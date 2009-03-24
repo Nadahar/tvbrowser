@@ -207,14 +207,14 @@ public final class ImdbDatabase {
       } catch (IOException e) {
         e.printStackTrace();
       }
-    } else if (new File(mCurrentPath, "write.lock").exists()){
+    } else if (new File(mCurrentPath, "write.lock").exists()) {
       try {
         new File(mCurrentPath, "write.lock").delete();
       } catch (SecurityException e) {
         e.printStackTrace();
       }
     }
-    
+
     if (mWriter != null) {
       try {
         mWriter.close();
@@ -224,12 +224,12 @@ public final class ImdbDatabase {
     }
 
     // if (new File(mCurrentPath, "segments.gen").exists()) {
-      try {
-        final IndexReader reader = IndexReader.open(mCurrentPath);
-        mSearcher = new IndexSearcher(reader);
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
+    try {
+      final IndexReader reader = IndexReader.open(mCurrentPath);
+      mSearcher = new IndexSearcher(reader);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
     // }
 
     try {
@@ -261,22 +261,27 @@ public final class ImdbDatabase {
     }
     try {
       final BooleanQuery bQuery = new BooleanQuery();
-      bQuery.add(new TermQuery(new Term(ITEM_TYPE, TYPE_MOVIE)),BooleanClause.Occur.MUST);
-      bQuery.add(new TermQuery(new Term(MOVIE_TITLE, movieTitle)),BooleanClause.Occur.MUST);
-      bQuery.add(new TermQuery(new Term(MOVIE_YEAR, Integer.toString(year))),BooleanClause.Occur.MUST);
+      bQuery.add(new TermQuery(new Term(ITEM_TYPE, TYPE_MOVIE)),
+          BooleanClause.Occur.MUST);
+      bQuery.add(new TermQuery(new Term(MOVIE_TITLE, movieTitle)),
+          BooleanClause.Occur.MUST);
+      bQuery.add(new TermQuery(new Term(MOVIE_YEAR, Integer.toString(year))),
+          BooleanClause.Occur.MUST);
       if (episode != null) {
-        bQuery.add(new TermQuery(new Term(EPISODE_TITLE, episode)),BooleanClause.Occur.MUST);
+        bQuery.add(new TermQuery(new Term(EPISODE_TITLE, episode)),
+            BooleanClause.Occur.MUST);
       }
       if (type != null) {
-        bQuery.add(new TermQuery(new Term(MOVIE_TYPE, type)),BooleanClause.Occur.MUST);
+        bQuery.add(new TermQuery(new Term(MOVIE_TYPE, type)),
+            BooleanClause.Occur.MUST);
       }
 
       final Hits hits = mSearcher.search(bQuery);
-      
+
       if (hits == null) {
         return null;
       }
-     
+
       final Iterator<Hit> it = hits.iterator();
 
       if (it.hasNext()) {
@@ -309,13 +314,16 @@ public final class ImdbDatabase {
     if (episode == null) {
       return null;
     }
+    final String normalizedTitle = normalise(title);
+    final String normalizedEpisode = normalise(episode);
     final BooleanQuery bQuery = new BooleanQuery();
     bQuery.add(new TermQuery(new Term(ITEM_TYPE, TYPE_MOVIE)),
         BooleanClause.Occur.MUST);
-    bQuery.add(new TermQuery(new Term(MOVIE_TITLE, title)),
+    bQuery.add(
+        new TermQuery(new Term(MOVIE_TITLE_NORMALISED, normalizedTitle)),
         BooleanClause.Occur.MUST);
-    bQuery.add(new TermQuery(new Term(EPISODE_TITLE, episode)),
-        BooleanClause.Occur.MUST);
+    bQuery.add(new TermQuery(new Term(EPISODE_TITLE_NORMALISED,
+        normalizedEpisode)), BooleanClause.Occur.MUST);
 
     if (year > 0) {
       bQuery.add(
@@ -342,24 +350,23 @@ public final class ImdbDatabase {
     return null;
   }
 
-  public String getMovieId(String title, String episode,
+  public String getMovieId(final String title, final String episode,
       final int year) {
     if (mSearcher == null) {
       return null;
     }
-    
-    title = normalise(title);
-    if (episode != null && episode.length() > 0) {
-      episode = normalise(episode);
-    }
+
+    final String normalizedTitle = normalise(title);
+    final String normalizedEpisode = normalise(episode);
 
     BooleanQuery bQuery = new BooleanQuery();
     bQuery.add(new TermQuery(new Term(ITEM_TYPE, TYPE_MOVIE)),
         BooleanClause.Occur.MUST);
-    bQuery.add(new TermQuery(new Term(MOVIE_TITLE, title)),
+    bQuery.add(
+        new TermQuery(new Term(MOVIE_TITLE_NORMALISED, normalizedTitle)),
         BooleanClause.Occur.MUST);
-    bQuery.add(new TermQuery(new Term(EPISODE_TITLE, episode)),
-        BooleanClause.Occur.MUST);
+    bQuery.add(new TermQuery(new Term(EPISODE_TITLE_NORMALISED,
+        normalizedEpisode)), BooleanClause.Occur.MUST);
 
     if (year > 0) {
       bQuery.add(
@@ -387,12 +394,18 @@ public final class ImdbDatabase {
       }
 
       bQuery = new BooleanQuery();
-      bQuery.add(new TermQuery(new Term(ITEM_TYPE, TYPE_AKA)),BooleanClause.Occur.MUST);
-      bQuery.add(new TermQuery(new Term(MOVIE_TITLE, title)),BooleanClause.Occur.MUST);
+      bQuery.add(new TermQuery(new Term(ITEM_TYPE, TYPE_AKA)),
+          BooleanClause.Occur.MUST);
+      bQuery.add(new TermQuery(
+          new Term(MOVIE_TITLE_NORMALISED, normalizedTitle)),
+          BooleanClause.Occur.MUST);
       if (year > 0) {
-        bQuery.add(new TermQuery(new Term(MOVIE_YEAR, Integer.toString(year-1))),BooleanClause.Occur.SHOULD);
-        bQuery.add(new TermQuery(new Term(MOVIE_YEAR, Integer.toString(year))),BooleanClause.Occur.SHOULD);
-        bQuery.add(new TermQuery(new Term(MOVIE_YEAR, Integer.toString(year+1))),BooleanClause.Occur.SHOULD);
+        bQuery.add(new TermQuery(new Term(MOVIE_YEAR, Integer
+            .toString(year - 1))), BooleanClause.Occur.SHOULD);
+        bQuery.add(new TermQuery(new Term(MOVIE_YEAR, Integer.toString(year))),
+            BooleanClause.Occur.SHOULD);
+        bQuery.add(new TermQuery(new Term(MOVIE_YEAR, Integer
+            .toString(year + 1))), BooleanClause.Occur.SHOULD);
       }
 
       hits = mSearcher.search(bQuery);
@@ -407,11 +420,10 @@ public final class ImdbDatabase {
         return document.getField(MOVIE_ID).stringValue();
       }
 
-
     } catch (IOException e) {
       e.printStackTrace();
     }
-    
+
     for (String suffix : TITLE_SUFFIX) {
       if (title.endsWith(suffix)) {
         return getMovieId(title.substring(0, title.length() - suffix.length())
@@ -423,14 +435,15 @@ public final class ImdbDatabase {
   }
 
   private void printDocument(final Document document) {
-/*    System.out.print(document.getField(MOVIE_TITLE).stringValue());
-
-    if (document.getField(EPISODE_TITLE) != null) {
-      System.out.print(" : " + document.getField(EPISODE_TITLE).stringValue());
-    }
-
-    System.out.println(" : " + document.getField(MOVIE_YEAR).stringValue() + " : " + document.getField(MOVIE_ID).stringValue());
-  */
+    /*
+     * System.out.print(document.getField(MOVIE_TITLE).stringValue());
+     * 
+     * if (document.getField(EPISODE_TITLE) != null) { System.out.print(" : " +
+     * document.getField(EPISODE_TITLE).stringValue()); }
+     * 
+     * System.out.println(" : " + document.getField(MOVIE_YEAR).stringValue() +
+     * " : " + document.getField(MOVIE_ID).stringValue());
+     */
   }
 
   public ImdbRating getRatingForId(final String id) {
@@ -439,8 +452,10 @@ public final class ImdbDatabase {
     }
     try {
       final BooleanQuery bQuery = new BooleanQuery();
-      bQuery.add(new TermQuery(new Term(ITEM_TYPE, TYPE_RATING)),BooleanClause.Occur.MUST);
-      bQuery.add(new TermQuery(new Term(MOVIE_ID, id)),BooleanClause.Occur.MUST);
+      bQuery.add(new TermQuery(new Term(ITEM_TYPE, TYPE_RATING)),
+          BooleanClause.Occur.MUST);
+      bQuery.add(new TermQuery(new Term(MOVIE_ID, id)),
+          BooleanClause.Occur.MUST);
 
       final Hits hits = mSearcher.search(bQuery);
       final Iterator<Hit> it = hits.iterator();
@@ -449,12 +464,10 @@ public final class ImdbDatabase {
         final Hit hit = it.next();
         final Document document = hit.getDocument();
 
-        return new ImdbRating(
-                Integer.parseInt(document.getField(MOVIE_RATING).stringValue()),
-                Integer.parseInt(document.getField(MOVIE_VOTES).stringValue()),
-                document.getField(MOVIE_DISTRIBUTION).stringValue(),
-                id
-        );
+        return new ImdbRating(Integer.parseInt(document.getField(MOVIE_RATING)
+            .stringValue()), Integer.parseInt(document.getField(MOVIE_VOTES)
+            .stringValue()), document.getField(MOVIE_DISTRIBUTION)
+            .stringValue(), id);
       }
     } catch (IOException e) {
       e.printStackTrace();
