@@ -5,16 +5,16 @@
 
 <categories>
   <category id="fiktion_film_gold">
-    <name lang="de">Adolf-Grimme-Preis mit Gold im Bereich Fiktion (ab 2000, beschränkt auf Filme und Mehrteiler)</name>
+    <name lang="de">Adolf-Grimme-Preis mit Gold im Bereich Fiktion (ab 1999, beschränkt auf Filme und Mehrteiler)</name>
   </category>
   <category id="fiktion_film">
-    <name lang="de">Adolf-Grimme-Preis im Bereich Fiktion (ab 2000, beschränkt auf Filme und Mehrteiler)</name>
+    <name lang="de">Adolf-Grimme-Preis im Bereich Fiktion (ab 1999, beschränkt auf Filme und Mehrteiler)</name>
   </category>
     <category id="information_gold">
-    <name lang="de">Adolf-Grimme-Preis mit Gold im Wettbewerb "Information &amp; Kultur" (ab 2000, beschränkt auf Filme und Mehrteiler)</name>
+    <name lang="de">Adolf-Grimme-Preis mit Gold im Wettbewerb "Information &amp; Kultur" (ab 1999, beschränkt auf Filme und Mehrteiler)</name>
   </category>
   <category id="information">
-    <name lang="de">Adolf-Grimme-Preis im Wettbewerb "Information &amp; Kultur" (ab 2000, beschränkt auf Filme und Mehrteiler)</name>
+    <name lang="de">Adolf-Grimme-Preis im Wettbewerb "Information &amp; Kultur" (ab 1999, beschränkt auf Filme und Mehrteiler)</name>
   </category>
 </categories>
 
@@ -48,6 +48,7 @@
   </movie>
   <movie id="movie_10" year="2005" director="Dominik Graf">
     <title lang="de" original="yes">Polizeiruf 110: Der scharlachrote Engel</title>
+    <alternativetitle lang="de" original="yes">Polizeiruf 110 - Der scharlachrote Engel</alternativetitle>
   </movie>
   <movie id="movie_11" year="1999" director="Lars Kraume">
     <title lang="de" original="yes">Dunckel</title>
@@ -75,6 +76,7 @@
   </movie>
   <movie id="movie_19" year="2001" director="Jobst Oetzmann">
     <title lang="de" original="yes">Tatort: Im freien Fall</title>
+    <alternativetitle lang="de" original="yes">Tatort - Im freien Fall</alternativetitle>
   </movie>
   <movie id="movie_20" year="2001" director="Hermine Huntgeburth">
     <title lang="de" original="yes">Romeo</title>
@@ -107,7 +109,8 @@
     <title lang="de" original="yes">Leben wäre schön</title>
   </movie>
   <movie id="movie_30" year="2004" director="Thomas Freundner">
-    <title lang="de" original="yes">Tatort: Herzversagen </title>
+    <title lang="de" original="yes">Tatort: Herzversagen</title>
+    <alternativetitle lang="de" original="yes">Tatort - Herzversagen</alternativetitle>
   </movie>
   <movie id="movie_31" year="2004" director="Annette Ernst">
     <title lang="de" original="yes">kiss and run</title>
@@ -117,6 +120,7 @@
   </movie>
   <movie id="movie_33" year="2006" director="Andreas Kleinert">
     <title lang="de" original="yes">Polizeiruf 110: Kleine Frau</title>
+    <alternativetitle lang="de" original="yes">Polizeiruf 110 - Kleine Frau</alternativetitle>
   </movie>
   <movie id="movie_34" year="2005" director="Matti Geschonneck">
     <title lang="de" original="yes">Die Nachrichten</title>
@@ -135,6 +139,7 @@
   </movie>
   <movie id="movie_39" year="2006" director="Dominik Graf">
     <title lang="de" original="yes">Polizeiruf 110: Er sollte tot</title>
+    <alternativetitle lang="de" original="yes">Polizeiruf 110 - Er sollte tot</alternativetitle>
   </movie>
   <movie id="movie_40" year="2007" director="Buket Alakus">
     <title lang="de" original="yes">Eine andere Liga </title>
@@ -271,7 +276,70 @@
     <title lang="de" original="yes">Zwischen Wahnsinn und Kunst</title>
   </movie>
   <movie id="movie_83" year="2007" director="Beatrix Schwehm">
-    <title lang="de" original="yes">Luise - eine deutsche Muslima </title>
+    <title lang="de" original="yes">Luise - eine deutsche Muslima</title>
+  </movie>
+  <movie id="movie_84" year="2008" director="Nicole Weegmann">
+    <title lang="de" original="yes">Ihr könnt euch niemals sicher sein</title>
+  </movie>
+  <movie id="movie_85" year="2008" director="Alain Gsponer">
+    <title lang="de" original="yes">Das wahre Leben</title>
+  </movie>
+  <movie id="movie_86" year="2008" director="Hermine Huntgeburth">
+    <title lang="de" original="yes">Teufelsbraten</title>
+  </movie>
+  <movie id="movie_87" year="2008" director="Hans Steinbichler">
+    <title lang="de" original="yes">Die zweite Frau</title>
+  </movie>
+  <movie id="movie_88" year="2008" director="Florian Gaag">
+    <title lang="de" original="yes">Wholetrain</title>
+  </movie>
+  <movie id="movie_89" year="2008" director="Michael Loeken, Ulrike Franke">
+    <title lang="de" original="yes">Losers and Winners</title>
+  </movie>
+  <movie id="movie_90" year="2008" director="Hubert Seipel">
+    <title lang="de" original="yes">Leben und Sterben für Kabul</title>
+  </movie>  
+  <movie id="movie_91" year="2008" director="Niko Apel">
+    <title lang="de" original="yes">Sonbol - Rallye durch den Gottesstaat</title>
+    <alternativetitle lang="de" original="yes">Sonbol – Ralley durch den Gottesstaat</alternativetitle>
+  </movie>
+  <movie id="movie_92" year="2008" director="Florian Opitz">
+    <title lang="de" original="yes">Der große Ausverkauf</title>
+  </movie>
+  <movie id="movie_93" year="1998" director="Uta König">
+    <title lang="de" original="yes">Eine Frau im Männerknast</title>
+  </movie>
+  <movie id="movie_94" year="1998" director="Michael Althen, Dominik Graf">
+    <title lang="de" original="yes">Das Wispern im Berg der Dinge</title>
+    <alternativetitle lang="de" original="yes">Denk ich an Deutschland - Das Wispern im Berg der Dinge</alternativetitle>
+  </movie>
+  <movie id="movie_95" year="1998" director="Wilfried Huismann, Klaus Schlösser">
+    <title lang="de" original="yes">Machtspieler – Friedrich Hennemann und der Untergang des Bremer Vulkan</title>
+    <alternativetitle lang="de" original="yes">Machtspieler – Friedrich Hennemann und der Untergang der Bremer Vulkan</alternativetitle>
+  </movie>
+  <movie id="movie_96" year="1998" director="Volker Anding, Enno Hungerland">
+    <title lang="de" original="yes">Ratten</title>
+  </movie>
+  <movie id="movie_97" year="1998" director="Patrice Barrat, Dierk Ludwig Schaaf">
+    <title lang="de" original="yes">Fenster zur Welt - Das andere Algerien</title>
+  </movie>
+  <movie id="movie_98" year="1998" director="Jo Baier">
+    <title lang="de" original="yes">Der Laden</title>
+  </movie>
+  <movie id="movie_99" year="1998" director="Xaver Schwarzenberger">
+    <title lang="de" original="yes">Krambambuli</title>
+  </movie>
+  <movie id="movie_100" year="1998" director="Oliver Storz">
+    <title lang="de" original="yes">Gegen Ende der Nacht</title>
+  </movie>
+  <movie id="movie_101" year="1998" director="Frank Beyer">
+    <title lang="de" original="yes">Abgehauen</title>
+  </movie>
+  <movie id="movie_102" year="1998" director="Connie Walther">
+    <title lang="de" original="yes">Hauptsache Leben</title>
+  </movie>
+  <movie id="movie_103" year="1998" director="Daniele Nocke">
+    <title lang="de" original="yes">Der Peitschenmeister</title>
   </movie>
 </movies>
 
@@ -286,6 +354,7 @@
   <award category="fiktion_film_gold" status="winner" movie="movie_8" year="2006" />
   <award category="fiktion_film_gold" status="winner" movie="movie_9" year="2006" />
   <award category="fiktion_film_gold" status="winner" movie="movie_10" year="2006" />
+  <award category="fiktion_film_gold" status="winner" movie="movie_98" year="1999" />
   <award category="fiktion_film" status="winner" movie="movie_11" year="2000" />
   <award category="fiktion_film" status="winner" movie="movie_12" year="2000" />
   <award category="fiktion_film" status="winner" movie="movie_13" year="2000" />
@@ -319,6 +388,16 @@
   <award category="fiktion_film" status="winner" movie="movie_41" year="2008" />
   <award category="fiktion_film" status="winner" movie="movie_42" year="2008" />
   <award category="fiktion_film" status="winner" movie="movie_43" year="2008" />
+  <award category="fiktion_film" status="winner" movie="movie_84" year="2009" />
+  <award category="fiktion_film" status="winner" movie="movie_85" year="2009" />
+  <award category="fiktion_film" status="winner" movie="movie_86" year="2009" />
+  <award category="fiktion_film" status="winner" movie="movie_87" year="2009" />
+  <award category="fiktion_film" status="winner" movie="movie_88" year="2009" />
+  <award category="fiktion_film" status="winner" movie="movie_99" year="1999" />
+  <award category="fiktion_film" status="winner" movie="movie_100" year="1999" />
+  <award category="fiktion_film" status="winner" movie="movie_101" year="1999" />
+  <award category="fiktion_film" status="winner" movie="movie_102" year="1999" />
+  <award category="fiktion_film" status="winner" movie="movie_103" year="1999" />
   <award category="information_gold" status="winner" movie="movie_44" year="2001" />
   <award category="information_gold" status="winner" movie="movie_45" year="2001" />
   <award category="information_gold" status="winner" movie="movie_46" year="2002" />
@@ -359,6 +438,15 @@
   <award category="information" status="winner" movie="movie_81" year="2008" />
   <award category="information" status="winner" movie="movie_82" year="2008" />
   <award category="information" status="winner" movie="movie_83" year="2008" />
+  <award category="information" status="winner" movie="movie_89" year="2009" />
+  <award category="information" status="winner" movie="movie_90" year="2009" />
+  <award category="information" status="winner" movie="movie_91" year="2009" />
+  <award category="information" status="winner" movie="movie_92" year="2009" />
+  <award category="information" status="winner" movie="movie_93" year="1999" />
+  <award category="information" status="winner" movie="movie_94" year="1999" />
+  <award category="information" status="winner" movie="movie_95" year="1999" />
+  <award category="information" status="winner" movie="movie_96" year="1999" />
+  <award category="information" status="winner" movie="movie_97" year="1999" />
 
 </awards>
 
