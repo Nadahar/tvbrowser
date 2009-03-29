@@ -46,6 +46,7 @@
     <module>plugin-tooltipcontrol</module>
     <module>plugin-tvpearl</module>
     <module>plugin-twitter</module>
+    <module>plugin-virtualdataservice</module>
     <module>plugin-wirschauen</module>
     <module>plugin-widget</module>
     <module>plugin-zattoo</module>
