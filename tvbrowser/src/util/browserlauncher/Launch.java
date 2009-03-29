@@ -92,8 +92,10 @@ public class Launch {
         if (Desktop.isDesktopSupported()) {
           try {
             Desktop desktop = Desktop.getDesktop();
-            desktop.browse(new URI(url));
-            opened = true;
+            if (desktop.isSupported(Desktop.Action.BROWSE)) {
+              desktop.browse(new URI(url));
+              opened = true;
+            }
           } catch (Exception e) {
             BrowserLauncher.openURL(url);
           }
