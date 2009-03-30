@@ -19,22 +19,39 @@
  */
 package virtualdataservice.ui;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.beans.PropertyVetoException;
-import java.text.*;
-import java.util.*;
-import javax.swing.*;
+import java.text.NumberFormat;
+import java.util.Calendar;
+import java.util.Date;
+
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JDialog;
+import javax.swing.JFormattedTextField;
+import javax.swing.JSpinner;
+import javax.swing.JTextField;
+import javax.swing.SpinnerDateModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import com.jgoodies.forms.builder.*;
-import com.jgoodies.forms.layout.*;
-import com.michaelbaranov.microba.calendar.DatePicker;
-
 import tvbrowser.core.Settings;
-import util.ui.*;
+import util.ui.CaretPositionCorrector;
+import util.ui.Localizer;
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 import virtualdataservice.virtual.VirtualProgram;
+
+import com.jgoodies.forms.builder.ButtonBarBuilder;
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+import com.michaelbaranov.microba.calendar.DatePicker;
 
 public class ContextDialog extends JDialog implements WindowClosingIf, ActionListener, ChangeListener, FocusListener
 {
@@ -57,7 +74,7 @@ public class ContextDialog extends JDialog implements WindowClosingIf, ActionLis
 
 	private VirtualProgram mProgram = null;
 
-	public ContextDialog(Frame frame)
+	public ContextDialog(final Frame frame)
 	{
 	  super(frame, true);
 
@@ -68,7 +85,7 @@ public class ContextDialog extends JDialog implements WindowClosingIf, ActionLis
 		UiUtilities.registerForClosing(this);
 	}
 
-  public static ContextDialog getInstance(Frame frame) {
+  public static ContextDialog getInstance(final Frame frame) {
     if (mInstance == null) {
       mInstance = new ContextDialog(frame);
     }
@@ -80,14 +97,16 @@ public class ContextDialog extends JDialog implements WindowClosingIf, ActionLis
 
 		//setLayout(new BorderLayout());
 
-		FormLayout layout = new FormLayout("5dlu, pref, 3dlu, pref, pref:grow, 5dlu", "5dlu, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref, 10dlu, pref, 2dlu, pref, 2dlu, top:pref:grow, 2dlu, pref, 3dlu");
+		final FormLayout layout = new FormLayout(
+        "5dlu, pref, 3dlu, pref, pref:grow, 5dlu",
+        "5dlu, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref, 10dlu, pref, 2dlu, pref, 2dlu, top:pref:grow, 2dlu, pref, 3dlu");
 
-		PanelBuilder builder = new PanelBuilder(layout);
+		final PanelBuilder builder = new PanelBuilder(layout);
 		builder.setBorder(null);
 
-		CellConstraints cc = new CellConstraints();
+		final CellConstraints cc = new CellConstraints();
 
-		NumberFormat nf = NumberFormat.getIntegerInstance();
+		final NumberFormat nf = NumberFormat.getIntegerInstance();
 		nf.setGroupingUsed(false);
 
 		mProgramName = new JTextField();
@@ -103,13 +122,15 @@ public class ContextDialog extends JDialog implements WindowClosingIf, ActionLis
     mFinalDate.addActionListener(this);
 
     mTime = new JSpinner(new SpinnerDateModel());
-		JSpinner.DateEditor dateEditor = new JSpinner.DateEditor(mTime, Settings.getTimePattern());
+    final JSpinner.DateEditor dateEditor = new JSpinner.DateEditor(mTime,
+        Settings.getTimePattern());
 		mTime.setEditor(dateEditor);
 		CaretPositionCorrector.createCorrector(dateEditor.getTextField(), new char[] { ':' }, -1);
     mTime.addChangeListener(this);
 
     mFinalTime = new JSpinner(new SpinnerDateModel());
-    JSpinner.DateEditor finalDateEditor = new JSpinner.DateEditor(mFinalTime, Settings.getTimePattern());
+    final JSpinner.DateEditor finalDateEditor = new JSpinner.DateEditor(
+        mFinalTime, Settings.getTimePattern());
     mFinalTime.setEditor(finalDateEditor);
     CaretPositionCorrector.createCorrector(finalDateEditor.getTextField(), new char[] { ':' }, -1);
     mFinalTime.addChangeListener(this);
@@ -120,7 +141,7 @@ public class ContextDialog extends JDialog implements WindowClosingIf, ActionLis
 		mEnableRepeater = new JCheckBox(mLocalizer.msg("ProgramEditor.repeat", "Enable repeat"));
 		mEnableRepeater.addChangeListener(new ChangeListener()
 		{
-			public void stateChanged(ChangeEvent evt)
+			public void stateChanged(final ChangeEvent evt)
 			{
 				mRepeater.setEnabled(mEnableRepeater.isSelected());
 			}
@@ -129,7 +150,7 @@ public class ContextDialog extends JDialog implements WindowClosingIf, ActionLis
 		mRepeater = new RepeaterComponent();
 		mRepeater.setEnabled(false);
 
-		ButtonBarBuilder buttonBuilder = new ButtonBarBuilder();
+		final ButtonBarBuilder buttonBuilder = new ButtonBarBuilder();
 		mOk = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
 		mOk.addActionListener(this);
 		mCancel = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
@@ -179,7 +200,7 @@ public class ContextDialog extends JDialog implements WindowClosingIf, ActionLis
 		return mProgram;
 	}
 
-	private Boolean isValidProgram()
+	private boolean isValidProgram()
 	{
 		if (mProgramName.getText().trim().length() == 0)
 		{
@@ -204,7 +225,8 @@ public class ContextDialog extends JDialog implements WindowClosingIf, ActionLis
 		return true;
 	}
 
-	public void setFields(String title, Calendar start, Calendar end, int length)
+	public void setFields(final String title, final Calendar start,
+      final Calendar end, final int length)
 	{
     mProgramName.setText(title);
     try
@@ -221,15 +243,16 @@ public class ContextDialog extends JDialog implements WindowClosingIf, ActionLis
 
 	private void setEnd (){
 	  mLog.info("foo: entered");
-    Calendar cal = Calendar.getInstance();
+	  final Calendar cal = Calendar.getInstance();
     cal.setTime(mDate.getDate());
-    Calendar time = Calendar.getInstance();
+    final Calendar time = Calendar.getInstance();
     time.setTime((Date) mTime.getValue());
     cal.set(Calendar.HOUR_OF_DAY, time.get(Calendar.HOUR_OF_DAY));
     cal.set(Calendar.MINUTE, time.get(Calendar.MINUTE));
     cal.set(Calendar.SECOND, 0);
     cal.set(Calendar.MILLISECOND, 0);
-	  long millis = cal.getTimeInMillis() + (Integer.parseInt(mProgramLength.getText())*60000);
+    final long millis = cal.getTimeInMillis()
+        + (Integer.parseInt(mProgramLength.getText()) * 60000L);
 	  cal.setTimeInMillis(millis);
     try {
       mFinalDate.setDate(cal.getTime());
@@ -241,10 +264,10 @@ public class ContextDialog extends JDialog implements WindowClosingIf, ActionLis
 	
 	private void setLength (){
 	  int length = 0;
-    Calendar calStart = Calendar.getInstance();
-    Calendar timeStart = Calendar.getInstance();
-    Calendar calEnd = Calendar.getInstance();
-    Calendar timeEnd = Calendar.getInstance();
+	  final Calendar calStart = Calendar.getInstance();
+    final Calendar timeStart = Calendar.getInstance();
+    final Calendar calEnd = Calendar.getInstance();
+    final Calendar timeEnd = Calendar.getInstance();
 
     calStart.setTime(mDate.getDate());
     calEnd.setTime(mFinalDate.getDate());
@@ -268,7 +291,7 @@ public class ContextDialog extends JDialog implements WindowClosingIf, ActionLis
     mProgramLength.setText(Integer.toString(length));
 	}
 	
-  public void actionPerformed(ActionEvent evt)
+  public void actionPerformed(final ActionEvent evt)
   { if (evt.getSource()== mDate || evt.getSource()== mFinalDate) {
     setLength();
   }
@@ -281,9 +304,9 @@ public class ContextDialog extends JDialog implements WindowClosingIf, ActionLis
           mProgram = new VirtualProgram();
         }
         mProgram.setTitle(mProgramName.getText().trim());
-        Calendar cal = Calendar.getInstance();
+        final Calendar cal = Calendar.getInstance();
         cal.setTime(mDate.getDate());
-        Calendar time = Calendar.getInstance();
+        final Calendar time = Calendar.getInstance();
         time.setTime((Date) mTime.getValue());
         cal.set(Calendar.HOUR_OF_DAY, time.get(Calendar.HOUR_OF_DAY));
         cal.set(Calendar.MINUTE, time.get(Calendar.MINUTE));
@@ -309,22 +332,19 @@ public class ContextDialog extends JDialog implements WindowClosingIf, ActionLis
     }
   }
 
-  public void stateChanged(ChangeEvent arg) {
+  public void stateChanged(final ChangeEvent arg) {
     if (arg.getSource()== mTime || arg.getSource()== mFinalTime){
       setLength();
     }
-    
   }
 
-  public void focusGained(FocusEvent e) {
+  public void focusGained(final FocusEvent e) {
  }
 
-  public void focusLost(FocusEvent e) {
+  public void focusLost(final FocusEvent e) {
     if (e.getSource()== mProgramLength) {
       setEnd();
     }
-
-    
   }
     
 

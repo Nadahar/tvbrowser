@@ -17,8 +17,17 @@
  */
 package virtualdataservice.virtual;
 
-import java.io.*;
-import java.util.*;
+import java.io.Externalizable;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 public class VirtualChannel implements Externalizable, Comparable<VirtualChannel>
 {
@@ -34,13 +43,13 @@ public class VirtualChannel implements Externalizable, Comparable<VirtualChannel
 		mID = -1;
 	}
 
-	public VirtualChannel(int id, String name)
+	public VirtualChannel(final int id, final String name)
 	{
 		mID = id;
 		mName = name;
 	}
 
-	public void setWorkingDirectory(String workingDirectory)
+	public void setWorkingDirectory(final String workingDirectory)
 	{
 		mWorkingDirectory = workingDirectory;
 	}
@@ -55,7 +64,7 @@ public class VirtualChannel implements Externalizable, Comparable<VirtualChannel
 		return mName;
 	}
 
-	public void setName(String name)
+	public void setName(final String name)
 	{
 		mName = name;
 	}
@@ -71,9 +80,10 @@ public class VirtualChannel implements Externalizable, Comparable<VirtualChannel
 		return mName;// + " [" + mID + "]";
 	}
 
-	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException
+	public void readExternal(final ObjectInput in) throws IOException,
+      ClassNotFoundException
 	{
-		int version = in.readInt();
+	  final int version = in.readInt();
 		if (version == 1)
 		{
 			mID = in.readInt();
@@ -81,7 +91,7 @@ public class VirtualChannel implements Externalizable, Comparable<VirtualChannel
 		}
 	}
 
-	public void writeExternal(ObjectOutput out) throws IOException
+	public void writeExternal(final ObjectOutput out) throws IOException
 	{
 		if (mID > -1)
 		{
@@ -102,21 +112,22 @@ public class VirtualChannel implements Externalizable, Comparable<VirtualChannel
 		{
 			mPrograms = new ArrayList<VirtualProgram>();
 
-			File file = new File(mWorkingDirectory + getFileName());
+			final File file = new File(mWorkingDirectory + getFileName());
 			if (file.exists())
 			{
 				try
 				{
-					ObjectInputStream in = new ObjectInputStream(new FileInputStream(file));
+				  final ObjectInputStream in = new ObjectInputStream(
+              new FileInputStream(file));
 
-					int version = in.readInt();
+				  final int version = in.readInt();
 
 					if (version == 1)
 					{
-						int count = in.readInt();
+					  final int count = in.readInt();
 						for (int i = 0; i < count; i++)
 						{
-							VirtualProgram program = (VirtualProgram) in.readObject();
+						  final VirtualProgram program = (VirtualProgram) in.readObject();
 							addProgram(program);
 						}
 					}
@@ -136,7 +147,8 @@ public class VirtualChannel implements Externalizable, Comparable<VirtualChannel
 		{
 			try
 			{
-				ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(mWorkingDirectory + getFileName()));
+			  final ObjectOutputStream out = new ObjectOutputStream(
+            new FileOutputStream(mWorkingDirectory + getFileName()));
 
 				out.writeInt(1); //version
 				out.writeInt(mPrograms.size());
@@ -154,7 +166,7 @@ public class VirtualChannel implements Externalizable, Comparable<VirtualChannel
 		}
 	}
 
-	private Boolean checkProgram(VirtualProgram p)
+	private boolean checkProgram(final VirtualProgram p)
 	{
 		return p.isActive();
 	}
@@ -174,7 +186,7 @@ public class VirtualChannel implements Externalizable, Comparable<VirtualChannel
 		}
 	}
 
-	public void addProgram(VirtualProgram program)
+	public void addProgram(final VirtualProgram program)
 	{
 		checkChannelState();
 		if (checkProgram(program))
@@ -183,15 +195,15 @@ public class VirtualChannel implements Externalizable, Comparable<VirtualChannel
 		}
 	}
 
-	public void removeProgram(VirtualProgram program)
+	public void removeProgram(final VirtualProgram program)
 	{
 		checkChannelState();
 		mPrograms.remove(program);
 	}
 
-	public int compareTo(VirtualChannel o)
+	public int compareTo(final VirtualChannel o)
 	{
-		int compare = getName().compareToIgnoreCase(o.getName());
+	  final int compare = getName().compareToIgnoreCase(o.getName());
 		if (compare == 0)
 		{
 			return getID() < o.getID() ? 1 : -1;

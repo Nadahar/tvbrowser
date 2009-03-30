@@ -25,11 +25,12 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 
+import virtualdataservice.virtual.Repeat;
+import virtualdataservice.virtual.WeeklyRepeater;
+
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
-
-import virtualdataservice.virtual.*;
 
 public class WeeklyRepeaterPanel extends RepeaterPanel
 {
@@ -50,14 +51,15 @@ public class WeeklyRepeaterPanel extends RepeaterPanel
 		setLayout(new BorderLayout());
 		setBorder(null);
 
-		FormLayout layout = new FormLayout("pref, 3dlu, pref, 3dlu, pref:grow", "pref, 3dlu, pref");
+		final FormLayout layout = new FormLayout(
+        "pref, 3dlu, pref, 3dlu, pref:grow", "pref, 3dlu, pref");
 
-		PanelBuilder builder = new PanelBuilder(layout);
+		final PanelBuilder builder = new PanelBuilder(layout);
 		builder.setBorder(null);
 
-		CellConstraints cc = new CellConstraints();
+		final CellConstraints cc = new CellConstraints();
 
-		SpinnerModel model = new SpinnerNumberModel(1, 1, 500, 1);
+		final SpinnerModel model = new SpinnerNumberModel(1, 1, 500, 1);
 		mWeeks = new JSpinner(model);
 
 		builder.addLabel(mLocalizer.msg("WeeklyRepeaterPanel.every", "Every"), cc.xy(1, 1));
@@ -70,13 +72,14 @@ public class WeeklyRepeaterPanel extends RepeaterPanel
 
 	private JPanel getDays()
 	{
-		FormLayout layout = new FormLayout("pref, 3dlu, pref, 3dlu, pref, 3dlu, pref", "pref, 1dlu, pref");
+	  final FormLayout layout = new FormLayout(
+        "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref", "pref, 1dlu, pref");
 		layout.setColumnGroups(new int[][] { { 1, 3, 5, 7 } });
 
-		PanelBuilder builder = new PanelBuilder(layout);
+		final PanelBuilder builder = new PanelBuilder(layout);
 		builder.setBorder(null);
 
-		CellConstraints cc = new CellConstraints();
+		final CellConstraints cc = new CellConstraints();
 
 		mMon = new JCheckBox(mLocalizer.msg("WeeklyRepeaterPanel.mon", "Mon"));
 		mTue = new JCheckBox(mLocalizer.msg("WeeklyRepeaterPanel.tue", "Tue"));
@@ -99,7 +102,7 @@ public class WeeklyRepeaterPanel extends RepeaterPanel
 
 	public Repeat getRepeater()
 	{
-		WeeklyRepeater repeater = new WeeklyRepeater();
+	  final WeeklyRepeater repeater = new WeeklyRepeater();
 		
 		repeater.setWeeks((Integer) mWeeks.getValue());
 		repeater.setMonday(mMon.isSelected());
@@ -113,11 +116,11 @@ public class WeeklyRepeaterPanel extends RepeaterPanel
 		return repeater;
 	}
 
-	public void setRepeater(Repeat repeater)
+	public void setRepeater(final Repeat repeater)
 	{
 		if (repeater.getID() == 2)
 		{
-			WeeklyRepeater weeklyRepeater = (WeeklyRepeater) repeater;
+		  final WeeklyRepeater weeklyRepeater = (WeeklyRepeater) repeater;
 			
 			mWeeks.setValue(weeklyRepeater.getWeeks());
 			mMon.setSelected(weeklyRepeater.getMonday());

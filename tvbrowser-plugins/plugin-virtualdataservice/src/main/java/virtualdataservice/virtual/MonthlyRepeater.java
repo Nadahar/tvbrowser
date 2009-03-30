@@ -31,7 +31,7 @@ public class MonthlyRepeater extends Repeat
 		return 3;
 	}
 
-	public Boolean isDayProgram(Calendar date, Calendar programStart)
+	public boolean isDayProgram(final Calendar date, final Calendar programStart)
 	{
 		if (validOptions() && programStart.compareTo(date) <= 0 && isBevorEnd(date))
 		{
@@ -43,9 +43,10 @@ public class MonthlyRepeater extends Repeat
 		return false;
 	}
 
-	public void readData(ObjectInput in) throws IOException, ClassNotFoundException
+	public void readData(final ObjectInput in) throws IOException,
+      ClassNotFoundException
 	{
-		int version = in.readInt();
+	  final int version = in.readInt();
 		if (version == 1)
 		{
 			mDay = in.readInt();
@@ -53,7 +54,7 @@ public class MonthlyRepeater extends Repeat
 		}
 	}
 
-	public void writeData(ObjectOutput out) throws IOException
+	public void writeData(final ObjectOutput out) throws IOException
 	{
 		out.writeInt(1);
 		out.writeInt(mDay);
@@ -65,12 +66,12 @@ public class MonthlyRepeater extends Repeat
 		return mDay;
 	}
 
-	public void setDay(int day)
+	public void setDay(final int day)
 	{
 		mDay = day;
 	}
 
-	private Boolean validOptions()
+	private boolean validOptions()
 	{
 		if (mDay < 0 || mDay > 31)
 		{

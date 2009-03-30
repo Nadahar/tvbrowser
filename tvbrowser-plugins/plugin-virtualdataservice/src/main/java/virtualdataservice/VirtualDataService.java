@@ -17,9 +17,8 @@
  */
 package virtualdataservice;
 
-import java.awt.Frame;
 import java.awt.event.ActionEvent;
-import java.io.*;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -29,15 +28,31 @@ import java.util.TimeZone;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.JOptionPane;
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 
-import tvdataservice.*;
-import util.exc.*;
-import util.ui.*;
+import tvdataservice.MutableChannelDayProgram;
+import tvdataservice.MutableProgram;
+import tvdataservice.SettingsPanel;
+import tvdataservice.TvDataUpdateManager;
+import util.exc.TvBrowserException;
+import util.ui.Localizer;
+import util.ui.UiUtilities;
 import virtualdataservice.ui.ContextDialog;
-import virtualdataservice.virtual.*;
-import devplugin.*;
+import virtualdataservice.virtual.VirtualChannel;
+import virtualdataservice.virtual.VirtualChannelManager;
+import virtualdataservice.virtual.VirtualProgram;
+import devplugin.AbstractTvDataService;
+import devplugin.ActionMenu;
+import devplugin.Channel;
+import devplugin.ChannelGroup;
+import devplugin.ContextMenuSeparatorAction;
+import devplugin.Date;
+import devplugin.Plugin;
+import devplugin.PluginInfo;
+import devplugin.Program;
+import devplugin.ProgressMonitor;
+import devplugin.Version;
 
 public class VirtualDataService extends AbstractTvDataService
 {
@@ -52,13 +67,13 @@ public class VirtualDataService extends AbstractTvDataService
   private ArrayList<Channel> mChannels = null;
   private File mWorkingDir;
   
-//modified by jb:         
+//modified by jb:
   final private ImageIcon vcIcon = DummyPlugin.getInstance().createImageIcon("emblems", "emblem-symbolic-link", 16);
   final private ImageIcon copyIcon = DummyPlugin.getInstance().createImageIcon("emblems", "go-next", 16);
   final private ImageIcon delIcon = DummyPlugin.getInstance().createImageIcon("actions", "edit-delete", 16);
   final private ImageIcon editIcon = DummyPlugin.getInstance().createImageIcon("actions", "document-edit", 16);
   final private ImageIcon newIcon = DummyPlugin.getInstance().createImageIcon("actions", "document-new", 16);
-//modified by jb //         
+//modified by jb //
 
   public VirtualDataService()
   {
@@ -70,27 +85,32 @@ public class VirtualDataService extends AbstractTvDataService
     return mInstance;
   }
 
-  public ChannelGroup[] checkForAvailableChannelGroups(ProgressMonitor monitor) throws TvBrowserException
+  public ChannelGroup[] checkForAvailableChannelGroups(
+      final ProgressMonitor monitor) throws TvBrowserException
   {
     return new ChannelGroup[] { mVirtualChannelGroup };
   }
 
-  public Channel[] checkForAvailableChannels(ChannelGroup group, ProgressMonitor monitor) throws TvBrowserException
+  public Channel[] checkForAvailableChannels(final ChannelGroup group,
+      final ProgressMonitor monitor) throws TvBrowserException
   {
     monitor.setMessage(mLocalizer.msg("loading", "Loading virtual data"));
 
     return getAvailableChannels(group);
   }
 
-  public Channel[] getAvailableChannels(ChannelGroup group)
+  public Channel[] getAvailableChannels(final ChannelGroup group)
   {
     if (mChannels == null)
     {
       mChannels = new ArrayList<Channel>();
-      VirtualChannelManager manager = new VirtualChannelManager(mWorkingDir.getAbsolutePath());
+      final VirtualChannelManager manager = new VirtualChannelManager(
+          mWorkingDir.getAbsolutePath());
       for (VirtualChannel channel : manager.getChannels())
       {
-        Channel ch = new Channel(this, channel.getName(), "VC" + Integer.toString(channel.getID()), TimeZone.getDefault(), "xc", "", "", mVirtualChannelGroup);
+        final Channel ch = new Channel(this, channel.getName(), "VC"
+            + Integer.toString(channel.getID()), TimeZone.getDefault(), "xc",
+            "", "", mVirtualChannelGroup);
         mChannels.add(ch);
       }
     }
@@ -122,7 +142,7 @@ public class VirtualDataService extends AbstractTvDataService
     return true;
   }
 
-  public void loadSettings(Properties settings)
+  public void loadSettings(final Properties settings)
   {
     mLog.info("Loading settings in VirtualDataService");
 
@@ -140,7 +160,7 @@ public class VirtualDataService extends AbstractTvDataService
     return mProperties;
   }
 
-  public void setWorkingDirectory(File dataDir)
+  public void setWorkingDirectory(final File dataDir)
   {
     mWorkingDir = dataDir;
   }
@@ -155,38 +175,46 @@ public class VirtualDataService extends AbstractTvDataService
     return true;
   }
 
-  public void updateTvData(TvDataUpdateManager updateManager, Channel[] channelArr, Date startDate, int dateCount, ProgressMonitor monitor) throws TvBrowserException
+  public void updateTvData(final TvDataUpdateManager updateManager,
+      final Channel[] channelArr, final Date startDate, final int dateCount,
+      final ProgressMonitor monitor) throws TvBrowserException
   {
-    VirtualChannelManager manager = new VirtualChannelManager(mWorkingDir.getAbsolutePath());
+    final VirtualChannelManager manager = new VirtualChannelManager(mWorkingDir
+        .getAbsolutePath());
     for (Channel channel : channelArr)
     {
       try
       {
-        VirtualChannel vCh = manager.getChannel(Integer.parseInt(channel.getId().substring(2)));
-        Calendar cal = startDate.getCalendar();
+        final VirtualChannel vCh = manager.getChannel(Integer.parseInt(channel
+            .getId().substring(2)));
+        final Calendar cal = startDate.getCalendar();
  
-// modified by jb:         
+// modified by jb:
         int prevEnd = 0;
         int actStart;
         for (int i = 0; i < dateCount; i++)
         {
-          Date d = new Date(cal);
-          MutableChannelDayProgram dayProgram = new MutableChannelDayProgram(d, channel);
+          final Date d = new Date(cal);
+          final MutableChannelDayProgram dayProgram = new MutableChannelDayProgram(
+              d, channel);
 
           for (VirtualProgram program : vCh.getPrograms())
           {
             if (program.isDayProgram(cal))
-            { 
+            {
               actStart = (program.getStart().get(Calendar.HOUR_OF_DAY)* 60)+ program.getStart().get(Calendar.MINUTE);
               if (actStart > prevEnd){
-                int dummyPrevStartHH = prevEnd/60;
-                MutableProgram dummyPrev = new MutableProgram(channel, d, dummyPrevStartHH, prevEnd - (dummyPrevStartHH*60), false);
+                final int dummyPrevStartHH = prevEnd / 60;
+                final MutableProgram dummyPrev = new MutableProgram(channel, d,
+                    dummyPrevStartHH, prevEnd - (dummyPrevStartHH * 60), false);
                 dummyPrev.setTitle(" ");
                 dummyPrev.setLength(actStart-prevEnd);
                 dayProgram.addProgram(dummyPrev);
               }
  
-              MutableProgram p = new MutableProgram(channel, d, program.getStart().get(Calendar.HOUR_OF_DAY), program.getStart().get(Calendar.MINUTE), false);
+              final MutableProgram p = new MutableProgram(channel, d, program
+                  .getStart().get(Calendar.HOUR_OF_DAY), program.getStart()
+                  .get(Calendar.MINUTE), false);
               p.setTitle(program.getTitle());
               p.setLength(program.getLength());
               dayProgram.addProgram(p);
@@ -195,8 +223,9 @@ public class VirtualDataService extends AbstractTvDataService
          }
 
           if (dayProgram.getProgramCount() == 0){
-            int dummyStartHH = prevEnd / 60;
-            MutableProgram dummy = new MutableProgram(channel, d, dummyStartHH, prevEnd - (dummyStartHH * 60), false);
+            final int dummyStartHH = prevEnd / 60;
+            final MutableProgram dummy = new MutableProgram(channel, d,
+                dummyStartHH, prevEnd - (dummyStartHH * 60), false);
             dummy.setTitle(" ");
             dummy.setLength(1439-prevEnd);
             dayProgram.addProgram(dummy);
@@ -209,8 +238,9 @@ public class VirtualDataService extends AbstractTvDataService
               prevEnd = prevEnd-1440;
             }
             else{
-              int dummyEndStartHH = prevEnd / 60;
-              MutableProgram dummyEnd = new MutableProgram(channel, d, dummyEndStartHH, prevEnd - (dummyEndStartHH * 60), false);
+              final int dummyEndStartHH = prevEnd / 60;
+              final MutableProgram dummyEnd = new MutableProgram(channel, d,
+                  dummyEndStartHH, prevEnd - (dummyEndStartHH * 60), false);
               dummyEnd.setTitle(" ");
               dummyEnd.setLength(1440 - prevEnd);
               dayProgram.addProgram(dummyEnd);
@@ -220,7 +250,7 @@ public class VirtualDataService extends AbstractTvDataService
           
           
 // modified by jb //
-          updateManager.updateDayProgram(dayProgram);         
+          updateManager.updateDayProgram(dayProgram);
           
           cal.add(Calendar.DAY_OF_MONTH, 1);
         }
@@ -240,15 +270,16 @@ public class VirtualDataService extends AbstractTvDataService
 
    }
 
-// added by jb : 
+// added by jb :
   
   public ActionMenu getContextMenuActions(final Program program){
 
-    VirtualChannelManager vcm = new VirtualChannelManager(mWorkingDir.getAbsolutePath());
-    List<VirtualChannel> channels = vcm.getChannels();
+    final VirtualChannelManager vcm = new VirtualChannelManager(mWorkingDir
+        .getAbsolutePath());
+    final List<VirtualChannel> channels = vcm.getChannels();
     
     Collections.sort(channels);
-    ArrayList<AbstractAction> actionList = new ArrayList<AbstractAction>();
+    final ArrayList<AbstractAction> actionList = new ArrayList<AbstractAction>();
     
     VirtualChannel channel = null;
     boolean isValidVcProgram = false;
@@ -257,7 +288,7 @@ public class VirtualDataService extends AbstractTvDataService
       if (program.getChannel().getId().equals("VC" + vcn.getID())){
         channel = vcn;
         for (VirtualProgram vProg : vcn.getPrograms()){
-          Calendar cal = getProgramStart(program);
+          final Calendar cal = getProgramStart(program);
           if (vProg.getTitle().equals(program.getTitle()) && vProg.getStart().get(Calendar.HOUR_OF_DAY) == cal.get(Calendar.HOUR_OF_DAY) && vProg.getStart().get(Calendar.MINUTE) == cal.get(Calendar.MINUTE) && vProg.getLength()== program.getLength()) {
             isValidVcProgram = true;
           }
@@ -271,10 +302,10 @@ public class VirtualDataService extends AbstractTvDataService
       final VirtualChannel fChannel = channel;
 
       if (isValidVcProgram) {
-        AbstractAction delAction = new AbstractAction() {
+        final AbstractAction delAction = new AbstractAction() {
           private static final long serialVersionUID = 1L;
 
-          public void actionPerformed(ActionEvent evt) {
+          public void actionPerformed(final ActionEvent evt) {
             delProgram(fChannel, program, false);
           }
         };
@@ -282,10 +313,10 @@ public class VirtualDataService extends AbstractTvDataService
             .getLocalization(Localizer.I18N_DELETE));
         delAction.putValue(Action.SMALL_ICON, delIcon);
         actionList.add(delAction);
-        AbstractAction editAction = new AbstractAction() {
+        final AbstractAction editAction = new AbstractAction() {
           private static final long serialVersionUID = 1L;
 
-          public void actionPerformed(ActionEvent evt) {
+          public void actionPerformed(final ActionEvent evt) {
             editProgram(fChannel, program);
           }
         };
@@ -297,9 +328,9 @@ public class VirtualDataService extends AbstractTvDataService
         actionList.add(ContextMenuSeparatorAction.getInstance());
       }
 
-      AbstractAction addAction = new AbstractAction() {
+      final AbstractAction addAction = new AbstractAction() {
          private static final long serialVersionUID = 1L;
-          public void actionPerformed(ActionEvent evt) {
+          public void actionPerformed(final ActionEvent evt) {
             addProgram (fChannel, program);
           }
         };
@@ -314,10 +345,10 @@ public class VirtualDataService extends AbstractTvDataService
 
     if (isValidVcProgram || channel == null) {
       for (final VirtualChannel vcn : channels) {
-        AbstractAction copyAction = new AbstractAction() {
+        final AbstractAction copyAction = new AbstractAction() {
           private static final long serialVersionUID = 1L;
 
-          public void actionPerformed(ActionEvent evt) {
+          public void actionPerformed(final ActionEvent evt) {
             copyProgram(vcn, program);
           }
         };
@@ -326,44 +357,49 @@ public class VirtualDataService extends AbstractTvDataService
         actionList.add(copyAction);
       }
     }
-    Action[] actions = new Action[actionList.size()];
+    final Action[] actions = new Action[actionList.size()];
     actionList.toArray(actions);
    
     if (actions.length == 0) {
       return null;
      }
-    Action mainaction = new devplugin.ContextMenuAction();
+    final Action mainaction = new devplugin.ContextMenuAction();
     mainaction.putValue(Action.NAME, mLocalizer.msg("name", "VirtualDataService"));
     mainaction.putValue(Action.SMALL_ICON, vcIcon);
-    return new ActionMenu(mainaction, actions); 
+    return new ActionMenu(mainaction, actions);
     }
 
 
-  private void delProgram (VirtualChannel channel, Program program, boolean isConfirmed){
+  private void delProgram(final VirtualChannel channel, final Program program,
+      boolean isConfirmed) {
     {
-      Calendar cal = getProgramStart(program);
+      final Calendar cal = getProgramStart(program);
       
        {
-         VirtualChannelManager vcm = new VirtualChannelManager(mWorkingDir.getAbsolutePath());
-         List<VirtualChannel> vChannels = vcm.getChannels();
+         final VirtualChannelManager vcm = new VirtualChannelManager(mWorkingDir
+            .getAbsolutePath());
+        final List<VirtualChannel> vChannels = vcm.getChannels();
          for (VirtualChannel vChannel : vChannels){
            if (vChannel.getID()==channel.getID()){
              for (VirtualProgram vProg : vChannel.getPrograms()) {
               if (vProg.getTitle().equals(program.getTitle()) && vProg.getStart().get(Calendar.HOUR_OF_DAY) == cal.get(Calendar.HOUR_OF_DAY) && vProg.getStart().get(Calendar.MINUTE) == cal.get(Calendar.MINUTE) && vProg.getLength()== program.getLength()) {
-                 String[] options = {mLocalizer.msg("delProgram", "Delete Program"), Localizer.getLocalization(Localizer.I18N_CANCEL)};
-                 int minutes = cal.get(Calendar.MINUTE);
+                final String[] options = {
+                    mLocalizer.msg("delProgram", "Delete Program"),
+                    Localizer.getLocalization(Localizer.I18N_CANCEL) };
+                final int minutes = cal.get(Calendar.MINUTE);
                  String minutesString;
-                 if (minutes<10)
-                   minutesString = ":0" + minutes;
-                 else 
-                   minutesString = ":" + minutes;
+                 if (minutes<10) {
+                  minutesString = ":0" + minutes;
+                } else {
+                  minutesString = ":" + minutes;
+                }
                  if (!isConfirmed) {
-                  String message = mLocalizer.msg("removeProgramWarning",
+                   final String message = mLocalizer.msg("removeProgramWarning",
                       "Are you sure to remove '" + program.getTitle()
                           + "' permanently?", program.getTitle(), cal
                           .get(Calendar.HOUR_OF_DAY)
                           + minutesString, channel.getName());
-                  int confirmation = JOptionPane.showOptionDialog(
+                  final int confirmation = JOptionPane.showOptionDialog(
                       getParentFrame(), message, mLocalizer.msg("delProgram",
                           "Delete Program"), JOptionPane.YES_NO_OPTION,
                       JOptionPane.ERROR_MESSAGE, null, options, options[1]);
@@ -384,24 +420,26 @@ public class VirtualDataService extends AbstractTvDataService
       
   }
   
-  private void copyProgram(VirtualChannel channel, Program program){
+  private void copyProgram(final VirtualChannel channel, final Program program) {
     handleProgram( channel,  program,  false, false);
   }
 
-  private void editProgram(VirtualChannel channel, Program program){
+  private void editProgram(final VirtualChannel channel, final Program program) {
     handleProgram( channel,  program, true,  false);
   }
 
-  private void addProgram(VirtualChannel channel, Program program){
+  private void addProgram(final VirtualChannel channel, final Program program) {
     handleProgram( channel,  program,  false, true);
   }
 
-  private void handleProgram (VirtualChannel channel, Program program, boolean delFlg, boolean noTitle)
+  private void handleProgram(final VirtualChannel channel,
+      final Program program, final boolean delFlg, final boolean noTitle)
   {
-     ContextDialog editor = ContextDialog.getInstance((Frame) getParentFrame());
+    final ContextDialog editor = ContextDialog
+        .getInstance(getParentFrame());
      
-     Calendar calStart = getProgramStart(program);
-     Calendar calEnd = getProgramEnd(program);
+    final Calendar calStart = getProgramStart(program);
+    final Calendar calEnd = getProgramEnd(program);
      String title;
      if (noTitle){
        title = "";
@@ -413,49 +451,55 @@ public class VirtualDataService extends AbstractTvDataService
  
      editor.setModal(true);
      UiUtilities.centerAndShow(editor);
-     VirtualProgram vProg = editor.getProgram();
+     final VirtualProgram vProg = editor.getProgram();
 
      if (vProg != null) {
-        VirtualChannelManager vcm = new VirtualChannelManager(mWorkingDir.getAbsolutePath());
-        List<VirtualChannel> vChannels = vcm.getChannels();
+       final VirtualChannelManager vcm = new VirtualChannelManager(mWorkingDir
+          .getAbsolutePath());
+      final List<VirtualChannel> vChannels = vcm.getChannels();
         for (VirtualChannel vChannel : vChannels){
           if (vChannel.getID()==channel.getID()){
             vChannel.addProgram(vProg);
             vcm.save();
-            if (delFlg)
+            if (delFlg) {
               delProgram (channel, program, true);
+            }
           }
         }
     }
   }
 
 
-  private String getProgramTitle (Program program, boolean noChannelFlg){
-    if (noChannelFlg)
+  private String getProgramTitle(final Program program,
+      final boolean noChannelFlg) {
+    if (noChannelFlg) {
       return program.getTitle();
+    }
     return "("+program.getChannel().getName()+ ") " + program.getTitle();
   }
   
-  private Calendar getProgramStart (Program program){
-    int hours = program.getStartTime()/60;
+  private Calendar getProgramStart(final Program program) {
+    final int hours = program.getStartTime() / 60;
     return getCalendar(program, hours, program.getStartTime() - (hours*60));
   }
   
   
-  private Calendar getProgramEnd (Program program){
+  private Calendar getProgramEnd(final Program program) {
     int endTime = program.getStartTime() + program.getLength();
-    int dayDiff = endTime / 1440;
+    final int dayDiff = endTime / 1440;
     endTime = endTime - (dayDiff*1440);
-    int hours = endTime /60;
+    final int hours = endTime / 60;
     return getCalendar(program, hours, endTime - (hours*60), dayDiff);
   }
   
-  private Calendar getCalendar (Program program, int hours, int minutes){
+  private Calendar getCalendar(final Program program, final int hours,
+      final int minutes) {
    return getCalendar(program, hours, minutes, 0);
  }
 
-  private Calendar getCalendar (Program program, int hours, int minutes, int dayDiff){
-    Calendar cal = program.getDate().getCalendar();
+  private Calendar getCalendar(final Program program, final int hours,
+      final int minutes, final int dayDiff) {
+    final Calendar cal = program.getDate().getCalendar();
     if (dayDiff > 0){
       cal.add(Calendar.DAY_OF_MONTH, dayDiff);
     }

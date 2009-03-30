@@ -17,8 +17,11 @@
  */
 package virtualdataservice.virtual;
 
-import java.io.*;
-import java.util.*;
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
+import java.util.Calendar;
 
 public class VirtualProgram implements Externalizable, Comparable<VirtualProgram>
 {
@@ -40,7 +43,7 @@ public class VirtualProgram implements Externalizable, Comparable<VirtualProgram
 		return mLength;
 	}
 
-	public void setLength(int length)
+	public void setLength(final int length)
 	{
 		mLength = length;
 	}
@@ -50,7 +53,7 @@ public class VirtualProgram implements Externalizable, Comparable<VirtualProgram
 		return mRepeat;
 	}
 
-	public void setRepeat(Repeat repeat)
+	public void setRepeat(final Repeat repeat)
 	{
 		mRepeat = repeat;
 	}
@@ -60,7 +63,7 @@ public class VirtualProgram implements Externalizable, Comparable<VirtualProgram
 		return mStart;
 	}
 
-	public void setStart(Calendar start)
+	public void setStart(final Calendar start)
 	{
 		mStart = start;
 		clearTime();
@@ -71,27 +74,28 @@ public class VirtualProgram implements Externalizable, Comparable<VirtualProgram
 		return mTitle;
 	}
 
-	public void setTitle(String title)
+	public void setTitle(final String title)
 	{
 		mTitle = title;
 	}
 
-	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException
+	public void readExternal(final ObjectInput in) throws IOException,
+      ClassNotFoundException
 	{
-		int version = in.readInt();
+	  final int version = in.readInt();
 		if (version == 1)
 		{
 			mTitle = (String) in.readObject();
 			mStart = (Calendar) in.readObject();
 			mLength = in.readInt();
-			int repeat = in.readInt();
+			final int repeat = in.readInt();
 			mRepeat = Repeat.createRepeater(repeat, in);
 
 			clearTime();
 		}
 	}
 
-	public void writeExternal(ObjectOutput out) throws IOException
+	public void writeExternal(final ObjectOutput out) throws IOException
 	{
 		out.writeInt(1); //version
 		out.writeObject(mTitle);
@@ -113,9 +117,9 @@ public class VirtualProgram implements Externalizable, Comparable<VirtualProgram
 		return mTitle + ": " + mStart.getTime() + " (" + mLength + ") " + (mRepeat != null ? mRepeat : 0);
 	}
 
-	public Boolean isActive()
+	public boolean isActive()
 	{
-		Calendar limit = Calendar.getInstance();
+	  final Calendar limit = Calendar.getInstance();
 		limit.set(Calendar.DAY_OF_MONTH, limit.get(Calendar.DAY_OF_MONTH) - 1);
 		limit.set(Calendar.HOUR_OF_DAY, 0);
 		limit.set(Calendar.MINUTE, 0);
@@ -139,7 +143,7 @@ public class VirtualProgram implements Externalizable, Comparable<VirtualProgram
 		return false;
 	}
 
-	public Boolean isDayProgram(Calendar day)
+	public boolean isDayProgram(final Calendar day)
 	{
 		if (mRepeat == null)
 		{
@@ -158,9 +162,9 @@ public class VirtualProgram implements Externalizable, Comparable<VirtualProgram
 		return false;
 	}
 
-	public int compareTo(VirtualProgram p)
+	public int compareTo(final VirtualProgram p)
 	{
-		int compare = mStart.compareTo(p.getStart());
+	  final int compare = mStart.compareTo(p.getStart());
 		if (compare == 0)
 		{
 			return mTitle.compareTo(p.getTitle());

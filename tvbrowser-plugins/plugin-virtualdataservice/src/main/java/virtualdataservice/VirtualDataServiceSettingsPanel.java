@@ -17,18 +17,28 @@
  */
 package virtualdataservice;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.text.*;
-import java.util.*;
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
-import javax.swing.*;
-import javax.swing.event.*;
-import javax.swing.table.*;
-import com.jgoodies.forms.builder.*;
-import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.layout.*;
-import devplugin.Plugin;
+import java.util.Vector;
+
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
+
 import tvdataservice.SettingsPanel;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
@@ -36,6 +46,14 @@ import virtualdataservice.ui.ProgramEditor;
 import virtualdataservice.virtual.VirtualChannel;
 import virtualdataservice.virtual.VirtualChannelManager;
 import virtualdataservice.virtual.VirtualProgram;
+
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.Sizes;
+
+import devplugin.Plugin;
 
 public class VirtualDataServiceSettingsPanel extends SettingsPanel implements ActionListener
 {
@@ -58,32 +76,34 @@ public class VirtualDataServiceSettingsPanel extends SettingsPanel implements Ac
 	private JButton mProgramDel;
 	private JButton mProgramEdit;
 
-	public VirtualDataServiceSettingsPanel(String workingDirectory)
+	public VirtualDataServiceSettingsPanel(final String workingDirectory)
 	{
 		mChannelManager = new VirtualChannelManager(workingDirectory);
 
 		setLayout(new BorderLayout());
 		setBorder(Borders.createEmptyBorder(Sizes.DLUY5, Sizes.DLUX5, Sizes.DLUY5, Sizes.DLUX5));
 
-		FormLayout layout = new FormLayout("5dlu, default, 3dlu, pref, 5dlu", "5dlu, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref, pref:grow, 10dlu, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref, pref:grow");
+		final FormLayout layout = new FormLayout(
+        "5dlu, default, 3dlu, pref, 5dlu",
+        "5dlu, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref, pref:grow, 10dlu, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref, pref:grow");
 
-		PanelBuilder builder = new PanelBuilder(layout);
+		final PanelBuilder builder = new PanelBuilder(layout);
 		builder.setBorder(null);
 
-		CellConstraints cc = new CellConstraints();
+		final CellConstraints cc = new CellConstraints();
 
 		mChannels = new DefaultListModel();
 		mChannelList = new JList(mChannels);
 		mChannelList.addListSelectionListener(new ListSelectionListener()
 		{
-			public void valueChanged(ListSelectionEvent e)
+			public void valueChanged(final ListSelectionEvent e)
 			{
 				setChannelButtons(true);
 				loadProgram(getChannel());
 			}
 		});
 		mChannelList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
-		JScrollPane scrollChannel = new JScrollPane(mChannelList);
+		final JScrollPane scrollChannel = new JScrollPane(mChannelList);
 
 		mPrograms = new ProgramTableModel();
 		mPrograms.addColumn(" ");
@@ -92,16 +112,18 @@ public class VirtualDataServiceSettingsPanel extends SettingsPanel implements Ac
 		mProgramList = new JTable(mPrograms);
 		mProgramList.getSelectionModel().addListSelectionListener(new ListSelectionListener()
 		{
-			public void valueChanged(ListSelectionEvent evt)
+			public void valueChanged(final ListSelectionEvent evt)
 			{
 				setProgramButtons(true, true);
 			}
 		});
 		mProgramList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		mProgramList.getColumnModel().getColumn(0).setMaxWidth(Sizes.dialogUnitXAsPixel(10, mProgramList));
-		JScrollPane scrollProgram = new JScrollPane(mProgramList);
+		final JScrollPane scrollProgram = new JScrollPane(mProgramList);
 
-		mChannelAdd = new JButton(mLocalizer.msg("add", "Add"), Plugin.getPluginManager().getIconFromTheme(null, "actions", "document-new", 16));
+		final JButton mChannelAdd = new JButton(mLocalizer.msg("add", "Add"),
+        Plugin.getPluginManager().getIconFromTheme(null, "actions",
+            "document-new", 16));
 		mChannelAdd.setToolTipText(mLocalizer.msg("addChannel", "Add channel"));
 		mChannelAdd.setHorizontalAlignment(SwingConstants.LEFT);
 		mChannelAdd.addActionListener(this);
@@ -158,7 +180,7 @@ public class VirtualDataServiceSettingsPanel extends SettingsPanel implements Ac
 	private void loadChannel()
 	{
 		mChannels.clear();
-		List<VirtualChannel> channels = mChannelManager.getChannels();
+		final List<VirtualChannel> channels = mChannelManager.getChannels();
 		Collections.sort(channels);
 		for (VirtualChannel channel : channels)
 		{
@@ -167,13 +189,13 @@ public class VirtualDataServiceSettingsPanel extends SettingsPanel implements Ac
 		setChannelButtons(false);
 	}
 
-	private void loadProgram(VirtualChannel channel)
+	private void loadProgram(final VirtualChannel channel)
 	{
 		while (mPrograms.getRowCount() > 0)
 		{
 			mPrograms.removeRow(0);
 		}
-		List<VirtualProgram> programs = channel.getPrograms();
+		final List<VirtualProgram> programs = channel.getPrograms();
 		Collections.sort(programs);
 		for (VirtualProgram program : programs)
 		{
@@ -182,9 +204,9 @@ public class VirtualDataServiceSettingsPanel extends SettingsPanel implements Ac
 		setProgramButtons(true, false);
 	}
 
-	private Vector getRowData(VirtualProgram program)
+	private Vector<String> getRowData(final VirtualProgram program)
 	{
-		Vector<String> row = new Vector<String>();
+	  final Vector<String> row = new Vector<String>();
 
 		String repeater = " ";
 		if (program.getRepeat() != null)
@@ -207,7 +229,7 @@ public class VirtualDataServiceSettingsPanel extends SettingsPanel implements Ac
 			}
 		}
 		row.add(repeater);
-		SimpleDateFormat format = new SimpleDateFormat(mDateFormat);
+		final SimpleDateFormat format = new SimpleDateFormat(mDateFormat);
 		row.add(format.format(program.getStart().getTime()));
 		row.add(program.getTitle());
 
@@ -221,25 +243,29 @@ public class VirtualDataServiceSettingsPanel extends SettingsPanel implements Ac
 		setChannelButtons(false);
 	}
 
-	private void setChannelButtons(Boolean enable)
+	private void setChannelButtons(final boolean enable)
 	{
 		mChannelDel.setEnabled(enable);
 		mChannelEdit.setEnabled(enable);
 		setProgramButtons(enable, false);
 	}
 
-	private void setProgramButtons(Boolean enable, Boolean all)
+	private void setProgramButtons(final boolean enable, final boolean all)
 	{
 		mProgramAdd.setEnabled(enable);
-		mProgramDel.setEnabled(enable & all);
-		mProgramEdit.setEnabled(enable & all);
+		mProgramDel.setEnabled(enable && all);
+    mProgramEdit.setEnabled(enable && all);
 	}
 
-	public void actionPerformed(ActionEvent evt)
+	public void actionPerformed(final ActionEvent evt)
 	{
 		if (evt.getSource() == mChannelAdd)
 		{
-			String channelName = (String) JOptionPane.showInputDialog(this, mLocalizer.msg("enterChannelName", "Please enter the name of the channel"), mLocalizer.msg("enterChannelNameTitle", "Add channel"), JOptionPane.PLAIN_MESSAGE, null, null, "");
+		  final String channelName = (String) JOptionPane.showInputDialog(this,
+          mLocalizer.msg("enterChannelName",
+              "Please enter the name of the channel"), mLocalizer.msg(
+              "enterChannelNameTitle", "Add channel"),
+          JOptionPane.PLAIN_MESSAGE, null, null, "");
 
 			if (channelName != null && channelName.length() > 0)
 			{
@@ -248,7 +274,7 @@ public class VirtualDataServiceSettingsPanel extends SettingsPanel implements Ac
 		}
 		else if (evt.getSource() == mChannelDel)
 		{
-			VirtualChannel channel = getChannel();
+		  final VirtualChannel channel = getChannel();
 			if (channel != null)
 			{
 				mChannelManager.removeChannel(channel);
@@ -262,10 +288,14 @@ public class VirtualDataServiceSettingsPanel extends SettingsPanel implements Ac
 		}
 		else if (evt.getSource() == mChannelEdit)
 		{
-			VirtualChannel channel = getChannel();
+		  final VirtualChannel channel = getChannel();
 			if (channel != null)
 			{
-				String channelName = (String) JOptionPane.showInputDialog(this, mLocalizer.msg("enterChannelName", "Please enter the name of the channel"), mLocalizer.msg("enterChannelNameTitle", "Add channel"), JOptionPane.PLAIN_MESSAGE, null, null, channel.getName());
+			  final String channelName = (String) JOptionPane.showInputDialog(this,
+            mLocalizer.msg("enterChannelName",
+                "Please enter the name of the channel"), mLocalizer.msg(
+                "enterChannelNameTitle", "Add channel"),
+            JOptionPane.PLAIN_MESSAGE, null, null, channel.getName());
 
 				if (channelName != null && channelName.length() > 0)
 				{
@@ -281,10 +311,10 @@ public class VirtualDataServiceSettingsPanel extends SettingsPanel implements Ac
 		}
 		else if (evt.getSource() == mProgramDel)
 		{
-			int index = mProgramList.getSelectedRow();
+		  final int index = mProgramList.getSelectedRow();
 			if (index >= 0)
 			{
-				VirtualProgram program = getProgram(index);
+			  final VirtualProgram program = getProgram(index);
 				if (program != null)
 				{
 					getChannel().removeProgram(program);
@@ -298,7 +328,7 @@ public class VirtualDataServiceSettingsPanel extends SettingsPanel implements Ac
 		}
 	}
 
-	private void addChannel(String name)
+	private void addChannel(final String name)
 	{
 		if (mChannels.indexOf(name) < 0)
 		{
@@ -308,14 +338,14 @@ public class VirtualDataServiceSettingsPanel extends SettingsPanel implements Ac
 		}
 	}
 
-	private void addProgram(VirtualChannel channel)
+	private void addProgram(final VirtualChannel channel)
 	{
 		ProgramEditor editor = new ProgramEditor(JOptionPane.getFrameForComponent(this));
 		try
 		{
 			editor.setModal(true);
 			UiUtilities.centerAndShow(editor);
-			VirtualProgram program = editor.getProgram();
+			final VirtualProgram program = editor.getProgram();
 
 			if (program != null)
 			{
@@ -330,7 +360,8 @@ public class VirtualDataServiceSettingsPanel extends SettingsPanel implements Ac
 		}
 	}
 
-	private void editProgram(VirtualChannel channel, VirtualProgram program)
+	private void editProgram(final VirtualChannel channel,
+      final VirtualProgram program)
 	{
 		ProgramEditor editor = new ProgramEditor(JOptionPane.getFrameForComponent(this));
 		try
@@ -357,13 +388,13 @@ public class VirtualDataServiceSettingsPanel extends SettingsPanel implements Ac
 		return (VirtualChannel) mChannelList.getSelectedValue();
 	}
 
-	private VirtualProgram getProgram(int index)
+	private VirtualProgram getProgram(final int index)
 	{
-		String date = (String) mPrograms.getValueAt(index, 1);
-		String title = (String) mPrograms.getValueAt(index, 2);
+	  final String date = (String) mPrograms.getValueAt(index, 1);
+    final String title = (String) mPrograms.getValueAt(index, 2);
 		Calendar startDate = null;
 
-		DateFormat formatter = new SimpleDateFormat(mDateFormat);
+		final DateFormat formatter = new SimpleDateFormat(mDateFormat);
 		try
 		{
 			startDate = Calendar.getInstance();
@@ -371,7 +402,7 @@ public class VirtualDataServiceSettingsPanel extends SettingsPanel implements Ac
 		}
 		catch (Exception ex)
 		{}
-		VirtualChannel channel = getChannel();
+		final VirtualChannel channel = getChannel();
 		for (VirtualProgram program : channel.getPrograms())
 		{
 // modified by jb:
@@ -388,7 +419,7 @@ public class VirtualDataServiceSettingsPanel extends SettingsPanel implements Ac
 	{
 		private static final long serialVersionUID = 1L;
 
-		public boolean isCellEditable(int arg0, int arg1)
+		public boolean isCellEditable(final int arg0, final int arg1)
 		{
 			return false;
 		}
