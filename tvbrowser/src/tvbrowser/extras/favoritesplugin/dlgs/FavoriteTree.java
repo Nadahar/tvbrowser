@@ -138,7 +138,7 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
             }
           }
         }
-        else if(e.getKeyCode() == KeyEvent.VK_R || e.getKeyCode() == KeyEvent.VK_CONTEXT_MENU) {
+        else if (e.getKeyCode() == KeyEvent.VK_CONTEXT_MENU) {
           if(getSelectionPath() != null) {
             Rectangle pathBounds = getRowBounds(getRowForPath(getSelectionPath()));
             
