@@ -1659,8 +1659,10 @@ public class MainFrame extends JFrame implements DateListener {
 
   /**
    * Starts the TV listings update.
+   * 
+   * @param numberOfDays
    */
-  public void updateTvData() {
+  public void updateTvData(int numberOfDays) {
     if (ChannelList.getNumberOfSubscribedChannels() == 0) {
       int result = JOptionPane.showOptionDialog(this, 
           mLocalizer.msg("subscribeBeforeUpdate.msg", "You have not defined any channels.\n\nDo you want to subscribe to some channels before starting the data update?"), 
@@ -1676,6 +1678,9 @@ public class MainFrame extends JFrame implements DateListener {
         TvDataUpdater.getInstance().stopDownload();
       } else {
         UpdateDlg dlg = new UpdateDlg(this, true);
+        if (numberOfDays > 0) {
+          dlg.setNumberOfDays(numberOfDays);
+        }
         dlg.pack();
         UiUtilities.centerAndShow(dlg);
           
@@ -1686,11 +1691,21 @@ public class MainFrame extends JFrame implements DateListener {
       }
     }
   }
-  
+
   /**
-   * Checks if all users services license were accepted. 
+   * Starts the TV listings update.
    * 
-   * @param updateServices The service to check for license.
+   * @param numberOfDays
+   */
+  public void updateTvData() {
+    updateTvData(0);
+  }
+
+  /**
+   * Checks if all users services license were accepted.
+   * 
+   * @param updateServices
+   *          The service to check for license.
    * 
    * @return If all used service licenses were accepted.
    */
@@ -1880,7 +1895,7 @@ public class MainFrame extends JFrame implements DateListener {
     mRootNode.update();
   }
   
-  public int askForDataUpdate(String reason) {
+  public int askForDataUpdate(String reason, int numberOfDays) {
 	    String msg1 = mLocalizer.msg("askforupdatedlg.1", "update now");
 	    String msg2 = mLocalizer.msg("askforupdatedlg.2", "later");
 	    String msg4 = mLocalizer.msg("askforupdatedlg.4",
@@ -1893,11 +1908,15 @@ public class MainFrame extends JFrame implements DateListener {
 	        options[0]);
 
 	    if (result == JOptionPane.YES_OPTION) {
-	      updateTvData();
+	      updateTvData(numberOfDays);
 	    }
       return result;
   }
 
+  public int askForDataUpdate(String reason) {
+    return askForDataUpdate(reason, 0);
+  }
+  
   public int askForDataUpdateNoDataAvailable() {
     if(mProgramTableModel.getAvailableChannelCount() > 0) {
       return askForDataUpdate(mLocalizer.msg("askforupdatedlg.3",

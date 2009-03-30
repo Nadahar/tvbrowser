@@ -46,15 +46,16 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.Settings;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
+
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
 import devplugin.Channel;
 
 /**
@@ -276,6 +277,15 @@ public class UpdateDlg extends JDialog implements ActionListener, WindowClosingI
   public void close() {
     mResult = CANCEL;
     setVisible(false);
+  }
+
+  public void setNumberOfDays(int numberOfDays) {
+    for (PeriodItem item : PeriodItem.PERIOD_ARR) {
+      if (item.getDays() >= numberOfDays) {
+        mComboBox.setSelectedItem(item);
+        return;
+      }
+    }
   }
 }
 
