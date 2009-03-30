@@ -32,7 +32,7 @@ public class MonthlyExRepeater extends Repeat
 		return 4;
 	}
 
-	public Boolean isDayProgram(Calendar date, Calendar programStart)
+	public boolean isDayProgram(final Calendar date, final Calendar programStart)
 	{
 		if (validOptions() && programStart.compareTo(date) <= 0 && isBevorEnd(date))
 		{
@@ -44,9 +44,10 @@ public class MonthlyExRepeater extends Repeat
 		return false;
 	}
 
-	public void readData(ObjectInput in) throws IOException, ClassNotFoundException
+	public void readData(final ObjectInput in) throws IOException,
+      ClassNotFoundException
 	{
-		int version = in.readInt();
+	  final int version = in.readInt();
 		if (version == 1)
 		{
 			mDayOfWeek = in.readInt();
@@ -55,7 +56,7 @@ public class MonthlyExRepeater extends Repeat
 		}
 	}
 
-	public void writeData(ObjectOutput out) throws IOException
+	public void writeData(final ObjectOutput out) throws IOException
 	{
 		out.writeInt(1);
 		out.writeInt(mDayOfWeek);
@@ -63,7 +64,7 @@ public class MonthlyExRepeater extends Repeat
 		out.writeObject(getEndDate());
 	}
 
-	private Boolean validOptions()
+	private boolean validOptions()
 	{
 		if (mDayOfWeek < 1 || mDayOfWeek > 7 || mWeekOfMonth < 0 || mWeekOfMonth > 5)
 		{
@@ -82,7 +83,7 @@ public class MonthlyExRepeater extends Repeat
 		return mDayOfWeek;
 	}
 
-	public void setDayOfWeek(int day)
+	public void setDayOfWeek(final int day)
 	{
 		mDayOfWeek = day;
 	}
@@ -92,7 +93,7 @@ public class MonthlyExRepeater extends Repeat
 		return mWeekOfMonth;
 	}
 
-	public void setWeekOfMonth(int week)
+	public void setWeekOfMonth(final int week)
 	{
 		mWeekOfMonth = week;
 	}

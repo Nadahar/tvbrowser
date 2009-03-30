@@ -17,8 +17,10 @@
  */
 package virtualdataservice.virtual;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
+import java.util.Calendar;
 
 public class YearlyRepeater extends Repeat
 {
@@ -29,11 +31,12 @@ public class YearlyRepeater extends Repeat
 		return 5;
 	}
 
-	public Boolean isDayProgram(Calendar date, Calendar programStart)
+	public boolean isDayProgram(final Calendar date, final Calendar programStart)
 	{
 		if (validOptions() && isBevorEnd(date))
 		{
-			long delta = date.get(Calendar.YEAR) - programStart.get(Calendar.YEAR);
+		  final long delta = date.get(Calendar.YEAR)
+          - programStart.get(Calendar.YEAR);
 			if (delta % mYears == 0 && date.get(Calendar.MONTH) == programStart.get(Calendar.MONTH) && date.get(Calendar.DAY_OF_MONTH) == programStart.get(Calendar.DAY_OF_MONTH))
 			{
 				return true;
@@ -42,9 +45,10 @@ public class YearlyRepeater extends Repeat
 		return false;
 	}
 
-	public void readData(ObjectInput in) throws IOException, ClassNotFoundException
+	public void readData(final ObjectInput in) throws IOException,
+      ClassNotFoundException
 	{
-		int version = in.readInt();
+	  final int version = in.readInt();
 		if (version == 1)
 		{
 			mYears = in.readInt();
@@ -52,7 +56,7 @@ public class YearlyRepeater extends Repeat
 		}
 	}
 
-	public void writeData(ObjectOutput out) throws IOException
+	public void writeData(final ObjectOutput out) throws IOException
 	{
 		out.writeInt(1);
 		out.writeInt(mYears);
@@ -64,12 +68,12 @@ public class YearlyRepeater extends Repeat
 		return mYears;
 	}
 
-	public void setYears(int years)
+	public void setYears(final int years)
 	{
 		mYears = years;
 	}
 
-	private Boolean validOptions()
+	private boolean validOptions()
 	{
 		if (mYears < 0)
 		{

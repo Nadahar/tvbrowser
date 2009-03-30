@@ -17,8 +17,10 @@
  */
 package virtualdataservice.virtual;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
+import java.util.Calendar;
 
 
 public abstract class Repeat
@@ -30,20 +32,21 @@ public abstract class Repeat
 		return mEndDate;
 	}
 
-	public void setEndDate(Calendar endDate)
+	public void setEndDate(final Calendar endDate)
 	{
 		mEndDate = endDate;
 	}
 
 	public abstract int getID();
 
-	public abstract Boolean isDayProgram(Calendar date, Calendar programStart);
+	public abstract boolean isDayProgram(Calendar date, Calendar programStart);
 
 	public abstract void readData(ObjectInput in) throws IOException, ClassNotFoundException;
 
 	public abstract void writeData(ObjectOutput out) throws IOException;
 
-	public static Repeat createRepeater(int id, ObjectInput in) throws IOException, ClassNotFoundException
+	public static Repeat createRepeater(final int id, final ObjectInput in)
+      throws IOException, ClassNotFoundException
 	{
 		Repeat result = null;
 
@@ -72,31 +75,29 @@ public abstract class Repeat
 		return result;
 	}
 
-	public Boolean isBevorEnd(Calendar date)
+	public boolean isBevorEnd(final Calendar date)
 	{
-		if (mEndDate != null)
-		{
-			if (mEndDate.compareTo(date) > 0)
+		if (mEndDate != null && mEndDate.compareTo(date) > 0)
 			{
 				return false;
 			}
-		}
 		return true;
 	}
 
-	protected long diffDayPeriods(Calendar start, Calendar end)
+	protected long diffDayPeriods(final Calendar start, final Calendar end)
 	{
-		long startMillis = cloneDayOnly(start).getTimeInMillis();
-		long endMillis = cloneDayOnly(end).getTimeInMillis();
+	  final long startMillis = cloneDayOnly(start).getTimeInMillis();
+    final long endMillis = cloneDayOnly(end).getTimeInMillis();
 
-		long endL = endMillis + end.getTimeZone().getOffset(endMillis);
-		long startL = startMillis + start.getTimeZone().getOffset(startMillis);
+	  final long endL = endMillis + end.getTimeZone().getOffset(endMillis);
+    final long startL = startMillis
+        + start.getTimeZone().getOffset(startMillis);
 		return (endL - startL) / (24 * 60 * 60 * 1000);
 	}
 
-	protected Calendar cloneDayOnly(Calendar date)
+	protected Calendar cloneDayOnly(final Calendar date)
 	{
-		Calendar cal = (Calendar) date.clone();
+	  final Calendar cal = (Calendar) date.clone();
 
 		cal.set(Calendar.HOUR_OF_DAY, 0);
 		cal.set(Calendar.MINUTE, 0);

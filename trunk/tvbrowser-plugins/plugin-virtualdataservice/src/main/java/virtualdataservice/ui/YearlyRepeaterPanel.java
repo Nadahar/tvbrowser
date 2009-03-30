@@ -17,11 +17,18 @@
  */
 package virtualdataservice.ui;
 
-import java.awt.*;
-import javax.swing.*;
-import com.jgoodies.forms.builder.*;
-import com.jgoodies.forms.layout.*;
-import virtualdataservice.virtual.*;
+import java.awt.BorderLayout;
+
+import javax.swing.JSpinner;
+import javax.swing.SpinnerModel;
+import javax.swing.SpinnerNumberModel;
+
+import virtualdataservice.virtual.Repeat;
+import virtualdataservice.virtual.YearlyRepeater;
+
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 
 public class YearlyRepeaterPanel extends RepeaterPanel
 {
@@ -35,14 +42,15 @@ public class YearlyRepeaterPanel extends RepeaterPanel
 		setLayout(new BorderLayout());
 		setBorder(null);
 
-		FormLayout layout = new FormLayout("pref, 3dlu, pref, 3dlu, pref:grow", "pref");
+		final FormLayout layout = new FormLayout(
+        "pref, 3dlu, pref, 3dlu, pref:grow", "pref");
 
-		PanelBuilder builder = new PanelBuilder(layout);
+		final PanelBuilder builder = new PanelBuilder(layout);
 		builder.setBorder(null);
 
-		CellConstraints cc = new CellConstraints();
+		final CellConstraints cc = new CellConstraints();
 
-		SpinnerModel model = new SpinnerNumberModel(1, 1, 50, 1);
+		final SpinnerModel model = new SpinnerNumberModel(1, 1, 50, 1);
 		mYears = new JSpinner(model);
 
 		builder.addLabel(mLocalizer.msg("YearlyRepeaterPanel.every", "Every"), cc.xy(1, 1));
@@ -54,16 +62,16 @@ public class YearlyRepeaterPanel extends RepeaterPanel
 
 	public Repeat getRepeater()
 	{
-		YearlyRepeater repeater = new YearlyRepeater();
+	  final YearlyRepeater repeater = new YearlyRepeater();
 		repeater.setYears((Integer) mYears.getValue());
 		return repeater;
 	}
 
-	public void setRepeater(Repeat repeater)
+	public void setRepeater(final Repeat repeater)
 	{
 		if (repeater.getID() == 5)
 		{
-			YearlyRepeater yearlyRepeater = (YearlyRepeater) repeater;
+		  final YearlyRepeater yearlyRepeater = (YearlyRepeater) repeater;
 			mYears.setValue(yearlyRepeater.getYears());
 		}
 	}

@@ -17,15 +17,22 @@
  */
 package virtualdataservice.ui;
 
-import virtualdataservice.virtual.*;
-import java.awt.*;
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyVetoException;
-import java.util.*;
-import javax.swing.*;
-import com.jgoodies.forms.builder.*;
-import com.jgoodies.forms.layout.*;
+import java.util.Calendar;
+
+import javax.swing.ButtonGroup;
+import javax.swing.JComboBox;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+
+import virtualdataservice.virtual.Repeat;
+
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 import com.michaelbaranov.microba.calendar.DatePicker;
 
 public class RepeaterComponent extends JPanel
@@ -44,17 +51,19 @@ public class RepeaterComponent extends JPanel
 		setLayout(new BorderLayout());
 		setBorder(null);
 
-		FormLayout layout = new FormLayout("0dlu, pref, 3dlu, pref, 3dlu, pref:grow, 0dlu", "5dlu, pref, 2dlu, pref, 2dlu, pref, 5dlu, pref:grow, 3dlu");
+		final FormLayout layout = new FormLayout(
+        "0dlu, pref, 3dlu, pref, 3dlu, pref:grow, 0dlu",
+        "5dlu, pref, 2dlu, pref, 2dlu, pref, 5dlu, pref:grow, 3dlu");
 
-		PanelBuilder builder = new PanelBuilder(layout);
+		final PanelBuilder builder = new PanelBuilder(layout);
 		builder.setBorder(null);
 
-		CellConstraints cc = new CellConstraints();
+		final CellConstraints cc = new CellConstraints();
 
 		mSchedule = new JComboBox(getSchedules());
 		mSchedule.addActionListener(new ActionListener()
 		{
-			public void actionPerformed(ActionEvent arg0)
+			public void actionPerformed(final ActionEvent arg0)
 			{
 				mRepeater.removeAll();
 				switch (mSchedule.getSelectedIndex())
@@ -79,7 +88,7 @@ public class RepeaterComponent extends JPanel
 		mNoEnd = new JRadioButton(mLocalizer.msg("RepeaterComponent.noEnd", "No End Date"));
 		mNoEnd.setSelected(true);
 		mEndWith = new JRadioButton("");
-		ButtonGroup endGroup = new ButtonGroup();
+		final ButtonGroup endGroup = new ButtonGroup();
 		endGroup.add(mNoEnd);
 		endGroup.add(mEndWith);
 
@@ -105,16 +114,12 @@ public class RepeaterComponent extends JPanel
 		add(builder.getPanel());
 	}
 
-	private Vector<String> getSchedules()
+	private String[] getSchedules()
 	{
-		Vector<String> schedules = new Vector<String>();
-
-		schedules.add(mLocalizer.msg("RepeaterComponent.daily", "Daily"));
-		schedules.add(mLocalizer.msg("RepeaterComponent.weekly", "Weekly"));
-		schedules.add(mLocalizer.msg("RepeaterComponent.monthly", "Monthly"));
-		schedules.add(mLocalizer.msg("RepeaterComponent.yearly", "Yearly"));
-
-		return schedules;
+	  return new String[] { mLocalizer.msg("RepeaterComponent.daily", "Daily"),
+        mLocalizer.msg("RepeaterComponent.weekly", "Weekly"),
+        mLocalizer.msg("RepeaterComponent.monthly", "Monthly"),
+        mLocalizer.msg("RepeaterComponent.yearly", "Yearly") };
 	}
 
 	private RepeaterPanel getRepeaterPanel()
@@ -124,17 +129,17 @@ public class RepeaterComponent extends JPanel
 
 	public Repeat getRepeater()
 	{
-		Repeat repeater = getRepeaterPanel().getRepeater();
+	  final Repeat repeater = getRepeaterPanel().getRepeater();
 		if (mEndWith.isSelected() && mEndDate.getDate() != null)
 		{
-			Calendar endDate = Calendar.getInstance();
+		  final Calendar endDate = Calendar.getInstance();
 			endDate.setTime(mEndDate.getDate());
 			repeater.setEndDate(endDate);
 		}
 		return repeater;
 	}
 
-	public void setRepeater(Repeat repeater)
+	public void setRepeater(final Repeat repeater)
 	{
 		if (repeater != null)
 		{

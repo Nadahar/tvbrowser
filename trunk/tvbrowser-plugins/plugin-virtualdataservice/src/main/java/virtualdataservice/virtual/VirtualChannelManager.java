@@ -17,8 +17,13 @@
  */
 package virtualdataservice.virtual;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 public class VirtualChannelManager
 {
@@ -28,7 +33,7 @@ public class VirtualChannelManager
 	private List<VirtualChannel> mChannels;
 	private int mMaxID;
 
-	public VirtualChannelManager(String workingDirectory)
+	public VirtualChannelManager(final String workingDirectory)
 	{
 		mWorkingDirectory = workingDirectory;
 		if (!mWorkingDirectory.endsWith(File.separator))
@@ -46,22 +51,23 @@ public class VirtualChannelManager
 	private void loadChannels()
 	{
 		mChannels = new ArrayList<VirtualChannel>();
-		File file = new File(mWorkingDirectory + CHANNELS);
+		final File file = new File(mWorkingDirectory + CHANNELS);
 		if (file.exists())
 		{
 			try
 			{
-				ObjectInputStream in = new ObjectInputStream(new FileInputStream(file));
+			  final ObjectInputStream in = new ObjectInputStream(new FileInputStream(
+            file));
 
-				int version = in.readInt();
+			  final int version = in.readInt();
 
 				if (version == 1)
 				{
 					mMaxID = in.readInt();
-					int count = in.readInt();
+					final int count = in.readInt();
 					for (int i = 0; i < count; i++)
 					{
-						VirtualChannel channel = (VirtualChannel) in.readObject();
+					  final VirtualChannel channel = (VirtualChannel) in.readObject();
 						channel.setWorkingDirectory(mWorkingDirectory);
 						mChannels.add(channel);
 					}
@@ -79,7 +85,8 @@ public class VirtualChannelManager
 	{
 		try
 		{
-			ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(mWorkingDirectory + CHANNELS));
+		  final ObjectOutputStream out = new ObjectOutputStream(
+          new FileOutputStream(mWorkingDirectory + CHANNELS));
 
 			out.writeInt(1); //version
 
@@ -103,7 +110,7 @@ public class VirtualChannelManager
 		//TODO: remove old files from deleted channels
 	}
 
-	public VirtualChannel addChannel(String name)
+	public VirtualChannel addChannel(final String name)
 	{
 		VirtualChannel channel = getChannel(name);
 		if (channel == null)
@@ -116,7 +123,7 @@ public class VirtualChannelManager
 		return channel;
 	}
 
-	public VirtualChannel getChannel(String name)
+	public VirtualChannel getChannel(final String name)
 	{
 		for (VirtualChannel channel : mChannels)
 		{
@@ -128,7 +135,7 @@ public class VirtualChannelManager
 		return null;
 	}
 
-	public VirtualChannel getChannel(int id)
+	public VirtualChannel getChannel(final int id)
 	{
 		for (VirtualChannel channel : mChannels)
 		{
@@ -140,7 +147,7 @@ public class VirtualChannelManager
 		return null;
 	}
 
-	public void removeChannel(VirtualChannel channel)
+	public void removeChannel(final VirtualChannel channel)
 	{
 		mChannels.remove(channel);
 	}

@@ -17,21 +17,36 @@
  */
 package virtualdataservice.ui;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.text.*;
-import java.util.*;
-import javax.swing.*;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.text.NumberFormat;
+import java.util.Calendar;
+import java.util.Date;
+
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JDialog;
+import javax.swing.JFormattedTextField;
+import javax.swing.JSpinner;
+import javax.swing.JTextField;
+import javax.swing.SpinnerDateModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import com.jgoodies.forms.builder.*;
-import com.jgoodies.forms.layout.*;
-import com.michaelbaranov.microba.calendar.DatePicker;
-
 import tvbrowser.core.Settings;
-import util.ui.*;
+import util.ui.CaretPositionCorrector;
+import util.ui.Localizer;
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 import virtualdataservice.virtual.VirtualProgram;
+
+import com.jgoodies.forms.builder.ButtonBarBuilder;
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+import com.michaelbaranov.microba.calendar.DatePicker;
 
 public class ProgramEditor extends JDialog implements WindowClosingIf, ActionListener
 {
@@ -49,7 +64,7 @@ public class ProgramEditor extends JDialog implements WindowClosingIf, ActionLis
 
 	private VirtualProgram mProgram = null;
 
-	public ProgramEditor(Frame frame)
+	public ProgramEditor(final Frame frame)
 	{
 		super(frame, true);
 
@@ -64,14 +79,16 @@ public class ProgramEditor extends JDialog implements WindowClosingIf, ActionLis
 
 		//setLayout(new BorderLayout());
 
-		FormLayout layout = new FormLayout("5dlu, pref, 3dlu, pref:grow, 5dlu", "5dlu, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref, 10dlu, pref, 2dlu, pref, 2dlu, top:pref:grow, 2dlu, pref, 3dlu");
+		final FormLayout layout = new FormLayout(
+        "5dlu, pref, 3dlu, pref:grow, 5dlu",
+        "5dlu, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref, 10dlu, pref, 2dlu, pref, 2dlu, top:pref:grow, 2dlu, pref, 3dlu");
 
-		PanelBuilder builder = new PanelBuilder(layout);
+		final PanelBuilder builder = new PanelBuilder(layout);
 		builder.setBorder(null);
 
-		CellConstraints cc = new CellConstraints();
+		final CellConstraints cc = new CellConstraints();
 
-		NumberFormat nf = NumberFormat.getIntegerInstance();
+		final NumberFormat nf = NumberFormat.getIntegerInstance();
 		nf.setGroupingUsed(false);
 
 		mProgramName = new JTextField();
@@ -81,7 +98,8 @@ public class ProgramEditor extends JDialog implements WindowClosingIf, ActionLis
 		mDate.setStripTime(true);
 
 		mTime = new JSpinner(new SpinnerDateModel());
-		JSpinner.DateEditor dateEditor = new JSpinner.DateEditor(mTime, Settings.getTimePattern());
+		final JSpinner.DateEditor dateEditor = new JSpinner.DateEditor(mTime,
+        Settings.getTimePattern());
 		mTime.setEditor(dateEditor);
 		CaretPositionCorrector.createCorrector(dateEditor.getTextField(), new char[] { ':' }, -1);
 
@@ -90,7 +108,7 @@ public class ProgramEditor extends JDialog implements WindowClosingIf, ActionLis
 		mEnableRepeater = new JCheckBox(mLocalizer.msg("ProgramEditor.repeat", "Enable repeat"));
 		mEnableRepeater.addChangeListener(new ChangeListener()
 		{
-			public void stateChanged(ChangeEvent evt)
+			public void stateChanged(final ChangeEvent evt)
 			{
 				mRepeater.setEnabled(mEnableRepeater.isSelected());
 			}
@@ -99,7 +117,7 @@ public class ProgramEditor extends JDialog implements WindowClosingIf, ActionLis
 		mRepeater = new RepeaterComponent();
 		mRepeater.setEnabled(false);
 
-		ButtonBarBuilder buttonBuilder = new ButtonBarBuilder();
+		final ButtonBarBuilder buttonBuilder = new ButtonBarBuilder();
 		mOk = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
 		mOk.addActionListener(this);
 		mCancel = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
@@ -140,7 +158,7 @@ public class ProgramEditor extends JDialog implements WindowClosingIf, ActionLis
 		//this.dispose();
 	}
 
-	public void setProgram(VirtualProgram program)
+	public void setProgram(final VirtualProgram program)
 	{
 		mProgram = program;
 		mEnableRepeater.setSelected(mProgram.getRepeat() != null);
@@ -156,7 +174,7 @@ public class ProgramEditor extends JDialog implements WindowClosingIf, ActionLis
 		return mProgram;
 	}
 
-	public void actionPerformed(ActionEvent evt)
+	public void actionPerformed(final ActionEvent evt)
 	{
 		if (evt.getSource() == mOk)
 		{
@@ -167,9 +185,9 @@ public class ProgramEditor extends JDialog implements WindowClosingIf, ActionLis
 					mProgram = new VirtualProgram();
 				}
 				mProgram.setTitle(mProgramName.getText().trim());
-				Calendar cal = Calendar.getInstance();
+				final Calendar cal = Calendar.getInstance();
 				cal.setTime(mDate.getDate());
-				Calendar time = Calendar.getInstance();
+				final Calendar time = Calendar.getInstance();
 				time.setTime((Date) mTime.getValue());
 				cal.set(Calendar.HOUR_OF_DAY, time.get(Calendar.HOUR_OF_DAY));
 				cal.set(Calendar.MINUTE, time.get(Calendar.MINUTE));
@@ -197,7 +215,7 @@ public class ProgramEditor extends JDialog implements WindowClosingIf, ActionLis
 		}
 	}
 
-	private Boolean isValidProgram()
+	private boolean isValidProgram()
 	{
 		if (mProgramName.getText().trim().length() == 0)
 		{

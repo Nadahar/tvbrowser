@@ -17,8 +17,10 @@
  */
 package virtualdataservice.virtual;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
+import java.util.Calendar;
 
 
 public class DailyRepeater extends Repeat
@@ -30,11 +32,11 @@ public class DailyRepeater extends Repeat
 		return 1;
 	}
 
-	public Boolean isDayProgram(Calendar date, Calendar programStart)
+	public boolean isDayProgram(final Calendar date, final Calendar programStart)
 	{
 		if (validOptions() && programStart.compareTo(date) <= 0 && isBevorEnd(date))
 		{
-			long delta = diffDayPeriods(programStart, date);
+		  final long delta = diffDayPeriods(programStart, date);
 			if (delta % mDays == 0)
 			{
 				return true;
@@ -43,9 +45,10 @@ public class DailyRepeater extends Repeat
 		return false;
 	}
 
-	public void readData(ObjectInput in) throws IOException, ClassNotFoundException
+	public void readData(final ObjectInput in) throws IOException,
+      ClassNotFoundException
 	{
-		int version = in.readInt();
+	  final int version = in.readInt();
 		if (version == 1)
 		{
 			mDays = in.readInt();
@@ -53,7 +56,7 @@ public class DailyRepeater extends Repeat
 		}
 	}
 
-	public void writeData(ObjectOutput out) throws IOException
+	public void writeData(final ObjectOutput out) throws IOException
 	{
 		out.writeInt(1);
 		out.writeInt(mDays);
@@ -65,12 +68,12 @@ public class DailyRepeater extends Repeat
 		return mDays;
 	}
 
-	public void setDays(int days)
+	public void setDays(final int days)
 	{
 		mDays = days;
 	}
 
-	private Boolean validOptions()
+	private boolean validOptions()
 	{
 		if (mDays < 0)
 		{

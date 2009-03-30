@@ -18,6 +18,7 @@
 package virtualdataservice.ui;
 
 import javax.swing.JPanel;
+
 import virtualdataservice.virtual.Repeat;
 
 public abstract class RepeaterPanel extends JPanel

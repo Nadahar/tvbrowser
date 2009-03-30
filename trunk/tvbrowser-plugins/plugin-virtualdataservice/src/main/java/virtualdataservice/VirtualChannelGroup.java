@@ -25,7 +25,8 @@ public class VirtualChannelGroup implements devplugin.ChannelGroup
 	private String mDescription;
 	private String mProviderName;
 
-	public VirtualChannelGroup(String name, String id, String description, String providername)
+	public VirtualChannelGroup(final String name, final String id,
+      final String description, final String providername)
 	{
 		mName = name;
 		mId = id;
@@ -53,11 +54,11 @@ public class VirtualChannelGroup implements devplugin.ChannelGroup
 		return mProviderName;
 	}
 
-	public boolean equals(Object obj)
+	public boolean equals(final Object obj)
 	{
 		if (obj instanceof devplugin.ChannelGroup)
 		{
-			devplugin.ChannelGroup group = (devplugin.ChannelGroup) obj;
+		  final devplugin.ChannelGroup group = (devplugin.ChannelGroup) obj;
 			return group.getId().equalsIgnoreCase(mId);
 		}
 		return false;

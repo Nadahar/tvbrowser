@@ -32,12 +32,12 @@ public class WeeklyRepeater extends Repeat
 		return 2;
 	}
 
-	public Boolean isDayProgram(Calendar date, Calendar programStart)
+	public boolean isDayProgram(final Calendar date, final Calendar programStart)
 	{
 		if (validOptions() && programStart.compareTo(date) <= 0 && isBevorEnd(date))
 		{
-			long delta = diffDayPeriods(programStart, date) / 7;
-			int dayOfWeek = date.get(Calendar.DAY_OF_WEEK);
+		  final long delta = diffDayPeriods(programStart, date) / 7;
+      final int dayOfWeek = date.get(Calendar.DAY_OF_WEEK);
 			if (delta % mWeeks == 0 && getDay(dayOfWeek))//(mWeekDays & dayOfWeek ) == dayOfWeek)
 			{
 				return true;
@@ -46,9 +46,10 @@ public class WeeklyRepeater extends Repeat
 		return false;
 	}
 
-	public void readData(ObjectInput in) throws IOException, ClassNotFoundException
+	public void readData(final ObjectInput in) throws IOException,
+      ClassNotFoundException
 	{
-		int version = in.readInt();
+	  final int version = in.readInt();
 		if (version == 1)
 		{
 			mWeeks = in.readInt();
@@ -57,7 +58,7 @@ public class WeeklyRepeater extends Repeat
 		}
 	}
 
-	public void writeData(ObjectOutput out) throws IOException
+	public void writeData(final ObjectOutput out) throws IOException
 	{
 		out.writeInt(1);
 		out.writeInt(mWeeks);
@@ -65,7 +66,7 @@ public class WeeklyRepeater extends Repeat
 		out.writeObject(getEndDate());
 	}
 
-	private Boolean validOptions()
+	private boolean validOptions()
 	{
 		if (mWeeks < 0 || mWeekDays <= 0 || mWeekDays >= 256)
 		{
@@ -84,7 +85,7 @@ public class WeeklyRepeater extends Repeat
 		return mWeekDays;
 	}
 
-	public void setWeekDays(int weekDays)
+	public void setWeekDays(final int weekDays)
 	{
 		mWeekDays = weekDays;
 	}
@@ -94,12 +95,12 @@ public class WeeklyRepeater extends Repeat
 		return mWeeks;
 	}
 
-	public void setWeeks(int weeks)
+	public void setWeeks(final int weeks)
 	{
 		mWeeks = weeks;
 	}
 
-	private void setDay(int day, Boolean set)
+	private void setDay(final int day, final boolean set)
 	{
 		if (set)
 		{
@@ -107,7 +108,7 @@ public class WeeklyRepeater extends Repeat
 		}
 		else
 		{
-			int d = (int) Math.pow(2, day);
+		  final int d = (int) Math.pow(2, day);
 			if ((mWeekDays & d) == d)
 			{
 				mWeekDays ^= d;
@@ -115,78 +116,78 @@ public class WeeklyRepeater extends Repeat
 		}
 	}
 
-	private Boolean getDay(int day)
+	private boolean getDay(final int day)
 	{
-		int d = (int) Math.pow(2, day);
+	  final int d = (int) Math.pow(2, day);
 		return (mWeekDays & d) == d;
 	}
 
-	public Boolean getMonday()
+	public boolean getMonday()
 	{
 		return getDay(Calendar.MONDAY);
 	}
 
-	public void setMonday(Boolean set)
+	public void setMonday(final boolean set)
 	{
 		setDay(Calendar.MONDAY, set);
 	}
 
-	public Boolean getTuesday()
+	public boolean getTuesday()
 	{
 		return getDay(Calendar.TUESDAY);
 	}
 
-	public void setTuesday(Boolean set)
+	public void setTuesday(final boolean set)
 	{
 		setDay(Calendar.TUESDAY, set);
 	}
 
-	public Boolean getWednesday()
+	public boolean getWednesday()
 	{
 		return getDay(Calendar.WEDNESDAY);
 	}
 
-	public void setWednesday(Boolean set)
+	public void setWednesday(final boolean set)
 	{
 		setDay(Calendar.WEDNESDAY, set);
 	}
 
-	public Boolean getThursday()
+	public boolean getThursday()
 	{
 		return getDay(Calendar.THURSDAY);
 	}
 
-	public void setThursday(Boolean set)
+	public void setThursday(final boolean set)
 	{
 		setDay(Calendar.THURSDAY, set);
 	}
 
-	public Boolean getFriday()
+	public boolean getFriday()
 	{
 		return getDay(Calendar.FRIDAY);
 	}
 
-	public void setFriday(Boolean set)
+	public void setFriday(final boolean set)
 	{
 		setDay(Calendar.FRIDAY, set);
 	}
 
-	public Boolean getSaturday()
+	public boolean getSaturday()
 	{
 		return getDay(Calendar.SATURDAY);
 	}
 
-	public void setSaturday(Boolean set)
+	public void setSaturday(final boolean set)
 	{
 		setDay(Calendar.SATURDAY, set);
 	}
 
-	public Boolean getSunday()
+	public boolean getSunday()
 	{
 		return getDay(Calendar.SUNDAY);
 	}
 
-	public void setSunday(Boolean set)
+	public void setSunday(final boolean set)
 	{
 		setDay(Calendar.SUNDAY, set);
 	}

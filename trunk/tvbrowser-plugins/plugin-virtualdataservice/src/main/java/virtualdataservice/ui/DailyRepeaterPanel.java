@@ -17,11 +17,18 @@
  */
 package virtualdataservice.ui;
 
-import java.awt.*;
-import javax.swing.*;
-import com.jgoodies.forms.builder.*;
-import com.jgoodies.forms.layout.*;
-import virtualdataservice.virtual.*;
+import java.awt.BorderLayout;
+
+import javax.swing.JSpinner;
+import javax.swing.SpinnerModel;
+import javax.swing.SpinnerNumberModel;
+
+import virtualdataservice.virtual.DailyRepeater;
+import virtualdataservice.virtual.Repeat;
+
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 
 public class DailyRepeaterPanel extends RepeaterPanel
 {
@@ -35,14 +42,15 @@ public class DailyRepeaterPanel extends RepeaterPanel
 		setLayout(new BorderLayout());
 		setBorder(null);
 
-		FormLayout layout = new FormLayout("pref, 3dlu, pref, 3dlu, pref:grow", "pref");
+		final FormLayout layout = new FormLayout(
+        "pref, 3dlu, pref, 3dlu, pref:grow", "pref");
 
-		PanelBuilder builder = new PanelBuilder(layout);
+		final PanelBuilder builder = new PanelBuilder(layout);
 		builder.setBorder(null);
 
-		CellConstraints cc = new CellConstraints();
+		final CellConstraints cc = new CellConstraints();
 
-		SpinnerModel model = new SpinnerNumberModel(1, 1, 500, 1);
+		final SpinnerModel model = new SpinnerNumberModel(1, 1, 500, 1);
 		mDays = new JSpinner(model);
 
 		builder.addLabel(mLocalizer.msg("DailyRepeaterPanel.every", "Every"), cc.xy(1, 1));
@@ -54,16 +62,16 @@ public class DailyRepeaterPanel extends RepeaterPanel
 
 	public Repeat getRepeater()
 	{
-		DailyRepeater repeater = new DailyRepeater();
+	  final DailyRepeater repeater = new DailyRepeater();
 		repeater.setDays((Integer) mDays.getValue());
 		return repeater;
 	}
 
-	public void setRepeater(Repeat repeater)
+	public void setRepeater(final Repeat repeater)
 	{
 		if (repeater.getID() == 1)
 		{
-			DailyRepeater dailyRepeater = (DailyRepeater) repeater;
+		  final DailyRepeater dailyRepeater = (DailyRepeater) repeater;
 			
 			mDays.setValue(dailyRepeater.getDays());
 		}
