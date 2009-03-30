@@ -256,7 +256,7 @@ public class FinderPanel extends JScrollPane implements MouseListener, MouseMoti
         } else {
           MainFrame.getInstance().askForDataUpdate(
               mLocalizer.msg("noDataFor", "No TV data available for {0}.", d
-                  .toString()));
+                  .toString()), d.getNumberOfDaysSince(Date.getCurrentDate()));
         }
         return;
       }
