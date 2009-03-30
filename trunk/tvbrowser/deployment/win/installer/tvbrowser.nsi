@@ -189,6 +189,64 @@ FunctionEnd
 #  !insertmacro MUI_INSTALLOPTIONS_DISPLAY "UninstallSettings.ini"
 #FunctionEnd
 
+Var JAVA_HOME
+Var JAVA_VER
+Var JAVA_INSTALLATION_MSG
+
+Function LocateJVM
+    ;Check for Java version and location
+    Push $0
+    Push $1
+    StrCpy $JAVA_VER "0"
+ 
+    ReadRegStr $JAVA_VER HKLM "SOFTWARE\JavaSoft\Java Runtime Environment" CurrentVersion
+    StrCmp "" "$JAVA_VER" JavaNotPresent CheckJavaVer
+ 
+    JavaNotPresent:
+        StrCpy $JAVA_INSTALLATION_MSG "Java Runtime Environment is not installed on your computer. You need version 1.4 or newer to run this program."
+        Goto Done
+ 
+    CheckJavaVer:
+        ReadRegStr $0 HKLM "SOFTWARE\JavaSoft\Java Runtime Environment\$JAVA_VER" JavaHome
+        GetFullPathName /SHORT $JAVA_HOME "$0"
+        StrCpy $0 $JAVA_VER 1 0
+        StrCpy $1 $JAVA_VER 1 2
+        StrCpy $JAVA_VER "$0$1"
+        IntCmp 16 $JAVA_VER FoundCorrectJavaVer FoundCorrectJavaVer JavaVerNotCorrect
+ 
+    FoundCorrectJavaVer:
+        IfFileExists "$JAVA_HOME\bin\javaw.exe" 0 JavaNotPresent
+        ;MessageBox MB_OK "Found Java: $JAVA_VER at $JAVA_HOME"
+        Goto Done
+ 
+    JavaVerNotCorrect:
+        StrCpy $JAVA_INSTALLATION_MSG "The version of Java Runtime Environment installed on your computer is $JAVA_VER. Version 1.6 or newer is required to run this program."
+ 
+    Done:
+        Pop $1
+        Pop $0
+FunctionEnd
+
+
+!macro registerFirewall fileName displayText
+    nsisFirewall::AddAuthorizedApplication "${fileName}" "${displayText}"
+    Pop $0
+    ${If} $0 == 0
+        DetailPrint "${displayText} added to Firewall exception list"
+    ${Else}
+        DetailPrint "An error happened while adding ${displayText} to Firewall exception list (result=$0)"
+    ${EndIf}
+!macroend
+
+!macro removeFirewall fileName displayText
+    nsisFirewall::RemoveAuthorizedApplication "${fileName}"
+    Pop $0
+    ${If} $0 == 0
+        DetailPrint "${displayText} removed from Firewall exception list"
+    ${Else}
+        DetailPrint "An error happened while removing ${displayText} from Firewall exception list (result=$0)"
+    ${EndIf}
+!macroend
 
 #--------------------------------
 #Language Strings
@@ -512,6 +570,13 @@ Section "$(STD_SECTION_NAME)" SEC_STANDARD
       0
 
   !insertmacro MUI_STARTMENU_WRITE_END
+  
+  !insertmacro registerFirewall "$INSTDIR\tvbrowser.exe" "${PROG_NAME}"
+  !insertmacro registerFirewall "$INSTDIR\tvbrowser_noDD.exe" "$(WITHOUT_DIRECTX)"
+  Call LocateJVM
+  ${If} $JAVA_VER > 0
+    !insertmacro registerFirewall "$JAVA_HOME\bin\javaw.exe" "Java"
+  ${EndIf}
 SectionEnd # main section
 
 
@@ -689,6 +754,9 @@ Section "Uninstall"
   # Remove settings if "Remove settings" was seleted in the "UninstallSettings.ini"
  # StrCmp $INI_VALUE "1" "" +2
  #   RMDir /r "$PROFILE\TV-Browser"
+
+  !insertmacro removeFirewall "$INSTDIR\tvbrowser.exe" "${PROG_NAME}"
+  !insertmacro removeFirewall "$INSTDIR\tvbrowser_noDD.exe" "$(WITHOUT_DIRECTX)"
 
   Delete "$INSTDIR\COPYRIGHT.txt"
   Delete "$INSTDIR\enwiki"
