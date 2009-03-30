@@ -29,9 +29,8 @@
 #--------------------------------
 # Includes
 #--------------------------------
-
-!include "MUI.nsh"
-
+!AddIncludeDir "${INSTALLER_DIR}"
+!include MUI.nsh
 
 #--------------------------------
 # Configuration
@@ -88,6 +87,7 @@ Var STARTMENU_FOLDER
 #--------------------------------
 
 !insertmacro MUI_PAGE_WELCOME
+Page Custom LockedListShow
 !insertmacro MUI_PAGE_LICENSE "${RUNTIME_DIR}\LICENSE.txt"
 !insertmacro MUI_PAGE_COMPONENTS
 !insertmacro MUI_PAGE_DIRECTORY
@@ -106,9 +106,10 @@ Var STARTMENU_FOLDER
 #--------------------------------
 # Supported installation languages
 #--------------------------------
-
-!insertmacro MUI_LANGUAGE "English"
 !insertmacro MUI_LANGUAGE "German"
+!insertmacro MUI_LANGUAGE "English"
+!include tvbrowser_english.nsh
+!include tvbrowser_german.nsh
 
 
 #--------------------------------
@@ -179,6 +180,14 @@ Function un.onInit
     !insertmacro MUI_UNGETLANGUAGE 
 FunctionEnd
 
+Function LockedListShow
+  !insertmacro MUI_HEADER_TEXT "$(LOCKED_LIST_HEADING)" "$(LOCKED_LIST_CAPTION)"
+  LockedList::AddModule /NOUNLOAD "\tvbrowser.exe"
+  LockedList::AddModule /NOUNLOAD "\tvbrowser_noDD.exe"
+  LockedList::AddCaption /NOUNLOAD "TV-Browser*"
+  LockedList::Dialog /heading "$(LOCKED_LIST_HEADING)" /caption "$(LOCKED_LIST_CAPTION)" /searching "$(LOCKED_LIST_SEARCHING)" /noprograms "$(LOCKED_LIST_NOPROGRAMS)" /colheadings "$(LOCKED_LIST_APPLICATION)" "$(LOCKED_LIST_PROCESS)" /ignore "$(LOCKED_LIST_IGNORE)"
+FunctionEnd
+
 # Function un.UninstallTvDataPage
 #  !insertmacro MUI_HEADER_TEXT "TV-Daten löschen" "Bestimmen Sie, ob bereits heruntergeladene TV-Daten gelöscht werden sollen"
 #  !insertmacro MUI_INSTALLOPTIONS_DISPLAY "UninstallTvData.ini"
@@ -247,108 +256,6 @@ FunctionEnd
         DetailPrint "An error happened while removing ${displayText} from Firewall exception list (result=$0)"
     ${EndIf}
 !macroend
-
-#--------------------------------
-#Language Strings
-
-  ;Description
- LangString INST_TYPE_1 ${LANG_German} "Normal (mit allen Plugins)"
- LangString INST_TYPE_1 ${LANG_ENGLISH} "Normal (with all Plugins)"
-
- LangString INST_TYPE_2 ${LANG_German} "Minimal (ohne Plugins)"
- LangString INST_TYPE_2 ${LANG_ENGLISH} "Minimal (without Plugins)"
-
- LangString STD_SECTION_NAME ${LANG_German} "${PROG_NAME} (erforderlich)"
- LangString STD_SECTION_NAME ${LANG_ENGLISH} "${PROG_NAME} (necessary)"
-
- LangString LINK_SECTION_NAME ${LANG_German} "Verknüpfung auf dem Desktop"
- LangString LINK_SECTION_NAME ${LANG_ENGLISH} "Link on the desktop"
-
- LangString START_WITH_WINDOWS ${LANG_GERMAN} "TV-Browser mit Windows starten"
- LangString START_WITH_WINDOWS ${LANG_ENGLISH} "Start TV-Browser at Windows startup"
-
- LangString DATA_SECTION_NAME ${LANG_German} "Daten-Services"
-   LangString DATA_TVB_SUBSECTION_NAME ${LANG_German} "TV-Browser-Datenservice"
-   LangString DATA_RADIOTIMES_SUBSECTION_NAME ${LANG_German} "Radio-Times-Datenservice"
-   LangString DATA_SWEDB_SUBSECTION_NAME ${LANG_German} "SweDB TV-Datenservice"
-   LangString DATA_SCHEDULESDIRECT_SUBSECTION_NAME ${LANG_German} "SchedulesDirect-Datenservice"
- LangString DATA_SECTION_NAME ${LANG_ENGLISH} "Data service"
-   LangString DATA_TVB_SUBSECTION_NAME ${LANG_ENGLISH} "TV-Browser data service"
-   LangString DATA_RADIOTIMES_SUBSECTION_NAME ${LANG_ENGLISH} "Radio Times data service"
-   LangString DATA_SWEDB_SUBSECTION_NAME ${LANG_ENGLISH} "SweDB TV data service"
-   LangString DATA_SCHEDULESDIRECT_SUBSECTION_NAME ${LANG_ENGLISH} "SchedulesDirect data service"
- 
- LangString MISC_DIR ${LANG_GERMAN} "Sonstiges"
- LangString MISC_DIR ${LANG_ENGLISH} "Misc"
-
- LangString LICENSE_TXT ${LANG_GERMAN} "Lizenz"
- LangString LICENSE_TXT ${LANG_ENGLISH} "License"
- 
- LangString WITHOUT_DIRECTX ${LANG_GERMAN} "${PROG_NAME} (ohne DirectX)"
- LangString WITHOUT_DIRECTX ${LANG_ENGLISH} "${PROG_NAME} (without DirectX)"
-
- LangString UNINSTALL_TXT ${LANG_GERMAN} "${PROG_NAME} deinstallieren"
- LangString UNINSTALL_TXT ${LANG_ENGLISH} "Uninstall ${PROG_NAME}"
- 
- LangString PROGRAM_INFO ${LANG_GERMAN} "Sendungsinfo-Betrachter"
- LangString PROGRAM_INFO ${LANG_ENGLISH} "Programinfo viewer"
- 
- LangString REMINDER ${LANG_GERMAN} "Erinnerer"
- LangString REMINDER ${LANG_ENGLISH} "Reminder"
-
- LangString BLOGTHIS ${LANG_GERMAN} "Blog dies!"
- LangString BLOGTHIS ${LANG_ENGLISH} "Blog this!"
- 
- LangString CAPTURE ${LANG_GERMAN} "Aufnahmesteuerung"
- LangString CAPTURE ${LANG_ENGLISH} "Recording control"
-
- LangString CALENDAR ${LANG_GERMAN} "Kalender-Export"
- LangString CALENDAR ${LANG_ENGLISH} "Calendar export"
-
- LangString CLIPBOARD ${LANG_GERMAN} "Zwischenablage"
- LangString CLIPBOARD ${LANG_ENGLISH} "Clipboard Plugin"
-
- LangString EMAIL ${LANG_GERMAN} "E-Mail"
- LangString EMAIL ${LANG_ENGLISH} "E-Mail Plugin"
-
- LangString FAVORITES ${LANG_GERMAN} "Lieblingssendungen verwalten"
- LangString FAVORITES ${LANG_ENGLISH} "Manage favorite programs"
- 
- LangString GENRES ${LANG_GERMAN} "Genres-Plugin"
- LangString GENRES ${LANG_ENGLISH} "Genres Plugin"
- 
- LangString I18N ${LANG_GERMAN} "Übersetzungstool"
- LangString I18N ${LANG_ENGLISH} "Translation tool"
- 
- LangString LISTVIEW ${LANG_GERMAN} "Was läuft gerade"
- LangString LISTVIEW ${LANG_ENGLISH} "What runs now"
- 
- LangString NEWS ${LANG_GERMAN} "Nachrichten"
- LangString NEWS ${LANG_ENGLISH} "News"
- 
- LangString PRINT ${LANG_GERMAN} "Drucken"
- LangString PRINT ${LANG_ENGLISH} "Print"
- 
- LangString PROGRAMLIST ${LANG_GERMAN} "Sendungsliste"
- LangString PROGRAMLIST ${LANG_ENGLISH} "Program list"
- 
- LangString SHOWVIEW ${LANG_GERMAN} "Showviewnummern berechnen"
- LangString SHOWVIEW ${LANG_ENGLISH} "Calculate Showview numbers"
- 
- LangString SIMPLEMARKER ${LANG_GERMAN} "Markierungs-Plugin"
- LangString SIMPLEMARKER ${LANG_ENGLISH} "Marker Plugin"
- 
- LangString TVRATER ${LANG_GERMAN} "TV-Bewertungen"
- LangString TVRATER ${LANG_ENGLISH} "TV rating"
-
- LangString WEB ${LANG_GERMAN} "Internet-Suche"
- LangString WEB ${LANG_ENGLISH} "Web Search"
-
- LangString un.QUESTION ${LANG_GERMAN} "Sollen die Konfigurationsdateien und TV-Daten gelöscht werden?"
- LangString un.QUESTION ${LANG_ENGLISH} "Do you want to delete the settings and TV data files?"
-
- LangString un.CONFIRM ${LANG_GERMAN} "Sind Sie sicher?"
- LangString un.CONFIRM ${LANG_ENGLISH} "Are you sure?"
 
 #--------------------------------
 # The installation types
