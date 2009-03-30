@@ -1,11 +1,11 @@
 /*
 
 NSIS Modern User Interface - Version 1.8
-Copyright © 2002-2007 Joost Verburg
+Copyright 2002-2009 Joost Verburg
 
 */
 
-!echo "NSIS Modern User Interface version 1.8 - © 2002-2007 Joost Verburg"
+!echo "NSIS Modern User Interface version 1.8 - Copyright 2002-2009 Joost Verburg"
 
 ;--------------------------------
 
@@ -29,8 +29,6 @@ Copyright © 2002-2007 Joost Verburg
 !include LangFile.nsh
 !include WinMessages.nsh
 
-!define LANGFILE_DEFAULT "${NSISDIR}\Contrib\Language files\English.nsh"
-
 Var MUI_TEMP1
 Var MUI_TEMP2
 
@@ -51,7 +49,7 @@ Var MUI_TEMP2
     !insertmacro MUI_FUNCTION_GUIINIT
     !insertmacro MUI_FUNCTION_ABORTWARNING
   
-    !ifdef MUI_WELCOMEPAGE | MUI_FINISHPAGE
+    !ifdef MUI_IOCONVERT_USED
       !insertmacro INSTALLOPTIONS_FUNCTION_WRITE_CONVERT
     !endif
 
@@ -59,7 +57,7 @@ Var MUI_TEMP2
       !insertmacro MUI_UNFUNCTION_GUIINIT
       !insertmacro MUI_FUNCTION_UNABORTWARNING
     
-      !ifdef MUI_UNWELCOMEPAGE | MUI_UNFINISHPAGE
+      !ifdef MUI_UNIOCONVERT_USED
         !insertmacro INSTALLOPTIONS_UNFUNCTION_WRITE_CONVERT
       !endif
     !endif
@@ -84,6 +82,7 @@ Var MUI_TEMP2
   !ifndef "${SYMBOL}"
     !define "${SYMBOL}" "${CONTENT}"
     !insertmacro MUI_SET "${SYMBOL}_DEFAULTSET"
+    !insertmacro MUI_SET "MUI_${MUI_PAGE_UNINSTALLER_PREFIX}IOCONVERT_USED"
   !else
     !insertmacro MUI_UNSET "${SYMBOL}_DEFAULTSET" 
   !endif
@@ -1406,16 +1405,16 @@ Var MUI_TEMP2
 
     StrCmp $(^RTL) 0 mui.startmenu_nortl
       !ifndef MUI_STARTMENUPAGE_NODISABLE
-        StartMenu::Init /NOUNLOAD /rtl /noicon /autoadd /text "${MUI_STARTMENUPAGE_TEXT_TOP}" /lastused "${MUI_STARTMENUPAGE_VARIABLE}" /checknoshortcuts "${MUI_STARTMENUPAGE_TEXT_CHECKBOX}" "${MUI_STARTMENUPAGE_DEFAULTFOLDER}"
+        StartMenu::Init /rtl /noicon /autoadd /text "${MUI_STARTMENUPAGE_TEXT_TOP}" /lastused "${MUI_STARTMENUPAGE_VARIABLE}" /checknoshortcuts "${MUI_STARTMENUPAGE_TEXT_CHECKBOX}" "${MUI_STARTMENUPAGE_DEFAULTFOLDER}"
       !else
-        StartMenu::Init /NOUNLOAD /rtl /noicon /autoadd /text "${MUI_STARTMENUPAGE_TEXT_TOP}" /lastused "${MUI_STARTMENUPAGE_VARIABLE}" "${MUI_STARTMENUPAGE_DEFAULTFOLDER}"
+        StartMenu::Init /rtl /noicon /autoadd /text "${MUI_STARTMENUPAGE_TEXT_TOP}" /lastused "${MUI_STARTMENUPAGE_VARIABLE}" "${MUI_STARTMENUPAGE_DEFAULTFOLDER}"
       !endif
       Goto mui.startmenu_initdone
     mui.startmenu_nortl:
       !ifndef MUI_STARTMENUPAGE_NODISABLE
-        StartMenu::Init /NOUNLOAD /noicon /autoadd /text "${MUI_STARTMENUPAGE_TEXT_TOP}" /lastused "${MUI_STARTMENUPAGE_VARIABLE}" /checknoshortcuts "${MUI_STARTMENUPAGE_TEXT_CHECKBOX}" "${MUI_STARTMENUPAGE_DEFAULTFOLDER}"
+        StartMenu::Init /noicon /autoadd /text "${MUI_STARTMENUPAGE_TEXT_TOP}" /lastused "${MUI_STARTMENUPAGE_VARIABLE}" /checknoshortcuts "${MUI_STARTMENUPAGE_TEXT_CHECKBOX}" "${MUI_STARTMENUPAGE_DEFAULTFOLDER}"
       !else
-        StartMenu::Init /NOUNLOAD /noicon /autoadd /text "${MUI_STARTMENUPAGE_TEXT_TOP}" /lastused "${MUI_STARTMENUPAGE_VARIABLE}" "${MUI_STARTMENUPAGE_DEFAULTFOLDER}"
+        StartMenu::Init /noicon /autoadd /text "${MUI_STARTMENUPAGE_TEXT_TOP}" /lastused "${MUI_STARTMENUPAGE_VARIABLE}" "${MUI_STARTMENUPAGE_DEFAULTFOLDER}"
       !endif
     mui.startmenu_initdone:
 
@@ -1571,9 +1570,11 @@ Var MUI_TEMP2
           !insertmacro INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 5" "Bottom" "120"
         !endif
         !ifdef MUI_FINISHPAGE_REBOOTLATER_DEFAULT
+		  !insertmacro INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 4" "State" "0"
           !insertmacro INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 5" "State" "1"
         !else
           !insertmacro INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 4" "State" "1"
+		  !insertmacro INSTALLOPTIONS_WRITE "ioSpecial.ini" "Field 5" "State" "0"
         !endif
 
         Goto mui.finish_load
@@ -2077,14 +2078,14 @@ Var MUI_TEMP2
   !insertmacro MUI_INSERT
 
   LoadLanguageFile "${NSISDIR}\Contrib\Language files\${LANGUAGE}.nlf"
-  !insertmacro LANGFILE_INCLUDE "${NSISDIR}\Contrib\Language files\${LANGUAGE}.nsh"
 
+  ;Include language file
+  !insertmacro LANGFILE_INCLUDE_WITHDEFAULT "${NSISDIR}\Contrib\Language files\${LANGUAGE}.nsh" "${NSISDIR}\Contrib\Language files\English.nsh"
+
+  ;Add language to list of languages for selection dialog  
   !ifndef MUI_LANGDLL_LANGUAGES
-    !ifdef MUI_LANGDLL_ALLLANGUAGES
-      !define MUI_LANGDLL_LANGUAGES "'${LANGFILE_${LANGUAGE}_NAME}' '${LANG_${LANGUAGE}}' "
-    !else
-      !define MUI_LANGDLL_LANGUAGES "'${LANGFILE_${LANGUAGE}_NAME}' '${LANG_${LANGUAGE}}' '${LANG_${LANGUAGE}_CP}' "
-    !endif
+    !define MUI_LANGDLL_LANGUAGES "'${LANGFILE_${LANGUAGE}_NAME}' '${LANG_${LANGUAGE}}' "
+    !define MUI_LANGDLL_LANGUAGES_CP "'${LANGFILE_${LANGUAGE}_NAME}' '${LANG_${LANGUAGE}}' '${LANG_${LANGUAGE}_CP}' "
   !else
     !ifdef MUI_LANGDLL_LANGUAGES_TEMP
       !undef MUI_LANGDLL_LANGUAGES_TEMP
@@ -2092,11 +2093,14 @@ Var MUI_TEMP2
     !define MUI_LANGDLL_LANGUAGES_TEMP "${MUI_LANGDLL_LANGUAGES}"
     !undef MUI_LANGDLL_LANGUAGES
 
-    !ifdef MUI_LANGDLL_ALLLANGUAGES
-      !define MUI_LANGDLL_LANGUAGES "'${LANGFILE_${LANGUAGE}_NAME}' '${LANG_${LANGUAGE}}' ${MUI_LANGDLL_LANGUAGES_TEMP}"
-    !else
-      !define MUI_LANGDLL_LANGUAGES "'${LANGFILE_${LANGUAGE}_NAME}' '${LANG_${LANGUAGE}}' '${LANG_${LANGUAGE}_CP}' ${MUI_LANGDLL_LANGUAGES_TEMP}"
+	!ifdef MUI_LANGDLL_LANGUAGES_CP_TEMP
+      !undef MUI_LANGDLL_LANGUAGES_CP_TEMP
     !endif
+    !define MUI_LANGDLL_LANGUAGES_CP_TEMP "${MUI_LANGDLL_LANGUAGES_CP}"
+    !undef MUI_LANGDLL_LANGUAGES_CP
+
+    !define MUI_LANGDLL_LANGUAGES "'${LANGFILE_${LANGUAGE}_NAME}' '${LANG_${LANGUAGE}}' ${MUI_LANGDLL_LANGUAGES_TEMP}"
+    !define MUI_LANGDLL_LANGUAGES_CP "'${LANGFILE_${LANGUAGE}_NAME}' '${LANG_${LANGUAGE}}' '${LANG_${LANGUAGE}_CP}' ${MUI_LANGDLL_LANGUAGES_CP_TEMP}"
   !endif
   
   !verbose pop
@@ -2133,7 +2137,7 @@ Var MUI_TEMP2
   !ifdef MUI_LANGDLL_ALLLANGUAGES
     LangDLL::LangDialog "${MUI_LANGDLL_WINDOWTITLE}" "${MUI_LANGDLL_INFO}" A ${MUI_LANGDLL_LANGUAGES} ""
   !else
-    LangDLL::LangDialog "${MUI_LANGDLL_WINDOWTITLE}" "${MUI_LANGDLL_INFO}" AC ${MUI_LANGDLL_LANGUAGES} ""
+    LangDLL::LangDialog "${MUI_LANGDLL_WINDOWTITLE}" "${MUI_LANGDLL_INFO}" AC ${MUI_LANGDLL_LANGUAGES_CP} ""
   !endif
 
   Pop $LANGUAGE
