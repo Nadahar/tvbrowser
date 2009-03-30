@@ -257,17 +257,22 @@ FunctionEnd
     ${EndIf}
 !macroend
 
+!macro createInternetShortcut FILENAME URL #ICONFILE ICONINDEX
+WriteINIStr "${FILENAME}.url" "InternetShortcut" "URL" "${URL}"
+# WriteINIStr "${FILENAME}.url" "InternetShortcut" "IconFile" "${ICONFILE}"
+# WriteINIStr "${FILENAME}.url" "InternetShortcut" "IconIndex" "${ICONINDEX}"
+!macroend
+
 #--------------------------------
 # The installation types
 
 InstType "$(INST_TYPE_1)" #"Normal (mit allen Plugins)"
-InstType "$(INST_TYPE_2)" #"Minimal (ohne Plugins)"
 
 #--------------------------------
 #Installer Sections
 
 Section "$(STD_SECTION_NAME)" SEC_STANDARD
-  # make the section requiered
+  # make the section required
   SectionIn 1 2 RO
 
   # Set output path to the installation directory.
@@ -339,8 +344,8 @@ Section "$(STD_SECTION_NAME)" SEC_STANDARD
   SetOutPath "$INSTDIR\themepacks"
   File "${RUNTIME_DIR}\themepacks\*.*"
 
-  # CreateDirectory "$INSTDIR\tvdata"
-  CreateDirectory "$INSTDIR\plugins"
+  SetOutPath "$INSTDIR\plugins"
+  File "${RUNTIME_DIR}\plugins\*.*"
 
 
   # Register uninstaller at Windows (Add/Remove programs)
@@ -442,32 +447,32 @@ Section "$(STD_SECTION_NAME)" SEC_STANDARD
       "$INSTDIR\tvbrowser.exe" "" "$INSTDIR\imgs\desktop.ico"
 
     CreateShortCut \
-      "$SMPROGRAMS\$STARTMENU_FOLDER\$(MISC_DIR)\$(WITHOUT_DIRECTX).lnk" \
-      "$INSTDIR\tvbrowser_noDD.exe" "" "$INSTDIR\imgs\desktop.ico"
-
-    CreateShortCut \
       "$SMPROGRAMS\$STARTMENU_FOLDER\$(MISC_DIR)\$(LICENSE_TXT).lnk" \
       "$INSTDIR\LICENSE.txt"
+
+    CreateShortCut \
+      "$SMPROGRAMS\$STARTMENU_FOLDER\$(MISC_DIR)\$(WITHOUT_DIRECTX).lnk" \
+      "$INSTDIR\tvbrowser_noDD.exe" "" "$INSTDIR\imgs\desktop.ico"
 
     CreateShortCut \
       "$SMPROGRAMS\$STARTMENU_FOLDER\$(MISC_DIR)\$(WITHOUT_DIRECTX) - Info.lnk" \
       "$INSTDIR\tvbrowser_noDD.txt"
 
-    CreateShortCut \
-      "$SMPROGRAMS\$STARTMENU_FOLDER\$(MISC_DIR)\Website.lnk" \
-      "$INSTDIR\website.url"
+    !insertmacro CreateInternetShortcut \
+        "$SMPROGRAMS\$STARTMENU_FOLDER\$(MISC_DIR)\Website" \
+        "http://tvbrowser.sourceforge.net/"
+  
+    !insertmacro CreateInternetShortcut \
+        "$SMPROGRAMS\$STARTMENU_FOLDER\$(MISC_DIR)\Forum" \
+        "http://hilfe.tvbrowser.org/index.php"
 
-    CreateShortCut \
-      "$SMPROGRAMS\$STARTMENU_FOLDER\$(MISC_DIR)\Forum.lnk" \
-      "$INSTDIR\forum.url"
+    !insertmacro CreateInternetShortcut \
+        "$SMPROGRAMS\$STARTMENU_FOLDER\$(MISC_DIR)\Deutsches Handbuch" \
+        "http://wiki.tvbrowser.org/"
 
-    CreateShortCut \
-      "$SMPROGRAMS\$STARTMENU_FOLDER\$(MISC_DIR)\Deutsches Handbuch.lnk" \
-      "$INSTDIR\wiki.url"
-
-    CreateShortCut \
-      "$SMPROGRAMS\$STARTMENU_FOLDER\$(MISC_DIR)\English Manual.lnk" \
-      "$INSTDIR\enwiki.url"
+    !insertmacro CreateInternetShortcut \
+        "$SMPROGRAMS\$STARTMENU_FOLDER\$(MISC_DIR)\English Manual" \
+        "http://enwiki.tvbrowser.org"
 
     CreateShortCut \
       "$SMPROGRAMS\$STARTMENU_FOLDER\$(MISC_DIR)\$(UNINSTALL_TXT).lnk" \
@@ -482,12 +487,13 @@ Section "$(STD_SECTION_NAME)" SEC_STANDARD
   !insertmacro registerFirewall "$INSTDIR\tvbrowser_noDD.exe" "$(WITHOUT_DIRECTX)"
   Call LocateJVM
   ${If} $JAVA_VER > 0
+    !insertmacro registerFirewall "$JAVA_HOME\bin\java.exe" "Java"
     !insertmacro registerFirewall "$JAVA_HOME\bin\javaw.exe" "Java"
   ${EndIf}
 SectionEnd # main section
 
 
-Section "$(LINK_SECTION_NAME)" SEC_LINK
+Section "$(DESKTOP_SECTION_NAME)" SEC_DESKTOP
   SectionIn 1 2
   StrCmp $8 "HKCU" user admin
   user:
@@ -505,146 +511,23 @@ Section "$(LINK_SECTION_NAME)" SEC_LINK
     "$INSTDIR\tvbrowser.exe" "" "$INSTDIR\imgs\desktop.ico"
 SectionEnd # link section
 
+Section "$(QUICKLAUNCH_SECTION_NAME)" SEC_QUICKLAUNCH
+  SectionIn 1 2
+  StrCmp $8 "HKCU" user admin
+  user:
+    SetShellVarContext current
+    goto goon
+  admin:
+    SetShellVarContext all
+  goon:
 
-SubSection "$(DATA_SECTION_NAME)" SEC_DATASERVICES
+  # Set the directory where the shortcuts should be executed in
+  SetOutPath "$INSTDIR"
 
-  Section "$(DATA_TVB_SUBSECTION_NAME)" SEC_SERVICE_TVB
-    SectionIn 1 2 RO
-
-    SetOutPath "$INSTDIR\plugins"
-    File "${RUNTIME_DIR}\plugins\TvBrowserDataService.jar"
-  SectionEnd
-  
-  Section "$(DATA_RADIOTIMES_SUBSECTION_NAME)" SEC_SERVICE_RADIOTIMES
-    SectionIn 1 2
-
-    SetOutPath "$INSTDIR\plugins"
-    File "${RUNTIME_DIR}\plugins\RadioTimesDataService.jar"
-  SectionEnd
-
-  Section "$(DATA_SWEDB_SUBSECTION_NAME)" SEC_SERVICE_SWEDB
-    SectionIn 1 2
-
-    SetOutPath "$INSTDIR\plugins"
-    File "${RUNTIME_DIR}\plugins\SweDBTvDataService.jar"
-  SectionEnd
-  
-  Section "$(DATA_SCHEDULESDIRECT_SUBSECTION_NAME)" SEC_SERVICE_SCHEDULESDIRECT
-    SectionIn 1 2
-
-    SetOutPath "$INSTDIR\plugins"
-    File "${RUNTIME_DIR}\plugins\SchedulesDirectDataService.jar"
-  SectionEnd  
-SubSectionEnd # data services section
-
-
-SubSection "Plugins" SEC_PLUGINS
- 
-  Section "$(BLOGTHIS)" SEC_PLUGIN_BLOGTHIS
-    SectionIn 1
-
-    SetOutPath "$INSTDIR\plugins"
-    File "${RUNTIME_DIR}\plugins\BlogThisPlugin.jar"
-  SectionEnd
-
-  Section "$(PRINT)" SEC_PLUGIN_PRINT
-    SectionIn 1
-
-    SetOutPath "$INSTDIR\plugins"
-    File "${RUNTIME_DIR}\plugins\PrintPlugin.jar"
-  SectionEnd
-
-  Section "$(SHOWVIEW)" SEC_PLUGIN_SHOWVIEW
-    SectionIn 1
-
-    SetOutPath "$INSTDIR\plugins"
-    File "${RUNTIME_DIR}\plugins\ShowviewPlugin.jar"
-  SectionEnd
-
-  Section "$(WEB)" SEC_PLUGIN_WEB
-    SectionIn 1
-
-    SetOutPath "$INSTDIR\plugins"
-    File "${RUNTIME_DIR}\plugins\WebPlugin.jar"
-  SectionEnd
-
-  Section "$(EMAIL)" SEC_PLUGIN_EMAIL
-    SectionIn 1
-
-    SetOutPath "$INSTDIR\plugins"
-    File "${RUNTIME_DIR}\plugins\EMailPlugin.jar"
-  SectionEnd
-
-  Section "$(TVRATER)" SEC_PLUGIN_TVRATER
-    SectionIn 1
-
-    SetOutPath "$INSTDIR\plugins"
-    File "${RUNTIME_DIR}\plugins\TVRaterPlugin.jar"
-  SectionEnd
-
-  Section "$(LISTVIEW)" SEC_PLUGIN_LISTVIEW
-    SectionIn 1
-
-    SetOutPath "$INSTDIR\plugins"
-    File "${RUNTIME_DIR}\plugins\ListViewPlugin.jar"
-  SectionEnd
-
-  Section "$(NEWS)" SEC_PLUGIN_NEWS
-    SectionIn 1
-
-    SetOutPath "$INSTDIR\plugins"
-    File "${RUNTIME_DIR}\plugins\NewsPlugin.jar"
-  SectionEnd
-
-  Section "$(CAPTURE)" SEC_PLUGIN_CAPTURE
-    SectionIn 1
-
-    SetOutPath "$INSTDIR\plugins"
-    File "${RUNTIME_DIR}\plugins\CapturePlugin.jar"
-  SectionEnd
-
-  Section "$(CLIPBOARD)" SEC_PLUGIN_CLIPBOARD
-    SectionIn 1
-
-    SetOutPath "$INSTDIR\plugins"
-    File "${RUNTIME_DIR}\plugins\ClipboardPlugin.jar"
-  SectionEnd
-
-  Section "$(CALENDAR)" SEC_PLUGIN_CALENDAR
-    SectionIn 1
-
-    SetOutPath "$INSTDIR\plugins"
-    File "${RUNTIME_DIR}\plugins\CalendarExportPlugin.jar"
-  SectionEnd
-  
-  Section "$(SIMPLEMARKER)" SEC_PLUGIN_SIMPLEMARKER
-    SectionIn 1
-
-    SetOutPath "$INSTDIR\plugins"
-    File "${RUNTIME_DIR}\plugins\SimpleMarkerPlugin.jar"
-  SectionEnd
-
-  Section "$(GENRES)" SEC_PLUGIN_GENRES
-    SectionIn 1
-
-    SetOutPath "$INSTDIR\plugins"
-    File "${RUNTIME_DIR}\plugins\GenrePlugin.jar"
-  SectionEnd
-
-  Section "$(PROGRAMLIST)" SEC_PLUGIN_PROGRAM_LIST
-    SectionIn 1
-    SetOutPath "$INSTDIR\plugins"
-    File "${RUNTIME_DIR}\plugins\ProgramListPlugin.jar"
-  SectionEND
-
-  Section "$(I18N)" SEC_PLUGIN_I18N
-    SectionIn 1
-
-    SetOutPath "$INSTDIR\plugins"
-    File "${RUNTIME_DIR}\plugins\I18NPlugin.jar"
-  SectionEnd
-SubSectionEnd # plugin section
-
+  CreateShortCut \
+    "$QUICKLAUNCH\${PROG_NAME}.lnk" \
+    "$INSTDIR\tvbrowser.exe" "" "$INSTDIR\imgs\desktop.ico"
+SectionEnd # link section
 
 # special uninstall section.
 Section "Uninstall"
@@ -664,6 +547,7 @@ Section "Uninstall"
 
   !insertmacro removeFirewall "$INSTDIR\tvbrowser.exe" "${PROG_NAME}"
   !insertmacro removeFirewall "$INSTDIR\tvbrowser_noDD.exe" "$(WITHOUT_DIRECTX)"
+  # no removeFirewall for Java because other applications may need that
 
   Delete "$INSTDIR\COPYRIGHT.txt"
   Delete "$INSTDIR\enwiki"
@@ -767,100 +651,10 @@ Section "Uninstall"
   Delete "$DESKTOP\${PROG_NAME}.lnk"
 SectionEnd
 
-
-LangString DESC_SEC_STANDARD ${LANG_ENGLISH} "TV-Browser application and files"
-LangString DESC_SEC_STANDARD ${LANG_GERMAN} "TV-Browser-Hauptprogramm und zusätzliche Dateien"
-
-LangString DESC_SEC_LINK ${LANG_ENGLISH} "Create a link on your desktop to run TV-Browser."
-LangString DESC_SEC_LINK ${LANG_GERMAN} "Eine Verknüpfung zum TV-Browser auf dem Desktop anlegen."
-
-LangString DESC_SEC_DATASERVICES ${LANG_ENGLISH} "Data services bring you additional channels"
-LangString DESC_SEC_DATASERVICES ${LANG_GERMAN} "Datenquellen zum Download der Programm-Daten"
-
-LangString DESC_SEC_SERVICE_TVB ${LANG_ENGLISH} "TV-Browser standard service for program listings"
-LangString DESC_SEC_SERVICE_TVB ${LANG_GERMAN} "TV-Browser-Standarddienst für Sendungsdaten"
-
-LangString DESC_SEC_SERVICE_RADIOTIMES ${LANG_ENGLISH} "RadioTimes data service for English channels"
-LangString DESC_SEC_SERVICE_RADIOTIMES ${LANG_GERMAN} "RadioTimes-Datenquelle für englische Sender"
-
-LangString DESC_SEC_SERVICE_SWEDB ${LANG_ENGLISH} "DataHydra data service for different XMLTV sources"
-LangString DESC_SEC_SERVICE_SWEDB ${LANG_GERMAN} "DataHydra-Datenquelle für verschiedene XMLTV-Quellen"
-
-LangString DESC_SEC_SERVICE_SCHEDULESDIRECT ${LANG_ENGLISH} "SchedulesDirect data service for channels from SchedulesDirect.org"
-LangString DESC_SEC_SERVICE_SCHEDULESDIRECT ${LANG_GERMAN} "SchedulesDirect-Datenquelle für Sender von SchedulesDirect.org"
-
-LangString DESC_SEC_PLUGINS ${LANG_ENGLISH} "Plugins can provide additional features."
-LangString DESC_SEC_PLUGINS ${LANG_GERMAN} "Mit Plugins können zusätzliche Funktionen bereitgestellt werden."
-
-LangString DESC_SEC_PLUGIN_BLOGTHIS ${LANG_ENGLISH} "Creates a new blog entry."
-LangString DESC_SEC_PLUGIN_BLOGTHIS ${LANG_GERMAN} "Erzeugt einen neuen Eintrag in einem Blog."
-
-LangString DESC_SEC_PLUGIN_CALENDAR ${LANG_ENGLISH} "Exports a program to a calendar application or a ical/vcal File."
-LangString DESC_SEC_PLUGIN_CALENDAR ${LANG_GERMAN} "Exportiert eine Sendung in eine Kalender-Anwendung."
-
-LangString DESC_SEC_PLUGIN_CAPTURE ${LANG_ENGLISH} "Starts an external program with configurable parameters."
-LangString DESC_SEC_PLUGIN_CAPTURE ${LANG_GERMAN} "Startet ein externes Programm mit einstellbaren Parametern."
-
-LangString DESC_SEC_PLUGIN_CLIPBOARD ${LANG_ENGLISH} "Copy programs to the clipboard."
-LangString DESC_SEC_PLUGIN_CLIPBOARD ${LANG_GERMAN} "Sendungen in die Zwischenablage kopieren."
-
-LangString DESC_SEC_PLUGIN_EMAIL ${LANG_ENGLISH} "Sends an e-mail with an external e-mail application."
-LangString DESC_SEC_PLUGIN_EMAIL ${LANG_GERMAN} "Verschickt eine E-Mail mit Hilfe einer externen E-Mail-Anwendung."
-
-LangString DESC_SEC_PLUGIN_GENRES ${LANG_ENGLISH} "Shows the available programs sorted by genre."
-LangString DESC_SEC_PLUGIN_GENRES ${LANG_GERMAN} "Zeigt die Programme nach Genre sortiert an."
-
-LangString DESC_SEC_PLUGIN_I18N ${LANG_ENGLISH} "A tool for translators of TV-Browser."
-LangString DESC_SEC_PLUGIN_I18N ${LANG_GERMAN} "Ein Werkzeug für Übersetzer von TV-Browser."
-
-LangString DESC_SEC_PLUGIN_LISTVIEW ${LANG_ENGLISH} "Shows a list of currently running programs."
-LangString DESC_SEC_PLUGIN_LISTVIEW ${LANG_GERMAN} "Zeigt eine Liste von momentan laufenden Programmen."
-
-LangString DESC_SEC_PLUGIN_NEWS ${LANG_ENGLISH} "Checks for news about the TV-Browser project."
-LangString DESC_SEC_PLUGIN_NEWS ${LANG_GERMAN} "Prüft automatisch nach Neuigkeiten rund um das TV-Browser-Projekt."
-
-LangString DESC_SEC_PLUGIN_PROGRAM_LIST ${LANG_ENGLISH} "This plugin shows filtered programs in a list."
-LangString DESC_SEC_PLUGIN_PROGRAM_LIST ${LANG_GERMAN} "Dieses Plugin zeigt gefilterte Sendungen in einer Liste an."
-
-LangString DESC_SEC_PLUGIN_PRINT ${LANG_ENGLISH} "This plugin allows to print the program."
-LangString DESC_SEC_PLUGIN_PRINT ${LANG_GERMAN} "Mit diesem Plugin kann die Programmvorschau ausgedruckt werden."
-
-LangString DESC_SEC_PLUGIN_SHOWVIEW ${LANG_ENGLISH} "Tries to calculate the missing Showview numbers after a TV listings update."
-LangString DESC_SEC_PLUGIN_SHOWVIEW ${LANG_GERMAN} "Versucht nach dem Aktualisieren der TV-Daten die fehlenden Showviewnummern zu berechnen."
-
-LangString DESC_SEC_PLUGIN_SIMPLEMARKER ${LANG_ENGLISH} "A simple marker plugin."
-LangString DESC_SEC_PLUGIN_SIMPLEMARKER ${LANG_GERMAN} "Ein einfaches Markierungs-Plugin."
-
-LangString DESC_SEC_PLUGIN_TVRATER ${LANG_ENGLISH} "Allows to rate programs and view ratings entered by other users."
-LangString DESC_SEC_PLUGIN_TVRATER ${LANG_GERMAN} "Ermöglicht die Bewertung von Sendungen und zeigt Bewertungen von anderen Benutzern."
-
-LangString DESC_SEC_PLUGIN_WEB ${LANG_ENGLISH} "Searches the web for a program."
-LangString DESC_SEC_PLUGIN_WEB ${LANG_GERMAN} "Sucht im Netz nach einer Sendung."
-
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
     !insertmacro MUI_DESCRIPTION_TEXT ${SEC_STANDARD} $(DESC_SEC_STANDARD)
-    !insertmacro MUI_DESCRIPTION_TEXT ${SEC_PLUGINS} $(DESC_SEC_PLUGINS)
-    !insertmacro MUI_DESCRIPTION_TEXT ${SEC_LINK} $(DESC_SEC_LINK)
-    !insertmacro MUI_DESCRIPTION_TEXT ${SEC_DATASERVICES} $(DESC_SEC_DATASERVICES)
-    !insertmacro MUI_DESCRIPTION_TEXT ${SEC_SERVICE_TVB} $(DESC_SEC_SERVICE_TVB)
-    !insertmacro MUI_DESCRIPTION_TEXT ${SEC_SERVICE_RADIOTIMES} $(DESC_SEC_SERVICE_RADIOTIMES)
-    !insertmacro MUI_DESCRIPTION_TEXT ${SEC_SERVICE_SWEDB} $(DESC_SEC_SERVICE_SWEDB)
-    !insertmacro MUI_DESCRIPTION_TEXT ${SEC_SERVICE_SCHEDULESDIRECT} $(DESC_SEC_SERVICE_SCHEDULESDIRECT)
-    !insertmacro MUI_DESCRIPTION_TEXT ${SEC_PLUGIN_BLOGTHIS} $(DESC_SEC_PLUGIN_BLOGTHIS)
-    !insertmacro MUI_DESCRIPTION_TEXT ${SEC_PLUGIN_CALENDAR} $(DESC_SEC_PLUGIN_CALENDAR)
-    !insertmacro MUI_DESCRIPTION_TEXT ${SEC_PLUGIN_CAPTURE} $(DESC_SEC_PLUGIN_CAPTURE)
-    !insertmacro MUI_DESCRIPTION_TEXT ${SEC_PLUGIN_CLIPBOARD} $(DESC_SEC_PLUGIN_CLIPBOARD)
-    !insertmacro MUI_DESCRIPTION_TEXT ${SEC_PLUGIN_EMAIL} $(DESC_SEC_PLUGIN_EMAIL)
-    !insertmacro MUI_DESCRIPTION_TEXT ${SEC_PLUGIN_GENRES} $(DESC_SEC_PLUGIN_GENRES)
-    !insertmacro MUI_DESCRIPTION_TEXT ${SEC_PLUGIN_I18N} $(DESC_SEC_PLUGIN_I18N)
-    !insertmacro MUI_DESCRIPTION_TEXT ${SEC_PLUGIN_LISTVIEW} $(DESC_SEC_PLUGIN_LISTVIEW)
-    !insertmacro MUI_DESCRIPTION_TEXT ${SEC_PLUGIN_NEWS} $(DESC_SEC_PLUGIN_NEWS)
-    !insertmacro MUI_DESCRIPTION_TEXT ${SEC_PLUGIN_PROGRAM_LIST} $(DESC_SEC_PLUGIN_PROGRAM_LIST)
-    !insertmacro MUI_DESCRIPTION_TEXT ${SEC_PLUGIN_PRINT} $(DESC_SEC_PLUGIN_PRINT)
-    !insertmacro MUI_DESCRIPTION_TEXT ${SEC_PLUGIN_SHOWVIEW} $(DESC_SEC_PLUGIN_SHOWVIEW)
-    !insertmacro MUI_DESCRIPTION_TEXT ${SEC_PLUGIN_SIMPLEMARKER} $(DESC_SEC_PLUGIN_SIMPLEMARKER)
-    !insertmacro MUI_DESCRIPTION_TEXT ${SEC_PLUGIN_TVRATER} $(DESC_SEC_PLUGIN_TVRATER)
-    !insertmacro MUI_DESCRIPTION_TEXT ${SEC_PLUGIN_WEB} $(DESC_SEC_PLUGIN_WEB)
+    !insertmacro MUI_DESCRIPTION_TEXT ${SEC_DESKTOP} $(DESC_SEC_DESKTOP)
+    !insertmacro MUI_DESCRIPTION_TEXT ${SEC_QUICKLAUNCH} $(DESC_SEC_QUICKLAUNCH)
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 #eof
