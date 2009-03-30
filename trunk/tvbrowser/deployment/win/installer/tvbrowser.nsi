@@ -27,12 +27,15 @@
 
 
 #--------------------------------
-# Include Modern UI
+# Includes
+#--------------------------------
+
 !include "MUI.nsh"
 
 
 #--------------------------------
 # Configuration
+#--------------------------------
 
 # program name
 Name "${PROG_NAME} ${VERSION}"
@@ -44,13 +47,16 @@ OutFile "${PUBLIC_DIR}\${PROG_NAME_FILE}-${VERSION}.exe"
 SetCompressor /SOLID lzma
 
 # The icons of the installer and uninstaller
-!define MUI_ICON "${NSISDIR}\Contrib\Graphics\Icons\murfman-install.ico"
-!define MUI_UNICON "${NSISDIR}\Contrib\Graphics\Icons\murfman-uninstall.ico"
+!define MUI_ICON "${NSISDIR}\Contrib\Graphics\Icons\orange-install.ico"
+!define MUI_UNICON "${NSISDIR}\Contrib\Graphics\Icons\orange-uninstall.ico"
 
+# use titles with linebreaks
 !define MUI_WELCOMEPAGE_TITLE_3LINES
 !define MUI_FINISHPAGE_TITLE_3LINES
 !define MUI_UNWELCOMEPAGE_TITLE_3LINES
 !define MUI_UNFINISHPAGE_TITLE_3LINES
+
+# run TV-Browser from last page
 !define MUI_FINISHPAGE_RUN "$INSTDIR\tvbrowser.exe"
 !define MUI_FINISHPAGE_RUN_NOTCHECKED
 
@@ -59,7 +65,8 @@ SetCompressor /SOLID lzma
 
 
 #--------------------------------
-#Variables
+# Variables
+#--------------------------------
 
 Var STARTMENU_FOLDER
 #Var INI_VALUE
@@ -77,7 +84,8 @@ Var STARTMENU_FOLDER
 
 
 #--------------------------------
-#Pages
+# Installer pages
+#--------------------------------
 
 !insertmacro MUI_PAGE_WELCOME
 !insertmacro MUI_PAGE_LICENSE "${RUNTIME_DIR}\LICENSE.txt"
@@ -96,7 +104,8 @@ Var STARTMENU_FOLDER
 
 
 #--------------------------------
-#Languages
+# Supported installation languages
+#--------------------------------
 
 !insertmacro MUI_LANGUAGE "English"
 !insertmacro MUI_LANGUAGE "German"
@@ -112,6 +121,7 @@ Var STARTMENU_FOLDER
 
 #--------------------------------
 # Installer Functions
+#--------------------------------
 
 Function .onInit
     # have language selection for the user
@@ -358,8 +368,8 @@ Section "$(STD_SECTION_NAME)" SEC_STANDARD
   SetOutPath "$INSTDIR\imgs"
   File "${RUNTIME_DIR}\imgs\*.*"
 
-  SetOutPath "$INSTDIR\icons\tango"
-  File /r "${RUNTIME_DIR}\icons\tango\*.*"
+  SetOutPath "$INSTDIR\icons"
+  File /r "${RUNTIME_DIR}\icons\*.*"
 
   SetOutPath "$INSTDIR\themepacks"
   File "${RUNTIME_DIR}\themepacks\*.*"

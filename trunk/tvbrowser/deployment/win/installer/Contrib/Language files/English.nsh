@@ -13,10 +13,6 @@
   ${LangFileString} MUI_UNTEXT_WELCOME_INFO_TEXT "This wizard will guide you through the uninstallation of $(^NameDA).$\r$\n$\r$\nBefore starting the uninstallation, make sure $(^NameDA) is not running.$\r$\n$\r$\n$_CLICK"
 !endif
 
-!ifdef MUI_WELCOMEPAGE | MUI_UNWELCOMEPAGE
-  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Finish"
-!endif
-
 !ifdef MUI_LICENSEPAGE
   ${LangFileString} MUI_TEXT_LICENSE_TITLE "License Agreement"
   ${LangFileString} MUI_TEXT_LICENSE_SUBTITLE "Please review the license terms before installing $(^NameDA)."
@@ -43,7 +39,7 @@
   ${LangFileString} MUI_INNERTEXT_COMPONENTS_DESCRIPTION_TITLE "Description"
 !endif
 
-!ifdef MUI_UNCOMPONENETSPAGE
+!ifdef MUI_UNCOMPONENTSPAGE
   ${LangFileString} MUI_UNTEXT_COMPONENTS_TITLE "Choose Components"
   ${LangFileString} MUI_UNTEXT_COMPONENTS_SUBTITLE "Choose which features of $(^NameDA) you want to uninstall."
 !endif
@@ -101,6 +97,7 @@
   ${LangFileString} MUI_TEXT_FINISH_REBOOTLATER "I want to manually reboot later"
   ${LangFileString} MUI_TEXT_FINISH_RUN "&Run $(^NameDA)"
   ${LangFileString} MUI_TEXT_FINISH_SHOWREADME "&Show Readme"
+  ${LangFileString} MUI_BUTTONTEXT_FINISH "&Finish"  
 !endif
 
 !ifdef MUI_STARTMENUPAGE
@@ -121,4 +118,12 @@
 
 !ifdef MUI_UNABORTWARNING
   ${LangFileString} MUI_UNTEXT_ABORTWARNING "Are you sure you want to quit $(^Name) Uninstall?"
+!endif
+
+!ifdef MULTIUSER_INSTALLMODEPAGE
+  ${LangFileString} MULTIUSER_TEXT_INSTALLMODE_TITLE "Choose Users"
+  ${LangFileString} MULTIUSER_TEXT_INSTALLMODE_SUBTITLE "Choose for which users you want to install $(^NameDA)."
+  ${LangFileString} MULTIUSER_INNERTEXT_INSTALLMODE_TOP "Select whether you want to install $(^NameDA) for yourself only or for all users of this computer. $(^ClickNext)"
+  ${LangFileString} MULTIUSER_INNERTEXT_INSTALLMODE_ALLUSERS "Install for anyone using this computer"
+  ${LangFileString} MULTIUSER_INNERTEXT_INSTALLMODE_CURRENTUSER "Install just for me"
 !endif
