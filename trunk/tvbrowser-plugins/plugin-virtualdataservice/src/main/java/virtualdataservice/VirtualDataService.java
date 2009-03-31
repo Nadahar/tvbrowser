@@ -124,7 +124,7 @@ public class VirtualDataService extends AbstractTvDataService
 
   public static Version getVersion()
   {
-    return new Version(0, 2, 0, false, "0.0.2.0 beta");
+    return new Version(0, 2, 1, false);
   }
 
   public PluginInfo getInfo()
@@ -198,29 +198,33 @@ public class VirtualDataService extends AbstractTvDataService
           final MutableChannelDayProgram dayProgram = new MutableChannelDayProgram(
               d, channel);
 
-          for (VirtualProgram program : vCh.getPrograms())
-          {
-            if (program.isDayProgram(cal))
-            {
-              actStart = (program.getStart().get(Calendar.HOUR_OF_DAY)* 60)+ program.getStart().get(Calendar.MINUTE);
-              if (actStart > prevEnd){
-                final int dummyPrevStartHH = prevEnd / 60;
-                final MutableProgram dummyPrev = new MutableProgram(channel, d,
-                    dummyPrevStartHH, prevEnd - (dummyPrevStartHH * 60), false);
-                dummyPrev.setTitle(" ");
-                dummyPrev.setLength(actStart-prevEnd);
-                dayProgram.addProgram(dummyPrev);
-              }
- 
-              final MutableProgram p = new MutableProgram(channel, d, program
-                  .getStart().get(Calendar.HOUR_OF_DAY), program.getStart()
-                  .get(Calendar.MINUTE), false);
-              p.setTitle(program.getTitle());
-              p.setLength(program.getLength());
-              dayProgram.addProgram(p);
-              prevEnd = actStart + program.getLength();
-            }
-         }
+          List<VirtualProgram> programs = vCh.getPrograms();
+          if (programs != null) {
+        	  Collections.sort(programs);
+	          for (VirtualProgram program : programs)
+	          {
+	            if (program.isDayProgram(cal))
+	            {
+	              actStart = (program.getStart().get(Calendar.HOUR_OF_DAY)* 60)+ program.getStart().get(Calendar.MINUTE);
+	              if (actStart > prevEnd){
+	                final int dummyPrevStartHH = prevEnd / 60;
+	                final MutableProgram dummyPrev = new MutableProgram(channel, d,
+	                    dummyPrevStartHH, prevEnd - (dummyPrevStartHH * 60), false);
+	                dummyPrev.setTitle(" ");
+	                dummyPrev.setLength(actStart-prevEnd);
+	                dayProgram.addProgram(dummyPrev);
+	              }
+	 
+	              final MutableProgram p = new MutableProgram(channel, d, program
+	                  .getStart().get(Calendar.HOUR_OF_DAY), program.getStart()
+	                  .get(Calendar.MINUTE), false);
+	              p.setTitle(program.getTitle());
+	              p.setLength(program.getLength());
+	              dayProgram.addProgram(p);
+	              prevEnd = actStart + program.getLength();
+	            }
+	         }
+          }
 
           if (dayProgram.getProgramCount() == 0){
             final int dummyStartHH = prevEnd / 60;
