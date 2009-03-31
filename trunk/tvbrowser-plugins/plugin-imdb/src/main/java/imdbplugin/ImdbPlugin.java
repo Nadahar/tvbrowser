@@ -107,16 +107,17 @@ public final class ImdbPlugin extends Plugin {
   private ImdbRating getRatingFor(final Program program) {
     ImdbRating rating = null;
     if (!mExcludedChannels.contains(program.getChannel())) {
-      rating = mRatingCache.get(program.getID());
+      final String cacheKey = getCacheKey(program);
+      rating = mRatingCache.get(cacheKey);
       if (rating == null) {
         rating = getEpisodeRating(program);
         if (rating == null) {
           rating = getProgramRating(program);
         }
         if (rating != null) {
-          mRatingCache.put(program.getID(), rating);
+          mRatingCache.put(cacheKey, rating);
         } else {
-          mRatingCache.put(program.getID(), DUMMY_RATING);
+          mRatingCache.put(cacheKey, DUMMY_RATING);
         }
       }
 
@@ -126,6 +127,15 @@ public final class ImdbPlugin extends Plugin {
     }
 
     return rating;
+  }
+
+  /**
+   * @param program
+   * @return
+   * @deprecated to be replaced with program.getUniqueID() in 3.0
+   */
+  private String getCacheKey(final Program program) {
+    return program.getID() + program.getDateString();
   }
 
   private ImdbRating getEpisodeRating(final Program program) {
