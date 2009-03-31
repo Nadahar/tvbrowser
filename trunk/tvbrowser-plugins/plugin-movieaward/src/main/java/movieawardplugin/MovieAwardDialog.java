@@ -3,6 +3,7 @@ package movieawardplugin;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -28,6 +29,9 @@ public class MovieAwardDialog extends JDialog implements WindowClosingIf {
    */
   private static final transient Localizer mLocalizer = Localizer
       .getLocalizerFor(MovieAwardDialog.class);
+
+  private static final Logger mLog = Logger.getLogger(MovieAwardDialog.class
+      .getName());
 
   public MovieAwardDialog(final JFrame frame,
       final ArrayList<MovieAward> mMovieAwards, final Program program) {
@@ -77,6 +81,8 @@ public class MovieAwardDialog extends JDialog implements WindowClosingIf {
           text.append(mLocalizer.msg("honored", "Honored in the category {0}",
               category));
           break;
+        default:
+          mLog.severe("Missing implementation for award status");
         }
 
         if (award.getRecipient() != null) {
