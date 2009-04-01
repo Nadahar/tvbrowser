@@ -64,7 +64,7 @@ final public class MovieAwardPlugin extends Plugin {
    * all known awards (for movies, documentaries and so on)
    */
   private static final String[] KNOWN_AWARDS = { "cannes", "deutscher_comedypreis", "grimme",
-            "max_ophuels", "menschenrechtsfilmpreis", "oscars" };
+            "max_ophuels", "menschenrechtsfilmpreis", "oscars", "golden_globe" };
   /**
    * all known awards (for movies ONLY)
    */
@@ -75,7 +75,7 @@ final public class MovieAwardPlugin extends Plugin {
    */
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(MovieAwardPlugin.class);
   private static Logger mLog = Logger.getLogger(MovieAwardPlugin.class.getName());
-  private static final Version mVersion = new Version(0, 7);
+  private static final Version mVersion = new Version(0, 8);
 
   private PluginInfo mPluginInfo;
   private ArrayList<MovieAward> mMovieAwards;
