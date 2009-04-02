@@ -252,7 +252,7 @@ public class Tag {
   }
   
   
-  private void replace(StringBuffer buf, String s, char c) {
+  private void replace(StringBuilder buf, String s, char c) {
          int inx;
          inx=buf.indexOf(s);
          while (inx>=0) {
@@ -265,7 +265,7 @@ public class Tag {
   
   private String convertString(String s) {
     
-    StringBuffer buf=new StringBuffer(s);
+    StringBuilder buf = new StringBuilder(s);
     
     replace(buf,"&nbsp;",' ');
     replace(buf,"&amp;",'&');

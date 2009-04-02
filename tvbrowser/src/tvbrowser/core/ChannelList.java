@@ -706,7 +706,7 @@ public class ChannelList {
   }
 
   private static String createPropertyForChannel(Channel channel, String value) {
-    return new StringBuffer(channel.getDataServiceProxy().getId()).append(":")
+    return new StringBuilder(channel.getDataServiceProxy().getId()).append(":")
         .append(channel.getGroup().getId()).append(":").append(
             channel.getCountry()).append(":").append(channel.getId()).append(
             "=").append(value).toString();
@@ -714,18 +714,18 @@ public class ChannelList {
 
   private static String getMapValueForChannel(Channel channel,
       HashMap<String, String> map) {
-    String value = map.get(new StringBuffer(channel.getDataServiceProxy()
+    String value = map.get(new StringBuilder(channel.getDataServiceProxy()
         .getId()).append(":").append(channel.getGroup().getId()).append(":")
         .append(channel.getCountry()).append(":").append(channel.getId())
         .toString());
 
     if (value == null) {
-      value = map.get(new StringBuffer(channel.getDataServiceProxy().getId())
+      value = map.get(new StringBuilder(channel.getDataServiceProxy().getId())
           .append(":").append(channel.getGroup().getId()).append(":").append(
               channel.getId()).toString());
     }
     if (value == null) {
-      value = map.get(new StringBuffer(channel.getDataServiceProxy().getId())
+      value = map.get(new StringBuilder(channel.getDataServiceProxy().getId())
           .append(":").append(channel.getId()).toString());
     }
 

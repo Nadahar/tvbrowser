@@ -46,7 +46,7 @@ public class CaptureUtilities {
           withthis = "";
         }
         
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         int pos = 0;
         
         while ((pos = inhere.toLowerCase().indexOf(thisone.toLowerCase())) > 0) {

@@ -1358,7 +1358,7 @@ public class ProgramTable extends JPanel
         return tooltip;
       }
       
-      StringBuffer buffer = new StringBuffer();
+      StringBuilder buffer = new StringBuilder();
       // if program is partially not visible then show the title as tooltip
       final JViewport viewport = MainFrame.getInstance()
           .getProgramTableScrollPane().getViewport();

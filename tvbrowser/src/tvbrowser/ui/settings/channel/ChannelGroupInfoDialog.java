@@ -144,7 +144,7 @@ public class ChannelGroupInfoDialog extends JDialog implements WindowClosingIf{
    * @return Html-Text
    */
   private String generateHtml(ExtendedHTMLDocument doc) {
-    StringBuffer html = new StringBuffer(1024);
+    StringBuilder html = new StringBuilder(1024);
 
     html.append("<html><style type=\"text/css\" media=\"screen\">"
                 + "<!--" +
@@ -168,7 +168,7 @@ public class ChannelGroupInfoDialog extends JDialog implements WindowClosingIf{
       Channel[] ch = proxy.getAvailableChannels(mChannelGroup);
       
       if (ch != null) {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
 
         for (int i=0; i<ch.length-1; i++) {
           buf.append(ch[i].getName()).append(", ");

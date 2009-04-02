@@ -67,7 +67,7 @@ public class ChannelUtil {
         categories.add(mLocalizer.msg("categoryOthers", "Sonstige Sparten"));
       }
 
-      StringBuffer buf = new StringBuffer(mLocalizer.msg("categoryTV", "TV"));
+      StringBuilder buf = new StringBuilder(mLocalizer.msg("categoryTV", "TV"));
 
       if (categories.size() > 0) {
         buf.append(" (");

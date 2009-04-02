@@ -158,7 +158,7 @@ public class PropertiesNode extends AbstractHierarchicalNode implements
     Properties prop = mOriginalPropertyMap.get(locale);
 
     if (prop == null) {
-      StringBuffer propName = new StringBuffer();
+      StringBuilder propName = new StringBuilder();
 
       propName.append(mPropertiesFile.substring(0, mPropertiesFile
           .lastIndexOf(".properties")));
@@ -199,7 +199,8 @@ public class PropertiesNode extends AbstractHierarchicalNode implements
    * @return Returns the filename for the properties file of the current user
    */
   private String getUserPropertiesFileName(Locale locale) {
-    StringBuffer propName = new StringBuffer(Settings.getUserSettingsDirName())
+    StringBuilder propName = new StringBuilder(Settings
+        .getUserSettingsDirName())
         .append(File.separatorChar).append("lang").append(File.separatorChar);
 
     propName.append(mPropertiesFile.substring(0, mPropertiesFile
@@ -439,7 +440,7 @@ public class PropertiesNode extends AbstractHierarchicalNode implements
     if (bufLen < 0) {
       bufLen = Integer.MAX_VALUE;
     }
-    StringBuffer outBuffer = new StringBuffer(bufLen);
+    StringBuilder outBuffer = new StringBuilder(bufLen);
 
     for (int x = 0; x < len; x++) {
       char aChar = theString.charAt(x);

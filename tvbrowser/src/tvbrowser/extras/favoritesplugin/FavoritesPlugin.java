@@ -562,7 +562,7 @@ public class FavoritesPlugin {
 
   private void sendToPlugins() {
     Collection<ReceiveTargetItem> targets = mSendPluginsTable.values();
-    StringBuffer buffer = new StringBuffer();
+    StringBuilder buffer = new StringBuilder();
     ArrayList<Favorite> errorFavorites = new ArrayList<Favorite>(0);
     
     for(ReceiveTargetItem target : targets) {

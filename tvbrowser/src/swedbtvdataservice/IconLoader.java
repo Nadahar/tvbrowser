@@ -47,7 +47,7 @@ class IconLoader {
   }
   
   public Icon getIcon(String channelId, String url) throws IOException {
-    String key = new StringBuffer("icons_").append(mGroup).append("_")
+    String key = new StringBuilder("icons_").append(mGroup).append("_")
             .append(channelId).toString();
     String prevUrl = (String) mProperties.get(key);
     Icon icon = null;

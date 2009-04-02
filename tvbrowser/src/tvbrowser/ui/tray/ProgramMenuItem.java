@@ -295,10 +295,11 @@ public class ProgramMenuItem extends JMenuItem {
       if(mToolTipTextBuffer == null) {
         String episodeText = CompoundedProgramFieldType.EPISODE_COMPOSITION.getFormatedValueForProgram(mProgram);
         
-        StringBuffer episode = new StringBuffer(episodeText != null ? episodeText : "");
+        StringBuilder episode = new StringBuilder(
+            episodeText != null ? episodeText : "");
         breakLines(episode);
         
-        StringBuffer info;
+        StringBuilder info;
         if (mProgram.getShortInfo() == null) {
           String desc = mProgram.getDescription();
 
@@ -306,18 +307,18 @@ public class ProgramMenuItem extends JMenuItem {
             if (desc.length() > 197) {
               desc = desc.substring(0, 197) + "...";
             }
-            info = new StringBuffer(desc);
+            info = new StringBuilder(desc);
           }
           else {
-            info = new StringBuffer("");
+            info = new StringBuilder();
           }
         }
         else {
-          info = new StringBuffer(mProgram.getShortInfo());
+          info = new StringBuilder(mProgram.getShortInfo());
         }
         breakLines(info);
   
-        StringBuffer toolTip = new StringBuffer("<html>");
+        StringBuilder toolTip = new StringBuilder("<html>");
         if (episode.length() > 0) {
           toolTip.append(episode.insert(0, "<b>").append("</b><br>"));
         }
@@ -337,7 +338,7 @@ public class ProgramMenuItem extends JMenuItem {
     return "";
   }
 
-  private void breakLines(StringBuffer info) {
+  private void breakLines(StringBuilder info) {
     for (int i = 38; i < info.length(); i += 38) {
       int index = info.indexOf(" ", i);
       if (index == -1) {

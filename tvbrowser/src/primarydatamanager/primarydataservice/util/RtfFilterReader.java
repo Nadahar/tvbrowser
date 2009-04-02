@@ -30,8 +30,8 @@ package primarydatamanager.primarydataservice.util;
 import java.io.FilterReader;
 import java.io.IOException;
 import java.io.Reader;
-import java.util.ArrayList;
 import java.math.BigInteger;
+import java.util.ArrayList;
 
 public class RtfFilterReader extends FilterReader {
 
@@ -87,7 +87,7 @@ public class RtfFilterReader extends FilterReader {
 
     while (ch == '\\' && ch != -1) {
 
-      StringBuffer buf = new StringBuffer();
+      StringBuilder buf = new StringBuilder();
 
       ch = getNext();
 

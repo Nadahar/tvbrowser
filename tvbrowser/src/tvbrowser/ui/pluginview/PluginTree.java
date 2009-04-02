@@ -147,7 +147,7 @@ public class PluginTree extends JTree implements DragGestureListener,
           int leafs = getLeafCount(node);
           node.setLeafCount(leafs);
           if (node.isShowLeafCount()) {
-            StringBuffer buf = new StringBuffer(o.toString());
+            StringBuilder buf = new StringBuilder(o.toString());
             if (leafs > 0) {
               buf.append(" [").append(leafs).append(']');
             }

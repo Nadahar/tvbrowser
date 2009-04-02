@@ -129,7 +129,7 @@ public class ChannelArrayProperty extends Property {
     if (equalsDefault) {
       setProperty(null);
     } else {
-      StringBuffer buffer = new StringBuffer();
+      StringBuilder buffer = new StringBuilder();
     
       for (int i = 0; i < value.length; i++) {
         if (value[i] == null)

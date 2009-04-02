@@ -386,7 +386,7 @@ public class MirrorUpdater {
 
   
   private String createIndexHtmlOLD(Channel[] channelArr) {
-    StringBuffer buffer = new StringBuffer(1024);
+    StringBuilder buffer = new StringBuilder(1024);
     
     buffer.append("<html><head>");
     buffer.append("<title>TV-Browser Mirror</title>");

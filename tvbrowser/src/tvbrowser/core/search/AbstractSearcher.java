@@ -116,7 +116,7 @@ public abstract class AbstractSearcher implements ProgramSearcher {
    * @return concatenated string for use in regex search
    */
   private String getProgramFieldsText(Program prog, ProgramFieldType[] fieldArr) {
-    StringBuffer buf = new StringBuffer();
+    StringBuilder buf = new StringBuilder();
 
     for (ProgramFieldType fieldType : fieldArr) {
       // Get the field value as String
@@ -156,7 +156,7 @@ public abstract class AbstractSearcher implements ProgramSearcher {
     // remove line breaks. for performance, do this manually
     int stringLength = s.length();
     char[] arr = s.toCharArray();
-    StringBuffer res = new StringBuffer(stringLength);
+    StringBuilder res = new StringBuilder(stringLength);
     for (int i = 0; i < stringLength; i++) {
       if (arr[i] != '\n') {
         res.append(arr[i]);

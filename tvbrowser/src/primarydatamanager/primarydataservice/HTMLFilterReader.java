@@ -54,7 +54,7 @@ public class HTMLFilterReader extends FilterReader {
   
   private String readTag() throws IOException {
     ch=in.read();
-    StringBuffer tagBuf=new StringBuffer();
+    StringBuilder tagBuf = new StringBuilder();
     while (ch!=-1 && ch!='>' && ch!=' ') {
       tagBuf.append(Character.toLowerCase((char)ch));
       ch=in.read();        
@@ -64,7 +64,7 @@ public class HTMLFilterReader extends FilterReader {
   
   private String readQuotedAttribute() throws IOException {
     ch=in.read();
-    StringBuffer buf=new StringBuffer();
+    StringBuilder buf = new StringBuilder();
     while (ch!=-1 && ch!='>' && ch!='"') {
       buf.append((char)ch);
       ch=in.read();
@@ -77,7 +77,7 @@ public class HTMLFilterReader extends FilterReader {
   
   private String readValueAttribute() throws IOException {
     ch=in.read();
-    StringBuffer buf=new StringBuffer();
+    StringBuilder buf = new StringBuilder();
     while (ch!=-1 && ch!='>' && ch!=' ') {
       buf.append((char)ch);
       ch=in.read();
@@ -90,7 +90,7 @@ public class HTMLFilterReader extends FilterReader {
   }
   
   private String[] readNextAttribute() throws IOException {
-    StringBuffer keyStrBuf=new StringBuffer();
+    StringBuilder keyStrBuf = new StringBuilder();
     while (ch==' ') {
       ch=in.read();
     }
@@ -192,7 +192,7 @@ public class HTMLFilterReader extends FilterReader {
       
        
     //  mBufStr=new StringBuffer();
-      StringBuffer buf=new StringBuffer();
+      StringBuilder buf = new StringBuilder();
       if (ch!=-1) ch=in.read();
       while (ch!=-1 && ch!='<') {
         if (ch!='\n' && ch!='\r') {

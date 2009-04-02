@@ -486,7 +486,11 @@ public class MutableProgram implements Program {
         String channelId = mChannel.getId();
         String country = mChannel.getCountry();
 
-        mId = (new StringBuffer(dataServiceId).append('_').append(groupId).append('_').append(country).append('_').append(channelId).append('_').append(getHours()).append(':').append(getMinutes()).append(':').append(TimeZone.getDefault().getRawOffset()/60000)).toString();
+        mId = (new StringBuilder(dataServiceId).append('_').append(groupId)
+            .append('_').append(country).append('_').append(channelId).append(
+                '_').append(getHours()).append(':').append(getMinutes())
+            .append(':').append(TimeZone.getDefault().getRawOffset() / 60000))
+            .toString();
       }
     }
     return mId;
@@ -505,7 +509,11 @@ public class MutableProgram implements Program {
         String country = mChannel.getCountry();
         String date = new SimpleDateFormat(ID_DATE_FORMAT).format(getDate().getCalendar().getTime());
 
-        mUniqueId = (new StringBuffer(dataServiceId).append('_').append(groupId).append('_').append(country).append('_').append(channelId).append('_').append(date).append('_').append(getHours()).append(':').append(getMinutes()).append(':').append(TimeZone.getDefault().getRawOffset()/60000)).toString();
+        mUniqueId = (new StringBuilder(dataServiceId).append('_').append(
+            groupId).append('_').append(country).append('_').append(channelId)
+            .append('_').append(date).append('_').append(getHours())
+            .append(':').append(getMinutes()).append(':').append(TimeZone
+            .getDefault().getRawOffset() / 60000)).toString();
       }
     }
     return mUniqueId;
@@ -598,7 +606,8 @@ public class MutableProgram implements Program {
         hours += 24;
       }
 
-      return new StringBuffer().append(hours).append(":").append((minutes < 10) ? "0" : "").append(minutes).toString();
+      return new StringBuilder().append(hours).append(":").append(
+          (minutes < 10) ? "0" : "").append(minutes).toString();
     }
   }
 

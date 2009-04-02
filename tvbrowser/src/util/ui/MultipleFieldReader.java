@@ -222,7 +222,7 @@ public class MultipleFieldReader extends Reader {
       return false;
     }
 
-    StringBuffer shortInfo = new StringBuffer(shortDesc.trim());
+    StringBuilder shortInfo = new StringBuilder(shortDesc.trim());
     
     while(shortInfo.toString().endsWith("."))
       shortInfo.deleteCharAt(shortInfo.length() - 1);

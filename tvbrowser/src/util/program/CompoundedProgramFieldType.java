@@ -117,7 +117,7 @@ public class CompoundedProgramFieldType {
       return found ? value : null;
     }
     else if(mPartSeparators != null) {
-      StringBuffer value = new StringBuffer();
+      StringBuilder value = new StringBuilder();
       
       String prevValue = "";
       String currentValue = "";

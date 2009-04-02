@@ -301,7 +301,7 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
         Program exampleProgram = Plugin.getPluginManager().getExampleProgram();
 
         // Get the context menu item text
-        StringBuffer text = new StringBuffer();
+        StringBuilder text = new StringBuilder();
         Icon icon = null;
         // Action[] actionArr = plugin.getContextMenuActions(exampleProgram);
         ActionMenu actionMenu = menuIf.getContextMenuActions(exampleProgram);

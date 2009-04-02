@@ -384,7 +384,7 @@ public class Mirror {
     }
 
     // We didn't find a mirror? This should not happen -> throw exception
-    StringBuffer buf = new StringBuffer();
+    StringBuilder buf = new StringBuilder();
     for (Mirror mirror : oldMirrorArr) {
       buf.append(mirror.getUrl()).append('\n');
     }

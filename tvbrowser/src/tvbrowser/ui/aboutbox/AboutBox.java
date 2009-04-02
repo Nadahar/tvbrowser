@@ -140,7 +140,8 @@ public class AboutBox extends JDialog implements WindowClosingIf{
     }
   }
   
-  private StringBuffer createInfoEntry(StringBuffer buf, String key, String value) {
+  private StringBuilder createInfoEntry(StringBuilder buf, String key,
+      String value) {
     
     buf.append("<tr><td width=\"35%\" valign=\"top\">");
     buf.append("<div id=\"key\">");
@@ -150,12 +151,12 @@ public class AboutBox extends JDialog implements WindowClosingIf{
     return buf.append("</td><td>").append(value).append("</td></tr>");
   }
   
-  private void createSpacer(StringBuffer buf) {
+  private void createSpacer(StringBuilder buf) {
       buf.append("<tr><td id=\"small\"></td></tr>");
       
   }
 
-  private void createJavaVersionEntry(StringBuffer buf) {
+  private void createJavaVersionEntry(StringBuilder buf) {
       
       buf.append("<tr><td colspan=\"2\">");
       
@@ -172,7 +173,7 @@ public class AboutBox extends JDialog implements WindowClosingIf{
   
   private String createAboutText(ExtendedHTMLDocument doc) {
   
-    StringBuffer buf=new StringBuffer();
+    StringBuilder buf = new StringBuilder();
     buf.append("<html>" +
                "  <head>" +
                "<style type=\"text/css\" media=\"screen\">" +

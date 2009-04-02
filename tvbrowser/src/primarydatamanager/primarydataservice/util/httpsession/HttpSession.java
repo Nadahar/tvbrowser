@@ -135,7 +135,7 @@ public class HttpSession {
 
     DataOutputStream out = new DataOutputStream (uconn.getOutputStream ());
     Field[] formFields = form.getFields();
-    StringBuffer contentBuf = new StringBuffer();
+    StringBuilder contentBuf = new StringBuilder();
     for (int i=0; i<formFields.length; i++) {
       if (i>0) {
         contentBuf.append('&');
@@ -175,7 +175,7 @@ public class HttpSession {
     
     DataOutputStream out = new DataOutputStream (uconn.getOutputStream ()); 
     Field[] formFields = form.getFields();
-    StringBuffer contentBuf = new StringBuffer();
+    StringBuilder contentBuf = new StringBuilder();
     for (int i=0; i<formFields.length; i++) {
       if (i>0) {
         contentBuf.append('&');

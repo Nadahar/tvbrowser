@@ -199,7 +199,7 @@ public class ProgramTextCreator {
       boolean showPersonLinks) {
     try {
     // NOTE: All field types are included until type 25 (REPETITION_ON_TYPE)
-      StringBuffer buffer = new StringBuffer(1024);
+      StringBuilder buffer = new StringBuilder(1024);
 
     String titleFont, titleSize, bodyFont;
 
@@ -320,7 +320,7 @@ public class ProgramTextCreator {
             imageIcon = (ImageIcon)UiUtilities.scaleIcon(imageIcon, imageIcon.getIconWidth() * zoom/100);
           }
           
-          StringBuffer value = new StringBuffer();
+          StringBuilder value = new StringBuilder();
             
           String textField = prog.getTextField(ProgramFieldType.PICTURE_COPYRIGHT_TYPE);
           if (textField != null) {
@@ -717,7 +717,7 @@ public class ProgramTextCreator {
 
   private static String addSearchLink(String topic, String displayText) {
       String style = " style=\"color:black; border-bottom: 1px dashed;\"";
-      StringBuffer buffer = new StringBuffer(32);
+      StringBuilder buffer = new StringBuilder(32);
       buffer.append("<a href=\"");
       buffer.append(TVBROWSER_URL_PROTOCOL);
       buffer.append(topic.replaceAll("\"", "").replaceAll("'", ""));
@@ -764,14 +764,14 @@ public class ProgramTextCreator {
     return items;
   }
 
-  private static void addEntry(ExtendedHTMLDocument doc, StringBuffer buffer,
+  private static void addEntry(ExtendedHTMLDocument doc, StringBuilder buffer,
       Program prog, ProgramFieldType fieldType, boolean showHelpLinks,
       boolean showPersonLinks) {
     addEntry(doc, buffer, prog, fieldType, false, showHelpLinks,
         showPersonLinks);
   }
 
-  private static void addEntry(ExtendedHTMLDocument doc, StringBuffer buffer,
+  private static void addEntry(ExtendedHTMLDocument doc, StringBuilder buffer,
       Program prog, ProgramFieldType fieldType, boolean createLinks,
       boolean showHelpLinks, boolean showPersonLinks) {
 
@@ -789,7 +789,8 @@ public class ProgramTextCreator {
         String description = prog.getDescription().trim();
 
         if (prog.getShortInfo() != null) {
-          StringBuffer shortInfo = new StringBuffer(prog.getShortInfo().trim());
+          StringBuilder shortInfo = new StringBuilder(prog.getShortInfo()
+              .trim());
 
           while (shortInfo.toString().endsWith(".")) {
             shortInfo.deleteCharAt(shortInfo.length() - 1);
@@ -931,7 +932,7 @@ public class ProgramTextCreator {
     if (lines.length > 5) {
       int avg = (text.length() - lines.length + 1) / lines.length;
       if (avg < 100 && avg > 50) {
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         for (int i = 0; i < lines.length; i++) {
           result.append(lines[i]);
           if (lines[i].length() < avg - 10) {
@@ -946,7 +947,7 @@ public class ProgramTextCreator {
     return text;
   }
 
-  private static void startInfoSection(StringBuffer buffer, String section) {
+  private static void startInfoSection(StringBuilder buffer, String section) {
     buffer.append("<tr><td valign=\"top\" style=\"color:#808080; font-size:");
     buffer.append(mBodyFontSize);
     buffer.append("\"><b>");
@@ -956,17 +957,18 @@ public class ProgramTextCreator {
     buffer.append("\">");
   }
 
-  private static void addSeparator(ExtendedHTMLDocument doc, StringBuffer buffer) {
+  private static void addSeparator(ExtendedHTMLDocument doc,
+      StringBuilder buffer) {
     buffer.append("<tr><td colspan=\"2\">");
     buffer.append("<div style=\"font-size:0;\">").append(
         doc.createCompTag(new HorizontalLine())).append("</div></td></tr>");
   }
 
-  private static void openPara(StringBuffer buffer, String style) {
+  private static void openPara(StringBuilder buffer, String style) {
     buffer.append("<div id=\"").append(style).append("\">");
   }
 
-  private static void closePara(StringBuffer buffer) {
+  private static void closePara(StringBuilder buffer) {
     buffer.append("</div>\n");
   }
 

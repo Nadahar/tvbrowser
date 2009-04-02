@@ -24,12 +24,12 @@
  */
 package captureplugin.drivers.dreambox.connector;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
-
-import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * This class parses the timerevent-xml-stream from a dreambox
@@ -37,7 +37,7 @@ import java.util.HashMap;
 public class DreamboxTimerHandler extends DefaultHandler {
     private ArrayList<HashMap<String, String>> mTimers = new ArrayList<HashMap<String, String>>();
     private HashMap<String, String> mCurrentHashMap = new HashMap<String, String>();
-    private StringBuffer mCharacters = new StringBuffer();
+    private StringBuilder mCharacters = new StringBuilder();
 
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
@@ -49,7 +49,7 @@ public class DreamboxTimerHandler extends DefaultHandler {
 
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-        mCharacters = new StringBuffer();
+        mCharacters = new StringBuilder();
 
         if ("e2timer".equals(qName)) {
             mCurrentHashMap = new HashMap<String, String>();

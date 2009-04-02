@@ -183,8 +183,8 @@ public class BbcFileParser {
             
             // Get Description
             
-            StringBuffer shortBuffer = new StringBuffer();
-            StringBuffer longBuffer = new StringBuffer();
+            StringBuilder shortBuffer = new StringBuilder();
+            StringBuilder longBuffer = new StringBuilder();
             
             int maxSyn = programInformation.getBasicDescription().getNumSynopses();
             for (int syni=0;syni<maxSyn;syni++) {
@@ -230,16 +230,17 @@ public class BbcFileParser {
               }
               else if (credit.getRole() != null && credit.getRole().endsWith("ACTOR")) {
                 
-                StringBuffer creditList = new StringBuffer();
+                StringBuilder creditList = new StringBuilder();
                 if (credit.getNumPersonNames() > 0) {
-                  StringBuffer person = new StringBuffer();
+                  StringBuilder person = new StringBuilder();
                   
                   for (int cv =0;cv<credit.getNumCharacters();cv++) {
                     person.append(credit.getCharacter(cv).getName().trim());
                     person.append('/');
                   }
   
-                  person = new StringBuffer(person.substring(0, person.length()-1));
+                  person = new StringBuilder(person.substring(0, person
+                      .length() - 1));
                   
                   person.append('\t');
                   
@@ -269,7 +270,7 @@ public class BbcFileParser {
             // Genre
             int maxg = programInformation.getBasicDescription().getNumGenres();
             
-            StringBuffer genrebuffer = new StringBuffer();
+            StringBuilder genrebuffer = new StringBuilder();
             
             for (int gi=0;gi<maxg;gi++) {
               genrebuffer.append(programInformation.getBasicDescription().getGenre(gi).getMPEG7Name(Genre.MAIN).trim()).append(", ");
@@ -349,7 +350,7 @@ public class BbcFileParser {
   }
 
   private String getPersonNames(CreditsItem credit) {
-    StringBuffer result = new StringBuffer();
+    StringBuilder result = new StringBuilder();
     for (int i = 0; i < credit.getNumPersonNames(); i++) {
       if (i > 0) {
         result.append(", ");

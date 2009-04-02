@@ -93,8 +93,9 @@ public class MailCreator {
    * @param program Programs to show in the Mail
    */
   void createMail(Frame parent, Program[] program) {
-    String param = mFormating.getContentValue();//mSettings.getProperty("paramToUse", EMailPlugin.DEFAULT_PARAMETER);
-    StringBuffer result = new StringBuffer();
+    final String param = mFormating.getContentValue();// mSettings.getProperty("paramToUse",
+                                                      // EMailPlugin.DEFAULT_PARAMETER);
+    final StringBuilder result = new StringBuilder();
     ParamParser parser = new ParamParser();
 
     int i = 0;

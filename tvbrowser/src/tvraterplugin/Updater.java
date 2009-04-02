@@ -164,7 +164,7 @@ public class Updater implements Progress {
    */
   private String getTextFromNode(Node data) {
     Node child = data.getFirstChild();
-    StringBuffer text = new StringBuffer();
+    StringBuilder text = new StringBuilder();
 
     while (child != null) {
 
@@ -274,7 +274,7 @@ public class Updater implements Progress {
    * @return Text in this Node
    */
   private String getNodeValue(Node node) {
-    StringBuffer value = new StringBuffer();
+    StringBuilder value = new StringBuilder();
 
     Node child = node.getFirstChild();
     while (child != null) {

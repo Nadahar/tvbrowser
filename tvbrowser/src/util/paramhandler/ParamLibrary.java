@@ -179,7 +179,7 @@ public class ParamLibrary {
       String res = removeNull(prg.getDescription());
       String copyright = prg.getChannel().getCopyrightNotice();
 	    if (copyright != null) {
-        return new StringBuffer(res).append('\n').append(copyright).toString();
+        return new StringBuilder(res).append('\n').append(copyright).toString();
       }
       return res;
     } else if (key.equals("episode")) {
@@ -323,21 +323,21 @@ public class ParamLibrary {
         return null;
       }
     } else if (function.equals("concat")) {
-      StringBuffer buffer = new StringBuffer();
+      StringBuilder buffer = new StringBuilder();
 
       for (int i = 0; i < params.length; i++) {
         buffer.append(params[i]);
       }
       return buffer.toString();
     } else if (function.equals("clean")) {
-      StringBuffer buffer = new StringBuffer();
+      StringBuilder buffer = new StringBuilder();
 
       for (int i = 0; i < params.length; i++) {
         buffer.append(clean(params[i]));
       }
       return buffer.toString();
     } else if (function.equals("cleanLess")) {
-      StringBuffer buffer = new StringBuffer();
+      StringBuilder buffer = new StringBuilder();
 
       for (int i = 0; i < params.length; i++) {
         buffer.append(cleanLess(params[i]));
@@ -382,7 +382,7 @@ public class ParamLibrary {
       
       TextLineBreakerStringWidth breaker = new TextLineBreakerStringWidth();
 
-      StringBuffer result = new StringBuffer();
+      StringBuilder result = new StringBuilder();
       
       try {
         String[] lines = breaker.breakLines(new StringReader(params[0]), num);
@@ -439,7 +439,7 @@ public class ParamLibrary {
    * @return
    */
   private String addLeadingZeros(String string, int num) {
-    StringBuffer buffer = new StringBuffer(string);
+    StringBuilder buffer = new StringBuilder(string);
 
     while (buffer.length() < num) {
       buffer.insert(0, '0');
@@ -455,7 +455,7 @@ public class ParamLibrary {
    * @return cleaned String
    */
   private String clean(String clean) {
-    StringBuffer buffer = new StringBuffer();
+    StringBuilder buffer = new StringBuilder();
     char[] chars = clean.trim().toCharArray();
 
     for (int i = 0; i < chars.length; i++) {
@@ -487,7 +487,7 @@ public class ParamLibrary {
    * @return cleaned String
    */
   private String cleanLess(String clean) {
-    StringBuffer buffer = new StringBuffer();
+    StringBuilder buffer = new StringBuilder();
     char[] chars = clean.trim().toCharArray();
 
     for (int i = 0; i < chars.length; i++) {

@@ -145,7 +145,7 @@ public class DataHydraChannelContainer {
   }
 
   public String getLastUpdateString() {
-    StringBuffer buffer = new StringBuffer();
+    StringBuilder buffer = new StringBuilder();
     Enumeration<String> enu = lastUpdate.keys();
     while (enu.hasMoreElements()) {
       String date = (String) enu.nextElement();
