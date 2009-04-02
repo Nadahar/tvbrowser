@@ -132,10 +132,17 @@ public final class ImdbPlugin extends Plugin {
   /**
    * @param program
    * @return
-   * @deprecated to be replaced with program.getUniqueID() in 3.0
    */
   private String getCacheKey(final Program program) {
-    return program.getID() + program.getDateString();
+    final StringBuilder builder = new StringBuilder(program.getTitle());
+    builder.append('~');
+    final String episode = program.getTextField(ProgramFieldType.EPISODE_TYPE);
+    if (episode != null) {
+      builder.append(episode);
+    }
+    builder.append('~');
+    builder.append(program.getIntField(ProgramFieldType.PRODUCTION_YEAR_TYPE));
+    return builder.toString();
   }
 
   private ImdbRating getEpisodeRating(final Program program) {
