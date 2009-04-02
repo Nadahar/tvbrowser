@@ -156,7 +156,7 @@ public class SummaryFile extends AbstractFile {
    * @return The hash key.
    */
   private String getChannelKey(String country, String channelId) {
-    return new StringBuffer(country).append('_').append(channelId).toString();
+    return new StringBuilder(country).append('_').append(channelId).toString();
   }
 
 

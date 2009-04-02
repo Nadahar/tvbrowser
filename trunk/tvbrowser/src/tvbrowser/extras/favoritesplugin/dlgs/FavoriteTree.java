@@ -709,7 +709,7 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
 
   public String convertValueToText(Object value, boolean selected,
       boolean expanded, boolean leaf, int row, boolean hasFocus) {
-    StringBuffer text = new StringBuffer(value.toString());
+    StringBuilder text = new StringBuilder(value.toString());
 
     if(value instanceof FavoriteNode) {
       int[] count = FavoriteTreeModel.getProgramsCount((FavoriteNode)value);

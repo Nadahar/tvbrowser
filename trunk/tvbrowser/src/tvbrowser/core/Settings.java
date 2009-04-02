@@ -147,7 +147,7 @@ public class Settings {
    * Returns the user directory. (e.g.: ~/.tvbrowser/)
    */
   public static String getUserDirectoryName() {
-    String dir = new StringBuffer(System.getProperty("user.home")).append(
+    String dir = new StringBuilder(System.getProperty("user.home")).append(
         File.separator).append(DEFAULT_USER_DIR).toString();
     return TVBrowser.isTransportable() ? new File("settings").getAbsolutePath() : mDefaultSettings.getProperty("userdir", dir);
   }
@@ -159,7 +159,7 @@ public class Settings {
       version = version.substring(0, version.indexOf('-'));
     }
     
-    return new StringBuffer(getUserDirectoryName())
+    return new StringBuilder(getUserDirectoryName())
         .append(File.separator).append(version).toString();
   }
 

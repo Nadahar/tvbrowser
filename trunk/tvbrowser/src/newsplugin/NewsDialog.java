@@ -190,7 +190,7 @@ public class NewsDialog implements WindowClosingIf {
   private String createHtmlText(ExtendedHTMLDocument doc) {
     DateFormat dateFormat = DateFormat.getDateInstance();
     
-    StringBuffer buf = new StringBuffer("<html><head>"
+    StringBuilder buf = new StringBuilder("<html><head>"
       + "<style type=\"text/css\" media=\"screen\"><!--"
       + "body { font-family: Dialog; }"
       + "td.time { font-size: small; font-style: italic; }"

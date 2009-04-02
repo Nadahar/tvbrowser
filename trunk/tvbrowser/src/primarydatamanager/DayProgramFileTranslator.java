@@ -198,7 +198,7 @@ public class DayProgramFileTranslator {
     }
 
     private static String programInfoToString(int info) {
-    StringBuffer buf = new StringBuffer(128);
+      StringBuilder buf = new StringBuilder(128);
 
     if (bitSet(info, Program.INFO_VISION_BLACK_AND_WHITE)) {
       buf.append("Black and white  ");

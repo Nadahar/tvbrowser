@@ -9,13 +9,13 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class DreamboxStateHandler extends DefaultHandler {
 
-    StringBuffer mCharacters = new StringBuffer();
+  StringBuilder mCharacters = new StringBuilder();
     String mState;
     String mStatetext;
 
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-        mCharacters = new StringBuffer();
+        mCharacters = new StringBuilder();
     }
 
     @Override

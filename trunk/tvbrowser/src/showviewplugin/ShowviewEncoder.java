@@ -279,7 +279,7 @@ public class ShowviewEncoder {
     }
     
     // Code schön formatieren
-    StringBuffer buffer = new StringBuffer();
+    StringBuilder buffer = new StringBuilder();
     showviewArr = splitDigits(showview);
     for (int i = 0; i < showviewArr.length; i++) {
       buffer.append(showviewArr[i]);

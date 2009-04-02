@@ -1136,7 +1136,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
   }
 
   private String getMarkedByTooltip() {
-    StringBuffer buffer = new StringBuffer("");
+    StringBuilder buffer = new StringBuilder();
     Marker[] markers = mProgram.getMarkerArr();
     for (int i = markers.length - 1; i >= 0; i--) {
       Marker marker = markers[i];

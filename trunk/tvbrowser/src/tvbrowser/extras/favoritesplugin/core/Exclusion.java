@@ -230,7 +230,7 @@ public class Exclusion {
 
     if (mTopic != null) {
       Iterator<ProgramFieldType> types = ProgramFieldType.getTypeIterator();
-      StringBuffer value = new StringBuffer();
+      StringBuilder value = new StringBuilder();
       
       while(types.hasNext()) {
         ProgramFieldType type = (ProgramFieldType)types.next();

@@ -720,7 +720,8 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
 
       if (!groups.contains(channelArr[i].getGroup().getId())) {
         groups
-            .add(new StringBuffer(channelArr[i].getDataServiceProxy().getId())
+            .add(new StringBuilder(channelArr[i].getDataServiceProxy()
+            .getId())
                 .append('.').append(channelArr[i].getGroup().getId())
                 .toString());
       }

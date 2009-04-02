@@ -220,7 +220,7 @@ public class ChannelList {
     for (int i = 0; i < getChannelCount(); i++) {
       ChannelItem channelItem = mChannelList.get(i);
       Channel channel = channelItem.getChannel();
-      StringBuffer line = new StringBuffer();
+      StringBuilder line = new StringBuilder();
       line.append(channel.getCountry()).append(';').append(
           channel.getTimeZone().getID());
       line.append(';').append(channel.getId());
@@ -299,7 +299,8 @@ public class ChannelList {
     }
 
     public Icon getIcon(String channelId, String url) throws IOException {
-      String key = new StringBuffer("icons_").append(mGroup).append("_").append(channelId).toString();
+      String key = new StringBuilder("icons_").append(mGroup).append("_")
+          .append(channelId).toString();
       String prevUrl = (String) mProperties.get(key);
       Icon icon = null;
       File iconFile = new File(mIconDir, channelId);

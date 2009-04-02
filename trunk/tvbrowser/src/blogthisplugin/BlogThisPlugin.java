@@ -206,7 +206,8 @@ public class BlogThisPlugin extends Plugin {
      */
     private String urlFactory(String title, String content, String url) throws UnsupportedEncodingException{
       if (mSettings.getProperty("BlogService", "").equals(BLOGGER)) {
-        StringBuffer toUrl = new StringBuffer("http://www.blogger.com/blog_this.pyra?");
+        StringBuilder toUrl = new StringBuilder(
+          "http://www.blogger.com/blog_this.pyra?");
         
         toUrl.append("n=").append(URLEncoder.encode(title, "UTF-8"));
         toUrl.append("&t=").append(URLEncoder.encode(content.trim(), "UTF-8"));
@@ -215,7 +216,8 @@ public class BlogThisPlugin extends Plugin {
         
         return toUrl.toString();
       } else if (mSettings.getProperty("BlogService", "").equals(WORDPRESS)) {
-        StringBuffer toUrl = new StringBuffer(mSettings.getProperty("BlogUrl", URL_WORDPRESS));
+        StringBuilder toUrl = new StringBuilder(mSettings.getProperty("BlogUrl",
+          URL_WORDPRESS));
         
         toUrl.append("?popuptitle=").append(URLEncoder.encode(title, "UTF-8"));
         toUrl.append("&text=").append(URLEncoder.encode(content, "UTF-8"));
@@ -224,7 +226,8 @@ public class BlogThisPlugin extends Plugin {
         
         return toUrl.toString();
       } else if (mSettings.getProperty("BlogService", "").equals(B2EVOLUTION)) {        
-        StringBuffer toUrl = new StringBuffer(mSettings.getProperty("BlogUrl", URL_B2EVOLUTION));
+        StringBuilder toUrl = new StringBuilder(mSettings.getProperty("BlogUrl",
+          URL_B2EVOLUTION));
         toUrl.append("?ctrl=items&action=new&mode=bookmarklet");
 
         toUrl.append("&post_title=").append(URLEncoder.encode(title, "ISO-8859-1"));

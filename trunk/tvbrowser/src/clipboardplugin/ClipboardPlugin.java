@@ -214,7 +214,7 @@ public class ClipboardPlugin extends Plugin {
   public String getTextForConfig(Program[] programs, AbstractPluginProgramFormating config) {
     String param = config.getContentValue();//mSettings.getProperty("ParamToUse", DEFAULT_PARAM);
 
-    StringBuffer buffer = new StringBuffer();
+    StringBuilder buffer = new StringBuilder();
     ParamParser parser = new ParamParser();
 
     int i = 0;
@@ -241,7 +241,7 @@ public class ClipboardPlugin extends Plugin {
   public void copyProgramsToSystem(Program[] programs, AbstractPluginProgramFormating config) {
     String param = config.getContentValue();//mSettings.getProperty("ParamToUse", DEFAULT_PARAM);
 
-    StringBuffer result = new StringBuffer();
+    StringBuilder result = new StringBuilder();
     ParamParser parser = new ParamParser();
 
     int i = 0;

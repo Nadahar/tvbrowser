@@ -69,7 +69,7 @@ public class ChannelJList extends JList {
     if (item instanceof Channel) {
       Channel channel = (Channel) item;
 
-      StringBuffer buf = new StringBuffer();
+      StringBuilder buf = new StringBuilder();
 
       Locale loc = new Locale(Locale.getDefault().getLanguage(), channel.getCountry());
       buf.append("<html>");

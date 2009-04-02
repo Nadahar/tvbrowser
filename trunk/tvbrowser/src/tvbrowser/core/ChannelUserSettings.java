@@ -59,7 +59,9 @@ public class ChannelUserSettings {
       return settings;
     }
       
-    String idValue = (new StringBuffer(ch.getDataServiceProxy().getId()).append(ch.getGroup().getId()).append(":").append(ch.getId())).toString();
+    String idValue = (new StringBuilder(ch.getDataServiceProxy().getId())
+        .append(ch.getGroup().getId()).append(":").append(ch.getId()))
+        .toString();
     
     ChannelUserSettings settings = mChannelUserSettings.get(idValue);
     if (settings == null) {

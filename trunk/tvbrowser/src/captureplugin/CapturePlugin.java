@@ -639,7 +639,7 @@ public class CapturePlugin extends devplugin.Plugin {
                       String eolStyle = File.separator.equals("/") ? "\n" : "\r\n";
                       
                       for(int i = 0; i < model.getRowCount(); i++) {
-                        StringBuffer line = new StringBuffer();
+                        StringBuilder line = new StringBuilder();
                         
                         for(int j = 0; j < model.getColumnCount(); j++)
                           line.append(model.getValueAt(i, j)).append(' ');

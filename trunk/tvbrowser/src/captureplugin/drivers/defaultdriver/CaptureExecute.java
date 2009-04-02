@@ -312,7 +312,7 @@ public class CaptureExecute {
      * @throws Exception Problems while loading the URL
      */
     private String executeUrl(String params) throws Exception{
-        StringBuffer result = new StringBuffer();
+      StringBuilder result = new StringBuilder();
         
         URL url = new URL (mData.getWebUrl() + "?" +params);
         

@@ -64,7 +64,7 @@ public class ParamDescriptionPanel extends JPanel {
     JEditorPane helpPanel = new JEditorPane();
     helpPanel.setContentType("text/html");
     helpPanel.setEditable(false);
-    StringBuffer text = new StringBuffer("<html>" + 
+    StringBuilder text = new StringBuilder("<html>" + 
         " <head>" + 
         "<style type=\"text/css\" media=\"screen\">" + 
         "<!--" + 

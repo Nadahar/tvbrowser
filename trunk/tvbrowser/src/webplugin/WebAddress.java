@@ -146,7 +146,8 @@ public class WebAddress implements Cloneable {
     if (mIconFile == null || mIconFile.length() == 0) { return DEFAULT_ICON; }
 
     try {
-      StringBuffer filePath = new StringBuffer(Plugin.getPluginManager().getTvBrowserSettings().getTvBrowserUserHome());
+      StringBuilder filePath = new StringBuilder(Plugin.getPluginManager()
+          .getTvBrowserSettings().getTvBrowserUserHome());
       filePath.append(File.separator).append("WebFavIcons").append(File.separator).append(mIconFile);
       
       mIcon = new ImageIcon(ImageUtilities.createImage(filePath.toString()));

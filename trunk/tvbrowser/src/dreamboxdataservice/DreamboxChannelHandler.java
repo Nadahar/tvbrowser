@@ -25,23 +25,24 @@
  */
 package dreamboxdataservice;
 
-import tvdataservice.TvDataUpdateManager;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
+
 import tvdataservice.MutableChannelDayProgram;
 import tvdataservice.MutableProgram;
+import tvdataservice.TvDataUpdateManager;
 import devplugin.Channel;
 import devplugin.Date;
 import devplugin.Program;
-import org.xml.sax.helpers.DefaultHandler;
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Collection;
 
 public class DreamboxChannelHandler extends DefaultHandler {
-    StringBuffer mCharacters = new StringBuffer();
+  StringBuilder mCharacters = new StringBuilder();
 
     /**
      * map of lazily created update channel day programs
@@ -58,7 +59,7 @@ public class DreamboxChannelHandler extends DefaultHandler {
 
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-        mCharacters = new StringBuffer();
+        mCharacters = new StringBuilder();
         if (qName.equals("e2event")) {
             mCurrentEvent = new HashMap<String, String>();
         }

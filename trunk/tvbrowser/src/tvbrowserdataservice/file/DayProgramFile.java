@@ -527,7 +527,7 @@ public class DayProgramFile extends AbstractFile {
   public static String getProgramFileName(Date date, String country,
     String channel, String level, int updateVersion)
   {
-    StringBuffer buf = new StringBuffer(50);
+    StringBuilder buf = new StringBuilder(50);
 
     buf.append(date.getYear());
     buf.append('-');

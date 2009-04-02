@@ -168,9 +168,11 @@ public class ChannelGroup implements devplugin.ChannelGroup {
   private String getLocaleProperty(Properties prop, String key, String defaultValue) {
     Locale locale = Locale.getDefault();
     String language = locale.getLanguage();
-    String result = prop.getProperty(new StringBuffer(key).append('_').append(language).toString());
+    String result = prop.getProperty(new StringBuilder(key).append('_').append(
+        language).toString());
     if (result == null) {
-      result = prop.getProperty(new StringBuffer(key).append("_default").toString(), defaultValue);
+      result = prop.getProperty(new StringBuilder(key).append("_default")
+          .toString(), defaultValue);
     }
     return result;
 

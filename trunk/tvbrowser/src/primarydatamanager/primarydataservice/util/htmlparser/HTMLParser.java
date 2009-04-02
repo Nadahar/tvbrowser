@@ -56,7 +56,7 @@ public class HTMLParser {
   
   private String getText() throws IOException {
     
-    StringBuffer buf=new StringBuffer();
+    StringBuilder buf = new StringBuilder();
     while (ch=='\n') {
        next();
     }
@@ -91,7 +91,7 @@ public class HTMLParser {
   }
  
   private String getTag() throws IOException {
-    StringBuffer buf=new StringBuffer();
+    StringBuilder buf = new StringBuilder();
     
     if (ch!='<') {
       //throw new RuntimeException("'<' expected.");

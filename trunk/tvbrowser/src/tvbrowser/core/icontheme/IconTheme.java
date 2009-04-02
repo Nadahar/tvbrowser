@@ -175,7 +175,8 @@ abstract public class IconTheme {
     while (it.hasNext()) {
       Directory dir = it.next();
       if (dir.getName().toLowerCase().contains("/" + icon.getCategory().toLowerCase()) && sizeMatches(dir, icon.getSize())) {
-        StringBuffer iconFile = new StringBuffer(dir.getName()).append("/").append(icon.getName()).append(".png");
+        StringBuilder iconFile = new StringBuilder(dir.getName()).append("/")
+            .append(icon.getName()).append(".png");
         if (entryExists(iconFile.toString())) {
           return getImageFromTheme(iconFile.toString());
         }
@@ -187,7 +188,8 @@ abstract public class IconTheme {
     while (it.hasNext()) {
       Directory dir = it.next();
       if (sizeMatches(dir, icon.getSize())) {
-        StringBuffer iconFile = new StringBuffer(dir.getName()).append("/").append(icon.getName()).append(".png");
+        StringBuilder iconFile = new StringBuilder(dir.getName()).append("/")
+            .append(icon.getName()).append(".png");
         if (entryExists(iconFile.toString())) {
           return getImageFromTheme(iconFile.toString());
         }
@@ -203,7 +205,8 @@ abstract public class IconTheme {
       Directory dir = it.next();
       int distance = sizeDistance(dir, icon.getSize()); 
       if (distance < minSize) {
-        StringBuffer iconFile = new StringBuffer(dir.getName()).append("/").append(icon.getName()).append(".png");
+        StringBuilder iconFile = new StringBuilder(dir.getName()).append("/")
+            .append(icon.getName()).append(".png");
         if (entryExists(iconFile.toString())) {
           closestMatch = iconFile.toString();
           minSize = distance;

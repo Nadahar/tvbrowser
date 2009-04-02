@@ -189,7 +189,8 @@ public final class WindowSetting {
   
   
   public String toString() {
-    return new StringBuffer("x:").append(mXPos).append(" y:").append(mYPos).append(" ").append(mWidth).append("x").append(mHeight).toString();
+    return new StringBuilder("x:").append(mXPos).append(" y:").append(mYPos)
+        .append(" ").append(mWidth).append("x").append(mHeight).toString();
   }
 }
 

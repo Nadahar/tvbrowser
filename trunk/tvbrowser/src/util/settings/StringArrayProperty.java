@@ -168,7 +168,7 @@ public class StringArrayProperty  extends Property {
     if (equalsDefault) {
       setProperty(null);
     } else {
-      StringBuffer buffer = new StringBuffer();
+      StringBuilder buffer = new StringBuilder();
       for (int i = 0; i < value.length; i++) {
         if (i != 0) {
           buffer.append(',');
@@ -198,7 +198,7 @@ public class StringArrayProperty  extends Property {
     
     ArrayList<String> list = new ArrayList<String>();
     
-    StringBuffer current = new StringBuffer();
+    StringBuilder current = new StringBuilder();
     
     for (int i= 0;i<splitted.length;i++) {
       if (splitted[i].endsWith("\\") && (countEndSlashes(splitted[i]) % 2 == 1)) {
@@ -207,7 +207,7 @@ public class StringArrayProperty  extends Property {
       } else {
         current.append(splitted[i]);
         list.add(current.toString().replaceAll("\\\\\\\\", "\\\\"));
-        current = new StringBuffer();
+        current = new StringBuilder();
       }
     }
     

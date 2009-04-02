@@ -1060,7 +1060,7 @@ public class TVBrowser {
   private static Formatter createFormatter() {
     return new Formatter() {
       public synchronized String format(LogRecord record) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         DateFormat mTimeFormat = DateFormat.getTimeInstance(DateFormat.MEDIUM);
         

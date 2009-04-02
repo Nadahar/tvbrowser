@@ -54,7 +54,7 @@ public class XMLWriter {
             return addEntities(node.getNodeValue());
         }
         
-        StringBuffer result = new StringBuffer("<" + node.getNodeName() + ">");
+        StringBuilder result = new StringBuilder("<" + node.getNodeName() + ">");
         
         Node child = node.getFirstChild();
         while (child != null) {

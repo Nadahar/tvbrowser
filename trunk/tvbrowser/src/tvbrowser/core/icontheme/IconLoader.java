@@ -32,8 +32,8 @@ import java.util.HashMap;
 import javax.swing.ImageIcon;
 
 import tvbrowser.core.Settings;
-import util.misc.SoftReferenceCache;
 import util.misc.OperatingSystem;
+import util.misc.SoftReferenceCache;
 import util.ui.ImageUtilities;
 import devplugin.Plugin;
 import devplugin.ThemeIcon;
@@ -304,7 +304,11 @@ public class IconLoader {
       }
       
       // Forth Try: Icon in Plugin-Jar
-      StringBuffer buffer = new StringBuffer("/").append(plugin.getClass().getPackage().getName()).append("/icons/").append(icon.getSize()).append("x").append(icon.getSize()).append("/").append(icon.getCategory()).append("/").append(icon.getName()).append(".png");
+      StringBuilder buffer = new StringBuilder("/").append(
+          plugin.getClass().getPackage().getName()).append("/icons/").append(
+          icon.getSize()).append("x").append(icon.getSize()).append("/")
+          .append(icon.getCategory()).append("/").append(icon.getName())
+          .append(".png");
             
       if (plugin.getClass().getResourceAsStream(buffer.toString()) != null) {
         try {
@@ -324,7 +328,10 @@ public class IconLoader {
     }
     
     // Last Try: Icon in tvbrowser.jar
-    StringBuffer buffer = new StringBuffer("/icons/").append(icon.getSize()).append("x").append(icon.getSize()).append("/").append(icon.getCategory()).append("/").append(icon.getName()).append(".png");
+    StringBuilder buffer = new StringBuilder("/icons/").append(icon.getSize())
+        .append("x").append(icon.getSize()).append("/").append(
+            icon.getCategory()).append("/").append(icon.getName()).append(
+            ".png");
      
     if (getClass().getResourceAsStream(buffer.toString()) != null) {
       imageIcon = ImageUtilities.createImageIconFromJar(buffer.toString(), getClass()); 

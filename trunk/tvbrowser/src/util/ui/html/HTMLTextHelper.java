@@ -57,7 +57,7 @@ public class HTMLTextHelper {
       
       Matcher matcher = Pattern.compile("(http://|www\\.)[^\\s<]*").matcher(text);
       
-      StringBuffer result = new StringBuffer();
+      StringBuilder result = new StringBuilder();
       
       int end = 0;
       

@@ -324,7 +324,8 @@ final public class TranslationDialog extends JDialog implements WindowClosingIf 
         }
       });
       
-      StringBuffer buffer = new StringBuffer(Settings.getUserSettingsDirName());
+      StringBuilder buffer = new StringBuilder(Settings
+          .getUserSettingsDirName());
       buffer.append("/lang/tvbrowser/tvbrowser");
 
       buffer.append('_').append(locale.getLanguage());
@@ -378,7 +379,9 @@ final public class TranslationDialog extends JDialog implements WindowClosingIf 
         
         ZipUtil zip = new ZipUtil();
         
-        StringBuffer dir = new StringBuffer(Settings.getUserSettingsDirName()).append(File.separatorChar).append("lang").append(File.separatorChar);
+        StringBuilder dir = new StringBuilder(Settings.getUserSettingsDirName())
+            .append(File.separatorChar).append("lang").append(
+                File.separatorChar);
         
         try {
           zip.zipDirectory(f, new File(dir.toString()));

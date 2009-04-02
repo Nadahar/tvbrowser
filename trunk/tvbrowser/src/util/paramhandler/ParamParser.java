@@ -106,9 +106,9 @@ public class ParamParser {
     boolean escapemode = false;
     boolean commandmode = false;
     boolean stringmode = false;
-    StringBuffer cmdBuffer = new StringBuffer();
+    StringBuilder cmdBuffer = new StringBuilder();
     char[] chars = command.toCharArray();
-    StringBuffer ret = new StringBuffer();
+    StringBuilder ret = new StringBuilder();
     
     for (int pos=0;pos<chars.length;pos++) {
       
@@ -124,7 +124,7 @@ public class ParamParser {
         cmdBuffer.append(chars[pos]);
       } else if (chars[pos] == '{'){
         commandmode = true;
-        cmdBuffer = new StringBuffer();
+        cmdBuffer = new StringBuilder();
       } else if (chars[pos] == '}'){
         String newCommand = cmdBuffer.toString().trim();
         
@@ -252,7 +252,7 @@ public class ParamParser {
   private String[] splitParams(String params, int strpos) {
     int infunction = 0;
     boolean instring = false;
-    StringBuffer curparam = new StringBuffer();
+    StringBuilder curparam = new StringBuilder();
     
     ArrayList<String> list = new ArrayList<String>();
     
@@ -273,7 +273,7 @@ public class ParamParser {
         curparam.append(chars[pos]);
       } else if (chars[pos] == ',') {
         list.add(curparam.toString().trim());
-        curparam = new StringBuffer();
+        curparam = new StringBuilder();
       } else {
         curparam.append(chars[pos]);
       }

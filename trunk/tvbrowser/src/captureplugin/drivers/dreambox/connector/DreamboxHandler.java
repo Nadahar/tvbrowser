@@ -24,11 +24,11 @@
  */
 package captureplugin.drivers.dreambox.connector;
 
+import java.util.TreeMap;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
-
-import java.util.TreeMap;
 
 /**
  * This class reads dreambox xml-data and maps it into a map
@@ -36,12 +36,12 @@ import java.util.TreeMap;
 public class DreamboxHandler extends DefaultHandler {
 
     TreeMap<String, String> mData = new TreeMap<String, String>();
-    StringBuffer mCharacters = new StringBuffer();
+    StringBuilder mCharacters = new StringBuilder();
     String mKey;
 
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-        mCharacters = new StringBuffer();
+        mCharacters = new StringBuilder();
     }
 
     @Override

@@ -38,7 +38,7 @@ import java.util.logging.LogRecord;
 public class VerySimpleFormatter extends Formatter {
 
   public synchronized String format(LogRecord record) {
-    StringBuffer sb = new StringBuffer();
+    StringBuilder sb = new StringBuilder();
 
     String message = formatMessage(record);
     sb.append(record.getLevel().getLocalizedName());

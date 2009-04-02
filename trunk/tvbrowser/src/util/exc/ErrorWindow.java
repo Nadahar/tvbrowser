@@ -296,7 +296,7 @@ class ErrorWindow {
   }
 
   private void copyDetailsToClipBoard() {
-    StringBuffer buffer = new StringBuffer(mErrorMessageTA.getText());
+    StringBuilder buffer = new StringBuilder(mErrorMessageTA.getText());
 
     buffer.append("\n\n----- Start of stacktrace -----\n");
     Throwable thr = mThrowable;

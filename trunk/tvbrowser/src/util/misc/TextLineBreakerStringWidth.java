@@ -39,9 +39,9 @@ public class TextLineBreakerStringWidth {
   /** Current Character */
   private int mCurrChar;
   /** Line Buffer */
-  private StringBuffer mCurrLineBuffer;
+  private StringBuilder mCurrLineBuffer;
   /** Word Buffer */
-  private StringBuffer mCurrWordBuffer;
+  private StringBuilder mCurrWordBuffer;
   
   /** Next Word */
   private String mNextWord;
@@ -56,8 +56,8 @@ public class TextLineBreakerStringWidth {
    * Create the LineBreaker
    */
   public TextLineBreakerStringWidth() {
-    mCurrLineBuffer = new StringBuffer();
-    mCurrWordBuffer = new StringBuffer();
+    mCurrLineBuffer = new StringBuilder();
+    mCurrWordBuffer = new StringBuilder();
     mSpaceWidth = 1;
     mMinusWidth = 1;
   }

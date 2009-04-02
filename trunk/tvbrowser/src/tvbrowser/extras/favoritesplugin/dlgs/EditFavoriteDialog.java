@@ -249,7 +249,7 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
 
   private String getChannelString(Channel[] channelArr) {
     if (channelArr != null && channelArr.length > 0) {
-      StringBuffer buf = new StringBuffer();
+      StringBuilder buf = new StringBuilder();
       for (int i = 0; i < channelArr.length - 1; i++) {
         buf.append(channelArr[i]).append(", ");
       }
@@ -513,7 +513,7 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
     ProgramReceiveIf[] pluginArr = plugins.toArray(new ProgramReceiveIf[plugins.size()]);
     
     if (pluginArr != null && pluginArr.length > 0) {
-      StringBuffer buf = new StringBuffer();
+      StringBuilder buf = new StringBuilder();
       if (pluginArr.length > 0) {
         buf.append(pluginArr[0].toString());
       }
