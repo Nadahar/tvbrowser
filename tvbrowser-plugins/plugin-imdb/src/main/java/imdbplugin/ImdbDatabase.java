@@ -164,31 +164,31 @@ public final class ImdbDatabase {
     }
     final String lowerCase = str.toLowerCase();
     final int length = lowerCase.length();
-    final StringBuffer buffer = new StringBuffer(length + 4);
+    final StringBuilder builder = new StringBuilder(length + 4);
     for (int i = 0; i < length; i++) {
       final char character = lowerCase.charAt(i);
       switch (character) {
       case 'ä': {
-        buffer.append("ae");
+        builder.append("ae");
         break;
       }
       case 'ö': {
-        buffer.append("oe");
+        builder.append("oe");
         break;
       }
       case 'ü': {
-        buffer.append("ue");
+        builder.append("ue");
         break;
       }
       case 'ß': {
-        buffer.append("ss");
+        builder.append("ss");
         break;
       }
       default:
-        buffer.append(character);
+        builder.append(character);
       }
     }
-    return buffer.toString();
+    return builder.toString();
   }
 
   public void addRating(final String movieId, final int rating,
