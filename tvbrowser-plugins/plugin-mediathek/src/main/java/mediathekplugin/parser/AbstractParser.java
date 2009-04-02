@@ -58,7 +58,7 @@ public abstract class AbstractParser implements IParser {
       reader = new BufferedReader(new InputStreamReader(url.openStream(),
           "utf-8"));
       String inputLine;
-      final StringBuffer buffer = new StringBuffer(1024);
+      final StringBuilder buffer = new StringBuilder(1024);
       while ((inputLine = reader.readLine()) != null) {
         buffer.append(inputLine);
       }
