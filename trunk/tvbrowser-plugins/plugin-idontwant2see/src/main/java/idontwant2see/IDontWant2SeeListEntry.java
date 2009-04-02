@@ -30,7 +30,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import devplugin.Date;
-import devplugin.Program;
 
 /**
  * A class that contains the search settings for the not to show values.
@@ -71,7 +70,7 @@ public class IDontWant2SeeListEntry {
     mDateWasSet = false;
   }
   
-  private boolean matchesTitle(final String title) {
+  private boolean matchesTitleInternal(final String title, final String lowerCaseTitle) {
     boolean matches = false;
     
     if(mPreSearchPart == null) {
@@ -80,8 +79,7 @@ public class IDontWant2SeeListEntry {
           .equalsIgnoreCase(mSearchText);
     } else {
       // or match with wild card
-      final String preSearchValue = mCaseSensitive ? title : title
-          .toLowerCase();
+      final String preSearchValue = mCaseSensitive ? title : lowerCaseTitle;
       if (preSearchValue.indexOf(mPreSearchPart) != -1) {
         final Matcher match = mSearchPattern.matcher(title);
         matches = match.matches();
@@ -97,12 +95,14 @@ public class IDontWant2SeeListEntry {
     return matches;
   }
   
-  protected boolean matches(final Program p) {
-    final String title = p.getTitle();
-    boolean found = matchesTitle(title);
+  protected boolean matchesProgramTitle(final String title,
+      final String lowerCaseTitle) {
+    boolean found = matchesTitleInternal(title, lowerCaseTitle);
     final String suffix = " (Fortsetzung)";
     if ((!found) && title.endsWith(suffix)) {
-      found = matchesTitle(title.substring(0, title.length() - suffix.length()));
+      found = matchesTitleInternal(
+          title.substring(0, title.length() - suffix.length()), lowerCaseTitle
+              .substring(0, lowerCaseTitle.length() - suffix.length()));
     }
     return found;
   }
