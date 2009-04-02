@@ -165,14 +165,17 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
     mCurrentDate = Date.getCurrentDate();
   }
   
-  protected boolean acceptInternal(final Program prog) {
+  protected boolean acceptInternal(final Program program) {
     if(!mDateWasSet) {
       mLastUsedDate = getCurrentDate();
       mDateWasSet = true;
     }
     
+    // calculate lower case title only once, not for each entry again
+    final String title = program.getTitle();
+    final String lowerCaseTitle = title.toLowerCase();
     for(IDontWant2SeeListEntry entry : mSearchList) {
-      if(entry.matches(prog)) {
+      if (entry.matchesProgramTitle(title, lowerCaseTitle)) {
         return false;
       }
     }
@@ -187,10 +190,13 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
         "René Mach", "GPL");
   }
   
-  private int getSearchTextIndexForProgram(final Program p) {
-    if(p != null) {
+  private int getSearchTextIndexForProgram(final Program program) {
+    if (program != null) {
+      // calculate lower case title only once, not for each entry again
+      final String title = program.getTitle();
+      final String lowerCaseTitle = title.toLowerCase();
       for(int i = 0; i < mSearchList.size(); i++) {
-        if(mSearchList.get(i).matches(p)) {
+        if (mSearchList.get(i).matchesProgramTitle(title, lowerCaseTitle)) {
           return i;
         }
       }
