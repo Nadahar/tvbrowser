@@ -153,9 +153,26 @@ public class ProgramItem implements Comparable<ProgramItem> {
     if (mProgram != null) {
       return getProgram().getStartTime();
     }
-    String[] id = mProgId.split("_");
-    String[] hourMinute = id[id.length - 1].split(":");
-    return Integer.valueOf(hourMinute[0]) * 60 + Integer.valueOf(hourMinute[1]);
+    // all the following lines could be written using split() and parseInt(),
+    // but this code is 2 orders of magnitude faster
+    int underscore = mProgId.lastIndexOf('_');
+    String hours = mProgId.substring(underscore + 1, underscore + 3);
+    int hoursNum;
+    String minutes;
+    int minutesNum;
+    if (hours.charAt(1) == ':') {
+      hoursNum = hours.charAt(0) - '0';
+      minutes = mProgId.substring(underscore + 3, underscore + 5);
+    } else {
+      hoursNum = Integer.parseInt(hours);
+      minutes = mProgId.substring(underscore + 4, underscore + 6);
+    }
+    if (minutes.charAt(1) == ':') {
+      minutesNum = minutes.charAt(0) - '0';
+    } else {
+      minutesNum = Integer.parseInt(minutes);
+    }
+    return hoursNum * 60 + minutesNum;
   }
 
   @Override
