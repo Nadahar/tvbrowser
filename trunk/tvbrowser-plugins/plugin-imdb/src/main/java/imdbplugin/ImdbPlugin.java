@@ -182,7 +182,7 @@ public final class ImdbPlugin extends Plugin {
   private void showRatingDialog(final Program program) {
     final ImdbRating episodeRating = getEpisodeRating(program);
     final ImdbRating rating = getProgramRating(program);
-    final StringBuffer message = new StringBuffer();
+    final StringBuilder message = new StringBuilder();
     if (rating != null || episodeRating != null) {
       if (episodeRating != null) {
         message.append(ratingMessage(program.getTitle() + " - "
