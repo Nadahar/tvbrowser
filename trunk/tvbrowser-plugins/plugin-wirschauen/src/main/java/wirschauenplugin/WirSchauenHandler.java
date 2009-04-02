@@ -11,7 +11,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * WirSchauen.de and creates a HashMap for the data.
  */
 public class WirSchauenHandler extends DefaultHandler {
-  private StringBuffer mCharacters = new StringBuffer();
+  private StringBuilder mCharacters = new StringBuilder();
   private HashMap<String, String> mData = new HashMap<String, String>();
 
   public WirSchauenHandler() {
@@ -20,7 +20,7 @@ public class WirSchauenHandler extends DefaultHandler {
   @Override
   public void startElement(final String uri, final String localName,
       final String qName, final Attributes attributes) throws SAXException {
-      mCharacters = new StringBuffer();
+      mCharacters = new StringBuilder();
   }
 
   @Override
