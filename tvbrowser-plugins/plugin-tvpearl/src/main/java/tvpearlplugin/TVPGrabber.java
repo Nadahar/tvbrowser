@@ -120,7 +120,7 @@ public class TVPGrabber
 
 	private String downloadUrl(final String webUrl)
 	{
-    final StringBuffer buffer = new StringBuffer(1024);
+    final StringBuilder buffer = new StringBuilder(1024);
 		InputStream stream = null;
 		BufferedReader in = null;
 		try
