@@ -523,7 +523,7 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
           "{start_day_of_week}, {start_day}. {start_month_name}, {leadingZero(start_hour,\"2\")}:{leadingZero(start_minute,\"2\")}, {channel_name}\n{title}\n\n{genre}",
           "UTF-8");
       final ParamParser parser = new ParamParser();
-      final StringBuffer buffer = new StringBuffer();
+      final StringBuilder buffer = new StringBuilder();
       for (Program program : programArr) {
         final String programText = parser.analyse(format.getContentValue(),
             program);

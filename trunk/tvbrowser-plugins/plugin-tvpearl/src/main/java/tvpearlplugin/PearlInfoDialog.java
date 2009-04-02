@@ -159,7 +159,7 @@ public final class PearlInfoDialog extends JDialog implements WindowClosingIf
     final String bodyFont = String.valueOf(tFont.getSize());
     final String bodyFontSize = String.valueOf(bFont.getSize());
 
-	  final StringBuffer buffer = new StringBuffer(1024);
+	  final StringBuilder buffer = new StringBuilder(1024);
 		buffer.append("<html><body>");
 		buffer.append("<table width=\"100%\" style=\"font-family:");
 		buffer.append(bodyFont);
@@ -222,7 +222,7 @@ public final class PearlInfoDialog extends JDialog implements WindowClosingIf
 	}
 
 	private void addSeparator(final ExtendedHTMLDocument doc,
-      final StringBuffer buffer)
+      final StringBuilder buffer)
 	{
 		buffer.append("<tr><td colspan=\"2\">");
 		buffer.append("<div style=\"font-size:0;\">").append(doc.createCompTag(new HorizontalLine())).append("</div></td></tr>");
