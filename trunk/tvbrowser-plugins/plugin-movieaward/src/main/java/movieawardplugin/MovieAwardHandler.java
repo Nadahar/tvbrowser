@@ -77,7 +77,7 @@ public class MovieAwardHandler extends DefaultHandler {
   /**
    * Holds the text of the current tag.
    */
-  private StringBuffer mText;
+  private StringBuilder mText;
   private Properties mAttributes;
 
   /**
@@ -93,7 +93,7 @@ public class MovieAwardHandler extends DefaultHandler {
 
   public MovieAwardHandler(final MovieAward movieAward) {
     mAward = movieAward;
-    mText = new StringBuffer();
+    mText = new StringBuilder();
   }
 
   /**
@@ -222,7 +222,7 @@ public class MovieAwardHandler extends DefaultHandler {
    *
    * @param buffer The StringBuffer to clear.
    */
-  private void clear(final StringBuffer buffer) {
+  private void clear(final StringBuilder buffer) {
     buffer.delete(0, buffer.length());
   }
 }
