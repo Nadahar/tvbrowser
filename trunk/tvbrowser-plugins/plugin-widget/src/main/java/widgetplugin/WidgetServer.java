@@ -87,7 +87,7 @@ public class WidgetServer extends NanoHTTPD {
 	}
 
 	private String currentProgramList() {
-	  final StringBuffer result = new StringBuffer(1024);
+	  final StringBuilder result = new StringBuilder(1024);
     final Channel[] channels = Plugin.getPluginManager()
         .getSubscribedChannels();
 		if (channels.length == 0) {
@@ -134,7 +134,7 @@ public class WidgetServer extends NanoHTTPD {
 
 	private String convert(String in) {
 		in = HTMLTextHelper.convertTextToHtml(in.replaceAll("\n", " "), false);
-		final StringBuffer buf = new StringBuffer();
+		final StringBuilder buf = new StringBuilder();
     final int len = in.length();
 		for (int i = 0; i < len; i++) {
 		  final char c = in.charAt(i);
