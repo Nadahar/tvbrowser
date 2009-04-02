@@ -57,9 +57,6 @@ public final class ImdbDatabase {
 
   private IndexSearcher mSearcher;
   private IndexWriter mWriter;
-  private static final String[][] NORMALIZATION = new String[][] {
-      { "ä", "ae" }, { "ü", "ue" }, { "ö", "oe" }, { "ß", "ss" },
-      { "Ä", "Ae" }, { "Ü", "Ue" }, { "Ö", "Oe" } };
 
   public ImdbDatabase(final File imdbDatabase) {
     mCurrentPath = imdbDatabase;
@@ -162,11 +159,36 @@ public final class ImdbDatabase {
   }
 
   private String normalise(final String str) {
-    String result = str.toLowerCase();
-    for (String[] pair : NORMALIZATION) {
-      result = result.replaceAll(pair[0], pair[1]);
+    if (str.length() == 0) {
+      return str;
     }
-    return result;
+    final String lowerCase = str.toLowerCase();
+    final int length = lowerCase.length();
+    final StringBuffer buffer = new StringBuffer(length + 4);
+    for (int i = 0; i < length; i++) {
+      final char character = lowerCase.charAt(i);
+      switch (character) {
+      case 'ä': {
+        buffer.append("ae");
+        break;
+      }
+      case 'ö': {
+        buffer.append("oe");
+        break;
+      }
+      case 'ü': {
+        buffer.append("ue");
+        break;
+      }
+      case 'ß': {
+        buffer.append("ss");
+        break;
+      }
+      default:
+        buffer.append(character);
+      }
+    }
+    return buffer.toString();
   }
 
   public void addRating(final String movieId, final int rating,
