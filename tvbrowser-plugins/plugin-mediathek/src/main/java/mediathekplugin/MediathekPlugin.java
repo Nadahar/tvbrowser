@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Properties;
 import java.util.logging.Logger;
 
@@ -65,12 +66,12 @@ public class MediathekPlugin extends Plugin {
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer
       .getLocalizerFor(MediathekPlugin.class);
 
-  private HashMap<String, MediathekProgram> programs;
+  private HashMap<String, List<MediathekProgram>> mPrograms;
 
   // cached ordered copy of the programs map
-  private MediathekProgram[] sortedPrograms;
+  private MediathekProgram[] mSortedPrograms;
 
-  private boolean sorted = false;
+  private boolean mSorted = false;
 
   private Icon markIcon, contextIcon, pluginIconSmall, pluginIconLarge,
       mIconWeb;
@@ -110,7 +111,7 @@ public class MediathekPlugin extends Plugin {
 
   public MediathekPlugin() {
     rememberInstance(this);
-    programs = new HashMap<String, MediathekProgram>();
+    mPrograms = new HashMap<String, List<MediathekProgram>>();
     pluginIconSmall = createImageIcon("actions", "web-search", 16);
     pluginIconLarge = createImageIcon("actions", "web-search", 22);
     contextIcon = createImageIcon("actions", "web-search", 16);
@@ -139,7 +140,7 @@ public class MediathekPlugin extends Plugin {
       return null;
     }
     // get mediathek contents, if not yet loaded
-    if (programs.isEmpty()) {
+    if (mPrograms.isEmpty()) {
       return actionMenuReadMediathekContents();
     }
     // do we have any media?
@@ -199,12 +200,31 @@ public class MediathekPlugin extends Plugin {
 
   public void addProgram(final IParser parser, final String title,
       final String url) {
+    final String key = title.toLowerCase();
+    final List<MediathekProgram> list = mPrograms.get(key);
+    if (list != null) {
+      for (MediathekProgram mediathekProgram : list) {
+        if (mediathekProgram.getParser() == parser) {
+          return;
+        }
+      }
+    }
     addProgram(new MediathekProgram(parser, title, url));
   }
 
   private void addProgram(final MediathekProgram program) {
-    programs.put(program.getTitle(), program);
-    sorted = false;
+    final String key = getProgramKey(program);
+    List<MediathekProgram> list = mPrograms.get(key);
+    if (list == null) {
+      list = new ArrayList<MediathekProgram>(4);
+      mPrograms.put(key, list);
+    }
+    list.add(program);
+    mSorted = false;
+  }
+
+  private String getProgramKey(final MediathekProgram program) {
+    return program.getLowerCaseTitle();
   }
 
   @Override
@@ -219,7 +239,7 @@ public class MediathekPlugin extends Plugin {
 
   @Override
   public Icon[] getProgramTableIcons(final Program program) {
-    if (programs.isEmpty()) {
+    if (mPrograms.isEmpty()) {
       return EMPTY_ICON_LIST;
     }
     if (!isSupportedChannel(program.getChannel())) {
@@ -241,20 +261,34 @@ public class MediathekPlugin extends Plugin {
    * @return
    */
   private MediathekProgram findProgram(final Program program) {
-    if (programs == null) {
+    if (mPrograms == null) {
       return null;
     }
-    String title = program.getTitle();
-    MediathekProgram mediathekProgram = programs.get(title);
+    String title = program.getTitle().toLowerCase();
+    final Channel channel = program.getChannel();
+    MediathekProgram mediathekProgram = findProgram(channel, title);
     if (mediathekProgram == null && title.endsWith(")") && title.contains("(")) {
       title = title.substring(0, title.lastIndexOf('(') - 1);
-      mediathekProgram = programs.get(title);
+      mediathekProgram = findProgram(channel, title);
     }
     if (mediathekProgram == null && title.endsWith("...")) {
       title = title.substring(0, title.length() - 3).trim();
-      mediathekProgram = programs.get(title);
+      mediathekProgram = findProgram(channel, title);
     }
     return mediathekProgram;
+  }
+
+  private MediathekProgram findProgram(final Channel channel, final String title) {
+    List<MediathekProgram> list = mPrograms.get(title);
+    if (list == null) {
+      return null;
+    }
+    for (MediathekProgram mediathekProgram : list) {
+      if (mediathekProgram.supportsChannel(channel)) {
+        return mediathekProgram;
+      }
+    }
+    return null;
   }
 
   @Override
@@ -420,13 +454,18 @@ public class MediathekPlugin extends Plugin {
   }
 
   protected MediathekProgram[] getSortedPrograms() {
-    if (!sorted) {
-      sortedPrograms = new MediathekProgram[programs.size()];
-      programs.values().toArray(sortedPrograms);
-      Arrays.sort(sortedPrograms);
-      sorted = true;
+    if (!mSorted) {
+      final ArrayList<MediathekProgram> sorted = new ArrayList<MediathekProgram>(
+          mPrograms.size());
+      for (List<MediathekProgram> list : mPrograms.values()) {
+        sorted.addAll(list);
+      }
+      mSortedPrograms = new MediathekProgram[sorted.size()];
+      sorted.toArray(mSortedPrograms);
+      Arrays.sort(mSortedPrograms);
+      this.mSorted = true;
     }
-    return sortedPrograms;
+    return mSortedPrograms;
   }
 
   public Logger getLogger() {

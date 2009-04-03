@@ -25,6 +25,7 @@ import javax.swing.Action;
 import mediathekplugin.parser.IParser;
 import util.browserlauncher.Launch;
 import devplugin.ActionMenu;
+import devplugin.Channel;
 import devplugin.ContextMenuAction;
 import devplugin.ContextMenuSeparatorAction;
 import devplugin.PluginTreeNode;
@@ -143,6 +144,18 @@ public final class MediathekProgram implements Comparable<MediathekProgram> {
 
   public boolean canReadEpisodes() {
     return mParser.canReadEpisodes();
+  }
+
+  public String getLowerCaseTitle() {
+    return mTitleLower;
+  }
+
+  public boolean supportsChannel(final Channel channel) {
+    return mParser.isSupportedChannel(channel);
+  }
+
+  protected IParser getParser() {
+    return mParser;
   }
 
 }
