@@ -53,12 +53,14 @@ public final class ARDParser extends AbstractParser {
   /**
    * pattern to match for episodes on those pages which do not support RSS
    */
-  private static final Pattern EPISODE_PATTERN = Pattern.compile(Pattern
-      .quote("\"beitragstitel\"><a href=\"")
-      + "([^\"]*)"
-      + Pattern.quote("\" class=\"blau\"><strong>")
-      + "([^<]*)"
-      + Pattern.quote("</strong>"));
+  private static final Pattern EPISODE_URL_PATTERN = Pattern.compile(Pattern
+      .quote("<a href=\"/ard/servlet/content/")
+      + "([^\"]+)"
+      + Pattern.quote("\" class=\"highlight\""));
+  
+  private static final Pattern EPISODE_TITLE_PATTERN = Pattern.compile(Pattern
+      .quote("\"beitragstitel\"><strong>")
+      + "([^<]*)" + Pattern.quote("</strong>"));
 
   private enum TitleFix {
     ARD_RATGEBER("ARD-Ratgeber", "ARD Ratgeber: "), LANDESSCHAU("Landesschau",
@@ -83,20 +85,28 @@ public final class ARDParser extends AbstractParser {
           currentFix = fix;
         }
       }
+      final int index = title.indexOf('|');
+      if (index > 0) {
+        title = title.substring(0, index).trim();
+      }
       return title;
     }
   };
 
   public void readContents() {
-    // <option value="http://www.ardmediathek.de/ard/servlet/content/967542">3
-    // nach 9 (RB)</option>
-    final Pattern pattern = Pattern.compile(Pattern.quote("option value=\""
-        + SITE_URL)
+    // <option value="1082266"
+    // title="ARD-Brennpunkt (Das Erste)">ARD-Brennpunkt</option>
+    final Pattern pattern = Pattern.compile(Pattern.quote("option value=\"")
         + "([^\"]+)"
+        + Pattern.quote("\" title=\"") + "([^\"]+)"
         + Pattern.quote("\">")
         + "([^<]+)"
         + Pattern.quote("</option>"));
     readContents(CONTENT_URL + "2570", pattern, "ARD");
+  }
+
+  protected String getTitleFromMatcher(final Matcher matcher) {
+    return matcher.group(3);
   }
 
   public boolean isSupportedChannel(final Channel channel) {
@@ -118,7 +128,8 @@ public final class ARDParser extends AbstractParser {
       return false;
     }
     MediathekPlugin.getInstance().addProgram(this, title,
-        SITE_URL + relativeUrl);
+        "http://www.ardmediathek.de/ard/servlet/content/1214?moduleId="
+            + relativeUrl);
     return true;
   }
 
@@ -147,25 +158,26 @@ public final class ARDParser extends AbstractParser {
 
   private void parseEpisodesWithoutRSS(final MediathekProgram program,
       final String content) {
-    final Matcher matcher = EPISODE_PATTERN.matcher(content);
+    final Matcher matcher = EPISODE_URL_PATTERN.matcher(content);
     int count = 0;
     while (matcher.find()) {
       String type = null;
-      final String url = SITE_URL + matcher.group(1);
-      final String title = MediathekPlugin.getInstance().convertHTML(
-          matcher.group(2));
+      final String url = SITE_URL + "/" + matcher.group(1);
       final String nextPart = content.substring(matcher.end(1),
           matcher.end(1) + 1024 * 2);
-      int index = nextPart.indexOf(matcher.group(1) + "\" class=\"");
-      if (index > 0) {
-        index += matcher.group(1).length() + "\" class=\"".length();
-        final int stop = nextPart.indexOf('"', index + 1);
-        if (stop > 0) {
-          type = nextPart.substring(index, stop);
-        }
+      final Matcher titleMatcher = EPISODE_TITLE_PATTERN.matcher(nextPart);
+      if (titleMatcher.find()) {
+        final String title = MediathekPlugin.getInstance().convertHTML(
+            titleMatcher.group(1));
+        /*
+         * int index = nextPart.indexOf(matcher.group(1) + "\" class=\""); if
+         * (index > 0) { index += matcher.group(1).length() +
+         * "\" class=\"".length(); final int stop = nextPart.indexOf('"', index
+         * + 1); if (stop > 0) { type = nextPart.substring(index, stop); } }
+         */
+        program.addItem(new MediathekProgramItem(title, url, type));
+        count++;
       }
-      program.addItem(new MediathekProgramItem(title, url, type));
-      count++;
     }
     logInfo("Read " + count + " episodes for " + program.getTitle());
     program.updatePluginTree(true);

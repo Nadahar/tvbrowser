@@ -87,8 +87,8 @@ public abstract class AbstractParser implements IParser {
     final Matcher matcher = pattern.matcher(startPage);
     int count = 0;
     while (matcher.find()) {
-      final String relativeUrl = matcher.group(1);
-      final String title = plugin.convertHTML(matcher.group(2));
+      final String relativeUrl = getUrlFromMatcher(matcher);
+      final String title = plugin.convertHTML(getTitleFromMatcher(matcher));
       if (addProgram(title, relativeUrl)) {
         count++;
       }
@@ -100,6 +100,14 @@ public abstract class AbstractParser implements IParser {
         plugin.getLogger().info(msg);
       }
     });
+  }
+
+  protected String getTitleFromMatcher(final Matcher matcher) {
+    return matcher.group(2);
+  }
+
+  protected String getUrlFromMatcher(final Matcher matcher) {
+    return matcher.group(1);
   }
 
   public boolean canReadEpisodes() {
