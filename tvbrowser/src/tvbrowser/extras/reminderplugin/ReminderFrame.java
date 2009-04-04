@@ -91,6 +91,7 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
     mLocalizer.msg("remind.480", "Remind me 8 hours before"),
     mLocalizer.msg("remind.720", "Remind me 12 hours before"),
     mLocalizer.msg("remind.1440", "Remind me one day before"),
+    mLocalizer.msg("remind.week", "Remind me one week before"),
   };
 
   /**
@@ -98,7 +99,8 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
    * reminder should appear.
    */
   static final int[] REMIND_VALUE_ARR
-    = { -1, 0, 1, 2, 3, 5, 10, 15, 30, 60, 90, 120, 240, 480, 720, 1440 };
+    = { -1, 0, 1, 2, 3, 5, 10, 15, 30, 60,
+      90, 120, 240, 480, 720, 1440, 7 * 1440 };
   
   /**
    * The frame that shows this reminder. The reminder is shown in a frame if
@@ -136,15 +138,16 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
    * @param autoCloseSecs The number seconds to wait before auto-closing the
    *                      window. -1 disables auto-closing.
    */
-  public ReminderFrame(ReminderList list,
-    ReminderListItem item, int autoCloseSecs)
+  public ReminderFrame(final ReminderList list, final ReminderListItem item,
+      final int autoCloseSecs)
   {
     // Check whether we have to use a frame or dialog
     // Workaround: If there is a modal dialog open a frame is not usable. All
     //             user interaction will be ignored.
     //             -> If there is a modal dialog open, we show this reminder as
     //                dialog, otherwise as frame.
-    Window parent = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
+    final Window parent = UiUtilities.getLastModalChildOf(MainFrame
+        .getInstance());
     String title = mLocalizer.msg("title", "Reminder");
     
     // if this is a favorite, change the title to the name of the favorite
@@ -171,17 +174,18 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
     
     mReminderList.blockProgram(mListItem.getProgram());
     
-    JPanel jcontentPane = new JPanel(new BorderLayout(0,10));
+    final JPanel jcontentPane = new JPanel(new BorderLayout(0, 10));
     mDialog.setContentPane(jcontentPane);
     
     jcontentPane.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
-    JPanel progPanel=new JPanel(new BorderLayout(5, 10));
+    final JPanel progPanel = new JPanel(new BorderLayout(5, 10));
 
     // text label
     String msg;
-    int progMinutesAfterMidnight = mProgram.getHours() * 60 + mProgram.getMinutes();
+    final int progMinutesAfterMidnight = mProgram.getHours() * 60
+        + mProgram.getMinutes();
     int remainingMinutes = 0;
-    Date today = Date.getCurrentDate();
+    final Date today = Date.getCurrentDate();
     if (today.compareTo(mProgram.getDate())>=0 && IOUtilities.getMinutesAfterMidnight() > progMinutesAfterMidnight) {
       msg = updateRunningTime();
     }
@@ -192,19 +196,23 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
     
     progPanel.add(mHeader = new JLabel(msg), BorderLayout.NORTH);
     
-    JPanel channelPanel = new JPanel(new BorderLayout());
+    final JPanel channelPanel = new JPanel(new BorderLayout());
     if (mProgram.getLength() > 0) {
-      JLabel endTime = new JLabel(mLocalizer.msg("endTime", "until {0}",mProgram.getEndTimeString()));
+      final JLabel endTime = new JLabel(mLocalizer.msg("endTime", "until {0}",
+          mProgram.getEndTimeString()));
       channelPanel.add(endTime, BorderLayout.NORTH);
     }
-    JLabel channelLabel=new JLabel(mProgram.getChannel().getName());
+    final JLabel channelLabel = new JLabel(mProgram.getChannel().getName());
     channelLabel.setIcon(UiUtilities.createChannelIcon(mProgram.getChannel().getIcon()));
     channelLabel.setVerticalTextPosition(SwingConstants.BOTTOM);
     channelLabel.setHorizontalTextPosition(SwingConstants.CENTER);
     channelPanel.add(channelLabel, BorderLayout.CENTER);
     progPanel.add(channelPanel,BorderLayout.EAST);
     
-    ProgramPanel panel = new ProgramPanel(mProgram, new ProgramPanelSettings(new PluginPictureSettings(PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE),false,ProgramPanelSettings.X_AXIS));
+    final ProgramPanel panel = new ProgramPanel(mProgram,
+        new ProgramPanelSettings(new PluginPictureSettings(
+            PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE), false,
+            ProgramPanelSettings.X_AXIS));
     // register panel with tooltip manager
     panel.setToolTipText("");
     panel.addPluginContextMenuMouseListener(ReminderPluginProxy.getInstance());
@@ -212,7 +220,7 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
     
     // initialize close button with full text, so it can show the countdown later without size problems
     mRemainingSecs = autoCloseSecs;
-    JPanel btnPanel = new JPanel(new BorderLayout(10,0));
+    final JPanel btnPanel = new JPanel(new BorderLayout(10, 0));
     mCloseBtText = Localizer.getLocalization(Localizer.I18N_CLOSE);
     int seconds = mRemainingSecs;
     if (ReminderPlugin.getInstance().getSettings().getProperty("showTimeCounter","false").compareTo("true") == 0) {
@@ -238,7 +246,7 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
     jcontentPane.add(btnPanel,BorderLayout.SOUTH);
     
     mCloseBt.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent event) {
+      public void actionPerformed(final ActionEvent event) {
         close();
       }
     });
@@ -246,7 +254,7 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
     if (mRemainingSecs > 0) {
       updateCloseBtText();
       mAutoCloseTimer = new Timer(1000, new ActionListener() {
-        public void actionPerformed(ActionEvent evt) {
+        public void actionPerformed(final ActionEvent evt) {
           handleTimerEvent();
         }
       });
@@ -263,9 +271,10 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
     
     if(mDialog.isAlwaysOnTop()) {
       mDialog.addWindowFocusListener(new WindowFocusListener() {
-        public void windowGainedFocus(WindowEvent e) {}
+        public void windowGainedFocus(final WindowEvent e) {
+        }
   
-        public void windowLostFocus(WindowEvent e) {
+        public void windowLostFocus(final WindowEvent e) {
           mDialog.setAlwaysOnTop(false);
           UiUtilities.getLastModalChildOf(MainFrame.getInstance()).toFront();
         }
@@ -274,7 +283,7 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
     
     mDialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
     mDialog.addWindowListener(new WindowAdapter() {
-      public void windowClosing(WindowEvent e) {
+      public void windowClosing(final WindowEvent e) {
         close();
       }
     });
@@ -286,7 +295,8 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
   private String updateRunningTime() {
     String msg = null;
     if(mProgram.isOnAir()) {
-      int progMinutesAfterMidnight = mProgram.getHours() * 60 + mProgram.getMinutes();
+      final int progMinutesAfterMidnight = mProgram.getHours() * 60
+          + mProgram.getMinutes();
       int minutesRunning = IOUtilities.getMinutesAfterMidnight() - progMinutesAfterMidnight;
       if (minutesRunning < 0) {
         minutesRunning += 24 * 60;
@@ -334,18 +344,18 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
   }
 
   private String getCloseButtonText(int seconds) {
-    StringBuilder builder = new StringBuilder(mCloseBtText);
+    final StringBuilder builder = new StringBuilder(mCloseBtText);
     builder.append(" ("); 
     if (seconds <= 60) {
       builder.append(seconds);
     }
     else {
       if (seconds >= 3600) {
-        int hours = seconds / 3600;
+        final int hours = seconds / 3600;
         builder.append(hours).append(":");
         seconds = seconds - 3600 * hours;
       }
-      int minutes = seconds / 60;
+      final int minutes = seconds / 60;
       if (minutes < 10) {
         builder.append("0");
       }
@@ -362,8 +372,8 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
   public void close() {
     mReminderList.removeWithoutChecking(mListItem.getProgramItem());
     
-    int inx = mReminderCB.getSelectedIndex();
-    int minutes = REMIND_VALUE_ARR[inx];
+    final int inx = mReminderCB.getSelectedIndex();
+    final int minutes = REMIND_VALUE_ARR[inx];
     if (minutes != -1) {
       mReminderList.add(mProgram, minutes);
       mReminderList.unblockProgram(mProgram);
@@ -382,7 +392,7 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
     return mDialog.getRootPane();
   }
   
-  public static String getStringForMinutes(int minutes) {
+  public static String getStringForMinutes(final int minutes) {
     for (int i = 0; i < REMIND_VALUE_ARR.length; i++) {
       if(REMIND_VALUE_ARR[i] == minutes) {
         return REMIND_MSG_ARR[i];
@@ -392,7 +402,7 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
     return null;
   }
   
-  public static int getValueForMinutes(int minutes) {
+  public static int getValueForMinutes(final int minutes) {
     for(int i = 0; i < REMIND_VALUE_ARR.length; i++) {
       if(REMIND_VALUE_ARR[i] == minutes) {
         return i - 1;
@@ -402,12 +412,12 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
     return -1;
   }
 
-  public static int getMinutesForValue(int index) {
+  public static int getMinutesForValue(final int index) {
     return REMIND_VALUE_ARR[index + 1];
   }
   
 
-  public void stateChanged(ChangeEvent e) {
+  public void stateChanged(final ChangeEvent e) {
     updateRunningTime();
   }
 }

@@ -891,14 +891,13 @@ public class ReminderPlugin {
   }
   
   protected static int getTimeToProgramStart(Program program) {
-    int progMinutesAfterMidnight = program.getHours() * 60 + program.getMinutes();
-    int remainingMinutes = progMinutesAfterMidnight - IOUtilities.getMinutesAfterMidnight();
-    if ((remainingMinutes < 0) || (Date.getCurrentDate().compareTo(program.getDate()) < 0)) {
+    int progMinutesAfterMidnight = program.getHours() * 60
+        + program.getMinutes();
+    int remainingMinutes = progMinutesAfterMidnight
+        - IOUtilities.getMinutesAfterMidnight() + 1440
+        * (program.getDate().getNumberOfDaysSince(Date.getCurrentDate()));
+    if (remainingMinutes < 0) {
       remainingMinutes += 24 * 60;
-      
-      if(Date.getCurrentDate().addDays(1).compareTo(program.getDate()) < 0) {
-        remainingMinutes += 24 * 60;
-      }
     }
     return remainingMinutes;
   }
