@@ -108,6 +108,16 @@ public class TVPProgram implements Comparable<TVPProgram>
 		return mStart;
 	}
 
+  /**
+   * get start time in minutes after midnight
+   * 
+   * @return
+   */
+  public int getStartTime() {
+    return getStart().get(Calendar.HOUR_OF_DAY) * 60
+        + getStart().get(Calendar.MINUTE);
+  }
+
 	public String getTitle()
 	{
 		return mTitle;
