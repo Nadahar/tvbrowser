@@ -41,8 +41,14 @@ import devplugin.ProgramReceiveTarget;
 public class TVPearl
 {
 	/**
-	 * minimum time in hours before the next online update can be done
-	 */
+   * maximum deviation in minutes which is accepted when searching for the
+   * matching program
+   */
+	private static final int ALLOWED_DEVIATION_MINUTES = 10;
+
+  /**
+   * minimum time in hours before the next online update can be done
+   */
 	private static final int UPDATE_WAIT_HOURS = 12;
 
 	private static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(TVPearlPlugin.class.getName());
@@ -140,8 +146,8 @@ public class TVPearl
 					while ((it != null) && (it.hasNext()))
 					{
 					  final Program p = it.next();
-						if (compareTitle(p.getTitle(), program.getTitle()) && p.getHours() == program.getStart().get(Calendar.HOUR_OF_DAY) && p.getMinutes() == program.getStart().get(Calendar.MINUTE))
-						{
+						if (compareTitle(p.getTitle(), program.getTitle())
+                && Math.abs(p.getStartTime() - program.getStartTime()) <= ALLOWED_DEVIATION_MINUTES) {
 							program.setProgram(p);
 							return;
 						}
