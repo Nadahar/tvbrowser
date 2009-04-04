@@ -78,6 +78,7 @@ public class ImdbParser {
       mDatabase.deleteDatabase();
     } else {
       optimizeDatabase(monitor);
+      ImdbPlugin.getInstance().setCurrentDatabaseVersion();
     }
   }
 

@@ -56,20 +56,25 @@ import devplugin.SettingsTab;
 import devplugin.Version;
 
 public final class ImdbPlugin extends Plugin {
+
   /**
    * Translator
    */
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(ImdbPlugin.class);
 
-  private static final Version mVersion = new Version(1, 0);
+  private static final boolean IS_STABLE = true;
+
+  private static final Version mVersion = new Version(1, 1, IS_STABLE);
 
   // Empty Rating for Cache
   private static final ImdbRating DUMMY_RATING = new ImdbRating(0, 0, "", "");
 
+  private static ImdbPlugin instance;
+
   private PluginInfo mPluginInfo;
   private ImdbDatabase mImdbDatabase;
   private SoftReferenceCache<String, ImdbRating> mRatingCache = new SoftReferenceCache<String, ImdbRating>();
-  private Properties mProperties;
+  private ImdbSettings mSettings;
   private boolean mStartFinished = false;
   private ArrayList<Channel> mExcludedChannels = new ArrayList<Channel>();
 
@@ -223,7 +228,22 @@ public final class ImdbPlugin extends Plugin {
   @Override
   public void handleTvBrowserStartFinished() {
     initializeDatabase();
-    if (!mProperties.getProperty("dontAskCreateDatabase", "false").equals("true") && !mImdbDatabase.isInitialised()) {
+    if (mImdbDatabase.isInitialised() && !mSettings.isDatabaseCurrentVersion()) {
+      SwingUtilities.invokeLater(new Runnable(){
+        public void run() {
+      JOptionPane
+          .showMessageDialog(
+              getParentFrame(),
+              mLocalizer
+                  .msg(
+                      "version.message",
+                      "Your local IMDb database must be imported again because the\ndatabase format has changed with this plugin version."),
+              mLocalizer.msg("version.title", "Database upgrade"),
+              JOptionPane.INFORMATION_MESSAGE);
+        }
+      });
+    }
+    if (mSettings.askCreateDatabase() && !mImdbDatabase.isInitialised()) {
       SwingUtilities.invokeLater(new Runnable(){
         public void run() {
           final JCheckBox askAgain = new JCheckBox(mLocalizer.msg(
@@ -237,7 +257,7 @@ public final class ImdbPlugin extends Plugin {
                   "No data available"), JOptionPane.YES_NO_OPTION);
 
           if (askAgain.isSelected()) {
-            mProperties.setProperty("dontAskCreateDatabase", "true");
+            mSettings.askCreateDatabase(true);
           }
 
           if (ret == JOptionPane.YES_OPTION) {
@@ -294,13 +314,13 @@ public final class ImdbPlugin extends Plugin {
   }
 
   @Override
-  public void loadSettings(final Properties settings) {
-    mProperties = settings;
+  public void loadSettings(final Properties properties) {
+    mSettings = new ImdbSettings(properties);
   }
 
   @Override
   public Properties storeSettings() {
-    return mProperties;
+    return mSettings.storeSettings();
   }
 
   @Override
@@ -444,5 +464,18 @@ public final class ImdbPlugin extends Plugin {
   @Override
   public PluginTreeNode getRootNode() {
     return mRootNode;
+  }
+
+  public static ImdbPlugin getInstance() {
+    return instance;
+  }
+
+  public ImdbPlugin() {
+    super();
+    instance = this;
+  }
+
+  public void setCurrentDatabaseVersion() {
+    mSettings.setCurrentDatabaseVersion();
   }
 }
