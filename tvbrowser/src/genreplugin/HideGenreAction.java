@@ -1,5 +1,5 @@
 /*
- * GenrePlugin Copyright Michael Keppler
+ * Copyright Michael Keppler
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -29,14 +29,14 @@ public class HideGenreAction extends ContextMenuAction implements Action {
 
   private String genre;
 
-  public HideGenreAction(String genre) {
+  public HideGenreAction(final String genre) {
     this.genre = genre;
     setText(mLocalizer.msg("label","Hide genre"));
     setSmallIcon(GenrePlugin.getInstance().createImageIcon("actions", "list-remove", 16));
   }
 
   @Override
-  public void actionPerformed(ActionEvent event) {
+  public void actionPerformed(final ActionEvent event) {
     GenrePlugin.getInstance().hideGenre(genre);
     GenrePlugin.getInstance().updateRootNode();
   }

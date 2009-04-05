@@ -1,5 +1,5 @@
 /*
- * GenrePlugin Copyright Michael Keppler
+ * Copyright Michael Keppler
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -58,7 +58,8 @@ public class GenreSettingsTab implements SettingsTab, IGenreSettings {
   private JButton mAddFilter;
   private JButton mRemoveFilter;
 
-  public GenreSettingsTab(GenrePlugin plugin, ArrayList<String> hiddenGenres, Properties settings) {
+  public GenreSettingsTab(final GenrePlugin plugin,
+      final ArrayList<String> hiddenGenres, final Properties settings) {
     mPlugin = plugin;
     mListModel = new DefaultListModel();
     Collections.sort(hiddenGenres);
@@ -69,14 +70,16 @@ public class GenreSettingsTab implements SettingsTab, IGenreSettings {
   }
 
   public JPanel createSettingsPanel() {
-    PanelBuilder panelBuilder = new PanelBuilder(new FormLayout("5dlu, pref, 3dlu, pref, fill:default:grow",
+    final PanelBuilder panelBuilder = new PanelBuilder(new FormLayout(
+        "5dlu, pref, 3dlu, pref, fill:default:grow",
         "5dlu, pref, 5dlu, pref, 2dlu, fill:default:grow, 3dlu, pref, 3dlu"));
-    CellConstraints cc = new CellConstraints();
+    final CellConstraints cc = new CellConstraints();
 
-    JLabel label = new JLabel(mLocalizer.msg("daysToShow", "Days to show"));
+    final JLabel label = new JLabel(mLocalizer
+        .msg("daysToShow", "Days to show"));
     panelBuilder.add(label, cc.xy(2, 2));
     
-    SpinnerNumberModel model = new SpinnerNumberModel(7, 1, 28, 1);
+    final SpinnerNumberModel model = new SpinnerNumberModel(7, 1, 28, 1);
     mSpinner = new JSpinner(model);
     mSpinner.setValue(Integer.valueOf(mSettings.getProperty(SETTINGS_DAYS, "7")));
     panelBuilder.add(mSpinner, cc.xy(4, 2));
@@ -87,15 +90,15 @@ public class GenreSettingsTab implements SettingsTab, IGenreSettings {
     mFilteredGenres.setSelectedIndex(0);
     mFilteredGenres.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     mFilteredGenres.addListSelectionListener(new ListSelectionListener() {
-      public void valueChanged(ListSelectionEvent e) {
+      public void valueChanged(final ListSelectionEvent e) {
         listSelectionChanged();
       }
     });
 
     
-    JPanel listPanel = new JPanel(new GridBagLayout());
+    final JPanel listPanel = new JPanel(new GridBagLayout());
 
-    GridBagConstraints c = new GridBagConstraints();
+    final GridBagConstraints c = new GridBagConstraints();
 
     c.gridwidth = GridBagConstraints.REMAINDER;
     c.fill = GridBagConstraints.BOTH;
@@ -111,7 +114,7 @@ public class GenreSettingsTab implements SettingsTab, IGenreSettings {
     panelBuilder.add(mAddFilter, cc.xy(2, 8));
     mAddFilter.addActionListener(new ActionListener() {
 
-      public void actionPerformed(ActionEvent e) {
+      public void actionPerformed(final ActionEvent e) {
         String genre = JOptionPane.showInputDialog(mLocalizer.msg("addFilterMessage", "Add genre to be filtered"), "");
         if (genre != null) {
           genre = genre.trim();
@@ -125,15 +128,15 @@ public class GenreSettingsTab implements SettingsTab, IGenreSettings {
     panelBuilder.add(mRemoveFilter, cc.xy(4, 8));
     mRemoveFilter.addActionListener(new ActionListener() {
 
-      public void actionPerformed(ActionEvent e) {
-        int index = mFilteredGenres.getSelectedIndex();
+      public void actionPerformed(final ActionEvent e) {
+        final int index = mFilteredGenres.getSelectedIndex();
         if (index >= 0) {
           mListModel.remove(index);
         }
       }});
     
     mFilteredGenres.addListSelectionListener(new ListSelectionListener() {
-      public void valueChanged(ListSelectionEvent e) {
+      public void valueChanged(final ListSelectionEvent e) {
         mRemoveFilter.setEnabled(mFilteredGenres.getSelectedIndex() >= 0);
       }});
     
@@ -159,7 +162,7 @@ public class GenreSettingsTab implements SettingsTab, IGenreSettings {
   }
 
   private void listSelectionChanged() {
-    boolean selected = (mFilteredGenres.getSelectedIndex() > -1);
+    final boolean selected = (mFilteredGenres.getSelectedIndex() > -1);
     mRemoveFilter.setEnabled(selected);
   }
 }
