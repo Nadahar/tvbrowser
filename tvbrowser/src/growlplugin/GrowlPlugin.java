@@ -26,17 +26,17 @@ package growlplugin;
 
 import java.util.Properties;
 
-import util.ui.Localizer;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+
 import util.ui.ImageUtilities;
+import util.ui.Localizer;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.Program;
+import devplugin.ProgramReceiveTarget;
 import devplugin.SettingsTab;
 import devplugin.Version;
-import devplugin.ProgramReceiveTarget;
-
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
 
 /**
  * This is the Growl-Plugin
@@ -48,42 +48,32 @@ import javax.swing.ImageIcon;
  * @author bodum
  */
 public class GrowlPlugin extends Plugin {
-  private static final Version mVersion = new Version(2,60);
+  private static final String GROWL_TARGET_ID = "growlnotify";
+
+  private static final Version mVersion = new Version(2, 70);
   
   /** Translator */
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(GrowlPlugin.class);
   /** The Growl-Container */
   private GrowlContainer mContainer;
-  /** Was the System initialized correctly ? */
-  private boolean mInitialized = false;
-  /** Settings for this Plugin */
-  private Properties mSettings;
-  
+
+  private GrowlSettings mSettings;
+
+  private final ImageIcon mIcon = new ImageIcon(ImageUtilities
+      .createImageFromJar("growlplugin/growlclaw.png", GrowlSettingsTab.class));
+
   /**
-   * Checks the OS and inititializes the System accordingly.
-   *
+   * Checks the OS and initializes the System accordingly.
+   * 
    */
   public GrowlPlugin() {
-    try {
-      if (System.getProperty("os.name").toLowerCase().startsWith("mac")) {
-        mContainer = new GrowlContainer();
-        mInitialized = true;
-      }      
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
   }
   
-  /*
-   * (non-Javadoc)
-   * 
-   * @see devplugin.Plugin#getInfo()
-   */
   public PluginInfo getInfo() {
-      String name = mLocalizer.msg("pluginName", "Growl Notification");
-      String desc = mLocalizer.msg("description",
+    final String name = mLocalizer.msg("pluginName", "Growl Notification");
+    final String desc = mLocalizer.msg("description",
               "Sends all received Programs to Growl.");
-      String author = "Bodo Tasche";
+    final String author = "Bodo Tasche";
       return new PluginInfo(this.getClass(), name, desc, author);
   }
 
@@ -94,14 +84,16 @@ public class GrowlPlugin extends Plugin {
 
   @Override
   public boolean canReceiveProgramsWithTarget() {
-      return mInitialized;
-  }    
+      return true;
+  }
 
   @Override
-  public boolean receivePrograms(Program[] programArr, ProgramReceiveTarget receiveTarget) {
-    if (mInitialized && receiveTarget.getTargetId().equals("growlnotify")) {
-      for (Program program : programArr)
+  public boolean receivePrograms(final Program[] programArr,
+      final ProgramReceiveTarget receiveTarget) {
+    if (receiveTarget.getTargetId().equals(GROWL_TARGET_ID)) {
+      for (Program program : programArr) {
         mContainer.notifyGrowl(mSettings, program);
+      }
       return true;
     }
     return false;
@@ -109,25 +101,16 @@ public class GrowlPlugin extends Plugin {
 
   @Override
   public ProgramReceiveTarget[] getProgramReceiveTargets() {
-    return new ProgramReceiveTarget[] { new ProgramReceiveTarget(this, mLocalizer.msg("pluginName", "Growl Notification"), "growlnotify")};
+    return new ProgramReceiveTarget[] { new ProgramReceiveTarget(this,
+        mLocalizer.msg("pluginName", "Growl Notification"), GROWL_TARGET_ID) };
   }
 
-  /**
-   * Create the Settings-Tab
-   */
   public SettingsTab getSettingsTab() {
-    return new GrowlSettingsTab(this, mInitialized, mSettings);
+    return new GrowlSettingsTab(this, mSettings);
   }
   
-  /**
-   * Load the Settings for this Plugin and
-   * create Default-Values if nothing was set
-   */
-  public void loadSettings(Properties settings) {
-    mSettings = settings;
-    
-    mSettings.setProperty("title",       mSettings.getProperty("title", "{leadingZero(start_hour,\"2\")}:{leadingZero(start_minute,\"2\")} {title}"));
-    mSettings.setProperty("description", mSettings.getProperty("description", "{channel_name}\n{short_info}"));
+  public void loadSettings(final Properties settings) {
+    mSettings = new GrowlSettings(settings);
   }
   
   /**
@@ -138,19 +121,28 @@ public class GrowlPlugin extends Plugin {
     return mContainer;
   }
   
-  /**
-   * Store the Settings
-   */
   public Properties storeSettings() {
-    return mSettings;
+    return mSettings.store();
   }
 
-  /**
-   * Get mark icons for Plugin
-   * @param p get Icon for this Program
-   * @return MarkIcons for the Plugin
-   */
-  public Icon[] getMarkIconsForProgram(Program p) {
-    return new Icon[] {new ImageIcon(ImageUtilities.createImageFromJar("growlplugin/growlclaw.png", GrowlSettingsTab.class))};
+  public Icon[] getMarkIconsForProgram(final Program program) {
+    return new Icon[] {mIcon};
   }
+
+  protected Icon getPluginIcon() {
+    return mIcon;
+  }
+
+  @Override
+  public void onActivation() {
+    mContainer = new GrowlContainer();
+    mContainer.registerApplication();
+  }
+
+  @Override
+  public void onDeactivation() {
+    mContainer = null;
+  }
+  
+  
 }
