@@ -29,7 +29,7 @@ public class ImdbSettings {
    * incremented to reflect that a new import of the data is necessary.
    * </p>
    */
-  private static final int CURRENT_DATABASE_VERSION = 1;
+  private static final int CURRENT_DATABASE_VERSION = 2;
   
   private Properties mProperties;
 
