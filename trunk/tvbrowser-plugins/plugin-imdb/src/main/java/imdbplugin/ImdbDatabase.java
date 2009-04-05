@@ -168,6 +168,7 @@ public final class ImdbDatabase {
     for (int i = 0; i < length; i++) {
       final char character = lowerCase.charAt(i);
       switch (character) {
+      // replace umlauts
       case 'ä': {
         builder.append("ae");
         break;
@@ -184,11 +185,32 @@ public final class ImdbDatabase {
         builder.append("ss");
         break;
       }
+      // remove some special characters
+      case ',':
+      case '\'':
+      case ':':
+      case '-': {
+        break;
+      }
+      // remove all double spaces
+      case ' ': {
+        if (builder.length() > 0 && builder.charAt(builder.length() - 1) != ' ') {
+          builder.append(' ');
+        }
+        break;
+      }
       default:
         builder.append(character);
       }
     }
-    return builder.toString();
+    String result = builder.toString();
+    // remove blank before the final ? or !
+    if (result.length() > 2 && (result.endsWith("!") || result.endsWith("?"))
+        && result.charAt(result.length() - 2) == ' ') {
+      result = result.substring(0, result.length() - 2)
+          + result.charAt(result.length() - 1);
+    }
+    return result;
   }
 
   public void addRating(final String movieId, final int rating,
