@@ -75,9 +75,9 @@ public class TaskMenuAction {
    * @param comp
    *          The Text Component find action to register the keyListener on.
    */
-  public TaskMenuAction(JTaskPaneGroup parent, Program program,
-      ActionMenu menu, ProgramInfoDialog info, String id,
-      TextComponentFindAction comp) {
+  public TaskMenuAction(final JTaskPaneGroup parent, final Program program,
+      final ActionMenu menu, final ProgramInfoDialog info, final String id,
+      final TextComponentFindAction comp) {
     mInfo = info;
     mFind = comp;
     
@@ -85,10 +85,12 @@ public class TaskMenuAction {
       if (!menu.hasSubItems()) {
         addAction(parent, menu);
       } else {
-        ActionMenu childMenu = getSingleActiveChild(menu);
+        final ActionMenu childMenu = getSingleActiveChild(menu);
         if (childMenu != null) {
-          // childMenu.getAction().putValue(Action.NAME,
-          // menu.getAction().getValue(Action.NAME));
+          if (id.contains("WebPlugin")) {
+            childMenu.getAction().putValue(Action.NAME,
+                menu.getAction().getValue(Action.NAME));
+          }
           childMenu.getAction().putValue(Action.SMALL_ICON, menu.getAction().getValue(Action.SMALL_ICON));
           addAction(parent, childMenu);
         }
@@ -99,11 +101,11 @@ public class TaskMenuAction {
     }
   }
 
-  private ActionMenu getSingleActiveChild(ActionMenu menu) {
+  private ActionMenu getSingleActiveChild(final ActionMenu menu) {
     int count = 0;
     ActionMenu result = null;
     for (int i = 0; i < menu.getSubItems().length; i++) {
-      ActionMenu subItem = menu.getSubItems()[i];
+      final ActionMenu subItem = menu.getSubItems()[i];
       if (subItem.getAction().getValue(Plugin.DISABLED_ON_TASK_MENU) == null) {
         count++;
         result = subItem;
@@ -116,13 +118,13 @@ public class TaskMenuAction {
   }
 
   // Adds the action to the TaskPaneGroup.
-  private void addAction(JTaskPaneGroup parent, ActionMenu menu) {
+  private void addAction(final JTaskPaneGroup parent, final ActionMenu menu) {
     final Action a = menu.getAction();    
 
     mAction = new AbstractAction() {
       private static final long serialVersionUID = 1L;
 
-      public void actionPerformed(ActionEvent e) {
+      public void actionPerformed(final ActionEvent e) {
         a.actionPerformed(e);
         
         if (mAction.getValue(Action.ACTION_COMMAND_KEY) == null
@@ -159,14 +161,14 @@ public class TaskMenuAction {
    * Adds a new TaskPaneGroup to the parent TaskPaneGroup for an ActionMenu with
    * submenus.
    */
-  private void addTaskPaneGroup(JTaskPaneGroup parent,
+  private void addTaskPaneGroup(final JTaskPaneGroup parent,
       final Program program, final ActionMenu menu, final ProgramInfoDialog info,
       final String id) {
     final ActionMenu[] subs = menu.getSubItems();
 
     final JTaskPaneGroup group = new JTaskPaneGroup();
     group.setTitle((String) menu.getAction().getValue(Action.NAME));
-    boolean expanded = ProgramInfo.getInstance().getExpanded(
+    final boolean expanded = ProgramInfo.getInstance().getExpanded(
         id + "_" + (String) menu.getAction().getValue(Action.NAME));
     group.setExpanded(expanded);
     group.setEnabled(true);
@@ -177,7 +179,7 @@ public class TaskMenuAction {
      * Properties for the Plugins menu.
      */
     group.addPropertyChangeListener(new PropertyChangeListener() {
-      public void propertyChange(PropertyChangeEvent evt) {
+      public void propertyChange(final PropertyChangeEvent evt) {
         ProgramInfo.getInstance().setExpanded(
             id + "_" + (String) menu.getAction().getValue(Action.NAME),
             group.isExpanded());
@@ -195,7 +197,7 @@ public class TaskMenuAction {
       }
     }
     else {
-      Thread thread = new Thread("Lazy task menus") {
+      final Thread thread = new Thread("Lazy task menus") {
         @Override
         public void run() {
           for (ActionMenu subMenu : subs) {
@@ -211,7 +213,7 @@ public class TaskMenuAction {
     parent.add(Box.createRigidArea(new Dimension(0, 5)));
   }
   
-  protected void setText(String value) {
+  protected void setText(final String value) {
     mAction.putValue(Action.NAME, "<html>" + value + "</html>");
   }
 }

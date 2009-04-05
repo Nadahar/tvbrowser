@@ -150,21 +150,23 @@ public class WebPlugin extends Plugin {
   /**
    * Loads the Data
    */
-  public void readData(ObjectInputStream in) throws IOException, ClassNotFoundException {
+  public void readData(final ObjectInputStream in) throws IOException,
+      ClassNotFoundException {
     mAddresses = new ArrayList<WebAddress>();
 
-    int version = in.readInt();
+    final int version = in.readInt();
 
-    int size = in.readInt();
+    final int size = in.readInt();
 
-    ArrayList<WebAddress> defaults = new ArrayList<WebAddress>(Arrays.asList(DEFAULT_ADRESSES));
+    final ArrayList<WebAddress> defaults = new ArrayList<WebAddress>(Arrays
+        .asList(DEFAULT_ADRESSES));
     
     for (int i = 0; i < size;i++) {
       WebAddress newone = new WebAddress(in);
 
       if (!newone.isUserEntry()) {
         for (int v = 0; v < defaults.size(); v++) {
-          WebAddress def = defaults.get(v);
+          final WebAddress def = defaults.get(v);
           // Replace Default Webaddresses with Default Settings
           if (def.getName().equals(newone.getName()) || def.getUrl().equals(newone.getUrl())) {
             // Copy needed Data
@@ -191,7 +193,7 @@ public class WebPlugin extends Plugin {
   /**
    * Saves the Data
    */
-  public void writeData(ObjectOutputStream out) throws IOException {
+  public void writeData(final ObjectOutputStream out) throws IOException {
     out.writeInt(2);
     if (mAddresses == null) {
       createDefaultSettings();
@@ -222,7 +224,9 @@ public class WebPlugin extends Plugin {
    */
   private void createDefaultSettings() {
     mAddresses = new ArrayList<WebAddress>();
-    WebAddress test = new WebAddress("Test", "http://akas.imdb.com/Tsearch?title={urlencode(title, \"UTF-8\")}", null, true, false);
+    final WebAddress test = new WebAddress("Test",
+        "http://akas.imdb.com/Tsearch?title={urlencode(title, \"UTF-8\")}",
+        null, true, false);
     mAddresses.addAll(Arrays.asList(DEFAULT_ADRESSES));
     mAddresses.add(test);
   }
@@ -236,7 +240,7 @@ public class WebPlugin extends Plugin {
       createDefaultSettings();
     }
 
-    ArrayList<Object> actionList = new ArrayList<Object>();
+    final ArrayList<Object> actionList = new ArrayList<Object>();
     listActors = null;
 
     for (int i = 0; i < mAddresses.size(); i++) {
@@ -245,7 +249,7 @@ public class WebPlugin extends Plugin {
         String actionName = mLocalizer.msg("SearchOn", "Search on ") + " " + address.getName();
 
         if (address.getUrl().equals(PROGRAM_SITE)) {
-          String url = program.getTextField(ProgramFieldType.URL_TYPE);
+          final String url = program.getTextField(ProgramFieldType.URL_TYPE);
           if (url != null && url.length() > 0) {
             address = new WebAddress(mLocalizer.msg("programPage", "Open page of program"),url,null,false,address.isActive());
             actionName = address.getName();
@@ -274,7 +278,7 @@ public class WebPlugin extends Plugin {
             findSearchItems(program);
           }
           if (address.getUrl().contains(WEBSEARCH_ALL) && (listActors.size() + listDirectors.size() + listScripts.size() > 0) && mShowDetails) {
-            ArrayList<Object> categoryList = new ArrayList<Object>();
+            final ArrayList<Object> categoryList = new ArrayList<Object>();
             // title
             final WebAddress adrTitle = new WebAddress(address.getName(), address.getUrl().replace(WEBSEARCH_ALL, "\"" + program.getTitle() + "\""), null, false, true);
             categoryList.add(createSearchAction(program, adrTitle, program.getTitle()));
@@ -286,14 +290,17 @@ public class WebPlugin extends Plugin {
               categoryList.remove(1);
             }
             
-            ContextMenuAction action = new ContextMenuAction(actionName, address.getIcon());
-            ActionMenu searchMenu = new ActionMenu(action, categoryList.toArray());
+            final ContextMenuAction action = new ContextMenuAction(actionName,
+                address.getIcon());
+            final ActionMenu searchMenu = new ActionMenu(action, categoryList
+                .toArray());
             actionList.add(searchMenu);
           }
           // create only a single menu item for this search
           else {
             final WebAddress adrTitle = new WebAddress(address.getName(), address.getUrl().replace(WEBSEARCH_ALL, "\"" + program.getTitle() + "\""), null, false, true);
-            AbstractAction action = createSearchAction(program, adrTitle, actionName);
+            final AbstractAction action = createSearchAction(program, adrTitle,
+                actionName);
             action.putValue(Action.SMALL_ICON, address.getIcon());
             actionList.add(action);
           }
@@ -305,7 +312,7 @@ public class WebPlugin extends Plugin {
     }
     
     if (actionList.size() == 1) {
-      Object action = actionList.get(0);
+      final Object action = actionList.get(0);
       if (action instanceof ActionMenu) {
         return (ActionMenu) action;
       }
@@ -314,18 +321,20 @@ public class WebPlugin extends Plugin {
       }
     }
     
-    Object[] actions = new Object[actionList.size()];
+    final Object[] actions = new Object[actionList.size()];
     actionList.toArray(actions);
-    Action mainAction = new devplugin.ContextMenuAction();
+    final Action mainAction = new devplugin.ContextMenuAction();
     mainAction.putValue(Action.NAME, mLocalizer.msg("contextMenu", "Web search"));
     mainAction.putValue(Action.SMALL_ICON, createImageIcon("actions", "web-search", 16));
 
-    ActionMenu result = new ActionMenu(mainAction, actions);
+    final ActionMenu result = new ActionMenu(mainAction, actions);
 
     return result;
   }
 
-  private void createSubMenu(final Program program, WebAddress address, ArrayList<Object> categoryList, String label, ArrayList<String> subItems) {
+  private void createSubMenu(final Program program, final WebAddress address,
+      final ArrayList<Object> categoryList, final String label,
+      final ArrayList<String> subItems) {
     if (subItems.size() > 0) {
       AbstractAction[] subActions = new AbstractAction[subItems.size()];
       for (int index = 0; index < subActions.length; index++) {
@@ -334,8 +343,8 @@ public class WebPlugin extends Plugin {
         subActions[index].putValue(Plugin.DISABLED_ON_TASK_MENU, true);
       }
       if (subItems.size() > 1) {
-        ContextMenuAction menuAction = new ContextMenuAction(label);
-        ActionMenu menu = new ActionMenu(menuAction, subActions);
+        final ContextMenuAction menuAction = new ContextMenuAction(label);
+        final ActionMenu menu = new ActionMenu(menuAction, subActions);
         menuAction.putValue(Plugin.DISABLED_ON_TASK_MENU, true);
         categoryList.add(menu);
       }
@@ -346,11 +355,12 @@ public class WebPlugin extends Plugin {
     }
   }
 
-  private AbstractAction createSearchAction(final Program program, WebAddress address, String actionName) {
+  private AbstractAction createSearchAction(final Program program,
+      final WebAddress address, final String actionName) {
     final WebAddress adr = address;
-    AbstractAction action = new AbstractAction() {
+    final AbstractAction action = new AbstractAction() {
  
-      public void actionPerformed(ActionEvent evt) {
+      public void actionPerformed(final ActionEvent evt) {
         openUrl(program, adr);
       }
     };
@@ -363,23 +373,25 @@ public class WebPlugin extends Plugin {
     listDirectors = new ArrayList<String>();
     listScripts = new ArrayList<String>();
     // director
-    String directorField = program.getTextField(ProgramFieldType.DIRECTOR_TYPE);
+    final String directorField = program
+        .getTextField(ProgramFieldType.DIRECTOR_TYPE);
     if (directorField != null) {
-      String[] directors = directorField.split(",");
+      final String[] directors = directorField.split(",");
       for (String director : directors) {
         addSearchItem(listDirectors, director);
       }
     }
     // script
-    String scriptField = program.getTextField(ProgramFieldType.SCRIPT_TYPE);
+    final String scriptField = program
+        .getTextField(ProgramFieldType.SCRIPT_TYPE);
     if (scriptField != null) {
-      String[] scripts = scriptField.split(",");
+      final String[] scripts = scriptField.split(",");
       for (String script : scripts) {
         addSearchItem(listScripts, script);
       }
     }
     // actors
-    String[] actors = ProgramUtilities.getActorNames(program);
+    final String[] actors = ProgramUtilities.getActorNames(program);
     if (actors != null) {
       Arrays.sort(actors);
       listActors = new ArrayList<String>();
@@ -392,11 +404,11 @@ public class WebPlugin extends Plugin {
     }
   }
 
-  private void addSearchItem(ArrayList<String> list, String search) {
+  private void addSearchItem(final ArrayList<String> list, String search) {
     if (search != null) {
       // remove additional bracket parts from script and director fields
-      int leftBracket = search.indexOf('(');
-      int rightBracket = search.lastIndexOf(')');
+      final int leftBracket = search.indexOf('(');
+      final int rightBracket = search.lastIndexOf(')');
       if (leftBracket > 0 && rightBracket > leftBracket) {
         search = search.substring(0, leftBracket);
       }
@@ -412,7 +424,7 @@ public class WebPlugin extends Plugin {
   }
   
   public ProgramReceiveTarget[] getProgramReceiveTargets() {
-    ArrayList<ProgramReceiveTarget> list = new ArrayList<ProgramReceiveTarget>();
+    final ArrayList<ProgramReceiveTarget> list = new ArrayList<ProgramReceiveTarget>();
     
     for (int i = 0; i < mAddresses.size(); i++) {
       final WebAddress adr = mAddresses.get(i);
@@ -425,14 +437,16 @@ public class WebPlugin extends Plugin {
     return list.toArray(new ProgramReceiveTarget[list.size()]);
   }
   
-  public boolean receiveValues(String[] values, ProgramReceiveTarget target) {
+  public boolean receiveValues(final String[] values,
+      final ProgramReceiveTarget target) {
     for (int i = 0; i < mAddresses.size(); i++) {
       final WebAddress adr = mAddresses.get(i);
       
       if (adr.isActive() && target.isReceiveTargetWithIdOfProgramReceiveIf(this,adr.getName() + "." + adr.getUrl())) {
         for(String value : values) {
           try {
-            String url = adr.getUrl().replaceAll("[{].*[}]",URLEncoder.encode(value, "UTF-8").replace("+", "%20"));
+            final String url = adr.getUrl().replaceAll("[{].*[}]",
+                URLEncoder.encode(value, "UTF-8").replace("+", "%20"));
             
             if(url.startsWith("http://")) {
               Launch.openURL(url);
@@ -447,7 +461,8 @@ public class WebPlugin extends Plugin {
     return false;
   }
   
-  public boolean receivePrograms(Program[] programArr, ProgramReceiveTarget target) {
+  public boolean receivePrograms(final Program[] programArr,
+      final ProgramReceiveTarget target) {
     for (int i = 0; i < mAddresses.size(); i++) {
       final WebAddress adr = mAddresses.get(i);
       
@@ -468,13 +483,13 @@ public class WebPlugin extends Plugin {
    * @param program Program to search on the Web
    * @param address Search-Engine to use
    */
-  protected void openUrl(Program program, WebAddress address) {
+  protected void openUrl(final Program program, final WebAddress address) {
     try {
-      ParamParser parser = new ParamParser();
-      String result = parser.analyse(address.getUrl(), program);
+      final ParamParser parser = new ParamParser();
+      final String result = parser.analyse(address.getUrl(), program);
       
       if (parser.hasErrors()) {
-        String errorString = parser.getErrorString();
+        final String errorString = parser.getErrorString();
         mLog.warning("URL parse error " + errorString+ " in " + address.getUrl());
         JOptionPane.showMessageDialog(UiUtilities.getLastModalChildOf(getParentFrame()), errorString, 
             Localizer.getLocalization(Localizer.I18N_ERROR),
@@ -496,12 +511,12 @@ public class WebPlugin extends Plugin {
   @Override
   public void handleTvDataUpdateFinished() {
     if(mHasRightToDownload) {
-      FavIconFetcher fetcher = new FavIconFetcher();
+      final FavIconFetcher fetcher = new FavIconFetcher();
     
       if (mAddresses != null) {
         for (WebAddress address : mAddresses) {
           if ((address.getIconFile() == null) && ! address.getUrl().equals(CHANNEL_SITE) && ! address.getUrl().equals(PROGRAM_SITE)) {
-            String file = fetcher.fetchFavIconForUrl(address.getUrl());
+            final String file = fetcher.fetchFavIconForUrl(address.getUrl());
             if (file != null) {
               address.setIconFile(file);
             } else {
@@ -518,7 +533,7 @@ public class WebPlugin extends Plugin {
     return mShowDetails;
   }
 
-  protected void setShowDetailMenus(boolean showDetails) {
+  protected void setShowDetailMenus(final boolean showDetails) {
     mShowDetails = showDetails;
   }
 }
