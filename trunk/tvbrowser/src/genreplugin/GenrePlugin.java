@@ -1,5 +1,5 @@
 /*
- * GenrePlugin Copyright Michael Keppler
+ * Copyright Michael Keppler
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -16,6 +16,8 @@
  */
 package genreplugin;
 
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -27,6 +29,7 @@ import javax.swing.Action;
 
 import util.ui.Localizer;
 import devplugin.Channel;
+import devplugin.ChannelDayProgram;
 import devplugin.Date;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
@@ -88,20 +91,18 @@ public class GenrePlugin extends Plugin implements IGenreSettings {
 
   @Override
   public PluginInfo getInfo() {
-    String name = mLocalizer.msg( "pluginName" ,"Genres" );
-    String desc = mLocalizer.msg( "pluginDescription" ,"Shows the available programs sorted by genre" );
-    return new PluginInfo(GenrePlugin.class, name, desc, "Michael Keppler");
+    final String name = mLocalizer.msg( "pluginName" ,"Genres" );
+    final String desc = mLocalizer.msg( "pluginDescription" ,"Shows the available programs sorted by genre" );
+    return new PluginInfo(GenrePlugin.class, name, desc, "Michael Keppler",
+        "GPL 3");
   }
 
   @Override
   public PluginTreeNode getRootNode() {
     if (mRootNode == null) {
-      mRootNode = new PluginTreeNode(this, false);
-      if (mStartFinished) {
-        // update the tree as the plugin view has been switched on for the first
-        // time after start
-        updateRootNode();
-      }
+      mRootNode = new PluginTreeNode(this);
+      loadRootNode(mRootNode);
+      mRootNode.getMutableTreeNode().setShowLeafCountEnabled(true);
     }
     return mRootNode;
   }
@@ -115,24 +116,24 @@ public class GenrePlugin extends Plugin implements IGenreSettings {
     if (!mStartFinished) {
       return;
     }
-    PluginTreeNode root = getRootNode();
+    final PluginTreeNode root = getRootNode();
     root.removeAllActions();
     root.removeAllChildren();
-    root.getMutableTreeNode().setShowLeafCountEnabled(true);
     
     int progCount = 0;
-    HashMap<String, PluginTreeNode> genreNodes = new HashMap<String, PluginTreeNode>();
+    final HashMap<String, PluginTreeNode> genreNodes = new HashMap<String, PluginTreeNode>();
     currentGenres = new ArrayList<String>();
-    Channel[] channels = devplugin.Plugin.getPluginManager().getSubscribedChannels();
+    final Channel[] channels = devplugin.Plugin.getPluginManager().getSubscribedChannels();
     Date date = Date.getCurrentDate();
-    int maxDays = Integer.valueOf(mSettings.getProperty(SETTINGS_DAYS, "7"));
+    final int maxDays = Integer.valueOf(mSettings.getProperty(SETTINGS_DAYS,
+        "7"));
     for (int days = 0; days < maxDays; days++) {
       for (int i = 0; i < channels.length; ++i) {
-        Iterator<Program> iter = devplugin.Plugin.getPluginManager()
+        final Iterator<Program> iter = devplugin.Plugin.getPluginManager()
             .getChannelDayProgram(date, channels[i]);
         if (iter != null) {
           while (iter.hasNext()) {
-            Program prog = iter.next();
+            final Program prog = iter.next();
             String genreField = prog.getTextField(ProgramFieldType.GENRE_TYPE);
             if (genreField != null) {
               // some programs have buggy fields with brackets
@@ -140,23 +141,19 @@ public class GenrePlugin extends Plugin implements IGenreSettings {
                 genreField = genreField.substring(1, genreField.length() - 1);
               }
               // some programs have multiple genres in the field
-              String[] genres = genreField.split(",");
+              final String[] genres = genreField.split(",");
               for (String g : genres) {
-                String genre = g.trim();
-                if (genre.length() > 3) {
-                  if (!hiddenGenres.contains(genre)) {
-                    PluginTreeNode node = genreNodes.get(genre);
-                    if (node == null) {
-                      node = new PluginTreeNode(genre);
-                      node.setGroupingByDateEnabled(maxDays > 1);
-                      Action hideCategory = new HideGenreAction(genre);
-                      node.addAction(hideCategory);
-                      genreNodes.put(genre, node);
-                      currentGenres.add(genre);
-                    }
-                    node.addProgramWithoutCheck(prog);
-                    progCount++;
+                final String genre = g.trim();
+                if (genre.length() > 3 && !hiddenGenres.contains(genre)) {
+                  PluginTreeNode node = genreNodes.get(genre);
+                  if (node == null) {
+                    node = new PluginTreeNode(genre);
+                    formatGenreNode(maxDays, node);
+                    genreNodes.put(genre, node);
+                    currentGenres.add(genre);
                   }
+                  node.addProgramWithoutCheck(prog);
+                  progCount++;
                 }
               }
             }
@@ -172,7 +169,7 @@ public class GenrePlugin extends Plugin implements IGenreSettings {
     Collections.sort(currentGenres, String.CASE_INSENSITIVE_ORDER);
     mergeSimilarGenres(genreNodes);
     for (String genre : currentGenres) {
-      PluginTreeNode genreNode = genreNodes.get(genre);
+      final PluginTreeNode genreNode = genreNodes.get(genre);
       // the node may be deleted because of merging
       if (genreNode != null) {
         root.add(genreNode);
@@ -181,32 +178,41 @@ public class GenrePlugin extends Plugin implements IGenreSettings {
     root.update();
   }
 
-  private void mergeSimilarGenres(HashMap<String, PluginTreeNode> genreNodes) {
+  private void formatGenreNode(final int maxDays, final PluginTreeNode node) {
+    node.setGroupingByDateEnabled(maxDays > 1);
+    final Action hideCategory = new HideGenreAction(node.getUserObject()
+        .toString());
+    node.addAction(hideCategory);
+  }
+
+  private void mergeSimilarGenres(
+      final HashMap<String, PluginTreeNode> genreNodes) {
     for (String genre : currentGenres) {
-      int index = genre.indexOf('-');
+      final int index = genre.indexOf('-');
       if (index > 0 && index + 2 <= genre.length()) {
         String shortened = genre.replace("-", "");
         if (Character.isUpperCase(shortened.charAt(index))) {
           shortened = shortened.substring(0, index) + shortened.substring(index, index + 1).toLowerCase() + shortened.substring(index + 1);
           mergeTwoGenres(genre, shortened, genreNodes);
         }
-        String genreWithBlanks = genre.replace("-", " ");
+        final String genreWithBlanks = genre.replace("-", " ");
         mergeTwoGenres(genre, genreWithBlanks, genreNodes);
       }
-      String umlauts = genre.replace("oe", "ö").replace("ae", "ä").replace("ue", "ü");
+      final String umlauts = genre.replace("oe", "ö").replace("ae", "ä")
+          .replace("ue", "ü");
       mergeTwoGenres(umlauts, genre, genreNodes);
     }
   }
 
-  private void mergeTwoGenres(String finalGenre, String removedGenre, HashMap<String,PluginTreeNode> genreNodes) {
+  private void mergeTwoGenres(final String finalGenre, final String removedGenre, final HashMap<String,PluginTreeNode> genreNodes) {
     if (!currentGenres.contains(removedGenre) || !currentGenres.contains(finalGenre)) {
       return;
     }
     if (finalGenre.equals(removedGenre)) {
       return;
     }
-    PluginTreeNode firstNode = genreNodes.get(finalGenre);
-    PluginTreeNode secondNode = genreNodes.get(removedGenre);
+    final PluginTreeNode firstNode = genreNodes.get(finalGenre);
+    final PluginTreeNode secondNode = genreNodes.get(removedGenre);
     for (Program program : secondNode.getPrograms()) {
       firstNode.addProgram(program);
     }
@@ -217,10 +223,6 @@ public class GenrePlugin extends Plugin implements IGenreSettings {
   @Override
   public void handleTvBrowserStartFinished() {
     mStartFinished  = true;
-    // update tree, but only if it is shown at all
-    if (mRootNode != null) {
-      updateRootNode();
-    }
   }
 
   public ThemeIcon getMarkIconFromTheme() {
@@ -235,7 +237,7 @@ public class GenrePlugin extends Plugin implements IGenreSettings {
   }
 
   @Override
-  public void loadSettings(Properties settings) {
+  public void loadSettings(final Properties settings) {
     mSettings = settings;
     if (mSettings == null) {
       mSettings = new Properties();
@@ -249,7 +251,7 @@ public class GenrePlugin extends Plugin implements IGenreSettings {
     return mSettings;
   }
 
-  public void hideGenre(String genre) {
+  public void hideGenre(final String genre) {
     if (!hiddenGenres.contains(genre)) {
       hiddenGenres.add(genre);
     }
@@ -257,13 +259,14 @@ public class GenrePlugin extends Plugin implements IGenreSettings {
 
   protected void getFilterFromSettings() {
     hiddenGenres.clear();
-    int filterCount = Integer.parseInt(mSettings.getProperty(FILTERED_GENRES_COUNT, "0"));
+    final int filterCount = Integer.parseInt(mSettings.getProperty(
+        FILTERED_GENRES_COUNT, "0"));
     for (int i = 0; i<filterCount; i++) {
       hideGenre(mSettings.getProperty(FILTERED_GENRE + i, ""));
     }
   }
 
-  public void saveSettings(Object[] hidden) {
+  public void saveSettings(final Object[] hidden) {
     mSettings.setProperty(FILTERED_GENRES_COUNT, String.valueOf(hidden.length));
     for (int i = 0; i < hidden.length; i++) {
       mSettings.setProperty(FILTERED_GENRE + i, (String) hidden[i]);
@@ -272,8 +275,40 @@ public class GenrePlugin extends Plugin implements IGenreSettings {
 
   @Override
   public void onActivation() {
+    // only run node update for manual activation
     if (mRootNode != null) {
       updateRootNode();
+    }
+  }
+
+  @Override
+  public void writeData(final ObjectOutputStream out) throws IOException {
+    // save the tree
+    storeRootNode(mRootNode);
+  }
+
+  @Override
+  public int getMarkPriorityForProgram(final Program p) {
+    return Program.NO_MARK_PRIORITY;
+  }
+
+  @Override
+  protected void loadRootNode(final PluginTreeNode node) {
+    super.loadRootNode(node);
+    // add the context menu actions after loading the tree
+    final int maxDays = Integer.valueOf(mSettings.getProperty(SETTINGS_DAYS,
+        "7"));
+    final PluginTreeNode[] children = node.getChildren();
+    for (PluginTreeNode child : children) {
+      formatGenreNode(maxDays, child);
+    }
+  }
+
+  @Override
+  public void handleTvDataDeleted(final ChannelDayProgram oldProg) {
+    if (oldProg != null) {
+      final Channel channel = oldProg.getChannel();
+      final Date date = oldProg.getDate();
     }
   }
 

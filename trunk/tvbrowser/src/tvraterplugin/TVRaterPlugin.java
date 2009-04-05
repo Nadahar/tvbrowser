@@ -39,6 +39,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
+import tvbrowser.ui.pluginview.Node;
 import util.io.IOUtilities;
 import util.ui.ImageUtilities;
 import util.ui.Localizer;
@@ -116,12 +117,12 @@ public class TVRaterPlugin extends devplugin.Plugin {
 
   public PluginInfo getInfo() {
     if (mPluginInfo == null) {
-      String name = mLocalizer.msg("pluginName", "TV Rater");
-      String desc = mLocalizer
+      final String name = mLocalizer.msg("pluginName", "TV Rater");
+      final String desc = mLocalizer
           .msg(
               "description",
               "Gives the User the possibility to rate a Show/Movie and get ratings from other Users");
-      String author = "Bodo Tasche";
+      final String author = "Bodo Tasche";
 
       mPluginInfo = new PluginInfo(TVRaterPlugin.class, name, desc, author);
     }
@@ -136,7 +137,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
   public ActionMenu getButtonAction() {
     AbstractAction action = new AbstractAction() {
 
-      public void actionPerformed(ActionEvent evt) {
+      public void actionPerformed(final ActionEvent evt) {
         showDialog();
       }
     };
@@ -172,7 +173,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
         || (_settings.getProperty("password", "").length() == 0)) {
       showNotConfigured();
     } else {
-      DialogOverview dlg = new DialogOverview(getParentFrame(), this);
+      final DialogOverview dlg = new DialogOverview(getParentFrame(), this);
 
       layoutWindow("dialogOverview", dlg);
 
@@ -187,7 +188,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
   public ActionMenu getContextMenuActions(final Program program) {
     AbstractAction action = new AbstractAction() {
 
-      public void actionPerformed(ActionEvent evt) {
+      public void actionPerformed(final ActionEvent evt) {
         showRatingDialog(program);
       }
     };
@@ -203,7 +204,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
     return new ActionMenu(action);
   }
 
-  public void showRatingDialog(Program program) {
+  public void showRatingDialog(final Program program) {
     if ((_settings.getProperty("name", "").length() == 0)
         || (_settings.getProperty("password", "").length() == 0)) {
       showNotConfigured();
@@ -222,8 +223,8 @@ public class TVRaterPlugin extends devplugin.Plugin {
    */
   private void showNotConfigured() {
     int ret = JOptionPane.showConfirmDialog(getParentFrame(), mLocalizer.msg(
-        "noUserText", "No User specified. Do you want to do this now?"),
-        mLocalizer.msg("noUserTitle", "No User specified"),
+        "noUserText", "No user specified. Do you want to do this now?"),
+        mLocalizer.msg("noUserTitle", "No user specified"),
         JOptionPane.YES_NO_OPTION);
 
     if (ret == JOptionPane.YES_OPTION) {
@@ -275,8 +276,8 @@ public class TVRaterPlugin extends devplugin.Plugin {
    * @return The icons for the given program or <code>null</code>.
    * @see #getProgramTableIconText()
    */
-  public Icon[] getProgramTableIcons(Program program) {
-    Rating rating = getRating(program);
+  public Icon[] getProgramTableIcons(final Program program) {
+    final Rating rating = getRating(program);
 
     if (rating != null) {
       return new Icon[] { RatingIconTextFactory.getImageIconForRating(rating
@@ -294,7 +295,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
    * @param program Get rating for this program
    * @return Rating
    */
-  public Rating getRating(Program program) {
+  public Rating getRating(final Program program) {
     Rating rating;
 
     if (_settings.getProperty("ownRating", "").equalsIgnoreCase("true")) {
@@ -314,7 +315,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
    * @return personal rating or <code>null</code> if no personal rating is available
    * @since 2.6 
    */
-  private Rating getPersonalRating(Program program) {
+  private Rating getPersonalRating(final Program program) {
     return _tvraterDB.getPersonalRating(program);
   }
 
@@ -341,7 +342,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
    * 
    * @see #writeData(ObjectOutputStream)
    */
-  public void readData(ObjectInputStream in) throws IOException,
+  public void readData(final ObjectInputStream in) throws IOException,
       ClassNotFoundException {
     _tvraterDB.readData(in);
   }
@@ -351,8 +352,9 @@ public class TVRaterPlugin extends devplugin.Plugin {
    * 
    * @see #readData(ObjectInputStream)
    */
-  public void writeData(ObjectOutputStream out) throws IOException {
+  public void writeData(final ObjectOutputStream out) throws IOException {
     _tvraterDB.writeData(out);
+    storeRootNode(mRootNode);
   }
 
   /**
@@ -369,10 +371,6 @@ public class TVRaterPlugin extends devplugin.Plugin {
 
   public void handleTvBrowserStartFinished() {
     mStartFinished = true;
-    // update tree only if it is already shown
-    if (mRootNode != null) {
-      updateRootNode();
-    }
     if (Integer.parseInt(_settings.getProperty("updateIntervall", "0")) == 2) {
       updateDB();
     }
@@ -431,7 +429,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
    * @param program Program to check
    * @return true if program is rateable
    */
-  public boolean isProgramRateable(Program program) {
+  public boolean isProgramRateable(final Program program) {
     if ((program.getTitle() != null)
         && (program.getLength() >= TVRaterPlugin.MINLENGTH)) {
       return true;
@@ -508,15 +506,13 @@ public class TVRaterPlugin extends devplugin.Plugin {
   @Override
   public PluginTreeNode getRootNode() {
     if (mRootNode == null) {
-      mRootNode = new PluginTreeNode(this, false);
-      mRootNode.getMutableTreeNode().setIcon(
+      mRootNode = new PluginTreeNode(this);
+      loadRootNode(mRootNode);
+      final Node mutableTreeNode = mRootNode.getMutableTreeNode();
+      mutableTreeNode.setIcon(
           new ImageIcon(ImageUtilities.createImageFromJar(
               "tvraterplugin/imgs/missingrating.png", TVRaterPlugin.class)));
-      if (mStartFinished) {
-        // update the tree as the plugin view has been switched on for the first
-        // time after start
-        updateRootNode();
-      }
+      mutableTreeNode.setShowLeafCountEnabled(false);
     }
     return mRootNode;
   }
@@ -531,7 +527,6 @@ public class TVRaterPlugin extends devplugin.Plugin {
       return;
     }
     mRootNode.removeAllChildren();
-    mRootNode.getMutableTreeNode().setShowLeafCountEnabled(false);
 
     // add top ratings for each category
     HashMap<String, HashSet<PluginTreeNode>> titles = new HashMap<String, HashSet<PluginTreeNode>>();
@@ -626,7 +621,8 @@ public class TVRaterPlugin extends devplugin.Plugin {
     mRootNode.update();
   }
 
-  private void addList(PluginTreeNode topNode, ArrayList<PluginTreeNode> titleList) {
+  private void addList(final PluginTreeNode topNode,
+      final ArrayList<PluginTreeNode> titleList) {
     for (PluginTreeNode titleNode : titleList) {
       if (!titleNode.isEmpty()) {
         topNode.add(titleNode);
@@ -634,8 +630,9 @@ public class TVRaterPlugin extends devplugin.Plugin {
     }
   }
 
-  private void addTitle(HashMap<String, HashSet<PluginTreeNode>> titles,
-      ArrayList<PluginTreeNode> list, Rating rating, int ratingValue) {
+  private void addTitle(final HashMap<String, HashSet<PluginTreeNode>> titles,
+      final ArrayList<PluginTreeNode> list, final Rating rating,
+      final int ratingValue) {
     if (ratingValue >= 4) {
       PluginTreeNode titleNode = new PluginTreeNode(rating.getTitle());
       list.add(titleNode);
@@ -670,7 +667,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
         return ImageUtilities.createImageIconFromJar(iconName, getClass());
       }
 
-      public int getRatingForProgram(Program p) {
+      public int getRatingForProgram(final Program p) {
         Rating rating = getRating(p);
         if (rating != null) {
           return rating.getOverallRating() * 20;
@@ -679,7 +676,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
         return -1;
       }
 
-      public Icon getIconForProgram(Program p) {
+      public Icon getIconForProgram(final Program p) {
         Rating rating = getRating(p);
         if (rating != null) {
           return RatingIconTextFactory.getImageIconForRating(rating.getOverallRating());
@@ -691,7 +688,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
         return true;
       }
 
-      public void showDetailsFor(Program p) {
+      public void showDetailsFor(final Program p) {
         showRatingDialog(p);
       }
     }};
