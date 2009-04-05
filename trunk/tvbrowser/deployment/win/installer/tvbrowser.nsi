@@ -124,7 +124,16 @@ Page Custom LockedListShow
 # Installer Functions
 #--------------------------------
 
+Function CheckMultipleInstance
+    System::Call 'kernel32::CreateMutexA(i 0, i 0, t "TV-Browser installation") i .r1 ?e'
+    Pop $R0
+    StrCmp $R0 0 +3
+    MessageBox MB_OK|MB_ICONEXCLAMATION "The installer is already running."
+    Abort
+FunctionEnd
+
 Function .onInit
+    call CheckMultipleInstance 
     # have language selection for the user
     !insertmacro MUI_LANGDLL_DISPLAY
   push $0
@@ -266,7 +275,7 @@ WriteINIStr "${FILENAME}.url" "InternetShortcut" "URL" "${URL}"
 #--------------------------------
 # The installation types
 
-InstType "$(INST_TYPE_1)" #"Normal (mit allen Plugins)"
+InstType "$(INSTALLATION_TYPE_NORMAL)" #"Normal"
 
 #--------------------------------
 #Installer Sections
@@ -283,10 +292,6 @@ Section "$(STD_SECTION_NAME)" SEC_STANDARD
   File "${RUNTIME_DIR}\tvbrowser.exe"
   File "${RUNTIME_DIR}\tvbrowser_noDD.exe"
   File "${RUNTIME_DIR}\tvbrowser_noDD.txt"
-  File "${RUNTIME_DIR}\website.url"
-  File "${RUNTIME_DIR}\forum.url"
-  File "${RUNTIME_DIR}\wiki.url"
-  File "${RUNTIME_DIR}\enwiki.url"
   File "${RUNTIME_DIR}\tvbrowser.jar"
   File "${RUNTIME_DIR}\windows.properties"
   File "${RUNTIME_DIR}\jRegistryKey.dll"

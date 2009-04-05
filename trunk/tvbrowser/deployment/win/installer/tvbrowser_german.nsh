@@ -7,7 +7,7 @@ LangString LOCKED_LIST_APPLICATION ${LANG_GERMAN} "Anwendung"
 LangString LOCKED_LIST_PROCESS ${LANG_GERMAN} "Prozess"
 LangString LOCKED_LIST_IGNORE ${LANG_GERMAN} "Ignorieren"
 
-LangString INST_TYPE_1 ${LANG_GERMAN} "Normal"
+LangString INSTALLATION_TYPE_NORMAL ${LANG_GERMAN} "Normal"
 LangString STD_SECTION_NAME ${LANG_GERMAN} "${PROG_NAME} (erforderlich)"
 LangString DESKTOP_SECTION_NAME ${LANG_GERMAN} "Verknüpfung auf dem Desktop"
 LangString QUICKLAUNCH_SECTION_NAME ${LANG_GERMAN} "Verknüpfung auf Schnellstartleiste"
@@ -18,7 +18,7 @@ LangString LICENSE_TXT ${LANG_GERMAN} "Lizenz"
 LangString WITHOUT_DIRECTX ${LANG_GERMAN} "${PROG_NAME} (ohne DirectX)"
 LangString UNINSTALL_TXT ${LANG_GERMAN} "${PROG_NAME} deinstallieren"
 
-# sections
+# section descriptions
 LangString DESC_SEC_STANDARD ${LANG_GERMAN} "TV-Browser-Hauptprogramm und zusätzliche Dateien"
 LangString DESC_SEC_DESKTOP ${LANG_GERMAN} "Eine Verknüpfung zum TV-Browser auf dem Desktop anlegen."
 LangString DESC_SEC_QUICKLAUNCH ${LANG_GERMAN} "Eine Verknüpfung zum TV-Browser auf der Schnellstartleiste anlegen."
