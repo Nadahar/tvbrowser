@@ -7,7 +7,7 @@ LangString LOCKED_LIST_APPLICATION ${LANG_ENGLISH} "Application"
 LangString LOCKED_LIST_PROCESS ${LANG_ENGLISH} "Process"
 LangString LOCKED_LIST_IGNORE ${LANG_ENGLISH} "Ignore"
 
-LangString INST_TYPE_1 ${LANG_ENGLISH} "Normal"
+LangString INSTALLATION_TYPE_NORMAL ${LANG_ENGLISH} "Normal"
 LangString STD_SECTION_NAME ${LANG_ENGLISH} "${PROG_NAME} (necessary)"
 LangString DESKTOP_SECTION_NAME ${LANG_ENGLISH} "Shortcut on the desktop"
 LangString QUICKLAUNCH_SECTION_NAME ${LANG_ENGLISH} "Quick launch shortcut"
@@ -18,7 +18,7 @@ LangString LICENSE_TXT ${LANG_ENGLISH} "License"
 LangString WITHOUT_DIRECTX ${LANG_ENGLISH} "${PROG_NAME} (without DirectX)"
 LangString UNINSTALL_TXT ${LANG_ENGLISH} "Uninstall ${PROG_NAME}"
 
-# sections
+# section descriptions
 LangString DESC_SEC_STANDARD ${LANG_ENGLISH} "TV-Browser application and files"
 LangString DESC_SEC_DESKTOP ${LANG_ENGLISH} "Create a shortcut on your desktop to run TV-Browser."
 LangString DESC_SEC_QUICKLAUNCH ${LANG_ENGLISH} "Create a shortcut in the quicklaunch area to run TV-Browser."
