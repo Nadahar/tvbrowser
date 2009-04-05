@@ -32,11 +32,12 @@ import java.util.regex.Pattern;
 import devplugin.Date;
 
 /**
- * A class that contains the search settings for the not to show values.
+ * A class that contains the search settings for the values not to show.
  * 
  * @author René Mach
  */
 public class IDontWant2SeeListEntry {
+  private static final String SUFFIX_CONTINUATION = " (Fortsetzung)";
   private String mSearchText;
   private String mPreSearchPart;
   private Pattern mSearchPattern;
@@ -97,14 +98,15 @@ public class IDontWant2SeeListEntry {
   
   protected boolean matchesProgramTitle(final String title,
       final String lowerCaseTitle) {
-    boolean found = matchesTitleInternal(title, lowerCaseTitle);
-    final String suffix = " (Fortsetzung)";
-    if ((!found) && title.endsWith(suffix)) {
-      found = matchesTitleInternal(
-          title.substring(0, title.length() - suffix.length()), lowerCaseTitle
-              .substring(0, lowerCaseTitle.length() - suffix.length()));
+    if (matchesTitleInternal(title, lowerCaseTitle)) {
+      return true;
     }
-    return found;
+    if (title.endsWith(SUFFIX_CONTINUATION)) {
+      return matchesTitleInternal(
+          title.substring(0, title.length() - SUFFIX_CONTINUATION.length()), lowerCaseTitle
+              .substring(0, lowerCaseTitle.length() - SUFFIX_CONTINUATION.length()));
+    }
+    return false;
   }
   
   protected void resetDateWasSetFlag() {
@@ -166,7 +168,8 @@ public class IDontWant2SeeListEntry {
   }
     
   protected void writeData(final ObjectOutputStream out) throws IOException {
-    // version 6, keep syncron with data file version from IDontWant2See.java
+    // version 6, keep synchronous with data file version from
+    // IDontWant2See.java
     out.writeUTF(mSearchText);
     out.writeBoolean(mCaseSensitive);
     
