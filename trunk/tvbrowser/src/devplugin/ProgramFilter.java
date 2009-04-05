@@ -36,7 +36,7 @@ public interface ProgramFilter {
    * @param prog
    * @return true, if the filter accepts the specified program
    */
-	public boolean accept(Program prog);
+	public boolean accept(Program program);
 
 	public String toString();
 
