@@ -43,6 +43,7 @@ import java.util.Properties;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
@@ -261,8 +262,7 @@ public class FavoritesPlugin {
               .severe("Favorites: Timeout on waiting for update threads to finish was reached");
         }
       } catch (InterruptedException e) {
-        ErrorHandler.handle(
-            "Waiting for favorite update finishing was interrupted", e);
+        mLog.log(Level.INFO,"Waiting for favorite update finishing was interrupted",e);
       }
       
       mThreadPool = null;

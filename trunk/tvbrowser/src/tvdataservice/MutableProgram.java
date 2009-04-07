@@ -1005,7 +1005,7 @@ public class MutableProgram implements Program {
       return getStartTime() == program.getStartTime()
         && equals(mChannel, program.getChannel())
         && equals(getDate(), program.getDate())
-        && getTitle().compareTo(program.getTitle()) == 0;
+        && (mState == IS_VALID_STATE && getTitle().compareTo(program.getTitle()) == 0);
     }
     return false;
   }
