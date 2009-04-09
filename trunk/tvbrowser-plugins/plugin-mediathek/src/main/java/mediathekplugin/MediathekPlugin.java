@@ -37,6 +37,7 @@ import javax.swing.SwingUtilities;
 import mediathekplugin.parser.ARDParser;
 import mediathekplugin.parser.IParser;
 import mediathekplugin.parser.ZDFParser;
+import mediathekplugin.parser.NRKParser;
 import util.browserlauncher.Launch;
 import util.io.IOUtilities;
 import util.ui.UiUtilities;
@@ -325,6 +326,14 @@ public class MediathekPlugin extends Plugin {
             .openURL("http://www.zdf.de/ZDFmediathek/content/9602?inPopup=true");
       }
     });
+    actionList.add(new AbstractAction("NRK Nett-TV",
+        createImageIcon("mediathekplugin/icons/nrk.png")) {
+
+      public void actionPerformed(final ActionEvent e) {
+        Launch
+            .openURL("http://www1.nrk.no/nett-tv");
+      }
+    });
     return new ActionMenu(menuAction, actionList.toArray());
   }
 
@@ -488,7 +497,7 @@ public class MediathekPlugin extends Plugin {
 
   @Override
   public void onActivation() {
-    mParsers = new IParser[] { new ZDFParser(), new ARDParser() };
+    mParsers = new IParser[] { new ZDFParser(), new ARDParser(), new NRKParser() };
   }
 
 }
