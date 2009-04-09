@@ -21,15 +21,12 @@ public class NRKParser extends AbstractParser {
   private static final String[] SUPPORTED_CHANNELS = { "nrk1", "nrk2", "nrk3", "nrk super" ,
     "nrk super tv", "nrk p1","nrk p2","nrk p3", "nrk alltid nyheter"};
 
-  private static final String[] MONTHS_NO = {"januar","februar","mars","april","mai",
-    "juni","juli","august","september","oktober","november","desember"};
-
-
   private static final Pattern EPISODE_PATTERN 
   = Pattern.compile("<li .*?<a href=\"([^\"]+?)\".*?class=\"(.*?)\">([^<]+?)</a>",Pattern.DOTALL);
 
-
-  private static final Pattern DATE_PATTERN = Pattern.compile("(\\d\\d)\\.(\\d\\d)\\.(?:20|)(\\d\\d)$");
+  //private static final Pattern DATE_PATTERN = Pattern.compile("(\\d\\d)\\.(\\d\\d)\\.(?:20|)(\\d\\d)$");
+  //private static final String[] MONTHS_NO = {"januar","februar","mars","april","mai",
+  //  "juni","juli","august","september","oktober","november","desember"};
   
   public boolean canReadEpisodes() {
     return true;
@@ -50,10 +47,9 @@ public class NRKParser extends AbstractParser {
     return title;
   }
 
-
   public void readContents() {
 
-    final Pattern pattern = Pattern.compile("<h2>.*?<a href=\"(.+?)\" .*?>(.*?)</a>",Pattern.DOTALL);
+    final Pattern pattern = Pattern.compile("<h2>.*?<a href=\"([^\"]+?)\" .*?>([^<]+?)</a>",Pattern.DOTALL);
     logInfo("Read NRK: " + CONTENT_URL);
 
     readContents(CONTENT_URL, pattern, "NRK");
