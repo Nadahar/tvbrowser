@@ -161,8 +161,8 @@ public class UpdateDlg extends JDialog implements ActionListener, WindowClosingI
       
       mAutoUpdate = new JCheckBox(mLocalizer.msg("autoUpdateMessage", "Update data automatically"));
       
-      mStartUpdate = new JRadioButton(mLocalizer.msg("onStartUp", "Only on TV-Browser startup"), true);
-      mRecurrentUpdate = new JRadioButton(mLocalizer.msg("recurrent", "Recurrent"));
+      mStartUpdate = new JRadioButton(mLocalizer.msg("onStartUp", "Only on TV-Browser startup"), false);
+      mRecurrentUpdate = new JRadioButton(mLocalizer.msg("recurrent", "Recurrent"), true);
       
       mStartUpdate.setEnabled(false);
       mRecurrentUpdate.setEnabled(false);
