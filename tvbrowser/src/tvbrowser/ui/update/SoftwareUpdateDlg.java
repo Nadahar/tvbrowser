@@ -28,6 +28,7 @@ package tvbrowser.ui.update;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Insets;
@@ -362,16 +363,24 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
     if (event.getSource() == mCloseBtn) {
       close();
     } else if (event.getSource() == mDownloadBtn) {
-      Object[] objects = mSoftwareUpdateItemList.getSelection();
+      mDownloadBtn.setEnabled(false);
+      Cursor cursor = getCursor();
+      this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
       int successfullyDownloadedItems = 0;
-      for (Object object : objects) {
-        SoftwareUpdateItem item = (SoftwareUpdateItem) object;
-        try {
-          item.download(mDownloadUrl);
-          successfullyDownloadedItems++;
-        } catch (TvBrowserException e) {
-          util.exc.ErrorHandler.handle(e);
+      try {
+        Object[] objects = mSoftwareUpdateItemList.getSelection();
+        for (Object object : objects) {
+          SoftwareUpdateItem item = (SoftwareUpdateItem) object;
+          try {
+            item.download(mDownloadUrl);
+            successfullyDownloadedItems++;
+          } catch (TvBrowserException e) {
+            util.exc.ErrorHandler.handle(e);
+          }
         }
+      } finally {
+        mDownloadBtn.setEnabled(true);
+        setCursor(cursor);
       }
       if (successfullyDownloadedItems > 0) {
         JOptionPane.showMessageDialog(null, mLocalizer.msg("restartprogram", "please restart tvbrowser before..."));
