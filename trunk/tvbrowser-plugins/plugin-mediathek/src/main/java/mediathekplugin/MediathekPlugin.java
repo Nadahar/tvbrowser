@@ -99,7 +99,7 @@ public class MediathekPlugin extends Plugin {
     return PLUGIN_VERSION;
   }
 
-  private IParser[] mParsers;
+  private IParser[] mParsers = new IParser[0];
 
   private static final Icon[] EMPTY_ICON_LIST = {};
 
