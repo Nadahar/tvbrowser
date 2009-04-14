@@ -64,22 +64,26 @@ public class ImdbParser {
     ProgressInputStream progressInputStream = new ProgressInputStream(
         downloadFile(monitor, "aka-titles.list.gz"), monitor);
 
-    parseAkaTitles(new GZIPInputStream(progressInputStream), monitor);
-
-    optimizeDatabase(monitor);
+    if (mRunParser) {
+      parseAkaTitles(new GZIPInputStream(progressInputStream), monitor);
+    }
+    if (mRunParser) {
+      optimizeDatabase(monitor);
+    }
     if (mRunParser) {
       progressInputStream = new ProgressInputStream(downloadFile(monitor,
           "ratings.list.gz"), monitor, progressInputStream.getCurrentPosition());
       parseRatings(new GZIPInputStream(progressInputStream), monitor);
     }
 
-    if (!mRunParser) {
-      // Cancel was pressed, all Files have to be deleted
-      mDatabase.deleteDatabase();
-    } else {
+    if (mRunParser) {
       optimizeDatabase(monitor);
       ImdbPlugin.getInstance().setCurrentDatabaseVersion();
+    } else {
+      // Cancel was pressed, all Files have to be deleted
+      mDatabase.deleteDatabase();
     }
+    mDatabase.openForReading();
   }
 
   private BufferedInputStream downloadFile(final ProgressMonitor monitor,
@@ -99,7 +103,7 @@ public class ImdbParser {
       throws IOException {
     monitor.setMessage(mLocalizer.msg("optimize", "Optimizing database"));
     mDatabase.close();
-    mDatabase.reOpen();
+    mDatabase.openForWriting();
     mDatabase.optimizeIndex();
   }
 
