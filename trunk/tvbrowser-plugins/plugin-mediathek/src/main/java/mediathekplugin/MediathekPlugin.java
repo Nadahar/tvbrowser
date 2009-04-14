@@ -35,6 +35,7 @@ import javax.swing.Icon;
 import javax.swing.SwingUtilities;
 
 import mediathekplugin.parser.ARDParser;
+import mediathekplugin.parser.AbstractParser;
 import mediathekplugin.parser.IParser;
 import mediathekplugin.parser.ZDFParser;
 import mediathekplugin.parser.NRKParser;
@@ -99,7 +100,7 @@ public class MediathekPlugin extends Plugin {
     return PLUGIN_VERSION;
   }
 
-  private IParser[] mParsers = new IParser[0];
+  private AbstractParser[] mParsers = new AbstractParser[0];
 
   private static final Icon[] EMPTY_ICON_LIST = {};
 
@@ -391,8 +392,10 @@ public class MediathekPlugin extends Plugin {
   }
 
   private void readMediathekContents() {
-    for (IParser reader : mParsers) {
-      reader.readContents();
+    for (AbstractParser reader : mParsers) {
+      if (reader.hasSubscribedChannels()) {
+        reader.readContents();
+      }
     }
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
@@ -497,7 +500,7 @@ public class MediathekPlugin extends Plugin {
 
   @Override
   public void onActivation() {
-    mParsers = new IParser[] { new ZDFParser(), new ARDParser(), new NRKParser() };
+    mParsers = new AbstractParser[] { new ZDFParser(), new ARDParser(), new NRKParser() };
   }
 
 }
