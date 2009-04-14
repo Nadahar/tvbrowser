@@ -16,7 +16,6 @@ package imdbplugin;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.UUID;
 
 import org.apache.lucene.analysis.SimpleAnalyzer;
@@ -25,15 +24,16 @@ import org.apache.lucene.document.Field;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
+import org.apache.lucene.index.IndexWriter.MaxFieldLength;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.Hit;
-import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.store.FSDirectory;
 
 public final class ImdbDatabase {
+  private static final int MAX_FIELD_LENGTH = 200;
   private static final String[] TITLE_SUFFIX = { "(Fortsetzung)", "(Teil 1)",
       "(Teil 2)", "(Teil 3)", "(Teil 4)" };
   private static final String ITEM_TYPE = "ITEM_TYPE";
@@ -71,11 +71,11 @@ public final class ImdbDatabase {
         e.printStackTrace();
       }
     }
-    reOpen();
+    openForWriting();
   }
 
   public void init() {
-    reOpen();
+    openForReading();
   }
 
   public boolean isInitialised() {
@@ -234,18 +234,30 @@ public final class ImdbDatabase {
   }
 
   public void optimizeIndex() throws IOException {
+    mWriter.commit();
     mWriter.optimize();
     mWriter.close();
-    reOpen();
+    openForWriting();
   }
-
-  public void reOpen() {
-    mSearcher = null;
-    mWriter = null;
-
-    if (!mCurrentPath.exists() || mCurrentPath.listFiles().length == 0) {
+  
+  public void openForReading() {
+    close();
+    if (!mCurrentPath.exists() || mCurrentPath.listFiles().length > 0) {
       try {
-        mWriter = new IndexWriter(mCurrentPath, new SimpleAnalyzer());
+        // open index reader readonly for better performance
+        FSDirectory directory = FSDirectory.getDirectory(mCurrentPath);
+        final IndexReader reader = IndexReader.open(directory, true);
+        mSearcher = new IndexSearcher(reader);
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    }
+  }
+  
+  public void openForWriting() {
+    if (!mCurrentPath.exists() || mCurrentPath.listFiles().length < 2) {
+      try {
+        mWriter = new IndexWriter(mCurrentPath, new SimpleAnalyzer(), new MaxFieldLength(MAX_FIELD_LENGTH));
         mWriter.addDocument(new Document());
         mWriter.close();
       } catch (IOException e) {
@@ -267,17 +279,12 @@ public final class ImdbDatabase {
       }
     }
 
-    // if (new File(mCurrentPath, "segments.gen").exists()) {
     try {
-      final IndexReader reader = IndexReader.open(mCurrentPath);
+      // open reader and writer
+      mWriter = new IndexWriter(mCurrentPath, new SimpleAnalyzer(), new MaxFieldLength(MAX_FIELD_LENGTH));
+      FSDirectory directory = FSDirectory.getDirectory(mCurrentPath);
+      final IndexReader reader = IndexReader.open(directory, true);
       mSearcher = new IndexSearcher(reader);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    // }
-
-    try {
-      mWriter = new IndexWriter(mCurrentPath, new SimpleAnalyzer());
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -286,6 +293,7 @@ public final class ImdbDatabase {
   public void close() {
     try {
       if (mWriter != null) {
+        mWriter.commit();
         mWriter.close();
         mWriter = null;
       }
@@ -301,7 +309,7 @@ public final class ImdbDatabase {
   public String getOrCreateMovieId(final String movieTitle,
       final String episode, final int year, final String type) {
     if (mSearcher == null) {
-      return null;
+      return addTitle(movieTitle, episode, year, type);
     }
     try {
       final BooleanQuery bQuery = new BooleanQuery();
@@ -320,17 +328,14 @@ public final class ImdbDatabase {
             BooleanClause.Occur.MUST);
       }
 
-      final Hits hits = mSearcher.search(bQuery);
+      final TopDocs topDocs = mSearcher.search(bQuery, null, 1);
 
-      if (hits == null) {
+      if (topDocs == null) {
         return null;
       }
 
-      final Iterator<Hit> it = hits.iterator();
-
-      if (it.hasNext()) {
-        final Hit hit = it.next();
-        final Document document = hit.getDocument();
+      if (topDocs.totalHits > 0) {
+        final Document document = mSearcher.doc(topDocs.scoreDocs[0].doc);
         return document.getField(MOVIE_ID).stringValue();
       } else {
         return addTitle(movieTitle, episode, year, type);
@@ -425,12 +430,10 @@ public final class ImdbDatabase {
 
     try {
 
-      Hits hits = mSearcher.search(bQuery);
-      Iterator<Hit> it = hits.iterator();
+      TopDocs topDocs = mSearcher.search(bQuery, null, 1);
 
-      if (it.hasNext()) {
-        final Hit hit = it.next();
-        final Document document = hit.getDocument();
+      if (topDocs.totalHits > 0) {
+        final Document document = mSearcher.doc(topDocs.scoreDocs[0].doc);
 
         printDocument(document);
 
@@ -452,12 +455,10 @@ public final class ImdbDatabase {
             .toString(year + 1))), BooleanClause.Occur.SHOULD);
       }
 
-      hits = mSearcher.search(bQuery);
-      it = hits.iterator();
+      topDocs = mSearcher.search(bQuery, null, 1);
 
-      if (it.hasNext()) {
-        final Hit hit = (Hit) it.next();
-        final Document document = hit.getDocument();
+      if (topDocs.totalHits > 0) {
+        final Document document = mSearcher.doc(topDocs.scoreDocs[0].doc);
 
         printDocument(document);
 
@@ -501,12 +502,10 @@ public final class ImdbDatabase {
       bQuery.add(new TermQuery(new Term(MOVIE_ID, id)),
           BooleanClause.Occur.MUST);
 
-      final Hits hits = mSearcher.search(bQuery);
-      final Iterator<Hit> it = hits.iterator();
+      final TopDocs topDocs = mSearcher.search(bQuery, null, 1);
 
-      if (it.hasNext()) {
-        final Hit hit = it.next();
-        final Document document = hit.getDocument();
+      if (topDocs.totalHits > 0) {
+        final Document document = mSearcher.doc(topDocs.scoreDocs[0].doc);
 
         return new ImdbRating(Integer.parseInt(document.getField(MOVIE_RATING)
             .stringValue()), Integer.parseInt(document.getField(MOVIE_VOTES)
