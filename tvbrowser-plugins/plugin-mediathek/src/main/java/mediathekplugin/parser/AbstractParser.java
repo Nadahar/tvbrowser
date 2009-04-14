@@ -43,6 +43,7 @@ import com.sun.syndication.fetcher.impl.HttpURLFeedFetcher;
 import com.sun.syndication.io.FeedException;
 
 import devplugin.Channel;
+import devplugin.Plugin;
 
 public abstract class AbstractParser implements IParser {
   
@@ -180,5 +181,15 @@ public abstract class AbstractParser implements IParser {
       e.printStackTrace();
     }
     program.updatePluginTree(true);
+  }
+
+  public boolean hasSubscribedChannels() {
+    MediathekPlugin.getInstance();
+    for (Channel channel : Plugin.getPluginManager().getSubscribedChannels()) {
+      if (isSupportedChannel(channel)) {
+        return true;
+      }
+    }
+    return false;
   }
 }
