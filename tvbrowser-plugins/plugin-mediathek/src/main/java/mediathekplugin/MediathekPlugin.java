@@ -37,8 +37,8 @@ import javax.swing.SwingUtilities;
 import mediathekplugin.parser.ARDParser;
 import mediathekplugin.parser.AbstractParser;
 import mediathekplugin.parser.IParser;
-import mediathekplugin.parser.ZDFParser;
 import mediathekplugin.parser.NRKParser;
+import mediathekplugin.parser.ZDFParser;
 import util.browserlauncher.Launch;
 import util.io.IOUtilities;
 import util.ui.UiUtilities;
@@ -392,40 +392,50 @@ public class MediathekPlugin extends Plugin {
   }
 
   private void readMediathekContents() {
-    for (AbstractParser reader : mParsers) {
-      if (reader.hasSubscribedChannels()) {
-        reader.readContents();
-      }
-    }
-    SwingUtilities.invokeLater(new Runnable() {
+    Thread contentThread = new Thread("Read Mediathek contents") {
+      @Override
       public void run() {
+        for (AbstractParser reader : mParsers) {
+          if (reader.hasSubscribedChannels()) {
+            reader.readContents();
+          }
+        }
         updatePluginTree();
-      }
-    });
-    // update programs of current day to force their icons to show
-    final ProgramFilter currentFilter = getPluginManager().getFilterManager()
-        .getCurrentFilter();
-    final Date date = getPluginManager().getCurrentDate();
-    for (Channel channel : getPluginManager().getSubscribedChannels()) {
-      if (isSupportedChannel(channel)) {
-        for (int days = 0; days < 30; days++) {
-          final Iterator<Program> iter = Plugin.getPluginManager()
-              .getChannelDayProgram(date, channel);
-          if (iter != null) {
-            while (iter.hasNext()) {
-              final Program program = iter.next();
-              // first search mediathek, then filter -> typically better
-              // performance
-              final MediathekProgram mediaProgram = findProgram(program);
-              if (mediaProgram != null && currentFilter.accept(program)) {
-                mediaProgram.readEpisodes();
-                program.validateMarking();
+        // update programs of current day to force their icons to show
+        final ArrayList<Program> validationPrograms = new ArrayList<Program>(128);
+        final ProgramFilter currentFilter = getPluginManager().getFilterManager()
+            .getCurrentFilter();
+        final Date date = getPluginManager().getCurrentDate();
+        for (Channel channel : getPluginManager().getSubscribedChannels()) {
+          if (isSupportedChannel(channel)) {
+            for (int days = 0; days < 30; days++) {
+              final Iterator<Program> iter = Plugin.getPluginManager()
+                  .getChannelDayProgram(date, channel);
+              if (iter != null) {
+                while (iter.hasNext()) {
+                  final Program program = iter.next();
+                  // first search mediathek, then filter -> typically better
+                  // performance
+                  final MediathekProgram mediaProgram = findProgram(program);
+                  if (mediaProgram != null && currentFilter.accept(program)) {
+                    mediaProgram.readEpisodes();
+                    validationPrograms.add(program);
+                  }
+                }
               }
             }
           }
         }
+        SwingUtilities.invokeLater(new Runnable() {
+          public void run() {
+            for (Program program : validationPrograms) {
+              program.validateMarking();
+            }
+          }});
       }
-    }
+    };
+    contentThread.setPriority(Thread.MIN_PRIORITY);
+    contentThread.start();
   }
 
   public String convertHTML(final String html) {

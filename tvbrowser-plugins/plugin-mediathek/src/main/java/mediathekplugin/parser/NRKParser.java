@@ -3,13 +3,10 @@ package mediathekplugin.parser;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.swing.SwingUtilities;
-
 import mediathekplugin.MediathekPlugin;
 import mediathekplugin.MediathekProgram;
 import mediathekplugin.MediathekProgramItem;
 import devplugin.Channel;
-import devplugin.Date;
 
 public class NRKParser extends AbstractParser {
 
