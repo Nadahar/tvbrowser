@@ -39,6 +39,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.swing.Action;
+import javax.swing.SwingUtilities;
 
 import tvbrowser.core.TvDataUpdateListener;
 import tvbrowser.core.TvDataUpdater;
@@ -470,9 +471,16 @@ public class PluginTreeNode implements Comparable<PluginTreeNode> {
     else {
       createDefaultNodes();
     }
-
-    PluginTreeModel.getInstance().reload(mDefaultNode);
-
+    if (SwingUtilities.isEventDispatchThread()) {
+      PluginTreeModel.getInstance().reload(mDefaultNode);
+    }
+    else {
+    SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        PluginTreeModel.getInstance().reload(mDefaultNode);
+      }});
+    }
   }
 
   public synchronized void addPrograms(final List<Program> listNew) {
