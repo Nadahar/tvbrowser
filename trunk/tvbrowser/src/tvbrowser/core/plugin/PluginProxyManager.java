@@ -35,6 +35,7 @@ import java.util.logging.Logger;
 
 import javax.swing.JMenu;
 import javax.swing.JPopupMenu;
+import javax.swing.SwingUtilities;
 
 import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataBase;
@@ -1046,7 +1047,11 @@ public class PluginProxyManager {
             else {
               plugin.removeArtificialPluginTree();
             }
-            MainFrame.getInstance().updatePluginTree();
+            SwingUtilities.invokeLater(new Runnable() {
+              @Override
+              public void run() {
+                MainFrame.getInstance().updatePluginTree();
+              }});
           }
         }
       }
