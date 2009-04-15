@@ -54,6 +54,7 @@ public final class UpdateThread extends Thread {
   public void run() {
     while (!isInterrupted()) {
       if (!updatePrograms.isEmpty()) {
+        // always take oldest program the insert order starts with the current date
         final MediathekProgram program = updatePrograms.remove(0);
         program.parseEpisodes(this);
       }
