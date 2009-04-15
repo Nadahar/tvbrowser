@@ -19,8 +19,6 @@ package mediathekplugin.parser;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.swing.SwingUtilities;
-
 import mediathekplugin.MediathekPlugin;
 import mediathekplugin.MediathekProgram;
 import devplugin.Channel;
@@ -42,8 +40,7 @@ public final class ZDFParser extends AbstractParser {
         + Pattern.quote("?reset=true\">")
         + "([^<]+)"
         + Pattern.quote("</a>"));
-    readContents("http://www.zdf.de/ZDFmediathek/inhalt?inPopup=true", pattern,
-        "ZDF");
+    readContents("http://www.zdf.de/ZDFmediathek/inhalt?inPopup=true", pattern);
   }
 
   public boolean canReadEpisodes() {
@@ -77,8 +74,7 @@ public final class ZDFParser extends AbstractParser {
     }
   }
 
-  protected void readContents(final String webPage, final Pattern pattern,
-      final String name) {
+  protected void readContents(final String webPage, final Pattern pattern) {
     final MediathekPlugin plugin = MediathekPlugin.getInstance();
     final String startPage = readUrl(webPage);
     final Matcher matcher = pattern.matcher(startPage);
@@ -94,12 +90,6 @@ public final class ZDFParser extends AbstractParser {
       addProgram(title, relativeUrl);
       count++;
     }
-    final String msg = "Read " + count + " programs from " + name
-        + " Mediathek";
-    SwingUtilities.invokeLater(new Runnable() {
-      public void run() {
-        plugin.getLogger().info(msg);
-      }
-    });
+    logInfo("Read " + count + " programs from ZDF Mediathek");
   }
 }

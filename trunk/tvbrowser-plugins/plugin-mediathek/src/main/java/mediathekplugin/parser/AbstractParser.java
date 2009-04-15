@@ -94,13 +94,7 @@ public abstract class AbstractParser implements IParser {
         count++;
       }
     }
-    final String msg = "Read " + count + " programs from " + name
-        + " Mediathek";
-    SwingUtilities.invokeLater(new Runnable() {
-      public void run() {
-        plugin.getLogger().info(msg);
-      }
-    });
+    logInfo("Read " + count + " programs from " + name + " Mediathek");
   }
 
   protected String getTitleFromMatcher(final Matcher matcher) {
@@ -135,8 +129,12 @@ public abstract class AbstractParser implements IParser {
     return title;
   }
 
-  protected void logInfo(final String string) {
-    MediathekPlugin.getInstance().getLogger().info(string);
+  protected void logInfo(final String message) {
+    SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        MediathekPlugin.getInstance().getLogger().info(message);
+      }
+    });
   }
 
   protected void readRSS(final MediathekProgram program, final String rssUrl) {
