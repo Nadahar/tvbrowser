@@ -64,7 +64,7 @@ public class MediathekPlugin extends Plugin {
 
   private static final boolean IS_STABLE = false;
 
-  private static final Version PLUGIN_VERSION = new Version(2, 71, IS_STABLE);
+  private static final Version PLUGIN_VERSION = new Version(2, 72, IS_STABLE);
 
   /** The localizer used by this class. */
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer
@@ -405,10 +405,11 @@ public class MediathekPlugin extends Plugin {
         final ArrayList<Program> validationPrograms = new ArrayList<Program>(128);
         final ProgramFilter currentFilter = getPluginManager().getFilterManager()
             .getCurrentFilter();
-        final Date date = getPluginManager().getCurrentDate();
-        for (Channel channel : getPluginManager().getSubscribedChannels()) {
-          if (isSupportedChannel(channel)) {
-            for (int days = 0; days < 30; days++) {
+        // have outer loop iterate over days so that all programs of today are loaded first
+        for (int days = 0; days < 30; days++) {
+          final Date date = getPluginManager().getCurrentDate().addDays(days);
+          for (Channel channel : getPluginManager().getSubscribedChannels()) {
+            if (isSupportedChannel(channel)) {
               final Iterator<Program> iter = Plugin.getPluginManager()
                   .getChannelDayProgram(date, channel);
               if (iter != null) {
