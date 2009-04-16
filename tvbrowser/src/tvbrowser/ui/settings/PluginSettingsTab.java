@@ -67,6 +67,7 @@ import util.browserlauncher.Launch;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
 import util.ui.Localizer;
+import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 
 import com.jgoodies.forms.builder.ButtonBarBuilder;
@@ -561,7 +562,7 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
   }
 
   public Icon getIcon() {
-    return null;
+    return TVBrowserIcons.plugin(TVBrowserIcons.SIZE_SMALL);
   }
 
   public String getTitle() {

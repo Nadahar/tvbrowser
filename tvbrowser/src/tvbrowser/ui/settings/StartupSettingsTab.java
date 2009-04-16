@@ -45,6 +45,7 @@ import javax.swing.SpinnerNumberModel;
 
 import tvbrowser.TVBrowser;
 import tvbrowser.core.Settings;
+import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.mainframe.PeriodItem;
 import util.ui.Localizer;
@@ -295,7 +296,7 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
    * Returns the name of the tab-sheet.
    */
   public Icon getIcon() {
-    return null;
+    return IconLoader.getInstance().getIconFromTheme("actions", "document-properties", 16);
   }
 
   /**

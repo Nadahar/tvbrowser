@@ -297,7 +297,7 @@ public class LookAndFeelSettingsTab implements SettingsTab {
   }
 
   public Icon getIcon() {
-    return null/*IconLoader.getInstance().getIconFromTheme("apps", "preferences-desktop-theme", 16)*/;
+    return IconLoader.getInstance().getIconFromTheme("apps", "preferences-desktop-theme", 16);
   }
 
   public String getTitle() {
