@@ -916,4 +916,12 @@ public class TvDataBase {
     // delete all channel files
     deleteFiles(true, filter, channelArr, channelIdArr);
   }
+  
+  /**
+   * the maximum date any part of TV-Browser needs to be able to handle
+   * @return today plus 4 weeks
+   */
+  public Date getMaxSupportedDate() {
+    return Date.getCurrentDate().addDays(28);
+  }
 }
