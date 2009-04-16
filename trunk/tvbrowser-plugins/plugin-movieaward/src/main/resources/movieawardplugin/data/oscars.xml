@@ -167,7 +167,19 @@
     <name lang="de">Musik (Original)</name>
     <name lang="en">Music (Original)</name>
   </category>
-</categories>
+<category id="best_documentary">
+    <name lang="de">Domentarfilm</name>
+    <name lang="en">Documentary Feature</name>
+  </category>
+
+
+<category id="best_short_subject">
+    <name lang="de">Kurzfilm</name>
+    <name lang="en">Short Film (Live Action)</name>
+  </category></categories>
+
+
+
 
 <awards>
   <award category="best_director" status="winner" movie="movie_db_1" year="1928" recipient="Frank Borzage"/>
@@ -1618,6 +1630,108 @@
   <award category="best_song" status="winner" movie="movie_db_793" year="2007" recipient="Falling Slowly, Musik + Text: Glen Hansard, Marketa Irglova"/>
   <award category="best_art_direction" status="winner" movie="movie_db_794" year="2007" recipient="Dante Ferretti, Francesca Lo Schiavo"/>
   <award category="best_writing_original_screenplay" status="winner" movie="movie_db_795" year="2007" recipient="Diablo Cody"/>
+<award category="best_short_subject" status="nominated" movie="movie_db_799" year="2008" recipient="Reto Caffi"/>
+<award category="best_costume_design" status="nominated" movie="movie_db_800" year="2008" recipient="Catherine Martin"/>
+<award category="best_animated_feature" status="nominated" movie="movie_db_801" year="2008" recipient="Chris Williams und Byron Howard"/>
+<award category="best_writing" status="nominated" movie="movie_db_802" year="2008" recipient="Martin McDonagh"/>
+<award category="best_music" status="nominated" movie="movie_db_803" year="2008" recipient="James Newton Howard"/>
+<award category="best_foreign_language_film" status="nominated" movie="movie_db_804" year="2008" recipient="Uli Edel"/>
+<award category="best_art_direction" status="nominated" movie="movie_db_805" year="2008" recipient="James J. Murakami und Gary Fettis"/>
+<award category="best_camera" status="nominated" movie="movie_db_805" year="2008" recipient="Tom Stern"/>
+<award category="best_actress_in_a_leading_role" status="nominated" movie="movie_db_805" year="2008" recipient="Angelina Jolie"/>
+<award category="best_specialeffect" status="winner" movie="movie_db_806" year="2008" recipient="Eric Barba, Steve Preeg, Burt Dalton, Craig Barron"/>
+<award category="best_actress_in_a_supporting_role" status="nominated" movie="movie_db_806" year="2008" recipient="Taraji P. Henson"/>
+<award category="best_costume_design" status="nominated" movie="movie_db_806" year="2008" recipient="Jacqueline West"/>
+<award category="best_cut" status="nominated" movie="movie_db_806" year="2008" recipient="Angus Wall und Kirk Baxter"/>
+<award category="best_art_direction" status="winner" movie="movie_db_806" year="2008" recipient="Donald Graham Burt, Victor J. Zolfo"/>
+<award category="best_camera" status="nominated" movie="movie_db_806" year="2008" recipient="Claudio Miranda"/>
+<award category="best_actor_in_a_leading_role" status="nominated" movie="movie_db_806" year="2008" recipient="Brad Pitt"/>
+<award category="best_sound_mixing" status="nominated" movie="movie_db_806" year="2008" recipient="David Parker, Michael Semanick, Ren Klyce und Mark Weingarten"/>
+<award category="best_music" status="nominated" movie="movie_db_806" year="2008" recipient="Alexandre Desplat"/>
+<award category="best_makeup" status="winner" movie="movie_db_806" year="2008" recipient="Greg Cannom"/>
+<award category="best_writing_adapted_screenplay" status="nominated" movie="movie_db_806" year="2008" recipient="Eric Roth und Robin Swicord"/>
+<award category="best_director" status="nominated" movie="movie_db_806" year="2008" recipient="David Fincher"/>
+<award category="best_motion_picture" status="nominated" movie="movie_db_806" year="2008" recipient="Céan Chaffin, Kathleen Kennedy und Frank Marshall"/>
+<award category="best_camera" status="nominated" movie="movie_db_807" year="2008" recipient="Roger Deakins und Chris Menges"/>
+<award category="best_writing_adapted_screenplay" status="nominated" movie="movie_db_807" year="2008" recipient="David Hare"/>
+<award category="best_director" status="nominated" movie="movie_db_807" year="2008" recipient="Stephen Daldry"/>
+<award category="best_motion_picture" status="nominated" movie="movie_db_807" year="2008" recipient="Anthony Minghella, Sydney Pollack, Donna Gigliotti und Redmond Morris"/>
+<award category="best_actress_in_a_leading_role" status="winner" movie="movie_db_807" year="2008" recipient="Kate Winslet"/>
+<award category="best_art_direction" status="nominated" movie="movie_db_808" year="2008" recipient="Michael Carlin und Rebecca Alleway"/>
+<award category="best_costume_design" status="winner" movie="movie_db_808" year="2008" recipient="Michael O'Connor"/>
+<award category="best_foreign_language_film" status="nominated" movie="movie_db_809" year="2008" recipient="Laurent Cantet"/>
+<award category="best_documentary" status="nominated" movie="movie_db_810" year="2008" recipient="Werner Herzog und Henry Kaiser"/>
+<award category="best_cut" status="nominated" movie="movie_db_811" year="2008" recipient="Daniel P. Hanley und Mike Hill"/>
+<award category="best_director" status="nominated" movie="movie_db_811" year="2008" recipient="Ron Howard"/>
+<award category="best_motion_picture" status="nominated" movie="movie_db_811" year="2008" recipient="Brian Grazer, Ron Howard und EricFellner"/>
+<award category="best_actor_in_a_leading_role" status="nominated" movie="movie_db_811" year="2008" recipient="Frank Langella"/>
+<award category="best_writing_adapted_screenplay" status="nominated" movie="movie_db_811" year="2008" recipient="Peter Morgan"/>
+<award category="best_writing" status="nominated" movie="movie_db_812" year="2008" recipient="Courtney Hunt"/>
+<award category="best_actress_in_a_leading_role" status="nominated" movie="movie_db_812" year="2008" recipient="Melissa Leo"/>
+<award category="best_actress_in_a_supporting_role" status="nominated" movie="movie_db_813" year="2008" recipient="Amy Adams"/>
+<award category="best_actress_in_a_leading_role" status="nominated" movie="movie_db_813" year="2008" recipient="Meryl Streep"/>
+<award category="best_actor_in_a_supporting_role" status="nominated" movie="movie_db_813" year="2008" recipient="Philip Seymour Hoffman"/>
+<award category="best_actress_in_a_supporting_role" status="nominated" movie="movie_db_813" year="2008" recipient="Viola Davis"/>
+<award category="best_writing_adapted_screenplay" status="nominated" movie="movie_db_813" year="2008" recipient="John Patrick Shanley"/>
+<award category="best_short_subject" status="nominated" movie="movie_db_814" year="2008" recipient="Dorthe Warnø Høgh und Tivi Magnusson"/>
+<award category="best_writing" status="nominated" movie="movie_db_815" year="2008" recipient="Mike Leigh"/>
+<award category="best_makeup" status="nominated" movie="movie_db_816" year="2008" recipient="Mike Elizalde und Thomas Floutz"/>
+<award category="best_sound_editing" status="nominated" movie="movie_db_817" year="2008" recipient="Frank E. Eulner und Christopher Boyes"/>
+<award category="best_specialeffect" status="nominated" movie="movie_db_817" year="2008" recipient="John Nelson, Ben Snow, Daniel Sudick und Shane Mahan"/>
+<award category="best_animated_feature" status="nominated" movie="movie_db_818" year="2008" recipient="John Stevenson und Mark Osborne"/>
+<award category="best_documentary" status="winner" movie="movie_db_819" year="2008" recipient="James Marsh und Simon Chinn"/>
+<award category="best_short_subject" status="nominated" movie="movie_db_820" year="2008" recipient="Elizabeth Marre und Olivier Pont"/>
+<award category="best_actor_in_a_supporting_role" status="nominated" movie="movie_db_821" year="2008" recipient="Josh Brolin"/>
+<award category="best_motion_picture" status="nominated" movie="movie_db_821" year="2008" recipient="Bruce Cohen, Dan Jinks und Michael London"/>
+<award category="best_actor_in_a_leading_role" status="winner" movie="movie_db_821" year="2008" recipient="Sean Penn"/>
+<award category="best_writing" status="winner" movie="movie_db_821" year="2008" recipient="Dustin Lance Black"/>
+<award category="best_costume_design" status="nominated" movie="movie_db_821" year="2008" recipient="Danny Glicker"/>
+<award category="best_director" status="nominated" movie="movie_db_821" year="2008" recipient="Gus Van Sant"/>
+<award category="best_music" status="nominated" movie="movie_db_821" year="2008" recipient="Danny Elfman"/>
+<award category="best_cut" status="nominated" movie="movie_db_821" year="2008" recipient="Elliot Graham"/>
+<award category="best_short_subject" status="nominated" movie="movie_db_822" year="2008" recipient="Steph Green und Tamara Anghie"/>
+<award category="best_foreign_language_film" status="winner" movie="movie_db_823" year="2008" recipient="Yoyiro Takita"/>
+<award category="best_actress_in_a_leading_role" status="nominated" movie="movie_db_824" year="2008" recipient="Anne Hathaway"/>
+<award category="best_foreign_language_film" status="nominated" movie="movie_db_825" year="2008" recipient="Götz Spielmann"/>
+<award category="best_sound_editing" status="nominated" movie="movie_db_826" year="2008" recipient="Tom Sayers"/>
+<award category="best_sound_mixing" status="winner" movie="movie_db_826" year="2008" recipient="Ian Tapp, Richard Pryke, Resul Pookutty"/>
+<award category="best_song" status="nominated" movie="movie_db_826" year="2008" recipient="A. R. Rahman und Maya Arulpragasam (Song O … Saya)"/>
+<award category="best_song" status="winner" movie="movie_db_826" year="2008" recipient="A. R. Rahman, Gulzar"/>
+<award category="best_music" status="winner" movie="movie_db_826" year="2008" recipient="A. R. Rahman"/>
+<award category="best_director" status="winner" movie="movie_db_826" year="2008" recipient="Danny Boyle"/>
+<award category="best_cut" status="winner" movie="movie_db_826" year="2008" recipient="Chris Dickens"/>
+<award category="best_camera" status="winner" movie="movie_db_826" year="2008" recipient="Anthony Dod Mantle"/>
+<award category="best_writing_adapted_screenplay" status="winner" movie="movie_db_826" year="2008" recipient="Simon Beaufoy"/>
+<award category="best_motion_picture" status="winner" movie="movie_db_826" year="2008" recipient="Christian Colson"/>
+<award category="best_short_subject" status="winner" movie="movie_db_827" year="2008" recipient="Jochen Alexander Freydank"/>
+<award category="best_documentary" status="nominated" movie="movie_db_828" year="2008" recipient="Ellen Kuras und Thavisouk Phrasavath"/>
+<award category="best_camera" status="nominated" movie="movie_db_829" year="2008" recipient="Wally Pfister"/>
+<award category="best_makeup" status="nominated" movie="movie_db_829" year="2008" recipient="John Caglione junior und Conor O'Sullivan"/>
+<award category="best_sound_editing" status="winner" movie="movie_db_829" year="2008" recipient="Richard King"/>
+<award category="best_art_direction" status="nominated" movie="movie_db_829" year="2008" recipient="Nathan Crowley und Peter Lando"/>
+<award category="best_sound_mixing" status="nominated" movie="movie_db_829" year="2008" recipient="Ed Novick, Lora Hirschberg und Gary Rizzo"/>
+<award category="best_actor_in_a_supporting_role" status="winner" movie="movie_db_829" year="2008" recipient="Heath Ledger (posthum)"/>
+<award category="best_specialeffect" status="nominated" movie="movie_db_829" year="2008" recipient="Nick Davis, Chris Corbould, Timothy Webber und Paul J. Franklin"/>
+<award category="best_cut" status="nominated" movie="movie_db_829" year="2008" recipient="Lee Smith"/>
+<award category="best_documentary" status="nominated" movie="movie_db_830" year="2008" recipient="Scott Hamilton Kennedy"/>
+<award category="best_actor_in_a_leading_role" status="nominated" movie="movie_db_831" year="2008" recipient="Richard Jenkins"/>
+<award category="best_actor_in_a_leading_role" status="nominated" movie="movie_db_832" year="2008" recipient="Mickey Rourke"/>
+<award category="best_actress_in_a_supporting_role" status="nominated" movie="movie_db_832" year="2008" recipient="Marisa Tomei"/>
+<award category="best_actor_in_a_supporting_role" status="nominated" movie="movie_db_833" year="2008" recipient="Robert Downey junior"/>
+<award category="best_documentary" status="nominated" movie="movie_db_834" year="2008" recipient="Tia Lessin und Carl Deal"/>
+<award category="best_actress_in_a_supporting_role" status="winner" movie="movie_db_835" year="2008" recipient="Penélope Cruz"/>
+<award category="best_animated_feature" status="winner" movie="movie_db_836" year="2008" recipient="Andrew Stanton"/>
+<award category="best_writing" status="nominated" movie="movie_db_836" year="2008" recipient="Andrew Stanton, Pete Docter und Jim Reardon"/>
+<award category="best_song" status="nominated" movie="movie_db_836" year="2008" recipient="Peter Gabriel und Thomas Newman(Song Down to Earth)"/>
+<award category="best_sound_mixing" status="nominated" movie="movie_db_836" year="2008" recipient="Tom Myers, Michael Semanick und Ben Burtt"/>
+<award category="best_sound_editing" status="nominated" movie="movie_db_836" year="2008" recipient="Ben Burtt und Matthew Wood"/>
+<award category="best_music" status="nominated" movie="movie_db_836" year="2008" recipient="Thomas Newman"/>
+<award category="best_foreign_language_film" status="nominated" movie="movie_db_837" year="2008" recipient="Ari Folman"/>
+<award category="best_sound_editing" status="nominated" movie="movie_db_838" year="2008" recipient="Wylie Stateman"/>
+<award category="best_sound_mixing" status="nominated" movie="movie_db_838" year="2008" recipient="Chris Jenkins, Frank A. Montaño und Petr Forejt"/>
+<award category="best_art_direction" status="nominated" movie="movie_db_839" year="2008" recipient="Kristi Zea und Debra Schutt"/>
+<award category="best_costume_design" status="nominated" movie="movie_db_839" year="2008" recipient="Albert Wolsky"/>
+<award category="best_actor_in_a_supporting_role" status="nominated" movie="movie_db_839" year="2008" recipient="Michael Shannon"/>
 
 </awards>
 </awarddata>
