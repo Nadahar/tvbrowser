@@ -335,6 +335,13 @@ public class MediathekPlugin extends Plugin {
             .openURL("http://www1.nrk.no/nett-tv");
       }
     });
+    
+    // set tooltip similar to name
+    for (Action action : actionList) {
+      action.putValue(Action.SHORT_DESCRIPTION, action.getValue(Action.NAME));
+      action.putValue(Action.LONG_DESCRIPTION, action.getValue(Action.NAME));
+    }
+
     return new ActionMenu(menuAction, actionList.toArray());
   }
 
