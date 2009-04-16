@@ -116,11 +116,15 @@ public final class RecommendationPlugin extends Plugin {
         Program p = it.next();
 
         if (!p.isExpired()) {
+          int sumWeight = 0;
           for (RecommendationInputIf input : mEnabledInput) {
             final int weight = input.calculate(p);
             if (weight > 0) {
-              list.add(new ProgramWeight(p, weight));
+              sumWeight += weight;
             }
+          }
+          if (sumWeight > 0) {
+            list.add(new ProgramWeight(p, sumWeight));
           }
         }
       }
