@@ -6,7 +6,7 @@ public class ProgramWeight implements Comparable<ProgramWeight> {
   private Program mProgram;
   private int mWeight;
 
-  public ProgramWeight(Program p, int weight) {
+  public ProgramWeight(final Program p, final int weight) {
     mProgram = p;
     mWeight = weight;
   }
@@ -26,7 +26,7 @@ public class ProgramWeight implements Comparable<ProgramWeight> {
       return -1;
     }
 
-    return 0;
+    return mProgram.getTitle().compareTo(programWeight.mProgram.getTitle());
   }
 
 }
