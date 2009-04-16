@@ -58,9 +58,6 @@ import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-
 import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
@@ -69,7 +66,12 @@ import tvbrowser.ui.filter.dlgs.FilterButtons;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.settings.ToolBarDragAndDropSettings;
 import util.ui.ChannelContextMenu;
+import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
+
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
 import devplugin.Date;
 import devplugin.Plugin;
 import devplugin.ProgressMonitor;
@@ -79,6 +81,9 @@ public class ToolBar extends JToolBar {
 
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer
       .getLocalizerFor(ToolBar.class);
+
+  private static java.util.logging.Logger mLog = java.util.logging.Logger
+  .getLogger(ToolBar.class.getName());
 
   public static final String ACTION_VALUE = "ActionValue";
   public static final String ACTION_TYPE_KEY = "ActionType";
@@ -469,10 +474,13 @@ public class ToolBar extends JToolBar {
       Icon icon;
       if (mIconSize == ICON_BIG) {
         icon = (Icon) action.getValue(Plugin.BIG_ICON);
-
+        if (icon == null) {
+          mLog.warning("Big icon missing for action " + action.getValue(Action.NAME));
+          icon = (Icon) action.getValue(Action.SMALL_ICON);
+        }
         if ((icon != null)
-            && ((icon.getIconHeight() != 22) || (icon.getIconWidth() != 22))) {
-          icon = UiUtilities.scaleIcon(icon, 22, 22);
+            && ((icon.getIconHeight() != TVBrowserIcons.SIZE_LARGE) || (icon.getIconWidth() != TVBrowserIcons.SIZE_LARGE))) {
+          icon = UiUtilities.scaleIcon(icon, TVBrowserIcons.SIZE_LARGE, TVBrowserIcons.SIZE_LARGE);
         }
 
       } else {
@@ -609,9 +617,9 @@ public class ToolBar extends JToolBar {
       setAlignmentX(Component.CENTER_ALIGNMENT);
       
       if(BorderLayout.NORTH.equals(toolbarLocation)) {
-        add(new JSeparator(JSeparator.VERTICAL), new CellConstraints().xy(2,1));
+        add(new JSeparator(SwingConstants.VERTICAL), new CellConstraints().xy(2,1));
       } else {
-        add(new JSeparator(JSeparator.HORIZONTAL), new CellConstraints().xy(1,2));
+        add(new JSeparator(SwingConstants.HORIZONTAL), new CellConstraints().xy(1,2));
       }
 
       adjustSize();
