@@ -2,6 +2,7 @@ package tvbrowser.ui.settings;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -50,6 +51,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.CompoundBorder;
 
@@ -59,6 +61,7 @@ import tvbrowser.ui.mainframe.toolbar.ContextMenu;
 import tvbrowser.ui.mainframe.toolbar.DefaultToolBarModel;
 import tvbrowser.ui.mainframe.toolbar.ToolBar;
 import util.ui.Localizer;
+import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
@@ -79,6 +82,9 @@ public class ToolBarDragAndDropSettings extends JDialog implements
   /** The localizer for this class. */
   public static final util.ui.Localizer mLocalizer = util.ui.Localizer
       .getLocalizerFor(ToolBarDragAndDropSettings.class);
+
+  private static java.util.logging.Logger mLog = java.util.logging.Logger
+  .getLogger(ToolBarDragAndDropSettings.class.getName());
 
   private static final long serialVersionUID = 1L;
   /** Actions that are visible in the ToolBar */
@@ -116,18 +122,22 @@ public class ToolBarDragAndDropSettings extends JDialog implements
     ArrayList<Action> notSelectedActionsList = new ArrayList<Action>(Arrays.asList(toolbarModel
         .getAvailableActions()));
 
-    for (Action a : currentActions)
+    for (Action a : currentActions) {
       mCurrentActions.addElement(a);
+    }
 
-    for (Action a : currentActions)
-      if (notSelectedActionsList.contains(a))
+    for (Action a : currentActions) {
+      if (notSelectedActionsList.contains(a)) {
         notSelectedActionsList.remove(a);
+      }
+    }
 
     Action[] availableActions = new Action[notSelectedActionsList.size()];
     notSelectedActionsList.toArray(availableActions);
 
-    for (Action a : availableActions)
+    for (Action a : availableActions) {
       mAvailableActions.addElement(a);
+    }
 
     mAvailableActions.insertElementAt(toolbarModel.getSeparatorAction(), 0);
     mAvailableActions.insertElementAt(toolbarModel.getGlueAction(), 1);
@@ -136,19 +146,19 @@ public class ToolBarDragAndDropSettings extends JDialog implements
     // Initialize the Panel with the available Buttons
     mButtonPanel = new JPanel();
     mButtonPanel.setLayout(new GridLayout(0, 4, 2, 2));
-    mButtonPanel.setAlignmentX(JPanel.LEFT_ALIGNMENT);
+    mButtonPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
     
     
     // Make the buttonPanel scrollable
     JScrollPane pane = new JScrollPane(mButtonPanel);
-    pane.setAlignmentX(JScrollPane.LEFT_ALIGNMENT);
+    pane.setAlignmentX(Component.LEFT_ALIGNMENT);
     pane.getVerticalScrollBar().setUnitIncrement(73);
     pane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
     addMouseAdapterForHandCursorToComponent(pane);
     
     // Initialize the Panel for selecting toolBars visibility
     final JPanel tVisPanel = new JPanel();
-    tVisPanel.setAlignmentX(JPanel.LEFT_ALIGNMENT);
+    tVisPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
     tVisPanel.setLayout(new BoxLayout(tVisPanel, BoxLayout.X_AXIS));
     tVisPanel.setBorder(new CompoundBorder(BorderFactory.createMatteBorder(0,
         0, 1, 0, Color.GRAY), BorderFactory.createEmptyBorder(10, 5, 9, 5)));
@@ -169,7 +179,7 @@ public class ToolBarDragAndDropSettings extends JDialog implements
 
     // Initialize the panel for the ToolBar settings
     JPanel tSetPanel = new JPanel(new FormLayout("default,5dlu,default,0dlu:grow,default,5dlu,default,5dlu,default","default"));
-    tSetPanel.setAlignmentX(JPanel.LEFT_ALIGNMENT);
+    tSetPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
     
     mLocationCB = new JComboBox(new String[] { mLocalizer.msg("top", "top"),
         Localizer.getLocalization(Localizer.I18N_LEFT), });
@@ -177,8 +187,9 @@ public class ToolBarDragAndDropSettings extends JDialog implements
     if ("west".equals(Settings.propToolbarLocation.getString())) {
       mLocationCB.setSelectedIndex(1);
       mWest = true;
-    } else
+    } else {
       mWest = false;
+    }
 
     mShowCB = new JComboBox(new String[] {
         ContextMenu.mLocalizer.msg("text.and.icon", "text and icon"),
@@ -191,7 +202,7 @@ public class ToolBarDragAndDropSettings extends JDialog implements
     } else if ("icon".equals(style)) {
       mShowCB.setSelectedIndex(2);
     }
-    mShowCB.setAlignmentX(JComboBox.CENTER_ALIGNMENT);
+    mShowCB.setAlignmentX(Component.CENTER_ALIGNMENT);
     mShowCB.setMaximumSize(mShowCB.getPreferredSize());
 
     mUseBigIconsCb = new JCheckBox(ContextMenu.mLocalizer.msg("bigIcons",
@@ -211,7 +222,7 @@ public class ToolBarDragAndDropSettings extends JDialog implements
 
     // The panel for the OK button
     JPanel okButtonPanel = new JPanel();
-    okButtonPanel.setAlignmentX(JPanel.LEFT_ALIGNMENT);
+    okButtonPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
     okButtonPanel.setLayout(new BoxLayout(okButtonPanel, BoxLayout.X_AXIS));
     okButtonPanel.setBorder(BorderFactory.createEmptyBorder(10, 5, 5, 5));
 
@@ -243,7 +254,7 @@ public class ToolBarDragAndDropSettings extends JDialog implements
 
     buildButtonPanel();
     setMainframeMenusEnabled(false);
-    ini();
+    init();
   }
   
   private void addMouseAdapterForHandCursorToComponent(final JComponent c) {
@@ -270,40 +281,50 @@ public class ToolBarDragAndDropSettings extends JDialog implements
 
     // Calculate the size of the ButtonPanel
     int n = this.mAvailableActions.size() / 4;
-    if (this.mAvailableActions.size() % 4 != 0)
+    if (this.mAvailableActions.size() % 4 != 0) {
       n++;
+    }
     mButtonPanel.setPreferredSize(new Dimension(570, n * 73));
 
     // Add all availableActions to the buttonPanel
-    for (Action a : mAvailableActions) {
+    for (Action action : mAvailableActions) {
       // <html> is needed to have a black color of the letters of a button,
       // because the Buttons have to be disabled for Drag'n'Drop
-      JButton b = new JButton("<html><div style=\"text-align:center\">" + (String) a.getValue(Action.NAME)
+      JButton button = new JButton("<html><div style=\"text-align:center\">" + (String) action.getValue(Action.NAME)
           + "</div></html>");
-      b.setBorder(new CompoundBorder(BorderFactory
+      button.setBorder(new CompoundBorder(BorderFactory
           .createEmptyBorder(1, 1, 1, 1), BorderFactory.createEmptyBorder(1, 1,
           1, 1)));
-      b.setIcon((Icon) a.getValue(Plugin.BIG_ICON));
       
-      b.setDisabledIcon((Icon) a.getValue(Plugin.BIG_ICON));
-      b.setVerticalTextPosition(JButton.BOTTOM);
-      b.setHorizontalTextPosition(JButton.CENTER);
-      b.setFont(new Font("Dialog", Font.PLAIN, 10));
-      b.addMouseListener(this);
-      addMouseAdapterForHandCursorToComponent(b);
-      b.setContentAreaFilled(false);
+      Icon icon = (Icon) action.getValue(Plugin.BIG_ICON);
+      if (icon == null) {
+        mLog.warning("Big icon missing for action " + action.getValue(Action.NAME));
+        icon = (Icon) action.getValue(Action.SMALL_ICON);
+      }
+      if ((icon != null)
+          && ((icon.getIconHeight() != TVBrowserIcons.SIZE_LARGE) || (icon.getIconWidth() != TVBrowserIcons.SIZE_LARGE))) {
+        icon = UiUtilities.scaleIcon(icon, TVBrowserIcons.SIZE_LARGE, TVBrowserIcons.SIZE_LARGE);
+      }
+      button.setIcon(icon);
+      button.setDisabledIcon(icon);
+      button.setVerticalTextPosition(SwingConstants.BOTTOM);
+      button.setHorizontalTextPosition(SwingConstants.CENTER);
+      button.setFont(new Font("Dialog", Font.PLAIN, 10));
+      button.addMouseListener(this);
+      addMouseAdapterForHandCursorToComponent(button);
+      button.setContentAreaFilled(false);
       
       // Set up the available ActionButtons for dragging
       DragSource d = new DragSource();
-      d.createDefaultDragGestureRecognizer(b, DnDConstants.ACTION_MOVE, this);
+      d.createDefaultDragGestureRecognizer(button, DnDConstants.ACTION_MOVE, this);
 
-      b.setEnabled(false);
-      mButtonPanel.add(b);
+      button.setEnabled(false);
+      mButtonPanel.add(button);
     }
     mButtonPanel.updateUI();
   }
 
-  private void ini() {
+  private void init() {
     // set the drop targets of the Actions
     new DropTarget(MainFrame.getInstance().getToolbar(), this);
     new DropTarget(MainFrame.getInstance().getToolBarPanel(), this);
@@ -312,17 +333,19 @@ public class ToolBarDragAndDropSettings extends JDialog implements
     // set up the ActionButtons in the ToolBar for dragging
     MainFrame.getInstance().getToolbar().disableForDragAndDrop(this, mWest);
 
-    if (mShowToolbarCb.isSelected())
+    if (mShowToolbarCb.isSelected()) {
       mShowSearchFieldCb.setEnabled(true);
-    else
+    } else {
       mShowSearchFieldCb.setEnabled(false);
+    }
   }
 
   private void setMainframeMenusEnabled(boolean enabled) {
     JMenuBar bar = MainFrame.getInstance().getJMenuBar();
 
-    for (int i = 0; i < bar.getMenuCount(); i++)
+    for (int i = 0; i < bar.getMenuCount(); i++) {
       bar.getMenu(i).setEnabled(enabled);
+    }
   }
 
   /**
@@ -364,20 +387,22 @@ public class ToolBarDragAndDropSettings extends JDialog implements
     }
 
     public boolean isDataFlavorSupported(DataFlavor e) {
-      if (e.equals(mNF) || e.equals(mIF))
+      if (e.equals(mNF) || e.equals(mIF)) {
         return true;
-      else
+      } else {
         return false;
+      }
     }
 
     public Object getTransferData(DataFlavor e)
         throws UnsupportedFlavorException, IOException {
-      if (e.equals(mNF))
+      if (e.equals(mNF)) {
         return mName;
-      else if (e.equals(mIF))
+      } else if (e.equals(mIF)) {
         return mIndex;
-      else
+      } else {
         return null;
+      }
     }
   }
 
@@ -395,10 +420,11 @@ public class ToolBarDragAndDropSettings extends JDialog implements
       return;
     }
     if (flavors[0].getHumanPresentableName().equals("Action")
-        && flavors[1].getHumanPresentableName().equals("Integer"))
+        && flavors[1].getHumanPresentableName().equals("Integer")) {
       e.acceptDrag(e.getDropAction());
-    else
+    } else {
       e.rejectDrag();
+    }
   }
 
   public void drop(DropTargetDropEvent e) {
@@ -434,8 +460,9 @@ public class ToolBarDragAndDropSettings extends JDialog implements
           if (!separator.getValue(Action.NAME).equals(name) 
               && !glue.getValue(Action.NAME).equals(name)
               && !space.getValue(Action.NAME).equals(name)
-              )
+              ) {
             mAvailableActions.addElement(a);
+          }
         }
         saveSettings();
       } else if (target.equals(MainFrame.getInstance().getToolbar())
@@ -444,11 +471,12 @@ public class ToolBarDragAndDropSettings extends JDialog implements
         
         Point location = e.getLocation();
 
-        if (mWest)
+        if (mWest) {
           location.setLocation(10, location.y);
-        else
+        } else {
           location.setLocation(location.x, MainFrame.getInstance().getToolbar()
               .getHeight() / 2);
+        }
 
         JComponent c = (JComponent) MainFrame.getInstance().getToolbar()
             .getComponentAt(location);
@@ -457,10 +485,11 @@ public class ToolBarDragAndDropSettings extends JDialog implements
           c = (JComponent) MainFrame.getInstance().getToolbar().getComponent(
               MainFrame.getInstance().getToolbar().getComponentCount() - 1);
 
-          if (c != null)
+          if (c != null) {
             location.setLocation(c.getLocation().x + c.getWidth() - 1, c
                 .getLocation().y
                 + c.getHeight() - 1);
+          }
         }
 
         int n = 0;
@@ -471,30 +500,35 @@ public class ToolBarDragAndDropSettings extends JDialog implements
           n = MainFrame.getInstance().getToolbar().getComponentIndex(c);
 
           if (!((mWest && (p.y < c.getHeight() / 2)) || (!mWest && (p.x < c
-              .getWidth() / 2))))
+              .getWidth() / 2)))) {
             n++;
+          }
         }
 
         if (index != -1) {
           Action a = mCurrentActions.remove(index);
 
-          if (index < n)
+          if (index < n) {
             n--;
+          }
 
-          if (n > MainFrame.getInstance().getToolbar().getComponentCount() - 1)
+          if (n > MainFrame.getInstance().getToolbar().getComponentCount() - 1) {
             mCurrentActions.insertElementAt(a, n - 1);
-          else
+          } else {
             mCurrentActions.insertElementAt(a, n);
+          }
         } else {
-          if(n < 0)
+          if(n < 0) {
             n = 0;
+          }
             
           for (Action a : mAvailableActions) {
             if (a.getValue(Action.NAME).equals(name)) {
               if (!separator.getValue(Action.NAME).equals(name) 
                   && !glue.getValue(Action.NAME).equals(name)
-                  && !space.getValue(Action.NAME).equals(name))
+                  && !space.getValue(Action.NAME).equals(name)) {
                 mAvailableActions.removeElement(a);
+              }
               mCurrentActions.insertElementAt(a, n);
               break;
             }
@@ -515,27 +549,27 @@ public class ToolBarDragAndDropSettings extends JDialog implements
     Action separator = DefaultToolBarModel.getInstance().getSeparatorAction();
     Action glue = DefaultToolBarModel.getInstance().getGlueAction();
     Action space = DefaultToolBarModel.getInstance().getSpaceAction();
-    Action[] a = DefaultToolBarModel.getInstance().getAvailableActions();
+    Action[] actions = DefaultToolBarModel.getInstance().getAvailableActions();
 
     JComponent c = (JComponent) e.getComponent();
     
-    for (int i = 0; i < a.length; i++) {
+    for (Action action : actions) {
       String text;
-      if (c instanceof JToolBar.Separator)
+      if (c instanceof JToolBar.Separator) {
         text = (String) separator.getValue(Action.NAME);
-      else if(c instanceof JPanel)
+      } else if(c instanceof JPanel) {
         text = (String) glue.getValue(Action.NAME);
-      else {
-        if (((AbstractButton) c).getText() == null)
+      } else {
+        if (((AbstractButton) c).getText() == null) {
           text = "notext";
-        else if (!((AbstractButton) c).getText().startsWith("<html>")) {
+        } else if (!((AbstractButton) c).getText().startsWith("<html>")) {
           text = ((AbstractButton) c).getText();
         } else {
           text = ((AbstractButton) c).getText().substring(37,
               ((AbstractButton) c).getText().length() - 13);
         }
       }
-      if (a[i].getValue(Action.NAME).equals(text)
+      if (action.getValue(Action.NAME).equals(text)
           || separator.getValue(Action.NAME).equals(text) 
           || glue.getValue(Action.NAME).equals(text)
           || space.getValue(Action.NAME).equals(text)
@@ -588,7 +622,7 @@ public class ToolBarDragAndDropSettings extends JDialog implements
     MainFrame.getInstance().updateToolbar();
 
     buildButtonPanel();
-    ini();
+    init();
   }
 
   public void actionPerformed(ActionEvent e) {
@@ -597,9 +631,10 @@ public class ToolBarDragAndDropSettings extends JDialog implements
     } else if (e.getSource() == mShowToolbarCb) {
 
       MainFrame.getInstance().setShowToolbar(mShowToolbarCb.isSelected());
-      ini();
-    } else
+      init();
+    } else {
       saveSettings();
+    }
   }
 
   public void dragOver(DropTargetDragEvent e) {
@@ -613,12 +648,13 @@ public class ToolBarDragAndDropSettings extends JDialog implements
     if (!target.equals(mButtonPanel)) {
       Point location = e.getLocation();
 
-      if (mWest)
+      if (mWest) {
         location.setLocation(10,
             location.y);
-      else
+      } else {
         location.setLocation(location.x, MainFrame.getInstance().getToolbar()
             .getHeight() / 2);
+      }
 
       JComponent c = (JComponent) MainFrame.getInstance().getToolbar()
           .getComponentAt(location);
@@ -627,10 +663,11 @@ public class ToolBarDragAndDropSettings extends JDialog implements
         c = (JComponent) MainFrame.getInstance().getToolbar().getComponent(
             MainFrame.getInstance().getToolbar().getComponentCount() - 1);
 
-        if (c != null)
+        if (c != null) {
           location.setLocation(c.getLocation().x + c.getWidth() - 1, c
               .getLocation().y
               + c.getHeight() - 1);
+        }
       }
       
       if (c != null) {
@@ -640,14 +677,15 @@ public class ToolBarDragAndDropSettings extends JDialog implements
         
         Rectangle oldCueLineBounds = mCueLine.getBounds();        
         
-        if (mWest)
+        if (mWest) {
           mCueLine.setRect(1,
               (p.y < c.getHeight() / 2) ? (location.y - p.y) : (location.y
                   + c.getHeight() - p.y), toolBarPanel.getWidth() - 1, 2);
-        else
+        } else {
           mCueLine.setRect((p.x < c.getWidth() / 2) ? (location.x - p.x )
               : (location.x + c.getWidth() - p.x ), 1, 2,
               toolBarPanel.getHeight() - 1);
+        }
 
         if (!oldCueLineBounds.equals(mCueLine.getBounds())) {
           Graphics2D g2d = (Graphics2D) toolBarPanel.getGraphics();
@@ -694,8 +732,9 @@ public class ToolBarDragAndDropSettings extends JDialog implements
       if (index != -1) {
         Action a = mCurrentActions.elementAt(index);
         mCurrentActions.removeElementAt(index);
-        if (!a.equals(separator) && !a.equals(glue) && !a.equals(space))
+        if (!a.equals(separator) && !a.equals(glue) && !a.equals(space)) {
           mAvailableActions.addElement(a);
+        }
       } else {
         String name = ((AbstractButton) e.getComponent()).getText().substring(
             37, ((AbstractButton) e.getComponent()).getText().length() - 13);
@@ -705,8 +744,9 @@ public class ToolBarDragAndDropSettings extends JDialog implements
           if (a.getValue(Action.NAME).equals(name)) {
             if (!separator.getValue(Action.NAME).equals(name) 
                 && !glue.getValue(Action.NAME).equals(name)
-                && !space.getValue(Action.NAME).equals(name))
+                && !space.getValue(Action.NAME).equals(name)) {
               mAvailableActions.removeElement(a);
+            }
             mCurrentActions.insertElementAt(a, n);
           }
         }
