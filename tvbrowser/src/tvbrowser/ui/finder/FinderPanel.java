@@ -112,6 +112,8 @@ public class FinderPanel extends JScrollPane implements MouseListener, MouseMoti
 
   private Date mToday;
 
+  private Date maxDate;
+
   public FinderPanel() {
 
     setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
@@ -123,13 +125,7 @@ public class FinderPanel extends JScrollPane implements MouseListener, MouseMoti
     mList.setCellRenderer(mRenderer);
 
     setViewportView(mList);
-
-    mToday = Date.getCurrentDate();
-    mModel.removeAllElements();
-    for (int i = -1; i < 28; i++) {
-      mModel.addElement(new FinderItem(mList, mToday.addDays(i), mToday));
-    }
-
+    updateContent();
     mList.addMouseMotionListener(this);
     mList.addMouseListener(this);
     mList.addKeyListener(this);
@@ -139,7 +135,7 @@ public class FinderPanel extends JScrollPane implements MouseListener, MouseMoti
   }
 
   /**
-   * Refresh the content. This method sould be called after midnight to refresh
+   * Refresh the content. This method should be called after midnight to refresh
    * the 'today' label.
    */
   public void updateContent() {
@@ -150,8 +146,12 @@ public class FinderPanel extends JScrollPane implements MouseListener, MouseMoti
 
     mToday = date;
     mModel.removeAllElements();
-    for (int i = -1; i < 28; i++) {
+    maxDate = TvDataBase.getInstance().getMaxSupportedDate();
+    for (int i = -1;; i++) {
       Date d = mToday.addDays(i);
+      if (d.getNumberOfDaysSince(maxDate) > 0) {
+        break;
+      }
       FinderItem fi = new FinderItem(mList, d, mToday);
       mModel.addElement(fi);
       if (d.equals(mCurChoosenDate)) {

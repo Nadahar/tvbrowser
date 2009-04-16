@@ -187,7 +187,7 @@ public abstract class AbstractSearcher implements ProgramSearcher {
     if (nrDays < 0) {
       // Search complete data, beginning yesterday to 4 weeks into the future
       startDate = Date.getCurrentDate().addDays(-1);
-      nrDays = 4*7;
+      nrDays = TvDataBase.getInstance().getMaxSupportedDate().getNumberOfDaysSince(startDate);
     }
 
     // Perform the actual search
