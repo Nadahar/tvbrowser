@@ -35,6 +35,7 @@ import javax.swing.JPanel;
 
 import tvbrowser.TVBrowser;
 import tvbrowser.core.Settings;
+import tvbrowser.core.icontheme.IconLoader;
 import util.misc.JavaVersion;
 
 import com.jgoodies.forms.builder.PanelBuilder;
@@ -133,7 +134,7 @@ public class TrayBaseSettingsTab implements SettingsTab {
   }
 
   public Icon getIcon() {
-    return null;
+    return IconLoader.getInstance().getIconFromTheme("actions", "document-properties", 16);
   }
 
   public String getTitle() {

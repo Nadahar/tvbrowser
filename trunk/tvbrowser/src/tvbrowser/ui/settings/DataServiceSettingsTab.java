@@ -29,6 +29,7 @@ package tvbrowser.ui.settings;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
+
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
@@ -40,20 +41,21 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
-import com.jgoodies.forms.builder.ButtonBarBuilder;
-import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-
-import devplugin.Channel;
-
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.PluginLoader;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import util.ui.Localizer;
+import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
+
+import com.jgoodies.forms.builder.ButtonBarBuilder;
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
+import devplugin.Channel;
 
 public class DataServiceSettingsTab implements devplugin.SettingsTab {
 
@@ -278,7 +280,7 @@ public class DataServiceSettingsTab implements devplugin.SettingsTab {
    * Returns the name of the tab-sheet.
    */
   public Icon getIcon() {
-    return null;
+    return TVBrowserIcons.webBrowser(TVBrowserIcons.SIZE_SMALL);
   }
 
   /**

@@ -70,6 +70,7 @@ import util.browserlauncher.Launch;
 import util.ui.FixedSizeIcon;
 import util.ui.Localizer;
 import util.ui.ScrollableMenu;
+import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 import devplugin.ActionMenu;
 import devplugin.Channel;
@@ -278,7 +279,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
     
     mPluginManagerMI = new JMenuItem(mLocalizer.msg("menuitem.managePlugins", "Manage Plugins"));
     mPluginManagerMI.addActionListener(this);
-    mPluginManagerMI.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "view-plugins", 16));
+    mPluginManagerMI.setIcon(TVBrowserIcons.plugin(TVBrowserIcons.SIZE_SMALL));
     new MenuHelpTextAdapter(mPluginManagerMI, mLocalizer.msg("menuinfo.findplugins",""), mLabel);
         
     mHandbookMI=new JMenuItem(mLocalizer.msg("menuitem.handbook", "Handbook"),urlHelpImg); 
