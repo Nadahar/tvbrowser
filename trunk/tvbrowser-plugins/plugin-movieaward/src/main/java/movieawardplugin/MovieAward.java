@@ -177,4 +177,8 @@ public class MovieAward implements Comparable<MovieAward> {
   public int compareTo(final MovieAward other) {
     return getName().compareTo(other.getName());
   }
+  
+  public String toString() {
+    return getName();
+  }
 }
