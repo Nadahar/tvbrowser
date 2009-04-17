@@ -140,7 +140,7 @@ final public class MovieAwardPlugin extends Plugin {
     return mVersion;
   }
 
-  private void initDatabase() {
+  public void initDatabase() {
     // might be called multiple times
     if (mMovieAwards == null) {
       MovieDataFactory.loadMovieDatabase(mMovieDatabase, getClass()
@@ -418,7 +418,7 @@ final public class MovieAwardPlugin extends Plugin {
 
   @SuppressWarnings("unchecked")
   public Class<? extends PluginsFilterComponent>[] getAvailableFilterComponentClasses() {
-    return (Class<? extends PluginsFilterComponent>[]) new Class[] {MovieAwardFilterComponent.class};
+    return (Class<? extends PluginsFilterComponent>[]) new Class[] {MovieAwardFilterComponent.class, SelectedAwardsFilterComponent.class};
   }
 
   @Override
