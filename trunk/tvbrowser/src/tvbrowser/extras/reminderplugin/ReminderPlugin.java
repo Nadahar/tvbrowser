@@ -69,6 +69,7 @@ import util.io.IOUtilities;
 import util.io.stream.ObjectOutputStreamProcessor;
 import util.io.stream.StreamUtilities;
 import util.ui.Localizer;
+import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 import devplugin.ActionMenu;
 import devplugin.ContextMenuAction;
@@ -637,7 +638,7 @@ public class ReminderPlugin {
         MainFrame.getInstance().showSettingsDialog(SettingsItem.REMINDER);
       }
     };
-    openSettings.putValue(Action.SMALL_ICON, IconLoader.getInstance().getIconFromTheme("categories", "preferences-system", 16));
+    openSettings.putValue(Action.SMALL_ICON, TVBrowserIcons.preferences(TVBrowserIcons.SIZE_SMALL));
     openSettings.putValue(Action.NAME, Localizer.getLocalization(Localizer.I18N_SETTINGS));
     
     mRootNode.addAction(editReminders);

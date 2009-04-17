@@ -66,6 +66,7 @@ import tvbrowser.ui.filter.dlgs.SelectFilterPopup;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.ui.Localizer;
 import util.ui.ScrollableMenu;
+import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 import devplugin.ActionMenu;
 import devplugin.Channel;
@@ -149,9 +150,7 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
         ToolBar.BUTTON_ACTION, this);
     mSettingsAction = createAction(Localizer.getLocalization(Localizer.I18N_SETTINGS),
         "#settings", MainFrame.mLocalizer.msg("menuinfo.settings",
-        ""), IconLoader.getInstance().getIconFromTheme("categories",
-        "preferences-system", 16), IconLoader.getInstance().getIconFromTheme(
-        "categories", "preferences-system", 22), ToolBar.BUTTON_ACTION, this);
+        ""), TVBrowserIcons.preferences(TVBrowserIcons.SIZE_SMALL), TVBrowserIcons.preferences(TVBrowserIcons.SIZE_LARGE), ToolBar.BUTTON_ACTION, this);
     mFilterAction = createAction(TVBrowser.mLocalizer.msg("button.filter",
         "Filter"), "#filter", MainFrame.mLocalizer.msg("menuinfo.filter", ""),
         IconLoader.getInstance().getIconFromTheme("actions","view-filter-list",16),
@@ -175,33 +174,23 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
             "scroll-to-now", 22), ToolBar.BUTTON_ACTION, this);
     mGoToPreviousDayAction = createAction(mLocalizer.msg(
             "goToPreviousDay", "Previous day"), "#goToPreviousDay", 
-            mLocalizer.msg("goToPreviousToolTip", "Previous day"), IconLoader
-            .getInstance().getIconFromTheme("actions", "go-previous", 16), IconLoader
-            .getInstance().getIconFromTheme("actions", "go-previous", 22),
+            mLocalizer.msg("goToPreviousToolTip", "Previous day"), TVBrowserIcons.left(TVBrowserIcons.SIZE_SMALL), TVBrowserIcons.left(TVBrowserIcons.SIZE_LARGE),
             ToolBar.BUTTON_ACTION, this);
     mGoToTodayAction = createAction(Localizer.getLocalization(
         Localizer.I18N_TODAY), "#goToToday", scrollTo
-        + Localizer.getLocalization(Localizer.I18N_TODAY), IconLoader
-        .getInstance().getIconFromTheme("actions", "go-down", 16),
-        IconLoader.getInstance().getIconFromTheme("actions", "go-down",
-            22), ToolBar.BUTTON_ACTION, this);
+        + Localizer.getLocalization(Localizer.I18N_TODAY), TVBrowserIcons.down(TVBrowserIcons.SIZE_SMALL),
+        TVBrowserIcons.down(TVBrowserIcons.SIZE_LARGE), ToolBar.BUTTON_ACTION, this);
     mGoToNextDayAction = createAction(mLocalizer.msg(
         "goToNextDay", "Next day"), "#goToNextDay", 
-        mLocalizer.msg("goToNextToolTip", "Next day"), IconLoader
-        .getInstance().getIconFromTheme("actions", "go-next", 16), IconLoader
-        .getInstance().getIconFromTheme("actions", "go-next", 22),
+        mLocalizer.msg("goToNextToolTip", "Next day"), TVBrowserIcons.right(TVBrowserIcons.SIZE_SMALL), TVBrowserIcons.right(TVBrowserIcons.SIZE_LARGE),
         ToolBar.BUTTON_ACTION, this);
     mGoToPreviousWeekAction = createAction(mLocalizer.msg(
         "goToPreviousWeek", "Previous week"), "#goToPreviousWeek", 
-        mLocalizer.msg("goToPreviousWeekToolTip", "Previous week"), IconLoader
-        .getInstance().getIconFromTheme("actions", "go-to-previous-week", 16), IconLoader
-        .getInstance().getIconFromTheme("actions", "go-to-previous-week", 22),
+        mLocalizer.msg("goToPreviousWeekToolTip", "Previous week"), TVBrowserIcons.previousWeek(TVBrowserIcons.SIZE_SMALL), TVBrowserIcons.previousWeek(TVBrowserIcons.SIZE_LARGE),
         ToolBar.BUTTON_ACTION, this);
     mGoToNextWeekAction = createAction(mLocalizer.msg(
         "goToNextWeek", "Next week"), "#goToNextWeek", 
-        mLocalizer.msg("goToNextWeekToolTip", "Next week"), IconLoader
-        .getInstance().getIconFromTheme("actions", "go-to-next-week", 16), IconLoader
-        .getInstance().getIconFromTheme("actions", "go-to-next-week", 22),
+        mLocalizer.msg("goToNextWeekToolTip", "Next week"), TVBrowserIcons.nextWeek(TVBrowserIcons.SIZE_SMALL), TVBrowserIcons.nextWeek(TVBrowserIcons.SIZE_LARGE),
         ToolBar.BUTTON_ACTION, this);
     mGoToDateAction = createAction(mLocalizer.msg("goToDate", "Go to date"),
             "#goToDate", mLocalizer.msg("goToDateTooltip", "Go to a date"),
@@ -221,13 +210,13 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
         ToolBar.TOOGLE_BUTTON_ACTION, this);
     mFontSizeSmallerAction = createAction(mLocalizer.msg("fontSizeSmaller", "Smaller fonts"),
         "#fontSizeSmaller", mLocalizer.msg("fontSizeSmallerToolTip", "Smaller font size in program table"),
-        IconLoader.getInstance().getIconFromTheme("actions", "zoom-out", 16),
-        IconLoader.getInstance().getIconFromTheme("actions", "zoom-out", 22),
+        TVBrowserIcons.zoomOut(TVBrowserIcons.SIZE_SMALL),
+        TVBrowserIcons.zoomOut(TVBrowserIcons.SIZE_LARGE),
         ToolBar.BUTTON_ACTION, this);
     mFontSizeLargerAction = createAction(mLocalizer.msg("fontSizeLarger", "Larger fonts"),
         "#fontSizeLarger", mLocalizer.msg("fontSizeLargerToolTip", "Larger font size in program table"),
-        IconLoader.getInstance().getIconFromTheme("actions", "zoom-in", 16),
-        IconLoader.getInstance().getIconFromTheme("actions", "zoom-in", 22),
+        TVBrowserIcons.zoomIn(TVBrowserIcons.SIZE_SMALL),
+        TVBrowserIcons.zoomIn(TVBrowserIcons.SIZE_LARGE),
         ToolBar.BUTTON_ACTION, this);
 
     updateTimeButtons();

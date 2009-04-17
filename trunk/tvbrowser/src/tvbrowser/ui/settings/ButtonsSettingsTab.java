@@ -51,6 +51,7 @@ import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
 import util.ui.CaretPositionCorrector;
 import util.ui.Localizer;
+import util.ui.TVBrowserIcons;
 import util.ui.TabLayout;
 import util.ui.UiUtilities;
 
@@ -200,7 +201,7 @@ public class ButtonsSettingsTab implements SettingsTab {
           }
         });
       }
-      JButton newBtn = new JButton(mLocalizer.msg("new", "New"), IconLoader.getInstance().getIconFromTheme("actions", "document-new", 16));
+      JButton newBtn = new JButton(mLocalizer.msg("new", "New"), TVBrowserIcons.newIcon(TVBrowserIcons.SIZE_SMALL));
       JPanel southPn = new JPanel(new BorderLayout());
       southPn.add(newBtn, BorderLayout.WEST);
 
@@ -263,7 +264,7 @@ public class ButtonsSettingsTab implements SettingsTab {
 
     public Row(int time) {
       setLayout(new BorderLayout());
-      mRemoveBtn = new JButton(IconLoader.getInstance().getIconFromTheme("actions", "edit-delete", 16));
+      mRemoveBtn = new JButton(TVBrowserIcons.delete(TVBrowserIcons.SIZE_SMALL));
       mRemoveBtn.setToolTipText(Localizer.getLocalization(Localizer.I18N_DELETE));
       JPanel row = new JPanel(new TabLayout(2, 14, 0));
 

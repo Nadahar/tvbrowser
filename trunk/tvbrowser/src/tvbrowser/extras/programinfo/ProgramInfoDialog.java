@@ -98,6 +98,7 @@ import util.settings.ProgramPanelSettings;
 import util.ui.Localizer;
 import util.ui.SearchFormSettings;
 import util.ui.SearchHelper;
+import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 import util.ui.findasyoutype.TextComponentFindAction;
@@ -541,8 +542,7 @@ public class ProgramInfoDialog {
     mActionsPane = new JScrollPane(mPluginsPane);
     
     mConfigBtn = new JButton(mLocalizer.msg("config","Configure view"));
-    mConfigBtn.setIcon(IconLoader.getInstance().getIconFromTheme("categories",
-        "preferences-system", 16));
+    mConfigBtn.setIcon(TVBrowserIcons.preferences(TVBrowserIcons.SIZE_SMALL));
     
     JPanel bottomLeft = new JPanel(new BorderLayout(3,0));    
     
@@ -633,8 +633,7 @@ public class ProgramInfoDialog {
       }
     };
 
-    searchAction.putValue(Action.SMALL_ICON, IconLoader.getInstance()
-        .getIconFromTheme("actions", "system-search", 16));
+    searchAction.putValue(Action.SMALL_ICON, TVBrowserIcons.search(TVBrowserIcons.SIZE_SMALL));
     searchAction.putValue(Action.ACTION_COMMAND_KEY, "action");
     searchAction.putValue(Action.NAME, mLocalizer.msg("search", "Search Text"));
 
@@ -716,7 +715,7 @@ public class ProgramInfoDialog {
           }
         };
 
-        action.putValue(Action.SMALL_ICON,IconLoader.getInstance().getIconFromTheme("categories", "preferences-system", 16));
+        action.putValue(Action.SMALL_ICON,TVBrowserIcons.preferences(TVBrowserIcons.SIZE_SMALL));
         action.putValue(Action.NAME, ConfigMenuItem.getInstance().toString());
 
         ActionMenu configure = new ActionMenu(action);

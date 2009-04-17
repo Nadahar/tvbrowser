@@ -250,8 +250,7 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
       }
     });
     
-    mConfigure = new JButton(mLocalizer.msg("configure", "Configure"), IconLoader
-        .getInstance().getIconFromTheme("categories", "preferences-system", 16));
+    mConfigure = new JButton(mLocalizer.msg("configure", "Configure"), TVBrowserIcons.preferences(TVBrowserIcons.SIZE_SMALL));
     mConfigure.addActionListener(new ActionListener() {
 
       public void actionPerformed(ActionEvent e) {
@@ -274,7 +273,7 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
     builder.addGlue();
     builder.addRelatedGap();
     
-    mRemove = new JButton(Localizer.getLocalization(Localizer.I18N_DELETE),IconLoader.getInstance().getIconFromTheme("actions", "edit-delete", 16));
+    mRemove = new JButton(Localizer.getLocalization(Localizer.I18N_DELETE),TVBrowserIcons.delete(TVBrowserIcons.SIZE_SMALL));
     mRemove.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         removePlugin((PluginProxy)getSelection());
@@ -311,7 +310,7 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
     
     //configure
     JMenuItem configureMI;
-    configureMI = new JMenuItem(mLocalizer.msg("configure", ""),IconLoader.getInstance().getIconFromTheme("categories", "preferences-system", 16));
+    configureMI = new JMenuItem(mLocalizer.msg("configure", ""),TVBrowserIcons.preferences(TVBrowserIcons.SIZE_SMALL));
     configureMI.addActionListener(new ActionListener(){
         public void actionPerformed(ActionEvent e) {
           mSettingsDialog.showSettingsTab(plugin.getSettingsId());
@@ -347,7 +346,7 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
 
     //configure
     JMenuItem configureMI;
-   	configureMI = new JMenuItem(mLocalizer.msg("configure", ""),IconLoader.getInstance().getIconFromTheme("categories", "preferences-system", 16));
+   	configureMI = new JMenuItem(mLocalizer.msg("configure", ""),TVBrowserIcons.preferences(TVBrowserIcons.SIZE_SMALL));
    	configureMI.addActionListener(new ActionListener(){
         public void actionPerformed(ActionEvent e) {
           configurePlugin(plugin);
@@ -361,7 +360,7 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
       enableMI = new JMenuItem(mLocalizer.msg("deactivate", ""),IconLoader.getInstance().getIconFromTheme("actions", "process-stop", 16));
     }
     else {
-      enableMI = new JMenuItem(mLocalizer.msg("activate", ""), IconLoader.getInstance().getIconFromTheme("actions", "view-refresh", 16));
+      enableMI = new JMenuItem(mLocalizer.msg("activate", ""), TVBrowserIcons.refresh(TVBrowserIcons.SIZE_SMALL));
 
     }
     enableMI.addActionListener(new ActionListener(){
@@ -375,7 +374,7 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
     menu.add(enableMI);
 
     //delete
-    JMenuItem deleteMI = new JMenuItem(mLocalizer.msg("remove","Remove"),  IconLoader.getInstance().getIconFromTheme("actions", "edit-delete", 16));
+    JMenuItem deleteMI = new JMenuItem(mLocalizer.msg("remove","Remove"),  TVBrowserIcons.delete(TVBrowserIcons.SIZE_SMALL));
     deleteMI.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e) {
         removePlugin(plugin);

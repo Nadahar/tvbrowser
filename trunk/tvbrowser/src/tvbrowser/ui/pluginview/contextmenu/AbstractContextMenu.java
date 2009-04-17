@@ -47,6 +47,7 @@ import tvbrowser.extras.reminderplugin.ReminderPluginProxy;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.pluginview.Node;
 import tvbrowser.ui.pluginview.PluginTree;
+import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 import util.ui.menu.MenuUtil;
 import devplugin.Plugin;
@@ -293,7 +294,7 @@ public abstract class AbstractContextMenu implements ContextMenu {
 
     JMenuItem item = new JMenuItem(action);
     item.setFont(MenuUtil.CONTEXT_MENU_PLAINFONT);
-    item.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "view-filter", 16));
+    item.setIcon(TVBrowserIcons.filter(TVBrowserIcons.SIZE_SMALL));
     return item;
   }
   

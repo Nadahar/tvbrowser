@@ -62,6 +62,7 @@ import tvdataservice.SettingsPanel;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
 import util.ui.Localizer;
+import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 import util.ui.progress.Progress;
 import util.ui.progress.ProgressWindow;
@@ -152,11 +153,9 @@ public class TvBrowserDataServiceSettingsPanel extends SettingsPanel implements 
     btnPn.setLayout(new GridLayout(0, 1, 0, 4));
 
     mAddBtn = new JButton(Localizer.getLocalization(Localizer.I18N_ADD),
-        AbstractTvDataService.getPluginManager().getIconFromTheme(null,
-            "actions", "document-new", 16));
+        TVBrowserIcons.newIcon(TVBrowserIcons.SIZE_SMALL));
     mRemoveBtn = new JButton(mLocalizer.msg("remove", "Remove"),
-        AbstractTvDataService.getPluginManager().getIconFromTheme(null,
-            "actions", "edit-delete", 16));
+        TVBrowserIcons.delete(TVBrowserIcons.SIZE_SMALL));
 
     mInfoBtn = new JButton("Information", AbstractTvDataService
         .getPluginManager().getIconFromTheme(null, "actions", "help-browser",

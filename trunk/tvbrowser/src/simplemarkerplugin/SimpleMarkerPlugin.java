@@ -53,6 +53,7 @@ import util.settings.PluginPictureSettings;
 import util.settings.ProgramPanelSettings;
 import util.ui.Localizer;
 import util.ui.ProgramList;
+import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
@@ -562,7 +563,7 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
   protected ImageIcon createIconForTree(int i) {
     switch (i) {
     case 0:
-      return createImageIcon("actions", "edit-delete", 16);
+      return TVBrowserIcons.delete(TVBrowserIcons.SIZE_SMALL);
     default:
       return createImageIcon("status", "mail-attachment", 16);
     }

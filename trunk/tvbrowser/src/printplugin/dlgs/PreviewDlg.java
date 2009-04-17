@@ -55,8 +55,8 @@ import javax.swing.JViewport;
 import javax.swing.SwingConstants;
 
 import printplugin.PrintPlugin;
-import tvbrowser.core.icontheme.IconLoader;
 import util.ui.Localizer;
+import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
@@ -99,9 +99,9 @@ public class PreviewDlg extends JDialog implements ActionListener, WindowClosing
     mSiteLb = new JLabel();
     mSiteLb.setHorizontalAlignment(SwingConstants.CENTER);
     
-    southPn.add(mPrevBt=new JButton(IconLoader.getInstance().getIconFromTheme("action", "go-previous", 16)), cc.xy(1,1));
+    southPn.add(mPrevBt=new JButton(TVBrowserIcons.left(TVBrowserIcons.SIZE_SMALL)), cc.xy(1,1));
     mPrevBt.setToolTipText(mLocalizer.msg("previous", "Previous page"));
-    southPn.add(mNextBt=new JButton(IconLoader.getInstance().getIconFromTheme("action", "go-next", 16)), cc.xy(3,1));
+    southPn.add(mNextBt=new JButton(TVBrowserIcons.right(TVBrowserIcons.SIZE_SMALL)), cc.xy(3,1));
     mNextBt.setToolTipText(mLocalizer.msg("next", "Next page"));
     southPn.add(mSiteLb, cc.xy(2,1));
     
@@ -134,9 +134,9 @@ public class PreviewDlg extends JDialog implements ActionListener, WindowClosing
     scrollPane.getVerticalScrollBar().setUnitIncrement(20);
     borderPn.add(scrollPane);
     
-    mZoomIn = new JButton(IconLoader.getInstance().getIconFromTheme("action", "zoom-in", 16));
+    mZoomIn = new JButton(TVBrowserIcons.zoomIn(TVBrowserIcons.SIZE_SMALL));
     mZoomIn.setToolTipText(mLocalizer.msg("zoomIn", "Zoom in"));
-    mZoomOut = new JButton(IconLoader.getInstance().getIconFromTheme("action", "zoom-out", 16));
+    mZoomOut = new JButton(TVBrowserIcons.zoomOut(TVBrowserIcons.SIZE_SMALL));
     mZoomOut.setToolTipText(mLocalizer.msg("zoomOut", "Zoom out"));
     
     mZoomIn.addActionListener(new ActionListener() {

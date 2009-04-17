@@ -43,11 +43,10 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.event.ListSelectionListener;
 
-import com.jgoodies.forms.layout.Sizes;
-
-import tvbrowser.core.icontheme.IconLoader;
 import util.ui.customizableitems.SelectableItem;
 import util.ui.customizableitems.SelectableItemRenderer;
+
+import com.jgoodies.forms.layout.Sizes;
 
 /**
  *
@@ -150,7 +149,7 @@ public class OrderChooser extends JPanel implements ListDropAction{
     add(p1, BorderLayout.EAST);
     p1.add(p2, BorderLayout.NORTH);
 
-    mUpBt = new JButton(IconLoader.getInstance().getIconFromTheme("actions", "go-up", 22));
+    mUpBt = new JButton(TVBrowserIcons.up(TVBrowserIcons.SIZE_LARGE));
     mUpBt.setToolTipText(mLocalizer.msg("tooltip.up", "Move selected rows up"));
     mUpBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
@@ -159,7 +158,7 @@ public class OrderChooser extends JPanel implements ListDropAction{
     });
     p2.add(mUpBt);
 
-    mDownBt = new JButton(IconLoader.getInstance().getIconFromTheme("actions", "go-down", 22));
+    mDownBt = new JButton(TVBrowserIcons.down(TVBrowserIcons.SIZE_LARGE));
     mDownBt.setToolTipText(mLocalizer.msg("tooltip.down", "Move selected rows down"));
     mDownBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {

@@ -25,9 +25,9 @@ package tvbrowser.extras.searchplugin;
 
 import javax.swing.Icon;
 
-import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.ButtonActionIf;
 import tvbrowser.extras.common.InternalPluginProxyIf;
+import util.ui.TVBrowserIcons;
 import devplugin.ActionMenu;
 import devplugin.ContextMenuIf;
 import devplugin.Program;
@@ -74,7 +74,7 @@ public class SearchPluginProxy implements ButtonActionIf, ContextMenuIf, Interna
   }
 
   public Icon getIcon() {
-    return IconLoader.getInstance().getIconFromTheme("actions", "system-search", 16);
+    return TVBrowserIcons.search(TVBrowserIcons.SIZE_SMALL);
   }
 
   public String getName() {

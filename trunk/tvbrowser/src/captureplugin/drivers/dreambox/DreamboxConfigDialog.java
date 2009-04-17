@@ -50,6 +50,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.table.TableCellEditor;
 
 import util.ui.Localizer;
+import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 import captureplugin.CapturePlugin;
@@ -166,7 +167,7 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
                 refreshChannelList();
             }
         });
-        refreshButton.setIcon(CapturePlugin.getInstance().createImageIcon("apps", "view-refresh", 16));
+        refreshButton.setIcon(TVBrowserIcons.refresh(TVBrowserIcons.SIZE_SMALL));
 
         refresh.addGriddedButtons(new JButton[]{refreshButton});
 

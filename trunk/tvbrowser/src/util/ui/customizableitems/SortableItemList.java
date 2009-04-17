@@ -41,11 +41,11 @@ import javax.swing.ListCellRenderer;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.ui.settings.channel.ChannelJList;
 import util.ui.DragAndDropMouseListener;
 import util.ui.ListDragAndDropHandler;
 import util.ui.ListDropAction;
+import util.ui.TVBrowserIcons;
 import util.ui.TabLayout;
 import util.ui.UiUtilities;
 
@@ -100,22 +100,22 @@ public class SortableItemList extends JPanel implements ActionListener, ListDrop
    * @since 2.2
    */
   public SortableItemList(String title, Object[] objects, JList list) {
-    mUpBt = new JButton(IconLoader.getInstance().getIconFromTheme("actions", "go-up", 22));
+    mUpBt = new JButton(TVBrowserIcons.up(TVBrowserIcons.SIZE_LARGE));
     String msg = mLocalizer.msg("tooltip.up", "Move selected rows up");
     mUpBt.setToolTipText(msg);
     mUpBt.addActionListener(this);
 
-    mDownBt = new JButton(IconLoader.getInstance().getIconFromTheme("actions", "go-down", 22));
+    mDownBt = new JButton(TVBrowserIcons.down(TVBrowserIcons.SIZE_LARGE));
     msg = mLocalizer.msg("tooltip.down", "Move selected rows down");
     mDownBt.setToolTipText(msg);
     mDownBt.addActionListener(this);
     
-    mTopBtn = new JButton(IconLoader.getInstance().getIconFromTheme("actions", "go-top", 22));
+    mTopBtn = new JButton(TVBrowserIcons.top(TVBrowserIcons.SIZE_LARGE));
     msg = mLocalizer.msg("tooltip.top", "Move selected rows to top");
     mTopBtn.setToolTipText(msg);
     mTopBtn.addActionListener(this);
 
-    mBottomBtn = new JButton(IconLoader.getInstance().getIconFromTheme("actions", "go-bottom", 22));
+    mBottomBtn = new JButton(TVBrowserIcons.bottom(TVBrowserIcons.SIZE_LARGE));
     msg = mLocalizer.msg("tooltip.bottom", "Move selected rows to bottom");
     mBottomBtn.setToolTipText(msg);
     mBottomBtn.addActionListener(this);

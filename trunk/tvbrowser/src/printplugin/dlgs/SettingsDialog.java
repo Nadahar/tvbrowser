@@ -51,6 +51,7 @@ import printplugin.PrintPlugin;
 import printplugin.printer.PrintJob;
 import printplugin.settings.Scheme;
 import util.ui.Localizer;
+import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
@@ -172,11 +173,11 @@ public class SettingsDialog extends JDialog implements WindowClosingIf {
 
 
 
-    JButton newSchemeBtn = new JButton(PrintPlugin.getInstance().createImageIcon("actions", "document-new", 16));
+    JButton newSchemeBtn = new JButton(TVBrowserIcons.newIcon(TVBrowserIcons.SIZE_SMALL));
     newSchemeBtn.setToolTipText(mLocalizer.msg("newScheme", "New scheme"));
-    mEditSchemeBtn = new JButton(PrintPlugin.getInstance().createImageIcon("actions", "document-edit", 16));
+    mEditSchemeBtn = new JButton(TVBrowserIcons.edit(TVBrowserIcons.SIZE_SMALL));
     mEditSchemeBtn.setToolTipText(mLocalizer.msg("editScheme", "Edit scheme"));
-    mDeleteSchemeBtn = new JButton(PrintPlugin.getInstance().createImageIcon("actions", "edit-delete", 16));
+    mDeleteSchemeBtn = new JButton(TVBrowserIcons.delete(TVBrowserIcons.SIZE_SMALL));
     mDeleteSchemeBtn.setToolTipText(mLocalizer.msg("deleteScheme", "Delete scheme"));
     mSaveSchemeBtn = new JButton(PrintPlugin.getInstance().createImageIcon("actions", "document-save", 16));
     mSaveSchemeBtn.setToolTipText(mLocalizer.msg("saveScheme", "Save scheme"));

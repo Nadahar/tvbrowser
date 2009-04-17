@@ -63,7 +63,6 @@ import javax.swing.tree.TreeSelectionModel;
 import tvbrowser.TVBrowser;
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.Settings;
-import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
@@ -76,6 +75,7 @@ import util.exc.ErrorHandler;
 import util.ui.ChannelLabel;
 import util.ui.Localizer;
 import util.ui.SingleAndDoubleClickTreeUI;
+import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
@@ -330,8 +330,7 @@ public class SettingsDialog implements WindowClosingIf {
     Icon icon;
     SettingNode node;
 
-    icon = IconLoader.getInstance().getIconFromTheme("categories",
-        "preferences-system", 16);
+    icon = TVBrowserIcons.preferences(TVBrowserIcons.SIZE_SMALL);
     SettingNode root = new SettingNode(new DefaultSettingsTab(Localizer
         .getLocalization(Localizer.I18N_SETTINGS), icon));
 

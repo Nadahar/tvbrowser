@@ -52,7 +52,6 @@ import javax.swing.event.ListDataListener;
 
 import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataUpdater;
-import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.extras.searchplugin.SearchDialog;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.exc.ErrorHandler;
@@ -345,7 +344,7 @@ public class SearchHelper {
     builder.setBorder(BorderFactory.createEmptyBorder(5, 0, 0, 0));
 
     // send to plugins
-    Icon icon = IconLoader.getInstance().getIconFromTheme("actions", "edit-copy", 16);
+    Icon icon = TVBrowserIcons.copy(TVBrowserIcons.SIZE_SMALL);
     final JButton sendBt = new JButton(icon);
     sendBt.setEnabled(false);
     sendBt.setToolTipText(mLocalizer.msg("send", "Send Programs to another Plugin"));
@@ -384,7 +383,7 @@ public class SearchHelper {
 
     // change search button
     if (!(comp instanceof SearchDialog)) {
-      icon = IconLoader.getInstance().getIconFromTheme("actions", "document-edit", 16);
+      icon = TVBrowserIcons.edit(TVBrowserIcons.SIZE_SMALL);
       JButton changeBt = new JButton(icon);
       changeBt.setToolTipText(mLocalizer.msg("edit", "Change search parameters"));
       changeBt.addActionListener(new ActionListener() {

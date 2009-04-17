@@ -32,12 +32,13 @@ import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
+import util.ui.SearchFormSettings;
+import util.ui.TVBrowserIcons;
+
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
-import tvbrowser.core.icontheme.IconLoader;
-import util.ui.SearchFormSettings;
 import devplugin.SettingsTab;
 
 /**
@@ -86,7 +87,7 @@ public class SearchSettingsTab implements SettingsTab {
    * @return the Icon for this SettingsTab
    */
   public Icon getIcon() {
-    return IconLoader.getInstance().getIconFromTheme("actions", "system-search", 16);
+    return TVBrowserIcons.search(TVBrowserIcons.SIZE_SMALL);
   }
 
   /**

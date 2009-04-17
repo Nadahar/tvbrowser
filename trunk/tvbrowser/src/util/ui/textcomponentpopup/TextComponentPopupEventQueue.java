@@ -19,6 +19,7 @@ import javax.swing.text.JTextComponent;
 
 import tvbrowser.core.icontheme.IconLoader;
 import util.ui.Localizer;
+import util.ui.TVBrowserIcons;
 
 /**
  * This TextComponentPopupEventQueue is based on the Implementation of Santhosh
@@ -125,8 +126,7 @@ public class TextComponentPopupEventQueue extends EventQueue {
     JTextComponent comp;
 
     public DeleteAction(JTextComponent comp) {
-      super(Localizer.getLocalization(Localizer.I18N_DELETE), IconLoader
-          .getInstance().getIconFromTheme("actions", "edit-delete"));
+      super(Localizer.getLocalization(Localizer.I18N_DELETE), TVBrowserIcons.delete(TVBrowserIcons.SIZE_SMALL));
       this.comp = comp;
     }
 
@@ -143,8 +143,7 @@ public class TextComponentPopupEventQueue extends EventQueue {
     JTextComponent comp;
 
     public CopyAction(JTextComponent comp) {
-      super(mLocalizer.msg("copy", "Copy"), IconLoader.getInstance()
-          .getIconFromTheme("actions", "edit-copy"));
+      super(mLocalizer.msg("copy", "Copy"), TVBrowserIcons.copy(TVBrowserIcons.SIZE_SMALL));
       this.comp = comp;
     }
 

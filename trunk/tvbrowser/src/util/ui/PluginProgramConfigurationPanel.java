@@ -16,19 +16,18 @@ import javax.swing.event.HyperlinkListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import tvbrowser.ui.mainframe.MainFrame;
+import tvbrowser.ui.settings.GlobalPluginProgramFormatingSettings;
+import tvbrowser.ui.settings.SettingsDialog;
+import util.program.AbstractPluginProgramFormating;
+import util.program.LocalPluginProgramFormating;
+
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.Plugin;
 import devplugin.SettingsItem;
-
-import tvbrowser.core.icontheme.IconLoader;
-import tvbrowser.ui.mainframe.MainFrame;
-import tvbrowser.ui.settings.GlobalPluginProgramFormatingSettings;
-import tvbrowser.ui.settings.SettingsDialog;
-import util.program.AbstractPluginProgramFormating;
-import util.program.LocalPluginProgramFormating;
 
 /**
  * A class that provides a panel for configuration of the
@@ -90,16 +89,16 @@ public class PluginProgramConfigurationPanel extends JPanel implements ActionLis
     JPanel buttonPanel = new JPanel(layout);
     
     mAdd = new JButton(Localizer.getLocalization(Localizer.I18N_ADD));
-    mAdd.setIcon(IconLoader.getInstance().getIconFromTheme("actions","document-new",16));
+    mAdd.setIcon(TVBrowserIcons.newIcon(TVBrowserIcons.SIZE_SMALL));
     mAdd.addActionListener(this);
     
     mEdit = new JButton(Localizer.getLocalization(Localizer.I18N_EDIT));
-    mEdit.setIcon(IconLoader.getInstance().getIconFromTheme("actions","document-edit",16));
+    mEdit.setIcon(TVBrowserIcons.edit(TVBrowserIcons.SIZE_SMALL));
     mEdit.setEnabled(false);
     mEdit.addActionListener(this);
     
     mDelete = new JButton(Localizer.getLocalization(Localizer.I18N_DELETE));      
-    mDelete.setIcon(IconLoader.getInstance().getIconFromTheme("actions","edit-delete",16));
+    mDelete.setIcon(TVBrowserIcons.delete(TVBrowserIcons.SIZE_SMALL));
     mDelete.setEnabled(false);
     mDelete.addActionListener(this);
     

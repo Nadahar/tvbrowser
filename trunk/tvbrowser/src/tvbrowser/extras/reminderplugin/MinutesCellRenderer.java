@@ -32,10 +32,10 @@ import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
+import util.ui.TVBrowserIcons;
+
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
-
-import tvbrowser.core.icontheme.IconLoader;
 
 /**
  * The cell renderer for the minutest column of the remider list.
@@ -51,7 +51,7 @@ public class MinutesCellRenderer extends DefaultTableCellRenderer {
     mPanel = new JPanel(new FormLayout("pref,pref:grow,pref,2dlu","pref:grow"));
     CellConstraints cc = new CellConstraints();
     mTextLabel = new JLabel();
-    mIconLabel = new JLabel(IconLoader.getInstance().getIconFromTheme("actions","document-edit",16));
+    mIconLabel = new JLabel(TVBrowserIcons.edit(TVBrowserIcons.SIZE_SMALL));
     
     mPanel.add(mTextLabel, cc.xy(1,1));
     mPanel.add(mIconLabel, cc.xy(3,1));

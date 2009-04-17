@@ -66,6 +66,7 @@ import util.ui.Localizer;
 import util.ui.SearchForm;
 import util.ui.SearchFormSettings;
 import util.ui.SearchHelper;
+import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
@@ -199,7 +200,7 @@ public class SearchField extends JPanel {
     
     panel.setBackground(mText.getBackground());
 
-    mSearchButton = new JButton(IconLoader.getInstance().getIconFromTheme("action", "system-search", 16)); 
+    mSearchButton = new JButton(TVBrowserIcons.search(TVBrowserIcons.SIZE_SMALL)); 
     mSearchButton.setBorder(BorderFactory.createEmptyBorder());
     mSearchButton.setContentAreaFilled(false);
     mSearchButton.setMargin(new Insets(0, 0, 0, 0));

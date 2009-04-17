@@ -70,6 +70,7 @@ import util.io.IOUtilities;
 import util.ui.ExtensionFileFilter;
 import util.ui.Localizer;
 import util.ui.MarkPriorityComboBoxRenderer;
+import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 
 import com.jgoodies.forms.layout.CellConstraints;
@@ -168,14 +169,12 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
 
     mAdd = new JButton(SimpleMarkerPlugin.mLocalizer.msg("settings.add",
         "Add new list"));
-    mAdd.setIcon(SimpleMarkerPlugin.getPluginManager().getIconFromTheme(
-        SimpleMarkerPlugin.getInstance(), "actions", "document-new", 16));
+    mAdd.setIcon(TVBrowserIcons.newIcon(TVBrowserIcons.SIZE_SMALL));
     mAdd.addActionListener(this);
 
     mDelete = new JButton(SimpleMarkerPlugin.mLocalizer.msg("settings.delete",
         "Delete selected list"));
-    mDelete.setIcon(SimpleMarkerPlugin.getPluginManager().getIconFromTheme(
-        SimpleMarkerPlugin.getInstance(), "actions", "edit-delete", 16));
+    mDelete.setIcon(TVBrowserIcons.delete(TVBrowserIcons.SIZE_SMALL));
     mDelete.setEnabled(false);
     mDelete.addActionListener(this);
 
@@ -329,8 +328,7 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
     
     JMenuItem item = new JMenuItem(SimpleMarkerPlugin.mLocalizer.msg("settings.delete",
     "Delete selected list"));
-    item.setIcon(SimpleMarkerPlugin.getPluginManager().getIconFromTheme(
-        SimpleMarkerPlugin.getInstance(), "actions", "edit-delete", 16));
+    item.setIcon(TVBrowserIcons.delete(TVBrowserIcons.SIZE_SMALL));
     item.addActionListener(this);
     
     if(mListTable.getSelectionModel().getMinSelectionIndex() > 0)
@@ -338,8 +336,7 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
     
     item = new JMenuItem(SimpleMarkerPlugin.mLocalizer.msg("settings.changeIcon",
     "Change list icon"));
-    item.setIcon(SimpleMarkerPlugin.getPluginManager().getIconFromTheme(
-        SimpleMarkerPlugin.getInstance(), "actions", "document-edit", 16));
+    item.setIcon(TVBrowserIcons.edit(TVBrowserIcons.SIZE_SMALL));
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         chooseIcon(row);

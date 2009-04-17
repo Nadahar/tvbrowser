@@ -431,9 +431,9 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
 
     content.add(new JScrollPane(mExclusionsList), cc.xywh(2, 1, 1, 5));
 
-    Icon newIcon = IconLoader.getInstance().getIconFromTheme("actions", "document-new", 16);
-    Icon editIcon = IconLoader.getInstance().getIconFromTheme("actions", "document-edit", 16);
-    Icon deleteIcon = IconLoader.getInstance().getIconFromTheme("actions", "edit-delete", 16);
+    Icon newIcon = TVBrowserIcons.newIcon(TVBrowserIcons.SIZE_SMALL);
+    Icon editIcon = TVBrowserIcons.edit(TVBrowserIcons.SIZE_SMALL);
+    Icon deleteIcon = TVBrowserIcons.delete(TVBrowserIcons.SIZE_SMALL);
 
     mNewExclusionBtn = new JButton(newIcon);
     mEditExclusionBtn = new JButton(editIcon);

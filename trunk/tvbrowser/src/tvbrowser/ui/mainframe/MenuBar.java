@@ -136,11 +136,11 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
   
   private void createMenuItems() {
       
-    mSettingsMI = new JMenuItem(mLocalizer.msg("menuitem.settings", "Settings..."), IconLoader.getInstance().getIconFromTheme("categories", "preferences-system", 16));
+    mSettingsMI = new JMenuItem(mLocalizer.msg("menuitem.settings", "Settings..."), TVBrowserIcons.preferences(TVBrowserIcons.SIZE_SMALL));
     mSettingsMI.addActionListener(this);
     new MenuHelpTextAdapter(mSettingsMI, mLocalizer.msg("menuinfo.settings",""), mLabel); 
 
-    mQuitMI = new JMenuItem(mLocalizer.msg("menuitem.exit", "Exit..."), IconLoader.getInstance().getIconFromTheme("actions", "system-log-out", 16));
+    mQuitMI = new JMenuItem(mLocalizer.msg("menuitem.exit", "Exit..."), TVBrowserIcons.quit(TVBrowserIcons.SIZE_SMALL));
     mQuitMI.addActionListener(this);
     new MenuHelpTextAdapter(mQuitMI, mLocalizer.msg("menuinfo.quit",""), mLabel);
     
@@ -192,7 +192,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
     new MenuHelpTextAdapter(mViewFilterBarMI, mLocalizer.msg("menuinfo.filterbar",""), mLabel);
     
     mFiltersMenu = new JMenu(mLocalizer.msg("menuitem.filters","Filter"));
-    mFiltersMenu.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "view-filter", 16));
+    mFiltersMenu.setIcon(TVBrowserIcons.filter(TVBrowserIcons.SIZE_SMALL));
     updateFiltersMenu();
     
     mChannelGroupMenu = new JMenu(mLocalizer.msg("menuitem.channelgroup", "Channel group"));
@@ -203,27 +203,27 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
 
     mPreviousDayMI = new JMenuItem(mLocalizer.msg("menuitem.previousDay","previous day"));
     mPreviousDayMI.addActionListener(this);
-    mPreviousDayMI.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "go-previous", 16));
+    mPreviousDayMI.setIcon(TVBrowserIcons.left(TVBrowserIcons.SIZE_LARGE));
     new MenuHelpTextAdapter(mPreviousDayMI, mLocalizer.msg("menuinfo.previousDay",""), mLabel);
 
     mNextDayMI = new JMenuItem(mLocalizer.msg("menuitem.nextDay","next day"));
     mNextDayMI.addActionListener(this);
-    mNextDayMI.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "go-next", 16));
+    mNextDayMI.setIcon(TVBrowserIcons.right(TVBrowserIcons.SIZE_SMALL));
     new MenuHelpTextAdapter(mNextDayMI, mLocalizer.msg("menuinfo.nextDay",""), mLabel);
 
     mPreviousWeekMI = new JMenuItem(mLocalizer.msg("menuitem.previousWeek","previous week"));
     mPreviousWeekMI.addActionListener(this);
-    mPreviousWeekMI.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "go-to-previous-week", 16));
+    mPreviousWeekMI.setIcon(TVBrowserIcons.previousWeek(TVBrowserIcons.SIZE_SMALL));
     new MenuHelpTextAdapter(mPreviousWeekMI, mLocalizer.msg("menuinfo.previousWeek",""), mLabel);
 
     mNextWeekMI = new JMenuItem(mLocalizer.msg("menuitem.nextWeek","next week"));
     mNextWeekMI.addActionListener(this);
-    mNextWeekMI.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "go-to-next-week", 16));
+    mNextWeekMI.setIcon(TVBrowserIcons.nextWeek(TVBrowserIcons.SIZE_SMALL));
     new MenuHelpTextAdapter(mNextWeekMI, mLocalizer.msg("menuinfo.nextWeek",""), mLabel);
 
     mTodayMI = new JMenuItem(mLocalizer.msg("menuitem.today","today"));
     mTodayMI.addActionListener(this);
-    mTodayMI.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "go-down", 16));
+    mTodayMI.setIcon(TVBrowserIcons.down(TVBrowserIcons.SIZE_SMALL));
     new MenuHelpTextAdapter(mTodayMI, mLocalizer.msg("menuinfo.today",""), mLabel);
 
     mGotoNowMenuItem = new JMenuItem(mLocalizer.msg("menuitem.now","now"));
@@ -314,7 +314,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
     mDonorMI.addActionListener(this);
     new MenuHelpTextAdapter(mDonorMI,mLocalizer.msg("website.donors",""),mLabel); 
     
-    mConfigAssistantMI=new JMenuItem(mLocalizer.msg("menuitem.configAssistant","setup assistant"),IconLoader.getInstance().getIconFromTheme("categories", "preferences-system", 16));
+    mConfigAssistantMI=new JMenuItem(mLocalizer.msg("menuitem.configAssistant","setup assistant"),TVBrowserIcons.preferences(TVBrowserIcons.SIZE_SMALL));
     mConfigAssistantMI.addActionListener(this);
     new MenuHelpTextAdapter(mConfigAssistantMI,mLocalizer.msg("menuinfo.configAssistant",""),mLabel);
     
@@ -332,12 +332,12 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
     
     mFontSizeLargerMI = new JMenuItem(mLocalizer.msg("menuitem.fontSizeLarger", "Larger"));
     mFontSizeLargerMI.addActionListener(this);
-    mFontSizeLargerMI.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "zoom-in", 16));
+    mFontSizeLargerMI.setIcon(TVBrowserIcons.zoomIn(TVBrowserIcons.SIZE_SMALL));
     new MenuHelpTextAdapter(mFontSizeLargerMI, mLocalizer.msg("menuinfo.fontlarger",""), mLabel);
     
     mFontSizeSmallerMI = new JMenuItem(mLocalizer.msg("menuitem.fontSizeSmaller", "Smaller"));
     mFontSizeSmallerMI.addActionListener(this);
-    mFontSizeSmallerMI.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "zoom-out", 16));
+    mFontSizeSmallerMI.setIcon(TVBrowserIcons.zoomOut(TVBrowserIcons.SIZE_SMALL));
     new MenuHelpTextAdapter(mFontSizeSmallerMI, mLocalizer.msg("menuinfo.fontsmaller",""), mLabel);
     
     mFontSizeDefaultMI = new JMenuItem(mLocalizer.msg("menuitem.fontSizeDefault", "Reset to default"));
@@ -349,7 +349,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
     mFontSizeMenu.add(mFontSizeSmallerMI);
     mFontSizeMenu.addSeparator();
     mFontSizeMenu.add(mFontSizeDefaultMI);
-    mFontSizeMenu.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "zoom-in", 16));
+    mFontSizeMenu.setIcon(TVBrowserIcons.zoomIn(TVBrowserIcons.SIZE_SMALL));
     
     mColumnWidthLargerMI = new JMenuItem(mLocalizer.msg("menuitem.columnWidthLarger", "Larger"));
     mColumnWidthLargerMI.addActionListener(this);

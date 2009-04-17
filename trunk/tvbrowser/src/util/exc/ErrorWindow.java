@@ -52,10 +52,10 @@ import javax.swing.JSeparator;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 
-import tvbrowser.core.icontheme.IconLoader;
 import util.io.IOUtilities;
 import util.ui.ImageUtilities;
 import util.ui.Localizer;
+import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 
 /**
@@ -378,13 +378,13 @@ class ErrorWindow {
         }
         mDetailPn.setVisible(true);
         
-        mDetailBt.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "go-up", 16));
+        mDetailBt.setIcon(TVBrowserIcons.up(TVBrowserIcons.SIZE_SMALL));
       } else {
         if (mDetailPn != null) {
           mDetailPn.setVisible(false);
         }
 
-        mDetailBt.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "go-down", 16));
+        mDetailBt.setIcon(TVBrowserIcons.down(TVBrowserIcons.SIZE_SMALL));
       }
 
       getWindow().pack();

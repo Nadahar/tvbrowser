@@ -69,6 +69,7 @@ import util.io.ZipUtil;
 import util.ui.LinkButton;
 import util.ui.Localizer;
 import util.ui.SingleAndDoubleClickTreeUI;
+import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
@@ -163,7 +164,7 @@ final public class TranslationDialog extends JDialog implements WindowClosingIf 
     
     panel.add(mLanguageCB, cc.xy(4,3));
     
-    JButton newButton = new JButton(IconLoader.getInstance().getIconFromTheme("actions", "document-new", 16));
+    JButton newButton = new JButton(TVBrowserIcons.newIcon(TVBrowserIcons.SIZE_SMALL));
     newButton.setToolTipText(mLocalizer.msg("newLanguage", "Add new language"));
     
     newButton.addActionListener(new ActionListener() {

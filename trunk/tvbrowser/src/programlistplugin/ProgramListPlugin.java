@@ -56,13 +56,13 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import tvbrowser.core.icontheme.IconLoader;
 import util.program.ProgramUtilities;
 import util.settings.PluginPictureSettings;
 import util.settings.ProgramPanelSettings;
 import util.ui.Localizer;
 import util.ui.ProgramList;
 import util.ui.SendToPluginDialog;
+import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
@@ -416,8 +416,7 @@ public class ProgramListPlugin extends Plugin {
             2, 3));
         panel.add(mFilterBox, cc.xy(4, 3));
         
-        mSendBtn = new JButton(IconLoader.getInstance()
-            .getIconFromTheme("actions", "edit-copy", 16));
+        mSendBtn = new JButton(TVBrowserIcons.copy(TVBrowserIcons.SIZE_SMALL));
         mSendBtn.setToolTipText(mLocalizer.msg("send", "Send to other Plugins"));
         mSendBtn.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
