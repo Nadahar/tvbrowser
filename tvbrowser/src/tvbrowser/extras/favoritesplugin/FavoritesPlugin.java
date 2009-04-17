@@ -88,6 +88,7 @@ import util.exc.TvBrowserException;
 import util.ui.Localizer;
 import util.ui.NullProgressMonitor;
 import util.ui.ScrollableJPanel;
+import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 import devplugin.ActionMenu;
 import devplugin.ButtonAction;
@@ -940,7 +941,7 @@ public class FavoritesPlugin {
         showCreateFavoriteWizard(null);
       }
     };
-    addFavorite.putValue(Action.SMALL_ICON, getIconFromTheme("actions", "document-new", 16));
+    addFavorite.putValue(Action.SMALL_ICON, TVBrowserIcons.newIcon(TVBrowserIcons.SIZE_SMALL));
     addFavorite.putValue(Action.NAME, mLocalizer.msg("new", "Create new favorite"));
 
     Action openSettings = new AbstractAction() {
@@ -948,7 +949,7 @@ public class FavoritesPlugin {
         MainFrame.getInstance().showSettingsDialog(SettingsItem.FAVORITE);
       }
     };
-    openSettings.putValue(Action.SMALL_ICON, getIconFromTheme("categories", "preferences-system", 16));
+    openSettings.putValue(Action.SMALL_ICON, TVBrowserIcons.preferences(TVBrowserIcons.SIZE_SMALL));
     openSettings.putValue(Action.NAME, Localizer.getLocalization(Localizer.I18N_SETTINGS));
     
     mRootNode.addAction(manageFavorite);

@@ -140,8 +140,7 @@ public class DataServiceSettingsTab implements devplugin.SettingsTab {
       }
     });
 
-    mConfigure = new JButton(mLocalizer.msg("configure", "Configure"), IconLoader
-        .getInstance().getIconFromTheme("categories", "preferences-system", 16));
+    mConfigure = new JButton(mLocalizer.msg("configure", "Configure"), TVBrowserIcons.preferences(TVBrowserIcons.SIZE_SMALL));
     mConfigure.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         configureService(getSelection());
@@ -155,8 +154,7 @@ public class DataServiceSettingsTab implements devplugin.SettingsTab {
     builder.addGlue();
     builder.addRelatedGap();
 
-    mRemove = new JButton(Localizer.getLocalization(Localizer.I18N_DELETE),IconLoader.getInstance().getIconFromTheme("actions",
-        "edit-delete", 16));
+    mRemove = new JButton(Localizer.getLocalization(Localizer.I18N_DELETE),TVBrowserIcons.delete(TVBrowserIcons.SIZE_SMALL));
     mRemove.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         removeService(getSelection());

@@ -24,16 +24,14 @@
  */
 package captureplugin.tabs;
 
-import captureplugin.CapturePlugin;
-import captureplugin.CapturePluginData;
-import captureplugin.drivers.DeviceIf;
-import captureplugin.utils.ProgramTimeComparator;
-import devplugin.Plugin;
-import devplugin.Program;
-import util.settings.PluginPictureSettings;
-import util.ui.Localizer;
-import util.ui.ProgramTableCellRenderer;
-import util.ui.UiUtilities;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.Arrays;
 
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
@@ -43,14 +41,18 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.Arrays;
+
+import util.settings.PluginPictureSettings;
+import util.ui.Localizer;
+import util.ui.ProgramTableCellRenderer;
+import util.ui.TVBrowserIcons;
+import util.ui.UiUtilities;
+import captureplugin.CapturePlugin;
+import captureplugin.CapturePluginData;
+import captureplugin.drivers.DeviceIf;
+import captureplugin.utils.ProgramTimeComparator;
+import devplugin.Plugin;
+import devplugin.Program;
 
 /**
  * Panel with List of Recordings
@@ -188,7 +190,7 @@ public class ProgramListPanel extends JPanel {
 
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 
-        JButton delete = new JButton(CapturePlugin.getInstance().createImageIcon("actions", "edit-delete", 16));
+        JButton delete = new JButton(TVBrowserIcons.delete(TVBrowserIcons.SIZE_SMALL));
         delete.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 deletePressed();

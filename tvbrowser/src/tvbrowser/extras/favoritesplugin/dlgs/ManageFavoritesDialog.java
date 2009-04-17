@@ -92,6 +92,7 @@ import util.ui.ListDropAction;
 import util.ui.Localizer;
 import util.ui.ProgramList;
 import util.ui.SendToPluginDialog;
+import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
@@ -187,7 +188,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
       addToolbarSeperator(toolbarPn);
       
       msg = mLocalizer.msg("new", "Create a new favorite...");
-      icon = FavoritesPlugin.getInstance().getIconFromTheme("actions", "document-new", 22);
+      icon = TVBrowserIcons.newIcon(TVBrowserIcons.SIZE_LARGE);
       mNewBt = UiUtilities.createToolBarButton(msg, icon);
       mNewBt.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent evt) {
@@ -207,7 +208,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
     }
     
     msg = mLocalizer.msg("edit", "Edit the selected favorite...");
-    icon = IconLoader.getInstance().getIconFromTheme("actions", "document-edit", 22);
+    icon = TVBrowserIcons.edit(TVBrowserIcons.SIZE_LARGE);
     mEditBt = UiUtilities.createToolBarButton(msg, icon);
     mEditBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
@@ -227,7 +228,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
     toolbarPn.add(mEditBt);
 
     msg = mLocalizer.msg("delete", "Delete selected favorite...");
-    icon = FavoritesPlugin.getInstance().getIconFromTheme("actions", "edit-delete", 22);
+    icon = TVBrowserIcons.delete(TVBrowserIcons.SIZE_LARGE);
     mDeleteBt = UiUtilities.createToolBarButton(msg, icon);
     mDeleteBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
@@ -247,7 +248,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
     toolbarPn.add(mDeleteBt);
     
     msg = mLocalizer.msg("up", "Move the selected favorite up");
-    icon = FavoritesPlugin.getInstance().getIconFromTheme("actions", "go-up", 22);
+    icon = TVBrowserIcons.up(TVBrowserIcons.SIZE_LARGE);
     mUpBt = UiUtilities.createToolBarButton(msg, icon);
     mUpBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
@@ -261,7 +262,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
     }
 
     msg = mLocalizer.msg("down", "Move the selected favorite down");
-    icon = FavoritesPlugin.getInstance().getIconFromTheme("actions", "go-down", 22);
+    icon = TVBrowserIcons.down(TVBrowserIcons.SIZE_LARGE);
     mDownBt = UiUtilities.createToolBarButton(msg, icon);
     mDownBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
@@ -299,7 +300,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
     }
     
     msg = mLocalizer.msg("send", "Send Programs to another Plugin");
-    icon = FavoritesPlugin.getInstance().getIconFromTheme("actions", "edit-copy", 22);
+    icon = TVBrowserIcons.copy(TVBrowserIcons.SIZE_LARGE);
     mSendBt = UiUtilities.createToolBarButton(msg, icon);
     mSendBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
@@ -324,7 +325,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
     }
 
     msg = mLocalizer.msg("settings","Open settings");
-    icon = FavoritesPlugin.getInstance().getIconFromTheme("categories","preferences-system", 22);
+    icon = TVBrowserIcons.preferences(TVBrowserIcons.SIZE_LARGE);
     JButton settings = UiUtilities.createToolBarButton(msg, icon);
 
     settings.addActionListener(new ActionListener() {
@@ -518,7 +519,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
 
     if (!mShowNew) {
       JMenuItem createNew = new JMenuItem(mLocalizer.msg("new", "Create a new favorite..."),
-          FavoritesPlugin.getInstance().getIconFromTheme("actions", "document-new", 16));
+          TVBrowserIcons.newIcon(TVBrowserIcons.SIZE_SMALL));
 
       createNew.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
@@ -531,7 +532,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
     }
 
     JMenuItem edit = new JMenuItem(mLocalizer.msg("edit", "Edit the selected favorite..."),
-        IconLoader.getInstance().getIconFromTheme("actions", "document-edit", 16));
+        TVBrowserIcons.edit(TVBrowserIcons.SIZE_SMALL));
 
     edit.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -542,7 +543,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
     menu.add(edit);
 
     JMenuItem delete = new JMenuItem(mLocalizer.msg("delete", "Delete selected favorite..."),
-        IconLoader.getInstance().getIconFromTheme("actions", "edit-delete", 16));
+        TVBrowserIcons.delete(TVBrowserIcons.SIZE_SMALL));
 
     delete.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -554,7 +555,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
     menu.addSeparator();
 
     JMenuItem sendPrograms = new JMenuItem(mLocalizer.msg("send", "Send Programs to another Plugin"),
-        FavoritesPlugin.getInstance().getIconFromTheme("actions", "edit-copy", 16));
+        TVBrowserIcons.copy(TVBrowserIcons.SIZE_SMALL));
 
     sendPrograms.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {

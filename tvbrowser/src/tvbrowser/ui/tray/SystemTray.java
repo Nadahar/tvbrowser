@@ -64,6 +64,7 @@ import tvdataservice.MarkedProgramsList;
 import util.io.IOUtilities;
 import util.misc.OperatingSystem;
 import util.ui.ScrollableMenu;
+import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 import util.ui.menu.MenuUtil;
 import devplugin.ActionMenu;
@@ -160,11 +161,9 @@ public class SystemTray {
 
       mOpenCloseMenuItem.setFont(f.deriveFont(Font.BOLD));
       mQuitMenuItem = new JMenuItem(mLocalizer.msg("menu.quit", "Quit"),
-          IconLoader.getInstance().getIconFromTheme("actions",
-              "system-log-out", 16));
+          TVBrowserIcons.quit(TVBrowserIcons.SIZE_SMALL));
       mConfigure = new JMenuItem(mLocalizer.msg("menu.configure", "Configure"),
-          IconLoader.getInstance().getIconFromTheme("categories",
-              "preferences-system", 16));
+          TVBrowserIcons.preferences(TVBrowserIcons.SIZE_SMALL));
 
       mConfigure.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {

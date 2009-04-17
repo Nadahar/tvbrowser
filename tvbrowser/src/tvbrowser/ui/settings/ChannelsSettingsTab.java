@@ -88,6 +88,7 @@ import util.ui.LinkButton;
 import util.ui.ListDragAndDropHandler;
 import util.ui.ListDropAction;
 import util.ui.Localizer;
+import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 import util.ui.customizableitems.SortableItemList;
 import util.ui.progress.Progress;
@@ -225,8 +226,7 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
     centerPn.add(listBoxPnLeft);
 
     // Buttons in the Middle
-    JButton rightBt = new JButton(IconLoader.getInstance().getIconFromTheme(
-        "action", "go-next", 24));
+    JButton rightBt = new JButton(TVBrowserIcons.right(TVBrowserIcons.SIZE_LARGE));
 
     rightBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -234,8 +234,7 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
       }
     });
 
-    JButton leftBt = new JButton(IconLoader.getInstance().getIconFromTheme(
-        "action", "go-previous", 24));
+    JButton leftBt = new JButton(TVBrowserIcons.left(TVBrowserIcons.SIZE_LARGE));
 
     leftBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -352,8 +351,7 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
     result.add(buttonsPanel, BorderLayout.SOUTH);
 
     JButton refreshList = new JButton(mLocalizer.msg("updateChannelList",
-        "Update channel list"), IconLoader.getInstance().getIconFromTheme(
-        "actions", "view-refresh", 16));
+        "Update channel list"), TVBrowserIcons.refresh(TVBrowserIcons.SIZE_SMALL));
 
     refreshList.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {

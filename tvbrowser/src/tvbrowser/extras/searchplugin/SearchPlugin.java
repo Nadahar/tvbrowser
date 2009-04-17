@@ -36,7 +36,6 @@ import java.io.ObjectOutputStream;
 
 import javax.swing.KeyStroke;
 
-import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.extras.common.ConfigurationHandler;
 import tvbrowser.extras.common.DataDeserializer;
 import tvbrowser.extras.common.DataSerializer;
@@ -44,6 +43,7 @@ import tvbrowser.extras.common.InternalPluginProxyIf;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.exc.ErrorHandler;
 import util.ui.SearchFormSettings;
+import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 import devplugin.ActionMenu;
 import devplugin.ButtonAction;
@@ -202,10 +202,8 @@ public class SearchPlugin {
       }
     });
 
-    action.setBigIcon(IconLoader.getInstance().getIconFromTheme("actions",
-        "system-search", 22));
-    action.setSmallIcon(IconLoader.getInstance().getIconFromTheme("actions",
-        "system-search", 16));
+    action.setBigIcon(TVBrowserIcons.search(TVBrowserIcons.SIZE_LARGE));
+    action.setSmallIcon(TVBrowserIcons.search(TVBrowserIcons.SIZE_SMALL));
     action.setShortDescription(mLocalizer.msg("description",
         "Allows searching programs containing a certain text."));
     action.setText(mLocalizer.msg("searchPrograms", "Search programs..."));
@@ -218,8 +216,7 @@ public class SearchPlugin {
   protected ActionMenu getContextMenuActions(final Program program) {
     ContextMenuAction action = new ContextMenuAction();
     action.setText(mLocalizer.msg("searchRepetion", "Search repetition"));
-    action.setSmallIcon(IconLoader.getInstance().getIconFromTheme("actions",
-        "system-search", 16));
+    action.setSmallIcon(TVBrowserIcons.search(TVBrowserIcons.SIZE_SMALL));
     action.setActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent event) {
 

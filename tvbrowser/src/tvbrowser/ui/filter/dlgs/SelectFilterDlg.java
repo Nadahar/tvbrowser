@@ -52,6 +52,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import tvbrowser.core.Settings;
+import tvbrowser.core.filters.AudioDescriptionFilter;
 import tvbrowser.core.filters.FilterList;
 import tvbrowser.core.filters.FilterManagerImpl;
 import tvbrowser.core.filters.PluginFilter;
@@ -59,13 +60,12 @@ import tvbrowser.core.filters.SeparatorFilter;
 import tvbrowser.core.filters.ShowAllFilter;
 import tvbrowser.core.filters.SubtitleFilter;
 import tvbrowser.core.filters.UserFilter;
-import tvbrowser.core.filters.AudioDescriptionFilter;
-import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.ui.mainframe.searchfield.SearchFilter;
 import util.ui.DragAndDropMouseListener;
 import util.ui.ListDragAndDropHandler;
 import util.ui.ListDropAction;
 import util.ui.Localizer;
+import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 import devplugin.PluginsProgramFilter;
@@ -157,8 +157,8 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
     btnPanel.add(panel1, BorderLayout.NORTH);
 
     JPanel panel2 = new JPanel(new GridLayout(0, 1, 0, 7));
-    mUpBtn = new JButton(IconLoader.getInstance().getIconFromTheme("actions", "go-up", 16));
-    mDownBtn = new JButton(IconLoader.getInstance().getIconFromTheme("actions", "go-down", 16));
+    mUpBtn = new JButton(TVBrowserIcons.up(TVBrowserIcons.SIZE_SMALL));
+    mDownBtn = new JButton(TVBrowserIcons.down(TVBrowserIcons.SIZE_SMALL));
     mUpBtn.addActionListener(this);
     mDownBtn.addActionListener(this);
     panel2.add(mUpBtn);

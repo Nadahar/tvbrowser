@@ -25,6 +25,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 
 import util.ui.Localizer;
+import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 
 
@@ -78,7 +79,7 @@ public class ListAction extends AbstractAction {
             putValue(Action.NAME, mLocalizer.msg("showList", "Show List"));
         
         if (icon)
-            putValue(Action.SMALL_ICON, TVRaterPlugin.getInstance().createImageIcon("actions", "system-search", 16));
+            putValue(Action.SMALL_ICON, TVBrowserIcons.search(TVBrowserIcons.SIZE_SMALL));
     }
 
     /* (non-Javadoc)

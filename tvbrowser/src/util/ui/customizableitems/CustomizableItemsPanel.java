@@ -48,7 +48,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import tvbrowser.core.icontheme.IconLoader;
+import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 
 /**
@@ -132,22 +132,22 @@ public class CustomizableItemsPanel extends JPanel {
     JPanel panel4=new JPanel(new BorderLayout());
     JPanel panel5=new JPanel(new BorderLayout());
 
-    mRightBt = new JButton(IconLoader.getInstance().getIconFromTheme("action", "go-next", 24));
+    mRightBt = new JButton(TVBrowserIcons.right(TVBrowserIcons.SIZE_LARGE));
     msg = mLocalizer.msg("tooltip.right", "Move selected rows in right list");
     mRightBt.setToolTipText(msg);
     mRightBt.setMargin(UiUtilities.ZERO_INSETS);
 
-    mLeftBt = new JButton(IconLoader.getInstance().getIconFromTheme("action", "go-previous", 24));
+    mLeftBt = new JButton(TVBrowserIcons.left(TVBrowserIcons.SIZE_LARGE));
     msg = mLocalizer.msg("tooltip.left", "Move selected rows in left list");
     mLeftBt.setToolTipText(msg);
     mLeftBt.setMargin(UiUtilities.ZERO_INSETS);
 
-    mUpBt = new JButton(IconLoader.getInstance().getIconFromTheme("actions", "go-up", 22));
+    mUpBt = new JButton(TVBrowserIcons.up(TVBrowserIcons.SIZE_LARGE));
     msg = mLocalizer.msg("tooltip.up", "Move selected rows up");
     mUpBt.setToolTipText(msg);
     mUpBt.setMargin(UiUtilities.ZERO_INSETS);
 
-    mDownBt = new JButton(IconLoader.getInstance().getIconFromTheme("actions", "go-down", 22));
+    mDownBt = new JButton(TVBrowserIcons.down(TVBrowserIcons.SIZE_LARGE));
     msg = mLocalizer.msg("tooltip.down", "Move selected rows down");
     mDownBt.setToolTipText(msg);
     mDownBt.setMargin(UiUtilities.ZERO_INSETS);

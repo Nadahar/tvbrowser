@@ -27,6 +27,7 @@ import javax.swing.text.JTextComponent;
 import javax.swing.text.Position;
 
 import tvbrowser.core.icontheme.IconLoader;
+import util.ui.TVBrowserIcons;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -99,8 +100,7 @@ public class TextComponentFindAction extends FindAction implements
 
     mFindNext = new JButton(mLocalizer.msg("next", "Find Next"));
     mFindNext.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
-    mFindNext.setIcon(IconLoader.getInstance().getIconFromTheme("actions",
-        "go-down", 16));
+    mFindNext.setIcon(TVBrowserIcons.down(TVBrowserIcons.SIZE_SMALL));
     mFindNext.setContentAreaFilled(false);
     mFindNext.setFocusable(false);
     mFindNext.addActionListener(new ActionListener() {
@@ -111,8 +111,7 @@ public class TextComponentFindAction extends FindAction implements
 
     mFindPrev = new JButton(mLocalizer.msg("prev", "Find Previous"));
     mFindPrev.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
-    mFindPrev.setIcon(IconLoader.getInstance().getIconFromTheme("actions",
-        "go-up", 16));
+    mFindPrev.setIcon(TVBrowserIcons.up(TVBrowserIcons.SIZE_SMALL));
     mFindPrev.setContentAreaFilled(false);
     mFindPrev.setFocusable(false);
     mFindPrev.addActionListener(new ActionListener() {

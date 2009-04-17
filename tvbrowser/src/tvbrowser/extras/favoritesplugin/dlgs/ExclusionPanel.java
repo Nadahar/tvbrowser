@@ -39,12 +39,12 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.extras.favoritesplugin.core.Exclusion;
 import tvbrowser.extras.favoritesplugin.core.Favorite;
 import tvbrowser.extras.favoritesplugin.wizards.ExcludeWizardStep;
 import tvbrowser.extras.favoritesplugin.wizards.WizardHandler;
 import util.ui.Localizer;
+import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 
 import com.jgoodies.forms.layout.CellConstraints;
@@ -110,9 +110,9 @@ public class ExclusionPanel extends JPanel{
 
     add(new JScrollPane(mExclusionsList), cc.xywh(2, 1, 1, 5));
 
-    Icon newIcon = IconLoader.getInstance().getIconFromTheme("actions", "document-new", 16);
-    Icon editIcon = IconLoader.getInstance().getIconFromTheme("actions", "document-edit", 16);
-    Icon deleteIcon = IconLoader.getInstance().getIconFromTheme("actions", "edit-delete", 16);
+    Icon newIcon = TVBrowserIcons.newIcon(TVBrowserIcons.SIZE_SMALL);
+    Icon editIcon = TVBrowserIcons.edit(TVBrowserIcons.SIZE_SMALL);
+    Icon deleteIcon = TVBrowserIcons.delete(TVBrowserIcons.SIZE_SMALL);
 
     mNewExclusionBtn = new JButton(newIcon);
     mEditExclusionBtn = new JButton(editIcon);

@@ -56,6 +56,7 @@ import util.settings.PluginPictureSettings;
 import util.ui.Localizer;
 import util.ui.ProgramTableCellRenderer;
 import util.ui.SendToPluginDialog;
+import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
@@ -219,7 +220,7 @@ public class ReminderListDialog extends JDialog implements WindowClosingIf {
 
     ButtonBarBuilder builder = ButtonBarBuilder.createLeftToRightBuilder();
 
-    JButton config = new JButton(IconLoader.getInstance().getIconFromTheme("categories", "preferences-system", 16));
+    JButton config = new JButton(TVBrowserIcons.preferences(TVBrowserIcons.SIZE_SMALL));
 
     config.setToolTipText(mLocalizer.msg("config", "Configure Reminder"));
     
@@ -232,7 +233,7 @@ public class ReminderListDialog extends JDialog implements WindowClosingIf {
     builder.addFixed(config);
     builder.addRelatedGap();
     
-    mSend = new JButton(IconLoader.getInstance().getIconFromTheme("actions", "edit-copy", 16));
+    mSend = new JButton(TVBrowserIcons.copy(TVBrowserIcons.SIZE_SMALL));
     mSend.setToolTipText(mLocalizer.msg("send", "Send to other Plugins"));
     mSend.setEnabled(mTable.getRowCount() > 0);
 
@@ -245,7 +246,7 @@ public class ReminderListDialog extends JDialog implements WindowClosingIf {
     builder.addFixed(mSend);
     builder.addRelatedGap();
 
-    mDelete = new JButton(IconLoader.getInstance().getIconFromTheme("actions", "edit-delete", 16));
+    mDelete = new JButton(TVBrowserIcons.delete(TVBrowserIcons.SIZE_SMALL));
     mDelete.setToolTipText(mLocalizer.msg("delete", "Remove all/selected programs from reminder list"));
     mDelete.setEnabled(mTable.getRowCount() > 0);
     

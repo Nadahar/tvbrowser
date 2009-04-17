@@ -54,6 +54,7 @@ import util.ui.DragAndDropMouseListener;
 import util.ui.ListDragAndDropHandler;
 import util.ui.ListDropAction;
 import util.ui.Localizer;
+import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 
 import com.jgoodies.forms.builder.PanelBuilder;
@@ -94,7 +95,7 @@ public class WebSettingsTab implements SettingsTab,  ListDropAction {
   private JButton mResetIcons;
 
   /** Start-Icon */
-  private Icon mStartIcon = WebPlugin.getInstance().createImageIcon("actions", "view-refresh", 16);
+  private Icon mStartIcon = TVBrowserIcons.refresh(TVBrowserIcons.SIZE_SMALL);
 
   /** Stop-Icon */
   private Icon mStopIcon = WebPlugin.getInstance().createImageIcon("actions", "process-stop", 16);
@@ -243,7 +244,7 @@ public class WebSettingsTab implements SettingsTab,  ListDropAction {
 
     });
 
-    mNew = new JButton(WebPlugin.getInstance().createImageIcon("actions", "document-new", 16));
+    mNew = new JButton(TVBrowserIcons.newIcon(TVBrowserIcons.SIZE_SMALL));
     mNew.setToolTipText(mLocalizer.msg("New", "Add a new Site"));
     mNew.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -251,7 +252,7 @@ public class WebSettingsTab implements SettingsTab,  ListDropAction {
       }
     });
 
-    mEdit = new JButton(WebPlugin.getInstance().createImageIcon("actions", "document-edit", 16));
+    mEdit = new JButton(TVBrowserIcons.edit(TVBrowserIcons.SIZE_SMALL));
     mEdit.setToolTipText(mLocalizer.msg("Edit", "Edit Site"));
 
     mEdit.addActionListener(new ActionListener() {
@@ -260,7 +261,7 @@ public class WebSettingsTab implements SettingsTab,  ListDropAction {
       }
     });
 
-    mDelete = new JButton(WebPlugin.getInstance().createImageIcon("actions", "edit-delete", 16));
+    mDelete = new JButton(TVBrowserIcons.delete(TVBrowserIcons.SIZE_SMALL));
     mDelete.setToolTipText(mLocalizer.msg("DeleteSite", "Delete Site"));
 
     mDelete.addActionListener(new ActionListener() {
@@ -271,7 +272,7 @@ public class WebSettingsTab implements SettingsTab,  ListDropAction {
 
     });
 
-    mUp = new JButton(WebPlugin.getInstance().createImageIcon("actions", "go-up", 16));
+    mUp = new JButton(TVBrowserIcons.up(TVBrowserIcons.SIZE_SMALL));
     mUp.setToolTipText(mLocalizer.msg("Up", "Move selected Site up"));
 
     mUp.addActionListener(new ActionListener() {
@@ -282,7 +283,7 @@ public class WebSettingsTab implements SettingsTab,  ListDropAction {
 
     });
 
-    mDown = new JButton(WebPlugin.getInstance().createImageIcon("actions", "go-down", 16));
+    mDown = new JButton(TVBrowserIcons.down(TVBrowserIcons.SIZE_SMALL));
     mDown.setToolTipText(mLocalizer.msg("Down", "Move selected Site down"));
 
     mDown.addActionListener(new ActionListener() {

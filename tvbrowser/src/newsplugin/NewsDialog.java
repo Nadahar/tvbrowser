@@ -51,6 +51,7 @@ import javax.swing.event.HyperlinkListener;
 import util.browserlauncher.Launch;
 import util.io.IOUtilities;
 import util.ui.Localizer;
+import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 import util.ui.html.ExtendedHTMLDocument;
@@ -205,7 +206,7 @@ public class NewsDialog implements WindowClosingIf {
       buf.append("</p>");
     } else {
       if (mNewIcon == null) {
-        mNewIcon = NewsPlugin.getInstance().createImageIcon("actions", "document-new", 22);
+        mNewIcon = TVBrowserIcons.newIcon(TVBrowserIcons.SIZE_LARGE);
       }
       
       // Show the news - backwards (newest first)

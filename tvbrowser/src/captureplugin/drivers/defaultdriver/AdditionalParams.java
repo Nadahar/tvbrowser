@@ -24,11 +24,17 @@
  */
 package captureplugin.drivers.defaultdriver;
 
-import captureplugin.CapturePlugin;
-import util.paramhandler.ParamDescriptionPanel;
-import util.ui.Localizer;
-import util.ui.UiUtilities;
-import util.ui.WindowClosingIf;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
@@ -44,17 +50,13 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.util.Vector;
+
+import util.paramhandler.ParamDescriptionPanel;
+import util.ui.Localizer;
+import util.ui.TVBrowserIcons;
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
+import captureplugin.CapturePlugin;
 
 /**
  * A DialogBox for the additional Parameters
@@ -81,7 +83,7 @@ public class AdditionalParams extends JDialog implements WindowClosingIf{
     private JButton mStartStop;
     
     /** Start-Icon */
-    private final ImageIcon mStartIcon = CapturePlugin.getInstance().createImageIcon("actions", "view-refresh", 16);
+    private final ImageIcon mStartIcon = TVBrowserIcons.refresh(TVBrowserIcons.SIZE_SMALL);
 
     /** Stop-Icon */
     private final ImageIcon mStopIcon = CapturePlugin.getInstance().createImageIcon("actions", "process-stop", 16);
@@ -179,7 +181,7 @@ public class AdditionalParams extends JDialog implements WindowClosingIf{
 
         JPanel buttons = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
-        JButton add = new JButton(CapturePlugin.getInstance().createImageIcon("actions", "document-new", 16));
+        JButton add = new JButton(TVBrowserIcons.newIcon(TVBrowserIcons.SIZE_SMALL));
         
         add.setToolTipText(Localizer.getLocalization(Localizer.I18N_ADD));
 
@@ -193,7 +195,7 @@ public class AdditionalParams extends JDialog implements WindowClosingIf{
 
         buttons.add(add);
 
-        JButton remove = new JButton(CapturePlugin.getInstance().createImageIcon("actions", "edit-delete", 16));
+        JButton remove = new JButton(TVBrowserIcons.delete(TVBrowserIcons.SIZE_SMALL));
         remove.setToolTipText(Localizer.getLocalization(Localizer.I18N_DELETE));
 
         remove.addActionListener(new ActionListener() {
@@ -206,7 +208,7 @@ public class AdditionalParams extends JDialog implements WindowClosingIf{
 
         buttons.add(remove);
 
-        final JButton up = new JButton(CapturePlugin.getInstance().createImageIcon("action", "go-up", 16));
+        final JButton up = new JButton(TVBrowserIcons.up(TVBrowserIcons.SIZE_SMALL));
         up.setToolTipText(Localizer.getLocalization(Localizer.I18N_UP));
         buttons.add(up);
 
@@ -218,7 +220,7 @@ public class AdditionalParams extends JDialog implements WindowClosingIf{
           
         });
         
-        final JButton down = new JButton(CapturePlugin.getInstance().createImageIcon("action", "go-down", 16));
+        final JButton down = new JButton(TVBrowserIcons.down(TVBrowserIcons.SIZE_SMALL));
         down.setToolTipText(Localizer.getLocalization(Localizer.I18N_DOWN));
         buttons.add(down);
 

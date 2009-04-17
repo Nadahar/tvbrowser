@@ -26,19 +26,21 @@
 
 package tvbrowser.extras.favoritesplugin;
 
-import devplugin.ActionMenu;
-import devplugin.ContextMenuAction;
-import devplugin.ContextMenuSeparatorAction;
-import devplugin.Program;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+
+import javax.swing.ImageIcon;
+
 import tvbrowser.extras.favoritesplugin.core.Favorite;
 import tvbrowser.extras.favoritesplugin.dlgs.FavoriteTreeModel;
 import tvbrowser.extras.programinfo.ProgramInfo;
 import tvbrowser.ui.mainframe.MainFrame;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import javax.swing.ImageIcon;
+import util.ui.TVBrowserIcons;
+import devplugin.ActionMenu;
+import devplugin.ContextMenuAction;
+import devplugin.ContextMenuSeparatorAction;
+import devplugin.Program;
 
 public class ContextMenuProvider {
 
@@ -124,7 +126,7 @@ public class ContextMenuProvider {
 
   private ActionMenu createGlobalExclusionMenu(final Program program) {
     ContextMenuAction menu = new ContextMenuAction();
-    menu.setSmallIcon(getIconFromTheme("actions", "document-new", 16));
+    menu.setSmallIcon(TVBrowserIcons.newIcon(TVBrowserIcons.SIZE_SMALL));
     menu.setText(mLocalizer.msg("createGlobalExclusion", "Create global exclusion..."));
     menu.setActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent event) {
@@ -184,7 +186,7 @@ public class ContextMenuProvider {
   private ActionMenu createEditFavoriteMenuAction(final Favorite[] favArr) {
     if (favArr.length == 1) {
       ContextMenuAction action = new ContextMenuAction();
-      action.setSmallIcon(getIconFromTheme("actions", "document-edit", 16));
+      action.setSmallIcon(TVBrowserIcons.edit(TVBrowserIcons.SIZE_SMALL));
       action.setText(mLocalizer.msg("editFavorite","Edit favorite '{0}'...", favArr[0].getName()));
       action.setActionListener(new ActionListener(){
         public void actionPerformed(ActionEvent e) {
@@ -195,7 +197,7 @@ public class ContextMenuProvider {
     }
     else {
       ContextMenuAction menu = new ContextMenuAction();
-      menu.setSmallIcon(getIconFromTheme("actions", "document-edit", 16));
+      menu.setSmallIcon(TVBrowserIcons.edit(TVBrowserIcons.SIZE_SMALL));
       menu.setText(mLocalizer.msg("edit","Edit Favorite"));
       ContextMenuAction[] subItems = new ContextMenuAction[favArr.length];
       for (int i=0; i<subItems.length; i++) {
@@ -215,7 +217,7 @@ public class ContextMenuProvider {
 
   private ActionMenu createRepetitionsMenuAction(final Favorite[] favorites, Program p) {
     ContextMenuAction topMenu = new ContextMenuAction();
-    topMenu.setSmallIcon(getIconFromTheme("actions", "system-search", 16));
+    topMenu.setSmallIcon(TVBrowserIcons.search(TVBrowserIcons.SIZE_SMALL));
     topMenu.setText(mLocalizer.msg("repetitions", "More programs"));
     
     if (favorites.length==1) {
@@ -276,7 +278,7 @@ public class ContextMenuProvider {
   private ActionMenu createDeleteFavoriteMenuAction(final Favorite[] favArr) {
       if (favArr.length == 1) {
         ContextMenuAction action = new ContextMenuAction();
-        action.setSmallIcon(getIconFromTheme("actions", "edit-delete", 16));
+        action.setSmallIcon(TVBrowserIcons.delete(TVBrowserIcons.SIZE_SMALL));
         action.setText(mLocalizer.msg("deleteFavorite","Delete Favorite '{0}'...", favArr[0].getName()));
         action.setActionListener(new ActionListener(){
           public void actionPerformed(ActionEvent e) {
@@ -288,7 +290,7 @@ public class ContextMenuProvider {
       else {
         ContextMenuAction menu = new ContextMenuAction();
         menu.setText(mLocalizer.msg("delete","Delete Favorite"));
-        menu.setSmallIcon(getIconFromTheme("actions", "edit-delete", 16));
+        menu.setSmallIcon(TVBrowserIcons.delete(TVBrowserIcons.SIZE_SMALL));
         ContextMenuAction[] subItems = new ContextMenuAction[favArr.length];
         for (int i=0; i<subItems.length; i++) {
           final Favorite fav = favArr[i];
@@ -311,7 +313,7 @@ public class ContextMenuProvider {
       ContextMenuAction action = new ContextMenuAction();
       
       if(favArr[0].isOnBlackList(program)) {
-        action.setSmallIcon(getIconFromTheme("apps", "view-refresh", 16));
+        action.setSmallIcon(TVBrowserIcons.refresh(TVBrowserIcons.SIZE_SMALL));
         action.setText(mLocalizer.msg("removeFavoriteFromBlackList","Put this program back into '{0}'", favArr[0].getName()));
         action.setActionListener(new ActionListener(){
           public void actionPerformed(ActionEvent e) {
@@ -335,7 +337,7 @@ public class ContextMenuProvider {
             
       ContextMenuAction reactivate = new ContextMenuAction(mLocalizer.msg("removeFromBlackList",
           "Put this program back into..."));
-      reactivate.setSmallIcon(getIconFromTheme("actions","view-refresh",16));
+      reactivate.setSmallIcon(TVBrowserIcons.refresh(TVBrowserIcons.SIZE_SMALL));
       
       ContextMenuAction[] reactivateAction = new ContextMenuAction[fromList.size()];
             

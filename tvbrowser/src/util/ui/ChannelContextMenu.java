@@ -76,7 +76,7 @@ public class ChannelContextMenu implements ActionListener {
     mMenu = new JPopupMenu();
     mChAdd = new JMenuItem(mLocalizer.msg("addChannels", "Add/Remove channels"));
     mChConf = new JMenuItem(mLocalizer.msg("configChannel", "Setup channel"),
-        IconLoader.getInstance().getIconFromTheme("actions", "document-edit"));
+        TVBrowserIcons.edit(TVBrowserIcons.SIZE_SMALL));
     mChGoToURL = new JMenuItem(mLocalizer.msg("openURL", "Open internet page"),
         IconLoader.getInstance().getIconFromTheme("apps",
             "internet-web-browser"));

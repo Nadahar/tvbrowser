@@ -65,9 +65,9 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import tvbrowser.core.icontheme.IconLoader;
-import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import util.ui.Localizer;
 import util.ui.OverlayListener;
+import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 
 /**
@@ -260,7 +260,7 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
       menu.addSeparator();
       
       item = new JMenuItem(mLocalizer.msg("newFavorite", "New Favorite"),
-          FavoritesPlugin.getInstance().getIconFromTheme("actions", "document-new", 16));
+          TVBrowserIcons.newIcon(TVBrowserIcons.SIZE_SMALL));
       
       item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
@@ -273,7 +273,7 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
       if(last.isDirectoryNode()) {
         if(!last.equals(mRootNode)) {
           item = new JMenuItem(mLocalizer.msg("renameFolder", "Rename folder"),
-              IconLoader.getInstance().getIconFromTheme("actions", "document-edit", 16));
+              TVBrowserIcons.edit(TVBrowserIcons.SIZE_SMALL));
           
           item.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -326,7 +326,7 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
       
       if (!last.isDirectoryNode()) {
         item = new JMenuItem(mLocalizer.msg("editFavorite", "Edit favorite"),
-            IconLoader.getInstance().getIconFromTheme("actions", "document-edit", 16));
+            TVBrowserIcons.edit(TVBrowserIcons.SIZE_SMALL));
         item.setFont(item.getFont().deriveFont(Font.BOLD));
         
         item.addActionListener(new ActionListener() {
@@ -339,7 +339,7 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
       }
       
       item = new JMenuItem(Localizer.getLocalization(Localizer.I18N_DELETE),
-          IconLoader.getInstance().getIconFromTheme("actions", "edit-delete", 16));
+          TVBrowserIcons.delete(TVBrowserIcons.SIZE_SMALL));
       
       item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
@@ -354,7 +354,7 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
       if(!ManageFavoritesDialog.getInstance().programListIsEmpty()) {
         menu.addSeparator();
         
-        item = new JMenuItem(ManageFavoritesDialog.mLocalizer.msg("send", "Send Programs to another Plugin"), FavoritesPlugin.getInstance().getIconFromTheme("actions", "edit-copy", 16));
+        item = new JMenuItem(ManageFavoritesDialog.mLocalizer.msg("send", "Send Programs to another Plugin"), TVBrowserIcons.copy(TVBrowserIcons.SIZE_SMALL));
         item.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent evt) {
              ManageFavoritesDialog.getInstance().showSendDialog();

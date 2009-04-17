@@ -43,6 +43,7 @@ import javax.swing.ImageIcon;
 import util.program.AbstractPluginProgramFormating;
 import util.program.LocalPluginProgramFormating;
 import util.ui.Localizer;
+import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 import calendarexportplugin.exporter.ExporterFactory;
 import calendarexportplugin.exporter.ExporterIf;
@@ -253,7 +254,7 @@ public class CalendarExportPlugin extends Plugin {
           
           name.append(mLocalizer.msg("contextMenuDeleteText","Remove marking for "));
           
-          action.putValue(Action.SMALL_ICON, createImageIcon("actions","edit-delete",16));
+          action.putValue(Action.SMALL_ICON, TVBrowserIcons.delete(TVBrowserIcons.SIZE_SMALL));
         }
         else {
           action = new AbstractAction() {
@@ -313,7 +314,7 @@ public class CalendarExportPlugin extends Plugin {
             };
             
             actions[j].putValue(Action.NAME, new StringBuilder(mLocalizer.msg("contextMenuDeleteText","Remove marking for ")).append(mConfigs[j].getName()).toString());
-            actions[j].putValue(Action.SMALL_ICON, createImageIcon("actions","edit-delete",16));
+            actions[j].putValue(Action.SMALL_ICON, TVBrowserIcons.delete(TVBrowserIcons.SIZE_SMALL));
           }
           else {
             actions[j] = new AbstractAction() {
@@ -413,7 +414,7 @@ public class CalendarExportPlugin extends Plugin {
 
   private void createNodeActionForNode(final PluginTreeNode node) {
     ContextMenuAction action = new ContextMenuAction(mLocalizer.msg("treeNodeDeleteAction",
-    "Delete all markings"),createImageIcon("actions","edit-delete",16));
+    "Delete all markings"),TVBrowserIcons.delete(TVBrowserIcons.SIZE_SMALL));
     
     action.setActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {

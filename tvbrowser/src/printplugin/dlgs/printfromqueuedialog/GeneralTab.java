@@ -42,14 +42,16 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 
+import printplugin.EmptyQueueAction;
+import printplugin.PrintPlugin;
+import util.program.ProgramUtilities;
+import util.ui.TVBrowserIcons;
+import util.ui.UiUtilities;
+
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
-import printplugin.EmptyQueueAction;
-import printplugin.PrintPlugin;
-import util.program.ProgramUtilities;
-import util.ui.UiUtilities;
 import devplugin.Channel;
 import devplugin.Date;
 import devplugin.PluginTreeNode;
@@ -126,7 +128,7 @@ public class GeneralTab extends JPanel {
   private void addProgramPanel(final JPanel content, final Program program) {
     final JPanel progPn = new JPanel(new BorderLayout());
 
-    Icon icon = PrintPlugin.getInstance().createImageIcon("actions", "edit-delete", 16);
+    Icon icon = TVBrowserIcons.delete(TVBrowserIcons.SIZE_SMALL);
     JButton removeBtn = UiUtilities.createToolBarButton("Remove from queue", icon);
     removeBtn.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent event) {

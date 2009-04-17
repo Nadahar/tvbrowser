@@ -55,6 +55,7 @@ import util.settings.ProgramPanelSettings;
 import util.ui.Localizer;
 import util.ui.ProgramList;
 import util.ui.SendToPluginDialog;
+import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
@@ -424,12 +425,9 @@ public class ManagePanel {
     JPanel p = new JPanel(new FormLayout("pref,5dlu,pref,5dlu,pref,5dlu,pref",
         "pref"));
 
-    mSettings = new JButton(SimpleMarkerPlugin.getInstance().createImageIcon("categories",
-        "preferences-system", 16));    
-    mSend = new JButton(SimpleMarkerPlugin.getInstance().createImageIcon(
-        "actions", "edit-copy", 16));
-    mDelete = new JButton(SimpleMarkerPlugin.getInstance().createImageIcon(
-        "actions", "edit-delete", 16));
+    mSettings = new JButton(TVBrowserIcons.preferences(TVBrowserIcons.SIZE_SMALL));    
+    mSend = new JButton(TVBrowserIcons.copy(TVBrowserIcons.SIZE_SMALL));
+    mDelete = new JButton(TVBrowserIcons.delete(TVBrowserIcons.SIZE_SMALL));
     mUndo = new JButton(SimpleMarkerPlugin.getInstance().createImageIcon(
         "actions", "edit-undo", 16));
     

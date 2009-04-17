@@ -36,12 +36,12 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.programformating.GlobalPluginProgramFormating;
 import tvbrowser.core.plugin.programformating.GlobalPluginProgramFormatingManager;
 import tvbrowser.core.plugin.programformating.GlobalPluginProgramFormatingSettingsDialog;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.ui.Localizer;
+import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 import util.ui.customizableitems.SortableItemList;
 
@@ -90,16 +90,16 @@ public class GlobalPluginProgramFormatingSettings implements SettingsTab, Action
       JPanel buttonPanel = new JPanel(layout);
       
       mAdd = new JButton(Localizer.getLocalization(Localizer.I18N_ADD));
-      mAdd.setIcon(IconLoader.getInstance().getIconFromTheme("actions","document-new",16));
+      mAdd.setIcon(TVBrowserIcons.newIcon(TVBrowserIcons.SIZE_SMALL));
       mAdd.addActionListener(this);
       
       mEdit = new JButton(Localizer.getLocalization(Localizer.I18N_EDIT));
-      mEdit.setIcon(IconLoader.getInstance().getIconFromTheme("actions","document-edit",16));
+      mEdit.setIcon(TVBrowserIcons.edit(TVBrowserIcons.SIZE_SMALL));
       mEdit.setEnabled(false);
       mEdit.addActionListener(this);
       
       mDelete = new JButton(Localizer.getLocalization(Localizer.I18N_DELETE));      
-      mDelete.setIcon(IconLoader.getInstance().getIconFromTheme("actions","edit-delete",16));
+      mDelete.setIcon(TVBrowserIcons.delete(TVBrowserIcons.SIZE_SMALL));
       mDelete.setEnabled(false);
       mDelete.addActionListener(this);
       

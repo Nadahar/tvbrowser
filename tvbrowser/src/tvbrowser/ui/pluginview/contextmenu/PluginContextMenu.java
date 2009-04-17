@@ -36,13 +36,13 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.tree.TreePath;
 
-import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.pluginview.PluginTree;
 import util.exc.TvBrowserException;
 import util.ui.Localizer;
+import util.ui.TVBrowserIcons;
 import util.ui.menu.MenuUtil;
 import devplugin.ActionMenu;
 
@@ -103,7 +103,7 @@ public abstract class PluginContextMenu extends AbstractContextMenu {
     menu.addSeparator();
     if (hasSettingsTab()) {
       JMenuItem menuItem = MenuUtil.createMenuItem(Localizer.getLocalization(Localizer.I18N_SETTINGS)+"...");
-      menuItem.setIcon(IconLoader.getInstance().getIconFromTheme("categories", "preferences-system", 16));
+      menuItem.setIcon(TVBrowserIcons.preferences(TVBrowserIcons.SIZE_SMALL));
       menuItem.addActionListener(new ActionListener(){
         public void actionPerformed(ActionEvent e) {
           MainFrame.getInstance().showSettingsDialog(getPluginId());

@@ -70,6 +70,7 @@ import tvbrowser.ui.filter.dlgs.EditFilterComponentDlg;
 import util.io.IOUtilities;
 import util.ui.CaretPositionCorrector;
 import util.ui.Localizer;
+import util.ui.TVBrowserIcons;
 import util.ui.TimeFormatter;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
@@ -572,8 +573,7 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
     });
 
     JPanel p = new JPanel(new FormLayout("pref,5dlu,pref,5dlu,pref", "pref"));
-    JButton settings = new JButton(mPlugin.createImageIcon("categories",
-        "preferences-system", 16));
+    JButton settings = new JButton(TVBrowserIcons.preferences(TVBrowserIcons.SIZE_SMALL));
     settings.setToolTipText(mLocalizer.msg("settings","Open settings"));
 
     settings.addActionListener(new ActionListener() {

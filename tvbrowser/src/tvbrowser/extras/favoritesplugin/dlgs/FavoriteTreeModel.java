@@ -46,6 +46,7 @@ import tvbrowser.extras.favoritesplugin.core.Favorite;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.ui.Localizer;
+import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 import devplugin.Channel;
 import devplugin.Date;
@@ -371,7 +372,7 @@ public class FavoriteTreeModel extends DefaultTreeModel {
               }
             };
             editFavorite.putValue(Action.NAME, mLocalizer.msg("editTree","Edit..."));
-            editFavorite.putValue(Action.SMALL_ICON, FavoritesPlugin.getInstance().getIconFromTheme("actions", "document-edit", 16));
+            editFavorite.putValue(Action.SMALL_ICON, TVBrowserIcons.edit(TVBrowserIcons.SIZE_SMALL));
 
             Action deleteFavorite = new AbstractAction() {
               public void actionPerformed(ActionEvent e) {
@@ -379,7 +380,7 @@ public class FavoriteTreeModel extends DefaultTreeModel {
               }
             };
             deleteFavorite.putValue(Action.NAME, mLocalizer.msg("deleteTree","Delete..."));
-            deleteFavorite.putValue(Action.SMALL_ICON, FavoritesPlugin.getInstance().getIconFromTheme("actions", "edit-delete", 16));
+            deleteFavorite.putValue(Action.SMALL_ICON, TVBrowserIcons.delete(TVBrowserIcons.SIZE_SMALL));
 
             newNode.addAction(editFavorite);
             newNode.addAction(deleteFavorite);

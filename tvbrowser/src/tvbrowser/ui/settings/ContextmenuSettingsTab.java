@@ -49,13 +49,13 @@ import tvbrowser.core.contextmenu.ConfigMenuItem;
 import tvbrowser.core.contextmenu.ContextMenuManager;
 import tvbrowser.core.contextmenu.LeaveFullScreenMenuItem;
 import tvbrowser.core.contextmenu.SeparatorMenuItem;
-import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.plugin.PluginStateAdapter;
 import tvbrowser.ui.settings.util.LineButton;
 import util.ui.FixedSizeIcon;
 import util.ui.LineComponent;
+import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 import util.ui.customizableitems.SortableItemList;
 
@@ -150,7 +150,7 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
     
     mList.addButton(addSeparator);
     
-    final JButton garbage = new JButton(IconLoader.getInstance().getIconFromTheme("actions", "edit-delete", 22));
+    final JButton garbage = new JButton(TVBrowserIcons.delete(TVBrowserIcons.SIZE_LARGE));
     garbage.setToolTipText(mLocalizer.msg("garbage", "Remove Separator"));
     garbage.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e) {
@@ -277,7 +277,7 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
       } else if (value instanceof ConfigMenuItem) {
         mItemSelected.setSelected(!mDeactivatedItems.contains(value));
 
-        mItemLabel.setIcon(IconLoader.getInstance().getIconFromTheme("categories", "preferences-system", 16));
+        mItemLabel.setIcon(TVBrowserIcons.preferences(TVBrowserIcons.SIZE_SMALL));
         mItemLabel.setText(value.toString());
         mItemLabel.setForeground(label.getForeground());
 

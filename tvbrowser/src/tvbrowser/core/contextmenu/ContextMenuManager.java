@@ -45,6 +45,7 @@ import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import tvbrowser.extras.common.InternalPluginProxyIf;
 import tvbrowser.extras.common.InternalPluginProxyList;
 import tvbrowser.ui.mainframe.MainFrame;
+import util.ui.TVBrowserIcons;
 import util.ui.menu.MenuUtil;
 import devplugin.ActionMenu;
 import devplugin.ContextMenuIf;
@@ -378,7 +379,7 @@ public class ContextMenuManager {
 	        rootMenu.addSeparator();
       } else if (menuIf instanceof ConfigMenuItem) {
         JMenuItem item = new JMenuItem(menuIf.toString());
-        item.setIcon(IconLoader.getInstance().getIconFromTheme("categories", "preferences-system", 16));
+        item.setIcon(TVBrowserIcons.preferences(TVBrowserIcons.SIZE_SMALL));
         item.setFont(MenuUtil.CONTEXT_MENU_PLAINFONT);
         item.addActionListener(new ActionListener() {
           public void actionPerformed(java.awt.event.ActionEvent e) {
