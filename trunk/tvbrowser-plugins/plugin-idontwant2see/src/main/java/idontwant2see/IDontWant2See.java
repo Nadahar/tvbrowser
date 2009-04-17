@@ -25,46 +25,32 @@ package idontwant2see;
 
 import java.awt.AWTEvent;
 import java.awt.Dimension;
-import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.AWTEventListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.ButtonGroup;
-import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JRootPane;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
-import tvbrowser.ui.settings.util.ColorLabel;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
@@ -72,7 +58,6 @@ import util.ui.WindowClosingIf;
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.Sizes;
 
 import devplugin.ActionMenu;
 import devplugin.ContextMenuAction;
@@ -99,14 +84,10 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
       .getLocalizerFor(IDontWant2See.class);
   
   private static Date mCurrentDate = Date.getCurrentDate();
-  private ArrayList<IDontWant2SeeListEntry> mSearchList;
   private PluginsProgramFilter mFilter;
   private static IDontWant2See mInstance;
-  private boolean mSimpleMenu;
-  private boolean mSwitchToMyFilter;
   private boolean mDateWasSet;
-  private String mLastEnteredExclusionString;
-  private Date mLastUsedDate;
+  private IDontWant2SeeSettings mSettings;
 
   private boolean mCtrlPressed;
 
@@ -130,11 +111,7 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
    */
   public IDontWant2See() {
     mInstance = this;
-    mSearchList = new ArrayList<IDontWant2SeeListEntry>();
-    mSimpleMenu = true;
-    mSwitchToMyFilter = true;
-    mLastEnteredExclusionString = "";
-    mLastUsedDate = getCurrentDate();
+    mSettings = new IDontWant2SeeSettings();
     mDateWasSet = false;
     
     mFilter = new PluginsProgramFilter(this) {
@@ -156,7 +133,7 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
     setCurrentDate();
     mDateWasSet = false;
     
-    for(IDontWant2SeeListEntry entry : mSearchList) {
+    for(IDontWant2SeeListEntry entry : mSettings.getSearchList()) {
       entry.resetDateWasSetFlag();
     }
   }
@@ -167,14 +144,14 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
   
   protected boolean acceptInternal(final Program program) {
     if(!mDateWasSet) {
-      mLastUsedDate = getCurrentDate();
+      mSettings.setLastUsedDate(getCurrentDate());
       mDateWasSet = true;
     }
     
     // calculate lower case title only once, not for each entry again
     final String title = program.getTitle();
     final String lowerCaseTitle = title.toLowerCase();
-    for(IDontWant2SeeListEntry entry : mSearchList) {
+    for(IDontWant2SeeListEntry entry : mSettings.getSearchList()) {
       if (entry.matchesProgramTitle(title, lowerCaseTitle)) {
         return false;
       }
@@ -195,8 +172,8 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
       // calculate lower case title only once, not for each entry again
       final String title = program.getTitle();
       final String lowerCaseTitle = title.toLowerCase();
-      for(int i = 0; i < mSearchList.size(); i++) {
-        if (mSearchList.get(i).matchesProgramTitle(title, lowerCaseTitle)) {
+      for(int i = 0; i < mSettings.getSearchList().size(); i++) {
+        if (mSettings.getSearchList().get(i).matchesProgramTitle(title, lowerCaseTitle)) {
           return i;
         }
       }
@@ -243,13 +220,13 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
           }
         });
         
-        final ExclusionTablePanel exclusionPanel = new ExclusionTablePanel();
+        final ExclusionTablePanel exclusionPanel = new ExclusionTablePanel(mSettings);
         
         final JButton ok = new JButton(Localizer
             .getLocalization(Localizer.I18N_OK));
         ok.addActionListener(new ActionListener() {
           public void actionPerformed(final ActionEvent e) {
-            exclusionPanel.saveSettings();
+            exclusionPanel.saveSettings(mSettings);
             exclusionListDlg.dispose();
           }
         });
@@ -290,14 +267,15 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
     undo.putValue(Plugin.BIG_ICON, createImageIcon("actions","edit-undo",22));
     undo.setActionListener(new ActionListener() {
       public void actionPerformed(final ActionEvent e) {
-        if(mLastEnteredExclusionString.length() > 0) {
-          for(int i = mSearchList.size()-1; i >= 0; i--) {
-            if(mSearchList.get(i).getSearchText().equals(mLastEnteredExclusionString)) {
-              mSearchList.remove(i);
+        String lastEnteredExclusionString = mSettings.getLastEnteredExclusionString();
+        if(lastEnteredExclusionString.length() > 0) {
+          for(int i = mSettings.getSearchList().size()-1; i >= 0; i--) {
+            if(mSettings.getSearchList().get(i).getSearchText().equals(lastEnteredExclusionString)) {
+              mSettings.getSearchList().remove(i);
             }
           }
           
-          mLastEnteredExclusionString = "";
+          mSettings.setLastEnteredExclusionString("");
           
           updateFilter(true);
         }
@@ -318,7 +296,7 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
     if (index == -1 || p.equals(getPluginManager().getExampleProgram())) {
       AbstractAction actionDontWant = getActionDontWantToSee(p);
 
-      if (mSimpleMenu && !mCtrlPressed) {
+      if (mSettings.isSimpleMenu() && !mCtrlPressed) {
         final Matcher matcher = PATTERN_TITLE_PART.matcher(p.getTitle());
         if (matcher.matches()) {
           actionDontWant = getActionInputTitle(p);
@@ -348,8 +326,8 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
         "edit-paste", 16)) {
       public void actionPerformed(final ActionEvent e) {
         final int index = getSearchTextIndexForProgram(p);
-        mSearchList.remove(index);
-        updateFilter(!mSwitchToMyFilter);
+        mSettings.getSearchList().remove(index);
+        updateFilter(!mSettings.isSwitchToMyFilter());
       }
     };
   }
@@ -387,10 +365,10 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
             test = input.getText().replaceAll("\\*+", "\\*").trim();
 
             if (test.length() >= 0 && !test.equals("*")) {
-              mSearchList.add(new IDontWant2SeeListEntry(input.getText(),
+              mSettings.getSearchList().add(new IDontWant2SeeListEntry(input.getText(),
                   caseSensitive.isSelected()));
-              mLastEnteredExclusionString = input.getText();
-              updateFilter(!mSwitchToMyFilter);
+              mSettings.setLastEnteredExclusionString(input.getText());
+              updateFilter(!mSettings.isSwitchToMyFilter());
             }
           }
 
@@ -410,14 +388,14 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
     return new AbstractAction(mLocalizer.msg("menu.completeCaseSensitive",
         "Complete title case-sensitive")) {
       public void actionPerformed(final ActionEvent e) {
-        mSearchList.add(new IDontWant2SeeListEntry(p.getTitle(), true));
-        mLastEnteredExclusionString = p.getTitle();
-        updateFilter(!mSwitchToMyFilter);
+        mSettings.getSearchList().add(new IDontWant2SeeListEntry(p.getTitle(), true));
+        mSettings.setLastEnteredExclusionString(p.getTitle());
+        updateFilter(!mSettings.isSwitchToMyFilter());
       }
     };
   }
   
-  private void updateFilter(final boolean update) {
+  void updateFilter(final boolean update) {
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         if(!update) {
@@ -446,120 +424,56 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
         final StringBuilder value = new StringBuilder("*");
         value.append(in.readUTF()).append("*");
         
-        mSearchList.add(new IDontWant2SeeListEntry(value.toString(),false));
+        mSettings.getSearchList().add(new IDontWant2SeeListEntry(value.toString(),false));
       }
       
       if(version == 2) {
         n = in.readInt();
         
         for(int i = 0; i < n; i++) {
-          mSearchList.add(new IDontWant2SeeListEntry(in.readUTF(),true));
+          mSettings.getSearchList().add(new IDontWant2SeeListEntry(in.readUTF(),true));
         }
         
-        mSimpleMenu = false;
+        mSettings.setSimpleMenu(false);
       }
     }
     else {
       for(int i = 0; i < n; i++) {
-        mSearchList.add(new IDontWant2SeeListEntry(in, version));
+        mSettings.getSearchList().add(new IDontWant2SeeListEntry(in, version));
       }
       
-      mSimpleMenu = in.readBoolean();
+      mSettings.setSimpleMenu(in.readBoolean());
       
       if(version >= 4) {
-        mSwitchToMyFilter = in.readBoolean();
+        mSettings.setSwitchToMyFilter(in.readBoolean());
       }
       if(version >= 5) {
-        mLastEnteredExclusionString = in.readUTF();
+        mSettings.setLastEnteredExclusionString(in.readUTF());
       }
       if(version >= 6) {
-        mLastUsedDate = new Date(in);
+        mSettings.setLastUsedDate(new Date(in));
       }
     }
   }
   
   public void writeData(final ObjectOutputStream out) throws IOException {
     out.writeInt(6); //version
-    out.writeInt(mSearchList.size());
+    out.writeInt(mSettings.getSearchList().size());
     
-    for(IDontWant2SeeListEntry entry : mSearchList) {
+    for(IDontWant2SeeListEntry entry : mSettings.getSearchList()) {
       entry.writeData(out);
     }
     
-    out.writeBoolean(mSimpleMenu);
-    out.writeBoolean(mSwitchToMyFilter);
+    out.writeBoolean(mSettings.isSimpleMenu());
+    out.writeBoolean(mSettings.isSwitchToMyFilter());
     
-    out.writeUTF(mLastEnteredExclusionString);
+    out.writeUTF(mSettings.getLastEnteredExclusionString());
     
-    mLastUsedDate.writeData(out);
+    mSettings.getLastUsedDate().writeData(out);
   }
   
   public SettingsTab getSettingsTab() {
-    return new SettingsTab() {
-      private JCheckBox mAutoSwitchToMyFilter;
-      private JRadioButton mSimpleContextMenu;
-      private JRadioButton mCascadedContextMenu;
-      private ExclusionTablePanel mExclusionPanel;
-      
-      public JPanel createSettingsPanel() {
-        final CellConstraints cc = new CellConstraints();
-        final PanelBuilder pb = new PanelBuilder(
-            new FormLayout("5dlu,default,0dlu:grow,default",
-            "default,10dlu,default,5dlu,default,5dlu,default,5dlu,fill:default:grow"));        
-        
-        final PanelBuilder pb2 = new PanelBuilder(new FormLayout(
-            "default,2dlu,default",
-            "default,1dlu,default,default"));
-        
-        mSimpleContextMenu = new JRadioButton(mLocalizer.msg("settings.menu.simple","Direct in the context menu:"),mSimpleMenu);
-        mSimpleContextMenu.setHorizontalTextPosition(JRadioButton.RIGHT);
-        
-        mCascadedContextMenu = new JRadioButton(mLocalizer.msg("settings.menu.cascaded","In a sub menu:"),!mSimpleMenu);
-        mCascadedContextMenu.setHorizontalTextPosition(JRadioButton.RIGHT);
-        mCascadedContextMenu.setVerticalAlignment(JRadioButton.TOP);
-        
-        final ButtonGroup bg = new ButtonGroup();
-        
-        bg.add(mSimpleContextMenu);
-        bg.add(mCascadedContextMenu);
-        
-        pb2.add(mSimpleContextMenu, cc.xy(1,1));
-        pb2.addLabel("-" + mLocalizer.msg("name","I don't want to see!") + " (" + mLocalizer.msg("menu.completeCaseSensitive","Instant exclusion with title") + ")", cc.xy(3,1));
-        
-        pb2.add(mCascadedContextMenu, cc.xy(1,3));
-        pb2.addLabel("-" + mLocalizer.msg("menu.completeCaseSensitive","Instant exclusion with title"), cc.xy(3,3));
-        pb2.addLabel("-" + mLocalizer.msg("menu.userEntered","User entered value"), cc.xy(3,4));
-        
-        mAutoSwitchToMyFilter = new JCheckBox(mLocalizer.msg("settings.autoFilter","Automatically activate filter on adding/removing"),mSwitchToMyFilter);
-                
-        pb.add(mAutoSwitchToMyFilter, cc.xyw(2,1,3));
-        pb.addSeparator(mLocalizer.msg("settings.contextMenu","Context menu"), cc.xyw(1,3,4));
-        pb.add(pb2.getPanel(), cc.xyw(2,5,3));
-        pb.addSeparator(mLocalizer.msg("settings.search","Search"), cc.xyw(1,7,4));
-        pb.add(mExclusionPanel = new ExclusionTablePanel(), cc.xyw(2,9,3));
-        
-        final JPanel p = new JPanel(new FormLayout("0dlu,0dlu:grow",
-            "5dlu,fill:default:grow"));
-        p.add(pb.getPanel(), cc.xy(2,2));
-        
-        return p;
-      }
-
-      public Icon getIcon() {
-        return createImageIcon("apps","idontwant2see",16);
-      }
-
-      public String getTitle() {
-        return null;
-      }
-
-      public void saveSettings() {
-        mSimpleMenu = mSimpleContextMenu.isSelected();
-        mSwitchToMyFilter = mAutoSwitchToMyFilter.isSelected();
-        
-        mExclusionPanel.saveSettings();
-      }      
-    };
+    return new IDontWant2SeeSettingsTab(mSettings);
   }
   
   protected static Date getCurrentDate() {
@@ -571,180 +485,6 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
     return (Class<? extends PluginsFilterComponent>[]) new Class[] {IDontWant2SeeFilterComponent.class};
   }
   
-  private class ExclusionTablePanel extends JPanel {
-    private JTable mTable;
-    private IDontWant2SeeSettingsTableModel mTableModel;
-    
-    protected ExclusionTablePanel() {
-      mTableModel = new IDontWant2SeeSettingsTableModel(mSearchList,mLastEnteredExclusionString);
-      
-      final IDontWant2SeeSettingsTableRenderer renderer = new IDontWant2SeeSettingsTableRenderer(mLastUsedDate);        
-      mTable = new JTable(mTableModel);
-      mTableModel.setTable(mTable);
-      mTable.setRowHeight(25);
-      mTable.setPreferredScrollableViewportSize(new Dimension(200,150));
-      mTable.getColumnModel().getColumn(0).setCellRenderer(renderer);
-      mTable.getColumnModel().getColumn(1).setCellRenderer(renderer);
-      mTable.getColumnModel().getColumn(1).setMaxWidth(Locale.getDefault().getLanguage().equals("de") ? Sizes.dialogUnitXAsPixel(80,mTable) : Sizes.dialogUnitXAsPixel(55,mTable));
-      mTable.getColumnModel().getColumn(1).setMinWidth(mTable.getColumnModel().getColumn(1).getMaxWidth());
-      mTable.getTableHeader().setReorderingAllowed(false);
-      mTable.getTableHeader().setResizingAllowed(false);
-      
-      final JScrollPane scrollPane = new JScrollPane(mTable);
-      
-      mTable.addMouseListener(new MouseAdapter() {
-        public void mouseClicked(final MouseEvent e) {
-          final int column = mTable.columnAtPoint(e.getPoint());
-          
-          if(column == 1) {
-            final int row = mTable.rowAtPoint(e.getPoint());
-            
-            mTable.getModel().setValueAt(!((Boolean)mTable.getValueAt(row,column)),row,1);
-            mTable.repaint();
-          }
-        }
-      });
-      
-      mTable.addKeyListener(new KeyAdapter() {
-        public void keyPressed(final KeyEvent e) {
-          if(e.getKeyCode() == KeyEvent.VK_DELETE) {
-            deleteSelectedRows();
-            e.consume();
-          }
-          else if(mTable.getSelectedColumn() == 1 && 
-              (e.getKeyCode() == KeyEvent.VK_F2 || e.getKeyCode() == KeyEvent.VK_SPACE)) {
-            mTable.getModel().setValueAt(!((Boolean)mTable.getValueAt(mTable.getSelectedRow(),1)),
-                mTable.getSelectedRow(),1);
-            mTable.repaint();
-          }
-        }
-      });
-      
-      addAncestorListener(new AncestorListener() {
-        public void ancestorAdded(final AncestorEvent event) {
-          for(int row = 0; row < mTableModel.getRowCount(); row++) {
-            if(mTableModel.isLastChangedRow(row)) {
-              final Rectangle rect = mTable.getCellRect(row, 0, true);
-            	rect.setBounds(0,scrollPane.getVisibleRect().height + rect.y - rect.height,0,0);
-            	
-              mTable.scrollRectToVisible(rect);
-              break;
-            }
-          }
-        }
-
-        public void ancestorMoved(final AncestorEvent event) {
-        }
-
-        public void ancestorRemoved(final AncestorEvent event) {
-        }
-      });
-      
-      final JButton add = new JButton(mLocalizer.msg("settings.add",
-          "Add entry"),
-          createImageIcon("actions","document-new",16));
-      add.addActionListener(new ActionListener() {
-        public void actionPerformed(final ActionEvent e) {
-          mTableModel.addRow();
-          mTable.scrollRectToVisible(mTable.getCellRect(mTableModel.getRowCount()-1,0,true));
-        }
-      });
-      
-      final JButton delete = new JButton(mLocalizer.msg("settings.delete",
-          "Delete selected entries"),createImageIcon("actions","edit-delete",16));
-      delete.setEnabled(false);
-      delete.addActionListener(new ActionListener() {
-        public void actionPerformed(final ActionEvent e) {
-          deleteSelectedRows();
-        }
-      });
-      
-      mTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-        public void valueChanged(final ListSelectionEvent e) {
-          if(!e.getValueIsAdjusting()) {
-            delete.setEnabled(e.getFirstIndex() >= 0);
-          }
-        }
-      });
-      
-      final FormLayout layout = new FormLayout("default,0dlu:grow,default",
-          "fill:default:grow,1dlu,default,4dlu,default,5dlu,pref");
-      final PanelBuilder pb = new PanelBuilder(layout, this);
-      final CellConstraints cc = new CellConstraints();
-      
-      int y = 1;
-      
-      pb.add(scrollPane, cc.xyw(1,y++,3));
-      
-      final PanelBuilder pb2 = new PanelBuilder(
-          new FormLayout("default,3dlu:grow,default,3dlu:grow,default,3dlu:grow,default",
-              "default"));
-      
-      final ColorLabel blueLabel = new ColorLabel(
-          IDontWant2SeeSettingsTableRenderer.LAST_CHANGED_COLOR);
-      blueLabel.setText(mLocalizer.msg("changed","Last change"));
-      pb2.add(blueLabel, cc.xy(1,1));
-      
-      final ColorLabel yellowLabel = new ColorLabel(
-          IDontWant2SeeSettingsTableRenderer.LAST_USAGE_7_COLOR);
-      yellowLabel.setText(mLocalizer.msg("unusedSince","Not used for {0} days",IDontWant2SeeSettingsTableRenderer.OUTDATED_7_DAY_COUNT));
-      pb2.add(yellowLabel, cc.xy(3,1));
-      
-      final ColorLabel orangeLabel = new ColorLabel(
-          IDontWant2SeeSettingsTableRenderer.LAST_USAGE_30_COLOR);
-      orangeLabel.setText(mLocalizer.msg("unusedSince","Not used for {0} days",IDontWant2SeeSettingsTableRenderer.OUTDATED_30_DAY_COUNT));
-      pb2.add(orangeLabel, cc.xy(5,1));
-      
-      final ColorLabel redLabel = new ColorLabel(
-          IDontWant2SeeSettingsTableRenderer.NOT_VALID_COLOR);
-      redLabel.setText(mLocalizer.msg("invalid","Invalid"));
-      pb2.add(redLabel, cc.xy(7,1));
-      
-      pb.add(pb2.getPanel(), cc.xyw(1,++y,3));
-      
-      y++;
-      pb.add(add, cc.xy(1,++y));
-      pb.add(delete, cc.xy(3,y++));
-      pb.add(UiUtilities.createHelpTextArea(mLocalizer.msg("settings.help",
-      "To edit a value double click a cell. You can use wildcard * to search for any text.")), cc.xyw(1,++y,3));
-    }
-    
-    private void deleteSelectedRows() {
-      final int selectedIndex = mTable.getSelectedRow();
-      final int[] selection = mTable.getSelectedRows();
-      
-      for(int i = selection.length-1; i >= 0; i--) {
-        mTableModel.deleteRow(selection[i]);
-      }
-      
-      if ((selectedIndex > 0) && (selectedIndex<mTable.getRowCount())) {
-        mTable.setRowSelectionInterval(selectedIndex,selectedIndex);
-      }
-      else if(mTable.getRowCount() > 0) {
-        if(mTable.getRowCount() - selectedIndex > 0) {
-          mTable.setRowSelectionInterval(0,0);
-        }
-        else {
-          mTable.setRowSelectionInterval(mTable.getRowCount()-1,mTable.getRowCount()-1);
-        }
-      }
-    }
-    
-    protected void saveSettings() {
-      if(mTable.isEditing()) {
-        mTable.getCellEditor().stopCellEditing();
-      }
-      
-      mSearchList = mTableModel.getChangedList();
-      
-      if(mTableModel.getLastChangedValue() != null) {
-        mLastEnteredExclusionString = mTableModel.getLastChangedValue();
-      }
-      
-      updateFilter(true);
-    }
-  }
-
   @Override
   public boolean canReceiveProgramsWithTarget() {
     return true;
@@ -764,12 +504,12 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
       if (programArr.length > 0) {
         for (Program program : programArr) {
           if (getSearchTextIndexForProgram(program) == -1) {
-            mSearchList
+            mSettings.getSearchList()
                 .add(new IDontWant2SeeListEntry(program.getTitle(), true));
-            mLastEnteredExclusionString = program.getTitle();
+            mSettings.setLastEnteredExclusionString(program.getTitle());
           }
         }
-        updateFilter(!mSwitchToMyFilter);
+        updateFilter(!mSettings.isSwitchToMyFilter());
       }
       return true;
     }
