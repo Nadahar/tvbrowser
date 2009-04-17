@@ -30,17 +30,17 @@ import java.awt.BorderLayout;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.Calendar;
 
-import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import util.ui.TabLayout;
+import util.ui.customizableitems.SelectableItemList;
 import devplugin.Program;
 
 /**
- * This Filter Filters for certain Days of the Week
+ * This Filter filters for certain Days of the Week
  * 
  * @author bodum
  * 
@@ -49,12 +49,12 @@ public class DayFilterComponent extends AbstractFilterComponent {
 
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer
       .getLocalizerFor(DayFilterComponent.class);
+  private final String[] allDays = new String[] {mLocalizer.msg("monday", "Monday"), mLocalizer.msg("tuesday", "Tuesday"), mLocalizer.msg("wednesday", "Wednesday"), mLocalizer.msg("thursday", "Thursday"), mLocalizer.msg("friday", "Friday"), mLocalizer.msg("saturday", "Saturday"), mLocalizer.msg("sunday", "Sunday")};
 
   private int mSelectedDays;
-  JCheckBox mMonday, mTuesday, mWednesday, mThursday, mFriday, mSaturday,
-      mSunday;
+  private SelectableItemList mList;
 
-  public DayFilterComponent(String name, String description) {
+  public DayFilterComponent(final String name, final String description) {
     super(name, description);
     mSelectedDays = 0;
   }
@@ -63,12 +63,12 @@ public class DayFilterComponent extends AbstractFilterComponent {
     this("", "");
   }
 
-  public void read(ObjectInputStream in, int version) throws IOException,
+  public void read(final ObjectInputStream in, final int version) throws IOException,
       ClassNotFoundException {
     mSelectedDays = in.readInt();
   }
 
-  public void write(ObjectOutputStream out) throws IOException {
+  public void write(final ObjectOutputStream out) throws IOException {
     out.writeInt(mSelectedDays);
   }
 
@@ -79,85 +79,39 @@ public class DayFilterComponent extends AbstractFilterComponent {
 
   public void saveSettings() {
     mSelectedDays = 0;
-
-    if (mMonday.isSelected()) {
-      mSelectedDays = mSelectedDays | 1;
+    Object[] selection = mList.getSelection();
+    ArrayList<String> listSelection = new ArrayList<String>(selection.length);
+    for (Object object : selection) {
+      listSelection.add((String) object);
     }
-    if (mTuesday.isSelected()) {
-      mSelectedDays = mSelectedDays | 2;
-    }
-    if (mWednesday.isSelected()) {
-      mSelectedDays = mSelectedDays | 4;
-    }
-    if (mThursday.isSelected()) {
-      mSelectedDays = mSelectedDays | 8;
-    }
-    if (mFriday.isSelected()) {
-      mSelectedDays = mSelectedDays | 16;
-    }
-    if (mSaturday.isSelected()) {
-      mSelectedDays = mSelectedDays | 32;
-    }
-    if (mSunday.isSelected()) {
-      mSelectedDays = mSelectedDays | 64;
+    
+    int bit = 1;
+    for (int day = 0; day < 7; day++) {
+      if (listSelection.contains(allDays[day])) {
+        mSelectedDays |= bit;
+      }
+      bit <<= 1;
     }
   }
 
   public JPanel getSettingsPanel() {
-    JPanel content = new JPanel(new TabLayout(1, 0, 5));
+    final JPanel content = new JPanel(new BorderLayout());
     content.add(new JLabel(mLocalizer.msg("description",
         "This filter accepts programs belonging to the following channels:")),
         BorderLayout.NORTH);
 
-    mMonday = new JCheckBox(mLocalizer.msg("monday", "Monday"));
-    content.add(mMonday);
+    ArrayList<String> selectedDays = new ArrayList<String>();
 
-    if ((mSelectedDays & 1) > 0) {
-      mMonday.setSelected(true);
+    int bit = 1;
+    for (int day = 0; day < 7; day++) {
+      if ((mSelectedDays & bit) > 0) {
+        selectedDays.add(allDays[day]);
+      }
+      bit <<= 1;
     }
 
-    mTuesday = new JCheckBox(mLocalizer.msg("tuesday", "Tuesday"));
-    content.add(mTuesday);
-
-    if ((mSelectedDays & 2) > 0) {
-      mTuesday.setSelected(true);
-    }
-
-    mWednesday = new JCheckBox(mLocalizer.msg("wednesday", "Wednesday"));
-    content.add(mWednesday);
-
-    if ((mSelectedDays & 4) > 0) {
-      mWednesday.setSelected(true);
-    }
-
-    mThursday = new JCheckBox(mLocalizer.msg("thursday", "Thursday"));
-    content.add(mThursday);
-
-    if ((mSelectedDays & 8) > 0) {
-      mThursday.setSelected(true);
-    }
-
-    mFriday = new JCheckBox(mLocalizer.msg("friday", "Friday"));
-    content.add(mFriday);
-
-    if ((mSelectedDays & 16) > 0) {
-      mFriday.setSelected(true);
-    }
-
-    mSaturday = new JCheckBox(mLocalizer.msg("saturday", "Saturday"));
-    content.add(mSaturday);
-
-    if ((mSelectedDays & 32) > 0) {
-      mSaturday.setSelected(true);
-    }
-
-    mSunday = new JCheckBox(mLocalizer.msg("sunday", "Sunday"));
-    content.add(mSunday);
-
-    if ((mSelectedDays & 64) > 0) {
-      mSunday.setSelected(true);
-    }
-
+    mList = new SelectableItemList(selectedDays.toArray(), allDays);
+    content.add(mList, BorderLayout.CENTER);
     return content;
   }
 
