@@ -212,4 +212,22 @@ public class TVBrowserIcons {
   public static ImageIcon quit(int size) {
     return icon("actions", "system-log-out", size);
   }
+
+  /**
+   * full screen icon
+   * @param size
+   * @return
+   */
+  public static ImageIcon fullScreen(int size) {
+    return icon("actions", "view-fullscreen", size);
+  }
+
+  /**
+   * warning icon
+   * @param size
+   * @return
+   */
+  public static ImageIcon warning(int size) {
+    return icon("status", "dialog-warning", size);
+  }
 }

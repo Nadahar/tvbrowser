@@ -256,7 +256,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
     mViewMenu = new JMenu(mLocalizer.msg("menuitem.view","View"));
 
     mFullscreenMI = new JCheckBoxMenuItem(mLocalizer.msg("menuitem.fullscreen","Fullscreen"));
-    mFullscreenMI.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "view-fullscreen", 16));
+    mFullscreenMI.setIcon(TVBrowserIcons.fullScreen(TVBrowserIcons.SIZE_SMALL));
     mFullscreenMI.addActionListener(this);
     new MenuHelpTextAdapter(mFullscreenMI, mLocalizer.msg("menuinfo.fullscreen",""), mLabel);
 

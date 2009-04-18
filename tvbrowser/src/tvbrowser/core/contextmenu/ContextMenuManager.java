@@ -37,7 +37,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
 import tvbrowser.core.Settings;
-import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
@@ -391,7 +390,7 @@ public class ContextMenuManager {
         if (MainFrame.getInstance().isFullScreenMode()) {
           JMenuItem item = new JMenuItem(menuIf.toString());
           item.setFont(MenuUtil.CONTEXT_MENU_PLAINFONT);
-          item.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "view-fullscreen", 16));
+          item.setIcon(TVBrowserIcons.fullScreen(TVBrowserIcons.SIZE_SMALL));
           item.addActionListener(new ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent e) {
               if (MainFrame.getInstance().isFullScreenMode()) {
