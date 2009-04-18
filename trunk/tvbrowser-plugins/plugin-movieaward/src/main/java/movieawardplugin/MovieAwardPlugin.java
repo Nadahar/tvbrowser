@@ -220,8 +220,9 @@ final public class MovieAwardPlugin extends Plugin {
   }
 
   public boolean hasAwards(final Program program) {
-    if (!mStartFinished) {
-      return false;
+    // this can be called before startFinished due to the movie award filter
+    if (mMovieAwards == null) {
+      initDatabase();
     }
     // no awards for very short programs
     final int length = program.getLength();
