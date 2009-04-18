@@ -27,25 +27,19 @@
 package tvbrowser.core.filters.filtercomponents;
 
 import java.awt.BorderLayout;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
-import javax.swing.border.EmptyBorder;
 
-import util.ui.ScrollableJPanel;
-
-import com.jgoodies.forms.builder.DefaultFormBuilder;
-import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.layout.FormLayout;
-
+import util.ui.customizableitems.SelectableItemList;
+import util.ui.customizableitems.SelectableItemRendererCenterComponentIf;
 import devplugin.Program;
 import devplugin.ProgramInfoHelper;
 
@@ -55,6 +49,8 @@ import devplugin.ProgramInfoHelper;
  * @author bodo
  */
 public class ProgramInfoFilterComponent extends AbstractFilterComponent {
+
+  private SelectableItemList mList;
 
   /**
    * Erzeugt einen leeren Filter
@@ -95,7 +91,7 @@ public class ProgramInfoFilterComponent extends AbstractFilterComponent {
       return false;
     }
 
-    return bitSet(info, selectedBits);
+    return bitSet(info, mSelectedBits);
   }
 
   /**
@@ -106,7 +102,7 @@ public class ProgramInfoFilterComponent extends AbstractFilterComponent {
    */
   public void read(ObjectInputStream in, int version) throws IOException,
       ClassNotFoundException {
-    selectedBits = in.readInt();
+    mSelectedBits = in.readInt();
   }
 
   /**
@@ -115,7 +111,7 @@ public class ProgramInfoFilterComponent extends AbstractFilterComponent {
    * @see tvbrowser.core.filters.FilterComponent#write(java.io.ObjectOutputStream)
    */
   public void write(ObjectOutputStream out) throws IOException {
-    out.writeInt(selectedBits);
+    out.writeInt(mSelectedBits);
   }
 
   /**
@@ -124,40 +120,53 @@ public class ProgramInfoFilterComponent extends AbstractFilterComponent {
    * @see tvbrowser.core.filters.FilterComponent#getSettingsPanel()
    */
   public JPanel getSettingsPanel() {
-    FormLayout layout = new FormLayout("pref, 3dlu, pref", "");
-    DefaultFormBuilder builder = new DefaultFormBuilder(layout,
-        new ScrollableJPanel());
-    builder.setDefaultDialogBorder();
-    builder.setBorder(Borders.EMPTY_BORDER);
-
-    _checkBox = new JCheckBox[ProgramInfoHelper.mInfoMsgArr.length];
-
+    final JPanel centerPanel = new JPanel(new BorderLayout());
+    final String[] allItems = new String[ProgramInfoHelper.mInfoMsgArr.length];
+    final ArrayList<String> selectedItems = new ArrayList<String>();
     for (int i = 0; i < ProgramInfoHelper.mInfoMsgArr.length; i++) {
-
-      final JCheckBox box = new JCheckBox();
-      _checkBox[i] = box;
-      JLabel label = new JLabel(" " + ProgramInfoHelper.mInfoMsgArr[i],
-          ProgramInfoHelper.mInfoIconArr[i], SwingConstants.LEFT);
-      label.setBorder(new EmptyBorder(0, 5, 0, 0));
-
-      if (bitSet(selectedBits, ProgramInfoHelper.mInfoBitArr[i])) {
-        box.setSelected(true);
+      final String item = ProgramInfoHelper.mInfoMsgArr[i];
+      allItems[i] = item;
+      if (bitSet(mSelectedBits, ProgramInfoHelper.mInfoBitArr[i])) {
+        selectedItems.add(item);
       }
-
-      label.addMouseListener(new MouseAdapter() {
-        @Override
-        public void mouseClicked(MouseEvent e) {
-          box.setSelected(!box.isSelected());
-        }
-      });
-
-      builder.append(box);
-      builder.append(label);
-      builder.nextLine();
     }
+    mList = new SelectableItemList(selectedItems.toArray(), allItems);
+    mList.addCenterRendererComponent(String.class,
+        new SelectableItemRendererCenterComponentIf() {
 
-    JPanel centerPanel = new JPanel(new BorderLayout());
-    centerPanel.add(new JScrollPane(builder.getPanel()), BorderLayout.CENTER);
+          private DefaultListCellRenderer mRenderer = new DefaultListCellRenderer();
+
+          @Override
+          public void calculateSize(JList list, int index, JPanel contentPane) {
+          }
+
+          @Override
+          public JPanel createCenterPanel(JList list, Object value, int index,
+              boolean isSelected, boolean isEnabled,
+              JScrollPane parentScrollPane, int leftColumnWidth) {
+            DefaultListCellRenderer label = (DefaultListCellRenderer) mRenderer
+                .getListCellRendererComponent(list, value, index, isSelected,
+                    false);
+            label.setIcon(ProgramInfoHelper.mInfoIconArr[index]);
+            label.setHorizontalAlignment(SwingConstants.LEADING);
+            label.setVerticalAlignment(SwingConstants.CENTER);
+            label.setOpaque(false);
+
+            JPanel panel = new JPanel(new BorderLayout());
+            if (isSelected && isEnabled) {
+              panel.setOpaque(true);
+              panel.setForeground(list.getSelectionForeground());
+              panel.setBackground(list.getSelectionBackground());
+            } else {
+              panel.setOpaque(false);
+              panel.setForeground(list.getForeground());
+              panel.setBackground(list.getBackground());
+            }
+            panel.add(label, BorderLayout.WEST);
+            return panel;
+          }
+        });
+    centerPanel.add(mList, BorderLayout.CENTER);
     return centerPanel;
   }
 
@@ -168,14 +177,19 @@ public class ProgramInfoFilterComponent extends AbstractFilterComponent {
    * @see tvbrowser.core.filters.FilterComponent#saveSettings()
    */
   public void saveSettings() {
-    int selectedBits = 0;
+    int bits = 0;
 
-    for (int i = 0; i < _checkBox.length; i++) {
-      if (_checkBox[i].isSelected()) {
-        selectedBits = selectedBits | ProgramInfoHelper.mInfoBitArr[i];
+    final Object[] checked = mList.getSelection();
+    for (int checkedIndex = 0; checkedIndex < checked.length; checkedIndex++) {
+      final String item = (String) checked[checkedIndex];
+      for (int infoIndex = 0; infoIndex < ProgramInfoHelper.mInfoMsgArr.length; infoIndex++) {
+        if (item.equals(ProgramInfoHelper.mInfoMsgArr[infoIndex])) {
+          bits |= ProgramInfoHelper.mInfoBitArr[infoIndex];
+          break;
+        }
       }
     }
-    this.selectedBits = selectedBits;
+    mSelectedBits = bits;
   }
 
   /**
@@ -195,19 +209,14 @@ public class ProgramInfoFilterComponent extends AbstractFilterComponent {
    *          diese pattern pruefen
    * @return Pattern gesetzt?
    */
-  private boolean bitSet(int num, int pattern) {
+  private boolean bitSet(final int num, final int pattern) {
     return (num & pattern) == pattern;
   }
 
   /**
    * Die gesetzten Bits
    */
-  private int selectedBits = 0;
-
-  /**
-   * Die CheckBoxen fuer den Panel
-   */
-  private JCheckBox[] _checkBox;
+  private int mSelectedBits = 0;
 
   /**
    * Der Lokalizer
