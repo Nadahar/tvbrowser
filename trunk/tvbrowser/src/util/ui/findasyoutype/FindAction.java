@@ -16,7 +16,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.Position;
 
-import tvbrowser.core.icontheme.IconLoader;
+import util.ui.TVBrowserIcons;
 
 /**
  * This TextComponentFindAction is based on the Implementation of Santhosh
@@ -60,7 +60,7 @@ public abstract class FindAction extends AbstractAction implements DocumentListe
     
     mComponent = comp;
     mMessage = new JLabel(mLocalizer.msg("notFound", "Phrase not found"));
-    mMessage.setIcon(IconLoader.getInstance().getIconFromTheme("status","dialog-warning",16));
+    mMessage.setIcon(TVBrowserIcons.warning(TVBrowserIcons.SIZE_SMALL));
     mMessage.setVisible(false);
     
     install(comp);

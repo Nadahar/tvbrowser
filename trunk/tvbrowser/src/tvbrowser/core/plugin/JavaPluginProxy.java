@@ -41,7 +41,6 @@ import javax.swing.Icon;
 import javax.swing.JOptionPane;
 
 import tvbrowser.core.PluginLoader;
-import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvdataservice.MutableChannelDayProgram;
 import util.exc.TvBrowserException;
@@ -49,6 +48,7 @@ import util.io.IOUtilities;
 import util.io.stream.ObjectOutputStreamProcessor;
 import util.io.stream.StreamUtilities;
 import util.ui.Localizer;
+import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 import devplugin.ActionMenu;
 import devplugin.ChannelDayProgram;
@@ -359,14 +359,12 @@ public class JavaPluginProxy extends AbstractPluginProxy {
           if (action.getValue(Action.SMALL_ICON) == null) {
             mLog.warning("Small icon missing for button action "
                 + action.getValue(Action.NAME));
-            action.putValue(Action.SMALL_ICON, IconLoader.getInstance()
-                .getIconFromTheme("status", "dialog-warning", 16));
+            action.putValue(Action.SMALL_ICON, TVBrowserIcons.warning(TVBrowserIcons.SIZE_SMALL));
           }
           if (action.getValue(Plugin.BIG_ICON) == null) {
             mLog.warning("Big icon missing for button action "
                 + action.getValue(Action.NAME));
-            action.putValue(Plugin.BIG_ICON, IconLoader.getInstance()
-                .getIconFromTheme("status", "dialog-warning", 22));
+            action.putValue(Plugin.BIG_ICON, TVBrowserIcons.warning(TVBrowserIcons.SIZE_LARGE));
           }
         }
       }
