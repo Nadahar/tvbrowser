@@ -48,6 +48,7 @@ import devplugin.Date;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.PluginTreeNode;
+import devplugin.PluginsFilterComponent;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
 import devplugin.ProgramFilter;
@@ -109,7 +110,7 @@ public final class ImdbPlugin extends Plugin {
     return new Icon[]{new ImdbIcon(rating)};
   }
 
-  private ImdbRating getRatingFor(final Program program) {
+  protected ImdbRating getRatingFor(final Program program) {
     ImdbRating rating = null;
     if (!mExcludedChannels.contains(program.getChannel())) {
       final String cacheKey = getCacheKey(program);
@@ -477,5 +478,10 @@ public final class ImdbPlugin extends Plugin {
 
   public void setCurrentDatabaseVersion() {
     mSettings.setCurrentDatabaseVersion();
+  }
+  
+  @Override
+  public Class<? extends PluginsFilterComponent>[] getAvailableFilterComponentClasses() {
+    return (Class<? extends PluginsFilterComponent>[]) new Class[] { ImdbFilterComponent.class };
   }
 }
