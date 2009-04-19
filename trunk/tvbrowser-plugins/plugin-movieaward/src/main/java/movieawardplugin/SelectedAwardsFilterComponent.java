@@ -52,7 +52,7 @@ public class SelectedAwardsFilterComponent extends PluginsFilterComponent {
     allAwards.addAll(MovieAwardPlugin.getInstance().getMovieAwards());
     Collections.sort(allAwards, new Comparator<MovieAward>(){
 
-      public int compare(MovieAward award1, MovieAward award2) {
+      public int compare(final MovieAward award1, final MovieAward award2) {
         return award1.getName().compareToIgnoreCase(award2.getName());
       }});
     mAwardsList = new SelectableItemList(mSelectedAwards.toArray(), allAwards.toArray());
