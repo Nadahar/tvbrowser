@@ -10,6 +10,7 @@ import devplugin.Channel;
 
 public class NRKParser extends AbstractParser {
 
+  private static final Pattern PATTERN_ID = Pattern.compile("prosjekt/(\\d+)");
   private static final String SITE_URL = "http://www1.nrk.no";
   private static final String MAIN_URL = "http://www1.nrk.no/nett-tv/";
   //private static final String CONTENT_URL = MAIN_URL + "bokstav/@";
@@ -53,14 +54,13 @@ public class NRKParser extends AbstractParser {
   }
 
   public void parseEpisodes(final MediathekProgram program) {
-    String pageUrl = program.getUrl();
-    // get page of program
-    Pattern IdPattern = Pattern.compile("prosjekt/(\\d+)");
-    Matcher IdMatcher = IdPattern.matcher(pageUrl);
-    if (IdMatcher.find()) {
-      String content = readUrl("http://www1.nrk.no/nett-tv/DynamiskLaster.aspx?ProjectList$project:"+IdMatcher.group(1));
+    final String pageUrl = program.getUrl();
+    final Matcher idMatcher = PATTERN_ID.matcher(pageUrl);
+    if (idMatcher.find()) {
+      final String content = readUrl("http://www1.nrk.no/nett-tv/DynamiskLaster.aspx?ProjectList$project:"
+          + idMatcher.group(1));
 
-      Matcher matcher = EPISODE_PATTERN.matcher(content);
+      final Matcher matcher = EPISODE_PATTERN.matcher(content);
 
       int count =0;
       while (matcher.find() && count<30) {
@@ -68,7 +68,7 @@ public class NRKParser extends AbstractParser {
         final String url = SITE_URL + matcher.group(1);
         final String title = MediathekPlugin.getInstance().convertHTML(
             matcher.group(3));
-        String icon = matcher.group(2);
+        final String icon = matcher.group(2);
         if (icon.equals("icon-folder-black")) {
           type = "link"; //folder
         } else if (icon.equals("icon-video-black")) {
