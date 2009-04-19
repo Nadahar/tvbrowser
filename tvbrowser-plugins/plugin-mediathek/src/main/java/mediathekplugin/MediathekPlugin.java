@@ -279,11 +279,31 @@ public class MediathekPlugin extends Plugin {
       title = title.substring(0, title.length() - 3).trim();
       mediathekProgram = findProgram(channel, title);
     }
+    // now check also for partial title matches. partial titles are constructed
+    // by adding each word of the title until a match is found or 3 words are
+    // reached
+    if (mediathekProgram == null && title.indexOf(' ') >= 0) {
+      final String[] parts = title.split(" ");
+      final StringBuilder builder = new StringBuilder();
+      for (int i = 0; i <= Math.min(parts.length - 1, 2); i++) {
+        if (i > 0) {
+          builder.append(' ');
+        }
+        builder.append(parts[i]);
+        if (builder.length() > 5) {
+          final String partTitle = builder.toString();
+          mediathekProgram = findProgram(channel, partTitle);
+          if (mediathekProgram != null) {
+            return mediathekProgram;
+          }
+        }
+      }
+    }
     return mediathekProgram;
   }
 
   private MediathekProgram findProgram(final Channel channel, final String title) {
-    List<MediathekProgram> list = mPrograms.get(title);
+    final List<MediathekProgram> list = mPrograms.get(title);
     if (list == null) {
       return null;
     }
@@ -399,7 +419,7 @@ public class MediathekPlugin extends Plugin {
   }
 
   private void readMediathekContents() {
-    Thread contentThread = new Thread("Read Mediathek contents") {
+    final Thread contentThread = new Thread("Read Mediathek contents") {
       @Override
       public void run() {
         for (AbstractParser reader : mParsers) {
