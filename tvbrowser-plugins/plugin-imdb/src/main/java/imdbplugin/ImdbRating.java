@@ -37,6 +37,10 @@ public final class ImdbRating {
   public int getRating() {
     return mRating;
   }
+  
+  public double getRatingRelative() {
+    return (double) mRating / MAX_RATING_NORMALIZATION;
+  }
 
   public int getVotes() {
     return mVotes;
