@@ -45,7 +45,7 @@ import devplugin.Version;
 
 public class CheckerPlugin extends Plugin {
 
-  private static final Version mVersion = new Version(0, 1, false);
+  private static final Version mVersion = new Version(0, 2, false);
 
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer
       .getLocalizerFor(CheckerPlugin.class);
@@ -56,7 +56,8 @@ public class CheckerPlugin extends Plugin {
 
   private PluginInfo mPluginInfo;
 
-  private ImageIcon mWarnIcon;
+  private ImageIcon mWarnIcon = Plugin.getPluginManager().getIconFromTheme(
+      this, "status", "dialog-warning", 16);
 
   private PluginTreeNode mRootNode = new PluginTreeNode(this, false);
 
@@ -266,12 +267,6 @@ public class CheckerPlugin extends Plugin {
       results.add(mLocalizer.msg("issue.missingCategory",
           "Category info missing for genre {0}", genre));
     }
-  }
-
-  @Override
-  public void onActivation() {
-    mWarnIcon = Plugin.getPluginManager().getIconFromTheme(this, "status",
-        "dialog-warning", 16);
   }
 
   @Override
