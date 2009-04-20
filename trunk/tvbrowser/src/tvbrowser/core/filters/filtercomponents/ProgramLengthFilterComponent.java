@@ -65,7 +65,8 @@ public class ProgramLengthFilterComponent extends AbstractFilterComponent {
    * @param description
    *          Beschreibung
    */
-  public ProgramLengthFilterComponent(String name, String description) {
+  public ProgramLengthFilterComponent(final String name,
+      final String description) {
     super(name, description);
   }
 
@@ -83,13 +84,17 @@ public class ProgramLengthFilterComponent extends AbstractFilterComponent {
    * 
    * @see tvbrowser.core.filters.FilterComponent#accept(devplugin.Program)
    */
-  public boolean accept(Program program) {
+  public boolean accept(final Program program) {
 
-    if (_useMin && (program.getLength() < _min)) {
+    final int length = program.getLength();
+    if (length < 0) {
+      return true;
+    }
+    if (mUseMin && (length < mMin)) {
       return false;
     }
 
-    if (_useMax && (program.getLength() > _max)) {
+    if (mUseMax && (length > mMax)) {
       return false;
     }
 
@@ -102,12 +107,13 @@ public class ProgramLengthFilterComponent extends AbstractFilterComponent {
    * @see tvbrowser.core.filters.FilterComponent#read(java.io.ObjectInputStream,
    *      int)
    */
-  public void read(ObjectInputStream in, int version) throws IOException,
+  public void read(final ObjectInputStream in, final int version)
+      throws IOException,
       ClassNotFoundException {
-    _useMin = in.readBoolean();
-    _useMax = in.readBoolean();
-    _min = in.readInt();
-    _max = in.readInt();
+    mUseMin = in.readBoolean();
+    mUseMax = in.readBoolean();
+    mMin = in.readInt();
+    mMax = in.readInt();
   }
 
   /**
@@ -115,11 +121,11 @@ public class ProgramLengthFilterComponent extends AbstractFilterComponent {
    * 
    * @see tvbrowser.core.filters.FilterComponent#write(java.io.ObjectOutputStream)
    */
-  public void write(ObjectOutputStream out) throws IOException {
-    out.writeBoolean(_useMin);
-    out.writeBoolean(_useMax);
-    out.writeInt(_min);
-    out.writeInt(_max);
+  public void write(final ObjectOutputStream out) throws IOException {
+    out.writeBoolean(mUseMin);
+    out.writeBoolean(mUseMax);
+    out.writeInt(mMin);
+    out.writeInt(mMax);
   }
 
   /**
@@ -128,53 +134,53 @@ public class ProgramLengthFilterComponent extends AbstractFilterComponent {
    * @see tvbrowser.core.filters.FilterComponent#getSettingsPanel()
    */
   public JPanel getSettingsPanel() {
-    JPanel panel = new JPanel();
+    final JPanel panel = new JPanel();
 
-    _minSpinner = new JSpinner(new SpinnerNumberModel(_min, 0, 1000, 1));
-    _maxSpinner = new JSpinner(new SpinnerNumberModel(_max, 0, 1000, 1));
-    _minBox = new JCheckBox(mLocalizer.msg("minimum", "minimum in Minutes")
-        + ":", _useMin);
-    _maxBox = new JCheckBox(mLocalizer.msg("maximum", "maximum in Minutes")
-        + ":", _useMax);
+    mMinSpinner = new JSpinner(new SpinnerNumberModel(mMin, 0, 1000, 1));
+    mMaxSpinner = new JSpinner(new SpinnerNumberModel(mMax, 1, 1000, 1));
+    mMinCheck = new JCheckBox(mLocalizer.msg("minimum", "minimum in Minutes")
+        + ":", mUseMin);
+    mMaxCheck = new JCheckBox(mLocalizer.msg("maximum", "maximum in Minutes")
+        + ":", mUseMax);
 
-    if (!_useMin) {
-      _minSpinner.setEnabled(false);
+    if (!mUseMin) {
+      mMinSpinner.setEnabled(false);
     }
 
-    if (!_useMax) {
-      _maxSpinner.setEnabled(false);
+    if (!mUseMax) {
+      mMaxSpinner.setEnabled(false);
     }
 
-    _minBox.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        _minSpinner.setEnabled(_minBox.isSelected());
+    mMinCheck.addActionListener(new ActionListener() {
+      public void actionPerformed(final ActionEvent e) {
+        mMinSpinner.setEnabled(mMinCheck.isSelected());
       }
     });
-    _maxBox.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        _maxSpinner.setEnabled(_maxBox.isSelected());
+    mMaxCheck.addActionListener(new ActionListener() {
+      public void actionPerformed(final ActionEvent e) {
+        mMaxSpinner.setEnabled(mMaxCheck.isSelected());
       }
     });
 
     panel.setLayout(new GridBagLayout());
 
-    GridBagConstraints a = new GridBagConstraints();
+    final GridBagConstraints a = new GridBagConstraints();
     a.gridwidth = GridBagConstraints.REMAINDER;
     a.fill = GridBagConstraints.NONE;
 
-    GridBagConstraints b = new GridBagConstraints();
+    final GridBagConstraints b = new GridBagConstraints();
     b.fill = GridBagConstraints.NONE;
 
-    _minSpinner.setEditor(new JSpinner.NumberEditor(_minSpinner, "###0"));
-    _maxSpinner.setEditor(new JSpinner.NumberEditor(_maxSpinner, "###0"));
+    mMinSpinner.setEditor(new JSpinner.NumberEditor(mMinSpinner, "###0"));
+    mMaxSpinner.setEditor(new JSpinner.NumberEditor(mMaxSpinner, "###0"));
 
-    panel.add(_minBox, b);
-    panel.add(_minSpinner, a);
+    panel.add(mMinCheck, b);
+    panel.add(mMinSpinner, a);
 
-    panel.add(_maxBox, b);
-    panel.add(_maxSpinner, a);
+    panel.add(mMaxCheck, b);
+    panel.add(mMaxSpinner, a);
 
-    JPanel centerPanel = new JPanel(new BorderLayout());
+    final JPanel centerPanel = new JPanel(new BorderLayout());
     centerPanel.add(panel, BorderLayout.NORTH);
     return centerPanel;
   }
@@ -185,10 +191,10 @@ public class ProgramLengthFilterComponent extends AbstractFilterComponent {
    * @see tvbrowser.core.filters.FilterComponent#saveSettings()
    */
   public void saveSettings() {
-    _min = ((Integer) _minSpinner.getValue()).intValue();
-    _max = ((Integer) _maxSpinner.getValue()).intValue();
-    _useMin = _minBox.isSelected();
-    _useMax = _maxBox.isSelected();
+    mMin = ((Integer) mMinSpinner.getValue()).intValue();
+    mMax = ((Integer) mMaxSpinner.getValue()).intValue();
+    mUseMin = mMinCheck.isSelected();
+    mUseMax = mMaxCheck.isSelected();
   }
 
   /**
@@ -206,17 +212,17 @@ public class ProgramLengthFilterComponent extends AbstractFilterComponent {
       .getLocalizerFor(ProgramLengthFilterComponent.class);
 
   /** Minimal-L�nge */
-  private int _min;
+  private int mMin = 5;
   /** Maximal-L�nge */
-  private int _max;
+  private int mMax = 90;
   /** Minimum benutzen? */
-  private boolean _useMin;
+  private boolean mUseMin = true;
   /** Maximum benutzen */
-  private boolean _useMax;
+  private boolean mUseMax = true;
 
   /** GUI-Komponenten f�r das Panel */
-  private JSpinner _minSpinner;
-  private JSpinner _maxSpinner;
-  private JCheckBox _minBox;
-  private JCheckBox _maxBox;
+  private JSpinner mMinSpinner;
+  private JSpinner mMaxSpinner;
+  private JCheckBox mMinCheck;
+  private JCheckBox mMaxCheck;
 }
