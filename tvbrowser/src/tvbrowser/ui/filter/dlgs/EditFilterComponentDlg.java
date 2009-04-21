@@ -68,6 +68,7 @@ import tvbrowser.core.filters.filtercomponents.ProgramInfoFilterComponent;
 import tvbrowser.core.filters.filtercomponents.ProgramLengthFilterComponent;
 import tvbrowser.core.filters.filtercomponents.ProgramMarkingPriorityFilterComponent;
 import tvbrowser.core.filters.filtercomponents.ProgramRunningFilterComponent;
+import tvbrowser.core.filters.filtercomponents.ProgramTypeFilterComponent;
 import tvbrowser.core.filters.filtercomponents.ReminderFilterComponent;
 import tvbrowser.core.filters.filtercomponents.TimeFilterComponent;
 import tvbrowser.core.plugin.PluginManagerImpl;
@@ -151,8 +152,8 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
       set.add(new AgeLimitFilterComponent());
       set.add(new BeanShellFilterComponent());
       set.add(new ChannelFilterComponent());
-      set.add(new DayFilterComponent());
       set.add(new DateFilterComponent());
+      set.add(new DayFilterComponent());
       set.add(new FavoritesFilterComponent());
       set.add(new KeywordFilterComponent());
       set.add(new MassFilterComponent());
@@ -162,6 +163,7 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
       set.add(new ProgramLengthFilterComponent());
       set.add(new ProgramMarkingPriorityFilterComponent());
       set.add(new ProgramRunningFilterComponent());
+      set.add(new ProgramTypeFilterComponent());
       set.add(new ReminderFilterComponent());
       set.add(new TimeFilterComponent());
   
