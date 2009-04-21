@@ -51,6 +51,7 @@ import tvbrowser.core.filters.filtercomponents.ProgramInfoFilterComponent;
 import tvbrowser.core.filters.filtercomponents.ProgramLengthFilterComponent;
 import tvbrowser.core.filters.filtercomponents.ProgramMarkingPriorityFilterComponent;
 import tvbrowser.core.filters.filtercomponents.ProgramRunningFilterComponent;
+import tvbrowser.core.filters.filtercomponents.ProgramTypeFilterComponent;
 import tvbrowser.core.filters.filtercomponents.ReminderFilterComponent;
 import tvbrowser.core.filters.filtercomponents.TimeFilterComponent;
 import tvbrowser.core.plugin.PluginManagerImpl;
@@ -170,6 +171,8 @@ public class FilterComponentList {
           description);
     } else if (className.endsWith(".ProgramRunningFilterComponent")) {
       filterComponent = new ProgramRunningFilterComponent(name, description);
+    } else if (className.endsWith(".ProgramTypeFilterComponent")) {
+      filterComponent = new ProgramTypeFilterComponent(name, description);
     } else if (className.endsWith(".ReminderFilterComponent")) {
       filterComponent = new ReminderFilterComponent(name, description);
     } else if (className.endsWith(".TimeFilterComponent")) {

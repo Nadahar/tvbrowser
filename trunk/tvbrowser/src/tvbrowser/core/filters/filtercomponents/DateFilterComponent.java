@@ -45,6 +45,13 @@ import devplugin.Program;
  */
 public class DateFilterComponent extends AbstractFilterComponent {
 
+  private static final util.ui.Localizer mLocalizer = util.ui.Localizer
+      .getLocalizerFor(DateFilterComponent.class);
+  private JSpinner mFromSpinner;
+  private JSpinner mToSpinner;
+  private int mStartDays = 0;
+  private int mEndDays = 7;
+
   public DateFilterComponent(String name, String description) {
     super(name, description);
   }
@@ -52,13 +59,6 @@ public class DateFilterComponent extends AbstractFilterComponent {
   public DateFilterComponent() {
     this("", "");
   }
-
-  private static final util.ui.Localizer mLocalizer = util.ui.Localizer
-      .getLocalizerFor(DateFilterComponent.class);
-  private JSpinner mFromSpinner;
-  private JSpinner mToSpinner;
-  private int mStartDays = 0;
-  private int mEndDays = 7;
 
   @Override
   public boolean accept(Program program) {
@@ -72,7 +72,7 @@ public class DateFilterComponent extends AbstractFilterComponent {
 
   @Override
   public JPanel getSettingsPanel() {
-    
+
     FormLayout layout = new FormLayout(
         "pref, 3dlu, fill:pref:grow, 3dlu, pref", "");
     JPanel content = new JPanel(layout);
@@ -94,8 +94,8 @@ public class DateFilterComponent extends AbstractFilterComponent {
     mFromSpinner = new JSpinner(new SpinnerNumberModel(0, 0, 28, 1));
     mFromSpinner.setValue(0);
     content.add(mFromSpinner, cc.xy(3, currentRow));
-    content.add(new JLabel(mLocalizer.msg("from.2", "days")), cc
-        .xy(5, currentRow));
+    content.add(new JLabel(mLocalizer.msg("from.2", "days")), cc.xy(5,
+        currentRow));
 
     layout.appendRow(RowSpec.decode("pref"));
 

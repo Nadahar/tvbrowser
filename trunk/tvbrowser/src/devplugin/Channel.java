@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.RandomAccessFile;
+import java.util.HashMap;
 import java.util.TimeZone;
 
 import javax.swing.Icon;
@@ -73,6 +74,10 @@ public class Channel implements Comparable<Channel> {
   public static final int CATEGORY_PAY_TV = 1 << 9;
   /** The identifier for a channel that is in the category payed data TV */
   public static final int CATEGORY_PAYED_DATA_TV = 1 << 10;
+  
+  private static HashMap<Integer, String> categoryName; 
+  private static final util.ui.Localizer mLocalizer = util.ui.Localizer
+      .getLocalizerFor(Channel.class);
 
   /**
    * @deprecated
@@ -971,5 +976,43 @@ public class Channel implements Comparable<Channel> {
    */
   public String getUniqueId() {
     return new StringBuilder(getDataServiceProxy().getId()).append("_").append(getGroup().getId()).append("_").append(getCountry()).append("_").append(getId()).toString();
+  }
+
+  /**
+   * get the localized name of the given category
+   * 
+   * @param category
+   *          category bit, see Channel.CATEGORY_XYZ
+   * @return localized name
+   * @since 3.0
+   */
+  public static String getLocalizedCategory(final int category) {
+    if (categoryName == null) {
+      categoryName = new HashMap<Integer, String>(12);
+      categoryName.put(CATEGORY_NONE, mLocalizer.msg("categoryNone",
+          "Not categorized"));
+      categoryName.put(CATEGORY_TV, mLocalizer.msg("categoryTVAll", "TV"));
+      categoryName
+          .put(CATEGORY_RADIO, mLocalizer.msg("categoryRadio", "Radio"));
+      categoryName.put(CATEGORY_CINEMA, mLocalizer.msg("categoryCinema",
+          "Cinema"));
+      categoryName.put(CATEGORY_EVENTS, mLocalizer.msg("categoryEvents",
+          "Events"));
+      categoryName.put(CATEGORY_DIGITAL, mLocalizer.msg("categoryDigital",
+          "Digitale"));
+      categoryName.put(CATEGORY_SPECIAL_MUSIC, mLocalizer.msg("categoryMusic",
+          "Musik"));
+      categoryName.put(CATEGORY_SPECIAL_SPORT, mLocalizer.msg("categorySport",
+          "Sport"));
+      categoryName.put(CATEGORY_SPECIAL_NEWS, mLocalizer.msg("categoryNews",
+          "Nachrichten"));
+      categoryName.put(CATEGORY_SPECIAL_OTHER, mLocalizer.msg("categoryOthers",
+          "Sonstige Sparten"));
+      categoryName.put(CATEGORY_PAY_TV, mLocalizer.msg("categoryPayTV",
+          "Pay TV"));
+      categoryName.put(CATEGORY_PAYED_DATA_TV, mLocalizer.msg(
+          "categoryPayedData", "Payed Data"));
+    }
+    return categoryName.get(category);
   }
 }

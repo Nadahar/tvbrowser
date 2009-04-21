@@ -112,7 +112,7 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
   /**
    * Translation
    */
-  public static final util.ui.Localizer mLocalizer = util.ui.Localizer
+  private static final util.ui.Localizer mLocalizer = util.ui.Localizer
       .getLocalizerFor(ChannelsSettingsTab.class);
 
   /**
@@ -515,57 +515,45 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
         Channel.CATEGORY_RADIO, Channel.CATEGORY_NONE }));
 
     if (channelListContains(allChannels, Channel.CATEGORY_TV)) {
-      mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryTVAll", "TV"),
-          Channel.CATEGORY_TV));
+      addCategoryFilter(Channel.CATEGORY_TV);
 
       if (channelListContains(allChannels, Channel.CATEGORY_TV)) {
         mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryNotSpecial",
             "TV"), Channel.CATEGORY_TV * -1));
       }
       if (channelListContains(allChannels, Channel.CATEGORY_DIGITAL)) {
-        mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryDigital",
-            "Digitale"), Channel.CATEGORY_DIGITAL));
+        addCategoryFilter(Channel.CATEGORY_DIGITAL);
       }
       if (channelListContains(allChannels, Channel.CATEGORY_SPECIAL_MUSIC)) {
-        mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryMusic",
-            "Musik"), Channel.CATEGORY_SPECIAL_MUSIC));
+        addCategoryFilter(Channel.CATEGORY_SPECIAL_MUSIC);
       }
       if (channelListContains(allChannels, Channel.CATEGORY_SPECIAL_SPORT)) {
-        mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categorySport",
-            "Sport"), Channel.CATEGORY_SPECIAL_SPORT));
+        addCategoryFilter(Channel.CATEGORY_SPECIAL_SPORT);
       }
       if (channelListContains(allChannels, Channel.CATEGORY_SPECIAL_NEWS)) {
-        mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryNews",
-            "Nachrichten"), Channel.CATEGORY_SPECIAL_NEWS));
+        addCategoryFilter(Channel.CATEGORY_SPECIAL_NEWS);
       }
       if (channelListContains(allChannels, Channel.CATEGORY_SPECIAL_OTHER)) {
-        mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryOthers",
-            "Sonstige Sparten"), Channel.CATEGORY_SPECIAL_OTHER));
+        addCategoryFilter(Channel.CATEGORY_SPECIAL_OTHER);
       }
       if (channelListContains(allChannels, Channel.CATEGORY_PAY_TV)) {
-        mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryPayTV",
-            "Pay TV"), Channel.CATEGORY_PAY_TV));
+        addCategoryFilter(Channel.CATEGORY_PAY_TV);
       }
       if (channelListContains(allChannels, Channel.CATEGORY_RADIO)) {
-        mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryRadio",
-            "Radio"), Channel.CATEGORY_RADIO));
+        addCategoryFilter(Channel.CATEGORY_RADIO);
       }
     }
     if (channelListContains(allChannels, Channel.CATEGORY_CINEMA)) {
-      mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryCinema",
-          "Kino"), Channel.CATEGORY_CINEMA));
+      addCategoryFilter(Channel.CATEGORY_CINEMA);
     }
     if (channelListContains(allChannels, Channel.CATEGORY_EVENTS)) {
-      mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryEvents",
-          "Events"), Channel.CATEGORY_EVENTS));
+      addCategoryFilter(Channel.CATEGORY_EVENTS);
     }
     if (channelListContains(allChannels, Channel.CATEGORY_PAYED_DATA_TV)) {
-      mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryPayedData",
-          "Payed Data"), Channel.CATEGORY_PAYED_DATA_TV));
+      addCategoryFilter(Channel.CATEGORY_PAYED_DATA_TV);
     }
     if (channelListContains(allChannels, Channel.CATEGORY_NONE)) {
-      mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryNone",
-          "Not categorized"), Channel.CATEGORY_NONE));
+      addCategoryFilter(Channel.CATEGORY_NONE);
     }
 
     if(mCategoryCB.getItemCount() > Settings.propSelectedChannelCategoryIndex.getByte()) {
@@ -599,6 +587,11 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
     if(Settings.propSelectedChannelCountryIndex.getShort() < mCountryCB.getItemCount()) {
       mCountryCB.setSelectedIndex(Settings.propSelectedChannelCountryIndex.getShort());
     }
+  }
+
+  private void addCategoryFilter(final int category) {
+    mCategoryCB.addItem(new FilterItem(Channel.getLocalizedCategory(category),
+        category));
   }
 
   /**
