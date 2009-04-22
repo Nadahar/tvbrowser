@@ -55,8 +55,6 @@ public class SettingsItem {
   public static final String PROGRAMPANELLOOK = "#programpanellook";
   public static final String PROGRAMPANELMARKING = "#programpanelmarking";
   public static final String PROGRAMTABLELOOK = "#programtablelook";
-  /** @deprecated since 2.6 Has no target! */
-  public static final String CHANNELLISTLOOK = "#channellistllook";
   
   public static final String TVDATASERVICES = "#tvdataservice";
   public static final String PICTURES = "#pictures";

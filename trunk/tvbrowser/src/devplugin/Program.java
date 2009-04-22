@@ -96,12 +96,6 @@ public interface Program {
   public static final int INFO_ORIGINAL_WITH_SUBTITLE  = 1 << 11;
   
   /**
-   * @deprecated Use {@link #INFO_SUBTITLE_FOR_AURALLY_HANDICAPPED}
-   *             or {@link #INFO_ORIGINAL_WITH_SUBTITLE} instead.
-   */
-  public static final int INFO_SUBTITLE = INFO_SUBTITLE_FOR_AURALLY_HANDICAPPED;
-  
-  /**
    * This program is a movie.
    * @since 2.6/2.2.4 
    */
@@ -405,12 +399,6 @@ public interface Program {
    * Gets whether this program is marked as "on air".
    */
   public boolean isOnAir();
-
-  /**
-   * Gets all {@link PluginAccess}s that have marked this program.
-   * @deprecated Use {@link #getMarkerArr}
-   */
-  public PluginAccess[] getMarkedByPlugins();
 
   /**
    * Gets all {@link Marker}s that have marked this program.
