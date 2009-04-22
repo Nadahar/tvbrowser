@@ -183,9 +183,7 @@ public class ProgramInfoPrintDialog implements WindowClosingIf{
       }
     });
     
-    boolean hasImage = program.hasFieldValue(ProgramFieldType.IMAGE_TYPE)
-        || program.hasFieldValue(ProgramFieldType.PICTURE_TYPE);
-    
+    boolean hasImage = program.hasFieldValue(ProgramFieldType.PICTURE_TYPE);
     boolean hasIcons = program.getMarkerArr().length > 0;
     
     if(!hasIcons) {

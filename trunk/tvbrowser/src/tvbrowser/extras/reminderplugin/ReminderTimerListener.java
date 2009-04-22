@@ -43,8 +43,8 @@ import util.io.ExecutionHandler;
 import util.io.IOUtilities;
 import util.paramhandler.ParamParser;
 import devplugin.Date;
-import devplugin.ProgramReceiveIf;
 import devplugin.Program;
+import devplugin.ProgramReceiveIf;
 import devplugin.ProgramReceiveTarget;
 
 public class ReminderTimerListener {
@@ -104,7 +104,7 @@ public class ReminderTimerListener {
     
     for (ProgramReceiveTarget target : targets) {
       ProgramReceiveIf plugin = target.getReceifeIfForIdOfTarget();
-      if (plugin != null && (plugin.canReceiveProgramsWithTarget() || plugin.canReceivePrograms())) {
+      if (plugin != null && plugin.canReceiveProgramsWithTarget()) {
         Program[] prArray = { item.getProgram()};
         plugin.receivePrograms(prArray, target);
       }

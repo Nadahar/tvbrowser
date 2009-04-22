@@ -694,30 +694,6 @@ public class Settings {
   public static final ChannelArrayProperty propSubscribedChannels = new ChannelArrayProperty(
       mProp, "subscribedchannels", new devplugin.Channel[] {});
 
-  /**
-   * @deprecated
-   */
-  public static final IntProperty propEarlyTime = new IntProperty(mProp,
-      "timebutton.early", 6 * 60);
-
-  /**
-   * @deprecated
-   */
-  public static final IntProperty propMiddayTime = new IntProperty(mProp,
-      "timebutton.midday", 12 * 60);
-
-  /**
-   * @deprecated
-   */
-  public static final IntProperty propAfternoonTime = new IntProperty(mProp,
-      "timebutton.afternoon", 18 * 60);
-
-  /**
-   * @deprecated
-   */
-  public static final IntProperty propEveningTime = new IntProperty(mProp,
-      "timebutton.evening", 20 * 60);
-
   public static final ChoiceProperty propTableLayout = new ChoiceProperty(
       mProp, "table.layout", "optimizedCompactTimeBlock", new String[] {
           "timeSynchronous", "compact", "realSynchronous" , "realCompact",
@@ -918,12 +894,6 @@ public class Settings {
   public static final BooleanProperty propIsStatusbarVisible = new BooleanProperty(
       mProp, "isStatusbarVisible", true);
 
-  /**
-   * @deprecated Deprecated with Version 2.2, now propLookAndFeel is used
-   */
-  public static final BooleanProperty propIsSkinLFEnabled = new BooleanProperty(
-      mProp, "skinLF.enabled", false);
-
   public static final StringProperty propSkinLFThemepack = new StringProperty(
       mProp, "skinLF.themepack", "themepacks/themepack.zip");
 
@@ -1065,7 +1035,10 @@ public class Settings {
     * @deprecated since 2.5.3 */
   public static final BooleanProperty propProgramTableMarkedDefaultPriorityShowsColor = new BooleanProperty(
       mProp, "programpanel.markedShowsColor", true);
-  /** Used to track if a program panel should use addtional space for the mark icons */
+  /**
+   * Used to track if a program panel should use additional space for the mark
+   * icons
+   */
   public static final BooleanProperty propProgramPanelUsesExtraSpaceForMarkIcons = new BooleanProperty(
       mProp, "programpanel.usesExtraSpaceForMarkIcons", true
       );

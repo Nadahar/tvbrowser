@@ -832,7 +832,10 @@ public class PluginManagerImpl implements PluginManager {
     }
     
     for(PluginAccess plugin : plugins) {
-      if((plugin.canReceivePrograms() || plugin.canReceiveProgramsWithTarget()) && plugin.getProgramReceiveTargets() != null && plugin.getProgramReceiveTargets().length > 0 &&
+      if (plugin.canReceiveProgramsWithTarget()
+          && plugin.getProgramReceiveTargets() != null
+          && plugin.getProgramReceiveTargets().length > 0
+          &&
           ((caller == null || plugin.getId().compareTo(caller.getId()) != 0) || (plugin.getId().compareTo(caller.getId()) == 0) && callerTarget != null && !(plugin.getProgramReceiveTargets().length == 1 && plugin.getProgramReceiveTargets()[0].equals(callerTarget)))) {
         receiveIfs.add(plugin);
       }

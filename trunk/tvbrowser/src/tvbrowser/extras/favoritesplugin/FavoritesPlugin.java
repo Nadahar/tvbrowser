@@ -984,7 +984,7 @@ public class FavoritesPlugin {
     ArrayList<ProgramReceiveTarget> list = new ArrayList<ProgramReceiveTarget>(0);
     for (ProgramReceiveTarget target : mClientPluginTargets) {
       ProgramReceiveIf plugin = target.getReceifeIfForIdOfTarget();
-      if (plugin != null && (plugin.canReceivePrograms() || plugin.canReceiveProgramsWithTarget())) {
+      if (plugin != null && plugin.canReceiveProgramsWithTarget()) {
         list.add(target);
       }
     }

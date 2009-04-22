@@ -173,7 +173,9 @@ public abstract class AbstractContextMenu implements ContextMenu {
     
     PluginProxy[] plugins = PluginProxyManager.getInstance().getActivatedPlugins();
     for (final PluginProxy plugin : plugins) {
-     if ((plugin.canReceivePrograms() || plugin.canReceiveProgramsWithTarget()) && plugin.getProgramReceiveTargets() != null && plugin.getProgramReceiveTargets().length > 0) {
+     if ((plugin.canReceiveProgramsWithTarget())
+          && plugin.getProgramReceiveTargets() != null
+          && plugin.getProgramReceiveTargets().length > 0) {
         if ((currentPlugin == null) || (!currentPlugin.getId().equals(plugin.getId()))) {
           ProgramReceiveTarget[] targets = plugin.getProgramReceiveTargets();
           if (!plugin.canReceiveProgramsWithTarget()) {

@@ -77,7 +77,6 @@ import tvbrowser.extras.programinfo.ProgramInfo;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import tvbrowser.extras.searchplugin.SearchPlugin;
 import tvbrowser.ui.configassistant.TvBrowserPictureSettingsUpdateDialog;
-import tvbrowser.ui.configassistant.TvBrowserUpdateAssistant;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.splashscreen.DummySplash;
 import tvbrowser.ui.splashscreen.Splash;
@@ -299,15 +298,6 @@ public class TVBrowser {
     Settings.propTVBrowserVersion.setVersion(VERSION);
     Settings.propTVBrowserVersionIsStable.setBoolean(VERSION.isStable());
     
-    if (currentVersion != null && currentVersion.compareTo(new Version(1,11))<0) {
-      mLog.info("Running tvbrowser update assistant");
-      updateLookAndFeel();
-      showUpdateAssistant();
-    }
-    else if(currentVersion != null && currentVersion.compareTo(new Version(2,53,false)) < 0) {
-      Settings.propProgramPanelUsedDefaultMarkPriority.setInt(Settings.propProgramTableMarkedDefaultPriorityShowsColor.getBoolean() ? 0 : -1);
-    }
-
     final Splash splash;
 
     if (mShowSplashScreen && Settings.propSplashShow.getBoolean()) {
@@ -467,10 +457,8 @@ public class TVBrowser {
             // check if user should select picture settings
             if(currentVersion != null && currentVersion.compareTo(new Version(2,22))<0) {
               TvBrowserPictureSettingsUpdateDialog.createAndShow(mainFrame);
-              Settings.propIsSkinLFEnabled.setBoolean(false);
             }
             else if(currentVersion != null && currentVersion.compareTo(new Version(2,51,true)) < 0) {
-              Settings.propIsSkinLFEnabled.setBoolean(false);
               Settings.propAcceptedLicenseArrForServiceIds.setStringArray(new String[0]);
             }
             
@@ -618,18 +606,6 @@ public class TVBrowser {
     }
 
     lockFile.delete();
-  }
-
-
-  private static void showUpdateAssistant() {
-    TvBrowserUpdateAssistant dlg = new TvBrowserUpdateAssistant(null);
-    UiUtilities.centerAndShow(dlg);
-    if (dlg.getResult() == TvBrowserUpdateAssistant.CONFIGURE_TVBROWSER) {
-      Settings.propShowAssistant.setBoolean(true);
-    }
-    else if (dlg.getResult() == TvBrowserUpdateAssistant.CANCEL) {
-      System.exit(2);
-    }
   }
 
 
@@ -957,8 +933,8 @@ public class TVBrowser {
     UIManager.installLookAndFeel("Plastic XP Look And Feel",        "com.jgoodies.looks.plastic.PlasticXPLookAndFeel");    
     UIManager.installLookAndFeel("Skin Look And Feel",              "com.l2fprod.gui.plaf.skin.SkinLookAndFeel");    
 
-    if (Settings.propIsSkinLFEnabled.getBoolean() || Settings.propLookAndFeel.getString().equals("com.l2fprod.gui.plaf.skin.SkinLookAndFeel")) {
-      Settings.propLookAndFeel.setString("com.l2fprod.gui.plaf.skin.SkinLookAndFeel");
+    if (Settings.propLookAndFeel.getString().equals(
+        "com.l2fprod.gui.plaf.skin.SkinLookAndFeel")) {
       String themepack = Settings.propSkinLFThemepack.getString();
       try {
         File themepackFile = new File(themepack);
