@@ -200,61 +200,6 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
   protected abstract PluginInfo doGetInfo();
 
   /**
-   * Gets whether the plugin supports receiving programs from other plugins.
-   * 
-   * @return Whether the plugin supports receiving programs from other plugins.
-   * @see #receivePrograms(Program[])
-   * @deprecated Since 2.5
-   */
-  @Deprecated
-  public final boolean canReceivePrograms() {
-    try {
-      return doCanReceivePrograms();
-    } catch (Throwable exc) {
-      handlePluginException(exc);
-      return false;
-    }
-  }
-
-  /**
-   * Really gets whether the plugin supports receiving programs from other
-   * plugins.
-   * 
-   * @return Whether the plugin supports receiving programs from other plugins.
-   * @see #receivePrograms(Program[])
-   * @deprecated Since 2.5
-   */
-  @Deprecated
-  protected abstract boolean doCanReceivePrograms();
-
-  /**
-   * Receives a list of programs from another plugin.
-   * 
-   * @param programArr The programs passed from the other plugin.
-   * @see #canReceivePrograms()
-   * @deprecated Since 2.5
-   */
-  @Deprecated
-  public final void receivePrograms(Program[] programArr) {
-    try {
-      assertActivatedState();
-      doReceivePrograms(programArr);
-    } catch (Throwable exc) {
-      handlePluginException(exc);
-    }
-  }
-
-  /**
-   * Really receives a list of programs from another plugin.
-   * 
-   * @param programArr The programs passed from the other plugin.
-   * @see #canReceivePrograms()
-   * @deprecated Since 2.5
-   */
-  @Deprecated
-  protected abstract void doReceivePrograms(Program[] programArr);
-
-  /**
    * Gets the SettingsTab object, which is added to the settings-window.
    * 
    * @return the SettingsTab object or <code>null</code> if the plugin does

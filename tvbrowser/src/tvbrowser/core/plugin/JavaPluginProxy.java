@@ -293,31 +293,6 @@ public class JavaPluginProxy extends AbstractPluginProxy {
 
 
   /**
-   * Really gets whether the plugin supports receiving programs from other
-   * plugins.
-   * 
-   * @return Whether the plugin supports receiving programs from other plugins.
-   * @see #receivePrograms(Program[])
-   * @deprecated Since 2.5
-   */
-  protected boolean doCanReceivePrograms() {
-    return mPlugin.canReceivePrograms();
-  }
-
-
-  /**
-   * Really receives a list of programs from another plugin.
-   * 
-   * @param programArr The programs passed from the other plugin.
-   * @see #canReceivePrograms()
-   * @deprecated Since 2.5
-   */
-  protected void doReceivePrograms(Program[] programArr) {
-    mPlugin.receivePrograms(programArr);
-  }
-
-
-  /**
    * Really gets the SettingsTab object, which is added to the settings-window.
    * 
    * @return the SettingsTab object or <code>null</code> if the plugin does not

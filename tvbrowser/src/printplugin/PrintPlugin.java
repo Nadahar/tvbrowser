@@ -308,7 +308,7 @@ public class PrintPlugin extends Plugin {
   }
 
 
-  public boolean canReceivePrograms() {
+  public boolean canReceiveProgramsWithTarget() {
     return true;
   }
 

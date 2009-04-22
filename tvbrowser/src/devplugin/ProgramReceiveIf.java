@@ -34,26 +34,6 @@ package devplugin;
 public interface ProgramReceiveIf {
   
   /**
-   * Gets whether the ProgramReceiveIf supports receiving programs from other plugins.
-   * 
-   * @return Whether the ProgramReceiveIf supports receiving programs from other plugins.
-   * 
-   * @see #receivePrograms(Program[])
-   * @deprecated Since 2.5 Use {@link #canReceiveProgramsWithTarget()} instead.
-   */
-  public boolean canReceivePrograms();  
-  
-  /**
-   * Receives a list of programs from another plugin.
-   * 
-   * @param programArr The programs passed from the other plugin.
-   * 
-   * @see #canReceivePrograms()
-   * @deprecated Since 2.5 Use {@link #receivePrograms(Program[],ProgramReceiveTarget)} instead.
-   */
-  public void receivePrograms(Program[] programArr);
-  
-  /**
    * Gets whether the ProgramReceiveIf supports receiving programs from other plugins with a special target.
    * 
    * @return Whether the ProgramReceiveIf supports receiving programs from other plugins with a special target.

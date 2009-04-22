@@ -98,16 +98,6 @@ public class ReminderPluginProxy implements ButtonActionIf, ContextMenuIf, Progr
         mLocalizer.msg("programTarget", "Remind"), PROGRAM_TARGET_REMIND) };
   }
   
-  /** @deprecated Since 2.5 */
-  public boolean canReceivePrograms() {
-    return true;
-  }
-
-  /** @deprecated Since 2.5 */
-  public void receivePrograms(Program[] programArr) {
-    mReminderInstance.addPrograms(programArr);
-  }
-
   public Icon getMarkIcon() {
     if(mMarkIcon == null)
       mMarkIcon = IconLoader.getInstance().getIconFromTheme("apps", "appointment", 16);

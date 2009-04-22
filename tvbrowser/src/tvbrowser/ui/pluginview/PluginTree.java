@@ -374,7 +374,7 @@ public class PluginTree extends JTree implements DragGestureListener,
                   for (PluginProxy pluginAccess : pluginAccessArray) {
                     if (pluginAccess.getRootNode() != null) {
                       if (pluginAccess.getRootNode().getMutableTreeNode().equals(target)) {
-                        if ((pluginAccess.canReceivePrograms() || pluginAccess.canReceiveProgramsWithTarget())) {
+                        if (pluginAccess.canReceiveProgramsWithTarget()) {
                           e.acceptDrag(e.getDropAction());
                           reject = false;
                           temp = pluginAccess;
@@ -618,7 +618,9 @@ public class PluginTree extends JTree implements DragGestureListener,
                     for (PluginProxy pluginAccess : pa) {
                       if (pluginAccess.getRootNode() != null) {
                         if (pluginAccess.getRootNode().getMutableTreeNode().equals(target)) {
-                          if ((pluginAccess.canReceivePrograms() || pluginAccess.canReceiveProgramsWithTarget()) && pluginAccess.getProgramReceiveTargets() != null && pluginAccess.getProgramReceiveTargets().length > 0) {
+                          if (pluginAccess.canReceiveProgramsWithTarget()
+                              && pluginAccess.getProgramReceiveTargets() != null
+                              && pluginAccess.getProgramReceiveTargets().length > 0) {
                             pluginAccess.receivePrograms(p,pluginAccess.getProgramReceiveTargets()[0]);
                           } else {
                             break;

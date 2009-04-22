@@ -36,8 +36,6 @@ import java.io.ObjectOutputStream;
 import java.util.Properties;
 import java.util.jar.JarFile;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
@@ -49,7 +47,6 @@ import util.exc.TvBrowserException;
 import util.io.stream.ObjectInputStreamProcessor;
 import util.io.stream.ObjectOutputStreamProcessor;
 import util.io.stream.StreamUtilities;
-import util.ui.FixedSizeIcon;
 import util.ui.ImageUtilities;
 
 /**
@@ -113,15 +110,6 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
   /** The cached icon to use for marking programs. */
   private Icon mMarkIcon;
   
-  /**
-   * The old member for the parent frame.
-   * <p>
-   * Some old plugin may still directly access it. 
-   * 
-   * @deprecated Use method {@link #getParentFrame()} instead.
-   */
-  protected Frame parent;
-
   /**
    * Called by the host-application to provide access to the plugin manager.
    * 
@@ -190,8 +178,6 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
    */
   final public void setParent(Frame parent) {
     this.mParentFrame = parent;
-
-    this.parent=parent;
   }
 
 
@@ -342,36 +328,6 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
   }
 
 
-  /**
-   * Gets whether the plugin supports receiving programs from other plugins.
-   * <p>
-   * Override this method and return <code>true</code>, if your plugin is able
-   * to receive programs from other plugins.
-   * 
-   * @return Whether the plugin supports receiving programs from other plugins.
-   * @see #receivePrograms(Program[])
-   * @deprecated Since 2.5 Use {@link #canReceiveProgramsWithTarget()} instead.
-   */
-  public boolean canReceivePrograms() {
-    // Call the old and deprecated method
-    return supportMultipleProgramExecution();
-  }
-
-
-  /**
-   * Receives a list of programs from another plugin.
-   * <p>
-   * Override this method to receive programs from other plugins.
-   * 
-   * @param programArr The programs passed from the other plugin.
-   * @see #canReceivePrograms()
-   * @deprecated Since 2.5 Use {@link #receivePrograms(Program[],ProgramReceiveTarget)} instead.
-   */
-  public void receivePrograms(Program[] programArr) {
-    // Call the old and deprecated method
-    execute(programArr);
-  }
-
 
 
 
@@ -399,24 +355,8 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
    * @see #getProgramFromContextMenuActionEvent(ActionEvent)
    */
   public ActionMenu getContextMenuActions(final Program program) {
-    // Check whether the old and deprecated methods are used
-    String contextMenuItemText = getContextMenuItemText();
-    if (contextMenuItemText != null) {
-      // The old and deprecated methods are used -> create an action for them
-      AbstractAction action = new AbstractAction() {
-        public void actionPerformed(ActionEvent evt) {
-          execute(program);
-        }
-      };
-      action.putValue(Action.NAME, contextMenuItemText);
-      action.putValue(Action.SMALL_ICON, getMarkIcon());
-
-      //return new Action[] { action };
-      return new ActionMenu(action);
-    } else {
-      // This plugin supports no context menus
-      return null;
-    }
+    // This plugin supports no context menus
+    return null;
   }
 
 
@@ -461,31 +401,8 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
    *         if the plugin does not provide this feature.
    */
   public ActionMenu getButtonAction() {
-    // Check whether the old and deprecated methods are used
-    String buttonText = getButtonText();
-    if (buttonText != null) {
-      // The old and deprecated methods are used -> create an action for them
-      AbstractAction action = new AbstractAction() {
-        public void actionPerformed(ActionEvent evt) {
-          execute();
-        }
-      };
-      action.putValue(Action.NAME, buttonText);
-      action.putValue(Action.SHORT_DESCRIPTION, getInfo().getDescription());
-      String iconFileName = getButtonIconName();
-      if (iconFileName != null) {
-        Icon icon = ImageUtilities.createImageIconFromJar(iconFileName, getClass());
-        if (icon != null) {
-          action.putValue(Action.SMALL_ICON, icon);
-          action.putValue(BIG_ICON, new FixedSizeIcon(24, 24, icon));
-        }
-      }
-
-      return new ActionMenu(action);
-    } else {
-      // This plugin supports no button
-      return null;
-    }
+    // This plugin supports no button
+    return null;
   }
 
 
@@ -653,8 +570,7 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
    * @see devplugin.Plugin#handleTvDataChanged()
    */
   public void handleTvDataUpdateFinished() {
-    // Call the old and deprecated method
-    handleTvDataChanged();
+    // do nothing
   }
 
   /**
@@ -693,8 +609,7 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
    * @see #handleTvDataChanged()
    */
   public void handleTvDataAdded(ChannelDayProgram newProg) {
-    // Call the old and deprecated method
-    handleTvDataChanged(newProg);
+    // do nothing
   }
 
 
@@ -724,136 +639,6 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
    */
   public void handleTvDataTouched(ChannelDayProgram removedDayProgram, ChannelDayProgram addedDayProgram) {
     
-  }
-
-  // The old and deprecated methods
-
-
-  /**
-   * Gets whether the plugin supports execution of multiple programs.
-   * 
-   * @return Whether the plugin supports execution of multiple programs.
-   *
-   * @see #execute(Program[])
-   * @deprecated Since 1.1. Use {@link #canReceivePrograms()} instead.
-   */
-  public boolean supportMultipleProgramExecution() {
-    return canReceiveProgramsWithTarget();
-  }
-
-
-  /**
-   * This method is invoked for multiple program execution.
-   * 
-   * @param programArr The programs to execute this plugins with.
-   *
-   * @see #supportMultipleProgramExecution()
-   * @deprecated Since 1.1. Use {@link #receivePrograms(Program[])} instead.
-   */
-  public void execute(Program[] programArr) {
-    if(canReceiveProgramsWithTarget())
-      receivePrograms(programArr, ProgramReceiveTarget.createDefaultTargetArrayForProgramReceiveIf(this)[0]);
-  }
-
-
-  /**
-   * Gets the text to use for the context menu.
-   * <p>
-   * This method is called by the host-application to show the plugin in the
-   * context menu.
-   * <p>
-   * Return <code>null</code> if your plugin does not provide this feature.
-   * 
-   * @return the text to use for the context menu or <code>null</code> if the
-   *         plugin does not provide this feature.
-   * 
-   * @deprecated Since 1.1. Use {@link #getContextMenuActions(Program)} instead.
-   */
-  public String getContextMenuItemText() {
-    return null;
-  }
-
-  /**
-   * This method is invoked by the host-application if the user has chosen your
-   * plugin from the context menu.
-   * 
-   * @param program
-   *          The program from whichs context menu the plugin was chosen.
-   * 
-   * @deprecated Since 1.1. Use {@link #getContextMenuActions(Program)} instead.
-   */
-  public void execute(Program program) {
-  }
-
-
-  /**
-   * Gets the text to use for the main menu or the toolbar.
-   * <p>
-   * This method is called by the host-application to show the plugin in the
-   * menu or in the toolbar.
-   *
-   * @return the text to use for the menu or the toolbar or <code>null</code> if
-   *         the plugin does not provide this feature.
-   * 
-   * @deprecated Since 1.1. Use {@link #getButtonAction()} instead.
-   */
-  protected String getButtonText() {
-    return null;
-  }
-
-
-  /**
-   * Returns the name of the file, containing your button icon (in the jar-File).
-   * <p>
-   * This icon is used for the toolbar and the menu. Return <code>null</code>
-   * if your plugin does not provide this feature.
-   * 
-   * @return the name of the file, containing your icon for the main menu and
-   *         the toolbar.
-   * 
-   * @deprecated Since 1.1. Use {@link #getButtonAction()} instead.
-   */
-  protected String getButtonIconName() {
-    return null;
-  }
-
-  /**
-   * This method is invoked by the host-application if the user has chosen your
-   * plugin from the menu or the toolbar.
-   * 
-   * @deprecated Since 1.1. Use {@link #getButtonAction()} instead.
-   */
-  public void execute() {
-  }
-
-
-  /**
-   * This method is automatically called, when the TV data update is finished.
-   * <p>
-   * Does by default nothing.
-   * 
-   * @see #handleTvDataAdded(ChannelDayProgram)
-   * @see #handleTvDataDeleted(ChannelDayProgram)
-   * @deprecated Since 1.1. Use {@link #handleTvDataUpdateFinished()} instead.
-   */
-  public void handleTvDataChanged() {
-  }
-
-
-  /**
-   * This method is automatically called, when the TV data has changed.
-   * (E.g. after an update).
-   * <p>
-   * The TV data may be modified by the plugin!
-   * <p>
-   * Does by default nothing.
-   * 
-   * @param newProg The new ChannelDayProgram.
-   *
-   * @deprecated Since 0.9.7.2. Use
-   *             {@link #handleTvDataAdded(ChannelDayProgram)} instead.
-   */
-  public void handleTvDataChanged(ChannelDayProgram newProg) {
   }
 
   /**
@@ -972,12 +757,6 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
   }
   
   public boolean receivePrograms(Program[] programArr, ProgramReceiveTarget receiveTarget) {
-    // check if this should call the old method
-    if((receiveTarget == null || ProgramReceiveTarget.isDefaultProgramReceiveTargetForProgramReceiveIf(this,receiveTarget)) && canReceivePrograms()) {
-      receivePrograms(programArr);
-      return true;
-    }
-      
     return false;
   }
 

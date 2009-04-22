@@ -20,8 +20,8 @@ import devplugin.PluginTreeNode;
 import devplugin.PluginsFilterComponent;
 import devplugin.PluginsProgramFilter;
 import devplugin.Program;
-import devplugin.ProgramReceiveTarget;
 import devplugin.ProgramRatingIf;
+import devplugin.ProgramReceiveTarget;
 import devplugin.beanshell.BeanShellScriptIf;
 
 
@@ -104,25 +104,6 @@ public class BeanShellPluginProxy extends AbstractPluginProxy {
         return new PluginInfo(mBshFile.getName());
     }
 
-    /**
-     * 
-     * @see tvbrowser.core.plugin.AbstractPluginProxy#doCanReceivePrograms()
-     * @deprecated Since 2.5
-     */
-    protected boolean doCanReceivePrograms() {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    /**
-     * 
-     * @see tvbrowser.core.plugin.AbstractPluginProxy#doReceivePrograms(devplugin.Program[])
-     * @deprecated Since 2.5
-     */
-    protected void doReceivePrograms(Program[] programArr) {
-        // TODO Auto-generated method stub
-
-    }
 
     /*
      * (non-Javadoc)
