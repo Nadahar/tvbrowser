@@ -27,7 +27,6 @@
 package tvdataservice;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -428,22 +427,6 @@ public class MutableProgram implements Program {
     return -1;
   }
 
-
-  /**
-   * Gets all {@link devplugin.Plugin}s that have marked this program.
-   * @deprecated use {@link #getMarkerArr}
-   */
-  public PluginAccess[] getMarkedByPlugins() {
-    PluginAccess plugin;
-    ArrayList<PluginAccess> list = new ArrayList<PluginAccess>();
-    for (Marker marker : mMarkerArr) {
-      plugin = PluginProxyManager.getInstance().getPluginForId(marker.getId());
-      if (plugin != null) {
-        list.add(plugin);
-      }
-    }
-    return list.toArray(new PluginAccess[list.size()]);
-  }
 
   public Marker[] getMarkerArr() {
     return mMarkerArr;

@@ -654,15 +654,6 @@ public class Channel implements Comparable<Channel> {
   }
 
   /**
-   * Copies the Settins in this Channel (DaylightSaving etc..) into
-   * another Channel
-   * @param to to this Channel
-   * @deprecated not needed since we use the ChannelUserSettings class for storing channel user settings
-   */
-  public void copySettingsToChannel(Channel to) {
-  }
-  
-  /**
    * @return the Icon for this Channel
    */
   public Icon getIcon() {
@@ -696,27 +687,11 @@ public class Channel implements Comparable<Channel> {
   }
   
   /**
-   * Gets the Filename for an Icon
-   * @return Filename of the Icon
-   * @deprecated use getUserIconFileName()
-   */
-  public String getIconFileName() {
-      return getUserIconFileName();
-  }
-  
-  /**
-   * Sets the Filename for an Icon
-   * @param filename Filename for Icon
-   * @deprecated user setUserIconFileName
-   */
-  public void setIconFileName(String filename) {
-    setUserIconFileName(filename);
-  }
-
-  /**
    * Sets the user icon file name.
    * <p>
-   * @param filename The file name of ths user icon file.
+   * 
+   * @param filename
+   *          The file name of the user icon file.
    */
   public void setUserIconFileName(String filename) {
     ChannelUserSettings.getSettings(this).setIconFileName(filename);

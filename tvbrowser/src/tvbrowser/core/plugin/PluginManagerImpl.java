@@ -70,7 +70,6 @@ import devplugin.PluginAccess;
 import devplugin.PluginManager;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
-import devplugin.ProgramFilter;
 import devplugin.ProgramRatingIf;
 import devplugin.ProgramReceiveIf;
 import devplugin.ProgramReceiveTarget;
@@ -276,62 +275,6 @@ public class PluginManagerImpl implements PluginManager {
   }
 
   /**
-   * Searches the TV data for programs which match a regular expression.
-   * 
-   * @param regex
-   *          The regular expression programs must match to.
-   * @param inTitle
-   *          Should be searched in the title?
-   * @param inText
-   *          Should be searched in the description?
-   * @param caseSensitive
-   *          Should the search be case sensitive?
-   * @param channels
-   *          The channels to search in.
-   * @param startDate
-   *          The date to start the search.
-   * @param nrDays
-   *          The number of days to include after the start date. If negative
-   *          the days before the start date are used.
-   * @throws TvBrowserException
-   *           If there is a syntax error in the regular expression.
-   * @return The matching programs.
-   * 
-   * @deprecated Use {@link #createProgramSearcher(int, String, boolean)}
-   *             instead.
-   */
-  public Program[] search(String regex, boolean inTitle, boolean inText,
-    boolean caseSensitive, Channel[] channels, devplugin.Date startDate,
-    int nrDays) throws TvBrowserException
-  {
-    ProgramFieldType[] fieldArr;
-    if (inTitle && inText) {
-      fieldArr = new ProgramFieldType[] {
-        ProgramFieldType.TITLE_TYPE,
-        ProgramFieldType.SHORT_DESCRIPTION_TYPE,
-        ProgramFieldType.DESCRIPTION_TYPE
-      };
-    }
-    else if (inTitle) {
-      fieldArr = new ProgramFieldType[] { ProgramFieldType.TITLE_TYPE };
-    }
-    else if (inText) {
-      fieldArr = new ProgramFieldType[] {
-        ProgramFieldType.SHORT_DESCRIPTION_TYPE,
-        ProgramFieldType.DESCRIPTION_TYPE
-      };
-    }
-    else {
-      fieldArr = new ProgramFieldType[0];
-    }
-
-    ProgramSearcher searcher = createProgramSearcher(
-        SEARCHER_TYPE_REGULAR_EXPRESSION, regex, caseSensitive);
-
-    return searcher.search(fieldArr, startDate, nrDays, channels, false);
-  }
-
-  /**
    * Creates a ProgramSearcher.
    * 
    * @param type
@@ -409,21 +352,6 @@ public class PluginManagerImpl implements PluginManager {
     return PluginProxyManager.getInstance().getActivatedPluginForId(pluginId);
   }
 
-
-  /**
-   * Gets a TvDataService for a class name.
-   *
-   * @deprecated
-   *
-   * @param dataServiceClassName the class name of the wanted TvDataService.
-   * @return The TvDataService or <code>null</code> if there is no such
-   *         TvDataService.
-   */
-  public tvdataservice.TvDataService getDataService(String dataServiceClassName) {
-  //  return TvDataServiceManager.getInstance().getDataService(dataServiceClassName);
-    return null; // todo: find a smarter implementation
-  }
-
   public TvDataServiceProxy getDataServiceProxy(String id) {
     return TvDataServiceProxyManager.getInstance().findDataServiceById(id);
   }
@@ -439,19 +367,6 @@ public class PluginManagerImpl implements PluginManager {
 
     return PluginProxyManager.createPluginContextMenu(program, caller);
   }
-
-
-  /**
-   * Returns an array of all available filters.
-   *
-   * @return An array of all available filters.
-   * @since 0.9.7.4
-   * * @deprecated Since 2.5 Use {@link devplugin.FilterManager#getAvailableFilters()} instead.
-   */
-  public ProgramFilter[] getAvailableFilters() {
-    return FilterManagerImpl.getInstance().getAvailableFilters();
-  }
-
 
   /**
    * Returns an example program. You can use it for preview stuff.

@@ -32,7 +32,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JPopupMenu;
 
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
-import tvdataservice.TvDataService;
 import util.exc.TvBrowserException;
 import util.program.AbstractPluginProgramFormating;
 
@@ -90,29 +89,6 @@ public interface PluginManager {
   public Iterator<Program> getChannelDayProgram(Date date, Channel channel);
 
   /**
-   * Searches the TV data for programs which match a regular expression.
-   *
-   * @param regex The regular expression programs must match to.
-   * @param inTitle Should be searched in the title?
-   * @param inText Should be searched in the description?
-   * @param caseSensitive Should the search be case sensitive?
-   * @param channels The channels to search in.
-   * @param startDate The date to start the search.
-   * @param nrDays The number of days to include after the start date. If
-   *        negative the days before the start date are used.
-   * @throws TvBrowserException If there is a syntax error in the regular expression.
-   * @return The matching programs.
-   *
-   * @deprecated Use {@link #createProgramSearcher(int, String, boolean)}
-   *             instead.
-   */
-  public Program[] search(String regex, boolean inTitle, boolean inText,
-                          boolean caseSensitive, Channel[] channels, Date startDate,
-                          int nrDays)
-    throws TvBrowserException;
-
-
-  /**
    * Creates a ProgramSearcher.
    *
    * @param type The searcher type to create. Must be one of
@@ -154,17 +130,6 @@ public interface PluginManager {
    */
   public PluginAccess getActivatedPluginForId(String pluginId);
 
-  /**
-   * Gets a TvDataService for a class name.
-   *
-   * @deprecated
-   *
-   * @param dataServiceClassName the class name of the wanted TvDataService.
-   * @return The TvDataService or <code>null</code> if there is no such
-   *         TvDataService.
-   */
-  public TvDataService getDataService(String dataServiceClassName);
-
   public TvDataServiceProxy getDataServiceProxy(String id);
 
   /**
@@ -176,16 +141,6 @@ public interface PluginManager {
    */
   public JPopupMenu createPluginContextMenu(Program program, ContextMenuIf caller);
   
-  /**
-   * Returns an array of all available filters.
-   *
-   * @return An array of all available filters.
-   * @since 0.9.7.4
-   * @deprecated Since 2.5 Use {@link devplugin.FilterManager#getAvailableFilters()} instead.
-   */
-  public ProgramFilter[] getAvailableFilters();
-
-
   /**
    * Returns an example program. You can use it for preview stuff.
    *
