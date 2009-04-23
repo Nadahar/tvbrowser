@@ -90,7 +90,11 @@ public class ProgramTypeFilterComponent extends AbstractFilterComponent {
   @Override
   public void read(final ObjectInputStream in, final int version)
       throws IOException, ClassNotFoundException {
-    mCategories = in.readInt();
+    try {
+      mCategories = in.readInt();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 
   @Override
@@ -108,7 +112,7 @@ public class ProgramTypeFilterComponent extends AbstractFilterComponent {
 
   @Override
   public void write(final ObjectOutputStream out) throws IOException {
-    out.write(mCategories);
+    out.writeInt(mCategories);
   }
 
   @Override
