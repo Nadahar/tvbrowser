@@ -14,8 +14,6 @@ import javax.swing.table.TableCellEditor;
 public class MinutesCellEditor extends AbstractCellEditor implements TableCellEditor, ActionListener {
   private JComboBox mComboBox;
   
-  protected static final String EDIT = "edit";
-
   public MinutesCellEditor() {
     mComboBox = new JComboBox(ReminderDialog.SMALL_REMIND_MSG_ARR);
     mComboBox.putClientProperty("JComboBox.isTableCellEditor", Boolean.TRUE);

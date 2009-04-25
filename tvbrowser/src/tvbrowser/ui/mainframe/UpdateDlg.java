@@ -68,7 +68,7 @@ public class UpdateDlg extends JDialog implements ActionListener, WindowClosingI
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer
       .getLocalizerFor(UpdateDlg.class);
 
-  public static final int CANCEL = -1, GETALL = 28;
+  protected static final int CANCEL = -1, GETALL = 28;
 
   private JButton mCancelBtn, mUpdateBtn;
   private int mResult = 0;

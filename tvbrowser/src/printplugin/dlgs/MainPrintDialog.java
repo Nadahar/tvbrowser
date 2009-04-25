@@ -56,7 +56,7 @@ public class MainPrintDialog extends JDialog implements ActionListener, WindowCl
 
   public static final int PRINT_DAYPROGRAMS = 1;
   public static final int PRINT_QUEUE = 2;
-  public static final int CANCEL = 0;
+  private static final int CANCEL = 0;
 
   private JRadioButton mPrintDayProgramsRb, mPrintQueueRb;
   private int mResult = CANCEL;

@@ -50,13 +50,12 @@ import com.jgoodies.forms.layout.Sizes;
 
 public class WizardDlg extends JDialog implements WindowClosingIf {
 
-  public static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(WizardDlg.class);
+  protected static final util.ui.Localizer mLocalizer = util.ui.Localizer
+      .getLocalizerFor(WizardDlg.class);
 
-  public static final int CANCEL = 0;
+  private static final int CANCEL = 0;
 
-  public static final int NEXT = 1;
-
-  public static final int FINISH = 2;
+  protected static final int FINISH = 2;
 
   private int mResult;
 

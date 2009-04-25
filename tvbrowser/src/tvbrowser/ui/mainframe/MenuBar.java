@@ -85,7 +85,7 @@ import devplugin.SettingsItem;
 public abstract class MenuBar extends JMenuBar implements ActionListener, DateListener {
   
     /** The localizer for this class. */
-    public static final util.ui.Localizer mLocalizer
+    protected static final util.ui.Localizer mLocalizer
       = util.ui.Localizer.getLocalizerFor(MainFrame.class);
     
     

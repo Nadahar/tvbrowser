@@ -39,7 +39,7 @@ import devplugin.Date;
 
 public class DateRangePanel extends JPanel {
 
-  static final util.ui.Localizer mLocalizer
+  private static final util.ui.Localizer mLocalizer
       = util.ui.Localizer.getLocalizerFor(DateRangePanel.class);
 
   private JComboBox mDateCb;

@@ -31,7 +31,7 @@ import java.util.ArrayList;
  * @author René Mach
  */
 public class NewsList {
-  ArrayList<News> mList = new ArrayList<News>();
+  private ArrayList<News> mList = new ArrayList<News>();
   
   /**
    * Adds a news sorted into the list.

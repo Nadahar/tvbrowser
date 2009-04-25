@@ -95,7 +95,8 @@ public class TvBrowserDataServiceSettingsPanel extends SettingsPanel implements 
   private static SettingsPanel mInstance;
 
   /** The localizer for this class. */
-  public static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(TvBrowserDataServiceSettingsPanel.class);
+  private static final util.ui.Localizer mLocalizer = util.ui.Localizer
+      .getLocalizerFor(TvBrowserDataServiceSettingsPanel.class);
 
   protected TvBrowserDataServiceSettingsPanel(Properties settings) {
 

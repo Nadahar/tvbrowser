@@ -37,7 +37,7 @@ import java.util.Vector;
  */
 public class MultiOr implements Block {
 
-  public Block[] blocks;
+  private Block[] blocks;
 
 
   public MultiOr(Or o, Block b2) {

@@ -29,18 +29,21 @@ package tvbrowser.extras.favoritesplugin.wizards;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.factories.Borders;
-
-import javax.swing.*;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 import tvbrowser.extras.favoritesplugin.core.Favorite;
 
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
 public class RenameWizardStep extends AbstractWizardStep {
 
-  public static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(RenameWizardStep.class);
+  private static final util.ui.Localizer mLocalizer = util.ui.Localizer
+      .getLocalizerFor(RenameWizardStep.class);
 
   private JTextField mNameTf;
 

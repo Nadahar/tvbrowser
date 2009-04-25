@@ -76,7 +76,8 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
   /**
    * localizer of this class
    */
-  public static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(ContextmenuSettingsTab.class);
+  private static final util.ui.Localizer mLocalizer = util.ui.Localizer
+      .getLocalizerFor(ContextmenuSettingsTab.class);
 
   private int mSelectionWidth;
 

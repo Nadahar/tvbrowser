@@ -23,7 +23,7 @@ public class RatingIconTextFactory {
     private static final Localizer _mLocalizer = Localizer.getLocalizerFor(RatingIconTextFactory.class);
 
     /** Icons used to show the Ratings */
-    final static ImageIcon _icons[] = new ImageIcon[] {
+    private final static ImageIcon _icons[] = new ImageIcon[] {
             new ImageIcon(RatingIconTextFactory.class.getResource("imgs/0.png")),
             new ImageIcon(RatingIconTextFactory.class.getResource("imgs/1.png")),
             new ImageIcon(RatingIconTextFactory.class.getResource("imgs/2.png")),
@@ -33,7 +33,7 @@ public class RatingIconTextFactory {
             new ImageIcon(RatingIconTextFactory.class.getResource("imgs/-1.png"))};
 
     /** The Genres */
-    static Properties _genre = null;
+    private static Properties _genre = null;
     
     /**
      * Returns the Genre-Property

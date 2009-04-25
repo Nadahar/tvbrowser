@@ -1,8 +1,8 @@
 package tvbrowser.core;
 
-import devplugin.Channel;
-
 import java.util.Hashtable;
+
+import devplugin.Channel;
 
 /**
  * This class returns the number of similar channels in
@@ -12,8 +12,8 @@ import java.util.Hashtable;
  */
 public class DuplicateChannelNameCounter {
 
-  Hashtable<String, Integer> mChannelNames = new Hashtable<String, Integer>();
-  Hashtable<String, Integer> mChannelCountryNames = new Hashtable<String, Integer>();
+  private Hashtable<String, Integer> mChannelNames = new Hashtable<String, Integer>();
+  private Hashtable<String, Integer> mChannelCountryNames = new Hashtable<String, Integer>();
 
   /**
    * Construct the Counter

@@ -36,11 +36,6 @@ import tvbrowser.ui.finder.FinderPanel;
 
 public class DateChooserPanel extends JPanel {
   
-  /** The localizer for this class. */
-    public static final util.ui.Localizer mLocalizer
-      = util.ui.Localizer.getLocalizerFor(DateChooserPanel.class);
-
- 
   public DateChooserPanel(MainFrame parent, FinderPanel finderPanel) {
     setOpaque(false);
     setLayout(new BorderLayout(0,7));

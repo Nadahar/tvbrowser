@@ -249,8 +249,8 @@ public class ListTableModel extends AbstractTableModel {
    * The Data in a rows
    */
   private static class ListTableModelData {
-    Channel mChannel;
-    Program mFirst, mSecond;
+    private Channel mChannel;
+    private Program mFirst, mSecond;
 
     public boolean equals(final Object obj) {
       if (obj instanceof ListTableModelData) {

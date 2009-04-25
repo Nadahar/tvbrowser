@@ -42,10 +42,10 @@ import com.jgoodies.forms.layout.FormLayout;
 public class StatusPanel extends JPanel {
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(StatusPanel.class);
 
-  public static final int NETWORK = 0;
-  public static final int CHANNELS = 1;
-  public static final int PICTURES = 2;
-  public static final int READY = 3;
+  protected static final int NETWORK = 0;
+  protected static final int CHANNELS = 1;
+  protected static final int PICTURES = 2;
+  protected static final int READY = 3;
   
   private Font mNormalFont;
 

@@ -121,7 +121,7 @@ public class ProgramTable extends JPanel
   private long mLastDragTime;
   private int mLastDragDeltaX;
   private int mLastDragDeltaY;
-  protected Point mAutoScroll;  
+  private Point mAutoScroll;  
 
   /**
    * Creates a new instance of ProgramTable.

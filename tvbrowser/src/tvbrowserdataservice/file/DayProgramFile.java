@@ -51,7 +51,7 @@ public class DayProgramFile extends AbstractFile {
   private transient devplugin.Date mDate;
 
   /** The localizer for this class. */
-  public static final util.ui.Localizer mLocalizer
+  private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(DayProgramFile.class);
 
   public static final TvDataLevel[] LEVEL_ARR = new TvDataLevel[] {

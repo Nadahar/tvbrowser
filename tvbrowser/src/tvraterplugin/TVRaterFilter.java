@@ -18,18 +18,21 @@
  */
 package tvraterplugin;
 
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.CellConstraints;
-import devplugin.PluginsFilterComponent;
-import devplugin.Program;
-import util.ui.Localizer;
-
-import javax.swing.JPanel;
-import javax.swing.JLabel;
-import javax.swing.JComboBox;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+import util.ui.Localizer;
+
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
+import devplugin.PluginsFilterComponent;
+import devplugin.Program;
 
 /**
  * This FilterComponent gives the users the opportunity
@@ -40,9 +43,9 @@ public class TVRaterFilter extends PluginsFilterComponent {
     private static final Localizer mLocalizer = Localizer.getLocalizerFor(TVRaterFilter.class);
     
     /** Accept-Value*/
-    int _value = 3;
+    private int _value = 3;
     /** Show programs that are better or worse than the <code>_value</code>*/
-    boolean  _best = true;
+    private boolean _best = true;
 
     /** Settings: show only good or bad programs*/
     private JComboBox _betterCombo;

@@ -29,8 +29,8 @@ package tvbrowser.ui.configassistant;
 import javax.swing.JPanel;
 
 abstract class AbstractCardPanel implements CardPanel {
-  protected CardPanel mNext, mPrev;
-  protected PrevNextButtons mBtns;
+  private CardPanel mNext, mPrev;
+  private PrevNextButtons mBtns;
   
   protected AbstractCardPanel(PrevNextButtons btns) {
     mBtns=btns;

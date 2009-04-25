@@ -67,16 +67,16 @@ public class GoogleExporter extends AbstractExporter {
    */
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(GoogleExporter.class);
 
-  public static final String USERNAME = "Google_Username";
-  public static final String PASSWORD = "Google_Password";
-  public static final String STOREPASSWORD = "Google_StorePassword";
-  public static final String STORESETTINGS = "Google_StoreSettgins";
-  public static final String SELECTEDCALENDAR = "Google_SelectedCalendar";
-  public static final String REMINDER = "Google_Reminder";
-  public static final String REMINDERMINUTES = "Google_ReminderMinutes";
-  public static final String REMINDERSMS = "Google_ReminderSMS";
-  public static final String REMINDEREMAIL = "Google_ReminderEMAIL";
-  public static final String REMINDERALERT = "Google_ReminderAlert";
+  protected static final String USERNAME = "Google_Username";
+  private static final String PASSWORD = "Google_Password";
+  protected static final String STOREPASSWORD = "Google_StorePassword";
+  protected static final String STORESETTINGS = "Google_StoreSettgins";
+  protected static final String SELECTEDCALENDAR = "Google_SelectedCalendar";
+  protected static final String REMINDER = "Google_Reminder";
+  protected static final String REMINDERMINUTES = "Google_ReminderMinutes";
+  protected static final String REMINDERSMS = "Google_ReminderSMS";
+  protected static final String REMINDEREMAIL = "Google_ReminderEMAIL";
+  protected static final String REMINDERALERT = "Google_ReminderAlert";
 
   private String mPassword = "";
 

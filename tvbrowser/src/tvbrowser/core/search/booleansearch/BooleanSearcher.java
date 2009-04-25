@@ -60,9 +60,9 @@ public class BooleanSearcher extends AbstractSearcher {
     = util.ui.Localizer.getLocalizerFor(BooleanSearcher.class);
 
 
-  Block root;
+  private Block root;
 
-  boolean caseSensitive;
+  private boolean caseSensitive;
 
 
   /**

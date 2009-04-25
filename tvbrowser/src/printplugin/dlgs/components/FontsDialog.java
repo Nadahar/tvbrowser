@@ -36,16 +36,16 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 
+import util.ui.FontChooserPanel;
+import util.ui.Localizer;
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
+
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
-
-import util.ui.FontChooserPanel;
-import util.ui.Localizer;
-import util.ui.UiUtilities;
-import util.ui.WindowClosingIf;
 
 public class FontsDialog extends JDialog implements WindowClosingIf {
 
@@ -54,8 +54,8 @@ public class FontsDialog extends JDialog implements WindowClosingIf {
          = util.ui.Localizer.getLocalizerFor(FontsDialog.class);
 
 
-  public static final int CANCEL = 0;
-  public static final int OK = 1;
+  private static final int CANCEL = 0;
+  protected static final int OK = 1;
 
   private FontChooserPanel mTitleFontPanel;
   private FontChooserPanel mDescriptionFontPanel;

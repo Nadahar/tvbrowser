@@ -96,7 +96,7 @@ import devplugin.SettingsTab;
  */
 public class SettingsDialog implements WindowClosingIf {
 
-  public static final util.ui.Localizer mLocalizer = util.ui.Localizer
+  private static final util.ui.Localizer mLocalizer = util.ui.Localizer
       .getLocalizerFor(SettingsDialog.class);
 
   private JDialog mDialog;

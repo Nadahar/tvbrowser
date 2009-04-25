@@ -50,7 +50,7 @@ import devplugin.SettingsItem;
 public class TimeChooserPanel extends JPanel implements ChangeListener, MouseListener {
     
     /** The localizer for this class. */
-    public static final util.ui.Localizer mLocalizer
+    private static final util.ui.Localizer mLocalizer
         = util.ui.Localizer.getLocalizerFor(TimeChooserPanel.class);
 
     

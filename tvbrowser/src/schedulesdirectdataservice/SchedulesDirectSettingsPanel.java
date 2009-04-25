@@ -25,24 +25,28 @@
  */
 package schedulesdirectdataservice;
 
-import tvdataservice.SettingsPanel;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.factories.Borders;
-
-import javax.swing.*;
-import javax.swing.event.DocumentListener;
-import javax.swing.event.DocumentEvent;
 import java.util.Properties;
-import util.ui.Localizer;
+
+import javax.swing.JLabel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+
+import tvdataservice.SettingsPanel;
 import util.io.IOUtilities;
+import util.ui.Localizer;
+
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 
 public class SchedulesDirectSettingsPanel extends SettingsPanel {
     /**
      * Translator
      */
     private static final Localizer mLocalizer = Localizer.getLocalizerFor(SchedulesDirectSettingsPanel.class);
-    public final static int PASSWORDSEED = 1231945;
+    protected final static int PASSWORDSEED = 1231945;
 
     private Properties mProperties;
     private JTextField mUsername;

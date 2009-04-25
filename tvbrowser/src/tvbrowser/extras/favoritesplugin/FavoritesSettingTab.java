@@ -62,7 +62,7 @@ import devplugin.SettingsTab;
 public class FavoritesSettingTab implements SettingsTab {
 
   /** The localizer for this class. */  
-  public static final util.ui.Localizer mLocalizer
+  private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(FavoritesSettingTab.class);
   
   private ProgramReceiveTarget[] mClientPluginTargets, mCurrentClientPluginTargets;

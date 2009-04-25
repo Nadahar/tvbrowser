@@ -26,13 +26,17 @@
 
 package tvbrowser.extras.common;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Component;
+
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.JLabel;
+import javax.swing.JList;
 
 
 public class DayListCellRenderer extends DefaultListCellRenderer {
 
-  public static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(DayListCellRenderer.class);
+  private static final util.ui.Localizer mLocalizer = util.ui.Localizer
+      .getLocalizerFor(DayListCellRenderer.class);
 
   public DayListCellRenderer() {
     super();

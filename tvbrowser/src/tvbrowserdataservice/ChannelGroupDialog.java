@@ -57,7 +57,8 @@ public class ChannelGroupDialog extends JDialog {
     /** Current ChannelGroup */
     private ChannelGroup mGroup;
     /** The localizer for this class. */
-    public static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(ChannelGroupDialog.class);
+    private static final util.ui.Localizer mLocalizer = util.ui.Localizer
+      .getLocalizerFor(ChannelGroupDialog.class);
 
     /**
      * Create the Dialog

@@ -52,7 +52,7 @@ import util.ui.html.HTMLTextHelper;
 
 public class LicenseBox extends JDialog implements ActionListener,WindowClosingIf {
   
-  int mRemainingSecs;
+  private int mRemainingSecs;
   private JButton mAgreeBt, mDisagreeBt, mCloseBt;
   private Timer mTimer;
   private boolean mAgreed=false;

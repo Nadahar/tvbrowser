@@ -26,10 +26,10 @@
 
 package tvbrowser.core.tvdataservice;
 
+import java.awt.Frame;
 import java.io.File;
 import java.util.Properties;
 import java.util.logging.Logger;
-import java.awt.*;
 
 import tvdataservice.SettingsPanel;
 import tvdataservice.TvDataUpdateManager;
@@ -48,7 +48,7 @@ public class DefaultTvDataServiceProxy extends AbstractTvDataServiceProxy {
   private static java.util.logging.Logger mLog = Logger
       .getLogger(DefaultTvDataServiceProxy.class.getName());
 
-  public devplugin.AbstractTvDataService mTvDataService;
+  private devplugin.AbstractTvDataService mTvDataService;
 
   public DefaultTvDataServiceProxy(devplugin.AbstractTvDataService service) {
     mTvDataService = service;

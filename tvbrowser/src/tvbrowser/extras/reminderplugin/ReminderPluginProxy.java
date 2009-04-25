@@ -48,7 +48,7 @@ import devplugin.SettingsTab;
 public class ReminderPluginProxy implements ButtonActionIf, ContextMenuIf, ProgramReceiveIf, Marker, InternalPluginProxyIf {
 
   /** The localizer for this class. */
-  public static final util.ui.Localizer mLocalizer = util.ui.Localizer
+  private static final util.ui.Localizer mLocalizer = util.ui.Localizer
       .getLocalizerFor(ReminderPluginProxy.class);
 
   private static final String PROGRAM_TARGET_REMIND = "target_remind";

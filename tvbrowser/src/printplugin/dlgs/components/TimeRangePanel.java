@@ -41,7 +41,7 @@ import com.jgoodies.forms.layout.FormLayout;
 
 public class TimeRangePanel extends JPanel {
 
-    static final util.ui.Localizer mLocalizer
+    private static final util.ui.Localizer mLocalizer
       = util.ui.Localizer.getLocalizerFor(TimeRangePanel.class);
 
   private JComboBox mDayStartCb, mDayEndCb;

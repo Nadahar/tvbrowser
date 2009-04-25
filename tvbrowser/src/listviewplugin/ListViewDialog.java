@@ -114,7 +114,8 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
   private JSpinner mTimeSpinner = new JSpinner(new SpinnerDateModel());
 
   /** Text for mRuns */
-  final static String[] TIMETEXT = { mLocalizer.msg("now", "Now"), mLocalizer.msg("15min", "in 15 minutes"),
+  private final static String[] TIMETEXT = { mLocalizer.msg("now", "Now"),
+      mLocalizer.msg("15min", "in 15 minutes"),
     mLocalizer.msg("30min", "in 30 minutes") };
 
   /** Select for mRuns */
@@ -377,7 +378,7 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
 
     mBox.addActionListener(new ActionListener() {
 
-      int lastSelected = 0;
+      private int lastSelected = 0;
       public void actionPerformed(ActionEvent e) {
         if (mBox.getSelectedIndex() == mBox.getItemCount()-1) {
           mBox.setSelectedIndex(lastSelected);

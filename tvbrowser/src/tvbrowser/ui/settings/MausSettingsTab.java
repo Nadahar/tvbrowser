@@ -59,7 +59,8 @@ public class MausSettingsTab implements devplugin.SettingsTab {
 
   private ContextMenuIf mLeftSingleClickIf, mDoubleClickIf, mMiddleClickIf;
 
-  public static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(MausSettingsTab.class);
+  private static final util.ui.Localizer mLocalizer = util.ui.Localizer
+      .getLocalizerFor(MausSettingsTab.class);
 
   private JComboBox mLeftSingleClickBox;
   

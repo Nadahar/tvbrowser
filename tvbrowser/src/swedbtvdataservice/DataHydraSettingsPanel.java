@@ -1,23 +1,26 @@
 package swedbtvdataservice;
 
-import tvdataservice.SettingsPanel;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.factories.DefaultComponentFactory;
-
-import javax.swing.*;
-import javax.swing.event.HyperlinkListener;
-import javax.swing.event.HyperlinkEvent;
-
-import util.ui.html.ExtendedHTMLEditorKit;
-import util.ui.Localizer;
-import util.browserlauncher.Launch;
-
 import java.net.URL;
 import java.util.Properties;
 
+import javax.swing.JCheckBox;
+import javax.swing.JEditorPane;
+import javax.swing.JScrollPane;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
+
+import tvdataservice.SettingsPanel;
+import util.browserlauncher.Launch;
+import util.ui.Localizer;
+import util.ui.html.ExtendedHTMLEditorKit;
+
+import com.jgoodies.forms.factories.DefaultComponentFactory;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
 public class DataHydraSettingsPanel extends SettingsPanel {
-  public static final Localizer mLocalizer = Localizer.getLocalizerFor(DataHydraSettingsPanel.class);
+  private static final Localizer mLocalizer = Localizer
+      .getLocalizerFor(DataHydraSettingsPanel.class);
 
   private Properties mProperties;
   private JCheckBox mShowRegisterText;

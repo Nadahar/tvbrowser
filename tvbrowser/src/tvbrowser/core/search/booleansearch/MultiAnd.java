@@ -37,7 +37,7 @@ import java.util.Vector;
  */
 public class MultiAnd implements Block {
 
-  public Block[] blocks;
+  private Block[] blocks;
 
 
   public MultiAnd(And a, Block b2) {

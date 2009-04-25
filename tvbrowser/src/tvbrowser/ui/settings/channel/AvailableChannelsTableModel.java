@@ -42,7 +42,7 @@ import devplugin.ChannelGroup;
  */
 public class AvailableChannelsTableModel extends AbstractTableModel {
 
-      String[] columnNames = {"Channel",
+      private String[] columnNames = { "Channel",
                          "Provider",
                          "Country",
                          "Timezone"};

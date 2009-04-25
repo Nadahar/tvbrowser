@@ -63,7 +63,7 @@ public class SettingsDialog extends JDialog implements WindowClosingIf {
       = util.ui.Localizer.getLocalizerFor(SettingsDialog.class);
 
   public static final int OK = 1;
-  public static final int CANCEL = 0;
+  private static final int CANCEL = 0;
 
 
   private PageFormat mPageFormat;

@@ -25,15 +25,16 @@
 
 package captureplugin;
 
-import captureplugin.tabs.DevicePanel;
-import captureplugin.tabs.ProgramListPanel;
-import util.ui.DefaultMarkingPrioritySelectionPanel;
-import util.ui.Localizer;
+import java.awt.BorderLayout;
+import java.awt.Window;
 
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
-import java.awt.BorderLayout;
-import java.awt.Window;
+
+import util.ui.DefaultMarkingPrioritySelectionPanel;
+import util.ui.Localizer;
+import captureplugin.tabs.DevicePanel;
+import captureplugin.tabs.ProgramListPanel;
 
 /**
  * This is a Panel for changing the Settings in the Plugin
@@ -44,9 +45,9 @@ public class CapturePluginPanel extends JPanel {
     private static final Localizer mLocalizer = Localizer.getLocalizerFor(CapturePluginPanel.class);
 
     /** Tab for Programlist */
-    public static final int TAB_PROGRAMLIST = 0;
+    protected static final int TAB_PROGRAMLIST = 0;
     /** Tab for DeviceList */
-    public static final int TAB_DEVICELIST = 1;
+    protected static final int TAB_DEVICELIST = 1;
     /** Tab for Marking */
     public static final int TAB_MARKING = 2;
 
