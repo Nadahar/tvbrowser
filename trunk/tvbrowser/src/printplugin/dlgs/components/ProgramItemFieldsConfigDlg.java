@@ -47,12 +47,12 @@ import devplugin.ProgramFieldType;
 
 public class ProgramItemFieldsConfigDlg extends JDialog implements WindowClosingIf{
 
-  static final util.ui.Localizer mLocalizer
+  private static final util.ui.Localizer mLocalizer
       = util.ui.Localizer.getLocalizerFor(ProgramItemFieldsConfigDlg.class);
 
   private OrderChooser mOrderChooser;
-  public static final int OK=0;
-  public static final int CANCEL=1;
+  protected static final int OK = 0;
+  private static final int CANCEL = 1;
   private int mResult;
   
   public ProgramItemFieldsConfigDlg(Frame parent, ProgramFieldType[] fieldTypes) {

@@ -61,10 +61,6 @@ public class ChannelList {
   private static java.util.logging.Logger mLog = java.util.logging.Logger
       .getLogger(ChannelList.class.getName());
 
-  /** The localizer for this class. */
-  public static final util.ui.Localizer mLocalizer
-      = util.ui.Localizer.getLocalizerFor(ChannelList.class);
-
   private static ArrayList<Channel> mAvailableChannels = new ArrayList<Channel>();
 
   private static HashMap<String, Channel> mAvailableChannelsMap = new HashMap<String, Channel>();

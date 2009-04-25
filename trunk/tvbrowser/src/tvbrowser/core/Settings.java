@@ -687,10 +687,6 @@ public class Settings {
       mProp, "dir.plugins", mDefaultSettings.getProperty("pluginsdir",
           getDefaultPluginsDir()));
 
-  public static final StringProperty propFilterDirectory = new StringProperty(
-      mProp, "directory.filters", getUserSettingsDirName() + File.separator
-          + "filters");
-
   public static final ChannelArrayProperty propSubscribedChannels = new ChannelArrayProperty(
       mProp, "subscribedchannels", new devplugin.Channel[] {});
 
@@ -913,12 +909,6 @@ public class Settings {
   public static final IntArrayProperty propTimeButtons = new IntArrayProperty(
       mProp, "timeButtons", new int[] { 6 * 60, 12 * 60, 18 * 60, 20 * 60 + 15 });
 
-  /**
-   * @deprecated
-   */
-  public static final StringArrayProperty propHiddenPluginButtons = new StringArrayProperty(
-      mProp, "hiddenPluginButtons", new String[0]);
-
   public static final StringArrayProperty propToolbarButtons = new StringArrayProperty(
       mProp, "toolbarButtons_2.0", null // we show all buttons, if this property
   // is not set
@@ -1031,10 +1021,6 @@ public class Settings {
   public static final ColorProperty propProgramTableColorOnAirLight = new ColorProperty(
       mProp, "programpanel.ColorOnAirLight", new Color(0, 0, 255, 30));
   
-  /** Used to enable color marking for default mark priority 
-    * @deprecated since 2.5.3 */
-  public static final BooleanProperty propProgramTableMarkedDefaultPriorityShowsColor = new BooleanProperty(
-      mProp, "programpanel.markedShowsColor", true);
   /**
    * Used to track if a program panel should use additional space for the mark
    * icons
@@ -1077,9 +1063,6 @@ public class Settings {
   /** Color for selected Program */
   public static final ColorProperty propKeyboardSelectedColor = new ColorProperty(
       mProp, "programpanel.KeyboardSelectedColor", new Color(130, 255, 0, 120));
-
-  public static final BooleanProperty propTitelAlwaysVisible = new BooleanProperty(
-      mProp, "programpanel.TitelAlwaysVisible", false);
 
   public static final BooleanProperty propIsWindowMaximized = new BooleanProperty(
       mProp, "window.isMaximized", false);

@@ -80,7 +80,7 @@ public class ProgramInfoPrintDialog implements WindowClosingIf{
   private JDialog mDialog;
   private PageFormat mPageFormat;
 
-  protected Object[] mFieldTypes;
+  private Object[] mFieldTypes;
   
   /**
    * Creates a instance of this class

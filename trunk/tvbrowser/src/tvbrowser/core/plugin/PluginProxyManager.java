@@ -69,7 +69,8 @@ public class PluginProxyManager {
   private static java.util.logging.Logger mLog = Logger.getLogger(PluginProxyManager.class.getName());
 
   /** The localizer for this class. */
-  public static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(PluginProxyManager.class);
+  private static final util.ui.Localizer mLocalizer = util.ui.Localizer
+      .getLocalizerFor(PluginProxyManager.class);
 
   /** The singleton. */
   private static PluginProxyManager mSingleton;
@@ -85,21 +86,21 @@ public class PluginProxyManager {
    * <p>
    * An shut down plugin has been shut down and can't be used any more.
    */
-  public static final int SHUT_DOWN_STATE = 1;
+  private static final int SHUT_DOWN_STATE = 1;
 
   /**
    * The plugin state 'loaded'.
    * <p>
    * A loaded plugin has an existing PluginProxy instance, but is not activated.
    */
-  public static final int LOADED_STATE = 2;
+  private static final int LOADED_STATE = 2;
 
   /**
    * The plugin state 'activated'.
    * <p>
    * An activated plugin has loaded its settings and is ready to be used.
    */
-  public static final int ACTIVATED_STATE = 3;
+  private static final int ACTIVATED_STATE = 3;
   
   /**
    * The list containing all plugins (PluginListItem objects) in the right

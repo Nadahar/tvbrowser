@@ -55,7 +55,8 @@ import devplugin.Program;
 
 public class LimitationsWizardStep extends AbstractWizardStep {
 
-  public static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(LimitationsWizardStep.class);
+  private static final util.ui.Localizer mLocalizer = util.ui.Localizer
+      .getLocalizerFor(LimitationsWizardStep.class);
 
   private JCheckBox mChannelCb;
 

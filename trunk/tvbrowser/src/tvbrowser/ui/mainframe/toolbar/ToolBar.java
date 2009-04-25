@@ -85,10 +85,10 @@ public class ToolBar extends JToolBar {
   private static java.util.logging.Logger mLog = java.util.logging.Logger
   .getLogger(ToolBar.class.getName());
 
-  public static final String ACTION_VALUE = "ActionValue";
-  public static final String ACTION_TYPE_KEY = "ActionType";
+  protected static final String ACTION_VALUE = "ActionValue";
+  protected static final String ACTION_TYPE_KEY = "ActionType";
   public static final String ACTION_ID_KEY = "ActionId";
-  public static final String ACTION_IS_SELECTED = "ActionIsSelected";
+  protected static final String ACTION_IS_SELECTED = "ActionIsSelected";
 
   /**
    * toolbar button with standard click behavior
@@ -97,10 +97,10 @@ public class ToolBar extends JToolBar {
   /**
    * toolbar button with toggle behavior (i.e. on/off state)
    */
-  public static final int TOOGLE_BUTTON_ACTION = 1;
-  public static final int SEPARATOR = 2;
-  public static final int SPACE = 3;
-  public static final int GLUE = 4;
+  protected static final int TOOGLE_BUTTON_ACTION = 1;
+  protected static final int SEPARATOR = 2;
+  protected static final int SPACE = 3;
+  protected static final int GLUE = 4;
 
   public static final int STYLE_TEXT = 1, STYLE_ICON = 2;
   private static final int ICON_BIG = 1, ICON_SMALL = 2;

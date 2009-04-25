@@ -48,7 +48,7 @@ public class Rating implements Serializable {
 	/**
 	 * overall rating
 	 */
-	public static final byte OVERALL_RATING_KEY = 0;
+	protected static final byte OVERALL_RATING_KEY = 0;
 
 	/**
 	 * action rating
@@ -58,7 +58,7 @@ public class Rating implements Serializable {
   /**
    * action rating
    */
-  public static final byte ACTION_RATING_KEY = 1;
+  protected static final byte ACTION_RATING_KEY = 1;
 
 	/**
 	 * fun rating
@@ -68,7 +68,7 @@ public class Rating implements Serializable {
   /**
    * fun rating
    */
-  public static final byte FUN_RATING_KEY = 2;
+  protected static final byte FUN_RATING_KEY = 2;
 
 	/**
 	 * erotic rating
@@ -78,7 +78,7 @@ public class Rating implements Serializable {
   /**
    * erotic rating
    */
-  public static final byte EROTIC_RATING_KEY = 3;
+  protected static final byte EROTIC_RATING_KEY = 3;
 
 	/**
 	 * tension rating
@@ -88,7 +88,7 @@ public class Rating implements Serializable {
   /**
    * tension rating
    */
-  public static final byte TENSION_RATING_KEY = 4;
+  protected static final byte TENSION_RATING_KEY = 4;
 
 	/**
 	 * entitlement rating
@@ -98,7 +98,7 @@ public class Rating implements Serializable {
   /**
    * entitlement rating
    */
-  public static final byte ENTITLEMENT_RATING_KEY = 5;
+  protected static final byte ENTITLEMENT_RATING_KEY = 5;
 
   private static final int RATING_ENTRY_COUNT = ENTITLEMENT_RATING_KEY + 1;
 
@@ -126,7 +126,7 @@ public class Rating implements Serializable {
 	 * user count of online rating
 	 * @deprecated
 	 */
-	public static final String COUNT = "count";
+	private static final String COUNT = "count";
   /**
    * number of users which rated this entry
    */

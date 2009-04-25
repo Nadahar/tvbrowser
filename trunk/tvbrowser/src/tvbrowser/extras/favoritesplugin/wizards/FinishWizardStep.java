@@ -37,7 +37,8 @@ import com.jgoodies.forms.layout.FormLayout;
 
 public class FinishWizardStep extends AbstractWizardStep {
 
-  public static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(FinishWizardStep.class);
+  private static final util.ui.Localizer mLocalizer = util.ui.Localizer
+      .getLocalizerFor(FinishWizardStep.class);
 
   private WizardStep mCaller;
 

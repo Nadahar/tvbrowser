@@ -74,7 +74,7 @@ public class ProgramMenuItem extends JMenuItem {
   private Program mProgram;
   private Color mBackground, mFill = null;
   private Insets mInsets;
-  boolean mSelected;
+  private boolean mSelected;
   private Timer mTimer;
   private static Font mPlainFont = (new JMenuItem()).getFont();
   private static Font mBoldFont = mPlainFont.deriveFont(Font.BOLD);

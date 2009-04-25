@@ -43,15 +43,9 @@ import devplugin.ProgramFilter;
 public class Exclusion {
 
   public static final int DAYLIMIT_DAILY = LimitationConfiguration.DAYLIMIT_DAILY;
-  public static final int DAYLIMIT_WEEKEND = LimitationConfiguration.DAYLIMIT_WEEKEND;
-  public static final int DAYLIMIT_WEEKDAY = LimitationConfiguration.DAYLIMIT_WEEKDAY;
-  public static final int DAYLIMIT_SUNDAY = LimitationConfiguration.DAYLIMIT_SUNDAY;
-  public static final int DAYLIMIT_MONDAY = LimitationConfiguration.DAYLIMIT_MONDAY;
-  public static final int DAYLIMIT_TUESDAY = LimitationConfiguration.DAYLIMIT_TUESDAY;
-  public static final int DAYLIMIT_WEDNESDAY = LimitationConfiguration.DAYLIMIT_WEDNESDAY;
-  public static final int DAYLIMIT_THURSDAY = LimitationConfiguration.DAYLIMIT_THURSDAY;
-  public static final int DAYLIMIT_FRIDAY = LimitationConfiguration.DAYLIMIT_FRIDAY;
-  public static final int DAYLIMIT_SATURDAY = LimitationConfiguration.DAYLIMIT_SATURDAY;
+  private static final int DAYLIMIT_WEEKEND = LimitationConfiguration.DAYLIMIT_WEEKEND;
+  private static final int DAYLIMIT_SUNDAY = LimitationConfiguration.DAYLIMIT_SUNDAY;
+  private static final int DAYLIMIT_SATURDAY = LimitationConfiguration.DAYLIMIT_SATURDAY;
 
   private ChannelItem mChannel;
   private String mTopic;

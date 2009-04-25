@@ -84,7 +84,8 @@ public class ChannelGroup implements devplugin.ChannelGroup {
   private static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(ChannelGroup.class.getName());
 
   /** The localizer for this class. */
-  public static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(ChannelGroup.class);
+  private static final util.ui.Localizer mLocalizer = util.ui.Localizer
+      .getLocalizerFor(ChannelGroup.class);
 
   private static final int MAX_META_DATA_AGE = 2;
 

@@ -37,9 +37,9 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class DreamboxHandler extends DefaultHandler {
 
-    TreeMap<String, String> mData = new TreeMap<String, String>();
-    StringBuilder mCharacters = new StringBuilder();
-    String mKey;
+    private TreeMap<String, String> mData = new TreeMap<String, String>();
+    private StringBuilder mCharacters = new StringBuilder();
+    private String mKey;
 
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {

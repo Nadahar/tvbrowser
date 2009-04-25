@@ -73,10 +73,6 @@ public class PluginLoader {
   private static java.util.logging.Logger mLog
       = Logger.getLogger(PluginLoader.class.getName());
 
-  /** The localizer for this class. */
-  public static final util.ui.Localizer mLocalizer
-      = util.ui.Localizer.getLocalizerFor(PluginLoader.class);
-
   private static PluginLoader mInstance;
 
   /** The name of the directory where the plugins are located in TV-Browser 2.1 and later */

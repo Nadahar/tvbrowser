@@ -59,7 +59,7 @@ import devplugin.ProgramFilter;
 
 public class AdvancedFavorite extends Favorite {
 
-  public static final util.ui.Localizer mLocalizer
+  private static final util.ui.Localizer mLocalizer
         = util.ui.Localizer.getLocalizerFor(AdvancedFavorite.class);
 
   public static final String TYPE_ID = "advanced";

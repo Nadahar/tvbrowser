@@ -40,7 +40,7 @@ import util.ui.SearchFormSettings;
 
 public class TopicFavorite extends Favorite {
 
-  public static final util.ui.Localizer mLocalizer
+  private static final util.ui.Localizer mLocalizer
      = util.ui.Localizer.getLocalizerFor(TopicFavorite.class);
 
   public static final String TYPE_ID = "topic";

@@ -43,25 +43,25 @@ import javax.swing.text.View;
  */
 public class DocumentRenderer implements Printable {
   /** Used to keep track of when the page to print changes. */
-  protected int mCurrentPage = -1;
+  private int mCurrentPage = -1;
 
   /**
    * Container to hold the Document. This object will be used to lay out the
    * Document for printing.
    */
-  protected JEditorPane mJEditorPane;
+  private JEditorPane mJEditorPane;
 
   /** Location of the current page end */
-  protected double mPageEndY = 0;
+  private double mPageEndY = 0;
 
   /** Location of the current page start */
-  protected double mPageStartY = 0;
+  private double mPageStartY = 0;
 
   /**
    * boolean to allow control over whether pages too wide to fit on a page will
    * be scaled.
    */
-  protected boolean mScaleWidthToFit = true;
+  private boolean mScaleWidthToFit = true;
 
   /**
    * The DocumentRenderer class uses pFormat and pJob in its methods. Note that
@@ -69,12 +69,12 @@ public class DocumentRenderer implements Printable {
    * DocumentRenderer. Although it would always be expected to reference the
    * pFormat object, the print method gets its PageFormat as an argument.
    */
-  protected PageFormat mPageFormat;
+  private PageFormat mPageFormat;
 
   /**
    * The PrintJob
    */
-  protected PrinterJob mPrintJob;
+  private PrinterJob mPrintJob;
 
   /**
    * Stores the Start-Position for each Page

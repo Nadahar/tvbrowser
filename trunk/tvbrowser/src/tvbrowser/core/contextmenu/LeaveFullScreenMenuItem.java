@@ -6,9 +6,10 @@ import devplugin.ContextMenuIf;
 import devplugin.Program;
 
 public class LeaveFullScreenMenuItem implements ContextMenuIf {
-  public static final Localizer mLocalizer = Localizer.getLocalizerFor(LeaveFullScreenMenuItem.class);
+  private static final Localizer mLocalizer = Localizer
+      .getLocalizerFor(LeaveFullScreenMenuItem.class);
 
-  public static final String LEAVEFULLSCREEN = "######LEAVEFULLSCREEN######";
+  protected static final String LEAVEFULLSCREEN = "######LEAVEFULLSCREEN######";
   
   private static LeaveFullScreenMenuItem mInstance;
   

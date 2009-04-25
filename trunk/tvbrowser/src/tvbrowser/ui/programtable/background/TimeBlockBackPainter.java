@@ -242,8 +242,8 @@ public class TimeBlockBackPainter extends AbstractBackPainter {
       mStartY = -1;
     }
     
-    int mStartTime;
-    int mStartY;
+    private int mStartTime;
+    private int mStartY;
   } // class TimeBlock
   
   

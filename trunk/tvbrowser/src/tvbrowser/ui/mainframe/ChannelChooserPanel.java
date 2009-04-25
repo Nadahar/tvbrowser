@@ -63,7 +63,7 @@ public class ChannelChooserPanel extends JPanel implements ListDropAction {
   private DefaultListModel mChannelChooserModel;
   private JList mList;
   private MainFrame mParent;
-  protected boolean disableSync = false;
+  private boolean disableSync = false;
 
   /**
    * @param frame

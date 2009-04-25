@@ -35,7 +35,8 @@ import devplugin.ChannelGroup;
  */
 public class ChannelUtil {
   /** Translation */
-  public static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(ChannelUtil.class);
+  private static final util.ui.Localizer mLocalizer = util.ui.Localizer
+      .getLocalizerFor(ChannelUtil.class);
 
   /**
    * Returns a Text representation for a Channel Category

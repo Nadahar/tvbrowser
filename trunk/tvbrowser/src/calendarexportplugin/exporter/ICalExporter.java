@@ -44,7 +44,7 @@ public class ICalExporter extends CalExporter {
   /** Translator */
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(ICalExporter.class);
   /** Property for Path for File */
-  public static final String SAVE_PATH = "ICAL_SAVE_PATH";
+  private static final String SAVE_PATH = "ICAL_SAVE_PATH";
   
   public String getName() {
     return mLocalizer.msg("name","iCal File");

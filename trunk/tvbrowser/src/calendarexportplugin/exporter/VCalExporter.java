@@ -39,7 +39,7 @@ public class VCalExporter extends CalExporter {
   /** Translator */
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(VCalExporter.class);
   /** Property for Path for File */
-  public static final String SAVE_PATH = "VCAL_SAVE_PATH";
+  private static final String SAVE_PATH = "VCAL_SAVE_PATH";
 
   public String getName() {
     return mLocalizer.msg("name","vCal File");

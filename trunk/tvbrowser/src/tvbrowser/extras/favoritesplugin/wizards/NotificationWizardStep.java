@@ -28,6 +28,7 @@ package tvbrowser.extras.favoritesplugin.wizards;
 
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -45,7 +46,7 @@ import devplugin.Program;
 
 public class NotificationWizardStep extends AbstractWizardStep {
 
-  public static final util.ui.Localizer mLocalizer
+  private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(NotificationWizardStep.class);
 
   private JCheckBox mReminderCb;

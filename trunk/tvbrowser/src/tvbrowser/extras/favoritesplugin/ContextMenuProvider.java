@@ -45,7 +45,7 @@ import devplugin.Program;
 public class ContextMenuProvider {
 
   /** The localizer for this class. */
-  public static final util.ui.Localizer mLocalizer = util.ui.Localizer
+  private static final util.ui.Localizer mLocalizer = util.ui.Localizer
           .getLocalizerFor(ContextMenuProvider.class);
 
   private Favorite[] mFavoriteArr;

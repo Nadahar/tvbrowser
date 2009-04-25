@@ -42,7 +42,7 @@ import devplugin.Date;
 import devplugin.Program;
 
 public class DreamboxChannelHandler extends DefaultHandler {
-  StringBuilder mCharacters = new StringBuilder();
+  private StringBuilder mCharacters = new StringBuilder();
 
     /**
      * map of lazily created update channel day programs

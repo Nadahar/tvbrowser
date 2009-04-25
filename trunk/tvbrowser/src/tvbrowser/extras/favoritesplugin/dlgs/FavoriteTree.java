@@ -88,7 +88,8 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
   private long mDragOverStart;
   private boolean mExpandListenerIsEnabled;
   
-  protected static final DataFlavor FAVORITE_FLAVOR = new DataFlavor(TreePath.class, "FavoriteNodeExport");
+  private static final DataFlavor FAVORITE_FLAVOR = new DataFlavor(
+      TreePath.class, "FavoriteNodeExport");
   
   /**
    * Creates an instance of this class.

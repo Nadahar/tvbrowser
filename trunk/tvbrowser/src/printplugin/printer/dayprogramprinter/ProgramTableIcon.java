@@ -48,9 +48,9 @@ import devplugin.Program;
 public class ProgramTableIcon implements Icon {
 
 
-   public static final int COLUMN_WIDTH = 180;
+   private static final int COLUMN_WIDTH = 180;
    private static final int HEADER_SPACE=22;
-   public static final Font COL_HEADER_FONT = new Font("Dialog",Font.BOLD,18);
+   private static final Font COL_HEADER_FONT = new Font("Dialog", Font.BOLD, 18);
 
 
    private ProgramItem[][] mProgramItems;

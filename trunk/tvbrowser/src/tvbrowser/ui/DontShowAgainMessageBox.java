@@ -33,7 +33,7 @@ import tvbrowser.core.Settings;
 public class DontShowAgainMessageBox {
 
   /** The localizer for this class. */
-  public static final util.ui.Localizer mLocalizer
+  private static final util.ui.Localizer mLocalizer
       = util.ui.Localizer.getLocalizerFor(DontShowAgainMessageBox.class);
 
   

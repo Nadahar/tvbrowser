@@ -82,7 +82,7 @@ import devplugin.SettingsTab;
 public class ReminderSettingsTab implements SettingsTab {
 
   /** The localizer for this class. */
-  public static final util.ui.Localizer mLocalizer
+  private static final util.ui.Localizer mLocalizer
       = util.ui.Localizer.getLocalizerFor(ReminderSettingsTab.class);
 
   private Properties mSettings;

@@ -69,8 +69,8 @@ public class DefaultKonfigurator extends JDialog implements WindowClosingIf {
     /** Name */
     private JTextField mName;
     
-    public final static int TAB_PATH = 0;
-    public final static int TAB_PARAMETER = 1;
+    protected final static int TAB_PATH = 0;
+    protected final static int TAB_PARAMETER = 1;
     public final static int TAB_SETTINGS = 2;
     public final static int TAB_CHANNELS = 3;
 
