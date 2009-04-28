@@ -24,14 +24,19 @@
  */
 package growlplugin;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 
 import net.sf.libgrowl.Application;
 import net.sf.libgrowl.GrowlConnector;
 import net.sf.libgrowl.Notification;
 import net.sf.libgrowl.NotificationType;
+import util.io.IOUtilities;
 import util.misc.AppleScriptRunner;
 import util.misc.OperatingSystem;
 import util.paramhandler.ParamParser;
@@ -48,6 +53,7 @@ import devplugin.Program;
  */
 public class GrowlContainer {
 
+  private static final String TVBROWSER_ICON_NAME = "imgs/tvbrowser48.png";
   private static final Logger mLog = Logger.getLogger(GrowlContainer.class
       .getName());
   private static final Localizer mLocalizer = Localizer
@@ -94,6 +100,19 @@ public class GrowlContainer {
     } else {
       final Notification notification = new Notification(mApplication,
           mNotificationProgram, title, desc, program.getID());
+      final Icon icon = program.getChannel().getIcon();
+      if (icon != null && icon instanceof ImageIcon) {
+        try {
+          File file = File.createTempFile("tvbrowser", ".png");
+          file.deleteOnExit();
+          if (IOUtilities.writeImageIconToFile((ImageIcon) icon, "png", file)) {
+            notification.setIcon(file.getAbsolutePath());
+          }
+        } catch (IOException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
+      }
       mGrowlConnector.notify(notification);
     }
   }
@@ -102,6 +121,10 @@ public class GrowlContainer {
     if (!OperatingSystem.isMacOs()) {
       mGrowlConnector = new GrowlConnector();
       mApplication = new Application("TV-Browser");
+      File icon = new File(TVBROWSER_ICON_NAME);
+      if (icon.isFile()) {
+        mApplication.setIcon(icon.getAbsolutePath());
+      }
       mNotificationProgram = new NotificationType("program_notification",
           mLocalizer.msg(
           "notification", "program notification"));
