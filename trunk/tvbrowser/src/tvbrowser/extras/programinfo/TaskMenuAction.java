@@ -168,7 +168,10 @@ public class TaskMenuAction {
 
     final JTaskPaneGroup group = new JTaskPaneGroup();
     group.setTitle((String) menu.getAction().getValue(Action.NAME));
-    final boolean expanded = ProgramInfo.getInstance().getExpanded(
+    final boolean expanded = ProgramInfo
+        .getInstance()
+        .getSettings()
+        .getExpanded(
         id + "_" + (String) menu.getAction().getValue(Action.NAME));
     group.setExpanded(expanded);
     group.setEnabled(true);
@@ -180,7 +183,7 @@ public class TaskMenuAction {
      */
     group.addPropertyChangeListener(new PropertyChangeListener() {
       public void propertyChange(final PropertyChangeEvent evt) {
-        ProgramInfo.getInstance().setExpanded(
+        ProgramInfo.getInstance().getSettings().setExpanded(
             id + "_" + (String) menu.getAction().getValue(Action.NAME),
             group.isExpanded());
       }

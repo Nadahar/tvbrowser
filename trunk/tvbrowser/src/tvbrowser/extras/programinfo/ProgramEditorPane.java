@@ -33,10 +33,10 @@ import java.awt.RenderingHints;
 import javax.swing.JEditorPane;
 
 /**
- * A JEditorPane with supperot for antialiasing.
+ * A JEditorPane with support for antialiasing.
  * 
  * @author René Mach
- *
+ * 
  */
 public class ProgramEditorPane extends JEditorPane{
   
@@ -52,7 +52,7 @@ public class ProgramEditorPane extends JEditorPane{
   protected void paintComponent(Graphics g) {
     Graphics2D g2d = (Graphics2D)g;
     
-    if(ProgramInfo.getInstance().getProperty("antialiasing","false").equals("true")) {
+    if (ProgramInfo.getInstance().getSettings().getAntialiasing()) {
       g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
         RenderingHints.VALUE_ANTIALIAS_ON);
     

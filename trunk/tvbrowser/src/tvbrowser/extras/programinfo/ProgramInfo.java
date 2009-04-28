@@ -32,15 +32,12 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
-import java.util.Properties;
 
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.extras.common.ConfigurationHandler;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.programtable.ProgramTable;
 import util.exc.ErrorHandler;
-import util.program.CompoundedProgramFieldType;
-import util.program.ProgramTextCreator;
 import util.settings.PluginPictureSettings;
 import util.ui.UiUtilities;
 
@@ -50,7 +47,6 @@ import devplugin.ActionMenu;
 import devplugin.ContextMenuAction;
 import devplugin.Plugin;
 import devplugin.Program;
-import devplugin.ProgramFieldType;
 
 /**
  * TV-Browser
@@ -66,15 +62,13 @@ public class ProgramInfo {
 
   private Dimension mLeftSplit = null;
 
-  private Properties mSettings;
+  private ProgramInfoSettings mSettings;
 
   private ConfigurationHandler mConfigurationHandler;
 
   private static ProgramInfo mInstance;
   
   private Object[] mOrder;
-  
-  private boolean mShowFunctions, mShowTextSearchButton;
   
   private static boolean mIsShowing = false;
   
@@ -86,9 +80,9 @@ public class ProgramInfo {
     loadSettings();
     LookAndFeelAddons.setTrackingLookAndFeelChanges(true);
   }
-  
+
   /**
-   * Inits the ProgramInfoDialog.
+   * Initializes the ProgramInfoDialog.
    */
   public void handleTvBrowserStartFinished() {
     mInitThread = new Thread("Program Info init thread") {
@@ -128,29 +122,25 @@ public class ProgramInfo {
   /**
    * @return Settings
    */
-  public Properties getSettings() {
+  public ProgramInfoSettings getSettings() {
     return mSettings;
   }
 
   private void loadSettings() {
 
     try {
-      mSettings = mConfigurationHandler.loadSettings();
+      mSettings = new ProgramInfoSettings(mConfigurationHandler.loadSettings());
     } catch (IOException e) {
       ErrorHandler.handle("Could not load programinfo settings.", e);
     }
 
-    String splitWidht = mSettings.getProperty("LeftSplit.Width");
-    String splitHeigt = mSettings.getProperty("LeftSplit.Height");
+    final int splitWidht = mSettings.getWidth();
+    final int splitHeigt = mSettings.getHeight();
 
-    if ((splitWidht != null) && (splitHeigt != null)) {
-      int sw = parseNumber(splitWidht);
-      int sh = parseNumber(splitHeigt);
-      mLeftSplit = new Dimension(sw, sh);
+    if ((splitWidht > 0) && (splitHeigt > 0)) {
+      mLeftSplit = new Dimension(splitWidht, splitHeigt);
     }
     
-    mShowFunctions = mSettings.getProperty("showFunctions","true").compareTo("true") == 0;
-    mShowTextSearchButton = mSettings.getProperty("showTextSearchButton","true").compareTo("true") == 0;
   }
 
   /**
@@ -158,14 +148,12 @@ public class ProgramInfo {
    */
   public void store() {
     if (mLeftSplit != null) {
-      mSettings.setProperty("LeftSplit.Width", Integer
-          .toString(mLeftSplit.width));
-      mSettings.setProperty("LeftSplit.Height", Integer
-          .toString(mLeftSplit.height));
+      mSettings.setWidth(mLeftSplit.width);
+      mSettings.setHeight(mLeftSplit.height);
     }
 
     try {
-      mConfigurationHandler.storeSettings(mSettings);
+      mSettings.storeSettings(mConfigurationHandler);
     } catch (IOException e) {
       ErrorHandler.handle("Could not store settings for programinfo.", e);
     }
@@ -177,7 +165,7 @@ public class ProgramInfo {
    * 
    * @param str
    *          Number in String to Parse
-   * @return Number if successfull. Default is 0
+   * @return Number if successful. Default is 0
    */
   public int parseNumber(String str) {
 
@@ -222,59 +210,21 @@ public class ProgramInfo {
   }
 
   protected void setSettings(Dimension d) {
-    if(mShowFunctions) {
+    if (mSettings.getShowFunctions()) {
       mLeftSplit = d;
     }
   }
 
-  protected boolean getExpanded(String key) {
-    return (mSettings.getProperty(key, "true").compareTo("true") == 0);
-  }
-
-  protected void setExpanded(String key, boolean value) {
-    mSettings.setProperty(key, String.valueOf(value));
-  }
-
-  protected String getProperty(String key, String def) {
-    return mSettings.getProperty(key, def);
-  }
-
-  protected String getUserfont(String value, String def) {
-    String tvalue = mSettings.getProperty(value);
-    boolean userfont = mSettings.getProperty("userfont", "false")
-        .equals("true");
-    return tvalue != null && tvalue.trim().length() > 0 && userfont ? tvalue
-        : def;
-  }
-
   protected Object[] getOrder() {
     if(mOrder == null) {
-      setOrder();
+      mOrder = mSettings.getFieldOrder();
     }
     
     return mOrder;
   }
   
   protected void setOrder() {
-    if(mSettings.getProperty("setupwasdone","false").compareTo("false") == 0) {
-      mOrder = ProgramTextCreator.getDefaultOrder();
-    } else {
-      String[] id = mSettings.getProperty("order", "").trim().split(";");
-      mOrder = new Object[id.length];
-      for (int i = 0; i < mOrder.length; i++) {
-        int parsedId = Integer.parseInt(id[i]);
-        
-        if(parsedId == ProgramFieldType.UNKOWN_FORMAT) {
-          mOrder[i] = ProgramTextCreator.getDurationTypeString();
-        }
-        else if(parsedId >= 0) {
-          mOrder[i] = ProgramFieldType.getTypeForId(parsedId);
-        }
-        else {
-          mOrder[i] = CompoundedProgramFieldType.getCompoundedProgramFieldTypeForId(parsedId);
-        }
-      }
-    }
+    mOrder = mSettings.getFieldOrder();
   }
 
   protected void setLook() {
@@ -282,7 +232,7 @@ public class ProgramInfo {
       if (mIsShowing) {
         return;
       }
-      String lf = mSettings.getProperty("look", LookAndFeelAddons.getBestMatchAddonClassName());
+      String lf = mSettings.getLook();
       
       if (lf.length() > 0) {
         LookAndFeelAddons.setAddon(lf);
@@ -296,24 +246,6 @@ public class ProgramInfo {
     }
   }
   
-  protected void setShowFunctions(boolean value) {
-    mShowFunctions = value;
-    mSettings.setProperty("showFunctions", String.valueOf(value));
-  }
-  
-  protected boolean isShowFunctions() {
-    return mShowFunctions;
-  }
-  
-  protected void setShowTextSearchButton(boolean value) {
-    mShowTextSearchButton = value;
-    mSettings.setProperty("showTextSearchButton", String.valueOf(value));    
-  }
-  
-  protected boolean isShowTextSearchButton() {
-    return mShowTextSearchButton;
-  }
-
   @Override
   public String toString() {
     return mLocalizer.msg("pluginName","Program details");
@@ -324,7 +256,7 @@ public class ProgramInfo {
   }
   
   protected PluginPictureSettings getPictureSettings() {
-    return new PluginPictureSettings(Integer.parseInt(mSettings.getProperty("pictureSettings",String.valueOf(PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE))));
+    return new PluginPictureSettings(mSettings.getPictureSettings());
   }
     
   /**
@@ -335,7 +267,7 @@ public class ProgramInfo {
     return ProgramInfoDialog.isShowing() || mIsShowing;
   }
 
-  public void showProgramInformation(Program program) {
+  public void showProgramInformation(final Program program) {
     showProgramInformation(program, true);
   }
 
@@ -348,4 +280,5 @@ public class ProgramInfo {
   public static String getProgramInfoPluginId() {
     return DATAFILE_PREFIX;
   }
+
 }

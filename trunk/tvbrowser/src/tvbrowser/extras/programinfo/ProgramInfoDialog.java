@@ -124,7 +124,7 @@ import devplugin.SettingsItem;
  * @author Martin Oberhauser
  */
 
-public class ProgramInfoDialog {
+class ProgramInfoDialog {
   private static final long serialVersionUID = 1L;
 
   protected static final util.ui.Localizer mLocalizer = util.ui.Localizer
@@ -237,14 +237,15 @@ public class ProgramInfoDialog {
 
   private void setProgramText() {
     mInfoEP.setText(ProgramTextCreator.createInfoText(mProgram, mDoc,
-        ProgramInfo.getInstance().getOrder(), getFont(true), getFont(false),
+        ProgramInfo.getInstance().getOrder(), ProgramInfo.getInstance()
+            .getSettings().getUsedTitleFont(), ProgramInfo.getInstance()
+            .getSettings().getUsedBodyFont(),
         new ProgramPanelSettings(
             ProgramInfo.getInstance().getPictureSettings(), false), true,
-        ProgramInfo.getInstance().getProperty("zoom", "false")
-            .compareTo("true") == 0 ? Integer.parseInt(ProgramInfo
-            .getInstance().getProperty("zoomValue", "100")) : 100, true,
-        ProgramInfo.getInstance().getProperty("enableSearch", "true")
-            .equalsIgnoreCase("true")));
+        ProgramInfo
+                .getInstance().getSettings().getZoomEnabled() ? ProgramInfo
+            .getInstance().getSettings().getZoomValue() : 100, true,
+        ProgramInfo.getInstance().getSettings().getEnableSearch()));
   }
   
   private void init(Dimension pluginsSize, boolean showSettings) {
@@ -300,7 +301,8 @@ public class ProgramInfoDialog {
             if(popupEvent) {
               JPopupMenu popupMenu = new JPopupMenu();
               
-              String value = ProgramInfo.getInstance().getSettings().getProperty("actorSearchDefault","internalWikipedia");
+              String value = ProgramInfo.getInstance().getSettings()
+                  .getActorSearch();
               
               JMenuItem item = searchTextMenuItem(desc);
               
@@ -354,7 +356,8 @@ public class ProgramInfoDialog {
               popupMenu.show(e.getComponent(),e.getX(),e.getY());
             }
             else {
-              String value = ProgramInfo.getInstance().getSettings().getProperty("actorSearchDefault","internalWikipedia");
+              String value = ProgramInfo.getInstance().getSettings()
+                  .getActorSearch();
               
               boolean found = false;
               
@@ -555,7 +558,7 @@ public class ProgramInfoDialog {
       mActionsPane.setPreferredSize(pluginsSize);
     }
 
-    if(ProgramInfo.getInstance().isShowFunctions()) {
+    if (ProgramInfo.getInstance().getSettings().getShowFunctions()) {
       JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
       split.setDividerSize(5);
       split.setContinuousLayout(true);
@@ -675,7 +678,7 @@ public class ProgramInfoDialog {
     };
     SwingUtilities.invokeLater(runnable);
     
-    if(ProgramInfo.getInstance().getProperty("showSearch","false").equals("true")) {
+    if (ProgramInfo.getInstance().getSettings().getShowSearch()) {
       mFindAsYouType.showSearchBar();
       if(mTextSearch != null) {
         mTextSearch.setText(mLocalizer.msg("closeSearch", "Close search bar"));
@@ -690,7 +693,7 @@ public class ProgramInfoDialog {
   protected void addPluginActions(boolean rebuild) {
     mFunctionGroup.removeAll();
 
-    if(ProgramInfo.getInstance().isShowTextSearchButton()) {
+    if (ProgramInfo.getInstance().getSettings().getShowSearchButton()) {
       mTextSearch = new TaskMenuAction(mFunctionGroup, mProgram, mSearchMenu,
         this, "id_sea", mFindAsYouType);
     }
@@ -748,17 +751,10 @@ public class ProgramInfoDialog {
     mPluginsPane.revalidate();
   }
   
-  private Font getFont(boolean title) {
-    if(title) {
-      return new Font(ProgramInfo.getInstance().getUserfont("titlefont", "Verdana"), Font.BOLD, Integer.parseInt(ProgramInfo.getInstance().getUserfont("title", "18")));
-    } else {
-      return new Font(ProgramInfo.getInstance().getUserfont("bodyfont", "Verdana"), Font.PLAIN, Integer.parseInt(ProgramInfo.getInstance().getUserfont("small", "11")));
-    }
-  }
-
   private void exit() {
     ProgramInfo.getInstance().setSettings(mActionsPane.getSize());
-    ProgramInfo.getInstance().setExpanded("showSearch",mFindAsYouType.isAlwaysVisible());
+    ProgramInfo.getInstance().getSettings().setShowSearch(
+        mFindAsYouType.isAlwaysVisible());
     mDialog.dispose();
   }
   
@@ -787,7 +783,7 @@ public class ProgramInfoDialog {
         .put(stroke, "SCROLL_DOWN");
     mDialog.getRootPane().getActionMap().put("SCROLL_DOWN", mDownAction);
     
-    if(ProgramInfo.getInstance().isShowFunctions()) {
+    if (ProgramInfo.getInstance().getSettings().getShowFunctions()) {
       mDialog.addComponentListener(new ComponentListener() {
         public void componentResized(ComponentEvent e) {
           mActionsPane.getVerticalScrollBar().setBlockIncrement(mActionsPane.getVisibleRect().height);
@@ -846,7 +842,7 @@ public class ProgramInfoDialog {
     });
     
     addActionsToRootPane();
-    
+
     Settings.layoutWindow("extras.programInfoDlg", mDialog);
     
     SwingUtilities.invokeLater(new Runnable() {
