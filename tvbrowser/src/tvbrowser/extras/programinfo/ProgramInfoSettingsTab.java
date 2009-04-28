@@ -7,7 +7,6 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.Properties;
 
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
@@ -30,7 +29,6 @@ import javax.swing.event.ChangeListener;
 
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginManagerImpl;
-import util.program.CompoundedProgramFieldType;
 import util.program.ProgramTextCreator;
 import util.ui.FontChooserPanel;
 import util.ui.Localizer;
@@ -46,7 +44,6 @@ import com.l2fprod.common.swing.plaf.LookAndFeelAddons;
 
 import devplugin.Plugin;
 import devplugin.PluginAccess;
-import devplugin.ProgramFieldType;
 import devplugin.ProgramReceiveTarget;
 import devplugin.SettingsTab;
 
@@ -59,7 +56,8 @@ import devplugin.SettingsTab;
 public class ProgramInfoSettingsTab implements SettingsTab {
   
   private OrderChooser mList;
-  private String mOldOrder, mOldSetupState;
+  private Object[] mOldOrder;
+  private boolean mOldSetupState;
   private PluginsPictureSettingsPanel mPictureSettings;
   
   private JCheckBox mZoomEnabled;
@@ -68,9 +66,9 @@ public class ProgramInfoSettingsTab implements SettingsTab {
   private JCheckBox mUserFont, mAntiAliasing;
   private FontChooserPanel mTitleFont, mBodyFont;
   
-  private String mOldTitleFont, mOldBodyFont,
-  mOldTitleFontSize, mOldBodyFontSize, mOldUserFontSelected,
-  mOldAntiAliasingSelected;
+  private String mOldTitleFont, mOldBodyFont;
+  private int mOldTitleFontSize, mOldBodyFontSize;
+  private boolean mOldUserFontSelected, mOldAntiAliasingSelected;
   
   private boolean mOldShowFunctions;
   
@@ -94,33 +92,31 @@ public class ProgramInfoSettingsTab implements SettingsTab {
   private JCheckBox mPersonSearchCB;
   
   public JPanel createSettingsPanel() {
-    final Properties settings = ProgramInfo.getInstance().getSettings();
-    mOldAntiAliasingSelected = settings.getProperty("antialiasing", "false");
-    mOldUserFontSelected = settings.getProperty("userfont", "false");
-    mOldTitleFontSize = settings.getProperty("title", "18");
-    mOldBodyFontSize = settings.getProperty("small", "11");
-    mOldTitleFont = settings.getProperty("titlefont", "Verdana");
-    mOldBodyFont = settings.getProperty("bodyfont", "Verdana");  
+    final ProgramInfoSettings settings = ProgramInfo.getInstance()
+        .getSettings();
+    mOldAntiAliasingSelected = settings.getAntialiasing();
+    mOldUserFontSelected = settings.getUserFont();
+    mOldTitleFontSize = settings.getTitleFontSize();
+    mOldBodyFontSize = settings.getBodyFontSize();
+    mOldTitleFont = settings.getTitleFontName();
+    mOldBodyFont = settings.getBodyFontName();  
     
     mAntiAliasing = new JCheckBox(ProgramInfo.mLocalizer
         .msg("antialiasing", "Antialiasing"));
-    mAntiAliasing.setSelected(mOldAntiAliasingSelected.compareToIgnoreCase("true") == 0);
+    mAntiAliasing.setSelected(mOldAntiAliasingSelected);
 
     mUserFont = new JCheckBox(ProgramInfo.mLocalizer.msg("userfont", "Use user fonts"));
-    mUserFont.setSelected(mOldUserFontSelected.compareToIgnoreCase("true") == 0);
+    mUserFont.setSelected(mOldUserFontSelected);
 
-    int size = Integer.parseInt(mOldTitleFontSize);
-
-    mTitleFont = new FontChooserPanel(null,
-        new Font(mOldTitleFont, Font.PLAIN, size), false);
+        mTitleFont = new FontChooserPanel(null, new Font(mOldTitleFont, Font.PLAIN,
+        mOldTitleFontSize), false);
     mTitleFont.setMaximumSize(mTitleFont.getPreferredSize());
     mTitleFont.setAlignmentX(FontChooserPanel.LEFT_ALIGNMENT);
     mTitleFont.setBorder(BorderFactory.createEmptyBorder(5, 20, 0, 0));
 
-    size = Integer.parseInt(mOldBodyFontSize);
-    
     mBodyFont = new FontChooserPanel(null, new Font(mOldBodyFont,
-            Font.PLAIN, size), false);
+            Font.PLAIN,
+        mOldBodyFontSize), false);
     mBodyFont.setMaximumSize(mBodyFont.getPreferredSize());
     mBodyFont.setAlignmentX(FontChooserPanel.LEFT_ALIGNMENT);
     mBodyFont.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 0));
@@ -128,7 +124,7 @@ public class ProgramInfoSettingsTab implements SettingsTab {
     mTitleFont.setEnabled(mUserFont.isSelected());
     mBodyFont.setEnabled(mUserFont.isSelected());
     
-    mOldLook = ProgramInfo.getInstance().getProperty("look", "");
+    mOldLook = settings.getLook();
     
     String[] lf = {"Aqua", "Metal", "Motif", "Windows XP",
     "Windows Classic"};
@@ -143,10 +139,13 @@ public class ProgramInfoSettingsTab implements SettingsTab {
         break;
       }
     
-    mOldShowFunctions = ProgramInfo.getInstance().isShowFunctions();
+    mOldShowFunctions = settings.getShowFunctions();
     
-    mShowFunctions = new JCheckBox(ProgramInfo.mLocalizer.msg("showFunctions","Show Functions"),ProgramInfo.getInstance().isShowFunctions());
-    mShowTextSearchButton  = new JCheckBox(ProgramInfo.mLocalizer.msg("showTextSearchButton","Show \"Search in program\""),ProgramInfo.getInstance().isShowTextSearchButton());
+    mShowFunctions = new JCheckBox(ProgramInfo.mLocalizer.msg("showFunctions",
+        "Show Functions"), settings.getShowFunctions());
+    mShowTextSearchButton = new JCheckBox(ProgramInfo.mLocalizer.msg(
+        "showTextSearchButton", "Show \"Search in program\""), ProgramInfo
+        .getInstance().getSettings().getShowSearchButton());
     
     mShowTextSearchButton.setEnabled(mShowFunctions.isSelected());
     
@@ -191,38 +190,11 @@ public class ProgramInfoSettingsTab implements SettingsTab {
     formatPanelBuilder.add(mShowFunctions, cc.xyw(2,14,5));
     formatPanelBuilder.add(mShowTextSearchButton, cc.xyw(3,15,4));
     
-    mOldOrder = ProgramInfo.getInstance().getProperty("order", "");
-    mOldSetupState = ProgramInfo.getInstance().getProperty("setupwasdone","false");        
+    mOldOrder = settings.getFieldOrder();
+    mOldSetupState = ProgramInfo.getInstance().getSettings().getSetupwasdone();        
     
-    Object[] order;
-    
-    if (mOldOrder.indexOf(';') == -1) {
-      if(mOldSetupState.compareTo("false") == 0) {
-        order = ProgramTextCreator.getDefaultOrder();
-      } else {
-        order = new Object[0];
-      }
-      
-      mList = new OrderChooser(order,ProgramTextCreator.getDefaultOrder(),true);
-    }
-    else {
-      String[] id = mOldOrder.trim().split(";");
-      order = new Object[id.length];
-      for (int i = 0; i < order.length; i++) {
-        int parsedId = Integer.parseInt(id[i]);
-        
-        if(parsedId == ProgramFieldType.UNKOWN_FORMAT) {
-          order[i] = ProgramTextCreator.getDurationTypeString();
-        }
-        else if(parsedId >= 0) {
-          order[i] = ProgramFieldType.getTypeForId(parsedId);
-        }
-        else {
-          order[i] = CompoundedProgramFieldType.getCompoundedProgramFieldTypeForId(parsedId);
-        }
-      }
-      mList = new OrderChooser(order,ProgramTextCreator.getDefaultOrder(),true);
-    }
+    mList = new OrderChooser(mOldOrder, ProgramTextCreator.getDefaultOrder(),
+        true);
     
     JButton previewBtn = new JButton(ProgramInfo.mLocalizer.msg("preview", "Prewview"));
     previewBtn.addActionListener(new ActionListener() {
@@ -250,8 +222,11 @@ public class ProgramInfoSettingsTab implements SettingsTab {
     
     PanelBuilder pb = new PanelBuilder(new FormLayout("default,2dlu,default,5dlu,default","default"));
     
-    pb.add(mZoomEnabled = new JCheckBox(ProgramInfo.mLocalizer.msg("scaleImage","Scale picture:"), ProgramInfo.getInstance().getProperty("zoom","false").compareTo("true") == 0), cc.xy(1,1));
-    pb.add(mZoomValue = new JSpinner(new SpinnerNumberModel(Integer.parseInt(ProgramInfo.getInstance().getProperty("zoomValue","100")),50,300,1)), cc.xy(3,1));
+    pb.add(mZoomEnabled = new JCheckBox(ProgramInfo.mLocalizer.msg(
+        "scaleImage", "Scale picture:"), ProgramInfo.getInstance()
+        .getSettings().getZoomEnabled()), cc.xy(1, 1));
+    pb.add(mZoomValue = new JSpinner(new SpinnerNumberModel(ProgramInfo
+        .getInstance().getSettings().getZoomValue(), 50, 300, 1)), cc.xy(3, 1));
     final JLabel label = pb.addLabel("%",cc.xy(5,1));
 
     mZoomEnabled.addItemListener(new ItemListener() {
@@ -280,7 +255,7 @@ public class ProgramInfoSettingsTab implements SettingsTab {
     availableDefaultTargets.add(new InternalRadioButton<String>(ProgramInfoDialog.mLocalizer.msg("searchWikipedia","Search in Wikipedia")));
     mAvailableTargetGroup.add(availableDefaultTargets.get(1));
     
-    Object currentValue = settings.getProperty("actorSearchDefault","internalWikipedia");
+    final String currentValue = settings.getActorSearch();
     
     int selectedIndex = -1;
     
@@ -344,8 +319,7 @@ public class ProgramInfoSettingsTab implements SettingsTab {
         }
       }
     });
-    mPersonSearchCB.setSelected(settings
-        .getProperty("enableSearch", "true").equalsIgnoreCase("true"));
+    mPersonSearchCB.setSelected(settings.getEnableSearch());
     mPersonSearchCB.getActionListeners()[0].actionPerformed(null);
     
     final JTabbedPane tabbedPane = new JTabbedPane();
@@ -393,54 +367,42 @@ public class ProgramInfoSettingsTab implements SettingsTab {
   }
 
   public void saveSettings() {try {
-    Object[] objects = mList.getOrder();
-
-    String temp = "";
-
-    for (Object object : objects) {
-      if (object instanceof String) {
-        temp += ProgramFieldType.UNKOWN_FORMAT + ";";
-      } else if (object instanceof CompoundedProgramFieldType) {
-        temp += ((CompoundedProgramFieldType) object).getId() + ";";
-      }
-      else {
-        temp += ((ProgramFieldType) object).getTypeId() + ";";
-      }
-    }
+    final ProgramInfoSettings settings = ProgramInfo.getInstance()
+          .getSettings();
+    settings.setZoomEnabled(mZoomEnabled.isSelected());
+    settings.setZoomValue((Integer) mZoomValue.getValue());
     
-    final Properties settings = ProgramInfo.getInstance().getSettings();
-    settings.setProperty("zoom", String.valueOf(mZoomEnabled.isSelected()));
-    settings.setProperty("zoomValue", String.valueOf(mZoomValue.getValue()));
+    settings.setFieldOrder(mList.getOrder());
+    settings.setSetupwasdone(true);
+    settings.setPictureSettings(mPictureSettings.getSettings().getType());
     
-    settings.setProperty("order", temp);
-    settings.setProperty("setupwasdone", "true");
-    settings.setProperty("pictureSettings", String.valueOf(mPictureSettings.getSettings().getType()));
     ProgramInfo.getInstance().setOrder();
     
-    settings.setProperty("antialiasing", String.valueOf(mAntiAliasing
-        .isSelected()));
-    settings.setProperty("userfont", String.valueOf(mUserFont.isSelected()));
+    settings.setAntialiasing(mAntiAliasing.isSelected());
+      settings.setUserFont(mUserFont.isSelected());
 
     Font f = mTitleFont.getChosenFont();
-    settings.setProperty("titlefont", f.getFamily());
-    settings.setProperty("title", String.valueOf(f.getSize()));
+    settings.setTitleFontName(f.getFamily());
+      settings.setTitleFontSize(f.getSize());
 
     f = mBodyFont.getChosenFont();
-    settings.setProperty("bodyfont", f.getFamily());
-    settings.setProperty("small", String.valueOf(f.getSize()));
+    settings.setBodyFontName(f.getFamily());
+      settings.setBodyFontSize(f.getSize());
     
-    settings.setProperty("look", mLf[mLook.getSelectedIndex()]);
+    settings.setLook(mLf[mLook.getSelectedIndex()]);
     ProgramInfo.getInstance().setLook();
     
     if(mShowFunctions != null) {
-      ProgramInfo.getInstance().setShowFunctions(mShowFunctions.isSelected());
+      ProgramInfo.getInstance().getSettings().setShowFunctions(
+            mShowFunctions.isSelected());
       
       if(mShowFunctions.isSelected() != mOldShowFunctions) {
         ProgramInfoDialog.recreateInstance();
       }
     }
     if(mShowTextSearchButton != null) {
-      ProgramInfo.getInstance().setShowTextSearchButton(mShowTextSearchButton.isSelected());
+      ProgramInfo.getInstance().getSettings().setShowSearchButton(
+            mShowTextSearchButton.isSelected());
     }
     
     Enumeration<AbstractButton> actorSearchDefault = mAvailableTargetGroup.getElements();
@@ -449,32 +411,32 @@ public class ProgramInfoSettingsTab implements SettingsTab {
       AbstractButton button = actorSearchDefault.nextElement();
       
       if(button.isSelected()) {
-        settings.setProperty("actorSearchDefault",((InternalRadioButton<?>)button).getValue());
+        settings.setActorSearch(((InternalRadioButton<?>) button).getValue());
         break;
       }
     }
-    settings.setProperty("enableSearch",
-          String.valueOf(mPersonSearchCB.isSelected()));
+    settings.setEnableSearch(mPersonSearchCB.isSelected());
   }catch(Exception e) {e.printStackTrace();}
   }
 
   private void restoreSettings() {
-    final Properties settings = ProgramInfo.getInstance().getSettings();
-    settings.setProperty("setupwasdone", mOldSetupState);
-    settings.setProperty("order", mOldOrder);
+    final ProgramInfoSettings settings = ProgramInfo.getInstance()
+        .getSettings();
+    settings.setSetupwasdone(mOldSetupState);
+    settings.setFieldOrder(mOldOrder);
     ProgramInfo.getInstance().setOrder();
     
-    settings.setProperty("antialiasing", mOldAntiAliasingSelected);
-    settings.setProperty("userfont", mOldUserFontSelected);
-    settings.setProperty("titlefont", mOldTitleFont);
-    settings.setProperty("title", mOldTitleFontSize);
-    settings.setProperty("bodyfont", mOldBodyFont);
-    settings.setProperty("small", mOldBodyFontSize);
+    settings.setAntialiasing(mOldAntiAliasingSelected);
+    settings.setUserFont(mOldUserFontSelected);
+    settings.setTitleFontName(mOldTitleFont);
+    settings.setTitleFontSize(mOldTitleFontSize);
+    settings.setBodyFontName(mOldBodyFont);
+    settings.setBodyFontSize(mOldBodyFontSize);
     
-    settings.setProperty("look", mOldLook);
+    settings.setLook(mOldLook);
     ProgramInfo.getInstance().setLook();
     
-    ProgramInfo.getInstance().setShowFunctions(mOldShowFunctions);
+    settings.setShowFunctions(mOldShowFunctions);
     
     ProgramInfoDialog.recreateInstance();
   }
