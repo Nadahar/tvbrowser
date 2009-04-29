@@ -29,7 +29,7 @@ import com.l2fprod.common.swing.plaf.LookAndFeelAddons;
 
 import devplugin.ProgramFieldType;
 
-public class ProgramInfoSettings {
+class ProgramInfoSettings {
 
   private static final String KEY_FIELD_ORDER = "order";
   private static final String KEY_LOOK = "look";
@@ -69,7 +69,7 @@ public class ProgramInfoSettings {
   }
 
   protected boolean getAntialiasing() {
-    return getProperty(KEY_ANTIALIASING, false);
+    return getProperty(KEY_ANTIALIASING, true);
   }
 
   private String getProperty(final String key, final String defaultValue) {
@@ -177,7 +177,7 @@ public class ProgramInfoSettings {
     setProperty(KEY_LEFT_SPLIT_WIDTH, Integer.toString(width));
   }
 
-  public void setHeight(final int height) {
+  protected void setHeight(final int height) {
     setProperty(KEY_LEFT_SPLIT_HEIGHT, Integer.toString(height));
   }
 
