@@ -29,6 +29,7 @@ package tvbrowser.ui.settings;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.swing.Icon;
 import javax.swing.JCheckBox;
@@ -50,6 +51,7 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.ProgramFieldType;
+import devplugin.ProgramInfoHelper;
 import devplugin.SettingsTab;
 
 /**
@@ -61,6 +63,9 @@ public class ProgramPanelSettingsTab implements SettingsTab {
 
   private static final Localizer mLocalizer
     = Localizer.getLocalizerFor(ProgramPanelSettingsTab.class);
+
+  private static final String PICTURE_ICON_NAME = mLocalizer.msg("hasPicure",
+      "Has picture");
   
   private JPanel mSettingsPn;
   
@@ -70,6 +75,8 @@ public class ProgramPanelSettingsTab implements SettingsTab {
   private ColorLabel mProgramItemOnAirColorLb, mProgramItemProgressColorLb, mProgramItemKeyboardSelectedLb;  
   
   private JCheckBox mBorderForOnAirPrograms;
+
+  private ArrayList<IconPlugin> mFormatIcons;
 
   /**
    * Creates the settings panel for this tab.
@@ -140,45 +147,65 @@ public class ProgramPanelSettingsTab implements SettingsTab {
   
   
   private IconPlugin[] getAvailableIconPlugins() {
-    ArrayList<IconPlugin> list = new ArrayList<IconPlugin>();
+    final ArrayList<IconPlugin> list = new ArrayList<IconPlugin>();
     
-    list.add(new IconPlugin(mLocalizer.msg("programInfo", "Infos")));
-    list.add(new IconPlugin(mLocalizer.msg("hasPicure","Has picture")));
+    list.addAll(getFormatIconNames());
+    // list.add(new IconPlugin(mLocalizer.msg("programInfo", "Infos")));
+    list.add(new IconPlugin(PICTURE_ICON_NAME));
     
-    PluginProxy[] pluginArr = PluginProxyManager.getInstance().getActivatedPlugins();
+    final PluginProxy[] pluginArr = PluginProxyManager.getInstance()
+        .getActivatedPlugins();
     for (PluginProxy pluginProxy : pluginArr) {
-      String iconText = pluginProxy.getProgramTableIconText();
+      final String iconText = pluginProxy.getProgramTableIconText();
       if (iconText != null) {
         list.add(new IconPlugin(pluginProxy));
       }
     }
     
-    IconPlugin[] asArr = new IconPlugin[list.size()];
+    final IconPlugin[] asArr = new IconPlugin[list.size()];
     list.toArray(asArr);
     return asArr;
   }
 
 
-  private IconPlugin[] getSelectedIconPlugins(IconPlugin[] allArr) {
-    String[] selPluginArr = Settings.propProgramTableIconPlugins.getStringArray();
-    ArrayList<IconPlugin> list = new ArrayList<IconPlugin>();
+  private IconPlugin[] getSelectedIconPlugins(final IconPlugin[] allArr) {
+    final String[] selPluginArr = Settings.propProgramTableIconPlugins
+        .getStringArray();
+    final ArrayList<IconPlugin> list = new ArrayList<IconPlugin>();
     
-    for (String selectedPlugin : selPluginArr) {
+    for (String selectedPluginId : selPluginArr) {
       for (IconPlugin iconPlugin : allArr) {
-        String pluginId = iconPlugin.getId()/*.getPlugin().getId()*/;
-        if (pluginId.equals(selectedPlugin)) {
+        final String pluginId = iconPlugin.getId();
+        if (selectedPluginId.equals(pluginId)) {
           list.add(iconPlugin);
           break;
         }
       }
+      if (selectedPluginId.equals(Settings.INFO_ID)) {
+        list.addAll(getFormatIconNames());
+      }
     }
 
-    IconPlugin[] asArr = new IconPlugin[list.size()];
+    final IconPlugin[] asArr = new IconPlugin[list.size()];
     list.toArray(asArr);
     return asArr;
   }
 
   
+  private List<IconPlugin> getFormatIconNames() {
+    if (mFormatIcons == null) {
+      mFormatIcons = new ArrayList<IconPlugin>();
+      for (int i = 0; i < ProgramInfoHelper.mInfoIconFileName.length; i++) {
+        if (ProgramInfoHelper.mInfoIconArr[i] != null) {
+          mFormatIcons.add(new IconPlugin(mLocalizer.msg("formatIcon",
+              "Format: {0}", ProgramInfoHelper.mInfoMsgArr[i])));
+        }
+      }
+    }
+    return mFormatIcons;
+  }
+
+
   private ProgramFieldType[] getAvailableTypes() {
     ArrayList<ProgramFieldType> typeList = new ArrayList<ProgramFieldType>();
     
@@ -215,7 +242,7 @@ public class ProgramPanelSettingsTab implements SettingsTab {
     String[] pluginIdArr = new String[iconPluginArr.length];
     for (int i = 0; i < iconPluginArr.length; i++) {
       IconPlugin plugin = (IconPlugin) iconPluginArr[i];
-      pluginIdArr[i] = plugin/*.getPlugin()*/.getId();
+      pluginIdArr[i] = plugin.getId();
     }
     Settings.propProgramTableIconPlugins.setStringArray(pluginIdArr);
     
@@ -256,11 +283,11 @@ public class ProgramPanelSettingsTab implements SettingsTab {
     private PluginProxy mPlugin;
     private String mName;
     
-    public IconPlugin(PluginProxy plugin) {
+    public IconPlugin(final PluginProxy plugin) {
       mPlugin = plugin;
     }
     
-    public IconPlugin(String name) {
+    public IconPlugin(final String name) {
       mName = name;
       mPlugin = null;
     }
@@ -268,11 +295,19 @@ public class ProgramPanelSettingsTab implements SettingsTab {
     public String getId() {
       if(mPlugin != null) {
         return mPlugin.getId();
-      } else if(mName != null && mName.compareTo(mLocalizer.msg("programInfo", "Infos")) == 0) {
-        return Settings.INFO_ID;
-      } else {
+      } else if (mName != null && mName.compareTo(PICTURE_ICON_NAME) == 0) {
         return Settings.PICTURE_ID;
+      } else {
+        for (int i = 0; i < ProgramInfoHelper.mInfoIconFileName.length; i++) {
+          if (ProgramInfoHelper.mInfoIconArr[i] != null) {
+            if (mLocalizer.msg("formatIcon", "Format: {0}",
+                ProgramInfoHelper.mInfoMsgArr[i]).equals(mName)) {
+              return "FORMAT_" + i;
+            }
+          }
+        }
       }
+      return null;
     }
     
     public String toString() {
