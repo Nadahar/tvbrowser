@@ -562,10 +562,10 @@ private static Font getDynamicFontSize(Font font, int offset) {
     } else {
       PluginProxyManager mng = PluginProxyManager.getInstance();
       ArrayList<Icon> iconList = new ArrayList<Icon>();
+      int info = program.getInfo();
       // Add the icons for each plugin
       for (int pluginIdx = 0; pluginIdx < iconPluginArr.length; pluginIdx++) {
         if (iconPluginArr[pluginIdx].compareTo(Settings.INFO_ID) == 0) {
-          int info = program.getInfo();
 
           if ((info != -1) && (info != 0)) {
             for (int i = 0; i < ProgramInfoHelper.mInfoBitArr.length; i++) {
@@ -580,6 +580,16 @@ private static Font getDynamicFontSize(Font font, int offset) {
         } else if (iconPluginArr[pluginIdx].compareTo(Settings.PICTURE_ID) == 0) {
           if (mProgram.hasFieldValue(ProgramFieldType.PICTURE_TYPE)) {
             iconList.add(new ImageIcon("imgs/Info_HasPicture.png"));
+          }
+        } else if (iconPluginArr[pluginIdx].substring(0, 6).compareTo("FORMAT") == 0) {
+          if ((info != -1) && (info != 0)) {
+            int index = Integer.valueOf(iconPluginArr[pluginIdx].substring(7));
+            if (ProgramInfoHelper.bitSet(info,
+                ProgramInfoHelper.mInfoBitArr[index])
+                && (ProgramInfoHelper.mInfoIconArr[index] != null)) {
+              // Add the icon to the list
+              iconList.add(ProgramInfoHelper.mInfoIconArr[index]);
+            }
           }
         } else {
           PluginProxy plugin = mng.getPluginForId(iconPluginArr[pluginIdx]);
