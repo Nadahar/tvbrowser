@@ -572,6 +572,10 @@ public class TVBrowser {
   }
 
   private static void showUsage() {
+    String vendor = System.getProperty("java.vendor").toLowerCase();
+    if (!(vendor.contains("sun") || vendor.contains("openjdk"))) {
+      System.out.println("TV-Browser was developed for Sun Java and OpenJDK and may not run with your version of Java.");
+    }
     System.out.println("command line options:");
     System.out.println("    -minimized    The main window will be minimized after start up");
     System.out.println("    -nosplash     No splash screen during start up");
