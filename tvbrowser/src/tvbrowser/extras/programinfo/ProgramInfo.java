@@ -90,7 +90,7 @@ public class ProgramInfo {
         ProgramInfoDialog.getInstance(Plugin.getPluginManager().getExampleProgram(), mLeftSplit, true);
       }
     };
-    mInitThread.setPriority(Thread.MIN_PRIORITY);
+    mInitThread.setPriority(Thread.NORM_PRIORITY);
     mInitThread.start();
   }
 

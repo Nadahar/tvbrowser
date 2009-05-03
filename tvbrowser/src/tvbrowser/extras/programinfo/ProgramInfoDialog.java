@@ -44,6 +44,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.regex.Matcher;
@@ -843,13 +844,20 @@ class ProgramInfoDialog {
     
     addActionsToRootPane();
 
-    Settings.layoutWindow("extras.programInfoDlg", mDialog);
-    
-    SwingUtilities.invokeLater(new Runnable() {
-      public void run() {
-        mDialog.setVisible(true);
-      }
-    });
+    try {
+      SwingUtilities.invokeAndWait(new Runnable() {
+        public void run() {
+          Settings.layoutWindow("extras.programInfoDlg", mDialog);
+          mDialog.setVisible(true);
+        }
+      });
+    } catch (InterruptedException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } catch (InvocationTargetException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
   }
   
   /**
