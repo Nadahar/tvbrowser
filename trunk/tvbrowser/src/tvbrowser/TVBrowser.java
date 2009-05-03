@@ -372,108 +372,169 @@ public class TVBrowser {
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         initUi(splash, fStartMinimized);
-        SwingUtilities.invokeLater(new Runnable(){
+        new Thread("Start finished callbacks") {
           public void run() {
-            new Thread("Start finished callbacks") {
-              public void run() {
-                setPriority(Thread.MIN_PRIORITY);
-                GlobalPluginProgramFormatingManager.getInstance();
-                PluginProxyManager.getInstance().fireTvBrowserStartFinished();
-                TvDataServiceProxyManager.getInstance().fireTvBrowserStartFinished();
-                  
-                ReminderPlugin.getInstance().handleTvBrowserStartFinished();
-                FavoritesPlugin.getInstance().handleTvBrowserStartFinished();
-                mainFrame.handleTvBrowserStartFinished();
-                
-                ProgramInfo.getInstance().handleTvBrowserStartFinished();
-                
-                TvDataBase.getInstance().handleTvBrowserStartFinished();
-              }
-            }.start();
-            ChannelList.completeChannelLoading();
+            setPriority(Thread.MIN_PRIORITY);
+            // first reset "starting" flag of mainframe
+            mainFrame.handleTvBrowserStartFinished();
             
-            if(Launch.isOsWindowsNtBranch()) {
+            // initialize program info for fast reaction to program table click
+            ProgramInfo.getInstance().handleTvBrowserStartFinished();
+
+            // load reminders and favorites
+            ReminderPlugin.getInstance().handleTvBrowserStartFinished();
+            FavoritesPlugin.getInstance().handleTvBrowserStartFinished();
+
+            // now handle all plugins and services
+            GlobalPluginProgramFormatingManager.getInstance();
+            PluginProxyManager.getInstance().fireTvBrowserStartFinished();
+            TvDataServiceProxyManager.getInstance()
+                .fireTvBrowserStartFinished();
+
+            // finally submit plugin caused updates to database
+            TvDataBase.getInstance().handleTvBrowserStartFinished();
+          }
+        }.start();
+        SwingUtilities.invokeLater(new Runnable() {
+          public void run() {
+            ChannelList.completeChannelLoading();
+
+            if (Launch.isOsWindowsNtBranch()) {
               try {
-                RegistryKey desktopSettings = new RegistryKey(RootKey.HKEY_CURRENT_USER, "Control Panel\\Desktop");
-                RegistryValue autoEnd = desktopSettings.getValue("AutoEndTasks");
-              
-                if(autoEnd.getData().equals("1")) {
-                  RegistryValue killWait = desktopSettings.getValue("WaitToKillAppTimeout");
-              
+                RegistryKey desktopSettings = new RegistryKey(
+                    RootKey.HKEY_CURRENT_USER, "Control Panel\\Desktop");
+                RegistryValue autoEnd = desktopSettings
+                    .getValue("AutoEndTasks");
+
+                if (autoEnd.getData().equals("1")) {
+                  RegistryValue killWait = desktopSettings
+                      .getValue("WaitToKillAppTimeout");
+
                   int i = Integer.parseInt(killWait.getData().toString());
-              
-                  if(i < 5000) {
+
+                  if (i < 5000) {
                     JOptionPane pane = new JOptionPane();
-                    
-                    String cancel = mLocalizer.msg("registryCancel","Close TV-Browser");
-                    String dontDoIt = mLocalizer.msg("registryJumpOver","Not this time");
-                    
-                    pane.setOptions(new String[] {Localizer.getLocalization(Localizer.I18N_OK),dontDoIt,cancel});
+
+                    String cancel = mLocalizer.msg("registryCancel",
+                        "Close TV-Browser");
+                    String dontDoIt = mLocalizer.msg("registryJumpOver",
+                        "Not this time");
+
+                    pane.setOptions(new String[] {
+                        Localizer.getLocalization(Localizer.I18N_OK), dontDoIt,
+                        cancel });
                     pane.setOptionType(JOptionPane.YES_NO_CANCEL_OPTION);
                     pane.setMessageType(JOptionPane.WARNING_MESSAGE);
-                    pane.setMessage(mLocalizer.msg("registryWarning","The fast shutdown of Windows is activated.\nThe timeout to wait for before Windows is closing an application is too short,\nto give TV-Browser enough time to save all settings.\n\nThe setting hasn't the default value. It was changed by a tool or by you.\nTV-Browser will now try to change the timeout.\n\nIf you don't want to change this timeout select 'Not this time' or 'Close TV-Browser'."));
-                    
-                    pane.setInitialValue(mLocalizer.msg("registryCancel","Close TV-Browser"));
-                    
-                    JDialog d = pane.createDialog(UiUtilities.getLastModalChildOf(mainFrame), UIManager.getString("OptionPane.messageDialogTitle"));
+                    pane
+                        .setMessage(mLocalizer
+                            .msg(
+                                "registryWarning",
+                                "The fast shutdown of Windows is activated.\nThe timeout to wait for before Windows is closing an application is too short,\nto give TV-Browser enough time to save all settings.\n\nThe setting hasn't the default value. It was changed by a tool or by you.\nTV-Browser will now try to change the timeout.\n\nIf you don't want to change this timeout select 'Not this time' or 'Close TV-Browser'."));
+
+                    pane.setInitialValue(mLocalizer.msg("registryCancel",
+                        "Close TV-Browser"));
+
+                    JDialog d = pane.createDialog(UiUtilities
+                        .getLastModalChildOf(mainFrame), UIManager
+                        .getString("OptionPane.messageDialogTitle"));
                     d.setModal(true);
                     UiUtilities.centerAndShow(d);
-                    
-                    if(pane.getValue() == null || pane.getValue().equals(cancel)) {
+
+                    if (pane.getValue() == null
+                        || pane.getValue().equals(cancel)) {
                       mainFrame.quit();
-                    }
-                    else if(!pane.getValue().equals(dontDoIt)) {
+                    } else if (!pane.getValue().equals(dontDoIt)) {
                       try {
                         killWait.setData("5000");
                         desktopSettings.setValue(killWait);
-                        JOptionPane.showMessageDialog(UiUtilities.getLastModalChildOf(mainFrame),
-                            mLocalizer.msg("registryChanged","The timeout was changed successfully.\nPlease reboot Windows!"));
-                      }catch(Exception registySetting) {
-                        JOptionPane.showMessageDialog(UiUtilities.getLastModalChildOf(mainFrame),
-                            mLocalizer.msg("registryNotChanged","<html>The Registry value couldn't be changed. Maybe you haven't the right to do it.<br>If it is so contact you Administrator and let him do it for you.<br><br><b><Attention:/b> The following description is for experts. If you change or delete the wrong value in the Registry you could destroy your Windows installation.<br><br>To get no warning on TV-Browser start the Registry value <b>WaitToKillAppTimeout</b> in the Registry path<br><b>HKEY_CURRENT_USER\\Control Panel\\Desktop</b> have to be at least <b>5000</b> or the value for <b>AutoEndTasks</b> in the same path have to be <b>0</b>.</html>"),
-                            Localizer.getLocalization(Localizer.I18N_ERROR),JOptionPane.ERROR_MESSAGE);
+                        JOptionPane
+                            .showMessageDialog(
+                                UiUtilities.getLastModalChildOf(mainFrame),
+                                mLocalizer
+                                    .msg("registryChanged",
+                                        "The timeout was changed successfully.\nPlease reboot Windows!"));
+                      } catch (Exception registySetting) {
+                        JOptionPane
+                            .showMessageDialog(
+                                UiUtilities.getLastModalChildOf(mainFrame),
+                                mLocalizer
+                                    .msg(
+                                        "registryNotChanged",
+                                        "<html>The Registry value couldn't be changed. Maybe you haven't the right to do it.<br>If it is so contact you Administrator and let him do it for you.<br><br><b><Attention:/b> The following description is for experts. If you change or delete the wrong value in the Registry you could destroy your Windows installation.<br><br>To get no warning on TV-Browser start the Registry value <b>WaitToKillAppTimeout</b> in the Registry path<br><b>HKEY_CURRENT_USER\\Control Panel\\Desktop</b> have to be at least <b>5000</b> or the value for <b>AutoEndTasks</b> in the same path have to be <b>0</b>.</html>"),
+                                Localizer.getLocalization(Localizer.I18N_ERROR),
+                                JOptionPane.ERROR_MESSAGE);
                       }
                     }
                   }
                 }
-              }catch(Throwable registry) {}
-            }
-            
-            if(currentVersion != null && currentVersion.compareTo(new Version(2,71,false))<0) {
-              if(Settings.propProgramPanelMarkedMinPriorityColor.getColor().equals(Settings.propProgramPanelMarkedMinPriorityColor.getDefaultColor())) {
-                Settings.propProgramPanelMarkedMinPriorityColor.setColor(new Color(255, 0, 0, 30));
-              }
-              if(Settings.propProgramPanelMarkedMediumPriorityColor.getColor().equals(Settings.propProgramPanelMarkedMediumPriorityColor.getDefaultColor())) {
-                Settings.propProgramPanelMarkedMediumPriorityColor.setColor(new Color(140, 255, 0, 60));
-              }
-              if(Settings.propProgramPanelMarkedHigherMediumPriorityColor.getColor().equals(Settings.propProgramPanelMarkedHigherMediumPriorityColor.getDefaultColor())) {
-                Settings.propProgramPanelMarkedHigherMediumPriorityColor.setColor(new Color(255, 255, 0, 60));
-              }
-              if(Settings.propProgramPanelMarkedMaxPriorityColor.getColor().equals(Settings.propProgramPanelMarkedMaxPriorityColor.getDefaultColor())) {
-                Settings.propProgramPanelMarkedMaxPriorityColor.setColor(new Color(255, 180, 0, 110));
+              } catch (Throwable registry) {
               }
             }
-            
+
+            if (currentVersion != null
+                && currentVersion.compareTo(new Version(2, 71, false)) < 0) {
+              if (Settings.propProgramPanelMarkedMinPriorityColor.getColor()
+                  .equals(
+                      Settings.propProgramPanelMarkedMinPriorityColor
+                          .getDefaultColor())) {
+                Settings.propProgramPanelMarkedMinPriorityColor
+                    .setColor(new Color(255, 0, 0, 30));
+              }
+              if (Settings.propProgramPanelMarkedMediumPriorityColor.getColor()
+                  .equals(
+                      Settings.propProgramPanelMarkedMediumPriorityColor
+                          .getDefaultColor())) {
+                Settings.propProgramPanelMarkedMediumPriorityColor
+                    .setColor(new Color(140, 255, 0, 60));
+              }
+              if (Settings.propProgramPanelMarkedHigherMediumPriorityColor
+                  .getColor().equals(
+                      Settings.propProgramPanelMarkedHigherMediumPriorityColor
+                          .getDefaultColor())) {
+                Settings.propProgramPanelMarkedHigherMediumPriorityColor
+                    .setColor(new Color(255, 255, 0, 60));
+              }
+              if (Settings.propProgramPanelMarkedMaxPriorityColor.getColor()
+                  .equals(
+                      Settings.propProgramPanelMarkedMaxPriorityColor
+                          .getDefaultColor())) {
+                Settings.propProgramPanelMarkedMaxPriorityColor
+                    .setColor(new Color(255, 180, 0, 110));
+              }
+            }
+
             // check if user should select picture settings
-            if(currentVersion != null && currentVersion.compareTo(new Version(2,22))<0) {
+            if (currentVersion != null
+                && currentVersion.compareTo(new Version(2, 22)) < 0) {
               TvBrowserPictureSettingsUpdateDialog.createAndShow(mainFrame);
+            } else if (currentVersion != null
+                && currentVersion.compareTo(new Version(2, 51, true)) < 0) {
+              Settings.propAcceptedLicenseArrForServiceIds
+                  .setStringArray(new String[0]);
             }
-            else if(currentVersion != null && currentVersion.compareTo(new Version(2,51,true)) < 0) {
-              Settings.propAcceptedLicenseArrForServiceIds.setStringArray(new String[0]);
-            }
-            
-            if(currentVersion != null && currentVersion.compareTo(new Version(2,60,true)) < 0) {
+
+            if (currentVersion != null
+                && currentVersion.compareTo(new Version(2, 60, true)) < 0) {
               int startOfDay = Settings.propProgramTableStartOfDay.getInt();
               int endOfDay = Settings.propProgramTableEndOfDay.getInt();
-              
-              if(endOfDay - startOfDay < -1) {
+
+              if (endOfDay - startOfDay < -1) {
                 Settings.propProgramTableEndOfDay.setInt(startOfDay);
-                
-                JOptionPane.showMessageDialog(UiUtilities.getLastModalChildOf(mainFrame),mLocalizer.msg("timeInfoText","The time range of the program table was corrected because the defined day was shorter than 24 hours.\n\nIf the program table should show less than 24h use a time filter for that. That time filter can be selected\nto be the default filter by selecting it in the filter settings and pressing on the button 'Default'."),mLocalizer.msg("timeInfoTitle","Times corrected"), JOptionPane.INFORMATION_MESSAGE);
+
+                JOptionPane
+                    .showMessageDialog(
+                        UiUtilities.getLastModalChildOf(mainFrame),
+                        mLocalizer
+                            .msg(
+                                "timeInfoText",
+                                "The time range of the program table was corrected because the defined day was shorter than 24 hours.\n\nIf the program table should show less than 24h use a time filter for that. That time filter can be selected\nto be the default filter by selecting it in the filter settings and pressing on the button 'Default'."),
+                        mLocalizer.msg("timeInfoTitle", "Times corrected"),
+                        JOptionPane.INFORMATION_MESSAGE);
                 Settings.handleChangedSettings();
               }
             }
-            MainFrame.getInstance().getProgramTableScrollPane().requestFocusInWindow();
+            MainFrame.getInstance().getProgramTableScrollPane()
+                .requestFocusInWindow();
           }
         });
       }
