@@ -79,7 +79,7 @@ public class ChannelGroup implements devplugin.ChannelGroup {
   /**
    * Settings for storing changes in ProviderName/Id
    */
-  private Properties mSettings;
+  private TvBrowserDataServiceSettings mSettings;
 
   private static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(ChannelGroup.class.getName());
 
@@ -100,7 +100,7 @@ public class ChannelGroup implements devplugin.ChannelGroup {
    * @param mirrorUrls The mirror urls of the group.
    * @param settings The properties of the group.
    */
-  public ChannelGroup(TvBrowserDataService dataservice, String id, String name, String description, String provider, String[] mirrorUrls, Properties settings) {
+  public ChannelGroup(TvBrowserDataService dataservice, String id, String name, String description, String provider, String[] mirrorUrls, TvBrowserDataServiceSettings settings) {
     mID = id;
     mName = name;
     mDescription = description;
@@ -120,7 +120,7 @@ public class ChannelGroup implements devplugin.ChannelGroup {
    * @param mirrorUrls The mirror urls of the group.
    * @param settings The properties of the group.
    */
-  public ChannelGroup(TvBrowserDataService dataservice, String id, String[] mirrorUrls, Properties settings) {
+  public ChannelGroup(TvBrowserDataService dataservice, String id, String[] mirrorUrls, TvBrowserDataServiceSettings settings) {
     this(dataservice, id, null, null, null, mirrorUrls, settings);
   }
 
@@ -230,7 +230,7 @@ public class ChannelGroup implements devplugin.ChannelGroup {
     if (mProviderName != null) {
       return mProviderName;
     }
-    String providerName = mSettings.getProperty(mID + "_provider");
+    String providerName = mSettings.getProvider(mID);
     if (providerName != null) {
       mProviderName = providerName;
       return providerName;
@@ -245,7 +245,7 @@ public class ChannelGroup implements devplugin.ChannelGroup {
         }
       });
       providerName = prop.getProperty("provider",mLocalizer.msg("unknownProvider","unknown"));
-      mSettings.setProperty(mID + "_provider", providerName);
+      mSettings.setProvider(mID, providerName);
       mProviderName = providerName;
       return providerName;
     } catch (IOException e) {

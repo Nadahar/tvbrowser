@@ -31,8 +31,6 @@ import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import util.ui.Localizer;
-
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
@@ -44,8 +42,7 @@ public class StatusPanel extends JPanel {
 
   protected static final int NETWORK = 0;
   protected static final int CHANNELS = 1;
-  protected static final int PICTURES = 2;
-  protected static final int READY = 3;
+  protected static final int READY = 2;
   
   private Font mNormalFont;
 
@@ -70,14 +67,11 @@ public class StatusPanel extends JPanel {
     else if (selected == CHANNELS) {
       text = mLocalizer.msg("channel", "Choose channel");
     }
-    else if (selected == PICTURES) {
-      text = Localizer.getLocalization(Localizer.I18N_PICTURES);
-    }
     else if (selected == READY) {
       text = mLocalizer.msg("done", "Done");
     }
     JLabel label = new JLabel();
-    label.setText(mLocalizer.msg("title","Step {0} of {1}: {2}", selected + 1, 4, text));
+    label.setText(mLocalizer.msg("title","Step {0} of {1}: {2}", selected + 1, READY + 1, text));
     label.setFont(mNormalFont);
     add(label, cc.xy(2,2));
     

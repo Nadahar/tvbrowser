@@ -115,7 +115,7 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
 
   private HashSet<ChannelGroup> mAvailableChannelGroupsSet;
 
-  private Properties mSettings;
+  private TvBrowserDataServiceSettings mSettings;
 
   private File mDataDir;
 
@@ -131,7 +131,7 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
    */
   public TvBrowserDataService() {
     mHasRightToDownloadIcons = false;
-    mSettings = new Properties();
+    mSettings = new TvBrowserDataServiceSettings(new Properties());
     mInstance=this;
     mAvailableChannelGroupsSet =new HashSet<ChannelGroup>();
   }
@@ -466,21 +466,10 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
    * Called by the host-application during start-up. Implement this method to
    * load your dataservices settings from the file system.
    */
-  public void loadSettings(Properties settings) {
-    mSettings = settings;
+  public void loadSettings(Properties properties) {
+    mSettings = new TvBrowserDataServiceSettings(properties);
 
-    /* Load data level settings */
-    String tvDataLevel=settings.getProperty("level");
-    if (tvDataLevel==null) {
-      settings.setProperty("level","base:::more00-16:::more16-00:::picture16-00");
-    }
-    
-    tvDataLevel = settings.getProperty("level");
-    
-    if(tvDataLevel.indexOf("image") != -1)
-      settings.setProperty("level",tvDataLevel.replaceAll("image","picture"));
-
-    String[] levelIds=settings.getProperty("level").split(":::");
+    String[] levelIds=mSettings.getLevelIds();
     ArrayList<TvDataLevel> levelList=new ArrayList<TvDataLevel>();
     for (int i=0;i<DayProgramFile.LEVEL_ARR.length;i++) {
       if (DayProgramFile.LEVEL_ARR[i].isRequired()) {
@@ -526,7 +515,7 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
 
   private Collection<ChannelGroup> getUserDefinedChannelGroupsCollection() {
     HashSet<ChannelGroup> result = new HashSet<ChannelGroup>();
-    String groupNames = mSettings.getProperty("groupname");
+    String groupNames = mSettings.getGroupName();
     String[] groupNamesArr;
 
     /* If there are no groups defined in the settings file, we return all default groups */
@@ -540,7 +529,7 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
       groupNamesArr=groupNames.split(":");
       for (int i=0;i<groupNamesArr.length;i++) {
         if (groupNamesArr[i].trim().length()>0) {
-          String groupUrls=mSettings.getProperty("group_"+groupNamesArr[i],"");
+          String groupUrls=mSettings.getGroupUrls(groupNamesArr[i]);
           String[] groupUrlArr=groupUrls.split(";");
           result.add(new ChannelGroup(this, groupNamesArr[i],groupUrlArr,mSettings));
         }
@@ -634,10 +623,10 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
 
   /**
    * Called by the host-application during shut-down. Implements this method to
-   * store your dataservices settings to the file system.
+   * store your data service settings to the file system.
    */
   public Properties storeSettings() {
-    return mSettings;
+    return mSettings.storeSettings();
   }
 
   public boolean hasSettingsPanel() {

@@ -78,7 +78,7 @@ import devplugin.AbstractTvDataService;
  */
 public class TvBrowserDataServiceSettingsPanel extends SettingsPanel implements ActionListener, PictureSettingsIf {
 
-  private Properties mSettings;
+  private TvBrowserDataServiceSettings mSettings;
 
   private JCheckBox[] mLevelCheckboxes;
 
@@ -98,7 +98,7 @@ public class TvBrowserDataServiceSettingsPanel extends SettingsPanel implements 
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer
       .getLocalizerFor(TvBrowserDataServiceSettingsPanel.class);
 
-  protected TvBrowserDataServiceSettingsPanel(Properties settings) {
+  protected TvBrowserDataServiceSettingsPanel(TvBrowserDataServiceSettings settings) {
 
     mSettings = settings;
     setLayout(new BorderLayout());
@@ -115,7 +115,7 @@ public class TvBrowserDataServiceSettingsPanel extends SettingsPanel implements 
 
     TvDataLevel[] levelArr = DayProgramFile.LEVEL_ARR;
 
-    String[] levelIds = settings.getProperty("level", "").split(":::");
+    String[] levelIds = settings.getLevelIds();
 
     mLevelCheckboxes = new JCheckBox[levelArr.length];
     for (int i = 0; i < levelArr.length; i++) {
@@ -238,7 +238,7 @@ public class TvBrowserDataServiceSettingsPanel extends SettingsPanel implements 
    * @param dataService
    * @return The settings panel for TvBrowserDataService.
    */
-  public static SettingsPanel getInstance(Properties settings) {
+  public static SettingsPanel getInstance(TvBrowserDataServiceSettings settings) {
     if (mInstance == null) {
       mInstance = new TvBrowserDataServiceSettingsPanel(settings);
     }
@@ -246,21 +246,18 @@ public class TvBrowserDataServiceSettingsPanel extends SettingsPanel implements 
   }
 
   public void ok() {
-    String setting = "";
     ArrayList<TvDataLevel> levelList = new ArrayList<TvDataLevel>();
+    ArrayList<String> levelIds = new ArrayList<String>();
 
     for (int i = 0; i < mLevelCheckboxes.length; i++) {
       if (mLevelCheckboxes[i].isSelected()) {
-        setting += ":::" + DayProgramFile.LEVEL_ARR[i].getId();
+        levelIds.add(DayProgramFile.LEVEL_ARR[i].getId());
         levelList.add(DayProgramFile.LEVEL_ARR[i]);
       }
     }
     TvBrowserDataService.getInstance().setTvDataLevel(levelList.toArray(new TvDataLevel[levelList.size()]));
 
-    if (setting.length() > 3) {
-      setting = setting.substring(3);
-    }
-    mSettings.setProperty("level", setting);
+    mSettings.setLevelIds(levelIds);
 
     storeGroups();
 
@@ -276,7 +273,7 @@ public class TvBrowserDataServiceSettingsPanel extends SettingsPanel implements 
     if (groups.length > 0) {
       buf.append(((ChannelGroup) groups[groups.length - 1]).getId());
     }
-    mSettings.setProperty("groupname", buf.toString());
+    mSettings.setGroupName(buf.toString());
     for (int i = 0; i < groups.length; i++) {
       StringBuilder urlBuf = new StringBuilder();
       String[] mirrorArr = ((ChannelGroup) groups[i]).getMirrorArr();
@@ -286,7 +283,7 @@ public class TvBrowserDataServiceSettingsPanel extends SettingsPanel implements 
       if (mirrorArr.length > 0) {
         urlBuf.append(mirrorArr[mirrorArr.length - 1]);
       }
-      mSettings.setProperty("group_" + ((ChannelGroup) groups[i]).getId(), urlBuf.toString());
+      mSettings.setGroupUrls(((ChannelGroup) groups[i]).getId(), urlBuf.toString());
     }
   }
 
