@@ -34,12 +34,14 @@ import tvbrowser.core.Settings;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
 import util.ui.progress.ProgressMonitorGroup;
+import devplugin.Channel;
 import devplugin.ChannelGroup;
 import devplugin.ProgressMonitor;
 
 
 public class ChannelGroupManager {
 
+  private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(ChannelGroupManager.class);
   private static ChannelGroupManager mInstance;
 
   private HashMap<TvDataServiceProxy, ArrayList<ChannelGroup>> mServiceToGroupsMap; // key: TvDataServiceProxy;
@@ -98,7 +100,7 @@ public class ChannelGroupManager {
 
   /**
    * Refresh the list of available groups and refresh the lists of available channels
-   * @param monitor Progessmonitor that shows the current status of the refresh
+   * @param monitor Progress monitor that shows the current status of the refresh
    */
   public void checkForAvailableGroupsAndChannels(ProgressMonitor monitor) {
     
@@ -132,6 +134,8 @@ public class ChannelGroupManager {
     curMon = progressGroup.getNextProgressMonitor(20);
     curMon.setMaximum(services.length);
 
+    int channelCount = 0;
+    
     /* Call 'checkForAvailableChannels' for all groups to fetch the most recent channel lists */
     TvDataServiceProxy[] proxies = TvDataServiceProxyManager.getInstance().getDataServices();
     for (TvDataServiceProxy proxy : proxies) {
@@ -141,15 +145,33 @@ public class ChannelGroupManager {
         curMon.setMaximum(max);
         for (int j = 0; j < max; j++) {
           try {
-            proxy.checkForAvailableChannels(groups[j], curMon);
+            final String channelCountString = Integer.toString(channelCount);
+            final ProgressMonitor finalMonitor = curMon;
+            // use a proxy progress monitor to be able to add the number of channels found so far
+            Channel[] channels = proxy.checkForAvailableChannels(groups[j], new ProgressMonitor(){
+            
+              @Override
+              public void setValue(int value) {
+                finalMonitor.setValue(value);
+              }
+            
+              @Override
+              public void setMessage(String msg) {
+                finalMonitor.setMessage(msg + " " + mLocalizer.msg("channelCount", "(Found {0} channels)", channelCountString));
+              }
+            
+              @Override
+              public void setMaximum(int maximum) {
+                finalMonitor.setMaximum(maximum);
+              }
+            });
+            if (channels != null) {
+              channelCount += channels.length;
+            }
             curMon.setValue(j);
           } catch (TvBrowserException e) {
             ErrorHandler.handle(e);
           }
-
-          /* ATTENTION: This is only for the 2-2-x branch*/
-          if (monitor != null)
-            monitor.setMaximum(-1);
         }
       }
     }
