@@ -70,6 +70,7 @@ import tvbrowser.core.icontheme.IconLoader;
 import util.browserlauncher.Launch;
 import util.exc.TvBrowserException;
 import util.ui.Localizer;
+import util.ui.TVBrowserIcons;
 import util.ui.TextAreaIcon;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
@@ -107,6 +108,8 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
   
   private int mLastIndex;
 
+  private JButton mHelpBtn;
+
   /**
    * Creates an instance of this class.
    * <p>
@@ -136,6 +139,10 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
     mDownloadBtn.addActionListener(this);
     mDownloadBtn.setEnabled(false);
 
+    mHelpBtn = new JButton(mLocalizer.msg("openWebsite","Open website"), TVBrowserIcons.webBrowser(TVBrowserIcons.SIZE_SMALL));
+    mHelpBtn.addActionListener(this);
+    mHelpBtn.setEnabled(false);
+
     ButtonBarBuilder builder = new ButtonBarBuilder();
     
     if(onlyUpdate) {
@@ -147,7 +154,9 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
       });
       
       builder.addFixed(mAutoUpdates);
+      builder.addRelatedGap();
     }
+    builder.addFixed(mHelpBtn);
     
     builder.addGlue();
     builder.addFixed(mDownloadBtn);
@@ -387,6 +396,12 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
         close();
       }
     }
+    else if (event.getSource() == mHelpBtn) {
+      final SoftwareUpdateItem item = (SoftwareUpdateItem) ((SelectableItem)mSoftwareUpdateItemList.getSelectedValue()).getItem();
+      if (item != null) {
+        Launch.openURL(item.getWebsite());
+      }
+    }
   }
 
   public void valueChanged(ListSelectionEvent event) {
@@ -402,6 +417,14 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
         }
         
         mLastIndex = list.getSelectedIndex();
+        if (mLastIndex < 0) {
+          mHelpBtn.setEnabled(false);
+        }
+        else {
+          SoftwareUpdateItem item = (SoftwareUpdateItem) ((SelectableItem)mSoftwareUpdateItemList.getSelectedValue()).getItem();
+          String website = item.getWebsite();
+          mHelpBtn.setEnabled(website != null && website.length() > 0);
+        }
       }
     }
     
@@ -448,7 +471,7 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
           if(((SoftwareUpdateItem)item).getWebsite() != null) {
             JPopupMenu menu = new JPopupMenu();
             
-            JMenuItem menuItem = new JMenuItem(mLocalizer.msg("openWebsite","Open website"));
+            JMenuItem menuItem = new JMenuItem(mLocalizer.msg("openWebsite","Open website"), TVBrowserIcons.webBrowser(TVBrowserIcons.SIZE_SMALL));
             menuItem.addActionListener(new ActionListener() {
               public void actionPerformed(ActionEvent e) {
                 Launch.openURL(((SoftwareUpdateItem)item).getWebsite());
