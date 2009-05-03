@@ -165,12 +165,13 @@ public class DreamboxConnector {
       for (Entry<String, String> entry : bouquets.entrySet()) {
         String key = entry.getKey();
         String bouqetName = entry.getValue();
+
         TreeMap<String, String> map = getServiceData(URLEncoder.encode(key,
             "UTF8"));
 
         for (Entry<String, String> mEntry : map.entrySet()) {
           String mkey = mEntry.getKey();
-          allChannels.add(new DreamboxChannel(mkey, entry.getValue(),
+          allChannels.add(new DreamboxChannel(mkey, mEntry.getValue(),
               bouqetName));
         }
       }
