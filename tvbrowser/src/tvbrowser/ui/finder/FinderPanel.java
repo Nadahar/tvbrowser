@@ -31,6 +31,7 @@
 
 package tvbrowser.ui.finder;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
@@ -93,7 +94,7 @@ class FinderItemRenderer extends DefaultListCellRenderer {
 
 }
 
-public class FinderPanel extends JScrollPane implements MouseListener, MouseMotionListener, KeyListener {
+public class FinderPanel extends AbstractDateSelector implements DateSelector, MouseListener, MouseMotionListener, KeyListener {
 
   private static final util.ui.Localizer mLocalizer
   = util.ui.Localizer.getLocalizerFor(FinderPanel.class);  
@@ -108,15 +109,14 @@ public class FinderPanel extends JScrollPane implements MouseListener, MouseMoti
 
   private int mCurMouseItemInx = -1;
 
-  private Date mCurChoosenDate;
-
-  private Date mToday;
-
-  private Date maxDate;
+  private JScrollPane mScrollPane;
 
   public FinderPanel() {
 
-    setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+    mScrollPane = new JScrollPane();
+    setLayout(new BorderLayout());
+    add(mScrollPane, BorderLayout.CENTER);
+    mScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
     mModel = new DefaultListModel();
     mList = new JList(mModel);
     mList.setOpaque(false);
@@ -124,7 +124,7 @@ public class FinderPanel extends JScrollPane implements MouseListener, MouseMoti
     mRenderer = new FinderItemRenderer();
     mList.setCellRenderer(mRenderer);
 
-    setViewportView(mList);
+    mScrollPane.setViewportView(mList);
     updateContent();
     mList.addMouseMotionListener(this);
     mList.addMouseListener(this);
@@ -132,6 +132,10 @@ public class FinderPanel extends JScrollPane implements MouseListener, MouseMoti
 
     markDate(mToday);
 
+  }
+
+  public JComponent getComponent() {
+    return this;
   }
 
   /**
@@ -146,7 +150,7 @@ public class FinderPanel extends JScrollPane implements MouseListener, MouseMoti
 
     mToday = date;
     mModel.removeAllElements();
-    maxDate = TvDataBase.getInstance().getMaxSupportedDate();
+    Date maxDate = TvDataBase.getInstance().getMaxSupportedDate();
     for (int i = -1;; i++) {
       Date d = mToday.addDays(i);
       if (d.getNumberOfDaysSince(maxDate) > 0) {
@@ -154,7 +158,7 @@ public class FinderPanel extends JScrollPane implements MouseListener, MouseMoti
       }
       FinderItem fi = new FinderItem(mList, d, mToday);
       mModel.addElement(fi);
-      if (d.equals(mCurChoosenDate)) {
+      if (d.equals(getSelectedDate())) {
         mRenderer.setSelectedItem(fi);
         mList.setSelectedValue(fi, false);
       }
@@ -164,10 +168,6 @@ public class FinderPanel extends JScrollPane implements MouseListener, MouseMoti
 
   public void setDateListener(DateListener dateChangedListener) {
     mDateChangedListener = dateChangedListener;
-  }
-
-  public Date getSelectedDate() {
-    return mCurChoosenDate;
   }
 
   public devplugin.ProgressMonitor getProgressMonitorForDate(Date date) {
@@ -188,28 +188,6 @@ public class FinderPanel extends JScrollPane implements MouseListener, MouseMoti
     markDate(d, null);
   }
 
-  public void markPreviousDate() {
-    markDate(mCurChoosenDate.addDays(-1));
-  }
-
-  public void markNextDate() {
-    markDate(mCurChoosenDate.addDays(1));
-  }
-  
-  /**
-   * @since 2.7
-   */
-  public void markNextWeek() {
-    markDate(mCurChoosenDate.addDays(7));
-  }
-  
-  /**
-   * @since 2.7
-   */
-  public void markPreviousWeek() {
-    markDate(mCurChoosenDate.addDays(-7));
-    
-  }
   /**
    * Updates the items after a data update.
    */
@@ -220,7 +198,7 @@ public class FinderPanel extends JScrollPane implements MouseListener, MouseMoti
       FinderItem item = (FinderItem) o[i];
       
       if(!item.isEnabled()) {
-        if(TvDataBase.getInstance().dataAvailable(item.getDate())) {
+        if (isValidDate(item.getDate())) {
           item.setEnabled(true);
         }
       }
@@ -237,7 +215,7 @@ public class FinderPanel extends JScrollPane implements MouseListener, MouseMoti
    */
   public void markDate(final Date d, Runnable callback) {
 
-    if (d.equals(mCurChoosenDate)) {
+    if (d.equals(getSelectedDate())) {
       if (callback != null) {
         callback.run();
       }
@@ -249,7 +227,7 @@ public class FinderPanel extends JScrollPane implements MouseListener, MouseMoti
       final FinderItem item = (FinderItem) object;
       if (item.getDate().equals(d)) {
         if (item.isEnabled()) {
-          mCurChoosenDate = d;
+          setCurrentDate(d);
           mRenderer.setSelectedItem(item);
           mList.setSelectedValue(item, true);
           item.startProgress(mDateChangedListener, callback);
@@ -292,6 +270,7 @@ public class FinderPanel extends JScrollPane implements MouseListener, MouseMoti
 
   /**
    * Show the Popup of the FinderPanel
+   * @param e
    */
   private void showPopup(MouseEvent e) {
     
@@ -302,7 +281,7 @@ public class FinderPanel extends JScrollPane implements MouseListener, MouseMoti
     update.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         MainFrame.getInstance().updateTvData();
-      };
+      }
     });
     
     menu.add(update);

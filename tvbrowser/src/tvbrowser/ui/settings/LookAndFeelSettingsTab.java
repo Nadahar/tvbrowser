@@ -73,11 +73,14 @@ public class LookAndFeelSettingsTab implements SettingsTab {
   
   private JComboBox mPluginViewPosition;
 
+  private JComboBox mDateLayout;
+
   private JTextArea mInfoArea;
   
   private static int mStartLookAndIndex;
   private static int mStartIconIndex;
   private static int mStartPluginViewPositionIndex;
+  private static int mStartDateLayout;
 
   private static String mJGoodiesStartTheme;
   private static boolean mJGoodiesStartShadow;
@@ -148,11 +151,36 @@ public class LookAndFeelSettingsTab implements SettingsTab {
     });
     
     mSettingsPn.add(mPluginViewPosition, cc.xy(4,3));
-    
+
     layout.appendRow(RowSpec.decode("5dlu"));
     layout.appendRow(RowSpec.decode("pref"));
 
-    mSettingsPn.add(new JLabel(mLocalizer.msg("theme", "Theme") +":"), cc.xy(2, 5));
+    mSettingsPn.add(new JLabel(mLocalizer.msg("dateFormat", "Layout of Datelist")+":"), cc.xy(2, 5));
+
+    mDateLayout = new JComboBox(new String[] {
+            mLocalizer.msg("dateFormat.datelist", "List"),
+            mLocalizer.msg("dateFormat.calendarlist", "Calendar")
+    });
+
+    if(Settings.propPluginViewDateLayout.getBoolean()) {
+      mDateLayout.setSelectedIndex(1);
+    }
+    else {
+      mDateLayout.setSelectedIndex(0);
+    }
+
+    mDateLayout.addActionListener(new ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent e) {
+        checkIfAreaIsToMakeVisible();
+      }
+    });
+
+    mSettingsPn.add(mDateLayout, cc.xy(4,5));
+
+    layout.appendRow(RowSpec.decode("5dlu"));
+    layout.appendRow(RowSpec.decode("pref"));
+
+    mSettingsPn.add(new JLabel(mLocalizer.msg("theme", "Theme") +":"), cc.xy(2, 7));
 
     LookAndFeelObj[] lfObjects = getLookAndFeelObjs();
     Arrays.sort(lfObjects);
@@ -171,7 +199,7 @@ public class LookAndFeelSettingsTab implements SettingsTab {
       }
     });
     
-    mSettingsPn.add(mLfComboBox, cc.xy(4, 5));
+    mSettingsPn.add(mLfComboBox, cc.xy(4, 7));
     
     mConfigBtn = new JButton(mLocalizer.msg("config", "Config"));
     mConfigBtn.addActionListener(new ActionListener() {
@@ -180,12 +208,12 @@ public class LookAndFeelSettingsTab implements SettingsTab {
       }
     });
     
-    mSettingsPn.add(mConfigBtn, cc.xy(6, 5));
+    mSettingsPn.add(mConfigBtn, cc.xy(6, 7));
 
     layout.appendRow(RowSpec.decode("3dlu"));
     layout.appendRow(RowSpec.decode("pref"));
 
-    mSettingsPn.add(new JLabel(mLocalizer.msg("icons", "Icons") + ":"), cc.xy(2, 7));
+    mSettingsPn.add(new JLabel(mLocalizer.msg("icons", "Icons") + ":"), cc.xy(2, 9));
     
     mIconThemes = new JComboBox(IconLoader.getInstance().getAvailableThemes());
     mIconThemes.setRenderer(new DefaultListCellRenderer() {
@@ -211,13 +239,13 @@ public class LookAndFeelSettingsTab implements SettingsTab {
       mIconThemes.setSelectedItem(IconLoader.getInstance().getDefaultTheme());
     }
     
-    mSettingsPn.add(mIconThemes, cc.xy(4, 7));
+    mSettingsPn.add(mIconThemes, cc.xy(4, 9));
 
     layout.appendRow(RowSpec.decode("3dlu"));
     layout.appendRow(RowSpec.decode("pref"));
 
     mSettingsPn.add(new LinkButton(mLocalizer.msg("findMoreIcons","You can find more Icons on our Web-Page."),
-        "http://www.tvbrowser.org/iconthemes.php"), cc.xy(4, 9));
+        "http://www.tvbrowser.org/iconthemes.php"), cc.xy(4, 11));
     
     layout.appendRow(RowSpec.decode("fill:3dlu:grow"));
     layout.appendRow(RowSpec.decode("pref"));
@@ -226,12 +254,13 @@ public class LookAndFeelSettingsTab implements SettingsTab {
     mInfoArea.setForeground(Color.RED);
     mInfoArea.setVisible(mSomethingChanged);
 
-    mSettingsPn.add(mInfoArea, cc.xyw(1, 11, 6));
+    mSettingsPn.add(mInfoArea, cc.xyw(1, 13, 6));
     
     if(!mSomethingChanged) {
       mStartLookAndIndex = mLfComboBox.getSelectedIndex();
       mStartIconIndex = mIconThemes.getSelectedIndex();
       mStartPluginViewPositionIndex = mPluginViewPosition.getSelectedIndex();
+      mStartDateLayout = mDateLayout.getSelectedIndex();
       mJGoodiesStartTheme = Settings.propJGoodiesTheme.getString();
       mJGoodiesStartShadow = Settings.propJGoodiesShadow.getBoolean();
       mSkinLFStartTheme = Settings.propSkinLFThemepack.getString();
@@ -255,7 +284,8 @@ public class LookAndFeelSettingsTab implements SettingsTab {
         mJGoodiesStartTheme.compareTo(Settings.propJGoodiesTheme.getString()) != 0 ||
         mJGoodiesStartShadow != Settings.propJGoodiesShadow.getBoolean() ||
         mSkinLFStartTheme.compareTo(Settings.propSkinLFThemepack.getString()) != 0 ||
-        mPluginViewPosition.getSelectedIndex() != mStartPluginViewPositionIndex);
+        mPluginViewPosition.getSelectedIndex() != mStartPluginViewPositionIndex ||
+        mDateLayout.getSelectedIndex() != mStartDateLayout);
   }
 
   protected void configTheme() {
@@ -294,6 +324,7 @@ public class LookAndFeelSettingsTab implements SettingsTab {
     mSomethingChanged = mInfoArea.isVisible();
     
     Settings.propPluginViewIsLeft.setBoolean(mPluginViewPosition.getSelectedIndex() == 1);
+    Settings.propPluginViewDateLayout.setBoolean(mDateLayout.getSelectedIndex()==1);
   }
 
   public Icon getIcon() {
