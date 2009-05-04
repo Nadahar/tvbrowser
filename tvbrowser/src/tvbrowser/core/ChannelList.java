@@ -37,6 +37,7 @@ import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.swing.SwingUtilities;
@@ -89,7 +90,8 @@ public class ChannelList {
   public static void completeChannelLoading() {
     mCompleteChannelThread = new Thread("Load not subscribed channels") {
       public void run() {
-        mLog.info("Loading the not subscribed channels");
+        mLog.info("Loading the not subscribed services and channels");
+        TvDataServiceProxyManager.getInstance().loadNotSubscribed();
         create();
         mLog.info("Loading of all channels complete");
       }
@@ -625,6 +627,7 @@ public class ChannelList {
    * Saves the channel names for all channels.
    */
   private static void storeChannelNames() {
+    HashSet<String> subscribedServices = new HashSet<String>();
     File f = new File(Settings.getUserSettingsDirName(), "channel_names.txt");
 
     FileWriter fw;
@@ -633,14 +636,16 @@ public class ChannelList {
     try {
       fw = new FileWriter(f);
       out = new PrintWriter(fw);
-      Channel[] channels = getSubscribedChannels();
-      for (Channel channel : channels) {
+      for (Channel channel : getSubscribedChannels()) {
         String userChannelName = channel.getUserChannelName();
         if ((userChannelName != null) && (userChannelName.trim().length() > 0) && (channel.getDefaultName() == null || !channel.getDefaultName().equalsIgnoreCase(userChannelName))) {
           out
               .println(createPropertyForChannel(channel, userChannelName.trim()));
         }
+        subscribedServices.add(channel.getDataServiceProxy().getId());
       }
+      // remember the currently active services for faster startup
+      Settings.propCurrentlyUsedDataServiceIds.setStringArray(subscribedServices.toArray(new String[subscribedServices.size()]));
       
       if(mChannelNameMap != null) {
         Set<String> keys = mChannelNameMap.keySet();

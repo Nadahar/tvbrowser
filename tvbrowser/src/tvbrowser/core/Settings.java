@@ -1381,6 +1381,8 @@ public class Settings {
    */
   public static final BooleanProperty propProgramTableMouseAutoScroll = new BooleanProperty(
       mProp, "programTableMouseAutoScroll", true);
+  
+  public static final StringArrayProperty propCurrentlyUsedDataServiceIds = new StringArrayProperty(mProp, "currentDataServices", new String[0]);
 
   /**
    * Sets the window position and size for the given window with the values of
