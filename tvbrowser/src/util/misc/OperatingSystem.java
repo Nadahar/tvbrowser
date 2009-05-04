@@ -30,7 +30,7 @@ import util.browserlauncher.Launch;
 /**
  * Checks which OS is used.
  * 
- * Uses the BrowserLauncher-Detecion-Code
+ * Uses the BrowserLauncher-Detection-Code
  * 
  * @author bodum
  * @since 2.2
