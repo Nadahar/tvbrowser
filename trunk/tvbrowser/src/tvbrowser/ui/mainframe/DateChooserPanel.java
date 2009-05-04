@@ -29,14 +29,11 @@ package tvbrowser.ui.mainframe;
 
 import java.awt.BorderLayout;
 
-import javax.swing.JPanel;
-
-import tvbrowser.ui.finder.FinderPanel;
-
+import javax.swing.*;
 
 public class DateChooserPanel extends JPanel {
   
-  public DateChooserPanel(MainFrame parent, FinderPanel finderPanel) {
+  public DateChooserPanel(MainFrame parent, JComponent finderPanel) {
     setOpaque(false);
     setLayout(new BorderLayout(0,7));
     

@@ -85,6 +85,8 @@ import tvbrowser.ui.DontShowAgainMessageBox;
 import tvbrowser.ui.aboutbox.AboutBox;
 import tvbrowser.ui.filter.dlgs.SelectFilterDlg;
 import tvbrowser.ui.finder.FinderPanel;
+import tvbrowser.ui.finder.DateSelector;
+import tvbrowser.ui.finder.calendar.CalendarPanel;
 import tvbrowser.ui.licensebox.LicenseBox;
 import tvbrowser.ui.mainframe.searchfield.SearchField;
 import tvbrowser.ui.mainframe.searchfield.SearchFilter;
@@ -164,7 +166,7 @@ public class MainFrame extends JFrame implements DateListener {
 
   private StatusBar mStatusBar;
 
-  private FinderPanel mFinderPanel;
+  private DateSelector mFinderPanel;
 
   private static MainFrame mSingleton;
 
@@ -272,7 +274,7 @@ public class MainFrame extends JFrame implements DateListener {
     mProgramTableScrollPane = new ProgramTableScrollPane(mProgramTableModel);
     centerPanel.add(mProgramTableScrollPane);
     
-    mFinderPanel = new FinderPanel();
+    mFinderPanel = Settings.propPluginViewDateLayout.getBoolean() ? new CalendarPanel() : new FinderPanel();
     
     mFinderPanel.setDateListener(this);
     dateChanged(new devplugin.Date(), null, null);
@@ -399,7 +401,7 @@ public class MainFrame extends JFrame implements DateListener {
           }
           
           if(mFinderPanel != null) {
-            mFinderPanel.setVisible(Settings.propShowDatelist.getBoolean());
+            mFinderPanel.getComponent().setVisible(Settings.propShowDatelist.getBoolean());
           }
         
           setVisible(true);
@@ -439,7 +441,7 @@ public class MainFrame extends JFrame implements DateListener {
           }
           
           if(mFinderPanel != null) {
-            mFinderPanel.setVisible(false);
+            mFinderPanel.getComponent().setVisible(false);
           }
           
           setUndecorated(true);
@@ -543,7 +545,7 @@ public class MainFrame extends JFrame implements DateListener {
                             setShowChannellist(!isFullScreenMode(), false);
                           }
                           
-                          if(mFinderPanel != null && mFinderPanel.isVisible() && p.x > mFinderPanel.getWidth()) {
+                          if(mFinderPanel != null && mFinderPanel.getComponent().isVisible() && p.x > mFinderPanel.getComponent().getWidth()) {
                             setShowDatelist(!isFullScreenMode(), false);
                           }
                           
@@ -589,7 +591,7 @@ public class MainFrame extends JFrame implements DateListener {
                             setShowChannellist(!isFullScreenMode(), false);
                           }
                           
-                          if(mFinderPanel != null && mFinderPanel.isVisible() && p.x < screen.width - mFinderPanel.getWidth()) {
+                          if(mFinderPanel != null && mFinderPanel.getComponent().isVisible() && p.x < screen.width - mFinderPanel.getComponent().getWidth()) {
                             setShowDatelist(!isFullScreenMode(), false);
                           }
                           
@@ -622,7 +624,7 @@ public class MainFrame extends JFrame implements DateListener {
             setShowTimeButtons(true, false);
           }
          
-          if(Settings.propShowDatelist.getBoolean() && !mFinderPanel.isVisible()) {
+          if(Settings.propShowDatelist.getBoolean() && !mFinderPanel.getComponent().isVisible()) {
             setShowDatelist(true, false);
           }
          
@@ -1694,8 +1696,6 @@ public class MainFrame extends JFrame implements DateListener {
 
   /**
    * Starts the TV listings update.
-   * 
-   * @param numberOfDays
    */
   public void updateTvData() {
     updateTvData(0);
@@ -2014,12 +2014,12 @@ public class MainFrame extends JFrame implements DateListener {
   
   public void setShowDatelist(boolean visible, boolean save) {
     if (visible) {
-      mDateNode.setLeaf(new DateChooserPanel(this, mFinderPanel));
+      mDateNode.setLeaf(new DateChooserPanel(this, mFinderPanel.getComponent()));
     } else {
       mDateNode.setLeaf(null);
     }
     
-    mFinderPanel.setVisible(visible);
+    mFinderPanel.getComponent().setVisible(visible);
     
     if(save) {
       Settings.propShowDatelist.setBoolean(visible);

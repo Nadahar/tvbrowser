@@ -1315,7 +1315,14 @@ public class Settings {
   public static final BooleanProperty propPluginViewIsLeft = new BooleanProperty(
       mProp, "pluginViewIsLeft", true);
   
-  /** 
+  /**
+   * if calender view is active
+   * @since 3.0
+   */
+  public static final BooleanProperty propPluginViewDateLayout = new BooleanProperty(
+      mProp, "propPluginViewDateLayout", false);
+
+  /**
    * The time between auto updates of data services
    * @since 2.7 
    */
@@ -1382,6 +1389,9 @@ public class Settings {
   public static final BooleanProperty propProgramTableMouseAutoScroll = new BooleanProperty(
       mProp, "programTableMouseAutoScroll", true);
   
+  /**
+   * @since 3.0
+   */
   public static final StringArrayProperty propCurrentlyUsedDataServiceIds = new StringArrayProperty(mProp, "currentDataServices", new String[0]);
 
   /**
