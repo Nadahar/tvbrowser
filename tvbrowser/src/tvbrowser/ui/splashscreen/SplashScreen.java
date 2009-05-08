@@ -44,9 +44,9 @@ import util.ui.UiUtilities;
 
 public class SplashScreen extends JWindow implements Splash {
 
-  private static final util.ui.Localizer mLocalizer
-    = util.ui.Localizer.getLocalizerFor(SplashScreen.class);
-  
+  private static final util.ui.Localizer mLocalizer = util.ui.Localizer
+      .getLocalizerFor(SplashScreen.class);
+
   private static final Font MESSAGE_FONT = new Font("Dialog", Font.BOLD, 16);
   private static final Font VERSION_FONT = new Font("Dialog", Font.BOLD, 16);
   private static final Font DOMAIN_FONT = new Font("Dialog", Font.PLAIN, 10);
@@ -62,40 +62,26 @@ public class SplashScreen extends JWindow implements Splash {
   private Point mDraggingPoint;
 
   private Color mForeground;
-  
-  public SplashScreen(String imgFileName, int msgX, int msgY,
-    Color background, Color foreground)
-  {
+
+  protected String mImgFileName;
+
+  public SplashScreen(final String imgFileName, final int msgX, int msgY, 
+      final Color foreground) {
     super();
-    
-    mImage = ImageUtilities.createImage(imgFileName);
-    if (mImage != null) {
-      ImageUtilities.waitForImageData(mImage, null);
-      setSize(mImage.getWidth(null), mImage.getHeight(null));
-    } else {
-      setSize(100, 50);
-    }
-    
+    mImgFileName = imgFileName;
     mMessage = mLocalizer.msg("loading", "Loading...");
-    
+
     mMsgX = msgX;
-    mMsgY = getHeight()-9;
-
-    mDomainX = getWidth()-UiUtilities.getStringWidth(DOMAIN_FONT, DOMAIN)-10;
-    mDomainY = getHeight()-7;
-
-    mVersionX = getWidth()-UiUtilities.getStringWidth(VERSION_FONT, VERSION)-10;
-    mVersionY = getHeight()-20;
 
     mForeground = foreground;
-    
+
     this.addMouseListener(new MouseAdapter() {
       public void mousePressed(MouseEvent e) {
-        mDraggingPoint = e.getPoint();      
+        mDraggingPoint = e.getPoint();
       }
 
       public void mouseReleased(MouseEvent e) {
-        mDraggingPoint = null; 
+        mDraggingPoint = null;
       }
     });
     this.addMouseMotionListener(new MouseMotionListener() {
@@ -106,20 +92,17 @@ public class SplashScreen extends JWindow implements Splash {
           int yP = e.getY();
           int x = mDraggingPoint.x - xP;
           int y = mDraggingPoint.y - yP;
-          
-          if(x != 0 || y != 0)
-            setLocation(getX() - x,getY() - y);
-        }        
+
+          if (x != 0 || y != 0)
+            setLocation(getX() - x, getY() - y);
+        }
       }
 
-      public void mouseMoved(MouseEvent e) {}
+      public void mouseMoved(MouseEvent e) {
+      }
     });
   }
 
-  public void showSplash() {
-    UiUtilities.centerAndShow(this);
-  }
-  
   public void paint(Graphics grp) {
     if (mImage != null) {
       grp.drawImage(mImage, 0, 0, null);
@@ -129,7 +112,7 @@ public class SplashScreen extends JWindow implements Splash {
     Graphics2D graphics = (Graphics2D) grp;
     graphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
         RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-    
+
     grp.setFont(MESSAGE_FONT);
 
     // Draw the message itself
@@ -143,9 +126,7 @@ public class SplashScreen extends JWindow implements Splash {
     grp.drawString(DOMAIN, mDomainX, mDomainY);
 
   }
-  
 
-  
   public void setMessage(final String msg) {
     SwingUtilities.invokeLater(new Runnable() {
 
@@ -153,19 +134,48 @@ public class SplashScreen extends JWindow implements Splash {
         mMessage = msg;
         repaint(0, getHeight() - 40, getWidth(), 40);
       }
-      
+
     });
   }
 
-  public void setMaximum(int maximum) {
+  public void hideSplash() {
+    setVisible(false);
   }
 
-  public void setValue(int value) {
+  @Override
+  public void showSplash() {
+
+    Thread thread = new Thread("Splash screen creation") {
+      @Override
+      public void run() {
+        mImage = ImageUtilities.createImage(mImgFileName);
+        if (mImage != null) {
+          ImageUtilities.waitForImageData(mImage, null);
+          setSize(mImage.getWidth(null), mImage.getHeight(null));
+        } else {
+          setSize(100, 50);
+        }
+
+        mMsgY = getHeight() - 9;
+
+        mDomainX = getWidth() - UiUtilities.getStringWidth(DOMAIN_FONT, DOMAIN)
+            - 10;
+        mDomainY = getHeight() - 7;
+
+        mVersionX = getWidth() - UiUtilities.getStringWidth(VERSION_FONT, VERSION)
+            - 10;
+        mVersionY = getHeight() - 20;
+
+        // have window opening in UI thread
+        SwingUtilities.invokeLater(new Runnable() {
+          @Override
+          public void run() {
+            UiUtilities.centerAndShow(SplashScreen.this);
+          }});
+      }
+    };
+    thread.setPriority(Thread.NORM_PRIORITY);
+    thread.start();
   }
-
-
-	public void hideSplash() {
-    setVisible(false);		
-	}
 
 }

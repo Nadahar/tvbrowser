@@ -1183,12 +1183,6 @@ public class Settings {
       "splash.textPosY", 262);
 
   /**
-   * Background-Color
-   */
-  public static final ColorProperty propSplashBackgroundColor = new ColorProperty(
-      mProp, "splash.BackgroundColor", new Color(63, 114, 133));
-
-  /**
    * Foreground-Color
    */
   public static final ColorProperty propSplashForegroundColor = new ColorProperty(
