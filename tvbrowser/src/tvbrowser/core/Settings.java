@@ -28,7 +28,6 @@ package tvbrowser.core;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.GraphicsEnvironment;
 import java.awt.Window;
 import java.io.File;
 import java.io.FileFilter;
@@ -37,9 +36,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
 
@@ -49,6 +46,8 @@ import javax.swing.UIManager;
 
 import tvbrowser.TVBrowser;
 import tvbrowser.core.plugin.DefaultSettings;
+import tvbrowser.core.settings.DeferredFontProperty;
+import tvbrowser.core.settings.JGoodiesThemeProperty;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import tvbrowser.extras.programinfo.ProgramInfo;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
@@ -84,9 +83,6 @@ import util.settings.VersionProperty;
 import util.settings.WindowSetting;
 import util.ui.Localizer;
 import util.ui.view.SplitViewProperty;
-
-import com.jgoodies.looks.plastic.PlasticLookAndFeel;
-
 import devplugin.ProgramFieldType;
 
 /**
@@ -119,13 +115,6 @@ public class Settings {
       DEFAULT_FONT_NAME, Font.BOLD, 12);
   private static Font DEFAULT_PROGRAMTIMEFONT = new Font(DEFAULT_FONT_NAME,
       Font.BOLD, 12);
-
-  /**
-   * if any of these fonts is found on the system then it is used as default
-   * font
-   */
-  private static final String[] KNOWN_GOOD_FONTS = { "Trebuchet MS",
-      "Arial Narrow", "Dialog" };
 
   private static PropertyManager mProp = new PropertyManager();
 
@@ -893,8 +882,8 @@ public class Settings {
   public static final StringProperty propSkinLFThemepack = new StringProperty(
       mProp, "skinLF.themepack", "themepacks/themepack.zip");
 
-  public static final StringProperty propJGoodiesTheme = new StringProperty(
-      mProp, "jgoodies.theme", "");
+  public static final StringProperty propJGoodiesTheme = new JGoodiesThemeProperty(
+      mProp, "jgoodies.theme");
 
   public static final BooleanProperty propJGoodiesShadow = new BooleanProperty(
       mProp, "jgoodies.dropshadow", false);
@@ -988,17 +977,17 @@ public class Settings {
   public static final DateProperty propLastDownloadDate = new DateProperty(
       mProp, "lastdownload", null);
 
-  public static final FontProperty propProgramTitleFont = new FontProperty(
-      mProp, "font.programtitle", getDefaultFont(DEFAULT_PROGRAMTITLEFONT));
+  public static final FontProperty propProgramTitleFont = new DeferredFontProperty(
+      mProp, "font.programtitle", DEFAULT_PROGRAMTITLEFONT);
 
-  public static final FontProperty propProgramInfoFont = new FontProperty(
-      mProp, "font.programinfo", getDefaultFont(DEFAULT_PROGRAMINFOFONT));
+  public static final FontProperty propProgramInfoFont = new DeferredFontProperty(
+      mProp, "font.programinfo", DEFAULT_PROGRAMINFOFONT);
 
-  public static final FontProperty propChannelNameFont = new FontProperty(
-      mProp, "font.channelname", getDefaultFont(DEFAULT_CHANNELNAMEFONT));
+  public static final FontProperty propChannelNameFont = new DeferredFontProperty(
+      mProp, "font.channelname", DEFAULT_CHANNELNAMEFONT);
 
-  public static final FontProperty propProgramTimeFont = new FontProperty(
-      mProp, "font.programtime", getDefaultFont(DEFAULT_PROGRAMTIMEFONT));
+  public static final FontProperty propProgramTimeFont = new DeferredFontProperty(
+      mProp, "font.programtime", DEFAULT_PROGRAMTIMEFONT);
 
   public static final ProgramFieldTypeArrayProperty propProgramInfoFields = new ProgramFieldTypeArrayProperty(
       mProp, "programpanel.infoFields", new ProgramFieldType[] {
@@ -1248,14 +1237,6 @@ public class Settings {
   public static final BooleanProperty propTwelveHourFormat = new BooleanProperty(
       mProp, "uswTwelveHourFormat", false);
 
-
-    static {
-        if (!GraphicsEnvironment.isHeadless()) {
-            propJGoodiesTheme.setDefault(PlasticLookAndFeel.createMyDefaultTheme().getClass().getName());        
-        }
-    }
-  
-    
   /** An array with the ids of the TV data service which license was accepted. */
   public static final StringArrayProperty propAcceptedLicenseArrForServiceIds = new StringArrayProperty(
       mProp, "licnseIds", new String[] {});
@@ -1403,18 +1384,6 @@ public class Settings {
     layoutWindow(windowId, window, null);
   }
   
-  private static Font getDefaultFont(Font defFont) {
-    GraphicsEnvironment ge = java.awt.GraphicsEnvironment
-        .getLocalGraphicsEnvironment();
-    List<String> fontNames = Arrays.asList(ge.getAvailableFontFamilyNames());
-    for (String knownFont : KNOWN_GOOD_FONTS) {
-      if (fontNames.contains(knownFont)) {
-        return new Font(knownFont, defFont.getStyle(), defFont.getSize());
-      }
-    }
-    return defFont;
-  }
-
   /**
    * Sets the window position and size for the given window with the values of the given id.
 
