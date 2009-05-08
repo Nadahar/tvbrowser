@@ -51,10 +51,7 @@ public class StreamReaderThread extends Thread {
    *          Save the output of the stream.
    */
   public StreamReaderThread(InputStream stream, boolean save) {
-      mInput = stream;
-      mSaveOutput = save;
-      mOutput = new StringBuffer();
-      mEncoding = null;
+    this(stream, save, null);
   }
 
   /**
@@ -66,6 +63,7 @@ public class StreamReaderThread extends Thread {
    *          Encoding of the Stream
    */
   public StreamReaderThread(InputStream stream, boolean save, String encoding) {
+    super("Stream reader");
     mInput = stream;
     mSaveOutput = save;
     mOutput = new StringBuffer();

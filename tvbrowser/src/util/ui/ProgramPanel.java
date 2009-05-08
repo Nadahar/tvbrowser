@@ -918,7 +918,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
 
       public void mouseClicked(final MouseEvent evt) {        
         if (SwingUtilities.isLeftMouseButton(evt) && (evt.getClickCount() == 1) && evt.getModifiersEx() == 0) {
-          mLeftClickThread = new Thread() {
+          mLeftClickThread = new Thread("Single click") {
             public void run() {
               try {
                 mPerformingSingleClick = false;

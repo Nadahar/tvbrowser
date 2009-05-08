@@ -658,7 +658,7 @@ public class Channel implements Comparable<Channel> {
    */
   public Icon getIcon() {
     if ((isUsingUserIcon()) && (mIcon == null) && (getUserIconFileName() != null)){
-      Image img = ImageUtilities.createImage(getUserIconFileName());
+      Image img = ImageUtilities.createImageAsynchronous(getUserIconFileName());
       if (img != null) {
         mIcon = new ImageIcon(img);
       }
