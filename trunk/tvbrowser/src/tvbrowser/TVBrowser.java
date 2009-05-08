@@ -305,13 +305,11 @@ public class TVBrowser {
           Settings.propSplashImage.getString(),
           Settings.propSplashTextPosX.getInt(),
           Settings.propSplashTextPosY.getInt(),
-          Settings.propSplashBackgroundColor.getColor(),
           Settings.propSplashForegroundColor.getColor());
     }
     else {
       splash = new DummySplash();
     }
-
     splash.showSplash();
 
     /* Initialize the MarkedProgramsList */
@@ -398,7 +396,7 @@ public class TVBrowser {
         SwingUtilities.invokeLater(new Runnable() {
           public void run() {
             ChannelList.completeChannelLoading();
-
+            initializeAutomaticDownload();
             if (Launch.isOsWindowsNtBranch()) {
               try {
                 RegistryKey desktopSettings = new RegistryKey(
@@ -762,7 +760,13 @@ public class TVBrowser {
       mLog.info("Running setup assistant");
       mainFrame.runSetupAssistant();
     }
-    else {
+  }
+
+  /**
+   * initialize the automatic download timer
+   */
+  private static void initializeAutomaticDownload() {
+    if (!Settings.propShowAssistant.getBoolean()) {
       SwingUtilities.invokeLater(new Runnable() {
         public void run() {
           boolean automaticDownloadStarted = handleAutomaticDownload();
@@ -777,7 +781,7 @@ public class TVBrowser {
       });
     }
   }
-
+  
   /**
    * Saves the main settings.
    * 
