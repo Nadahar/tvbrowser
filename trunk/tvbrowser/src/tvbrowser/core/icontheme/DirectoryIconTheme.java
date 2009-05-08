@@ -79,7 +79,7 @@ public class DirectoryIconTheme extends IconTheme {
    * @return Image
    */
   protected ImageIcon getImageFromTheme(String image) {
-    return new ImageIcon(ImageUtilities.createImage(new File(getBase(), image).getAbsolutePath()));
+    return new ImageIcon(ImageUtilities.createImageAsynchronous(new File(getBase(), image).getAbsolutePath()));
   }
 
 }

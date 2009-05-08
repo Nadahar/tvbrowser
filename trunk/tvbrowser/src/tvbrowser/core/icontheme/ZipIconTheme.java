@@ -38,8 +38,6 @@ import java.util.zip.ZipEntry;
 
 import javax.swing.ImageIcon;
 
-import util.ui.ImageUtilities;
-
 /**
  * This Class implements the IconTheme for a Zip-File.
  * 
@@ -132,9 +130,7 @@ public class ZipIconTheme extends IconTheme {
           throw new IOException("Could not completely read file "+image);
       }
       
-      Image img = Toolkit.getDefaultToolkit().createImage(bytes);
-      ImageUtilities.waitForImageData(img, null);
-      return new ImageIcon(img);
+      return new ImageIcon(Toolkit.getDefaultToolkit().createImage(bytes));
     } catch (Exception e) {
     }
     return null;

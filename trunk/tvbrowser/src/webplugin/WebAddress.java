@@ -150,7 +150,7 @@ public class WebAddress implements Cloneable {
           .getTvBrowserSettings().getTvBrowserUserHome());
       filePath.append(File.separator).append("WebFavIcons").append(File.separator).append(mIconFile);
       
-      mIcon = new ImageIcon(ImageUtilities.createImage(filePath.toString()));
+      mIcon = new ImageIcon(ImageUtilities.createImageAsynchronous(filePath.toString()));
       if ((mIcon != null) && (mIcon.getIconWidth() > 0)) {
         return mIcon;
       }

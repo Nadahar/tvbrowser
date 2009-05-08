@@ -577,7 +577,7 @@ public class ProgramTable extends JPanel
     requestFocus();
     
     if(mClickThread == null || !mClickThread.isAlive()) {
-      mClickThread = new Thread() {
+      mClickThread = new Thread("Single click") {
         public void run() {
           try {
             Thread.sleep(Plugin.SINGLE_CLICK_WAITING_TIME + 50);

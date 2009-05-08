@@ -71,7 +71,9 @@ public class ImageUtilities {
   /**
    * Returns the image in the specified file.
    * <p>
-   * If the file does not exist null is returned.
+   * If the file does not exist <code>null</code> is returned.
+   * </p>
+   * <p>Do NOT use this method for images used with ImageIcons! Always use {@link #createImageAsynchronous(String)} with ImageIcons!</p>
    */
   public static Image createImage(String fileName) {
     return createImage(fileName, true);
@@ -146,6 +148,7 @@ public class ImageUtilities {
    * <code>comp</code> is needed to monitor the preparing of the Image. You can
    * pass any Component (it will not be changed).
    * </p>
+   * <p>You should not use this method when creating an ImageIcon. ImageIcons already use a MediaTracker internally.</p>
    *
    * @param image
    * @param comp

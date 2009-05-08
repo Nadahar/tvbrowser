@@ -273,7 +273,7 @@ public class ProgramList extends JList implements ChangeListener,
 
       public void mouseClicked(final MouseEvent e) {
         if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 1) && e.getModifiersEx() == 0) {
-          mLeftSingleClickThread = new Thread() {
+          mLeftSingleClickThread = new Thread("Single click") {
             public void run() {
               try {
                 mPerformingSingleClick = false;

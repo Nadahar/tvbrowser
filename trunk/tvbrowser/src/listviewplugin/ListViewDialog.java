@@ -655,7 +655,7 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
       return;
     }
     if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 1) && e.getModifiersEx() == 0) {
-      mLeftClickThread = new Thread() {
+      mLeftClickThread = new Thread("Single click") {
         @Override
         public void run() {
           try {

@@ -140,7 +140,7 @@ public class ProgramListPanel extends JPanel {
                 }
                 
                 if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 1) && e.getModifiersEx() == 0) {
-                  mLeftSingleClickThread = new Thread() {
+                  mLeftSingleClickThread = new Thread("Single click") {
                     public void run() {
                       try {
                         mPerformingSingleClick = false;

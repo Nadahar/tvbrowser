@@ -154,7 +154,7 @@ public class ReminderListDialog extends JDialog implements WindowClosingIf {
                 row, column);
           }
           
-          mLeftClickThread = new Thread() {
+          mLeftClickThread = new Thread("Single click") {
             public void run() {
               try {
                 mPerformingSingleClick = false;

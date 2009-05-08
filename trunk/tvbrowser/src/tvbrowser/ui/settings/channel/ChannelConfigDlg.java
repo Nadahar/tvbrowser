@@ -271,7 +271,7 @@ public class ChannelConfigDlg extends JDialog implements ActionListener, WindowC
   private Icon createUserIcon() {
     Icon icon;
     if ((mIconFile != null) && (mIconFile.exists())) {
-      Image img = ImageUtilities.createImage(mIconFile.getAbsolutePath());
+      Image img = ImageUtilities.createImageAsynchronous(mIconFile.getAbsolutePath());
       if (img != null) {
         icon = UiUtilities.createChannelIcon(new ImageIcon(img));
       } else {
