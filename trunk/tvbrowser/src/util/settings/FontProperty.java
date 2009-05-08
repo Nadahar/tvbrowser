@@ -20,7 +20,7 @@
  *  $RCSfile$
  *   $Source$
  *     $Date$
- *   $Author$
+ *   $util.settingss $
  * $Revision$
  */
 package util.settings;
@@ -75,7 +75,7 @@ public class FontProperty extends Property {
       }
   
       if (mCachedValue == null) {
-        mCachedValue = mDefaultValue;
+        mCachedValue = getDefault();
       }
     }
   
@@ -88,7 +88,7 @@ public class FontProperty extends Property {
       throw new IllegalArgumentException("You can't set a null value");
     }
 
-    if (value.equals(mDefaultValue)) {
+    if (value.equals(getDefault())) {
       setProperty(null);
     } else {
       String asString = value.getName() + "," + value.getStyle() + ","

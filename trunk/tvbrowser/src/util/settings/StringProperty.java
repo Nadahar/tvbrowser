@@ -36,24 +36,19 @@ public class StringProperty extends Property {
 
   private String mDefaultValue;
   private String mCachedValue;
-  
-  
-  
-  public StringProperty(PropertyManager manager, String key,
-    String defaultValue)
-  {
+
+  public StringProperty(final PropertyManager manager, final String key,
+      final String defaultValue) {
     super(manager, key);
 
     mDefaultValue = defaultValue;
     mCachedValue = null;
   }
-  
-  
+
   public String getDefault() {
     return mDefaultValue;
   }
-  
-  
+
   public String getString() {
     if (mCachedValue == null) {
       String asString = getProperty();
@@ -61,10 +56,9 @@ public class StringProperty extends Property {
         if (mDefaultValue == null) {
           mCachedValue = NULL_VALUE;
         } else {
-          mCachedValue = mDefaultValue;
+          mCachedValue = getDefault();
         }
-      }
-      else {
+      } else {
         mCachedValue = asString;
       }
     }
@@ -75,39 +69,38 @@ public class StringProperty extends Property {
       return mCachedValue;
     }
   }
-  
-  
+
   public void setString(String value) {
     if (value == null) {
       value = NULL_VALUE;
     }
 
-    if ((mDefaultValue == null) ? (value.equals(NULL_VALUE))
-                                : value.equals(mDefaultValue))
-    {
+    if ((mDefaultValue == null) ? (value.equals(NULL_VALUE)) : value
+        .equals(mDefaultValue)) {
       // The default value was set
       setProperty(null);
     } else {
       setProperty(value);
     }
-    
+
     mCachedValue = value;
   }
-  
-  
+
   protected void clearCache() {
     mCachedValue = null;
   }
 
-    /**
-     * Set the Default-Value of this Class
-     * @param defaultValue Default Value
-     * @since 2.5
-     */
+  /**
+   * Set the Default-Value of this Class
+   * 
+   * @param defaultValue
+   *          Default Value
+   * @since 2.5
+   */
   public void setDefault(String defaultValue) {
-        mDefaultValue = defaultValue;
+    mDefaultValue = defaultValue;
   }
-  
+
   /**
    * reset this option to the default value
    * 
