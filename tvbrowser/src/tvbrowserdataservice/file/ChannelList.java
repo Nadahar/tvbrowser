@@ -25,7 +25,6 @@
  */
 package tvbrowserdataservice.file;
 
-import java.awt.Image;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -42,7 +41,6 @@ import java.util.logging.Level;
 import java.util.zip.GZIPOutputStream;
 
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 
 import org.apache.commons.lang.StringEscapeUtils;
 
@@ -52,7 +50,7 @@ import util.io.FileFormatException;
 import util.io.IOUtilities;
 import util.misc.ChangeTrackingProperties;
 import util.misc.SoftReferenceCache;
-import util.ui.ImageUtilities;
+import util.ui.AsynchronousImageIcon;
 import au.com.bytecode.opencsv.CSVReader;
 import devplugin.Channel;
 import devplugin.ChannelGroup;
@@ -345,11 +343,7 @@ public class ChannelList {
     }
 
     private Icon getIconFromFile(File file) {
-      Image img = ImageUtilities.createImageAsynchronous(file.getAbsolutePath());
-      if (img != null) {
-        return new ImageIcon(img);
-      }
-      return null;
+      return new AsynchronousImageIcon(file);
     }
 
     private void close() throws IOException {
