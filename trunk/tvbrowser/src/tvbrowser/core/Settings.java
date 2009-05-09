@@ -994,7 +994,6 @@ public class Settings {
       mProp, "programpanel.infoFields", new ProgramFieldType[] {
           ProgramFieldType.GENRE_TYPE, ProgramFieldType.EPISODE_TYPE,
           ProgramFieldType.ORIGIN_TYPE, ProgramFieldType.PRODUCTION_YEAR_TYPE,
-          ProgramFieldType.SHOWVIEW_NR_TYPE,
           ProgramFieldType.SHORT_DESCRIPTION_TYPE });
 
   public static final StringArrayProperty propProgramTableIconPlugins = new StringArrayProperty(
