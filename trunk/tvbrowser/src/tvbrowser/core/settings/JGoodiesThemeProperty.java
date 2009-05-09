@@ -50,10 +50,4 @@ public class JGoodiesThemeProperty extends StringProperty {
     }
     return mCachedValue;
   }
-  
-  @Override
-  public String getString() {
-    // TODO Auto-generated method stub
-    return super.getString();
-  }
 }
