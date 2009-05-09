@@ -38,30 +38,38 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 /**
- * The cell renderer for the minutest column of the remider list.
+ * The cell renderer for the minutest column of the reminder list.
  */
 public class MinutesCellRenderer extends DefaultTableCellRenderer {
+  private static final util.ui.Localizer mLocalizer = util.ui.Localizer
+      .getLocalizerFor(MinutesCellRenderer.class);
+
   private JPanel mPanel;
   private JLabel mTextLabel, mIconLabel;
+  private JLabel mNoteLabel;
   
   /**
    * Creates an instance of this class.
    */
   public MinutesCellRenderer() {
-    mPanel = new JPanel(new FormLayout("pref,pref:grow,pref,2dlu","pref:grow"));
+    mPanel = new JPanel(new FormLayout("pref,pref:grow,pref,2dlu",
+        "pref:grow,pref,2dlu,pref,pref:grow"));
     CellConstraints cc = new CellConstraints();
     mTextLabel = new JLabel();
     mIconLabel = new JLabel(TVBrowserIcons.edit(TVBrowserIcons.SIZE_SMALL));
+    mNoteLabel = new JLabel("");
     
-    mPanel.add(mTextLabel, cc.xy(1,1));
-    mPanel.add(mIconLabel, cc.xy(3,1));
+    mPanel.add(mTextLabel, cc.xy(1, 2));
+    mPanel.add(mIconLabel, cc.xy(3, 2));
+    mPanel.add(mNoteLabel, cc.xy(1, 4));
   }
   
   public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
     Component def = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
     
-    if (value instanceof Integer) {
-      Integer minutes = (Integer) value;
+    if (value instanceof ReminderListItem) {
+      final ReminderListItem listItem = (ReminderListItem) value;
+      Integer minutes = listItem.getMinutes();
       
       mTextLabel.setText(ReminderFrame.getStringForMinutes(minutes.intValue()));
       
@@ -71,6 +79,17 @@ public class MinutesCellRenderer extends DefaultTableCellRenderer {
       
       mPanel.setOpaque(def.isOpaque());
       mPanel.setBackground(def.getBackground());
+      
+      final String comment = listItem.getComment();
+      if (comment != null && !comment.isEmpty()) {
+        mNoteLabel.setVisible(true);
+        mNoteLabel.setText(mLocalizer.msg("note", "Note: {0}", comment));
+        mNoteLabel.setOpaque(def.isOpaque());
+        mNoteLabel.setForeground(def.getForeground());
+        mNoteLabel.setBackground(def.getBackground());
+      } else {
+        mNoteLabel.setVisible(false);
+      }
       
       return mPanel;
     }

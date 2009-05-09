@@ -42,15 +42,7 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
+import javax.swing.*;
 
 import util.ui.Localizer;
 import util.ui.UiUtilities;
@@ -73,31 +65,33 @@ public class ReminderDialog extends JDialog implements WindowClosingIf {
     System.arraycopy(ReminderFrame.REMIND_VALUE_ARR, 1, SMALL_REMIND_VALUE_ARR,
         0, SMALL_REMIND_VALUE_ARR.length);
   }
-  
+
   private String[] mRemindMessages;
 
   private int[] mRemindValues;
-  
+
   private boolean mOkPressed=false;
 
   private JComboBox mList;
 
   private JCheckBox mRememberSettingsCb, mDontShowDialog;
-  
+
+  private JTextField mCommentField;
+
   public ReminderDialog(Window parent, devplugin.Program program,
       final java.util.Properties settings) {
     super(parent);
     setModal(true);
     createGui(program, settings);
   }
-  
+
   private void createGui(devplugin.Program program, final java.util.Properties settings) {
     calculatePossibleReminders(program);
 
     setTitle(mLocalizer.msg("title", "New reminder"));
 
     UiUtilities.registerForClosing(this);
-    
+
     JPanel contentPane=(JPanel)getContentPane();
     contentPane.setLayout(new BorderLayout());
     contentPane.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
@@ -125,11 +119,11 @@ public class ReminderDialog extends JDialog implements WindowClosingIf {
     headerPanel.add(channelLabel,BorderLayout.WEST);
     headerPanel.add(titleLabel,BorderLayout.CENTER);
     headerPanel.add(infoPanel,BorderLayout.EAST);
-    
+
     northPn.add(headerPanel);
-    
+
     mList=new JComboBox(mRemindMessages);
-    
+
     String s=settings.getProperty("defaultReminderEntry");
     int reminderTime = 5;
     if (s!=null) {
@@ -145,24 +139,31 @@ public class ReminderDialog extends JDialog implements WindowClosingIf {
     else {
       mList.setSelectedIndex(mRemindMessages.length - 1);
     }
-    
+
     northPn.add(mList);
     northPn.add(Box.createRigidArea(new Dimension(0,3)));
 
-    mRememberSettingsCb = new JCheckBox(mLocalizer.msg("rememberSetting","Remember setting"));
+    JPanel commentPanel = new JPanel();
+    commentPanel.setLayout(new BorderLayout());
+    commentPanel.add(new JLabel(mLocalizer.msg("comment", "Comment")), BorderLayout.NORTH);
+    mCommentField = new JTextField();
+    commentPanel.add(mCommentField, BorderLayout.CENTER);
+    northPn.add(commentPanel);
+
+    mRememberSettingsCb = new JCheckBox(mLocalizer.msg("rememberSetting", "Remember setting"));
     JPanel pn1 = new JPanel(new BorderLayout());
     pn1.add(mRememberSettingsCb, BorderLayout.NORTH);
-    
+
     mDontShowDialog = new JCheckBox(mLocalizer.msg("dontShow","Don't show this dialog anymore"));
-    pn1.add(mDontShowDialog, BorderLayout.CENTER);    
-    
+    pn1.add(mDontShowDialog, BorderLayout.CENTER);
+
     pn1.add(new JLabel(mLocalizer.msg("howToChange","You can change the behavior under Settings -> Reminder")), BorderLayout.SOUTH);
-    
+
     northPn.add(pn1);
-    
+
     JPanel btnPn=new JPanel(new FlowLayout(FlowLayout.TRAILING));
     btnPn.setBorder(BorderFactory.createEmptyBorder(10,0,0,0));
-    
+
     JButton okBtn=new JButton(Localizer.getLocalization(Localizer.I18N_OK));
     okBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -177,7 +178,7 @@ public class ReminderDialog extends JDialog implements WindowClosingIf {
     });
     btnPn.add(okBtn);
     getRootPane().setDefaultButton(okBtn);
-    
+
     JButton cancelBtn=new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
     cancelBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -185,7 +186,7 @@ public class ReminderDialog extends JDialog implements WindowClosingIf {
       }
     });
     btnPn.add(cancelBtn);
-    
+
     contentPane.add(northPn,BorderLayout.NORTH);
     contentPane.add(btnPn,BorderLayout.SOUTH);
   }
@@ -206,18 +207,19 @@ public class ReminderDialog extends JDialog implements WindowClosingIf {
     System.arraycopy(ReminderFrame.REMIND_VALUE_ARR, 1, mRemindValues, 0, maxIndex);
   }
 
-  
+
   public int getReminderMinutes() {
     int idx = mList.getSelectedIndex();
     return mRemindValues[idx];
   }
 
-  
-  
+  public ReminderContent getReminderContent() {
+    return new ReminderContent(getReminderMinutes(), mCommentField.getText());
+  }
+
   public boolean getOkPressed() {
     return mOkPressed;
   }
-
 
 
   public void close() {
