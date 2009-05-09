@@ -65,4 +65,13 @@ public class AsynchronousImageIcon implements Icon {
     return mIcon;
   }
 
+  /**
+   * get an image icon from this icon
+   * 
+   * @return
+   */
+  public Icon getImageIcon() {
+    return getIcon();
+  }
+
 }
