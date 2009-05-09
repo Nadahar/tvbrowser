@@ -134,7 +134,7 @@ public class ReminderTableModel extends AbstractTableModel {
     if (columnIndex == 0) {
       return mProgramItems[rowIndex].getProgram();
     } else if (columnIndex == 1) {
-      return mProgramItems[rowIndex].getMinutes();
+      return mProgramItems[rowIndex];
     }
     
     return "";

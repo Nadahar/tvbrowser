@@ -27,6 +27,10 @@
 package tvbrowser.extras.reminderplugin;
 
 
+import java.awt.Frame;
+
+import javax.swing.JOptionPane;
+
 import util.program.ProgramUtilities;
 import devplugin.Program;
 import devplugin.ProgramItem;
@@ -36,6 +40,14 @@ import devplugin.ProgramItem;
  * which a reminder should be shown at some time.
  */
 public class ReminderListItem implements Comparable<ReminderListItem> {
+  private static final String KEY_REF_CNT = "refCnt";
+  private static final String KEY_MINUTES = "minutes";
+  private static final String KEY_COMMENT = "comment";
+
+  /** The localizer for this class. */
+  public static final util.ui.Localizer mLocalizer = util.ui.Localizer
+      .getLocalizerFor(ReminderListItem.class);
+
   private ProgramItem mProgramItem;
 
   /**
@@ -61,13 +73,18 @@ public class ReminderListItem implements Comparable<ReminderListItem> {
     setMinutes(minutes);
   }
 
+  public ReminderListItem(Program prog, ReminderContent reminderContent) {
+    this(prog, reminderContent.getReminderMinutes());
+    setComment(reminderContent.getReminderComment());
+  }
+
   /**
    * Sets the number of reminders set for this item.
    * <p>
    * @param refCnt The number of reminders for this item.
    */
   public void setReferenceCount(int refCnt) {
-    mProgramItem.setProperty("refCnt", Integer.toString(refCnt));
+    mProgramItem.setProperty(KEY_REF_CNT, Integer.toString(refCnt));
   }
 
   /**
@@ -85,7 +102,7 @@ public class ReminderListItem implements Comparable<ReminderListItem> {
    * @return The number of set reminders of this item.
    */
   public int getReferenceCount() {
-    String cnt = mProgramItem.getProperty("refCnt");
+    String cnt = mProgramItem.getProperty(KEY_REF_CNT);
     if (cnt != null) {
       try {
         return Integer.parseInt(cnt);
@@ -101,7 +118,7 @@ public class ReminderListItem implements Comparable<ReminderListItem> {
    */
   public void incReferenceCount() {
     int cnt = getReferenceCount() + 1;
-    mProgramItem.setProperty("refCnt", Integer.toString(cnt));
+    mProgramItem.setProperty(KEY_REF_CNT, Integer.toString(cnt));
   }
 
   /**
@@ -110,7 +127,7 @@ public class ReminderListItem implements Comparable<ReminderListItem> {
   public void decReferenceCount() {
     int cnt = getReferenceCount() - 1;
     if (cnt >= 0) {
-      mProgramItem.setProperty("refCnt", Integer.toString(cnt));
+      mProgramItem.setProperty(KEY_REF_CNT, Integer.toString(cnt));
     }
   }
 
@@ -121,7 +138,7 @@ public class ReminderListItem implements Comparable<ReminderListItem> {
    * @return The reminder minutes of this list item.
    */
   public int getMinutes() {
-    String m = mProgramItem.getProperty("minutes");
+    String m = mProgramItem.getProperty(KEY_MINUTES);
     if (m!=null) {
       try {
         return Integer.parseInt(m);
@@ -142,7 +159,33 @@ public class ReminderListItem implements Comparable<ReminderListItem> {
       minutes = ReminderPlugin.getInstance().getDefaultReminderTime();
     }
     
-    mProgramItem.setProperty("minutes", Integer.toString(minutes));
+    mProgramItem.setProperty(KEY_MINUTES, Integer.toString(minutes));
+  }
+
+  /**
+   * Gets the reminder comment of this list item.
+   * <p/>
+   *
+   * @return The reminder comment of this list item.
+   */
+  public String getComment() {
+    final String comment = mProgramItem.getProperty(KEY_COMMENT);
+    if (comment != null) {
+      return comment;
+    }
+    return "";
+  }
+
+  /**
+   * Sets the comment of this list item.
+   * <p/>
+   *
+   * @param comment The comment of this list item.
+   */
+  public void setComment(final String comment) {
+    if (comment != null) {
+      mProgramItem.setProperty(KEY_COMMENT, comment);
+    }
   }
 
   /**
@@ -156,5 +199,17 @@ public class ReminderListItem implements Comparable<ReminderListItem> {
 
   public int compareTo(ReminderListItem other) {
     return ProgramUtilities.getProgramComparator().compare(getProgram(), other.getProgram());
+  }
+
+  public void changeComment(final Frame parentFrame) {
+    String comment = getComment();
+    if (comment == null) {
+      comment = "";
+    }
+    comment = JOptionPane.showInputDialog(parentFrame, mLocalizer.msg(
+        "comment.message", "Enter new comment"), comment);
+    if (comment != null) {
+      setComment(comment);
+    }
   }
 }

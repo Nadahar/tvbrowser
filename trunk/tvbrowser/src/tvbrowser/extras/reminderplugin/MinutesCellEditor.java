@@ -19,8 +19,9 @@ public class MinutesCellEditor extends AbstractCellEditor implements TableCellEd
     mComboBox.putClientProperty("JComboBox.isTableCellEditor", Boolean.TRUE);
   }
 
-  public void setValue(Object value) {
-    mComboBox.setSelectedIndex(ReminderFrame.getValueForMinutes(((Integer) value).intValue()));
+  private void setValue(ReminderListItem item) {
+    mComboBox.setSelectedIndex(ReminderFrame.getValueForMinutes(item
+        .getMinutes()));
   }
   
   public boolean stopCellEditing() {
@@ -47,13 +48,14 @@ public class MinutesCellEditor extends AbstractCellEditor implements TableCellEd
     return true;
   }
   
-  public JComboBox getComboBox() {
+  JComboBox getComboBox() {
     return mComboBox;
   }
   
   // Implement the one method defined by TableCellEditor.
-  public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) { 
-    setValue(value);
+  public Component getTableCellEditorComponent(JTable table, Object value,
+      boolean isSelected, int row, int column) {
+    setValue((ReminderListItem) value);
     return mComboBox;
   }  
 }

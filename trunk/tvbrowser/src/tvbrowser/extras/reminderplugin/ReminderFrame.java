@@ -217,7 +217,12 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
     panel.setToolTipText("");
     panel.addPluginContextMenuMouseListener(ReminderPluginProxy.getInstance());
     progPanel.add(panel, BorderLayout.CENTER);
-    
+
+    String comment = item.getComment();
+    if (comment != null && comment.length() > 0) {
+      progPanel.add(new JLabel(comment), BorderLayout.SOUTH);
+    }
+
     // initialize close button with full text, so it can show the countdown later without size problems
     mRemainingSecs = autoCloseSecs;
     final JPanel btnPanel = new JPanel(new BorderLayout(10, 0));
@@ -375,7 +380,7 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
     final int inx = mReminderCB.getSelectedIndex();
     final int minutes = REMIND_VALUE_ARR[inx];
     if (minutes != -1) {
-      mReminderList.add(mProgram, minutes);
+      mReminderList.add(mProgram, new ReminderContent(minutes, mListItem.getComment()));
       mReminderList.unblockProgram(mProgram);
       ReminderPlugin.getInstance().updateRootNode(true);
     }

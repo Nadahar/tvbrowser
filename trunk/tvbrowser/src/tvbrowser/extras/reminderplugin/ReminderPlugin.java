@@ -85,7 +85,7 @@ import devplugin.SettingsItem;
 
 /**
  * TV-Browser
- * 
+ *
  * @author Martin Oberhauser
  */
 public class ReminderPlugin {
@@ -107,11 +107,11 @@ public class ReminderPlugin {
   private ConfigurationHandler mConfigurationHandler;
 
   private PluginTreeNode mRootNode;
-  
+
   private boolean mHasRightToStartTimer = false;
-  
+
   private boolean mHasRightToSave = true;
-  
+
   /** The IDs of the plugins that should receive the favorites. */
   private ProgramReceiveTarget[] mClientPluginTargets;
   private int mMarkPriority = -2;
@@ -145,10 +145,10 @@ public class ReminderPlugin {
         	  } else {
         	    mReminderList.updatePrograms();
         	  }
-            
+
             mHasRightToSave = true;
             saveReminders();
-            
+
             ReminderListDialog.updateReminderList();
           }
         });
@@ -158,7 +158,7 @@ public class ReminderPlugin {
   /**
    * Gets the current instance of this class, or if
    * there is no instance creates a new one.
-   * 
+   *
    * @return The current instance of this class.
    */
   public static synchronized ReminderPlugin getInstance() {
@@ -171,7 +171,7 @@ public class ReminderPlugin {
   public String toString() {
     return mLocalizer.msg("pluginName","Reminder");
   }
-  
+
   /**
    * Is been called by TVBrowser when the TV-Browser start is finished.
    */
@@ -181,18 +181,18 @@ public class ReminderPlugin {
     mReminderList.removeExpiredItems();
     mReminderList.startTimer();
   }
-  
+
   /**
    * Is used by the ReminderList to track if
    * the TV-Browser start was finished.
    * (When it's finished then the Timer is allowed to start.)
-   * 
+   *
    * @return If the Timer is allowed to start.
    */
   protected boolean isAllowedToStartTimer() {
-    return mHasRightToStartTimer; 
+    return mHasRightToStartTimer;
   }
-  
+
   private void loadSettings() {
 
     try {
@@ -214,7 +214,7 @@ public class ReminderPlugin {
 
 
       File newFile = new File(Settings.getUserSettingsDirName(), DATAFILE_NAME);
-      
+
       if (newFile.exists()) {
         readData(getObjectInputStream(newFile));
       }
@@ -259,7 +259,7 @@ public class ReminderPlugin {
 
   /**
    * Gets the settings for the reminder.
-   * 
+   *
    * @return The settings of the reminder.
    */
   public Properties getSettings() {
@@ -290,7 +290,7 @@ public class ReminderPlugin {
               out.close();
             }
           });
-      
+
       datFile.delete();
       tmpDatFile.renameTo(datFile);
     } catch (IOException e) {
@@ -310,10 +310,10 @@ public class ReminderPlugin {
 
     mReminderList.setReminderTimerListener(null);
     mReminderList.read(in);
-    
+
     if(version == 3) {
       mClientPluginTargets = new ProgramReceiveTarget[in.readInt()];
-      
+
       for(int i = 0; i < mClientPluginTargets.length; i++) {
         mClientPluginTargets[i] = new ProgramReceiveTarget(in);
       }
@@ -336,9 +336,9 @@ public class ReminderPlugin {
           minutes = 10;
         }
         Program program = item.getProgram();
-        
+
         if(program != null) {
-          mReminderList.add(program, minutes);
+          mReminderList.add(program, new ReminderContent(minutes));
         }
 
         in.readInt();  // cnt (should be 0)
@@ -361,7 +361,7 @@ public class ReminderPlugin {
 
         // Only add items that were able to load their program
         if (program != null) {
-          mReminderList.add(program, reminderMinutes);
+          mReminderList.add(program, new ReminderContent(reminderMinutes));
         }
       }
     }
@@ -381,7 +381,7 @@ public class ReminderPlugin {
     out.writeInt(3);
     mReminderList.writeData(out);
     out.writeInt(mClientPluginTargets.length);
-    
+
     for(ProgramReceiveTarget target : mClientPluginTargets) {
       target.writeData(out);
     }
@@ -402,7 +402,7 @@ public class ReminderPlugin {
 
       settings.remove("usethisplugin");
       settings.remove("usesendplugin");
-      
+
       if(plugins.length() > 0 && sendEnabled) {
         if (plugins.indexOf(';') == -1) {
           mClientPluginTargets = new ProgramReceiveTarget[1];
@@ -412,19 +412,19 @@ public class ReminderPlugin {
           String[] ids = plugins.split(";");
         
           mClientPluginTargets = new ProgramReceiveTarget[ids.length];
-        
+
           for(int i = 0; i < ids.length; i++) {
             mClientPluginTargets[i] = ProgramReceiveTarget.createDefaultTargetForProgramReceiveIfId(ids[i]);
           }
         }
       }
     }
-    
+
     if(settings.containsKey("autoCloseReminderAtProgramEnd")) {
       if(settings.getProperty("autoCloseReminderAtProgramEnd","true").equalsIgnoreCase("true")) {
         settings.setProperty("autoCloseBehaviour","onEnd");
       }
-      
+
       settings.remove("autoCloseReminderAtProgramEnd");
     }
   }
@@ -449,26 +449,37 @@ public class ReminderPlugin {
       }
       final ReminderListItem item = mReminderList.getReminderItem(program);
       String[] entries = ReminderFrame.REMIND_MSG_ARR;
-      ActionMenu[] actions = new ActionMenu[maxIndex + 2];
+      
+      ArrayList<ActionMenu> actions = new ArrayList<ActionMenu>(maxIndex + 2);
 
-      actions[0] = new ActionMenu(new AbstractAction(entries[0]) {
+      actions.add(new ActionMenu(new AbstractAction(entries[0]) {
         public void actionPerformed(ActionEvent e) {
           mReminderList.removeWithoutChecking(program);
           updateRootNode(true);
         }
-      });
-      actions[1] = new ActionMenu(ContextMenuSeparatorAction.getInstance());
-      
+      }));
+      actions.add(new ActionMenu(ContextMenuSeparatorAction.getInstance()));
+
       for (int i = 1; i <= maxIndex; i++) {
         final int minutes = ReminderFrame.REMIND_VALUE_ARR[i];
-        actions[i + 1] = new ActionMenu(new AbstractAction(entries[i]) {
+        actions.add(new ActionMenu(new AbstractAction(entries[i]) {
           public void actionPerformed(ActionEvent e) {
             item.setMinutes(minutes);
           }
-        }, minutes == item.getMinutes());
+        }, minutes == item.getMinutes()));
       }
 
-      return new ActionMenu(action, actions);
+      actions.add(new ActionMenu(ContextMenuSeparatorAction.getInstance()));
+      actions.add(new ActionMenu(new AbstractAction(mLocalizer.msg("comment",
+          "Change comment"), TVBrowserIcons.edit(TVBrowserIcons.SIZE_SMALL)) {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          item.changeComment(parentFrame);
+        }
+      }));
+
+      return new ActionMenu(action, actions.toArray(new ActionMenu[actions
+          .size()]));
     } else if ((program.isExpired() || program.isOnAir())
         && (!program.equals(Plugin.getPluginManager().getExampleProgram()))) {
       return null;
@@ -482,21 +493,19 @@ public class ReminderPlugin {
           Window w = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
           ReminderDialog dlg = new ReminderDialog(w, program, mSettings);
           Settings.layoutWindow("extras.remiderContext", dlg);
-          
+
           if(mSettings.getProperty("showTimeSelectionDialog","true").compareTo("true") == 0) {
             UiUtilities.centerAndShow(dlg);
             
             if (dlg.getOkPressed()) {
-              int minutes = dlg.getReminderMinutes();
-              mReminderList.add(program, minutes);
+              mReminderList.add(program, dlg.getReminderContent());
               mReminderList.unblockProgram(program);
               updateRootNode(true);
             }
             dlg.dispose();
           }
           else {
-            int minutes = dlg.getReminderMinutes();
-            mReminderList.add(program, minutes);
+            mReminderList.add(program, dlg.getReminderContent());
             mReminderList.unblockProgram(program);
             updateRootNode(true);
           }
@@ -537,7 +546,7 @@ public class ReminderPlugin {
     mReminderList.addAndCheckBlocked(programArr, getDefaultReminderTime());
     updateRootNode(true);
   }
-  
+
   /**
    * Removes the given program from the reminder list.
    * <p>
@@ -547,17 +556,17 @@ public class ReminderPlugin {
    */
   public int removeProgram(Program prog) {
     ReminderListItem item = null;
-    
+
     synchronized(mReminderList) {
       item = mReminderList.getReminderItem(prog);
-      
+
       mReminderList.remove(prog);
     }
-    
+
     if(item != null) {
       return item.getMinutes();
     }
-    
+
     return -2;
   }
 
@@ -579,9 +588,9 @@ public class ReminderPlugin {
    * @param reminderMinutes The reminder minutes for the program.
    */
   public void addProgram(Program prog, int reminderMinutes) {
-    mReminderList.add(prog, reminderMinutes);
+    mReminderList.add(prog, new ReminderContent(reminderMinutes));
   }
-  
+
   /**
    * Gets the reminder minutes for the given program.
    * <p>
@@ -592,21 +601,21 @@ public class ReminderPlugin {
    */
   public int getReminderMinutesForProgram(Program prog) {
     ReminderListItem item = null;
-    
+
     synchronized(mReminderList) {
       item = mReminderList.getReminderItem(prog);
     }
-    
+
     if(item != null) {
       return item.getMinutes();
     }
-    
+
     return -1;
   }
 
   /**
    * Gets the root node for the plugin tree.
-   * <p> 
+   * <p>
    * @return The root node for the plugin tree.
    */
   public PluginTreeNode getRootNode() {
@@ -616,14 +625,14 @@ public class ReminderPlugin {
   /**
    * Updates the plugin tree entry for this plugin.
    * <p>
-   * 
+   *
    * @param save
    *          <code>True</code> if the reminder entries should be saved.
    */
   public void updateRootNode(boolean save) {
     mRootNode.removeAllActions();
     mRootNode.getMutableTreeNode().setIcon(IconLoader.getInstance().getIconFromTheme("apps", "appointment", 16));
-    
+
     Action editReminders = new AbstractAction() {
       public void actionPerformed(ActionEvent e) {
         ReminderListDialog dlg = new ReminderListDialog(MainFrame.getInstance(), mReminderList);
@@ -640,11 +649,11 @@ public class ReminderPlugin {
     };
     openSettings.putValue(Action.SMALL_ICON, TVBrowserIcons.preferences(TVBrowserIcons.SIZE_SMALL));
     openSettings.putValue(Action.NAME, Localizer.getLocalization(Localizer.I18N_SETTINGS));
-    
+
     mRootNode.addAction(editReminders);
     mRootNode.addAction(null);
     mRootNode.addAction(openSettings);
-    
+
     mRootNode.removeAllChildren();
 
     ReminderListItem[] items = mReminderList.getReminderItems();
@@ -655,7 +664,7 @@ public class ReminderPlugin {
     mRootNode.addPrograms(listNewPrograms);
 
     mRootNode.update();
-    
+
     if(save && mHasRightToSave) {
       saveReminders();
     }
@@ -675,20 +684,20 @@ public class ReminderPlugin {
   protected ActionMenu getButtonAction() {
     AbstractAction action = new AbstractAction() {
       public void actionPerformed(ActionEvent evt) {
-        
+
         Window w = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
         ReminderListDialog dlg = new ReminderListDialog(w, mReminderList);
-        
+
         int x = Integer.parseInt(mSettings.getProperty("dlgXPos","-1"));
         int y = Integer.parseInt(mSettings.getProperty("dlgYPos","-1"));
-        
+
         if(x == -1 || y == -1) {
           UiUtilities.centerAndShow(dlg);
         } else {
           dlg.setLocation(x,y);
           dlg.setVisible(true);
         }
-        
+
         mSettings.setProperty("dlgXPos", String.valueOf(dlg.getX()));
         mSettings.setProperty("dlgYPos", String.valueOf(dlg.getY()));
         mSettings.setProperty("dlgWidth", String.valueOf(dlg.getWidth()));
@@ -708,7 +717,7 @@ public class ReminderPlugin {
 
   /**
    * Plays a sound.
-   * 
+   *
    * @param fileName
    *          The file name of the sound to play.
    * @return The sound Object.
@@ -749,15 +758,15 @@ public class ReminderPlugin {
         final AudioInputStream ais = AudioSystem.getAudioInputStream(new File(
             fileName));
 
-        final AudioFormat format = ais.getFormat();        
+        final AudioFormat format = ais.getFormat();
         final DataLine.Info info = new DataLine.Info(SourceDataLine.class, format);
-        
+
         if(AudioSystem.isLineSupported(info)) {
-          final SourceDataLine line = (SourceDataLine) AudioSystem.getLine(info);          
-          
-          line.open(format);          
+          final SourceDataLine line = (SourceDataLine) AudioSystem.getLine(info);
+
+          line.open(format);
           line.start();
-          
+
           new Thread("Reminder audio playing") {
             private boolean stopped;
             public void run() {
@@ -767,9 +776,9 @@ public class ReminderPlugin {
               int total = 0;
               int totalToRead = (int) (format.getFrameSize() * ais.getFrameLength());
               stopped = false;
-              
+
               line.addLineListener(new LineListener() {
-                public void update(LineEvent event) {                  
+                public void update(LineEvent event) {
                   if(line != null && !line.isRunning()) {
                     stopped = true;
                     line.close();
@@ -781,26 +790,26 @@ public class ReminderPlugin {
                   }
                 }
               });
-              
+
               try {
                 while (total < totalToRead && !stopped) {
                   numBytesRead = ais.read(myData, 0, numBytesToRead);
-                  
+
                   if (numBytesRead == -1) {
                     break;
                   }
-                  
+
                   total += numBytesRead;
-                  line.write(myData, 0, numBytesRead); 
+                  line.write(myData, 0, numBytesRead);
                 }
               }catch(Exception e) {}
-              
+
               line.drain();
               line.stop();
             }
           }.start();
-          
-          return line;         
+
+          return line;
         }else {
           URL url = new File(fileName).toURI().toURL();
           AudioClip clip= Applet.newAudioClip(url);
@@ -842,7 +851,7 @@ public class ReminderPlugin {
 
   /**
    * get the ID of the plugin (without the need to load the plugin)
-   * 
+   *
    * @return the id
    * @since 3.0
    */
@@ -860,7 +869,7 @@ public class ReminderPlugin {
     }
     return list.toArray(new ProgramReceiveTarget[list.size()]);
   }
-  
+
   protected void setClientPluginsTargets(ProgramReceiveTarget[] targets) {
     if(targets != null) {
       mClientPluginTargets = targets;
@@ -868,7 +877,7 @@ public class ReminderPlugin {
       mClientPluginTargets = new ProgramReceiveTarget[0];
     }
   }
-    
+
   protected int getMarkPriority() {
     if(mMarkPriority == - 2 && mSettings != null) {
       mMarkPriority = Integer.parseInt(mSettings.getProperty("markPriority",String.valueOf(Program.MIN_MARK_PRIORITY)));
@@ -877,20 +886,20 @@ public class ReminderPlugin {
       return mMarkPriority;
     }
   }
-  
+
   protected void setMarkPriority(int priority) {
     mMarkPriority = priority;
-    
+
     ReminderListItem[] items = mReminderList.getReminderItems();
-    
+
     for(ReminderListItem item : items) {
       item.getProgram().validateMarking();
     }
-    
+
     mSettings.setProperty("markPriority",String.valueOf(priority));
     saveReminders();
   }
-  
+
   protected static int getTimeToProgramStart(Program program) {
     int progMinutesAfterMidnight = program.getHours() * 60
         + program.getMinutes();
