@@ -1,6 +1,5 @@
 package swedbtvdataservice;
 
-import java.awt.Image;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -10,11 +9,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 
 import util.io.IOUtilities;
 import util.misc.ChangeTrackingProperties;
-import util.ui.ImageUtilities;
+import util.ui.AsynchronousImageIcon;
 
 class IconLoader {
   private static Logger mLog = Logger.getLogger(IconLoader.class.getName());
@@ -118,11 +116,7 @@ class IconLoader {
       }
     }
     // now load the (renamed) image
-    Image img = ImageUtilities.createImageAsynchronous(file.getAbsolutePath());
-    if (img != null) {
-      return new ImageIcon(img);
-    }
-    return null;
+    return new AsynchronousImageIcon(file);
   }
 
   public void close() throws IOException {
