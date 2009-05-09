@@ -29,6 +29,8 @@ import javax.swing.GrayFilter;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
+import tvbrowser.core.Settings;
+
 import devplugin.Program;
 import devplugin.ProgramFieldType;
 
@@ -49,7 +51,7 @@ public class PictureAreaIcon implements Icon {
   private Program mProgram;
   private boolean mIsExpired;
   private boolean mIsGrayFilter;
-  private boolean mShowDescription;
+  private int mDescriptionLines;
   
   /**
    * Constructor for programs with no picture or if pictures for 
@@ -65,13 +67,18 @@ public class PictureAreaIcon implements Icon {
    * @param width The width of this area.
    * @param showDescription If description should be shown.
    * @param grayFilter If the image should be filtered to gray if the program is expired.
-   * @param zoom If the piture should be zoomed to width.
+   * @param zoom If the picture should be zoomed to width.
    */
   public PictureAreaIcon(Program p, Font f, int width, boolean showDescription, boolean grayFilter, boolean zoom) {
     mProgram = p;
     mIsExpired = false;
     mIsGrayFilter = grayFilter;
-    mShowDescription = showDescription;
+    if (showDescription) {
+      mDescriptionLines = Settings.propPictureDescriptionLines.getInt();
+    }
+    else {
+      mDescriptionLines = 0;
+    }
     
     byte[] picture = p.getBinaryField(ProgramFieldType.PICTURE_TYPE);    
     
@@ -93,11 +100,11 @@ public class PictureAreaIcon implements Icon {
     String pictureText = showDescription ? p.getTextField(ProgramFieldType.PICTURE_DESCRIPTION_TYPE) : "";
     if ((pictureText != null) && !(pictureText.equals(""))) {
       mDescriptionText = new TextAreaIcon(pictureText,f,width-6);
-      mDescriptionText.setMaximumLineCount(8);
+      mDescriptionText.setMaximumLineCount(mDescriptionLines);
     }
     else {
       // reset show description as the string is empty
-      mShowDescription = false;
+      mDescriptionLines = 0;
     }
   }
   
@@ -105,7 +112,7 @@ public class PictureAreaIcon implements Icon {
     if(mScaledIcon == null) {
       return 0;
     } else {
-      return mScaledIcon.getIconHeight() + mCopyrightText.getIconHeight() + (mShowDescription ? mDescriptionText.getIconHeight() : 0) + 10;
+      return mScaledIcon.getIconHeight() + mCopyrightText.getIconHeight() + (mDescriptionLines > 0 ? mDescriptionText.getIconHeight() : 0) + 10;
     }
   }
 
@@ -146,7 +153,7 @@ public class PictureAreaIcon implements Icon {
     }
     
     mCopyrightText.paintIcon(null,g,x,y + mScaledIcon.getIconHeight());
-    if (mShowDescription && mDescriptionText != null) {
+    if (mDescriptionLines > 0 && mDescriptionText != null) {
       mDescriptionText.paintIcon(null,g,x,y + mScaledIcon.getIconHeight() + mCopyrightText.getIconHeight() + 1);
     }
     g.setColor(color);

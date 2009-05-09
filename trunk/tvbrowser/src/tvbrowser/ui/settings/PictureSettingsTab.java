@@ -39,6 +39,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerDateModel;
+import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
@@ -87,6 +88,10 @@ public class PictureSettingsTab extends AbstractSettingsTab {
   private JButton choose;
 
   private PluginsPictureSettingsPanel mPluginsPictureSettings;
+
+private JSpinner mDescriptionLines;
+
+private JLabel mDescriptionLabel;
 
 
   public JPanel createSettingsPanel() {
@@ -140,7 +145,7 @@ public class PictureSettingsTab extends AbstractSettingsTab {
       FormLayout layout = new FormLayout(
               "5dlu, 12dlu, 15dlu, pref, 5dlu, pref, 5dlu, pref:grow, 5dlu",
               "pref,5dlu,pref,pref,pref,2dlu,pref,pref,2dlu,pref" +
-                      ",2dlu,pref,pref,5dlu,pref,10dlu,pref,5dlu,pref,10dlu,pref,5dlu");
+                      ",2dlu,pref,pref,5dlu,pref,pref,10dlu,pref,5dlu,pref,10dlu,pref,5dlu");
 
       PanelBuilder pb = new PanelBuilder(layout, new ScrollableJPanel());
 
@@ -149,22 +154,21 @@ public class PictureSettingsTab extends AbstractSettingsTab {
       int y = 1;
 
       pb.addSeparator(mLocalizer.msg("basics", "Picture settings for the program table"), cc.xyw(1, y, 9));
-      y += 2;
 
-      pb.add(mShowPicturesNever, cc.xyw(2, y++, 8));
-      pb.add(mShowPicturesEver, cc.xyw(2, y++, 8));
-      pb.add(mShowPicturesForSelection, cc.xyw(2, y++, 8));
+      pb.add(mShowPicturesNever, cc.xyw(2, y+=2, 8));
+      pb.add(mShowPicturesEver, cc.xyw(2, y+=1, 8));
+      pb.add(mShowPicturesForSelection, cc.xyw(2, y+=1, 8));
 
-      pb.add(mShowPicturesInTimeRange, cc.xyw(3, ++y, 7));
-      mStartLabel = pb.addLabel(mLocalizer.msg("startTime", "From:"), cc.xy(4, ++y));
-      pb.add(mPictureStartTime, cc.xy(6, y++));
-      mEndLabel = pb.addLabel(mLocalizer.msg("endTime", "To:"), cc.xy(4, ++y));
-      pb.add(mPictureEndTime, cc.xy(6, y++));
+      pb.add(mShowPicturesInTimeRange, cc.xyw(3, y+=2, 7));
+      mStartLabel = pb.addLabel(mLocalizer.msg("startTime", "From:"), cc.xy(4, y+=1));
+      pb.add(mPictureStartTime, cc.xy(6, y));
+      mEndLabel = pb.addLabel(mLocalizer.msg("endTime", "To:"), cc.xy(4, y+=2));
+      pb.add(mPictureEndTime, cc.xy(6, y));
 
-      pb.add(mShowPicturesForDuration, cc.xyw(3, ++y, 7));
-      pb.add(mDuration, cc.xy(6, ++y));
-      final JLabel minutesLabel = pb.addLabel(mLocalizer.msg("minutes", "Minutes"), cc.xy(8, y++));
-
+      pb.add(mShowPicturesForDuration, cc.xyw(3, y+=2, 7));
+      pb.add(mDuration, cc.xy(6, y+=1));
+      final JLabel minutesLabel = pb.addLabel(mLocalizer.msg("minutes", "Minutes"), cc.xy(8, y));
+      y++;
       if (Settings.propPicturePluginIds.getStringArray() != null) {
         JPanel mSubPanel = new JPanel(new FormLayout("15dlu,pref:grow,5dlu,pref", "pref,2dlu,pref"));
 
@@ -221,18 +225,30 @@ public class PictureSettingsTab extends AbstractSettingsTab {
         mSubPanel.add(choose, cc.xy(4, 3));
 
         layout.insertRow(y, RowSpec.decode("2dlu"));
-        layout.insertRow(++y, RowSpec.decode("pref"));
+        layout.insertRow(y+=1, RowSpec.decode("pref"));
         pb.add(mSubPanel, cc.xyw(3, y, 6));
-        layout.insertRow(++y, RowSpec.decode("2dlu"));
+        layout.insertRow(y+=1, RowSpec.decode("2dlu"));
         y++;
       }
 
-      pb.add(mShowDescription, cc.xyw(2, ++y, 8));
-      y++;
-      pb.addSeparator(mLocalizer.msg("pluginPictureTitle", "Default picture settings for the program lists of the Plugins"), cc.xyw(1, ++y, 8));
-      y++;
-      pb.add(mPluginsPictureSettings = new PluginsPictureSettingsPanel(new PluginPictureSettings(Settings.propPluginsPictureSetting.getInt()), true), cc.xyw(2, ++y, 7));
-      pb.add(helpLabel, cc.xyw(1, y + 2, 9));
+      pb.add(mShowDescription, cc.xyw(2, y+=1, 8));
+
+      mDescriptionLines = new JSpinner(new SpinnerNumberModel(Settings.propPictureDescriptionLines.getInt(), 1, 20, 1));
+      pb.add(mDescriptionLines, cc.xyw(3, y+=1, 4));
+      mDescriptionLabel = new JLabel(mLocalizer.msg("lines", "lines"));
+	  pb.add(mDescriptionLabel, cc.xy(8, y));
+	  mDescriptionLabel.setEnabled(mShowDescription.isSelected());
+	  mShowDescription.addActionListener(new ActionListener() {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+		  mDescriptionLines.setEnabled(mShowDescription.isSelected());
+		  mDescriptionLabel.setEnabled(mShowDescription.isSelected());
+		}});
+    
+      pb.addSeparator(mLocalizer.msg("pluginPictureTitle", "Default picture settings for the program lists of the Plugins"), cc.xyw(1, y+=2, 8));
+      pb.add(mPluginsPictureSettings = new PluginsPictureSettingsPanel(new PluginPictureSettings(Settings.propPluginsPictureSetting.getInt()), true), cc.xyw(2, y+=2, 7));
+      pb.add(helpLabel, cc.xyw(1, y+=2, 9));
 
       mShowPicturesInTimeRange.addItemListener(new ItemListener() {
         public void itemStateChanged(ItemEvent e) {
@@ -322,6 +338,7 @@ public class PictureSettingsTab extends AbstractSettingsTab {
     }
 
     Settings.propPluginsPictureSetting.setInt(mPluginsPictureSettings.getSettings().getType());
+    Settings.propPictureDescriptionLines.setInt((Integer) mDescriptionLines.getValue());
   }
 
   /**
