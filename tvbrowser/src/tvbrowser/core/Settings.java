@@ -83,6 +83,7 @@ import util.settings.VersionProperty;
 import util.settings.WindowSetting;
 import util.ui.Localizer;
 import util.ui.view.SplitViewProperty;
+import devplugin.Date;
 import devplugin.ProgramFieldType;
 
 /**
@@ -975,7 +976,7 @@ public class Settings {
       mProp, "askForAutoDownload", false);
 
   public static final DateProperty propLastDownloadDate = new DateProperty(
-      mProp, "lastdownload", null);
+      mProp, "lastdownload", Date.getCurrentDate().addDays(-100));
 
   public static final FontProperty propProgramTitleFont = new DeferredFontProperty(
       mProp, "font.programtitle", DEFAULT_PROGRAMTITLEFONT);

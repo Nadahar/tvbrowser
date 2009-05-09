@@ -944,10 +944,7 @@ public class TVBrowser {
   
   private static boolean isAutomaticDownloadDateReached() {
     String autoDLType = Settings.propAutoDownloadType.getString();
-    Date lastDownloadDate = Settings.propLastDownloadDate.getDate();
-    if (lastDownloadDate==null) {
-      lastDownloadDate = Date.getCurrentDate().addDays(-100);
-    }
+    final Date lastDownloadDate = Settings.propLastDownloadDate.getDate();
     Date today = Date.getCurrentDate();
 
     Date nextDownloadDate;
