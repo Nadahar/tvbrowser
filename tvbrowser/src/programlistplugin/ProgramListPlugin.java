@@ -169,6 +169,11 @@ public class ProgramListPlugin extends Plugin {
   }
   
   private void fillFilterBox() {
+    // initialize filter as allFilter because we may no longer find the filter
+    // with the stored name
+    if (mFilter == null) {
+      mFilter = Plugin.getPluginManager().getFilterManager().getAllFilter();
+    }
     ArrayList<ProgramFilter> filters = new ArrayList<ProgramFilter>();
     for (ProgramFilter filter : Plugin.getPluginManager().getFilterManager()
         .getAvailableFilters()) {
@@ -494,6 +499,5 @@ public class ProgramListPlugin extends Plugin {
     mDialog.setVisible(false);
     saveMe();
   }
-  
 
 }
