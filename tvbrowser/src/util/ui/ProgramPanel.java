@@ -352,7 +352,8 @@ private static Font getDynamicFontSize(Font font, int offset) {
     calculateWidth();
     mTitleIcon = new TextAreaIcon(null, mTitleFont, WIDTH_RIGHT - 5);
     mDescriptionIcon = new TextAreaIcon(null, mNormalFont, WIDTH_RIGHT - 5);
-    mDescriptionIcon.setMaximumLineCount(3);
+    mDescriptionIcon.setMaximumLineCount(Settings.propProgramPanelMaxLines
+        .getInt());
     mProgram.validateMarking();
     Program p = mProgram;
     mProgram = null;
@@ -484,13 +485,15 @@ private static Font getDynamicFontSize(Font font, int offset) {
     }
     
     // Create the picture area icon
+    int length = program.getLength();
     if (!mSettings.isShowingOnlyDateAndTitle()
         && mProgram.hasFieldValue(ProgramFieldType.PICTURE_TYPE)
         && ( 
         mSettings.isShowingPictureEver() || !dontShow || 
         (mSettings.isShowingPictureInTimeRange() && 
          !ProgramUtilities.isNotInTimeRange(mSettings.getPictureTimeRangeStart(),mSettings.getPictureTimeRangeEnd(),program)) ||
-         (mSettings.isShowingPictureForDuration() && mSettings.getDuration() <= program.getLength())
+         (mSettings
+            .isShowingPictureForDuration() && mSettings.getDuration() <= length)
          )) {
       mPictureAreaIcon = new PictureAreaIcon(program,mNormalFont, WIDTH_RIGHT - 4, mSettings.isShowingPictureDescription(), true, false);
     } else {
@@ -499,7 +502,16 @@ private static Font getDynamicFontSize(Font font, int offset) {
     
     // Calculate the maximum description lines
     int titleHeight = mTitleIcon.getIconHeight();
-    int maxDescLines = 3;
+    int maxDescLines;
+    if (Settings.propProgramPanelShortDurationActive.getBoolean()
+        && length >= 0
+        && length <= Settings.propProgramPanelShortDurationMinutes.getInt()) {
+      maxDescLines = 0;
+      mDescriptionIcon.setText("");
+      mDescriptionIcon.setMaximumLineCount(0);
+    } else {
+      maxDescLines = Settings.propProgramPanelMaxLines.getInt();
+    }
     int additionalHeight = Settings.propProgramPanelUsesExtraSpaceForMarkIcons.getBoolean() && program.getMarkerArr().length > 0 ? 16 : 0;
     
     if (maxHeight != -1) {
@@ -510,7 +522,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
         || (maxDescLines != mDescriptionIcon.getMaximumLineCount())) {
       int descHeight = 0;
       // (Re)set the description text
-      if (!mSettings.isShowingOnlyDateAndTitle()) {
+      if (!mSettings.isShowingOnlyDateAndTitle() && maxDescLines > 0) {
         mDescriptionIcon.setMaximumLineCount(maxDescLines);
         ProgramFieldType[] infoFieldArr = Settings.propProgramInfoFields
             .getProgramFieldTypeArray();
