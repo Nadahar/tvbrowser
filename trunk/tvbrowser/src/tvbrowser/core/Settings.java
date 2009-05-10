@@ -538,7 +538,9 @@ public class Settings {
     propArr = new Property[] {propPictureType, propPictureStartTime,
         propPictureEndTime, propIsPictureShowingDescription, propPicturePluginIds,
         propPictureDuration, propProgramTableCutTitle,
-        propProgramTableCutTitleLines, propPictureDescriptionLines };
+        propProgramTableCutTitleLines, propPictureDescriptionLines,
+        propProgramPanelMaxLines, propProgramPanelShortDurationActive,
+        propProgramPanelShortDurationMinutes };
     
     if(mProp.hasChanged(propArr)) {
       mainFrame.getProgramTableScrollPane().forceRepaintAll();
@@ -1042,6 +1044,24 @@ public class Settings {
   public static final ColorProperty propProgramPanelForegroundColor = new ColorProperty(
       mProp, "programpanel.ColorForeground", Color.black);
   
+  /**
+   * number of description lines show in program panel
+   */
+  public static final IntProperty propProgramPanelMaxLines = new IntProperty(
+      mProp, "programpanel.MaxLines", 3);
+
+  /**
+   * show less description lines for very short programs
+   */
+  public static final BooleanProperty propProgramPanelShortDurationActive = new BooleanProperty(
+      mProp, "programpanel.ShortActive", true);
+
+  /**
+   * maximum duration in minutes to show no description
+   */
+  public static final IntProperty propProgramPanelShortDurationMinutes = new IntProperty(
+      mProp, "programpanel.ShortMinutes", 10);
+
   public static final BooleanProperty propProgramTableMouseOver = new BooleanProperty(
       mProp, "programpanel.MouseOver", true);
 

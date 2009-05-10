@@ -50,6 +50,7 @@ import javax.swing.JSlider;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerDateModel;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
@@ -108,9 +109,19 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
 
   private JCheckBox mCutLongTitlesCB;
 
-  private JComboBox mCutLongTitlesSelection;
+  private JSpinner mCutLongTitlesSelection;
 
   private JCheckBox mAutoScrollCb;
+
+  private JSpinner mDescriptionLines;
+
+  private JLabel mCutLongTitlesLabel;
+
+  private JCheckBox mShortProgramsCB;
+
+  private JSpinner mShortProgramsMinutes;
+
+  private JLabel mShortProgramsLabel;
 
   public void actionPerformed(ActionEvent event) {
     Object source = event.getSource();
@@ -133,6 +144,10 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     // Layout-Rows ****************************************
     layout.appendRow(RowSpec.decode("pref"));
     layout.appendRow(RowSpec.decode("5dlu"));
+    layout.appendRow(RowSpec.decode("pref"));
+    layout.appendRow(RowSpec.decode("3dlu"));
+    layout.appendRow(RowSpec.decode("pref"));
+    layout.appendRow(RowSpec.decode("3dlu"));
     layout.appendRow(RowSpec.decode("pref"));
     layout.appendRow(RowSpec.decode("3dlu"));
     layout.appendRow(RowSpec.decode("pref"));
@@ -171,27 +186,53 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
 
     mSettingsPn.add(mProgramArrangementCB, cc.xy(4, currentRow));
 
+    // Cut long titles
     mCutLongTitlesCB = new JCheckBox(mLocalizer.msg("cutTitle",
-        "Cut long titles"));
+        "Cut long titles"), Settings.propProgramTableCutTitle.getBoolean());
     mSettingsPn.add(mCutLongTitlesCB, cc.xyw(2, (currentRow += 2), 2));
-    mCutLongTitlesSelection = new JComboBox();
-    for (int i = 1; i <= 3; i++) {
-      mCutLongTitlesSelection.addItem(i);
-    }
+    mCutLongTitlesSelection = new JSpinner(new SpinnerNumberModel(
+        Settings.propProgramTableCutTitleLines.getInt(), 1, 3, 1));
     mSettingsPn.add(mCutLongTitlesSelection, cc.xy(4, currentRow));
+    mCutLongTitlesLabel = new JLabel(mLocalizer.msg("lines", "Lines"));
+    mSettingsPn.add(mCutLongTitlesLabel, cc.xy(6, currentRow));
+    
     mCutLongTitlesCB.addActionListener(new ActionListener() {
-
       public void actionPerformed(ActionEvent e) {
         mCutLongTitlesSelection.setEnabled(mCutLongTitlesCB.isSelected());
+        mCutLongTitlesLabel.setEnabled(mCutLongTitlesCB.isSelected());
       }
     });
-    mCutLongTitlesSelection
-        .setSelectedIndex(Settings.propProgramTableCutTitleLines.getInt() - 1);
+    mCutLongTitlesCB.getActionListeners()[0].actionPerformed(null);
+    
+    // Short descriptions N lines
+    mDescriptionLines = new JSpinner(new SpinnerNumberModel(
+        Settings.propProgramPanelMaxLines.getInt(), 1, 5, 1));
+    mSettingsPn.add(new JLabel(mLocalizer.msg("shortDescription",
+        "Short description")), cc.xyw(2, currentRow += 2, 2));
+    mSettingsPn.add(mDescriptionLines, cc.xy(4, currentRow));
     mSettingsPn.add(new JLabel(mLocalizer.msg("lines", "Lines")), cc.xy(6,
         currentRow));
-    mCutLongTitlesCB
-        .setSelected(Settings.propProgramTableCutTitle.getBoolean());
-    mCutLongTitlesSelection.setEnabled(mCutLongTitlesCB.isSelected());
+    
+    // Short programs no description
+    mShortProgramsCB = new JCheckBox(mLocalizer.msg("shortPrograms",
+        "If duration less than"),
+        Settings.propProgramPanelShortDurationActive.getBoolean());
+    mSettingsPn.add(mShortProgramsCB, cc.xyw(2, (currentRow += 2), 2));
+    mShortProgramsMinutes = new JSpinner(new SpinnerNumberModel(
+        Settings.propProgramPanelShortDurationMinutes.getInt(), 1, 30, 1));
+    mSettingsPn.add(mShortProgramsMinutes, cc.xy(4, currentRow));
+    mShortProgramsLabel = new JLabel(mLocalizer.msg("shortPrograms2",
+        "minutes, then hide description"));
+    mSettingsPn.add(mShortProgramsLabel, cc.xy(6, currentRow));
+
+    mShortProgramsCB.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        mShortProgramsMinutes.setEnabled(mShortProgramsCB.isSelected());
+        mShortProgramsLabel.setEnabled(mShortProgramsCB.isSelected());
+      }
+    });
+    mShortProgramsCB.getActionListeners()[0].actionPerformed(null);
     
     // Column Rows ***************************************
     layout.appendRow(RowSpec.decode("pref"));
@@ -368,9 +409,7 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     
     mMouseOverColorLb = new ColorLabel(Settings.propProgramTableMouseOverColor.getColor());
     mMouseOverColorLb.setStandardColor(Settings.propProgramTableMouseOverColor.getDefaultColor());
-    mMouseOverColorLb.setEnabled(Settings.propProgramTableMouseOver.getBoolean());
     final ColorButton mouseOverColorChangeBtn = new ColorButton(mMouseOverColorLb);
-    mouseOverColorChangeBtn.setEnabled(Settings.propProgramTableMouseOver.getBoolean());
     mMouseOverCb.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         boolean enabled = mMouseOverCb.isSelected();
@@ -378,6 +417,7 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
         mouseOverColorChangeBtn.setEnabled(enabled);
       }
     });
+    mMouseOverCb.getActionListeners()[0].actionPerformed(null);
 
     mSettingsPn.add(mMouseOverColorLb, cc.xy(4, currentRow));
     mSettingsPn.add(mouseOverColorChangeBtn, cc.xy(6, currentRow));
@@ -504,10 +544,16 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
 
     Settings.propProgramTableMouseOverColor.setColor(mMouseOverColorLb.getColor());
     Settings.propProgramTableCutTitle.setBoolean(mCutLongTitlesCB.isSelected());
-    Settings.propProgramTableCutTitleLines.setInt(mCutLongTitlesSelection
-        .getSelectedIndex() + 1);
+    Settings.propProgramTableCutTitleLines
+        .setInt((Integer) mCutLongTitlesSelection.getValue());
     Settings.propProgramTableMouseAutoScroll.setBoolean(mAutoScrollCb
         .isSelected());
+    Settings.propProgramPanelMaxLines.setInt((Integer) mDescriptionLines
+        .getValue());
+    Settings.propProgramPanelShortDurationActive.setBoolean(mShortProgramsCB
+        .isSelected());
+    Settings.propProgramPanelShortDurationMinutes
+        .setInt((Integer) mShortProgramsMinutes.getValue());
   }
 
   /**
