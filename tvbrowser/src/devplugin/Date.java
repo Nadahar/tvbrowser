@@ -160,6 +160,12 @@ public class Date implements Comparable<Date> {
 
   }
 
+  /**
+   * do not call this method repeatedly! always cache this value because this is
+   * a very slow function!
+   * 
+   * @return
+   */
   public static Date getCurrentDate() {
     return new Date();
   }
