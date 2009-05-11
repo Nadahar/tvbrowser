@@ -41,6 +41,7 @@ public class IDontWant2SeeSettings {
 
   public void setLastEnteredExclusionString(final String value) {
     mLastEnteredExclusionString = value;
+    IDontWant2See.getInstance().clearCache();
   }
 
   public void setLastUsedDate(final Date value) {
@@ -57,6 +58,7 @@ public class IDontWant2SeeSettings {
 
   public void setSearchList(final ArrayList<IDontWant2SeeListEntry> value) {
     mSearchList = value;
+    IDontWant2See.getInstance().clearCache();
   }
 
 }

@@ -34,6 +34,7 @@ import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -91,6 +92,9 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
 
   private boolean mCtrlPressed;
 
+  private HashMap<Program, Boolean> mMatchCache = new HashMap<Program, Boolean>(
+			1000);
+
   private static final Pattern PATTERN_TITLE_PART = Pattern.compile("(.*)"
       + "((" // one of two alternatives
       + "\\(?(" // optional brackets
@@ -130,12 +134,17 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
   }
   
   public void handleTvDataUpdateFinished() {
+    clearCache();
     setCurrentDate();
     mDateWasSet = false;
     
     for(IDontWant2SeeListEntry entry : mSettings.getSearchList()) {
       entry.resetDateWasSetFlag();
     }
+  }
+
+  void clearCache() {
+    mMatchCache = new HashMap<Program, Boolean>(1000);
   }
 
   private static void setCurrentDate() {
@@ -147,23 +156,36 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
       mSettings.setLastUsedDate(getCurrentDate());
       mDateWasSet = true;
     }
+    final Boolean result = mMatchCache.get(program);
+		if (result != null) {
+			return result;
+		}
     
     // calculate lower case title only once, not for each entry again
     final String title = program.getTitle();
     final String lowerCaseTitle = title.toLowerCase();
     for(IDontWant2SeeListEntry entry : mSettings.getSearchList()) {
       if (entry.matchesProgramTitle(title, lowerCaseTitle)) {
-        return false;
+        return putCache(program, false);
       }
     }
     
-    return true;
+    return putCache(program, true);
   }
   
-  public PluginInfo getInfo() {
-    return new PluginInfo(IDontWant2See.class,
-        mLocalizer.msg("name","I don't want to see!"),
-        mLocalizer.msg("desc","Removes all programs with an entered search text in the title from the program table."),
+  private boolean putCache(final Program program, final boolean matches) {
+		mMatchCache.put(program, matches);
+		return matches;
+	}
+
+	public PluginInfo getInfo() {
+		return new PluginInfo(
+        IDontWant2See.class,
+        mLocalizer.msg("name", "I don't want to see!"),
+        mLocalizer
+            .msg(
+                "desc",
+                "Removes all programs with an entered search text in the title from the program table."),
         "René Mach", "GPL");
   }
   
