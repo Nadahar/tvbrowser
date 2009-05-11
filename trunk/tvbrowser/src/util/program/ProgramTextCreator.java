@@ -239,21 +239,21 @@ public class ProgramTextCreator {
 
     buffer.append(";\"><b>");
     
-    if(prog.getDate().equals(Date.getCurrentDate().addDays(-1))) {
+    Date currentDate = Date.getCurrentDate();
+    Date programDate = prog.getDate();
+    if(programDate.equals(currentDate.addDays(-1))) {
       buffer.append(Localizer.getLocalization(Localizer.I18N_YESTERDAY));
-      buffer.append(" · ").append(prog.getDateString());
+      buffer.append(" · ");
     }
-    else if(prog.getDate().equals(Date.getCurrentDate())){
+    else if(programDate.equals(currentDate)){
       buffer.append(Localizer.getLocalization(Localizer.I18N_TODAY));
-      buffer.append(" · ").append(prog.getDateString());
+      buffer.append(" · ");
     }
-    else if(prog.getDate().equals(Date.getCurrentDate().addDays(1))){
+    else if(programDate.equals(currentDate.addDays(1))){
       buffer.append(Localizer.getLocalization(Localizer.I18N_TOMORROW));
-      buffer.append(" · ").append(prog.getDateString());
+      buffer.append(" · ");
     }
-    else {
-      buffer.append(prog.getDateString());
-    }
+    buffer.append(prog.getDateString());
     
     buffer.append(" · ");
     buffer.append(prog.getTimeString());
