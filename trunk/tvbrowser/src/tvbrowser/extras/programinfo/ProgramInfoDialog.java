@@ -99,6 +99,7 @@ import util.settings.ProgramPanelSettings;
 import util.ui.Localizer;
 import util.ui.SearchFormSettings;
 import util.ui.SearchHelper;
+import util.ui.UIThreadRunner;
 import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
@@ -845,7 +846,7 @@ class ProgramInfoDialog {
     addActionsToRootPane();
 
     try {
-      SwingUtilities.invokeAndWait(new Runnable() {
+      UIThreadRunner.invokeAndWait(new Runnable() {
         public void run() {
           Settings.layoutWindow("extras.programInfoDlg", mDialog);
           mDialog.setVisible(true);

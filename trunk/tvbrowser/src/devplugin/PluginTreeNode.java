@@ -39,7 +39,6 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.swing.Action;
-import javax.swing.SwingUtilities;
 
 import tvbrowser.core.TvDataUpdateListener;
 import tvbrowser.core.TvDataUpdater;
@@ -47,6 +46,7 @@ import tvbrowser.ui.pluginview.Node;
 import tvbrowser.ui.pluginview.PluginTreeModel;
 import util.program.ProgramUtilities;
 import util.ui.Localizer;
+import util.ui.UIThreadRunner;
 
 
 /**
@@ -471,16 +471,12 @@ public class PluginTreeNode implements Comparable<PluginTreeNode> {
     else {
       createDefaultNodes();
     }
-    if (SwingUtilities.isEventDispatchThread()) {
-      PluginTreeModel.getInstance().reload(mDefaultNode);
-    }
-    else {
-    SwingUtilities.invokeLater(new Runnable() {
+    UIThreadRunner.invokeLater(new Runnable() {
       @Override
       public void run() {
         PluginTreeModel.getInstance().reload(mDefaultNode);
-      }});
-    }
+      }
+    });
   }
 
   public synchronized void addPrograms(final List<Program> listNew) {
