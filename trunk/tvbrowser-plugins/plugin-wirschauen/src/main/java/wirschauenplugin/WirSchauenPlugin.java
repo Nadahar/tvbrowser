@@ -78,7 +78,7 @@ public final class WirSchauenPlugin extends Plugin {
   private PluginInfo mPluginInfo;
 
   private Icon mIcon;
-
+  
   private PluginsProgramFilter mFilter;
 
   private WirSchauenFilterComponent mComponent;
@@ -90,7 +90,7 @@ public final class WirSchauenPlugin extends Plugin {
   public WirSchauenPlugin() {
     INSTANCE = this;
 
-    mAllowedChannels = new ArrayList<String>(5);
+    mAllowedChannels = new ArrayList<String>(20);
     mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:rtl");
     mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:rtl2");
     mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:superrtl");
@@ -110,7 +110,6 @@ public final class WirSchauenPlugin extends Plugin {
     mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:RTLLIVING");
     mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:RTLCRIME");
   
-    mIcon = new ImageIcon(getClass().getResource("icons/16x16/apps/wirschauen.png"));
   }
 
   /**
@@ -163,6 +162,11 @@ public final class WirSchauenPlugin extends Plugin {
       };
 
       action.putValue(Action.NAME, mLocalizer.msg("contextMenu", "Recommend text for this program"));
+      
+      if (mIcon == null) {
+        mIcon = new ImageIcon(getClass().getResource(
+            "icons/16x16/apps/wirschauen.png"));
+      }
 
       action.putValue(Action.SMALL_ICON, mIcon);
 
