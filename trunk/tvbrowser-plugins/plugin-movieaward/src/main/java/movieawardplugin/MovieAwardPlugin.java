@@ -23,6 +23,7 @@
  */
 package movieawardplugin;
 
+import java.awt.Dimension;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
@@ -209,14 +210,18 @@ final public class MovieAwardPlugin extends Plugin {
     final Window window = UiUtilities.getLastModalChildOf(getParentFrame());
 
     final MovieAwardDialog dialog;
-
+    
     if (window instanceof JDialog) {
       dialog = new MovieAwardDialog((JDialog)window, mMovieAwards, program);
     } else {
       dialog = new MovieAwardDialog((JFrame)window, mMovieAwards, program);
     }
+    //Bolle Edit: layoutWindow
+    layoutWindow("movieAwardDlg", dialog, new Dimension(500,450));
+    //
     UiUtilities.registerForClosing(dialog);
     UiUtilities.centerAndShow(dialog);
+    
   }
 
   public boolean hasAwards(final Program program) {
