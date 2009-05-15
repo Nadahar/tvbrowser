@@ -33,7 +33,11 @@ public class Award {
   private Status mStatus;
   private String mMovieId;
   private String mRecipient;
-
+//Bolle Edit: Additional Information for Best Song and Animated Short Subject Category  
+  private String mAdd_Info;
+//
+  
+//Bolle Note: Old Constructor
   public Award(final String category, final String status,
       final String movieId, final int awardYear, final String recipient) {
     mCategory = category;
@@ -48,8 +52,27 @@ public class Award {
     mAwardYear = awardYear;
     mRecipient = recipient;
   }
-
-  public String getMovieId() {
+  
+//Bolle Edit: New Constructor for Award (old,old,old,old,old,new: add_Info)
+  public Award(final String category, final String status,
+        final String movieId, final int awardYear, final String recipient, final String add_Info) {
+      mCategory = category;
+      if (status.equalsIgnoreCase("winner")) {
+        mStatus = Status.WINNER;
+      } else if (status.equalsIgnoreCase("nominated")) {
+        mStatus = Status.NOMINATED;
+      } else if (status.equalsIgnoreCase("honored")) {
+        mStatus = Status.HONORED;
+      }
+      mMovieId = movieId;
+      mAwardYear = awardYear;
+      mRecipient = recipient;
+    //Bolle Edit: Additional Information for Best Song and Animated Short Subject Category  
+      mAdd_Info = add_Info;
+    //
+    }
+//
+public String getMovieId() {
     return mMovieId;
   }
 
@@ -89,5 +112,15 @@ public class Award {
     mRecipient = recipient;
   }
 
+//Bolle Edit: Additional Information for Best Song and Animated Short Subject Category  
+
+  public String getAdd_Info() {
+      return mAdd_Info;
+  }
+
+  public String setAdd_Info() {
+      return mAdd_Info;
+  }
+//
 
 }

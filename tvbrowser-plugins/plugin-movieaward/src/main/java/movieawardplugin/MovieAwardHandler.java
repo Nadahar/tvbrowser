@@ -71,7 +71,10 @@ public class MovieAwardHandler extends DefaultHandler {
   private static final String ATTRIBUTE_ID = "id";
 
   private static final String CATEGORY = "category";
-
+  
+//Bolle Edit: Additional Information for Best Song and Animated Short Subject Category 
+  private static final String ADD_INFO = "add_info";
+//  
   private static Logger mLog = Logger.getLogger(MovieAwardHandler.class.getName());
 
   /**
@@ -161,7 +164,9 @@ public class MovieAwardHandler extends DefaultHandler {
                                 attributes.getValue(STATUS),
                                 attributes.getValue(MOVIE),
                                 year,
-                                attributes.getValue(RECIPIENT)
+                                attributes.getValue(RECIPIENT),
+                                //Bolle Edit: ADD_INFO added
+                                attributes.getValue(ADD_INFO)
           ));
     } else if (PROVIDED_BY.equals(qName)) {
       if (attributes.getValue(URL) != null) {
