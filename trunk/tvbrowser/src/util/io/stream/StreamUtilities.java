@@ -16,6 +16,8 @@
  */
 package util.io.stream;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -52,17 +54,31 @@ public class StreamUtilities {
    * @throws IOException
    * @since 3.0
    */
-  public static void inputStream(File file, InputStreamProcessor processor)
+  public static void inputStream(final File file,
+      final InputStreamProcessor processor)
       throws IOException {
     IOException processException = null;
     InputStream input = null;
+    BufferedInputStream bufferedStream = null;
     try {
       input = new FileInputStream(file);
-      processor.process(input);
+      bufferedStream = new BufferedInputStream(input);
+      processor.process(bufferedStream);
     } catch (IOException e) {
       processException = e;
     } finally {
       // close stream
+      if (bufferedStream != null) {
+        try {
+          bufferedStream.close();
+        } catch (IOException e) {
+          if (processException != null) {
+            processException = new IOException(processException);
+          } else {
+            processException = e;
+          }
+        }
+      }
       if (input != null) {
         try {
           input.close();
@@ -89,13 +105,13 @@ public class StreamUtilities {
    * @param processor
    * @since 3.0
    */
-  public static void inputStreamIgnoringExceptions(String fileName,
-      InputStreamProcessor processor) {
+  public static void inputStreamIgnoringExceptions(final String fileName,
+      final InputStreamProcessor processor) {
     inputStreamIgnoringExceptions(new File(fileName), processor);
   }
 
-  public static void inputStreamIgnoringExceptions(File file,
-      InputStreamProcessor processor) {
+  public static void inputStreamIgnoringExceptions(final File file,
+      final InputStreamProcessor processor) {
     try {
       inputStream(file, processor);
     } catch (IOException e) {
@@ -103,12 +119,14 @@ public class StreamUtilities {
     }
   }
 
-  public static void inputStream(String fileName, InputStreamProcessor processor)
+  public static void inputStream(final String fileName,
+      final InputStreamProcessor processor)
       throws IOException {
     inputStream(new File(fileName), processor);
   }
 
-  public static void bufferedReader(File file, BufferedReaderProcessor processor)
+  public static void bufferedReader(final File file,
+      final BufferedReaderProcessor processor)
       throws IOException {
     FileReader fileReader = null;
     BufferedReader bufferedReader = null;
@@ -150,8 +168,8 @@ public class StreamUtilities {
     }
   }
 
-  public static void bufferedReaderIgnoringExceptions(File file,
-      BufferedReaderProcessor processor) {
+  public static void bufferedReaderIgnoringExceptions(final File file,
+      final BufferedReaderProcessor processor) {
     try {
       bufferedReader(file, processor);
     } catch (IOException e) {
@@ -159,22 +177,36 @@ public class StreamUtilities {
     }
   }
 
-  public static void bufferedReader(String fileName,
-      BufferedReaderProcessor processor) throws IOException {
+  public static void bufferedReader(final String fileName,
+      final BufferedReaderProcessor processor) throws IOException {
     bufferedReader(new File(fileName), processor);
   }
 
-  public static void outputStream(File file, OutputStreamProcessor processor)
+  public static void outputStream(final File file,
+      final OutputStreamProcessor processor)
       throws IOException {
     IOException processException = null;
     OutputStream output = null;
+    BufferedOutputStream bufferedStream = null;
     try {
       output = new FileOutputStream(file);
-      processor.process(output);
+      bufferedStream = new BufferedOutputStream(output);
+      processor.process(bufferedStream);
     } catch (IOException e) {
       processException = e;
     } finally {
       // close stream
+      if (bufferedStream != null) {
+        try {
+          bufferedStream.close();
+        } catch (IOException e) {
+          if (processException != null) {
+            processException = new IOException(processException);
+          } else {
+            processException = e;
+          }
+        }
+      }
       if (output != null) {
         try {
           output.close();
@@ -192,19 +224,21 @@ public class StreamUtilities {
     }
   }
 
-  public static void outputStream(String fileName,
-      OutputStreamProcessor processor) throws IOException {
+  public static void outputStream(final String fileName,
+      final OutputStreamProcessor processor) throws IOException {
     outputStream(new File(fileName), processor);
   }
 
-  public static void objectOutputStream(File file,
-      ObjectOutputStreamProcessor processor) throws IOException {
+  public static void objectOutputStream(final File file,
+      final ObjectOutputStreamProcessor processor) throws IOException {
     IOException processException = null;
     ObjectOutputStream objectStream = null;
     FileOutputStream fileStream = null;
+    BufferedOutputStream bufferedStream = null;
     try {
       fileStream = new FileOutputStream(file);
-      objectStream = new ObjectOutputStream(fileStream);
+      bufferedStream = new BufferedOutputStream(fileStream);
+      objectStream = new ObjectOutputStream(bufferedStream);
       processor.process(objectStream);
     } catch (IOException e) {
       processException = e;
@@ -213,6 +247,17 @@ public class StreamUtilities {
       if (objectStream != null) {
         try {
           objectStream.close();
+        } catch (IOException e) {
+          if (processException != null) {
+            processException = new IOException(processException);
+          } else {
+            processException = e;
+          }
+        }
+      }
+      if (bufferedStream != null) {
+        try {
+          bufferedStream.close();
         } catch (IOException e) {
           if (processException != null) {
             processException = new IOException(processException);
@@ -238,7 +283,7 @@ public class StreamUtilities {
     }
   }
 
-  public static void objectOutputStreamIgnoringExceptions(File file,
+  public static void objectOutputStreamIgnoringExceptions(final File file,
       ObjectOutputStreamProcessor processor) {
     try {
       objectOutputStream(file, processor);
@@ -247,7 +292,8 @@ public class StreamUtilities {
     }
   }
 
-  public static void bufferedWriter(File file, BufferedWriterProcessor processor)
+  public static void bufferedWriter(final File file,
+      final BufferedWriterProcessor processor)
       throws IOException {
     FileWriter fileWriter = null;
     BufferedWriter bufferedWriter = null;
@@ -289,8 +335,8 @@ public class StreamUtilities {
     }
   }
 
-  public static void bufferedWriterIgnoringExceptions(File file,
-      BufferedWriterProcessor processor) {
+  public static void bufferedWriterIgnoringExceptions(final File file,
+      final BufferedWriterProcessor processor) {
     try {
       bufferedWriter(file, processor);
     } catch (IOException e) {
@@ -308,14 +354,35 @@ public class StreamUtilities {
    * @throws IOException
    * @since 3.0
    */
-  public static void objectInputStream(File file,
-      ObjectInputStreamProcessor processor) throws IOException {
+  public static void objectInputStream(final File file,
+      final ObjectInputStreamProcessor processor) throws IOException {
+    objectInputStream(file, 0, processor);
+  }
+
+  /**
+   * Lets you work with a file based input stream. It is guaranteed that the
+   * underlying stream is closed, even if IOExceptions occur (which are still
+   * thrown further to the caller of this method)
+   * 
+   * @param file
+   * @param processor
+   * @throws IOException
+   * @since 3.0
+   */
+  public static void objectInputStream(final File file, final int bufferSize,
+      final ObjectInputStreamProcessor processor) throws IOException {
     IOException processException = null;
     ObjectInputStream objectStream = null;
     FileInputStream fileStream = null;
+    BufferedInputStream bufferedStream = null;
     try {
       fileStream = new FileInputStream(file);
-      objectStream = new ObjectInputStream(fileStream);
+      if (bufferSize > 0) {
+        bufferedStream = new BufferedInputStream(fileStream, bufferSize);
+      } else {
+        bufferedStream = new BufferedInputStream(fileStream);
+      }
+      objectStream = new ObjectInputStream(bufferedStream);
       processor.process(objectStream);
     } catch (IOException e) {
       processException = e;
@@ -324,6 +391,17 @@ public class StreamUtilities {
       if (objectStream != null) {
         try {
           objectStream.close();
+        } catch (IOException e) {
+          if (processException != null) {
+            processException = new IOException(processException);
+          } else {
+            processException = e;
+          }
+        }
+      }
+      if (bufferedStream != null) {
+        try {
+          bufferedStream.close();
         } catch (IOException e) {
           if (processException != null) {
             processException = new IOException(processException);
@@ -349,17 +427,23 @@ public class StreamUtilities {
     }
   }
 
-  public static void objectInputStreamIgnoringExceptions(File file,
-      ObjectInputStreamProcessor processor) {
+  public static void objectInputStreamIgnoringExceptions(final File file,
+      final ObjectInputStreamProcessor processor) {
+    objectInputStreamIgnoringExceptions(file, 0, processor);
+  }
+
+  public static void objectInputStreamIgnoringExceptions(final File file,
+      final int bufferSize, final ObjectInputStreamProcessor processor) {
     try {
-      objectInputStream(file, processor);
+      objectInputStream(file, bufferSize, processor);
     } catch (IOException e) {
       e.printStackTrace();
     }
   }
 
-  public static void printStream(File file, boolean autoFlush, String encoding,
-      PrintStreamProcessor processor) throws IOException {
+  public static void printStream(final File file, final boolean autoFlush,
+      final String encoding, final PrintStreamProcessor processor)
+      throws IOException {
     IOException processException = null;
     PrintStream printStream = null;
     FileOutputStream fileStream = null;
@@ -395,7 +479,8 @@ public class StreamUtilities {
     }
   }
 
-  public static void printStream(File file, PrintStreamProcessor processor)
+  public static void printStream(final File file,
+      final PrintStreamProcessor processor)
       throws IOException {
     printStream(file, false, null, processor);
   }

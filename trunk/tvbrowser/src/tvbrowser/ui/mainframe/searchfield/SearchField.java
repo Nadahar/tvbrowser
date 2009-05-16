@@ -38,7 +38,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -58,6 +57,7 @@ import tvbrowser.core.filters.FilterManagerImpl;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.exc.TvBrowserException;
+import util.io.stream.ObjectInputStreamProcessor;
 import util.io.stream.ObjectOutputStreamProcessor;
 import util.io.stream.StreamUtilities;
 import util.settings.PluginPictureSettings;
@@ -111,10 +111,18 @@ public class SearchField extends JPanel {
     try {
       String home = Plugin.getPluginManager().getTvBrowserSettings().getTvBrowserUserHome();
       File settingsFile = new File(home,SETTINGS_FILE);
-      
-      ObjectInputStream stream = new ObjectInputStream(new FileInputStream(settingsFile));
-      mSearchFormSettings = new SearchFormSettings(stream);
-      stream.close();
+      StreamUtilities.objectInputStream(settingsFile,
+          new ObjectInputStreamProcessor() {
+            @Override
+            public void process(final ObjectInputStream inputStream)
+                throws IOException {
+              try {
+                mSearchFormSettings = new SearchFormSettings(inputStream);
+              } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+              }
+            }
+          });
     }catch(Exception e) {
       createDefaultSearchFormSettings();
     }    

@@ -26,10 +26,7 @@
 
 package tvbrowser.core.filters;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -55,6 +52,7 @@ import tvbrowser.core.filters.filtercomponents.ProgramTypeFilterComponent;
 import tvbrowser.core.filters.filtercomponents.ReminderFilterComponent;
 import tvbrowser.core.filters.filtercomponents.TimeFilterComponent;
 import tvbrowser.core.plugin.PluginManagerImpl;
+import util.io.stream.ObjectInputStreamProcessor;
 import util.io.stream.ObjectOutputStreamProcessor;
 import util.io.stream.StreamUtilities;
 import devplugin.PluginAccess;
@@ -71,43 +69,34 @@ public class FilterComponentList {
       .getLogger(FilterComponentList.class.getName());
 
   private FilterComponentList() {
-    ObjectInputStream in=null;
     mComponentList = new ArrayList<FilterComponent>();
-
-    try {
-
 
       File filterCompFile=new File(tvbrowser.core.filters.FilterList.FILTER_DIRECTORY,"filter.comp");
 
       if (filterCompFile.exists() && filterCompFile.isFile()) {
+        StreamUtilities.objectInputStreamIgnoringExceptions(filterCompFile,
+          0x1000, new ObjectInputStreamProcessor() {
 
-        in=new ObjectInputStream(new BufferedInputStream(new FileInputStream(filterCompFile), 0x1000));
-        in.readInt(); // version not yet used
-        int compCnt=in.readInt();
-        for (int i=0; i<compCnt; i++) {
-          FilterComponent comp=null;
-          try {
-            comp = readComponent(in);
-          }catch(IOException e) {
-            mLog.warning("error reading filter component: "+e);
-          }
-          if (comp != null) {
-            mComponentList.add(comp);
-          }
-        }
-        in.close();
+          @Override
+            public void process(final ObjectInputStream in) throws IOException {
+              in.readInt(); // version not yet used
+              int compCnt = in.readInt();
+              for (int i = 0; i < compCnt; i++) {
+                FilterComponent comp = null;
+                try {
+                  comp = readComponent(in);
+                } catch (IOException e) {
+                  mLog.warning("error reading filter component: " + e);
+                } catch (ClassNotFoundException e) {
+                  e.printStackTrace();
+                }
+                if (comp != null) {
+                  mComponentList.add(comp);
+                }
+              }
+            }
+          });
       }
-    }catch (FileNotFoundException e) {
-      e.printStackTrace();
-    }catch(IOException e) {
-      e.printStackTrace();
-    }catch(ClassNotFoundException e) {
-      e.printStackTrace();
-    }finally {
-      if (in!=null) {
-        try { in.close(); } catch(IOException exc) {}
-      }
-    }
   }
 
 
