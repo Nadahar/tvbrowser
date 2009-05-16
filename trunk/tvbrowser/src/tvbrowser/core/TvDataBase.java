@@ -152,15 +152,17 @@ public class TvDataBase {
 
     // Check whether day programs were removed
     String[] knownProgArr = mTvDataInventory.getKnownDayPrograms();
+    Date expireDate = Date.getCurrentDate().addDays(-1);
     for (String key : knownProgArr) {
-      // Check whether this file is still present
+      Date date = getDateFromFileName(key);
+      // Check whether this file is still present AND not expired
       // (The key is equal to the file name)
-      if (!tvDataFiles.containsKey(key)) {
+      if (!tvDataFiles.containsKey(key)
+          || (date != null && date.compareTo(expireDate) < 0)) {
         // This day program was deleted -> Inform the listeners
 
         // Get the channel and date
         Channel channel = getChannelFromFileName(key, channelArr, channelIdArr);
-        Date date = getDateFromFileName(key);
         if ((channel != null) && (date != null)) {
           mLog.info("Day program was deleted by third party: " + date + " on "
               + channel.getName());
@@ -170,6 +172,11 @@ public class TvDataBase {
           fireDayProgramDeleted(dummyProg);
 
           mTvDataInventory.setUnknown(date, channel);
+        }
+        else {
+          // we do not know the channel of this file -> remove from list of
+          // remembered files
+          mTvDataInventory.setUnknown(key);
         }
       }
     }
@@ -455,8 +462,7 @@ public class TvDataBase {
     if (lifespan < 0) {
       return; // manually
     }
-    Date d1 = new Date();
-    final Date d = d1.addDays(-lifespan);
+    final Date d = Date.getCurrentDate().addDays(-lifespan);
 
     FilenameFilter filter = new FilenameFilter() {
       public boolean accept(File dir, String name) {
@@ -806,8 +812,21 @@ public class TvDataBase {
 
       // The day program is new -> fire an added event
       // save the value for informing the listeners later
-      mNewDayProgramsAfterUpdate.put(getDayProgramKey(date,channel),newDayProg);
+      if (isValidDate(date)) {
+        mNewDayProgramsAfterUpdate.put(getDayProgramKey(date, channel),
+            newDayProg);
+      }
     }
+  }
+
+  /**
+   * a day program is only valid, if it is from yesterday or newer
+   * 
+   * @param date
+   * @return
+   */
+  private boolean isValidDate(final Date date) {
+    return (Date.getCurrentDate().getNumberOfDaysSince(date) <= 1);
   }
 
   /**

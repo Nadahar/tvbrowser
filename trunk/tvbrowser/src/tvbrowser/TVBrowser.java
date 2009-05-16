@@ -336,9 +336,6 @@ public class TVBrowser {
       updateLookAndFeel();
     }
 
-    mLog.info("Deleting expired TV listings...");
-    TvDataBase.getInstance().deleteExpiredFiles(1,false);
-    
     mLog.info("Loading plugins...");
     msg = mLocalizer.msg("splash.plugins", "Loading plugins...");
     splash.setMessage(msg);
@@ -351,11 +348,6 @@ public class TVBrowser {
     msg = mLocalizer.msg("splash.tvData", "Checking TV database...");
     splash.setMessage(msg);
 
-    /* Initialize the FavoritesPlugin to let it react on
-     * tvdata changes.
-     */
-    //FavoritesPlugin.getInstance();
-    
     mLog.info("Checking TV listings inventory...");
     TvDataBase.getInstance().checkTvDataInventory();
 
@@ -373,6 +365,10 @@ public class TVBrowser {
         new Thread("Start finished callbacks") {
           public void run() {
             setPriority(Thread.MIN_PRIORITY);
+
+            mLog.info("Deleting expired TV listings...");
+            TvDataBase.getInstance().deleteExpiredFiles(1, false);
+            
             // first reset "starting" flag of mainframe
             mainFrame.handleTvBrowserStartFinished();
             
@@ -391,6 +387,9 @@ public class TVBrowser {
 
             // finally submit plugin caused updates to database
             TvDataBase.getInstance().handleTvBrowserStartFinished();
+            
+            startPeriodicSaveSettings();
+
           }
         }.start();
         SwingUtilities.invokeLater(new Runnable() {
@@ -538,6 +537,16 @@ public class TVBrowser {
       }
     });
 
+     // register the shutdown hook
+    Runtime.getRuntime().addShutdownHook(new Thread("Shutdown hook") {
+      public void run() {
+        deleteLockFile();
+        MainFrame.getInstance().quit(false);
+      }
+     });
+  }
+
+  private static void startPeriodicSaveSettings() {
     // Every 5 minutes we store all the settings so they are stored in case of
     // an unexpected failure
     Thread saveThread = new Thread("Store settings periodically") {
@@ -559,14 +568,6 @@ public class TVBrowser {
     };
     saveThread.setPriority(Thread.MIN_PRIORITY);
     saveThread.start();
-
-     // register the shutdown hook
-    Runtime.getRuntime().addShutdownHook(new Thread("Shutdown hook") {
-      public void run() {
-        deleteLockFile();
-        MainFrame.getInstance().quit(false);
-      }
-     });
   }
 
   private static void showUsage() {

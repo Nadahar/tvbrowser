@@ -25,15 +25,14 @@
  */
 package tvbrowser.core;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import util.io.stream.ObjectInputStreamProcessor;
 import util.io.stream.ObjectOutputStreamProcessor;
 import util.io.stream.StreamUtilities;
 import devplugin.Channel;
@@ -118,7 +117,14 @@ public class TvDataInventory {
     String key = TvDataBase.getDayProgramKey(date, channel);
     mInventoryHash.remove(key);
   }
-  
+
+  /**
+   * Sets the day program to "NOT known to the user".
+   * 
+   */
+  public synchronized void setUnknown(final String key) {
+    mInventoryHash.remove(key);
+  }
   
   /**
    * Gets the keys of all known day programs.
@@ -145,28 +151,26 @@ public class TvDataInventory {
   public synchronized void readData(File file)
     throws IOException, ClassNotFoundException
   {
-    BufferedInputStream fIn = null;
-    try {
-      fIn = new BufferedInputStream(new FileInputStream(file), 0x10000);
-      ObjectInputStream in = new ObjectInputStream(fIn);
-      
-      in.readInt(); // version
-      
-      mInventoryHash.clear();
-      int count = in.readInt();
-      for (int i = 0; i < count; i++) {
-        String key = (String) in.readObject();
-        Integer ver = in.readInt();
-        mInventoryHash.put(key, ver);
-      }
-      
-      in.close();
-    }
-    finally {
-      if (fIn != null) {
-        fIn.close();
-      }
-    }
+      StreamUtilities.objectInputStream(file, 0x10000,
+        new ObjectInputStreamProcessor() {
+
+          @Override
+          public void process(final ObjectInputStream in) throws IOException {
+            try {
+              in.readInt(); // version
+
+              mInventoryHash.clear();
+              int count = in.readInt();
+              for (int i = 0; i < count; i++) {
+                String key = (String) in.readObject();
+                Integer ver = in.readInt();
+                mInventoryHash.put(key, ver);
+              }
+            } catch (ClassNotFoundException e) {
+              e.printStackTrace();
+            }
+          }
+        });
   }
 
   
