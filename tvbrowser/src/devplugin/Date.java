@@ -99,15 +99,16 @@ public class Date implements Comparable<Date> {
   }
 
   /**
-   * @param d The date to check for days since.
+   * @param date
+   *          The date to check for days since.
    * @return The days since the given date.
    * @since 0.9.7.4 This method may not return the exactly number of days since
    *        the calculation is confounded by daylight savings time
    *        switchovers... Around midnight the result may not be correct.
    */
 
-  public int getNumberOfDaysSince(Date d) {
-    Calendar cal_1 = d.getCalendar();
+  public int getNumberOfDaysSince(Date date) {
+    Calendar cal_1 = date.getCalendar();
     java.util.Date utilDate_1 = cal_1.getTime();
     long millis_1 = utilDate_1.getTime();
 
