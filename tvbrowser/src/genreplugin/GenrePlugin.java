@@ -103,6 +103,9 @@ public class GenrePlugin extends Plugin implements IGenreSettings {
       mRootNode = new PluginTreeNode(this);
       loadRootNode(mRootNode);
       mRootNode.getMutableTreeNode().setShowLeafCountEnabled(true);
+      if (mRootNode.isEmpty()) {
+        updateRootNode(true);
+      }
     }
     return mRootNode;
   }
@@ -113,7 +116,11 @@ public class GenrePlugin extends Plugin implements IGenreSettings {
   }
 
   protected void updateRootNode() {
-    if (!mStartFinished) {
+    updateRootNode(false);
+  }
+
+  private void updateRootNode(final boolean force) {
+    if (!mStartFinished && !force) {
       return;
     }
     final PluginTreeNode root = getRootNode();
@@ -284,7 +291,9 @@ public class GenrePlugin extends Plugin implements IGenreSettings {
   @Override
   public void writeData(final ObjectOutputStream out) throws IOException {
     // save the tree
-    storeRootNode(mRootNode);
+    if (!mRootNode.isEmpty()) {
+      storeRootNode(mRootNode);
+    }
   }
 
   @Override
