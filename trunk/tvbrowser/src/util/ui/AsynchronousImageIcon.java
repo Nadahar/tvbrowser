@@ -19,6 +19,7 @@ package util.ui;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.Toolkit;
 import java.io.File;
 
 import javax.swing.Icon;
@@ -34,9 +35,11 @@ public class AsynchronousImageIcon implements Icon {
 
   private ImageIcon mIcon;
   private Image mImage;
+  private static final Toolkit TOOLKIT = Toolkit.getDefaultToolkit();
 
   public AsynchronousImageIcon(final String fileName) {
     mImage = ImageUtilities.createImageAsynchronous(fileName);
+    TOOLKIT.prepareImage(mImage, -1, -1, null);
   }
 
   public AsynchronousImageIcon(final File file) {
@@ -45,11 +48,19 @@ public class AsynchronousImageIcon implements Icon {
 
   @Override
   public int getIconHeight() {
+    int height = mImage.getHeight(null);
+    if (height > 0) {
+      return height;
+    }
     return getIcon().getIconHeight();
   }
 
   @Override
   public int getIconWidth() {
+    int width = mImage.getWidth(null);
+    if (width > 0) {
+      return width;
+    }
     return getIcon().getIconWidth();
   }
 
@@ -68,7 +79,7 @@ public class AsynchronousImageIcon implements Icon {
   /**
    * get an image icon from this icon
    * 
-   * @return
+   * @return the wrapped image icon
    */
   public Icon getImageIcon() {
     return getIcon();
