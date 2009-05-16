@@ -354,7 +354,9 @@ public class TVRaterPlugin extends devplugin.Plugin {
    */
   public void writeData(final ObjectOutputStream out) throws IOException {
     _tvraterDB.writeData(out);
-    storeRootNode(mRootNode);
+    if (!mRootNode.isEmpty()) {
+      storeRootNode(mRootNode);
+    }
   }
 
   /**
@@ -513,8 +515,15 @@ public class TVRaterPlugin extends devplugin.Plugin {
           new ImageIcon(ImageUtilities.createImageFromJar(
               "tvraterplugin/imgs/missingrating.png", TVRaterPlugin.class)));
       mutableTreeNode.setShowLeafCountEnabled(false);
+      if (mRootNode.isEmpty()) {
+        updateRootNode(true);
+      }
     }
     return mRootNode;
+  }
+  
+  protected void updateRootNode() {
+    updateRootNode(false);
   }
 
   /**
@@ -522,7 +531,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
    * 
    * @since 2.6
    */
-  protected void updateRootNode() {
+  private void updateRootNode(final boolean force) {
     if (!mStartFinished) {
       return;
     }
