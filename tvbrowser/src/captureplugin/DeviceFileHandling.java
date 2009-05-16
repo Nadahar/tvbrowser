@@ -24,13 +24,12 @@
  */
 package captureplugin;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+import util.io.stream.ObjectInputStreamProcessor;
 import util.io.stream.ObjectOutputStreamProcessor;
 import util.io.stream.StreamUtilities;
 import captureplugin.drivers.DeviceIf;
@@ -105,7 +104,7 @@ public class DeviceFileHandling {
      * @throws ClassNotFoundException Class creation problems
      */
     public DeviceIf readDevice(String classname, String filename, String devname) throws IOException, ClassNotFoundException {
-        DeviceIf dev = DriverFactory.getInstance().createDevice(classname, devname);
+        final DeviceIf dev = DriverFactory.getInstance().createDevice(classname, devname);
         
         if (dev == null) {
             return null;
@@ -113,12 +112,18 @@ public class DeviceFileHandling {
         
         File data = new File(Plugin.getPluginManager().getTvBrowserSettings().getTvBrowserUserHome()  + File.separator + 
                 "CaptureDevices" + File.separator + filename);
+        StreamUtilities.objectInputStreamIgnoringExceptions(data, 0x2000,
+        new ObjectInputStreamProcessor() {
+
+          @Override
+          public void process(final ObjectInputStream inputStream) throws IOException {
+            try {
+              dev.readData(inputStream, false);
+            } catch (ClassNotFoundException e) {
+              e.printStackTrace();
+            }
+          }});
         
-        ObjectInputStream stream = new ObjectInputStream(new BufferedInputStream(new FileInputStream(data), 0x2000));
-        
-        dev.readData(stream, false);
-        
-        stream.close();
         return dev;
     }
 

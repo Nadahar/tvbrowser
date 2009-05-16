@@ -27,9 +27,7 @@
  
 package tvbrowser.core.filters;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -38,6 +36,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 import util.exc.ErrorHandler;
+import util.io.stream.ObjectInputStreamProcessor;
 import util.io.stream.ObjectOutputStreamProcessor;
 import util.io.stream.StreamUtilities;
 import devplugin.ProgramFilter;
@@ -93,24 +92,26 @@ public class UserFilter implements devplugin.ProgramFilter {
 
   public UserFilter(File file) throws ParserException {
          mFile=file;
-         ObjectInputStream in=null;
-         try {
-             in=new ObjectInputStream(new BufferedInputStream(new FileInputStream(file), 0x1000));            
-             @SuppressWarnings("unused") // version not yet used
-             int version=in.readInt();
-             mName=(String)in.readObject();
-             mRule=(String)in.readObject();        
-         }catch (IOException e) {
-             ErrorHandler.handle("Could not read filter from file", e);
-         }catch (ClassNotFoundException e) {
-             ErrorHandler.handle("Could not read filter from file", e);
-         }finally {
-             try { if (in!=null) in.close(); } catch (IOException e) {}
-         }
-        
-         try {
-           in.close();
-         }catch(IOException e) {}
+           try {
+      StreamUtilities.objectInputStream(file, 0x1000,
+          new ObjectInputStreamProcessor() {
+
+            @Override
+            public void process(final ObjectInputStream in) throws IOException {
+              @SuppressWarnings("unused")
+              // version not yet used
+              int version = in.readInt();
+              try {
+                mName = (String) in.readObject();
+                mRule = (String) in.readObject();
+              } catch (ClassNotFoundException e) {
+                ErrorHandler.handle("Could not read filter from file", e);
+              }
+            }
+          });
+    } catch (IOException e) {
+      ErrorHandler.handle("Could not read filter from file", e);
+    }            
         
          createTokenTree();            
      }
