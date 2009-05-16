@@ -28,8 +28,6 @@ package tvbrowser.ui.programtable.background;
 import java.awt.Image;
 
 import tvbrowser.core.Settings;
-import tvbrowser.ui.programtable.ProgramTableLayout;
-import tvbrowser.ui.programtable.ProgramTableModel;
 import util.ui.ImageUtilities;
 import devplugin.Program;
 
@@ -49,19 +47,23 @@ public class TimeOfDayBackPainter extends AbstractCellBasedBackPainter {
     mBackgroundImageMidday, mBackgroundImageAfternoon, mBackgroundImageEvening;
 
 
-  /**
-   * Is called when the table's layout has changed.
-   */
-  public void layoutChanged(ProgramTableLayout layout, ProgramTableModel model) {
-
-
-    mBackgroundImageEdge      = ImageUtilities.createImage(Settings.propTimeOfDayBackgroundEdge.getString());
-    mBackgroundImageEarly     = ImageUtilities.createImage(Settings.propTimeOfDayBackgroundEarly.getString());
-    mBackgroundImageMidday    = ImageUtilities.createImage(Settings.propTimeOfDayBackgroundMidday.getString());
-    mBackgroundImageAfternoon = ImageUtilities.createImage(Settings.propTimeOfDayBackgroundAfternoon.getString());
-    mBackgroundImageEvening   = ImageUtilities.createImage(Settings.propTimeOfDayBackgroundEvening.getString());
+  public TimeOfDayBackPainter() {
+    mBackgroundImageEdge = ImageUtilities
+        .createImageAsynchronous(Settings.propTimeOfDayBackgroundEdge
+            .getString());
+    mBackgroundImageEarly = ImageUtilities
+        .createImageAsynchronous(Settings.propTimeOfDayBackgroundEarly
+            .getString());
+    mBackgroundImageMidday = ImageUtilities
+        .createImageAsynchronous(Settings.propTimeOfDayBackgroundMidday
+            .getString());
+    mBackgroundImageAfternoon = ImageUtilities
+        .createImageAsynchronous(Settings.propTimeOfDayBackgroundAfternoon
+            .getString());
+    mBackgroundImageEvening = ImageUtilities
+        .createImageAsynchronous(Settings.propTimeOfDayBackgroundEvening
+            .getString());
   }
-
 
   /**
    * Gets the background image for the outer areas, where no programs are.

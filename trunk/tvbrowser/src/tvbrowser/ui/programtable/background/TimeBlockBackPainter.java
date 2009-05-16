@@ -52,7 +52,7 @@ import devplugin.Program;
  * @author Til Schneider, www.murfman.de
  */
 public class TimeBlockBackPainter extends AbstractBackPainter {
-  
+
   private static final Font TABLE_WEST_FONT = new Font("Dialog", Font.PLAIN, 14);
   private static final Color TABLE_WEST_FONT_COLOR = Color.DARK_GRAY;
 
@@ -62,26 +62,23 @@ public class TimeBlockBackPainter extends AbstractBackPainter {
   private TimeBlock[] mBlockArr;
   private JComponent mTableWest;
   private TimeFormatter mFormatter;
-  
+
   public TimeBlockBackPainter() {
     if (Settings.propTwelveHourFormat.getBoolean()) {
       mFormatter = new TimeFormatter("hh a");
     } else {
       mFormatter = new TimeFormatter("HH");
     }
-  }
+    mBackgroundImage1 = ImageUtilities
+        .createImageAsynchronous(Settings.propTimeBlockBackground1.getString());
+    mBackgroundImage2 = ImageUtilities
+        .createImageAsynchronous(Settings.propTimeBlockBackground2.getString());
 
+    mTableWestImage1 = ImageUtilities
+        .createImageAsynchronous(Settings.propTimeBlockWestImage1.getString());
+    mTableWestImage2 = ImageUtilities
+        .createImageAsynchronous(Settings.propTimeBlockWestImage2.getString());
 
-  /**
-   * Is called when the table's layout has changed.
-   */
-  public void layoutChanged(ProgramTableLayout layout, ProgramTableModel model) {
-    mBackgroundImage1 = ImageUtilities.createImage(Settings.propTimeBlockBackground1.getString());
-    mBackgroundImage2 = ImageUtilities.createImage(Settings.propTimeBlockBackground2.getString());
-
-    mTableWestImage1 = ImageUtilities.createImage(Settings.propTimeBlockWestImage1.getString());
-    mTableWestImage2 = ImageUtilities.createImage(Settings.propTimeBlockWestImage2.getString());
-    
     if (Settings.propTimeBlockShowWest.getBoolean()) {
       if (mTableWest == null) {
         mTableWest = new TimeBlockTableWest();
@@ -89,12 +86,15 @@ public class TimeBlockBackPainter extends AbstractBackPainter {
     } else {
       mTableWest = null;
     }
-    
     mBlockSize = Settings.propTimeBlockSize.getInt();
-    
-    mBlockArr = createBlockArray(layout, model);
   }
 
+  /**
+   * Is called when the table's layout has changed.
+   */
+  public void layoutChanged(ProgramTableLayout layout, ProgramTableModel model) {
+    mBlockArr = createBlockArray(layout, model);
+  }
 
   /**
    * Paints the background.
@@ -103,13 +103,14 @@ public class TimeBlockBackPainter extends AbstractBackPainter {
    * @param columnWidth
    * @param tableHeight
    * @param clipBounds
-   * @param layout The table's layout
-   * @param model The table model
+   * @param layout
+   *          The table's layout
+   * @param model
+   *          The table model
    */
   public void paintBackground(Graphics grp, int columnWidth, int tableHeight,
-    int minCol, int maxCol, Rectangle clipBounds, ProgramTableLayout layout,
-    ProgramTableModel model)
-  {
+      int minCol, int maxCol, Rectangle clipBounds, ProgramTableLayout layout,
+      ProgramTableModel model) {
     // We make a local copy of the block y array to get thread savety
     // (layoutChanged() may set mBlockYArr to null during paining)
     TimeBlock[] blockArr = createBlockArray(layout, model);
@@ -132,24 +133,24 @@ public class TimeBlockBackPainter extends AbstractBackPainter {
       } else {
         maxY = tableHeight;
       }
-      
+
       // Paint the background of this time block
       int x = minCol * columnWidth;
       for (int col = minCol; col <= maxCol; col++) {
         fillImage(grp, x, minY, columnWidth, (maxY - minY), backImg, clipBounds);
-        
+
         x += columnWidth;
       }
-      
+
       // Toggle the background
-      toggleFlag = ! toggleFlag;
+      toggleFlag = !toggleFlag;
     }
-    
+
     // Paint the rest if needed
     if (maxY < tableHeight) {
       minY = maxY + 1;
       maxY = tableHeight;
-      
+
       // Get the image of this time block
       Image backImg;
       if (toggleFlag) {
@@ -162,16 +163,14 @@ public class TimeBlockBackPainter extends AbstractBackPainter {
       int x = minCol * columnWidth;
       for (int col = minCol; col <= maxCol; col++) {
         fillImage(grp, x, minY, columnWidth, (maxY - minY), backImg, clipBounds);
-        
+
         x += columnWidth;
       }
     }
   }
 
-
   private TimeBlock[] createBlockArray(ProgramTableLayout layout,
-    ProgramTableModel model)
-  {
+      ProgramTableModel model) {
     int blockCount = 2 * 24 / mBlockSize;
     TimeBlock[] blocks = new TimeBlock[blockCount];
     for (int i = 0; i < blockCount; i++) {
@@ -181,23 +180,24 @@ public class TimeBlockBackPainter extends AbstractBackPainter {
     // Go through the model and find the block borders
     Date mainDate = ((DefaultProgramTableModel) model).getDate();
     int columnCount = model.getColumnCount();
-	for (int col = 0; col < columnCount; col++) {
+    for (int col = 0; col < columnCount; col++) {
       int y = layout.getColumnStart(col);
       int rowCount = model.getRowCount(col);
-	  for (int row = 0; row < rowCount; row++) {        
+      for (int row = 0; row < rowCount; row++) {
         ProgramPanel panel = model.getProgramPanel(col, row);
         if (panel != null) {
           Program prog = panel.getProgram();
           int startTime = prog.getStartTime();
-          if (! mainDate.equals(prog.getDate())) {
+          if (!mainDate.equals(prog.getDate())) {
             startTime += 24 * 60;
           }
-          
+
           // Go to the block of this program
           int blockIndex = startTime / (mBlockSize * 60);
           TimeBlock block = blocks[blockIndex];
-          
-          // Check whether the y of the program is lower than the one of the block
+
+          // Check whether the y of the program is lower than the one of the
+          // block
           int blockY = block.mStartY;
           if ((blockY == -1) || (y < blockY)) {
             block.mStartY = y;
@@ -207,7 +207,7 @@ public class TimeBlockBackPainter extends AbstractBackPainter {
         }
       }
     }
-    
+
     // Remove the blocks that have no y
     ArrayList<TimeBlock> list = new ArrayList<TimeBlock>();
     for (int i = 0; i < blockCount; i++) {
@@ -215,11 +215,11 @@ public class TimeBlockBackPainter extends AbstractBackPainter {
         list.add(blocks[i]);
       }
     }
-    
+
     // Create an array
     TimeBlock[] blockArr = new TimeBlock[list.size()];
     list.toArray(blockArr);
-    
+
     return blockArr;
   }
 
@@ -227,40 +227,38 @@ public class TimeBlockBackPainter extends AbstractBackPainter {
    * Gets the component that should be shown in the west of the table.
    * <p>
    * If nothing should be shown in the west, null is returned.
-   *  
+   * 
    * @return The table west.
    */
   public JComponent getTableWest() {
     return mTableWest;
   }
-  
-  
+
   private static class TimeBlock {
-    
+
     public TimeBlock(int startTime) {
       mStartTime = startTime;
       mStartY = -1;
     }
-    
+
     private int mStartTime;
     private int mStartY;
   } // class TimeBlock
-  
-  
+
   class TimeBlockTableWest extends JComponent {
-    
+
     private FontMetrics mFontMetrics;
-    
+
     public TimeBlockTableWest() {
       mFontMetrics = getFontMetrics(TABLE_WEST_FONT);
     }
-    
+
     public Dimension getPreferredSize() {
       int width = mFontMetrics.stringWidth(mFormatter.formatTime(23, 0)) + 4;
       int height = 1000000; // We don't know the size
       return new Dimension(width, height);
     }
-    
+
     public void paintComponent(Graphics grp) {
       // We make a local copy of the block y array to get thread savety
       // (layoutChanged() may set mBlockYArr to null during paining)
@@ -275,7 +273,7 @@ public class TimeBlockBackPainter extends AbstractBackPainter {
         grp.setFont(TABLE_WEST_FONT);
         grp.setColor(TABLE_WEST_FONT_COLOR);
         for (int i = 0; i < blockArr.length; i++) {
-          toggleFlag = ! toggleFlag;
+          toggleFlag = !toggleFlag;
           // Get the y positions of this time block
           int minY = blockArr[i].mStartY;
           int maxY;
@@ -284,7 +282,7 @@ public class TimeBlockBackPainter extends AbstractBackPainter {
           } else {
             maxY = height;
           }
-          if (! clipBounds.intersects(0, minY, width, maxY - minY)) {
+          if (!clipBounds.intersects(0, minY, width, maxY - minY)) {
             // this piece is not visible at all
             continue;
           }
@@ -296,17 +294,18 @@ public class TimeBlockBackPainter extends AbstractBackPainter {
           } else {
             backImg = mTableWestImage2;
           }
-      
+
           // Paint the block
           fillImage(grp, 0, minY, width, (maxY - minY), backImg, clipBounds);
-          String msg = mFormatter.formatTime(blockArr[i].mStartTime / 60 % 24, 0);
+          String msg = mFormatter.formatTime(blockArr[i].mStartTime / 60 % 24,
+              0);
           int msgWidth = mFontMetrics.stringWidth(msg);
           int x = width - msgWidth - 2;
           grp.drawString(msg, x, minY + TABLE_WEST_FONT.getSize());
         }
       }
     }
-    
+
   } // class TimeBlockTableWest
 
 }
