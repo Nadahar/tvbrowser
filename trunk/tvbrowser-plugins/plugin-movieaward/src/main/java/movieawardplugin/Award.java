@@ -37,22 +37,6 @@ public class Award {
   private String mAdd_Info;
 //
   
-//Bolle Note: Old Constructor
-  public Award(final String category, final String status,
-      final String movieId, final int awardYear, final String recipient) {
-    mCategory = category;
-    if (status.equalsIgnoreCase("winner")) {
-      mStatus = Status.WINNER;
-    } else if (status.equalsIgnoreCase("nominated")) {
-      mStatus = Status.NOMINATED;
-    } else if (status.equalsIgnoreCase("honored")) {
-      mStatus = Status.HONORED;
-    }
-    mMovieId = movieId;
-    mAwardYear = awardYear;
-    mRecipient = recipient;
-  }
-  
 //Bolle Edit: New Constructor for Award (old,old,old,old,old,new: add_Info)
   public Award(final String category, final String status,
         final String movieId, final int awardYear, final String recipient, final String add_Info) {
