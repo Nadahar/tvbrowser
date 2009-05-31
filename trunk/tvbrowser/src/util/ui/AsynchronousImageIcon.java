@@ -38,8 +38,9 @@ public class AsynchronousImageIcon implements Icon {
   private static final Toolkit TOOLKIT = Toolkit.getDefaultToolkit();
 
   public AsynchronousImageIcon(final String fileName) {
-    mImage = ImageUtilities.createImageAsynchronous(fileName);
-    TOOLKIT.prepareImage(mImage, -1, -1, null);
+    mIcon = new ImageIcon(fileName);
+    // mImage = ImageUtilities.createImageAsynchronous(fileName);
+    // TOOLKIT.prepareImage(mImage, -1, -1, null);
   }
 
   public AsynchronousImageIcon(final File file) {
@@ -48,18 +49,22 @@ public class AsynchronousImageIcon implements Icon {
 
   @Override
   public int getIconHeight() {
-    int height = mImage.getHeight(null);
-    if (height > 0) {
-      return height;
+    if (mImage != null) {
+      int height = mImage.getHeight(null);
+      if (height > 0) {
+        return height;
+      }
     }
     return getIcon().getIconHeight();
   }
 
   @Override
   public int getIconWidth() {
-    int width = mImage.getWidth(null);
-    if (width > 0) {
-      return width;
+    if (mImage != null) {
+      int width = mImage.getWidth(null);
+      if (width > 0) {
+        return width;
+      }
     }
     return getIcon().getIconWidth();
   }
