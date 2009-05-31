@@ -354,7 +354,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
    */
   public void writeData(final ObjectOutputStream out) throws IOException {
     _tvraterDB.writeData(out);
-    if (!mRootNode.isEmpty()) {
+    if (mRootNode != null && !mRootNode.isEmpty()) {
       storeRootNode(mRootNode);
     }
   }

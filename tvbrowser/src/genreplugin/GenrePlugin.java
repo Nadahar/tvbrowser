@@ -291,7 +291,7 @@ public class GenrePlugin extends Plugin implements IGenreSettings {
   @Override
   public void writeData(final ObjectOutputStream out) throws IOException {
     // save the tree
-    if (!mRootNode.isEmpty()) {
+    if (mRootNode != null && !mRootNode.isEmpty()) {
       storeRootNode(mRootNode);
     }
   }
