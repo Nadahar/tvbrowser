@@ -58,6 +58,7 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
+import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -99,8 +100,8 @@ import util.settings.ProgramPanelSettings;
 import util.ui.Localizer;
 import util.ui.SearchFormSettings;
 import util.ui.SearchHelper;
-import util.ui.UIThreadRunner;
 import util.ui.TVBrowserIcons;
+import util.ui.UIThreadRunner;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 import util.ui.findasyoutype.TextComponentFindAction;
@@ -289,6 +290,62 @@ class ProgramInfoDialog {
         }
       }
 
+      private void addSearchMenus(final String searchText, JPopupMenu popupMenu) {
+        String value = ProgramInfo.getInstance().getSettings().getActorSearch();
+
+        JMenuItem item = searchTextMenuItem(searchText);
+
+        if (value.equals("internalSearch")) {
+          item.setFont(item.getFont().deriveFont(Font.BOLD));
+        }
+
+        popupMenu.add(item);
+
+        item = new JMenuItem(mLocalizer.msg("searchWikipedia",
+            "Search in Wikipedia"));
+        item.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+            searchWikipedia(searchText);
+          }
+        });
+
+        if (value.equals("internalWikipedia")) {
+          item.setFont(item.getFont().deriveFont(Font.BOLD));
+        }
+
+        popupMenu.add(item);
+
+        final PluginAccess webPlugin = PluginManagerImpl.getInstance()
+            .getActivatedPluginForId("java.webplugin.WebPlugin");
+
+        if (webPlugin != null && webPlugin.canReceiveProgramsWithTarget()) {
+          ProgramReceiveTarget[] targets = webPlugin.getProgramReceiveTargets();
+
+          if (targets != null && targets.length > 0) {
+            final JMenu subMenu = new JMenu(webPlugin.getInfo().getName());
+            popupMenu.add(subMenu);
+
+            for (final ProgramReceiveTarget target : targets) {
+              item = new JMenuItem(target.toString());
+              item.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                  searchWebPlugin(searchText, target);
+                }
+              });
+
+              if (value.endsWith(target.getTargetId())) {
+                item.setFont(item.getFont().deriveFont(Font.BOLD));
+              }
+
+              subMenu.add(item);
+            }
+          }
+        }
+
+        popupMenu.addSeparator();
+        popupMenu.add(addFavoriteMenuItem(searchText, true));
+      }
+
       private void handleEvent(MouseEvent e, boolean popupEvent) {
         JEditorPane editor = (JEditorPane) e.getSource();
         
@@ -298,62 +355,13 @@ class ProgramInfoDialog {
           String link = getLink(pos, editor);
 
           if (link != null && link.startsWith(ProgramTextCreator.TVBROWSER_URL_PROTOCOL)) {
-            final String desc = link.substring(ProgramTextCreator.TVBROWSER_URL_PROTOCOL.length());
+            final String searchText = link
+                .substring(ProgramTextCreator.TVBROWSER_URL_PROTOCOL.length());
             
             if(popupEvent) {
               JPopupMenu popupMenu = new JPopupMenu();
               
-              String value = ProgramInfo.getInstance().getSettings()
-                  .getActorSearch();
-              
-              JMenuItem item = searchTextMenuItem(desc);
-              
-              if(value.equals("internalSearch")) {
-                item.setFont(item.getFont().deriveFont(Font.BOLD));
-              }
-              
-              popupMenu.add(item);
-              
-              item = new JMenuItem(mLocalizer.msg("searchWikipedia","Search in Wikipedia"));
-              item.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                  searchWikipedia(desc);
-                }
-              });
-
-              if(value.equals("internalWikipedia")) {
-                item.setFont(item.getFont().deriveFont(Font.BOLD));
-              }
-              
-              popupMenu.add(item);
-              
-              final PluginAccess webPlugin = PluginManagerImpl.getInstance().getActivatedPluginForId("java.webplugin.WebPlugin");
-              
-              if(webPlugin != null && webPlugin.canReceiveProgramsWithTarget()) {
-                ProgramReceiveTarget[] targets = webPlugin.getProgramReceiveTargets();
-                
-                if(targets != null && targets.length > 0) {
-                  popupMenu.addSeparator();
-                  
-                  for(final ProgramReceiveTarget target : targets) {
-                    item = new JMenuItem(target.toString());
-                    item.addActionListener(new ActionListener() {
-                      public void actionPerformed(ActionEvent e) {
-                        searchWebPlugin(desc, target);
-                      }     
-                    });
-                    
-                    if(value.endsWith(target.getTargetId())) {
-                      item.setFont(item.getFont().deriveFont(Font.BOLD));
-                    }
-                    
-                    popupMenu.add(item);
-                  }
-                }
-              }
-              
-              popupMenu.addSeparator();
-              popupMenu.add(addFavoriteMenuItem(desc, true));
+              addSearchMenus(searchText, popupMenu);
               
               popupMenu.show(e.getComponent(),e.getX(),e.getY());
             }
@@ -376,7 +384,7 @@ class ProgramInfoDialog {
                     
                     for(ProgramReceiveTarget target : targets) {
                       if(target.getTargetId().equals(keys[1])) {
-                        searchWebPlugin(desc, target);
+                        searchWebPlugin(searchText, target);
                         found = true;
                       }
                     }
@@ -386,10 +394,10 @@ class ProgramInfoDialog {
               
               if(!found) {
                 if(value.equals("internalSearch")) {
-                  internalSearch(desc);
+                  internalSearch(searchText);
                 }
                 else {
-                  searchWikipedia(desc);
+                  searchWikipedia(searchText);
                 }
               }
             }
@@ -397,11 +405,12 @@ class ProgramInfoDialog {
           else {
             String selection = getSelection(pos, editor);
             if (selection != null) {
-              selection = selection.trim();
-              if (selection.length() > 0) {
+              final String searchText = selection.trim();
+              if (searchText.length() > 0) {
                 JPopupMenu popupMenu = new JPopupMenu();
-                popupMenu.add(searchTextMenuItem(selection));
-                popupMenu.add(addFavoriteMenuItem(selection, false));
+                addSearchMenus(searchText, popupMenu);
+                // popupMenu.add(searchTextMenuItem(searchText));
+                // popupMenu.add(addFavoriteMenuItem(searchText, false));
                 TextComponentPopupEventQueue.addStandardContextMenu(mInfoEP,
                     popupMenu);
                 popupMenu.show(e.getComponent(), e.getX(), e.getY());
@@ -886,10 +895,11 @@ class ProgramInfoDialog {
   }
 
   /**
-   * Clise this dialog.
+   * Close this dialog.
    * <p>
-   * @return <code>True</code> if the dialog was visible,
-   * <code>false</code> otherwise.
+   * 
+   * @return <code>True</code> if the dialog was visible, <code>false</code>
+   *         otherwise.
    */
   public static boolean closeDialog() {
     return instance != null && instance.closeDialogInternal();
