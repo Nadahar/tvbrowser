@@ -6,6 +6,7 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -32,6 +33,7 @@ public class CalendarPanel extends AbstractDateSelector implements
 
   public CalendarPanel() {
     initComponents();
+    addMouseListener(this);
   }
 
   public JComponent getComponent() {
@@ -60,6 +62,7 @@ public class CalendarPanel extends AbstractDateSelector implements
         add(components[x][y]);
         date = date.addDays(1);
         currentButton.addActionListener(currentButton);
+        currentButton.addMouseListener(this);
       }
     }
   }
@@ -167,4 +170,9 @@ public class CalendarPanel extends AbstractDateSelector implements
       markDate(mSelectedDate);
     }
   }
+
+  @Override
+  public void mouseExited(MouseEvent e) {
+  }
+
 }

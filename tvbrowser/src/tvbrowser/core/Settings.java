@@ -1312,13 +1312,14 @@ public class Settings {
    */
   public static final BooleanProperty propPluginViewIsLeft = new BooleanProperty(
       mProp, "pluginViewIsLeft", true);
-  
+
   /**
-   * if calender view is active
+   * if calendar view is active
+   * 
    * @since 3.0
    */
   public static final BooleanProperty propPluginViewDateLayout = new BooleanProperty(
-      mProp, "propPluginViewDateLayout", false);
+      mProp, "propPluginViewDateLayout", true);
 
   /**
    * The time between auto updates of data services

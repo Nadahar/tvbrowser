@@ -34,12 +34,9 @@ package tvbrowser.ui.finder;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
 import javax.swing.BorderFactory;
@@ -47,8 +44,6 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.JComponent;
 import javax.swing.JList;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
@@ -94,7 +89,8 @@ class FinderItemRenderer extends DefaultListCellRenderer {
 
 }
 
-public class FinderPanel extends AbstractDateSelector implements DateSelector, MouseListener, MouseMotionListener, KeyListener {
+public class FinderPanel extends AbstractDateSelector implements DateSelector,
+    MouseMotionListener, KeyListener {
 
   private static final util.ui.Localizer mLocalizer
   = util.ui.Localizer.getLocalizerFor(FinderPanel.class);  
@@ -241,20 +237,9 @@ public class FinderPanel extends AbstractDateSelector implements DateSelector, M
     }
   }
 
-  public void mouseClicked(MouseEvent event) {}
-
-  public void mouseEntered(MouseEvent arg0) {
-  }
-
   public void mouseExited(MouseEvent arg0) {
     mList.clearSelection();
     mCurMouseItemInx = -1;
-  }
-
-  public void mousePressed(MouseEvent e) {
-    if (e.isPopupTrigger()) {
-      showPopup(e);
-    }
   }
 
   public void mouseReleased(MouseEvent e) {
@@ -268,29 +253,6 @@ public class FinderPanel extends AbstractDateSelector implements DateSelector, M
     }
   }
 
-  /**
-   * Show the Popup of the FinderPanel
-   * @param e
-   */
-  private void showPopup(MouseEvent e) {
-    
-    JPopupMenu menu = new JPopupMenu();
-    
-    JMenuItem update = new JMenuItem(mLocalizer.msg("update", "Update"));
-    
-    update.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        MainFrame.getInstance().updateTvData();
-      }
-    });
-    
-    menu.add(update);
-    
-    int x = e.getX() + ((JComponent)e.getSource()).getX();
-    int y = e.getY() + ((JComponent)e.getSource()).getY();
-    
-    menu.show(this, x, y);
-  }
 
   public void mouseDragged(MouseEvent arg0) {
   }
