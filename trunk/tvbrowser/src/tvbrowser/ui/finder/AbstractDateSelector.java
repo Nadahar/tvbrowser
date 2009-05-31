@@ -16,9 +16,18 @@
  */
 package tvbrowser.ui.finder;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+
+import javax.swing.JComponent;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 
 import tvbrowser.core.TvDataBase;
+import tvbrowser.ui.mainframe.MainFrame;
 import devplugin.Date;
 
 /**
@@ -27,7 +36,11 @@ import devplugin.Date;
  * @author Bananeweizen
  * 
  */
-public abstract class AbstractDateSelector extends JPanel {
+public abstract class AbstractDateSelector extends JPanel implements
+    MouseListener {
+  private static final util.ui.Localizer mLocalizer = util.ui.Localizer
+      .getLocalizerFor(FinderPanel.class);  
+
   private Date mCurChoosenDate = Date.getCurrentDate();
   protected Date mToday;
 
@@ -66,6 +79,49 @@ public abstract class AbstractDateSelector extends JPanel {
 
   public Date getSelectedDate() {
     return mCurChoosenDate;
+  }
+
+  public void mousePressed(final MouseEvent e) {
+    if (e.isPopupTrigger()) {
+      showPopup(e);
+    }
+  }
+
+  public void mouseReleased(final MouseEvent e) {
+    if (e.isPopupTrigger()) {
+      showPopup(e);
+    }
+  }
+  
+  /**
+   * Show the Popup of the FinderPanel
+   * 
+   * @param e
+   */
+  protected void showPopup(final MouseEvent e) {
+
+    JPopupMenu menu = new JPopupMenu();
+
+    JMenuItem update = new JMenuItem(mLocalizer.msg("update", "Update"));
+
+    update.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        MainFrame.getInstance().updateTvData();
+      }
+    });
+
+    menu.add(update);
+
+    int x = e.getX() + ((JComponent) e.getSource()).getX();
+    int y = e.getY() + ((JComponent) e.getSource()).getY();
+
+    menu.show(this, x, y);
+  }
+
+  public void mouseClicked(final MouseEvent event) {
+  }
+
+  public void mouseEntered(final MouseEvent arg0) {
   }
 
 }
