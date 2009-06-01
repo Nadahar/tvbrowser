@@ -138,26 +138,19 @@ public class FinderPanel extends AbstractDateSelector implements DateSelector,
    * Refresh the content. This method should be called after midnight to refresh
    * the 'today' label.
    */
-  public void updateContent() {
-    Date date = Date.getCurrentDate();
-    if (date.equals(mToday)) {
-      return;
-    }
-
+  protected void rebuildControls() {
+    Date date = getFirstDate();
     mToday = date;
     mModel.removeAllElements();
     Date maxDate = TvDataBase.getInstance().getMaxSupportedDate();
-    for (int i = -1;; i++) {
-      Date d = mToday.addDays(i);
-      if (d.getNumberOfDaysSince(maxDate) > 0) {
-        break;
-      }
-      FinderItem fi = new FinderItem(mList, d, mToday);
+    while (maxDate.getNumberOfDaysSince(date) >= 0) {
+      FinderItem fi = new FinderItem(mList, date, mToday);
       mModel.addElement(fi);
-      if (d.equals(getSelectedDate())) {
+      if (date.equals(getSelectedDate())) {
         mRenderer.setSelectedItem(fi);
         mList.setSelectedValue(fi, false);
       }
+      date = date.addDays(1);
     }
     mList.repaint();
   }

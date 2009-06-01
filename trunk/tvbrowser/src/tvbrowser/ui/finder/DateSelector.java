@@ -1,9 +1,8 @@
 package tvbrowser.ui.finder;
 
+import javax.swing.JComponent;
+
 import tvbrowser.core.DateListener;
-
-import javax.swing.*;
-
 import devplugin.Date;
 
 public interface DateSelector {

@@ -32,7 +32,7 @@ public class CalendarPanel extends AbstractDateSelector implements
   public DateListener mDateChangedListener;
 
   public CalendarPanel() {
-    initComponents();
+    rebuildControls();
     addMouseListener(this);
   }
 
@@ -40,9 +40,10 @@ public class CalendarPanel extends AbstractDateSelector implements
     return this;
   }
 
-  private void initComponents() {
+  protected void rebuildControls() {
+    removeAll();
     setLayout(new GridLayout(ROWS, COLUMNS));
-    Date date = Date.getCurrentDate();
+    Date date = getFirstDate();
     while (date.getDayOfWeek() != Calendar.MONDAY) {
       date = date.addDays(-1);
     }
@@ -63,23 +64,6 @@ public class CalendarPanel extends AbstractDateSelector implements
         date = date.addDays(1);
         currentButton.addActionListener(currentButton);
         currentButton.addMouseListener(this);
-      }
-    }
-  }
-
-  public void updateContent() {
-    Date date = Date.getCurrentDate();
-    if (date.equals(mToday)) {
-      return;
-    }
-    mToday = date;
-    while (date.getDayOfWeek() != Calendar.MONDAY) {
-      date = date.addDays(-1);
-    }
-    for (int y = 1; y < ROWS; y++) {
-      for (int x = 0; x < COLUMNS; x++) {
-        components[x][y].setEnabled(isValidDate(date));
-        date = date.addDays(1);
       }
     }
   }
