@@ -124,4 +124,19 @@ public abstract class AbstractDateSelector extends JPanel implements
   public void mouseEntered(final MouseEvent arg0) {
   }
 
+  public void updateContent() {
+    Date date = Date.getCurrentDate();
+    if (date.equals(mToday)) {
+      return;
+    }
+
+    mToday = date;
+    rebuildControls();
+  }
+
+  abstract protected void rebuildControls();
+
+  protected Date getFirstDate() {
+    return Date.getCurrentDate().addDays(-1);
+  }
 }
