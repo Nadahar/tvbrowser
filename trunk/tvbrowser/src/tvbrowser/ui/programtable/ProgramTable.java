@@ -121,7 +121,9 @@ public class ProgramTable extends JPanel
   private long mLastDragTime;
   private int mLastDragDeltaX;
   private int mLastDragDeltaY;
-  private Point mAutoScroll;  
+  private Point mAutoScroll;
+
+  private Point mDraggingPointOnScreen;  
 
   /**
    * Creates a new instance of ProgramTable.
@@ -171,44 +173,13 @@ public class ProgramTable extends JPanel
           if (Math.abs(mLastDragDeltaX) >= 3 || Math.abs(mLastDragDeltaY) >= 3) {
             // stop last scroll, if it is still active
             stopAutoScroll();
-            mAutoScroll = new Point(0, 0);
-            // scale the delta
-            if (Math.abs(mLastDragDeltaX) > 1) {
-              mLastDragDeltaX = mLastDragDeltaX / 2;
-            }
-            if (Math.abs(mLastDragDeltaY) > 1) {
-              mLastDragDeltaY = mLastDragDeltaY / 2;
-            }
-            // decide which direction to scroll
-            if (Math.abs(mLastDragDeltaX) > Math.abs(mLastDragDeltaY)) {
-              mAutoScroll.x = mLastDragDeltaX;
-            } else {
-              mAutoScroll.y = mLastDragDeltaY;
-            }
-            mAutoScrollThread = new Thread("Autoscrolling") {
-              @Override
-              public void run() {
-                while (mAutoScrollThread != null) {
-                  SwingUtilities.invokeLater(new Runnable() {
-                    public void run() {
-                      scrollBy(mAutoScroll.x, mAutoScroll.y);
-                    }
-                  });
-                  try {
-                    sleep(30); // speed of scrolling
-                  } catch (InterruptedException e) {
-                    mAutoScrollThread = null;
-                  }
-                }
-                mAutoScrollThread = null;
-              }
-            };
-            mAutoScrollThread.start();
+            startAutoScroll(new Point(mLastDragDeltaX, mLastDragDeltaY), 2);
           }
         }
 
         // disable dragging
         mDraggingPoint = null;
+        mDraggingPointOnScreen = null;
 
         if(mClickThread != null && mClickThread.isAlive()) {
           mClickThread.interrupt();
@@ -217,6 +188,10 @@ public class ProgramTable extends JPanel
         setCursor(Cursor.getDefaultCursor());
         if (evt.isPopupTrigger()) {
           showPopup(evt);
+        }
+        
+        if (SwingUtilities.isMiddleMouseButton(evt)) {
+          stopAutoScroll();
         }
       }
       public void mouseClicked(MouseEvent evt) {
@@ -592,6 +567,7 @@ public class ProgramTable extends JPanel
     }
 
     mDraggingPoint = evt.getPoint();
+    mDraggingPointOnScreen = new Point(evt.getXOnScreen(), evt.getYOnScreen());
   }
 
 
@@ -680,13 +656,20 @@ public class ProgramTable extends JPanel
 
 
 
-  private void handleMouseDragged(MouseEvent evt) {
-    stopAutoScroll();
+  private void handleMouseDragged(final MouseEvent evt) {
     if (mDraggingPoint != null && !evt.isShiftDown()) {
-      mLastDragDeltaX = mDraggingPoint.x - evt.getX();
-      mLastDragDeltaY = mDraggingPoint.y - evt.getY();
-      scrollBy(mLastDragDeltaX, mLastDragDeltaY);
-      mLastDragTime = System.currentTimeMillis();
+      if (SwingUtilities.isLeftMouseButton(evt)) {
+        stopAutoScroll();
+        mLastDragDeltaX = mDraggingPoint.x - evt.getX();
+        mLastDragDeltaY = mDraggingPoint.y - evt.getY();
+        scrollBy(mLastDragDeltaX, mLastDragDeltaY);
+        mLastDragTime = System.currentTimeMillis();
+      } else if (SwingUtilities.isMiddleMouseButton(evt)
+          && mDraggingPointOnScreen != null) {
+        Point scroll = new Point(evt.getXOnScreen() - mDraggingPointOnScreen.x,
+            evt.getYOnScreen() - mDraggingPointOnScreen.y);
+        startAutoScroll(scroll, 10);
+      }
     }
   }
 
@@ -1397,5 +1380,44 @@ public class ProgramTable extends JPanel
       }
     }
     return null;
+  }
+
+  private void startAutoScroll(final Point scroll, int scaling) {
+    // decide which direction to scroll
+    if (Math.abs(scroll.x) > Math.abs(scroll.y)) {
+      scroll.y = 0;
+    } else {
+      scroll.x = 0;
+    }
+    // scale the delta
+    if (Math.abs(scroll.x) >= scaling) {
+      scroll.x = scroll.x / scaling;
+    }
+    if (Math.abs(scroll.y) >= scaling) {
+      scroll.y = scroll.y / scaling;
+    }
+    mAutoScroll = scroll;
+    // now start, if we are not running already
+    if (mAutoScrollThread == null) {
+      mAutoScrollThread = new Thread("Autoscrolling") {
+        @Override
+        public void run() {
+          while (mAutoScrollThread != null) {
+            SwingUtilities.invokeLater(new Runnable() {
+              public void run() {
+                scrollBy(mAutoScroll.x, mAutoScroll.y);
+              }
+            });
+            try {
+              sleep(30); // speed of scrolling
+            } catch (InterruptedException e) {
+              mAutoScrollThread = null;
+            }
+          }
+          mAutoScrollThread = null;
+        }
+      };
+      mAutoScrollThread.start();
+    }
   }
 }
