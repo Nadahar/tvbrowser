@@ -99,7 +99,6 @@ import devplugin.ProgramReceiveIf;
 import devplugin.ProgramReceiveTarget;
 import devplugin.ProgressMonitor;
 import devplugin.SettingsItem;
-import devplugin.ThemeIcon;
 
 /**
  * Plugin for managing the favorite programs.
@@ -914,11 +913,6 @@ public class FavoritesPlugin {
     }
   }
 
-  public ThemeIcon getMarkIconFromTheme() {
-    return new ThemeIcon(ICON_CATEGORY, ICON_NAME, 16);
-  }
-
-
   public PluginTreeNode getRootNode() {
     return mRootNode;
   }
@@ -1163,4 +1157,5 @@ public class FavoritesPlugin {
   public void showInfoDialog() {
     mShowInfoDialog = true;
   }
+  
 }
