@@ -547,4 +547,19 @@ public class FavoriteTreeModel extends DefaultTreeModel {
     return containing.toArray(new Favorite[containing.size()]);
   }
     
+  public boolean isInMultipleFavorites(final Program program) {
+    int found = 0;
+    for (Favorite favorite : getFavoriteArr()) {
+      for (Program favProgram : favorite.getPrograms()) {
+        if (favProgram.equals(program)) {
+          found++;
+          break;
+        }
+      }
+      if (found >= 2) {
+        return true;
+      }
+    }
+    return false;
+  }
 }

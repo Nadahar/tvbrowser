@@ -25,11 +25,17 @@
  */
 package tvbrowser.extras.favoritesplugin;
 
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
+
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 
 import tvbrowser.core.plugin.ButtonActionIf;
 import tvbrowser.extras.common.InternalPluginProxyIf;
-
+import tvbrowser.extras.favoritesplugin.dlgs.FavoriteTreeModel;
 import devplugin.ActionMenu;
 import devplugin.ContextMenuIf;
 import devplugin.Marker;
@@ -47,6 +53,8 @@ public class FavoritesPluginProxy implements ButtonActionIf, ContextMenuIf, Mark
   private static FavoritesPluginProxy mInstance;
   private static FavoritesPlugin mFavoritesInstance;
   private Icon mMarkIcon;
+  private Icon[] mMarkIconArr;
+  private Icon[] mMultipleIconArr;
   
   private FavoritesPluginProxy() {
     mInstance = this;
@@ -77,13 +85,25 @@ public class FavoritesPluginProxy implements ButtonActionIf, ContextMenuIf, Mark
   }
 
   public Icon getMarkIcon() {
-    if(mMarkIcon == null)
-      mMarkIcon = mFavoritesInstance.getFavoritesIcon(16);
+    createIcons();
     return mMarkIcon;
   }
 
-  public Icon[] getMarkIcons(Program p) {
-    return new Icon[] {getMarkIcon()};
+  private void createIcons() {
+    if (mMarkIcon == null) {
+      mMarkIcon = mFavoritesInstance.getFavoritesIcon(16);
+      mMultipleIconArr = new Icon[] { getDoubleIcon(mMarkIcon, 12) };
+      mMarkIconArr = new Icon[] { mMarkIcon };
+    }
+  }
+
+  public Icon[] getMarkIcons(final Program program) {
+    createIcons();
+    if (FavoriteTreeModel.getInstance().isInMultipleFavorites(program)) {
+      return mMultipleIconArr;
+    } else {
+      return mMarkIconArr;
+    }
   }
 
   public int getMarkPriorityForProgram(Program p) {
@@ -113,4 +133,35 @@ public class FavoritesPluginProxy implements ButtonActionIf, ContextMenuIf, Mark
   public ActionMenu getButtonAction() {
     return mFavoritesInstance.getButtonAction();
   }
+
+  private Icon getDoubleIcon(final Icon icon, final int width) {
+    try {
+      // Create Image with Icon
+      BufferedImage iconimage = new BufferedImage(icon.getIconWidth(), icon
+          .getIconHeight(), BufferedImage.TYPE_INT_ARGB);
+      Graphics2D g2 = iconimage.createGraphics();
+      g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+          RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+      g2.setRenderingHint(RenderingHints.KEY_RENDERING,
+          RenderingHints.VALUE_RENDER_QUALITY);
+      AffineTransform z = g2.getTransform();
+      double scale = (double) width / icon.getIconWidth();
+      z.scale(scale, scale);
+      g2.setTransform(z);
+      icon.paintIcon(null, g2, 0, 0);
+      icon.paintIcon(null, g2, icon.getIconWidth() - width, icon
+          .getIconHeight()
+          - width);
+      g2.dispose();
+
+      // Return new Icon
+      return new ImageIcon(iconimage);
+
+    } catch (Exception ex) {
+      ex.printStackTrace();
+    }
+
+    return icon;
+  }
+  
 }
