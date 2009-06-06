@@ -290,7 +290,8 @@ class ProgramInfoDialog {
         }
       }
 
-      private void addSearchMenus(final String searchText, JPopupMenu popupMenu) {
+      private void addSearchMenus(final String searchText,
+          final JPopupMenu popupMenu, final boolean actorFavorite) {
         String value = ProgramInfo.getInstance().getSettings().getActorSearch();
 
         JMenuItem item = searchTextMenuItem(searchText);
@@ -323,6 +324,7 @@ class ProgramInfoDialog {
 
           if (targets != null && targets.length > 0) {
             final JMenu subMenu = new JMenu(webPlugin.getInfo().getName());
+            subMenu.setIcon(webPlugin.getMarkIcon());
             popupMenu.add(subMenu);
 
             for (final ProgramReceiveTarget target : targets) {
@@ -343,7 +345,7 @@ class ProgramInfoDialog {
         }
 
         popupMenu.addSeparator();
-        popupMenu.add(addFavoriteMenuItem(searchText, true));
+        popupMenu.add(addFavoriteMenuItem(searchText, actorFavorite));
       }
 
       private void handleEvent(MouseEvent e, boolean popupEvent) {
@@ -361,7 +363,7 @@ class ProgramInfoDialog {
             if(popupEvent) {
               JPopupMenu popupMenu = new JPopupMenu();
               
-              addSearchMenus(searchText, popupMenu);
+              addSearchMenus(searchText, popupMenu, true);
               
               popupMenu.show(e.getComponent(),e.getX(),e.getY());
             }
@@ -408,9 +410,7 @@ class ProgramInfoDialog {
               final String searchText = selection.trim();
               if (searchText.length() > 0) {
                 JPopupMenu popupMenu = new JPopupMenu();
-                addSearchMenus(searchText, popupMenu);
-                // popupMenu.add(searchTextMenuItem(searchText));
-                // popupMenu.add(addFavoriteMenuItem(searchText, false));
+                addSearchMenus(searchText, popupMenu, false);
                 TextComponentPopupEventQueue.addStandardContextMenu(mInfoEP,
                     popupMenu);
                 popupMenu.show(e.getComponent(), e.getX(), e.getY());
