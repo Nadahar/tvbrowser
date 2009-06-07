@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+   <color name="header_backgroud">#ff3399ff</color>
+   <color name="header_text_color">#fffafafa</color>
+   <color name="event_background">#fffafafa</color>
+   <color name="event_bordercolor">#ffa9a9a9</color>
+   <color name="event_text_color">#ff000000</color>
+   <color name="event_selectedbordercolor">#ffdd8800</color>
+   <color name="currentevent_oldtimebackground">#ffc5c5fe</color>
+   <color name="currentevent_newtimebackground">#ffe1e1fe</color>
+   <color name="old_event_text_color">#ff808080</color>
+   <color name="old_event_background">#fffafafa</color>
+</resources>

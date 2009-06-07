@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+   <string name="app_name">TVBrowser</string>
+
+   <string name="main_menu_selectdate">Select date</string>
+   <string name="main_menu_jumphour">Jump to hour</string>
+   <string name="main_menu_search">Search</string>
+   <string name="main_menu_settings">Settings</string>
+   <string name="main_menu_selecttime">Select time</string>
+
+   <string name="menu_showdetail">Show details</string>
+   <string name="menu_searchforrepeat">Search for repeat</string>
+   <string name="menu_addreminder">Add reminder</string>
+   <string name="menu_editreminder">Edit reminder</string>
+   <string name="menu_deletereminder">Delete reminder</string>
+
+   <string name="settings_title">Settings</string>
+   <string name="settings_select_groups">Select groups</string>
+
+   <string name="no_data_available">No data available. Please load data from your TVBrowser-Application on your PC.</string>
+
+   <string name="search_title">Search broadcast</string>
+   <string name="search_lbl_text">Search for</string>
+   <string name="search_start">Search</string>
+   <string name="searchtype_onlytitle">Search only in title</string>
+   <string name="searchtype_allfields">Search in all fields</string>
+
+   <string name="searchresult_title">Search results</string>
+
+   <string name="info_title">Information</string>
+   <string name="info_lbl_actor">Actors:</string>
+   <string name="info_lbl_formatinformation">Format:</string>
+   <string name="info_lbl_genre">Genre:</string>
+   <string name="info_lbl_repetitionof">Repetition of:</string>
+   <string name="info_lbl_repetitionon">Repetition on:</string>
+   <string name="info_lbl_website">Internet:</string>
+
+   <string name="outputdateformat">MMM d, yyyy</string>
+</resources>

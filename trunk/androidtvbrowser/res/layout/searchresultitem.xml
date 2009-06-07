@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android:RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
+   <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+             android:id="@+id/searchresult_title"
+             android:layout_width="fill_parent"
+             android:layout_height="wrap_content"
+             android:textAppearance="?android:attr/textAppearanceLarge"
+             android:gravity="center_vertical"
+             android:paddingLeft="5dip"
+             android:singleLine="true"
+           />
+   <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+             android:id="@+id/searchresult_starttime"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:singleLine="false"
+             android:layout_below="@id/searchresult_title"
+           />
+   <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+             android:id="@+id/searchresult_channel"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:paddingLeft="5dip"
+             android:singleLine="false"
+             android:layout_toRightOf="@id/searchresult_starttime"
+             android:layout_alignTop="@id/searchresult_starttime"
+           />
+</android:RelativeLayout>

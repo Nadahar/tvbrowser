@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+   <string name="app_name">TVBrowser</string>
+
+   <string name="main_menu_selectdate">Datum auswählen</string>
+   <string name="main_menu_jumphour">Springe zu Stunde</string>
+   <string name="main_menu_search">Suchen</string>
+   <string name="main_menu_settings">Einstellungen</string>
+   <string name="main_menu_selecttime">Uhrzeit auswählen</string>
+
+   <string name="menu_showdetail">Details anzeigen</string>
+   <string name="menu_searchforrepeat">Wiederholung suchen</string>
+   <string name="menu_addreminder">Erinnerung erstellen</string>
+   <string name="menu_editreminder">Erinnerung bearbeiten</string>
+   <string name="menu_deletereminder">Erinnerung löschen</string>
+
+   <string name="settings_title">Einstellungen</string>
+   <string name="settings_select_groups">Gruppen auswählen</string>
+
+   <string name="no_data_available">Keine Daten vorhanden. Bitte laden Sie aktuelle Daten von Ihrer TVBrowser-Version Ihres PCs herunter.</string>
+
+   <string name="search_title">Sendung suchen</string>
+   <string name="search_lbl_text">Suchen nach</string>
+   <string name="search_start">Suchen</string>
+   <string name="searchtype_onlytitle">Nur im Titel suchen</string>
+   <string name="searchtype_allfields">In allen Feldern suchen</string>
+
+   <string name="searchresult_title">Suchergebnisse</string>
+
+   <string name="info_title">Informationen</string>
+   <string name="info_lbl_actor">Darsteller:</string>
+   <string name="info_lbl_formatinformation">Format:</string>
+   <string name="info_lbl_genre">Genre:</string>
+   <string name="info_lbl_repetitionof">Wiederholung vom:</string>
+   <string name="info_lbl_repetitionon">Wiederholung am:</string>
+   <string name="info_lbl_website">Internet:</string>
+
+   <string name="outputdateformat">dd.MM.yyyy</string>
+</resources>
