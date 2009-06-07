@@ -29,6 +29,8 @@ package tvbrowser.ui.pluginview;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
@@ -36,9 +38,11 @@ import java.util.ArrayList;
 import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
+import javax.swing.MenuElement;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -49,6 +53,8 @@ import javax.swing.tree.TreeSelectionModel;
 import tvbrowser.core.contextmenu.ContextMenuManager;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
+import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
+import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import tvbrowser.ui.pluginview.contextmenu.ContextMenu;
 import tvbrowser.ui.pluginview.contextmenu.CustomNodeContextMenu;
 import tvbrowser.ui.pluginview.contextmenu.PluginBasedPluginContextMenu;
@@ -56,15 +62,13 @@ import tvbrowser.ui.pluginview.contextmenu.ProgramContextMenu;
 import tvbrowser.ui.pluginview.contextmenu.ProxyBasedPluginContextMenu;
 import tvbrowser.ui.pluginview.contextmenu.RootNodeContextMenu;
 import tvbrowser.ui.pluginview.contextmenu.StructureNodeContextMenu;
-import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
-import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import devplugin.ContextMenuIf;
 import devplugin.Plugin;
 import devplugin.Program;
 import devplugin.ProgramItem;
 
 
-public class PluginView extends JPanel implements MouseListener {
+public class PluginView extends JPanel implements MouseListener, KeyListener {
     
   private PluginTree mTree;
   private PluginTreeModel mModel;
@@ -84,6 +88,7 @@ public class PluginView extends JPanel implements MouseListener {
     mTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
     mTree.addMouseListener(this);
     mTree.setCellRenderer(renderer);
+    mTree.addKeyListener(this);
     
     add(new JScrollPane(mTree), BorderLayout.CENTER);
   }
@@ -286,5 +291,36 @@ public class PluginView extends JPanel implements MouseListener {
       
       return label;
     }
+  }
+
+  @Override
+  public void keyPressed(KeyEvent e) {
+    // empty
+  }
+
+  @Override
+  public void keyReleased(final KeyEvent event) {
+    // check if menu item has key event for pure keyboard usage
+    TreePath[] selectedPaths = mTree.getSelectionPaths();
+    ContextMenu menu = createContextMenu(selectedPaths);
+    for (MenuElement element : menu.getPopupMenu().getSubElements()) {
+      if (element instanceof JMenuItem) {
+        final JMenuItem item = (JMenuItem) element;
+        final Action action = item.getAction();
+        if (action != null) {
+          Object keyboard = action
+              .getValue(ContextMenuIf.ACTIONKEY_KEYBOARD_EVENT);
+          if (keyboard != null && keyboard instanceof Integer
+              && (Integer) keyboard == event.getKeyCode()) {
+            action.actionPerformed(null);
+          }
+        }
+      }
+    }
+  }
+
+  @Override
+  public void keyTyped(KeyEvent e) {
+    // empty
   }
 }
