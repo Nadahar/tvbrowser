@@ -9,7 +9,6 @@
          </intent-filter>
       </activity>
       <activity android:name=".activities.settings.SettingsDialog" android:label="@string/settings_title"/>
-      <activity android:name=".activities.settings.SelectGroups" android:label="Select groups"/>
       <activity android:name=".activities.search.SearchActivity" android:label="@string/search_title"/>
       <activity android:name=".activities.search.SearchResult" android:label="@string/searchresult_title"/>
       <activity android:name=".activities.info.InfoActivity" android:label="@string/info_title"/>
