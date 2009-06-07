@@ -51,4 +51,9 @@ public interface ContextMenuIf {
    */
   public String getId();
   
+  /**
+   * @since 3.0
+   */
+  public static String ACTIONKEY_KEYBOARD_EVENT = "ACTIONKEY_KEY_EVENT";
+  
 }

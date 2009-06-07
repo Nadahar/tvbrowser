@@ -24,6 +24,7 @@
 package tvbrowser.extras.favoritesplugin.dlgs;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -49,6 +50,7 @@ import util.ui.Localizer;
 import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 import devplugin.Channel;
+import devplugin.ContextMenuIf;
 import devplugin.Date;
 import devplugin.NodeFormatter;
 import devplugin.PluginTreeNode;
@@ -381,6 +383,8 @@ public class FavoriteTreeModel extends DefaultTreeModel {
             };
             deleteFavorite.putValue(Action.NAME, mLocalizer.msg("deleteTree","Delete..."));
             deleteFavorite.putValue(Action.SMALL_ICON, TVBrowserIcons.delete(TVBrowserIcons.SIZE_SMALL));
+            deleteFavorite.putValue(ContextMenuIf.ACTIONKEY_KEYBOARD_EVENT,
+                KeyEvent.VK_DELETE);
 
             newNode.addAction(editFavorite);
             newNode.addAction(deleteFavorite);
