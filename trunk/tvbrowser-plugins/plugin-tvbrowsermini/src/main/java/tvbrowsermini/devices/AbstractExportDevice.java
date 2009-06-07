@@ -15,6 +15,8 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.awt.*;
 
+import tvbrowsermini.TVBrowserMini;
+
 public abstract class AbstractExportDevice {
 
   protected boolean elementDescription;
@@ -122,7 +124,7 @@ public abstract class AbstractExportDevice {
         file.renameTo(temp);
       } catch (IOException e) {
         e.printStackTrace();
-        ErrorHandler.handle(Plugin.mLocalizer.msg("error", "Error while exporting tv-data!"), e);
+        ErrorHandler.handle(TVBrowserMini.mLocalizer.msg("error", "Error while exporting tv-data!"), e);
       }
       progress.setString("Creating indices");
       progress.setStringPainted(true);

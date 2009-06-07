@@ -57,7 +57,7 @@ public class TVBrowserMini extends Plugin {
   /**
    * Translator
    */
-  protected static final Localizer mLocalizer = Localizer.getLocalizerFor(TVBrowserMini.class);
+  public static final Localizer mLocalizer = Localizer.getLocalizerFor(TVBrowserMini.class);
   private static TVBrowserMini mInstance;
   private Properties mSettings;
   private boolean mExportRuns;
