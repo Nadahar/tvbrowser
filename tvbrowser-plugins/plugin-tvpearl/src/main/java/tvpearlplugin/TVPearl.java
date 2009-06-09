@@ -116,7 +116,7 @@ public class TVPearl
 		}
 	}
 
-	private void addProgram(final TVPProgram program)
+	private synchronized void addProgram(final TVPProgram program)
 	{
 		if (indexOf(program) == -1)
 		{
@@ -176,7 +176,7 @@ public class TVPearl
 		return limit;
 	}
 
-	private Integer indexOf(final TVPProgram program)
+	private int indexOf(final TVPProgram program)
 	{
 		for (int i = 0; i < mProgramList.size(); i++)
 		{
@@ -233,7 +233,7 @@ public class TVPearl
 		return hours > UPDATE_WAIT_HOURS || !TVBrowser.isStable();
 	}
 
-	public TVPProgram getPearl(final Program program)
+	public synchronized TVPProgram getPearl(final Program program)
 	{
 		for (TVPProgram p : mProgramList)
 		{
