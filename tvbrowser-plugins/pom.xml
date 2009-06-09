@@ -44,6 +44,7 @@
     <module>plugin-timeline</module>
     <module>plugin-timelist</module>
     <module>plugin-tooltipcontrol</module>
+    <module>plugin-tvbrowsermini</module>
     <module>plugin-tvpearl</module>
     <module>plugin-twitter</module>
     <module>plugin-virtualdataservice</module>
