@@ -5,8 +5,8 @@
 <categories>
 
   <category id="c_71">
-    <name lang="de">beste weibliche Nebenrolle</name>
-    <name lang="en">beste weibliche Nebenrolle</name>
+    <name lang="de">Beste weibliche Nebenrolle</name>
+    <name lang="en">Beste weibliche Nebenrolle</name>
   </category>
   <category id="c_6">
     <name lang="de">Darstellerische Leistungen</name>
@@ -137,8 +137,8 @@
     <name lang="en">Bester sonstiger Kurzfilm</name>
   </category>
   <category id="c_131">
-    <name lang="de">Beste Haudtdarstellerin</name>
-    <name lang="en">Beste Haudtdarstellerin</name>
+    <name lang="de">Beste Hauptdarstellerin</name>
+    <name lang="en">Beste Hauptdarstellerin</name>
   </category>
   <category id="c_158">
     <name lang="de">Bester abendfüllender Film ohne Spielhandlung</name>
@@ -149,8 +149,8 @@
     <name lang="en">Bestes verfilmtes Drehbuch</name>
   </category>
   <category id="c_151">
-    <name lang="de">Beste Nebendarstellerrin</name>
-    <name lang="en">Beste Nebendarstellerrin</name>
+    <name lang="de">Beste Nebendarstellerin</name>
+    <name lang="en">Beste Nebendarstellerin</name>
   </category>
   <category id="c_67">
     <name lang="de">Bester Kulturfilm in Farbe mit internationalem Rang</name>
@@ -485,8 +485,8 @@
     <name lang="en">Sonstige Kurzfilme</name>
   </category>
   <category id="c_159">
-    <name lang="de">Bester Speilfilm</name>
-    <name lang="en">Bester Speilfilm</name>
+    <name lang="de">Bester Spielfilm</name>
+    <name lang="en">Bester Spielfilm</name>
   </category>
   <category id="c_125">
     <name lang="de">Visuelle Gestaltung</name>
@@ -687,6 +687,18 @@
   <category id="c_160">
     <name lang="de">Hervorragende Kameraführung in einem Kulturfilm</name>
     <name lang="en">Hervorragende Kameraführung in einem Kulturfilm</name>
+  </category>
+  <category id="c_161">
+    <name lang="de">Bester Spielfilm in Gold</name>
+    <name lang="en">Bester Spielfilm in Gold</name>
+  </category>
+  <category id="c_162">
+    <name lang="de">Bester Spielfilm in Silber</name>
+    <name lang="en">Bester Spielfilm in Silber</name>
+  </category>
+    <category id="c_163">
+    <name lang="de">Bester Spielfilm in Bronze</name>
+    <name lang="en">Bester Spielfilm in Bronze</name>
   </category>
 </categories>
 
@@ -2644,6 +2656,28 @@
   <movie id="m_651">
       <title lang="de">Das zweite Erwachen der Christa Klages</title>
   </movie>
+  <movie id="m_652">
+      <title lang="de" original="yes">John Rabe</title>
+  </movie>
+  <movie id="m_653">
+      <title lang="de" original="yes">Im Winter ein Jahr</title>
+  </movie>
+  <movie id="m_654">
+      <title lang="de" original="yes">Wolke Neun</title>
+  </movie>  
+  <movie id="m_655">
+      <title lang="de" original="yes">NoBody’s Perfect</title>
+  </movie>  
+  <movie id="m_656">
+      <title lang="de" original="yes">Was am Ende zählt</title>
+  </movie>
+  <movie id="m_657">
+      <title lang="de" original="yes">Chiko</title>
+  </movie>
+  <movie id="">
+      <title lang="de" original="yes"></title>
+  </movie>
+
 
 </movies>
 <awards>
@@ -3615,6 +3649,14 @@
   <award category="c_168" status="winner" movie="m_650" year="1962" recipient="Ufa-Film-Hansa"/>
   <award category="c_80" status="winner" movie="m_651" year="1978" recipient="Tina Engel"/>
   <award category="c_10" status="winner" movie="m_651" year="1978" recipient="Bioskop-Film"/>
+  <award category="c_161" status="winner" movie="m_652" year="2009" recipient=""/>
+  <award category="c_162" status="winner" movie="m_653" year="2009" recipient=""/>
+  <award category="c_163" status="winner" movie="m_654" year="2009" recipient=""/>
+  <award category="c_53" status="winner" movie="m_655" year="2009" recipient=""/>
+  <award category="c_55" status="winner" movie="m_656" year="2009" recipient=""/>
+  <award category="c_27" status="winner" movie="m_657" year="2009" recipient="Özgür Yildirim"/>
+  <award category="c_26" status="winner" movie="m_654" year="2009" recipient="Andreas Dresen"/>
+  <award category="c_" status="winner" movie="m_654" year="2009" recipient="Ursula Werner"/>
 
 </awards>
 </awarddata>
