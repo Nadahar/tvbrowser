@@ -1318,8 +1318,8 @@ public class Settings {
    * 
    * @since 3.0
    */
-  public static final BooleanProperty propPluginViewDateLayout = new BooleanProperty(
-      mProp, "propPluginViewDateLayout", true);
+  public static final IntProperty propViewDateLayout = new IntProperty(
+      mProp, "propViewDateLayout", 1);
 
   /**
    * The time between auto updates of data services

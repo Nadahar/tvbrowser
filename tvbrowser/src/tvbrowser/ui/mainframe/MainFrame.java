@@ -84,9 +84,10 @@ import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import tvbrowser.ui.DontShowAgainMessageBox;
 import tvbrowser.ui.aboutbox.AboutBox;
 import tvbrowser.ui.filter.dlgs.SelectFilterDlg;
-import tvbrowser.ui.finder.FinderPanel;
 import tvbrowser.ui.finder.DateSelector;
+import tvbrowser.ui.finder.FinderPanel;
 import tvbrowser.ui.finder.calendar.CalendarPanel;
+import tvbrowser.ui.finder.calendar.CalendarTablePanel;
 import tvbrowser.ui.licensebox.LicenseBox;
 import tvbrowser.ui.mainframe.searchfield.SearchField;
 import tvbrowser.ui.mainframe.searchfield.SearchFilter;
@@ -274,7 +275,11 @@ public class MainFrame extends JFrame implements DateListener {
     mProgramTableScrollPane = new ProgramTableScrollPane(mProgramTableModel);
     centerPanel.add(mProgramTableScrollPane);
     
-    mFinderPanel = Settings.propPluginViewDateLayout.getBoolean() ? new CalendarPanel() : new FinderPanel();
+    switch (Settings.propViewDateLayout.getInt()) {
+    case 1: mFinderPanel = new CalendarTablePanel();break;
+    case 2: mFinderPanel = new CalendarPanel();break;
+    default: mFinderPanel = new FinderPanel();
+    }
     
     mFinderPanel.setDateListener(this);
     dateChanged(new devplugin.Date(), null, null);
