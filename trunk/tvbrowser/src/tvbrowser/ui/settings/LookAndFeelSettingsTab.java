@@ -159,15 +159,11 @@ public class LookAndFeelSettingsTab implements SettingsTab {
 
     mDateLayout = new JComboBox(new String[] {
             mLocalizer.msg("dateFormat.datelist", "List"),
-            mLocalizer.msg("dateFormat.calendarlist", "Calendar")
+            mLocalizer.msg("dateFormat.calendarTable", "Calendar (Table)"),
+            mLocalizer.msg("dateFormat.calendarButtons", "Calendar (Buttons)")
     });
 
-    if(Settings.propPluginViewDateLayout.getBoolean()) {
-      mDateLayout.setSelectedIndex(1);
-    }
-    else {
-      mDateLayout.setSelectedIndex(0);
-    }
+    mDateLayout.setSelectedIndex(Settings.propViewDateLayout.getInt());
 
     mDateLayout.addActionListener(new ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent e) {
@@ -324,7 +320,7 @@ public class LookAndFeelSettingsTab implements SettingsTab {
     mSomethingChanged = mInfoArea.isVisible();
     
     Settings.propPluginViewIsLeft.setBoolean(mPluginViewPosition.getSelectedIndex() == 1);
-    Settings.propPluginViewDateLayout.setBoolean(mDateLayout.getSelectedIndex()==1);
+    Settings.propViewDateLayout.setInt(mDateLayout.getSelectedIndex());
   }
 
   public Icon getIcon() {

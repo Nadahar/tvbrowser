@@ -1,3 +1,17 @@
+/*
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package tvbrowser.ui.finder.calendar;
 
 import java.awt.Dimension;
@@ -6,7 +20,6 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -14,14 +27,12 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JToggleButton;
 
-import tvbrowser.core.DateListener;
 import tvbrowser.core.TvDataBase;
-import tvbrowser.ui.finder.AbstractDateSelector;
 import tvbrowser.ui.finder.DateSelector;
 import devplugin.Date;
 import devplugin.ProgressMonitor;
 
-public class CalendarPanel extends AbstractDateSelector implements
+public class CalendarPanel extends AbstractCalendarPanel implements
     DateSelector, ProgressMonitor {
 
   private static final int COLUMNS = 7;
@@ -29,15 +40,9 @@ public class CalendarPanel extends AbstractDateSelector implements
 
   private JComponent[][] components = new JComponent[COLUMNS][ROWS];
 
-  public DateListener mDateChangedListener;
-
   public CalendarPanel() {
     rebuildControls();
     addMouseListener(this);
-  }
-
-  public JComponent getComponent() {
-    return this;
   }
 
   protected void rebuildControls() {
@@ -66,18 +71,6 @@ public class CalendarPanel extends AbstractDateSelector implements
         currentButton.addMouseListener(this);
       }
     }
-  }
-
-  public DateListener getDateChangedListener() {
-    return mDateChangedListener;
-  }
-
-  public void setDateListener(final DateListener dateChangedListener) {
-    mDateChangedListener = dateChangedListener;
-  }
-
-  public void markDate(final Date d) {
-    markDate(d, null);
   }
 
   public void markDate(final Date d, final Runnable callback) {
@@ -112,15 +105,6 @@ public class CalendarPanel extends AbstractDateSelector implements
     }
   }
 
-  public void setMaximum(int maximum) {
-  }
-
-  public void setValue(int value) {
-  }
-
-  public void setMessage(String msg) {
-  }
-
   private class ExtendedButton extends JToggleButton implements ActionListener {
 
     private Date mSelectedDate = null;
@@ -153,10 +137,6 @@ public class CalendarPanel extends AbstractDateSelector implements
     public void actionPerformed(final ActionEvent e) {
       markDate(mSelectedDate);
     }
-  }
-
-  @Override
-  public void mouseExited(MouseEvent e) {
   }
 
 }
