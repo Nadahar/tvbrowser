@@ -632,6 +632,11 @@ public class Settings {
       MainFrame.getInstance().handleChangedTvDataDir();      
     }
     
+    if (mProp.hasChanged(propViewDateLayout)) {
+      MainFrame.getInstance().createDateSelector();
+      MainFrame.getInstance().setShowDatelist(true, false);
+    }
+    
 
     mProp.clearChanges();
     

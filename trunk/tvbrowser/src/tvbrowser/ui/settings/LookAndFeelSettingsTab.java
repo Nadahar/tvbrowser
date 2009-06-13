@@ -59,7 +59,7 @@ import com.jgoodies.forms.layout.RowSpec;
 
 import devplugin.SettingsTab;
 
-public class LookAndFeelSettingsTab implements SettingsTab {
+public final class LookAndFeelSettingsTab implements SettingsTab {
 
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(LookAndFeelSettingsTab.class);
 
@@ -77,17 +77,16 @@ public class LookAndFeelSettingsTab implements SettingsTab {
 
   private JTextArea mInfoArea;
   
-  private static int mStartLookAndIndex;
-  private static int mStartIconIndex;
-  private static int mStartPluginViewPositionIndex;
-  private static int mStartDateLayout;
+  private int mStartLookAndIndex;
+  private int mStartIconIndex;
+  private int mStartPluginViewPositionIndex;
 
-  private static String mJGoodiesStartTheme;
-  private static boolean mJGoodiesStartShadow;
+  private String mJGoodiesStartTheme;
+  private boolean mJGoodiesStartShadow;
   
-  private static String mSkinLFStartTheme;
+  private String mSkinLFStartTheme;
   
-  private static boolean mSomethingChanged = false;
+  private boolean mSomethingChanged = false;
 
   private static class LookAndFeelObj implements Comparable<LookAndFeelObj> {
     private UIManager.LookAndFeelInfo info;
@@ -256,7 +255,6 @@ public class LookAndFeelSettingsTab implements SettingsTab {
       mStartLookAndIndex = mLfComboBox.getSelectedIndex();
       mStartIconIndex = mIconThemes.getSelectedIndex();
       mStartPluginViewPositionIndex = mPluginViewPosition.getSelectedIndex();
-      mStartDateLayout = mDateLayout.getSelectedIndex();
       mJGoodiesStartTheme = Settings.propJGoodiesTheme.getString();
       mJGoodiesStartShadow = Settings.propJGoodiesShadow.getBoolean();
       mSkinLFStartTheme = Settings.propSkinLFThemepack.getString();
@@ -280,8 +278,7 @@ public class LookAndFeelSettingsTab implements SettingsTab {
         mJGoodiesStartTheme.compareTo(Settings.propJGoodiesTheme.getString()) != 0 ||
         mJGoodiesStartShadow != Settings.propJGoodiesShadow.getBoolean() ||
         mSkinLFStartTheme.compareTo(Settings.propSkinLFThemepack.getString()) != 0 ||
-        mPluginViewPosition.getSelectedIndex() != mStartPluginViewPositionIndex ||
-        mDateLayout.getSelectedIndex() != mStartDateLayout);
+        mPluginViewPosition.getSelectedIndex() != mStartPluginViewPositionIndex);
   }
 
   protected void configTheme() {
