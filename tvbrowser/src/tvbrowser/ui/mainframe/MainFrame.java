@@ -275,14 +275,7 @@ public class MainFrame extends JFrame implements DateListener {
     mProgramTableScrollPane = new ProgramTableScrollPane(mProgramTableModel);
     centerPanel.add(mProgramTableScrollPane);
     
-    switch (Settings.propViewDateLayout.getInt()) {
-    case 1: mFinderPanel = new CalendarTablePanel();break;
-    case 2: mFinderPanel = new CalendarPanel();break;
-    default: mFinderPanel = new FinderPanel();
-    }
-    
-    mFinderPanel.setDateListener(this);
-    dateChanged(new devplugin.Date(), null, null);
+    createDateSelector();
 
     skinPanel.add(centerPanel, BorderLayout.CENTER);
 
@@ -370,6 +363,19 @@ public class MainFrame extends JFrame implements DateListener {
     timer.start();
 
     setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+  }
+
+  /**
+   * 
+   */
+  public void createDateSelector() {
+    switch (Settings.propViewDateLayout.getInt()) {
+    case 1: mFinderPanel = new CalendarTablePanel();break;
+    case 2: mFinderPanel = new CalendarPanel();break;
+    default: mFinderPanel = new FinderPanel();
+    }
+    dateChanged(new devplugin.Date(), null, null);
+    mFinderPanel.setDateListener(this);
   }
   
   /**

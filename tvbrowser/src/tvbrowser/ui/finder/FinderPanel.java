@@ -140,7 +140,7 @@ public class FinderPanel extends AbstractDateSelector implements DateSelector,
    */
   protected void rebuildControls() {
     Date date = getFirstDate();
-    mToday = date;
+    mToday = Date.getCurrentDate();
     mModel.removeAllElements();
     Date maxDate = TvDataBase.getInstance().getMaxSupportedDate();
     while (maxDate.getNumberOfDaysSince(date) >= 0) {
