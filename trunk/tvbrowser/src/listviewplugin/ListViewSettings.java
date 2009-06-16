@@ -89,7 +89,7 @@ public class ListViewSettings implements SettingsTab {
    */
   public void saveSettings() {
     mSettings.setProperty("showAtStartup", String.valueOf(mShowAtStart.isSelected()));
-    mSettings.setProperty("pictureSettigns", String.valueOf(mPictureSettings.getSettings().getType()));
+    mSettings.setProperty("pictureSettings", String.valueOf(mPictureSettings.getSettings().getType()));
   }
 
   /**

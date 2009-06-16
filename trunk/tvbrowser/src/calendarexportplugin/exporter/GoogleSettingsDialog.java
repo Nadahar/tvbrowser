@@ -133,7 +133,7 @@ public class GoogleSettingsDialog extends JDialog  implements WindowClosingIf {
     content.add(mUseEMail, cc.xyw(3,13,3));
     content.add(mUseAlert, cc.xyw(3,15,3));
 
-    mReminderStore = new JCheckBox(mLocalizer.msg("storeSettigns", "Use this settings and don't ask again"));
+    mReminderStore = new JCheckBox(mLocalizer.msg("storeSettings", "Use these settings and don't ask again"));
     content.add(mReminderStore, cc.xyw(2,17,4));
 
 

@@ -400,7 +400,7 @@ public class Mirror {
    * @param name The name of the file to check.
    * @param id The id of the file to check.
    * @param caller The caller class.
-   * @param additionalErrorMsg An additonal error message value.
+   * @param additionalErrorMsg An additional error message value.
    * @return The choosen mirror.
    * @throws TvBrowserException Thrown if no up to date mirror was found or something went wrong. 
    */

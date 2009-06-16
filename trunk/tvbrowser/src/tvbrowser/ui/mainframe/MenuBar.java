@@ -275,7 +275,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
     
     mInstallPluginsMI = new JMenuItem(mLocalizer.msg("menuitem.installPlugins","Install/Update Plugins..."),urlBrowserImg);
     mInstallPluginsMI.addActionListener(this);
-    new MenuHelpTextAdapter(mInstallPluginsMI, mLocalizer.msg("menuinfo.installPlugins","Add additonal functions to TV-Browser/search for updates for installed Plugins"), mLabel);
+    new MenuHelpTextAdapter(mInstallPluginsMI, mLocalizer.msg("menuinfo.installPlugins","Add additional functions to TV-Browser/search for updates for installed Plugins"), mLabel);
     
     mPluginManagerMI = new JMenuItem(mLocalizer.msg("menuitem.managePlugins", "Manage Plugins"));
     mPluginManagerMI.addActionListener(this);

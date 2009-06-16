@@ -332,7 +332,7 @@ public class GoogleExporter extends AbstractExporter {
       try {
         showCalendarSettings(settings);
       } catch (AuthenticationException e) {
-        ErrorHandler.handle(mLocalizer.msg("loginFailure", "Problems while Login to Service.\nMaybee bad Username/Password ?"), e);
+        ErrorHandler.handle(mLocalizer.msg("loginFailure", "Problems while Login to Service.\nMaybe bad Username/Password ?"), e);
         settings.setProperty(GoogleExporter.STOREPASSWORD, "false");
       } catch (Exception e) {
         ErrorHandler.handle(mLocalizer.msg("commError", "Error while communicating with Google!"), e);

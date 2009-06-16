@@ -266,7 +266,7 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
         }
         storeDayPrograms(updateManager);
       } catch (DataDirectException e) {
-        ErrorHandler.handle(mLocalizer.msg("problems","Problems loading the data, maybee Username/Passwort wrong or Communication Error"), e);
+        ErrorHandler.handle(mLocalizer.msg("problems","Problems loading the data, maybe Username/Passwort wrong or Communication Error"), e);
         e.printStackTrace();
       }
 
@@ -485,7 +485,7 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
 
     } catch (DataDirectException e) {
       e.printStackTrace();
-      ErrorHandler.handle(mLocalizer.msg("problems","Problems loading the data, maybee Username/Passwort wrong or Communication Error"), e);
+      ErrorHandler.handle(mLocalizer.msg("problems","Problems loading the data, maybe Username/Passwort wrong or Communication Error"), e);
     }
 
     return allChannels;
