@@ -77,7 +77,7 @@ public class SearchSettingsTab implements SettingsTab {
   }
 
   /**
-   * Save Settigns
+   * Save Settings
    */
   public void saveSettings() {    
   }

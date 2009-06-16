@@ -146,7 +146,7 @@ public class SettingsPanel extends ScrollableJPanel implements ActionListener, C
       pb.addLabel(mLocalizer.msg("Password", "Password") + ":", cc.xyw(2,11,2));
       pb.add(mUserPwd, cc.xy(5,11));
             
-      pb.addSeparator(mLocalizer.msg("Additional", "Additonal"), cc.xyw(1,13,6));
+      pb.addSeparator(mLocalizer.msg("Additional", "Additional"), cc.xyw(1,13,6));
 
       pb.addLabel(mLocalizer.msg("MaxSimult","Maximum simultaneous recordings")+ ":" , cc.xyw(2,15,2));
       pb.add(mMaxSimult,cc.xy(5,15));

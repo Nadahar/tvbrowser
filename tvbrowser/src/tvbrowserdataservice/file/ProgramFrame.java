@@ -211,7 +211,7 @@ public class ProgramFrame implements Cloneable {
   
     /*
      * If the id is 255 we have to read the additional
-     * id from the additonal ProgramField.
+     * id from the additional ProgramField.
      */
     if(mId == 255) {
       ProgramField field = new ProgramField(null);
@@ -235,7 +235,7 @@ public class ProgramFrame implements Cloneable {
      * Check if the id of this ProgramFrame is greater
      * than or equal to 255. If this is so we only write
      * 255 to stream as track value that we have an
-     * additonal id in a ProgramField. 
+     * additional id in a ProgramField. 
      */
     if(mId >= 255)
       stream.write(255);
@@ -251,7 +251,7 @@ public class ProgramFrame implements Cloneable {
   
     /*
      * Write the additional ProgramField, that contains
-     * the additonal id value. 
+     * the additional id value. 
      */
     if(mId >= 255) {
       ProgramField additional = new ProgramField(null);

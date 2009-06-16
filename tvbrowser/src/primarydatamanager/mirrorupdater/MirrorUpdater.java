@@ -247,7 +247,7 @@ public class MirrorUpdater {
         
         // Check whether the mirror needs an update
         if (versionOnMirror < versionAtSource) {
-          String additonalFileName = null;
+          String additionalFileName = null;
           if (versionOnMirror == -1) {
             mLog.fine("Adding version " + versionAtSource
               + ": " + completeFileName);
@@ -261,23 +261,23 @@ public class MirrorUpdater {
           int index = completeFileName.indexOf("_update_");
             
           if(index != -1)
-            additonalFileName = completeFileName.substring(0,index) + completeFileName.substring(index+8,completeFileName.indexOf(".prog.gz")) + "_additional.prog.gz";
+            additionalFileName = completeFileName.substring(0,index) + completeFileName.substring(index+8,completeFileName.indexOf(".prog.gz")) + "_additional.prog.gz";
           else
-            additonalFileName = completeFileName.substring(0,completeFileName.indexOf(".prog.gz")) + "_additional.prog.gz";
+            additionalFileName = completeFileName.substring(0,completeFileName.indexOf(".prog.gz")) + "_additional.prog.gz";
 
-          mLog.log(Level.INFO, "Checking for old additional file: " + additonalFileName);
+          mLog.log(Level.INFO, "Checking for old additional file: " + additionalFileName);
           for(String value : mTargetFileArr) {
-            if(value.compareTo(additonalFileName) == 0) {
-              mLog.fine("Deleting old additonal file: " + additonalFileName);
-              mDataTarget.deleteFile(additonalFileName);
+            if(value.compareTo(additionalFileName) == 0) {
+              mLog.fine("Deleting old additional file: " + additionalFileName);
+              mDataTarget.deleteFile(additionalFileName);
               break;
             }
           }
 
-          if(mDataSource.fileExists(additonalFileName)) {            
-            mLog.fine("Adding new additonal file: " + additonalFileName);
-            byte[] data = mDataSource.loadFile(additonalFileName);
-            mDataTarget.writeFile(additonalFileName, data);
+          if(mDataSource.fileExists(additionalFileName)) {            
+            mLog.fine("Adding new additional file: " + additionalFileName);
+            byte[] data = mDataSource.loadFile(additionalFileName);
+            mDataTarget.writeFile(additionalFileName, data);
           }
                       
           

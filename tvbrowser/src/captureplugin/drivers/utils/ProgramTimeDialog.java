@@ -78,11 +78,11 @@ public class ProgramTimeDialog extends JDialog {
 
 
     public ProgramTimeDialog(Window parent, ProgramTime time, boolean editTitle,
-      String additonalText, JComponent additionalComponent) {
+      String additionalText, JComponent additionalComponent) {
     super(parent);
     setModal(true);
         mPrgTime = time;
-        createGui(editTitle, additonalText, additionalComponent);
+        createGui(editTitle, additionalText, additionalComponent);
     }
 
     /**
@@ -98,7 +98,7 @@ public class ProgramTimeDialog extends JDialog {
      * Create the GUI
      * @param titleEditable is the Title editable ?
      */
-    private void createGui(final boolean titleEditable, final String additonalText, final JComponent additionalComponent) {
+    private void createGui(final boolean titleEditable, final String additionalText, final JComponent additionalComponent) {
         setTitle(mLocalizer.msg("SetTime","Set Time"));
         
         JPanel panel = (JPanel)getContentPane();
@@ -152,9 +152,9 @@ public class ProgramTimeDialog extends JDialog {
         center.add(mStart, c);
         center.add(mEnd, c);
 
-        if (additonalText != null) {
+        if (additionalText != null) {
             JPanel additionalPanel = new JPanel();
-            additionalPanel.setBorder(BorderFactory.createTitledBorder(additonalText));
+            additionalPanel.setBorder(BorderFactory.createTitledBorder(additionalText));
             additionalPanel.add(additionalComponent);
             center.add(additionalPanel, c);
         }

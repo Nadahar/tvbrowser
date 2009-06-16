@@ -182,6 +182,6 @@ public class ListViewPlugin extends Plugin {
      * @since 2.6
      */
     protected PluginPictureSettings getPictureSettings() {
-      return new PluginPictureSettings(Integer.parseInt(mSettings.getProperty("pictureSettigns",String.valueOf(PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE))));
+      return new PluginPictureSettings(Integer.parseInt(mSettings.getProperty("pictureSettings",String.valueOf(PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE))));
     }
 }

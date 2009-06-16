@@ -102,7 +102,7 @@ public class TVRaterFilter extends PluginsFilterComponent {
     }
 
     /**
-     * Store Settigns
+     * Store Settings
      * @param out store settings here
      * @throws IOException Exception while storing the data
      */

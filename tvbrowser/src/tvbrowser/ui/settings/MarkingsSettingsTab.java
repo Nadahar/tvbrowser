@@ -71,7 +71,7 @@ public class MarkingsSettingsTab implements SettingsTab {
 
     String[] colors = {mLocalizer.msg("color.noPriority","Don't highlight"),mLocalizer.msg("color.minPriority","1. Color (minimal priority)"),mLocalizer.msg("color.lowerMediumPriority","2. Color (lower medium priority)"),mLocalizer.msg("color.mediumPriority","3. Color (medium priority)"),mLocalizer.msg("color.higherMediumPriority","4. Color (higher medium priority)"),mLocalizer.msg("color.maxPriority","5. Color (maximum priority)")};
 
-    defaultMarkings.add(mProgramPanelUsesExtraSpaceForMarkIcons = new JCheckBox(mLocalizer.msg("panel.extraSpace","Use additonal space for the mark icons"), Settings.propProgramPanelUsesExtraSpaceForMarkIcons.getBoolean()), cc.xyw(1,1,3));
+    defaultMarkings.add(mProgramPanelUsesExtraSpaceForMarkIcons = new JCheckBox(mLocalizer.msg("panel.extraSpace","Use additional space for the mark icons"), Settings.propProgramPanelUsesExtraSpaceForMarkIcons.getBoolean()), cc.xyw(1,1,3));
     defaultMarkings.add(mProgramItemWithMarkingsIsShowingBorder = new JCheckBox(mLocalizer.msg("color.showBorder","Show border for highlighted programs"), Settings.propProgramPanelWithMarkingsShowingBoder.getBoolean()), cc.xyw(1,3,3));
     defaultMarkings.add(new JLabel(mLocalizer.msg("color.showColor","Highlight with color (default color):")), cc.xy(1,5));    
     defaultMarkings.add(mDefaultColor = new JComboBox(colors), cc.xy(3,5));    

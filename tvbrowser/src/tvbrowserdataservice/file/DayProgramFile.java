@@ -64,7 +64,7 @@ public class DayProgramFile extends AbstractFile {
 
   private static final int FILE_VERSION = 1;
 
-  private static final int ADDITONAL_FILE_VERSION = 1;
+  private static final int ADDITIONAL_FILE_VERSION = 1;
 
   private int mVersion;
 
@@ -434,7 +434,7 @@ public class DayProgramFile extends AbstractFile {
   private void writeProgCountToStream(OutputStream stream) throws IOException, FileFormatException {
     GZIPOutputStream gOut = new GZIPOutputStream(stream);
 
-    gOut.write(ADDITONAL_FILE_VERSION);
+    gOut.write(ADDITIONAL_FILE_VERSION);
 
     int count = getProgramFrameCount();
 
