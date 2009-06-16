@@ -226,12 +226,14 @@ public class TVBrowser {
     }
 
     mLocalizer = util.ui.Localizer.getLocalizerFor(TVBrowser.class);
-    String msg;
 
     // Check whether the TV-Browser was started in the right directory
     if ( !new File("imgs").exists()) {
-      msg = mLocalizer.msg("error.2",
-        "Please start TV-Browser in the TV-Browser directory!");
+      String msg = "Please start TV-Browser in the TV-Browser directory!";
+      if (mLocalizer != null) {
+        msg = mLocalizer.msg("error.2",
+          "Please start TV-Browser in the TV-Browser directory!");
+      }
       JOptionPane.showMessageDialog(null, msg);
       System.exit(1);
     }
@@ -268,7 +270,7 @@ public class TVBrowser {
         logDir.mkdirs();
         mainLogger.addHandler(new FileLoggingHandler(logDir.getAbsolutePath()+"/tvbrowser.log", createFormatter()));
       } catch (IOException exc) {
-        msg = mLocalizer.msg("error.4", "Can't create log file.");
+        String msg = mLocalizer.msg("error.4", "Can't create log file.");
         ErrorHandler.handle(msg, exc);
       }
     }
@@ -321,8 +323,7 @@ public class TVBrowser {
     PluginLoader.getInstance().loadAllPlugins();
 
     mLog.info("Loading TV listings service...");
-    msg = mLocalizer.msg("splash.dataService", "Loading TV listings service...");
-    splash.setMessage(msg);
+    splash.setMessage(mLocalizer.msg("splash.dataService", "Loading TV listings service..."));
     TvDataServiceProxyManager.getInstance().init();
     ChannelList.createForTvBrowserStart();
 
@@ -330,30 +331,26 @@ public class TVBrowser {
 
     if (!lookAndFeelInitialized) {
       mLog.info("Loading Look&Feel...");
-      msg = mLocalizer.msg("splash.laf", "Loading look and feel...");
-      splash.setMessage(msg);
+      splash.setMessage(mLocalizer.msg("splash.laf", "Loading look and feel..."));
 
       updateLookAndFeel();
     }
 
     mLog.info("Loading plugins...");
-    msg = mLocalizer.msg("splash.plugins", "Loading plugins...");
-    splash.setMessage(msg);
+    splash.setMessage(mLocalizer.msg("splash.plugins", "Loading plugins..."));
     try {
       PluginProxyManager.getInstance().init();
     } catch(TvBrowserException exc) {
       ErrorHandler.handle(exc);
     }
 
-    msg = mLocalizer.msg("splash.tvData", "Checking TV database...");
-    splash.setMessage(msg);
+    splash.setMessage(mLocalizer.msg("splash.tvData", "Checking TV database..."));
 
     mLog.info("Checking TV listings inventory...");
     TvDataBase.getInstance().checkTvDataInventory();
 
     mLog.info("Starting up...");
-    msg = mLocalizer.msg("splash.ui", "Starting up...");
-    splash.setMessage(msg);
+    splash.setMessage(mLocalizer.msg("splash.ui", "Starting up..."));
 
     Toolkit.getDefaultToolkit().getSystemEventQueue().push(new TextComponentPopupEventQueue());
 
