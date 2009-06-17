@@ -72,9 +72,17 @@ DateSelector, ProgressMonitor, ListSelectionListener {
 
 
   public void markDate(final Date date, final Runnable callback) {
-    if (!isValidDate(date) || date.equals(getSelectedDate())) {
+    if (!isValidDate(date)) {
       return;
     }
+    
+    if (date.equals(getSelectedDate())) {
+      if (callback != null) {
+        callback.run();
+      }
+      return;
+    }
+
     setCurrentDate(date);
     mTableModel.setCurrentDate(date);
     if (mDateChangedListener == null) {
