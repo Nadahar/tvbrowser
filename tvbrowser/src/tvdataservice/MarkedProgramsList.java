@@ -26,17 +26,18 @@
 package tvdataservice;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.swing.SwingUtilities;
 
 import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginManagerImpl;
 import tvbrowser.ui.mainframe.MainFrame;
-
-import devplugin.Date;
+import util.program.ProgramUtilities;
 import devplugin.Marker;
 import devplugin.Program;
 import devplugin.ProgramFilter;
@@ -141,7 +142,7 @@ public class MarkedProgramsList {
       }catch(Exception e) {
         // ignore
       }
-    } 
+    }
   }
 
   /**
@@ -166,84 +167,31 @@ public class MarkedProgramsList {
    * @return The time sorted programs for the tray.
    */
   public Program[] getTimeSortedProgramsForTray(ProgramFilter filter, int markPriority, int numberOfPrograms, boolean includeOnAirPrograms) {
-    Program[] trayPrograms = new Program[0];
     
     synchronized(mMarkedPrograms) {
-      int n = (mMarkedPrograms.size() > numberOfPrograms && numberOfPrograms > 0) ? numberOfPrograms : mMarkedPrograms.size();
+      List<Program> programs = new ArrayList<Program>();
   
-      ArrayList<Program> programs = new ArrayList<Program>();
-  
-      int k = 0;
-      int i = 0;
-      
       Iterator<MutableProgram> it = mMarkedPrograms.iterator();
-  
-      long currentDateValue = Date.getCurrentDate().getValue();
-      while(i < n) {
-        if(k >= mMarkedPrograms.size()) {
-          break;
-        }
-  
+      while (it.hasNext()) {
         MutableProgram p = it.next();
         if((p.isOnAir() && !includeOnAirPrograms) || p.isExpired() || !filter.accept(p) || p.getMarkPriority() < markPriority) {
-          k++;
           continue;
         }
-        long value1 = (p.getDate().getValue() - currentDateValue) * 24 * 60 + p.getStartTime();
-        boolean found = false;
-  
-        for(int j = 0; j < programs.size(); j++) {
-          Program p1 = programs.get(j);
-          long value2 = (p1.getDate().getValue() - currentDateValue) * 24 * 60 + p1.getStartTime();
-  
-          if(value2 > value1) {
-            programs.add(j,p);
-            found = true;
-            break;
-          }
-        }
-  
-        if(!found && filter.accept(p)) {
-          programs.add(p);
-        }
-  
-        k++;
-        i++;
+        programs.add(p);
       }
-  
-      for(i = k; i < mMarkedPrograms.size(); i++) {
-        Program p = it.next();
-  
-        if((p.isOnAir() && !includeOnAirPrograms) || p.isExpired() || p.getMarkPriority() < markPriority) {
-          continue;
-        }
-  
-        long valueNew = (p.getDate().getValue() - currentDateValue) * 24 * 60 + p.getStartTime();
-        Program p1 = programs.get(programs.size() - 1);
-  
-        long valueOld = (p1.getDate().getValue() - currentDateValue) * 24 * 60 + p1.getStartTime();
-        if(valueOld > valueNew) {
-          for(int j = 0; j < programs.size(); j++) {
-            p1 = programs.get(j);
-            valueOld = (p1.getDate().getValue() - currentDateValue) * 24 * 60 + p1.getStartTime();
-  
-            if(valueOld > valueNew) {
-              programs.add(j,p);
-              break;
-            }
-          }
-        }
-  
-        if(programs.size() > Settings.propTrayImportantProgramsSize.getInt()) {
-          programs.remove(Settings.propTrayImportantProgramsSize.getInt());
-        }
+
+      Collections.sort(programs, ProgramUtilities.getProgramComparator());
+
+      int maxCount = Math.min(programs.size(), Settings.propTrayImportantProgramsSize.getInt());
+      if (numberOfPrograms > 0) {
+        maxCount = Math.min(maxCount, numberOfPrograms);
       }
-  
-      trayPrograms = new Program[programs.size()];
-      programs.toArray(trayPrograms);
+      programs = programs.subList(0, maxCount);
+      Collections.sort(programs, ProgramUtilities.getProgramComparator()); // needed twice due to sublist not guaranteeing the order
+      
+      return programs.toArray(new Program[programs.size()]);
     }
 
-    return trayPrograms;
   }
 
   /**
