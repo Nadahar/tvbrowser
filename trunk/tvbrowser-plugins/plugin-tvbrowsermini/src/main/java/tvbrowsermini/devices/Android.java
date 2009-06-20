@@ -25,9 +25,38 @@ public class Android extends AbstractExportDevice {
 
   protected void createTables(Connection connection, Statement stmt) throws SQLException {
     stmt.execute("CREATE TABLE channel (id INTEGER NOT NULL PRIMARY KEY, channelid VARCHAR(100), name VARCHAR(50), category VARCHAR(1))");
-    stmt.execute("CREATE TABLE broadcast (id INTEGER NOT NULL PRIMARY KEY, channel_id INTEGER NOT NULL, title VARCHAR(100), start_date_id INTEGER NOT NULL, end_date_id INTEGER NOT NULL, starttime VARCHAR(10), endtime VARCHAR(10), favorite BOOLEAN, reminder BOOLEAN)");
-    stmt.execute("CREATE TABLE info (broadcast_id INTEGER NOT NULL PRIMARY KEY, originaltitel VARCHAR(100), episode VARCHAR(100), originalepisode VARCHAR(100), shortdescription VARCHAR(400), description TEXT, genre VARCHAR(150), produced VARCHAR(100), location VARCHAR(100), director VARCHAR(200), moderation VARCHAR(200), script VARCHAR(200), actor VARCHAR(2000), music VARCHAR(150), fsk VARCHAR(5), form VARCHAR(400), showview VARCHAR(12), webside VARCHAR(150), vps VARCHAR(100), repetitionon VARCHAR(100), repetitionof VARCHAR(100))");
-    stmt.execute("CREATE TABLE dates (id INTEGER NOT NULL PRIMARY KEY, datum VARCHAR(20))");
+    stmt.execute("CREATE TABLE broadcast (" +
+            "id INTEGER NOT NULL PRIMARY KEY, " +
+            "channel_id INTEGER NOT NULL, " +
+            "title VARCHAR(100), " +
+            "start_date_id INTEGER NOT NULL, " +
+            "end_date_id INTEGER NOT NULL, " +
+            "starttime INTEGER, " +
+            "endtime INTEGER, " +
+            "favorite BOOLEAN, " +
+            "reminder BOOLEAN)");
+    stmt.execute("CREATE TABLE info (" +
+            "broadcast_id INTEGER NOT NULL PRIMARY KEY, " +
+            "originaltitel VARCHAR(100), " +
+            "episode VARCHAR(100), " +
+            "originalepisode VARCHAR(100), " +
+            "shortdescription VARCHAR(400), " +
+            "description TEXT, " +
+            "genre VARCHAR(150), " +
+            "produced VARCHAR(100), " +
+            "location VARCHAR(100), " +
+            "director VARCHAR(200), " +
+            "moderation VARCHAR(200), " +
+            "script VARCHAR(200), " +
+            "actor VARCHAR(2000), " +
+            "music VARCHAR(150), " +
+            "fsk VARCHAR(5), " +
+            "form INTEGER, " +
+            "showview VARCHAR(12), " +
+            "webside VARCHAR(150), " +
+            "vps VARCHAR(100), " +
+            "repetitionon VARCHAR(100), " +
+            "repetitionof VARCHAR(100))");
   }
 
   protected void createIndices(Connection conn, Statement stmt) throws SQLException {
@@ -37,10 +66,6 @@ public class Android extends AbstractExportDevice {
     stmt.execute("CREATE INDEX genre ON info(genre)");
     stmt.execute("CREATE INDEX startid ON broadcast(start_date_id)");
     stmt.execute("CREATE INDEX endid ON broadcast(end_date_id)");
-    stmt.execute("CREATE UNIQUE INDEX datumidx ON dates(datum)");
-    //stmt.addBatch("CREATE INDEX shortd ON info(shortdescription)");
-    //stmt.addBatch("CREATE INDEX desc ON info(description)");
-    //stmt.addBatch("CREATE INDEX episo ON info(episode)");
   }
 
   /**
@@ -49,11 +74,10 @@ public class Android extends AbstractExportDevice {
    * @throws java.io.IOException Exception while writing
    */
   protected void exportFile(Connection connection, Frame parentFrame, Statement stmt) throws IOException {
-    DateFormat formater = new SimpleDateFormat("HH:mm");
     DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
     try {
       exportChannels(connection);
-      exportDates(connection);
+      createDateIds();
       Date date = new Date();
       date = date.addDays(-2);
       Calendar calStart = Calendar.getInstance();
@@ -111,10 +135,10 @@ public class Android extends AbstractExportDevice {
               broadcastStatement.setInt(1, ++broadcastId);
               broadcastStatement.setInt(2, findDBChannel(mSelectedChannels[i]));
               broadcastStatement.setString(3, program.getTitle());
-              broadcastStatement.setInt(4, findDBDate(dateFormat.format(calStart.getTime())));
-              broadcastStatement.setInt(5, findDBDate(dateFormat.format(calEnd.getTime())));
-              broadcastStatement.setString(6, formater.format(calStart.getTime()));
-              broadcastStatement.setString(7, formater.format(calEnd.getTime()));
+              broadcastStatement.setLong(4, findDBDate(dateFormat.format(calStart.getTime())));
+              broadcastStatement.setLong(5, findDBDate(dateFormat.format(calEnd.getTime())));
+              broadcastStatement.setInt(6, calStart.get(Calendar.HOUR_OF_DAY)*60+calStart.get(Calendar.MINUTE));
+              broadcastStatement.setInt(7, calEnd.get(Calendar.HOUR_OF_DAY)*60+calEnd.get(Calendar.MINUTE));
               broadcastStatement.setInt(8, favorite);
               broadcastStatement.setInt(9, reminder);
 
@@ -147,9 +171,7 @@ public class Android extends AbstractExportDevice {
                 infoStatement.setString(12, encrypt(String.valueOf(program.getIntField(ProgramFieldType.AGE_LIMIT_TYPE))));
               }
               if (elementForminformation) {
-                StringBuilder info = new StringBuilder("");
-                info = getFormatInformation(program, info);
-                infoStatement.setString(13, encrypt(info.toString()));
+                infoStatement.setInt(13, program.getInfo());
               }
               setValueToInfoStatement(infoStatement, elementShowView, 14, program.getTextField(ProgramFieldType.SHOWVIEW_NR_TYPE));
               setValueToInfoStatement(infoStatement, elementEpisode, 15, program.getTextField(ProgramFieldType.EPISODE_TYPE));

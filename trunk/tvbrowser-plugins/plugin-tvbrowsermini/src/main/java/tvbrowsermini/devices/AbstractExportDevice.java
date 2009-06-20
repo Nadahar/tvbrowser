@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.sql.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.text.ParseException;
 import java.util.*;
 import java.awt.*;
 
@@ -45,9 +46,9 @@ public abstract class AbstractExportDevice {
   protected JProgressBar progress;
 
   private Map<String, Integer> dbChannelIds;
-  private Map<String, Integer> dbDateIds;
+  private Map<String, Long> mDateIds;
 
-  protected AbstractExportDevice(Properties mSettings, Channel[] mSelectedChannels, JProgressBar progress) {
+   protected AbstractExportDevice(Properties mSettings, Channel[] mSelectedChannels, JProgressBar progress) {
     this.mSettings = mSettings;
     this.mSelectedChannels = mSelectedChannels;
     this.progress = progress;
@@ -126,7 +127,7 @@ public abstract class AbstractExportDevice {
         e.printStackTrace();
         ErrorHandler.handle(TVBrowserMini.mLocalizer.msg("error", "Error while exporting tv-data!"), e);
       }
-      progress.setString("Creating indices");
+      progress.setString(TVBrowserMini.mLocalizer.msg("creatingIndices", "Creating indices"));
       progress.setStringPainted(true);
       createIndices(conn, stmt);
     } catch (Exception e) {
@@ -155,25 +156,31 @@ public abstract class AbstractExportDevice {
 
   protected abstract void exportFile(Connection connection, Frame parentFrame, Statement stmt) throws IOException;
 
-  protected void exportDates(Connection connection) throws SQLException {
-    dbDateIds = new HashMap<String, Integer>();
+  protected void createDateIds() throws SQLException {
+    mDateIds = new HashMap<String, Long>();
     Date date = new Date();
+    Calendar currentCalendar = date.getCalendar();
+    currentCalendar.set(Calendar.HOUR, 0);
+    currentCalendar.set(Calendar.MINUTE, 0);
+    currentCalendar.set(Calendar.SECOND, 0);
+    currentCalendar.set(Calendar.MILLISECOND, 0);
+    date = new Date(currentCalendar);
     date = date.addDays(-2);
     int maxDays = Integer.parseInt(mSettings.getProperty("exportDays"));
     if (maxDays == 0)
       maxDays = 32;
-    PreparedStatement statement = connection.prepareStatement("INSERT INTO dates (id, datum) VALUES (?, ?)");
     DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-    int id = 1;
     for (int d = 0; d <= maxDays; d++) {
       date = date.addDays(1);
-      statement.setInt(1, id);
-      statement.setString(2, dateFormat.format(date.getCalendar().getTime()));
-      statement.execute();
-      dbDateIds.put(dateFormat.format(date.getCalendar().getTime()), id);
-      id++;
+      Calendar calendar = date.getCalendar();
+      String formattedDate = dateFormat.format(calendar.getTime());
+      try {
+         calendar.setTime(dateFormat.parse(formattedDate));
+      } catch (ParseException e) {
+      }
+      long id = calendar.getTimeInMillis();
+      mDateIds.put(formattedDate, id);
     }
-    statement.close();
   }
 
   protected void exportChannels(Connection connection) throws SQLException {
@@ -202,8 +209,8 @@ public abstract class AbstractExportDevice {
     return new StringBuffer(channel.getDataServiceProxy().getId()).append(":").append(channel.getGroup().getId()).append(":").append(channel.getCountry()).append(":").append(channel.getId()).toString();
   }
 
-  protected int findDBDate(String date) {
-    return dbDateIds.get(date);
+  protected long findDBDate(String date) {
+    return mDateIds.get(date);
   }
 
   protected String encrypt(String text) {
