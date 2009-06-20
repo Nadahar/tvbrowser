@@ -353,7 +353,7 @@ public class SystemTray {
   private void searchForToAddingPrograms() {
     // show the now/soon running programs
     try {
-      Channel[] channels = Settings.propSubscribedChannels.getChannelArray();
+      Channel[] channels = getTrayChannels();
 
       JComponent subMenu;
 
@@ -370,15 +370,6 @@ public class SystemTray {
       ArrayList<ProgramMenuItem> additional = new ArrayList<ProgramMenuItem>();
       ArrayList<ProgramMenuItem> nextPrograms = new ArrayList<ProgramMenuItem>();
       ArrayList<ProgramMenuItem> nextAdditionalPrograms = new ArrayList<ProgramMenuItem>();
-
-      /*
-       * Fill the ArrayList to support storing the programs on the correct
-       * position in the list.
-       */
-      for (int i = 0; i < Settings.propTraySpecialChannels.getChannelArray().length; i++) {
-        programs.add(i, null);
-        nextPrograms.add(i, null);
-      }
 
       /*
        * Search through all channels.
@@ -458,10 +449,6 @@ public class SystemTray {
       if (Settings.propTrayNowProgramsEnabled.getBoolean()
           && (programs.size() > 0 || additional.size() > 0)) {
 
-        while (programs.contains(null)) {
-          programs.remove(null);
-        }
-
         for (ProgramMenuItem item : programs) {
           subMenu.add(item);
         }
@@ -488,19 +475,8 @@ public class SystemTray {
             "menu.programsSoon", "Soon runs") : mLocalizer.msg(
             "menu.programsSoonAlone", "Soon runs"));
 
-        while (nextPrograms.contains(null)) {
-          nextPrograms.remove(null);
-        }
-
-        for (ProgramMenuItem item : nextPrograms) {
-          item.setBackground(next.getItemCount());
-          next.add(item);
-        }
-        for (ProgramMenuItem pItem : nextAdditionalPrograms) {
-          pItem.setBackground(next.getItemCount());
-          next.add(pItem);
-        }
-
+        addMenuItems(next, nextPrograms);
+        addMenuItems(next, nextAdditionalPrograms);
         addNoProgramsItem(next);
 
         mTrayMenu.add(next);
@@ -546,40 +522,6 @@ public class SystemTray {
     }
 
     return menu;
-  }
-
-  /**
-   * @param ch
-   *          The channel to check.
-   * @return True if the channel is on the tray channel list.
-   */
-  private boolean isOnChannelList(Channel ch) {
-    Channel[] channels = Settings.propTraySpecialChannels.getChannelArray();
-
-    for (Channel channel : channels) {
-      if (ch.equals(channel)) {
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-  /**
-   * @param ch
-   *          The channel to get the index from.
-   * @return The index of the channel in the tray channel list.
-   */
-  private int getIndexOfChannel(Channel ch) {
-    Channel[] channels = Settings.propTraySpecialChannels.getChannelArray();
-
-    for (int i = 0; i < channels.length; i++) {
-      if (ch.equals(channels[i])) {
-        return i;
-      }
-    }
-
-    return -1;
   }
 
   /**
@@ -677,14 +619,10 @@ public class SystemTray {
   private void createTimeProgramMenu(JMenu menu, int time) {
     // the menu is empty, so search for the programs at the time
     if (menu.getMenuComponentCount() < 1) {
-      Channel[] c = Settings.propSubscribedChannels.getChannelArray();
+      Channel[] c = getTrayChannels();
 
       ArrayList<ProgramMenuItem> programs = new ArrayList<ProgramMenuItem>();
       ArrayList<ProgramMenuItem> additional = new ArrayList<ProgramMenuItem>();
-
-      for (int i = 0; i < Settings.propTraySpecialChannels.getChannelArray().length; i++) {
-        programs.add(i, null);
-      }
 
       Date currentDate = Date.getCurrentDate();
       for (Channel ch : c) {
@@ -710,10 +648,8 @@ public class SystemTray {
 
           if (start <= time && time < end
               && MainFrame.getInstance().getProgramFilter().accept(p)) {
-            if (isOnChannelList(ch)) {
-              programs.add(getIndexOfChannel(ch), new ProgramMenuItem(p,
-                  ProgramMenuItem.ON_TIME_TYPE, time, -1));
-            } else if (p.getMarkerArr().length > 0
+            programs.add(new ProgramMenuItem(p, ProgramMenuItem.ON_TIME_TYPE, time, -1));
+            if (p.getMarkerArr().length > 0
                 && p.getMarkPriority() >= Settings.propTrayImportantProgramsPriority
                     .getInt()) {
               additional.add(new ProgramMenuItem(p,
@@ -732,10 +668,9 @@ public class SystemTray {
 
               if (start <= temptime && temptime < end
                   && MainFrame.getInstance().getProgramFilter().accept(p)) {
-                if (isOnChannelList(ch)) {
-                  programs.add(getIndexOfChannel(ch), new ProgramMenuItem(p,
+                programs.add(new ProgramMenuItem(p,
                       ProgramMenuItem.ON_TIME_TYPE, time, -1));
-                } else if (p.getMarkerArr().length > 0
+                if (p.getMarkerArr().length > 0
                     && p.getMarkPriority() >= Settings.propTrayImportantProgramsPriority
                         .getInt()) {
                   additional.add(new ProgramMenuItem(p,
@@ -752,20 +687,40 @@ public class SystemTray {
         }
       }
 
-      while (programs.contains(null)) {
-        programs.remove(null);
-      }
-
-      for (ProgramMenuItem pItem : programs) {
-        pItem.setBackground(menu.getItemCount());
-        menu.add(pItem);
-      }
-      for (ProgramMenuItem pItem : additional) {
-        pItem.setBackground(menu.getItemCount());
-        menu.add(pItem);
-      }
-
+      addMenuItems(menu, programs);
+      addMenuItems(menu, additional);
       addNoProgramsItem(menu);
+    }
+  }
+
+  /**
+   * add a limited number of items to the current tray menu (or sub menu)
+   * @param menu
+   * @param items
+   */
+  private void addMenuItems(final JMenu menu, final ArrayList<ProgramMenuItem> items) {
+    int maxCount = 30;
+    if (Settings.propTrayUseSpecialChannels.getBoolean()) {
+      maxCount = Settings.propTraySpecialChannels.getChannelArray().length;
+    }
+    if (menu.getItemCount() >= maxCount) {
+      return;
+    }
+    for (ProgramMenuItem pItem : items) {
+      pItem.setBackground(menu.getItemCount());
+      menu.add(pItem);
+      if (menu.getItemCount() >= maxCount) {
+        break;
+      }
+    }
+  }
+
+  private Channel[] getTrayChannels() {
+    if (Settings.propTrayUseSpecialChannels.getBoolean()) {
+      return Settings.propTraySpecialChannels.getChannelArray();
+    }
+    else {
+      return Settings.propSubscribedChannels.getChannelArray();
     }
   }
 
@@ -799,10 +754,8 @@ public class SystemTray {
       ArrayList<ProgramMenuItem> listAdditional, int menuItemType) {
     // put the program on the standard list for selected channels
     // or on the additional list if there is a marking
-    if (this.isOnChannelList(program.getChannel())) {
-      listStandard.set(getIndexOfChannel(program.getChannel()),
-          new ProgramMenuItem(program, menuItemType, -1, -1));
-    } else if (program.getMarkerArr().length > 0
+      listStandard.add(new ProgramMenuItem(program, menuItemType, -1, -1));
+    if (program.getMarkerArr().length > 0
         && program.getMarkPriority() >= Settings.propTrayImportantProgramsPriority
             .getInt()) {
       listAdditional.add(new ProgramMenuItem(program, menuItemType, -1, -1));
