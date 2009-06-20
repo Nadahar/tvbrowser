@@ -1,60 +1,70 @@
 package de.misi.tvbrowser.data;
 
-import android.content.Intent;
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import de.misi.tvbrowser.activities.search.SearchResult;
+import android.util.Log;
+import de.misi.tvbrowser.TVBrowser;
+import de.misi.tvbrowser.Utility;
 
 import java.io.File;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
 
 public class DataLoader {
 
-   public static final String TVBROWSER_DATADIRECTORY = File.separator + "sdcard" + File.separator + "TVBrowser";
-   public static final SimpleDateFormat SQLDATEFORMAT = new SimpleDateFormat("yyyy-MM-dd");
-   public static final SimpleDateFormat SQLTIMEFORMAT = new SimpleDateFormat("HH:mm");
-   public static final String DOT_TVBFILESUFFIX = ".tvd";
+   private static final String TVBROWSER_DATADIRECTORY = File.separator + "sdcard" + File.separator + "TVBrowser";
 
-   private static final String TABLENAME_CHANNEL = "channel";
-   private static final String CHANNEL_ID = "id";
+   private static final String DOT_TVBFILESUFFIX = ".tvd";
+
+   private static final String TVBROWSER_DATABASEFILENAME = TVBROWSER_DATADIRECTORY + File.separator + "data" + DOT_TVBFILESUFFIX;
+
+   private static final String INTERNALDATABASE = "tvbrowser.db";
+   private static final String TABLENAME_REMINDER = "reminder";
+   private static final String REMINDER_ID = "_id";
+   public static final String REMINDER_CHANNEL = "channel";
+   public static final String REMINDER_STARTDATE = "startdate";
+   public static final String REMINDER_STARTTIME = "starttime";
+   public static final String REMINDER_TITLE = "title";
+   private static final String REMINDER_REMINDERTIME = "remindertime";
+
+   private static final String REMINDER_TIMEINMILLIS = "timeinmillis";
+   public static final String TABLENAME_CHANNEL = "channel";
+   public static final String CHANNEL_ID = "id";
    public static final String CHANNEL_NAME = "name";
-   private static final String TABLENAME_BROADCAST = "broadcast";
-   public static final String BROADCAST_ID = "id";
+   public static final String TABLENAME_BROADCAST = "broadcast";
+   private static final String BROADCAST_ID = "id";
    private static final String BROADCAST_CHANNEL_ID = "channel_id";
    public static final String BROADCAST_TITLE = "title";
    public static final String BROADCAST_START_DATE_ID = "start_date_id";
    public static final String BROADCAST_END_DATE_ID = "end_date_id";
    public static final String BROADCAST_STARTTIME = "starttime";
    public static final String BROADCAST_ENDTIME = "endtime";
-   private static final String TABLENAME_DATES = "dates";
-   private static final String DATES_ID = "id";
-   public static final String DATES_DATUM = "datum";
-   public static final String TABLENAME_INFO = "info";
-   public static final String INFO_BROADCASTID = "broadcast_id";
+   private static final String TABLENAME_INFO = "info";
+   private static final String INFO_BROADCASTID = "broadcast_id";
    public static final String INFO_DESCRIPTION = "description";
    public static final String INFO_SHORTDESCRIPTION = "shortdescription";
    public static final String INFO_GENRE = "genre";
-   public static final String INFO_PRODUCED = "produced";
-   public static final String INFO_LOCATION = "location";
-   public static final String INFO_DIRECTOR = "director";
-   public static final String INFO_SCRIPT = "script";
+   private static final String INFO_PRODUCED = "produced";
+   private static final String INFO_LOCATION = "location";
+   private static final String INFO_DIRECTOR = "director";
+   private static final String INFO_SCRIPT = "script";
    public static final String INFO_ACTOR = "actor";
-   public static final String INFO_MUSIC = "music";
-   public static final String INFO_ORIGINALTITEL = "originaltitel";
-   public static final String INFO_FSK = "fsk";
+   private static final String INFO_MUSIC = "music";
+   private static final String INFO_ORIGINALTITEL = "originaltitel";
+   private static final String INFO_FSK = "fsk";
    public static final String INFO_FORM = "form";
-   public static final String INFO_SHOWVIEW = "showview";
-   public static final String INFO_EPISODE = "episode";
-   public static final String INFO_ORIGINALEPISODE = "originalepisode";
-   public static final String INFO_MODERATION = "moderation";
+   private static final String INFO_SHOWVIEW = "showview";
+   private static final String INFO_EPISODE = "episode";
+   private static final String INFO_ORIGINALEPISODE = "originalepisode";
+   private static final String INFO_MODERATION = "moderation";
    public static final String INFO_WEBSITE = "webside";
-   public static final String INFO_VPS = "vps";
+   private static final String INFO_VPS = "vps";
    public static final String INFO_REPETITIONON = "repetitionon";
+
    public static final String INFO_REPETITIONOF = "repetitionof";
 
-   public static final String[] allInfoSearchFields = {
+   private static final String[] allInfoSearchFields = {
            INFO_DESCRIPTION,
            INFO_SHORTDESCRIPTION,
            INFO_GENRE,
@@ -76,14 +86,14 @@ public class DataLoader {
            INFO_REPETITIONON,
            INFO_REPETITIONOF
    };
-
-   private static SQLiteDatabase database = null;
-
-   private static Map<Long, Date> dateCache = new HashMap<Long, Date>();
+   private static SQLiteDatabase database;
+   private static SQLiteDatabase internalDatabase;
 
    private static SQLiteDatabase openDatabase() {
       if (database == null) {
-         database = SQLiteDatabase.openDatabase(TVBROWSER_DATADIRECTORY + File.separator + "data" + DOT_TVBFILESUFFIX, null, SQLiteDatabase.OPEN_READWRITE);
+         File file = new File(TVBROWSER_DATABASEFILENAME);
+         if (file.exists())
+            database = SQLiteDatabase.openDatabase(TVBROWSER_DATABASEFILENAME, null, SQLiteDatabase.OPEN_READWRITE);
       }
       return database;
    }
@@ -92,12 +102,20 @@ public class DataLoader {
       SQLiteDatabase database = openDatabase();
       Cursor result = null;
       if (database != null) {
-         result = database.query(TABLENAME_DATES, new String[]{DATES_DATUM}, null, null, null, null, DATES_DATUM);
+         result = database.query(TABLENAME_BROADCAST, new String[]{"DISTINCT " + BROADCAST_START_DATE_ID}, null, null, null, null, BROADCAST_START_DATE_ID);
       }
       return result;
    }
 
    public static ArrayList<Channel> loadChannelsFromDatabase(Calendar date) {
+      date.set(Calendar.HOUR_OF_DAY, 0);
+      date.set(Calendar.MINUTE, 0);
+      date.set(Calendar.SECOND, 0);
+      date.set(Calendar.MILLISECOND, 0);
+      return loadChannelsFromDatabase(date.getTimeInMillis());
+   }
+
+   public static ArrayList<Channel> loadChannelsFromDatabase(long timeInMillis) {
       SQLiteDatabase database = openDatabase();
       ArrayList<Channel> result = new ArrayList<Channel>();
       if (database != null) {
@@ -107,7 +125,7 @@ public class DataLoader {
          while (cursor.moveToNext()) {
             Channel channel = new Channel(cursor.getInt(channelIdIndex),
                     cursor.getString(channelNameIndex));
-            channel.loadBroadcasts(date);
+            channel.loadBroadcasts(timeInMillis);
             result.add(channel);
          }
          cursor.close();
@@ -115,93 +133,121 @@ public class DataLoader {
       return result;
    }
 
-   public static ArrayList<Broadcast> loadBroadcastsFromDatabase(Calendar date, int id) {
+   public static ArrayList<Broadcast> loadBroadcastsFromDatabase(long currentDateInMillis, int channelId) {
       SQLiteDatabase database = openDatabase();
       ArrayList<Broadcast> broadcasts = new ArrayList<Broadcast>();
-      int startDateId = getDateId(date);
-      String startDateIdStr = Integer.toString(startDateId);
+      Utility.tempCalendar.setTimeInMillis(currentDateInMillis);
+      Utility.tempCalendar.add(Calendar.DAY_OF_MONTH, 1);
+      long nextDay = Utility.tempCalendar.getTimeInMillis();
+      String startDateIdStr = Long.toString(currentDateInMillis);
       Cursor cursor = database.query(TABLENAME_BROADCAST,
-              new String[]{BROADCAST_ID, BROADCAST_TITLE, BROADCAST_STARTTIME, BROADCAST_ENDTIME},
+              new String[]{BROADCAST_ID, BROADCAST_TITLE, BROADCAST_START_DATE_ID, BROADCAST_STARTTIME, BROADCAST_END_DATE_ID, BROADCAST_ENDTIME},
               BROADCAST_CHANNEL_ID + "=? AND" +
-                      " (" + BROADCAST_START_DATE_ID + "=?" +
-                      " OR (" + BROADCAST_START_DATE_ID + "=? AND " + BROADCAST_END_DATE_ID + "=?)" +
-                      " OR (" + BROADCAST_START_DATE_ID + "=? AND " + BROADCAST_END_DATE_ID + "=?))",
-              new String[]{Integer.toString(id),
-                      startDateIdStr,
-                      Integer.toString(startDateId - 1), startDateIdStr,
-                      startDateIdStr, Integer.toString(startDateId + 1)
+              " (" + BROADCAST_START_DATE_ID + "=? OR " + BROADCAST_END_DATE_ID + "=?)",
+              new String[]{Integer.toString(channelId),
+                           startDateIdStr, startDateIdStr
               },
               null, null, BROADCAST_START_DATE_ID + "," + BROADCAST_STARTTIME);
-      if (cursor != null) {
+      if (cursor != null && cursor.getCount() > 0) {
          int broadcastIdIndex = cursor.getColumnIndex(BROADCAST_ID);
          int broadcastTitleIndex = cursor.getColumnIndex(BROADCAST_TITLE);
+         int broadcastStartDateIndex = cursor.getColumnIndex(BROADCAST_START_DATE_ID);
          int broadcastStartIndex = cursor.getColumnIndex(BROADCAST_STARTTIME);
+         int broadcastEndDateIndex = cursor.getColumnIndex(BROADCAST_END_DATE_ID);
          int broadcastEndIndex = cursor.getColumnIndex(BROADCAST_ENDTIME);
-         boolean firstBroadcastOfDay = true;
          while (cursor.moveToNext()) {
             broadcasts.add(new Broadcast(cursor.getInt(broadcastIdIndex),
                     cursor.getString(broadcastTitleIndex),
-                    date,
-                    cursor.getString(broadcastStartIndex),
-                    cursor.getString(broadcastEndIndex),
-                    firstBroadcastOfDay));
-            firstBroadcastOfDay = false;
+                    currentDateInMillis,
+                    nextDay,
+                    cursor.getLong(broadcastStartDateIndex),
+                    cursor.getInt(broadcastStartIndex),
+                    cursor.getLong(broadcastEndDateIndex),
+                    cursor.getInt(broadcastEndIndex)
+            ));
          }
          cursor.close();
       }
       return broadcasts;
    }
 
-   private static int getDateId(Calendar date) {
-      return getDateId(SQLDATEFORMAT.format(date.getTime()));
-   }
-
-   private static int getDateId(String date) {
+   public static long getBroadcastId(long startDate, int startTime, String channel) {
       SQLiteDatabase database = openDatabase();
-      Cursor cursor = database.query(TABLENAME_DATES, new String[]{DATES_ID}, DATES_DATUM + "=?", new String[]{date}, null, null, null, null);
-      int result = 0;
-      if (cursor != null) {
-         if (cursor.moveToFirst())
-            result = cursor.getInt(cursor.getColumnIndex(DATES_ID));
-         cursor.close();
+      long result = 0;
+      if (database != null) {
+         Cursor cursor = database.query(TABLENAME_BROADCAST + "," + TABLENAME_CHANNEL,
+                 new String[]{TABLENAME_BROADCAST + "." + BROADCAST_ID},
+                 TABLENAME_BROADCAST + "." + BROADCAST_CHANNEL_ID + "=" + TABLENAME_CHANNEL + "." + CHANNEL_ID + " AND " +
+                 TABLENAME_CHANNEL + "." + CHANNEL_NAME + "=? AND " +
+                 TABLENAME_BROADCAST + "." + BROADCAST_START_DATE_ID + "=? AND " +
+                 TABLENAME_BROADCAST + "." + BROADCAST_STARTTIME + "=?",
+                 new String[]{channel, Long.toString(startDate), Integer.toString(startTime)},
+                 null, null, null, null);
+         if (cursor != null) {
+            if (cursor.moveToFirst())
+               result = cursor.getLong(cursor.getColumnIndex(BROADCAST_ID));
+            cursor.close();
+         }
       }
       return result;
    }
 
-   public static Cursor createSearchQuery(Intent intent) {
+   public static Cursor createSearchQuery(String searchText, int searchType, boolean onlyFuture) {
       SQLiteDatabase database = openDatabase();
       if (database != null) {
-         String searchtext = intent.getStringExtra(SearchResult.SEARCHTEXT);
-         int searchtype = intent.getIntExtra(SearchResult.SEARCHTYPE, 0);
          String where = TABLENAME_BROADCAST + "." + BROADCAST_CHANNEL_ID + "=" + TABLENAME_CHANNEL + "." + CHANNEL_ID;
-         if (searchtype == 1)
+         if (searchType == 1)
             where = where + " AND " + TABLENAME_BROADCAST + "." + BROADCAST_ID + "=" + TABLENAME_INFO + "." + INFO_BROADCASTID;
-         where = where + " AND (" + BROADCAST_TITLE + " LIKE ?";
          String tables = TABLENAME_BROADCAST + ", " + TABLENAME_CHANNEL;
-         String[] whereArgs = {
-                 "%" + searchtext + "%"
-         };
-         if (searchtype == 1) {
+         String[] whereArgs;
+         if (onlyFuture) {
+            where = where + " AND " + BROADCAST_START_DATE_ID + ">?";
+            whereArgs = new String[]{
+                    Long.toString(System.currentTimeMillis()),
+                    "%" + searchText + "%"
+            };
+         } else {
+            whereArgs = new String[]{
+                    "%" + searchText + "%"
+            };
+         }
+         where = where + " AND (" + BROADCAST_TITLE + " LIKE ?";
+         if (searchType == 1) {
             tables = tables + ", " + TABLENAME_INFO;
-            String encryptedtext = encrypt(searchtext);
+            String encryptedtext = encrypt(searchText);
             for (String infoSearchField : allInfoSearchFields) {
                where = where + " OR " + TABLENAME_INFO + "." + infoSearchField + " LIKE '%" + encryptedtext + "%'";
             }
          }
          where = where + ")";
-         return database.query(tables,
-                 new String[]{BROADCAST_TITLE,
-                         BROADCAST_STARTTIME,
-                         CHANNEL_NAME,
-                         BROADCAST_START_DATE_ID,
-                         TABLENAME_BROADCAST + "." + BROADCAST_ID + " AS _id"},
-                 where,
-                 whereArgs,
-                 null,
-                 null,
-                 BROADCAST_START_DATE_ID + "," + BROADCAST_STARTTIME);
+         return createSearchQuery(database, tables, where, whereArgs);
       }
       return null;
+   }
+
+   public static Cursor createSearchQuery(String where, String[] whereArgs) {
+      SQLiteDatabase database = openDatabase();
+      if (database != null) {
+         return createSearchQuery(database,
+                 TABLENAME_BROADCAST + ", " + TABLENAME_CHANNEL,
+                 TABLENAME_BROADCAST + "." + BROADCAST_CHANNEL_ID + "=" + TABLENAME_CHANNEL + "." + CHANNEL_ID + " AND " + where,
+                 whereArgs);
+      }
+      return null;
+   }
+
+   private static Cursor createSearchQuery(SQLiteDatabase database, String tables, String where, String[] whereArgs) {
+      return database.query(tables,
+              new String[]{BROADCAST_TITLE,
+                           BROADCAST_STARTTIME,
+                           CHANNEL_NAME,
+                           BROADCAST_START_DATE_ID,
+                           TABLENAME_BROADCAST + "." + BROADCAST_ID + " AS _id"},
+              where,
+              whereArgs,
+              null,
+              null,
+              BROADCAST_START_DATE_ID + "," + BROADCAST_STARTTIME);
    }
 
    public static Cursor getAllBroadcastInfos(long broadcastid) {
@@ -209,37 +255,16 @@ public class DataLoader {
       if (database != null) {
          return database.query(TABLENAME_BROADCAST + "," + TABLENAME_CHANNEL + "," + TABLENAME_INFO,
                  new String[]{TABLENAME_BROADCAST + ".*",
-                         TABLENAME_INFO + ".*",
-                         TABLENAME_CHANNEL + "." + CHANNEL_NAME},
-                 TABLENAME_BROADCAST + "." + BROADCAST_ID + "=" + TABLENAME_INFO + "." + INFO_BROADCASTID + " AND " + TABLENAME_BROADCAST + "." + BROADCAST_CHANNEL_ID + "=" + TABLENAME_CHANNEL + "." + CHANNEL_ID + " AND " + TABLENAME_BROADCAST + "." + BROADCAST_ID + "=" + Long.toString(broadcastid),
+                              TABLENAME_INFO + ".*",
+                              TABLENAME_CHANNEL + "." + CHANNEL_NAME
+                 },
+                 TABLENAME_BROADCAST + "." + BROADCAST_ID + "=" + TABLENAME_INFO + "." + INFO_BROADCASTID + " AND " +
+                 TABLENAME_BROADCAST + "." + BROADCAST_CHANNEL_ID + "=" + TABLENAME_CHANNEL + "." + CHANNEL_ID + " AND " +
+                 TABLENAME_BROADCAST + "." + BROADCAST_ID + "=" + Long.toString(broadcastid),
                  null,
                  null,
                  null,
                  null);
-      }
-      return null;
-   }
-
-   public static Date getDateByDataId(long dateId) {
-      if (dateCache.containsKey(dateId)) {
-         return dateCache.get(dateId);
-      } else {
-         SQLiteDatabase database = openDatabase();
-         if (database != null) {
-            Cursor cursor = database.query(TABLENAME_DATES, new String[]{DATES_DATUM}, DATES_ID + "=" + Long.toString(dateId), null, null, null, null);
-            if (cursor != null) {
-               try {
-                  if (cursor.moveToFirst()) {
-                     Date date = SQLDATEFORMAT.parse(cursor.getString(cursor.getColumnIndex(DATES_DATUM)));
-                     dateCache.put(dateId, date);
-                     return date;
-                  }
-               } catch (ParseException e) {
-               } finally {
-                  cursor.close();
-               }
-            }
-         }
       }
       return null;
    }
@@ -274,5 +299,139 @@ public class DataLoader {
          }
       }
       return result;
+   }
+
+   private static SQLiteDatabase openInternalDatabase() {
+      if (internalDatabase == null) {
+         File file = new File(TVBROWSER_DATADIRECTORY + File.separator + INTERNALDATABASE);
+         Log.d(TVBrowser.LOGTAG, file.getAbsolutePath());
+         if (!file.exists()) {
+            internalDatabase = SQLiteDatabase.openOrCreateDatabase(file, null);
+            internalDatabase.execSQL("CREATE TABLE " + TABLENAME_REMINDER + " (" +
+                                     REMINDER_ID + " INTEGER NOT NULL PRIMARY KEY," +
+                                     REMINDER_CHANNEL + " VARCHAR(50) NOT NULL," +
+                                     REMINDER_STARTDATE + " INTEGER NOT NULL," +
+                                     REMINDER_STARTTIME + " INTEGER NOT NULL," +
+                                     REMINDER_REMINDERTIME + " INTEGER NOT NULL," +
+                                     REMINDER_TITLE + " VARCHAR(500) NOT NULL," +
+                                     REMINDER_TIMEINMILLIS + " INTEGER NOT NULL)");
+            internalDatabase.execSQL("CREATE UNIQUE INDEX idx_reminder ON " + TABLENAME_REMINDER + "(" + REMINDER_CHANNEL + "," + REMINDER_STARTDATE + "," + REMINDER_STARTTIME + ")");
+         } else {
+            internalDatabase = SQLiteDatabase.openDatabase(TVBROWSER_DATADIRECTORY + File.separator + INTERNALDATABASE, null, SQLiteDatabase.OPEN_READWRITE);
+         }
+      }
+      deleteOldReminder(internalDatabase);
+      return internalDatabase;
+   }
+
+   public static long getReminderId(long broadcastId) {
+      Cursor cursor = getAllBroadcastInfos(broadcastId);
+      long result = 0;
+      if (cursor != null) {
+         if (cursor.moveToNext()) {
+            result = getReminderId(cursor.getString(cursor.getColumnIndex(CHANNEL_NAME)),
+                    Utility.getTimeInMillis(cursor.getLong(cursor.getColumnIndex(BROADCAST_START_DATE_ID)),
+                            cursor.getInt(cursor.getColumnIndex(BROADCAST_STARTTIME))));
+         }
+         cursor.close();
+      }
+      return result;
+   }
+
+   private static long getReminderId(String channel, long startDate) {
+      Log.d(TVBrowser.LOGTAG, "channel " + channel + ", startDate " + startDate);
+      SQLiteDatabase database = openInternalDatabase();
+      long result = 0;
+      if (database != null) {
+         Cursor cursor = database.query(TABLENAME_REMINDER,
+                 new String[]{REMINDER_ID},
+                 REMINDER_CHANNEL + "=? AND " + REMINDER_STARTDATE + "=?",
+                 new String[]{channel, Long.toString(startDate)},
+                 null, null, null);
+         if (cursor != null) {
+            if (cursor.moveToNext())
+               result = cursor.getInt(cursor.getColumnIndex(REMINDER_ID));
+            cursor.close();
+         }
+      }
+      return result;
+   }
+
+   public static int getReminderTime(String channel, long startDate) {
+      Log.d(TVBrowser.LOGTAG, "channel " + channel + ", startDate " + startDate);
+      SQLiteDatabase database = openInternalDatabase();
+      int result = 0;
+      if (database != null) {
+         Cursor cursor = database.query(TABLENAME_REMINDER,
+                 new String[]{REMINDER_REMINDERTIME},
+                 REMINDER_CHANNEL + "=? AND " + REMINDER_STARTDATE + "=?",
+                 new String[]{channel, Long.toString(startDate)},
+                 null, null, null);
+         if (cursor != null) {
+            if (cursor.moveToNext())
+               result = cursor.getInt(cursor.getColumnIndex(REMINDER_REMINDERTIME));
+            cursor.close();
+         }
+      }
+      return result;
+   }
+
+   public static long getNextReminderTime() {
+      long result = 0;
+      SQLiteDatabase database = openInternalDatabase();
+      if (database != null) {
+         Cursor cursor = database.query(TABLENAME_REMINDER,
+                 new String[]{REMINDER_TIMEINMILLIS},
+                 REMINDER_TIMEINMILLIS + ">?",
+                 new String[]{Long.toString(System.currentTimeMillis())},
+                 null, null,
+                 REMINDER_TIMEINMILLIS);
+         if (cursor != null) {
+            if (cursor.moveToNext())
+               result = cursor.getLong(cursor.getColumnIndex(REMINDER_TIMEINMILLIS));
+            cursor.close();
+         }
+      }
+      return result;
+   }
+
+   public static Cursor getReminderByTimeInMillis(long timeInMillis) {
+      SQLiteDatabase database = openInternalDatabase();
+      if (database != null) {
+         return database.query(TABLENAME_REMINDER,
+                 new String[]{TABLENAME_REMINDER + ".*"},
+                 REMINDER_TIMEINMILLIS + "=" + Long.toString(timeInMillis),
+                 null, null, null, null);
+      }
+      return null;
+   }
+
+   public static void writeReminder(String broadcastTitle, long startDate, int startTime, String channel, int selectedReminderTime) {
+      SQLiteDatabase database = openInternalDatabase();
+      if (database != null) {
+         long time = Utility.getTimeInMillis(startDate, startTime);
+         long lastId = getReminderId(channel, time);
+         ContentValues contentValues = new ContentValues();
+         contentValues.put(REMINDER_CHANNEL, channel);
+         contentValues.put(REMINDER_STARTDATE, startDate);
+         contentValues.put(REMINDER_STARTTIME, startTime);
+         contentValues.put(REMINDER_TITLE, broadcastTitle);
+         contentValues.put(REMINDER_REMINDERTIME, selectedReminderTime);
+         contentValues.put(REMINDER_TIMEINMILLIS, Utility.getTimeInMillis(time, -selectedReminderTime));
+         if (lastId == 0)
+            database.insert(TABLENAME_REMINDER, null, contentValues);
+         else
+            database.update(TABLENAME_REMINDER, contentValues, REMINDER_ID + "=" + Long.toString(lastId), null);
+      }
+   }
+
+   public static void deleteOldReminder() {
+      deleteOldReminder(openInternalDatabase());
+   }
+
+   private static void deleteOldReminder(SQLiteDatabase database) {
+      if (database != null) {
+         database.execSQL("DELETE FROM " + TABLENAME_REMINDER + " WHERE " + REMINDER_TIMEINMILLIS + "<" + System.currentTimeMillis());
+      }
    }
 }

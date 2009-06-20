@@ -1,32 +1,27 @@
 package de.misi.tvbrowser.activities.settings;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import de.misi.tvbrowser.R;
 
 public class SettingsDialog extends Activity {
 
-   private static final int MENU_SELECTGROUP = 0;
+   public static final String TVBROWSER_PREFERENCES = "tvbrowser_prefs";
 
    @Override
    protected void onCreate(Bundle bundle) {
-      super.onCreate(bundle);    //To change body of overridden methods use File | Settings | File Templates.
+      super.onCreate(bundle);
+      setContentView(R.layout.settings);
+      SharedPreferences preferences = getSharedPreferences(TVBROWSER_PREFERENCES, MODE_PRIVATE);
    }
 
    @Override
-   public boolean onCreateOptionsMenu(Menu menu) {
-      menu.addSubMenu(Menu.NONE, MENU_SELECTGROUP, Menu.NONE, R.string.settings_select_groups);
-      return true;
-   }
+   protected void onStop() {
+      super.onStop();
+      SharedPreferences preferences = getSharedPreferences(TVBROWSER_PREFERENCES, MODE_PRIVATE);
+      SharedPreferences.Editor editor = preferences.edit();
 
-   @Override
-   public boolean onOptionsItemSelected(MenuItem menuItem) {
-      switch(menuItem.getItemId()) {
-         case MENU_SELECTGROUP :
-            return true;
-      }
-      return super.onOptionsItemSelected(menuItem);
+      editor.commit();
    }
 }

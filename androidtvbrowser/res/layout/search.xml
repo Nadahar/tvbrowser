@@ -1,26 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-            android:orientation="vertical"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent">
 
-   <LinearLayout
-           android:orientation="vertical"
-           android:layout_width="fill_parent"
-           android:layout_height="wrap_content">
-      <TextView android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:text="@string/search_lbl_text"/>
-      <EditText android:id="@+id/search_text"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"/>
-      <Spinner android:id="@+id/search_searchtype"
-               android:layout_width="fill_parent"
-               android:layout_height="wrap_content"/>
-      <Button android:id="@+id/search_execute"
-              android:text="@string/search_start"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
               android:layout_width="fill_parent"
-              android:layout_height="wrap_content"/>
-   </LinearLayout>
-
-</ScrollView>
+              android:layout_height="fill_parent"
+              android:padding="10dp">
+   <TextView android:layout_width="fill_parent"
+             android:layout_height="wrap_content"
+             android:text="@string/search_lbl_text"/>
+   <EditText android:id="@+id/search_text"
+             android:layout_width="fill_parent"
+             android:layout_height="wrap_content"/>
+   <Spinner android:id="@+id/search_searchtype"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"/>
+   <CheckBox android:id="@+id/search_onlyfuture"
+             android:layout_width="fill_parent"
+             android:layout_height="wrap_content"
+             android:text="@string/search_onlyfuture"/>
+   <Button android:id="@+id/search_execute"
+           android:text="@string/search_start"
+           android:layout_width="fill_parent"
+           android:layout_height="wrap_content"/>
+</LinearLayout>

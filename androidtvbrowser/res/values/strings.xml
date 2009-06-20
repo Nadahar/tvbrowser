@@ -15,13 +15,13 @@
    <string name="menu_deletereminder">Delete reminder</string>
 
    <string name="settings_title">Settings</string>
-   <string name="settings_select_groups">Select groups</string>
 
    <string name="no_data_available">No data available. Please load data from your TVBrowser-Application on your PC.</string>
 
    <string name="search_title">Search broadcast</string>
    <string name="search_lbl_text">Search for</string>
    <string name="search_start">Search</string>
+   <string name="search_onlyfuture">Search only in the future</string>
    <string name="searchtype_onlytitle">Search only in title</string>
    <string name="searchtype_allfields">Search in all fields</string>
 
@@ -36,4 +36,30 @@
    <string name="info_lbl_website">Internet:</string>
 
    <string name="outputdateformat">MMM d, yyyy</string>
+
+   <string name="reminder_from">TVBrowser</string>
+   <string name="reminder_tickertext">%1$s is starting in %2$s minutes.</string>
+   <string name="reminder_tickertextmultiple">This reminds you on %1$d broadcasts.</string>
+
+   <string-array name="reminder_times">
+      <item>10 Minutes</item>
+      <item>30 Minutes</item>
+      <item>1 hour</item>
+      <item>12 hours</item>
+      <item>1 day</item>
+      <item>2 days</item>
+      <item>1 week</item>
+   </string-array>
+
+   <string name="info_format_black_white">Black and white</string>
+   <string name="info_format_4_3">4:3</string>
+   <string name="info_format_16_9">16:9</string>
+   <string name="info_format_audio_mono">mono</string>
+   <string name="info_format_audio_stereo">stereo</string>
+   <string name="info_format_audio_dolby_surround">Dolby surround</string>
+   <string name="info_format_audio_dolby_digital_5_1">Dolby digital 5.1</string>
+   <string name="info_format_audio_two_channel">Two channel tone</string>
+   <string name="info_format_aurally_handicaped">Aurally Handicapped</string>
+   <string name="info_format_live">Live</string>
+   <string name="info_format_original_with_subtitle">Original with subtitle</string>
 </resources>
