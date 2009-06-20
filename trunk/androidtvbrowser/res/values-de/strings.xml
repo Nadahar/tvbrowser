@@ -15,13 +15,13 @@
    <string name="menu_deletereminder">Erinnerung löschen</string>
 
    <string name="settings_title">Einstellungen</string>
-   <string name="settings_select_groups">Gruppen auswählen</string>
 
    <string name="no_data_available">Keine Daten vorhanden. Bitte laden Sie aktuelle Daten von Ihrer TVBrowser-Version Ihres PCs herunter.</string>
 
    <string name="search_title">Sendung suchen</string>
    <string name="search_lbl_text">Suchen nach</string>
    <string name="search_start">Suchen</string>
+   <string name="search_onlyfuture">Nur in der Zukunft suchen</string>
    <string name="searchtype_onlytitle">Nur im Titel suchen</string>
    <string name="searchtype_allfields">In allen Feldern suchen</string>
 
@@ -36,4 +36,17 @@
    <string name="info_lbl_website">Internet:</string>
 
    <string name="outputdateformat">dd.MM.yyyy</string>
+
+   <string name="reminder_tickertext">%1$s beginnt in %2$s Minuten.</string>
+   <string name="reminder_tickertextmultiple">%1$d Sendungen starten in nächster Zukunft.</string>
+
+   <string-array name="reminder_times">
+      <item>10 Minuten</item>
+      <item>30 Minuten</item>
+      <item>1 Stunde</item>
+      <item>12 Stunden</item>
+      <item>1 Tag</item>
+      <item>2 Tage</item>
+      <item>1 Woche</item>
+   </string-array>
 </resources>

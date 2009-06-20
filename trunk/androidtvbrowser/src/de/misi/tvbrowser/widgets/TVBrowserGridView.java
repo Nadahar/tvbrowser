@@ -1,10 +1,13 @@
 package de.misi.tvbrowser.widgets;
 
-import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.*;
-import android.util.AttributeSet;
-import android.view.*;
+import android.os.Handler;
+import android.util.Log;
+import android.view.ContextMenu;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
+import android.view.View;
 import de.misi.tvbrowser.R;
 import de.misi.tvbrowser.TVBrowser;
 import de.misi.tvbrowser.Utility;
@@ -43,40 +46,32 @@ public class TVBrowserGridView extends View implements View.OnCreateContextMenuL
     */
    private static final int TOUCH_MODE_HSCROLL = 0x40;
 
-   private static DrawConfiguration drawConfiguration = null;
+   private static DrawConfiguration drawConfiguration;
 
-   private TVBrowser parentActivity;
-   private ArrayList<Channel> channels = null;
-   private Bitmap mChannelNameBitmap = null;
-   private Canvas mChannelNameCanvas = null;
-   private Bitmap mBitmap = null;
-   private Canvas mCanvas = null;
-   private Rect mSrcRect = new Rect();
-   private Rect mDestRect = new Rect();
-   private boolean needRepaint = false;
-   private int visibleStartX = 0;
-   private int visibleStartY = 0;
-   private int scrollStartX = 0;
-   private int scrollStartY = 0;
-   private ContinueScroll continueScroll = new ContinueScroll();
+   private TVBrowser mParentActivity;
+   private ArrayList<Channel> mChannels;
+   private Bitmap mChannelNameBitmap;
+   private Canvas mChannelNameCanvas;
+   private Bitmap mBitmap;
+   private Canvas mCanvas;
+   private final Rect mSrcRect = new Rect();
+   private final Rect mDestRect = new Rect();
+   private boolean mNeedRepaint;
+   private int mVisibleStartX;
+   private int mVisibleStartY;
+   private int mScrollStartX;
+   private int mScrollStartY;
+   private final ContinueScroll mContinueScroll = new ContinueScroll();
    private int mTouchMode = TOUCH_MODE_INITIAL_STATE;
-   public Channel selectedChannel = null;
-   public Broadcast selectedBroadcast = null;
+   private Channel mSelectedChannel;
+   public Broadcast mSelectedBroadcast;
+   private Handler mHandler = new Handler();
+   private Ticker mTicker = new Ticker();
 
    public TVBrowserGridView(TVBrowser activity) {
       super(activity);
-      parentActivity = activity;
+      mParentActivity = activity;
       initialize(activity.getResources());
-   }
-
-   public TVBrowserGridView(Context context, AttributeSet attributeSet) {
-      super(context, attributeSet);
-      initialize(context.getResources());
-   }
-
-   public TVBrowserGridView(Context context, AttributeSet attributeSet, int i) {
-      super(context, attributeSet, i);
-      initialize(context.getResources());
    }
 
    private void initialize(Resources resources) {
@@ -84,23 +79,20 @@ public class TVBrowserGridView extends View implements View.OnCreateContextMenuL
          drawConfiguration = new DrawConfiguration();
          drawConfiguration.initialize(resources);
       }
-      Calendar now = Calendar.getInstance();
-      visibleStartX = Utility.getX(now);
-      needRepaint = true;
+      mVisibleStartX = Utility.getX(Calendar.getInstance());
+      mNeedRepaint = true;
       mTouchMode = TOUCH_MODE_INITIAL_STATE;
-      selectedBroadcast = null;
+      mSelectedBroadcast = null;
       setOnCreateContextMenuListener(this);
       setOnClickListener(this);
-   }
-
-   public ArrayList<Channel> getChannels() {
-      return channels;
+      mHandler.removeCallbacks(mTicker);
+      mHandler.postDelayed(mTicker, 20000);
    }
 
    public void setChannels(ArrayList<Channel> channels) {
-      this.channels = channels;
-      needRepaint = true;
-      selectedBroadcast = null;
+      mChannels = channels;
+      mNeedRepaint = true;
+      mSelectedBroadcast = null;
       invalidate();
    }
 
@@ -114,7 +106,7 @@ public class TVBrowserGridView extends View implements View.OnCreateContextMenuL
 
    private void remeasure(int width, int height) {
       drawConfiguration.bitmapWidth = width;
-      int bitmapHeight = (channels != null ? channels.size() * TEXTHEIGHT + 2 * channels.size() * HORIZONTAL_GAP : height) + TEXTHEIGHT;
+      int bitmapHeight = (mChannels != null ? mChannels.size() * TEXTHEIGHT + 2 * mChannels.size() * HORIZONTAL_GAP : height) + TEXTHEIGHT;
       if (bitmapHeight < height)
          bitmapHeight = height;
       drawConfiguration.bitmapHeight = bitmapHeight;
@@ -128,13 +120,13 @@ public class TVBrowserGridView extends View implements View.OnCreateContextMenuL
          mChannelNameBitmap.recycle();
       mChannelNameBitmap = Bitmap.createBitmap(CHANNELNAME_SIZE, drawConfiguration.bitmapHeight, Bitmap.Config.RGB_565);
       mChannelNameCanvas = new Canvas(mChannelNameBitmap);
-      needRepaint = true;
+      mNeedRepaint = true;
    }
 
    @Override
    protected void onDraw(Canvas canvas) {
       boolean doCopyBitmap = true;
-      if (needRepaint && mCanvas != null) {
+      if (mNeedRepaint && mCanvas != null) {
          mSrcRect.left = 0;
          mSrcRect.top = 0;
          mSrcRect.right = drawConfiguration.bitmapWidth;
@@ -145,30 +137,30 @@ public class TVBrowserGridView extends View implements View.OnCreateContextMenuL
          mCanvas.drawRect(mSrcRect, drawConfiguration.backgroundPaint);
          mChannelNameCanvas.drawRect(mSrcRect, drawConfiguration.headerBackground);
          Paint textPaint = drawConfiguration.headerTextColor;
-         if (channels != null) {
+         if (mChannels != null) {
             for (int i = 0; i < 25; i++) {
                int x = i * 60 * MINUTE_WIDTH;
-               if (x >= visibleStartX && x < visibleStartX + drawConfiguration.bitmapWidth) {
+               if (x >= mVisibleStartX && x < mVisibleStartX + drawConfiguration.bitmapWidth) {
                   String value = Integer.toString(i);
                   float measure = textPaint.measureText(value);
-                  mCanvas.drawText(value, x - measure / 2 - visibleStartX, TEXTHEIGHT + HORIZONTAL_GAP, textPaint);
+                  mCanvas.drawText(value, x - measure / 2 - mVisibleStartX, TEXTHEIGHT + HORIZONTAL_GAP, textPaint);
                }
             }
             int y = TEXTHEIGHT + 2 * HORIZONTAL_GAP;
-            int visibleEndX = (visibleStartX + drawConfiguration.bitmapWidth) / MINUTE_WIDTH;
+            int visibleEndX = (mVisibleStartX + drawConfiguration.bitmapWidth) / MINUTE_WIDTH;
             Calendar now = Calendar.getInstance();
             long nowInMillis = now.getTimeInMillis();
             int nowx = Utility.getX(now);
-            for (Channel channel : channels) {
+            for (Channel channel : mChannels) {
                channel.drawChannelNames(mChannelNameCanvas, drawConfiguration, y);
-               channel.drawBroadcasts(mCanvas, drawConfiguration, y, visibleStartX / MINUTE_WIDTH, visibleEndX, nowInMillis, nowx, visibleStartX, selectedBroadcast);
+               channel.drawBroadcasts(mCanvas, drawConfiguration, y, mVisibleStartX / MINUTE_WIDTH, visibleEndX, nowInMillis, nowx, mVisibleStartX, mSelectedBroadcast);
                y += TEXTHEIGHT + 2 * HORIZONTAL_GAP;
             }
          } else {
             doCopyBitmap = false;
             canvas.drawText(getResources().getString(R.string.no_data_available), 0, 0, textPaint);
          }
-         needRepaint = false;
+         mNeedRepaint = false;
       }
       if (doCopyBitmap)
          copyBitmap(canvas);
@@ -179,8 +171,8 @@ public class TVBrowserGridView extends View implements View.OnCreateContextMenuL
          Rect src = mSrcRect;
          Rect dest = mDestRect;
 
-         src.top = visibleStartY;
-         src.bottom = visibleStartY + drawConfiguration.screenHeight;
+         src.top = mVisibleStartY;
+         src.bottom = mVisibleStartY + drawConfiguration.screenHeight;
          src.left = 0;
          src.right = drawConfiguration.screenWidth - CHANNELNAME_SIZE;
 
@@ -210,8 +202,8 @@ public class TVBrowserGridView extends View implements View.OnCreateContextMenuL
       if (mTouchMode == TOUCH_MODE_DOWN) {
          int absDistanceX = Math.abs(distanceX);
          int absDistanceY = Math.abs(distanceY);
-         scrollStartX = visibleStartX;
-         scrollStartY = visibleStartY;
+         mScrollStartX = mVisibleStartX;
+         mScrollStartY = mVisibleStartY;
          if (absDistanceY >= 2 * absDistanceX) {
             mTouchMode = TOUCH_MODE_VSCROLL;
          } else {
@@ -219,43 +211,45 @@ public class TVBrowserGridView extends View implements View.OnCreateContextMenuL
          }
       }
       if ((mTouchMode & TOUCH_MODE_VSCROLL) != 0) {
-         visibleStartY = scrollStartY + distanceY;
-         if (visibleStartY < 0)
-            visibleStartY = 0;
-         if (visibleStartY > drawConfiguration.bitmapHeight - drawConfiguration.screenHeight)
-            visibleStartY = drawConfiguration.bitmapHeight - drawConfiguration.screenHeight;
+         mVisibleStartY = mScrollStartY + distanceY;
+         if (mVisibleStartY < 0)
+            mVisibleStartY = 0;
+         if (mVisibleStartY > drawConfiguration.bitmapHeight - drawConfiguration.screenHeight)
+            mVisibleStartY = drawConfiguration.bitmapHeight - drawConfiguration.screenHeight;
       }
       if ((mTouchMode & TOUCH_MODE_HSCROLL) != 0) {
-         visibleStartX = scrollStartX + distanceX;
+         mVisibleStartX = mScrollStartX + distanceX;
          checkForValidXPosition();
-         needRepaint = true;
+         mNeedRepaint = true;
       }
       invalidate();
    }
 
    private void checkForValidXPosition() {
-      if (visibleStartX < 0) {
-         visibleStartX = 0;
-      } else if (visibleStartX > 24 * 60 * MINUTE_WIDTH) {
-         visibleStartX = 24 * 60 * MINUTE_WIDTH - drawConfiguration.bitmapWidth;
+      if (mVisibleStartX < 0) {
+         mVisibleStartX = 0;
+      } else if (mVisibleStartX > 24 * 60 * MINUTE_WIDTH) {
+         mVisibleStartX = 24 * 60 * MINUTE_WIDTH - drawConfiguration.bitmapWidth;
       }
    }
 
    public void doFling(MotionEvent motionEvent1, MotionEvent motionEvent2, float velocityX, float velocityY) {
       mTouchMode = TOUCH_MODE_INITIAL_STATE;
-      continueScroll.init((int) velocityX / 20);
-      post(continueScroll);
+      mContinueScroll.init((int) velocityX / 20);
+      post(mContinueScroll);
    }
 
    public void doDown(MotionEvent motionEvent) {
       mTouchMode = TOUCH_MODE_DOWN;
-      getHandler().removeCallbacks(continueScroll);
+      getHandler().removeCallbacks(mContinueScroll);
    }
 
    public void doShowPress(MotionEvent motionEvent) {
-      selectedChannel = getChannelByAbsolutePosition((int) motionEvent.getY());
-      selectedBroadcast = getBroadcastByAbsolutePosition(selectedChannel, (int) motionEvent.getX());
-      needRepaint = true;
+      mSelectedChannel = getChannelByAbsolutePosition((int) motionEvent.getY());
+      mSelectedBroadcast = getBroadcastByAbsolutePosition(mSelectedChannel, (int) motionEvent.getX());
+      if (mSelectedChannel != null && mSelectedBroadcast != null)
+         Log.d(TVBrowser.LOGTAG, "doShowPress: " + mSelectedChannel.mName + ", " + mSelectedBroadcast.mTitle);
+      mNeedRepaint = true;
       invalidate();
    }
 
@@ -266,10 +260,10 @@ public class TVBrowserGridView extends View implements View.OnCreateContextMenuL
    private Channel getChannelByAbsolutePosition(int y) {
       y = y - TEXTHEIGHT - 2 * HORIZONTAL_GAP;
       if (y > 0) {
-         y += visibleStartY;
+         y += mVisibleStartY;
          int channelId = (y / (TEXTHEIGHT + 2 * HORIZONTAL_GAP));
-         if (channelId >= 0 && channels.size() > channelId)
-            return channels.get(channelId);
+         if (channelId >= 0 && mChannels.size() > channelId)
+            return mChannels.get(channelId);
       }
       return null;
    }
@@ -278,7 +272,7 @@ public class TVBrowserGridView extends View implements View.OnCreateContextMenuL
       if (channel != null) {
          x = x - CHANNELNAME_SIZE - 2 * VERTICAL_GAP;
          if (x > 0) {
-            x += visibleStartX;
+            x += mVisibleStartX;
             x /= MINUTE_WIDTH;
             return channel.getBroadcastByPosition(x);
          }
@@ -292,21 +286,21 @@ public class TVBrowserGridView extends View implements View.OnCreateContextMenuL
          case MotionEvent.ACTION_DOWN:
          case MotionEvent.ACTION_MOVE:
          case MotionEvent.ACTION_CANCEL:
-            parentActivity.gestureDetector.onTouchEvent(motionEvent);
+            mParentActivity.mGestureDetector.onTouchEvent(motionEvent);
             return true;
          case MotionEvent.ACTION_UP:
-            parentActivity.gestureDetector.onTouchEvent(motionEvent);
+            mParentActivity.mGestureDetector.onTouchEvent(motionEvent);
             mTouchMode = TOUCH_MODE_INITIAL_STATE;
             return true;
          default:
-            return parentActivity.gestureDetector.onTouchEvent(motionEvent) || super.onTouchEvent(motionEvent);
+            return mParentActivity.mGestureDetector.onTouchEvent(motionEvent) || super.onTouchEvent(motionEvent);
       }
    }
 
    public void setVisiblePosition(int hour, int minute) {
-      visibleStartX = Utility.getX(hour, minute) - drawConfiguration.bitmapWidth / 2;
+      mVisibleStartX = Utility.getX(hour, minute) - drawConfiguration.bitmapWidth / 2;
       checkForValidXPosition();
-      needRepaint = true;
+      mNeedRepaint = true;
       invalidate();
    }
 
@@ -316,9 +310,9 @@ public class TVBrowserGridView extends View implements View.OnCreateContextMenuL
          case KeyEvent.KEYCODE_DPAD_CENTER:
             break;
          case KeyEvent.KEYCODE_DPAD_LEFT:
-//            if(selectedBroadcast==null)
-//               selectedBroadcast = findUpperLeftBroadcast();
-//            needRepaint = true;
+//            if(mSelectedBroadcast==null)
+//               mSelectedBroadcast = findUpperLeftBroadcast();
+//            mNeedRepaint = true;
 //            invalidate();
             break;
       }
@@ -326,18 +320,11 @@ public class TVBrowserGridView extends View implements View.OnCreateContextMenuL
    }
 
    public void onCreateContextMenu(ContextMenu contextMenu, View view, ContextMenu.ContextMenuInfo contextMenuInfo) {
-      if (selectedBroadcast != null) {
-         contextMenu.setHeaderTitle(selectedBroadcast.title);
-         contextMenu.add(Menu.NONE, TVBrowser.MENU_SHOWDETAIL, Menu.NONE, R.string.menu_showdetail);
-         contextMenu.add(Menu.NONE, TVBrowser.MENU_SEARCHFORREPEAT, Menu.NONE, R.string.menu_searchforrepeat);
-         contextMenu.add(Menu.NONE, TVBrowser.MENU_ADDREMINDER, Menu.NONE, R.string.menu_addreminder);
-         contextMenu.add(Menu.NONE, TVBrowser.MENU_EDITREMINDER, Menu.NONE, R.string.menu_editreminder);
-         contextMenu.add(Menu.NONE, TVBrowser.MENU_DELETEREMINDER, Menu.NONE, R.string.menu_deletereminder);
-      }
+      Utility.createBroadcastContextMenu(mSelectedBroadcast, contextMenu);
    }
 
    public void onClick(View view) {
-      //To change body of implemented methods use File | Settings | File Templates.
+      //Todo change body of implemented methods use File | Settings | File Templates.
    }
 
    public class DrawConfiguration {
@@ -347,16 +334,16 @@ public class TVBrowserGridView extends View implements View.OnCreateContextMenuL
       private int bitmapWidth;
       public int bitmapHeight;
 
-      public Paint backgroundPaint = new Paint();
-      public Paint borderPaint = new Paint();
-      public Paint selectedBorderPaint = new Paint();
-      public Paint textPaint = new Paint();
-      public Paint oldTextPaint = new Paint();
-      public Paint oldBackgroundPaint = new Paint();
-      public Paint currentEventOldTime = new Paint();
-      public Paint currentEventNewTime = new Paint();
-      public Paint headerBackground = new Paint();
-      public Paint headerTextColor = new Paint();
+      public final Paint backgroundPaint = new Paint();
+      public final Paint borderPaint = new Paint();
+      public final Paint selectedBorderPaint = new Paint();
+      public final Paint textPaint = new Paint();
+      public final Paint oldTextPaint = new Paint();
+      public final Paint oldBackgroundPaint = new Paint();
+      public final Paint currentEventOldTime = new Paint();
+      public final Paint currentEventNewTime = new Paint();
+      public final Paint headerBackground = new Paint();
+      public final Paint headerTextColor = new Paint();
 
       private void initialize(Resources resources) {
          backgroundPaint.setColor(resources.getColor(R.color.event_background));
@@ -429,24 +416,33 @@ public class TVBrowserGridView extends View implements View.OnCreateContextMenuL
             }
          }
          if (mSignDeltaX == 1) {
-            visibleStartX -= mAbsDeltaX;
+            mVisibleStartX -= mAbsDeltaX;
          } else {
-            visibleStartX += mAbsDeltaX;
+            mVisibleStartX += mAbsDeltaX;
          }
-         if (visibleStartX < 0) {
-            visibleStartX = 0;
+         if (mVisibleStartX < 0) {
+            mVisibleStartX = 0;
             mAbsDeltaX = 0;
-         } else if (visibleStartX > 24 * 60 * MINUTE_WIDTH) {
-            visibleStartX = 24 * 60 * MINUTE_WIDTH - drawConfiguration.bitmapWidth;
+         } else if (mVisibleStartX > 24 * 60 * MINUTE_WIDTH) {
+            mVisibleStartX = 24 * 60 * MINUTE_WIDTH - drawConfiguration.bitmapWidth;
             mAbsDeltaX = 0;
          }
-         needRepaint = true;
+         mNeedRepaint = true;
          if (mAbsDeltaX > 0) {
             postDelayed(this, SCROLL_REPEAT_INTERVAL);
          } else {
-            needRepaint = true;
+            mNeedRepaint = true;
          }
          invalidate();
+      }
+   }
+
+   private class Ticker implements Runnable {
+
+      public void run() {
+         Log.d(TVBrowser.LOGTAG, "tick");
+         invalidate();
+         mHandler.postAtTime(this, System.currentTimeMillis() + 10000);
       }
    }
 }
