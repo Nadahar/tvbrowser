@@ -69,6 +69,7 @@ public final class ImdbPlugin extends Plugin {
 
   // Empty Rating for Cache
   private static final ImdbRating DUMMY_RATING = new ImdbRating(0, 0, "", "");
+  private static final ImdbRating EXAMPLE_RATING = new ImdbRating(70, 123, "123456789", null);
 
   private static ImdbPlugin instance;
 
@@ -111,6 +112,10 @@ public final class ImdbPlugin extends Plugin {
   }
 
   protected ImdbRating getRatingFor(final Program program) {
+    // have extra rating for example program to avoid full database initialization when only getting the plugin icon
+    if (Plugin.getPluginManager().getExampleProgram().equals(program)) {
+      return EXAMPLE_RATING;
+    }
     ImdbRating rating = null;
     if (!mExcludedChannels.contains(program.getChannel())) {
       final String cacheKey = getCacheKey(program);
