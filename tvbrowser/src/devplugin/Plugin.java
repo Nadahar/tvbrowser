@@ -27,6 +27,7 @@ package devplugin;
 
 import java.awt.Dimension;
 import java.awt.Frame;
+import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.io.File;
@@ -85,7 +86,24 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
    * The waiting time for single click performing.
    * @since 2.7
    */
-  public static final int SINGLE_CLICK_WAITING_TIME = 200;
+  public static final int SINGLE_CLICK_WAITING_TIME;
+  
+  static {
+    int doubleClickTime = 200;
+    try {
+      Object property = Toolkit.getDefaultToolkit().getDesktopProperty("awt.multiClickInterval");
+      if (property != null) {
+        doubleClickTime = (Integer) property;
+      }
+    } catch (Exception e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    if (doubleClickTime < 50 || doubleClickTime > 2000) {
+      doubleClickTime = 200;
+    }
+    SINGLE_CLICK_WAITING_TIME = doubleClickTime;
+  }
   
   /** The localizer used by this class. */
   private static final util.ui.Localizer mLocalizer
