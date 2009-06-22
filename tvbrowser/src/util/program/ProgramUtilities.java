@@ -49,15 +49,15 @@ public class ProgramUtilities {
    * @return True if the program runs.
    */
   public static boolean isOnAir(Program p) {
-    int time = IOUtilities.getMinutesAfterMidnight();
     Date currentDate = Date.getCurrentDate();
-    if (currentDate.addDays(-1).compareTo(p.getDate()) == 0) {
-      time += 24 * 60;
-    }
     if (currentDate.compareTo(p.getDate()) < 0 || p.getDate().addDays(1).compareTo(currentDate) < 0) {
       return false;
     }
 
+    int time = IOUtilities.getMinutesAfterMidnight();
+    if (currentDate.addDays(-1).compareTo(p.getDate()) == 0) {
+      time += 24 * 60;
+    }
     if (p.getStartTime() <= time && (p.getStartTime() + p.getLength()) > time) {
       return true;
     }
