@@ -438,10 +438,18 @@ public class TVRaterPlugin extends devplugin.Plugin {
     }
 
     if ((program.getTitle() != null) && (program.getLength() <= 0)) {
-      program.getChannel();
+      Channel channel = program.getChannel();
+      if (channel == null) {
+        return false;
+      }
+      
+      Date date = program.getDate();
+      if (date == null) {
+        return false;
+      }
 
       Iterator<Program> it = Plugin.getPluginManager().getChannelDayProgram(
-          program.getDate(), program.getChannel());
+          program.getDate(), channel);
 
       Program last = null;
 
