@@ -155,7 +155,7 @@ public class WebAddressEditDialog extends JDialog {
         
     panel.add(test, cc.xy(5, 3));
 
-    JButton help = new JButton(mLocalizer.msg("help", "help"));
+    JButton help = new JButton(Localizer.getLocalization(Localizer.I18N_HELP));
     
     help.addActionListener(new ActionListener() {
 
