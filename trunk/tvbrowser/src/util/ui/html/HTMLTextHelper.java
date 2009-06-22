@@ -42,10 +42,8 @@ public class HTMLTextHelper {
    */
   public static String convertTextToHtml(String text, boolean createLinks) {
     // remove Javascript
-
     text = text.replaceAll("(?i)<script.*?(>.*?</script>|/>)", "");
 
-    // Disarm HTML entities
     text = IOUtilities.replace(text.trim(), "<", "&lt;");
     text = IOUtilities.replace(text.trim(), ">", "&gt;");
 
@@ -55,7 +53,7 @@ public class HTMLTextHelper {
     // Create links for URLs
     if (createLinks) {
       
-      Matcher matcher = Pattern.compile("(http://|www\\.)[^\\s<]*").matcher(text);
+      Matcher matcher = Pattern.compile("(http://|www\\.)[^\\s<\"']*").matcher(text);
       
       StringBuilder result = new StringBuilder();
       
