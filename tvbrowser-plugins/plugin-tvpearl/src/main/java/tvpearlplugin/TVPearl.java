@@ -269,7 +269,7 @@ public class TVPearl
 		return result.toArray(new TVPProgram[result.size()]);
 	}
 
-	public void recheckProgramID()
+	public synchronized void recheckProgramID()
 	{
 		for (TVPProgram program : mProgramList)
 		{
