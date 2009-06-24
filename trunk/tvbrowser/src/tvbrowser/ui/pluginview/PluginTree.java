@@ -59,6 +59,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.Enumeration;
 import java.util.Vector;
 
 import javax.swing.Action;
@@ -174,11 +175,13 @@ public class PluginTree extends JTree implements DragGestureListener,
    */
   private int getLeafCount(TreeNode node) {
     int count = 0;
-    for (int i = 0; i < node.getChildCount(); i++) {
-      if (node.getChildAt(i).isLeaf()) {
+    for (Enumeration children = node.children(); children.hasMoreElements();) {
+      TreeNode child = (TreeNode) children.nextElement();
+      if (child.isLeaf()) {
         count++;
-      } else {
-        count += getLeafCount(node.getChildAt(i));
+      }
+      else {
+        count += getLeafCount(child); 
       }
     }
     return count;
