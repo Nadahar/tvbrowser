@@ -67,6 +67,19 @@ public class PluginTreeNode implements Comparable<PluginTreeNode> {
   private boolean mGroupingByDate;
   private boolean mGroupWeekly;
 
+  /**
+   * cache todays date for update of all tree nodes 
+   */
+  private static Date mNodeToday;
+  /**
+   * cache tomorrows date for update of all tree nodes
+   */
+  private static Date mNodeTomorrow;
+  /**
+   * cache yesterdays date for update of all tree nodes
+   */
+  private static Date mNodeYesterday;
+
   private PluginTreeNode(final int type, final Object o) {
     mChildNodes = null; // do not initialize to save memory
     mNodeType = type;
@@ -330,7 +343,6 @@ public class PluginTreeNode implements Comparable<PluginTreeNode> {
 
     Map<Date, ArrayList<PluginTreeNode>> dateMap = new HashMap<Date, ArrayList<PluginTreeNode>>();  // key: date; value: ArrayList of ProgramItem objects
     Iterator<PluginTreeNode> it = mChildNodes.iterator();
-    Date currentDate = Date.getCurrentDate();
     while (it.hasNext()) {
       PluginTreeNode n = it.next();
       if (!n.isLeaf()) {
@@ -345,7 +357,7 @@ public class PluginTreeNode implements Comparable<PluginTreeNode> {
       else {
       	Date date = ((ProgramItem) n.getUserObject()).getDate();
                 
-        if(date.addDays(1).compareTo(currentDate) >= 0) {
+        if(date.compareTo(mNodeYesterday) >= 0) {
           ArrayList<PluginTreeNode> list = dateMap.get(date);
           if (list == null) {
             list = new ArrayList<PluginTreeNode>();
@@ -362,9 +374,6 @@ public class PluginTreeNode implements Comparable<PluginTreeNode> {
     Date[] dates = new Date[keySet.size()];
     keySet.toArray(dates);
     Arrays.sort(dates);
-    Date today = currentDate;
-    Date nextDay = today.addDays(1);
-    Date yesterDay = today.addDays(-1);
     Node node=null;
     String lastDateStr="";
     int numPrograms = 0;
@@ -377,21 +386,21 @@ public class PluginTreeNode implements Comparable<PluginTreeNode> {
     
     for (int i=0; i<dates.length; i++) {
       String dateStr;
-      if (yesterDay.equals(dates[i])) {
+      if (mNodeYesterday.equals(dates[i])) {
         dateStr = Localizer.getLocalization(Localizer.I18N_YESTERDAY);
         isShowingWeekNodes = false;
       }
-      else if (today.equals(dates[i])) {
+      else if (mNodeToday.equals(dates[i])) {
         dateStr = Localizer.getLocalization(Localizer.I18N_TODAY);
         isShowingWeekNodes = false;
       }
-      else if (nextDay.equals(dates[i])) {
+      else if (mNodeTomorrow.equals(dates[i])) {
         dateStr = Localizer.getLocalization(Localizer.I18N_TOMORROW);
         isShowingWeekNodes = false;
       }
       else {
         if (createWeekNodes) {
-          int weeks = dates[i].getNumberOfDaysSince(today) / 7;
+          int weeks = dates[i].getNumberOfDaysSince(mNodeToday) / 7;
           if (weeks <= 3) {
             dateStr = mLocalizer.msg("weeks."+weeks,"in {0} weeks",weeks);
           }
@@ -464,7 +473,10 @@ public class PluginTreeNode implements Comparable<PluginTreeNode> {
    * nodes of the (sub-)tree
    */
   public synchronized void update() {
-
+    // calculate dates only once instead of for each node
+    mNodeToday = Date.getCurrentDate();
+    mNodeTomorrow = mNodeToday.addDays(1);
+    mNodeYesterday = mNodeToday.addDays(-1);
     if (mGroupingByDate) {
       createDateNodes();
     }
