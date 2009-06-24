@@ -274,8 +274,13 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
               + action.getValue(Action.NAME), action);
           String tooltip = (String) action.getValue(Action.SHORT_DESCRIPTION);
           if (tooltip == null) {
-            action.putValue(Action.SHORT_DESCRIPTION, plugin
+            if (subMenus.length == 1) {
+              action.putValue(Action.SHORT_DESCRIPTION, plugin
                 .getButtonActionDescription());
+            }
+            else {
+              action.putValue(Action.SHORT_DESCRIPTION, action.getValue(Action.NAME));
+            }
           }
         }
       }
