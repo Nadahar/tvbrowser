@@ -412,6 +412,7 @@ public class PluginManagerImpl implements PluginManager {
           "Lorimar Television");
       prog.setTextField(ProgramFieldType.CAMERA_TYPE, "Jon Doe");
       prog.setTextField(ProgramFieldType.CUTTER_TYPE, "Jon Doe");
+      prog.setIntField(ProgramFieldType.RATING_TYPE, 70);
       mExampleProgram = prog;
     }
 
