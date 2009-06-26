@@ -27,12 +27,14 @@
 package tvbrowser.extras.reminderplugin;
 
 import java.awt.BorderLayout;
+import java.awt.GridLayout;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
+import java.util.AbstractList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -108,17 +110,9 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
    * <p>
    * Is <code>null</code> when the reminder is shown in a dialog.
    */
-/*  private JFrame mFrame;
-  /**
-   * The dialog that shows this reminder. The reminder is shown in a frame if
-   * there is a modal dialog open.
-   * <p>
-   * Is <code>null</code> when the reminder is shown in a frame.
-   */
   private JDialog mDialog;
 
   private ReminderList mReminderList;
-  private Program mProgram;
 
   private JComboBox mReminderCB;
   private JButton mCloseBt;
@@ -128,17 +122,21 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
   private int mRemainingSecs;
 
   private JLabel mHeader;
-  private ReminderListItem mListItem;
+  private AbstractList<ReminderListItem> mListItem;
 
   /**
    * Creates a new instance of ReminderFrame.
-   *
-   * @param list The list of all reminders.
-   * @param item The reminder to show.
-   * @param autoCloseSecs The number seconds to wait before auto-closing the
-   *                      window. -1 disables auto-closing.
+   * 
+   * @param list
+   *          The list of all reminders.
+   * @param reminders
+   *          The reminders to show.
+   * @param autoCloseSecs
+   *          The number seconds to wait before auto-closing the window. -1
+   *          disables auto-closing.
    */
-  public ReminderFrame(final ReminderList list, final ReminderListItem item,
+  public ReminderFrame(final ReminderList list,
+      final AbstractList<ReminderListItem> reminders,
       final int autoCloseSecs)
   {
     // Check whether we have to use a frame or dialog
@@ -151,17 +149,19 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
     String title = mLocalizer.msg("title", "Reminder");
     
     // if this is a favorite, change the title to the name of the favorite
-    boolean found = false;
-    for (Favorite favorite : FavoriteTreeModel.getInstance().getFavoriteArr()) {
-      for (Program program : favorite.getPrograms()) {
-        if (program.equals(item.getProgram())) {
-          title = favorite.getName();
-          found = true;
+    if (reminders.size() == 1) {
+      boolean found = false;
+      for (Favorite favorite : FavoriteTreeModel.getInstance().getFavoriteArr()) {
+        for (Program program : favorite.getPrograms()) {
+          if (program.equals(reminders.get(0).getProgram())) {
+            title = favorite.getName();
+            found = true;
+            break;
+          }
+        }
+        if (found) {
           break;
         }
-      }
-      if (found) {
-        break;
       }
     } 
 
@@ -169,58 +169,63 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
     UiUtilities.registerForClosing(this);
     
     mReminderList = list;
-    mListItem = item;
-    mProgram = item.getProgram();
-    
-    mReminderList.blockProgram(mListItem.getProgram());
+    mListItem = reminders;
     
     final JPanel jcontentPane = new JPanel(new BorderLayout(0, 10));
     mDialog.setContentPane(jcontentPane);
+    final JPanel programsPanel = new JPanel(new GridLayout(0, 1));
     
     jcontentPane.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
     final JPanel progPanel = new JPanel(new BorderLayout(5, 10));
 
-    // text label
-    String msg;
-    final int progMinutesAfterMidnight = mProgram.getHours() * 60
-        + mProgram.getMinutes();
-    int remainingMinutes = 0;
-    final Date today = Date.getCurrentDate();
-    if (today.compareTo(mProgram.getDate())>=0 && IOUtilities.getMinutesAfterMidnight() > progMinutesAfterMidnight) {
-      msg = updateRunningTime();
-    }
-    else {
-      msg = mLocalizer.msg("soonStarts", "Soon starts");
-      remainingMinutes = ReminderPlugin.getTimeToProgramStart(mProgram);
-    }
-    
-    progPanel.add(mHeader = new JLabel(msg), BorderLayout.NORTH);
-    
-    final JPanel channelPanel = new JPanel(new BorderLayout());
-    if (mProgram.getLength() > 0) {
-      final JLabel endTime = new JLabel(mLocalizer.msg("endTime", "until {0}",
-          mProgram.getEndTimeString()));
-      channelPanel.add(endTime, BorderLayout.NORTH);
-    }
-    final JLabel channelLabel = new JLabel(mProgram.getChannel().getName());
-    channelLabel.setIcon(UiUtilities.createChannelIcon(mProgram.getChannel().getIcon()));
-    channelLabel.setVerticalTextPosition(SwingConstants.BOTTOM);
-    channelLabel.setHorizontalTextPosition(SwingConstants.CENTER);
-    channelPanel.add(channelLabel, BorderLayout.CENTER);
-    progPanel.add(channelPanel,BorderLayout.EAST);
-    
-    final ProgramPanel panel = new ProgramPanel(mProgram,
-        new ProgramPanelSettings(new PluginPictureSettings(
-            PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE), false,
-            ProgramPanelSettings.X_AXIS));
-    // register panel with tooltip manager
-    panel.setToolTipText("");
-    panel.addPluginContextMenuMouseListener(ReminderPluginProxy.getInstance());
-    progPanel.add(panel, BorderLayout.CENTER);
+    int remainingMinutesMax = 0;
+    for (ReminderListItem reminder : reminders) {
+      Program program = reminder.getProgram();
+      mReminderList.blockProgram(program);
+      // text label
+      String msg;
+      final int progMinutesAfterMidnight = program.getStartTime();
+      int remainingMinutes = 0;
+      final Date today = Date.getCurrentDate();
+      if (today.compareTo(program.getDate()) >= 0
+          && IOUtilities.getMinutesAfterMidnight() > progMinutesAfterMidnight) {
+        msg = updateRunningTime();
+      } else {
+        msg = mLocalizer.msg("soonStarts", "Soon starts");
+        remainingMinutes = ReminderPlugin.getTimeToProgramStart(program);
+      }
+      remainingMinutesMax = Math.max(remainingMinutesMax, remainingMinutes);
+      progPanel.add(mHeader = new JLabel(msg), BorderLayout.NORTH);
 
-    String comment = item.getComment();
-    if (comment != null && comment.length() > 0) {
-      progPanel.add(new JLabel(comment), BorderLayout.SOUTH);
+      final JPanel channelPanel = new JPanel(new BorderLayout());
+      if (program.getLength() > 0) {
+        final JLabel endTime = new JLabel(mLocalizer.msg("endTime",
+            "until {0}", program.getEndTimeString()));
+        channelPanel.add(endTime, BorderLayout.NORTH);
+      }
+      final JLabel channelLabel = new JLabel(program.getChannel().getName());
+      channelLabel.setIcon(UiUtilities.createChannelIcon(program.getChannel()
+          .getIcon()));
+      channelLabel.setVerticalTextPosition(SwingConstants.BOTTOM);
+      channelLabel.setHorizontalTextPosition(SwingConstants.CENTER);
+      channelPanel.add(channelLabel, BorderLayout.CENTER);
+      progPanel.add(channelPanel, BorderLayout.EAST);
+
+      final ProgramPanel panel = new ProgramPanel(program,
+          new ProgramPanelSettings(new PluginPictureSettings(
+              PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE), false,
+              ProgramPanelSettings.X_AXIS));
+      // register panel with tooltip manager
+      panel.setToolTipText("");
+      panel
+          .addPluginContextMenuMouseListener(ReminderPluginProxy.getInstance());
+      progPanel.add(panel, BorderLayout.CENTER);
+
+      String comment = reminder.getComment();
+      if (comment != null && comment.length() > 0) {
+        progPanel.add(new JLabel(comment), BorderLayout.SOUTH);
+      }
+      programsPanel.add(progPanel);
     }
 
     // initialize close button with full text, so it can show the countdown later without size problems
@@ -234,9 +239,16 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
     mCloseBt = new JButton(getCloseButtonText(seconds));
     mDialog.getRootPane().setDefaultButton(mCloseBt);
     
+    for (ReminderListItem reminder : reminders) {
+      if (reminder.getMinutes() < remainingMinutesMax) {
+        remainingMinutesMax = reminder.getMinutes();
+      }
+    }
+    
     mReminderCB = new JComboBox();
     int i=0;
-    while(i<REMIND_VALUE_ARR.length && REMIND_VALUE_ARR[i]<item.getMinutes() && REMIND_VALUE_ARR[i]< remainingMinutes) {
+    while (i < REMIND_VALUE_ARR.length
+        && REMIND_VALUE_ARR[i] < remainingMinutesMax) {
       mReminderCB.addItem(REMIND_MSG_ARR[i]);
       i++;
     }
@@ -247,7 +259,7 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
     btnPanel.add(mReminderCB, BorderLayout.WEST);
     btnPanel.add(mCloseBt, BorderLayout.EAST);
     
-    jcontentPane.add(progPanel,BorderLayout.NORTH);
+    jcontentPane.add(programsPanel, BorderLayout.NORTH);
     jcontentPane.add(btnPanel,BorderLayout.SOUTH);
     
     mCloseBt.addActionListener(new ActionListener() {
@@ -293,15 +305,19 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
       }
     });
     
-    mProgram.addChangeListener(this);
+    for (ReminderListItem reminder : reminders) {
+      reminder.getProgram().addChangeListener(this);
+    }
   }
 
 
   private String updateRunningTime() {
     String msg = null;
-    if(mProgram.isOnAir()) {
-      final int progMinutesAfterMidnight = mProgram.getHours() * 60
-          + mProgram.getMinutes();
+    ReminderListItem reminder = mListItem.get(0);
+    Program program = reminder.getProgram();
+    if (program.isOnAir()) {
+      final int progMinutesAfterMidnight = program.getHours() * 60
+          + program.getMinutes();
       int minutesRunning = IOUtilities.getMinutesAfterMidnight() - progMinutesAfterMidnight;
       if (minutesRunning < 0) {
         minutesRunning += 24 * 60;
@@ -315,7 +331,7 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
       else {
         msg = mLocalizer.msg("alreadyRunningMinutes", "Already running {0} minutes", minutesRunning);
       }
-    } else if(mProgram.isExpired()) {
+    } else if (program.isExpired()) {
       msg = mLocalizer.msg("ended", "Program elapsed");
     }
     else {
@@ -375,13 +391,18 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
   }
   
   public void close() {
-    mReminderList.removeWithoutChecking(mListItem.getProgramItem());
+    final int minutes = REMIND_VALUE_ARR[mReminderCB.getSelectedIndex()];
+    for (ReminderListItem reminder : mListItem) {
+      mReminderList.removeWithoutChecking(reminder.getProgramItem());
+      if (minutes != -1) {
+        Program program = reminder.getProgram();
+        mReminderList.add(program, new ReminderContent(minutes, reminder
+            .getComment()));
+        mReminderList.unblockProgram(program);
+      }
+    }
     
-    final int inx = mReminderCB.getSelectedIndex();
-    final int minutes = REMIND_VALUE_ARR[inx];
     if (minutes != -1) {
-      mReminderList.add(mProgram, new ReminderContent(minutes, mListItem.getComment()));
-      mReminderList.unblockProgram(mProgram);
       ReminderPlugin.getInstance().updateRootNode(true);
     }
     
