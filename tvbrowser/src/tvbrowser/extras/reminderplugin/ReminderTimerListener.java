@@ -34,6 +34,7 @@
 package tvbrowser.extras.reminderplugin;
 
 import java.awt.Toolkit;
+import java.util.ArrayList;
 import java.util.Properties;
 
 import javax.swing.SwingUtilities;
@@ -62,8 +63,17 @@ public class ReminderTimerListener {
     mReminderList = reminderList;
   }
 
-  public void timeEvent(ReminderListItem item) {
-    if (item.getProgramItem().getProgram().isExpired()){
+  public void timeEvent(ArrayList<ReminderListItem> reminders) {
+    // filter expired items, just for safety
+    ArrayList<ReminderListItem> notExpired = new ArrayList<ReminderListItem>(
+        reminders.size());
+    for (ReminderListItem item : reminders) {
+      if (!item.getProgramItem().getProgram().isExpired()) {
+        notExpired.add(item);
+      }
+    }
+    reminders = notExpired;
+    if (reminders.isEmpty()) {
       return;
     }
 
@@ -75,38 +85,51 @@ public class ReminderTimerListener {
     }
 
     if ("true" .equals(mSettings.getProperty( "usemsgbox" ))) {
-      new ReminderFrame(mReminderList, item,
-          getAutoCloseReminderTime(item.getProgram()));
+      new ReminderFrame(mReminderList, reminders,
+          getAutoCloseReminderTime(reminders));
     } else {
-      mReminderList.removeWithoutChecking(item.getProgramItem());
-      mReminderList.blockProgram(item.getProgram());
-    }
-    if ("true" .equals(mSettings.getProperty( "useexec" ))) {
-      String fName=mSettings.getProperty( "execfile","" ).trim();
-      ParamParser parser = new ParamParser();
-      String fParam=parser.analyse(mSettings.getProperty("execparam",""), item.getProgram());
-
-      if (!fName.equals("")) {
-        try {
-          ExecutionHandler executionHandler = new ExecutionHandler(fParam, fName);
-          executionHandler.execute();
-        } catch (Exception exc) {
-          String msg = mLocalizer.msg( "error.2" ,"Error executing reminder program!\n({0})" , fName, exc);
-          ErrorHandler.handle(msg, exc);
-        }
+      for (ReminderListItem reminder : reminders) {
+        mReminderList.removeWithoutChecking(reminder.getProgramItem());
+        mReminderList.blockProgram(reminder.getProgram());
       }
-      else {
+    }
+    if ("true".equals(mSettings.getProperty("useexec"))) {
+      String fName = mSettings.getProperty("execfile", "").trim();
+      if (!fName.equals("")) {
+        for (ReminderListItem reminder : reminders) {
+          ParamParser parser = new ParamParser();
+          String fParam = parser.analyse(
+              mSettings.getProperty("execparam", ""), reminder.getProgram());
+
+          try {
+            ExecutionHandler executionHandler = new ExecutionHandler(fParam,
+                fName);
+            executionHandler.execute();
+          } catch (Exception exc) {
+            String msg = mLocalizer.msg("error.2",
+                "Error executing reminder program!\n({0})", fName, exc);
+            ErrorHandler.handle(msg, exc);
+          }
+        }
+      } else {
         mLog.warning("Reminder program name is not defined!");
       }
     }
-
-    ProgramReceiveTarget[] targets = ReminderPlugin.getInstance().getClientPluginsTargets();
     
+    // send to receiving plugins
+    ProgramReceiveTarget[] targets = ReminderPlugin.getInstance()
+        .getClientPluginsTargets();
+
+    ArrayList<Program> programs = new ArrayList<Program>();
+    for (ReminderListItem reminder : reminders) {
+      programs.add(reminder.getProgram());
+    }
+
     for (ProgramReceiveTarget target : targets) {
       ProgramReceiveIf plugin = target.getReceifeIfForIdOfTarget();
       if (plugin != null && plugin.canReceiveProgramsWithTarget()) {
-        Program[] prArray = { item.getProgram()};
-        plugin.receivePrograms(prArray, target);
+        plugin.receivePrograms(programs.toArray(new Program[programs.size()]),
+            target);
       }
     }
     
@@ -122,6 +145,15 @@ public class ReminderTimerListener {
     });
   }
 
+
+  private int getAutoCloseReminderTime(ArrayList<ReminderListItem> reminders) {
+    int result = 0;
+    for (ReminderListItem reminder : reminders) {
+      result = Math
+          .max(result, getAutoCloseReminderTime(reminder.getProgram()));
+    }
+    return result;
+  }
 
   /**
      * Gets the time (in seconds) after which the reminder frame closes

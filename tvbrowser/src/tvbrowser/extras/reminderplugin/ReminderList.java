@@ -359,13 +359,15 @@ public class ReminderList implements ActionListener {
 
     // calculate today only once for the complete list
     devplugin.Date today = Date.getCurrentDate();
-    ReminderListItem[] items = getReminderItems();
-    for (ReminderListItem item : items) {
+    ArrayList<ReminderListItem> reminders = new ArrayList<ReminderListItem>();
+    for (ReminderListItem item : getReminderItems()) {
       if (isRemindEventRequired(item.getProgram(), item.getMinutes(), today)) {
-        mListener.timeEvent(item);
+        reminders.add(item);
       }
     }
-
+    if (reminders.size() > 0) {
+      mListener.timeEvent(reminders);
+    }
   }
 
   private boolean isRemindEventRequired(Program prog, int remindMinutes, Date today) {
