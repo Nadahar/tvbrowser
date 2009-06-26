@@ -43,6 +43,7 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRootPane;
+import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 import javax.swing.Timer;
 import javax.swing.WindowConstants;
@@ -173,12 +174,15 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
     
     final JPanel jcontentPane = new JPanel(new BorderLayout(0, 10));
     mDialog.setContentPane(jcontentPane);
-    final JPanel programsPanel = new JPanel(new GridLayout(0, 1));
+    final JPanel programsPanel = new JPanel(new GridLayout(0, 2));
     
     jcontentPane.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
-    final JPanel progPanel = new JPanel(new BorderLayout(5, 10));
 
+    final Date today = Date.getCurrentDate();
+    programsPanel.add(mHeader = new JLabel(""));
+    programsPanel.add(new JLabel(""));
     int remainingMinutesMax = 0;
+
     for (ReminderListItem reminder : reminders) {
       Program program = reminder.getProgram();
       mReminderList.blockProgram(program);
@@ -186,7 +190,6 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
       String msg;
       final int progMinutesAfterMidnight = program.getStartTime();
       int remainingMinutes = 0;
-      final Date today = Date.getCurrentDate();
       if (today.compareTo(program.getDate()) >= 0
           && IOUtilities.getMinutesAfterMidnight() > progMinutesAfterMidnight) {
         msg = updateRunningTime();
@@ -194,8 +197,17 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
         msg = mLocalizer.msg("soonStarts", "Soon starts");
         remainingMinutes = ReminderPlugin.getTimeToProgramStart(program);
       }
+      mHeader.setText(msg);
       remainingMinutesMax = Math.max(remainingMinutesMax, remainingMinutes);
-      progPanel.add(mHeader = new JLabel(msg), BorderLayout.NORTH);
+
+      final ProgramPanel panel = new ProgramPanel(program,
+          new ProgramPanelSettings(new PluginPictureSettings(
+              PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE), false,
+              ProgramPanelSettings.X_AXIS));
+      // register panel with tooltip manager
+      panel.setToolTipText("");
+      panel.addPluginContextMenuMouseListener(ReminderPluginProxy
+          .getInstance());
 
       final JPanel channelPanel = new JPanel(new BorderLayout());
       if (program.getLength() > 0) {
@@ -209,23 +221,15 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
       channelLabel.setVerticalTextPosition(SwingConstants.BOTTOM);
       channelLabel.setHorizontalTextPosition(SwingConstants.CENTER);
       channelPanel.add(channelLabel, BorderLayout.CENTER);
-      progPanel.add(channelPanel, BorderLayout.EAST);
-
-      final ProgramPanel panel = new ProgramPanel(program,
-          new ProgramPanelSettings(new PluginPictureSettings(
-              PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE), false,
-              ProgramPanelSettings.X_AXIS));
-      // register panel with tooltip manager
-      panel.setToolTipText("");
-      panel
-          .addPluginContextMenuMouseListener(ReminderPluginProxy.getInstance());
-      progPanel.add(panel, BorderLayout.CENTER);
+      
+      programsPanel.add(panel);
+      programsPanel.add(channelPanel);
 
       String comment = reminder.getComment();
       if (comment != null && comment.length() > 0) {
-        progPanel.add(new JLabel(comment), BorderLayout.SOUTH);
+        programsPanel.add(new JLabel(comment), BorderLayout.SOUTH);
+        programsPanel.add(new JLabel(""));
       }
-      programsPanel.add(progPanel);
     }
 
     // initialize close button with full text, so it can show the countdown later without size problems
@@ -259,7 +263,7 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
     btnPanel.add(mReminderCB, BorderLayout.WEST);
     btnPanel.add(mCloseBt, BorderLayout.EAST);
     
-    jcontentPane.add(programsPanel, BorderLayout.NORTH);
+    jcontentPane.add(new JScrollPane(programsPanel), BorderLayout.NORTH);
     jcontentPane.add(btnPanel,BorderLayout.SOUTH);
     
     mCloseBt.addActionListener(new ActionListener() {
