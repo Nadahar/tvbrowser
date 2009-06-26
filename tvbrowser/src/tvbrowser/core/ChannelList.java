@@ -88,16 +88,7 @@ public class ChannelList {
    * Load the not subscribed channels after TV-Browser start was finished.
    */
   public static void completeChannelLoading() {
-    mCompleteChannelThread = new Thread("Load not subscribed channels") {
-      public void run() {
-        mLog.info("Loading the not subscribed services and channels");
-        TvDataServiceProxyManager.getInstance().loadNotSubscribed();
-        create();
-        mLog.info("Loading of all channels complete");
-      }
-    };
-    mCompleteChannelThread.setPriority(Thread.MIN_PRIORITY);
-    mCompleteChannelThread.start();
+    getChannelLoadThread();
   }
 
   /**
@@ -788,6 +779,18 @@ public class ChannelList {
    * @return The Thread of loading the not used channels.
    */
   public static Thread getChannelLoadThread() {
+    if (mCompleteChannelThread == null) {
+      mCompleteChannelThread = new Thread("Load not subscribed channels") {
+        public void run() {
+          mLog.info("Loading the not subscribed services and channels");
+          TvDataServiceProxyManager.getInstance().loadNotSubscribed();
+          create();
+          mLog.info("Loading of all channels complete");
+        }
+      };
+      mCompleteChannelThread.setPriority(Thread.MIN_PRIORITY);
+      mCompleteChannelThread.start();
+    }
     return mCompleteChannelThread;
   }
 
