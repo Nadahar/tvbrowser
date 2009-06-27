@@ -33,7 +33,7 @@ import devplugin.Program;
 import devplugin.Version;
 
 final public class TeleTextPlugin extends Plugin {
-  private static final Version mVersion = new Version(2, 70, 7);
+  private static final Version mVersion = new Version(2, 70, 8);
 
   private PluginInfo mPluginInfo;
 
