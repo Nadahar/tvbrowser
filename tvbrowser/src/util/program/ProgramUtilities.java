@@ -160,7 +160,10 @@ public class ProgramUtilities {
       ArrayList<String> listFirst = new ArrayList<String>();
       ArrayList<String> listSecond = new ArrayList<String>();
       for (int i = 0; i < actors.length; i++) {
-        String actor = actors[i];
+        String actor = actors[i].trim();
+        if (actor.endsWith(",")) {
+          actor = actor.substring(0, actor.length() - 1).trim();
+        }
         // if this actor has been deleted, do the next iteration
         if (actor.length() == 0) {
           continue;
