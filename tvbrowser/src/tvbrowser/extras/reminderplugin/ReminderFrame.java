@@ -19,15 +19,14 @@
  * CVS information:
  *  $RCSfile$
  *   $Source$
- *     $Date$
- *   $Author$
- * $Revision$
+ *     $Date: 2009-06-26 22:54:26 +0200 (Fr, 26 Jun 2009) $
+ *   $Author: bananeweizen $
+ * $Revision: 5770 $
  */
 
 package tvbrowser.extras.reminderplugin;
 
 import java.awt.BorderLayout;
-import java.awt.GridLayout;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -60,6 +59,11 @@ import util.ui.Localizer;
 import util.ui.ProgramPanel;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
+
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.RowSpec;
+
 import devplugin.Date;
 import devplugin.Program;
 
@@ -140,6 +144,9 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
       final AbstractList<ReminderListItem> reminders,
       final int autoCloseSecs)
   {
+    mReminderList = list;
+    mListItem = reminders;
+    
     // Check whether we have to use a frame or dialog
     // Workaround: If there is a modal dialog open a frame is not usable. All
     //             user interaction will be ignored.
@@ -169,18 +176,17 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
     mDialog = new JDialog(parent, title);
     UiUtilities.registerForClosing(this);
     
-    mReminderList = list;
-    mListItem = reminders;
-    
     final JPanel jcontentPane = new JPanel(new BorderLayout(0, 10));
-    mDialog.setContentPane(jcontentPane);
-    final JPanel programsPanel = new JPanel(new GridLayout(0, 2));
-    
     jcontentPane.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
-
+    mDialog.setContentPane(jcontentPane);
+    
+    final FormLayout layout = new FormLayout("pref:grow,3dlu,pref","pref,3dlu");
+    final JPanel programsPanel = new JPanel(layout);
+    CellConstraints cc = new CellConstraints();
+    
     final Date today = Date.getCurrentDate();
-    programsPanel.add(mHeader = new JLabel(""));
-    programsPanel.add(new JLabel(""));
+    programsPanel.add(mHeader = new JLabel(""), cc.xyw(1, 1, 3));
+    int row = 3;
     int remainingMinutesMax = 0;
 
     for (ReminderListItem reminder : reminders) {
@@ -204,6 +210,7 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
           new ProgramPanelSettings(new PluginPictureSettings(
               PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE), false,
               ProgramPanelSettings.X_AXIS));
+      panel.setWidth(300);
       // register panel with tooltip manager
       panel.setToolTipText("");
       panel.addPluginContextMenuMouseListener(ReminderPluginProxy
@@ -215,20 +222,26 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
             "until {0}", program.getEndTimeString()));
         channelPanel.add(endTime, BorderLayout.NORTH);
       }
-      final JLabel channelLabel = new JLabel(program.getChannel().getName());
+      final JLabel channelLabel = new JLabel();
+      channelLabel.setToolTipText(program.getChannel().getName());
       channelLabel.setIcon(UiUtilities.createChannelIcon(program.getChannel()
           .getIcon()));
       channelLabel.setVerticalTextPosition(SwingConstants.BOTTOM);
-      channelLabel.setHorizontalTextPosition(SwingConstants.CENTER);
+      channelLabel.setHorizontalTextPosition(SwingConstants.LEFT);
       channelPanel.add(channelLabel, BorderLayout.CENTER);
       
-      programsPanel.add(panel);
-      programsPanel.add(channelPanel);
+      layout.appendRow(RowSpec.decode("pref"));
+      programsPanel.add(panel, cc.xy(1, row));
+      programsPanel.add(channelPanel, cc.xy(3, row, CellConstraints.LEFT, CellConstraints.TOP));
+      row++;
 
       String comment = reminder.getComment();
       if (comment != null && comment.length() > 0) {
-        programsPanel.add(new JLabel(comment), BorderLayout.SOUTH);
-        programsPanel.add(new JLabel(""));
+        layout.appendRow(RowSpec.decode("2dlu"));
+        layout.appendRow(RowSpec.decode("pref"));
+        layout.appendRow(RowSpec.decode("2dlu"));
+        programsPanel.add(new JLabel(comment), cc.xyw(1, row + 1, 3));
+        row += 3;
       }
     }
 
@@ -263,7 +276,9 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
     btnPanel.add(mReminderCB, BorderLayout.WEST);
     btnPanel.add(mCloseBt, BorderLayout.EAST);
     
-    jcontentPane.add(new JScrollPane(programsPanel), BorderLayout.NORTH);
+    final JScrollPane scrollPane = new JScrollPane(programsPanel);
+    scrollPane.setBorder(BorderFactory.createEmptyBorder());
+    jcontentPane.add(scrollPane, BorderLayout.CENTER);
     jcontentPane.add(btnPanel,BorderLayout.SOUTH);
     
     mCloseBt.addActionListener(new ActionListener() {
