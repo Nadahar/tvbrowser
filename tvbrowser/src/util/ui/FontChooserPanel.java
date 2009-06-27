@@ -58,6 +58,12 @@ public class FontChooserPanel extends JPanel {
     }
   }
 
+  /**
+   * create a new font chooser with optional style selection
+   * @param title title or <code>null</code>
+   * @param font selected font
+   * @param style enable style selection
+   */
   public FontChooserPanel(String title, Font font, boolean style) {
     setLayout(new BorderLayout());
     if (title != null) {
@@ -76,7 +82,7 @@ public class FontChooserPanel extends JPanel {
       panel1.add(mStyleCB);
 
     panel1.add(mSizeCB);
-
+    
     add(panel1, BorderLayout.CENTER);
 
     if (font != null) {
@@ -84,18 +90,33 @@ public class FontChooserPanel extends JPanel {
     }
   }
 
+  /**
+   * create a font chooser with style selection
+   * @param title title or <code>null</code>
+   * @param font
+   */
   public FontChooserPanel(String title, Font font) {
     this(title, font, true);
   }
 
   /**
-   * Creates a Font-Chooser without Title-Bar
+   * Creates a Font-Chooser without Title-Bar, but with style selection
    * 
    * @param font
    * @since 2.2
    */
   public FontChooserPanel(Font font) {
     this(null, font, true);
+  }
+  
+  /**
+   * create a font chooser without title bar
+   * @param font
+   * @param enableStyleSelection show style selection or not
+   * @since 3.0
+   */
+  public FontChooserPanel(final Font font, boolean enableStyleSelection) {
+    this(null, font, enableStyleSelection);
   }
   
   public FontChooserPanel(String title) {
