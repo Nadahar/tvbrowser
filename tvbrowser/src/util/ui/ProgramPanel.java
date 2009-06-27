@@ -551,7 +551,9 @@ private static Font getDynamicFontSize(Font font, int offset) {
     }
 
     if (isShowing()) {
-      oldProgram.removeChangeListener(this);
+      if (oldProgram != null) {
+        oldProgram.removeChangeListener(this);
+      }
       mProgram.addChangeListener(this);
       revalidate();
       repaint();
@@ -655,6 +657,10 @@ private static Font getDynamicFontSize(Font font, int offset) {
     }
     
     int width = getWidth();
+    if (getTextIconWidth(width) != mDescriptionIcon.getIconWidth()) {
+      recreateTextIcons(width);
+    }
+    
     int height = USE_FULL_HEIGHT ? getHeight() : mHeight;
     Graphics2D grp = (Graphics2D) g;
     
@@ -1254,20 +1260,33 @@ private static Font getDynamicFontSize(Font font, int offset) {
     super.setSize(width, height);
     setWidth(width);
   }
-
+  
   public void setWidth(int newWidth) {
     int oldWidth = getWidth();
-    if (oldWidth != newWidth && newWidth > 0) {
-      int widthRight = newWidth - WIDTH_LEFT;
-      mTitleIcon = new TextAreaIcon(null, mTitleFont, widthRight - 5);
-      mDescriptionIcon = new TextAreaIcon(null, mNormalFont, widthRight - 5);
-      mDescriptionIcon.setMaximumLineCount(3);
-      if (mProgram != null) {
-        mProgram.validateMarking();
-        Program p = mProgram;
-        mProgram = null;
-        setProgram(p);
-      }
+    int textIconWidth = getTextIconWidth(newWidth);
+    if (oldWidth != newWidth && newWidth > 0 || textIconWidth != mDescriptionIcon.getIconWidth()) {
+      recreateTextIcons(newWidth);
+    }
+  }
+
+  private int getTextIconWidth(final int fullWidth) {
+    return fullWidth - WIDTH_LEFT - 5;
+  }
+
+  /**
+   * recreate the textual icons if the width of the program panel has changed
+   * @param newWidth
+   */
+  private void recreateTextIcons(int newWidth) {
+    int textIconWidth = getTextIconWidth(newWidth);
+    mTitleIcon = new TextAreaIcon(null, mTitleFont, textIconWidth);
+    mDescriptionIcon = new TextAreaIcon(null, mNormalFont, textIconWidth);
+    mDescriptionIcon.setMaximumLineCount(3);
+    if (mProgram != null) {
+      mProgram.validateMarking();
+      Program p = mProgram;
+      mProgram = null;
+      setProgram(p);
     }
   }
   
