@@ -36,11 +36,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.TimeZone;
-import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import org.apache.commons.compress.tar.TarEntry;
-import org.apache.commons.compress.tar.TarInputStream;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+
+import org.apache.commons.compress.archivers.ArchiveEntry;
+import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 
 import tvdataservice.MutableChannelDayProgram;
 import tvdataservice.SettingsPanel;
@@ -55,8 +58,6 @@ import devplugin.Date;
 import devplugin.PluginInfo;
 import devplugin.ProgressMonitor;
 import devplugin.Version;
-
-import javax.swing.*;
 
 /**
  * This Dataservice collects Data from http://backstage.bbc.co.uk/feeds/tvradio/
@@ -420,8 +421,8 @@ public class BbcBackstageDataService extends AbstractTvDataService {
       IOUtilities.ungzip(download, tar);
       download.delete();
       
-      TarInputStream tarfile = new TarInputStream(new FileInputStream(tar));
-      TarEntry entry;
+      TarArchiveInputStream tarfile = new TarArchiveInputStream(new FileInputStream(tar));
+      ArchiveEntry entry;
       while ((entry = tarfile.getNextEntry()) != null) {
         if (!entry.isDirectory()) {
           String filename = entry.getName();
