@@ -33,11 +33,24 @@
         </configuration>
       </plugin>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
+        <artifactId>maven-assembly-plugin</artifactId>
         <configuration>
-          <finalName>TVBrowserMiniPlugin</finalName>
+            <descriptorRefs>
+                <descriptorRef>jar-with-dependencies</descriptorRef>
+            </descriptorRefs>
+            <finalName>TVBrowserMini</finalName>
+            <appendAssemblyId>false</appendAssemblyId>
+            <attach>false</attach>
         </configuration>
+        <executions>
+         <execution>
+                <id>make-assembly</id> <!-- this is used for inheritance merges -->
+                <phase>package</phase> <!-- append to the packaging phase. -->
+                <goals>
+                    <goal>single</goal> <!-- goals == mojos -->
+                </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
@@ -49,6 +62,16 @@
     <dependency>
       <groupId>org.tvbrowser</groupId>
       <artifactId>tvbrowser</artifactId>
+    </dependency>
+    <!-- 
+    The sqlite jar is not available on the net. Therefore you need to add it to your local repository.
+    In Eclipse, select the jar file in the package explorer then use Import->Maven->Install or deploy an artifact to a Maven repository.
+    Set group and artifact to "sqlitejdbc", version to the exact version string used below.
+    -->
+    <dependency>
+      <groupId>sqlitejdbc</groupId>
+      <artifactId>sqlitejdbc</artifactId>
+      <version>v054</version>
     </dependency>
   </dependencies>
 </project>
