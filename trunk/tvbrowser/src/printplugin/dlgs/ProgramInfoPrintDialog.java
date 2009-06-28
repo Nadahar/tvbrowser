@@ -105,7 +105,7 @@ public class ProgramInfoPrintDialog implements WindowClosingIf{
     final PrinterJob printerJob = PrinterJob.getPrinterJob();
     mPageFormat = printerJob.defaultPage();
     
-    JButton printerSetupBtn = new JButton(SettingsDialog.mLocalizer.msg("printer","Drucker")+"...",PrintPlugin.getInstance().createImageIcon("devices", "printer", 16));
+    JButton printerSetupBtn = new JButton(SettingsDialog.mLocalizer.ellipsisMsg("printer","Printer"),PrintPlugin.getInstance().createImageIcon("devices", "printer", 16));
     printerSetupBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         new Thread("Printer setup") {
@@ -116,7 +116,7 @@ public class ProgramInfoPrintDialog implements WindowClosingIf{
       }
     });
     
-    JButton pageBtn = new JButton(SettingsDialog.mLocalizer.msg("page","Seite")+"...", PrintPlugin.getInstance().createImageIcon("actions", "document-properties", 16));
+    JButton pageBtn = new JButton(SettingsDialog.mLocalizer.ellipsisMsg("page","Page"), PrintPlugin.getInstance().createImageIcon("actions", "document-properties", 16));
     pageBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent event) {
         new Thread("Document setup (printing)"){
@@ -130,7 +130,7 @@ public class ProgramInfoPrintDialog implements WindowClosingIf{
       }
     });
     
-    JButton previewBtn = new JButton(SettingsDialog.mLocalizer.msg("preview","Vorschau")+"...", PrintPlugin.getInstance().createImageIcon("actions", "document-print-preview", 16));
+    JButton previewBtn = new JButton(SettingsDialog.mLocalizer.ellipsisMsg("preview","Preview"), PrintPlugin.getInstance().createImageIcon("actions", "document-print-preview", 16));
     previewBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         if (mPageFormat == null) {

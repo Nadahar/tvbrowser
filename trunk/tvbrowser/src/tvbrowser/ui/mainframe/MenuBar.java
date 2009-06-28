@@ -136,11 +136,11 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
   
   private void createMenuItems() {
       
-    mSettingsMI = new JMenuItem(mLocalizer.msg("menuitem.settings", "Settings..."), TVBrowserIcons.preferences(TVBrowserIcons.SIZE_SMALL));
+    mSettingsMI = new JMenuItem(mLocalizer.ellipsisMsg("menuitem.settings", "Settings"), TVBrowserIcons.preferences(TVBrowserIcons.SIZE_SMALL));
     mSettingsMI.addActionListener(this);
     new MenuHelpTextAdapter(mSettingsMI, mLocalizer.msg("menuinfo.settings",""), mLabel); 
 
-    mQuitMI = new JMenuItem(mLocalizer.msg("menuitem.exit", "Exit..."), TVBrowserIcons.quit(TVBrowserIcons.SIZE_SMALL));
+    mQuitMI = new JMenuItem(mLocalizer.msg("menuitem.exit", "Exit"), TVBrowserIcons.quit(TVBrowserIcons.SIZE_SMALL));
     mQuitMI.addActionListener(this);
     new MenuHelpTextAdapter(mQuitMI, mLocalizer.msg("menuinfo.quit",""), mLabel);
     
@@ -152,7 +152,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
     mToolbarMI.addActionListener(this);
     new MenuHelpTextAdapter(mToolbarMI, mLocalizer.msg("menuinfo.toolbar",""), mLabel);
     
-    mToolbarCustomizeMI = new JMenuItem(ContextMenu.mLocalizer.msg("configure","Configure")+"...");
+    mToolbarCustomizeMI = new JMenuItem(ContextMenu.mLocalizer.ellipsisMsg("configure","Configure"));
     mToolbarCustomizeMI.addActionListener(this);
     new MenuHelpTextAdapter(mToolbarCustomizeMI, mLocalizer.msg("menuinfo.customizeToolbar",""), mLabel);
     
@@ -264,7 +264,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
     updateChannelItems();
     updateTimeItems();
     
-    mUpdateMI = new JMenuItem(mLocalizer.msg("menuitem.update", "Update..."), IconLoader.getInstance().getIconFromTheme("apps", "system-software-update", 16));
+    mUpdateMI = new JMenuItem(mLocalizer.ellipsisMsg("menuitem.update", "Update"), IconLoader.getInstance().getIconFromTheme("apps", "system-software-update", 16));
     mUpdateMI.addActionListener(this);
     new MenuHelpTextAdapter(mUpdateMI, mLocalizer.msg("menuinfo.update",""), mLabel);
     
@@ -273,11 +273,11 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
     Icon urlHelpImg = IconLoader.getInstance().getIconFromTheme("apps", "help-browser", 16);
     Icon urlBrowserImg = IconLoader.getInstance().getIconFromTheme("apps", "internet-web-browser", 16);
     
-    mInstallPluginsMI = new JMenuItem(mLocalizer.msg("menuitem.installPlugins","Install/Update Plugins..."),urlBrowserImg);
+    mInstallPluginsMI = new JMenuItem(mLocalizer.ellipsisMsg("menuitem.installPlugins","Install/Update Plugins"),urlBrowserImg);
     mInstallPluginsMI.addActionListener(this);
     new MenuHelpTextAdapter(mInstallPluginsMI, mLocalizer.msg("menuinfo.installPlugins","Add additional functions to TV-Browser/search for updates for installed Plugins"), mLabel);
     
-    mPluginManagerMI = new JMenuItem(mLocalizer.msg("menuitem.managePlugins", "Manage Plugins"));
+    mPluginManagerMI = new JMenuItem(mLocalizer.ellipsisMsg("menuitem.managePlugins", "Manage Plugins"));
     mPluginManagerMI.addActionListener(this);
     mPluginManagerMI.setIcon(TVBrowserIcons.plugin(TVBrowserIcons.SIZE_SMALL));
     new MenuHelpTextAdapter(mPluginManagerMI, mLocalizer.msg("menuinfo.findplugins",""), mLabel);
@@ -322,7 +322,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
     mPluginInfoDlgMI.addActionListener(this);
     new MenuHelpTextAdapter(mPluginInfoDlgMI,mLocalizer.msg("menuinfo.pluginInfoDlg","Describes the Plugin functionality of TV-Browser."),mLabel);
     
-    mAboutMI = new JMenuItem(mLocalizer.msg("menuitem.about", "About..."), new ImageIcon("imgs/tvbrowser16.png"));
+    mAboutMI = new JMenuItem(mLocalizer.ellipsisMsg("menuitem.about", "About"), new ImageIcon("imgs/tvbrowser16.png"));
     mAboutMI.addActionListener(this);
     new MenuHelpTextAdapter(mAboutMI, mLocalizer.msg("menuinfo.about",""), mLabel);
     
@@ -411,7 +411,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
       }
     }
     mChannelGroupMenu.add(new JSeparator());
-    JMenuItem menuItemAdd = new JMenuItem(mLocalizer.msg("channelGroupNew", "Add channel group..."));
+    JMenuItem menuItemAdd = new JMenuItem(mLocalizer.ellipsisMsg("channelGroupNew", "Add channel group"));
     menuItemAdd.addActionListener(new ActionListener(){
 
       public void actionPerformed(ActionEvent e) {
@@ -485,7 +485,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
 
   private JMenu createLicenseMenuItems() {
       
-      JMenu licenseMenu = new JMenu(mLocalizer.msg("menuitem.license","Terms of Use..."));
+      JMenu licenseMenu = new JMenu(mLocalizer.ellipsisMsg("menuitem.license","Terms of Use"));
       TvDataServiceProxy services[]= TvDataServiceProxyManager.getInstance().getDataServices();
       for (TvDataServiceProxy service : services) {
         final String license=service.getInfo().getLicense();
@@ -521,7 +521,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
       mGotoTimeMenu.add(createTimeMenuItem(time));
     }
     mGotoTimeMenu.addSeparator();
-    mEditTimeButtonsMenuItem = new JMenuItem(mLocalizer.msg("menuitem.editTimeItems","Edit Items..."));
+    mEditTimeButtonsMenuItem = new JMenuItem(mLocalizer.ellipsisMsg("menuitem.editTimeItems","Edit Items"));
     mEditTimeButtonsMenuItem.addActionListener(this);
     mGotoTimeMenu.add(mEditTimeButtonsMenuItem);
    }

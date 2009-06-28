@@ -640,7 +640,7 @@ public class ReminderPlugin {
       }
     };
     editReminders.putValue(Action.SMALL_ICON, IconLoader.getInstance().getIconFromTheme("apps", "appointment", 16));
-    editReminders.putValue(Action.NAME, mLocalizer.msg("buttonText", "Edit reminder list..."));
+    editReminders.putValue(Action.NAME, mLocalizer.ellipsisMsg("buttonText", "Edit reminder list"));
 
     Action openSettings = new AbstractAction() {
       public void actionPerformed(ActionEvent e) {

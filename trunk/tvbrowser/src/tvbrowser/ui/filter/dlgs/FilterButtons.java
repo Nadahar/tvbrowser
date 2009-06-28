@@ -129,7 +129,7 @@ public class FilterButtons implements ActionListener {
             }
         }
 
-        mCreateFilterMI = new JMenuItem(mLocalizer.msg("createFilter", "Create filter..."));
+        mCreateFilterMI = new JMenuItem(mLocalizer.ellipsisMsg("createFilter", "Create filter"));
         mCreateFilterMI.addActionListener(this);
 
         result[filterArr.length] = null;

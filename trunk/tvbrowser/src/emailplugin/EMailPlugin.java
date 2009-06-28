@@ -122,7 +122,7 @@ public class EMailPlugin extends Plugin {
    */
   public ActionMenu getContextMenuActions(final Program program) {
     if(mConfigs.length > 1) {
-      ContextMenuAction copyToSystem = new ContextMenuAction(mLocalizer.msg("contextMenuText", "Send via EMail")+ "...");
+      ContextMenuAction copyToSystem = new ContextMenuAction(mLocalizer.ellipsisMsg("contextMenuText", "Send via EMail"));
       
       ArrayList<AbstractAction>list = new ArrayList<AbstractAction>();
     

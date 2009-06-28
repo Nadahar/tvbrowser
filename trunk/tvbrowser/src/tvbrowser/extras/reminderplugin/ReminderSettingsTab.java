@@ -211,7 +211,7 @@ public class ReminderSettingsTab implements SettingsTab {
     mCloseNever = new JRadioButton(mLocalizer.msg("autoCloseNever","Never close"), mSettings.getProperty("autoCloseBehaviour","onEnd").equals("never"));
     mCloseNever.setEnabled(mReminderWindowChB.isSelected());
     
-    mCloseOnTime = new JRadioButton(mLocalizer.msg("autoCloseAfterTime","After time ..."), mSettings.getProperty("autoCloseBehaviour","onEnd").equals("onTime"));
+    mCloseOnTime = new JRadioButton(mLocalizer.ellipsisMsg("autoCloseAfterTime","After time"), mSettings.getProperty("autoCloseBehaviour","onEnd").equals("onTime"));
     mCloseOnTime.setEnabled(mReminderWindowChB.isSelected());
     
     ButtonGroup bg = new ButtonGroup();
@@ -443,7 +443,7 @@ public class ReminderSettingsTab implements SettingsTab {
       }
     
       if(mClientPlugins.length > 4) {
-        mPluginLabel.setText(mPluginLabel.getText() + " (" + (mClientPlugins.length - 3) + " " + mLocalizer.msg("otherPlugins","others...") + ")");
+        mPluginLabel.setText(mPluginLabel.getText() + " (" + (mClientPlugins.length - 3) + " " + mLocalizer.ellipsisMsg("otherPlugins","others") + ")");
       }
     }
   }

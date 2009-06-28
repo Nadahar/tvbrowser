@@ -69,7 +69,7 @@ public class SplashScreen extends JWindow implements Splash {
       final Color foreground) {
     super();
     mImgFileName = imgFileName;
-    mMessage = mLocalizer.msg("loading", "Loading...");
+    mMessage = mLocalizer.ellipsisMsg("loading", "Loading");
 
     mMsgX = msgX;
 

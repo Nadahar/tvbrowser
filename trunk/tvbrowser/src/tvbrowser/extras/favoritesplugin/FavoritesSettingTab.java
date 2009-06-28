@@ -170,7 +170,7 @@ public class FavoritesSettingTab implements SettingsTab {
       }
     
       if(mClientPlugins.length > 4) {
-        mPluginLabel.setText(mPluginLabel.getText() + " (" + (mClientPlugins.length - 3) + " " + mLocalizer.msg("otherPlugins","others...") + ")");
+        mPluginLabel.setText(mPluginLabel.getText() + " (" + (mClientPlugins.length - 3) + " " + mLocalizer.ellipsisMsg("otherPlugins","others") + ")");
       }
     }
   }

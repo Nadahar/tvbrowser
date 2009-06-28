@@ -206,7 +206,7 @@ public class SearchPlugin {
     action.setSmallIcon(TVBrowserIcons.search(TVBrowserIcons.SIZE_SMALL));
     action.setShortDescription(mLocalizer.msg("description",
         "Allows searching programs containing a certain text."));
-    action.setText(mLocalizer.msg("searchPrograms", "Search programs..."));
+    action.setText(mLocalizer.ellipsisMsg("searchPrograms", "Search programs"));
     action.putValue(InternalPluginProxyIf.KEYBOARD_ACCELERATOR, KeyStroke
         .getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_MASK));
 

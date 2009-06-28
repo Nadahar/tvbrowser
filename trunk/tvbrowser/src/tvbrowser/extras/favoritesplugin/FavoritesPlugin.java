@@ -928,7 +928,7 @@ public class FavoritesPlugin {
       }
     };
     manageFavorite.putValue(Action.SMALL_ICON, getFavoritesIcon(16));
-    manageFavorite.putValue(Action.NAME, mLocalizer.msg("favoritesManager", "Manage Favorites"));
+    manageFavorite.putValue(Action.NAME, mLocalizer.ellipsisMsg("favoritesManager", "Manage Favorites"));
 
 
     Action addFavorite = new AbstractAction() {
@@ -937,7 +937,7 @@ public class FavoritesPlugin {
       }
     };
     addFavorite.putValue(Action.SMALL_ICON, TVBrowserIcons.newIcon(TVBrowserIcons.SIZE_SMALL));
-    addFavorite.putValue(Action.NAME, mLocalizer.msg("new", "Create new favorite"));
+    addFavorite.putValue(Action.NAME, mLocalizer.ellipsisMsg("new", "Create new favorite"));
 
     Action openSettings = new AbstractAction() {
       public void actionPerformed(ActionEvent e) {
@@ -945,7 +945,7 @@ public class FavoritesPlugin {
       }
     };
     openSettings.putValue(Action.SMALL_ICON, TVBrowserIcons.preferences(TVBrowserIcons.SIZE_SMALL));
-    openSettings.putValue(Action.NAME, Localizer.getLocalization(Localizer.I18N_SETTINGS));
+    openSettings.putValue(Action.NAME, Localizer.getEllipsisLocalization(Localizer.I18N_SETTINGS));
     
     mRootNode.addAction(manageFavorite);
     mRootNode.addAction(addFavorite);

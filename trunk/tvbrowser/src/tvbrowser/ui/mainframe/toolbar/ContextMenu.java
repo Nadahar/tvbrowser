@@ -111,8 +111,7 @@ public class ContextMenu {
   }
 
   private static JMenuItem createConfigureItem() {
-    JMenuItem item = new JMenuItem(mLocalizer.msg("configure", "Configure")
-        + "...");
+    JMenuItem item = new JMenuItem(mLocalizer.ellipsisMsg("configure", "Configure"));
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         new ToolBarDragAndDropSettings();

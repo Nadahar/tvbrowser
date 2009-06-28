@@ -95,7 +95,7 @@ public class ClipboardPlugin extends Plugin {
     ImageIcon img = createImageIcon("actions", "edit-paste", 16);
 
     if(mConfigs.length > 1) {
-      ContextMenuAction copyToSystem = new ContextMenuAction(mLocalizer.msg("copyToSystem", "Copy to System-Clipboard")+ "...");
+      ContextMenuAction copyToSystem = new ContextMenuAction(mLocalizer.ellipsisMsg("copyToSystem", "Copy to System-Clipboard"));
       
       ArrayList<AbstractAction> list = new ArrayList<AbstractAction>();
     

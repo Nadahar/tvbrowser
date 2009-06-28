@@ -424,7 +424,7 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
     for (String filterName : FilterComponentList.getInstance().getChannelFilterNames()) {
       filters.add(filterName);
     }
-    filters.add(mLocalizer.msg("filterDefine", "define filter..."));
+    filters.add(mLocalizer.ellipsisMsg("filterDefine", "define filter"));
     mChannels = new JComboBox(filters);
     datetimeselect.add(new JLabel("    "));
     datetimeselect.add(mChannels);
@@ -475,7 +475,7 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
           for (String channel : FilterComponentList.getInstance().getChannelFilterNames()) {
             mChannels.addItem(channel);
           }
-          mChannels.addItem(mLocalizer.msg("filterDefine", "define filter..."));
+          mChannels.addItem(mLocalizer.ellipsisMsg("filterDefine", "define filter"));
           mChannels.setSelectedItem(filterName);
         }
         mModel.removeAllRows();

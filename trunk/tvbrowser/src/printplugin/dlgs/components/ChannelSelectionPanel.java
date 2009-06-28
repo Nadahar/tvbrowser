@@ -69,7 +69,7 @@ public class ChannelSelectionPanel extends JPanel {
     pb.addSeparator(Localizer.getLocalization(Localizer.I18N_CHANNELS), cc.xyw(1,1,4));
     pb.add(mAllChannelsRb=new JRadioButton(mLocalizer.msg("all","All")), cc.xy(2,3));
     pb.add(mSelectedChannelsRb=new JRadioButton(), cc.xy(2,5));
-    pb.add(mChangeSelectedChannelsBt=new JButton(mLocalizer.msg("change","Change")+"..."), cc.xy(4,5));
+    pb.add(mChangeSelectedChannelsBt=new JButton(mLocalizer.ellipsisMsg("change","Change")), cc.xy(4,5));
     
     ButtonGroup group = new ButtonGroup();
     group.add(mAllChannelsRb);

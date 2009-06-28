@@ -129,8 +129,8 @@ public class BlogThisPlugin extends Plugin {
       ImageIcon img = createImageIcon("apps","internet-web-browser", 16);
 
       if(mConfigs.length > 1) {
-        ContextMenuAction blog = new ContextMenuAction(mLocalizer.msg("contextMenuText",
-        "Create a new Blog-Entry") + "...");
+        ContextMenuAction blog = new ContextMenuAction(mLocalizer.ellipsisMsg("contextMenuText",
+        "Create a new Blog-Entry"));
         
         ArrayList<AbstractAction>list = new ArrayList<AbstractAction>();
 

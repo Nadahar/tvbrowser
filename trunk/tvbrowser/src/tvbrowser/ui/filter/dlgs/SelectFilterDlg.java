@@ -137,7 +137,7 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
     JPanel btnPanel = new JPanel(new BorderLayout());
     JPanel panel1 = new JPanel(new GridLayout(0, 1, 0, 7));
     mNewBtn = new JButton(mLocalizer.msg("newButton", "new"));
-    mEditBtn = new JButton(Localizer.getLocalization(Localizer.I18N_EDIT)+"...");
+    mEditBtn = new JButton(Localizer.getEllipsisLocalization(Localizer.I18N_EDIT));
     mRemoveBtn = new JButton(Localizer.getLocalization(Localizer.I18N_DELETE));
     mSeperator = new JButton(mLocalizer.msg("seperatorButton", "seperator"));
     mDefaultFilterBtn = new JButton(Localizer.getLocalization(Localizer.I18N_STANDARD));

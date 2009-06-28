@@ -174,7 +174,7 @@ public class SearchField extends JPanel {
     
     mText.addFocusListener(new FocusAdapter() {
       public void focusLost(FocusEvent e) {
-        mGoOrCancelButton.setVisible(mText.getText().length() != 0 && !mText.getText().equals(SearchTextField.mLocalizer.msg("search","Search...")));
+        mGoOrCancelButton.setVisible(mText.getText().length() != 0 && !mText.getText().equals(SearchTextField.mLocalizer.ellipsisMsg("search","Search")));
       }
     });
     
@@ -183,7 +183,7 @@ public class SearchField extends JPanel {
 
       public void insertUpdate(DocumentEvent e) {
         try {
-          mGoOrCancelButton.setVisible(e.getDocument().getLength() > 0 && !e.getDocument().getText(0,e.getDocument().getLength()-1).equals(SearchTextField.mLocalizer.msg("search","Search...")));
+          mGoOrCancelButton.setVisible(e.getDocument().getLength() > 0 && !e.getDocument().getText(0,e.getDocument().getLength()-1).equals(SearchTextField.mLocalizer.ellipsisMsg("search","Search")));
         } catch (BadLocationException e1) {
           // Ignore
         }
@@ -191,7 +191,7 @@ public class SearchField extends JPanel {
 
       public void removeUpdate(DocumentEvent e) {
         try {
-          mGoOrCancelButton.setVisible(e.getDocument().getLength() > 0 && !e.getDocument().getText(0,e.getDocument().getLength()-1).equals(SearchTextField.mLocalizer.msg("search","Search...")));
+          mGoOrCancelButton.setVisible(e.getDocument().getLength() > 0 && !e.getDocument().getText(0,e.getDocument().getLength()-1).equals(SearchTextField.mLocalizer.ellipsisMsg("search","Search")));
         } catch (BadLocationException e1) {
           // Ignore
         }

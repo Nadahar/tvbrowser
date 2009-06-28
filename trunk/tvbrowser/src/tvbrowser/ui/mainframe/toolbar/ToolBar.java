@@ -358,7 +358,7 @@ public class ToolBar extends JToolBar {
 
   private void showPopupMenu(MouseEvent e) {
     JPopupMenu menu = new JPopupMenu();
-    String label = mLocalizer.msg("configure", "Configure");
+    String label = mLocalizer.ellipsisMsg("configure", "Configure");
     String name = null;
     boolean configItemEnabled = false;
     
@@ -367,15 +367,15 @@ public class ToolBar extends JToolBar {
       
       if (name.startsWith("#scrollTo") && name.indexOf("Channel") == -1) {
         configItemEnabled = true;
-        label = mLocalizer.msg("configureTime", "Configure time buttons");
+        label = mLocalizer.ellipsisMsg("configureTime", "Configure time buttons");
       }
       else if(name.startsWith("#filter")) {
         configItemEnabled = true;
-        label = FilterButtons.mLocalizer.msg("createFilter", "Create filter...");
+        label = FilterButtons.mLocalizer.ellipsisMsg("createFilter", "Create filter");
       }
       else if(name.startsWith("#scrollToChannel")) {
         configItemEnabled = true;
-        label = ChannelContextMenu.mLocalizer.msg("addChannels", "Add/Remove channels");
+        label = ChannelContextMenu.mLocalizer.ellipsisMsg("addChannels", "Add/Remove channels");
       }
       else if (name.indexOf("##") != -1) {
         PluginProxy plugin = PluginProxyManager.getInstance().getActivatedPluginForId(name.substring(0,name.indexOf("##")));
