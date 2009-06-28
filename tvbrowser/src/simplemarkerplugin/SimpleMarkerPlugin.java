@@ -243,7 +243,7 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
     }
     // create the new (sub) menu
     ContextMenuAction menuExtended = new ContextMenuAction();
-    menuExtended.setText(mLocalizer.msg("extendedMark", "Mark programs of filter..."));
+    menuExtended.setText(mLocalizer.ellipsisMsg("extendedMark", "Mark programs of filter"));
     menuExtended.setActionListener(this);
     menuExtended.putValue(Plugin.DISABLED_ON_TASK_MENU,true);
     menuExtended.putValue(Program.MARK_PRIORITY, mMarkListVector.getListAt(0).getMarkPriority());

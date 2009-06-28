@@ -373,7 +373,7 @@ public class FavoriteTreeModel extends DefaultTreeModel {
                 FavoritesPlugin.getInstance().editFavorite(child.getFavorite());
               }
             };
-            editFavorite.putValue(Action.NAME, mLocalizer.msg("editTree","Edit..."));
+            editFavorite.putValue(Action.NAME, mLocalizer.ellipsisMsg("editTree","Edit"));
             editFavorite.putValue(Action.SMALL_ICON, TVBrowserIcons.edit(TVBrowserIcons.SIZE_SMALL));
 
             Action deleteFavorite = new AbstractAction() {
@@ -381,7 +381,7 @@ public class FavoriteTreeModel extends DefaultTreeModel {
                 FavoritesPlugin.getInstance().askAndDeleteFavorite(child.getFavorite());
               }
             };
-            deleteFavorite.putValue(Action.NAME, mLocalizer.msg("deleteTree","Delete..."));
+            deleteFavorite.putValue(Action.NAME, mLocalizer.ellipsisMsg("deleteTree","Delete"));
             deleteFavorite.putValue(Action.SMALL_ICON, TVBrowserIcons.delete(TVBrowserIcons.SIZE_SMALL));
             deleteFavorite.putValue(ContextMenuIf.ACTIONKEY_KEYBOARD_EVENT,
                 KeyEvent.VK_DELETE);

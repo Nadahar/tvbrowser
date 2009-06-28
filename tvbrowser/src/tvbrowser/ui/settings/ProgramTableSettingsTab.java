@@ -360,7 +360,7 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
 
     mSettingsPn.add(mBackgroundStyleCB, cc.xy(4, currentRow));
     
-    mConfigBackgroundStyleBt = new JButton(mLocalizer.msg("configure", "Configure..."));
+    mConfigBackgroundStyleBt = new JButton(mLocalizer.ellipsisMsg("configure", "Configure"));
 
     mConfigBackgroundStyleBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {

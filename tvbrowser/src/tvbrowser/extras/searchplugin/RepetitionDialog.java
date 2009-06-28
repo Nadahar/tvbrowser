@@ -163,7 +163,7 @@ public class RepetitionDialog extends JDialog implements WindowClosingIf {
 
     panel.add(mTimeChooser, cc.xy(3, 7));
 
-    JButton stdSearch = new JButton(mLocalizer.msg("more", "More..."));
+    JButton stdSearch = new JButton(mLocalizer.ellipsisMsg("more", "More"));
     stdSearch.setToolTipText(mLocalizer.msg("standardSearch",
         "Open standard search"));
 

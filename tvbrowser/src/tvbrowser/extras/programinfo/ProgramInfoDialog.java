@@ -436,7 +436,7 @@ class ProgramInfoDialog {
           final boolean actor) {
         JMenuItem item;
         item = new JMenuItem(mLocalizer
-            .msg("addFavorite", "Create favorite..."), IconLoader.getInstance()
+            .ellipsisMsg("addFavorite", "Create favorite"), IconLoader.getInstance()
             .getIconFromTheme("emblems", "emblem-favorite"));
         item.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {

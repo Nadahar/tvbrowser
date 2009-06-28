@@ -187,7 +187,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
       
       addToolbarSeperator(toolbarPn);
       
-      msg = mLocalizer.msg("new", "Create a new favorite...");
+      msg = mLocalizer.ellipsisMsg("new", "Create a new favorite");
       icon = TVBrowserIcons.newIcon(TVBrowserIcons.SIZE_LARGE);
       mNewBt = UiUtilities.createToolBarButton(msg, icon);
       mNewBt.addActionListener(new ActionListener() {
@@ -207,7 +207,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
       toolbarPn.add(mNewBt);
     }
     
-    msg = mLocalizer.msg("edit", "Edit the selected favorite...");
+    msg = mLocalizer.ellipsisMsg("edit", "Edit the selected favorite");
     icon = TVBrowserIcons.edit(TVBrowserIcons.SIZE_LARGE);
     mEditBt = UiUtilities.createToolBarButton(msg, icon);
     mEditBt.addActionListener(new ActionListener() {
@@ -227,7 +227,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
     });
     toolbarPn.add(mEditBt);
 
-    msg = mLocalizer.msg("delete", "Delete selected favorite...");
+    msg = mLocalizer.ellipsisMsg("delete", "Delete selected favorite");
     icon = TVBrowserIcons.delete(TVBrowserIcons.SIZE_LARGE);
     mDeleteBt = UiUtilities.createToolBarButton(msg, icon);
     mDeleteBt.addActionListener(new ActionListener() {
@@ -518,7 +518,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
     mFavoritesList.setSelectedIndex(mFavoritesList.locationToIndex(new Point(x,y)));
 
     if (!mShowNew) {
-      JMenuItem createNew = new JMenuItem(mLocalizer.msg("new", "Create a new favorite..."),
+      JMenuItem createNew = new JMenuItem(mLocalizer.ellipsisMsg("new", "Create a new favorite"),
           TVBrowserIcons.newIcon(TVBrowserIcons.SIZE_SMALL));
 
       createNew.addActionListener(new ActionListener() {
@@ -531,7 +531,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
       menu.addSeparator();
     }
 
-    JMenuItem edit = new JMenuItem(mLocalizer.msg("edit", "Edit the selected favorite..."),
+    JMenuItem edit = new JMenuItem(mLocalizer.ellipsisMsg("edit", "Edit the selected favorite"),
         TVBrowserIcons.edit(TVBrowserIcons.SIZE_SMALL));
 
     edit.addActionListener(new ActionListener() {
@@ -542,7 +542,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
 
     menu.add(edit);
 
-    JMenuItem delete = new JMenuItem(mLocalizer.msg("delete", "Delete selected favorite..."),
+    JMenuItem delete = new JMenuItem(mLocalizer.ellipsisMsg("delete", "Delete selected favorite"),
         TVBrowserIcons.delete(TVBrowserIcons.SIZE_SMALL));
 
     delete.addActionListener(new ActionListener() {
@@ -592,8 +592,8 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
       mEditBt.setEnabled(selection != -1);
       mDeleteBt.setEnabled(selection != -1);
 
-      mEditBt.setToolTipText(mLocalizer.msg("edit", "Edit the selected favorite..."));
-      mDeleteBt.setToolTipText(mLocalizer.msg("delete", "Delete selected favorite..."));
+      mEditBt.setToolTipText(mLocalizer.ellipsisMsg("edit", "Edit the selected favorite"));
+      mDeleteBt.setToolTipText(mLocalizer.ellipsisMsg("delete", "Delete selected favorite"));
       
       mUpBt.setEnabled(selection > 0);
       mDownBt.setEnabled((selection != -1) && (selection < (size - 1)));
@@ -616,8 +616,8 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
           enableButtons(true);
           changeProgramList(fav);
           mDeleteBt.setEnabled(true);
-          mEditBt.setToolTipText(mLocalizer.msg("edit", "Edit the selected favorite..."));
-          mDeleteBt.setToolTipText(mLocalizer.msg("delete", "Delete selected favorite..."));
+          mEditBt.setToolTipText(mLocalizer.ellipsisMsg("edit", "Edit the selected favorite"));
+          mDeleteBt.setToolTipText(mLocalizer.ellipsisMsg("delete", "Delete selected favorite"));
         }
         else {
           Program[] p = ((FavoriteNode)mFavoriteTree.getSelectionPath().getLastPathComponent()).getAllPrograms(false);
@@ -657,7 +657,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
             mDeleteBt.setEnabled(node.isDirectoryNode() && node.getChildCount() < 1);
             mSendBt.setEnabled(false);
           }
-          mEditBt.setToolTipText(mLocalizer.msg("renameFolder", "Rename selected folder..."));
+          mEditBt.setToolTipText(mLocalizer.ellipsisMsg("renameFolder", "Rename selected folder"));
           mDeleteBt.setToolTipText(mLocalizer.msg("deleteFolder", "Delete selected folder"));
         }
       }

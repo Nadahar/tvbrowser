@@ -143,6 +143,10 @@ public class Localizer {
   
   private ClassLoader mClassLoader;
   
+  /**
+   * ellipsis suffix for use in menus
+   */
+  private static final String ELLIPSIS = "...";
 
   /**
    * Creates a new instance of Localizer.
@@ -461,7 +465,12 @@ public class Localizer {
     }
   }
   
-  public static String getLocalization(String key) {
+  /**
+   * get a standard localization
+   * @param key one of the constant values defined in the Localizer class
+   * @return localized message for key
+   */
+  public static String getLocalization(final String key) {
     if(mLocalizer == null) {
       mLocalizer = Localizer.getLocalizerFor(Localizer.class);
     }
@@ -523,6 +532,15 @@ public class Localizer {
     return value;
   }
   
+  /**
+   * get a standard localization with ellipsis as suffix
+   * @param key one of the constant values defined in the Localizer class
+   * @return localized message for key
+   */
+  public static String getEllipsisLocalization(final String key) {
+    return ellipsisSuffix(getLocalization(key));
+  }
+  
   private void checkMessage(String key, String localizedMessage) {
     if (TVBrowser.isStable()) {
       return;
@@ -546,4 +564,33 @@ public class Localizer {
     }
   }
 
+  /**
+   * get a localized message with an ellipsis as suffix
+   * @param key localization key
+   * @param defaultMessage default (English) message
+   * @return localized message
+   * @since 3.0
+   */
+  public String ellipsisMsg(final String key, final String defaultMessage) {
+    return ellipsisSuffix(msg(key, defaultMessage));
+  }
+
+  private static String ellipsisSuffix(final String msg) {
+    if (msg.endsWith(ELLIPSIS)) {
+      return msg;
+    }
+    return msg + ELLIPSIS;
+  }
+
+  /**
+   * Gets a localized message ending with ellipsis suffix
+   *
+   * @param key The key of the message.
+   * @param defaultMsg The default message (English)
+   * @param arg1 The argument that should replace <CODE>{0}</CODE>.
+   * @return a localized message.
+   */  
+  public String ellipsisMsg(final String key, final String defaultMsg, final Object arg1) {
+    return ellipsisSuffix(msg(key, defaultMsg, arg1));
+  }
 }

@@ -102,7 +102,7 @@ public abstract class PluginContextMenu extends AbstractContextMenu {
 
     menu.addSeparator();
     if (hasSettingsTab()) {
-      JMenuItem menuItem = MenuUtil.createMenuItem(Localizer.getLocalization(Localizer.I18N_SETTINGS)+"...");
+      JMenuItem menuItem = MenuUtil.createMenuItem(Localizer.getEllipsisLocalization(Localizer.I18N_SETTINGS));
       menuItem.setIcon(TVBrowserIcons.preferences(TVBrowserIcons.SIZE_SMALL));
       menuItem.addActionListener(new ActionListener(){
         public void actionPerformed(ActionEvent e) {

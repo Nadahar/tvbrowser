@@ -67,7 +67,7 @@ public class SearchTextField extends JTextField implements FocusListener{
     mNoTextColor = new Color(r,g,b);
     mTextColor = getForeground();
     
-    setText(mLocalizer.msg("search","Search..."));
+    setText(mLocalizer.ellipsisMsg("search","Search"));
     setForeground(mNoTextColor);
   }
   
@@ -76,7 +76,7 @@ public class SearchTextField extends JTextField implements FocusListener{
    * @see java.awt.event.FocusListener#focusGained(java.awt.event.FocusEvent)
    */
   public void focusGained(FocusEvent e) {
-    if (getText().equals(mLocalizer.msg("search","Search..."))) {
+    if (getText().equals(mLocalizer.ellipsisMsg("search","Search"))) {
       setText("");
     }
     
@@ -89,7 +89,7 @@ public class SearchTextField extends JTextField implements FocusListener{
    */
   public void focusLost(FocusEvent e) {
     if (getText().length() == 0) {
-      setText(mLocalizer.msg("search","Search..."));
+      setText(mLocalizer.ellipsisMsg("search","Search"));
       setForeground(mNoTextColor);
     }
       

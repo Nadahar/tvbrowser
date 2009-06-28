@@ -127,7 +127,7 @@ public class ContextMenuProvider {
   private ActionMenu createGlobalExclusionMenu(final Program program) {
     ContextMenuAction menu = new ContextMenuAction();
     menu.setSmallIcon(TVBrowserIcons.newIcon(TVBrowserIcons.SIZE_SMALL));
-    menu.setText(mLocalizer.msg("createGlobalExclusion", "Create global exclusion..."));
+    menu.setText(mLocalizer.ellipsisMsg("createGlobalExclusion", "Create global exclusion"));
     menu.setActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent event) {
         FavoritesPlugin.getInstance().showExcludeProgramsDialog(null,program);
@@ -154,7 +154,7 @@ public class ContextMenuProvider {
     if (favArr.length == 1) {
       ContextMenuAction action = new ContextMenuAction();
       action.setSmallIcon(FavoritesPlugin.getInstance().getFavoritesIcon(16));
-      action.setText(mLocalizer.msg("excludeFromFavorite","Exclude from '{0}'...", favArr[0].getName()));
+      action.setText(mLocalizer.ellipsisMsg("excludeFromFavorite","Exclude from '{0}'", favArr[0].getName()));
       action.setActionListener(new ActionListener(){
         public void actionPerformed(ActionEvent e) {
           FavoritesPlugin.getInstance().showExcludeProgramsDialog(favArr[0], program);
@@ -187,7 +187,7 @@ public class ContextMenuProvider {
     if (favArr.length == 1) {
       ContextMenuAction action = new ContextMenuAction();
       action.setSmallIcon(TVBrowserIcons.edit(TVBrowserIcons.SIZE_SMALL));
-      action.setText(mLocalizer.msg("editFavorite","Edit favorite '{0}'...", favArr[0].getName()));
+      action.setText(mLocalizer.ellipsisMsg("editFavorite","Edit favorite '{0}'", favArr[0].getName()));
       action.setActionListener(new ActionListener(){
         public void actionPerformed(ActionEvent e) {
           FavoritesPlugin.getInstance().editFavorite(favArr[0]);
@@ -279,7 +279,7 @@ public class ContextMenuProvider {
       if (favArr.length == 1) {
         ContextMenuAction action = new ContextMenuAction();
         action.setSmallIcon(TVBrowserIcons.delete(TVBrowserIcons.SIZE_SMALL));
-        action.setText(mLocalizer.msg("deleteFavorite","Delete Favorite '{0}'...", favArr[0].getName()));
+        action.setText(mLocalizer.ellipsisMsg("deleteFavorite","Delete Favorite '{0}'", favArr[0].getName()));
         action.setActionListener(new ActionListener(){
           public void actionPerformed(ActionEvent e) {
             FavoritesPlugin.getInstance().askAndDeleteFavorite(favArr[0]);
@@ -335,8 +335,8 @@ public class ContextMenuProvider {
         }
       }
             
-      ContextMenuAction reactivate = new ContextMenuAction(mLocalizer.msg("removeFromBlackList",
-          "Put this program back into..."));
+      ContextMenuAction reactivate = new ContextMenuAction(mLocalizer.ellipsisMsg("removeFromBlackList",
+          "Put this program back into"));
       reactivate.setSmallIcon(TVBrowserIcons.refresh(TVBrowserIcons.SIZE_SMALL));
       
       ContextMenuAction[] reactivateAction = new ContextMenuAction[fromList.size()];
