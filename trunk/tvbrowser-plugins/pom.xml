@@ -36,6 +36,7 @@
     <module>plugin-imdb</module>
     <module>plugin-mediathek</module>
     <module>plugin-movieaward</module>
+    <module>plugin-notifyosd</module>
     <module>plugin-recommendation</module>
     <module>plugin-snarl</module>
     <module>plugin-soundreminder</module>
