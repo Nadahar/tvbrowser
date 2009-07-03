@@ -75,44 +75,72 @@ public class NotifyOSDPlugin extends Plugin {
     if (!canReceiveProgramsWithTarget()) {
       return false;
     }
-    for (Program program : programArr) {
-      showNotification(program);
+    // notify-osd will always show only a single notification!
+    if (programArr.length == 1) {
+      showSingleNotification(programArr[0]);
+    }
+    else {
+      showMultiNotification(programArr);
     }
     return true;
   }
 
-  private void showNotification(final Program program) {
+  private void showMultiNotification(final Program[] programArr) {
+    ParamParser parser = new ParamParser();
+    final LocalPluginProgramFormating format = new LocalPluginProgramFormating(
+        mLocalizer.msg("name", "NotifyOSD Multi"),
+        "",
+        "{leadingZero(start_hour,\"2\")}:{leadingZero(start_minute,\"2\")} {title}", "UTF-8");
+    StringBuilder builder = new StringBuilder();
+    for (Program program : programArr) {
+      String entry = parser.analyse(format.getContentValue(), program);
+      if (entry != null && entry.trim().length() > 0) {
+        if (builder.length() > 0) {
+          builder.append(", ");
+        }
+        builder.append(entry.trim());
+      }
+    }
+    showNotification("TV-Browser", builder.toString());
+  }
+
+  private void showSingleNotification(final Program program) {
+    ParamParser parser = new ParamParser();
+    final LocalPluginProgramFormating format = new LocalPluginProgramFormating(
+        mLocalizer.msg("name", "NotifyOSD Single"),
+        "{leadingZero(start_hour,\"2\")}:{leadingZero(start_minute,\"2\")} {title}",
+        "{maxlength(short_info,\"1000\")}", "UTF-8");
+    String title = parser.analyse(format.getTitleValue(), program);
+    if (title == null) {
+      title = program.getTitle();
+    }
+    String description = parser.analyse(format.getContentValue(), program);
+    if (description == null) {
+      description = program.getShortInfo();
+    }
+    showNotification(title, description);
+  }
+
+  private void showNotification(String title, String body) {
     if (!notifyAvailable()) {
       return;
     }
     final File curDir = new File(".");
-    String iconPath = "";
     ArrayList<String> command = new ArrayList<String>();
     command.add("notify-send");
     try {
-      iconPath = "--icon=" + curDir.getCanonicalPath()
+      String iconPath = "--icon=" + curDir.getCanonicalPath()
           + "/imgs/tvbrowser128.png";
       command.add(iconPath);
     } catch (IOException e) {
       e.printStackTrace();
     }
-    ParamParser parser = new ParamParser();
-    final LocalPluginProgramFormating format = new LocalPluginProgramFormating(
-        mLocalizer.msg("name", "NotifyOSD"),
-        "{leadingZero(start_hour,\"2\")}:{leadingZero(start_minute,\"2\")} {title}",
-        "{maxlength(short_info,\"100\")}", "UTF-8");
-    String title = parser.analyse(format.getTitleValue(), program);
-    if (title == null) {
-      title = program.getTitle();
-    }
     title = title.replace("\n", " ").trim();
-    command.add(title);
-    String description = parser.analyse(format.getContentValue(), program);
-    if (description == null) {
-      description = program.getShortInfo();
+    if (title.length() > 0) {
+      command.add(title);
     }
-    description = description.replace("\n", " ").trim();
-    command.add(description);
+    body = body.replace("\n", " ").trim();
+    command.add(body);
     final ExecutionHandler executer = new ExecutionHandler(command
         .toArray(new String[command.size()]));
     try {
