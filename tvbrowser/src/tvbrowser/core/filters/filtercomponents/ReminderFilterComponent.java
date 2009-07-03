@@ -41,10 +41,11 @@ public class ReminderFilterComponent extends AbstractFilterComponent {
   }
 
   public boolean accept(Program program) {
+    String reminderPluginId = ReminderPlugin.getInstance().getId();
     Marker[] mark = program.getMarkerArr();
 
     for (Marker element : mark) {
-      if (element.getId().compareTo(ReminderPlugin.getInstance().getId()) == 0) {
+      if (reminderPluginId.equals(element.getId())) {
         return true;
       }
     }

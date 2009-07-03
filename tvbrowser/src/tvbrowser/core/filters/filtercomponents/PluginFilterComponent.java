@@ -46,7 +46,6 @@ public class PluginFilterComponent extends AbstractFilterComponent {
       .getLocalizerFor(PluginFilterComponent.class);
 
   private JComboBox mBox;
-  private PluginProxy mPlugin;
 
   private String mPluginId;
 
@@ -66,22 +65,22 @@ public class PluginFilterComponent extends AbstractFilterComponent {
     } else {
       mPluginId = (String) in.readObject();
     }
-    mPlugin = PluginProxyManager.getInstance().getPluginForId(mPluginId);
   }
 
   public void write(ObjectOutputStream out) throws IOException {
-    if (mPlugin == null) {
+    if (mPluginId == null) {
       out.writeObject("[invalid]");
     } else {
-      out.writeObject(mPlugin.getId());
+      out.writeObject(mPluginId);
     }
   }
 
-  public boolean accept(Program program) {
-    Marker[] markedBy = program.getMarkerArr();
-    for (Marker element : markedBy) {
-      if (mPlugin != null && element.getId().compareTo(mPlugin.getId()) == 0) {
-        return true;
+  public boolean accept(final Program program) {
+    if (mPluginId != null) {
+      for (Marker marker : program.getMarkerArr()) {
+        if (mPluginId.equals(marker.getId())) {
+          return true;
+        }
       }
     }
     return false;
@@ -111,8 +110,11 @@ public class PluginFilterComponent extends AbstractFilterComponent {
     Arrays.sort(plugins, new PluginProxy.Comparator());
 
     mBox = new JComboBox(plugins);
-    if (mPlugin != null) {
-      mBox.setSelectedItem(mPlugin);
+    if (mPluginId != null) {
+      PluginProxy plugin = PluginProxyManager.getInstance().getPluginForId(mPluginId);
+      if (plugin != null) {
+        mBox.setSelectedItem(plugin);
+      }
     }
     content.add(mBox, BorderLayout.CENTER);
 
@@ -127,7 +129,7 @@ public class PluginFilterComponent extends AbstractFilterComponent {
   }
 
   public void saveSettings() {
-    mPlugin = (PluginProxy) mBox.getSelectedItem();
+    mPluginId = ((PluginProxy) mBox.getSelectedItem()).getId();
   }
 
   public int getVersion() {

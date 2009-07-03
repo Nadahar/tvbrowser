@@ -60,8 +60,7 @@ public class ProgramTypeFilterComponent extends AbstractFilterComponent {
 
   @Override
   public boolean accept(final Program program) {
-    Channel channel = program.getChannel();
-    return (channel.getCategories() & mCategories) == mCategories;
+    return (program.getChannel().getCategories() & mCategories) == mCategories;
   }
 
   @Override

@@ -158,7 +158,7 @@ public class BeanShellFilterComponent extends AbstractFilterComponent {
     }
   }
 
-  public boolean accept(Program program) {
+  public boolean accept(final Program program) {
     try {
       if (mScript == null) {
         compileSource();

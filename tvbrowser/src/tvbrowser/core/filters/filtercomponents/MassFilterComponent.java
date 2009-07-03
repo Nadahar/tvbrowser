@@ -82,43 +82,41 @@ public class MassFilterComponent extends AbstractFilterComponent {
     super(name, description);
     mText = "";
     mSearchFormSettings = new SearchFormSettings("");
-    generateSearcher();
   }
 
   /**
    * Generates the Search-Array
    */
-  private void generateSearcher() {
-    ArrayList<ProgramSearcher> list = new ArrayList<ProgramSearcher>();
-    String[] keys = mText.split("\\n");
-
-    for (String key : keys) {
-      try {
-        list.add(mSearchFormSettings.createSearcher(key));
-      } catch (TvBrowserException ex) {
-        ex.printStackTrace();
+  private ProgramSearcher[] getSearcher() {
+    if (mSearcher == null) {
+      ArrayList<ProgramSearcher> list = new ArrayList<ProgramSearcher>();
+      String[] keys = mText.split("\\n");
+  
+      for (String key : keys) {
+        try {
+          list.add(mSearchFormSettings.createSearcher(key));
+        } catch (TvBrowserException ex) {
+          ex.printStackTrace();
+        }
       }
+  
+      mSearcher = list.toArray(new ProgramSearcher[list.size()]);
     }
-
-    mSearcher = list.toArray(new ProgramSearcher[list.size()]);
+    return mSearcher;
   }
 
   public int getVersion() {
     return 1;
   }
 
-  public boolean accept(Program program) {
-
-    if (mSearcher != null) {
-
-      for (ProgramSearcher element : mSearcher) {
-        if (element.matches(program, mSearchFormSettings.getFieldTypes())) {
+  public boolean accept(final Program program) {
+    if (getSearcher() != null) {
+      for (ProgramSearcher searcher : getSearcher()) {
+        if (searcher.matches(program, mSearchFormSettings.getFieldTypes())) {
           return true;
         }
       }
-
     }
-
     return false;
   }
 
@@ -126,7 +124,7 @@ public class MassFilterComponent extends AbstractFilterComponent {
       ClassNotFoundException {
     mText = (String) in.readObject();
     mSearchFormSettings = new SearchFormSettings(in);
-    generateSearcher();
+    mSearcher = null;
   }
 
   public void write(ObjectOutputStream out) throws IOException {
@@ -183,7 +181,7 @@ public class MassFilterComponent extends AbstractFilterComponent {
   public void saveSettings() {
     mText = mTextInput.getText();
     mSearchFormSettings = mNewSearchFormSettings;
-    generateSearcher();
+    mSearcher = null;
   }
 
   @Override

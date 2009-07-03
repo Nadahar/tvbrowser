@@ -26,7 +26,6 @@
 
 package tvbrowser.core.tvdataservice;
 
-import java.awt.List;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -43,7 +42,6 @@ import tvbrowser.core.plugin.PluginManagerImpl;
 import util.exc.ErrorHandler;
 import util.io.stream.OutputStreamProcessor;
 import util.io.stream.StreamUtilities;
-import util.settings.StringArrayProperty;
 import devplugin.AbstractTvDataService;
 
 
@@ -83,8 +81,7 @@ public class TvDataServiceProxyManager {
   }
 
   private void loadServiceSettings(TvDataServiceProxy service) {
-    String dir=Settings.getUserSettingsDirName();
-    File f=new File(dir,service.getId()+".service");
+    File f=new File(Settings.getUserSettingsDirName(),service.getId()+".service");
     if (f.exists()) {
       try {
         Properties p=new Properties();
@@ -131,8 +128,7 @@ public class TvDataServiceProxyManager {
    * @param dir
    */
   public void setTvDataDir(File dir) {
-    TvDataServiceProxy[] services = getDataServices();
-    for (TvDataServiceProxy proxy : services) {
+    for (TvDataServiceProxy proxy : getDataServices()) {
       File dataServiceDir=new File(dir,proxy.getId());
       if (!dataServiceDir.exists()) {
         dataServiceDir.mkdirs();
@@ -169,30 +165,30 @@ public class TvDataServiceProxyManager {
     }
   }
 
-  public boolean licensesAccepted(TvDataServiceProxy services[]) {
+  public boolean licensesAccepted(final TvDataServiceProxy services[]) {
     return true;
   }
 
 
   public void shutDown() {
-    TvDataServiceProxy[] proxies = getDataServices();
-    for (TvDataServiceProxy proxy : proxies) {
+    for (TvDataServiceProxy proxy : getDataServices()) {
       storeServiceSettings(proxy);
     }
   }
 
-  public TvDataServiceProxy findDataServiceById(String id) {
-    TvDataServiceProxy[] proxies = getDataServices();
-    for (TvDataServiceProxy proxy : proxies) {
-      if (id.equals(proxy.getId())) {
-        return proxy;
+  public TvDataServiceProxy findDataServiceById(final String id) {
+    if (mProxyList != null) {
+      for (TvDataServiceProxy proxy : mProxyList) {
+        if (id.equals(proxy.getId())) {
+          return proxy;
+        }
       }
     }
     return null;
   }
 
 
-  public TvDataServiceProxy[] getTvDataServices(String[] idArr) {
+  public TvDataServiceProxy[] getTvDataServices(final String[] idArr) {
     ArrayList<TvDataServiceProxy> list = new ArrayList<TvDataServiceProxy>();
     for (String id : idArr) {
       TvDataServiceProxy proxy = findDataServiceById(id);
@@ -219,17 +215,15 @@ public class TvDataServiceProxyManager {
    * Set the Parent-Frame for all Dataservices
    * @param frame Parentframe
    */
-  public void setParamFrame(JFrame frame) {
-      TvDataServiceProxy[] services = getDataServices();
-      for (TvDataServiceProxy proxy : services) {
+  public void setParamFrame(final JFrame frame) {
+      for (TvDataServiceProxy proxy : getDataServices()) {
         proxy.setParent(frame);
       }
 
   }
 
   public void fireTvBrowserStartFinished() {
-    TvDataServiceProxy[] services = getDataServices();
-    for (TvDataServiceProxy proxy : services) {
+    for (TvDataServiceProxy proxy : getDataServices()) {
         proxy.handleTvBrowserStartFinished();    
     }
   }
@@ -237,7 +231,6 @@ public class TvDataServiceProxyManager {
   public void loadNotSubscribed() {
     try {
       // load only the settings of services WITHOUT subscription
-      TvDataServiceProxy[] proxies = getDataServices();
       String[] subscribedServices = Settings.propCurrentlyUsedDataServiceIds
           .getStringArray();
       if (subscribedServices.length == 0) {
@@ -245,7 +238,7 @@ public class TvDataServiceProxyManager {
       }
 
       java.util.List<String> list = Arrays.asList(subscribedServices);
-      for (TvDataServiceProxy proxy : proxies) {
+      for (TvDataServiceProxy proxy : getDataServices()) {
         if (!list.contains(proxy.getId())) {
           loadServiceSettings(proxy);
         }

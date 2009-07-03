@@ -37,9 +37,8 @@ public class PluginFilter implements ProgramFilter {
 
 
   public boolean accept(devplugin.Program prog) {
-    Marker[] markerArr = prog.getMarkerArr();
+    final Marker[] markerArr = prog.getMarkerArr();
     return (markerArr!=null && markerArr.length>0);
-
   }
 
   public String getName() {
