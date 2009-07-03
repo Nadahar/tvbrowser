@@ -40,11 +40,10 @@ public class FavoritesFilterComponent extends AbstractFilterComponent {
     return 1;
   }
 
-  public boolean accept(Program program) {
-    Marker[] mark = program.getMarkerArr();
-
-    for (Marker element : mark) {
-      if (element.getId().compareTo(FavoritesPlugin.getInstance().getId()) == 0) {
+  public boolean accept(final Program program) {
+    final String favPluginId = FavoritesPlugin.getInstance().getId();
+    for (Marker marker : program.getMarkerArr()) {
+      if (favPluginId.equals(marker.getId())) {
         return true;
       }
     }

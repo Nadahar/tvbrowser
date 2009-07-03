@@ -61,7 +61,7 @@ public class DateFilterComponent extends AbstractFilterComponent {
   }
 
   @Override
-  public boolean accept(Program program) {
+  public boolean accept(final Program program) {
     final Date progDate = program.getDate();
     Date currentDate = Date.getCurrentDate();
     Date mStartDate = currentDate.addDays(mStartDays);

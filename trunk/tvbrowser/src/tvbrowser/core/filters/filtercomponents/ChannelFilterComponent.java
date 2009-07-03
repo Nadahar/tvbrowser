@@ -50,7 +50,7 @@ public class ChannelFilterComponent extends AbstractFilterComponent {
 
   public ChannelFilterComponent(String name, String desc) {
     super(name, desc);
-    mSelectedChannels = new Channel[] {};
+    mSelectedChannels = new Channel[0];
   }
 
   public ChannelFilterComponent() {
@@ -127,7 +127,7 @@ public class ChannelFilterComponent extends AbstractFilterComponent {
     return content;
   }
 
-  public boolean accept(Program program) {
+  public boolean accept(final Program program) {
     for (Channel selectedChannel : mSelectedChannels) {
       if (selectedChannel.equals(program.getChannel())) {
         return true;

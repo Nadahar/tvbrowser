@@ -45,8 +45,8 @@ public class AgeLimitFilterComponent extends AbstractFilterComponent {
   private int mRequiredAge;
   private JSpinner mAgeSpinner;
 
-  public boolean accept(Program program) {
-    int ageLimit = program.getIntField(ProgramFieldType.AGE_LIMIT_TYPE);
+  public boolean accept(final Program program) {
+    final int ageLimit = program.getIntField(ProgramFieldType.AGE_LIMIT_TYPE);
     return ageLimit > 0 && ageLimit <= mRequiredAge;
   }
 
