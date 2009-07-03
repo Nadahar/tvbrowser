@@ -53,6 +53,8 @@ public class KNotifyPlugin extends Plugin {
    */
   private static final Version mVersion = new Version(2,61);
 
+  private static final String TARGET = "KNOTIFY_TARGET";
+
   boolean mInitialized = false;
 
   private Properties mSettings;
@@ -92,6 +94,16 @@ public class KNotifyPlugin extends Plugin {
   public boolean canReceiveProgramsWithTarget() {
     return true;
   }
+  
+  public ProgramReceiveTarget[] getProgramReceiveTargets() {
+    if (canReceiveProgramsWithTarget()) {
+      final ProgramReceiveTarget target = new ProgramReceiveTarget(this,
+          mLocalizer.msg("targetName", "Show with KNotify"), TARGET);
+      return new ProgramReceiveTarget[] { target };
+    }
+    return null;
+  }
+  
 
   public static Version getVersion() {
     return mVersion;
