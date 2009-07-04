@@ -1,5 +1,6 @@
 package tvbrowser.extras.programinfo;
 
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -29,6 +30,8 @@ import javax.swing.event.ChangeListener;
 
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginManagerImpl;
+import tvbrowser.ui.settings.util.ColorButton;
+import tvbrowser.ui.settings.util.ColorLabel;
 import util.program.ProgramTextCreator;
 import util.ui.FontChooserPanel;
 import util.ui.Localizer;
@@ -90,6 +93,9 @@ public class ProgramInfoSettingsTab implements SettingsTab {
   
   private ButtonGroup mAvailableTargetGroup;
   private JCheckBox mPersonSearchCB;
+  private JCheckBox mHighlight;
+  private ColorLabel mHighlightColorLb;
+  private ColorButton mHighlightButton;
   
   public JPanel createSettingsPanel() {
     final ProgramInfoSettings settings = ProgramInfo.getInstance()
@@ -155,10 +161,20 @@ public class ProgramInfoSettingsTab implements SettingsTab {
       }
     });
     
+    mHighlight = new JCheckBox(ProgramInfoDialog.mLocalizer.msg("highlight", "Highlight favorite matches"), settings.getHighlightFavorite());
+    mHighlight.addActionListener(new ActionListener() {
+      
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        mHighlightColorLb.setEnabled(mHighlight.isSelected());
+        mHighlightButton.setEnabled(mHighlight.isSelected());
+      }
+    });
+    
     CellConstraints cc = new CellConstraints();
     PanelBuilder formatPanelBuilder = new PanelBuilder(new FormLayout("5dlu,10dlu,pref,pref,default:grow,5dlu",
         "pref,5dlu,pref,pref,pref,pref,10dlu,pref,5dlu,pref" +
-        ",10dlu,pref,5dlu,pref,pref"));
+        ",10dlu,pref,5dlu,pref,pref,10dlu,pref,5dlu,pref"));
     formatPanelBuilder.setDefaultDialogBorder();
     
     formatPanelBuilder.addSeparator(ProgramInfo.mLocalizer.msg("font","Font settings"), cc.xyw(1,1,6));
@@ -189,6 +205,17 @@ public class ProgramInfoSettingsTab implements SettingsTab {
     formatPanelBuilder.addSeparator(ProgramInfoDialog.mLocalizer.msg("functions","Functions"), cc.xyw(1,12,6));
     formatPanelBuilder.add(mShowFunctions, cc.xyw(2,14,5));
     formatPanelBuilder.add(mShowTextSearchButton, cc.xyw(3,15,4));
+    
+    formatPanelBuilder.addSeparator(ProgramInfo.mLocalizer.msg("favorites","Favorites"), cc.xyw(1,17,6));
+    formatPanelBuilder.add(mHighlight, cc.xyw(2,19,3));
+    JPanel panel = new JPanel(new FlowLayout());
+    mHighlightColorLb = new ColorLabel(settings.getHighlightColor());
+    panel.add(mHighlightColorLb);
+    mHighlightColorLb.setStandardColor(settings.getHighlightColor());
+    mHighlightButton = new ColorButton(mHighlightColorLb);
+    panel.add(mHighlightButton);
+    mHighlight.getActionListeners()[0].actionPerformed(null);
+    formatPanelBuilder.add(panel, cc.xy(5,19));
     
     mOldOrder = settings.getFieldOrder();
     mOldSetupState = ProgramInfo.getInstance().getSettings().getSetupwasdone();        
@@ -323,8 +350,8 @@ public class ProgramInfoSettingsTab implements SettingsTab {
     mPersonSearchCB.getActionListeners()[0].actionPerformed(null);
     
     final JTabbedPane tabbedPane = new JTabbedPane();
+    tabbedPane.add(ProgramInfo.mLocalizer.msg("look","Look"), formatPanelBuilder.getPanel());
     tabbedPane.add(ProgramInfo.mLocalizer.msg("pictureOrder","Pictures/order"), builder.getPanel());
-    tabbedPane.add(ProgramInfo.mLocalizer.msg("formating","Formating"), formatPanelBuilder.getPanel());
     tabbedPane.add(ProgramInfo.mLocalizer.msg("actorSearch","Actor search"), actorSearchPanelBuilder.getPanel());
     tabbedPane.setSelectedIndex(mSelectedTab);
     
@@ -393,17 +420,16 @@ public class ProgramInfoSettingsTab implements SettingsTab {
     ProgramInfo.getInstance().setLook();
     
     if(mShowFunctions != null) {
-      ProgramInfo.getInstance().getSettings().setShowFunctions(
-            mShowFunctions.isSelected());
-      
+      settings.setShowFunctions(mShowFunctions.isSelected());
       if(mShowFunctions.isSelected() != mOldShowFunctions) {
         ProgramInfoDialog.recreateInstance();
       }
     }
     if(mShowTextSearchButton != null) {
-      ProgramInfo.getInstance().getSettings().setShowSearchButton(
-            mShowTextSearchButton.isSelected());
+      settings.setShowSearchButton(mShowTextSearchButton.isSelected());
     }
+    settings.setHighlightFavorite(mHighlight.isSelected());
+    settings.setHighlightColor(mHighlightColorLb.getColor());
     
     Enumeration<AbstractButton> actorSearchDefault = mAvailableTargetGroup.getElements();
 
