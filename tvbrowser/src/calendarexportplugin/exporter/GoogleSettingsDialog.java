@@ -28,7 +28,7 @@ import com.google.gdata.data.calendar.CalendarEntry;
 import com.google.gdata.data.calendar.CalendarFeed;
 import com.google.gdata.util.AuthenticationException;
 import com.google.gdata.util.ServiceException;
-import com.jgoodies.forms.builder.ButtonBarBuilder;
+import com.jgoodies.forms.builder.ButtonBarBuilder2;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.factories.DefaultComponentFactory;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -137,7 +137,7 @@ public class GoogleSettingsDialog extends JDialog  implements WindowClosingIf {
     content.add(mReminderStore, cc.xyw(2,17,4));
 
 
-    ButtonBarBuilder builder = new ButtonBarBuilder();
+    ButtonBarBuilder2 builder = new ButtonBarBuilder2();
     builder.addGlue();
 
     mOkButton = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
@@ -158,7 +158,7 @@ public class GoogleSettingsDialog extends JDialog  implements WindowClosingIf {
       }
     });
 
-    builder.addGriddedButtons(new JButton[] {mOkButton, cancel});
+    builder.addButton(new JButton[] {mOkButton, cancel});
 
     content.add(builder.getPanel(), cc.xyw(1, 19, 5));
 

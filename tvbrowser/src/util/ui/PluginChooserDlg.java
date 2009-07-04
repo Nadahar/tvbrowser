@@ -53,7 +53,7 @@ import tvbrowser.core.Settings;
 import util.ui.customizableitems.SelectableItem;
 import util.ui.customizableitems.SelectableItemList;
 
-import com.jgoodies.forms.builder.ButtonBarBuilder;
+import com.jgoodies.forms.builder.ButtonBarBuilder2;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
@@ -429,9 +429,9 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
       }
     });
 
-    ButtonBarBuilder builder = new ButtonBarBuilder();
+    ButtonBarBuilder2 builder = new ButtonBarBuilder2();
     builder.addGlue();
-    builder.addGriddedButtons(new JButton[] {okBt, cancelBt});
+    builder.addButton(new JButton[] {okBt, cancelBt});
     
     layout.appendRow(RowSpec.decode("pref"));
     contentPane.add(builder.getPanel(), cc.xy(1,pos));

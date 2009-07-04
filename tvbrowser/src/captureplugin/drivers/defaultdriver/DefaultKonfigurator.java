@@ -50,7 +50,7 @@ import captureplugin.drivers.defaultdriver.configpanels.ParameterPanel;
 import captureplugin.drivers.defaultdriver.configpanels.SettingsPanel;
 import captureplugin.drivers.defaultdriver.configpanels.VariablePanel;
 
-import com.jgoodies.forms.builder.ButtonBarBuilder;
+import com.jgoodies.forms.builder.ButtonBarBuilder2;
 import com.jgoodies.forms.factories.Borders;
 
 /**
@@ -149,9 +149,9 @@ public class DefaultKonfigurator extends JDialog implements WindowClosingIf {
             }
         });
         
-        ButtonBarBuilder builder = new ButtonBarBuilder();
+        ButtonBarBuilder2 builder = new ButtonBarBuilder2();
         builder.addGlue();
-        builder.addGriddedButtons(new JButton[]{ok, cancel});
+        builder.addButton(new JButton[]{ok, cancel});
         builder.setBorder(Borders.DLU4_BORDER);
         
         panel.add(builder.getPanel(), BorderLayout.SOUTH);

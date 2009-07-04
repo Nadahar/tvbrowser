@@ -70,7 +70,7 @@ import util.ui.Localizer;
 import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 
-import com.jgoodies.forms.builder.ButtonBarBuilder;
+import com.jgoodies.forms.builder.ButtonBarBuilder2;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
@@ -234,7 +234,7 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
     
     contentPanel.add(pane, cc.xyw(1,3,2));
     
-    ButtonBarBuilder builder = new ButtonBarBuilder();
+    ButtonBarBuilder2 builder = new ButtonBarBuilder2();
 
     mInfo = new JButton(mLocalizer.msg("info","Info"), IconLoader.getInstance().getIconFromTheme("status", "dialog-information", 16));
     mInfo.addActionListener(new ActionListener() {
@@ -266,9 +266,9 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
       }
     });
     
-    builder.addGridded(mInfo);
+    builder.addButton(mInfo);
     builder.addRelatedGap();
-    builder.addGridded(mConfigure);
+    builder.addButton(mConfigure);
     builder.addRelatedGap();
     builder.addGlue();
     builder.addRelatedGap();
@@ -280,7 +280,7 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
       }
     });
     
-    builder.addGridded(mRemove);
+    builder.addButton(mRemove);
     
     contentPanel.add(builder.getPanel(), cc.xyw(1,5,2));
     

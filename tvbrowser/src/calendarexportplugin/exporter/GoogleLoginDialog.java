@@ -41,7 +41,7 @@ import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
-import com.jgoodies.forms.builder.ButtonBarBuilder;
+import com.jgoodies.forms.builder.ButtonBarBuilder2;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.Sizes;
@@ -134,7 +134,7 @@ public class GoogleLoginDialog extends JDialog implements WindowClosingIf {
     
     mStorePassword.setSelected(mStore);
     
-    ButtonBarBuilder builder = new ButtonBarBuilder();
+    ButtonBarBuilder2 builder = new ButtonBarBuilder2();
     builder.addGlue();
     
     JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
@@ -156,7 +156,7 @@ public class GoogleLoginDialog extends JDialog implements WindowClosingIf {
       }
     });
     
-    builder.addGriddedButtons(new JButton[] {ok, cancel});
+    builder.addButton(new JButton[] {ok, cancel});
 
     content.add(builder.getPanel(), cc.xyw(1,9,4));
     

@@ -56,7 +56,7 @@ import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
-import com.jgoodies.forms.builder.ButtonBarBuilder;
+import com.jgoodies.forms.builder.ButtonBarBuilder2;
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.factories.DefaultComponentFactory;
@@ -205,7 +205,7 @@ public class ChannelConfigDlg extends JDialog implements ActionListener, WindowC
     panel.add(txt2, cc.xy(3, 17));
     
     // buttons
-    ButtonBarBuilder builder = new ButtonBarBuilder();
+    ButtonBarBuilder2 builder = new ButtonBarBuilder2();
     JButton defaultButton = new JButton(Localizer.getLocalization(Localizer.I18N_DEFAULT));
     
     defaultButton.addActionListener(new ActionListener() {
@@ -215,7 +215,7 @@ public class ChannelConfigDlg extends JDialog implements ActionListener, WindowC
 
     });
     
-    builder.addGridded(defaultButton);
+    builder.addButton(defaultButton);
     builder.addRelatedGap();
     builder.addGlue();
 
@@ -227,7 +227,7 @@ public class ChannelConfigDlg extends JDialog implements ActionListener, WindowC
     mCloseBt = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
     mCloseBt.addActionListener(this);
 
-    builder.addGriddedButtons(new JButton[] { mOKBt, mCloseBt });
+    builder.addButton(new JButton[] { mOKBt, mCloseBt });
 
     panel.add(new JSeparator(), cc.xyw(1, 19, 3));
     panel.add(builder.getPanel(), cc.xyw(1, 21, 3));

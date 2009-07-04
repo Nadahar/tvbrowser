@@ -60,7 +60,7 @@ import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
-import com.jgoodies.forms.builder.ButtonBarBuilder;
+import com.jgoodies.forms.builder.ButtonBarBuilder2;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
@@ -218,7 +218,7 @@ public class ReminderListDialog extends JDialog implements WindowClosingIf {
     
     panel.add(new JScrollPane(mTable), cc.xyw(1, 3, 3));
 
-    ButtonBarBuilder builder = ButtonBarBuilder.createLeftToRightBuilder();
+    ButtonBarBuilder2 builder = ButtonBarBuilder2.createLeftToRightBuilder();
 
     JButton config = new JButton(TVBrowserIcons.preferences(TVBrowserIcons.SIZE_SMALL));
 

@@ -51,7 +51,7 @@ import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
-import com.jgoodies.forms.builder.ButtonBarBuilder;
+import com.jgoodies.forms.builder.ButtonBarBuilder2;
 
 /**
  * A Dialog for creating new Devices
@@ -179,9 +179,9 @@ public class DeviceCreatorDialog extends JDialog implements WindowClosingIf {
           }
         });
 
-        ButtonBarBuilder builder = new ButtonBarBuilder();
+        ButtonBarBuilder2 builder = new ButtonBarBuilder2();
         builder.addGlue();
-        builder.addGriddedButtons(new JButton[] {ok, cancel});
+        builder.addButton(new JButton[] {ok, cancel});
         
         getRootPane().setDefaultButton(ok);
 

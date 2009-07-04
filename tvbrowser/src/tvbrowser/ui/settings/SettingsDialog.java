@@ -79,7 +79,7 @@ import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
-import com.jgoodies.forms.builder.ButtonBarBuilder;
+import com.jgoodies.forms.builder.ButtonBarBuilder2;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
@@ -175,7 +175,7 @@ public class SettingsDialog implements WindowClosingIf {
     mSettingsPn = new JPanel(new BorderLayout());
     splitPane.setRightComponent(mSettingsPn);
 
-    ButtonBarBuilder builder = new ButtonBarBuilder();
+    ButtonBarBuilder2 builder = new ButtonBarBuilder2();
 
     mHelpBt = new JButton(mLocalizer.msg("help", "Online help"));
     mHelpBt.addActionListener(new ActionListener() {
@@ -184,7 +184,7 @@ public class SettingsDialog implements WindowClosingIf {
       }
     });
 
-    builder.addGridded(mHelpBt);
+    builder.addButton(mHelpBt);
 
     JButton okBt = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
     okBt.addActionListener(new ActionListener() {
@@ -217,7 +217,7 @@ public class SettingsDialog implements WindowClosingIf {
     });
 
     builder.addGlue();
-    builder.addGriddedButtons(new JButton[] { okBt, cancelBt, applyBt });
+    builder.addButton(new JButton[] { okBt, cancelBt, applyBt });
     main.add(builder.getPanel(), cc.xy(1, 3));
 
     mDialog.pack();

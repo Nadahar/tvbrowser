@@ -59,7 +59,7 @@ import util.exc.TvBrowserException;
 import util.settings.PluginPictureSettings;
 import util.settings.ProgramPanelSettings;
 
-import com.jgoodies.forms.builder.ButtonBarBuilder;
+import com.jgoodies.forms.builder.ButtonBarBuilder2;
 import com.jgoodies.forms.factories.Borders;
 
 import devplugin.Program;
@@ -340,7 +340,7 @@ public class SearchHelper {
       mProgramList.setSelectedValue(programArr[curPos], true);
     }
 
-    ButtonBarBuilder builder = ButtonBarBuilder.createLeftToRightBuilder();
+    ButtonBarBuilder2 builder = ButtonBarBuilder2.createLeftToRightBuilder();
     builder.setBorder(BorderFactory.createEmptyBorder(5, 0, 0, 0));
 
     // send to plugins

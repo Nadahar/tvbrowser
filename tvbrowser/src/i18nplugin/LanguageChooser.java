@@ -43,7 +43,7 @@ import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
-import com.jgoodies.forms.builder.ButtonBarBuilder;
+import com.jgoodies.forms.builder.ButtonBarBuilder2;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
@@ -104,7 +104,7 @@ public class LanguageChooser extends JDialog implements WindowClosingIf {
     
     panel.add(mLangBox, cc.xy(2,3));
     
-    ButtonBarBuilder builder = new ButtonBarBuilder();
+    ButtonBarBuilder2 builder = new ButtonBarBuilder2();
     
     JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
     ok.addActionListener(new ActionListener() {
@@ -122,7 +122,7 @@ public class LanguageChooser extends JDialog implements WindowClosingIf {
     });
     
     builder.addGlue();
-    builder.addGriddedButtons(new JButton[] {ok, cancel});
+    builder.addButton(new JButton[] {ok, cancel});
     
     panel.add(builder.getPanel(), cc.xyw(1,5,3));
     
