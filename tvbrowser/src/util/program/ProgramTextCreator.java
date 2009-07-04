@@ -601,9 +601,9 @@ public class ProgramTextCreator {
                 int actorIndex = 0;
                 if (showPersonLinks) {
                     if (knownNames.contains(parts[0])) {
-                      parts[0] = addSearchLink(parts[0]);
+                      parts[0] = addPersonLink(parts[0]);
                     } else if (knownNames.contains(parts[1])) {
-                      parts[1] = addSearchLink(parts[1]);
+                      parts[1] = addPersonLink(parts[1]);
                       actorIndex = 1;
                     }
                 }
@@ -664,6 +664,13 @@ public class ProgramTextCreator {
 
     return buffer.toString();}catch(Exception e) {e.printStackTrace();}
     return "";
+  }
+
+  private static String addPersonLink(final String name) {
+    if (name == null || name.isEmpty()) {
+      return mLocalizer.msg("unknown", "(unknown)");
+    }
+    return addSearchLink(name);
   }
 
   private static ArrayList<String>[] splitActorsSimple(Program prog) {
@@ -731,6 +738,9 @@ public class ProgramTextCreator {
   }
 
   private static String addSearchLink(String topic) {
+    if (topic == null || topic.isEmpty()) {
+      return "";
+    }
     return addSearchLink(topic, topic);
   }
   
