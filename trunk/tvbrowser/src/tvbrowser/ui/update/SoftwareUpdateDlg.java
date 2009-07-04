@@ -80,7 +80,7 @@ import util.ui.customizableitems.SelectableItemList;
 import util.ui.customizableitems.SelectableItemRendererCenterComponentIf;
 import util.ui.html.HTMLTextHelper;
 
-import com.jgoodies.forms.builder.ButtonBarBuilder;
+import com.jgoodies.forms.builder.ButtonBarBuilder2;
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
@@ -143,7 +143,7 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
     mHelpBtn.addActionListener(this);
     mHelpBtn.setEnabled(false);
 
-    ButtonBarBuilder builder = new ButtonBarBuilder();
+    ButtonBarBuilder2 builder = new ButtonBarBuilder2();
     
     if(onlyUpdate) {
       mAutoUpdates = new JCheckBox(mLocalizer.msg("autoUpdates","Find plugin updates automatically"), Settings.propAutoUpdatePlugins.getBoolean());

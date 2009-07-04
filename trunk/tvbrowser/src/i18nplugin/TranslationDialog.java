@@ -73,7 +73,7 @@ import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
-import com.jgoodies.forms.builder.ButtonBarBuilder;
+import com.jgoodies.forms.builder.ButtonBarBuilder2;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.factories.DefaultComponentFactory;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -249,7 +249,7 @@ final public class TranslationDialog extends JDialog implements WindowClosingIf 
       }
     });
     
-    ButtonBarBuilder buttonbar = new ButtonBarBuilder();
+    ButtonBarBuilder2 buttonbar = new ButtonBarBuilder2();
     
     JButton save = new JButton(mLocalizer.msg("save","Save"));
     
@@ -281,7 +281,7 @@ final public class TranslationDialog extends JDialog implements WindowClosingIf 
     buttonbar.addGlue();
     buttonbar.addFixed(link);
     buttonbar.addGlue();
-    buttonbar.addGriddedButtons(new JButton[] {save, cancel});
+    buttonbar.addButton(new JButton[] {save, cancel});
     
     panel.add(buttonbar.getPanel(), cc.xyw(2,11,6));
 

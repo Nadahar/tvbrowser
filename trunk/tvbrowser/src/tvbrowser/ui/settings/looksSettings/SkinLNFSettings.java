@@ -39,12 +39,12 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 
 import tvbrowser.core.Settings;
+import util.misc.OperatingSystem;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
-import util.misc.OperatingSystem;
 
-import com.jgoodies.forms.builder.ButtonBarBuilder;
+import com.jgoodies.forms.builder.ButtonBarBuilder2;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.factories.DefaultComponentFactory;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -111,8 +111,8 @@ public class SkinLNFSettings extends JDialog implements WindowClosingIf {
       }
     });
 
-    ButtonBarBuilder bar = new ButtonBarBuilder();
-    bar.addGriddedButtons(new JButton[] {ok, cancel});
+    ButtonBarBuilder2 bar = new ButtonBarBuilder2();
+    bar.addButton(new JButton[] {ok, cancel});
 
     JPanel panel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
     panel.add(bar.getPanel());

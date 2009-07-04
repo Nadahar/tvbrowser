@@ -61,7 +61,7 @@ import captureplugin.utils.ExternalChannelIf;
 import captureplugin.utils.ExternalChannelTableCellEditor;
 import captureplugin.utils.ExternalChannelTableCellRenderer;
 
-import com.jgoodies.forms.builder.ButtonBarBuilder;
+import com.jgoodies.forms.builder.ButtonBarBuilder2;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.factories.DefaultComponentFactory;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -157,7 +157,7 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
 
         basicPanel.add(miscPanel, cc.xy(2, 3));
 
-        ButtonBarBuilder refresh = new ButtonBarBuilder();
+        ButtonBarBuilder2 refresh = new ButtonBarBuilder2();
 
         refresh.addGlue();
 
@@ -169,7 +169,7 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
         });
         refreshButton.setIcon(TVBrowserIcons.refresh(TVBrowserIcons.SIZE_SMALL));
 
-        refresh.addGriddedButtons(new JButton[]{refreshButton});
+        refresh.addButton(new JButton[]{refreshButton});
 
         miscPanel.add(refresh.getPanel(), cc.xy(3, 5));
 
@@ -195,7 +195,7 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
 
         basicPanel.add(new JScrollPane(mTable), cc.xy(2, 7));
 
-        ButtonBarBuilder builder = new ButtonBarBuilder();
+        ButtonBarBuilder2 builder = new ButtonBarBuilder2();
 
         builder.addGlue();
 
@@ -207,7 +207,7 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
             }
         });
 
-        builder.addGridded(attach);
+        builder.addButton(attach);
 
         basicPanel.add(builder.getPanel(), cc.xyw(1,9,2));
 
@@ -269,7 +269,7 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
         });
         extendedPanel.add(select, cc.xy(6, 17));
 
-        builder = new ButtonBarBuilder();
+        builder = new ButtonBarBuilder2();
 
         JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
         ok.addActionListener(new ActionListener() {
@@ -286,7 +286,7 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
         });
 
         builder.addGlue();
-        builder.addGriddedButtons(new JButton[]{ok, cancel});
+        builder.addButton(new JButton[]{ok, cancel});
 
         getRootPane().setDefaultButton(ok);
 

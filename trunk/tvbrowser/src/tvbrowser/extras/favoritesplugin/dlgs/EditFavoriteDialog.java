@@ -65,7 +65,7 @@ import util.ui.TimePeriodChooser;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
-import com.jgoodies.forms.builder.ButtonBarBuilder;
+import com.jgoodies.forms.builder.ButtonBarBuilder2;
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.factories.DefaultComponentFactory;
@@ -179,9 +179,9 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
       }
     });
 
-    ButtonBarBuilder buttons = new ButtonBarBuilder();
+    ButtonBarBuilder2 buttons = new ButtonBarBuilder2();
     buttons.addGlue();
-    buttons.addGriddedButtons(new JButton[] { okBtn, cancelBtn });
+    buttons.addButton(new JButton[] { okBtn, cancelBtn });
 
     rootPn.add(BorderLayout.NORTH, content);
     rootPn.add(BorderLayout.SOUTH, buttons.getPanel());

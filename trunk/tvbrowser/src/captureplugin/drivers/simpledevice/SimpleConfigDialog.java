@@ -47,7 +47,7 @@ import captureplugin.utils.ConfigTableModel;
 import captureplugin.utils.ExternalChannelTableCellEditor;
 import captureplugin.utils.ExternalChannelTableCellRenderer;
 
-import com.jgoodies.forms.builder.ButtonBarBuilder;
+import com.jgoodies.forms.builder.ButtonBarBuilder2;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.factories.DefaultComponentFactory;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -155,7 +155,7 @@ public class SimpleConfigDialog extends JDialog implements WindowClosingIf {
     
     panel.add(fetch, cc.xy(6,9));
     
-    ButtonBarBuilder builder = new ButtonBarBuilder();
+    ButtonBarBuilder2 builder = new ButtonBarBuilder2();
     builder.addGlue();
     
     JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
@@ -178,7 +178,7 @@ public class SimpleConfigDialog extends JDialog implements WindowClosingIf {
       }
     });
     
-    builder.addGriddedButtons(new JButton[] {ok, cancel});
+    builder.addButton(new JButton[] {ok, cancel});
     
     panel.add(builder.getPanel(), cc.xyw(1,11,7));
     

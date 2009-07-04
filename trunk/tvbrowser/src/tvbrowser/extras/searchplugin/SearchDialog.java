@@ -50,7 +50,7 @@ import util.ui.TabLayout;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
-import com.jgoodies.forms.builder.ButtonBarBuilder;
+import com.jgoodies.forms.builder.ButtonBarBuilder2;
 import com.jgoodies.forms.factories.Borders;
 
 import devplugin.PluginManager;
@@ -145,8 +145,8 @@ public class SearchDialog extends JDialog implements WindowClosingIf {
       }
     });
 
-    ButtonBarBuilder buttons = new ButtonBarBuilder();
-    buttons.addGriddedButtons(new JButton[]{mSearchBt, mCloseBt});
+    ButtonBarBuilder2 buttons = new ButtonBarBuilder2();
+    buttons.addButton(new JButton[]{mSearchBt, mCloseBt});
 
     JPanel buttonPanel = new JPanel(new BorderLayout());
     buttonPanel.add(buttons.getPanel(), BorderLayout.EAST);

@@ -37,7 +37,7 @@ import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
-import com.jgoodies.forms.builder.ButtonBarBuilder;
+import com.jgoodies.forms.builder.ButtonBarBuilder2;
 import com.jgoodies.forms.factories.Borders;
 
 /**
@@ -88,9 +88,9 @@ public class CapturePluginDialog extends JDialog implements WindowClosingIf {
             }
         });
 
-        ButtonBarBuilder builder = new ButtonBarBuilder();
+        ButtonBarBuilder2 builder = new ButtonBarBuilder2();
         builder.addGlue();
-        builder.addGridded(okButton);
+        builder.addButton(okButton);
         builder.setBorder(Borders.DLU4_BORDER);
         
         this.getContentPane().add(builder.getPanel(), BorderLayout.SOUTH);
