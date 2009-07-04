@@ -16,6 +16,7 @@
  */
 package tvbrowser.extras.programinfo;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.io.IOException;
 import java.util.Properties;
@@ -54,6 +55,8 @@ class ProgramInfoSettings {
   private static final String KEY_TITLEFONT_NAME = "titlefont";
   private static final String KEY_BODYFONT_NAME = "bodyfont";
   private static final String KEY_ACTOR_SEARCH_DEFAULT = "actorSearchDefault";
+  private static final String KEY_HIGHLIGHT_COLOR = "highlightColor";
+  private static final String KEY_HIGHLIGHT_ACTIVE = "highlightActive";
   private Properties mProperties;
 
   protected ProgramInfoSettings(final Properties properties) {
@@ -97,11 +100,19 @@ class ProgramInfoSettings {
   }
 
   protected void setAntialiasing(final boolean value) {
-    setProperty(KEY_ANTIALIASING, Boolean.toString(value));
+    setProperty(KEY_ANTIALIASING, value);
   }
 
   private void setProperty(final String key, final String value) {
     mProperties.setProperty(key, value);
+  }
+
+  private void setProperty(final String key, final int value) {
+    mProperties.setProperty(key, Integer.toString(value));
+  }
+
+  private void setProperty(final String key, final boolean value) {
+    mProperties.setProperty(key, Boolean.toString(value));
   }
 
   protected void setTitleFontName(final String name) {
@@ -109,7 +120,7 @@ class ProgramInfoSettings {
   }
 
   protected void setTitleFontSize(final int size) {
-    setProperty(KEY_TITLEFONT_SIZE, Integer.toString(size));
+    setProperty(KEY_TITLEFONT_SIZE, size);
   }
 
   protected void setBodyFontName(final String name) {
@@ -117,11 +128,11 @@ class ProgramInfoSettings {
   }
 
   protected void setUserFont(final boolean selected) {
-    setProperty(KEY_USERFONT_ENABLED, String.valueOf(selected));
+    setProperty(KEY_USERFONT_ENABLED, selected);
   }
 
   protected void setBodyFontSize(final int size) {
-    setProperty(KEY_BODYFONT_SIZE, String.valueOf(size));
+    setProperty(KEY_BODYFONT_SIZE, size);
   }
 
   protected String getActorSearch() {
@@ -133,19 +144,19 @@ class ProgramInfoSettings {
   }
 
   protected void setZoomEnabled(final boolean enabled) {
-    setProperty(KEY_ZOOM_ENABLED, String.valueOf(enabled));
+    setProperty(KEY_ZOOM_ENABLED, enabled);
   }
 
   protected void setZoomValue(final int value) {
-    setProperty(KEY_ZOOM_VALUE, String.valueOf(value));
+    setProperty(KEY_ZOOM_VALUE, value);
   }
 
   protected void setShowFunctions(final boolean show) {
-    setProperty(KEY_SHOW_FUNCTIONS, String.valueOf(show));
+    setProperty(KEY_SHOW_FUNCTIONS, show);
   }
 
   protected void setShowSearchButton(final boolean show) {
-    setProperty(KEY_SHOW_TEXT_SEARCH_BUTTON, String.valueOf(show));
+    setProperty(KEY_SHOW_TEXT_SEARCH_BUTTON, show);
   }
 
   protected boolean getZoomEnabled() {
@@ -161,11 +172,11 @@ class ProgramInfoSettings {
   }
 
   protected void setEnableSearch(final boolean enable) {
-    setProperty(KEY_ENABLE_SEARCH, String.valueOf(enable));
+    setProperty(KEY_ENABLE_SEARCH, enable);
   }
 
   protected void setPictureSettings(final int type) {
-    setProperty(KEY_PICTURE_SETTINGS, String.valueOf(type));
+    setProperty(KEY_PICTURE_SETTINGS, type);
   }
 
   protected int getPictureSettings() {
@@ -174,11 +185,11 @@ class ProgramInfoSettings {
   }
 
   protected void setWidth(final int width) {
-    setProperty(KEY_LEFT_SPLIT_WIDTH, Integer.toString(width));
+    setProperty(KEY_LEFT_SPLIT_WIDTH, width);
   }
 
   protected void setHeight(final int height) {
-    setProperty(KEY_LEFT_SPLIT_HEIGHT, Integer.toString(height));
+    setProperty(KEY_LEFT_SPLIT_HEIGHT, height);
   }
 
   protected int getWidth() {
@@ -207,7 +218,7 @@ class ProgramInfoSettings {
   }
 
   protected void setSetupwasdone(final boolean b) {
-    setProperty(KEY_SETUPWASDONE, Boolean.toString(b));
+    setProperty(KEY_SETUPWASDONE, b);
   }
 
   protected boolean getSetupwasdone() {
@@ -215,7 +226,7 @@ class ProgramInfoSettings {
   }
   
   protected void setShowSearch(final boolean show) {
-    setProperty(KEY_SHOW_SEARCH, String.valueOf(show));
+    setProperty(KEY_SHOW_SEARCH, show);
   }
 
   protected boolean getShowSearch() {
@@ -279,5 +290,25 @@ class ProgramInfoSettings {
       }
     }
     setProperty(KEY_FIELD_ORDER, temp.toString());
+  }
+  
+  protected void setHighlightColor(final Color color) {
+    setProperty(KEY_HIGHLIGHT_COLOR, color.getRGB());
+  }
+
+  protected Color getHighlightColor() {
+    int code = getProperty(KEY_HIGHLIGHT_COLOR, -1);
+    if (code == -1) {
+      return Color.PINK;
+    }
+    return new Color(code);
+  }
+
+  protected boolean getHighlightFavorite() {
+    return getProperty(KEY_HIGHLIGHT_ACTIVE, true);
+  }
+
+  protected void setHighlightFavorite(final boolean highlight) {
+    setProperty(KEY_HIGHLIGHT_ACTIVE, highlight);
   }
 }

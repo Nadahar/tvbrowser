@@ -26,7 +26,6 @@
 package tvbrowser.extras.programinfo;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -55,6 +54,7 @@ import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
@@ -109,6 +109,7 @@ import util.ui.html.ExtendedHTMLDocument;
 import util.ui.html.ExtendedHTMLEditorKit;
 import util.ui.textcomponentpopup.TextComponentPopupEventQueue;
 
+import com.jgoodies.forms.builder.ButtonBarBuilder2;
 import com.l2fprod.common.swing.JTaskPane;
 import com.l2fprod.common.swing.JTaskPaneGroup;
 
@@ -151,8 +152,9 @@ class ProgramInfoDialog {
   private static ProgramInfoDialog instance;
   private Action mUpAction, mDownAction;
   private JButton mCloseBtn;
-
   private JButton mConfigBtn;
+
+  private JCheckBox mHighlight;
   
   private ProgramInfoDialog(Dimension pluginsSize, boolean showSettings) {	  
 	  init(pluginsSize, showSettings);
@@ -183,6 +185,7 @@ class ProgramInfoDialog {
 	  SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         mInfoEP.setCaretPosition(0);
+        mHighlight.setSelected(ProgramInfo.getInstance().getSettings().getHighlightFavorite());
         highlightFavorites();
         if (mFindAsYouType.getSearchBar().isVisible()) {
           mFindAsYouType.next();
@@ -194,14 +197,18 @@ class ProgramInfoDialog {
 
   protected void highlightFavorites() {
     Favorite[] favorites = FavoriteTreeModel.getInstance().getFavoritesContainingProgram(mProgram);
-    if (favorites == null || favorites.length == 0) {
-      return;
-    }
+    boolean hasFavorites = favorites != null && favorites.length > 0;
+    mHighlight.setEnabled(hasFavorites);
     
-    DefaultHighlightPainter painter = new DefaultHighlightPainter(Color.MAGENTA);
     Highlighter highlighter = mInfoEP.getHighlighter();
     HTMLDocument document = (HTMLDocument) mInfoEP.getDocument();
+    highlighter.removeAllHighlights();
 
+    if (!hasFavorites || !ProgramInfo.getInstance().getSettings().getHighlightFavorite()) {
+      return;
+    }
+
+    DefaultHighlightPainter painter = new DefaultHighlightPainter(ProgramInfo.getInstance().getSettings().getHighlightColor());
     for (Favorite favorite : favorites) {
       ProgramSearcher searcher = null;
       try {
@@ -558,9 +565,9 @@ class ProgramInfoDialog {
     mConfigBtn = new JButton(mLocalizer.msg("config","Configure view"));
     mConfigBtn.setIcon(TVBrowserIcons.preferences(TVBrowserIcons.SIZE_SMALL));
     
-    JPanel bottomLeft = new JPanel(new BorderLayout(3,0));    
+    ButtonBarBuilder2 buttonBuilder = new ButtonBarBuilder2();
     
-    bottomLeft.add(mConfigBtn, BorderLayout.WEST);
+    buttonBuilder.addButton(mConfigBtn);
     mConfigBtn.setVisible(showSettings);
     
     if (pluginsSize == null) {
@@ -594,12 +601,8 @@ class ProgramInfoDialog {
         }
       });
       
-      if(showSettings) {
-        bottomLeft.add(functions, BorderLayout.EAST);
-      } else {
-        bottomLeft.add(functions, BorderLayout.WEST);
-      }
-      
+      buttonBuilder.addUnrelatedGap();
+      buttonBuilder.addButton(functions);
       mMainPanel.add(scrollPane, BorderLayout.CENTER);
     }
 
@@ -618,8 +621,18 @@ class ProgramInfoDialog {
       }
     });
     
-    buttonPn.add(bottomLeft, BorderLayout.WEST);
-
+    mHighlight = new JCheckBox(mLocalizer.msg("highlight", "Highlight favorite"), ProgramInfo.getInstance().getSettings().getHighlightFavorite());
+    mHighlight.addActionListener(new ActionListener() {
+      
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        ProgramInfo.getInstance().getSettings().setHighlightFavorite(mHighlight.isSelected());
+        highlightFavorites();
+      }
+    });
+    buttonBuilder.addUnrelatedGap();
+    buttonBuilder.addFixed(mHighlight);
+    
     mCloseBtn = new JButton(Localizer.getLocalization(Localizer.I18N_CLOSE));
     mCloseBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
@@ -627,8 +640,11 @@ class ProgramInfoDialog {
       }
     });
 
-    buttonPn.add(mCloseBtn, BorderLayout.EAST);
-
+    buttonBuilder.addGlue();
+    buttonBuilder.addButton(mCloseBtn);
+    
+    buttonPn.add(buttonBuilder.getPanel(), BorderLayout.SOUTH);
+    
     /*
      * The action for the search button in the function panel.
      */
