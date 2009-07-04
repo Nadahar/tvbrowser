@@ -280,6 +280,9 @@ public class ProgramUtilities {
     if (name.equals("null")) {
       return "";
     }
+    if (name.equals("-")) {
+      return "";
+    }
     return name;
   }
 
