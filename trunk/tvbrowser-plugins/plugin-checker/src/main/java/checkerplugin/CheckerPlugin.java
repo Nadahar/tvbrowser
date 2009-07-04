@@ -63,6 +63,8 @@ public class CheckerPlugin extends Plugin {
 
   private static Pattern HTML_PATTERN = Pattern.compile(Pattern.quote("&")
       + "\\w+" + Pattern.quote(";"));
+  
+  private static Pattern MISSING_WHITE_PATTERN = Pattern.compile("\\s\\p{Lower}+\\p{Upper}");
 
   public PluginInfo getInfo() {
     if (mPluginInfo == null) {
@@ -219,6 +221,18 @@ public class CheckerPlugin extends Plugin {
             results.add(mLocalizer.msg("issue.entity",
                 "Text field {0} contains HTML entity.", fieldType
                     .getLocalizedName()));
+          }
+          if (fieldType != ProgramFieldType.ACTOR_LIST_TYPE
+              && fieldType != ProgramFieldType.DIRECTOR_TYPE
+              && fieldType != ProgramFieldType.CAMERA_TYPE
+              && fieldType != ProgramFieldType.CUTTER_TYPE
+              && fieldType != ProgramFieldType.MODERATION_TYPE
+              && fieldType != ProgramFieldType.ADDITIONAL_PERSONS_TYPE) {
+            if (MISSING_WHITE_PATTERN.matcher(content).find()) {
+              results.add(mLocalizer.msg("issue.missingWhitespace",
+                  "Text field {0} probably misses whitespace.", fieldType
+                      .getLocalizedName()));
+            }
           }
         }
       }
