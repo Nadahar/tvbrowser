@@ -16,12 +16,14 @@
  */
 package checkerplugin;
 
+import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Properties;
 import java.util.regex.Pattern;
 
 import javax.swing.AbstractAction;
@@ -29,7 +31,9 @@ import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
+import util.program.ProgramUtilities;
 import devplugin.ActionMenu;
 import devplugin.Channel;
 import devplugin.ContextMenuAction;
@@ -41,13 +45,14 @@ import devplugin.PluginTreeNode;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
 import devplugin.ProgramInfoHelper;
+import devplugin.SettingsTab;
 import devplugin.Version;
 
 public class CheckerPlugin extends Plugin {
 
-  private static final Version mVersion = new Version(0, 2, false);
+  private static final Version mVersion = new Version(0, 3, false);
 
-  private static final util.ui.Localizer mLocalizer = util.ui.Localizer
+  static final util.ui.Localizer mLocalizer = util.ui.Localizer
       .getLocalizerFor(CheckerPlugin.class);
 
   public static Version getVersion() {
@@ -61,10 +66,13 @@ public class CheckerPlugin extends Plugin {
 
   private PluginTreeNode mRootNode = new PluginTreeNode(this, false);
 
+  private CheckerSettings mSettings;
+
   private static Pattern HTML_PATTERN = Pattern.compile(Pattern.quote("&")
       + "\\w+" + Pattern.quote(";"));
-  
-  private static Pattern MISSING_WHITE_PATTERN = Pattern.compile("\\s\\p{Lower}+\\p{Upper}");
+
+  private static Pattern MISSING_WHITE_PATTERN = Pattern
+      .compile("\\s\\p{Lower}+\\p{Upper}");
 
   public PluginInfo getInfo() {
     if (mPluginInfo == null) {
@@ -109,7 +117,20 @@ public class CheckerPlugin extends Plugin {
     checkTime(program, results);
     checkSeriesByEpisode(program, results);
     checkSeriesNumbers(program, results);
+    checkActors(program, results);
     return results;
+  }
+
+  private void checkActors(Program program, ArrayList<String> results) {
+    String[] actors = ProgramUtilities.getActorNames(program);
+    if (actors == null) {
+      return;
+    }
+    for (String actor : actors) {
+      if (actor.isEmpty()) {
+        results.add(mLocalizer.msg("issue.actor", "Unknown actor"));
+      }
+    }
   }
 
   private void checkSeriesNumbers(final Program program,
@@ -175,8 +196,7 @@ public class CheckerPlugin extends Plugin {
           results.add(mLocalizer.msg("issue.netTime",
               "Net playing time is longer than duration ({0} min.)", netTime
                   - duration));
-        }
-        else {
+        } else {
           results.add(mLocalizer.msg("issue.netTimeAvailable",
               "Net play time is set, but duration missing."));
         }
@@ -345,46 +365,71 @@ public class CheckerPlugin extends Plugin {
 
   @Override
   public void handleTvBrowserStartFinished() {
-    final HashMap<String, PluginTreeNode> nodes = new HashMap<String, PluginTreeNode>();
-    final Channel[] channels = devplugin.Plugin.getPluginManager()
-        .getSubscribedChannels();
-    for (Channel channel : channels) {
-      if (!isSupportedChannel(channel)) {
-        continue;
+    if (mSettings.getAutostart()) {
+      runAllChecks();
+    }
+  }
+
+  private void runAllChecks() {
+    Cursor cursor = getParentFrame().getCursor();
+    SwingUtilities.invokeLater(new Runnable() {
+      
+      @Override
+      public void run() {
+        getParentFrame().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
       }
-      Date date = Date.getCurrentDate();
-      for (int days = 0; days < 30; days++) {
-        final Iterator<Program> iter = Plugin.getPluginManager()
-            .getChannelDayProgram(date, channel);
-        if (iter != null) {
-          while (iter.hasNext()) {
-            final Program program = iter.next();
-            final ArrayList<String> issues = getIssues(program);
-            if (!issues.isEmpty()) {
-              program.mark(this);
-              for (String issue : issues) {
-                PluginTreeNode node = nodes.get(issue);
-                if (node == null) {
-                  node = new PluginTreeNode(issue);
-                  nodes.put(issue, node);
+    });
+    try {
+      final HashMap<String, PluginTreeNode> nodes = new HashMap<String, PluginTreeNode>();
+      final Channel[] channels = devplugin.Plugin.getPluginManager()
+          .getSubscribedChannels();
+      for (Channel channel : channels) {
+        if (!isSupportedChannel(channel)) {
+          continue;
+        }
+        Date date = Date.getCurrentDate();
+        for (int days = 0; days < 30; days++) {
+          final Iterator<Program> iter = Plugin.getPluginManager()
+              .getChannelDayProgram(date, channel);
+          if (iter != null) {
+            while (iter.hasNext()) {
+              final Program program = iter.next();
+              final ArrayList<String> issues = getIssues(program);
+              if (!issues.isEmpty()) {
+                program.mark(this);
+                for (String issue : issues) {
+                  PluginTreeNode node = nodes.get(issue);
+                  if (node == null) {
+                    node = new PluginTreeNode(issue);
+                    nodes.put(issue, node);
+                  }
+                  node.addProgram(program);
                 }
-                node.addProgram(program);
               }
             }
           }
+          date = date.addDays(1);
         }
-        date = date.addDays(1);
       }
+      // sort nodes and add them to the root
+      final Collection<PluginTreeNode> values = nodes.values();
+      final PluginTreeNode[] nodeArray = new PluginTreeNode[values.size()];
+      values.toArray(nodeArray);
+      Arrays.sort(nodeArray);
+      for (PluginTreeNode node : nodeArray) {
+        mRootNode.add(node);
+      }
+      mRootNode.update();
+    } finally {
+      final Cursor finalCursor = cursor;
+      SwingUtilities.invokeLater(new Runnable() {
+        
+        @Override
+        public void run() {
+          getParentFrame().setCursor(finalCursor);
+        }
+      });
     }
-    // sort nodes and add them to the root
-    final Collection<PluginTreeNode> values = nodes.values();
-    final PluginTreeNode[] nodeArray = new PluginTreeNode[values.size()];
-    values.toArray(nodeArray);
-    Arrays.sort(nodeArray);
-    for (PluginTreeNode node : nodeArray) {
-      mRootNode.add(node);
-    }
-    mRootNode.update();
   }
 
   @Override
@@ -402,4 +447,30 @@ public class CheckerPlugin extends Plugin {
     return mRootNode;
   }
 
+  @Override
+  public ActionMenu getButtonAction() {
+    return new ActionMenu(new AbstractAction(mLocalizer.msg("action.check",
+        "Start check"), mWarnIcon) {
+
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        runAllChecks();
+      }
+    });
+  }
+
+  @Override
+  public SettingsTab getSettingsTab() {
+    return new CheckerSettingsTab(mSettings);
+  }
+  
+  @Override
+  public void loadSettings(Properties properties) {
+    mSettings = new CheckerSettings(properties);
+  }
+  
+  @Override
+  public Properties storeSettings() {
+    return mSettings.storeSettings();
+  }
 }
