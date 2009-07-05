@@ -38,6 +38,8 @@ import java.io.PrintWriter;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.StringTokenizer;
 import java.util.zip.GZIPOutputStream;
 
@@ -376,6 +378,27 @@ public class Mirror {
         // Check whether this is the old mirror or Mirror is Blocked
         if (((mirror == oldMirror) || BLOCKEDSERVERS.contains(getServerBase(mirror.getUrl()))) && (mirrorArr.length > 1)) {
           // We chose the old mirror -> chose another one
+          ArrayList<Mirror> oldList = new ArrayList<Mirror>(oldMirrorArr.length);
+          for (Mirror m : oldMirrorArr) {
+            oldList.add(m);
+          }
+          ArrayList<Mirror> currentList = new ArrayList<Mirror>(mirrorArr.length);
+          for (Mirror m : mirrorArr) {
+            currentList.add(m);
+          }
+          Comparator<Mirror> comp = new Comparator<Mirror>() {
+
+            @Override
+            public int compare(Mirror m1, Mirror m2) {
+              return m1.getUrl().compareTo(m2.getUrl());
+            }
+          };
+          Collections.sort(oldList, comp );
+          Collections.sort(currentList, comp);
+          if (oldList.equals(currentList)) {
+            // avoid stack overflow
+            return mirror;
+          }
           return chooseMirror(mirrorArr, oldMirror, name, caller);
         } else {
           return mirror;
