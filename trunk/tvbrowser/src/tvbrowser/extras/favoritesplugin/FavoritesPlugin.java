@@ -269,7 +269,7 @@ public class FavoritesPlugin {
     }
   }
 
-  private void handleTvDataUpdateFinished() {
+  protected void handleTvDataUpdateFinished() {
     mHasToUpdate = true;
 
     if(mHasRightToUpdate) {
