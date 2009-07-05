@@ -117,7 +117,7 @@ public class RepetitionDialog extends JDialog implements WindowClosingIf {
 
     JPanel panel = (JPanel) getContentPane();
     panel.setLayout(new FormLayout("right:pref, 3dlu, 0dlu:grow",
-        "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, fill:3dlu:grow, pref"));
+        "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, fill:5dlu:grow, pref"));
     panel.setBorder(Borders.DLU7_BORDER);
 
     CellConstraints cc = new CellConstraints();
@@ -176,7 +176,7 @@ public class RepetitionDialog extends JDialog implements WindowClosingIf {
 
     ButtonBarBuilder2 builder = new ButtonBarBuilder2();
     builder.addButton(stdSearch);
-    builder.addRelatedGap();
+    builder.addUnrelatedGap();
     builder.addGlue();
 
     JButton go = new JButton(mLocalizer.msg("go", "go"));

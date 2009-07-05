@@ -4,7 +4,7 @@
 package util.ui;
 
 import java.awt.Dialog;
-import java.awt.FlowLayout;
+import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
@@ -21,9 +21,13 @@ import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import tvbrowser.core.Settings;
+
+import com.jgoodies.forms.builder.ButtonBarBuilder2;
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.Sizes;
 
 import devplugin.Plugin;
 import devplugin.Program;
@@ -163,10 +167,9 @@ public class SendToPluginDialog extends JDialog implements WindowClosingIf {
    */
   private void createDialog() {
     setTitle(mLocalizer.msg("title", "Send to other Plugin"));
-    UiUtilities.registerForClosing(this);
 
     CellConstraints cc = new CellConstraints();
-    PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,0dlu:grow,5dlu","pref,5dlu,pref,5dlu,pref,5dlu,pref,10dlu,pref"), (JPanel)this.getContentPane());
+    PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,0dlu:grow,5dlu","pref,5dlu,pref,5dlu,pref,5dlu,pref,fill:10dlu:grow,pref"), (JPanel)this.getContentPane());
     pb.setDefaultDialogBorder();
     
     pb.addSeparator(mLocalizer.msg("sendTo", "Send {0} programs to", mPrograms.length), cc.xyw(1,1,3));
@@ -212,7 +215,6 @@ public class SendToPluginDialog extends JDialog implements WindowClosingIf {
       }
     });
 
-    JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 
     JButton sendButton = new JButton(mLocalizer.msg("send", "Send"));
 
@@ -223,12 +225,9 @@ public class SendToPluginDialog extends JDialog implements WindowClosingIf {
         setVisible(false);
       }
     });
-
-    buttonPanel.add(sendButton);
     sendButton.setEnabled(mPrograms.length > 0);
 
     JButton cancelButton = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
-
     cancelButton.addActionListener(new ActionListener() {
 
       public void actionPerformed(ActionEvent evt) {
@@ -236,12 +235,17 @@ public class SendToPluginDialog extends JDialog implements WindowClosingIf {
       }
     });
 
-    buttonPanel.add(cancelButton);
+    ButtonBarBuilder2 buttonBuilder = new ButtonBarBuilder2();
+    buttonBuilder.addGlue();
+    buttonBuilder.addButton(new JButton[] {sendButton, cancelButton});
     
-    pb.add(buttonPanel, cc.xyw(1,9,3));
+    pb.add(buttonBuilder.getPanel(), cc.xyw(1,9,3));
 
-    pack();
-    setResizable(false);
+    Settings.layoutWindow("util.sendToDialog", this, new Dimension(Sizes
+        .dialogUnitXAsPixel(220, this), Sizes.dialogUnitYAsPixel(125, this)));
+
+    UiUtilities.registerForClosing(this);
+    getRootPane().setDefaultButton(sendButton);
   }
 
   /**
