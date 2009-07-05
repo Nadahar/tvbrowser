@@ -24,6 +24,7 @@
 package tvbrowser.ui.settings;
 
 import java.awt.Color;
+
 import javax.swing.Icon;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -128,7 +129,7 @@ public class MarkingsSettingsTab implements SettingsTab {
       }
     });    
     
-    pb.addSeparator(mLocalizer.msg("color.programMarked","Markierung durch Plugins"), cc.xyw(1,1,2));
+    pb.addSeparator(mLocalizer.msg("color.programMarked","Highlighting by plugins"), cc.xyw(1,1,2));
     pb.add(defaultMarkings, cc.xy(2,3));
     pb.addSeparator(mLocalizer.msg("color.programMarkedAdditional","Additional colors (replacing default color)"), cc.xyw(1,5,2));    
     pb.add(markings, cc.xy(2,7));
