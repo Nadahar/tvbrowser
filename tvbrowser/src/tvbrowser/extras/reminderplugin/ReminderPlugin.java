@@ -912,4 +912,11 @@ public class ReminderPlugin {
     return remainingMinutes;
   }
 
+  protected void handleTvDataUpdateFinished() {
+    mReminderList.removeExpiredItems();
+    updateRootNode(false);
+  }
+  
+  
+
 }

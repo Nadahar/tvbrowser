@@ -34,6 +34,7 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import tvbrowser.core.ChannelList;
 import util.io.IOUtilities;
 import devplugin.Date;
 import devplugin.Plugin;
@@ -214,7 +215,8 @@ public class ReminderList implements ActionListener {
     ArrayList<ReminderListItem> localItems = (ArrayList<ReminderListItem>) mList
             .clone();
     for (ReminderListItem item : localItems) {
-      if (item.getProgram().isExpired()) {
+      final Program program = item.getProgram();
+      if (program == null || program.isExpired() || !ChannelList.isSubscribedChannel(program.getChannel())) {
         remove(item);
       }
     }
