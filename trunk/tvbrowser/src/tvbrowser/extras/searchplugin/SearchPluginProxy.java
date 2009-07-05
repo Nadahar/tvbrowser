@@ -93,4 +93,9 @@ public class SearchPluginProxy implements ButtonActionIf, ContextMenuIf, Interna
     return SearchPlugin.getInstance().getButtonAction();
   }
 
+  @Override
+  public void handleTvDataUpdateFinished() {
+    // nothing to do
+  }
+
 }

@@ -24,6 +24,7 @@
 package tvbrowser.extras.common;
 
 import javax.swing.Icon;
+
 import devplugin.SettingsTab;
 
 
@@ -75,4 +76,9 @@ public interface InternalPluginProxyIf {
       return o1.getName().compareToIgnoreCase(o2.getName());
     }
   }
+
+  /**
+   * @since 3.0
+   */
+  public void handleTvDataUpdateFinished();
 }

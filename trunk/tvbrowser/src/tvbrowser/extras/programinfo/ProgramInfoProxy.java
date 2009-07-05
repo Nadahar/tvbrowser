@@ -89,4 +89,9 @@ public class ProgramInfoProxy implements ContextMenuIf, InternalPluginProxyIf {
   public SettingsTab getSettingsTab() {
     return new ProgramInfoSettingsTab();
   }
+
+  @Override
+  public void handleTvDataUpdateFinished() {
+    // nothing to do
+  }
 }

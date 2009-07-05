@@ -141,4 +141,9 @@ public class ReminderPluginProxy implements ButtonActionIf, ContextMenuIf, Progr
       ProgramReceiveTarget receiveTarget) {
     return false;
   }
+
+  @Override
+  public void handleTvDataUpdateFinished() {
+    mReminderInstance.handleTvDataUpdateFinished();
+  }
 }

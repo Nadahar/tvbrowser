@@ -25,6 +25,8 @@ package tvbrowser.extras.common;
 
 import java.util.ArrayList;
 
+import tvbrowser.core.TvDataUpdateListener;
+import tvbrowser.core.TvDataUpdater;
 import tvbrowser.extras.favoritesplugin.FavoritesPluginProxy;
 import tvbrowser.extras.programinfo.ProgramInfoProxy;
 import tvbrowser.extras.reminderplugin.ReminderPluginProxy;
@@ -50,6 +52,19 @@ public class InternalPluginProxyList {
     mList.add(ReminderPluginProxy.getInstance());
     mList.add(ProgramInfoProxy.getInstance());
     mList.add(SearchPluginProxy.getInstance());
+    TvDataUpdater.getInstance().addTvDataUpdateListener(new TvDataUpdateListener() {
+      
+      @Override
+      public void tvDataUpdateStarted() {
+      }
+      
+      @Override
+      public void tvDataUpdateFinished() {
+        for (InternalPluginProxyIf proxy : mList) {
+          proxy.handleTvDataUpdateFinished();
+        }
+      }
+    });
   }
   
   /**

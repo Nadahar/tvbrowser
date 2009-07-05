@@ -163,5 +163,10 @@ public class FavoritesPluginProxy implements ButtonActionIf, ContextMenuIf, Mark
 
     return icon;
   }
+
+  @Override
+  public void handleTvDataUpdateFinished() {
+    mFavoritesInstance.handleTvDataUpdateFinished();
+  }
   
 }
