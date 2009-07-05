@@ -407,11 +407,13 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
 
   private void createDefaultVisibleActions() {
     mVisibleActions = new ArrayList<Action>();
+    // often invoked actions
     mVisibleActions.add(mUpdateAction);
     mVisibleActions.add(mPluginViewAction);
-    mVisibleActions.add(mFilterAction);
-    mVisibleActions.add(getSeparatorAction());
+    mVisibleActions.add(mSettingsAction);
     
+    // internal plugins
+    mVisibleActions.add(getSeparatorAction());
     InternalPluginProxyIf[] internalPlugins = InternalPluginProxyList.getInstance().getAvailableProxys();
     
     for(InternalPluginProxyIf internalPlugin : internalPlugins) {
@@ -419,14 +421,32 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
         addButtonActionIfToVisibleActions((ButtonActionIf)internalPlugin);
       }
     }
-    
-    mVisibleActions.add(getSeparatorAction());
 
+    // activated default plugins
+    mVisibleActions.add(getSeparatorAction());
     PluginProxy[] pluginProxys = PluginProxyManager.getInstance().getActivatedPlugins();
     
     for (int i = 0; i < pluginProxys.length; i++) {
       addButtonActionIfToVisibleActions(pluginProxys[i]);
     }
+    
+    // remaining actions right aligned
+    mVisibleActions.add(getGlueAction());
+    
+    // filter and view
+    mVisibleActions.add(mFilterAction);
+    mVisibleActions.add(getSeparatorAction());
+    mVisibleActions.add(mFontSizeSmallerAction);
+    mVisibleActions.add(mFontSizeLargerAction);
+    mVisibleActions.add(getSeparatorAction());
+    
+    // date navigation
+    mVisibleActions.add(mGoToPreviousDayAction);
+    mVisibleActions.add(mGoToTodayAction);
+    mVisibleActions.add(mGoToNextDayAction);
+    mVisibleActions.add(mScrollToNowAction);
+    
+    // search bar has its own space, so we don't add the space action
   }
   
   private void addButtonActionIfToVisibleActions(ButtonActionIf buttonAction) {
