@@ -59,7 +59,7 @@ public class KOrganizerExporter extends AbstractExporter {
       ICalFile ical = new ICalFile();
       ical.export(file, programs, settings, formating);
       
-      new ExecutionHandler("--import " + file.getAbsolutePath(), "korganizer").execute();
+      new ExecutionHandler("--merge " + file.getAbsolutePath(), "korganizer").execute();
       return true;
     } catch (IOException e) {
       ErrorHandler.handle("Could not export to KOrganizer.", e);
