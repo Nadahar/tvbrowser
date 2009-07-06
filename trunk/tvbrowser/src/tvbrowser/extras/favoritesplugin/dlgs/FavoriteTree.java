@@ -302,7 +302,7 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
         final String titleAlpha = item.getText();
         item.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
-              FavoriteTreeModel.getInstance().sort(sortNode,true, FavoriteNodeComparator.getInstance(), titleAlpha);
+              FavoriteTreeModel.getInstance().sort(sortNode,FavoriteNodeComparator.getInstance(), titleAlpha);
               reload(sortNode);
           }
         });
@@ -313,7 +313,7 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
         final String titleCount = item.getText();
         item.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
-              FavoriteTreeModel.getInstance().sort(sortNode,true, FavoriteNodeCountComparator.getInstance(),titleCount);
+              FavoriteTreeModel.getInstance().sort(sortNode,FavoriteNodeCountComparator.getInstance(),titleCount);
               reload(sortNode);
           }
         });

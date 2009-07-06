@@ -29,7 +29,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
 
@@ -80,8 +80,8 @@ public class FavoriteTreeModel extends DefaultTreeModel {
   }
 
   public static FavoriteTreeModel initInstance(Favorite[] favoriteArr) {
-    FavoriteNode rootNode = new FavoriteNode("FAVORITES_ROOT");
-
+    FavoriteNode rootNode = new FavoriteNode("");
+    fixRootNode(rootNode);
     for(Favorite fav : favoriteArr) {
       rootNode.add(fav);
     }
@@ -92,15 +92,26 @@ public class FavoriteTreeModel extends DefaultTreeModel {
 
   public static FavoriteTreeModel initInstance(ObjectInputStream in, int version) throws IOException, ClassNotFoundException {
     FavoriteNode rootNode = new FavoriteNode(in, version);
-
+    fixRootNode(rootNode);
     mInstance = new FavoriteTreeModel(rootNode);
     return mInstance;
   }
 
+  /**
+   * change the label of the root node after it has been red from disk
+   * @param rootNode
+   */
+  private static void fixRootNode(final FavoriteNode rootNode) {
+    String rootLabel = mLocalizer.msg("rootLabel", "All favorites");
+    if (rootLabel.length() == 0) {
+      rootLabel = "FAVORITES_ROOT";
+    }
+    rootNode.setUserObject(rootLabel);
+  }
+
   public static FavoriteTreeModel getInstance() {
     if (mInstance == null) {
-      FavoriteNode rootNode = new FavoriteNode("FAVORITES_ROOT");
-      mInstance = new FavoriteTreeModel(rootNode);
+      mInstance = initInstance(new Favorite[0]);
     }
 
     return mInstance;
@@ -463,40 +474,40 @@ public class FavoriteTreeModel extends DefaultTreeModel {
    * Sorts the path from the given node to all leafs alphabetically.
    *
    * @param node The node to sort from.
-   * @param start If this is called with the root sort node.
    * @param comp Comparator for sorting
    * @param title Title of confirmation message dialog
    */
-  public void sort(FavoriteNode node, boolean start, Comparator<FavoriteNode> comp, String title) {
-    int result = JOptionPane.YES_OPTION;
-
-    if(start) {
-      String msg = mLocalizer.msg("reallySort", "Do you really want to sort your " +
-      "favorites?\n\nThe current order will get lost.");
-      result = JOptionPane.showConfirmDialog(UiUtilities.getLastModalChildOf(MainFrame.getInstance()), msg, title, JOptionPane.YES_NO_OPTION);
-    }
-
+  public void sort(FavoriteNode node, Comparator<FavoriteNode> comp, String title) {
+    String msg = mLocalizer.msg("reallySort",
+        "Do you really want to sort '{0}'?\n\nThe current order will get lost.", node.toString());
+    int result = JOptionPane.showConfirmDialog(UiUtilities
+        .getLastModalChildOf(MainFrame.getInstance()), msg, title,
+        JOptionPane.YES_NO_OPTION);
     if (result == JOptionPane.YES_OPTION) {
-      FavoriteNode[] nodes = new FavoriteNode[node.getChildCount()];
-
-      for(int i = 0; i < nodes.length; i++) {
-        nodes[i] = (FavoriteNode)node.getChildAt(i);
-      }
-
-      node.removeAllChildren();
-
-      Arrays.sort(nodes, comp);
-
-      for(FavoriteNode child : nodes) {
-        node.add(child);
-
-        if(child.isDirectoryNode()) {
-          sort(child, false, comp, title);
-        }
-      }
+      sortNodeInternal(node, comp);
     }
 
     ManageFavoritesDialog.getInstance().favoriteSelectionChanged();
+  }
+
+  /**
+   * sort favorite nodes (dialog handling must be done by caller)
+   * @param node
+   * @param comp
+   */
+  private void sortNodeInternal(FavoriteNode node,
+      Comparator<FavoriteNode> comp) {
+    ArrayList<FavoriteNode> childNodes = Collections.list(node.children());
+    Collections.sort(childNodes, comp);
+
+    node.removeAllChildren();
+
+    for(FavoriteNode child : childNodes) {
+      node.add(child);
+      if(child.isDirectoryNode()) {
+        sortNodeInternal(child, comp);
+      }
+    }
   }
   
   /**
