@@ -37,6 +37,7 @@ import util.io.IOUtilities;
 import util.paramhandler.ParamParser;
 import util.program.AbstractPluginProgramFormating;
 import util.ui.Localizer;
+import util.ui.login.LoginDialog;
 import calendarexportplugin.CalendarExportPlugin;
 import calendarexportplugin.utils.CalendarToolbox;
 
@@ -280,11 +281,11 @@ public class GoogleExporter extends AbstractExporter {
    * @return true, if successful
    */
   private boolean showLoginDialog(Properties settings) {
-    GoogleLoginDialog login;
+    LoginDialog login;
 
     Window parent = CalendarExportPlugin.getInstance().getBestParentFrame();
 
-    login = new GoogleLoginDialog(parent, settings.getProperty(USERNAME, ""),
+    login = new LoginDialog(parent, settings.getProperty(USERNAME, ""),
         IOUtilities.xorDecode(settings.getProperty(PASSWORD, ""), 345903),
         settings.getProperty(STOREPASSWORD, "false").equals("true"));
 
@@ -332,7 +333,7 @@ public class GoogleExporter extends AbstractExporter {
       try {
         showCalendarSettings(settings);
       } catch (AuthenticationException e) {
-        ErrorHandler.handle(mLocalizer.msg("loginFailure", "Problems while Login to Service.\nMaybe bad Username/Password ?"), e);
+        ErrorHandler.handle(mLocalizer.msg("loginFailure", "Problems while Login to Service.\nMaybee bad Username/Password ?"), e);
         settings.setProperty(GoogleExporter.STOREPASSWORD, "false");
       } catch (Exception e) {
         ErrorHandler.handle(mLocalizer.msg("commError", "Error while communicating with Google!"), e);

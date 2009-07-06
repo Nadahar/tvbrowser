@@ -20,7 +20,7 @@
  *   $Author: troggan $
  * $Revision: 1764 $
  */
-package calendarexportplugin.exporter;
+package util.ui.login;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -51,9 +51,9 @@ import com.jgoodies.forms.layout.Sizes;
  * 
  * @author bodum
  */
-public class GoogleLoginDialog extends JDialog implements WindowClosingIf {
+public class LoginDialog extends JDialog implements WindowClosingIf {
   /** Translator */
-  private static final Localizer mLocalizer = Localizer.getLocalizerFor(GoogleLoginDialog.class);
+  private static final Localizer mLocalizer = Localizer.getLocalizerFor(LoginDialog.class);
  
   /** Which Button was pressed ?*/
   private int mReturnValue = JOptionPane.CANCEL_OPTION;
@@ -73,7 +73,7 @@ public class GoogleLoginDialog extends JDialog implements WindowClosingIf {
    * @param password Password
    * @param storePassword store password ?
    */
-  public GoogleLoginDialog(Window owner, String username, String password,
+  public LoginDialog(Window owner, String username, String password,
       boolean storePassword) {
     super(owner);
     setModal(true);
@@ -87,7 +87,7 @@ public class GoogleLoginDialog extends JDialog implements WindowClosingIf {
    * Create Gui
    */
   private void createGui() {
-    setTitle(mLocalizer.msg("login", "Google Login"));
+    setTitle(mLocalizer.msg("login", "Login"));
 
     UiUtilities.registerForClosing(this);
     
@@ -103,7 +103,7 @@ public class GoogleLoginDialog extends JDialog implements WindowClosingIf {
     panel.setBackground(Color.WHITE);
     panel.setForeground(Color.BLACK);
     
-    JLabel top = new JLabel(mLocalizer.msg("title", "Google Calendar Login"));
+    JLabel top = new JLabel(mLocalizer.msg("title", "Login"));
     top.setFont(top.getFont().deriveFont(Font.BOLD, 20));
     
     panel.add(top, cc.xy(2,2));
