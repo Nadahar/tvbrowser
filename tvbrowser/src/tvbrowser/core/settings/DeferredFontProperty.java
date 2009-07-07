@@ -53,7 +53,9 @@ public class DeferredFontProperty extends FontProperty {
       for (String knownFont : KNOWN_GOOD_FONTS) {
         final Font font = new Font(knownFont, mDefFont.getStyle(), mDefFont
             .getSize());
-        if (font != null && !font.getFamily().equalsIgnoreCase(Font.DIALOG)) {
+        // comparing the font name and Font.DIALOG is not really correct.
+        // font family name would be more precise, but takes too much time
+        if (font != null && !font.getName().startsWith(Font.DIALOG)) {
           mCachedValue = font;
           break;
         }
