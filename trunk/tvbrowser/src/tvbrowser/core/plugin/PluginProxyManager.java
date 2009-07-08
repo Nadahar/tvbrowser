@@ -740,10 +740,7 @@ public class PluginProxyManager {
       }
     }
 
-    // Create an array from the list
-    String[] deactivatedPluginIdArr = new String[deactivatedPluginIdList.size()];
-    deactivatedPluginIdList.toArray(deactivatedPluginIdArr);
-    return deactivatedPluginIdArr;
+    return deactivatedPluginIdList.toArray(new String[deactivatedPluginIdList.size()]);
   }
 
   /**
@@ -756,10 +753,10 @@ public class PluginProxyManager {
    *         plugin exists or has the wrong state.
    */
   private PluginProxy getPluginForId(String pluginId, int state) {
+    if (pluginId == null) {
+      return null;
+    }
     synchronized (mPluginList) {
-      if (pluginId == null) {
-        return null;
-      }
       PluginListItem item = mPluginMap.get(pluginId); 
       if (item != null) {
         if ((state == -1) || (item.getState() == state)) {
@@ -947,11 +944,9 @@ public class PluginProxyManager {
    * @see PluginProxy#handleTvDataAdded(ChannelDayProgram)
    */
   private void fireTvDataAdded(MutableChannelDayProgram newProg) {
-    synchronized (mPluginList) {
-      for (PluginListItem item : mPluginList) {
-        if (item.getPlugin().isActivated()) {
-          item.getPlugin().handleTvDataAdded(newProg);
-        }
+    for (PluginListItem item : getPluginListCopy()) {
+      if (item.getPlugin().isActivated()) {
+        item.getPlugin().handleTvDataAdded(newProg);
       }
     }
   }
@@ -964,11 +959,9 @@ public class PluginProxyManager {
    * @see PluginProxy#handleTvDataAdded(ChannelDayProgram)
    */
   private void fireTvDataAdded(ChannelDayProgram newProg) {
-    synchronized (mPluginList) {
-      for (PluginListItem item : mPluginList) {
-        if (item.getPlugin().isActivated()) {
-          item.getPlugin().handleTvDataAdded(newProg);
-        }
+    for (PluginListItem item : getPluginListCopy()) {
+      if (item.getPlugin().isActivated()) {
+        item.getPlugin().handleTvDataAdded(newProg);
       }
     }
   }
@@ -981,11 +974,9 @@ public class PluginProxyManager {
    * @see PluginProxy#handleTvDataDeleted(ChannelDayProgram)
    */
   private void fireTvDataDeleted(ChannelDayProgram deletedProg) {
-    synchronized (mPluginList) {
-      for (PluginListItem item : mPluginList) {
-        if (item.getPlugin().isActivated()) {
-          item.getPlugin().handleTvDataDeleted(deletedProg);
-        }
+    for (PluginListItem item : getPluginListCopy()) {
+      if (item.getPlugin().isActivated()) {
+        item.getPlugin().handleTvDataDeleted(deletedProg);
       }
     }
   }
@@ -1000,11 +991,9 @@ public class PluginProxyManager {
    */
   private void fireTvDataTouched(ChannelDayProgram removedDayProgram,
       ChannelDayProgram addedDayProgram) {
-    synchronized (mPluginList) {
-      for (PluginListItem item : mPluginList) {
-        if (item.getPlugin().isActivated()) {
-          item.getPlugin().handleTvDataTouched(removedDayProgram, addedDayProgram);
-        }
+    for (PluginListItem item : getPluginListCopy()) {
+      if (item.getPlugin().isActivated()) {
+        item.getPlugin().handleTvDataTouched(removedDayProgram, addedDayProgram);
       }
     }
   }
@@ -1016,13 +1005,19 @@ public class PluginProxyManager {
    * @see PluginProxy#handleTvDataUpdateFinished()
    */
   private void fireTvDataUpdateFinished() {
-    synchronized (mPluginList) {
-      for (PluginListItem item : mPluginList) {
-        if (item.getPlugin().isActivated()) {
-          item.getPlugin().handleTvDataUpdateFinished();
-        }
+    for (PluginListItem item : getPluginListCopy()) {
+      if (item.getPlugin().isActivated()) {
+        item.getPlugin().handleTvDataUpdateFinished();
       }
     }
+  }
+
+  private ArrayList<PluginListItem> getPluginListCopy() {
+    final ArrayList<PluginListItem> localList;
+    synchronized(mPluginList) {
+      localList = new ArrayList<PluginListItem>(mPluginList);
+    }
+    return localList;
   }
   
   /**
@@ -1032,28 +1027,25 @@ public class PluginProxyManager {
    * @see PluginProxy#handleTvBrowserStartFinished()
    */
   public void fireTvBrowserStartFinished() {
-    synchronized(mPluginList) {
-      ((PluginManagerImpl)PluginManagerImpl.getInstance()).handleTvBrowserStartFinished();
-      
-      for (PluginListItem item : mPluginList) {
-        AbstractPluginProxy plugin = item.getPlugin();
-        if (plugin.isActivated()) {
-          fireTvBrowserStartFinished(plugin);
-          if (plugin.hasArtificialPluginTree()) {
-            int childCount = plugin.getArtificialRootNode().size();
-            // update all children of the artificial tree or remove the tree completely
-            if (childCount > 0 && childCount < 100) {
-              plugin.getArtificialRootNode().update();
-            }
-            else {
-              plugin.removeArtificialPluginTree();
-            }
-            SwingUtilities.invokeLater(new Runnable() {
-              @Override
-              public void run() {
-                MainFrame.getInstance().updatePluginTree();
-              }});
+    ((PluginManagerImpl)PluginManagerImpl.getInstance()).handleTvBrowserStartFinished();
+    for (PluginListItem item : getPluginListCopy()) {
+      final AbstractPluginProxy plugin = item.getPlugin();
+      if (plugin.isActivated()) {
+        fireTvBrowserStartFinished(plugin);
+        if (plugin.hasArtificialPluginTree()) {
+          int childCount = plugin.getArtificialRootNode().size();
+          // update all children of the artificial tree or remove the tree completely
+          if (childCount > 0 && childCount < 100) {
+            plugin.getArtificialRootNode().update();
           }
+          else {
+            plugin.removeArtificialPluginTree();
+          }
+          SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+              MainFrame.getInstance().updatePluginTree();
+            }});
         }
       }
     }
