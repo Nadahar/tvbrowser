@@ -168,45 +168,48 @@ public class ProgramInfo {
    * @return Number if successful. Default is 0
    */
   public int parseNumber(String str) {
-
     try {
       return Integer.parseInt(str);
     } catch (Exception e) {
       // ignore
     }
-
     return 0;
   }
 
-  protected synchronized void showProgramInformation(Program program, boolean showSettings) {
-    if(program.equals(Plugin.getPluginManager().getExampleProgram()) && showSettings) {
+  protected void showProgramInformation(Program program, boolean showSettings) {
+    if (program.equals(Plugin.getPluginManager().getExampleProgram()) && showSettings) {
       return;
     }
-    
-    if(mInitThread != null && mInitThread.isAlive()) {
-      try {
-        mInitThread.join();
-      }catch(InterruptedException e) {
-        e.printStackTrace();
+
+    synchronized (mInitThread) {
+      if (mInitThread != null && mInitThread.isAlive()) {
+        try {
+          mInitThread.join();
+        } catch (InterruptedException e) {
+          e.printStackTrace();
+        }
       }
     }
-    
+
     if (mIsShowing || ProgramInfoDialog.isShowing()) {
       if (!ProgramInfoDialog.closeDialog()) {
         return;
       }
     }
     mIsShowing = true;
-    Window window = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
-    // show busy cursor
-    ProgramTable programTable = MainFrame.getInstance().getProgramTableScrollPane().getProgramTable();
-    window.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-    programTable.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-    // open dialog
-    ProgramInfoDialog.getInstance(program, mLeftSplit, showSettings).show();
-    window.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-    programTable.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-    mIsShowing = false;
+
+    synchronized (this) {
+      Window window = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
+      // show busy cursor
+      ProgramTable programTable = MainFrame.getInstance().getProgramTableScrollPane().getProgramTable();
+      window.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+      programTable.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+      // open dialog
+      ProgramInfoDialog.getInstance(program, mLeftSplit, showSettings).show();
+      window.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+      programTable.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+      mIsShowing = false;
+    }
   }
 
   protected void setSettings(Dimension d) {
