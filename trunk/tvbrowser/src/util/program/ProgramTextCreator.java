@@ -544,9 +544,9 @@ public class ProgramTextCreator {
             // line.
             buffer.append("&nbsp;");
   
-            int[] infoBitArr = ProgramInfoHelper.mInfoBitArr;
-            Icon[] infoIconArr = ProgramInfoHelper.mInfoIconArr;
-            String[] infoMsgArr = ProgramInfoHelper.mInfoMsgArr;
+            int[] infoBitArr = ProgramInfoHelper.getInfoBits();
+            Icon[] infoIconArr = ProgramInfoHelper.getInfoIcons();
+            String[] infoMsgArr = ProgramInfoHelper.getInfoIconMessages();
   
             for (int i = 0; i < infoBitArr.length; i++) {
               if (ProgramInfoHelper.bitSet(info, infoBitArr[i])) {

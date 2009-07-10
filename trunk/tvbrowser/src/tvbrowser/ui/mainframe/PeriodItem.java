@@ -35,7 +35,7 @@ public class PeriodItem {
 
   private int mDays;
 
-  public static final PeriodItem[] PERIOD_ARR = {
+  private static final PeriodItem[] PERIOD_ARR = {
     new PeriodItem(0), new PeriodItem(1), new PeriodItem(2), new PeriodItem(3),
     new PeriodItem(7), new PeriodItem(14),  new PeriodItem(21),  new PeriodItem(UpdateDlg.GETALL)
   };
@@ -75,6 +75,10 @@ public class PeriodItem {
       return p.getDays() == mDays;
     }
     return false;
+  }
+  
+  public static final PeriodItem[] getPeriodItems() {
+    return PERIOD_ARR.clone();
   }
 
 }

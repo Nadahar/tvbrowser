@@ -27,6 +27,7 @@ public class ProgramInfoHelper {
     
     /**
      * The Bit-Array with all possibilities
+     * @deprecated since 3.0, use {@link #getInfoBits()} instead
      */
     public static final int[] mInfoBitArr = new int[] {
             Program.INFO_VISION_BLACK_AND_WHITE, Program.INFO_VISION_4_TO_3,
@@ -47,6 +48,7 @@ public class ProgramInfoHelper {
 
     /**
      * The Icons for the Bits
+     * @deprecated since 3.0, use {@link #getInfoIcons()} instead 
      */
     public static final Icon[] mInfoIconArr = new Icon[] {
       createIcon("Info_BlackAndWhite.gif"), // INFO_VISION_BLACK_AND_WHITE
@@ -79,6 +81,7 @@ public class ProgramInfoHelper {
 
   /**
    * The Icons for the Bits
+   * @deprecated since 3.0, use {@link #getInfoIconFilenames()} instead
    */
   public static final String[] mInfoIconFileName = new String[] {
       "Info_BlackAndWhite.gif", // INFO_VISION_BLACK_AND_WHITE
@@ -111,6 +114,7 @@ public class ProgramInfoHelper {
 
   /**
    * The String representation of the Bits
+   * @deprecated since 3.0, use {@link #getInfoIconMessages()} instead
    */
     public static final String[] mInfoMsgArr = new String[] {
             mLocalizer.msg("blackAndWhite", "Black and white"),
@@ -171,6 +175,38 @@ public class ProgramInfoHelper {
      */
     public static boolean bitSet(int num, int pattern) {
       return (num & pattern) == pattern;
+    }
+    
+    /**
+     * @since 3.0
+     * @return the info bit array
+     */
+    public static final int[] getInfoBits() {
+      return mInfoBitArr.clone();
+    }
+    
+    /**
+     * @since 3.0
+     * @return the info icon array
+     */
+    public static final Icon[] getInfoIcons() {
+      return mInfoIconArr.clone();
+    }
+    
+    /**
+     * @since 3.0
+     * @return the info icon file name array
+     */
+    public static final String[] getInfoIconFilenames() {
+      return mInfoIconFileName.clone();
+    }
+    
+    /**
+     * @since 3.0
+     * @return the info message array (localized)
+     */
+    public static final String[] getInfoIconMessages() {
+      return mInfoMsgArr.clone();
     }
 
 }

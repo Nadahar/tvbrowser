@@ -195,10 +195,13 @@ public class ProgramPanelSettingsTab implements SettingsTab {
   private List<IconPlugin> getFormatIconNames() {
     if (mFormatIcons == null) {
       mFormatIcons = new ArrayList<IconPlugin>();
-      for (int i = 0; i < ProgramInfoHelper.mInfoIconFileName.length; i++) {
-        if (ProgramInfoHelper.mInfoIconArr[i] != null) {
+      String[] iconFilenames = ProgramInfoHelper.getInfoIconFilenames();
+      Icon[] infoIcons = ProgramInfoHelper.getInfoIcons();
+      String[] infoMessages = ProgramInfoHelper.getInfoIconMessages();
+      for (int i = 0; i < iconFilenames.length; i++) {
+        if (infoIcons[i] != null) {
           mFormatIcons.add(new IconPlugin(mLocalizer.msg("formatIcon",
-              "Format: {0}", ProgramInfoHelper.mInfoMsgArr[i])));
+              "Format: {0}", infoMessages[i])));
         }
       }
     }
@@ -298,10 +301,13 @@ public class ProgramPanelSettingsTab implements SettingsTab {
       } else if (mName != null && mName.compareTo(PICTURE_ICON_NAME) == 0) {
         return Settings.PICTURE_ID;
       } else {
-        for (int i = 0; i < ProgramInfoHelper.mInfoIconFileName.length; i++) {
-          if (ProgramInfoHelper.mInfoIconArr[i] != null) {
+        String[] infoFilenames = ProgramInfoHelper.getInfoIconFilenames();
+        Icon[] infoIcons = ProgramInfoHelper.getInfoIcons();
+        String[] infoMessages = ProgramInfoHelper.getInfoIconMessages();
+        for (int i = 0; i < infoFilenames.length; i++) {
+          if (infoIcons[i] != null) {
             if (mLocalizer.msg("formatIcon", "Format: {0}",
-                ProgramInfoHelper.mInfoMsgArr[i]).equals(mName)) {
+                infoMessages[i]).equals(mName)) {
               return "FORMAT_" + i;
             }
           }
