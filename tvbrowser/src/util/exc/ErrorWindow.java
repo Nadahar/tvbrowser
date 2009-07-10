@@ -61,9 +61,9 @@ import util.ui.UiUtilities;
 /**
  * The dialog used to show exceptions.
  * <p>
- * This implementation shows the stacktrace and the nested exceptions as well.
+ * This implementation shows the stack trace and the nested exceptions as well.
  * 
- * This class was moved from ErrorHandler into a seperate Class in Version 2.1.
+ * This class was moved from ErrorHandler into a separate Class in Version 2.1.
  * Please use ErrorHandler, do not call this directly
  */
 class ErrorWindow {
@@ -83,7 +83,7 @@ class ErrorWindow {
   /** The text area containing the error message. */
   private JTextArea mErrorMessageTA;
 
-  /** The panel containing the details (the stacktrace). */
+  /** The panel containing the details (the stack trace). */
   private JPanel mDetailPn;
 
   /** The Buttons. */
@@ -92,10 +92,10 @@ class ErrorWindow {
   /** The button that shows and hides the details. */
   private JButton mDetailBt;
 
-  /** Holds whether the deatails are currently visible. */
+  /** Holds whether the details are currently visible. */
   private boolean mDetailsVisible;
 
-  /** The throwable whichs details are shown by the dialog. */
+  /** The throwable whose details are shown by the dialog. */
   private Throwable mThrowable;
 
   /** The Button that was pressed */
@@ -107,7 +107,7 @@ class ErrorWindow {
    * @param parent A component in the component tree the dialog should be
    *          created for.
    * @param errorMsg The localized error message.
-   * @param thr The throwable whichs details are shown by the dialog.
+   * @param thr The throwable whose details are shown by the dialog.
    */
   public ErrorWindow(Component parent, String errorMsg, Throwable thr) {
     this(parent, errorMsg, thr, ErrorHandler.SHOW_OK);
@@ -119,7 +119,7 @@ class ErrorWindow {
    * @param parent A component in the component tree the dialog should be
    *          created for.
    * @param errorMsg The localized error message.
-   * @param thr The throwable whichs details are shown by the dialog.
+   * @param thr The throwable whose details are shown by the dialog.
    * @param messageType The type of Window to Display: ErrorHandler.SHOW_OK, ErrorHandler.SHOW_YES_NO
    * 
    * @since 2.1

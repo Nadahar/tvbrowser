@@ -267,23 +267,26 @@ public class ChannelGroup implements devplugin.ChannelGroup {
     // Get a random Mirror that is up to date
     mCurMirror = Mirror.chooseUpToDateMirror(mirrorArr, null, getName(), mID, ChannelGroup.class, " Please contact the TV data provider for help.");
 
-    mLog.info("Using mirror " + mCurMirror.getUrl());
-    // monitor.setMessage(mLocalizer.msg("info.1","Downloading from mirror
-    // {0}",mirror.getUrl()));
-
-    // Update the mirrorlist (for the next time)
-    updateMetaFile(mCurMirror.getUrl(), mID + "_" + Mirror.MIRROR_LIST_FILE_NAME);
-
-    // Update the channel list
-    // NOTE: We have to load the channel list before the programs, because
-    // we need it for the programs.
-    updateChannelList(mCurMirror, false);
-
-    try {
-      mSummary = loadSummaryFile(mCurMirror);
-    } catch (Exception exc) {
-      mLog.log(Level.WARNING, "Getting summary file from mirror " + mCurMirror.getUrl() + " failed.", exc);
-      mSummary = null;
+    if (mCurMirror != null) {
+      mLog.info("Using mirror " + mCurMirror.getUrl());
+  
+      // Update the mirrorlist (for the next time)
+      updateMetaFile(mCurMirror.getUrl(), mID + "_" + Mirror.MIRROR_LIST_FILE_NAME);
+  
+      // Update the channel list
+      // NOTE: We have to load the channel list before the programs, because
+      // we need it for the programs.
+      updateChannelList(mCurMirror, false);
+  
+      try {
+        mSummary = loadSummaryFile(mCurMirror);
+      } catch (Exception exc) {
+        mLog.log(Level.WARNING, "Getting summary file from mirror " + mCurMirror.getUrl() + " failed.", exc);
+        mSummary = null;
+      }
+    }
+    else {
+      mLog.info("No up to date mirror available for "+mID);
     }
   }
 
