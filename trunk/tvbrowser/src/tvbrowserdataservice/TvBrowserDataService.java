@@ -78,7 +78,7 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
   protected static final String CHANNEL_GROUPS_FILENAME = "groups.txt";
   private static final String DEFAULT_CHANNEL_GROUPS_URL = "http://tvbrowser.org/listings";
   
-  /** Contains the mirror urls useable for receiving the groups.txt from. */
+  /** Contains the mirror urls usable for receiving the groups.txt from. */
   private static final String[] DEFAULT_CHANNEL_GROUPS_MIRRORS = {
     "http://tvbrowser.dyndns.tv",
     "http://hdtv-online.org/TVB",
@@ -299,7 +299,7 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
       updater.updateTvDataBase(monitor);
       mProgressMonitor.setMessage("");
 
-      // Clean up ressources
+      // Clean up resources
       mDownloadManager = null;
       mTvDataBase = null;
       mProgressMonitor = null;

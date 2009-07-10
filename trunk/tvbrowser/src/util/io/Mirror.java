@@ -424,8 +424,8 @@ public class Mirror {
    * @param id The id of the file to check.
    * @param caller The caller class.
    * @param additionalErrorMsg An additional error message value.
-   * @return The choosen mirror.
-   * @throws TvBrowserException Thrown if no up to date mirror was found or something went wrong. 
+   * @return The choosen mirror or <code>null</code>, if no up to date mirror was found or something went wrong. 
+   * @throws TvBrowserException 
    */
   public static Mirror chooseUpToDateMirror(Mirror[] mirrorArr, ProgressMonitor monitor, String name, String id, Class caller, String additionalErrorMsg) throws TvBrowserException {
     boolean isUpToDate = false;
@@ -456,7 +456,7 @@ public class Mirror {
         mLog.info("Server blocked : " + blockedServer);
         
         if(mirrorArr.length == 1 && mirrorArr[0].equals(mirror)) {
-          throw new TvBrowserException(caller, "noUpToDateServer", "The mirror {0} is out of date or down and no other mirror is available." + additionalErrorMsg, mirror.getUrl());
+          return null;
         }
         
         // This one is not available -> choose another one
@@ -474,9 +474,7 @@ public class Mirror {
     if (isUpToDate) {
       return mirror;
     }
-    else {
-      throw new TvBrowserException(caller, "noUpToDateServer", "The mirror {0} is out of date or down and no other mirror is available." + additionalErrorMsg, mirror.getUrl());
-    }
+    return null;
   }
 
   private static boolean mirrorIsUpToDate(Mirror mirror, String id) throws TvBrowserException {
