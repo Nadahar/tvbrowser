@@ -356,7 +356,7 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
     panel.add(mAutoDownloadCombo, cc.xy(4, 1));
     
     mAskBeforeDownloadRadio = new JRadioButton(mLocalizer.msg("autoDownload.ask", "Ask before downloading"));
-    mAutoDownloadPeriodCB = new JComboBox(PeriodItem.PERIOD_ARR);
+    mAutoDownloadPeriodCB = new JComboBox(PeriodItem.getPeriodItems());
     
     int autoDLPeriod = Settings.propAutoDownloadPeriod.getInt();
     PeriodItem pi = new PeriodItem(autoDLPeriod);

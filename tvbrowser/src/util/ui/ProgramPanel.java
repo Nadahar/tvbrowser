@@ -577,17 +577,19 @@ private static Font getDynamicFontSize(Font font, int offset) {
       PluginProxyManager mng = PluginProxyManager.getInstance();
       ArrayList<Icon> iconList = new ArrayList<Icon>();
       int info = program.getInfo();
+      int[] infoBits = ProgramInfoHelper.getInfoBits();
+      Icon[] infoIcons = ProgramInfoHelper.getInfoIcons();
       // Add the icons for each plugin
       for (int pluginIdx = 0; pluginIdx < iconPluginArr.length; pluginIdx++) {
         if (iconPluginArr[pluginIdx].compareTo(Settings.INFO_ID) == 0) {
 
           if ((info != -1) && (info != 0)) {
-            for (int i = 0; i < ProgramInfoHelper.mInfoBitArr.length; i++) {
+            for (int i = 0; i < infoBits.length; i++) {
               if (ProgramInfoHelper.bitSet(info,
-                  ProgramInfoHelper.mInfoBitArr[i])
-                  && (ProgramInfoHelper.mInfoIconArr[i] != null)) {
+                  infoBits[i])
+                  && (infoIcons[i] != null)) {
                 // Add the icon to the list
-                iconList.add(ProgramInfoHelper.mInfoIconArr[i]);
+                iconList.add(infoIcons[i]);
               }
             }
           }
@@ -599,10 +601,10 @@ private static Font getDynamicFontSize(Font font, int offset) {
           if ((info != -1) && (info != 0)) {
             int index = Integer.valueOf(iconPluginArr[pluginIdx].substring(7));
             if (ProgramInfoHelper.bitSet(info,
-                ProgramInfoHelper.mInfoBitArr[index])
-                && (ProgramInfoHelper.mInfoIconArr[index] != null)) {
+                infoBits[index])
+                && (infoIcons[index] != null)) {
               // Add the icon to the list
-              iconList.add(ProgramInfoHelper.mInfoIconArr[index]);
+              iconList.add(infoIcons[index]);
             }
           }
         } else {
@@ -1212,9 +1214,9 @@ private static Font getDynamicFontSize(Font font, int offset) {
     int info = mProgram.getInfo();
     if (info > 0) {
       StringBuilder buffer = new StringBuilder("");
-      int[] infoBitArr = ProgramInfoHelper.mInfoBitArr;
-      String[] infoIconFileName = ProgramInfoHelper.mInfoIconFileName;
-      String[] infoMsgArr = ProgramInfoHelper.mInfoMsgArr;
+      int[] infoBitArr = ProgramInfoHelper.getInfoBits();
+      String[] infoIconFileName = ProgramInfoHelper.getInfoIconFilenames();
+      String[] infoMsgArr = ProgramInfoHelper.getInfoIconMessages();
 
       for (int i = 0; i < infoBitArr.length; i++) {
         if (ProgramInfoHelper.bitSet(info, infoBitArr[i])) {

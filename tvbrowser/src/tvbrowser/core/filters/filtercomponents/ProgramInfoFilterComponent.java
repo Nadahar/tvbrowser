@@ -121,12 +121,14 @@ public class ProgramInfoFilterComponent extends AbstractFilterComponent {
    */
   public JPanel getSettingsPanel() {
     final JPanel centerPanel = new JPanel(new BorderLayout());
-    final String[] allItems = new String[ProgramInfoHelper.mInfoMsgArr.length];
+    String[] infoMessages = ProgramInfoHelper.getInfoIconMessages();
+    int[] infoBits = ProgramInfoHelper.getInfoBits();
+    final String[] allItems = new String[infoMessages.length];
     final ArrayList<String> selectedItems = new ArrayList<String>();
-    for (int i = 0; i < ProgramInfoHelper.mInfoMsgArr.length; i++) {
-      final String item = ProgramInfoHelper.mInfoMsgArr[i];
+    for (int i = 0; i < infoMessages.length; i++) {
+      final String item = infoMessages[i];
       allItems[i] = item;
-      if (bitSet(mSelectedBits, ProgramInfoHelper.mInfoBitArr[i])) {
+      if (bitSet(mSelectedBits, infoBits[i])) {
         selectedItems.add(item);
       }
     }
@@ -147,7 +149,7 @@ public class ProgramInfoFilterComponent extends AbstractFilterComponent {
             DefaultListCellRenderer label = (DefaultListCellRenderer) mRenderer
                 .getListCellRendererComponent(list, value, index, isSelected,
                     false);
-            label.setIcon(ProgramInfoHelper.mInfoIconArr[index]);
+            label.setIcon(ProgramInfoHelper.getInfoIcons()[index]);
             label.setHorizontalAlignment(SwingConstants.LEADING);
             label.setVerticalAlignment(SwingConstants.CENTER);
             label.setOpaque(false);
@@ -179,12 +181,14 @@ public class ProgramInfoFilterComponent extends AbstractFilterComponent {
   public void saveSettings() {
     int bits = 0;
 
+    String[] infoMessages = ProgramInfoHelper.getInfoIconMessages();
+    int[] infoBits = ProgramInfoHelper.getInfoBits();
     final Object[] checked = mList.getSelection();
     for (int checkedIndex = 0; checkedIndex < checked.length; checkedIndex++) {
       final String item = (String) checked[checkedIndex];
-      for (int infoIndex = 0; infoIndex < ProgramInfoHelper.mInfoMsgArr.length; infoIndex++) {
-        if (item.equals(ProgramInfoHelper.mInfoMsgArr[infoIndex])) {
-          bits |= ProgramInfoHelper.mInfoBitArr[infoIndex];
+      for (int infoIndex = 0; infoIndex < infoMessages.length; infoIndex++) {
+        if (item.equals(infoMessages[infoIndex])) {
+          bits |= infoBits[infoIndex];
           break;
         }
       }

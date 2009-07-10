@@ -115,7 +115,7 @@ public class UpdateDlg extends JDialog implements ActionListener, WindowClosingI
     JPanel panel1 = new JPanel(new BorderLayout(7, 0));
     msg = mLocalizer.msg("period", "Update program for");
     panel1.add(new JLabel(msg), BorderLayout.WEST);
-    mComboBox = new JComboBox(PeriodItem.PERIOD_ARR);
+    mComboBox = new JComboBox(PeriodItem.getPeriodItems());
     panel1.add(mComboBox, BorderLayout.EAST);
     northPanel.add(panel1);
 
@@ -280,7 +280,7 @@ public class UpdateDlg extends JDialog implements ActionListener, WindowClosingI
   }
 
   public void setNumberOfDays(int numberOfDays) {
-    for (PeriodItem item : PeriodItem.PERIOD_ARR) {
+    for (PeriodItem item : PeriodItem.getPeriodItems()) {
       if (item.getDays() >= numberOfDays) {
         mComboBox.setSelectedItem(item);
         return;
