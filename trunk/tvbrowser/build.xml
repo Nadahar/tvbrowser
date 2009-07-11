@@ -818,13 +818,14 @@
         todir="${public.dir}"
         package="tvbrowser"
         section="utils"
-        depends="${depends}">
+        depends="sun-java6-jre | openjdk-6-jre | sun-java7-jre | openjdk-7-jre | default-jre"
+  		recommends="sun-java6-jre">
   		
         <version upstream="${tvbrowser.version}"/>
         <maintainer name="TV-Browser team" email="dev@tvbrowser.org"/>
-        <description synopsis="Digital TV Guide">
-        	Themeable and easy to use TV Guide - written in Java.
-        </description>
+
+  		<!-- do not indent the description, otherwise the indent will be visible in the package manager and other tools -->
+        <description synopsis="Digital TV Guide">Themeable and easy to use TV Guide - written in Java.</description>
   	   	  		
   	    <tarfileset dir="${tvbrowser-linux.runtime.dir}" prefix="usr/share/tvbrowser">
   	    	<include name="imgs/**"/>
@@ -837,29 +838,10 @@
   		<tarfileset dir="${tvbrowser-linux.runtime.dir}/icons" prefix="usr/share/tvbrowser/icons">
   			<include name="*"/>
   		</tarfileset>
-  		<tarfileset dir="${tvbrowser-linux.runtime.dir}/icons/CrystalClear" prefix="usr/share/tvbrowser/icons/CrystalClear">
-  			<include name="*"/>
-  		</tarfileset>
-  	  	<tarfileset dir="${tvbrowser-linux.runtime.dir}/icons/CrystalClear/16x16" prefix="usr/share/tvbrowser/icons/CrystalClear/16x16">
-  	  		<include name="**"/>
-  	  	</tarfileset>
-  	  	<tarfileset dir="${tvbrowser-linux.runtime.dir}/icons/CrystalClear/22x22" prefix="usr/share/tvbrowser/icons/CrystalClear/22x22">
-  	  		<include name="**"/>
-  	  	</tarfileset>
-  		<tarfileset dir="${tvbrowser-linux.runtime.dir}/icons/tango" prefix="usr/share/tvbrowser/icons/tango">
-  			<include name="*"/>
-  		</tarfileset>
-  	  	<tarfileset dir="${tvbrowser-linux.runtime.dir}/icons/tango/16x16" prefix="usr/share/tvbrowser/icons/tango/16x16">
-  	  		<include name="**"/>
-  	  	</tarfileset>
-  	  	<tarfileset dir="${tvbrowser-linux.runtime.dir}/icons/tango/22x22" prefix="usr/share/tvbrowser/icons/tango/22x22">
-  	  		<include name="**"/>
-  	  	</tarfileset>
-  	  		
   		<tarfileset dir="${tvbrowser-linux.runtime.dir}" prefix="usr/share/tvbrowser" filemode="755" includes="**/tvbrowser.sh" />
   		<tarfileset dir="${tvbrowser-linux.runtime.dir}" prefix="usr/share/applications" includes="**/tvbrowser.desktop"/>
   	   	<tarfileset dir="${deployment.dir}/linux"
-  	                 prefix="usr/sbin"
+  	                 prefix="usr/bin"
   	   	   filemode="755" includes="**/tvbrowser" />	
   	</deb>
   </target>
