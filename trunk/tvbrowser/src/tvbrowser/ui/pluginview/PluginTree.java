@@ -458,6 +458,8 @@ public class PluginTree extends JTree implements DragGestureListener,
               mPlugin = temp;
             }
           }
+          else
+            e.rejectDrag();
         } catch (Exception e2) {
           e.rejectDrag();
         }
@@ -530,6 +532,7 @@ public class PluginTree extends JTree implements DragGestureListener,
           mCurrentPoint = location;
         }
       }
+      
     } catch (Exception ee) {}
 
     if (this.getVisibleRect().width < this.getSize().width
