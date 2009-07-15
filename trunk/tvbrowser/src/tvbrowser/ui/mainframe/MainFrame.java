@@ -76,6 +76,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JRootPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
@@ -93,7 +95,6 @@ import tvbrowser.core.filters.FilterList;
 import tvbrowser.core.filters.FilterManagerImpl;
 import tvbrowser.core.filters.ShowAllFilter;
 import tvbrowser.core.filters.filtercomponents.ChannelFilterComponent;
-import tvbrowser.core.plugin.PluginManagerImpl;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
@@ -127,7 +128,6 @@ import tvbrowser.ui.update.SoftwareUpdateItem;
 import tvbrowser.ui.update.SoftwareUpdater;
 import util.browserlauncher.Launch;
 import util.exc.ErrorHandler;
-import util.exc.TvBrowserException;
 import util.io.IOUtilities;
 import util.misc.OperatingSystem;
 import util.ui.Localizer;
@@ -2264,6 +2264,10 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
         Object data = t.getTransferData(f);
         
         if(data instanceof List) {
+          File tmpFile = File.createTempFile("plugins",".txt");
+          StringBuilder alreadyInstalled = new StringBuilder();
+          StringBuilder notCompatiblePlugins = new StringBuilder();
+          
           for(Object o : ((List)data)) {
             if(o instanceof File && ((File)o).isFile() && ((File)o).getName().toLowerCase().endsWith(".jar")) {
               File jarFile = ((File)o);
@@ -2279,7 +2283,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
               // Get the plugin name
               String pluginName = jarFile.getName();
               pluginName = pluginName.substring(0, pluginName.length() - 4);
-                            
+                     
               try {
                 String pluginId = "java." + pluginName.toLowerCase() + "." + pluginName;      
                 PluginProxy installedPlugin = PluginProxyManager.getInstance().getPluginForId(pluginId);
@@ -2290,47 +2294,58 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
                 Version version1 = (Version)getVersion.invoke(pluginClass, new Object[0]);
 
                 if (installedPlugin!=null && installedPlugin.getInfo().getVersion().compareTo(version1)>=0) {
-                  JOptionPane.showMessageDialog(this,mLocalizer.msg("update.alreadyInstalled","This Plugin in an current version is already installed."));
+                  alreadyInstalled.append(installedPlugin.getInfo().getName()).append("\n");
                 }
                 else {
-                  File tmpFile = File.createTempFile("plugins",".txt");
                   RandomAccessFile write = new RandomAccessFile(tmpFile,"rw");
                   
                   String versionString = + version1.getMajor() + "." + (version1.getMinor()/10) + (version1.getMinor()%10) + "." + version1.getSubMinor(); 
+                  
+                  write.seek(write.length());
                   
                   write.writeBytes("[plugin:" + pluginName + "]\n");
                   write.writeBytes("name_en=" + pluginName + "\n");
                   write.writeBytes("filename=" + jarFile.getName() + "\n");
                   write.writeBytes("version=" + versionString + "\n");
-                  write.writeBytes("version.name=" + versionString + (version1.isStable() ? "" : "beta") + "\n");
+                  write.writeBytes("version.name=" + version1.getMajor() + "." + (version1.getMinor()/10) + "." + (version1.getMinor()%10) + "." + version1.getSubMinor() + (version1.isStable() ? "" : "beta") + "\n");
                   write.writeBytes("download=" + jarFile.toURI().toURL() + "\n");
-                  write.writeBytes("downloadtype=mirrors\n");
+                  write.writeBytes("category=unknown\n");
+                  write.writeBytes("downloadtype=mirrors\n\n");
                   
                   write.close();
-                  
-                  java.net.URL url = tmpFile.toURI().toURL();
-                  SoftwareUpdater softwareUpdater = new SoftwareUpdater(url,false);
-                  mSoftwareUpdateItems = softwareUpdater
-                      .getAvailableSoftwareUpdateItems();
-                  
-                  SoftwareUpdateDlg updateDlg = new SoftwareUpdateDlg(this,null,false,mSoftwareUpdateItems);
-                  updateDlg.setVisible(true);
-                  
-                  if(!tmpFile.delete()) {
-                    tmpFile.deleteOnExit();
-                  }
                 }
               }catch(Exception e) {
-                JOptionPane.showMessageDialog(this,mLocalizer.msg("update.noTVBPlugin","This file doesn't contain a TV-Browser Plugin."));
+                notCompatiblePlugins.append(jarFile.getName()).append("\n");
               }
-              
-              dtde.dropComplete(true);
-              break;
             }
-            else {
-              dtde.rejectDrop();
-              dtde.dropComplete(false);
+          }
+          
+          if(alreadyInstalled.length() > 0) {
+            showInfoTextMessage(mLocalizer.msg("update.alreadyInstalled","The following Plugin in current version are already installed:"),alreadyInstalled.toString());
+          }
+          
+          if(notCompatiblePlugins.length() > 0) {
+            showInfoTextMessage(mLocalizer.msg("update.noTVBPlugin","This following files are not TV-Browser Plugins:"),notCompatiblePlugins.toString());
+          }
+          
+          if(tmpFile.length() > 0) {
+            java.net.URL url = tmpFile.toURI().toURL();
+            SoftwareUpdater softwareUpdater = new SoftwareUpdater(url,false);
+            mSoftwareUpdateItems = softwareUpdater
+                .getAvailableSoftwareUpdateItems();
+            
+            SoftwareUpdateDlg updateDlg = new SoftwareUpdateDlg(this,null,false,mSoftwareUpdateItems);
+            updateDlg.setVisible(true);
+            
+            if(!tmpFile.delete()) {
+              tmpFile.deleteOnExit();
             }
+            
+            dtde.dropComplete(true);
+          }
+          else {
+            dtde.rejectDrop();
+            dtde.dropComplete(false);
           }
         }
         
@@ -2348,5 +2363,17 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
   public void dropActionChanged(DropTargetDragEvent dtde) {
     // TODO Auto-generated method stub
     
+  }
+  
+  private void showInfoTextMessage(String header, String infoText) {
+    JTextArea textArea = new JTextArea(infoText);
+    textArea.setEditable(false);
+    
+    JScrollPane scrollPane = new JScrollPane(textArea);
+    
+    scrollPane.setPreferredSize(new Dimension(200,150));
+    
+    Object[] msg = {header,scrollPane};
+    JOptionPane.showMessageDialog(this,msg,Localizer.getLocalization(Localizer.I18N_INFO),JOptionPane.INFORMATION_MESSAGE);            
   }
 }
