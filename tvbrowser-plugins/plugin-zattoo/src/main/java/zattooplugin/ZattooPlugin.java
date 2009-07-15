@@ -12,6 +12,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
 
+import util.browserlauncher.Launch;
 import util.exc.ErrorHandler;
 import util.io.ExecutionHandler;
 import util.misc.OperatingSystem;
@@ -29,18 +30,14 @@ import devplugin.Version;
 public final class ZattooPlugin extends Plugin {
 
   private static final boolean PLUGIN_IS_STABLE = true;
-  private static final Version PLUGIN_VERSION = new Version(0, 4, 7,
-      PLUGIN_IS_STABLE);
+  private static final Version PLUGIN_VERSION = new Version(0, 5, PLUGIN_IS_STABLE);
 
-  private static final Localizer mLocalizer = Localizer
-      .getLocalizerFor(ZattooPlugin.class);
+  private static final Localizer mLocalizer = Localizer.getLocalizerFor(ZattooPlugin.class);
   private static Logger mLog = Logger.getLogger(ZattooPlugin.class.getName());
-
-  private static final String KEY_COUNTRY = "COUNTRY";
 
   private ImageIcon mIcon;
   private static ZattooPlugin mInstance;
-  private Properties mSettings;
+  private ZattooSettings mSettings;
   private PluginsProgramFilter mFilters;
   private ZattooChannelProperties mChannelIds;
 
@@ -57,40 +54,33 @@ public final class ZattooPlugin extends Plugin {
 
   @Override
   public Properties storeSettings() {
-    return mSettings;
+    return mSettings.storeSettings();
   }
 
   @Override
   public void loadSettings(final Properties properties) {
-    mSettings = properties;
+    mSettings = new ZattooSettings(properties);
 
-    changeCountry(mSettings.getProperty(KEY_COUNTRY, "de"));
+    changeCountry(mSettings.getCountry());
   }
 
   public void changeCountry(final String country) {
     try {
       mChannelIds = new ZattooChannelProperties("channels_" + country);
-      mSettings.setProperty(KEY_COUNTRY, country);
+      mSettings.setCountry(country);
     } catch (Exception e) {
-      mLog.log(Level.WARNING, "Could not load File for Country " + country
-          + ".", e);
+      mLog.log(Level.WARNING, "Could not load File for Country " + country + ".", e);
     }
   }
 
-  public String getCurrentCountry() {
-    return mSettings.getProperty(KEY_COUNTRY, "de");
-  }
-
   public PluginInfo getInfo() {
-    return new PluginInfo(ZattooPlugin.class, mLocalizer.msg("pluginName",
-        "Zattoo"),
-        mLocalizer.msg("description", "Switches channels in Zattoo"),
-        "Bodo Tasche", "GPL");
+    return new PluginInfo(ZattooPlugin.class, mLocalizer.msg("pluginName", "Zattoo"), mLocalizer.msg("description",
+        "Switches channels in Zattoo"), "Bodo Tasche, Michael Keppler", "GPL");
   }
 
   @Override
   public SettingsTab getSettingsTab() {
-    return new ZattooSettingsTab();
+    return new ZattooSettingsTab(mSettings);
   }
 
   public Icon getPluginIcon() {
@@ -101,8 +91,7 @@ public final class ZattooPlugin extends Plugin {
   }
 
   public ActionMenu getContextMenuActions(final Program program) {
-    if (getPluginManager().getExampleProgram().equals(program)
-        || getChannelId(program.getChannel()) != null) {
+    if (getPluginManager().getExampleProgram().equals(program) || getChannelId(program.getChannel()) != null) {
       final AbstractAction action = new AbstractAction() {
         public void actionPerformed(final ActionEvent evt) {
           SwingUtilities.invokeLater(new Runnable() {
@@ -112,8 +101,7 @@ public final class ZattooPlugin extends Plugin {
           });
         }
       };
-      action.putValue(Action.NAME, mLocalizer.msg("contextMenuTweet",
-          "Switch Channel"));
+      action.putValue(Action.NAME, mLocalizer.msg("contextMenuZattoo", "Switch Channel"));
       action.putValue(Action.SMALL_ICON, getPluginIcon());
       return new ActionMenu(action);
     }
@@ -122,7 +110,13 @@ public final class ZattooPlugin extends Plugin {
 
   private void openChannel(final Channel channel) {
     final String id = getChannelId(channel);
-    if (id != null && !OperatingSystem.isOther()) {
+    if (id == null) {
+      return;
+    }
+
+    if (mSettings.getUseWebPlayer()) {
+      Launch.openURL("https://watch.zattoo.com/view/" + id);
+    } else {
       ExecutionHandler executionHandler;
       final String zattooURI = "zattoo://channel/" + id;
       if (OperatingSystem.isLinux()) {
@@ -130,27 +124,34 @@ public final class ZattooPlugin extends Plugin {
       } else if (OperatingSystem.isMacOs()) {
         executionHandler = new ExecutionHandler(zattooURI, "open");
       } else {
-        executionHandler = new ExecutionHandler(new String[] { "rundll32.exe",
-            "url.dll,FileProtocolHandler", zattooURI });
+        executionHandler = new ExecutionHandler(
+            new String[] { "rundll32.exe", "url.dll,FileProtocolHandler", zattooURI });
       }
 
       try {
         executionHandler.execute(false);
       } catch (IOException e) {
         e.printStackTrace();
-        ErrorHandler.handle(mLocalizer.msg("error.zatto",
-            "Could not start zattoo"), e);
+        ErrorHandler.handle(mLocalizer.msg("error.zatto", "Could not start zattoo"), e);
       }
     }
   }
 
   private String getChannelId(final Channel channel) {
-    final String ret = mChannelIds.getProperty(channel);
-    if (ret == null) {
-      mLog.log(Level.INFO, "No channel mapping found for "
-          + channel.getUniqueId());
+    final String id = mChannelIds.getProperty(channel);
+    if (id == null) {
+      mLog.log(Level.INFO, "No zattoo channel mapping found for " + channel.getUniqueId());
+      return null;
     }
-    return ret;
+    int comma = id.indexOf(',');
+    if (mSettings.getUseWebPlayer() && comma >= 0) {
+      return id.substring(comma + 1).trim();
+    } else if (mSettings.getUseWebPlayer() && comma == -1) {
+      return null;
+    } else if (comma >= 0) {
+      return id.substring(0, comma);
+    }
+    return id;
   }
 
   public static ZattooPlugin getInstance() {
@@ -182,6 +183,10 @@ public final class ZattooPlugin extends Plugin {
 
   public boolean isChannelSupported(final Channel channel) {
     return getChannelId(channel) != null;
+  }
+
+  public static boolean canUseLocalPlayer() {
+    return OperatingSystem.isMacOs() || OperatingSystem.isWindows();
   }
 
 }
