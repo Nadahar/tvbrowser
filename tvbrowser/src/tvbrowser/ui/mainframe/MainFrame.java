@@ -37,17 +37,34 @@ import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.Window;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.dnd.DropTarget;
+import java.awt.dnd.DropTargetDragEvent;
+import java.awt.dnd.DropTargetDropEvent;
+import java.awt.dnd.DropTargetEvent;
+import java.awt.dnd.DropTargetListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
+import java.util.TooManyListenersException;
 import java.util.logging.Level;
 
 import javax.swing.BorderFactory;
@@ -76,6 +93,8 @@ import tvbrowser.core.filters.FilterList;
 import tvbrowser.core.filters.FilterManagerImpl;
 import tvbrowser.core.filters.ShowAllFilter;
 import tvbrowser.core.filters.filtercomponents.ChannelFilterComponent;
+import tvbrowser.core.plugin.PluginManagerImpl;
+import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
@@ -108,6 +127,7 @@ import tvbrowser.ui.update.SoftwareUpdateItem;
 import tvbrowser.ui.update.SoftwareUpdater;
 import util.browserlauncher.Launch;
 import util.exc.ErrorHandler;
+import util.exc.TvBrowserException;
 import util.io.IOUtilities;
 import util.misc.OperatingSystem;
 import util.ui.Localizer;
@@ -128,13 +148,14 @@ import devplugin.Program;
 import devplugin.ProgramFilter;
 import devplugin.ProgressMonitor;
 import devplugin.SettingsItem;
+import devplugin.Version;
 
 /**
  * TV-Browser
  * 
  * @author Martin Oberhauser
  */
-public class MainFrame extends JFrame implements DateListener {
+public class MainFrame extends JFrame implements DateListener,DropTargetListener {
 
   private static java.util.logging.Logger mLog = java.util.logging.Logger
       .getLogger(tvbrowser.TVBrowser.class.getName());
@@ -363,6 +384,16 @@ public class MainFrame extends JFrame implements DateListener {
     timer.start();
 
     setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+    
+    //create the drop target for installation of Plugins with Drag'N'Drop on MainFrame
+    DropTarget target = new DropTarget();
+    try {
+      target.addDropTargetListener(this);
+    } catch (TooManyListenersException e1) {
+      //ignore
+    }
+    
+    this.setDropTarget(target);
   }
 
   /**
@@ -2182,5 +2213,140 @@ public class MainFrame extends JFrame implements DateListener {
     if (mPluginView != null) {
       mPluginView.refreshTree();
     }
+  }
+
+  @Override
+  public void dragEnter(DropTargetDragEvent dtde) {
+    DataFlavor[] fl = dtde.getCurrentDataFlavors();
+    Transferable t = dtde.getTransferable();
+    
+    for(DataFlavor f :fl) {
+      try {
+        Object data = t.getTransferData(f);
+        
+        if(data instanceof List) {
+          for(Object o : ((List)data)) {
+            if(o instanceof File && ((File)o).isFile() && ((File)o).getName().toLowerCase().endsWith(".jar")) {
+              dtde.acceptDrag(dtde.getDropAction());
+            }
+            else {
+              dtde.rejectDrag();
+            }
+          }
+        }
+        
+      } catch (UnsupportedFlavorException e) { //ignore
+      } catch (IOException e) { //ignore
+      }
+    }
+  }
+
+  @Override
+  public void dragExit(DropTargetEvent dte) {
+    // TODO Auto-generated method stub
+    
+  }
+
+  @Override
+  public void dragOver(DropTargetDragEvent dtde) {
+    // TODO Auto-generated method stub
+    
+  }
+
+  @Override
+  public void drop(DropTargetDropEvent dtde) {
+    DataFlavor[] fl = dtde.getCurrentDataFlavors();
+    Transferable t = dtde.getTransferable();
+    
+    dtde.acceptDrop(dtde.getDropAction());
+    for(DataFlavor f :fl) {      
+      try {
+        Object data = t.getTransferData(f);
+        
+        if(data instanceof List) {
+          for(Object o : ((List)data)) {
+            if(o instanceof File && ((File)o).isFile() && ((File)o).getName().toLowerCase().endsWith(".jar")) {
+              File jarFile = ((File)o);
+              ClassLoader classLoader = null;
+              
+              try {
+                URL[] urls = new URL[] { jarFile.toURI().toURL() };
+                classLoader = URLClassLoader.newInstance(urls, ClassLoader.getSystemClassLoader());                
+              } catch (MalformedURLException exc) {
+                
+              }
+              
+              // Get the plugin name
+              String pluginName = jarFile.getName();
+              pluginName = pluginName.substring(0, pluginName.length() - 4);
+                            
+              try {
+                String pluginId = "java." + pluginName.toLowerCase() + "." + pluginName;      
+                PluginProxy installedPlugin = PluginProxyManager.getInstance().getPluginForId(pluginId);
+
+                Class pluginClass = classLoader.loadClass(pluginName.toLowerCase() + "." + pluginName);
+                
+                Method getVersion = pluginClass.getMethod("getVersion",new Class[0]);
+                Version version1 = (Version)getVersion.invoke(pluginClass, new Object[0]);
+
+                if (installedPlugin!=null && installedPlugin.getInfo().getVersion().compareTo(version1)>=0) {
+                  JOptionPane.showMessageDialog(this,mLocalizer.msg("update.alreadyInstalled","This Plugin in an current version is already installed."));
+                }
+                else {
+                  File tmpFile = File.createTempFile("plugins",".txt");
+                  RandomAccessFile write = new RandomAccessFile(tmpFile,"rw");
+                  
+                  String versionString = + version1.getMajor() + "." + (version1.getMinor()/10) + (version1.getMinor()%10) + "." + version1.getSubMinor(); 
+                  
+                  write.writeBytes("[plugin:" + pluginName + "]\n");
+                  write.writeBytes("name_en=" + pluginName + "\n");
+                  write.writeBytes("filename=" + jarFile.getName() + "\n");
+                  write.writeBytes("version=" + versionString + "\n");
+                  write.writeBytes("version.name=" + versionString + (version1.isStable() ? "" : "beta") + "\n");
+                  write.writeBytes("download=" + jarFile.toURI().toURL() + "\n");
+                  write.writeBytes("downloadtype=mirrors\n");
+                  
+                  write.close();
+                  
+                  java.net.URL url = tmpFile.toURI().toURL();
+                  SoftwareUpdater softwareUpdater = new SoftwareUpdater(url,false);
+                  mSoftwareUpdateItems = softwareUpdater
+                      .getAvailableSoftwareUpdateItems();
+                  
+                  SoftwareUpdateDlg updateDlg = new SoftwareUpdateDlg(this,null,false,mSoftwareUpdateItems);
+                  updateDlg.setVisible(true);
+                  
+                  if(!tmpFile.delete()) {
+                    tmpFile.deleteOnExit();
+                  }
+                }
+              }catch(Exception e) {
+                JOptionPane.showMessageDialog(this,mLocalizer.msg("update.noTVBPlugin","This file doesn't contain a TV-Browser Plugin."));
+              }
+              
+              dtde.dropComplete(true);
+              break;
+            }
+            else {
+              dtde.rejectDrop();
+              dtde.dropComplete(false);
+            }
+          }
+        }
+        
+      } catch (UnsupportedFlavorException e) { //ignore
+      } catch (IOException e) {
+        //ignore
+      }
+    }
+    
+    
+    
+  }
+
+  @Override
+  public void dropActionChanged(DropTargetDragEvent dtde) {
+    // TODO Auto-generated method stub
+    
   }
 }
