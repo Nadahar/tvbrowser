@@ -2342,16 +2342,15 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
             
             SoftwareUpdateDlg updateDlg = new SoftwareUpdateDlg(this,null,false,mSoftwareUpdateItems);
             updateDlg.setVisible(true);
-            
-            if(!tmpFile.delete()) {
-              tmpFile.deleteOnExit();
-            }
-            
             dtde.dropComplete(true);
           }
           else {
             dtde.rejectDrop();
             dtde.dropComplete(false);
+          }
+          
+          if(!tmpFile.delete()) {
+            tmpFile.deleteOnExit();
           }
         }
         
