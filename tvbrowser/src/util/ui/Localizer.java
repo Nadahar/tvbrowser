@@ -98,6 +98,7 @@ public class Localizer {
   public final static String I18N_YESTERDAY = "i18n_yesterday";
   public final static String I18N_TODAY = "i18n_today";
   public final static String I18N_TOMORROW = "i18n_tomorrow";
+  public final static String I18N_INFO = "i18n_info";
   
   /** The logger for this class. */  
   private static java.util.logging.Logger mLog

@@ -310,6 +310,11 @@ public abstract class SoftwareUpdateItem {
 	 * @return The category of this update item.
 	 */
 	public String getCategory() {
-	  return mPropertyMap.get("category");
+	  if(mPropertyMap.containsKey("category")) {
+	    return mPropertyMap.get("category");
+	  }
+	  else {
+	    return "unknown";
+	  }
 	}
 }
