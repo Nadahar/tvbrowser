@@ -2286,8 +2286,10 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
                      
               try {
                 String pluginId = "java." + pluginName.toLowerCase() + "." + pluginName;      
+                
                 PluginProxy installedPlugin = PluginProxyManager.getInstance().getPluginForId(pluginId);
-
+                TvDataServiceProxy service= TvDataServiceProxyManager.getInstance().findDataServiceById(pluginName.toLowerCase()+"."+pluginName);
+                
                 Class pluginClass = classLoader.loadClass(pluginName.toLowerCase() + "." + pluginName);
                 
                 Method getVersion = pluginClass.getMethod("getVersion",new Class[0]);
@@ -2296,18 +2298,22 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
                 if (installedPlugin!=null && installedPlugin.getInfo().getVersion().compareTo(version1)>=0) {
                   alreadyInstalled.append(installedPlugin.getInfo().getName()).append("\n");
                 }
+                else if(service!=null && service.getInfo().getVersion().compareTo(version1)>=0) {
+                  alreadyInstalled.append(service.getInfo().getName()).append("\n");
+                }
                 else {
                   RandomAccessFile write = new RandomAccessFile(tmpFile,"rw");
                   
                   String versionString = + version1.getMajor() + "." + (version1.getMinor()/10) + (version1.getMinor()%10) + "." + version1.getSubMinor(); 
                   
                   write.seek(write.length());
+                  System.out.println(pluginClass.getSuperclass());
                   
                   write.writeBytes("[plugin:" + pluginName + "]\n");
                   write.writeBytes("name_en=" + pluginName + "\n");
                   write.writeBytes("filename=" + jarFile.getName() + "\n");
                   write.writeBytes("version=" + versionString + "\n");
-                  write.writeBytes("version.name=" + version1.getMajor() + "." + (version1.getMinor()/10) + "." + (version1.getMinor()%10) + "." + version1.getSubMinor() + (version1.isStable() ? "" : "beta") + "\n");
+                  write.writeBytes("stable=" + version1.isStable() + "\n");
                   write.writeBytes("download=" + jarFile.toURI().toURL() + "\n");
                   write.writeBytes("category=unknown\n");
                   write.writeBytes("downloadtype=mirrors\n\n");
