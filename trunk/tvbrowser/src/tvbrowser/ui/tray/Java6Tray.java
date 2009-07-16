@@ -25,6 +25,7 @@ package tvbrowser.ui.tray;
 
 import java.awt.Dimension;
 import java.awt.Point;
+import java.awt.TrayIcon;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -55,7 +56,7 @@ public class Java6Tray {
   private static java.util.logging.Logger mLog
   = java.util.logging.Logger.getLogger(Java6Tray.class.getName());
   
-  private Class<?> mClass;
+  private java.awt.SystemTray mSystemTray;
   private TrayIcon mTrayIcon;
   private JPopupMenu mPopupMenu;
   private ActionListener mLeftClickListener, mLeftDoubleClickListener, mRightClickListener;
@@ -115,12 +116,9 @@ public class Java6Tray {
   public boolean init(JFrame parent, String tooltip) {
     if(JavaVersion.getVersion() >= JavaVersion.VERSION_1_6 && !OperatingSystem.isMacOs()) {
       try {
-        mClass = Class.forName("java.awt.SystemTray");
-        
-        Class<?> clazz = Class.forName("java.awt.SystemTray");
-        boolean value = (Boolean)clazz.getMethod("isSupported",new Class[] {}).invoke(clazz,new Object[] {});
-        
-        if(value) {
+        mSystemTray = java.awt.SystemTray.getSystemTray();
+        boolean isSupported = java.awt.SystemTray.isSupported();
+        if(isSupported) {
           try {
             if(new File("imgs/TrayIcon.png").isFile()) {
               mTrayIcon = new TrayIcon(ImageIO.read(new File("imgs/TrayIcon.png")), tooltip);
@@ -165,10 +163,10 @@ public class Java6Tray {
           mLog.info("Java 6 Tray is not supported on current platform.");
         }
         
-        return value;
+        return isSupported;
       }catch(Exception e) {
         mLog.log(Level.SEVERE, "Java 6 Tray could not be inited.", e);
-        mClass = null;
+        mSystemTray = null;
         return false;
       }
     }
@@ -254,14 +252,12 @@ public class Java6Tray {
   public void setVisible(boolean b) {
     if(b) {
       try {
-        Object o = mClass.getMethod("getSystemTray",new Class[] {}).invoke(mClass,new Object[] {});      
-        mClass.getMethod("add", new Class[] {mTrayIcon.getTrayIcon().getClass()}).invoke(o,mTrayIcon.getTrayIcon());      
+        mSystemTray.add(mTrayIcon);
       }catch(Exception e) {}
     }
     else {
       try {
-        Object o = mClass.getMethod("getSystemTray",new Class[] {}).invoke(mClass,new Object[] {});      
-        mClass.getMethod("remove", new Class[] {mTrayIcon.getTrayIcon().getClass()}).invoke(o,mTrayIcon.getTrayIcon());      
+        mSystemTray.remove(mTrayIcon);
       }catch(Exception e) {}      
     }
   }
@@ -273,13 +269,10 @@ public class Java6Tray {
    */
   public Dimension getTrayIconSize() {
     try {
-      Class<?> clazz = Class.forName("java.awt.SystemTray");
-      
-      if(clazz != null) {
-        Object o = clazz.getMethod("getSystemTray",new Class[] {}).invoke(clazz,new Object[] {});
-        return (Dimension)clazz.getMethod("getTrayIconSize", new Class[] {}).invoke(o, new Object[] {});
+      if(mSystemTray != null) {
+        mSystemTray.getTrayIconSize();
       }
-    }catch(Exception e) {e.printStackTrace();}
+    }catch(Exception e) {}
     
     return null;
   }
