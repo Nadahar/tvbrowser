@@ -50,12 +50,16 @@ public class ProgramUtilities {
    */
   public static boolean isOnAir(Program p) {
     Date currentDate = Date.getCurrentDate();
-    if (currentDate.compareTo(p.getDate()) < 0 || p.getDate().addDays(1).compareTo(currentDate) < 0) {
+    if (currentDate.compareTo(p.getDate()) < 0) {
+      return false;
+    }
+    int programNextDayEqualsToday = p.getDate().addDays(1).compareTo(currentDate);
+    if (programNextDayEqualsToday < 0) {
       return false;
     }
 
     int time = IOUtilities.getMinutesAfterMidnight();
-    if (currentDate.addDays(-1).compareTo(p.getDate()) == 0) {
+    if (programNextDayEqualsToday == 0) {
       time += 24 * 60;
     }
     if (p.getStartTime() <= time && (p.getStartTime() + p.getLength()) > time) {
