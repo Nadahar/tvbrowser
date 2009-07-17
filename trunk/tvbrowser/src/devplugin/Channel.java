@@ -793,7 +793,7 @@ public class Channel implements Comparable<Channel> {
       Channel cmp = (Channel) obj;
 
       // this is for the example program
-      if((getDataServiceProxy() == null && cmp.getDataServiceProxy() == null) &&
+      if((mDataService == null && cmp.getDataServiceProxy() == null) &&
         (getGroup() == null && cmp.getGroup() == null) &&
         (getId().compareTo(cmp.getId())) == 0) {
         return true;
