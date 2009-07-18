@@ -31,18 +31,10 @@ import java.util.Properties;
  */
 public abstract class AbstractExporter implements ExporterIf {
 
-  /*
-   * (non-Javadoc)
-   * @see calendarexportplugin.exporter.ExporterIf#hasSettingsDialog()
-   */
   public boolean hasSettingsDialog() {
     return false;
   }
   
-  /*
-   * (non-Javadoc)
-   * @see calendarexportplugin.exporter.ExporterIf#showSettingsDialog(java.util.Properties)
-   */
   public void showSettingsDialog(Properties settings) {
   }
   

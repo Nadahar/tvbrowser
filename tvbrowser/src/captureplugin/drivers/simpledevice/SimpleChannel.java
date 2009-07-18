@@ -89,18 +89,10 @@ public class SimpleChannel implements ExternalChannelIf {
         mNumber = number;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
     public String toString() {
         return mName;
     }
     
-    /*
-     * (non-Javadoc)
-     * @see java.lang.Object#hashCode()
-     */
     public int hashCode() {
       final int PRIME = 31;
       int result = 1;
@@ -109,10 +101,6 @@ public class SimpleChannel implements ExternalChannelIf {
       return result;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
     public boolean equals(Object obj) {
       if (this == obj)
         return true;

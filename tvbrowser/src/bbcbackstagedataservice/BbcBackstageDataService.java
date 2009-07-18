@@ -92,18 +92,10 @@ public class BbcBackstageDataService extends AbstractTvDataService {
    */
   private File mWorkingDir;
 
-  /*
-   * (non-Javadoc)
-   * @see devplugin.TvDataService#checkForAvailableChannelGroups(devplugin.ProgressMonitor)
-   */
   public ChannelGroup[] checkForAvailableChannelGroups(ProgressMonitor monitor) throws TvBrowserException {
     return new ChannelGroup[] { mBbcChannelGroup };
   }
 
-  /*
-   * (non-Javadoc)
-   * @see devplugin.TvDataService#checkForAvailableChannels(devplugin.ChannelGroup, devplugin.ProgressMonitor)
-   */
   public Channel[] checkForAvailableChannels(ChannelGroup group, ProgressMonitor monitor) throws TvBrowserException {
     try {
       ArrayList<Channel> channels = new ArrayList<Channel>();
@@ -179,18 +171,10 @@ public class BbcBackstageDataService extends AbstractTvDataService {
     return "http://bbc.co.uk";
   }
 
-  /*
-   * (non-Javadoc)
-   * @see devplugin.TvDataService#getAvailableChannels(devplugin.ChannelGroup)
-   */
   public Channel[] getAvailableChannels(ChannelGroup group) {
     return mChannels.toArray(new Channel[mChannels.size()]);
   }
 
-  /*
-   * (non-Javadoc)
-   * @see devplugin.TvDataService#getAvailableGroups()
-   */
   public ChannelGroup[] getAvailableGroups() {
     return new ChannelGroup[] { mBbcChannelGroup };
   }
@@ -199,35 +183,19 @@ public class BbcBackstageDataService extends AbstractTvDataService {
     return new Version(2,61);
   }
 
-  /*
-   * (non-Javadoc)
-   * @see devplugin.TvDataService#getInfo()
-   */
   public PluginInfo getInfo() {
     return new PluginInfo(BbcBackstageDataService.class, mLocalizer.msg("name","BBC Data"), 
         mLocalizer.msg("desc", "Data from BBC Backstage."), "Bodo Tasche");
   }
 
-  /*
-   * (non-Javadoc)
-   * @see devplugin.TvDataService#getSettingsPanel()
-   */
   public SettingsPanel getSettingsPanel() {
     return null;
   }
 
-  /*
-   * (non-Javadoc)
-   * @see devplugin.TvDataService#hasSettingsPanel()
-   */
   public boolean hasSettingsPanel() {
     return false;
   }
 
-  /*
-   * (non-Javadoc)
-   * @see devplugin.TvDataService#loadSettings(java.util.Properties)
-   */
   public void loadSettings(Properties settings) {
     mLog.info("Loading settings in BbcBackstageDataService");
     
@@ -257,10 +225,6 @@ public class BbcBackstageDataService extends AbstractTvDataService {
     mLog.info("Finished loading settings for BbcBackstageDataService");
   }
 
-  /*
-   * (non-Javadoc)
-   * @see devplugin.TvDataService#storeSettings()
-   */
   public Properties storeSettings() {
     mLog.info("Storing settings for BbcBackstageDataService");
 
@@ -279,34 +243,18 @@ public class BbcBackstageDataService extends AbstractTvDataService {
     return prop;
   }
 
-  /*
-   * (non-Javadoc)
-   * @see devplugin.TvDataService#setWorkingDirectory(java.io.File)
-   */
   public void setWorkingDirectory(File dataDir) {
     mWorkingDir = dataDir;
   }
 
-  /*
-   * (non-Javadoc)
-   * @see devplugin.TvDataService#supportsDynamicChannelGroups()
-   */
   public boolean supportsDynamicChannelGroups() {
     return false;
   }
 
-  /*
-   * (non-Javadoc)
-   * @see devplugin.TvDataService#supportsDynamicChannelList()
-   */
   public boolean supportsDynamicChannelList() {
     return true;
   }
 
-  /*
-   * (non-Javadoc)
-   * @see devplugin.TvDataService#updateTvData(tvdataservice.TvDataUpdateManager, devplugin.Channel[], devplugin.Date, int, devplugin.ProgressMonitor)
-   */
   public void updateTvData(TvDataUpdateManager updateManager, Channel[] channelArr, Date startDate, int dateCount,
       ProgressMonitor monitor) throws TvBrowserException {
 

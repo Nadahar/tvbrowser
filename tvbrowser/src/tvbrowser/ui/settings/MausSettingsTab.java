@@ -45,8 +45,8 @@ import tvbrowser.core.contextmenu.SeparatorMenuItem;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginProxy;
 
+import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.factories.DefaultComponentFactory;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
@@ -73,12 +73,12 @@ public class MausSettingsTab implements devplugin.SettingsTab {
     mDoubleClickIf = ContextMenuManager.getInstance().getDefaultContextMenuIf();
     mMiddleClickIf = ContextMenuManager.getInstance().getMiddleClickIf();
 
-    JPanel contentPanel = new JPanel(new FormLayout("5dlu, pref, 3dlu, pref, fill:pref:grow, 3dlu",
+    PanelBuilder contentPanel = new PanelBuilder(new FormLayout("5dlu, pref, 3dlu, pref, fill:pref:grow, 3dlu",
         "pref, 5dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref"));
     contentPanel.setBorder(Borders.DIALOG_BORDER);
 
     CellConstraints cc = new CellConstraints();
-    contentPanel.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("title", "Title")), cc.xyw(1,
+    contentPanel.addSeparator(mLocalizer.msg("title", "Title"), cc.xyw(1,
         1, 6));    
     
     contentPanel.add(new JLabel(mLocalizer.msg("MouseButtons", "Mouse Buttons:")), cc.xyw(2, 3, 4));
@@ -111,7 +111,7 @@ public class MausSettingsTab implements devplugin.SettingsTab {
 
     fillListbox();
 
-    return contentPanel;
+    return contentPanel.getPanel();
   }
 
   private void fillListbox() {

@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.Properties;
 import java.util.zip.GZIPOutputStream;
 
 import javax.swing.JOptionPane;
@@ -73,22 +72,24 @@ public class Updater implements Progress {
 
   private Hashtable<String, Program> _updateList;
 
+  private TVRaterSettings settings;
+
   /**
    * Creates the Updater
    * 
    * @param tvraterPlugin Plugin that uses the Updater
    */
-  public Updater(TVRaterPlugin tvraterPlugin) {
+  public Updater(final TVRaterPlugin tvraterPlugin, final TVRaterSettings settings) {
     _tvraterPlugin = tvraterPlugin;
+    this.settings = settings;
   }
 
   /**
    * Does the Update
    */
   public void run() {
-    Properties settings = _tvraterPlugin.getSettings();
-    String name = settings.getProperty("name");
-    String password = settings.getProperty("password");
+    String name = settings.getName();
+    String password = settings.getPassword();
     if ((name == null)
         || (name.length() == 0)
         || (password == null)
@@ -305,11 +306,11 @@ public class Updater implements Progress {
     // User
     Element user = document.createElement("user");
 
-    Element name = createNodeWithTextValue(document, "name", _tvraterPlugin.getSettings().getProperty("name"));
+    Element name = createNodeWithTextValue(document, "name", settings.getName());
     user.appendChild(name);
 
-    Element password = createNodeWithTextValue(document, "password", IOUtilities.xorEncode(_tvraterPlugin.getSettings()
-        .getProperty("password"), 21));
+    Element password = createNodeWithTextValue(document, "password", IOUtilities.xorEncode(settings
+        .getPassword(), 21));
     user.appendChild(password);
 
     tvrater.appendChild(user);

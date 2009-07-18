@@ -25,15 +25,10 @@
  */
 package tvbrowsermini;
 
-import devplugin.*;
-import tvbrowsermini.devices.AbstractExportDevice;
-import tvbrowsermini.devices.Android;
-import tvbrowsermini.devices.PDA;
-import util.ui.Localizer;
-import util.ui.UiUtilities;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Dialog;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
@@ -41,8 +36,34 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Properties;
 import java.util.Iterator;
+import java.util.Properties;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+
+import tvbrowsermini.devices.AbstractExportDevice;
+import tvbrowsermini.devices.Android;
+import tvbrowsermini.devices.PDA;
+import util.ui.Localizer;
+import util.ui.UiUtilities;
+import devplugin.ActionMenu;
+import devplugin.Channel;
+import devplugin.Date;
+import devplugin.Plugin;
+import devplugin.PluginInfo;
+import devplugin.Program;
+import devplugin.SettingsTab;
+import devplugin.ThemeIcon;
+import devplugin.Version;
 
 
 //import org.sqlite.JDBC;
@@ -82,7 +103,7 @@ public class TVBrowserMini extends Plugin {
   public PluginInfo getInfo() {
     String name = mLocalizer.msg("pluginName", "TV-Browser Mini Export");
     String desc = mLocalizer.msg("description", "Exports the Data for your Pocket PC");
-    String author = "Bodo Tasche, René Mach, Benedikt Grabenmeier";
+    String author = "Bodo Tasche, Renï¿½ Mach, Benedikt Grabenmeier";
     return new PluginInfo(name, desc, author, new Version(0, 52, false));
   }
 
@@ -95,7 +116,7 @@ public class TVBrowserMini extends Plugin {
               export();
               JOptionPane.showMessageDialog(UiUtilities.getBestDialogParent(getParentFrame()), "Export fertig!");
             } else {
-              JOptionPane.showMessageDialog(UiUtilities.getBestDialogParent(getParentFrame()), "Sie müssen erst die Einverständniserklärung akzeptieren!");
+              JOptionPane.showMessageDialog(UiUtilities.getBestDialogParent(getParentFrame()), "Sie mï¿½ssen erst die Einverstï¿½ndniserklï¿½rung akzeptieren!");
             }
           }
         }.start();
@@ -314,11 +335,6 @@ public class TVBrowserMini extends Plugin {
     return cal;
   }
 
-  /*
-  * (non-Javadoc)
-  *
-  * @see devplugin.Plugin#getMarkIconFromTheme()
-  */
   public ThemeIcon getMarkIconFromTheme() {
     return new ThemeIcon("apps", "preferences-desktop-locale", 16);
   }

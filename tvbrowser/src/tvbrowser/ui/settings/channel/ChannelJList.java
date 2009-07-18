@@ -48,10 +48,6 @@ public class ChannelJList extends JList {
     super(model);
   }
 
-  /*
-   * (non-Javadoc)
-   * @see javax.swing.JList#getToolTipText(java.awt.event.MouseEvent)
-   */
   public String getToolTipText(MouseEvent evt) {
     // Get item index
     int index = locationToIndex(evt.getPoint());

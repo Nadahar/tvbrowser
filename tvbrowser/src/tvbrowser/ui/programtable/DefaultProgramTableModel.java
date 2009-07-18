@@ -185,9 +185,6 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
   }
   
   
-  /* (non-Javadoc)
-   * @see tvbrowser.ui.programtable.ProgramTableModel#setProgramFilter(devplugin.ProgramFilter)
-   */
   public void setProgramFilter(ProgramFilter filter) {
     mProgramFilter=filter;
     updateTableContent();

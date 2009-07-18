@@ -26,7 +26,6 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.util.Properties;
 
 import javax.swing.Icon;
 import javax.swing.JButton;
@@ -52,12 +51,12 @@ import devplugin.SettingsTab;
  * 
  * @author bodum
  */
-public class EMailSettingsTab implements SettingsTab {
+public final class EMailSettingsTab implements SettingsTab {
   /** Translator */
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(EMailSettingsTab.class);
 
   /** Settings */
-  private Properties mSettings;
+  private EMailSettings mSettings;
 
   /** Application-Path */
   private JTextField mApplication;
@@ -88,16 +87,11 @@ public class EMailSettingsTab implements SettingsTab {
    * @param plugin Plugin
    * @param settings Settings to use
    */
-  public EMailSettingsTab(EMailPlugin plugin, Properties settings) {
+  public EMailSettingsTab(EMailPlugin plugin, EMailSettings settings) {
     mPlugin = plugin;
     mSettings = settings;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see devplugin.SettingsTab#createSettingsPanel()
-   */
   public JPanel createSettingsPanel() {
     final JPanel configPanel = new JPanel();
 
@@ -117,7 +111,7 @@ public class EMailSettingsTab implements SettingsTab {
                   + " (" +mLocalizer.msg("notOnYourOS", "Function only Available on Windows and Mac OS") + ")");
     } else {
       mDefaultApplication.setText(mLocalizer.msg("defaultApp", "Default Application"));
-      mDefaultApplication.setSelected(mSettings.getProperty("defaultapp", "true").equals("true"));
+      mDefaultApplication.setSelected(mSettings.getUseDefaultApplication());
     }
     
     configPanel.add(mDefaultApplication, cc.xyw(2,2, 6));
@@ -125,7 +119,7 @@ public class EMailSettingsTab implements SettingsTab {
     mAppLabel = new JLabel(mLocalizer.msg("Application", "Application") + ":");
     configPanel.add(mAppLabel, cc.xy(2, 4));
 
-    mApplication = new JTextField(mSettings.getProperty("application"));
+    mApplication = new JTextField(mSettings.getApplication());
 
     configPanel.add(mApplication, cc.xyw(4, 4, 2));
 
@@ -143,7 +137,7 @@ public class EMailSettingsTab implements SettingsTab {
     mParameterLabel = new JLabel(mLocalizer.msg("Parameter", "Parameter") + ":");
     configPanel.add(mParameterLabel, cc.xy(2, 6));
 
-    mParameter = new JTextField(mSettings.getProperty("parameter", "{0}"));
+    mParameter = new JTextField(mSettings.getParameter());
 
     configPanel.add(mParameter, cc.xyw(4, 6, 4));
 
@@ -158,7 +152,7 @@ public class EMailSettingsTab implements SettingsTab {
     
     setInputState();
 
-    mConfigPanel = new PluginProgramConfigurationPanel(mPlugin.getSelectedPluginProgramFormatings(), mPlugin.getAvailableLocalPluginProgramFormatings(), EMailPlugin.getDefaultFormating(),false,true);
+    mConfigPanel = new PluginProgramConfigurationPanel(mPlugin.getSelectedPluginProgramFormattings(), mPlugin.getAvailableLocalPluginProgramFormattings(), EMailPlugin.getDefaultFormatting(),false,true);
 
     configPanel.add(mConfigPanel, cc.xyw(1, 10, 7));
     
@@ -170,7 +164,7 @@ public class EMailSettingsTab implements SettingsTab {
   }
 
   /**
-   * Sets the Inputstates of the Dialogs
+   * Sets the input states of the dialogs
    */
   private void setInputState() {
     mApplication.setEnabled(!mDefaultApplication.isSelected());
@@ -192,38 +186,19 @@ public class EMailSettingsTab implements SettingsTab {
     }
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see devplugin.SettingsTab#saveSettings()
-   */
   public void saveSettings() {
-    mSettings.put("application", mApplication.getText());
-    mSettings.put("parameter", mParameter.getText());
-    if (mDefaultApplication.isSelected()) {
-      mSettings.put("defaultapp", "true");
-    } else {
-      mSettings.put("defaultapp", "false");
-    }
-    
-    mPlugin.setAvailableLocalPluginProgramFormatings(mConfigPanel.getAvailableLocalPluginProgramFormatings());
+    mSettings.setApplication(mApplication.getText());
+    mSettings.setParameter(mParameter.getText());
+    mSettings.setDefaultApplication(mDefaultApplication.isSelected());
+   
+    mPlugin.setAvailableLocalPluginProgramFormattings(mConfigPanel.getAvailableLocalPluginProgramFormatings());
     mPlugin.setSelectedPluginProgramFormatings(mConfigPanel.getSelectedPluginProgramFormatings());
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see devplugin.SettingsTab#getIcon()
-   */
   public Icon getIcon() {
     return mPlugin.createImageIcon("action", "mail-message-new", 16);
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see devplugin.SettingsTab#getTitle()
-   */
   public String getTitle() {
     return mLocalizer.msg("name", "Send EMail");
   }

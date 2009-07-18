@@ -192,11 +192,6 @@ public class CapturePlugin extends devplugin.Plugin {
         return new CapturePluginSettingsTab((JFrame) getParentFrame(), this);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see devplugin.Plugin#getContextMenuActions(devplugin.Program)
-     */
     public ActionMenu getContextMenuActions(final Program program) {
 
         final DeviceIf[] devices = mConfig.getDeviceArray();
@@ -340,11 +335,6 @@ public class CapturePlugin extends devplugin.Plugin {
         return v;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see devplugin.Plugin#getButtonAction()
-     */
     public ActionMenu getButtonAction() {
         AbstractAction action = new AbstractAction() {
 
@@ -436,9 +426,6 @@ public class CapturePlugin extends devplugin.Plugin {
         return mRootNode;
     }
 
-    /* (non-Javadoc)
-     * @see devplugin.Plugin#canUseProgramTree()
-     */
     public boolean canUseProgramTree() {
         return true;
     }

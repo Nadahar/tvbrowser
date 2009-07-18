@@ -107,11 +107,6 @@ public class DreamboxDataService extends AbstractTvDataService {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see devplugin.TvDataService#loadSettings(java.util.Properties)
-     */
     public void loadSettings(Properties settings) {
         mProperties = settings;
 
@@ -128,11 +123,6 @@ public class DreamboxDataService extends AbstractTvDataService {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see devplugin.TvDataService#storeSettings()
-     */
     public Properties storeSettings() {
       Properties prop = new Properties();
 
@@ -198,11 +188,6 @@ public class DreamboxDataService extends AbstractTvDataService {
         return new Version(0, 6, 1);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see devplugin.TvDataService#getInfo()
-     */
     public PluginInfo getInfo() {
         return new PluginInfo(DreamboxDataService.class, mLocalizer.msg("name", "Dreambox Data"), mLocalizer.msg("desc", "Loads data from the dreambox."),
                 "Bodo Tasche");

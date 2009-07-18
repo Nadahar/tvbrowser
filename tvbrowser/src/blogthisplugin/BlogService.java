@@ -14,11 +14,12 @@
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package genreplugin;
+package blogthisplugin;
 
-public interface IGenreSettings {
-  final static String SETTINGS_DAYS = "days";
-  final static String FILTERED_GENRE = "filteredGenre";
-  final static String FILTERED_GENRES_COUNT = "filteredGenresCount";
- 
+/**
+ * @author bananeweizen
+ *
+ */
+public enum BlogService {
+  Blogger, WordPress, B2Evolution
 }

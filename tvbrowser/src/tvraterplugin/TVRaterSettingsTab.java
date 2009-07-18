@@ -21,7 +21,6 @@ package tvraterplugin;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
-import java.util.Properties;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -32,15 +31,16 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-
 import util.browserlauncher.Launch;
 import util.io.IOUtilities;
 import util.ui.ImageUtilities;
 import util.ui.LinkButton;
 import util.ui.Localizer;
+
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
 import devplugin.SettingsTab;
 
 /**
@@ -51,7 +51,7 @@ import devplugin.SettingsTab;
 public class TVRaterSettingsTab implements SettingsTab {
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(TVRaterSettingsTab.class);
 
-  private Properties _settings;
+  private TVRaterSettings _settings;
 
   private JTextField _name;
 
@@ -65,15 +65,10 @@ public class TVRaterSettingsTab implements SettingsTab {
   /**
    * @param settings
    */
-  public TVRaterSettingsTab(Properties settings) {
+  public TVRaterSettingsTab(TVRaterSettings settings) {
     _settings = settings;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see devplugin.SettingsTab#createSettingsPanel()
-   */
   public JPanel createSettingsPanel() {
     FormLayout layout = new FormLayout("5dlu,pref,5dlu,pref:grow,pref,3dlu,pref,5dlu",
         "5dlu,pref,3dlu,pref,10dlu,pref,5dlu,pref,1dlu,pref,2dlu,pref,default:grow,pref");
@@ -82,18 +77,37 @@ public class TVRaterSettingsTab implements SettingsTab {
     PanelBuilder pb = new PanelBuilder(layout);
     CellConstraints cc = new CellConstraints();
     
-    _ownRating = new JCheckBox(mLocalizer.msg("ownRating", "Use own rating if available"), _settings.getProperty(
-        "ownRating", "true").equals("true"));
+    _ownRating = new JCheckBox(mLocalizer.msg("ownRating", "Use own rating if available"), _settings.getPreferOwnRating());
 
     String[] updateStrings = { mLocalizer.msg("update", "only when updating TV listings"),
         mLocalizer.msg("everyTime", "every Time a rating is made"),
         mLocalizer.msg("eachStart", "at each start of TV-Browser"), mLocalizer.msg("manual", "manual Update"), };
     
     _updateTime = new JComboBox(updateStrings);
-    _updateTime.setSelectedIndex(Integer.parseInt(_settings.getProperty("updateIntervall", "0")));
+    switch (_settings.getUpdateInterval()) {
+    case OnDataUpdate: {
+      _updateTime.setSelectedIndex(0);
+      break;
+    }
+    case OnRating: {
+      _updateTime.setSelectedIndex(1);
+      break;
+    }
+    case OnStart: {
+      _updateTime.setSelectedIndex(2);
+      break;
+    }
+    case Manually: {
+      _updateTime.setSelectedIndex(3);
+      break;
+    }
+    default: {
+      _updateTime.setSelectedIndex(0);
+    }
+    }
     
-    _name = new JTextField(_settings.getProperty("name", "noname"));    
-    _password = new JPasswordField(IOUtilities.xorEncode(_settings.getProperty("password", ""), 21));
+    _name = new JTextField(_settings.getName());    
+    _password = new JPasswordField(IOUtilities.xorEncode(_settings.getPassword(), 21));
     
     JButton newAccount = new JButton(mLocalizer.msg("newAccount", "Create new Account"));
     JButton lostPassword = new JButton(mLocalizer.msg("lostPassword", "Lost Password?"));
@@ -132,43 +146,38 @@ public class TVRaterSettingsTab implements SettingsTab {
     return pb.getPanel();
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see devplugin.SettingsTab#saveSettings()
-   */
   public void saveSettings() {
-    _settings.setProperty("name", _name.getText());
-    _settings.setProperty("password", IOUtilities.xorEncode(new String(_password.getPassword()), 21));
-    /*
-     * if (_includeFav.isSelected()) { _settings.setProperty("includeFavorites",
-     * "true"); } else { _settings.setProperty("includeFavorites", "false"); }
-     */
-    if (_ownRating.isSelected()) {
-      _settings.setProperty("ownRating", "true");
-    } else {
-      _settings.setProperty("ownRating", "false");
+    _settings.setName(_name.getText());
+    _settings.setPassword(IOUtilities.xorEncode(new String(_password.getPassword()), 21));
+    _settings.setPreferOwnRating(_ownRating.isSelected());
+    switch (_updateTime.getSelectedIndex()) {
+    case 0: {
+      _settings.setUpdateInterval(UpdateInterval.OnDataUpdate);
+      break;
     }
-
-    _settings.setProperty("updateIntervall", Integer.toString(_updateTime.getSelectedIndex()));
-
+    case 1: {
+      _settings.setUpdateInterval(UpdateInterval.OnRating);
+      break;
+    }
+    case 2: {
+      _settings.setUpdateInterval(UpdateInterval.OnStart);
+      break;
+    }
+    case 3: {
+      _settings.setUpdateInterval(UpdateInterval.Manually);
+      break;
+    }
+    default: {
+      _settings.setUpdateInterval(UpdateInterval.OnDataUpdate);
+    }
+    }
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see devplugin.SettingsTab#getIcon()
-   */
   public Icon getIcon() {
     String iconName = "tvraterplugin/imgs/tvrater.png";
     return ImageUtilities.createImageIconFromJar(iconName, getClass());
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see devplugin.SettingsTab#getTitle()
-   */
   public String getTitle() {
     return mLocalizer.msg("tabName", "TV Rater");
   }

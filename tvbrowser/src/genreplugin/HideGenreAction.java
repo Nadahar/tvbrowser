@@ -23,6 +23,10 @@ import javax.swing.Action;
 import util.ui.Localizer;
 import devplugin.ContextMenuAction;
 
+/**
+ * @author bananeweizen
+ *
+ */
 public class HideGenreAction extends ContextMenuAction implements Action {
 
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(HideGenreAction.class);

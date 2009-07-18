@@ -35,7 +35,6 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JList;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -291,26 +290,13 @@ public class DialogOverview extends JDialog implements WindowClosingIf {
    * Updates the Database from the Server
    */
   protected void update() {
-    Thread updateThread = new Thread("TV rater update") {
+    _update.setEnabled(false);
+    _tvraterPlugin.runUpdate(true, new Runnable() {
 
+      @Override
       public void run() {
-
-        _update.setEnabled(false);
-        System.out.println("Updater gestartet");
-        Updater up = new Updater(_tvraterPlugin);
-        up.run();
-
-        updateLists();
-
-        if (up.wasSuccessfull()) {
-          JOptionPane.showMessageDialog(_tvraterPlugin.getParentFrameForTVRater(), _mLocalizer.msg("updateSuccess",
-              "Update was successfull!"));
-        }
-
         _update.setEnabled(true);
-      };
-    };
-    updateThread.start();
+      }});
   }
 
   public void close() {

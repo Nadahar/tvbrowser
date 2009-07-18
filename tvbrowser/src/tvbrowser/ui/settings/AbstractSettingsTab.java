@@ -4,8 +4,8 @@
 package tvbrowser.ui.settings;
 
 import javax.swing.Icon;
-import tvbrowser.core.icontheme.IconLoader;
 
+import tvbrowser.core.icontheme.IconLoader;
 import devplugin.SettingsTab;
 
 /**
@@ -14,9 +14,6 @@ import devplugin.SettingsTab;
  */
 public abstract class AbstractSettingsTab implements SettingsTab {
 
-	/* (non-Javadoc)
-	 * @see devplugin.SettingsTab#getIcon()
-	 */
 	public Icon getIcon() {
 		return null;
 	}

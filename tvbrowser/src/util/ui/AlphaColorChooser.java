@@ -350,11 +350,6 @@ public class AlphaColorChooser extends JDialog implements ChangeListener {
         mColorPanel.setBackground(mCurrentColor);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see javax.swing.event.ChangeListener#stateChanged(javax.swing.event.ChangeEvent)
-     */
     public void stateChanged(ChangeEvent e) {
         if (e.getSource() == mRedSp) {
             mRedSl.setValue(((Integer) mRedSp.getValue()).intValue());
@@ -415,11 +410,6 @@ public class AlphaColorChooser extends JDialog implements ChangeListener {
      */
     private static class PaintColor extends JPanel {
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see javax.swing.JComponent#paintComponent(java.awt.Graphics)
-         */
         protected void paintComponent(Graphics g) {
 
             g.setColor(Color.white);

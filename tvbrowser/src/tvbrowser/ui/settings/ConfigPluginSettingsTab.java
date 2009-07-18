@@ -43,8 +43,8 @@ import tvbrowser.core.plugin.SettingsTabProxy;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.exc.TvBrowserException;
 
+import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.factories.DefaultComponentFactory;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
@@ -117,12 +117,11 @@ public class ConfigPluginSettingsTab implements CancelableSettingsTab {
       }
     } else {
       // The plugin is not activated -> Tell it the user
-      JPanel panelActivate = new JPanel();
-      panelActivate.setLayout(new FormLayout("5dlu,pref,10dlu,pref,default:grow", "pref,5dlu,pref"));
+      PanelBuilder panelActivate = new PanelBuilder(new FormLayout("5dlu,pref,10dlu,pref,default:grow", "pref,5dlu,pref"));
       CellConstraints cc = new CellConstraints();
 
-      panelActivate.add(DefaultComponentFactory.getInstance().createSeparator(
-          mLocalizer.msg("activation", "Activation")), cc.xyw(1, 1, 5));
+      panelActivate.addSeparator(
+          mLocalizer.msg("activation", "Activation"), cc.xyw(1, 1, 5));
       
       panelActivate.add(new JLabel(mLocalizer.msg("notactivated", "This Plugin is currently not activated.")), cc.xy(2, 3));
       
@@ -148,7 +147,7 @@ public class ConfigPluginSettingsTab implements CancelableSettingsTab {
         }});
       
       panelActivate.add(btnActivate, cc.xy(4, 3));
-      mPluginPanel.add(panelActivate, BorderLayout.NORTH);
+      mPluginPanel.add(panelActivate.getPanel(), BorderLayout.NORTH);
     }
     
     mPluginWasActivatedLastTime = mPlugin.isActivated();

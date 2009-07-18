@@ -32,12 +32,12 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 
 import util.paramhandler.ParamInputField;
+import util.ui.EnhancedPanelPuilder;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 
-import com.jgoodies.forms.factories.DefaultComponentFactory;
+import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.Plugin;
 import devplugin.SettingsTab;
@@ -72,28 +72,26 @@ public class GrowlSettingsTab implements SettingsTab {
    * @return Panel
    */
   public JPanel createSettingsPanel() {
-    
-    final JPanel panel = new JPanel(
-        new FormLayout(
-            "5dlu, pref:grow, 3dlu, pref, 5dlu",
-            "5dlu, pref, 3dlu, pref, 5dlu, fill:pref:grow, 3dlu, pref, 5dlu, fill:pref:grow, 3dlu, pref, 3dlu"));
-    
+    final EnhancedPanelPuilder panel = new EnhancedPanelPuilder(FormFactory.RELATED_GAP_COLSPEC.encode() + "," + FormFactory.PREF_COLSPEC.encode() + "," + FormFactory.RELATED_GAP_COLSPEC.encode() + ",pref:grow");
     final CellConstraints cc = new CellConstraints();
     
+    panel.addRow();
     panel.add(UiUtilities.createHelpTextArea(
-        mLocalizer.msg("help", "Help Text")), cc.xyw(2,2, 3));
+        mLocalizer.msg("help", "Help Text")), cc.xyw(2,panel.getRow(), 3));
     
-    panel.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("title", "Title")), cc.xyw(1,4,5));
+    panel.addParagraph(mLocalizer.msg("title", "Title"));
     
     mTitle = new ParamInputField(mSettings.getTitle());
     
-    panel.add(mTitle, cc.xyw(2,6,3));
+    panel.addRow();
+    panel.add(mTitle, cc.xyw(2,panel.getRow(),3));
     
-    panel.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("description", "Description")), cc.xyw(1,8,5));
+    panel.addParagraph(mLocalizer.msg("description", "Description"));
     
     mDescription = new ParamInputField(mSettings.getDescription());
     
-    panel.add(mDescription, cc.xyw(2,10,3));
+    panel.addGrowingRow();
+    panel.add(mDescription, cc.xyw(2,panel.getRow(),3));
     
     final JButton testGrowl = new JButton(mLocalizer.msg("testGrowl",
         "Test Growl"));
@@ -109,9 +107,11 @@ public class GrowlSettingsTab implements SettingsTab {
       
     });
     
-    panel.add(testGrowl, cc.xy(4,12));
+    panel.addParagraph(mLocalizer.msg("testGrowl","Test Growl"));
+    panel.addRow();
+    panel.add(testGrowl, cc.xy(2,panel.getRowCount()));
     
-    return panel;
+    return panel.getPanel();
   }
 
   /**

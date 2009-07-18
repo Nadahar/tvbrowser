@@ -57,10 +57,6 @@ public class PropertiesEntryNode extends DefaultMutableTreeNode implements Langu
     return toString();
   }
 
-  /*
-   * (non-Javadoc)
-   * @see i18nplugin.LanguageNodeIf#allTranslationsAvailableFor(java.util.Locale)
-   */
   public int translationStateFor(Locale locale) {
     if (getParent() == null) {
       return STATE_MISSING_TRANSLATION;
@@ -133,10 +129,6 @@ public class PropertiesEntryNode extends DefaultMutableTreeNode implements Langu
     return args;
   }
 
-  /*
-   * (non-Javadoc)
-   * @see i18nplugin.LanguageNodeIf#save()
-   */
   public void save() {
   }
   

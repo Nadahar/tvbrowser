@@ -30,7 +30,7 @@ import util.ui.ChannelChooserDlg;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 
-import com.jgoodies.forms.factories.DefaultComponentFactory;
+import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
@@ -53,7 +53,7 @@ public final class ImdbSettingsTab implements SettingsTab {
   }
 
   public JPanel createSettingsPanel() {
-    final JPanel panel = new JPanel(new FormLayout(
+    final PanelBuilder panel = new PanelBuilder(new FormLayout(
         "3dlu, fill:pref:grow, 3dlu, pref, 3dlu",
         "pref, 3dlu, pref, 3dlu, pref"));
 
@@ -83,7 +83,7 @@ public final class ImdbSettingsTab implements SettingsTab {
     panel.add(channelConfig, cc.xy(4,y));
     y += 2;
 
-    panel.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("titleDatabase", "Database")), cc.xyw(1, y, 5));
+    panel.addSeparator(mLocalizer.msg("titleDatabase", "Database"), cc.xyw(1, y, 5));
     y += 2;
 
     final JButton update = new JButton(mLocalizer.msg("updateDB",
@@ -101,7 +101,7 @@ public final class ImdbSettingsTab implements SettingsTab {
     panel.add(buttons,cc.xyw(2,y, 3));
     y += 2;
 
-    return panel;
+    return panel.getPanel();
   }
 
   private String createExcludeChannelsLabelText() {

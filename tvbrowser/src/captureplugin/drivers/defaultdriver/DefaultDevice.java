@@ -90,38 +90,23 @@ public class DefaultDevice implements DeviceIf {
         return mConfig;
     }
     
-    /* (non-Javadoc)
-     * @see captureplugin.drivers.DeviceIf#getDriver()
-     */
     public DriverIf getDriver() {
         return mDriver;
     }
 
-    /* (non-Javadoc)
-     * @see captureplugin.drivers.DeviceIf#getId()
-     */
     public String getId() {
         return mConfig.getId();
     }
 
-    /* (non-Javadoc)
-    * @see captureplugin.drivers.DeviceIf#getName()
-    */
     public String getName() {
         return mConfig.getName();
     }
 
-    /* (non-Javadoc)
-     * @see captureplugin.drivers.DeviceIf#setName(java.lang.String)
-     */
     public String setName(String name) {
         mConfig.setName(name);
         return mConfig.getName();
     }
 
-    /* (non-Javadoc)
-     * @see captureplugin.drivers.DeviceIf#configDevice(javax.swing.JFrame)
-     */
     public void configDevice(Window owner) {
         
         DefaultKonfigurator config = new DefaultKonfigurator(owner,
@@ -134,16 +119,10 @@ public class DefaultDevice implements DeviceIf {
         
     }
 
-    /* (non-Javadoc)
-     * @see captureplugin.drivers.DeviceIf#isInList(devplugin.Program)
-     */
     public boolean isInList(Program program) {
         return mConfig.getMarkedPrograms().contains(program);
     }
 
-    /* (non-Javadoc)
-     * @see captureplugin.drivers.DeviceIf#add(devplugin.Program)
-     */
     public boolean add(Window parent, Program program) {
         
         if (isInList(program)) {
@@ -205,9 +184,6 @@ public class DefaultDevice implements DeviceIf {
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see captureplugin.drivers.DeviceIf#remove(devplugin.Program)
-     */
     public boolean remove(Window parent, Program program) {
         CaptureExecute exec = CaptureExecute.getInstance(parent, mConfig);
         
@@ -235,42 +211,27 @@ public class DefaultDevice implements DeviceIf {
 
     }
 
-    /* (non-Javadoc)
-     * @see captureplugin.drivers.DeviceIf#getProgramList()
-     */
     public Program[] getProgramList() {
         ProgramTimeList marked = mConfig.getMarkedPrograms();
         
         return marked.getPrograms();
     }
 
-    /* (non-Javadoc)
-     * @see captureplugin.drivers.DeviceIf#clone()
-     */
     public Object clone() {
         return new DefaultDevice(this);
     }
 
 
-    /* (non-Javadoc)
-     * @see captureplugin.drivers.DeviceIf#writeData(java.io.ObjectOutputStream)
-     */
     public void writeData(ObjectOutputStream stream) throws IOException {
         mConfig.writeData(stream);
     }
 
 
-    /* (non-Javadoc)
-     * @see captureplugin.drivers.DeviceIf#readData(java.io.ObjectInputStream)
-     */
     public void readData(ObjectInputStream stream, boolean importDevice) throws IOException, ClassNotFoundException {
         mConfig.readData(stream, importDevice);
     }
 
 
-    /* (non-Javadoc)
-     * @see captureplugin.drivers.DeviceIf#isAbleToAddPrograms()
-     */
     public boolean isAbleToAddAndRemovePrograms() {
         if (mConfig.getParameterFormatAdd().trim().length()+mConfig.getParameterFormatRem().trim().length() == 0) {
             return false;
@@ -280,9 +241,6 @@ public class DefaultDevice implements DeviceIf {
     }
 
 
-    /* (non-Javadoc)
-     * @see captureplugin.drivers.DeviceIf#getAdditionalCommands(devplugin.Program)
-     */
     public String[] getAdditionalCommands() {
         Collection<ParamEntry> commands = mConfig.getEnabledParamList();
         String[] values = new String[commands.size()];
@@ -299,9 +257,6 @@ public class DefaultDevice implements DeviceIf {
     }
 
 
-    /* (non-Javadoc)
-     * @see captureplugin.drivers.DeviceIf#executeAdditionalCommand(int, devplugin.Program)
-     */
     public boolean executeAdditionalCommand(Window parent,int num, Program program) {
         
         CaptureExecute exec = CaptureExecute.getInstance(parent, mConfig);

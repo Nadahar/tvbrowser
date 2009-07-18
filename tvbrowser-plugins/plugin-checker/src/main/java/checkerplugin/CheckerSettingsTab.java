@@ -24,6 +24,10 @@ import javax.swing.JPanel;
 
 import devplugin.SettingsTab;
 
+/**
+ * @author bananeweizen
+ *
+ */
 public class CheckerSettingsTab implements SettingsTab {
 
   private JCheckBox mAutoStart;

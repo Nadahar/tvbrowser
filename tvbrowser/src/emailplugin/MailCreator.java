@@ -30,7 +30,6 @@ import java.awt.event.ActionListener;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
-import java.util.Properties;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -65,7 +64,7 @@ import devplugin.Program;
  */
 public class MailCreator {  
   /** Settings for this Plugin */
-  private Properties mSettings;
+  private EMailSettings mSettings;
   
   private AbstractPluginProgramFormating mFormating;
   
@@ -80,7 +79,7 @@ public class MailCreator {
    * @param settings Settings for this MailCreator
    * @param formating The program formating to use.
    */
-  public MailCreator(EMailPlugin plugin, Properties settings, AbstractPluginProgramFormating formating) {
+  public MailCreator(EMailPlugin plugin, EMailSettings settings, AbstractPluginProgramFormating formating) {
     mPlugin = plugin;
     mSettings = settings;
     mFormating = formating;
@@ -140,7 +139,7 @@ public class MailCreator {
       String execparam;
 
       if ((OperatingSystem.isMacOs() || OperatingSystem.isWindows())
-          && mSettings.getProperty("defaultapp", "true").equals("true")) {
+          && mSettings.getUseDefaultApplication()) {
 
         if (OperatingSystem.isMacOs()) {
           application = "/usr/bin/open";
@@ -150,27 +149,27 @@ public class MailCreator {
           execparam = "url.dll,FileProtocolHandler " + mailTo;
         }
 
-      } else if (mSettings.getProperty("application", "").trim().equals("")) {
+      } else if (mSettings.getApplication().trim().equals("")) {
         if (OperatingSystem.isOther()) {
           if (!showKdeGnomeDialog(parent)) {
             return;
           }
-          application = mSettings.getProperty("application", "");
-          execparam = mSettings.getProperty("parameter", "").replaceAll(
+          application = mSettings.getApplication();
+          execparam = mSettings.getParameter().replaceAll(
               "\\{0\\}", mailTo);
         } else {
           showNotConfiguredCorrectly(parent);
           return;
         }
       } else {
-        application = mSettings.getProperty("application", "");
-        execparam = mSettings.getProperty("parameter", "").replaceAll(
+        application = mSettings.getApplication();
+        execparam = mSettings.getParameter().replaceAll(
             "\\{0\\}", mailTo);
       }
 
       new ExecutionHandler(execparam, application).execute();
 
-      if (mSettings.getProperty("showEmailOpened", "true").equals("true"))
+      if (mSettings.getShowEmailOpened())
         showEMailOpenedDialog(parent);
 
     } catch (Exception e) {
@@ -233,7 +232,7 @@ public class MailCreator {
     ok.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         if (dontShowAgain.isSelected()) {
-          mSettings.setProperty("showEmailOpened", "false");
+          mSettings.setShowEmailOpened(false);
         }
         dialog.setVisible(false);
       }
@@ -336,11 +335,11 @@ public class MailCreator {
     UiUtilities.centerAndShow(dialog);
     
     if (kdeButton.isSelected()) {
-      mSettings.setProperty("application", "kfmclient");
-      mSettings.setProperty("parameter", "exec {0}");      
+      mSettings.setApplication("kfmclient");
+      mSettings.setParameter("exec {0}");      
     } else if (gnomeButton.isSelected()) {
-      mSettings.setProperty("application", "gnome-open");
-      mSettings.setProperty("parameter", "{0}");      
+      mSettings.setApplication("gnome-open");
+      mSettings.setParameter("{0}");      
     } else {
       EMailPlugin.getPluginManager().showSettings(mPlugin);
       return false;

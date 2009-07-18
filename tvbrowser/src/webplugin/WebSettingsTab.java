@@ -51,15 +51,15 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import util.ui.DragAndDropMouseListener;
+import util.ui.EnhancedPanelPuilder;
 import util.ui.ListDragAndDropHandler;
 import util.ui.ListDropAction;
 import util.ui.Localizer;
 import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 
-import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.SettingsTab;
 
@@ -131,29 +131,23 @@ public class WebSettingsTab implements SettingsTab,  ListDropAction {
     this.webPlugin = plugin;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see devplugin.SettingsTab#createSettingsPanel()
-   */
   public JPanel createSettingsPanel() {
 
-    PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,fill:default:grow", "5dlu,pref,2dlu,pref,2dlu,fill:default:grow"));
+    EnhancedPanelPuilder pb = new EnhancedPanelPuilder(FormFactory.RELATED_GAP_COLSPEC.encode() + ",fill:default:grow");
     CellConstraints cc = new CellConstraints();
 
     mRbShowDetails = new JRadioButton(mLocalizer.msg("showDetails","Show search menu for title, actors, and other fields"), webPlugin.getShowDetailMenus());
     mRbShowTitle = new JRadioButton(mLocalizer.msg("showTitle","Show title search only"), !webPlugin.getShowDetailMenus());
     
     ButtonGroup bg = new ButtonGroup();
-    
     bg.add(mRbShowDetails);
     bg.add(mRbShowTitle);
-    PanelBuilder detailsBuilder = new PanelBuilder(new FormLayout("12dlu,default,2dlu,default:grow","pref,2dlu,pref,5dlu"));
-    detailsBuilder.add(mRbShowDetails, cc.xyw(1,1,4));
-    detailsBuilder.add(mRbShowTitle, cc.xyw(1,3,4));
 
-    pb.add(detailsBuilder.getPanel(), cc.xy(2, 2));
+    pb.addRow();
+    pb.add(mRbShowDetails, cc.xy(2, pb.getRow()));
     
+    pb.addRow();
+    pb.add(mRbShowTitle, cc.xy(2, pb.getRow()));
     
     mAddressList = new JList(mListModel);
     // Register DnD on the List.
@@ -222,8 +216,9 @@ public class WebSettingsTab implements SettingsTab,  ListDropAction {
 
     listSelectionChanged();
 
-    pb.addSeparator(mLocalizer.msg("WebPages", "Web Pages"), cc.xyw(1, 4, 2));
-    pb.add(panel, cc.xy(2, 6));
+    pb.addParagraph(mLocalizer.msg("WebPages", "Web Pages"));
+    pb.addGrowingRow();
+    pb.add(panel, cc.xy(2, pb.getRow()));
 
     return pb.getPanel();
   }
@@ -441,11 +436,6 @@ public class WebSettingsTab implements SettingsTab,  ListDropAction {
     mAddressList.repaint();
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see devplugin.SettingsTab#saveSettings()
-   */
   public void saveSettings() {
     mOriginal.clear();
     
@@ -455,20 +445,10 @@ public class WebSettingsTab implements SettingsTab,  ListDropAction {
     webPlugin.setShowDetailMenus(mRbShowDetails.isSelected());
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see devplugin.SettingsTab#getIcon()
-   */
   public Icon getIcon() {
     return WebPlugin.getInstance().createImageIcon("actions", "web-search", 16);
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see devplugin.SettingsTab#getTitle()
-   */
   public String getTitle() {
     return mLocalizer.msg("WebPlugin", "WebPlugin");
   }

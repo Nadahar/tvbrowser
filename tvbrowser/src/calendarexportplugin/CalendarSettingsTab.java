@@ -44,15 +44,14 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import util.ui.EnhancedPanelPuilder;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.customizableitems.SelectableItemList;
 import calendarexportplugin.exporter.ExporterIf;
 
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.factories.DefaultComponentFactory;
+import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.SettingsTab;
 
@@ -97,14 +96,8 @@ public class CalendarSettingsTab implements SettingsTab {
     mSettings = settings;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see devplugin.SettingsTab#createSettingsPanel()
-   */
   public JPanel createSettingsPanel() {
-    final PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,pref,5dlu,default:grow, pref,5dlu",
-        "5dlu,pref,3dlu,pref,3dlu,pref,3dlu,pref,3dlu,pref, 3dlu, pref, 5dlu, pref, 3dlu,pref, 3dlu, fill:default:grow, 3dlu, pref"));
+    final EnhancedPanelPuilder pb = new EnhancedPanelPuilder(FormFactory.RELATED_GAP_COLSPEC.encode() + "," + FormFactory.PREF_COLSPEC.encode() + "," +FormFactory.RELATED_GAP_COLSPEC.encode() +",default:grow," + FormFactory.PREF_COLSPEC.encode());
     CellConstraints cc = new CellConstraints();
     
     mCategorie = new JTextField(mSettings.getProperty(CalendarExportPlugin.PROP_CATEGORY, ""));
@@ -136,15 +129,21 @@ public class CalendarSettingsTab implements SettingsTab {
       mNulltime.setSelected(true);
     }
     
-    pb.addLabel(mLocalizer.msg("Categorie", "Categorie") + ':', cc.xy(2,2));
-    pb.add(mCategorie, cc.xyw(4,2,2));
-    pb.addLabel(mLocalizer.msg("ShowTime", "Show Time as") + ':', cc.xy(2,4));
-    pb.add(mShowTime, cc.xy(4,4));
-    pb.addLabel(mLocalizer.msg("Classification", "Classification") + ':', cc.xy(2,6));
-    pb.add(mClassification, cc.xy(4,6));
+    pb.addRow();
+    pb.addLabel(mLocalizer.msg("Categorie", "Categorie") + ':', cc.xy(2,pb.getRow()));
+    pb.add(mCategorie, cc.xyw(4,pb.getRow(),2));
+
+    pb.addRow();
+    pb.addLabel(mLocalizer.msg("ShowTime", "Show Time as") + ':', cc.xy(2,pb.getRow()));
+    pb.add(mShowTime, cc.xy(4,pb.getRow()));
+    
+    pb.addRow();
+    pb.addLabel(mLocalizer.msg("Classification", "Classification") + ':', cc.xy(2,pb.getRow()));
+    pb.add(mClassification, cc.xy(4,pb.getRow()));
     
     mUseAlarm = new JCheckBox(mLocalizer.msg("reminder", "Use reminder"));
-    pb.add(mUseAlarm, cc.xy(2,8));
+    pb.addRow();
+    pb.add(mUseAlarm, cc.xy(2,pb.getRow()));
 
     SpinnerModel model = new SpinnerNumberModel(0, 0, 1440, 1);
     mAlarmMinutes = new JSpinner(model);
@@ -177,15 +176,18 @@ public class CalendarSettingsTab implements SettingsTab {
     label.setEnabled(mUseAlarm.isSelected());
     
     
-    pb.add(panel, cc.xyw(4, 8, 2));
+    pb.add(panel, cc.xyw(4, pb.getRow(), 2));
     
-    pb.add(mNulltime, cc.xyw(2,10,4));
+    pb.addRow();
+    pb.add(mNulltime, cc.xyw(2,pb.getRow(),4));
 
     mMarkItems = new JCheckBox(mLocalizer.msg("markItems", "Mark items when exported"));
     if (mSettings.getProperty(CalendarExportPlugin.PROP_MARK_ITEMS, "true").equals("true")) {
       mMarkItems.setSelected(true);
     }
-    pb.add(mMarkItems, cc.xyw(2,12,4));
+
+    pb.addRow();
+    pb.add(mMarkItems, cc.xyw(2,pb.getRow(),4));
 
     JButton extended = new JButton(mLocalizer.msg("extended", "Extended Settings"));
     
@@ -195,12 +197,14 @@ public class CalendarSettingsTab implements SettingsTab {
       }
     });
     
-    pb.add(extended, cc.xy(5,14));
+    pb.addRow();
+    pb.add(extended, cc.xy(5,pb.getRow()));
 
-    pb.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("interface", "Interface:")), cc.xyw(1,16,6));
+    pb.addParagraph(mLocalizer.msg("interface", "Interface:"));
    
     mExporterList = new SelectableItemList(mPlugin.getExporterFactory().getActiveExporters(), mPlugin.getExporterFactory().getAllExporters());
-    pb.add(mExporterList, cc.xyw(2,18,4));
+    pb.addGrowingRow();
+    pb.add(mExporterList, cc.xyw(2,pb.getRow(),4));
 
     final JButton settings = new JButton(Localizer.getLocalization(Localizer.I18N_SETTINGS));
     settings.setEnabled(false);
@@ -227,7 +231,8 @@ public class CalendarSettingsTab implements SettingsTab {
     JPanel btnpanel = new JPanel(new BorderLayout());
     btnpanel.add(settings, BorderLayout.EAST);
     
-    pb.add(btnpanel, cc.xyw(2,20,4));
+    pb.addRow();
+    pb.add(btnpanel, cc.xyw(2,pb.getRow(),4));
     
     return pb.getPanel();
   }
@@ -243,11 +248,6 @@ public class CalendarSettingsTab implements SettingsTab {
     UiUtilities.centerAndShow(dialog);
   }  
   
-  /*
-   * (non-Javadoc)
-   * 
-   * @see devplugin.SettingsTab#saveSettings()
-   */
   public void saveSettings() {
     if (mNulltime.isSelected()) {
       mSettings.setProperty(CalendarExportPlugin.PROP_NULLTIME, "true");
@@ -276,20 +276,10 @@ public class CalendarSettingsTab implements SettingsTab {
     mSettings.setProperty(CalendarExportPlugin.PROP_ACTIVE_EXPORTER, mPlugin.getExporterFactory().getListOfActiveExporters());
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see devplugin.SettingsTab#getIcon()
-   */
   public Icon getIcon() {
     return mPlugin.createImageIcon("apps", "office-calendar", 16);
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see devplugin.SettingsTab#getTitle()
-   */
   public String getTitle() {
     return mLocalizer.msg("tabName", "Calendar Export");
   }

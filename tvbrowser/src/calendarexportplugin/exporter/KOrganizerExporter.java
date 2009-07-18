@@ -39,18 +39,10 @@ import devplugin.Program;
  */
 public class KOrganizerExporter extends AbstractExporter {
 
-  /*
-   * (non-Javadoc)
-   * @see calendarexportplugin.exporter.ExporterIf#getName()
-   */
   public String getName() {
     return "KOrganizer";
   }
 
-  /*
-   * (non-Javadoc)
-   * @see calendarexportplugin.exporter.ExporterIf#exportPrograms(devplugin.Program[], java.util.Properties)
-   */
   public boolean exportPrograms(Program[] programs, Properties settings, AbstractPluginProgramFormating formating) {
     try {
       File file = File.createTempFile("tvbrowser", ".ics");

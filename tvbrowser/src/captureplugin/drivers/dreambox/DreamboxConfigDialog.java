@@ -62,8 +62,8 @@ import captureplugin.utils.ExternalChannelTableCellEditor;
 import captureplugin.utils.ExternalChannelTableCellRenderer;
 
 import com.jgoodies.forms.builder.ButtonBarBuilder2;
+import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.factories.DefaultComponentFactory;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.Sizes;
@@ -129,15 +129,13 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
 
         UiUtilities.registerForClosing(this);
 
-        JPanel basicPanel = new JPanel();
+        PanelBuilder basicPanel = new PanelBuilder(new FormLayout("5dlu, fill:min:grow",
+        "pref, 3dlu, pref, 3dlu, pref, 3dlu, fill:min:grow, 3dlu, pref"));
         basicPanel.setBorder(Borders.DLU4_BORDER);
-
-        basicPanel.setLayout(new FormLayout("5dlu, fill:min:grow",
-                "pref, 3dlu, pref, 3dlu, pref, 3dlu, fill:min:grow, 3dlu, pref"));
 
         CellConstraints cc = new CellConstraints();
 
-        basicPanel.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("misc", "Miscellaneous")), cc.xyw(1, 1, 2));
+        basicPanel.addSeparator(mLocalizer.msg("misc", "Miscellaneous"), cc.xyw(1, 1, 2));
 
         JPanel miscPanel = new JPanel(new FormLayout("right:pref, 3dlu, fill:min:grow, 3dlu, pref, 3dlu, pref", "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref"));
 
@@ -185,7 +183,7 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
         JSpinner afterSpinner = new JSpinner(mAfterModel);
         miscPanel.add(afterSpinner, cc.xy(3,9));
 
-        basicPanel.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("channel", "Channel assignment")), cc.xyw(1, 5, 2));
+        basicPanel.addSeparator(mLocalizer.msg("channel", "Channel assignment"), cc.xyw(1, 5, 2));
 
         mTable = new JTable(new ConfigTableModel(mConfig, mLocalizer.msg("dreambox", "Dreambox Channel")));
         mTable.getTableHeader().setReorderingAllowed(false);
@@ -211,11 +209,10 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
 
         basicPanel.add(builder.getPanel(), cc.xyw(1,9,2));
 
-        final JPanel extendedPanel = new JPanel();
+        final PanelBuilder extendedPanel = new PanelBuilder(new FormLayout("5dlu, right:pref, 3dlu, fill:pref:grow, 3dlu, pref, 5dlu", "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref"));
         extendedPanel.setBorder(Borders.DLU4_BORDER);
-        extendedPanel.setLayout(new FormLayout("5dlu, right:pref, 3dlu, fill:pref:grow, 3dlu, pref, 5dlu", "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref"));
 
-        extendedPanel.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("misc", "Sonstiges")), cc.xyw(1,1,7));
+        extendedPanel.addSeparator(mLocalizer.msg("misc", "Sonstiges"), cc.xyw(1,1,7));
 
         extendedPanel.add(new JLabel(mLocalizer.msg("Timeout", "Timeout for connections in ms:")), cc.xy(2,3));
 
@@ -224,7 +221,7 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
         extendedPanel.add(timeoutSpinner, cc.xyw(4, 3, 3));
 
 
-        extendedPanel.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("timeZoneSeparator","Timezone")), cc.xyw(1,5,7));
+        extendedPanel.addSeparator(mLocalizer.msg("timeZoneSeparator","Timezone"), cc.xyw(1,5,7));
         extendedPanel.add(new JLabel(mLocalizer.msg("timeZone", "Timezone:")), cc.xy(2,7));
 
         String[] zoneIds = TimeZone.getAvailableIDs();
@@ -241,7 +238,7 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
 
         extendedPanel.add(mTimezone, cc.xyw(4,7,3));
 
-        extendedPanel.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("security", "Security")), cc.xyw(1,9,7));
+        extendedPanel.addSeparator(mLocalizer.msg("security", "Security"), cc.xyw(1,9,7));
 
         extendedPanel.add(new JLabel(mLocalizer.msg("userName", "Username :")), cc.xy(2,11));
         mUserName = new JTextField(mConfig.getUserName());
@@ -251,7 +248,7 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
         mPasswordField = new JPasswordField(mConfig.getPassword());
         extendedPanel.add(mPasswordField, cc.xyw(4,13,3));
         
-        extendedPanel.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("streaming", "Streaming")), cc.xyw(1, 15, 7));
+        extendedPanel.addSeparator(mLocalizer.msg("streaming", "Streaming"), cc.xyw(1, 15, 7));
         
         extendedPanel.add(new JLabel(mLocalizer.msg("mediaplayer", "Mediaplayer :")), cc.xy(2, 17));
         mMediaplayer = new JTextField(mConfig.getMediaplayer());
@@ -261,7 +258,7 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
         select.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 JFileChooser mediaplayerChooser = new JFileChooser();
-                int returnVal = mediaplayerChooser.showOpenDialog(extendedPanel);
+                int returnVal = mediaplayerChooser.showOpenDialog(extendedPanel.getPanel());
                 if(returnVal == JFileChooser.APPROVE_OPTION) {
                     mMediaplayer.setText(mediaplayerChooser.getSelectedFile().getAbsolutePath());
                }
@@ -291,8 +288,8 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
         getRootPane().setDefaultButton(ok);
 
         JTabbedPane tabs = new JTabbedPane();
-        tabs.add(mLocalizer.msg("basicTitle", "Basic settings"), basicPanel);
-        tabs.add(mLocalizer.msg("extendedTitle", "Extended settings"), extendedPanel);
+        tabs.add(mLocalizer.msg("basicTitle", "Basic settings"), basicPanel.getPanel());
+        tabs.add(mLocalizer.msg("extendedTitle", "Extended settings"), extendedPanel.getPanel());
 
         JPanel content = (JPanel) getContentPane();
         content.setBorder(Borders.DLU4_BORDER);

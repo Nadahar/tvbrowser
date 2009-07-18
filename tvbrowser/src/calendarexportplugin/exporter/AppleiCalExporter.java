@@ -24,8 +24,8 @@ package calendarexportplugin.exporter;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Properties;
 import java.util.Calendar;
+import java.util.Properties;
 
 import util.exc.ErrorHandler;
 import util.misc.AppleScriptRunner;
@@ -42,21 +42,10 @@ import devplugin.Program;
  */
 public class AppleiCalExporter extends AbstractExporter {
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see calendarexportplugin.exporter.ExporterIf#getName()
-     */
     public String getName() {
         return "Apple iCal";
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see calendarexportplugin.exporter.ExporterIf#exportPrograms(devplugin.Program[],
-     *      java.util.Properties)
-     */
     public boolean exportPrograms(Program[] programs, Properties settings, AbstractPluginProgramFormating formating) {
         System.out.println("Apple iCal!");
 

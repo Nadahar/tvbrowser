@@ -37,8 +37,8 @@ import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
 import util.ui.FontChooserPanel;
 
+import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.factories.DefaultComponentFactory;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
@@ -62,20 +62,20 @@ public class FontsSettingsTab implements devplugin.SettingsTab {
   private JLabel mTitleFontLabel;
 
   public JPanel createSettingsPanel() {
-    JPanel mainPanel = new JPanel(new FormLayout("5dlu, 10dlu, pref, 3dlu, pref, fill:3dlu:grow", 
+    PanelBuilder mainPanel = new PanelBuilder(new FormLayout("5dlu, 10dlu, pref, 3dlu, pref, fill:3dlu:grow", 
         "pref, 5dlu, pref, 10dlu, pref, 5dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref"));
     mainPanel.setBorder(Borders.DIALOG_BORDER);
     
     CellConstraints cc = new CellConstraints();
     
-    mainPanel.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("Fonts", "Fonts")), cc.xyw(1,1,6));
+    mainPanel.addSeparator(mLocalizer.msg("Fonts", "Fonts"), cc.xyw(1,1,6));
     
     mEnableAntialiasingCB = new JCheckBox(mLocalizer.msg("EnableAntialiasing", "Enable antialiasing"));
     mEnableAntialiasingCB.setSelected(Settings.propEnableAntialiasing.getBoolean());
 
     mainPanel.add(mEnableAntialiasingCB, cc.xyw(2,3, 4));
 
-    mainPanel.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("UserDefinedFonts", "Userdefined Fonts")), cc.xyw(1,5,6));
+    mainPanel.addSeparator(mLocalizer.msg("UserDefinedFonts", "Userdefined Fonts"), cc.xyw(1,5,6));
 
     mUseDefaultFontsCB = new JCheckBox(mLocalizer.msg("UseDefaultFonts", "Use default fonts"));
     mUseDefaultFontsCB.setSelected(Settings.propUseDefaultFonts.getBoolean());
@@ -109,7 +109,7 @@ public class FontsSettingsTab implements devplugin.SettingsTab {
     });
     
     enableFontFields(!mUseDefaultFontsCB.isSelected());
-    return mainPanel;
+    return mainPanel.getPanel();
   }
 
   private void enableFontFields(boolean enable) {

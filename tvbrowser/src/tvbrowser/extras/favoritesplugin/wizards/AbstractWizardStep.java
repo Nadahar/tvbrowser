@@ -41,10 +41,6 @@ public abstract class AbstractWizardStep implements WizardStep {
     return mContent;
   }
   
-  /*
-   * (non-Javadoc)
-   * @see tvbrowser.extras.favoritesplugin.wizards.WizardStep#isSingleStep()
-   */
   public boolean isSingleStep() {
     return false;
   }

@@ -24,12 +24,6 @@
  */
 package captureplugin.drivers.simpledevice;
 
-import captureplugin.CapturePlugin;
-import captureplugin.drivers.utils.IDGenerator;
-import captureplugin.utils.ConfigIf;
-import captureplugin.utils.ExternalChannelIf;
-import devplugin.Channel;
-
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -37,6 +31,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+
+import captureplugin.CapturePlugin;
+import captureplugin.drivers.utils.IDGenerator;
+import captureplugin.utils.ConfigIf;
+import captureplugin.utils.ExternalChannelIf;
+import devplugin.Channel;
 
 /**
  * Configuration for the Device
@@ -89,10 +89,6 @@ public class SimpleConfig implements ConfigIf {
         readData(stream);
     }
 
-    /*
-    * (non-Javadoc)
-    * @see java.lang.Object#clone()
-    */
     public Object clone() {
         return new SimpleConfig(this);
     }

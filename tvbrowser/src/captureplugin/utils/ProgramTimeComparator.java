@@ -24,10 +24,10 @@
  */
 package captureplugin.utils;
 
+import java.util.Comparator;
+
 import devplugin.Program;
 import devplugin.ProgramFieldType;
-
-import java.util.Comparator;
 
 
 /**
@@ -37,9 +37,6 @@ import java.util.Comparator;
  */
 public class ProgramTimeComparator implements Comparator<Program> {
 
-    /* (non-Javadoc)
-     * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-     */
     public int compare(Program p1, Program p2) {
         int dc = p1.getDate().compareTo(p2.getDate());
         if (dc != 0)

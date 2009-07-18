@@ -82,10 +82,6 @@ public class SearchFilter implements ProgramFilter {
     return mSearcherForm != null;
   }
 
-  /*
-   * (non-Javadoc)
-   * @see devplugin.ProgramFilter#accept(devplugin.Program)
-   */
   public boolean accept(Program prog) {
     if (mSearch == null) {
       return true;
@@ -93,10 +89,6 @@ public class SearchFilter implements ProgramFilter {
     return mSearch.matches(prog, mFieldTypes);
   }
 
-  /*
-   * (non-Javadoc)
-   * @see devplugin.ProgramFilter#getName()
-   */
   public String getName() {
     return mLocalizer.msg("searchFor", "Search for {0}", mSearcherForm.getSearchText());
   }

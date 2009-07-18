@@ -18,6 +18,10 @@ package zattooplugin;
 
 import java.util.Properties;
 
+/**
+ * @author bananeweizen
+ *
+ */
 public class ZattooSettings {
 
   private static final String KEY_PLAYER = "PLAYER";

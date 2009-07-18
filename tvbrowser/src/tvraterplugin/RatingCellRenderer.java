@@ -34,12 +34,6 @@ public class RatingCellRenderer extends JLabel implements ListCellRenderer {
         setOpaque(true);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see javax.swing.ListCellRenderer#getListCellRendererComponent(javax.swing.JList,
-     *      java.lang.Object, int, boolean, boolean)
-     */
     public Component getListCellRendererComponent(JList list, Object obj,
             int index, boolean isSelected, boolean hasFocus) {
        

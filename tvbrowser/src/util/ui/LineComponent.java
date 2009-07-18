@@ -44,10 +44,6 @@ public class LineComponent extends JComponent {
     setForeground(color);
   }
 
-  /*
-   * (non-Javadoc)
-   * @see javax.swing.JComponent#paintComponent(java.awt.Graphics)
-   */
   protected void paintComponent(Graphics g) {
     super.paintComponent(g);
     

@@ -43,6 +43,7 @@ import util.ui.ScrollableJPanel;
 import util.ui.UiUtilities;
 
 import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
@@ -80,7 +81,7 @@ public final class TVPearlPluginSettingsTab implements SettingsTab
 	{
 	  final FormLayout layout = new FormLayout(
         "5dlu, pref, 3dlu, fill:pref:grow, 5dlu",
-        "5dlu, pref, 2dlu, pref, 10dlu, pref, 2dlu, pref, 2dlu, pref, 10dlu, pref, 2dlu, pref, 10dlu, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref, 10dlu, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref");
+        "5dlu");
 
 	  final PanelBuilder builder = new PanelBuilder(layout,
         new ScrollableJPanel());
@@ -180,41 +181,54 @@ public final class TVPearlPluginSettingsTab implements SettingsTab
     });
 		updateFilterEnabled();
 
-		int row = 2;
-		builder.addLabel(mLocalizer.msg("view", "View"), cc.xy(2, row));
-		builder.add(mViewOption, cc.xy(4, row));
-		row += 2;
-		builder.add(mShowInfoModal, cc.xyw(2, row, 3));
-		row += 2;
-		builder.addSeparator(mLocalizer.msg("programTable", "Program table"), cc.xyw(1, row, 5));
-		row += 2;
-		builder.add(mMarkPearl, cc.xyw(2, row, 3));
-		row += 2;
-		builder.addLabel(mLocalizer.msg("markPriority", "Mark priority"), cc.xy(2, row));
-		builder.add(mMarkPriority, cc.xy(4, row));
-		row += 2;
-		builder.addSeparator(mLocalizer.msg("sendToPlugin", "Send reminded program to"), cc.xyw(1, row, 5));
-		row += 2;
-		builder.add(pluginPanel, cc.xyw(2, row, 3));
-		row += 2;
-		builder.addSeparator(mLocalizer.msg("updateOption", "Update options"), cc.xyw(1, row, 5));
-		row += 2;
-		builder.add(mUpdateAtStart, cc.xyw(2, row, 3));
-		row += 2;
-		builder.add(mUpdateAfterUpdateFinished, cc.xyw(2, row, 3));
-		row += 2;
-		builder.add(mUpdateManual, cc.xyw(2, row, 3));
-		row += 2;
-		builder.addSeparator(mLocalizer.msg("filter", "Filter"), cc.xyw(1, row, 5));
-		row += 2;
-		builder.add(mEnableFilter, cc.xyw(2, row, 3));
-		row += 2;
-		builder.add(mFilterShowOnly, cc.xyw(2, row, 3));
-		row += 2;
-		builder.add(mFilterShowNot, cc.xyw(2, row, 3));
-		row += 2;
-		builder.add(scrollComposer, cc.xyw(2, row, 3));
-		row += 2;
+		builder.appendRow(FormFactory.PREF_ROWSPEC);
+		builder.setRow(2);
+		builder.addLabel(mLocalizer.msg("view", "View"), cc.xy(2, builder.getRow()));
+		builder.add(mViewOption, cc.xy(4, builder.getRow()));
+		
+		newLine(builder);
+		builder.add(mShowInfoModal, cc.xyw(2, builder.getRow(), 3));
+
+    addSeparator(builder,mLocalizer.msg("programTable", "Program table"));
+		
+    newLine(builder);
+		builder.add(mMarkPearl, cc.xyw(2, builder.getRow(), 3));
+
+    newLine(builder);
+		builder.addLabel(mLocalizer.msg("markPriority", "Mark priority"), cc.xy(2, builder.getRow()));
+		builder.add(mMarkPriority, cc.xy(4, builder.getRow()));
+
+    addSeparator(builder,mLocalizer.msg("sendToPlugin", "Send reminded program to"));
+
+    newLine(builder);
+		builder.add(pluginPanel, cc.xyw(2, builder.getRow(), 3));
+
+    addSeparator(builder,mLocalizer.msg("updateOption", "Update options"));
+
+    newLine(builder);
+		builder.add(mUpdateAtStart, cc.xyw(2, builder.getRow(), 3));
+
+    newLine(builder);
+		builder.add(mUpdateAfterUpdateFinished, cc.xyw(2, builder.getRow(), 3));
+
+    newLine(builder);
+		builder.add(mUpdateManual, cc.xyw(2, builder.getRow(), 3));
+
+    addSeparator(builder,mLocalizer.msg("filter", "Filter"));
+
+    newLine(builder);
+		builder.add(mEnableFilter, cc.xyw(2, builder.getRow(), 3));
+
+    newLine(builder);
+		builder.add(mFilterShowOnly, cc.xyw(2, builder.getRow(), 3));
+		
+    newLine(builder);
+		builder.add(mFilterShowNot, cc.xyw(2, builder.getRow(), 3));
+    
+    newLine(builder);
+		builder.add(scrollComposer, cc.xyw(2, builder.getRow(), 3));
+    
+		builder.nextRow(2);
 
 		final JScrollPane scrollPane = new JScrollPane(builder.getPanel());
 		scrollPane.setBorder(null);
@@ -227,6 +241,20 @@ public final class TVPearlPluginSettingsTab implements SettingsTab
 
 		return scrollPanel;
 	}
+
+  private void addSeparator(final PanelBuilder builder, final String label) {
+    builder.appendRow(FormFactory.PARAGRAPH_GAP_ROWSPEC);
+    builder.appendRow(FormFactory.PREF_ROWSPEC);
+		builder.nextRow(2);
+    builder.addSeparator(label);
+  }
+
+  private PanelBuilder newLine(final PanelBuilder builder) {
+    builder.appendRow(FormFactory.LINE_GAP_ROWSPEC);
+    builder.appendRow(FormFactory.PREF_ROWSPEC);
+		builder.nextRow(2);
+		return builder;
+  }
 
 	public Icon getIcon()
 	{

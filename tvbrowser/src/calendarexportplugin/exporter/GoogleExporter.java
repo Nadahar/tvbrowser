@@ -81,18 +81,10 @@ public class GoogleExporter extends AbstractExporter {
 
   private String mPassword = "";
 
-  /*
-   * (non-Javadoc)
-   * @see calendarexportplugin.exporter.ExporterIf#getName()
-   */
   public String getName() {
     return mLocalizer.msg("name", "Google Calendar");
   }
 
-  /*
-   * (non-Javadoc)
-   * @see calendarexportplugin.exporter.ExporterIf#exportPrograms(devplugin.Program[], java.util.Properties)
-   */
   public boolean exportPrograms(Program[] programs, Properties settings, AbstractPluginProgramFormating formating) {
     try {
       boolean uploadedItems = false;
@@ -314,19 +306,11 @@ public class GoogleExporter extends AbstractExporter {
     return true;
   }
 
-  /*
-   * (non-Javadoc)
-   * @see calendarexportplugin.exporter.ExporterIf#hasSettingsDialog()
-   */
   @Override
   public boolean hasSettingsDialog() {
     return true;
   }
 
-  /*
-   * (non-Javadoc)
-   * @see calendarexportplugin.exporter.ExporterIf#showSettingsDialog(java.util.Properties)
-   */
   @Override
   public void showSettingsDialog(Properties settings) {
     if (showLoginDialog(settings)) {

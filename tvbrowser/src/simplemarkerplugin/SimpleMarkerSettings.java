@@ -18,7 +18,13 @@ package simplemarkerplugin;
 
 import java.util.Properties;
 
-public class SimpleMarkerSettings {
+import util.settings.PropertyBasedSettings;
+
+/**
+ * @author bananeweizen
+ *
+ */
+public final class SimpleMarkerSettings extends PropertyBasedSettings{
 
   private static final String KEY_SHOW_DELETED_PROGRAM = "showDeletedProgram";
   private static final String KEY_SPLIT_POSITION = "splitPosition";
@@ -36,34 +42,24 @@ public class SimpleMarkerSettings {
   private static final int GROUPING_BY_DATE = 2;
   private static final String KEY_GROUPING = "grouping";
 
-  private Properties mProperties;
-
-  public SimpleMarkerSettings(Properties prop) {
-    if (prop != null) {
-      mProperties = prop;
-    } else {
-      mProperties = new Properties();
-    }
-  }
-
-  public Properties storeSettings() {
-    return mProperties;
+  public SimpleMarkerSettings(final Properties properties) {
+    super(properties);
   }
 
   public boolean showDeletedPrograms() {
-    return mProperties.getProperty(KEY_SHOW_DELETED_PROGRAM, "true").equals("true");
+    return get(KEY_SHOW_DELETED_PROGRAM, true);
   }
 
   public void setShowDeletedPrograms(boolean show) {
-    mProperties.setProperty(KEY_SHOW_DELETED_PROGRAM, String.valueOf(show));
+    set(KEY_SHOW_DELETED_PROGRAM, show);
   }
 
   public int getSplitPosition() {
-    return Integer.parseInt(mProperties.getProperty(KEY_SPLIT_POSITION, "-1"));
+    return get(KEY_SPLIT_POSITION, -1);
   }
 
   public void setSplitPosition(int dividerLocation) {
-    mProperties.setProperty(KEY_SPLIT_POSITION, String.valueOf(dividerLocation));
+    set(KEY_SPLIT_POSITION, dividerLocation);
   }
 
   public void setNodeGroupingByBoth() {
@@ -71,7 +67,7 @@ public class SimpleMarkerSettings {
   }
 
   private void setNodeGrouping(int grouping) {
-    mProperties.setProperty(KEY_GROUPING, Integer.toString(grouping));
+    set(KEY_GROUPING, grouping);
   }
 
   public boolean isGroupingByBoth() {
@@ -79,7 +75,7 @@ public class SimpleMarkerSettings {
   }
 
   private boolean isGrouping(int grouping) {
-    return Integer.parseInt(mProperties.getProperty(KEY_GROUPING, "0")) == grouping;
+    return get(KEY_GROUPING, 0) == grouping;
   }
 
   public void setNodeGroupingByTitle() {

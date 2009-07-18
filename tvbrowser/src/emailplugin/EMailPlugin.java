@@ -58,13 +58,13 @@ public class EMailPlugin extends Plugin {
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(EMailPlugin.class);
 
   /** Properties */
-  private Properties mSettings;
+  private EMailSettings mSettings;
   
   /** The Default-Parameters */
   private static LocalPluginProgramFormating DEFAULT_CONFIG = new LocalPluginProgramFormating("emailDefault", mLocalizer.msg("defaultName","EmailPlugin - Default"),"{title}","{channel_name} - {title}\n{leadingZero(start_day,\"2\")}.{leadingZero(start_month,\"2\")}.{start_year} {leadingZero(start_hour,\"2\")}:{leadingZero(start_minute,\"2\")}-{leadingZero(end_hour,\"2\")}:{leadingZero(end_minute,\"2\")}\n\n{splitAt(short_info,\"78\")}\n\n","UTF-8");
   
   private AbstractPluginProgramFormating[] mConfigs = null;
-  private LocalPluginProgramFormating[] mLocalFormatings = null;
+  private LocalPluginProgramFormating[] mLocalFormattings = null;
   
   private PluginInfo mPluginInfo;
   
@@ -82,19 +82,14 @@ public class EMailPlugin extends Plugin {
   }
 
   private void createDefaultAvailable() {
-    mLocalFormatings = new LocalPluginProgramFormating[1];
-    mLocalFormatings[0] = DEFAULT_CONFIG;        
+    mLocalFormattings = new LocalPluginProgramFormating[1];
+    mLocalFormattings[0] = DEFAULT_CONFIG;        
   }
   
   public static Version getVersion() {
     return mVersion;
   }
   
-  /*
-   * (non-Javadoc)
-   * 
-   * @see devplugin.Plugin#getInfo()
-   */
   public PluginInfo getInfo() {
     if(mPluginInfo == null) {
       String name = mLocalizer.msg("pluginName", "EMail export");
@@ -107,19 +102,10 @@ public class EMailPlugin extends Plugin {
     return mPluginInfo;
   }
 
-  /*
-   * (non-Javadoc)
-   * @see devplugin.Plugin#getMarkIconFromTheme()
-   */
   public ThemeIcon getMarkIconFromTheme() {
     return new ThemeIcon("actions", "mail-message-new", 16);
   }
   
-  /*
-   * (non-Javadoc)
-   * 
-   * @see devplugin.Plugin#getContextMenuActions(devplugin.Program)
-   */
   public ActionMenu getContextMenuActions(final Program program) {
     if(mConfigs.length > 1) {
       ContextMenuAction copyToSystem = new ContextMenuAction(mLocalizer.ellipsisMsg("contextMenuText", "Send via EMail"));
@@ -155,23 +141,8 @@ public class EMailPlugin extends Plugin {
       
       return new ActionMenu(copyToSystem);
     }
-    
-    /*AbstractAction action = new AbstractAction() {
-      public void actionPerformed(ActionEvent evt) {
-        Program[] programArr = { program };
-        new MailCreator(EMailPlugin.this, mSettings).createMail(getParentFrame(), programArr);
-      }
-    };
-    action.putValue(Action.NAME, mLocalizer.msg("contextMenuText", "Send via EMail"));
-    action.putValue(Action.SMALL_ICON, createImageIcon("actions", "mail-message-new", 16)); 
-    return new ActionMenu(action);*/
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see devplugin.Plugin#canReceivePrograms()
-   */
   public boolean canReceiveProgramsWithTarget() {
     return true;
   }
@@ -212,63 +183,46 @@ public class EMailPlugin extends Plugin {
     return false;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see devplugin.Plugin#getSettingsTab()
-   */
   public SettingsTab getSettingsTab() {
-
-    EMailSettingsTab tab = new EMailSettingsTab(this, mSettings);
-
-    return tab;
+    return new EMailSettingsTab(this, mSettings);
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see devplugin.Plugin#loadSettings(java.util.Properties)
-   */
-  public void loadSettings(Properties settings) {
-    mSettings = settings;
-    
+  public void loadSettings(final Properties properties) {
+    mSettings = new EMailSettings(properties);
+/*    
     if(settings != null && settings.containsKey("ParamToUse")) {
       mConfigs = new AbstractPluginProgramFormating[1];
       mConfigs[0] = new LocalPluginProgramFormating(mLocalizer.msg("defaultName","Send e-mail - Default"),"{title}",settings.getProperty("ParamToUse"),settings.getProperty("encoding", "UTF-8"));
-      mLocalFormatings = new LocalPluginProgramFormating[1];
-      mLocalFormatings[0] = (LocalPluginProgramFormating)mConfigs[0];
-      DEFAULT_CONFIG = mLocalFormatings[0];
+      mLocalFormattings = new LocalPluginProgramFormating[1];
+      mLocalFormattings[0] = (LocalPluginProgramFormating)mConfigs[0];
+      DEFAULT_CONFIG = mLocalFormattings[0];
       
       settings.remove("ParamToUse");
       settings.remove("encoding");
     }
+*/
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see devplugin.Plugin#storeSettings()
-   */
   public Properties storeSettings() {
-    return mSettings;
+    return mSettings.storeSettings();
   }
   
-  protected static LocalPluginProgramFormating getDefaultFormating() {    
+  protected static LocalPluginProgramFormating getDefaultFormatting() {    
     return new LocalPluginProgramFormating(mLocalizer.msg("defaultName","EmailPlugin - Default"),"{title}","{channel_name} - {title}\n{leadingZero(start_day,\"2\")}.{leadingZero(start_month,\"2\")}.{start_year} {leadingZero(start_hour,\"2\")}:{leadingZero(start_minute,\"2\")}-{leadingZero(end_hour,\"2\")}:{leadingZero(end_minute,\"2\")}\n\n{splitAt(short_info,\"78\")}\n\n","UTF-8");
   }
 
-  protected LocalPluginProgramFormating[] getAvailableLocalPluginProgramFormatings() {
-    return mLocalFormatings;
+  protected LocalPluginProgramFormating[] getAvailableLocalPluginProgramFormattings() {
+    return mLocalFormattings;
   }
   
-  protected void setAvailableLocalPluginProgramFormatings(LocalPluginProgramFormating[] value) {
+  protected void setAvailableLocalPluginProgramFormattings(LocalPluginProgramFormating[] value) {
     if(value == null || value.length < 1)
       createDefaultAvailable();
     else
-      mLocalFormatings = value;
+      mLocalFormattings = value;
   }
 
-  protected AbstractPluginProgramFormating[] getSelectedPluginProgramFormatings() {
+  protected AbstractPluginProgramFormating[] getSelectedPluginProgramFormattings() {
     return mConfigs;
   }
   
@@ -297,10 +251,10 @@ public class EMailPlugin extends Plugin {
     else
       out.writeInt(0);
     
-    if(mLocalFormatings != null) {
+    if(mLocalFormattings != null) {
       ArrayList<AbstractPluginProgramFormating> list = new ArrayList<AbstractPluginProgramFormating>();
       
-      for(AbstractPluginProgramFormating config : mLocalFormatings)
+      for(AbstractPluginProgramFormating config : mLocalFormattings)
         if(config != null)
           list.add(config);
       
@@ -332,13 +286,13 @@ public class EMailPlugin extends Plugin {
     
       mConfigs = list.toArray(new AbstractPluginProgramFormating[list.size()]);
     
-      mLocalFormatings = new LocalPluginProgramFormating[in.readInt()];
+      mLocalFormattings = new LocalPluginProgramFormating[in.readInt()];
     
-      for(int i = 0; i < mLocalFormatings.length; i++) {
+      for(int i = 0; i < mLocalFormattings.length; i++) {
         LocalPluginProgramFormating value = (LocalPluginProgramFormating)LocalPluginProgramFormating.readData(in);
         LocalPluginProgramFormating loadedInstance = getInstanceOfFormatingFromSelected(value);
       
-        mLocalFormatings[i] = loadedInstance == null ? value : loadedInstance;
+        mLocalFormattings[i] = loadedInstance == null ? value : loadedInstance;
       }
     }catch(Exception e) {}
   }

@@ -18,7 +18,11 @@ package checkerplugin;
 
 import java.util.Properties;
 
-public class CheckerSettings {
+/**
+ * @author bananeweizen
+ *
+ */
+public final class CheckerSettings {
 
   private static final String KEY_AUTOSTART = "autostart";
   private Properties mProperties;

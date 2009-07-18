@@ -38,7 +38,6 @@ import javax.swing.table.DefaultTableCellRenderer;
 
 import util.settings.PluginPictureSettings;
 import util.settings.ProgramPanelSettings;
-
 import devplugin.Date;
 import devplugin.Program;
 
@@ -96,12 +95,6 @@ public class ProgramTableCellRenderer extends DefaultTableCellRenderer {
         mMainPanel.add(mProgramPanel, BorderLayout.CENTER);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see javax.swing.table.TableCellRenderer#getTableCellRendererComponent(javax.swing.JTable,
-     *      java.lang.Object, boolean, boolean, int, int)
-     */
     public Component getTableCellRendererComponent(final JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         

@@ -243,11 +243,13 @@ final public class TranslationDialog extends JDialog implements WindowClosingIf 
     
     mSplitpane.setRightComponent(cardPanel);
     
-    SwingUtilities.invokeLater(new Runnable() {
-      public void run() {
-        mSplitpane.setDividerLocation(splitPos);
-      }
-    });
+    if (splitPos > 0) {
+      SwingUtilities.invokeLater(new Runnable() {
+        public void run() {
+          mSplitpane.setDividerLocation(splitPos);
+        }
+      });
+    }
     
     ButtonBarBuilder2 buttonbar = new ButtonBarBuilder2();
     
@@ -456,10 +458,6 @@ final public class TranslationDialog extends JDialog implements WindowClosingIf 
     
   }
 
-  /*
-   * (non-Javadoc)
-   * @see util.ui.WindowClosingIf#close()
-   */
   public void close() {
     setVisible(false);
   }

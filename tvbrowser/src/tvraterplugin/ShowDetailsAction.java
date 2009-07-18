@@ -77,9 +77,6 @@ public class ShowDetailsAction extends AbstractAction {
             putValue(Action.SMALL_ICON, TVRaterPlugin.getInstance().createImageIcon("apps", "internet-web-browser", 16));
     }    
     
-    /* (non-Javadoc)
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
     public void actionPerformed(ActionEvent e) {
       Launch.openURL("http://tvaddicted.de/index.php?showId=" + _id);
     }

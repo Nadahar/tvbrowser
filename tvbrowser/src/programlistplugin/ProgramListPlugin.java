@@ -87,10 +87,6 @@ import devplugin.Version;
  * @since 2.7
  */
 public class ProgramListPlugin extends Plugin {
-  private static final String SETTING_FILTER = "filter";
-
-  private static final String SETTING_SHOW_DESCRIPTION = "showDescription";
-
   protected static final Localizer mLocalizer = Localizer.getLocalizerFor(ProgramListPlugin.class);
   
   private static Version mVersion = new Version(2,70);
@@ -98,7 +94,7 @@ public class ProgramListPlugin extends Plugin {
   private JDialog mDialog;
   private JComboBox mBox;
   private ProgramFilter mFilter;
-  private Properties mSettings;
+  private ProgramListSettings mSettings;
   private DefaultListModel mModel;
   private ProgramList mList;
   private ProgramPanelSettings mProgramPanelSettings;
@@ -139,17 +135,12 @@ public class ProgramListPlugin extends Plugin {
     return mInstance;
   }
   
-  public void loadSettings(Properties settings) {
-    if(settings == null) {
-      mSettings = new Properties();
-    }
-    else {
-      mSettings = settings;
-    }
+  public void loadSettings(final Properties properties) {
+    mSettings = new ProgramListSettings(properties);
   }
   
   public Properties storeSettings() {
-    return mSettings;
+    return mSettings.storeSettings();
   }
   
   public ActionMenu getButtonAction() {
@@ -197,7 +188,7 @@ public class ProgramListPlugin extends Plugin {
         mFilterBox.addItem(filter);
         
         if ((mRecieveFilter == null && filter.getName().equals(
-            mSettings.getProperty(SETTING_FILTER)))
+            mSettings.getFilterName()))
             || (mRecieveFilter != null && filter.getName().equals(
                 mRecieveFilter.getName()))) {
           mFilter = filter;
@@ -360,8 +351,7 @@ public class ProgramListPlugin extends Plugin {
         });
 
         mModel = new DefaultListModel();
-        boolean showDescription = mSettings.getProperty(
-            SETTING_SHOW_DESCRIPTION, "true").equals("true");
+        boolean showDescription = mSettings.getShowDescription();
         mProgramPanelSettings = new ProgramPanelSettings(
             new PluginPictureSettings(
                 PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE),
@@ -380,13 +370,12 @@ public class ProgramListPlugin extends Plugin {
         mBox = new JComboBox(Plugin.getPluginManager().getSubscribedChannels());
         mBox.insertItemAt(mLocalizer.msg("allChannels", "All channels"), 0);
         mBox.setRenderer(new ChannelListCellRenderer());
-        mBox.setSelectedIndex(Integer.parseInt(mSettings.getProperty("index",
-            String.valueOf(0))));
+        mBox.setSelectedIndex(mSettings.getIndex());
 
         mFilterBox = new JComboBox();
 
-        if (mSettings.getProperty(SETTING_FILTER) == null) {
-          mSettings.setProperty(SETTING_FILTER, Plugin.getPluginManager()
+        if (mSettings.getFilterName().isEmpty()) {
+          mSettings.setFilterName(Plugin.getPluginManager()
               .getFilterManager().getAllFilter().getName());
         }
 
@@ -396,7 +385,7 @@ public class ProgramListPlugin extends Plugin {
           public void itemStateChanged(ItemEvent e) {
             mFilter = (ProgramFilter) mFilterBox.getSelectedItem();
             if (mFilter != mRecieveFilter) {
-              mSettings.setProperty(SETTING_FILTER, mFilter.getName());
+              mSettings.setFilterName(mFilter.getName());
             }
             mBox.getItemListeners()[0].itemStateChanged(null);
           }
@@ -405,8 +394,7 @@ public class ProgramListPlugin extends Plugin {
         mBox.addItemListener(new ItemListener() {
           public void itemStateChanged(ItemEvent e) {
             fillProgramList();
-            mSettings.setProperty("index", String.valueOf(mBox
-                .getSelectedIndex()));
+            mSettings.setIndex(mBox.getSelectedIndex());
           }
         });
 
@@ -417,7 +405,7 @@ public class ProgramListPlugin extends Plugin {
         panel.add(new JLabel(Localizer.getLocalization(Localizer.I18N_CHANNELS)
             + ":"), cc.xy(2, 1));
         panel.add(mBox, cc.xy(4, 1));
-        panel.add(new JLabel(mLocalizer.msg(SETTING_FILTER, "Filter:")), cc.xy(
+        panel.add(new JLabel(mLocalizer.msg("filter", "Filter:")), cc.xy(
             2, 3));
         panel.add(mFilterBox, cc.xy(4, 3));
         
@@ -444,8 +432,7 @@ public class ProgramListPlugin extends Plugin {
             int topRow = mList.getFirstVisibleIndex();
             mProgramPanelSettings
                 .setShowOnlyDateAndTitle(e.getStateChange() == ItemEvent.DESELECTED);
-            mSettings.setProperty(SETTING_SHOW_DESCRIPTION, String.valueOf(e
-                .getStateChange() == ItemEvent.SELECTED));
+            mSettings.setShowDescription(e.getStateChange() == ItemEvent.SELECTED);
             mList.updateUI();
             if (topRow != -1) {
               mList.ensureIndexIsVisible(topRow);
