@@ -44,9 +44,14 @@ public class EnhancedPanelPuilder extends PanelBuilder {
    * @return the new separator component
    */
   public JComponent addParagraph(final String label) {
-    appendRow(FormFactory.PARAGRAPH_GAP_ROWSPEC);
+    if (getRowCount() > 0) {
+      appendRow(FormFactory.PARAGRAPH_GAP_ROWSPEC);
+    }
+    else {
+      appendRow(FormFactory.NARROW_LINE_GAP_ROWSPEC);
+    }
     appendRow(FormFactory.PREF_ROWSPEC);
-    nextRow(2);
+    incrementRowNumber();
     return addSeparator(label);
   }
 
@@ -60,6 +65,11 @@ public class EnhancedPanelPuilder extends PanelBuilder {
   public PanelBuilder addRow() {
     appendRow(FormFactory.LINE_GAP_ROWSPEC);
     appendRow(FormFactory.PREF_ROWSPEC);
+    incrementRowNumber();
+    return this;
+  }
+
+  private void incrementRowNumber() {
     // there is no line number zero, therefore only add one row, if we are still in the first line
     if (getRow() == 1) {
       nextRow();
@@ -67,7 +77,6 @@ public class EnhancedPanelPuilder extends PanelBuilder {
     else {
       nextRow(2);
     }
-    return this;
   }
 
   /**
@@ -78,7 +87,7 @@ public class EnhancedPanelPuilder extends PanelBuilder {
   public PanelBuilder addGrowingRow() {
     appendRow(FormFactory.LINE_GAP_ROWSPEC);
     appendRow("fill:default:grow");
-    nextRow(2);
+    incrementRowNumber();
     return this;
   }
 }
