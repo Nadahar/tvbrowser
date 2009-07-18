@@ -29,6 +29,7 @@ import javax.swing.Icon;
 
 import tvdataservice.MutableProgram;
 import devplugin.ActionMenu;
+import devplugin.Channel;
 import devplugin.ChannelDayProgram;
 import devplugin.PluginAccess;
 import devplugin.PluginTreeNode;
@@ -198,4 +199,16 @@ public interface PluginProxy extends PluginAccess {
    * @since 2.7
    */
   public ProgramRatingIf[] getProgramRatingIfs();
+  
+  /**
+   * Gets the actions for the context menu of a channel.
+   * 
+   * @param channel
+   *          The channel the context menu will be shown for.
+   * @return the actions this plugin provides for the given channel or
+   *         <code>null</code> if the plugin does not provide this feature.
+   * @since 3.0
+   */
+  public ActionMenu getContextMenuActions(final Channel channel);
+
 }

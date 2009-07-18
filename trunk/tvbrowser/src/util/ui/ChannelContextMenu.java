@@ -18,6 +18,8 @@ import tvbrowser.core.filters.FilterComponent;
 import tvbrowser.core.filters.FilterComponentList;
 import tvbrowser.core.filters.filtercomponents.ChannelFilterComponent;
 import tvbrowser.core.icontheme.IconLoader;
+import tvbrowser.core.plugin.PluginProxy;
+import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.ui.filter.dlgs.EditFilterComponentDlg;
 import tvbrowser.ui.mainframe.ChannelChooserPanel;
 import tvbrowser.ui.mainframe.MainFrame;
@@ -25,6 +27,8 @@ import tvbrowser.ui.programtable.ProgramTableChannelLabel;
 import tvbrowser.ui.settings.ChannelsSettingsTab;
 import tvbrowser.ui.settings.channel.ChannelConfigDlg;
 import util.browserlauncher.Launch;
+import util.ui.menu.MenuUtil;
+import devplugin.ActionMenu;
 import devplugin.Channel;
 import devplugin.SettingsItem;
 
@@ -168,8 +172,24 @@ public class ChannelContextMenu implements ActionListener {
           layoutName.setSelected(true);
         }
       }
+      // add context menu actions from plugins
+      addPluginContextMenuItems(ch);
     }
     mMenu.show(e.getComponent(), e.getX(), e.getY());
+  }
+
+  private void addPluginContextMenuItems(final Channel ch) {
+    boolean separator = false;
+    for (PluginProxy plugin : PluginProxyManager.getInstance().getActivatedPlugins()) {
+      ActionMenu context = plugin.getContextMenuActions(ch);
+      if (context != null) {
+        if (!separator) {
+          mMenu.addSeparator();
+          separator = true;
+        }
+        mMenu.add(MenuUtil.createMenuItem(context));
+      }
+    }
   }
 
   public void actionPerformed(ActionEvent e) {
