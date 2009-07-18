@@ -26,9 +26,9 @@ import javax.swing.JRadioButton;
 import util.ui.Localizer;
 
 import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.RowSpec;
 
 import devplugin.SettingsTab;
 
@@ -38,18 +38,20 @@ public final class ZattooSettingsTab implements SettingsTab {
   private ZattooSettings mSettings;
   private JRadioButton mRbLocalPlayer;
   private JRadioButton mRbWebPlayer;
+  private JRadioButton mRbPrism;
 
   public ZattooSettingsTab(ZattooSettings settings) {
     mSettings = settings;
   }
 
   public JPanel createSettingsPanel() {
-    FormLayout layout = new FormLayout("2dlu,pref, 3dlu, pref,pref:grow", "pref");
-    int row = 1;
-    final PanelBuilder builder = new PanelBuilder(layout);
+    final PanelBuilder builder = new PanelBuilder(new FormLayout(
+        FormFactory.RELATED_GAP_COLSPEC.encode() + ","
+        + FormFactory.PREF_COLSPEC.encode() + ","
+        + FormFactory.RELATED_GAP_COLSPEC.encode() + ","
+        + FormFactory.PREF_COLSPEC.encode() + ","
+        + FormFactory.GLUE_COLSPEC.encode(), ""));
     final CellConstraints cc = new CellConstraints();
-
-    builder.add(new JLabel(mLocalizer.msg("country","Country:")), cc.xy(2,1));
 
     final ZattooCountry[] countries = new ZattooCountry[] {
         new ZattooCountry("de", mLocalizer.msg("country_de", "Germany")),
@@ -59,26 +61,41 @@ public final class ZattooSettingsTab implements SettingsTab {
     mCountry = new JComboBox(countries);
     mCountry.setSelectedItem(new ZattooCountry(mSettings.getCountry(), ""));
 
-    builder.add(mCountry, cc.xy(4,row));
-    
-    layout.appendRow(RowSpec.decode("10dlu"));
-    layout.appendRow(RowSpec.decode("pref"));
-    layout.appendRow(RowSpec.decode("2dlu"));
-    layout.appendRow(RowSpec.decode("pref"));
-    layout.appendRow(RowSpec.decode("2dlu"));
-    layout.appendRow(RowSpec.decode("pref"));
+    builder.appendRow(FormFactory.LINE_GAP_ROWSPEC);
+    builder.appendRow(FormFactory.PREF_ROWSPEC);
+    builder.nextRow();
+    builder.add(new JLabel(mLocalizer.msg("country","Country:")), cc.xy(2, builder.getRow()));
+    builder.add(mCountry, cc.xy(4, builder.getRow()));
     
     mRbLocalPlayer = new JRadioButton(mLocalizer.msg("localPlayer", "Use local player"));
     mRbLocalPlayer.setEnabled(ZattooPlugin.canUseLocalPlayer());
     mRbWebPlayer = new JRadioButton(mLocalizer.msg("webPlayer", "Use web player"));
+    mRbPrism = new JRadioButton(mLocalizer.msg("prism", "Mozilla Prism"));
     
     ButtonGroup buttonGroup = new ButtonGroup();
     buttonGroup.add(mRbLocalPlayer);
     buttonGroup.add(mRbWebPlayer);
+    buttonGroup.add(mRbPrism);
 
-    builder.addSeparator(mLocalizer.msg("player", "Player"), cc.xyw(1, row += 2, layout.getColumnCount()));
-    builder.add(mRbLocalPlayer, cc.xyw(2, row += 2, layout.getColumnCount() - 1));
-    builder.add(mRbWebPlayer, cc.xyw(2, row += 2, layout.getColumnCount() - 1));
+    builder.appendRow(FormFactory.PARAGRAPH_GAP_ROWSPEC);
+    builder.appendRow(FormFactory.PREF_ROWSPEC);
+    builder.nextRow(2);
+    builder.addSeparator(mLocalizer.msg("player", "Player"));
+    
+    builder.appendRow(FormFactory.LINE_GAP_ROWSPEC);
+    builder.appendRow(FormFactory.PREF_ROWSPEC);
+    builder.nextRow(2);
+    builder.add(mRbLocalPlayer, cc.xyw(2, builder.getRow(), builder.getColumnCount() - 1));
+    
+    builder.appendRow(FormFactory.LINE_GAP_ROWSPEC);
+    builder.appendRow(FormFactory.PREF_ROWSPEC);
+    builder.nextRow(2);
+    builder.add(mRbWebPlayer, cc.xyw(2, builder.getRow(), builder.getColumnCount() - 1));
+    
+    builder.appendRow(FormFactory.LINE_GAP_ROWSPEC);
+    builder.appendRow(FormFactory.PREF_ROWSPEC);
+    builder.nextRow(2);
+    builder.add(mRbPrism, cc.xyw(2, builder.getRow(), builder.getColumnCount() - 1));
     
     if (ZattooPlugin.canUseLocalPlayer() && !mSettings.getUseWebPlayer()) {
       mRbLocalPlayer.setSelected(true);
@@ -92,7 +109,15 @@ public final class ZattooSettingsTab implements SettingsTab {
 
   public void saveSettings() {
     ZattooPlugin.getInstance().changeCountry(((ZattooCountry)mCountry.getSelectedItem()).getCode());
-    mSettings.setUseWebPlayer(mRbWebPlayer.isSelected() || !ZattooPlugin.canUseLocalPlayer());
+    if (mRbLocalPlayer.isSelected() && ZattooPlugin.canUseLocalPlayer()) {
+      mSettings.setLocalPlayer();
+    }
+    else if (mRbPrism.isSelected()) {
+      mSettings.setPrismPlayer();
+    }
+    else {
+      mSettings.setWebPlayer();
+    }
   }
 
   public Icon getIcon() {
