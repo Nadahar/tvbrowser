@@ -279,10 +279,6 @@ public class SendToPluginDialog extends JDialog implements WindowClosingIf {
 
   }
 
-  /*
-   * (non-Javadoc)
-   * @see util.ui.WindowClosingIf#close()
-   */
   public void close() {
     setVisible(false);
   }  

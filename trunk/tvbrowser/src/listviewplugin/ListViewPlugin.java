@@ -106,10 +106,6 @@ public class ListViewPlugin extends Plugin {
         dlg.setVisible(true);
     }
 
-    /*
-     *  (non-Javadoc)
-     * @see devplugin.Plugin#getButtonAction()
-     */
     public ActionMenu getButtonAction() {
         AbstractAction action = new AbstractAction() {
 

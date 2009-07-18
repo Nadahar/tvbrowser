@@ -28,12 +28,13 @@ package clipboardplugin;
 import javax.swing.Icon;
 import javax.swing.JPanel;
 
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-
+import util.ui.EnhancedPanelPuilder;
 import util.ui.Localizer;
 import util.ui.PluginProgramConfigurationPanel;
+
+import com.jgoodies.forms.factories.FormFactory;
+import com.jgoodies.forms.layout.CellConstraints;
+
 import devplugin.SettingsTab;
 
 /**
@@ -65,12 +66,13 @@ public class ClipboardSettingsTab implements SettingsTab {
    * @return Settings-Panel
    */
   public JPanel createSettingsPanel() {
-    PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,fill:default:grow,5dlu","5dlu,fill:default:grow,5dlu"));
+    EnhancedPanelPuilder pb = new EnhancedPanelPuilder(FormFactory.RELATED_GAP_COLSPEC.encode() + ",fill:default:grow");
     CellConstraints cc = new CellConstraints();
     
     mConfigPanel = new PluginProgramConfigurationPanel(mPlugin.getSelectedPluginProgramFormatings(), mPlugin.getAvailableLocalPluginProgramFormatings(), ClipboardPlugin.getDefaultFormating(),false,false);
     
-    pb.add(mConfigPanel, cc.xyw(1,2,2));
+    pb.addRow();
+    pb.add(mConfigPanel, cc.xyw(1,pb.getRow(),pb.getColumnCount()));
 
     return pb.getPanel();
   }

@@ -94,9 +94,6 @@ public class CaptureParamLibrary extends ParamLibrary {
     return mPrgTime;
   }
   
-  /* (non-Javadoc)
-   * @see util.paramhandler.ParamLibrary#getDescriptionForFunctions(java.lang.String)
-   */
   public String getDescriptionForFunctions(String function) {
     String translation = mLocalizer.msg("function_" + function, "", false);
     if (translation.startsWith("[CaptureParamLibrary.function")) {
@@ -106,18 +103,12 @@ public class CaptureParamLibrary extends ParamLibrary {
     return translation;
   }
 
-  /* (non-Javadoc)
-   * @see util.paramhandler.ParamLibrary#getPossibleFunctions()
-   */
   public String[] getPossibleFunctions() {
     String[] additionalKeys = {"variable"};
     
     return concat(super.getPossibleFunctions(), additionalKeys);
   }
 
-  /* (non-Javadoc)
-   * @see util.paramhandler.ParamLibrary#getStringForFunction(devplugin.Program, java.lang.String, java.lang.String[])
-   */
   public String getStringForFunction(Program prg, String function, String[] params) {
     
     if (function.equals("variable")) {
@@ -148,9 +139,6 @@ public class CaptureParamLibrary extends ParamLibrary {
     return super.getStringForFunction(prg, function, params);
   }
 
-  /* (non-Javadoc)
-   * @see util.paramhandler.ParamLibrary#getDescriptionForKey(java.lang.String)
-   */
   public String getDescriptionForKey(String key) {
     String translation = mLocalizer.msg("parameter_" + key, "", false);
     if (translation.startsWith("[CaptureParamLibrary.parameter")) {
@@ -161,18 +149,12 @@ public class CaptureParamLibrary extends ParamLibrary {
   }
 
 
-  /* (non-Javadoc)
-   * @see util.paramhandler.ParamLibrary#getPossibleKeys()
-   */
   public String[] getPossibleKeys() {
     String[] additionalKeys = {"channel_name_external","channel_name_external_quiet" , "device_username", "device_password"};
     
     return concat(super.getPossibleKeys(), additionalKeys);
   }
 
-  /* (non-Javadoc)
-   * @see util.paramhandler.ParamLibrary#getStringForKey(devplugin.Program, java.lang.String)
-   */
   public String getStringForKey(Program prg, String key) {
     
     if (key.equals("title")) {

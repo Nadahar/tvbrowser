@@ -24,7 +24,6 @@ package blogthisplugin;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Properties;
 
 import javax.swing.Icon;
 import javax.swing.JComboBox;
@@ -32,11 +31,12 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import util.ui.EnhancedPanelPuilder;
 import util.ui.Localizer;
 import util.ui.PluginProgramConfigurationPanel;
-import com.jgoodies.forms.factories.Borders;
+
+import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.SettingsTab;
 
@@ -46,154 +46,140 @@ import devplugin.SettingsTab;
  * @author bodum
  */
 public class BlogSettingsTab implements SettingsTab {
-    /** Translator */
-    private static final Localizer mLocalizer = Localizer
-            .getLocalizerFor(BlogSettingsTab.class);
+  /** Translator */
+  private static final Localizer mLocalizer = Localizer.getLocalizerFor(BlogSettingsTab.class);
 
-    /** Plugin */
-    private BlogThisPlugin mPlugin;
+  /** Plugin */
+  private BlogThisPlugin mPlugin;
 
-    /** Settings for this Plugin */
-    private Properties mSettings;
+  /** Settings for this Plugin */
+  private BlogSettings mSettings;
 
-    /** ComboBox for Blog-Service */
-    private JComboBox mServiceCombo;
+  /** ComboBox for Blog-Service */
+  private JComboBox mServiceCombo;
 
-    /** Label for the Url-Inputfield */
-    private JLabel mServiceUrlLabel;
+  /** Label for the Url-Inputfield */
+  private JLabel mServiceUrlLabel;
 
-    /** Textfield for Url */
-    private JTextField mServiceUrlField;
-    
-    private PluginProgramConfigurationPanel mConfigPanel;
+  /** Textfield for Url */
+  private JTextField mServiceUrlField;
 
-    /**
-     * Create Plugin-Settingstab
-     * 
-     * @param plugin Plugin
-     * @param settings Settings of this Plugin
-     */
-    public BlogSettingsTab(BlogThisPlugin plugin, Properties settings) {
-        mPlugin = plugin;
-        mSettings = settings;
+  private PluginProgramConfigurationPanel mConfigPanel;
+
+  /**
+   * Create Plugin-Settingstab
+   * 
+   * @param plugin
+   *          Plugin
+   * @param settings
+   *          Settings of this Plugin
+   */
+  public BlogSettingsTab(BlogThisPlugin plugin, BlogSettings settings) {
+    mPlugin = plugin;
+    mSettings = settings;
+  }
+
+  /**
+   * Create the SettingsPanel
+   */
+  public JPanel createSettingsPanel() {
+    final EnhancedPanelPuilder settingsPanel = new EnhancedPanelPuilder(FormFactory.RELATED_GAP_COLSPEC.encode() + ","
+        + FormFactory.PREF_COLSPEC.encode() + "," + FormFactory.RELATED_GAP_COLSPEC.encode() + ","
+        + FormFactory.PREF_COLSPEC.encode() + ", fill:pref:grow");
+
+    String[] services = { "", "Blogger.com", "Wordpress", "b2evolution" };
+
+    mServiceCombo = new JComboBox(services);
+
+    if (mSettings.getBlogService() == BlogService.Blogger) {
+      mServiceCombo.setSelectedIndex(1);
+    } else if (mSettings.getBlogService() == BlogService.WordPress) {
+      mServiceCombo.setSelectedIndex(2);
+    } else if (mSettings.getBlogService() == BlogService.B2Evolution) {
+      mServiceCombo.setSelectedIndex(3);
     }
 
-    /**
-     * Create the SettingsPanel
-     */
-    public JPanel createSettingsPanel() {
-        final JPanel settingsPanel = new JPanel(new FormLayout(
-                "5dlu, pref, 3dlu, pref, fill:pref:grow",
-                "pref, 3dlu, pref, 10dlu, fill:default:grow"));
-        settingsPanel.setBorder(Borders.DLU4_BORDER);
+    mServiceCombo.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        updateAfterServiceSelection();
+      }
+    });
 
-        String[] services = { "", "Blogger.com", "Wordpress",
-                "b2evolution" };
+    mServiceUrlLabel = new JLabel(mLocalizer.msg("Url", "Url") + ':');
+    mServiceUrlLabel.setEnabled(mServiceCombo.getSelectedIndex() >= 2);
 
-        mServiceCombo = new JComboBox(services);
+    mServiceUrlField = new JTextField();
+    mServiceUrlField.setEnabled(mServiceCombo.getSelectedIndex() >= 2);
+    mServiceUrlField.setText(mSettings.getBlogUrl());
 
-        if (mSettings.getProperty("BlogService", "").equals(
-                BlogThisPlugin.BLOGGER)) {
-            mServiceCombo.setSelectedIndex(1);
-        } else if (mSettings.getProperty("BlogService", "").equals(
-                BlogThisPlugin.WORDPRESS)) {
-            mServiceCombo.setSelectedIndex(2);
-        } else if (mSettings.getProperty("BlogService", "").equals(
-                BlogThisPlugin.B2EVOLUTION)) {
-            mServiceCombo.setSelectedIndex(3);
-        }
+    CellConstraints cc = new CellConstraints();
 
-        mServiceCombo.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                updateAfterServiceSelection();
-            }
-        });
+    settingsPanel.addRow();
+    settingsPanel.add(new JLabel(mLocalizer.msg("Service", "Blog-Service") + ':'), cc.xy(2, settingsPanel.getRow()));
+    settingsPanel.add(mServiceCombo, cc.xy(4, settingsPanel.getRow()));
 
-        mServiceUrlLabel = new JLabel(mLocalizer.msg("Url", "Url")+':');
-        mServiceUrlLabel.setEnabled(mServiceCombo.getSelectedIndex() >= 2);
+    settingsPanel.addRow();
+    settingsPanel.add(mServiceUrlLabel, cc.xy(2, settingsPanel.getRow()));
+    settingsPanel.add(mServiceUrlField, cc.xyw(4, settingsPanel.getRow(), 2));
 
-        mServiceUrlField = new JTextField();
-        mServiceUrlField.setEnabled(mServiceCombo.getSelectedIndex() >= 2);
-        mServiceUrlField.setText(mSettings.getProperty("BlogUrl"));
+    mConfigPanel = new PluginProgramConfigurationPanel(mPlugin.getSelectedPluginProgramFormattings(), mPlugin
+        .getAvailableLocalPluginProgramFormattings(), BlogThisPlugin.getDefaultFormatting(), true, false);
 
-        CellConstraints cc = new CellConstraints();
-        settingsPanel.add(new JLabel(mLocalizer.msg("Service", "Blog-Service")+':'), cc.xy(2, 1));
-        settingsPanel.add(mServiceCombo, cc.xy(4, 1));
-        settingsPanel.add(mServiceUrlLabel, cc.xy(2, 3));
-        settingsPanel.add(mServiceUrlField, cc.xyw(4, 3, 2));
+    settingsPanel.addParagraph(mLocalizer.msg("formattings", "Formattings"));
 
-        mConfigPanel = new PluginProgramConfigurationPanel(mPlugin.getSelectedPluginProgramFormatings(), mPlugin.getAvailableLocalPluginProgramFormatings(), BlogThisPlugin.getDefaultFormating(),true,false);
-        
-        /*JButton extended = new JButton(mLocalizer.msg("Extended", "Extended Settings"));
-        
-        extended.addActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-            showExtendedDialog(settingsPanel);
-          }
-        });*/
-        
-        settingsPanel.add(mConfigPanel, cc.xyw(1, 5, 5));
+    settingsPanel.addGrowingRow();
+    settingsPanel.add(mConfigPanel, cc.xyw(1, settingsPanel.getRow(), 5));
 
-        return settingsPanel;
+    return settingsPanel.getPanel();
+  }
+
+  /**
+   * Updates the GUI after a new Service is selected
+   */
+  private void updateAfterServiceSelection() {
+    mServiceUrlLabel.setEnabled(mServiceCombo.getSelectedIndex() >= 2);
+    mServiceUrlField.setEnabled(mServiceCombo.getSelectedIndex() >= 2);
+
+    if (mServiceCombo.getSelectedIndex() == 2) {
+      mServiceUrlField.setText(BlogThisPlugin.URL_WORDPRESS);
+    } else if (mServiceCombo.getSelectedIndex() == 3) {
+      mServiceUrlField.setText(BlogThisPlugin.URL_B2EVOLUTION);
+    } else {
+      mServiceUrlField.setText("");
     }
+  }
 
-    /**
-     * Updates the GUI after a new Service is selected
-     */
-    private void updateAfterServiceSelection() {
-        mServiceUrlLabel.setEnabled(mServiceCombo.getSelectedIndex() >= 2);
-        mServiceUrlField.setEnabled(mServiceCombo.getSelectedIndex() >= 2);
+  /**
+   * Saves the Settings
+   */
+  public void saveSettings() {
+    switch (mServiceCombo.getSelectedIndex()) {
+    case 1:
+      mSettings.setService(BlogService.Blogger);
+      break;
+    case 2:
+      mSettings.setService(BlogService.WordPress);
+      break;
+    case 3:
+      mSettings.setService(BlogService.B2Evolution);
+      break;
 
-        if (mServiceCombo.getSelectedIndex() == 2) {
-            mServiceUrlField.setText(BlogThisPlugin.URL_WORDPRESS);
-        } else if (mServiceCombo.getSelectedIndex() == 3) {
-            mServiceUrlField.setText(BlogThisPlugin.URL_B2EVOLUTION);
-        } else {
-            mServiceUrlField.setText("");
-        }
+    default:
+      mSettings.setService(null);
+      break;
     }
-    
-    /**
-     * Saves the Settings
-     */
-    public void saveSettings() {
-        switch (mServiceCombo.getSelectedIndex()) {
-        case 1:
-            mSettings.setProperty("BlogService", BlogThisPlugin.BLOGGER);
-            break;
-        case 2:
-            mSettings.setProperty("BlogService", BlogThisPlugin.WORDPRESS);
-            break;
-        case 3:
-            mSettings.setProperty("BlogService", BlogThisPlugin.B2EVOLUTION);
-            break;
+    mSettings.setBlogUrl(mServiceUrlField.getText());
 
-        default:
-            mSettings.remove("BlogService");
-            break;
-        }
-        mSettings.setProperty("BlogUrl", mServiceUrlField.getText());
-        
-        mPlugin.setAvailableLocalPluginProgramFormatings(mConfigPanel.getAvailableLocalPluginProgramFormatings());
-        mPlugin.setSelectedPluginProgramFormatings(mConfigPanel.getSelectedPluginProgramFormatings());
-    }
+    mPlugin.setAvailableLocalPluginProgramFormattings(mConfigPanel.getAvailableLocalPluginProgramFormatings());
+    mPlugin.setSelectedPluginProgramFormattings(mConfigPanel.getSelectedPluginProgramFormatings());
+  }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see devplugin.SettingsTab#getIcon()
-     */
-    public Icon getIcon() {
-        return mPlugin.createImageIcon("apps", "internet-web-browser", 16);
-    }
+  public Icon getIcon() {
+    return mPlugin.createImageIcon("apps", "internet-web-browser", 16);
+  }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see devplugin.SettingsTab#getTitle()
-     */
-    public String getTitle() {
-        return mLocalizer.msg("Name", "Blog this!");
-    }
+  public String getTitle() {
+    return mLocalizer.msg("Name", "Blog this!");
+  }
 
 }

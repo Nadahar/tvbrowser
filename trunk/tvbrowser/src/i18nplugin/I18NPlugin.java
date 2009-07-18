@@ -57,9 +57,9 @@ public class I18NPlugin extends Plugin {
   /** Instance of this Plugin */
   private static I18NPlugin mInstance;
   
-  private int mDevider = 200;
-  
   private PluginInfo mPluginInfo;
+
+  private I18NSettings mSettings;
   
   /**
    * Constructor, stores current instance in static field
@@ -108,21 +108,17 @@ public class I18NPlugin extends Plugin {
     TranslationDialog dialog;
     
     Window parent = UiUtilities.getLastModalChildOf(getParentFrame());
-    dialog = new TranslationDialog(parent, mDevider);
+    dialog = new TranslationDialog(parent, mSettings.getDivider());
     
     layoutWindow("i18nDlg", dialog, new Dimension(800,750));
     
     dialog.setVisible(true);
-    
-    mDevider = dialog.getDeviderLocation();
+    mSettings.setDivider(dialog.getDeviderLocation());
   }
 
   @Override
-  public void loadSettings(Properties settings) {
-    String devider = settings.getProperty("DialogDevider.Location");
-    if (devider != null) {
-        mDevider = parseNumber(devider);
-    }
+  public void loadSettings(final Properties properties) {
+    mSettings = new I18NSettings(properties);
   }
   
   /**
@@ -145,20 +141,9 @@ public class I18NPlugin extends Plugin {
   
   @Override
   public Properties storeSettings() {
-    Properties prop = new Properties();
-
-    if (mDevider > 0) {
-      prop.setProperty("DialogDevider.Location", Integer.toString(mDevider));
-    }
-    
-    return prop;
+    return mSettings.storeSettings();
   }
   
-  /*
-   * (non-Javadoc)
-   * 
-   * @see devplugin.Plugin#getMarkIconFromTheme()
-   */
   @Override
   public ThemeIcon getMarkIconFromTheme() {
     return new ThemeIcon("apps", "preferences-desktop-locale", 16);

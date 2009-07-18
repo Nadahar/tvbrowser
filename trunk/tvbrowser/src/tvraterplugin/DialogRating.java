@@ -18,23 +18,6 @@
 
 package tvraterplugin;
 
-import devplugin.Program;
-import devplugin.ProgramFieldType;
-import util.ui.Localizer;
-import util.ui.TabLayout;
-import util.ui.UiUtilities;
-import util.ui.WindowClosingIf;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextPane;
-import javax.swing.SwingConstants;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -47,6 +30,23 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.text.MessageFormat;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextPane;
+import javax.swing.SwingConstants;
+
+import util.ui.Localizer;
+import util.ui.TabLayout;
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
+import devplugin.Program;
+import devplugin.ProgramFieldType;
 
 /**
  * This Dialog shows one Rating
@@ -284,21 +284,8 @@ public class DialogRating extends JDialog implements WindowClosingIf {
         _rater.getDatabase().setPersonalRating(mPersonalRating);
         setVisible(false);
 
-        if (Integer.parseInt(_rater.getSettings().getProperty("updateIntervall", "0")) == 1) {
-
-            Thread updateThread = new Thread("TV rater update") {
-
-                public void run() {
-                    System.out.println("Updater gestartet");
-                    Updater up = new Updater(_rater);
-                    up.run();
-                    if (up.wasSuccessfull()) {
-                        JOptionPane.showMessageDialog(_parent, _mLocalizer.msg("updateSuccess",
-                                "Update was successfull!"));
-                    }
-                }
-            };
-            updateThread.start();
+        if (_rater.getUpdateInterval() == UpdateInterval.OnRating) {
+          _rater.runUpdate(true, null);
         }
         
         // refresh the plugin tree as we may need to remove the just rated program

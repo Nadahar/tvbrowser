@@ -18,25 +18,20 @@ package growlplugin;
 
 import java.util.Properties;
 
+import util.settings.PropertyBasedSettings;
+
 /**
  * settings container for the Growl plugin
  * 
  * @author Bananeweizen
  * 
  */
-public class GrowlSettings {
+public final class GrowlSettings extends PropertyBasedSettings {
   private static final String KEY_DESCRIPTION = "description";
   private static final String KEY_TITLE = "title";
 
-  private Properties mProperties;
-
   public GrowlSettings(final Properties properties) {
-    if (properties == null) {
-      mProperties = new Properties();
-    }
-    else {
-      mProperties = properties;
-    }
+    super(properties);
   }
 
   /**
@@ -45,8 +40,7 @@ public class GrowlSettings {
    * @return the title
    */
   public String getTitle() {
-    return mProperties
-        .getProperty(KEY_TITLE,
+    return get(KEY_TITLE,
             "{leadingZero(start_hour,\"2\")}:{leadingZero(start_minute,\"2\")} {title}");
   }
 
@@ -56,19 +50,14 @@ public class GrowlSettings {
    * @return the description
    */
   public String getDescription() {
-    return mProperties.getProperty(KEY_DESCRIPTION,
-        "{channel_name}\n{short_info}");
-  }
-
-  protected Properties store() {
-    return mProperties;
+    return get(KEY_DESCRIPTION,"{channel_name}\n{short_info}");
   }
 
   public void setTitle(final String title) {
-    mProperties.setProperty(KEY_TITLE, title);
+    set(KEY_TITLE, title);
   }
 
   public void setDescription(final String description) {
-    mProperties.setProperty(KEY_DESCRIPTION, description);
+    set(KEY_DESCRIPTION, description);
   }
 }

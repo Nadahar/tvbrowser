@@ -40,9 +40,6 @@ import captureplugin.drivers.DeviceIf;
  */
 public class DeviceTableCellRenderer extends DefaultTableCellRenderer {
 
-    /* (non-Javadoc)
-     * @see javax.swing.ListCellRenderer#getListCellRendererComponent(javax.swing.JList, java.lang.Object, int, boolean, boolean)
-     */
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         

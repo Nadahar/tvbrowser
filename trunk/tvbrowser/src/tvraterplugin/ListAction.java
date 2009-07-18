@@ -82,9 +82,6 @@ public class ListAction extends AbstractAction {
             putValue(Action.SMALL_ICON, TVBrowserIcons.search(TVBrowserIcons.SIZE_SMALL));
     }
 
-    /* (non-Javadoc)
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
     public void actionPerformed(ActionEvent e) {
         ProgramListDialog dialog = new ProgramListDialog(mParent, _title);
         

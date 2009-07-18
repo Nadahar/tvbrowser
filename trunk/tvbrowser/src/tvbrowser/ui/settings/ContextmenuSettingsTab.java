@@ -59,8 +59,8 @@ import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 import util.ui.customizableitems.SortableItemList;
 
+import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.factories.DefaultComponentFactory;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
@@ -86,12 +86,12 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
   public JPanel createSettingsPanel() {
     createList();
     
-    JPanel contentPanel = new JPanel(new FormLayout("5dlu, pref, 3dlu, pref, fill:pref:grow, 3dlu",
+    PanelBuilder contentPanel = new PanelBuilder(new FormLayout("5dlu, pref, 3dlu, pref, fill:pref:grow, 3dlu",
         "pref, 5dlu, pref, 3dlu, fill:pref:grow"));
     contentPanel.setBorder(Borders.DIALOG_BORDER);
 
     CellConstraints cc = new CellConstraints();
-    contentPanel.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("title", "Title")), cc.xyw(1,
+    contentPanel.addSeparator(mLocalizer.msg("title", "Title"), cc.xyw(1,
         1, 6));
 
     contentPanel.add(UiUtilities.createHelpTextArea(mLocalizer.msg("ItemOrder", "Item Order:")), cc.xyw(2, 3, 4));
@@ -100,7 +100,7 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
 
     fillListbox();
 
-    return contentPanel;
+    return contentPanel.getPanel();
   }
 
   private void createList() {

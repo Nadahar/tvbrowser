@@ -208,11 +208,6 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
   public void tableCellUpdated(int col, int row) {
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see java.awt.event.MouseWheelListener#mouseWheelMoved(java.awt.event.MouseWheelEvent)
-   */
   public void mouseWheelMoved(MouseWheelEvent e) {
 
     if (e.getScrollType() == MouseWheelEvent.WHEEL_UNIT_SCROLL) {

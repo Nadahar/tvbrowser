@@ -125,11 +125,6 @@ public final class ColorProperty extends Property {
         return str;
     }
     
-    /*
-     * (non-Javadoc)
-     * 
-     * @see util.settings.Property#clearCache()
-     */
     protected void clearCache() {
         mIsCacheFilled = false;
     }

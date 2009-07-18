@@ -186,10 +186,6 @@ public class ChannelGroupInfoDialog extends JDialog implements WindowClosingIf{
     return html.toString();
   }
 
-  /*
-   * (non-Javadoc)
-   * @see util.ui.WindowClosingIf#close()
-   */
   public void close() {
     setVisible(false);
   }

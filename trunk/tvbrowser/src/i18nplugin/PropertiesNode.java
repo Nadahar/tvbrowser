@@ -288,11 +288,6 @@ public class PropertiesNode extends AbstractHierarchicalNode implements
         locale).getProperty(key) != null));
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see i18nplugin.LanguageNodeIf#save()
-   */
   public void save() throws IOException {
     Set<Locale> keys = mUserPropertyMap.keySet();
     for (Locale locale : keys) {

@@ -54,9 +54,6 @@ public class GenreComboBox extends JComboBox implements ListCellRenderer, Compar
     }
     
     
-    /* (non-Javadoc)
-     * @see javax.swing.ListCellRenderer#getListCellRendererComponent(javax.swing.JList, java.lang.Object, int, boolean, boolean)
-     */
     public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
             boolean cellHasFocus) {
 

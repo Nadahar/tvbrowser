@@ -52,7 +52,7 @@ import javax.swing.event.DocumentListener;
 import util.ui.customizableitems.SelectableItemList;
 
 import com.jgoodies.forms.builder.DefaultFormBuilder;
-import com.jgoodies.forms.factories.DefaultComponentFactory;
+import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
@@ -147,8 +147,8 @@ public class SearchForm extends JPanel {
     FormLayout layoutOptions = new FormLayout("3dlu, pref, fill:pref:grow","pref, 3dlu, pref, pref, pref, pref, pref, 3dlu, pref");
 
     JPanel topPanel = new JPanel(layoutTop);
-    JPanel searchInPanel = new JPanel(layoutSearchIn);
-    JPanel optionsPanel = new JPanel(layoutOptions);
+    PanelBuilder searchInPanel = new PanelBuilder(layoutSearchIn);
+    PanelBuilder optionsPanel = new PanelBuilder(layoutOptions);
 
     DefaultFormBuilder topBuilder = new DefaultFormBuilder(layoutTop, topPanel);
 
@@ -189,7 +189,7 @@ public class SearchForm extends JPanel {
     bg = new ButtonGroup();
     String msg;
     
-    searchInPanel.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("searchIn", "Search in")), cc.xyw(1,1,2));
+    searchInPanel.addSeparator(mLocalizer.msg("searchIn", "Search in"), cc.xyw(1,1,2));
 
     ActionListener updateEnabledListener = new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
@@ -225,7 +225,7 @@ public class SearchForm extends JPanel {
     panel.add(mChangeSearchFieldsBt, cc.xy(3,1));
     searchInPanel.add(panel, cc.xy(2,5));
 
-    optionsPanel.add(DefaultComponentFactory.getInstance().createSeparator(Localizer.getLocalization(Localizer.I18N_OPTIONS)), cc.xyw(1,1,3));
+    optionsPanel.addSeparator(Localizer.getLocalization(Localizer.I18N_OPTIONS), cc.xyw(1,1,3));
 
     mCaseSensitiveChB = new JCheckBox(mLocalizer.msg("caseSensitive", "Case sensitive"));
     optionsPanel.add(mCaseSensitiveChB, cc.xy(2,3));
@@ -263,14 +263,14 @@ public class SearchForm extends JPanel {
     if (layout == LAYOUT_HORIZONTAL) {
       setLayout(new FormLayout("pref:grow, 3dlu, pref:grow","pref, 3dlu, top:pref"));
       add(topPanel, cc.xyw(1,1, 3));
-      add(searchInPanel, cc.xy(1,3));
-      add(optionsPanel, cc.xy(3,3));
+      add(searchInPanel.getPanel(), cc.xy(1,3));
+      add(optionsPanel.getPanel(), cc.xy(3,3));
     }
     else if (layout == LAYOUT_VERTICAL) {
       setLayout(new FormLayout("pref:grow", "pref, 3dlu, pref, 3dlu, pref"));
       add(topPanel, cc.xy(1,1));
-      add(searchInPanel, cc.xy(1,3));
-      add(optionsPanel, cc.xy(1,5));
+      add(searchInPanel.getPanel(), cc.xy(1,3));
+      add(optionsPanel.getPanel(), cc.xy(1,5));
     }
     else {
       throw new IllegalArgumentException("invalid layout type: "+layout);

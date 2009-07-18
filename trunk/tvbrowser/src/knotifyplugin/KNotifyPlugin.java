@@ -57,7 +57,7 @@ public class KNotifyPlugin extends Plugin {
 
   boolean mInitialized = false;
 
-  private Properties mSettings;
+  private KNotifySettings mSettings;
 
   private ParamParser mParser;
 
@@ -109,9 +109,6 @@ public class KNotifyPlugin extends Plugin {
     return mVersion;
   }
 
-  /* (non-Javadoc)
-   * @see devplugin.Plugin#getMarkIconsForProgram(devplugin.Program)
-   */
   public Icon[] getMarkIconsForProgram(final Program p) {
     return new Icon[] {new ImageIcon(ImageUtilities.createImageFromJar("knotifyplugin/knotify.png", KNotifySettingsTab.class))};
   }
@@ -121,13 +118,13 @@ public class KNotifyPlugin extends Plugin {
       final ProgramReceiveTarget receiveTarget) {
     if (mInitialized) {
       for (Program program : programArr) {
-        sendToKNotify(mSettings, program);
+        sendToKNotify(program);
       }
     }
     return true;
   }
 
-  public void sendToKNotify(final Properties settings, final Program program) {
+  public void sendToKNotify(final String titleFormat, final String descriptionFormat, final Program program) {
     try {
       final ExecutionHandler executionHandler = new ExecutionHandler("dcop",
           "which");
@@ -142,10 +139,8 @@ public class KNotifyPlugin extends Plugin {
           if (mParser == null) {
             mParser = new ParamParser();
           }
-          final String title = mParser.analyse(settings.getProperty("title"),
-              program);
-          final String message = mParser.analyse(settings
-              .getProperty("description"), program);
+          final String title = mParser.analyse(titleFormat,program);
+          final String message = mParser.analyse(descriptionFormat, program);
           
           // run the notification command
           final String[] command = { dcopLocation, "knotify", "Notify",
@@ -162,6 +157,10 @@ public class KNotifyPlugin extends Plugin {
     }
   }
 
+public void sendToKNotify(final Program program) {
+  sendToKNotify(mSettings.getTitle(), mSettings.getDescription(), program);
+}
+
   @Override
   public SettingsTab getSettingsTab() {
     return new KNotifySettingsTab(this, mInitialized, mSettings);
@@ -170,16 +169,13 @@ public class KNotifyPlugin extends Plugin {
   /**
    * Load the settings for this plugin and create default values if nothing was set
    */
-  public void loadSettings(final Properties settings) {
-    mSettings = settings;
-    
-    mSettings.setProperty("title",       mSettings.getProperty("title", "{channel_name}, {leadingZero(start_hour,\"2\")}:{leadingZero(start_minute,\"2\")} - {title}"));
-    mSettings.setProperty("description", mSettings.getProperty("description", "{splitAt(short_info,\"80\")}"));
+  public void loadSettings(final Properties properties) {
+    mSettings = new KNotifySettings(properties);
   }
 
   @Override
   public Properties storeSettings() {
-    return mSettings;
+    return mSettings.storeSettings();
   }
-  
+
 }

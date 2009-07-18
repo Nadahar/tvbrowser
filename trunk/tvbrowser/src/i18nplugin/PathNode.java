@@ -66,10 +66,6 @@ public class PathNode extends AbstractHierarchicalNode implements LanguageNodeIf
     });
   }
 
-  /*
-   * (non-Javadoc)
-   * @see i18nplugin.LanguageNodeIf#save()
-   */
   public void save() throws IOException{
     int max = getChildCount();
     for (int i=0;i<max;i++) {

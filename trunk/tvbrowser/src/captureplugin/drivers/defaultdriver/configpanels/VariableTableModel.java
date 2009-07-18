@@ -74,17 +74,10 @@ public class VariableTableModel extends AbstractTableModel {
         return mData.getVariables().size()+1;
     }
 
-    
-    /* (non-Javadoc)
-     * @see javax.swing.table.AbstractTableModel#isCellEditable(int, int)
-     */
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         return columnIndex != 0;
     }
     
-    /* (non-Javadoc)
-     * @see javax.swing.table.AbstractTableModel#setValueAt(java.lang.Object, int, int)
-     */
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
 
       Variable var;

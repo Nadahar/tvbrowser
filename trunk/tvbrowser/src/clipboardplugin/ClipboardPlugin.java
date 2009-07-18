@@ -136,11 +136,6 @@ public class ClipboardPlugin extends Plugin {
     return mVersion;
   }
   
-  /*
-   * (non-Javadoc)
-   * 
-   * @see devplugin.Plugin#getInfo()
-   */
   public PluginInfo getInfo() {
     if(mPluginInfo == null) {
       String name = mLocalizer.msg("pluginName", "Clipboard");
@@ -261,10 +256,6 @@ public class ClipboardPlugin extends Plugin {
     }
   }
 
-  /*
-   * (non-Javadoc)
-   * @see devplugin.Plugin#getMarkIconFromTheme()
-   */
   @Override
   public ThemeIcon getMarkIconFromTheme() {
     return new ThemeIcon("actions", "edit-paste", 16);

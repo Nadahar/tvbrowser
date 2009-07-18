@@ -252,11 +252,6 @@ public class SearchPlugin {
     mSearchHistory = history;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see devplugin.Plugin#getSettingsTab()
-   */
   public SettingsTab getSettingsTab() {
     return new SearchSettingsTab();
   }

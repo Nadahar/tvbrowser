@@ -23,12 +23,7 @@
  */
 package i18nplugin;
 
-import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.factories.DefaultComponentFactory;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-import util.ui.Localizer;
-import util.ui.UiUtilities;
+import java.util.Locale;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -40,7 +35,13 @@ import javax.swing.UIManager;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import java.util.Locale;
+import util.ui.Localizer;
+import util.ui.UiUtilities;
+
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 
 /**
  * This is the Editor-Component. It shows the original text and a input field
@@ -79,9 +80,9 @@ public class TranslatorEditor extends JPanel {
     CellConstraints cc = new CellConstraints();
 
     // Top
-    JPanel topPanel = new JPanel(new FormLayout("fill:10dlu:grow", "pref, 5dlu, fill:pref:grow")); 
+    PanelBuilder topPanel = new PanelBuilder(new FormLayout("fill:10dlu:grow", "pref, 5dlu, fill:pref:grow")); 
     topPanel.setBorder(Borders.DLU4_BORDER);
-    topPanel.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("original","Original text")), cc.xy(1,1));
+    topPanel.addSeparator(mLocalizer.msg("original","Original text"), cc.xy(1,1));
 
     mOriginal = new JTextArea();
     mOriginal.setWrapStyleWord(false);
@@ -90,9 +91,9 @@ public class TranslatorEditor extends JPanel {
     topPanel.add(new JScrollPane(mOriginal), cc.xy(1,3));
     
     // Bottom
-    JPanel bottomPanel = new JPanel(new FormLayout("fill:10dlu:grow", "pref, 5dlu, fill:pref:grow")); 
+    PanelBuilder bottomPanel = new PanelBuilder(new FormLayout("fill:10dlu:grow", "pref, 5dlu, fill:pref:grow")); 
     bottomPanel.setBorder(Borders.DLU4_BORDER);
-    bottomPanel.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("translation","Translation")), cc.xy(1,1));
+    bottomPanel.addSeparator(mLocalizer.msg("translation","Translation"), cc.xy(1,1));
     mTranslation = new JTextArea();
     mTranslation.getDocument().addDocumentListener(new DocumentListener() {
       public void changedUpdate(DocumentEvent e) {
@@ -114,8 +115,8 @@ public class TranslatorEditor extends JPanel {
     final JSplitPane split = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
     split.setBorder(null);
     
-    split.setTopComponent(topPanel);
-    split.setBottomComponent(bottomPanel);
+    split.setTopComponent(topPanel.getPanel());
+    split.setBottomComponent(bottomPanel.getPanel());
     
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
@@ -126,15 +127,15 @@ public class TranslatorEditor extends JPanel {
     add(split, cc.xy(1,1));
     
     // translation state
-    JPanel panel = new JPanel(new FormLayout("pref, 2dlu, fill:10dlu:grow", "pref, 3dlu, pref")); 
+    PanelBuilder panel = new PanelBuilder(new FormLayout("pref, 2dlu, fill:10dlu:grow", "pref, 3dlu, pref")); 
     panel.setBorder(Borders.DLU4_BORDER);
-    panel.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("state","State")), cc.xyw(1, 1, 3));
+    panel.addSeparator(mLocalizer.msg("state","State"), cc.xyw(1, 1, 3));
     mIcon = new JLabel();
     panel.add(mIcon, cc.xy(1, 3));
     mState = new JLabel("-");
     panel.add(mState, cc.xy(3, 3));
 
-    add(panel, cc.xy(1,2));
+    add(panel.getPanel(), cc.xy(1,2));
   }
 
   /**

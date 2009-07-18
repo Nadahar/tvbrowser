@@ -56,13 +56,13 @@ public final class ToolTipControlPluginSettingsTab implements SettingsTab {
   
   public JPanel createSettingsPanel() {
     CellConstraints cc = new CellConstraints();
-    PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,default,5dlu,default","5dlu,default,5dlu,default,2dlu,default,2dlu,default"));
+    PanelBuilder pb = new PanelBuilder(new FormLayout("3dlu,pref,3dlu,pref","5dlu,default,5dlu,default,2dlu,default,2dlu,default"));
     
     mInitialSpinner = new JSpinner(new SpinnerNumberModel(Integer.parseInt(mSettings.getProperty("initialDelay")),500,5000,100));
     mDismissSpinner = new JSpinner(new SpinnerNumberModel(Integer.parseInt(mSettings.getProperty("dismissDelay")),500,20000,100));
     mReshowSpinner = new JSpinner(new SpinnerNumberModel(Integer.parseInt(mSettings.getProperty("reshowDelay")),500,5000,100));
 
-    pb.add(mEnabled = new JCheckBox(mLocalizer.msg("enabled","Show tooltips"),mSettings.getProperty("isEnabled","true").equals("true")), cc.xyw(1,2,3));
+    pb.add(mEnabled = new JCheckBox(mLocalizer.msg("enabled","Show tooltips"),mSettings.getProperty("isEnabled","true").equals("true")), cc.xyw(2,2,3));
     
     final JLabel label1 = pb.addLabel(mLocalizer.msg("initialDelay","Wait time until the tooltip should be shown (in milliseconds)"), cc.xy(2,4));
     pb.add(mInitialSpinner, cc.xy(4,4));

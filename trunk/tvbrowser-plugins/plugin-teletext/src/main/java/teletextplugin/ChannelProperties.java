@@ -23,6 +23,10 @@ import java.util.Properties;
 
 import devplugin.Channel;
 
+/**
+ * @author bananeweizen
+ *
+ */
 public abstract class ChannelProperties {
   private String mFileName;
   protected Properties mProperties;

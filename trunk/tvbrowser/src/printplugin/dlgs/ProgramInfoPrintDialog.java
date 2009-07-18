@@ -243,18 +243,10 @@ public class ProgramInfoPrintDialog implements WindowClosingIf{
     mDialog.setVisible(true);
   }
 
-  /*
-   * (non-Javadoc)
-   * @see util.ui.WindowClosingIf#close()
-   */
   public void close() {
     mDialog.dispose();
   }
 
-  /*
-   * (non-Javadoc)
-   * @see util.ui.WindowClosingIf#getRootPane()
-   */
   public JRootPane getRootPane() {
     return mDialog.getRootPane();
   }

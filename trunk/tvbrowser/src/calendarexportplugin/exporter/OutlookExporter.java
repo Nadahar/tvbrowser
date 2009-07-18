@@ -58,11 +58,6 @@ public class OutlookExporter extends AbstractExporter {
     private static int olPrivate = 2;
     private static int olConfidential = 3;
 
-    /*
-    * (non-Javadoc)
-    *
-    * @see calendarexportplugin.exporter.ExporterIf#getName()
-    */
     public String getName() {
         return mLocalizer.msg("name", "MS Outlook Calendar");
     }
@@ -130,12 +125,6 @@ public class OutlookExporter extends AbstractExporter {
         return true;
     }
 
-    /*
-    * (non-Javadoc)
-    *
-    * @see calendarexportplugin.exporter.ExporterIf#exportPrograms(devplugin.Program[],
-    *      java.util.Properties)
-    */
     public boolean exportPrograms(Program[] programs, Properties settings, AbstractPluginProgramFormating formating) {
         int classification = 0;
         try {

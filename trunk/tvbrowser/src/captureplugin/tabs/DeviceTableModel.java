@@ -24,12 +24,13 @@
  */
 package captureplugin.tabs;
 
-import captureplugin.drivers.DeviceIf;
-import devplugin.Program;
-import util.ui.Localizer;
+import java.util.ArrayList;
 
 import javax.swing.table.AbstractTableModel;
-import java.util.ArrayList;
+
+import util.ui.Localizer;
+import captureplugin.drivers.DeviceIf;
+import devplugin.Program;
 
 
 /**
@@ -91,9 +92,6 @@ public class DeviceTableModel extends AbstractTableModel {
         mPrograms.clear();
     }
     
-    /* (non-Javadoc)
-     * @see javax.swing.table.TableModel#getColumnCount()
-     */
     public int getColumnCount() {
         return 2;
     }
@@ -109,16 +107,10 @@ public class DeviceTableModel extends AbstractTableModel {
         }
     }
     
-    /* (non-Javadoc)
-     * @see javax.swing.table.TableModel#getRowCount()
-     */
     public int getRowCount() {
         return mDevices.size();
     }
 
-    /* (non-Javadoc)
-     * @see javax.swing.table.TableModel#getValueAt(int, int)
-     */
     public Object getValueAt(int rowIndex, int columnIndex) {
         
         if (rowIndex > mDevices.size()) {

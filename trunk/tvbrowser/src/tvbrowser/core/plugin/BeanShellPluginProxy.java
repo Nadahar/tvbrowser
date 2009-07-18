@@ -54,11 +54,6 @@ public class BeanShellPluginProxy extends AbstractPluginProxy {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see tvbrowser.core.plugin.AbstractPluginProxy#setParentFrame(java.awt.Frame)
-     */
     void setParentFrame(Frame parent) {
 
         if (mScript == null) { return; }
@@ -69,19 +64,9 @@ public class BeanShellPluginProxy extends AbstractPluginProxy {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see tvbrowser.core.plugin.AbstractPluginProxy#doLoadSettings(java.io.File)
-     */
     protected void doLoadSettings(File userDirectory) throws TvBrowserException {
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see tvbrowser.core.plugin.AbstractPluginProxy#doSaveSettings(java.io.File)
-     */
     protected void doSaveSettings(File userDirectory) throws TvBrowserException {
       doSaveSettings(userDirectory, true);
     }
@@ -89,11 +74,6 @@ public class BeanShellPluginProxy extends AbstractPluginProxy {
     protected void doSaveSettings(File userDirectory, boolean log) throws TvBrowserException {
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see tvbrowser.core.plugin.AbstractPluginProxy#doGetInfo()
-     */
     protected PluginInfo doGetInfo() {
         if (mScript != null) {
             try {
@@ -106,11 +86,6 @@ public class BeanShellPluginProxy extends AbstractPluginProxy {
     }
 
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see tvbrowser.core.plugin.AbstractPluginProxy#doGetSettingsTab()
-     */
     protected SettingsTabProxy doGetSettingsTab() {
         // TODO Auto-generated method stub
         return null;
@@ -169,20 +144,10 @@ public class BeanShellPluginProxy extends AbstractPluginProxy {
         return null;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see tvbrowser.core.plugin.AbstractPluginProxy#doGetMarkIcons()
-     */
     protected Icon[] doGetMarkIcons(Program p) {
         return new Icon[] {BEANICON};
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see tvbrowser.core.plugin.AbstractPluginProxy#doGetProgramTableIconText()
-     */
     protected String doGetProgramTableIconText() {
         if (mScript != null) {
             try {
@@ -194,11 +159,6 @@ public class BeanShellPluginProxy extends AbstractPluginProxy {
         return null;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see tvbrowser.core.plugin.AbstractPluginProxy#doGetProgramTableIcons(devplugin.Program)
-     */
     protected Icon[] doGetProgramTableIcons(Program program) {
         if (mScript != null) {
             try {
@@ -210,49 +170,24 @@ public class BeanShellPluginProxy extends AbstractPluginProxy {
         return null;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see tvbrowser.core.plugin.AbstractPluginProxy#doHandleTvDataUpdateFinished()
-     */
     protected void doHandleTvDataUpdateFinished() {
         // TODO Auto-generated method stub
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see tvbrowser.core.plugin.AbstractPluginProxy#doHandleTvDataAdded(devplugin.ChannelDayProgram)
-     */
     protected void doHandleTvDataAdded(ChannelDayProgram newProg) {
         // TODO Auto-generated method stub
 
     }
     
-    /* 
-     * (non-Javadoc)
-     * 
-     * @see  tvbrowser.core.plugin.AbstractPluginProxy#doHandleTvBrowserStartFinished()
-     */
     protected void doHandleTvBrowserStartFinished() {
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see tvbrowser.core.plugin.AbstractPluginProxy#doHandleTvDataDeleted(devplugin.ChannelDayProgram)
-     */
     protected void doHandleTvDataDeleted(ChannelDayProgram oldProg) {
         // TODO Auto-generated method stub
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see devplugin.PluginAccess#getId()
-     */
     public String getId() {
         return "bsh." + mBshFile.getName();
     }

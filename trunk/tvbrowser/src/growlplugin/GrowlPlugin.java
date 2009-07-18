@@ -122,7 +122,7 @@ public class GrowlPlugin extends Plugin {
   }
   
   public Properties storeSettings() {
-    return mSettings.store();
+    return mSettings.storeSettings();
   }
 
   public Icon[] getMarkIconsForProgram(final Program program) {

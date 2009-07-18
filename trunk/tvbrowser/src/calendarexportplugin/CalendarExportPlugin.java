@@ -126,7 +126,7 @@ public class CalendarExportPlugin extends Plugin {
   private static LocalPluginProgramFormating DEFAULT_CONFIG = new LocalPluginProgramFormating("calendarDefault", mLocalizer.msg("defaultName", "CalendarExportPlugin - Default"), "{channel_name} - {title}", "{channel_name} - {title}\n{leadingZero(start_day,\"2\")}.{leadingZero(start_month,\"2\")}.{start_year} {leadingZero(start_hour,\"2\")}:{leadingZero(start_minute,\"2\")}-{leadingZero(end_hour,\"2\")}:{leadingZero(end_minute,\"2\")}\n\n{splitAt(short_info,\"78\")}\n\n", "UTF-8");
 
   private AbstractPluginProgramFormating[] mConfigs = null;
-  private LocalPluginProgramFormating[] mLocalFormatings = null;
+  private LocalPluginProgramFormating[] mLocalFormattings = null;
 
   /**
    * Instance of this Plugin
@@ -170,19 +170,14 @@ public class CalendarExportPlugin extends Plugin {
   }
 
   private void createDefaultAvailable() {
-    mLocalFormatings = new LocalPluginProgramFormating[1];
-    mLocalFormatings[0] = DEFAULT_CONFIG;
+    mLocalFormattings = new LocalPluginProgramFormating[1];
+    mLocalFormattings[0] = DEFAULT_CONFIG;
   }
 
   public static Version getVersion() {
     return mVersion;
   }
 
-  /*
-  * (non-Javadoc)
-  *
-  * @see devplugin.Plugin#getInfo()
-  */
   @Override
   public PluginInfo getInfo() {
     if (mPluginInfo == null) {
@@ -197,20 +192,11 @@ public class CalendarExportPlugin extends Plugin {
     return mPluginInfo;
   }
 
-  /*
-  * (non-Javadoc)
-  * @see devplugin.Plugin#getMarkIconFromTheme()
-  */
   @Override
   public ThemeIcon getMarkIconFromTheme() {
     return new ThemeIcon("apps", "office-calendar", 16);
   }
 
-  /*
-  * (non-Javadoc)
-  *
-  * @see devplugin.Plugin#getContextMenuActions(devplugin.Program)
-  */
   @Override
   public ActionMenu getContextMenuActions(final Program program) {
     ExporterIf[] activeExporter = mExporterFactory.getActiveExporters();
@@ -491,9 +477,9 @@ public class CalendarExportPlugin extends Plugin {
     if (settings.containsKey("paramToUse")) {
       mConfigs = new AbstractPluginProgramFormating[1];
       mConfigs[0] = new LocalPluginProgramFormating(mLocalizer.msg("defaultName", "Calendar Export - Default"), "{channel_name} - {title}", settings.getProperty("paramToUse"), "UTF-8");
-      mLocalFormatings = new LocalPluginProgramFormating[1];
-      mLocalFormatings[0] = (LocalPluginProgramFormating) mConfigs[0];
-      DEFAULT_CONFIG = mLocalFormatings[0];
+      mLocalFormattings = new LocalPluginProgramFormating[1];
+      mLocalFormattings[0] = (LocalPluginProgramFormating) mConfigs[0];
+      DEFAULT_CONFIG = mLocalFormattings[0];
 
       settings.remove("paramToUse");
     }
@@ -552,10 +538,10 @@ public class CalendarExportPlugin extends Plugin {
       out.writeInt(0);
     }
 
-    if (mLocalFormatings != null) {
+    if (mLocalFormattings != null) {
       ArrayList<AbstractPluginProgramFormating> list = new ArrayList<AbstractPluginProgramFormating>();
 
-      for (AbstractPluginProgramFormating config : mLocalFormatings) {
+      for (AbstractPluginProgramFormating config : mLocalFormattings) {
         if (config != null) {
           list.add(config);
         }
@@ -614,13 +600,13 @@ public class CalendarExportPlugin extends Plugin {
 
         mConfigs = list.toArray(new AbstractPluginProgramFormating[list.size()]);
 
-        mLocalFormatings = new LocalPluginProgramFormating[in.readInt()];
+        mLocalFormattings = new LocalPluginProgramFormating[in.readInt()];
 
-        for (int i = 0; i < mLocalFormatings.length; i++) {
+        for (int i = 0; i < mLocalFormattings.length; i++) {
           LocalPluginProgramFormating value = (LocalPluginProgramFormating) AbstractPluginProgramFormating.readData(in);
-          LocalPluginProgramFormating loadedInstance = getInstanceOfFormatingFromSelected(value);
+          LocalPluginProgramFormating loadedInstance = getInstanceOfFormattingFromSelected(value);
 
-          mLocalFormatings[i] = loadedInstance == null ? value : loadedInstance;
+          mLocalFormattings[i] = loadedInstance == null ? value : loadedInstance;
         }
 
         if (version >= 4) {
@@ -674,7 +660,7 @@ public class CalendarExportPlugin extends Plugin {
     return null;
   }
 
-  private LocalPluginProgramFormating getInstanceOfFormatingFromSelected(LocalPluginProgramFormating value) {
+  private LocalPluginProgramFormating getInstanceOfFormattingFromSelected(LocalPluginProgramFormating value) {
     for (AbstractPluginProgramFormating config : mConfigs) {
       if (config.equals(value)) {
         return (LocalPluginProgramFormating) config;
@@ -684,27 +670,27 @@ public class CalendarExportPlugin extends Plugin {
     return null;
   }
 
-  protected static LocalPluginProgramFormating getDefaultFormating() {
-    return new LocalPluginProgramFormating(mLocalizer.msg("defaultName", "CliboardPlugin - Default"), "{title}", "{channel_name} - {title}\n{leadingZero(start_day,\"2\")}.{leadingZero(start_month,\"2\")}.{start_year} {leadingZero(start_hour,\"2\")}:{leadingZero(start_minute,\"2\")}-{leadingZero(end_hour,\"2\")}:{leadingZero(end_minute,\"2\")}\n\n{splitAt(short_info,\"78\")}\n\n", "UTF-8");
+  protected static LocalPluginProgramFormating getDefaultFormatting() {
+    return new LocalPluginProgramFormating(mLocalizer.msg("defaultName", "ClipboardPlugin - Default"), "{title}", "{channel_name} - {title}\n{leadingZero(start_day,\"2\")}.{leadingZero(start_month,\"2\")}.{start_year} {leadingZero(start_hour,\"2\")}:{leadingZero(start_minute,\"2\")}-{leadingZero(end_hour,\"2\")}:{leadingZero(end_minute,\"2\")}\n\n{splitAt(short_info,\"78\")}\n\n", "UTF-8");
   }
 
   protected LocalPluginProgramFormating[] getAvailableLocalPluginProgramFormatings() {
-    return mLocalFormatings;
+    return mLocalFormattings;
   }
 
   protected void setAvailableLocalPluginProgramFormatings(LocalPluginProgramFormating[] value) {
     if (value == null || value.length < 1) {
       createDefaultAvailable();
     } else {
-      mLocalFormatings = value;
+      mLocalFormattings = value;
     }
   }
 
-  protected AbstractPluginProgramFormating[] getSelectedPluginProgramFormatings() {
+  protected AbstractPluginProgramFormating[] getSelectedPluginProgramFormattings() {
     return mConfigs;
   }
 
-  protected void setSelectedPluginProgramFormatings(AbstractPluginProgramFormating[] value) {
+  protected void setSelectedPluginProgramFormattings(AbstractPluginProgramFormating[] value) {
     if (value == null || value.length < 1) {
       createDefaultConfig();
     } else {

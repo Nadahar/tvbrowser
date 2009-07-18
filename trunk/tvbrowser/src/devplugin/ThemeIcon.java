@@ -75,9 +75,6 @@ public class ThemeIcon {
     return mSize;
   }
 
-  /* (non-Javadoc)
-   * @see java.lang.Object#hashCode()
-   */
   public int hashCode() {
     final int PRIME = 31;
     int result = 1;
@@ -87,9 +84,6 @@ public class ThemeIcon {
     return result;
   }
 
-  /* (non-Javadoc)
-   * @see java.lang.Object#equals(java.lang.Object)
-   */
   public boolean equals(Object obj) {
     if (this == obj)
       return true;

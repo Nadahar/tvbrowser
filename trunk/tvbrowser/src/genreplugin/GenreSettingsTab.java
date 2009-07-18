@@ -16,14 +16,10 @@
  */
 package genreplugin;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Properties;
 
 import javax.swing.DefaultListModel;
 import javax.swing.Icon;
@@ -39,27 +35,32 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import util.ui.EnhancedPanelPuilder;
 import util.ui.Localizer;
 
-import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.builder.ButtonBarBuilder2;
+import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.SettingsTab;
 
-public class GenreSettingsTab implements SettingsTab, IGenreSettings {
+/**
+ * @author bananeweizen
+ *
+ */
+public final class GenreSettingsTab implements SettingsTab {
 
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(GenreSettingsTab.class);
   private GenrePlugin mPlugin;
   private DefaultListModel mListModel;
   private JList mFilteredGenres;
-  private Properties mSettings;
+  private GenreSettings mSettings;
   private JSpinner mSpinner;
   private JButton mAddFilter;
   private JButton mRemoveFilter;
 
   public GenreSettingsTab(final GenrePlugin plugin,
-      final ArrayList<String> hiddenGenres, final Properties settings) {
+      final ArrayList<String> hiddenGenres, final GenreSettings settings) {
     mPlugin = plugin;
     mListModel = new DefaultListModel();
     Collections.sort(hiddenGenres);
@@ -70,21 +71,21 @@ public class GenreSettingsTab implements SettingsTab, IGenreSettings {
   }
 
   public JPanel createSettingsPanel() {
-    final PanelBuilder panelBuilder = new PanelBuilder(new FormLayout(
-        "5dlu, pref, 3dlu, pref, fill:default:grow",
-        "5dlu, pref, 5dlu, pref, 2dlu, fill:default:grow, 3dlu, pref, 3dlu"));
+    final EnhancedPanelPuilder panelBuilder = new EnhancedPanelPuilder(FormFactory.RELATED_GAP_COLSPEC.encode() + "," + FormFactory.PREF_COLSPEC.encode() + "," +FormFactory.RELATED_GAP_COLSPEC.encode() + "," + FormFactory.PREF_COLSPEC.encode() + ", fill:default:grow");
     final CellConstraints cc = new CellConstraints();
 
     final JLabel label = new JLabel(mLocalizer
         .msg("daysToShow", "Days to show"));
-    panelBuilder.add(label, cc.xy(2, 2));
+
+    panelBuilder.addRow();
+    panelBuilder.add(label, cc.xy(2, panelBuilder.getRow()));
     
     final SpinnerNumberModel model = new SpinnerNumberModel(7, 1, 28, 1);
     mSpinner = new JSpinner(model);
-    mSpinner.setValue(Integer.valueOf(mSettings.getProperty(SETTINGS_DAYS, "7")));
-    panelBuilder.add(mSpinner, cc.xy(4, 2));
+    mSpinner.setValue(mSettings.getDays());
+    panelBuilder.add(mSpinner, cc.xy(4, panelBuilder.getRow()));
 
-    panelBuilder.addSeparator(mLocalizer.msg("filteredGenres", "Filtered genres"), cc.xyw(1, 4, 5));
+    panelBuilder.addParagraph(mLocalizer.msg("filteredGenres", "Filtered genres"));
 
     mFilteredGenres = new JList(mListModel);
     mFilteredGenres.setSelectedIndex(0);
@@ -95,23 +96,10 @@ public class GenreSettingsTab implements SettingsTab, IGenreSettings {
       }
     });
 
-    
-    final JPanel listPanel = new JPanel(new GridBagLayout());
-
-    final GridBagConstraints c = new GridBagConstraints();
-
-    c.gridwidth = GridBagConstraints.REMAINDER;
-    c.fill = GridBagConstraints.BOTH;
-    c.weightx = 1.0;
-    c.weighty = 1.0;
-    c.insets = new Insets(0, 0, 5, 5);
-
-    listPanel.add(new JScrollPane(mFilteredGenres), c);
-    
-    panelBuilder.add(listPanel, cc.xyw(2,6,4));
+    panelBuilder.addGrowingRow();
+    panelBuilder.add(new JScrollPane(mFilteredGenres), cc.xyw(2, panelBuilder.getRow(), panelBuilder.getColumnCount() - 1));
     
     mAddFilter = new JButton(mLocalizer.msg("addFilterBtn", "Add filter"));
-    panelBuilder.add(mAddFilter, cc.xy(2, 8));
     mAddFilter.addActionListener(new ActionListener() {
 
       public void actionPerformed(final ActionEvent e) {
@@ -125,7 +113,6 @@ public class GenreSettingsTab implements SettingsTab, IGenreSettings {
       }});
     
     mRemoveFilter = new JButton(mLocalizer.msg("removeFilterBtn", "Remove filter"));
-    panelBuilder.add(mRemoveFilter, cc.xy(4, 8));
     mRemoveFilter.addActionListener(new ActionListener() {
 
       public void actionPerformed(final ActionEvent e) {
@@ -135,6 +122,11 @@ public class GenreSettingsTab implements SettingsTab, IGenreSettings {
         }
       }});
     
+    panelBuilder.addRow();
+    ButtonBarBuilder2 buttonBar = new ButtonBarBuilder2();
+    buttonBar.addButton(new JButton[]{mAddFilter, mRemoveFilter});
+    panelBuilder.add(buttonBar.getPanel(), cc.xyw(2, panelBuilder.getRow(), panelBuilder.getColumnCount() - 1));
+
     mFilteredGenres.addListSelectionListener(new ListSelectionListener() {
       public void valueChanged(final ListSelectionEvent e) {
         mRemoveFilter.setEnabled(mFilteredGenres.getSelectedIndex() >= 0);
@@ -155,8 +147,8 @@ public class GenreSettingsTab implements SettingsTab, IGenreSettings {
   }
 
   public void saveSettings() {
-    mSettings.setProperty(SETTINGS_DAYS, mSpinner.getValue().toString());
-    mPlugin.saveSettings(mListModel.toArray());
+    mSettings.setDays((Integer) mSpinner.getValue());
+    mSettings.setHiddenGenres(mListModel.toArray());
     mPlugin.getFilterFromSettings();
     mPlugin.updateRootNode();
   }

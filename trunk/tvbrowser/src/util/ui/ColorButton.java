@@ -108,9 +108,6 @@ public class ColorButton extends JButton implements ActionListener{
       mStandardColor = color;
     }
 
-    /* (non-Javadoc)
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
     public void actionPerformed(ActionEvent e) {
         mColor = AlphaColorChooser.showDialog(UiUtilities.getBestDialogParent(getParent()),
                 mLocalizer.msg("ChooseColor", "Please choose the Color"), mColor, mStandardColor);

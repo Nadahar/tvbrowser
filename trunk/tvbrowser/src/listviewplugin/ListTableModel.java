@@ -152,29 +152,14 @@ public class ListTableModel extends AbstractTableModel {
     return -1;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see javax.swing.table.TableModel#getColumnCount()
-   */
   public int getColumnCount() {
     return 3;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see javax.swing.table.TableModel#getRowCount()
-   */
   public int getRowCount() {
     return mData.size();
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see javax.swing.table.TableModel#getValueAt(int, int)
-   */
   public Object getValueAt(final int rowIndex, final int columnIndex) {
 
     if (rowIndex > mData.size()) {

@@ -24,18 +24,19 @@
  */
 package captureplugin.drivers.defaultdriver.configpanels;
 
-import captureplugin.CapturePlugin;
-import captureplugin.drivers.defaultdriver.DeviceConfig;
-import devplugin.Channel;
-import devplugin.PluginManager;
-import util.ui.Localizer;
-
-import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.TreeMap;
+
+import javax.swing.table.AbstractTableModel;
+
+import util.ui.Localizer;
+import captureplugin.CapturePlugin;
+import captureplugin.drivers.defaultdriver.DeviceConfig;
+import devplugin.Channel;
+import devplugin.PluginManager;
 
 /**
  * TableModel for ChannelTable
@@ -118,17 +119,10 @@ public class ChannelTableModel extends AbstractTableModel {
         return mData.getChannels().size();
     }
 
-    
-    /* (non-Javadoc)
-     * @see javax.swing.table.AbstractTableModel#isCellEditable(int, int)
-     */
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         return columnIndex == 1;
     }
     
-    /* (non-Javadoc)
-     * @see javax.swing.table.AbstractTableModel#setValueAt(java.lang.Object, int, int)
-     */
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
       
       Channel key = getKeyForRow(rowIndex);

@@ -24,9 +24,9 @@
  */
 package captureplugin.drivers.defaultdriver;
 
+import util.ui.Localizer;
 import captureplugin.drivers.DeviceIf;
 import captureplugin.drivers.DriverIf;
-import util.ui.Localizer;
 
 
 /**
@@ -36,16 +36,10 @@ public class DefaultDriver implements DriverIf {
     /** Translator */
     private static final Localizer mLocalizer = Localizer.getLocalizerFor(DefaultDriver.class);
  
-    /* (non-Javadoc)
-     * @see captureplugin.drivers.DriverIf#getDriverName()
-     */
     public String getDriverName() {
         return mLocalizer.msg("Name", "Default Driver");
     }
 
-    /* (non-Javadoc)
-     * @see captureplugin.drivers.DriverIf#getDriverDesc()
-     */
     public String getDriverDesc() {
         return mLocalizer.msg("Description", "The Default Driver. A commandline/web-interface");
     }
@@ -58,9 +52,6 @@ public class DefaultDriver implements DriverIf {
         return getDriverName();
     }
 
-    /* (non-Javadoc)
-     * @see captureplugin.drivers.DriverIf#createDevice(java.lang.String)
-     */
     public DeviceIf createDevice(String name) {
         return new DefaultDevice(this, name);
     }

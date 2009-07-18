@@ -145,11 +145,6 @@ public class FilterButtons implements ActionListener {
         return result;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == mCreateFilterMI) {
             mMainFrame.showFilterDialog();

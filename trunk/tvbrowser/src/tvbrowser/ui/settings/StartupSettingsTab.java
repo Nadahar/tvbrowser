@@ -53,6 +53,7 @@ import util.ui.UiUtilities;
 import ca.beq.util.win32.registry.RegistryKey;
 import ca.beq.util.win32.registry.RootKey;
 
+import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.factories.DefaultComponentFactory;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -307,12 +308,12 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
   }
   
   private JPanel createRefreshPanel() {
-    JPanel refreshSettings = new JPanel(new FormLayout("5dlu, 9dlu, pref, 3dlu, pref, fill:3dlu:grow, 3dlu",
+    PanelBuilder refreshSettings = new PanelBuilder(new FormLayout("5dlu, 9dlu, pref, 3dlu, pref, fill:3dlu:grow, 3dlu",
     "pref, 5dlu, pref, 3dlu, pref, pref, 3dlu, pref, 5dlu, pref, 3dlu, pref"));
     
     CellConstraints cc = new CellConstraints();
     
-    refreshSettings.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("titleRefresh", "Startup")), cc.xyw(
+    refreshSettings.addSeparator(mLocalizer.msg("titleRefresh", "Startup"), cc.xyw(
         1, 1, 6));
     
     mAutoDownload = new JCheckBox(mLocalizer.msg("autoUpdate","Update TV listings automatically"));
@@ -426,7 +427,7 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
 
     setAutoDownloadEnabled(mAutoDownload.isSelected());
     
-    return refreshSettings;
+    return refreshSettings.getPanel();
   }
   
   private void setAutoDownloadEnabled(boolean enabled) {

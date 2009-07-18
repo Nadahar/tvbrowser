@@ -559,9 +559,6 @@ public class JavaPluginProxy extends AbstractPluginProxy {
     return mPlugin.getMarkPriorityForProgram(p);
   }
 
-  /* (non-Javadoc)
-   * @see tvbrowser.core.plugin.PluginProxy#getPluginFileName()
-   */
   public String getPluginFileName() {
     return mPluginFileName;
   }

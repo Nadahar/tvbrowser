@@ -32,6 +32,10 @@ import devplugin.PluginInfo;
 import devplugin.Program;
 import devplugin.Version;
 
+/**
+ * @author bananeweizen
+ *
+ */
 final public class TeleTextPlugin extends Plugin {
   private static final Version mVersion = new Version(2, 70, 8);
 

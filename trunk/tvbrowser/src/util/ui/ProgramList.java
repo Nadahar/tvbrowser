@@ -350,39 +350,19 @@ public class ProgramList extends JList implements ChangeListener,
     }
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see javax.swing.event.ChangeListener#stateChanged(javax.swing.event.ChangeEvent)
-   */
   public void stateChanged(ChangeEvent e) {
     repaint();
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see javax.swing.event.ListDataListener#contentsChanged(javax.swing.event.ListDataEvent)
-   */
   public void contentsChanged(ListDataEvent e) {
     removeFromPrograms();
     addToPrograms();
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see javax.swing.event.ListDataListener#intervalAdded(javax.swing.event.ListDataEvent)
-   */
   public void intervalAdded(ListDataEvent e) {
     addToPrograms(e.getIndex0(), e.getIndex1());
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see javax.swing.event.ListDataListener#intervalRemoved(javax.swing.event.ListDataEvent)
-   */
   public void intervalRemoved(ListDataEvent e) {
     removeFromPrograms(e.getIndex0(), e.getIndex1());
   }

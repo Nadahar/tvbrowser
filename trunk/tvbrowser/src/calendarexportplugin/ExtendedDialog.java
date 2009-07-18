@@ -71,7 +71,7 @@ public class ExtendedDialog extends JDialog {
     PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,default:grow,5dlu","pref,5dlu,fill:default:grow,5dlu,pref"), (JPanel)this.getContentPane());
     pb.setDefaultDialogBorder();
     
-    mConfigPanel = new PluginProgramConfigurationPanel(CalendarExportPlugin.getInstance().getSelectedPluginProgramFormatings(), CalendarExportPlugin.getInstance().getAvailableLocalPluginProgramFormatings(), CalendarExportPlugin.getDefaultFormating(),true,false);
+    mConfigPanel = new PluginProgramConfigurationPanel(CalendarExportPlugin.getInstance().getSelectedPluginProgramFormattings(), CalendarExportPlugin.getInstance().getAvailableLocalPluginProgramFormatings(), CalendarExportPlugin.getDefaultFormatting(),true,false);
     
     pb.addSeparator(mLocalizer.msg("title","Formatings selection"), cc.xyw(1,1,3));
     pb.add(mConfigPanel, cc.xy(2,3));
@@ -118,7 +118,7 @@ public class ExtendedDialog extends JDialog {
    */
   private void okPressed() {
     CalendarExportPlugin.getInstance().setAvailableLocalPluginProgramFormatings(mConfigPanel.getAvailableLocalPluginProgramFormatings());
-    CalendarExportPlugin.getInstance().setSelectedPluginProgramFormatings(mConfigPanel.getSelectedPluginProgramFormatings());
+    CalendarExportPlugin.getInstance().setSelectedPluginProgramFormattings(mConfigPanel.getSelectedPluginProgramFormatings());
     
     setVisible(false);
   }

@@ -356,11 +356,6 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
     }
   }
 
-  /*
-  * (non-Javadoc)
-  *
-  * @see devplugin.TvDataService#loadSettings(java.util.Properties)
-  */
   public void loadSettings(Properties settings) {
     mProperties = settings;
 
@@ -376,11 +371,6 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
     }
   }
 
-  /*
-  * (non-Javadoc)
-  *
-  * @see devplugin.TvDataService#storeSettings()
-  */
   public Properties storeSettings() {
     Properties prop = new Properties();
 
@@ -447,11 +437,6 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
     return new Version(0, 6, 1);
   }
 
-  /*
-  * (non-Javadoc)
-  *
-  * @see devplugin.TvDataService#getInfo()
-  */
   public PluginInfo getInfo() {
     return new PluginInfo(SchedulesDirectDataService.class, mLocalizer.msg("name", "Schedules Direct Data"), mLocalizer.msg("desc", "Loads data from Schedules Direct."),
             "TV-Browser Team");

@@ -1046,10 +1046,6 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
     } 
   }
 
-  /*
-   * (non-Javadoc)
-   * @see util.ui.WindowClosingIf#close()
-   */
   public void close() {
     mInstance = null;
 
@@ -1060,10 +1056,6 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
     dispose();
   }
 
-  /*
-   * (non-Javadoc)
-   * @see util.ui.ListDropAction#drop(javax.swing.JList, javax.swing.JList, int, boolean)
-   */
   public void drop(JList source, JList target, int rows, boolean move) {
     UiUtilities.moveSelectedItems(target,rows,true);
   }

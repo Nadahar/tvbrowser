@@ -34,8 +34,8 @@ import java.util.Vector;
 import javax.swing.JTable;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import util.ui.ProgramPanel;
 
+import util.ui.ProgramPanel;
 import devplugin.Program;
 
 /**
@@ -111,11 +111,6 @@ public class ListTable extends JTable implements ChangeListener {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see javax.swing.event.ChangeListener#stateChanged(javax.swing.event.ChangeEvent)
-     */
     public void stateChanged(ChangeEvent e) {
         repaint();
     }

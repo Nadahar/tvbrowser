@@ -48,6 +48,10 @@ import devplugin.ProgramInfoHelper;
 import devplugin.SettingsTab;
 import devplugin.Version;
 
+/**
+ * @author bananeweizen
+ *
+ */
 public class CheckerPlugin extends Plugin {
 
   private static final Version mVersion = new Version(0, 3, false);

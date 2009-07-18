@@ -170,10 +170,6 @@ public class MultiChannelConfigDlg extends JDialog implements ActionListener, Wi
 
   }
 
-  /*
-   * (non-Javadoc)
-   * @see util.ui.WindowClosingIf#close()
-   */
   public void close() {
     setVisible(false);
   }

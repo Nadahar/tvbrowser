@@ -28,6 +28,10 @@ import devplugin.Program;
 import devplugin.ProgramFieldType;
 import devplugin.Version;
 
+/**
+ * @author bananeweizen
+ *
+ */
 public final class CountryCodePlugin extends Plugin {
   private static final Version mVersion = new Version(2, 70, 3);
 

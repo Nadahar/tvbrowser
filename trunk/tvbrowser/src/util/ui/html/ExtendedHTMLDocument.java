@@ -65,7 +65,7 @@ public class ExtendedHTMLDocument extends HTMLDocument {
       index = mKnownCompList.size() - 1;
     }
     
-    return "<comp index=\"" + index + "\">";
+    return "<"+COMP_TAG.toString()+" index=\"" + index + "\">";
   }
   
   

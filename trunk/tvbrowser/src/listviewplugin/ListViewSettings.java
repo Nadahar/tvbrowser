@@ -31,11 +31,11 @@ import javax.swing.Icon;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 
+import util.ui.EnhancedPanelPuilder;
 import util.ui.PluginsPictureSettingsPanel;
 
-import com.jgoodies.forms.factories.DefaultComponentFactory;
+import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.SettingsTab;
 
@@ -67,8 +67,7 @@ public class ListViewSettings implements SettingsTab {
    * Create the Panel
    */
   public JPanel createSettingsPanel() {    
-    JPanel panel = new JPanel();
-    panel.setLayout(new FormLayout("5dlu,default:grow", "5dlu,default,10dlu,pref,5dlu,fill:default:grow"));
+    EnhancedPanelPuilder panel = new EnhancedPanelPuilder(FormFactory.RELATED_GAP_COLSPEC.encode() + ",default:grow");
     
     CellConstraints cc = new CellConstraints();
     
@@ -77,11 +76,15 @@ public class ListViewSettings implements SettingsTab {
 
     mPictureSettings = new PluginsPictureSettingsPanel(ListViewPlugin.getInstance().getPictureSettings(), false);
     
-    panel.add(mShowAtStart, cc.xy(2,2));
-    panel.add(DefaultComponentFactory.getInstance().createSeparator(PluginsPictureSettingsPanel.getTitle()), cc.xyw(1,4,2));
-    panel.add(mPictureSettings, cc.xy(2,6));
+    panel.addRow();
+    panel.add(mShowAtStart, cc.xy(2,panel.getRow()));
+    
+    panel.addParagraph(PluginsPictureSettingsPanel.getTitle());
+    
+    panel.addGrowingRow();
+    panel.add(mPictureSettings, cc.xy(2,panel.getRow()));
         
-    return panel;
+    return panel.getPanel();
   }
 
   /**

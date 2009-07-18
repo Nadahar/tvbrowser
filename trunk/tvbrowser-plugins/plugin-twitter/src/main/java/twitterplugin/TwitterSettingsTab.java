@@ -12,8 +12,7 @@ import javax.swing.JPanel;
 import util.paramhandler.ParamInputField;
 import util.ui.Localizer;
 
-import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.factories.DefaultComponentFactory;
+import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
@@ -30,8 +29,7 @@ public final class TwitterSettingsTab implements SettingsTab {
     final FormLayout layout = new FormLayout("3dlu,fill:min:grow,3dlu");
     final CellConstraints cc = new CellConstraints();
 
-    final JPanel panel = new JPanel(layout);
-    panel.setBorder(Borders.DLU4_BORDER);
+    final PanelBuilder panel = new PanelBuilder(layout);
     
     int line = 1;
 
@@ -69,8 +67,8 @@ public final class TwitterSettingsTab implements SettingsTab {
     layout.appendRow(RowSpec.decode("pref"));
     layout.appendRow(RowSpec.decode("3dlu"));
 
-    panel.add(DefaultComponentFactory.getInstance().createSeparator(
-        mLocalizer.msg("format", "Twitter Format")), cc.xyw(1, line += 2, 3));
+    panel.addSeparator(
+        mLocalizer.msg("format", "Twitter Format"), cc.xyw(1, line += 2, 3));
 
     layout.appendRow(RowSpec.decode("fill:min:grow"));
     layout.appendRow(RowSpec.decode("3dlu"));
@@ -79,7 +77,7 @@ public final class TwitterSettingsTab implements SettingsTab {
 
     panel.add(mFormat, cc.xy(2, line += 2));
 
-    return panel;
+    return panel.getPanel();
   }
 
   public void saveSettings() {

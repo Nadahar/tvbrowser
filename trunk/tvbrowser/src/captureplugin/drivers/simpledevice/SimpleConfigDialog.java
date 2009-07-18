@@ -210,10 +210,6 @@ public class SimpleConfigDialog extends JDialog implements WindowClosingIf {
     return mName.getText();
   }
   
-  /*
-   * (non-Javadoc)
-   * @see util.ui.WindowClosingIf#close()
-   */
   public void close() {
     setVisible(false);
   }

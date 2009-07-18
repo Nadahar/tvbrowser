@@ -44,7 +44,7 @@ import devplugin.Version;
  * @author bananeweizen
  *
  */
-public class GenrePlugin extends Plugin implements IGenreSettings {
+public class GenrePlugin extends Plugin {
 
   /**
    * plugin version
@@ -63,7 +63,7 @@ public class GenrePlugin extends Plugin implements IGenreSettings {
 
   private static GenrePlugin instance;
 
-  private Properties mSettings;
+  private GenreSettings mSettings;
   
   private ArrayList<String> hiddenGenres = new ArrayList<String>();
 
@@ -132,8 +132,7 @@ public class GenrePlugin extends Plugin implements IGenreSettings {
     currentGenres = new ArrayList<String>();
     final Channel[] channels = devplugin.Plugin.getPluginManager().getSubscribedChannels();
     Date date = Date.getCurrentDate();
-    final int maxDays = Integer.valueOf(mSettings.getProperty(SETTINGS_DAYS,
-        "7"));
+    final int maxDays = mSettings.getDays();
     for (int days = 0; days < maxDays; days++) {
       for (int i = 0; i < channels.length; ++i) {
         final Iterator<Program> iter = devplugin.Plugin.getPluginManager()
@@ -244,18 +243,15 @@ public class GenrePlugin extends Plugin implements IGenreSettings {
   }
 
   @Override
-  public void loadSettings(final Properties settings) {
-    mSettings = settings;
-    if (mSettings == null) {
-      mSettings = new Properties();
-    }
+  public void loadSettings(final Properties properties) {
+    mSettings = new GenreSettings(properties);
     getFilterFromSettings();
   }
 
   @Override
   public Properties storeSettings() {
-    saveSettings(hiddenGenres.toArray());
-    return mSettings;
+    mSettings.setHiddenGenres(hiddenGenres.toArray());
+    return mSettings.storeSettings();
   }
 
   public void hideGenre(final String genre) {
@@ -265,18 +261,8 @@ public class GenrePlugin extends Plugin implements IGenreSettings {
   }
 
   protected void getFilterFromSettings() {
-    hiddenGenres.clear();
-    final int filterCount = Integer.parseInt(mSettings.getProperty(
-        FILTERED_GENRES_COUNT, "0"));
-    for (int i = 0; i<filterCount; i++) {
-      hideGenre(mSettings.getProperty(FILTERED_GENRE + i, ""));
-    }
-  }
-
-  public void saveSettings(final Object[] hidden) {
-    mSettings.setProperty(FILTERED_GENRES_COUNT, String.valueOf(hidden.length));
-    for (int i = 0; i < hidden.length; i++) {
-      mSettings.setProperty(FILTERED_GENRE + i, (String) hidden[i]);
+    for (String genre : mSettings.getHiddenGenres()) {
+      hideGenre(genre);
     }
   }
 
@@ -305,8 +291,7 @@ public class GenrePlugin extends Plugin implements IGenreSettings {
   protected void loadRootNode(final PluginTreeNode node) {
     super.loadRootNode(node);
     // add the context menu actions after loading the tree
-    final int maxDays = Integer.valueOf(mSettings.getProperty(SETTINGS_DAYS,
-        "7"));
+    final int maxDays = mSettings.getDays();
     final PluginTreeNode[] children = node.getChildren();
     for (PluginTreeNode child : children) {
       formatGenreNode(maxDays, child);
