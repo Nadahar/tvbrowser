@@ -271,9 +271,10 @@ public abstract class SoftwareUpdateItem {
 	 * @throws TvBrowserException
 	 */
 	public boolean download(String downloadUrl) throws TvBrowserException {	 
-    String url = getProperty("downloadtype") != null
-        && getProperty("downloadtype").equalsIgnoreCase("mirrors") ? getProperty("download")
+    String url = getProperty("downloadtype") == null
+        || !getProperty("downloadtype").equalsIgnoreCase("mirrors") ? getProperty("download")
         : downloadUrl + "/" + getProperty("filename");
+    
     if (url == null) {
       throw new TvBrowserException(SoftwareUpdateItem.class, "error.2", "No Url");
     }
