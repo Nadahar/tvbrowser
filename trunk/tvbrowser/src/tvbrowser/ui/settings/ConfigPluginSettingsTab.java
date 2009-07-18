@@ -42,11 +42,11 @@ import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.plugin.SettingsTabProxy;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.exc.TvBrowserException;
+import util.ui.EnhancedPanelPuilder;
 
-import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.CancelableSettingsTab;
 
@@ -112,18 +112,27 @@ public class ConfigPluginSettingsTab implements CancelableSettingsTab {
       mPluginPanel.removeAll();
     }
     if (mPlugin.isActivated()) {
+      // active plugin with settings
       if (mSettingsTab != null) {
         mPluginPanel.add(mSettingsTab.createSettingsPanel(), BorderLayout.CENTER);
       }
+      // active plugin with no settings
+      else {
+        EnhancedPanelPuilder panel = new EnhancedPanelPuilder(FormFactory.RELATED_GAP_COLSPEC.encode() + ",pref:grow");
+        panel.addParagraph(mLocalizer.msg("noSettings", "No settings"));
+        panel.addRow();
+        panel.add(new JLabel(mLocalizer.msg("noSettings.text", "This plugin has no settings.")), new CellConstraints().xy(2, panel.getRow()));
+        mPluginPanel.add(panel.getPanel(), BorderLayout.NORTH);
+      }
     } else {
       // The plugin is not activated -> Tell it the user
-      PanelBuilder panelActivate = new PanelBuilder(new FormLayout("5dlu,pref,10dlu,pref,default:grow", "pref,5dlu,pref"));
+      EnhancedPanelPuilder panelActivate = new EnhancedPanelPuilder(FormFactory.RELATED_GAP_COLSPEC.encode() + "," + FormFactory.PREF_COLSPEC.encode() + "," + FormFactory.RELATED_GAP_COLSPEC.encode() + "," + FormFactory.PREF_COLSPEC.encode() + ",default:grow");
       CellConstraints cc = new CellConstraints();
 
-      panelActivate.addSeparator(
-          mLocalizer.msg("activation", "Activation"), cc.xyw(1, 1, 5));
+      panelActivate.addParagraph(mLocalizer.msg("activation", "Activation"));
       
-      panelActivate.add(new JLabel(mLocalizer.msg("notactivated", "This Plugin is currently not activated.")), cc.xy(2, 3));
+      panelActivate.addRow();
+      panelActivate.add(new JLabel(mLocalizer.msg("notactivated", "This Plugin is currently not activated.")), cc.xy(2, panelActivate.getRow()));
       
       final JButton btnActivate = new JButton(mLocalizer.msg("activate", "Activate"));
       btnActivate.addActionListener(new ActionListener() {
@@ -146,7 +155,7 @@ public class ConfigPluginSettingsTab implements CancelableSettingsTab {
           }
         }});
       
-      panelActivate.add(btnActivate, cc.xy(4, 3));
+      panelActivate.add(btnActivate, cc.xy(4, panelActivate.getRow()));
       mPluginPanel.add(panelActivate.getPanel(), BorderLayout.NORTH);
     }
     
