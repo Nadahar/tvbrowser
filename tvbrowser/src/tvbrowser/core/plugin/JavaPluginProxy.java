@@ -51,6 +51,7 @@ import util.ui.Localizer;
 import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 import devplugin.ActionMenu;
+import devplugin.Channel;
 import devplugin.ChannelDayProgram;
 import devplugin.ContextMenuAction;
 import devplugin.Plugin;
@@ -314,10 +315,21 @@ public class JavaPluginProxy extends AbstractPluginProxy {
    * @return the actions this plugin provides for the given program or
    *         <code>null</code> if the plugin does not provide this feature.
    */
-  protected ActionMenu goGetContextMenuActions(Program program) {
+  protected ActionMenu doGetContextMenuActions(Program program) {
     return mPlugin.getContextMenuActions(program);
   }
 
+  
+  /**
+   * Gets the actions for the context menu of a channel.
+   * 
+   * @param program The channel the context menu will be shown for.
+   * @return the actions this plugin provides for the given channel or
+   *         <code>null</code> if the plugin does not provide this feature.
+   */
+  protected ActionMenu doGetContextMenuActions(final Channel channel) {
+    return mPlugin.getContextMenuActions(channel);
+  }
   
   /**
    * Really gets the action to use for the main menu and the toolbar.

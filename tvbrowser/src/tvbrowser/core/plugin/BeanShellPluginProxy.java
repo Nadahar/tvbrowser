@@ -14,6 +14,7 @@ import tvdataservice.MutableChannelDayProgram;
 import util.exc.TvBrowserException;
 import bsh.Interpreter;
 import devplugin.ActionMenu;
+import devplugin.Channel;
 import devplugin.ChannelDayProgram;
 import devplugin.PluginInfo;
 import devplugin.PluginTreeNode;
@@ -133,12 +134,7 @@ public class BeanShellPluginProxy extends AbstractPluginProxy {
       }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see tvbrowser.core.plugin.AbstractPluginProxy#goGetContextMenuActions(devplugin.Program)
-     */
-    protected ActionMenu goGetContextMenuActions(Program program) {
+    protected ActionMenu doGetContextMenuActions(Program program) {
         if (mScript == null) { return null; }
 
         try {
@@ -154,11 +150,10 @@ public class BeanShellPluginProxy extends AbstractPluginProxy {
         return null;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see tvbrowser.core.plugin.AbstractPluginProxy#doGetButtonAction()
-     */
+    protected ActionMenu doGetContextMenuActions(final Channel channel) {
+      return null;
+    }
+
     protected ActionMenu doGetButtonAction() {
         
         if (mScript == null) { return null; }

@@ -91,21 +91,32 @@ public final class ZattooPlugin extends Plugin {
   }
 
   public ActionMenu getContextMenuActions(final Program program) {
-    if (getPluginManager().getExampleProgram().equals(program) || getChannelId(program.getChannel()) != null) {
-      final AbstractAction action = new AbstractAction() {
-        public void actionPerformed(final ActionEvent evt) {
-          SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-              openChannel(program.getChannel());
-            }
-          });
-        }
-      };
-      action.putValue(Action.NAME, mLocalizer.msg("contextMenuZattoo", "Switch Channel"));
-      action.putValue(Action.SMALL_ICON, getPluginIcon());
-      return new ActionMenu(action);
+    if (getPluginManager().getExampleProgram().equals(program) || isChannelSupported(program.getChannel())) {
+      return getSwitchActionMenu(program.getChannel());
     }
     return null;
+  }
+
+  public ActionMenu getContextMenuActions(final Channel channel) {
+    if (channel != null && isChannelSupported(channel)) {
+      return getSwitchActionMenu(channel);
+    }
+    return null;
+  }
+
+  private ActionMenu getSwitchActionMenu(final Channel channel) {
+    final AbstractAction action = new AbstractAction() {
+      public void actionPerformed(final ActionEvent evt) {
+        SwingUtilities.invokeLater(new Runnable() {
+          public void run() {
+            openChannel(channel);
+          }
+        });
+      }
+    };
+    action.putValue(Action.NAME, mLocalizer.msg("contextMenuZattoo", "Switch Channel"));
+    action.putValue(Action.SMALL_ICON, getPluginIcon());
+    return new ActionMenu(action);
   }
 
   private void openChannel(final Channel channel) {

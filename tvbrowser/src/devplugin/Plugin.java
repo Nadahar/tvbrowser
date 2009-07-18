@@ -373,7 +373,32 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
    * @see #getProgramFromContextMenuActionEvent(ActionEvent)
    */
   public ActionMenu getContextMenuActions(final Program program) {
-    // This plugin supports no context menus
+    // This plugin supports no context menus for programs
+    return null;
+  }
+
+
+  /**
+   * Gets the actions for the context menu of a channel.
+   * <p>
+   * Override this method to provide context menu items for channels.
+   * <p>
+   * The following action values will be used:
+   * <ul>
+   * <li><code>Action.NAME</code>: The text for the context menu item.</li>
+   * <li><code>Action.SMALL_ICON</code>: The icon for the context menu item.
+   * Should be 16x16.</li>
+   * </ul>
+   * 
+   * @param channel The channel the context menu will be shown for.
+   * @return the actions this plugin provides for the given program or
+   *         <code>null</code> if the plugin does not provide this feature.
+   * @since 3.0
+   * 
+   * @see #getContextMenuActions(Program)
+   */
+  public ActionMenu getContextMenuActions(final Channel channel) {
+    // This plugin supports no context menus for channels
     return null;
   }
 

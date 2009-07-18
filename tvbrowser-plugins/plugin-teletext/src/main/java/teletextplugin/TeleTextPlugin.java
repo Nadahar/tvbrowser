@@ -71,7 +71,17 @@ final public class TeleTextPlugin extends Plugin {
           "Teletext"), getPluginIcon()));
     }
 
-    final Channel channel = program.getChannel();
+    return getChannelTextAction(program.getChannel());
+  }
+  
+  public ActionMenu getContextMenuActions(final Channel channel) {
+    if (channel != null) {
+      return getChannelTextAction(channel);
+    }
+    return null;
+  }
+
+  private ActionMenu getChannelTextAction(final Channel channel) {
     final String url = mUrlProperties.getProperty(channel);
     if (url != null && url.length() > 0) {
       final Action action = new AbstractAction(mLocalizer.msg("contextMenu",

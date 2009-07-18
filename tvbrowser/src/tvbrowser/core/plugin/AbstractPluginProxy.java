@@ -39,6 +39,7 @@ import tvdataservice.MutableProgram;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
 import devplugin.ActionMenu;
+import devplugin.Channel;
 import devplugin.ChannelDayProgram;
 import devplugin.ContextMenuIf;
 import devplugin.PluginInfo;
@@ -233,7 +234,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
    */
   public final ActionMenu getContextMenuActions(Program program) {
     try {
-      ActionMenu menu = goGetContextMenuActions(program);
+      ActionMenu menu = doGetContextMenuActions(program);
 
       if (menu != null) {
         return new ActionMenuProxy(this, menu);
@@ -255,7 +256,40 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
    * 
    * @see #getContextMenuActions(Program)
    */
-  protected abstract ActionMenu goGetContextMenuActions(Program program);
+  protected abstract ActionMenu doGetContextMenuActions(Program program);
+
+  /**
+   * Gets the actions for the context menu of a channel.
+   * 
+   * @param channel The channel the context menu will be shown for.
+   * @return the actions this plugin provides for the given channel or
+   *         <code>null</code> if the plugin does not provide this feature.
+   */
+  public final ActionMenu getContextMenuActions(final Channel channel) {
+    try {
+      ActionMenu menu = doGetContextMenuActions(channel);
+
+      if (menu != null) {
+        return new ActionMenuProxy(this, menu);
+      } else {
+        return null;
+      }
+    } catch (Throwable exc) {
+      handlePluginException(exc);
+      return null;
+    }
+  }
+
+  /**
+   * Really gets the actions for the context menu of a program.
+   * 
+   * @param program The program the context menu will be shown for.
+   * @return the actions this plugin provides for the given program or
+   *         <code>null</code> if the plugin does not provide this feature.
+   * 
+   * @see #getContextMenuActions(Program)
+   */
+  protected abstract ActionMenu doGetContextMenuActions(final Channel channel);
 
   /**
    * Gets the action to use for the main menu and the toolbar.
