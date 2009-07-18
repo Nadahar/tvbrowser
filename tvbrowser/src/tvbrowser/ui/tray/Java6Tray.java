@@ -270,7 +270,7 @@ public class Java6Tray {
   public Dimension getTrayIconSize() {
     try {
       if(mSystemTray != null) {
-        mSystemTray.getTrayIconSize();
+        return mSystemTray.getTrayIconSize();
       }
     }catch(Exception e) {}
     
