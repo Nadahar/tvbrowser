@@ -114,10 +114,15 @@ public final class ZattooPlugin extends Plugin {
       return;
     }
 
+    String url = "https://watch.zattoo.com/view/" + id;
+    ExecutionHandler executionHandler = null;
     if (mSettings.getUseWebPlayer()) {
-      Launch.openURL("https://watch.zattoo.com/view/" + id);
-    } else {
-      ExecutionHandler executionHandler;
+      Launch.openURL(url);
+    }
+    else if (mSettings.getPrismPlayer()) {
+      executionHandler = new ExecutionHandler("-uri " + url + " -name tvbrowser-zattoo", "prism");
+    }
+    else {
       final String zattooURI = "zattoo://channel/" + id;
       if (OperatingSystem.isLinux()) {
         executionHandler = new ExecutionHandler(zattooURI, "zattoo-uri-handler");
@@ -127,7 +132,8 @@ public final class ZattooPlugin extends Plugin {
         executionHandler = new ExecutionHandler(
             new String[] { "rundll32.exe", "url.dll,FileProtocolHandler", zattooURI });
       }
-
+    }
+    if (executionHandler != null) {
       try {
         executionHandler.execute(false);
       } catch (IOException e) {

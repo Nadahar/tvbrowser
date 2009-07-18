@@ -18,12 +18,14 @@ package zattooplugin;
 
 import java.util.Properties;
 
-import util.misc.OperatingSystem;
-
 public class ZattooSettings {
 
-  private static final String KEY_USE_WEBPLAYER = "usewebplayer";
+  private static final String KEY_PLAYER = "PLAYER";
   private static final String KEY_COUNTRY = "COUNTRY";
+  
+  private static final int PLAYER_LOCAL = 0;
+  private static final int PLAYER_WEB = 1;
+  private static final int PLAYER_PRISM = 2;
 
   private Properties mProperties;
 
@@ -34,13 +36,17 @@ public class ZattooSettings {
   public Properties storeSettings() {
     return mProperties;
   }
-
-  public boolean getUseWebPlayer() {
-    return getProperty(KEY_USE_WEBPLAYER, !OperatingSystem.isWindows());
+  
+  private int getPlayer() {
+    return getProperty(KEY_PLAYER, ZattooPlugin.canUseLocalPlayer() ? PLAYER_LOCAL : PLAYER_WEB);
   }
 
-  private boolean getProperty(final String key, final boolean defaultValue) {
-    return Boolean.valueOf(mProperties.getProperty(key, String.valueOf(defaultValue)));
+  private int getProperty(String key, int defaultValue) {
+    return Integer.valueOf(mProperties.getProperty(key, String.valueOf(defaultValue)));
+  }
+
+  public boolean getUseWebPlayer() {
+    return PLAYER_WEB == getPlayer();
   }
 
   public String getCountry() {
@@ -51,12 +57,28 @@ public class ZattooSettings {
     mProperties.setProperty(KEY_COUNTRY, country);
   }
 
-  public void setUseWebPlayer(boolean useWeb) {
-    setProperty(KEY_USE_WEBPLAYER, useWeb);
+  public void setWebPlayer() {
+    setPlayer(PLAYER_WEB);
   }
 
-  private void setProperty(final String key, final boolean value) {
+  private void setPlayer(int player) {
+    setProperty(KEY_PLAYER, player);
+  }
+
+  private void setProperty(String key, int value) {
     mProperties.setProperty(key, String.valueOf(value));
+  }
+
+  public void setLocalPlayer() {
+    setPlayer(PLAYER_LOCAL);
+  }
+
+  public void setPrismPlayer() {
+    setPlayer(PLAYER_PRISM);
+  }
+
+  public boolean getPrismPlayer() {
+    return getPlayer() == PLAYER_PRISM;
   }
 
 }
