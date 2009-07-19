@@ -1010,10 +1010,10 @@ public class Settings {
   /** Used to enable border for on air programs */
   public static final BooleanProperty propProgramTableOnAirProgramsShowingBorder = new BooleanProperty(
       mProp, "programpanel.onAirProgramsShowingBorder", false);
-  /** Color for Program on Air - This shows how much was shown til now */
+  /** Color for Program on Air - This shows how much was shown until now */
   public static final ColorProperty propProgramTableColorOnAirDark = new ColorProperty(
       mProp, "programpanel.ColorOnAirDark", new Color(0, 0, 255, 60));
-  /** Color for Program on Air - This shows how much is not shown til now */
+  /** Color for Program on Air - This shows how much is not shown until now */
   public static final ColorProperty propProgramTableColorOnAirLight = new ColorProperty(
       mProp, "programpanel.ColorOnAirLight", new Color(0, 0, 255, 30));
   
