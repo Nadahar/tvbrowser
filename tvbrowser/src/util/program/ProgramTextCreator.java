@@ -27,12 +27,15 @@
 package util.program;
 
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 
 import tvbrowser.extras.common.InternalPluginProxyIf;
@@ -40,9 +43,11 @@ import tvbrowser.extras.common.InternalPluginProxyList;
 import tvbrowser.extras.favoritesplugin.FavoritesPluginProxy;
 import tvbrowser.extras.favoritesplugin.core.Favorite;
 import tvbrowser.extras.favoritesplugin.dlgs.FavoriteTreeModel;
+import tvbrowser.extras.programinfo.ProgramInfo;
 import util.settings.PluginPictureSettings;
 import util.settings.ProgramPanelSettings;
 import util.ui.Localizer;
+import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 import util.ui.html.ExtendedHTMLDocument;
 import util.ui.html.HTMLTextHelper;
@@ -197,6 +202,7 @@ public class ProgramTextCreator {
       Object[] fieldArr, Font tFont, Font bFont, ProgramPanelSettings settings,
       boolean showHelpLinks, int zoom, boolean showPluginIcons,
       boolean showPersonLinks) {
+    String debugTables = "0"; //set to "1" for debugging, to "0" for no debugging
     try {
     // NOTE: All field types are included until type 25 (REPETITION_ON_TYPE)
       StringBuilder buffer = new StringBuilder(1024);
@@ -220,7 +226,7 @@ public class ProgramTextCreator {
     }
 
     buffer.append("<html>");
-    buffer.append("<table width=\"100%\" style=\"font-family:");
+    buffer.append("<table width=\"100%\" border=\"" + debugTables + "\" style=\"font-family:");
 
     buffer.append(bodyFont);
 
@@ -232,7 +238,7 @@ public class ProgramTextCreator {
     channelLogo.setToolTipText(prog.getChannel().getName());
     buffer.append(doc.createCompTag(channelLogo));
     
-    buffer.append("</p></td><td>");
+    buffer.append("</p></td><td><table width=\"100%\" border=\""+ debugTables +"\"><tr><td>");
     buffer.append("<div style=\"color:#ff0000; font-size:");
 
     buffer.append(mBodyFontSize);
@@ -286,7 +292,33 @@ public class ProgramTextCreator {
       buffer.append("</div>");
     }
 
-    buffer.append("</td></tr>");
+    buffer.append("</td><td align=\"right\"><table border=\"" + debugTables +"\"><tr><td>");
+    JButton btn = new JButton(TVBrowserIcons.left(TVBrowserIcons.SIZE_LARGE));
+    buffer.append(doc.createCompTag(btn));
+    btn.addActionListener(new ActionListener() {
+
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        ProgramInfo.getInstance().historyBack();
+      }
+    });
+    btn.setEnabled(ProgramInfo.getInstance().canNavigateBack());
+    btn.setToolTipText(ProgramInfo.getInstance().navigationBackwardText());
+
+    buffer.append("</td><td>");
+    btn = new JButton(TVBrowserIcons.right(TVBrowserIcons.SIZE_LARGE));
+    buffer.append(doc.createCompTag(btn));
+    btn.addActionListener(new ActionListener() {
+
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        ProgramInfo.getInstance().historyForward();
+      }
+    });
+    btn.setEnabled(ProgramInfo.getInstance().canNavigateForward());
+    btn.setToolTipText(ProgramInfo.getInstance().navigationForwardText());
+    
+    buffer.append("</td></tr></table></td></tr></table></td></tr>");
 
     boolean show = false;
     

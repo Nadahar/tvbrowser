@@ -32,6 +32,7 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.extras.common.ConfigurationHandler;
@@ -73,6 +74,9 @@ public class ProgramInfo {
   private static boolean mIsShowing = false;
   
   private Thread mInitThread;
+  
+  private ArrayList<Program> mHistory = new ArrayList<Program>();
+  private int mHistoryIndex = 0;
 
   private ProgramInfo() {
     mInstance = this;
@@ -180,6 +184,11 @@ public class ProgramInfo {
     if (program.equals(Plugin.getPluginManager().getExampleProgram()) && showSettings) {
       return;
     }
+    // remember program for history
+    if (mHistory.isEmpty() || !mHistory.get(mHistory.size() - 1).equals(program)) {
+      mHistory.add(program);
+      mHistoryIndex = mHistory.size() - 1;
+    }
 
     synchronized (mInitThread) {
       if (mInitThread != null && mInitThread.isAlive()) {
@@ -282,6 +291,49 @@ public class ProgramInfo {
    */
   public static String getProgramInfoPluginId() {
     return DATAFILE_PREFIX;
+  }
+
+  public void historyBack() {
+    history(-1);
+  }
+
+  private void history(final int delta) {
+    mHistoryIndex += delta;
+    if (mHistoryIndex < 0) {
+      mHistoryIndex = 0;
+    }
+    if (mHistoryIndex >= mHistory.size()) {
+      mHistoryIndex = mHistory.size() - 1;
+    }
+    if (mHistoryIndex >= 0) {
+      ProgramInfoDialog.getInstance(mHistory.get(mHistoryIndex), mLeftSplit, false);
+    }
+  }
+
+  public void historyForward() {
+    history(+1);
+  }
+
+  public boolean canNavigateBack() {
+    return mHistoryIndex > 0;
+  }
+
+  public boolean canNavigateForward() {
+    return mHistoryIndex < mHistory.size() - 1;
+  }
+
+  public String navigationBackwardText() {
+    if (!canNavigateBack()) {
+      return null;
+    }
+    return mHistory.get(mHistoryIndex - 1).getTitle();
+  }
+
+  public String navigationForwardText() {
+    if (!canNavigateForward()) {
+      return null;
+    }
+    return mHistory.get(mHistoryIndex + 1).getTitle();
   }
 
 }
