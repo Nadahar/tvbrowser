@@ -428,26 +428,27 @@ public class PluginProxyManager {
     checkStateChange(item, LOADED_STATE, ACTIVATED_STATE);
 
     // Log this event
-    mLog.info("Activating plugin " + item.getPlugin().getId());
+    AbstractPluginProxy plugin = item.getPlugin();
+    mLog.info("Activating plugin " + plugin.getId());
 
     // Set the plugin active
     item.setState(ACTIVATED_STATE);
     
     // Tell the plugin that we activate it now
-    item.getPlugin().onActivation();
+    plugin.onActivation();
 
     // Get the user directory
     String userDirectoryName = Settings.getUserSettingsDirName();
     File userDirectory = new File(userDirectoryName);
         
     // Load the plugin settings
-    item.getPlugin().loadSettings(userDirectory);
+    plugin.loadSettings(userDirectory);
 
     // Clear the activated plugins cache
     mActivatedPluginCache = null;
-
+    
     // Inform the listeners
-    firePluginActivated(item.getPlugin());
+    firePluginActivated(plugin);
   }
 
   /**
@@ -808,7 +809,7 @@ public class PluginProxyManager {
       }
     }
 
-    // Nothing fonnd
+    // Nothing found
     mLog.warning("Unknown plugin: " + plugin.getId());
     return null;
   }

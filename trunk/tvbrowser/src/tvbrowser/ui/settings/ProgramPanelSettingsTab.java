@@ -150,21 +150,17 @@ public class ProgramPanelSettingsTab implements SettingsTab {
     final ArrayList<IconPlugin> list = new ArrayList<IconPlugin>();
     
     list.addAll(getFormatIconNames());
-    // list.add(new IconPlugin(mLocalizer.msg("programInfo", "Infos")));
     list.add(new IconPlugin(PICTURE_ICON_NAME));
     
-    final PluginProxy[] pluginArr = PluginProxyManager.getInstance()
-        .getActivatedPlugins();
-    for (PluginProxy pluginProxy : pluginArr) {
-      final String iconText = pluginProxy.getProgramTableIconText();
+    for (PluginProxy plugin : PluginProxyManager.getInstance()
+        .getActivatedPlugins()) {
+      final String iconText = plugin.getProgramTableIconText();
       if (iconText != null) {
-        list.add(new IconPlugin(pluginProxy));
+        list.add(new IconPlugin(plugin));
       }
     }
     
-    final IconPlugin[] asArr = new IconPlugin[list.size()];
-    list.toArray(asArr);
-    return asArr;
+    return list.toArray(new IconPlugin[list.size()]);
   }
 
 
@@ -186,9 +182,7 @@ public class ProgramPanelSettingsTab implements SettingsTab {
       }
     }
 
-    final IconPlugin[] asArr = new IconPlugin[list.size()];
-    list.toArray(asArr);
-    return asArr;
+    return list.toArray(new IconPlugin[list.size()]);
   }
 
   
@@ -225,9 +219,7 @@ public class ProgramPanelSettingsTab implements SettingsTab {
       }
     }
     
-    ProgramFieldType[] typeArr = new ProgramFieldType[typeList.size()];
-    typeList.toArray(typeArr);
-    return typeArr;
+    return typeList.toArray(new ProgramFieldType[typeList.size()]);
   }
 
 

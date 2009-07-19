@@ -1007,7 +1007,7 @@ public class Settings {
       mProp, "programpanel.iconPlugins", new String[] { PICTURE_ID,INFO_ID,
           "tvraterplugin.TVRaterPlugin", });
 
-  /** Used to enable border on on air programs */
+  /** Used to enable border for on air programs */
   public static final BooleanProperty propProgramTableOnAirProgramsShowingBorder = new BooleanProperty(
       mProp, "programpanel.onAirProgramsShowingBorder", false);
   /** Color for Program on Air - This shows how much was shown til now */
