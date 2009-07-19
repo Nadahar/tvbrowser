@@ -689,27 +689,40 @@ private static Font getDynamicFontSize(Font font, int offset) {
       int borderWidth = Settings.propProgramTableOnAirProgramsShowingBorder
           .getBoolean() ? 1 : 0;
       if (mAxis == ProgramPanelSettings.X_AXIS) {
+        // horizontal filling panel
         int progressX = 0;
         if (progLength > 0) {
           progressX = elapsedMinutes * width / progLength;
         }
 
         grp.setColor(Settings.propProgramTableColorOnAirDark.getColor());
-        grp.fillRect(borderWidth, borderWidth, progressX - borderWidth, height - borderWidth);
+        int fillWidth = progressX - borderWidth;
+        if (fillWidth > 0) {
+          grp.fillRect(borderWidth, borderWidth, fillWidth, height - borderWidth);
+        }
         grp.setColor(Settings.propProgramTableColorOnAirLight.getColor());
-        grp.fillRect(progressX, borderWidth, width - progressX - borderWidth * 2, height - borderWidth);
+        fillWidth = width - progressX - borderWidth * 2;
+        if (fillWidth > 0) { 
+          grp.fillRect(progressX, borderWidth, fillWidth, height - borderWidth);
+        }
 
       } else {
+        // vertical filling panel
         int progressY = 0;
         if (progLength > 0) {
           progressY = elapsedMinutes * height / progLength;
         }
 
         grp.setColor(Settings.propProgramTableColorOnAirDark.getColor());
-        grp.fillRect(borderWidth, borderWidth, width - borderWidth * 2, progressY - borderWidth);
+        int fillHeight = progressY - borderWidth;
+        if (fillHeight > 0) {
+          grp.fillRect(borderWidth, borderWidth, width - borderWidth * 2, fillHeight);
+        }
         grp.setColor(Settings.propProgramTableColorOnAirLight.getColor());
-        grp.fillRect(borderWidth, progressY, width - borderWidth * 2, height - progressY - borderWidth);
-        
+        fillHeight = height - progressY - borderWidth;
+        if (fillHeight > 0) {
+          grp.fillRect(borderWidth, progressY, width - borderWidth * 2, fillHeight);
+        }
       }
       if (Settings.propProgramTableOnAirProgramsShowingBorder.getBoolean()) {
         grp.draw3DRect(0, 0, width - 1, height - 1, true);
