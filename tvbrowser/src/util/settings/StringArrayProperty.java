@@ -96,16 +96,12 @@ public class StringArrayProperty  extends Property {
    */
   public void addItem(String str) {
     String[] arr = getStringArray();
-
-    String[] newArr;
     if (arr == null) {
-      newArr = new String[] { str };
-      setStringArray(newArr);
+      setStringArray(new String[] { str });
     } else {
-      newArr = new String[arr.length + 1];
+      String[] newArr = new String[arr.length + 1];
       System.arraycopy(arr, 0, newArr, 0, arr.length);
       newArr[newArr.length - 1] = str;
-      
       setStringArray(newArr);
     }
   }

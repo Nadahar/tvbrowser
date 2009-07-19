@@ -69,6 +69,8 @@ import devplugin.Version;
  */
 public class PluginLoader {
 
+  private static final String PLUGIN_INSTALL_EXTENSION = ".inst";
+
   /** The logger for this class */
   private static java.util.logging.Logger mLog
       = Logger.getLogger(PluginLoader.class.getName());
@@ -83,6 +85,8 @@ public class PluginLoader {
   private HashMap<Object, File> mDeleteablePlugin;
 
   private ArrayList<PluginProxy> loadedProxies;
+  
+  private ArrayList<String> mNewInstalledPlugins = new ArrayList<String>();
   
   private PluginLoader() {
     mSuccessfullyLoadedPluginFiles = new HashSet<String>();
@@ -101,40 +105,45 @@ public class PluginLoader {
    * old version was in use.
    */
   public void installPendingPlugins() {
-    File[] fileArr = new File(Settings.propPluginsDirectory.getString()).listFiles();
-    if (fileArr == null) {
+    File[] installableFiles = new File(Settings.propPluginsDirectory.getString()).listFiles(new FilenameFilter() {
+      @Override
+      public boolean accept(File dir, String fileName) {
+        return fileName.endsWith(PLUGIN_INSTALL_EXTENSION);
+      }
+    });
+    if (installableFiles == null || installableFiles.length == 0) {
       // Nothing to do
       return;
     }
 
     // Install all pending plugins
-    for (int i = 0; i < fileArr.length; i++) {
-      if (fileArr[i].getName().endsWith(".inst")) {
-        // This plugin wants to be installed
-        String fileName = fileArr[i].getAbsolutePath();
-        String oldFileName = fileName.substring(0, fileName.length() - 5);
-        File oldFile = new File(oldFileName);
-        
-        // delete the old proxy, this will force loading of the new plugin (even if it's not active)
-        String oldProxyName = getProxyFileName(oldFile);
-        File oldProxy = new File(oldProxyName);
-        if (oldProxy.exists()) {
-          deletePluginProxy(oldProxy);
-        }
-        String oldIconName = getProxyIconFileName(oldFile);
-        File oldIcon = new File(oldIconName);
-        if (oldIcon.exists()) {
-          deletePluginProxy(oldIcon);
-        }
-
-        // Delete the old file
-        deletePluginProxy(oldFile);
-
-        // Rename the file, so the PluginLoader will install it later
-        if (!fileArr[i].renameTo(oldFile)) {
-          mLog.warning("Installing pending plugin failed: " + fileName);
-        }
+    for (File file : installableFiles) {
+      // This plugin wants to be installed
+      String fileName = file.getAbsolutePath();
+      String oldFileName = fileName.substring(0, fileName.length() - PLUGIN_INSTALL_EXTENSION.length());
+      File oldFile = new File(oldFileName);
+      
+      // delete the old proxy, this will force loading of the new plugin (even if it's not active)
+      String oldProxyName = getProxyFileName(oldFile);
+      File oldProxy = new File(oldProxyName);
+      if (oldProxy.exists()) {
+        deletePluginProxy(oldProxy);
       }
+      String oldIconName = getProxyIconFileName(oldFile);
+      File oldIcon = new File(oldIconName);
+      if (oldIcon.exists()) {
+        deletePluginProxy(oldIcon);
+      }
+
+      // Delete the old file
+      deletePluginProxy(oldFile);
+
+      // Rename the file, so the PluginLoader will install it later
+      if (!file.renameTo(oldFile)) {
+        mLog.warning("Installing pending plugin failed: " + fileName);
+      }
+      
+      mNewInstalledPlugins.add(oldFileName);
     }
   }
   
@@ -195,7 +204,15 @@ public class PluginLoader {
           javaplugin = new JavaPluginProxy((Plugin)plugin, pluginFile.getPath());
           PluginProxyManager.getInstance().registerPlugin(javaplugin);
         }
-
+        if (mNewInstalledPlugins.contains(pluginFile.getAbsolutePath())) {
+          // add this plugin to the icon settings for program panels
+          String iconText = ((Plugin)plugin).getProgramTableIconText();
+          if (iconText != null && !iconText.isEmpty()) {
+            if (!Settings.propProgramTableIconPlugins.containsItem(((Plugin)plugin).getId())) {
+              Settings.propProgramTableIconPlugins.addItem(((Plugin)plugin).getId());
+            }
+          }
+        }
         if (deleteable) {
           mDeleteablePlugin.put(javaplugin, pluginFile);
         }
@@ -205,7 +222,7 @@ public class PluginLoader {
       else if (plugin instanceof AbstractPluginProxy) {
         PluginProxyManager.getInstance().registerPlugin((AbstractPluginProxy)plugin);
         if (deleteable) {
-          mDeleteablePlugin.put((AbstractPluginProxy)plugin, pluginFile);
+          mDeleteablePlugin.put(plugin, pluginFile);
         }
       }
       else if (plugin instanceof devplugin.AbstractTvDataService) {
@@ -389,7 +406,7 @@ public class PluginLoader {
         return !("FavoritesPlugin.jar".equals(name)
                 || "ReminderPlugin.jar".equals(name)
                 || "ProgramInfo.jar".equals(name)
-                || "SearchPlugin.jar".equals(name)); 
+                || "SearchPlugin.jar".equals(name));
       }
     });
     if (fileArr == null) {
@@ -418,10 +435,10 @@ public class PluginLoader {
     String[] files = Settings.propDeleteFilesAtStart.getStringArray();
     
     if ((files != null) && (files.length > 0)) {
-      for (int i=0;i<files.length;i++) {
+      for (String file : files) {
         try {
-          mLog.info("Deleting " + files[i]);
-          new File(files[i]).delete();
+          mLog.info("Deleting " + file);
+          new File(file).delete();
         } catch (Exception e) {
           e.printStackTrace();
         }

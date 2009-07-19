@@ -579,35 +579,35 @@ private static Font getDynamicFontSize(Font font, int offset) {
       int info = program.getInfo();
       int[] infoBits = ProgramInfoHelper.getInfoBits();
       Icon[] infoIcons = ProgramInfoHelper.getInfoIcons();
-      // Add the icons for each plugin
       for (int pluginIdx = 0; pluginIdx < iconPluginArr.length; pluginIdx++) {
         if (iconPluginArr[pluginIdx].compareTo(Settings.INFO_ID) == 0) {
-
+          // old style format (with all icons)
           if ((info != -1) && (info != 0)) {
             for (int i = 0; i < infoBits.length; i++) {
               if (ProgramInfoHelper.bitSet(info,
                   infoBits[i])
                   && (infoIcons[i] != null)) {
-                // Add the icon to the list
                 iconList.add(infoIcons[i]);
               }
             }
           }
         } else if (iconPluginArr[pluginIdx].compareTo(Settings.PICTURE_ID) == 0) {
+          // picture icon
           if (mProgram.hasFieldValue(ProgramFieldType.PICTURE_TYPE)) {
             iconList.add(new ImageIcon("imgs/Info_HasPicture.png"));
           }
         } else if (iconPluginArr[pluginIdx].substring(0, 6).compareTo("FORMAT") == 0) {
+          // new style format (each icon separately)
           if ((info != -1) && (info != 0)) {
             int index = Integer.valueOf(iconPluginArr[pluginIdx].substring(7));
             if (ProgramInfoHelper.bitSet(info,
                 infoBits[index])
                 && (infoIcons[index] != null)) {
-              // Add the icon to the list
               iconList.add(infoIcons[index]);
             }
           }
         } else {
+          // plugin icons
           PluginProxy plugin = mng.getPluginForId(iconPluginArr[pluginIdx]);
 
           // Check whether this entry still uses the old class name

@@ -135,24 +135,7 @@ public class TvBrowserPictureSettingsUpdateDialog extends JDialog implements Win
       close(false);
       
       if(Settings.propPictureType.getInt() != ProgramPanelSettings.SHOW_PICTURES_NEVER) {
-        String[] icons = Settings.propProgramTableIconPlugins.getStringArray();
-                
-        boolean containsPictures = false;
-        
-        for(int i = 0; i < icons.length; i++) {
-          if(icons[i].compareTo("picture.id") == 0) {
-            containsPictures = true;
-            break;
-          }
-        }
-      
-        if(!containsPictures) {
-          String[] target = new String[icons.length + 1];
-          target[0] = "picture.id";
-          System.arraycopy(icons,0,target,1,icons.length);
-          Settings.propProgramTableIconPlugins.setStringArray(target);
-          Settings.handleChangedSettings();
-        }
+        Settings.propProgramTableIconPlugins.addItem(Settings.PICTURE_ID);
       }
     }
     else if(e.getSource() == mCancelButton)
