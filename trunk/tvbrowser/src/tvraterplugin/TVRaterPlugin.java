@@ -66,7 +66,7 @@ import devplugin.Version;
  * @author Bodo Tasche
  */
 public class TVRaterPlugin extends devplugin.Plugin {
-  private static final Version mVersion = new Version(2, 70);
+  private static final Version mVersion = new Version(2, 74);
 
   protected final static int MINLENGTH = 15;
 
@@ -461,7 +461,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
   @SuppressWarnings("unchecked")
   public Class<? extends PluginsFilterComponent>[] getAvailableFilterComponentClasses() {
     //manually cast to avoid unsafe compiler cast
-    return (Class<? extends PluginsFilterComponent>[]) new Class[] { TVRaterFilter.class };
+    return (Class<? extends PluginsFilterComponent>[]) new Class[] { TVRaterFilter.class, TVRaterFilterAllCategories.class };
   }
 
   @Override
