@@ -147,6 +147,7 @@ public class ProgramMenuItem extends JMenuItem {
     }
         
     mChannelName = new TextAreaIcon(p.getChannel().getName(), mBoldFont, Settings.propTrayChannelWidth.getInt());
+    mChannelName.setMaximumLineCount(2);
 
     if(mShowToolTip) {
       ToolTipManager toolTipManager = ToolTipManager.sharedInstance();
