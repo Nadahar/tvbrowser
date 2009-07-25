@@ -41,7 +41,7 @@ public final class ToolTipControlPlugin extends Plugin {
   private static ToolTipControlPlugin mInstance;
   
   public static Version getVersion() {
-    return new Version(0,21,false);
+    return new Version(0, 21, true);
   }
   
   /**
