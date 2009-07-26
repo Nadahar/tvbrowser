@@ -154,7 +154,11 @@ public class Localizer {
    *
    * @param clazz The Class to create the Localizer for.
    */
-  private Localizer(Class clazz) {
+  protected Localizer(Class clazz) {
+    initializeForClass(clazz);
+  }
+
+  protected void initializeForClass(Class clazz) {
     String className = clazz.getName();
     int lastDot = className.lastIndexOf('.');
     String packageName;
@@ -188,7 +192,9 @@ public class Localizer {
         mResource = new HashMap<String, String>();
         for (Enumeration<String> enumKeys = bundle.getKeys(); enumKeys.hasMoreElements();) {
           String key = enumKeys.nextElement();
-          mResource.put(key, bundle.getString(key));
+          if (key.startsWith(mKeyPrefix)) {
+            mResource.put(key, bundle.getString(key));
+          }
         }
       }
     }
@@ -196,7 +202,10 @@ public class Localizer {
       mLog.warning("ResourceBundle not found: '" + mBaseName + "'");
     }
   }
-  
+
+  protected static Localizer getCachedLocalizerFor(final Class clazz) {
+    return mLocalizerCache.get(clazz);
+  }
   
   /**
    * Gets the Localizer for the specified Class.
@@ -205,14 +214,18 @@ public class Localizer {
    * @return the Localizer for the specified Class.
    */  
   public static Localizer getLocalizerFor(Class clazz) {
-    Localizer localizer = mLocalizerCache.get(clazz);
+    Localizer localizer = getCachedLocalizerFor(clazz);
     
     if (localizer == null) {
       localizer = new Localizer(clazz);
-      mLocalizerCache.put(clazz, localizer);
+      addLocalizerToCache(clazz, localizer);
     }
     
     return localizer;
+  }
+
+  protected static void addLocalizerToCache(Class clazz, final Localizer localizer) {
+    mLocalizerCache.put(clazz, localizer);
   }
 
 

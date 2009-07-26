@@ -111,7 +111,7 @@ public class TimeBlockBackPainter extends AbstractBackPainter {
   public void paintBackground(Graphics grp, int columnWidth, int tableHeight,
       int minCol, int maxCol, Rectangle clipBounds, ProgramTableLayout layout,
       ProgramTableModel model) {
-    // We make a local copy of the block y array to get thread savety
+    // We make a local copy of the block y array to get thread safety
     // (layoutChanged() may set mBlockYArr to null during paining)
     TimeBlock[] blockArr = createBlockArray(layout, model);
     boolean toggleFlag = true;
@@ -217,10 +217,7 @@ public class TimeBlockBackPainter extends AbstractBackPainter {
     }
 
     // Create an array
-    TimeBlock[] blockArr = new TimeBlock[list.size()];
-    list.toArray(blockArr);
-
-    return blockArr;
+    return list.toArray(new TimeBlock[list.size()]);
   }
 
   /**

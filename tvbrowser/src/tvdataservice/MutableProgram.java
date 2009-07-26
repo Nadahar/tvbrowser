@@ -649,7 +649,7 @@ public class MutableProgram implements Program {
       value = validateShortInfo(value);
     }
     // filter all the duplicate origin fields
-    if (type == ProgramFieldType.ORIGIN_TYPE) {
+    if (type == ProgramFieldType.ORIGIN_TYPE || type == ProgramFieldType.GENRE_TYPE) {
       setField(type, ProgramFieldType.TEXT_FORMAT, StringPool.getString(value));
     }
     else {
