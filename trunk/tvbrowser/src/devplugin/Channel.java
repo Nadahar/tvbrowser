@@ -40,6 +40,7 @@ import javax.swing.ImageIcon;
 
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.ChannelUserSettings;
+import tvbrowser.core.tvdataservice.AbstractTvDataServiceProxy;
 import tvbrowser.core.tvdataservice.DeprecatedTvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvdataservice.TvDataService;
@@ -97,6 +98,8 @@ public class Channel implements Comparable<Channel> {
 
   /** The Default-Icon */
   private Icon mDefaultIcon;
+  
+  private AbstractTvDataServiceProxy mProxy;
 
 
   /**
@@ -604,7 +607,10 @@ public class Channel implements Comparable<Channel> {
    */
   public TvDataServiceProxy getDataServiceProxy() {
     if(mDataService != null) {
-      return new DeprecatedTvDataServiceProxy(mDataService);
+      if (mProxy == null) {
+        mProxy = new DeprecatedTvDataServiceProxy(mDataService); 
+      }
+      return mProxy;
     } else {
       return null;
     }

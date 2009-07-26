@@ -39,6 +39,7 @@ import tvbrowser.ui.settings.util.ColorButton;
 import tvbrowser.ui.settings.util.ColorLabel;
 import util.ui.Localizer;
 import util.ui.MarkPriorityComboBoxRenderer;
+import util.ui.PooledLocalizer;
 import util.ui.UiUtilities;
 
 import com.jgoodies.forms.builder.PanelBuilder;
@@ -55,7 +56,7 @@ import devplugin.SettingsTab;
  */
 public class MarkingsSettingsTab implements SettingsTab {
   /** The localizer for this class */
-  public static final Localizer mLocalizer = Localizer.getLocalizerFor(MarkingsSettingsTab.class);
+  public static final Localizer mLocalizer = PooledLocalizer.getLocalizerFor(MarkingsSettingsTab.class);
 
   private ColorLabel mProgramItemMinMarkedColorLb, mProgramItemLowerMediumMarkedColorLb, mProgramItemMediumMarkedColorLb, mProgramItemHigherMediumMarkedColorLb, mProgramItemMaxMarkedColorLb;
   private JCheckBox mProgramItemWithMarkingsIsShowingBorder, mProgramPanelUsesExtraSpaceForMarkIcons;

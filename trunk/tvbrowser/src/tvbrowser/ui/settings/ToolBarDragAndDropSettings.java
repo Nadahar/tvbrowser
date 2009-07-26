@@ -115,7 +115,7 @@ public class ToolBarDragAndDropSettings extends JDialog implements
     ((JPanel) this.getContentPane()).setBorder(BorderFactory.createEmptyBorder(
         0, 6, 2, 6));
 
-    // Initalize the buttonPanel and fill the vectors with the actions.
+    // Initialize the buttonPanel and fill the vectors with the actions.
     final DefaultToolBarModel toolbarModel = DefaultToolBarModel.getInstance();
     Action[] currentActions = toolbarModel.getActions();
 
