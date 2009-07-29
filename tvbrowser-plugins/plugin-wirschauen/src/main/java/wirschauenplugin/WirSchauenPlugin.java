@@ -37,7 +37,6 @@ import java.util.logging.Logger;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -62,7 +61,7 @@ import devplugin.Version;
 public final class WirSchauenPlugin extends Plugin {
   private static final boolean IS_STABLE = true;
 
-  private static final Version mVersion = new Version(0, 11, 0, IS_STABLE);
+  private static final Version mVersion = new Version(0, 12, 0, IS_STABLE);
 
   private static Logger mLog = Logger.getLogger(WirSchauenPlugin.class.getName());
 
@@ -77,7 +76,12 @@ public final class WirSchauenPlugin extends Plugin {
 
   private PluginInfo mPluginInfo;
 
-  private Icon mIcon;
+  private static Icon mIcon;
+  
+  /**
+   * the icon for a missing description, shown in the program table.
+   */
+  private static Icon mMissingDescriptionIcon;
   
   private PluginsProgramFilter mFilter;
 
@@ -142,18 +146,9 @@ public final class WirSchauenPlugin extends Plugin {
   /**
    * Creates the Context-Menu-Entries
    */
-  public ActionMenu getContextMenuActions(final Program program) {
-
-    String name = "";
-
-    if (program.getChannel().getDataServiceProxy() != null) {
-      name = program.getChannel().getDataServiceProxy().getId() + ":";
-    }
-
-    name = name + program.getChannel().getId();
-    
-    if (getPluginManager().getExampleProgram().equals(program) ||
-        mAllowedChannels.contains(name)) {
+  public ActionMenu getContextMenuActions(final Program program)
+  {
+    if (isProgramAllowed(program)) {
 
       final AbstractAction action = new AbstractAction() {
         public void actionPerformed(final ActionEvent evt) {
@@ -163,9 +158,9 @@ public final class WirSchauenPlugin extends Plugin {
 
       action.putValue(Action.NAME, mLocalizer.msg("contextMenu", "Recommend text for this program"));
       
-      if (mIcon == null) {
-        mIcon = new ImageIcon(getClass().getResource(
-            "icons/16x16/apps/wirschauen.png"));
+      if (mIcon == null)
+      {
+          mIcon = createImageIcon("apps", "wirschauen", 16);
       }
 
       action.putValue(Action.SMALL_ICON, mIcon);
@@ -289,6 +284,58 @@ public final class WirSchauenPlugin extends Plugin {
     }
     return new PluginsProgramFilter[] { mFilter };
   }
-  
-  
+
+    /**
+     * @see devplugin.Plugin#getProgramTableIcons(devplugin.Program)
+     */
+    @Override
+    public Icon[] getProgramTableIcons(Program program)
+    {
+        //show the icon for a missing description
+        if (isProgramAllowed(program) &&
+                (program.getShortInfo() == null || 
+                        (program.getShortInfo().indexOf("keine Beschreibung") != -1 && program.getShortInfo().indexOf("WirSchauen") != -1)))
+        {
+            if (mMissingDescriptionIcon == null)
+            {
+                mMissingDescriptionIcon = createImageIcon("apps", "wirschauen_noDesc", 16);
+            }
+            return new Icon[] {mMissingDescriptionIcon};
+        }
+        return new Icon[] {};
+    }
+
+    
+    /**
+     * @see devplugin.Plugin#getProgramTableIconText()
+     */
+    @Override
+    public String getProgramTableIconText()
+    {
+        return mLocalizer.msg("icon", "WirSchauen: Description for this program is missing");
+    }
+    
+    
+    /**
+     * checks if a program is allowed to be processed by wirschauen.
+     * the method checks, if the programs channel is in the vg media.
+     * if so, the program is allowed. im not sure if this restriction
+     * makes sense anymore.
+     *  
+     * @param program the program to be checked
+     * @return true, if the program is allowed to be processed by wirschauen
+     */
+    private boolean isProgramAllowed(Program program)
+    {
+        String name = "";
+
+        if (program.getChannel().getDataServiceProxy() != null)
+        {
+            name = program.getChannel().getDataServiceProxy().getId() + ":";
+        }
+
+        name = name + program.getChannel().getId();
+        
+        return (getPluginManager().getExampleProgram().equals(program) || mAllowedChannels.contains(name));
+    }
 }
