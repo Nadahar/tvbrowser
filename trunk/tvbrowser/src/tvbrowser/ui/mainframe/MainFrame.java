@@ -1679,7 +1679,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
               onDownloadDone();
               newTvDataAvailable(scroll);
               
-              if(Settings.propAutoUpdatePlugins.getBoolean() && (Settings.propLastPluginsUpdate.getDate() == null || Settings.propLastPluginsUpdate.getDate().addDays(7).compareTo(Date.getCurrentDate()) <= 0)) {
+              if((Settings.propLastPluginsUpdate.getDate() == null || Settings.propLastPluginsUpdate.getDate().addDays(7).compareTo(Date.getCurrentDate()) <= 0)) {
                 PluginAutoUpdater.searchForPluginUpdates(mStatusBar.getLabel());
               }
             }          
@@ -1869,7 +1869,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     }
 
     if (answer == JOptionPane.YES_OPTION) {
-      updatePlugins(PluginAutoUpdater.DEFAULT_PLUGINS_DOWNLOAD_URL, false, mStatusBar.getLabel());
+      updatePlugins(PluginAutoUpdater.DEFAULT_PLUGINS_DOWNLOAD_URL, false, mStatusBar.getLabel(),false);
     }
   }
   
@@ -1880,8 +1880,10 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
    * @param showOnlyUpdates If the dialog is only to show when updates of
    *                        installed plugins are found.
    * @param infoLabel The label to use to show infos.
+   * @param dontShowUpdateDlg If the dialog should not be shown even if updates
+   *                          are available. (User has disabled automatically plugin updates.)
    */
-  public void updatePlugins(final String baseUrl, final boolean showOnlyUpdates, final JLabel infoLabel) {
+  public void updatePlugins(final String baseUrl, final boolean showOnlyUpdates, final JLabel infoLabel, final boolean dontShowUpdateDlg) {
     new Thread("Plugin Update Thread") {
       public void run() {
         try {
@@ -1895,21 +1897,23 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
           e.printStackTrace();
         }
         
-        if (mSoftwareUpdateItems == null && !showOnlyUpdates) {
-          JOptionPane.showMessageDialog(UiUtilities.getLastModalChildOf(MainFrame.getInstance()), mLocalizer.msg("error.1",
-              "software check failed."));
-        } else if (mSoftwareUpdateItems != null && mSoftwareUpdateItems.length == 0 && !showOnlyUpdates) {
-          JOptionPane.showMessageDialog(UiUtilities.getLastModalChildOf(MainFrame.getInstance()), mLocalizer.msg("error.2",
-              "No new items available"));
-        } else if(mSoftwareUpdateItems != null && mSoftwareUpdateItems.length > 0) {
-          Window parent = UiUtilities.getLastModalChildOf(MainFrame
-              .getInstance());
-          SoftwareUpdateDlg dlg = new SoftwareUpdateDlg(parent, baseUrl,
-              showOnlyUpdates, mSoftwareUpdateItems);
-   
-          //dlg.setSoftwareUpdateItems(mSoftwareUpdateItems);
-          dlg.setLocationRelativeTo(parent);
-          dlg.setVisible(true);
+        if(!dontShowUpdateDlg) {
+          if (mSoftwareUpdateItems == null && !showOnlyUpdates) {
+            JOptionPane.showMessageDialog(UiUtilities.getLastModalChildOf(MainFrame.getInstance()), mLocalizer.msg("error.1",
+                "software check failed."));
+          } else if (mSoftwareUpdateItems != null && mSoftwareUpdateItems.length == 0 && !showOnlyUpdates) {
+            JOptionPane.showMessageDialog(UiUtilities.getLastModalChildOf(MainFrame.getInstance()), mLocalizer.msg("error.2",
+                "No new items available"));
+          } else if(mSoftwareUpdateItems != null && mSoftwareUpdateItems.length > 0) {
+            Window parent = UiUtilities.getLastModalChildOf(MainFrame
+                .getInstance());
+            SoftwareUpdateDlg dlg = new SoftwareUpdateDlg(parent, baseUrl,
+                showOnlyUpdates, mSoftwareUpdateItems);
+     
+            //dlg.setSoftwareUpdateItems(mSoftwareUpdateItems);
+            dlg.setLocationRelativeTo(parent);
+            dlg.setVisible(true);
+          }
         }
         
         Settings.propLastPluginsUpdate.setDate(Date.getCurrentDate());
@@ -2283,7 +2287,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
               // Get the plugin name
               String pluginName = jarFile.getName();
               pluginName = pluginName.substring(0, pluginName.length() - 4);
-                     
+              
               try {
                 String pluginId = "java." + pluginName.toLowerCase() + "." + pluginName;      
                 
@@ -2293,8 +2297,12 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
                 Class pluginClass = classLoader.loadClass(pluginName.toLowerCase() + "." + pluginName);
                 
                 Method getVersion = pluginClass.getMethod("getVersion",new Class[0]);
-                Version version1 = (Version)getVersion.invoke(pluginClass, new Object[0]);
-
+                System.out.println("hier " + getVersion);
+                Version version1 = null;
+                try{
+                version1 = (Version)getVersion.invoke(pluginClass, new Object[0]);
+                }catch(Throwable t1){t1.printStackTrace();}
+                
                 if (installedPlugin!=null && installedPlugin.getInfo().getVersion().compareTo(version1)>=0) {
                   alreadyInstalled.append(installedPlugin.getInfo().getName()).append("\n");
                 }
@@ -2316,9 +2324,9 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
                   write.writeBytes("stable=" + version1.isStable() + "\n");
                   write.writeBytes("download=" + jarFile.toURI().toURL() + "\n");
                   write.writeBytes("category=unknown\n");
-                  write.writeBytes("downloadtype=mirrors\n\n");
                   
                   write.close();
+                  
                 }
               }catch(Exception e) {
                 notCompatiblePlugins.append(jarFile.getName()).append("\n");
@@ -2333,7 +2341,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
           if(notCompatiblePlugins.length() > 0) {
             showInfoTextMessage(mLocalizer.msg("update.noTVBPlugin","This following files are not TV-Browser Plugins:"),notCompatiblePlugins.toString());
           }
-          
+          System.out.println(tmpFile.length());
           if(tmpFile.length() > 0) {
             java.net.URL url = tmpFile.toURI().toURL();
             SoftwareUpdater softwareUpdater = new SoftwareUpdater(url,false);
@@ -2355,7 +2363,8 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
         }
         
       } catch (UnsupportedFlavorException e) { //ignore
-      } catch (IOException e) {
+        e.printStackTrace();
+      } catch (IOException e) {e.printStackTrace();
         //ignore
       }
     }
