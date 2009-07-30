@@ -19,9 +19,9 @@
  * CVS information:
  *  $RCSfile$
  *   $Source$
- *     $Date: 2009-06-26 22:54:26 +0200 (Fr, 26 Jun 2009) $
- *   $Author: bananeweizen $
- * $Revision: 5770 $
+ *     $Date$
+ *   $Author$
+ * $Revision$
  */
 
 package tvbrowser.extras.reminderplugin;
@@ -125,6 +125,10 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
   
   private Timer mAutoCloseTimer;
   private int mRemainingSecs;
+  /**
+   * automatically close when currenttime is larger than this instant in time
+   */
+  private long mAutoCloseAtMillis;
 
   private JLabel mHeader;
   private AbstractList<ReminderListItem> mListItem;
@@ -247,6 +251,7 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
 
     // initialize close button with full text, so it can show the countdown later without size problems
     mRemainingSecs = autoCloseSecs;
+    mAutoCloseAtMillis = System.currentTimeMillis() + 1000 * autoCloseSecs;
     final JPanel btnPanel = new JPanel(new BorderLayout(10, 0));
     mCloseBtText = Localizer.getLocalization(Localizer.I18N_CLOSE);
     int seconds = mRemainingSecs;
@@ -363,9 +368,14 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
     return msg;
   }
   
-  
+  /**
+   * Although this is called once a second, we don't want to count each second
+   * individually. If the whole system is under heavy load, or hibernated the
+   * gaps between two calls may increase dramatically. The interval of 1000 ms
+   * only ensures, that this is not polled more often than once a second.
+   */  
   private void handleTimerEvent() {
-    mRemainingSecs--;
+    mRemainingSecs = Math.max(0, (int)(mAutoCloseAtMillis - System.currentTimeMillis()) / 1000);
     
     if (mRemainingSecs == 0) {
       close();
