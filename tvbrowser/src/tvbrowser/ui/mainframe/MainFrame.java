@@ -236,6 +236,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
   private boolean mSettingsWillBeOpened;
   
   private long mLastAutoUpdateRun;
+  private long mLastAutoUpdateRunBuffer;
   
   private int mAutoDownloadTimer;
   
@@ -1182,6 +1183,8 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     if(!dataServices.isEmpty() && licenseForTvDataServicesWasAccepted(dataServices.toArray(new TvDataServiceProxy[dataServices.size()]))) {
       runUpdateThread(14, dataServices.toArray(new TvDataServiceProxy[dataServices.size()]), true);
     }
+    
+    mLastAutoUpdateRun = System.currentTimeMillis();
   }
   
   /**
@@ -1523,6 +1526,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       }
     }
     
+    mLastAutoUpdateRunBuffer = mLastAutoUpdateRun;
     mLastAutoUpdateRun = System.currentTimeMillis();
     mToolBar.updateUpdateButton(true);
     mMenuBar.showStopMenuItem();
@@ -1535,7 +1539,9 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
 
     mToolBar.updateUpdateButton(false);
     mMenuBar.showUpdateMenuItem();
-
+    
+    mLastAutoUpdateRun = mLastAutoUpdateRunBuffer;
+    
     mFinderPanel.updateItems();
     resetOnAirArrays();
     mAutoDownloadTimer = -1;
@@ -2326,7 +2332,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
           Class pluginClass = classLoader.loadClass(pluginName.toLowerCase() + "." + pluginName);
 
           Method getVersion = pluginClass.getMethod("getVersion", new Class[0]);
-          System.out.println("hier " + getVersion);
+          
           Version version1 = null;
           try {
             version1 = (Version) getVersion.invoke(pluginClass, new Object[0]);
@@ -2345,7 +2351,6 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
                 + "." + version1.getSubMinor();
 
             write.seek(write.length());
-            System.out.println(pluginClass.getSuperclass());
 
             write.writeBytes("[plugin:" + pluginName + "]\n");
             write.writeBytes("name_en=" + pluginName + "\n");
@@ -2373,7 +2378,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
             notCompatiblePlugins.toString());
       }
       
-      System.out.println(tmpFile.length());
+      
       if (tmpFile.length() > 0) {
         java.net.URL url = tmpFile.toURI().toURL();
         SoftwareUpdater softwareUpdater = new SoftwareUpdater(url, false);
