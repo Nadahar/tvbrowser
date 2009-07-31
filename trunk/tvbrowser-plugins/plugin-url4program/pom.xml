@@ -1,0 +1,56 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <parent>
+    <groupId>org.tvbrowser</groupId>
+    <artifactId>tvbrowser-plugins</artifactId>
+    <version>0.1-SNAPSHOT</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.tvbrowser</groupId>
+  <artifactId>tvbrowser-plugins-url4program</artifactId>
+  <name>Url4Program Plugin</name>
+  <developers>
+    <developer>
+      <id>ds10</id>
+      <email>ds10@tvbrowser.org</email>
+    </developer>
+  </developers>
+  <licenses>
+     <license>
+      <name>GPL v3.0</name>
+      <url>http://www.gnu.org/licenses/gpl-3.0.txt</url>
+      <distribution>manual</distribution>
+     </license>
+  </licenses>   
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.5</source>
+          <target>1.5</target>
+          <encoding>UTF-8</encoding>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <finalName>URL4ProgramPlugin</finalName>
+        </configuration>
+      </plugin>
+
+    </plugins>
+  </build>
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.tvbrowser</groupId>
+      <artifactId>tvbrowser</artifactId>
+      <version>3.0-SNAPSHOT</version>
+    </dependency>
+  </dependencies>
+</project>
