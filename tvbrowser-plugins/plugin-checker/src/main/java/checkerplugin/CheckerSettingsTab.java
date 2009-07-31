@@ -22,6 +22,10 @@ import javax.swing.Icon;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 
+import com.jgoodies.forms.factories.FormFactory;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
 import devplugin.SettingsTab;
 
 /**
@@ -39,10 +43,10 @@ public class CheckerSettingsTab implements SettingsTab {
 
   @Override
   public JPanel createSettingsPanel() {
-    JPanel panel = new JPanel(new BorderLayout());
+    JPanel panel = new JPanel(new FormLayout(FormFactory.RELATED_GAP_COLSPEC.encode() + "," + FormFactory.PREF_COLSPEC.encode(), "pref"));
     mAutoStart = new JCheckBox(CheckerPlugin.mLocalizer.msg("autostart", "Run checks at startup"));
     mAutoStart.setSelected(mSettings.getAutostart());
-    panel.add(mAutoStart, BorderLayout.NORTH);
+    panel.add(mAutoStart, new CellConstraints().xy(2, 1));
     return panel;
   }
 
