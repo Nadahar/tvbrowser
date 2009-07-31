@@ -57,11 +57,14 @@ import java.io.RandomAccessFile;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.TooManyListenersException;
@@ -2218,159 +2221,182 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       mPluginView.refreshTree();
     }
   }
-
-  @Override
-  public void dragEnter(DropTargetDragEvent dtde) {
-    DataFlavor[] fl = dtde.getCurrentDataFlavors();
-    Transferable t = dtde.getTransferable();
-    
-    for(DataFlavor f :fl) {
+  
+  /**
+   * extract the drag and drop targets from the event
+   * @param transferable 
+   * @param dataFlavors 
+   * @param dtde
+   * @return
+   */
+  private File[] getDragDropPlugins(final DataFlavor[] dataFlavors, final Transferable transferable) {
+    HashSet<File> files = new HashSet<File>();
+    for(DataFlavor flavor : dataFlavors) {
       try {
-        Object data = t.getTransferData(f);
-        
+        Object data = transferable.getTransferData(flavor);
+        System.out.println(flavor);
+        System.out.println(data);
         if(data instanceof List) {
           for(Object o : ((List)data)) {
-            if(o instanceof File && ((File)o).isFile() && ((File)o).getName().toLowerCase().endsWith(".jar")) {
-              dtde.acceptDrag(dtde.getDropAction());
-            }
-            else {
-              dtde.rejectDrag();
+            if(o instanceof File) {
+              addPluginFile((File)o, files);
             }
           }
+          if (!files.isEmpty()) {
+            break;
+          }
         }
-        
+        else if (data instanceof String) {
+          String name = ((String) data).trim();
+          addPluginFile(new File(name), files);
+          try {
+            URI uri = new URI(name);
+            addPluginFile(new File(uri), files);
+          } catch (URISyntaxException e) { // ignore
+          }
+          if (!files.isEmpty()) {
+            break;
+          }
+        }
       } catch (UnsupportedFlavorException e) { //ignore
       } catch (IOException e) { //ignore
       }
+    }
+    return files.toArray(new File[files.size()]);
+  }
+
+  private void addPluginFile(final File file, final HashSet<File> files) {
+    if (file.isFile() && file.getName().toLowerCase().endsWith(".jar") && file.canRead()) {
+      files.add(file);
+    }
+  }
+
+  @Override
+  public void dragEnter(DropTargetDragEvent dtde) {
+    File[] files = getDragDropPlugins(dtde.getCurrentDataFlavors(), dtde.getTransferable());
+    if (files.length > 0) {
+      dtde.acceptDrag(dtde.getDropAction());
+    }
+    else {
+      dtde.rejectDrag();
     }
   }
 
   @Override
   public void dragExit(DropTargetEvent dte) {
-    // TODO Auto-generated method stub
-    
+    // empty
   }
 
   @Override
   public void dragOver(DropTargetDragEvent dtde) {
-    // TODO Auto-generated method stub
-    
+    // empty
   }
 
   @Override
   public void drop(DropTargetDropEvent dtde) {
-    DataFlavor[] fl = dtde.getCurrentDataFlavors();
-    Transferable t = dtde.getTransferable();
-    
     dtde.acceptDrop(dtde.getDropAction());
-    for(DataFlavor f :fl) {      
-      try {
-        Object data = t.getTransferData(f);
-        
-        if(data instanceof List) {
-          File tmpFile = File.createTempFile("plugins",".txt");
-          StringBuilder alreadyInstalled = new StringBuilder();
-          StringBuilder notCompatiblePlugins = new StringBuilder();
-          
-          for(Object o : ((List)data)) {
-            if(o instanceof File && ((File)o).isFile() && ((File)o).getName().toLowerCase().endsWith(".jar")) {
-              File jarFile = ((File)o);
-              ClassLoader classLoader = null;
-              
-              try {
-                URL[] urls = new URL[] { jarFile.toURI().toURL() };
-                classLoader = URLClassLoader.newInstance(urls, ClassLoader.getSystemClassLoader());                
-              } catch (MalformedURLException exc) {
-                
-              }
-              
-              // Get the plugin name
-              String pluginName = jarFile.getName();
-              pluginName = pluginName.substring(0, pluginName.length() - 4);
-              
-              try {
-                String pluginId = "java." + pluginName.toLowerCase() + "." + pluginName;      
-                
-                PluginProxy installedPlugin = PluginProxyManager.getInstance().getPluginForId(pluginId);
-                TvDataServiceProxy service= TvDataServiceProxyManager.getInstance().findDataServiceById(pluginName.toLowerCase()+"."+pluginName);
-                
-                Class pluginClass = classLoader.loadClass(pluginName.toLowerCase() + "." + pluginName);
-                
-                Method getVersion = pluginClass.getMethod("getVersion",new Class[0]);
-                System.out.println("hier " + getVersion);
-                Version version1 = null;
-                try{
-                version1 = (Version)getVersion.invoke(pluginClass, new Object[0]);
-                }catch(Throwable t1){t1.printStackTrace();}
-                
-                if (installedPlugin!=null && installedPlugin.getInfo().getVersion().compareTo(version1)>=0) {
-                  alreadyInstalled.append(installedPlugin.getInfo().getName()).append("\n");
-                }
-                else if(service!=null && service.getInfo().getVersion().compareTo(version1)>=0) {
-                  alreadyInstalled.append(service.getInfo().getName()).append("\n");
-                }
-                else {
-                  RandomAccessFile write = new RandomAccessFile(tmpFile,"rw");
-                  
-                  String versionString = + version1.getMajor() + "." + (version1.getMinor()/10) + (version1.getMinor()%10) + "." + version1.getSubMinor(); 
-                  
-                  write.seek(write.length());
-                  System.out.println(pluginClass.getSuperclass());
-                  
-                  write.writeBytes("[plugin:" + pluginName + "]\n");
-                  write.writeBytes("name_en=" + pluginName + "\n");
-                  write.writeBytes("filename=" + jarFile.getName() + "\n");
-                  write.writeBytes("version=" + versionString + "\n");
-                  write.writeBytes("stable=" + version1.isStable() + "\n");
-                  write.writeBytes("download=" + jarFile.toURI().toURL() + "\n");
-                  write.writeBytes("category=unknown\n");
-                  
-                  write.close();
-                  
-                }
-              }catch(Exception e) {
-                notCompatiblePlugins.append(jarFile.getName()).append("\n");
-              }
-            }
-          }
-          
-          if(alreadyInstalled.length() > 0) {
-            showInfoTextMessage(mLocalizer.msg("update.alreadyInstalled","The following Plugin in current version are already installed:"),alreadyInstalled.toString());
-          }
-          
-          if(notCompatiblePlugins.length() > 0) {
-            showInfoTextMessage(mLocalizer.msg("update.noTVBPlugin","This following files are not TV-Browser Plugins:"),notCompatiblePlugins.toString());
-          }
-          System.out.println(tmpFile.length());
-          if(tmpFile.length() > 0) {
-            java.net.URL url = tmpFile.toURI().toURL();
-            SoftwareUpdater softwareUpdater = new SoftwareUpdater(url,false);
-            mSoftwareUpdateItems = softwareUpdater
-                .getAvailableSoftwareUpdateItems();
-            
-            SoftwareUpdateDlg updateDlg = new SoftwareUpdateDlg(this,null,false,mSoftwareUpdateItems);
-            updateDlg.setVisible(true);
-            dtde.dropComplete(true);
-          }
-          else {
-            dtde.rejectDrop();
-            dtde.dropComplete(false);
-          }
-          
-          if(!tmpFile.delete()) {
-            tmpFile.deleteOnExit();
-          }
+    File[] files = getDragDropPlugins(dtde.getCurrentDataFlavors(),  dtde.getTransferable());
+    
+    try {
+      File tmpFile = File.createTempFile("plugins",".txt");
+      StringBuilder alreadyInstalled = new StringBuilder();
+      StringBuilder notCompatiblePlugins = new StringBuilder();
+
+      for (File jarFile : files) {
+        ClassLoader classLoader = null;
+
+        try {
+          URL[] urls = new URL[] { jarFile.toURI().toURL() };
+          classLoader = URLClassLoader.newInstance(urls, ClassLoader.getSystemClassLoader());
+        } catch (MalformedURLException exc) {
+
         }
-        
-      } catch (UnsupportedFlavorException e) { //ignore
-        e.printStackTrace();
-      } catch (IOException e) {e.printStackTrace();
-        //ignore
+
+        // Get the plugin name
+        String pluginName = jarFile.getName();
+        pluginName = pluginName.substring(0, pluginName.length() - 4);
+
+        try {
+          String pluginId = "java." + pluginName.toLowerCase() + "." + pluginName;
+
+          PluginProxy installedPlugin = PluginProxyManager.getInstance().getPluginForId(pluginId);
+          TvDataServiceProxy service = TvDataServiceProxyManager.getInstance().findDataServiceById(
+              pluginName.toLowerCase() + "." + pluginName);
+
+          Class pluginClass = classLoader.loadClass(pluginName.toLowerCase() + "." + pluginName);
+
+          Method getVersion = pluginClass.getMethod("getVersion", new Class[0]);
+          System.out.println("hier " + getVersion);
+          Version version1 = null;
+          try {
+            version1 = (Version) getVersion.invoke(pluginClass, new Object[0]);
+          } catch (Throwable t1) {
+            t1.printStackTrace();
+          }
+
+          if (installedPlugin != null && installedPlugin.getInfo().getVersion().compareTo(version1) >= 0) {
+            alreadyInstalled.append(installedPlugin.getInfo().getName()).append("\n");
+          } else if (service != null && service.getInfo().getVersion().compareTo(version1) >= 0) {
+            alreadyInstalled.append(service.getInfo().getName()).append("\n");
+          } else {
+            RandomAccessFile write = new RandomAccessFile(tmpFile, "rw");
+
+            String versionString = +version1.getMajor() + "." + (version1.getMinor() / 10) + (version1.getMinor() % 10)
+                + "." + version1.getSubMinor();
+
+            write.seek(write.length());
+            System.out.println(pluginClass.getSuperclass());
+
+            write.writeBytes("[plugin:" + pluginName + "]\n");
+            write.writeBytes("name_en=" + pluginName + "\n");
+            write.writeBytes("filename=" + jarFile.getName() + "\n");
+            write.writeBytes("version=" + versionString + "\n");
+            write.writeBytes("stable=" + version1.isStable() + "\n");
+            write.writeBytes("download=" + jarFile.toURI().toURL() + "\n");
+            write.writeBytes("category=unknown\n");
+
+            write.close();
+
+          }
+        } catch (Exception e) {
+          notCompatiblePlugins.append(jarFile.getName()).append("\n");
+        }
       }
-    }
-    
-    
-    
+
+      if (alreadyInstalled.length() > 0) {
+        showInfoTextMessage(mLocalizer.msg("update.alreadyInstalled",
+            "The following Plugin in current version are already installed:"), alreadyInstalled.toString());
+      }
+
+      if (notCompatiblePlugins.length() > 0) {
+        showInfoTextMessage(mLocalizer.msg("update.noTVBPlugin", "This following files are not TV-Browser Plugins:"),
+            notCompatiblePlugins.toString());
+      }
+      
+      System.out.println(tmpFile.length());
+      if (tmpFile.length() > 0) {
+        java.net.URL url = tmpFile.toURI().toURL();
+        SoftwareUpdater softwareUpdater = new SoftwareUpdater(url, false);
+        mSoftwareUpdateItems = softwareUpdater.getAvailableSoftwareUpdateItems();
+
+        SoftwareUpdateDlg updateDlg = new SoftwareUpdateDlg(this, null, false, mSoftwareUpdateItems);
+        updateDlg.setVisible(true);
+        dtde.dropComplete(true);
+      } else {
+        dtde.rejectDrop();
+        dtde.dropComplete(false);
+      }
+
+      if (!tmpFile.delete()) {
+        tmpFile.deleteOnExit();
+      }
+    } catch (MalformedURLException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }        
   }
 
   @Override
