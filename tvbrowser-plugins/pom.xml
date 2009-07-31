@@ -48,6 +48,7 @@
     <module>plugin-tvbrowsermini</module>
     <module>plugin-tvpearl</module>
     <module>plugin-twitter</module>
+    <module>plugin-url4program</module>
     <module>plugin-virtualdataservice</module>
     <module>plugin-wirschauen</module>
     <module>plugin-widget</module>
