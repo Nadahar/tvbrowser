@@ -25,7 +25,7 @@
  */
 
 
-package tvbrowser.ui.update;
+package tvbrowser.ui.mainframe;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -37,18 +37,26 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import tvbrowser.TVBrowser;
+import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
+import tvbrowser.ui.update.DataServiceSoftwareUpdateItem;
+import tvbrowser.ui.update.PluginSoftwareUpdateItem;
+import tvbrowser.ui.update.PluginsSoftwareUpdateItem;
+import tvbrowser.ui.update.SoftwareUpdateItem;
+import tvbrowser.ui.update.TvbrowserSoftwareUpdateItem;
 import util.io.IOUtilities;
 import devplugin.Version;
 
 /**
  * Loads software update information.
  */
-public class SoftwareUpdater {
+public final class SoftwareUpdater {
 	private SoftwareUpdateItem[] mSoftwareUpdateItems;
+	private String mBlockRequestingPluginId;
+	private boolean mIsRequestingBlockArrayClear;
 
 	/**
 	 * Creates an instance of this class.
@@ -57,7 +65,7 @@ public class SoftwareUpdater {
 	 * @param onlyUpdates If only updates and not new items should be accepted.
 	 * @throws IOException
 	 */
-	public SoftwareUpdater(URL url, boolean onlyUpdates) throws IOException {
+	protected SoftwareUpdater(URL url, boolean onlyUpdates) throws IOException {
 		BufferedReader reader = new BufferedReader(new InputStreamReader(IOUtilities.getStream(url, 300000),"ISO-8859-1"));
 		
 		mSoftwareUpdateItems=readSoftwareUpdateItems(reader,onlyUpdates);
@@ -71,6 +79,7 @@ public class SoftwareUpdater {
     Matcher matcher;
     
     ArrayList<SoftwareUpdateItem> updateItems = new ArrayList<SoftwareUpdateItem>();
+    ArrayList<PluginsSoftwareUpdateItem> blockedItems = new ArrayList<PluginsSoftwareUpdateItem>(0);
     
     SoftwareUpdateItem curItem=null;
     String line=reader.readLine();
@@ -81,8 +90,12 @@ public class SoftwareUpdater {
         String type=matcher.group(1);
         String className=matcher.group(2);
         
-        if ("plugin".equals(type) || "dataservice".equals(type))
-          curItem=new PluginSoftwareUpdateItem(className); 
+        if ("plugin".equals(type)) {
+          curItem=new PluginSoftwareUpdateItem(className);
+        }
+        else if ("dataservice".equals(type)) {
+          curItem=new DataServiceSoftwareUpdateItem(className);
+        }
         else if ("tvbrowser".equals(type))
           curItem=new TvbrowserSoftwareUpdateItem(className);
         
@@ -120,7 +133,23 @@ public class SoftwareUpdater {
           (maximum != null && TVBrowser.VERSION.compareTo(maximum)>0) ||
           !item.getProperty("filename").toLowerCase().endsWith(".jar") ||
           !item.isSupportingCurrentOs()) {
-        it.remove();
+        
+        /* maximum contains the block start version if this is a block plugin entry
+         * required cotains the block end version
+         */
+        if(required!=null && maximum != null && required.compareTo(maximum) > 0) {
+          if(item.getVersion().compareTo(required) <= 0 && item.getVersion().compareTo(maximum) >= 0) {
+            it.remove();
+          }
+          
+          if(item instanceof PluginsSoftwareUpdateItem) {
+            blockedItems.add((PluginsSoftwareUpdateItem)item);
+          }
+        }
+        else {
+          it.remove();
+        }
+        
         continue;
       }
       
@@ -159,13 +188,21 @@ public class SoftwareUpdater {
       }
     }
     
-    Object[]objs=updateItems.toArray();
-    SoftwareUpdateItem[] ui=new SoftwareUpdateItem[objs.length];
-    for (int i=0;i<ui.length;i++) {
-      ui[i]=(SoftwareUpdateItem)objs[i];
-    }
-    return ui;
+    mIsRequestingBlockArrayClear = true;
+    Settings.propBlockedPluginArray.clear(this);
+    mIsRequestingBlockArrayClear = false;
     
+    for(PluginsSoftwareUpdateItem blocked : blockedItems) {
+      mBlockRequestingPluginId = blocked.getId();
+      
+      Settings.propBlockedPluginArray.addBlockedPlugin(this, mBlockRequestingPluginId, blocked.getMaximumVersion(), blocked.getRequiredVersion());
+    }
+    
+    mBlockRequestingPluginId = null;
+    
+    PluginProxyManager.getInstance().firePluginBlockListRenewed();
+    
+    return updateItems.toArray(new SoftwareUpdateItem[updateItems.size()]);
   }	
 	
 	/**
@@ -175,5 +212,22 @@ public class SoftwareUpdater {
 	 */
 	public SoftwareUpdateItem[] getAvailableSoftwareUpdateItems() {		
 		return mSoftwareUpdateItems;
+	}
+	
+	/**
+	 * @param pluginId The id that is requested to be blocked.
+	 * @return <code>True</code> if this updater is requesting a block.
+	 */
+	public boolean isRequestingToBlockAPlugin(String pluginId) {
+	  return mBlockRequestingPluginId != null && pluginId != null &&
+	  mBlockRequestingPluginId.equals(pluginId);
+	}
+	
+	/**
+	 * @return <code>True</code> if this updater is requesting
+	 * to clear the block array. 
+	 */
+	public boolean isRequestingBlockArrayClear() {
+	  return mIsRequestingBlockArrayClear;
 	}
 }

@@ -132,7 +132,7 @@ public abstract class SoftwareUpdateItem {
    * is supported by the plugin, <code>false</code> otherwise.
    * @since 2.2.4/2.6 
    */
-  protected boolean isSupportingCurrentOs() {
+  public boolean isSupportingCurrentOs() {
     String prop = getProperty("os.name");
     
     if(prop == null) {

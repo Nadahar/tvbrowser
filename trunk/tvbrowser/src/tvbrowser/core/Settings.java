@@ -54,6 +54,7 @@ import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.programtable.DefaultProgramTableModel;
 import tvbrowser.ui.programtable.ProgramTableScrollPane;
+import tvbrowser.ui.settings.BlockedPluginArrayProperty;
 import tvbrowser.ui.waiting.dlgs.TvDataCopyWaitingDlg;
 import util.exc.TvBrowserException;
 import util.io.IOUtilities;
@@ -1398,6 +1399,8 @@ public class Settings {
    */
   public static final StringArrayProperty propCurrentlyUsedDataServiceIds = new StringArrayProperty(mProp, "currentDataServices", new String[0]);
 
+  public static final BlockedPluginArrayProperty propBlockedPluginArray = new BlockedPluginArrayProperty(mProp, "blockedPlugins");
+  
   /**
    * Sets the window position and size for the given window with the values of
    * the given id.

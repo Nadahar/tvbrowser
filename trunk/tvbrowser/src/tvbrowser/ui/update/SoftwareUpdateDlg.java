@@ -174,14 +174,14 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
     JPanel southPn = new JPanel(new BorderLayout());
 
     southPn.add(builder.getPanel(), BorderLayout.SOUTH);
-
+    
     mSoftwareUpdateItemList = new SelectableItemList(new Object[0],itemArr);
     mSoftwareUpdateItemList.addListSelectionListener(this);
     mSoftwareUpdateItemList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     mSoftwareUpdateItemList.setListUI(new MyListUI());
     mSoftwareUpdateItemList.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
     
-    mSoftwareUpdateItemList.addCenterRendererComponent(SoftwareUpdateItem.class,new SelectableItemRendererCenterComponentIf() {
+    mSoftwareUpdateItemList.addCenterRendererComponent(PluginsSoftwareUpdateItem.class,new SelectableItemRendererCenterComponentIf() {
       private final ImageIcon NEW_VERSION_ICON = IconLoader.getInstance().getIconFromTheme("status", "software-update-available", 16);
       
       public JPanel createCenterPanel(JList list, Object value, int index, boolean isSelected, boolean isEnabled, JScrollPane parentScrollPane, int leftColumnWidth) {

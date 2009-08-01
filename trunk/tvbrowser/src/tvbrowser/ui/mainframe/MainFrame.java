@@ -128,7 +128,6 @@ import tvbrowser.ui.settings.SettingsDialog;
 import tvbrowser.ui.update.PluginAutoUpdater;
 import tvbrowser.ui.update.SoftwareUpdateDlg;
 import tvbrowser.ui.update.SoftwareUpdateItem;
-import tvbrowser.ui.update.SoftwareUpdater;
 import util.browserlauncher.Launch;
 import util.exc.ErrorHandler;
 import util.io.IOUtilities;

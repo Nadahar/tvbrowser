@@ -474,7 +474,7 @@ public class PluginLoader {
 
 
   private Object loadJavaPlugin(File jarFile) throws TvBrowserException {
-    Object plugin;
+    Object plugin = null;
 
     // Create a class loader for the plugin
     ClassLoader classLoader;
@@ -502,6 +502,8 @@ public class PluginLoader {
       pluginName = pluginName.substring(0, pluginName.length() - 4);
     }
 
+    boolean isBlockedDataService = false;
+    
     // Create a plugin instance
     try {
       Class pluginClass = classLoader.loadClass(pluginName.toLowerCase() + "." + pluginName);
@@ -520,6 +522,10 @@ public class PluginLoader {
           return null;
         }
         
+        if(pluginClass.getSuperclass().equals(devplugin.AbstractTvDataService.class)) {
+          isBlockedDataService = Settings.propBlockedPluginArray.isBlocked(pluginName.toLowerCase() + "." + pluginName, version1);
+        }
+        
         }catch(Throwable t) {}
       }
       
@@ -528,7 +534,9 @@ public class PluginLoader {
         preInstancing.invoke(pluginClass,new Object[0]);
       }catch(Throwable ti) {}
       
-      plugin = pluginClass.newInstance();
+      if(!isBlockedDataService) {
+        plugin = pluginClass.newInstance();
+      }
     }
     catch (Throwable thr) {
       throw new TvBrowserException(getClass(), "error.2",

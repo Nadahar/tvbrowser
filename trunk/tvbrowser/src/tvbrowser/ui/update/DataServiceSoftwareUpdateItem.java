@@ -16,7 +16,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * CVS information:
+ * SVN information:
+ *       $Id$
  *     $Date$
  *   $Author$
  * $Revision$
@@ -24,18 +25,18 @@
 package tvbrowser.ui.update;
 
 /**
- * Contains the update information for a devplugin.Plugin
+ * Contains the update information for a devplugin.AbstractTvDataService
  * 
  * @author René Mach
  */
-public class PluginSoftwareUpdateItem extends PluginsSoftwareUpdateItem {
-
+public class DataServiceSoftwareUpdateItem extends PluginsSoftwareUpdateItem {
+  
   /**
    * Creates an instance of this class.
    * 
-   * @param name The class name of the plugin.
+   * @param name The class name of the dataservice.
    */
-  public PluginSoftwareUpdateItem(String name) {
+  public DataServiceSoftwareUpdateItem(String name) {
     super(name);
   }
 }
