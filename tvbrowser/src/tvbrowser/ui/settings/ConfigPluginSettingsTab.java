@@ -124,7 +124,7 @@ public class ConfigPluginSettingsTab implements CancelableSettingsTab {
         panel.add(new JLabel(mLocalizer.msg("noSettings.text", "This plugin has no settings.")), new CellConstraints().xy(2, panel.getRow()));
         mPluginPanel.add(panel.getPanel(), BorderLayout.NORTH);
       }
-    } else {
+    } else if (!Settings.propBlockedPluginArray.isBlocked(mPlugin)) {
       // The plugin is not activated -> Tell it the user
       EnhancedPanelPuilder panelActivate = new EnhancedPanelPuilder(FormFactory.RELATED_GAP_COLSPEC.encode() + "," + FormFactory.PREF_COLSPEC.encode() + "," + FormFactory.RELATED_GAP_COLSPEC.encode() + "," + FormFactory.PREF_COLSPEC.encode() + ",default:grow");
       CellConstraints cc = new CellConstraints();
@@ -157,6 +157,13 @@ public class ConfigPluginSettingsTab implements CancelableSettingsTab {
       
       panelActivate.add(btnActivate, cc.xy(4, panelActivate.getRow()));
       mPluginPanel.add(panelActivate.getPanel(), BorderLayout.NORTH);
+    }
+    else {
+      EnhancedPanelPuilder panel = new EnhancedPanelPuilder(FormFactory.RELATED_GAP_COLSPEC.encode() + ",pref:grow");
+      panel.addParagraph(mLocalizer.msg("blocked", "Blocked"));
+      panel.addRow();
+      panel.add(new JLabel(mLocalizer.msg("blocked.text", "This plugin is blocked and cannot be activated.")), new CellConstraints().xy(2, panel.getRow()));
+      mPluginPanel.add(panel.getPanel(), BorderLayout.NORTH);
     }
     
     mPluginWasActivatedLastTime = mPlugin.isActivated();

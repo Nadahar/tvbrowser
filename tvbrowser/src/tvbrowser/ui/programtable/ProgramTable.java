@@ -1258,7 +1258,11 @@ public class ProgramTable extends JPanel
   }
 
   public void pluginDeactivated(PluginProxy plugin) {
-    updatePrograms();
+    SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        updatePrograms();
+      }
+    });
   }
 
   private void updatePrograms() {

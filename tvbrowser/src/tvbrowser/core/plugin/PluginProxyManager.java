@@ -374,7 +374,9 @@ public class PluginProxyManager {
         // Activate the plugin
         if (activated) {
           try {
-            activatePlugin(item);
+            if(!Settings.propBlockedPluginArray.isBlocked(item.getPlugin())) {
+              activatePlugin(item);
+            }
           } catch (TvBrowserException exc) {
             ErrorHandler.handle(exc);
           }
@@ -402,16 +404,35 @@ public class PluginProxyManager {
   public void activatePlugin(PluginProxy plugin, boolean setParentFrame) throws TvBrowserException {
     PluginListItem item = getItemForPlugin(plugin);
     if (item != null) {
-      activatePlugin(item);
-      if (setParentFrame) {
-        item.getPlugin().setParentFrame(MainFrame.getInstance());
-      }
+      boolean activated = activatePlugin(item);
       
-      PluginsProgramFilter[] filters = item.getPlugin().getAvailableFilter();
-    
-      if(filters != null) {
-        for(PluginsProgramFilter filter : filters) {
-          FilterManagerImpl.getInstance().addFilter(filter);
+      if(activated) {
+        if (setParentFrame) {
+          item.getPlugin().setParentFrame(MainFrame.getInstance());
+        }
+        
+        PluginsProgramFilter[] filters = item.getPlugin().getAvailableFilter();
+      
+        if(filters != null) {
+          for(PluginsProgramFilter filter : filters) {
+            FilterManagerImpl.getInstance().addFilter(filter);
+          }
+        }
+      }
+    }
+  }
+  
+  /**
+   * Reacts on a change of the blocked plugins setting
+   * and deactivates all blocked plugins.
+   */
+  public void firePluginBlockListRenewed() {
+    for(PluginListItem item : mPluginList) {
+      if(Settings.propBlockedPluginArray.isBlocked(item.mPlugin) && getActivatedPluginForId(item.getPlugin().getId()) != null) {
+        try {
+          deactivatePlugin(item.getPlugin());
+        } catch (TvBrowserException e) {
+          mLog.severe("Blocked Plugin '" + item.getPlugin().getInfo().getName() + "' could not be deactivated!");
         }
       }
     }
@@ -423,32 +444,39 @@ public class PluginProxyManager {
    * @param item The item of the plugin to activate
    * @throws TvBrowserException If activating failed
    */
-  private void activatePlugin(PluginListItem item) throws TvBrowserException {
-    // Check the state
-    checkStateChange(item, LOADED_STATE, ACTIVATED_STATE);
-
-    // Log this event
-    AbstractPluginProxy plugin = item.getPlugin();
-    mLog.info("Activating plugin " + plugin.getId());
-
-    // Set the plugin active
-    item.setState(ACTIVATED_STATE);
-    
-    // Tell the plugin that we activate it now
-    plugin.onActivation();
-
-    // Get the user directory
-    String userDirectoryName = Settings.getUserSettingsDirName();
-    File userDirectory = new File(userDirectoryName);
-        
-    // Load the plugin settings
-    plugin.loadSettings(userDirectory);
-
-    // Clear the activated plugins cache
-    mActivatedPluginCache = null;
-    
-    // Inform the listeners
-    firePluginActivated(plugin);
+  private boolean activatePlugin(PluginListItem item) throws TvBrowserException {
+    if(Settings.propBlockedPluginArray.isBlocked(item.getPlugin())) {
+      mLog.info("It was tried to actiavte blocked plugin '" + item.getPlugin().getInfo().getName() + "'. FORBIDDEN!");
+      return false;
+    }
+    else {
+      // Check the state
+      checkStateChange(item, LOADED_STATE, ACTIVATED_STATE);
+  
+      // Log this event
+      AbstractPluginProxy plugin = item.getPlugin();
+      mLog.info("Activating plugin " + plugin.getId());
+  
+      // Set the plugin active
+      item.setState(ACTIVATED_STATE);
+      
+      // Tell the plugin that we activate it now
+      plugin.onActivation();
+  
+      // Get the user directory
+      String userDirectoryName = Settings.getUserSettingsDirName();
+      File userDirectory = new File(userDirectoryName);
+          
+      // Load the plugin settings
+      plugin.loadSettings(userDirectory);
+  
+      // Clear the activated plugins cache
+      mActivatedPluginCache = null;
+      
+      // Inform the listeners
+      firePluginActivated(plugin);
+      return true;
+    }
   }
 
   /**

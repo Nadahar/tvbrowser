@@ -137,7 +137,9 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
     mTableModel = new DefaultTableModel() {
       public boolean isCellEditable(int row, int column) {
         if (column == 0) {
-          return (row >= InternalPluginProxyList.getInstance().getAvailableProxys().length);
+          if (row >= InternalPluginProxyList.getInstance().getAvailableProxys().length) {
+            return !Settings.propBlockedPluginArray.isBlocked(((PluginProxy)getValueAt(row,1)));
+          }
         }
         return false;
       }
@@ -361,7 +363,7 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
     }
     else {
       enableMI = new JMenuItem(mLocalizer.msg("activate", ""), TVBrowserIcons.refresh(TVBrowserIcons.SIZE_SMALL));
-
+      enableMI.setEnabled(!Settings.propBlockedPluginArray.isBlocked(plugin));
     }
     enableMI.addActionListener(new ActionListener(){
         public void actionPerformed(ActionEvent e) {
