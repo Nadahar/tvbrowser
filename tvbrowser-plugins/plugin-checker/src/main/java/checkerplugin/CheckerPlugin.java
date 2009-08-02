@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Properties;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.AbstractAction;
@@ -241,10 +242,11 @@ public class CheckerPlugin extends Plugin {
                   fieldType.getLocalizedName()));
             }
           }
-          if (HTML_PATTERN.matcher(content).find()) {
+          Matcher matcher = HTML_PATTERN.matcher(content);
+          if (matcher.find()) {
             results.add(mLocalizer.msg("issue.entity",
-                "Text field {0} contains HTML entity.", fieldType
-                    .getLocalizedName()));
+                "Text field {0} contains HTML entity: {1}", fieldType
+                    .getLocalizedName(), matcher.group()));
           }
           if (fieldType != ProgramFieldType.ACTOR_LIST_TYPE
               && fieldType != ProgramFieldType.DIRECTOR_TYPE
