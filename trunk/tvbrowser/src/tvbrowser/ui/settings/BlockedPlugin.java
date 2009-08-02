@@ -81,33 +81,9 @@ public final class BlockedPlugin {
   }
   
   /**
-   * @return The id of the blocked plugin.
-   */
-  public String getPluginId() {
-    return mPluginId;
-  }
-  
-  /**
-   * @return The version from which the block begins.
-   * (Even if this is higher than 0.0.0.0 that version
-   * will always been blocked if a plugin is blocked.)
-   */
-  public Version getBlockStart() {
-    return mBlockStart;
-  }
-  
-  /**
-   * @return The version to which the block reaches.
-   */
-  public Version getBlockEnd() {
-    return mBlockEnd;
-  }
-  
-  public String toString() {
-    return new StringBuilder("Blocked from: '").append(mBlockStart).append("' to: '").append(mBlockEnd).append("' for ID: '").append(mPluginId).append("'.").toString();
-  }
-  
-  /**
+   * (Even if the block start version is higher than 0.0.0.0, the
+   * 0.0.0.0 version will always been acknowledged as blocked.)
+   * 
    * @param plugin The plugin to check.
    * @return <code>True</code> if the given plugin is blocked.
    */
@@ -164,5 +140,9 @@ public final class BlockedPlugin {
     }
     
     return asString.toString();
+  }
+  
+  public String toString() {
+    return new StringBuilder("Blocked from: '").append(mBlockStart).append("' to: '").append(mBlockEnd).append("' for ID: '").append(mPluginId).append("'.").toString();
   }
 }
