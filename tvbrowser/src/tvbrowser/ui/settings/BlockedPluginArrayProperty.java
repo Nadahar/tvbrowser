@@ -85,6 +85,9 @@ public final class BlockedPluginArrayProperty extends Property {
   }
   
   /**
+   * (Even if the block start version is higher than 0.0.0.0, the
+   * 0.0.0.0 version will always been acknowledged as blocked.)
+   * 
    * @param pluginId The id to test. 
    * @param version The version to test.
    * @return <code>True</code> if the given plugin id version combination is blocked.
