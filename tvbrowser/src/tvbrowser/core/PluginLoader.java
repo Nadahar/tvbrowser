@@ -507,28 +507,31 @@ public class PluginLoader {
     // Create a plugin instance
     try {
       Class pluginClass = classLoader.loadClass(pluginName.toLowerCase() + "." + pluginName);
+      Method getVersion = null;
+      Version version1 = null;
       
-      if(classLoader2 != null) {
-        try {
-        Method getVersion = pluginClass.getMethod("getVersion",new Class[0]);
-        
-        Class pluginClass2 = classLoader2.loadClass(pluginName.toLowerCase() + "." + pluginName);
-        Method getVersion2 = pluginClass2.getMethod("getVersion",new Class[0]);
-        
-        Version version1 = (Version)getVersion.invoke(pluginClass, new Object[0]);
-        Version version2 = (Version)getVersion2.invoke(pluginClass2, new Object[0]);
-        
-        if(version2.compareTo(version1) > 0) {
-          return null;
-        }
+      if(pluginClass.getSuperclass().equals(devplugin.AbstractTvDataService.class) || classLoader2 != null) {
+        getVersion = pluginClass.getMethod("getVersion",new Class[0]);
+        version1 = (Version)getVersion.invoke(pluginClass, new Object[0]);
         
         if(pluginClass.getSuperclass().equals(devplugin.AbstractTvDataService.class)) {
           isBlockedDataService = Settings.propBlockedPluginArray.isBlocked(pluginName.toLowerCase() + "." + pluginName, version1);
         }
-        
-        }catch(Throwable t) {}
       }
       
+      if(classLoader2 != null) {
+        try {
+          Class pluginClass2 = classLoader2.loadClass(pluginName.toLowerCase() + "." + pluginName);
+          Method getVersion2 = pluginClass2.getMethod("getVersion",new Class[0]);
+          
+          Version version2 = (Version)getVersion2.invoke(pluginClass2, new Object[0]);
+          
+          if(version2.compareTo(version1) > 0) {
+            return null;
+          }        
+        }catch(Throwable t) {}
+      }
+            
       try {
         Method preInstancing = pluginClass.getMethod("preInstancing",new Class[0]);
         preInstancing.invoke(pluginClass,new Object[0]);
