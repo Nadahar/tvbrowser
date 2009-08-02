@@ -265,6 +265,10 @@ public class TVRaterPlugin extends devplugin.Plugin {
    * @see #getProgramTableIconText()
    */
   public Icon[] getProgramTableIcons(final Program program) {
+    if (program == getPluginManager().getExampleProgram()) {
+      return new Icon[] { RatingIconTextFactory.getImageIconForRating(3) };
+    }
+    
     final Rating rating = getRating(program);
 
     if (rating != null) {

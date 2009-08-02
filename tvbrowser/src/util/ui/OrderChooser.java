@@ -45,6 +45,7 @@ import javax.swing.event.ListSelectionListener;
 
 import util.ui.customizableitems.SelectableItem;
 import util.ui.customizableitems.SelectableItemRenderer;
+import util.ui.customizableitems.SelectableItemRendererCenterComponentIf;
 
 import com.jgoodies.forms.layout.Sizes;
 
@@ -74,7 +75,7 @@ public class OrderChooser extends JPanel implements ListDropAction{
 
 
   /**
-   * Construcst an OrderChooser without selection Buttons.
+   * Constructs an OrderChooser without selection Buttons.
    *  
    * @param currOrder Die aktuelle Reihenfolge
    * @param allItems Alle moeglichen Objekte (die Objekte der aktuellen Reihenfolge
@@ -83,6 +84,7 @@ public class OrderChooser extends JPanel implements ListDropAction{
   public OrderChooser(Object[] currOrder, Object[] allItems) {
     this(currOrder, allItems, false);
   }
+
   /**
    * Konstruiert einen OrderChooser.
    * <P>
@@ -96,6 +98,14 @@ public class OrderChooser extends JPanel implements ListDropAction{
    * @param showSelectionButtons Shows the selection buttons.
    */
   public OrderChooser(Object[] currOrder, Object[] allItems, boolean showSelectionButtons) {
+    this(currOrder, allItems, showSelectionButtons, null, null);
+  }
+
+  public OrderChooser(Object[] currOrder, Object[] allItems, final Class renderClass, final SelectableItemRendererCenterComponentIf renderComponent) {
+    this(currOrder, allItems, false, renderClass, renderComponent);
+  }
+  
+  public OrderChooser(Object[] currOrder, Object[] allItems, boolean showSelectionButtons, final Class renderClass, final SelectableItemRendererCenterComponentIf renderComponent) {
     super(new BorderLayout());
 
     JPanel p1, p2, p3, main;
@@ -106,6 +116,9 @@ public class OrderChooser extends JPanel implements ListDropAction{
     setEntries(currOrder,allItems);
     mList = new JList(mListModel);
     mList.setCellRenderer(mItemRenderer = new SelectableItemRenderer());
+    if (renderClass != null && renderComponent != null) {
+      mItemRenderer.setCenterRendererComponent(renderClass, renderComponent);
+    }
 
     // Register DnD on the List.
     ListDragAndDropHandler dnDHandler = new ListDragAndDropHandler(mList,mList,this);    

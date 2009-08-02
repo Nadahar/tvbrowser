@@ -302,7 +302,10 @@ public final class WirSchauenPlugin extends Plugin {
             }
             return new Icon[] {mMissingDescriptionIcon};
         }
-        return new Icon[] {};
+        if (program == getPluginManager().getExampleProgram()) {
+          return new Icon[] {mMissingDescriptionIcon};
+        }
+        return null;
     }
 
     

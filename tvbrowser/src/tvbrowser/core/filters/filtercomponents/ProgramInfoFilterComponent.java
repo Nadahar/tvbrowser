@@ -135,7 +135,6 @@ public class ProgramInfoFilterComponent extends AbstractFilterComponent {
     mList = new SelectableItemList(selectedItems.toArray(), allItems);
     mList.addCenterRendererComponent(String.class,
         new SelectableItemRendererCenterComponentIf() {
-
           private DefaultListCellRenderer mRenderer = new DefaultListCellRenderer();
 
           @Override
@@ -172,12 +171,6 @@ public class ProgramInfoFilterComponent extends AbstractFilterComponent {
     return centerPanel;
   }
 
-  /**
-   * Im Dialog wurde OK gedrueckt, alle Einstellungen koennen nun uebernommen
-   * werden
-   * 
-   * @see tvbrowser.core.filters.FilterComponent#saveSettings()
-   */
   public void saveSettings() {
     int bits = 0;
 
