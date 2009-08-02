@@ -26,17 +26,24 @@
 
 package tvbrowser.ui.settings;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.SwingConstants;
 
 import tvbrowser.core.Settings;
+import tvbrowser.core.plugin.PluginManagerImpl;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.ui.settings.util.ColorButton;
@@ -44,6 +51,7 @@ import tvbrowser.ui.settings.util.ColorLabel;
 import util.ui.Localizer;
 import util.ui.OrderChooser;
 import util.ui.UiUtilities;
+import util.ui.customizableitems.SelectableItemRendererCenterComponentIf;
 
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.factories.DefaultComponentFactory;
@@ -56,24 +64,22 @@ import devplugin.SettingsTab;
 
 /**
  * A settings tab for the program panel.
- *
+ * 
  * @author Til Schneider, www.murfman.de
  */
 public class ProgramPanelSettingsTab implements SettingsTab {
 
-  private static final Localizer mLocalizer
-    = Localizer.getLocalizerFor(ProgramPanelSettingsTab.class);
+  private static final Localizer mLocalizer = Localizer.getLocalizerFor(ProgramPanelSettingsTab.class);
 
-  private static final String PICTURE_ICON_NAME = mLocalizer.msg("hasPicure",
-      "Has picture");
-  
+  private static final String PICTURE_ICON_NAME = mLocalizer.msg("hasPicure", "Has picture");
+
   private JPanel mSettingsPn;
-  
+
   private OrderChooser mIconPluginOCh;
   private OrderChooser mInfoTextOCh;
 
-  private ColorLabel mProgramItemOnAirColorLb, mProgramItemProgressColorLb, mProgramItemKeyboardSelectedLb;  
-  
+  private ColorLabel mProgramItemOnAirColorLb, mProgramItemProgressColorLb, mProgramItemKeyboardSelectedLb;
+
   private JCheckBox mBorderForOnAirPrograms;
 
   private ArrayList<IconPlugin> mFormatIcons;
@@ -82,33 +88,70 @@ public class ProgramPanelSettingsTab implements SettingsTab {
    * Creates the settings panel for this tab.
    */
   public JPanel createSettingsPanel() {
-    mSettingsPn = new JPanel(new FormLayout("5dlu, fill:50dlu:grow, 3dlu, fill:50dlu:grow, 3dlu", 
-        "pref, 5dlu, fill:default:grow, 3dlu, top:pref, 10dlu, pref, 5dlu, pref, 10dlu, pref, 5dlu, pref, 10dlu, pref, 5dlu, pref"));
+    mSettingsPn = new JPanel(
+        new FormLayout(
+            "5dlu, fill:50dlu:grow, 3dlu, fill:50dlu:grow, 3dlu",
+            "pref, 5dlu, fill:default:grow, 3dlu, top:pref, 10dlu, pref, 5dlu, pref, 10dlu, pref, 5dlu, pref, 10dlu, pref, 5dlu, pref"));
     mSettingsPn.setBorder(Borders.DIALOG_BORDER);
-    
+
     CellConstraints cc = new CellConstraints();
 
     // icons
-    mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("pluginIcons", "Plugin icons")), cc.xyw(1,1,2));
-    
+    mSettingsPn.add(DefaultComponentFactory.getInstance()
+        .createSeparator(mLocalizer.msg("pluginIcons", "Plugin icons")), cc.xyw(1, 1, 2));
+
     IconPlugin[] allPluginArr = getAvailableIconPlugins();
     IconPlugin[] pluginOrderArr = getSelectedIconPlugins(allPluginArr);
-    mIconPluginOCh = new OrderChooser(pluginOrderArr, allPluginArr);
-    
-    mSettingsPn.add(mIconPluginOCh, cc.xy(2,3));
-    mSettingsPn.add(UiUtilities.createHelpTextArea(mLocalizer.msg("pluginIcons.description", "")), cc.xy(2,5));
-    
+    mIconPluginOCh = new OrderChooser(pluginOrderArr, allPluginArr, IconPlugin.class,
+        new SelectableItemRendererCenterComponentIf() {
+          private DefaultListCellRenderer mRenderer = new DefaultListCellRenderer();
+
+          @Override
+          public JPanel createCenterPanel(JList list, Object value, int index, boolean isSelected, boolean isEnabled,
+              JScrollPane parentScrollPane, int leftColumnWidth) {
+            DefaultListCellRenderer label = (DefaultListCellRenderer) mRenderer.getListCellRendererComponent(list,
+                value, index, isSelected, false);
+            IconPlugin iconPlugin = (IconPlugin) value;
+            label.setIcon(iconPlugin.getIcon());
+            label.setHorizontalAlignment(SwingConstants.LEADING);
+            label.setVerticalAlignment(SwingConstants.CENTER);
+            label.setOpaque(false);
+
+            JPanel panel = new JPanel(new BorderLayout());
+            if (isSelected && isEnabled) {
+              panel.setOpaque(true);
+              panel.setForeground(list.getSelectionForeground());
+              panel.setBackground(list.getSelectionBackground());
+            } else {
+              panel.setOpaque(false);
+              panel.setForeground(list.getForeground());
+              panel.setBackground(list.getBackground());
+            }
+            panel.add(label, BorderLayout.WEST);
+            return panel;
+          }
+
+          @Override
+          public void calculateSize(JList list, int index, JPanel contentPane) {
+          }
+        });
+
+    mSettingsPn.add(mIconPluginOCh, cc.xy(2, 3));
+    mSettingsPn.add(UiUtilities.createHelpTextArea(mLocalizer.msg("pluginIcons.description", "")), cc.xy(2, 5));
+
     // info text
-    mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("infoText", "Info text")), cc.xyw(4,1,2));
+    mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("infoText", "Info text")), cc
+        .xyw(4, 1, 2));
 
     ProgramFieldType[] allTypeArr = getAvailableTypes();
     ProgramFieldType[] typeOrderArr = getSelectedTypes();
     mInfoTextOCh = new OrderChooser(typeOrderArr, allTypeArr);
 
-    mSettingsPn.add(mInfoTextOCh, cc.xy(4,3));
-    mSettingsPn.add(UiUtilities.createHelpTextArea(mLocalizer.msg("infoText.description", "")), cc.xy(4,5));
-    
-    mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("Colors", "Colors")), cc.xyw(1,7,5));
+    mSettingsPn.add(mInfoTextOCh, cc.xy(4, 3));
+    mSettingsPn.add(UiUtilities.createHelpTextArea(mLocalizer.msg("infoText.description", "")), cc.xy(4, 5));
+
+    mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("Colors", "Colors")), cc.xyw(
+        1, 7, 5));
 
     JPanel colors = new JPanel();
     Color programItemProgressColor = Settings.propProgramTableColorOnAirDark.getColor();
@@ -120,55 +163,62 @@ public class ProgramPanelSettingsTab implements SettingsTab {
     Color programItemDefaultKeyboardSelectedColor = Settings.propKeyboardSelectedColor.getDefaultColor();
 
     FormLayout formLayout = new FormLayout("default, 5dlu, default, 5dlu, default, 5dlu, default",
-            "default, 5dlu, default, 3dlu, default, 3dlu, default");    
+        "default, 5dlu, default, 3dlu, default, 3dlu, default");
     colors.setLayout(formLayout);
 
-    colors.add(mBorderForOnAirPrograms = new JCheckBox(mLocalizer.msg("color.programOnAirWithBorder","Border for programs on air"), Settings.propProgramTableOnAirProgramsShowingBorder.getBoolean()), cc.xyw(1,1,3)); 
-    
-    colors.add(new JLabel(mLocalizer.msg("color.programOnAir","Hintergrundfarbe fuer laufende Sendung")), cc.xy(1,3));
-    colors.add(mProgramItemOnAirColorLb = new ColorLabel(programItemOnAirColor), cc.xy(3,3));
+    colors.add(mBorderForOnAirPrograms = new JCheckBox(mLocalizer.msg("color.programOnAirWithBorder",
+        "Border for programs on air"), Settings.propProgramTableOnAirProgramsShowingBorder.getBoolean()), cc.xyw(1, 1,
+        3));
+
+    colors.add(new JLabel(mLocalizer.msg("color.programOnAir", "Hintergrundfarbe fuer laufende Sendung")), cc.xy(1, 3));
+    colors.add(mProgramItemOnAirColorLb = new ColorLabel(programItemOnAirColor), cc.xy(3, 3));
     mProgramItemOnAirColorLb.setStandardColor(programItemDefaultOnAirColor);
-    colors.add(new ColorButton(mProgramItemOnAirColorLb), cc.xy(5,3));
+    colors.add(new ColorButton(mProgramItemOnAirColorLb), cc.xy(5, 3));
 
-    colors.add(new JLabel(mLocalizer.msg("color.programProgress", "Fortschrittsanzeige fuer laufende Sendung")), cc.xy(1,5));
-    colors.add(mProgramItemProgressColorLb = new ColorLabel(programItemProgressColor), cc.xy(3,5));
+    colors.add(new JLabel(mLocalizer.msg("color.programProgress", "Fortschrittsanzeige fuer laufende Sendung")), cc.xy(
+        1, 5));
+    colors.add(mProgramItemProgressColorLb = new ColorLabel(programItemProgressColor), cc.xy(3, 5));
     mProgramItemProgressColorLb.setStandardColor(programItemDefaultProgressColor);
-    colors.add(new ColorButton(mProgramItemProgressColorLb), cc.xy(5,5));
+    colors.add(new ColorButton(mProgramItemProgressColorLb), cc.xy(5, 5));
 
-    colors.add(new JLabel(mLocalizer.msg("color.keyboardSelected","Markierung durch Plugins")), cc.xy(1,7));
-    colors.add(mProgramItemKeyboardSelectedLb = new ColorLabel(programItemKeyboardSelectedColor), cc.xy(3,7));
+    colors.add(new JLabel(mLocalizer.msg("color.keyboardSelected", "Markierung durch Plugins")), cc.xy(1, 7));
+    colors.add(mProgramItemKeyboardSelectedLb = new ColorLabel(programItemKeyboardSelectedColor), cc.xy(3, 7));
     mProgramItemKeyboardSelectedLb.setStandardColor(programItemDefaultKeyboardSelectedColor);
-    colors.add(new ColorButton(mProgramItemKeyboardSelectedLb), cc.xy(5,7));
+    colors.add(new ColorButton(mProgramItemKeyboardSelectedLb), cc.xy(5, 7));
 
-    mSettingsPn.add(colors, cc.xyw(2,9,4));
-    
+    mSettingsPn.add(colors, cc.xyw(2, 9, 4));
+
     return mSettingsPn;
   }
-  
-  
+
   private IconPlugin[] getAvailableIconPlugins() {
     final ArrayList<IconPlugin> list = new ArrayList<IconPlugin>();
-    
+
     list.addAll(getFormatIconNames());
-    list.add(new IconPlugin(PICTURE_ICON_NAME));
-    
-    for (PluginProxy plugin : PluginProxyManager.getInstance()
-        .getActivatedPlugins()) {
+    list.add(new IconPlugin(PICTURE_ICON_NAME, new ImageIcon("imgs/Info_HasPicture.png")));
+
+    for (PluginProxy plugin : PluginProxyManager.getInstance().getActivatedPlugins()) {
       final String iconText = plugin.getProgramTableIconText();
       if (iconText != null) {
-        list.add(new IconPlugin(plugin));
+        Icon[] icons = plugin.getProgramTableIcons(PluginManagerImpl.getInstance().getExampleProgram());
+        Icon icon;
+        if (icons != null && icons.length > 0) {
+          icon = icons[0];
+        }
+        else {
+          icon = null;
+        }
+        list.add(new IconPlugin(plugin, icon));
       }
     }
-    
+
     return list.toArray(new IconPlugin[list.size()]);
   }
 
-
   private IconPlugin[] getSelectedIconPlugins(final IconPlugin[] allArr) {
-    final String[] selPluginArr = Settings.propProgramTableIconPlugins
-        .getStringArray();
+    final String[] selPluginArr = Settings.propProgramTableIconPlugins.getStringArray();
     final ArrayList<IconPlugin> list = new ArrayList<IconPlugin>();
-    
+
     for (String selectedPluginId : selPluginArr) {
       for (IconPlugin iconPlugin : allArr) {
         final String pluginId = iconPlugin.getId();
@@ -185,7 +235,6 @@ public class ProgramPanelSettingsTab implements SettingsTab {
     return list.toArray(new IconPlugin[list.size()]);
   }
 
-  
   private List<IconPlugin> getFormatIconNames() {
     if (mFormatIcons == null) {
       mFormatIcons = new ArrayList<IconPlugin>();
@@ -194,40 +243,33 @@ public class ProgramPanelSettingsTab implements SettingsTab {
       String[] infoMessages = ProgramInfoHelper.getInfoIconMessages();
       for (int i = 0; i < iconFilenames.length; i++) {
         if (infoIcons[i] != null) {
-          mFormatIcons.add(new IconPlugin(mLocalizer.msg("formatIcon",
-              "Format: {0}", infoMessages[i])));
+          mFormatIcons.add(new IconPlugin(mLocalizer.msg("formatIcon", "Format: {0}", infoMessages[i]), infoIcons[i]));
         }
       }
     }
     return mFormatIcons;
   }
 
-
   private ProgramFieldType[] getAvailableTypes() {
     ArrayList<ProgramFieldType> typeList = new ArrayList<ProgramFieldType>();
-    
+
     Iterator<ProgramFieldType> typeIter = ProgramFieldType.getTypeIterator();
     while (typeIter.hasNext()) {
       ProgramFieldType type = (ProgramFieldType) typeIter.next();
-      
-      if ((type.getFormat() != ProgramFieldType.BINARY_FORMAT)
-        && (type != ProgramFieldType.INFO_TYPE) && 
-        (type != ProgramFieldType.PICTURE_DESCRIPTION_TYPE) && 
-        (type != ProgramFieldType.PICTURE_COPYRIGHT_TYPE))
-      {
+
+      if ((type.getFormat() != ProgramFieldType.BINARY_FORMAT) && (type != ProgramFieldType.INFO_TYPE)
+          && (type != ProgramFieldType.PICTURE_DESCRIPTION_TYPE) && (type != ProgramFieldType.PICTURE_COPYRIGHT_TYPE)) {
         typeList.add(type);
       }
     }
-    
+
     return typeList.toArray(new ProgramFieldType[typeList.size()]);
   }
-
 
   private ProgramFieldType[] getSelectedTypes() {
     return Settings.propProgramInfoFields.getProgramFieldTypeArray();
   }
-  
-  
+
   /**
    * Called by the host-application, if the user wants to save the settings.
    */
@@ -240,7 +282,7 @@ public class ProgramPanelSettingsTab implements SettingsTab {
       pluginIdArr[i] = plugin.getId();
     }
     Settings.propProgramTableIconPlugins.setStringArray(pluginIdArr);
-    
+
     // info text
     Object[] infoFieldArr = mInfoTextOCh.getOrder();
     ProgramFieldType[] typeArr = new ProgramFieldType[infoFieldArr.length];
@@ -250,45 +292,49 @@ public class ProgramPanelSettingsTab implements SettingsTab {
     Settings.propProgramInfoFields.setProgramFieldTypeArray(typeArr);
 
     Settings.propProgramTableOnAirProgramsShowingBorder.setBoolean(mBorderForOnAirPrograms.isSelected());
-    
+
     Settings.propProgramTableColorOnAirDark.setColor(mProgramItemProgressColorLb.getColor());
     Settings.propProgramTableColorOnAirLight.setColor(mProgramItemOnAirColorLb.getColor());
     Settings.propKeyboardSelectedColor.setColor(mProgramItemKeyboardSelectedLb.getColor());
   }
-  
-  
+
   /**
    * Returns the icon of the tab-sheet.
    */
   public Icon getIcon() {
     return null;
   }
-  
-  
+
   /**
    * Returns the title of the tab-sheet.
    */
   public String getTitle() {
     return mLocalizer.msg("title", "Program display");
   }
-  
-  
+
   private static class IconPlugin {
-    
+
     private PluginProxy mPlugin;
     private String mName;
-    
-    public IconPlugin(final PluginProxy plugin) {
+    private Icon mIcon;
+
+    public IconPlugin(final PluginProxy plugin, Icon icon) {
       mPlugin = plugin;
+      mIcon = icon;
     }
-    
-    public IconPlugin(final String name) {
+
+    public Icon getIcon() {
+      return mIcon;
+    }
+
+    public IconPlugin(final String name, final Icon icon) {
       mName = name;
       mPlugin = null;
+      mIcon = icon;
     }
-    
+
     public String getId() {
-      if(mPlugin != null) {
+      if (mPlugin != null) {
         return mPlugin.getId();
       } else if (mName != null && mName.compareTo(PICTURE_ICON_NAME) == 0) {
         return Settings.PICTURE_ID;
@@ -298,8 +344,7 @@ public class ProgramPanelSettingsTab implements SettingsTab {
         String[] infoMessages = ProgramInfoHelper.getInfoIconMessages();
         for (int i = 0; i < infoFilenames.length; i++) {
           if (infoIcons[i] != null) {
-            if (mLocalizer.msg("formatIcon", "Format: {0}",
-                infoMessages[i]).equals(mName)) {
+            if (mLocalizer.msg("formatIcon", "Format: {0}", infoMessages[i]).equals(mName)) {
               return "FORMAT_" + i;
             }
           }
@@ -307,16 +352,15 @@ public class ProgramPanelSettingsTab implements SettingsTab {
       }
       return null;
     }
-    
+
     public String toString() {
-      if(mPlugin != null) {
+      if (mPlugin != null) {
         return mPlugin.getProgramTableIconText();
       } else {
         return mName;
       }
     }
-    
+
   }
 
 }
-
