@@ -72,6 +72,7 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.layout.Sizes;
 
+import devplugin.Date;
 import devplugin.PluginInfo;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
@@ -501,14 +502,19 @@ public final class WirSchauenDialog extends JDialog implements WindowClosingIf,
 
     // TODO: change to 2.7 size storage mechanism after 2.7 release
     int dialogHeight = 280;
-    panel.add(mSubtitle, cc.xyw(3, 17, 2));
-    panel.add(mOwS, cc.xyw(3, 18, 2));
-    panel.add(mPremiere, cc.xyw(3, 19, 2));
-    
-    getRootPane().setDefaultButton(mOk);
-
+    if (checkCurrentDate(program)) {
+      dialogHeight = 170;
+      getRootPane().setDefaultButton(cancel);
+    }
+    else {
+      panel.add(mSubtitle, cc.xyw(3, 17, 2));
+      panel.add(mOwS, cc.xyw(3, 18, 2));
+      panel.add(mPremiere, cc.xyw(3, 19, 2));
+      
+      getRootPane().setDefaultButton(mOk);
+    }
     setSize(Sizes.dialogUnitXAsPixel(300, this),
-    Sizes.dialogUnitYAsPixel(dialogHeight, this));
+        Sizes.dialogUnitYAsPixel(dialogHeight, this));
 
     UiUtilities.registerForClosing(this);
     
@@ -585,6 +591,19 @@ public final class WirSchauenDialog extends JDialog implements WindowClosingIf,
         mDescription.setBackground(UIManager.getColor("TextField.background"));
       }
     }
+  }
+  
+  private boolean checkCurrentDate(final Program program) {
+    if (program.getDate().compareTo(Date.getCurrentDate()) <= 0) {
+      //mOmdb.setEnabled(false);
+      enableWirSchauenInput(false);
+      for (int i = 12; i < 18; i++) {
+        mLayout.setRowSpec(i, RowSpec.decode("0"));
+      }
+      showStatus(STATUS_WARNING, mLocalizer.msg("editToday", "Programs earlier than tomorrow can only be edited on omdb.org"));
+      return true;
+    }
+    return false;
   }
 
   private void enableWirSchauenInput(final boolean enable) {
