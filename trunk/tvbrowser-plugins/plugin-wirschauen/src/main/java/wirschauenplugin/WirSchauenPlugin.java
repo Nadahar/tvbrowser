@@ -61,7 +61,7 @@ import devplugin.Version;
 public final class WirSchauenPlugin extends Plugin {
   private static final boolean IS_STABLE = true;
 
-  private static final Version mVersion = new Version(0, 12, 0, IS_STABLE);
+  private static final Version mVersion = new Version(0, 13, 0, IS_STABLE);
 
   private static Logger mLog = Logger.getLogger(WirSchauenPlugin.class.getName());
 
