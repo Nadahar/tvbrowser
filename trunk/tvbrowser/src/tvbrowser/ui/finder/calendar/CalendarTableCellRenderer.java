@@ -27,6 +27,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.table.TableCellRenderer;
 
@@ -35,11 +36,12 @@ import devplugin.Date;
 
 public final class CalendarTableCellRenderer implements
     TableCellRenderer {
-  
+
   private static JPanel mPanel;
   private static JLabel mLabel;
   private static Font mBoldFont;
   private static Font mPlainFont;
+  private static Font mItalicFont;
   private static DashedBorder mDashedBorder;
 
   @Override
@@ -55,10 +57,10 @@ public final class CalendarTableCellRenderer implements
       int fontSize = mLabel.getFont().getSize() - 2;
       mBoldFont = new Font(Font.DIALOG, Font.BOLD, fontSize + 2);
       mPlainFont = new Font(Font.DIALOG, Font.PLAIN, fontSize);
+      mItalicFont = new Font(Font.DIALOG, Font.ITALIC, fontSize);
       mDashedBorder = new DashedBorder();
     }
     if (value instanceof Date) {
-      mPanel.setBackground(table.getBackground());
       Date date = (Date) value;
       if (isSelected) {
         mPanel.setBorder(mDashedBorder);
@@ -70,11 +72,23 @@ public final class CalendarTableCellRenderer implements
       mLabel.setText(String.valueOf(date.getDayOfMonth()));
       mLabel.setEnabled(enabled);
       CalendarTableModel tableModel = (CalendarTableModel) table.getModel();
-      if (date.equals(tableModel.getCurrentDate())) {
+
+      if (date.equals(new Date())) {
         mLabel.setFont(mBoldFont);
-      }
-      else {
+      } else if (date.compareTo(new Date()) < 0) {
+        mLabel.setFont(mItalicFont);
+      } else {
         mLabel.setFont(mPlainFont);
+      }
+
+      if (date.equals(tableModel.getCurrentDate())) {
+        mPanel.setBackground(UIManager.getColor("List.selectionBackground"));
+        mPanel.setForeground(UIManager.getColor("List.selectionForeground"));
+        mPanel.setOpaque(true);
+      } else {
+        mPanel.setBackground(table.getBackground());
+        mPanel.setForeground(table.getForeground());
+        mPanel.setOpaque(false);
       }
     }
     else {
