@@ -73,9 +73,10 @@ public final class CalendarTableCellRenderer implements
       mLabel.setEnabled(enabled);
       CalendarTableModel tableModel = (CalendarTableModel) table.getModel();
 
-      if (date.equals(new Date())) {
+      Date today = new Date();
+      if (date.equals(today)) {
         mLabel.setFont(mBoldFont);
-      } else if (date.compareTo(new Date()) < 0) {
+      } else if (date.compareTo(today) < 0) {
         mLabel.setFont(mItalicFont);
       } else {
         mLabel.setFont(mPlainFont);
@@ -84,11 +85,9 @@ public final class CalendarTableCellRenderer implements
       if (date.equals(tableModel.getCurrentDate())) {
         mPanel.setBackground(UIManager.getColor("List.selectionBackground"));
         mPanel.setForeground(UIManager.getColor("List.selectionForeground"));
-        mPanel.setOpaque(true);
       } else {
         mPanel.setBackground(table.getBackground());
         mPanel.setForeground(table.getForeground());
-        mPanel.setOpaque(false);
       }
     }
     else {
