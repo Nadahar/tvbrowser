@@ -1526,7 +1526,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     }
     
     mLastAutoUpdateRunBuffer = mLastAutoUpdateRun;
-    mLastAutoUpdateRun = System.currentTimeMillis();
+    mLastAutoUpdateRun = System.currentTimeMillis() + 3600000;
     mToolBar.updateUpdateButton(true);
     mMenuBar.showStopMenuItem();
     Settings.propLastDownloadDate.setDate(Date.getCurrentDate());
