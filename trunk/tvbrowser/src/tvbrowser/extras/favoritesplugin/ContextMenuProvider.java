@@ -81,42 +81,23 @@ public class ContextMenuProvider {
       }
       else {
         ActionMenu blackListAction = createBlackListFavoriteMenuAction(favArr, program); 
+        ActionMenu repetitions = FavoritesPlugin.getInstance().isShowingRepetitions() ? createRepetitionsMenuAction(favArr, program) : null;
         
-        if(blackListAction == null) {
-          ActionMenu repetitions = FavoritesPlugin.getInstance().isShowingRepetitions() ? createRepetitionsMenuAction(favArr, program) : null;
-          
-          if(repetitions == null) {
-            return new ActionMenu(menu, new Object[]{
-              createExcludeFromFavoritesMenuAction(favArr, program),
-              createEditFavoriteMenuAction(favArr),
-              createDeleteFavoriteMenuAction(favArr),
-              ContextMenuSeparatorAction.getInstance(),
-              createGlobalExclusionMenu(program),
-              createAddToFavoritesActionMenu(program)
-            });
-          }
-          else {
-            return new ActionMenu(menu, new Object[]{
-              createExcludeFromFavoritesMenuAction(favArr, program),
-              createEditFavoriteMenuAction(favArr),
-              createDeleteFavoriteMenuAction(favArr),
-              repetitions,
-              ContextMenuSeparatorAction.getDisabledOnTaskMenuInstance(),
-              createGlobalExclusionMenu(program),
-              createAddToFavoritesActionMenu(program)
-            });            
-          }
+        ArrayList<Object> subItems = new ArrayList<Object>(8);
+        subItems.add(createManageFavoriteMenuAction(favArr));
+        subItems.add(createEditFavoriteMenuAction(favArr));
+        subItems.add(createExcludeFromFavoritesMenuAction(favArr, program));
+        subItems.add(createDeleteFavoriteMenuAction(favArr));
+        subItems.add(ContextMenuSeparatorAction.getInstance());
+        subItems.add(createGlobalExclusionMenu(program));
+        subItems.add(createAddToFavoritesActionMenu(program));
+        if (repetitions != null) {
+          subItems.add(3, repetitions);
         }
-        else {
-          return new ActionMenu(menu, new ActionMenu[]{
-              createExcludeFromFavoritesMenuAction(favArr, program),
-              blackListAction,
-              createEditFavoriteMenuAction(favArr),
-              createDeleteFavoriteMenuAction(favArr),
-              createGlobalExclusionMenu(program),
-              createAddToFavoritesActionMenu(program)
-          });          
+        if(blackListAction != null) {
+          subItems.add(1, blackListAction);
         }
+        return new ActionMenu(menu, subItems.toArray());
       }
     }
 
@@ -153,7 +134,7 @@ public class ContextMenuProvider {
 
     if (favArr.length == 1) {
       ContextMenuAction action = new ContextMenuAction();
-      action.setSmallIcon(FavoritesPlugin.getInstance().getFavoritesIcon(16));
+      action.setSmallIcon(TVBrowserIcons.filter(TVBrowserIcons.SIZE_SMALL));
       action.setText(mLocalizer.ellipsisMsg("excludeFromFavorite","Exclude from '{0}'", favArr[0].getName()));
       action.setActionListener(new ActionListener(){
         public void actionPerformed(ActionEvent e) {
@@ -165,7 +146,7 @@ public class ContextMenuProvider {
     else {
       ContextMenuAction menu = new ContextMenuAction();
       menu.setText(mLocalizer.msg("excludeFrom","Exclude from"));
-      menu.setSmallIcon(FavoritesPlugin.getInstance().getFavoritesIcon(16));
+      menu.setSmallIcon(TVBrowserIcons.filter(TVBrowserIcons.SIZE_SMALL));
       ContextMenuAction[] subItems = new ContextMenuAction[favArr.length];
       for (int i=0; i<subItems.length; i++) {
         final Favorite fav = favArr[i];
@@ -182,6 +163,37 @@ public class ContextMenuProvider {
     }
   }
 
+  private ActionMenu createManageFavoriteMenuAction(final Favorite[] favArr) {
+    if (favArr.length == 1) {
+      ContextMenuAction action = new ContextMenuAction();
+      action.setSmallIcon(FavoritesPlugin.getInstance().getFavoritesIcon(16));
+      action.setText(mLocalizer.ellipsisMsg("manageFavorite","Manage favorite '{0}'", favArr[0].getName()));
+      action.setActionListener(new ActionListener(){
+        public void actionPerformed(ActionEvent e) {
+          FavoritesPlugin.getInstance().showManageFavoritesDialog(favArr[0]);
+        }
+      });
+      return new ActionMenu(action);
+    }
+    else {
+      ContextMenuAction menu = new ContextMenuAction();
+      menu.setSmallIcon(FavoritesPlugin.getInstance().getFavoritesIcon(16));
+      menu.setText(mLocalizer.msg("manage","Manage Favorite"));
+      ContextMenuAction[] subItems = new ContextMenuAction[favArr.length];
+      for (int i=0; i<subItems.length; i++) {
+        final Favorite fav = favArr[i];
+        subItems[i] = new ContextMenuAction(favArr[i].getName());
+        subItems[i].setSmallIcon(FavoritesPlugin.getInstance().getFavoritesIcon(16));
+        subItems[i].setActionListener(new ActionListener(){
+          public void actionPerformed(ActionEvent e) {
+            FavoritesPlugin.getInstance().showManageFavoritesDialog(fav);
+          }
+        });
+      }
+
+      return new ActionMenu(menu, subItems);
+    }
+  }
 
   private ActionMenu createEditFavoriteMenuAction(final Favorite[] favArr) {
     if (favArr.length == 1) {

@@ -127,13 +127,13 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
   private JCheckBox mBlackListChb;
 
   public ManageFavoritesDialog(Window parent, Favorite[] favoriteArr,
-      int splitPanePosition, boolean showNew) {
+      int splitPanePosition, boolean showNew, Favorite initialSelection) {
     super(parent);
     setModal(true);
-    init(favoriteArr, splitPanePosition, showNew);
+    init(favoriteArr, splitPanePosition, showNew, initialSelection);
   }
 
-  private void init(Favorite[] favoriteArr, int splitPanePosition, boolean showNew) {
+  private void init(Favorite[] favoriteArr, int splitPanePosition, boolean showNew, Favorite initialSelection) {
     mInstance = this;
 
     mShowNew = showNew;
@@ -490,8 +490,14 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
       }
     });
     
+    FavoriteNode initialNode = mFavoriteTree.getRoot();
+    if (initialSelection != null) {
+      initialNode = mFavoriteTree.findFavorite(initialSelection);
+    }
     if(mFavoriteTree != null) {
-      mFavoriteTree.setSelectionPath(new TreePath(mFavoriteTree.getRoot()));
+      TreePath treePath = new TreePath(initialNode.getPath());
+      mFavoriteTree.setSelectionPath(treePath);
+      mFavoriteTree.scrollPathToVisible(treePath);
     }
     
     favoriteSelectionChanged();

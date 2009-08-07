@@ -65,6 +65,7 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import tvbrowser.core.icontheme.IconLoader;
+import tvbrowser.extras.favoritesplugin.core.Favorite;
 import util.ui.Localizer;
 import util.ui.OverlayListener;
 import util.ui.TVBrowserIcons;
@@ -908,5 +909,31 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
         updateUI();
       }
     }
+  }
+  
+  protected FavoriteNode findFavorite(final Favorite favorite) {
+    return findFavorite(favorite, getRoot());
+  }
+  
+  private FavoriteNode findFavorite(final Favorite favorite, final FavoriteNode root) {
+    if (root.isDirectoryNode()) {
+      Enumeration<FavoriteNode> e = root.children();
+      
+      while(e.hasMoreElements()) {
+        FavoriteNode child = e.nextElement();
+        if(child.isDirectoryNode()) {
+          FavoriteNode result = findFavorite(favorite, child);
+          if (result != null) {
+            return result;
+          }
+        }
+        else {
+          if (child.getFavorite().equals(favorite)) {
+            return child;
+          }
+        }
+      }
+    }
+    return null;
   }
 }

@@ -695,7 +695,7 @@ public class FavoritesPlugin {
     ButtonAction action = new ButtonAction();
     action.setActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        showManageFavoritesDialog(false, null);
+        showManageFavoritesDialog();
       }
     });
 
@@ -708,6 +708,14 @@ public class FavoritesPlugin {
     return new ActionMenu(action);
   }
 
+
+  protected void showManageFavoritesDialog() {
+    showManageFavoritesDialog(null);
+  }
+
+  protected void showManageFavoritesDialog(final Favorite initialSelection) {
+    showManageFavoritesDialog(false, null, initialSelection);
+  }
 
   protected ActionMenu getContextMenuActions(Program program) {
     return new ContextMenuProvider(FavoriteTreeModel.getInstance().getFavoriteArr()).getContextMenuActions(program);
@@ -725,10 +733,10 @@ public class FavoritesPlugin {
     }
   }
 
-  private void showManageFavoritesDialog(final boolean showNew, Favorite[] favoriteArr) {
+  private void showManageFavoritesDialog(final boolean showNew, final Favorite[] favoriteArr, final Favorite initialSelection) {
     int splitPanePosition = getIntegerSetting(mSettings, "splitpanePosition",
             200);
-    ManageFavoritesDialog dlg = new ManageFavoritesDialog(MainFrame.getInstance(), favoriteArr, splitPanePosition, showNew);
+    ManageFavoritesDialog dlg = new ManageFavoritesDialog(MainFrame.getInstance(), favoriteArr, splitPanePosition, showNew, initialSelection);
     dlg.setModal(true);
     
     if(mShowInfoOnNewProgramsFound) {
@@ -924,7 +932,7 @@ public class FavoritesPlugin {
 
     Action manageFavorite = new AbstractAction() {
       public void actionPerformed(ActionEvent e) {
-        showManageFavoritesDialog(false, null);
+        showManageFavoritesDialog();
       }
     };
     manageFavorite.putValue(Action.SMALL_ICON, getFavoritesIcon(16));
@@ -1151,7 +1159,7 @@ public class FavoritesPlugin {
     }
     
     protected void showDialog() {
-      showManageFavoritesDialog(true, mFavoriteArr);
+      showManageFavoritesDialog(true, mFavoriteArr, null);
     }
   }
   
