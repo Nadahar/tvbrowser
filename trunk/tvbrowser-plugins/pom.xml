@@ -41,6 +41,7 @@
     <module>plugin-snarl</module>
     <module>plugin-soundreminder</module>
     <module>plugin-speech</module>
+    <module>plugin-tagging</module>
     <module>plugin-teletext</module>
     <module>plugin-timeline</module>
     <module>plugin-timelist</module>
