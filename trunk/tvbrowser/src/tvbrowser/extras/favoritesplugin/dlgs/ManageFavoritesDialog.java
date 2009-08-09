@@ -490,11 +490,12 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
       }
     });
     
-    FavoriteNode initialNode = mFavoriteTree.getRoot();
-    if (initialSelection != null) {
-      initialNode = mFavoriteTree.findFavorite(initialSelection);
-    }
     if(mFavoriteTree != null) {
+      FavoriteNode initialNode = mFavoriteTree.getRoot();
+      
+      if (initialSelection != null) {
+        initialNode = mFavoriteTree.findFavorite(initialSelection);
+      }
       TreePath treePath = new TreePath(initialNode.getPath());
       mFavoriteTree.setSelectionPath(treePath);
       mFavoriteTree.scrollPathToVisible(treePath);
