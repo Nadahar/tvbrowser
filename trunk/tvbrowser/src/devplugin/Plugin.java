@@ -109,9 +109,6 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(Plugin.class );
 
-  /** The jar file of this plugin. May be used to load resources. */
-  private JarFile mJarFile;
-
   private PluginTreeNode mRootNode;
 
   /**
@@ -152,32 +149,6 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
   final public static PluginManager getPluginManager() {
     return mPluginManager;
   }
-
-
-  /**
-   * Called by the host-application to provide the jar file.
-   *
-   * @param jarFile The jar file of this plugin.
-   * @throws TvBrowserException If the given file is no jar file.
-   */
-  final public void setJarFile(File jarFile) throws TvBrowserException {
-    try {
-      mJarFile = new JarFile(jarFile);
-    } catch (java.io.IOException exc) {
-      throw new TvBrowserException(getClass(), "error.1",
-        "Setting file failed!\n({0})", exc);
-    }
-  }
-
-  /**
-   * Gets the jar file of this plugin. May be used to load resources.
-   * 
-   * @return The jar file of this plugin.
-   */  
-  final protected JarFile getJarFile() {
-    return mJarFile;
-  }
-
 
   /**
    * Gets the ID of this plugin.

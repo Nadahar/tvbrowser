@@ -193,7 +193,6 @@ public class PluginLoader {
       }
 
       if (plugin instanceof Plugin) {
-        ((Plugin)plugin).setJarFile(pluginFile);
         // check if the proxy is already loaded, but the plugin was not loaded yet
         JavaPluginProxy javaplugin = (JavaPluginProxy) PluginProxyManager.getInstance().getPluginForId(JavaPluginProxy.getJavaPluginId((Plugin) plugin));
         if (javaplugin != null) {
