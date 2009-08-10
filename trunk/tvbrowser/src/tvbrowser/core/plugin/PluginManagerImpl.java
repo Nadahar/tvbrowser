@@ -836,11 +836,7 @@ public class PluginManagerImpl implements PluginManager {
    * @since 2.5
    */
   public FilterManager getFilterManager() {
-    if(mTvBrowserStartFinished) {
-      return FilterManagerImpl.getInstance();
-    } else {
-      return null;
-    }
+    return FilterManagerImpl.getInstance();
   }
   
   protected void handleTvBrowserStartFinished() {
