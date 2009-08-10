@@ -116,6 +116,9 @@ public final class ImdbPlugin extends Plugin {
     if (Plugin.getPluginManager().getExampleProgram().equals(program)) {
       return EXAMPLE_RATING;
     }
+    if (mImdbDatabase == null) {
+    	return null;
+    }
     ImdbRating rating = null;
     if (!mExcludedChannels.contains(program.getChannel())) {
       final String cacheKey = getCacheKey(program);
@@ -278,11 +281,15 @@ public final class ImdbPlugin extends Plugin {
   }
 
   private void initializeDatabase() {
-    if (mImdbDatabase == null) {
-      mImdbDatabase = new ImdbDatabase(new File(Plugin.getPluginManager()
-          .getTvBrowserSettings().getTvBrowserUserHome(), "imdbDatabase"));
-      mImdbDatabase.init();
-    }
+    try {
+			if (mImdbDatabase == null) {
+			  mImdbDatabase = new ImdbDatabase(new File(Plugin.getPluginManager()
+			      .getTvBrowserSettings().getTvBrowserUserHome(), "imdbDatabase"));
+			  mImdbDatabase.init();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
   }
 
   public void showUpdateDialog() {
