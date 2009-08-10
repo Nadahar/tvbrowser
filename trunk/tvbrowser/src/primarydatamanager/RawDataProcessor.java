@@ -345,7 +345,8 @@ public class RawDataProcessor {
       }
       ProgramField titleField = frame.getProgramFieldOfType(ProgramFieldType.TITLE_TYPE);
       if (titleField == null) {
-        throw new PreparationException("Program frame has no title. "
+        frame.addProgramField(ProgramField.create(ProgramFieldType.TITLE_TYPE, "[Unknown title]"));
+        System.out.println("Program frame has no title. "
           + "ID: " + frame.getId() + ", Day program: " + date + ", " + country + ", " + channel);
       }
       
