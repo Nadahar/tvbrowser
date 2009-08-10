@@ -902,7 +902,7 @@ public class Settings {
           UIManager.getCrossPlatformLookAndFeelClassName()));
 
   public static final IntProperty propColumnWidth = new IntProperty(mProp,
-      "columnwidth", 200);
+      "columnwidth", 180);
 
   public static final IntArrayProperty propTimeButtons = new IntArrayProperty(
       mProp, "timeButtons", new int[] { 6 * 60, 12 * 60, 18 * 60, 20 * 60 + 15 });
