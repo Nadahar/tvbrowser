@@ -94,8 +94,14 @@ public class IconLoader {
     mDefaultIconTheme = getIconTheme(mDefaultIconDir);
     mDefaultIconTheme.loadTheme();
 
-    if (Settings.propIcontheme.getString() != null) {
-      File themeFile = getIconThemeFile(Settings.propIcontheme.getString());
+    String iconTheme = Settings.propIcontheme.getString();
+		if (iconTheme != null) {
+			if (iconTheme != null && !iconTheme.endsWith(".zip")) {
+				if (new File(iconTheme + ".zip").canRead()) {
+					Settings.propIcontheme.setString(iconTheme + ".zip");
+				}
+			}
+      File themeFile = getIconThemeFile(iconTheme);
 
       mLog.info("Loading Icon from " + themeFile.getAbsolutePath());
 
@@ -142,7 +148,20 @@ public class IconLoader {
     if (OperatingSystem.isMacOs()) {
       list.addAll(getThemesInDirectory(new File("/Library/Application Support/TV-Browser/icons")));
     }
-
+    
+    ArrayList<String> zipThemes = new ArrayList<String>(list.size());
+    for (IconTheme iconTheme : list) {
+    	if (iconTheme instanceof ZipIconTheme) {
+				zipThemes.add(iconTheme.getName());
+    	}
+		}
+    for (int i=list.size() - 1; i >= 0; i--) {
+    	for (String zipName : zipThemes) {
+	    	if (list.get(i).getName().equalsIgnoreCase(zipName) && !(list.get(i) instanceof ZipIconTheme)) {
+	    		list.remove(i);
+	    	}
+			}
+    }
     return list.toArray(new IconTheme[list.size()]);
   }
 
