@@ -129,7 +129,9 @@ public class FilterList {
 
     /* Sort the list*/
     try {
-      StreamUtilities.bufferedReader(new File(mFilterDirectory, FILTER_INDEX),
+      File filterFile = new File(mFilterDirectory, FILTER_INDEX);
+      if (filterFile.canRead()) {
+      	StreamUtilities.bufferedReader(filterFile,
           new BufferedReaderProcessor() {
             public void process(BufferedReader inxIn) throws IOException {
               String curFilterName = inxIn.readLine();
@@ -149,6 +151,7 @@ public class FilterList {
               }
             }
           });
+      }
     } catch (FileNotFoundException e) {
       // ignore
     } catch (IOException e) {
