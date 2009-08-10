@@ -203,7 +203,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
 
     mPreviousDayMI = new JMenuItem(mLocalizer.msg("menuitem.previousDay","previous day"));
     mPreviousDayMI.addActionListener(this);
-    mPreviousDayMI.setIcon(TVBrowserIcons.left(TVBrowserIcons.SIZE_LARGE));
+    mPreviousDayMI.setIcon(TVBrowserIcons.left(TVBrowserIcons.SIZE_SMALL));
     new MenuHelpTextAdapter(mPreviousDayMI, mLocalizer.msg("menuinfo.previousDay",""), mLabel);
 
     mNextDayMI = new JMenuItem(mLocalizer.msg("menuitem.nextDay","next day"));
