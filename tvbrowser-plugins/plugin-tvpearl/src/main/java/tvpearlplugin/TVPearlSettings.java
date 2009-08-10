@@ -183,22 +183,26 @@ public class TVPearlSettings {
 
   public Dimension getDialogSize(final String dialogKey) {
     try {
-      return new Dimension(Integer.parseInt(mProperties.getProperty(dialogKey
-          + ".Width")), Integer.parseInt(mProperties.getProperty(dialogKey
-          + ".Height")));
+      String width = mProperties.getProperty(dialogKey + ".Width");
+      String height = mProperties.getProperty(dialogKey + ".Height");
+			if (width != null && height != null) {
+				return new Dimension(Integer.parseInt(width), Integer.parseInt(height));
+			}
     } catch (NumberFormatException e) {
-      return null;
     }
+    return null;
   }
   
   public Point getDialogDimension(final String dialogKey) {
     try {
-      return new Point(Integer
-          .parseInt(mProperties.getProperty(dialogKey + ".X")), Integer
-          .parseInt(mProperties.getProperty(dialogKey + ".Y")));
+      String x = mProperties.getProperty(dialogKey + ".X");
+      String y = mProperties.getProperty(dialogKey + ".Y");
+      if (x != null && y != null) {
+      	return new Point(Integer.parseInt(x), Integer.parseInt(y));
+      }
     } catch (NumberFormatException e) {
-      return null;
     }
+    return null;
   }
 
   public String getUrl() {
