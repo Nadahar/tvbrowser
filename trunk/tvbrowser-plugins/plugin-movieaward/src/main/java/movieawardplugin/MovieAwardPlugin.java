@@ -148,15 +148,26 @@ final public class MovieAwardPlugin extends Plugin {
           .getResourceAsStream("data/moviedatabase.xml"));
       mMovieAwards = new ArrayList<MovieAward>();
       for (String awardName : KNOWN_AWARDS) {
-        mMovieAwards
-            .add(MovieDataFactory.loadMovieDataFromStream(getClass()
-                .getResourceAsStream("data/" + awardName + ".xml"),
-                mMovieDatabase));
+        MovieAward award = MovieDataFactory.loadMovieDataFromStream(getClass()
+		    .getResourceAsStream("data/" + awardName + ".xml"),
+		    mMovieDatabase);
+        if (award != null) {
+        	mMovieAwards.add(award);
+        }
+        else {
+        	mLog.warning("Could not load award " + awardName);
+        }
       }
       for (String awardName : KNOWN_MOVIE_AWARDS) {
-        mMovieAwards.add(MovieDataFactory.loadMovieDataFromStream(getClass()
+        MovieAward award = MovieDataFactory.loadMovieDataFromStream(getClass()
             .getResourceAsStream("data/" + awardName + ".xml"),
-            new MovieAwardForMovies(mMovieDatabase)));
+            new MovieAwardForMovies(mMovieDatabase));
+        if (award != null) {
+        	mMovieAwards.add(award);
+        }
+        else {
+        	mLog.warning("Could not load award " + awardName);
+        }
       }
     }
 
