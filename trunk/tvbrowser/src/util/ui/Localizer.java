@@ -607,4 +607,14 @@ public class Localizer {
   public String ellipsisMsg(final String key, final String defaultMsg, final Object arg1) {
     return ellipsisSuffix(msg(key, defaultMsg, arg1));
   }
+  
+  /**
+   * check if a given message key exists
+   * @param key
+   * @return
+   * @since 3.0
+   */
+  public boolean hasMessage(final String key) {
+  	return mResource.containsKey(key);
+  }
 }
