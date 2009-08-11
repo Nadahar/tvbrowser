@@ -244,7 +244,7 @@ public class MarkList extends Vector<Program> {
           .createIconForTree(0));
     } else {
       action.putValue(Action.NAME, SimpleMarkerPlugin.mLocalizer.msg(
-          "list.mark", "Add program to'{0}'", getName()));
+          "list.mark", "Add program to '{0}'", getName()));
       action.putValue(Action.SMALL_ICON, mMarkIcon);
       action.putValue(Program.MARK_PRIORITY, getMarkPriority());
     }
@@ -478,7 +478,7 @@ public class MarkList extends Vector<Program> {
    */
   public ProgramReceiveTarget getReceiveTarget() {
     return new ProgramReceiveTarget(SimpleMarkerPlugin.getInstance(),
-        SimpleMarkerPlugin.mLocalizer.msg("list.export", "Add to'{0}'", mName),
+        SimpleMarkerPlugin.mLocalizer.msg("list.export", "Add to '{0}'", mName),
         mId);
   }
 
