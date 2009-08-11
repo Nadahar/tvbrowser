@@ -35,8 +35,6 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 
-import util.ui.Localizer;
-
 
 
 public class DefaultMenuBar extends MenuBar {
@@ -49,24 +47,20 @@ public class DefaultMenuBar extends MenuBar {
     int keyModifier = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
     
     /* create the main menus */
-    JMenu tvbrowserMenu = new JMenu(mLocalizer.msg("menu.main", "TV-Browser"));
-    tvbrowserMenu.setMnemonic(KeyEvent.VK_B);
+    JMenu tvbrowserMenu = createMenu("menu.main", "TV-Browser");
     add(tvbrowserMenu);
     
     add(mViewMenu);
 
     add(mGoMenu);
 
-    JMenu tvListingsMenu = new JMenu(mLocalizer.msg("menu.tvData", "TV data"));
-    tvListingsMenu.setMnemonic(KeyEvent.VK_D);
+    JMenu tvListingsMenu = createMenu("menu.tvData", "TV data");
     add(tvListingsMenu);
     
-    mPluginsMenu = new JMenu(mLocalizer.msg("menu.plugins", "Plugins"));
-    mPluginsMenu.setMnemonic(KeyEvent.VK_P);
+    mPluginsMenu = createMenu("menu.plugins", "Plugins");
     add(mPluginsMenu);
     
-    JMenu helpMenu = new JMenu(Localizer.getLocalization(Localizer.I18N_HELP));
-    helpMenu.setMnemonic(KeyEvent.VK_H);
+    JMenu helpMenu = createMenu("menu.help", "Help");
     add(helpMenu);
     
     // "TV-Browser" menu
