@@ -305,6 +305,14 @@ public abstract class SoftwareUpdateItem {
   }
 	
 	/**
+	 * check whether this item is already installed or not
+	 * @return
+	 */
+	public boolean isAlreadyInstalled() {
+		return getInstalledVersion() != null;
+	}
+	
+	/**
 	 * Gets the category of this update item.
 	 * <p>
 	 * @since 2.7

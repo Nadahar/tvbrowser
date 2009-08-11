@@ -175,7 +175,13 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
 
     southPn.add(builder.getPanel(), BorderLayout.SOUTH);
     
-    mSoftwareUpdateItemList = new SelectableItemList(new Object[0],itemArr);
+    ArrayList<SoftwareUpdateItem> selectedItems = new ArrayList<SoftwareUpdateItem>();
+    for (SoftwareUpdateItem item : itemArr) {
+			if (item.isAlreadyInstalled() && item.getInstalledVersion().compareTo(item.getVersion()) < 0) {
+				selectedItems.add(item);
+			}
+		}
+    mSoftwareUpdateItemList = new SelectableItemList(selectedItems.toArray(new SoftwareUpdateItem[selectedItems.size()]),itemArr);
     mSoftwareUpdateItemList.addListSelectionListener(this);
     mSoftwareUpdateItemList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     mSoftwareUpdateItemList.setListUI(new MyListUI());
@@ -203,14 +209,16 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
         
         JLabel label3 = new JLabel();
         
-        Version installedVersion = item.getInstalledVersion();
-        if ((installedVersion != null) && (installedVersion.compareTo(item.getVersion()) < 0)) {
-          label.setIcon(NEW_VERSION_ICON);
-          
-          label3.setText("(" + mLocalizer.msg("installed","Installed version: ") + installedVersion.toString()+")");
-          label3.setFont(label3.getFont().deriveFont(label3.getFont().getSize2D()+2));
-          
-          pb.add(label3, cc.xy(4,2));
+        if (item.isAlreadyInstalled()) {
+	        Version installedVersion = item.getInstalledVersion();
+	        if ((installedVersion != null) && (installedVersion.compareTo(item.getVersion()) < 0)) {
+	          label.setIcon(NEW_VERSION_ICON);
+	          
+	          label3.setText("(" + mLocalizer.msg("installed","Installed version: ") + installedVersion.toString()+")");
+	          label3.setFont(label3.getFont().deriveFont(label3.getFont().getSize2D()+2));
+	          
+	          pb.add(label3, cc.xy(4,2));
+	        }
         }
         
         if (isSelected && isEnabled) {
