@@ -22,7 +22,6 @@
  * $Revision$
  */
 
-
 package tvbrowser.ui.mainframe;
 
 import java.awt.event.ActionEvent;
@@ -81,337 +80,418 @@ import devplugin.ProgramFilter;
 import devplugin.ProgressMonitor;
 import devplugin.SettingsItem;
 
+public abstract class MenuBar extends JMenuBar implements ActionListener,
+		DateListener {
 
-public abstract class MenuBar extends JMenuBar implements ActionListener, DateListener {
-  
-    /** The localizer for this class. */
-    protected static final util.ui.Localizer mLocalizer
-      = util.ui.Localizer.getLocalizerFor(MainFrame.class);
-    
-    
-  private MainFrame mMainFrame;
+	/** The localizer for this class. */
+	protected static final util.ui.Localizer mLocalizer = util.ui.Localizer
+			.getLocalizerFor(MainFrame.class);
 
-  protected JMenuItem mSettingsMI, mQuitMI, mToolbarMI, mStatusbarMI, mTimeBtnsMI, mDatelistMI,
-                    mChannellistMI, mPluginOverviewMI, mViewFilterBarMI, mUpdateMI,
-                    mPluginManagerMI, mInstallPluginsMI, mDonorMI, mFaqMI, mBackupMI, mForumMI, mWebsiteMI, mHandbookMI, mDownloadMI,
-                    mConfigAssistantMI, mAboutMI, mKeyboardShortcutsMI,
-                    mPreviousDayMI, mNextDayMI, mPreviousWeekMI, mNextWeekMI, mTodayMI,
-                    mGotoNowMenuItem, mEditTimeButtonsMenuItem,
-                    mToolbarCustomizeMI, mFullscreenMI, mFontSizeLargerMI, mFontSizeSmallerMI,
-                    mFontSizeDefaultMI, mColumnWidthLargerMI, mColumnWidthSmallerMI, 
-                    mColumnWidthDefaultMI, mPluginInfoDlgMI;
-  protected JMenu mFiltersMenu, mLicenseMenu, mGoMenu, mViewMenu, mToolbarMenu, mPluginHelpMenu;
+	private MainFrame mMainFrame;
 
-  private JMenu mGotoDateMenu, mGotoChannelMenu, mGotoTimeMenu, mFontSizeMenu, mColumnWidthMenu, mChannelGroupMenu;
-  
-  /**
-   * status bar label for menu help
-   */
-  private JLabel mLabel;
-  
-  protected MenuBar(MainFrame mainFrame, JLabel label) {
-    mMainFrame = mainFrame;
-    mLabel = label;
-    createMenuItems();
-    createMenuItemInfos();
-  }
+	protected JMenuItem mSettingsMI, mQuitMI, mToolbarMI, mStatusbarMI,
+			mTimeBtnsMI, mDatelistMI, mChannellistMI, mPluginOverviewMI,
+			mViewFilterBarMI, mUpdateMI, mPluginManagerMI, mInstallPluginsMI,
+			mDonorMI, mFaqMI, mBackupMI, mForumMI, mWebsiteMI, mHandbookMI,
+			mDownloadMI, mConfigAssistantMI, mAboutMI, mKeyboardShortcutsMI,
+			mPreviousDayMI, mNextDayMI, mPreviousWeekMI, mNextWeekMI, mTodayMI,
+			mGotoNowMenuItem, mEditTimeButtonsMenuItem, mToolbarCustomizeMI,
+			mFullscreenMI, mFontSizeLargerMI, mFontSizeSmallerMI, mFontSizeDefaultMI,
+			mColumnWidthLargerMI, mColumnWidthSmallerMI, mColumnWidthDefaultMI,
+			mPluginInfoDlgMI;
+	protected JMenu mFiltersMenu, mLicenseMenu, mGoMenu, mViewMenu, mToolbarMenu,
+			mPluginHelpMenu;
+
+	private JMenu mGotoDateMenu, mGotoChannelMenu, mGotoTimeMenu, mFontSizeMenu,
+			mColumnWidthMenu, mChannelGroupMenu;
+
+	/**
+	 * status bar label for menu help
+	 */
+	private JLabel mLabel;
+
+	protected MenuBar(MainFrame mainFrame, JLabel label) {
+		mMainFrame = mainFrame;
+		mLabel = label;
+		createMenuItems();
+		createMenuItemInfos();
+	}
 
 	protected MainFrame getMainFrame() {
 		return mMainFrame;
 	}
-    
-  public JLabel getLabel() {
-    return mLabel;
-  }
-    
-  public void showUpdateMenuItem() {
-    mUpdateMI.setText(mLocalizer.msg("menuitem.update","Update"));
-    mUpdateMI.setIcon(IconLoader.getInstance().getIconFromTheme("apps", "system-software-update", 16));
-  }
-  
-  public void showStopMenuItem() {
-      mUpdateMI.setText(mLocalizer.msg("menuitem.stopUpdate","Stop"));
-      mUpdateMI.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "process-stop", 16));
-  }
-  
-  private void createMenuItems() {
-      
-    mSettingsMI = createMenuItem("menuitem.settings", "Settings", TVBrowserIcons.preferences(TVBrowserIcons.SIZE_SMALL), true);
-    mSettingsMI.addActionListener(this);
-    new MenuHelpTextAdapter(mSettingsMI, mLocalizer.msg("menuinfo.settings",""), mLabel); 
 
-    mQuitMI = createMenuItem("menuitem.exit", "Exit", TVBrowserIcons.quit(TVBrowserIcons.SIZE_SMALL));
-    mQuitMI.addActionListener(this);
-    new MenuHelpTextAdapter(mQuitMI, mLocalizer.msg("menuinfo.quit",""), mLabel);
-    
-    mToolbarMenu = createMenu("menuitem.viewToolbar","Toolbar");
-    
-    mToolbarMI = new JCheckBoxMenuItem(ToolBarDragAndDropSettings.mLocalizer.msg(
-        "showToolbar", "Show toolbar"));
-    mToolbarMI.setSelected(Settings.propIsTooolbarVisible.getBoolean());
-    mToolbarMI.addActionListener(this);
-    new MenuHelpTextAdapter(mToolbarMI, mLocalizer.msg("menuinfo.toolbar",""), mLabel);
-    
-    mToolbarCustomizeMI = new JMenuItem(ContextMenu.mLocalizer.ellipsisMsg("configure","Configure"));
-    mToolbarCustomizeMI.addActionListener(this);
-    new MenuHelpTextAdapter(mToolbarCustomizeMI, mLocalizer.msg("menuinfo.customizeToolbar",""), mLabel);
-    
-    mToolbarMenu.add(mToolbarMI);
-    mToolbarMenu.addSeparator();
-    mToolbarMenu.add(mToolbarCustomizeMI);
-    
-    mStatusbarMI = createCheckBoxItem("menuitem.viewStatusbar","Statusbar");
-    mStatusbarMI.setSelected(Settings.propIsStatusbarVisible.getBoolean());
-    mStatusbarMI.addActionListener(this);
-    new MenuHelpTextAdapter(mStatusbarMI, mLocalizer.msg("menuinfo.statusbar",""), mLabel);
-    
-    mTimeBtnsMI = createCheckBoxItem("menuitem.timebuttons", "Time buttons");
-    mTimeBtnsMI.setSelected(Settings.propShowTimeButtons.getBoolean());
-    mTimeBtnsMI.addActionListener(this);    
-    new MenuHelpTextAdapter(mTimeBtnsMI, mLocalizer.msg("menuinfo.timebuttons",""), mLabel);
-    
-    mDatelistMI = createCheckBoxItem("menuitem.datelist","Date list");
-    mDatelistMI.setSelected(Settings.propShowDatelist.getBoolean());
-    mDatelistMI.addActionListener(this);
-    new MenuHelpTextAdapter(mDatelistMI, mLocalizer.msg("menuinfo.datelist",""), mLabel);
+	public JLabel getLabel() {
+		return mLabel;
+	}
 
-    mChannellistMI = createCheckBoxItem("menuitem.channellist","channel list");
-    mChannellistMI.setSelected(Settings.propShowChannels.getBoolean());
-    mChannellistMI.addActionListener(this);
-    new MenuHelpTextAdapter(mChannellistMI, mLocalizer.msg("menuinfo.channellist",""), mLabel);
+	public void showUpdateMenuItem() {
+		mUpdateMI.setText(mLocalizer.msg("menuitem.update", "Update"));
+		mUpdateMI.setIcon(IconLoader.getInstance().getIconFromTheme("apps",
+				"system-software-update", 16));
+	}
 
-    mPluginOverviewMI = createCheckBoxItem("menuitem.pluginOverview","Plugin overview");
-    mPluginOverviewMI.setSelected(Settings.propShowPluginView.getBoolean());
-    mPluginOverviewMI.addActionListener(this);
-    mPluginOverviewMI.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "view-tree", 16));
-    new MenuHelpTextAdapter(mPluginOverviewMI, mLocalizer.msg("menuinfo.pluginOverview",""), mLabel);
+	public void showStopMenuItem() {
+		mUpdateMI.setText(mLocalizer.msg("menuitem.stopUpdate", "Stop"));
+		mUpdateMI.setIcon(IconLoader.getInstance().getIconFromTheme("actions",
+				"process-stop", 16));
+	}
 
-    mViewFilterBarMI = createCheckBoxItem("menuitem.viewFilterBar","Filter bar");
-    mViewFilterBarMI.setSelected(Settings.propShowFilterBar.getBoolean());
-    mViewFilterBarMI.addActionListener(this);
-    new MenuHelpTextAdapter(mViewFilterBarMI, mLocalizer.msg("menuinfo.filterbar",""), mLabel);
-    
-    mFiltersMenu = createMenu("menuitem.filters","Filter");
-    mFiltersMenu.setIcon(TVBrowserIcons.filter(TVBrowserIcons.SIZE_SMALL));
-    updateFiltersMenu();
-    
-    mChannelGroupMenu = createMenu("menuitem.channelgroup", "Channel group");
-    updateChannelGroupMenu();
-    
-    mGoMenu = createMenu("menu.go", "Go");
+	private void createMenuItems() {
+		// Windows guidelines require the use of "Options"
+		if (OperatingSystem.isWindows()) {
+			mSettingsMI = createMenuItem("menuitem.settingsWin", "&Options",
+				TVBrowserIcons.preferences(TVBrowserIcons.SIZE_SMALL), true);
+		}
+		else {
+			mSettingsMI = createMenuItem("menuitem.settings", "&Settings",
+				TVBrowserIcons.preferences(TVBrowserIcons.SIZE_SMALL), true);
+		}
+		mSettingsMI.addActionListener(this);
+		new MenuHelpTextAdapter(mSettingsMI, mLocalizer
+				.msg("menuinfo.settings", ""), mLabel);
 
-    mPreviousDayMI = createMenuItem("menuitem.previousDay","previous day");
-    mPreviousDayMI.addActionListener(this);
-    mPreviousDayMI.setIcon(TVBrowserIcons.left(TVBrowserIcons.SIZE_SMALL));
-    new MenuHelpTextAdapter(mPreviousDayMI, mLocalizer.msg("menuinfo.previousDay",""), mLabel);
+		mQuitMI = createMenuItem("menuitem.exit", "Exit", TVBrowserIcons
+				.quit(TVBrowserIcons.SIZE_SMALL));
+		mQuitMI.addActionListener(this);
+		new MenuHelpTextAdapter(mQuitMI, mLocalizer.msg("menuinfo.quit", ""),
+				mLabel);
 
-    mNextDayMI = createMenuItem("menuitem.nextDay", "next day");
-    mNextDayMI.addActionListener(this);
-    mNextDayMI.setIcon(TVBrowserIcons.right(TVBrowserIcons.SIZE_SMALL));
-    new MenuHelpTextAdapter(mNextDayMI, mLocalizer.msg("menuinfo.nextDay",""), mLabel);
+		mToolbarMenu = createMenu("menuitem.viewToolbar", "Toolbar");
 
-    mPreviousWeekMI = createMenuItem("menuitem.previousWeek", "previous week");
-    mPreviousWeekMI.addActionListener(this);
-    mPreviousWeekMI.setIcon(TVBrowserIcons.previousWeek(TVBrowserIcons.SIZE_SMALL));
-    new MenuHelpTextAdapter(mPreviousWeekMI, mLocalizer.msg("menuinfo.previousWeek",""), mLabel);
+		mToolbarMI = new JCheckBoxMenuItem(ToolBarDragAndDropSettings.mLocalizer
+				.msg("showToolbar", "Show toolbar"));
+		mToolbarMI.setSelected(Settings.propIsTooolbarVisible.getBoolean());
+		mToolbarMI.addActionListener(this);
+		new MenuHelpTextAdapter(mToolbarMI, mLocalizer.msg("menuinfo.toolbar", ""),
+				mLabel);
 
-    mNextWeekMI = createMenuItem("menuitem.nextWeek", "next week");
-    mNextWeekMI.addActionListener(this);
-    mNextWeekMI.setIcon(TVBrowserIcons.nextWeek(TVBrowserIcons.SIZE_SMALL));
-    new MenuHelpTextAdapter(mNextWeekMI, mLocalizer.msg("menuinfo.nextWeek",""), mLabel);
+		mToolbarCustomizeMI = new JMenuItem(ContextMenu.mLocalizer.ellipsisMsg(
+				"configure", "Configure"));
+		mToolbarCustomizeMI.addActionListener(this);
+		new MenuHelpTextAdapter(mToolbarCustomizeMI, mLocalizer.msg(
+				"menuinfo.customizeToolbar", ""), mLabel);
 
-    mTodayMI = createMenuItem("menuitem.today", "today");
-    mTodayMI.addActionListener(this);
-    mTodayMI.setIcon(TVBrowserIcons.down(TVBrowserIcons.SIZE_SMALL));
-    new MenuHelpTextAdapter(mTodayMI, mLocalizer.msg("menuinfo.today",""), mLabel);
+		mToolbarMenu.add(mToolbarMI);
+		mToolbarMenu.addSeparator();
+		mToolbarMenu.add(mToolbarCustomizeMI);
 
-    mGotoNowMenuItem = createMenuItem("menuitem.now","now");
-    mGotoNowMenuItem.addActionListener(this);
-    mGotoNowMenuItem.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "scroll-to-now", 16));
-    new MenuHelpTextAdapter(mGotoNowMenuItem, mLocalizer.msg("menuinfo.now",""), mLabel);
+		mStatusbarMI = createCheckBoxItem("menuitem.viewStatusbar", "Statusbar");
+		mStatusbarMI.setSelected(Settings.propIsStatusbarVisible.getBoolean());
+		mStatusbarMI.addActionListener(this);
+		new MenuHelpTextAdapter(mStatusbarMI, mLocalizer.msg("menuinfo.statusbar",
+				""), mLabel);
 
-    mGotoDateMenu = createMenu("menuitem.date","date");
-    mGotoDateMenu.setIcon(IconLoader.getInstance().getIconFromTheme("apps", "office-calendar", 16));
+		mTimeBtnsMI = createCheckBoxItem("menuitem.timebuttons", "Time buttons");
+		mTimeBtnsMI.setSelected(Settings.propShowTimeButtons.getBoolean());
+		mTimeBtnsMI.addActionListener(this);
+		new MenuHelpTextAdapter(mTimeBtnsMI, mLocalizer.msg("menuinfo.timebuttons",
+				""), mLabel);
 
+		mDatelistMI = createCheckBoxItem("menuitem.datelist", "Date list");
+		mDatelistMI.setSelected(Settings.propShowDatelist.getBoolean());
+		mDatelistMI.addActionListener(this);
+		new MenuHelpTextAdapter(mDatelistMI, mLocalizer
+				.msg("menuinfo.datelist", ""), mLabel);
 
+		mChannellistMI = createCheckBoxItem("menuitem.channellist", "channel list");
+		mChannellistMI.setSelected(Settings.propShowChannels.getBoolean());
+		mChannellistMI.addActionListener(this);
+		new MenuHelpTextAdapter(mChannellistMI, mLocalizer.msg(
+				"menuinfo.channellist", ""), mLabel);
 
-    mGotoChannelMenu = new ScrollableMenu(Localizer.getLocalization(Localizer.I18N_CHANNEL));
-    mGotoChannelMenu.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "scroll-to-channel", 16));
-    mGotoTimeMenu = createMenu("menuitem.time","time");
-    mGotoTimeMenu.setIcon(IconLoader.getInstance().getIconFromTheme("actions", "scroll-to-time", 16));
-    mGoMenu.add(mPreviousDayMI);
-    mGoMenu.add(mNextDayMI);
-    mGoMenu.add(mPreviousWeekMI);
-    mGoMenu.add(mNextWeekMI);
-    mGoMenu.add(mTodayMI);
-    mGoMenu.addSeparator();
-    mGoMenu.add(mGotoDateMenu);
-    mGoMenu.add(mGotoChannelMenu);
-    mGoMenu.add(mGotoTimeMenu);
-    mGoMenu.addSeparator();
-    mGoMenu.add(mGotoNowMenuItem);
+		mPluginOverviewMI = createCheckBoxItem("menuitem.pluginOverview",
+				"Plugin overview");
+		mPluginOverviewMI.setSelected(Settings.propShowPluginView.getBoolean());
+		mPluginOverviewMI.addActionListener(this);
+		mPluginOverviewMI.setIcon(IconLoader.getInstance().getIconFromTheme(
+				"actions", "view-tree", 16));
+		new MenuHelpTextAdapter(mPluginOverviewMI, mLocalizer.msg(
+				"menuinfo.pluginOverview", ""), mLabel);
 
+		mViewFilterBarMI = createCheckBoxItem("menuitem.viewFilterBar",
+				"Filter bar");
+		mViewFilterBarMI.setSelected(Settings.propShowFilterBar.getBoolean());
+		mViewFilterBarMI.addActionListener(this);
+		new MenuHelpTextAdapter(mViewFilterBarMI, mLocalizer.msg(
+				"menuinfo.filterbar", ""), mLabel);
 
-    mViewMenu = createMenu("menu.view","View");
+		mFiltersMenu = createMenu("menuitem.filters", "Filter");
+		mFiltersMenu.setIcon(TVBrowserIcons.filter(TVBrowserIcons.SIZE_SMALL));
+		updateFiltersMenu();
 
-    mFullscreenMI = createCheckBoxItem("menuitem.fullscreen","Fullscreen");
-    mFullscreenMI.setIcon(TVBrowserIcons.fullScreen(TVBrowserIcons.SIZE_SMALL));
-    mFullscreenMI.addActionListener(this);
-    new MenuHelpTextAdapter(mFullscreenMI, mLocalizer.msg("menuinfo.fullscreen",""), mLabel);
+		mChannelGroupMenu = createMenu("menuitem.channelgroup", "Channel group");
+		updateChannelGroupMenu();
 
-    updateDateItems();
-    updateChannelItems();
-    updateTimeItems();
-    
-    mUpdateMI = createMenuItem("menuitem.update", "Update", IconLoader.getInstance().getIconFromTheme("apps", "system-software-update", 16), true);
-    mUpdateMI.addActionListener(this);
-    new MenuHelpTextAdapter(mUpdateMI, mLocalizer.msg("menuinfo.update",""), mLabel);
-    
-    mLicenseMenu = createLicenseMenuItems();
+		mGoMenu = createMenu("menu.go", "Go");
 
-    Icon urlHelpImg = IconLoader.getInstance().getIconFromTheme("apps", "help-browser", 16);
-    Icon urlBrowserImg = IconLoader.getInstance().getIconFromTheme("apps", "internet-web-browser", 16);
-    
-    mInstallPluginsMI = createMenuItem("menuitem.installPlugins","Install/Update Plugins", urlBrowserImg, true);
-    mInstallPluginsMI.addActionListener(this);
-    new MenuHelpTextAdapter(mInstallPluginsMI, mLocalizer.msg("menuinfo.installPlugins","Add additional functions to TV-Browser/search for updates for installed Plugins"), mLabel);
-    
-    mPluginManagerMI = createMenuItem("menuitem.managePlugins", "Manage Plugins", null, true);
-    mPluginManagerMI.addActionListener(this);
-    mPluginManagerMI.setIcon(TVBrowserIcons.plugin(TVBrowserIcons.SIZE_SMALL));
-    new MenuHelpTextAdapter(mPluginManagerMI, mLocalizer.msg("menuinfo.findplugins",""), mLabel);
-        
-    mHandbookMI=createMenuItem("menuitem.handbook", "Handbook", urlHelpImg); 
-    mHandbookMI.addActionListener(this);
-    new MenuHelpTextAdapter(mHandbookMI,mLocalizer.msg("website.handbook",""),mLabel); 
-    
-    mKeyboardShortcutsMI = createMenuItem("menuitem.keyboardshortcuts","Keyboard shortcuts", urlHelpImg);
-    mKeyboardShortcutsMI.addActionListener(this);
-    new MenuHelpTextAdapter(mKeyboardShortcutsMI,mLocalizer.msg("website.keyboardshortcuts",""),mLabel);
+		mPreviousDayMI = createMenuItem("menuitem.previousDay", "previous day");
+		mPreviousDayMI.addActionListener(this);
+		mPreviousDayMI.setIcon(TVBrowserIcons.left(TVBrowserIcons.SIZE_SMALL));
+		new MenuHelpTextAdapter(mPreviousDayMI, mLocalizer.msg(
+				"menuinfo.previousDay", ""), mLabel);
 
-    mFaqMI=createMenuItem("menuitem.faq", "FAQ", urlHelpImg);   
-    mFaqMI.addActionListener(this);
-    new MenuHelpTextAdapter(mFaqMI,mLocalizer.msg("website.faq",""),mLabel); 
-    
-    mBackupMI=createMenuItem("menuitem.backup", "Backup", urlHelpImg);   
-    mBackupMI.addActionListener(this);
-    new MenuHelpTextAdapter(mBackupMI,mLocalizer.msg("website.backup",""),mLabel); 
-    
-    mWebsiteMI=createMenuItem("menuitem.website", "Website", urlBrowserImg);
-    mWebsiteMI.addActionListener(this);
-    new MenuHelpTextAdapter(mWebsiteMI,mLocalizer.msg("website.tvbrowser",""),mLabel); 
-    
-    mForumMI=createMenuItem("menuitem.forum", "Bulletin board", urlBrowserImg); 
-    mForumMI.addActionListener(this);
-    new MenuHelpTextAdapter(mForumMI,mLocalizer.msg("website.forum",""),mLabel); 
-    
-    mDownloadMI=createMenuItem("menuitem.download", "Download",urlBrowserImg); 
-    mDownloadMI.addActionListener(this);
-    new MenuHelpTextAdapter(mForumMI,mLocalizer.msg("website.download",""),mLabel); 
-    
-    mDonorMI=createMenuItem("menuitem.donors", "Donors", urlBrowserImg);
-    mDonorMI.addActionListener(this);
-    new MenuHelpTextAdapter(mDonorMI,mLocalizer.msg("website.donors",""),mLabel); 
-    
-    mConfigAssistantMI=createMenuItem("menuitem.configAssistant", "Setup assistant" ,TVBrowserIcons.preferences(TVBrowserIcons.SIZE_SMALL));
-    mConfigAssistantMI.addActionListener(this);
-    new MenuHelpTextAdapter(mConfigAssistantMI,mLocalizer.msg("menuinfo.configAssistant",""),mLabel);
-    
-    mPluginInfoDlgMI=createMenuItem("menuitem.pluginInfoDlg","What are Plugins?" ,urlHelpImg);
-    mPluginInfoDlgMI.addActionListener(this);
-    new MenuHelpTextAdapter(mPluginInfoDlgMI,mLocalizer.msg("menuinfo.pluginInfoDlg","Describes the Plugin functionality of TV-Browser."),mLabel);
-    
-    mAboutMI = createMenuItem("menuitem.about", "About", new ImageIcon("imgs/tvbrowser16.png"), true);
-    mAboutMI.addActionListener(this);
-    new MenuHelpTextAdapter(mAboutMI, mLocalizer.msg("menuinfo.about",""), mLabel);
-    
-    mPluginHelpMenu = createMenu("menuitem.pluginHelp","Plugin help");
-    mPluginHelpMenu.setIcon(urlHelpImg);
-    updatePluginHelpMenuItems();
-    
-    mFontSizeLargerMI = createMenuItem("menuitem.fontSizeLarger", "Larger");
-    mFontSizeLargerMI.addActionListener(this);
-    mFontSizeLargerMI.setIcon(TVBrowserIcons.zoomIn(TVBrowserIcons.SIZE_SMALL));
-    new MenuHelpTextAdapter(mFontSizeLargerMI, mLocalizer.msg("menuinfo.fontlarger",""), mLabel);
-    
-    mFontSizeSmallerMI = createMenuItem("menuitem.fontSizeSmaller", "Smaller");
-    mFontSizeSmallerMI.addActionListener(this);
-    mFontSizeSmallerMI.setIcon(TVBrowserIcons.zoomOut(TVBrowserIcons.SIZE_SMALL));
-    new MenuHelpTextAdapter(mFontSizeSmallerMI, mLocalizer.msg("menuinfo.fontsmaller",""), mLabel);
-    
-    mFontSizeDefaultMI = createMenuItem("menuitem.fontSizeDefault", "Reset to default");
-    mFontSizeDefaultMI.addActionListener(this);
-    new MenuHelpTextAdapter(mFontSizeDefaultMI, mLocalizer.msg("menuinfo.fontdefault",""), mLabel);
-    
-    mFontSizeMenu = createMenu("menuitem.fontSize", "Font size");
-    mFontSizeMenu.add(mFontSizeLargerMI);
-    mFontSizeMenu.add(mFontSizeSmallerMI);
-    mFontSizeMenu.addSeparator();
-    mFontSizeMenu.add(mFontSizeDefaultMI);
-    mFontSizeMenu.setIcon(TVBrowserIcons.zoomIn(TVBrowserIcons.SIZE_SMALL));
-    
-    mColumnWidthLargerMI = createMenuItem("menuitem.columnWidthLarger", "Larger");
-    mColumnWidthLargerMI.addActionListener(this);
-    new MenuHelpTextAdapter(mColumnWidthLargerMI, mLocalizer.msg("menuinfo.columnlarger",""), mLabel);
-    
-    mColumnWidthSmallerMI = createMenuItem("menuitem.columnWidthSmaller", "Smaller");
-    mColumnWidthSmallerMI.addActionListener(this);
-    new MenuHelpTextAdapter(mColumnWidthSmallerMI, mLocalizer.msg("menuinfo.columnsmaller",""), mLabel);
-    
-    mColumnWidthDefaultMI = createMenuItem("menuitem.columnWidthDefault", "Reset to default");
-    mColumnWidthDefaultMI.addActionListener(this);
-    new MenuHelpTextAdapter(mColumnWidthDefaultMI, mLocalizer.msg("menuinfo.columndefault",""), mLabel);
-    
-    mColumnWidthMenu = createMenu("menuitem.columnWidth", "ColumnWidth");
-    mColumnWidthMenu.add(mColumnWidthLargerMI);
-    mColumnWidthMenu.add(mColumnWidthSmallerMI);
-    mColumnWidthMenu.addSeparator();
-    mColumnWidthMenu.add(mColumnWidthDefaultMI);
-    
-    mViewMenu.add(mToolbarMenu);
-    mViewMenu.add(mPluginOverviewMI);
-    mViewMenu.add(mTimeBtnsMI);
-    mViewMenu.add(mDatelistMI);
-    mViewMenu.add(mChannellistMI);
-    mViewMenu.add(mStatusbarMI);
-    mViewMenu.add(mViewFilterBarMI);
-    mViewMenu.addSeparator();
-    mViewMenu.add(mFiltersMenu);
-    mViewMenu.add(mChannelGroupMenu);
-    mViewMenu.add(mFontSizeMenu);
-    mViewMenu.add(mColumnWidthMenu);
-    mViewMenu.addSeparator();
-    mViewMenu.add(mFullscreenMI);
-  }
+		mNextDayMI = createMenuItem("menuitem.nextDay", "next day");
+		mNextDayMI.addActionListener(this);
+		mNextDayMI.setIcon(TVBrowserIcons.right(TVBrowserIcons.SIZE_SMALL));
+		new MenuHelpTextAdapter(mNextDayMI, mLocalizer.msg("menuinfo.nextDay", ""),
+				mLabel);
 
-  private JMenuItem createMenuItem(final String localizerKey, final String defaultLabel,
-			Icon icon, boolean ellipsis) {
-  	JMenuItem item = new JMenuItem();
-  	setLabelAndAccessKeys(localizerKey, defaultLabel, item, ellipsis);
-  	if (icon != null) {
-  		item.setIcon(icon);
-  	}
+		mPreviousWeekMI = createMenuItem("menuitem.previousWeek", "previous week");
+		mPreviousWeekMI.addActionListener(this);
+		mPreviousWeekMI.setIcon(TVBrowserIcons
+				.previousWeek(TVBrowserIcons.SIZE_SMALL));
+		new MenuHelpTextAdapter(mPreviousWeekMI, mLocalizer.msg(
+				"menuinfo.previousWeek", ""), mLabel);
+
+		mNextWeekMI = createMenuItem("menuitem.nextWeek", "next week");
+		mNextWeekMI.addActionListener(this);
+		mNextWeekMI.setIcon(TVBrowserIcons.nextWeek(TVBrowserIcons.SIZE_SMALL));
+		new MenuHelpTextAdapter(mNextWeekMI, mLocalizer
+				.msg("menuinfo.nextWeek", ""), mLabel);
+
+		mTodayMI = createMenuItem("menuitem.today", "today");
+		mTodayMI.addActionListener(this);
+		mTodayMI.setIcon(TVBrowserIcons.down(TVBrowserIcons.SIZE_SMALL));
+		new MenuHelpTextAdapter(mTodayMI, mLocalizer.msg("menuinfo.today", ""),
+				mLabel);
+
+		mGotoNowMenuItem = createMenuItem("menuitem.now", "now");
+		mGotoNowMenuItem.addActionListener(this);
+		mGotoNowMenuItem.setIcon(IconLoader.getInstance().getIconFromTheme(
+				"actions", "scroll-to-now", 16));
+		new MenuHelpTextAdapter(mGotoNowMenuItem, mLocalizer
+				.msg("menuinfo.now", ""), mLabel);
+
+		mGotoDateMenu = createMenu("menuitem.date", "date");
+		mGotoDateMenu.setIcon(IconLoader.getInstance().getIconFromTheme("apps",
+				"office-calendar", 16));
+
+		mGotoChannelMenu = new ScrollableMenu(Localizer
+				.getLocalization(Localizer.I18N_CHANNEL));
+		mGotoChannelMenu.setIcon(IconLoader.getInstance().getIconFromTheme(
+				"actions", "scroll-to-channel", 16));
+		mGotoTimeMenu = createMenu("menuitem.time", "time");
+		mGotoTimeMenu.setIcon(IconLoader.getInstance().getIconFromTheme("actions",
+				"scroll-to-time", 16));
+		mGoMenu.add(mPreviousDayMI);
+		mGoMenu.add(mNextDayMI);
+		mGoMenu.add(mPreviousWeekMI);
+		mGoMenu.add(mNextWeekMI);
+		mGoMenu.add(mTodayMI);
+		mGoMenu.addSeparator();
+		mGoMenu.add(mGotoDateMenu);
+		mGoMenu.add(mGotoChannelMenu);
+		mGoMenu.add(mGotoTimeMenu);
+		mGoMenu.addSeparator();
+		mGoMenu.add(mGotoNowMenuItem);
+
+		mViewMenu = createMenu("menu.view", "View");
+
+		mFullscreenMI = createCheckBoxItem("menuitem.fullscreen", "Fullscreen");
+		mFullscreenMI.setIcon(TVBrowserIcons.fullScreen(TVBrowserIcons.SIZE_SMALL));
+		mFullscreenMI.addActionListener(this);
+		new MenuHelpTextAdapter(mFullscreenMI, mLocalizer.msg(
+				"menuinfo.fullscreen", ""), mLabel);
+
+		updateDateItems();
+		updateChannelItems();
+		updateTimeItems();
+
+		mUpdateMI = createMenuItem("menuitem.update", "Update", IconLoader
+				.getInstance().getIconFromTheme("apps", "system-software-update", 16),
+				true);
+		mUpdateMI.addActionListener(this);
+		new MenuHelpTextAdapter(mUpdateMI, mLocalizer.msg("menuinfo.update", ""),
+				mLabel);
+
+		mLicenseMenu = createLicenseMenuItems();
+
+		Icon urlHelpImg = IconLoader.getInstance().getIconFromTheme("apps",
+				"help-browser", 16);
+		Icon urlBrowserImg = IconLoader.getInstance().getIconFromTheme("apps",
+				"internet-web-browser", 16);
+
+		mInstallPluginsMI = createMenuItem("menuitem.installPlugins",
+				"Install/Update Plugins", urlBrowserImg, true);
+		mInstallPluginsMI.addActionListener(this);
+		new MenuHelpTextAdapter(
+				mInstallPluginsMI,
+				mLocalizer
+						.msg(
+								"menuinfo.installPlugins",
+								"Add additional functions to TV-Browser/search for updates for installed Plugins"),
+				mLabel);
+
+		mPluginManagerMI = createMenuItem("menuitem.managePlugins",
+				"Manage Plugins", null, true);
+		mPluginManagerMI.addActionListener(this);
+		mPluginManagerMI.setIcon(TVBrowserIcons.plugin(TVBrowserIcons.SIZE_SMALL));
+		new MenuHelpTextAdapter(mPluginManagerMI, mLocalizer.msg(
+				"menuinfo.findplugins", ""), mLabel);
+
+		mHandbookMI = createMenuItem("menuitem.handbook", "Handbook", urlHelpImg);
+		mHandbookMI.addActionListener(this);
+		new MenuHelpTextAdapter(mHandbookMI,
+				mLocalizer.msg("website.handbook", ""), mLabel);
+
+		mKeyboardShortcutsMI = createMenuItem("menuitem.keyboardshortcuts",
+				"Keyboard shortcuts", urlHelpImg);
+		mKeyboardShortcutsMI.addActionListener(this);
+		new MenuHelpTextAdapter(mKeyboardShortcutsMI, mLocalizer.msg(
+				"website.keyboardshortcuts", ""), mLabel);
+
+		mFaqMI = createMenuItem("menuitem.faq", "FAQ", urlHelpImg);
+		mFaqMI.addActionListener(this);
+		new MenuHelpTextAdapter(mFaqMI, mLocalizer.msg("website.faq", ""), mLabel);
+
+		mBackupMI = createMenuItem("menuitem.backup", "Backup", urlHelpImg);
+		mBackupMI.addActionListener(this);
+		new MenuHelpTextAdapter(mBackupMI, mLocalizer.msg("website.backup", ""),
+				mLabel);
+
+		mWebsiteMI = createMenuItem("menuitem.website", "Website", urlBrowserImg);
+		mWebsiteMI.addActionListener(this);
+		new MenuHelpTextAdapter(mWebsiteMI,
+				mLocalizer.msg("website.tvbrowser", ""), mLabel);
+
+		mForumMI = createMenuItem("menuitem.forum", "Bulletin board", urlBrowserImg);
+		mForumMI.addActionListener(this);
+		new MenuHelpTextAdapter(mForumMI, mLocalizer.msg("website.forum", ""),
+				mLabel);
+
+		mDownloadMI = createMenuItem("menuitem.download", "Download", urlBrowserImg);
+		mDownloadMI.addActionListener(this);
+		new MenuHelpTextAdapter(mForumMI, mLocalizer.msg("website.download", ""),
+				mLabel);
+
+		mDonorMI = createMenuItem("menuitem.donors", "Donors", urlBrowserImg);
+		mDonorMI.addActionListener(this);
+		new MenuHelpTextAdapter(mDonorMI, mLocalizer.msg("website.donors", ""),
+				mLabel);
+
+		mConfigAssistantMI = createMenuItem("menuitem.configAssistant",
+				"Setup assistant", TVBrowserIcons
+						.preferences(TVBrowserIcons.SIZE_SMALL));
+		mConfigAssistantMI.addActionListener(this);
+		new MenuHelpTextAdapter(mConfigAssistantMI, mLocalizer.msg(
+				"menuinfo.configAssistant", ""), mLabel);
+
+		mPluginInfoDlgMI = createMenuItem("menuitem.pluginInfoDlg",
+				"What are Plugins?", urlHelpImg);
+		mPluginInfoDlgMI.addActionListener(this);
+		new MenuHelpTextAdapter(mPluginInfoDlgMI, mLocalizer.msg(
+				"menuinfo.pluginInfoDlg",
+				"Describes the Plugin functionality of TV-Browser."), mLabel);
+
+		mAboutMI = createMenuItem("menuitem.about", "About", new ImageIcon(
+				"imgs/tvbrowser16.png"), false);
+		mAboutMI.addActionListener(this);
+		new MenuHelpTextAdapter(mAboutMI, mLocalizer.msg("menuinfo.about", ""),
+				mLabel);
+
+		mPluginHelpMenu = createMenu("menuitem.pluginHelp", "Plugin help");
+		mPluginHelpMenu.setIcon(urlHelpImg);
+		updatePluginHelpMenuItems();
+
+		mFontSizeLargerMI = createMenuItem("menuitem.fontSizeLarger", "Larger");
+		mFontSizeLargerMI.addActionListener(this);
+		mFontSizeLargerMI.setIcon(TVBrowserIcons.zoomIn(TVBrowserIcons.SIZE_SMALL));
+		new MenuHelpTextAdapter(mFontSizeLargerMI, mLocalizer.msg(
+				"menuinfo.fontlarger", ""), mLabel);
+
+		mFontSizeSmallerMI = createMenuItem("menuitem.fontSizeSmaller", "Smaller");
+		mFontSizeSmallerMI.addActionListener(this);
+		mFontSizeSmallerMI.setIcon(TVBrowserIcons
+				.zoomOut(TVBrowserIcons.SIZE_SMALL));
+		new MenuHelpTextAdapter(mFontSizeSmallerMI, mLocalizer.msg(
+				"menuinfo.fontsmaller", ""), mLabel);
+
+		mFontSizeDefaultMI = createMenuItem("menuitem.fontSizeDefault",
+				"Reset to default");
+		mFontSizeDefaultMI.addActionListener(this);
+		new MenuHelpTextAdapter(mFontSizeDefaultMI, mLocalizer.msg(
+				"menuinfo.fontdefault", ""), mLabel);
+
+		mFontSizeMenu = createMenu("menuitem.fontSize", "Font size");
+		mFontSizeMenu.add(mFontSizeLargerMI);
+		mFontSizeMenu.add(mFontSizeSmallerMI);
+		mFontSizeMenu.addSeparator();
+		mFontSizeMenu.add(mFontSizeDefaultMI);
+		mFontSizeMenu.setIcon(TVBrowserIcons.zoomIn(TVBrowserIcons.SIZE_SMALL));
+
+		mColumnWidthLargerMI = createMenuItem("menuitem.columnWidthLarger",
+				"Larger");
+		mColumnWidthLargerMI.addActionListener(this);
+		new MenuHelpTextAdapter(mColumnWidthLargerMI, mLocalizer.msg(
+				"menuinfo.columnlarger", ""), mLabel);
+
+		mColumnWidthSmallerMI = createMenuItem("menuitem.columnWidthSmaller",
+				"Smaller");
+		mColumnWidthSmallerMI.addActionListener(this);
+		new MenuHelpTextAdapter(mColumnWidthSmallerMI, mLocalizer.msg(
+				"menuinfo.columnsmaller", ""), mLabel);
+
+		mColumnWidthDefaultMI = createMenuItem("menuitem.columnWidthDefault",
+				"Reset to default");
+		mColumnWidthDefaultMI.addActionListener(this);
+		new MenuHelpTextAdapter(mColumnWidthDefaultMI, mLocalizer.msg(
+				"menuinfo.columndefault", ""), mLabel);
+
+		mColumnWidthMenu = createMenu("menuitem.columnWidth", "ColumnWidth");
+		mColumnWidthMenu.add(mColumnWidthLargerMI);
+		mColumnWidthMenu.add(mColumnWidthSmallerMI);
+		mColumnWidthMenu.addSeparator();
+		mColumnWidthMenu.add(mColumnWidthDefaultMI);
+
+		mViewMenu.add(mToolbarMenu);
+		mViewMenu.add(mPluginOverviewMI);
+		mViewMenu.add(mTimeBtnsMI);
+		mViewMenu.add(mDatelistMI);
+		mViewMenu.add(mChannellistMI);
+		mViewMenu.add(mStatusbarMI);
+		mViewMenu.add(mViewFilterBarMI);
+		mViewMenu.addSeparator();
+		mViewMenu.add(mFiltersMenu);
+		mViewMenu.add(mChannelGroupMenu);
+		mViewMenu.add(mFontSizeMenu);
+		mViewMenu.add(mColumnWidthMenu);
+		mViewMenu.addSeparator();
+		mViewMenu.add(mFullscreenMI);
+	}
+
+	private JMenuItem createMenuItem(final String localizerKey,
+			final String defaultLabel, Icon icon, boolean ellipsis) {
+		JMenuItem item = new JMenuItem();
+		setLabelAndAccessKeys(localizerKey, defaultLabel, item, ellipsis);
+		if (icon != null) {
+			item.setIcon(icon);
+		}
 		return item;
 	}
 
-	private JCheckBoxMenuItem createCheckBoxItem(final String localizerKey, final String defaultLabel) {
-  	JCheckBoxMenuItem item = new JCheckBoxMenuItem();
-  	setLabelAndAccessKeys(localizerKey, defaultLabel, item, false);
+	private JCheckBoxMenuItem createCheckBoxItem(final String localizerKey,
+			final String defaultLabel) {
+		JCheckBoxMenuItem item = new JCheckBoxMenuItem();
+		setLabelAndAccessKeys(localizerKey, defaultLabel, item, false);
 		return item;
 	}
 
-	private JMenuItem createMenuItem(final String localizerKey, final String defaultLabel) {
+	private JMenuItem createMenuItem(final String localizerKey,
+			final String defaultLabel) {
 		return createMenuItem(localizerKey, defaultLabel, null);
 	}
 
-	private JMenuItem createMenuItem(final String localizerKey, final String defaultLabel, final Icon icon) {
+	private JMenuItem createMenuItem(final String localizerKey,
+			final String defaultLabel, final Icon icon) {
 		return createMenuItem(localizerKey, defaultLabel, icon, false);
 	}
 
-	protected JMenu createMenu(final String localizerKey, final String defaultLabel) {
+	protected JMenu createMenu(final String localizerKey,
+			final String defaultLabel) {
 		JMenu menu = new JMenu();
-    setLabelAndAccessKeys(localizerKey, defaultLabel, menu, false);
-    return menu;
+		setLabelAndAccessKeys(localizerKey, defaultLabel, menu, false);
+		return menu;
 	}
 
 	private void setLabelAndAccessKeys(final String localizerKey,
@@ -420,543 +500,532 @@ public abstract class MenuBar extends JMenuBar implements ActionListener, DateLi
 		String label;
 		if (ellipsis) {
 			label = mLocalizer.ellipsisMsg(localizerKey, defaultLabel);
-		}
-		else {
+		} else {
 			label = mLocalizer.msg(localizerKey, defaultLabel);
 		}
-		
+
 		// find and extract the mnemonic
-    int index = label.indexOf('&');
-    String mnemonic = "";
-    if (index >= 0) {
-    	mnemonic = label.substring(index,index);
-    	label = label.substring(0, index) + label.substring(index + 1);
-    }
-    else {
+		int index = label.indexOf('&');
+		String mnemonic = "";
+		if (index >= 0) {
+			mnemonic = label.substring(index, index);
+			label = label.substring(0, index) + label.substring(index + 1);
+		} else {
 			String mnemonicKey = localizerKey + ".mnemonic";
-    	if (mLocalizer.hasMessage(mnemonicKey)) {
+			if (mLocalizer.hasMessage(mnemonicKey)) {
 				mnemonic = mLocalizer.msg(mnemonicKey, "");
 			}
-    }
+		}
 		item.setText(label);
-		
+
 		// mnemonics are discouraged on MacOS by Apples user interface guidelines
 		if (!OperatingSystem.isMacOs()) {
-	    if (mnemonic != null && !mnemonic.isEmpty()) {
-	      item.setMnemonic(mnemonic.charAt(0));
-	    }
-	    if (index >= 0) {
-	    	item.setDisplayedMnemonicIndex(index);
-	    }
+			if (mnemonic != null && !mnemonic.isEmpty()) {
+				item.setMnemonic(mnemonic.charAt(0));
+			}
+			if (index >= 0) {
+				item.setDisplayedMnemonicIndex(index);
+			}
 		}
 	}
 
 	void updateChannelGroupMenu() {
-    mChannelGroupMenu.removeAll();
-    String channelFilterName = Settings.propLastUsedChannelGroup.getString();
-    JRadioButtonMenuItem menuItem = new JRadioButtonMenuItem(mLocalizer.msg("channelGroupAll", "All channels"));
-    menuItem.setSelected(channelFilterName == null);
-    menuItem.addActionListener(new ActionListener() {
+		mChannelGroupMenu.removeAll();
+		String channelFilterName = Settings.propLastUsedChannelGroup.getString();
+		JRadioButtonMenuItem menuItem = new JRadioButtonMenuItem(mLocalizer.msg(
+				"channelGroupAll", "All channels"));
+		menuItem.setSelected(channelFilterName == null);
+		menuItem.addActionListener(new ActionListener() {
 
-      public void actionPerformed(ActionEvent e) {
-        MainFrame.getInstance().setChannelGroup(null);
-      }});
-    mChannelGroupMenu.add(menuItem);
-    String[] channelFilterNames = FilterComponentList.getInstance().getChannelFilterNames();
-    for (final String filterName : channelFilterNames) {
-      menuItem = new JRadioButtonMenuItem(filterName);
-      menuItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				MainFrame.getInstance().setChannelGroup(null);
+			}
+		});
+		mChannelGroupMenu.add(menuItem);
+		String[] channelFilterNames = FilterComponentList.getInstance()
+				.getChannelFilterNames();
+		for (final String filterName : channelFilterNames) {
+			menuItem = new JRadioButtonMenuItem(filterName);
+			menuItem.addActionListener(new ActionListener() {
 
-        public void actionPerformed(ActionEvent e) {
-          MainFrame.getInstance().setChannelGroup((ChannelFilterComponent) FilterComponentList.getInstance().getFilterComponentByName(filterName));
-        }});
-      mChannelGroupMenu.add(menuItem);
-      if (channelFilterName != null && filterName.equals(channelFilterName)) {
-        menuItem.setSelected(true);
-      }
-    }
-    mChannelGroupMenu.add(new JSeparator());
-    JMenuItem menuItemAdd = createMenuItem("channelGroupNew", "Add channel group", null, true);
-    menuItemAdd.addActionListener(new ActionListener(){
+				public void actionPerformed(ActionEvent e) {
+					MainFrame.getInstance().setChannelGroup(
+							(ChannelFilterComponent) FilterComponentList.getInstance()
+									.getFilterComponentByName(filterName));
+				}
+			});
+			mChannelGroupMenu.add(menuItem);
+			if (channelFilterName != null && filterName.equals(channelFilterName)) {
+				menuItem.setSelected(true);
+			}
+		}
+		mChannelGroupMenu.add(new JSeparator());
+		JMenuItem menuItemAdd = createMenuItem("channelGroupNew",
+				"Add channel group", null, true);
+		menuItemAdd.addActionListener(new ActionListener() {
 
-      public void actionPerformed(ActionEvent e) {
-        EditFilterComponentDlg dlg = new EditFilterComponentDlg(null, null, ChannelFilterComponent.class);
-        FilterComponent rule = dlg.getFilterComponent();
-        if ((rule != null) && (rule instanceof ChannelFilterComponent)) {
-          FilterComponentList.getInstance().add(rule);
-          FilterComponentList.getInstance().store();
-          MainFrame.getInstance().setChannelGroup((ChannelFilterComponent) rule);
-        }
-      }});
-    mChannelGroupMenu.add(menuItemAdd);
-  }
+			public void actionPerformed(ActionEvent e) {
+				EditFilterComponentDlg dlg = new EditFilterComponentDlg(null, null,
+						ChannelFilterComponent.class);
+				FilterComponent rule = dlg.getFilterComponent();
+				if ((rule != null) && (rule instanceof ChannelFilterComponent)) {
+					FilterComponentList.getInstance().add(rule);
+					FilterComponentList.getInstance().store();
+					MainFrame.getInstance()
+							.setChannelGroup((ChannelFilterComponent) rule);
+				}
+			}
+		});
+		mChannelGroupMenu.add(menuItemAdd);
+	}
 
-  private JMenuItem createDateMenuItem(final Date date) {
-    JMenuItem item = new JMenuItem(date.getLongDateString());
-    item.addActionListener(new ActionListener(){
-      public void actionPerformed(ActionEvent e) {
-        mMainFrame.goTo(date);
-      }
-    });
-    return item;
-  }
+	private JMenuItem createDateMenuItem(final Date date) {
+		JMenuItem item = new JMenuItem(date.getLongDateString());
+		item.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				mMainFrame.goTo(date);
+			}
+		});
+		return item;
+	}
 
-  private JMenuItem createChannelMenuItem(final Channel channel) {
-    Icon icon = null;
-    if (Settings.propShowChannelIconsInChannellist.getBoolean()) {
-      icon = UiUtilities.createChannelIcon(channel.getIcon());
-    }
-    JMenuItem item = new JMenuItem(channel.getName(), icon);
-    item.addActionListener(new ActionListener(){
-      public void actionPerformed(ActionEvent e) {
-        mMainFrame.showChannel(channel);
-      }
-    });
+	private JMenuItem createChannelMenuItem(final Channel channel) {
+		Icon icon = null;
+		if (Settings.propShowChannelIconsInChannellist.getBoolean()) {
+			icon = UiUtilities.createChannelIcon(channel.getIcon());
+		}
+		JMenuItem item = new JMenuItem(channel.getName(), icon);
+		item.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				mMainFrame.showChannel(channel);
+			}
+		});
 
-    return item;
-  }
+		return item;
+	}
 
-  private JMenuItem createTimeMenuItem(final int time) {
-    int h = time/60;
-    int min = time%60;
-    JMenuItem item = new JMenuItem((h<10?"0":"")+h+":"+(min<10?"0":"")+min);
-    item.addActionListener(new ActionListener(){
-      public void actionPerformed(ActionEvent e) {
-        mMainFrame.scrollToTime(time);
-      }
-    });
-    return item;
-  }
+	private JMenuItem createTimeMenuItem(final int time) {
+		int h = time / 60;
+		int min = time % 60;
+		JMenuItem item = new JMenuItem((h < 10 ? "0" : "") + h + ":"
+				+ (min < 10 ? "0" : "") + min);
+		item.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				mMainFrame.scrollToTime(time);
+			}
+		});
+		return item;
+	}
 
-  protected JMenuItem[] createFilterMenuItems() {
-      ButtonGroup group = new ButtonGroup();
-      FilterList filterList = FilterList.getInstance();
-      ProgramFilter[] filterArr = filterList.getFilterArr();
-      JRadioButtonMenuItem[] result = new JRadioButtonMenuItem[filterArr.length];
-      for (int i=0; i<filterArr.length; i++) {
-        final ProgramFilter filter = filterArr[i];
-        result[i] = new JRadioButtonMenuItem(filter.toString());
-        final JRadioButtonMenuItem item = result[i];    
-        group.add(item);
-        result[i].addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent event) {
-              mMainFrame.setProgramFilter(filter);
-              item.setSelected(true);
-            }});
-      }
-      result[0].setSelected(true);
-      return result;
-    }
+	protected JMenuItem[] createFilterMenuItems() {
+		ButtonGroup group = new ButtonGroup();
+		FilterList filterList = FilterList.getInstance();
+		ProgramFilter[] filterArr = filterList.getFilterArr();
+		JRadioButtonMenuItem[] result = new JRadioButtonMenuItem[filterArr.length];
+		for (int i = 0; i < filterArr.length; i++) {
+			final ProgramFilter filter = filterArr[i];
+			result[i] = new JRadioButtonMenuItem(filter.toString());
+			final JRadioButtonMenuItem item = result[i];
+			group.add(item);
+			result[i].addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent event) {
+					mMainFrame.setProgramFilter(filter);
+					item.setSelected(true);
+				}
+			});
+		}
+		result[0].setSelected(true);
+		return result;
+	}
 
-  private JMenu createLicenseMenuItems() {
-      JMenu licenseMenu = new JMenu();
-      TvDataServiceProxy services[]= TvDataServiceProxyManager.getInstance().getDataServices();
-      for (TvDataServiceProxy service : services) {
-        final String license=service.getInfo().getLicense();
-        if (license!=null) {
-          String name = service.getInfo().getName();
-					JMenuItem item=new JMenuItem(name,new ImageIcon("imgs/tvbrowser16.png"));
-					item.setMnemonic(name.charAt(0));
-          item.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e) {
-              LicenseBox box=new LicenseBox(mMainFrame, license, false);
-              util.ui.UiUtilities.centerAndShow(box);
-            }        
-          });
-          licenseMenu.add(item);
-        }
-      }
-      if (licenseMenu.getItemCount() > 1) {
-        setLabelAndAccessKeys("menuitem.licenseMultiple","Terms of Use", licenseMenu, false);
-        for (int i = 0; i < licenseMenu.getItemCount(); i++) {
-          licenseMenu.getItem(i).setText(licenseMenu.getItem(i).getText()+"...");
-        }
-      }
-      else {
-        setLabelAndAccessKeys("menuitem.license", "Terms of Use", licenseMenu, true);
-      }
-      return licenseMenu;
-    }
-  
-   public void updatePluginsMenu() {
-     JMenuItem[] items = createPluginMenuItems();
-     setPluginMenuItems(items);
-   }
+	private JMenu createLicenseMenuItems() {
+		JMenu licenseMenu = new JMenu();
+		TvDataServiceProxy services[] = TvDataServiceProxyManager.getInstance()
+				.getDataServices();
+		for (TvDataServiceProxy service : services) {
+			final String license = service.getInfo().getLicense();
+			if (license != null) {
+				String name = service.getInfo().getName();
+				JMenuItem item = new JMenuItem(name, new ImageIcon(
+						"imgs/tvbrowser16.png"));
+				setMnemonic(item);
+				item.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						LicenseBox box = new LicenseBox(mMainFrame, license, false);
+						util.ui.UiUtilities.centerAndShow(box);
+					}
+				});
+				licenseMenu.add(item);
+			}
+		}
+		if (licenseMenu.getItemCount() > 1) {
+			setLabelAndAccessKeys("menuitem.licenseMultiple", "Terms of Use",
+					licenseMenu, false);
+		} else {
+			setLabelAndAccessKeys("menuitem.license", "Terms of Use", licenseMenu,
+					true);
+		}
+		return licenseMenu;
+	}
 
-   public void updateTimeItems() {
-     mGotoTimeMenu.removeAll();
-     int[] times = Settings.propTimeButtons.getIntArray();
-    for (int time : times) {
-      mGotoTimeMenu.add(createTimeMenuItem(time));
-    }
-    mGotoTimeMenu.addSeparator();
-    mEditTimeButtonsMenuItem = createMenuItem("menuitem.editTimeItems","Edit Items", null, true);
-    mEditTimeButtonsMenuItem.addActionListener(this);
-    mGotoTimeMenu.add(mEditTimeButtonsMenuItem);
-   }
-   
-   public void updateViewToolbarItem() {
-     mToolbarMI.setSelected(Settings.propIsTooolbarVisible.getBoolean());
-   }
+	private void setMnemonic(final JMenuItem item) {
+		// Apple doesn't want mnemonics (see Apple user interface guidelines)
+		if (!OperatingSystem.isMacOs()) {
+			item.setMnemonic(item.getText().charAt(0));
+		}
+	}
 
-   public void updateChannelItems() {
-     mGotoChannelMenu.removeAll();
-     Channel[] channels = ChannelList.getSubscribedChannels();
-     for (Channel channel : channels) {
-       mGotoChannelMenu.add(createChannelMenuItem(channel));
-     }
-   }
+	public void updatePluginsMenu() {
+		JMenuItem[] items = createPluginMenuItems();
+		setPluginMenuItems(items);
+	}
 
-  public void updateDateItems() {
-    mGotoDateMenu.removeAll();
-    Date curDate = new Date();
-    for (int i=0; i<21; i++) {
-      if (!TvDataBase.getInstance().dataAvailable(curDate)) {
-        break;
-      }
-      if (i > 0) {
-        if (curDate.isFirstDayOfWeek()) {
-          mGotoDateMenu.addSeparator();
-        }
-      }
-      mGotoDateMenu.add(createDateMenuItem(curDate));
-      curDate = curDate.addDays(1);
-    }
-    // update enable state of "goto previous/next" menu items after data download 
-    if (! MainFrame.isStarting()) {
-      dateChanged(mMainFrame.getCurrentSelectedDate(), null, null);
-    }
-  }
+	public void updateTimeItems() {
+		mGotoTimeMenu.removeAll();
+		int[] times = Settings.propTimeButtons.getIntArray();
+		for (int time : times) {
+			mGotoTimeMenu.add(createTimeMenuItem(time));
+		}
+		mGotoTimeMenu.addSeparator();
+		mEditTimeButtonsMenuItem = createMenuItem("menuitem.editTimeItems",
+				"Edit Items", null, true);
+		mEditTimeButtonsMenuItem.addActionListener(this);
+		mGotoTimeMenu.add(mEditTimeButtonsMenuItem);
+	}
 
-   public void updateFiltersMenu() {
-       mFiltersMenu.removeAll();
-       FilterButtons filterButtons = new FilterButtons(mMainFrame);
-       JMenuItem[] filterMenuItems = filterButtons.createFilterMenuItems();
-       for (JMenuItem menuItem : filterMenuItems) {
-         if (menuItem != null) {
-             mFiltersMenu.add(menuItem);
-         } else {
-             mFiltersMenu.addSeparator();
-         }
-       }
-       mViewFilterBarMI.setEnabled(!mMainFrame.isDefaultFilterActivated());
-   }
-   
-   protected abstract void setPluginMenuItems(JMenuItem[] items);
+	public void updateViewToolbarItem() {
+		mToolbarMI.setSelected(Settings.propIsTooolbarVisible.getBoolean());
+	}
 
+	public void updateChannelItems() {
+		mGotoChannelMenu.removeAll();
+		Channel[] channels = ChannelList.getSubscribedChannels();
+		for (Channel channel : channels) {
+			mGotoChannelMenu.add(createChannelMenuItem(channel));
+		}
+	}
 
-   private JMenuItem createMenuItem(ActionMenu menu) {
-    JMenuItem result;
-    if (menu.hasSubItems()) {
-      result = new JMenu(menu.getTitle());
-      
-      if(menu.getAction().getValue(Action.SMALL_ICON) != null) {
-        result.setIcon(new FixedSizeIcon(16, 16, (Icon) menu.getAction().getValue(Action.SMALL_ICON)));
-      }
-      
-      ActionMenu[] subItems = menu.getSubItems();
-      for (ActionMenu subItem : subItems) {
-        final JMenuItem menuItem = createMenuItem(subItem);
-        if (menuItem != null) {
-          result.add(menuItem);
-        } else {
-          ((JMenu) result).addSeparator();
-        }
-      }
-    }
-    else {
-      if (ContextMenuSeparatorAction.getInstance().equals(menu.getAction())) {
-        return null;
-      }
-      result = new JMenuItem(menu.getAction());
-      if(menu.getAction().getValue(Action.SMALL_ICON) != null) {
-        result.setIcon(new FixedSizeIcon(16, 16, (Icon) menu.getAction().getValue(Action.SMALL_ICON)));
-      }
-    }
-    
-    if(menu.getAction().getValue(InternalPluginProxyIf.KEYBOARD_ACCELERATOR) != null) {
-      if(menu.getAction().getValue(InternalPluginProxyIf.KEYBOARD_ACCELERATOR) instanceof KeyStroke) {
-        result.setAccelerator((KeyStroke)menu.getAction().getValue(InternalPluginProxyIf.KEYBOARD_ACCELERATOR));
-      }
-    }
-    
-    return result;
+	public void updateDateItems() {
+		mGotoDateMenu.removeAll();
+		Date curDate = new Date();
+		for (int i = 0; i < 21; i++) {
+			if (!TvDataBase.getInstance().dataAvailable(curDate)) {
+				break;
+			}
+			if (i > 0) {
+				if (curDate.isFirstDayOfWeek()) {
+					mGotoDateMenu.addSeparator();
+				}
+			}
+			mGotoDateMenu.add(createDateMenuItem(curDate));
+			curDate = curDate.addDays(1);
+		}
+		// update enable state of "goto previous/next" menu items after data
+		// download
+		if (!MainFrame.isStarting()) {
+			dateChanged(mMainFrame.getCurrentSelectedDate(), null, null);
+		}
+	}
 
-  }
+	public void updateFiltersMenu() {
+		mFiltersMenu.removeAll();
+		FilterButtons filterButtons = new FilterButtons(mMainFrame);
+		JMenuItem[] filterMenuItems = filterButtons.createFilterMenuItems();
+		for (JMenuItem menuItem : filterMenuItems) {
+			if (menuItem != null) {
+				mFiltersMenu.add(menuItem);
+			} else {
+				mFiltersMenu.addSeparator();
+			}
+		}
+		mViewFilterBarMI.setEnabled(!mMainFrame.isDefaultFilterActivated());
+	}
 
-   protected JMenuItem[] createInternalPluginMenuItems() {
-     InternalPluginProxyIf[] internalPlugins = InternalPluginProxyList.getInstance().getAvailableProxys();
-     
-     ArrayList<JMenuItem> list = new ArrayList<JMenuItem>();
-     for(InternalPluginProxyIf internalPlugin : internalPlugins) {
-       if(internalPlugin instanceof ButtonActionIf) {
-         fillButtonActionList(list, (ButtonActionIf)internalPlugin);
-       }
-     }
-     
-     return createSortedArrayFromList(list);
-   }
-   
-   protected JMenuItem[] createPluginMenuItems() {
-     PluginProxy[] plugins = PluginProxyManager.getInstance()
-         .getActivatedPlugins();
+	protected abstract void setPluginMenuItems(JMenuItem[] items);
 
-     ArrayList<JMenuItem> list = new ArrayList<JMenuItem>();
-     for (PluginProxy plugin : plugins) {
-       fillButtonActionList(list, plugin);
-     }
-     
-     TvDataServiceProxy[] dataServices = TvDataServiceProxyManager.getInstance().getDataServices();
-     
-     for(TvDataServiceProxy dataService : dataServices) {
-       fillButtonActionList(list, dataService);
-     }
-     
-     return createSortedArrayFromList(list);
-   }
-   
-   private void fillButtonActionList(ArrayList<JMenuItem> list, ButtonActionIf buttonActionIf) {
-     ActionMenu actionMenu = buttonActionIf.getButtonAction();
-     if (actionMenu != null) {
-       JMenuItem item = createMenuItem(actionMenu);
-       item.setMnemonic(item.getText().charAt(0));
-       list.add(item);
-       new MenuHelpTextAdapter(item,
-           buttonActionIf.getButtonActionDescription(), mLabel);
-     }
-   }
-   
-   private JMenuItem[] createSortedArrayFromList(ArrayList<JMenuItem> itemList) {
-     JMenuItem[] result = itemList.toArray(new JMenuItem[itemList.size()]);
-     Arrays.sort(result, new Comparator<JMenuItem>() {
+	private JMenuItem createMenuItem(ActionMenu menu) {
+		JMenuItem result;
+		if (menu.hasSubItems()) {
+			result = new JMenu(menu.getTitle());
 
-       public int compare(JMenuItem item1, JMenuItem item2) {
-         return item1.getText().compareTo(item2.getText());
-       }
-     });
-     
-     return result;
-   }
+			if (menu.getAction().getValue(Action.SMALL_ICON) != null) {
+				result.setIcon(new FixedSizeIcon(16, 16, (Icon) menu.getAction()
+						.getValue(Action.SMALL_ICON)));
+			}
 
-  protected void updatePluginHelpMenuItems() {
-     mPluginHelpMenu.removeAll();
-    PluginProxy[] plugins = PluginProxyManager.getInstance()
-        .getActivatedPlugins();
-    ArrayList<JMenuItem> list = new ArrayList<JMenuItem>();
-    for (final PluginProxy plugin : plugins) {
-      String helpUrl = plugin.getInfo().getHelpUrl();
-      if (helpUrl == null) {
-        helpUrl = PluginInfo.getHelpUrl(plugin.getId());
-      }
-      if(helpUrl != null) {
-        JMenuItem item = pluginHelpMenuItem(plugin.getInfo().getName(), helpUrl);
-        item.setIcon(plugin.getPluginIcon());
-        list.add(item);
-      }
-    }
-    JMenuItem[] result = list.toArray(new JMenuItem[list.size()]);
-    Arrays.sort(result, new Comparator<JMenuItem>() {
+			ActionMenu[] subItems = menu.getSubItems();
+			for (ActionMenu subItem : subItems) {
+				final JMenuItem menuItem = createMenuItem(subItem);
+				if (menuItem != null) {
+					result.add(menuItem);
+				} else {
+					((JMenu) result).addSeparator();
+				}
+			}
+		} else {
+			if (ContextMenuSeparatorAction.getInstance().equals(menu.getAction())) {
+				return null;
+			}
+			result = new JMenuItem(menu.getAction());
+			if (menu.getAction().getValue(Action.SMALL_ICON) != null) {
+				result.setIcon(new FixedSizeIcon(16, 16, (Icon) menu.getAction()
+						.getValue(Action.SMALL_ICON)));
+			}
+		}
 
-      public int compare(JMenuItem item1, JMenuItem item2) {
-        return item1.getText().compareTo(item2.getText());
-      }
-    });
-    
-    InternalPluginProxyIf[] internalPlugins = InternalPluginProxyList.getInstance().getAvailableProxys();
-    
-    for(InternalPluginProxyIf internalPlugin : internalPlugins) {
-      JMenuItem item = pluginHelpMenuItem(internalPlugin.toString(), PluginInfo.getHelpUrl(internalPlugin.getId()));
-      item.setIcon(internalPlugin.getIcon());
-      mPluginHelpMenu.add(item);
-    }
-    
-    if(result.length > 0) {
-      mPluginHelpMenu.addSeparator();
-    }
-    
-    for (JMenuItem pluginMenuItem : result) {
-      mPluginHelpMenu.add(pluginMenuItem);
-    }
-  }
+		Object accelerator = menu.getAction().getValue(InternalPluginProxyIf.KEYBOARD_ACCELERATOR);
+		if (accelerator != null) {
+			if (accelerator instanceof KeyStroke) {
+				result.setAccelerator((KeyStroke) accelerator);
+			}
+		}
 
-  private JMenuItem pluginHelpMenuItem(final String name, final String helpUrl) {
-    JMenuItem item = new JMenuItem(name);
-    item.setMnemonic(name.charAt(0));
-    item.addActionListener(new ActionListener() {
+		return result;
 
-      public void actionPerformed(ActionEvent e) {
-        Launch.openURL(helpUrl);
-      }});
-    return item;
-  }
+	}
 
-  public void setPluginViewItemChecked(boolean selected) {
-    mPluginOverviewMI.setSelected(selected);
-  }
-  
-  public void setFullscreenItemChecked(boolean selected) {
-    mFullscreenMI.setSelected(selected);
-  }
+	protected JMenuItem[] createInternalPluginMenuItems() {
+		InternalPluginProxyIf[] internalPlugins = InternalPluginProxyList
+				.getInstance().getAvailableProxys();
 
-   public void actionPerformed(ActionEvent event) {
-     Object source = event.getSource();
-     if (source == mSettingsMI) {
-       mMainFrame.showSettingsDialog();
-     }
-     else if (source == mTimeBtnsMI) {
-       mMainFrame.setShowTimeButtons(mTimeBtnsMI.isSelected());   
-     }     
-     else if (source == mQuitMI) {
-       mMainFrame.quit();
-     }
-     else if (source == mToolbarMI) {
-       mMainFrame.setShowToolbar(mToolbarMI.isSelected());
-     }
-     else if (source == mStatusbarMI) {
-       mMainFrame.setShowStatusbar(mStatusbarMI.isSelected());
-     }
-     else if (source == mViewFilterBarMI) {
-       mMainFrame.updateFilterPanel();
-     }
-     else if (source == mDatelistMI) {
-       mMainFrame.setShowDatelist(mDatelistMI.isSelected());  
-     }
-     else if (source == mChannellistMI) {
-       mMainFrame.setShowChannellist(mChannellistMI.isSelected());  
-     }
-     else if (source == mPluginOverviewMI) {
-       boolean selected = mPluginOverviewMI.isSelected();
-       mMainFrame.setShowPluginOverview(selected);
-       mMainFrame.setPluginViewButton(selected);
-     }
-     else if (source == mFullscreenMI) {
-       mMainFrame.switchFullscreenMode();
-     }
-     
-     else if (source == mUpdateMI) {
-       mMainFrame.updateTvData();
-     }
-     else if (source == mPluginManagerMI) {
-       mMainFrame.showSettingsDialog(SettingsItem.PLUGINS);
-     }
-     else if (source == mInstallPluginsMI) {
-       mMainFrame.showUpdatePluginsDlg(true);
-     }
-     else if (source == mHandbookMI) {
-       Launch.openURL(mLocalizer.msg("website.handbook",""));
-     }
-     else if (source == mKeyboardShortcutsMI) {
-       Launch.openURL(mLocalizer.msg("website.keyboardshortcuts",""));
-     }
-     else if (source == mFaqMI) {
-       Launch.openURL(mLocalizer.msg("website.faq",""));
-     }
-     else if (source == mBackupMI) {
-       Launch.openURL(mLocalizer.msg("website.backup",""));
-     }
-     else if (source == mWebsiteMI) {
-       Launch.openURL(mLocalizer.msg("website.tvbrowser",""));
-     } 
-     else if (source == mForumMI) {
-       Launch.openURL(mLocalizer.msg("website.forum",""));
-     }
-     else if (source == mDownloadMI) {
-       Launch.openURL(mLocalizer.msg("website.download",""));
-     } 
-     else if (source == mDonorMI) {
-       Launch.openURL(mLocalizer.msg("website.donors",""));
-     }
-     else if (source == mConfigAssistantMI) {
-         mMainFrame.runSetupAssistant();
-     }
-     else if (source == mPluginInfoDlgMI) {
-       mMainFrame.showPluginInfoDlg();
-     } 
-     else if (source == mAboutMI) {
-       mMainFrame.showAboutBox();
-     }
-     else if (source == mPreviousDayMI) {
-       mMainFrame.goToPreviousDay();
-     }
-     else if (source == mNextDayMI) {
-       mMainFrame.goToNextDay();
-     }
-     else if (source == mPreviousWeekMI) {
-       mMainFrame.goToPreviousWeek();
-     }
-     else if (source == mNextWeekMI) {
-       mMainFrame.goToNextWeek();
-     }
-     else if (source == mTodayMI) {
-       mMainFrame.goToToday();
-     }
-     else if (source == mGotoNowMenuItem) {
-       mMainFrame.scrollToNow();
-     }
-     else if (source == mEditTimeButtonsMenuItem) {
-       mMainFrame.showSettingsDialog(SettingsItem.TIMEBUTTONS);
-     }
-     else if (source == mToolbarCustomizeMI) {
-       new ToolBarDragAndDropSettings();
-     }
-     else if (source == mFontSizeLargerMI) {
-       mMainFrame.changeFontSize(+1);
-     }
-     else if (source == mFontSizeSmallerMI) {
-       mMainFrame.changeFontSize(-1);
-     }
-     else if (source == mFontSizeDefaultMI) {
-       mMainFrame.changeFontSize(0);
-     }
-     else if (source == mColumnWidthLargerMI) {
-       mMainFrame.changeColumnWidth(1);
-     }
-     else if (source == mColumnWidthSmallerMI) {
-       mMainFrame.changeColumnWidth(-1);
-     }
-     else if (source == mColumnWidthDefaultMI) {
-       mMainFrame.changeColumnWidth(0);
-     }
-   }
-   
-   private void createMenuItemInfos() {
-     
-     
-   }
+		ArrayList<JMenuItem> list = new ArrayList<JMenuItem>();
+		for (InternalPluginProxyIf internalPlugin : internalPlugins) {
+			if (internalPlugin instanceof ButtonActionIf) {
+				fillButtonActionList(list, (ButtonActionIf) internalPlugin);
+			}
+		}
 
-  public void dateChanged(Date date, ProgressMonitor monitor, Runnable callback) {
-    mPreviousDayMI.setEnabled(TvDataBase.getInstance().dataAvailable(
-        date.addDays(-1)));
-    mNextDayMI.setEnabled(TvDataBase.getInstance().dataAvailable(
-        date.addDays(1)));
-    mPreviousWeekMI.setEnabled(TvDataBase.getInstance().dataAvailable(
-        date.addDays(-7)));
-    mNextWeekMI.setEnabled(TvDataBase.getInstance().dataAvailable(
-        date.addDays(7)));
-  }
+		return createSortedArrayFromList(list);
+	}
 
-  public boolean isShowFilterPanelEnabled() {
-    return mViewFilterBarMI.isSelected();
-  }
+	protected JMenuItem[] createPluginMenuItems() {
+		PluginProxy[] plugins = PluginProxyManager.getInstance()
+				.getActivatedPlugins();
 
-  protected void createHelpMenuItems(JMenu helpMenu, boolean showAbout) {
-    helpMenu.add(mConfigAssistantMI);
-    helpMenu.addSeparator();
-    helpMenu.add(mHandbookMI);
-    helpMenu.add(mKeyboardShortcutsMI);
-    helpMenu.add(mFaqMI);
-    helpMenu.add(mBackupMI);
-    helpMenu.add(mPluginHelpMenu);
-    helpMenu.add(mPluginInfoDlgMI);
-    helpMenu.addSeparator();
-    helpMenu.add(mWebsiteMI);
-    helpMenu.add(mForumMI);
-    helpMenu.add(mDownloadMI);
-    helpMenu.add(mDonorMI);
-    if (showAbout) {
-      helpMenu.addSeparator();
-      helpMenu.add(mAboutMI);
-    }
-  }
+		ArrayList<JMenuItem> list = new ArrayList<JMenuItem>();
+		for (PluginProxy plugin : plugins) {
+			fillButtonActionList(list, plugin);
+		}
+
+		TvDataServiceProxy[] dataServices = TvDataServiceProxyManager.getInstance()
+				.getDataServices();
+
+		for (TvDataServiceProxy dataService : dataServices) {
+			fillButtonActionList(list, dataService);
+		}
+
+		return createSortedArrayFromList(list);
+	}
+
+	private void fillButtonActionList(ArrayList<JMenuItem> list,
+			ButtonActionIf buttonActionIf) {
+		ActionMenu actionMenu = buttonActionIf.getButtonAction();
+		if (actionMenu != null) {
+			JMenuItem item = createMenuItem(actionMenu);
+			setMnemonic(item);
+			list.add(item);
+			new MenuHelpTextAdapter(item,
+					buttonActionIf.getButtonActionDescription(), mLabel);
+		}
+	}
+
+	private JMenuItem[] createSortedArrayFromList(ArrayList<JMenuItem> itemList) {
+		JMenuItem[] result = itemList.toArray(new JMenuItem[itemList.size()]);
+		Arrays.sort(result, new Comparator<JMenuItem>() {
+
+			public int compare(JMenuItem item1, JMenuItem item2) {
+				return item1.getText().compareTo(item2.getText());
+			}
+		});
+
+		return result;
+	}
+
+	protected void updatePluginHelpMenuItems() {
+		mPluginHelpMenu.removeAll();
+		PluginProxy[] plugins = PluginProxyManager.getInstance()
+				.getActivatedPlugins();
+		ArrayList<JMenuItem> list = new ArrayList<JMenuItem>();
+		for (final PluginProxy plugin : plugins) {
+			String helpUrl = plugin.getInfo().getHelpUrl();
+			if (helpUrl == null) {
+				helpUrl = PluginInfo.getHelpUrl(plugin.getId());
+			}
+			if (helpUrl != null) {
+				JMenuItem item = pluginHelpMenuItem(plugin.getInfo().getName(), helpUrl);
+				item.setIcon(plugin.getPluginIcon());
+				list.add(item);
+			}
+		}
+		JMenuItem[] result = list.toArray(new JMenuItem[list.size()]);
+		Arrays.sort(result, new Comparator<JMenuItem>() {
+
+			public int compare(JMenuItem item1, JMenuItem item2) {
+				return item1.getText().compareTo(item2.getText());
+			}
+		});
+
+		InternalPluginProxyIf[] internalPlugins = InternalPluginProxyList
+				.getInstance().getAvailableProxys();
+
+		for (InternalPluginProxyIf internalPlugin : internalPlugins) {
+			JMenuItem item = pluginHelpMenuItem(internalPlugin.toString(), PluginInfo
+					.getHelpUrl(internalPlugin.getId()));
+			item.setIcon(internalPlugin.getIcon());
+			mPluginHelpMenu.add(item);
+		}
+
+		if (result.length > 0) {
+			mPluginHelpMenu.addSeparator();
+		}
+
+		for (JMenuItem pluginMenuItem : result) {
+			mPluginHelpMenu.add(pluginMenuItem);
+		}
+	}
+
+	private JMenuItem pluginHelpMenuItem(final String name, final String helpUrl) {
+		JMenuItem item = new JMenuItem(name);
+		setMnemonic(item);
+		item.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				Launch.openURL(helpUrl);
+			}
+		});
+		return item;
+	}
+
+	public void setPluginViewItemChecked(boolean selected) {
+		mPluginOverviewMI.setSelected(selected);
+	}
+
+	public void setFullscreenItemChecked(boolean selected) {
+		mFullscreenMI.setSelected(selected);
+	}
+
+	public void actionPerformed(ActionEvent event) {
+		Object source = event.getSource();
+		if (source == mSettingsMI) {
+			mMainFrame.showSettingsDialog();
+		} else if (source == mTimeBtnsMI) {
+			mMainFrame.setShowTimeButtons(mTimeBtnsMI.isSelected());
+		} else if (source == mQuitMI) {
+			mMainFrame.quit();
+		} else if (source == mToolbarMI) {
+			mMainFrame.setShowToolbar(mToolbarMI.isSelected());
+		} else if (source == mStatusbarMI) {
+			mMainFrame.setShowStatusbar(mStatusbarMI.isSelected());
+		} else if (source == mViewFilterBarMI) {
+			mMainFrame.updateFilterPanel();
+		} else if (source == mDatelistMI) {
+			mMainFrame.setShowDatelist(mDatelistMI.isSelected());
+		} else if (source == mChannellistMI) {
+			mMainFrame.setShowChannellist(mChannellistMI.isSelected());
+		} else if (source == mPluginOverviewMI) {
+			boolean selected = mPluginOverviewMI.isSelected();
+			mMainFrame.setShowPluginOverview(selected);
+			mMainFrame.setPluginViewButton(selected);
+		} else if (source == mFullscreenMI) {
+			mMainFrame.switchFullscreenMode();
+		}
+
+		else if (source == mUpdateMI) {
+			mMainFrame.updateTvData();
+		} else if (source == mPluginManagerMI) {
+			mMainFrame.showSettingsDialog(SettingsItem.PLUGINS);
+		} else if (source == mInstallPluginsMI) {
+			mMainFrame.showUpdatePluginsDlg(true);
+		} else if (source == mHandbookMI) {
+			Launch.openURL(mLocalizer.msg("website.handbook", ""));
+		} else if (source == mKeyboardShortcutsMI) {
+			Launch.openURL(mLocalizer.msg("website.keyboardshortcuts", ""));
+		} else if (source == mFaqMI) {
+			Launch.openURL(mLocalizer.msg("website.faq", ""));
+		} else if (source == mBackupMI) {
+			Launch.openURL(mLocalizer.msg("website.backup", ""));
+		} else if (source == mWebsiteMI) {
+			Launch.openURL(mLocalizer.msg("website.tvbrowser", ""));
+		} else if (source == mForumMI) {
+			Launch.openURL(mLocalizer.msg("website.forum", ""));
+		} else if (source == mDownloadMI) {
+			Launch.openURL(mLocalizer.msg("website.download", ""));
+		} else if (source == mDonorMI) {
+			Launch.openURL(mLocalizer.msg("website.donors", ""));
+		} else if (source == mConfigAssistantMI) {
+			mMainFrame.runSetupAssistant();
+		} else if (source == mPluginInfoDlgMI) {
+			mMainFrame.showPluginInfoDlg();
+		} else if (source == mAboutMI) {
+			mMainFrame.showAboutBox();
+		} else if (source == mPreviousDayMI) {
+			mMainFrame.goToPreviousDay();
+		} else if (source == mNextDayMI) {
+			mMainFrame.goToNextDay();
+		} else if (source == mPreviousWeekMI) {
+			mMainFrame.goToPreviousWeek();
+		} else if (source == mNextWeekMI) {
+			mMainFrame.goToNextWeek();
+		} else if (source == mTodayMI) {
+			mMainFrame.goToToday();
+		} else if (source == mGotoNowMenuItem) {
+			mMainFrame.scrollToNow();
+		} else if (source == mEditTimeButtonsMenuItem) {
+			mMainFrame.showSettingsDialog(SettingsItem.TIMEBUTTONS);
+		} else if (source == mToolbarCustomizeMI) {
+			new ToolBarDragAndDropSettings();
+		} else if (source == mFontSizeLargerMI) {
+			mMainFrame.changeFontSize(+1);
+		} else if (source == mFontSizeSmallerMI) {
+			mMainFrame.changeFontSize(-1);
+		} else if (source == mFontSizeDefaultMI) {
+			mMainFrame.changeFontSize(0);
+		} else if (source == mColumnWidthLargerMI) {
+			mMainFrame.changeColumnWidth(1);
+		} else if (source == mColumnWidthSmallerMI) {
+			mMainFrame.changeColumnWidth(-1);
+		} else if (source == mColumnWidthDefaultMI) {
+			mMainFrame.changeColumnWidth(0);
+		}
+	}
+
+	private void createMenuItemInfos() {
+
+	}
+
+	public void dateChanged(Date date, ProgressMonitor monitor, Runnable callback) {
+		mPreviousDayMI.setEnabled(TvDataBase.getInstance().dataAvailable(
+				date.addDays(-1)));
+		mNextDayMI.setEnabled(TvDataBase.getInstance().dataAvailable(
+				date.addDays(1)));
+		mPreviousWeekMI.setEnabled(TvDataBase.getInstance().dataAvailable(
+				date.addDays(-7)));
+		mNextWeekMI.setEnabled(TvDataBase.getInstance().dataAvailable(
+				date.addDays(7)));
+	}
+
+	public boolean isShowFilterPanelEnabled() {
+		return mViewFilterBarMI.isSelected();
+	}
+
+	protected void createHelpMenuItems(JMenu helpMenu, boolean showAbout) {
+		helpMenu.add(mConfigAssistantMI);
+		helpMenu.addSeparator();
+		helpMenu.add(mHandbookMI);
+		helpMenu.add(mKeyboardShortcutsMI);
+		helpMenu.add(mFaqMI);
+		helpMenu.add(mBackupMI);
+		helpMenu.add(mPluginHelpMenu);
+		helpMenu.add(mPluginInfoDlgMI);
+		helpMenu.addSeparator();
+		helpMenu.add(mWebsiteMI);
+		helpMenu.add(mForumMI);
+		helpMenu.add(mDownloadMI);
+		helpMenu.add(mDonorMI);
+		if (showAbout) {
+			helpMenu.addSeparator();
+			helpMenu.add(mAboutMI);
+		}
+	}
 
 }

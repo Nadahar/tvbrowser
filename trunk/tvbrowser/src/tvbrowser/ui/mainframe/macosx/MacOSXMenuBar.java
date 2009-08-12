@@ -27,6 +27,9 @@
 
 package tvbrowser.ui.mainframe.macosx;
 
+import java.awt.Toolkit;
+import java.awt.event.KeyEvent;
+
 import tvbrowser.ui.mainframe.MenuBar;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.ui.Localizer;
@@ -46,24 +49,32 @@ public class MacOSXMenuBar extends MenuBar {
 		createTVBrowserMenuItem();
 
     createMenuBar();
-
-		
+    
+    int commandModifier = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
+    
+    // command Q
+    mQuitMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, commandModifier));
+    
+    // command ,
+    mSettingsMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_COMMA, commandModifier));
+    
+    // alt command T
+    mToolbarMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, commandModifier | KeyEvent.ALT_DOWN_MASK));
   }
 
 	private void createMenuBar() {
-
     add(mViewMenu);
 
     add(mGoMenu);
 
-    JMenu tvListingsMenu = new JMenu(mLocalizer.msg("menu.tvData", "TV data"));
+    JMenu tvListingsMenu = createMenu("menu.tvData", "TV data");
     add(tvListingsMenu);
 		
-    mPluginsMenu = new JMenu(mLocalizer.msg("menu.plugins", "Plugins"));
+    mPluginsMenu = createMenu("menu.plugins", "Plugins");
     add(mPluginsMenu);
-    JMenu helpMenu = new JMenu(Localizer.getLocalization(Localizer.I18N_HELP));
-    add(helpMenu);
 
+    JMenu helpMenu = createMenu("menu.help", "Help");
+    add(helpMenu);
 
     // "TV Listings" menu
     tvListingsMenu.add(mUpdateMI);
@@ -91,7 +102,6 @@ public class MacOSXMenuBar extends MenuBar {
   }
 
   private void createTVBrowserMenuItem() {
-
 		Application app = Application.getApplication();
 		app.addAboutMenuItem();
 		app.addPreferencesMenuItem();
@@ -124,7 +134,6 @@ public class MacOSXMenuBar extends MenuBar {
 		});
   }
 
-
   protected void setPluginMenuItems(JMenuItem[] items) {
       mPluginsMenu.removeAll();
       
@@ -143,6 +152,4 @@ public class MacOSXMenuBar extends MenuBar {
       mPluginsMenu.add(mInstallPluginsMI);
       mPluginsMenu.add(mPluginManagerMI);
   }
-
-	
 }

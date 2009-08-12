@@ -44,30 +44,25 @@ public class DefaultMenuBar extends MenuBar {
   public DefaultMenuBar(MainFrame mainFrame, JLabel label) {
     super(mainFrame, label);
     
-    int keyModifier = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
-    
     /* create the main menus */
-    JMenu tvbrowserMenu = createMenu("menu.main", "TV-Browser");
-    add(tvbrowserMenu);
+    JMenu fileMenu = createMenu("menu.main", "&File");
+    add(fileMenu);
     
     add(mViewMenu);
 
     add(mGoMenu);
 
-    JMenu tvListingsMenu = createMenu("menu.tvData", "TV data");
+    JMenu tvListingsMenu = createMenu("menu.tvData", "TV &data");
     add(tvListingsMenu);
     
-    mPluginsMenu = createMenu("menu.plugins", "Plugins");
+    mPluginsMenu = createMenu("menu.plugins", "&Tools");
     add(mPluginsMenu);
     
-    JMenu helpMenu = createMenu("menu.help", "Help");
+    JMenu helpMenu = createMenu("menu.help", "&Help");
     add(helpMenu);
     
     // "TV-Browser" menu
-    tvbrowserMenu.add(mSettingsMI);
-    tvbrowserMenu.addSeparator();
-    tvbrowserMenu.add(mQuitMI);
-    
+    fileMenu.add(mQuitMI);
 
     // "TV Listings" menu
     tvListingsMenu.add(mUpdateMI);
@@ -89,12 +84,14 @@ public class DefaultMenuBar extends MenuBar {
     mPluginsMenu.addSeparator();
     mPluginsMenu.add(mInstallPluginsMI);
     mPluginsMenu.add(mPluginManagerMI);
+    mPluginsMenu.addSeparator();
+    mPluginsMenu.add(mSettingsMI);
     
     // Help menu
     createHelpMenuItems(helpMenu, true);
     
-    mSettingsMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, keyModifier));
-    mQuitMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, keyModifier));
+    mQuitMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, KeyEvent.ALT_DOWN_MASK));
+    mSettingsMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
     
     mPluginOverviewMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F2,0));
     mTimeBtnsMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F3,0));
@@ -108,9 +105,9 @@ public class DefaultMenuBar extends MenuBar {
     mGotoNowMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F9,0));
     mFullscreenMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F11,0));
     
-    mFontSizeLargerMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_PLUS, InputEvent.CTRL_MASK));
-    mFontSizeSmallerMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, InputEvent.CTRL_MASK));
-    mFontSizeDefaultMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_0, InputEvent.CTRL_MASK));
+    mFontSizeLargerMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_PLUS, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+    mFontSizeSmallerMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+    mFontSizeDefaultMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_0, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 
     mColumnWidthLargerMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_PLUS, InputEvent.ALT_MASK));
     mColumnWidthSmallerMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, InputEvent.ALT_MASK));
@@ -135,6 +132,8 @@ public class DefaultMenuBar extends MenuBar {
     mPluginsMenu.addSeparator();
     mPluginsMenu.add(mInstallPluginsMI);
     mPluginsMenu.add(mPluginManagerMI);
+    mPluginsMenu.addSeparator();
+    mPluginsMenu.add(mSettingsMI);
   }
 
 
