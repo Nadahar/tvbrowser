@@ -25,10 +25,10 @@
  */
 package tvbrowser.extras.searchplugin;
 
+import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -208,7 +208,7 @@ public class SearchPlugin {
         "Allows searching programs containing a certain text."));
     action.setText(mLocalizer.ellipsisMsg("searchPrograms", "Search programs"));
     action.putValue(InternalPluginProxyIf.KEYBOARD_ACCELERATOR, KeyStroke
-        .getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_MASK));
+        .getKeyStroke(KeyEvent.VK_F, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 
     return new ActionMenu(action);
   }

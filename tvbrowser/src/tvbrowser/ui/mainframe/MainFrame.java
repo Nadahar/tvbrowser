@@ -697,8 +697,11 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     	}
     }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
     
-    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_UP,
-        InputEvent.CTRL_MASK);
+    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.CTRL_MASK);
+    rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,
+        KeyboardAction.KEY_UP), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+    
+    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_KP_UP, InputEvent.CTRL_MASK);
     rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,
         KeyboardAction.KEY_UP), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
     
@@ -706,11 +709,23 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,
         KeyboardAction.KEY_RIGHT), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
 
+    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_KP_RIGHT, InputEvent.CTRL_MASK);
+    rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,
+        KeyboardAction.KEY_RIGHT), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+
     stroke = KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, InputEvent.CTRL_MASK);
     rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,
         KeyboardAction.KEY_DOWN), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
 
+    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_KP_DOWN, InputEvent.CTRL_MASK);
+    rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,
+        KeyboardAction.KEY_DOWN), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+
     stroke = KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, InputEvent.CTRL_MASK);
+    rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,
+        KeyboardAction.KEY_LEFT), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+
+    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_KP_LEFT, InputEvent.CTRL_MASK);
     rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,
         KeyboardAction.KEY_LEFT), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
 
