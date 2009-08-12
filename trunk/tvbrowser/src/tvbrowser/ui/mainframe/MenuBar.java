@@ -126,13 +126,13 @@ public abstract class MenuBar extends JMenuBar implements ActionListener,
 	}
 
 	public void showUpdateMenuItem() {
-		mUpdateMI.setText(mLocalizer.msg("menuitem.update", "Update"));
+		setLabelAndAccessKeys("menuitem.update", "Update", mUpdateMI, false);
 		mUpdateMI.setIcon(IconLoader.getInstance().getIconFromTheme("apps",
 				"system-software-update", 16));
 	}
 
 	public void showStopMenuItem() {
-		mUpdateMI.setText(mLocalizer.msg("menuitem.stopUpdate", "Stop"));
+		setLabelAndAccessKeys("menuitem.stopUpdate", "Stop", mUpdateMI, false);
 		mUpdateMI.setIcon(IconLoader.getInstance().getIconFromTheme("actions",
 				"process-stop", 16));
 	}
