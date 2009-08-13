@@ -228,12 +228,12 @@ public class TVBrowserMini extends Plugin {
     JDialog infoDialog = null;
 
     if (mSettings.getProperty("accept").equals("1")) {
-      Window parent = UiUtilities.getBestDialogParent(getParentFrame());
+      Window parentWindow = UiUtilities.getBestDialogParent(getParentFrame());
 
-      if (parent instanceof Dialog)
-        infoDialog = new JDialog((Dialog) parent);
-      else if (parent instanceof Frame)
-        infoDialog = new JDialog((Frame) parent);
+      if (parentWindow instanceof Dialog)
+        infoDialog = new JDialog((Dialog) parentWindow);
+      else if (parentWindow instanceof Frame)
+        infoDialog = new JDialog((Frame) parentWindow);
       else
         infoDialog = new JDialog(getParentFrame());
 
