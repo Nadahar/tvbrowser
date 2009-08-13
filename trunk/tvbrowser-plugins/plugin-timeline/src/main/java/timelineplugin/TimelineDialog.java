@@ -272,8 +272,6 @@ public final class TimelineDialog extends JDialog implements WindowClosingIf
 
 	public void addKeyboardAction()
 	{
-	  final JRootPane rootPane = this.getRootPane();
-
 		// Debug Info
 		rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_F12, 0), "debugInfo");
 		rootPane.getActionMap().put("debugInfo", new AbstractAction()
@@ -520,7 +518,6 @@ public final class TimelineDialog extends JDialog implements WindowClosingIf
 		{
 			public void run()
 			{
-			  final JScrollBar sb = mMainPane.getHorizontalScrollBar();
 				sb.setValue((int) (sb.getMaximum() * mRelation));
 			}
 		});
