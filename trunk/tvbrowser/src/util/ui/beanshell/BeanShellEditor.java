@@ -43,11 +43,11 @@ public class BeanShellEditor extends JEditorPane {
   public boolean getScrollableTracksViewportWidth() {
     if (getParent() instanceof JViewport) {
       JViewport port = (JViewport) getParent();
-      TextUI ui = getUI();
+      TextUI textUI = getUI();
       int w = port.getWidth();
-      ui.getMinimumSize(this);
-      ui.getMaximumSize(this);
-      Dimension pref = ui.getPreferredSize(this);
+      textUI.getMinimumSize(this);
+      textUI.getMaximumSize(this);
+      Dimension pref = textUI.getPreferredSize(this);
       
       if ((w >= pref.width)) {
         return true;

@@ -84,12 +84,12 @@ public class UserFilter implements devplugin.ProgramFilter {
   private String mName, mRule;
   private File mFile;
 
-  private static Token[] tokenList = null;
-  private static int curInx, curTokenInx;
-  private static char[] ruleLine;
-  private static Token curToken;
+  private static Token[] mTokenList = null;
+  private static int mCurInx, curTokenInx;
+  private static char[] mRuleLine;
+  private static Token mCurToken;
 
-  private Node root;
+  private Node mRoot;
 
   public UserFilter(String name) {
     mName = name;
@@ -166,35 +166,35 @@ public class UserFilter implements devplugin.ProgramFilter {
   }
 
   private void createTokenTree() throws ParserException {
-    tokenList = createTokenList(mRule);
+    mTokenList = createTokenList(mRule);
     curTokenInx = -1;
-    curToken = getNextToken();
-    if (curToken != null) {
+    mCurToken = getNextToken();
+    if (mCurToken != null) {
       Node rule = rule();
-      if (curToken != null) {
+      if (mCurToken != null) {
         // throw new
         // ParserException(curToken.pos,mLocalizer.msg("EOLExpected","end of rule expected"));
       }
-      root = rule;
+      mRoot = rule;
     }
   }
 
   private static Token getNextToken() throws ParserException {
     curTokenInx++;
-    if (tokenList.length > curTokenInx) {
-      return tokenList[curTokenInx];
+    if (mTokenList.length > curTokenInx) {
+      return mTokenList[curTokenInx];
     }
     return null;
   }
 
   public static void testTokenTree(String rule) throws ParserException {
-    tokenList = createTokenList(rule);
+    mTokenList = createTokenList(rule);
     curTokenInx = -1;
-    curToken = getNextToken();
-    if (curToken != null) {
+    mCurToken = getNextToken();
+    if (mCurToken != null) {
       rule();
-      if (curToken != null) {
-        throw new ParserException(curToken.pos, mLocalizer.msg("EOLExpected",
+      if (mCurToken != null) {
+        throw new ParserException(mCurToken.pos, mLocalizer.msg("EOLExpected",
             "end of rule expected"));
       }
     }
@@ -202,8 +202,8 @@ public class UserFilter implements devplugin.ProgramFilter {
 
   private static Token[] createTokenList(String rule) {
 
-    ruleLine = rule.toCharArray();
-    curInx = 0;
+    mRuleLine = rule.toCharArray();
+    mCurInx = 0;
     Token curToken = null;
     ArrayList<Token> list = new ArrayList<Token>();
     do {
@@ -223,24 +223,24 @@ public class UserFilter implements devplugin.ProgramFilter {
   private static Token readNextToken() {
 
     ignoreSpaces();
-    int i = curInx;
+    int i = mCurInx;
 
-    if (curInx == ruleLine.length) {
+    if (mCurInx == mRuleLine.length) {
       return null;
     }
 
     Token result = new Token();
-    result.pos = curInx;
+    result.pos = mCurInx;
 
-    if (ruleLine[curInx] == '(') {
+    if (mRuleLine[mCurInx] == '(') {
       result.type = Token.LEFT_BRACKET;
-      curInx++;
-    } else if (ruleLine[curInx] == ')') {
+      mCurInx++;
+    } else if (mRuleLine[mCurInx] == ')') {
       result.type = Token.RIGHT_BRACKET;
-      curInx++;
+      mCurInx++;
     } else {
       readString();
-      result.value = new String(ruleLine, i, curInx - i);
+      result.value = new String(mRuleLine, i, mCurInx - i);
       if ("or".equalsIgnoreCase(result.value)
           || "oder".equalsIgnoreCase(result.value)
           || mLocalizer.msg("or", "or").equalsIgnoreCase(result.value)) {
@@ -261,16 +261,16 @@ public class UserFilter implements devplugin.ProgramFilter {
   }
 
   private static void readString() {
-    while (curInx < ruleLine.length
-        && !Character.isWhitespace(ruleLine[curInx]) && ruleLine[curInx] != '('
-        && ruleLine[curInx] != ')') {
-      curInx++;
+    while (mCurInx < mRuleLine.length
+        && !Character.isWhitespace(mRuleLine[mCurInx]) && mRuleLine[mCurInx] != '('
+        && mRuleLine[mCurInx] != ')') {
+      mCurInx++;
     }
   }
 
   private static void ignoreSpaces() {
-    while (curInx < ruleLine.length && Character.isWhitespace(ruleLine[curInx])) {
-      curInx++;
+    while (mCurInx < mRuleLine.length && Character.isWhitespace(mRuleLine[mCurInx])) {
+      mCurInx++;
     }
   }
 
@@ -313,9 +313,9 @@ public class UserFilter implements devplugin.ProgramFilter {
     Node result = new OrNode();
     result.addNode(condTerm());
 
-    while (curToken != null && curToken.type == Token.OR) {
-      curToken = getNextToken();
-      if (curToken == null) {
+    while (mCurToken != null && mCurToken.type == Token.OR) {
+      mCurToken = getNextToken();
+      if (mCurToken == null) {
         // throw new
         // ParserException(mLocalizer.msg("unexpectedEOL","unexpected end of rule"));
       }
@@ -329,9 +329,9 @@ public class UserFilter implements devplugin.ProgramFilter {
     Node result = new AndNode();
 
     result.addNode(condFact());
-    while (curToken != null && curToken.type == Token.AND) {
-      curToken = getNextToken();
-      if (curToken == null) {
+    while (mCurToken != null && mCurToken.type == Token.AND) {
+      mCurToken = getNextToken();
+      if (mCurToken == null) {
         // throw new
         // ParserException(mLocalizer.msg("unexpectedEOL","unexpected end of rule"));
       }
@@ -343,31 +343,31 @@ public class UserFilter implements devplugin.ProgramFilter {
   private static Node condFact() throws ParserException {
     Node result, notNode = null;
 
-    if (curToken == null) {
+    if (mCurToken == null) {
       throw new ParserException(mLocalizer.msg("unexpectedEOL",
           "unexpected end of rule"));
     }
 
-    if (curToken.type == Token.NOT) {
+    if (mCurToken.type == Token.NOT) {
       notNode = new NotNode();
-      curToken = getNextToken();
-      if (curToken == null) {
+      mCurToken = getNextToken();
+      if (mCurToken == null) {
         throw new ParserException(mLocalizer.msg("unexpectedEOL",
             "unexpected end of rule"));
       }
 
     }
 
-    if (curToken.type == Token.LEFT_BRACKET) {
-      curToken = getNextToken();
+    if (mCurToken.type == Token.LEFT_BRACKET) {
+      mCurToken = getNextToken();
       result = rule();
-      expectToken(new int[] { Token.RIGHT_BRACKET }, curToken);
-      curToken = getNextToken();
+      expectToken(new int[] { Token.RIGHT_BRACKET }, mCurToken);
+      mCurToken = getNextToken();
     }
 
     else {
       result = item();
-      curToken = getNextToken();
+      mCurToken = getNextToken();
     }
 
     if (notNode != null) {
@@ -379,7 +379,7 @@ public class UserFilter implements devplugin.ProgramFilter {
   }
 
   private static Node item() throws ParserException {
-    Token tk = curToken;
+    Token tk = mCurToken;
     if (tk.type != Token.ITEM) {
       throw new ParserException(mLocalizer.msg("compExpected",
           "component name expected."));
@@ -395,10 +395,10 @@ public class UserFilter implements devplugin.ProgramFilter {
   }
 
   public boolean accept(devplugin.Program prog) {
-    if (root == null) {
+    if (mRoot == null) {
       return false;
     }
-    return root.accept(prog);
+    return mRoot.accept(prog);
   }
 
   public void setName(String name) {
@@ -426,10 +426,10 @@ public class UserFilter implements devplugin.ProgramFilter {
   }
 
   public boolean containsRuleComponent(String comp) {
-    if (root == null) {
+    if (mRoot == null) {
       return false;
     }
-    return root.containsRuleComponent(comp);
+    return mRoot.containsRuleComponent(comp);
   }
 
   public boolean equals(Object o) {
@@ -444,14 +444,14 @@ public class UserFilter implements devplugin.ProgramFilter {
 
 abstract class Node {
 
-  protected HashSet<Node> nodes;
+  protected HashSet<Node> mNodes;
 
   public Node() {
-    nodes = new HashSet<Node>();
+    mNodes = new HashSet<Node>();
   }
 
   public void addNode(Node n) {
-    nodes.add(n);
+    mNodes.add(n);
   }
 
   public abstract boolean accept(devplugin.Program prog);
@@ -459,7 +459,7 @@ abstract class Node {
   public abstract void dump();
 
   public boolean containsRuleComponent(String compName) {
-    Iterator<Node> it = nodes.iterator();
+    Iterator<Node> it = mNodes.iterator();
     while (it.hasNext()) {
       Node n = it.next();
       if (n.containsRuleComponent(compName)) {
@@ -476,7 +476,7 @@ class OrNode extends Node {
   }
 
   public boolean accept(devplugin.Program prog) {
-    Iterator<Node> it = nodes.iterator();
+    Iterator<Node> it = mNodes.iterator();
     while (it.hasNext()) {
       Node n = it.next();
       if (n.accept(prog)) {
@@ -487,7 +487,7 @@ class OrNode extends Node {
   }
 
   public void dump() {
-    Iterator<Node> it = nodes.iterator();
+    Iterator<Node> it = mNodes.iterator();
     while (it.hasNext()) {
       Node n = it.next();
       n.dump();
@@ -503,7 +503,7 @@ class AndNode extends Node {
   }
 
   public boolean accept(devplugin.Program prog) {
-    Iterator<Node> it = nodes.iterator();
+    Iterator<Node> it = mNodes.iterator();
     while (it.hasNext()) {
       Node n = it.next();
       if (!n.accept(prog)) {
@@ -515,7 +515,7 @@ class AndNode extends Node {
 
   public void dump() {
     System.out.println("AndNode {");
-    Iterator<Node> it = nodes.iterator();
+    Iterator<Node> it = mNodes.iterator();
     while (it.hasNext()) {
       Node n = it.next();
       n.dump();
@@ -525,17 +525,17 @@ class AndNode extends Node {
 }
 
 class NotNode extends Node {
-  private Node n;
+  private Node mNode;
 
   public NotNode() {
   }
 
-  public void addNode(Node n) {
-    this.n = n;
+  public void addNode(Node node) {
+    this.mNode = node;
   }
 
   public boolean accept(devplugin.Program prog) {
-    return !n.accept(prog);
+    return !mNode.accept(prog);
   }
 
   public void dump() {

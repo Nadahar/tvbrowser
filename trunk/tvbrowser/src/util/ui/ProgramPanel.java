@@ -112,7 +112,7 @@ public class ProgramPanel extends JComponent implements ChangeListener, PluginSt
   /** The width of the right part (the title and short info). */
   private static int WIDTH_RIGHT = Settings.propColumnWidth.getInt() - WIDTH_LEFT;
   /** The total width. */
-  private static int WIDTH = WIDTH_LEFT + WIDTH_RIGHT;
+  private static int WIDTH_TOTAL = WIDTH_LEFT + WIDTH_RIGHT;
 
   /** Formatter for the Time-String */
   private static final TimeFormatter TIME_FORMATTER = new TimeFormatter(); 
@@ -277,7 +277,7 @@ public class ProgramPanel extends JComponent implements ChangeListener, PluginSt
           + distance;
       WIDTH_RIGHT = Settings.propColumnWidth.getInt() + columnWidthOffset
           - WIDTH_LEFT;
-      WIDTH = WIDTH_LEFT + WIDTH_RIGHT;
+      WIDTH_TOTAL = WIDTH_LEFT + WIDTH_RIGHT;
     }
   }
 
@@ -383,7 +383,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
     }
     columnWidth = Settings.propColumnWidth.getInt() + columnWidthOffset;
     WIDTH_RIGHT = columnWidth - WIDTH_LEFT;
-    WIDTH = WIDTH_LEFT + WIDTH_RIGHT;
+    WIDTH_TOTAL = WIDTH_LEFT + WIDTH_RIGHT;
     return columnWidth;
   }
 
@@ -540,7 +540,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
       
       // Calculate the height
       mHeight = titleHeight + descHeight + mPictureAreaIcon.getIconHeight() + additionalHeight + V_GAP;
-      setPreferredSize(new Dimension(WIDTH, mHeight));
+      setPreferredSize(new Dimension(WIDTH_TOTAL, mHeight));
 
       // Calculate the preferred height
       mPreferredHeight = titleHeight + (maxDescLines * mNormalFont.getSize()) + mPictureAreaIcon.getIconHeight() + additionalHeight + V_GAP;

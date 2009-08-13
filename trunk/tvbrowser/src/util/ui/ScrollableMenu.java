@@ -130,18 +130,18 @@ public class ScrollableMenu extends JMenu {
             .getFirstVisibleAndEnabledComponent() : menu
             .getLastVisibleAndEnabledComponent());
         if (component == null || selected == component) {
-          boolean enableScroll = (direction == ScrollDirection.UP ? menu.scrollUp.enableScroll
-              : menu.scrollDown.enableScroll);
+          boolean enableScroll = (direction == ScrollDirection.UP ? menu.scrollUp.mEnableScroll
+              : menu.scrollDown.mEnableScroll);
           if (enableScroll) {
             do {
               if (direction == ScrollDirection.UP) {
                 menu.scrollUpClicked();
                 component = menu.getFirstVisibleComponent();
-                enableScroll = menu.scrollUp.enableScroll;
+                enableScroll = menu.scrollUp.mEnableScroll;
               } else {
                 menu.scrollDownClicked();
                 component = menu.getLastVisibleComponent();
-                enableScroll = menu.scrollDown.enableScroll;
+                enableScroll = menu.scrollDown.mEnableScroll;
               }
             } while (component != null && (!(component instanceof MenuElement)) && (component instanceof JSeparator)
                 && enableScroll);
@@ -660,42 +660,42 @@ public class ScrollableMenu extends JMenu {
   
   private class ScrollUpOrDownButtonItem extends JPanel {
 
-    private ScrollDirection direction = ScrollDirection.UP;
+    private ScrollDirection mDirection = ScrollDirection.UP;
 
-    private Polygon arrow = null;
+    private Polygon mArrow = null;
 
-    private boolean isMouseOver = false;
+    private boolean mIsMouseOver = false;
 
-    private boolean enableScroll = false;
+    private boolean mEnableScroll = false;
 
-    private MyMouseListener mouseListener;
+    private MyMouseListener mMouseListener;
 
-    private MyActionListener actionListener;
+    private MyActionListener mActionListener;
 
-    private int initialDelay = 300;
+    private int mInitialDelay = 300;
 
-    private int repeatDelay = 50;
+    private int mRepeatDelay = 50;
 
-    private Timer timer = null;
+    private Timer mTimer = null;
 
     public ScrollUpOrDownButtonItem(ScrollDirection direction) {
-      this.direction = direction;
+      this.mDirection = direction;
       setVisible(false);
 
       setPreferredSize(new Dimension(10, 10));
       setSize(new Dimension(10, 10));
       setMinimumSize(new Dimension(10, 10));
 
-      mouseListener = new MyMouseListener();
-      addMouseListener(mouseListener);
+      mMouseListener = new MyMouseListener();
+      addMouseListener(mMouseListener);
 
-      actionListener = new MyActionListener();
-      timer = new Timer(repeatDelay, actionListener);
-      timer.setInitialDelay(initialDelay);
+      mActionListener = new MyActionListener();
+      mTimer = new Timer(mRepeatDelay, mActionListener);
+      mTimer.setInitialDelay(mInitialDelay);
     }
 
     public void enableScroll(boolean enableScroll) {
-      this.enableScroll = enableScroll;
+      this.mEnableScroll = enableScroll;
       repaint();
     }
 
@@ -707,9 +707,9 @@ public class ScrollableMenu extends JMenu {
       Rectangle rect = g.getClipBounds();
       g.fillRect(rect.x, rect.y, rect.width, rect.height);
 
-      if (isMouseOver && enableScroll) {
+      if (mIsMouseOver && mEnableScroll) {
         g.setColor(Color.blue);
-      } else if (!enableScroll) {
+      } else if (!mEnableScroll) {
         g.setColor(Color.gray);
       } else {
         g.setColor(ScrollableMenu.this.getForeground());
@@ -720,23 +720,23 @@ public class ScrollableMenu extends JMenu {
     }
 
     private Polygon getArrow() {
-      if (arrow == null) {
-        arrow = new Polygon();
-        if (direction == ScrollDirection.UP) {
-          arrow.addPoint((int) (getSize().width / 2.0 - 6.0 + 0.5), (int) (getSize().height / 2.0 + 3.0 + 0.5));
-          arrow.addPoint((int) (getSize().width / 2.0 + 6.0 + 0.5), (int) (getSize().height / 2.0 + 3.0 + 0.5));
-          arrow.addPoint((int) (getSize().width / 2.0 + 0.5), (int) (getSize().height / 2.0 - 4.0 + 0.5));
+      if (mArrow == null) {
+        mArrow = new Polygon();
+        if (mDirection == ScrollDirection.UP) {
+          mArrow.addPoint((int) (getSize().width / 2.0 - 6.0 + 0.5), (int) (getSize().height / 2.0 + 3.0 + 0.5));
+          mArrow.addPoint((int) (getSize().width / 2.0 + 6.0 + 0.5), (int) (getSize().height / 2.0 + 3.0 + 0.5));
+          mArrow.addPoint((int) (getSize().width / 2.0 + 0.5), (int) (getSize().height / 2.0 - 4.0 + 0.5));
         } else {
-          arrow.addPoint((int) (getSize().width / 2.0 - 6.0 + 0.5), (int) (getSize().height / 2.0 - 3.0 + 0.5));
-          arrow.addPoint((int) (getSize().width / 2.0 + 6.0 + 0.5), (int) (getSize().height / 2.0 - 3.0 + 0.5));
-          arrow.addPoint((int) (getSize().width / 2.0 + 0.5), (int) (getSize().height / 2.0 + 4.0 + 0.5));
+          mArrow.addPoint((int) (getSize().width / 2.0 - 6.0 + 0.5), (int) (getSize().height / 2.0 - 3.0 + 0.5));
+          mArrow.addPoint((int) (getSize().width / 2.0 + 6.0 + 0.5), (int) (getSize().height / 2.0 - 3.0 + 0.5));
+          mArrow.addPoint((int) (getSize().width / 2.0 + 0.5), (int) (getSize().height / 2.0 + 4.0 + 0.5));
         }
       }
-      return arrow;
+      return mArrow;
     }
 
     private void scroll() {
-      if (direction == ScrollDirection.UP) {
+      if (mDirection == ScrollDirection.UP) {
         scrollUpClicked();
       } else {
         scrollDownClicked();
@@ -744,10 +744,10 @@ public class ScrollableMenu extends JMenu {
     }
 
     private void startScrollTimer() {
-      if (enableScroll) {
-        timer.start();
+      if (mEnableScroll) {
+        mTimer.start();
       } else {
-        timer.stop();
+        mTimer.stop();
       }
     }
 
@@ -768,14 +768,14 @@ public class ScrollableMenu extends JMenu {
       }
 
       public void mouseEntered(MouseEvent me) {
-        isMouseOver = true;
+        mIsMouseOver = true;
         repaint();
         startScrollTimer();
       }
 
       public void mouseExited(MouseEvent me) {
-        isMouseOver = false;
-        timer.stop();
+        mIsMouseOver = false;
+        mTimer.stop();
         repaint();
       }
 
@@ -784,7 +784,7 @@ public class ScrollableMenu extends JMenu {
       }
 
       public void mouseReleased(MouseEvent mouseevent) {
-        timer.stop();
+        mTimer.stop();
       }
     }
   }

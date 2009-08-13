@@ -183,9 +183,9 @@ public class ProgramMenuItem extends JMenuItem {
         else if(SwingUtilities.isMiddleMouseButton(e)) {
           Plugin.getPluginManager().handleProgramMiddleClick(mProgram);
         } else if (SwingUtilities.isRightMouseButton(e)) {
-          Point p = e.getPoint();
-          SwingUtilities.convertPointToScreen(p,e.getComponent());
-          showPopup(p,PluginProxyManager.createPluginContextMenu(mProgram));
+          Point point = e.getPoint();
+          SwingUtilities.convertPointToScreen(point,e.getComponent());
+          showPopup(point,PluginProxyManager.createPluginContextMenu(mProgram));
           e.consume();
         }
       }

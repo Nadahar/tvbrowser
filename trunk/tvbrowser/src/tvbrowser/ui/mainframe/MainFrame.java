@@ -686,8 +686,6 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
    * 
    */
   public void addKeyboardAction() {
-    JRootPane rootPane = this.getRootPane();
-
     mProgramTableScrollPane.deSelectItem();
     
     KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_F11, 0, false);
