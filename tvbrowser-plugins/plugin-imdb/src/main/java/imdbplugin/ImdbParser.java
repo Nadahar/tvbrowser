@@ -107,7 +107,7 @@ public class ImdbParser {
     mDatabase.optimizeIndex();
   }
 
-  private int getFileSize(final String mServer) {
+  private int getFileSize(final String server) {
     final String[] fileNames = new String[] { "aka-titles", "ratings" };
     final Integer[] fileSizes = new Integer[] { 5950067, 5067908 };
 
@@ -115,7 +115,7 @@ public class ImdbParser {
       
       int size = 0;
       final String filesizes = new String(IOUtilities
-          .loadFileFromHttpServer(new URL(mServer + "filesizes")));
+          .loadFileFromHttpServer(new URL(server + "filesizes")));
 
       for (int i = 0; i < fileNames.length; i++) {
         final Matcher m = Pattern.compile(
