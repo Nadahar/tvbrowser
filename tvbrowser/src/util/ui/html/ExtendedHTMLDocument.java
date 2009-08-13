@@ -130,8 +130,8 @@ public class ExtendedHTMLDocument extends HTMLDocument {
       
       mCompAction = new TagAction() {
         public void start(HTML.Tag tag, MutableAttributeSet attributeSet) {
-          Vector<ElementSpec> parseBuffer = ExtendedHTMLReader.super.parseBuffer;
-          handleCompTag(tag, attributeSet, parseBuffer);
+          Vector<ElementSpec> pBuffer = ExtendedHTMLReader.super.parseBuffer;
+          handleCompTag(tag, attributeSet, pBuffer);
         }
       };
       registerTag(COMP_TAG, mCompAction);

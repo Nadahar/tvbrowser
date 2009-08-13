@@ -99,10 +99,10 @@ public class AboutBox extends JDialog implements WindowClosingIf{
     JButton copyClipboard = new JButton(mLocalizer.msg("copyClipboard", "Copy to Clipboard"));
     copyClipboard.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-            Document doc = infoEP.getDocument();
+            Document infoDoc = infoEP.getDocument();
 
             try {
-                StringSelection sel = new StringSelection(doc.getText(0, doc.getLength()));
+                StringSelection sel = new StringSelection(infoDoc.getText(0, infoDoc.getLength()));
                 Toolkit.getDefaultToolkit().getSystemClipboard().setContents(sel, null);
             } catch (BadLocationException e1) {
                 e1.printStackTrace();

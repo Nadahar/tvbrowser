@@ -532,9 +532,9 @@ public class CapturePlugin extends devplugin.Plugin {
         table.getTableHeader().setReorderingAllowed(false);
         table.getTableHeader().setResizingAllowed(false);
         table.getColumnModel().getColumn(0).setCellRenderer(new DefaultTableCellRenderer() {
-          public Component getTableCellRendererComponent(JTable table, Object value,
+          public Component getTableCellRendererComponent(JTable renderTable, Object value,
               boolean isSelected, boolean hasFocus, int row, int column) {
-            Component c = super.getTableCellRendererComponent(table,value,isSelected,hasFocus,row,column);
+            Component c = super.getTableCellRendererComponent(renderTable,value,isSelected,hasFocus,row,column);
             
             if(value instanceof DeviceIf) {
               if(((DeviceIf)value).getDeleteRemovedProgramsAutomatically() && !isSelected)

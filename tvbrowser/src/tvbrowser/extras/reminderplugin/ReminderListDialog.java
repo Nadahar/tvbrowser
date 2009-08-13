@@ -161,9 +161,7 @@ public class ReminderListDialog extends JDialog implements WindowClosingIf {
                 sleep(Plugin.SINGLE_CLICK_WAITING_TIME);
                 mPerformingSingleClick = true;
                 
-                int column = mTable.columnAtPoint(e.getPoint());
-
-                if (column == 1)
+                if (mTable.columnAtPoint(e.getPoint()) == 1)
                   return;
 
                 int row = mTable.rowAtPoint(e.getPoint());
@@ -173,7 +171,7 @@ public class ReminderListDialog extends JDialog implements WindowClosingIf {
                 
                 Plugin.getPluginManager().handleProgramSingleClick(p, ReminderPluginProxy.getInstance());
                 mPerformingSingleClick = false;
-              } catch (InterruptedException e) { // ignore
+              } catch (InterruptedException ex) { // ignore
               }
             }
           };

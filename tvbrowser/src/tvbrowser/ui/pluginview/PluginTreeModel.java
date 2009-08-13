@@ -74,9 +74,9 @@ public class PluginTreeModel extends DefaultTreeModel {
    */
   public void update() {
     if (!mDisableUpdate) {
-      MutableTreeNode root = (MutableTreeNode) this.getRoot();
+      MutableTreeNode rootNode = (MutableTreeNode) this.getRoot();
       @SuppressWarnings("unchecked")
-      Enumeration<DefaultMutableTreeNode> e = root.children();
+      Enumeration<DefaultMutableTreeNode> e = rootNode.children();
       while (e.hasMoreElements() && !mDisableUpdate) {
         DefaultMutableTreeNode n = e.nextElement();
         
@@ -116,11 +116,11 @@ public class PluginTreeModel extends DefaultTreeModel {
   }
 
   private void insertSorted(PluginTreeNode pluginRoot) {
-    MutableTreeNode root = (MutableTreeNode) this.getRoot();
+    MutableTreeNode rootNode = (MutableTreeNode) this.getRoot();
     ArrayList<String> pluginNames = new ArrayList<String>();    
     
-    for (int i = 0; i < root.getChildCount(); i++) {
-      pluginNames.add(root.getChildAt(i).toString());
+    for (int i = 0; i < rootNode.getChildCount(); i++) {
+      pluginNames.add(rootNode.getChildAt(i).toString());
     }
     
     Collections.sort(pluginNames);
@@ -133,7 +133,7 @@ public class PluginTreeModel extends DefaultTreeModel {
       index = -index-1;
     }
     
-    root.insert(pluginRoot.getMutableTreeNode(), -index-1);
+    rootNode.insert(pluginRoot.getMutableTreeNode(), -index-1);
 
     if(pluginRoot.getMutableTreeNode().getIcon() == null) {
       if(pluginRoot.getUserObject() instanceof Plugin) {
@@ -149,9 +149,9 @@ public class PluginTreeModel extends DefaultTreeModel {
    * Removes all ChildNodes from this Tree
    */
   public void removeAllChildNodes() {
-    MutableTreeNode root = (MutableTreeNode) this.getRoot();
-    while (root.getChildCount() > 0) {
-      root.remove(0);
+    MutableTreeNode rootNode = (MutableTreeNode) this.getRoot();
+    while (rootNode.getChildCount() > 0) {
+      rootNode.remove(0);
     }
   }
 

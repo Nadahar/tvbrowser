@@ -150,19 +150,19 @@ public final class WindowSetting {
   
         public void componentResized(ComponentEvent e) {
           if (mMinSize != null) {
-            int width = window.getWidth();
-            int height = window.getHeight();
+            int winWidth = window.getWidth();
+            int winHeight = window.getHeight();
             boolean resize = false;
-            if (width < mMinSize.getWidth()) {
-              width = mMinSize.width;
+            if (winWidth < mMinSize.getWidth()) {
+              winWidth = mMinSize.width;
               resize = true;
             }
-            if (height < mMinSize.getHeight()) {
-              height = mMinSize.height;
+            if (winHeight < mMinSize.getHeight()) {
+              winHeight = mMinSize.height;
               resize = true;
             }
             if (resize) {
-              window.setSize(width, height);
+              window.setSize(winWidth, winHeight);
             }
           }
           saveSize(e);

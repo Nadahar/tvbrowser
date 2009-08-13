@@ -186,9 +186,9 @@ public class Node extends DefaultMutableTreeNode {
     if (mNodeFormatter != null) {
       return mNodeFormatter;
     }
-    Node parent = (Node)getParent();
-    if (parent != null) {
-      return parent.getNodeFormatter();
+    Node parentNode = (Node)getParent();
+    if (parentNode != null) {
+      return parentNode.getNodeFormatter();
     }
     return isWeekNodesEnabled ? mDefaultDateNodeFormatter : mDefaultNodeFormatter;
   }

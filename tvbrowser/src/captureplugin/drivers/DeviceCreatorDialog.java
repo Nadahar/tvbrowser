@@ -155,9 +155,9 @@ public class DeviceCreatorDialog extends JDialog implements WindowClosingIf {
         mDriverCombo.addItemListener(new ItemListener() {
 
             public void itemStateChanged(ItemEvent e) {
-                String desc = ((DriverIf) mDriverCombo.getSelectedItem()).getDriverDesc();
-                desc = "<html><div style=\"color:#000000;font-family:"+ font.getName() +"; font-size:"+font.getSize()+";\">"+desc+"</div></html>";
-                mDesc.setText(desc);
+                String description = ((DriverIf) mDriverCombo.getSelectedItem()).getDriverDesc();
+                description = "<html><div style=\"color:#000000;font-family:"+ font.getName() +"; font-size:"+font.getSize()+";\">"+description+"</div></html>";
+                mDesc.setText(description);
                 mDesc.setFont(font);
             }
 

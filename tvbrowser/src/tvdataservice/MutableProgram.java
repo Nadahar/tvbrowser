@@ -63,7 +63,7 @@ public class MutableProgram implements Program {
   private static java.util.logging.Logger mLog
     = java.util.logging.Logger.getLogger(MutableProgram.class.getName());
   
-  private static TimeZone localTimeZone = TimeZone.getDefault();
+  private static TimeZone mLocalTimeZone = TimeZone.getDefault();
 
   /**
    * The maximum length of a short info. Used for generating a short info out of a
@@ -187,7 +187,7 @@ public class MutableProgram implements Program {
   private void normalizeTimeZone(Date localDate, int localStartTime) {
     TimeZone channelTimeZone=mChannel.getTimeZone();
 
-    int timeZoneOffset=(localTimeZone.getRawOffset()-channelTimeZone.getRawOffset())/60000;
+    int timeZoneOffset=(mLocalTimeZone.getRawOffset()-channelTimeZone.getRawOffset())/60000;
     timeZoneOffset+=mChannel.getDayLightSavingTimeCorrection()*60;
 
     mNormalizedStartTime = localStartTime + timeZoneOffset;

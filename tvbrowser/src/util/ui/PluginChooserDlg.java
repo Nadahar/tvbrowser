@@ -358,11 +358,11 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
                     .addListSelectionListener(new ListSelectionListener() {
 
                       @Override
-                      public void valueChanged(ListSelectionEvent e) {
-                        if (!e.getValueIsAdjusting()) {
+                      public void valueChanged(ListSelectionEvent listEvent) {
+                        if (!listEvent.getValueIsAdjusting()) {
                           SelectableItem currPluginItem = (SelectableItem) mPluginItemList
                               .getSelectedValue();
-                          ProgramReceiveIf plugin = (ProgramReceiveIf) currPluginItem
+                          ProgramReceiveIf currPlugin = (ProgramReceiveIf) currPluginItem
                               .getItem();
                           Object[] sel = targetList.getSelection();
                           ArrayList<ProgramReceiveTarget> selTargets = new ArrayList<ProgramReceiveTarget>(
@@ -374,7 +374,7 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
                             currPluginItem.setSelected(sel.length > 0);
                             mPluginItemList.updateUI();
                           }
-                          mReceiveTargetTable.put(plugin, selTargets);
+                          mReceiveTargetTable.put(currPlugin, selTargets);
                         }
                       }
                     });

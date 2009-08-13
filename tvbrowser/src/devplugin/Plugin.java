@@ -35,8 +35,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Properties;
-import java.util.jar.JarFile;
-
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 

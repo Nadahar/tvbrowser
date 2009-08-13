@@ -239,6 +239,9 @@ public class WebPlugin extends Plugin {
     if (mAddresses == null) {
       createDefaultSettings();
     }
+    if (program == getPluginManager().getExampleProgram()) {
+    	return new ActionMenu(getMainContextMenuAction());
+    }
 
     final ArrayList<Object> actionList = new ArrayList<Object>();
     listActors = null;
@@ -323,14 +326,15 @@ public class WebPlugin extends Plugin {
     
     final Object[] actions = new Object[actionList.size()];
     actionList.toArray(actions);
-    final Action mainAction = new devplugin.ContextMenuAction();
+    return new ActionMenu(getMainContextMenuAction(), actions);
+  }
+
+	private Action getMainContextMenuAction() {
+		final Action mainAction = new devplugin.ContextMenuAction();
     mainAction.putValue(Action.NAME, mLocalizer.msg("contextMenu", "Web search"));
     mainAction.putValue(Action.SMALL_ICON, createImageIcon("actions", "web-search", 16));
-
-    final ActionMenu result = new ActionMenu(mainAction, actions);
-
-    return result;
-  }
+		return mainAction;
+	}
 
   private void createSubMenu(final Program program, final WebAddress address,
       final ArrayList<Object> categoryList, final String label,

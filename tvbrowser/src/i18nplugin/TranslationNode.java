@@ -25,9 +25,7 @@ package i18nplugin;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.List;
 import java.util.Locale;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -42,9 +40,6 @@ import javax.swing.tree.TreeNode;
  */
 public class TranslationNode extends PathNode {
   
-  private String filter;
-  private List<TreeNode> filteredChildren = new ArrayList<TreeNode>();
-
   /**
    * Create Tree
    * @param string Name of Tree-Node

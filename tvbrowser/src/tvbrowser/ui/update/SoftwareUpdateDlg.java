@@ -69,6 +69,7 @@ import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
 import util.browserlauncher.Launch;
 import util.exc.TvBrowserException;
+import util.ui.EnhancedPanelPuilder;
 import util.ui.Localizer;
 import util.ui.TVBrowserIcons;
 import util.ui.TextAreaIcon;
@@ -191,8 +192,8 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
       private final ImageIcon NEW_VERSION_ICON = IconLoader.getInstance().getIconFromTheme("status", "software-update-available", 16);
       
       public JPanel createCenterPanel(JList list, Object value, int index, boolean isSelected, boolean isEnabled, JScrollPane parentScrollPane, int leftColumnWidth) {
-        FormLayout layout = new FormLayout("5dlu,default,5dlu,default:grow","2dlu,default,2dlu,fill:pref:grow,2dlu");
-        PanelBuilder pb = new PanelBuilder(layout);
+        FormLayout lay = new FormLayout("5dlu,default,5dlu,default:grow","2dlu,default,2dlu,fill:pref:grow,2dlu");
+        EnhancedPanelPuilder pb = new EnhancedPanelPuilder(lay);
         pb.getPanel().setOpaque(false);
         
         SoftwareUpdateItem item = (SoftwareUpdateItem)value;
@@ -232,9 +233,9 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
           authorAndWebsite.setOpaque(false);
           
           if (author != null) {
-            layout.appendRow(RowSpec.decode("2dlu"));
-            layout.appendRow(RowSpec.decode("default"));
-            layout.appendRow(RowSpec.decode("2dlu"));
+            lay.appendRow(RowSpec.decode("2dlu"));
+            lay.appendRow(RowSpec.decode("default"));
+            lay.appendRow(RowSpec.decode("2dlu"));
             
             pb.add(authorAndWebsite, cc.xyw(2,7,3));
             
@@ -252,9 +253,9 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
           
           if (website != null) {
             if(author == null) {
-              layout.appendRow(RowSpec.decode("2dlu"));
-              layout.appendRow(RowSpec.decode("default"));
-              layout.appendRow(RowSpec.decode("2dlu"));
+              lay.appendRow(RowSpec.decode("2dlu"));
+              lay.appendRow(RowSpec.decode("default"));
+              lay.appendRow(RowSpec.decode("2dlu"));
               
               pb.add(authorAndWebsite, cc.xyw(2,7,3));
             }
@@ -296,9 +297,9 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
         return pb.getPanel();
       }
 
-      public void calculateSize(JList list, int index, JPanel contentPane) {
+      public void calculateSize(JList list, int index, JPanel contPane) {
         if(list.getUI() instanceof MyListUI) {
-          ((MyListUI)list.getUI()).setCellHeight(index, contentPane.getPreferredSize().height);
+          ((MyListUI)list.getUI()).setCellHeight(index, contPane.getPreferredSize().height);
         }
       }
     });
@@ -458,8 +459,8 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
       
       height += i.top + i.bottom;
       
-      for(int cellHeight : cellHeights) {
-        height += cellHeight;
+      for(int localCellHeight : cellHeights) {
+        height += localCellHeight;
       }
       
       return new Dimension(width,height);

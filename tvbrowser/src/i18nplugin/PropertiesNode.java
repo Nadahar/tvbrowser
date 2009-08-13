@@ -63,7 +63,6 @@ public class PropertiesNode extends AbstractHierarchicalNode implements
   private String mPropertiesFile;
   private HashMap<Locale, Properties> mOriginalPropertyMap;
   private HashMap<Locale, Properties> mUserPropertyMap;
-  private List<TreeNode> filteredChildren = new ArrayList<TreeNode>();
 
   /**
    * Create the Properties-File

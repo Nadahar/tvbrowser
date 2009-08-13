@@ -36,15 +36,15 @@ public class HTMLFilterReader extends FilterReader {
  
   public int read(char[] cbuf, int off, int len) throws IOException {
     
-    int in=read();
-    if (in==-1) {
+    int character=read();
+    if (character==-1) {
       return -1;
     }
-    cbuf[off]=(char)in;
+    cbuf[off]=(char)character;
     for (int i=1;i<len;i++) {
-      in=read();
-      cbuf[off+i]=(char)in;
-      if (in==-1) {
+      character=read();
+      cbuf[off+i]=(char)character;
+      if (character==-1) {
         return i;
       }      
     }
