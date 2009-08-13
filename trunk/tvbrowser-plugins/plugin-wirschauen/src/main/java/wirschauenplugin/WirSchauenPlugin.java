@@ -180,14 +180,14 @@ public final class WirSchauenPlugin extends Plugin {
   }
 
   private void showDescribeDialog(final Program program) {
-    final Window parent = UiUtilities.getLastModalChildOf(getParentFrame());
+    final Window parentWindow = UiUtilities.getLastModalChildOf(getParentFrame());
 
     WirSchauenDialog dialog;
 
-    if (parent instanceof JDialog) {
-      dialog = new WirSchauenDialog((JDialog) parent, program);
+    if (parentWindow instanceof JDialog) {
+      dialog = new WirSchauenDialog((JDialog) parentWindow, program);
     } else {
-      dialog = new WirSchauenDialog((JFrame) parent, program);
+      dialog = new WirSchauenDialog((JFrame) parentWindow, program);
     }
 
     UiUtilities.centerAndShow(dialog);
