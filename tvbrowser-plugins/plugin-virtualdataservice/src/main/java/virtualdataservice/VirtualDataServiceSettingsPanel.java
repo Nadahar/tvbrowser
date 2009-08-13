@@ -121,7 +121,7 @@ public class VirtualDataServiceSettingsPanel extends SettingsPanel implements Ac
 		mProgramList.getColumnModel().getColumn(0).setMaxWidth(Sizes.dialogUnitXAsPixel(10, mProgramList));
 		final JScrollPane scrollProgram = new JScrollPane(mProgramList);
 
-		final JButton mChannelAdd = new JButton(mLocalizer.msg("add", "Add"),
+		mChannelAdd = new JButton(mLocalizer.msg("add", "Add"),
         Plugin.getPluginManager().getIconFromTheme(null, "actions",
             "document-new", 16));
 		mChannelAdd.setToolTipText(mLocalizer.msg("addChannel", "Add channel"));

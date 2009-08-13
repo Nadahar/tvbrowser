@@ -424,7 +424,7 @@ class CalendarGridPanel extends JPanel implements FocusListener,
 
 	class DateLabel extends JLabel {
 
-		private Date date;
+		private Date mDate;
 
 		private int id;
 
@@ -494,7 +494,7 @@ class CalendarGridPanel extends JPanel implements FocusListener,
 		private void updateTooltip() {
 			if (holidayPolicy != null && holliday) {
 				Calendar c = Calendar.getInstance(zone, locale);
-				c.setTime(date);
+				c.setTime(mDate);
 				setToolTipText(holidayPolicy.getHollidayName(this, c));
 			} else
 				setToolTipText(null);
@@ -570,11 +570,11 @@ class CalendarGridPanel extends JPanel implements FocusListener,
 		}
 
 		public Date getDate() {
-			return date;
+			return mDate;
 		}
 
 		public void setDate(Date date) {
-			this.date = date;
+			this.mDate = date;
 		}
 
 	}
