@@ -48,6 +48,7 @@ import devplugin.Program;
 
 /**
  * @author bananeweizen
+ * @deprecated to be removed after 3.0. instead use util.
  * 
  */
 public final class ProgramListDialog extends JDialog implements WindowClosingIf {
