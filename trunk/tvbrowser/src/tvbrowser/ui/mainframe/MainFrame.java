@@ -1910,7 +1910,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
         try {
           infoLabel.setText(mLocalizer.msg("searchForPluginUpdates","Search for plugin updates..."));
           java.net.URL url = new java.net.URL(baseUrl + "/" + PluginAutoUpdater.PLUGIN_UPDATES_FILENAME);
-          SoftwareUpdater softwareUpdater = new SoftwareUpdater(url,showOnlyUpdates);
+          SoftwareUpdater softwareUpdater = new SoftwareUpdater(url,showOnlyUpdates,false);
           mSoftwareUpdateItems = softwareUpdater
               .getAvailableSoftwareUpdateItems();
           infoLabel.setText("");
@@ -2352,9 +2352,9 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
             t1.printStackTrace();
           }
 
-          if (installedPlugin != null && installedPlugin.getInfo().getVersion().compareTo(version1) >= 0) {
+          if (installedPlugin != null && installedPlugin.getInfo().getVersion().compareTo(version1) > 0) {
             alreadyInstalled.append(installedPlugin.getInfo().getName()).append("\n");
-          } else if (service != null && service.getInfo().getVersion().compareTo(version1) >= 0) {
+          } else if (service != null && service.getInfo().getVersion().compareTo(version1) > 0) {
             alreadyInstalled.append(service.getInfo().getName()).append("\n");
           } else {
             RandomAccessFile write = new RandomAccessFile(tmpFile, "rw");
@@ -2393,7 +2393,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       
       if (tmpFile.length() > 0) {
         java.net.URL url = tmpFile.toURI().toURL();
-        SoftwareUpdater softwareUpdater = new SoftwareUpdater(url, false);
+        SoftwareUpdater softwareUpdater = new SoftwareUpdater(url, false, true);
         mSoftwareUpdateItems = softwareUpdater.getAvailableSoftwareUpdateItems();
 
         SoftwareUpdateDlg updateDlg = new SoftwareUpdateDlg(this, null, false, mSoftwareUpdateItems);
