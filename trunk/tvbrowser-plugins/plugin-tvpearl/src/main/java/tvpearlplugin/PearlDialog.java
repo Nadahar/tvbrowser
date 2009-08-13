@@ -315,7 +315,7 @@ public final class PearlDialog extends JDialog implements WindowClosingIf
                   "system-search", 16));
           item.addActionListener(new ActionListener() {
 
-            public void actionPerformed(final ActionEvent e) {
+            public void actionPerformed(final ActionEvent event) {
               final SearchFormSettings searchSettings = new SearchFormSettings(
                   popupProgram.getTitle());
               searchSettings
