@@ -63,17 +63,18 @@ public final class SoftwareUpdater {
 	 * 
 	 * @param url The url to download the informations from.
 	 * @param onlyUpdates If only updates and not new items should be accepted.
+	 * @param dragNdrop If the plugin was droped.
 	 * @throws IOException
 	 */
-	protected SoftwareUpdater(URL url, boolean onlyUpdates) throws IOException {
+	protected SoftwareUpdater(URL url, boolean onlyUpdates, boolean dragNdrop) throws IOException {
 		BufferedReader reader = new BufferedReader(new InputStreamReader(IOUtilities.getStream(url, 300000),"ISO-8859-1"));
 		
-		mSoftwareUpdateItems=readSoftwareUpdateItems(reader,onlyUpdates);
+		mSoftwareUpdateItems=readSoftwareUpdateItems(reader,onlyUpdates, dragNdrop);
 		
 		reader.close();
 	}
 	
-  private SoftwareUpdateItem[] readSoftwareUpdateItems(BufferedReader reader, boolean onlyUpdates) throws IOException {
+  private SoftwareUpdateItem[] readSoftwareUpdateItems(BufferedReader reader, boolean onlyUpdates, boolean dragNdrop) throws IOException {
     Pattern pluginTypePattern = Pattern.compile("\\[(.*):(.*)\\]");
     Pattern keyValuePattern = Pattern.compile("(.+?)=(.*)");
     Matcher matcher;
@@ -171,14 +172,16 @@ public final class SoftwareUpdater {
       // remove already installed plugins
       String pluginId = "java." + className.toLowerCase() + "." + className;      
       PluginProxy installedPlugin = PluginProxyManager.getInstance().getPluginForId(pluginId);
-      if (installedPlugin!=null && installedPlugin.getInfo().getVersion().compareTo(item.getVersion())>=0) {
+      if (installedPlugin!=null && ((dragNdrop && installedPlugin.getInfo().getVersion().compareTo(item.getVersion())>0 && !item.getVersion().isStable()) || 
+          (!dragNdrop && installedPlugin.getInfo().getVersion().compareTo(item.getVersion())>=0))) {
         it.remove();
         continue;
       }
       
       // remove already installed dataservices
       TvDataServiceProxy service= TvDataServiceProxyManager.getInstance().findDataServiceById(className.toLowerCase()+"."+className);
-      if (service!=null && service.getInfo().getVersion().compareTo(item.getVersion())>=0) {
+      if (service!=null && ((dragNdrop && service.getInfo().getVersion().compareTo(item.getVersion())>0  && !item.getVersion().isStable()) ||
+          (!dragNdrop && service.getInfo().getVersion().compareTo(item.getVersion())>=0))) {
         it.remove();
         continue;
       }
