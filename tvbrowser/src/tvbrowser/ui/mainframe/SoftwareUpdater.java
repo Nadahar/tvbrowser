@@ -173,7 +173,7 @@ public final class SoftwareUpdater {
       String pluginId = "java." + className.toLowerCase() + "." + className;      
       PluginProxy installedPlugin = PluginProxyManager.getInstance().getPluginForId(pluginId);
       if (installedPlugin!=null && ((dragNdrop && installedPlugin.getInfo().getVersion().compareTo(item.getVersion())>0 && !item.getVersion().isStable()) || 
-          (!dragNdrop && installedPlugin.getInfo().getVersion().compareTo(item.getVersion())>=0))) {
+          (installedPlugin.getInfo().getVersion().compareTo(item.getVersion())>=0))) {
         it.remove();
         continue;
       }
@@ -181,7 +181,7 @@ public final class SoftwareUpdater {
       // remove already installed dataservices
       TvDataServiceProxy service= TvDataServiceProxyManager.getInstance().findDataServiceById(className.toLowerCase()+"."+className);
       if (service!=null && ((dragNdrop && service.getInfo().getVersion().compareTo(item.getVersion())>0  && !item.getVersion().isStable()) ||
-          (!dragNdrop && service.getInfo().getVersion().compareTo(item.getVersion())>=0))) {
+          (service.getInfo().getVersion().compareTo(item.getVersion())>=0))) {
         it.remove();
         continue;
       }
