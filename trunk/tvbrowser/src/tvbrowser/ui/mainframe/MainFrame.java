@@ -2352,9 +2352,9 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
             t1.printStackTrace();
           }
 
-          if (installedPlugin != null && installedPlugin.getInfo().getVersion().compareTo(version1) > 0) {
+          if (installedPlugin != null && (installedPlugin.getInfo().getVersion().compareTo(version1) > 0 || (installedPlugin.getInfo().getVersion().compareTo(version1) == 0 && version1.isStable()))) {
             alreadyInstalled.append(installedPlugin.getInfo().getName()).append("\n");
-          } else if (service != null && service.getInfo().getVersion().compareTo(version1) > 0) {
+          } else if (service != null && (service.getInfo().getVersion().compareTo(version1) > 0 || (service.getInfo().getVersion().compareTo(version1) == 0 && version1.isStable()))) {
             alreadyInstalled.append(service.getInfo().getName()).append("\n");
           } else {
             RandomAccessFile write = new RandomAccessFile(tmpFile, "rw");
