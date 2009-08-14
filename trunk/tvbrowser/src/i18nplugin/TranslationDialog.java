@@ -51,6 +51,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.JTree;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -94,7 +95,7 @@ final public class TranslationDialog extends JDialog implements WindowClosingIf 
   /** Translator */
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(TranslationDialog.class);
 
-  private static final String EDITOR = "EDITOR"; 
+  private static final String EDITOR = "EDITOR";
   private static final String HELP = "HELP";
 
   private JTree mTree;
@@ -109,7 +110,7 @@ final public class TranslationDialog extends JDialog implements WindowClosingIf 
 
   private JComboBox mLanguageCB;
 
-  private JSplitPane mSplitpane; 
+  private JSplitPane mSplitpane;
   
   private JTextField mFilterTF;
   
@@ -139,8 +140,9 @@ final public class TranslationDialog extends JDialog implements WindowClosingIf 
     Locale[] locales = mLocalizer.getAllAvailableLocales();
     
     for (Locale locale : locales) {
-      if (!locale.getLanguage().equals("en"))
-        mCurrentLocales.add(locale);
+      if (!locale.getLanguage().equals("en")) {
+				mCurrentLocales.add(locale);
+			}
     }
     
     mLanguageCB = new JComboBox(mCurrentLocales);
@@ -216,7 +218,7 @@ final public class TranslationDialog extends JDialog implements WindowClosingIf 
     JEditorPane help = new JEditorPane("text/html",mLocalizer.msg("helpText", "<h1>Help missing</h1>"));
     help.setEditable(false);
 
-    cardPanel.add(new JScrollPane(help, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), HELP);
+    cardPanel.add(new JScrollPane(help, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER), HELP);
     
     mTree.addTreeSelectionListener(new TreeSelectionListener() {
       public void valueChanged(TreeSelectionEvent e) {
@@ -268,7 +270,7 @@ final public class TranslationDialog extends JDialog implements WindowClosingIf 
       }
     });
     
-    JButton export = new JButton(IconLoader.getInstance().getIconFromTheme("actions", "document-save-as", 16)); 
+    JButton export = new JButton(IconLoader.getInstance().getIconFromTheme("actions", "document-save-as", 16));
     export.setToolTipText(mLocalizer.msg("export", "Export Translations to File"));
     
     export.addActionListener(new ActionListener() {
@@ -333,11 +335,13 @@ final public class TranslationDialog extends JDialog implements WindowClosingIf 
 
       buffer.append('_').append(locale.getLanguage());
       
-      if (locale.getCountry().length() > 0)
-        buffer.append('_').append(locale.getCountry());
+      if (locale.getCountry().length() > 0) {
+				buffer.append('_').append(locale.getCountry());
+			}
 
-      if (locale.getVariant().length() > 0)
-        buffer.append('_').append(locale.getVariant());
+      if (locale.getVariant().length() > 0) {
+				buffer.append('_').append(locale.getVariant());
+			}
 
       buffer.append(".properties");
 
@@ -451,8 +455,9 @@ final public class TranslationDialog extends JDialog implements WindowClosingIf 
     if (files != null) {
       for (File file : files) {
         TranslationNode node = new TranslationNode(file.getName(), file);
-        if (node.getChildCount() > 0)
-          treenode.add(node);
+        if (node.getChildCount() > 0) {
+					treenode.add(node);
+				}
       }
     }
     

@@ -49,7 +49,7 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 /**
- * A small Dialog that enables the User to select a Language 
+ * A small Dialog that enables the User to select a Language
  * 
  * @author bodum
  */
@@ -81,8 +81,9 @@ public class LanguageChooser extends JDialog implements WindowClosingIf {
     Vector<Locale> newLocales = new Vector<Locale>();
     
     for (Locale locale : loc) {
-      if ((!locale.getLanguage().equals("en")) && !currentLanguages.contains(locale))
-        newLocales.add(locale);
+      if ((!locale.getLanguage().equals("en")) && !currentLanguages.contains(locale)) {
+				newLocales.add(locale);
+			}
     }
     
     setTitle(mLocalizer.msg("addLanguage", "Add Language"));
