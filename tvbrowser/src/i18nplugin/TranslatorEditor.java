@@ -80,7 +80,7 @@ public class TranslatorEditor extends JPanel {
     CellConstraints cc = new CellConstraints();
 
     // Top
-    PanelBuilder topPanel = new PanelBuilder(new FormLayout("fill:10dlu:grow", "pref, 5dlu, fill:pref:grow")); 
+    PanelBuilder topPanel = new PanelBuilder(new FormLayout("fill:10dlu:grow", "pref, 5dlu, fill:pref:grow"));
     topPanel.setBorder(Borders.DLU4_BORDER);
     topPanel.addSeparator(mLocalizer.msg("original","Original text"), cc.xy(1,1));
 
@@ -91,7 +91,7 @@ public class TranslatorEditor extends JPanel {
     topPanel.add(new JScrollPane(mOriginal), cc.xy(1,3));
     
     // Bottom
-    PanelBuilder bottomPanel = new PanelBuilder(new FormLayout("fill:10dlu:grow", "pref, 5dlu, fill:pref:grow")); 
+    PanelBuilder bottomPanel = new PanelBuilder(new FormLayout("fill:10dlu:grow", "pref, 5dlu, fill:pref:grow"));
     bottomPanel.setBorder(Borders.DLU4_BORDER);
     bottomPanel.addSeparator(mLocalizer.msg("translation","Translation"), cc.xy(1,1));
     mTranslation = new JTextArea();
@@ -127,7 +127,7 @@ public class TranslatorEditor extends JPanel {
     add(split, cc.xy(1,1));
     
     // translation state
-    PanelBuilder panel = new PanelBuilder(new FormLayout("pref, 2dlu, fill:10dlu:grow", "pref, 3dlu, pref")); 
+    PanelBuilder panel = new PanelBuilder(new FormLayout("pref, 2dlu, fill:10dlu:grow", "pref, 3dlu, pref"));
     panel.setBorder(Borders.DLU4_BORDER);
     panel.addSeparator(mLocalizer.msg("state","State"), cc.xyw(1, 1, 3));
     mIcon = new JLabel();
@@ -210,7 +210,7 @@ public class TranslatorEditor extends JPanel {
   }
   
   /**
-   * Save the current state in the Property 
+   * Save the current state in the Property
    */
   public void save() {
     if (mCurrentPropertyKey != null) {

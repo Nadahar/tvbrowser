@@ -32,6 +32,8 @@ import java.util.regex.Pattern;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import util.i18n.WritingConversion;
+
 /**
  * Entry for a Property
  * 
@@ -98,6 +100,8 @@ public class PropertiesEntryNode extends DefaultMutableTreeNode implements Langu
         translated = translated.replace(arg, "");
       }
     }
+    original = WritingConversion.reduceToASCIILetters(original, false);
+    translated = WritingConversion.reduceToASCIILetters(translated, false);
     // check that the strings have the same non alphanumeric ends, e.g. "..." in menu items
     Pattern lastChars = Pattern.compile(".*[\\w\\sﬂ](\\W*)",Pattern.DOTALL);
     Matcher matcher = lastChars.matcher(original);

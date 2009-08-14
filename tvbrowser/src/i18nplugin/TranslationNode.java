@@ -64,13 +64,15 @@ public class TranslationNode extends PathNode {
           if (name.indexOf('/') >= 0) {
             String dir = name.substring(0, name.lastIndexOf('/'));
             
-            if (dir.contains("/"))
-              dir = dir.substring(dir.lastIndexOf('/')+1);
+            if (dir.contains("/")) {
+							dir = dir.substring(dir.lastIndexOf('/')+1);
+						}
 
             name = name.substring(name.lastIndexOf('/')+1);
             
-            if (name.equals(dir))
-              addEntry(jarfile, entry);
+            if (name.equals(dir)) {
+							addEntry(jarfile, entry);
+						}
           }
         }
       }
@@ -104,7 +106,7 @@ public class TranslationNode extends PathNode {
 
   /**
    * Find the path recursive. If the Path was not found, it will
-   * be created 
+   * be created
    * 
    * @param node Node to add Path
    * @param strings Path-Elements
@@ -118,8 +120,9 @@ public class TranslationNode extends PathNode {
         PathNode child = (PathNode) node.getChildAt(i);
         if(child.toString().equals(strings[deep])) {
           
-          if (deep == strings.length-1)
-            return child;
+          if (deep == strings.length-1) {
+						return child;
+					}
           
           return findPath(child, strings, deep+1);
         }

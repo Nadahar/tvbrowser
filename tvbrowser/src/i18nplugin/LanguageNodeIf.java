@@ -28,7 +28,7 @@ import java.util.Locale;
 
 /**
  * This interface is important for the treecellrenderer. All TreeNodes that implement
- * this will be colored according the result of the method allTranslationsAvailableFor 
+ * this will be colored according the result of the method allTranslationsAvailableFor
  * 
  * @author bodum
  */

@@ -67,13 +67,17 @@ public class PropertiesTreeCellRenderer extends DefaultTreeCellRenderer {
   
   @Override
   public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus) {
-    JLabel label = (JLabel) super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus); 
+    JLabel label = (JLabel) super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
 
     int state = LanguageNodeIf.STATE_OK;
     if (value instanceof LanguageNodeIf) {
-      LanguageNodeIf entry = (LanguageNodeIf) value;
-      state = entry.translationStateFor(mLocale);
-      if (!sel) {
+      if (sel) {
+      	label.setForeground(UIManager.getColor("List.selectionForeground"));
+      	label.setBackground(UIManager.getColor("List.selectionBackground"));
+      }
+      else {
+        LanguageNodeIf entry = (LanguageNodeIf) value;
+        state = entry.translationStateFor(mLocale);
         label.setForeground(I18NPlugin.getInstance().getTranslationColor(state));
       }
     }
@@ -90,7 +94,7 @@ public class PropertiesTreeCellRenderer extends DefaultTreeCellRenderer {
       }
     }
     
-    // Set the icon 
+    // Set the icon
     Icon icon = label.getIcon();
     mIcon.setTargetIcon(icon);
     Icon stateIcon = null;
@@ -110,8 +114,8 @@ public class PropertiesTreeCellRenderer extends DefaultTreeCellRenderer {
   /**
    * @author Torsten Keil
    * 
-   * This composite icon draws the target icon. If the target icon and a state icon is set it 
-   * draws the state icon over the lower right corner of the target icon. 
+   * This composite icon draws the target icon. If the target icon and a state icon is set it
+   * draws the state icon over the lower right corner of the target icon.
    *
    */
   private static class CompositeIcon implements Icon {
@@ -119,27 +123,27 @@ public class PropertiesTreeCellRenderer extends DefaultTreeCellRenderer {
     /**
      * The "original" icon.
      */
-    private Icon targetIcon;
+    private Icon mTargetIcon;
     /**
      * The icon indicating the state.
      */
-    private Icon stateIcon;
+    private Icon mStateIcon;
 
     public int getIconHeight() {
-      return targetIcon != null ? targetIcon.getIconHeight() : 0;
+      return mTargetIcon != null ? mTargetIcon.getIconHeight() : 0;
     }
 
     public int getIconWidth() {
-      return targetIcon != null ? targetIcon.getIconWidth() : 0;
+      return mTargetIcon != null ? mTargetIcon.getIconWidth() : 0;
     }
 
     public void paintIcon(Component c, Graphics g, int x, int y) {
-      if (targetIcon != null) {
-        targetIcon.paintIcon(c, g, x, y);
-        if (stateIcon != null) {
-          int xPos = x + targetIcon.getIconWidth() - stateIcon.getIconWidth();
-          int yPos = c.getHeight() - stateIcon.getIconHeight();
-          stateIcon.paintIcon(c, g, xPos, yPos);
+      if (mTargetIcon != null) {
+        mTargetIcon.paintIcon(c, g, x, y);
+        if (mStateIcon != null) {
+          int xPos = x + mTargetIcon.getIconWidth() - mStateIcon.getIconWidth();
+          int yPos = c.getHeight() - mStateIcon.getIconHeight();
+          mStateIcon.paintIcon(c, g, xPos, yPos);
         }
       }
     }
@@ -150,7 +154,7 @@ public class PropertiesTreeCellRenderer extends DefaultTreeCellRenderer {
      * @param targetIcon
      */
     public void setTargetIcon(Icon targetIcon) {
-      this.targetIcon = targetIcon;
+      this.mTargetIcon = targetIcon;
     }
 
     /**
@@ -159,7 +163,7 @@ public class PropertiesTreeCellRenderer extends DefaultTreeCellRenderer {
      * @param stateIcon
      */
     public void setStateIcon(Icon stateIcon) {
-      this.stateIcon = stateIcon;
+      this.mStateIcon = stateIcon;
     }
   } // CompositeIcon
   

@@ -26,7 +26,7 @@ package i18nplugin;
 import java.util.Locale;
 
 /**
- * A Node implementing this interface should be able to filter it's children. 
+ * A Node implementing this interface should be able to filter it's children.
  * 
  * @author Torsten Keil
  *
