@@ -686,6 +686,14 @@ private static Font getDynamicFontSize(Font font, int offset) {
         elapsedMinutes = (24 * 60) + minutesAfterMidnight - startTime;
       }
 
+      // elapsed minutes can not be larger than run time
+      if (progLength > 0) {
+        if (elapsedMinutes > progLength) {
+          mLog.severe("paint program panel: elapsed minutes to large");
+        }
+        elapsedMinutes = Math.min(elapsedMinutes, progLength);
+      }
+
       int borderWidth = Settings.propProgramTableOnAirProgramsShowingBorder
           .getBoolean() ? 1 : 0;
       if (mAxis == ProgramPanelSettings.X_AXIS) {
@@ -715,11 +723,23 @@ private static Font getDynamicFontSize(Font font, int offset) {
 
         grp.setColor(Settings.propProgramTableColorOnAirDark.getColor());
         int fillHeight = progressY - borderWidth;
+
+        if (fillHeight > height) {
+          mLog.severe("paint program panel: fill height 1 to large");
+          fillHeight = height;
+        }
+
         if (fillHeight > 0) {
           grp.fillRect(borderWidth, borderWidth, width - borderWidth * 2, fillHeight);
         }
         grp.setColor(Settings.propProgramTableColorOnAirLight.getColor());
         fillHeight = height - progressY - borderWidth;
+
+        if (fillHeight > height) {
+          mLog.severe("paint program panel: fill height 2 to large");
+          fillHeight = height;
+        }
+
         if (fillHeight > 0) {
           grp.fillRect(borderWidth, progressY, width - borderWidth * 2, fillHeight);
         }
@@ -1224,9 +1244,10 @@ private static Font getDynamicFontSize(Font font, int offset) {
   }
 
   private String  getProgramInfoTooltip() {
+    StringBuilder buffer = new StringBuilder("");
+    // program info icons
     int info = mProgram.getInfo();
     if (info > 0) {
-      StringBuilder buffer = new StringBuilder("");
       int[] infoBitArr = ProgramInfoHelper.getInfoBits();
       String[] infoIconFileName = ProgramInfoHelper.getInfoIconFilenames();
       String[] infoMsgArr = ProgramInfoHelper.getInfoIconMessages();
@@ -1241,11 +1262,21 @@ private static Font getDynamicFontSize(Font font, int offset) {
           }
         }
       }
-      if (buffer.length() > 0) {
-        buffer.insert(0, "<html><table cellpadding=\"1\">");
-        buffer.append("</table></html>");
-        return buffer.toString();
+    }
+    // plugin icons
+    for (PluginProxy proxy : PluginProxyManager.getInstance().getActivatedPlugins()) {
+      Icon[] pluginIcons = proxy.getProgramTableIcons(mProgram);
+      if (pluginIcons != null && pluginIcons.length > 0) {
+        buffer.append(
+            "<tr><td valign=\"middle\" align=\"center\">&nbsp;</td><td>&nbsp;")
+            .append(proxy.getProgramTableIconText()).append("</td></tr>");
       }
+    }
+    // HTML header and footer
+    if (buffer.length() > 0) {
+      buffer.insert(0, "<html><table cellpadding=\"1\">");
+      buffer.append("</table></html>");
+      return buffer.toString();
     }
     return null;
   }
