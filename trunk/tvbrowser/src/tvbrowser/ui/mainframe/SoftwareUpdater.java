@@ -63,7 +63,7 @@ public final class SoftwareUpdater {
 	 * 
 	 * @param url The url to download the informations from.
 	 * @param onlyUpdates If only updates and not new items should be accepted.
-	 * @param dragNdrop If the plugin was droped.
+	 * @param dragNdrop If the plugin was dropped.
 	 * @throws IOException
 	 */
 	protected SoftwareUpdater(URL url, boolean onlyUpdates, boolean dragNdrop) throws IOException {
@@ -82,128 +82,132 @@ public final class SoftwareUpdater {
     ArrayList<SoftwareUpdateItem> updateItems = new ArrayList<SoftwareUpdateItem>();
     ArrayList<PluginsSoftwareUpdateItem> blockedItems = new ArrayList<PluginsSoftwareUpdateItem>(0);
     
-    SoftwareUpdateItem curItem=null;
-    String line=reader.readLine();
-    
-    while (line != null) {
-      matcher=pluginTypePattern.matcher(line);
-      if (matcher.find()) { // new plugin 
-        String type=matcher.group(1);
-        String className=matcher.group(2);
-        
-        if ("plugin".equals(type)) {
-          curItem=new PluginSoftwareUpdateItem(className);
-        }
-        else if ("dataservice".equals(type)) {
-          curItem=new DataServiceSoftwareUpdateItem(className);
-        }
-        else if ("tvbrowser".equals(type))
-          curItem=new TvbrowserSoftwareUpdateItem(className);
-        
-        if (curItem==null)
-          throw new IOException("invalid software update file");    
-                
-        updateItems.add(curItem);
-      }
-      else {
-        matcher=keyValuePattern.matcher(line);
-        
-        if (matcher.find()) { // new plugin 
-          String value = matcher.group(2);
-          value = value.replaceAll("\\\\", ""); // fix wrong HTML encoding in plugin descriptions
-          
-          if(curItem != null) {
-            curItem.addProperty(matcher.group(1), value);
-          }
-        }
-      }
-      line=reader.readLine();
-    }
-    
-    // remove all items we can't use
-    
-    Iterator<SoftwareUpdateItem> it = updateItems.iterator();
-    while (it.hasNext()) {
-      SoftwareUpdateItem item = (SoftwareUpdateItem) it.next();
-      String className = item.getClassName();
+    try {
+      SoftwareUpdateItem curItem=null;
+      String line=reader.readLine();
       
-      // remove incompatible items
-      Version required = item.getRequiredVersion();
-      Version maximum = item.getMaximumVersion();
-      if ((required!=null && TVBrowser.VERSION.compareTo(required)<0) ||
-          (maximum != null && TVBrowser.VERSION.compareTo(maximum)>0) ||
-          !item.getProperty("filename").toLowerCase().endsWith(".jar") ||
-          !item.isSupportingCurrentOs()) {
-        
-        /* maximum contains the block start version if this is a block plugin entry
-         * required cotains the block end version
-         */
-        if(required!=null && maximum != null && required.compareTo(maximum) > 0) {
-          if(item.getVersion().compareTo(required) <= 0 && item.getVersion().compareTo(maximum) >= 0) {
-            it.remove();
-          }
+      while (line != null) {
+        matcher=pluginTypePattern.matcher(line);
+        if (matcher.find()) { // new plugin 
+          String type=matcher.group(1);
+          String className=matcher.group(2);
           
-          if(item instanceof PluginsSoftwareUpdateItem) {
-            blockedItems.add((PluginsSoftwareUpdateItem)item);
+          if ("plugin".equals(type)) {
+            curItem=new PluginSoftwareUpdateItem(className);
           }
+          else if ("dataservice".equals(type)) {
+            curItem=new DataServiceSoftwareUpdateItem(className);
+          }
+          else if ("tvbrowser".equals(type))
+            curItem=new TvbrowserSoftwareUpdateItem(className);
+          
+          if (curItem==null)
+            throw new IOException("invalid software update file");    
+                  
+          updateItems.add(curItem);
         }
         else {
-          it.remove();
-        }
-        
-        continue;
-      }
-      
-      if(onlyUpdates) {
-        // remove all not installed plugins
-        String pluginId = "java." + className.toLowerCase() + "." + className;      
-        PluginProxy installedPlugin = PluginProxyManager.getInstance().getPluginForId(pluginId);        
-        
-        if (installedPlugin == null) {
-          TvDataServiceProxy service = TvDataServiceProxyManager.getInstance().findDataServiceById(className.toLowerCase()+"."+className);
+          matcher=keyValuePattern.matcher(line);
           
-          if(service == null) {
-            it.remove();
-            continue;
+          if (matcher.find()) { // new plugin 
+            String value = matcher.group(2);
+            value = value.replaceAll("\\\\", ""); // fix wrong HTML encoding in plugin descriptions
+            
+            if(curItem != null) {
+              curItem.addProperty(matcher.group(1), value);
+            }
           }
         }
+        line=reader.readLine();
       }
       
-      // remove already installed plugins
-      String pluginId = "java." + className.toLowerCase() + "." + className;      
-      PluginProxy installedPlugin = PluginProxyManager.getInstance().getPluginForId(pluginId);
-      if (installedPlugin!=null && ((installedPlugin.getInfo().getVersion().compareTo(item.getVersion())>0 || 
-          (installedPlugin.getInfo().getVersion().compareTo(item.getVersion())==0 && (!dragNdrop || item.getVersion().isStable()))))) {
-        it.remove();
-        continue;
+      // remove all items we can't use
+      
+      Iterator<SoftwareUpdateItem> it = updateItems.iterator();
+      while (it.hasNext()) {
+        SoftwareUpdateItem item = (SoftwareUpdateItem) it.next();
+        String className = item.getClassName();
+        
+        // remove incompatible items
+        Version required = item.getRequiredVersion();
+        Version maximum = item.getMaximumVersion();
+        if ((required!=null && TVBrowser.VERSION.compareTo(required)<0) ||
+            (maximum != null && TVBrowser.VERSION.compareTo(maximum)>0) ||
+            !item.getProperty("filename").toLowerCase().endsWith(".jar") ||
+            !item.isSupportingCurrentOs()) {
+          
+          /* maximum contains the block start version if this is a block plugin entry
+           * required cotains the block end version
+           */
+          if(required!=null && maximum != null && required.compareTo(maximum) > 0) {
+            if(item.getVersion().compareTo(required) <= 0 && item.getVersion().compareTo(maximum) >= 0) {
+              it.remove();
+            }
+            
+            if(item instanceof PluginsSoftwareUpdateItem) {
+              blockedItems.add((PluginsSoftwareUpdateItem)item);
+            }
+          }
+          else {
+            it.remove();
+          }
+          
+          continue;
+        }
+        
+        if(onlyUpdates) {
+          // remove all not installed plugins
+          String pluginId = "java." + className.toLowerCase() + "." + className;      
+          PluginProxy installedPlugin = PluginProxyManager.getInstance().getPluginForId(pluginId);        
+          
+          if (installedPlugin == null) {
+            TvDataServiceProxy service = TvDataServiceProxyManager.getInstance().findDataServiceById(className.toLowerCase()+"."+className);
+            
+            if(service == null) {
+              it.remove();
+              continue;
+            }
+          }
+        }
+        
+        // remove already installed plugins
+        String pluginId = "java." + className.toLowerCase() + "." + className;      
+        PluginProxy installedPlugin = PluginProxyManager.getInstance().getPluginForId(pluginId);
+        if (installedPlugin!=null && ((installedPlugin.getInfo().getVersion().compareTo(item.getVersion())>0 || 
+            (installedPlugin.getInfo().getVersion().compareTo(item.getVersion())==0 && (!dragNdrop || item.getVersion().isStable()))))) {
+          it.remove();
+          continue;
+        }
+        
+        // remove already installed dataservices
+        TvDataServiceProxy service= TvDataServiceProxyManager.getInstance().findDataServiceById(className.toLowerCase()+"."+className);
+        if (service!=null && ((service.getInfo().getVersion().compareTo(item.getVersion())>0) ||
+            (service.getInfo().getVersion().compareTo(item.getVersion())==0 && (!dragNdrop || item.getVersion().isStable())))) {
+          it.remove();
+          continue;
+        }
+        
+        if(item.isOnlyUpdate() && installedPlugin == null && service == null) {
+          it.remove();
+        }
       }
       
-      // remove already installed dataservices
-      TvDataServiceProxy service= TvDataServiceProxyManager.getInstance().findDataServiceById(className.toLowerCase()+"."+className);
-      if (service!=null && ((service.getInfo().getVersion().compareTo(item.getVersion())>0) ||
-          (service.getInfo().getVersion().compareTo(item.getVersion())==0 && (!dragNdrop || item.getVersion().isStable())))) {
-        it.remove();
-        continue;
+      mIsRequestingBlockArrayClear = true;
+      Settings.propBlockedPluginArray.clear(this);
+      mIsRequestingBlockArrayClear = false;
+      
+      for(PluginsSoftwareUpdateItem blocked : blockedItems) {
+        mBlockRequestingPluginId = blocked.getId();
+        
+        Settings.propBlockedPluginArray.addBlockedPlugin(this, mBlockRequestingPluginId, blocked.getMaximumVersion(), blocked.getRequiredVersion());
       }
       
-      if(item.isOnlyUpdate() && installedPlugin == null && service == null) {
-        it.remove();
-      }
+      mBlockRequestingPluginId = null;
+      
+      PluginProxyManager.getInstance().firePluginBlockListRenewed();
+    } catch (RuntimeException e) {
+      e.printStackTrace();
     }
-    
-    mIsRequestingBlockArrayClear = true;
-    Settings.propBlockedPluginArray.clear(this);
-    mIsRequestingBlockArrayClear = false;
-    
-    for(PluginsSoftwareUpdateItem blocked : blockedItems) {
-      mBlockRequestingPluginId = blocked.getId();
-      
-      Settings.propBlockedPluginArray.addBlockedPlugin(this, mBlockRequestingPluginId, blocked.getMaximumVersion(), blocked.getRequiredVersion());
-    }
-    
-    mBlockRequestingPluginId = null;
-    
-    PluginProxyManager.getInstance().firePluginBlockListRenewed();
     
     return updateItems.toArray(new SoftwareUpdateItem[updateItems.size()]);
   }	
