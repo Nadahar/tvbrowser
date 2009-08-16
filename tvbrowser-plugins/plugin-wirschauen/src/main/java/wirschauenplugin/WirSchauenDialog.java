@@ -340,8 +340,8 @@ public final class WirSchauenDialog extends JDialog implements WindowClosingIf,
     category.setFont(category.getFont().deriveFont(Font.BOLD));
     
     panel.add(category, cc.xy(1, 9));
-    final String[] categories = mLocalizer.msg("categories",
-        "Film,Series,Other").split(",");
+    final String[] categories = { mLocalizer.msg("category.film", "Film"), mLocalizer.msg("category.series", "Series"),
+        mLocalizer.msg("category.other", "Other") };
     
     mCategory = new JComboBox(categories);
     mCategory.setRenderer(new DefaultListCellRenderer() {
