@@ -751,6 +751,7 @@ class ProgramInfoDialog {
   }
 
   protected void addPluginActions(boolean rebuild) {
+    final Rectangle oldVisibleRect = mInfoEP.getVisibleRect();
     mFunctionGroup.removeAll();
 
     if (ProgramInfo.getInstance().getSettings().getShowSearchButton()) {
@@ -806,7 +807,7 @@ class ProgramInfoDialog {
       setProgramText();
       SwingUtilities.invokeLater(new Runnable() {
         public void run() {
-          mInfoEP.setCaretPosition(0);
+          mInfoEP.scrollRectToVisible(oldVisibleRect);
         }
       });
     }
