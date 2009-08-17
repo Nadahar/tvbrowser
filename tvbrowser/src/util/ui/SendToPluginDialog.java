@@ -214,8 +214,25 @@ public class SendToPluginDialog extends JDialog implements WindowClosingIf {
         }
       }
     });
-
-
+    
+    // select same plugin and target like last time
+    String lastUsedPlugin = Settings.propLastUsedReceivePlugin.getString();
+    if (lastUsedPlugin != null) {
+      for (ProgramReceiveIf programReceiveIf : installedPluginArr) {
+        if (programReceiveIf.getId().equals(lastUsedPlugin)) {
+          mPluginList.setSelectedItem(programReceiveIf);
+          String lastUsedTarget = Settings.propLastUsedReceiveTarget.getString();
+          if (lastUsedTarget != null) {
+            for (ProgramReceiveTarget target: programReceiveIf.getProgramReceiveTargets()) {
+              if (target.getTargetId().equals(lastUsedTarget)) {
+                mTargetList.setSelectedItem(lastUsedTarget);
+              }
+            }
+          }
+        }
+      }
+    }
+    
     JButton sendButton = new JButton(mLocalizer.msg("send", "Send"));
 
     sendButton.addActionListener(new ActionListener() {
@@ -264,7 +281,10 @@ public class SendToPluginDialog extends JDialog implements WindowClosingIf {
     }    
 
     if (result == JOptionPane.YES_OPTION) {
-      plug.receivePrograms(mPrograms, (ProgramReceiveTarget)mTargetList.getSelectedItem());
+      ProgramReceiveTarget target = (ProgramReceiveTarget)mTargetList.getSelectedItem();
+      plug.receivePrograms(mPrograms, target);
+      Settings.propLastUsedReceivePlugin.setString(plug.getId());
+      Settings.propLastUsedReceiveTarget.setString(target.getTargetId());
     }
   }
 

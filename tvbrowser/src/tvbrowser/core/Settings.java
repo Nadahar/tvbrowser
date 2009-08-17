@@ -1402,6 +1402,20 @@ public class Settings {
   public static final BlockedPluginArrayProperty propBlockedPluginArray = new BlockedPluginArrayProperty(mProp, "blockedPlugins");
   
   /**
+   * id of the last active program receive target plugin
+   * @since 3.0
+   */
+  public static final StringProperty propLastUsedReceivePlugin = new StringProperty(
+      mProp, "lastusedreceiveplugin", null);
+
+  /**
+   * id of the last active program receive target
+   * @since 3.0
+   */
+  public static final StringProperty propLastUsedReceiveTarget = new StringProperty(
+      mProp, "lastusedreceivetarget", null);
+
+  /**
    * Sets the window position and size for the given window with the values of
    * the given id.
    * 
