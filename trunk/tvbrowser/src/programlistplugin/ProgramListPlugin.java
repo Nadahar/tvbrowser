@@ -37,7 +37,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
-import java.util.Vector;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -53,8 +52,6 @@ import javax.swing.JPanel;
 import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import util.program.ProgramUtilities;
 import util.settings.PluginPictureSettings;
@@ -95,6 +92,7 @@ public class ProgramListPlugin extends Plugin {
   private JComboBox mBox;
   private ProgramFilter mFilter;
   private ProgramListSettings mSettings;
+  private ArrayList<Program> mPrograms = new ArrayList<Program>();
   private DefaultListModel mModel;
   private ProgramList mList;
   private ProgramPanelSettings mProgramPanelSettings;
@@ -219,10 +217,10 @@ public class ProgramListPlugin extends Plugin {
       public void run() {try {
         mDialog.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         mModel.clear();
+        mPrograms.clear();
         
         boolean showExpired = false;
         
-        Vector<Program> programs = new Vector<Program>();
         Channel[] channels = mBox.getSelectedItem() instanceof String ? Plugin.getPluginManager().getSubscribedChannels() : new Channel[] {(Channel)mBox.getSelectedItem()};
 
         Date date = channels.length > 1 && mFilter.equals(Plugin.getPluginManager().getFilterManager().getAllFilter())? Plugin.getPluginManager().getCurrentDate() : Date.getCurrentDate();
@@ -244,11 +242,11 @@ public class ProgramListPlugin extends Plugin {
                   if(mFilter.equals(Plugin.getPluginManager().getFilterManager().getAllFilter())) {
                     if ((d == 0 && program.getStartTime() >= startTime)
                         || (d == 1 && program.getStartTime() <= endTime)) {
-                      programs.add(program);
+                      mPrograms.add(program);
                     }
                   }
                   else {
-                    programs.add(program);
+                    mPrograms.add(program);
                   }
                 }
               }
@@ -258,15 +256,15 @@ public class ProgramListPlugin extends Plugin {
         }
         
         if(channels.length > 1) {
-          Collections.sort(programs, ProgramUtilities.getProgramComparator());
+          Collections.sort(mPrograms, ProgramUtilities.getProgramComparator());
         }
         
         int index = -1;
     
-        for(Program p : programs) {
-          mModel.addElement(p);
+        for(Program program : mPrograms) {
+          mModel.addElement(program);
             
-          if (!p.isExpired() && index == -1) {
+          if (!program.isExpired() && index == -1) {
             index = mModel.getSize() - 1;
           }
         }
@@ -359,13 +357,6 @@ public class ProgramListPlugin extends Plugin {
         mList = new ProgramList(mModel, mProgramPanelSettings);
 
         mList.addMouseListeners(null);
-        mList.addListSelectionListener(new ListSelectionListener() {
-
-          @Override
-          public void valueChanged(ListSelectionEvent e) {
-            mSendBtn.setEnabled(mList.getSelectedIndex() >= 0);
-          }
-        });
 
         mBox = new JComboBox(Plugin.getPluginManager().getSubscribedChannels());
         mBox.insertItemAt(mLocalizer.msg("allChannels", "All channels"), 0);
@@ -414,6 +405,9 @@ public class ProgramListPlugin extends Plugin {
         mSendBtn.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
             Program[] programs = mList.getSelectedPrograms();
+            if (programs == null || programs.length == 0) {
+              programs = mPrograms.toArray(new Program[mPrograms.size()]);
+            }
             if (programs != null && programs.length > 0) {
               SendToPluginDialog sendDialog = new SendToPluginDialog(
                   ProgramListPlugin.getInstance(), mDialog, programs);
@@ -421,7 +415,6 @@ public class ProgramListPlugin extends Plugin {
             }
           }
         });
-        mSendBtn.setEnabled(false);
         
 
         mShowDescription = new JCheckBox(mLocalizer.msg(
