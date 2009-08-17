@@ -17,9 +17,7 @@
 package taggingplugin;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Frame;
 import java.awt.Rectangle;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
@@ -34,8 +32,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
-import com.jgoodies.forms.builder.ButtonBarBuilder;
-
 import util.program.ProgramUtilities;
 import util.settings.PluginPictureSettings;
 import util.settings.ProgramPanelSettings;
@@ -43,6 +39,9 @@ import util.ui.Localizer;
 import util.ui.ProgramList;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
+
+import com.jgoodies.forms.builder.ButtonBarBuilder;
+
 import devplugin.Program;
 
 /**

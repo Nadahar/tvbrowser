@@ -20,6 +20,7 @@ import java.awt.event.ActionEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -28,8 +29,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map.Entry;
 
 import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
@@ -43,7 +46,9 @@ import devplugin.Date;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.PluginTreeNode;
+import devplugin.PluginsFilterComponent;
 import devplugin.Program;
+import devplugin.ProgramReceiveTarget;
 import devplugin.Version;
 
 /**
@@ -51,7 +56,9 @@ import devplugin.Version;
  * 
  */
 final public class TaggingPlugin extends Plugin {
-	private static final Version mVersion = new Version(2, 70, 0);
+  private static final Version mVersion = new Version(2, 70, 0);
+
+  private static TaggingPlugin mInstance;
 
 	private PluginInfo mPluginInfo;
 
@@ -62,6 +69,9 @@ final public class TaggingPlugin extends Plugin {
 			.getLocalizerFor(TaggingPlugin.class);
 
 	private static final String MAIN_URL = "http://tv-browser.appspot.com/";
+//  private static final String MAIN_URL = "http://localhost:8080/";
+
+  private static final String TARGET = "TAGGING_TARGET";
 
 	private HashMap<String, ArrayList<String>> mTags = new HashMap<String, ArrayList<String>>();
 
@@ -96,18 +106,20 @@ final public class TaggingPlugin extends Plugin {
 		}
 
 		ArrayList<AbstractAction> tagsAction = getTagsActions(program);
-		if (tagsAction != null && !tagsAction.isEmpty()) {
+		AbstractAction newTagAction = getNewTagAction(program);
+    if (tagsAction != null && !tagsAction.isEmpty()) {
 			tagsAction.add(0, ContextMenuSeparatorAction.getInstance());
-			tagsAction.add(0, getNewTagAction(program));
+			tagsAction.add(0, newTagAction);
 			return new ActionMenu(new ContextMenuAction(mLocalizer.msg(
 					"contextMenuTags", "Tags"), getPluginIcon()), tagsAction
 					.toArray(new AbstractAction[tagsAction.size()]));
 		}
-		return new ActionMenu(getNewTagAction(program));
+    newTagAction.putValue(Action.SMALL_ICON, getPluginIcon());
+		return new ActionMenu(newTagAction);
 	}
 
 	private ArrayList<AbstractAction> getTagsActions(final Program program) {
-		ArrayList<String> tags = mTags.get(program.getTitle());
+		ArrayList<String> tags = getProgramTags(program);
 		if (tags == null || tags.isEmpty()) {
 			return null;
 		}
@@ -142,14 +154,9 @@ final public class TaggingPlugin extends Plugin {
 				if (iter != null) {
 					while (iter.hasNext()) {
 						final Program program = iter.next();
-						ArrayList<String> tags = mTags.get(program.getTitle());
-						if (tags != null) {
-							for (String programTag : tags) {
-								if (programTag != null && programTag.equals(wantedTag)) {
-									programs.add(program);
-									break;
-								}
-							}
+						if (isProgramTagged(program, wantedTag)) {
+							programs.add(program);
+							break;
 						}
 					}
 				}
@@ -162,37 +169,49 @@ final public class TaggingPlugin extends Plugin {
 	private AbstractAction getNewTagAction(final Program program) {
 		AbstractAction action = new AbstractAction(mLocalizer.msg("contextMenuTag", "Add tag"), createImageIcon("actions","document-new",16)) {
 			public void actionPerformed(ActionEvent e) {
-				if (addTag(program)) {
-					updateRootNodeIfVisible();
-				}
+				addTag(program);
 			}
 		};
 		return action;
 	}
+	
+	private String getTagInput(final String message) {
+	  return TagValidation.makeValidTag(JOptionPane.showInputDialog(UiUtilities.getBestDialogParent(getParentFrame()), message));
+	}
 
 	protected boolean addTag(final Program program) {
-		String tag = JOptionPane.showInputDialog(UiUtilities
-				.getBestDialogParent(getParentFrame()), mLocalizer.msg("addTag",
-				"Add tag for {0}", program.getTitle()));
-		if (tag != null) {
-			tag = tag.trim();
-			if (tag.length() < 3) {
-				return false;
-			}
-			if (tag.length() > 40) {
-				return false;
-			}
-			return postTagToServer(program, tag);
+		final String tag = getTagInput(mLocalizer.msg("addTag", "Add tag for {0}", program.getTitle()));
+		if (postTagToServer(program, tag)) {
+      updateRootNodeIfVisible();
+      return true;
 		}
 		return false;
 	}
 
-	private boolean postTagToServer(final Program program, final String tag) {
+	private boolean isProgramTagged(final Program program, final String tag) {
+    ArrayList<String> tags = getProgramTags(program);
+    if (tags != null) {
+      for (String programTag : tags) {
+        if (programTag.equalsIgnoreCase(tag)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  private boolean postTagToServer(final Program program, final String tag) {
+    if (tag == null) {
+      return false;
+    }
+    if (isProgramTagged(program, tag)) {
+      return false;
+    }
 		try {
-			URL url = new URL(MAIN_URL + "tag?title="
-					+ URLEncoder.encode(program.getTitle(), "UTF-8") + "&tag="
-					+ URLEncoder.encode(tag, "UTF-8"));
-			URLConnection conn = url.openConnection();
+			HashMap<String,String> params = new HashMap<String, String>();
+		  params.put("title", program.getTitle());
+		  params.put("tag", tag);
+			URLConnection conn = createUrl("addtag",params).openConnection();
 
 			BufferedReader in = new BufferedReader(new InputStreamReader(conn
 					.getInputStream()));
@@ -200,6 +219,7 @@ final public class TaggingPlugin extends Plugin {
 			while ((line = in.readLine()) != null) {
 				System.out.println(line);
 			}
+			addTagInternal(program.getTitle(), tag);
 			return true;
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
@@ -209,7 +229,18 @@ final public class TaggingPlugin extends Plugin {
 		return false;
 	}
 
-	private Icon getPluginIcon() {
+	private URL createUrl(final String target, final HashMap<String, String> params) throws MalformedURLException, UnsupportedEncodingException {
+	  params.put("v", String.valueOf(getVersion().getMajor() * 100 + getVersion().getMinor()));
+    StringBuilder builder = new StringBuilder(100);
+    builder.append(MAIN_URL).append(target).append("?");
+    for (Entry<String, String> param : params.entrySet()) {
+      builder.append(param.getKey()).append('=').append(URLEncoder.encode(param.getValue(), "UTF-8")).append('&');
+    }
+    builder.deleteCharAt(builder.length() - 1);
+    return new URL(builder.toString());
+  }
+
+  private Icon getPluginIcon() {
 		if (mIcon == null) {
 			mIcon = new ImageIcon(getClass().getResource("tag.png"));
 		}
@@ -229,18 +260,15 @@ final public class TaggingPlugin extends Plugin {
 
 			String inputLine;
 			while ((inputLine = in.readLine()) != null) {
-				System.out.println(inputLine);
 				int pos = inputLine.indexOf('\t');
 				if (pos >= 0) {
 					String programTitle = inputLine.substring(0, pos).trim();
-					String tag = inputLine.substring(pos + 1).trim();
-					if (!programTitle.isEmpty() && !tag.isEmpty()) {
-						ArrayList<String> list = mTags.get(programTitle);
-						if (list == null) {
-							list = new ArrayList<String>();
-							mTags.put(programTitle, list);
+					// assume that any tag from server is corrupt
+					String tag = TagValidation.makeValidTag(inputLine.substring(pos + 1));
+					if (tag != null && !programTitle.isEmpty() && !tag.isEmpty()) {
+					  if (addTagInternal(programTitle, tag)) {
+						  System.out.println(programTitle + ": " + tag);
 						}
-						list.add(tag);
 					}
 				}
 			}
@@ -251,6 +279,24 @@ final public class TaggingPlugin extends Plugin {
 			e.printStackTrace();
 		}
 	}
+
+
+  private boolean addTagInternal(final String programTitle, final String tag) {
+    ArrayList<String> list = mTags.get(programTitle);
+    if (list == null) {
+      list = new ArrayList<String>();
+      mTags.put(programTitle, list);
+    }
+    if (!list.contains(tag)) {
+      list.add(tag);
+      return true;
+    }
+    return false;
+  }
+
+  ArrayList<String> getProgramTags(final Program program) {
+    return mTags.get(program.getTitle());
+  }
 
 	@Override
 	public PluginTreeNode getRootNode() {
@@ -338,4 +384,51 @@ final public class TaggingPlugin extends Plugin {
 	public boolean canUseProgramTree() {
 		return true;
 	}
+
+  public static TaggingPlugin getInstance() {
+    return mInstance;
+  }
+
+  public TaggingPlugin() {
+    mInstance = this;
+  }
+  
+  @Override
+  public Class<? extends PluginsFilterComponent>[] getAvailableFilterComponentClasses() {
+    return (Class<? extends PluginsFilterComponent>[]) new Class[] {TagFilterComponent.class};
+  }
+  
+  @Override
+  public boolean canReceiveProgramsWithTarget() {
+    return true;
+  }
+  
+  @Override
+  public boolean receivePrograms(Program[] programArr, ProgramReceiveTarget receiveTarget) {
+    if (programArr == null || programArr.length == 0) {
+      return true;
+    }
+    final String tag = getTagInput(mLocalizer.msg("tagPrograms", "Add tag to {0} programs", programArr.length));
+    if (tag != null) {
+      int count = 0;
+      for (Program program : programArr) {
+        if (postTagToServer(program, tag)) {
+          count++;
+          if (count >= 20) {
+            break;
+          }
+        }
+      }
+      if (count > 0) {
+        updateRootNodeIfVisible();
+      }
+    }
+    return true;
+  }
+  
+  @Override
+  public ProgramReceiveTarget[] getProgramReceiveTargets() {
+    final ProgramReceiveTarget target = new ProgramReceiveTarget(this, mLocalizer.msg("target", "Tag program"), TARGET);
+    return new ProgramReceiveTarget[] {target};
+  }
 }
