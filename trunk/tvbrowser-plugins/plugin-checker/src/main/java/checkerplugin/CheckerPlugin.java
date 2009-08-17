@@ -275,6 +275,13 @@ public class CheckerPlugin extends Plugin {
         }
       }
     }
+    if (title.length() >= 2) {
+      char lastChar = title.charAt(title.length() - 1);
+      if (title.charAt(title.length() - 2) == ' ' && !Character.isLetterOrDigit(lastChar) && lastChar != '?' && lastChar != '!') {
+        results.add(mLocalizer.msg("issue.titleEnd",
+          "Title seems to contain confusing end character."));
+      }
+    }
   }
 
   private void checkDuration(final Program program,
