@@ -230,24 +230,25 @@ public class ProgramListPlugin extends Plugin {
         int endTime = Plugin.getPluginManager().getTvBrowserSettings()
             .getProgramTableEndOfDay();
         
-        // TODO: use isDataAvailable after 3.0
         int maxDays = channels.length > 1 && mFilter.equals(Plugin.getPluginManager().getFilterManager().getAllFilter()) ? 2 : 28;
         for (int d = 0; d < maxDays; d++) {
-          for (Channel channel : channels) {
-            Iterator<Program> it = Plugin.getPluginManager().getChannelDayProgram(
-                date, channel);
-            if (it != null) {
-              while (it.hasNext()) {
-                Program program = it.next();
-                if ((showExpired || !program.isExpired()) && mFilter.accept(program)) {
-                  if(mFilter.equals(Plugin.getPluginManager().getFilterManager().getAllFilter())) {
-                    if ((d == 0 && program.getStartTime() >= startTime)
-                        || (d == 1 && program.getStartTime() <= endTime)) {
+          if (Plugin.getPluginManager().isDataAvailable(date)) {
+            for (Channel channel : channels) {
+              Iterator<Program> it = Plugin.getPluginManager().getChannelDayProgram(
+                  date, channel);
+              if (it != null) {
+                while (it.hasNext()) {
+                  Program program = it.next();
+                  if ((showExpired || !program.isExpired()) && mFilter.accept(program)) {
+                    if(mFilter.equals(Plugin.getPluginManager().getFilterManager().getAllFilter())) {
+                      if ((d == 0 && program.getStartTime() >= startTime)
+                          || (d == 1 && program.getStartTime() <= endTime)) {
+                        mPrograms.add(program);
+                      }
+                    }
+                    else {
                       mPrograms.add(program);
                     }
-                  }
-                  else {
-                    mPrograms.add(program);
                   }
                 }
               }
