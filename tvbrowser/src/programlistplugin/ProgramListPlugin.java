@@ -230,11 +230,12 @@ public class ProgramListPlugin extends Plugin {
         int endTime = Plugin.getPluginManager().getTvBrowserSettings()
             .getProgramTableEndOfDay();
         
-        for (int d = 0; d < (channels.length > 1 && mFilter.equals(Plugin.getPluginManager().getFilterManager().getAllFilter()) ? 2 : 14); d++) {
-
-          for (int i = 0; i < channels.length; i++) {
+        // TODO: use isDataAvailable after 3.0
+        int maxDays = channels.length > 1 && mFilter.equals(Plugin.getPluginManager().getFilterManager().getAllFilter()) ? 2 : 28;
+        for (int d = 0; d < maxDays; d++) {
+          for (Channel channel : channels) {
             Iterator<Program> it = Plugin.getPluginManager().getChannelDayProgram(
-                date, channels[i]);
+                date, channel);
             if (it != null) {
               while (it.hasNext()) {
                 Program program = it.next();
