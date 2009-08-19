@@ -516,4 +516,37 @@ public class ProgramUtilities {
     
     return progID;
   }
+  
+  /**
+   * extract a list of person names out of the given string
+   * 
+   * @param field
+   * @return list of person names
+   */
+  public static String[] splitPersons(final String field) {
+    if (field == null) {
+      return new String[0];
+    }
+    String[] items;
+    if (field.contains("\n")) {
+      items = field.split("\n|( und )");
+    }
+    else if (field.contains(",")) {
+      items = field.split(",|( und )");
+    }
+    else if (field.contains(" und ")) {
+      items = field.split(" und ");
+    }
+    else {
+      items = new String[1];
+      items[0] = field;
+    }
+    for (int i = 0; i < items.length; i++) {
+      items[i] = items[i].trim();
+      if (items[i].endsWith(",") || items[i].endsWith(".")) {
+        items[i] = items[i].substring(0, items[i].length() - 1);
+      }
+    }
+    return items;
+  }
 }

@@ -776,36 +776,6 @@ public class ProgramTextCreator {
     return addSearchLink(topic, topic);
   }
   
-  /**
-   * extract a list of person names out of the given string
-   * 
-   * @param field
-   * @return
-   */
-  private static String[] splitPersons(String field) {
-    String[] items;
-    if (field.contains("\n")) {
-      items = field.split("\n|( und )");
-    }
-    else if (field.contains(",")) {
-      items = field.split(",|( und )");
-    }
-    else if (field.contains(" und ")) {
-      items = field.split(" und ");
-    }
-    else {
-      items = new String[1];
-      items[0] = field;
-    }
-    for (int i = 0; i < items.length; i++) {
-      items[i] = items[i].trim();
-      if (items[i].endsWith(",") || items[i].endsWith(".")) {
-        items[i] = items[i].substring(0, items[i].length() - 1);
-      }
-    }
-    return items;
-  }
-
   private static void addEntry(ExtendedHTMLDocument doc, StringBuilder buffer,
       Program prog, ProgramFieldType fieldType, boolean showHelpLinks,
       boolean showPersonLinks) {
@@ -960,6 +930,10 @@ public class ProgramTextCreator {
     buffer.append("</td></tr>");
 
     addSeparator(doc, buffer);
+  }
+
+  private static String[] splitPersons(final String textField) {
+    return ProgramUtilities.splitPersons(textField);
   }
 
   /**
