@@ -897,7 +897,7 @@ class ProgramInfoDialog {
     mDialog = new JDialog(parent);
     mDialog.setModal(true);
 
-    mDialog.setTitle(mLocalizer.msg("title", "Program information"));
+    mDialog.setTitle(mProgram.getTitle());
     mDialog.setContentPane(mMainPanel);
 
     UiUtilities.registerForClosing(new WindowClosingIf() {
