@@ -469,8 +469,8 @@ public class PluginTreeNode implements Comparable<PluginTreeNode> {
   }
 
   /**
-   * Refreshes the tree. Call this method after you have added/removed/changed
-   * nodes of the (sub-)tree
+   * Refreshes the tree in the user interface. Call this method after you have added/removed/changed
+   * nodes of the tree or its children. Otherwise those changes will not get visible.
    */
   public synchronized void update() {
     // calculate dates only once instead of for each node
@@ -491,6 +491,14 @@ public class PluginTreeNode implements Comparable<PluginTreeNode> {
     });
   }
 
+  /**
+   * Add several program as children to this tree node.
+   * If the programs are already contained in this sub tree, it is not added again.
+   * <br>
+   * After you have finished adding all programs, you need to call {@link #update()} to refresh the UI.
+   * 
+   * @param listNew list of new programs
+   */
   public synchronized void addPrograms(final List<Program> listNew) {
     Iterator<Program> newIt = listNew.iterator();
     // create sorted lists of current and new programs, but only if this node contains any children at all!
@@ -563,8 +571,10 @@ public class PluginTreeNode implements Comparable<PluginTreeNode> {
   }
 
   /**
-   * add a single program to this tree node.
+   * Add a single program as child to this tree node.
    * If the program is already contained in this sub tree, it is not added again.
+   * <br>
+   * After you have finished adding all programs, you need to call {@link #update()} to refresh the UI.
    * 
    * @param program
    * @return the tree node containing the program
@@ -589,9 +599,11 @@ public class PluginTreeNode implements Comparable<PluginTreeNode> {
   }
 
   /**
-   * add a single program node to this tree node.
+   * Add a single program node as child to this tree node.
    * It is not checked if the program is already contained in this sub tree,
    * so you may only use this method with newly created tree nodes!
+   * <br>
+   * After you have finished adding all programs, you need to call {@link #update()} to refresh the UI.
    * 
    * @param program
    * @return the tree node containing the program
