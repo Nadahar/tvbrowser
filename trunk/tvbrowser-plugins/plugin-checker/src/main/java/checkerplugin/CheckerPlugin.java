@@ -21,7 +21,10 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.regex.Matcher;
@@ -123,10 +126,45 @@ public class CheckerPlugin extends Plugin {
     checkSeriesByEpisode(program, results);
     checkSeriesNumbers(program, results);
     checkActors(program, results);
+    checkPersonFields(program, results);
     return results;
   }
 
-  private void checkActors(Program program, ArrayList<String> results) {
+  private void checkPersonFields(final Program program, final ArrayList<String> results) {
+    checkPersonFields(ProgramFieldType.ACTOR_LIST_TYPE, program, results);
+    checkPersonFields(ProgramFieldType.DIRECTOR_TYPE, program, results);
+    checkPersonFields(ProgramFieldType.CAMERA_TYPE, program, results);
+    checkPersonFields(ProgramFieldType.CUTTER_TYPE, program, results);
+    checkPersonFields(ProgramFieldType.MODERATION_TYPE, program, results);
+    checkPersonFields(ProgramFieldType.ADDITIONAL_PERSONS_TYPE, program, results);
+  }
+
+  private void checkPersonFields(final ProgramFieldType fieldType, final Program program, final ArrayList<String> results) {
+    String field = program.getTextField(fieldType);
+    if (field != null) {
+      // TODO use ProgramUtilities instead
+      //String[] persons = ProgramUtilities.splitPersons(field);
+      String[] persons = splitPersons(field);
+      if (persons != null) {
+        for (String person : persons) {
+          if (person.isEmpty()) {
+            results.add(mLocalizer.msg("issue.name.empty", "Person name is empty in {0}", fieldType.getLocalizedName()));
+          } else {
+            char firstChar = person.charAt(0);
+            if (! (Character.isLetter(firstChar) || firstChar == '\'')) {
+              results.add(mLocalizer.msg("issue.name.starts", "Person name starts with non whitespace in {0}", fieldType.getLocalizedName()));
+            }
+          }
+        }
+        HashSet set = new HashSet(Arrays.asList(persons));
+        if (set.size() != persons.length) {
+          results.add(mLocalizer.msg("issue.name.duplicate", "Person name duplicate in {0}", fieldType.getLocalizedName()));
+        }
+      }
+    }
+  }
+
+  private void checkActors(final Program program, final ArrayList<String> results) {
     String[] actors = ProgramUtilities.getActorNames(program);
     if (actors == null) {
       return;
@@ -366,6 +404,13 @@ public class CheckerPlugin extends Plugin {
         }
       });
     }
+    Collections.sort(fieldActions, new Comparator<Action>() {
+
+      @Override
+      public int compare(Action o1, Action o2) {
+        return ((String)o1.getValue(Action.NAME)).compareTo((String) o2.getValue(Action.NAME));
+      }
+    });
     actionList.add(new ActionMenu(new ContextMenuAction(mLocalizer.msg(
         "showField", "Show field")), fieldActions
         .toArray(new Action[fieldActions.size()])));
@@ -485,5 +530,38 @@ public class CheckerPlugin extends Plugin {
   @Override
   public Properties storeSettings() {
     return mSettings.storeSettings();
+  }
+
+  /**
+   * extract a list of person names out of the given string
+   * 
+   * @param field
+   * @return list of person names
+   */
+  private static String[] splitPersons(final String field) {
+    if (field == null) {
+      return new String[0];
+    }
+    String[] items;
+    if (field.contains("\n")) {
+      items = field.split("\n|( und )");
+    }
+    else if (field.contains(",")) {
+      items = field.split(",|( und )");
+    }
+    else if (field.contains(" und ")) {
+      items = field.split(" und ");
+    }
+    else {
+      items = new String[1];
+      items[0] = field;
+    }
+    for (int i = 0; i < items.length; i++) {
+      items[i] = items[i].trim();
+      if (items[i].endsWith(",") || items[i].endsWith(".")) {
+        items[i] = items[i].substring(0, items[i].length() - 1);
+      }
+    }
+    return items;
   }
 }
