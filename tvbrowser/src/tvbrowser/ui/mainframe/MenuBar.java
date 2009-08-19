@@ -24,8 +24,11 @@
 
 package tvbrowser.ui.mainframe;
 
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -99,8 +102,9 @@ public abstract class MenuBar extends JMenuBar implements ActionListener,
 			mFullscreenMI, mFontSizeLargerMI, mFontSizeSmallerMI, mFontSizeDefaultMI,
 			mColumnWidthLargerMI, mColumnWidthSmallerMI, mColumnWidthDefaultMI,
 			mPluginInfoDlgMI;
+
 	protected JMenu mFiltersMenu, mLicenseMenu, mGoMenu, mViewMenu, mToolbarMenu,
-			mPluginHelpMenu;
+			mPluginHelpMenu, mPluginsMenu, mHelpMenu;
 
 	private JMenu mGotoDateMenu, mGotoChannelMenu, mGotoTimeMenu, mFontSizeMenu,
 			mColumnWidthMenu, mChannelGroupMenu;
@@ -676,8 +680,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener,
 	}
 
 	public void updatePluginsMenu() {
-		JMenuItem[] items = createPluginMenuItems();
-		setPluginMenuItems(items);
+		setPluginMenuItems(createPluginMenuItems());
 	}
 
 	public void updateTimeItems() {
@@ -741,7 +744,24 @@ public abstract class MenuBar extends JMenuBar implements ActionListener,
 		mViewFilterBarMI.setEnabled(!mMainFrame.isDefaultFilterActivated());
 	}
 
-	protected abstract void setPluginMenuItems(JMenuItem[] items);
+  protected void setPluginMenuItems(JMenuItem[] items) {
+    mPluginsMenu.removeAll();
+
+    JMenuItem[] internalPluginItems = createInternalPluginMenuItems();
+    for (JMenuItem menuItem : internalPluginItems) {
+      mPluginsMenu.add(menuItem);
+    }
+
+    mPluginsMenu.addSeparator();
+
+    JMenuItem[] pluginItems = createPluginMenuItems();
+    for (JMenuItem pluginItem : pluginItems) {
+      mPluginsMenu.add(pluginItem);
+    }
+    mPluginsMenu.addSeparator();
+    mPluginsMenu.add(mInstallPluginsMI);
+    mPluginsMenu.add(mPluginManagerMI);
+  }
 
 	private JMenuItem createMenuItem(ActionMenu menu) {
 		JMenuItem result;
@@ -1008,24 +1028,60 @@ public abstract class MenuBar extends JMenuBar implements ActionListener,
 		return mViewFilterBarMI.isSelected();
 	}
 
-	protected void createHelpMenuItems(JMenu helpMenu, boolean showAbout) {
-		helpMenu.add(mConfigAssistantMI);
-		helpMenu.addSeparator();
-		helpMenu.add(mHandbookMI);
-		helpMenu.add(mKeyboardShortcutsMI);
-		helpMenu.add(mFaqMI);
-		helpMenu.add(mBackupMI);
-		helpMenu.add(mPluginHelpMenu);
-		helpMenu.add(mPluginInfoDlgMI);
-		helpMenu.addSeparator();
-		helpMenu.add(mWebsiteMI);
-		helpMenu.add(mForumMI);
-		helpMenu.add(mDownloadMI);
-		helpMenu.add(mDonorMI);
-		if (showAbout) {
-			helpMenu.addSeparator();
-			helpMenu.add(mAboutMI);
-		}
+	protected void createHelpMenuItems(boolean showAbout) {
 	}
 
+  protected void createCommonMenus() {
+    add(mViewMenu);
+
+    add(mGoMenu);
+
+    JMenu tvListingsMenu = createMenu("menu.tvData", "TV &data");
+    add(tvListingsMenu);
+    tvListingsMenu.add(mUpdateMI);
+    tvListingsMenu.addSeparator();
+    tvListingsMenu.add(mLicenseMenu);
+
+    mPluginsMenu = createMenu("menu.plugins", "&Tools");
+    add(mPluginsMenu);
+    updatePluginsMenu();
+
+    mHelpMenu = createMenu("menu.help", "&Help");
+    add(mHelpMenu);
+    mHelpMenu.add(mConfigAssistantMI);
+    mHelpMenu.addSeparator();
+    mHelpMenu.add(mHandbookMI);
+    mHelpMenu.add(mKeyboardShortcutsMI);
+    mHelpMenu.add(mFaqMI);
+    mHelpMenu.add(mBackupMI);
+    mHelpMenu.add(mPluginHelpMenu);
+    mHelpMenu.add(mPluginInfoDlgMI);
+    mHelpMenu.addSeparator();
+    mHelpMenu.add(mWebsiteMI);
+    mHelpMenu.add(mForumMI);
+    mHelpMenu.add(mDownloadMI);
+    mHelpMenu.add(mDonorMI);
+
+    mPluginOverviewMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0));
+    mTimeBtnsMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F3, 0));
+    mDatelistMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, 0));
+    mChannellistMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F6, 0));
+
+    mUpdateMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0));
+
+    mPreviousDayMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, InputEvent.ALT_MASK));
+    mNextDayMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, InputEvent.ALT_MASK));
+    mGotoNowMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F9, 0));
+    mFullscreenMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F11, 0));
+
+    int ctrlKey = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
+    mFontSizeLargerMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_PLUS, ctrlKey));
+    mFontSizeSmallerMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, ctrlKey));
+    mFontSizeDefaultMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_0, ctrlKey));
+
+    mColumnWidthLargerMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_PLUS, InputEvent.ALT_MASK));
+    mColumnWidthSmallerMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, InputEvent.ALT_MASK));
+    mColumnWidthDefaultMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_0, InputEvent.ALT_MASK));
+
+  }
 }
