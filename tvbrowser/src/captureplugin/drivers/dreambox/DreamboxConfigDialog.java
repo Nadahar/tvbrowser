@@ -224,7 +224,12 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
         extendedPanel.addSeparator(mLocalizer.msg("timeZoneSeparator","Timezone"), cc.xyw(1,5,7));
         extendedPanel.add(new JLabel(mLocalizer.msg("timeZone", "Timezone:")), cc.xy(2,7));
 
-        String[] zoneIds = TimeZone.getAvailableIDs();
+        String[] zoneIds = new String[0];
+        try {
+          zoneIds = TimeZone.getAvailableIDs();
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
         Arrays.sort(zoneIds);
         mTimezone = new JComboBox(zoneIds);
 

@@ -114,12 +114,22 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
     Locale loc = new Locale(lan, country, variant);
     mLanguageCB.setSelectedItem(loc);
     
-    String[] zoneIds = TimeZone.getAvailableIDs();
-    Arrays.sort(zoneIds);
+    // time zone data may not be accessible, therefore use try-catch everywhere
+    String[] zoneIds = new String[0];
+    try {
+      zoneIds = TimeZone.getAvailableIDs();
+      Arrays.sort(zoneIds);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
     mTimezoneCB = new JComboBox(zoneIds);
     String zone = Settings.propTimezone.getString();
     if (zone == null) {
-      zone = TimeZone.getDefault().getID();
+      try {
+        zone = TimeZone.getDefault().getID();
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
     }
     for (int i = 0; i < zoneIds.length; i++) {
       if (zoneIds[i].equals(zone)) {
@@ -194,7 +204,11 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
     Settings.propCountry.setString(loc.getCountry());
     Settings.propVariant.setString(loc.getVariant());
     
-    Settings.propTimezone.setString((String) mTimezoneCB.getSelectedItem());
+    try {
+      Settings.propTimezone.setString((String) mTimezoneCB.getSelectedItem());
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
     
     Settings.propTwelveHourFormat.setBoolean(mTwelveHourFormat.isSelected());
     
