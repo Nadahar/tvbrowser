@@ -78,7 +78,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
-import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
@@ -1325,12 +1324,26 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
         scrollToNow();
       }
       
-      SwingUtilities.invokeLater(new Runnable() {
+      Thread deletionThread = new Thread("Deferring data deletion") {
+        @Override
         public void run() {
-          mLog.info("Deleting expired TV listings...");
-          TvDataBase.getInstance().deleteExpiredFiles(1, true);
+          // wait up to an hour to start data deletion
+          // this better distributes the server load which is caused by the (plugins) Internet access during the data update 
+          try {
+            sleep((long) (Math.random() * 3600 * 1000));
+          } catch (InterruptedException e) {
+            e.printStackTrace();
+          }
+          // now delete the data
+          SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+              mLog.info("Deleting expired TV listings...");
+              TvDataBase.getInstance().deleteExpiredFiles(1, true);
+            }
+          });
         }
-      });
+      };
+      deletionThread.start();
     }
     
     mLastTimerMinutesAfterMidnight = -1;

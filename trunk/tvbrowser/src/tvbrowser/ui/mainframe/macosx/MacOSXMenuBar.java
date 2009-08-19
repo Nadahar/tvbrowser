@@ -24,7 +24,6 @@
  * $Revision$
  */
 
-
 package tvbrowser.ui.mainframe.macosx;
 
 import java.awt.Toolkit;
@@ -38,118 +37,64 @@ import javax.swing.*;
 
 import com.apple.eawt.*;
 
-
 public class MacOSXMenuBar extends MenuBar {
-    
-    private JMenu mPluginsMenu;
-    
+
   public MacOSXMenuBar(MainFrame mainFrame, JLabel label) {
     super(mainFrame, label);
 
-		createTVBrowserMenuItem();
+    createTVBrowserMenuItem();
 
-    createMenuBar();
-    
+    createCommonMenus();
+
     int commandModifier = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
-    
+
+    // shortcuts as defined in the Apple guidelines
     // command Q
     mQuitMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, commandModifier));
-    
+
     // command ,
     mSettingsMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_COMMA, commandModifier));
-    
+
     // alt command T
     mToolbarMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, commandModifier | KeyEvent.ALT_DOWN_MASK));
   }
 
-	private void createMenuBar() {
-    add(mViewMenu);
-
-    add(mGoMenu);
-
-    JMenu tvListingsMenu = createMenu("menu.tvData", "TV data");
-    add(tvListingsMenu);
-		
-    mPluginsMenu = createMenu("menu.plugins", "Plugins");
-    add(mPluginsMenu);
-
-    JMenu helpMenu = createMenu("menu.help", "Help");
-    add(helpMenu);
-
-    // "TV Listings" menu
-    tvListingsMenu.add(mUpdateMI);
-    tvListingsMenu.addSeparator();
-    tvListingsMenu.add(mLicenseMenu);
-
-    // "Plugins" menu
-    JMenuItem[] internalPluginItems = createInternalPluginMenuItems();
-    for (JMenuItem menuItem : internalPluginItems) {
-      mPluginsMenu.add(menuItem);
-    }
-    
-    mPluginsMenu.addSeparator();
-    
-    JMenuItem[] pluginItems = createPluginMenuItems();
-    for (JMenuItem pluginItem : pluginItems) {
-      mPluginsMenu.add(pluginItem);
-    }
-    mPluginsMenu.addSeparator();
-    mPluginsMenu.add(mInstallPluginsMI);
-    mPluginsMenu.add(mPluginManagerMI);
-
-    // "Help" menu
-    createHelpMenuItems(helpMenu, false);
-  }
 
   private void createTVBrowserMenuItem() {
-		Application app = Application.getApplication();
-		app.addAboutMenuItem();
-		app.addPreferencesMenuItem();
+    Application app = Application.getApplication();
+    app.addAboutMenuItem();
+    app.addPreferencesMenuItem();
 
-		app.setEnabledAboutMenu(true);
-		app.setEnabledPreferencesMenu(true);
-		
-    app.addApplicationListener(
-    new ApplicationListener() {
+    app.setEnabledAboutMenu(true);
+    app.setEnabledPreferencesMenu(true);
+
+    app.addApplicationListener(new ApplicationListener() {
       public void handleAbout(ApplicationEvent event) {
         getMainFrame().showAboutBox();
-				event.setHandled(true);
-			}
-			public void handleOpenApplication(ApplicationEvent event) {
-			}
-			public void handleOpenFile(ApplicationEvent event) {
-			}
-			public void handlePreferences(ApplicationEvent event) {
-				getMainFrame().showSettingsDialog();
-				event.setHandled(true);
-			}
-			public void handlePrintFile(ApplicationEvent event) {
-			}
-			public void handleQuit(ApplicationEvent event) {
-				getMainFrame().quit();
-			}
-			public void handleReOpenApplication(ApplicationEvent event) {
-			}
-			
-		});
-  }
-
-  protected void setPluginMenuItems(JMenuItem[] items) {
-      mPluginsMenu.removeAll();
-      
-      JMenuItem[] internalPluginItems = createInternalPluginMenuItems();
-      for (JMenuItem menuItem : internalPluginItems) {
-        mPluginsMenu.add(menuItem);
+        event.setHandled(true);
       }
-      
-      mPluginsMenu.addSeparator();
 
-      JMenuItem[] pluginItems = createPluginMenuItems();
-      for (JMenuItem pluginItem : pluginItems) {
-        mPluginsMenu.add(pluginItem);
+      public void handleOpenApplication(ApplicationEvent event) {
       }
-      mPluginsMenu.addSeparator();
-      mPluginsMenu.add(mInstallPluginsMI);
-      mPluginsMenu.add(mPluginManagerMI);
+
+      public void handleOpenFile(ApplicationEvent event) {
+      }
+
+      public void handlePreferences(ApplicationEvent event) {
+        getMainFrame().showSettingsDialog();
+        event.setHandled(true);
+      }
+
+      public void handlePrintFile(ApplicationEvent event) {
+      }
+
+      public void handleQuit(ApplicationEvent event) {
+        getMainFrame().quit();
+      }
+
+      public void handleReOpenApplication(ApplicationEvent event) {
+      }
+
+    });
   }
 }
