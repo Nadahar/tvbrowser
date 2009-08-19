@@ -21,6 +21,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -36,6 +37,7 @@ import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 import util.ui.UiUtilities;
 import devplugin.ActionMenu;
@@ -179,13 +181,27 @@ final public class TaggingPlugin extends Plugin {
 	  return TagValidation.makeValidTag(JOptionPane.showInputDialog(UiUtilities.getBestDialogParent(getParentFrame()), message));
 	}
 
-	protected boolean addTag(final Program program) {
+	protected void addTag(final Program program) {
 		final String tag = getTagInput(mLocalizer.msg("addTag", "Add tag for {0}", program.getTitle()));
-		if (postTagToServer(program, tag)) {
-      updateRootNodeIfVisible();
-      return true;
-		}
-		return false;
+		Thread tagThread = new Thread("Add tag") {
+		  @Override
+		  public void run() {
+		    if (postTagToServer(program, tag)) {
+		      try {
+            SwingUtilities.invokeAndWait(new Runnable() {
+              public void run() {
+                updateRootNodeIfVisible();
+              }
+            });
+          } catch (InterruptedException e) {
+            e.printStackTrace();
+          } catch (InvocationTargetException e) {
+            e.printStackTrace();
+          }
+		    }
+		  }
+		};
+		tagThread.start();
 	}
 
 	private boolean isProgramTagged(final Program program, final String tag) {
