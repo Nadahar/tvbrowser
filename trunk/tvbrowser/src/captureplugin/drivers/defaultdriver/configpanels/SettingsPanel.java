@@ -24,12 +24,14 @@
  */
 package captureplugin.drivers.defaultdriver.configpanels;
 
-import captureplugin.drivers.defaultdriver.DeviceConfig;
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-import util.ui.Localizer;
-import util.ui.ScrollableJPanel;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.util.TimeZone;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -41,14 +43,14 @@ import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.util.TimeZone;
+
+import util.ui.Localizer;
+import util.ui.ScrollableJPanel;
+import captureplugin.drivers.defaultdriver.DeviceConfig;
+
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 
 
 /**
@@ -120,9 +122,14 @@ public class SettingsPanel extends ScrollableJPanel implements ActionListener, C
       
       mUseTime = new JCheckBox(mLocalizer.msg("useSystemTimezone","Use timezone provided by OS"), !mData.useTimeZone());
       
-      String[] zoneIds = TimeZone.getAvailableIDs();
+      String[] zoneIds = new String[0];
+      try {
+        zoneIds = TimeZone.getAvailableIDs();
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
       mTimeZones = new JComboBox(zoneIds);
-      mTimeZones.setEnabled(mData.useTimeZone());
+      mTimeZones.setEnabled(mData.useTimeZone() && mTimeZones.getItemCount() > 0);
       
       for (int i=0; i<zoneIds.length; i++) {
         if (zoneIds[i].equals(mData.getTimeZone().getID())) {
