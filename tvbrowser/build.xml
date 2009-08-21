@@ -175,6 +175,7 @@
   <target name="clean">
     <delete dir="${classes.dir}"/>
     <delete dir="${unpacked.dir}"/>
+    <delete dir="${test.classes.dir}"/>
   </target>
 
 
