@@ -27,6 +27,7 @@
 
 package primarydatamanager.primarydataservice.util.html2txt;
 
+import java.io.BufferedReader;
 import java.io.FilterReader;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -104,6 +105,29 @@ public class Html2TxtConverter extends FilterReader {
 			// ignore
 		}
     return result;
+  }
+  
+  public static String convert(int mode, String in) {
+    return convert(mode, in, null);
+  }
+  
+  public static String convert(int mode, String in, String encoding) {
+    StringBuffer content = new StringBuffer();
+    StringReader input = new StringReader(in);
+    
+    try {
+    Html2TxtConverter txtReader = new Html2TxtConverter(mode, input, encoding);
+    BufferedReader reader = new BufferedReader(txtReader);
+   
+    String line = reader.readLine();
+    while (line != null) {
+      content.append(line).append("\n");
+      line = reader.readLine();
+    }
+    } catch (IOException e) {
+      //can't happen since it's no real IO operation
+    }
+   return content.toString();
   }
 
   public static void convert(int mode, Reader in, Writer out) throws IOException {
