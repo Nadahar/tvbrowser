@@ -122,7 +122,7 @@ class HTMLTag implements Tag {
   
   public String getTagName() {
     if (mIsTag) {
-      String res=mBuf.toString();
+      String res=mBuf.toString().toLowerCase();
       int p = res.indexOf(' ');
       if (p>0) {
         return res.substring(0,p);
@@ -151,7 +151,7 @@ class HTMLTag implements Tag {
           if (p>0) {
             String key=attributes[i].substring(0,p);
             String val=attributes[i].substring(p+1,attributes[i].length());
-            if (key.trim().equals(attributeName)) {
+            if (key.trim().equalsIgnoreCase(attributeName)) {
               return val.trim();
             }
           }          
