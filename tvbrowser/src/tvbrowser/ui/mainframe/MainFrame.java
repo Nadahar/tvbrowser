@@ -263,6 +263,9 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
         mMenuBar = (MenuBar) cons.newInstance(new Object[] { this,
             mStatusBar.getLabel() });
       } catch (Exception e) {
+        if (TVBrowser.isTransportable()) {
+          mLog.info("Using default menu bar (instead of MacOSXMenuBar) for transportable version.");
+        }
         mLog.warning("Could not instantiate MacOSXMenuBar\n" + e.toString());
         mMenuBar = new DefaultMenuBar(this, mStatusBar.getLabel());
         mLog.info("Using default menu bar");
