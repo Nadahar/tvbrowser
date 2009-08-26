@@ -149,7 +149,7 @@ public class Html2TxtConverter extends FilterReader {
       }
      
       else if (tag.getTagName()!=null && tag.getTagName().startsWith("br")) {
-        writer.print("\t\t"); 
+        writer.print("\n"); 
       }
       else if ("p".equals(tag.getName())) {
         writer.println();
