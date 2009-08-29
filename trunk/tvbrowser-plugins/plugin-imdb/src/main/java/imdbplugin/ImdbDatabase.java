@@ -519,4 +519,15 @@ public final class ImdbDatabase {
     return null;
   }
 
+  public String getDatabaseSizeMB() {
+    if (!isInitialised()) {
+      return "0";
+    }
+    long size = 0;
+    for (File f : mCurrentPath.listFiles()) {
+      size = size + f.length();
+    }
+    return String.valueOf(size/ (1024 * 1024));
+  }
+
 }

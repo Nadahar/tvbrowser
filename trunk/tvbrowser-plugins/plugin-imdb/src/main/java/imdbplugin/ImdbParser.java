@@ -54,6 +54,7 @@ public class ImdbParser {
   }
 
   public void startParsing(final ProgressMonitor monitor) throws IOException {
+    int ratingCount = 0;
     mDatabase.deleteDatabase();
 
     monitor.setMaximum(getFileSize(mServer));
@@ -73,12 +74,12 @@ public class ImdbParser {
     if (mRunParser) {
       progressInputStream = new ProgressInputStream(downloadFile(monitor,
           "ratings.list.gz"), monitor, progressInputStream.getCurrentPosition());
-      parseRatings(new GZIPInputStream(progressInputStream), monitor);
+      ratingCount = parseRatings(new GZIPInputStream(progressInputStream), monitor);
     }
 
     if (mRunParser) {
       optimizeDatabase(monitor);
-      ImdbPlugin.getInstance().setCurrentDatabaseVersion();
+      ImdbPlugin.getInstance().setCurrentDatabaseVersion(ratingCount);
     } else {
       // Cancel was pressed, all Files have to be deleted
       mDatabase.deleteDatabase();
@@ -214,7 +215,7 @@ public class ImdbParser {
     reader.close();
   }
 
-  private void parseRatings(final InputStream inputStream,
+  private int parseRatings(final InputStream inputStream,
       final ProgressMonitor monitor) throws IOException {
     final Pattern ratingPattern = Pattern
         .compile("^(.*?)(?:\\W\\((\\d{4,4}|\\?\\?\\?\\?).*?\\))?(?:\\W\\((.*)\\))?(?:\\W\\{(.*)\\})?$");
@@ -266,6 +267,7 @@ public class ImdbParser {
     }
 
     reader.close();
+    return count;
   }
 
   private String cleanEpisodeTitle(final String episode) {

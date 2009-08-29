@@ -18,10 +18,14 @@ package imdbplugin;
 
 import java.util.Properties;
 
+import devplugin.Date;
+
 public class ImdbSettings {
 
   private static final String KEY_DONT_ASK_CREATE_DATABASE = "dontAskCreateDatabase";
   private static final String KEY_DATABASE_VERSION = "databaseVersion";
+  private static final String KEY_LAST_UPDATE = "LAST_UPDATE";
+  private static final String KEY_NUMBER_OF_MOVIES = "NUMBER OF MOVIES";
   /**
    * database version number
    * <p>
@@ -77,5 +81,21 @@ public class ImdbSettings {
   public void setCurrentDatabaseVersion() {
     mProperties.setProperty(KEY_DATABASE_VERSION, Integer
         .toString(CURRENT_DATABASE_VERSION));
+  }
+
+  public String getUpdateDate() {
+    return mProperties.getProperty(KEY_LAST_UPDATE,"-");
+  }
+
+  public String getNumberOfMovies() {
+    return mProperties.getProperty(KEY_NUMBER_OF_MOVIES,"0");
+  }
+
+  public void setNumberOfMovies(final int ratingCount) {
+    mProperties.setProperty(KEY_NUMBER_OF_MOVIES, String.valueOf(ratingCount));
+  }
+
+  public void setUpdateDate(final Date currentDate) {
+    mProperties.setProperty(KEY_LAST_UPDATE, currentDate.toString());
   }
 }
