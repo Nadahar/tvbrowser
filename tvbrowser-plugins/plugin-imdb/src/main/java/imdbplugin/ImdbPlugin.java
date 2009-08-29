@@ -365,7 +365,7 @@ public final class ImdbPlugin extends Plugin {
 
   @Override
   public SettingsTab getSettingsTab() {
-    return new ImdbSettingsTab((JFrame)getParentFrame(), this);
+    return new ImdbSettingsTab((JFrame)getParentFrame(), this, mSettings);
   }
 
   /**
@@ -488,12 +488,18 @@ public final class ImdbPlugin extends Plugin {
     instance = this;
   }
 
-  public void setCurrentDatabaseVersion() {
+  public void setCurrentDatabaseVersion(int ratingCount) {
     mSettings.setCurrentDatabaseVersion();
+    mSettings.setNumberOfMovies(ratingCount);
+    mSettings.setUpdateDate(Date.getCurrentDate());
   }
   
   @Override
   public Class<? extends PluginsFilterComponent>[] getAvailableFilterComponentClasses() {
     return (Class<? extends PluginsFilterComponent>[]) new Class[] { ImdbFilterComponent.class };
+  }
+
+  public String getDatabaseSizeMB() {
+    return mImdbDatabase.getDatabaseSizeMB();
   }
 }

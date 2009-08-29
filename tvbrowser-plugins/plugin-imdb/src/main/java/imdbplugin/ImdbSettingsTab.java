@@ -45,24 +45,28 @@ public final class ImdbSettingsTab implements SettingsTab {
   private ImdbPlugin mImdbPlugin;
   private JFrame mParent;
   private Channel[] mExcludedChannels;
+  private ImdbSettings mSettings;
+  private JLabel mLabelUpdate;
+  private JLabel mLabelSize;
+  private JLabel mLabelRatings;
 
-  public ImdbSettingsTab(final JFrame parent, final ImdbPlugin imdbPlugin) {
+  public ImdbSettingsTab(final JFrame parent, final ImdbPlugin imdbPlugin, final ImdbSettings settings) {
     mParent = parent;
     mImdbPlugin = imdbPlugin;
     mExcludedChannels = mImdbPlugin.getExcludedChannels();
+    mSettings = settings;
   }
 
   public JPanel createSettingsPanel() {
     final PanelBuilder panel = new PanelBuilder(new FormLayout(
         "3dlu, fill:pref:grow, 3dlu, pref, 3dlu",
-        "pref, 3dlu, pref, 3dlu, pref"));
+        "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref"));
 
     final CellConstraints cc = new CellConstraints();
-    int y = 1;
 
     final JLabel excludedChannels = new JLabel(createExcludeChannelsLabelText());
-    panel.add(excludedChannels, cc.xy(2,y));
-    final JButton channelConfig = new JButton("bearbeiten");
+    panel.add(excludedChannels, cc.xy(2, panel.getRow()));
+    final JButton channelConfig = new JButton(Localizer.getLocalization(Localizer.I18N_EDIT));
     channelConfig.addActionListener(new ActionListener() {
       public void actionPerformed(final ActionEvent e) {
         ChannelChooserDlg chooser;
@@ -80,11 +84,28 @@ public final class ImdbSettingsTab implements SettingsTab {
       }
     });
 
-    panel.add(channelConfig, cc.xy(4,y));
-    y += 2;
+    panel.add(channelConfig, cc.xy(4,panel.getRow()));
+    panel.nextRow(2);
 
-    panel.addSeparator(mLocalizer.msg("titleDatabase", "Database"), cc.xyw(1, y, 5));
-    y += 2;
+    panel.addSeparator(mLocalizer.msg("titleDatabase", "Database"), cc.xyw(1, panel.getRow(), 5));
+    panel.nextRow(2);
+    
+    panel.add(new JLabel(mLocalizer.msg("lastUpdate", "Last update")), cc.xy(2, panel.getRow()));
+    mLabelUpdate = new JLabel();
+    panel.add(mLabelUpdate, cc.xy(4, panel.getRow()));
+    panel.nextRow(2);
+
+    panel.add(new JLabel(mLocalizer.msg("movies", "Movies")), cc.xy(2, panel.getRow()));
+    mLabelRatings = new JLabel();
+    panel.add(mLabelRatings, cc.xy(4, panel.getRow()));
+    panel.nextRow(2);
+
+    panel.add(new JLabel(mLocalizer.msg("size", "Size")), cc.xy(2, panel.getRow()));
+    mLabelSize = new JLabel();
+    panel.add(mLabelSize, cc.xy(4, panel.getRow()));
+    panel.nextRow(2);
+    
+    updateStatistics();
 
     final JButton update = new JButton(mLocalizer.msg("updateDB",
         "Update Database"));
@@ -92,16 +113,23 @@ public final class ImdbSettingsTab implements SettingsTab {
 
       public void actionPerformed(final ActionEvent e) {
         mImdbPlugin.showUpdateDialog();
+        updateStatistics();
       }
     });
 
     final JPanel buttons = new JPanel(new FlowLayout(FlowLayout.LEFT));
     buttons.add(update);
 
-    panel.add(buttons,cc.xyw(2,y, 3));
-    y += 2;
+    panel.add(buttons,cc.xyw(2,panel.getRow(), 3));
+    panel.nextRow(2);
 
     return panel.getPanel();
+  }
+
+  protected void updateStatistics() {
+    mLabelUpdate.setText(mSettings.getUpdateDate());
+    mLabelRatings.setText(mSettings.getNumberOfMovies());
+    mLabelSize.setText(ImdbPlugin.getInstance().getDatabaseSizeMB() + " MB");
   }
 
   private String createExcludeChannelsLabelText() {
