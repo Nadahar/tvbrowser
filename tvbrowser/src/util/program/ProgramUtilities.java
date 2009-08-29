@@ -107,6 +107,8 @@ public class ProgramUtilities {
 
     }
   };
+  private static ArrayList<String> mListFirst;
+  private static ArrayList<String> mListSecond;
 
   /**
    * A helper method to get if a program is not in a time range.
@@ -161,10 +163,13 @@ public class ProgramUtilities {
       else {
         return null;
       }
-      ArrayList<String> listFirst = new ArrayList<String>();
-      ArrayList<String> listSecond = new ArrayList<String>();
+      mListFirst = new ArrayList<String>();
+      mListSecond = new ArrayList<String>();
       for (int i = 0; i < actors.length; i++) {
-        String actor = actors[i].trim();
+        String actor = actors[i];
+        if (!actor.startsWith(ACTOR_ROLE_SEPARATOR)) {
+          actor = actor.trim();
+        }
         if (actor.endsWith(",")) {
           actor = actor.substring(0, actor.length() - 1).trim();
         }
@@ -173,22 +178,22 @@ public class ProgramUtilities {
           continue;
         }
         if (actor.contains(ACTOR_ROLE_SEPARATOR)) {
-          listFirst.add(nameFrom(actor.substring(0, actor.indexOf(ACTOR_ROLE_SEPARATOR))));
-          listSecond.add(nameFrom(actor.substring(actor.indexOf(ACTOR_ROLE_SEPARATOR) + ACTOR_ROLE_SEPARATOR.length())));
+          addNames(nameFrom(actor.substring(0, actor.indexOf(ACTOR_ROLE_SEPARATOR))),
+          nameFrom(actor.substring(actor.indexOf(ACTOR_ROLE_SEPARATOR) + ACTOR_ROLE_SEPARATOR.length())));
         }
         // actor and role separated by tab
         else if (actor.contains("\t")) {
-          listFirst.add(nameFrom(actor.substring(0, actor.indexOf('\t'))));
-          listSecond.add(nameFrom(actor.substring(actor.indexOf('\t') + 1)));
+          addNames(nameFrom(actor.substring(0, actor.indexOf('\t'))),
+          nameFrom(actor.substring(actor.indexOf('\t') + 1)));
         }
         // actor and role separated by colon
         else if (actor.contains(":")) {
-          listFirst.add(nameFrom(actor.substring(0, actor.indexOf(':'))));
-          listSecond.add(nameFrom(actor.substring(actor.indexOf(':') + 1)));
+          addNames(nameFrom(actor.substring(0, actor.indexOf(':'))),
+          nameFrom(actor.substring(actor.indexOf(':') + 1)));
         }
         // actor and role separated by brackets
         else if (actor.contains("(") || actor.contains(")")) {
-          // maybe the splitting went wrong because of commata inside brackets
+          // maybe the splitting went wrong because of commas inside brackets
           if (actor.contains("(") && !actor.contains(")")) {
             if (i+1 < actors.length && actors[i+1].contains(")") && !actors[i+1].contains("(")) {
               actor = actor + "," + actors[i+1];
@@ -213,8 +218,7 @@ public class ProgramUtilities {
             int indexOpen = secondPart.indexOf('(');
             int indexClose = secondPart.indexOf(')');
             if ((indexOpen == -1 && indexClose == -1) || (indexOpen < indexClose)) {
-              listFirst.add(nameFrom(actor.substring(0, actor.indexOf('('))));
-              listSecond.add(secondPart);
+              addNames(nameFrom(actor.substring(0, actor.indexOf('('))),secondPart);
             }
             else {
               return null; // error: multiple brackets in one name
@@ -225,18 +229,26 @@ public class ProgramUtilities {
           }
         }
         else {
-          listFirst.add(nameFrom(actor));
+          mListFirst.add(nameFrom(actor));
         }
       }
       @SuppressWarnings("unchecked")
       ArrayList<String>[] lists = new ArrayList[2];
-      lists[0] = listFirst;
-      lists[1] = listSecond;
+      lists[0] = mListFirst;
+      lists[1] = mListSecond;
       return lists;
     }
     return null;
   }
   
+  private static void addNames(final String firstName, final String secondName) {
+    if (firstName.equalsIgnoreCase("und andere") || secondName.equalsIgnoreCase("und andere")) {
+      return;
+    }
+    mListFirst.add(firstName);
+    mListSecond.add(secondName);
+  }
+
   /**
    * extract the actor names from the actor field
    * 

@@ -32,6 +32,7 @@ import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.regex.Pattern;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -892,17 +893,38 @@ public class ProgramTextCreator {
         || ProgramFieldType.MODERATION_TYPE == fieldType
         || ProgramFieldType.ADDITIONAL_PERSONS_TYPE == fieldType
         || ProgramFieldType.PRODUCER_TYPE == fieldType) {
-      if (showPersonLinks && text.length() < 100) {
-        // if field is longer than 100 characters, this is not a list of names
+      if (showPersonLinks && text.length() < 200) {
+        // if field is longer, this is probably not a list of names
+        if (text.endsWith(".")) {
+          text = text.substring(0, text.length() - 1);
+        }
         String[] persons = splitPersons(text);
         for (int i = 0; i < persons.length; i++) {
+          // remove duplicate entries
+          boolean duplicate = false;
+          if (i < persons.length - 1) {
+            for (int j = i + 1; j < persons.length; j++) {
+              if (persons[i].equalsIgnoreCase(persons[j])) {
+                duplicate = true;
+                break;
+              }
+            }
+          }
+          if (duplicate) {
+            text = text.replaceFirst(Pattern.quote(persons[i]), "").trim();
+            if (text.startsWith(",")) {
+              text = text.substring(1).trim();
+            }
+            text = text.replaceAll(",\\s*,", ",");
+            continue;
+          }
           // a name shall not have more name parts
           if (persons[i].trim().split(" ").length <= 3) {
             String link;
             if (persons[i].contains("(")) {
-              String topic = persons[i].substring(0, persons[i].indexOf('('))
-                  .trim();
-              link = addSearchLink(topic, persons[i]);
+              int index = persons[i].indexOf('(');
+              String topic = persons[i].substring(0, index).trim();
+              link = addSearchLink(topic) + " " + persons[i].substring(index).trim();
             } else {
               link = addSearchLink(persons[i]);
             }
