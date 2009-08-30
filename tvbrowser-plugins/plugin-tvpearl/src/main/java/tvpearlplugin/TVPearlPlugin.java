@@ -61,7 +61,10 @@ import devplugin.Version;
 public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 {
 
-	private static final String TARGET_PEARL_COPY = "pearlCopy";
+	private static final boolean PLUGIN_IS_STABLE = true;
+  private static final Version PLUGIN_VERSION = new Version(0, 20, 1, PLUGIN_IS_STABLE);
+  
+  private static final String TARGET_PEARL_COPY = "pearlCopy";
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer
       .getLocalizerFor(TVPearlPlugin.class);
 	private static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(TVPearlPlugin.class.getName());
@@ -110,7 +113,7 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 
 	public static Version getVersion()
 	{
-		return new Version(0, 20, 0);
+		return PLUGIN_VERSION;
 	}
 
 	public SettingsTab getSettingsTab()
