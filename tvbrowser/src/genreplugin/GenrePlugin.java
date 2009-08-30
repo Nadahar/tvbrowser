@@ -57,6 +57,11 @@ public class GenrePlugin extends Plugin {
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(GenrePlugin.class);
 
   /**
+   * minimum length in characters for a genre to be accepted
+   */
+  private static final int MIN_GENRE_LENGTH = 4;
+
+  /**
    * root node of the plugin tree
    */
   private PluginTreeNode mRootNode;
@@ -146,11 +151,18 @@ public class GenrePlugin extends Plugin {
               if (genreField.startsWith("(") && genreField.endsWith(")")) {
                 genreField = genreField.substring(1, genreField.length() - 1);
               }
+              // remove sub genres in braces
+              if (mSettings.getUnifyBraceGenres()) {
+                int brace = genreField.indexOf('(');
+                if (brace > 0) {
+                  genreField = genreField.substring(0, brace).trim();
+                }
+              }
               // some programs have multiple genres in the field
               final String[] genres = genreField.split(",");
               for (String g : genres) {
-                final String genre = g.trim();
-                if (genre.length() > 3 && !hiddenGenres.contains(genre)) {
+                String genre = g.trim();
+                if (genre.length() >= MIN_GENRE_LENGTH && !hiddenGenres.contains(genre)) {
                   PluginTreeNode node = genreNodes.get(genre);
                   if (node == null) {
                     node = new PluginTreeNode(genre);

@@ -24,6 +24,7 @@ import java.util.Collections;
 import javax.swing.DefaultListModel;
 import javax.swing.Icon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -58,6 +59,7 @@ public final class GenreSettingsTab implements SettingsTab {
   private JSpinner mSpinner;
   private JButton mAddFilter;
   private JButton mRemoveFilter;
+  private JCheckBox mUnifyBraces;
 
   public GenreSettingsTab(final GenrePlugin plugin,
       final ArrayList<String> hiddenGenres, final GenreSettings settings) {
@@ -71,7 +73,9 @@ public final class GenreSettingsTab implements SettingsTab {
   }
 
   public JPanel createSettingsPanel() {
-    final EnhancedPanelPuilder panelBuilder = new EnhancedPanelPuilder(FormFactory.RELATED_GAP_COLSPEC.encode() + "," + FormFactory.PREF_COLSPEC.encode() + "," +FormFactory.RELATED_GAP_COLSPEC.encode() + "," + FormFactory.PREF_COLSPEC.encode() + ", fill:default:grow");
+    final EnhancedPanelPuilder panelBuilder = new EnhancedPanelPuilder(FormFactory.RELATED_GAP_COLSPEC.encode() + ","
+        + FormFactory.PREF_COLSPEC.encode() + "," + FormFactory.RELATED_GAP_COLSPEC.encode() + ","
+        + FormFactory.PREF_COLSPEC.encode() + ", fill:default:grow");
     final CellConstraints cc = new CellConstraints();
 
     final JLabel label = new JLabel(mLocalizer
@@ -84,6 +88,10 @@ public final class GenreSettingsTab implements SettingsTab {
     mSpinner = new JSpinner(model);
     mSpinner.setValue(mSettings.getDays());
     panelBuilder.add(mSpinner, cc.xy(4, panelBuilder.getRow()));
+
+    mUnifyBraces = new JCheckBox(mLocalizer.msg("unifyBracedGenres", "Unify genres with sub genres in braces"), mSettings.getUnifyBraceGenres());
+    panelBuilder.addRow();
+    panelBuilder.add(mUnifyBraces, cc.xy(2, panelBuilder.getRow()));
 
     panelBuilder.addParagraph(mLocalizer.msg("filteredGenres", "Filtered genres"));
 
@@ -149,6 +157,7 @@ public final class GenreSettingsTab implements SettingsTab {
   public void saveSettings() {
     mSettings.setDays((Integer) mSpinner.getValue());
     mSettings.setHiddenGenres(mListModel.toArray());
+    mSettings.setUnifyBraceGenres(mUnifyBraces.isSelected());
     mPlugin.getFilterFromSettings();
     mPlugin.updateRootNode();
   }

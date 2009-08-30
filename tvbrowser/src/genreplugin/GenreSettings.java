@@ -27,9 +27,10 @@ import util.settings.PropertyBasedSettings;
  */
 public final class GenreSettings extends PropertyBasedSettings {
 
-  final static String SETTINGS_DAYS = "days";
-  final static String FILTERED_GENRE = "filteredGenre";
-  final static String FILTERED_GENRES_COUNT = "filteredGenresCount";
+  private final static String SETTINGS_DAYS = "days";
+  private final static String FILTERED_GENRE = "filteredGenre";
+  private final static String FILTERED_GENRES_COUNT = "filteredGenresCount";
+  private static final String UNIFY_BRACE_GENRES = "unifyBraces";
 
   public GenreSettings(final Properties properties) {
     super(properties);
@@ -60,5 +61,13 @@ public final class GenreSettings extends PropertyBasedSettings {
       }
     }
     return genres.toArray(new String[genres.size()]);
+  }
+
+  public boolean getUnifyBraceGenres() {
+    return get(UNIFY_BRACE_GENRES, true);
+  }
+
+  public void setUnifyBraceGenres(boolean unify) {
+    set(UNIFY_BRACE_GENRES, unify);
   }
 }
