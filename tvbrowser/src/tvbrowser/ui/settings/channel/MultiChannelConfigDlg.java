@@ -91,10 +91,10 @@ public class MultiChannelConfigDlg extends JDialog implements ActionListener, Wi
 
     panel.setBorder(Borders.DLU4_BORDER);
 
-    panel.add(new JLabel(mLocalizer.msg("time", "Time Correction") + ":"), cc.xy(1, 1));
+    panel.add(new JLabel(mLocalizer.msg("time", "Time zone correction")), cc.xy(1, 1));
 
-    mCorrectionCB = new JComboBox(new String[] { "-1:00", "0:00", "+1:00" });
-    mCorrectionCB.setSelectedIndex(mChannel[0].getDayLightSavingTimeCorrection() + 1);
+    mCorrectionCB = new JComboBox(new String[] { "-1:00", "-0:45", "-0:30", "-0:15", "0:00", "+0:15", "+0:30", "+0:45", "+1:00" });
+    mCorrectionCB.setSelectedIndex((int) (Math.round(mChannel[0].getTimeZoneCorrectionMinutes() / 15) + 4));
 
     panel.add(mCorrectionCB, cc.xy(3, 1));
 
@@ -157,10 +157,9 @@ public class MultiChannelConfigDlg extends JDialog implements ActionListener, Wi
   public void actionPerformed(ActionEvent e) {
     Object o = e.getSource();
     if (o == mOKBt) {
-      int correction = mCorrectionCB.getSelectedIndex() - 1;
-      
+      int minutes = (mCorrectionCB.getSelectedIndex() - 4) * 15;
       for (int i=0;i<mChannel.length;i++) {
-        mChannel[i].setDayLightSavingTimeCorrection(correction);
+        mChannel[i].setTimeZoneCorrectionMinutes(minutes);
       }
       
       setVisible(false);

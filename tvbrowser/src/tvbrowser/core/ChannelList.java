@@ -59,6 +59,16 @@ import devplugin.Channel;
  */
 public class ChannelList {
 
+  private static final String FILENAME_DAYLIGHT_CORRECTION = "daylight_correction.txt";
+
+  private static final String FILENAME_CHANNEL_NAMES = "channel_names.txt";
+
+  private static final String FILENAME_CHANNEL_ICONS = "channel_icons.txt";
+
+  private static final String FILENAME_CHANNEL_WEBPAGES = "channel_webpages.txt";
+
+  private static final String FILENAME_CHANNEL_TIME_LIMIT = "channelTimeLimit.dat";
+
   private static java.util.logging.Logger mLog = java.util.logging.Logger
       .getLogger(ChannelList.class.getName());
 
@@ -224,13 +234,13 @@ public class ChannelList {
 
   private static void loadChannelMaps() {
     mChannelIconMap = createMap(new File(Settings.getUserSettingsDirName(),
-        "channel_icons.txt"));
+        FILENAME_CHANNEL_ICONS));
     mChannelNameMap = createMap(new File(Settings.getUserSettingsDirName(),
-        "channel_names.txt"));
+        FILENAME_CHANNEL_NAMES));
     mChannelWebpagesMap = createMap(new File(Settings.getUserSettingsDirName(),
-        "channel_webpages.txt"));
+        FILENAME_CHANNEL_WEBPAGES));
     mChannelDayLightCorrectionMap = createMap(new File(Settings
-        .getUserSettingsDirName(), "daylight_correction.txt"));
+        .getUserSettingsDirName(), FILENAME_DAYLIGHT_CORRECTION));
   }
 
   /**
@@ -493,8 +503,8 @@ public class ChannelList {
     String value = getMapValueForChannel(channel, mChannelDayLightCorrectionMap);
 
     if (value != null && value.length() > 0) {
-      int corr = Integer.parseInt(value);
-      channel.setDayLightSavingTimeCorrection(corr);
+      Double corr = Double.valueOf(value);
+      channel.setTimeZoneCorrectionMinutes((int) (corr * 60));
     }
   }
 
@@ -551,7 +561,7 @@ public class ChannelList {
 
   private static void storeDayLightSavingTimeCorrections() {
     File f = new File(Settings.getUserSettingsDirName(),
-        "daylight_correction.txt");
+        FILENAME_DAYLIGHT_CORRECTION);
 
     FileWriter fw;
     PrintWriter out = null;
@@ -560,9 +570,9 @@ public class ChannelList {
       out = new PrintWriter(fw);
       Channel[] channels = getSubscribedChannels();
       for (Channel channel : channels) {
-        int corr = channel.getDayLightSavingTimeCorrection();
+        int corr = channel.getTimeZoneCorrectionMinutes();
         if (corr != 0) {
-          out.println(createPropertyForChannel(channel, String.valueOf(corr)));
+          out.println(createPropertyForChannel(channel, String.valueOf(corr / 60.0)));
         }
       }
     } catch (IOException e) {
@@ -577,7 +587,7 @@ public class ChannelList {
    * Stores all Icons
    */
   private static void storeChannelIcons() {
-    File f = new File(Settings.getUserSettingsDirName(), "channel_icons.txt");
+    File f = new File(Settings.getUserSettingsDirName(), FILENAME_CHANNEL_ICONS);
 
     FileWriter fw;
     PrintWriter out = null;
@@ -619,7 +629,7 @@ public class ChannelList {
    */
   private static void storeChannelNames() {
     HashSet<String> subscribedServices = new HashSet<String>();
-    File f = new File(Settings.getUserSettingsDirName(), "channel_names.txt");
+    File f = new File(Settings.getUserSettingsDirName(), FILENAME_CHANNEL_NAMES);
 
     FileWriter fw;
     PrintWriter out = null;
@@ -662,7 +672,7 @@ public class ChannelList {
    * 
    */
   private static void storeChannelWebPages() {
-    File f = new File(Settings.getUserSettingsDirName(), "channel_webpages.txt");
+    File f = new File(Settings.getUserSettingsDirName(), FILENAME_CHANNEL_WEBPAGES);
 
     FileWriter fw;
     PrintWriter out = null;
@@ -800,7 +810,7 @@ public class ChannelList {
    * @since 2.2.4/2.6
    */
   public static void loadChannelTimeLimits() {
-    File f = new File(Settings.getUserSettingsDirName(), "channelTimeLimit.dat");
+    File f = new File(Settings.getUserSettingsDirName(), FILENAME_CHANNEL_TIME_LIMIT);
 
     if (f.isFile() && f.canRead()) {
       StreamUtilities.objectInputStreamIgnoringExceptions(f,
@@ -837,7 +847,7 @@ public class ChannelList {
    * @since 2.2.4/2.6
    */
   public static void storeChannelTimeLimits() {
-    File f = new File(Settings.getUserSettingsDirName(), "channelTimeLimit.dat");
+    File f = new File(Settings.getUserSettingsDirName(), FILENAME_CHANNEL_TIME_LIMIT);
     StreamUtilities.objectOutputStreamIgnoringExceptions(f,
         new ObjectOutputStreamProcessor() {
           public void process(ObjectOutputStream out) throws IOException {
