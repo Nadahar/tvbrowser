@@ -29,6 +29,12 @@ public class TagValidation {
     if (tag == null) {
       return null;
     }
+    
+    // don't allow HTML
+    if (tag.indexOf('<') >= 0 || tag.indexOf('>') >= 0) {
+      return null;
+    }
+    
     // no blanks at beginning or end
     String result = tag.trim();
 
