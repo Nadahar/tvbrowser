@@ -28,10 +28,11 @@ import devplugin.Version;
 
 public class BalloonPlugin extends Plugin {
 
-  private static final util.ui.Localizer mLocalizer = util.ui.Localizer
-      .getLocalizerFor(BalloonPlugin.class);
+  private static final boolean PLUGIN_IS_STABLE = true;
+  private static final Version PLUGIN_VERSION = new Version(2, 70, 1, PLUGIN_IS_STABLE);
 
-  private static final Version mVersion = new Version(2, 70, 0);
+  private static final util.ui.Localizer mLocalizer = util.ui.Localizer
+  .getLocalizerFor(BalloonPlugin.class);
 
   private static final String TARGET = "BALLOON_TARGET";
 
@@ -40,7 +41,7 @@ public class BalloonPlugin extends Plugin {
   private JarApplicationExecuter mExecuter;
 
   public static Version getVersion() {
-    return mVersion;
+    return PLUGIN_VERSION;
   }
 
   public PluginInfo getInfo() {
