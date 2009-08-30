@@ -79,6 +79,10 @@ import devplugin.Version;
  * @author René Mach
  */
 public final class IDontWant2See extends Plugin implements AWTEventListener {
+
+  private static final boolean PLUGIN_IS_STABLE = true;
+  private static final Version PLUGIN_VERSION = new Version(0, 11, 0, PLUGIN_IS_STABLE);
+
   private static final String RECEIVE_TARGET_EXCLUDE_EXACT = "target_exclude_exact";
 
   static final Localizer mLocalizer = Localizer
@@ -107,7 +111,7 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
                                                                  // only
   
   public static Version getVersion() {
-    return new Version(0,10,1,true);
+    return PLUGIN_VERSION;
   }
   
   /**
