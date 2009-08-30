@@ -298,6 +298,19 @@ public class CheckerPlugin extends Plugin {
                       .getLocalizedName()));
             }
           }
+          int closing = 0;
+          int opening = 0;
+          for (int i = 0; i < content.length(); i++) {
+            if (content.charAt(i) == '(') {
+              opening++;
+            }
+            else if (content.charAt(i) == ')') {
+              closing++;
+            }
+          }
+          if (closing != opening) {
+            results.add(mLocalizer.msg("issue.braces", "Opening and closing braces doen't match in {0}.", fieldType.getLocalizedName()));
+          }
         }
       }
     }
