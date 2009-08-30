@@ -33,17 +33,17 @@ import devplugin.Channel;
 
 
 /**
- * The ChannelUserSettings class holds all information of channel properties which can changed by the user.
+ * The ChannelUserSettings class holds all information of channel properties which can be changed by the user.
  */
 public class ChannelUserSettings {
 
-  private int mDaylightSavingTimeCorrection;
   private String mChannelName;
   private String mIconFileName;
   private boolean mUseUserIconFile;
   private String mWebPage;
   private int mStartTimeLimit;
   private int mEndTimeLimit;
+  private int mTimeZoneOffsetMinutes;
 
   private static HashMap<String, ChannelUserSettings> mChannelUserSettings = new HashMap<String, ChannelUserSettings>();
 
@@ -76,8 +76,8 @@ public class ChannelUserSettings {
 
   }
 
-  public void setDaylightSavingTimeCorrection(int correction) {
-    mDaylightSavingTimeCorrection = correction;
+  public void setTimeZoneCorrectionMinutes(int offset) {
+    mTimeZoneOffsetMinutes = offset;
   }
 
   public void setChannelName(String channelName) {
@@ -92,8 +92,8 @@ public class ChannelUserSettings {
     mUseUserIconFile = b;
   }
 
-  public int getDaylightSavingTimeCorrection() {
-    return mDaylightSavingTimeCorrection;
+  public int getTimeZoneCorrectionMinutes() {
+    return mTimeZoneOffsetMinutes;
   }
 
   public String getChannelName() {

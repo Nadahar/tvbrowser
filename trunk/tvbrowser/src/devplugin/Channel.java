@@ -575,19 +575,41 @@ public class Channel implements Comparable<Channel> {
   /**
    * Sets the day light saving time correction.
    * <p>
-   * @param correction The new day light saving time correction.
+   * @param hours The new day light saving time correction.
+   * @deprecated since 3.0
    */
-  public void setDayLightSavingTimeCorrection(int correction) {
-    ChannelUserSettings.getSettings(this).setDaylightSavingTimeCorrection(correction);
+  public void setDayLightSavingTimeCorrection(int hours) {
+    setTimeZoneCorrectionMinutes(hours * 60);
+  }
+  
+  /**
+   * Corrects the time zone offset of the channel.
+   * <p>
+   * @param minutes The offset in minutes. Valid values are only half or full hours (positive and negative).
+   * @since 3.0
+   */
+  public void setTimeZoneCorrectionMinutes(int minutes) {
+    ChannelUserSettings.getSettings(this).setTimeZoneCorrectionMinutes(minutes);
   }
   
   /**
    * Gets the day light saving time correction of this channel.
    * <p>
    * @return The day light saving time correction of this channel.
+   * @deprecated since 3.0
    */
   public int getDayLightSavingTimeCorrection() {
-    return ChannelUserSettings.getSettings(this).getDaylightSavingTimeCorrection();
+    return getTimeZoneCorrectionMinutes() / 60;
+  }
+
+  /**
+   * Gets the time zone offset of this channel.
+   * <p>
+   * @return time zone offset
+   * @since 3.0
+   */
+  public int getTimeZoneCorrectionMinutes() {
+    return ChannelUserSettings.getSettings(this).getTimeZoneCorrectionMinutes();
   }
 
   /**
