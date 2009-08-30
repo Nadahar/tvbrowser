@@ -527,7 +527,10 @@ public class TVPearl
 		{
 			if (p.wasFound())
 			{
-				root.addProgram(p.getProgram());
+				Program program = p.getProgram();
+				if (program != null) {
+				  root.addProgram(program);
+				}
 			}
 		}
 		root.update();

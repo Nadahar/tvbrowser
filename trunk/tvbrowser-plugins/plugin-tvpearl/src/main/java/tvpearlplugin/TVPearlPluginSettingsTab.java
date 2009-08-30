@@ -335,12 +335,12 @@ public final class TVPearlPluginSettingsTab implements SettingsTab
 
 	private String getComposers()
 	{
-		String result = "";
-		for (String item : TVPearlPlugin.getInstance().getComposers())
+		StringBuilder result = new StringBuilder(100);
+		for (String composer : TVPearlPlugin.getInstance().getComposers())
 		{
-			result += item + "\n";
+		  result.append(composer).append('\n');
 		}
-		return result.trim();
+		return result.toString().trim();
 	}
 
 	private void handlePluginSelection()
