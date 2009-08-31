@@ -34,8 +34,7 @@ import org.apache.lucene.store.FSDirectory;
 
 public final class ImdbDatabase {
   private static final int MAX_FIELD_LENGTH = 200;
-  private static final String[] TITLE_SUFFIX = { "(Fortsetzung)", "(Teil 1)",
-      "(Teil 2)", "(Teil 3)", "(Teil 4)" };
+  private static final String[] TITLE_SUFFIX = { "(Fortsetzung)", "(Teil 1)", "(Teil 2)", "(Teil 3)", "(Teil 4)" };
   private static final String ITEM_TYPE = "ITEM_TYPE";
   private static final String TYPE_MOVIE = "TYPE_MOVIE";
   private static final String TYPE_AKA = "TYPE_AKA";
@@ -90,33 +89,25 @@ public final class ImdbDatabase {
     return false;
   }
 
-  public String addTitle(final String movieTitle, final String episode,
-      final int year, final String type) {
+  public String addTitle(final String movieTitle, final String episode, final int year, final String type) {
     String movieID = null;
     try {
       final Document doc = new Document();
       movieID = UUID.randomUUID().toString();
-      doc.add(new Field(MOVIE_ID, movieID, Field.Store.COMPRESS,
-          Field.Index.NOT_ANALYZED, Field.TermVector.NO));
-      doc.add(new Field(ITEM_TYPE, TYPE_MOVIE, Field.Store.COMPRESS,
-          Field.Index.NOT_ANALYZED, Field.TermVector.NO));
-      doc.add(new Field(MOVIE_TITLE, movieTitle, Field.Store.COMPRESS,
-          Field.Index.NOT_ANALYZED, Field.TermVector.NO));
-      doc.add(new Field(MOVIE_TITLE_NORMALISED, normalise(movieTitle),
-          Field.Store.COMPRESS, Field.Index.NOT_ANALYZED, Field.TermVector.NO));
-      doc.add(new Field(MOVIE_YEAR, Integer.toString(year),
-          Field.Store.COMPRESS, Field.Index.NOT_ANALYZED, Field.TermVector.NO));
+      doc.add(new Field(MOVIE_ID, movieID, Field.Store.COMPRESS, Field.Index.NOT_ANALYZED, Field.TermVector.NO));
+      doc.add(new Field(ITEM_TYPE, TYPE_MOVIE, Field.Store.COMPRESS, Field.Index.NOT_ANALYZED, Field.TermVector.NO));
+      doc.add(new Field(MOVIE_TITLE, movieTitle, Field.Store.COMPRESS, Field.Index.NOT_ANALYZED, Field.TermVector.NO));
+      doc.add(new Field(MOVIE_TITLE_NORMALISED, normalise(movieTitle), Field.Store.COMPRESS, Field.Index.NOT_ANALYZED,
+          Field.TermVector.NO));
+      doc.add(new Field(MOVIE_YEAR, Integer.toString(year), Field.Store.COMPRESS, Field.Index.NOT_ANALYZED,
+          Field.TermVector.NO));
       if (type != null) {
-        doc.add(new Field(MOVIE_TYPE, type, Field.Store.YES,
-            Field.Index.NOT_ANALYZED, Field.TermVector.NO));
+        doc.add(new Field(MOVIE_TYPE, type, Field.Store.YES, Field.Index.NOT_ANALYZED, Field.TermVector.NO));
       }
       if (episode != null) {
-        doc.add(new Field(EPISODE_TITLE, episode, Field.Store.COMPRESS,
-            Field.Index.NOT_ANALYZED, Field.TermVector.NO));
-        doc
-            .add(new Field(EPISODE_TITLE_NORMALISED, normalise(episode),
-                Field.Store.COMPRESS, Field.Index.NOT_ANALYZED,
-                Field.TermVector.NO));
+        doc.add(new Field(EPISODE_TITLE, episode, Field.Store.COMPRESS, Field.Index.NOT_ANALYZED, Field.TermVector.NO));
+        doc.add(new Field(EPISODE_TITLE_NORMALISED, normalise(episode), Field.Store.COMPRESS, Field.Index.NOT_ANALYZED,
+            Field.TermVector.NO));
       }
       mWriter.addDocument(doc);
     } catch (IOException e) {
@@ -126,31 +117,24 @@ public final class ImdbDatabase {
     return movieID;
   }
 
-  public void addAkaTitle(final String movieId, final String title,
-      final String episode, final int year, final String type) {
+  public void addAkaTitle(final String movieId, final String title, final String episode, final int year,
+      final String type) {
     try {
       final Document doc = new Document();
-      doc.add(new Field(MOVIE_ID, movieId, Field.Store.COMPRESS,
-          Field.Index.NOT_ANALYZED, Field.TermVector.NO));
-      doc.add(new Field(ITEM_TYPE, TYPE_AKA, Field.Store.COMPRESS,
-          Field.Index.NOT_ANALYZED, Field.TermVector.NO));
-      doc.add(new Field(MOVIE_TITLE, title, Field.Store.COMPRESS,
-          Field.Index.NOT_ANALYZED, Field.TermVector.NO));
-      doc.add(new Field(MOVIE_TITLE_NORMALISED, normalise(title),
-          Field.Store.COMPRESS, Field.Index.NOT_ANALYZED, Field.TermVector.NO));
-      doc.add(new Field(MOVIE_YEAR, Integer.toString(year),
-          Field.Store.COMPRESS, Field.Index.NOT_ANALYZED, Field.TermVector.NO));
+      doc.add(new Field(MOVIE_ID, movieId, Field.Store.COMPRESS, Field.Index.NOT_ANALYZED, Field.TermVector.NO));
+      doc.add(new Field(ITEM_TYPE, TYPE_AKA, Field.Store.COMPRESS, Field.Index.NOT_ANALYZED, Field.TermVector.NO));
+      doc.add(new Field(MOVIE_TITLE, title, Field.Store.COMPRESS, Field.Index.NOT_ANALYZED, Field.TermVector.NO));
+      doc.add(new Field(MOVIE_TITLE_NORMALISED, normalise(title), Field.Store.COMPRESS, Field.Index.NOT_ANALYZED,
+          Field.TermVector.NO));
+      doc.add(new Field(MOVIE_YEAR, Integer.toString(year), Field.Store.COMPRESS, Field.Index.NOT_ANALYZED,
+          Field.TermVector.NO));
       if (type != null) {
-        doc.add(new Field(MOVIE_TYPE, type, Field.Store.YES,
-            Field.Index.NOT_ANALYZED, Field.TermVector.NO));
+        doc.add(new Field(MOVIE_TYPE, type, Field.Store.YES, Field.Index.NOT_ANALYZED, Field.TermVector.NO));
       }
       if (episode != null) {
-        doc.add(new Field(EPISODE_TITLE, episode, Field.Store.COMPRESS,
-            Field.Index.NOT_ANALYZED, Field.TermVector.NO));
-        doc
-            .add(new Field(EPISODE_TITLE_NORMALISED, normalise(episode),
-                Field.Store.COMPRESS, Field.Index.NOT_ANALYZED,
-                Field.TermVector.NO));
+        doc.add(new Field(EPISODE_TITLE, episode, Field.Store.COMPRESS, Field.Index.NOT_ANALYZED, Field.TermVector.NO));
+        doc.add(new Field(EPISODE_TITLE_NORMALISED, normalise(episode), Field.Store.COMPRESS, Field.Index.NOT_ANALYZED,
+            Field.TermVector.NO));
       }
       mWriter.addDocument(doc);
     } catch (IOException e) {
@@ -185,14 +169,14 @@ public final class ImdbDatabase {
         builder.append("ss");
         break;
       }
-      // remove some special characters
+        // remove some special characters
       case ',':
       case '\'':
       case ':':
       case '-': {
         break;
       }
-      // remove all double spaces
+        // remove all double spaces
       case ' ': {
         if (builder.length() > 0 && builder.charAt(builder.length() - 1) != ' ') {
           builder.append(' ');
@@ -207,26 +191,22 @@ public final class ImdbDatabase {
     // remove blank before the final ? or !
     if (result.length() > 2 && (result.endsWith("!") || result.endsWith("?"))
         && result.charAt(result.length() - 2) == ' ') {
-      result = result.substring(0, result.length() - 2)
-          + result.charAt(result.length() - 1);
+      result = result.substring(0, result.length() - 2) + result.charAt(result.length() - 1);
     }
     return result;
   }
 
-  public void addRating(final String movieId, final int rating,
-      final int votes, final String distribution) {
+  public void addRating(final String movieId, final int rating, final int votes, final String distribution) {
     try {
       final Document doc = new Document();
-      doc.add(new Field(MOVIE_ID, movieId, Field.Store.COMPRESS,
-          Field.Index.NOT_ANALYZED, Field.TermVector.NO));
-      doc.add(new Field(ITEM_TYPE, TYPE_RATING, Field.Store.COMPRESS,
-          Field.Index.NOT_ANALYZED, Field.TermVector.NO));
-      doc.add(new Field(MOVIE_RATING, Integer.toString(rating),
-          Field.Store.YES, Field.Index.NOT_ANALYZED, Field.TermVector.NO));
-      doc.add(new Field(MOVIE_VOTES, Integer.toString(votes), Field.Store.YES,
-          Field.Index.NOT_ANALYZED, Field.TermVector.NO));
-      doc.add(new Field(MOVIE_DISTRIBUTION, distribution, Field.Store.COMPRESS,
-          Field.Index.NOT_ANALYZED, Field.TermVector.NO));
+      doc.add(new Field(MOVIE_ID, movieId, Field.Store.COMPRESS, Field.Index.NOT_ANALYZED, Field.TermVector.NO));
+      doc.add(new Field(ITEM_TYPE, TYPE_RATING, Field.Store.COMPRESS, Field.Index.NOT_ANALYZED, Field.TermVector.NO));
+      doc.add(new Field(MOVIE_RATING, Integer.toString(rating), Field.Store.YES, Field.Index.NOT_ANALYZED,
+          Field.TermVector.NO));
+      doc.add(new Field(MOVIE_VOTES, Integer.toString(votes), Field.Store.YES, Field.Index.NOT_ANALYZED,
+          Field.TermVector.NO));
+      doc.add(new Field(MOVIE_DISTRIBUTION, distribution, Field.Store.COMPRESS, Field.Index.NOT_ANALYZED,
+          Field.TermVector.NO));
       mWriter.addDocument(doc);
     } catch (IOException e) {
       e.printStackTrace();
@@ -239,7 +219,7 @@ public final class ImdbDatabase {
     mWriter.close();
     openForWriting();
   }
-  
+
   public void openForReading() {
     close();
     if (!mCurrentPath.exists() || mCurrentPath.listFiles().length > 0) {
@@ -253,7 +233,7 @@ public final class ImdbDatabase {
       }
     }
   }
-  
+
   public void openForWriting() {
     if (!mCurrentPath.exists() || mCurrentPath.listFiles().length < 2) {
       try {
@@ -306,26 +286,20 @@ public final class ImdbDatabase {
     }
   }
 
-  public String getOrCreateMovieId(final String movieTitle,
-      final String episode, final int year, final String type) {
+  public String getOrCreateMovieId(final String movieTitle, final String episode, final int year, final String type) {
     if (mSearcher == null) {
       return addTitle(movieTitle, episode, year, type);
     }
     try {
       final BooleanQuery bQuery = new BooleanQuery();
-      bQuery.add(new TermQuery(new Term(ITEM_TYPE, TYPE_MOVIE)),
-          BooleanClause.Occur.MUST);
-      bQuery.add(new TermQuery(new Term(MOVIE_TITLE, movieTitle)),
-          BooleanClause.Occur.MUST);
-      bQuery.add(new TermQuery(new Term(MOVIE_YEAR, Integer.toString(year))),
-          BooleanClause.Occur.MUST);
+      bQuery.add(new TermQuery(new Term(ITEM_TYPE, TYPE_MOVIE)), BooleanClause.Occur.MUST);
+      bQuery.add(new TermQuery(new Term(MOVIE_TITLE, movieTitle)), BooleanClause.Occur.MUST);
+      bQuery.add(new TermQuery(new Term(MOVIE_YEAR, Integer.toString(year))), BooleanClause.Occur.MUST);
       if (episode != null) {
-        bQuery.add(new TermQuery(new Term(EPISODE_TITLE, episode)),
-            BooleanClause.Occur.MUST);
+        bQuery.add(new TermQuery(new Term(EPISODE_TITLE, episode)), BooleanClause.Occur.MUST);
       }
       if (type != null) {
-        bQuery.add(new TermQuery(new Term(MOVIE_TYPE, type)),
-            BooleanClause.Occur.MUST);
+        bQuery.add(new TermQuery(new Term(MOVIE_TYPE, type)), BooleanClause.Occur.MUST);
       }
 
       final TopDocs topDocs = mSearcher.search(bQuery, null, 1);
@@ -346,8 +320,7 @@ public final class ImdbDatabase {
     return null;
   }
 
-  public String getMovieEpisodeId(final String title, final String episode,
-      final String originalEpisode, final int year) {
+  public String getMovieEpisodeId(final String title, final String episode, final String originalEpisode, final int year) {
     if (mSearcher == null) {
       return null;
     }
@@ -358,31 +331,21 @@ public final class ImdbDatabase {
     return id;
   }
 
-  private String getEpisodeId(final String title, final String episode,
-      final int year) {
+  private String getEpisodeId(final String title, final String episode, final int year) {
     if (episode == null) {
       return null;
     }
     final String normalizedTitle = normalise(title);
     final String normalizedEpisode = normalise(episode);
     final BooleanQuery bQuery = new BooleanQuery();
-    bQuery.add(new TermQuery(new Term(ITEM_TYPE, TYPE_MOVIE)),
-        BooleanClause.Occur.MUST);
-    bQuery.add(
-        new TermQuery(new Term(MOVIE_TITLE_NORMALISED, normalizedTitle)),
-        BooleanClause.Occur.MUST);
-    bQuery.add(new TermQuery(new Term(EPISODE_TITLE_NORMALISED,
-        normalizedEpisode)), BooleanClause.Occur.MUST);
+    bQuery.add(new TermQuery(new Term(ITEM_TYPE, TYPE_MOVIE)), BooleanClause.Occur.MUST);
+    bQuery.add(new TermQuery(new Term(MOVIE_TITLE_NORMALISED, normalizedTitle)), BooleanClause.Occur.MUST);
+    bQuery.add(new TermQuery(new Term(EPISODE_TITLE_NORMALISED, normalizedEpisode)), BooleanClause.Occur.MUST);
 
     if (year > 0) {
-      bQuery.add(
-          new TermQuery(new Term(MOVIE_YEAR, Integer.toString(year - 1))),
-          BooleanClause.Occur.SHOULD);
-      bQuery.add(new TermQuery(new Term(MOVIE_YEAR, Integer.toString(year))),
-          BooleanClause.Occur.SHOULD);
-      bQuery.add(
-          new TermQuery(new Term(MOVIE_YEAR, Integer.toString(year + 1))),
-          BooleanClause.Occur.SHOULD);
+      bQuery.add(new TermQuery(new Term(MOVIE_YEAR, Integer.toString(year - 1))), BooleanClause.Occur.SHOULD);
+      bQuery.add(new TermQuery(new Term(MOVIE_YEAR, Integer.toString(year))), BooleanClause.Occur.SHOULD);
+      bQuery.add(new TermQuery(new Term(MOVIE_YEAR, Integer.toString(year + 1))), BooleanClause.Occur.SHOULD);
     }
 
     try {
@@ -399,8 +362,7 @@ public final class ImdbDatabase {
     return null;
   }
 
-  public String getMovieId(final String title, final String episode,
-      final int year) {
+  public String getMovieId(final String title, final String episode, String originalTitle, final int year) {
     if (mSearcher == null) {
       return null;
     }
@@ -408,28 +370,23 @@ public final class ImdbDatabase {
     final String normalizedTitle = normalise(title);
     final String normalizedEpisode = normalise(episode);
 
-    BooleanQuery bQuery = new BooleanQuery();
-    bQuery.add(new TermQuery(new Term(ITEM_TYPE, TYPE_MOVIE)),
-        BooleanClause.Occur.MUST);
-    bQuery.add(
-        new TermQuery(new Term(MOVIE_TITLE_NORMALISED, normalizedTitle)),
-        BooleanClause.Occur.MUST);
-    bQuery.add(new TermQuery(new Term(EPISODE_TITLE_NORMALISED,
-        normalizedEpisode)), BooleanClause.Occur.MUST);
+    // first search title
+    String movieId = getMovieIdFromTitle(normalizedTitle, normalizedEpisode, year);
+    if (movieId != null) {
+      return movieId;
+    }
 
+    // next search title in A.K.A. list
+    BooleanQuery bQuery = new BooleanQuery();
+    bQuery.add(new TermQuery(new Term(ITEM_TYPE, TYPE_AKA)), BooleanClause.Occur.MUST);
+    bQuery.add(new TermQuery(new Term(MOVIE_TITLE_NORMALISED, normalizedTitle)), BooleanClause.Occur.MUST);
     if (year > 0) {
-      bQuery.add(
-          new TermQuery(new Term(MOVIE_YEAR, Integer.toString(year - 1))),
-          BooleanClause.Occur.SHOULD);
-      bQuery.add(new TermQuery(new Term(MOVIE_YEAR, Integer.toString(year))),
-          BooleanClause.Occur.SHOULD);
-      bQuery.add(
-          new TermQuery(new Term(MOVIE_YEAR, Integer.toString(year + 1))),
-          BooleanClause.Occur.SHOULD);
+      bQuery.add(new TermQuery(new Term(MOVIE_YEAR, Integer.toString(year - 1))), BooleanClause.Occur.SHOULD);
+      bQuery.add(new TermQuery(new Term(MOVIE_YEAR, Integer.toString(year))), BooleanClause.Occur.SHOULD);
+      bQuery.add(new TermQuery(new Term(MOVIE_YEAR, Integer.toString(year + 1))), BooleanClause.Occur.SHOULD);
     }
 
     try {
-
       TopDocs topDocs = mSearcher.search(bQuery, null, 1);
 
       if (topDocs.totalHits > 0) {
@@ -439,23 +396,42 @@ public final class ImdbDatabase {
 
         return document.getField(MOVIE_ID).stringValue();
       }
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
 
-      bQuery = new BooleanQuery();
-      bQuery.add(new TermQuery(new Term(ITEM_TYPE, TYPE_AKA)),
-          BooleanClause.Occur.MUST);
-      bQuery.add(new TermQuery(
-          new Term(MOVIE_TITLE_NORMALISED, normalizedTitle)),
-          BooleanClause.Occur.MUST);
-      if (year > 0) {
-        bQuery.add(new TermQuery(new Term(MOVIE_YEAR, Integer
-            .toString(year - 1))), BooleanClause.Occur.SHOULD);
-        bQuery.add(new TermQuery(new Term(MOVIE_YEAR, Integer.toString(year))),
-            BooleanClause.Occur.SHOULD);
-        bQuery.add(new TermQuery(new Term(MOVIE_YEAR, Integer
-            .toString(year + 1))), BooleanClause.Occur.SHOULD);
+    // finally search only original title
+    if (originalTitle != null) {
+      movieId = getMovieIdFromTitle(normalise(originalTitle), "", year);
+      if (movieId != null) {
+        return movieId;
       }
+    }
 
-      topDocs = mSearcher.search(bQuery, null, 1);
+    // and now try with shortened title if there is a common suffix
+    for (String suffix : TITLE_SUFFIX) {
+      if (title.endsWith(suffix)) {
+        return getMovieId(title.substring(0, title.length() - suffix.length()).trim(), episode, null, year);
+      }
+    }
+
+    return null;
+  }
+
+  private String getMovieIdFromTitle(final String title, final String episode, final int year) {
+    BooleanQuery bQuery = new BooleanQuery();
+    bQuery.add(new TermQuery(new Term(ITEM_TYPE, TYPE_MOVIE)), BooleanClause.Occur.MUST);
+    bQuery.add(new TermQuery(new Term(MOVIE_TITLE_NORMALISED, title)), BooleanClause.Occur.MUST);
+    bQuery.add(new TermQuery(new Term(EPISODE_TITLE_NORMALISED, episode)), BooleanClause.Occur.MUST);
+
+    if (year > 0) {
+      bQuery.add(new TermQuery(new Term(MOVIE_YEAR, Integer.toString(year - 1))), BooleanClause.Occur.SHOULD);
+      bQuery.add(new TermQuery(new Term(MOVIE_YEAR, Integer.toString(year))), BooleanClause.Occur.SHOULD);
+      bQuery.add(new TermQuery(new Term(MOVIE_YEAR, Integer.toString(year + 1))), BooleanClause.Occur.SHOULD);
+    }
+
+    try {
+      TopDocs topDocs = mSearcher.search(bQuery, null, 1);
 
       if (topDocs.totalHits > 0) {
         final Document document = mSearcher.doc(topDocs.scoreDocs[0].doc);
@@ -464,18 +440,9 @@ public final class ImdbDatabase {
 
         return document.getField(MOVIE_ID).stringValue();
       }
-
-    } catch (IOException e) {
-      e.printStackTrace();
+    } catch (IOException e1) {
+      e1.printStackTrace();
     }
-
-    for (String suffix : TITLE_SUFFIX) {
-      if (title.endsWith(suffix)) {
-        return getMovieId(title.substring(0, title.length() - suffix.length())
-            .trim(), episode, year);
-      }
-    }
-
     return null;
   }
 
@@ -497,19 +464,16 @@ public final class ImdbDatabase {
     }
     try {
       final BooleanQuery bQuery = new BooleanQuery();
-      bQuery.add(new TermQuery(new Term(ITEM_TYPE, TYPE_RATING)),
-          BooleanClause.Occur.MUST);
-      bQuery.add(new TermQuery(new Term(MOVIE_ID, id)),
-          BooleanClause.Occur.MUST);
+      bQuery.add(new TermQuery(new Term(ITEM_TYPE, TYPE_RATING)), BooleanClause.Occur.MUST);
+      bQuery.add(new TermQuery(new Term(MOVIE_ID, id)), BooleanClause.Occur.MUST);
 
       final TopDocs topDocs = mSearcher.search(bQuery, null, 1);
 
       if (topDocs.totalHits > 0) {
         final Document document = mSearcher.doc(topDocs.scoreDocs[0].doc);
 
-        return new ImdbRating(Integer.parseInt(document.getField(MOVIE_RATING)
-            .stringValue()), Integer.parseInt(document.getField(MOVIE_VOTES)
-            .stringValue()), document.getField(MOVIE_DISTRIBUTION)
+        return new ImdbRating(Integer.parseInt(document.getField(MOVIE_RATING).stringValue()), Integer
+            .parseInt(document.getField(MOVIE_VOTES).stringValue()), document.getField(MOVIE_DISTRIBUTION)
             .stringValue(), id);
       }
     } catch (IOException e) {
@@ -527,7 +491,7 @@ public final class ImdbDatabase {
     for (File f : mCurrentPath.listFiles()) {
       size = size + f.length();
     }
-    return String.valueOf(size/ (1024 * 1024));
+    return String.valueOf(size / (1024 * 1024));
   }
 
 }
