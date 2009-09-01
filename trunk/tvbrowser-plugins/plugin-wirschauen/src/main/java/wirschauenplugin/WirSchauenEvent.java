@@ -200,44 +200,48 @@ extends DefaultHandler
 
     if (qName.equals("event_id"))
     {
-      eventId = Long.parseLong(characters.toString().trim());
+      setEventId(Long.parseLong(getCharacters()));
     }
     else if (qName.equals("desc_counter"))
     {
-      descCounter = Integer.parseInt(characters.toString().trim());
+      setDescCounter(Integer.parseInt(getCharacters()));
     }
     else if (qName.equals("desc_id"))
     {
-      descId = Long.parseLong(characters.toString().trim());
+      setDescId(Long.parseLong(getCharacters()));
     }
     else if (qName.equals("url"))
     {
-      omdbUrl = characters.toString().trim();
+      setOmdbUrl(getCharacters());
     }
     else if (qName.equals("genre"))
     {
-      genre = characters.toString().trim();
+      setGenre(characters.toString());
     }
     else if (qName.equals("desc"))
     {
-      desc = characters.toString().trim();
+      setDesc(characters.toString());
     }
     else if (qName.equals("premiere"))
     {
-      premiere = Boolean.parseBoolean(characters.toString().trim());
+      setPremiere(Boolean.parseBoolean(getCharacters()));
     }
     else if (qName.equals("subtitle"))
     {
-      subtitles = Boolean.parseBoolean(characters.toString().trim());
+      setSubtitles(Boolean.parseBoolean(getCharacters()));
     }
     else if (qName.equals("omu"))
     {
-      omu = Boolean.parseBoolean(characters.toString().trim());
+      setOmu(Boolean.parseBoolean(getCharacters()));
     }
     else if (qName.equals("category"))
     {
-      category = Byte.parseByte(characters.toString().trim());
+      setCategory(Byte.parseByte(getCharacters()));
     }
+  }
+
+  private String getCharacters() {
+    return characters.toString().trim();
   }
 
 
@@ -282,6 +286,9 @@ extends DefaultHandler
    */
   public void setOmdbUrl(String omdbUrl)
   {
+    if (omdbUrl != null) {
+      omdbUrl = omdbUrl.trim();
+    }
     this.omdbUrl = omdbUrl;
   }
   /**
@@ -296,6 +303,9 @@ extends DefaultHandler
    */
   public void setGenre(String genre)
   {
+    if (genre != null) {
+      genre = genre.trim();
+    }
     this.genre = genre;
   }
   /**
@@ -394,6 +404,9 @@ extends DefaultHandler
    */
   public void setDesc(String desc)
   {
+    if (desc != null) {
+      desc = desc.trim();
+    }
     this.desc = desc;
   }
 

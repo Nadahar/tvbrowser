@@ -51,7 +51,7 @@ public class OmdbConnection
     public static final String MOVIE_URL = "http://www.omdb.org/movie/";
 
     /**
-     * url to perform a search. apend the url-encoded search params, separated by space (%20).
+     * url to perform a search. append the url-encoded search params, separated by space (%20).
      */
     public static final String SEARCH_URL = "http://www.omdb.org/search?search%5Btext%5D=";
 
@@ -68,7 +68,7 @@ public class OmdbConnection
     private static final String LANGUAGE_URL_EN = "http://www.omdb.org/session/set_language?language=1819";
 
     /**
-     * url to save the abscract. %d will be replaced by the movie id.
+     * url to save the abstract. %d will be replaced by the movie id.
      */
     private static final String SET_ABSTRACT_URL = "http://www.omdb.org/movie/%d/set_abstract";
 
@@ -97,7 +97,7 @@ public class OmdbConnection
 
     /**
      * current language. default is en. is used to remember the selected language
-     * between subsequent calls. therefore we dont have to set the language on omdb
+     * between subsequent calls. therefore we don't have to set the language on omdb
      * each time. saves some slow http-request-response-cycles.
      */
     private byte currentLanguage = EN;
@@ -105,8 +105,8 @@ public class OmdbConnection
 
 
     /**
-     * sets the language of this session. the default language for omdb is english. so every
-     * data saved will be used for the english sub-page of the movie. if you want to save
+     * sets the language of this session. the default language for omdb is English. so every
+     * data saved will be used for the English sub-page of the movie. if you want to save
      * german data, eg an abstract, call this method first to set the language to de.
      *
      * the method is blocking, so it returns, as soon as omdb sends the http response but
@@ -116,7 +116,7 @@ public class OmdbConnection
      * with the language already selected, it returns instantly true.
      *
      * @param language OmdbConnection.EN or OmdbConnection.DE
-     * @return true if the response code was 200 (ok), false otherwise or if the language is not supported
+     * @return true if the response code was 200 (OK), false otherwise or if the language is not supported
      * @throws IOException if the communication with omdb failed
      */
     public boolean setLanguage(byte language)
@@ -177,7 +177,7 @@ public class OmdbConnection
 
 
     /**
-     * just a convinience method wich calls setLanguage and saveAbstract(id, abstract).
+     * just a convenience method which calls setLanguage and saveAbstract(id, abstract).
      *
      * @param movieId the omdb-id of the movie
      * @param movieAbstract the abstract
@@ -210,8 +210,8 @@ public class OmdbConnection
       int statusCode = httpClient.executeMethod(getMethod);
       if (statusCode == 200)
       {
-        //response is utf-8 encoded but response header ist not set. hence http client uses the
-        //default encoding iso-8859-1 for getResponseBodyAsString(), wich is wrong.
+        //response is utf-8 encoded but response header is not set. hence http client uses the
+        //default encoding iso-8859-1 for getResponseBodyAsString(), which is wrong.
         Matcher matcher = ABSTRACT_PATTERN.matcher(new String(getMethod.getResponseBody(), "UTF-8"));
         if (matcher.matches())
         {
@@ -222,7 +222,7 @@ public class OmdbConnection
           }
           else
           {
-            return movieAbstract;
+            return movieAbstract.trim();
           }
         }
       }

@@ -21,6 +21,7 @@ import java.io.IOException;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
+import util.ui.Localizer;
 import util.ui.UiUtilities;
 import devplugin.Date;
 import devplugin.Program;
@@ -58,13 +59,13 @@ public class DialogController
 
 
   /**
-   * this is the enty point for the whole processing. it will load the corresponding data from
+   * this is the entry point for the whole processing. it will load the corresponding data from
    * wirschauen (new thread). if there are data and the program is already linked to omdb, it
    * then opens the dialog to insert/change the omdb abstract for the program. otherwise it will
    * ask the user if he wants to create an omdb link or if he wants to insert wirschauen data.
    * the corresponding dialogs are opened in both cases.
    *
-   * caution: todays programs or even older programs cant be described via wirschauen. the omdb
+   * caution: todays programs or even older programs can't be described via wirschauen. the omdb
    * link dialog is always shown for those programs.
    *
    * @param program the program to describe
@@ -74,9 +75,9 @@ public class DialogController
     this.program = program;
 
     //just a 'im doing something' dialog. may be cancelled by the user.
-    final LoadingInfoDialog loadingInfoDialog = new LoadingInfoDialog(parent);
+    final LoadingInfoDialog loadingInfoDialog = new LoadingInfoDialog(parent, "WirSchauen");
 
-    //load the wirschauen data in a new thead.
+    //load the wirschauen data in a new thread.
     new Thread() {
       @Override
       public void run()
@@ -137,9 +138,9 @@ public class DialogController
       //is the program linked to the omdb?
       if (wirSchauenEvent.getOmdbUrl() == null || wirSchauenEvent.getOmdbUrl().equals(""))
       {
-        //the event has no omdb-link. if it is a future program, show a diolog (choose between
+        //the event has no omdb-link. if it is a future program, show a dialog (choose between
         //omdb-link and wirschauen-stuff). show the omdb-dialog otherwise.
-        Object[] options = {WirSchauenPlugin.mLocalizer.msg("Yes", "Yes"), WirSchauenPlugin.mLocalizer.msg("No", "No"), WirSchauenPlugin.mLocalizer.msg("Cancel", "Cancel")};
+        Object[] options = {WirSchauenPlugin.mLocalizer.msg("Yes", "Yes"), WirSchauenPlugin.mLocalizer.msg("No", "No"), Localizer.getLocalization(Localizer.I18N_CANCEL)};
         int buttonPressed = 0;
         if (program.getDate().compareTo(Date.getCurrentDate()) > 0)
         {
@@ -197,7 +198,7 @@ public class DialogController
         }
         else if (buttonPressed == 1)
         {
-          //dont create a omdb link but create/change wirschauen data
+          //Don't create a omdb link but create/change wirschauen data
           final CreateWirSchauenDataDialog createWirSchauenDataDialog = new CreateWirSchauenDataDialog(parent, program, wirSchauenEvent);
           //restore window size and position
           WirSchauenPlugin.getInstance().layoutWindow("wirschauenplugin.CreateWirSchauenDataDialog", createWirSchauenDataDialog, new Dimension(410, 360));
@@ -250,7 +251,7 @@ public class DialogController
       {
         //the event has an omdb-link. load omdb-data.
         //create i-am-busy-dialog
-        final LoadingInfoDialog loadingOmdbDataDialog = new LoadingInfoDialog(parent);
+        final LoadingInfoDialog loadingOmdbDataDialog = new LoadingInfoDialog(parent, "OMDB");
         //load omdb-data in its own thread.
         new Thread()
         {
@@ -305,7 +306,7 @@ public class DialogController
    * @param loadingOmdbDataDialog the loading-dialog (for closing and cancel-action)
    * @param wirSchauenEvent the wirschauen data for the program
    */
-  private void omdbDataLoaded(String omdbAbstract, LoadingInfoDialog loadingOmdbDataDialog, final WirSchauenEvent wirSchauenEvent)
+  private void omdbDataLoaded(final String omdbAbstract, final LoadingInfoDialog loadingOmdbDataDialog, final WirSchauenEvent wirSchauenEvent)
   {
     //check if the loading was cancelled by the user -> fall through
     if (!loadingOmdbDataDialog.isCancelled())

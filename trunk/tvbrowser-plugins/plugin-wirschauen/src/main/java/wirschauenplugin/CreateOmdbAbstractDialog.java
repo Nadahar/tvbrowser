@@ -64,7 +64,7 @@ implements WindowClosingIf
 
 
   /**
-   * max input length of the abstact in characters.
+   * max input length of the abstract in characters.
    */
   private static short MAX_CHARS_IN_ABSTRACT = 400;
 

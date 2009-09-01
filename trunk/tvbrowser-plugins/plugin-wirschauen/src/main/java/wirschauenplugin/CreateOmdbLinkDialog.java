@@ -84,14 +84,14 @@ implements WindowClosingIf
    * @param parent the parent window of this dialog
    * @param program the program to link with omdb
    */
-  public CreateOmdbLinkDialog(Window parent, Program program)
+  public CreateOmdbLinkDialog(Window parent, final Program program)
   {
     //create the window
     super(parent, mLocalizer.msg("DialogTitle", "Linking with OMDB.org"), ModalityType.APPLICATION_MODAL);
     UiUtilities.registerForClosing(this);
     JPanel contentPane = (JPanel) getContentPane();
     contentPane.setBorder(Borders.DLU4_BORDER);
-    contentPane.setLayout(new FormLayout("right:pref, 3dlu, pref, fill:10dlu:grow, 3dlu, pref", "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref"));
+    contentPane.setLayout(new FormLayout("right:pref, 3dlu, pref, fill:10dlu:grow, 3dlu, pref", "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, fill:3dlu:grow, pref"));
     CellConstraints cellConstraints = new CellConstraints();
     addWindowListener(new WindowAdapter()
     {

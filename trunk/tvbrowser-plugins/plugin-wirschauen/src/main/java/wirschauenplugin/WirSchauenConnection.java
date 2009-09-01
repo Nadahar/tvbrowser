@@ -44,7 +44,7 @@ public class WirSchauenConnection
 
   /**
    * loads the wirschauen event for a program. if the program has no entry
-   * at wirschauen, this method will return a wirschauen event nontheless.
+   * at wirschauen, this method will return a wirschauen event nonetheless.
    * this event is 'empty', though.
    *
    * @param program the program to load the wirschauen event for

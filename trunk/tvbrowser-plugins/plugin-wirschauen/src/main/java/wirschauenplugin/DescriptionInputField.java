@@ -59,13 +59,13 @@ implements DocumentListener
 
 
   /**
-   * builds a lengthwise limited text area with a remaing-char-counter beneath it.
+   * builds a lengthwise limited text area with a remaining-char-counter beneath it.
    *
-   * @param maxChars the max legth of the text area
+   * @param maxChars the max length of the text area
    * @param value the default value of the text area
-   * @param label the remaing characters label. it must include a %s as placeholder for the counter.
+   * @param label the remaining characters label. it must include a %s as placeholder for the counter.
    */
-  public DescriptionInputField(int maxChars, String value, String label)
+  public DescriptionInputField(final int maxChars, final String value, final String label)
   {
     this.maxChars = maxChars;
     this.label = label;
@@ -82,7 +82,11 @@ implements DocumentListener
     add(counterLabel, cellConstraints.xy(1, 3, CellConstraints.RIGHT, CellConstraints.CENTER));
 
     //this fires a event to the document listeners (i.e. this). so be sure, everything is initialized (e.g. counter label)
-    textArea.insert(value, 0);
+    String initialValue = null;
+    if (value != null) {
+      initialValue = value.trim();
+    }
+    textArea.insert(initialValue, 0);
   }
 
 
@@ -91,7 +95,7 @@ implements DocumentListener
    */
   public String getText()
   {
-    return textArea.getText();
+    return textArea.getText().trim();
   }
 
 
@@ -109,7 +113,7 @@ implements DocumentListener
 
 
   /**
-   * called everytime the document listener fires. updates the label
+   * called every time the document listener fires. updates the label
    * for the remaining characters.
    *
    * @param event

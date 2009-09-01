@@ -65,7 +65,7 @@ implements WindowClosingIf
 
 
   /**
-   * max input length of the abstact in characters.
+   * max input length of the abstract in characters.
    */
   private static final short MAX_CHARS_IN_ABSTRACT = 200;
 
@@ -84,7 +84,7 @@ implements WindowClosingIf
    * @param program the program, which the data is for
    * @param wirSchauenEvent the (old) wirschauen data loaded from the server
    */
-  public CreateWirSchauenDataDialog(Window parent, Program program, WirSchauenEvent wirSchauenEvent)
+  public CreateWirSchauenDataDialog(final Window parent, final Program program, final WirSchauenEvent wirSchauenEvent)
   {
     //create the window
     super(parent, mLocalizer.msg("DialogTitle", "Description for WirSchauen.de"), ModalityType.APPLICATION_MODAL);
@@ -130,7 +130,7 @@ implements WindowClosingIf
 
     //description/abstract
     contentPane.add(DialogUtil.createBoldLabel(WirSchauenPlugin.mLocalizer.msg("PropertyLabels.Description", "Description")), cellConstraints.xy(1, 9, CellConstraints.DEFAULT, CellConstraints.TOP));
-    final DescriptionInputField descriptionInputField = new DescriptionInputField(CreateWirSchauenDataDialog.MAX_CHARS_IN_ABSTRACT, "", WirSchauenPlugin.mLocalizer.msg("RemainingChars", "%s Characters remaining"));
+    final DescriptionInputField descriptionInputField = new DescriptionInputField(CreateWirSchauenDataDialog.MAX_CHARS_IN_ABSTRACT, "", WirSchauenPlugin.mLocalizer.msg("RemainingChars", "%s characters remaining"));
     contentPane.add(descriptionInputField, cellConstraints.xy(3, 9));
 
     // format information

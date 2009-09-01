@@ -203,60 +203,46 @@ public final class WirSchauenPlugin extends Plugin {
     return new PluginsProgramFilter[] { mFilter };
   }
 
-    /**
-     * @see devplugin.Plugin#getProgramTableIcons(devplugin.Program)
-     */
-    @Override
-    public Icon[] getProgramTableIcons(Program program)
-    {
-        //show the icon for a missing description
-        if (isProgramAllowed(program) &&
-                (program.getShortInfo() == null ||
-                        (program.getShortInfo().indexOf("keine Beschreibung") != -1 && program.getShortInfo().indexOf("WirSchauen") != -1)))
-        {
-            if (mMissingDescriptionIcon == null)
-            {
-                mMissingDescriptionIcon = createImageIcon("apps", "wirschauen_noDesc", 16);
-            }
-            return new Icon[] {mMissingDescriptionIcon};
-        }
-        if (program == getPluginManager().getExampleProgram()) {
-          return new Icon[] {mMissingDescriptionIcon};
-        }
-        return null;
+  @Override
+  public Icon[] getProgramTableIcons(Program program) {
+    // show the icon for a missing description
+    if (isProgramAllowed(program)
+        && (program.getShortInfo() == null || (program.getShortInfo().indexOf("keine Beschreibung") != -1 && program
+            .getShortInfo().indexOf("WirSchauen") != -1))) {
+      if (mMissingDescriptionIcon == null) {
+        mMissingDescriptionIcon = createImageIcon("apps", "wirschauen_noDesc", 16);
+      }
+      return new Icon[] { mMissingDescriptionIcon };
+    }
+    if (program == getPluginManager().getExampleProgram()) {
+      return new Icon[] { mMissingDescriptionIcon };
+    }
+    return null;
+  }
+
+  @Override
+  public String getProgramTableIconText() {
+    return mLocalizer.msg("icon", "WirSchauen: Description for this program is missing");
+  }
+
+  /**
+   * checks if a program is allowed to be processed by wirschauen. the method
+   * checks, if the programs channel is in the vg media. if so, the program is
+   * allowed. im not sure if this restriction makes sense anymore.
+   * 
+   * @param program
+   *          the program to be checked
+   * @return true, if the program is allowed to be processed by wirschauen
+   */
+  private boolean isProgramAllowed(Program program) {
+    String name = "";
+
+    if (program.getChannel().getDataServiceProxy() != null) {
+      name = program.getChannel().getDataServiceProxy().getId() + ":";
     }
 
+    name = name + program.getChannel().getId();
 
-    /**
-     * @see devplugin.Plugin#getProgramTableIconText()
-     */
-    @Override
-    public String getProgramTableIconText()
-    {
-        return mLocalizer.msg("icon", "WirSchauen: Description for this program is missing");
-    }
-
-
-    /**
-     * checks if a program is allowed to be processed by wirschauen.
-     * the method checks, if the programs channel is in the vg media.
-     * if so, the program is allowed. im not sure if this restriction
-     * makes sense anymore.
-     *
-     * @param program the program to be checked
-     * @return true, if the program is allowed to be processed by wirschauen
-     */
-    private boolean isProgramAllowed(Program program)
-    {
-        String name = "";
-
-        if (program.getChannel().getDataServiceProxy() != null)
-        {
-            name = program.getChannel().getDataServiceProxy().getId() + ":";
-        }
-
-        name = name + program.getChannel().getId();
-
-        return (getPluginManager().getExampleProgram().equals(program) || mAllowedChannels.contains(name));
-    }
+    return (getPluginManager().getExampleProgram().equals(program) || mAllowedChannels.contains(name));
+  }
 }
