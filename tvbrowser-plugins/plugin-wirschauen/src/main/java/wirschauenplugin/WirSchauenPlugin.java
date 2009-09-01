@@ -25,24 +25,15 @@
 */
 package wirschauenplugin;
 
-import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.net.URL;
-import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Icon;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 
-import util.exc.ErrorHandler;
-import util.io.IOUtilities;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import devplugin.ActionMenu;
@@ -51,7 +42,6 @@ import devplugin.PluginInfo;
 import devplugin.PluginsFilterComponent;
 import devplugin.PluginsProgramFilter;
 import devplugin.Program;
-import devplugin.ProgramFieldType;
 import devplugin.ThemeIcon;
 import devplugin.Version;
 
@@ -61,28 +51,26 @@ import devplugin.Version;
 public final class WirSchauenPlugin extends Plugin {
   private static final boolean IS_STABLE = true;
 
-  private static final Version mVersion = new Version(0, 13, 0, IS_STABLE);
-
-  private static Logger mLog = Logger.getLogger(WirSchauenPlugin.class.getName());
+  private static final Version mVersion = new Version(0, 14, 0, IS_STABLE);
 
   private ArrayList<String> mAllowedChannels;
 
   /**
    * Localizer
    */
-  private static final Localizer mLocalizer = Localizer.getLocalizerFor(WirSchauenPlugin.class);
+  protected static final Localizer mLocalizer = Localizer.getLocalizerFor(WirSchauenPlugin.class);
 
   private static WirSchauenPlugin INSTANCE;
 
   private PluginInfo mPluginInfo;
 
   private static Icon mIcon;
-  
+
   /**
    * the icon for a missing description, shown in the program table.
    */
   private static Icon mMissingDescriptionIcon;
-  
+
   private PluginsProgramFilter mFilter;
 
   private WirSchauenFilterComponent mComponent;
@@ -113,7 +101,7 @@ public final class WirSchauenPlugin extends Plugin {
     mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:RTLPASSION");
     mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:RTLLIVING");
     mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:RTLCRIME");
-  
+
   }
 
   /**
@@ -132,6 +120,7 @@ public final class WirSchauenPlugin extends Plugin {
   /**
    * Returns the Plugin-Info
    */
+  @Override
   public PluginInfo getInfo() {
     if (mPluginInfo == null) {
       mPluginInfo = new PluginInfo(WirSchauenPlugin.class, mLocalizer.msg("name", "WirSchauenPlugin"),
@@ -146,18 +135,21 @@ public final class WirSchauenPlugin extends Plugin {
   /**
    * Creates the Context-Menu-Entries
    */
+  @Override
   public ActionMenu getContextMenuActions(final Program program)
   {
-    if (isProgramAllowed(program)) {
-
-      final AbstractAction action = new AbstractAction() {
-        public void actionPerformed(final ActionEvent evt) {
-          showDescribeDialog(program);
+    if (isProgramAllowed(program))
+    {
+      @SuppressWarnings("serial")
+      final AbstractAction action = new AbstractAction()
+      {
+        public void actionPerformed(final ActionEvent event)
+        {
+          new DialogController(UiUtilities.getLastModalChildOf(getParentFrame())).startDialogs(program);
         }
       };
-
       action.putValue(Action.NAME, mLocalizer.msg("contextMenu", "Recommend text for this program"));
-      
+
       if (mIcon == null)
       {
           mIcon = createImageIcon("apps", "wirschauen", 16);
@@ -166,9 +158,6 @@ public final class WirSchauenPlugin extends Plugin {
       action.putValue(Action.SMALL_ICON, mIcon);
 
       return new ActionMenu(action);
-
-    } else {
-      // mLog.log(Level.INFO, "Channel not allowed for WirSchauen: " + name);
     }
 
     return null;
@@ -179,77 +168,6 @@ public final class WirSchauenPlugin extends Plugin {
     return new ThemeIcon("apps", "wirschauen", 16);
   }
 
-  private void showDescribeDialog(final Program program) {
-    final Window parentWindow = UiUtilities.getLastModalChildOf(getParentFrame());
-
-    WirSchauenDialog dialog;
-
-    if (parentWindow instanceof JDialog) {
-      dialog = new WirSchauenDialog((JDialog) parentWindow, program);
-    } else {
-      dialog = new WirSchauenDialog((JFrame) parentWindow, program);
-    }
-
-    UiUtilities.centerAndShow(dialog);
-
-    if (dialog.getButtonPressed() == JOptionPane.OK_OPTION) {
-      // check whether we got any input at all
-      if (!dialog.hasChanged()) {
-        return;
-      }
-      
-      // we have new input, so store it on the server
-      final String category = dialog.getCategory();
-      final String genre = dialog.getGenre();
-      final String description = dialog.getDescription();
-      final String flagSubtitle = dialog.getSubtitle();
-      final String flagOws = dialog.getOws();
-      final String flagPremiere = dialog.getPremiere();
-      final String omdbUrl = dialog.getUrl();
-
-      final StringBuilder url = new StringBuilder();
-      try {
-        url.append("channel=").append(URLEncoder.encode(program.getChannel().getId(), "UTF-8"));
-        url.append("&day=").append(program.getDate().getDayOfMonth());
-        url.append("&month=").append(program.getDate().getMonth());
-        url.append("&year=").append(program.getDate().getYear());
-        url.append("&hour=").append(program.getHours());
-        url.append("&minute=").append(program.getMinutes());
-        url.append("&length=").append(program.getLength());
-        url.append("&title=").append(URLEncoder.encode(program.getTitle(), "UTF-8"));
-        url.append("&category=").append(category);
-        
-        final String episodeField = program
-            .getTextField(ProgramFieldType.EPISODE_TYPE);
-        if (episodeField != null) {
-          url.append("&episode=").append(URLEncoder.encode(episodeField, "UTF-8"));
-        }
-        if (omdbUrl.length() > 0) {
-          url.append("&url=").append(URLEncoder.encode(omdbUrl, "UTF-8"));
-        }
-        if (genre.length() > 0) {
-          url.append("&genre=").append(URLEncoder.encode(genre, "UTF-8"));
-        }
-        if (description.length() > 0) {
-          url.append("&description=").append(URLEncoder.encode(description, "UTF-8"));
-        }
-        url.append("&subtitle=").append(URLEncoder.encode(flagSubtitle, "UTF-8"));
-        url.append("&omu=").append(URLEncoder.encode(flagOws, "UTF-8"));
-        url.append("&premiere=").append(URLEncoder.encode(flagPremiere, "UTF-8"));
-
-        final URL u = new URL(BASE_URL + "addTVBrowserEvent/?" + url);
-        IOUtilities.loadFileFromHttpServer(u);
-
-        getRootNode().addProgram(program);
-        getRootNode().update();
-
-        JOptionPane.showMessageDialog(getParentFrame(), mLocalizer.msg("success", "Thank you for submitting a description!"), mLocalizer.msg("successTitle", "Thank you"), JOptionPane.INFORMATION_MESSAGE);
-      } catch (Exception e) {
-        ErrorHandler.handle(mLocalizer.msg("problem", "Sorry, a problem occured during the upload"), e);
-        e.printStackTrace();
-      }
-    }
-  }
 
   @Override
   public boolean canUseProgramTree() {
@@ -264,7 +182,7 @@ public final class WirSchauenPlugin extends Plugin {
 
   @Override
   public Class<? extends PluginsFilterComponent>[] getAvailableFilterComponentClasses() {
-    return (Class<? extends PluginsFilterComponent>[]) new Class[] { WirSchauenFilterComponent.class };
+    return new Class[] { WirSchauenFilterComponent.class };
   }
 
   @Override
@@ -293,7 +211,7 @@ public final class WirSchauenPlugin extends Plugin {
     {
         //show the icon for a missing description
         if (isProgramAllowed(program) &&
-                (program.getShortInfo() == null || 
+                (program.getShortInfo() == null ||
                         (program.getShortInfo().indexOf("keine Beschreibung") != -1 && program.getShortInfo().indexOf("WirSchauen") != -1)))
         {
             if (mMissingDescriptionIcon == null)
@@ -308,7 +226,7 @@ public final class WirSchauenPlugin extends Plugin {
         return null;
     }
 
-    
+
     /**
      * @see devplugin.Plugin#getProgramTableIconText()
      */
@@ -317,14 +235,14 @@ public final class WirSchauenPlugin extends Plugin {
     {
         return mLocalizer.msg("icon", "WirSchauen: Description for this program is missing");
     }
-    
-    
+
+
     /**
      * checks if a program is allowed to be processed by wirschauen.
      * the method checks, if the programs channel is in the vg media.
      * if so, the program is allowed. im not sure if this restriction
      * makes sense anymore.
-     *  
+     *
      * @param program the program to be checked
      * @return true, if the program is allowed to be processed by wirschauen
      */
@@ -338,7 +256,7 @@ public final class WirSchauenPlugin extends Plugin {
         }
 
         name = name + program.getChannel().getId();
-        
+
         return (getPluginManager().getExampleProgram().equals(program) || mAllowedChannels.contains(name));
     }
 }
