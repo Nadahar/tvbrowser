@@ -235,7 +235,7 @@ public class DialogUtil
   /**
    * creates a dropdown which is editable. an AutoCompletion is used.
    *
-   * @param options the options of the drowdown.
+   * @param options the options of the dropdown.
    * @return the JComboBox
    */
   public static JComboBox createEditableDropdown(final String[] options)

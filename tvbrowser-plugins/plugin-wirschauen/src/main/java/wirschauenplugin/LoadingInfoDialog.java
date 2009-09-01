@@ -36,8 +36,8 @@ import com.jgoodies.forms.layout.FormLayout;
 /**
  * its a little dialog with a progress bar and a cancel button. its used to
  * show 'im busy' whenever a long running task is performed (in this case its
- * loading from the internet). it can be cancelled (which will close the
- * dialog). the dialog is application modaland not resizable.
+ * loading from the Internet). it can be canceled (which will close the
+ * dialog). the dialog is application modal and not resizable.
  *
  * @author uzi
  * @date 30.08.2009
@@ -65,11 +65,12 @@ implements WindowClosingIf
    * creates a modal dialog with a progress bar and a cancel-button.
    *
    * @param parent the parent of the dialog
+   * @param webSite name of the website we are loading data from
    */
-  public LoadingInfoDialog(Window parent)
+  public LoadingInfoDialog(final Window parent, final String webSite)
   {
     //create the window
-    super(parent, mLocalizer.msg("DialogTitle", "Loading..."), ModalityType.APPLICATION_MODAL);
+    super(parent, mLocalizer.msg("DialogTitle", "Loading data from {0}...", webSite), ModalityType.APPLICATION_MODAL);
     setResizable(false);
     //register esc key
     UiUtilities.registerForClosing(this);
@@ -77,7 +78,7 @@ implements WindowClosingIf
     contentPane.setBorder(Borders.DLU4_BORDER);
     contentPane.setLayout(new FormLayout("center:pref", "pref, 3dlu, pref"));
     CellConstraints cellConstraints = new CellConstraints();
-    //regist window control
+    //register window control
     addWindowListener(new WindowAdapter()
     {
       @Override
@@ -90,7 +91,7 @@ implements WindowClosingIf
     //add the progress bar
     JProgressBar progressBar = new JProgressBar();
     progressBar.setIndeterminate(true);
-    progressBar.setSize(100, 10);
+    progressBar.setSize(200, 10);
     contentPane.add(progressBar, cellConstraints.xy(1, 1));
 
     //add the cancel button
