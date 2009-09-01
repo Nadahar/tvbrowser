@@ -32,14 +32,33 @@
           <encoding>UTF-8</encoding>
         </configuration>
       </plugin>
-      <plugin>
+      <!-- <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
         <configuration>
           <finalName>WirSchauenPlugin</finalName>
         </configuration>
+      </plugin>-->
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <configuration>
+            <descriptorRefs>
+                <descriptorRef>jar-with-dependencies</descriptorRef>
+            </descriptorRefs>
+            <finalName>WirSchauenPlugin</finalName>
+            <appendAssemblyId>false</appendAssemblyId>
+            <attach>false</attach>
+        </configuration>
+        <executions>
+         <execution>
+                <id>make-assembly</id> <!-- this is used for inheritance merges -->
+                <phase>package</phase> <!-- append to the packaging phase. -->
+                <goals>
+                    <goal>single</goal> <!-- goals == mojos -->
+                </goals>
+          </execution>
+        </executions>
       </plugin>
-
     </plugins>
   </build>
   <dependencies>
@@ -50,6 +69,11 @@
     <dependency>
       <groupId>org.tvbrowser</groupId>
       <artifactId>tvbrowser</artifactId>
+    </dependency>
+    <dependency>
+    	<groupId>commons-httpclient</groupId>
+    	<artifactId>commons-httpclient</artifactId>
+    	<version>3.1</version>
     </dependency>
   </dependencies>
 </project>
