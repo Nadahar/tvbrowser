@@ -24,16 +24,16 @@
  */
 package captureplugin;
 
-import captureplugin.drivers.DeviceIf;
-import devplugin.Program;
-import util.exc.ErrorHandler;
-import util.ui.Localizer;
-
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Collection;
 import java.util.Vector;
+
+import util.exc.ErrorHandler;
+import util.ui.Localizer;
+import captureplugin.drivers.DeviceIf;
+import devplugin.Program;
 
 
 /**
@@ -181,7 +181,7 @@ public class CapturePluginData implements Cloneable {
     }
     
     /**
-     * Sets the mark priority used by capture plguin.
+     * Sets the mark priority used by capture plugin.
      * 
      * @param priority The new mark priority.
      * @since 2.12
@@ -192,8 +192,11 @@ public class CapturePluginData implements Cloneable {
       for(DeviceIf device : mDevices) {
         Program[] programs = device.getProgramList();
         
-        for(Program program : programs)
-          program.validateMarking();
+        if (programs != null) {
+          for(Program program : programs) {
+            program.validateMarking();
+          }
+        }
       }
     }
 }
