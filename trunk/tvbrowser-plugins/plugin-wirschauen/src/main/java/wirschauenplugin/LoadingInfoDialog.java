@@ -40,24 +40,25 @@ import com.jgoodies.forms.layout.FormLayout;
  * dialog). the dialog is application modal and not resizable.
  *
  * @author uzi
- * @date 30.08.2009
  */
 @SuppressWarnings("serial")
-public class LoadingInfoDialog
-extends JDialog
-implements WindowClosingIf
+public class LoadingInfoDialog extends JDialog implements WindowClosingIf
 {
+  /**
+   * Localizer.
+   */
+  private static final Localizer LOCALIZER = Localizer.getLocalizerFor(LoadingInfoDialog.class);
+
+
+
   /**
    * true, if one of the different cancel-methods was used. every user initiated closing of
    * the dialog means that cancelled is true.
    */
-  private boolean cancelled = false;
+  private boolean mCancelled;
 
 
-  /**
-   * Localizer
-   */
-  private static final Localizer mLocalizer = Localizer.getLocalizerFor(LoadingInfoDialog.class);
+
 
 
 
@@ -70,7 +71,7 @@ implements WindowClosingIf
   public LoadingInfoDialog(final Window parent, final String webSite)
   {
     //create the window
-    super(parent, mLocalizer.msg("DialogTitle", "Loading data from {0}...", webSite), ModalityType.APPLICATION_MODAL);
+    super(parent, LOCALIZER.msg("DialogTitle", "Loading data from {0}...", webSite), ModalityType.APPLICATION_MODAL);
     setResizable(false);
     //register esc key
     UiUtilities.registerForClosing(this);
@@ -82,7 +83,7 @@ implements WindowClosingIf
     addWindowListener(new WindowAdapter()
     {
       @Override
-      public void windowClosing(WindowEvent e)
+      public void windowClosing(final WindowEvent e)
       {
         close();
       }
@@ -119,7 +120,7 @@ implements WindowClosingIf
   {
     //close the window and provide the cancelled-status
     setVisible(false);
-    cancelled = true;
+    mCancelled = true;
     dispose();
   }
 
@@ -129,6 +130,6 @@ implements WindowClosingIf
    */
   public boolean isCancelled()
   {
-    return cancelled;
+    return mCancelled;
   }
 }

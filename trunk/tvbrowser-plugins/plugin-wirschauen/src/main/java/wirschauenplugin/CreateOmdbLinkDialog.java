@@ -48,33 +48,34 @@ import devplugin.ProgramFieldType;
  * esc, close window) isCancelled will return true.
  *
  * @author uzi
- * @date 30.08.2009
  */
 @SuppressWarnings("serial")
-public class CreateOmdbLinkDialog
-extends JDialog
-implements WindowClosingIf
+public class CreateOmdbLinkDialog extends JDialog implements WindowClosingIf
 {
+  /**
+   * Localizer.
+   */
+  private static final Localizer LOCALIZER = Localizer.getLocalizerFor(CreateOmdbLinkDialog.class);
+
+
+
   /**
    * true, if one of the different cancel-methods was used. every user initiated closing of
    * the dialog means that cancelled is true.
    */
-  private boolean cancelled = false;
+  private boolean mCancelled;
 
   /**
-   * the omdb id for the program inserted by the user
+   * the omdb id for the program inserted by the user.
    */
-  private int omdbId;
+  private int mOmdbId;
 
   /**
-   * movie or series
+   * movie or series.
    */
-  private byte category;
+  private byte mCategory;
 
-  /**
-   * Localizer
-   */
-  private static final Localizer mLocalizer = Localizer.getLocalizerFor(CreateOmdbLinkDialog.class);
+
 
 
 
@@ -84,10 +85,10 @@ implements WindowClosingIf
    * @param parent the parent window of this dialog
    * @param program the program to link with omdb
    */
-  public CreateOmdbLinkDialog(Window parent, final Program program)
+  public CreateOmdbLinkDialog(final Window parent, final Program program)
   {
     //create the window
-    super(parent, mLocalizer.msg("DialogTitle", "Linking with OMDB.org"), ModalityType.APPLICATION_MODAL);
+    super(parent, LOCALIZER.msg("DialogTitle", "Linking with OMDB.org"), ModalityType.APPLICATION_MODAL);
     UiUtilities.registerForClosing(this);
     JPanel contentPane = (JPanel) getContentPane();
     contentPane.setBorder(Borders.DLU4_BORDER);
@@ -96,7 +97,7 @@ implements WindowClosingIf
     addWindowListener(new WindowAdapter()
     {
       @Override
-      public void windowClosing(WindowEvent e)
+      public void windowClosing(final WindowEvent e)
       {
         close();
       }
@@ -121,9 +122,9 @@ implements WindowClosingIf
     //omdb-link-input (label + url + input-field for id + button-link to omdb)
     contentPane.add(DialogUtil.createBoldLabel(WirSchauenPlugin.mLocalizer.msg("PropertyLabels.OmdbUrl", "URL")), cellConstraints.xy(1, 5));
     contentPane.add(new JLabel("http://www.omdb.org/movie/"), cellConstraints.xy(3, 5));
-    final JTextField omdbIdInput = DialogUtil.createNumericInput(mLocalizer.msg("IdTooltip", "numeric OMDB-ID of the program"));
+    final JTextField omdbIdInput = DialogUtil.createNumericInput(LOCALIZER.msg("IdTooltip", "numeric OMDB-ID of the program"));
     contentPane.add(omdbIdInput, cellConstraints.xy(4, 5));
-    contentPane.add(DialogUtil.createUrlButton(generateSearchUrl(program.getTitle(), program.getTextField(ProgramFieldType.EPISODE_TYPE)), mLocalizer.msg("FindProgram", "Find program in OMDB")), cellConstraints.xy(6, 5));
+    contentPane.add(DialogUtil.createUrlButton(generateSearchUrl(program.getTitle(), program.getTextField(ProgramFieldType.EPISODE_TYPE)), LOCALIZER.msg("FindProgram", "Find program in OMDB")), cellConstraints.xy(6, 5));
 
     //dropdown category (movie or series)
     contentPane.add(DialogUtil.createBoldLabel(WirSchauenPlugin.mLocalizer.msg("PropertyLabels.Category", "Category")), cellConstraints.xy(1, 7));
@@ -144,8 +145,8 @@ implements WindowClosingIf
       {
         //provide the input and close the dialog
         setVisible(false);
-        omdbId = Integer.parseInt(omdbIdInput.getText());
-        category = categoryDropdown.getSelectedIndex() == 1 ? WirSchauenEvent.CATEGORY_MOVIE : WirSchauenEvent.CATEGORY_SERIES;
+        mOmdbId = Integer.parseInt(omdbIdInput.getText());
+        mCategory = categoryDropdown.getSelectedIndex() == 1 ? WirSchauenEvent.CATEGORY_MOVIE : WirSchauenEvent.CATEGORY_SERIES;
         dispose();
       }
     });
@@ -177,7 +178,7 @@ implements WindowClosingIf
    * @param episodeName the name of the episode or null
    * @return the search-url
    */
-  private String generateSearchUrl(String programName, String episodeName)
+  private String generateSearchUrl(final String programName, final String episodeName)
   {
     try
     {
@@ -189,7 +190,7 @@ implements WindowClosingIf
       }
       return urlBuilder.toString();
     }
-    catch (UnsupportedEncodingException uee)
+    catch (final UnsupportedEncodingException uee)
     {
       uee.printStackTrace();
     }
@@ -208,7 +209,7 @@ implements WindowClosingIf
   public void close()
   {
     setVisible(false);
-    cancelled = true;
+    mCancelled = true;
     dispose();
   }
 
@@ -217,7 +218,7 @@ implements WindowClosingIf
    */
   public boolean isCancelled()
   {
-    return cancelled;
+    return mCancelled;
   }
 
 
@@ -226,7 +227,7 @@ implements WindowClosingIf
    */
   public int getOmdbId()
   {
-    return omdbId;
+    return mOmdbId;
   }
 
 
@@ -235,6 +236,6 @@ implements WindowClosingIf
    */
   public byte getCategory()
   {
-    return category;
+    return mCategory;
   }
 }
