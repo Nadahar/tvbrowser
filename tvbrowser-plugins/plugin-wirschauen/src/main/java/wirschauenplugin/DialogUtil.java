@@ -11,7 +11,9 @@
  *
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
- */package wirschauenplugin;
+ */
+
+package wirschauenplugin;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -44,10 +46,18 @@ import com.jgoodies.forms.layout.FormLayout;
  * just a helper class to create form components.
  *
  * @author uzi
- * @date 30.08.2009
  */
-public class DialogUtil
+public final class DialogUtil
 {
+  /**
+   * util class, so hide the default constructor.
+   */
+  private DialogUtil()
+  {
+    super();
+  }
+
+
   /**
    * creates a JTextField. it allows only numeric input.
    *
@@ -55,7 +65,7 @@ public class DialogUtil
    * @return the JTextField
    */
   @SuppressWarnings("serial")
-  public static JTextField createNumericInput(String tooltip)
+  public static JTextField createNumericInput(final String tooltip)
   {
     NumberFormat integerFormat = NumberFormat.getIntegerInstance();
     integerFormat.setGroupingUsed(false);
@@ -65,8 +75,7 @@ public class DialogUtil
     urlInput.setDocument(new PlainDocument()
     {
       @Override
-      public void insertString(final int offset, final String input, final AttributeSet a)
-      throws BadLocationException
+      public void insertString(final int offset, final String input, final AttributeSet a) throws BadLocationException
       {
         final String filtered = input.replaceAll("\\D", "");
         if (!filtered.equals(input))
@@ -95,21 +104,20 @@ public class DialogUtil
     textArea.setDocument(new PlainDocument()
     {
       @Override
-      public void insertString(final int offs, String str, AttributeSet a)
-      throws BadLocationException
+      public void insertString(final int offs, final String str, final AttributeSet a) throws BadLocationException
       {
         if (str == null)
         {
           return;
         }
-        str = str.replaceAll("\t", "");
-        if (getLength() + str.length() > maxCharCount)
+        String strReplaced = str.replaceAll("\t", "");
+        if (getLength() + strReplaced.length() > maxCharCount)
         {
           Toolkit.getDefaultToolkit().beep();
         }
         else
         {
-          super.insertString(offs, str, a);
+          super.insertString(offs, strReplaced, a);
         }
       }
     });
@@ -126,7 +134,7 @@ public class DialogUtil
    * @param toolTip the tooltip of the button
    * @return the button
    */
-  public static JButton createUrlButton(final String url, String toolTip)
+  public static JButton createUrlButton(final String url, final String toolTip)
   {
     JButton urlButton = new JButton(WirSchauenPlugin.getInstance().createImageIcon("apps", "internet-web-browser", 16));
     urlButton.setToolTipText(toolTip);
@@ -147,7 +155,7 @@ public class DialogUtil
    * @param labelString the label label ;)
    * @return the label
    */
-  public static JLabel createBoldLabel(String labelString)
+  public static JLabel createBoldLabel(final String labelString)
   {
     JLabel label = new JLabel(labelString);
     label.setFont(label.getFont().deriveFont(Font.BOLD));
@@ -161,9 +169,9 @@ public class DialogUtil
    * it the whole value of the text field will get marked.
    *
    * @param value the value of the text field
-   * @return
+   * @return the text field
    */
-  public static JTextField createReadOnlySelectAllTextField(String value)
+  public static JTextField createReadOnlySelectAllTextField(final String value)
   {
     final JTextField textField = new JTextField(value);
     textField.setEditable(false);
@@ -188,7 +196,7 @@ public class DialogUtil
    * @return the JComboBox
    */
   @SuppressWarnings("serial")
-  public static JComboBox createUneditableDropdown(final String[] options, int selected)
+  public static JComboBox createUneditableDropdown(final String[] options, final int selected)
   {
     JComboBox dropdown = new JComboBox(options);
     dropdown.setEditable(false);

@@ -32,14 +32,26 @@ import devplugin.ProgramFieldType;
  * this class is the connection to the wirschauen backend.
  *
  * @author uzi
- * @date 30.08.2009
  */
-public class WirSchauenConnection
+public final class WirSchauenConnection
 {
   /**
-   * base url to wirschauen
+   * base url to wirschauen.
    */
   private static final String BASE_URL = "http://www.wirschauen.de/events/";
+
+
+
+  /**
+   * util class, so hide the default constructor.
+   */
+  private WirSchauenConnection()
+  {
+    super();
+  }
+
+
+
 
 
   /**
@@ -51,8 +63,7 @@ public class WirSchauenConnection
    * @return the wirschauen event or null if wirschauen returns malformed data
    * @throws IOException if the connection failed
    */
-  public static WirSchauenEvent getEvent(Program program)
-  throws IOException
+  public static WirSchauenEvent getEvent(final Program program) throws IOException
   {
     try
     {
@@ -73,15 +84,15 @@ public class WirSchauenConnection
       SAXParserFactory.newInstance().newSAXParser().parse(new URL(url.toString()).openStream(), event);
       return event;
     }
-    catch (UnsupportedEncodingException e)
+    catch (final UnsupportedEncodingException e)
     {
       e.printStackTrace();
     }
-    catch (ParserConfigurationException e)
+    catch (final ParserConfigurationException e)
     {
       e.printStackTrace();
     }
-    catch (SAXException e)
+    catch (final SAXException e)
     {
       e.printStackTrace();
     }
@@ -96,8 +107,7 @@ public class WirSchauenConnection
    * @param program the corresponding program
    * @throws IOException if the connection failed
    */
-  public static void saveEvent(WirSchauenEvent event, Program program)
-  throws IOException
+  public static void saveEvent(final WirSchauenEvent event, final Program program) throws IOException
   {
     //build and call the url
     StringBuilder url = new StringBuilder(BASE_URL).append("addTVBrowserEvent/?");

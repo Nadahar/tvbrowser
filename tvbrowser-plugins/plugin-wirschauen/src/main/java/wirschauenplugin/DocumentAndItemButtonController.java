@@ -31,34 +31,32 @@ import javax.swing.text.BadLocationException;
  * input field is >0.
  *
  * @author uzi
- * @date 30.08.2009
  */
-public class DocumentAndItemButtonController
-implements DocumentListener, ItemListener
+public class DocumentAndItemButtonController implements DocumentListener, ItemListener
 {
   /**
-   * the button to control
+   * the button to control.
    */
-  private JButton button;
+  private JButton mButton;
 
   /**
-   * the document's (input field's) vote to activate the button
+   * the document's (input field's) vote to activate the button.
    */
-  private boolean docOk = false;
+  private boolean mDocOk;
 
   /**
-   * the dropdown's vote to activate the button
+   * the dropdown's vote to activate the button.
    */
-  private boolean dropdownOk = false;
+  private boolean mDropdownOk;
 
 
 
   /**
    * @param button the button to control
    */
-  public DocumentAndItemButtonController(JButton button)
+  public DocumentAndItemButtonController(final JButton button)
   {
-    this.button = button;
+    this.mButton = button;
   }
 
 
@@ -68,7 +66,7 @@ implements DocumentListener, ItemListener
    */
   private void updateButton()
   {
-    button.setEnabled(docOk && dropdownOk);
+    mButton.setEnabled(mDocOk && mDropdownOk);
   }
 
 
@@ -76,13 +74,14 @@ implements DocumentListener, ItemListener
    * votes for the activation of the button if the selected item in the combo box
    * has not the index 0.
    *
+   * @param e the event fired
    * @see java.awt.event.ItemListener#itemStateChanged(java.awt.event.ItemEvent)
    */
-  public void itemStateChanged(ItemEvent e)
+  public void itemStateChanged(final ItemEvent e)
   {
     if (e.getStateChange() == ItemEvent.SELECTED)
     {
-      dropdownOk = ((JComboBox) e.getItemSelectable()).getSelectedIndex() != 0;
+      mDropdownOk = ((JComboBox) e.getItemSelectable()).getSelectedIndex() != 0;
       updateButton();
     }
   }
@@ -92,41 +91,41 @@ implements DocumentListener, ItemListener
    * called whenever the document listener fires. votes to activate the button
    * if the length of the document is > 0.
    *
-   * @param e
+   * @param e the event fired
    */
-  private void docUpdated(DocumentEvent e)
+  private void docUpdated(final DocumentEvent e)
   {
     try
     {
-      docOk = !(e.getDocument().getText(0, e.getDocument().getLength()).trim().length() == 0);
+      mDocOk = !(e.getDocument().getText(0, e.getDocument().getLength()).trim().length() == 0);
       updateButton();
     }
-    catch (BadLocationException ble)
+    catch (final BadLocationException ble)
     {
       ble.printStackTrace();
     }
   }
 
   /**
-   * @see javax.swing.event.DocumentListener#changedUpdate(javax.swing.event.DocumentEvent)
+   * {@inheritDoc}
    */
-  public void changedUpdate(DocumentEvent e)
+  public void changedUpdate(final DocumentEvent e)
   {
     docUpdated(e);
   }
 
   /**
-   * @see javax.swing.event.DocumentListener#insertUpdate(javax.swing.event.DocumentEvent)
+   * {@inheritDoc}
    */
-  public void insertUpdate(DocumentEvent e)
+  public void insertUpdate(final DocumentEvent e)
   {
     docUpdated(e);
   }
 
   /**
-   * @see javax.swing.event.DocumentListener#removeUpdate(javax.swing.event.DocumentEvent)
+   * {@inheritDoc}
    */
-  public void removeUpdate(DocumentEvent e)
+  public void removeUpdate(final DocumentEvent e)
   {
     docUpdated(e);
   }

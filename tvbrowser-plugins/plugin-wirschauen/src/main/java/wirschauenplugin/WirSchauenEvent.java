@@ -23,10 +23,8 @@ import org.xml.sax.helpers.DefaultHandler;
  * from wirschauen into an object.
  *
  * @author uzi
- * @date 30.08.2009
  */
-public class WirSchauenEvent
-extends DefaultHandler
+public class WirSchauenEvent extends DefaultHandler
 {
   /**
    * movie category.
@@ -45,89 +43,123 @@ extends DefaultHandler
 
 
   /**
-   * wirschauen event id
+   * wirschauen event id.
    */
-  private long eventId;
+  private long mEventId;
 
   /**
-   * link to omdb
+   * link to omdb.
    */
-  private String omdbUrl;
+  private String mOmdbUrl;
 
   /**
-   * genre of the event
+   * genre of the event.
    */
-  private String genre;
+  private String mGenre;
 
   /**
    * is this event a tv premiere?
    */
-  private boolean premiere;
+  private boolean mPremiere;
 
   /**
    * has this event subtitles?
    */
-  private boolean subtitles;
+  private boolean mSubtitles;
 
   /**
    * is this event an 'original with subtitles'?
    */
-  private boolean omu;
+  private boolean mOmu;
 
   /**
-   * the category (see constants of this class) of this event
+   * the category (see constants of this class) of this event.
    */
-  private byte category;
+  private byte mCategory;
 
-
-  private int descCounter;
-  private long descId;
-  private String desc;
-
-  private boolean eventFound = false;
 
   /**
-   * holds the content of the xml elements
+   * counter.
    */
-  private StringBuilder characters;
+  private int mDescCounter;
+
+  /**
+   * desc id.
+   */
+  private long mDescId;
+
+  /**
+   * description/abstract.
+   */
+  private String mDesc;
 
 
+  /**
+   * true, if a event was found, false otherwise.
+   */
+  private boolean mEventFound;
+
+  /**
+   * holds the content of the xml elements.
+   */
+  private StringBuilder mCharacters;
+
+
+
+  /**
+   * default contructor.
+   */
   public WirSchauenEvent()
   {
     super();
   }
 
-  public WirSchauenEvent(String omdbUrl, byte category)
+
+  /**
+   * creates a event and sets some properties.
+   *
+   * @param omdbUrl the link to omdb.
+   * @param category the category (see constants in this class)
+   */
+  public WirSchauenEvent(final String omdbUrl, final byte category)
   {
-    this.omdbUrl = omdbUrl;
-    this.category = category;
+    this.mOmdbUrl = omdbUrl;
+    this.mCategory = category;
   }
 
-  public WirSchauenEvent(int omdbId, byte category)
+
+  /**
+   * creates a event and sets some properties.
+   *
+   * @param omdbId omdb id of the program.
+   * @param category the category (see constants in this class)
+   */
+  public WirSchauenEvent(final int omdbId, final byte category)
   {
     this(OmdbConnection.MOVIE_URL + omdbId, category);
   }
 
 
   /**
-   * for debugging
+   * for debugging.
    *
    * @see java.lang.Object#toString()
+   * @return string representation of the event
    */
   @Override
   public String toString()
   {
     StringBuilder builder = new StringBuilder();
-    builder.append("event id: ").append(eventId).append("\r\n");
-    builder.append("omdb url: ").append(omdbUrl).append("\r\n");
-    builder.append("genre: ").append(genre).append("\r\n");
-    builder.append("premiere: ").append(premiere).append("\r\n");
-    builder.append("subtitles: ").append(subtitles).append("\r\n");
-    builder.append("omu: ").append(omu).append("\r\n");
-    builder.append("category: ").append(category).append("\r\n");
-    builder.append("desc counter: ").append(category).append("\r\n");
-    builder.append("desc id: ").append(descId).append("\r\n");
-    builder.append("desc: ").append(desc);
+    builder.append("event id: ").append(mEventId).append("\r\n");
+    builder.append("omdb url: ").append(mOmdbUrl).append("\r\n");
+    builder.append("genre: ").append(mGenre).append("\r\n");
+    builder.append("premiere: ").append(mPremiere).append("\r\n");
+    builder.append("subtitles: ").append(mSubtitles).append("\r\n");
+    builder.append("omu: ").append(mOmu).append("\r\n");
+    builder.append("category: ").append(mCategory).append("\r\n");
+    builder.append("desc counter: ").append(mCategory).append("\r\n");
+    builder.append("desc id: ").append(mDescId).append("\r\n");
+    builder.append("desc: ").append(mDesc);
     return builder.toString();
   }
 
@@ -141,7 +173,7 @@ extends DefaultHandler
    * @param changeableFieldsOnly if true, only the mentioned fields are compared.
    * @return true if the events are equal as defined
    */
-  public boolean equals(WirSchauenEvent event, boolean changeableFieldsOnly)
+  public boolean equals(final WirSchauenEvent event, final boolean changeableFieldsOnly)
   {
     if (!changeableFieldsOnly || event ==  null)
     {
@@ -149,12 +181,12 @@ extends DefaultHandler
     }
     else
     {
-      return event.getCategory() == category &&
-             event.getDesc().equals(desc) &&
-             event.getGenre().equals(genre) &&
-             event.isOmu() == omu &&
-             event.isPremiere() == premiere &&
-             event.hasSubtitles() == subtitles;
+      return event.getCategory() == mCategory
+            && event.getDesc().equals(mDesc)
+            && event.getGenre().equals(mGenre)
+            && event.isOmu() == mOmu
+            && event.isPremiere() == mPremiere
+            && event.hasSubtitles() == mSubtitles;
     }
   }
 
@@ -166,10 +198,9 @@ extends DefaultHandler
    * @see org.xml.sax.helpers.DefaultHandler#startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes)
    */
   @Override
-  public void startElement(final String uri, final String localName, final String qName, final Attributes attributes)
-  throws SAXException
+  public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException
   {
-      characters = new StringBuilder();
+    mCharacters = new StringBuilder();
   }
 
   /**
@@ -178,8 +209,7 @@ extends DefaultHandler
    * @see org.xml.sax.helpers.DefaultHandler#endElement(java.lang.String, java.lang.String, java.lang.String)
    */
   @Override
-  public void endElement(final String uri, final String localName, final String qName)
-  throws SAXException
+  public void endElement(final String uri, final String localName, final String qName) throws SAXException
   {
     /*
      * <event>
@@ -196,52 +226,56 @@ extends DefaultHandler
      * </event>
      */
     //if the event was not on the server, it returns <event/>
-    eventFound = !qName.equals("event");
+    mEventFound = !"event".equals(qName);
 
-    if (qName.equals("event_id"))
+    if ("event_id".equals(qName))
     {
       setEventId(Long.parseLong(getCharacters()));
     }
-    else if (qName.equals("desc_counter"))
+    else if ("desc_counter".equals(qName))
     {
       setDescCounter(Integer.parseInt(getCharacters()));
     }
-    else if (qName.equals("desc_id"))
+    else if ("desc_id".equals(qName))
     {
       setDescId(Long.parseLong(getCharacters()));
     }
-    else if (qName.equals("url"))
+    else if ("url".equals(qName))
     {
       setOmdbUrl(getCharacters());
     }
-    else if (qName.equals("genre"))
+    else if ("genre".equals(qName))
     {
-      setGenre(characters.toString());
+      setGenre(mCharacters.toString());
     }
-    else if (qName.equals("desc"))
+    else if ("desc".equals(qName))
     {
-      setDesc(characters.toString());
+      setDesc(mCharacters.toString());
     }
-    else if (qName.equals("premiere"))
+    else if ("premiere".equals(qName))
     {
       setPremiere(Boolean.parseBoolean(getCharacters()));
     }
-    else if (qName.equals("subtitle"))
+    else if ("subtitle".equals(qName))
     {
       setSubtitles(Boolean.parseBoolean(getCharacters()));
     }
-    else if (qName.equals("omu"))
+    else if ("omu".equals(qName))
     {
       setOmu(Boolean.parseBoolean(getCharacters()));
     }
-    else if (qName.equals("category"))
+    else if ("category".equals(qName))
     {
       setCategory(Byte.parseByte(getCharacters()));
     }
   }
 
-  private String getCharacters() {
-    return characters.toString().trim();
+  /**
+   * @return the element content
+   */
+  private String getCharacters()
+  {
+    return mCharacters.toString().trim();
   }
 
 
@@ -251,10 +285,9 @@ extends DefaultHandler
    * @see org.xml.sax.helpers.DefaultHandler#characters(char[], int, int)
    */
   @Override
-  public void characters(final char ch[], final int start, final int length)
-  throws SAXException
+  public void characters(final char ch[], final int start, final int length) throws SAXException
   {
-      characters.append(ch, start, length);
+    mCharacters.append(ch, start, length);
   }
 
 
@@ -265,149 +298,152 @@ extends DefaultHandler
    */
   public long getEventId()
   {
-    return eventId;
+    return mEventId;
   }
   /**
    * @param eventId the eventId to set
    */
-  public void setEventId(long eventId)
+  public void setEventId(final long eventId)
   {
-    this.eventId = eventId;
+    this.mEventId = eventId;
   }
   /**
    * @return the omdbUrl
    */
   public String getOmdbUrl()
   {
-    return omdbUrl;
+    return mOmdbUrl;
   }
   /**
    * @param omdbUrl the omdbUrl to set
    */
-  public void setOmdbUrl(String omdbUrl)
+  public void setOmdbUrl(final String omdbUrl)
   {
-    if (omdbUrl != null) {
-      omdbUrl = omdbUrl.trim();
+    if (omdbUrl == null)
+    {
+      this.mOmdbUrl = omdbUrl;
     }
-    this.omdbUrl = omdbUrl;
+    this.mOmdbUrl = omdbUrl.trim();
   }
   /**
    * @return the genre
    */
   public String getGenre()
   {
-    return genre;
+    return mGenre;
   }
   /**
    * @param genre the genre to set
    */
-  public void setGenre(String genre)
+  public void setGenre(final String genre)
   {
-    if (genre != null) {
-      genre = genre.trim();
+    if (genre == null)
+    {
+      this.mGenre = genre;
     }
-    this.genre = genre;
+    this.mGenre = genre.trim();
   }
   /**
    * @return the premiere
    */
   public boolean isPremiere()
   {
-    return premiere;
+    return mPremiere;
   }
   /**
    * @param premiere the premiere to set
    */
-  public void setPremiere(boolean premiere)
+  public void setPremiere(final boolean premiere)
   {
-    this.premiere = premiere;
+    this.mPremiere = premiere;
   }
   /**
    * @return the subtitles
    */
   public boolean hasSubtitles()
   {
-    return subtitles;
+    return mSubtitles;
   }
   /**
    * @param subtitles the subtitles to set
    */
-  public void setSubtitles(boolean subtitles)
+  public void setSubtitles(final boolean subtitles)
   {
-    this.subtitles = subtitles;
+    this.mSubtitles = subtitles;
   }
   /**
    * @return the omu
    */
   public boolean isOmu()
   {
-    return omu;
+    return mOmu;
   }
   /**
    * @param omu the omu to set
    */
-  public void setOmu(boolean omu)
+  public void setOmu(final boolean omu)
   {
-    this.omu = omu;
+    this.mOmu = omu;
   }
   /**
    * @return the category
    */
   public byte getCategory()
   {
-    return category;
+    return mCategory;
   }
   /**
    * @param category the category to set
    */
-  public void setCategory(byte category)
+  public void setCategory(final byte category)
   {
-    this.category = category;
+    this.mCategory = category;
   }
   /**
    * @return the descCounter
    */
   public int getDescCounter()
   {
-    return descCounter;
+    return mDescCounter;
   }
   /**
    * @param descCounter the descCounter to set
    */
-  public void setDescCounter(int descCounter)
+  public void setDescCounter(final int descCounter)
   {
-    this.descCounter = descCounter;
+    this.mDescCounter = descCounter;
   }
   /**
    * @return the descId
    */
   public long getDescId()
   {
-    return descId;
+    return mDescId;
   }
   /**
    * @param descId the descId to set
    */
-  public void setDescId(long descId)
+  public void setDescId(final long descId)
   {
-    this.descId = descId;
+    this.mDescId = descId;
   }
   /**
    * @return the desc
    */
   public String getDesc()
   {
-    return desc;
+    return mDesc;
   }
   /**
    * @param desc the desc to set
    */
-  public void setDesc(String desc)
+  public void setDesc(final String desc)
   {
-    if (desc != null) {
-      desc = desc.trim();
+    if (desc == null)
+    {
+      this.mDesc = desc;
     }
-    this.desc = desc;
+    this.mDesc = desc.trim();
   }
 
   /**
@@ -415,6 +451,6 @@ extends DefaultHandler
    */
   public boolean eventFound()
   {
-    return eventFound;
+    return mEventFound;
   }
 }

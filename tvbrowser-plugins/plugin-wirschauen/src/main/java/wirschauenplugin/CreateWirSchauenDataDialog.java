@@ -45,25 +45,10 @@ import devplugin.ProgramFieldType;
  * (button, esc, close window) isCancelled will return true.
  *
  * @author uzi
- * @date 30.08.2009
  */
 @SuppressWarnings("serial")
-public class CreateWirSchauenDataDialog
-extends JDialog
-implements WindowClosingIf
+public class CreateWirSchauenDataDialog extends JDialog implements WindowClosingIf
 {
-  /**
-   * true, if one of the different cancel-methods was used. every user initiated closing of
-   * the dialog means that cancelled is true.
-   */
-  private boolean cancelled = false;
-
-  /**
-   * the form-input from the user.
-   */
-  private WirSchauenEvent wirSchauenInput;
-
-
   /**
    * max input length of the abstract in characters.
    */
@@ -71,9 +56,24 @@ implements WindowClosingIf
 
 
   /**
-   * Localizer
+   * Localizer.
    */
-  private static final Localizer mLocalizer = Localizer.getLocalizerFor(CreateWirSchauenDataDialog.class);
+  private static final Localizer LOCALIZER = Localizer.getLocalizerFor(CreateWirSchauenDataDialog.class);
+
+
+
+  /**
+   * true, if one of the different cancel-methods was used. every user initiated closing of
+   * the dialog means that cancelled is true.
+   */
+  private boolean mCancelled;
+
+  /**
+   * the form-input from the user.
+   */
+  private WirSchauenEvent mWirSchauenInput;
+
+
 
 
 
@@ -87,7 +87,7 @@ implements WindowClosingIf
   public CreateWirSchauenDataDialog(final Window parent, final Program program, final WirSchauenEvent wirSchauenEvent)
   {
     //create the window
-    super(parent, mLocalizer.msg("DialogTitle", "Description for WirSchauen.de"), ModalityType.APPLICATION_MODAL);
+    super(parent, LOCALIZER.msg("DialogTitle", "Description for WirSchauen.de"), ModalityType.APPLICATION_MODAL);
     UiUtilities.registerForClosing(this);
     JPanel contentPane = (JPanel) getContentPane();
     contentPane.setBorder(Borders.DLU4_BORDER);
@@ -96,7 +96,7 @@ implements WindowClosingIf
     addWindowListener(new WindowAdapter()
     {
       @Override
-      public void windowClosing(WindowEvent e)
+      public void windowClosing(final WindowEvent e)
       {
         close();
       }
@@ -156,24 +156,24 @@ implements WindowClosingIf
       {
         //provide the input and close the dialog
         setVisible(false);
-        wirSchauenInput = new WirSchauenEvent();
+        mWirSchauenInput = new WirSchauenEvent();
         if (categoryDropdown.getSelectedIndex() == 1)
         {
-          wirSchauenInput.setCategory(WirSchauenEvent.CATEGORY_MOVIE);
+          mWirSchauenInput.setCategory(WirSchauenEvent.CATEGORY_MOVIE);
         }
         else if (categoryDropdown.getSelectedIndex() == 2)
         {
-          wirSchauenInput.setCategory(WirSchauenEvent.CATEGORY_SERIES);
+          mWirSchauenInput.setCategory(WirSchauenEvent.CATEGORY_SERIES);
         }
         else
         {
-          wirSchauenInput.setCategory(WirSchauenEvent.CATEGORY_OTHER);
+          mWirSchauenInput.setCategory(WirSchauenEvent.CATEGORY_OTHER);
         }
-        wirSchauenInput.setDesc(descriptionInputField.getText());
-        wirSchauenInput.setGenre((String) genreComboBox.getSelectedItem());
-        wirSchauenInput.setOmu(owsCheckBox.isSelected());
-        wirSchauenInput.setPremiere(premiereCheckBox.isSelected());
-        wirSchauenInput.setSubtitles(subtitleCheckBox.isSelected());
+        mWirSchauenInput.setDesc(descriptionInputField.getText());
+        mWirSchauenInput.setGenre((String) genreComboBox.getSelectedItem());
+        mWirSchauenInput.setOmu(owsCheckBox.isSelected());
+        mWirSchauenInput.setPremiere(premiereCheckBox.isSelected());
+        mWirSchauenInput.setSubtitles(subtitleCheckBox.isSelected());
         dispose();
       }
     });
@@ -205,7 +205,7 @@ implements WindowClosingIf
    */
   public void close()
   {
-    cancelled = true;
+    mCancelled = true;
     setVisible(false);
     dispose();
   }
@@ -217,7 +217,7 @@ implements WindowClosingIf
    */
   public boolean isCancelled()
   {
-    return cancelled;
+    return mCancelled;
   }
 
 
@@ -237,7 +237,7 @@ implements WindowClosingIf
    */
   public WirSchauenEvent getWirSchauenInput()
   {
-    return wirSchauenInput;
+    return mWirSchauenInput;
   }
 
 

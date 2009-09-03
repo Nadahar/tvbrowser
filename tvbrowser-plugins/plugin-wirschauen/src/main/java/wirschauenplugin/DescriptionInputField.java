@@ -30,32 +30,29 @@ import com.jgoodies.forms.layout.FormLayout;
  * remaining.
  *
  * @author uzi
- * @date 30.08.2009
  */
 @SuppressWarnings("serial")
-public class DescriptionInputField
-extends JPanel
-implements DocumentListener
+public class DescriptionInputField extends JPanel implements DocumentListener
 {
   /**
    * limits the length of the text area.
    */
-  private int maxChars;
+  private int mMaxChars;
 
   /**
    * shows the remaining chars.
    */
-  private JLabel counterLabel;
+  private JLabel mCounterLabel;
 
   /**
    * the string for the counterLabel.
    */
-  private String label;
+  private String mLabel;
 
   /**
    * the text area.
    */
-  private JTextArea textArea;
+  private JTextArea mTextArea;
 
 
   /**
@@ -67,26 +64,26 @@ implements DocumentListener
    */
   public DescriptionInputField(final int maxChars, final String value, final String label)
   {
-    this.maxChars = maxChars;
-    this.label = label;
+    this.mMaxChars = maxChars;
+    this.mLabel = label;
 
     setLayout(new FormLayout("pref:grow", "fill:50dlu:grow, 3dlu, pref"));
     CellConstraints cellConstraints = new CellConstraints();
 
-    textArea = DialogUtil.createTextArea(maxChars); //the text area ensures the length limitation
-    textArea.getDocument().addDocumentListener(this); //to update the label
+    mTextArea = DialogUtil.createTextArea(maxChars); //the text area ensures the length limitation
+    mTextArea.getDocument().addDocumentListener(this); //to update the label
 
-    add(new JScrollPane(textArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), cellConstraints.xy(1, 1));
+    add(new JScrollPane(mTextArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), cellConstraints.xy(1, 1));
 
-    counterLabel = new JLabel(String.format(label, maxChars - textArea.getDocument().getLength()));
-    add(counterLabel, cellConstraints.xy(1, 3, CellConstraints.RIGHT, CellConstraints.CENTER));
+    mCounterLabel = new JLabel(String.format(label, maxChars - mTextArea.getDocument().getLength()));
+    add(mCounterLabel, cellConstraints.xy(1, 3, CellConstraints.RIGHT, CellConstraints.CENTER));
 
     //this fires a event to the document listeners (i.e. this). so be sure, everything is initialized (e.g. counter label)
     String initialValue = null;
     if (value != null) {
       initialValue = value.trim();
     }
-    textArea.insert(initialValue, 0);
+    mTextArea.insert(initialValue, 0);
   }
 
 
@@ -95,7 +92,7 @@ implements DocumentListener
    */
   public String getText()
   {
-    return textArea.getText().trim();
+    return mTextArea.getText().trim();
   }
 
 
@@ -104,9 +101,9 @@ implements DocumentListener
    *
    * @param listener the listener to add
    */
-  public void addDocumentListener(DocumentListener listener)
+  public void addDocumentListener(final DocumentListener listener)
   {
-    textArea.getDocument().addDocumentListener(listener);
+    mTextArea.getDocument().addDocumentListener(listener);
   }
 
 
@@ -116,35 +113,35 @@ implements DocumentListener
    * called every time the document listener fires. updates the label
    * for the remaining characters.
    *
-   * @param event
+   * @param event the document event fired
    */
-  private void update(DocumentEvent event)
+  private void update(final DocumentEvent event)
   {
-    counterLabel.setText(String.format(label, maxChars - event.getDocument().getLength()));
+    mCounterLabel.setText(String.format(mLabel, mMaxChars - event.getDocument().getLength()));
   }
 
 
 
   /**
-   * @see javax.swing.event.DocumentListener#changedUpdate(javax.swing.event.DocumentEvent)
+   * {@inheritDoc}
    */
-  public void changedUpdate(DocumentEvent event)
-  {
-    update(event);
-  }
-
-  /**
-   * @see javax.swing.event.DocumentListener#insertUpdate(javax.swing.event.DocumentEvent)
-   */
-  public void insertUpdate(DocumentEvent event)
+  public void changedUpdate(final DocumentEvent event)
   {
     update(event);
   }
 
   /**
-   * @see javax.swing.event.DocumentListener#removeUpdate(javax.swing.event.DocumentEvent)
+   * {@inheritDoc}
    */
-  public void removeUpdate(DocumentEvent event)
+  public void insertUpdate(final DocumentEvent event)
+  {
+    update(event);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public void removeUpdate(final DocumentEvent event)
   {
     update(event);
   }

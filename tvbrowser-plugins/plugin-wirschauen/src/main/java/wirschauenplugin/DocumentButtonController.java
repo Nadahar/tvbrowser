@@ -25,20 +25,18 @@ import javax.swing.text.BadLocationException;
  * content of the document is not equal oldDescription.
  *
  * @author uzi
- * @date 30.08.2009
  */
-public class DocumentButtonController
-implements DocumentListener
+public class DocumentButtonController implements DocumentListener
 {
   /**
    * the button to control.
    */
-  private JButton button;
+  private JButton mButton;
 
   /**
    * the old description.
    */
-  private String oldDescription;
+  private String mOldDescription;
 
 
 
@@ -49,10 +47,10 @@ implements DocumentListener
    * @param button the button to control
    * @param oldDescription the old description to change
    */
-  public DocumentButtonController(JButton button, String oldDescription)
+  public DocumentButtonController(final JButton button, final String oldDescription)
   {
-    this.button = button;
-    this.oldDescription = oldDescription;
+    this.mButton = button;
+    this.mOldDescription = oldDescription;
   }
 
 
@@ -60,41 +58,41 @@ implements DocumentListener
    * called whenever the document listener fires. this method will
    * (de)activate the button.
    *
-   * @param e
+   * @param e the event fired
    */
-  private void docUpdated(DocumentEvent e)
+  private void docUpdated(final DocumentEvent e)
   {
     try
     {
-      button.setEnabled(!(e.getDocument().getText(0, e.getDocument().getLength()).trim().length() == 0) &&
-          !e.getDocument().getText(0, e.getDocument().getLength()).equals(oldDescription));
+      mButton.setEnabled(!(e.getDocument().getText(0, e.getDocument().getLength()).trim().length() == 0)
+          && !e.getDocument().getText(0, e.getDocument().getLength()).equals(mOldDescription));
     }
-    catch (BadLocationException ble)
+    catch (final BadLocationException ble)
     {
       ble.printStackTrace();
     }
   }
 
   /**
-   * @see javax.swing.event.DocumentListener#changedUpdate(javax.swing.event.DocumentEvent)
+   * {@inheritDoc}
    */
-  public void changedUpdate(DocumentEvent e)
+  public void changedUpdate(final DocumentEvent e)
   {
     docUpdated(e);
   }
 
   /**
-   * @see javax.swing.event.DocumentListener#insertUpdate(javax.swing.event.DocumentEvent)
+   * {@inheritDoc}
    */
-  public void insertUpdate(DocumentEvent e)
+  public void insertUpdate(final DocumentEvent e)
   {
     docUpdated(e);
   }
 
   /**
-   * @see javax.swing.event.DocumentListener#removeUpdate(javax.swing.event.DocumentEvent)
+   * {@inheritDoc}
    */
-  public void removeUpdate(DocumentEvent e)
+  public void removeUpdate(final DocumentEvent e)
   {
     docUpdated(e);
   }

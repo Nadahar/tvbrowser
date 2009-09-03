@@ -43,36 +43,35 @@ import devplugin.ProgramFieldType;
  * that case getOmdbAbstractInput returns a undefined value.
  *
  * @author uzi
- * @date 30.08.2009
  */
 @SuppressWarnings("serial")
-public class CreateOmdbAbstractDialog
-extends JDialog
-implements WindowClosingIf
+public class CreateOmdbAbstractDialog extends JDialog implements WindowClosingIf
 {
+  /**
+   * max input length of the abstract in characters.
+   */
+  private static final short MAX_CHARS_IN_ABSTRACT = 400;
+
+  /**
+   * Localizer.
+   */
+  private static final Localizer LOCALIZER = Localizer.getLocalizerFor(CreateOmdbAbstractDialog.class);
+
+
+
+
   /**
    * true, if one of the different cancel-methods was used. every user initiated closing of
    * the dialog means that cancelled is true.
    */
-  private boolean cancelled = false;
+  private boolean mCancelled;
 
 
   /**
    * the abstract from the input field of the form.
    */
-  private String omdbAbstractInput = "";
+  private String mOmdbAbstractInput = "";
 
-
-  /**
-   * max input length of the abstract in characters.
-   */
-  private static short MAX_CHARS_IN_ABSTRACT = 400;
-
-
-  /**
-   * Localizer
-   */
-  private static final Localizer mLocalizer = Localizer.getLocalizerFor(CreateOmdbAbstractDialog.class);
 
 
 
@@ -85,10 +84,10 @@ implements WindowClosingIf
    * @param wirSchauenEvent the WirSchauenEvent corresponding to the program (to display the omdb-link and film/series)
    * @param oldOmdbAbstract the old abstract for the program (init value for the input field)
    */
-  public CreateOmdbAbstractDialog(Window parent, Program program, WirSchauenEvent wirSchauenEvent, String oldOmdbAbstract)
+  public CreateOmdbAbstractDialog(final Window parent, final Program program, final WirSchauenEvent wirSchauenEvent, final String oldOmdbAbstract)
   {
     //create the window
-    super(parent, mLocalizer.msg("DialogTitle", "Description for OMDB.org"), ModalityType.APPLICATION_MODAL);
+    super(parent, LOCALIZER.msg("DialogTitle", "Description for OMDB.org"), ModalityType.APPLICATION_MODAL);
     UiUtilities.registerForClosing(this); //register esc-button
     JPanel contentPane = (JPanel) getContentPane();
     contentPane.setBorder(Borders.DLU4_BORDER);
@@ -97,7 +96,7 @@ implements WindowClosingIf
     addWindowListener(new WindowAdapter()
     {
       @Override
-      public void windowClosing(WindowEvent e)
+      public void windowClosing(final WindowEvent e)
       {
         close();
       }
@@ -144,7 +143,7 @@ implements WindowClosingIf
       public void actionPerformed(final ActionEvent e)
       {
         //provide the input and close the dialog
-        omdbAbstractInput = descriptionInputField.getText();
+        mOmdbAbstractInput = descriptionInputField.getText();
         setVisible(false);
         dispose();
       }
@@ -177,7 +176,7 @@ implements WindowClosingIf
    */
   public void close()
   {
-    cancelled = true;
+    mCancelled = true;
     setVisible(false);
     dispose();
   }
@@ -190,7 +189,7 @@ implements WindowClosingIf
    */
   public boolean isCancelled()
   {
-    return cancelled;
+    return mCancelled;
   }
 
 
@@ -201,7 +200,7 @@ implements WindowClosingIf
    */
   public String getOmdbAbstractInput()
   {
-    return omdbAbstractInput;
+    return mOmdbAbstractInput;
   }
 
 
@@ -211,7 +210,7 @@ implements WindowClosingIf
    * @param category the category (see WirSchauenEvent constants)
    * @return a localized string
    */
-  private String mapCategoryToString(byte category)
+  private String mapCategoryToString(final byte category)
   {
     if (category == WirSchauenEvent.CATEGORY_MOVIE)
     {
@@ -223,7 +222,7 @@ implements WindowClosingIf
     }
     if (category == WirSchauenEvent.CATEGORY_OTHER)
     {
-      return WirSchauenPlugin.mLocalizer.msg("Category.Other", "Series");
+      return WirSchauenPlugin.mLocalizer.msg("Category.Other", "Other");
     }
     return null;
   }
