@@ -106,7 +106,7 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
   
   private void init() {
     setModel(FavoriteTreeModel.getInstance());
-    setRootVisible(false);
+    setRootVisible(true);
     setShowsRootHandles(true);
 
     mRootNode = (FavoriteNode) FavoriteTreeModel.getInstance().getRoot();
@@ -195,7 +195,16 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
   private void showContextMenu(Point p) {
     
       JPopupMenu menu = new JPopupMenu();      
-      TreePath path1 = getPathForLocation(p.x, p.y);
+      int row = getClosestRowForLocation(p.x, p.y);
+      if (row >= 0 && row < getRowCount()) {
+        setSelectionRow(row);
+      }
+      
+      TreePath path1 = null;
+      int[] selectionRows = getSelectionRows();
+      if (selectionRows.length > 0) {
+        path1 = getPathForRow(selectionRows[0]);
+      }
       
       if(path1 == null) {
         path1 = new TreePath(mRootNode);
@@ -243,9 +252,22 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
             collapseAll(last);
           }
         });
-        
         menu.add(item);
 
+        menu.addSeparator();
+      }
+      
+      if (!last.isDirectoryNode()) {
+        item = new JMenuItem(mLocalizer.ellipsisMsg("editFavorite", "Edit favorite '{0}'", last.getFavorite().getName()),
+            TVBrowserIcons.edit(TVBrowserIcons.SIZE_SMALL));
+        item.setFont(item.getFont().deriveFont(Font.BOLD));
+        
+        item.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+            ManageFavoritesDialog.getInstance().editSelectedFavorite();
+          }
+        });
+        menu.add(item);
         menu.addSeparator();
       }
       
@@ -257,11 +279,9 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
           newFolder(last);
         }
       });
-      
       menu.add(item);
-      menu.addSeparator();
-      
-      item = new JMenuItem(mLocalizer.msg("newFavorite", "New Favorite"),
+
+      item = new JMenuItem(mLocalizer.ellipsisMsg("newFavorite", "New Favorite"),
           TVBrowserIcons.newIcon(TVBrowserIcons.SIZE_SMALL));
       
       item.addActionListener(new ActionListener() {
@@ -269,7 +289,6 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
           ManageFavoritesDialog.getInstance().newFavorite(last.isDirectoryNode() ? last : (FavoriteNode)last.getParent());
         }
       });
-      
       menu.add(item);
       
       if(last.isDirectoryNode()) {
@@ -325,20 +344,6 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
         menu.addSeparator();
       }
       
-      
-      if (!last.isDirectoryNode()) {
-        item = new JMenuItem(mLocalizer.msg("editFavorite", "Edit favorite"),
-            TVBrowserIcons.edit(TVBrowserIcons.SIZE_SMALL));
-        item.setFont(item.getFont().deriveFont(Font.BOLD));
-        
-        item.addActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-            ManageFavoritesDialog.getInstance().editSelectedFavorite();
-          }
-        });
-        
-        menu.add(item);
-      }
       
       item = new JMenuItem(Localizer.getLocalization(Localizer.I18N_DELETE),
           TVBrowserIcons.delete(TVBrowserIcons.SIZE_SMALL));
