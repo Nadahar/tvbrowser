@@ -135,7 +135,7 @@ public class DialogController
       loadingWirSchauenDataDialog.dispose();
 
       //is the program linked to the omdb?
-      if ("".equals(wirSchauenEvent.getOmdbUrl()))
+      if (wirSchauenEvent.getOmdbUrl() == null || "".equals(wirSchauenEvent.getOmdbUrl()))
       {
         //the event has no omdb-link. if it is a future program, show a dialog (choose between
         //omdb-link and wirschauen-stuff). show the omdb-dialog otherwise.
