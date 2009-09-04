@@ -47,8 +47,11 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.TableCellEditor;
 
+import util.ui.EnhancedPanelPuilder;
 import util.ui.Localizer;
 import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
@@ -62,13 +65,12 @@ import captureplugin.utils.ExternalChannelTableCellEditor;
 import captureplugin.utils.ExternalChannelTableCellRenderer;
 
 import com.jgoodies.forms.builder.ButtonBarBuilder2;
-import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.Sizes;
 
 import devplugin.Channel;
+import devplugin.Plugin;
 
 /**
  * The configuration dialog for the dreambox
@@ -102,6 +104,8 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
     
     private JTextField mMediaplayer;
 
+    private JButton mRefreshButton;
+
   /**
    * Create the Dialog
    * 
@@ -129,61 +133,84 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
 
         UiUtilities.registerForClosing(this);
 
-        PanelBuilder basicPanel = new PanelBuilder(new FormLayout("5dlu, fill:min:grow",
-        "pref, 3dlu, pref, 3dlu, pref, 3dlu, fill:min:grow, 3dlu, pref"));
+        EnhancedPanelPuilder basicPanel = new EnhancedPanelPuilder("2dlu, pref, 3dlu, fill:min:grow, 3dlu, pref, 3dlu, pref");
         basicPanel.setBorder(Borders.DLU4_BORDER);
 
         CellConstraints cc = new CellConstraints();
 
-        basicPanel.addSeparator(mLocalizer.msg("misc", "Miscellaneous"), cc.xyw(1, 1, 2));
+        basicPanel.addParagraph(mLocalizer.msg("misc", "Miscellaneous"));
 
-        JPanel miscPanel = new JPanel(new FormLayout("right:pref, 3dlu, fill:min:grow, 3dlu, pref, 3dlu, pref", "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref"));
-
-        miscPanel.add(new JLabel(mLocalizer.msg("name","Name:")), cc.xy(1, 1));
+        basicPanel.addRow();
+        basicPanel.add(new JLabel(mLocalizer.msg("name","Name:")), cc.xy(2, basicPanel.getRow()));
         mDeviceName = new JTextField(mDevice.getName());
-        miscPanel.add(mDeviceName, cc.xy(3, 1));
+        basicPanel.add(mDeviceName, cc.xy(4, basicPanel.getRow()));
 
-        miscPanel.add(new JLabel(mLocalizer.msg("ipaddress", "IP address")), cc.xy(1, 3));
+        basicPanel.addRow();
+        basicPanel.add(new JLabel(mLocalizer.msg("ipaddress", "IP address")), cc.xy(2, basicPanel.getRow()));
         mDreamboxAddress = new JTextField(mConfig.getDreamboxAddress());
-        miscPanel.add(mDreamboxAddress, cc.xy(3, 3));
+        basicPanel.add(mDreamboxAddress, cc.xy(4, basicPanel.getRow()));
 
         JButton help = new JButton(CapturePlugin.getInstance().createImageIcon("apps", "help-browser", 16));
-        help.setToolTipText(mLocalizer.msg("help", "Help"));
+        help.setToolTipText(Localizer.getLocalization(Localizer.I18N_HELP));
         help.setOpaque(false);
         help.setBorder(Borders.EMPTY_BORDER);
-        miscPanel.add(help, cc.xy(7, 3));
-
-        basicPanel.add(miscPanel, cc.xy(2, 3));
+        basicPanel.add(help, cc.xy(8, basicPanel.getRow()));
 
         ButtonBarBuilder2 refresh = new ButtonBarBuilder2();
 
         refresh.addGlue();
 
-        JButton refreshButton = new JButton(mLocalizer.msg("refresh", "Refresh channellist"));
-        refreshButton.addActionListener(new ActionListener() {
+        mRefreshButton = new JButton(mLocalizer.msg("refresh", "Refresh channellist"));
+        mRefreshButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 refreshChannelList();
             }
         });
-        refreshButton.setIcon(TVBrowserIcons.refresh(TVBrowserIcons.SIZE_SMALL));
+        mRefreshButton.setIcon(TVBrowserIcons.refresh(TVBrowserIcons.SIZE_SMALL));
+        mRefreshButton.setEnabled(mConfig.hasValidAddress());
 
-        refresh.addButton(new JButton[]{refreshButton});
+        mDreamboxAddress.getDocument().addDocumentListener(new DocumentListener() {
+          
+          @Override
+          public void removeUpdate(DocumentEvent e) {
+            check(e);
+          }
+          
+          @Override
+          public void insertUpdate(DocumentEvent e) {
+            check(e);
+          }
+          
+          @Override
+          public void changedUpdate(DocumentEvent e) {
+            check(e);
+          }
 
-        miscPanel.add(refresh.getPanel(), cc.xy(3, 5));
+          private void check(DocumentEvent e) {
+            mRefreshButton.setEnabled(!mDreamboxAddress.getText().trim().isEmpty());
+          }
+        });
 
-        miscPanel.add(new JLabel(mLocalizer.msg("preTime", "Time before in minutes:")), cc.xy(1,7));
+        refresh.addButton(new JButton[]{mRefreshButton});
+
+        basicPanel.addRow();
+        basicPanel.add(refresh.getPanel(), cc.xy(4, basicPanel.getRow()));
+
+        basicPanel.addRow();
+        basicPanel.add(new JLabel(mLocalizer.msg("preTime", "Time before in minutes:")), cc.xy(2,basicPanel.getRow()));
 
         mBeforeModel = new SpinnerNumberModel(mConfig.getPreTime(), 0, 60, 1);
         JSpinner beforeSpinner = new JSpinner(mBeforeModel);
-        miscPanel.add(beforeSpinner, cc.xy(3,7));
+        basicPanel.add(beforeSpinner, cc.xy(4, basicPanel.getRow()));
 
-        miscPanel.add(new JLabel(mLocalizer.msg("afterTime", "Time after in minutes:")), cc.xy(1,9));
+        basicPanel.addRow();
+        basicPanel.add(new JLabel(mLocalizer.msg("afterTime", "Time after in minutes:")), cc.xy(2, basicPanel.getRow()));
 
         mAfterModel = new SpinnerNumberModel(mConfig.getAfterTime(), 0, 60, 1);
         JSpinner afterSpinner = new JSpinner(mAfterModel);
-        miscPanel.add(afterSpinner, cc.xy(3,9));
+        basicPanel.add(afterSpinner, cc.xy(4, basicPanel.getRow()));
 
-        basicPanel.addSeparator(mLocalizer.msg("channel", "Channel assignment"), cc.xyw(1, 5, 2));
+        basicPanel.addParagraph(mLocalizer.msg("channel", "Channel assignment"));
 
         mTable = new JTable(new ConfigTableModel(mConfig, mLocalizer.msg("dreambox", "Dreambox Channel")));
         mTable.getTableHeader().setReorderingAllowed(false);
@@ -191,7 +218,8 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
         mTable.getColumnModel().getColumn(1).setCellRenderer(new ExternalChannelTableCellRenderer());
         mTable.getColumnModel().getColumn(1).setCellEditor(new ExternalChannelTableCellEditor(mConfig));
 
-        basicPanel.add(new JScrollPane(mTable), cc.xy(2, 7));
+        basicPanel.addGrowingRow();
+        basicPanel.add(new JScrollPane(mTable), cc.xyw(2, basicPanel.getRow(), basicPanel.getColumnCount() - 1));
 
         ButtonBarBuilder2 builder = new ButtonBarBuilder2();
 
@@ -207,22 +235,25 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
 
         builder.addButton(attach);
 
-        basicPanel.add(builder.getPanel(), cc.xyw(1,9,2));
+        basicPanel.addRow();
+        basicPanel.add(builder.getPanel(), cc.xyw(2,basicPanel.getRow(), basicPanel.getColumnCount() - 1));
 
-        final PanelBuilder extendedPanel = new PanelBuilder(new FormLayout("5dlu, right:pref, 3dlu, fill:pref:grow, 3dlu, pref, 5dlu", "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref"));
+        final EnhancedPanelPuilder extendedPanel = new EnhancedPanelPuilder("2dlu, pref, 3dlu, fill:pref:grow, 3dlu, pref, 5dlu");
         extendedPanel.setBorder(Borders.DLU4_BORDER);
 
-        extendedPanel.addSeparator(mLocalizer.msg("misc", "Sonstiges"), cc.xyw(1,1,7));
+        extendedPanel.addParagraph(mLocalizer.msg("misc", "Miscellanious"));
 
-        extendedPanel.add(new JLabel(mLocalizer.msg("Timeout", "Timeout for connections in ms:")), cc.xy(2,3));
+        extendedPanel.addRow();
+        extendedPanel.add(new JLabel(mLocalizer.msg("Timeout", "Timeout for connections in ms:")), cc.xy(2, extendedPanel.getRow()));
 
         mTimeoutModel = new SpinnerNumberModel(mConfig.getTimeout(), 0, 100000, 10);
         JSpinner timeoutSpinner = new JSpinner(mTimeoutModel);
-        extendedPanel.add(timeoutSpinner, cc.xyw(4, 3, 3));
+        extendedPanel.add(timeoutSpinner, cc.xyw(4, extendedPanel.getRow(), 3));
 
-
-        extendedPanel.addSeparator(mLocalizer.msg("timeZoneSeparator","Timezone"), cc.xyw(1,5,7));
-        extendedPanel.add(new JLabel(mLocalizer.msg("timeZone", "Timezone:")), cc.xy(2,7));
+        extendedPanel.addParagraph(mLocalizer.msg("timeZoneSeparator","Time zone"));
+        
+        extendedPanel.addRow();
+        extendedPanel.add(new JLabel(mLocalizer.msg("timeZone", "Time zone:")), cc.xy(2, extendedPanel.getRow()));
 
         String[] zoneIds = new String[0];
         try {
@@ -241,25 +272,28 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
           }
         }
 
-        extendedPanel.add(mTimezone, cc.xyw(4,7,3));
+        extendedPanel.add(mTimezone, cc.xyw(4, extendedPanel.getRow(), 3));
 
-        extendedPanel.addSeparator(mLocalizer.msg("security", "Security"), cc.xyw(1,9,7));
+        extendedPanel.addParagraph(mLocalizer.msg("security", "Security"));
 
-        extendedPanel.add(new JLabel(mLocalizer.msg("userName", "Username :")), cc.xy(2,11));
+        extendedPanel.addRow();
+        extendedPanel.add(new JLabel(mLocalizer.msg("userName", "User name :")), cc.xy(2, extendedPanel.getRow()));
         mUserName = new JTextField(mConfig.getUserName());
-        extendedPanel.add(mUserName, cc.xyw(4,11,3));
+        extendedPanel.add(mUserName, cc.xyw(4, extendedPanel.getRow(),3));
 
-        extendedPanel.add(new JLabel(mLocalizer.msg("password", "Password :")), cc.xy(2,13));
+        extendedPanel.addRow();
+        extendedPanel.add(new JLabel(mLocalizer.msg("password", "Password :")), cc.xy(2, extendedPanel.getRow()));
         mPasswordField = new JPasswordField(mConfig.getPassword());
-        extendedPanel.add(mPasswordField, cc.xyw(4,13,3));
+        extendedPanel.add(mPasswordField, cc.xyw(4, extendedPanel.getRow(), 3));
         
-        extendedPanel.addSeparator(mLocalizer.msg("streaming", "Streaming"), cc.xyw(1, 15, 7));
+        extendedPanel.addParagraph(mLocalizer.msg("streaming", "Streaming"));
         
-        extendedPanel.add(new JLabel(mLocalizer.msg("mediaplayer", "Mediaplayer :")), cc.xy(2, 17));
+        extendedPanel.addRow();
+        extendedPanel.add(new JLabel(mLocalizer.msg("mediaplayer", "Mediaplayer :")), cc.xy(2, extendedPanel.getRow()));
         mMediaplayer = new JTextField(mConfig.getMediaplayer());
-        extendedPanel.add(mMediaplayer, cc.xy(4, 17));
+        extendedPanel.add(mMediaplayer, cc.xy(4, extendedPanel.getRow()));
         
-        JButton select = new JButton(mLocalizer.msg("select", "Select"));
+        JButton select = new JButton(Localizer.getLocalization(Localizer.I18N_SELECT));
         select.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 JFileChooser mediaplayerChooser = new JFileChooser();
@@ -269,7 +303,7 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
                }
             }
         });
-        extendedPanel.add(select, cc.xy(6, 17));
+        extendedPanel.add(select, cc.xy(6, extendedPanel.getRow()));
 
         builder = new ButtonBarBuilder2();
 
@@ -302,14 +336,14 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
         content.add(tabs, cc.xy(1,1));
         content.add(builder.getPanel(), cc.xy(1,3));
 
-        setSize(Sizes.dialogUnitXAsPixel(240, this), Sizes.dialogUnitYAsPixel(340, this));
+        pack();
     }
 
     /**
      * Try to attach internal channels with dreambox channels
      */
     private void attachChannels() {
-        Channel[] channels = CapturePlugin.getPluginManager().getSubscribedChannels();
+        Channel[] channels = Plugin.getPluginManager().getSubscribedChannels();
         ExternalChannelIf[] dchannels = mConfig.getExternalChannels();
 
         for (Channel channel:channels) {
@@ -331,7 +365,7 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
     }
 
     /**
-     * Normalizes a channel name. Lowercase and no spaces.
+     * Normalizes a channel name. Lower case and no spaces.
      * @param name channel name
      * @return normalized channel name
      */
@@ -395,8 +429,9 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
 
         if (mTable.isEditing()) {
             TableCellEditor editor = mTable.getCellEditor();
-            if (editor != null)
-                editor.stopCellEditing();
+            if (editor != null) {
+              editor.stopCellEditing();
+            }
         }
 
         mConfig.setAfterTime(mAfterModel.getNumber().intValue());
