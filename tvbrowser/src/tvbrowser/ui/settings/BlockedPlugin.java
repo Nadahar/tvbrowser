@@ -145,4 +145,37 @@ public final class BlockedPlugin {
   public String toString() {
     return new StringBuilder("Blocked from: '").append(mBlockStart).append("' to: '").append(mBlockEnd).append("' for ID: '").append(mPluginId).append("'.").toString();
   }
+  
+  public boolean equals(Object o) {
+    if(o instanceof BlockedPlugin) {
+      BlockedPlugin otherPlugin = (BlockedPlugin)o;
+      return mPluginId.equals(otherPlugin.mPluginId) && mBlockStart.equals(otherPlugin.mBlockStart) && mBlockEnd.equals(otherPlugin.mBlockEnd);
+    }
+    else if(o instanceof String) {
+      return mPluginId.equals(o);
+    }
+    
+    return false;
+  }
+  
+  /**
+   * @return The id of this blocked plugin.
+   */
+  public String getPluginId() {
+    return mPluginId;
+  }
+  
+  /**
+   * @return The block start version.
+   */
+  public Version getBlockStart() {
+    return mBlockStart;
+  }
+  
+  /**
+   * @return The block end version.
+   */
+  public Version getBlockEnd() {
+    return mBlockEnd;
+  }
 }
