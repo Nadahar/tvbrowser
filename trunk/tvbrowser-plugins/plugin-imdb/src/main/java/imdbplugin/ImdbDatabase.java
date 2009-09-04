@@ -25,6 +25,7 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.index.IndexWriter.MaxFieldLength;
+import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.IndexSearcher;
@@ -421,15 +422,14 @@ public final class ImdbDatabase {
   private String getMovieIdFromTitle(final String title, final String episode, final int year) {
     BooleanQuery bQuery = new BooleanQuery();
     bQuery.add(new TermQuery(new Term(ITEM_TYPE, TYPE_MOVIE)), BooleanClause.Occur.MUST);
-    bQuery.add(new TermQuery(new Term(MOVIE_TITLE_NORMALISED, title)), BooleanClause.Occur.MUST);
-    bQuery.add(new TermQuery(new Term(EPISODE_TITLE_NORMALISED, episode)), BooleanClause.Occur.MUST);
+    bQuery.add(new TermQuery(new Term(MOVIE_TITLE_NORMALISED, QueryParser.escape(title))), BooleanClause.Occur.MUST);
+    bQuery.add(new TermQuery(new Term(EPISODE_TITLE_NORMALISED, QueryParser.escape(episode))), BooleanClause.Occur.MUST);
 
     if (year > 0) {
       bQuery.add(new TermQuery(new Term(MOVIE_YEAR, Integer.toString(year - 1))), BooleanClause.Occur.SHOULD);
       bQuery.add(new TermQuery(new Term(MOVIE_YEAR, Integer.toString(year))), BooleanClause.Occur.SHOULD);
       bQuery.add(new TermQuery(new Term(MOVIE_YEAR, Integer.toString(year + 1))), BooleanClause.Occur.SHOULD);
     }
-
     try {
       TopDocs topDocs = mSearcher.search(bQuery, null, 1);
 
