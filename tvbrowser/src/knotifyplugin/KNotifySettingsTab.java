@@ -26,7 +26,7 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 
 import util.paramhandler.ParamInputField;
-import util.ui.EnhancedPanelPuilder;
+import util.ui.EnhancedPanelBuilder;
 import util.ui.ImageUtilities;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
@@ -82,7 +82,7 @@ public class KNotifySettingsTab implements SettingsTab {
       return panel;
     }
     
-    EnhancedPanelPuilder panel = new EnhancedPanelPuilder(FormFactory.RELATED_GAP_COLSPEC.encode() + ", pref:grow, " + FormFactory.RELATED_GAP_COLSPEC.encode() +"," + FormFactory.PREF_COLSPEC.encode());
+    EnhancedPanelBuilder panel = new EnhancedPanelBuilder(FormFactory.RELATED_GAP_COLSPEC.encode() + ", pref:grow, " + FormFactory.RELATED_GAP_COLSPEC.encode() +"," + FormFactory.PREF_COLSPEC.encode());
     
     CellConstraints cc = new CellConstraints();
     

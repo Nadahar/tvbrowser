@@ -31,7 +31,7 @@ import javax.swing.Icon;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 
-import util.ui.EnhancedPanelPuilder;
+import util.ui.EnhancedPanelBuilder;
 import util.ui.PluginsPictureSettingsPanel;
 
 import com.jgoodies.forms.factories.FormFactory;
@@ -67,7 +67,7 @@ public class ListViewSettings implements SettingsTab {
    * Create the Panel
    */
   public JPanel createSettingsPanel() {    
-    EnhancedPanelPuilder panel = new EnhancedPanelPuilder(FormFactory.RELATED_GAP_COLSPEC.encode() + ",default:grow");
+    EnhancedPanelBuilder panel = new EnhancedPanelBuilder(FormFactory.RELATED_GAP_COLSPEC.encode() + ",default:grow");
     
     CellConstraints cc = new CellConstraints();
     

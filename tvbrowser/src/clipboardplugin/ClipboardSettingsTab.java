@@ -28,7 +28,7 @@ package clipboardplugin;
 import javax.swing.Icon;
 import javax.swing.JPanel;
 
-import util.ui.EnhancedPanelPuilder;
+import util.ui.EnhancedPanelBuilder;
 import util.ui.Localizer;
 import util.ui.PluginProgramConfigurationPanel;
 
@@ -66,7 +66,7 @@ public class ClipboardSettingsTab implements SettingsTab {
    * @return Settings-Panel
    */
   public JPanel createSettingsPanel() {
-    EnhancedPanelPuilder pb = new EnhancedPanelPuilder(FormFactory.RELATED_GAP_COLSPEC.encode() + ",fill:default:grow");
+    EnhancedPanelBuilder pb = new EnhancedPanelBuilder(FormFactory.RELATED_GAP_COLSPEC.encode() + ",fill:default:grow");
     CellConstraints cc = new CellConstraints();
     
     mConfigPanel = new PluginProgramConfigurationPanel(mPlugin.getSelectedPluginProgramFormatings(), mPlugin.getAvailableLocalPluginProgramFormatings(), ClipboardPlugin.getDefaultFormating(),false,false);

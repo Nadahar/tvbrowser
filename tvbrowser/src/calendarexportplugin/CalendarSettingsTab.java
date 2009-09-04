@@ -44,7 +44,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import util.ui.EnhancedPanelPuilder;
+import util.ui.EnhancedPanelBuilder;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.customizableitems.SelectableItemList;
@@ -97,7 +97,7 @@ public class CalendarSettingsTab implements SettingsTab {
   }
 
   public JPanel createSettingsPanel() {
-    final EnhancedPanelPuilder pb = new EnhancedPanelPuilder(FormFactory.RELATED_GAP_COLSPEC.encode() + "," + FormFactory.PREF_COLSPEC.encode() + "," +FormFactory.RELATED_GAP_COLSPEC.encode() +",default:grow," + FormFactory.PREF_COLSPEC.encode());
+    final EnhancedPanelBuilder pb = new EnhancedPanelBuilder(FormFactory.RELATED_GAP_COLSPEC.encode() + "," + FormFactory.PREF_COLSPEC.encode() + "," +FormFactory.RELATED_GAP_COLSPEC.encode() +",default:grow," + FormFactory.PREF_COLSPEC.encode());
     CellConstraints cc = new CellConstraints();
     
     mCategorie = new JTextField(mSettings.getProperty(CalendarExportPlugin.PROP_CATEGORY, ""));

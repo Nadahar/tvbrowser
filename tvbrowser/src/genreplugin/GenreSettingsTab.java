@@ -36,7 +36,7 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import util.ui.EnhancedPanelPuilder;
+import util.ui.EnhancedPanelBuilder;
 import util.ui.Localizer;
 
 import com.jgoodies.forms.builder.ButtonBarBuilder2;
@@ -73,7 +73,7 @@ public final class GenreSettingsTab implements SettingsTab {
   }
 
   public JPanel createSettingsPanel() {
-    final EnhancedPanelPuilder panelBuilder = new EnhancedPanelPuilder(FormFactory.RELATED_GAP_COLSPEC.encode() + ","
+    final EnhancedPanelBuilder panelBuilder = new EnhancedPanelBuilder(FormFactory.RELATED_GAP_COLSPEC.encode() + ","
         + FormFactory.PREF_COLSPEC.encode() + "," + FormFactory.RELATED_GAP_COLSPEC.encode() + ","
         + FormFactory.PREF_COLSPEC.encode() + ", fill:default:grow");
     final CellConstraints cc = new CellConstraints();

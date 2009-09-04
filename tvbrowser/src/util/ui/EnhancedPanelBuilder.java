@@ -28,18 +28,18 @@ import com.jgoodies.forms.layout.FormLayout;
  * @since 3.0
  *
  */
-public class EnhancedPanelPuilder extends PanelBuilder {
+public class EnhancedPanelBuilder extends PanelBuilder {
 
-  public EnhancedPanelPuilder(FormLayout layout) {
+  public EnhancedPanelBuilder(FormLayout layout) {
     super(layout);
   }
 
-  public EnhancedPanelPuilder(final String encodedColumnSpecs) {
+  public EnhancedPanelBuilder(final String encodedColumnSpecs) {
     this(new FormLayout(encodedColumnSpecs,""));
   }
 
   /**
-   * create a new section in the layout, which is separated from the previous line by a PARAGRAP_GAP
+   * create a new section in the layout, which is separated from the previous line by a PARAGRAPH_GAP
    * @param label label string
    * @return the new separator component
    */

@@ -42,7 +42,7 @@ import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.plugin.SettingsTabProxy;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.exc.TvBrowserException;
-import util.ui.EnhancedPanelPuilder;
+import util.ui.EnhancedPanelBuilder;
 
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.factories.FormFactory;
@@ -118,7 +118,7 @@ public class ConfigPluginSettingsTab implements CancelableSettingsTab {
       }
       // active plugin with no settings
       else {
-        EnhancedPanelPuilder panel = new EnhancedPanelPuilder(FormFactory.RELATED_GAP_COLSPEC.encode() + ",pref:grow");
+        EnhancedPanelBuilder panel = new EnhancedPanelBuilder(FormFactory.RELATED_GAP_COLSPEC.encode() + ",pref:grow");
         panel.addParagraph(mLocalizer.msg("noSettings", "No settings"));
         panel.addRow();
         panel.add(new JLabel(mLocalizer.msg("noSettings.text", "This plugin has no settings.")), new CellConstraints().xy(2, panel.getRow()));
@@ -126,7 +126,7 @@ public class ConfigPluginSettingsTab implements CancelableSettingsTab {
       }
     } else if (!Settings.propBlockedPluginArray.isBlocked(mPlugin)) {
       // The plugin is not activated -> Tell it the user
-      EnhancedPanelPuilder panelActivate = new EnhancedPanelPuilder(FormFactory.RELATED_GAP_COLSPEC.encode() + "," + FormFactory.PREF_COLSPEC.encode() + "," + FormFactory.RELATED_GAP_COLSPEC.encode() + "," + FormFactory.PREF_COLSPEC.encode() + ",default:grow");
+      EnhancedPanelBuilder panelActivate = new EnhancedPanelBuilder(FormFactory.RELATED_GAP_COLSPEC.encode() + "," + FormFactory.PREF_COLSPEC.encode() + "," + FormFactory.RELATED_GAP_COLSPEC.encode() + "," + FormFactory.PREF_COLSPEC.encode() + ",default:grow");
       CellConstraints cc = new CellConstraints();
 
       panelActivate.addParagraph(mLocalizer.msg("activation", "Activation"));
@@ -159,7 +159,7 @@ public class ConfigPluginSettingsTab implements CancelableSettingsTab {
       mPluginPanel.add(panelActivate.getPanel(), BorderLayout.NORTH);
     }
     else {
-      EnhancedPanelPuilder panel = new EnhancedPanelPuilder(FormFactory.RELATED_GAP_COLSPEC.encode() + ",pref:grow");
+      EnhancedPanelBuilder panel = new EnhancedPanelBuilder(FormFactory.RELATED_GAP_COLSPEC.encode() + ",pref:grow");
       panel.addParagraph(mLocalizer.msg("blocked", "Blocked"));
       panel.addRow();
       panel.add(new JLabel(mLocalizer.msg("blocked.text", "This plugin is blocked and cannot be activated.")), new CellConstraints().xy(2, panel.getRow()));
