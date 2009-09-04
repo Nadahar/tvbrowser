@@ -153,10 +153,11 @@ public class CapturePlugin extends devplugin.Plugin {
      * load your plugins settings from the file system.
      */
     public void loadSettings(Properties settings) {
-      if(settings == null)
+      if(settings == null) {
         mSettings = new Properties();
-      else
+      } else {
         mSettings = settings;
+      }
     }
 
     /**
@@ -236,25 +237,25 @@ public class CapturePlugin extends devplugin.Plugin {
 
             String[] commands = dev.getAdditionalCommands();
 
-            if (commands != null)
-                for (int y = 0; y < commands.length; y++) {
+            if (commands != null) {
+              for (int y = 0; y < commands.length; y++) {
 
-                    final int num = y;
+                  final int num = y;
 
-                    AbstractAction caction = new AbstractAction() {
+                  AbstractAction caction = new AbstractAction() {
 
-                        public void actionPerformed(ActionEvent evt) {
-                            dev.executeAdditionalCommand(parent, num, program);
-                        }
-                    };
-                    caction.putValue(Action.NAME, commands[y]);
-                    commandList.add(caction);
-                }
+                      public void actionPerformed(ActionEvent evt) {
+                          dev.executeAdditionalCommand(parent, num, program);
+                      }
+                  };
+                  caction.putValue(Action.NAME, commands[y]);
+                  commandList.add(caction);
+              }
+            }
 
-            Action[] commandActions = new Action[commandList.size()];
-            commandList.toArray(commandActions);
-
-            actionList.add(new ActionMenu(action, commandActions));
+            if (!commandList.isEmpty()) {
+              actionList.add(new ActionMenu(action, commandList.toArray(new Action[commandList.size()])));
+            }
         }
 
         if (actionList.size() == 1) {
@@ -406,10 +407,11 @@ public class CapturePlugin extends devplugin.Plugin {
 
             Program[] programs = device.getProgramList();
 
-            if (programs != null)
-                for (Program program : programs) {
-                    node.addProgram(program);
-                }
+            if (programs != null) {
+              for (Program program : programs) {
+                  node.addProgram(program);
+              }
+            }
 
             mRootNode.add(node);
         }
@@ -438,8 +440,9 @@ public class CapturePlugin extends devplugin.Plugin {
     @Override
     public boolean receivePrograms(Program[] programArr, ProgramReceiveTarget receiveTarget) {
         if (receiveTarget == null || receiveTarget.getTargetId() == null ||
-            receiveTarget.getTargetId().indexOf('#') == -1)
-            return false;
+            receiveTarget.getTargetId().indexOf('#') == -1) {
+          return false;
+        }
 
         String id = receiveTarget.getTargetId();
         String deviceid = id.substring(0, id.indexOf('#'));
@@ -449,8 +452,9 @@ public class CapturePlugin extends devplugin.Plugin {
             if (device.getId().equals(deviceid)) {
                 if (command.equals(REMOVE)) {
                     for (Program program:programArr) {
-                      if(device.isInList(program))
+                      if(device.isInList(program)) {
                         device.remove(getParentFrame(), program);
+                      }
                     }
                     updateMarkedPrograms();
                     return true;
@@ -504,8 +508,9 @@ public class CapturePlugin extends devplugin.Plugin {
     public void handleTvBrowserStartFinished() {
       mAllowedToShowDialog = true;
       
-      if(mNeedsUpdate)
+      if(mNeedsUpdate) {
         handleTvDataUpdateFinished();
+      }
     }
     
     /**
@@ -520,13 +525,13 @@ public class CapturePlugin extends devplugin.Plugin {
         DeviceIf[] devices = mConfig.getDeviceArray();
       
         final DefaultTableModel model = new DefaultTableModel() {
-          public boolean isCellEditable(int row, int column) {          
+          public boolean isCellEditable(int row, int column) {
             return false;
           }
         };
       
         model.setColumnCount(5);
-        model.setColumnIdentifiers(new String[] {mLocalizer.msg("device","Device"),Localizer.getLocalization(Localizer.I18N_CHANNEL),mLocalizer.msg("date","Date"),ProgramFieldType.START_TIME_TYPE.getLocalizedName(),ProgramFieldType.TITLE_TYPE.getLocalizedName()});    
+        model.setColumnIdentifiers(new String[] {mLocalizer.msg("device","Device"),Localizer.getLocalization(Localizer.I18N_CHANNEL),mLocalizer.msg("date","Date"),ProgramFieldType.START_TIME_TYPE.getLocalizedName(),ProgramFieldType.TITLE_TYPE.getLocalizedName()});
       
         JTable table = new JTable(model);
         table.getTableHeader().setReorderingAllowed(false);
@@ -537,8 +542,9 @@ public class CapturePlugin extends devplugin.Plugin {
             Component c = super.getTableCellRendererComponent(renderTable,value,isSelected,hasFocus,row,column);
             
             if(value instanceof DeviceIf) {
-              if(((DeviceIf)value).getDeleteRemovedProgramsAutomatically() && !isSelected)
+              if(((DeviceIf)value).getDeleteRemovedProgramsAutomatically() && !isSelected) {
                 c.setForeground(Color.red);
+              }
             }
             
             return c;
@@ -547,24 +553,27 @@ public class CapturePlugin extends devplugin.Plugin {
       
         int columnWidth[] = new int[5];
       
-        for(int i = 0; i < columnWidth.length; i++)
+        for(int i = 0; i < columnWidth.length; i++) {
           columnWidth[i] =  UiUtilities.getStringWidth(table.getFont(),model.getColumnName(i)) + 10;
+        }
       
         for (DeviceIf device : devices) {
           Program[] deleted = device.checkProgramsAfterDataUpdateAndGetDeleted();
         
           if(deleted != null && deleted.length > 0) {
             for(Program p : deleted) {
-              if(device.getDeleteRemovedProgramsAutomatically() && !p.isExpired() && !p.isOnAir())
+              if(device.getDeleteRemovedProgramsAutomatically() && !p.isExpired() && !p.isOnAir()) {
                 device.remove(UiUtilities.getLastModalChildOf(getParentFrame()), p);
-              else
+              } else {
                 device.removeProgramWithoutExecution(p);
+              }
             
               if(!p.isExpired()) {
                 Object[] o = new Object[] {device,p.getChannel().getName(),p.getDateString(),p.getTimeString(),p.getTitle()};
             
-                for(int i = 0; i < columnWidth.length; i++)
+                for(int i = 0; i < columnWidth.length; i++) {
                   columnWidth[i] = Math.max(columnWidth[i],UiUtilities.getStringWidth(table.getFont(),o[i].toString())+10);
+                }
             
                 model.addRow(o);
               }
@@ -580,8 +589,9 @@ public class CapturePlugin extends devplugin.Plugin {
           for(int i = 0; i < columnWidth.length; i++) {
             table.getColumnModel().getColumn(i).setPreferredWidth(columnWidth[i]);
             
-            if(i < columnWidth.length-1)
+            if(i < columnWidth.length-1) {
               table.getColumnModel().getColumn(i).setMaxWidth(columnWidth[i]);
+            }
             
             sum += columnWidth[i];
           }
@@ -600,7 +610,7 @@ public class CapturePlugin extends devplugin.Plugin {
               JFileChooser chooser = new JFileChooser();
               chooser.setDialogType(JFileChooser.SAVE_DIALOG);
               chooser.setFileFilter(new FileFilter() {
-                public boolean accept(File f) {                  
+                public boolean accept(File f) {
                   return f.isDirectory() || f.toString().toLowerCase().endsWith(".txt");
                 }
 
@@ -615,8 +625,9 @@ public class CapturePlugin extends devplugin.Plugin {
                   String file = chooser.getSelectedFile().getAbsolutePath();
                   
                   if (!file.toLowerCase().endsWith(".txt")
-                    && file.indexOf('.') == -1)
+                    && file.indexOf('.') == -1) {
                     file = file + ".txt";
+                  }
                   
                   if (file.indexOf('.') != -1) {
                     try {
@@ -628,8 +639,9 @@ public class CapturePlugin extends devplugin.Plugin {
                       for(int i = 0; i < model.getRowCount(); i++) {
                         StringBuilder line = new StringBuilder();
                         
-                        for(int j = 0; j < model.getColumnCount(); j++)
+                        for(int j = 0; j < model.getColumnCount(); j++) {
                           line.append(model.getValueAt(i, j)).append(' ');
+                        }
                         
                         line.append(eolStyle);
                         
@@ -644,7 +656,7 @@ public class CapturePlugin extends devplugin.Plugin {
             }
           });
                     
-          Object[] message = {mLocalizer.msg("deletedText","The data was changed and the following programs were deleted:"),scrollPane,export};          
+          Object[] message = {mLocalizer.msg("deletedText","The data was changed and the following programs were deleted:"),scrollPane,export};
         
           JOptionPane pane = new JOptionPane();
           pane.setMessage(message);
