@@ -113,7 +113,7 @@ public class TVRaterFilter extends PluginsFilterComponent {
 
     @Override
     public JPanel getSettingsPanel() {
-        JPanel panel = new JPanel(new FormLayout("right:pref, 3dlu, pref", "pref, 3dlu, pref"));
+        JPanel panel = new JPanel(new FormLayout("pref, 3dlu, pref", "pref, 3dlu, pref"));
 
         CellConstraints cc = new CellConstraints();
 

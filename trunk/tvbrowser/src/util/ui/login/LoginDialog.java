@@ -93,7 +93,7 @@ public class LoginDialog extends JDialog implements WindowClosingIf {
     
     JPanel content = (JPanel)getContentPane();
     
-    content.setLayout(new FormLayout("right:pref:grow(0.5), 3dlu, 100dlu, fill:pref:grow(0.5), 5dlu", 
+    content.setLayout(new FormLayout("pref:grow(0.5), 3dlu, 100dlu, fill:pref:grow(0.5), 5dlu", 
         "30dlu, 5dlu, pref, 3dlu, pref, 3dlu, pref, fill:pref:grow, pref, 5dlu"));
 
     CellConstraints cc = new CellConstraints();
