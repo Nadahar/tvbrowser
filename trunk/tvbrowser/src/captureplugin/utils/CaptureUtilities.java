@@ -58,5 +58,5 @@ public class CaptureUtilities {
         result.append(inhere);
         
         return result.toString();
-    }    
+    }
 }

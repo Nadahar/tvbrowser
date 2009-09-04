@@ -33,14 +33,14 @@ import captureplugin.drivers.utils.ProgramTime;
 import devplugin.Program;
 
 /**
- * This Class extends the ParamLibrary with Capture-Plugin-Specific Parameters.  
+ * This Class extends the ParamLibrary with Capture-Plugin-Specific Parameters.
  * 
  * @author bodum
  */
 public class CaptureParamLibrary extends ParamLibrary {
 
   /** Translator */
-  private static final Localizer mLocalizer = Localizer.getLocalizerFor(CaptureParamLibrary.class);  
+  private static final Localizer mLocalizer = Localizer.getLocalizerFor(CaptureParamLibrary.class);
   /** Program-Time Values */
   private ProgramTime mPrgTime;
   /** Configuration */
@@ -57,7 +57,7 @@ public class CaptureParamLibrary extends ParamLibrary {
    */
   public CaptureParamLibrary(DeviceConfig config) {
     mConfig = config;
-  }  
+  }
   
   /**
    * Create the ParamLibrary
@@ -70,7 +70,7 @@ public class CaptureParamLibrary extends ParamLibrary {
   }
 
   /**
-   * Set the ProgramTime 
+   * Set the ProgramTime
    * @param prgTime ProgramTime to use for calculating start/endtime
    */
   public void setProgramTime(ProgramTime prgTime) {
@@ -205,7 +205,7 @@ public class CaptureParamLibrary extends ParamLibrary {
   private String getUserName() {
     if ((mConfig.getUserName() == null) || (mConfig.getUserName().length() == 0)) {
       setErrors(true);
-      setErrorString(mLocalizer.msg("NoUser", "Please specify Username!"));      
+      setErrorString(mLocalizer.msg("NoUser", "Please specify Username!"));
       return null;
     }
     
@@ -219,7 +219,7 @@ public class CaptureParamLibrary extends ParamLibrary {
   private String getPassword() {
     if ((mConfig.getPassword() == null) || (mConfig.getPassword().length() == 0)) {
       setErrors(true);
-      setErrorString(mLocalizer.msg("NoPwd", "Please specify Password!"));      
+      setErrorString(mLocalizer.msg("NoPwd", "Please specify Password!"));
       return null;
     }
     
@@ -227,7 +227,7 @@ public class CaptureParamLibrary extends ParamLibrary {
   }
   
   /**
-   * Get the external ChannelName 
+   * Get the external ChannelName
    * @param prg Program to get the external ChannelName for
    * @param showError If true it returns an Error if the ChannelName is not set, otherwise it returns a empty String
    * @return external ChannelName
@@ -238,7 +238,7 @@ public class CaptureParamLibrary extends ParamLibrary {
 
       if (showError) {
         setErrors(true);
-        setErrorString(mLocalizer.msg("NoExternal", "No external Name exists for channel {0}.", prg.getChannel().getName()));      
+        setErrorString(mLocalizer.msg("NoExternal", "No external Name exists for channel {0}.", prg.getChannel().getName()));
         return null;
       } else {
         return "";
@@ -250,7 +250,7 @@ public class CaptureParamLibrary extends ParamLibrary {
   
   /**
    * concatenates two String-Arrays
-   * @param ar1 Array One 
+   * @param ar1 Array One
    * @param ar2 Array Two
    * @return concatenated Version of the two Arrays
    */

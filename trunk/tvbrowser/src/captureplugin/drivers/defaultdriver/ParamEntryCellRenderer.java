@@ -25,10 +25,11 @@
  */
 package captureplugin.drivers.defaultdriver;
 
+import java.awt.Component;
+
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import java.awt.Component;
 
 /**
  * A ListCellRenderer for Channel-Lists

@@ -24,12 +24,12 @@
  */
 package captureplugin.drivers;
 
-import devplugin.Program;
-
 import java.awt.Window;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+
+import devplugin.Program;
 
 /**
  * This Interfaces represents a Device.
@@ -72,7 +72,7 @@ public interface DeviceIf extends Cloneable {
     /**
      * Is this Program in the List of selected Recordings?
      * @param program Program
-     * @return is Progam in List?
+     * @return is Program in List?
      */
     public boolean isInList(Program program);
 
@@ -86,7 +86,7 @@ public interface DeviceIf extends Cloneable {
      * Adds a Program to the List
      * @param parent Parent-Frame
      * @param program Program to add
-     * @return true if successfull
+     * @return true if successful
      */
     public boolean add(Window parent, Program program);
 
@@ -94,7 +94,7 @@ public interface DeviceIf extends Cloneable {
      * Removes a Program from the List
      * @param parent Parent-Frame
      * @param program Program to remove
-     * @return true if successfull
+     * @return true if successful
      */
     public boolean remove(Window parent, Program program);
 
@@ -111,12 +111,12 @@ public interface DeviceIf extends Cloneable {
     public String[] getAdditionalCommands();
     
     /**
-     * Execute a additional Command. The Number must corospond to the
+     * Execute a additional Command. The Number must correspond to the
      * List of getAdditionalCommands()
      * @param parent Parent-Frame
      * @param num Number of Command
      * @param program Program
-     * @return true if successfull
+     * @return true if successful
      */
     public boolean executeAdditionalCommand(Window parent,int num, Program program);
     
@@ -129,7 +129,7 @@ public interface DeviceIf extends Cloneable {
     /**
      * Saves the Data into a Stream
      * @param stream write Data into this stream
-     * @throws IOException 
+     * @throws IOException
      */
     public void writeData(ObjectOutputStream stream) throws IOException;
 
@@ -137,13 +137,13 @@ public interface DeviceIf extends Cloneable {
      * Reads the Data from a Stream
      * @param stream read data from this stream
      * @param importDevice <code>True</code> if the device should be imported.
-     * @throws IOException 
-     * @throws ClassNotFoundException 
+     * @throws IOException
+     * @throws ClassNotFoundException
      */
     public void readData(ObjectInputStream stream, boolean importDevice) throws IOException, ClassNotFoundException;
     
     /**
-     * Checks the programs if there were updates or deletings
+     * Checks the programs if there were updates or deletions
      * 
      * @return The deleted programs as array.
      * @since 2.11
@@ -162,7 +162,7 @@ public interface DeviceIf extends Cloneable {
     /**
      * Removes programs that were deleted during a data update
      * 
-     * @param p The program to remove from this device. 
+     * @param p The program to remove from this device.
      * @since 2.11
      */
     public void removeProgramWithoutExecution(Program p);

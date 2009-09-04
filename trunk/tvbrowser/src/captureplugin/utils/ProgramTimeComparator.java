@@ -39,8 +39,9 @@ public class ProgramTimeComparator implements Comparator<Program> {
 
     public int compare(Program p1, Program p2) {
         int dc = p1.getDate().compareTo(p2.getDate());
-        if (dc != 0)
-            return dc;
+        if (dc != 0) {
+          return dc;
+        }
         
         int t1 = p1.getTimeField(ProgramFieldType.START_TIME_TYPE);
         int t2 = p2.getTimeField(ProgramFieldType.START_TIME_TYPE);

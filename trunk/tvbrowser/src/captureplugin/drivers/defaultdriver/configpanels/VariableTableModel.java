@@ -52,12 +52,13 @@ public class VariableTableModel extends AbstractTableModel {
      * return the Column-Names
      */
     public String getColumnName(int column) {
-        if (column == 0)
-            return mLocalizer.msg("No", "No");
-        else if (column == 1)
-            return mLocalizer.msg("Description", "Description");
-        else
-            return mLocalizer.msg("Value", "Value");
+        if (column == 0) {
+          return mLocalizer.msg("No", "No");
+        } else if (column == 1) {
+          return mLocalizer.msg("Description", "Description");
+        } else {
+          return mLocalizer.msg("Value", "Value");
+        }
     }
 
     /**

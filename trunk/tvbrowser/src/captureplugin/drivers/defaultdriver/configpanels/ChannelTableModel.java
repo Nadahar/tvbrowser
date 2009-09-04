@@ -33,9 +33,9 @@ import java.util.TreeMap;
 import javax.swing.table.AbstractTableModel;
 
 import util.ui.Localizer;
-import captureplugin.CapturePlugin;
 import captureplugin.drivers.defaultdriver.DeviceConfig;
 import devplugin.Channel;
+import devplugin.Plugin;
 import devplugin.PluginManager;
 
 /**
@@ -64,7 +64,7 @@ public class ChannelTableModel extends AbstractTableModel {
      * Updates the List of Channels
      */
     private void updateChannels() {
-        PluginManager pl = CapturePlugin.getPluginManager();
+        PluginManager pl = Plugin.getPluginManager();
         if (pl == null) {
             return;
         }
@@ -99,10 +99,11 @@ public class ChannelTableModel extends AbstractTableModel {
      * return the "Internal Name" for col 0, "External Name" for col 1
      */
     public String getColumnName(int column) {
-        if (column == 0)
-            return mLocalizer.msg("IntName", "Internal Name");
-        else
-            return mLocalizer.msg("ExtName", "External Name");
+        if (column == 0) {
+          return mLocalizer.msg("IntName", "Internal Name");
+        } else {
+          return mLocalizer.msg("ExtName", "External Name");
+        }
     }
 
     /**
@@ -140,10 +141,11 @@ public class ChannelTableModel extends AbstractTableModel {
     public Object getValueAt(int row, int col) {
         Channel key = getKeyForRow(row);
 
-        if (col == 0)
-            return key;
-        else
-            return mData.getChannels().get(key);
+        if (col == 0) {
+          return key;
+        } else {
+          return mData.getChannels().get(key);
+        }
     }
     
     /**

@@ -25,8 +25,8 @@
 package captureplugin.drivers;
 
 /**
- * The Driver. 
- * A Driver creates the Device that handles the 
+ * The Driver.
+ * A Driver creates the Device that handles the
  * recordings
  */
 public interface DriverIf {

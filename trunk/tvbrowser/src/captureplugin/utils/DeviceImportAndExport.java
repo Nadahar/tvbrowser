@@ -137,9 +137,9 @@ public class DeviceImportAndExport {
     mException = new Exception();
 
     if (file.exists()) {
-      if (JOptionPane.showConfirmDialog(panel, 
-          mLocalizer.msg("ReplaceFile","Do you want to replace the existing File?"), 
-          mLocalizer.msg("Replace","Replace?"), 
+      if (JOptionPane.showConfirmDialog(panel,
+          mLocalizer.msg("ReplaceFile","Do you want to replace the existing File?"),
+          mLocalizer.msg("Replace","Replace?"),
           JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) {
         return true;
       }

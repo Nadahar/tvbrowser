@@ -24,11 +24,10 @@
  */
 package captureplugin.drivers.defaultdriver.configpanels;
 
-import captureplugin.drivers.defaultdriver.DeviceConfig;
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-import util.ui.Localizer;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -36,14 +35,17 @@ import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
+
+import util.ui.Localizer;
+import captureplugin.drivers.defaultdriver.DeviceConfig;
+
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 
 
 /**
- * This Panel lets the User choose the Application / URL 
+ * This Panel lets the User choose the Application / URL
  */
 public class ApplicationPanel extends JPanel {
     /** Translator */
@@ -131,10 +133,11 @@ public class ApplicationPanel extends JPanel {
         }
       });
         
-      if (mData.getUseWebUrl())
+      if (mData.getUseWebUrl()) {
         url.setSelected(true);
-      else
+      } else {
         application.setSelected(true);
+      }
       
       setUrlMode(mData.getUseWebUrl());
     }

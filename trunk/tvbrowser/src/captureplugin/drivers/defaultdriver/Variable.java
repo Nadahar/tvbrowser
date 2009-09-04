@@ -30,7 +30,7 @@ import java.io.ObjectOutputStream;
 
 /**
  * Variables
- *  
+ * 
  * @author bodum
  */
 public class Variable {
@@ -65,7 +65,7 @@ public class Variable {
 
   /**
    * Set the Description
-   * @param description Description 
+   * @param description Description
    */
   public void setDescription(String description) {
     mDescription = description;

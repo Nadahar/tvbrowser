@@ -152,13 +152,14 @@ public class DefaultDevice implements DeviceIf {
                     mLocalizer.msg("Error","Error"),
                     JOptionPane.ERROR_MESSAGE);
             
-            return false;            
+            return false;
         }
         
         ProgramTimeDialog cdialog = new ProgramTimeDialog(parent, prgTime, true);
         
-        if(mConfig.getShowTitleAndTimeDialog())
+        if(mConfig.getShowTitleAndTimeDialog()) {
           UiUtilities.centerAndShow(cdialog);
+        }
         
         prgTime = cdialog.getPrgTime();
         
@@ -171,7 +172,7 @@ public class DefaultDevice implements DeviceIf {
                     mLocalizer.msg("MaxRecordings", "Sorry, the maximum of simultanious recodings is reached!\n(See the Settings to enable this)"),
                     mLocalizer.msg("Error","Error"),
                     JOptionPane.ERROR_MESSAGE);
-            return false;            
+            return false;
         }
         
         CaptureExecute exec = CaptureExecute.getInstance(parent, mConfig);
@@ -187,15 +188,15 @@ public class DefaultDevice implements DeviceIf {
     public boolean remove(Window parent, Program program) {
         CaptureExecute exec = CaptureExecute.getInstance(parent, mConfig);
         
-        ProgramTime prgTime = mConfig.getMarkedPrograms().getProgamTimeForProgram(program);
+        ProgramTime prgTime = mConfig.getMarkedPrograms().getProgramTimeForProgram(program);
         
         if (exec.removeProgram(prgTime)) {
             mConfig.getMarkedPrograms().remove(prgTime);
             return true;
         } else {
             
-            int ret = JOptionPane.showConfirmDialog(parent, 
-                    mLocalizer.msg("DeleteConfirmOnError", "There was an error while deleting the Program.\nShould I remove it from the List?"), 
+            int ret = JOptionPane.showConfirmDialog(parent,
+                    mLocalizer.msg("DeleteConfirmOnError", "There was an error while deleting the Program.\nShould I remove it from the List?"),
                     mLocalizer.msg("Error","Error"),
                     JOptionPane.YES_NO_OPTION);
             
@@ -275,18 +276,20 @@ public class DefaultDevice implements DeviceIf {
     
     /**
      * Checks the programs marked by this device if there
-     * were updates or deletings of programs and returns
+     * were updates or deletions of programs and returns
      * the deleted programs as array.
      * 
      * @return The deleted programs as array.
      */
     public Program[] checkProgramsAfterDataUpdateAndGetDeleted() {
       ProgramTime[] programTimes = mConfig.getMarkedPrograms().getProgramTimes();
-      ArrayList<Program> deleted = new ArrayList<Program>();      
+      ArrayList<Program> deleted = new ArrayList<Program>();
       
-      for(ProgramTime pTime : programTimes)
-        if(pTime.checkIfRemovedOrUpdateInstead())
+      for(ProgramTime pTime : programTimes) {
+        if(pTime.checkIfRemovedOrUpdateInstead()) {
           deleted.add(pTime.getProgram());
+        }
+      }
       
       return deleted.toArray(new Program[deleted.size()]);
     }
@@ -305,11 +308,11 @@ public class DefaultDevice implements DeviceIf {
     /**
      * Removes programs that were deleted during a data update
      * 
-     * @param p The program to remove from this device. 
+     * @param p The program to remove from this device.
      * @since 2.11
      */
     public void removeProgramWithoutExecution(Program p) {
-      ProgramTime prgTime = mConfig.getMarkedPrograms().getProgamTimeForProgram(p);
+      ProgramTime prgTime = mConfig.getMarkedPrograms().getProgramTimeForProgram(p);
       mConfig.getMarkedPrograms().remove(prgTime);
     }
 }

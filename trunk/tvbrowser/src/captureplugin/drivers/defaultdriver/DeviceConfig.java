@@ -24,11 +24,6 @@
  */
 package captureplugin.drivers.defaultdriver;
 
-import captureplugin.drivers.utils.IDGenerator;
-import captureplugin.utils.ChannelComperator;
-import devplugin.Channel;
-import util.ui.Localizer;
-
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -38,13 +33,18 @@ import java.util.Iterator;
 import java.util.TimeZone;
 import java.util.TreeMap;
 
+import util.ui.Localizer;
+import captureplugin.drivers.utils.IDGenerator;
+import captureplugin.utils.ChannelComperator;
+import devplugin.Channel;
+
 
 /**
  * The Configuration for this Device
  */
 public class DeviceConfig {
     /** Translator */
-    private static final Localizer mLocalizer = Localizer.getLocalizerFor(DeviceConfig.class);  
+    private static final Localizer mLocalizer = Localizer.getLocalizerFor(DeviceConfig.class);
 
     /** Id of this Device */
     private String mId;
@@ -83,7 +83,7 @@ public class DeviceConfig {
     private String mUserName = "";
     
     /** Password */
-    private String mPassword = "";    
+    private String mPassword = "";
 
     /** Use the Return-Value ? */
     private boolean mUseReturnValue = true;
@@ -185,13 +185,13 @@ public class DeviceConfig {
       }
       
       return params;
-    }    
+    }
     
     /**
      * @param onlyFuturePrograms
      */
     public void setOnlyFuturePrograms(boolean onlyFuturePrograms) {
-        mOnlyFuture = onlyFuturePrograms;        
+        mOnlyFuture = onlyFuturePrograms;
     }
 
     /**
@@ -205,7 +205,7 @@ public class DeviceConfig {
      * @param dialogOnlyOnError
      */
     public void setDialogOnlyOnError(boolean dialogOnlyOnError) {
-        mResultDialogOnlyOnError = dialogOnlyOnError;        
+        mResultDialogOnlyOnError = dialogOnlyOnError;
     }
 
     /**
@@ -296,7 +296,7 @@ public class DeviceConfig {
      */
     public void setMarkedPrograms(ProgramTimeList markedPrograms) {
         this.mMarkedPrograms = markedPrograms;
-    }    
+    }
     
     /**
      * @return
@@ -368,7 +368,7 @@ public class DeviceConfig {
     */
    public void setChannels(TreeMap<Channel, String> channels) {
        this.mChannels = channels;
-   }    
+   }
     
     /**
      * @return
@@ -473,7 +473,7 @@ public class DeviceConfig {
 
     /**
      * Use TimeZone Settings ?
-     * @param timeZone true if User wants to overide the TimeZone
+     * @param timeZone true if User wants to override the TimeZone
      */
     public void setUseTimeZone(boolean timeZone) {
       mUseTimeZone = timeZone;
@@ -500,7 +500,7 @@ public class DeviceConfig {
     /**
      * Write the Config into a Stream
      * @param stream
-     * @throws IOException 
+     * @throws IOException
      */
     public void writeData(ObjectOutputStream stream) throws IOException {
 
@@ -554,8 +554,8 @@ public class DeviceConfig {
      * Read the Config from a Stream
      * @param stream The stream to read from.
      * @param importDevice <code>True</code> if a device should be imported.
-     * @throws IOException 
-     * @throws ClassNotFoundException 
+     * @throws IOException
+     * @throws ClassNotFoundException
      */
     public void readData(ObjectInputStream stream, boolean importDevice) throws IOException, ClassNotFoundException {
         int version = stream.readInt();
@@ -643,7 +643,7 @@ public class DeviceConfig {
       Iterator<Channel> it = mChannels.keySet().iterator();
       
       while (it.hasNext()) {
-        Channel channel = (Channel) it.next();
+        Channel channel = it.next();
         channel.writeData(stream);
         stream.writeObject(mChannels.get(channel));
       }
@@ -664,22 +664,25 @@ public class DeviceConfig {
           String dataServiceClassName = (String)stream.readObject();
           String groupId = null;
         
-          if(version == 7)
+          if(version == 7) {
             groupId = (String)stream.readObject();
+          }
             
           String channelId = (String)stream.readObject();
           String value = (String)stream.readObject();
-          Channel ch = Channel.getChannel(dataServiceClassName, groupId, null, channelId); 
+          Channel ch = Channel.getChannel(dataServiceClassName, groupId, null, channelId);
 
-          if (ch!=null)
+          if (ch!=null) {
             mChannels.put(ch, value);
+          }
         }
         else {
           Channel ch = Channel.readData(stream, true);
           String value = (String)stream.readObject();
           
-          if (ch!=null)
-            mChannels.put(ch, value);          
+          if (ch!=null) {
+            mChannels.put(ch, value);
+          }
         }
       }
     }
@@ -688,8 +691,9 @@ public class DeviceConfig {
      * @return Unique ID of this Device
      */
     public String getId() {
-        if (mId == null)
-            mId = IDGenerator.generateUniqueId();
+        if (mId == null) {
+          mId = IDGenerator.generateUniqueId();
+        }
 
         return mId;
     }

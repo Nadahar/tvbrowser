@@ -45,7 +45,7 @@ public class DeviceCellRenderer extends DefaultListCellRenderer {
         JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
         
         if (value instanceof DeviceIf) {
-            DeviceIf device = (DeviceIf)value; 
+            DeviceIf device = (DeviceIf)value;
             String str = device.getName() + " (" + device.getDriver().getDriverName()
           + ")";
             label.setText(str);

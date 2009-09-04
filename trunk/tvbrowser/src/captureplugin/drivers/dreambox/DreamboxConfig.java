@@ -277,7 +277,7 @@ public class DreamboxConfig implements ConfigIf {
      * @return all channels on the dreambox
      */
     public ExternalChannelIf[] getExternalChannels() {
-        return mDreamboxChannels;
+        return mDreamboxChannels.clone();
     }
 
     /**
@@ -422,5 +422,10 @@ public class DreamboxConfig implements ConfigIf {
 
     public void setTimeout(int timeout) {
       mTimeout = timeout;
+    }
+
+    public boolean hasValidAddress() {
+      final String address = getDreamboxAddress();
+      return address != null && !address.trim().isEmpty();
     }
 }

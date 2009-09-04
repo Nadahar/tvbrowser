@@ -32,11 +32,11 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import captureplugin.CapturePlugin;
 import captureplugin.drivers.utils.IDGenerator;
 import captureplugin.utils.ConfigIf;
 import captureplugin.utils.ExternalChannelIf;
 import devplugin.Channel;
+import devplugin.Plugin;
 
 /**
  * Configuration for the Device
@@ -118,10 +118,11 @@ public class SimpleConfig implements ConfigIf {
      * @param external external Channel
      */
     public void setExternalChannel(Channel channel, ExternalChannelIf external) {
-        if ((external != null) && (channel != null))
-            mChannels.put(channel, (SimpleChannel) external);
-        else if (channel != null)
-            mChannels.remove(channel);
+        if ((external != null) && (channel != null)) {
+          mChannels.put(channel, (SimpleChannel) external);
+        } else if (channel != null) {
+          mChannels.remove(channel);
+        }
     }
 
     /**
@@ -139,7 +140,7 @@ public class SimpleConfig implements ConfigIf {
         HashMap<Channel, SimpleChannel> cloneMap = (HashMap<Channel, SimpleChannel>) mChannels.clone();
 
         while (iterator.hasNext()) {
-            Channel rchan = (Channel) iterator.next();
+            Channel rchan = iterator.next();
             SimpleChannel channel = mChannels.get(rchan);
             if (!mSimpleChannels.contains(channel)) {
                 cloneMap.remove(rchan);
@@ -149,12 +150,12 @@ public class SimpleConfig implements ConfigIf {
         mChannels = cloneMap;
 
         // Set Channels automatically if Name fits
-        Channel[] subchannels = CapturePlugin.getPluginManager().getSubscribedChannels();
-        for (int i = 0; i < subchannels.length; i++) {
-            if (mChannels.get(subchannels[i]) == null) {
-                for (int v = 0; v < channels.length; v++) {
-                    if (subchannels[i].getName().equalsIgnoreCase(channels[v].getName())) {
-                        mChannels.put(subchannels[i], channels[v]);
+        Channel[] subchannels = Plugin.getPluginManager().getSubscribedChannels();
+        for (Channel subchannel : subchannels) {
+            if (mChannels.get(subchannel) == null) {
+                for (SimpleChannel channel : channels) {
+                    if (subchannel.getName().equalsIgnoreCase(channel.getName())) {
+                        mChannels.put(subchannel, channel);
                     }
                 }
             }
@@ -175,8 +176,9 @@ public class SimpleConfig implements ConfigIf {
     public ExternalChannelIf[] getAllExternalChannels(SimpleConnectionIf con) {
         if ((con != null) && (mSimpleChannels.size() == 0)) {
             SimpleChannel[] lists = con.getAvailableChannels();
-            if (lists != null)
-                setExternalChannels(lists);
+            if (lists != null) {
+              setExternalChannels(lists);
+            }
         }
         return mSimpleChannels.toArray(new SimpleChannel[mSimpleChannels.size()]);
     }
@@ -199,15 +201,15 @@ public class SimpleConfig implements ConfigIf {
 
         int mapCount = stream.readInt();
 
-        Channel channels[] = CapturePlugin.getPluginManager().getSubscribedChannels();
+        Channel channels[] = Plugin.getPluginManager().getSubscribedChannels();
 
         for (int i = 0; i < mapCount; i++) {
             String chanId = stream.readUTF();
             SimpleChannel channel = new SimpleChannel(stream);
 
-            for (int v = 0; v < channels.length; v++) {
-                if (channels[v].getId().equals(chanId)) {
-                    mChannels.put(channels[v], channel);
+            for (Channel channel2 : channels) {
+                if (channel2.getId().equals(chanId)) {
+                    mChannels.put(channel2, channel);
                 }
             }
         }
@@ -251,8 +253,9 @@ public class SimpleConfig implements ConfigIf {
     public Channel getChannelForExternalId(int channel) {
 
         for (Channel ch : mChannels.keySet()) {
-            if ((mChannels.get(ch)).getNumber() == channel)
-                return ch;
+            if ((mChannels.get(ch)).getNumber() == channel) {
+              return ch;
+            }
         }
 
         return null;
@@ -262,8 +265,9 @@ public class SimpleConfig implements ConfigIf {
      * @return ID of this Device
      */
     public String getId() {
-        if (mId == null)
-            mId = IDGenerator.generateUniqueId();
+        if (mId == null) {
+          mId = IDGenerator.generateUniqueId();
+        }
         return mId;
     }
 }
