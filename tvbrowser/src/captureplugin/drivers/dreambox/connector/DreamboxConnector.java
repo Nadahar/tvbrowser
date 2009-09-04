@@ -52,11 +52,11 @@ import org.apache.commons.codec.binary.Base64;
 import org.xml.sax.SAXException;
 
 import util.io.IOUtilities;
-import captureplugin.CapturePlugin;
 import captureplugin.drivers.dreambox.DreamboxConfig;
 import captureplugin.drivers.utils.ProgramTime;
 import devplugin.Channel;
 import devplugin.Date;
+import devplugin.Plugin;
 import devplugin.Program;
 
 /**
@@ -83,6 +83,9 @@ public class DreamboxConnector {
      * @return Data of specific service
      */
     public TreeMap<String, String> getServiceDataBonquets(String service) {
+      if (!mConfig.hasValidAddress()) {
+        return null;
+      }
         try {
             URL url = new URL("http://" + mConfig.getDreamboxAddress() + "/web/getservices?bRef=" + service);
 
@@ -120,6 +123,9 @@ public class DreamboxConnector {
      * @return Data of specific service
      */
     public TreeMap<String, String> getServiceData(String service) {
+      if (!mConfig.hasValidAddress()) {
+        return null;
+      }
         try {
             URL url = new URL("http://" + mConfig.getDreamboxAddress() + "/web/getservices?sRef=" + service);
 
@@ -211,6 +217,9 @@ public class DreamboxConnector {
      * @return List of Timers
      */
     private ArrayList<HashMap<String, String>> getTimers() {
+      if (!mConfig.hasValidAddress()) {
+        return null;
+      }
         try {
             URL url = new URL("http://" + mConfig.getDreamboxAddress() + "/web/timerlist");
             URLConnection connection = url.openConnection();
@@ -285,7 +294,7 @@ public class DreamboxConnector {
                     }
 
                     for (int i=0;i<=days;i++) {
-                        Iterator<Program> it = CapturePlugin.getPluginManager()
+                        Iterator<Program> it = Plugin.getPluginManager()
                                     .getChannelDayProgram(new Date(runner), tvbchannel);
                         if (it != null) {
                             boolean found = false;
@@ -338,12 +347,15 @@ public class DreamboxConnector {
     /**
      * Add a recording to the Dreambox
      * @param dreamboxChannel the DreamboxChannel for the Program
-     * @param prgTime add this ProgramTime @return true, if succcesfull
+     * @param prgTime add this ProgramTime @return true, if successful
      * @param afterEvent 0=nothing, 1=standby, 2=deepstandby
      * @param timezone TimeZone to use for recording
-     * @return True, if successfull
+     * @return True, if successful
      */
     public boolean addRecording(DreamboxChannel dreamboxChannel, ProgramTime prgTime, int afterEvent, TimeZone timezone) {
+      if (!mConfig.hasValidAddress()) {
+        return false;
+      }
         try {
             Calendar start = prgTime.getStartAsCalendar();
             start.setTimeZone(timezone);
@@ -410,11 +422,14 @@ public class DreamboxConnector {
     /**
      * Remove a recording from the Dreambox
      * @param dreamboxChannel the DreamboxChannel for the Program
-     * @param prgTime ProgramTime to remove @return true, if successfull
+     * @param prgTime ProgramTime to remove @return true, if successful
      * @param timezone Timezone to use for recording
-     * @return True, if successfull
+     * @return True, if successful
      */
     public boolean removeRecording(DreamboxChannel dreamboxChannel, ProgramTime prgTime, TimeZone timezone) {
+      if (!mConfig.hasValidAddress()) {
+        return false;
+      }
         try {
             Calendar start = prgTime.getStartAsCalendar();
             start.setTimeZone(timezone);
@@ -481,6 +496,9 @@ public class DreamboxConnector {
      * @param message Message to send
      */
     public void sendMessage(String message) {
+      if (!mConfig.hasValidAddress()) {
+        return;
+      }
         try {
             final URL url = new URL("http://" + mConfig.getDreamboxAddress() + "/web/message?type=2&timeout=" + mConfig.getTimeout() + "&text=" + URLEncoder.encode(message, "UTF8"));
             URLConnection connection = url.openConnection();
@@ -529,7 +547,10 @@ public class DreamboxConnector {
     return false;
   }
 
-  public boolean streamChannel(DreamboxChannel channel) {
+  public boolean streamChannel(final DreamboxChannel channel) {
+    if (!mConfig.hasValidAddress()) {
+      return false;
+    }
     boolean success = false;
     
     if (new File(mConfig.getMediaplayer()).exists()) {

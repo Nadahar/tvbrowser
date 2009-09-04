@@ -98,9 +98,9 @@ public class CaptureExecute {
    * @return The capture execute for the given values.
    */
     public static CaptureExecute getInstance(Window window, DeviceConfig data) {
-      if(mInstance == null)
+      if(mInstance == null) {
         new CaptureExecute(window, data);
-      else {
+      } else {
         mInstance.mParent = window;
         mInstance.mData = data;
       }
@@ -188,7 +188,7 @@ public class CaptureExecute {
                 ResultDialog dialog = new ResultDialog(mParent, params, output, true);
                 UiUtilities.centerAndShow(dialog);
                 return false;
-            } 
+            }
             
             if (!mData.getDialogOnlyOnError() || (mData.getDialogOnlyOnError() && mError && mExitValue != 249)) {
                 ResultDialog dialog = new ResultDialog(mParent, params, output, false);
@@ -203,7 +203,7 @@ public class CaptureExecute {
         return mExitValue == 0;
     }
     
-    /** 
+    /**
      * Checks the Parameters
      * @return true if OK
      */

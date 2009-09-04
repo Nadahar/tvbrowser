@@ -25,14 +25,16 @@
 
 package captureplugin;
 
-import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.layout.Sizes;
-import devplugin.SettingsTab;
-import util.ui.Localizer;
-
 import javax.swing.Icon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+
+import util.ui.Localizer;
+
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.layout.Sizes;
+
+import devplugin.SettingsTab;
 
 /**
  *	The Settings-Tab for the CapturePlugin,

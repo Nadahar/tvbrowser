@@ -24,9 +24,10 @@
  */
 package captureplugin.utils;
 
+import java.awt.Component;
+
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
-import java.awt.Component;
 
 /**
  * The renderer for the dreamboxchannel

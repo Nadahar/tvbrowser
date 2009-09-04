@@ -77,7 +77,7 @@ public class ProgramTimeList {
      * @return true if Program is in List
      */
     public boolean contains(Program program) {
-        return getProgamTimeForProgram(program) != null;
+        return getProgramTimeForProgram(program) != null;
     }
 
     /**
@@ -94,7 +94,7 @@ public class ProgramTimeList {
      * @param program Program
      * @return ProgramTime for Program
      */
-    public ProgramTime getProgamTimeForProgram(Program program) {
+    public ProgramTime getProgramTimeForProgram(Program program) {
         for (ProgramTime time : mPrgTimeList) {
             if (time.getProgram() == program) {
                 return time;

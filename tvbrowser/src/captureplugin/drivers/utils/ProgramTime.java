@@ -24,14 +24,14 @@
  */
 package captureplugin.drivers.utils;
 
-import devplugin.Plugin;
-import devplugin.Program;
-
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Calendar;
 import java.util.Date;
+
+import devplugin.Plugin;
+import devplugin.Program;
 
 
 /**
@@ -113,10 +113,11 @@ public class ProgramTime implements Cloneable {
       c.set(Calendar.HOUR_OF_DAY, prg.getHours());
       c.set(Calendar.MINUTE, prg.getMinutes());
       
-      if (prg.getLength() <= 0) 
+      if (prg.getLength() <= 0) {
         c.add(Calendar.MINUTE, 1);
-      else
+      } else {
         c.add(Calendar.MINUTE, prg.getLength());
+      }
       c.set(Calendar.SECOND, 0);
       
       mEnd = c;
@@ -266,16 +267,17 @@ public class ProgramTime implements Cloneable {
     
     /**
      * Checks if the program of this ProgramTime was deleted
-     * or if it has not updated instead renew the instance of it.   
+     * or if it has not updated instead renew the instance of it.
      * 
      * @return <code>true</code> if the program was deleted, <code>false</code> instead.
      * @since 2.11
      */
     public boolean checkIfRemovedOrUpdateInstead() {
-      if(mProgram.getProgramState() == Program.WAS_UPDATED_STATE)
+      if(mProgram.getProgramState() == Program.WAS_UPDATED_STATE) {
         mProgram = Plugin.getPluginManager().getProgram(mProgram.getDate(), mProgram.getID());
-      else if(mProgram.getProgramState() == Program.WAS_DELETED_STATE)
+      } else if(mProgram.getProgramState() == Program.WAS_DELETED_STATE) {
         return true;
+      }
 
       return false;
     }

@@ -24,11 +24,11 @@
  */
 package captureplugin.drivers.dreambox.connector;
 
-import captureplugin.utils.ExternalChannelIf;
-
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+
+import captureplugin.utils.ExternalChannelIf;
 
 /**
  * A channel in the dreambox

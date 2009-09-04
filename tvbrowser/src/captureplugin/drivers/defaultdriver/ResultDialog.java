@@ -62,7 +62,7 @@ public class ResultDialog extends JDialog {
     super(parent);
     setModal(true);
         createGui(input, output, error);
-    }    
+    }
     
     public void createGui(String input, String output, boolean error) {
         setTitle(mLocalizer.msg("Title","Capture-Plugin"));

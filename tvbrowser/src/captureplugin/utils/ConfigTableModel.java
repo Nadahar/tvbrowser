@@ -24,11 +24,11 @@
  */
 package captureplugin.utils;
 
-import captureplugin.CapturePlugin;
-import devplugin.Channel;
-import util.ui.Localizer;
-
 import javax.swing.table.AbstractTableModel;
+
+import util.ui.Localizer;
+import devplugin.Channel;
+import devplugin.Plugin;
 
 /**
  * The Table-Model for the mapping of the Channels
@@ -41,7 +41,7 @@ public class ConfigTableModel extends AbstractTableModel {
      */
     private static final Localizer mLocalizer = Localizer.getLocalizerFor(ConfigTableModel.class);
 
-    private Channel[] mSubscribedChannels = CapturePlugin.getPluginManager().getSubscribedChannels();
+    private Channel[] mSubscribedChannels = Plugin.getPluginManager().getSubscribedChannels();
 
     private ConfigIf mConfig;
 
@@ -54,7 +54,7 @@ public class ConfigTableModel extends AbstractTableModel {
 
     public String getColumnName(int column) {
         if (column == 0) {
-            return mLocalizer.msg("channel", "Channel");
+            return Localizer.getLocalization(Localizer.I18N_CHANNEL);
         } else if (column == 1) {
             return mExternalName;
         }

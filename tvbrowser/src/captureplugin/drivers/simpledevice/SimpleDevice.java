@@ -146,7 +146,7 @@ public class SimpleDevice implements DeviceIf {
 
     public Program[] getProgramList() {
         mListOfRecordings = mConnection.getAllRecordings(mConfig);
-        return mListOfRecordings;
+        return mListOfRecordings.clone();
     }
 
     public boolean isInList(Program program) {
@@ -219,8 +219,9 @@ public class SimpleDevice implements DeviceIf {
         ArrayList<Program> deletedPrograms = new ArrayList<Program>();
 
         for (Program p : mListOfRecordings) {
-            if (p.getProgramState() == Program.WAS_DELETED_STATE)
-                deletedPrograms.add(p);
+            if (p.getProgramState() == Program.WAS_DELETED_STATE) {
+              deletedPrograms.add(p);
+            }
         }
 
         return deletedPrograms.toArray(new Program[deletedPrograms.size()]);

@@ -102,20 +102,26 @@ public class SimpleChannel implements ExternalChannelIf {
     }
 
     public boolean equals(Object obj) {
-      if (this == obj)
+      if (this == obj) {
         return true;
-      if (obj == null)
+      }
+      if (obj == null) {
         return false;
-      if (getClass() != obj.getClass())
+      }
+      if (getClass() != obj.getClass()) {
         return false;
+      }
       final SimpleChannel other = (SimpleChannel) obj;
       if (mName == null) {
-        if (other.mName != null)
+        if (other.mName != null) {
           return false;
-      } else if (!mName.equals(other.mName))
+        }
+      } else if (!mName.equals(other.mName)) {
         return false;
-      if (mNumber != other.mNumber)
+      }
+      if (mNumber != other.mNumber) {
         return false;
+      }
       return true;
     }
 
@@ -129,7 +135,7 @@ public class SimpleChannel implements ExternalChannelIf {
       stream.readInt(); // version not yet used
       mNumber = stream.readInt();
       mName = stream.readUTF();
-    } 
+    }
 
     /**
      * Store Settings

@@ -243,14 +243,15 @@ public class TheTubeConnection implements SimpleConnectionIf {
                 Iterator<Program> it = CapturePlugin.getPluginManager()
                         .getChannelDayProgram(date, chan);
 
-                if (it != null)
-                    while (it.hasNext()) {
-                        Program prog = it.next();
+                if (it != null) {
+                  while (it.hasNext()) {
+                      Program prog = it.next();
 
-                        if ((prog.getHours() == hour) && (prog.getMinutes() == min)) {
-                            programs.add(prog);
-                        }
-                    }
+                      if ((prog.getHours() == hour) && (prog.getMinutes() == min)) {
+                          programs.add(prog);
+                      }
+                  }
+                }
             }
 
         } catch (Exception e) {

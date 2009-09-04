@@ -79,7 +79,7 @@ public class AdditionalParams extends JDialog implements WindowClosingIf{
     private DeviceConfig mConfig;
     /** currently deleting */
     private boolean mDeleting = false;
-    /** Button for aktivation/deaktivation of the Param */ 
+    /** Button for aktivation/deaktivation of the Param */
     private JButton mStartStop;
     
     /** Start-Icon */
@@ -333,7 +333,7 @@ public class AdditionalParams extends JDialog implements WindowClosingIf{
     }
     
     /**
-     * OK was pressed 
+     * OK was pressed
      */
     protected void okPressed() {
         saveSelected();

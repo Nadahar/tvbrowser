@@ -24,11 +24,11 @@
  */
 package captureplugin.drivers;
 
+import java.util.ArrayList;
+
+import util.misc.OperatingSystem;
 import captureplugin.drivers.defaultdriver.DefaultDriver;
 import captureplugin.drivers.dreambox.DreamboxDriver;
-import util.misc.OperatingSystem;
-
-import java.util.ArrayList;
 
 /**
  * This Factory returns all availabe Drivers and
@@ -70,12 +70,14 @@ public class DriverFactory {
         if (OperatingSystem.isMacOs()) {
             try {
                 DriverIf driver = (DriverIf) this.getClass().getClassLoader().loadClass("captureplugin.drivers.elgatodriver.ElgatoDriver").newInstance();
-                if (driver != null)
-                    drivers.add(driver);
+                if (driver != null) {
+                  drivers.add(driver);
+                }
 
                 driver = (DriverIf) this.getClass().getClassLoader().loadClass("captureplugin.drivers.thetubedriver.TheTubeDriver").newInstance();
-                if (driver != null)
-                    drivers.add(driver);
+                if (driver != null) {
+                  drivers.add(driver);
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }

@@ -24,6 +24,14 @@
  */
 package captureplugin.drivers.elgatodriver;
 
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.logging.Logger;
+
+import util.misc.AppleScriptRunner;
 import captureplugin.CapturePlugin;
 import captureplugin.drivers.simpledevice.SimpleChannel;
 import captureplugin.drivers.simpledevice.SimpleConfig;
@@ -32,14 +40,6 @@ import captureplugin.drivers.utils.ProgramTime;
 import devplugin.Channel;
 import devplugin.Date;
 import devplugin.Program;
-import util.misc.AppleScriptRunner;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.logging.Logger;
-import java.text.SimpleDateFormat;
 
 /**
  * This Class represents the Connection to the Elgato EyeTV.
@@ -220,18 +220,19 @@ public class ElgatoConnection implements SimpleConnectionIf {
                     Iterator<Program> it = CapturePlugin.getPluginManager()
                             .getChannelDayProgram(date, chan);
 
-                    if (it != null)
-                        while (it.hasNext()) {
-                            Program prog = it.next();
+                    if (it != null) {
+                      while (it.hasNext()) {
+                          Program prog = it.next();
 
-                            if ((prog.getHours() == hour)
-                                    && (prog.getMinutes() == min)
-                                    && (prog.getTitle().trim().toLowerCase()
-                                            .equals(title.trim().toLowerCase()))) {
-                                programs.add(prog);
-                                mProgramMapping.put(prog, id);
-                            }
-                        }
+                          if ((prog.getHours() == hour)
+                                  && (prog.getMinutes() == min)
+                                  && (prog.getTitle().trim().toLowerCase()
+                                          .equals(title.trim().toLowerCase()))) {
+                              programs.add(prog);
+                              mProgramMapping.put(prog, id);
+                          }
+                      }
+                    }
                 }
 
             } catch (Exception e) {

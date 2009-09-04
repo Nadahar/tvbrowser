@@ -24,15 +24,16 @@
  */
 package captureplugin.drivers.utils;
 
-import util.ui.CaretPositionCorrector;
+import java.awt.Color;
+import java.util.Date;
 
 import javax.swing.JComponent;
 import javax.swing.JFormattedTextField;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerDateModel;
-import java.awt.Color;
-import java.util.Date;
+
+import util.ui.CaretPositionCorrector;
 
 /**
  * A Panel that gives the possibility to choose date/time
@@ -57,10 +58,11 @@ public class TimeDateChooserPanel extends JPanel {
     mSpinner = new JSpinner(mDateModel);
          
     
-    if(mSpinner.getEditor() instanceof JSpinner.DateEditor)
+    if(mSpinner.getEditor() instanceof JSpinner.DateEditor) {
       CaretPositionCorrector.createCorrector(
           ((JSpinner.DateEditor)mSpinner.getEditor()).getTextField(),
           new char[] {'.','/','-',':',' '}, ':');
+    }
     
     add(mSpinner);
   }

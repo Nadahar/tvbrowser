@@ -85,6 +85,8 @@ public class SettingsPanel extends ScrollableJPanel implements ActionListener, C
     
     private JComboBox mTimeZones;
 
+    private JLabel mTimeZoneLabel;
+
     /**
      * Creates the SettingsPanel
      * @param data Settings
@@ -103,7 +105,7 @@ public class SettingsPanel extends ScrollableJPanel implements ActionListener, C
       "pref,5dlu,pref,1dlu,pref,10dlu,pref,5dlu,pref,1dlu,"+
       "pref,10dlu,pref,5dlu,pref,1dlu,pref,7dlu,pref,pref," +
       "pref,pref,pref,7dlu,pref,pref"),this);
-      pb.setDefaultDialogBorder();      
+      pb.setDefaultDialogBorder();
       
       mPreTimeSpinner = new JSpinner(new SpinnerNumberModel(mData.getPreTime(), 0, null, 1));
       mPostTimeTextField = new JSpinner(new SpinnerNumberModel(mData.getPostTime(), 0, null, 1));
@@ -137,17 +139,17 @@ public class SettingsPanel extends ScrollableJPanel implements ActionListener, C
         }
       }
       
-      pb.addSeparator(mLocalizer.msg("TimeSettings", "Timesettings"), cc.xyw(1,1,6));      
+      pb.addSeparator(mLocalizer.msg("TimeSettings", "Timesettings"), cc.xyw(1,1,6));
       
       pb.addLabel(mLocalizer.msg("Earlier", "Number of minutes to start erlier"),cc.xyw(2,3,2));
       pb.add(mPreTimeSpinner, cc.xy(5,3));
       
       pb.addLabel(mLocalizer.msg("Later", "Number of minutes to stop later"),cc.xyw(2,5,2));
-      pb.add(mPostTimeTextField, cc.xy(5,5));      
+      pb.add(mPostTimeTextField, cc.xy(5,5));
       
-      pb.addSeparator(mLocalizer.msg("User", "User"), cc.xyw(1,7,6));      
+      pb.addSeparator(mLocalizer.msg("User", "User"), cc.xyw(1,7,6));
       
-      pb.addLabel(mLocalizer.msg("Username", "Username") + ":", cc.xyw(2,9,2));      
+      pb.addLabel(mLocalizer.msg("Username", "Username") + ":", cc.xyw(2,9,2));
       pb.add(mUserName, cc.xy(5,9));
       
       pb.addLabel(mLocalizer.msg("Password", "Password") + ":", cc.xyw(2,11,2));
@@ -158,7 +160,7 @@ public class SettingsPanel extends ScrollableJPanel implements ActionListener, C
       pb.addLabel(mLocalizer.msg("MaxSimult","Maximum simultaneous recordings")+ ":" , cc.xyw(2,15,2));
       pb.add(mMaxSimult,cc.xy(5,15));
       
-      pb.addLabel(mLocalizer.msg("Timeout","Wait sec. until Timeout (-1 = disabled)")+ ":", cc.xyw(2,17,2));      
+      pb.addLabel(mLocalizer.msg("Timeout","Wait sec. until Timeout (-1 = disabled)")+ ":", cc.xyw(2,17,2));
       pb.add(mMaxTimeout,cc.xy(5,17));
 
       pb.add(mCheckReturn, cc.xyw(2,19,4));
@@ -170,10 +172,12 @@ public class SettingsPanel extends ScrollableJPanel implements ActionListener, C
       pb.add(mUseTime, cc.xyw(2,25,4));
       
       JPanel timeZonePanel = new JPanel(new FlowLayout(FlowLayout.LEFT,0,0));
-      timeZonePanel.add(new JLabel(mLocalizer.msg("Timezone","Timezone")+": "));
+      mTimeZoneLabel = new JLabel(mLocalizer.msg("Timezone","Timezone")+": ");
+      mTimeZoneLabel.setEnabled(mTimeZones.isEnabled());
+      timeZonePanel.add(mTimeZoneLabel);
       timeZonePanel.add(mTimeZones);
       
-      pb.add(timeZonePanel, cc.xyw(3,26,3));      
+      pb.add(timeZonePanel, cc.xyw(3,26,3));
       
       // add ChangeListener to the spinners
       mPreTimeSpinner.addChangeListener(this);
@@ -209,32 +213,34 @@ public class SettingsPanel extends ScrollableJPanel implements ActionListener, C
     }
 
     public void actionPerformed(ActionEvent e) {
-      if(e.getSource().equals(mCheckReturn))
+      if(e.getSource().equals(mCheckReturn)) {
         mData.setUseReturnValue(mCheckReturn.isSelected());
-      else if(e.getSource().equals(mShowOnError))
+      } else if(e.getSource().equals(mShowOnError)) {
         mData.setDialogOnlyOnError(mShowOnError.isSelected());
-      else if(e.getSource().equals(mShowTitleAndTimeDialog))
+      } else if(e.getSource().equals(mShowTitleAndTimeDialog)) {
         mData.setShowTitleAndTimeDialog(mShowTitleAndTimeDialog.isSelected());
-      else if(e.getSource().equals(mDeleteRemovedPrograms))
+      } else if(e.getSource().equals(mDeleteRemovedPrograms)) {
         mData.setDeleteRemovedPrograms(mDeleteRemovedPrograms.isSelected());
-      else if(e.getSource().equals(mOldPrograms))
+      } else if(e.getSource().equals(mOldPrograms)) {
         mData.setOnlyFuturePrograms(mOldPrograms.isSelected());
-      else if(e.getSource().equals(mUseTime)) {
+      } else if(e.getSource().equals(mUseTime)) {
         mData.setUseTimeZone(!mUseTime.isSelected());
         mTimeZones.setEnabled(!mUseTime.isSelected());
+        mTimeZoneLabel.setEnabled(mTimeZones.isEnabled());
       }
       
     }
 
     public void stateChanged(ChangeEvent e) {
-      if(e.getSource().equals(mMaxSimult))
+      if(e.getSource().equals(mMaxSimult)) {
         mData.setMaxSimultanious((Integer) mMaxSimult.getValue());
-      else if(e.getSource().equals(mMaxTimeout))
+      } else if(e.getSource().equals(mMaxTimeout)) {
         mData.setTimeOut((Integer) mMaxTimeout.getValue());
-      else if(e.getSource().equals(mPreTimeSpinner))
+      } else if(e.getSource().equals(mPreTimeSpinner)) {
         mData.setPreTime((Integer) mPreTimeSpinner.getValue());
-      else if(e.getSource().equals(mPostTimeTextField))
+      } else if(e.getSource().equals(mPostTimeTextField)) {
         mData.setPostTime((Integer) mPostTimeTextField.getValue());
+      }
     }
 
 }

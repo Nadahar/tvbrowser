@@ -26,12 +26,6 @@ package captureplugin.drivers.defaultdriver.configpanels;
 
 import java.awt.Component;
 
-import captureplugin.drivers.defaultdriver.DeviceConfig;
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-import util.ui.Localizer;
-
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -41,6 +35,13 @@ import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
+
+import util.ui.Localizer;
+import captureplugin.drivers.defaultdriver.DeviceConfig;
+
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 
 /**
  * The Panel for configuration of the Variables
@@ -114,8 +115,9 @@ public class VariablePanel extends JPanel {
       public void ancestorRemoved(AncestorEvent event) {
         if (mVariableTable.isEditing()) {
           TableCellEditor editor = mVariableTable.getCellEditor();
-          if (editor != null)
+          if (editor != null) {
             editor.stopCellEditing();
+          }
         }
       }
     });

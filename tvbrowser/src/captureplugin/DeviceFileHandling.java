@@ -82,7 +82,7 @@ public class DeviceFileHandling {
         }
         mCount++;
         
-        File data = new File(Plugin.getPluginManager().getTvBrowserSettings().getTvBrowserUserHome()  + File.separator + 
+        File data = new File(Plugin.getPluginManager().getTvBrowserSettings().getTvBrowserUserHome()  + File.separator +
                 "CaptureDevices" + File.separator + mCount + ".dat");
         StreamUtilities.objectOutputStream(data, new ObjectOutputStreamProcessor() {
       public void process(ObjectOutputStream stream) throws IOException {
@@ -110,7 +110,7 @@ public class DeviceFileHandling {
             return null;
         }
         
-        File data = new File(Plugin.getPluginManager().getTvBrowserSettings().getTvBrowserUserHome()  + File.separator + 
+        File data = new File(Plugin.getPluginManager().getTvBrowserSettings().getTvBrowserUserHome()  + File.separator +
                 "CaptureDevices" + File.separator + filename);
         StreamUtilities.objectInputStreamIgnoringExceptions(data, 0x2000,
         new ObjectInputStreamProcessor() {

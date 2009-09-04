@@ -24,27 +24,30 @@
  */
 package captureplugin.drivers.defaultdriver.configpanels;
 
-import captureplugin.drivers.defaultdriver.AdditionalParams;
-import captureplugin.drivers.defaultdriver.CaptureParamLibrary;
-import captureplugin.drivers.defaultdriver.DefaultKonfigurator;
-import captureplugin.drivers.defaultdriver.DeviceConfig;
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-import util.paramhandler.ParamDescriptionPanel;
-import util.ui.Localizer;
-import util.ui.UiUtilities;
-
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.ScrollPaneConstants;
+
+import util.paramhandler.ParamDescriptionPanel;
+import util.ui.Localizer;
+import util.ui.UiUtilities;
+import captureplugin.drivers.defaultdriver.AdditionalParams;
+import captureplugin.drivers.defaultdriver.CaptureParamLibrary;
+import captureplugin.drivers.defaultdriver.DefaultKonfigurator;
+import captureplugin.drivers.defaultdriver.DeviceConfig;
+
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 
 /**
  * Enter the Parameters
@@ -108,8 +111,8 @@ public class ParameterPanel extends JPanel {
 
       mAddFormatTextField.setText(mData.getParameterFormatAdd());
 
-      JScrollPane scroll = new JScrollPane(mAddFormatTextField, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+      JScrollPane scroll = new JScrollPane(mAddFormatTextField, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
       
       pb.add(scroll, cc.xywh(4,3,2,2));
       
@@ -134,7 +137,7 @@ public class ParameterPanel extends JPanel {
 
       mRemFormatTextField.setText(mData.getParameterFormatRem());
             
-      scroll = new JScrollPane(mRemFormatTextField, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+      scroll = new JScrollPane(mRemFormatTextField, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
       pb.add(scroll, cc.xywh(4,6,2,2));
         
       

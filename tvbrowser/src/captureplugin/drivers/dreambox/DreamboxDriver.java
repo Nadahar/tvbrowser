@@ -24,9 +24,9 @@
  */
 package captureplugin.drivers.dreambox;
 
+import util.ui.Localizer;
 import captureplugin.drivers.DeviceIf;
 import captureplugin.drivers.DriverIf;
-import util.ui.Localizer;
 
 /**
  * The Driver for the Dreambox

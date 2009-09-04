@@ -1,9 +1,9 @@
 package captureplugin.drivers.thetubedriver;
 
+import util.ui.Localizer;
 import captureplugin.drivers.DeviceIf;
 import captureplugin.drivers.DriverIf;
 import captureplugin.drivers.simpledevice.SimpleDevice;
-import util.ui.Localizer;
 
 /**
  * Driver for TheTube

@@ -46,6 +46,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
 
 import util.ui.Localizer;
 import util.ui.UiUtilities;
@@ -83,7 +84,7 @@ public class DeviceCreatorDialog extends JDialog implements WindowClosingIf {
     setModal(true);
         createGUI();
         setTitle(mLocalizer.msg("Title", "Create Device"));
-    }    
+    }
     
     /**
      * Create the GUI
@@ -143,7 +144,7 @@ public class DeviceCreatorDialog extends JDialog implements WindowClosingIf {
         descC.gridwidth = GridBagConstraints.REMAINDER;
         descC.insets = new Insets(5, 5, 5, 5);
 
-        panel.add(new JScrollPane(mDesc,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), descC);
+        panel.add(new JScrollPane(mDesc,ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER), descC);
 
         final Font font = new JLabel().getFont();
 

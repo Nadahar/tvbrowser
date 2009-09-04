@@ -56,7 +56,7 @@ import com.jgoodies.forms.layout.Sizes;
 
 /**
  * Config Dialog
- *  
+ * 
  * @author bodum
  */
 public class SimpleConfigDialog extends JDialog implements WindowClosingIf {
@@ -163,8 +163,9 @@ public class SimpleConfigDialog extends JDialog implements WindowClosingIf {
       public void actionPerformed(java.awt.event.ActionEvent e) {
         if (mTable.isEditing()) {
             TableCellEditor editor = mTable.getCellEditor();
-            if (editor != null)
-                editor.stopCellEditing();
+            if (editor != null) {
+              editor.stopCellEditing();
+            }
         }
         mReturn = JOptionPane.OK_OPTION;
         setVisible(false);

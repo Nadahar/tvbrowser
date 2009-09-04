@@ -187,6 +187,9 @@ public class DevicePanel extends JPanel {
           }
           
         });
+        if (mDeviceList.getModel().getSize() > 0) {
+          mDeviceList.setSelectedIndex(0);
+        }
         
         setButtonState();
     }
@@ -204,7 +207,7 @@ public class DevicePanel extends JPanel {
       
       mRemoveDevice.setEnabled(state);
       mExportDevice.setEnabled(state);
-      mConfigDevice.setEnabled(state);      
+      mConfigDevice.setEnabled(state);
     }
     
     /**
@@ -243,7 +246,7 @@ public class DevicePanel extends JPanel {
         DeviceIf device = (DeviceIf) mDeviceList.getSelectedValue();
         
         if (device != null) {
-            int result = JOptionPane.showConfirmDialog(this, 
+            int result = JOptionPane.showConfirmDialog(this,
                     mLocalizer.msg("AskRemove", "Delete selected Device?"),
                     mLocalizer.msg("Remove", "Delete Device"),
                     JOptionPane.YES_NO_OPTION);
@@ -267,7 +270,7 @@ public class DevicePanel extends JPanel {
       if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
         DeviceImportAndExport importer = new DeviceImportAndExport();
         
-        DeviceIf device = importer.importDevice(mData, this, chooser.getSelectedFile()); 
+        DeviceIf device = importer.importDevice(mData, this, chooser.getSelectedFile());
         
         if (device == null) {
           ErrorHandler.handle(importer.getError(), importer.getException());

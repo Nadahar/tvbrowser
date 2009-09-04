@@ -87,7 +87,7 @@ public class DefaultKonfigurator extends JDialog implements WindowClosingIf {
     setModal(true);
       mConfig = config;
       createGui();
-    }    
+    }
     
     /**
      * Create the GUI

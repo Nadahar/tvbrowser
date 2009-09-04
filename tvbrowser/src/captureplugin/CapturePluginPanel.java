@@ -73,7 +73,7 @@ public class CapturePluginPanel extends JPanel {
         mMarkingPriorityPanel = DefaultMarkingPrioritySelectionPanel.createPanel(data.getMarkPriority(),false,true);
         mTabPane.addTab(DefaultMarkingPrioritySelectionPanel.getTitle(), mMarkingPriorityPanel);
 
-        this.add(mTabPane, BorderLayout.CENTER);        
+        this.add(mTabPane, BorderLayout.CENTER);
     }
 
 
@@ -98,6 +98,6 @@ public class CapturePluginPanel extends JPanel {
      * Saves the marking settings for the program
      */
     public void saveMarkingSettings() {
-      CapturePlugin.getInstance().getCapturePluginData().setMarkPriority(mMarkingPriorityPanel.getSelectedPriority());      
+      CapturePlugin.getInstance().getCapturePluginData().setMarkPriority(mMarkingPriorityPanel.getSelectedPriority());
     }
 }

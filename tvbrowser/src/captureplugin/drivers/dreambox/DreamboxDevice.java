@@ -177,7 +177,7 @@ public class DreamboxDevice implements DeviceIf {
 
         if (program.isExpired()) {
             JOptionPane.showMessageDialog(parent,
-                    mLocalizer.msg("expiredText","This program has expired. It's not possible to record it.\nWell, unless you have a time-machine."), 
+                    mLocalizer.msg("expiredText","This program has expired. It's not possible to record it.\nWell, unless you have a time-machine."),
                     mLocalizer.msg("expiredTitle","Expired"),
                     JOptionPane.INFORMATION_MESSAGE);
             return false;
@@ -247,8 +247,7 @@ public class DreamboxDevice implements DeviceIf {
      */
     public Program[] getProgramList() {
         DreamboxConnector con = new DreamboxConnector(mConfig);
-
-        if ((mConfig.getDreamboxAddress() != null)) {
+        if (mConfig.hasValidAddress()) {
             ProgramTime[] times = con.getRecordings(mConfig);
             _programTimeList = new ArrayList<ProgramTime>(Arrays.asList(times));
 
