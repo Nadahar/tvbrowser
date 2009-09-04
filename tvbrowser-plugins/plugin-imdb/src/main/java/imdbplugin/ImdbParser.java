@@ -218,7 +218,7 @@ public class ImdbParser {
   private int parseRatings(final InputStream inputStream,
       final ProgressMonitor monitor) throws IOException {
     final Pattern ratingPattern = Pattern
-        .compile("^(.*?)(?:\\W\\((\\d{4,4}|\\?\\?\\?\\?).*?\\))?(?:\\W\\((.*)\\))?(?:\\W\\{(.*)\\})?$");
+        .compile("^(.*)(?:\\W\\((\\d{4,4}|\\?\\?\\?\\?).*?\\))(?:\\W\\((.*)\\))?(?:\\W\\{(.*)\\})?$");
 
     final BufferedReader reader = new BufferedReader(new InputStreamReader(
         inputStream, "ISO-8859-15"));
@@ -245,12 +245,18 @@ public class ImdbParser {
         if (matcher.matches()) {
           final String movieTitle = cleanMovieTitle(matcher.group(1).trim());
           int year = -1;
-          if (matcher.group(2) != null) {
-            try {
-              year = Integer.parseInt(matcher.group(2));
-            } catch (NumberFormatException e) {
-              // NOP
+          String yearString = matcher.group(2);
+          if (yearString != null) {
+            if (!yearString.equals("????")) {
+              try {
+                year = Integer.parseInt(yearString);
+              } catch (NumberFormatException e) {
+                mLog.warning("unexpected year: " + yearString);
+              }
             }
+          }
+          else {
+            mLog.warning("unexpected null year");
           }
           final String type = matcher.group(3);
           final String episode = cleanEpisodeTitle(matcher.group(4));
@@ -259,6 +265,9 @@ public class ImdbParser {
           if (++count % 100 == 0 || count == 1) {
             monitor.setMessage(mLocalizer.msg("ratings", "Rating {0}", count));
           }
+        }
+        else {
+          mLog.warning("Non matching line: " + line);
         }
       }
 
