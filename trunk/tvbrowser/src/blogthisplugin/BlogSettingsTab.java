@@ -31,7 +31,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import util.ui.EnhancedPanelPuilder;
+import util.ui.EnhancedPanelBuilder;
 import util.ui.Localizer;
 import util.ui.PluginProgramConfigurationPanel;
 
@@ -83,7 +83,7 @@ public class BlogSettingsTab implements SettingsTab {
    * Create the SettingsPanel
    */
   public JPanel createSettingsPanel() {
-    final EnhancedPanelPuilder settingsPanel = new EnhancedPanelPuilder(FormFactory.RELATED_GAP_COLSPEC.encode() + ","
+    final EnhancedPanelBuilder settingsPanel = new EnhancedPanelBuilder(FormFactory.RELATED_GAP_COLSPEC.encode() + ","
         + FormFactory.PREF_COLSPEC.encode() + "," + FormFactory.RELATED_GAP_COLSPEC.encode() + ","
         + FormFactory.PREF_COLSPEC.encode() + ", fill:pref:grow");
 

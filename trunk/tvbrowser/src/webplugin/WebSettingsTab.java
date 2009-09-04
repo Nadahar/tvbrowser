@@ -51,7 +51,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import util.ui.DragAndDropMouseListener;
-import util.ui.EnhancedPanelPuilder;
+import util.ui.EnhancedPanelBuilder;
 import util.ui.ListDragAndDropHandler;
 import util.ui.ListDropAction;
 import util.ui.Localizer;
@@ -133,7 +133,7 @@ public class WebSettingsTab implements SettingsTab,  ListDropAction {
 
   public JPanel createSettingsPanel() {
 
-    EnhancedPanelPuilder pb = new EnhancedPanelPuilder(FormFactory.RELATED_GAP_COLSPEC.encode() + ",fill:default:grow");
+    EnhancedPanelBuilder pb = new EnhancedPanelBuilder(FormFactory.RELATED_GAP_COLSPEC.encode() + ",fill:default:grow");
     CellConstraints cc = new CellConstraints();
 
     mRbShowDetails = new JRadioButton(mLocalizer.msg("showDetails","Show search menu for title, actors, and other fields"), webPlugin.getShowDetailMenus());

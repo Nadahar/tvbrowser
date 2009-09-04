@@ -69,7 +69,7 @@ import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
 import util.browserlauncher.Launch;
 import util.exc.TvBrowserException;
-import util.ui.EnhancedPanelPuilder;
+import util.ui.EnhancedPanelBuilder;
 import util.ui.Localizer;
 import util.ui.TVBrowserIcons;
 import util.ui.TextAreaIcon;
@@ -193,7 +193,7 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
       
       public JPanel createCenterPanel(JList list, Object value, int index, boolean isSelected, boolean isEnabled, JScrollPane parentScrollPane, int leftColumnWidth) {
         FormLayout lay = new FormLayout("5dlu,default,5dlu,default:grow","2dlu,default,2dlu,fill:pref:grow,2dlu");
-        EnhancedPanelPuilder pb = new EnhancedPanelPuilder(lay);
+        EnhancedPanelBuilder pb = new EnhancedPanelBuilder(lay);
         pb.getPanel().setOpaque(false);
         
         SoftwareUpdateItem item = (SoftwareUpdateItem)value;

@@ -32,7 +32,7 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 
 import util.paramhandler.ParamInputField;
-import util.ui.EnhancedPanelPuilder;
+import util.ui.EnhancedPanelBuilder;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 
@@ -72,7 +72,7 @@ public class GrowlSettingsTab implements SettingsTab {
    * @return Panel
    */
   public JPanel createSettingsPanel() {
-    final EnhancedPanelPuilder panel = new EnhancedPanelPuilder(FormFactory.RELATED_GAP_COLSPEC.encode() + "," + FormFactory.PREF_COLSPEC.encode() + "," + FormFactory.RELATED_GAP_COLSPEC.encode() + ",pref:grow");
+    final EnhancedPanelBuilder panel = new EnhancedPanelBuilder(FormFactory.RELATED_GAP_COLSPEC.encode() + "," + FormFactory.PREF_COLSPEC.encode() + "," + FormFactory.RELATED_GAP_COLSPEC.encode() + ",pref:grow");
     final CellConstraints cc = new CellConstraints();
     
     panel.addRow();

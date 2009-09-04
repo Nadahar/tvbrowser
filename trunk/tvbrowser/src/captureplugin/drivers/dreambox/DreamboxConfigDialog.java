@@ -51,7 +51,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.TableCellEditor;
 
-import util.ui.EnhancedPanelPuilder;
+import util.ui.EnhancedPanelBuilder;
 import util.ui.Localizer;
 import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
@@ -133,7 +133,7 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
 
         UiUtilities.registerForClosing(this);
 
-        EnhancedPanelPuilder basicPanel = new EnhancedPanelPuilder("2dlu, pref, 3dlu, fill:min:grow, 3dlu, pref, 3dlu, pref");
+        EnhancedPanelBuilder basicPanel = new EnhancedPanelBuilder("2dlu, pref, 3dlu, fill:min:grow, 3dlu, pref, 3dlu, pref");
         basicPanel.setBorder(Borders.DLU4_BORDER);
 
         CellConstraints cc = new CellConstraints();
@@ -238,7 +238,7 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
         basicPanel.addRow();
         basicPanel.add(builder.getPanel(), cc.xyw(2,basicPanel.getRow(), basicPanel.getColumnCount() - 1));
 
-        final EnhancedPanelPuilder extendedPanel = new EnhancedPanelPuilder("2dlu, pref, 3dlu, fill:pref:grow, 3dlu, pref, 5dlu");
+        final EnhancedPanelBuilder extendedPanel = new EnhancedPanelBuilder("2dlu, pref, 3dlu, fill:pref:grow, 3dlu, pref, 5dlu");
         extendedPanel.setBorder(Borders.DLU4_BORDER);
 
         extendedPanel.addParagraph(mLocalizer.msg("misc", "Miscellanious"));
