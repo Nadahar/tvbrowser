@@ -27,6 +27,9 @@ package util.paramhandler;
 
 import java.util.ArrayList;
 
+import javax.swing.JOptionPane;
+
+import util.ui.Localizer;
 import devplugin.Program;
 
 
@@ -297,5 +300,18 @@ public class ParamParser {
     
     list.add(curparam.toString().trim());
     return list.toArray(new String[list.size()]);
+  }
+
+  /**
+   * show the parser error(s), if there were errors during parsing 
+   * @return <code>true</code>, if an error exists in the parser, <code>false</code> otherwise
+   * @since 3.0
+   */
+  public boolean showErrors() {
+    if (hasErrors()) {
+      JOptionPane.showMessageDialog(null, getErrorString(), Localizer.getLocalization(Localizer.I18N_ERROR), JOptionPane.ERROR_MESSAGE);
+      return true;
+    }
+    return false;
   }
 }

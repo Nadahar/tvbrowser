@@ -230,7 +230,11 @@ public final class GlobalPluginProgramFormatingSettingsDialog extends JDialog
    */
   protected void showPreview() {
     ParamParser parser = new ParamParser();
-    String content = parser.analyse(mContentArea.getText(), Plugin.getPluginManager().getExampleProgram()).trim();
+    String content = parser.analyse(mContentArea.getText(), Plugin.getPluginManager().getExampleProgram());
+    if (parser.showErrors()) {
+      return;
+    }
+    content = content.trim();
     
     final JDialog dialog = new JDialog(this, mLocalizer.msg("preview", "Preview"), true);
     JPanel contentPanel = (JPanel) dialog.getContentPane();
