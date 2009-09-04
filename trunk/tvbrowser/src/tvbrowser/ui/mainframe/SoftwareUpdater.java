@@ -80,7 +80,7 @@ public final class SoftwareUpdater {
     Matcher matcher;
     
     ArrayList<SoftwareUpdateItem> updateItems = new ArrayList<SoftwareUpdateItem>();
-    ArrayList<PluginsSoftwareUpdateItem> blockedItems = new ArrayList<PluginsSoftwareUpdateItem>(0);
+    //ArrayList<PluginsSoftwareUpdateItem> blockedItems = new ArrayList<PluginsSoftwareUpdateItem>(0);
     
     try {
       SoftwareUpdateItem curItem=null;
@@ -121,6 +121,10 @@ public final class SoftwareUpdater {
         line=reader.readLine();
       }
       
+      mIsRequestingBlockArrayClear = true;
+      Settings.propBlockedPluginArray.clear(this);
+      mIsRequestingBlockArrayClear = false;
+      
       // remove all items we can't use
       
       Iterator<SoftwareUpdateItem> it = updateItems.iterator();
@@ -139,27 +143,31 @@ public final class SoftwareUpdater {
           /* maximum contains the block start version if this is a block plugin entry
            * required cotains the block end version
            */
-          if(required!=null && maximum != null && required.compareTo(maximum) > 0) {
-            if(item.getVersion().compareTo(required) <= 0 && item.getVersion().compareTo(maximum) >= 0) {
-              it.remove();
+          if(required!=null && maximum != null && required.compareTo(maximum) > 0) {            
+            if(item instanceof PluginsSoftwareUpdateItem) {
+              PluginsSoftwareUpdateItem blocked = (PluginsSoftwareUpdateItem)item;
+              mBlockRequestingPluginId = blocked.getId();
+              Settings.propBlockedPluginArray.addBlockedPlugin(this, mBlockRequestingPluginId, blocked.getMaximumVersion(), blocked.getRequiredVersion());
+              mBlockRequestingPluginId = null;
             }
             
-            if(item instanceof PluginsSoftwareUpdateItem) {
-              blockedItems.add((PluginsSoftwareUpdateItem)item);
+            if(item.getVersion().compareTo(required) <= 0 && item.getVersion().compareTo(maximum) >= 0) {
+              it.remove();
+              continue;
             }
           }
           else {
             it.remove();
+            continue;
           }
-          
-          continue;
         }
         
+        // remove already installed plugins
+        String pluginId = "java." + className.toLowerCase() + "." + className;        
+        PluginProxy installedPlugin = PluginProxyManager.getInstance().getPluginForId(pluginId);
+
         if(onlyUpdates) {
-          // remove all not installed plugins
-          String pluginId = "java." + className.toLowerCase() + "." + className;      
-          PluginProxy installedPlugin = PluginProxyManager.getInstance().getPluginForId(pluginId);        
-          
+          // remove all not installed plugins          
           if (installedPlugin == null) {
             TvDataServiceProxy service = TvDataServiceProxyManager.getInstance().findDataServiceById(className.toLowerCase()+"."+className);
             
@@ -170,9 +178,6 @@ public final class SoftwareUpdater {
           }
         }
         
-        // remove already installed plugins
-        String pluginId = "java." + className.toLowerCase() + "." + className;      
-        PluginProxy installedPlugin = PluginProxyManager.getInstance().getPluginForId(pluginId);
         if (installedPlugin!=null && ((installedPlugin.getInfo().getVersion().compareTo(item.getVersion())>0 || 
             (installedPlugin.getInfo().getVersion().compareTo(item.getVersion())==0 && (!dragNdrop || item.getVersion().isStable()))))) {
           it.remove();
@@ -191,18 +196,6 @@ public final class SoftwareUpdater {
           it.remove();
         }
       }
-      
-      mIsRequestingBlockArrayClear = true;
-      Settings.propBlockedPluginArray.clear(this);
-      mIsRequestingBlockArrayClear = false;
-      
-      for(PluginsSoftwareUpdateItem blocked : blockedItems) {
-        mBlockRequestingPluginId = blocked.getId();
-        
-        Settings.propBlockedPluginArray.addBlockedPlugin(this, mBlockRequestingPluginId, blocked.getMaximumVersion(), blocked.getRequiredVersion());
-      }
-      
-      mBlockRequestingPluginId = null;
       
       PluginProxyManager.getInstance().firePluginBlockListRenewed();
     } catch (RuntimeException e) {

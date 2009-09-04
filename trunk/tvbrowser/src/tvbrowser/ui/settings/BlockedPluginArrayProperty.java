@@ -24,6 +24,8 @@
  */
 package tvbrowser.ui.settings;
 
+import java.util.ArrayList;
+
 import devplugin.PluginAccess;
 import devplugin.Version;
 import tvbrowser.ui.mainframe.SoftwareUpdater;
@@ -38,6 +40,8 @@ import util.settings.PropertyManager;
 public final class BlockedPluginArrayProperty extends Property {
   /** The array with the blocked plugins */
   private BlockedPlugin[] mCachedValue;
+  private BlockedPlugin[] mOldValue;
+  private ArrayList<BlockedPlugin> mNewValues;
   
   /**
    * Creates the blocked plugins array.
@@ -48,6 +52,8 @@ public final class BlockedPluginArrayProperty extends Property {
     super(manager, key);
     
     mCachedValue = null;
+    mOldValue = null;
+    mNewValues = new ArrayList<BlockedPlugin>(0);
   }
 
   /**
@@ -129,7 +135,29 @@ public final class BlockedPluginArrayProperty extends Property {
       mCachedValue = blockedArray;
     }
     
+    if(!checkAndRemoveValueFromOld(mCachedValue[mCachedValue.length-1])) {
+      mNewValues.add(mCachedValue[mCachedValue.length-1]);
+    }
+    
     setBlockedPluginArray(mCachedValue);
+  }
+  
+  /**
+   * Checks if the given plugin is already blocked and
+   * removes it from the old value array if so.
+   * 
+   * @param plugin The plugin to check if already blocked.
+   * @return If the given id was already blocked.
+   */
+  private boolean checkAndRemoveValueFromOld(BlockedPlugin plugin) {
+    for(int i = 0; i < mOldValue.length; i++) {
+      if(mOldValue[i] != null && mOldValue[i].equals(plugin)) {
+        mOldValue[i] = null;
+        return true;
+      }
+    }
+    
+    return false;
   }
   
   /**
@@ -140,7 +168,9 @@ public final class BlockedPluginArrayProperty extends Property {
    */
   public void clear(SoftwareUpdater updater) {
     if(updater != null && updater.isRequestingBlockArrayClear()) {
+      mOldValue = mCachedValue;
       mCachedValue = null;
+      mNewValues = new ArrayList<BlockedPlugin>(0);
       setProperty("");
     }
   }
@@ -182,5 +212,14 @@ public final class BlockedPluginArrayProperty extends Property {
   @Override
   protected void clearCache() {
     mCachedValue = null;
+  }
+  
+  /**
+   * Gets the plugins that were newly blocked at the last update.
+   * <p>
+   * @return The array with the new blocked plugins.
+   */
+  public BlockedPlugin[] getNewBlockedPlugins() {
+    return mNewValues.toArray(new BlockedPlugin[mNewValues.size()]);
   }
 }

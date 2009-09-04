@@ -123,6 +123,7 @@ import tvbrowser.ui.programtable.FilterPanel;
 import tvbrowser.ui.programtable.KeyboardAction;
 import tvbrowser.ui.programtable.ProgramTable;
 import tvbrowser.ui.programtable.ProgramTableScrollPane;
+import tvbrowser.ui.settings.BlockedPlugin;
 import tvbrowser.ui.settings.SettingsDialog;
 import tvbrowser.ui.update.PluginAutoUpdater;
 import tvbrowser.ui.update.SoftwareUpdateDlg;
@@ -1953,6 +1954,33 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
           }
         }
         
+        BlockedPlugin[] newlyBlocked = Settings.propBlockedPluginArray.getNewBlockedPlugins();
+        
+        if(newlyBlocked != null && newlyBlocked.length > 0) {
+          StringBuilder message = new StringBuilder();
+          
+          for(BlockedPlugin blockedPlugin : newlyBlocked) {
+            PluginProxy plugin = PluginProxyManager.getInstance().getPluginForId(blockedPlugin.getPluginId());
+            
+            if(plugin == null) {
+              TvDataServiceProxy dataService = TvDataServiceProxyManager.getInstance().findDataServiceById(blockedPlugin.getPluginId());
+              
+              if(dataService != null && blockedPlugin.isBlockedVersion(dataService.getId(),dataService.getInfo().getVersion())) {
+                message.append("\n").append(dataService.getInfo().getName()).append(" (").append(blockedPlugin.getBlockStart()).append(" - ").append(blockedPlugin.getBlockEnd()).append(")");
+              }
+            }
+            else if(blockedPlugin.isBlockedVersion(plugin)){
+              message.append("\n").append(plugin.getInfo().getName()).append(" (").append(blockedPlugin.getBlockStart()).append(" - ").append(blockedPlugin.getBlockEnd()).append(")");
+            }
+          }
+          
+          if(message.length() > 0) {
+            message.insert(0,mLocalizer.msg("update.blockedInfo","The following Plugins were blocked and cannot be used in their current version:\n"));
+            
+            showInfoTextMessage(mLocalizer.msg("update.blockedPlugins","Plugins blocked!"),message.toString(),450);
+          }
+        }
+        
         Settings.propLastPluginsUpdate.setDate(Date.getCurrentDate());
         
         infoLabel.setText("");
@@ -2268,8 +2296,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     for(DataFlavor flavor : dataFlavors) {
       try {
         Object data = transferable.getTransferData(flavor);
-        System.out.println(flavor);
-        System.out.println(data);
+        
         if(data instanceof List) {
           for(Object o : ((List)data)) {
             if(o instanceof File) {
@@ -2398,12 +2425,12 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
 
       if (alreadyInstalled.length() > 0) {
         showInfoTextMessage(mLocalizer.msg("update.alreadyInstalled",
-            "The following Plugin in current version are already installed:"), alreadyInstalled.toString());
+            "The following Plugin in current version are already installed:"), alreadyInstalled.toString(), 400);
       }
 
       if (notCompatiblePlugins.length() > 0) {
         showInfoTextMessage(mLocalizer.msg("update.noTVBPlugin", "This following files are not TV-Browser Plugins:"),
-            notCompatiblePlugins.toString());
+            notCompatiblePlugins.toString(), 400);
       }
       
       
@@ -2438,13 +2465,15 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     
   }
   
-  private void showInfoTextMessage(String header, String infoText) {
+  private void showInfoTextMessage(String header, String infoText, int width) {
     JTextArea textArea = new JTextArea(infoText);
     textArea.setEditable(false);
+    textArea.setLineWrap(true);
+    textArea.setWrapStyleWord(true);
     
     JScrollPane scrollPane = new JScrollPane(textArea);
     
-    scrollPane.setPreferredSize(new Dimension(200,150));
+    scrollPane.setPreferredSize(new Dimension(width,150));
     
     Object[] msg = {header,scrollPane};
     JOptionPane.showMessageDialog(this,msg,Localizer.getLocalization(Localizer.I18N_INFO),JOptionPane.INFORMATION_MESSAGE);            
