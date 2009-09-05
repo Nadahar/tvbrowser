@@ -421,4 +421,15 @@ public interface PluginManager {
    * @since 3.0
    */
   public boolean isDataAvailable(Date date);
+  
+  /**
+   * Shows a balloon tip on the TV-Browser tray icon.
+   * <p>
+   * @param caption The caption of the displayed message.
+   * @param message The message to display in the balloon tip.
+   * @param messageType The java.awt.TrayIcon.MessageType of the displayed balllon tip.
+   * @return If the balloon tip could be shown.
+   * @since 3.0
+   */
+  public boolean showBalloonTip(String caption, String message, java.awt.TrayIcon.MessageType messageType);
 }

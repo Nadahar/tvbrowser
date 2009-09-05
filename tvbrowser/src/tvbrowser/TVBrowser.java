@@ -883,6 +883,22 @@ public class TVBrowser {
       }
     }
   }
+  
+  /**
+   * Shows a balloon tip on the TV-Browser tray icon.
+   * <p>
+   * @param caption The caption of the displayed message.
+   * @param message The message to display in the balloon tip.
+   * @param messageType The type of the displayed balllon tip.
+   * @return If the balloon tip could be shown.
+   */
+  public static boolean showBalloonTip(String caption, String message, java.awt.TrayIcon.MessageType messageType) {
+    if(mTray.isTrayUsed()) {
+      return mTray.showBalloonTip(caption,message,messageType);
+    }
+    
+    return false; 
+  }
 
   /**
    * Starts an automatic download if required

@@ -26,6 +26,7 @@ package tvbrowser.ui.tray;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.TrayIcon;
+import java.awt.TrayIcon.MessageType;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -275,5 +276,23 @@ public class Java6Tray {
     }catch(Exception e) {}
     
     return null;
+  }
+  
+  /**
+   * Shows a balloon tip on the TV-Browser tray icon.
+   * <p>
+   * @param caption The caption of the displayed message.
+   * @param message The message to display in the balloon tip.
+   * @param messageType The type of the displayed balllon tip.
+   * @return If the balloon tip could be shown.
+   */
+  public boolean showBalloonTip(String caption, String message, java.awt.TrayIcon.MessageType messageType) {
+    if(mSystemTray != null) {
+      mTrayIcon.displayMessage(caption,message,messageType);
+      
+      return true;
+    }
+    
+    return false;
   }
 }
