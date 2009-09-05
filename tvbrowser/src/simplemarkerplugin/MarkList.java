@@ -76,7 +76,7 @@ public class MarkList extends Vector<Program> {
    * @param name
    *          The name of the list.
    */
-  public MarkList(String name) {
+  protected MarkList(String name) {
     mName = name;
     mMarkIcon = SimpleMarkerPlugin.getInstance().getIconForFileName(null);
     mId = name + System.currentTimeMillis();
@@ -108,12 +108,13 @@ public class MarkList extends Vector<Program> {
    * @throws IOException
    * @throws ClassNotFoundException
    */
-  public MarkList(ObjectInputStream in) throws IOException,
+  protected MarkList(ObjectInputStream in) throws IOException,
       ClassNotFoundException {
     int version = in.readInt();
 
-    if (version >= 3)
+    if (version >= 3) {
       mMarkPriority = in.readInt();
+    }
 
     if (version >= 1) {
       mName = (String) in.readObject();
@@ -142,20 +143,21 @@ public class MarkList extends Vector<Program> {
 
       if (mMarkIconPath == null
           || mMarkIconPath.compareTo("null") == 0
-          || (version > 3 && !(new File(SimpleMarkerPlugin.getPluginManager()
+          || (version > 3 && !(new File(Plugin.getPluginManager()
               .getTvBrowserSettings().getTvBrowserUserHome()
-              + mMarkIconPath)).isFile()))
+              + mMarkIconPath)).isFile())) {
         mMarkIcon = SimpleMarkerPlugin.getInstance().getIconForFileName(null);
-      else {
+      } else {
 
         if (version == 1) {
-          File dir = new File(SimpleMarkerPlugin.getPluginManager()
+          File dir = new File(Plugin.getPluginManager()
               .getTvBrowserSettings().getTvBrowserUserHome(),
               "simplemarkericons");
           File src = new File(mMarkIconPath);
 
-          if (!dir.isDirectory())
+          if (!dir.isDirectory()) {
             dir.mkdir();
+          }
 
           String ext = mMarkIconPath;
           ext = ext.substring(ext.lastIndexOf('.'));
@@ -173,7 +175,7 @@ public class MarkList extends Vector<Program> {
           mMarkIconPath = mMarkIconPath.substring(mMarkIconPath
               .lastIndexOf("simplemarkericons") - 1);
 
-          if (!new File(SimpleMarkerPlugin.getPluginManager()
+          if (!new File(Plugin.getPluginManager()
               .getTvBrowserSettings().getTvBrowserUserHome()
               + mMarkIconPath).isFile()) {
             mMarkIcon = SimpleMarkerPlugin.getInstance().getIconForFileName(
@@ -183,7 +185,7 @@ public class MarkList extends Vector<Program> {
         }
 
         mMarkIcon = SimpleMarkerPlugin.getInstance().getIconForFileName(
-            SimpleMarkerPlugin.getPluginManager().getTvBrowserSettings()
+            Plugin.getPluginManager().getTvBrowserSettings()
                 .getTvBrowserUserHome()
                 + mMarkIconPath);
       }
@@ -197,7 +199,7 @@ public class MarkList extends Vector<Program> {
    *          The ObjectOutputStream of the data file.
    * @throws IOException
    */
-  public void writeData(ObjectOutputStream out) throws IOException {
+  protected void writeData(ObjectOutputStream out) throws IOException {
     out.writeInt(4); // Version
     out.writeInt(mMarkPriority);
     out.writeObject(mName);
@@ -218,7 +220,7 @@ public class MarkList extends Vector<Program> {
    *          The Program.
    * @return The action for the Program for this List;
    */
-  public Action getContextMenuAction(final Program p) {
+  protected Action getContextMenuAction(final Program p) {
     AbstractAction action = new AbstractAction() {
       private static final long serialVersionUID = 1L;
 
@@ -259,7 +261,7 @@ public class MarkList extends Vector<Program> {
    *          The parent node that contains the programs
    * 
    */
-  public void handleAction(PluginTreeNode node) {
+  protected void handleAction(PluginTreeNode node) {
     if (node == null) {
       return;
     }
@@ -282,7 +284,7 @@ public class MarkList extends Vector<Program> {
    * @param update
    *          The tree is to update
    */
-  public void createNodes(PluginTreeNode root, boolean update) {
+  protected void createNodes(PluginTreeNode root, boolean update) {
     mRootNode = root;
     root.removeAllChildren();
 
@@ -379,8 +381,9 @@ public class MarkList extends Vector<Program> {
   }
 
   protected void updateNode() {
-    if (mRootNode != null)
+    if (mRootNode != null) {
       createNodes(mRootNode, true);
+    }
   }
 
   protected void revalidateContainingPrograms(ArrayList<Program> deletedPrograms) {
@@ -388,7 +391,7 @@ public class MarkList extends Vector<Program> {
       Program containingProgram = remove(i);
 
       if (containingProgram.getProgramState() == Program.WAS_UPDATED_STATE) {
-        Program updatedProg = SimpleMarkerPlugin.getPluginManager().getProgram(
+        Program updatedProg = Plugin.getPluginManager().getProgram(
             containingProgram.getDate(), containingProgram.getID());
         addElement(updatedProg);
       } else if (containingProgram.getProgramState() == Program.IS_VALID_STATE) {
@@ -406,8 +409,9 @@ public class MarkList extends Vector<Program> {
     mProgram.clear();
     for (int i = 0; i < size(); i++) {
       Program p = elementAt(i);
-      if (p == null)
+      if (p == null) {
         continue;
+      }
       if (!mProgram.containsKey(p.getTitle())) {
         LinkedList<Program> list1 = new LinkedList<Program>();
         mProgram.put(p.getTitle(), list1);
@@ -422,7 +426,7 @@ public class MarkList extends Vector<Program> {
   protected void setMarkIconFileName(String fileName) {
     mMarkIconPath = "/simplemarkericons/" + fileName;
     mMarkIcon = SimpleMarkerPlugin.getInstance().getIconForFileName(
-        SimpleMarkerPlugin.getPluginManager().getTvBrowserSettings()
+        Plugin.getPluginManager().getTvBrowserSettings()
             .getTvBrowserUserHome()
             + mMarkIconPath);
   }
@@ -438,7 +442,7 @@ public class MarkList extends Vector<Program> {
   /**
    * @return The table with the programs.
    */
-  public Hashtable<String, LinkedList<Program>> getSortedPrograms() {
+  protected Hashtable<String, LinkedList<Program>> getSortedPrograms() {
     return mProgram;
   }
 
@@ -449,7 +453,7 @@ public class MarkList extends Vector<Program> {
    *          The title of the programs to get.
    * @return The program with the given title.
    */
-  public Program[] getProgramsWithTitle(String title) {
+  protected Program[] getProgramsWithTitle(String title) {
     LinkedList<Program> list = mProgram.get(title);
     return (list.toArray(new Program[list.size()]));
   }
@@ -461,12 +465,13 @@ public class MarkList extends Vector<Program> {
    *          The title of the Programs to remove
    * @return The programs that were deleted.
    */
-  public Program[] removeProgramsWithTitle(String title) {
+  protected Program[] removeProgramsWithTitle(String title) {
     LinkedList<Program> list = mProgram.remove(title);
     Program[] programs = list.toArray(new Program[list.size()]);
 
-    for (Program p : programs)
+    for (Program p : programs) {
       remove(p);
+    }
 
     SimpleMarkerPlugin.getInstance().revalidate(programs);
 
@@ -496,18 +501,19 @@ public class MarkList extends Vector<Program> {
   }
 
   public void addElement(Program p) {
-    if (isEmpty())
+    if (isEmpty()) {
       super.addElement(p);
-    else {
+    } else {
       int index = 0;
       Comparator<Program> c = ProgramUtilities.getProgramComparator();
 
       for (int i = 0; i < size(); i++) {
         int value = c.compare(elementAt(i), p);
-        if (value < 1)
+        if (value < 1) {
           index = i + 1;
-        else
+        } else {
           break;
+        }
       }
 
       insertElementAt(p, index);

@@ -77,6 +77,7 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.Sizes;
 
+import devplugin.Plugin;
 import devplugin.Program;
 import devplugin.SettingsItem;
 import devplugin.SettingsTab;
@@ -111,7 +112,7 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
     mShowDeletedPrograms = new JCheckBox(SimpleMarkerPlugin.mLocalizer.msg(
         "settings.informAboutDeletedPrograms",
         "Inform about program that were deleted during a data update"),
-        SimpleMarkerPlugin.getInstance().getSettings().showDeletedPrograms());    
+        SimpleMarkerPlugin.getInstance().getSettings().showDeletedPrograms());
     
     panel.add(mShowDeletedPrograms, cc.xy(2,1));
     
@@ -147,12 +148,13 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
     
     mListTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
       public void valueChanged(ListSelectionEvent e) {
-        if(!e.getValueIsAdjusting())
+        if(!e.getValueIsAdjusting()) {
           mDelete.setEnabled(mListTable.getSelectionModel().getMinSelectionIndex() > 0);
+        }
       }
     });
     
-    mListTable.addMouseListener(this);    
+    mListTable.addMouseListener(this);
     mListTable.addKeyListener(this);
     mListTable.getColumnModel().getColumn(0).setCellEditor(
         new MarkListItemCellEditor(MarkListItemCellEditor.TEXT_EDITOR));
@@ -187,7 +189,7 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
     mHelpLabel = UiUtilities.createHtmlHelpTextArea(SimpleMarkerPlugin.mLocalizer.msg("settings.prioHelp","The mark priority is used for selecting the marking color. The marking colors of the priorities can be change in the <a href=\"#link\">program panel settings</a>. If a program is marked by more than one plugin/list the color with the highest priority given by the marking plugins/lists is used."), new HyperlinkListener() {
       public void hyperlinkUpdate(HyperlinkEvent e) {
         if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-          SimpleMarkerPlugin.getPluginManager().showSettings(SettingsItem.PROGRAMPANELMARKING);
+          Plugin.getPluginManager().showSettings(SettingsItem.PROGRAMPANELMARKING);
         }
       }
     });
@@ -201,18 +203,21 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
     return p;
   }
 
-  public void saveSettings() { 
+  public void saveSettings() {
     SimpleMarkerPlugin.getInstance().getSettings().setShowDeletedPrograms(
         mShowDeletedPrograms.isSelected());
     
-    if (mListTable.isEditing())
+    if (mListTable.isEditing()) {
       mListTable.getCellEditor().stopCellEditing();
+    }
 
-    for (MarkListItem item : mToDeleteItems)
+    for (MarkListItem item : mToDeleteItems) {
       item.doChanges();
+    }
 
-    for (int i = 0; i < mListTable.getRowCount(); i++)
+    for (int i = 0; i < mListTable.getRowCount(); i++) {
       ((MarkListItem) mListTable.getValueAt(i, 0)).doChanges();
+    }
         
     SimpleMarkerPlugin.getInstance().updateTree();
     
@@ -238,8 +243,9 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
   }
 
   public void actionPerformed(ActionEvent e) {
-    if (mListTable.isEditing())
+    if (mListTable.isEditing()) {
       mListTable.getCellEditor().cancelCellEditing();
+    }
 
     if (e.getSource() == mAdd) {
       int n = mListTable.getRowCount() + 1;
@@ -287,8 +293,9 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
   public void keyPressed(KeyEvent e) {
     mListTable.getRootPane().dispatchEvent(e);
 
-    if (mListTable.getSelectionModel().getMinSelectionIndex() > 0)
+    if (mListTable.getSelectionModel().getMinSelectionIndex() > 0) {
       mDelete.setEnabled(true);
+    }
     
     if(e.getKeyCode() == KeyEvent.VK_DELETE) {
       deleteSelectedRows();
@@ -331,8 +338,9 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
     item.setIcon(TVBrowserIcons.delete(TVBrowserIcons.SIZE_SMALL));
     item.addActionListener(this);
     
-    if(mListTable.getSelectionModel().getMinSelectionIndex() > 0)
+    if(mListTable.getSelectionModel().getMinSelectionIndex() > 0) {
       popupMenu.add(item);
+    }
     
     item = new JMenuItem(SimpleMarkerPlugin.mLocalizer.msg("settings.changeIcon",
     "Change list icon"));
@@ -360,7 +368,7 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
 
       Color color = c.getBackground();
       
-      if(value instanceof Icon) {      
+      if(value instanceof Icon) {
         JLabel b = new JLabel((Icon) value);
         b.setOpaque(false);
 
@@ -378,7 +386,7 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
         
           default: b.setText(SimpleMarkerPlugin.mLocalizer.msg("settings.noPriority","None"));break;
         }
-        Color testColor = SimpleMarkerPlugin.getPluginManager().getTvBrowserSettings().getColorForMarkingPriority((Integer)value);
+        Color testColor = Plugin.getPluginManager().getTvBrowserSettings().getColorForMarkingPriority((Integer)value);
         
         if(color != null && !isSelected) {
           color = testColor;
@@ -395,10 +403,11 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
         
         int count = ((MarkListItem)value).getProgramCountOfList();
         
-        if(count > 0)
+        if(count > 0) {
           b.setText(value.toString() + " [" + count + "]");
-        else
+        } else {
           b.setText(value.toString());
+        }
         
         p.setLayout(new FlowLayout(FlowLayout.LEFT));
         p.add(b);
@@ -508,13 +517,15 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
      * Starts the processing of the changes.
      */
     public void doChanges() {
-      if (mIsNewList && !mDelete)
+      if (mIsNewList && !mDelete) {
         SimpleMarkerPlugin.getInstance().addList(mList);
-      if (mDelete && !mIsNewList)
+      }
+      if (mDelete && !mIsNewList) {
         SimpleMarkerPlugin.getInstance().removeList(mList);
-      else if (!mDelete) {
-        if (mName != null)
+      } else if (!mDelete) {
+        if (mName != null) {
           mList.setName(mName);
+        }
         if (mIconPath != null) {
           mList.setMarkIconFileName(mIconPath);
           SimpleMarkerPlugin.getInstance().revalidate(
@@ -532,36 +543,39 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
      * @return The mark priority.
      */
     public int getMarkPriority() {
-      if(mMarkPriority != -1)
+      if(mMarkPriority != -1) {
         return mMarkPriority;
-      else
+      } else {
         return mList.getMarkPriority();
+      }
     }
     
     /**
      * @return The icon file name.
      */
     public String getMarkIconFileName() {
-      if(mIconPath != null)
+      if(mIconPath != null) {
         return mIconPath;
-      else
+      } else {
         return mList.getMarkIconPath();
+      }
     }
 
     public String toString() {
-      if (mName == null)
+      if (mName == null) {
         return mList.getName();
-      else
+      } else {
         return mName;
+      }
     }
   }
 
   private class MarkListItemCellEditor extends AbstractCellEditor implements
       TableCellEditor {
     /** The text editor type for this editor*/
-    public final static int TEXT_EDITOR = 0;
+    protected final static int TEXT_EDITOR = 0;
     /** The combo box editor type for thid editor*/
-    public final static int COMBO_BOX_EDITOR = 1;
+    protected final static int COMBO_BOX_EDITOR = 1;
     
     private static final long serialVersionUID = 1L;
     private MarkListItem mItem;
@@ -576,8 +590,8 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
         SimpleMarkerPlugin.mLocalizer.msg("settings.higherMedium","Higher Medium"),
         SimpleMarkerPlugin.mLocalizer.msg("settings.max","Maximum")};
 
-    /** Constructor 
-     * @param type The type of this editor. 
+    /** Constructor
+     * @param type The type of this editor.
      */
     public MarkListItemCellEditor(int type) {
       if(type == TEXT_EDITOR) {
@@ -607,7 +621,7 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
                 c.setBackground(color);
               }
               
-              colorPanel.setOpaque(false);        
+              colorPanel.setOpaque(false);
               colorPanel.add(c, new CellConstraints().xy(1,1));
               
               c = colorPanel;
@@ -633,11 +647,12 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
 
         boolean found = false;
 
-        for (int i = 0; i < mListTable.getRowCount(); i++)
+        for (int i = 0; i < mListTable.getRowCount(); i++) {
           if (name.equals(mListTable.getValueAt(i, 0).toString())) {
             found = true;
             break;
           }
+        }
 
         if (name.length() > 0 && !found) {
           mItem.setName(name);
@@ -654,7 +669,7 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
     }
 
     public Component getTableCellEditorComponent(JTable table, Object value,
-        boolean isSelected, int row, int column) {      
+        boolean isSelected, int row, int column) {
       if(mTextField != null) {
         mItem = (MarkListItem) value;
         mTextField.setText(value.toString());
@@ -669,7 +684,7 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
   }
   
   private void checkForIcon(final MarkListItem item) {
-    File dir = new File(SimpleMarkerPlugin.getPluginManager().getTvBrowserSettings().getTvBrowserUserHome(),"simplemarkericons");
+    File dir = new File(Plugin.getPluginManager().getTvBrowserSettings().getTvBrowserUserHome(),"simplemarkericons");
     
     File[] icons = dir.listFiles(new FileFilter() {
       public boolean accept(File pathname) {
@@ -677,8 +692,9 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
         
         if (pathname.isFile()
             && file.substring(0, file.lastIndexOf('.')).equalsIgnoreCase(
-                item.toString()))
+                item.toString())) {
           return true;
+        }
         
         return false;
       }
@@ -695,7 +711,7 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
     }
   }
   
-  private void chooseIcon(int row) {    
+  private void chooseIcon(int row) {
     String iconPath = ((MarkListItem) mListTable.getValueAt(row, 0)).getMarkIconFileName();
 
     JFileChooser chooser = new JFileChooser(iconPath == null ? new File("")
@@ -715,10 +731,11 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
 
     if (chooser.showDialog(w, Localizer.getLocalization(Localizer.I18N_SELECT)) == JFileChooser.APPROVE_OPTION) {
       if (chooser.getSelectedFile() != null) {
-        File dir = new File(SimpleMarkerPlugin.getPluginManager().getTvBrowserSettings().getTvBrowserUserHome(),"simplemarkericons");
+        File dir = new File(Plugin.getPluginManager().getTvBrowserSettings().getTvBrowserUserHome(),"simplemarkericons");
         
-        if(!dir.isDirectory())
+        if(!dir.isDirectory()) {
           dir.mkdir();
+        }
   
         String ext =  chooser.getSelectedFile().getName();
         ext = ext.substring(ext.lastIndexOf('.'));

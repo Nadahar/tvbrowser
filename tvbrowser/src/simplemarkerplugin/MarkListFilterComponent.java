@@ -37,6 +37,7 @@ import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
+import devplugin.Plugin;
 import devplugin.PluginsFilterComponent;
 import devplugin.Program;
 
@@ -60,7 +61,7 @@ public class MarkListFilterComponent extends PluginsFilterComponent {
     } catch(Exception e) {
       if(SimpleMarkerPlugin.getInstance().getSuperFrame() != null) {
         JOptionPane.showMessageDialog(UiUtilities.getLastModalChildOf(SimpleMarkerPlugin.getInstance().getSuperFrame()),SimpleMarkerPlugin.mLocalizer.msg("filterErrorMessage","The mark list that is used for the filter component '{0}' was deleted.\nPlease correct your filter configuration.",getName()),Localizer.getLocalization(Localizer.I18N_ERROR) + ": " +SimpleMarkerPlugin.getInstance().getInfo().getName(),JOptionPane.ERROR_MESSAGE);
-        SimpleMarkerPlugin.getPluginManager().getFilterManager().setCurrentFilter(SimpleMarkerPlugin.getPluginManager().getFilterManager().getDefaultFilter());
+        Plugin.getPluginManager().getFilterManager().setCurrentFilter(Plugin.getPluginManager().getFilterManager().getDefaultFilter());
       }
     }
     
@@ -78,8 +79,9 @@ public class MarkListFilterComponent extends PluginsFilterComponent {
     if(mListId != null){
       MarkList selected = SimpleMarkerPlugin.getInstance().getMarkListForId(mListId);
       
-      if(selected != null)
+      if(selected != null) {
         mLists.setSelectedItem(selected.getName());
+      }
     }
     
     pb.add(mLists, cc.xy(1,1));

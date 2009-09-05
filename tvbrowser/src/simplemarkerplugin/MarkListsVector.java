@@ -47,10 +47,11 @@ public class MarkListsVector extends Vector<MarkList> {
    *          The Program to find.
    * @return True if a list contains the Program.
    */
-  public boolean contains(Program p) {
+  protected boolean contains(Program p) {
     for (int i = 0; i < size(); i++) {
-      if (elementAt(i).contains(p))
+      if (elementAt(i).contains(p)) {
         return true;
+      }
     }
     return false;
   }
@@ -60,12 +61,14 @@ public class MarkListsVector extends Vector<MarkList> {
    *          The Program to find
    * @return The array of the names of the lists that containing p.
    */
-  public String[] getNamesOfListsContainingProgram(Program p) {
+  protected String[] getNamesOfListsContainingProgram(Program p) {
     Vector<String> vec = new Vector<String>();
 
-    for (int i = 0; i < size(); i++)
-      if (elementAt(i).contains(p))
+    for (int i = 0; i < size(); i++) {
+      if (elementAt(i).contains(p)) {
         vec.addElement(elementAt(i).getName());
+      }
+    }
     
     return vec.toArray(new String[vec.size()]);
   }
@@ -75,10 +78,12 @@ public class MarkListsVector extends Vector<MarkList> {
    *          The name of the requested list.
    * @return The list for the name.
    */
-  public MarkList getListForName(String name) {
-    for (int i = 0; i < size(); i++)
-      if (elementAt(i).getName().equals(name))
+  protected MarkList getListForName(String name) {
+    for (int i = 0; i < size(); i++) {
+      if (elementAt(i).getName().equals(name)) {
         return elementAt(i);
+      }
+    }
 
     return null;
   }
@@ -86,14 +91,15 @@ public class MarkListsVector extends Vector<MarkList> {
   /**
    * @param name The name of the list to remove.
    */
-  public void removeListForName(String name) {
+  protected void removeListForName(String name) {
     MarkList list = null;
     
-    for(int i = 0; i < size(); i++)
+    for(int i = 0; i < size(); i++) {
       if(elementAt(i).getName().compareTo(name) == 0) {
         list = remove(i);
         break;
       }
+    }
     
     if (list != null) {
       Program[] programs = list.toArray(new Program[list.size()]);
@@ -101,7 +107,7 @@ public class MarkListsVector extends Vector<MarkList> {
       list.removeAllElements();
       
       SimpleMarkerPlugin.getInstance().revalidate(programs);
-    }    
+    }
   }
   
   /**
@@ -109,7 +115,7 @@ public class MarkListsVector extends Vector<MarkList> {
    * @param index The index of the list.
    * @return The list at the index.
    */
-  public MarkList getListAt(int index) {
+  protected MarkList getListAt(int index) {
     return elementAt(index);
   }
   
@@ -117,11 +123,12 @@ public class MarkListsVector extends Vector<MarkList> {
    * 
    * @return The names of the MarkLists.
    */
-  public String[] getMarkListNames() {    
+  public String[] getMarkListNames() {
     String[] names = new String[size()];
     
-    for(int i = 0; i < names.length; i++)
+    for(int i = 0; i < names.length; i++) {
       names[i] = elementAt(i).getName();
+    }
     
     return names;
   }
@@ -132,12 +139,13 @@ public class MarkListsVector extends Vector<MarkList> {
    * @return Thr available ProgramReceiveTargets
    */
   public ProgramReceiveTarget[] getReceiveTargets() {
-    ProgramReceiveTarget[] targets = new ProgramReceiveTarget[size()];    
+    ProgramReceiveTarget[] targets = new ProgramReceiveTarget[size()];
       
-    for(int i = 0; i < size(); i++)
+    for(int i = 0; i < size(); i++) {
       targets[i] = get(i).getReceiveTarget();
+    }
       
-    return targets;    
+    return targets;
   }
   
   /**
@@ -147,10 +155,12 @@ public class MarkListsVector extends Vector<MarkList> {
    * @return The wanted MarkList or <code>null</code> if the
    *         list for the target was not found.
    */
-  public MarkList getMarkListForTarget(ProgramReceiveTarget target) {
-    for(int i = 0; i < size(); i++)
-      if(get(i).getReceiveTarget().equals(target))
+  protected MarkList getMarkListForTarget(ProgramReceiveTarget target) {
+    for(int i = 0; i < size(); i++) {
+      if(get(i).getReceiveTarget().equals(target)) {
         return get(i);
+      }
+    }
     
     return null;
   }
@@ -160,10 +170,12 @@ public class MarkListsVector extends Vector<MarkList> {
    *          The id of the requested list.
    * @return The list for the name.
    */
-  public MarkList getListForId(String id) {
-    for (int i = 0; i < size(); i++)
-      if (elementAt(i).getId().equals(id))
+  protected MarkList getListForId(String id) {
+    for (int i = 0; i < size(); i++) {
+      if (elementAt(i).getId().equals(id)) {
         return elementAt(i);
+      }
+    }
 
     return null;
   }
