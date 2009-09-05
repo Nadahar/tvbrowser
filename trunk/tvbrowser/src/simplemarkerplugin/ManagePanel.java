@@ -124,22 +124,22 @@ public class ManagePanel {
     mMarkListsList.setCellRenderer(new MarkListCellRenderer());
     
     mProgramsList = new ProgramList(mProgramListModel,new ProgramPanelSettings(new PluginPictureSettings(PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE), false, ProgramPanelSettings.X_AXIS));
-    mProgramsList.addMouseListeners(null);    
+    mProgramsList.addMouseListeners(null);
 
     mMarkListsScrolPane = new JScrollPane(mMarkListsList);
     mProgramsScrollPane = new JScrollPane(mProgramsList);
     mMarkListsScrolPane.setBorder(null);
     mProgramsScrollPane.setBorder(null);
 
-    JPanel panel = (JPanel)mParent.getContentPane();    
+    JPanel panel = (JPanel)mParent.getContentPane();
     panel.setBorder(Borders.createEmptyBorder("6dlu,6dlu,5dlu,6dlu"));
     
     FormLayout layout = new FormLayout("default:grow",
     "pref,pref,4dlu,fill:default:grow,4dlu,pref");
     
-    panel.setLayout(layout);    
+    panel.setLayout(layout);
 
-    CellConstraints cc = new CellConstraints();    
+    CellConstraints cc = new CellConstraints();
     
     panel.add(mShowPrograms, cc.xy(1,1));
     panel.add(mShowTitles, cc.xy(1,2));
@@ -173,7 +173,7 @@ public class ManagePanel {
 
     mShowPrograms.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        selectPrograms(true);        
+        selectPrograms(true);
         mDelete.setToolTipText(SimpleMarkerPlugin.mLocalizer.msg("tooltip.deletePrograms","Delete selected progams"));
       }
     });
@@ -269,17 +269,18 @@ public class ManagePanel {
     
     MarkList list = (MarkList) mMarkListsList.getSelectedValue();
     
-    if(mProgramsList.getSelectedValue() != null && mProgramsList.getSelectedValue() instanceof Program)
+    if(mProgramsList.getSelectedValue() != null && mProgramsList.getSelectedValue() instanceof Program) {
       programs = mProgramsList.getSelectedPrograms();
-    else if(mProgramsList.getSelectedValue() != null) {
+    } else if(mProgramsList.getSelectedValue() != null) {
       Object[] values = mProgramsList.getSelectedValues();
       ArrayList<Program> progList = new ArrayList<Program>();
       
       for(Object o : values) {
         Program[] progs = list.getProgramsWithTitle((String)o);
         
-        for(Program p : progs)
+        for(Program p : progs) {
           progList.add(p);
+        }
       }
       
       programs = progList.toArray(new Program[progList.size()]);
@@ -351,7 +352,7 @@ public class ManagePanel {
           mProgramsScrollPane.getVerticalScrollBar().setValue(0);
           mProgramsScrollPane.getHorizontalScrollBar().setValue(0);
           
-          if(scrollIndex != -1) {            
+          if(scrollIndex != -1) {
             Rectangle cellBounds = mProgramsList.getCellBounds(scrollIndex,scrollIndex);
             cellBounds.setLocation(cellBounds.x, cellBounds.y + mProgramsScrollPane.getHeight() - cellBounds.height);
             
@@ -365,21 +366,24 @@ public class ManagePanel {
     mDelete.setEnabled(mProgramListModel.size() > 0);
     mUndo.setEnabled(mLastDeletingList != null && mDeletedPrograms != null && mDeletedPrograms.length > 0);
     
-    if(mMarkListsList != null && mParent.isVisible())
+    if(mMarkListsList != null && mParent.isVisible()) {
       mMarkListsList.repaint();
+    }
   }
 
   private void delete() {
-    if (mProgramsList.getSelectedIndex() == -1)
-      mProgramsList.setSelectionInterval(0, mProgramListModel.getSize()-1);      
+    if (mProgramsList.getSelectedIndex() == -1) {
+      mProgramsList.setSelectionInterval(0, mProgramListModel.getSize()-1);
+    }
 
     mLastDeletingList =(MarkList) mMarkListsList.getSelectedValue();
 
     if (mShowPrograms.isSelected()) {
       mDeletedPrograms = (mProgramsList).getSelectedPrograms();
 
-      for (Program p : mDeletedPrograms)
+      for (Program p : mDeletedPrograms) {
         mLastDeletingList.remove(p);
+      }
 
     } else {
       Object[] programs = mProgramsList.getSelectedValues();
@@ -389,8 +393,9 @@ public class ManagePanel {
       for (Object o : programs) {
         Program[] deletedArr = mLastDeletingList.removeProgramsWithTitle((String)o);
         
-        for(Program deleted: deletedArr)
+        for(Program deleted: deletedArr) {
           deletedPrograms.add(deleted);
+        }
       }
       
       mDeletedPrograms = deletedPrograms.toArray(new Program[deletedPrograms.size()]);
@@ -403,8 +408,9 @@ public class ManagePanel {
   
   private void undo() {
     if(mLastDeletingList != null && mDeletedPrograms != null && mDeletedPrograms.length > 0) {
-      for(Program p : mDeletedPrograms)
+      for(Program p : mDeletedPrograms) {
         mLastDeletingList.addElement(p);
+      }
     }
     
     SimpleMarkerPlugin.getInstance().revalidate(mDeletedPrograms);
@@ -425,7 +431,7 @@ public class ManagePanel {
     JPanel p = new JPanel(new FormLayout("pref,5dlu,pref,5dlu,pref,5dlu,pref",
         "pref"));
 
-    mSettings = new JButton(TVBrowserIcons.preferences(TVBrowserIcons.SIZE_SMALL));    
+    mSettings = new JButton(TVBrowserIcons.preferences(TVBrowserIcons.SIZE_SMALL));
     mSend = new JButton(TVBrowserIcons.copy(TVBrowserIcons.SIZE_SMALL));
     mDelete = new JButton(TVBrowserIcons.delete(TVBrowserIcons.SIZE_SMALL));
     mUndo = new JButton(SimpleMarkerPlugin.getInstance().createImageIcon(
@@ -442,7 +448,7 @@ public class ManagePanel {
     p.add(mDelete, cc.xy(5, 1));
     p.add(mUndo, cc.xy(7, 1));
         
-    mClose = new JButton(Localizer.getLocalization(Localizer.I18N_CLOSE));    
+    mClose = new JButton(Localizer.getLocalization(Localizer.I18N_CLOSE));
       
     JPanel buttons = new JPanel(new BorderLayout());
     
@@ -454,10 +460,11 @@ public class ManagePanel {
   
   private static class MarkListCellRenderer extends DefaultListCellRenderer {
     public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-      simplemarkerplugin.ManagePanel.MarkListCellRenderer c = (simplemarkerplugin.ManagePanel.MarkListCellRenderer) super.getListCellRendererComponent(list,value,index,isSelected,cellHasFocus);      
+      simplemarkerplugin.ManagePanel.MarkListCellRenderer c = (simplemarkerplugin.ManagePanel.MarkListCellRenderer) super.getListCellRendererComponent(list,value,index,isSelected,cellHasFocus);
       
-      if(!((MarkList)value).isEmpty())
+      if(!((MarkList)value).isEmpty()) {
         c.setText(c.getText() + " [" + ((MarkList)value).size() + "]");
+      }
       
       return c;
     }

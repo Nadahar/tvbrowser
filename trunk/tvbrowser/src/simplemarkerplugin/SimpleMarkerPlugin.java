@@ -22,10 +22,8 @@
  */
 package simplemarkerplugin;
 
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Frame;
-import java.awt.Graphics;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -47,8 +45,6 @@ import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
 import javax.swing.WindowConstants;
 
-import tvbrowser.ui.mainframe.MainFrame;
-import tvbrowser.ui.programtable.ProgramTableModel;
 import util.settings.PluginPictureSettings;
 import util.settings.ProgramPanelSettings;
 import util.ui.Localizer;
@@ -63,13 +59,11 @@ import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.ActionMenu;
 import devplugin.ContextMenuAction;
-import devplugin.ContextMenuSeparatorAction;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.PluginTreeNode;
 import devplugin.PluginsFilterComponent;
 import devplugin.Program;
-import devplugin.ProgramFilter;
 import devplugin.ProgramReceiveTarget;
 import devplugin.SettingsTab;
 import devplugin.Version;
@@ -144,7 +138,7 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
   }
 
   public void loadSettings(Properties prop) {
-    mSettings = new SimpleMarkerSettings(prop); 
+    mSettings = new SimpleMarkerSettings(prop);
   }
 
   public Properties storeSettings() {
@@ -183,86 +177,21 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
     
     this.mProg = p;
     
-    Object[] submenu = new Object[mMarkListVector.size() + 2];
-    ContextMenuAction menu = new ContextMenuAction();
-    menu.setText(mLocalizer.msg("mark", "Mark"));
-    menu.setSmallIcon(createImageIcon("status", "mail-attachment", 16));
-    
     if (mMarkListVector.size() == 1) {
       // Create context menu entry
-      submenu[0] = getDefaultAction(p);
+      return new ActionMenu(getDefaultAction(p));
     } else {
+      Object[] submenu = new Object[mMarkListVector.size()];
+      ContextMenuAction menu = new ContextMenuAction();
+      menu.setText(mLocalizer.msg("mark", "Mark"));
+      menu.setSmallIcon(createImageIcon("status", "mail-attachment", 16));
+      
       for (int i = 0; i < mMarkListVector.size(); i++) {
         submenu[i] = mMarkListVector.getListAt(i).getContextMenuAction(p);
       }
+      return new ActionMenu(menu, submenu);
     }
     
-    submenu[submenu.length-2] = ContextMenuSeparatorAction.getDisabledOnTaskMenuInstance();
-    submenu[submenu.length-1] = getExtendedMarkMenu();
-    
-    return new ActionMenu(menu, submenu);
-  }
-
-  private ActionMenu getExtendedMarkMenu() {
-    // get all non-default filters
-    ArrayList<ProgramFilter> markFilters = new ArrayList<ProgramFilter>();
-    for (ProgramFilter filter : getPluginManager().getFilterManager().getAvailableFilters()) {
-      if (filter != null && (!(filter.equals(getPluginManager().getFilterManager().getDefaultFilter()))) && (!(getPluginManager().getFilterManager().isPluginFilter(filter)))) {
-        markFilters.add(filter);
-      }
-    }
-    // create an action for each filter
-    AbstractAction[] filtersAction = new AbstractAction[markFilters.size()];
-    for (int i = 0; i < markFilters.size(); i++) {
-      final ProgramFilter filter = markFilters.get(i);
-      filtersAction[i] = new AbstractAction() {
-        public void actionPerformed(ActionEvent e) {
-          // collect all (visible) programs of this day which match the filter
-          ArrayList<Program> progList = new ArrayList<Program>();
-          ProgramTableModel model = MainFrame.getInstance().getProgramTableModel();
-
-          int columnCount = model.getColumnCount();
-          for (int col = 0; col < columnCount; col++) {
-            int rowCount = model.getRowCount(col);
-            for (int row = 0; row < rowCount; row++) {
-              Program program = model.getProgramPanel(col, row).getProgram();
-              if (filter.accept(program)) {
-                progList.add(program);
-              }
-            }
-          }
-          // now mark all those programs on the default list
-          for (Program program : progList) {
-            mMarkListVector.getListAt(0).addElement(program);
-            program.mark(SimpleMarkerPlugin.this);
-          }
-          mMarkListVector.getListAt(0).updateNode();
-          save();
-        }};
-      filtersAction[i].putValue(Action.NAME, filter.getName());
-    }
-    // create the new (sub) menu
-    ContextMenuAction menuExtended = new ContextMenuAction();
-    menuExtended.setText(mLocalizer.ellipsisMsg("extendedMark", "Mark programs of filter"));
-    menuExtended.setActionListener(this);
-    menuExtended.putValue(Plugin.DISABLED_ON_TASK_MENU,true);
-    menuExtended.putValue(Program.MARK_PRIORITY, mMarkListVector.getListAt(0).getMarkPriority());
-    
-    // workaround for not correct menu painting
-    menuExtended.putValue(Action.SMALL_ICON, new Icon() {
-      public int getIconHeight() {
-        return 16;
-      }
-
-      public int getIconWidth() {
-        return 16;
-      }
-
-      public void paintIcon(Component c, Graphics g, int x, int y) {}
-    });
-    
-    ActionMenu actionMenuExtendedMark = new ActionMenu(menuExtended, filtersAction);
-    return actionMenuExtendedMark;
   }
 
   private ContextMenuAction getDefaultAction(Program p) {
@@ -292,7 +221,7 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
   }
   
   public boolean receivePrograms(Program[] programs, ProgramReceiveTarget target) {
-    MarkList targetList = mMarkListVector.getMarkListForTarget(target);    
+    MarkList targetList = mMarkListVector.getMarkListForTarget(target);
     
     if(targetList == null) {
       return false;
@@ -481,29 +410,6 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
     return true;
   }
 
-  /**
-   * Remove all programs of the list
-   * 
-   * @param node
-   *          The parent node that contains the programs
-   * @param e
-   *          The ActionEvent.
-   */
-  public void handleAction(PluginTreeNode node, ActionEvent e) {
-    if (e.getActionCommand().equals(
-        mLocalizer.msg("unmarkall", "Just unmark all"))) {
-      Program[] programs = node.getPrograms();
-
-      for (Program program : programs) {
-        mMarkListVector.remove(program);
-        program.unmark(this);
-      }
-      
-      revalidate(programs);
-      updateTree();
-    }
-  }
-  
   protected void addGroupingActions(PluginTreeNode node) {
     ActionMenu displayBoth = new ActionMenu(new AbstractAction(mLocalizer.msg(
         "grouping.both", "By title and date")) {
@@ -535,7 +441,7 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
   /**
    * Updates the plugin tree.
    */
-  public void updateTree() {
+  protected void updateTree() {
     if (!mStartFinished) {
       return;
     }
@@ -608,10 +514,6 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
     return mMarkListVector.getListForId(id);
   }
 
-  protected void addList(String name) {
-    addList(new MarkList(name));
-  }
-
   protected void addList(MarkList list) {
     mMarkListVector.addElement(list);
     updateTree();
@@ -649,8 +551,8 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
   
   public Class<? extends PluginsFilterComponent>[] getAvailableFilterComponentClasses() {
     if(mMarkListVector.size() > 1) {
-      // Make sure the compiler not has to make unsafe class cast, therefor class is casted manually to needed type
-      return (Class<? extends PluginsFilterComponent>[]) new Class[] {MarkListFilterComponent.class};
+      // Make sure the compiler not has to make unsafe class cast, therefore class is casted manually to needed type
+      return new Class[] {MarkListFilterComponent.class};
     }
 
     return null;

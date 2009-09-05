@@ -42,11 +42,11 @@ public final class SimpleMarkerSettings extends PropertyBasedSettings{
   private static final int GROUPING_BY_DATE = 2;
   private static final String KEY_GROUPING = "grouping";
 
-  public SimpleMarkerSettings(final Properties properties) {
+  protected SimpleMarkerSettings(final Properties properties) {
     super(properties);
   }
 
-  public boolean showDeletedPrograms() {
+  protected boolean showDeletedPrograms() {
     return get(KEY_SHOW_DELETED_PROGRAM, true);
   }
 
@@ -62,7 +62,7 @@ public final class SimpleMarkerSettings extends PropertyBasedSettings{
     set(KEY_SPLIT_POSITION, dividerLocation);
   }
 
-  public void setNodeGroupingByBoth() {
+  protected void setNodeGroupingByBoth() {
     setNodeGrouping(GROUPING_BY_TITLE_AND_DATE);
   }
 
@@ -78,7 +78,7 @@ public final class SimpleMarkerSettings extends PropertyBasedSettings{
     return get(KEY_GROUPING, 0) == grouping;
   }
 
-  public void setNodeGroupingByTitle() {
+  protected void setNodeGroupingByTitle() {
     setNodeGrouping(GROUPING_BY_TITLE);
   }
 
@@ -86,7 +86,7 @@ public final class SimpleMarkerSettings extends PropertyBasedSettings{
     return isGrouping(GROUPING_BY_TITLE);
   }
 
-  public void setNodeGroupingByDate() {
+  protected void setNodeGroupingByDate() {
     setNodeGrouping(GROUPING_BY_DATE);
   }
 
