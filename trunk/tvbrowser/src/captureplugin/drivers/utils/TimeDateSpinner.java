@@ -29,42 +29,30 @@ import java.util.Date;
 
 import javax.swing.JComponent;
 import javax.swing.JFormattedTextField;
-import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerDateModel;
 
 import util.ui.CaretPositionCorrector;
 
 /**
- * A Panel that gives the possibility to choose date/time
+ * A spinner that gives the possibility to choose date/time
  * 
  */
-public class TimeDateChooserPanel extends JPanel {
+public class TimeDateSpinner extends JSpinner {
 
-  /** The Spinner-Model */
-  private SpinnerDateModel mDateModel;
-
-  private JSpinner mSpinner;
-  
   /**
-   * Create the Panel
+   * Create the spinner
    * 
    * @param date Date
    */
-  public TimeDateChooserPanel(Date date) {
-    mDateModel = new SpinnerDateModel();
-    mDateModel.setValue(date);
-
-    mSpinner = new JSpinner(mDateModel);
-         
-    
-    if(mSpinner.getEditor() instanceof JSpinner.DateEditor) {
+  public TimeDateSpinner(Date date) {
+    super(new SpinnerDateModel());
+    getModel().setValue(date);
+    if(getEditor() instanceof JSpinner.DateEditor) {
       CaretPositionCorrector.createCorrector(
-          ((JSpinner.DateEditor)mSpinner.getEditor()).getTextField(),
+          ((JSpinner.DateEditor)getEditor()).getTextField(),
           new char[] {'.','/','-',':',' '}, ':');
     }
-    
-    add(mSpinner);
   }
   
   /**
@@ -73,8 +61,7 @@ public class TimeDateChooserPanel extends JPanel {
    * @param bg Color of Background
    */
   public void setSpinnerBackground(Color bg) {
-    if (mSpinner != null) {
-      JComponent editor = mSpinner.getEditor();
+      JComponent editor = getEditor();
       if (editor instanceof JSpinner.DefaultEditor) {
         JSpinner.DefaultEditor defEditor = (JSpinner.DefaultEditor) editor;
         JFormattedTextField tf = defEditor.getTextField();
@@ -82,7 +69,6 @@ public class TimeDateChooserPanel extends JPanel {
           tf.setBackground(bg);
         }
       }
-    }
   }
 
   /**
@@ -91,7 +77,7 @@ public class TimeDateChooserPanel extends JPanel {
    * @return Date
    */
   public Date getDate() {
-    return mDateModel.getDate();
+    return ((SpinnerDateModel)getModel()).getDate();
   }
 
 }

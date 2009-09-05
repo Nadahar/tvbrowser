@@ -32,8 +32,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
@@ -46,12 +44,11 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import util.paramhandler.ParamDescriptionPanel;
+import util.paramhandler.ParamInputField;
 import util.ui.Localizer;
 import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
@@ -72,7 +69,7 @@ public class AdditionalParams extends JDialog implements WindowClosingIf{
     /** Current Name */
     private JTextField mName;
     /** Current Params */
-    private JTextArea mParam;
+    private ParamInputField mParam;
     /** Current ParamEnty */
     private ParamEntry mSelectedEntry;
     /** Config */
@@ -119,7 +116,7 @@ public class AdditionalParams extends JDialog implements WindowClosingIf{
      *  Create GUI
      */
     private void createGUI() {
-        setTitle(mLocalizer.msg("Additional","Additional Parameters"));
+        setTitle(mLocalizer.msg("Additional","Additional Commands"));
 
         UiUtilities.registerForClosing(this);
         
@@ -162,8 +159,8 @@ public class AdditionalParams extends JDialog implements WindowClosingIf{
         mList.setSelectedIndex(0);
         
         mList.setCellRenderer(new ParamEntryCellRenderer());
-        
-        setSize(550, 450);
+
+        pack();
     }
 
     /**
@@ -172,19 +169,17 @@ public class AdditionalParams extends JDialog implements WindowClosingIf{
      */
     private Component createListPanel() {
         JPanel panel = new JPanel(new BorderLayout(0, 2));
-
         panel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 5));
 
+        panel.add(new JLabel(mLocalizer.msg("command", "Command")), BorderLayout.NORTH);
+        
         mList = new JList(mListModel);
-
         panel.add(new JScrollPane(mList), BorderLayout.CENTER);
 
         JPanel buttons = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
         JButton add = new JButton(TVBrowserIcons.newIcon(TVBrowserIcons.SIZE_SMALL));
-        
         add.setToolTipText(Localizer.getLocalization(Localizer.I18N_ADD));
-
         add.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
@@ -307,28 +302,17 @@ public class AdditionalParams extends JDialog implements WindowClosingIf{
         l.fill = GridBagConstraints.HORIZONTAL;
         l.gridwidth = GridBagConstraints.REMAINDER;
 
-        panel.add(new JLabel(mLocalizer.msg("Name","Name")+":"), l);
+        panel.add(new JLabel(mLocalizer.msg("Name","Name")), l);
 
         mName = new JTextField();
 
         panel.add(mName, l);
 
-        panel.add(new JLabel(mLocalizer.msg("Parameter","Parameter")+":"), l);
+        panel.add(new JLabel(mLocalizer.msg("Parameter","Parameter")), l);
 
-        mParam = new JTextArea();
+        mParam = new ParamInputField(new CaptureParamLibrary(mConfig), "", false);
+        panel.add(mParam, c);
 
-        mParam.addKeyListener(new KeyAdapter() {
-
-            public void keyPressed(KeyEvent ke) {
-                if (ke.getKeyCode() == KeyEvent.VK_ENTER) {
-                    ke.consume();
-                }
-            }
-        });
-
-        panel.add(new JScrollPane(mParam), c);
-
-        panel.add(new JScrollPane(new ParamDescriptionPanel(new CaptureParamLibrary(mConfig))), c);
         return panel;
     }
     

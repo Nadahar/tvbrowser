@@ -26,18 +26,12 @@ package captureplugin.drivers.defaultdriver.configpanels;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.ScrollPaneConstants;
 
-import util.paramhandler.ParamDescriptionPanel;
+import util.paramhandler.ParamInputField;
+import util.ui.EnhancedPanelBuilder;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import captureplugin.drivers.defaultdriver.AdditionalParams;
@@ -45,9 +39,7 @@ import captureplugin.drivers.defaultdriver.CaptureParamLibrary;
 import captureplugin.drivers.defaultdriver.DefaultKonfigurator;
 import captureplugin.drivers.defaultdriver.DeviceConfig;
 
-import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
 
 /**
  * Enter the Parameters
@@ -58,9 +50,9 @@ public class ParameterPanel extends JPanel {
     private static final Localizer mLocalizer = Localizer.getLocalizerFor(ParameterPanel.class);
 
     /** GUI */
-    private JTextArea mAddFormatTextField = new JTextArea();
+    private ParamInputField mAddFormatTextField;
 
-    private JTextArea mRemFormatTextField = new JTextArea();
+    private ParamInputField mRemFormatTextField;
 
     /** Data for the Panel */
     private DeviceConfig mData;
@@ -81,80 +73,43 @@ public class ParameterPanel extends JPanel {
     }
 
     /**
-     * creates a JPanel for getting the parameterformat
+     * creates a JPanel for getting the parameters
      */
     private void createPanel() {try {
       CellConstraints cc = new CellConstraints();
-      PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,pref,5dlu,pref:grow,pref,5dlu",
-          "pref,5dlu,pref,55dlu,5dlu,pref,55dlu,5dlu,pref,5dlu,default"),this);
+      EnhancedPanelBuilder pb = new EnhancedPanelBuilder("5dlu,pref,5dlu,pref:grow,pref,5dlu", this);
       pb.setDefaultDialogBorder();
 
-      pb.addSeparator(mLocalizer.msg("Parameters", "Parameters"), cc.xyw(1,1,6));
-      pb.addLabel(mLocalizer.msg("Record", "record"), cc.xy(2,3));
-      
+      pb.addParagraph(mLocalizer.msg("parametersRecord", "Parameters for recording"));
 
-      mAddFormatTextField.setLineWrap(true);
-        // Consume Enter-Key
-      mAddFormatTextField.addKeyListener(new KeyAdapter() {
-        public void keyPressed(KeyEvent ke) {
-          if (ke.getKeyCode() == KeyEvent.VK_ENTER) {
-            ke.consume();
-          }
-        }
-      });
+      pb.addGrowingRow();
+      mAddFormatTextField = new ParamInputField(new CaptureParamLibrary(mData), mData.getParameterFormatAdd(), false);
+      pb.add(mAddFormatTextField, cc.xyw(2, pb.getRow(), pb.getColumnCount() - 1));
       
-      mAddFormatTextField.addFocusListener(new FocusAdapter() {
-        public void focusLost(FocusEvent e) {
-          addFormatChanged();
-        }
-      });
+      pb.addParagraph(mLocalizer.msg("parametersDelete", "Parameters for deletion"));
 
-      mAddFormatTextField.setText(mData.getParameterFormatAdd());
-
-      JScrollPane scroll = new JScrollPane(mAddFormatTextField, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
-                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+      pb.addGrowingRow();
+      mRemFormatTextField = new ParamInputField(new CaptureParamLibrary(mData), mData.getParameterFormatRem(), false);
+      pb.add(mRemFormatTextField, cc.xyw(2, pb.getRow(), pb.getColumnCount() - 1));
       
-      pb.add(scroll, cc.xywh(4,3,2,2));
-      
-      pb.addLabel(Localizer.getLocalization(Localizer.I18N_DELETE), cc.xy(2,6));
-
-      mRemFormatTextField.setLineWrap(true);
-      
-      // Consume Enter-Key
-      mRemFormatTextField.addKeyListener(new KeyAdapter() {
-        public void keyPressed(KeyEvent ke) {
-          if (ke.getKeyCode() == KeyEvent.VK_ENTER) {
-            ke.consume();
-          }
-        }
-      });
-      
-      mRemFormatTextField.addFocusListener(new FocusAdapter() {
-        public void focusLost(FocusEvent e) {
-          remFormatChanged();
-        }
-      });
-
-      mRemFormatTextField.setText(mData.getParameterFormatRem());
-            
-      scroll = new JScrollPane(mRemFormatTextField, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-      pb.add(scroll, cc.xywh(4,6,2,2));
-        
-      
-      JButton additional = new JButton(mLocalizer.msg("Additional", "Additional Parameters"));
+      pb.addParagraph(mLocalizer.msg("parametersAdditional", "Additional commands"));
+      pb.addRow();
+      JButton additional = new JButton(mLocalizer.msg("Additional", "Define additional commands"));
       
       additional.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          additionalPressed();
+          AdditionalParams params = new AdditionalParams(mKonfigurator, mData);
+          UiUtilities.centerAndShow(params);
         }
       });
         
-      pb.add(additional, cc.xy(5,9));
-      pb.add(new ParamDescriptionPanel(new CaptureParamLibrary(mData)), cc.xyw(2,11,4));}catch(Exception e){e.printStackTrace();}
+      pb.add(additional, cc.xy(pb.getColumnCount() - 1, pb.getRow()));
+      
+      }catch(Exception e){e.printStackTrace();}
     }
 
     /**
-     * invoked when the addFormat - TextField losts the Focus, the value of the
+     * invoked when the addFormat - TextField lost the Focus, the value of the
      * TextField will then be stored.
      */
     public void addFormatChanged() {
@@ -162,19 +117,10 @@ public class ParameterPanel extends JPanel {
     }
 
     /**
-     * invoked when the remFormat - TextField losts the Focus, the value of the
+     * invoked when the remFormat - TextField lost the Focus, the value of the
      * TextField will then be stored.
      */
     public void remFormatChanged() {
         mData.setParameterFormatRem(mRemFormatTextField.getText());
     }
-
-    /**
-     * Additional Parameters was pressed
-     */
-    private void additionalPressed() {
-        AdditionalParams params = new AdditionalParams(mKonfigurator, mData);
-        UiUtilities.centerAndShow(params);
-    }
-
 }

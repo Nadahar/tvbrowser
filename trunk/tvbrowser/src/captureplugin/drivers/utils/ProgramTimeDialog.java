@@ -26,23 +26,25 @@ package captureplugin.drivers.utils;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import util.ui.EnhancedPanelBuilder;
 import util.ui.Localizer;
 import util.ui.ProgramPanel;
 import captureplugin.CapturePlugin;
+
+import com.jgoodies.forms.builder.ButtonBarBuilder2;
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.layout.CellConstraints;
 
 
 /**
@@ -57,9 +59,9 @@ public class ProgramTimeDialog extends JDialog {
     /** ProgramTime*/
     private ProgramTime mPrgTime;
     /** Start-Time*/
-    private TimeDateChooserPanel mStart;
+    private TimeDateSpinner mStart;
     /** End-Time */
-    private TimeDateChooserPanel mEnd;
+    private TimeDateSpinner mEnd;
     /** Title-Input */
     private JTextField mTitle;
     
@@ -101,73 +103,59 @@ public class ProgramTimeDialog extends JDialog {
     private void createGui(final boolean titleEditable, final String additionalText, final JComponent additionalComponent) {
         setTitle(mLocalizer.msg("SetTime","Set Time"));
         
-        JPanel panel = (JPanel)getContentPane();
-        panel.setLayout(new BorderLayout());
-        
-        mStart = new TimeDateChooserPanel(mPrgTime.getStart());
-        mStart.setBorder(BorderFactory.createTitledBorder(
-                mLocalizer.msg("StartTime","Start-Time")));
-        
-        mEnd =  new TimeDateChooserPanel(mPrgTime.getEnd());
-        mEnd.setBorder(BorderFactory.createTitledBorder(
-                mLocalizer.msg("EndTime","End-Time")));
+        JPanel content = (JPanel)getContentPane();
+        content.setBorder(Borders.DIALOG_BORDER);
+        content.setLayout(new BorderLayout());
         
         if (mPrgTime.getProgram().getLength() <= 0) {
           mEnd.setSpinnerBackground(new Color(255, 153, 153));
         }
 
-        JPanel center = new JPanel();
-        center.setLayout(new GridBagLayout());
+        EnhancedPanelBuilder panel = new EnhancedPanelBuilder("2dlu, pref:grow,pref");
         
-        GridBagConstraints c = new GridBagConstraints();
-        
-        c.weightx = 1.0;
-        c.fill = GridBagConstraints.BOTH;
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.weighty = 0.5;
-        
-        JPanel namePanel = new JPanel();
-        namePanel.setBorder(BorderFactory.createTitledBorder(Localizer.getLocalization(Localizer.I18N_PROGRAM)));
-        namePanel.setLayout(new BorderLayout());
+        panel.addParagraph(Localizer.getLocalization(Localizer.I18N_PROGRAM));
 
+        panel.addRow();
         ProgramPanel p = new ProgramPanel(mPrgTime.getProgram());
         p.setToolTipText("");
         p.addPluginContextMenuMouseListener(CapturePlugin.getInstance());
+        p.setWidth(200);
         
-        namePanel.add(p);
-        
-        center.add(namePanel, c);
+        CellConstraints cc = new CellConstraints();
+        panel.add(p, cc.xyw(2, panel.getRow(), panel.getColumnCount() - 1));
 
         if (titleEditable) {
-            JPanel titlePanel = new JPanel(new BorderLayout());
+          panel.addParagraph(mLocalizer.msg("Title", "Title"));
+          mTitle = new JTextField(mPrgTime.getTitle());
 
-            mTitle = new JTextField(mPrgTime.getTitle());
-
-            titlePanel.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("Title", "Title")));
-            titlePanel.add(mTitle, BorderLayout.CENTER);
-
-            center.add(titlePanel, c);
+          panel.addRow();
+          panel.add(mTitle, cc.xyw(2, panel.getRow(), panel.getColumnCount() - 1));
         }
 
-        center.add(mStart, c);
-        center.add(mEnd, c);
+        panel.addParagraph(mLocalizer.msg("Times","Times"));
+        panel.addRow();
+        panel.add(new JLabel(mLocalizer.msg("StartTime","Start time")), cc.xy(2, panel.getRow()));
+        mStart = new TimeDateSpinner(mPrgTime.getStart());
+        panel.add(mStart, cc.xy(3, panel.getRow()));
+        
+        panel.addRow();
+        panel.add(new JLabel(mLocalizer.msg("EndTime","End time")), cc.xy(2, panel.getRow()));
+        mEnd =  new TimeDateSpinner(mPrgTime.getEnd());
+        panel.add(mEnd, cc.xy(3, panel.getRow()));
 
         if (additionalText != null) {
-            JPanel additionalPanel = new JPanel();
-            additionalPanel.setBorder(BorderFactory.createTitledBorder(additionalText));
-            additionalPanel.add(additionalComponent);
-            center.add(additionalPanel, c);
+            panel.addParagraph(additionalText);
+            panel.addRow();
+            panel.add(additionalComponent, cc.xy(2, panel.getRow()));
         }
 
 
-        panel.add(center, BorderLayout.CENTER);
+        content.add(panel.getPanel(), BorderLayout.CENTER);
         
-        JPanel btPanel = new JPanel();
+        ButtonBarBuilder2 btPanel = new ButtonBarBuilder2();
+        btPanel.setBorder(Borders.DLU4_BORDER);
         
-        btPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
-       
         JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
-        
         ok.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 mPrgTime.setStart(mStart.getDate());
@@ -179,7 +167,7 @@ public class ProgramTimeDialog extends JDialog {
             }
         });
         
-        btPanel.add(ok);
+        btPanel.addGlue();
         
         JButton cancel = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
         
@@ -192,11 +180,11 @@ public class ProgramTimeDialog extends JDialog {
         });
 
         
-        btPanel.add(cancel);
+        btPanel.addButton(ok, cancel);
 
         getRootPane().setDefaultButton(ok);
         
-        panel.add(btPanel, BorderLayout.SOUTH);
+        content.add(btPanel.getPanel(), BorderLayout.SOUTH);
         
         pack();
     }

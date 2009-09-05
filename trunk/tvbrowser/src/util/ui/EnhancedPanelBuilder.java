@@ -17,6 +17,7 @@
 package util.ui;
 
 import javax.swing.JComponent;
+import javax.swing.JPanel;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.FormFactory;
@@ -35,7 +36,11 @@ public class EnhancedPanelBuilder extends PanelBuilder {
   }
 
   public EnhancedPanelBuilder(final String encodedColumnSpecs) {
-    this(new FormLayout(encodedColumnSpecs,""));
+    super(new FormLayout(encodedColumnSpecs,""));
+  }
+
+  public EnhancedPanelBuilder(final String encodedColumnSpecs, JPanel parent) {
+    super(new FormLayout(encodedColumnSpecs,""), parent);
   }
 
   /**
@@ -63,10 +68,7 @@ public class EnhancedPanelBuilder extends PanelBuilder {
    * @return the builder
    */
   public PanelBuilder addRow() {
-    appendRow(FormFactory.LINE_GAP_ROWSPEC);
-    appendRow(FormFactory.PREF_ROWSPEC);
-    incrementRowNumber();
-    return this;
+    return addRow(FormFactory.PREF_ROWSPEC.encode());
   }
 
   private void incrementRowNumber() {
@@ -80,13 +82,24 @@ public class EnhancedPanelBuilder extends PanelBuilder {
   }
 
   /**
-   * add a new growing row to the builders layout<br>
+   * add a new growing layout row to the builders layout<br>
    * It is separated from the preceding row by LINE_GAP and will grow to take the available space.
    * @return the builder
    */
   public PanelBuilder addGrowingRow() {
+    return addRow("fill:default:grow");
+  }
+
+  /**
+   * add a new layout row with the given height to the builders layout<br>
+   * It is separated from the preceding row with a LINE_GAP. Use {@link #getRow()} to address this line
+   * afterwards.
+   * @param rowHeightCode row height
+   * @return the builder
+   */
+  public PanelBuilder addRow(final String rowHeightCode) {
     appendRow(FormFactory.LINE_GAP_ROWSPEC);
-    appendRow("fill:default:grow");
+    appendRow(rowHeightCode);
     incrementRowNumber();
     return this;
   }
