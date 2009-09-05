@@ -92,7 +92,7 @@ public class CapturePlugin extends devplugin.Plugin {
     private Vector<Program> mMarkedPrograms = new Vector<Program>();
 
     /**
-     * The Singelton
+     * The Singleton
      */
     private static CapturePlugin mInstance = null;
 
@@ -397,7 +397,7 @@ public class CapturePlugin extends devplugin.Plugin {
         mRootNode.removeAllChildren();
 
         for (Object o : mConfig.getDevices()) {
-            DeviceIf device = (DeviceIf) o;
+            final DeviceIf device = (DeviceIf) o;
             
             PluginTreeNode node = new PluginTreeNode(device.getName());
             
@@ -412,6 +412,13 @@ public class CapturePlugin extends devplugin.Plugin {
                   node.addProgram(program);
               }
             }
+            
+            node.addAction(new AbstractAction(mLocalizer.msg("configure", "Configure '{0}'", device.getName())) {
+              @Override
+              public void actionPerformed(ActionEvent e) {
+                device.configDevice(UiUtilities.getBestDialogParent(getParentFrame()));
+              }
+            });
 
             mRootNode.add(node);
         }
