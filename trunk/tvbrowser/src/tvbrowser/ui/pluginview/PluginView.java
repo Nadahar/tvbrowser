@@ -257,10 +257,8 @@ public class PluginView extends JPanel implements MouseListener, KeyListener {
       JLabel label = (JLabel)super.getTreeCellRendererComponent(tree,value,sel,expanded,leaf,row,hasFocus);
 
       if (label != null) {
-        if(UIManager.getLookAndFeel().getClass().getCanonicalName().equals("com.sun.java.swing.plaf.gtk.GTKLookAndFeel")) {
-          label.setBackground(tree.getBackground());
-          label.setOpaque(!sel && !hasFocus);
-        }
+        label.setBackground(tree.getBackground());
+        label.setOpaque(!sel && !hasFocus);
         
         if (leaf && value instanceof Node) {
           Node node = (Node)value;
