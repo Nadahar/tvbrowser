@@ -145,64 +145,64 @@ public class ParamLibrary {
    * @return Value of key in program
    */
   public String getStringForKey(Program prg, String key) {
-    if (key.equals("title")) {
+    if (key.equalsIgnoreCase("title")) {
       return prg.getTitle();
-    } else if (key.equals("original_title")) {
+    } else if (key.equalsIgnoreCase("original_title")) {
       return removeNull(prg.getTextField(ProgramFieldType.ORIGINAL_TITLE_TYPE));
-    } else if (key.equals("start_day")) {
+    } else if (key.equalsIgnoreCase("start_day")) {
       return String.valueOf(prg.getDate().getDayOfMonth());
-    } else if (key.equals("start_month")) {
+    } else if (key.equalsIgnoreCase("start_month")) {
       return String.valueOf(prg.getDate().getMonth());
-    } else if (key.equals("start_year")) {
+    } else if (key.equalsIgnoreCase("start_year")) {
       return String.valueOf(prg.getDate().getYear());
-    } else if (key.equals("end_day")) {
+    } else if (key.equalsIgnoreCase("end_day")) {
       return String.valueOf(getEndTimeFieldInProgram(prg, Calendar.DAY_OF_MONTH));
-    } else if (key.equals("end_month")) {
+    } else if (key.equalsIgnoreCase("end_month")) {
       return String.valueOf(getEndTimeFieldInProgram(prg, Calendar.MONTH) + 1);
-    } else if (key.equals("end_year")) {
+    } else if (key.equalsIgnoreCase("end_year")) {
       return String.valueOf(getEndTimeFieldInProgram(prg, Calendar.YEAR));
-    } else if (key.equals("start_hour")) {
+    } else if (key.equalsIgnoreCase("start_hour")) {
       return String.valueOf(prg.getHours());
-    } else if (key.equals("start_minute")) {
+    } else if (key.equalsIgnoreCase("start_minute")) {
       return String.valueOf(prg.getMinutes());
-    } else if (key.equals("end_hour")) {
+    } else if (key.equalsIgnoreCase("end_hour")) {
       return String.valueOf(getEndTimeFieldInProgram(prg, Calendar.HOUR_OF_DAY));
-    } else if (key.equals("end_minute")) {
+    } else if (key.equalsIgnoreCase("end_minute")) {
       return String.valueOf(getEndTimeFieldInProgram(prg, Calendar.MINUTE));
-    } else if (key.equals("length_minutes")) {
+    } else if (key.equalsIgnoreCase("length_minutes")) {
       return String.valueOf(prg.getLength());
-    } else if (key.equals("length_sec")) {
+    } else if (key.equalsIgnoreCase("length_sec")) {
       return String.valueOf(prg.getLength() * 60);
-    } else if (key.equals("short_info")) {
+    } else if (key.equalsIgnoreCase("short_info")) {
       return removeNull(prg.getShortInfo());
-    } else if (key.equals("description")) {
+    } else if (key.equalsIgnoreCase("description")) {
       String res = removeNull(prg.getDescription());
       String copyright = prg.getChannel().getCopyrightNotice();
 	    if (copyright != null) {
         return new StringBuilder(res).append('\n').append(copyright).toString();
       }
       return res;
-    } else if (key.equals("episode")) {
+    } else if (key.equalsIgnoreCase("episode")) {
       return removeNull(prg.getTextField(ProgramFieldType.EPISODE_TYPE));
-    } else if (key.equals("original_episode")) {
+    } else if (key.equalsIgnoreCase("original_episode")) {
       return removeNull(prg.getTextField(ProgramFieldType.ORIGINAL_EPISODE_TYPE));
-    } else if (key.equals("channel_name")) {
+    } else if (key.equalsIgnoreCase("channel_name")) {
       return removeNull(prg.getChannel().getName());
-    } else if (key.equals("url")) {
+    } else if (key.equalsIgnoreCase("url")) {
       return removeNull(prg.getTextField(ProgramFieldType.URL_TYPE));
-    } else if (key.equals("start_day_of_week")) {
+    } else if (key.equalsIgnoreCase("start_day_of_week")) {
       SimpleDateFormat format = new SimpleDateFormat("EEEE"); 
       return format.format(new java.util.Date(prg.getDate().getCalendar().getTimeInMillis()));    
-    } else if (key.equals("start_month_name")) {
+    } else if (key.equalsIgnoreCase("start_month_name")) {
       SimpleDateFormat format = new SimpleDateFormat("MMMM"); 
       return format.format(new java.util.Date(prg.getDate().getCalendar().getTimeInMillis()));
-    } else if (key.equals("start_unix")) {
+    } else if (key.equalsIgnoreCase("start_unix")) {
       return Long.toString(createStartTime(prg).getTimeInMillis() / 1000);
-    } else if (key.equals("end_unix")) {
+    } else if (key.equalsIgnoreCase("end_unix")) {
       return Long.toString(createEndTime(prg).getTimeInMillis() / 1000);
-    } else if (key.equals("genre")) {
+    } else if (key.equalsIgnoreCase("genre")) {
       return removeNull(prg.getTextField(ProgramFieldType.GENRE_TYPE));
-    } else if (key.equals("episode_number")) {
+    } else if (key.equalsIgnoreCase("episode_number")) {
       int epNum = prg.getIntField(ProgramFieldType.EPISODE_NUMBER_TYPE);
       if (epNum == -1) {
         return "";
@@ -280,7 +280,7 @@ public class ParamLibrary {
    * @return Return-Value of Function
    */
   public String getStringForFunction(Program prg, String function, String[] params) {
-    if (function.equals("isset")) {
+    if (function.equalsIgnoreCase("isset")) {
       if (params.length != 2) {
         mError = true;
         mErrorString = mLocalizer.msg("isset2Params", "isset needs 2 Parameters");
@@ -292,7 +292,7 @@ public class ParamLibrary {
       }
 
       return params[1];
-    } else if (function.equals("testparam")) {
+    } else if (function.equalsIgnoreCase("testparam")) {
       if ((params.length < 2) || ((params.length > 3))) {
         mError = true;
         mErrorString = mLocalizer.msg("testparam2Params", "testparam needs 2-3 Parameters");
@@ -308,7 +308,7 @@ public class ParamLibrary {
       }
       
       return "";
-    } else if (function.equals("urlencode")) {
+    } else if (function.equalsIgnoreCase("urlencode")) {
       if (params.length != 2) {
         mError = true;
         mErrorString = mLocalizer.msg("urlencode2Params", "urlencode needs 2 Parameters");
@@ -322,28 +322,28 @@ public class ParamLibrary {
         mErrorString = mLocalizer.msg("urlencodeProblems", "Problems with encoding : ") + e.toString();
         return null;
       }
-    } else if (function.equals("concat")) {
+    } else if (function.equalsIgnoreCase("concat")) {
       StringBuilder buffer = new StringBuilder();
 
       for (int i = 0; i < params.length; i++) {
         buffer.append(params[i]);
       }
       return buffer.toString();
-    } else if (function.equals("clean")) {
+    } else if (function.equalsIgnoreCase("clean")) {
       StringBuilder buffer = new StringBuilder();
 
       for (int i = 0; i < params.length; i++) {
         buffer.append(clean(params[i]));
       }
       return buffer.toString();
-    } else if (function.equals("cleanLess")) {
+    } else if (function.equalsIgnoreCase("cleanLess")) {
       StringBuilder buffer = new StringBuilder();
 
       for (int i = 0; i < params.length; i++) {
         buffer.append(cleanLess(params[i]));
       }
       return buffer.toString();
-    } else if (function.equals("leadingZero")) {
+    } else if (function.equalsIgnoreCase("leadingZero")) {
       if (params.length > 2) {
         mError = true;
         mErrorString = mLocalizer.msg("leadingZero2Params", "leadingZero has max. 2 Parameters");
@@ -363,7 +363,7 @@ public class ParamLibrary {
       }
 
       return addLeadingZeros(params[0], num);
-    } else if (function.equals("splitAt")) {
+    } else if (function.equalsIgnoreCase("splitAt")) {
       if (params.length != 2) {
         mError = true;
         mErrorString = mLocalizer.msg("splitAt2Params", "splitAt needs 2 Parameters");
@@ -399,7 +399,7 @@ public class ParamLibrary {
       }
       
       return result.toString().trim();
-    } else if (function.equals("maxlength")) {
+    } else if (function.equalsIgnoreCase("maxlength")) {
       if (params.length != 2) {
         mError = true;
         mErrorString = mLocalizer.msg("maxlength2Params", "maxlength needs 2 Parameters");
