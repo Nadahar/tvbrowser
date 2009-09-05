@@ -25,6 +25,9 @@
 package util.paramhandler;
 
 import java.awt.BorderLayout;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import javax.swing.JEditorPane;
 import javax.swing.JPanel;
@@ -44,7 +47,7 @@ public class ParamDescriptionPanel extends JPanel {
    * Constructor
    */
   public ParamDescriptionPanel() {
-    createGui(new ParamLibrary());
+    this(new ParamLibrary());
   }
 
   /**
@@ -77,13 +80,14 @@ public class ParamDescriptionPanel extends JPanel {
         ":</b>\n\n" + 
         "<table>");
     
-    String[] params = lib.getPossibleKeys();
+    List<String> params = Arrays.asList(lib.getPossibleKeys());
+    Collections.sort(params);
 
-    for (int i = 0; i< params.length;i++) {
+    for (String param : params) {
       text.append("<tr><td valign='top'>{");
-      text.append(params[i]);
+      text.append(param);
       text.append("}</td><td>");
-      text.append(lib.getDescriptionForKey(params[i]));
+      text.append(lib.getDescriptionForKey(param));
       text.append("</td></tr>");
     }
     
@@ -91,13 +95,14 @@ public class ParamDescriptionPanel extends JPanel {
         mLocalizer.msg("possibleFunctions", "Possible Functions") +
         ":</b>\n\n<table>" );
     
-    String[] functions = lib.getPossibleFunctions();
+    List<String> functions = Arrays.asList(lib.getPossibleFunctions());
+    Collections.sort(functions);
     
-    for (int i = 0; i< functions.length;i++) {
+    for (String function : functions) {
       text.append("<tr><td valign='top'>");
-      text.append(functions[i]);
+      text.append(function);
       text.append("</td><td>");
-      text.append(lib.getDescriptionForFunctions(functions[i]));
+      text.append(lib.getDescriptionForFunctions(function));
       text.append("</td></tr>");
     }
     

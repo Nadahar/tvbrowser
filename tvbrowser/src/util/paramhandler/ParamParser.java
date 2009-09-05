@@ -149,12 +149,16 @@ public class ParamParser {
     }
     
     if (commandmode) {
-      mErrors = true;
-      mErrorString = "One \"{\" was not closed properly";
+      setError("One \"{\" was not closed properly");
       return null;
     }
     
     return ret.toString();
+  }
+
+  private void setError(final String message) {
+    mErrors = true;
+    mErrorString = message;
   }
   
   /**
@@ -180,8 +184,7 @@ public class ParamParser {
       String cmdRet = mLibrary.getStringForKey(prg, newCommand.trim());
       
       if ((cmdRet == null) && (!mLibrary.hasErrors())) {
-        mErrors = true;
-        mErrorString = "Could not understand Param \""+newCommand+"\" at Position "+ (pos) + ".";
+        setError("Could not understand Param \""+newCommand+"\" at Position "+ (pos) + ".");
         return null;
       } else if (cmdRet == null) {
         mErrors = mLibrary.hasErrors();
@@ -208,14 +211,12 @@ public class ParamParser {
     String funcname = function.substring(0, function.indexOf('(')).trim();
     
     if (funcname.length() == 0) {
-      mErrors = true;
-      mErrorString = "A ( without a function-name was found at Position " + pos;
+      setError("A ( without a function-name was found at Position " + pos);
       return null;
     }
    
     if (!function.endsWith(")")) {
-      mErrors = true;
-      mErrorString = "Function-Call \""+funcname+"\" doesn't end with \")\" at Position " + pos;
+      setError("Function-Call \""+funcname+"\" doesn't end with \")\" at Position " + pos);
       return null;
     }
  
@@ -282,19 +283,16 @@ public class ParamParser {
       }
       
       if (infunction<0) {
-        mErrors = true;
-        mErrorString = "One \")\" at the wrong Position found";
+        setError("One \")\" at the wrong Position found");
         return null;
       }
     }
     
     if (instring) {
-      mErrors = true;
-      mErrorString = "One \" was not closed properly";
+      setError("One \" was not closed properly");
       return null;
     } else if (infunction>0) {
-      mErrors = true;
-      mErrorString = "One \"(\" was not closed properly";
+      setError("One \"(\" was not closed properly");
       return null;
     }
     

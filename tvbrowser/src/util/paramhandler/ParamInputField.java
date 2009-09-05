@@ -29,11 +29,17 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.text.BadLocationException;
 
 import util.ui.Localizer;
 import util.ui.UiUtilities;
@@ -105,13 +111,13 @@ public class ParamInputField extends JPanel {
    * @param singleLine set True, if Input-Field should be a Single-Line
    */
   private void createGui(String text, boolean singleLine) {
-    setLayout(new FormLayout("fill:pref:grow, 3dlu, default, 3dlu, default", 
-                 "fill:pref:grow, 3dlu, default"));
+    FormLayout layout = new FormLayout("fill:pref:grow, 3dlu, default, 3dlu, default, 3dlu, default", 
+                 "fill:pref:grow, 3dlu, default");
+    setLayout(layout);
     
     CellConstraints cc = new CellConstraints();
     
     mParamText = new JTextArea();
-    
     mParamText.setText(text);
     
     if (singleLine) {
@@ -128,13 +134,69 @@ public class ParamInputField extends JPanel {
       JScrollPane scroll = new JScrollPane(mParamText, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
           JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
       
-      add(scroll, cc.xyw(1,1,5));
+      add(scroll, cc.xyw(1,1, layout.getColumnCount()));
     } else {
-      add(new JScrollPane(mParamText), cc.xyw(1,1,5));
+      add(new JScrollPane(mParamText), cc.xyw(1,1,layout.getColumnCount()));
     }
     
-    JButton check = new JButton(mLocalizer.msg("check","Check"));
+    ArrayList<String> items = new ArrayList<String>();
+    items.add(mLocalizer.msg("insert", "Insert"));
+    List<String> functions = Arrays.asList(mParamLibrary.getPossibleFunctions());
+    Collections.sort(functions);
+    for (String function : functions) {
+      items.add(function+"()");
+    }
+    List<String> keys = Arrays.asList(mParamLibrary.getPossibleKeys());
+    Collections.sort(keys);
+    for (String key : keys) {
+      items.add(key);
+    }
+    final JComboBox insert = new JComboBox(items.toArray(new String[items.size()]));
+    add(insert, cc.xy(layout.getColumnCount() - 4, 3));
+    insert.addActionListener(new ActionListener() {
+      
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        if (insert.getSelectedIndex() > 0) {
+          // find out whether to insert with braces or not
+          boolean inFunction = false;
+          String newText = insert.getSelectedItem().toString();
+          int selStart = mParamText.getSelectionStart();
+          if (selStart > 0) {
+            try {
+              if (mParamText.getText(selStart - 1, 1).equals("(")) {
+                inFunction = true;
+              }
+            } catch (BadLocationException e1) {
+              e1.printStackTrace();
+            }
+          }
+          int selEnd = mParamText.getSelectionEnd();
+          if (selEnd < mParamText.getText().length()) {
+            try {
+              if (mParamText.getText(selEnd + 1, 1).equals(")")) {
+                inFunction = true;
+              }
+            } catch (BadLocationException e1) {
+              e1.printStackTrace();
+            }
+          }
+          if (!inFunction) {
+            newText = "{" + newText + "}";
+          }
+          mParamText.insert(newText, selStart);
+          // reposition cursor if this was a function itself
+          int lastBrace = newText.lastIndexOf(')');
+          if (lastBrace > 0) {
+            if (newText.length() - lastBrace <= 2) {
+              mParamText.setSelectionStart(mParamText.getSelectionStart() - (newText.length() - lastBrace));
+            }
+          }
+        }
+      }
+    });
     
+    JButton check = new JButton(mLocalizer.msg("check","Check"));
     check.addActionListener(new ActionListener() {
 
       public void actionPerformed(ActionEvent arg0) {
@@ -146,10 +208,9 @@ public class ParamInputField extends JPanel {
       
     });
     
-    add(check, cc.xy(3,3));
+    add(check, cc.xy(layout.getColumnCount() - 2,3));
     
     JButton help = new JButton(Localizer.getLocalization(Localizer.I18N_HELP));
-    
     help.addActionListener(new ActionListener() {
 
       public void actionPerformed(ActionEvent arg0) {
@@ -160,7 +221,7 @@ public class ParamInputField extends JPanel {
       
     });
     
-    add(help, cc.xy(5,3));
+    add(help, cc.xy(layout.getColumnCount(),3));
   }
   
   /**
