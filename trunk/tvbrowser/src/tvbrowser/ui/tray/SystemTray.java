@@ -295,6 +295,18 @@ public class SystemTray {
     mSystemTray.setVisible(value);
   }
 
+  /**
+   * Shows a balloon tip on the TV-Browser tray icon.
+   * <p>
+   * @param caption The caption of the displayed message.
+   * @param message The message to display in the balloon tip.
+   * @param messageType The type of the displayed balllon tip.
+   * @return If the balloon tip could be shown.
+   */
+  public boolean showBalloonTip(String caption, String message, java.awt.TrayIcon.MessageType messageType) {
+    return mSystemTray.showBalloonTip(caption,message,messageType);
+  }
+  
   private void buildMenu() {
     mTrayMenu.removeAll();
     mTrayMenu.add(mOpenCloseMenuItem);

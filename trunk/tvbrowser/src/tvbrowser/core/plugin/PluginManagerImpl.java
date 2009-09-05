@@ -26,6 +26,7 @@
 package tvbrowser.core.plugin;
 
 import java.awt.Color;
+import java.awt.TrayIcon.MessageType;
 import java.awt.event.ActionEvent;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -40,6 +41,7 @@ import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.JPopupMenu;
 
+import tvbrowser.TVBrowser;
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataBase;
@@ -883,5 +885,10 @@ public class PluginManagerImpl implements PluginManager {
   @Override
   public boolean isDataAvailable(Date date) {
     return TvDataBase.getInstance().dataAvailable(date);
+  }
+
+  @Override
+  public boolean showBalloonTip(String caption, String message, MessageType messageType) {
+    return TVBrowser.showBalloonTip(caption,message,messageType);
   }
 }
