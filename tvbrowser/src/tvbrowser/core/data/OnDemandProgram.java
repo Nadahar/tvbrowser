@@ -74,6 +74,10 @@ public class OnDemandProgram extends MutableProgram {
   public void setLargeField(ProgramFieldType type, long position) {
     OnDemandValue onDemandValue = new OnDemandValue(position);
     
+    if (type == ProgramFieldType.TITLE_TYPE) {
+      mTitle = String.valueOf(onDemandValue.getValue(ProgramFieldType.TITLE_TYPE));
+    }
+    
     super.setField(type, type.getFormat(), onDemandValue);
   }
 

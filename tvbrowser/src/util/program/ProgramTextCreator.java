@@ -26,6 +26,7 @@
 
 package util.program;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -39,6 +40,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 
+import tvbrowser.core.Settings;
 import tvbrowser.extras.common.InternalPluginProxyIf;
 import tvbrowser.extras.common.InternalPluginProxyList;
 import tvbrowser.extras.favoritesplugin.FavoritesPluginProxy;
@@ -339,12 +341,14 @@ public class ProgramTextCreator {
       }
     }
     
+    Color foreground = Settings.propProgramPanelForegroundColor.getColor();
+    
     if(settings.isShowingPictureEver() || 
       (settings.isShowingPictureInTimeRange() && !ProgramUtilities.isNotInTimeRange(settings.getPictureTimeRangeStart(),settings.getPictureTimeRangeEnd(), prog)) ||
       show || (settings.isShowingPictureForDuration() && settings.getDuration() <= prog.getLength())) {
       byte[] image = prog.getBinaryField(ProgramFieldType.PICTURE_TYPE);
       if (image != null) {
-        String line = "<tr><td></td><td valign=\"top\" style=\"color:black; font-size:0\">";
+        String line = "<tr><td></td><td valign=\"top\" style=\"color:rgb("+ foreground.getRed() + "," + foreground.getGreen() + "," + foreground.getBlue() + "); font-size:0\">";
         buffer.append(line);
         try {
           ImageIcon imageIcon = new ImageIcon(image);
@@ -508,7 +512,7 @@ public class ProgramTextCreator {
             buffer.append("\"><b>");
             buffer.append(mLocalizer.msg("duration",
                 "Program duration/<br>-end"));
-            buffer.append("</b></td><td style=\"font-size:");
+            buffer.append("</b></td><td style=\"color:rgb("+ foreground.getRed() + "," + foreground.getGreen() + "," + foreground.getBlue() + "); font-size:");
 
             buffer.append(mBodyFontSize);
 
@@ -756,7 +760,9 @@ public class ProgramTextCreator {
   }
 
   private static String addSearchLink(String topic, String displayText) {
-      String style = " style=\"color:black; border-bottom: 1px dashed;\"";
+    Color foreground = Settings.propProgramPanelForegroundColor.getColor();
+    
+    String style = " style=\"color:rgb("+ foreground.getRed() + "," + foreground.getGreen() + "," + foreground.getBlue() + "); border-bottom: 1px dashed;\"";
       StringBuilder buffer = new StringBuilder(32);
       buffer.append("<a href=\"");
       buffer.append(TVBROWSER_URL_PROTOCOL);
@@ -986,11 +992,13 @@ public class ProgramTextCreator {
   }
 
   private static void startInfoSection(StringBuilder buffer, String section) {
+    Color foreground = Settings.propProgramPanelForegroundColor.getColor();
+    
     buffer.append("<tr><td valign=\"top\" style=\"color:#808080; font-size:");
     buffer.append(mBodyFontSize);
     buffer.append("\"><b>");
     buffer.append(section);
-    buffer.append("</b></td><td style=\"font-size:");
+    buffer.append("</b></td><td style=\"color:rgb("+ foreground.getRed() + "," + foreground.getGreen() + "," + foreground.getBlue() + "); font-size:");
     buffer.append(mBodyFontSize);
     buffer.append("\">");
   }

@@ -112,8 +112,8 @@ public class MutableProgram implements Program {
   /** The state of this program */
   private int mState;
   
-  /** Contains the title of the program if the program is marked */
-  private String mTitle;
+  /** Contains the title */
+  protected String mTitle;
   
   /** Contains the current mark priority of this program */
   private int mMarkPriority = Program.NO_MARK_PRIORITY;
@@ -345,7 +345,6 @@ public class MutableProgram implements Program {
       }
   
       if(oldCount < 1) {
-        mTitle = getTitle();
         MarkedProgramsList.getInstance().addProgram(this);
       }
     }
@@ -401,7 +400,6 @@ public class MutableProgram implements Program {
       }
   
       if(mMarkerArr.length < 1) {
-        mTitle = null;
         MarkedProgramsList.getInstance().removeProgram(this);
       }
     }
@@ -509,6 +507,10 @@ public class MutableProgram implements Program {
 
 
   public String getTextField(ProgramFieldType type) {
+    if(type == ProgramFieldType.TITLE_TYPE && mTitle != null && mTitle.trim().length() > 0) {
+      return mTitle;
+    }
+    
     String value = (String) getField(type, ProgramFieldType.TEXT_FORMAT);
 
     if (type == ProgramFieldType.SHORT_DESCRIPTION_TYPE) {
@@ -600,8 +602,14 @@ public class MutableProgram implements Program {
         + ", because it is " + ProgramFieldType.getFormatName(type.getFormat()));
     }
 
-    synchronized (mFieldHash) {
-      return mFieldHash.get(type);
+    if(mState == IS_VALID_STATE) {
+      synchronized (mFieldHash) {
+        return mFieldHash.get(type);
+      }
+    }
+    else {
+      mLog.info("Access to not valid program: " + toString());
+      return null;
     }
   }
 
@@ -707,7 +715,11 @@ public class MutableProgram implements Program {
         + " can't be written as " + ProgramFieldType.getFormatName(fieldFormat)
         + ", because it is " + ProgramFieldType.getFormatName(type.getFormat()));
     }
-
+    
+    if (type == ProgramFieldType.TITLE_TYPE && value instanceof String) {
+      mTitle = (String)value;
+    }
+    
     synchronized (mFieldHash) {
       if (value == null) {
         mFieldHash.remove(type);
@@ -782,9 +794,7 @@ public class MutableProgram implements Program {
    * @param title the new title of this program.
    */
   public void setTitle(String title) {
-    if(mTitle != null) {
-      mTitle = title;
-    }
+    mTitle = title;
 
     setTextField(ProgramFieldType.TITLE_TYPE, title);
   }
@@ -795,10 +805,11 @@ public class MutableProgram implements Program {
    * @return the title of this program.
    */
   public String getTitle() {
-    if(mTitle != null) {
+    if(mTitle != null && mTitle.trim().length() > 0) {
       return mTitle;
     } else {
-      return getTextField(ProgramFieldType.TITLE_TYPE);
+      mTitle = getTextField(ProgramFieldType.TITLE_TYPE);
+      return mTitle;
     }
   }
 
@@ -974,19 +985,23 @@ public class MutableProgram implements Program {
   }
 
 
-  public boolean equals(Object other) {
-    if (other == null) {
-      return false;
-    }
-    if (this == other) {
-      return true;
-    }
-    if (other instanceof devplugin.Program) {
-      devplugin.Program program = (devplugin.Program) other;
-      return getStartTime() == program.getStartTime()
+  public boolean equals(Object o) {
+    if (o instanceof devplugin.Program) {
+      if(o == this) {
+        return true;
+      }
+      
+      devplugin.Program program = (devplugin.Program)o;
+      
+      String title = getTitle();
+      String otherTitle = program != null ? program.getTitle() : null;
+      
+      return program!=null
+        && getStartTime() == program.getStartTime()
         && equals(mChannel, program.getChannel())
         && equals(getDate(), program.getDate())
-        && (mState == IS_VALID_STATE && getTitle().compareTo(program.getTitle()) == 0);
+        && title != null && otherTitle != null
+        && title.compareTo(otherTitle) == 0;
     }
     return false;
   }
@@ -1081,10 +1096,6 @@ public class MutableProgram implements Program {
     }
     else {
       mMarkerArr = marker;
-  
-      if(marker.length > 0) {
-        mTitle = getTitle();
-      }
     }
     //fireStateChanged();
   }
