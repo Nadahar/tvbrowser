@@ -82,7 +82,7 @@ public class DreamboxConnector {
      * @param service Service-ID
      * @return Data of specific service
      */
-    public TreeMap<String, String> getServiceDataBonquets(String service) {
+    private TreeMap<String, String> getServiceDataBonquets(String service) {
       if (!mConfig.hasValidAddress()) {
         return null;
       }
@@ -122,7 +122,7 @@ public class DreamboxConnector {
      * @param service Service-ID
      * @return Data of specific service
      */
-    public TreeMap<String, String> getServiceData(String service) {
+    private TreeMap<String, String> getServiceData(String service) {
       if (!mConfig.hasValidAddress()) {
         return null;
       }

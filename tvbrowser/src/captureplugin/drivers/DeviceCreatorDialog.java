@@ -47,6 +47,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import util.ui.Localizer;
 import util.ui.UiUtilities;
@@ -122,20 +124,18 @@ public class DeviceCreatorDialog extends JDialog implements WindowClosingIf {
         input.gridwidth = GridBagConstraints.REMAINDER;
         input.insets = new Insets(5, 5, 5, 5);
 
-        panel.add(new JLabel(mLocalizer.msg("Name", "Name") + ":"), label);
+        panel.add(new JLabel(mLocalizer.msg("Name", "Name")), label);
 
         mName = new JTextField();
-        
         panel.add(mName, input);
 
-        panel.add(new JLabel(mLocalizer.msg("Driver", "Driver") +":"), label);
-
+        panel.add(new JLabel(mLocalizer.msg("Driver", "Driver")), label);
         panel.add(mDriverCombo, input);
 
         mDesc = UiUtilities.createHtmlHelpTextArea("");
         mDesc.setEditable(false);
         
-        panel.add(new JLabel(mLocalizer.msg("Description", "Description") +":"), input);
+        panel.add(new JLabel(mLocalizer.msg("Description", "Description")), input);
 
         GridBagConstraints descC = new GridBagConstraints();
         descC.weightx = 1.0;
@@ -164,8 +164,9 @@ public class DeviceCreatorDialog extends JDialog implements WindowClosingIf {
 
         });
 
-        JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
-        JButton cancel = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
+        final JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
+        ok.setEnabled(false);
+        final JButton cancel = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
         ok.addActionListener(new ActionListener() {
 
           public void actionPerformed(ActionEvent e) {
@@ -177,6 +178,27 @@ public class DeviceCreatorDialog extends JDialog implements WindowClosingIf {
 
           public void actionPerformed(ActionEvent e) {
             setVisible(false);
+          }
+        });
+
+        mName.getDocument().addDocumentListener(new DocumentListener() {
+          @Override
+          public void removeUpdate(DocumentEvent e) {
+            updateButtons();
+          }
+          
+          @Override
+          public void insertUpdate(DocumentEvent e) {
+            updateButtons();
+          }
+          
+          @Override
+          public void changedUpdate(DocumentEvent e) {
+            updateButtons();
+          }
+
+          private void updateButtons() {
+            ok.setEnabled(!mName.getText().trim().isEmpty());
           }
         });
 

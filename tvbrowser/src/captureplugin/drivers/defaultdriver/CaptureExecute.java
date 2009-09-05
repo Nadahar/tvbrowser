@@ -152,7 +152,7 @@ public class CaptureExecute {
      * 
      * @param programTime Program to use for Command-Line
      * @param param Parameter
-     * @return true if successfull
+     * @return true if successful
      */
     public boolean execute(ProgramTime programTime, String param) {
         try {

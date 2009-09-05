@@ -91,7 +91,7 @@ public class DevicePanel extends JPanel {
     /**
      * Creates the GUI
      */
-    public void createGui() {
+    private void createGui() {
         setLayout(new BorderLayout(5, 5));
         setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         

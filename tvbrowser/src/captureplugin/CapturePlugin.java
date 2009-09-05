@@ -289,7 +289,7 @@ public class CapturePlugin extends devplugin.Plugin {
     /**
      * Updates the marked Programs.
      */
-    public void updateMarkedPrograms() {
+    protected void updateMarkedPrograms() {
         Vector<Program> list = getMarkedByDevices();
 
         for (Program aList : list) {
@@ -351,10 +351,10 @@ public class CapturePlugin extends devplugin.Plugin {
     }
 
     /**
-     * This method is invoked by the host-application if the user has choosen
+     * This method is invoked by the host-application if the user has chosen
      * your plugin from the menu.
      */
-    public void showDialog() {
+    protected void showDialog() {
         CapturePluginDialog dialog = new CapturePluginDialog(getParentFrame(), mConfig);
 
         layoutWindow("captureDlg", dialog, new Dimension(500,450));
@@ -395,11 +395,19 @@ public class CapturePlugin extends devplugin.Plugin {
      */
     private void updateTreeNode() {
         mRootNode.removeAllChildren();
+        mRootNode.removeAllActions();
 
         for (Object o : mConfig.getDevices()) {
             final DeviceIf device = (DeviceIf) o;
             
-            PluginTreeNode node = new PluginTreeNode(device.getName());
+            PluginTreeNode node;
+            if (mConfig.getDevices().size() > 1) {
+              node = new PluginTreeNode(device.getName());
+              mRootNode.add(node);
+            }
+            else {
+              node = mRootNode;
+            }
             
             if(device.isAbleToAddAndRemovePrograms()) {
               node.getMutableTreeNode().setProgramReceiveTarget(new ProgramReceiveTarget(this, device.getName() + " - " + mLocalizer.msg("record", "record"), device.getId() + RECORD));
@@ -417,10 +425,9 @@ public class CapturePlugin extends devplugin.Plugin {
               @Override
               public void actionPerformed(ActionEvent e) {
                 device.configDevice(UiUtilities.getBestDialogParent(getParentFrame()));
+                updateTreeNode();
               }
             });
-
-            mRootNode.add(node);
         }
 
         mRootNode.update();
