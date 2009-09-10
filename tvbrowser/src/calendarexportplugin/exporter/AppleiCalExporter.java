@@ -113,7 +113,7 @@ public class AppleiCalExporter extends AbstractExporter {
             String title = parser.analyse(formating.getTitleValue(), program);
             script.append(title);
                
-            script.append("\", event:true, description:\"");
+            script.append("\", description:\"");
             
             String desc = parser.analyse(formating.getContentValue(), program);
             script.append(desc.replaceAll("\"", "\\\\\"").replace('\n', ' '));
