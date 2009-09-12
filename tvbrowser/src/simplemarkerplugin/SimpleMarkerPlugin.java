@@ -367,6 +367,7 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
     layoutWindow("manageDlg", dialog, new Dimension(434, 330));
     
     dialog.setVisible(true);
+    updateTree();
   }
 
   public void actionPerformed(ActionEvent e) {

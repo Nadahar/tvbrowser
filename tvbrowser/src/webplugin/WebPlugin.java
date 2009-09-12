@@ -38,7 +38,6 @@ import java.util.Locale;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 
 import util.browserlauncher.Launch;
 import util.paramhandler.ParamParser;
@@ -495,10 +494,7 @@ public class WebPlugin extends Plugin {
       if (parser.hasErrors()) {
         final String errorString = parser.getErrorString();
         mLog.warning("URL parse error " + errorString+ " in " + address.getUrl());
-        JOptionPane.showMessageDialog(UiUtilities.getLastModalChildOf(getParentFrame()), errorString, 
-            Localizer.getLocalization(Localizer.I18N_ERROR),
-            JOptionPane.ERROR_MESSAGE);
-
+        parser.showErrors(UiUtilities.getLastModalChildOf(getParentFrame()));
       } else {
         Launch.openURL(result);
       }

@@ -25,6 +25,7 @@
  */
 package util.paramhandler;
 
+import java.awt.Window;
 import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
@@ -302,14 +303,24 @@ public class ParamParser {
 
   /**
    * show the parser error(s), if there were errors during parsing 
+   * @param parent parent window
+   * @return <code>true</code>, if an error exists in the parser, <code>false</code> otherwise
+   * @since 3.0
+   */
+  public boolean showErrors(Window parent) {
+    if (hasErrors()) {
+      JOptionPane.showMessageDialog(parent, getErrorString(), Localizer.getLocalization(Localizer.I18N_ERROR), JOptionPane.ERROR_MESSAGE);
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * show the parser error(s), if there were errors during parsing 
    * @return <code>true</code>, if an error exists in the parser, <code>false</code> otherwise
    * @since 3.0
    */
   public boolean showErrors() {
-    if (hasErrors()) {
-      JOptionPane.showMessageDialog(null, getErrorString(), Localizer.getLocalization(Localizer.I18N_ERROR), JOptionPane.ERROR_MESSAGE);
-      return true;
-    }
-    return false;
+    return showErrors(null);
   }
 }

@@ -71,8 +71,6 @@ public class DefaultKonfigurator extends JDialog implements WindowClosingIf {
     
     protected final static int TAB_PATH = 0;
     protected final static int TAB_PARAMETER = 1;
-    public final static int TAB_SETTINGS = 2;
-    public final static int TAB_CHANNELS = 3;
 
   /**
    * Creates the Dialog

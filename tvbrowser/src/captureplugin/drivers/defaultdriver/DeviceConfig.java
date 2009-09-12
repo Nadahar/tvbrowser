@@ -88,7 +88,7 @@ public class DeviceConfig {
     /** Use the Return-Value ? */
     private boolean mUseReturnValue = true;
 
-    /** Maximum simultanious recordings */
+    /** Maximum simultaneous recordings */
     private int mMaxSimultanious = 1;
     
     /** Dialog only on Error */
