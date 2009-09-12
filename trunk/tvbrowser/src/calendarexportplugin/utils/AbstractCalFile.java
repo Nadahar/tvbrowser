@@ -24,8 +24,6 @@ import java.util.Calendar;
 import java.util.Properties;
 import java.util.TimeZone;
 
-import javax.swing.JOptionPane;
-
 import util.exc.ErrorHandler;
 import util.io.stream.PrintStreamProcessor;
 import util.paramhandler.ParamParser;
@@ -130,9 +128,7 @@ public abstract class AbstractCalFile {
                 + mTime.format(c.getTime()) + "Z");
 
             String desc = parser.analyse(formatting.getContentValue(), p);
-            if (parser.hasErrors()) {
-              JOptionPane.showMessageDialog(null, parser.getErrorString(),
-                  "Error", JOptionPane.ERROR_MESSAGE);
+            if (parser.showErrors()) {
               return;
             }
             out.println("DESCRIPTION:" + CalendarToolbox.noBreaks(desc));

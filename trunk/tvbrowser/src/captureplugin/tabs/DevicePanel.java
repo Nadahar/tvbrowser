@@ -263,6 +263,7 @@ public class DevicePanel extends JPanel {
      */
     private void importDevice() {
       JFileChooser chooser = new JFileChooser();
+      chooser.setDialogTitle(mLocalizer.msg("importDevice", "Import device"));
       
       ExtensionFileFilter filter = new ExtensionFileFilter("tcf", mLocalizer.msg("FileType", "TV-Browser Capture-Device File (*.tcf)"));
 
@@ -288,6 +289,7 @@ public class DevicePanel extends JPanel {
      */
     private void exportDevice() {
       JFileChooser chooser = new JFileChooser();
+      chooser.setDialogTitle(mLocalizer.msg("exportDevice", "Export device"));
       
       ExtensionFileFilter filter = new ExtensionFileFilter("tcf", mLocalizer.msg("FileType", "TV-Browser Capture-Device File (*.tcf)"));
 

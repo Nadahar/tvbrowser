@@ -37,7 +37,6 @@ import java.util.Properties;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
 
 import util.paramhandler.ParamParser;
 import util.program.AbstractPluginProgramFormating;
@@ -247,10 +246,7 @@ public class ClipboardPlugin extends Plugin {
       i++;
     }
 
-    if (parser.hasErrors()) {
-      JOptionPane.showMessageDialog(UiUtilities.getLastModalChildOf(getParentFrame()), parser.getErrorString(),
-          "Error", JOptionPane.ERROR_MESSAGE);
-    } else {
+    if (!parser.showErrors(UiUtilities.getLastModalChildOf(getParentFrame()))) {
       Clipboard clip = java.awt.Toolkit.getDefaultToolkit().getSystemClipboard();
       clip.setContents(new StringSelection(result.toString()), null);
     }

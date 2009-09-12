@@ -105,9 +105,7 @@ public class MailCreator {
       i++;
     }
 
-    if (parser.hasErrors()) {
-      JOptionPane.showMessageDialog(UiUtilities.getLastModalChildOf(parent), parser.getErrorString(), Localizer.getLocalization(Localizer.I18N_ERROR),
-          JOptionPane.ERROR_MESSAGE);
+    if (parser.showErrors(UiUtilities.getLastModalChildOf(parent))) {
       return;
     }
 

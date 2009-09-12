@@ -166,8 +166,7 @@ public class CaptureExecute {
             
             String params = parser.analyse(param, programTime.getProgram());
 
-            if (parser.hasErrors()) {
-              JOptionPane.showMessageDialog(mParent, parser.getErrorString(), Localizer.getLocalization(Localizer.I18N_ERROR), JOptionPane.ERROR_MESSAGE);
+            if (parser.showErrors(mParent)) {
               return false;
             }
             
