@@ -159,24 +159,24 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
         "Program arrangement")), cc.xy(2, (currentRow += 2)));
     
     // program table layout
-    String[] arrangementArr = { mLocalizer.msg("timeSynchronous", "Time synchronous"),
-        mLocalizer.msg("realSynchronous", "Real time synchronous"),
-        mLocalizer.msg("compact", "Compact"),mLocalizer.msg("realCompact", "Real compact"),
-        mLocalizer.msg("timeBlock", "Time block"),
-        mLocalizer.msg("compactTimeBlock", "Compact time block"),
-        mLocalizer.msg("optimizedCompactTimeBlock", "Optimized compact time block")};
+    String[] arrangementArr = { mLocalizer.msg(Settings.LAYOUT_TIME_SYNCHRONOUS, "Time synchronous"),
+        mLocalizer.msg(Settings.LAYOUT_REAL_SYNCHRONOUS, "Real time synchronous"),
+        mLocalizer.msg(Settings.LAYOUT_COMPACT, "Compact"),mLocalizer.msg(Settings.LAYOUT_REAL_COMPACT, "Real compact"),
+        mLocalizer.msg(Settings.LAYOUT_TIME_BLOCK, "Time block"),
+        mLocalizer.msg(Settings.LAYOUT_COMPACT_TIME_BLOCK, "Compact time block"),
+        mLocalizer.msg(Settings.LAYOUT_OPTIMIZED_COMPACT_TIME_BLOCK, "Optimized compact time block")};
     mProgramArrangementCB = new JComboBox(arrangementArr);
-    if (Settings.propTableLayout.getString().equals("compact")) {
+    if (Settings.propTableLayout.getString().equals(Settings.LAYOUT_COMPACT)) {
       mProgramArrangementCB.setSelectedIndex(2);
-    } else if (Settings.propTableLayout.getString().equals("realCompact")) {
+    } else if (Settings.propTableLayout.getString().equals(Settings.LAYOUT_REAL_COMPACT)) {
       mProgramArrangementCB.setSelectedIndex(3);
-    } else if (Settings.propTableLayout.getString().equals("timeSynchronous")) {
+    } else if (Settings.propTableLayout.getString().equals(Settings.LAYOUT_TIME_SYNCHRONOUS)) {
       mProgramArrangementCB.setSelectedIndex(0);
-    } else if (Settings.propTableLayout.getString().equals("timeBlock")) {
+    } else if (Settings.propTableLayout.getString().equals(Settings.LAYOUT_TIME_BLOCK)) {
       mProgramArrangementCB.setSelectedIndex(4);
-    } else if (Settings.propTableLayout.getString().equals("compactTimeBlock")) {
+    } else if (Settings.propTableLayout.getString().equals(Settings.LAYOUT_COMPACT_TIME_BLOCK)) {
       mProgramArrangementCB.setSelectedIndex(5);
-    } else if (Settings.propTableLayout.getString().equals("optimizedCompactTimeBlock")) {
+    } else if (Settings.propTableLayout.getString().equals(Settings.LAYOUT_OPTIMIZED_COMPACT_TIME_BLOCK)) {
       mProgramArrangementCB.setSelectedIndex(6);
     } else {
       mProgramArrangementCB.setSelectedIndex(1);
@@ -467,8 +467,8 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
   }
   
   private void setBackgroundStyleForTimeBlockLayout() {
-    if(!Settings.propTableLayout.getString().equals("timeBlock") &&
-        !Settings.propTableLayout.getString().equals("compactTimeBlock")) {
+    if(!Settings.propTableLayout.getString().equals(Settings.LAYOUT_TIME_BLOCK) &&
+        !Settings.propTableLayout.getString().equals(Settings.LAYOUT_COMPACT_TIME_BLOCK)) {
       Settings.propTableBackgroundStyle.setString("timeBlock");
       
       Settings.propTimeBlockBackground1.setString(Settings.propTimeBlockBackground1.getDefault());
@@ -482,9 +482,9 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
   }
   
   private void resetBackgroundStyle() {
-    if(Settings.propTableLayout.getString().equals("timeBlock") ||
-        Settings.propTableLayout.getString().equals("compactTimeBlock") ||
-        Settings.propTableLayout.getString().equals("optimizedCompactTimeBlock")) {
+    if(Settings.propTableLayout.getString().equals(Settings.LAYOUT_TIME_BLOCK) ||
+        Settings.propTableLayout.getString().equals(Settings.LAYOUT_COMPACT_TIME_BLOCK) ||
+        Settings.propTableLayout.getString().equals(Settings.LAYOUT_OPTIMIZED_COMPACT_TIME_BLOCK)) {
       Settings.propTableBackgroundStyle.setString("timeBlock");
       
       Settings.propTimeBlockBackground1.setString("imgs/columns_evening.jpg");
@@ -507,25 +507,25 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     
     if (mProgramArrangementCB.getSelectedIndex() == 2 && mLastSelectedLayoutIndex != 2) {
       resetBackgroundStyle();
-      Settings.propTableLayout.setString("compact");
+      Settings.propTableLayout.setString(Settings.LAYOUT_COMPACT);
     } else if (mProgramArrangementCB.getSelectedIndex() == 3 && mLastSelectedLayoutIndex != 3) {
       resetBackgroundStyle();
-      Settings.propTableLayout.setString("realCompact");
+      Settings.propTableLayout.setString(Settings.LAYOUT_REAL_COMPACT);
     } else if (mProgramArrangementCB.getSelectedIndex() == 0 && mLastSelectedLayoutIndex != 0) {
       resetBackgroundStyle();
-      Settings.propTableLayout.setString("timeSynchronous");
+      Settings.propTableLayout.setString(Settings.LAYOUT_TIME_SYNCHRONOUS);
     } else if (mProgramArrangementCB.getSelectedIndex() == 4 && mLastSelectedLayoutIndex != 4) {
       setBackgroundStyleForTimeBlockLayout();
-      Settings.propTableLayout.setString("timeBlock");
+      Settings.propTableLayout.setString(Settings.LAYOUT_TIME_BLOCK);
     } else if (mProgramArrangementCB.getSelectedIndex() == 5 && mLastSelectedLayoutIndex != 5) {
       setBackgroundStyleForTimeBlockLayout();
-      Settings.propTableLayout.setString("compactTimeBlock");
+      Settings.propTableLayout.setString(Settings.LAYOUT_COMPACT_TIME_BLOCK);
     } else if (mProgramArrangementCB.getSelectedIndex() == 6 && mLastSelectedLayoutIndex != 6) {
       setBackgroundStyleForTimeBlockLayout();
-      Settings.propTableLayout.setString("optimizedCompactTimeBlock");
+      Settings.propTableLayout.setString(Settings.LAYOUT_OPTIMIZED_COMPACT_TIME_BLOCK);
     } else if (mProgramArrangementCB.getSelectedIndex() == 1 && mLastSelectedLayoutIndex != 1){
       resetBackgroundStyle();
-      Settings.propTableLayout.setString("realSynchronous");
+      Settings.propTableLayout.setString(Settings.LAYOUT_REAL_SYNCHRONOUS);
     }
     
     Settings.propColumnWidth.setInt(mColWidthSl.getValue());
