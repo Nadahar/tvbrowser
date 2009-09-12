@@ -163,9 +163,10 @@ public class Settings {
 
   /**
    * Store all settings. This method is called on quitting the application.
+   * @param log If it should be written into the log.
    * @throws util.exc.TvBrowserException Exception while saving the settings
    */
-  public static void storeSettings() throws TvBrowserException {
+  public static void storeSettings(boolean log) throws TvBrowserException {
     File f = new File(getUserSettingsDirName());
     if (!f.exists()) {
       f.mkdirs();
@@ -198,6 +199,9 @@ public class Settings {
           exc);
     }
     
+    if(log) {
+      mLog.info("Storing window settings");
+    }
     storeWindowSettings();
   }
   
@@ -214,9 +218,13 @@ public class Settings {
 
             out.writeInt(mWindowSettings.size());
 
-            for (String key : mWindowSettings.keySet()) {
-              out.writeUTF(key);
-              mWindowSettings.get(key).saveSettings(out);
+            for(String key : mWindowSettings.keySet()) {
+              WindowSetting setting = mWindowSettings.get(key);
+              
+              if(setting != null) {
+                out.writeUTF(key);
+                mWindowSettings.get(key).saveSettings(out);
+              }
             }
 
             out.close();
@@ -283,7 +291,7 @@ public class Settings {
               mLog.info("Could not read settings - using default user settings");
             } else {
               try {
-                storeSettings();
+                storeSettings(true);
               }catch(Exception e) {}
             }
           }
@@ -496,24 +504,29 @@ public class Settings {
         WINDOW_SETTINGS_FILE);
 
     if (windowSettingsFile.isFile() && windowSettingsFile.canRead()) {
-      StreamUtilities.objectInputStreamIgnoringExceptions(windowSettingsFile,
-          new ObjectInputStreamProcessor() {
-            public void process(ObjectInputStream in) throws IOException {
-              if (in.available() > 0) {
-                in.readInt(); // read version
+      try {
+        StreamUtilities.objectInputStream(windowSettingsFile,
+            new ObjectInputStreamProcessor() {
+              public void process(ObjectInputStream in) throws IOException {
+                if (in.available() > 0) {
+                  in.readInt(); // read version
 
-                int n = in.readInt(); // read number of window settings
+                  int n = in.readInt(); // read number of window settings
 
-                mWindowSettings = new HashMap<String, WindowSetting>(n);
+                  mWindowSettings = new HashMap<String, WindowSetting>(n);
 
-                for (int i = 0; i < n; i++) {
-                  mWindowSettings.put(in.readUTF(), new WindowSetting(in));
+                  for (int i = 0; i < n; i++) {
+                    mWindowSettings.put(in.readUTF(), new WindowSetting(in));
+                  }
                 }
-              }
 
-              in.close();
-            }
-          });
+                in.close();
+              }
+            });
+      }catch(Exception e) {
+        // propably defect settings, create new settings
+        mWindowSettings = null;
+      }
     }
 
     if (mWindowSettings == null) {
@@ -650,7 +663,7 @@ public class Settings {
     mProp.clearChanges();
     
     try {
-      storeSettings();
+      storeSettings(true);
     }catch(Exception e) {}
   }
 

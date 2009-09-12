@@ -821,7 +821,7 @@ public class TVBrowser {
       mLog.info("Storing settings");
     }
     try {
-      Settings.storeSettings();
+      Settings.storeSettings(log);
     } catch (TvBrowserException e) {
       ErrorHandler.handle(e);
     }

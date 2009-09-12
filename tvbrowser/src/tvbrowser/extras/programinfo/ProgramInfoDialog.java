@@ -179,7 +179,7 @@ class ProgramInfoDialog {
     return instance;
   }
 
-  private void setProgram(Program program, boolean showSettings) {
+  private synchronized void setProgram(Program program, boolean showSettings) {
     mProgram = program;
     addPluginActions(false);
     setProgramText();
