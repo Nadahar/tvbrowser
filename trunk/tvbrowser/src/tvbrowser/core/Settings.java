@@ -94,6 +94,13 @@ import devplugin.ProgramFieldType;
  * @author Martin Oberhauser
  */
 public class Settings {  
+  public static final String LAYOUT_OPTIMIZED_COMPACT_TIME_BLOCK = "optimizedCompactTimeBlock";
+  public static final String LAYOUT_COMPACT_TIME_BLOCK = "compactTimeBlock";
+  public static final String LAYOUT_TIME_BLOCK = "timeBlock";
+  public static final String LAYOUT_REAL_COMPACT = "realCompact";
+  public static final String LAYOUT_REAL_SYNCHRONOUS = "realSynchronous";
+  public static final String LAYOUT_COMPACT = "compact";
+  public static final String LAYOUT_TIME_SYNCHRONOUS = "timeSynchronous";
   public static final String INFO_ID = "info.id";
   public static final String PICTURE_ID = "picture.id";
 
@@ -557,6 +564,7 @@ public class Settings {
     if (mProp.hasChanged(propTableLayout)) {
       ProgramTableScrollPane scrollPane = mainFrame.getProgramTableScrollPane();
       scrollPane.getProgramTable().setProgramTableLayout(null);
+      scrollPane.getProgramTable().updateBackground();
       scrollPane.forceRepaintAll();
     }
 
@@ -689,13 +697,13 @@ public class Settings {
       mProp, "subscribedchannels", new devplugin.Channel[] {});
 
   public static final ChoiceProperty propTableLayout = new ChoiceProperty(
-      mProp, "table.layout", "optimizedCompactTimeBlock", new String[] {
-          "timeSynchronous", "compact", "realSynchronous" , "realCompact",
-          "timeBlock", "compactTimeBlock", "optimizedCompactTimeBlock"});
+      mProp, "table.layout", LAYOUT_OPTIMIZED_COMPACT_TIME_BLOCK, new String[] {
+          LAYOUT_TIME_SYNCHRONOUS, LAYOUT_COMPACT, LAYOUT_REAL_SYNCHRONOUS , LAYOUT_REAL_COMPACT,
+          LAYOUT_TIME_BLOCK, LAYOUT_COMPACT_TIME_BLOCK, LAYOUT_OPTIMIZED_COMPACT_TIME_BLOCK});
 
   public static final ChoiceProperty propTableBackgroundStyle = new ChoiceProperty(
-      mProp, "tablebackground.style", "timeBlock", new String[] { "singleColor",
-          "oneImage", "timeBlock", "timeOfDay" });
+      mProp, "tablebackground.style", LAYOUT_TIME_BLOCK, new String[] { "singleColor",
+          "oneImage", LAYOUT_TIME_BLOCK, "timeOfDay" });
 
   public static final StringProperty propOneImageBackground = new StringProperty(
       mProp, "tablebackground.oneImage.image", "imgs/columns_evening.jpg");

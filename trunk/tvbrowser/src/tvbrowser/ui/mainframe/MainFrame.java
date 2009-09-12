@@ -1295,7 +1295,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       }
       
       if (onAirChanged) {
-        if(Settings.propTableLayout.getString().equals("optimizedCompactTimeBlock")) {
+        if(Settings.propTableLayout.getString().equals(Settings.LAYOUT_OPTIMIZED_COMPACT_TIME_BLOCK)) {
           mProgramTableScrollPane.getProgramTable().updateLayout();
         }
         
