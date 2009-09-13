@@ -17,6 +17,7 @@
 package emailplugin;
 
 import java.util.Properties;
+import java.util.regex.Pattern;
 
 import util.settings.PropertyBasedSettings;
 
@@ -44,14 +45,16 @@ public final class EMailSettings extends PropertyBasedSettings {
   }
 
   public String getParameter() {
-    return get(KEY_PARAMETER, "{0}");
+    String value = get(KEY_PARAMETER, "{" + EMailParamLibrary.KEY_MAIL_TEXT + "}");
+    // replace old parameter system with new param library value
+    return value.replaceAll(Pattern.quote("{0}"), "{" + EMailParamLibrary.KEY_MAIL_TEXT + "}");
   }
 
   public void setApplication(final String application) {
     set(KEY_APPLICATION, application);  }
 
   public void setParameter(final String parameter) {
-    set(KEY_PARAMETER, parameter);    
+    set(KEY_PARAMETER, parameter);
   }
 
   public void setDefaultApplication(boolean useDefault) {

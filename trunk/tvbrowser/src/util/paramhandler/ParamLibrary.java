@@ -140,70 +140,70 @@ public class ParamLibrary {
   /**
    * Get the String for a key
    * 
-   * @param prg Program to use
+   * @param program Program to use
    * @param key Key to use
    * @return Value of key in program
    */
-  public String getStringForKey(Program prg, String key) {
+  public String getStringForKey(Program program, String key) {
     if (key.equalsIgnoreCase("title")) {
-      return prg.getTitle();
+      return program.getTitle();
     } else if (key.equalsIgnoreCase("original_title")) {
-      return removeNull(prg.getTextField(ProgramFieldType.ORIGINAL_TITLE_TYPE));
+      return removeNull(program.getTextField(ProgramFieldType.ORIGINAL_TITLE_TYPE));
     } else if (key.equalsIgnoreCase("start_day")) {
-      return String.valueOf(prg.getDate().getDayOfMonth());
+      return String.valueOf(program.getDate().getDayOfMonth());
     } else if (key.equalsIgnoreCase("start_month")) {
-      return String.valueOf(prg.getDate().getMonth());
+      return String.valueOf(program.getDate().getMonth());
     } else if (key.equalsIgnoreCase("start_year")) {
-      return String.valueOf(prg.getDate().getYear());
+      return String.valueOf(program.getDate().getYear());
     } else if (key.equalsIgnoreCase("end_day")) {
-      return String.valueOf(getEndTimeFieldInProgram(prg, Calendar.DAY_OF_MONTH));
+      return String.valueOf(getEndTimeFieldInProgram(program, Calendar.DAY_OF_MONTH));
     } else if (key.equalsIgnoreCase("end_month")) {
-      return String.valueOf(getEndTimeFieldInProgram(prg, Calendar.MONTH) + 1);
+      return String.valueOf(getEndTimeFieldInProgram(program, Calendar.MONTH) + 1);
     } else if (key.equalsIgnoreCase("end_year")) {
-      return String.valueOf(getEndTimeFieldInProgram(prg, Calendar.YEAR));
+      return String.valueOf(getEndTimeFieldInProgram(program, Calendar.YEAR));
     } else if (key.equalsIgnoreCase("start_hour")) {
-      return String.valueOf(prg.getHours());
+      return String.valueOf(program.getHours());
     } else if (key.equalsIgnoreCase("start_minute")) {
-      return String.valueOf(prg.getMinutes());
+      return String.valueOf(program.getMinutes());
     } else if (key.equalsIgnoreCase("end_hour")) {
-      return String.valueOf(getEndTimeFieldInProgram(prg, Calendar.HOUR_OF_DAY));
+      return String.valueOf(getEndTimeFieldInProgram(program, Calendar.HOUR_OF_DAY));
     } else if (key.equalsIgnoreCase("end_minute")) {
-      return String.valueOf(getEndTimeFieldInProgram(prg, Calendar.MINUTE));
+      return String.valueOf(getEndTimeFieldInProgram(program, Calendar.MINUTE));
     } else if (key.equalsIgnoreCase("length_minutes")) {
-      return String.valueOf(prg.getLength());
+      return String.valueOf(program.getLength());
     } else if (key.equalsIgnoreCase("length_sec")) {
-      return String.valueOf(prg.getLength() * 60);
+      return String.valueOf(program.getLength() * 60);
     } else if (key.equalsIgnoreCase("short_info")) {
-      return removeNull(prg.getShortInfo());
+      return removeNull(program.getShortInfo());
     } else if (key.equalsIgnoreCase("description")) {
-      String res = removeNull(prg.getDescription());
-      String copyright = prg.getChannel().getCopyrightNotice();
+      String res = removeNull(program.getDescription());
+      String copyright = program.getChannel().getCopyrightNotice();
 	    if (copyright != null) {
         return new StringBuilder(res).append('\n').append(copyright).toString();
       }
       return res;
     } else if (key.equalsIgnoreCase("episode")) {
-      return removeNull(prg.getTextField(ProgramFieldType.EPISODE_TYPE));
+      return removeNull(program.getTextField(ProgramFieldType.EPISODE_TYPE));
     } else if (key.equalsIgnoreCase("original_episode")) {
-      return removeNull(prg.getTextField(ProgramFieldType.ORIGINAL_EPISODE_TYPE));
+      return removeNull(program.getTextField(ProgramFieldType.ORIGINAL_EPISODE_TYPE));
     } else if (key.equalsIgnoreCase("channel_name")) {
-      return removeNull(prg.getChannel().getName());
+      return removeNull(program.getChannel().getName());
     } else if (key.equalsIgnoreCase("url")) {
-      return removeNull(prg.getTextField(ProgramFieldType.URL_TYPE));
+      return removeNull(program.getTextField(ProgramFieldType.URL_TYPE));
     } else if (key.equalsIgnoreCase("start_day_of_week")) {
       SimpleDateFormat format = new SimpleDateFormat("EEEE"); 
-      return format.format(new java.util.Date(prg.getDate().getCalendar().getTimeInMillis()));    
+      return format.format(new java.util.Date(program.getDate().getCalendar().getTimeInMillis()));    
     } else if (key.equalsIgnoreCase("start_month_name")) {
       SimpleDateFormat format = new SimpleDateFormat("MMMM"); 
-      return format.format(new java.util.Date(prg.getDate().getCalendar().getTimeInMillis()));
+      return format.format(new java.util.Date(program.getDate().getCalendar().getTimeInMillis()));
     } else if (key.equalsIgnoreCase("start_unix")) {
-      return Long.toString(createStartTime(prg).getTimeInMillis() / 1000);
+      return Long.toString(createStartTime(program).getTimeInMillis() / 1000);
     } else if (key.equalsIgnoreCase("end_unix")) {
-      return Long.toString(createEndTime(prg).getTimeInMillis() / 1000);
+      return Long.toString(createEndTime(program).getTimeInMillis() / 1000);
     } else if (key.equalsIgnoreCase("genre")) {
-      return removeNull(prg.getTextField(ProgramFieldType.GENRE_TYPE));
+      return removeNull(program.getTextField(ProgramFieldType.GENRE_TYPE));
     } else if (key.equalsIgnoreCase("episode_number")) {
-      int epNum = prg.getIntField(ProgramFieldType.EPISODE_NUMBER_TYPE);
+      int epNum = program.getIntField(ProgramFieldType.EPISODE_NUMBER_TYPE);
       if (epNum == -1) {
         return "";
       }
