@@ -37,6 +37,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import util.misc.OperatingSystem;
+import util.paramhandler.ParamInputField;
 import util.ui.Localizer;
 import util.ui.PluginProgramConfigurationPanel;
 import util.ui.UiUtilities;
@@ -62,7 +63,7 @@ public final class EMailSettingsTab implements SettingsTab {
   private JTextField mApplication;
 
   /** Parameters */
-  private JTextField mParameter;
+  private ParamInputField mParameter;
 
   /** Plugin */
   private EMailPlugin mPlugin;
@@ -101,7 +102,7 @@ public final class EMailSettingsTab implements SettingsTab {
 
     CellConstraints cc = new CellConstraints();
 
-    boolean osOk = OperatingSystem.isMacOs() || OperatingSystem.isWindows(); 
+    boolean osOk = OperatingSystem.isMacOs() || OperatingSystem.isWindows();
 
     mDefaultApplication = new JCheckBox();
     mDefaultApplication.setEnabled(osOk);
@@ -137,11 +138,11 @@ public final class EMailSettingsTab implements SettingsTab {
     mParameterLabel = new JLabel(mLocalizer.msg("Parameter", "Parameter") + ":");
     configPanel.add(mParameterLabel, cc.xy(2, 6));
 
-    mParameter = new JTextField(mSettings.getParameter());
+    mParameter = new ParamInputField(new EMailParamLibrary("mailto:?body="), mSettings.getParameter(), true);
 
     configPanel.add(mParameter, cc.xyw(4, 6, 4));
 
-    mHelpText = UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("Desc","Desc"));
+    mHelpText = UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("Desc","Desc", "{" + EMailParamLibrary.KEY_MAIL_TEXT + "}"));
     configPanel.add(mHelpText, cc.xyw(2,8,6));
 
     mDefaultApplication.addActionListener(new ActionListener() {

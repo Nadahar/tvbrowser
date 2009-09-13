@@ -83,7 +83,7 @@ public class EMailPlugin extends Plugin {
 
   private void createDefaultAvailable() {
     mLocalFormattings = new LocalPluginProgramFormating[1];
-    mLocalFormattings[0] = DEFAULT_CONFIG;        
+    mLocalFormattings[0] = DEFAULT_CONFIG;
   }
   
   public static Version getVersion() {
@@ -92,8 +92,8 @@ public class EMailPlugin extends Plugin {
   
   public PluginInfo getInfo() {
     if(mPluginInfo == null) {
-      String name = mLocalizer.msg("pluginName", "EMail export");
-      String desc = mLocalizer.msg("description", "Send a EMail with an external Program");
+      String name = mLocalizer.msg("pluginName", "Email");
+      String desc = mLocalizer.msg("description", "Send email with an external program");
       String author = "Bodo Tasche";
       
       mPluginInfo = new PluginInfo(EMailPlugin.class, name, desc, author);
@@ -112,9 +112,8 @@ public class EMailPlugin extends Plugin {
       
       ArrayList<AbstractAction>list = new ArrayList<AbstractAction>();
     
-      for(int i = 0; i < mConfigs.length; i++) {
-        final AbstractPluginProgramFormating config = mConfigs[i];
-        if(config != null && config.isValid())
+      for (final AbstractPluginProgramFormating config : mConfigs) {
+        if(config != null && config.isValid()) {
           list.add(new AbstractAction(config.getName()) {
             public void actionPerformed(ActionEvent e) {
           
@@ -123,8 +122,9 @@ public class EMailPlugin extends Plugin {
             }
           });
         }
+        }
       
-      copyToSystem.putValue(Action.SMALL_ICON, createImageIcon("actions", "mail-message-new", 16)); 
+      copyToSystem.putValue(Action.SMALL_ICON, createImageIcon("actions", "mail-message-new", 16));
 
       return new ActionMenu(copyToSystem, list.toArray(new AbstractAction[list.size()]));
     }
@@ -137,7 +137,7 @@ public class EMailPlugin extends Plugin {
       };
       
       copyToSystem.putValue(Action.NAME, mLocalizer.msg("contextMenuText", "Send via EMail"));
-      copyToSystem.putValue(Action.SMALL_ICON, createImageIcon("actions", "mail-message-new", 16)); 
+      copyToSystem.putValue(Action.SMALL_ICON, createImageIcon("actions", "mail-message-new", 16));
       
       return new ActionMenu(copyToSystem);
     }
@@ -150,12 +150,15 @@ public class EMailPlugin extends Plugin {
   public ProgramReceiveTarget[] getProgramReceiveTargets() {
     ArrayList<ProgramReceiveTarget> list = new ArrayList<ProgramReceiveTarget>();
     
-    for(AbstractPluginProgramFormating config : mConfigs)
-      if(config != null && config.isValid())
+    for(AbstractPluginProgramFormating config : mConfigs) {
+      if(config != null && config.isValid()) {
         list.add(new ProgramReceiveTarget(this, config.getName(), config.getId()));
+      }
+    }
     
-    if(list.isEmpty())
+    if(list.isEmpty()) {
       list.add(new ProgramReceiveTarget(this, DEFAULT_CONFIG.getName(), DEFAULT_CONFIG.getId()));
+    }
     
     return list.toArray(new ProgramReceiveTarget[list.size()]);
   }
@@ -163,17 +166,20 @@ public class EMailPlugin extends Plugin {
   public boolean receivePrograms(Program[] programArr, ProgramReceiveTarget target) {
     AbstractPluginProgramFormating formating = null;
     
-    if(target == null)
+    if(target == null) {
       return false;
+    }
     
-    if(target.isReceiveTargetWithIdOfProgramReceiveIf(this,DEFAULT_CONFIG.getId()))
+    if(target.isReceiveTargetWithIdOfProgramReceiveIf(this,DEFAULT_CONFIG.getId())) {
       formating = DEFAULT_CONFIG;
-    else
-      for(AbstractPluginProgramFormating config : mConfigs)
+    } else {
+      for(AbstractPluginProgramFormating config : mConfigs) {
         if(target.isReceiveTargetWithIdOfProgramReceiveIf(this,config.getId())) {
           formating = config;
           break;
         }
+      }
+    }
     
     if(formating != null) {
       new MailCreator(this, mSettings, formating).createMail(getParentFrame(), programArr);
@@ -189,7 +195,7 @@ public class EMailPlugin extends Plugin {
 
   public void loadSettings(final Properties properties) {
     mSettings = new EMailSettings(properties);
-/*    
+/*
     if(settings != null && settings.containsKey("ParamToUse")) {
       mConfigs = new AbstractPluginProgramFormating[1];
       mConfigs[0] = new LocalPluginProgramFormating(mLocalizer.msg("defaultName","Send e-mail - Default"),"{title}",settings.getProperty("ParamToUse"),settings.getProperty("encoding", "UTF-8"));
@@ -207,7 +213,7 @@ public class EMailPlugin extends Plugin {
     return mSettings.storeSettings();
   }
   
-  protected static LocalPluginProgramFormating getDefaultFormatting() {    
+  protected static LocalPluginProgramFormating getDefaultFormatting() {
     return new LocalPluginProgramFormating(mLocalizer.msg("defaultName","EmailPlugin - Default"),"{title}","{channel_name} - {title}\n{leadingZero(start_day,\"2\")}.{leadingZero(start_month,\"2\")}.{start_year} {leadingZero(start_hour,\"2\")}:{leadingZero(start_minute,\"2\")}-{leadingZero(end_hour,\"2\")}:{leadingZero(end_minute,\"2\")}\n\n{splitAt(short_info,\"78\")}\n\n","UTF-8");
   }
 
@@ -216,10 +222,11 @@ public class EMailPlugin extends Plugin {
   }
   
   protected void setAvailableLocalPluginProgramFormattings(LocalPluginProgramFormating[] value) {
-    if(value == null || value.length < 1)
+    if(value == null || value.length < 1) {
       createDefaultAvailable();
-    else
+    } else {
       mLocalFormattings = value;
+    }
   }
 
   protected AbstractPluginProgramFormating[] getSelectedPluginProgramFormattings() {
@@ -227,10 +234,11 @@ public class EMailPlugin extends Plugin {
   }
   
   protected void setSelectedPluginProgramFormatings(AbstractPluginProgramFormating[] value) {
-    if(value == null || value.length < 1)
+    if(value == null || value.length < 1) {
       createDefaultConfig();
-    else
+    } else {
       mConfigs = value;
+    }
   }
   
   public void writeData(ObjectOutputStream out) throws IOException {
@@ -239,29 +247,35 @@ public class EMailPlugin extends Plugin {
     if(mConfigs != null) {
       ArrayList<AbstractPluginProgramFormating> list = new ArrayList<AbstractPluginProgramFormating>();
       
-      for(AbstractPluginProgramFormating config : mConfigs)
-        if(config != null)
+      for(AbstractPluginProgramFormating config : mConfigs) {
+        if(config != null) {
           list.add(config);
+        }
+      }
       
       out.writeInt(list.size());
       
-      for(AbstractPluginProgramFormating config : list)
+      for(AbstractPluginProgramFormating config : list) {
         config.writeData(out);
-    }
-    else
+      }
+    } else {
       out.writeInt(0);
+    }
     
     if(mLocalFormattings != null) {
       ArrayList<AbstractPluginProgramFormating> list = new ArrayList<AbstractPluginProgramFormating>();
       
-      for(AbstractPluginProgramFormating config : mLocalFormattings)
-        if(config != null)
+      for(AbstractPluginProgramFormating config : mLocalFormattings) {
+        if(config != null) {
           list.add(config);
+        }
+      }
       
       out.writeInt(list.size());
       
-      for(AbstractPluginProgramFormating config : list)
-        config.writeData(out);      
+      for(AbstractPluginProgramFormating config : list) {
+        config.writeData(out);
+      }
     }
   }
   
@@ -276,9 +290,10 @@ public class EMailPlugin extends Plugin {
       for(int i = 0; i < n; i++) {
         AbstractPluginProgramFormating value = AbstractPluginProgramFormating.readData(in);
       
-        if(value != null) { 
-          if(value.equals(DEFAULT_CONFIG))
+        if(value != null) {
+          if(value.equals(DEFAULT_CONFIG)) {
             DEFAULT_CONFIG = (LocalPluginProgramFormating)value;
+          }
         
           list.add(value);
         }
@@ -289,7 +304,7 @@ public class EMailPlugin extends Plugin {
       mLocalFormattings = new LocalPluginProgramFormating[in.readInt()];
     
       for(int i = 0; i < mLocalFormattings.length; i++) {
-        LocalPluginProgramFormating value = (LocalPluginProgramFormating)LocalPluginProgramFormating.readData(in);
+        LocalPluginProgramFormating value = (LocalPluginProgramFormating)AbstractPluginProgramFormating.readData(in);
         LocalPluginProgramFormating loadedInstance = getInstanceOfFormatingFromSelected(value);
       
         mLocalFormattings[i] = loadedInstance == null ? value : loadedInstance;
@@ -298,9 +313,11 @@ public class EMailPlugin extends Plugin {
   }
   
   private LocalPluginProgramFormating getInstanceOfFormatingFromSelected(LocalPluginProgramFormating value) {
-    for(AbstractPluginProgramFormating config : mConfigs)
-      if(config.equals(value))
+    for(AbstractPluginProgramFormating config : mConfigs) {
+      if(config.equals(value)) {
         return (LocalPluginProgramFormating)config;
+      }
+    }
     
     return null;
   }

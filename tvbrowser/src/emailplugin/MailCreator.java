@@ -54,6 +54,7 @@ import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
+import devplugin.Plugin;
 import devplugin.Program;
 
 /**
@@ -62,7 +63,7 @@ import devplugin.Program;
  * 
  * @author bodum
  */
-public class MailCreator {  
+public class MailCreator {
   /** Settings for this Plugin */
   private EMailSettings mSettings;
   
@@ -74,7 +75,7 @@ public class MailCreator {
   private Localizer mLocalizer = Localizer.getLocalizerFor(MailCreator.class);
 
   /**
-   * Create the MailCreator 
+   * Create the MailCreator
    * @param plugin Plugin to use
    * @param settings Settings for this MailCreator
    * @param formating The program formating to use.
@@ -88,7 +89,7 @@ public class MailCreator {
   /**
    * Create the Mail
    * 
-   * @param parent Parent-Frame for Dialogs 
+   * @param parent Parent-Frame for Dialogs
    * @param program Programs to show in the Mail
    */
   void createMail(Frame parent, Program[] program) {
@@ -153,22 +154,21 @@ public class MailCreator {
             return;
           }
           application = mSettings.getApplication();
-          execparam = mSettings.getParameter().replaceAll(
-              "\\{0\\}", mailTo);
+          execparam = getContentParameter(content);
         } else {
           showNotConfiguredCorrectly(parent);
           return;
         }
       } else {
         application = mSettings.getApplication();
-        execparam = mSettings.getParameter().replaceAll(
-            "\\{0\\}", mailTo);
+        execparam = getContentParameter(content);
       }
 
       new ExecutionHandler(execparam, application).execute();
 
-      if (mSettings.getShowEmailOpened())
+      if (mSettings.getShowEmailOpened()) {
         showEMailOpenedDialog(parent);
+      }
 
     } catch (Exception e) {
       e.printStackTrace();
@@ -179,6 +179,12 @@ public class MailCreator {
         MainFrame.getInstance().showSettingsDialog(mPlugin);
       }
     }
+  }
+
+  private String getContentParameter(String content) throws UnsupportedEncodingException {
+    ParamParser parser = new ParamParser(new EMailParamLibrary(content));
+    String string = "mailto:?body=" + encodeString(parser.analyse(mSettings.getParameter(), null));
+    return string;
   }
 
   /**
@@ -221,7 +227,7 @@ public class MailCreator {
     JButton configure = new JButton(mLocalizer.msg("configure", "Configure"));
     configure.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        EMailPlugin.getPluginManager().showSettings(mPlugin);
+        Plugin.getPluginManager().showSettings(mPlugin);
         dialog.setVisible(false);
       }
     });
@@ -265,7 +271,7 @@ public class MailCreator {
     int ret = JOptionPane.showConfirmDialog(parent, mLocalizer.msg("NotConfiguredCorrectly", "Not configured correctly"), Localizer.getLocalization(Localizer.I18N_ERROR), JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
     
     if (ret == JOptionPane.YES_OPTION) {
-      EMailPlugin.getPluginManager().showSettings(mPlugin);
+      Plugin.getPluginManager().showSettings(mPlugin);
     }
   }
 
@@ -334,12 +340,12 @@ public class MailCreator {
     
     if (kdeButton.isSelected()) {
       mSettings.setApplication("kfmclient");
-      mSettings.setParameter("exec {0}");      
+      mSettings.setParameter("exec {0}");
     } else if (gnomeButton.isSelected()) {
       mSettings.setApplication("gnome-open");
-      mSettings.setParameter("{0}");      
+      mSettings.setParameter("{0}");
     } else {
-      EMailPlugin.getPluginManager().showSettings(mPlugin);
+      Plugin.getPluginManager().showSettings(mPlugin);
       return false;
     }
     
