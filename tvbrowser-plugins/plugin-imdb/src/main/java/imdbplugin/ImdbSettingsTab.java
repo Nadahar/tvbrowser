@@ -25,6 +25,8 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
 
 import util.ui.ChannelChooserDlg;
 import util.ui.Localizer;
@@ -49,6 +51,7 @@ public final class ImdbSettingsTab implements SettingsTab {
   private JLabel mLabelUpdate;
   private JLabel mLabelSize;
   private JLabel mLabelRatings;
+  private JSpinner mMinRating;
 
   public ImdbSettingsTab(final JFrame parent, final ImdbPlugin imdbPlugin, final ImdbSettings settings) {
     mParent = parent;
@@ -60,7 +63,7 @@ public final class ImdbSettingsTab implements SettingsTab {
   public JPanel createSettingsPanel() {
     final PanelBuilder panel = new PanelBuilder(new FormLayout(
         "3dlu, fill:pref:grow, 3dlu, pref, 3dlu",
-        "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref"));
+        "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref"));
 
     final CellConstraints cc = new CellConstraints();
 
@@ -85,6 +88,11 @@ public final class ImdbSettingsTab implements SettingsTab {
     });
 
     panel.add(channelConfig, cc.xy(4,panel.getRow()));
+    panel.nextRow(2);
+    
+    panel.add(new JLabel(mLocalizer.msg("minimumRating","Minimum rating to show in plugin tree")), cc.xy(2, panel.getRow()));
+    mMinRating = new JSpinner(new SpinnerNumberModel(mSettings.getMinimumRating() / 10.0, 0.0, 10.0, 0.1));
+    panel.add(mMinRating, cc.xy(4, panel.getRow()));
     panel.nextRow(2);
 
     panel.addSeparator(mLocalizer.msg("titleDatabase", "Database"), cc.xyw(1, panel.getRow(), 5));
@@ -148,6 +156,7 @@ public final class ImdbSettingsTab implements SettingsTab {
 
   public void saveSettings() {
     mImdbPlugin.setExcludedChannels(mExcludedChannels);
+    mSettings.setMinimumRating((int) (Math.round((Double)mMinRating.getValue() * 10.0)));
     mImdbPlugin.updateCurrentDateAndClearCache();
   }
 

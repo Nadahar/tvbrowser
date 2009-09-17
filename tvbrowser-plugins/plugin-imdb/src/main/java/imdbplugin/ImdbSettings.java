@@ -20,7 +20,7 @@ import java.util.Properties;
 
 import devplugin.Date;
 
-public class ImdbSettings {
+final class ImdbSettings {
 
   private static final String KEY_DONT_ASK_CREATE_DATABASE = "dontAskCreateDatabase";
   private static final String KEY_DATABASE_VERSION = "databaseVersion";
@@ -33,11 +33,12 @@ public class ImdbSettings {
    * incremented to reflect that a new import of the data is necessary.
    * </p>
    */
-  private static final int CURRENT_DATABASE_VERSION = 2;
+  private static final int CURRENT_DATABASE_VERSION = 3;
+  private static final String KEY_MINIMUM_RATING = "minimum rating";
   
   private Properties mProperties;
 
-  public ImdbSettings(final Properties properties) {
+  protected ImdbSettings(final Properties properties) {
     if (properties != null) {
       mProperties = properties;
     } else {
@@ -45,11 +46,11 @@ public class ImdbSettings {
     }
   }
 
-  public Properties storeSettings() {
+  protected Properties storeSettings() {
     return mProperties;
   }
 
-  public void askCreateDatabase(final boolean ask) {
+  protected void askCreateDatabase(final boolean ask) {
     mProperties.setProperty(KEY_DONT_ASK_CREATE_DATABASE, Boolean.toString(ask));
   }
 
@@ -58,7 +59,7 @@ public class ImdbSettings {
    * 
    * @return
    */
-  public boolean askCreateDatabase() {
+  protected boolean askCreateDatabase() {
     return mProperties.getProperty(KEY_DONT_ASK_CREATE_DATABASE, "false").equals(
         "false");
   }
@@ -69,7 +70,7 @@ public class ImdbSettings {
    * 
    * @return
    */
-  public boolean isDatabaseCurrentVersion() {
+  protected boolean isDatabaseCurrentVersion() {
     return Integer
         .parseInt(mProperties.getProperty(KEY_DATABASE_VERSION, "-1")) == CURRENT_DATABASE_VERSION;
   }
@@ -78,24 +79,32 @@ public class ImdbSettings {
    * mark the newly imported local database as being current, so it fulfills the
    * requirements of the current plugin version
    */
-  public void setCurrentDatabaseVersion() {
+  protected void setCurrentDatabaseVersion() {
     mProperties.setProperty(KEY_DATABASE_VERSION, Integer
         .toString(CURRENT_DATABASE_VERSION));
   }
 
-  public String getUpdateDate() {
+  protected String getUpdateDate() {
     return mProperties.getProperty(KEY_LAST_UPDATE,"-");
   }
 
-  public String getNumberOfMovies() {
+  protected String getNumberOfMovies() {
     return mProperties.getProperty(KEY_NUMBER_OF_MOVIES,"0");
   }
 
-  public void setNumberOfMovies(final int ratingCount) {
+  protected void setNumberOfMovies(final int ratingCount) {
     mProperties.setProperty(KEY_NUMBER_OF_MOVIES, String.valueOf(ratingCount));
   }
 
-  public void setUpdateDate(final Date currentDate) {
+  protected void setUpdateDate(final Date currentDate) {
     mProperties.setProperty(KEY_LAST_UPDATE, currentDate.toString());
+  }
+
+  protected int getMinimumRating() {
+    return Integer.valueOf(mProperties.getProperty(KEY_MINIMUM_RATING, "50"));
+  }
+
+  protected void setMinimumRating(final int rating) {
+    mProperties.setProperty(KEY_MINIMUM_RATING, String.valueOf(rating));
   }
 }
