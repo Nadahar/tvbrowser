@@ -29,6 +29,7 @@ public class RatingNode extends PluginTreeNode implements
     super(rating.getRatingText() + " " + program.getTitle());
     mRating = rating.getRating();
     mProgram = program;
+    setGroupingByDateEnabled(false);
   }
 
   public int compareTo(final RatingNode other) {
@@ -36,8 +37,9 @@ public class RatingNode extends PluginTreeNode implements
       return -1;
     } else if (mRating > other.mRating) {
       return 1;
-    } else
+    } else {
       return mProgram.getTitle().compareTo(other.mProgram.getTitle());
+    }
   }
 
 }

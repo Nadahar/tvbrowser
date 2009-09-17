@@ -385,18 +385,18 @@ public final class ImdbPlugin extends Plugin {
     final ProgramFilter filter = getPluginManager().getFilterManager()
         .getCurrentFilter();
     final Channel[] channels = getPluginManager().getSubscribedChannels();
+    int minimumRating = mSettings.getMinimumRating();
     for (Channel channel : channels) {
       final Iterator<Program> iter = getPluginManager().getChannelDayProgram(currentDate, channel);
       if (null != iter) {
         while (iter.hasNext()) {
           final Program program = iter.next();
           final ImdbRating rating = getRatingFor(program);
-          if (rating != null && rating != DUMMY_RATING) {
+          if (rating != null && rating != DUMMY_RATING && rating.getRating() > minimumRating) {
             final String key = rating.getRatingText() + program.getTitle();
             RatingNode ratingNode = nodes.get(key);
             if (ratingNode == null) {
               ratingNode = new RatingNode(rating, program);
-              ratingNode.setGroupingByDateEnabled(false);
               nodes.put(key, ratingNode);
             }
             ratingNode.addProgram(program);

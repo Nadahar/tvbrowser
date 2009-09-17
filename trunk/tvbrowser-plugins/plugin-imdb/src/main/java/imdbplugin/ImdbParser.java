@@ -176,10 +176,9 @@ public class ImdbParser {
                 if (matcher.group(2) != null) {
                   year = Integer.parseInt(matcher.group(2));
                 }
-                final String type = matcher.group(3);
                 final String episode = cleanEpisodeTitle(matcher.group(4));
 
-                mDatabase.addAkaTitle(movieId, title, episode, year, type);
+                mDatabase.addAkaTitle(movieId, title, episode, year);
                 if (++count % 100 == 0 || count == 1) {
                   monitor.setMessage(mLocalizer.msg("akaTitles",
                       "Alternative title {0}", count));
@@ -197,9 +196,8 @@ public class ImdbParser {
               if (matcher.group(2) != null) {
                 year = Integer.parseInt(matcher.group(2));
               }
-              final String type = matcher.group(3);
               final String episode = cleanEpisodeTitle(matcher.group(4));
-              movieId = mDatabase.getOrCreateMovieId(movieTitle, episode, year, type);
+              movieId = mDatabase.getOrCreateMovieId(movieTitle, episode, year);
             }
           }
         }
@@ -258,10 +256,9 @@ public class ImdbParser {
           else {
             mLog.warning("unexpected null year");
           }
-          final String type = matcher.group(3);
           final String episode = cleanEpisodeTitle(matcher.group(4));
 
-          mDatabase.addRating(mDatabase.getOrCreateMovieId(movieTitle, episode, year, type), rating, votes, distribution);
+          mDatabase.addRating(mDatabase.getOrCreateMovieId(movieTitle, episode, year), rating, votes, distribution);
           if (++count % 100 == 0 || count == 1) {
             monitor.setMessage(mLocalizer.msg("ratings", "Rating {0}", count));
           }
