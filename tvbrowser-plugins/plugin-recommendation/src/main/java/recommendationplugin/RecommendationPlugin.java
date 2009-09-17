@@ -1,42 +1,53 @@
 package recommendationplugin;
 
-import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
 
-import recommendationplugin.inputimpl.FavoriteInput;
-import recommendationplugin.inputimpl.RatingInput;
-import recommendationplugin.inputimpl.ReminderInput;
+import recommendationplugin.weighting.FavoriteWeighting;
+import recommendationplugin.weighting.FilterWeighting;
+import recommendationplugin.weighting.MarkerWeighting;
+import recommendationplugin.weighting.RatingWeighting;
+import recommendationplugin.weighting.ReminderWeighting;
+import tvbrowser.core.plugin.PluginManagerImpl;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import devplugin.ActionMenu;
 import devplugin.Channel;
 import devplugin.Date;
 import devplugin.Plugin;
+import devplugin.PluginAccess;
 import devplugin.PluginInfo;
+import devplugin.PluginTreeNode;
 import devplugin.Program;
+import devplugin.ProgramFilter;
 import devplugin.ProgramRatingIf;
 import devplugin.SettingsTab;
 import devplugin.Version;
 
 public final class RecommendationPlugin extends Plugin {
+  private static final boolean PLUGIN_IS_STABLE = false;
+  private static final Version PLUGIN_VERSION = new Version(0, 2, PLUGIN_IS_STABLE);
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(RecommendationPlugin.class);
   private static RecommendationPlugin mInstance;
   private Icon mIcon;
-  private List<RecommendationInputIf> mEnabledInput;
+  private List<RecommendationWeighting> mWeightings = new ArrayList<RecommendationWeighting>();
+
+  private PluginTreeNode mRootNode = new PluginTreeNode(this, false);
+  private ArrayList<ProgramWeight> mRecommendations;
+  private RecommendationSettings mSettings;
 
   public static Version getVersion() {
-    return new Version(0, 2, false);
+    return PLUGIN_VERSION;
   }
 
   /**
@@ -44,17 +55,42 @@ public final class RecommendationPlugin extends Plugin {
    */
   public RecommendationPlugin() {
     mInstance = this;
-    mEnabledInput = new ArrayList<RecommendationInputIf>();
   }
 
   @Override
   public void handleTvBrowserStartFinished() {
-    for (ProgramRatingIf rating : getPluginManager().getAllProgramRatingIfs()) {
-      mEnabledInput.add(new RatingInput(rating, 30));
-    }
+    initializeWeightings();
+    mRootNode.setGroupingByDateEnabled(true); // to force neither alphabetic nor
+                                              // date sorting
+    updateRecommendations();
+  }
 
-    mEnabledInput.add(new FavoriteInput(30));
-    mEnabledInput.add(new ReminderInput(30));
+  public void initializeWeightings() {
+    mWeightings = new ArrayList<RecommendationWeighting>();
+    for (ProgramRatingIf rating : getPluginManager().getAllProgramRatingIfs()) {
+      initializeWeighting(new RatingWeighting(rating));
+    }
+    for (ProgramFilter filter : getPluginManager().getFilterManager().getAvailableFilters()) {
+      initializeWeighting(new FilterWeighting(filter));
+    }
+    for (PluginAccess plugin : getPluginManager().getActivatedPlugins()) {
+      final String iconText = plugin.getProgramTableIconText();
+      if (iconText != null) {
+        Icon[] icons = plugin.getProgramTableIcons(PluginManagerImpl.getInstance().getExampleProgram());
+        Icon icon;
+        if (icons != null && icons.length > 0) {
+          initializeWeighting(new MarkerWeighting(plugin));
+        }
+      }
+    }
+    
+    initializeWeighting(new FavoriteWeighting());
+    initializeWeighting(new ReminderWeighting());
+  }
+
+  private void initializeWeighting(final RecommendationWeighting weighting) {
+    weighting.setWeighting(mSettings.getWeighting(weighting.getId()));
+    mWeightings.add(weighting);
   }
 
   @Override
@@ -71,9 +107,9 @@ public final class RecommendationPlugin extends Plugin {
   }
 
   public PluginInfo getInfo() {
-    return new PluginInfo(RecommendationPlugin.class, mLocalizer.msg("pluginName", "Recommendation Plugin"),
-        mLocalizer.msg("description", "Shows recommendation based on data from different sources"),
-        "Bodo Tasche", "GPL");
+    return new PluginInfo(RecommendationPlugin.class, mLocalizer.msg("pluginName", "Recommendation Plugin"), mLocalizer
+        .msg("description", "Shows recommendation based on data from different sources"),
+        "Bodo Tasche, Michael Keppler", "GPL");
   }
 
   public Icon getPluginIcon() {
@@ -89,52 +125,102 @@ public final class RecommendationPlugin extends Plugin {
 
   @Override
   public SettingsTab getSettingsTab() {
-    return new RecommendationSettingsTab(this);
+    return new RecommendationSettingsTab(this, mSettings);
   }
 
-  public List<RecommendationInputIf> getEnabledInput() {
-    return mEnabledInput;
+  List<RecommendationWeighting> getAllWeightings() {
+    return mWeightings;
   }
 
   private void showWeightDialog() {
-    WeightDialog dialog;
+    WeightDialog dialog = new WeightDialog(UiUtilities.getLastModalChildOf(getParentFrame()));
 
-    Window w = UiUtilities.getLastModalChildOf(getParentFrame());
+    updateRecommendations();
+    dialog.addAllPrograms(mRecommendations);
 
-    if (w instanceof JFrame) {
-      dialog = new WeightDialog((JFrame) w);
-    } else {
-      dialog = new WeightDialog((JDialog) w);
+    UiUtilities.centerAndShow(dialog);
+  }
+
+  void updateRecommendations() {
+    mRootNode.clear();
+    mRecommendations = new ArrayList<ProgramWeight>();
+
+    // speedup calculation by only using weightings > 0
+    ArrayList<RecommendationWeighting> usedWeightings = new ArrayList<RecommendationWeighting>();
+    for (RecommendationWeighting weighting : mWeightings) {
+      if (weighting.getWeighting() > 0) {
+        usedWeightings.add(weighting);
+      }
+    }
+    if (usedWeightings.isEmpty()) {
+      return;
     }
 
-    ArrayList<ProgramWeight> list = new ArrayList<ProgramWeight>();
+    HashMap<String, RecommendationNode> nodes = new HashMap<String, RecommendationNode>(200);
 
-    Date today = new Date();
-    for (Channel ch : getPluginManager().getSubscribedChannels()) {
-      Iterator<Program> it = getPluginManager().getChannelDayProgram(today, ch);
+    Date today = Date.getCurrentDate();
+    for (Channel channel : getPluginManager().getSubscribedChannels()) {
+      Iterator<Program> it = getPluginManager().getChannelDayProgram(today, channel);
       while (it.hasNext()) {
-        Program p = it.next();
+        Program program = it.next();
 
-        if (!p.isExpired()) {
+        if (!program.isExpired()) {
           int sumWeight = 0;
-          for (RecommendationInputIf input : mEnabledInput) {
-            final int weight = input.calculate(p);
+          for (RecommendationWeighting weighting : usedWeightings) {
+            final int weight = weighting.getWeight(program);
             if (weight > 0) {
               sumWeight += weight;
             }
           }
           if (sumWeight > 0) {
-            list.add(new ProgramWeight(p, sumWeight));
+            ProgramWeight programWeight = new ProgramWeight(program, sumWeight);
+            mRecommendations.add(programWeight);
+            String key = String.valueOf(sumWeight) + program.getTitle();
+            RecommendationNode node = nodes.get(key);
+            if (node == null) {
+              node = new RecommendationNode(programWeight);
+              nodes.put(key, node);
+            }
+            node.addProgram(program);
           }
         }
       }
     }
 
-    Collections.sort(list);
+    Collections.sort(mRecommendations);
 
-    dialog.addAllPrograms(list);
+    ArrayList<RecommendationNode> nodeList = new ArrayList<RecommendationNode>(nodes.values());
+    Collections.sort(nodeList);
 
-    UiUtilities.centerAndShow(dialog);
+    for (RecommendationNode recommendationNode : nodeList) {
+      mRootNode.add(recommendationNode);
+    }
+
+    mRootNode.update();
   }
 
+  @Override
+  public boolean canUseProgramTree() {
+    return true;
+  }
+
+  @Override
+  public PluginTreeNode getRootNode() {
+    return mRootNode;
+  }
+
+  @Override
+  public void handleTvDataUpdateFinished() {
+    updateRecommendations();
+  }
+
+  @Override
+  public void loadSettings(Properties properties) {
+    mSettings = new RecommendationSettings(properties);
+  }
+
+  @Override
+  public Properties storeSettings() {
+    return mSettings.storeSettings();
+  }
 }

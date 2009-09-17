@@ -38,6 +38,7 @@ import java.util.TimeZone;
 import java.util.logging.Logger;
 
 import javax.swing.Action;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JPopupMenu;
 
@@ -86,6 +87,46 @@ import devplugin.TvBrowserSettings;
  * @author Til Schneider, www.murfman.de
  */
 public class PluginManagerImpl implements PluginManager {
+
+  public class RatingFieldRating implements ProgramRatingIf {
+
+    @Override
+    public Icon getIcon() {
+      // TODO Auto-generated method stub
+      return null;
+    }
+
+    @Override
+    public Icon getIconForProgram(final Program program) {
+      // TODO Auto-generated method stub
+      return null;
+    }
+
+    @Override
+    public String getName() {
+      return "TV data rating";
+    }
+
+    @Override
+    public int getRatingForProgram(final Program program) {
+      int rating = program.getIntField(ProgramFieldType.RATING_TYPE);
+      if (rating >= 0) {
+        return rating;
+      }
+      return 0;
+    }
+
+    @Override
+    public boolean hasDetailsDialog() {
+      return false;
+    }
+
+    @Override
+    public void showDetailsFor(Program p) {
+      // TODO Auto-generated method stub
+    }
+
+  }
 
   /** An example program. */
   private Program mExampleProgram;
@@ -868,7 +909,8 @@ public class PluginManagerImpl implements PluginManager {
    */
   public ProgramRatingIf[] getAllProgramRatingIfs() {
     ArrayList<ProgramRatingIf> ratingArray = new ArrayList<ProgramRatingIf>();
-    for (PluginAccess access :getActivatedPlugins()){
+    ratingArray.add(new RatingFieldRating());
+    for (PluginAccess access : getActivatedPlugins()){
       ProgramRatingIf[] ratings = access.getProgramRatingIfs();
       if (ratings != null) {
         ratingArray.addAll(Arrays.asList(ratings));
