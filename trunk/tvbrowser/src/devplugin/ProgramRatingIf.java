@@ -25,7 +25,7 @@
  */
 package devplugin;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 /**
  * This Interface makes it possible for plugins to offer rating infos to other
@@ -51,20 +51,20 @@ public interface ProgramRatingIf {
    * Returns a rating for this program. The rating must
    * be between 0 and 100, -1 if no rating is available
    *
-   * @param p program to get rating for
+   * @param program program to get rating for
    * @return rating for the program (between 0 and 100), -1 if no rating is available
    */
-  public int getRatingForProgram(Program p);
+  public int getRatingForProgram(final Program program);
 
   /**
    * Get Icon for the rating.
    *
    * This gives plugins the opportunity to show it's icon for the specific rating
    *
-   * @param p program to get icon for
+   * @param program program to get icon for
    * @return icon for rating, <code>null</code> if no rating is available
    */
-  public Icon getIconForProgram(Program p);
+  public Icon getIconForProgram(final Program program);
 
   /**
    * Has this plugin a dialog that displays details about this rating?
@@ -75,8 +75,8 @@ public interface ProgramRatingIf {
 
   /**
    * shows a detail dialog for a rating
-   * @param p show dialog for this program
+   * @param program show dialog for this program
    */
-  public void showDetailsFor(Program p);
+  public void showDetailsFor(final Program program);
 
 }
