@@ -76,8 +76,7 @@ public final class RecommendationPlugin extends Plugin {
     for (PluginAccess plugin : getPluginManager().getActivatedPlugins()) {
       final String iconText = plugin.getProgramTableIconText();
       if (iconText != null) {
-        Icon[] icons = plugin.getProgramTableIcons(PluginManagerImpl.getInstance().getExampleProgram());
-        Icon icon;
+        final Icon[] icons = plugin.getProgramTableIcons(PluginManagerImpl.getInstance().getExampleProgram());
         if (icons != null && icons.length > 0) {
           initializeWeighting(new MarkerWeighting(plugin));
         }
@@ -95,7 +94,7 @@ public final class RecommendationPlugin extends Plugin {
 
   @Override
   public ActionMenu getButtonAction() {
-    AbstractAction action = new AbstractAction() {
+    final AbstractAction action = new AbstractAction() {
       public void actionPerformed(ActionEvent evt) {
         showWeightDialog();
       }
@@ -133,7 +132,7 @@ public final class RecommendationPlugin extends Plugin {
   }
 
   private void showWeightDialog() {
-    WeightDialog dialog = new WeightDialog(UiUtilities.getLastModalChildOf(getParentFrame()));
+    final WeightDialog dialog = new WeightDialog(UiUtilities.getLastModalChildOf(getParentFrame()));
 
     updateRecommendations();
     dialog.addAllPrograms(mRecommendations);
@@ -146,7 +145,7 @@ public final class RecommendationPlugin extends Plugin {
     mRecommendations = new ArrayList<ProgramWeight>();
 
     // speedup calculation by only using weightings > 0
-    ArrayList<RecommendationWeighting> usedWeightings = new ArrayList<RecommendationWeighting>();
+    final ArrayList<RecommendationWeighting> usedWeightings = new ArrayList<RecommendationWeighting>();
     for (RecommendationWeighting weighting : mWeightings) {
       if (weighting.getWeighting() > 0) {
         usedWeightings.add(weighting);
@@ -156,13 +155,16 @@ public final class RecommendationPlugin extends Plugin {
       return;
     }
 
-    HashMap<String, RecommendationNode> nodes = new HashMap<String, RecommendationNode>(200);
+    final HashMap<String, RecommendationNode> nodes = new HashMap<String, RecommendationNode>(200);
 
-    Date today = Date.getCurrentDate();
+    final Date today = Date.getCurrentDate();
     for (Channel channel : getPluginManager().getSubscribedChannels()) {
-      Iterator<Program> it = getPluginManager().getChannelDayProgram(today, channel);
+      final Iterator<Program> it = getPluginManager().getChannelDayProgram(today, channel);
+      if (it == null) {
+        continue;
+      }
       while (it.hasNext()) {
-        Program program = it.next();
+        final Program program = it.next();
 
         if (!program.isExpired()) {
           int sumWeight = 0;
