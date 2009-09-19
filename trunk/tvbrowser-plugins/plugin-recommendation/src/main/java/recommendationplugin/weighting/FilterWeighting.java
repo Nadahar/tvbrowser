@@ -42,6 +42,6 @@ public class FilterWeighting extends AbstractWeighting implements Recommendation
 
   @Override
   public String getId() {
-    return super.getId() + mFilter.getName();
+    return super.getId() +'@' + mFilter.getName();
   }
 }

@@ -45,6 +45,6 @@ public class RatingWeighting extends AbstractWeighting implements Recommendation
   
   @Override
   public String getId() {
-    return super.getId() + mRating.getName();
+    return super.getId() + '@' + mRating.getName();
   }
 }
