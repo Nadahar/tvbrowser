@@ -147,7 +147,7 @@ public final class RecommendationPlugin extends Plugin {
     // speedup calculation by only using weightings > 0
     final ArrayList<RecommendationWeighting> usedWeightings = new ArrayList<RecommendationWeighting>();
     for (RecommendationWeighting weighting : mWeightings) {
-      if (weighting.getWeighting() > 0) {
+      if (weighting.getWeighting() != 0) {
         usedWeightings.add(weighting);
       }
     }
@@ -169,10 +169,7 @@ public final class RecommendationPlugin extends Plugin {
         if (!program.isExpired()) {
           int sumWeight = 0;
           for (RecommendationWeighting weighting : usedWeightings) {
-            final int weight = weighting.getWeight(program);
-            if (weight > 0) {
-              sumWeight += weight;
-            }
+            sumWeight += weighting.getWeight(program);
           }
           if (sumWeight > 0) {
             ProgramWeight programWeight = new ProgramWeight(program, sumWeight);

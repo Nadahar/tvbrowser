@@ -30,8 +30,12 @@ public class RecommendationSettings extends PropertyBasedSettings {
 
   int getWeighting(final String id) {
     int defaultValue = 0;
-    if (id.toLowerCase().contains("favorite")) {
+    String lowerId = id.toLowerCase();
+    if (lowerId.contains("favorite")) {
       defaultValue = 70;
+    }
+    else if (lowerId.contains("dontwant") || lowerId.contains("nicht sehen")) {
+      defaultValue = 100;
     }
     return get(id, defaultValue);
   }
