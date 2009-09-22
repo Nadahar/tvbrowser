@@ -70,8 +70,11 @@ public final class RecommendationPlugin extends Plugin {
     for (ProgramRatingIf rating : getPluginManager().getAllProgramRatingIfs()) {
       initializeWeighting(new RatingWeighting(rating));
     }
+    ProgramFilter allFilter = getPluginManager().getFilterManager().getAllFilter();
     for (ProgramFilter filter : getPluginManager().getFilterManager().getAvailableFilters()) {
-      initializeWeighting(new FilterWeighting(filter));
+      if (filter != allFilter) {
+        initializeWeighting(new FilterWeighting(filter));
+      }
     }
     for (PluginAccess plugin : getPluginManager().getActivatedPlugins()) {
       final String iconText = plugin.getProgramTableIconText();
