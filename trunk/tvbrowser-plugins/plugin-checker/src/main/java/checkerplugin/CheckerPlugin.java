@@ -411,7 +411,7 @@ public class CheckerPlugin extends Plugin {
           } else if (format == ProgramFieldType.TIME_FORMAT) {
             content = program.getTimeFieldAsString(field);
           } else if (format == ProgramFieldType.BINARY_FORMAT) {
-            content = program.getBinaryField(field).toString();
+            content = Arrays.toString(program.getBinaryField(field));
           }
           JOptionPane.showMessageDialog(null, content);
         }
