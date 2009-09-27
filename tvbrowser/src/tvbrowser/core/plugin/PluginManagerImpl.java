@@ -88,7 +88,7 @@ import devplugin.TvBrowserSettings;
  */
 public class PluginManagerImpl implements PluginManager {
 
-  public class RatingFieldRating implements ProgramRatingIf {
+  public static class RatingFieldRating implements ProgramRatingIf {
 
     @Override
     public Icon getIcon() {

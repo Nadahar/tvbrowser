@@ -146,7 +146,7 @@ public class IconLoader {
     list.addAll(getThemesInDirectory(new File(Settings.getUserDirectoryName(), "icons")));
 
     if (OperatingSystem.isMacOs()) {
-      list.addAll(getThemesInDirectory(new File("/Library/Application Support/TV-Browser/icons")));
+      list.addAll(getThemesInDirectory(new File(Settings.getOSLibraryDirectoryName() + "icons")));
     }
     
     ArrayList<String> zipThemes = new ArrayList<String>(list.size());

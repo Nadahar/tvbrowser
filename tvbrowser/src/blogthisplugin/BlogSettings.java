@@ -59,6 +59,9 @@ public class BlogSettings extends PropertyBasedSettings {
         set(KEY_BLOG_SERVICE, BlogSettings.B2EVOLUTION);
         break;
       }
+      default: {
+      	remove(KEY_BLOG_SERVICE);
+      }
     }
   }
 

@@ -197,7 +197,7 @@ public class StringArrayProperty  extends Property {
     StringBuilder current = new StringBuilder();
     
     for (int i= 0;i<splitted.length;i++) {
-      if (splitted[i].endsWith("\\") && (countEndSlashes(splitted[i]) % 2 == 1)) {
+      if (splitted[i].endsWith("\\") && ((countEndSlashes(splitted[i]) & 1) == 1)) {
         current.append(splitted[i].substring(0, splitted[i].length()-1));
         current.append(',');
       } else {

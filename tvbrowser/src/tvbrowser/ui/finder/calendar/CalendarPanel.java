@@ -28,12 +28,9 @@ import javax.swing.JLabel;
 import javax.swing.JToggleButton;
 
 import tvbrowser.core.TvDataBase;
-import tvbrowser.ui.finder.DateSelector;
 import devplugin.Date;
-import devplugin.ProgressMonitor;
 
-public class CalendarPanel extends AbstractCalendarPanel implements
-    DateSelector, ProgressMonitor {
+public class CalendarPanel extends AbstractCalendarPanel {
 
   private static final int COLUMNS = 7;
   private static final int ROWS = 6;

@@ -18,8 +18,6 @@ package genreplugin;
 
 import java.awt.event.ActionEvent;
 
-import javax.swing.Action;
-
 import util.ui.Localizer;
 import devplugin.ContextMenuAction;
 
@@ -27,7 +25,7 @@ import devplugin.ContextMenuAction;
  * @author bananeweizen
  *
  */
-public class HideGenreAction extends ContextMenuAction implements Action {
+public class HideGenreAction extends ContextMenuAction {
 
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(HideGenreAction.class);
 

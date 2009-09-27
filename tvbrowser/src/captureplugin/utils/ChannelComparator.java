@@ -27,16 +27,14 @@ package captureplugin.utils;
 import java.util.Comparator;
 
 import devplugin.Channel;
-
 /**
  * Compares two Channels
  * 
  * @author bodum
  */
-public class ChannelComperator implements Comparator<Channel> {
+public class ChannelComparator implements Comparator<Channel> {
 
-  /**
-   * Compares two channels
+  /**ChannelComparatorwo channels
    */
   public int compare(Channel a, Channel b) {
 

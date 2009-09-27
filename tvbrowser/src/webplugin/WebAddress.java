@@ -39,7 +39,7 @@ import devplugin.Plugin;
 /**
  * a web address
  */
-public class WebAddress implements Cloneable {
+public final class WebAddress implements Cloneable {
   /** default icon for all web addresses */
   private static ImageIcon DEFAULT_ICON = null;
 

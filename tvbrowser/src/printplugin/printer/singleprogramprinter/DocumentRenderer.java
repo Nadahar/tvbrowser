@@ -85,7 +85,7 @@ public class DocumentRenderer implements Printable {
   /**
    * The constructor initializes the pFormat and PJob variables.
    * 
-   * @param pageFormat Foramt of the Page
+   * @param pageFormat Format of the Page
    */
   public DocumentRenderer(PageFormat pageFormat) {
     mPageFormat = pageFormat;
@@ -231,9 +231,9 @@ public class DocumentRenderer implements Printable {
         } else {
           mPageStartY = lastSize; 
         }
-        mPageStarts.add(new Double(mPageStartY));
+        mPageStarts.add(mPageStartY);
       } else {
-        mPageStartY =  (mPageStarts.get(pageIndex)).doubleValue();
+        mPageStartY = mPageStarts.get(pageIndex);
       }
       
       mPageEndY = height;
@@ -249,7 +249,7 @@ public class DocumentRenderer implements Printable {
       graphics2D.setClip(bounds);
       // Add Position of next Page
       if (pageIndex >= mPageStarts.size()-1) {
-        mPageStarts.add(new Double(mPageStartY+mPageEndY));
+        mPageStarts.add(Double.valueOf(mPageStartY+mPageEndY));
       }
       return Printable.PAGE_EXISTS;
     } else {

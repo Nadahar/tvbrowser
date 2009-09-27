@@ -131,10 +131,12 @@ public class MultiOr implements Block {
 
 
   public String toString() {
-    String temp = "(" + blocks[0];
+    StringBuilder temp = new StringBuilder(100);
+    temp.append('(').append(blocks[0]);
     for (int i = 1; i < blocks.length; i++) {
-      temp += " OR " + blocks[i].toString();
+      temp.append(" OR ").append(blocks[i].toString());
     }
-    return temp + ")";
+    temp.append(')');
+    return temp.toString();
   }
 }

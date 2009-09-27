@@ -125,12 +125,11 @@ public class SkinLNFSettings extends JDialog implements WindowClosingIf {
 
   private String[] getThemePacks() {
     final TreeSet<String> themepacks = new TreeSet<String>();
-
     themepacks.addAll(Arrays.asList(getThemePacks(new File("themepacks"))));
     themepacks.addAll(Arrays.asList(getThemePacks(new File(Settings.getUserDirectoryName(), "themepacks"))));
 
     if (OperatingSystem.isMacOs()) {
-      themepacks.addAll(Arrays.asList(getThemePacks(new File("/Library/Application Support/TV-Browser/themepacks"))));
+      themepacks.addAll(Arrays.asList(getThemePacks(new File(Settings.getOSLibraryDirectoryName() + "themepacks"))));
     }
 
     return themepacks.toArray(new String[themepacks.size()]);

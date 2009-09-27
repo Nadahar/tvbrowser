@@ -184,7 +184,8 @@ class HTMLTag implements Tag {
        try {
 				 result=new StringBuffer(new String(line.toString().getBytes(mEncoding)));
        } catch (UnsupportedEncodingException e) {
-				// ignore
+      	 // ignore
+				 result = new StringBuffer();
 			 }
      }
      else {

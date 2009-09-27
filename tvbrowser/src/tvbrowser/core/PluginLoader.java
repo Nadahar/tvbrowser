@@ -69,7 +69,9 @@ import devplugin.Version;
  */
 public class PluginLoader {
 
-  private static final String PLUGIN_INSTALL_EXTENSION = ".inst";
+  private static final String PLUGIN_PROXY_EXTENSION = ".jar.proxy";
+
+	private static final String PLUGIN_INSTALL_EXTENSION = ".inst";
 
   /** The logger for this class */
   private static java.util.logging.Logger mLog
@@ -374,12 +376,12 @@ public class PluginLoader {
         File settingsDir = new File(Settings.getUserSettingsDirName());
         File[] proxyFiles = settingsDir.listFiles(new FilenameFilter() {
           public boolean accept(File dir, String name) {
-            if (!name.endsWith(".jar.proxy")) {
+            if (!name.endsWith(PLUGIN_PROXY_EXTENSION)) {
               return false;
             }
-            String mainName = name.substring(0, name.length() - 10).toLowerCase();
+            String mainName = name.substring(0, name.length() - PLUGIN_PROXY_EXTENSION.length()).toLowerCase();
             for (String deactivatedId : deactivatedPluginArr) {
-              if (deactivatedId.indexOf(mainName)>0) {
+            	if (deactivatedId.contains(mainName)) {
                 return true;
               }
             }
@@ -622,7 +624,7 @@ public class PluginLoader {
     File settingsDir = new File(Settings.getUserSettingsDirName());
     File[] proxyFiles = settingsDir.listFiles(new FilenameFilter() {
       public boolean accept(File dir, String name) {
-        return name.endsWith(".jar.proxy");
+        return name.endsWith(PLUGIN_PROXY_EXTENSION);
       }});
     if (proxyFiles != null) {
       for (File proxyFile : proxyFiles) {

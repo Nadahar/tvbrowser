@@ -563,14 +563,15 @@ public class Localizer {
       return;
     }
     if (standardLocalizations == null) {
-      standardLocalizations = new HashMap<String, String>(20);
+      HashMap<String, String> std = new HashMap<String, String>(20);
       HashMap<String, String> standardResource = Localizer.getLocalizerFor(Localizer.class).mResource;
       for (Entry<String, String> entry : standardResource.entrySet()) {
         String standardKey = entry.getKey();
         if (standardKey.startsWith("Localizer.")) {
-          standardLocalizations.put(entry.getValue(), standardKey);
+          std.put(entry.getValue(), standardKey);
         }
       }
+      standardLocalizations = std;
     }
     if (standardLocalizations.containsKey(localizedMessage)) {
       String standardKey = standardLocalizations.get(localizedMessage);

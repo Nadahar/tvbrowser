@@ -27,14 +27,10 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumn;
 
-import tvbrowser.ui.finder.DateSelector;
 import devplugin.Date;
-import devplugin.ProgressMonitor;
 
-public class CalendarTablePanel extends AbstractCalendarPanel implements
-DateSelector, ProgressMonitor, ListSelectionListener {
+public class CalendarTablePanel extends AbstractCalendarPanel implements ListSelectionListener {
   private static final int COLUMNS = 7;
-  private static final int ROWS = 6;
 
   private JTable mTable;
   private CalendarTableModel mTableModel;

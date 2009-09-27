@@ -591,7 +591,7 @@ public class TVBrowser {
       } else if (argument.equalsIgnoreCase("-fullscreen") || argument.equalsIgnoreCase("-f")) {
         mFullscreen = true;
       } else if (argument.startsWith("-D")) {
-        if (argument.indexOf("=") > 0) {
+        if (argument.indexOf("=") >= 2) {
           String key = argument.substring(2, argument.indexOf("="));
           String value = argument.substring(argument.indexOf("=") + 1);
           if (key.equals("user.language")) {

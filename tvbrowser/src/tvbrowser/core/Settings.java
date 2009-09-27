@@ -62,6 +62,7 @@ import util.io.stream.InputStreamProcessor;
 import util.io.stream.ObjectInputStreamProcessor;
 import util.io.stream.ObjectOutputStreamProcessor;
 import util.io.stream.StreamUtilities;
+import util.misc.OperatingSystem;
 import util.settings.BooleanProperty;
 import util.settings.ByteProperty;
 import util.settings.ChannelArrayProperty;
@@ -148,6 +149,13 @@ public class Settings {
     String dir = new StringBuilder(System.getProperty("user.home")).append(
         File.separator).append(DEFAULT_USER_DIR).toString();
     return TVBrowser.isTransportable() ? new File("settings").getAbsolutePath() : mDefaultSettings.getProperty("userdir", dir);
+  }
+  
+  public static String getOSLibraryDirectoryName() {
+  	if (OperatingSystem.isMacOs()) {
+  		return "/Library/Application Support/TV-Browser/";
+  	}
+    return "";
   }
 
   public static String getUserSettingsDirName() {
