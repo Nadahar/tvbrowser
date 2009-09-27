@@ -419,7 +419,7 @@ public class AlphaColorChooser extends JDialog implements ChangeListener {
             for (int y = 0; y < getHeight(); y += 15) {
 
                 int start = 0;
-                if (y % 2 == 1) {
+                if ((y & 1) == 1) {
                     start = 15;
                 }
 

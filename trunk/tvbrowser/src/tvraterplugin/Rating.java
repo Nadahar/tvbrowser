@@ -223,7 +223,7 @@ public class Rating implements Serializable {
 	 * @throws IOException possible Error
 	 * @throws ClassNotFoundException possible Error
 	 */
-  private synchronized void readObject(java.io.ObjectInputStream s) throws IOException, ClassNotFoundException {
+  private void readObject(java.io.ObjectInputStream s) throws IOException, ClassNotFoundException {
     int version = s.readInt();
 		mTitle = (String) s.readObject();
 		if (version == 1) {

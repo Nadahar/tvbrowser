@@ -37,7 +37,7 @@ import devplugin.Program;
 /**
  * A combination of Start/End-Time and the Program
  */
-public class ProgramTime implements Cloneable {
+public final class ProgramTime implements Cloneable {
     /** Start-Time*/
     private Calendar mStart;
     /** End-Time */

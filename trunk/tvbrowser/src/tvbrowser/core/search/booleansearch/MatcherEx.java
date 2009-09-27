@@ -73,12 +73,13 @@ public class MatcherEx implements Block {
     }
 
     toTest = vtemp.toArray(new String[vtemp.size()]);
-    String regex = ".*(" + toTest[0];
+    StringBuilder regex = new StringBuilder(100);
+    regex.append(".*(").append(toTest[0]);
     for (int i = 1; i < toTest.length; i++) {
-      regex = regex + "\\s" + toTest[i];
+      regex.append("\\s").append(toTest[i]);
     }
-    regex = regex + ").*";
-    pattern = Pattern.compile(regex, flags);
+    regex.append(").*");
+    pattern = Pattern.compile(regex.toString(), flags);
 
     //mal kucken ob sich der pretest optimierten lässt:
     pretest = pretest.finish();

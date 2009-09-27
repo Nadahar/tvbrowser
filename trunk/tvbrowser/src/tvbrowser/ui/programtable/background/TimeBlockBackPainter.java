@@ -80,9 +80,7 @@ public class TimeBlockBackPainter extends AbstractBackPainter {
         .createImageAsynchronous(Settings.propTimeBlockWestImage2.getString());
 
     if (Settings.propTimeBlockShowWest.getBoolean()) {
-      if (mTableWest == null) {
-        mTableWest = new TimeBlockTableWest();
-      }
+      mTableWest = new TimeBlockTableWest();
     } else {
       mTableWest = null;
     }

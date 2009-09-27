@@ -47,7 +47,7 @@ import devplugin.Program;
  *
  * @author bodum
  */
-public class SimpleDevice implements DeviceIf {
+public final class SimpleDevice implements DeviceIf {
     /**
      * Translator
      */

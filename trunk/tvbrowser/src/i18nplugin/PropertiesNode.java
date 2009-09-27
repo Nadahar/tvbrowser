@@ -54,8 +54,7 @@ import util.io.stream.StreamUtilities;
  * 
  * @author bodum
  */
-public class PropertiesNode extends AbstractHierarchicalNode implements
-    LanguageNodeIf, FilterNodeIf {
+public class PropertiesNode extends AbstractHierarchicalNode implements FilterNodeIf {
   private Properties mProp;
   private JarFile mJarFile;
   private String mPropertiesFile;

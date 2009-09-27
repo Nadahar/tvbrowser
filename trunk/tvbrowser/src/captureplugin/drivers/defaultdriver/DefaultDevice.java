@@ -45,7 +45,7 @@ import devplugin.Program;
 /**
  * The Default-Device
  */
-public class DefaultDevice implements DeviceIf {
+public final class DefaultDevice implements DeviceIf {
     /** Driver */
     private DriverIf mDriver;
     /** Config */

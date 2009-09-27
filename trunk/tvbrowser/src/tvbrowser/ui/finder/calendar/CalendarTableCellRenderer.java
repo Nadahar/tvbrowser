@@ -98,8 +98,8 @@ public final class CalendarTableCellRenderer implements
     return mPanel;
   }
 
-  class DashedBorder implements Border {
-    int THICKNESS = 1;
+  private static class DashedBorder implements Border {
+    final static int THICKNESS = 1;
     Color color;
     int dashWidth;
     int dashHeight;

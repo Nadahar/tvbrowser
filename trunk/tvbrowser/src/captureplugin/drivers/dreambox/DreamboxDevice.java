@@ -50,7 +50,7 @@ import devplugin.Program;
 /**
  * The Dreambox-Device
  */
-public class DreamboxDevice implements DeviceIf {
+public final class DreamboxDevice implements DeviceIf {
     /**
      * Translator
      */

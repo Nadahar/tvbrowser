@@ -465,11 +465,10 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
    *         the array from the constructor call is returned.
    */
   public ProgramReceiveIf[] getPlugins() {
-
     if (mResultPluginArr==null) {
-      return mPluginArr;
+      return new ProgramReceiveIf[0];
     }
-    return mResultPluginArr;
+    return mResultPluginArr.clone();
   }
   
   public ProgramReceiveTarget[] getReceiveTargets() {

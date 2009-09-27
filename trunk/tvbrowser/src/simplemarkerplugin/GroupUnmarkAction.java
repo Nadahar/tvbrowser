@@ -23,7 +23,6 @@
 package simplemarkerplugin;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import devplugin.ContextMenuAction;
 import devplugin.PluginTreeNode;
@@ -39,8 +38,7 @@ import devplugin.PluginTreeNode;
  * @author René Mach
  * 
  */
-public class GroupUnmarkAction extends ContextMenuAction implements
-    ActionListener {
+public class GroupUnmarkAction extends ContextMenuAction {
 
   private static final long serialVersionUID = 1L;
   private PluginTreeNode mNode;

@@ -230,9 +230,8 @@ public class RepetitionDialog extends JDialog implements WindowClosingIf {
     case 4:
       days = 21;
       break;
-    case 5:
+    default:
       days = -1;
-      break;
     }
 
     SearchPlugin.getInstance().setRepetitionTimeSelection(

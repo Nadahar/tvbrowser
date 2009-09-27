@@ -991,30 +991,31 @@ public class Channel implements Comparable<Channel> {
    */
   public static String getLocalizedCategory(final int category) {
     if (categoryName == null) {
-      categoryName = new HashMap<Integer, String>(12);
-      categoryName.put(CATEGORY_NONE, mLocalizer.msg("categoryNone",
+      HashMap<Integer, String> catName = new HashMap<Integer, String>(12);
+      catName.put(CATEGORY_NONE, mLocalizer.msg("categoryNone",
           "Not categorized"));
-      categoryName.put(CATEGORY_TV, mLocalizer.msg("categoryTVAll", "TV"));
-      categoryName
+      catName.put(CATEGORY_TV, mLocalizer.msg("categoryTVAll", "TV"));
+      catName
           .put(CATEGORY_RADIO, mLocalizer.msg("categoryRadio", "Radio"));
-      categoryName.put(CATEGORY_CINEMA, mLocalizer.msg("categoryCinema",
+      catName.put(CATEGORY_CINEMA, mLocalizer.msg("categoryCinema",
           "Cinema"));
-      categoryName.put(CATEGORY_EVENTS, mLocalizer.msg("categoryEvents",
+      catName.put(CATEGORY_EVENTS, mLocalizer.msg("categoryEvents",
           "Events"));
-      categoryName.put(CATEGORY_DIGITAL, mLocalizer.msg("categoryDigital",
+      catName.put(CATEGORY_DIGITAL, mLocalizer.msg("categoryDigital",
           "Digitale"));
-      categoryName.put(CATEGORY_SPECIAL_MUSIC, mLocalizer.msg("categoryMusic",
+      catName.put(CATEGORY_SPECIAL_MUSIC, mLocalizer.msg("categoryMusic",
           "Musik"));
-      categoryName.put(CATEGORY_SPECIAL_SPORT, mLocalizer.msg("categorySport",
+      catName.put(CATEGORY_SPECIAL_SPORT, mLocalizer.msg("categorySport",
           "Sport"));
-      categoryName.put(CATEGORY_SPECIAL_NEWS, mLocalizer.msg("categoryNews",
+      catName.put(CATEGORY_SPECIAL_NEWS, mLocalizer.msg("categoryNews",
           "Nachrichten"));
-      categoryName.put(CATEGORY_SPECIAL_OTHER, mLocalizer.msg("categoryOthers",
+      catName.put(CATEGORY_SPECIAL_OTHER, mLocalizer.msg("categoryOthers",
           "Sonstige Sparten"));
-      categoryName.put(CATEGORY_PAY_TV, mLocalizer.msg("categoryPayTV",
+      catName.put(CATEGORY_PAY_TV, mLocalizer.msg("categoryPayTV",
           "Pay TV"));
-      categoryName.put(CATEGORY_PAYED_DATA_TV, mLocalizer.msg(
+      catName.put(CATEGORY_PAYED_DATA_TV, mLocalizer.msg(
           "categoryPayedData", "Payed Data"));
+      categoryName = catName;
     }
     return categoryName.get(category);
   }

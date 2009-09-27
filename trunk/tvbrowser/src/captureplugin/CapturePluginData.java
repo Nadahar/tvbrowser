@@ -39,7 +39,7 @@ import devplugin.Program;
 /**
  * This Class contains all needed Data
  */
-public class CapturePluginData implements Cloneable {
+public final class CapturePluginData implements Cloneable {
     /** Translator */
     private static final Localizer mLocalizer = Localizer.getLocalizerFor(CapturePluginData.class);
 

@@ -35,7 +35,7 @@ import javax.swing.tree.TreeNode;
  * 
  * @author bodum
  */
-public class PathNode extends AbstractHierarchicalNode implements LanguageNodeIf, FilterNodeIf {
+public class PathNode extends AbstractHierarchicalNode implements FilterNodeIf {
   
   /**
    * Create Path-Entry

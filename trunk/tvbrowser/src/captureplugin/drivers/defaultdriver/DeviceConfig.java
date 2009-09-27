@@ -35,7 +35,7 @@ import java.util.TreeMap;
 
 import util.ui.Localizer;
 import captureplugin.drivers.utils.IDGenerator;
-import captureplugin.utils.ChannelComperator;
+import captureplugin.utils.ChannelComparator;
 import devplugin.Channel;
 
 
@@ -53,7 +53,7 @@ public class DeviceConfig {
     private String mName = "";
     
     /** Channels */
-    private TreeMap<Channel, String> mChannels = new TreeMap<Channel, String>(new ChannelComperator());
+    private TreeMap<Channel, String> mChannels = new TreeMap<Channel, String>(new ChannelComparator());
 
     /** Programs that are marked */
     private ProgramTimeList mMarkedPrograms = new ProgramTimeList();
