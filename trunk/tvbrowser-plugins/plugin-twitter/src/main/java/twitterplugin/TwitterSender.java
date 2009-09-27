@@ -3,8 +3,6 @@ package twitterplugin;
 import java.awt.Window;
 import java.util.Properties;
 
-import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import twitter4j.Twitter;
@@ -21,12 +19,7 @@ public class TwitterSender {
   }
 
   public void send(Window parentWindow, Program program) {
-    TwitterDialog dialog;
-    if (parentWindow instanceof JDialog) {
-      dialog = new TwitterDialog((JDialog) parentWindow, program);
-    } else {
-      dialog = new TwitterDialog((JFrame) parentWindow, program);
-    }
+    TwitterDialog dialog = new TwitterDialog(parentWindow, program);
     dialog.setLocationRelativeTo(parentWindow);
     dialog.setVisible(true);
 
@@ -36,12 +29,7 @@ public class TwitterSender {
       String username = settings.getProperty(TwitterPlugin.USERNAME, "");
       String password;
       if ("false".equalsIgnoreCase(settings.getProperty(TwitterPlugin.STORE_PASSWORD, "false"))) {
-        final TwitterLoginDialog login;
-        if (parentWindow instanceof JDialog) {
-          login = new TwitterLoginDialog((JDialog)parentWindow, username, "", false);
-        } else {
-          login = new TwitterLoginDialog((JFrame)parentWindow, username, "", false);
-        }
+        final TwitterLoginDialog login = new TwitterLoginDialog(parentWindow, username, "", false);
         
         if (!(login.askLogin() == JOptionPane.OK_OPTION)) {
           return;

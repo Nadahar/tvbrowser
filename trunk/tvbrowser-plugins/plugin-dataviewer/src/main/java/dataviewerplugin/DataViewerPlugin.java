@@ -217,23 +217,25 @@ public final class DataViewerPlugin extends Plugin implements Runnable {
     table.addMouseMotionListener(new MouseMotionAdapter() {
       @Override
       public void mouseMoved(MouseEvent e) {
-        String toolTip = "<html>" + mDates[table.columnAtPoint(e.getPoint())]
-                                           + " " + channels.getValueAt(table.rowAtPoint(e.getPoint()), 0);
+				StringBuilder toolTip = new StringBuilder();
+				toolTip.append("<html>").append(
+						mDates[table.columnAtPoint(e.getPoint())]).append(' ').append(
+						channels.getValueAt(table.rowAtPoint(e.getPoint()), 0));
 
-        ArrayList<Program> list = mErrData[table.rowAtPoint(e.getPoint())][table
-                                                              .columnAtPoint(e.getPoint())];
+				ArrayList<Program> list = mErrData[table.rowAtPoint(e.getPoint())][table
+						.columnAtPoint(e.getPoint())];
 
-        if (list != null) {
-          for (int i = 0; i < list.size(); i++) {
-            Program p = list.get(i);
+				if (list != null) {
+					for (int i = 0; i < list.size(); i++) {
+						Program p = list.get(i);
+						toolTip.append("<br>").append(p.getTimeString()).append(' ')
+								.append(p.getTitle());
+					}
+				}
 
-            toolTip += "<br>" + p.getTimeString() + " " + p.getTitle();
-          }
-        }
+				toolTip.append("</html>");
 
-        toolTip += "</html>";
-
-        table.setToolTipText(toolTip);
+        table.setToolTipText(toolTip.toString());
       }
     });
     table.addMouseListener(new MouseAdapter() {

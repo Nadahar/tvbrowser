@@ -415,7 +415,7 @@ public class VirtualDataServiceSettingsPanel extends SettingsPanel implements Ac
 		return null;
 	}
 
-	private class ProgramTableModel extends DefaultTableModel
+	private static class ProgramTableModel extends DefaultTableModel
 	{
 		private static final long serialVersionUID = 1L;
 

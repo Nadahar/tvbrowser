@@ -327,7 +327,7 @@ public class URL4ProgramPlugin extends Plugin {
             if(column == 2) {
               Boolean oldValue = (Boolean)mUrlProgramTable.getValueAt(i, column);
               
-              mUrlProgramTable.setValueAt(new Boolean(!oldValue.booleanValue()),i,column);
+              mUrlProgramTable.setValueAt(!oldValue.booleanValue(),i,column);
             }
           }
           else
@@ -397,7 +397,7 @@ public class URL4ProgramPlugin extends Plugin {
     mDialog.dispose();
   }
   
-  class ProgramUrlTableModel extends DefaultTableModel {
+  private static class ProgramUrlTableModel extends DefaultTableModel {
 
     private static final long serialVersionUID = 1L;
 
@@ -466,7 +466,7 @@ public class URL4ProgramPlugin extends Plugin {
     }
   }
   
-  private class UrlTableRenderer extends DefaultTableCellRenderer {
+  private static class UrlTableRenderer extends DefaultTableCellRenderer {
     public Component getTableCellRendererComponent(JTable table, Object value,boolean isSelected, boolean hasFocus, int row, int column)  {      
       
       JCheckBox box = new JCheckBox(mLocalizer.msg("full","Show complete link"),((Boolean)value).booleanValue());

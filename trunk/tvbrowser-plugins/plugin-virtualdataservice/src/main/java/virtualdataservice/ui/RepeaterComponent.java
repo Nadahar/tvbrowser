@@ -68,9 +68,6 @@ public class RepeaterComponent extends JPanel
 				mRepeater.removeAll();
 				switch (mSchedule.getSelectedIndex())
 				{
-					case 0:
-						mRepeater.add(new DailyRepeaterPanel());
-						break;
 					case 1:
 						mRepeater.add(new WeeklyRepeaterPanel());
 						break;
@@ -80,6 +77,8 @@ public class RepeaterComponent extends JPanel
 					case 3:
 						mRepeater.add(new YearlyRepeaterPanel());
 						break;
+					default:
+						mRepeater.add(new DailyRepeaterPanel());
 				}
 				mRepeater.updateUI();
 			}
