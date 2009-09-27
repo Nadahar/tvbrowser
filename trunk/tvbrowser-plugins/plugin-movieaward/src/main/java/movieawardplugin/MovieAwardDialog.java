@@ -62,8 +62,7 @@ public class MovieAwardDialog extends JDialog implements WindowClosingIf {
 
     // Bolle Edit: Styles/Classes for formatting text added to the
     // JEditorPane
-    String stylesheetDef = new String();
-    stylesheetDef = "<head><style type=\"text/css\">"
+    String stylesheetDef = "<head><style type=\"text/css\">"
         + ".headlineSmall { line-height:100%;text-indent:0em;font-size:16 pt; color:#000000;font-family:Verdana, Arial, Helvetica;}"
         + ".headlineFilm { line-height:110%;margin-bottom:5 px;text-indent:0em;font-size:20 pt; color:#003366; font-weight:bold;font-family:Verdana, Arial, Helvetica;}"
         + ".category { line-height:100%;font-size:12 pt; color:#000000; font-family: Verdana, Arial, Helvetica;}"
