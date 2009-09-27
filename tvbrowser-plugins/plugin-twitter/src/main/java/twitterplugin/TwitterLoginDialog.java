@@ -2,14 +2,13 @@ package twitterplugin;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Frame;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -48,38 +47,9 @@ public final class TwitterLoginDialog extends JDialog implements
    * @param password Password
    * @param storePassword store password ?
    */
-  public TwitterLoginDialog(JFrame owner, String username, String password, boolean storePassword) {
-    super(owner, true);
-    mUsername = username;
-    mPassword = password;
-    mStore = storePassword;
-    createGui();
-  }
-
-  /**
-   * Create Dialog
-   * @param owner Parent-Dialog
-   * @param username Username
-   * @param password Password
-   * @param storePassword store password ?
-   */
-  public TwitterLoginDialog(JDialog owner, String username, String password, boolean storePassword) {
-    super(owner, true);
-    mUsername = username;
-    mPassword = password;
-    mStore = storePassword;
-    createGui();
-  }
-
-  /**
-   * Create Dialog
-   * @param owner Parent-Frame
-   * @param username Username
-   * @param password Password
-   * @param storePassword store password ?
-   */
-  public TwitterLoginDialog(Frame owner, String username, String password, boolean storePassword) {
-    super(owner, true);
+  public TwitterLoginDialog(Window owner, String username, String password, boolean storePassword) {
+    super(owner);
+    setModal(true);
     mUsername = username;
     mPassword = password;
     mStore = storePassword;

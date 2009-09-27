@@ -1,8 +1,6 @@
 package twitterplugin;
 
 import java.awt.Color;
-import java.awt.Dialog;
-import java.awt.Frame;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -36,8 +34,9 @@ public final class TwitterDialog extends JDialog implements WindowClosingIf {
   private JEditorPane mMessage = new JEditorPane();
   private boolean mOkWasPressed = false;
 
-  public TwitterDialog(final Dialog parentDialog, final Program program) {
-    super(parentDialog, true);
+  public TwitterDialog(final Window parentDialog, final Program program) {
+    super(parentDialog);
+    setModal(true);
     initialize(parentDialog, program);
   }
 
@@ -45,11 +44,6 @@ public final class TwitterDialog extends JDialog implements WindowClosingIf {
     setTitle(mLocalizer.msg("title", "Enter Twitter Message"));
     createGui(program);
     setLocationRelativeTo(parent);
-  }
-
-  public TwitterDialog(final Frame parentFrame, final Program program) {
-    super(parentFrame, true);
-    initialize(parentFrame, program);
   }
 
   private void createGui(final Program program) {
