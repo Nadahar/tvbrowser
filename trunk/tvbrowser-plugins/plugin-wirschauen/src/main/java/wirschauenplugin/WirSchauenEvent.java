@@ -319,11 +319,12 @@ public class WirSchauenEvent extends DefaultHandler
    */
   public void setOmdbUrl(final String omdbUrl)
   {
-    if (omdbUrl == null)
-    {
-      this.mOmdbUrl = omdbUrl;
+    if (omdbUrl != null) {
+      this.mOmdbUrl = omdbUrl.trim();
     }
-    this.mOmdbUrl = omdbUrl.trim();
+    else {
+      this.mOmdbUrl = null;
+    }
   }
   /**
    * @return the genre
@@ -337,11 +338,12 @@ public class WirSchauenEvent extends DefaultHandler
    */
   public void setGenre(final String genre)
   {
-    if (genre == null)
-    {
-      this.mGenre = genre;
+    if (genre != null) {
+      this.mGenre = genre.trim();
     }
-    this.mGenre = genre.trim();
+    else {
+      this.mGenre = null;
+    }
   }
   /**
    * @return the premiere
@@ -439,11 +441,12 @@ public class WirSchauenEvent extends DefaultHandler
    */
   public void setDesc(final String desc)
   {
-    if (desc == null)
-    {
-      this.mDesc = desc;
+    if (desc != null) {
+      this.mDesc = desc.trim();
     }
-    this.mDesc = desc.trim();
+    else {
+      this.mDesc = null;
+    }
   }
 
   /**

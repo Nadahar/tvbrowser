@@ -58,7 +58,7 @@ public final class WirSchauenPlugin extends Plugin {
   /**
    * Localizer
    */
-  protected static final Localizer mLocalizer = Localizer.getLocalizerFor(WirSchauenPlugin.class);
+  static final Localizer mLocalizer = Localizer.getLocalizerFor(WirSchauenPlugin.class);
 
   private static WirSchauenPlugin INSTANCE;
 
