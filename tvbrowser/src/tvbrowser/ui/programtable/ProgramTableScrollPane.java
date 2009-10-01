@@ -184,8 +184,8 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
       scrollPos.y = 0;
     }
 
-    int max = mProgramTable.getHeight() - getViewport().getHeight();
-    if (max > 0 && scrollPos.y > max) {
+    int max = Math.max(0, mProgramTable.getHeight() - getViewport().getHeight());
+    if (scrollPos.y > max) {
       scrollPos.y = max;
     }
 
