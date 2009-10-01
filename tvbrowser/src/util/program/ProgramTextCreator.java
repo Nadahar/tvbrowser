@@ -1025,7 +1025,8 @@ public class ProgramTextCreator {
   public static Object[] getDefaultOrder() {
     return new Object[] {
         ProgramFieldType.GENRE_TYPE,
-        ProgramFieldType.DESCRIPTION_TYPE,        
+        ProgramFieldType.DESCRIPTION_TYPE,
+        ProgramFieldType.ADDITIONAL_INFORMATION_TYPE,
         ProgramFieldType.RATING_TYPE,
         ProgramFieldType.ORIGIN_TYPE,
         ProgramFieldType.DIRECTOR_TYPE,
