@@ -281,8 +281,41 @@ public class ProgramFieldType {
    */
   public static final ProgramFieldType PRODUCTION_COMPANY_TYPE
        = new ProgramFieldType(37, TEXT_FORMAT, true, "production company",
-                              "productionCompany", "Production company");  
+                              "productionCompany", "Production company"); 
+  
+  /**
+   * Age rating. This is the text version, whereas "age limit" should
+   * contain the age in years.
+   * 
+   * @since 3.0
+   * @see AGE_LIMIT_TYPE
+   */
+  public static final ProgramFieldType AGE_RATING_TYPE
+  = new ProgramFieldType(38, TEXT_FORMAT, true, "age rating",
+                         "ageRating", "Age rating"); 
 
+  /**
+   * Last production year if a program was produced over several years.
+   * First production year has then to be added to PRODUCTION_YEAR_TYPE.
+   * 
+   * @since 3.0
+   * @see PRODUCTION_YEAR_TYPE
+   */
+  public static final ProgramFieldType LAST_PRODUCTION_YEAR_TYPE
+  = new ProgramFieldType(39, INT_FORMAT, true, "last production year",
+                         "lastProductionYear", "Last production year");
+
+  /**
+   * Background information that does not belong into the description of
+   * the program. E.g. star portraits, awards, reception.
+   * 
+   * @since 3.0
+   */
+  public static final ProgramFieldType ADDITIONAL_INFORMATION_TYPE
+  = new ProgramFieldType(40, TEXT_FORMAT, true, "additional information",
+                         "additionalInformation", "Additional information");
+
+  
   private int mTypeId;
 
   private String mName;
