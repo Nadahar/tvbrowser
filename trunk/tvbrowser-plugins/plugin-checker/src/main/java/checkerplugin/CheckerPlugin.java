@@ -69,8 +69,7 @@ public class CheckerPlugin extends Plugin {
 
   private PluginInfo mPluginInfo;
 
-  private ImageIcon mWarnIcon = Plugin.getPluginManager().getIconFromTheme(
-      this, "status", "dialog-warning", 16);
+  private ImageIcon mWarnIcon = createImageIcon("status", "dialog-warning", 16);
 
   private PluginTreeNode mRootNode = new PluginTreeNode(this, false);
 
@@ -520,14 +519,16 @@ public class CheckerPlugin extends Plugin {
 
   @Override
   public ActionMenu getButtonAction() {
-    return new ActionMenu(new AbstractAction(mLocalizer.msg("action.check",
+    AbstractAction action = new AbstractAction(mLocalizer.msg("action.check",
         "Start check"), mWarnIcon) {
 
       @Override
       public void actionPerformed(ActionEvent e) {
         runAllChecks();
       }
-    });
+    };
+    action.putValue(Plugin.BIG_ICON, createImageIcon("status", "dialog-warning", 22));
+    return new ActionMenu(action);
   }
 
   @Override
