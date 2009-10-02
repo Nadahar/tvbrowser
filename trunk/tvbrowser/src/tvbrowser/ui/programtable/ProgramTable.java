@@ -738,9 +738,9 @@ public class ProgramTable extends JPanel
    * columns where the program is running at the given time
    * 
    * @param minutesAfterMidnight
-   * @return
+   * @return y offset
    */
-  public int getTimeY(int minutesAfterMidnight) {
+  protected int getTimeY(final int minutesAfterMidnight) {
     // Get the total time y
     int totalTimeY = 0;
     int parts = 0;
@@ -801,6 +801,9 @@ public class ProgramTable extends JPanel
 
       // It was between current and previous program
       if (startTime > minutesAfterMidnight) {
+        if (row == 0) {
+          return 0; // there is no panel for this time at all, do not take this column into account
+        }
         return timeY;
       }
       
