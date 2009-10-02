@@ -878,6 +878,17 @@ public class ProgramTextCreator {
           text += " " + temp;
         }
       }
+      temp = prog
+      .getIntFieldAsString(ProgramFieldType.LAST_PRODUCTION_YEAR_TYPE);
+      if (temp != null && temp.trim().length() > 0) {
+        if (text == null || text.trim().length() < 1) {
+          name = ProgramFieldType.LAST_PRODUCTION_YEAR_TYPE.getLocalizedName();
+          text = temp;
+        } else {
+         
+          text += " - " + temp;
+        }
+      }      
     }
 
     if (text == null || text.trim().length() < 1) {
