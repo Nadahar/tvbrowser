@@ -243,8 +243,8 @@ public class CaptureExecute {
         
         // wait until the process has exited, max MaxTimouts
         
-        if (mData.getTimeOut() > 0 ){
-            while (time < mData.getTimeOut() * 1000) {
+        if (mData.getTimeout() > 0 ){
+            while (time < mData.getTimeout() * 1000) {
                 try {
                     Thread.sleep(100);
                     time += 100;
@@ -266,7 +266,7 @@ public class CaptureExecute {
             }
         }
         
-        while (time < mData.getTimeOut() * 1000) {
+        while (time < mData.getTimeout() * 1000) {
             try {
                 Thread.sleep(100);
                 time += 100;

@@ -114,7 +114,7 @@ public class SettingsPanel extends ScrollableJPanel implements ActionListener, C
       mUserPwd.setText(mData.getPassword());
       
       mMaxSimult = new JSpinner(new SpinnerNumberModel(mData.getMaxSimultanious(), 1, null, 1));
-      mMaxTimeout = new JSpinner(new SpinnerNumberModel(mData.getTimeOut(), -1, 999, 1));
+      mMaxTimeout = new JSpinner(new SpinnerNumberModel(mData.getTimeout(), -1, 999, 1));
 
       mCheckReturn = new JCheckBox(mLocalizer.msg("CheckError", "Check if returns Error"), mData.useReturnValue());
       mShowOnError = new JCheckBox(mLocalizer.msg("ShowResultOnError","Show Result-Dialog only on Error"), mData.getDialogOnlyOnError());
@@ -235,7 +235,7 @@ public class SettingsPanel extends ScrollableJPanel implements ActionListener, C
       if(e.getSource().equals(mMaxSimult)) {
         mData.setMaxSimultanious((Integer) mMaxSimult.getValue());
       } else if(e.getSource().equals(mMaxTimeout)) {
-        mData.setTimeOut((Integer) mMaxTimeout.getValue());
+        mData.setTimeout((Integer) mMaxTimeout.getValue());
       } else if(e.getSource().equals(mPreTimeSpinner)) {
         mData.setPreTime((Integer) mPreTimeSpinner.getValue());
       } else if(e.getSource().equals(mPostTimeTextField)) {
