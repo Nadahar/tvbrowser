@@ -147,7 +147,7 @@ public class DeviceConfig {
         setDialogOnlyOnError(data.getDialogOnlyOnError());
         setOnlyFuturePrograms(data.getOnlyFuturePrograms());
         setParamList(data.getParamList());
-        setTimeOut(data.getTimeOut());
+        setTimeout(data.getTimeout());
         setVariables(data.getVariables());
         setUseTimeZone(data.useTimeZone());
         setTimeZone(data.getTimeZone());
@@ -435,7 +435,7 @@ public class DeviceConfig {
      * Set the sec to timeout
      * @param sec Secs
      */
-    public void setTimeOut(int sec) {
+    public void setTimeout(int sec) {
         mMaxTimeout = sec;
     }
     
@@ -443,7 +443,7 @@ public class DeviceConfig {
      * Get the Timeout in secs
      * @return Timeout in secs
      */
-    public int getTimeOut() {
+    public int getTimeout() {
         return mMaxTimeout;
     }
     
