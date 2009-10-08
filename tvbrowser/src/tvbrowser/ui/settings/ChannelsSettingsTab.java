@@ -39,9 +39,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Timer;
@@ -371,7 +371,14 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
     panel.addAncestorListener(new AncestorListener() {
       public void ancestorRemoved(AncestorEvent event) {
         Settings.propSelectedChannelCategoryIndex.setByte((byte)mCategoryCB.getSelectedIndex());
-        Settings.propSelectedChannelCountryIndex.setShort((short)mCountryCB.getSelectedIndex());
+        String country = "";
+        if (mCountryCB.getSelectedIndex() >= 0) {
+          Object object = ((FilterItem)mCountryCB.getSelectedItem()).getValue();
+          if (object != null) {
+            country = object.toString();
+          }
+        }
+        Settings.propSelectedChannelCountry.setString(country);
       }
 
       public void ancestorAdded(AncestorEvent event) {}
@@ -572,20 +579,25 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
     mCountryCB.removeAllItems();
     mCountryCB.addItem(new FilterItem(mLocalizer.msg("allCountries",
         "All Countries"), null));
-    FilterItem[] items = new FilterItem[countries.size()];
-    Iterator<String> iter = countries.iterator();
-    for (int i = 0; i < countries.size(); i++) {
-      String country = iter.next();
+    ArrayList<FilterItem> items = new ArrayList<FilterItem>(countries.size());
+    for (String country : countries) {
       Locale locale = new Locale(Locale.getDefault().getLanguage(), country);
-      items[i] = new FilterItem(locale.getDisplayCountry(), country);
+      items.add(new FilterItem(locale.getDisplayCountry(), country));
     }
-    Arrays.sort(items);
+    Collections.sort(items);
+    
+    String defaultCountry = Settings.propSelectedChannelCountry.getString(); 
     for (FilterItem item : items) {
       mCountryCB.addItem(item);
+      // select last used country (or default country of this system)
+      if (!defaultCountry.isEmpty() && defaultCountry.equalsIgnoreCase(item.getValue().toString())) {
+        mCountryCB.setSelectedIndex(mCountryCB.getItemCount() - 1);
+      }
     }
     
-    if(Settings.propSelectedChannelCountryIndex.getShort() < mCountryCB.getItemCount()) {
-      mCountryCB.setSelectedIndex(Settings.propSelectedChannelCountryIndex.getShort());
+    // select "all countries" if nothing else matches
+    if(mCountryCB.getSelectedIndex() == -1) {
+      mCountryCB.setSelectedIndex(0);
     }
   }
 

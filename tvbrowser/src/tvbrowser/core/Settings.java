@@ -37,6 +37,7 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Properties;
 import java.util.logging.Level;
 
@@ -1388,9 +1389,12 @@ public class Settings {
   public static final ByteProperty propSelectedChannelCategoryIndex = new ByteProperty(
       mProp, "selectedChannelCategoryIndex", (byte)1);
 
-  /** Saves the selected channel country filter index */
-  public static final ShortProperty propSelectedChannelCountryIndex = new ShortProperty(
-      mProp, "selectedChannelCountryIndex", (short)0);
+  /**
+   * selected channel country filter in channel settings
+   * @since 3.0
+   */
+  public static final StringProperty propSelectedChannelCountry = new StringProperty(
+      mProp, "selectedChannelCountry", Locale.getDefault().getCountry().toLowerCase());
 
   public static final BooleanProperty propAutoDataDownloadEnabled = new BooleanProperty(
       mProp, "autoDataDownloadEnabled", true);
