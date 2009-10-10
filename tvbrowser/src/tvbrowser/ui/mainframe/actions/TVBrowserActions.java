@@ -142,7 +142,7 @@ public final class TVBrowserActions {
         return mLocalizer.msg(getKey() + ".menu.win", "&Options");
       }
       else {
-        return mLocalizer.msg(getKey() + "settings.menu", "&Settings");
+        return mLocalizer.msg(getKey() + ".menu", "&Settings");
       }
     };
   };
