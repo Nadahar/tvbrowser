@@ -49,7 +49,6 @@ import javax.swing.JRadioButtonMenuItem;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
-import tvbrowser.TVBrowser;
 import tvbrowser.core.DateListener;
 import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataBase;
@@ -64,9 +63,10 @@ import tvbrowser.extras.common.InternalPluginProxyIf;
 import tvbrowser.extras.common.InternalPluginProxyList;
 import tvbrowser.ui.filter.dlgs.SelectFilterPopup;
 import tvbrowser.ui.mainframe.MainFrame;
+import tvbrowser.ui.mainframe.actions.TVBrowserAction;
+import tvbrowser.ui.mainframe.actions.TVBrowserActions;
 import util.ui.Localizer;
 import util.ui.ScrollableMenu;
-import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 import devplugin.ActionMenu;
 import devplugin.Channel;
@@ -75,7 +75,7 @@ import devplugin.Date;
 import devplugin.Plugin;
 import devplugin.ProgressMonitor;
 
-public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateListener {
+public class DefaultToolBarModel implements ToolBarModel, DateListener {
 
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer
       .getLocalizerFor(DefaultToolBarModel.class);
@@ -118,11 +118,6 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
     return sInstance;
   }
 
-  public void setPluginViewButtonSelected(boolean arg) {
-    mPluginViewAction
-        .putValue(ToolBar.ACTION_IS_SELECTED, Boolean.valueOf(arg));
-  }
-
   public void setFilterButtonSelected(boolean arg) {
     mFilterAction.putValue(ToolBar.ACTION_IS_SELECTED, Boolean.valueOf(arg));
     
@@ -142,87 +137,23 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
   private void createAvailableActions() {
     mAvailableActions = new HashMap<String, Action>();
     actionOrder = new ArrayList<Action>();
-    mUpdateAction = createAction(TVBrowser.mLocalizer.msg("button.update",
-        "Update"), "#update", MainFrame.mLocalizer.msg("menuinfo.update", ""),
-        IconLoader.getInstance().getIconFromTheme("apps",
-            "system-software-update", 16), IconLoader.getInstance()
-            .getIconFromTheme("apps", "system-software-update", 22),
-        ToolBar.BUTTON_ACTION, this);
-    mSettingsAction = createAction(Localizer.getLocalization(Localizer.I18N_SETTINGS),
-        "#settings", MainFrame.mLocalizer.msg("menuinfo.settings",
-        ""), TVBrowserIcons.preferences(TVBrowserIcons.SIZE_SMALL), TVBrowserIcons.preferences(TVBrowserIcons.SIZE_LARGE), ToolBar.BUTTON_ACTION, this);
-    mFilterAction = createAction(TVBrowser.mLocalizer.msg("button.filter",
-        "Filter"), "#filter", MainFrame.mLocalizer.msg("menuinfo.filter", ""),
-        IconLoader.getInstance().getIconFromTheme("actions","view-filter-list",16),
-        IconLoader.getInstance().getIconFromTheme("actions","view-filter-list",22),
-        ToolBar.TOOGLE_BUTTON_ACTION, this);
-    mPluginViewAction = createAction(TVBrowser.mLocalizer.msg(
-        "button.pluginView", "Plugin View"), "#pluginView",
-        MainFrame.mLocalizer.msg("menuinfo.pluginView", ""), IconLoader
-        .getInstance().getIconFromTheme("actions", "view-tree", 16),
-        IconLoader.getInstance().getIconFromTheme("actions",
-            "view-tree", 22),
-        ToolBar.TOOGLE_BUTTON_ACTION, this);
-    String scrollTo = MainFrame.mLocalizer
-        .msg("menuinfo.scrollTo", "Scroll to")
-        + ": ";
-    mScrollToNowAction = createAction(TVBrowser.mLocalizer.msg("button.now",
-        "Now"), "#scrollToNow", scrollTo
-        + TVBrowser.mLocalizer.msg("button.now", "Now"), IconLoader
-        .getInstance().getIconFromTheme("actions", "scroll-to-now", 16),
-        IconLoader.getInstance().getIconFromTheme("actions",
-            "scroll-to-now", 22), ToolBar.BUTTON_ACTION, this);
-    mGoToPreviousDayAction = createAction(mLocalizer.msg(
-            "goToPreviousDay", "Previous day"), "#goToPreviousDay", 
-            mLocalizer.msg("goToPreviousToolTip", "Previous day"), TVBrowserIcons.left(TVBrowserIcons.SIZE_SMALL), TVBrowserIcons.left(TVBrowserIcons.SIZE_LARGE),
-            ToolBar.BUTTON_ACTION, this);
-    mGoToTodayAction = createAction(Localizer.getLocalization(
-        Localizer.I18N_TODAY), "#goToToday", scrollTo
-        + Localizer.getLocalization(Localizer.I18N_TODAY), TVBrowserIcons.down(TVBrowserIcons.SIZE_SMALL),
-        TVBrowserIcons.down(TVBrowserIcons.SIZE_LARGE), ToolBar.BUTTON_ACTION, this);
-    mGoToNextDayAction = createAction(mLocalizer.msg(
-        "goToNextDay", "Next day"), "#goToNextDay", 
-        mLocalizer.msg("goToNextToolTip", "Next day"), TVBrowserIcons.right(TVBrowserIcons.SIZE_SMALL), TVBrowserIcons.right(TVBrowserIcons.SIZE_LARGE),
-        ToolBar.BUTTON_ACTION, this);
-    mGoToPreviousWeekAction = createAction(mLocalizer.msg(
-        "goToPreviousWeek", "Previous week"), "#goToPreviousWeek", 
-        mLocalizer.msg("goToPreviousWeekToolTip", "Previous week"), TVBrowserIcons.previousWeek(TVBrowserIcons.SIZE_SMALL), TVBrowserIcons.previousWeek(TVBrowserIcons.SIZE_LARGE),
-        ToolBar.BUTTON_ACTION, this);
-    mGoToNextWeekAction = createAction(mLocalizer.msg(
-        "goToNextWeek", "Next week"), "#goToNextWeek", 
-        mLocalizer.msg("goToNextWeekToolTip", "Next week"), TVBrowserIcons.nextWeek(TVBrowserIcons.SIZE_SMALL), TVBrowserIcons.nextWeek(TVBrowserIcons.SIZE_LARGE),
-        ToolBar.BUTTON_ACTION, this);
-    mGoToDateAction = createAction(mLocalizer.msg("goToDate", "Go to date"),
-            "#goToDate", mLocalizer.msg("goToDateTooltip", "Go to a date"),
-            IconLoader.getInstance().getIconFromTheme("actions",
-                "go-to-date-list", 16), IconLoader.getInstance()
-                .getIconFromTheme("actions", "go-to-date-list", 22),
-            ToolBar.TOOGLE_BUTTON_ACTION, this);
-    mScrollToChannelAction = createAction(mLocalizer.msg("scrollToChannel",
-        "Scroll to channel"), "#scrollToChannel", mLocalizer.msg("scrollToChannelTooltip",
-        "Scroll to a channel"), IconLoader.getInstance().getIconFromTheme(
-        "actions", "scroll-to-channel-list", 16),IconLoader.getInstance().getIconFromTheme(
-        "actions", "scroll-to-channel-list", 22), ToolBar.TOOGLE_BUTTON_ACTION, this);
-    mScrollToTimeAction = createAction(mLocalizer.msg("scrollToTime", "Scroll to time"),
-        "#scrollToTime", mLocalizer.msg("scrollToTimeTooltip", "Scroll to a time"),
-        IconLoader.getInstance().getIconFromTheme("actions", "scroll-to-time-list", 16),
-        IconLoader.getInstance().getIconFromTheme("actions", "scroll-to-time-list", 22),
-        ToolBar.TOOGLE_BUTTON_ACTION, this);
-    mFontSizeSmallerAction = createAction(mLocalizer.msg("fontSizeSmaller", "Smaller fonts"),
-        "#fontSizeSmaller", mLocalizer.msg("fontSizeSmallerToolTip", "Smaller font size in program table"),
-        TVBrowserIcons.zoomOut(TVBrowserIcons.SIZE_SMALL),
-        TVBrowserIcons.zoomOut(TVBrowserIcons.SIZE_LARGE),
-        ToolBar.BUTTON_ACTION, this);
-    mFontSizeLargerAction = createAction(mLocalizer.msg("fontSizeLarger", "Larger fonts"),
-        "#fontSizeLarger", mLocalizer.msg("fontSizeLargerToolTip", "Larger font size in program table"),
-        TVBrowserIcons.zoomIn(TVBrowserIcons.SIZE_SMALL),
-        TVBrowserIcons.zoomIn(TVBrowserIcons.SIZE_LARGE),
-        ToolBar.BUTTON_ACTION, this);
-
+    mUpdateAction = createAction(TVBrowserActions.update);
+    mSettingsAction = createAction(TVBrowserActions.settings);
+    mFilterAction = createAction(TVBrowserActions.filter);
+    mPluginViewAction = createAction(TVBrowserActions.pluginView);
+    mScrollToNowAction = createAction(TVBrowserActions.scrollToNow);
+    mGoToPreviousDayAction = createAction(TVBrowserActions.goToPreviousDay);
+    mGoToTodayAction = createAction(TVBrowserActions.goToToday);
+    mGoToNextDayAction = createAction(TVBrowserActions.goToNextDay);
+    mGoToPreviousWeekAction = createAction(TVBrowserActions.goToPreviousWeek);
+    mGoToNextWeekAction = createAction(TVBrowserActions.goToNextWeek);
+    mGoToDateAction = createAction(TVBrowserActions.goToDate);
+    mScrollToChannelAction = createAction(TVBrowserActions.scrollToChannel);
+    mScrollToTimeAction = createAction(TVBrowserActions.scrollToTime);
+    mFontSizeSmallerAction = createAction(TVBrowserActions.fontSizeSmaller);
+    mFontSizeLargerAction = createAction(TVBrowserActions.fontSizeLarger);
     updateTimeButtons();
 
-    setPluginViewButtonSelected(Settings.propShowPluginView.getBoolean());
-    
     InternalPluginProxyIf[] internalPlugins = InternalPluginProxyList.getInstance().getAvailableProxys();
     
     for (InternalPluginProxyIf internalPlugin : internalPlugins) {
@@ -609,35 +540,10 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
     return action;
   }
 
-  public void actionPerformed(ActionEvent event) {
-    Action source = (Action) event.getSource();
-    if (source == mUpdateAction) {
-      MainFrame.getInstance().updateTvData();
-    } else if (source == mSettingsAction) {
-      MainFrame.getInstance().showSettingsDialog();
-    } else if (source == mFilterAction || source == mGoToDateAction
-        || source == mScrollToChannelAction || source == mScrollToTimeAction) {
-      showPopupMenu(source);
-    } else if (source == mPluginViewAction) {
-      MainFrame.getInstance().setShowPluginOverview(!MainFrame.getInstance().isShowingPluginOverview());
-      setPluginViewButtonSelected(MainFrame.getInstance().isShowingPluginOverview());
-    } else if (source == mScrollToNowAction) {
-      MainFrame.getInstance().scrollToNow();
-    } else if (source == mGoToTodayAction) {
-      MainFrame.getInstance().goToToday();
-    } else if (source == mGoToNextDayAction) {
-      MainFrame.getInstance().goToNextDay();
-    } else if (source == mGoToPreviousDayAction) {
-      MainFrame.getInstance().goToPreviousDay();
-    } else if (source == mGoToPreviousWeekAction) {
-      MainFrame.getInstance().goToPreviousWeek();
-    } else if (source == mGoToNextWeekAction) {
-      MainFrame.getInstance().goToNextWeek();
-    } else if (source == mFontSizeLargerAction) {
-      MainFrame.getInstance().changeFontSize(+1);
-    } else if (source == mFontSizeSmallerAction) {
-      MainFrame.getInstance().changeFontSize(-1);
-    }
+  private Action createAction(final TVBrowserAction action) {
+    mAvailableActions.put(action.getToolbarIdentifier(), action);
+    actionOrder.add(action);
+    return action;
   }
 
   public Action[] getActions() {
@@ -668,8 +574,7 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
   }
   
   protected void showStopButton() {
-    mUpdateAction.putValue(Action.NAME, TVBrowser.mLocalizer.msg("button.stop",
-        "Stop"));
+    mUpdateAction.putValue(Action.NAME, TVBrowserActions.update.getToolbarText());
     mUpdateAction.putValue(Action.SMALL_ICON, IconLoader.getInstance()
         .getIconFromTheme("actions", "process-stop", 16));
     mUpdateAction.putValue(Plugin.BIG_ICON, IconLoader.getInstance()
@@ -679,8 +584,7 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
   }
 
   protected void showUpdateButton() {
-    mUpdateAction.putValue(Action.NAME, TVBrowser.mLocalizer.msg(
-        "button.update", "Update"));
+    mUpdateAction.putValue(Action.NAME, TVBrowserActions.update.getToolbarText());
     mUpdateAction.putValue(Action.SMALL_ICON, IconLoader.getInstance()
         .getIconFromTheme("apps", "system-software-update", 16));
     mUpdateAction.putValue(Plugin.BIG_ICON, IconLoader.getInstance()
@@ -690,7 +594,7 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
 
   }
 
-  private void showPopupMenu(final Action item) {
+  void showPopupMenu(final Action item) {
     final AbstractButton btn = (AbstractButton) item
         .getValue(ToolBar.ACTION_VALUE);
 
@@ -739,8 +643,7 @@ public class DefaultToolBarModel implements ToolBarModel, ActionListener, DateLi
         popup.addSeparator();
       }
 
-      JMenuItem menuItem = new JMenuItem(TVBrowser.mLocalizer.msg("button.now",
-          "Now"));
+      JMenuItem menuItem = new JMenuItem(TVBrowserActions.scrollToNow.getValue(Action.NAME).toString());
       menuItem.setHorizontalTextPosition(JMenuItem.CENTER);
 
       menuItem.addActionListener(new ActionListener() {

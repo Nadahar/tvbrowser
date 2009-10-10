@@ -230,4 +230,58 @@ public class TVBrowserIcons {
   public static ImageIcon warning(int size) {
     return icon("status", "dialog-warning", size);
   }
+
+  /**
+   * update data icon
+   * @param size
+   * @return
+   */
+  public static ImageIcon update(final int size) {
+    return icon("apps", "system-software-update", size);
+  }
+
+  /**
+   * show plugin tree icon
+   * @param size
+   * @return
+   */
+  public static ImageIcon viewTree(final int size) {
+    return icon("actions", "view-tree", size);
+  }
+
+  /**
+   * scroll to now icon
+   * @param size
+   * @return
+   */
+  public static ImageIcon scrollToNow(final int size) {
+    return icon("actions", "scroll-to-now", size);
+  }
+
+  /**
+   * go to date icon
+   * @param size
+   * @return
+   */
+  public static ImageIcon goToDate(final int size) {
+    return icon("actions", "go-to-date-list", size);
+  }
+
+  /**
+   * scroll to channel icon
+   * @param size
+   * @return
+   */
+  public static ImageIcon scrollToChannel(final int size) {
+    return icon("actions", "scroll-to-channel-list", size);
+  }
+
+  /**
+   * scroll to time icon
+   * @param size
+   * @return
+   */
+  public static ImageIcon scrollToTime(int size) {
+    return icon("actions", "scroll-to-time-list", size);
+  }
 }

@@ -41,6 +41,8 @@ import java.awt.event.ContainerEvent;
 import java.awt.event.ContainerListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 
 import javax.swing.AbstractButton;
@@ -64,6 +66,7 @@ import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.extras.common.InternalPluginProxyList;
 import tvbrowser.ui.filter.dlgs.FilterButtons;
 import tvbrowser.ui.mainframe.MainFrame;
+import tvbrowser.ui.mainframe.actions.TVBrowserAction;
 import tvbrowser.ui.settings.ToolBarDragAndDropSettings;
 import util.ui.ChannelContextMenu;
 import util.ui.TVBrowserIcons;
@@ -85,10 +88,10 @@ public class ToolBar extends JToolBar {
   private static java.util.logging.Logger mLog = java.util.logging.Logger
   .getLogger(ToolBar.class.getName());
 
-  protected static final String ACTION_VALUE = "ActionValue";
-  protected static final String ACTION_TYPE_KEY = "ActionType";
+  public static final String ACTION_VALUE = "ActionValue";
+  public static final String ACTION_TYPE_KEY = "ActionType";
   public static final String ACTION_ID_KEY = "ActionId";
-  protected static final String ACTION_IS_SELECTED = "ActionIsSelected";
+  public static final String ACTION_IS_SELECTED = "ActionIsSelected";
 
   /**
    * toolbar button with standard click behavior
@@ -97,7 +100,7 @@ public class ToolBar extends JToolBar {
   /**
    * toolbar button with toggle behavior (i.e. on/off state)
    */
-  protected static final int TOOGLE_BUTTON_ACTION = 1;
+  public static final int TOOGLE_BUTTON_ACTION = 1;
   protected static final int SEPARATOR = 2;
   protected static final int SPACE = 3;
   protected static final int GLUE = 4;
@@ -326,6 +329,7 @@ public class ToolBar extends JToolBar {
     addButtonProperties(button, action);
     button.setBorderPainted(false);
     button.setAlignmentX(Component.CENTER_ALIGNMENT);
+    action.putValue(ACTION_VALUE, button);
 
     if(action.equals(((DefaultToolBarModel)mModel).getUpdateAction())) {
       mUpdateButton = button;
@@ -349,6 +353,16 @@ public class ToolBar extends JToolBar {
       public void mouseReleased(MouseEvent e) {
         if (e.isPopupTrigger() && !disabled) {
           showPopupMenu(e);
+        }
+      }
+    });
+    
+    action.addPropertyChangeListener(new PropertyChangeListener() {
+      
+      @Override
+      public void propertyChange(PropertyChangeEvent evt) {
+        if (evt.getPropertyName().equals("enabled")) {
+          button.setEnabled(action.isEnabled());
         }
       }
     });
@@ -652,5 +666,9 @@ public class ToolBar extends JToolBar {
         setMinimumSize(newSize);
       }
     }
+  }
+
+  public void showPopupMenu(TVBrowserAction tvBrowserAction) {
+    ((DefaultToolBarModel)mModel).showPopupMenu(tvBrowserAction);
   }
 }
