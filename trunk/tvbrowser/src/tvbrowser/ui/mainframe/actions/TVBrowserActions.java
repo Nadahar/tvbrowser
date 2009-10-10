@@ -20,6 +20,8 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.mainframe.toolbar.ToolBar;
@@ -33,6 +35,8 @@ import util.ui.TVBrowserIcons;
  * 
  */
 public final class TVBrowserActions {
+
+  private static ArrayList<TVBrowserAction> mAllActions = new ArrayList<TVBrowserAction>();
 
   /**
    * increase program table font size
@@ -116,32 +120,31 @@ public final class TVBrowserActions {
   public final static TVBrowserUpdateAction update = new TVBrowserUpdateAction("update", TVBrowserIcons
       .update(TVBrowserIcons.SIZE_SMALL), TVBrowserIcons.update(TVBrowserIcons.SIZE_LARGE), KeyEvent.VK_F5, 0,
       ToolBar.BUTTON_ACTION) {
-    
+
     @Override
     public void actionPerformed(ActionEvent e) {
       MainFrame.getInstance().updateTvData();
     }
-    
+
   };
 
   /**
    * open settings dialog
    */
   public final static TVBrowserAction settings = new TVBrowserAction("settings", TVBrowserIcons
-      .preferences(TVBrowserIcons.SIZE_SMALL), TVBrowserIcons.preferences(TVBrowserIcons.SIZE_LARGE), 0, 0,
-      ToolBar.BUTTON_ACTION) {
+      .preferences(TVBrowserIcons.SIZE_SMALL), TVBrowserIcons.preferences(TVBrowserIcons.SIZE_LARGE), KeyEvent.VK_S,
+      InputEvent.CTRL_MASK, ToolBar.BUTTON_ACTION) {
 
     @Override
     public void actionPerformed(ActionEvent e) {
       MainFrame.getInstance().showSettingsDialog();
     }
-    
+
     public String getMenuText() {
       // Windows guidelines explicitly require "Options"
       if (OperatingSystem.isWindows()) {
         return mLocalizer.msg(getKey() + ".menu.win", "&Options");
-      }
-      else {
+      } else {
         return mLocalizer.msg(getKey() + ".menu", "&Settings");
       }
     };
@@ -162,7 +165,7 @@ public final class TVBrowserActions {
   };
 
   /**
-   * show/hide plugin view
+   * show/hide plugin view action
    */
   public final static TVBrowserAction pluginView = new TVBrowserAction("pluginView", TVBrowserIcons
       .viewTree(TVBrowserIcons.SIZE_SMALL), TVBrowserIcons.viewTree(TVBrowserIcons.SIZE_LARGE), 0, 0,
@@ -174,6 +177,9 @@ public final class TVBrowserActions {
     }
   };
 
+  /**
+   * scroll to now action
+   */
   public final static TVBrowserAction scrollToNow = new TVBrowserAction("scrollToNow", TVBrowserIcons
       .scrollToNow(TVBrowserIcons.SIZE_SMALL), TVBrowserIcons.scrollToNow(TVBrowserIcons.SIZE_LARGE), KeyEvent.VK_F9,
       0, ToolBar.BUTTON_ACTION) {
@@ -184,6 +190,9 @@ public final class TVBrowserActions {
     }
   };
 
+  /**
+   * previous day action
+   */
   public final static TVBrowserAction goToPreviousDay = new TVBrowserAction("goToPreviousDay", TVBrowserIcons
       .left(TVBrowserIcons.SIZE_SMALL), TVBrowserIcons.left(TVBrowserIcons.SIZE_LARGE), KeyEvent.VK_LEFT,
       InputEvent.ALT_MASK, ToolBar.BUTTON_ACTION) {
@@ -194,6 +203,9 @@ public final class TVBrowserActions {
     }
   };
 
+  /**
+   * today action
+   */
   public final static TVBrowserAction goToToday = new TVBrowserAction("goToToday", TVBrowserIcons
       .down(TVBrowserIcons.SIZE_SMALL), TVBrowserIcons.down(TVBrowserIcons.SIZE_LARGE), 0, 0, ToolBar.BUTTON_ACTION) {
 
@@ -203,6 +215,9 @@ public final class TVBrowserActions {
     }
   };
 
+  /**
+   * next day action
+   */
   public final static TVBrowserAction goToNextDay = new TVBrowserAction("goToNextDay", TVBrowserIcons
       .right(TVBrowserIcons.SIZE_SMALL), TVBrowserIcons.right(TVBrowserIcons.SIZE_LARGE), KeyEvent.VK_RIGHT,
       InputEvent.ALT_MASK, ToolBar.BUTTON_ACTION) {
@@ -213,6 +228,9 @@ public final class TVBrowserActions {
     }
   };
 
+  /**
+   * previous week action
+   */
   public final static TVBrowserAction goToPreviousWeek = new TVBrowserAction("goToPreviousWeek", TVBrowserIcons
       .previousWeek(TVBrowserIcons.SIZE_SMALL), TVBrowserIcons.previousWeek(TVBrowserIcons.SIZE_LARGE), 0, 0,
       ToolBar.BUTTON_ACTION) {
@@ -223,6 +241,9 @@ public final class TVBrowserActions {
     }
   };
 
+  /**
+   * next week action
+   */
   public final static TVBrowserAction goToNextWeek = new TVBrowserAction("goToNextWeek", TVBrowserIcons
       .nextWeek(TVBrowserIcons.SIZE_SMALL), TVBrowserIcons.nextWeek(TVBrowserIcons.SIZE_LARGE), 0, 0,
       ToolBar.BUTTON_ACTION) {
@@ -233,6 +254,9 @@ public final class TVBrowserActions {
     }
   };
 
+  /**
+   * scroll to date (popup menu) action
+   */
   public final static TVBrowserAction goToDate = new TVBrowserAction("goToDate", TVBrowserIcons
       .goToDate(TVBrowserIcons.SIZE_SMALL), TVBrowserIcons.goToDate(TVBrowserIcons.SIZE_LARGE), 0, 0,
       ToolBar.BUTTON_ACTION) {
@@ -244,6 +268,9 @@ public final class TVBrowserActions {
 
   };
 
+  /**
+   * scroll to channel (popup menu) action
+   */
   public final static TVBrowserAction scrollToChannel = new TVBrowserAction("scrollToChannel", TVBrowserIcons
       .scrollToChannel(TVBrowserIcons.SIZE_SMALL), TVBrowserIcons.scrollToChannel(TVBrowserIcons.SIZE_LARGE), 0, 0,
       ToolBar.BUTTON_ACTION) {
@@ -255,6 +282,9 @@ public final class TVBrowserActions {
 
   };
 
+  /**
+   * scroll to time (popup menu) action
+   */
   public final static TVBrowserAction scrollToTime = new TVBrowserAction("scrollToTime", TVBrowserIcons
       .scrollToTime(TVBrowserIcons.SIZE_SMALL), TVBrowserIcons.scrollToTime(TVBrowserIcons.SIZE_LARGE), 0, 0,
       ToolBar.BUTTON_ACTION) {
@@ -266,85 +296,28 @@ public final class TVBrowserActions {
 
   };
 
-  /*
-   * 
-   * mGoToDateAction = createAction(mLocalizer.msg("goToDate", "Go to date"),
-   * "#goToDate", mLocalizer.msg("goToDateTooltip", "Go to a date"),
-   * IconLoader.getInstance().getIconFromTheme("actions", "go-to-date-list",
-   * 16), IconLoader.getInstance() .getIconFromTheme("actions",
-   * "go-to-date-list", 22), ToolBar.TOOGLE_BUTTON_ACTION, this);
-   * mScrollToChannelAction = createAction(mLocalizer.msg("scrollToChannel",
-   * "Scroll to channel"), "#scrollToChannel",
-   * mLocalizer.msg("scrollToChannelTooltip", "Scroll to a channel"),
-   * IconLoader.getInstance().getIconFromTheme( "actions",
-   * "scroll-to-channel-list", 16),IconLoader.getInstance().getIconFromTheme(
-   * "actions", "scroll-to-channel-list", 22), ToolBar.TOOGLE_BUTTON_ACTION,
-   * this); mScrollToTimeAction = createAction(mLocalizer.msg("scrollToTime",
-   * "Scroll to time"), "#scrollToTime", mLocalizer.msg("scrollToTimeTooltip",
-   * "Scroll to a time"), IconLoader.getInstance().getIconFromTheme("actions",
-   * "scroll-to-time-list", 16),
-   * IconLoader.getInstance().getIconFromTheme("actions", "scroll-to-time-list",
-   * 22), ToolBar.TOOGLE_BUTTON_ACTION, this);
-   * 
-   * mGoToPreviousWeekAction = createAction(mLocalizer.msg( "goToPreviousWeek",
-   * "Previous week"), "#goToPreviousWeek",
-   * mLocalizer.msg("goToPreviousWeekToolTip", "Previous week"),
-   * TVBrowserIcons.previousWeek(TVBrowserIcons.SIZE_SMALL),
-   * TVBrowserIcons.previousWeek(TVBrowserIcons.SIZE_LARGE),
-   * ToolBar.BUTTON_ACTION, this); mGoToNextWeekAction =
-   * createAction(mLocalizer.msg( "goToNextWeek", "Next week"), "#goToNextWeek",
-   * mLocalizer.msg("goToNextWeekToolTip", "Next week"),
-   * TVBrowserIcons.nextWeek(TVBrowserIcons.SIZE_SMALL),
-   * TVBrowserIcons.nextWeek(TVBrowserIcons.SIZE_LARGE), ToolBar.BUTTON_ACTION,
-   * this);
-   * 
-   * 
-   * mGoToPreviousDayAction = createAction(mLocalizer.msg( "goToPreviousDay",
-   * "Previous day"), "#goToPreviousDay", mLocalizer.msg("goToPreviousToolTip",
-   * "Previous day"), TVBrowserIcons.left(TVBrowserIcons.SIZE_SMALL),
-   * TVBrowserIcons.left(TVBrowserIcons.SIZE_LARGE), ToolBar.BUTTON_ACTION,
-   * this); mGoToTodayAction = createAction(Localizer.getLocalization(
-   * Localizer.I18N_TODAY), "#goToToday", scrollTo +
-   * Localizer.getLocalization(Localizer.I18N_TODAY),
-   * TVBrowserIcons.down(TVBrowserIcons.SIZE_SMALL),
-   * TVBrowserIcons.down(TVBrowserIcons.SIZE_LARGE), ToolBar.BUTTON_ACTION,
-   * this); mGoToNextDayAction = createAction(mLocalizer.msg( "goToNextDay",
-   * "Next day"), "#goToNextDay", mLocalizer.msg("goToNextToolTip", "Next day"),
-   * TVBrowserIcons.right(TVBrowserIcons.SIZE_SMALL),
-   * TVBrowserIcons.right(TVBrowserIcons.SIZE_LARGE), ToolBar.BUTTON_ACTION,
-   * this);
-   * 
-   * mScrollToNowAction = createAction(TVBrowser.mLocalizer.msg("button.now",
-   * "Now"), "#scrollToNow", scrollTo + TVBrowser.mLocalizer.msg("button.now",
-   * "Now"), IconLoader .getInstance().getIconFromTheme("actions",
-   * "scroll-to-now", 16), IconLoader.getInstance().getIconFromTheme("actions",
-   * "scroll-to-now", 22), ToolBar.BUTTON_ACTION, this);
-   * 
-   * 
-   * createAction(TVBrowser.mLocalizer.msg( "button.pluginView", "Plugin View"),
-   * "#pluginView", MainFrame.mLocalizer.msg("menuinfo.pluginView", ""),
-   * IconLoader .getInstance().getIconFromTheme("actions", "view-tree", 16),
-   * IconLoader.getInstance().getIconFromTheme("actions", "view-tree", 22),
-   * ToolBar.TOOGLE_BUTTON_ACTION, this);
-   * 
-   * createAction(TVBrowser.mLocalizer.msg("button.filter", "Filter"),
-   * "#filter", MainFrame.mLocalizer.msg("menuinfo.filter", ""),
-   * IconLoader.getInstance().getIconFromTheme("actions","view-filter-list",16),
-   * IconLoader.getInstance().getIconFromTheme("actions","view-filter-list",22),
-   * ToolBar.TOOGLE_BUTTON_ACTION, this);
-   * 
-   * createAction createAction(TVBrowser.mLocalizer.msg("button.update",
-   * "Update"), "#update", MainFrame.mLocalizer.msg("menuinfo.update", ""),
-   * IconLoader.getInstance().getIconFromTheme("apps", "system-software-update",
-   * 16), IconLoader.getInstance() .getIconFromTheme("apps",
-   * "system-software-update", 22), ToolBar.BUTTON_ACTION, this);
-   * 
-   * 
-   * mSettingsAction =
-   * createAction(Localizer.getLocalization(Localizer.I18N_SETTINGS),
-   * "#settings", MainFrame.mLocalizer.msg("menuinfo.settings", ""),
-   * TVBrowserIcons.preferences(TVBrowserIcons.SIZE_SMALL),
-   * TVBrowserIcons.preferences(TVBrowserIcons.SIZE_LARGE),
-   * ToolBar.BUTTON_ACTION, this);
+  /**
+   * switch full screen action
    */
+  public final static TVBrowserAction fullScreen = new TVBrowserAction("fullScreen", TVBrowserIcons
+      .fullScreen(TVBrowserIcons.SIZE_SMALL), TVBrowserIcons.fullScreen(TVBrowserIcons.SIZE_LARGE), KeyEvent.VK_F11, 0,
+      ToolBar.BUTTON_ACTION) {
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      MainFrame.getInstance().switchFullscreenMode();
+    }
+  };
+
+  /**
+   * register this action, so we can iterate over all actions later
+   * @param tvBrowserAction
+   */
+  public static void register(final TVBrowserAction tvBrowserAction) {
+    mAllActions.add(tvBrowserAction);
+  }
+
+  public static List<TVBrowserAction> getActions() {
+    return (List<TVBrowserAction>) mAllActions.clone();
+  }
 }

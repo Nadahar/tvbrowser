@@ -111,6 +111,7 @@ import tvbrowser.ui.finder.FinderPanel;
 import tvbrowser.ui.finder.calendar.CalendarPanel;
 import tvbrowser.ui.finder.calendar.CalendarTablePanel;
 import tvbrowser.ui.licensebox.LicenseBox;
+import tvbrowser.ui.mainframe.actions.TVBrowserAction;
 import tvbrowser.ui.mainframe.actions.TVBrowserActions;
 import tvbrowser.ui.mainframe.searchfield.SearchField;
 import tvbrowser.ui.mainframe.searchfield.SearchFilter;
@@ -691,15 +692,22 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
    */
   public void addKeyboardAction() {
     mProgramTableScrollPane.deSelectItem();
+
+    // register the global hot keys, so they also work when the main menu is not visible
+    for (final TVBrowserAction action : TVBrowserActions.getActions()) {
+      KeyStroke keyStroke = action.getAccelerator();
+      if (keyStroke != null) {
+        rootPane.registerKeyboardAction(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+            if (action.isEnabled()) {
+              action.actionPerformed(null);
+            }
+          }
+        }, keyStroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+      }
+    }
     
-    KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_F11, 0, false);
-    rootPane.registerKeyboardAction(new ActionListener() {
-    	public void actionPerformed(ActionEvent e) {
-        switchFullscreenMode();        
-    	}
-    }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
-    
-    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.CTRL_MASK);
+    KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.CTRL_MASK);
     rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,
         KeyboardAction.KEY_UP), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
     
@@ -780,7 +788,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
 
     }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
 
-    // return from fullscreen using ESCAPE
+    // return from full screen using ESCAPE
     stroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0);
     rootPane.registerKeyboardAction(new ActionListener() {
 
@@ -838,15 +846,6 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
 
     }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
     
-    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_A, 0, true);
-    rootPane.registerKeyboardAction(new ActionListener() {
-
-      public void actionPerformed(ActionEvent e) {
-        //Schnellnavigation starten
-      }
-    }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
-
-
     this.setRootPane(rootPane);
   }
 
