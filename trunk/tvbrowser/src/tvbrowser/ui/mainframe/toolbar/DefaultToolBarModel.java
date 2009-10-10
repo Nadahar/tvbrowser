@@ -608,19 +608,22 @@ public class DefaultToolBarModel implements ToolBarModel, DateListener {
       Date curDate = Date.getCurrentDate().addDays(-1);
 
       if(TvDataBase.getInstance().dataAvailable(curDate)) {
-        popup.add(createDateMenuItem(curDate, btn));
+        popup.add(createDateMenuItem(curDate));
       }
       
       curDate = curDate.addDays(1);
       
-      for (int i = 0; i < 21; i++) {
+      Date maxDate = TvDataBase.getInstance().getMaxSupportedDate();
+      while (maxDate.getNumberOfDaysSince(curDate) >= 0) {
         if(!TvDataBase.getInstance().dataAvailable(curDate)) {
           break;
         }
+        if (curDate.isFirstDayOfWeek()) {
+          popup.addSeparator();
+        }
         
-        popup.add(createDateMenuItem(curDate, btn));
+        popup.add(createDateMenuItem(curDate));
         curDate = curDate.addDays(1);
-        
       }
     } else if (item == mScrollToChannelAction) {
       ScrollableMenu menu = new ScrollableMenu();
@@ -684,7 +687,7 @@ public class DefaultToolBarModel implements ToolBarModel, DateListener {
     }
   }
 
-  private JMenuItem createDateMenuItem(final Date date, final AbstractButton btn) {
+  private JMenuItem createDateMenuItem(final Date date) {
     String buttonText;
     
     if(date.equals(Date.getCurrentDate().addDays(-1))) {
@@ -709,8 +712,6 @@ public class DefaultToolBarModel implements ToolBarModel, DateListener {
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         MainFrame.getInstance().goTo(date);
-        btn.setSelected(false);
-        MainFrame.getInstance().updateToolbar();
       }
     });
     return item;
