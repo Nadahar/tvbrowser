@@ -628,14 +628,13 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 	public void updateDateItems() {
 		mGotoDateMenu.removeAll();
 		Date curDate = new Date();
-		for (int i = 0; i < 21; i++) {
+    Date maxDate = TvDataBase.getInstance().getMaxSupportedDate();
+    while (maxDate.getNumberOfDaysSince(curDate) >= 0) {
 			if (!TvDataBase.getInstance().dataAvailable(curDate)) {
 				break;
 			}
-			if (i > 0) {
-				if (curDate.isFirstDayOfWeek()) {
-					mGotoDateMenu.addSeparator();
-				}
+			if (curDate.isFirstDayOfWeek() && mGotoDateMenu.getItemCount() > 0) {
+				mGotoDateMenu.addSeparator();
 			}
 			mGotoDateMenu.add(createDateMenuItem(curDate));
 			curDate = curDate.addDays(1);
