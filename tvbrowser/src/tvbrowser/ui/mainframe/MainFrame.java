@@ -111,6 +111,7 @@ import tvbrowser.ui.finder.FinderPanel;
 import tvbrowser.ui.finder.calendar.CalendarPanel;
 import tvbrowser.ui.finder.calendar.CalendarTablePanel;
 import tvbrowser.ui.licensebox.LicenseBox;
+import tvbrowser.ui.mainframe.actions.TVBrowserActions;
 import tvbrowser.ui.mainframe.searchfield.SearchField;
 import tvbrowser.ui.mainframe.searchfield.SearchFilter;
 import tvbrowser.ui.mainframe.toolbar.ContextMenu;
@@ -346,6 +347,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     this.setShowChannellist(Settings.propShowChannels.getBoolean());
 
     updateToolbar();
+    dateChanged(new devplugin.Date(), null, null);
 
     mCenterComponent = mRootNode.getComponent();
     if (mCenterComponent != null) {
@@ -411,7 +413,6 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     case 2: mFinderPanel = new CalendarPanel();break;
     default: mFinderPanel = new FinderPanel();
     }
-    dateChanged(new devplugin.Date(), null, null);
     mFinderPanel.setDateListener(this);
   }
   
@@ -1545,6 +1546,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
 
   private void onDownloadStart() {
     mAutoDownloadTimer = -1;
+    TVBrowserActions.update.setUpdating(true);
     
     if(!Settings.propPluginInfoDialogWasShown.getBoolean()) {
       Date compareDate = Settings.propFirstStartDate.getDate().addDays((int)(Math.random() * 4 + 3));
@@ -1563,6 +1565,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
   }
 
   private void onDownloadDone() {
+    TVBrowserActions.update.setUpdating(false);
     TvDataUpdater.getInstance().stopDownload();
     mStatusBar.getProgressBar().setValue(0);
 
@@ -1686,9 +1689,6 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     changeDate(date, monitor, callback);
     super.setTitle(TVBrowser.MAINWINDOW_TITLE + " - "
         + date.getLongDateString());
-    if (mMenuBar != null) {
-        mMenuBar.dateChanged(date, monitor, callback);
-    }
     if (mToolBar != null) {
     	mToolBar.dateChanged(date, monitor, callback);
     }
@@ -2159,14 +2159,8 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     updateViews();
   }
 
-  /*
-   * public void setPluginViewToolbarButtonSelected(boolean selected) {
-   * mToolBar.setPluginViewToolbarButtonSelected(selected); }
-   */
-
   public void setPluginViewButton(boolean selected) {
     if (mToolBarModel != null) {
-      mToolBarModel.setPluginViewButtonSelected(selected);
       mToolBar.update();
     }
   }
@@ -2192,22 +2186,14 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       mPluginView = null;
     }
     mPluginsNode.setLeaf(mPluginView);
-    mMenuBar.setPluginViewItemChecked(visible);
-        
+    TVBrowserActions.pluginView.putValue(ToolBar.ACTION_IS_SELECTED, Boolean.valueOf(visible));
+    mMenuBar.setPluginViewItemChecked(visible);      
     if(save) {
       Settings.propShowPluginView.setBoolean(visible);
     }
 
     updateViews();
   }
-
- /* public void restoreViews() {
-    mRootNode.setProperty(Settings.propViewRoot.getDefault());
-    mMainframeNode.setProperty(Settings.propViewMainframe.getDefault());
-    mNavigationNode.setProperty(Settings.propViewNavigation.getDefault());
-    mDateChannelNode.setProperty(Settings.propViewDateChannel.getDefault());
-    mRootNode.update();
-  }*/
 
   /**
    * Makes the StatusBar visible
