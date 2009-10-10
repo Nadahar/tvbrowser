@@ -56,6 +56,7 @@ public abstract class TVBrowserAction extends AbstractAction {
     putValue(Action.SHORT_DESCRIPTION, getToolbarTip());
     putValue(ToolBar.ACTION_TYPE_KEY, toolbarActionType);
     putValue(ToolBar.ACTION_ID_KEY, "#" + mKey);
+    TVBrowserActions.register(this);
   }
 
   private String getToolbarTip() {
