@@ -1,5 +1,0 @@
-Changelog ShowviewPlugin
-
-1.0:
-- initial version: Tries to calculate the missing Showview numbers after a
-  TV data update.

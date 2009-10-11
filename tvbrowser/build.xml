@@ -421,11 +421,6 @@
       <fileset dir="${classes.dir}" includes="simplemarkerplugin/**" /> 	 
     </jar>
 
-    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/ShowviewPlugin.jar"
-         compress="false">
-      <fileset dir="${classes.dir}" includes="showviewplugin/**"/>
-    </jar>
-
   	<jar jarfile="${tvbrowser-default.runtime.dir}/plugins/TVRaterPlugin.jar"
          compress="false">
       <fileset dir="${classes.dir}" includes="tvraterplugin/**"/>
