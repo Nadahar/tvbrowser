@@ -308,18 +308,18 @@
     <unjar src="${lib.dir}/skinlf.jar" dest="${unpacked.dir}/skinlf.jar"/>
     <unjar src="${lib.dir}/bsh-2.0b4.jar" dest="${unpacked.dir}/bsh-2.0b4.jar"/>
     <unjar src="${lib.dir}/forms-1.2.1.jar" dest="${unpacked.dir}/forms-1.2.1.jar"/>
-    <unjar src="${lib.dir}/looks-2.2.2.jar" dest="${unpacked.dir}/looks-2.2.2.jar"/>
+    <unjar src="${lib.dir}/looks-2.3.0.jar" dest="${unpacked.dir}/looks-2.2.2.jar"/>
     <unjar src="${lib.dir}/l2fprod-common-tasks.jar" dest="${unpacked.dir}/l2fprod-common-tasks.jar"/>
     <unjar src="${lib.dir}/jRegistryKey.jar" dest="${unpacked.dir}/jRegistryKey.jar" /> 	 
     <unjar src="${lib.dir}/TVAnytimeAPI.jar" dest="${unpacked.dir}/TVAnytimeAPI.jar" /> 	 
     <unjar src="${lib.dir}/commons-compress-1.0.jar" dest="${unpacked.dir}/commons-compress-1.0.jar" />
-    <unjar src="${lib.dir}/commons-codec-1.3.jar" dest="${unpacked.dir}/commons-codec-1.3.jar" />
+    <unjar src="${lib.dir}/commons-codec-1.4.jar" dest="${unpacked.dir}/commons-codec-1.3.jar" />
     <unjar src="${lib.dir}/commons-lang-2.4.jar" dest="${unpacked.dir}/commons-lang-2.4.jar" />
     <unjar src="${lib.dir}/gdata-calendar-2.0.jar" dest="${unpacked.dir}/gdata-calendar-2.0.jar" />
     <unjar src="${lib.dir}/gdata-client-1.0.jar" dest="${unpacked.dir}/gdata-client-1.0.jar" /> 	   	
     <unjar src="${lib.dir}/gdata-core-1.0.jar" dest="${unpacked.dir}/gdata-core-1.0.jar" />
     <unjar src="${lib.dir}/jcom.jar" dest="${unpacked.dir}/jcom.jar" />
-    <unjar src="${lib.dir}/opencsv-1.8.jar" dest="${unpacked.dir}/opencsv-1.8.jar" />
+    <unjar src="${lib.dir}/opencsv-2.0.jar" dest="${unpacked.dir}/opencsv-1.8.jar" />
     <unjar src="${lib.dir}/htmlparser.jar" dest="${unpacked.dir}/htmlparser.jar" />
     <unjar src="${lib.dir}/aclibico-2.1.jar" dest="${unpacked.dir}/aclibico-2.1.jar" />
     <unjar src="${lib.dir}/log4j-1.2.15.jar" dest="${unpacked.dir}/log4j-1.2.15.jar" />
