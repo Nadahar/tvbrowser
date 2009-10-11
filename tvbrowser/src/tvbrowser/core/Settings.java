@@ -1130,9 +1130,15 @@ public class Settings {
   public static final IntProperty propSettingsDialogDividerLocation = new IntProperty(mProp,
       "settingsDialogDividerLocation", 200);
 
+  /**
+   * start of day in minutes after midnight
+   */
   public static final IntProperty propProgramTableStartOfDay = new IntProperty(
       mProp, "programtable.startofday", 0);
 
+  /**
+   * end of day in minutes after midnight
+   */
   public static final IntProperty propProgramTableEndOfDay = new IntProperty(
       mProp, "programtable.endofday", 5 * 60);
   public static final BooleanProperty propHttpProxyUseProxy = new BooleanProperty(

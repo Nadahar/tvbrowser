@@ -26,6 +26,8 @@
 package tvbrowser.ui.programtable;
 
 import java.awt.Point;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.InputEvent;
@@ -51,11 +53,15 @@ import devplugin.Channel;
 public class ProgramTableScrollPane extends JScrollPane implements ProgramTableModelListener,
     MouseWheelListener, ChangeListener {
 
+  private static final double SCROLL_OFFSET_FROM_TOP = 0.15;
+
   private ProgramTable mProgramTable;
 
   private ChannelPanel mChannelPanel;
 
   private boolean initialScrollingDone = false;
+
+  private int mScrolledTime = -1;
 
   /**
    * Creates a new instance of ProgramTableScrollPane.
@@ -111,6 +117,15 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
 
       public void componentShown(ComponentEvent e) {
       }});
+    
+    // whenever the vertical scroll bar is moved, reset the current time
+    getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
+      
+      @Override
+      public void adjustmentValueChanged(AdjustmentEvent e) {
+        resetScrolledTime();
+      }
+    });
   }
 
   public ProgramTable getProgramTable() {
@@ -178,7 +193,7 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
   public void scrollToTime(int minutesAfterMidnight) {
     Point scrollPos = getViewport().getViewPosition();
 
-    scrollPos.y = mProgramTable.getTimeY(minutesAfterMidnight) - (getViewport().getHeight() / 4);
+    scrollPos.y = mProgramTable.getTimeY(minutesAfterMidnight) - (int)(Math.round(getViewport().getHeight() * SCROLL_OFFSET_FROM_TOP));
 
     if (scrollPos.y < 0) {
       scrollPos.y = 0;
@@ -190,6 +205,8 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
     }
 
     getViewport().setViewPosition(scrollPos);
+    
+    mScrolledTime = minutesAfterMidnight;
   }
 
   protected void handleBackgroundPainterChanged(BackgroundPainter painter) {
@@ -329,6 +346,16 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
     }
     getHorizontalScrollBar().setBlockIncrement(fullColumns * columnWidth);
   }
-}
+  
+  /**
+   * get the currently scrolled time of the program table
+   * @return time in minutes after midnight, or -1 if it is unknown
+   */
+  public int getScrolledTime() {
+    return mScrolledTime;
+  }
 
-// class ProgramTableBorder
+  public void resetScrolledTime() {
+    mScrolledTime = -1;
+  }
+}

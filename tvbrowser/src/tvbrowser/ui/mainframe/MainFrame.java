@@ -1422,7 +1422,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         mProgramTableScrollPane.scrollToChannel(program.getChannel());
-        scrollTo(program.getDate(), program.getHours(), callback);
+        scrollTo(program.getDate(), program.getStartTime(), callback);
       }});
   }
 
@@ -1432,20 +1432,21 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
   }
 
   public void scrollToNow() {
+    mProgramTableScrollPane.resetScrolledTime();
     Calendar cal = Calendar.getInstance();
     int hour = cal.get(Calendar.HOUR_OF_DAY);
     devplugin.Date day = new devplugin.Date();
-    scrollTo(day, hour);
+    scrollTo(day, hour * 60 + cal.get(Calendar.MINUTE));
   }
   
-  private void scrollTo(Date day, int hour) {
-    scrollTo(day, hour, null);
+  private void scrollTo(Date day, int minute) {
+    scrollTo(day, minute, null);
   }
 
-  private void scrollTo(Date day, int hour, final Runnable callback) {
+  private void scrollTo(Date day, int minute, final Runnable callback) {
     mProgramTableScrollPane.deSelectItem();
     // Choose the day.
-    // NOTE: If its early in the morning before the setted "day start" we should
+    // NOTE: If its early in the morning before the set "day start" we should
     // stay at the last day - otherwise the user won't see the current
     // program. But until when should we stay at the old day?
     // Example: day start: 0:00, day end: 6:00
@@ -1459,18 +1460,18 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
 
     int dayStart = Settings.propProgramTableStartOfDay.getInt();
     int dayEnd = Settings.propProgramTableEndOfDay.getInt();
-    if ((dayStart >= dayEnd && hour < dayEnd / 60) // no overlapping -> stay on last day until day end
-        || (dayStart < dayEnd && hour <= (dayEnd + dayStart) /60 /2)) { // overlapping -> stay until the middle between both times
+    if ((dayStart >= dayEnd && minute < dayEnd) // no overlapping -> stay on last day until day end
+        || (dayStart < dayEnd && minute <= (dayEnd + dayStart) /2)) { // overlapping -> stay until the middle between both times
       day = day.addDays(-1);
-      hour += 24;
+      minute += 24 * 60;
     }
-    // Change to the shown day program to today if nessesary
+    // Change to the shown day program to today if necessary
     // and scroll to "now" afterwards
-    final int fHour = hour;
+    final int scrollMinute = minute;
     mFinderPanel.markDate(day, new Runnable() {
       public void run() {
         // Scroll to now
-        mProgramTableScrollPane.scrollToTime(fHour * 60);
+        mProgramTableScrollPane.scrollToTime(scrollMinute);
         if (callback != null) {
           callback.run();
         }
@@ -1674,8 +1675,20 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       final Runnable callback) {
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
+        final int currentTime = mProgramTableScrollPane.getScrolledTime();
         mProgramTableScrollPane.deSelectItem();
-        mProgramTableModel.setDate(date, monitor, callback);
+        mProgramTableModel.setDate(date, monitor, new Runnable() {
+          
+          @Override
+          public void run() {
+            if (callback != null) {
+              callback.run();
+            }
+            if (currentTime >= 0) {
+              mProgramTableScrollPane.scrollToTime(currentTime);
+            }
+          }
+        });
       }
     });
   }
