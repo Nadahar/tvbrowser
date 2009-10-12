@@ -203,8 +203,9 @@ public class TextLineBreakerStringWidth {
         }
       } else {
         if (lineWidth != 0) {
-          // Add a space
-          if (mCurrLineBuffer.charAt(mCurrLineBuffer.length() - 1) != '/') {
+          // Add a space, but not if our current word ends with "-"
+          char lastChar = mCurrLineBuffer.charAt(mCurrLineBuffer.length() - 1);
+          if (lastChar != '/' && (lastChar != '-' || (mCurrLineBuffer.length() >= 2 && mCurrLineBuffer.charAt(mCurrLineBuffer.length() - 2) == ' '))) {
             mCurrLineBuffer.append(' ');
           }
           lineWidth += mSpaceWidth;
@@ -241,8 +242,9 @@ public class TextLineBreakerStringWidth {
       
       mCurrChar = textReader.read();
     }
-    while ((! Character.isWhitespace((char) mCurrChar)) && (! isEndOfLine(mCurrChar)) && (mCurrChar != '/'));
-    if (mCurrChar == '/') {
+    // a word stops at whitespace, line end or if a "-" occurs (but not if a space is in front of the "-")
+    while ((! Character.isWhitespace((char) mCurrChar)) && (! isEndOfLine(mCurrChar)) && (mCurrChar != '/') && (mCurrChar != '-' || mCurrWordBuffer.length() < 2));
+    if (mCurrChar == '/' || mCurrChar == '-') {
       mCurrWordBuffer.append((char) mCurrChar);
     }
 
