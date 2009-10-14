@@ -777,6 +777,7 @@ public class ProgramTable extends JPanel
     int timeY = mLayout.getColumnStart(col);
     Date mainDate = mModel.getDate();
 
+    int lastPanelHeight = 0;
     int rowCount = mModel.getRowCount(col);
     for (int row = 0; row < rowCount; row++) {
       ProgramPanel panel = mModel.getProgramPanel(col, row);
@@ -793,9 +794,13 @@ public class ProgramTable extends JPanel
       
       // somewhere inside current panel
       final int progLength = program.getLength();
+      int panelHeight = panel.getHeight();
       if (progLength > 0 && startTime < minutesAfterMidnight
           && startTime + progLength > minutesAfterMidnight) {
-        return timeY + panel.getHeight() * (minutesAfterMidnight - startTime)
+        if (panelHeight > 800) {
+          return 0;  // very large programs (due to filters) falsify calculation
+        }
+        return timeY + panelHeight * (minutesAfterMidnight - startTime)
             / progLength;
       }
 
@@ -804,10 +809,14 @@ public class ProgramTable extends JPanel
         if (row == 0) {
           return 0; // there is no panel for this time at all, do not take this column into account
         }
+        if (lastPanelHeight > 800) {
+          return 0; // last program was much to large to take this into account
+        }
         return timeY;
       }
       
-      timeY += panel.getHeight();
+      timeY += panelHeight;
+      lastPanelHeight = panelHeight;
     }
 
     return -1;
