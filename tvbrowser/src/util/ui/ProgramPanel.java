@@ -429,7 +429,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
    * @param program
    *          The program to show in this panel.
    */
-  public void setProgram(devplugin.Program program) {
+  public void setProgram(Program program) {
     setProgram(program, -1);
   }
 
@@ -441,7 +441,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
    * @param maxHeight
    *          The maximum height the program should have (in pixels).
    */
-  public void setProgram(devplugin.Program program, int maxHeight) {    
+  public void setProgram(Program program, int maxHeight) {    
     Program oldProgram = mProgram;
     mProgram = program;
     
@@ -561,13 +561,13 @@ private static Font getDynamicFontSize(Font font, int offset) {
   }
 
   /**
-   * Gets the plugin icons for a program.
+   * Gets the plugin icons for a program to show them on the left below the start time.
    * 
    * @param program
    *          The program to get the icons for.
    * @return The icons for the program.
    */
-  private Icon[] getPluginIcons(Program program) {
+  private Icon[] getPluginIcons(final Program program) {
     String[] iconPluginArr = Settings.propProgramTableIconPlugins
         .getStringArray();
 
@@ -823,9 +823,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
     }
     
     
-    
-    
-    // paint the icons of the plugins that have marked the program
+    // paint the icons of the plugins that have marked the program (lower right corner)
     int x = width - 1;
     int y = mTitleIcon.getIconHeight() + mDescriptionIcon.getIconHeight()
         + mPictureAreaIcon.getIconHeight() + 18;
