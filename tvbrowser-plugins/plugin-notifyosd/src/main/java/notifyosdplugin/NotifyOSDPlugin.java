@@ -16,9 +16,16 @@
  */
 package notifyosdplugin;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
+import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Properties;
+
+import javax.swing.Icon;
 
 import util.io.ExecutionHandler;
 import util.misc.OperatingSystem;
@@ -28,18 +35,20 @@ import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.Program;
 import devplugin.ProgramReceiveTarget;
+import devplugin.SettingsTab;
 import devplugin.Version;
 
 public class NotifyOSDPlugin extends Plugin {
+  private static final boolean IS_STABLE = false;
+  private static final Version mVersion = new Version(2, 70, 0, IS_STABLE);
 
-  private static final util.ui.Localizer mLocalizer = util.ui.Localizer
-      .getLocalizerFor(NotifyOSDPlugin.class);
-
-  private static final Version mVersion = new Version(2, 70, 0);
+  private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(NotifyOSDPlugin.class);
 
   private static final String TARGET = "NOTIFYOSD_TARGET";
 
   private PluginInfo mPluginInfo;
+
+  private NotifyOSDSettings mSettings;
 
   public static Version getVersion() {
     return mVersion;
@@ -48,10 +57,8 @@ public class NotifyOSDPlugin extends Plugin {
   public PluginInfo getInfo() {
     if (mPluginInfo == null) {
       final String name = mLocalizer.msg("name", "NotifyOSD");
-      final String desc = mLocalizer.msg("description",
-          "Show notifications using NotifyOSD.");
-      mPluginInfo = new PluginInfo(NotifyOSDPlugin.class, name, desc,
-          "Michael Keppler", "GPL 3");
+      final String desc = mLocalizer.msg("description", "Show notifications using NotifyOSD.");
+      mPluginInfo = new PluginInfo(NotifyOSDPlugin.class, name, desc, "Michael Keppler", "GPL 3");
     }
 
     return mPluginInfo;
@@ -63,23 +70,21 @@ public class NotifyOSDPlugin extends Plugin {
 
   public ProgramReceiveTarget[] getProgramReceiveTargets() {
     if (canReceiveProgramsWithTarget()) {
-      final ProgramReceiveTarget target = new ProgramReceiveTarget(this,
-          mLocalizer.msg("targetName", "Show notification"), TARGET);
+      final ProgramReceiveTarget target = new ProgramReceiveTarget(this, mLocalizer.msg("targetName",
+          "Show notification"), TARGET);
       return new ProgramReceiveTarget[] { target };
     }
     return null;
   }
 
-  public boolean receivePrograms(final Program[] programArr,
-      final ProgramReceiveTarget receiveTarget) {
+  public boolean receivePrograms(final Program[] programArr, final ProgramReceiveTarget receiveTarget) {
     if (!canReceiveProgramsWithTarget()) {
       return false;
     }
     // notify-osd will always show only a single notification!
     if (programArr.length == 1) {
       showSingleNotification(programArr[0]);
-    }
-    else {
+    } else {
       showMultiNotification(programArr);
     }
     return true;
@@ -87,16 +92,15 @@ public class NotifyOSDPlugin extends Plugin {
 
   private void showMultiNotification(final Program[] programArr) {
     ParamParser parser = new ParamParser();
-    final LocalPluginProgramFormating format = new LocalPluginProgramFormating(
-        mLocalizer.msg("name", "NotifyOSD Multi"),
-        "",
+    final LocalPluginProgramFormating format = new LocalPluginProgramFormating(mLocalizer
+        .msg("name", "NotifyOSD Multi"), "",
         "{leadingZero(start_hour,\"2\")}:{leadingZero(start_minute,\"2\")} {title}", "UTF-8");
     StringBuilder builder = new StringBuilder();
     for (Program program : programArr) {
       String entry = parser.analyse(format.getContentValue(), program);
       if (entry != null && entry.trim().length() > 0) {
         if (builder.length() > 0) {
-          builder.append(", ");
+          builder.append("\n");
         }
         builder.append(entry.trim());
       }
@@ -104,12 +108,11 @@ public class NotifyOSDPlugin extends Plugin {
     showNotification("TV-Browser", builder.toString());
   }
 
-  private void showSingleNotification(final Program program) {
+  protected void showSingleNotification(final Program program) {
     ParamParser parser = new ParamParser();
-    final LocalPluginProgramFormating format = new LocalPluginProgramFormating(
-        mLocalizer.msg("name", "NotifyOSD Single"),
-        "{leadingZero(start_hour,\"2\")}:{leadingZero(start_minute,\"2\")} {title}",
-        "{maxlength(short_info,\"1000\")}", "UTF-8");
+    final LocalPluginProgramFormating format = new LocalPluginProgramFormating(mLocalizer.msg("name",
+        "NotifyOSD Single"), mSettings.getTitle(), mSettings.getDescription(),
+        "UTF-8");
     String title = parser.analyse(format.getTitleValue(), program);
     if (title == null) {
       title = program.getTitle();
@@ -129,20 +132,18 @@ public class NotifyOSDPlugin extends Plugin {
     ArrayList<String> command = new ArrayList<String>();
     command.add("notify-send");
     try {
-      String iconPath = "--icon=" + curDir.getCanonicalPath()
-          + "/imgs/tvbrowser128.png";
+      String iconPath = "--icon=" + curDir.getCanonicalPath() + "/imgs/tvbrowser128.png";
       command.add(iconPath);
     } catch (IOException e) {
       e.printStackTrace();
     }
     title = title.replace("\n", " ").trim();
     if (title.length() > 0) {
-      command.add(title);
+      command.add(encode(title));
     }
-    body = body.replace("\n", " ").trim();
-    command.add(body);
-    final ExecutionHandler executer = new ExecutionHandler(command
-        .toArray(new String[command.size()]));
+    body = body.trim();
+    command.add(encode(body));
+    final ExecutionHandler executer = new ExecutionHandler(command.toArray(new String[command.size()]));
     try {
       executer.execute();
     } catch (IOException e) {
@@ -150,13 +151,29 @@ public class NotifyOSDPlugin extends Plugin {
     }
   }
 
+  private String encode(final String text) {
+    String sEncoding = "UTF8";
+    ByteArrayOutputStream osByteArray = new ByteArrayOutputStream();
+    Writer w;
+    try {
+      w = new OutputStreamWriter(osByteArray, sEncoding);
+      w.write(text);
+      w.close();
+    } catch (UnsupportedEncodingException e2) {
+      // TODO Auto-generated catch block
+      e2.printStackTrace();
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    return osByteArray.toString();
+  }
+
   private boolean notifyAvailable() {
-    final ExecutionHandler executionHandler = new ExecutionHandler(
-        "notify-send", "which");
+    final ExecutionHandler executionHandler = new ExecutionHandler("notify-send", "which");
     try {
       executionHandler.execute(true);
-      String location = executionHandler.getInputStreamReaderThread()
-          .getOutput();
+      String location = executionHandler.getInputStreamReaderThread().getOutput();
       if (location != null) {
         location = location.trim();
         if (location.length() > 0) {
@@ -172,7 +189,25 @@ public class NotifyOSDPlugin extends Plugin {
 
   @Override
   protected String getMarkIconName() {
-    return "notifyosdplugin/icons/16x16/notify.png";
+    return "notifyosdplugin/icons/16x16/actions/notify.png";
   }
 
+  protected Icon getPluginIcon() {
+    return Plugin.getPluginManager().getIconFromTheme(this, "actions", "notify", 16);
+  }
+
+  @Override
+  public void loadSettings(final Properties properties) {
+    mSettings = new NotifyOSDSettings(properties);
+  }
+  
+  @Override
+  public Properties storeSettings() {
+    return mSettings.storeSettings();
+  }
+  
+  @Override
+  public SettingsTab getSettingsTab() {
+    return new NotifyOSDSettingsTab(this, mSettings);
+  }
 }
