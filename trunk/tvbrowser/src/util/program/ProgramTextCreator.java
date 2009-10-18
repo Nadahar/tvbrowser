@@ -820,6 +820,7 @@ public class ProgramTextCreator {
                 ProgramFieldType.SHORT_DESCRIPTION_TYPE, true, showHelpLinks);
           }
         }
+        text = text.replace("\\-", ""); // replace conditional dashes
         text = removeArtificialLineBreaks(text);
         text = HTMLTextHelper.convertTextToHtml(text, createLinks);
         // scan for moderation in beginning of description

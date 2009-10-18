@@ -310,6 +310,9 @@ public class CheckerPlugin extends Plugin {
           if (closing != opening) {
             results.add(mLocalizer.msg("issue.braces", "Opening and closing braces doen't match in {0}.", fieldType.getLocalizedName()));
           }
+          if (content.contains("\\-")) {
+            results.add(mLocalizer.msg("issue.dash", "Escaped dash in {0}.", fieldType.getLocalizedName()));
+          }
         }
       }
     }
