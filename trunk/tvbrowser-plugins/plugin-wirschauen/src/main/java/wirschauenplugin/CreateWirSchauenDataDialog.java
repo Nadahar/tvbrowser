@@ -25,6 +25,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import util.ui.Localizer;
@@ -91,7 +92,7 @@ public class CreateWirSchauenDataDialog extends JDialog implements WindowClosing
     UiUtilities.registerForClosing(this);
     JPanel contentPane = (JPanel) getContentPane();
     contentPane.setBorder(Borders.DLU4_BORDER);
-    contentPane.setLayout(new FormLayout("right:pref, 3dlu, pref:grow", "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, fill:50dlu:grow, 3dlu, pref, pref, pref, 3dlu, pref"));
+    contentPane.setLayout(new FormLayout("pref, 3dlu, pref:grow", "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, fill:50dlu:grow, 3dlu, pref, pref, pref, 3dlu, pref"));
     CellConstraints cellConstraints = new CellConstraints();
     addWindowListener(new WindowAdapter()
     {
@@ -103,7 +104,7 @@ public class CreateWirSchauenDataDialog extends JDialog implements WindowClosing
     });
 
     //labels for movie and episode titles
-    contentPane.add(DialogUtil.createBoldLabel(WirSchauenPlugin.mLocalizer.msg("PropertyLabels.Title", "Title")), cellConstraints.xy(1, 1));
+    contentPane.add(new JLabel(WirSchauenPlugin.mLocalizer.msg("PropertyLabels.Title", "Title")), cellConstraints.xy(1, 1));
     contentPane.add(DialogUtil.createReadOnlySelectAllTextField(program.getTitle()), cellConstraints.xy(3, 1));
     //if there is no episode title, take the episode number
     String episodeTitle = program.getTextField(ProgramFieldType.EPISODE_TYPE);
@@ -114,27 +115,27 @@ public class CreateWirSchauenDataDialog extends JDialog implements WindowClosing
     //if any episode id (title or number) was found, display it
     if (episodeTitle != null && episodeTitle.length() > 0)
     {
-      contentPane.add(DialogUtil.createBoldLabel(WirSchauenPlugin.mLocalizer.msg("PropertyLabels.Episode", "Episode")), cellConstraints.xy(1, 3));
+      contentPane.add(new JLabel(WirSchauenPlugin.mLocalizer.msg("PropertyLabels.Episode", "Episode")), cellConstraints.xy(1, 3));
       contentPane.add(DialogUtil.createReadOnlySelectAllTextField(episodeTitle), cellConstraints.xy(3, 3));
     }
 
     //dropdown category (movie or series)
-    contentPane.add(DialogUtil.createBoldLabel(WirSchauenPlugin.mLocalizer.msg("PropertyLabels.Category", "Category")), cellConstraints.xy(1, 5));
+    contentPane.add(new JLabel(WirSchauenPlugin.mLocalizer.msg("PropertyLabels.Category", "Category")), cellConstraints.xy(1, 5));
     final JComboBox categoryDropdown = DialogUtil.createUneditableDropdown(new String[] {WirSchauenPlugin.mLocalizer.msg("Category.NotSet", "not yet set"), WirSchauenPlugin.mLocalizer.msg("Category.Movie", "Movie"), WirSchauenPlugin.mLocalizer.msg("Category.Series", "Series"), WirSchauenPlugin.mLocalizer.msg("Category.Other", "Other")});
     contentPane.add(categoryDropdown, cellConstraints.xy(3, 5));
 
     //dropdown genre
-    contentPane.add(DialogUtil.createBoldLabel(WirSchauenPlugin.mLocalizer.msg("PropertyLabels.Genre", "Genre")), cellConstraints.xy(1, 7));
+    contentPane.add(new JLabel(WirSchauenPlugin.mLocalizer.msg("PropertyLabels.Genre", "Genre")), cellConstraints.xy(1, 7));
     final JComboBox genreComboBox = DialogUtil.createEditableDropdown(loadGenres());
     contentPane.add(genreComboBox, cellConstraints.xy(3, 7));
 
     //description/abstract
-    contentPane.add(DialogUtil.createBoldLabel(WirSchauenPlugin.mLocalizer.msg("PropertyLabels.Description", "Description")), cellConstraints.xy(1, 9, CellConstraints.DEFAULT, CellConstraints.TOP));
+    contentPane.add(new JLabel(WirSchauenPlugin.mLocalizer.msg("PropertyLabels.Description", "Description")), cellConstraints.xy(1, 9, CellConstraints.DEFAULT, CellConstraints.TOP));
     final DescriptionInputField descriptionInputField = new DescriptionInputField(CreateWirSchauenDataDialog.MAX_CHARS_IN_ABSTRACT, "", WirSchauenPlugin.mLocalizer.msg("RemainingChars", "%s characters remaining"));
     contentPane.add(descriptionInputField, cellConstraints.xy(3, 9));
 
     // format information
-    contentPane.add(DialogUtil.createBoldLabel(WirSchauenPlugin.mLocalizer.msg("PropertyLabels.Format", "Format")), cellConstraints.xy(1, 11));
+    contentPane.add(new JLabel(WirSchauenPlugin.mLocalizer.msg("PropertyLabels.Format", "Format")), cellConstraints.xy(1, 11));
     final JCheckBox subtitleCheckBox = new JCheckBox(WirSchauenPlugin.mLocalizer.msg("PropertyLabels.Subtitles", "Subtitles"));
     final JCheckBox owsCheckBox = new JCheckBox(WirSchauenPlugin.mLocalizer.msg("PropertyLabels.OwS", "Original with subtitles"));
     final JCheckBox premiereCheckBox = new JCheckBox(WirSchauenPlugin.mLocalizer.msg("PropertyLabels.Premiere", "TV Premiere"));
