@@ -22,6 +22,7 @@ import java.awt.event.WindowEvent;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import util.ui.Localizer;
@@ -91,7 +92,7 @@ public class CreateOmdbAbstractDialog extends JDialog implements WindowClosingIf
     UiUtilities.registerForClosing(this); //register esc-button
     JPanel contentPane = (JPanel) getContentPane();
     contentPane.setBorder(Borders.DLU4_BORDER);
-    contentPane.setLayout(new FormLayout("right:pref, 3dlu, pref:grow, pref", "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, fill:50dlu:grow, 3dlu, pref"));
+    contentPane.setLayout(new FormLayout("pref, 3dlu, pref:grow, pref", "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, fill:50dlu:grow, 3dlu, pref"));
     CellConstraints cellConstraints = new CellConstraints();
     addWindowListener(new WindowAdapter()
     {
@@ -103,7 +104,7 @@ public class CreateOmdbAbstractDialog extends JDialog implements WindowClosingIf
     });
 
     //labels for movie and episode titles (not changeable)
-    contentPane.add(DialogUtil.createBoldLabel(WirSchauenPlugin.mLocalizer.msg("PropertyLabels.Title", "Title")), cellConstraints.xy(1, 1));
+    contentPane.add(new JLabel(WirSchauenPlugin.mLocalizer.msg("PropertyLabels.Title", "Title")), cellConstraints.xy(1, 1));
     contentPane.add(DialogUtil.createReadOnlySelectAllTextField(program.getTitle()), cellConstraints.xyw(3, 1, 2));
     //if there is no episode title, take the episode number
     String episodeTitle = program.getTextField(ProgramFieldType.EPISODE_TYPE);
@@ -114,22 +115,22 @@ public class CreateOmdbAbstractDialog extends JDialog implements WindowClosingIf
     //if any episode id (title or number) was found, display it
     if (episodeTitle != null && episodeTitle.length() > 0)
     {
-      contentPane.add(DialogUtil.createBoldLabel(WirSchauenPlugin.mLocalizer.msg("PropertyLabels.Episode", "Episode")), cellConstraints.xy(1, 3));
+      contentPane.add(new JLabel(WirSchauenPlugin.mLocalizer.msg("PropertyLabels.Episode", "Episode")), cellConstraints.xy(1, 3));
       contentPane.add(DialogUtil.createReadOnlySelectAllTextField(episodeTitle), cellConstraints.xyw(3, 3, 2));
     }
 
     //omdb-link (not changeable)
-    contentPane.add(DialogUtil.createBoldLabel(WirSchauenPlugin.mLocalizer.msg("PropertyLabels.OmdbUrl", "URL")), cellConstraints.xy(1, 5));
+    contentPane.add(new JLabel(WirSchauenPlugin.mLocalizer.msg("PropertyLabels.OmdbUrl", "URL")), cellConstraints.xy(1, 5));
     contentPane.add(DialogUtil.createReadOnlySelectAllTextField(wirSchauenEvent.getOmdbUrl()), cellConstraints.xy(3, 5));
     //this buttons opens the omdb-page for this program
     contentPane.add(DialogUtil.createUrlButton(wirSchauenEvent.getOmdbUrl(), WirSchauenPlugin.mLocalizer.msg("OmdbButton", "Open OMDB in Browser")), cellConstraints.xy(4, 5));
 
     //category (movie or series, not changeable)
-    contentPane.add(DialogUtil.createBoldLabel(WirSchauenPlugin.mLocalizer.msg("PropertyLabels.Category", "Category")), cellConstraints.xy(1, 7));
+    contentPane.add(new JLabel(WirSchauenPlugin.mLocalizer.msg("PropertyLabels.Category", "Category")), cellConstraints.xy(1, 7));
     contentPane.add(DialogUtil.createReadOnlySelectAllTextField(mapCategoryToString(wirSchauenEvent.getCategory())), cellConstraints.xyw(3, 7, 2));
 
     //description/abstract (changeable)
-    contentPane.add(DialogUtil.createBoldLabel(WirSchauenPlugin.mLocalizer.msg("PropertyLabels.Description", "Description")), cellConstraints.xy(1, 9, CellConstraints.DEFAULT, CellConstraints.TOP));
+    contentPane.add(new JLabel(WirSchauenPlugin.mLocalizer.msg("PropertyLabels.Description", "Description")), cellConstraints.xy(1, 9, CellConstraints.DEFAULT, CellConstraints.TOP));
     final DescriptionInputField descriptionInputField = new DescriptionInputField(CreateOmdbAbstractDialog.MAX_CHARS_IN_ABSTRACT, oldOmdbAbstract, WirSchauenPlugin.mLocalizer.msg("RemainingChars", "%s Characters remaining"));
     contentPane.add(descriptionInputField, cellConstraints.xyw(3, 9, 2));
 

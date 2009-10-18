@@ -17,7 +17,6 @@ package wirschauenplugin;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -147,21 +146,6 @@ public final class DialogUtil
     });
     return urlButton;
   }
-
-
-  /**
-   * creates a bold label.
-   *
-   * @param labelString the label label ;)
-   * @return the label
-   */
-  public static JLabel createBoldLabel(final String labelString)
-  {
-    JLabel label = new JLabel(labelString);
-    label.setFont(label.getFont().deriveFont(Font.BOLD));
-    return label;
-  }
-
 
 
   /**

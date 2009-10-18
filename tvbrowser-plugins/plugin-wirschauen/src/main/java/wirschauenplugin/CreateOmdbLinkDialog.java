@@ -92,7 +92,7 @@ public class CreateOmdbLinkDialog extends JDialog implements WindowClosingIf
     UiUtilities.registerForClosing(this);
     JPanel contentPane = (JPanel) getContentPane();
     contentPane.setBorder(Borders.DLU4_BORDER);
-    contentPane.setLayout(new FormLayout("right:pref, 3dlu, pref, fill:10dlu:grow, 3dlu, pref", "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, fill:3dlu:grow, pref"));
+    contentPane.setLayout(new FormLayout("pref, 3dlu, pref, fill:10dlu:grow, 3dlu, pref", "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, fill:3dlu:grow, pref"));
     CellConstraints cellConstraints = new CellConstraints();
     addWindowListener(new WindowAdapter()
     {
@@ -104,7 +104,7 @@ public class CreateOmdbLinkDialog extends JDialog implements WindowClosingIf
     });
 
     //labels for movie and episode titles
-    contentPane.add(DialogUtil.createBoldLabel(WirSchauenPlugin.mLocalizer.msg("PropertyLabels.Title", "Title")), cellConstraints.xy(1, 1));
+    contentPane.add(new JLabel(WirSchauenPlugin.mLocalizer.msg("PropertyLabels.Title", "Title")), cellConstraints.xy(1, 1));
     contentPane.add(DialogUtil.createReadOnlySelectAllTextField(program.getTitle()), cellConstraints.xyw(3, 1, 4));
     //if there is no episode title, take the episode number
     String episodeTitle = program.getTextField(ProgramFieldType.EPISODE_TYPE);
@@ -115,19 +115,19 @@ public class CreateOmdbLinkDialog extends JDialog implements WindowClosingIf
     //if any episode id (title or number) was found, display it
     if (episodeTitle != null && episodeTitle.length() > 0)
     {
-      contentPane.add(DialogUtil.createBoldLabel(WirSchauenPlugin.mLocalizer.msg("PropertyLabels.Episode", "Episode")), cellConstraints.xy(1, 3));
+      contentPane.add(new JLabel(WirSchauenPlugin.mLocalizer.msg("PropertyLabels.Episode", "Episode")), cellConstraints.xy(1, 3));
       contentPane.add(DialogUtil.createReadOnlySelectAllTextField(episodeTitle), cellConstraints.xyw(3, 3, 4));
     }
 
     //omdb-link-input (label + url + input-field for id + button-link to omdb)
-    contentPane.add(DialogUtil.createBoldLabel(WirSchauenPlugin.mLocalizer.msg("PropertyLabels.OmdbUrl", "URL")), cellConstraints.xy(1, 5));
+    contentPane.add(new JLabel(WirSchauenPlugin.mLocalizer.msg("PropertyLabels.OmdbUrl", "URL")), cellConstraints.xy(1, 5));
     contentPane.add(new JLabel("http://www.omdb.org/movie/"), cellConstraints.xy(3, 5));
     final JTextField omdbIdInput = DialogUtil.createNumericInput(LOCALIZER.msg("IdTooltip", "numeric OMDB-ID of the program"));
     contentPane.add(omdbIdInput, cellConstraints.xy(4, 5));
     contentPane.add(DialogUtil.createUrlButton(generateSearchUrl(program.getTitle(), program.getTextField(ProgramFieldType.EPISODE_TYPE)), LOCALIZER.msg("FindProgram", "Find program in OMDB")), cellConstraints.xy(6, 5));
 
     //dropdown category (movie or series)
-    contentPane.add(DialogUtil.createBoldLabel(WirSchauenPlugin.mLocalizer.msg("PropertyLabels.Category", "Category")), cellConstraints.xy(1, 7));
+    contentPane.add(new JLabel(WirSchauenPlugin.mLocalizer.msg("PropertyLabels.Category", "Category")), cellConstraints.xy(1, 7));
     final JComboBox categoryDropdown = DialogUtil.createUneditableDropdown(new String[] {WirSchauenPlugin.mLocalizer.msg("Category.NotSet", "not yet set"), WirSchauenPlugin.mLocalizer.msg("Category.Movie", "Movie"), WirSchauenPlugin.mLocalizer.msg("Category.Series", "Series")});
     contentPane.add(categoryDropdown, cellConstraints.xyw(3, 7, 4));
 
