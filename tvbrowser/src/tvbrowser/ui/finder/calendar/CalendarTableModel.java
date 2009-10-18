@@ -28,7 +28,7 @@ public final class CalendarTableModel extends AbstractTableModel {
   private static final int COLUMNS = 7;
   private static final int ROWS = 5;
   private Date[][] mDate = new Date[ROWS][COLUMNS];
-  private Date mCurrentDate;
+  private Date mCurrentDate = Date.getCurrentDate();
 
   public CalendarTableModel(final Date firstDate) {
     Date date = firstDate;
