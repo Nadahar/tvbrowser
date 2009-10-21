@@ -283,7 +283,7 @@ public class ProgramTextCreator {
     buffer.append(prog.getTitle());
     buffer.append("</b></div>");
 
-    String episode = CompoundedProgramFieldType.EPISODE_COMPOSITION.getFormatedValueForProgram(prog);
+    String episode = CompoundedProgramFieldType.EPISODE_COMPOSITION.getFormattedValueForProgram(prog);
     
     if (episode != null && episode.trim().length() > 0) {
       buffer.append("<div style=\"color:#808080; font-size:");
@@ -540,7 +540,7 @@ public class ProgramTextCreator {
         }
       } else if(id instanceof CompoundedProgramFieldType) {
         CompoundedProgramFieldType value = (CompoundedProgramFieldType) id;
-        String entry = value.getFormatedValueForProgram(prog);
+        String entry = value.getFormattedValueForProgram(prog);
         
         if(entry != null) {
           startInfoSection(buffer, value.getName());

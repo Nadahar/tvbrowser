@@ -69,7 +69,7 @@ public class CompoundedProgramFieldType {
    * @param name The name for this field type, or <code>null</code> if
    * the name of the first entry in the field type array should be used. 
    * @param partSeparators The separator string between the fields. If one field value
-   * ist empty the part separator isn't used between the empty field and the next one.
+   * is empty the part separator isn't used between the empty field and the next one.
    */
   private CompoundedProgramFieldType(int id, ProgramFieldType[] fieldTypes, String name, String[] partSeparators) {
     mId = id;
@@ -80,38 +80,38 @@ public class CompoundedProgramFieldType {
   }
   
   /**
-   * Gets the formated value for the given program for this
+   * Gets the formatted value for the given program for this
    * compounded field type.
    * 
-   * @param prog The Program to get the formated value for.
-   * @return The formated value.
+   * @param prog The Program to get the formatted value for.
+   * @return The formatted value.
    */
-  public String getFormatedValueForProgram(Program prog) {
+  public String getFormattedValueForProgram(Program prog) {
     if(mFormatString != null) { 
       String value = mFormatString;
       boolean found = false;
       
       for(int i = 0; i < mFieldTypes.length; i++) {
-        String formatedValue = "";
+        String formattedValue = "";
         
         if(mFieldTypes[i].getFormat() == ProgramFieldType.TEXT_FORMAT) {
-          formatedValue = prog.getTextField(mFieldTypes[i]);
+          formattedValue = prog.getTextField(mFieldTypes[i]);
         }
         else if(mFieldTypes[i].getFormat() == ProgramFieldType.INT_FORMAT) {
-          formatedValue = prog.getIntFieldAsString(mFieldTypes[i]);
+          formattedValue = prog.getIntFieldAsString(mFieldTypes[i]);
         }
         else if(mFieldTypes[i].getFormat() == ProgramFieldType.TIME_FORMAT) {
-          formatedValue = prog.getTimeFieldAsString(mFieldTypes[i]);
+          formattedValue = prog.getTimeFieldAsString(mFieldTypes[i]);
         }
         
-        if(formatedValue == null) {
-          formatedValue = "";
+        if(formattedValue == null) {
+          formattedValue = "";
         }
         else {
           found = true;
         }
         
-        value = value.replace("{"+i+"}",formatedValue);
+        value = value.replace("{"+i+"}",formattedValue);
       }
       
       return found ? value : null;
@@ -187,7 +187,7 @@ public class CompoundedProgramFieldType {
   /**
    * Gets the compounded program field type for the given id.
    * 
-   * @param id The id to get the compunded field type for.
+   * @param id The id to get the compounded field type for.
    * @return The compounded field type for the given id or
    * <code>null</code> if the compounded field type of the id was not found.
    */
