@@ -294,7 +294,7 @@ public class ProgramMenuItem extends JMenuItem {
   public String getToolTipText() {
     if (mShowToolTip) {
       if(mToolTipTextBuffer == null) {
-        String episodeText = CompoundedProgramFieldType.EPISODE_COMPOSITION.getFormatedValueForProgram(mProgram);
+        String episodeText = CompoundedProgramFieldType.EPISODE_COMPOSITION.getFormattedValueForProgram(mProgram);
         
         StringBuilder episode = new StringBuilder(
             episodeText != null ? episodeText : "");
@@ -378,5 +378,9 @@ public class ProgramMenuItem extends JMenuItem {
         menu.show(popupParent,p.x - popupParent.getLocation().x,p.y - popupParent.getLocation().y);
       };
     });
+  }
+
+  public Program getProgram() {
+    return mProgram;
   }
 }
