@@ -37,6 +37,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Calendar;
 
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -340,13 +341,18 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
 
   private void updateScrollBars() {
     int columnWidth = mProgramTable.getColumnWidth();
-    int fullColumns = (getViewport().getWidth() + 8) / columnWidth;
-    if (fullColumns < 1) {
-      fullColumns = 1;
-    }
-    getHorizontalScrollBar().setBlockIncrement(fullColumns * columnWidth);
+    getHorizontalScrollBar().setBlockIncrement(getFullColumns() * columnWidth);
   }
   
+  private int getFullColumns() {
+    int columnWidth = mProgramTable.getColumnWidth();
+    int fullColumns = (getViewport().getWidth() + 8) / columnWidth;
+    if (fullColumns < 1) {
+      return 1;
+    }
+    return fullColumns;
+  }
+
   /**
    * get the currently scrolled time of the program table
    * @return time in minutes after midnight, or -1 if it is unknown
@@ -357,5 +363,26 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
 
   public void resetScrolledTime() {
     mScrolledTime = -1;
+  }
+
+  public void scrollPageRight() {
+    scrollPageHorizontal(+1);
+  }
+
+  public void scrollPageLeft() {
+    scrollPageHorizontal(-1);
+  }
+
+  private void scrollPageHorizontal(int direction) {
+    JScrollBar scrollBar = getHorizontalScrollBar();
+    int pos = scrollBar.getValue() + direction * getFullColumns() * mProgramTable.getColumnWidth();
+    int max = scrollBar.getMaximum() - scrollBar.getVisibleAmount();
+    if (pos > max) {
+      pos = max;
+    }
+    if (pos < 0) {
+      pos = 0;
+    }
+    scrollBar.setValue(pos);
   }
 }

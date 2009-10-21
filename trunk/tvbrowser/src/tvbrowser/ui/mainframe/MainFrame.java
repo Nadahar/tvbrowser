@@ -771,22 +771,10 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
         JComponent.WHEN_IN_FOCUSED_WINDOW);
 
     stroke = KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_MASK);
-    rootPane.registerKeyboardAction(new ActionListener() {
-
-      public void actionPerformed(ActionEvent e) {
-        goToNextDay();
-      }
-
-    }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+    rootPane.registerKeyboardAction(TVBrowserActions.goToNextDay, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
 
     stroke = KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_MASK);
-    rootPane.registerKeyboardAction(new ActionListener() {
-
-      public void actionPerformed(ActionEvent e) {
-        goToPreviousDay();
-      }
-
-    }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+    rootPane.registerKeyboardAction(TVBrowserActions.goToPreviousDay, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
 
     // return from full screen using ESCAPE
     stroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0);
@@ -794,7 +782,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
 
       public void actionPerformed(ActionEvent e) {
         if (isFullScreenMode()) {
-          switchFullscreenMode();
+          TVBrowserActions.fullScreen.actionPerformed(null);
         }
       }
 
@@ -817,34 +805,35 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       }
 
     }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+    
+    
+    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, InputEvent.SHIFT_MASK);
+    rootPane.registerKeyboardAction(new ActionListener() {
+      
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        mProgramTableScrollPane.scrollPageRight();
+      }
+    }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+
+    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, InputEvent.SHIFT_MASK);
+    rootPane.registerKeyboardAction(new ActionListener() {
+      
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        mProgramTableScrollPane.scrollPageLeft();
+      }
+    }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
 
     // map font size keys also to numeric pad
     stroke = KeyStroke.getKeyStroke(KeyEvent.VK_SUBTRACT, InputEvent.CTRL_MASK);
-    rootPane.registerKeyboardAction(new ActionListener() {
-
-      public void actionPerformed(ActionEvent e) {
-        changeFontSize(-1);
-      }
-
-    }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+    rootPane.registerKeyboardAction(TVBrowserActions.fontSizeSmaller, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
 
     stroke = KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD0, InputEvent.CTRL_MASK);
-    rootPane.registerKeyboardAction(new ActionListener() {
-
-      public void actionPerformed(ActionEvent e) {
-        changeFontSize(0);
-      }
-
-    }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+    rootPane.registerKeyboardAction(TVBrowserActions.fontSizeDefault, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
 
     stroke = KeyStroke.getKeyStroke(KeyEvent.VK_ADD, InputEvent.CTRL_MASK);
-    rootPane.registerKeyboardAction(new ActionListener() {
-
-      public void actionPerformed(ActionEvent e) {
-        changeFontSize(1);
-      }
-
-    }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+    rootPane.registerKeyboardAction(TVBrowserActions.fontSizeLarger, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
     
     this.setRootPane(rootPane);
   }
