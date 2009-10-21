@@ -36,6 +36,7 @@ import java.util.ArrayList;
  */
 public class TextLineBreakerStringWidth {
 
+  private static final String ELLIPSIS = "\u2026"; // unicode character representing "...";
   /** Current Character */
   private int mCurrChar;
   /** Line Buffer */
@@ -117,7 +118,7 @@ public class TextLineBreakerStringWidth {
         && (line.length() != 0))
       {
         // Add three dots if we stop because of the maxLines rule
-        line += "...";
+        line += ELLIPSIS;
       }
 
       lineList.add(line);
