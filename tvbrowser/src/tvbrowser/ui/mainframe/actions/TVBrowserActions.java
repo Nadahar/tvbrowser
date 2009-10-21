@@ -308,7 +308,7 @@ public final class TVBrowserActions {
       MainFrame.getInstance().switchFullscreenMode();
     }
   };
-
+  
   /**
    * register this action, so we can iterate over all actions later
    * @param tvBrowserAction
