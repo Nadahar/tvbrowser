@@ -184,18 +184,40 @@ public final class WirSchauenPlugin extends Plugin
         }
       };
       action.putValue(Action.NAME, LOCALIZER.msg("contextMenu", "Recommend text for this program"));
-
-      //TODO put that in a method for better encapsulation of lazy init
-      if (mIcon == null)
-      {
-        mIcon = createImageIcon("apps", "wirschauen", 16);
-      }
-
-      action.putValue(Action.SMALL_ICON, mIcon);
+      action.putValue(Action.SMALL_ICON, getIcon());
 
       return new ActionMenu(action);
     }
     return null;
+  }
+
+  /**
+   * helper method for lazy init.
+   *
+   * @return the icon for the context menu.
+   */
+  private Icon getIcon()
+  {
+    if (mIcon == null)
+    {
+      mIcon = createImageIcon("apps", "wirschauen", 16);
+    }
+    return mIcon;
+  }
+
+
+  /**
+   * helper method for lazy init.
+   *
+   * @return the icon for the missing description marker.
+   */
+  private Icon getMissingDescriptionIcon()
+  {
+    if (mMissingDescriptionIcon == null)
+    {
+      mMissingDescriptionIcon = createImageIcon("apps", "wirschauen_noDesc", 16);
+    }
+    return mMissingDescriptionIcon;
   }
 
 
@@ -283,17 +305,11 @@ public final class WirSchauenPlugin extends Plugin
         || (program.getShortInfo().indexOf("keine Beschreibung") != -1
         && program.getShortInfo().indexOf("WirSchauen") != -1)))
     {
-      //TODO put that in a method for better encapsulation of lazy init
-      if (mMissingDescriptionIcon == null)
-      {
-        mMissingDescriptionIcon = createImageIcon("apps", "wirschauen_noDesc", 16);
-      }
-      return new Icon[] {mMissingDescriptionIcon};
+      return new Icon[] {getMissingDescriptionIcon()};
     }
     if (program == getPluginManager().getExampleProgram())
     {
-      //FIXME that might be null! use a method for lazy init!
-      return new Icon[] {mMissingDescriptionIcon};
+      return new Icon[] {getMissingDescriptionIcon()};
     }
     return null;
   }
