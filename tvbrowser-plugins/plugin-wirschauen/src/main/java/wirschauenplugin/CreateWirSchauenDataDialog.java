@@ -104,7 +104,7 @@ public class CreateWirSchauenDataDialog extends JDialog implements WindowClosing
     });
 
     //labels for movie and episode titles
-    contentPane.add(new JLabel(WirSchauenPlugin.mLocalizer.msg("PropertyLabels.Title", "Title")), cellConstraints.xy(1, 1));
+    contentPane.add(new JLabel(WirSchauenPlugin.LOCALIZER.msg("PropertyLabels.Title", "Title")), cellConstraints.xy(1, 1));
     contentPane.add(DialogUtil.createReadOnlySelectAllTextField(program.getTitle()), cellConstraints.xy(3, 1));
     //if there is no episode title, take the episode number
     String episodeTitle = program.getTextField(ProgramFieldType.EPISODE_TYPE);
@@ -115,30 +115,30 @@ public class CreateWirSchauenDataDialog extends JDialog implements WindowClosing
     //if any episode id (title or number) was found, display it
     if (episodeTitle != null && episodeTitle.length() > 0)
     {
-      contentPane.add(new JLabel(WirSchauenPlugin.mLocalizer.msg("PropertyLabels.Episode", "Episode")), cellConstraints.xy(1, 3));
+      contentPane.add(new JLabel(WirSchauenPlugin.LOCALIZER.msg("PropertyLabels.Episode", "Episode")), cellConstraints.xy(1, 3));
       contentPane.add(DialogUtil.createReadOnlySelectAllTextField(episodeTitle), cellConstraints.xy(3, 3));
     }
 
     //dropdown category (movie or series)
-    contentPane.add(new JLabel(WirSchauenPlugin.mLocalizer.msg("PropertyLabels.Category", "Category")), cellConstraints.xy(1, 5));
-    final JComboBox categoryDropdown = DialogUtil.createUneditableDropdown(new String[] {WirSchauenPlugin.mLocalizer.msg("Category.NotSet", "not yet set"), WirSchauenPlugin.mLocalizer.msg("Category.Movie", "Movie"), WirSchauenPlugin.mLocalizer.msg("Category.Series", "Series"), WirSchauenPlugin.mLocalizer.msg("Category.Other", "Other")});
+    contentPane.add(new JLabel(WirSchauenPlugin.LOCALIZER.msg("PropertyLabels.Category", "Category")), cellConstraints.xy(1, 5));
+    final JComboBox categoryDropdown = DialogUtil.createUneditableDropdown(new String[] {WirSchauenPlugin.LOCALIZER.msg("Category.NotSet", "not yet set"), WirSchauenPlugin.LOCALIZER.msg("Category.Movie", "Movie"), WirSchauenPlugin.LOCALIZER.msg("Category.Series", "Series"), WirSchauenPlugin.LOCALIZER.msg("Category.Other", "Other")});
     contentPane.add(categoryDropdown, cellConstraints.xy(3, 5));
 
     //dropdown genre
-    contentPane.add(new JLabel(WirSchauenPlugin.mLocalizer.msg("PropertyLabels.Genre", "Genre")), cellConstraints.xy(1, 7));
+    contentPane.add(new JLabel(WirSchauenPlugin.LOCALIZER.msg("PropertyLabels.Genre", "Genre")), cellConstraints.xy(1, 7));
     final JComboBox genreComboBox = DialogUtil.createEditableDropdown(loadGenres());
     contentPane.add(genreComboBox, cellConstraints.xy(3, 7));
 
     //description/abstract
-    contentPane.add(new JLabel(WirSchauenPlugin.mLocalizer.msg("PropertyLabels.Description", "Description")), cellConstraints.xy(1, 9, CellConstraints.DEFAULT, CellConstraints.TOP));
-    final DescriptionInputField descriptionInputField = new DescriptionInputField(CreateWirSchauenDataDialog.MAX_CHARS_IN_ABSTRACT, "", WirSchauenPlugin.mLocalizer.msg("RemainingChars", "%s characters remaining"));
+    contentPane.add(new JLabel(WirSchauenPlugin.LOCALIZER.msg("PropertyLabels.Description", "Description")), cellConstraints.xy(1, 9, CellConstraints.DEFAULT, CellConstraints.TOP));
+    final DescriptionInputField descriptionInputField = new DescriptionInputField(CreateWirSchauenDataDialog.MAX_CHARS_IN_ABSTRACT, "", WirSchauenPlugin.LOCALIZER.msg("RemainingChars", "%s characters remaining"));
     contentPane.add(descriptionInputField, cellConstraints.xy(3, 9));
 
     // format information
-    contentPane.add(new JLabel(WirSchauenPlugin.mLocalizer.msg("PropertyLabels.Format", "Format")), cellConstraints.xy(1, 11));
-    final JCheckBox subtitleCheckBox = new JCheckBox(WirSchauenPlugin.mLocalizer.msg("PropertyLabels.Subtitles", "Subtitles"));
-    final JCheckBox owsCheckBox = new JCheckBox(WirSchauenPlugin.mLocalizer.msg("PropertyLabels.OwS", "Original with subtitles"));
-    final JCheckBox premiereCheckBox = new JCheckBox(WirSchauenPlugin.mLocalizer.msg("PropertyLabels.Premiere", "TV Premiere"));
+    contentPane.add(new JLabel(WirSchauenPlugin.LOCALIZER.msg("PropertyLabels.Format", "Format")), cellConstraints.xy(1, 11));
+    final JCheckBox subtitleCheckBox = new JCheckBox(WirSchauenPlugin.LOCALIZER.msg("PropertyLabels.Subtitles", "Subtitles"));
+    final JCheckBox owsCheckBox = new JCheckBox(WirSchauenPlugin.LOCALIZER.msg("PropertyLabels.OwS", "Original with subtitles"));
+    final JCheckBox premiereCheckBox = new JCheckBox(WirSchauenPlugin.LOCALIZER.msg("PropertyLabels.Premiere", "TV Premiere"));
     contentPane.add(subtitleCheckBox, cellConstraints.xy(3, 11));
     contentPane.add(owsCheckBox, cellConstraints.xy(3, 12));
     contentPane.add(premiereCheckBox, cellConstraints.xy(3, 13));
@@ -248,16 +248,16 @@ public class CreateWirSchauenDataDialog extends JDialog implements WindowClosing
   private static String[] loadGenres()
   {
     String[] genres = new String[10];
-    genres[0] = WirSchauenPlugin.mLocalizer.msg("Genre.Action", "Action");
-    genres[1] = WirSchauenPlugin.mLocalizer.msg("Genre.Adventure", "Adventure");
-    genres[2] = WirSchauenPlugin.mLocalizer.msg("Genre.Animation", "Animation");
-    genres[3] = WirSchauenPlugin.mLocalizer.msg("Genre.Comedy", "Comedy");
-    genres[4] = WirSchauenPlugin.mLocalizer.msg("Genre.Documentation", "Documentation");
-    genres[5] = WirSchauenPlugin.mLocalizer.msg("Genre.Drama", "Drama");
-    genres[6] = WirSchauenPlugin.mLocalizer.msg("Genre.Series", "Series");
-    genres[7] = WirSchauenPlugin.mLocalizer.msg("Genre.Thriller", "Thriller");
-    genres[8] = WirSchauenPlugin.mLocalizer.msg("Genre.Crime", "Crime");
-    genres[9] = WirSchauenPlugin.mLocalizer.msg("Genre.Movie", "Movie");
+    genres[0] = WirSchauenPlugin.LOCALIZER.msg("Genre.Action", "Action");
+    genres[1] = WirSchauenPlugin.LOCALIZER.msg("Genre.Adventure", "Adventure");
+    genres[2] = WirSchauenPlugin.LOCALIZER.msg("Genre.Animation", "Animation");
+    genres[3] = WirSchauenPlugin.LOCALIZER.msg("Genre.Comedy", "Comedy");
+    genres[4] = WirSchauenPlugin.LOCALIZER.msg("Genre.Documentation", "Documentation");
+    genres[5] = WirSchauenPlugin.LOCALIZER.msg("Genre.Drama", "Drama");
+    genres[6] = WirSchauenPlugin.LOCALIZER.msg("Genre.Series", "Series");
+    genres[7] = WirSchauenPlugin.LOCALIZER.msg("Genre.Thriller", "Thriller");
+    genres[8] = WirSchauenPlugin.LOCALIZER.msg("Genre.Crime", "Crime");
+    genres[9] = WirSchauenPlugin.LOCALIZER.msg("Genre.Movie", "Movie");
     Arrays.sort(genres);
     return genres;
   }
