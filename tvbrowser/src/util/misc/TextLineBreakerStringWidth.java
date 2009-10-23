@@ -36,7 +36,11 @@ import java.util.ArrayList;
  */
 public class TextLineBreakerStringWidth {
 
-  private static final String ELLIPSIS = "\u2026"; // unicode character representing "...";
+  /**
+   * ellipsis used for shortened titles and descriptions<br>
+   * unicode character representing "..."
+   */
+  public static final String ELLIPSIS = "\u2026";
   /** Current Character */
   private int mCurrChar;
   /** Line Buffer */
