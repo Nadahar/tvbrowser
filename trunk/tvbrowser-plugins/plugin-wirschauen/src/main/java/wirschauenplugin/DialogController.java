@@ -104,7 +104,7 @@ public class DialogController
             @Override
             public void run()
             {
-              JOptionPane.showMessageDialog(mParent, WirSchauenPlugin.mLocalizer.msg("ConnectionFailed", "Connection failed"), WirSchauenPlugin.mLocalizer.msg("Error", "Error"), JOptionPane.ERROR_MESSAGE);
+              JOptionPane.showMessageDialog(mParent, WirSchauenPlugin.LOCALIZER.msg("ConnectionFailed", "Connection failed"), WirSchauenPlugin.LOCALIZER.msg("Error", "Error"), JOptionPane.ERROR_MESSAGE);
             }
           });
         }
@@ -139,11 +139,11 @@ public class DialogController
       {
         //the event has no omdb-link. if it is a future program, show a dialog (choose between
         //omdb-link and wirschauen-stuff). show the omdb-dialog otherwise.
-        Object[] options = {WirSchauenPlugin.mLocalizer.msg("Yes", "Yes"), WirSchauenPlugin.mLocalizer.msg("No", "No"), Localizer.getLocalization(Localizer.I18N_CANCEL)};
+        Object[] options = {WirSchauenPlugin.LOCALIZER.msg("Yes", "Yes"), WirSchauenPlugin.LOCALIZER.msg("No", "No"), Localizer.getLocalization(Localizer.I18N_CANCEL)};
         int buttonPressed = 0;
         if (mProgram.getDate().compareTo(Date.getCurrentDate()) > 0)
         {
-          buttonPressed = JOptionPane.showOptionDialog(mParent, WirSchauenPlugin.mLocalizer.msg("NoOmdbLink", "This program is not yet linked with OMDB. Do you want to create a link now?"), WirSchauenPlugin.mLocalizer.msg("CreateLinkQuestionTitle", "Create OMDB Link"), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+          buttonPressed = JOptionPane.showOptionDialog(mParent, WirSchauenPlugin.LOCALIZER.msg("NoOmdbLink", "This program is not yet linked with OMDB. Do you want to create a link now?"), WirSchauenPlugin.LOCALIZER.msg("CreateLinkQuestionTitle", "Create OMDB Link"), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
         }
         if (buttonPressed == 0)
         {
@@ -173,7 +173,7 @@ public class DialogController
                     @Override
                     public void run()
                     {
-                      JOptionPane.showMessageDialog(mParent, WirSchauenPlugin.mLocalizer.msg("Thanks", "Thanks"), WirSchauenPlugin.mLocalizer.msg("Thanks", "Thanks"), JOptionPane.INFORMATION_MESSAGE);
+                      JOptionPane.showMessageDialog(mParent, WirSchauenPlugin.LOCALIZER.msg("Thanks", "Thanks"), WirSchauenPlugin.LOCALIZER.msg("Thanks", "Thanks"), JOptionPane.INFORMATION_MESSAGE);
                     }
                   });
                 }
@@ -187,7 +187,7 @@ public class DialogController
                     @Override
                     public void run()
                     {
-                      JOptionPane.showMessageDialog(mParent, WirSchauenPlugin.mLocalizer.msg("ConnectionFailed", "Connection failed"), WirSchauenPlugin.mLocalizer.msg("Error", "Error"), JOptionPane.ERROR_MESSAGE);
+                      JOptionPane.showMessageDialog(mParent, WirSchauenPlugin.LOCALIZER.msg("ConnectionFailed", "Connection failed"), WirSchauenPlugin.LOCALIZER.msg("Error", "Error"), JOptionPane.ERROR_MESSAGE);
                     }
                   });
                 }
@@ -223,7 +223,7 @@ public class DialogController
                     @Override
                     public void run()
                     {
-                      JOptionPane.showMessageDialog(mParent, WirSchauenPlugin.mLocalizer.msg("Thanks", "Thanks"), WirSchauenPlugin.mLocalizer.msg("Thanks", "Thanks"), JOptionPane.INFORMATION_MESSAGE);
+                      JOptionPane.showMessageDialog(mParent, WirSchauenPlugin.LOCALIZER.msg("Thanks", "Thanks"), WirSchauenPlugin.LOCALIZER.msg("Thanks", "Thanks"), JOptionPane.INFORMATION_MESSAGE);
                     }
                   });
                 }
@@ -237,7 +237,7 @@ public class DialogController
                     @Override
                     public void run()
                     {
-                      JOptionPane.showMessageDialog(mParent, WirSchauenPlugin.mLocalizer.msg("ConnectionFailed", "Connection failed"), WirSchauenPlugin.mLocalizer.msg("Error", "Error"), JOptionPane.ERROR_MESSAGE);
+                      JOptionPane.showMessageDialog(mParent, WirSchauenPlugin.LOCALIZER.msg("ConnectionFailed", "Connection failed"), WirSchauenPlugin.LOCALIZER.msg("Error", "Error"), JOptionPane.ERROR_MESSAGE);
                     }
                   });
                 }
@@ -282,7 +282,7 @@ public class DialogController
                 @Override
                 public void run()
                 {
-                  JOptionPane.showMessageDialog(mParent, WirSchauenPlugin.mLocalizer.msg("ConnectionFailed", "Connection failed"), WirSchauenPlugin.mLocalizer.msg("Error", "Error"), JOptionPane.ERROR_MESSAGE);
+                  JOptionPane.showMessageDialog(mParent, WirSchauenPlugin.LOCALIZER.msg("ConnectionFailed", "Connection failed"), WirSchauenPlugin.LOCALIZER.msg("Error", "Error"), JOptionPane.ERROR_MESSAGE);
                 }
               });
             }
@@ -342,7 +342,7 @@ public class DialogController
                 @Override
                 public void run()
                 {
-                  JOptionPane.showMessageDialog(mParent, WirSchauenPlugin.mLocalizer.msg("Thanks", "Thanks"), WirSchauenPlugin.mLocalizer.msg("Thanks", "Thanks"), JOptionPane.INFORMATION_MESSAGE);
+                  JOptionPane.showMessageDialog(mParent, WirSchauenPlugin.LOCALIZER.msg("Thanks", "Thanks"), WirSchauenPlugin.LOCALIZER.msg("Thanks", "Thanks"), JOptionPane.INFORMATION_MESSAGE);
                 }
               });
             }
@@ -356,7 +356,7 @@ public class DialogController
                 @Override
                 public void run()
                 {
-                  JOptionPane.showMessageDialog(mParent, WirSchauenPlugin.mLocalizer.msg("ConnectionFailed", "Connection failed"), WirSchauenPlugin.mLocalizer.msg("Error", "Error"), JOptionPane.ERROR_MESSAGE);
+                  JOptionPane.showMessageDialog(mParent, WirSchauenPlugin.LOCALIZER.msg("ConnectionFailed", "Connection failed"), WirSchauenPlugin.LOCALIZER.msg("Error", "Error"), JOptionPane.ERROR_MESSAGE);
                 }
               });
             }
