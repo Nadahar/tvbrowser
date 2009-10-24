@@ -306,7 +306,7 @@ public class ProgramInfo {
       mHistoryIndex = mHistory.size() - 1;
     }
     if (mHistoryIndex >= 0) {
-      ProgramInfoDialog.getInstance(mHistory.get(mHistoryIndex), mLeftSplit, false);
+      ProgramInfoDialog.getInstance(mHistory.get(mHistoryIndex), mLeftSplit, true);
     }
   }
 
