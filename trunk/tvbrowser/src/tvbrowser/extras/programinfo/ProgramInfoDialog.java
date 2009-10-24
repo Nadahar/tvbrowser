@@ -182,13 +182,10 @@ class ProgramInfoDialog {
   private synchronized void setProgram(Program program, boolean showSettings) {
     mProgram = program;
     addPluginActions(false);
-    setProgramText();
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
+        setProgramText();
         mInfoEP.setCaretPosition(0);
-        mHighlight.setSelected(ProgramInfo.getInstance().getSettings()
-            .getHighlightFavorite());
-        highlightFavorites();
         if (mFindAsYouType.getSearchBar().isVisible()) {
           mFindAsYouType.next();
         }
@@ -252,7 +249,9 @@ class ProgramInfoDialog {
   }
 
   private void setProgramText() {
-    mDialog.setTitle(mProgram.getTitle());
+    if (mDialog != null) {
+      mDialog.setTitle(mProgram.getTitle());
+    }
     mInfoEP.setText(ProgramTextCreator.createInfoText(mProgram, mDoc,
         ProgramInfo.getInstance().getOrder(), ProgramInfo.getInstance()
             .getSettings().getUsedTitleFont(), ProgramInfo.getInstance()
@@ -261,12 +260,16 @@ class ProgramInfoDialog {
         ProgramInfo.getInstance().getSettings().getZoomEnabled() ? ProgramInfo
             .getInstance().getSettings().getZoomValue() : 100, true,
         ProgramInfo.getInstance().getSettings().getEnableSearch()));
+    mHighlight.setSelected(ProgramInfo.getInstance().getSettings()
+        .getHighlightFavorite());
+    highlightFavorites();
   }
 
   private void init(Dimension pluginsSize, boolean showSettings) {
     mShowSettings = showSettings;
     mFunctionGroup = new JTaskPaneGroup();
     mFunctionGroup.setTitle(mLocalizer.msg("functions", "Functions"));
+    mFunctionGroup.setDoubleBuffered(true);
 
     mMainPanel = new JPanel(new BorderLayout());
     mMainPanel.setPreferredSize(new Dimension(750, 500));
@@ -278,6 +281,7 @@ class ProgramInfoDialog {
     kit.setLinkCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
     mInfoEP.setEditorKit(kit);
+    mInfoEP.setDoubleBuffered(true);
 
     mDoc = (ExtendedHTMLDocument) mInfoEP.getDocument();
 
@@ -806,6 +810,7 @@ class ProgramInfoDialog {
 
     if (rebuild) {
       setProgramText();
+      mInfoEP.scrollRectToVisible(oldVisibleRect);
       SwingUtilities.invokeLater(new Runnable() {
         public void run() {
           mInfoEP.scrollRectToVisible(oldVisibleRect);
