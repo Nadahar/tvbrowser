@@ -252,6 +252,7 @@ class ProgramInfoDialog {
   }
 
   private void setProgramText() {
+    mDialog.setTitle(mProgram.getTitle());
     mInfoEP.setText(ProgramTextCreator.createInfoText(mProgram, mDoc,
         ProgramInfo.getInstance().getOrder(), ProgramInfo.getInstance()
             .getSettings().getUsedTitleFont(), ProgramInfo.getInstance()
