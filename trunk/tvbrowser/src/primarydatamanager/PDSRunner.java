@@ -125,7 +125,7 @@ public class PDSRunner {
             logFile.delete();
           }
           errOut.close();
-        }catch(IOException exc) {
+        }catch(Exception exc) {
           mLog.log(Level.SEVERE, "Error executing primary data service "+pds.getClass().getName(), exc);
         }
       }
