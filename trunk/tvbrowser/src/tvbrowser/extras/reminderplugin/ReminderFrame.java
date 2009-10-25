@@ -35,6 +35,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 import java.util.AbstractList;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -194,6 +195,8 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
     programsPanel.add(mHeader = new JLabel(""), cc.xyw(1, 1, 3));
     programsPanel.setRow(3);
     int remainingMinutesMax = 0;
+    
+    ArrayList<ProgramPanel> panels = new ArrayList<ProgramPanel>(reminders.size());
 
     for (ReminderListItem reminder : reminders) {
       Program program = reminder.getProgram();
@@ -216,6 +219,7 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
           new ProgramPanelSettings(new PluginPictureSettings(
               PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE), false,
               ProgramPanelSettings.X_AXIS));
+      panels.add(panel);
       panel.setMinimumSize(new Dimension(300,50));
       panel.setWidth(300);
       // register panel with tooltip manager
@@ -227,18 +231,20 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
       if (program.getLength() > 0) {
         final JLabel endTime = new JLabel(mLocalizer.msg("endTime",
             "until {0}", program.getEndTimeString()));
-        channelPanel.add(endTime, BorderLayout.NORTH);
+        channelPanel.add(endTime, BorderLayout.PAGE_START);
       }
-      final JLabel channelLabel = new JLabel();
-      channelLabel.setToolTipText(program.getChannel().getName());
+      String channelName = program.getChannel().getName();
+      JLabel channelLabel = new JLabel();
+      channelLabel.setToolTipText(channelName);
       channelLabel.setIcon(UiUtilities.createChannelIcon(program.getChannel()
           .getIcon()));
-      channelLabel.setVerticalTextPosition(SwingConstants.BOTTOM);
-      channelLabel.setHorizontalTextPosition(SwingConstants.LEFT);
+      channelLabel.setHorizontalTextPosition(SwingConstants.RIGHT);
       channelPanel.add(channelLabel, BorderLayout.CENTER);
+      channelLabel = new JLabel(channelName);
+      channelPanel.add(channelLabel, BorderLayout.PAGE_END);
       
       layout.appendRow(RowSpec.decode("pref"));
-      programsPanel.add(panel, cc.xy(1, programsPanel.getRow()));
+      programsPanel.add(panel, cc.xy(1, programsPanel.getRow(), CellConstraints.FILL, CellConstraints.FILL));
       programsPanel.add(channelPanel, cc.xy(3, programsPanel.getRow(), CellConstraints.LEFT, CellConstraints.TOP));
       programsPanel.nextRow();
 
@@ -305,6 +311,9 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
       mAutoCloseTimer.start();
     }
 
+    for (ProgramPanel programPanel : panels) {
+      programPanel.setMinimumSize(new Dimension(300,50));
+    }
     mDialog.pack();
     
     mCloseBt.setText(mCloseBtText);
