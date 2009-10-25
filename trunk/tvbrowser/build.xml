@@ -658,7 +658,7 @@
     <mkdir dir="${unpacked.dir}/commons-lang-2.4.jar"/>
     <unjar src="${lib.dir}/commons-lang-2.4.jar" dest="${unpacked.dir}/commons-net-2.0.jar"/>
 
-    <unjar src="${lib.dir}/looks-2.2.2.jar" dest="${unpacked.dir}/looks-2.2.2.jar"/>
+    <unjar src="${lib.dir}/looks-2.3.0.jar" dest="${unpacked.dir}/looks-2.2.2.jar"/>
     <unjar src="${lib.dir}/jakarta-oro-2.0.8.jar" dest="${unpacked.dir}/jakarta-oro-2.0.8.jar"/>
 	<unjar src="${lib.dir}/opencsv-1.8.jar" dest="${unpacked.dir}/opencsv-1.8.jar" />
     <unjar src="${lib.dir}/htmlparser.jar" dest="${unpacked.dir}/htmlparser.jar" />
