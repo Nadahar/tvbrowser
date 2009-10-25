@@ -1,3 +1,19 @@
+/*
+ * Copyright Michael Keppler
+ * 
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package recommendationplugin;
 
 import java.awt.event.ActionEvent;
@@ -111,7 +127,7 @@ public final class RecommendationPlugin extends Plugin {
   public PluginInfo getInfo() {
     return new PluginInfo(RecommendationPlugin.class, mLocalizer.msg("pluginName", "Recommendation Plugin"), mLocalizer
         .msg("description", "Shows recommendation based on data from different sources"),
-        "Bodo Tasche, Michael Keppler", "GPL");
+        "Bodo Tasche, Michael Keppler", "GPL 3");
   }
 
   public Icon getPluginIcon() {
