@@ -26,8 +26,10 @@ import java.util.ArrayList;
 import java.util.Properties;
 
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 
 import util.io.ExecutionHandler;
+import util.io.IOUtilities;
 import util.misc.OperatingSystem;
 import util.paramhandler.ParamParser;
 import util.program.LocalPluginProgramFormating;
@@ -105,7 +107,7 @@ public class NotifyOSDPlugin extends Plugin {
         builder.append(entry.trim());
       }
     }
-    showNotification("TV-Browser", builder.toString());
+    showNotification("TV-Browser", builder.toString(), null);
   }
 
   protected void showSingleNotification(final Program program) {
@@ -121,21 +123,51 @@ public class NotifyOSDPlugin extends Plugin {
     if (description == null) {
       description = program.getShortInfo();
     }
-    showNotification(title, description);
+    Icon icon = program.getChannel().getIcon();
+    String fileName = null;
+    if (icon != null) {
+      String suffix = "PNG";
+      try {
+      //TODO: uncomment after 3.0 release
+        /*
+        if (icon instanceof AsynchronousImageIcon) {
+          icon = ((AsynchronousImageIcon) icon).getIcon();
+        }
+        */
+        if (icon instanceof ImageIcon) {
+          File file = File.createTempFile("tvbrowser", "." + suffix);
+          fileName = file.getCanonicalPath();
+          file.deleteOnExit();
+          IOUtilities.writeImageIconToFile((ImageIcon) icon, suffix, file);
+        }
+        else {
+          fileName = null;
+        }
+      } catch (IOException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+    }
+    showNotification(title, description, fileName);
   }
 
-  private void showNotification(String title, String body) {
+  private void showNotification(String title, String body, String fileName) {
     if (!notifyAvailable()) {
       return;
     }
-    final File curDir = new File(".");
+    if (fileName == null) {
+      try {
+        fileName = new File(".").getCanonicalPath() + "/imgs/tvbrowser128.png";
+      } catch (IOException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+    }
     ArrayList<String> command = new ArrayList<String>();
     command.add("notify-send");
-    try {
-      String iconPath = "--icon=" + curDir.getCanonicalPath() + "/imgs/tvbrowser128.png";
+    if (fileName != null) {
+      String iconPath = "--icon=" + fileName;
       command.add(iconPath);
-    } catch (IOException e) {
-      e.printStackTrace();
     }
     title = title.replace("\n", " ").trim();
     if (title.length() > 0) {
