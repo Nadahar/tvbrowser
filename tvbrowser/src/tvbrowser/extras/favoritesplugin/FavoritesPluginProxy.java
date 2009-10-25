@@ -136,6 +136,10 @@ public class FavoritesPluginProxy implements ButtonActionIf, ContextMenuIf, Mark
 
   private Icon getDoubleIcon(final Icon icon, final int width) {
     try {
+      // just in case the original icon could not be loaded
+      if (icon == null) {
+        return null;
+      }
       // Create Image with Icon
       BufferedImage iconimage = new BufferedImage(icon.getIconWidth(), icon
           .getIconHeight(), BufferedImage.TYPE_INT_ARGB);
