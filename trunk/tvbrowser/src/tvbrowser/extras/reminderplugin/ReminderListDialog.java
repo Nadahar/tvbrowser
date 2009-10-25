@@ -148,10 +148,8 @@ public class ReminderListDialog extends JDialog implements WindowClosingIf {
 
           if (column == 1) {
             int row = mTable.rowAtPoint(e.getPoint());
-            int height = mTable.getRowHeight(row);
-
-            ((MinutesCellRenderer) mTable.getCellRenderer(row, column)).trackSingleClick(e.getPoint(), mTable, height,
-                row, column);
+            mTable.editCellAt(row,column);
+            ((MinutesCellEditor)mTable.getCellEditor()).getComboBox().showPopup(); 
           }
           
           mLeftClickThread = new Thread("Single click") {
@@ -210,6 +208,8 @@ public class ReminderListDialog extends JDialog implements WindowClosingIf {
     });
 
     installTableModel(mModel);
+    mTable.getColumnModel().getColumn(1).setPreferredWidth(250);
+    mTable.getColumnModel().getColumn(1).setMaxWidth(300);
 
     panel.add(new JLabel(mLocalizer.msg("titleFilterText","Show only programs with the following title:")), cc.xy(1,1));
     panel.add(mTitleSelection, cc.xy(3,1));

@@ -24,8 +24,6 @@
 package tvbrowser.extras.reminderplugin;
 
 import java.awt.Component;
-import java.awt.Point;
-import java.awt.Rectangle;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -96,28 +94,4 @@ public class MinutesCellRenderer extends DefaultTableCellRenderer {
     
     return def;
   }
-  
-  /**
-   * Tracks a single click on the minutes entry and opens
-   * the cell editor if the point is on the edit picture.
-   * 
-   * @param p The point on that was clicked.
-   * @param table The table that was clicked
-   * @param y The height of the clicked cell.
-   * @param row The row the click was in.
-   * @param column The column the click was in.
-   */
-  public void trackSingleClick(Point p, JTable table, int y, int row,int column) {
-    for(int i = 0; i < row; i++)
-      p.move(p.x,p.y - table.getRowHeight(i));      
-    
-    Rectangle rect = new Rectangle(table.getColumnModel().getColumn(0).getWidth() + mIconLabel.getLocation().x
-        ,y/2-8,16,16);
-    
-    if(rect.contains(p)) {
-      table.editCellAt(row,column);
-      ((MinutesCellEditor)table.getCellEditor()).getComboBox().showPopup(); 
-    }
-  }
-  
 }
