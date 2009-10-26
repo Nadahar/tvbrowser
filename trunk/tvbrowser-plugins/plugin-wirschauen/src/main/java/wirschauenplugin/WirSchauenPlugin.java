@@ -15,7 +15,13 @@
 package wirschauenplugin;
 
 import java.awt.event.ActionEvent;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
@@ -23,14 +29,17 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Icon;
 
+import tvbrowser.core.Settings;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import devplugin.ActionMenu;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
+import devplugin.PluginTreeNode;
 import devplugin.PluginsFilterComponent;
 import devplugin.PluginsProgramFilter;
 import devplugin.Program;
+import devplugin.ProgramFieldType;
 import devplugin.ThemeIcon;
 import devplugin.Version;
 
@@ -97,6 +106,11 @@ public final class WirSchauenPlugin extends Plugin
    * the filter implementation. lazy init, see getAvailableFilter.
    */
   private static WirSchauenFilterComponent mComponent;
+
+  /**
+   * the root node for the plugin tree. overrides Plugin with a marked tree.
+   */
+  private PluginTreeNode mRootNode = new PluginTreeNode(this, false);
 
 
   /**
@@ -233,7 +247,34 @@ public final class WirSchauenPlugin extends Plugin
 
 
   /**
+   * all programs with an omdb link will marked with prio 1. all programs
+   * wich the user linked to omdb will be marked with prio 2.
+   *
+   * @param program the program to mark
+   * @return the mark priority
+   * @see devplugin.Plugin#getMarkPriorityForProgram(devplugin.Program)
+   */
+  @Override
+  public int getMarkPriorityForProgram(final Program program)
+  {
+    int prio = Program.NO_MARK_PRIORITY;
+    if (getRootNode().contains(program))
+    {
+      //mark all programs wich were linked by the user (those are in the tree)
+      prio = Program.LOWER_MEDIUM_MARK_PRIORITY;
+    }
+    else if (program.getTextField(ProgramFieldType.URL_TYPE) != null)
+    {
+      //mark all programs with omdb-link
+      prio = Program.MIN_MARK_PRIORITY;
+    }
+    return prio;
+  }
+
+
+  /**
    * {@inheritDoc}
+   * @return true
    * @see devplugin.Plugin#canUseProgramTree()
    */
   @Override
@@ -244,14 +285,99 @@ public final class WirSchauenPlugin extends Plugin
 
 
   /**
+   * marks this program and puts it into the plugin tree.
+   *
+   * @param program the program to mark
+   */
+  public void updateTreeAndMarks(final Program program)
+  {
+    getRootNode().addProgram(program);
+    getRootNode().update();
+    program.mark(this);
+    program.validateMarking();
+  }
+
+
+  /**
+   * {@inheritDoc}
+   * @see devplugin.Plugin#getRootNode()
+   */
+  @Override
+  public PluginTreeNode getRootNode()
+  {
+    return mRootNode;
+  }
+
+
+  /**
+   * saves the tree to a file. this is the same as Plugin.storeRootNode. it
+   * was copied because storeRootNode is protected and cant be called.
+   * TODO make Plugin.storeRootNode public and use that method
+   */
+  private void storeTree()
+  {
+    File file = new File(Settings.getUserSettingsDirName(), getId() + ".node");
+    if (getRootNode() == null || getRootNode().isEmpty())
+    {
+      file.delete();
+      return;
+    }
+    try
+    {
+      ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(file)));
+      mRootNode.store(out);
+      out.close();
+    }
+    catch (final IOException e)
+    {
+      util.exc.ErrorHandler.handle(util.ui.Localizer.getLocalizerFor(Plugin.class).msg("error.couldNotWriteFile", "Storing file '{0}' failed.", file.getAbsolutePath()), e);
+    }
+  }
+
+
+  /**
+   * loads the tree from a file. this is the same as Plugin.loadRootNode. it
+   * was copied because loadRootNode is protected and cant be called.
+   * TODO make Plugin.loadRootNode public and use that method
+   *
+   * @throws IOException if the file cant be read
+   * @throws ClassNotFoundException TODO maybe catch this and delete the file?
+   */
+  private void loadTree() throws IOException, ClassNotFoundException
+  {
+    if (mRootNode == null)
+    {
+      return;
+    }
+    File file = new File(Settings.getUserSettingsDirName(), getId() + ".node");
+    if (file.canRead())
+    {
+      ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(file)));
+      mRootNode.load(in);
+      in.close();
+    }
+  }
+
+
+  /**
    * {@inheritDoc}
    * @see devplugin.Plugin#writeData(java.io.ObjectOutputStream)
    */
   @Override
   public void writeData(final ObjectOutputStream out) throws IOException
   {
-    getRootNode();
-    storeRootNode();
+    storeTree();
+  }
+
+
+  /**
+   * {@inheritDoc}
+   * @see devplugin.Plugin#readData(java.io.ObjectInputStream)
+   */
+  @Override
+  public void readData(final ObjectInputStream in) throws IOException, ClassNotFoundException
+  {
+    loadTree();
   }
 
 
@@ -346,3 +472,4 @@ public final class WirSchauenPlugin extends Plugin
     return (getPluginManager().getExampleProgram().equals(program) || mAllowedChannels.contains(name));
   }
 }
+
