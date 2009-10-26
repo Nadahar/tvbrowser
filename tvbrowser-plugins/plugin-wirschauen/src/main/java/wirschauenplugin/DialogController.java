@@ -165,8 +165,7 @@ public class DialogController
                 {
                   WirSchauenConnection.saveEvent(new WirSchauenEvent(createOmdbLinkDialog.getOmdbId(), createOmdbLinkDialog.getCategory()), mProgram);
                   //add the program to the plugin program tree
-                  WirSchauenPlugin.getInstance().getRootNode().addProgram(mProgram);
-                  WirSchauenPlugin.getInstance().getRootNode().update();
+                  WirSchauenPlugin.getInstance().updateTreeAndMarks(mProgram);
                   //be polite but switch back to event dispatching thread (swing)
                   SwingUtilities.invokeLater(new Thread()
                   {
@@ -215,8 +214,7 @@ public class DialogController
                 {
                   WirSchauenConnection.saveEvent(createWirSchauenDataDialog.getWirSchauenInput(), mProgram);
                   //add the program to the plugin program tree
-                  WirSchauenPlugin.getInstance().getRootNode().addProgram(mProgram);
-                  WirSchauenPlugin.getInstance().getRootNode().update();
+                  WirSchauenPlugin.getInstance().updateTreeAndMarks(mProgram);
                   //be polite but switch back to event dispatching thread (swing)
                   SwingUtilities.invokeLater(new Thread()
                   {
@@ -334,8 +332,7 @@ public class DialogController
               //loses the session. the language is set to en in that case.
               new OmdbConnection().saveAbstract(OmdbConnection.getIdFromUrl(wirSchauenEvent.getOmdbUrl()), createOmdbAbstractDialog.getOmdbAbstractInput(), OmdbConnection.DE);
               //add the program to the plugin program tree
-              WirSchauenPlugin.getInstance().getRootNode().addProgram(mProgram);
-              WirSchauenPlugin.getInstance().getRootNode().update();
+              WirSchauenPlugin.getInstance().updateTreeAndMarks(mProgram);
               //be polite but switch back to event dispatching thread (swing)
               SwingUtilities.invokeLater(new Thread()
               {
