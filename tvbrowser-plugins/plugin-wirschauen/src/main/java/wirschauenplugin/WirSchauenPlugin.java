@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -33,6 +34,7 @@ import tvbrowser.core.Settings;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import devplugin.ActionMenu;
+import devplugin.ChannelDayProgram;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.PluginTreeNode;
@@ -295,6 +297,30 @@ public final class WirSchauenPlugin extends Plugin
     getRootNode().update();
     program.mark(this);
     program.validateMarking();
+  }
+
+
+  /**
+   * {@inheritDoc}
+   * @see devplugin.Plugin#handleTvDataAdded(tvdataservice.ChannelDayProgram)
+   */
+  @Override
+  public void handleTvDataAdded(final ChannelDayProgram newProg)
+  {
+    //this method is called when a program was added. it is also called when
+    //a program was changed (ie deleted + added again). everytime a program
+    //was added, check if it has a omdb link. if so, mark it.
+    Iterator<Program> programIterator = newProg.getPrograms();
+    Program program;
+    while (programIterator.hasNext())
+    {
+      program = programIterator.next();
+      //if the program is in vgmedia and has an omdb-link, mark it
+      if (isProgramAllowed(program) && program.getTextField(ProgramFieldType.URL_TYPE) != null && !"".equals(program.getTextField(ProgramFieldType.URL_TYPE)))
+      {
+        program.mark(this);
+      }
+    }
   }
 
 
