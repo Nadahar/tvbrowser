@@ -259,7 +259,7 @@ public class ChannelConfigDlg extends JDialog implements ActionListener, WindowC
     mChannelName.setText(mChannel.getDefaultName());
     mIconFile = null;
     mIconLabel.setIcon(createUserIcon());
-    mCorrectionCB.setSelectedIndex(1);
+    mCorrectionCB.setSelectedIndex(mCorrectionCB.getItemCount() / 2);
     setTimeDate(mStartTimeLimit, 0);
     setTimeDate(mEndTimeLimit, 0);
   }

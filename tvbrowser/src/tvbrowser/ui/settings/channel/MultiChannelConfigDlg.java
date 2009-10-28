@@ -144,7 +144,7 @@ public class MultiChannelConfigDlg extends JDialog implements ActionListener, Wi
    * Reset the Channel to the Default-Values
    */
   private void resetToDefaults() {
-    mCorrectionCB.setSelectedIndex(1);
+    mCorrectionCB.setSelectedIndex(mCorrectionCB.getItemCount() / 2);
   }
 
   /**
