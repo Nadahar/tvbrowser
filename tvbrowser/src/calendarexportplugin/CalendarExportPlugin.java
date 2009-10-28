@@ -120,8 +120,6 @@ public class CalendarExportPlugin extends Plugin {
   /**
    * The Default-Parameters
    */
-  //public static final String DEFAULT_PARAMETER = "{channel_name} - {title}\n{leadingZero(start_day,\"2\")}.{leadingZero(start_month,\"2\")}.{start_year} {leadingZero(start_hour,\"2\")}:{leadingZero(start_minute,\"2\")}-{leadingZero(end_hour,\"2\")}:{leadingZero(end_minute,\"2\")}\n\n{splitAt(short_info,\"78\")}\n\n";
-
 
   private static LocalPluginProgramFormating DEFAULT_CONFIG = new LocalPluginProgramFormating("calendarDefault", mLocalizer.msg("defaultName", "CalendarExportPlugin - Default"), "{channel_name} - {title}", "{channel_name} - {title}\n{leadingZero(start_day,\"2\")}.{leadingZero(start_month,\"2\")}.{start_year} {leadingZero(start_hour,\"2\")}:{leadingZero(start_minute,\"2\")}-{leadingZero(end_hour,\"2\")}:{leadingZero(end_minute,\"2\")}\n\n{splitAt(short_info,\"78\")}\n\n", "UTF-8");
 

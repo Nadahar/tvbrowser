@@ -54,7 +54,7 @@ public class ExporterFactory {
 
     if (OperatingSystem.isOther() || OperatingSystem.isLinux()) {
       mExporterList.add(new KOrganizerExporter());
-    } else if (OperatingSystem.isWindows()) {
+    } else if (OperatingSystem.isWindows() && !OperatingSystem.isWindows64()) {
       mExporterList.add(new OutlookExporter());
     }
 
@@ -98,8 +98,9 @@ public class ExporterFactory {
    * @return String representation of all active exporters
    */
   public String getListOfActiveExporters() {
-    if (mActiveExporter.size() == 0) 
+    if (mActiveExporter.size() == 0) {
       return "";
+    }
     
     StringBuilder classes = new StringBuilder();
 

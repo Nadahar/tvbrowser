@@ -64,5 +64,13 @@ public class OperatingSystem {
   public static boolean isOther() {
     return Launch.getOs() == Launch.OS_OTHER;
   }
+
+  /**
+   * @return true, if the OS is Windows with 64 bit
+   * @since 3.0
+   */
+  public static boolean isWindows64() {
+    return isWindows() && System.getProperty("sun.arch.data.model").equals("64"); // this may or may not work
+  }
   
 }
