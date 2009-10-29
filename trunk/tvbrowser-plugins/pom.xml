@@ -60,7 +60,7 @@
       <dependency>
         <groupId>org.tvbrowser</groupId>
         <artifactId>tvbrowser</artifactId>
-        <version>2.7.3beta</version>
+        <version>2.7.4</version>
         <scope>provided</scope>
       </dependency>
       <dependency>
