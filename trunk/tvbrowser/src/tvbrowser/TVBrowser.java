@@ -99,6 +99,7 @@ import com.jgoodies.looks.LookUtils;
 import com.l2fprod.gui.plaf.skin.SkinLookAndFeel;
 
 import devplugin.Date;
+import devplugin.ProgramFieldType;
 import devplugin.Version;
 
 /**
@@ -286,9 +287,13 @@ public class TVBrowser {
     }
     mLog.info("Using timezone "+TimeZone.getDefault().getDisplayName());
 
-    // refresh the localizer because we know the language now
+    // refresh the localizers because we know the language now
     Localizer.emptyLocalizerCache();
     mLocalizer = Localizer.getLocalizerFor(TVBrowser.class);
+    ProgramInfo.mLocalizer = Localizer.getLocalizerFor(ProgramInfo.class);
+    ReminderPlugin.mLocalizer = Localizer.getLocalizerFor(ReminderPlugin.class);
+    Date.mLocalizer = util.ui.Localizer.getLocalizerFor(Date.class);
+    ProgramFieldType.mLocalizer = Localizer.getLocalizerFor(ProgramFieldType.class);
 
     // Set the proxy settings
     updateProxySettings();
