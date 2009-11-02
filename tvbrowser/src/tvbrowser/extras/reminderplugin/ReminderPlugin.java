@@ -91,7 +91,7 @@ import devplugin.SettingsItem;
 public class ReminderPlugin {
 
   /** The localizer for this class. */
-  public static final util.ui.Localizer mLocalizer = util.ui.Localizer
+  public static util.ui.Localizer mLocalizer = util.ui.Localizer
       .getLocalizerFor(ReminderPlugin.class);
 
    private java.util.logging.Logger mLog

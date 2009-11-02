@@ -56,7 +56,7 @@ import devplugin.Program;
  */
 public class ProgramInfo {
 
-  protected static final util.ui.Localizer mLocalizer = util.ui.Localizer
+  public static util.ui.Localizer mLocalizer = util.ui.Localizer
       .getLocalizerFor(ProgramInfo.class);
 
   private static final String DATAFILE_PREFIX = "programinfo.ProgramInfo";

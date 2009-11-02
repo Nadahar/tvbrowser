@@ -42,7 +42,7 @@ import java.util.HashMap;
 
 public class Date implements Comparable<Date> {
 
-  private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(Date.class);
+  public static util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(Date.class);
 
   private final int mYear;
 

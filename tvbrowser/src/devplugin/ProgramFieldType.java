@@ -39,7 +39,7 @@ import java.util.Iterator;
  */
 public class ProgramFieldType {
 
-  private static final util.ui.Localizer mLocalizer
+  public static util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(ProgramFieldType.class);
 
   private static final ArrayList<ProgramFieldType> mKnownTypeList = new ArrayList<ProgramFieldType>();
