@@ -498,7 +498,7 @@ public class SettingsDialog implements WindowClosingIf {
       });
 
       try {
-        t.join();
+        t.join(10000);
       } catch (Exception e) {
         e.printStackTrace();
       }

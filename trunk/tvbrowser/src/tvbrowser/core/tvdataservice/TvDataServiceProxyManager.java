@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 
 import javax.swing.JFrame;
@@ -236,11 +237,16 @@ public class TvDataServiceProxyManager {
       if (subscribedServices.length == 0) {
         return;
       }
-
-      java.util.List<String> list = Arrays.asList(subscribedServices);
-      for (TvDataServiceProxy proxy : getDataServices()) {
-        if (!list.contains(proxy.getId())) {
-          loadServiceSettings(proxy);
+      List<String> list = Arrays.asList(subscribedServices);
+      
+      // load cleverepg last, because it uses network connections during setup
+      for (int run = 1; run <=2 ; run++) {
+        for (TvDataServiceProxy proxy : getDataServices()) {
+          if (proxy.getId().contains("cleverepg") == (run == 2)) {
+            if (!list.contains(proxy.getId())) {
+              loadServiceSettings(proxy);
+            }
+          }
         }
       }
     } catch (Throwable t) {
