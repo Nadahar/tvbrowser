@@ -122,11 +122,10 @@ public class UiUtilities {
     } else {
       GraphicsEnvironment ge = GraphicsEnvironment
           .getLocalGraphicsEnvironment();
-      GraphicsDevice[] gs = ge.getScreenDevices();
       // dual head, use first screen
-      if (gs.length > 1) {
+      if (ge.getScreenDevices().length > 1) {
         try {
-          GraphicsDevice gd = gs[0];
+          GraphicsDevice gd = ge.getDefaultScreenDevice();
           GraphicsConfiguration config = gd.getConfigurations()[0];
           frameD = config.getBounds().getSize();
           framePos = config.getBounds().getLocation();
