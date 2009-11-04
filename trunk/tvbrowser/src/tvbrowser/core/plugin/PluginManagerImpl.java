@@ -33,6 +33,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.TimeZone;
 import java.util.logging.Logger;
@@ -799,6 +800,7 @@ public class PluginManagerImpl implements PluginManager {
         receiveIfs.add(plugin);
       }
     }
+    Collections.sort(receiveIfs);
     
     return receiveIfs.toArray(new ProgramReceiveIf[receiveIfs.size()]);
   }

@@ -47,6 +47,7 @@ import devplugin.PluginTreeNode;
 import devplugin.PluginsFilterComponent;
 import devplugin.PluginsProgramFilter;
 import devplugin.Program;
+import devplugin.ProgramReceiveIf;
 import devplugin.ProgramReceiveTarget;
 
 /**
@@ -965,5 +966,10 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
 
   final public void removeArtificialPluginTree() {
     mArtificialRootNode = null;
+  }
+  
+  @Override
+  public int compareTo(ProgramReceiveIf other) {
+    return getInfo().getName().compareTo(other.toString());
   }
 }

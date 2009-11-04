@@ -87,7 +87,7 @@ import util.ui.Localizer;
  * @author René Mach
  * @since 2.5
  */
-public final class ProgramReceiveTarget {
+public final class ProgramReceiveTarget implements Comparable<ProgramReceiveTarget> {
   private static Localizer mLocalizer = Localizer.getLocalizerFor(ProgramReceiveTarget.class);
   
   private String mReceiveIfId;
@@ -241,5 +241,10 @@ public final class ProgramReceiveTarget {
       return false;
     
     return receiveIf.getId().compareTo(mReceiveIfId) == 0 && id.compareTo(mTargetId) == 0;
+  }
+
+  @Override
+  public int compareTo(ProgramReceiveTarget other) {
+    return getTargetName().compareTo(other.getTargetName());
   }
 }
