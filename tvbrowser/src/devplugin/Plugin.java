@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Properties;
+
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
@@ -42,7 +43,6 @@ import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvdataservice.MutableChannelDayProgram;
-import util.exc.TvBrowserException;
 import util.io.stream.ObjectInputStreamProcessor;
 import util.io.stream.ObjectOutputStreamProcessor;
 import util.io.stream.StreamUtilities;
@@ -900,5 +900,10 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
    */
   public ProgramRatingIf[] getRatingInterfaces() {
     return null;
+  }
+  
+  @Override
+  public int compareTo(ProgramReceiveIf o) {
+    return getInfo().getName().compareTo(o.toString());
   }
 }

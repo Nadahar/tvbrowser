@@ -28,7 +28,7 @@ package tvbrowser.extras.programinfo;
 import javax.swing.Icon;
 
 import tvbrowser.core.icontheme.IconLoader;
-import tvbrowser.extras.common.InternalPluginProxyIf;
+import tvbrowser.extras.common.AbstractInternalPluginProxy;
 import devplugin.ActionMenu;
 import devplugin.ContextMenuIf;
 import devplugin.Program;
@@ -40,7 +40,7 @@ import devplugin.SettingsTab;
  *
  * @author René Mach
  */
-public class ProgramInfoProxy implements ContextMenuIf, InternalPluginProxyIf {
+public class ProgramInfoProxy extends AbstractInternalPluginProxy implements ContextMenuIf {
   
   private static ProgramInfoProxy mInstance;
   

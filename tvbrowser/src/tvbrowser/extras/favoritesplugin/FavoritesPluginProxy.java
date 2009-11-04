@@ -34,7 +34,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
 import tvbrowser.core.plugin.ButtonActionIf;
-import tvbrowser.extras.common.InternalPluginProxyIf;
+import tvbrowser.extras.common.AbstractInternalPluginProxy;
 import tvbrowser.extras.favoritesplugin.dlgs.FavoriteTreeModel;
 import devplugin.ActionMenu;
 import devplugin.ContextMenuIf;
@@ -48,7 +48,7 @@ import devplugin.SettingsTab;
  *
  * @author René Mach
  */
-public class FavoritesPluginProxy implements ButtonActionIf, ContextMenuIf, Marker, InternalPluginProxyIf {
+public class FavoritesPluginProxy extends AbstractInternalPluginProxy implements ButtonActionIf, ContextMenuIf, Marker {
   
   private static FavoritesPluginProxy mInstance;
   private static FavoritesPlugin mFavoritesInstance;

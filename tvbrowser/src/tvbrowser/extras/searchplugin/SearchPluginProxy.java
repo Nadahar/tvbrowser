@@ -26,7 +26,7 @@ package tvbrowser.extras.searchplugin;
 import javax.swing.Icon;
 
 import tvbrowser.core.plugin.ButtonActionIf;
-import tvbrowser.extras.common.InternalPluginProxyIf;
+import tvbrowser.extras.common.AbstractInternalPluginProxy;
 import util.ui.TVBrowserIcons;
 import devplugin.ActionMenu;
 import devplugin.ContextMenuIf;
@@ -39,7 +39,7 @@ import devplugin.SettingsTab;
  *
  * @author René Mach
  */
-public class SearchPluginProxy implements ButtonActionIf, ContextMenuIf, InternalPluginProxyIf {
+public class SearchPluginProxy extends AbstractInternalPluginProxy implements ButtonActionIf, ContextMenuIf {
   
   private static SearchPluginProxy mInstance;
 

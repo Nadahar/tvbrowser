@@ -29,12 +29,11 @@ import javax.swing.Icon;
 
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.ButtonActionIf;
-import tvbrowser.extras.common.InternalPluginProxyIf;
+import tvbrowser.extras.common.AbstractInternalPluginProxy;
 import devplugin.ActionMenu;
 import devplugin.ContextMenuIf;
 import devplugin.Marker;
 import devplugin.Program;
-import devplugin.ProgramReceiveIf;
 import devplugin.ProgramReceiveTarget;
 import devplugin.SettingsItem;
 import devplugin.SettingsTab;
@@ -45,7 +44,7 @@ import devplugin.SettingsTab;
  * @author René Mach
  * @since 2.5
  */
-public class ReminderPluginProxy implements ButtonActionIf, ContextMenuIf, ProgramReceiveIf, Marker, InternalPluginProxyIf {
+public class ReminderPluginProxy extends AbstractInternalPluginProxy implements ButtonActionIf, ContextMenuIf, Marker {
 
   /** The localizer for this class. */
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer

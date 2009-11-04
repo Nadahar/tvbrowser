@@ -37,7 +37,7 @@ import devplugin.SettingsTab;
  */
 public interface InternalPluginProxyIf {
   /** This is the key for the keyboard accelerator for
-   * interal plugin button actions.
+   * internal plugin button actions.
    * @since 2.7
    */
   public static final String KEYBOARD_ACCELERATOR = "####KEYBOARD_ACCELERATOR####";

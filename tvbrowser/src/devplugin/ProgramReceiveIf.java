@@ -31,7 +31,7 @@ package devplugin;
  * @author René Mach
  *
  */
-public interface ProgramReceiveIf {
+public interface ProgramReceiveIf extends Comparable<ProgramReceiveIf> {
   
   /**
    * Gets whether the ProgramReceiveIf supports receiving programs from other plugins with a special target.
