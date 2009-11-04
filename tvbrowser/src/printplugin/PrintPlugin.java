@@ -71,6 +71,7 @@ import devplugin.PluginInfo;
 import devplugin.PluginTreeNode;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
+import devplugin.ProgramReceiveTarget;
 import devplugin.SettingsTab;
 import devplugin.ThemeIcon;
 import devplugin.Version;
@@ -296,7 +297,8 @@ public class PrintPlugin extends Plugin {
     }
   }
 
-  public void receivePrograms(Program[] programArr) {
+  @Override
+  public boolean receivePrograms(Program[] programArr, ProgramReceiveTarget receiveTarget) {
     PluginTreeNode rootNode = getRootNode();
     for (Program program : programArr) {
       if (!rootNode.contains(program)) {
@@ -305,8 +307,8 @@ public class PrintPlugin extends Plugin {
       }
     }
     rootNode.update();
+    return true;
   }
-
 
   public boolean canReceiveProgramsWithTarget() {
     return true;
