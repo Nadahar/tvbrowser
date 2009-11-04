@@ -36,6 +36,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
@@ -278,7 +279,6 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
       mResultPluginArr = pluginArr;
       mReceiveTargetTable = targetTable;
     }
-    
 
     JPanel contentPane = (JPanel)getContentPane();
     FormLayout layout = new FormLayout("fill:pref:grow", "");
@@ -342,6 +342,7 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
               mCurrentTargets = plugin.getProgramReceiveTargets();
 
               if (mCurrentTargets != null) {
+                Arrays.sort(mCurrentTargets);
                 ArrayList<ProgramReceiveTarget> targets = mReceiveTargetTable
                     .get(plugin);
                 if (targets == null || !pluginItem.isSelected()) {
