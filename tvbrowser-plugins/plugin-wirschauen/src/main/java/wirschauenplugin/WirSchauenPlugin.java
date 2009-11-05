@@ -455,7 +455,11 @@ public final class WirSchauenPlugin extends Plugin
         mLinkedPrograms = (ArrayList<ProgramId>) in.readObject();
         for (ProgramId programId : mLinkedPrograms)
         {
-          getPluginManager().getProgram(programId.getDate(), programId.getId()).mark(this);
+          Program program = getPluginManager().getProgram(programId.getDate(), programId.getId());
+          if (program != null)
+          {
+            program.mark(this);
+          }
         }
       }
     }
