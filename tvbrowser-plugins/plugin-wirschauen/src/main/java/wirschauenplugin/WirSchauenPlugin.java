@@ -17,6 +17,7 @@ package wirschauenplugin;
 import java.awt.event.ActionEvent;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -113,6 +114,14 @@ public final class WirSchauenPlugin extends Plugin
    * the root node for the plugin tree. overrides Plugin with a marked tree.
    */
   private PluginTreeNode mRootNode = new PluginTreeNode(this, false);
+
+  /**
+   * this list holds all the program-ids that are linked with the omdb. its
+   * necessary to keep track of these programs cause the tvb will not mark
+   * programs at startup. so we have to persist this data and do the marking
+   * ourselves.
+   */
+  private ArrayList<ProgramId> mLinkedPrograms = new ArrayList<ProgramId>();
 
 
   /**
@@ -309,16 +318,44 @@ public final class WirSchauenPlugin extends Plugin
   {
     //this method is called when a program was added. it is also called when
     //a program was changed (ie deleted + added again). everytime a program
-    //was added, check if it has a omdb link. if so, mark it.
+    //was added, check if it has a omdb link. if so, mark it and remember that
+    //we marked the program.
     Iterator<Program> programIterator = newProg.getPrograms();
     Program program;
     while (programIterator.hasNext())
     {
       program = programIterator.next();
-      //if the program is in vgmedia and has an omdb-link, mark it
+      //if the program is in vgmedia and has an omdb-link, mark it and remember that we marked it
       if (isProgramAllowed(program) && program.getTextField(ProgramFieldType.URL_TYPE) != null && !"".equals(program.getTextField(ProgramFieldType.URL_TYPE)))
       {
         program.mark(this);
+        mLinkedPrograms.add(new ProgramId(program.getDate(), program.getID()));
+      }
+    }
+  }
+
+
+  /**
+   * {@inheritDoc}
+   * @see devplugin.Plugin#handleTvDataDeleted(devplugin.ChannelDayProgram)
+   */
+  @Override
+  public void handleTvDataDeleted(final ChannelDayProgram oldProg)
+  {
+    //this is also called when a program was changed, ie deleted + added.
+    //remove the program from the list of marked programs. if its changed,
+    //handleTvDataAdded will add it again (if its linked to omdb).
+    Iterator<Program> programIterator = oldProg.getPrograms();
+    Program program;
+    while (programIterator.hasNext())
+    {
+      program = programIterator.next();
+      //if the program was in vgmedia and it was linked to omdb, remove it from the linked programs
+      if (isProgramAllowed(program) && program.getTextField(ProgramFieldType.URL_TYPE) != null && !"".equals(program.getTextField(ProgramFieldType.URL_TYPE)))
+      {
+        program.unmark(this);
+        //TODO dont create always new ProgramId object. reuse just one.
+        mLinkedPrograms.remove(new ProgramId(program.getDate(), program.getID()));
       }
     }
   }
@@ -338,7 +375,7 @@ public final class WirSchauenPlugin extends Plugin
   /**
    * saves the tree to a file. this is the same as Plugin.storeRootNode. it
    * was copied because storeRootNode is protected and cant be called.
-   * TODO make Plugin.storeRootNode public and use that method
+   * TODO use Plugin.storeRootNode after 3.0 was released
    */
   private void storeTree()
   {
@@ -364,7 +401,7 @@ public final class WirSchauenPlugin extends Plugin
   /**
    * loads the tree from a file. this is the same as Plugin.loadRootNode. it
    * was copied because loadRootNode is protected and cant be called.
-   * TODO make Plugin.loadRootNode public and use that method
+   * TODO user Plugin.loadRootNode after 3.0 was released
    *
    * @throws IOException if the file cant be read
    * @throws ClassNotFoundException TODO maybe catch this and delete the file?
@@ -393,6 +430,10 @@ public final class WirSchauenPlugin extends Plugin
   public void writeData(final ObjectOutputStream out) throws IOException
   {
     storeTree();
+    //write version (for future compatibility issues)
+    out.writeInt(1);
+    //save the linked programs so we can mark them on startup
+    out.writeObject(mLinkedPrograms);
   }
 
 
@@ -404,6 +445,25 @@ public final class WirSchauenPlugin extends Plugin
   public void readData(final ObjectInputStream in) throws IOException, ClassNotFoundException
   {
     loadTree();
+    try
+    {
+      //read version (for future compatibility issues)
+      int version = in.readInt();
+      if (version == 1)
+      {
+        //load the linked programs and mark them
+        mLinkedPrograms = (ArrayList<ProgramId>) in.readObject();
+        for (ProgramId programId : mLinkedPrograms)
+        {
+          getPluginManager().getProgram(programId.getDate(), programId.getId()).mark(this);
+        }
+      }
+    }
+    catch (final EOFException e)
+    {
+      //thrown if the file for the data was not found. we can ignore that
+      //cause on exit the tvb will create the file.
+    }
   }
 
 
@@ -427,7 +487,7 @@ public final class WirSchauenPlugin extends Plugin
   {
     if (mFilter == null)
     {
-      //TODO verstehen und verbessern. wieso gibt es 2 geschachtelte filter-objekte??
+      //map filter to filter component
       mComponent = new WirSchauenFilterComponent();
       mFilter = new PluginsProgramFilter(this) {
         @Override
