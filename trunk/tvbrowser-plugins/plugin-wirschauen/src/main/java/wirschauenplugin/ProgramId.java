@@ -58,7 +58,6 @@ public class ProgramId implements Serializable
 
 
   /**
-   * TODO override hashcode!!
    * @param obj the other date
    * @return true if date and id are equal
    * @see java.lang.Object#equals(java.lang.Object)
@@ -72,6 +71,21 @@ public class ProgramId implements Serializable
       return other.mDate.equals(mDate) && other.mId.equals(mId);
     }
     return false;
+  }
+
+
+  /**
+   * {@inheritDoc}
+   * @see java.lang.Object#hashCode()
+   */
+  @Override
+  public int hashCode()
+  {
+    //taken from Effective Java, Item 9
+    int result = 17;
+    result = 31 * result + mDate.hashCode();
+    result = 31 * result + mId.hashCode();
+    return result;
   }
 
 
