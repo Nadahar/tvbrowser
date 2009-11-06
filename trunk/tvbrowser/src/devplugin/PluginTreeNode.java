@@ -702,8 +702,11 @@ public class PluginTreeNode implements Comparable<PluginTreeNode> {
     while (it.hasNext()) {
       PluginTreeNode n = it.next();
       if (n.isLeaf()) {
-        ProgramItem item = (ProgramItem)n.getUserObject();
-        list.add(item.getProgram());
+        final ProgramItem item = (ProgramItem)n.getUserObject();
+        final Program program = item.getProgram();
+        if (program != null) {
+          list.add(program);
+        }
       }
     }
 
