@@ -75,7 +75,7 @@ public class ChannelListChangesDialog extends JDialog {
     contentPanel.setLayout(new GridLayout(1, 2, 10, 0));
 
     JPanel panelAdded = new JPanel(new BorderLayout());
-    panelAdded.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("added", "New channels")));
+    panelAdded.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("added", "New channels: {0}", mAddedList.size())));
 
     DefaultListModel listModel = new DefaultListModel();
     for (int i = 0; i < mAddedList.size(); i++) {
@@ -87,7 +87,7 @@ public class ChannelListChangesDialog extends JDialog {
     panelAdded.add(new JScrollPane(list), BorderLayout.CENTER);
 
     JPanel panelDeleted = new JPanel(new BorderLayout());
-    panelDeleted.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("deleted", "Removed channels")));
+    panelDeleted.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("deleted", "Removed channels: {0}", mDeletedList.size())));
 
     listModel = new DefaultListModel();
     for (int i = 0; i < mDeletedList.size(); i++) {

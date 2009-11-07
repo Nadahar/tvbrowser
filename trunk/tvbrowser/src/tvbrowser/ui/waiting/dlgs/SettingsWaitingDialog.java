@@ -78,7 +78,7 @@ public class SettingsWaitingDialog extends JDialog {
 
     panel.add(header, cc.xy(2, 2));
 
-    panel.add(new JLabel(mLocalizer.msg("pleaseWait", "Please wait for the completing of the list.")), cc.xy(2, 4));
+    panel.add(new JLabel(mLocalizer.msg("pleaseWait", "Please wait for the completion of the list.")), cc.xy(2, 4));
 
     pack();
   }
