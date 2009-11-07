@@ -749,13 +749,16 @@ public class PluginTreeNode implements Comparable<PluginTreeNode> {
         } catch (ClassNotFoundException e) {
           e.printStackTrace();
         }
+        Program program = item.getProgram();
 
         n = new PluginTreeNode(item);
-        add(n);
-        if (mMarker != null) {
-          item.getProgram().mark(mMarker);
+        // only show nodes for programs which still exist
+        if (program != null) {
+          add(n);
+          if (mMarker != null) {
+            item.getProgram().mark(mMarker);
+          }
         }
-
       }
       else {
         try {
