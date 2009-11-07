@@ -121,24 +121,6 @@ public class I18NPlugin extends Plugin {
     mSettings = new I18NSettings(properties);
   }
   
-  /**
-   * Parses a Number from a String.
-   * 
-   * @param str
-   *          Number in String to Parse
-   * @return Number if successful. Default is 0
-   */
-  public int parseNumber(String str) {
-
-    try {
-      return Integer.parseInt(str);
-    } catch (Exception e) {
-      // ignore
-    }
-
-    return 0;
-  }
-  
   @Override
   public Properties storeSettings() {
     return mSettings.storeSettings();
