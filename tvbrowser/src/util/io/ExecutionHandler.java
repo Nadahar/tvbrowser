@@ -79,7 +79,7 @@ public class ExecutionHandler {
    * @param runtimeDirectory The runtime directory for the application.
    */
   public ExecutionHandler(String parameter, String programPath, File runtimeDirectory) {
-    mParameter = calculateParamter(parameter, programPath);
+    mParameter = calculateParameter(parameter, programPath);
     mRuntimeDirectory = runtimeDirectory;
   }
   
@@ -234,7 +234,7 @@ public class ExecutionHandler {
     return mErrorStream;
   }
   
-  private String[] calculateParamter(String parameter, String programPath) {
+  private String[] calculateParameter(String parameter, String programPath) {
     StringBuilder lastString = null;
     ArrayList<String> args = new ArrayList<String>();
     
@@ -251,7 +251,7 @@ public class ExecutionHandler {
       } else if (lastString != null) {
         lastString.append(' ');
         lastString.append(part);
-        if (part.charAt(part.length()-1) == '"') {
+        if (part.length() > 0 && part.charAt(part.length()-1) == '"') {
           lastString.deleteCharAt(lastString.length() - 1);
           args.add(lastString.toString());
           lastString = null;
