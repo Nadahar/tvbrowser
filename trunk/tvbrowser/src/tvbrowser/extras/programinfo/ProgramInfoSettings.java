@@ -301,7 +301,7 @@ class ProgramInfoSettings {
     if (code == -1) {
       return Color.PINK;
     }
-    return new Color(code);
+    return new Color(code, true);
   }
 
   protected boolean getHighlightFavorite() {
