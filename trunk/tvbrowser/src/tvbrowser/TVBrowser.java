@@ -292,7 +292,7 @@ public class TVBrowser {
     mLocalizer = Localizer.getLocalizerFor(TVBrowser.class);
     ProgramInfo.mLocalizer = Localizer.getLocalizerFor(ProgramInfo.class);
     ReminderPlugin.mLocalizer = Localizer.getLocalizerFor(ReminderPlugin.class);
-    Date.mLocalizer = util.ui.Localizer.getLocalizerFor(Date.class);
+    Date.LOCALIZER = util.ui.Localizer.getLocalizerFor(Date.class);
     ProgramFieldType.mLocalizer = Localizer.getLocalizerFor(ProgramFieldType.class);
 
     // Set the proxy settings
