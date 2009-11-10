@@ -26,43 +26,52 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.RandomAccessFile;
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
+
+import util.ui.Localizer;
 
 /**
  * the date of a program. it holds year, month and day.
  *
  * @author Martin Oberhauser
  */
-public class Date implements Comparable<Date> {
+public class Date implements Comparable<Date>, Serializable
+{
   /**
-   * a cache for dates.
+   * the localizer for the date.
+   * TODO this field must not be final cause its set elsewhere. there was a problem during
+   * startup and some objects where initalized before the locale was set. so the localizer
+   * mechanism should be reworked somehow. this field however should be made private with a
+   * getter-setter-pair.
+   */
+  public static Localizer LOCALIZER = util.ui.Localizer.getLocalizerFor(Date.class);
+
+
+  /**
+   * a cache for dates. static vars are not serialized.
+   * FIXME mem leak -> can grow unlimited
    */
   private static final HashMap<Integer, String> LONG_DATE_MAP = new HashMap<Integer, String>(28);
 
 
 
   /**
-   * the localizer for the date.
-   * TODO should be private with a getter!
-   */
-  public static util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(Date.class);
-
-  /**
    * the year, ie Calendar.get(Calendar.YEAR).
    */
-  private final int mYear;
+  private int mYear;
 
   /**
    * the month, ie Calendar.get(Calendar.MONTH) + 1.
    */
-  private final int mMonth;
+  private int mMonth;
 
   /**
    * the day, ie Calendar.get(Calendar.DAY_OF_MONTH).
    */
-  private final int mDay;
+  private int mDay;
 
 
 
@@ -118,7 +127,9 @@ public class Date implements Comparable<Date> {
    * @throws IOException if the stream could not be read
    * @throws ClassNotFoundException if the date could not be restored
    * @since 2.2
+   * @deprecated use the serialisation mechanism instead
    */
+  @Deprecated
   public Date(final DataInput in) throws IOException, ClassNotFoundException {
     int version = in.readInt();
     if (version == 1) { // currently, version==2 is used
@@ -140,12 +151,13 @@ public class Date implements Comparable<Date> {
 
   /**
    * Creates a new instance from a stream.
-   * TODO replace this with implementation of serializable
    *
    * @param in the input to read from
    * @throws IOException if the stream could not be read
    * @throws ClassNotFoundException if the date could not be restored
+   * @deprecated use the serialisation mechanism instead
    */
+  @Deprecated
   public Date(final ObjectInputStream in) throws IOException, ClassNotFoundException {
     int version = in.readInt();
     if (version == 1) { // currently, version==2 is used
@@ -163,7 +175,6 @@ public class Date implements Comparable<Date> {
       mMonth = in.readInt();
       mDay = in.readInt();
     }
-
   }
 
 
@@ -324,7 +335,9 @@ public class Date implements Comparable<Date> {
    * @throws IOException if something went wrong
    *
    * @since 2.2
+   * @deprecated use the serialisation mechanism instead
    */
+  @Deprecated
   public void writeToDataFile(final RandomAccessFile out) throws IOException {
     out.writeInt(2); // version
     out.writeInt(mYear);
@@ -334,11 +347,12 @@ public class Date implements Comparable<Date> {
 
   /**
    * Writes this instance to a stream.
-   * TODO replace this with implementation of serializable
    *
    * @param out the stream to write to
    * @throws IOException if something went wrong
+   * @deprecated use the serialisation mechanism instead
    */
+  @Deprecated
   public void writeData(final ObjectOutputStream out) throws IOException {
     out.writeInt(2); // version
     out.writeInt(mYear);
@@ -396,7 +410,7 @@ public class Date implements Comparable<Date> {
 
     java.util.Date javaDate = new java.util.Date(getCalendar().getTimeInMillis());
 
-    return mLocalizer.msg("datePattern", "{0}, {1} {2}", day.format(javaDate), month.format(javaDate), Integer
+    return LOCALIZER.msg("datePattern", "{0}, {1} {2}", day.format(javaDate), month.format(javaDate), Integer
         .toString(dayOfMonth));
   }
 
@@ -506,4 +520,55 @@ public class Date implements Comparable<Date> {
     return getDayOfWeek() == Calendar.MONDAY;
   }
 
+
+
+
+  /**
+   * writes this object to a stream. called by the serialization process.
+   *
+   * @param out the stream to write to
+   * @throws IOException if something went wrong
+   * @since 3.0
+   */
+  private void writeObject(final ObjectOutputStream out) throws IOException
+  {
+    //version for compatibility issues
+    out.writeInt(2);
+    //date
+    out.writeInt(mYear);
+    out.writeInt(mMonth);
+    out.writeInt(mDay);
+  }
+
+
+  /**
+   * reads this object from a stream. called by the serialization process.
+   *
+   * @param in the stream to read from
+   * @throws IOException if something went wrong
+   * @throws ClassNotFoundException if the format was not readable
+   * @since 3.0
+   */
+  private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException
+  {
+    //version for compatibility issues
+    int version = in.readInt();
+    if (version == 1)
+    {
+      int date = in.readInt();
+      long l = (long) date * 24 * 60 * 60 * 1000;
+      java.util.Date d = new java.util.Date(l);
+      Calendar mCalendar = Calendar.getInstance();
+      mCalendar.setTime(d);
+      mYear = mCalendar.get(Calendar.YEAR);
+      mMonth = mCalendar.get(Calendar.MONTH) + 1;
+      mDay = mCalendar.get(Calendar.DAY_OF_MONTH);
+    }
+    else
+    {
+      mYear = in.readInt();
+      mMonth = in.readInt();
+      mDay = in.readInt();
+    }
+  }
 }
