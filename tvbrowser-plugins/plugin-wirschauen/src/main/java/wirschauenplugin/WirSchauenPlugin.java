@@ -401,7 +401,7 @@ public final class WirSchauenPlugin extends Plugin
   /**
    * loads the tree from a file. this is the same as Plugin.loadRootNode. it
    * was copied because loadRootNode is protected and cant be called.
-   * TODO user Plugin.loadRootNode after 3.0 was released
+   * TODO use Plugin.loadRootNode after 3.0 was released
    *
    * @throws IOException if the file cant be read
    * @throws ClassNotFoundException TODO maybe catch this and delete the file?
