@@ -100,6 +100,7 @@ public class ProgramId implements Serializable
     //version for future compatibility issues
     out.writeInt(1);
     //date and id
+    //TODO avoid deprecated method after release of 3.0
     mDate.writeData(out);
     out.writeObject(mId);
   }
@@ -119,6 +120,7 @@ public class ProgramId implements Serializable
     if (version == 1)
     {
       //date and id
+      //TODO avoid deprecated method after release of 3.0
       mDate = new Date(in);
       mId = (String) in.readObject();
     }
