@@ -127,7 +127,7 @@ public class Date implements Comparable<Date>, Serializable
    * @throws IOException if the stream could not be read
    * @throws ClassNotFoundException if the date could not be restored
    * @since 2.2
-   * @deprecated use the serialisation mechanism instead
+   * @deprecated since 3.0, use the serialisation mechanism instead
    */
   @Deprecated
   public Date(final DataInput in) throws IOException, ClassNotFoundException {
@@ -155,7 +155,7 @@ public class Date implements Comparable<Date>, Serializable
    * @param in the input to read from
    * @throws IOException if the stream could not be read
    * @throws ClassNotFoundException if the date could not be restored
-   * @deprecated use the serialisation mechanism instead
+   * @deprecated since 3.0, use the serialisation mechanism instead
    */
   @Deprecated
   public Date(final ObjectInputStream in) throws IOException, ClassNotFoundException {
@@ -335,7 +335,7 @@ public class Date implements Comparable<Date>, Serializable
    * @throws IOException if something went wrong
    *
    * @since 2.2
-   * @deprecated use the serialisation mechanism instead
+   * @deprecated since 3.0, use the serialisation mechanism instead
    */
   @Deprecated
   public void writeToDataFile(final RandomAccessFile out) throws IOException {
@@ -350,7 +350,7 @@ public class Date implements Comparable<Date>, Serializable
    *
    * @param out the stream to write to
    * @throws IOException if something went wrong
-   * @deprecated use the serialisation mechanism instead
+   * @deprecated since 3.0, use the serialisation mechanism instead
    */
   @Deprecated
   public void writeData(final ObjectOutputStream out) throws IOException {
