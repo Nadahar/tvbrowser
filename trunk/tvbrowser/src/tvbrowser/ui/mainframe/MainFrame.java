@@ -1406,6 +1406,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
         setProgramFilter(FilterManagerImpl.getInstance().getAllFilter());
       }
     }
+    mProgramTableScrollPane.resetScrolledTime();
     // invoke scrolling later as the upper filter deactivation may have pending operations for the UI
     // so we currently can't scroll there yet
     SwingUtilities.invokeLater(new Runnable() {
