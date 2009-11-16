@@ -324,6 +324,7 @@
     <unjar src="${lib.dir}/aclibico-2.1.jar" dest="${unpacked.dir}/aclibico-2.1.jar" />
     <unjar src="${lib.dir}/log4j-1.2.15.jar" dest="${unpacked.dir}/log4j-1.2.15.jar" />
     <unjar src="${lib.dir}/libgrowl.jar" dest="${unpacked.dir}/libgrowl.jar" />
+    <unjar src="${lib.dir}/texhyphj.jar" dest="${unpacked.dir}/texhyphj.jar" />
 
     <!-- Pack the tvbrowser.jar -->
     <jar jarfile="${tvbrowser-default.runtime.dir}/tvbrowser.jar"
@@ -488,7 +489,7 @@
     <copy todir="${tvbrowser-default.runtime.dir}">
       <fileset dir="${txt.dir}" includes="LICENSE.txt"/>
       <fileset dir="${txt.dir}" includes="COPYRIGHT.txt"/>
-      <fileset dir="${deployment.dir}/common" includes="*.url" />
+      <fileset dir="${deployment.dir}/common" includes="**" />
       <!--    <fileset dir="${txt.dir}" includes="website.url"/>          -->
       <!--    <fileset dir="${txt.dir}" includes="default.properties"/>   -->
       <!--    <fileset dir="${txt.dir}" includes="osx.properties"/>       -->
@@ -626,7 +627,7 @@
   </target>
 	
   <!-- Creates the runtime folder for linux platforms -->
-  <target name="runtime-linux" depends="clean-linux, make-linux, runtime, test">
+  <target name="runtime-linux" depends="clean-linux, make-linux, runtime">
     <delete dir="${tvbrowser-linux.runtime.dir}"/>
     <mkdir dir="${tvbrowser-linux.runtime.dir}"/>
     <copy todir="${tvbrowser-linux.runtime.dir}">

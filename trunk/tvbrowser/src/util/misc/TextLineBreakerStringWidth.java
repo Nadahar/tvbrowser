@@ -26,8 +26,14 @@
 package util.misc;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Reader;
 import java.util.ArrayList;
+
+import net.davidashen.text.Hyphenator;
+import net.davidashen.util.ErrorHandler;
+import util.io.stream.InputStreamProcessor;
+import util.io.stream.StreamUtilities;
 
 /**
  * Breaks a text into lines.
@@ -35,6 +41,9 @@ import java.util.ArrayList;
  * @author Til Schneider, www.murfman.de
  */
 public class TextLineBreakerStringWidth {
+
+  private static java.util.logging.Logger mLog
+    = java.util.logging.Logger.getLogger(TextLineBreakerStringWidth.class.getName());
 
   /**
    * ellipsis used for shortened titles and descriptions<br>
@@ -57,6 +66,8 @@ public class TextLineBreakerStringWidth {
   /** Width of a Minus-Character */
   private int mMinusWidth;
   
+  private static Hyphenator hyphenator; 
+  
   /**
    * Create the LineBreaker
    */
@@ -65,6 +76,56 @@ public class TextLineBreakerStringWidth {
     mCurrWordBuffer = new StringBuilder();
     mSpaceWidth = 1;
     mMinusWidth = 1;
+    
+    initializeHyphenator();
+  }
+
+  private void initializeHyphenator() {
+    if (hyphenator != null) {
+      return;
+    }
+    hyphenator=new Hyphenator();
+    hyphenator.setErrorHandler(new ErrorHandler() {
+
+      @Override
+      public void debug(String arg0, String arg1) {
+      }
+
+      @Override
+      public void error(String arg0) {
+        mLog.severe(arg0);
+      }
+
+      @Override
+      public void exception(String arg0, Exception arg1) {
+        mLog.severe(arg0);
+      }
+
+      @Override
+      public void info(String arg0) {
+        mLog.info(arg0);
+      }
+
+      @Override
+      public boolean isDebugged(String arg0) {
+        return false;
+      }
+
+      @Override
+      public void warning(String arg0) {
+        mLog.warning(arg0);
+      }});
+    try {
+      StreamUtilities.inputStream("hyphen/dehyphx.tex", new InputStreamProcessor() {
+        
+        @Override
+        public void process(InputStream input) throws IOException {
+          hyphenator.loadTable(input);
+        }
+      });
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 
   /**
@@ -149,7 +210,7 @@ public class TextLineBreakerStringWidth {
     throws IOException
   {
     // Clear the current line
-    mCurrLineBuffer.delete(0, mCurrLineBuffer.length());
+    mCurrLineBuffer.setLength(0);
     
     int lineWidth = 0;
     while (true) {
@@ -182,26 +243,29 @@ public class TextLineBreakerStringWidth {
       
       if (newLineWidth - mSpaceWidth > maxWidth) {
         // The next word does not fit
-        if (lineWidth == 0) {
+        if (lineWidth == 0 || (maxWidth - lineWidth > 20)) {
           // The line is empty -> Break the word
-          int breakPos = findBreakPos(mNextWord, maxWidth);
+          int breakPos = findBreakPos(mNextWord, maxWidth - lineWidth, lineWidth == 0);
           
-          String firstPart = mNextWord.substring(0, breakPos);
-          if (firstPart.length()==0) {
-            mNextWordWidth = -1;
-            return "";
+          if (breakPos <= 0) {
+            return mCurrLineBuffer.toString();
           }
+          String firstPart = mNextWord.substring(0, breakPos);
+          if (mCurrLineBuffer.length() > 0) {
+            mCurrLineBuffer.append(' ');
+          }
+          mCurrLineBuffer.append(firstPart);
           
           // Append a minus if the last character is a letter or digit
           char lastChar = firstPart.charAt(firstPart.length() - 1);
           if (Character.isLetterOrDigit(lastChar)) {
-            firstPart += "-";
+            mCurrLineBuffer.append('-');
           }
           
           mNextWord = mNextWord.substring(breakPos);
           mNextWordWidth = getStringWidth(mNextWord);
           
-          return firstPart;
+          return mCurrLineBuffer.toString();
         } else {
           // Make a line break here (and process the word the next time)
           return mCurrLineBuffer.toString();
@@ -240,7 +304,7 @@ public class TextLineBreakerStringWidth {
     throws IOException
   {
     // Clear the current word
-    mCurrWordBuffer.delete(0, mCurrWordBuffer.length());
+    mCurrWordBuffer.setLength(0);
     
     do {
       mCurrWordBuffer.append((char) mCurrChar);
@@ -263,9 +327,10 @@ public class TextLineBreakerStringWidth {
    * 
    * @param word The word to break
    * @param maxWidth The maximum width of the word
+   * @param mustBreak this word must break, even if no hyphenation is found
    * @return The position where to break the word
    */
-  private int findBreakPos(String word, int maxWidth) {
+  private int findBreakPos(final String word, int maxWidth, boolean mustBreak) {
     // Reserve some space for the minus
     maxWidth -= mMinusWidth;
     
@@ -298,9 +363,39 @@ public class TextLineBreakerStringWidth {
         return i + 1;
       }
     }
-
+    
+    int endCharacters;
+    if (Character.isLetter(word.charAt(word.length() - 1))) {
+      endCharacters = 2;
+    }
+    else {
+      endCharacters = 3; // some words end in punctuation, so make sure at least 2 letters stay together
+    }
+    int startCharacters = 2;
+    if (word.length() >= startCharacters + endCharacters) {
+      final String hyphenated = hyphenator.hyphenate(word, endCharacters, startCharacters);
+      if (hyphenated != null && hyphenated.length() > word.length()) {
+        int characters = 0;
+        int lastHyphen = 0;
+        for (int i = 0; i < hyphenated.length(); i++) {
+          if (hyphenated.charAt(i) != '\u00AD') {
+            if (++characters > lastFittingPos) {
+              return lastHyphen;
+            }
+          }
+          else {
+            lastHyphen = characters;
+          }
+        }
+      }
+    }
+    
     // We did not find a better break char -> break at the last fitting char
-    return lastFittingPos;
+    if (mustBreak) {
+      return lastFittingPos;
+    }
+    
+    return 0;
   }
   
   /**
@@ -308,16 +403,16 @@ public class TextLineBreakerStringWidth {
    * @param str get Width of this String
    * @return Width of this String
    */
-  public int getStringWidth(String str) {
+  public int getStringWidth(final String str) {
     return str.length();
   }
   
   /**
-   * Test if the Character is is a EOL-Char 
+   * Test if the character is a EOL-Char 
    * @param ch test this Char
    * @return true if ch is a EOL Char
    */
-  private boolean isEndOfLine(int ch) {
+  private boolean isEndOfLine(final int ch) {
     return (ch == '\n') || (ch == -1);
   }
 

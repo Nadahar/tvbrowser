@@ -1,21 +1,47 @@
+Name: TV-Browser
+Maintainer: TV-Browser Team <dev@tvbrowser.org>
+Source: https://tvbrowser.svn.sourceforge.net/svnroot/tvbrowser
+
+Files: *
+Copyright: TV-Browser Team <dev@tvbrowser.org>
+License: GPL-3+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+Files: deployment/common/hyphen/dehyphn.tex
+Copyright: 1988,1991 Rechenzentrum der Ruhr-Universitaet Bochum
+           1993,1994,1999 Bernd Raichle/DANTE e.V.
+           1998-2001 Walter Schmidt
+License: LPPL-1+
+
 Files: deployment/maxosx/jarbundler-2.0.jar
-Copyright: © 2003, Seth J. Morabito <sethm@loomcom.com>
+Copyright: 2003, Seth J. Morabito <sethm@loomcom.com>
 License: Apache-2.0
 
-Files: "deployment/win/launcher/*
-Copyright: © 2007 René Mach
+Files: deployment/win/launcher/*
+Copyright: 2007 René Mach
 License: GPL-2+
 
 Files: "deployment/win/installer/Contrib/Modern UI/System.nsh"
-Copyright: © 2002-2007 Joost Verburg
+Copyright: 2002-2007 Joost Verburg
 License: see below
 
 Files: deployment/win/installer/Include/LangFile.nsh
-Copyright: © 2007 Joost Verburg
+Copyright: 2007 Joost Verburg
 License: see below
 
 Files: deployment/win/installer/*
-Copyright: © 1999-2004 Nullsoft, Inc.
+Copyright: 1999-2004 Nullsoft, Inc.
 License: other
  This software is provided 'as-is', without any express or implied warranty.
  In no event will the authors be held liable for any damages arising from the
@@ -36,7 +62,7 @@ License: other
  3. This notice may not be removed or altered from any source distribution.
 
 Files: deployment/win/launch4j/*
-Copyright: © 2004, 2008 Grzegorz Kowal
+Copyright: 2004, 2008 Grzegorz Kowal
 License: other
   All rights reserved.
 
@@ -65,7 +91,7 @@ License: other
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 Files: images/themes/CrystalClear/*
-Copyright: © Everaldo.com
+Copyright: Everaldo.com
 License: LGPL 2.1+
 
 Files: images/themes/tango/*
@@ -140,7 +166,7 @@ License: other
  Creative Commons may be contacted at http://creativecommons.org/.
 
 Files: lib/commons-*
-Copyright: © 2001 The Apache Software Foundation
+Copyright: 2001 The Apache Software Foundation
 License: other
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions
@@ -184,7 +210,7 @@ License: other
  SUCH DAMAGE.
 
 Files: lib/skinlf.jar
-Copyright: © 2000-2005 L2FProd.com
+Copyright: 2000-2005 L2FProd.com
 License: other
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions
@@ -227,11 +253,11 @@ License: other
  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 Files: lib/bsh-*.jar
-Copyright: © 2007 Pat Niemeyer pat@pat.net
+Copyright: 2007 Pat Niemeyer pat@pat.net
 License: LGPL-2.1+
 
 Files: lib/forms-*.jar, lib/looks-*.jar
-Copyright: © 2001-2008 JGoodies Karsten Lentzsch
+Copyright: 2001-2008 JGoodies Karsten Lentzsch
 License: other
    Redistribution and use in source and binary forms, with or without
    modification, are permitted provided that the following conditions are met:
@@ -264,51 +290,51 @@ Copyright: jregistry team (http://sourceforge.net/projects/jregistrykey/)
 License: LGPL 2.1+
 
 Files: lib/xtvd-lib-*.jar
-Copyright: © 2003 Tribune Media Services
+Copyright: 2003 Tribune Media Services
 License: GPL 2+
 
-Files: lib/libidn-*.jar
-Copyright: © 2004 - 2007  Free Software Foundation, Inc.
-License: LGPL 2.1+
-
 Files: lib/TVAnytimeAPI.jar
-Copyright: © 2005 BBC Research and Development
+Copyright: 2005 BBC Research and Development
 License: LGPL 2.1+
 
 Files: lib/stax-*.jar
-Copyright: © Chris Fry, Aleksander Slominski (http://stax.codehaus.org/) 
+Copyright: Chris Fry, Aleksander Slominski (http://stax.codehaus.org/) 
 License: Apache-2.0
 
 Files: lib/lucene-core-*.jar
-Copyright: © 2006 The Apache Software Foundation
+Copyright: 2006 The Apache Software Foundation
 License: Apache-2.0
 
 Files: lib/jakarta-oro-*.jar
-Copyright: © 2006 The Apache Software Foundation
+Copyright: 2006 The Apache Software Foundation
 License: Apache-2.0
 
 Files: lib/gdata-*.jar
-Copyright: © google.com
+Copyright: google.com
 License: Apache-2.0
 
 Files: lib/opencsv-*.jar
-Copyright: © 2005 Bytecode Pty Ltd.
+Copyright: 2005 Bytecode Pty Ltd.
 License: Apache-2.0
 
 Files: lib/l2fprod-common-tasks.jar
-Copyright: © 2005-2007 L2FProd.com
+Copyright: 2005-2007 L2FProd.com
 License: Apache-2.0
 
 Files: lib/libgrowl.jar
-Copyright: © 2009 Michael Keppler
+Copyright: 2009 Michael Keppler
 License: GPL-3+
 
+Files: lib/texhyphj.jar
+Copyright: 2003 David Tolpin
+License: LGPL-2.1+
+
 Files: tvdatakit/workspace/lib/poi-*.jar
-Copyright: © 2002-2007 The Apache Software Foundation
+Copyright: 2002-2007 The Apache Software Foundation
 License: Apache-2.0
 
 Files: src/tvbrowser/ui/mainframe/toolbar/MoreButton.java
-Copyright: © 2005 Santhosh Kumar T
+Copyright: 2005 Santhosh Kumar T
 License: LGPL-2.1+
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -316,7 +342,7 @@ License: LGPL-2.1+
  version 2.1 of the License, or (at your option) any later version.
 
 Files: src/util/browserlauncher/BrowserLauncher.java
-Copyright: © 1999-2002 by Eric Albert (ejalbert@cs.stanford.edu)
+Copyright: 1999-2002 by Eric Albert (ejalbert@cs.stanford.edu)
 License: other
  This code is Copyright 1999-2002 by Eric Albert (ejalbert@cs.stanford.edu) and may be
  redistributed or modified in any form without restrictions as long as the portion of this
@@ -327,11 +353,11 @@ License: other
  or any adverse or unexpected effects of using this software.
 
 Files: src/util/io/NtpMessage.java
-Copyright: © 2004 Adam Buckley
+Copyright: 2004 Adam Buckley
 License: GPL-2+
 
 Files: src/webplugin/aclib/*
-Copyright: © 2000 by Lee Benfield - lee@recoil.org
+Copyright: 2000 by Lee Benfield - lee@recoil.org
 License: other
  Permission to use, copy, modify, and distribute this software and its
  documentation for any purpose and without fee is hereby granted, provided
@@ -341,24 +367,8 @@ License: other
  or implied warranty.
 
 Files: lib/jcom.jar, deployment/win/jcom/*
-Copyright:  © Yoshinori Watanabe 1999-2004
+Copyright: Yoshinori Watanabe 1999-2004
 License: LGPL 2.1+
-
-Files: *
-Copyright: TV-Browser Team <dev@tvbrowser.org>
-License: GPL-3+
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 On Debian systems, the complete text of the GNU General
 Public License can be found in `/usr/share/common-licenses/GPL' and the
