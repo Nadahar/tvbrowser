@@ -35,6 +35,8 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -217,6 +219,13 @@ public class SearchField extends JPanel {
       public void actionPerformed(ActionEvent e) {
         showConfigureDialog(mText);
       };
+    });
+    mSearchButton.addMouseListener(new MouseAdapter() {
+      
+      @Override
+      public void mousePressed(MouseEvent e) {
+        showConfigureDialog(mText);
+      }
     });
     
     mGoOrCancelButton = new JButton(IconLoader.getInstance().getIconFromTheme("action", "media-playback-start", 16)); 
