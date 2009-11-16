@@ -132,6 +132,6 @@ public class MovieDatabaseHandler extends DefaultHandler {
    * @param buffer The StringBuffer to clear.
    */
   private void clear(final StringBuilder buffer) {
-    buffer.delete(0, buffer.length());
+    buffer.setLength(0);
   }
 }
