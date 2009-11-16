@@ -451,7 +451,7 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 		mLog.info("Start TV Pearl update.");
 		mTVPearls.update();
 		mLog.info("TV Pearl update finished.");
-		mLog.info(mTVPearls.getInfo());
+		mTVPearls.logInfo();
 		updateChanges();
 		if (mDialog != null)
 		{
