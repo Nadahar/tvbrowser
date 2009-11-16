@@ -536,15 +536,13 @@ public class TVPearl
 		root.update();
 	}
 
-	public String getInfo()
+	public void logInfo()
 	{
-		String msg = "";
-		msg += "Url: " + mUrl + "\n";
-		msg += "Program count: " + mProgramList.size() + "\n";
+		mLog.info("Url: " + mUrl);
+		mLog.info("Program count: " + mProgramList.size());
 		if (mLastUpdate != null)
 		{
-			msg += "Last update: " + mLastUpdate.getTime().toString() + "\n";
+			mLog.info("Last update: " + mLastUpdate.getTime().toString());
 		}
-		return msg.trim();
 	}
 }
