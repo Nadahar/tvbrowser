@@ -31,6 +31,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.net.URL;
+
+import util.io.IOUtilities;
 
 /**
  * Stream processor class for working with streams
@@ -123,6 +126,58 @@ public class StreamUtilities {
       final InputStreamProcessor processor)
       throws IOException {
     inputStream(new File(fileName), processor);
+  }
+
+  /**
+   * Lets you work with a file based input stream. It is guaranteed that the
+   * underlying stream is closed, even if IOExceptions occur (which are still
+   * thrown further to the caller of this method)
+   * 
+   * @param url URL to open
+   * @param processor
+   * @throws IOException
+   * @since 3.0
+   */
+  public static void inputStream(final URL url,
+      final InputStreamProcessor processor)
+      throws IOException {
+    IOException processException = null;
+    InputStream input = null;
+    BufferedInputStream bufferedStream = null;
+    try {
+      input = IOUtilities.getStream(url);
+      bufferedStream = new BufferedInputStream(input);
+      processor.process(bufferedStream);
+    } catch (IOException e) {
+      processException = e;
+    } finally {
+      // close stream
+      if (bufferedStream != null) {
+        try {
+          bufferedStream.close();
+        } catch (IOException e) {
+          if (processException != null) {
+            processException = new IOException(processException);
+          } else {
+            processException = e;
+          }
+        }
+      }
+      if (input != null) {
+        try {
+          input.close();
+        } catch (IOException e) {
+          if (processException != null) {
+            processException = new IOException(processException);
+          } else {
+            processException = e;
+          }
+        }
+      }
+      if (processException != null) {
+        throw processException;
+      }
+    }
   }
 
   public static void bufferedReader(final File file,
