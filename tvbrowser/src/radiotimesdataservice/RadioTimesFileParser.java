@@ -25,6 +25,10 @@
  */
 package radiotimesdataservice;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
@@ -33,7 +37,9 @@ import java.util.Iterator;
 import tvdataservice.MutableChannelDayProgram;
 import tvdataservice.MutableProgram;
 import tvdataservice.TvDataUpdateManager;
-import util.io.IOUtilities;
+import util.io.stream.InputStreamProcessor;
+import util.io.stream.StreamUtilities;
+import devplugin.AbstractTvDataService;
 import devplugin.Channel;
 import devplugin.Date;
 import devplugin.Program;
@@ -43,10 +49,6 @@ import devplugin.ProgramFieldType;
  * Parses the RadioTimes Data
  * 
  * @author bodum
- */
-/**
- * @author bananeweizen
- *
  */
 public class RadioTimesFileParser {
 
@@ -58,7 +60,7 @@ public class RadioTimesFileParser {
   private Channel mChannel;
   
   /**
-   * map of lazily created update channel day programs 
+   * map of lazily created update channel day programs
    */
   private HashMap<Date, MutableChannelDayProgram> mMutMap = new HashMap<Date, MutableChannelDayProgram>();
 
@@ -101,134 +103,159 @@ public class RadioTimesFileParser {
    * Parse the Data
    * 
    * @param updateManager
-   * @param endDate 
+   * @param endDate
    * @throws Exception
    */
-  public void parse(TvDataUpdateManager updateManager, Date endDate) throws Exception {
-    StringBuilder builder = new StringBuilder(RadioTimesDataService.BASEURL);
-    builder.append(mChannel.getId().substring(RadioTimesDataService.RADIOTIMES.length()));
-    builder.append(".dat");
+  public void parse(final TvDataUpdateManager updateManager, final Date endDate) throws Exception {
+    StringBuilder urlString = new StringBuilder(RadioTimesDataService.BASEURL);
+    urlString.append(mChannel.getId().substring(RadioTimesDataService.RADIOTIMES.length()));
+    urlString.append(".dat");
 
-    String file = new String(IOUtilities.loadFileFromHttpServer(new URL(builder.toString())), "UTF8");
-
-    for (String line:file.split("\n")) {
-      String[] items = line.split("~");
-
-      if (items.length == 23) {
-        Date date = parseDate(items[RT_DATE]);
-        if (date.compareTo(endDate) >  0) {
-          storeDayPrograms(updateManager);
-          return;
-        }
+    StreamUtilities.inputStream(new URL(urlString.toString()), new InputStreamProcessor() {
+      
+      @Override
+      public void process(InputStream inputStream) throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "UTF8"));
         
-        MutableChannelDayProgram mutDayProg = getMutableDayProgram(date);
-        
-        int[] time = parseTime(items[RT_START_TIME]);
-        
-        MutableProgram prog = new MutableProgram(mChannel,date, time[0], time[1], true);
-        
-        prog.setTitle(items[RT_TITLE]);
-
-        StringBuilder desc = new StringBuilder(items[RT_SUBTITLE].trim()).append("\n\n");
-
-        if (items[RT_DESCRIPTION].indexOf(0x0D) > 0) {
-          items[RT_DESCRIPTION] = items[RT_DESCRIPTION].replace((char)0x0D, '\n');
-        }
-
-        if (items[RT_STAR_RATING].length() != 0) {
-            prog.setIntField(ProgramFieldType.RATING_TYPE, translateRating(items[RT_STAR_RATING]));
-        }
-
-        desc.append(items[RT_DESCRIPTION]);
-        desc.append("\n\n");
-
-        prog.setTextField(ProgramFieldType.DESCRIPTION_TYPE, desc.toString().trim());
-
-        prog.setTextField(ProgramFieldType.SHORT_DESCRIPTION_TYPE, MutableProgram.generateShortInfoFromDescription(items[RT_DESCRIPTION].trim()));
-
-        String field = items[RT_EPISODE].trim();
-        if (field.length() > 0) {
-          prog.setTextField(ProgramFieldType.EPISODE_TYPE, field);
-        }
-        
-        field = items[RT_YEAR].trim();
-        if (field.length() > 0) {
-          try {
-            prog.setIntField(ProgramFieldType.PRODUCTION_YEAR_TYPE, Integer.parseInt(field));
-          } catch (Exception e) {
+        int countProgram = 0;
+        String line;
+        String lastLine = "";
+        while ((line = reader.readLine()) != null) {
+          if (lastLine.length() > 0) { // re-append updated descriptions.
+            line = lastLine + " " + line;
           }
-        }
+          String[] items = line.trim().split("~");
 
-        field = items[RT_DURATION_MINUTES].trim();
-        if (field.length() > 0) {
-          try {
-            prog.setIntField(ProgramFieldType.NET_PLAYING_TIME_TYPE, Integer.parseInt(field));
-          } catch (Exception e) {
+          if (items.length == 23) {
+            try {
+              Date date = parseDate(items[RT_DATE]);
+              MutableChannelDayProgram mutDayProg = getMutableDayProgram(date);
+              
+              int[] time = parseTime(items[RT_START_TIME]);
+              
+              MutableProgram prog = new MutableProgram(mChannel,date, time[0], time[1], true);
+              
+              prog.setTitle(items[RT_TITLE]);
+
+              StringBuilder desc = new StringBuilder(items[RT_SUBTITLE].trim()).append("\n\n");
+
+              if (items[RT_DESCRIPTION].indexOf(0x0D) > 0) {
+                items[RT_DESCRIPTION] = items[RT_DESCRIPTION].replace((char)0x0D, '\n');
+              }
+
+              if (items[RT_STAR_RATING].length() != 0) {
+                  prog.setIntField(ProgramFieldType.RATING_TYPE, translateRating(items[RT_STAR_RATING]));
+              }
+
+              desc.append(items[RT_DESCRIPTION]);
+              desc.append("\n\n");
+
+              prog.setTextField(ProgramFieldType.DESCRIPTION_TYPE, desc.toString().trim());
+
+              prog.setTextField(ProgramFieldType.SHORT_DESCRIPTION_TYPE, MutableProgram.generateShortInfoFromDescription(items[RT_DESCRIPTION].trim()));
+
+              String field = items[RT_EPISODE].trim();
+              if (field.length() > 0) {
+                prog.setTextField(ProgramFieldType.EPISODE_TYPE, field);
+              }
+              
+              field = items[RT_YEAR].trim();
+              if (field.length() > 0) {
+                try {
+                  prog.setIntField(ProgramFieldType.PRODUCTION_YEAR_TYPE, Integer.parseInt(field));
+                } catch (Exception e) {
+                }
+              }
+
+              field = items[RT_DURATION_MINUTES].trim();
+              if (field.length() > 0) {
+                try {
+                  prog.setIntField(ProgramFieldType.NET_PLAYING_TIME_TYPE, Integer.parseInt(field));
+                } catch (Exception e) {
+                }
+              }
+
+              field = items[RT_DIRECTOR].trim();
+              if (field.length() > 0) {
+                prog.setTextField(ProgramFieldType.DIRECTOR_TYPE, field);
+              }
+              
+              field = items[RT_ACTORS].trim();
+              if (field.length() > 0) {
+                prog.setTextField(ProgramFieldType.ACTOR_LIST_TYPE, createCast(field));
+              }
+              
+              field = items[RT_GENRE].trim();
+              if ((field.length() > 0)&& (!field.equals("No Genre"))) {
+                prog.setTextField(ProgramFieldType.GENRE_TYPE, field);
+              }
+
+              int bitset = 0;
+              
+              if (items[RT_SUBTITLES_FOR_AURALLY_HANDICAPPED].trim().equalsIgnoreCase("true")) {
+                bitset |= Program.INFO_SUBTITLE_FOR_AURALLY_HANDICAPPED;
+              }
+              
+              if (items[RT_16_TO_9].trim().equalsIgnoreCase("true")) {
+                bitset |= Program.INFO_VISION_16_TO_9;
+              }
+              
+              if (items[RT_BLACK_WHITE].trim().equalsIgnoreCase("true")) {
+                bitset |= Program.INFO_VISION_BLACK_AND_WHITE;
+              }
+              
+              if (items[RT_MOVIE].trim().equalsIgnoreCase("true")) {
+                bitset |= Program.INFO_CATEGORIE_MOVIE;
+              }
+              
+              if (items[RT_MOVIE_PREMIERE].trim().equalsIgnoreCase("true")) {
+                bitset |= Program.INFO_NEW;
+              }
+
+              if (items[RT_NEW_SERIES].trim().equalsIgnoreCase("true")) {
+                bitset |= Program.INFO_NEW;
+                bitset |= Program.INFO_CATEGORIE_MOVIE;
+              }
+      
+              prog.setInfo(bitset);
+              
+              try {
+                int age = Integer.parseInt(items[RT_AGE_LIMIT]);
+                prog.setIntField(ProgramFieldType.AGE_LIMIT_TYPE, age);
+              } catch (Exception e) {
+              }
+              
+              
+              int[] endtime = parseTime(items[RT_END_TIME]);
+              prog.setTimeField(ProgramFieldType.END_TIME_TYPE, endtime[0] * 60 + endtime[1]);
+              
+              prog.setProgramLoadingIsComplete();
+              mutDayProg.addProgram(prog);
+              countProgram ++;
+            } catch (Exception e) {
+              // TODO Auto-generated catch block
+              e.printStackTrace();
+            }
+            lastLine = "";
           }
-        }
+          else {
+            if (items.length > 1) { // empty lines and the first line with the usage agreement are expected
+              if (items.length != 18) {
+                mLog.warning("Non matching line in Radiotimes: " + line);
+              }
+              lastLine = line;
+            }
+          }
 
-        field = items[RT_DIRECTOR].trim();
-        if (field.length() > 0) {
-          prog.setTextField(ProgramFieldType.DIRECTOR_TYPE, field);
         }
-        
-        field = items[RT_ACTORS].trim();
-        if (field.length() > 0) {
-          prog.setTextField(ProgramFieldType.ACTOR_LIST_TYPE, createCast(field));
+        if (countProgram == 0) {
+          mLog.warning("Found no matching entry in RadioTimes file");
         }
-        
-        field = items[RT_GENRE].trim();
-        if ((field.length() > 0)&& (!field.equals("No Genre"))) {
-          prog.setTextField(ProgramFieldType.GENRE_TYPE, field);
+        else {
+          mLog.info("Found " + countProgram + " programs.");
         }
-
-        int bitset = 0;
-        
-        if (items[RT_SUBTITLES_FOR_AURALLY_HANDICAPPED].trim().equalsIgnoreCase("true")) {
-          bitset |= Program.INFO_SUBTITLE_FOR_AURALLY_HANDICAPPED;
-        }
-        
-        if (items[RT_16_TO_9].trim().equalsIgnoreCase("true")) {
-          bitset |= Program.INFO_VISION_16_TO_9;
-        }
-        
-        if (items[RT_BLACK_WHITE].trim().equalsIgnoreCase("true")) {
-          bitset |= Program.INFO_VISION_BLACK_AND_WHITE;
-        }
-        
-        if (items[RT_MOVIE].trim().equalsIgnoreCase("true")) {
-          bitset |= Program.INFO_CATEGORIE_MOVIE;
-        }
-        
-        if (items[RT_MOVIE_PREMIERE].trim().equalsIgnoreCase("true")) {
-          bitset |= Program.INFO_NEW; 
-        }
-
-        if (items[RT_NEW_SERIES].trim().equalsIgnoreCase("true")) {
-          bitset |= Program.INFO_NEW;
-          bitset |= Program.INFO_CATEGORIE_MOVIE;
-        }
-       
-        prog.setInfo(bitset);
-        
-        try {
-          int age = Integer.parseInt(items[RT_AGE_LIMIT]);
-          prog.setIntField(ProgramFieldType.AGE_LIMIT_TYPE, age);
-        } catch (Exception e) {
-        }
-        
-        
-        int[] endtime = parseTime(items[RT_END_TIME]);
-        prog.setTimeField(ProgramFieldType.END_TIME_TYPE, endtime[0] * 60 + endtime[1]);
-        
-        prog.setProgramLoadingIsComplete();
-        mutDayProg.addProgram(prog);
       }
-      else {
-        mLog.warning("Non matching line in Radiotimes: " + line);
-      }
-
-    }
+    });
 
     storeDayPrograms(updateManager);
   }
@@ -246,8 +273,9 @@ public class RadioTimesFileParser {
       return 100;
     }
 
-    if (rating.length() > 0)
+    if (rating.length() > 0) {
       System.out.println(rating);
+    }
 
     return 0;
   }
@@ -257,7 +285,7 @@ public class RadioTimesFileParser {
       // compare new and existing programs to avoid unnecessary updates
       boolean update = true;
       
-      Iterator<Program> itCurrProg = RadioTimesDataService.getPluginManager().getChannelDayProgram(newDayProg.getDate(), mChannel);
+      Iterator<Program> itCurrProg = AbstractTvDataService.getPluginManager().getChannelDayProgram(newDayProg.getDate(), mChannel);
       Iterator<Program> itNewProg = newDayProg.getPrograms();
       if (itCurrProg != null && itNewProg != null) {
         update = false;
