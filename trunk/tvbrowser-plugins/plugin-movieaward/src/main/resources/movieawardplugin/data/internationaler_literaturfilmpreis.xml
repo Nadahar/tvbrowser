@@ -67,6 +67,10 @@
 			</title>
 			<title lang="en">Gomorrha</title>
 		</movie>
+		    <movie id="2009" director="Michael Hoffman" year="2009">
+      <title lang="de">The Last Station</title>
+      <title lang="en">The Last Station</title>
+    </movie>
 	</movies>
 
 	<awards>
@@ -83,6 +87,7 @@
 		<award category="preis" status="winner" movie="2006" year="2006" />
 		<award category="preis" status="winner" movie="2007" year="2007" />
 		<award category="preis" status="winner" movie="2008" year="2008" />
+    <award category="preis" status="winner" movie="2009" year="2009" />
 	</awards>
 
 </awarddata>

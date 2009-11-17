@@ -9,6 +9,10 @@
     <name lang="de">Goldene Palme</name>
     <name lang="en">Palme d'Or</name>
   </category>
+	  <category id="grand_prix">
+    <name lang="de">Großer Preis der Internationalen Filmfestspiele (1964-1974)</name>
+    <name lang="en">Grand Prix du Festival International du Film (1964-1974)</name>
+  </category>
 </categories>
 
 <movies>
@@ -98,12 +102,14 @@
   </movie>
   <movie id="movie_19" year="1981" director="Andrzej Wajda">
     <title lang="pl" original="yes">Człowiek z żelaza</title>
+    <alternativetitle lang="pl" original="yes">Czlowiek z zelaza</alternativetitle>
     <title lang="en">Man of Iron</title>
     <title lang="de">Der Mann aus Eisen</title>
   </movie>
   <movie id="movie_20" year="1982" director="Constantin Costa-Gavras">
     <title lang="en" original="yes">Missing</title>
     <title lang="de">Vermißt</title>
+    <alternativetitle lang="de">Vermisst</alternativetitle>
   </movie>
   <movie id="movie_21" year="1982" director="Şerif Gören">
     <title lang="tr" original="yes">Yol</title>
@@ -121,6 +127,7 @@
   </movie>
   <movie id="movie_24" year="1985" director="Emir Kusturica">
     <title lang="sh" original="yes">Otac na službenom putu</title>
+    <alternativetitle lang="sh" original="yes">Otac na sluzbenom putu</alternativetitle>
     <title lang="en">When Father Was Away on Business</title>
     <title lang="de">Papa ist auf Dienstreise</title>
   </movie>
@@ -157,6 +164,7 @@
   </movie>
   <movie id="movie_32" year="1993" director="Chen Kaige">
     <title lang="zh" original="yes">Bàwáng Bié Jī</title>
+    <alternativetitle lang="zh" original="yes">Bawang Bie Ji</alternativetitle>
     <title lang="en">Farewell My Concubine</title>
     <title lang="de">Lebewohl, meine Konkubine</title>
   </movie>
@@ -179,6 +187,9 @@
   </movie>
   <movie id="movie_37" year="1997" director="Abbas Kiarostami">
     <title lang="fa" original="yes">Ta'm-e gīlās</title>
+    <alternativetitle lang="fa" original="yes">Ta'm-e gilas</alternativetitle>
+    <alternativetitle lang="fa" original="yes">Tame gilas</alternativetitle>
+    <alternativetitle lang="fa" original="yes">Tam e guilas</alternativetitle>
     <title lang="en">Taste of Cherry</title>
     <title lang="de">Der Geschmack der Kirsche</title>
   </movie>
@@ -227,16 +238,6 @@
   <movie id="movie_47" year="2006" director="Ken Loach">
     <title lang="en" original="yes">The Wind That Shakes the Barley</title>
     <title lang="de">The Wind That Shakes the Barley</title>
-  </movie>
-  <movie id="movie_48" year="2007" director="Cristian Mungiu">
-    <title lang="ro" original="yes">4 luni, 3 săptămâni şi 2 zile</title>
-  <title lang="en">4 Months, 3 Weeks and 2 Days</title>
-  <title lang="de">4 Monate, 3 Wochen und 2 Tage</title>
-  </movie>
-  <movie id="movie_49" year="2008" director="Laurent Cantet">
-    <title lang="fr" original="yes">Entre les murs</title>
-    <title lang="en">The Class</title>
-    <title lang="de">Die Klasse</title>
   </movie>
 </movies>
 
@@ -288,8 +289,22 @@
   <award category="golden_palm" status="winner" movie="movie_45" year="2004" />
   <award category="golden_palm" status="winner" movie="movie_46" year="2005" />
   <award category="golden_palm" status="winner" movie="movie_47" year="2006" />
-  <award category="golden_palm" status="winner" movie="movie_48" year="2007" />
-  <award category="golden_palm" status="winner" movie="movie_49" year="2008" />
+  <award category="golden_palm" status="winner" movie="movie_db_32" year="2007" />
+  <award category="golden_palm" status="winner" movie="movie_db_1157" year="2008" />
+	<award category="golden_palm" status="winner" movie="movie_db_4231" year="2009" />
+	<award category="grand_prix" status="winner" movie="movie_db_1209" year="1964" />
+	<award category="grand_prix" status="winner" movie="movie_db_804" year="1965" />
+	<award category="grand_prix" status="winner" movie="movie_db_1416" year="1966" />
+	<award category="grand_prix" status="winner" movie="movie_db_81" year="1966" />
+	<award category="grand_prix" status="winner" movie="movie_db_375" year="1967" />
+	<award category="grand_prix" status="winner" movie="movie_db_4232" year="1969" />
+	<award category="grand_prix" status="winner" movie="movie_db_2393" year="1970" />
+	<award category="grand_prix" status="winner" movie="movie_db_896" year="1971" />
+	<award category="grand_prix" status="winner" movie="movie_db_4233" year="1972" />
+  <award category="grand_prix" status="winner" movie="movie_db_4234" year="1972" />
+	<award category="grand_prix" status="winner" movie="movie_db_4235" year="1973" />
+  <award category="grand_prix" status="winner" movie="movie_db_4236" year="1973" />
+	<award category="grand_prix" status="winner" movie="movie_db_760" year="1974" />
 </awards>
 
 </awarddata>

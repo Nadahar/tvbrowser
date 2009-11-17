@@ -30,6 +30,7 @@
 <movies>
   <movie id="movie_1" year="1988" director="Krzysztof Kieslowski">
     <title lang="pl" original="yes">Krótki film o zabijaniu</title>
+    <alternativetitle lang="pl" original="yes">Krotki film o zabijaniu</alternativetitle>
     <title lang="en">A Short Film About Killing</title>
    <title lang="de">Ein kurzer Film über das Töten</title>
   </movie>
@@ -54,6 +55,7 @@
   </movie>
   <movie id="movie_6" year="1991" director="Nikita Mikhalkov">
     <title lang="ru" original="yes">Урга</title>
+    <alternativetitle lang="ru" original="yes">Urga</alternativetitle>
    <title lang="en">Urga</title>
    <title lang="de">Urga</title>
   </movie>
@@ -77,6 +79,7 @@
   </movie>
   <movie id="movie_11" year="1997" director="Roberto Benigni">
     <title lang="it" original="yes">La vita è bella</title>
+    <alternativetitle lang="it" original="yes">La vita e bella</alternativetitle>
    <title lang="en">Life Is Beautiful</title>
    <title lang="de">Das Leben ist schön</title>
   </movie>
@@ -116,11 +119,6 @@
   <movie id="movie_19" year="2006" director="Florian Henckel von Donnersmarck">
     <title lang="de" original="yes">Das Leben der Anderen</title>
    <title lang="en">The Lives of Others</title>
-  </movie>
-  <movie id="movie_20" year="2007" director="Cristian Mungiu">
-    <title lang="ro" original="yes">4 luni, 3 săptămâni şi 2 zile</title>
-   <title lang="en">4 Months, 3 Weeks and 2 Days</title>
-   <title lang="de">4 Monate, 3 Wochen und 2 Tage</title>
   </movie>
   <movie id="movie_21" year="1987" director="Wim Wenders">
     <title lang="de" original="yes">Der Himmel über Berlin</title>
@@ -296,7 +294,7 @@
    <title lang="en">Sweet Emma, Dear Böbe</title>
    <title lang="de">Süße Emma, liebe Böbe</title>
   </movie>
-  <movie id="movie_58" year="1996" director=" Sergei Bodrov">
+  <movie id="movie_58" year="1996" director="Sergei Bodrov">
    <title lang="ru" original="yes">Kavkazskiy plennik</title>
    <title lang="en">Prisoner of the Mountains</title>
    <title lang="de">Gefangen im Kaukasus</title>
@@ -317,6 +315,7 @@
   </movie>
   <movie id="movie_62" year="2001" director="Danis Tanović">
    <title lang="bs" original="yes">Ničija zemlja</title>
+   <alternativetitle lang="bs" original="yes">Nicija zemlja</alternativetitle>
    <title lang="en">No Man's Land</title>
    <title lang="de">No Man's Land</title>
   </movie>
@@ -355,7 +354,7 @@
   <award category="best_movie" status="winner" movie="movie_17" year="2004" />
   <award category="best_movie" status="winner" movie="movie_18" year="2005" />
   <award category="best_movie" status="winner" movie="movie_19" year="2006" />
-  <award category="best_movie" status="winner" movie="movie_20" year="2007" />
+  <award category="best_movie" status="winner" movie="movie_db_32" year="2007" />
   <award category="best_movie" status="winner" movie="movie_db_796" year="2008" />
   <award category="best_director" status="winner" movie="movie_21" year="1988" />
   <award category="best_director" status="winner" movie="movie_22" year="1989" />
@@ -365,7 +364,7 @@
   <award category="best_director" status="winner" movie="movie_24" year="2004" />
   <award category="best_director" status="winner" movie="movie_18" year="2005" />
   <award category="best_director" status="winner" movie="movie_25" year="2006" />
-  <award category="best_director" status="winner" movie="movie_20" year="2007" />
+  <award category="best_director" status="winner" movie="movie_db_32" year="2007" />
   <award category="best_director" status="winner" movie="movie_db_796" year="2008" />
   <award category="best_actor" recipient="Max von Sydow" status="winner" movie="movie_26" year="1988" />
   <award category="best_actor" recipient="Philippe Noiret" status="winner" movie="movie_27" year="1989" />

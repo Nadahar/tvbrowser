@@ -147,8 +147,11 @@
 <title lang="en" original="yes">4 Devils</title>
 </movie>
 
-<movie id="movie_db_32" year="2008">
-<title lang="de">4 Monate, 3 Wochen und 2 Tage</title>
+<movie id="movie_db_32" year="2007" director="Cristian Mungiu">
+    <title lang="ro" original="yes">4 luni, 3 săptămâni şi 2 zile</title>
+    <alternativetitle lang="ro" original="yes">4 luni, 3 saptamani si 2 zile</alternativetitle>
+    <title lang="en">4 Months, 3 Weeks and 2 Days</title>
+    <title lang="de">4 Monate, 3 Wochen und 2 Tage</title>
 </movie>
 
 <movie id="movie_db_33" year="1942">
@@ -391,7 +394,8 @@
 
 <movie id="movie_db_81" year="1967">
 <title lang="de">Aber, aber, meine Herren...</title>
-<title lang="en" original="yes">Signore &amp; Signori</title>
+<title lang="it" original="yes">Signore &amp; Signori</title>
+<title lang="en">The Birds, the Bees and the Italians</title>
 </movie>
 
 <movie id="movie_db_82" year="2002">
@@ -516,7 +520,9 @@
 </movie>
 
 <movie id="movie_db_106" year="2000">
-<title lang="de">Aimée und Jaguar</title>
+<title lang="de" original="yes">Aimée und Jaguar</title>
+<title lang="en">Aimée & Jaguar</title>
+<alternativetitle lang="de">Aimée & Jaguar</alternativetitle>
 </movie>
 
 <movie id="movie_db_107" year="1943" director="Howard Hawks">
@@ -1826,7 +1832,8 @@
 
 <movie id="movie_db_375" year="1966">
 <title lang="de">Blow Up</title>
-<title lang="en" original="yes">Blowup</title>
+<title lang="en">Blowup</title>
+<title lang="it" original="yes">Blow-Up</title>
 </movie>
 
 <movie id="movie_db_376" year="1946">
@@ -3816,7 +3823,8 @@
 
 <movie id="movie_db_786" year="1968">
 <title lang="de">Der Feuerwehrball</title>
-<title lang="cs" original="yes">Ho?í, má panenko</title>
+<title lang="cs" original="yes">Hoří, má panenko</title>
+<alternativetitle lang="cs" original="yes">Hori, ma panenko</alternativetitle>
 </movie>
 
 <movie id="movie_db_787" year="1961">
@@ -3901,6 +3909,7 @@
 <movie id="movie_db_804" year="1966">
 <title lang="de">Der gewisse Kniff</title>
 <title lang="en" original="yes">The Knack</title>
+<alternativetitle lang="en" original="yes">The Knack ...and How to Get It</alternativetitle>
 </movie>
 
 <movie id="movie_db_805" year="1942">
@@ -4335,6 +4344,7 @@
 
 <movie id="movie_db_896" year="1971">
 <title lang="de">Der Mittler</title>
+<title lang="en" original="yes">The Go-Between</title>
 </movie>
 
 <movie id="movie_db_897" year="2000">
@@ -4736,7 +4746,9 @@
 
 <movie id="movie_db_981" year="1974">
 <title lang="de">Der unsichtbare Aufstand</title>
-<title lang="en" original="yes">État de siège</title>
+<title lang="fr" original="yes">État de siège</title>
+<alternativetitle lang="fr" original="yes">Etat de siege</alternativetitle>
+<title lang="en">State of Siege</title>
 </movie>
 
 <movie id="movie_db_982" year="1959">
@@ -5075,6 +5087,7 @@
 
 <movie id="movie_db_1053" year="1995">
 <title lang="de">Die Brücken am Fluß</title>
+<alternativetitle lang="de">Die Brücken am Fluss</alternativetitle>
 <title lang="en" original="yes">The Bridges of Madison County</title>
 </movie>
 
@@ -5517,6 +5530,7 @@
 <movie id="movie_db_1145" year="1968">
 <title lang="de">Die Jungen von der Paulstraße</title>
 <title lang="hu" original="yes">A Pál utcai fiúk</title>
+<alternativetitle lang="hu" original="yes">A Pal utcai fiuk</alternativetitle>
 </movie>
 
 <movie id="movie_db_1146" year="1960">
@@ -5574,7 +5588,7 @@
 <title lang="fr" original="yes">Les Choristes</title>
 </movie>
 
-<movie id="movie_db_1157" year="2008">
+<movie id="movie_db_1157" year="2008" director="Laurent Cantet">
 <title lang="de">Die Klasse</title>
 <title lang="en">The Class</title>
 <title lang="fr" original="yes">Entre les murs</title>
@@ -5830,6 +5844,7 @@
 <movie id="movie_db_1209" year="1964">
 <title lang="de">Die Regenschirme von Cherbourg</title>
 <title lang="fr" original="yes">Les parapluies de Cherbourg</title>
+<title lang="en">The Umbrellas of Cherbourg</title>
 </movie>
 
 <movie id="movie_db_1210" year="1966">
@@ -5849,7 +5864,8 @@
 
 <movie id="movie_db_1213" year="2004" director="Walter Salles">
 <title lang="de">Die Reise des jungen Che</title>
-<title lang="en" original="yes">Diarios de motocicleta</title>
+<title lang="es" original="yes">Diarios de motocicleta</title>
+<title lang="en">Diarios de motocicleta</title>
 </movie>
 
 <movie id="movie_db_1214" year="1987" director="Joe Dante">
@@ -6185,6 +6201,7 @@
 <movie id="movie_db_1284" year="1991">
 <title lang="de">Die Volksschule</title>
 <title lang="cs" original="yes">Obecná škola</title>
+<alternativetitle lang="cs" original="yes">Obecna skola</alternativetitle>
 </movie>
 
 <movie id="movie_db_1285" year="1988" director="Mike Nichols">
@@ -6400,6 +6417,7 @@
 
 <movie id="movie_db_1329" year="1947">
 <title lang="de">Donald, der Nußdieb</title>
+<alternativetitle lang="de">Donald, der Nussdieb</alternativetitle>
 </movie>
 
 <movie id="movie_db_1330" year="1945">
@@ -6594,6 +6612,7 @@
 
 <movie id="movie_db_1371" year="1999">
 <title lang="de">e-m@il für Dich</title>
+<alternativetitle lang="de">E-Mail für Dich</alternativetitle>
 <title lang="en" original="yes">You've Got Mail</title>
 </movie>
 
@@ -6649,6 +6668,7 @@
 
 <movie id="movie_db_1383" year="1986">
 <title lang="de">Een Griekse tragedie</title>
+<title lang="nl" original="yes">Een Griekse tragedie</title>
 </movie>
 
 <movie id="movie_db_1384" year="1955">
@@ -6722,7 +6742,9 @@
 
 <movie id="movie_db_1398" year="1978">
 <title lang="de">Ein Elefant irrt sich gewaltig</title>
-<title lang="en" original="yes">Un éléphant ça trompe énormément</title>
+<title lang="fr" original="yes">Un éléphant ça trompe énormément</title>
+<alternativetitle lang="fr" original="yes">Un elephant ca trompe enormement</alternativetitle>
+<title lang="en">An Elephant Can Be Extremely Deceptive</title>
 </movie>
 
 <movie id="movie_db_1399" year="1956">
@@ -6789,7 +6811,7 @@
 
 <movie id="movie_db_1412" year="1979">
 <title lang="de">Ein Käfig voller Narren</title>
-<title lang="en" original="yes">La cage aux folles</title>
+<title lang="en">La cage aux folles</title>
 <title lang="fr" original="yes">La cage aux folles</title>
 </movie>
 
@@ -6811,6 +6833,7 @@
 <movie id="movie_db_1416" year="1966" director="Claude Lelouch">
 <title lang="de">Ein Mann und eine Frau</title>
 <title lang="en">Un homme et une femme</title>
+<alternativetitle lang="en">A Man and a Woman</alternativetitle>
 <title lang="fr" original="yes">Un homme et une femme</title>
 </movie>
 
@@ -6990,6 +7013,7 @@
 
 <movie id="movie_db_1453" year="1975">
 <title lang="de">Eine Frau unter Einfluß</title>
+<alternativetitle lang="de">Eine Frau unter Einfluss</alternativetitle>
 <title lang="en" original="yes">A Woman Under the Influence</title>
 </movie>
 
@@ -7280,7 +7304,6 @@
 
 <movie id="movie_db_1514" year="1970">
 <title lang="de" original="yes">Erste Liebe</title>
-<title lang="de" original="yes">Erste Liebe</title>
 </movie>
 
 <movie id="movie_db_1515" year="1960">
@@ -7493,7 +7516,8 @@
 
 <movie id="movie_db_1558" year="1976" director="Federico Fellini">
 <title lang="de">Fellinis Casanova</title>
-<title lang="en" original="yes">Il Casanova di Fellini</title>
+<alternativetitle lang="en">Il Casanova di Fellini</alternativetitle>
+<title lang="en">Fellini's Casanova</title>
 <title lang="it" original="yes">Il Casanova di Fellini</title>
 </movie>
 
@@ -8884,7 +8908,8 @@
 
 <movie id="movie_db_1850" year="1986">
 <title lang="de">Heimat, süße Heimat</title>
-<title lang="cs" original="yes">Vesni?ko má st?edisková</title>
+<title lang="cs" original="yes">Vesničko má středisková</title>
+<alternativetitle lang="cs" original="yes">Vesnicko ma strediskova</alternativetitle>
 </movie>
 
 <movie id="movie_db_1851" year="1946">
@@ -9124,12 +9149,15 @@
 
 <movie id="movie_db_1902" year="2002">
 <title lang="de">Hinter der Sonne</title>
-<title lang="en" original="yes">Abril Despedaçado</title>
+<title lang="pt" original="yes">Abril Despedaçado</title>
+<alternativtitle lang="pt" original="yes">Abril Despedacado</alternativtitle>
+<title lang="en">Behind the Sun</title>
 </movie>
 
 <movie id="movie_db_1903" year="1983">
 <title lang="de">Hiob lehnt sich auf</title>
 <title lang="hu" original="yes">Jób lázadása</title>
+<alternativtitle lang="hu" original="yes">Job lazadasa</alternativtitle>
 </movie>
 
 <movie id="movie_db_1904" year="1960">
@@ -9301,7 +9329,14 @@
 
 <movie id="movie_db_1941" year="1988">
 <title lang="de">Hôtel Terminus: Zeit und Leben des Klaus Barbie</title>
+<alternativtitle lang="de">Hôtel Terminus - Zeit und Leben des Klaus Barbie</alternativtitle>
+<alternativtitle lang="de">Hotel Terminus: Zeit und Leben des Klaus Barbie</alternativtitle>
+<alternativtitle lang="de">Hotel Terminus - Zeit und Leben des Klaus Barbie</alternativtitle>
+<alternativtitle lang="de">Hotel Terminus</alternativtitle>
+<alternativtitle lang="de">Hôtel Terminus</alternativtitle>
 <title lang="en">Hôtel Terminus</title>
+<alternativtitle lang="en">Hotel Terminus</alternativtitle>
+<title lang="fr" original="yes">Hôtel Terminus</title>
 </movie>
 
 <movie id="movie_db_1942" year="1972">
@@ -9474,6 +9509,7 @@
 
 <movie id="movie_db_1977" year="1979">
 <title lang="de">Ich liebe dichI love youJe t’aime</title>
+<alternativtitle lang="de">Ich liebe dich - I love you - Je t’aime</alternativtitle>
 <title lang="en" original="yes">A Little Romance</title>
 </movie>
 
@@ -9787,6 +9823,8 @@
 <movie id="movie_db_2042" year="1982">
 <title lang="de">Ingenjör Andrées luftfärd</title>
 <title lang="sv" original="yes">Ingenjör Andrées luftfärd</title>
+<alternativtitle lang="sv" original="yes">Ingenjör Andrees luftfärd</alternativtitle>
+<alternativtitle lang="sv" original="yes">Ingenjor Andrees luftfard</alternativtitle>
 </movie>
 
 <movie id="movie_db_2043" year="1978">
@@ -9987,7 +10025,9 @@
 
 <movie id="movie_db_2083" year="1976">
 <title lang="de" original="yes">Jakob der Lügner</title>
+<alternativtitle lang="de" original="yes">Jakob, der Lügner</alternativtitle>
 <title lang="en">Jakob der Lügner</title>
+<alternativtitle lang="en">Jacob, the Liar</alternativtitle>
 </movie>
 
 <movie id="movie_db_2084" year="1959">
@@ -10083,6 +10123,7 @@
 <title lang="de">Jesus von Montreal</title>
 <title lang="en">Jésus de Montréal</title>
 <title lang="fr" original="yes">Jésus de Montréal</title>
+<alternativetitle lang="fr" original="yes">Jesus de Montreal</alternativetitle>
 </movie>
 
 <movie id="movie_db_2104" year="1954">
@@ -10446,6 +10487,7 @@
 <movie id="movie_db_2180" year="1991">
 <title lang="de">Kinder der Natur</title>
 <title lang="no" original="yes">Börn náttúrunnar</title>
+<alternativetitle lang="no" original="yes">Born natturunnar</alternativetitle>
 </movie>
 
 <movie id="movie_db_2181" year="1998">
@@ -10696,6 +10738,7 @@
 
 <movie id="movie_db_2233" year="1985">
 <title lang="de">Kuß der Spinnenfrau</title>
+<alternativetitle lang="de">Kuss der Spinnenfrau</alternativetitle>
 <title lang="en" original="yes">Kiss of the Spider Woman</title>
 </movie>
 
@@ -10818,6 +10861,7 @@
 <title lang="de">La vie en rose</title>
 <title lang="en">La Môme</title>
 <title lang="fr" original="yes">La Môme</title>
+<alternativetitle lang="fr" original="yes">La Mome</alternativetitle>
 </movie>
 
 <movie id="movie_db_2259" year="1997">
@@ -10940,6 +10984,7 @@
 
 <movie id="movie_db_2283" year="1958" director="Robert Wise">
 <title lang="de">Laßt mich leben</title>
+<alternativetitle lang="de">Lasst mich leben</alternativetitle>
 <title lang="en" original="yes">I Want to Live!</title>
 </movie>
 
@@ -11445,6 +11490,7 @@
 <movie id="movie_db_2388" year="2000">
 <title lang="de">Lust auf Anderes</title>
 <title lang="fr" original="yes">Le Goût des autres</title>
+<alternativetitle lang="fr" original="yes">Le Gout des autres</alternativetitle>
 </movie>
 
 <movie id="movie_db_2389" year="1991">
@@ -11600,6 +11646,7 @@
 <movie id="movie_db_2421" year="1979">
 <title lang="de">Mama wird 100 Jahre alt</title>
 <title lang="es" original="yes">Mamá cumple cien años</title>
+<alternativetitle lang="es" original="yes">Mama cumple cien anos</alternativetitle>
 </movie>
 
 <movie id="movie_db_2422" year="1992">
@@ -11801,6 +11848,7 @@
 <title lang="de">Mathilde - Eine große Liebe</title>
 <title lang="en">Un long dimanche de fiançailles</title>
 <title lang="fr" original="yes">Un long dimanche de fiançailles</title>
+<alternativetitle lang="fr" original="yes">Un long dimanche de fiancailles</alternativetitle>
 </movie>
 
 <movie id="movie_db_2465" year="1999" director="Larry Wachowski, Andy Wachowski">
@@ -11884,7 +11932,8 @@
 
 <movie id="movie_db_2482" year="1998">
 <title lang="de">Mein Leben in Rosarot</title>
-<title lang="en" original="yes">Ma vie en rose</title>
+<title lang="fr" original="yes">Ma vie en rose</title>
+<title lang="en">Ma vie en rose</title>
 </movie>
 
 <movie id="movie_db_2483" year="1989" director="Jim Sheridan">
@@ -12051,6 +12100,7 @@
 <title lang="de">Merry Christmas</title>
 <title lang="en">Joyeux Noël</title>
 <title lang="fr" original="yes">Joyeux Noël</title>
+<alternativetitle lang="fr" original="yes">Joyeux Noel</alternativetitle>
 </movie>
 
 <movie id="movie_db_2518" year="1979">
@@ -12387,6 +12437,7 @@
 
 <movie id="movie_db_2589" year="1974">
 <title lang="de">Mord im Orient-Expreß</title>
+<alternativtitle lang="de">Mord im Orient-Express</alternativtitle>
 <title lang="en" original="yes">Murder on the Orient Express</title>
 </movie>
 
@@ -12763,6 +12814,8 @@
 </movie>
 
 <movie id="movie_db_2669" year="1998">
+<title lang="da" original="yes">Når livet går sin vej</title>
+<alternativtitle lang="da" original="yes">Nar livet gar sin vej</alternativtitle>
 <title lang="de">Når livet går sin vej</title>
 </movie>
 
@@ -13024,6 +13077,7 @@
 
 <movie id="movie_db_2722" year="1969" director="Sydney Pollack">
 <title lang="de">Nur Pferden gibt man den Gnadenschuß</title>
+<alternativetitle lang="de">Nur Pferden gibt man den Gnadenschuß</alternativetitle>
 <title lang="en" original="yes">They Shoot Horses, Don't They?</title>
 </movie>
 
@@ -13496,7 +13550,7 @@
 
 <movie id="movie_db_2820" year="1988">
 <title lang="de">Pelle der Eroberer</title>
-<title lang="en" original="yes">Pelle erobreren</title>
+<title lang="en">Pelle erobreren</title>
 <title lang="sv" original="yes">Pelle erobreren</title>
 </movie>
 
@@ -15413,7 +15467,8 @@
 
 <movie id="movie_db_3228" year="1976">
 <title lang="de">Sondertribunal - Jeder kämpft für sich allein</title>
-<title lang="en" original="yes">Section spéciale</title>
+<title lang="fr" original="yes">Section spéciale</title>
+<title lang="en">Special Section</title>
 </movie>
 
 <movie id="movie_db_3229" year="1944">
@@ -15452,7 +15507,7 @@
 
 <movie id="movie_db_3236" year="2005">
 <title lang="de" original="yes">Sophie Scholl - Die letzten Tage</title>
-<title lang="en">Sophie Scholl - Die letzten Tage</title>
+<title lang="en">Sophie Scholl - The Final Days</title>
 </movie>
 
 <movie id="movie_db_3237" year="1982" director="Alan J. Pakula">
@@ -15575,7 +15630,8 @@
 
 <movie id="movie_db_3263" year="2002" director="Pedro Almodovar">
 <title lang="de">Sprich mit ihr</title>
-<title lang="en" original="yes">Hable con ella</title>
+<title lang="es" original="yes">Hable con ella</title>
+<title lang="en">Talk to Her</title>
 </movie>
 
 <movie id="movie_db_3264" year="1940">
@@ -16083,8 +16139,9 @@
 
 <movie id="movie_db_3377" year="1998">
 <title lang="de">Tango</title>
-<title lang="en">Tango, no me dejes nunca</title>
-<title lang="pt" original="yes">Tango</title>
+<title lang="es" original="yes">Tango, no me dejes nunca</title>
+<title lang="pt">Tango</title>
+<title lang="en">Tango</title>
 </movie>
 
 <movie id="movie_db_3378" year="1936">
@@ -19015,6 +19072,7 @@
 
 <movie id="movie_db_3974" year="2004" director="Michel Gondry">
 <title lang="de">Vergiss mein nicht!</title>
+<alternativetitle lang="de">Vergiss mein nicht</alternativetitle>
 <title lang="en" original="yes">Eternal Sunshine Of The Spotless Mind</title>
 </movie>
 
@@ -19030,6 +19088,7 @@
 
 <movie id="movie_db_3977" year="1935">
 <title lang="de">Verlaß mich niemals wieder</title>
+<alternativetitle lang="de">Verlass mich niemals wieder</alternativetitle>
 </movie>
 
 <movie id="movie_db_3978" year="1963">
@@ -19861,6 +19920,7 @@
 <movie id="movie_db_4148" year="2000">
 <title lang="de">Wir müssen zusammenhalten</title>
 <title lang="cs" original="yes">Musíme si pomáhat</title>
+<alternativetitle lang="cs" original="yes">Musime si pomahat</alternativetitle>
 </movie>
 
 <movie id="movie_db_4149" year="1960">
@@ -20171,6 +20231,7 @@
 
 <movie id="movie_db_4211" year="1971">
 <title lang="de">Zorn und Mitleid</title>
+<title lang="fr">Le Chagrin et la pitié</title>
 <title lang="en">Le Chagrin et la pitié</title>
 </movie>
 
@@ -20190,7 +20251,9 @@
 
 <movie id="movie_db_4215" year="1978">
 <title lang="de">Züchte Raben...</title>
-<title lang="en" original="yes">Cría cuervos</title>
+<title lang="en">Cría cuervos</title>
+<title lang="es" original="yes">Cría cuervos</title>
+<alternativetitle lang="es" original="yes">Cria cuervos</alternativetitle>
 </movie>
 
 <movie id="movie_db_4216" year="1969">
@@ -20265,6 +20328,39 @@
 <movie id="movie_db_4230" year="1952" director="Fred Zinnemann">
 <title lang="de">Zwölf Uhr mittags</title>
 <title lang="en" original="yes">High Noon</title>
+</movie>
+
+<movie id="movie_db_4231" year="2009" director="Michael Haneke">
+<title lang="de" original="yes">Das weiße Band</title>
+<alternativetitle lang="de" original="yes">Das weisse Band</alternativetitle>
+<title lang="en">The White Ribbon</title>
+</movie>
+
+<movie id="movie_db_4232" year="1968" director="Lindsay Anderson">
+<title lang="en" original="yes">if....</title>
+<title lang="de">if...</title>
+</movie>
+
+<movie id="movie_db_4233" year="1971" director="Elio Petri">
+<title lang="it" original="yes">La classe operaia va in paradiso</title>
+<title lang="en">The Working Class Goes to Heaven</title>
+<title lang="de">Die Arbeiterklasse geht ins Paradies</title>
+</movie>
+
+<movie id="movie_db_4234" year="1972" director="Francesco Rosi">
+<title lang="it" original="yes">Il Caso Mattei</title>
+<title lang="en">The Mattei Affair</title>
+<title lang="de">Der Fall Mattei</title>
+</movie>
+
+<movie id="movie_db_4235" year="1973" director="Alan Bridges">
+<title lang="en" original="yes">The Hireling</title>
+<title lang="de">Botschaft für Lady Franklin</title>
+</movie>
+
+<movie id="movie_db_4236" year="1973" director="Jerry Schatzberg">
+<title lang="en" original="yes">Scarecrow</title>
+<title lang="de">Asphalt-Blüten</title>
 </movie>
 
 </movies>
