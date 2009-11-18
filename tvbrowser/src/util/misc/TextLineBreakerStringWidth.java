@@ -66,7 +66,11 @@ public class TextLineBreakerStringWidth {
   /** Width of a Minus-Character */
   private int mMinusWidth;
   
-  private static Hyphenator hyphenator; 
+  private static Hyphenator hyphenator;
+  /**
+   * don't use hyphenator if it can not be initialized correctly
+   */
+  private static boolean useHyphenator = false;
   
   /**
    * Create the LineBreaker
@@ -121,6 +125,7 @@ public class TextLineBreakerStringWidth {
         @Override
         public void process(InputStream input) throws IOException {
           hyphenator.loadTable(input);
+          useHyphenator = true;
         }
       });
     } catch (IOException e) {
@@ -364,27 +369,29 @@ public class TextLineBreakerStringWidth {
       }
     }
     
-    int endCharacters;
-    if (Character.isLetter(word.charAt(word.length() - 1))) {
-      endCharacters = 2;
-    }
-    else {
-      endCharacters = 3; // some words end in punctuation, so make sure at least 2 letters stay together
-    }
-    int startCharacters = 2;
-    if (word.length() >= startCharacters + endCharacters) {
-      final String hyphenated = hyphenator.hyphenate(word, endCharacters, startCharacters);
-      if (hyphenated != null && hyphenated.length() > word.length()) {
-        int characters = 0;
-        int lastHyphen = 0;
-        for (int i = 0; i < hyphenated.length(); i++) {
-          if (hyphenated.charAt(i) != '\u00AD') {
-            if (++characters > lastFittingPos) {
-              return lastHyphen;
+    if (useHyphenator) {
+      int endCharacters;
+      if (Character.isLetter(word.charAt(word.length() - 1))) {
+        endCharacters = 2;
+      }
+      else {
+        endCharacters = 3; // some words end in punctuation, so make sure at least 2 letters stay together
+      }
+      int startCharacters = 2;
+      if (word.length() >= startCharacters + endCharacters) {
+        final String hyphenated = hyphenator.hyphenate(word, endCharacters, startCharacters);
+        if (hyphenated != null && hyphenated.length() > word.length()) {
+          int characters = 0;
+          int lastHyphen = 0;
+          for (int i = 0; i < hyphenated.length(); i++) {
+            if (hyphenated.charAt(i) != '\u00AD') {
+              if (++characters > lastFittingPos) {
+                return lastHyphen;
+              }
             }
-          }
-          else {
-            lastHyphen = characters;
+            else {
+              lastHyphen = characters;
+            }
           }
         }
       }
