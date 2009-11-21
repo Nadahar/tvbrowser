@@ -360,7 +360,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
       selModel.addListSelectionListener(new ListSelectionListener() {
         public void valueChanged(ListSelectionEvent evt) {
           if(!evt.getValueIsAdjusting()) {
-            favoriteSelectionChanged();
+            favoriteSelectionChanged(true);
           }
         }
       });
@@ -501,7 +501,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
       mFavoriteTree.scrollPathToVisible(treePath);
     }
     
-    favoriteSelectionChanged();
+    favoriteSelectionChanged(true);
   }
   
   private void addToolbarSeperator(JToolBar toolbarPn) {
@@ -594,7 +594,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
   /**
    * Refresh the program list.
    */
-  public void favoriteSelectionChanged() {
+  public void favoriteSelectionChanged(final boolean scrollToFirst) {
     if(mFavoritesList != null) {
       int selection = mFavoritesList.getSelectedIndex();
       int size = mFavoritesListModel.getSize();
@@ -652,7 +652,9 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
                 }
               }
             }
-            scrollInProgramListToIndex(firstNotExpiredIndex);
+            if (scrollToFirst) {
+              scrollInProgramListToIndex(firstNotExpiredIndex);
+            }
             
             mSendBt.setEnabled(true);
             mDeleteBt.setEnabled(false);
@@ -1071,7 +1073,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
   }
 
   public void valueChanged(TreeSelectionEvent e) {
-    favoriteSelectionChanged();
+    favoriteSelectionChanged(true);
   }
   
   protected boolean programListIsEmpty() {
@@ -1084,6 +1086,10 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
    */
   public boolean isShowingNewFoundPrograms() {
     return mShowNew;
+  }
+
+  public void favoriteSelectionChanged() {
+    favoriteSelectionChanged(false);
   }
 }
 
