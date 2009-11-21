@@ -18,8 +18,11 @@ package zattooplugin;
 
 public class ZattooChannelProperties extends ChannelProperties {
 
-  public ZattooChannelProperties(final String fileName) {
+  private ZattooSettings mSettings;
+
+  public ZattooChannelProperties(final String fileName, ZattooSettings zattooSettings) {
     super(fileName);
+    mSettings = zattooSettings;
   }
 
   @Override
@@ -28,9 +31,24 @@ public class ZattooChannelProperties extends ChannelProperties {
   }
 
   @Override
-  protected boolean isValidProperty(final String property) {
-    return property != null && property.length() > 0
-        && !property.startsWith("=");
+  protected boolean isValidProperty(final String id) {
+    if (id== null) {
+      return false;
+    }
+    if (id.length() == 0) {
+      return false;
+    }
+    if (id.startsWith("=")) {
+      return false;
+    }
+    int comma = id.indexOf(',');
+    if (!mSettings.getUseLocalPlayer() && comma >= 0) {
+      return id.substring(comma + 1).trim().length() > 0;
+    } else if (!mSettings.getUseLocalPlayer() && comma == -1) {
+      return false;
+    } else {
+      return true;
+    }
   }
 
 }

@@ -67,10 +67,10 @@ public final class ZattooSettingsTab implements SettingsTab {
     builder.add(new JLabel(mLocalizer.msg("country","Country:")), cc.xy(2, builder.getRow()));
     builder.add(mCountry, cc.xy(4, builder.getRow()));
     
-    mRbLocalPlayer = new JRadioButton(mLocalizer.msg("localPlayer", "Use local player"));
+    mRbLocalPlayer = new JRadioButton(mLocalizer.msg("localPlayer", "Use local player"), mSettings.getUseLocalPlayer());
     mRbLocalPlayer.setEnabled(ZattooPlugin.canUseLocalPlayer());
-    mRbWebPlayer = new JRadioButton(mLocalizer.msg("webPlayer", "Use web player"));
-    mRbPrism = new JRadioButton(mLocalizer.msg("prism", "Mozilla Prism"));
+    mRbWebPlayer = new JRadioButton(mLocalizer.msg("webPlayer", "Use web player"), mSettings.getUseWebPlayer());
+    mRbPrism = new JRadioButton(mLocalizer.msg("prism", "Mozilla Prism"), mSettings.getUsePrismPlayer());
     
     ButtonGroup buttonGroup = new ButtonGroup();
     buttonGroup.add(mRbLocalPlayer);
@@ -97,26 +97,19 @@ public final class ZattooSettingsTab implements SettingsTab {
     builder.nextRow(2);
     builder.add(mRbPrism, cc.xyw(2, builder.getRow(), builder.getColumnCount() - 1));
     
-    if (ZattooPlugin.canUseLocalPlayer() && !mSettings.getUseWebPlayer()) {
-      mRbLocalPlayer.setSelected(true);
-    }
-    else {
-      mRbWebPlayer.setSelected(true);
-    }
-
     return builder.getPanel();
   }
 
   public void saveSettings() {
     ZattooPlugin.getInstance().changeCountry(((ZattooCountry)mCountry.getSelectedItem()).getCode());
     if (mRbLocalPlayer.isSelected() && ZattooPlugin.canUseLocalPlayer()) {
-      mSettings.setLocalPlayer();
+      mSettings.setUseLocalPlayer();
     }
     else if (mRbPrism.isSelected()) {
-      mSettings.setPrismPlayer();
+      mSettings.setUsePrismPlayer();
     }
     else {
-      mSettings.setWebPlayer();
+      mSettings.setUseWebPlayer();
     }
   }
 
