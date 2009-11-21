@@ -221,9 +221,7 @@ public class FinderPanel extends AbstractDateSelector implements DateSelector,
           mList.setSelectedValue(item, true);
           item.startProgress(mDateChangedListener, callback);
         } else {
-          MainFrame.getInstance().askForDataUpdate(
-              mLocalizer.msg("noDataFor", "No TV data available for {0}.", d
-                  .toString()), d.getNumberOfDaysSince(Date.getCurrentDate()));
+          askForDataUpdate(d);
         }
         return;
       }
