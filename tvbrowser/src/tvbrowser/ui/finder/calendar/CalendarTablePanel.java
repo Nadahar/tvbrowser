@@ -35,6 +35,10 @@ public class CalendarTablePanel extends AbstractCalendarPanel implements ListSel
   private JTable mTable;
   private CalendarTableModel mTableModel;
 
+  private int mLastColumn = -1;
+
+  private int mLastRow = -1;
+
   public CalendarTablePanel() {
     setLayout(new BorderLayout());
     mTableModel = new CalendarTableModel(getFirstDate());
@@ -69,6 +73,7 @@ public class CalendarTablePanel extends AbstractCalendarPanel implements ListSel
 
   public void markDate(final Date date, final Runnable callback) {
     if (!isValidDate(date)) {
+      askForDataUpdate(date);
       return;
     }
     
@@ -100,13 +105,21 @@ public class CalendarTablePanel extends AbstractCalendarPanel implements ListSel
 
   @Override
   public void valueChanged(ListSelectionEvent e) {
+    if (e.getValueIsAdjusting()) {
+      return;
+    }
     int column = mTable.getSelectedColumn();
     int row = mTable.getSelectedRow();
     if (column >= 0 && row >= 0) {
       Date date = (Date) mTable.getValueAt(row, column);
       CalendarTableModel model = (CalendarTableModel)mTable.getModel();
       if (date != model.getCurrentDate()) {
-        markDate(date);
+        // filter out the duplicate events caused by listening to row and column selection changes
+        if (column != mLastColumn || row != mLastRow) {
+          markDate(date);
+          mLastColumn = column;
+          mLastRow = row;
+        }
       }
     }
   }

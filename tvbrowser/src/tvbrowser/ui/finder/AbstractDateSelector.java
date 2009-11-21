@@ -39,7 +39,7 @@ import devplugin.Date;
 public abstract class AbstractDateSelector extends JPanel implements
     MouseListener {
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer
-      .getLocalizerFor(FinderPanel.class);  
+      .getLocalizerFor(AbstractDateSelector.class);  
 
   private Date mCurChoosenDate = Date.getCurrentDate();
   protected Date mToday;
@@ -138,5 +138,14 @@ public abstract class AbstractDateSelector extends JPanel implements
 
   protected Date getFirstDate() {
     return Date.getCurrentDate().addDays(-1);
+  }
+  
+  final protected void askForDataUpdate(final Date date) {
+    int numberOfDays = date.getNumberOfDaysSince(Date.getCurrentDate());
+    if (numberOfDays >= 0) {
+      MainFrame.getInstance().askForDataUpdate(
+          mLocalizer.msg("noDataFor", "No TV data available for {0}.", date
+              .toString()), numberOfDays);
+    }
   }
 }
