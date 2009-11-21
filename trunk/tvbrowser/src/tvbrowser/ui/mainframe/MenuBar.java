@@ -905,6 +905,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
     JMenu tvListingsMenu = createMenu("menu.tvData", "TV &data");
     add(tvListingsMenu);
     tvListingsMenu.add(createMenuItem(TVBrowserActions.update));
+    tvListingsMenu.add(createMenuItem(TVBrowserActions.configureChannels));
     tvListingsMenu.addSeparator();
     tvListingsMenu.add(mLicenseMenu);
 

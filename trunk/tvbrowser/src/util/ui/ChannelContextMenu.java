@@ -23,6 +23,7 @@ import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.ui.filter.dlgs.EditFilterComponentDlg;
 import tvbrowser.ui.mainframe.ChannelChooserPanel;
 import tvbrowser.ui.mainframe.MainFrame;
+import tvbrowser.ui.mainframe.actions.TVBrowserActions;
 import tvbrowser.ui.programtable.ProgramTableChannelLabel;
 import tvbrowser.ui.settings.ChannelsSettingsTab;
 import tvbrowser.ui.settings.channel.ChannelConfigDlg;
@@ -30,7 +31,6 @@ import util.browserlauncher.Launch;
 import util.ui.menu.MenuUtil;
 import devplugin.ActionMenu;
 import devplugin.Channel;
-import devplugin.SettingsItem;
 
 /**
  * A class that builds a PopupMenu for a Channel.
@@ -194,7 +194,7 @@ public class ChannelContextMenu implements ActionListener {
 
   public void actionPerformed(ActionEvent e) {
     if (e.getSource().equals(mChAdd)) {
-      MainFrame.getInstance().showSettingsDialog(SettingsItem.CHANNELS);
+      TVBrowserActions.configureChannels.actionPerformed(null);
     } else if (e.getSource().equals(mChConf)) {
       if ((mSource instanceof ChannelsSettingsTab)) {
         ((ChannelsSettingsTab) mSource).configChannels();

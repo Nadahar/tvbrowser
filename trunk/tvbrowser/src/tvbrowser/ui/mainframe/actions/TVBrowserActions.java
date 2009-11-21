@@ -27,6 +27,7 @@ import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.mainframe.toolbar.ToolBar;
 import util.misc.OperatingSystem;
 import util.ui.TVBrowserIcons;
+import devplugin.SettingsItem;
 
 /**
  * common TV-Browser actions
@@ -308,7 +309,20 @@ public final class TVBrowserActions {
       MainFrame.getInstance().switchFullscreenMode();
     }
   };
-  
+
+  /**
+   * configure channels action
+   */
+  public static final TVBrowserAction configureChannels = new TVBrowserAction("configureChannels", TVBrowserIcons
+      .preferences(TVBrowserIcons.SIZE_SMALL), TVBrowserIcons.preferences(TVBrowserIcons.SIZE_LARGE), 0, 0,
+      ToolBar.BUTTON_ACTION) {
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      MainFrame.getInstance().showSettingsDialog(SettingsItem.CHANNELS);
+    }
+  };
+
   /**
    * register this action, so we can iterate over all actions later
    * @param tvBrowserAction
