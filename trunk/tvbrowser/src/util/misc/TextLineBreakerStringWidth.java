@@ -246,6 +246,7 @@ public class TextLineBreakerStringWidth {
         newLineWidth += mSpaceWidth;
       }
       
+      int lineLength = mCurrLineBuffer.length();
       if (newLineWidth - mSpaceWidth > maxWidth) {
         // The next word does not fit
         if (lineWidth == 0 || (maxWidth - lineWidth > 20)) {
@@ -256,7 +257,7 @@ public class TextLineBreakerStringWidth {
             return mCurrLineBuffer.toString();
           }
           String firstPart = mNextWord.substring(0, breakPos);
-          if (mCurrLineBuffer.length() > 0) {
+          if (lineLength > 0 && (mCurrLineBuffer.charAt(lineLength - 1) != '-' || (lineLength > 1 && mCurrLineBuffer.charAt(lineLength - 2) == ' '))) {
             mCurrLineBuffer.append(' ');
           }
           mCurrLineBuffer.append(firstPart);
@@ -278,8 +279,8 @@ public class TextLineBreakerStringWidth {
       } else {
         if (lineWidth != 0) {
           // Add a space, but not if our current word ends with "-"
-          char lastChar = mCurrLineBuffer.charAt(mCurrLineBuffer.length() - 1);
-          if (lastChar != '/' && (lastChar != '-' || (mCurrLineBuffer.length() >= 2 && mCurrLineBuffer.charAt(mCurrLineBuffer.length() - 2) == ' '))) {
+          char lastChar = mCurrLineBuffer.charAt(lineLength - 1);
+          if (lastChar != '/' && (lastChar != '-' || (lineLength >= 2 && mCurrLineBuffer.charAt(lineLength - 2) == ' '))) {
             mCurrLineBuffer.append(' ');
           }
           lineWidth += mSpaceWidth;
