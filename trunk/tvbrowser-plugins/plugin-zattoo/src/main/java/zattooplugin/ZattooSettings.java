@@ -61,7 +61,7 @@ public class ZattooSettings {
     mProperties.setProperty(KEY_COUNTRY, country);
   }
 
-  public void setWebPlayer() {
+  public void setUseWebPlayer() {
     setPlayer(PLAYER_WEB);
   }
 
@@ -73,16 +73,20 @@ public class ZattooSettings {
     mProperties.setProperty(key, String.valueOf(value));
   }
 
-  public void setLocalPlayer() {
+  public void setUseLocalPlayer() {
     setPlayer(PLAYER_LOCAL);
   }
 
-  public void setPrismPlayer() {
+  public void setUsePrismPlayer() {
     setPlayer(PLAYER_PRISM);
   }
 
-  public boolean getPrismPlayer() {
+  public boolean getUsePrismPlayer() {
     return getPlayer() == PLAYER_PRISM;
+  }
+
+  public boolean getUseLocalPlayer() {
+    return getPlayer() == PLAYER_LOCAL && (ZattooPlugin.canUseLocalPlayer());
   }
 
 }

@@ -30,7 +30,7 @@ import devplugin.Version;
 public final class ZattooPlugin extends Plugin {
 
   private static final boolean PLUGIN_IS_STABLE = true;
-  private static final Version PLUGIN_VERSION = new Version(0, 5, 1, PLUGIN_IS_STABLE);
+  private static final Version PLUGIN_VERSION = new Version(0, 6, 0, PLUGIN_IS_STABLE);
 
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(ZattooPlugin.class);
   private static Logger mLog = Logger.getLogger(ZattooPlugin.class.getName());
@@ -66,7 +66,7 @@ public final class ZattooPlugin extends Plugin {
 
   public void changeCountry(final String country) {
     try {
-      mChannelIds = new ZattooChannelProperties("channels_" + country);
+      mChannelIds = new ZattooChannelProperties("channels_" + country, mSettings);
       mSettings.setCountry(country);
     } catch (Exception e) {
       mLog.log(Level.WARNING, "Could not load File for Country " + country + ".", e);
@@ -125,12 +125,12 @@ public final class ZattooPlugin extends Plugin {
       return;
     }
 
-    String url = "https://watch.zattoo.com/view/" + id;
+    String url = "http://zattoo.com/view/" + id;
     ExecutionHandler executionHandler = null;
     if (mSettings.getUseWebPlayer()) {
       Launch.openURL(url);
     }
-    else if (mSettings.getPrismPlayer()) {
+    else if (mSettings.getUsePrismPlayer()) {
       executionHandler = new ExecutionHandler("-uri " + url + " -name tvbrowser-zattoo", "prism");
     }
     else {
@@ -161,9 +161,9 @@ public final class ZattooPlugin extends Plugin {
       return null;
     }
     int comma = id.indexOf(',');
-    if (mSettings.getUseWebPlayer() && comma >= 0) {
+    if (!mSettings.getUseLocalPlayer() && comma >= 0) {
       return id.substring(comma + 1).trim();
-    } else if (mSettings.getUseWebPlayer() && comma == -1) {
+    } else if (!mSettings.getUseLocalPlayer() && comma == -1) {
       return null;
     } else if (comma >= 0) {
       return id.substring(0, comma);
