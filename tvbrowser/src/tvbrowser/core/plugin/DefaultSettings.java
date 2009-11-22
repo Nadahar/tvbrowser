@@ -77,8 +77,8 @@ public class DefaultSettings {
     while (matcher.find()) {
       String sysKey = matcher.group(1);
       String p = pre + sysKey + post;
-      String v = System.getProperty(sysKey,"UNKNOWN");
-
+      String v = sysKey.equalsIgnoreCase("user.appdata") ? System.getenv("appdata") : System.getProperty(sysKey,"UNKNOWN");
+      
       // We habe to replace '\' and '$' signs before replacement
       // see: http://java.sun.com/j2se/1.4.2/docs/api/java/util/regex/Matcher.html#replaceAll(java.lang.String)
       v = v.replaceAll("\\\\","/");

@@ -57,6 +57,7 @@ import tvbrowser.ui.programtable.DefaultProgramTableModel;
 import tvbrowser.ui.programtable.ProgramTableScrollPane;
 import tvbrowser.ui.settings.BlockedPluginArrayProperty;
 import tvbrowser.ui.waiting.dlgs.TvDataCopyWaitingDlg;
+import util.browserlauncher.Launch;
 import util.exc.TvBrowserException;
 import util.io.IOUtilities;
 import util.io.stream.InputStreamProcessor;
@@ -88,6 +89,7 @@ import util.ui.Localizer;
 import util.ui.view.SplitViewProperty;
 import devplugin.Date;
 import devplugin.ProgramFieldType;
+import devplugin.Version;
 
 /**
  * The Settings class provides access to the settings of the whole application
@@ -319,9 +321,15 @@ public class Settings {
       File oldDir = null;
       File testFile = null;
       
+      int countValue = 1;
+      
+      if(Launch.isOsWindowsNtBranch()) {
+        countValue = 2;
+      }
+      
       String[] directories = {getUserDirectoryName() ,System.getProperty("user.home") + "/TV-Browser",System.getProperty("user.home") + "/Library/Preferences/TV-Browser", System.getProperty("user.home") + "/.tvbrowser"};      
 
-      for(int j = 0; j < (TVBrowser.isTransportable() ? directories.length : 1); j++) {        
+      for(int j = 0; j < (TVBrowser.isTransportable() ? directories.length : countValue); j++) {        
         for (int i = (j == 0 ? 1 : 0); i < TVBrowser.ALL_VERSIONS.length; i++) {
           testFile = new File(directories[j] + File.separator + 
               TVBrowser.ALL_VERSIONS[i], SETTINGS_FILE);
@@ -355,17 +363,39 @@ public class Settings {
 
         File oldTvDataDir = null;
         
-        if(TVBrowser.isTransportable() && !(new File(getUserDirectoryName(),"tvdata").isDirectory())) {
+        
+        final Properties prop = new Properties();
+        
+        try {
+          StreamUtilities.inputStream(testFile, new InputStreamProcessor() {
+            public void process(InputStream input) throws IOException {
+              prop.load(input);
+            }
+          });
+        }catch(Exception e) {}
+        
+        String versionString = prop.getProperty("version",null);
+        Version testVersion = null;
+        
+        if(versionString != null) {
           try {
-            final Properties prop = new Properties();
-            StreamUtilities.inputStream(testFile, new InputStreamProcessor() {
-              public void process(InputStream input) throws IOException {
-                prop.load(input);
-              }
-            });
-            
-            String temp = prop.getProperty("dir.tvdata", null);
-            
+            int asInt = Integer.parseInt(versionString);
+            int major = asInt / 100;
+            int minor = asInt % 100;
+            testVersion = new Version(major,minor);  
+          }
+          catch(NumberFormatException exc) {
+            // Ignore
+          }
+        }
+        
+        String temp = prop.getProperty("dir.tvdata", null);
+        boolean versionTest = Launch.isOsWindowsNtBranch() && testVersion != null && testVersion.compareTo(new Version(3,0,true)) < 0 
+                               && (temp == null || temp.replace("/","\\").equals(System.getProperty("user.home")+"\\TV-Browser\\tvdata"));
+        
+        if((TVBrowser.isTransportable() || versionTest) 
+            && !(new File(getUserDirectoryName(),"tvdata").isDirectory())) {
+          try {
             if(temp != null) {
               oldTvDataDir = new File(temp);
             } else if(new File(oldDir, "tvdata").isDirectory()) {
@@ -387,7 +417,7 @@ public class Settings {
                     && !name.equalsIgnoreCase("lang");
               }
             }), newDir);
-
+            
             mLog.info("settings from previous version copied successfully");
             File newSettingsFile = new File(newDir, SETTINGS_FILE);
             mProp.readFromFile(newSettingsFile);
@@ -437,7 +467,7 @@ public class Settings {
               if(!oldTvDataDir.equals(targetDir)) {
                 targetDir.mkdirs();
                 
-                final TvDataCopyWaitingDlg waiting = new TvDataCopyWaitingDlg(new JFrame(), false);
+                final TvDataCopyWaitingDlg waiting = new TvDataCopyWaitingDlg(new JFrame(), versionTest ? TvDataCopyWaitingDlg.APPDATA_MSG : TvDataCopyWaitingDlg.IMPORT_MSG);
                 
                 mShowWaiting = true;
                 
