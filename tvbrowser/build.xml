@@ -349,6 +349,7 @@
       <fileset dir="${unpacked.dir}/commons-lang-2.4.jar" includes="org/**" />
       <fileset dir="${unpacked.dir}/opencsv-1.8.jar" includes="au/**"/>
       <fileset dir="${unpacked.dir}/htmlparser.jar" includes="org/**"/>
+      <fileset dir="${unpacked.dir}/texhyphj.jar" includes="net/**"/>
     </jar>
 
     <!-- Pack the plugin jars -->
@@ -542,7 +543,7 @@
     <echo message="deployment dir is ${deployment.dir}, win is ${win.dir}" />
     <mkdir dir="${tvbrowser-win.runtime.dir}"/>
     <copy todir="${tvbrowser-win.runtime.dir}">
-      <fileset dir="${tvbrowser-default.runtime.dir}"/>
+      <fileset dir="${tvbrowser-default.runtime.dir}" excludes="**/GrowlPlugin.jar"/>
       <fileset dir="${win.dir}/jRegistryKey" includes="jRegistryKey.dll" />
         <fileset dir="${win.dir}/jcom" includes="jcom.dll" />
       <fileset dir="${deployment.dir}" includes="windows.properties"/>
