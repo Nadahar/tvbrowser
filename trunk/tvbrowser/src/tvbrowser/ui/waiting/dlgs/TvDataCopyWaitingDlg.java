@@ -2,6 +2,7 @@ package tvbrowser.ui.waiting.dlgs;
 
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Window;
 
@@ -9,6 +10,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 
 import util.ui.Localizer;
 
@@ -23,20 +25,26 @@ import com.jgoodies.forms.layout.FormLayout;
  * @since 2.2.2/2.5.1
  */
 public class TvDataCopyWaitingDlg extends JDialog {
+  /** The message key for copy messages */
+  public static final byte COPY_MSG = 0;
+  /** The message key for import messages */
+  public static final byte IMPORT_MSG = 1;
+  /** The message key for appdata messages */
+  public static final byte APPDATA_MSG = 2;
   
   /**
    * Creates an instance of this class.
    * 
    * @param parent The parent dialog for this dialog.
-   * @param copy If the message should contains copy for <code>true</code> or import instead if it is <code>false</code>.
+   * @param messageType The message type for this dialog.
    */
-  public TvDataCopyWaitingDlg(Window parent, boolean copy) {
+  public TvDataCopyWaitingDlg(Window parent, byte messageType) {
     super(parent);
     setModal(true);
-    createGUI(parent, copy);
+    createGUI(parent, messageType);
   }
 
-  private void createGUI(Window parent, boolean copy) {
+  private void createGUI(Window parent, byte messageType) {
     setUndecorated(true);
     setCursor(new Cursor(Cursor.WAIT_CURSOR));
     
@@ -49,11 +57,24 @@ public class TvDataCopyWaitingDlg extends JDialog {
     Localizer localizer = Localizer.getLocalizerFor(TvDataCopyWaitingDlg.class);
     
     String msg = localizer.msg("waitingHeader", "Importing TV data (this can need some minutes).");
+    JTextArea header = new JTextArea();
     
-    if(copy)
+    if(messageType == IMPORT_MSG) {
       msg = localizer.msg("waitingHeaderCopy", "Copying TV data (this can need some minutes).");
+    }
+    else if(messageType == APPDATA_MSG) {
+      msg = localizer.msg("appdataHeaderMsg", "Copying TV data (this can need some minutes).\nThe data and the settings are copied to the\n" +
+      		"Windows appdata directory. You can delete the old TV-Browser settings directory\n if you don't use an old version of TV-Browser.");
+      header.setPreferredSize(new Dimension(370,80));
+    }
     
-    JLabel header = new JLabel(msg);
+    header.setText(msg);
+    header.setEditable(false);
+    header.setLineWrap(true);
+    header.setWrapStyleWord(true);
+    header.setBorder(null);
+    header.setOpaque(false);
+    
     header.setFont(header.getFont().deriveFont(Font.BOLD));
 
     panel.add(header, cc.xy(2, 2));

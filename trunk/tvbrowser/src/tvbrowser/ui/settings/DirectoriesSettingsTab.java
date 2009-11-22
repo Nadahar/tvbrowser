@@ -101,7 +101,7 @@ public class DirectoriesSettingsTab implements SettingsTab {
     if(!currentDir.equals(newDir)) {      
       
       Window parent = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
-      mWaitingDlg = new TvDataCopyWaitingDlg(parent, true);
+      mWaitingDlg = new TvDataCopyWaitingDlg(parent, TvDataCopyWaitingDlg.COPY_MSG);
 
       mShowWaiting = true;
 

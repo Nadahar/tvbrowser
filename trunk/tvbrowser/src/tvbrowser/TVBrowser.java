@@ -221,7 +221,7 @@ public class TVBrowser {
   public static void main(String[] args) {
     // Read the command line parameters
     parseCommandline(args);
-
+    
     try {
       Toolkit.getDefaultToolkit().setDynamicLayout((Boolean) Toolkit.getDefaultToolkit().getDesktopProperty("awt.dynamicLayoutSupported"));
     } catch (Exception e) {
@@ -304,6 +304,19 @@ public class TVBrowser {
     Version tmpVer = Settings.propTVBrowserVersion.getVersion();
     final Version currentVersion = tmpVer != null ? new Version(tmpVer.getMajor(),tmpVer.getMinor(),Settings.propTVBrowserVersionIsStable.getBoolean()) : tmpVer;
     
+    if(!isTransportable() && Launch.isOsWindowsNtBranch() && currentVersion.compareTo(new Version(3,0,true)) < 0) {
+      String tvDataDir = Settings.propTVDataDirectory.getString().replace("/",File.separator);
+      
+      if(!tvDataDir.startsWith(System.getenv("appdata"))) {
+        StringBuilder oldDefaultTvDataDir = new StringBuilder(System.getProperty("user.home")).append(File.separator).append("TV-Browser").append(File.separator).append("tvdata");
+        
+        if(oldDefaultTvDataDir.toString().equals(tvDataDir)) {
+          Settings.propTVDataDirectory.setString(Settings.propTVDataDirectory.getDefault());
+        }
+      }
+    }
+    
+    
     Settings.propTVBrowserVersion.setVersion(VERSION);
     Settings.propTVBrowserVersionIsStable.setBoolean(VERSION.isStable());
     
@@ -358,7 +371,7 @@ public class TVBrowser {
 
     mLog.info("Starting up...");
     splash.setMessage(mLocalizer.msg("splash.ui", "Starting up..."));
-
+    
     Toolkit.getDefaultToolkit().getSystemEventQueue().push(new TextComponentPopupEventQueue());
 
     // Init the UI
@@ -366,6 +379,7 @@ public class TVBrowser {
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         initUi(splash, fStartMinimized);
+        
         new Thread("Start finished callbacks") {
           public void run() {
             setPriority(Thread.MIN_PRIORITY);
@@ -540,7 +554,7 @@ public class TVBrowser {
         });
       }
     });
-
+    
      // register the shutdown hook
     Runtime.getRuntime().addShutdownHook(new Thread("Shutdown hook") {
       public void run() {
@@ -704,7 +718,7 @@ public class TVBrowser {
     iconImages.add(ImageUtilities.createImage("imgs/tvbrowser32.png"));
     iconImages.add(ImageUtilities.createImage("imgs/tvbrowser16.png"));
     mainFrame.setIconImages(iconImages);
-
+    
     mTray = new SystemTray();
 
     if (mTray.initSystemTray()) {
@@ -713,7 +727,7 @@ public class TVBrowser {
       mLog.info("platform independent mode is ON");
       addTrayWindowListener();
     }
-
+    
     // Set the right size
     mLog.info("Setting frame size and location");
     
