@@ -32,6 +32,7 @@ import java.util.ArrayList;
 
 import net.davidashen.text.Hyphenator;
 import net.davidashen.util.ErrorHandler;
+import tvbrowser.core.Settings;
 import util.io.stream.InputStreamProcessor;
 import util.io.stream.StreamUtilities;
 
@@ -172,12 +173,16 @@ public class TextLineBreakerStringWidth {
     int maxLines)
     throws IOException
   {
+    if (width <= 0) {
+      width = Settings.propColumnWidth.getInt();
+    }
+    
     mNextWordWidth = -1;
     
     if (maxLines == -1) {
       maxLines = Integer.MAX_VALUE;
     }
-
+        
     ArrayList<String> lineList = new ArrayList<String>();
     boolean allProcessed;
     do {
