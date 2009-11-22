@@ -107,7 +107,11 @@ public class HTMLTextHelper {
     if (html == null) {
       return null;
     }
-    return Translate.decode(html);
+    String temp = Translate.decode(html);
+    
+    temp = temp.replace("<br>","\n");
+    
+    return temp;
   }
   
 }
