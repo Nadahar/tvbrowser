@@ -198,12 +198,12 @@ Function LockedListShow
 FunctionEnd
 
 # Function un.UninstallTvDataPage
-#  !insertmacro MUI_HEADER_TEXT "TV-Daten löschen" "Bestimmen Sie, ob bereits heruntergeladene TV-Daten gelöscht werden sollen"
+#  !insertmacro MUI_HEADER_TEXT "TV-Daten lï¿½schen" "Bestimmen Sie, ob bereits heruntergeladene TV-Daten gelï¿½scht werden sollen"
 #  !insertmacro MUI_INSTALLOPTIONS_DISPLAY "UninstallTvData.ini"
 # FunctionEnd
 
 #Function un.UninstallSettingsPage
-#  !insertmacro MUI_HEADER_TEXT "Einstellungen löschen" "Bestimmen Sie, ob Ihre Einstellungen gelöscht werden sollen"
+#  !insertmacro MUI_HEADER_TEXT "Einstellungen lï¿½schen" "Bestimmen Sie, ob Ihre Einstellungen gelï¿½scht werden sollen"
 #  !insertmacro MUI_INSTALLOPTIONS_DISPLAY "UninstallSettings.ini"
 #FunctionEnd
 
@@ -340,6 +340,9 @@ Section "$(STD_SECTION_NAME)" SEC_STANDARD
 
   WriteUninstaller "Uninstall.exe"
 
+  SetOutPath "$INSTDIR\hyphen"
+  File "${RUNTIME_DIR}\hyphen\*.*"
+
   SetOutPath "$INSTDIR\imgs"
   File "${RUNTIME_DIR}\imgs\*.*"
 
@@ -351,6 +354,7 @@ Section "$(STD_SECTION_NAME)" SEC_STANDARD
 
   SetOutPath "$INSTDIR\plugins"
   File "${RUNTIME_DIR}\plugins\*.*"
+
 
 
   # Register uninstaller at Windows (Add/Remove programs)
@@ -616,7 +620,16 @@ Section "Uninstall"
   MessageBox MB_YESNO $(un.CONFIRM) IDNO no
     RMDir /r "$1\TV-Browser"
   no:
-
+  # Test the new settings directory
+  ReadEnvStr $1 "APPDATA"
+  IfErrors no1
+  IfFileExists "$1\TV-Browser" noerror1 no1
+  noerror1:
+  MessageBox MB_YESNO $(un.QUESTION) IDNO no
+  MessageBox MB_YESNO $(un.CONFIRM) IDNO no
+    RMDir /r "$1\TV-Browser"
+  no1:
+  
   # Unregister uninstaller at Windows (Add/Remove programs)
   push $8
   UserInfo::GetAccountType
