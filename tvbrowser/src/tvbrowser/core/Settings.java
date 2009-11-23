@@ -260,7 +260,8 @@ public class Settings {
       try {
         mProp.readFromFile(settingsFile);
         
-        if((mProp.getProperty("subscribedchannels") == null || mProp.getProperty("subscribedchannels").trim().length() < 1) && (firstSettingsBackupFile.isFile() || secondSettingsBackupFile.isFile())) {
+        if(((mProp.getProperty("subscribedchannels") == null || mProp.getProperty("subscribedchannels").trim().length() < 1) && (mProp.getProperty("channelsWereConfigured") != null && mProp.getProperty("channelsWereConfigured").equals("true")) )
+            && (firstSettingsBackupFile.isFile() || secondSettingsBackupFile.isFile())) {
           throw new IOException();
         }
         else {
@@ -1483,6 +1484,13 @@ public class Settings {
   public static final StringProperty propLastUsedReceiveTarget = new StringProperty(
       mProp, "lastusedreceivetarget", null);
 
+  /**
+   * saves if the channels were configured
+   * @since 3.0
+   */
+  public static final BooleanProperty propChannelsWereConfigured = new BooleanProperty(
+      mProp, "channelsWereConfigured", false);
+  
   /**
    * Sets the window position and size for the given window with the values of
    * the given id.

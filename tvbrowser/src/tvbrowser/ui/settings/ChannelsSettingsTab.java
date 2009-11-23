@@ -735,6 +735,8 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
     Settings.propSubscribedChannels.setChannelArray(channelArr);
     Settings.propUsedChannelGroups.setStringArray(groups
         .toArray(new String[groups.size()]));
+    
+    Settings.propChannelsWereConfigured.setBoolean(ChannelList.getNumberOfSubscribedChannels() > 0);
 
     if (!Settings.propTrayUseSpecialChannels.getBoolean()) {
       Channel[] tempArr = new Channel[channelArr.length > 10 ? 10
