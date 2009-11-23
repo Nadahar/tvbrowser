@@ -201,7 +201,13 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
         JLabel label = pb.addLabel(HTMLTextHelper.convertHtmlToText(item.getName()) + " " + item.getVersion(), cc.xy(2,2));
         label.setFont(label.getFont().deriveFont(Font.BOLD, label.getFont().getSize2D()+2));
         
-        TextAreaIcon icon = new TextAreaIcon(HTMLTextHelper.convertHtmlToText(item.getDescription()), new JLabel().getFont(),parentScrollPane.getSize().width - parentScrollPane.getVerticalScrollBar().getWidth() - leftColumnWidth - Sizes.dialogUnitXAsPixel(5,pb.getPanel()) * 4 - parentScrollPane.getInsets().left - parentScrollPane.getInsets().right, 2);
+        int width = parentScrollPane.getSize().width - parentScrollPane.getVerticalScrollBar().getWidth() - leftColumnWidth - Sizes.dialogUnitXAsPixel(5,pb.getPanel()) * 4 - parentScrollPane.getInsets().left - parentScrollPane.getInsets().right;
+        
+        if (width <= 0) {
+          width = Settings.propColumnWidth.getInt();
+        }
+        
+        TextAreaIcon icon = new TextAreaIcon(HTMLTextHelper.convertHtmlToText(item.getDescription()), new JLabel().getFont(), width, 2);
 
         JLabel iconLabel = new JLabel("");
         iconLabel.setIcon(icon);
