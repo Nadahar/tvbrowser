@@ -59,6 +59,9 @@ public class TextAreaIcon implements Icon {
    * Creates a TextAreaIcon with the specified text, font and width.
    */
   public TextAreaIcon(String text, Font font, int width, int lineSpace) {
+    if (width <= 0) {
+      mLog.warning("TextAreaIcon width " + width);
+    }
     mWidth = width;
     mFont = font;
     mLineSpace = lineSpace;
