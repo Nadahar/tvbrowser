@@ -58,6 +58,7 @@ public class TvDataCopyWaitingDlg extends JDialog {
     
     String msg = localizer.msg("waitingHeader", "Importing TV data (this can need some minutes).");
     JTextArea header = new JTextArea();
+    header.setPreferredSize(new Dimension(370,30));
     
     if(messageType == IMPORT_MSG) {
       msg = localizer.msg("waitingHeaderCopy", "Copying TV data (this can need some minutes).");
