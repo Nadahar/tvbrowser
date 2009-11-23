@@ -1742,11 +1742,12 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
   }
 
   /**
-   * Starts the TV listings update.
+   * Starts the TV listings update with the given reason shown in the dialog
    * 
    * @param numberOfDays
+   * @param reason The reason for initiating the download
    */
-  public void updateTvData(int numberOfDays) {
+  public void updateTvData(final int numberOfDays, final String reason) {
     if (ChannelList.getNumberOfSubscribedChannels() == 0) {
       int result = JOptionPane.showOptionDialog(this, 
           mLocalizer.msg("subscribeBeforeUpdate.msg", "You have not defined any channels.\n\nDo you want to subscribe to some channels before starting the data update?"), 
@@ -1761,7 +1762,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       if (TvDataUpdater.getInstance().isDownloading()) {
         TvDataUpdater.getInstance().stopDownload();
       } else {
-        UpdateDlg dlg = new UpdateDlg(this, true);
+        UpdateDlg dlg = new UpdateDlg(this, true, reason);
         if (numberOfDays > 0) {
           dlg.setNumberOfDays(numberOfDays);
         }
@@ -1777,10 +1778,10 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
   }
 
   /**
-   * Starts the TV listings update.
+   * Starts the TV listings update without a special reason shown in the dialog
    */
   public void updateTvData() {
-    updateTvData(0);
+    updateTvData(0, null);
   }
 
   /**
@@ -2008,39 +2009,23 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     mRootNode.update();
   }
   
-  public int askForDataUpdate(String reason, int numberOfDays) {
-	    String msg1 = mLocalizer.msg("askforupdatedlg.1", "update now");
-	    String msg2 = mLocalizer.msg("askforupdatedlg.2", "later");
-	    String msg4 = mLocalizer.msg("askforupdatedlg.4",
-	        "Do you want to update now?");
-	    String msg5 = mLocalizer.msg("askforupdatedlg.5", "Update TV data");
-
-	    Object[] options = { msg1, msg2 };
-	    int result = JOptionPane.showOptionDialog(this, reason + "\n\n" + msg4, msg5,
-	        JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options,
-	        options[0]);
-
-	    if (result == JOptionPane.YES_OPTION) {
-	      updateTvData(numberOfDays);
-	    }
-      return result;
+  public void askForDataUpdate(final String message, final int numberOfDays) {
+    updateTvData(numberOfDays, message);
   }
 
-  public int askForDataUpdate(String reason) {
-    return askForDataUpdate(reason, 0);
+  private void askForDataUpdate(final String reason) {
+    askForDataUpdate(reason, 0);
   }
   
-  public int askForDataUpdateNoDataAvailable() {
+  public void askForDataUpdateNoDataAvailable() {
     if(mProgramTableModel.getAvailableChannelCount() > 0) {
-      return askForDataUpdate(mLocalizer.msg("askforupdatedlg.3",
+      askForDataUpdate(mLocalizer.msg("askforupdatedlg.noData",
         "No TV data for todays program available."));
     }
-    
-    return JOptionPane.NO_OPTION;
   }
   
-  public int askForDataUpdateChannelsAdded() {
-	  return askForDataUpdate(mLocalizer.msg("askforupdatedlg.added",
+  public void askForDataUpdateChannelsAdded() {
+	  askForDataUpdate(mLocalizer.msg("askforupdatedlg.addedChannels",
       "You have added channels."));
   }
 
