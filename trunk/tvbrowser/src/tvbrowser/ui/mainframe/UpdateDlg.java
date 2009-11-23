@@ -81,7 +81,7 @@ public class UpdateDlg extends JDialog implements ActionListener, WindowClosingI
   private JRadioButton mStartUpdate;
   private JRadioButton mRecurrentUpdate;
 
-  public UpdateDlg(JFrame parent, boolean modal) {
+  public UpdateDlg(JFrame parent, boolean modal, final String reason) {
     super(parent, modal);
 
     UiUtilities.registerForClosing(this);
@@ -111,7 +111,18 @@ public class UpdateDlg extends JDialog implements ActionListener, WindowClosingI
 
     JPanel northPanel = new JPanel();
     northPanel.setLayout(new BoxLayout(northPanel, BoxLayout.Y_AXIS));
+    
+    // first show reason of update
+    if (reason != null && !reason.isEmpty()) {
+      String question = mLocalizer.msg("question", "Do you want to update now?");
+      JLabel lbReason = new JLabel("<html>" + reason + "<br>" + question + "</html>");
+      JPanel panelReason = new JPanel(new BorderLayout(7, 0));
+      panelReason.add(lbReason, BorderLayout.WEST);
+      northPanel.add(panelReason);
+      northPanel.add(new JLabel(" "));
+    }
 
+    // then time selection
     JPanel panel1 = new JPanel(new BorderLayout(7, 0));
     msg = mLocalizer.msg("period", "Update program for");
     panel1.add(new JLabel(msg), BorderLayout.WEST);
@@ -119,8 +130,8 @@ public class UpdateDlg extends JDialog implements ActionListener, WindowClosingI
     panel1.add(mComboBox, BorderLayout.EAST);
     northPanel.add(panel1);
 
+    // channel selection
     TvDataServiceProxy[] serviceArr = getActiveDataServices();
-    
     if (serviceArr.length > 1) {
       panel1.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
       JPanel dataServicePanel = new JPanel();
@@ -147,7 +158,8 @@ public class UpdateDlg extends JDialog implements ActionListener, WindowClosingI
     int period = Settings.propDownloadPeriod.getInt();
     PeriodItem pi = new PeriodItem(period);
     mComboBox.setSelectedItem(pi);
-    
+
+    // auto update options
     if (Settings.propAutoDownloadType.getString().equals("never")) {
       JPanel p = new JPanel(new BorderLayout());
       p.setBorder(BorderFactory.createEmptyBorder(10,0,0,0));
