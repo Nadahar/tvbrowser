@@ -304,7 +304,7 @@ public class TVBrowser {
     Version tmpVer = Settings.propTVBrowserVersion.getVersion();
     final Version currentVersion = tmpVer != null ? new Version(tmpVer.getMajor(),tmpVer.getMinor(),Settings.propTVBrowserVersionIsStable.getBoolean()) : tmpVer;
     
-    if(!isTransportable() && Launch.isOsWindowsNtBranch() && currentVersion.compareTo(new Version(3,0,true)) < 0) {
+    if(!isTransportable() && Launch.isOsWindowsNtBranch() && currentVersion != null && currentVersion.compareTo(new Version(3,0,true)) < 0) {
       String tvDataDir = Settings.propTVDataDirectory.getString().replace("/",File.separator);
       
       if(!tvDataDir.startsWith(System.getenv("appdata"))) {
