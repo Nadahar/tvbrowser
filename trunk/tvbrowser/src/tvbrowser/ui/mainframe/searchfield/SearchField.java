@@ -227,7 +227,8 @@ public class SearchField extends JPanel {
         showConfigureDialog(mText);
       }
     });
-    
+    mSearchButton.setToolTipText(mLocalizer.msg("preferences.tooltip", "Click to change search preferences"));
+
     mGoOrCancelButton = new JButton(IconLoader.getInstance().getIconFromTheme("action", "media-playback-start", 16)); 
     mGoOrCancelButton.setBorder(BorderFactory.createEmptyBorder());
     mGoOrCancelButton.setContentAreaFilled(false);
@@ -243,7 +244,9 @@ public class SearchField extends JPanel {
           cancelPressed();
         }
       };
-    });mText.setEditable(true);
+    });
+    setSearchButton();
+    mText.setEditable(true);
     
     panel.setOpaque(true);
     
@@ -267,8 +270,7 @@ public class SearchField extends JPanel {
           SearchFilter filter = SearchFilter.getInstance();
           filter.setSearch(mSearchFormSettings);
           MainFrame.getInstance().setProgramFilter(filter);
-          mGoButton = false;
-          mGoOrCancelButton.setIcon(IconLoader.getInstance().getIconFromTheme("action", "process-stop", 16));
+          setCancelButton();
           
           SwingUtilities.invokeLater(new Runnable() {
             public void run() {
@@ -281,7 +283,7 @@ public class SearchField extends JPanel {
       } else {
         SearchFilter.getInstance().deactivateSearch();
         MainFrame.getInstance().setProgramFilter(FilterManagerImpl.getInstance().getDefaultFilter());
-        mGoOrCancelButton.setIcon(IconLoader.getInstance().getIconFromTheme("action", "media-playback-start", 16));
+        setSearchButton();
       }
     } else {
       SearchHelper.search(mText, mSearchFormSettings, new ProgramPanelSettings(new PluginPictureSettings(PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE),false),true);
@@ -295,8 +297,7 @@ public class SearchField extends JPanel {
     mText.setText("");
     SearchFilter.getInstance().deactivateSearch();
     MainFrame.getInstance().setProgramFilter(FilterManagerImpl.getInstance().getDefaultFilter());
-    mGoButton = true;
-    mGoOrCancelButton.setIcon(IconLoader.getInstance().getIconFromTheme("action", "media-playback-start", 16));
+    setSearchButton();
     mGoOrCancelButton.setVisible(false);
     mText.focusLost(null);
   }
@@ -373,9 +374,28 @@ public class SearchField extends JPanel {
    */
   public void deactivateSearch() {
     mText.setText("");
-    mGoButton = true;
-    mGoOrCancelButton.setIcon(IconLoader.getInstance().getIconFromTheme("action", "media-playback-start", 16));
+    setSearchButton();
     mText.focusLost(null);
     mGoOrCancelButton.setVisible(false);
   }
+  
+  /**
+   * make a search button from the combined search/cancel button
+   */
+  private void setSearchButton() {
+    mGoButton = true;
+    mGoOrCancelButton.setIcon(IconLoader.getInstance().getIconFromTheme("action", "media-playback-start", 16));
+    mGoOrCancelButton.setToolTipText(mLocalizer.msg("start.tooltip", "Start search"));
+ }
+  
+  /**
+   * make a cancel button from the combined search/cancel button
+   */
+  private void setCancelButton() {
+    mGoButton = false;
+    mGoOrCancelButton.setIcon(IconLoader.getInstance().getIconFromTheme("action", "process-stop", 16));
+    mGoOrCancelButton.setToolTipText(mLocalizer.msg("cancel.tooltip", "Cancel search"));
+  }
+
+
 }
