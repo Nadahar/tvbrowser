@@ -90,6 +90,7 @@ public abstract class Favorite {
   }
 
   public Favorite(ObjectInputStream in) throws IOException, ClassNotFoundException {
+    this();
     int version = in.readInt();  // version
     mName = (String)in.readObject();
     mReminderConfiguration = new ReminderConfiguration(in);
