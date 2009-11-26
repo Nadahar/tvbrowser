@@ -53,8 +53,8 @@ public final class ImdbDatabase {
 
   private File mCurrentPath;
 
-  private IndexSearcher mSearcher;
-  private IndexWriter mWriter;
+  private IndexSearcher mSearcher = null;
+  private IndexWriter mWriter = null;
 
   public ImdbDatabase(final File imdbDatabase) {
     mCurrentPath = imdbDatabase;
@@ -93,16 +93,16 @@ public final class ImdbDatabase {
     try {
       final Document doc = new Document();
       movieID = UUID.randomUUID().toString();
-      doc.add(new Field(MOVIE_ID, movieID, Field.Store.COMPRESS, Field.Index.NOT_ANALYZED, Field.TermVector.NO));
-      doc.add(new Field(ITEM_TYPE, TYPE_MOVIE, Field.Store.COMPRESS, Field.Index.NOT_ANALYZED, Field.TermVector.NO));
-      doc.add(new Field(MOVIE_TITLE, movieTitle, Field.Store.COMPRESS, Field.Index.NOT_ANALYZED, Field.TermVector.NO));
-      doc.add(new Field(MOVIE_TITLE_NORMALISED, normalise(movieTitle), Field.Store.COMPRESS, Field.Index.NOT_ANALYZED,
+      doc.add(new Field(MOVIE_ID, movieID, Field.Store.YES, Field.Index.NOT_ANALYZED, Field.TermVector.NO));
+      doc.add(new Field(ITEM_TYPE, TYPE_MOVIE, Field.Store.YES, Field.Index.NOT_ANALYZED, Field.TermVector.NO));
+      doc.add(new Field(MOVIE_TITLE, movieTitle, Field.Store.YES, Field.Index.NOT_ANALYZED, Field.TermVector.NO));
+      doc.add(new Field(MOVIE_TITLE_NORMALISED, normalise(movieTitle), Field.Store.YES, Field.Index.NOT_ANALYZED,
           Field.TermVector.NO));
-      doc.add(new Field(MOVIE_YEAR, Integer.toString(year), Field.Store.COMPRESS, Field.Index.NOT_ANALYZED,
+      doc.add(new Field(MOVIE_YEAR, Integer.toString(year), Field.Store.YES, Field.Index.NOT_ANALYZED,
           Field.TermVector.NO));
       if (episode != null) {
-        doc.add(new Field(EPISODE_TITLE, episode, Field.Store.COMPRESS, Field.Index.NOT_ANALYZED, Field.TermVector.NO));
-        doc.add(new Field(EPISODE_TITLE_NORMALISED, normalise(episode), Field.Store.COMPRESS, Field.Index.NOT_ANALYZED,
+        doc.add(new Field(EPISODE_TITLE, episode, Field.Store.YES, Field.Index.NOT_ANALYZED, Field.TermVector.NO));
+        doc.add(new Field(EPISODE_TITLE_NORMALISED, normalise(episode), Field.Store.YES, Field.Index.NOT_ANALYZED,
             Field.TermVector.NO));
       }
       mWriter.addDocument(doc);
@@ -116,16 +116,16 @@ public final class ImdbDatabase {
   public void addAkaTitle(final String movieId, final String title, final String episode, final int year) {
     try {
       final Document doc = new Document();
-      doc.add(new Field(MOVIE_ID, movieId, Field.Store.COMPRESS, Field.Index.NOT_ANALYZED, Field.TermVector.NO));
-      doc.add(new Field(ITEM_TYPE, TYPE_AKA, Field.Store.COMPRESS, Field.Index.NOT_ANALYZED, Field.TermVector.NO));
-      doc.add(new Field(MOVIE_TITLE, title, Field.Store.COMPRESS, Field.Index.NOT_ANALYZED, Field.TermVector.NO));
-      doc.add(new Field(MOVIE_TITLE_NORMALISED, normalise(title), Field.Store.COMPRESS, Field.Index.NOT_ANALYZED,
+      doc.add(new Field(MOVIE_ID, movieId, Field.Store.YES, Field.Index.NOT_ANALYZED, Field.TermVector.NO));
+      doc.add(new Field(ITEM_TYPE, TYPE_AKA, Field.Store.YES, Field.Index.NOT_ANALYZED, Field.TermVector.NO));
+      doc.add(new Field(MOVIE_TITLE, title, Field.Store.YES, Field.Index.NOT_ANALYZED, Field.TermVector.NO));
+      doc.add(new Field(MOVIE_TITLE_NORMALISED, normalise(title), Field.Store.YES, Field.Index.NOT_ANALYZED,
           Field.TermVector.NO));
-      doc.add(new Field(MOVIE_YEAR, Integer.toString(year), Field.Store.COMPRESS, Field.Index.NOT_ANALYZED,
+      doc.add(new Field(MOVIE_YEAR, Integer.toString(year), Field.Store.YES, Field.Index.NOT_ANALYZED,
           Field.TermVector.NO));
       if (episode != null) {
-        doc.add(new Field(EPISODE_TITLE, episode, Field.Store.COMPRESS, Field.Index.NOT_ANALYZED, Field.TermVector.NO));
-        doc.add(new Field(EPISODE_TITLE_NORMALISED, normalise(episode), Field.Store.COMPRESS, Field.Index.NOT_ANALYZED,
+        doc.add(new Field(EPISODE_TITLE, episode, Field.Store.YES, Field.Index.NOT_ANALYZED, Field.TermVector.NO));
+        doc.add(new Field(EPISODE_TITLE_NORMALISED, normalise(episode), Field.Store.YES, Field.Index.NOT_ANALYZED,
             Field.TermVector.NO));
       }
       mWriter.addDocument(doc);
@@ -191,13 +191,13 @@ public final class ImdbDatabase {
   public void addRating(final String movieId, final int rating, final int votes, final String distribution) {
     try {
       final Document doc = new Document();
-      doc.add(new Field(MOVIE_ID, movieId, Field.Store.COMPRESS, Field.Index.NOT_ANALYZED, Field.TermVector.NO));
-      doc.add(new Field(ITEM_TYPE, TYPE_RATING, Field.Store.COMPRESS, Field.Index.NOT_ANALYZED, Field.TermVector.NO));
+      doc.add(new Field(MOVIE_ID, movieId, Field.Store.YES, Field.Index.NOT_ANALYZED, Field.TermVector.NO));
+      doc.add(new Field(ITEM_TYPE, TYPE_RATING, Field.Store.YES, Field.Index.NOT_ANALYZED, Field.TermVector.NO));
       doc.add(new Field(MOVIE_RATING, Integer.toString(rating), Field.Store.YES, Field.Index.NOT_ANALYZED,
           Field.TermVector.NO));
       doc.add(new Field(MOVIE_VOTES, Integer.toString(votes), Field.Store.YES, Field.Index.NOT_ANALYZED,
           Field.TermVector.NO));
-      doc.add(new Field(MOVIE_DISTRIBUTION, distribution, Field.Store.COMPRESS, Field.Index.NOT_ANALYZED,
+      doc.add(new Field(MOVIE_DISTRIBUTION, distribution, Field.Store.YES, Field.Index.NOT_ANALYZED,
           Field.TermVector.NO));
       mWriter.addDocument(doc);
     } catch (IOException e) {
@@ -217,7 +217,7 @@ public final class ImdbDatabase {
     if (!mCurrentPath.exists() || mCurrentPath.listFiles().length > 0) {
       try {
         // open index reader readonly for better performance
-        FSDirectory directory = FSDirectory.getDirectory(mCurrentPath);
+        FSDirectory directory = FSDirectory.open(mCurrentPath);
         final IndexReader reader = IndexReader.open(directory, true);
         mSearcher = new IndexSearcher(reader);
       } catch (IOException e) {
@@ -229,7 +229,7 @@ public final class ImdbDatabase {
   public void openForWriting() {
     if (!mCurrentPath.exists() || mCurrentPath.listFiles().length < 2) {
       try {
-        mWriter = new IndexWriter(mCurrentPath, new SimpleAnalyzer(), new MaxFieldLength(MAX_FIELD_LENGTH));
+        mWriter = new IndexWriter(FSDirectory.open(mCurrentPath), new SimpleAnalyzer(), new MaxFieldLength(MAX_FIELD_LENGTH));
         mWriter.addDocument(new Document());
         mWriter.close();
       } catch (IOException e) {
@@ -253,8 +253,8 @@ public final class ImdbDatabase {
 
     try {
       // open reader and writer
-      mWriter = new IndexWriter(mCurrentPath, new SimpleAnalyzer(), new MaxFieldLength(MAX_FIELD_LENGTH));
-      FSDirectory directory = FSDirectory.getDirectory(mCurrentPath);
+      mWriter = new IndexWriter(FSDirectory.open(mCurrentPath), new SimpleAnalyzer(), new MaxFieldLength(MAX_FIELD_LENGTH));
+      FSDirectory directory = FSDirectory.open(mCurrentPath);
       final IndexReader reader = IndexReader.open(directory, true);
       mSearcher = new IndexSearcher(reader);
     } catch (IOException e) {

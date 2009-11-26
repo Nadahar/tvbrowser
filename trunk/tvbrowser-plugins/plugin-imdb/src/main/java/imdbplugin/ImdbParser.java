@@ -44,6 +44,8 @@ public class ImdbParser {
       .compile("^(.*?)(?:\\W\\(\\#.*\\))?$");
   private static final Pattern MOVIE_PREFIX_PATTERN = Pattern.compile("(.*), ([A-Z][a-z']{0,2})");
 
+  private static final int STEPS_TO_REPORT_PROGRESS = 1000;
+
   private ImdbDatabase mDatabase;
   private String mServer;
   private boolean mRunParser = true;
@@ -179,7 +181,7 @@ public class ImdbParser {
                 final String episode = cleanEpisodeTitle(matcher.group(4));
 
                 mDatabase.addAkaTitle(movieId, title, episode, year);
-                if (++count % 100 == 0 || count == 1) {
+                if (++count % STEPS_TO_REPORT_PROGRESS == 0 || count == 1) {
                   monitor.setMessage(mLocalizer.msg("akaTitles",
                       "Alternative title {0}", count));
                 }
@@ -259,7 +261,7 @@ public class ImdbParser {
           final String episode = cleanEpisodeTitle(matcher.group(4));
 
           mDatabase.addRating(mDatabase.getOrCreateMovieId(movieTitle, episode, year), rating, votes, distribution);
-          if (++count % 100 == 0 || count == 1) {
+          if (++count % STEPS_TO_REPORT_PROGRESS == 0 || count == 1) {
             monitor.setMessage(mLocalizer.msg("ratings", "Rating {0}", count));
           }
         }
