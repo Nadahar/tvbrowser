@@ -207,9 +207,13 @@ public final class ImdbDatabase {
 
   public void optimizeIndex() throws IOException {
     mWriter.commit();
-    mWriter.optimize();
-    mWriter.close();
-    openForWriting();
+    try {
+      mWriter.optimize();
+      mWriter.close();
+      openForWriting();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 
   public void openForReading() {
@@ -373,7 +377,13 @@ public final class ImdbDatabase {
 
     // next search only original title
     if (originalTitle != null) {
-      movieId = getMovieIdFromTitle(normalise(originalTitle), "", year, TYPE_MOVIE);
+      String normalisedOriginal = normalise(originalTitle);
+      movieId = getMovieIdFromTitle(normalisedOriginal, "", year, TYPE_MOVIE);
+      if (movieId != null) {
+        return movieId;
+      }
+      // original title in A.K.A. list (may happen with spelling alternatives)
+      movieId = getMovieIdFromTitle(normalisedOriginal, "", year, TYPE_AKA);
       if (movieId != null) {
         return movieId;
       }
