@@ -60,22 +60,19 @@ public class ImdbParser {
     mDatabase.deleteDatabase();
 
     monitor.setMaximum(getFileSize(mServer));
-    monitor.setMessage(mLocalizer.msg("download", "Downloading files"));
 
     mRunParser = true;
 
-    ProgressInputStream progressInputStream = new ProgressInputStream(
-        downloadFile(monitor, "aka-titles.list.gz"), monitor);
+    BufferedInputStream akaFile = downloadFile(monitor, "aka-titles.list.gz");
+    BufferedInputStream ratingsFile = downloadFile(monitor,"ratings.list.gz");
+
+    ProgressInputStream progressInputStream = new ProgressInputStream(akaFile, monitor);
 
     if (mRunParser) {
       parseAkaTitles(new GZIPInputStream(progressInputStream), monitor);
     }
     if (mRunParser) {
-      optimizeDatabase(monitor);
-    }
-    if (mRunParser) {
-      progressInputStream = new ProgressInputStream(downloadFile(monitor,
-          "ratings.list.gz"), monitor, progressInputStream.getCurrentPosition());
+      progressInputStream = new ProgressInputStream(ratingsFile, monitor, progressInputStream.getCurrentPosition());
       ratingCount = parseRatings(new GZIPInputStream(progressInputStream), monitor);
     }
 
@@ -92,6 +89,7 @@ public class ImdbParser {
   private BufferedInputStream downloadFile(final ProgressMonitor monitor,
       final String fileName) throws MalformedURLException, IOException,
       FileNotFoundException {
+    monitor.setMessage(mLocalizer.msg("download", "Downloading {0}", fileName));
     final URL url = new URL(mServer + fileName);
     final File tempFile = File.createTempFile("imdb", null);
     IOUtilities.download(url, tempFile);
