@@ -110,4 +110,8 @@ public abstract class TVBrowserAction extends AbstractAction {
   protected String getKey() {
     return mKey;
   }
+
+  public boolean useEllipsis() {
+    return false;
+  }
 }

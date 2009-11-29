@@ -381,7 +381,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 
   private JMenuItem createMenuItem(final TVBrowserAction action) {
     JMenuItem item = new JMenuItem(action);
-    setLabelAndAccessKeys("", action.getMenuText(), item, false);
+    setLabelAndAccessKeys("", action.getMenuText(), item, action.useEllipsis());
     item.setIcon(action.getIcon());
     new MenuHelpTextAdapter(item, action.getMenuHelpText(), mLabel);
     KeyStroke accelerator = action.getAccelerator();
@@ -422,7 +422,12 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
   		}
 		}
 		else {
-		  label = defaultLabel;
+		  if (ellipsis) {
+		    label = mLocalizer.ellipsis(defaultLabel);
+		  }
+		  else {
+		    label = defaultLabel;
+		  }
 		}
 
 		// find and extract the mnemonic
