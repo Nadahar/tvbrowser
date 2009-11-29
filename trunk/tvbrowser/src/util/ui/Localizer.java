@@ -618,4 +618,17 @@ public class Localizer {
   public boolean hasMessage(final String key) {
   	return mResource.containsKey(key);
   }
+
+  /**
+   * return the given String with an ellipsis appended
+   * @param someString
+   * @return ellipsis appended String or <code>null</code>
+   * @since 3.0
+   */
+  public String ellipsis(final String someString) {
+    if (someString == null) {
+      return null;
+    }
+    return ellipsisSuffix(someString);
+  }
 }

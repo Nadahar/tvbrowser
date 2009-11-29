@@ -126,6 +126,10 @@ public final class TVBrowserActions {
     public void actionPerformed(ActionEvent e) {
       MainFrame.getInstance().updateTvData();
     }
+    
+    public boolean useEllipsis() {
+      return true;
+    };
 
   };
 
@@ -148,6 +152,10 @@ public final class TVBrowserActions {
       } else {
         return mLocalizer.msg(getKey() + ".menu", "&Settings");
       }
+    };
+    
+    public boolean useEllipsis() {
+      return true;
     };
   };
 
@@ -321,6 +329,10 @@ public final class TVBrowserActions {
     public void actionPerformed(ActionEvent e) {
       MainFrame.getInstance().showSettingsDialog(SettingsItem.CHANNELS);
     }
+    
+    public boolean useEllipsis() {
+      return true;
+    };
   };
 
   /**
