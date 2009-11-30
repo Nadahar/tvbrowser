@@ -590,9 +590,9 @@ public class Localizer {
     return ellipsisSuffix(msg(key, defaultMessage));
   }
 
-  private static String ellipsisSuffix(final String msg) {
+  private static String ellipsisSuffix(String msg) {
     if (msg.endsWith(ELLIPSIS)) {
-      return msg;
+      msg = msg.substring(0, msg.length() - ELLIPSIS.length()).trim();
     }
     return msg + ELLIPSIS;
   }
