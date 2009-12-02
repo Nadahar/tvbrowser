@@ -60,8 +60,7 @@ final class ImdbSettings {
    * @return
    */
   protected boolean askCreateDatabase() {
-    return mProperties.getProperty(KEY_DONT_ASK_CREATE_DATABASE, "false").equals(
-        "false");
+    return !Boolean.parseBoolean(mProperties.getProperty(KEY_DONT_ASK_CREATE_DATABASE, "false"));
   }
 
   /**

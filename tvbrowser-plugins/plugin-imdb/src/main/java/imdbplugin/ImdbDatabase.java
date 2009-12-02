@@ -58,6 +58,14 @@ public final class ImdbDatabase {
 
   public ImdbDatabase(final File imdbDatabase) {
     mCurrentPath = imdbDatabase;
+    // make sure the directory exists
+    if (!mCurrentPath.exists()) {
+      try {
+        mCurrentPath.mkdirs();
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
   }
 
   public void deleteDatabase() {
