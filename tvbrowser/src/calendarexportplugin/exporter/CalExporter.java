@@ -21,7 +21,6 @@
 package calendarexportplugin.exporter;
 
 import java.io.File;
-import java.util.Properties;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -30,6 +29,7 @@ import util.program.AbstractPluginProgramFormating;
 import util.ui.ExtensionFileFilter;
 import util.ui.Localizer;
 import calendarexportplugin.CalendarExportPlugin;
+import calendarexportplugin.CalendarExportSettings;
 import calendarexportplugin.utils.CalendarToolbox;
 import devplugin.Program;
 
@@ -50,8 +50,8 @@ public abstract class CalExporter extends AbstractExporter {
     mExtensionFilter = extensionFilter;
   }
 
-  public boolean exportPrograms(Program[] programs, Properties settings,
-      AbstractPluginProgramFormating formating) {
+  public boolean exportPrograms(Program[] programs, CalendarExportSettings settings,
+      AbstractPluginProgramFormating formatting) {
     mSavePath = getSavePath(settings);
 
     File file = chooseFile(programs);
@@ -74,7 +74,7 @@ public abstract class CalExporter extends AbstractExporter {
     mSavePath = file.getAbsolutePath();
 
     setSavePath(settings, mSavePath);
-    export(file, programs, settings, formating);
+    export(file, programs, settings, formatting);
 
     return true;
   }
@@ -135,9 +135,9 @@ public abstract class CalExporter extends AbstractExporter {
     return null;
   }
 
-  protected abstract String getSavePath(Properties settings);
-  protected abstract void setSavePath(Properties settings, String path);
+  protected abstract String getSavePath(CalendarExportSettings settings);
+  protected abstract void setSavePath(CalendarExportSettings settings, String path);
   protected abstract void export(File file, Program[] programs,
-      Properties settings, AbstractPluginProgramFormating formating);
+      CalendarExportSettings settings, AbstractPluginProgramFormating formatting);
 
 }

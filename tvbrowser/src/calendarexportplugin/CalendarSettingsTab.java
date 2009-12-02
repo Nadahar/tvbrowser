@@ -26,7 +26,6 @@ import java.awt.BorderLayout;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Properties;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -65,7 +64,7 @@ public class CalendarSettingsTab implements SettingsTab {
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(CalendarSettingsTab.class);
 
   /** Settings */
-  private Properties mSettings;
+  private CalendarExportSettings mSettings;
 
   /** Length of Program */
   private JCheckBox mNulltime;
@@ -91,55 +90,61 @@ public class CalendarSettingsTab implements SettingsTab {
    * @param plugin Plugin-Instance
    * @param settings Settings for this Plugin
    */
-  public CalendarSettingsTab(CalendarExportPlugin plugin, Properties settings) {
+  public CalendarSettingsTab(CalendarExportPlugin plugin, CalendarExportSettings settings) {
     mPlugin = plugin;
     mSettings = settings;
   }
 
   public JPanel createSettingsPanel() {
-    final EnhancedPanelBuilder pb = new EnhancedPanelBuilder(FormFactory.RELATED_GAP_COLSPEC.encode() + "," + FormFactory.PREF_COLSPEC.encode() + "," +FormFactory.RELATED_GAP_COLSPEC.encode() +",default:grow," + FormFactory.PREF_COLSPEC.encode());
+    final EnhancedPanelBuilder pb = new EnhancedPanelBuilder(FormFactory.RELATED_GAP_COLSPEC.encode() + ","
+        + FormFactory.PREF_COLSPEC.encode() + "," + FormFactory.RELATED_GAP_COLSPEC.encode() + ",default:grow,"
+        + FormFactory.RELATED_GAP_COLSPEC.encode() + "," + FormFactory.PREF_COLSPEC.encode());
     CellConstraints cc = new CellConstraints();
     
-    mCategorie = new JTextField(mSettings.getProperty(CalendarExportPlugin.PROP_CATEGORY, ""));
+    mCategorie = new JTextField(mSettings.getCategory());
     
-    String[] values = { mLocalizer.msg("Busy", "Busy"), mLocalizer.msg("Free", "Free") };
+    String[] reservedValues = { mLocalizer.msg("Busy", "Busy"), mLocalizer.msg("Free", "Free") };
 
-    mShowTime = new JComboBox(values);
-
-    try {
-      mShowTime.setSelectedIndex(Integer.parseInt(mSettings.getProperty(CalendarExportPlugin.PROP_SHOWTIME, "0")));
-    } catch (Exception e) {
-        // Empty
+    mShowTime = new JComboBox(reservedValues);
+    if (mSettings.isShowBusy()) {
+      mShowTime.setSelectedIndex(0);
+    }
+    else if (mSettings.isShowFree()) {
+      mShowTime.setSelectedIndex(1);
     }
     
-    String[] val2 = { mLocalizer.msg("Public", "Public"), mLocalizer.msg("Private", "Private"),
+    String[] classificationValues = { mLocalizer.msg("Public", "Public"), mLocalizer.msg("Private", "Private"),
         mLocalizer.msg("Confidential", "Confidential") };
 
-    mClassification = new JComboBox(val2);
+    mClassification = new JComboBox(classificationValues);
 
-    try {
-      mClassification.setSelectedIndex(Integer.parseInt(mSettings.getProperty(CalendarExportPlugin.PROP_CLASSIFICATION, "0")));
-    } catch (Exception e) {
-        // empty
+    if (mSettings.isClassificationPublic()) {
+      mClassification.setSelectedIndex(0);
+    }
+    else if (mSettings.isClassificationPrivate()) {
+      mClassification.setSelectedIndex(1);
+    }
+    else if (mSettings.isClassificationConfidential()) {
+      mClassification.setSelectedIndex(2);
     }
     
     mNulltime = new JCheckBox(mLocalizer.msg("nullTime", "Set length to 0 Minutes"));
 
-    if (mSettings.getProperty(CalendarExportPlugin.PROP_NULLTIME, "false").equals("true")) {
+    if (mSettings.getNullTime()) {
       mNulltime.setSelected(true);
     }
     
     pb.addRow();
     pb.addLabel(mLocalizer.msg("Categorie", "Categorie") + ':', cc.xy(2,pb.getRow()));
-    pb.add(mCategorie, cc.xyw(4,pb.getRow(),2));
+    pb.add(mCategorie, cc.xyw(4,pb.getRow(), pb.getColumnCount() - 3));
 
     pb.addRow();
     pb.addLabel(mLocalizer.msg("ShowTime", "Show Time as") + ':', cc.xy(2,pb.getRow()));
-    pb.add(mShowTime, cc.xy(4,pb.getRow()));
+    pb.add(mShowTime, cc.xyw(4,pb.getRow(), pb.getColumnCount() - 3));
     
     pb.addRow();
     pb.addLabel(mLocalizer.msg("Classification", "Classification") + ':', cc.xy(2,pb.getRow()));
-    pb.add(mClassification, cc.xy(4,pb.getRow()));
+    pb.add(mClassification, cc.xyw(4,pb.getRow(), pb.getColumnCount() - 3));
     
     mUseAlarm = new JCheckBox(mLocalizer.msg("reminder", "Use reminder"));
     pb.addRow();
@@ -162,12 +167,12 @@ public class CalendarSettingsTab implements SettingsTab {
       }
     });
 
-    if (mSettings.getProperty(CalendarExportPlugin.PROP_ALARM, "true").equals("true")) {
+    if (mSettings.getUseAlarm()) {
       mUseAlarm.setSelected(true);
     }
     
     try {
-      mAlarmMinutes.setValue(Integer.parseInt(mSettings.getProperty(CalendarExportPlugin.PROP_ALARMBEFORE, "0")));
+      mAlarmMinutes.setValue(mSettings.getAlarmMinutes());
     } catch (Exception e) {
         // empty
     }
@@ -182,29 +187,18 @@ public class CalendarSettingsTab implements SettingsTab {
     pb.add(mNulltime, cc.xyw(2,pb.getRow(),4));
 
     mMarkItems = new JCheckBox(mLocalizer.msg("markItems", "Mark items when exported"));
-    if (mSettings.getProperty(CalendarExportPlugin.PROP_MARK_ITEMS, "true").equals("true")) {
+    if (mSettings.getMarkItems()) {
       mMarkItems.setSelected(true);
     }
 
     pb.addRow();
     pb.add(mMarkItems, cc.xyw(2,pb.getRow(),4));
 
-    JButton extended = new JButton(mLocalizer.msg("extended", "Extended Settings"));
-    
-    extended.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        showExtendedDialog(pb.getPanel());
-      }
-    });
-    
-    pb.addRow();
-    pb.add(extended, cc.xy(5,pb.getRow()));
-
-    pb.addParagraph(mLocalizer.msg("interface", "Interface:"));
+    pb.addParagraph(mLocalizer.msg("interface", "Interface"));
    
     mExporterList = new SelectableItemList(mPlugin.getExporterFactory().getActiveExporters(), mPlugin.getExporterFactory().getAllExporters());
-    pb.addGrowingRow();
-    pb.add(mExporterList, cc.xyw(2,pb.getRow(),4));
+    pb.addRow("120");
+    pb.add(mExporterList, cc.xyw(2,pb.getRow(),3));
 
     final JButton settings = new JButton(Localizer.getLocalization(Localizer.I18N_SETTINGS));
     settings.setEnabled(false);
@@ -228,11 +222,20 @@ public class CalendarSettingsTab implements SettingsTab {
       }
     });
 
-    JPanel btnpanel = new JPanel(new BorderLayout());
-    btnpanel.add(settings, BorderLayout.EAST);
+    pb.add(settings, cc.xy(6,pb.getRow(), CellConstraints.RIGHT, CellConstraints.TOP));
+    
+    pb.addParagraph(mLocalizer.msg("formattings", "Formattings"));
+
+    JButton extended = new JButton(mLocalizer.msg("formattings", "Formattings"));
+    
+    extended.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        showExtendedDialog(pb.getPanel());
+      }
+    });
     
     pb.addRow();
-    pb.add(btnpanel, cc.xyw(2,pb.getRow(),4));
+    pb.add(extended, cc.xy(2,pb.getRow()));
     
     return pb.getPanel();
   }
@@ -249,19 +252,29 @@ public class CalendarSettingsTab implements SettingsTab {
   }  
   
   public void saveSettings() {
-    if (mNulltime.isSelected()) {
-      mSettings.setProperty(CalendarExportPlugin.PROP_NULLTIME, "true");
-    } else {
-      mSettings.setProperty(CalendarExportPlugin.PROP_NULLTIME, "false");
-    }
+    mSettings.setNullTime(mNulltime.isSelected());
 
-    mSettings.setProperty(CalendarExportPlugin.PROP_CATEGORY, mCategorie.getText());
-    mSettings.setProperty(CalendarExportPlugin.PROP_SHOWTIME, Integer.toString(mShowTime.getSelectedIndex()));
-    mSettings.setProperty(CalendarExportPlugin.PROP_CLASSIFICATION, Integer.toString(mClassification.getSelectedIndex()));
+    mSettings.setCategory(mCategorie.getText());
+    if (mShowTime.getSelectedIndex() == 1) {
+      mSettings.setReservation(Reservation.Free);
+    }
+    else {
+      mSettings.setReservation(Reservation.Busy);
+    }
+    switch (mClassification.getSelectedIndex()) {
+    case 1:
+      mSettings.setClassification(Classification.Private);
+      break;
+    case 2:
+      mSettings.setClassification(Classification.Confidential);
+      break;
+    default:
+      mSettings.setClassification(Classification.Public);
+    }
     
-    mSettings.setProperty(CalendarExportPlugin.PROP_ALARM, mUseAlarm.isSelected()? "true": "false");
-    mSettings.setProperty(CalendarExportPlugin.PROP_ALARMBEFORE, mAlarmMinutes.getValue().toString());
-    mSettings.setProperty(CalendarExportPlugin.PROP_MARK_ITEMS, mMarkItems.isSelected()? "true": "false");
+    mSettings.setUseAlarm(mUseAlarm.isSelected());
+    mSettings.setAlarmMinutes((Integer)mAlarmMinutes.getValue());
+    mSettings.setMarkItems(mMarkItems.isSelected());
 
     Object[] selection = mExporterList.getSelection();
     
@@ -273,7 +286,7 @@ public class CalendarSettingsTab implements SettingsTab {
     
     mPlugin.getExporterFactory().setActiveExporters(exporter);
     
-    mSettings.setProperty(CalendarExportPlugin.PROP_ACTIVE_EXPORTER, mPlugin.getExporterFactory().getListOfActiveExporters());
+    mSettings.setActiveExporters(mPlugin.getExporterFactory().getListOfActiveExporters());
   }
 
   public Icon getIcon() {

@@ -27,7 +27,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Properties;
 import java.util.TimeZone;
 
 import javax.swing.JOptionPane;
@@ -39,6 +38,7 @@ import util.program.AbstractPluginProgramFormating;
 import util.ui.Localizer;
 import util.ui.login.LoginDialog;
 import calendarexportplugin.CalendarExportPlugin;
+import calendarexportplugin.CalendarExportSettings;
 import calendarexportplugin.utils.CalendarToolbox;
 
 import com.google.gdata.client.GoogleService;
@@ -85,28 +85,28 @@ public class GoogleExporter extends AbstractExporter {
     return mLocalizer.msg("name", "Google Calendar");
   }
 
-  public boolean exportPrograms(Program[] programs, Properties settings, AbstractPluginProgramFormating formating) {
+  public boolean exportPrograms(Program[] programs, CalendarExportSettings settings, AbstractPluginProgramFormating formatting) {
     try {
       boolean uploadedItems = false;
-      mPassword = IOUtilities.xorDecode(settings.getProperty(PASSWORD, ""), 345903).trim();
+      mPassword = IOUtilities.xorDecode(settings.getExporterProperty(PASSWORD), 345903).trim();
 
-      if (!settings.getProperty(STOREPASSWORD, "false").equals("true")) {
+      if (!settings.getExporterProperty(STOREPASSWORD, false)) {
         if (!showLoginDialog(settings)) {
           return false;
         }
       }
 
-      if (!settings.getProperty(STORESETTINGS, "false").equals("true")) {
+      if (!settings.getExporterProperty(STORESETTINGS, false)) {
         if (!showCalendarSettings(settings)) {
           return false;
         }
       }
 
       CalendarService myService = new CalendarService("tvbrowser-tvbrowsercalenderplugin-" + CalendarExportPlugin.getInstance().getInfo().getVersion().toString());
-      myService.setUserCredentials(settings.getProperty(USERNAME, "").trim(), mPassword);
+      myService.setUserCredentials(settings.getExporterProperty(USERNAME).trim(), mPassword);
 
       URL postUrl =
-              new URL("http://www.google.com/calendar/feeds/" + settings.getProperty(SELECTEDCALENDAR) + "/private/full");
+              new URL("http://www.google.com/calendar/feeds/" + settings.getExporterProperty(SELECTEDCALENDAR) + "/private/full");
 
       SimpleDateFormat formatDay = new SimpleDateFormat("yyyy-MM-dd");
       formatDay.setTimeZone(TimeZone.getTimeZone("GMT"));
@@ -115,7 +115,7 @@ public class GoogleExporter extends AbstractExporter {
 
       ParamParser parser = new ParamParser();
       for (Program program : programs) {
-        final String title = parser.analyse(formating.getTitleValue(), program);
+        final String title = parser.analyse(formatting.getTitleValue(), program);
 
         // First step: search for event in calendar
         boolean createEvent = true;
@@ -136,7 +136,7 @@ public class GoogleExporter extends AbstractExporter {
 
           myEntry.setTitle(new PlainTextConstruct(title));
 
-          String desc = parser.analyse(formating.getContentValue(), program);
+          String desc = parser.analyse(formatting.getContentValue(), program);
           myEntry.setContent(new PlainTextConstruct(desc));
 
           Calendar c = CalendarToolbox.getStartAsCalendar(program);
@@ -154,46 +154,34 @@ public class GoogleExporter extends AbstractExporter {
 
           myEntry.addTime(eventTimes);
 
-          if (settings.getProperty(REMINDER, "false").equals("true")) {
+          if (settings.getExporterProperty(REMINDER, false)) {
             int reminderMinutes = 0;
 
             try {
-              reminderMinutes = Integer.parseInt(settings.getProperty(REMINDERMINUTES, "0"));
+              reminderMinutes = settings.getExporterProperty(REMINDERMINUTES, 0);
             } catch (NumberFormatException e) {
               e.printStackTrace();
             }
 
-            if (settings.getProperty(REMINDERALERT, "false").equals("true")) {
+            if (settings.getExporterProperty(REMINDERALERT, false)) {
               addReminder(myEntry, reminderMinutes, Reminder.Method.ALERT);
             }
 
-            if (settings.getProperty(REMINDEREMAIL, "false").equals("true")) {
+            if (settings.getExporterProperty(REMINDEREMAIL, false)) {
               addReminder(myEntry, reminderMinutes, Reminder.Method.EMAIL);
             }
 
-            if (settings.getProperty(REMINDERSMS, "false").equals("true")) {
+            if (settings.getExporterProperty(REMINDERSMS, false)) {
               addReminder(myEntry, reminderMinutes, Reminder.Method.SMS);
             }
 
           }
 
-          int showtime = 0;
-
-          try {
-            showtime = Integer.parseInt(settings.getProperty(CalendarExportPlugin.PROP_SHOWTIME, "0"));
-          } catch (Exception e) {
-            // Empty
-          }
-
-          switch (showtime) {
-            case 0:
+          if (settings.isShowBusy()) {
               myEntry.setTransparency(BaseEventEntry.Transparency.OPAQUE);
-              break;
-            case 1:
+          }
+          else {
               myEntry.setTransparency(BaseEventEntry.Transparency.TRANSPARENT);
-              break;
-            default:
-              break;
           }
           // Send the request and receive the response:
           myService.insert(postUrl, myEntry);
@@ -208,7 +196,7 @@ public class GoogleExporter extends AbstractExporter {
       return true;
     } catch (AuthenticationException e) {
       ErrorHandler.handle(mLocalizer.msg("loginFailure", "Problems during login to Service.\nMaybe bad username or password?"), e);
-      settings.setProperty(GoogleExporter.STOREPASSWORD, "false");
+      settings.setExporterProperty(STOREPASSWORD, false);
     } catch (Exception e) {
       ErrorHandler.handle(mLocalizer.msg("commError", "Error while communicating with Google!"), e);
     }
@@ -255,7 +243,7 @@ public class GoogleExporter extends AbstractExporter {
    * @throws IOException      Exception during connection
    * @throws ServiceException Problems with the google service
    */
-  private boolean showCalendarSettings(Properties settings) throws IOException, ServiceException {
+  private boolean showCalendarSettings(CalendarExportSettings settings) throws IOException, ServiceException {
     GoogleSettingsDialog settingsDialog;
 
     Window wnd = CalendarExportPlugin.getInstance().getBestParentFrame();
@@ -272,14 +260,14 @@ public class GoogleExporter extends AbstractExporter {
    *          Settings to use for this Dialog
    * @return true, if successful
    */
-  private boolean showLoginDialog(Properties settings) {
+  private boolean showLoginDialog(CalendarExportSettings settings) {
     LoginDialog login;
 
     Window parent = CalendarExportPlugin.getInstance().getBestParentFrame();
 
-    login = new LoginDialog(parent, settings.getProperty(USERNAME, ""),
-        IOUtilities.xorDecode(settings.getProperty(PASSWORD, ""), 345903),
-        settings.getProperty(STOREPASSWORD, "false").equals("true"));
+    login = new LoginDialog(parent, settings.getExporterProperty(USERNAME),
+        IOUtilities.xorDecode(settings.getExporterProperty(PASSWORD), 345903),
+        settings.getExporterProperty(STOREPASSWORD, false));
 
     if (login.askLogin() != JOptionPane.OK_OPTION) {
       return false;
@@ -292,14 +280,14 @@ public class GoogleExporter extends AbstractExporter {
       return false;
     }
 
-    settings.setProperty(USERNAME, login.getUsername().trim());
+    settings.setExporterProperty(USERNAME, login.getUsername().trim());
 
     if (login.storePasswords()) {
-      settings.setProperty(PASSWORD, IOUtilities.xorEncode(login.getPassword().trim(), 345903));
-      settings.setProperty(STOREPASSWORD, "true");
+      settings.setExporterProperty(PASSWORD, IOUtilities.xorEncode(login.getPassword().trim(), 345903));
+      settings.setExporterProperty(STOREPASSWORD, true);
     } else {
-      settings.setProperty(PASSWORD, "");
-      settings.setProperty(STOREPASSWORD, "false");
+      settings.setExporterProperty(PASSWORD, "");
+      settings.setExporterProperty(STOREPASSWORD, false);
     }
 
     mPassword = login.getPassword().trim();
@@ -312,13 +300,13 @@ public class GoogleExporter extends AbstractExporter {
   }
 
   @Override
-  public void showSettingsDialog(Properties settings) {
+  public void showSettingsDialog(CalendarExportSettings settings) {
     if (showLoginDialog(settings)) {
       try {
         showCalendarSettings(settings);
       } catch (AuthenticationException e) {
         ErrorHandler.handle(mLocalizer.msg("loginFailure", "Problems while Login to Service.\nMaybee bad Username/Password ?"), e);
-        settings.setProperty(GoogleExporter.STOREPASSWORD, "false");
+        settings.setExporterProperty(STOREPASSWORD, false);
       } catch (Exception e) {
         ErrorHandler.handle(mLocalizer.msg("commError", "Error while communicating with Google!"), e);
       }

@@ -5,7 +5,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Properties;
 import java.util.Vector;
 
 import javax.swing.DefaultComboBoxModel;
@@ -22,6 +21,7 @@ import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 import calendarexportplugin.CalendarExportPlugin;
+import calendarexportplugin.CalendarExportSettings;
 
 import com.google.gdata.client.GoogleService;
 import com.google.gdata.data.calendar.CalendarEntry;
@@ -59,13 +59,13 @@ public class GoogleSettingsDialog extends JDialog  implements WindowClosingIf {
   private JLabel mReminderText;
   private JCheckBox mReminderStore;
 
-  public GoogleSettingsDialog(Window owner, Properties settings, String password) {
+  public GoogleSettingsDialog(Window owner, CalendarExportSettings settings, String password) {
     super(owner);
     setModal(true);
     createGui(settings, password);
   }
 
-  private void createGui(final Properties settings, final String password) {
+  private void createGui(final CalendarExportSettings settings, final String password) {
     setTitle(mLocalizer.msg("title", "Google Calendar Settings"));
 
     UiUtilities.registerForClosing(this);
@@ -116,7 +116,7 @@ public class GoogleSettingsDialog extends JDialog  implements WindowClosingIf {
     v.add(new GoogleComboboxItem(10080, mLocalizer.msg("10080_minutes","1 week")));
     mRemindMinutes = new JComboBox(v);
     
-    String minutes = settings.getProperty(GoogleExporter.REMINDERMINUTES);
+    String minutes = settings.getExporterProperty(GoogleExporter.REMINDERMINUTES);
     for (GoogleComboboxItem item : v) {
       if (item.getKey().equals(minutes)) {
         mRemindMinutes.setSelectedItem(item);
@@ -174,7 +174,7 @@ public class GoogleSettingsDialog extends JDialog  implements WindowClosingIf {
         } catch (AuthenticationException e) {
           loadingFailed();
           ErrorHandler.handle(mErrorLocalizer.msg("loginFailure", "Problems during login to service.\nMaybe bad username or password?"), e);
-          settings.setProperty(GoogleExporter.STOREPASSWORD, "false");
+          settings.setExporterProperty(GoogleExporter.STOREPASSWORD, false);
         } catch (Exception e) {
           loadingFailed();
           ErrorHandler.handle(mErrorLocalizer.msg("commError", "Error while communicating with Google!"), e);
@@ -185,27 +185,27 @@ public class GoogleSettingsDialog extends JDialog  implements WindowClosingIf {
     setSize(Sizes.dialogUnitXAsPixel(240, this), Sizes.dialogUnitYAsPixel(200, this));
   }
 
-  private void loadValues(Properties settings) {
-    mUseAlert.setSelected(Boolean.parseBoolean(settings.getProperty(GoogleExporter.REMINDERALERT, "false")));
-    mUseEMail.setSelected(Boolean.parseBoolean(settings.getProperty(GoogleExporter.REMINDEREMAIL, "false")));
-    mUseSMS.setSelected(Boolean.parseBoolean(settings.getProperty(GoogleExporter.REMINDERSMS, "false")));
+  private void loadValues(CalendarExportSettings settings) {
+    mUseAlert.setSelected(settings.getExporterProperty(GoogleExporter.REMINDERALERT, false));
+    mUseEMail.setSelected(settings.getExporterProperty(GoogleExporter.REMINDEREMAIL, false));
+    mUseSMS.setSelected(settings.getExporterProperty(GoogleExporter.REMINDERSMS, false));
 
-    mReminderCheckBox.setSelected(Boolean.parseBoolean(settings.getProperty(GoogleExporter.REMINDER, "false")));
-    mReminderStore.setSelected(Boolean.parseBoolean(settings.getProperty(GoogleExporter.STORESETTINGS, "false")));
+    mReminderCheckBox.setSelected(settings.getExporterProperty(GoogleExporter.REMINDER, false));
+    mReminderStore.setSelected(settings.getExporterProperty(GoogleExporter.STORESETTINGS, false));
   }
 
-  private void okPressed(Properties settings) {
+  private void okPressed(CalendarExportSettings settings) {
     mReturnValue = JOptionPane.OK_OPTION;
     setVisible(false);
 
-    settings.setProperty(GoogleExporter.SELECTEDCALENDAR, ((GoogleComboboxItem)mCalendarChooser.getSelectedItem()).getKey());
-    settings.setProperty(GoogleExporter.REMINDER, mReminderCheckBox.isSelected() ? "true" : "false");
-    settings.setProperty(GoogleExporter.REMINDERALERT, mUseAlert.isSelected() ? "true" : "false");
-    settings.setProperty(GoogleExporter.REMINDEREMAIL, mUseEMail.isSelected() ? "true" : "false");
-    settings.setProperty(GoogleExporter.REMINDERSMS,   mUseSMS.isSelected() ? "true" : "false");
-    settings.setProperty(GoogleExporter.REMINDERMINUTES, ((GoogleComboboxItem)mRemindMinutes.getSelectedItem()).getKey());
+    settings.setExporterProperty(GoogleExporter.SELECTEDCALENDAR, ((GoogleComboboxItem)mCalendarChooser.getSelectedItem()).getKey());
+    settings.setExporterProperty(GoogleExporter.REMINDER, mReminderCheckBox.isSelected());
+    settings.setExporterProperty(GoogleExporter.REMINDERALERT, mUseAlert.isSelected());
+    settings.setExporterProperty(GoogleExporter.REMINDEREMAIL, mUseEMail.isSelected());
+    settings.setExporterProperty(GoogleExporter.REMINDERSMS,   mUseSMS.isSelected());
+    settings.setExporterProperty(GoogleExporter.REMINDERMINUTES, ((GoogleComboboxItem)mRemindMinutes.getSelectedItem()).getKey());
 
-    settings.setProperty(GoogleExporter.STORESETTINGS,   mReminderStore.isSelected() ? "true" : "false");
+    settings.setExporterProperty(GoogleExporter.STORESETTINGS,   mReminderStore.isSelected());
   }
 
   private void loadingFailed() {
@@ -222,9 +222,9 @@ public class GoogleSettingsDialog extends JDialog  implements WindowClosingIf {
     mReminderText.setEnabled(mReminderCheckBox.isSelected());
   }
 
-  private void fetchCalendarList(Properties settings, String password) throws IOException, ServiceException {
+  private void fetchCalendarList(CalendarExportSettings settings, String password) throws IOException, ServiceException {
     GoogleService myService = new GoogleService("cl", "tvbrowser-tvbrowsercalenderplugin-" + CalendarExportPlugin.getInstance().getInfo().getVersion().toString());
-    myService.setUserCredentials(settings.getProperty(GoogleExporter.USERNAME, "").trim(), password);
+    myService.setUserCredentials(settings.getExporterProperty(GoogleExporter.USERNAME).trim(), password);
 
     // Send the request and print the response
     URL feedUrl = new URL("http://www.google.com/calendar/feeds/default/owncalendars/full");
@@ -241,7 +241,7 @@ public class GoogleSettingsDialog extends JDialog  implements WindowClosingIf {
 
       model.addElement(new GoogleComboboxItem(id, entry.getTitle().getPlainText()));
 
-      if (id.equals(settings.getProperty(GoogleExporter.SELECTEDCALENDAR))) {
+      if (id.equals(settings.getExporterProperty(GoogleExporter.SELECTEDCALENDAR))) {
         mCalendarChooser.setSelectedIndex(model.getSize() - 1);
       }
     }

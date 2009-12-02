@@ -24,11 +24,11 @@ package calendarexportplugin.exporter;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Properties;
 
 import util.exc.ErrorHandler;
 import util.io.ExecutionHandler;
 import util.program.AbstractPluginProgramFormating;
+import calendarexportplugin.CalendarExportSettings;
 import calendarexportplugin.utils.ICalFile;
 import devplugin.Program;
 
@@ -43,7 +43,7 @@ public class KOrganizerExporter extends AbstractExporter {
     return "KOrganizer";
   }
 
-  public boolean exportPrograms(Program[] programs, Properties settings, AbstractPluginProgramFormating formating) {
+  public boolean exportPrograms(Program[] programs, CalendarExportSettings settings, AbstractPluginProgramFormating formating) {
     try {
       File file = File.createTempFile("tvbrowser", ".ics");
       file.deleteOnExit();

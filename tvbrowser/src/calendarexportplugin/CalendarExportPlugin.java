@@ -134,7 +134,7 @@ public class CalendarExportPlugin extends Plugin {
   /**
    * Settings
    */
-  private Properties mSettings;
+  private CalendarExportSettings mSettings;
 
   /**
    * Factory for Export-Types
@@ -373,7 +373,7 @@ public class CalendarExportPlugin extends Plugin {
   }
   
   private void markProgram(Program program, ExporterIf export) {
-    if (mSettings.getProperty(PROP_MARK_ITEMS, "true").equals("true")) {
+    if (mSettings.getMarkItems()) {
       PluginTreeNode node = getNodeForExporter(export);
       node.addProgram(program);
     }
@@ -455,31 +455,28 @@ public class CalendarExportPlugin extends Plugin {
    */
   @Override
   public Properties storeSettings() {
-    return mSettings;
+    return mSettings.storeSettings();
   }
 
   /**
    * Loads the Settings
    *
-   * @param settings Settings for this Plugin
+   * @param properties Settings for this Plugin
    */
   @Override
-  public void loadSettings(Properties settings) {
-    if (settings == null) {
-      settings = new Properties();
-    }
-    mSettings = settings;
+  public void loadSettings(final Properties properties) {
+    mSettings = new CalendarExportSettings(properties);
 
-    mExporterFactory.setListOfActiveExporters(mSettings.getProperty(PROP_ACTIVE_EXPORTER));
+    mExporterFactory.setListOfActiveExporters(mSettings.getActiveExporters());
 
-    if (settings.containsKey("paramToUse")) {
+    if (properties.containsKey("paramToUse")) {
       mConfigs = new AbstractPluginProgramFormating[1];
-      mConfigs[0] = new LocalPluginProgramFormating(mLocalizer.msg("defaultName", "Calendar Export - Default"), "{channel_name} - {title}", settings.getProperty("paramToUse"), "UTF-8");
+      mConfigs[0] = new LocalPluginProgramFormating(mLocalizer.msg("defaultName", "Calendar Export - Default"), "{channel_name} - {title}", properties.getProperty("paramToUse"), "UTF-8");
       mLocalFormattings = new LocalPluginProgramFormating[1];
       mLocalFormattings[0] = (LocalPluginProgramFormating) mConfigs[0];
       DEFAULT_CONFIG = mLocalFormattings[0];
 
-      settings.remove("paramToUse");
+      properties.remove("paramToUse");
     }
   }
 
@@ -552,9 +549,7 @@ public class CalendarExportPlugin extends Plugin {
       }
     }
 
-    if (mSettings.getProperty(PROP_MARK_ITEMS, "true").equals("false")) {
-      out.writeInt(0);
-    } else {
+    if (mSettings.getMarkItems()) {
       final Set<ExporterIf> exporters = mTreeNodes.keySet();
       out.writeInt(exporters.size());
 
@@ -570,6 +565,8 @@ public class CalendarExportPlugin extends Plugin {
           }
         }
       }
+    } else {
+      out.writeInt(0);
     }
 
   }
