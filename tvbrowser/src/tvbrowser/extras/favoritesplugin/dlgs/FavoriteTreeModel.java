@@ -353,7 +353,7 @@ public class FavoriteTreeModel extends DefaultTreeModel {
     ((FavoriteNode)getRoot()).store(out);
   }
 
-  public void updatePluginTree(PluginTreeNode node, FavoriteNode parentFavorite) {
+  public void updatePluginTree(final PluginTreeNode node, final PluginTreeNode dateNode, FavoriteNode parentFavorite) {
     if(parentFavorite == null) {
       parentFavorite = (FavoriteNode) getRoot();
     }
@@ -369,7 +369,7 @@ public class FavoriteTreeModel extends DefaultTreeModel {
         newNode.setGroupingByWeekEnabled(true);
 
         if(child.isDirectoryNode()) {
-          updatePluginTree(newNode,child);
+          updatePluginTree(newNode, dateNode,child);
           if (!newNode.isEmpty()) {
             node.add(newNode);
           }
@@ -415,6 +415,7 @@ public class FavoriteTreeModel extends DefaultTreeModel {
 
             for (Program program : progArr) {
               PluginTreeNode pNode = newNode.addProgramWithoutCheck(program);
+              dateNode.addProgram(program);
               if (episodeOnly || progArr.length <= 10) {
                 pNode.setNodeFormatter(new NodeFormatter() {
                   public String format(ProgramItem pitem) {
@@ -538,8 +539,8 @@ public class FavoriteTreeModel extends DefaultTreeModel {
     return receiveFavorites.toArray(new Favorite[receiveFavorites.size()]);
   }
 
-  public void updatePluginTree(PluginTreeNode rootNode) {
-    updatePluginTree(rootNode,null);
+  public void updatePluginTree(final PluginTreeNode topicNode, final PluginTreeNode dateNode) {
+    updatePluginTree(topicNode, dateNode, null);
   }
   
   /**
