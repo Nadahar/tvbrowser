@@ -333,14 +333,14 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 		return createImageIcon("actions", "pearl", 16);
 	}
 
-	ImageIcon getProgramFoundIcon()
+	ImageIcon getProgramIcon(boolean knownProgram)
 	{
-		return createImageIcon("actions", "program_found", 16);
-	}
-
-	ImageIcon getProgramUnknownIcon()
-	{
-		return createImageIcon("actions", "program_unknown", 16);
+	  if (knownProgram) {
+	    return createImageIcon("actions", "program_found", 16);
+	  }
+	  else {
+	    return createImageIcon("actions", "program_unknown", 16);
+	  }
 	}
 
 	protected static String getDayName(final Calendar cal, final boolean showToday)

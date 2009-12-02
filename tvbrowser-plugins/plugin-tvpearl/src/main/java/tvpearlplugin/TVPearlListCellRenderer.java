@@ -17,45 +17,35 @@
  */
 package tvpearlplugin;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JPanel;
 
-public class TVPearlListCellRenderer extends DefaultListCellRenderer
-{
-    private static final long serialVersionUID = 1L;
+public class TVPearlListCellRenderer extends DefaultListCellRenderer {
+  private static final long serialVersionUID = 1L;
 
-    private static final Color SECOND_ROW_COLOR = new Color(230, 230, 230);
+  private static final Color SECOND_ROW_COLOR = new Color(230, 230, 230);
 
-    public Component getListCellRendererComponent(final JList list,
-      final Object value, final int index, final boolean isSelected,
-      final boolean cellHasFocus)
-    {
-      final JLabel label = (JLabel) super.getListCellRendererComponent(list,
-        value, index, isSelected, cellHasFocus);
+  public Component getListCellRendererComponent(final JList list, final Object value, final int index,
+      final boolean isSelected, final boolean cellHasFocus) {
+    final JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
-        if (value instanceof TVPProgram)
-        {
-          final TVPProgram p = (TVPProgram) value;
+    if (value instanceof TVPProgram) {
+      final TVPProgram program = (TVPProgram) value;
 
-          final TVPearlProgramPanel prog = new TVPearlProgramPanel(p);
-            prog.setTextColor(label.getForeground());
-            final JPanel pan = new JPanel(new BorderLayout());
-            pan.add(prog, BorderLayout.CENTER);
-            pan.setBackground(label.getBackground());
-            if ((index % 2 != 0) && (!isSelected))
-            {
-                pan.setBackground(SECOND_ROW_COLOR);
-            }
+      final TVPearlProgramPanel panel = new TVPearlProgramPanel(program);
+      panel.setBackground(label.getBackground());
+      panel.setForeground(label.getForeground());
+      if ((index % 2 != 0) && (!isSelected)) {
+        panel.setBackground(SECOND_ROW_COLOR);
+      }
 
-            return pan;
-        }
-
-        return label;
+      return panel;
     }
+
+    return label;
+  }
 }
