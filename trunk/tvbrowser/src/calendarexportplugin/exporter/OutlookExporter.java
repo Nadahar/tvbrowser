@@ -17,7 +17,6 @@
 package calendarexportplugin.exporter;
 
 import java.util.Date;
-import java.util.Properties;
 
 import javax.swing.JOptionPane;
 
@@ -29,6 +28,7 @@ import util.paramhandler.ParamParser;
 import util.program.AbstractPluginProgramFormating;
 import util.ui.Localizer;
 import calendarexportplugin.CalendarExportPlugin;
+import calendarexportplugin.CalendarExportSettings;
 import calendarexportplugin.utils.CalendarToolbox;
 import devplugin.Program;
 
@@ -131,33 +131,23 @@ public class OutlookExporter extends AbstractExporter {
     return true;
   }
 
-  public boolean exportPrograms(Program[] programs, Properties settings, AbstractPluginProgramFormating formating) {
+  public boolean exportPrograms(Program[] programs, CalendarExportSettings settings, AbstractPluginProgramFormating formating) {
     if (OperatingSystem.isWindows64()) {
       return false;
     }
     int classification = 0;
-    try {
-      classification = Integer.parseInt(settings.getProperty(CalendarExportPlugin.PROP_CLASSIFICATION, "0"));
-    } catch (Exception e) {
-      // Empty
-    }
-    if (classification == 1) {
+    if (settings.isClassificationPrivate()) {
       classification = olPrivate;
-    } else if (classification == 2) {
+    } else if (settings.isClassificationConfidential()) {
       classification = olConfidential;
     } else {
       classification = olNormal;
     }
 
-    String categories = settings.getProperty(CalendarExportPlugin.PROP_CATEGORY, "");
+    String categories = settings.getCategory();
 
-    int showtime = 0;
-    try {
-      showtime = Integer.parseInt(settings.getProperty(CalendarExportPlugin.PROP_SHOWTIME, "0"));
-    } catch (Exception e) {
-      // empty
-    }
-    if (showtime == 1) {
+    int showtime;
+    if (settings.isShowFree()) {
       showtime = olFree;
     } else {
       showtime = olBusy;
@@ -165,17 +155,17 @@ public class OutlookExporter extends AbstractExporter {
 
     int alarmBefore = 0;
     try {
-      alarmBefore = Integer.parseInt(settings.getProperty(CalendarExportPlugin.PROP_ALARMBEFORE, "0"));
+      alarmBefore = settings.getAlarmMinutes();
     } catch (Exception ex) {
       // empty
     }
     boolean useAlarm = false;
-    if (settings.getProperty(CalendarExportPlugin.PROP_ALARM, "false").equals("true")) {
+    if (settings.getUseAlarm()) {
       useAlarm = true;
     }
 
     boolean nullTime = false;
-    if (settings.getProperty(CalendarExportPlugin.PROP_NULLTIME, "false").equals("true")) {
+    if (settings.getNullTime()) {
       nullTime = true;
     }
 

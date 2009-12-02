@@ -25,13 +25,12 @@ package calendarexportplugin.exporter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Properties;
 
 import util.exc.ErrorHandler;
 import util.misc.AppleScriptRunner;
 import util.paramhandler.ParamParser;
 import util.program.AbstractPluginProgramFormating;
-import calendarexportplugin.CalendarExportPlugin;
+import calendarexportplugin.CalendarExportSettings;
 import calendarexportplugin.utils.CalendarToolbox;
 import devplugin.Program;
 
@@ -46,7 +45,7 @@ public class AppleiCalExporter extends AbstractExporter {
         return "Apple iCal";
     }
 
-    public boolean exportPrograms(Program[] programs, Properties settings, AbstractPluginProgramFormating formating) {
+    public boolean exportPrograms(Program[] programs, CalendarExportSettings settings, AbstractPluginProgramFormating formatting) {
         System.out.println("Apple iCal!");
 
         AppleScriptRunner runner = new AppleScriptRunner();
@@ -110,20 +109,20 @@ public class AppleiCalExporter extends AbstractExporter {
             
             ParamParser parser = new ParamParser();
             
-            String title = parser.analyse(formating.getTitleValue(), program);
+            String title = parser.analyse(formatting.getTitleValue(), program);
             script.append(title);
                
             script.append("\", description:\"");
             
-            String desc = parser.analyse(formating.getContentValue(), program);
+            String desc = parser.analyse(formatting.getContentValue(), program);
             script.append(desc.replaceAll("\"", "\\\\\"").replace('\n', ' '));
             
             script.append("\"}\n");
             script.append("  set theEvent to make new event at end of (events of TVBrowserCalendar) with properties props\n");
             
-            if (settings.getProperty(CalendarExportPlugin.PROP_ALARM, "false").equals("true")) {
+            if (settings.getUseAlarm()) {
                 script.append("  make new display alarm at beginning of theEvent with properties {trigger interval:-");
-                script.append(settings.getProperty(CalendarExportPlugin.PROP_ALARMBEFORE, "0"));
+                script.append(settings.getAlarmMinutes());
                 script.append("}\n");
             }
             

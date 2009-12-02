@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Properties;
 import java.util.TimeZone;
 
 import util.exc.ErrorHandler;
@@ -29,7 +28,7 @@ import util.io.stream.PrintStreamProcessor;
 import util.paramhandler.ParamParser;
 import util.program.AbstractPluginProgramFormating;
 import util.ui.Localizer;
-import calendarexportplugin.CalendarExportPlugin;
+import calendarexportplugin.CalendarExportSettings;
 import devplugin.Program;
 
 public abstract class AbstractCalFile {
@@ -56,12 +55,11 @@ public abstract class AbstractCalFile {
    *          The formatting value for the program
    */
   public void export(File intothis, final Program[] list,
-      final Properties settings, final AbstractPluginProgramFormating formatting) {
+      final CalendarExportSettings settings, final AbstractPluginProgramFormating formatting) {
     try {
       final ParamParser parser = new ParamParser();
 
-      final boolean nulltime = settings.getProperty(
-          CalendarExportPlugin.PROP_NULLTIME, "false").equals("true");
+      final boolean nulltime = settings.getNullTime();
 
       mTime.setTimeZone(TimeZone.getTimeZone("GMT"));
       mDate.setTimeZone(TimeZone.getTimeZone("GMT"));
@@ -82,38 +80,22 @@ public abstract class AbstractCalFile {
 
             printCreated(out, mDate.format(c.getTime()) + "T"
                 + mTime.format(c.getTime()), i);
-
-            int classification = 0;
-
-            try {
-              classification = Integer.parseInt(settings.getProperty(
-                  CalendarExportPlugin.PROP_CLASSIFICATION, "0"));
-            } catch (Exception e) {
-
-            }
-
-            switch (classification) {
-            case 0:
-              out.println("CLASS:PUBLIC");
-              break;
-            case 1:
+            
+            if (settings.isClassificationPrivate()) {
               out.println("CLASS:PRIVATE");
-              break;
-            case 2:
+            }
+            else if (settings.isClassificationConfidential()) {
               out.println("CLASS:CONFIDENTIAL");
-              break;
-
-            default:
-              break;
+            }
+            else if (settings.isClassificationPublic()) {
+              out.println("CLASS:PUBLIC");
             }
 
             out.println("PRIORITY:3");
 
-            if (settings.getProperty(CalendarExportPlugin.PROP_CATEGORY, "")
-                .trim().length() > 0) {
-              out.println("CATEGORIES:"
-                  + settings
-                      .getProperty(CalendarExportPlugin.PROP_CATEGORY, ""));
+            String category = settings.getCategory().trim();
+            if (category.length() > 0) {
+              out.println("CATEGORIES:" + category);
             }
 
             c = CalendarToolbox.getStartAsCalendar(p);
@@ -139,30 +121,18 @@ public abstract class AbstractCalFile {
 
             int showtime = 0;
 
-            try {
-              showtime = Integer.parseInt(settings.getProperty(
-                  CalendarExportPlugin.PROP_SHOWTIME, "0"));
-            } catch (Exception e) {
-
-            }
-
-            switch (showtime) {
-            case 0:
+            if (settings.isShowBusy()) {
               out.println("TRANSP:" + opaque());
-              break;
-            case 1:
+            }
+            else if (settings.isShowFree()) {
               out.println("TRANSP:" + transparent());
-              break;
-            default:
-              break;
             }
 
             out.println("DTEND:" + mDate.format(c.getTime()) + "T"
                 + mTime.format(c.getTime()) + "Z");
 
-            if (settings.getProperty(CalendarExportPlugin.PROP_ALARM, "false")
-                .equals("true")) {
-              printAlarm(settings, out, c);
+            if (settings.getUseAlarm()) {
+              printAlarm(settings.getAlarmMinutes(), out, c);
             }
 
             out.println("END:VEVENT\n");
@@ -185,7 +155,7 @@ public abstract class AbstractCalFile {
   protected abstract void print(File intothis, PrintStreamProcessor processor)
       throws IOException;
 
-  protected abstract void printAlarm(Properties settings, PrintStream out,
+  protected abstract void printAlarm(final int minutes, PrintStream out,
       Calendar c);
 
   protected abstract String transparent();

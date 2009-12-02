@@ -4,11 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Calendar;
-import java.util.Properties;
 
 import util.io.stream.PrintStreamProcessor;
 import util.io.stream.StreamUtilities;
-import calendarexportplugin.CalendarExportPlugin;
 
 public class ICalFile extends AbstractCalFile {
 
@@ -33,13 +31,13 @@ public class ICalFile extends AbstractCalFile {
     return "TRANSPARENT";
   }
 
-  protected void printAlarm(final Properties settings, PrintStream out,
+  protected void printAlarm(final int minutes, PrintStream out,
       Calendar c) {
     out.println("BEGIN:VALARM");
     out.println("DESCRIPTION:");
     out.println("ACTION:DISPLAY");
     out.println("TRIGGER;VALUE=DURATION:-PT"
-        + settings.getProperty(CalendarExportPlugin.PROP_ALARMBEFORE, "0")
+        + minutes
         + "M");
     out.println("END:VALARM");
   }

@@ -22,7 +22,7 @@
  */
 package calendarexportplugin.exporter;
 
-import java.util.Properties;
+import calendarexportplugin.CalendarExportSettings;
 
 /**
  * Abstract Implementation for ExporterIf
@@ -35,7 +35,7 @@ public abstract class AbstractExporter implements ExporterIf {
     return false;
   }
   
-  public void showSettingsDialog(Properties settings) {
+  public void showSettingsDialog(CalendarExportSettings settings) {
   }
   
   @Override

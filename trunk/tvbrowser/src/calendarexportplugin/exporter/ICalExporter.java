@@ -23,10 +23,10 @@
 package calendarexportplugin.exporter;
 
 import java.io.File;
-import java.util.Properties;
 
 import util.program.AbstractPluginProgramFormating;
 import util.ui.Localizer;
+import calendarexportplugin.CalendarExportSettings;
 import calendarexportplugin.utils.ICalFile;
 import devplugin.Program;
 
@@ -50,16 +50,16 @@ public class ICalExporter extends CalExporter {
     return mLocalizer.msg("name","iCal File");
   }
 
-  protected String getSavePath(Properties settings) {
-    return settings.getProperty(SAVE_PATH);
+  protected String getSavePath(CalendarExportSettings settings) {
+    return settings.getExporterProperty(SAVE_PATH);
   }
 
-  protected void setSavePath(Properties settings, String path) {
-    settings.setProperty(SAVE_PATH, path);
+  protected void setSavePath(CalendarExportSettings settings, String path) {
+    settings.setExporterProperty(SAVE_PATH, path);
   }
 
   @Override
-  protected void export(File file, Program[] programs, Properties settings,
+  protected void export(File file, Program[] programs, CalendarExportSettings settings,
       AbstractPluginProgramFormating formating) {
     new ICalFile().export(file, programs, settings, formating);
   }

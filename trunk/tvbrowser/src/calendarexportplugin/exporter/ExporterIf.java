@@ -22,9 +22,8 @@
  */
 package calendarexportplugin.exporter;
 
-import java.util.Properties;
-
 import util.program.AbstractPluginProgramFormating;
+import calendarexportplugin.CalendarExportSettings;
 import devplugin.Program;
 
 /**
@@ -41,7 +40,7 @@ public interface ExporterIf {
    * @param settings the settings
    * @return true, if successfully
    */
-  public boolean exportPrograms(Program[] programs, Properties settings, AbstractPluginProgramFormating formating);
+  public boolean exportPrograms(Program[] programs, CalendarExportSettings settings, AbstractPluginProgramFormating formatting);
   
   /**
    * @return true, if this exporter has a settings-dialog
@@ -52,7 +51,7 @@ public interface ExporterIf {
    * Show settings-dialog
    * @param settings Show Dialog with this settings 
    */
-  public void showSettingsDialog(Properties settings);
+  public void showSettingsDialog(CalendarExportSettings settings);
   
   /**
    * @return Name of Exporter
