@@ -960,8 +960,14 @@ public class FavoritesPlugin {
     mRootNode.addAction(null);
     mRootNode.addAction(openSettings);
     mRootNode.removeAllChildren();
+    mRootNode.getMutableTreeNode().setShowLeafCountEnabled(false);
+    
+    PluginTreeNode topicNode = mRootNode.addNode(Localizer.getLocalization(Localizer.I18N_PROGRAMS));
+    topicNode.setGroupingByDateEnabled(false);
+    PluginTreeNode dateNode = mRootNode.addNode(mLocalizer.msg("days", "Days"));
+    dateNode.setGroupingByDateEnabled(true);
 
-    FavoriteTreeModel.getInstance().updatePluginTree(mRootNode);
+    FavoriteTreeModel.getInstance().updatePluginTree(topicNode, dateNode);
 
     mRootNode.update();
     ReminderPlugin.getInstance().updateRootNode(mHasRightToSave);
