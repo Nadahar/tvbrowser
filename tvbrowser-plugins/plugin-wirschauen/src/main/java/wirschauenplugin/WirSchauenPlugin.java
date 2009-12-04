@@ -342,6 +342,9 @@ public final class WirSchauenPlugin extends Plugin
   @Override
   public void handleTvDataDeleted(final ChannelDayProgram oldProg)
   {
+    if (oldProg == null) {
+      return;
+    }
     //this is also called when a program was changed, ie deleted + added.
     //remove the program from the list of marked programs. if its changed,
     //handleTvDataAdded will add it again (if its linked to omdb).
