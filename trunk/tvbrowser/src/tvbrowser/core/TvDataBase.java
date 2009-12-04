@@ -513,8 +513,10 @@ public class TvDataBase {
         if(ch != null && date != null) {
           if(informPlugins) {
             ChannelDayProgram dayProgram = getDayProgram(date, ch);
-            fireDayProgramTouched(dayProgram, null);
-            fireDayProgramDeleted(dayProgram);
+            if (dayProgram != null) {
+              fireDayProgramTouched(dayProgram, null);
+              fireDayProgramDeleted(dayProgram);
+            }
           }        
           
           removeCacheEntry(getDayProgramKey(date,ch));
