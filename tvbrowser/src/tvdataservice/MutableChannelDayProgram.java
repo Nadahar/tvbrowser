@@ -28,8 +28,6 @@ package tvdataservice;
 import java.util.ArrayList;
 
 import util.program.ProgramUtilities;
-
-//import util.io.IOUtilities;
 import devplugin.Channel;
 import devplugin.ChannelDayProgram;
 import devplugin.Program;
@@ -108,11 +106,24 @@ public class MutableChannelDayProgram implements ChannelDayProgram {
    */
   public Program getProgram(String progID) {
     progID = ProgramUtilities.getTimeZoneCorrectedProgramId(progID);
-    int idlength = progID.split("_").length;
     
+    // avoid split operation
+    int strLen = progID.length();
+    int idlength = 1;
+    for (int i = 0; i < strLen; i++) {
+      if (progID.charAt(i) == '_') {
+        idlength++;
+      }
+    }
+
     for(Program prog : mProgramList) {
       String id = prog.getID();
-      if(idlength < 4) {
+      if (idlength > 4) {
+        if (progID.compareTo(id) == 0) {
+          return prog;
+        }
+      }
+      else if(idlength < 4) {
         String[] temp = id.split("_");
        
         id = temp[temp.length - 2] + "_" + temp[temp.length - 1];
@@ -123,9 +134,6 @@ public class MutableChannelDayProgram implements ChannelDayProgram {
         id = temp[0] + "_" + temp[1] + "_" + temp[temp.length - 2] + "_" + temp[temp.length - 1];        
       }
       
-      if (progID.compareTo(id) == 0) {
-        return prog;
-      }
     }
 
     // nothing found
