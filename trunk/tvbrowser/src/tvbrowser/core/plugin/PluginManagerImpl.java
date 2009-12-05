@@ -174,14 +174,17 @@ public class PluginManagerImpl implements PluginManager {
     
     Channel ch = getChannelFromProgId(progID);
     if (ch != null && ChannelList.isSubscribedChannel(ch)) {
-      String[] id = progID.split("_");
-      String[] hourMinute = id[id.length-1].split(":");
+      int index = progID.lastIndexOf('_');
+      String timeString = progID.substring(index + 1);
+      int hourIndex = timeString.indexOf(':');
+      int offsetIndex = timeString.lastIndexOf(':');
 
-      if(hourMinute.length > 2) {
-        int timeZoneOffset = Integer.parseInt(hourMinute[2]);
+      if(hourIndex != offsetIndex) {
+        int timeZoneOffset = Integer.parseInt(timeString.substring(offsetIndex + 1));
         int currentTimeZoneOffset = TimeZone.getDefault().getRawOffset()/60000;
         
         if(timeZoneOffset != currentTimeZoneOffset) {
+          String[] hourMinute = timeString.split(":");
           int timeZoneDiff = currentTimeZoneOffset - timeZoneOffset;
           
           int hour = Integer.parseInt(hourMinute[0]) + (timeZoneDiff/60);
@@ -200,30 +203,22 @@ public class PluginManagerImpl implements PluginManager {
           hourMinute[1] = String.valueOf(minute);
           hourMinute[2] = String.valueOf(currentTimeZoneOffset);
           
-          StringBuilder newId = new StringBuilder();
-          
-          for(int i = 0; i < id.length-1; i++) {
-            newId.append(id[i]).append("_");
-          }
-          
+          StringBuilder newId = new StringBuilder(progID.substring(0, index + 1));
           newId.append(hourMinute[0]).append(":").append(hourMinute[1]).append(":").append(hourMinute[2]);
           
           progID = newId.toString();
         }
       }
       else {
-        StringBuilder newId = new StringBuilder();
-        
-        for(int i = 0; i < id.length-1; i++) {
-          newId.append(id[i]).append("_");
-        }
-        
+        String[] hourMinute = timeString.split(":");
+        StringBuilder newId = new StringBuilder(progID.substring(0, index + 1));
         newId.append(hourMinute[0]).append(":").append(hourMinute[1]).append(":").append(TimeZone.getDefault().getRawOffset()/60000);
         
         progID = newId.toString();
       }      
       
-      if(!ch.getTimeZone().equals(TimeZone.getDefault())) {
+      if(ch.getTimeZone().getRawOffset() != TimeZone.getDefault().getRawOffset()) {
+        String[] hourMinute = timeString.split(":");
         int milliSeconds = Integer.parseInt(hourMinute[0]) * 60 * 60 * 1000 + Integer.parseInt(hourMinute[1]) * 60 * 1000;
 
         int diff = Math.abs(ch.getTimeZone().getRawOffset() - TimeZone.getDefault().getRawOffset());
@@ -279,6 +274,23 @@ public class PluginManagerImpl implements PluginManager {
 
 
   private Channel getChannelFromProgId(String progId) {
+    // try to avoid the split operation as it is costly
+    int strLen = progId.length();
+    int count = 0;
+    int lastSeparator = 0;
+    for (int i = 0; i < strLen; i++) {
+      if (progId.charAt(i) == '_') {
+        count++;
+        lastSeparator = i;
+      }
+    }
+    if (count == 4) {
+      Channel channel = ChannelList.getChannel(progId.substring(0, lastSeparator));
+      if (channel != null) {
+        return channel;
+      }
+    }
+
     String[] s = progId.split("_");    
     
     if(s.length < 4) {

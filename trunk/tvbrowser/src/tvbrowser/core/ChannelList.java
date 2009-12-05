@@ -898,4 +898,8 @@ public class ChannelList {
     return mCurrentChangeChannel != null && ch != null && mCurrentChangeChannel.equals(ch);
   }
 
+  public static Channel getChannel(final String uniqueId) {
+    return mAvailableChannelsMap.get(uniqueId);
+  }
+
 }

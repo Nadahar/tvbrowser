@@ -479,14 +479,17 @@ public class ProgramUtilities {
    * @since 2.7
    */
   public static String getTimeZoneCorrectedProgramId(String progID) {
-    String[] id = progID.split("_");
-    String[] hourMinute = id[id.length-1].split(":");
+    int index = progID.lastIndexOf('_');
+    String timeString = progID.substring(index + 1);
+    int hourIndex = timeString.indexOf(':');
+    int offsetIndex = timeString.lastIndexOf(':');
     
-    if(hourMinute.length > 2) {
-      int timeZoneOffset = Integer.parseInt(hourMinute[2]);
+    if(hourIndex != offsetIndex) {
+      int timeZoneOffset = Integer.parseInt(timeString.substring(offsetIndex + 1));
       int currentTimeZoneOffset = TimeZone.getDefault().getRawOffset()/60000;
       
       if(timeZoneOffset != currentTimeZoneOffset) {
+        String[] hourMinute = timeString.split(":");
         int timeZoneDiff = currentTimeZoneOffset - timeZoneOffset;
         
         int hour = Integer.parseInt(hourMinute[0]) + (timeZoneDiff/60);
@@ -503,24 +506,15 @@ public class ProgramUtilities {
         hourMinute[1] = String.valueOf(minute);
         hourMinute[2] = String.valueOf(currentTimeZoneOffset);
         
-        StringBuilder newId = new StringBuilder();
-        
-        for(int i = 0; i < id.length-1; i++) {
-          newId.append(id[i]).append("_");
-        }
-        
+        StringBuilder newId = new StringBuilder(progID.substring(index + 1));
         newId.append(hourMinute[0]).append(":").append(hourMinute[1]).append(":").append(hourMinute[2]);
         
         return newId.toString();
       }
     }
     else {
-      StringBuilder newId = new StringBuilder();
-      
-      for(int i = 0; i < id.length-1; i++) {
-        newId.append(id[i]).append("_");
-      }
-      
+      String[] hourMinute = timeString.split(":");
+      StringBuilder newId = new StringBuilder(progID.substring(index + 1));
       newId.append(hourMinute[0]).append(":").append(hourMinute[1]).append(":").append(TimeZone.getDefault().getRawOffset()/60000);
       
       return newId.toString();
