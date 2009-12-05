@@ -419,7 +419,7 @@ public final class DataViewerPlugin extends Plugin implements Runnable {
     }
 
     {
-      int j = -1;
+      int dateOffset = -1;
       boolean found = false;
 
       for (int i = 0; i < mChannels.length; i++) {
@@ -431,9 +431,10 @@ public final class DataViewerPlugin extends Plugin implements Runnable {
       do {
         found = false;
 
-        for (int i = 0; i < mChannels.length; i++) {
+        Date date = mToday.addDays(dateOffset);
+        for (int channelIndex = 0; channelIndex < mChannels.length; channelIndex++) {
           Iterator<Program> it = getPluginManager().getChannelDayProgram(
-              Date.getCurrentDate().addDays(j), mChannels[i]);
+              date, mChannels[channelIndex]);
 
           boolean complete = true;
           boolean picture = false;
@@ -442,18 +443,18 @@ public final class DataViewerPlugin extends Plugin implements Runnable {
           short endTimeLimit = 0;
 
           try {
-            Method method = mChannels[i].getClass().getMethod("getStartTimeLimit", new Class[0]);
-            startTimeLimit = ((Integer)method.invoke(mChannels[i],new Object[0])).shortValue();
+            Method method = mChannels[channelIndex].getClass().getMethod("getStartTimeLimit", new Class[0]);
+            startTimeLimit = ((Integer)method.invoke(mChannels[channelIndex],new Object[0])).shortValue();
 
-            method = mChannels[i].getClass().getMethod("getEndTimeLimit", new Class[0]);
-            endTimeLimit = ((Integer)method.invoke(mChannels[i],new Object[0])).shortValue();
+            method = mChannels[channelIndex].getClass().getMethod("getEndTimeLimit", new Class[0]);
+            endTimeLimit = ((Integer)method.invoke(mChannels[channelIndex],new Object[0])).shortValue();
           } catch (Exception e) {}
 
           if (it != null && it.hasNext()) {
             found = true;
 
-            if (last[i] == null) {
-              last[i] = it.next();
+            if (last[channelIndex] == null) {
+              last[channelIndex] = it.next();
             }
 
             while (it.hasNext()) {
@@ -461,8 +462,8 @@ public final class DataViewerPlugin extends Plugin implements Runnable {
               picture = picture
                   || p1.hasFieldValue(ProgramFieldType.PICTURE_TYPE);
 
-              if (j != -1) {
-                int length = last[i].getStartTime() + last[i].getLength();
+              if (dateOffset != -1) {
+                int length = last[channelIndex].getStartTime() + last[channelIndex].getLength();
 
                 if(endTimeLimit - startTimeLimit < 0) {
                   length = length >= 1439 ? length - 1439 : length;
@@ -480,32 +481,32 @@ public final class DataViewerPlugin extends Plugin implements Runnable {
                 length = length >= 1439 ? length - 1439 : length;
 
                 if (p1.getStartTime() - acceptableGap > length || p1.getStartTime() + acceptableGap < length || p1.getLength() > acceptableDuration * 60) {
-                  putInHashMap(err, p1, mChannels[i], channels[i].size());
+                  putInHashMap(err, p1, mChannels[channelIndex], channels[channelIndex].size());
                   complete = false;
                 }
               }
 
-              last[i] = p1;
+              last[channelIndex] = p1;
             }
 
-            if (endTimeLimit == startTimeLimit && (last[i].getStartTime() + last[i].getLength() <= last[i].getStartTime() && j != -1)) {
-              putInHashMap(err, last[i], mChannels[i], channels[i].size());
+            if (endTimeLimit == startTimeLimit && (last[channelIndex].getStartTime() + last[channelIndex].getLength() <= last[channelIndex].getStartTime() && dateOffset != -1)) {
+              putInHashMap(err, last[channelIndex], mChannels[channelIndex], channels[channelIndex].size());
               complete = false;
             }
 
-            if (complete && j != -1) {
-              channels[i].add("true" + (picture ? "pict" : ""));
-            } else if (j != -1) {
-              channels[i].add("uncomplete" + (picture ? "pict" : ""));
+            if (complete && dateOffset != -1) {
+              channels[channelIndex].add("true" + (picture ? "pict" : ""));
+            } else if (dateOffset != -1) {
+              channels[channelIndex].add("uncomplete" + (picture ? "pict" : ""));
             }
-          } else if (j != -1) {
-            channels[i].add("false");
-            last[i] = null;
+          } else if (dateOffset != -1) {
+            channels[channelIndex].add("false");
+            last[channelIndex] = null;
           }
         }
-        j++;
+        dateOffset++;
 
-      } while (found || j == 0);
+      } while (found || dateOffset == 0);
     }
     mDataTable = new Object[mChannels.length][channels[0].size() - 1];
     mChannelTable = new Channel[mChannels.length][1];
@@ -518,9 +519,8 @@ public final class DataViewerPlugin extends Plugin implements Runnable {
 
       for (int j = 0; j < channels[0].size() - 1; j++) {
         if (i == 0) {
-          mDates[j] = Date.getCurrentDate().addDays(j);
-          mDateString[j] = Date.getCurrentDate().addDays(j).getDayOfMonth()
-          + ".";
+          mDates[j] = mToday.addDays(j);
+          mDateString[j] = mDates[j].getDayOfMonth()+ ".";
         }
         if (err.containsKey(mChannels[i])) {
 
