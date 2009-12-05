@@ -456,11 +456,12 @@ public class CheckerPlugin extends Plugin {
       final HashMap<String, PluginTreeNode> nodes = new HashMap<String, PluginTreeNode>();
       final Channel[] channels = devplugin.Plugin.getPluginManager()
           .getSubscribedChannels();
+      Date currentDate = Date.getCurrentDate();
       for (Channel channel : channels) {
         if (!isSupportedChannel(channel)) {
           continue;
         }
-        Date date = Date.getCurrentDate();
+        Date date = currentDate;
         for (int days = 0; days < 30; days++) {
           final Iterator<Program> iter = Plugin.getPluginManager()
               .getChannelDayProgram(date, channel);
