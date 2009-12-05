@@ -456,14 +456,18 @@ public final class WirSchauenPlugin extends Plugin
       {
         //load the linked programs and mark them
         mLinkedPrograms = (ArrayList<ProgramId>) in.readObject();
+        ArrayList<ProgramId> currentPrograms = new ArrayList<ProgramId>(mLinkedPrograms.size());
         for (ProgramId programId : mLinkedPrograms)
         {
           Program program = getPluginManager().getProgram(programId.getDate(), programId.getId());
           if (program != null)
           {
             program.mark(this);
+            currentPrograms.add(programId);
           }
         }
+        // we have now removed all no more existing programs
+        mLinkedPrograms = currentPrograms;
       }
     }
     catch (final EOFException e)
