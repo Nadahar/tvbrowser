@@ -34,6 +34,8 @@ import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -483,6 +485,14 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
   }
   
   public void writeData(final ObjectOutputStream out) throws IOException {
+    // sort the list so that often used entries are in the front (for faster lookup)
+    Collections.sort(mSettings.getSearchList(), new Comparator<IDontWant2SeeListEntry>() {
+
+      public int compare(IDontWant2SeeListEntry o1, IDontWant2SeeListEntry o2) {
+        return o2.getLastMatchedDate().compareTo(o1.getLastMatchedDate());
+      }
+    });
+    
     out.writeInt(6); //version
     out.writeInt(mSettings.getSearchList().size());
     
