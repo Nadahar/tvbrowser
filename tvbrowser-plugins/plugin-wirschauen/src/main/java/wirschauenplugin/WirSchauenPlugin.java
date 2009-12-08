@@ -71,7 +71,7 @@ public final class WirSchauenPlugin extends Plugin
   /**
    * the version of this plugin.
    */
-  private static final Version VERSION = new Version(0, 14, 0, IS_STABLE);
+  private static final Version VERSION = new Version(0, 15, 0, IS_STABLE);
 
   /**
    * this is the key used to store the show markings option in a property
@@ -83,7 +83,7 @@ public final class WirSchauenPlugin extends Plugin
   /**
    * this class is a singleton. kind of. the constructor is not restricted so
    * there might be more than one instance. but the getInstance method will
-   * alway return the last created instance.
+   * always return the last created instance.
    */
   private static WirSchauenPlugin mInstance;
 
@@ -106,7 +106,28 @@ public final class WirSchauenPlugin extends Plugin
    * the plugin is restricted to specific channels, ie vg media. this might be
    * removed in future versions.
    */
-  private static ArrayList<String> mAllowedChannels;
+  private static ArrayList<String> mAllowedChannels = new ArrayList<String>(20);
+  static
+  {
+    mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:rtl");
+    mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:rtl2");
+    mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:superrtl");
+    mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:pro7");
+    mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:sat1");
+    mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:vox");
+    mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:COMEDYCENTRAL");
+    mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:dsf");
+    mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:kabel1");
+    mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:MTV");
+    mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:n24");
+    mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:NICK");
+    mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:NTV");
+    mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:VIVA");
+    mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:puls4");
+    mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:RTLPASSION");
+    mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:RTLLIVING");
+    mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:RTLCRIME");
+  }
 
   /**
    * all the filters defined by this plugin (for now its one). lazy init, see getAvailableFilter.
@@ -146,27 +167,6 @@ public final class WirSchauenPlugin extends Plugin
   public WirSchauenPlugin()
   {
     mInstance = this;
-
-    //TODO thats static so we should do this in a static init block
-    mAllowedChannels = new ArrayList<String>(20);
-    mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:rtl");
-    mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:rtl2");
-    mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:superrtl");
-    mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:pro7");
-    mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:sat1");
-    mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:vox");
-    mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:COMEDYCENTRAL");
-    mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:dsf");
-    mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:kabel1");
-    mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:MTV");
-    mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:n24");
-    mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:NICK");
-    mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:NTV");
-    mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:VIVA");
-    mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:puls4");
-    mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:RTLPASSION");
-    mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:RTLLIVING");
-    mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:RTLCRIME");
   }
 
 
