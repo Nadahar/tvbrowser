@@ -139,6 +139,7 @@ public final class WirSchauenPlugin extends Plugin
 
 
 
+
   /**
    * Creates the Plugin.
    */
@@ -470,6 +471,7 @@ public final class WirSchauenPlugin extends Plugin
   public void readData(final ObjectInputStream in) throws IOException, ClassNotFoundException
   {
     loadTree();
+
     try
     {
       //read version (for future compatibility issues)
@@ -489,8 +491,6 @@ public final class WirSchauenPlugin extends Plugin
             mLinkedPrograms.remove(i);
           }
         }
-
-        changeMarkingOfLinkedPrograms(mShowMarkings);
       }
     }
     catch (final EOFException e)
@@ -512,6 +512,11 @@ public final class WirSchauenPlugin extends Plugin
     {
       mShowMarkings = Boolean.parseBoolean(settings.getProperty(WirSchauenPlugin.OPTION_KEY_SHOW_MARKINGS));
     }
+
+    //loadSettings is called after readData. so all linked programs are loaded. now we have to
+    //(un)mark them.
+    changeMarkingOfLinkedPrograms(mShowMarkings);
+    changeMarkingOfProgramsInTree(mShowMarkings);
   }
 
 
@@ -635,6 +640,19 @@ public final class WirSchauenPlugin extends Plugin
   }
 
 
+  private void changeMarkingOfProgram(Program program, boolean mark)
+  {
+    if (mark)
+    {
+      program.mark(this);
+    }
+    else
+    {
+      program.unmark(this);
+    }
+  }
+
+
   /**
    * this walks through all the linkedPrograms (mLinkedPrograms) and (un)marks them.
    *
@@ -647,15 +665,17 @@ public final class WirSchauenPlugin extends Plugin
       Program program = getPluginManager().getProgram(programId.getDate(), programId.getId());
       if (program != null)
       {
-        if (mark)
-        {
-          program.mark(this);
-        }
-        else
-        {
-          program.unmark(this);
-        }
+        changeMarkingOfProgram(program, mark);
       }
+    }
+  }
+
+
+  private void changeMarkingOfProgramsInTree(final boolean mark)
+  {
+    for (Program program : getRootNode().getPrograms())
+    {
+      changeMarkingOfProgram(program, mark);
     }
   }
 
@@ -671,20 +691,19 @@ public final class WirSchauenPlugin extends Plugin
     if (mShowMarkings != showMarkings)
     {
       changeMarkingOfLinkedPrograms(showMarkings);
-      for (Program program : getRootNode().getPrograms())
-      {
-        if (showMarkings)
-        {
-          program.mark(this);
-        }
-        else
-        {
-          program.unmark(this);
-        }
-      }
+      changeMarkingOfProgramsInTree(showMarkings);
     }
     //remember the new value
     mShowMarkings = showMarkings;
+  }
+
+
+  /**
+   * @return true if linked programs should be marked in the program table
+   */
+  public boolean getShowMarkings()
+  {
+    return mShowMarkings;
   }
 }
 

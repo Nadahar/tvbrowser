@@ -44,7 +44,7 @@ public class WirSchauenSettingsTab implements SettingsTab
 
     JPanel panel = new JPanel(new FormLayout("pref, 3dlu, pref:grow", "pref"));
     panel.setBorder(Borders.DLU4_BORDER);
-    mMarkerCheckbox = new JCheckBox(WirSchauenPlugin.LOCALIZER.msg("Settings.ShowMarking", "Mark programs which are linked with the OMDB."), true);
+    mMarkerCheckbox = new JCheckBox(WirSchauenPlugin.LOCALIZER.msg("Settings.ShowMarking", "Mark programs which are linked with the OMDB."), WirSchauenPlugin.getInstance().getShowMarkings());
     panel.add(mMarkerCheckbox, new CellConstraints().xy(1, 1));
     return panel;
   }
