@@ -73,6 +73,12 @@ public final class WirSchauenPlugin extends Plugin
    */
   private static final Version VERSION = new Version(0, 14, 0, IS_STABLE);
 
+  /**
+   * this is the key used to store the show markings option in a property
+   * (see storeSettings and loadSettings).
+   */
+  private static final String OPTION_KEY_SHOW_MARKINGS = "showMarkings";
+
 
   /**
    * this class is a singleton. kind of. the constructor is not restricted so
@@ -504,7 +510,7 @@ public final class WirSchauenPlugin extends Plugin
   {
     if (settings != null && settings.containsKey("showMarkings"))
     {
-      mShowMarkings = Boolean.parseBoolean(settings.getProperty("showMarkings"));
+      mShowMarkings = Boolean.parseBoolean(settings.getProperty(WirSchauenPlugin.OPTION_KEY_SHOW_MARKINGS));
     }
   }
 
@@ -520,7 +526,7 @@ public final class WirSchauenPlugin extends Plugin
     //we build the properties here, cause we have just one bool (instead of holding
     //the props in this object). saves a lot of mem but costs a bit cpu on shutdown.
     Properties settings = new Properties();
-    settings.setProperty("showMarkings", Boolean.toString(mShowMarkings));
+    settings.setProperty(WirSchauenPlugin.OPTION_KEY_SHOW_MARKINGS, Boolean.toString(mShowMarkings));
     return settings;
   }
 
