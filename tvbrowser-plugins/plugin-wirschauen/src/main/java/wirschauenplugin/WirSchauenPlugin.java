@@ -26,6 +26,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Properties;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -43,6 +44,7 @@ import devplugin.PluginsFilterComponent;
 import devplugin.PluginsProgramFilter;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
+import devplugin.SettingsTab;
 import devplugin.ThemeIcon;
 import devplugin.Version;
 
@@ -111,6 +113,12 @@ public final class WirSchauenPlugin extends Plugin
   private static WirSchauenFilterComponent mComponent;
 
   /**
+   * this is the option to switch on/off the markings for linked programs in the
+   * program table. its set via the WirSchauenSettingsTab.
+   */
+  private boolean mShowMarkings = true;
+
+  /**
    * the root node for the plugin tree. overrides Plugin with a marked tree.
    */
   private PluginTreeNode mRootNode = new PluginTreeNode(this, false);
@@ -122,6 +130,7 @@ public final class WirSchauenPlugin extends Plugin
    * ourselves.
    */
   private ArrayList<ProgramId> mLinkedPrograms = new ArrayList<ProgramId>();
+
 
 
   /**
@@ -221,7 +230,7 @@ public final class WirSchauenPlugin extends Plugin
    *
    * @return the icon for the context menu.
    */
-  private Icon getIcon()
+  public Icon getIcon()
   {
     if (mIcon == null)
     {
@@ -259,7 +268,7 @@ public final class WirSchauenPlugin extends Plugin
 
   /**
    * all programs with an omdb link will marked with prio 1. all programs
-   * wich the user linked to omdb will be marked with prio 2.
+   * which the user linked to omdb will be marked with prio 2.
    *
    * @param program the program to mark
    * @return the mark priority
@@ -271,7 +280,7 @@ public final class WirSchauenPlugin extends Plugin
     int prio = Program.NO_MARK_PRIORITY;
     if (getRootNode().contains(program))
     {
-      //mark all programs wich were linked by the user (those are in the tree)
+      //mark all programs which were linked by the user (those are in the tree)
       prio = Program.LOWER_MEDIUM_MARK_PRIORITY;
     }
     else if (program.getTextField(ProgramFieldType.URL_TYPE) != null)
@@ -304,8 +313,11 @@ public final class WirSchauenPlugin extends Plugin
   {
     getRootNode().addProgram(program);
     getRootNode().update();
-    program.mark(this);
-    program.validateMarking();
+    if (mShowMarkings)
+    {
+      program.mark(this);
+      program.validateMarking();
+    }
   }
 
 
@@ -328,7 +340,10 @@ public final class WirSchauenPlugin extends Plugin
       //if the program is in vgmedia and has an omdb-link, mark it and remember that we marked it
       if (isProgramAllowed(program) && program.getTextField(ProgramFieldType.URL_TYPE) != null && !"".equals(program.getTextField(ProgramFieldType.URL_TYPE)))
       {
-        program.mark(this);
+        if (mShowMarkings)
+        {
+          program.mark(this);
+        }
         mLinkedPrograms.add(new ProgramId(program.getDate(), program.getID()));
       }
     }
@@ -342,7 +357,8 @@ public final class WirSchauenPlugin extends Plugin
   @Override
   public void handleTvDataDeleted(final ChannelDayProgram oldProg)
   {
-    if (oldProg == null) {
+    if (oldProg == null)
+    {
       return;
     }
     //this is also called when a program was changed, ie deleted + added.
@@ -456,18 +472,19 @@ public final class WirSchauenPlugin extends Plugin
       {
         //load the linked programs and mark them
         mLinkedPrograms = (ArrayList<ProgramId>) in.readObject();
-        ArrayList<ProgramId> currentPrograms = new ArrayList<ProgramId>(mLinkedPrograms.size());
-        for (ProgramId programId : mLinkedPrograms)
+
+        //remove programs from the list which are no longer available. crawl backwards
+        //through the list so removed items will not interfere.
+        for (int i = mLinkedPrograms.size() - 1; i >= 0; i--)
         {
-          Program program = getPluginManager().getProgram(programId.getDate(), programId.getId());
-          if (program != null)
+          ProgramId programId = mLinkedPrograms.get(i);
+          if (getPluginManager().getProgram(programId.getDate(), programId.getId()) == null)
           {
-            program.mark(this);
-            currentPrograms.add(programId);
+            mLinkedPrograms.remove(i);
           }
         }
-        // we have now removed all no more existing programs
-        mLinkedPrograms = currentPrograms;
+
+        changeMarkingOfLinkedPrograms(mShowMarkings);
       }
     }
     catch (final EOFException e)
@@ -475,6 +492,36 @@ public final class WirSchauenPlugin extends Plugin
       //thrown if the file for the data was not found. we can ignore that
       //cause on exit the tvb will create the file.
     }
+  }
+
+
+  /**
+   * {@inheritDoc}
+   * @see devplugin.Plugin#loadSettings(java.util.Properties)
+   */
+  @Override
+  public void loadSettings(final Properties settings)
+  {
+    if (settings != null && settings.containsKey("showMarkings"))
+    {
+      mShowMarkings = Boolean.parseBoolean(settings.getProperty("showMarkings"));
+    }
+  }
+
+
+
+  /**
+   * {@inheritDoc}
+   * @see devplugin.Plugin#storeSettings()
+   */
+  @Override
+  public Properties storeSettings()
+  {
+    //we build the properties here, cause we have just one bool (instead of holding
+    //the props in this object). saves a lot of mem but costs a bit cpu on shutdown.
+    Properties settings = new Properties();
+    settings.setProperty("showMarkings", Boolean.toString(mShowMarkings));
+    return settings;
   }
 
 
@@ -547,6 +594,18 @@ public final class WirSchauenPlugin extends Plugin
     return LOCALIZER.msg("icon", "WirSchauen: Description for this program is missing");
   }
 
+
+  /**
+   * {@inheritDoc}
+   * @see devplugin.Plugin#getSettingsTab()
+   */
+  @Override
+  public SettingsTab getSettingsTab()
+  {
+    return new WirSchauenSettingsTab();
+  }
+
+
   /**
    * checks if a program is allowed to be processed by wirschauen. the method
    * checks, if the programs channel is in the vg media. if so, the program is
@@ -567,6 +626,59 @@ public final class WirSchauenPlugin extends Plugin
     name = name + program.getChannel().getId();
 
     return (getPluginManager().getExampleProgram().equals(program) || mAllowedChannels.contains(name));
+  }
+
+
+  /**
+   * this walks through all the linkedPrograms (mLinkedPrograms) and (un)marks them.
+   *
+   * @param mark true to mark the program, false otherwise
+   */
+  private void changeMarkingOfLinkedPrograms(final boolean mark)
+  {
+    for (ProgramId programId : mLinkedPrograms)
+    {
+      Program program = getPluginManager().getProgram(programId.getDate(), programId.getId());
+      if (program != null)
+      {
+        if (mark)
+        {
+          program.mark(this);
+        }
+        else
+        {
+          program.unmark(this);
+        }
+      }
+    }
+  }
+
+
+
+  /**
+   * @param showMarkings true if linked programs should be marked in the program table
+   */
+  public void setShowMarkings(final boolean showMarkings)
+  {
+    //if this option was changed, we have to go through all linkedPrograms and
+    //TreeNodes and switch the marking.
+    if (mShowMarkings != showMarkings)
+    {
+      changeMarkingOfLinkedPrograms(showMarkings);
+      for (Program program : getRootNode().getPrograms())
+      {
+        if (showMarkings)
+        {
+          program.mark(this);
+        }
+        else
+        {
+          program.unmark(this);
+        }
+      }
+    }
+    //remember the new value
+    mShowMarkings = showMarkings;
   }
 }
 
