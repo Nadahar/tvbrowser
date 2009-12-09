@@ -224,7 +224,7 @@ public class CreateWirSchauenDataDialog extends JDialog implements WindowClosing
 
 
   /**
-   * the used properties of the WirSchauenEvent are:<br>
+   * the used properties of the WirSchauenEvent are...<br>
    * <ul>
    * <li>Category</li>
    * <li>Desc</li>

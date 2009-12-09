@@ -193,24 +193,24 @@ public class WirSchauenEvent extends DefaultHandler
 
 
   /**
-   * called by the sax parser. create a new container for the element content.
-   *
+   * {@inheritDoc}
    * @see org.xml.sax.helpers.DefaultHandler#startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes)
    */
   @Override
   public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException
   {
+    //called by the sax parser. create a new container for the element content.
     mCharacters = new StringBuilder();
   }
 
   /**
-   * called by the sax parser. copy and save the element content.
-   *
+   * {@inheritDoc}
    * @see org.xml.sax.helpers.DefaultHandler#endElement(java.lang.String, java.lang.String, java.lang.String)
    */
   @Override
   public void endElement(final String uri, final String localName, final String qName) throws SAXException
   {
+    //called by the sax parser. copy and save the element content.
     /*
      * <event>
      *   <event_id>7519</event_id>
@@ -280,13 +280,13 @@ public class WirSchauenEvent extends DefaultHandler
 
 
   /**
-   * called by the sax parser. saves the element content.
-   *
+   * {@inheritDoc}
    * @see org.xml.sax.helpers.DefaultHandler#characters(char[], int, int)
    */
   @Override
-  public void characters(final char ch[], final int start, final int length) throws SAXException
+  public void characters(final char[] ch, final int start, final int length) throws SAXException
   {
+    //called by the sax parser. saves the element content.
     mCharacters.append(ch, start, length);
   }
 
