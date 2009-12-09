@@ -371,6 +371,8 @@ public final class WirSchauenPlugin extends Plugin
     //this is also called when a program was changed, ie deleted + added.
     //remove the program from the list of marked programs. if its changed,
     //handleTvDataAdded will add it again (if its linked to omdb).
+    //CAUTION: this mehtod will NOT be called, if programs are removed by
+    //the tvb at startup.
     Iterator<Program> programIterator = oldProg.getPrograms();
     Program program;
     ProgramId programId = new ProgramId(); //reusable (needed to delete the program)
@@ -640,7 +642,13 @@ public final class WirSchauenPlugin extends Plugin
   }
 
 
-  private void changeMarkingOfProgram(Program program, boolean mark)
+  /**
+   * (un)marks a program.
+   *
+   * @param program the program to (un)mark
+   * @param mark true if the program is to be marked, false otherwise
+   */
+  private void changeMarkingOfProgram(final Program program, final boolean mark)
   {
     if (mark)
     {
@@ -656,7 +664,7 @@ public final class WirSchauenPlugin extends Plugin
   /**
    * this walks through all the linkedPrograms (mLinkedPrograms) and (un)marks them.
    *
-   * @param mark true to mark the program, false otherwise
+   * @param mark true to mark the programs, false otherwise
    */
   private void changeMarkingOfLinkedPrograms(final boolean mark)
   {
@@ -671,6 +679,11 @@ public final class WirSchauenPlugin extends Plugin
   }
 
 
+  /**
+   * this walks through plugin tree an (un)marks all programs.
+   *
+   * @param mark true to mark the programs, false otherwise
+   */
   private void changeMarkingOfProgramsInTree(final boolean mark)
   {
     for (Program program : getRootNode().getPrograms())
