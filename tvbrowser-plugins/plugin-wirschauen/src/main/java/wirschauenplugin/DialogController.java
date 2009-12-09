@@ -77,7 +77,7 @@ public class DialogController
     final LoadingInfoDialog loadingInfoDialog = new LoadingInfoDialog(mParent, "WirSchauen");
 
     //load the wirschauen data in a new thread.
-    new Thread() {
+    Thread loader = new Thread() {
       @Override
       public void run()
       {
@@ -109,7 +109,8 @@ public class DialogController
           });
         }
       }
-    }.start();
+    };
+    loader.start();
 
     UiUtilities.centerAndShow(loadingInfoDialog);
   }
@@ -156,7 +157,7 @@ public class DialogController
           if (!createOmdbLinkDialog.isCancelled())
           {
             //save the new data (= omdb link) in wirschauen (in its own thread)
-            new Thread()
+            Thread saver = new Thread()
             {
               @Override
               public void run()
@@ -191,7 +192,8 @@ public class DialogController
                   });
                 }
               }
-            }.start();
+            };
+            saver.start();
           }
         }
         else if (buttonPressed == 1)
@@ -205,7 +207,7 @@ public class DialogController
           if (!createWirSchauenDataDialog.isCancelled() && !createWirSchauenDataDialog.getWirSchauenInput().equals(wirSchauenEvent, true))
           {
             //save the new data in wirschauen (in its own thread)
-            new Thread()
+            Thread saver = new Thread()
             {
               @Override
               public void run()
@@ -240,7 +242,8 @@ public class DialogController
                   });
                 }
               }
-            }.start();
+            };
+            saver.start();
           }
         }
       }
@@ -250,7 +253,7 @@ public class DialogController
         //create i-am-busy-dialog
         final LoadingInfoDialog loadingOmdbDataDialog = new LoadingInfoDialog(mParent, "OMDB");
         //load omdb-data in its own thread.
-        new Thread()
+        Thread loader = new Thread()
         {
           @Override
           public void run()
@@ -285,7 +288,8 @@ public class DialogController
               });
             }
           }
-        }.start();
+        };
+        loader.start();
         //show i-am-busy-dialog
         UiUtilities.centerAndShow(loadingOmdbDataDialog);
       }
@@ -321,7 +325,7 @@ public class DialogController
       if (!createOmdbAbstractDialog.isCancelled() && !createOmdbAbstractDialog.getOmdbAbstractInput().equals(omdbAbstract))
       {
         //save the abstract to omdb
-        new Thread()
+        Thread saver = new Thread()
         {
           @Override
           public void run()
@@ -358,7 +362,8 @@ public class DialogController
               });
             }
           }
-        }.start();
+        };
+        saver.start();
       }
     }
   }
