@@ -47,13 +47,38 @@ public class ProgramId implements Serializable
 
 
   /**
+   * default constructor.
+   */
+  public ProgramId()
+  {
+  }
+
+
+  /**
    * @param date the date of a program
    * @param id the id of a program
    */
   public ProgramId(final Date date, final String id)
   {
+    this();
     this.mDate = date;
     this.mId = id;
+  }
+
+
+  /**
+   * method for 'fluent programming'. sets the date and the id values
+   * of thsi object an returns it.
+   *
+   * @param date the date to set
+   * @param id the id to set
+   * @return the object (this)
+   */
+  public ProgramId setValues(final Date date, final String id)
+  {
+    this.mDate = date;
+    this.mId = id;
+    return this;
   }
 
 

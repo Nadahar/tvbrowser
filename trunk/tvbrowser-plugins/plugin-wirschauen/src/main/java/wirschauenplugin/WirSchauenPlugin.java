@@ -373,6 +373,7 @@ public final class WirSchauenPlugin extends Plugin
     //handleTvDataAdded will add it again (if its linked to omdb).
     Iterator<Program> programIterator = oldProg.getPrograms();
     Program program;
+    ProgramId programId = new ProgramId(); //reusable (needed to delete the program)
     while (programIterator.hasNext())
     {
       program = programIterator.next();
@@ -380,8 +381,7 @@ public final class WirSchauenPlugin extends Plugin
       if (isProgramAllowed(program) && program.getTextField(ProgramFieldType.URL_TYPE) != null && !"".equals(program.getTextField(ProgramFieldType.URL_TYPE)))
       {
         program.unmark(this);
-        //TODO dont create always new ProgramId object. reuse just one.
-        mLinkedPrograms.remove(new ProgramId(program.getDate(), program.getID()));
+        mLinkedPrograms.remove(programId.setValues(program.getDate(), program.getID()));
       }
     }
   }
