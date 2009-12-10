@@ -61,7 +61,7 @@ import util.ui.ImageUtilities;
  * <li>Put the jar in the <code>plugin</code> directory of your TV-Browser
  * installation.
  * </ol>
- * 
+ *
  * @author Martin Oberhauser
  * @author Til Schneider, www.murfman.de
  */
@@ -70,22 +70,22 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
   /**
    * The name to use for the big icon (the 22x22 one for the toolbar) of the
    * button action.
-   * 
+   *
    * @see #getButtonAction()
    */
   public static final String BIG_ICON = "BigIcon";
 
   /** The name to use for disabling a menu part for
-   *  showing in ProgramInfo. 
+   *  showing in ProgramInfo.
    *  @since 2.6 */
   public static final String DISABLED_ON_TASK_MENU = "DISABLED_ON_TASK_MENU";
-  
+
   /**
    * The waiting time for single click performing.
    * @since 2.7
    */
   public static final int SINGLE_CLICK_WAITING_TIME;
-  
+
   static {
     int doubleClickTime = 200;
     try {
@@ -102,7 +102,7 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
     }
     SINGLE_CLICK_WAITING_TIME = doubleClickTime;
   }
-  
+
   /** The localizer used by this class. */
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(Plugin.class );
@@ -122,10 +122,10 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
 
   /** The cached icon to use for marking programs. */
   private Icon mMarkIcon;
-  
+
   /**
    * Called by the host-application to provide access to the plugin manager.
-   * 
+   *
    * @param manager The plugin manager the plugins should use.
    */
   final public static void setPluginManager(PluginManager manager) {
@@ -141,7 +141,7 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
    * The plugin manager is your connection to TV-Browser. Every communication
    * between TV-Browser and the plugin is either initiated by TV-Browser or made
    * by using the plugin manager.
-   * 
+   *
    * @return The plugin manager.
    */
   final public static PluginManager getPluginManager() {
@@ -150,7 +150,7 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
 
   /**
    * Gets the ID of this plugin.
-   * 
+   *
    * @return The ID of this plugin.
    */
   final public String getId() {
@@ -172,7 +172,7 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
    * Gets the parent frame.
    * <p>
    * The parent frame may be used for showing dialogs.
-   * 
+   *
    * @return The parent frame.
    */
   final protected Frame getParentFrame() {
@@ -183,7 +183,7 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
   /**
    * Helper method that loads an ImageIcon from the plugin jar file and returns
    * it.
-   * 
+   *
    * @param fileName The name of the icon file.
    * @return The icon.
    */
@@ -194,7 +194,7 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
   /**
    * Helper method that loads an ImageIcon from the file system and returns
    * it.
-   * 
+   *
    * @param fileName The name of the icon file.
    * @return The icon.
    * @since 2.3
@@ -202,10 +202,10 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
   final protected ImageIcon createImageIconForFileName(String fileName) {
     return ImageUtilities.createImageIconFromJar(fileName, null);
   }
-  
+
   /**
    * Helper method that Loads an ImageIcon from the IconTheme
-   * 
+   *
    * @param category Category the Icon resists in
    * @param icon Icon to load (without extension)
    * @param size Size of the Icon
@@ -214,11 +214,11 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
    */
   final public ImageIcon createImageIcon(String category, String icon, int size) {
     return getPluginManager().getIconFromTheme(this, category, icon, size);
-  }  
-  
+  }
+
   /**
    * Helper method that Loads an ImageIcon from the IconTheme
-   * 
+   *
    * @param icon Icon to load
    *
    * @return The Icon
@@ -229,7 +229,7 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
   }
 
   /**
-   * Called by the host-application during start-up. 
+   * Called by the host-application during start-up.
    * <p>
    * Override this method to load any objects from the file system.
    *
@@ -250,7 +250,7 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
    * <p>
    * Override this method to store any objects to the file system.
    * ATTENTION: Don't use any logger, thread or access to Frames in this method.
-   * 
+   *
    * @param out The stream to write the objects to
    * @throws IOException If writing failed.
    *
@@ -264,7 +264,7 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
    * Called by the host-application during start-up.
    * <p>
    * Override this method to load your plugins settings from the file system.
-   * 
+   *
    * @param settings The settings for this plugin (May be empty).
    */
   public void loadSettings(Properties settings) {
@@ -291,7 +291,7 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
    * for the version to load from main plugins dir
    * or the user plugins dir. The plugin with the highest
    * version will be loaded.
-   * 
+   *
    * @return The version of this plugin.
    * @since 2.6
    */
@@ -303,7 +303,7 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
    * Gets the meta information about the plugin.
    * <p>
    * Override this method to provide information about your plugin.
-   * 
+   *
    * @return The meta information about the plugin.
    */
   public PluginInfo getInfo() {
@@ -333,12 +333,12 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
    * <li><code>Action.SMALL_ICON</code>: The icon for the context menu item.
    * Should be 16x16.</li>
    * </ul>
-   * 
+   *
    * @param program
    *          The program the context menu will be shown for.
    * @return the actions this plugin provides for the given program or
    *         <code>null</code> if the plugin does not provide this feature.
-   * 
+   *
    * @see #getProgramFromContextMenuActionEvent(ActionEvent)
    */
   public ActionMenu getContextMenuActions(final Program program) {
@@ -358,12 +358,12 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
    * <li><code>Action.SMALL_ICON</code>: The icon for the context menu item.
    * Should be 16x16.</li>
    * </ul>
-   * 
+   *
    * @param channel The channel the context menu will be shown for.
    * @return the actions this plugin provides for the given program or
    *         <code>null</code> if the plugin does not provide this feature.
    * @since 3.0
-   * 
+   *
    * @see #getContextMenuActions(Program)
    */
   public ActionMenu getContextMenuActions(final Channel channel) {
@@ -379,11 +379,11 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
    * NOTE: At the moment the Program is passed as ActionEvent source. Please
    *       use this method to get the program and not directly the ActionEvent
    *       source. Because in future versions of TV-Browser the Program may be
-   *       passed in another way!!  
-   * 
+   *       passed in another way!!
+   *
    * @param evt The ActionEvent to get the Program from.
    * @return The Program from the ActionEvent.
-   * 
+   *
    * @see #getContextMenuActions(Program)
    */
   protected final Program getProgramFromContextMenuActionEvent(ActionEvent evt) {
@@ -425,7 +425,7 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
    * Override this method if your plugin provides icons for the program table
    * (shown below the start time). The returned String will be shown in settings
    * dialog (german: Aussehen->Sendungsanzeige->Plugin-Icons).
-   * 
+   *
    * @return The description text for the program table icons or
    *         <code>null</code> if the plugin does not provide this feature.
    *
@@ -445,7 +445,7 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
    * <p>
    * This method is only called, if the option to show program table icons for
    * this plugin is set in the options.
-   * 
+   *
    * @param program The programs to get the icons for.
    * @return The icons for the given program or <code>null</code> if the plugin
    *         does not provide this feature.
@@ -462,7 +462,7 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
    * <p>
    * Override this method to provide a settings tab. The settings tab will be
    * shown in the settings dialog in the plugin section.
-   * 
+   *
    * @return the SettingsTab object or <code>null</code> if the plugin does not
    *         provide this feature.
    */
@@ -472,56 +472,56 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
 
   /**
    * Gets the icon used for marking programs in the program table.
-   * 
+   *
    * @return the icon to use for marking programs in the program table.
-   * 
+   *
    * @see #getMarkIconName()
    */
   public final Icon getMarkIcon() {
     if (mMarkIcon== null ) {
       ThemeIcon icon = getMarkIconFromTheme();
-      
+
       if (icon != null) {
         mMarkIcon = IconLoader.getInstance().getIconFromTheme(this, icon);
       }
-      
+
       if (mMarkIcon == null) {
         String iconFileName = getMarkIconName();
         if (iconFileName != null) {
           mMarkIcon = ImageUtilities.createImageIconFromJar(iconFileName, getClass());
         }
       }
-      
+
     }
-    
+
     return mMarkIcon;
   }
-  
+
   /**
    * Gets the icons used for marking programs in the program table.
-   * 
+   *
    * @return the icons to use for marking programs in the program table.
-   * 
+   *
    * @since 2.5
    */
   public final Icon[] getMarkIcons(Program p) {
-    if(getMarkIcon() != null)  
+    if(getMarkIcon() != null)
       return new Icon[] {getMarkIcon()};
-    
+
     Icon[] icon = getMarkIconsForProgram(p);
-    
+
     if(icon == null)
       return new Icon[0];
     else
       return icon;
   }
-  
+
 
   /**
    * This gets the mark icons for a Program.
-   * 
+   *
    * Please cache the icons in the Plugin.
-   * 
+   *
    * @param p The Program to get the icons for.
    * @return The icons for the Program.
    * @since 2.5
@@ -532,10 +532,10 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
 
   /**
    * This gets the ThemeIcon containing your mark icon.
-   * 
+   *
    * This Function uses the Icon-Theme-Function of the TV-Browser. For details
    * see {@link PluginManager#getIconFromTheme(Plugin, String, String, int)}
-   * 
+   *
    * @return ThemeIcon that identifies the Icon in the Theme
    * @since 2.2
    */
@@ -568,14 +568,14 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
    * This method is automatically called, when the TV data update is finished.
    * <p>
    * Override this method to react on this event.
-   * 
+   *
    * If you want to read data from the Internet use this method to track if a
    * connection was established. ATTENTION: If you do so take care of the
    * TV-Browser start, at the start this method mustn't use an Internet
    * connection. Use the method handleTvBrowserStartFinished() to track if the
    * TV-Browser start was finished before allowing access to the Internet in
    * this method.
-   * 
+   *
    * @see #handleTvBrowserStartFinished()
    * @see #handleTvDataAdded(ChannelDayProgram)
    * @see #handleTvDataDeleted(ChannelDayProgram)
@@ -594,14 +594,14 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
    * Override this method if you want to change/add data. Don't do other things
    * than changing/adding data, use
    * {@link #handleTvDataAdded(ChannelDayProgram)} instead.
-   * 
+   *
    * @param newProg
    *          The new ChannelDayProgram.
    * @see #handleTvDataDeleted(ChannelDayProgram)
    * @see #handleTvDataChanged()
    */
   public void handleTvDataAdded(MutableChannelDayProgram newProg) {
-    
+
   }
 
   /**
@@ -614,7 +614,7 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
    * So use this method if you want to mark or do something else than changing
    * with the program. If you want to change/add data use
    * {@link #handleTvDataAdded(MutableChannelDayProgram)} instead.
-   * 
+   *
    * @param newProg
    *          The new ChannelDayProgram.
    * @see #handleTvDataDeleted(ChannelDayProgram)
@@ -627,10 +627,11 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
 
   /**
    * This method is automatically called, when TV data was deleted.
-   * (E.g. after an update).
+   * (E.g. after an update). It is not called however, if programs
+   * are removed at startup of the TVB due to their age!
    * <p>
    * Override this method to react on this event.
-   * 
+   *
    * @param oldProg The old ChannelDayProgram which was deleted.
    * @see #handleTvDataAdded(ChannelDayProgram)
    * @see #handleTvDataChanged()
@@ -650,26 +651,26 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
    * @since 2.7.3
    */
   public void handleTvDataTouched(ChannelDayProgram removedDayProgram, ChannelDayProgram addedDayProgram) {
-    
+
   }
 
   /**
    * This method is automatically called immediately before the plugin gets
    * activated.
-   * 
+   *
    * @since 1.1
    */
-  public void onActivation() {      
+  public void onActivation() {
   }
 
   /**
    * This method is automatically called immediately after deactivating the
    * plugin. ATTENTION: Don't use any logger, thread or access to Frames in this
    * method.
-   * 
+   *
    * @since 1.1
    */
-  public void onDeactivation() {      
+  public void onDeactivation() {
   }
 
   /**
@@ -687,13 +688,13 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
    * This method is called when the TV-Browser start is finished.
    * @since 2.2
    */
-  public void handleTvBrowserStartFinished() { 
+  public void handleTvBrowserStartFinished() {
   }
-  
+
   /**
    * Gets the root node of the plugin for the plugin tree.
    * @see #canUseProgramTree()
-   * 
+   *
    * @return The root node.
    */
   public PluginTreeNode getRootNode() {
@@ -755,40 +756,40 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
       util.exc.ErrorHandler.handle(mLocalizer.msg("error.couldNotWriteFile","Storing file '{0}' failed.", f.getAbsolutePath()), e);
     }
   }
-  
+
   /**
    * Gets whether the ProgramReceiveIf supports receiving programs from other plugins with a special target.
-   * 
+   *
    * @return Whether the ProgramReceiveIf supports receiving programs from other plugins with a special target.
-   * 
+   *
    * @see #receivePrograms(Program[],ProgramReceiveTarget)
    * @since 2.5
-   */  
+   */
   public boolean canReceiveProgramsWithTarget() {
     return false;
   }
-  
+
   public boolean receivePrograms(Program[] programArr, ProgramReceiveTarget receiveTarget) {
     return false;
   }
 
   /**
    * Receives a list of Strings from another plugin with a target.
-   * 
+   *
    * @param values
    *          The value array passed from the other plugin.
    * @param receiveTarget
    *          The receive target of the programs.
    * @return <code>true</code> if the value array was handled correct,
    *         </code>false</code> otherwise.
-   * 
+   *
    * @see #canReceiveProgramsWithTarget()
    * @since 2.7
    */
   public boolean receiveValues(String[] values, ProgramReceiveTarget receiveTarget) {
     return false;
   }
-  
+
   public ProgramReceiveTarget[] getProgramReceiveTargets() {
     return ProgramReceiveTarget.createDefaultTargetArrayForProgramReceiveIf(this);
   }
@@ -796,7 +797,7 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
   /**
    * Returns the available program filters that the plugin supports.
    * @since 2.5
-   * 
+   *
    * @return The available program filters that the plugin supports or <code>null</code> if it supports no filter.
    */
   public PluginsProgramFilter[] getAvailableFilter() {
@@ -806,7 +807,7 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
   /**
    * Is used to track if a program filter be deleted.
    * Should be make sure only the plugin itself can delete program filters.
-   * 
+   *
    * @param programFilter The program filter to delete.
    * @return True if the program filter component can be deleted.
    */
@@ -814,16 +815,17 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
     return false;
   }
 
+  @Override
   public String toString() {
     return getInfo().getName();
   }
-  
+
   /**
    * Returns the available plugins filter component classes.
    * <br>
    * ATTENTON: Use return <code>(Class<? extends PluginsFilterComponent>[]) new Class[] {MyFilterComponent1.class,MyFilterComponent2.class};</code>
    * because the creation of a class array with generic type didn't work.
-   * 
+   *
    * @return The available plugins filter components classes or <code>null</code> if no plugins filter components are supported.
    * @since 2.5
    */
@@ -844,7 +846,7 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
    * <li>{@link Program#MAX_MARK_PRIORITY}.</li>
    * </ul>
    * <p>
-   * 
+   *
    * @param p
    *          The program to get the mark priority for.
    * @return The mark priority for the given program for this plugin.
@@ -853,7 +855,7 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
   public int getMarkPriorityForProgram(Program p) {
     return Settings.propProgramPanelUsedDefaultMarkPriority.getInt();
   }
-  
+
   /**
    *  Says the plugin proxy manager to store the settings and data of this plugin.
    *  <p>
@@ -863,26 +865,26 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
   protected final boolean saveMe() {
     return PluginProxyManager.getInstance().saveSettings(PluginProxyManager.getInstance().getActivatedPluginForId(getId()));
   }
-  
+
   /**
    * Sets the window position and size for the given window from remembered values for that id.
 
    * @param windowId The relative id of the window. The ID only needs to unique for this plugin.
    * @param window The window to layout.
-   * 
+   *
    * @since 2.7
    */
   public final void layoutWindow(String windowId, Window window) {
     layoutWindow(windowId, window, null);
   }
-  
+
   /**
    * Sets the window position and size for the given window from remembered values for that id.
 
-   * @param windowId The relative id of the window. The ID only needs to unique for this plugin. 
+   * @param windowId The relative id of the window. The ID only needs to unique for this plugin.
    * @param window The window to layout.
    * @param defaultSize The default size for the window.
-   * 
+   *
    * @since 2.7
    */
   public final void layoutWindow(String windowId, Window window, Dimension defaultSize) {
@@ -901,7 +903,7 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
   public ProgramRatingIf[] getRatingInterfaces() {
     return null;
   }
-  
+
   @Override
   public int compareTo(ProgramReceiveIf o) {
     return getInfo().getName().compareTo(o.toString());
