@@ -61,17 +61,17 @@ public class Date implements Comparable<Date>, Serializable
   /**
    * the year, ie Calendar.get(Calendar.YEAR).
    */
-  private int mYear;
+  private short mYear;
 
   /**
    * the month, ie Calendar.get(Calendar.MONTH) + 1.
    */
-  private int mMonth;
+  private byte mMonth;
 
   /**
    * the day, ie Calendar.get(Calendar.DAY_OF_MONTH).
    */
-  private int mDay;
+  private byte mDay;
 
 
 
@@ -80,9 +80,9 @@ public class Date implements Comparable<Date>, Serializable
    */
   public Date() {
     Calendar mCalendar = Calendar.getInstance();
-    mYear = mCalendar.get(Calendar.YEAR);
-    mMonth = mCalendar.get(Calendar.MONTH) + 1;
-    mDay = mCalendar.get(Calendar.DAY_OF_MONTH);
+    mYear = (short) mCalendar.get(Calendar.YEAR);
+    mMonth = (byte) (mCalendar.get(Calendar.MONTH) + 1);
+    mDay = (byte) mCalendar.get(Calendar.DAY_OF_MONTH);
   }
 
   /**
@@ -92,10 +92,25 @@ public class Date implements Comparable<Date>, Serializable
    * @param month Calendar.get(Calendar.MONTH) + 1
    * @param dayOfMonth Calendar.get(Calendar.DAY_OF_MONTH)
    */
-  public Date(final int year, final int month, final int dayOfMonth) {
+  public Date(final short year, final byte month, final byte dayOfMonth) {
     mYear = year;
     mMonth = month;
     mDay = dayOfMonth;
+  }
+
+  /**
+   * constructs a new date initialized with the given arguments.
+   *
+   * @param year Calendar.get(Calendar.YEAR)
+   * @param month Calendar.get(Calendar.MONTH) + 1
+   * @param dayOfMonth Calendar.get(Calendar.DAY_OF_MONTH)
+   * @deprecated since 3.0, use Date(short, byte, byte) instead
+   */
+  @Deprecated
+  public Date(final int year, final int month, final int dayOfMonth) {
+    mYear = (short) year;
+    mMonth = (byte) month;
+    mDay = (byte) dayOfMonth;
   }
 
   /**
@@ -104,9 +119,9 @@ public class Date implements Comparable<Date>, Serializable
    * @param cal the calendar to create a date from.
    */
   public Date(final Calendar cal) {
-    mYear = cal.get(Calendar.YEAR);
-    mMonth = cal.get(Calendar.MONTH) + 1;
-    mDay = cal.get(Calendar.DAY_OF_MONTH);
+    mYear = (short) cal.get(Calendar.YEAR);
+    mMonth = (byte) (cal.get(Calendar.MONTH) + 1);
+    mDay = (byte) cal.get(Calendar.DAY_OF_MONTH);
   }
 
   /**
@@ -132,20 +147,27 @@ public class Date implements Comparable<Date>, Serializable
   @Deprecated
   public Date(final DataInput in) throws IOException, ClassNotFoundException {
     int version = in.readInt();
-    if (version == 1) { // currently, version==2 is used
+    if (version == 1) { // currently, version==3 is used
       int date = in.readInt();
       long l = (long) date * 24 * 60 * 60 * 1000;
       java.util.Date d = new java.util.Date(l);
       Calendar mCalendar = Calendar.getInstance();
       mCalendar.setTime(d);
-      mYear = mCalendar.get(Calendar.YEAR);
-      mMonth = mCalendar.get(Calendar.MONTH) + 1;
-      mDay = mCalendar.get(Calendar.DAY_OF_MONTH);
+      mYear = (short) mCalendar.get(Calendar.YEAR);
+      mMonth = (byte) (mCalendar.get(Calendar.MONTH) + 1);
+      mDay = (byte) mCalendar.get(Calendar.DAY_OF_MONTH);
     }
-    else {
-      mYear = in.readInt();
-      mMonth = in.readInt();
-      mDay = in.readInt();
+    else if (version == 2)
+    {
+      mYear = (short) in.readInt();
+      mMonth = (byte) in.readInt();
+      mDay = (byte) in.readInt();
+    }
+    else
+    {
+      mYear = in.readShort();
+      mMonth = in.readByte();
+      mDay = in.readByte();
     }
   }
 
@@ -160,20 +182,27 @@ public class Date implements Comparable<Date>, Serializable
   @Deprecated
   public Date(final ObjectInputStream in) throws IOException, ClassNotFoundException {
     int version = in.readInt();
-    if (version == 1) { // currently, version==2 is used
+    if (version == 1) { // currently, version==3 is used
       int date = in.readInt();
       long l = (long) date * 24 * 60 * 60 * 1000;
       java.util.Date d = new java.util.Date(l);
       Calendar mCalendar = Calendar.getInstance();
       mCalendar.setTime(d);
-      mYear = mCalendar.get(Calendar.YEAR);
-      mMonth = mCalendar.get(Calendar.MONTH) + 1;
-      mDay = mCalendar.get(Calendar.DAY_OF_MONTH);
+      mYear = (short) mCalendar.get(Calendar.YEAR);
+      mMonth = (byte) (mCalendar.get(Calendar.MONTH) + 1);
+      mDay = (byte) mCalendar.get(Calendar.DAY_OF_MONTH);
     }
-    else {
-      mYear = in.readInt();
-      mMonth = in.readInt();
-      mDay = in.readInt();
+    else if (version == 2)
+    {
+      mYear = (short) in.readInt();
+      mMonth = (byte) in.readInt();
+      mDay = (byte) in.readInt();
+    }
+    else
+    {
+      mYear = in.readShort();
+      mMonth = in.readByte();
+      mDay = in.readByte();
     }
   }
 
@@ -199,9 +228,9 @@ public class Date implements Comparable<Date>, Serializable
    * @return the date
    */
   public static Date createDateFromValue(final long value) {
-    int year = (int) (value / 10000L);
-    int month = (int) (value % 10000L / 100L);
-    int day = (int) (value % 100L);
+    short year = (short) (value / 10000L);
+    byte month = (byte) (value % 10000L / 100L);
+    byte day = (byte) (value % 100L);
 
     return new Date(year, month, day);
   }
@@ -224,9 +253,9 @@ public class Date implements Comparable<Date>, Serializable
     {
       return null;
     }
-    int year = Integer.parseInt(s[0]);
-    int month = Integer.parseInt(s[1]);
-    int day = Integer.parseInt(s[2]);
+    short year = Short.parseShort(s[0]);
+    byte month = Byte.parseByte(s[1]);
+    byte day = Byte.parseByte(s[2]);
     return new Date(year, month, day);
   }
 
@@ -248,9 +277,9 @@ public class Date implements Comparable<Date>, Serializable
     {
       return null;
     }
-    int day = Integer.parseInt(s[0]);
-    int month = Integer.parseInt(s[1]);
-    int year = Integer.parseInt(s[2]);
+    short year = Short.parseShort(s[0]);
+    byte month = Byte.parseByte(s[1]);
+    byte day = Byte.parseByte(s[2]);
     return new Date(year, month, day);
   }
 
@@ -339,10 +368,10 @@ public class Date implements Comparable<Date>, Serializable
    */
   @Deprecated
   public void writeToDataFile(final RandomAccessFile out) throws IOException {
-    out.writeInt(2); // version
-    out.writeInt(mYear);
-    out.writeInt(mMonth);
-    out.writeInt(mDay);
+    out.writeInt(3); // version
+    out.writeShort(mYear);
+    out.writeByte(mMonth);
+    out.writeByte(mDay);
   }
 
   /**
@@ -354,10 +383,10 @@ public class Date implements Comparable<Date>, Serializable
    */
   @Deprecated
   public void writeData(final ObjectOutputStream out) throws IOException {
-    out.writeInt(2); // version
-    out.writeInt(mYear);
-    out.writeInt(mMonth);
-    out.writeInt(mDay);
+    out.writeInt(3); // version
+    out.writeShort(mYear);
+    out.writeByte(mMonth);
+    out.writeByte(mDay);
   }
 
 
@@ -388,6 +417,8 @@ public class Date implements Comparable<Date>, Serializable
   /**
    * return the textual representation of this date with abbreviated day of week
    * and abbreviated month name.
+   *
+   * TODO the description does not fit the code. change code or change description?
    *
    * @return date string
    */
@@ -533,11 +564,11 @@ public class Date implements Comparable<Date>, Serializable
   private void writeObject(final ObjectOutputStream out) throws IOException
   {
     //version for compatibility issues
-    out.writeInt(2);
+    out.writeInt(3);
     //date
-    out.writeInt(mYear);
-    out.writeInt(mMonth);
-    out.writeInt(mDay);
+    out.writeShort(mYear);
+    out.writeByte(mMonth);
+    out.writeByte(mDay);
   }
 
 
@@ -560,15 +591,21 @@ public class Date implements Comparable<Date>, Serializable
       java.util.Date d = new java.util.Date(l);
       Calendar mCalendar = Calendar.getInstance();
       mCalendar.setTime(d);
-      mYear = mCalendar.get(Calendar.YEAR);
-      mMonth = mCalendar.get(Calendar.MONTH) + 1;
-      mDay = mCalendar.get(Calendar.DAY_OF_MONTH);
+      mYear = (short) mCalendar.get(Calendar.YEAR);
+      mMonth = (byte) (mCalendar.get(Calendar.MONTH) + 1);
+      mDay = (byte) mCalendar.get(Calendar.DAY_OF_MONTH);
+    }
+    else if (version == 2)
+    {
+      mYear = (short) in.readInt();
+      mMonth = (byte) in.readInt();
+      mDay = (byte) in.readInt();
     }
     else
     {
-      mYear = in.readInt();
-      mMonth = in.readInt();
-      mDay = in.readInt();
+      mYear = in.readShort();
+      mMonth = in.readByte();
+      mDay = in.readByte();
     }
   }
 }
