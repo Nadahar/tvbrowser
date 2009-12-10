@@ -53,11 +53,6 @@ public class CreateOmdbAbstractDialog extends JDialog implements WindowClosingIf
    */
   private static final short MAX_CHARS_IN_ABSTRACT = 400;
 
-  /**
-   * Localizer.
-   */
-  private static final Localizer LOCALIZER = Localizer.getLocalizerFor(CreateOmdbAbstractDialog.class);
-
 
 
 
@@ -88,7 +83,7 @@ public class CreateOmdbAbstractDialog extends JDialog implements WindowClosingIf
   public CreateOmdbAbstractDialog(final Window parent, final Program program, final WirSchauenEvent wirSchauenEvent, final String oldOmdbAbstract)
   {
     //create the window
-    super(parent, LOCALIZER.msg("DialogTitle", "Description for OMDB.org"), ModalityType.APPLICATION_MODAL);
+    super(parent, WirSchauenPlugin.LOCALIZER.msg("CreateOmdbAbstractDialog.DialogTitle", "Description for OMDB.org"), ModalityType.APPLICATION_MODAL);
     UiUtilities.registerForClosing(this); //register esc-button
     JPanel contentPane = (JPanel) getContentPane();
     contentPane.setBorder(Borders.DLU4_BORDER);

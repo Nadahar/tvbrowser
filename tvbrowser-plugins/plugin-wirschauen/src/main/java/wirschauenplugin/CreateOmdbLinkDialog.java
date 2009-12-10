@@ -53,13 +53,6 @@ import devplugin.ProgramFieldType;
 public class CreateOmdbLinkDialog extends JDialog implements WindowClosingIf
 {
   /**
-   * Localizer.
-   */
-  private static final Localizer LOCALIZER = Localizer.getLocalizerFor(CreateOmdbLinkDialog.class);
-
-
-
-  /**
    * true, if one of the different cancel-methods was used. every user initiated closing of
    * the dialog means that cancelled is true.
    */
@@ -88,7 +81,7 @@ public class CreateOmdbLinkDialog extends JDialog implements WindowClosingIf
   public CreateOmdbLinkDialog(final Window parent, final Program program)
   {
     //create the window
-    super(parent, LOCALIZER.msg("DialogTitle", "Linking with OMDB.org"), ModalityType.APPLICATION_MODAL);
+    super(parent, WirSchauenPlugin.LOCALIZER.msg("CreateOmdbLinkDialog.DialogTitle", "Linking with OMDB.org"), ModalityType.APPLICATION_MODAL);
     UiUtilities.registerForClosing(this);
     JPanel contentPane = (JPanel) getContentPane();
     contentPane.setBorder(Borders.DLU4_BORDER);
@@ -122,9 +115,9 @@ public class CreateOmdbLinkDialog extends JDialog implements WindowClosingIf
     //omdb-link-input (label + url + input-field for id + button-link to omdb)
     contentPane.add(new JLabel(WirSchauenPlugin.LOCALIZER.msg("PropertyLabels.OmdbUrl", "URL")), cellConstraints.xy(1, 5));
     contentPane.add(new JLabel("http://www.omdb.org/movie/"), cellConstraints.xy(3, 5));
-    final JTextField omdbIdInput = DialogUtil.createNumericInput(LOCALIZER.msg("IdTooltip", "numeric OMDB-ID of the program"));
+    final JTextField omdbIdInput = DialogUtil.createNumericInput(WirSchauenPlugin.LOCALIZER.msg("CreateOmdbLinkDialog.IdTooltip", "numeric OMDB-ID of the program"));
     contentPane.add(omdbIdInput, cellConstraints.xy(4, 5));
-    contentPane.add(DialogUtil.createUrlButton(generateSearchUrl(program.getTitle(), program.getTextField(ProgramFieldType.EPISODE_TYPE)), LOCALIZER.msg("FindProgram", "Find program in OMDB")), cellConstraints.xy(6, 5));
+    contentPane.add(DialogUtil.createUrlButton(generateSearchUrl(program.getTitle(), program.getTextField(ProgramFieldType.EPISODE_TYPE)), WirSchauenPlugin.LOCALIZER.msg("CreateOmdbLinkDialog.FindProgram", "Find program in OMDB")), cellConstraints.xy(6, 5));
 
     //dropdown category (movie or series)
     contentPane.add(new JLabel(WirSchauenPlugin.LOCALIZER.msg("PropertyLabels.Category", "Category")), cellConstraints.xy(1, 7));

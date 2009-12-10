@@ -57,13 +57,6 @@ public class CreateWirSchauenDataDialog extends JDialog implements WindowClosing
 
 
   /**
-   * Localizer.
-   */
-  private static final Localizer LOCALIZER = Localizer.getLocalizerFor(CreateWirSchauenDataDialog.class);
-
-
-
-  /**
    * true, if one of the different cancel-methods was used. every user initiated closing of
    * the dialog means that cancelled is true.
    */
@@ -88,7 +81,7 @@ public class CreateWirSchauenDataDialog extends JDialog implements WindowClosing
   public CreateWirSchauenDataDialog(final Window parent, final Program program, final WirSchauenEvent wirSchauenEvent)
   {
     //create the window
-    super(parent, LOCALIZER.msg("DialogTitle", "Description for WirSchauen.de"), ModalityType.APPLICATION_MODAL);
+    super(parent, WirSchauenPlugin.LOCALIZER.msg("CreateWirSchauenDataDialog.DialogTitle", "Description for WirSchauen.de"), ModalityType.APPLICATION_MODAL);
     UiUtilities.registerForClosing(this);
     JPanel contentPane = (JPanel) getContentPane();
     contentPane.setBorder(Borders.DLU4_BORDER);

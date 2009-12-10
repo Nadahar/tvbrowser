@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-import util.ui.Localizer;
 import devplugin.PluginsFilterComponent;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
@@ -30,19 +29,13 @@ import devplugin.ProgramFieldType;
 public class WirSchauenFilterComponent extends PluginsFilterComponent
 {
   /**
-   * the localizer.
-   */
-  private static final Localizer LOCALIZER = Localizer.getLocalizerFor(WirSchauenFilterComponent.class);
-
-
-  /**
    * {@inheritDoc}
    * @see devplugin.PluginsFilterComponent#getUserPresentableClassName()
    */
   @Override
   public String getUserPresentableClassName()
   {
-    return LOCALIZER.msg("name", "Missing description");
+    return WirSchauenPlugin.LOCALIZER.msg("Filter.Name", "Missing description.");
   }
 
 
