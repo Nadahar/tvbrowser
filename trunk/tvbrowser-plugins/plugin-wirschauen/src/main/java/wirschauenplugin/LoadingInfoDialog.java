@@ -45,13 +45,6 @@ import com.jgoodies.forms.layout.FormLayout;
 public class LoadingInfoDialog extends JDialog implements WindowClosingIf
 {
   /**
-   * Localizer.
-   */
-  private static final Localizer LOCALIZER = Localizer.getLocalizerFor(LoadingInfoDialog.class);
-
-
-
-  /**
    * true, if one of the different cancel-methods was used. every user initiated closing of
    * the dialog means that cancelled is true.
    */
@@ -71,7 +64,7 @@ public class LoadingInfoDialog extends JDialog implements WindowClosingIf
   public LoadingInfoDialog(final Window parent, final String webSite)
   {
     //create the window
-    super(parent, LOCALIZER.msg("DialogTitle", "Loading data from {0}...", webSite), ModalityType.APPLICATION_MODAL);
+    super(parent, WirSchauenPlugin.LOCALIZER.msg("LoadingInfoDialog.DialogTitle", "Loading data from {0}...", webSite), ModalityType.APPLICATION_MODAL);
     setResizable(false);
     //register esc key
     UiUtilities.registerForClosing(this);
