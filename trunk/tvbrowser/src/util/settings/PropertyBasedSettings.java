@@ -55,7 +55,7 @@ public class PropertyBasedSettings {
   }
 
   protected boolean get(final String key, final boolean defaultValue) {
-    return Boolean.valueOf(get(key, String.valueOf(defaultValue)));
+    return Boolean.parseBoolean(get(key, String.valueOf(defaultValue)));
   }
 
   protected void set(final String key, final boolean value) {
