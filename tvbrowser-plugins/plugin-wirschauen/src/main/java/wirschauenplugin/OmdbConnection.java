@@ -19,10 +19,15 @@ import java.net.URLEncoder;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.methods.StringRequestEntity;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+
 
 /**
  * this is the connection object to communicate with the omdb. it uses a
@@ -91,7 +96,7 @@ public class OmdbConnection
   /**
    * the http client holds the http session und simplifies the communication.
    */
-  private HttpClient mHttpClient = new HttpClient();
+  private HttpClient mHttpClient = new DefaultHttpClient();
 
   /**
    * current language. default is en. is used to remember the selected language
@@ -128,22 +133,24 @@ public class OmdbConnection
       // the language is already set
       return true;
     }
-    GetMethod getMethod;
+    HttpGet getMethod;
     if (language == OmdbConnection.DE)
     {
-      getMethod = new GetMethod(OmdbConnection.LANGUAGE_URL_DE);
+      getMethod = new HttpGet(OmdbConnection.LANGUAGE_URL_DE);
     }
     else if (language == OmdbConnection.EN)
     {
-      getMethod = new GetMethod(OmdbConnection.LANGUAGE_URL_EN);
+      getMethod = new HttpGet(OmdbConnection.LANGUAGE_URL_EN);
     }
     else
     {
       // unsupported language
       return false;
     }
-    int statusCode = mHttpClient.executeMethod(getMethod);
-    return (statusCode == 200);
+    HttpResponse response = mHttpClient.execute(getMethod);
+    boolean result = response.getStatusLine().getStatusCode() == 200;
+    getMethod.abort();
+    return result;
   }
 
 
@@ -165,15 +172,17 @@ public class OmdbConnection
    */
   public boolean saveAbstract(final long movieId, final String movieAbstract) throws IOException
   {
-    PostMethod postMethod = new PostMethod(String.format(OmdbConnection.SET_ABSTRACT_URL, movieId));
-    postMethod.setRequestEntity(new StringRequestEntity("movie%5Babstract%5D=" + URLEncoder.encode(movieAbstract, "UTF-8") + "&commit=Ok", "application/x-www-form-urlencoded; charset=UTF-8", "UTF-8"));
+    HttpPost postMethod = new HttpPost(String.format(OmdbConnection.SET_ABSTRACT_URL, movieId));
+    postMethod.setEntity(new StringEntity("movie%5Babstract%5D=" + URLEncoder.encode(movieAbstract, "UTF-8") + "&commit=Ok", "UTF-8"));
 
     // omdb need this headers, it wont work without them
-    postMethod.setRequestHeader("X-Requested-With", "XMLHttpRequest");
-    postMethod.setRequestHeader("X-Prototype-Version", "1.5.0");
+    postMethod.setHeader("X-Requested-With", "XMLHttpRequest");
+    postMethod.setHeader("X-Prototype-Version", "1.5.0");
 
-    int statusCode = mHttpClient.executeMethod(postMethod);
-    return (statusCode == 200);
+    HttpResponse response = mHttpClient.execute(postMethod);
+    boolean result = response.getStatusLine().getStatusCode() == 200;
+    postMethod.abort();
+    return result;
   }
 
 
@@ -209,35 +218,39 @@ public class OmdbConnection
    */
   public String loadAbstract(final long movieId) throws IOException
   {
-    GetMethod getMethod = new GetMethod(String.format(OmdbConnection.GET_ABSTRACT_URL, movieId));
-    int statusCode = mHttpClient.executeMethod(getMethod);
-    if (statusCode == 200)
+    HttpGet getMethod = new HttpGet(String.format(OmdbConnection.GET_ABSTRACT_URL, movieId));
+    HttpResponse response = mHttpClient.execute(getMethod);
+    String result = null;
+    if (response.getStatusLine().getStatusCode() == 200)
     {
-      // response is utf-8 encoded but response header is not set. hence http client uses the
-      // default encoding iso-8859-1 for getResponseBodyAsString(), which is wrong.
-      Matcher matcher = ABSTRACT_PATTERN.matcher(new String(getMethod.getResponseBody(), "UTF-8"));
-      if (matcher.matches())
-      {
-        String movieAbstract = matcher.group(1);
-        if ("".equals(movieAbstract)
-            || "no abstract defined".equals(movieAbstract)
-            || "Es wurde noch keine Kurzbeschreibung eingegeben".equals(movieAbstract))
-        {
-          return null;
-        }
-        else
-        {
-          return movieAbstract.trim();
+      HttpEntity entity = response.getEntity();
+      if (entity != null) {
+        String content = EntityUtils.toString(entity);
+        // response is utf-8 encoded but response header is not set. hence http
+        // client uses the
+        // default encoding iso-8859-1 for getResponseBodyAsString(), which is
+        // wrong.
+        content = new String(content.getBytes("ISO8859-1"), "UTF-8");
+        Matcher matcher = ABSTRACT_PATTERN.matcher(content);
+        if (matcher.matches()) {
+          String movieAbstract = matcher.group(1);
+          if ("".equals(movieAbstract) || "no abstract defined".equals(movieAbstract)
+              || "Es wurde noch keine Kurzbeschreibung eingegeben".equals(movieAbstract)) {
+            result  = null;
+          } else {
+            result = movieAbstract.trim();
+          }
         }
       }
     }
-    return null;
+    getMethod.abort();
+    return result;
   }
 
 
 
   /**
-   * just a convinience method wich calls setLanguage and loadAbstract(id, abstract).
+   * just a convenience method which calls setLanguage and loadAbstract(id, abstract).
    *
    * @param movieId the omdb-id of the movie
    * @param language OmdbConnection.EN or OmdbConnection.DE
