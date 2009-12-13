@@ -22,7 +22,7 @@ import devplugin.Program;
 public class RatingNode extends PluginTreeNode implements
     Comparable<RatingNode> {
 
-  private int mRating;
+  private byte mRating;
   private Program mProgram;
 
   public RatingNode(final ImdbRating rating, final Program program) {

@@ -4,9 +4,9 @@ import devplugin.Program;
 
 public class ProgramWeight implements Comparable<ProgramWeight> {
   private Program mProgram;
-  private int mWeight;
+  private short mWeight;
 
-  public ProgramWeight(final Program p, final int weight) {
+  public ProgramWeight(final Program p, final short weight) {
     mProgram = p;
     mWeight = weight;
   }

@@ -104,19 +104,19 @@ public class MutableProgram implements Program {
   private Date mNormalizedDate;
 
   /** The normalized start time of the program. (in the client's time zone) */
-  private int mNormalizedStartTime;
+  private short mNormalizedStartTime;
   
   /** Contains for a {@link ProgramFieldType} (key) the field value. */
   private HashMap<ProgramFieldType,Object> mFieldHash;
 
   /** The state of this program */
-  private int mState;
+  private byte mState;
   
   /** Contains the title */
   protected String mTitle;
   
   /** Contains the current mark priority of this program */
-  private int mMarkPriority = Program.NO_MARK_PRIORITY;
+  private byte mMarkPriority = Program.NO_MARK_PRIORITY;
 
   /**
    * Creates a new instance of MutableProgram.
@@ -189,7 +189,7 @@ public class MutableProgram implements Program {
 
     int timeZoneOffset=(mLocalTimeZone.getRawOffset()-channelTimeZone.getRawOffset())/ 60000 + mChannel.getTimeZoneCorrectionMinutes();
 
-    mNormalizedStartTime = localStartTime + timeZoneOffset;
+    mNormalizedStartTime = (short) (localStartTime + timeZoneOffset);
     mNormalizedDate=localDate;
 
     if (mNormalizedStartTime >= (24 * 60)) {
@@ -329,7 +329,7 @@ public class MutableProgram implements Program {
           }
         });
         
-        mMarkPriority = Math.max(mMarkPriority,marker.getMarkPriorityForProgram(this));
+        mMarkPriority = (byte) Math.max(mMarkPriority,marker.getMarkPriorityForProgram(this));
   
         // add program to artificial plugin tree
         if (marker instanceof PluginProxy) {
@@ -382,7 +382,7 @@ public class MutableProgram implements Program {
           mMarkPriority = Program.NO_MARK_PRIORITY;
           
           for(Marker mark : newArr) {
-            mMarkPriority = Math.max(mMarkPriority,mark.getMarkPriorityForProgram(this));
+            mMarkPriority = (byte) Math.max(mMarkPriority,mark.getMarkPriorityForProgram(this));
           }
           
           mMarkerArr = newArr;
@@ -1055,7 +1055,7 @@ public class MutableProgram implements Program {
    * @since 2.2
    */
   protected void setProgramState(int state) {
-    mState = state;
+    mState = (byte) state;
   }
 
   /**
@@ -1078,7 +1078,7 @@ public class MutableProgram implements Program {
     mMarkPriority = Program.NO_MARK_PRIORITY;
     
     for(Marker mark : mMarkerArr) {
-      mMarkPriority = Math.max(mMarkPriority,mark.getMarkPriorityForProgram(this));
+      mMarkPriority = (byte) Math.max(mMarkPriority,mark.getMarkPriorityForProgram(this));
     }
     
     fireStateChanged();
@@ -1126,7 +1126,7 @@ public class MutableProgram implements Program {
    * @since 2.5.1
    */
   protected void setMarkPriority(int markPriority) {
-    mMarkPriority = markPriority;
+    mMarkPriority = (byte) markPriority;
   }
 
   public boolean hasFieldValue(ProgramFieldType type) {
