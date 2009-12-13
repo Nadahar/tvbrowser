@@ -43,7 +43,7 @@ public class Date implements Comparable<Date>, Serializable
   /**
    * the localizer for the date.
    * TODO this field must not be final cause its set elsewhere. there was a problem during
-   * startup and some objects where initalized before the locale was set. so the localizer
+   * startup and some objects where initialized before the locale was set. so the localizer
    * mechanism should be reworked somehow. this field however should be made private with a
    * getter-setter-pair.
    */
@@ -100,13 +100,12 @@ public class Date implements Comparable<Date>, Serializable
 
   /**
    * constructs a new date initialized with the given arguments.
+   * This is a convenience method hiding the internal storage format.
    *
    * @param year Calendar.get(Calendar.YEAR)
    * @param month Calendar.get(Calendar.MONTH) + 1
    * @param dayOfMonth Calendar.get(Calendar.DAY_OF_MONTH)
-   * @deprecated since 3.0, use Date(short, byte, byte) instead
    */
-  @Deprecated
   public Date(final int year, final int month, final int dayOfMonth) {
     mYear = (short) year;
     mMonth = (byte) month;
@@ -125,7 +124,7 @@ public class Date implements Comparable<Date>, Serializable
   }
 
   /**
-   * contructs a new date from a date object, ie clones it.
+   * Constructs a new date from a date object, ie clones it.
    *
    * @param d the date to clone
    */
@@ -142,7 +141,7 @@ public class Date implements Comparable<Date>, Serializable
    * @throws IOException if the stream could not be read
    * @throws ClassNotFoundException if the date could not be restored
    * @since 2.2
-   * @deprecated since 3.0, use the serialisation mechanism instead
+   * @deprecated since 3.0, use the serialization mechanism instead
    */
   @Deprecated
   public Date(final DataInput in) throws IOException, ClassNotFoundException {
