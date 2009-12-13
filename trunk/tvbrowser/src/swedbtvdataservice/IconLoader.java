@@ -26,7 +26,7 @@ class IconLoader {
   private ChangeTrackingProperties mProperties;
   private SweDBTvDataService mDataHydraTvDataService;
 
-  public IconLoader(SweDBTvDataService DataHydraDataService, String group, File dir) throws IOException {
+  protected IconLoader(SweDBTvDataService DataHydraDataService, String group, File dir) throws IOException {
     mDataHydraTvDataService = DataHydraDataService;
     mGroup = group;
     mIconDir = new File(dir + "/icons_" + mGroup);
@@ -44,7 +44,7 @@ class IconLoader {
     }
   }
   
-  public Icon getIcon(String channelId, String url) throws IOException {
+  protected Icon getIcon(String channelId, String url) throws IOException {
     String key = new StringBuilder("icons_").append(mGroup).append("_")
             .append(channelId).toString();
     String prevUrl = (String) mProperties.get(key);
@@ -119,7 +119,7 @@ class IconLoader {
     return new AsynchronousImageIcon(file);
   }
 
-  public void close() throws IOException {
+  protected void close() throws IOException {
     mProperties.store(mIconIndexFile);
   }
 }

@@ -27,7 +27,7 @@ import util.misc.StringPool;
  * Each channel should belong to exactly one channel group. The ChannelGroup interface
  * represents a channel goup.
  */
-public class DataHydraChannelGroup implements devplugin.ChannelGroup {
+class DataHydraChannelGroup implements devplugin.ChannelGroup {
 
   private String mId;
   private String mProvider;
@@ -37,11 +37,11 @@ public class DataHydraChannelGroup implements devplugin.ChannelGroup {
   private String mCountry;
   private boolean mShowRegister;
 
-  public DataHydraChannelGroup(String id, String provider, String copyright, String url, String channelFile, String country) {
+  protected DataHydraChannelGroup(String id, String provider, String copyright, String url, String channelFile, String country) {
     this(id, provider, copyright, url, channelFile, country, true);
   }
 
-  public DataHydraChannelGroup(String id, String provider, String copyright, String url, String channelFile, String country, boolean showRegister) {
+  protected DataHydraChannelGroup(String id, String provider, String copyright, String url, String channelFile, String country, boolean showRegister) {
     mId = id;
     mProvider = provider;
     mCopyright = StringPool.getString(copyright);

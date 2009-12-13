@@ -6,15 +6,6 @@
 
 package swedbtvdataservice;
 
-import devplugin.Channel;
-import devplugin.Program;
-import devplugin.ProgramFieldType;
-import org.xml.sax.Attributes;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXParseException;
-import tvdataservice.MutableChannelDayProgram;
-import tvdataservice.MutableProgram;
-
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
@@ -25,12 +16,21 @@ import java.util.Hashtable;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXParseException;
+
+import tvdataservice.MutableChannelDayProgram;
+import tvdataservice.MutableProgram;
 import util.ui.Localizer;
+import devplugin.Channel;
+import devplugin.Program;
+import devplugin.ProgramFieldType;
 
 /**
  * @author Inforama
  */
-public class DataHydraDayParser extends org.xml.sax.helpers.DefaultHandler {
+class DataHydraDayParser extends org.xml.sax.helpers.DefaultHandler {
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(DataHydraDayParser.class);
 
   private static java.util.logging.Logger mLog
@@ -374,7 +374,7 @@ public class DataHydraDayParser extends org.xml.sax.helpers.DefaultHandler {
           String shortDesc = MutableProgram.generateShortInfoFromDescription(mDescription);           
           prog.setShortInfo(shortDesc);
                     
-          if (((DataHydraChannelGroup)mChannel.getGroup()).isShowRegister() && "true".equals(mDataService.getProperties().getProperty(SweDBTvDataService.SHOW_REGISTER_TEXT, "true"))) {
+          if (((DataHydraChannelGroup)mChannel.getGroup()).isShowRegister() && mDataService.getShowRegisterText()) {
             mDescription += "\n\n" + mLocalizer.msg("register", "Please Register at {0}", mChannel.getWebpage());
           }
 

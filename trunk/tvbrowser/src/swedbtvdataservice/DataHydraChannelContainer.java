@@ -12,7 +12,7 @@ import java.util.StringTokenizer;
 
 import util.misc.StringPool;
 
-public class DataHydraChannelContainer {
+class DataHydraChannelContainer {
 
   private String id;
   private String name;
@@ -24,7 +24,7 @@ public class DataHydraChannelContainer {
   /**
    * Creates a new instance of DataHydraChannelContainer
    */
-  public DataHydraChannelContainer(String id, String name, String baseUrl, String iconUrl, String timeString) {
+  protected DataHydraChannelContainer(String id, String name, String baseUrl, String iconUrl, String timeString) {
     this.name = name;
     this.baseUrl = baseUrl;
     this.iconUrl = StringPool.getString(iconUrl);
@@ -124,7 +124,7 @@ public class DataHydraChannelContainer {
    *
    * @return Value of property lastUpdate.
    */
-  public long getLastUpdate(devplugin.Date day) {
+  protected long getLastUpdate(devplugin.Date day) {
     Long temp = lastUpdate.get(Integer.toString(day.getYear()) + ":" + Integer.toString(day.getMonth()) + ":" + Integer.toString(day.getDayOfMonth()));
     if (temp == null) {
       return 0;
@@ -138,7 +138,7 @@ public class DataHydraChannelContainer {
    *
    * @param lastUpdate New value of property lastUpdate.
    */
-  public void setLastUpdate(final devplugin.Date day, final long lastUpdate) {
+  protected void setLastUpdate(final devplugin.Date day, final long lastUpdate) {
     this.lastUpdate.put(Integer.toString(day.getYear()) + ':'
         + Integer.toString(day.getMonth()) + ':'
         + Integer.toString(day.getDayOfMonth()), lastUpdate);

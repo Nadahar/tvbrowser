@@ -41,7 +41,7 @@ import devplugin.Version;
 
 public class SweDBTvDataService extends devplugin.AbstractTvDataService {
   /** The default plugins download URL */
-  public static final String DEFAULT_PLUGINS_DOWNLOAD_URL = "http://www.tvbrowser.org/mirrorlists";
+  private static final String DEFAULT_PLUGINS_DOWNLOAD_URL = "http://www.tvbrowser.org/mirrorlists";
 
   /** Contains the mirror URLs usable for receiving the channellist.xml.gz from. */
   private static final String[] DEFAULT_MIRRORS = {
@@ -50,13 +50,13 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
     "http://www.tvbrowserserver.de/"
   };
 
-  public static final Localizer mLocalizer = Localizer.getLocalizerFor(SweDBTvDataService.class);
+  private static final Localizer mLocalizer = Localizer.getLocalizerFor(SweDBTvDataService.class);
 
   private static Logger mLog = Logger.getLogger(SweDBTvDataService.class.getName());
 
-  private Properties mProperties;
-
   private File mWorkingDirectory;
+  
+  private DataHydraSettings mSettings = new DataHydraSettings();
 
   private HashMap<String, DataHydraChannelGroup> mChannelGroups;
 
@@ -80,8 +80,6 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
    */
   public SweDBTvDataService() {
     mHasRightToDownloadIcons = false;
-    mProperties = new Properties();
-
     mChannelGroups = new HashMap<String, DataHydraChannelGroup>();
     addGroup(new DataHydraChannelGroup("SweDB", "SweDB.se", "(c) swedb.se", "http://tv.swedb.se", "swedb_channels.xml.gz", "se"));
     addGroup(new DataHydraChannelGroup("MSPC", "mspc.no", "(c) mspc.no", "http://www.mspc.no", "mspc_channels.xml.gz", "no"));
@@ -106,7 +104,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
   }
 
   public SettingsPanel getSettingsPanel() {
-    return new DataHydraSettingsPanel(mProperties);
+    return new DataHydraSettingsPanel(mSettings);
   }
 
   public void setWorkingDirectory(File dataDir) {
@@ -157,16 +155,15 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
    * Called by the host-application during start-up. Implement this method to
    * load your data services settings from the file system.
    */
-  public void loadSettings(Properties settings) {
+  public void loadSettings(Properties properties) {
     mLog.info("Loading settings in DataHydraTvDataService");
-    mProperties = settings;
 
     for (ChannelGroup group : getAvailableGroups()) {
-      long lastupdate = Long.parseLong(mProperties.getProperty("LastChannelUpdate-" + group.getId(), "0"));
+      long lastupdate = Long.parseLong(properties.getProperty("LastChannelUpdate-" + group.getId(), "0"));
       mLastGroupUpdate.put(group, lastupdate);
     }
 
-    int numChannels = Integer.parseInt(mProperties.getProperty(
+    int numChannels = Integer.parseInt(properties.getProperty(
             "NumberOfChannels", "0"));
 
     ArrayList<Channel> channels = new ArrayList<Channel>();
@@ -176,7 +173,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
       String groupId = group.getId();
       DataHydraChannelGroup dataHydraChannelGroup = mChannelGroups.get(groupId);
       for (int i = 0; i < numChannels; i++) {
-        String channelGroupId = mProperties.getProperty("ChannelGroup-" + i);
+        String channelGroupId = properties.getProperty("ChannelGroup-" + i);
         if (channelGroupId == null) {
           channelGroupId = "SweDB";
         }
@@ -185,10 +182,10 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
           if (iconLoader == null) {
             initializeIconLoader(dataHydraChannelGroup);
           }
-          DataHydraChannelContainer container = new DataHydraChannelContainer(mProperties.getProperty(
-                  "ChannelId-" + i, ""), mProperties.getProperty("ChannelTitle-" + i,
-                  ""), mProperties.getProperty("ChannelBaseUrl-" + i, ""), mProperties
-                  .getProperty("ChannelIconUrl-" + i, ""), mProperties.getProperty(
+          DataHydraChannelContainer container = new DataHydraChannelContainer(properties.getProperty(
+                  "ChannelId-" + i, ""), properties.getProperty("ChannelTitle-" + i,
+                  ""), properties.getProperty("ChannelBaseUrl-" + i, ""), properties
+                  .getProperty("ChannelIconUrl-" + i, ""), properties.getProperty(
                   "ChannelLastUpdate-" + i, ""));
     
           Channel ch = createTVBrowserChannel(dataHydraChannelGroup, container);
@@ -200,6 +197,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
     }
 
     mChannels = channels;
+    mSettings.setShowRegisterText(Boolean.parseBoolean(properties.getProperty(SweDBTvDataService.SHOW_REGISTER_TEXT, "true")));
 
     mLog.info("Finished loading settings for DataHydraTvDataService");
   }
@@ -211,28 +209,31 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
   public Properties storeSettings() {
     mLog.info("Storing settings for DataHydraTvDataService");
 
+    Properties properties = new Properties();
     for (ChannelGroup group : getAvailableGroups()) {
       String value = "0";
       if (mLastGroupUpdate.get(group) != null) {
         value = mLastGroupUpdate.get(group).toString();
       }
-      mProperties.setProperty("LastChannelUpdate-" + group.getId(), value);
+      properties.setProperty("LastChannelUpdate-" + group.getId(), value);
     }
 
-    mProperties.setProperty("NumberOfChannels", Integer.toString(mChannels.size()));
+    properties.setProperty("NumberOfChannels", Integer.toString(mChannels.size()));
 
     for (int i = 0; i < mChannels.size(); i++) {
       final Channel channel = mChannels.get(i);
       DataHydraChannelContainer container = mInternalChannels.get(channel);
-      mProperties.setProperty("ChannelId-" + i, container.getId());
-      mProperties.setProperty("ChannelTitle-" + i, container.getName());
-      mProperties.setProperty("ChannelBaseUrl-" + i, container.getBaseUrl());
-      mProperties.setProperty("ChannelIconUrl-" + i, container.getIconUrl());
-      mProperties.setProperty("ChannelLastUpdate-" + i, container.getLastUpdateString());
-      mProperties.setProperty("ChannelGroup-" + i, channel.getGroup().getId());
+      properties.setProperty("ChannelId-" + i, container.getId());
+      properties.setProperty("ChannelTitle-" + i, container.getName());
+      properties.setProperty("ChannelBaseUrl-" + i, container.getBaseUrl());
+      properties.setProperty("ChannelIconUrl-" + i, container.getIconUrl());
+      properties.setProperty("ChannelLastUpdate-" + i, container.getLastUpdateString());
+      properties.setProperty("ChannelGroup-" + i, channel.getGroup().getId());
     }
+    properties.setProperty(SweDBTvDataService.SHOW_REGISTER_TEXT, String.valueOf(mSettings.getShowRegisterText()));
+
     mLog.info("Finished storing settings for DataHydraTvDataService. Returning properties...");
-    return mProperties;
+    return properties;
   }
 
   /**
@@ -331,7 +332,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
           }
   
           /**
-           * Update Channellist of the data plugin
+           * Update Channel list of the data plugin
            */
   
           // Remove all Channels of current Group
@@ -444,17 +445,12 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
     }
   }
 
-  public boolean hasRightToDownloadIcons() {
+  protected boolean hasRightToDownloadIcons() {
     return mHasRightToDownloadIcons;
   }
 
   public SoftReferenceCache<String, File> getIconCache() {
     return mIconCache;
-  }
-
-
-  public Properties getProperties() {
-    return mProperties;
   }
 
   public ChannelGroup[] checkForAvailableChannelGroups(ProgressMonitor monitor)
@@ -476,6 +472,10 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
             mLocalizer
                     .msg("PluginInfo.support",
                     "Support the SWEDB and the mspc crew - Don't forget to register with http://tv.swedb.se/ and http://www.mspc.no"));
+  }
+
+  public boolean getShowRegisterText() {
+    return mSettings.getShowRegisterText();
   }
 
 }
