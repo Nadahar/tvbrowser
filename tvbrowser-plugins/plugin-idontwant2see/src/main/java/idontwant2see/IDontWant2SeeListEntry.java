@@ -40,6 +40,11 @@ public class IDontWant2SeeListEntry {
   private static final String SUFFIX_CONTINUATION = " (Fortsetzung)";
   private String mSearchText;
   private String mPreSearchPart;
+  /**
+   * search pattern for regular expression.<br>
+   * this object is initialized lazily only if the preSearchText already matched
+   * to save memory and pattern compilation runtime
+   */
   private Pattern mSearchPattern;
   private boolean mCaseSensitive;
   private boolean mDateWasSet;
@@ -58,7 +63,6 @@ public class IDontWant2SeeListEntry {
     
     if(in.readBoolean()) {
       mPreSearchPart = in.readUTF();
-      mSearchPattern = createSearchPattern(mSearchText, mCaseSensitive);
     }
     
     if(version >= 6) {
@@ -82,7 +86,7 @@ public class IDontWant2SeeListEntry {
       // or match with wild card
       final String preSearchValue = mCaseSensitive ? title : lowerCaseTitle;
       if (preSearchValue.indexOf(mPreSearchPart) != -1) {
-        final Matcher match = mSearchPattern.matcher(title);
+        final Matcher match = getPattern().matcher(title);
         matches = match.matches();
       }
     }
@@ -96,6 +100,13 @@ public class IDontWant2SeeListEntry {
     return matches;
   }
   
+  private Pattern getPattern() {
+    if (mSearchPattern == null) {
+      mSearchPattern = createSearchPattern(mSearchText,mCaseSensitive);
+    }
+    return mSearchPattern;
+  }
+
   protected boolean matchesProgramTitle(final String title,
       final String lowerCaseTitle) {
     if (matchesTitleInternal(title, lowerCaseTitle)) {
@@ -146,8 +157,6 @@ public class IDontWant2SeeListEntry {
         if(!caseSensitive) {
           mPreSearchPart = mPreSearchPart.toLowerCase();
         }
-        
-        mSearchPattern = createSearchPattern(searchText,caseSensitive);
       }
     }
   }
