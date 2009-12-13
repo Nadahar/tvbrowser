@@ -17,7 +17,7 @@ import devplugin.Date;
 import devplugin.Plugin;
 import devplugin.ProgressMonitor;
 
-public class DataHydraFileParser {
+class DataHydraFileParser {
 
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(DataHydraFileParser.class);
   private static Logger mLog = Logger.getLogger(DataHydraFileParser.class.getName());

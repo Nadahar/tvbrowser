@@ -6,16 +6,17 @@
 
 package swedbtvdataservice;
 
-import org.xml.sax.Attributes;
-
 import java.io.InputStream;
 import java.util.Vector;
+
 import javax.xml.parsers.SAXParserFactory;
+
+import org.xml.sax.Attributes;
 
 /**
  * @author pumpkin
  */
-public class DataHydraChannelParser extends org.xml.sax.helpers.DefaultHandler {
+class DataHydraChannelParser extends org.xml.sax.helpers.DefaultHandler {
 
   private Vector<DataHydraChannelContainer> saveIn;
   private final static int STATUS_CONSTRUCTION = 0;
@@ -107,7 +108,7 @@ public class DataHydraChannelParser extends org.xml.sax.helpers.DefaultHandler {
     }
   }
 
-  public static DataHydraChannelContainer[] parse(InputStream in) throws Exception {
+  protected static DataHydraChannelContainer[] parse(InputStream in) throws Exception {
     Vector<DataHydraChannelContainer> v = new Vector<DataHydraChannelContainer>();
     DataHydraChannelParser handler = new DataHydraChannelParser(v);
     SAXParserFactory.newInstance().newSAXParser().parse(in, handler);

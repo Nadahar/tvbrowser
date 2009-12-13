@@ -1,7 +1,6 @@
 package swedbtvdataservice;
 
 import java.net.URL;
-import java.util.Properties;
 
 import javax.swing.JCheckBox;
 import javax.swing.JEditorPane;
@@ -18,15 +17,15 @@ import com.jgoodies.forms.factories.DefaultComponentFactory;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
-public class DataHydraSettingsPanel extends SettingsPanel {
+class DataHydraSettingsPanel extends SettingsPanel {
   private static final Localizer mLocalizer = Localizer
       .getLocalizerFor(DataHydraSettingsPanel.class);
 
-  private Properties mProperties;
+  private DataHydraSettings mSettings;
   private JCheckBox mShowRegisterText;
 
-  public DataHydraSettingsPanel(Properties prop) {
-    mProperties = prop;
+  protected DataHydraSettingsPanel(final DataHydraSettings settings) {
+    mSettings = settings;
     createGui();
   }
 
@@ -37,7 +36,7 @@ public class DataHydraSettingsPanel extends SettingsPanel {
 
     mShowRegisterText = new JCheckBox(mLocalizer.msg("showRegister", "Show 'Please Register' Text at bottom of description"));
 
-    if ("true".equals(mProperties.getProperty(SweDBTvDataService.SHOW_REGISTER_TEXT, "true"))) {
+    if (mSettings.getShowRegisterText()) {
       mShowRegisterText.setSelected(true);
     }
 
@@ -67,13 +66,7 @@ public class DataHydraSettingsPanel extends SettingsPanel {
   }
 
   public void ok() {
-    
-    if (mShowRegisterText.isSelected()) {
-      mProperties.setProperty(SweDBTvDataService.SHOW_REGISTER_TEXT, "true");
-    } else {
-      mProperties.setProperty(SweDBTvDataService.SHOW_REGISTER_TEXT, "false");
-    }
-
+    mSettings.setShowRegisterText(mShowRegisterText.isSelected());
   }
 
 }
