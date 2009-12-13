@@ -58,7 +58,7 @@ public class PluginTreeNode implements Comparable<PluginTreeNode> {
   private static final util.ui.Localizer mLocalizer =
       util.ui.Localizer.getLocalizerFor(PluginTreeNode.class);
 
-  private int mNodeType;
+  private byte mNodeType;
   private ArrayList<PluginTreeNode> mChildNodes;
   private Object mObject;
   private ArrayList<PluginTreeListener> mNodeListeners;
@@ -68,7 +68,7 @@ public class PluginTreeNode implements Comparable<PluginTreeNode> {
   private boolean mGroupWeekly;
 
   /**
-   * cache todays date for update of all tree nodes 
+   * cache todays date for update of all tree nodes
    */
   private static Date mNodeToday;
   /**
@@ -80,14 +80,18 @@ public class PluginTreeNode implements Comparable<PluginTreeNode> {
    */
   private static Date mNodeYesterday;
 
-  private PluginTreeNode(final int type, final Object o) {
+  private PluginTreeNode(final byte type, final Object object) {
     mChildNodes = null; // do not initialize to save memory
     mNodeType = type;
-    mObject = o;
+    mObject = object;
     mDefaultNode = new Node(type, mObject);
     mNodeListeners = null; // do not initialize to save memory
     mGroupingByDate = true;
     mGroupWeekly = false;
+  }
+
+  private PluginTreeNode(final int type, final Object object) {
+    this((byte)type, object);
   }
 
   /**
@@ -301,8 +305,7 @@ public class PluginTreeNode implements Comparable<PluginTreeNode> {
     PluginTreeNode[] items = mChildNodes.toArray(new PluginTreeNode[mChildNodes.size()]);
     Arrays.sort(items);
     Date currentDate = null;
-    for (int i=0; i<items.length; i++) {
-      PluginTreeNode n = items[i];
+    for (PluginTreeNode n : items) {
       if (!n.isLeaf()) {
         if (n.mGroupingByDate) {
           n.createDateNodes();
@@ -320,8 +323,9 @@ public class PluginTreeNode implements Comparable<PluginTreeNode> {
           if (currentDate == null) {
             currentDate = Date.getCurrentDate();
           }
-          if(progItem.getProgram().getDate().addDays(1).compareTo(currentDate) >= 0)
+          if(progItem.getProgram().getDate().addDays(1).compareTo(currentDate) >= 0) {
             mDefaultNode.add(node);
+          }
         }
         else {
           mDefaultNode.add(n.getMutableTreeNode());
@@ -384,23 +388,23 @@ public class PluginTreeNode implements Comparable<PluginTreeNode> {
     boolean createWeekNodes = mGroupWeekly && (numPrograms <= dates.length * 2);
     boolean isShowingWeekNodes = createWeekNodes;
     
-    for (int i=0; i<dates.length; i++) {
+    for (Date date : dates) {
       String dateStr;
-      if (mNodeYesterday.equals(dates[i])) {
+      if (mNodeYesterday.equals(date)) {
         dateStr = Localizer.getLocalization(Localizer.I18N_YESTERDAY);
         isShowingWeekNodes = false;
       }
-      else if (mNodeToday.equals(dates[i])) {
+      else if (mNodeToday.equals(date)) {
         dateStr = Localizer.getLocalization(Localizer.I18N_TODAY);
         isShowingWeekNodes = false;
       }
-      else if (mNodeTomorrow.equals(dates[i])) {
+      else if (mNodeTomorrow.equals(date)) {
         dateStr = Localizer.getLocalization(Localizer.I18N_TOMORROW);
         isShowingWeekNodes = false;
       }
       else {
         if (createWeekNodes) {
-          int weeks = dates[i].getNumberOfDaysSince(mNodeToday) / 7;
+          int weeks = date.getNumberOfDaysSince(mNodeToday) / 7;
           if (weeks <= 3) {
             dateStr = mLocalizer.msg("weeks."+weeks,"in {0} weeks",weeks);
           }
@@ -409,7 +413,7 @@ public class PluginTreeNode implements Comparable<PluginTreeNode> {
           }
         }
         else {
-          dateStr = dates[i].getLongDateString();
+          dateStr = date.getLongDateString();
         }
       }
       if (!dateStr.equals(lastDateStr)) {
@@ -417,13 +421,13 @@ public class PluginTreeNode implements Comparable<PluginTreeNode> {
         mDefaultNode.add(node);
         lastDateStr = dateStr;
       }
-      List<PluginTreeNode> list = dateMap.get(dates[i]);
+      List<PluginTreeNode> list = dateMap.get(date);
       PluginTreeNode[] nodeArr = new PluginTreeNode[list.size()];
       list.toArray(nodeArr);
       Arrays.sort(nodeArr);
-      for (int k=0; k<nodeArr.length; k++) {
-      	Node newNode = new Node((ProgramItem)nodeArr[k].getUserObject());
-        newNode.setNodeFormatter(nodeArr[k].getNodeFormatter(createWeekNodes && isShowingWeekNodes));
+      for (PluginTreeNode element : nodeArr) {
+      	Node newNode = new Node((ProgramItem)element.getUserObject());
+        newNode.setNodeFormatter(element.getNodeFormatter(createWeekNodes && isShowingWeekNodes));
         node.add(newNode);
       }
       
@@ -438,8 +442,8 @@ public class PluginTreeNode implements Comparable<PluginTreeNode> {
   public synchronized void removeAllChildren() {
     if (mMarker != null) {
       Program[] programs = getPrograms();
-      for (int i=0; i<programs.length; i++) {
-        programs[i].unmark(mMarker);
+      for (Program program : programs) {
+        program.unmark(mMarker);
       }
     }
     if (mChildNodes != null) {
@@ -455,7 +459,7 @@ public class PluginTreeNode implements Comparable<PluginTreeNode> {
     if (mChildNodes == null) {
       mChildNodes = new ArrayList<PluginTreeNode>(1);
     }
-    mChildNodes.add(node);    
+    mChildNodes.add(node);
     node.mMarker = mMarker;
   }
 
@@ -505,8 +509,8 @@ public class PluginTreeNode implements Comparable<PluginTreeNode> {
     if (mChildNodes != null && mChildNodes.size() > 0) {
       Program[] currentProgs = getPrograms();
       ArrayList<Program> listCurrent = new ArrayList<Program>(currentProgs.length);
-      for (int i = 0; i < currentProgs.length; i++) {
-        listCurrent.add(currentProgs[i]);
+      for (Program currentProg : currentProgs) {
+        listCurrent.add(currentProg);
       }
       Comparator<Program> comp = ProgramUtilities.getProgramComparator();
       Collections.sort(listCurrent, comp);
@@ -623,7 +627,7 @@ public class PluginTreeNode implements Comparable<PluginTreeNode> {
     if (root.mChildNodes != null) {
       Iterator<PluginTreeNode> it = root.mChildNodes.iterator();
       while (it.hasNext()) {
-        PluginTreeNode node = (PluginTreeNode)it.next();
+        PluginTreeNode node = it.next();
         if (!node.isLeaf()) {
           if (recursive) {
             PluginTreeNode n = findProgramTreeNode(node, prog, recursive);

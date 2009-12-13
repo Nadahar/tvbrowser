@@ -53,7 +53,7 @@ public class Node extends DefaultMutableTreeNode {
   public static final int STRUCTURE_NODE = 3; // a node created by the PluginTreeNode object
   public static final int CUSTOM_NODE = 4;   // a node created by the plugin
 
-  private int mType;
+  private byte mType;
 
   private ArrayList<ActionMenu> mActionMenuList;
 
@@ -93,7 +93,7 @@ public class Node extends DefaultMutableTreeNode {
         builder.insert(0," ").insert(0,program.getDate().toString());
       }*/
       
-      return builder.toString(); 
+      return builder.toString();
     }
   };
   
@@ -124,18 +124,23 @@ public class Node extends DefaultMutableTreeNode {
         builder.insert(0," ").insert(0,program.getDate().toString());
       }
       
-      return builder.toString(); 
+      return builder.toString();
     }
   };
 
-  public Node(int type, Object o) {
-    super(o);
+  public Node(byte type, Object object) {
+    super(object);
     mType = type;
     mActionMenuList = null; // defer initialization to save memory
-    if(type == ROOT)
+    if(type == ROOT) {
       mShowLeafCount = false;
-    else
+    } else {
       mShowLeafCount = true;
+    }
+  }
+
+  public Node(int type, Object object) {
+    this((byte)type, object);
   }
 
   public Node(ProgramItem programItem) {

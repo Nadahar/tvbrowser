@@ -177,7 +177,7 @@ public final class ImdbPlugin extends Plugin {
     ImdbRating rating = getRatingFor(program);
     if (rating == null
         && getPluginManager().getExampleProgram().equals(program)) {
-    	rating = new ImdbRating(75, 1000, "", "");
+    	rating = EXAMPLE_RATING;
     }
     if (rating != null) {
       final AbstractAction action = new AbstractAction() {

@@ -191,7 +191,7 @@ public final class RecommendationPlugin extends Plugin {
             sumWeight += weighting.getWeight(program);
           }
           if (sumWeight > 0) {
-            ProgramWeight programWeight = new ProgramWeight(program, sumWeight);
+            ProgramWeight programWeight = new ProgramWeight(program, (short) sumWeight);
             mRecommendations.add(programWeight);
             String key = String.valueOf(sumWeight) + program.getTitle();
             RecommendationNode node = nodes.get(key);

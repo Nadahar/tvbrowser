@@ -21,20 +21,25 @@ public final class ImdbRating {
   private static final DecimalFormat RATING_TEXT_FORMAT = new DecimalFormat(
       "##.0");
 
-  public static final int MAX_RATING_NORMALIZATION = 100;
+  public static final byte MAX_RATING_NORMALIZATION = 100;
   
   private String mDistribution;
   private int mVotes;
-  private int mRating;
+  private byte mRating;
 
-  public ImdbRating(final int rating, final int votes,
+  public ImdbRating(final byte rating, final int votes,
       final String distribution, final String movieid) {
     mRating = rating;
     mVotes = votes;
     mDistribution = distribution;
   }
 
-  public int getRating() {
+  public ImdbRating(final int rating, final int votes,
+      final String distribution, final String movieid) {
+    this((byte)rating, votes, distribution, movieid);
+  }
+
+  public byte getRating() {
     return mRating;
   }
   
