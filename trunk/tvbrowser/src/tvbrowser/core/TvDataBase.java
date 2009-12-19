@@ -462,6 +462,14 @@ public class TvDataBase {
     if (lifespan < 0) {
       return; // manually
     }
+    // remove the dates from the "available" set
+    Date date = Date.getCurrentDate().addDays(-lifespan);
+    while (dataAvailable(date)) {
+      mAvailableDateSet.remove(date);
+      date = date.addDays(-1);
+    }
+    
+    // search files
     final Date d = Date.getCurrentDate().addDays(-lifespan);
 
     FilenameFilter filter = new FilenameFilter() {
@@ -496,6 +504,7 @@ public class TvDataBase {
     }
 
     deleteFiles(informPlugins, filter, channelArr, channelIdArr);
+    updateAvailableDateSet();
   }
 
   private void deleteFiles(boolean informPlugins, FilenameFilter filter,
