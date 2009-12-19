@@ -65,6 +65,7 @@ public class GrowlContainer {
   private Application mApplication;
   private NotificationType mNotificationProgram;
   private GrowlConnector mGrowlConnector;
+  private boolean mInitialized = false;
 
   /**
    * Create the Growl-Container
@@ -81,7 +82,10 @@ public class GrowlContainer {
    * @param program
    *          Program to use
    */
-  public void notifyGrowl(final GrowlSettings settings, final Program program) {
+  protected void notifyGrowl(final GrowlSettings settings, final Program program) {
+    if (!mInitialized) {
+      return;
+    }
     final String title = mParser.analyse(settings.getTitle(), program);
     final String desc = mParser.analyse(settings.getDescription(), program);
     if (OperatingSystem.isMacOs()) {
@@ -113,7 +117,6 @@ public class GrowlContainer {
             notification.setIcon(file.getAbsolutePath());
           }
         } catch (IOException e) {
-          // TODO Auto-generated catch block
           e.printStackTrace();
         }
       }
@@ -122,18 +125,26 @@ public class GrowlContainer {
   }
 
   protected void registerApplication() {
-    if (!OperatingSystem.isMacOs()) {
-      mGrowlConnector = new GrowlConnector();
-      mApplication = new Application("TV-Browser");
-      File icon = new File(TVBROWSER_ICON_NAME);
-      if (icon.isFile()) {
-        mApplication.setIcon(icon.getAbsolutePath());
+    if (OperatingSystem.isMacOs()) {
+      mInitialized = true;
+    }
+    else {
+      try {
+        mGrowlConnector = new GrowlConnector();
+        mApplication = new Application("TV-Browser");
+        File icon = new File(TVBROWSER_ICON_NAME);
+        if (icon.isFile()) {
+          mApplication.setIcon(icon.getAbsolutePath());
+        }
+        mNotificationProgram = new NotificationType("program_notification",
+            mLocalizer.msg(
+            "notification", "program notification"));
+        final NotificationType[] notificationTypes = new NotificationType[] { mNotificationProgram };
+        mGrowlConnector.register(mApplication, notificationTypes);
+        mInitialized = true;
+      } catch (Exception e) {
+        mLog.warning("Growl could not be initialized: " + e.getMessage());
       }
-      mNotificationProgram = new NotificationType("program_notification",
-          mLocalizer.msg(
-          "notification", "program notification"));
-      final NotificationType[] notificationTypes = new NotificationType[] { mNotificationProgram };
-      mGrowlConnector.register(mApplication, notificationTypes);
     }
   }
 }
