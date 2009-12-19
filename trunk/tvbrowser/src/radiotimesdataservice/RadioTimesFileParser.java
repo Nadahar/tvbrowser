@@ -86,7 +86,7 @@ public class RadioTimesFileParser {
   private static final int RT_GENRE = 16;
   private static final int RT_DESCRIPTION = 17;
   @SuppressWarnings("unused")
-  private static final int RT_CHOICE = 18; // ???
+  private static final int RT_CHOICE = 18; // This means that the Radio Times editorial team have marked it as a choice
   private static final int RT_DATE = 19;
   private static final int RT_START_TIME = 20;
   private static final int RT_END_TIME = 21;
@@ -128,6 +128,9 @@ public class RadioTimesFileParser {
 
           if (items.length == 23) {
             try {
+              for (int i = 0; i < items.length; i++) {
+                items[i] = items[i].trim();
+              }
               Date date = parseDate(items[RT_DATE]);
               MutableChannelDayProgram mutDayProg = getMutableDayProgram(date);
               
@@ -148,18 +151,17 @@ public class RadioTimesFileParser {
               }
 
               desc.append(items[RT_DESCRIPTION]);
-              desc.append("\n\n");
 
               prog.setTextField(ProgramFieldType.DESCRIPTION_TYPE, desc.toString().trim());
 
               prog.setTextField(ProgramFieldType.SHORT_DESCRIPTION_TYPE, MutableProgram.generateShortInfoFromDescription(items[RT_DESCRIPTION].trim()));
 
-              String field = items[RT_EPISODE].trim();
+              String field = items[RT_EPISODE];
               if (field.length() > 0) {
                 prog.setTextField(ProgramFieldType.EPISODE_TYPE, field);
               }
               
-              field = items[RT_YEAR].trim();
+              field = items[RT_YEAR];
               if (field.length() > 0) {
                 try {
                   prog.setIntField(ProgramFieldType.PRODUCTION_YEAR_TYPE, Integer.parseInt(field));
@@ -167,7 +169,7 @@ public class RadioTimesFileParser {
                 }
               }
 
-              field = items[RT_DURATION_MINUTES].trim();
+              field = items[RT_DURATION_MINUTES];
               if (field.length() > 0) {
                 try {
                   prog.setIntField(ProgramFieldType.NET_PLAYING_TIME_TYPE, Integer.parseInt(field));
@@ -175,44 +177,44 @@ public class RadioTimesFileParser {
                 }
               }
 
-              field = items[RT_DIRECTOR].trim();
+              field = items[RT_DIRECTOR];
               if (field.length() > 0) {
                 prog.setTextField(ProgramFieldType.DIRECTOR_TYPE, field);
               }
               
-              field = items[RT_ACTORS].trim();
+              field = items[RT_ACTORS];
               if (field.length() > 0) {
                 prog.setTextField(ProgramFieldType.ACTOR_LIST_TYPE, createCast(field));
               }
               
-              field = items[RT_GENRE].trim();
+              field = items[RT_GENRE];
               if ((field.length() > 0)&& (!field.equals("No Genre"))) {
                 prog.setTextField(ProgramFieldType.GENRE_TYPE, field);
               }
 
               int bitset = 0;
               
-              if (items[RT_SUBTITLES_FOR_AURALLY_HANDICAPPED].trim().equalsIgnoreCase("true")) {
+              if (Boolean.parseBoolean(items[RT_SUBTITLES_FOR_AURALLY_HANDICAPPED])) {
                 bitset |= Program.INFO_SUBTITLE_FOR_AURALLY_HANDICAPPED;
               }
               
-              if (items[RT_16_TO_9].trim().equalsIgnoreCase("true")) {
+              if (Boolean.parseBoolean(items[RT_16_TO_9])) {
                 bitset |= Program.INFO_VISION_16_TO_9;
               }
               
-              if (items[RT_BLACK_WHITE].trim().equalsIgnoreCase("true")) {
+              if (Boolean.parseBoolean(items[RT_BLACK_WHITE])) {
                 bitset |= Program.INFO_VISION_BLACK_AND_WHITE;
               }
               
-              if (items[RT_MOVIE].trim().equalsIgnoreCase("true")) {
+              if (Boolean.parseBoolean(items[RT_MOVIE])) {
                 bitset |= Program.INFO_CATEGORIE_MOVIE;
               }
               
-              if (items[RT_MOVIE_PREMIERE].trim().equalsIgnoreCase("true")) {
+              if (Boolean.parseBoolean(items[RT_MOVIE_PREMIERE])) {
                 bitset |= Program.INFO_NEW;
               }
 
-              if (items[RT_NEW_SERIES].trim().equalsIgnoreCase("true")) {
+              if (Boolean.parseBoolean(items[RT_NEW_SERIES])) {
                 bitset |= Program.INFO_NEW;
                 bitset |= Program.INFO_CATEGORIE_MOVIE;
               }
@@ -260,7 +262,7 @@ public class RadioTimesFileParser {
     storeDayPrograms(updateManager);
   }
 
-  private int translateRating(String rating) {
+  private int translateRating(final String rating) {
     if (rating.equals("1")) {
       return 20;
     } else if (rating.equals("2")) {
@@ -274,7 +276,7 @@ public class RadioTimesFileParser {
     }
 
     if (rating.length() > 0) {
-      System.out.println(rating);
+      mLog.warning("Unknown rating: " + rating);
     }
 
     return 0;
@@ -321,9 +323,9 @@ public class RadioTimesFileParser {
         String[] names = actor.split("\\*");
         
         if (names.length == 2) {
-          actors.append(names[1]).append("\t").append(names[0]).append("\n");
+          actors.append(names[1]).append('\t').append(names[0]).append('\n');
         } else {
-          actors.append(names[0]).append("\n");
+          actors.append(names[0]).append('\n');
         }
       }
       

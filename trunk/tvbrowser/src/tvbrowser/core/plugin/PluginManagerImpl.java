@@ -432,7 +432,7 @@ public class PluginManagerImpl implements PluginManager {
    */
   public Program getExampleProgram() {
     if (mExampleProgram == null) {
-      // TODO: interationalize
+      // TODO: internationalize
       
       Channel exampleChannel = new Channel(null, "Channel 1",
           TimeZone.getDefault(), "de", "");
