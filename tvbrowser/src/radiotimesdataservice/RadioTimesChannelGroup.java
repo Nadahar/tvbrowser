@@ -28,7 +28,7 @@ package radiotimesdataservice;
 
 /**
  * Each channel should belong to exactly one channel group. The ChannelGroup
- * interface represents a channel goup.
+ * interface represents a channel group.
  */
 public class RadioTimesChannelGroup implements devplugin.ChannelGroup {
 
