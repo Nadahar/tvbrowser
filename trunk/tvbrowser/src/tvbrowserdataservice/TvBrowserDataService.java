@@ -410,13 +410,15 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
 
 
   void checkCancelDownload() {
-    if (mTvDataBase.cancelDownload()) {
-      mDownloadManager.removeAllDownloadJobs();
+    if (mTvDataBase != null && mDownloadManager != null) {
+      if (mTvDataBase.cancelDownload()) {
+        mDownloadManager.removeAllDownloadJobs();
+      }
+  
+      // Update the ProgressMonitor
+      int jobCount = mDownloadManager.getDownloadJobCount();
+      mProgressMonitor.setValue(mTotalDownloadJobCount - jobCount);
     }
-
-    // Update the ProgressMonitor
-    int jobCount = mDownloadManager.getDownloadJobCount();
-    mProgressMonitor.setValue(mTotalDownloadJobCount - jobCount);
   }
 
 
