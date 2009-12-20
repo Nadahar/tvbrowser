@@ -200,7 +200,7 @@ public class ProgramUtilities {
               actors[i+1] = "";
             }
           }
-          if (actor.contains("(") && actor.contains(")")) {
+          if (actor.contains("(") && actor.contains(")") && actor.lastIndexOf(')') > actor.indexOf('(')) {
             String secondPart = nameFrom(actor.substring(
                 actor.indexOf('(') + 1, actor.lastIndexOf(')')));
             // there are multiple brackets, lets look for something like "actor (age) (role)"
@@ -243,6 +243,11 @@ public class ProgramUtilities {
   
   private static void addNames(final String firstName, final String secondName) {
     if (firstName.equalsIgnoreCase("und andere") || secondName.equalsIgnoreCase("und andere")) {
+      return;
+    }
+    // avoid duplicates in the list (sometimes duplicates occur in the fields)
+    int firstIndex = mListFirst.indexOf(firstName);
+    if (firstIndex >= 0 && firstIndex == mListSecond.indexOf(secondName)) {
       return;
     }
     mListFirst.add(firstName);
@@ -555,4 +560,84 @@ public class ProgramUtilities {
     }
     return items;
   }
+
+  /**
+   * get the age limit for a given textual rating
+   * 
+   * @param rating
+   * @return age limit or -1
+   * @since 3.0
+   */
+  public static int getAgeLimit(final String rating) {
+    if (rating == null || rating.isEmpty()) {
+      return -1;
+    }
+    if (rating.equalsIgnoreCase("NR") || rating.equalsIgnoreCase("Unrated")) {
+      return -1;
+    }
+    // MPAA
+    if (rating.equalsIgnoreCase("G")) {
+      return 0;
+    }
+    if (rating.equalsIgnoreCase("PG-13")) {
+      return 13;
+    }
+    if (rating.equalsIgnoreCase("NC-17")) {
+      return 18;
+    }
+    // X-Rating
+    if (rating.startsWith("X")) {
+      return 18;
+    }
+    // FCC
+    if (rating.startsWith("TV-Y7")) {
+      return 7;
+    }
+    if (rating.startsWith("TV-Y")) {
+      return 0;
+    }
+    if (rating.startsWith("TV-14")) {
+      return 14;
+    }
+    if (rating.startsWith("TV-M")) {
+      return 17;
+    }
+    // BBFC, Great Britain
+    if (rating.equalsIgnoreCase("UC")) {
+      return 0;
+    }
+    if (rating.equalsIgnoreCase("U")) {
+      return 3;
+    }
+    if (rating.equalsIgnoreCase("PG")) {
+      return 7;
+    }
+    if (rating.startsWith("R18") || rating.equals("R")) {
+      return 18;
+    }
+    // Italy
+    if (rating.equalsIgnoreCase("T")) {
+      return 0;
+    }
+    if (rating.equalsIgnoreCase("VM14")) {
+      return 14;
+    }
+    if (rating.equalsIgnoreCase("VM18")) {
+      return 18;
+    }
+    // ratings without age
+    if (rating.equals("TV-G") || rating.equals("TV-PG")) {
+      return -1;
+    }
+    // numerical codes
+    try {
+      int number = Integer.parseInt(rating);
+      return number;
+    } catch (NumberFormatException e) {
+      // ignore, this wasn't a numerical code
+    }
+    System.out.println("Unknown rating code: " + rating);
+    return -1;
+  }
+  
 }
