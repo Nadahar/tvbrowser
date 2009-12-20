@@ -31,7 +31,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 import util.program.ProgramTextCreator;
-
 import devplugin.ProgramFieldType;
 
 /**
@@ -92,7 +91,7 @@ public class ProgramInfoPrintSettings {
       for(int i = 0; i < n; i++) {
         mFieldTypes[i] = ProgramFieldType.getTypeForId(in.readInt());
         
-        if(((ProgramFieldType)mFieldTypes[i]).getTypeId() == ProgramFieldType.UNKOWN_FORMAT)
+        if(((ProgramFieldType)mFieldTypes[i]).getTypeId() == ProgramFieldType.UNKNOWN_FORMAT)
           mFieldTypes[i] = ProgramTextCreator.getDurationTypeString();
       }
       
@@ -119,7 +118,7 @@ public class ProgramInfoPrintSettings {
       if(mFieldTypes[i] instanceof ProgramFieldType)
         out.writeInt(((ProgramFieldType)mFieldTypes[i]).getTypeId());
       else
-        out.writeInt(ProgramFieldType.UNKOWN_FORMAT);
+        out.writeInt(ProgramFieldType.UNKNOWN_FORMAT);
     
     out.writeBoolean(mPrintImage);
     out.writeBoolean(mPrintPluginIcons);

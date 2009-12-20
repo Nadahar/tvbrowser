@@ -45,7 +45,11 @@ public class ProgramFieldType {
   private static final ArrayList<ProgramFieldType> mKnownTypeList = new ArrayList<ProgramFieldType>();
   private static ProgramFieldType[] mKnownTypeArray;
   
-  public static final int UNKOWN_FORMAT = 1;
+  public static final int UNKNOWN_FORMAT = 1;
+  /**
+   * @deprecated since 3.0, use {@link UNKNOWN_FORMAT} instead
+   */
+  public static final int UNKOWN_FORMAT = UNKNOWN_FORMAT;
   public static final int BINARY_FORMAT = 2;
   public static final int TEXT_FORMAT = 3;
   public static final int INT_FORMAT = 4;
@@ -363,7 +367,7 @@ public class ProgramFieldType {
       return mKnownTypeArray[typeId];
     }
     
-    return new ProgramFieldType(typeId, UNKOWN_FORMAT, false,
+    return new ProgramFieldType(typeId, UNKNOWN_FORMAT, false,
                                 "unknown (" + typeId + ")","unknown", "Unknown");
   }
   
@@ -411,7 +415,7 @@ public class ProgramFieldType {
   
   public boolean isRightFormat(int format) {
     return (mFormat == format)
-      || (format == UNKOWN_FORMAT) || (mFormat == UNKOWN_FORMAT);
+      || (format == UNKNOWN_FORMAT) || (mFormat == UNKNOWN_FORMAT);
   }
   
   
