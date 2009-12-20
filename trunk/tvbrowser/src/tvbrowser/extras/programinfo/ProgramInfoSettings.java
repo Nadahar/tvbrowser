@@ -265,7 +265,7 @@ class ProgramInfoSettings {
     final Object[] result = new Object[id.length];
     for (int i = 0; i < id.length; i++) {
       final int parsedId = Integer.parseInt(id[i]);
-      if (parsedId == ProgramFieldType.UNKOWN_FORMAT) {
+      if (parsedId == ProgramFieldType.UNKNOWN_FORMAT) {
         result[i] = ProgramTextCreator.getDurationTypeString();
       } else if (parsedId >= 0) {
         result[i] = ProgramFieldType.getTypeForId(parsedId);
@@ -282,7 +282,7 @@ class ProgramInfoSettings {
 
     for (Object object : order) {
       if (object instanceof String) {
-        temp.append(ProgramFieldType.UNKOWN_FORMAT).append(';');
+        temp.append(ProgramFieldType.UNKNOWN_FORMAT).append(';');
       } else if (object instanceof CompoundedProgramFieldType) {
         temp.append(((CompoundedProgramFieldType) object).getId()).append(';');
       } else {

@@ -80,7 +80,7 @@ public class ProgramField implements Cloneable {
 
 
     public ProgramField() {
-        mDataFormat = ProgramFieldType.UNKOWN_FORMAT;
+        mDataFormat = ProgramFieldType.UNKNOWN_FORMAT;
         mType = null;
     }
     
@@ -92,7 +92,7 @@ public class ProgramField implements Cloneable {
      * @since 2.2.2
      */
     protected ProgramField(Object o) {
-      mDataFormat = ProgramFieldType.UNKOWN_FORMAT;
+      mDataFormat = ProgramFieldType.UNKNOWN_FORMAT;
       mTypeId = 255;      
     }
 
@@ -291,7 +291,7 @@ public class ProgramField implements Cloneable {
      * Is used for a field in an update file that should be deleted.
      */
     public void removeData() {
-        mDataFormat = ProgramFieldType.UNKOWN_FORMAT;
+        mDataFormat = ProgramFieldType.UNKNOWN_FORMAT;
         mData = null;
     }
 
@@ -429,7 +429,7 @@ public class ProgramField implements Cloneable {
         mTypeId = stream.read();
         mType = null;
 
-        mDataFormat = ProgramFieldType.UNKOWN_FORMAT;
+        mDataFormat = ProgramFieldType.UNKNOWN_FORMAT;
 
         int dataLength = ((stream.read() & 0xFF) << 16)
                 | ((stream.read() & 0xFF) << 8)
