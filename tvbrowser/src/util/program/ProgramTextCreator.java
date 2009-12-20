@@ -33,6 +33,7 @@ import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.regex.Pattern;
 
 import javax.swing.Icon;
@@ -611,7 +612,8 @@ public class ProgramTextCreator {
         } else if (type == ProgramFieldType.URL_TYPE) {
           addEntry(doc, buffer, prog, ProgramFieldType.URL_TYPE, true,
               showHelpLinks, showPersonLinks);
-        } else if (type == ProgramFieldType.ACTOR_LIST_TYPE) {
+        }
+        else if (type == ProgramFieldType.ACTOR_LIST_TYPE) {
           ArrayList<String> knownNames = new ArrayList<String>();
           String[] recognizedActors = ProgramUtilities.getActorNames(prog);
           if (recognizedActors != null) {
@@ -952,24 +954,26 @@ public class ProgramTextCreator {
       }
       buffer.append(text);
     }
-    else {
-      if (ProgramFieldType.DESCRIPTION_TYPE == fieldType) {
-        buffer.append(text);
-      } else {
-        buffer.append(HTMLTextHelper.convertTextToHtml(text, createLinks));
-      }
+    else if (ProgramFieldType.DESCRIPTION_TYPE == fieldType) {
+      buffer.append(text);
+    } else {
+      buffer.append(HTMLTextHelper.convertTextToHtml(text, createLinks));
     }
     
     if ((ProgramFieldType.SHOWVIEW_NR_TYPE == fieldType) && (showHelpLinks)) {
-      buffer.append(" (<a href=\"").append(
-          mLocalizer.msg("showviewInfo",
-              "http://wiki.tvbrowser.org/index.php/Showviewnummern")).append(
-          "\">?</a>)");
+      addHelpLink(buffer, mLocalizer.msg("showviewInfo", "http://wiki.tvbrowser.org/index.php/Showviewnummern"));
+    }
+    if ((ProgramFieldType.AGE_RATING_TYPE == fieldType) && (showHelpLinks)) {
+      addHelpLink(buffer, mLocalizer.msg("ratingInfo", "http://en.wikipedia.org/wiki/Motion_picture_rating_system"));
     }
 
     buffer.append("</td></tr>");
 
     addSeparator(doc, buffer);
+  }
+
+  private static void addHelpLink(final StringBuilder buffer, final String url) {
+    buffer.append(" (<a href=\"").append(url).append("\">?</a>)");
   }
 
   private static String[] splitPersons(final String textField) {
@@ -1035,7 +1039,7 @@ public class ProgramTextCreator {
    * @return The default order of the entries.
    */
   public static Object[] getDefaultOrder() {
-    return new Object[] {
+    ArrayList<Object> list = new ArrayList<Object>(Arrays.asList(new Object[] {
         ProgramFieldType.GENRE_TYPE,
         ProgramFieldType.DESCRIPTION_TYPE,
         ProgramFieldType.ADDITIONAL_INFORMATION_TYPE,
@@ -1055,10 +1059,24 @@ public class ProgramTextCreator {
         ProgramFieldType.ORIGINAL_EPISODE_TYPE,
         ProgramFieldType.PRODUCTION_COMPANY_TYPE,
         ProgramFieldType.REPETITION_OF_TYPE,
-        ProgramFieldType.REPETITION_ON_TYPE, ProgramFieldType.AGE_LIMIT_TYPE,
-        ProgramFieldType.INFO_TYPE, ProgramFieldType.VPS_TYPE,
+        ProgramFieldType.REPETITION_ON_TYPE,
+        ProgramFieldType.AGE_LIMIT_TYPE,
+        ProgramFieldType.INFO_TYPE,
+        ProgramFieldType.VPS_TYPE,
         ProgramFieldType.SHOWVIEW_NR_TYPE, 
-        getDurationTypeString() };
+        getDurationTypeString()}));
+    // append missing fields (which may have been added in recent versions)
+    for (Iterator<ProgramFieldType> iterator = ProgramFieldType.getTypeIterator(); iterator.hasNext();) {
+      ProgramFieldType type = iterator.next();
+      // exclude binary information which need special handling anyway
+      if (type.getFormat() == ProgramFieldType.BINARY_FORMAT) {
+        continue;
+      }
+      if (!list.contains(type)) {
+        list.add(type);
+      }
+    }
+    return list.toArray();
   }
 
   /**
