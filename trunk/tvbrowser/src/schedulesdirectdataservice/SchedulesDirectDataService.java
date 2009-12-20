@@ -35,6 +35,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.TimeZone;
 import java.util.Map.Entry;
+import java.util.logging.Logger;
 
 import net.sf.xtvdclient.xtvd.DataDirectException;
 import net.sf.xtvdclient.xtvd.SOAPRequest;
@@ -42,6 +43,7 @@ import net.sf.xtvdclient.xtvd.datatypes.Crew;
 import net.sf.xtvdclient.xtvd.datatypes.CrewMember;
 import net.sf.xtvdclient.xtvd.datatypes.Genre;
 import net.sf.xtvdclient.xtvd.datatypes.MovieAdvisories;
+import net.sf.xtvdclient.xtvd.datatypes.Part;
 import net.sf.xtvdclient.xtvd.datatypes.ProgramGenre;
 import net.sf.xtvdclient.xtvd.datatypes.Schedule;
 import net.sf.xtvdclient.xtvd.datatypes.StarRating;
@@ -54,6 +56,7 @@ import tvdataservice.TvDataUpdateManager;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
 import util.io.IOUtilities;
+import util.program.ProgramUtilities;
 import util.ui.Localizer;
 import devplugin.AbstractTvDataService;
 import devplugin.Channel;
@@ -71,6 +74,10 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
    * Translator
    */
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(SchedulesDirectDataService.class);
+
+  /** The logger for this class */
+  private static java.util.logging.Logger mLog
+    = Logger.getLogger(SchedulesDirectDataService.class.getName());
 
   private SchedulesDirectChannelGroup mChannelGroup = new SchedulesDirectChannelGroup();
 
@@ -91,7 +98,8 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
   }
 
   public void updateTvData(TvDataUpdateManager updateManager, Channel[] channelArr, Date startDate, int dateCount, ProgressMonitor monitor) throws TvBrowserException {
-    if (mProperties.getProperty("username", "").trim().length() != 0) {
+    final String userName = mProperties.getProperty("username", "").trim();
+    if (!userName.isEmpty()) {
       int max = channelArr.length;
 
       monitor.setMaximum(max);
@@ -99,7 +107,7 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
 
       try {
         SOAPRequest soapRequest = new SOAPRequest(
-                mProperties.getProperty("username", "").trim(),
+                userName,
                 IOUtilities.xorDecode(mProperties.getProperty("password", ""), SchedulesDirectSettingsPanel.PASSWORDSEED).trim(),
                 SCHEDULESDIRECT_SERVICE);
         Calendar start = startDate.getCalendar();
@@ -119,41 +127,49 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
         }
 
         mChannelMap = new HashMap<Channel, Map<devplugin.Date, MutableChannelDayProgram>>();
-        for (Schedule s : schedules) {
-          Channel ch = channelMap.get(Integer.toString(s.getStation()));
+        for (Schedule schedule : schedules) {
+          Channel ch = channelMap.get(Integer.toString(schedule.getStation()));
           if (ch != null) {
             Calendar cal = Calendar.getInstance();
-            cal.setTime(s.getTime().getLocalDate());
+            cal.setTime(schedule.getTime().getLocalDate());
             devplugin.Date programDate = new Date(cal);
             MutableChannelDayProgram chDayProgram = getMutableDayProgram(ch, programDate);
 
             MutableProgram prog = new MutableProgram(ch, programDate, cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), true);
+            net.sf.xtvdclient.xtvd.datatypes.Program xtvdProgram = xtvd.getPrograms().get(schedule.getProgram());
 
             int info = 0;
-            if (s.getCloseCaptioned()) {
+            if (schedule.getCloseCaptioned()) {
               info |= Program.INFO_SUBTITLE_FOR_AURALLY_HANDICAPPED;
             }
-            if (s.getStereo()) {
+            if (schedule.getStereo()) {
               info |= Program.INFO_AUDIO_STEREO;
             }
-            if (s.getSubtitled()) {
+            if (schedule.getSubtitled()) {
               info |= Program.INFO_ORIGINAL_WITH_SUBTITLE;
             }
-            if (s.getHdtv()) {
+            if (schedule.getHdtv()) {
               info |= Program.INFO_VISION_HD;
+            }
+            if (xtvdProgram.getColorCode() != null) {
+              String code = xtvdProgram.getColorCode().toLowerCase();
+              if (code.contains("black") || code.contains("bw")) {
+                info |= Program.INFO_VISION_BLACK_AND_WHITE;
+              }
+              else {
+                mLog.warning("Unknown color code: " + xtvdProgram.getColorCode());
+              }
             }
 
             prog.setInfo(info);
-
-            net.sf.xtvdclient.xtvd.datatypes.Program xtvdProgram = xtvd.getPrograms().get(s.getProgram());
-
+            
             prog.setTitle(xtvdProgram.getTitle());
 
             if (xtvdProgram.getSyndicatedEpisodeNumber() != null) {
               try {
                 prog.setIntField(ProgramFieldType.EPISODE_NUMBER_TYPE, Integer.parseInt(xtvdProgram.getSyndicatedEpisodeNumber()));
               } catch (NumberFormatException e) {
-                e.printStackTrace();
+                // ignore, the syndicated episode number may also be an arbitrary string
               }
             }
 
@@ -164,6 +180,8 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
             if (xtvdProgram.getYear() != null) {
               try {
                 prog.setIntField(ProgramFieldType.PRODUCTION_YEAR_TYPE, Integer.parseInt(xtvdProgram.getYear()));
+                // year is only set for movies
+                setMovieType(prog);
               } catch (NumberFormatException e) {
                 e.printStackTrace();
               }
@@ -175,20 +193,49 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
 
             StringBuilder desc = new StringBuilder();
             if (xtvdProgram.getDescription() != null) {
-              desc.append(xtvdProgram.getDescription()).append("\n");
+              desc.append(xtvdProgram.getDescription()).append('\n');
             }
             if (xtvdProgram.getStarRating() != null) {
-              prog.setIntField(ProgramFieldType.RATING_TYPE, parseStarRating(xtvdProgram.getStarRating()));
+              int rating = parseStarRating(xtvdProgram.getStarRating());
+              if (rating >= 0) {
+                prog.setIntField(ProgramFieldType.RATING_TYPE, rating);
+              }
+              setMovieType(prog);
             }
             if (xtvdProgram.getMpaaRating() != null) {
-              desc.append("\nMPAA Rating: ").append(xtvdProgram.getMpaaRating());
+              String rating = xtvdProgram.getMpaaRating().toString();
+              prog.setTextField(ProgramFieldType.AGE_RATING_TYPE, rating);
+              int ageLimit = ProgramUtilities.getAgeLimit(rating);
+              if (ageLimit >= 0) {
+                prog.setIntField(ProgramFieldType.AGE_LIMIT_TYPE, ageLimit);
+              }
+              setMovieType(prog);
+            }
+            if (schedule.getTvRating() != null) {
+              String rating = schedule.getTvRating().toString();
+              String ratingString = prog.getTextField(ProgramFieldType.AGE_RATING_TYPE);
+              if (ratingString != null) {
+                ratingString = ratingString + ", " + rating;
+              }
+              else {
+                ratingString = rating;
+              }
+              prog.setTextField(ProgramFieldType.AGE_RATING_TYPE, ratingString);
+              int ageLimit = ProgramUtilities.getAgeLimit(rating);
+              if (ageLimit >= 0) {
+                prog.setIntField(ProgramFieldType.AGE_LIMIT_TYPE, ageLimit);
+              }
             }
             if (xtvdProgram.getAdvisories() != null && !xtvdProgram.getAdvisories().isEmpty()) {
-              desc.append("\nAdvisories : ");
+              StringBuilder advBuilder = new StringBuilder();
 
-              for (MovieAdvisories str : xtvdProgram.getAdvisories()) {
-                desc.append(str.toString()).append(" ");
+              for (MovieAdvisories advisory : xtvdProgram.getAdvisories()) {
+                if (advBuilder.length() > 0) {
+                  advBuilder.append(", ");
+                }
+                advBuilder.append(advisory.toString());
               }
+              desc.append("\nAdvisories: ").append(advBuilder.toString());
             }
 
             if (xtvdProgram.getRunTime() != null) {
@@ -200,15 +247,21 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
               }
             }
             /*
-            if (xtvdProgram.getColorCode() != null) {
-              desc.append("\nColorCode : ").append(xtvdProgram.getColorCode());
-            }
             if (xtvdProgram.getSeries() != null) {
               desc.append("\nSeries : ").append(xtvdProgram.getSeries());
             }
             if (xtvdProgram.getShowType()!= null) {
               desc.append("\nShowType : ").append(xtvdProgram.getShowType());
             } */
+            
+            if (schedule.getPart() != null) {
+              final Part part = schedule.getPart();
+              desc.append("\nPart " + part.getNumber() + " of " + part.getTotal());
+            }
+            if (schedule.getRepeat()) {
+              prog.setTextField(ProgramFieldType.REPETITION_OF_TYPE, "unknown previous program");
+            }
+
 
             Crew crew = xtvd.getProductionCrew().get(xtvdProgram.getId());
             if (crew != null) {
@@ -217,34 +270,48 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
               StringBuilder host = new StringBuilder();
               StringBuilder producer = new StringBuilder();
               StringBuilder writer = new StringBuilder();
+              StringBuilder additional = new StringBuilder();
 
               for (CrewMember member : crew.getMember()) {
-                if ("Actor".equals(member.getRole()) || "Guest Star".equals(member.getRole())) {
-                  actors.append(member.getGivenname()).append(" ").append(member.getSurname()).append(", ");
-                } else if ("Director".equals(member.getRole())) {
-                  director.append(member.getGivenname()).append(" ").append(member.getSurname()).append(", ");
-                } else if ("Host".equals(member.getRole())) {
-                  host.append(member.getGivenname()).append(" ").append(member.getSurname()).append(", ");
-                } else if ("Producer".equals(member.getRole())||"Executive Producer".equals(member.getRole())) {
-                  producer.append(member.getGivenname()).append(" ").append(member.getSurname()).append(", ");
-                } else if ("Writer".equals(member.getRole())) {
-                  writer.append(member.getGivenname()).append(" ").append(member.getSurname()).append(", ");
+                final String role = member.getRole();
+                if ("Actor".equalsIgnoreCase(role) || "Guest Star".equals(role)) {
+                  appendPerson(actors, member);
+                } else if ("Director".equalsIgnoreCase(role)) {
+                  appendPerson(director, member);
+                } else if ("Host".equalsIgnoreCase(role) || "Anchor".equalsIgnoreCase(role)) {
+                  appendPerson(host, member);
+                } else if (role.toLowerCase().contains("producer")) {
+                  appendPerson(producer, member);
+                } else if ("Writer".equalsIgnoreCase(role)) {
+                  appendPerson(writer, member);
+                } else if (role.toLowerCase().contains("guest")) {
+                  appendPerson(additional, member);
+                }
+                else if ("Narrator".equalsIgnoreCase(role)) {
+                  appendPersonWithRole(additional, member);
+                }
+                else {
+                  appendPersonWithRole(additional, member);
+                  mLog.warning("Unknown crew member role: " + role);
                 }
               }
               if (actors.length() > 0) {
-                prog.setTextField(ProgramFieldType.ACTOR_LIST_TYPE, actors.toString().substring(0, actors.toString().length()-2));
+                prog.setTextField(ProgramFieldType.ACTOR_LIST_TYPE, actors.toString());
               }
               if (director.length() > 0) {
-                prog.setTextField(ProgramFieldType.DIRECTOR_TYPE, director.toString().substring(0, director.toString().length()-2));
+                prog.setTextField(ProgramFieldType.DIRECTOR_TYPE, director.toString());
               }
               if (host.length() > 0) {
-                prog.setTextField(ProgramFieldType.MODERATION_TYPE, host.toString().substring(0, host.toString().length()-2));
+                prog.setTextField(ProgramFieldType.MODERATION_TYPE, host.toString());
               }
               if (producer.length() > 0) {
-                prog.setTextField(ProgramFieldType.PRODUCER_TYPE, producer.toString().substring(0, producer.toString().length()-2));
+                prog.setTextField(ProgramFieldType.PRODUCER_TYPE, producer.toString());
               }
               if (writer.length() > 0) {
-                prog.setTextField(ProgramFieldType.SCRIPT_TYPE, writer.toString().substring(0, writer.toString().length()-2));
+                prog.setTextField(ProgramFieldType.SCRIPT_TYPE, writer.toString());
+              }
+              if (additional.length() > 0) {
+                prog.setTextField(ProgramFieldType.ADDITIONAL_PERSONS_TYPE, additional.toString());
               }
             }
 
@@ -252,13 +319,19 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
             if (programGenre != null) {
               StringBuilder genreStr = new StringBuilder();
               for (Genre genre : programGenre.getGenres()) {
-                genreStr.append(genre.getClassValue()).append(", ");
+                if (genreStr.length() > 0) {
+                  genreStr.append(", ");
+                }
+                genreStr.append(genre.getClassValue());
               }
-              prog.setTextField(ProgramFieldType.GENRE_TYPE, genreStr.toString().substring(0, genreStr.toString().length()-2));
+              prog.setTextField(ProgramFieldType.GENRE_TYPE, genreStr.toString());
             }
 
-            prog.setDescription(desc.toString());
-            prog.setShortInfo(MutableProgram.generateShortInfoFromDescription(desc.toString()));
+            final String description = desc.toString().trim();
+            if (!description.isEmpty()) {
+              prog.setDescription(description);
+              prog.setShortInfo(MutableProgram.generateShortInfoFromDescription(description));
+            }
 
             chDayProgram.addProgram(prog);
           }
@@ -274,38 +347,44 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
     }
   }
 
-  private int parseStarRating(StarRating starRating) {
-    String value = starRating.toString();
+  private void setMovieType(MutableProgram prog) {
+    prog.setInfo(prog.getInfo() | Program.INFO_CATEGORIE_MOVIE);
+  }
 
-    int ret = -1;
-
-    if (value.equals("")) {
-      ret = 0;
-    } else if (value.equals("+")) {
-      ret = 10;
-    } else if (value.equals("*")) {
-      ret = 20;
-    } else if (value.equals("*+")) {
-      ret = 30;
-    } else if (value.equals("**")) {
-      ret = 40;
-    } else if (value.equals("**+")) {
-      ret = 50;
-    } else if (value.equals("***")) {
-      ret = 60;
-    } else if (value.equals("***+")) {
-      ret = 70;
-    } else if (value.equals("****")) {
-      ret = 80;
-    } else if (value.equals("****+")) {
-      ret = 90;
-    } else if (value.equals("*****")) {
-      ret = 100;
-    } else {
-      System.out.println(value);
+  private void appendPersonWithRole(final StringBuilder personField, final CrewMember member) {
+    if (personField.length() > 0) {
+      personField.append('\n');
     }
+    personField.append(member.getGivenname()).append(' ').append(member.getSurname());
+    personField.append("\t\t-\t\t").append(member.getRole());
+  }
+  
+  private void appendPerson(final StringBuilder personField, final CrewMember member) {
+    if (personField.length() > 0) {
+      personField.append('\n');
+    }
+    personField.append(member.getGivenname()).append(' ').append(member.getSurname());
+  }
 
-    return ret;
+  private int parseStarRating(final StarRating starRating) {
+    final String value = starRating.toString();
+    int rating = 0;
+    for (int i = 0; i < value.length(); i++) {
+      switch (value.charAt(i)) {
+      case '+' : {
+        rating += 10;
+        break;
+      }
+      case '*' : {
+        rating += 20;
+        break;
+      }
+      default:
+        mLog.warning("Unknown rating: " + value);
+        return -1;
+      }
+    }
+    return rating;
   }
 
   private MutableChannelDayProgram getMutableDayProgram(Channel ch, devplugin.Date date) {
@@ -434,7 +513,7 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
 
 
   public static Version getVersion() {
-    return new Version(0, 6, 1);
+    return new Version(0, 7, 0);
   }
 
   public PluginInfo getInfo() {
@@ -459,10 +538,10 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
       Xtvd xtvd = new Xtvd();
       soapRequest.getData(start, end, xtvd);
 
-      Map stations = xtvd.getStations();
+      Map<Integer, Station> stations = xtvd.getStations();
 
-      for (final Object entry : stations.entrySet()) {
-        final Station station = (Station) (((Entry) entry).getValue());
+      for (final Entry<Integer, Station> entry : stations.entrySet()) {
+        final Station station = entry.getValue();
         allChannels.add(
                 new Channel(this, station.getName(), Integer.toString(station.getId()), TimeZone.getTimeZone("UTC"), "US", "(c) SchedulesDirect", "", mChannelGroup, null, Channel.CATEGORY_TV)
         );
