@@ -46,9 +46,9 @@ public class MarkListTableModel extends DefaultTableModel implements Serializabl
   @Override
   public String getColumnName(int column) {
     switch(column){
-      case 0: return SimpleMarkerPlugin.mLocalizer.msg("settings.list", "Additional Mark List");
+      case 0: return SimpleMarkerPlugin.getLocalizer().msg("settings.list", "Additional Mark List");
       case 1: return "Icon";
-      case 2: return SimpleMarkerPlugin.mLocalizer.msg("settings.markPriority", "Mark priority");
+      case 2: return SimpleMarkerPlugin.getLocalizer().msg("settings.markPriority", "Mark priority");
     }
 
     return null;

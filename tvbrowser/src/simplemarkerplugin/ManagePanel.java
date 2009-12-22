@@ -107,8 +107,8 @@ public class ManagePanel {
     mParent = parent;
     mMarkListVector = markListVector;
 
-    mShowPrograms = new JRadioButton(SimpleMarkerPlugin.mLocalizer.msg("list.programs","List programs"),true);
-    mShowTitles = new JRadioButton(SimpleMarkerPlugin.mLocalizer.msg("list.titles","List for program titles"));
+    mShowPrograms = new JRadioButton(SimpleMarkerPlugin.getLocalizer().msg("list.programs","List programs"),true);
+    mShowTitles = new JRadioButton(SimpleMarkerPlugin.getLocalizer().msg("list.titles","List for program titles"));
     
     ButtonGroup bg = new ButtonGroup();
     bg.add(mShowPrograms);
@@ -171,14 +171,14 @@ public class ManagePanel {
     mShowPrograms.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         selectPrograms(true);
-        mDelete.setToolTipText(SimpleMarkerPlugin.mLocalizer.msg("tooltip.deletePrograms","Delete selected progams"));
+        mDelete.setToolTipText(SimpleMarkerPlugin.getLocalizer().msg("tooltip.deletePrograms","Delete selected progams"));
       }
     });
     
     mShowTitles.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         selectPrograms(true);
-        mDelete.setToolTipText(SimpleMarkerPlugin.mLocalizer.msg("tooltip.deleteTitles","Delete programs with selected titles/all programs"));
+        mDelete.setToolTipText(SimpleMarkerPlugin.getLocalizer().msg("tooltip.deleteTitles","Delete programs with selected titles/all programs"));
       }
     });
     
@@ -434,10 +434,10 @@ public class ManagePanel {
     mUndo = new JButton(SimpleMarkerPlugin.getInstance().createImageIcon(
         "actions", "edit-undo", 16));
     
-    mSettings.setToolTipText(SimpleMarkerPlugin.mLocalizer.msg("tooltip.settings","Open settings"));
-    mSend.setToolTipText(SimpleMarkerPlugin.mLocalizer.msg("tooltip.send","Send  programs to other plugins"));
-    mDelete.setToolTipText(SimpleMarkerPlugin.mLocalizer.msg("tooltip.deletePrograms","Delete all/selected progams"));
-    mUndo.setToolTipText(SimpleMarkerPlugin.mLocalizer.msg("tooltip.undo","Undo"));
+    mSettings.setToolTipText(SimpleMarkerPlugin.getLocalizer().msg("tooltip.settings","Open settings"));
+    mSend.setToolTipText(SimpleMarkerPlugin.getLocalizer().msg("tooltip.send","Send  programs to other plugins"));
+    mDelete.setToolTipText(SimpleMarkerPlugin.getLocalizer().msg("tooltip.deletePrograms","Delete all/selected progams"));
+    mUndo.setToolTipText(SimpleMarkerPlugin.getLocalizer().msg("tooltip.undo","Undo"));
     mUndo.setEnabled(false);
     
     p.add(mSettings, cc.xy(1, 1));

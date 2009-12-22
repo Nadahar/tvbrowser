@@ -18,12 +18,12 @@ public class MarkListPriorityCellEditor extends AbstractCellEditor implements
   private static final long serialVersionUID = 1L;
 
   private final String[] prioValues = {
-      SimpleMarkerPlugin.mLocalizer.msg("settings.noPriority","None"),
-      SimpleMarkerPlugin.mLocalizer.msg("settings.min","Minimum"),
-      SimpleMarkerPlugin.mLocalizer.msg("settings.lowerMedium","Lower Medium"),
-      SimpleMarkerPlugin.mLocalizer.msg("settings.medium","Medium"),
-      SimpleMarkerPlugin.mLocalizer.msg("settings.higherMedium","Higher Medium"),
-      SimpleMarkerPlugin.mLocalizer.msg("settings.max","Maximum")};
+      SimpleMarkerPlugin.getLocalizer().msg("settings.noPriority","None"),
+      SimpleMarkerPlugin.getLocalizer().msg("settings.min","Minimum"),
+      SimpleMarkerPlugin.getLocalizer().msg("settings.lowerMedium","Lower Medium"),
+      SimpleMarkerPlugin.getLocalizer().msg("settings.medium","Medium"),
+      SimpleMarkerPlugin.getLocalizer().msg("settings.higherMedium","Higher Medium"),
+      SimpleMarkerPlugin.getLocalizer().msg("settings.max","Maximum")};
 
   private JComboBox mComboBox;
   private MarkList mItem;

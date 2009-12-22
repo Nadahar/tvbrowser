@@ -239,12 +239,12 @@ public class MarkList extends Vector<Program> {
     };
 
     if (contains(p)) {
-      action.putValue(Action.NAME, SimpleMarkerPlugin.mLocalizer.msg(
+      action.putValue(Action.NAME, SimpleMarkerPlugin.getLocalizer().msg(
           "list.unmark", "Remove program from '{0}'", getName()));
       action.putValue(Action.SMALL_ICON, SimpleMarkerPlugin.getInstance()
           .createIconForTree(0));
     } else {
-      action.putValue(Action.NAME, SimpleMarkerPlugin.mLocalizer.msg(
+      action.putValue(Action.NAME, SimpleMarkerPlugin.getLocalizer().msg(
           "list.mark", "Add program to '{0}'", getName()));
       action.putValue(Action.SMALL_ICON, mMarkIcon);
       action.putValue(Program.MARK_PRIORITY, getMarkPriority());
@@ -295,7 +295,7 @@ public class MarkList extends Vector<Program> {
       programRoot = new PluginTreeNode(Localizer
           .getLocalization(Localizer.I18N_PROGRAMS));
       programRoot.setGroupingByDateEnabled(false);
-      dateRoot = new PluginTreeNode(SimpleMarkerPlugin.mLocalizer.msg("days",
+      dateRoot = new PluginTreeNode(SimpleMarkerPlugin.getLocalizer().msg("days",
           "Days"));
     }
 
@@ -374,7 +374,7 @@ public class MarkList extends Vector<Program> {
   private GroupUnmarkAction getUnmarkAction(PluginTreeNode dateNode) {
     GroupUnmarkAction menu = new GroupUnmarkAction(dateNode, this);
     menu.setSmallIcon(SimpleMarkerPlugin.getInstance().createIconForTree(1));
-    menu.setText(SimpleMarkerPlugin.mLocalizer.msg("unmarkall",
+    menu.setText(SimpleMarkerPlugin.getLocalizer().msg("unmarkall",
         "Just unmark all"));
     return menu;
   }
@@ -482,7 +482,7 @@ public class MarkList extends Vector<Program> {
    */
   public ProgramReceiveTarget getReceiveTarget() {
     return new ProgramReceiveTarget(SimpleMarkerPlugin.getInstance(),
-        SimpleMarkerPlugin.mLocalizer.msg("list.export", "Add to '{0}'", mName),
+        SimpleMarkerPlugin.getLocalizer().msg("list.export", "Add to '{0}'", mName),
         mId);
   }
 

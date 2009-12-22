@@ -49,7 +49,7 @@ public class MarkListFilterComponent extends PluginsFilterComponent {
   
   @Override
   public String getUserPresentableClassName() {
-    return SimpleMarkerPlugin.mLocalizer.msg("filterText","Contained on a list of SimpleMarkerPlugin");
+    return SimpleMarkerPlugin.getLocalizer().msg("filterText","Contained on a list of SimpleMarkerPlugin");
   }
 
   public boolean accept(Program program) {
@@ -57,7 +57,7 @@ public class MarkListFilterComponent extends PluginsFilterComponent {
       return SimpleMarkerPlugin.getInstance().getMarkListForId(mListId).contains(program);
     } catch(Exception e) {
       if(SimpleMarkerPlugin.getInstance().getSuperFrame() != null) {
-        JOptionPane.showMessageDialog(UiUtilities.getLastModalChildOf(SimpleMarkerPlugin.getInstance().getSuperFrame()),SimpleMarkerPlugin.mLocalizer.msg("filterErrorMessage","The mark list that is used for the filter component '{0}' was deleted.\nPlease correct your filter configuration.",getName()),Localizer.getLocalization(Localizer.I18N_ERROR) + ": " +SimpleMarkerPlugin.getInstance().getInfo().getName(),JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(UiUtilities.getLastModalChildOf(SimpleMarkerPlugin.getInstance().getSuperFrame()),SimpleMarkerPlugin.getLocalizer().msg("filterErrorMessage","The mark list that is used for the filter component '{0}' was deleted.\nPlease correct your filter configuration.",getName()),Localizer.getLocalization(Localizer.I18N_ERROR) + ": " +SimpleMarkerPlugin.getInstance().getInfo().getName(),JOptionPane.ERROR_MESSAGE);
         Plugin.getPluginManager().getFilterManager().setCurrentFilter(Plugin.getPluginManager().getFilterManager().getDefaultFilter());
       }
     }
