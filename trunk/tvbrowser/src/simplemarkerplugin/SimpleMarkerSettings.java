@@ -16,9 +16,9 @@
  */
 package simplemarkerplugin;
 
-import java.util.Properties;
-
 import util.settings.PropertyBasedSettings;
+
+import java.util.Properties;
 
 /**
  * @author bananeweizen

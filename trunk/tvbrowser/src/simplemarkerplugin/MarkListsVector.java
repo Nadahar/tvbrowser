@@ -22,10 +22,10 @@
  */
 package simplemarkerplugin;
 
-import java.util.Vector;
-
 import devplugin.Program;
 import devplugin.ProgramReceiveTarget;
+
+import java.util.Vector;
 
 /**
  * SimpleMarkerPlugin 1.4 Plugin for TV-Browser since version 2.3
