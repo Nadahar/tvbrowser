@@ -229,7 +229,6 @@ public class PropertiesNode extends AbstractHierarchicalNode implements FilterNo
     if (file.exists()) {
       try {
         StreamUtilities.inputStream(file, new InputStreamProcessor() {
-          @Override
           public void process(InputStream input) throws IOException {
             newProp.load(input);
           }
@@ -295,6 +294,7 @@ public class PropertiesNode extends AbstractHierarchicalNode implements FilterNo
         SortedProperties sorted = new SortedProperties();
         sorted.putAll(newprop);
         sorted.store(new FileOutputStream(propFile),
+            "Translation for TV-Browser Version " + I18NPlugin.getPluginManager().getTVBrowserVersion().toString() + "\n"+
             "Saved by i18n Plugin Version "
                 + I18NPlugin.getInstance().getInfo().getVersion());
       }
