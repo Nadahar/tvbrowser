@@ -43,6 +43,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JPopupMenu;
 
+import devplugin.Version;
 import tvbrowser.TVBrowser;
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.Settings;
@@ -946,5 +947,9 @@ public class PluginManagerImpl implements PluginManager {
   @Override
   public boolean showBalloonTip(String caption, String message, MessageType messageType) {
     return TVBrowser.showBalloonTip(caption,message,messageType);
+  }
+
+  public Version getTVBrowserVersion() {
+    return TVBrowser.VERSION;
   }
 }

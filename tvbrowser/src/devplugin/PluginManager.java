@@ -432,4 +432,10 @@ public interface PluginManager {
    * @since 3.0
    */
   public boolean showBalloonTip(String caption, String message, java.awt.TrayIcon.MessageType messageType);
+
+  /**
+   * Get the Version of TV-Browser
+   * @since 3.0
+   */
+  public Version getTVBrowserVersion();
 }
