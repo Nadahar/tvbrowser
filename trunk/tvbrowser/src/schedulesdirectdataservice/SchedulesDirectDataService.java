@@ -260,7 +260,7 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
               final Part part = schedule.getPart();
               desc.append("\nPart " + part.getNumber() + " of " + part.getTotal());
             }
-            if (schedule.getRepeat()) {
+            if (schedule.getRepeat() && xtvdProgram.getOriginalAirDate() == null) {
               prog.setTextField(ProgramFieldType.REPETITION_OF_TYPE, "unknown previous program");
             }
 
