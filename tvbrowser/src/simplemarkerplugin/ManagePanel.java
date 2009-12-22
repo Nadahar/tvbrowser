@@ -22,17 +22,19 @@
  */
 package simplemarkerplugin;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.LinkedList;
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+import devplugin.Plugin;
+import devplugin.Program;
+import util.settings.PluginPictureSettings;
+import util.settings.ProgramPanelSettings;
+import util.ui.Localizer;
+import util.ui.ProgramList;
+import util.ui.SendToPluginDialog;
+import util.ui.TVBrowserIcons;
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultListCellRenderer;
@@ -49,22 +51,17 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-
-import util.settings.PluginPictureSettings;
-import util.settings.ProgramPanelSettings;
-import util.ui.Localizer;
-import util.ui.ProgramList;
-import util.ui.SendToPluginDialog;
-import util.ui.TVBrowserIcons;
-import util.ui.UiUtilities;
-import util.ui.WindowClosingIf;
-
-import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-
-import devplugin.Plugin;
-import devplugin.Program;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.LinkedList;
 
 /**
  * SimpleMarkerPlugin 1.4 Plugin for TV-Browser since version 2.3 to only mark
@@ -140,7 +137,7 @@ public class ManagePanel {
     panel.setLayout(layout);
 
     CellConstraints cc = new CellConstraints();
-    
+
     panel.add(mShowPrograms, cc.xy(1,1));
     panel.add(mShowTitles, cc.xy(1,2));
     
@@ -162,13 +159,13 @@ public class ManagePanel {
     }
     else {
       JPanel innerPanel = new JPanel(new FormLayout("fill:default:grow","fill:default:grow"));
-      innerPanel.setBorder(new JScrollPane().getBorder());
+      mProgramsScrollPane.setBorder(new JScrollPane().getBorder());
       
       innerPanel.add(mProgramsScrollPane, cc.xy(1,1));
       
       panel.add(innerPanel, cc.xy(1,4));
     }
-    
+
     panel.add(getButtonPanel(cc), cc.xy(1,6));
 
     mShowPrograms.addActionListener(new ActionListener() {

@@ -22,16 +22,26 @@
  */
 package simplemarkerplugin;
 
-import java.awt.Dimension;
-import java.awt.Frame;
-import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.Properties;
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+import devplugin.ActionMenu;
+import devplugin.ContextMenuAction;
+import devplugin.Plugin;
+import devplugin.PluginInfo;
+import devplugin.PluginTreeNode;
+import devplugin.PluginsFilterComponent;
+import devplugin.Program;
+import devplugin.ProgramReceiveTarget;
+import devplugin.SettingsTab;
+import devplugin.Version;
+import util.settings.PluginPictureSettings;
+import util.settings.ProgramPanelSettings;
+import util.ui.Localizer;
+import util.ui.ProgramList;
+import util.ui.TVBrowserIcons;
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -44,29 +54,18 @@ import javax.swing.JPanel;
 import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
 import javax.swing.WindowConstants;
-
-import util.settings.PluginPictureSettings;
-import util.settings.ProgramPanelSettings;
-import util.ui.Localizer;
-import util.ui.ProgramList;
-import util.ui.TVBrowserIcons;
-import util.ui.UiUtilities;
-import util.ui.WindowClosingIf;
-
-import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-
-import devplugin.ActionMenu;
-import devplugin.ContextMenuAction;
-import devplugin.Plugin;
-import devplugin.PluginInfo;
-import devplugin.PluginTreeNode;
-import devplugin.PluginsFilterComponent;
-import devplugin.Program;
-import devplugin.ProgramReceiveTarget;
-import devplugin.SettingsTab;
-import devplugin.Version;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Properties;
+import java.util.Vector;
 
 /**
  * SimpleMarkerPlugin 1.4 Plugin for TV-Browser since version 2.3 to only mark
@@ -82,7 +81,7 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
   private static final Version mVersion = new Version(2,70,0);
   
   /** The localizer for this class. */
-  protected static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(SimpleMarkerPlugin.class);
+  public static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(SimpleMarkerPlugin.class);
 
   private Program mProg = null;
 
@@ -450,6 +449,14 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
     root.removeAllChildren();
     root.getMutableTreeNode().setShowLeafCountEnabled(false);
 
+    for (Program p : getPluginManager().getMarkedPrograms()) {
+      if (!mMarkListVector.contains(p)) {
+        p.unmark(this);
+      } else {
+        p.validateMarking();
+      }
+    }
+
     if (mMarkListVector.size() == 1) {
       mMarkListVector.getListAt(0).createNodes(root, false);
     } else {
@@ -493,7 +500,13 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
   protected MarkList[] getMarkLists() {
     return mMarkListVector.toArray(new MarkList[mMarkListVector.size()]);
   }
-  
+
+  public void setMarkLists(MarkList[] markLists) {
+    mMarkListVector = new MarkListsVector();
+    mMarkListVector.addAll(Arrays.asList(markLists));
+    updateTree();
+  }
+
   protected String[] getMarkListNames() {
     return mMarkListVector.getMarkListNames();
   }
@@ -566,4 +579,5 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
   protected void save() {
     saveMe();
   }
+
 }

@@ -22,10 +22,10 @@
  */
 package simplemarkerplugin;
 
-import java.awt.event.ActionEvent;
-
 import devplugin.ContextMenuAction;
 import devplugin.PluginTreeNode;
+
+import java.awt.event.ActionEvent;
 
 /**
  * SimpleMarkerPlugin 1.4 Plugin for TV-Browser since version 2.3
