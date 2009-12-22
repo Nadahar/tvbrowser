@@ -33,13 +33,13 @@ public class MarkerPriorityRenderer extends DefaultTableCellRenderer {
     int priority = ((MarkList)value).getMarkPriority();
 
     switch(priority) {
-      case Program.MIN_MARK_PRIORITY: mLabel.setText(SimpleMarkerPlugin.mLocalizer.msg("settings.min","Minimum"));break;
-      case Program.LOWER_MEDIUM_MARK_PRIORITY: mLabel.setText(SimpleMarkerPlugin.mLocalizer.msg("settings.lowerMedium","Lower medium"));break;
-      case Program.MEDIUM_MARK_PRIORITY: mLabel.setText(SimpleMarkerPlugin.mLocalizer.msg("settings.medium","Medium"));break;
-      case Program.HIGHER_MEDIUM_MARK_PRIORITY: mLabel.setText(SimpleMarkerPlugin.mLocalizer.msg("settings.higherMedium","Higher Medium"));break;
-      case Program.MAX_MARK_PRIORITY: mLabel.setText(SimpleMarkerPlugin.mLocalizer.msg("settings.max","Maximum"));break;
+      case Program.MIN_MARK_PRIORITY: mLabel.setText(SimpleMarkerPlugin.getLocalizer().msg("settings.min","Minimum"));break;
+      case Program.LOWER_MEDIUM_MARK_PRIORITY: mLabel.setText(SimpleMarkerPlugin.getLocalizer().msg("settings.lowerMedium","Lower medium"));break;
+      case Program.MEDIUM_MARK_PRIORITY: mLabel.setText(SimpleMarkerPlugin.getLocalizer().msg("settings.medium","Medium"));break;
+      case Program.HIGHER_MEDIUM_MARK_PRIORITY: mLabel.setText(SimpleMarkerPlugin.getLocalizer().msg("settings.higherMedium","Higher Medium"));break;
+      case Program.MAX_MARK_PRIORITY: mLabel.setText(SimpleMarkerPlugin.getLocalizer().msg("settings.max","Maximum"));break;
 
-      default: mLabel.setText(SimpleMarkerPlugin.mLocalizer.msg("settings.noPriority","None"));break;
+      default: mLabel.setText(SimpleMarkerPlugin.getLocalizer().msg("settings.noPriority","None"));break;
     }
     
     Color testColor = Plugin.getPluginManager().getTvBrowserSettings().getColorForMarkingPriority(priority);

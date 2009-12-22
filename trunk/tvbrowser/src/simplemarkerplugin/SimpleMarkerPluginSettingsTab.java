@@ -97,7 +97,7 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
         "default,5dlu,fill:default:grow,3dlu,pref,10dlu,pref,5dlu"));
     CellConstraints cc = new CellConstraints();
     
-    mShowDeletedPrograms = new JCheckBox(SimpleMarkerPlugin.mLocalizer.msg(
+    mShowDeletedPrograms = new JCheckBox(SimpleMarkerPlugin.getLocalizer().msg(
         "settings.informAboutDeletedPrograms",
         "Inform about program that were deleted during a data update"),
         SimpleMarkerPlugin.getInstance().getSettings().showDeletedPrograms());
@@ -142,12 +142,12 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
     south.setLayout(new BoxLayout(south, BoxLayout.X_AXIS));
     south.setBorder(BorderFactory.createEmptyBorder(5, 0, 0, 0));
 
-    mAdd = new JButton(SimpleMarkerPlugin.mLocalizer.msg("settings.add",
+    mAdd = new JButton(SimpleMarkerPlugin.getLocalizer().msg("settings.add",
         "Add new list"));
     mAdd.setIcon(TVBrowserIcons.newIcon(TVBrowserIcons.SIZE_SMALL));
     mAdd.addActionListener(this);
 
-    mDelete = new JButton(SimpleMarkerPlugin.mLocalizer.msg("settings.delete",
+    mDelete = new JButton(SimpleMarkerPlugin.getLocalizer().msg("settings.delete",
         "Delete selected list"));
     mDelete.setIcon(TVBrowserIcons.delete(TVBrowserIcons.SIZE_SMALL));
     mDelete.setEnabled(false);
@@ -159,7 +159,7 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
 
     panel.add(south, cc.xy(2, 5));
     
-    mHelpLabel = UiUtilities.createHtmlHelpTextArea(SimpleMarkerPlugin.mLocalizer.msg("settings.prioHelp","The mark priority is used for selecting the marking color. The marking colors of the priorities can be change in the <a href=\"#link\">program panel settings</a>. If a program is marked by more than one plugin/list the color with the highest priority given by the marking plugins/lists is used."), new HyperlinkListener() {
+    mHelpLabel = UiUtilities.createHtmlHelpTextArea(SimpleMarkerPlugin.getLocalizer().msg("settings.prioHelp","The mark priority is used for selecting the marking color. The marking colors of the priorities can be change in the <a href=\"#link\">program panel settings</a>. If a program is marked by more than one plugin/list the color with the highest priority given by the marking plugins/lists is used."), new HyperlinkListener() {
       public void hyperlinkUpdate(HyperlinkEvent e) {
         if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
           Plugin.getPluginManager().showSettings(SettingsItem.PROGRAMPANELMARKING);
@@ -212,11 +212,11 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
     if (e.getSource() == mAdd) {
       int n = mListTable.getRowCount() + 1;
       
-      String name = SimpleMarkerPlugin.mLocalizer.msg("settings.listName","List {0}", n);
+      String name = SimpleMarkerPlugin.getLocalizer().msg("settings.listName","List {0}", n);
       
       for(int i = 0; i < mListTable.getRowCount(); i++) {
         if (name.equals(mListTable.getValueAt(i, 0).toString())) {
-          name = SimpleMarkerPlugin.mLocalizer.msg("settings.listName","List {0}", ++n);
+          name = SimpleMarkerPlugin.getLocalizer().msg("settings.listName","List {0}", ++n);
           i = -1;
         }
       }
@@ -225,7 +225,7 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
       mModel.addRow(list);
       mListTable.setRowSelectionInterval(mListTable.getRowCount()-1,mListTable.getRowCount()-1);
     }
-    if (e.getActionCommand().equals(SimpleMarkerPlugin.mLocalizer.msg("settings.delete",
+    if (e.getActionCommand().equals(SimpleMarkerPlugin.getLocalizer().msg("settings.delete",
     "Delete selected list"))) {
       deleteSelectedRows();
     }
@@ -287,7 +287,7 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
   private void showPopupMenu(Point p, final int row) {
     JPopupMenu popupMenu = new JPopupMenu();
     
-    JMenuItem item = new JMenuItem(SimpleMarkerPlugin.mLocalizer.msg("settings.delete",
+    JMenuItem item = new JMenuItem(SimpleMarkerPlugin.getLocalizer().msg("settings.delete",
     "Delete selected list"));
     item.setIcon(TVBrowserIcons.delete(TVBrowserIcons.SIZE_SMALL));
     item.addActionListener(this);
@@ -296,7 +296,7 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
       popupMenu.add(item);
     }
     
-    item = new JMenuItem(SimpleMarkerPlugin.mLocalizer.msg("settings.changeIcon",
+    item = new JMenuItem(SimpleMarkerPlugin.getLocalizer().msg("settings.changeIcon",
     "Change list icon"));
     item.setIcon(TVBrowserIcons.edit(TVBrowserIcons.SIZE_SMALL));
     item.addActionListener(new ActionListener() {
@@ -319,12 +319,12 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
         : (new File(iconPath)).getParentFile());
     chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 
-    String msg = SimpleMarkerPlugin.mLocalizer.msg("iconFiles",
+    String msg = SimpleMarkerPlugin.getLocalizer().msg("iconFiles",
         "Icon Files {0}", "*.png,*.jpg, *.gif");
     String[] extArr = { ".png", ".jpg", ".gif" };
 
     chooser.setFileFilter(new ExtensionFileFilter(extArr, msg));
-    chooser.setDialogTitle(SimpleMarkerPlugin.mLocalizer.msg("chooseIcon",
+    chooser.setDialogTitle(SimpleMarkerPlugin.getLocalizer().msg("chooseIcon",
         "Choose icon for {0}", markList.getName()));
 
     Window w = UiUtilities.getLastModalChildOf(SimpleMarkerPlugin
@@ -347,7 +347,7 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
             chooser.getSelectedFile().getAbsolutePath());
   
         if (icon.getIconWidth() != 16 || icon.getIconHeight() != 16) {
-          JOptionPane.showMessageDialog(w, SimpleMarkerPlugin.mLocalizer.msg(
+          JOptionPane.showMessageDialog(w, SimpleMarkerPlugin.getLocalizer().msg(
               "iconSize", "The icon has to be 16x16 in size."));
           return;
         }

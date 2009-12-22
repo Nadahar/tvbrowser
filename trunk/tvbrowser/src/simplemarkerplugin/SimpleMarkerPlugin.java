@@ -81,7 +81,7 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
   private static final Version mVersion = new Version(2,70,0);
   
   /** The localizer for this class. */
-  public static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(SimpleMarkerPlugin.class);
+  private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(SimpleMarkerPlugin.class);
 
   private Program mProg = null;
 
@@ -106,6 +106,10 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
    */
   public SimpleMarkerPlugin() {
     mInstance = this;
+  }
+
+  public static Localizer getLocalizer() {
+    return mLocalizer;
   }
   
   public void onActivation() {
