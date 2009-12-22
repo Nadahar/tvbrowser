@@ -26,6 +26,7 @@
 package schedulesdirectdataservice;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -189,6 +190,7 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
               Calendar aircal = Calendar.getInstance();
               aircal.setTime(xtvdProgram.getOriginalAirDate().getDate());
               prog.setIntField(ProgramFieldType.PRODUCTION_YEAR_TYPE, aircal.get(Calendar.YEAR));
+              prog.setTextField(ProgramFieldType.REPETITION_OF_TYPE, new SimpleDateFormat().format(aircal.getTime()));
             }
 
             StringBuilder desc = new StringBuilder();
