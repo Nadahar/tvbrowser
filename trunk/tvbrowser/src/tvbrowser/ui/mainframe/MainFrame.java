@@ -497,7 +497,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
           setUndecorated(true);
           final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
           
-          if(device.isFullScreenSupported()) {            
+          if(device.isFullScreenSupported() && (Launch.getOs() == Launch.OS_MAC)) {            
             device.setFullScreenWindow(MainFrame.getInstance());
           }
           else {
