@@ -516,15 +516,18 @@ public class Mirror {
     
     try {
       // Parse is. E.g.: '2003-10-09 11:48:45'
-      String asString = new String(mMirrorDownloadData);    
-      int year = Integer.parseInt(asString.substring(0, 4));
-      int month = Integer.parseInt(asString.substring(5, 7));
-      int day = Integer.parseInt(asString.substring(8, 10));
-      lastupdated = new Date(year, month, day);
-      
-      mLog.info("Done !");
-      
-      return lastupdated.compareTo(new Date().addDays(-MAX_LAST_UPDATE_DAYS)) >= 0;
+      String asString = new String(mMirrorDownloadData);
+
+      if (asString.length() > 10) {
+        int year = Integer.parseInt(asString.substring(0, 4));
+        int month = Integer.parseInt(asString.substring(5, 7));
+        int day = Integer.parseInt(asString.substring(8, 10));
+        lastupdated = new Date(year, month, day);
+
+        mLog.info("Done !");
+
+        return lastupdated.compareTo(new Date().addDays(-MAX_LAST_UPDATE_DAYS)) >= 0;
+      }
     }catch(NumberFormatException parseException) {
       mLog.info("The file on the server has the wrong format!");
     }
