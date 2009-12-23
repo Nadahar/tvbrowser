@@ -62,7 +62,7 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 {
 
 	private static final boolean PLUGIN_IS_STABLE = true;
-  private static final Version PLUGIN_VERSION = new Version(0, 20, 1, PLUGIN_IS_STABLE);
+  private static final Version PLUGIN_VERSION = new Version(0, 20, 2, PLUGIN_IS_STABLE);
   
   private static final String TARGET_PEARL_COPY = "pearlCopy";
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer
