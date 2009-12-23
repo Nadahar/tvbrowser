@@ -38,9 +38,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
-import javax.swing.filechooser.FileFilter;
 
-import com.jgoodies.forms.debug.FormDebugPanel;
 import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
 import util.browserlauncher.Launch;
