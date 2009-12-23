@@ -85,9 +85,11 @@ public class WebbrowserSettingsTab implements devplugin.SettingsTab {
     testButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         String buffer = Settings.propUserDefinedWebbrowser.getString();
+        String bufferParams = Settings.propUserDefinedWebbrowserParams.getString();
         saveSettings();
         Launch.openURL("http://www.tvbrowser.org");
         Settings.propUserDefinedWebbrowser.setString(buffer);
+        Settings.propUserDefinedWebbrowserParams.setString(bufferParams);
       }
     });
 
