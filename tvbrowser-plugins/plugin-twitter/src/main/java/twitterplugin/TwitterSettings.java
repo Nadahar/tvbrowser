@@ -87,7 +87,7 @@ final public class TwitterSettings extends PropertyBasedSettings {
   public AccessToken getAccessToken() {
     String token = get(ACCESS_TOKEN);
     String secret = get(ACCESS_TOKEN_SECRET);
-    if (token.length() == 0 || secret.length() == 0) {
+    if (token == null || secret == null || token.length() == 0 || secret.length() == 0) {
       return null;
     }
     return new AccessToken(token, secret);
