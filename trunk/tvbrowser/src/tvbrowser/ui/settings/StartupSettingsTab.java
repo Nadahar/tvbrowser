@@ -107,6 +107,7 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
   
   /* Close settings */
   private JCheckBox mOnlyMinimizeWhenWindowClosingChB;
+  private JCheckBox mAskForExitConfirmation;
   private JCheckBox mShowFinishDialog;
   private JLabel mSecondsLabel;
 
@@ -116,7 +117,7 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
   public JPanel createSettingsPanel() {
     FormLayout layout = new FormLayout(
         "5dlu, pref, 3dlu, pref, fill:3dlu:grow, 3dlu",
-        "pref, 5dlu, pref, 1dlu, pref, 1dlu, pref, 10dlu, pref, 10dlu, pref, 5dlu, pref");
+        "pref, 5dlu, pref, 1dlu, pref, 1dlu, pref, 10dlu, pref, 10dlu, pref, 5dlu, pref, pref");
     mSettingsPn = new JPanel(layout);
     mSettingsPn.setBorder(Borders.DIALOG_BORDER);
 
@@ -207,12 +208,14 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
     "When closing the main window only minimize TV-Browser, don't quit.");
     
     mOnlyMinimizeWhenWindowClosingChB = new JCheckBox(msg, Settings.propOnlyMinimizeWhenWindowClosing.getBoolean());
-
+    mAskForExitConfirmation = new JCheckBox(mLocalizer.msg("askForExitConfirmation","Ask for confirmation on TV-Browser exit"), Settings.propAskForExitConfirm.getBoolean());
+    
     mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("closing","Closing")), cc.xyw(1,++y,5));
     
     y++;
     
     mSettingsPn.add(mOnlyMinimizeWhenWindowClosingChB, cc.xyw(2,++y,4));
+    mSettingsPn.add(mAskForExitConfirmation, cc.xyw(2,++y,4));
     
     return mSettingsPn;
   }
@@ -291,6 +294,8 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
       boolean checked = mOnlyMinimizeWhenWindowClosingChB.isSelected();
       Settings.propOnlyMinimizeWhenWindowClosing.setBoolean(checked);
     }
+    
+    Settings.propAskForExitConfirm.setBoolean(mAskForExitConfirmation.isSelected());
   }
 
   /**
