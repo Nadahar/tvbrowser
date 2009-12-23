@@ -40,7 +40,7 @@
 Name "${PROG_NAME} ${VERSION}"
 
 # The file to write
-OutFile "${PUBLIC_DIR}\${PROG_NAME_FILE}-${VERSION}.exe"
+OutFile "${PUBLIC_DIR}\${PROG_NAME_FILE}_${VERSION}_win32.exe"
 
 # Use LZMA compression
 SetCompressor /SOLID lzma

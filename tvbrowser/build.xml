@@ -788,7 +788,7 @@
   <target name="public-default" depends="runtime-default">
     <mkdir dir="${public.dir}"/>
 
-    <zip destfile="${public.dir}/tvbrowser-${tvbrowser.version}-bin.zip">
+    <zip destfile="${public.dir}/tvbrowser_${tvbrowser.version}_bin.zip">
       <zipfileset prefix="tvbrowser-${tvbrowser.version}"
                   dir="${tvbrowser-default.runtime.dir}"/>
     </zip>
@@ -803,7 +803,7 @@
   	
   	<echo file="${tvbrowser-transportable.runtime.dir}/NIGHTLY_VALUES" append="false">${TODAY}-nightly</echo>
   	
-	<zip destfile="${public.dir}/tvbrowser-${tvbrowser.version}-${TODAY}-nightly-transportable-bin.zip">
+	<zip destfile="${public.dir}/tvbrowser_${tvbrowser.version}_${TODAY}_nightly_bin_transportable.zip">
 		<zipfileset prefix="tvbrowser-nightly-transportable" dir="${tvbrowser-transportable.runtime.dir}"/>		
 	</zip>
   	
@@ -853,7 +853,7 @@
    	</copy>
    	<move file="${tvbrowser-transportable.runtime.dir}/tvbrowser.sh" tofile="${tvbrowser-transportable.runtime.dir}/tvbrowser-transportable.sh"/>  	
   	
-	  <zip destfile="${public.dir}/tvbrowser-${tvbrowser.version}-transportable-bin.zip">
+	  <zip destfile="${public.dir}/tvbrowser_${tvbrowser.version}_bin_transportable.zip">
       <zipfileset prefix="tvbrowser-transportable"
                   dir="${tvbrowser-transportable.runtime.dir}"
 				excludes="**/tvbrowser-transportable.sh"/>
@@ -867,7 +867,7 @@
   <target name="public-linux" depends="runtime-linux, tvbrowser-desktop-entry">
     <mkdir dir="${public.dir}"/>
 
-    <tar tarfile="${public.dir}/tvbrowser-${tvbrowser.version}.tar.gz" compression="gzip">
+    <tar tarfile="${public.dir}/tvbrowser_${tvbrowser.version}_bin.tar.gz" compression="gzip">
       <tarfileset dir="${tvbrowser-linux.runtime.dir}" prefix="tvbrowser-${tvbrowser.version}" excludes="**/tvbrowser.sh"/>
    	  <tarfileset dir="${tvbrowser-linux.runtime.dir}"
     	              prefix="tvbrowser-${tvbrowser.version}"
@@ -977,7 +977,7 @@
       </exec>    
 
       <!-- Delete existing Files -->
-      <delete file="${public.dir}/tvbrowser-${tvbrowser.version}.dmg" />
+      <delete file="${public.dir}/tvbrowser_${tvbrowser.version}_mac.dmg" />
 
       <!-- Convert .sparseimage to dmg -->    
       <exec executable="hdiutil" os="Mac OS X">
@@ -986,7 +986,7 @@
         <arg value="-format"/>
         <arg value="UDBZ"/>
         <arg value="-o" />
-        <arg value="${public.dir}/tvbrowser-${tvbrowser.version}.dmg"/>
+        <arg value="${public.dir}/tvbrowser_${tvbrowser.version}_mac.dmg"/>
       </exec>
 
       <!-- Delete Files -->
@@ -1080,7 +1080,7 @@
     </javadoc>
 
 
-    <zip destfile="${public.dir}/tvbrowser-${tvbrowser.version}-doc.zip">
+    <zip destfile="${public.dir}/tvbrowser_${tvbrowser.version}_doc.zip">
       <zipfileset prefix="tvbrowser_v${tvbrowser.version}/doc"
                   dir="${doc.dir}"/>
     </zip>
@@ -1108,7 +1108,7 @@
 
   <target name="public-src">
     <mkdir dir="${public.dir}"/>
-    <zip destfile="${public.dir}/tvbrowser-${tvbrowser.version}-src.zip">
+    <zip destfile="${public.dir}/tvbrowser_${tvbrowser.version}_src.zip">
       <zipfileset prefix="tvbrowser-${tvbrowser.version}"
                   dir=".">
 
