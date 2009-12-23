@@ -27,6 +27,7 @@ package tvbrowser;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Frame;
 import java.awt.Image;
 import java.awt.Toolkit;
@@ -56,11 +57,14 @@ import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JTextArea;
 import javax.swing.LookAndFeel;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.UIManager.LookAndFeelInfo;
 
 import tvbrowser.core.ChannelList;
@@ -252,6 +256,33 @@ public class TVBrowser {
 
     // Use a even simpler Formatter for console logging
     mainLogger.getHandlers()[0].setFormatter(createFormatter());
+    
+    if(mIsTransportable) {
+      File settingsDir = new File("settings");
+      try {
+        File test = File.createTempFile("write","test",settingsDir);
+        test.delete();
+      } catch (IOException e) {
+        try {
+          UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception e1) {
+          //ignore
+        }
+        
+        JTextArea area = new JTextArea(mLocalizer.msg("error.noWriteRightsText","You are using the transportable version of TV-Browser but you have no writing rights in the settings directory:\n\n{0}'\n\nTV-Browser will be closed.",settingsDir.getAbsolutePath()));
+        area.setFont(new JLabel().getFont());
+        area.setFont(area.getFont().deriveFont((float)14).deriveFont(Font.BOLD));
+        area.setLineWrap(true);
+        area.setWrapStyleWord(true);
+        area.setPreferredSize(new Dimension(500,100));
+        area.setEditable(false);
+        area.setBorder(null);
+        area.setOpaque(false);
+        
+        JOptionPane.showMessageDialog(null,area,mLocalizer.msg("error.noWriteRightsTitle","No write rights in settings directory"),JOptionPane.ERROR_MESSAGE);
+        System.exit(1);
+      }
+    }
     
     // Load the settings    
     Settings.loadSettings();
