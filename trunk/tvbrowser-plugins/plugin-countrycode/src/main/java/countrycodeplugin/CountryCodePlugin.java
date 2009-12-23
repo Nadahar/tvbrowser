@@ -33,7 +33,7 @@ import devplugin.Version;
  *
  */
 public final class CountryCodePlugin extends Plugin {
-  private static final Version mVersion = new Version(2, 70, 3);
+  private static final Version mVersion = new Version(2, 70, 4);
 
   private PluginInfo mPluginInfo;
 
