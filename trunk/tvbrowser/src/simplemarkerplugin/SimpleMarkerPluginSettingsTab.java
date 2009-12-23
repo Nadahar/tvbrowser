@@ -29,10 +29,12 @@ import devplugin.Plugin;
 import devplugin.SettingsItem;
 import devplugin.SettingsTab;
 import simplemarkerplugin.table.MarkListPriorityCellEditor;
+import simplemarkerplugin.table.MarkListSendToPluginCellEditor;
 import simplemarkerplugin.table.MarkListTableModel;
 import simplemarkerplugin.table.MarkerIDRenderer;
 import simplemarkerplugin.table.MarkerIconRenderer;
 import simplemarkerplugin.table.MarkerPriorityRenderer;
+import simplemarkerplugin.table.MarkerSendToPluginRenderer;
 import util.io.IOUtilities;
 import util.ui.ExtensionFileFilter;
 import util.ui.Localizer;
@@ -119,6 +121,9 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
     mListTable.getColumnModel().getColumn(2).setCellRenderer(new MarkerPriorityRenderer());
     mListTable.getColumnModel().getColumn(2).setMaxWidth(Sizes.dialogUnitXAsPixel(70,mListTable));
     mListTable.getColumnModel().getColumn(2).setMinWidth(Sizes.dialogUnitXAsPixel(70,mListTable));
+    mListTable.getColumnModel().getColumn(3).setCellRenderer(new MarkerSendToPluginRenderer());
+    mListTable.getColumnModel().getColumn(3).setMaxWidth(Sizes.dialogUnitXAsPixel(70,mListTable));
+    mListTable.getColumnModel().getColumn(3).setMinWidth(Sizes.dialogUnitXAsPixel(70,mListTable));
     
     mListTable.setRowHeight(25);
     
@@ -133,6 +138,7 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
     mListTable.addMouseListener(this);
     mListTable.addKeyListener(this);
     mListTable.getColumnModel().getColumn(2).setCellEditor(new MarkListPriorityCellEditor());
+    mListTable.getColumnModel().getColumn(3).setCellEditor(new MarkListSendToPluginCellEditor());
 
     JScrollPane pane = new JScrollPane(mListTable);
 

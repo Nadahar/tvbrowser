@@ -1,5 +1,5 @@
 /*
- * SimpleMarkerPlugin by René Mach
+ * SimpleMarkerPlugin by RenÈ Mach
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -28,6 +28,7 @@ import devplugin.Plugin;
 import devplugin.PluginTreeNode;
 import devplugin.Program;
 import devplugin.ProgramItem;
+import devplugin.ProgramReceiveIf;
 import devplugin.ProgramReceiveTarget;
 import util.io.IOUtilities;
 import util.program.ProgramUtilities;
@@ -36,12 +37,14 @@ import util.ui.Localizer;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Icon;
+import javax.swing.SwingUtilities;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.LinkedList;
@@ -56,7 +59,7 @@ import java.util.Vector;
  * 
  * A class that is a list with marked programs.
  * 
- * @author René Mach
+ * @author RenÈ Mach
  */
 public class MarkList extends Vector<Program> {
   private static final long serialVersionUID = 1L;
@@ -68,6 +71,7 @@ public class MarkList extends Vector<Program> {
   private Icon mMarkIcon;
   private String mMarkIconPath;
   private int mMarkPriority;
+  private ArrayList<ProgramReceiveTarget> mReceiveTargets = new ArrayList<ProgramReceiveTarget>();
 
   /**
    * The constructor for a new list.
@@ -188,6 +192,14 @@ public class MarkList extends Vector<Program> {
                 .getTvBrowserUserHome()
                 + mMarkIconPath);
       }
+
+      if (version > 4) {
+        int targets = in.readInt();
+        for (int i = 0;i<targets;i++){
+          ProgramReceiveTarget t = new ProgramReceiveTarget(in);
+          mReceiveTargets.add(t);
+        }
+      }
     }
   }
 
@@ -199,7 +211,7 @@ public class MarkList extends Vector<Program> {
    * @throws IOException
    */
   protected void writeData(ObjectOutputStream out) throws IOException {
-    out.writeInt(4); // Version
+    out.writeInt(5); // Version
     out.writeInt(mMarkPriority);
     out.writeObject(mName);
     out.writeUTF(mId);
@@ -211,46 +223,77 @@ public class MarkList extends Vector<Program> {
     }
 
     out.writeObject(mMarkIconPath);
+
+    out.writeInt(mReceiveTargets.size());
+    for (ProgramReceiveTarget target:mReceiveTargets) {
+      target.writeData(out);
+    }
   }
 
   /**
    * 
    * @param p
    *          The Program.
+   * @param defaultText
+   *          Use the default text instead of own created text
    * @return The action for the Program for this List;
    */
-  protected Action getContextMenuAction(final Program p) {
+  protected Action getContextMenuAction(final Program p, final boolean defaultText) {
     AbstractAction action = new AbstractAction() {
       private static final long serialVersionUID = 1L;
 
       public void actionPerformed(ActionEvent e) {
-        if (contains(p)) {
-          removeElement(p);
-          SimpleMarkerPlugin.getInstance().revalidate(new Program[] { p });
-        } else {
-          addElement(p);
-          p.mark(SimpleMarkerPlugin.getInstance());
-          p.validateMarking();
-        }
-        createNodes(mRootNode, true);
-        SimpleMarkerPlugin.getInstance().refreshManagePanel(false);
-        SimpleMarkerPlugin.getInstance().save();
+        SwingUtilities.invokeLater(new Runnable() {
+          @Override
+          public void run() {
+            if (contains(p)) {
+              removeElement(p);
+              SimpleMarkerPlugin.getInstance().revalidate(new Program[] { p });
+            } else {
+              addProgram(p);
+            }
+            createNodes(mRootNode, true);
+            SimpleMarkerPlugin.getInstance().refreshManagePanel(false);
+            SimpleMarkerPlugin.getInstance().save();
+          }
+        });
       }
     };
 
     if (contains(p)) {
-      action.putValue(Action.NAME, SimpleMarkerPlugin.getLocalizer().msg(
-          "list.unmark", "Remove program from '{0}'", getName()));
+      if (defaultText) {
+        action.putValue(Action.NAME, SimpleMarkerPlugin.getLocalizer().msg("unmark", "Remove marking"));
+      } else {
+        action.putValue(Action.NAME, SimpleMarkerPlugin.getLocalizer().msg(
+            "list.unmark", "Remove program from '{0}'", getName()));
+      }
       action.putValue(Action.SMALL_ICON, SimpleMarkerPlugin.getInstance()
           .createIconForTree(0));
     } else {
-      action.putValue(Action.NAME, SimpleMarkerPlugin.getLocalizer().msg(
+      if (defaultText) {
+        action.putValue(Action.NAME, SimpleMarkerPlugin.getLocalizer().msg("markProgram", "Mark program"));
+      } else {
+        action.putValue(Action.NAME, SimpleMarkerPlugin.getLocalizer().msg(
           "list.mark", "Add program to '{0}'", getName()));
+      }
       action.putValue(Action.SMALL_ICON, mMarkIcon);
       action.putValue(Program.MARK_PRIORITY, getMarkPriority());
     }
 
     return action;
+  }
+
+  public void addProgram(Program p) {
+    if (mReceiveTargets != null) {
+      for (ProgramReceiveTarget target:mReceiveTargets){
+        System.out.println(target.getReceiveIfId());
+        target.receivePrograms(new Program[] {p});
+      }
+    }
+
+    addElement(p);
+    p.mark(SimpleMarkerPlugin.getInstance());
+    p.validateMarking();
   }
 
   /**
@@ -537,4 +580,25 @@ public class MarkList extends Vector<Program> {
   public void setMarkPriority(int value) {
     mMarkPriority = value;
   }
+
+  /**
+   * Get the plugin targets that get notified as soon as a new program is added
+   * to the list
+   *
+   * @return The plugin targets
+   */
+  public Collection<ProgramReceiveTarget> getPluginTargets() {
+    return mReceiveTargets;
+  }
+
+  /**
+   * Sets the plugins that get notified each time a program is added to the list
+   *
+   * @param targets list of plugins that get notified
+   */
+  public void setPluginTargets(Collection<ProgramReceiveTarget> targets) {
+    mReceiveTargets = new ArrayList<ProgramReceiveTarget>(targets);
+  }
+
+
 }

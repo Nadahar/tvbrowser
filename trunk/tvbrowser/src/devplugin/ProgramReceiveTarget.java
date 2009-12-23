@@ -247,4 +247,17 @@ public final class ProgramReceiveTarget implements Comparable<ProgramReceiveTarg
   public int compareTo(ProgramReceiveTarget other) {
     return getTargetName().compareTo(other.getTargetName());
   }
+
+  /**
+   * Send the programs to the receive target
+   *
+   * @param programs programs to send
+   * @since 3.0
+   */
+  public void receivePrograms(Program[] programs) {
+    ProgramReceiveIf plugin = getReceifeIfForIdOfTarget();
+    if (plugin != null && plugin.canReceiveProgramsWithTarget()) {
+      plugin.receivePrograms(programs, this);
+    }
+  }
 }

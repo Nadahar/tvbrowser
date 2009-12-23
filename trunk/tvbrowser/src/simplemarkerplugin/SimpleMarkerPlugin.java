@@ -77,7 +77,7 @@ import java.util.Vector;
  * 
  * @author René Mach
  */
-public class SimpleMarkerPlugin extends Plugin implements ActionListener {
+public class SimpleMarkerPlugin extends Plugin {
   private static final Version mVersion = new Version(2,70,0);
   
   /** The localizer for this class. */
@@ -182,7 +182,7 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
     
     if (mMarkListVector.size() == 1) {
       // Create context menu entry
-      return new ActionMenu(getDefaultAction(p));
+      return new ActionMenu(mMarkListVector.getListAt(0).getContextMenuAction(p, true));
     } else {
       Object[] submenu = new Object[mMarkListVector.size()];
       ContextMenuAction menu = new ContextMenuAction();
@@ -190,29 +190,11 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
       menu.setSmallIcon(createImageIcon("status", "mail-attachment", 16));
       
       for (int i = 0; i < mMarkListVector.size(); i++) {
-        submenu[i] = mMarkListVector.getListAt(i).getContextMenuAction(p);
+        submenu[i] = mMarkListVector.getListAt(i).getContextMenuAction(p, false);
       }
       return new ActionMenu(menu, submenu);
     }
     
-  }
-
-  private ContextMenuAction getDefaultAction(Program p) {
-    ContextMenuAction menu = new ContextMenuAction();
-    menu.setText(mLocalizer.msg("markProgram", "Mark program"));
-    
-    if (mMarkListVector.getListAt(0).contains(p)) {
-      menu.setText(mLocalizer.msg("unmark", "Remove marking"));
-    }
-    else {
-      menu.putValue(Program.MARK_PRIORITY, mMarkListVector.getListAt(0).getMarkPriority());
-    }
-    
-    menu.putValue(Action.ACTION_COMMAND_KEY, menu.getValue(Action.NAME));
-    menu.setSmallIcon(createImageIcon("status", "mail-attachment", 16));
-    menu.setActionListener(this);
-
-    return menu;
   }
   
   public boolean canReceiveProgramsWithTarget() {
@@ -225,21 +207,21 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
   
   public boolean receivePrograms(Program[] programs, ProgramReceiveTarget target) {
     MarkList targetList = mMarkListVector.getMarkListForTarget(target);
-    
+
     if(targetList == null) {
       return false;
     }
-    
+
     for (Program p : programs) {
       if (!targetList.contains(p)) {
-        targetList.addElement(p);
+        targetList.addProgram(p);
         p.mark(this);
         p.validateMarking();
       }
     }
     targetList.updateNode();
     save();
-    
+
     return true;
   }
   
@@ -371,22 +353,6 @@ public class SimpleMarkerPlugin extends Plugin implements ActionListener {
     
     dialog.setVisible(true);
     updateTree();
-  }
-
-  public void actionPerformed(ActionEvent e) {
-    if (e.getActionCommand().equals(mLocalizer.msg("markProgram", "Mark program"))) {
-      mMarkListVector.getListAt(0).addElement(mProg);
-      mProg.mark(this);
-      mMarkListVector.getListAt(0).updateNode();
-    } else if (e.getActionCommand().equals(
-        mLocalizer.msg("unmark", "Remove marking"))) {
-      mMarkListVector.getListAt(0).removeElement(mProg);
-      mProg.unmark(this);
-      mMarkListVector.getListAt(0).updateNode();
-    }
-    
-    refreshManagePanel(false);
-    save();
   }
 
   public void readData(ObjectInputStream in) throws IOException,
