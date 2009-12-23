@@ -184,7 +184,6 @@ public class SystemTray {
       mQuitMenuItem.addActionListener(new java.awt.event.ActionListener() {
 
         public void actionPerformed(java.awt.event.ActionEvent e) {
-          mSystemTray.setVisible(false);
           MainFrame.getInstance().quit();
         }
       });
@@ -229,7 +228,6 @@ public class SystemTray {
           if (Settings.propOnlyMinimizeWhenWindowClosing.getBoolean()) {
             toggleShowHide();
           } else {
-            mSystemTray.setVisible(false);
             MainFrame.getInstance().quit();
           }
         }

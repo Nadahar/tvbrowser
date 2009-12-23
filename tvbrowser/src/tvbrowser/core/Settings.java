@@ -1531,6 +1531,13 @@ public class Settings {
       mProp, "channelsWereConfigured", false);
   
   /**
+   * If true ask user before quit TV-Browser
+   * @since 3.0
+   */
+  public static final BooleanProperty propAskForExitConfirm = new BooleanProperty(
+      mProp, "askForExitConfirm", true);
+  
+  /**
    * Sets the window position and size for the given window with the values of
    * the given id.
    * 
