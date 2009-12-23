@@ -70,7 +70,7 @@ public class Launch {
   public static final int OS_OTHER = 2;
   /** Linux OS JVM*/
   public static final int OS_LINUX = 3;
-  
+
   /**
    * Opens an URL in a web-browser
    * @param url Url to open
@@ -79,12 +79,14 @@ public class Launch {
     String browserExecutable = Settings.propUserDefinedWebbrowser.getString();
     try {
       if (browserExecutable != null) {
+        String params = Settings.propUserDefinedWebbrowserParams.getString().replace("{0}", url);
+
         // Test if the JVM is a Mac-VM and the Application is an .app-File.
         // These Files must be launched differently
         if ((getOs() == OS_MAC) && (browserExecutable.trim().toLowerCase().endsWith(".app"))) {
-          new ExecutionHandler(new String[] { "open", "-a", browserExecutable, url }).execute();
+          new ExecutionHandler(new String[] { "open", "-a", browserExecutable, params }).execute();
         } else {
-          new ExecutionHandler(new String[] { browserExecutable, url }).execute();
+          new ExecutionHandler(new String[] { browserExecutable, params }).execute();
         }
       } else {
         boolean opened = false;
@@ -186,12 +188,12 @@ public class Launch {
     } else if (BrowserLauncher.getJvm() == 8) {
       return OS_LINUX;
     }
-    
+
     return OS_OTHER;
   }
-  
+
   /**
-   * 
+   *
    * @return If the OS is Windows NT branch.
    */
   public static boolean isOsWindowsNtBranch() {

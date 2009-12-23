@@ -800,6 +800,9 @@ public class Settings {
   public static final StringProperty propUserDefinedWebbrowser = new StringProperty(
       mProp, "webbrowser", null);
 
+  public static final StringProperty propUserDefinedWebbrowserParams = new StringProperty(
+      mProp, "webbrowserParams", "{0}");
+
   public static final ColorProperty propProgramTableBackgroundSingleColor = new ColorProperty(
       mProp, "backgroundSingleColor", Color.white);  
   
