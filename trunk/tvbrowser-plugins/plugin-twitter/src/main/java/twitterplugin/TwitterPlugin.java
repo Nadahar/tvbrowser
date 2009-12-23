@@ -23,6 +23,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
 
+import util.ui.DontShowAgainMessageBox;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import devplugin.ActionMenu;
@@ -113,7 +114,10 @@ public final class TwitterPlugin extends Plugin {
   
   @Override
   public boolean receivePrograms(final Program[] programArr, final ProgramReceiveTarget receiveTarget) {
+    // if lots of programs are sent, this would lead to showing many dialogs and sending many tweets, so set an upper limit
     if (programArr.length > MAX_PROGRAM_COUNT) {
+      DontShowAgainMessageBox.dontShowAgainMessageBox(this, "toManyProgramsToTweet", getParentFrame(), mLocalizer.msg(
+          "toManyPrograms", "Please select at most {0} programs to be tweeted.", MAX_PROGRAM_COUNT));
       return false;
     }
     for (Program program : programArr) {
