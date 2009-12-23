@@ -34,10 +34,7 @@ public class MarkListPriorityCellEditor extends AbstractCellEditor implements
   }
 
   public boolean isCellEditable(EventObject evt) {
-    if (evt instanceof MouseEvent) {
-      return ((MouseEvent) evt).getClickCount() >= 2;
-    }
-    return true;
+    return !(evt instanceof MouseEvent) || ((MouseEvent) evt).getClickCount() >= 2;
   }
 
   public Object getCellEditorValue() {
