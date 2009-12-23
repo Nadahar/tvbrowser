@@ -49,6 +49,7 @@ import javax.swing.JRadioButton;
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.Settings;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
+import util.ui.DisclosureTriangle;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
@@ -137,22 +138,29 @@ public class UpdateDlg extends JDialog implements ActionListener, WindowClosingI
       JPanel dataServicePanel = new JPanel();
       dataServicePanel.setLayout(new BoxLayout(dataServicePanel,
           BoxLayout.Y_AXIS));
-      dataServicePanel.setBorder(BorderFactory.createTitledBorder(mLocalizer
-          .msg("useDataSources", "Use these data sources:")));
+      dataServicePanel.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 0));
       mDataServiceCbArr = new TvDataServiceCheckBox[serviceArr.length];
 
       String[] checkedServiceNames = Settings.propDataServicesForUpdate
           .getStringArray();
 
+      boolean expand = false;
       for (int i = 0; i < serviceArr.length; i++) {
         mDataServiceCbArr[i] = new TvDataServiceCheckBox(serviceArr[i]);
-        mDataServiceCbArr[i].setSelected(tvDataServiceIsChecked(serviceArr[i],
-            checkedServiceNames));
+        boolean isSelected = tvDataServiceIsChecked(serviceArr[i],
+            checkedServiceNames);
+        mDataServiceCbArr[i].setSelected(isSelected);
+        if (!isSelected) {
+          expand = true;
+        }
         dataServicePanel.add(mDataServiceCbArr[i]);
       }
-      JPanel p = new JPanel(new BorderLayout());
-      p.add(dataServicePanel, BorderLayout.CENTER);
-      northPanel.add(p);
+      DisclosureTriangle disclosureButton = new DisclosureTriangle(dataServicePanel);
+      disclosureButton.setLabelText(mLocalizer.msg("dataSources", "Data sources"));
+      if (expand) {
+        disclosureButton.expand();
+      }
+      northPanel.add(disclosureButton);
     }
 
     int period = Settings.propDownloadPeriod.getInt();
