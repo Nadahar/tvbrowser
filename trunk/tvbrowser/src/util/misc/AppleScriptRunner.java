@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.logging.Logger;
 
 import util.io.ExecutionHandler;
 
@@ -36,6 +37,9 @@ import util.io.ExecutionHandler;
  * @since 2.2.1
  */
 public class AppleScriptRunner {
+  /** The logger for this class */
+  private static java.util.logging.Logger mLog = Logger.getLogger(AppleScriptRunner.class.getName());
+
   /**
    * Default TimeOut in Seconds
    */
@@ -66,7 +70,7 @@ public class AppleScriptRunner {
   public String executeScript(String script) throws IOException {
     File scriptFile = File.createTempFile("osascript", "temp");
     scriptFile.deleteOnExit();
-    
+
     OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(scriptFile), "UTF-8");
     writer.write(script);
     writer.close();
@@ -125,6 +129,9 @@ public class AppleScriptRunner {
       output = executionHandler.getInputStreamReaderThread().getOutput();
     }
 
+    mLog.info("AppleScript Output:");
+    mLog.info(output);
+
     if (executionHandler.exitValue() >= 0) {
       return output;
     }
@@ -145,6 +152,6 @@ public class AppleScriptRunner {
    * @return string with escaped characters
    */
   public String formatTextAsParam(String string) {
-    return string.replaceAll("\"", "\\\\\\\\\"").replace('\n', ' ');
+    return string.replaceAll("\"", "\\\\\"").replace('\n', ' ');
   }
 }
