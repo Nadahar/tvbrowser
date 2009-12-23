@@ -18,19 +18,21 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 /**
- * This dialog is shown when TV data is copied or imported.
+ * This dialog is shown when something is copied or imported.
  * It blocks all other dialogs.
  * 
  * @author René Mach
  * @since 2.2.2/2.5.1
  */
-public class TvDataCopyWaitingDlg extends JDialog {
+public class CopyWaitingDlg extends JDialog {
   /** The message key for copy messages */
   public static final byte COPY_MSG = 0;
   /** The message key for import messages */
   public static final byte IMPORT_MSG = 1;
   /** The message key for appdata messages */
   public static final byte APPDATA_MSG = 2;
+  /** The message key for settings import messages */
+  public static final byte IMPORT_SETTINGS_MSG = 3;
   
   /**
    * Creates an instance of this class.
@@ -38,7 +40,7 @@ public class TvDataCopyWaitingDlg extends JDialog {
    * @param parent The parent dialog for this dialog.
    * @param messageType The message type for this dialog.
    */
-  public TvDataCopyWaitingDlg(Window parent, byte messageType) {
+  public CopyWaitingDlg(Window parent, byte messageType) {
     super(parent);
     setModal(true);
     createGUI(parent, messageType);
@@ -54,7 +56,7 @@ public class TvDataCopyWaitingDlg extends JDialog {
     panel.setLayout(new FormLayout("3dlu, pref, 3dlu", "3dlu, pref, 3dlu, pref, 3dlu"));
     CellConstraints cc = new CellConstraints();
 
-    Localizer localizer = Localizer.getLocalizerFor(TvDataCopyWaitingDlg.class);
+    Localizer localizer = Localizer.getLocalizerFor(CopyWaitingDlg.class);
     
     String msg = localizer.msg("waitingHeader", "Importing TV data (this can need some minutes).");
     JTextArea header = new JTextArea();
@@ -68,6 +70,9 @@ public class TvDataCopyWaitingDlg extends JDialog {
       		"Windows appdata directory. You can delete the old TV-Browser settings directory\n if you don't use an old version of TV-Browser.");
       header.setPreferredSize(new Dimension(370,80));
     }
+    else {
+      msg = localizer.msg("waitingSettingsHeader","Importing the settings of a previous version (this may take some minutes).");
+    }
     
     header.setText(msg);
     header.setEditable(false);
@@ -80,7 +85,7 @@ public class TvDataCopyWaitingDlg extends JDialog {
 
     panel.add(header, cc.xy(2, 2));
 
-    panel.add(new JLabel(localizer.msg("pleaseWait", "Please wait until the TV data were copied.")), cc.xy(2, 4));
+    panel.add(new JLabel(localizer.msg("pleaseWait", "Please wait until the files were copied.")), cc.xy(2, 4));
 
     pack();
     setLocationRelativeTo(parent);
