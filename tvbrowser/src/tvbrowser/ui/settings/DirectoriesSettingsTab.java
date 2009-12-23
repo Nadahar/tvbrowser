@@ -36,7 +36,7 @@ import javax.swing.JPanel;
 import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.ui.mainframe.MainFrame;
-import tvbrowser.ui.waiting.dlgs.TvDataCopyWaitingDlg;
+import tvbrowser.ui.waiting.dlgs.CopyWaitingDlg;
 import util.io.IOUtilities;
 import util.ui.DirectoryChooserPanel;
 import util.ui.UiUtilities;
@@ -58,7 +58,7 @@ public class DirectoriesSettingsTab implements SettingsTab {
   private String mCurrentTvDataDir;
   
   private boolean mShowWaiting;
-  private TvDataCopyWaitingDlg mWaitingDlg;
+  private CopyWaitingDlg mWaitingDlg;
 
   public DirectoriesSettingsTab() {
   }
@@ -101,7 +101,7 @@ public class DirectoriesSettingsTab implements SettingsTab {
     if(!currentDir.equals(newDir)) {      
       
       Window parent = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
-      mWaitingDlg = new TvDataCopyWaitingDlg(parent, TvDataCopyWaitingDlg.COPY_MSG);
+      mWaitingDlg = new CopyWaitingDlg(parent, CopyWaitingDlg.COPY_MSG);
 
       mShowWaiting = true;
 

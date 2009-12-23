@@ -56,7 +56,7 @@ import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.programtable.DefaultProgramTableModel;
 import tvbrowser.ui.programtable.ProgramTableScrollPane;
 import tvbrowser.ui.settings.BlockedPluginArrayProperty;
-import tvbrowser.ui.waiting.dlgs.TvDataCopyWaitingDlg;
+import tvbrowser.ui.waiting.dlgs.CopyWaitingDlg;
 import util.browserlauncher.Launch;
 import util.exc.TvBrowserException;
 import util.io.IOUtilities;
@@ -107,6 +107,7 @@ public class Settings {
   public static final String LAYOUT_TIME_SYNCHRONOUS = "timeSynchronous";
   public static final String INFO_ID = "info.id";
   public static final String PICTURE_ID = "picture.id";
+  private static final short INFO_DIALOG_WAITING_TIME = 1500;
 
   private static java.util.logging.Logger mLog = java.util.logging.Logger
       .getLogger(Settings.class.getName());
@@ -132,6 +133,7 @@ public class Settings {
   private static PropertyManager mProp = new PropertyManager();
 
   private static boolean mShowWaiting;
+  private static boolean mShowSettingsCopyWaiting;
   
   private static HashMap<String,WindowSetting> mWindowSettings;
   
@@ -317,6 +319,38 @@ public class Settings {
      * by a previous version of TV-Browser
      */
     else if (!oldDirectoryName.equals(newDirectoryName)) {
+      mShowSettingsCopyWaiting = true;
+      
+      new Thread("settings import info thread") {
+        public void run() {
+          try {
+            sleep(INFO_DIALOG_WAITING_TIME);
+            
+            if(mShowSettingsCopyWaiting) {
+              final CopyWaitingDlg waiting = new CopyWaitingDlg(new JFrame(),CopyWaitingDlg.IMPORT_SETTINGS_MSG);
+              
+              new Thread("settings import waiting thread") {
+                public void run() {
+                  while(mShowSettingsCopyWaiting) {
+                    try {
+                      sleep(200);
+                    } catch (InterruptedException e1) {
+                      e1.printStackTrace();
+                    }
+                  }
+                  
+                  waiting.setVisible(false);
+                }
+              }.start();
+              
+              waiting.setVisible(mShowSettingsCopyWaiting);
+            }
+          } catch (InterruptedException e) {
+            // ignore
+          }
+        }
+      }.start();
+      
       mLog.info("Try to load settings from a previous version of TV-Browser");
             
       File oldDir = null;
@@ -418,6 +452,8 @@ public class Settings {
               }
             }), newDir);
             
+            mShowSettingsCopyWaiting = false;
+            
             mLog.info("settings from previous version copied successfully");
             File newSettingsFile = new File(newDir, SETTINGS_FILE);
             mProp.readFromFile(newSettingsFile);
@@ -467,7 +503,7 @@ public class Settings {
               if(!oldTvDataDir.equals(targetDir)) {
                 targetDir.mkdirs();
                 
-                final TvDataCopyWaitingDlg waiting = new TvDataCopyWaitingDlg(new JFrame(), versionTest ? TvDataCopyWaitingDlg.APPDATA_MSG : TvDataCopyWaitingDlg.IMPORT_MSG);
+                final CopyWaitingDlg waiting = new CopyWaitingDlg(new JFrame(), versionTest ? CopyWaitingDlg.APPDATA_MSG : CopyWaitingDlg.IMPORT_MSG);
                 
                 mShowWaiting = true;
                 
@@ -525,9 +561,9 @@ public class Settings {
         mLog
             .info("No previous version of TV-Browser found - using default user settings");
       }
-
     }
-
+    mShowSettingsCopyWaiting = false;
+    
     File settingsDir = new File(newDirectoryName);
 
     if (!settingsDir.exists()) {
