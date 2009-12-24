@@ -273,4 +273,12 @@ public class ChannelLabel extends JLabel {
   public static void clearIconCache() {
     ICONCACHE.clear();
   }
+
+  /**
+   * @return The current Channel
+   * @since 3.0
+   */
+  public Channel getChannel() {
+    return mChannel;  
+  }
 }
