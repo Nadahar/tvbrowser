@@ -81,25 +81,31 @@ public class ElgatoConnection implements SimpleConnectionIf {
             + "  end tell\n"
             + "end stringToList\n"
             + "\n"
-            + "\n"
-            + "on getdateForISOdate(theISODate, theISOTime)\n"
-            + "  local myDate\n"
-            + "  -- converts an ISO format (YYYY-MM-DD) and time to a date object\n"
-            + "  set monthConstants to {January, February, March, April, May, June, July, August, September, October, November, December} \n"
-            + " \n"
-            + "  set theISODate to (stringToList from (theISODate) for \"-\")\n"
-            + "  \n"
-            + "  set myDate to date theISOTime\n"
-            + "  \n"
-            + "  tell theISODate\n"
-            + "    set year of myDate to item 1\n"
-            + "    set month of myDate to item (item 2) of monthConstants\n"
-            + "    set day of myDate to item 3\n"
-            + "  end tell\n"
-            + " \n"
-            + "  return myDate\n"
-            + "end getdateForISOdate\n"
-            + "\n"
+            + "\n" +
+            "on getDateForISOdate(theISODate, theISOTime)\n" +
+            "\tlocal myDate\n" +
+            "\t-- converts an ISO format (YYYY-MM-DD) and time to a date object\n" +
+            "\tset monthConstants to {January, February, March, April, May, June, July, August, September, October, November, December}\n" +
+            "\t\n" +
+            "\tset theISODate to (stringToList from (theISODate) for \"-\")\n" +
+            "\tset theISOTime to (stringToList from (theISOTime) for \":\")\n" +
+            "\t\n" +
+            "\tset myDate to current date\n" +
+            "\t\n" +
+            "\ttell theISODate\n" +
+            "\t\tset year of myDate to item 1\n" +
+            "\t\tset month of myDate to item (item 2) of monthConstants\n" +
+            "\t\tset day of myDate to item 3\n" +
+            "\tend tell\n" +
+            "\ttell theISOTime\n" +
+            "\t\tset hours of myDate to item 1\n" +
+            "\t\tset minutes of myDate to item 2\n" +
+            "\t\tset seconds of myDate to 0\n" +
+            "\tend tell\n" +
+            "\t\n" +
+            "\treturn myDate\n" +
+            "end getDateForISOdate\n" +
+            "\n"
             + "set dateob to getdateForISOdate(\"{0}\", \"{1}\")\n"
             + "\n"
             + "tell application \"EyeTV\"\n"
