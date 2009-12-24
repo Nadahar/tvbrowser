@@ -162,7 +162,7 @@ public class ListTableModel extends AbstractTableModel {
 
   public Object getValueAt(final int rowIndex, final int columnIndex) {
 
-    if (rowIndex > mData.size()) {
+    if (rowIndex >= mData.size()) {
       return null;
     }
 
