@@ -46,8 +46,6 @@ public class AppleiCalExporter extends AbstractExporter {
     }
 
     public boolean exportPrograms(Program[] programs, CalendarExportSettings settings, AbstractPluginProgramFormating formatting) {
-        System.out.println("Apple iCal!");
-
         AppleScriptRunner runner = new AppleScriptRunner();
 
         StringBuilder script = new StringBuilder();

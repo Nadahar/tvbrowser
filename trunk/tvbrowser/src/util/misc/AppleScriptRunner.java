@@ -68,6 +68,9 @@ public class AppleScriptRunner {
    * @throws IOException
    */
   public String executeScript(String script) throws IOException {
+    mLog.info("Applescript start:");
+    mLog.info(script);
+
     File scriptFile = File.createTempFile("osascript", "temp");
     scriptFile.deleteOnExit();
 
