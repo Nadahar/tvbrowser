@@ -346,8 +346,6 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
 
   /**
    * Creates the GUI
-   *
-   * @param plugin
    */
   private void createGUI() {
     JPanel content = (JPanel) this.getContentPane();
@@ -580,8 +578,7 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
     settings.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         close();
-        Plugin.getPluginManager()
-        .showSettings(ListViewPlugin.getInstance());
+        Plugin.getPluginManager().showSettings(ListViewPlugin.getInstance());
       }
     });
 
@@ -710,7 +707,7 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
 
   /**
    * Shows the Popup
-   * @param evt Mouse-Event
+   * @param e Mouse-Event
    */
   private void showPopup(MouseEvent e) {
     Program prg = getProgramByClick(e);
