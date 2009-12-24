@@ -97,10 +97,6 @@ public class ProgramTableChannelLabel extends ChannelLabel {
     }
   }
   
-  protected Channel getChannel() {
-    return mChannel;
-  }
-
   @Override
   public JToolTip createToolTip() {
     // don't show tooltip, if disabled in settings
