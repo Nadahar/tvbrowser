@@ -539,7 +539,13 @@ private static Font getDynamicFontSize(Font font, int offset) {
       }
       
       // Calculate the height
-      mHeight = titleHeight + descHeight + mPictureAreaIcon.getIconHeight() + additionalHeight + V_GAP;
+      int newHeight = titleHeight + descHeight + mPictureAreaIcon.getIconHeight() + additionalHeight + V_GAP;
+      if (newHeight > mHeight && mAxis == ProgramPanelSettings.X_AXIS) {
+        mHeight = newHeight;
+      } else if (mAxis == ProgramPanelSettings.Y_AXIS) {
+        mHeight = newHeight;
+      }
+
       setPreferredSize(new Dimension(WIDTH_TOTAL, mHeight));
 
       // Calculate the preferred height
