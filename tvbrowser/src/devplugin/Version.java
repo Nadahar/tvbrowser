@@ -32,12 +32,16 @@
 
 package devplugin;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+
 /**
  * A class for the Version value off
  * TV-Browser and it's plugins.
  */
-public final class Version implements Comparable {
-
+public final class Version implements Comparable<Version> {
+  
   private int mMajor, mMinor, mSubMinor;
   private boolean mIsStable;
   private String mName;
@@ -167,9 +171,7 @@ public final class Version implements Comparable {
     return mSubMinor;
   }
   
-  public int compareTo(Object obj) throws ClassCastException {
-  	Version v=(Version)obj;
-  	
+  public int compareTo(Version v) throws ClassCastException {
   	if (mMajor>v.mMajor) {
   		return 1;
   	}else if (mMajor<v.mMajor) {
@@ -211,4 +213,42 @@ public final class Version implements Comparable {
     }
   }
   
+  /**
+   * Writes tis object to a stream.
+   * <p>
+   * @param out The stream to write to.
+   * @throws IOException Thrown if something went wrong.
+   */
+  public void writeData(final DataOutputStream out) throws IOException {
+    out.writeByte(1); //version
+    out.writeInt(mMajor);
+    out.writeInt(mMinor);
+    out.writeInt(mSubMinor);
+    out.writeBoolean(mIsStable);
+    
+    out.writeBoolean(mName != null);
+    
+    if(mName != null) {
+      out.writeUTF(mName);
+    }
+  }
+
+  /**
+   * Creates an instance of this class from the given stream
+   * <p>
+   * @param in The stream to read the version from.
+   * @throws IOException Thrown if something went wrong.
+   * @throws ClassNotFoundException Thrown if something went wrong.
+   */
+  public Version(final DataInputStream in) throws IOException, ClassNotFoundException {
+    in.readByte(); //version
+    mMajor = in.readInt();
+    mMinor = in.readInt();
+    mSubMinor = in.readInt();
+    mIsStable = in.readBoolean();
+    
+    if(in.readBoolean()) {
+      mName = in.readUTF();
+    }
+  }
 }
