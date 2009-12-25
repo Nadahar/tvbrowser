@@ -554,8 +554,9 @@ public class ProgramTextCreator {
         type = (ProgramFieldType) id;      
 
         if (type == ProgramFieldType.DESCRIPTION_TYPE) {
-          if (prog.getDescription() != null
-              && prog.getDescription().trim().length() > 0) {
+          String description = getDescription(prog);
+          if (description != null
+              && description.length() > 0) {
             addEntry(doc, buffer, prog, ProgramFieldType.DESCRIPTION_TYPE, true,
                 showHelpLinks, showPersonLinks);
           } else {
@@ -705,6 +706,24 @@ public class ProgramTextCreator {
     return "";
   }
 
+  private static String getDescription(final Program prog) {
+    String desc = prog.getDescription();
+    if (desc != null) {
+      desc = desc.trim();
+      int size = 50;
+      // search re-occurings in the description
+      if (desc.indexOf(desc.substring(0, size), size) >= size) {
+        int descLength = desc.length();
+        while (((size + 1) * 2 <= descLength) && (desc.indexOf(desc.substring(0, size + 1), size + 1) >= size + 1)) {
+          size++;
+        }
+        desc = desc.substring(size).trim();
+      }
+      return desc;
+    }
+    return null;
+  }
+
   private static String addPersonLink(final String name) {
     if (name == null || name.isEmpty()) {
       return mLocalizer.msg("unknown", "(unknown)");
@@ -807,7 +826,8 @@ public class ProgramTextCreator {
 
       // Lazily add short description, but only if it differs from description
       if (fieldType == ProgramFieldType.DESCRIPTION_TYPE) {
-        String description = prog.getDescription().trim();
+        String description = getDescription(prog);
+        text = description;
 
         if (prog.getShortInfo() != null) {
           StringBuilder shortInfo = new StringBuilder(prog.getShortInfo()
