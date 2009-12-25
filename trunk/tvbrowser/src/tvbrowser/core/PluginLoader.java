@@ -128,6 +128,7 @@ public class PluginLoader {
       // delete the old proxy, this will force loading of the new plugin (even if it's not active)
       String oldProxyName = getProxyFileName(oldFile);
       File oldProxy = new File(oldProxyName);
+      System.out.println(oldProxy);
       if (oldProxy.exists()) {
         deletePluginProxy(oldProxy);
       }
@@ -262,14 +263,14 @@ public class PluginLoader {
   private JavaPluginProxy readPluginProxy(File proxyFile) {
     try {
       DataInputStream in = new DataInputStream(new BufferedInputStream(new FileInputStream(proxyFile)));
+      
       String name = in.readUTF();
       String author = in.readUTF();
       String description = in.readUTF();
       String license = in.readUTF();
-      int major = in.readInt();
-      int minor = in.readInt();
-      boolean stable = in.readBoolean();
-      Version version = new Version(major, minor, stable);
+      
+      Version version = new Version(in);
+      
       String pluginId = in.readUTF();
       in.readLong(); // file size is unused
       String lcFileName = in.readUTF();
@@ -309,6 +310,7 @@ public class PluginLoader {
       String proxyFileName = getProxyFileName(pluginFile);
       DataOutputStream out = new DataOutputStream(new
           BufferedOutputStream(new FileOutputStream(proxyFileName)));
+      
       PluginInfo info = proxy.getInfo();
       out.writeUTF(info.getName());
       out.writeUTF(info.getAuthor());
@@ -318,10 +320,9 @@ public class PluginLoader {
         license = "";
       }
       out.writeUTF(license);
-      Version version = info.getVersion();
-      out.writeInt(version.getMajor());
-      out.writeInt(version.getMinor());
-      out.writeBoolean(version.isStable());
+      
+      info.getVersion().writeData(out); //write version
+      
       out.writeUTF(proxy.getId());
       out.writeLong(pluginFile.length());
       out.writeUTF(proxy.getPluginFileName());
