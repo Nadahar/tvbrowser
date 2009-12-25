@@ -71,7 +71,7 @@ public final class WirSchauenPlugin extends Plugin
   /**
    * the version of this plugin.
    */
-  private static final Version VERSION = new Version(0, 15, 0, IS_STABLE);
+  private static final Version VERSION = new Version(0, 15, 1, IS_STABLE);
 
   /**
    * this is the key used to store the show markings option in a property
@@ -143,7 +143,7 @@ public final class WirSchauenPlugin extends Plugin
    * this is the option to switch on/off the markings for linked programs in the
    * program table. its set via the WirSchauenSettingsTab.
    */
-  private boolean mShowMarkings = true;
+  private boolean mShowMarkings = false;
 
   /**
    * the root node for the plugin tree. overrides Plugin with a marked tree.
