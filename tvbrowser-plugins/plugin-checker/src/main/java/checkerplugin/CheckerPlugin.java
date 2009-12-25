@@ -126,10 +126,30 @@ public class CheckerPlugin extends Plugin {
     checkSeriesNumbers(program, results);
     checkActors(program, results);
     checkPersonFields(program, results);
+    checkDescription(program, results);
     return results;
   }
 
-  private void checkPersonFields(final Program program, final ArrayList<String> results) {
+  private void checkDescription(final Program program, final ArrayList<String> results) {
+  	String desc = program.getDescription();
+  	if (desc == null) {
+  		return;
+  	}
+		desc = desc.trim();
+    int size = 50;
+    if (desc.length() < size) {
+    	return;
+    }
+    // search re-occurings in the description
+    int index = desc.indexOf(desc.substring(0, size), size);
+    if (index >= size) {
+      if (desc.indexOf(desc.substring(0, index - 1).trim(), index) == index) {
+      	results.add(mLocalizer.msg("issue.desc.duplicate", "Description has duplicate parts"));
+      }
+    }
+	}
+
+	private void checkPersonFields(final Program program, final ArrayList<String> results) {
     checkPersonFields(ProgramFieldType.ACTOR_LIST_TYPE, program, results);
     checkPersonFields(ProgramFieldType.DIRECTOR_TYPE, program, results);
     checkPersonFields(ProgramFieldType.CAMERA_TYPE, program, results);
