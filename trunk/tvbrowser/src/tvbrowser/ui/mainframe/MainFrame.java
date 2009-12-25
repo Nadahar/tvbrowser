@@ -2426,10 +2426,10 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
         java.net.URL url = tmpFile.toURI().toURL();
         SoftwareUpdater softwareUpdater = new SoftwareUpdater(url, false, true);
         mSoftwareUpdateItems = softwareUpdater.getAvailableSoftwareUpdateItems();
-
-        SoftwareUpdateDlg updateDlg = new SoftwareUpdateDlg(this, null, false, mSoftwareUpdateItems);
-        updateDlg.setVisible(true);
         dtde.dropComplete(true);
+
+        SoftwareUpdateDlg updateDlg = new SoftwareUpdateDlg(this, false, mSoftwareUpdateItems);
+        updateDlg.setVisible(true);
       } else {
         dtde.rejectDrop();
         dtde.dropComplete(false);
