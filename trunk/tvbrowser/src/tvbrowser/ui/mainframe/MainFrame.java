@@ -71,7 +71,6 @@ import java.util.TooManyListenersException;
 import java.util.logging.Level;
 
 import javax.swing.BorderFactory;
-import javax.swing.Icon;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -1082,10 +1081,10 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
 
   public void quit(boolean log) {
     if (log && downloadingThread != null && downloadingThread.isAlive()) {
-      final JDialog info = new JDialog();
+      final JDialog info = new JDialog(UiUtilities.getLastModalChildOf(this));
       info.setModal(true);
       info.setUndecorated(true);
-      info.setAlwaysOnTop(true);
+      info.toFront();
       
       JPanel main = new JPanel(new FormLayout("5dlu,pref,5dlu","5dlu,pref,5dlu"));
       main.setBorder(BorderFactory.createLineBorder(Color.black));
