@@ -712,12 +712,11 @@ public class ProgramTextCreator {
       desc = desc.trim();
       int size = 50;
       // search re-occurings in the description
-      if (desc.indexOf(desc.substring(0, size), size) >= size) {
-        int descLength = desc.length();
-        while (((size + 1) * 2 <= descLength) && (desc.indexOf(desc.substring(0, size + 1), size + 1) >= size + 1)) {
-          size++;
+      int index = desc.indexOf(desc.substring(0, size), size);
+      if (index >= size) {
+        if (desc.indexOf(desc.substring(0, index - 1).trim(), index) == index) {
+          desc = desc.substring(index).trim();
         }
-        desc = desc.substring(size).trim();
       }
       return desc;
     }
