@@ -138,7 +138,6 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
 
     mDownloadBtn = new JButton(mLocalizer.msg("download", "Download selected items"));
     mDownloadBtn.addActionListener(this);
-    mDownloadBtn.setEnabled(false);
 
     mHelpBtn = new JButton(mLocalizer.msg("openWebsite","Open website"), TVBrowserIcons.webBrowser(TVBrowserIcons.SIZE_SMALL));
     mHelpBtn.addActionListener(this);
@@ -182,6 +181,9 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
 				selectedItems.add(item);
 			}
 		}
+    
+    mDownloadBtn.setEnabled(!selectedItems.isEmpty());
+    
     mSoftwareUpdateItemList = new SelectableItemList(selectedItems.toArray(new SoftwareUpdateItem[selectedItems.size()]),itemArr);
     mSoftwareUpdateItemList.addListSelectionListener(this);
     mSoftwareUpdateItemList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
