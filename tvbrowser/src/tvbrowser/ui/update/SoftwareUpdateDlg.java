@@ -82,7 +82,6 @@ import util.ui.customizableitems.SelectableItemRendererCenterComponentIf;
 import util.ui.html.HTMLTextHelper;
 
 import com.jgoodies.forms.builder.ButtonBarBuilder2;
-import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
@@ -123,7 +122,20 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
       boolean onlyUpdate, SoftwareUpdateItem[] itemArr) {
     super(parent);
     setModal(true);
-    createGui(downloadUrl,onlyUpdate, itemArr);
+    createGui(downloadUrl, onlyUpdate, itemArr);
+  }
+
+  /**
+   * Creates an instance of this class for drag-n-drop instead of normal plugin downloads.
+   * <p>
+   * @param parent The parent dialog.
+   * @param onlyUpdate If this dialog should only show updates.
+   * @param itemArr The array with the available update items.
+   */
+  public SoftwareUpdateDlg(Window parent,
+      boolean onlyUpdate, SoftwareUpdateItem[] itemArr) {
+    this(parent, null, onlyUpdate, itemArr);
+    mSoftwareUpdateItemList.selectAll();
   }
 
   private void createGui(String downloadUrl, boolean onlyUpdate, SoftwareUpdateItem[] itemArr) {
