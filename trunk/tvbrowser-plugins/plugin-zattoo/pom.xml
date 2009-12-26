@@ -14,6 +14,14 @@
       <id>bodo</id>
       <email>bodo@tvbrowser.org</email>
     </developer>
+    <developer>
+    	<id>bananeweizen</id>
+    	<name>Michael Keppler</name>
+    	<email>bananeweizen@tvbrowser.org</email>
+    	<roles>
+    		<role>developer</role>
+    	</roles>
+    </developer>
   </developers>
   <licenses>
      <license>
