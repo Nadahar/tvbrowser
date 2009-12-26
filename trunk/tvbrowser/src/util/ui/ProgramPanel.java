@@ -539,13 +539,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
       }
       
       // Calculate the height
-      int newHeight = titleHeight + descHeight + mPictureAreaIcon.getIconHeight() + additionalHeight + V_GAP;
-      if (newHeight > mHeight && mAxis == ProgramPanelSettings.X_AXIS) {
-        mHeight = newHeight;
-      } else if (mAxis == ProgramPanelSettings.Y_AXIS) {
-        mHeight = newHeight;
-      }
-
+      mHeight = titleHeight + descHeight + mPictureAreaIcon.getIconHeight() + additionalHeight + V_GAP;
       setPreferredSize(new Dimension(WIDTH_TOTAL, mHeight));
 
       // Calculate the preferred height
@@ -668,7 +662,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
     if (getTextIconWidth(width) != mDescriptionIcon.getIconWidth()) {
       recreateTextIcons(width);
     }
-    
+
     int height = USE_FULL_HEIGHT ? getHeight() : mHeight;
     Graphics2D grp = (Graphics2D) g;
     
