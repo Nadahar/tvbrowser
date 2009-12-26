@@ -554,7 +554,7 @@ public class ProgramTextCreator {
         type = (ProgramFieldType) id;      
 
         if (type == ProgramFieldType.DESCRIPTION_TYPE) {
-          String description = getDescription(prog);
+          String description = checkDescription(prog.getDescription());
           if (description != null
               && description.length() > 0) {
             addEntry(doc, buffer, prog, ProgramFieldType.DESCRIPTION_TYPE, true,
@@ -706,16 +706,29 @@ public class ProgramTextCreator {
     return "";
   }
 
-  private static String getDescription(final Program prog) {
-    String desc = prog.getDescription();
+  private static String checkDescription(String desc) {
     if (desc != null) {
       desc = desc.trim();
+      // remove duplicate lines directly after each other
+      StringBuilder buffer = new StringBuilder();
+      String[] lines = desc.split("\n");
+      for (int i = 0; i < lines.length; i++) {
+        if (i == 0 || ! lines[i].equals(lines[i - 1])) {
+          if (buffer.length() > 0) {
+            buffer.append('\n');
+          }
+          buffer.append(lines[i]);
+        }
+      }
+      desc = buffer.toString();
       int size = 50;
-      // search re-occurings in the description
-      int index = desc.indexOf(desc.substring(0, size), size);
-      if (index >= size) {
-        if (desc.indexOf(desc.substring(0, index - 1).trim(), index) == index) {
-          desc = desc.substring(index).trim();
+      if (desc.length() >= size) {
+        // search re-occurings in the description, independent of line breaks
+        int index = desc.indexOf(desc.substring(0, size), size);
+        if (index >= size) {
+          if (desc.indexOf(desc.substring(0, index - 1).trim(), index) == index) {
+            desc = desc.substring(index).trim();
+          }
         }
       }
       return desc;
@@ -822,16 +835,20 @@ public class ProgramTextCreator {
     }
     if (fieldType.getFormat() == ProgramFieldType.TEXT_FORMAT) {
       text = prog.getTextField(fieldType);
+      if (ProgramFieldType.SHORT_DESCRIPTION_TYPE == fieldType) {
+        text = checkDescription(text);
+      }
 
       // Lazily add short description, but only if it differs from description
       if (fieldType == ProgramFieldType.DESCRIPTION_TYPE) {
-        String description = getDescription(prog);
+        String description = checkDescription(prog.getDescription());
         text = description;
 
         if (prog.getShortInfo() != null) {
-          StringBuilder shortInfo = new StringBuilder(prog.getShortInfo()
+          StringBuilder shortInfo = new StringBuilder(checkDescription(prog.getShortInfo())
               .trim());
 
+          // delete "..." at the end, but only for duplication check, not for display
           while (shortInfo.toString().endsWith(".")) {
             shortInfo.deleteCharAt(shortInfo.length() - 1);
           }
