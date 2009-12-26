@@ -69,26 +69,21 @@ public class ListTableCellRenderer extends DefaultTableCellRenderer {
     }
 
     for (int i = 0; i < 2; i++) {
-      Program program = (Program) table.getValueAt(row, 1 + i);
       Rectangle rect = table.getCellRect(row, i + 1, true);
-      if(program != null) {
-        if (mProgramPanel[row][i] != null) {
-          mProgramPanel[row][i].setWidth(rect.width);
-          height = Math.max(height, mProgramPanel[row][i].getPreferredHeight());
-        }
+      if (mProgramPanel[row][i] != null) {
+        mProgramPanel[row][i].setWidth(rect.width);
+        height = Math.max(height, mProgramPanel[row][i].getPreferredHeight());
       }
+    }
+
+    if (height + gaps.height != table.getRowHeight(row)) {
+      table.setRowHeight(row, height + gaps.height);
     }
 
     for (int i = 0; i < 2; i++) {
       if (mProgramPanel[row][i] != null) {
         mProgramPanel[row][i].setHeight(height);
       }
-    }
-
-    height += gaps.height;
-
-    if (height != table.getRowHeight(row)) {
-      table.setRowHeight(row, height);
     }
   }
 
@@ -107,6 +102,17 @@ public class ListTableCellRenderer extends DefaultTableCellRenderer {
         mCache[row][column].setBackground(label.getBackground());
         return mCache[row][column];
       } else if (value instanceof Program && mProgramPanel[row][column - 1].getProgram().equals(value)) {
+        if (mProgramPanel[row][column - 1].getHeight() < table.getRowHeight(row)) {
+          mProgramPanel[row][column - 1].setHeight(table.getRowHeight(row));
+        } else if (mProgramPanel[row][column - 1].getHeight() > table.getRowHeight(row)) {
+          if (column == 1) {
+            mProgramPanel[row][1].setHeight(mProgramPanel[row][0].getHeight());
+          } else if (column == 2) {
+            mProgramPanel[row][0].setHeight(mProgramPanel[row][1].getHeight());
+          }
+          table.setRowHeight(row, mProgramPanel[row][column - 1].getHeight());
+        }
+        
         mProgramPanel[row][column - 1].setTextColor(label.getForeground());
         mCache[row][column].setForeground(label.getForeground());
         mCache[row][column].setBackground(label.getBackground());
