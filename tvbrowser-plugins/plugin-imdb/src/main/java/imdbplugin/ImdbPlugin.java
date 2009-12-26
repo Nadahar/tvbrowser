@@ -496,7 +496,7 @@ public final class ImdbPlugin extends Plugin {
   
   @Override
   public Class<? extends PluginsFilterComponent>[] getAvailableFilterComponentClasses() {
-    return (Class<? extends PluginsFilterComponent>[]) new Class[] { ImdbFilterComponent.class };
+    return (Class<? extends PluginsFilterComponent>[]) new Class[] { ImdbFilterComponent.class, VoteCountFilterComponent.class};
   }
 
   public String getDatabaseSizeMB() {
