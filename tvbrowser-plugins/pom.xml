@@ -15,6 +15,21 @@
     <name>TV-Browser</name>
     <url>http://www.tvbrowser.org/</url>
   </organization>
+  <issueManagement>
+  	<system>Jira</system>
+  	<url>http://tvbrowser.org:8080/jira/browse/TVBP</url>
+  </issueManagement>
+  <ciManagement>
+  	<system>Hudson</system>
+  	<url>http://tvbrowser.org:8080/hudson/job/tvbrowser-plugins/</url>
+  </ciManagement>
+  <licenses>
+	<license>
+	  <name>GPL 3</name>
+      <url>http://www.gnu.org/licenses/gpl-3.0.txt</url>
+	  <distribution>manual</distribution>
+	</license>
+  </licenses>
   <build>
     <plugins>
       <plugin>
@@ -51,8 +66,8 @@
     <module>plugin-twitter</module>
     <module>plugin-url4program</module>
     <module>plugin-virtualdataservice</module>
-    <module>plugin-wirschauen</module>
     <module>plugin-widget</module>
+    <module>plugin-wirschauen</module>
     <module>plugin-zattoo</module>
   </modules>
   <dependencyManagement>
