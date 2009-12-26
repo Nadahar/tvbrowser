@@ -126,25 +126,43 @@ public class CheckerPlugin extends Plugin {
     checkSeriesNumbers(program, results);
     checkActors(program, results);
     checkPersonFields(program, results);
-    checkDescription(program, results);
+    checkDescriptions(program, results);
     return results;
   }
 
-  private void checkDescription(final Program program, final ArrayList<String> results) {
-  	String desc = program.getDescription();
+  private void checkDescriptions(final Program program, final ArrayList<String> results) {
+  	checkDescriptionField(program, results, program.getDescription(), ProgramFieldType.DESCRIPTION_TYPE.getLocalizedName());
+  	checkDescriptionField(program, results, program.getShortInfo(), ProgramFieldType.SHORT_DESCRIPTION_TYPE.getLocalizedName());
+	}
+
+	private void checkDescriptionField(final Program program,
+			final ArrayList<String> results, String desc, final String fieldName) {
   	if (desc == null) {
   		return;
   	}
 		desc = desc.trim();
+		// search duplicated lines
+		String[] lines = desc.split("\n");
+		ArrayList<String> list = new ArrayList<String>(lines.length);
+		for (String line : lines) {
+			if (!line.trim().isEmpty()) {
+				list.add(line);
+			}
+		}
+		HashSet<String> set = new HashSet<String>(list.size());
+		set.addAll(list);
+		if (set.size() != list.size()) {
+    	results.add(mLocalizer.msg("issue.desc.duplicate", "{0} has duplicate parts", fieldName));
+		}
     int size = 50;
     if (desc.length() < size) {
     	return;
     }
-    // search re-occurings in the description
+    // search long duplications even without line break
     int index = desc.indexOf(desc.substring(0, size), size);
     if (index >= size) {
       if (desc.indexOf(desc.substring(0, index - 1).trim(), index) == index) {
-      	results.add(mLocalizer.msg("issue.desc.duplicate", "Description has duplicate parts"));
+      	results.add(mLocalizer.msg("issue.desc.duplicate", "{0} has duplicate parts", fieldName));
       }
     }
 	}
@@ -173,6 +191,9 @@ public class CheckerPlugin extends Plugin {
             if (! (Character.isLetter(firstChar) || firstChar == '\'')) {
               results.add(mLocalizer.msg("issue.name.starts", "Person name starts with non whitespace in {0}", fieldType.getLocalizedName()));
             }
+          }
+          if (person.contains("und andere")) {
+          	results.add(mLocalizer.msg("issue.name.andothers", "Actor list contains 'and others'"));
           }
         }
         HashSet set = new HashSet(Arrays.asList(persons));
