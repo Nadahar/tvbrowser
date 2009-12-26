@@ -105,12 +105,22 @@ public class ListTableCellRenderer extends DefaultTableCellRenderer {
         if (mProgramPanel[row][column - 1].getHeight() < table.getRowHeight(row)) {
           mProgramPanel[row][column - 1].setHeight(table.getRowHeight(row));
         } else if (mProgramPanel[row][column - 1].getHeight() > table.getRowHeight(row)) {
-          if (column == 1) {
-            mProgramPanel[row][1].setHeight(mProgramPanel[row][0].getHeight());
-          } else if (column == 2) {
-            mProgramPanel[row][0].setHeight(mProgramPanel[row][1].getHeight());
+          int other = 0;
+          if (column == 2) {
+            other = 1;
           }
-          table.setRowHeight(row, mProgramPanel[row][column - 1].getHeight());
+
+          int otherHeight = mProgramPanel[row][other].getHeight();
+
+          int height = Math.max(mProgramPanel[row][column - 1].getHeight(), Math.max(table.getRowHeight(row), otherHeight));
+
+          if (otherHeight < height) {
+            mProgramPanel[row][other].setHeight(height);
+          } else if (height < mProgramPanel[row][column - 1].getHeight()) {
+            mProgramPanel[row][column - 1].setHeight(height);
+          }
+
+          table.setRowHeight(row, height);
         }
         
         mProgramPanel[row][column - 1].setTextColor(label.getForeground());
