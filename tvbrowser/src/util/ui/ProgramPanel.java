@@ -1308,7 +1308,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
   public void setWidth(int newWidth) {
     int oldWidth = getWidth();
     int textIconWidth = getTextIconWidth(newWidth);
-    if (oldWidth != newWidth && newWidth > 0 || textIconWidth != mDescriptionIcon.getIconWidth()) {
+    if (oldWidth != newWidth && newWidth > 0 || (textIconWidth != mDescriptionIcon.getIconWidth() && textIconWidth > 0)) {
       recreateTextIcons(newWidth);
     }
   }
