@@ -34,6 +34,7 @@ import java.awt.Rectangle;
 
 import javax.swing.Action;
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.UIManager;
 import javax.swing.plaf.basic.BasicMenuItemUI;
@@ -78,13 +79,12 @@ public class MenuUtil {
       result = new ScrollableMenu(menu.getAction());
       checkAndSetBackgroundColor(result);
       ActionMenu[] subItems = menu.getSubItems();
-      for (int i=0; i<subItems.length; i++) {
-        JMenuItem item = createMenuItem(subItems[i], setFont);
-        
+      for (ActionMenu subItem : subItems) {
+        JMenuItem item = createMenuItem(subItem, setFont);
+
         if (item == null) {
-          ((ScrollableMenu)result).addSeparator();
-        }
-        else {
+          ((JMenu) result).addSeparator();
+        } else {
           checkAndSetBackgroundColor(item);
           result.add(item);
         }
