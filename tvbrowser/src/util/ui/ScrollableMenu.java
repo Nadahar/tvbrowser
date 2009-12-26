@@ -78,7 +78,7 @@ public class ScrollableMenu extends JMenu {
 
   private enum ScrollDirection {
     UP, DOWN
-  };
+  }
 
   static {
     // put a wrapper action between up and down selection action to scroll up or
@@ -103,7 +103,7 @@ public class ScrollableMenu extends JMenu {
   private void setMaxItemToDisplay() {
     // set max items count visible on screen
     Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-    maxItemsToDisplay = (dim.height / maxHeight) - 1;
+    maxItemsToDisplay = (dim.height / maxHeight) - 3;
   }
   
   private static class SelectNextItemAction extends AbstractAction {
@@ -229,7 +229,7 @@ public class ScrollableMenu extends JMenu {
     super.add(upSeperator);
     super.add(downSeperator);
     super.add(scrollDown);
-    
+
     getPopupMenu().addPopupMenuListener(new PopupMenuListener() {
       public void popupMenuCanceled(PopupMenuEvent e) {}
       public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {}
@@ -609,12 +609,10 @@ public class ScrollableMenu extends JMenu {
           maxHeight = height;
           setMaxItemToDisplay();
         }
-        
-        Iterator<Component> iterator = scrollableItems.iterator();
-        while (iterator.hasNext()) {
-          Object object = iterator.next();
-          if (object instanceof JComponent && !(object instanceof JPopupMenu.Separator)) {
-            JComponent jComponent = (JComponent) object;
+
+        for (Component scrollableItem : scrollableItems) {
+          if (scrollableItem instanceof JComponent && !(scrollableItem instanceof JPopupMenu.Separator)) {
+            JComponent jComponent = (JComponent) scrollableItem;
             jComponent.setPreferredSize(new Dimension(maxWidth, maxHeight));
           }
         }
@@ -658,7 +656,7 @@ public class ScrollableMenu extends JMenu {
     }
   }
   
-  private class ScrollUpOrDownButtonItem extends JPanel {
+  private class ScrollUpOrDownButtonItem extends JMenuItem {
 
     private ScrollDirection mDirection = ScrollDirection.UP;
 
