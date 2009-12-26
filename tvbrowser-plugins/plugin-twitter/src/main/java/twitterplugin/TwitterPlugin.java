@@ -35,15 +35,22 @@ import devplugin.SettingsTab;
 import devplugin.Version;
 
 public final class TwitterPlugin extends Plugin {
-  private static final Localizer mLocalizer = Localizer.getLocalizerFor(TwitterPlugin.class);
+  private static final boolean PLUGIN_IS_STABLE = false;
+	private static final Version PLUGIN_VERSION = new Version(0, 5, 1, PLUGIN_IS_STABLE);
+	
+	private static final Localizer mLocalizer = Localizer.getLocalizerFor(TwitterPlugin.class);
   private static final String TWITTER_TARGET = "TWITTER_TARGET";
+  /**
+   * maximum number of programs which can be used with Twitter export target.
+   * This avoids presenting a dozen dialogs for entering tweets.
+   */
   private static final int MAX_PROGRAM_COUNT = 3;
   private TwitterSettings mSettings;
   private ImageIcon mIcon;
   private static TwitterPlugin mInstance;
 
   public static Version getVersion() {
-    return new Version(0, 5, false);
+    return PLUGIN_VERSION;
   }
 
   /**
