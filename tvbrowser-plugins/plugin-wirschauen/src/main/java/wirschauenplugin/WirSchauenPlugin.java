@@ -74,13 +74,6 @@ public final class WirSchauenPlugin extends Plugin
   private static final Version VERSION = new Version(0, 15, 1, IS_STABLE);
 
   /**
-   * this is the key used to store the show markings option in a property
-   * (see storeSettings and loadSettings).
-   */
-  private static final String OPTION_KEY_SHOW_MARKINGS = "showMarkings";
-
-
-  /**
    * this class is a singleton. kind of. the constructor is not restricted so
    * there might be more than one instance. but the getInstance method will
    * always return the last created instance.
@@ -140,12 +133,6 @@ public final class WirSchauenPlugin extends Plugin
   private static WirSchauenFilterComponent mComponent;
 
   /**
-   * this is the option to switch on/off the markings for linked programs in the
-   * program table. its set via the WirSchauenSettingsTab.
-   */
-  private boolean mShowMarkings = false;
-
-  /**
    * the root node for the plugin tree. overrides Plugin with a marked tree.
    */
   private PluginTreeNode mRootNode = new PluginTreeNode(this, false);
@@ -157,6 +144,11 @@ public final class WirSchauenPlugin extends Plugin
    * ourselves.
    */
   private ArrayList<ProgramId> mLinkedPrograms = new ArrayList<ProgramId>();
+
+	/**
+	 * all settings of this plugin
+	 */
+	private WirSchauenSettings mSettings;
 
 
 
@@ -320,7 +312,7 @@ public final class WirSchauenPlugin extends Plugin
   {
     getRootNode().addProgram(program);
     getRootNode().update();
-    if (mShowMarkings)
+    if (mSettings.getMarkPrograms())
     {
       program.mark(this);
       program.validateMarking();
@@ -347,7 +339,7 @@ public final class WirSchauenPlugin extends Plugin
       //if the program is in vgmedia and has an omdb-link, mark it and remember that we marked it
       if (isProgramAllowed(program) && program.getTextField(ProgramFieldType.URL_TYPE) != null && !"".equals(program.getTextField(ProgramFieldType.URL_TYPE)))
       {
-        if (mShowMarkings)
+        if (mSettings.getMarkPrograms())
         {
           program.mark(this);
         }
@@ -508,33 +500,28 @@ public final class WirSchauenPlugin extends Plugin
    * @see devplugin.Plugin#loadSettings(java.util.Properties)
    */
   @Override
-  public void loadSettings(final Properties settings)
+  public void loadSettings(final Properties properties)
   {
-    if (settings != null && settings.containsKey("showMarkings"))
-    {
-      mShowMarkings = Boolean.parseBoolean(settings.getProperty(WirSchauenPlugin.OPTION_KEY_SHOW_MARKINGS));
-    }
+  	mSettings = new WirSchauenSettings(properties);
 
     //loadSettings is called after readData. so all linked programs are loaded. now we have to
     //(un)mark them.
-    changeMarkingOfLinkedPrograms(mShowMarkings);
-    changeMarkingOfProgramsInTree(mShowMarkings);
+  	updateMarkings(mSettings.getMarkPrograms());
   }
 
+  void updateMarkings(final boolean markPrograms) {
+    changeMarkingOfLinkedPrograms(markPrograms);
+    changeMarkingOfProgramsInTree(markPrograms);
+	}
 
-
-  /**
+	/**
    * {@inheritDoc}
    * @see devplugin.Plugin#storeSettings()
    */
   @Override
   public Properties storeSettings()
   {
-    //we build the properties here, cause we have just one bool (instead of holding
-    //the props in this object). saves a lot of mem but costs a bit cpu on shutdown.
-    Properties settings = new Properties();
-    settings.setProperty(WirSchauenPlugin.OPTION_KEY_SHOW_MARKINGS, Boolean.toString(mShowMarkings));
-    return settings;
+    return mSettings.storeSettings();
   }
 
 
@@ -615,7 +602,7 @@ public final class WirSchauenPlugin extends Plugin
   @Override
   public SettingsTab getSettingsTab()
   {
-    return new WirSchauenSettingsTab();
+    return new WirSchauenSettingsTab(mSettings);
   }
 
 
@@ -690,33 +677,6 @@ public final class WirSchauenPlugin extends Plugin
     {
       changeMarkingOfProgram(program, mark);
     }
-  }
-
-
-
-  /**
-   * @param showMarkings true if linked programs should be marked in the program table
-   */
-  public void setShowMarkings(final boolean showMarkings)
-  {
-    //if this option was changed, we have to go through all linkedPrograms and
-    //TreeNodes and switch the marking.
-    if (mShowMarkings != showMarkings)
-    {
-      changeMarkingOfLinkedPrograms(showMarkings);
-      changeMarkingOfProgramsInTree(showMarkings);
-    }
-    //remember the new value
-    mShowMarkings = showMarkings;
-  }
-
-
-  /**
-   * @return true if linked programs should be marked in the program table
-   */
-  public boolean getShowMarkings()
-  {
-    return mShowMarkings;
   }
 }
 

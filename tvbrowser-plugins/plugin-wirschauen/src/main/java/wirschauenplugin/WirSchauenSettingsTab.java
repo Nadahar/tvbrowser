@@ -33,18 +33,23 @@ public class WirSchauenSettingsTab implements SettingsTab
    * the checkbox that holds the marker-option (whether or not to mark the linked programs).
    */
   private JCheckBox mMarkerCheckbox;
+	private WirSchauenSettings mSettings;
 
 
-  /**
+  public WirSchauenSettingsTab(final WirSchauenSettings settings) {
+  	mSettings = settings;
+	}
+
+
+	/**
    * {@inheritDoc}
    * @see devplugin.SettingsTab#createSettingsPanel()
    */
   public JPanel createSettingsPanel()
   {
-
     JPanel panel = new JPanel(new FormLayout("pref, 3dlu, pref:grow", "pref"));
     panel.setBorder(Borders.DLU4_BORDER);
-    mMarkerCheckbox = new JCheckBox(WirSchauenPlugin.LOCALIZER.msg("Settings.ShowMarking", "Mark programs which are linked with the OMDB."), WirSchauenPlugin.getInstance().getShowMarkings());
+    mMarkerCheckbox = new JCheckBox(WirSchauenPlugin.LOCALIZER.msg("Settings.ShowMarking", "Mark programs which are linked with the OMDB."), mSettings.getMarkPrograms());
     panel.add(mMarkerCheckbox, new CellConstraints().xy(1, 1));
     return panel;
   }
@@ -79,6 +84,6 @@ public class WirSchauenSettingsTab implements SettingsTab
     //this is not the persistence api for the settings, but the callback
     //for the ok-button. as soon as the user accepts the settings, this
     //method will be called. so tell the plugin the new settings.
-    WirSchauenPlugin.getInstance().setShowMarkings(mMarkerCheckbox.isSelected());
+  	mSettings.setMarkPrograms(mMarkerCheckbox.isSelected());
   }
 }
