@@ -49,7 +49,7 @@ public class DontShowAgainMessageBox {
    * @since 2.7
    */
   public static void dontShowAgainMessageBox(Plugin plugin, String messageBoxId, Component parent, String message, String title, int messageType) {
-    tvbrowser.ui.DontShowAgainMessageBox.showMessageDialog(plugin.getId() + "."+ messageBoxId, parent, message, title, messageType);
+    tvbrowser.ui.DontShowAgainOptionBox.showOptionDialog(plugin.getId() + "."+ messageBoxId, parent, message, title, messageType);
   }
 
   /**
@@ -67,7 +67,7 @@ public class DontShowAgainMessageBox {
    * @since 2.7
    */
   public static void dontShowAgainMessageBox(Plugin plugin, String messageBoxId, Component parentComponent, String message, String title) {
-    tvbrowser.ui.DontShowAgainMessageBox.showMessageDialog(plugin.getId() + "."+ messageBoxId, parentComponent, message, title);
+    tvbrowser.ui.DontShowAgainOptionBox.showOptionDialog(plugin.getId() + "."+ messageBoxId, parentComponent, message, title);
   }
 
   /**
@@ -84,7 +84,7 @@ public class DontShowAgainMessageBox {
    * @since 2.7
    */
   public static void dontShowAgainMessageBox(Plugin plugin, String messageBoxId, Component parentComponent, String message) {
-    tvbrowser.ui.DontShowAgainMessageBox.showMessageDialog(plugin.getId() + "."+ messageBoxId, parentComponent, message);
+    tvbrowser.ui.DontShowAgainOptionBox.showOptionDialog(plugin.getId() + "."+ messageBoxId, parentComponent, message);
   }
 
   /**

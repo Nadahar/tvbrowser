@@ -208,7 +208,7 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
     "When closing the main window only minimize TV-Browser, don't quit.");
     
     mOnlyMinimizeWhenWindowClosingChB = new JCheckBox(msg, Settings.propOnlyMinimizeWhenWindowClosing.getBoolean());
-    mAskForExitConfirmation = new JCheckBox(mLocalizer.msg("askForExitConfirmation","Ask for confirmation on TV-Browser exit"), Settings.propAskForExitConfirm.getBoolean());
+    mAskForExitConfirmation = new JCheckBox(mLocalizer.msg("askForExitConfirmation","Ask for confirmation on TV-Browser exit"), !Settings.propHiddenMessageBoxes.containsItem("MainFrame.askForExitConfirm"));
     
     mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("closing","Closing")), cc.xyw(1,++y,5));
     
@@ -295,7 +295,12 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
       Settings.propOnlyMinimizeWhenWindowClosing.setBoolean(checked);
     }
     
-    Settings.propAskForExitConfirm.setBoolean(mAskForExitConfirmation.isSelected());
+    if(mAskForExitConfirmation.isSelected()) {
+      Settings.propHiddenMessageBoxes.removeItem("MainFrame.askForExitConfirm");
+    }
+    else {
+      Settings.propHiddenMessageBoxes.addItem("MainFrame.askForExitConfirm");
+    }
   }
 
   /**
