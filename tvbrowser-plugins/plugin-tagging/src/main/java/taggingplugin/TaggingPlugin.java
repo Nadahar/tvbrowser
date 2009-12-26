@@ -70,6 +70,8 @@ final public class TaggingPlugin extends Plugin {
 	private static final util.ui.Localizer mLocalizer = util.ui.Localizer
 			.getLocalizerFor(TaggingPlugin.class);
 
+	private static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(TaggingPlugin.class.getName());
+
 	private static final String MAIN_URL = "http://tv-browser.appspot.com/";
 //  private static final String MAIN_URL = "http://localhost:8080/";
 
@@ -283,12 +285,13 @@ final public class TaggingPlugin extends Plugin {
 					String tag = TagValidation.makeValidTag(inputLine.substring(pos + 1));
 					if (tag != null && !programTitle.isEmpty() && !tag.isEmpty()) {
 					  if (addTagInternal(programTitle, tag)) {
-						  System.out.println(programTitle + ": " + tag);
+						  // System.out.println(programTitle + ": " + tag);
 						}
 					}
 				}
 			}
 			in.close();
+			mLog.info(mTags.size() + " known tagged programs");
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
