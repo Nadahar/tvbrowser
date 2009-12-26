@@ -25,6 +25,7 @@
  */
 package util.misc;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
@@ -42,6 +43,8 @@ import util.io.stream.StreamUtilities;
  * @author Til Schneider, www.murfman.de
  */
 public class TextLineBreakerStringWidth {
+
+  private static final String HYPHEN_DICT_FILENAME = "hyphen/dehyphx.tex";
 
   private static java.util.logging.Logger mLog
     = java.util.logging.Logger.getLogger(TextLineBreakerStringWidth.class.getName());
@@ -121,14 +124,20 @@ public class TextLineBreakerStringWidth {
         mLog.warning(arg0);
       }});
     try {
-      StreamUtilities.inputStream("hyphen/dehyphx.tex", new InputStreamProcessor() {
-        
-        @Override
-        public void process(InputStream input) throws IOException {
-          hyphenator.loadTable(input);
-          useHyphenator = true;
-        }
-      });
+      File dictionary = new File(HYPHEN_DICT_FILENAME);
+      if (dictionary.exists()) {
+        StreamUtilities.inputStream(HYPHEN_DICT_FILENAME, new InputStreamProcessor() {
+          
+          @Override
+          public void process(InputStream input) throws IOException {
+            hyphenator.loadTable(input);
+            useHyphenator = true;
+          }
+        });
+      }
+      else {
+        mLog.warning("Hyphenation dictionary not found at " + HYPHEN_DICT_FILENAME);
+      }
     } catch (IOException e) {
       e.printStackTrace();
     }
