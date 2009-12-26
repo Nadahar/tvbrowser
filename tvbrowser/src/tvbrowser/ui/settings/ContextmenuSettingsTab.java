@@ -289,7 +289,7 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
       } else if (value instanceof LeaveFullScreenMenuItem) {
         mItemSelected.setSelected(!mDeactivatedItems.contains(value));
 
-        mItemLabel.setIcon(null);
+        mItemLabel.setIcon(TVBrowserIcons.fullScreen(TVBrowserIcons.SIZE_SMALL));
         mItemLabel.setText(value.toString());
         mItemLabel.setForeground(label.getForeground());
 

@@ -62,14 +62,14 @@ public class ContextMenuManager {
   private static ContextMenuManager mInstance;
 
   /**
-   * The context menu interface that should be executed by default when 
+   * The context menu interface that should be executed by default when
    * left single clicking a program in the program table. It is shown with a dark
    * green font in the context menu.
    */
   private ContextMenuIf mDefaultLeftSingleClickMenuIf;
   
   /**
-   * The context menu interface that should be executed by default when 
+   * The context menu interface that should be executed by default when
    * double-clicking a program in the program table. It is shown with a bold
    * font in the context menu.
    */
@@ -129,8 +129,9 @@ public class ContextMenuManager {
    * @return The instance of this class.
    */
   public static synchronized ContextMenuManager getInstance() {
-    if(mInstance == null)
+    if(mInstance == null) {
       new ContextMenuManager();
+    }
     return mInstance;
   }
   
@@ -144,7 +145,7 @@ public class ContextMenuManager {
     PluginProxy plugin = PluginProxyManager.getInstance().getActivatedPluginForId(id);
     if(plugin != null) {
       return plugin;
-    }    
+    }
     TvDataServiceProxy dataService = TvDataServiceProxyManager.getInstance().findDataServiceById(id);
     
     if(dataService != null) {
@@ -154,11 +155,11 @@ public class ContextMenuManager {
       if(internalPlugin != null && internalPlugin instanceof ContextMenuIf) {
         return (ContextMenuIf)internalPlugin;
       }
-      else if(id.compareTo(ConfigMenuItem.CONFIG) == 0) 
+      else if(id.compareTo(ConfigMenuItem.CONFIG) == 0) {
         return ConfigMenuItem.getInstance();
-      else if(id.compareTo(LeaveFullScreenMenuItem.LEAVEFULLSCREEN) == 0) 
+      } else if(id.compareTo(LeaveFullScreenMenuItem.LEAVEFULLSCREEN) == 0) {
         return LeaveFullScreenMenuItem.getInstance();
-      else if(id.compareTo(DoNothingContextMenuItem.DONOTHING) == 0) {
+      } else if(id.compareTo(DoNothingContextMenuItem.DONOTHING) == 0) {
         return DoNothingContextMenuItem.getInstance();
       }
     }
@@ -246,7 +247,7 @@ public class ContextMenuManager {
     InternalPluginProxyIf[] internalPluginProxies = InternalPluginProxyList.getInstance().getAvailableProxys();
     PluginProxy[] pluginArr = PluginProxyManager.getInstance().getActivatedPlugins();
     TvDataServiceProxy[] dataServiceArr = TvDataServiceProxyManager.getInstance().getDataServices();
-    String[] order = Settings.propContextMenuOrder.getStringArray();    
+    String[] order = Settings.propContextMenuOrder.getStringArray();
     List<ContextMenuIf> disabledList = getDisabledContextMenuIfs();
     
     ArrayList<ContextMenuIf> ifList = new ArrayList<ContextMenuIf>();
@@ -260,34 +261,34 @@ public class ContextMenuManager {
         }
       }
 
-      for(int i = 0; i < pluginArr.length; i++) {
-        ifList.add(pluginArr[i]);
+      for (PluginProxy pluginProxy : pluginArr) {
+        ifList.add(pluginProxy);
       }
       
       for(TvDataServiceProxy dataService : dataServiceArr) {
         ifList.add(dataService);
       }
     }
-    else {    
-      for(int i = 0; i < order.length; i++) {
-        if (order[i].compareTo(SeparatorMenuItem.SEPARATOR) == 0) {
-          // Add Separator only when when one Entry exists
+    else {
+      for (String element : order) {
+        if (element.compareTo(SeparatorMenuItem.SEPARATOR) == 0) {
+          // Add Separator only when an entry exists
           if (!cleanSeparator || (cleanSeparator && (ifList.size() > 0) && !lastWasSeparator)) {
             ifList.add(new SeparatorMenuItem());
             lastWasSeparator = true;
           }
-        } else if (order[i].compareTo(ConfigMenuItem.CONFIG) == 0) {
+        } else if (element.compareTo(ConfigMenuItem.CONFIG) == 0) {
           if ((includingDisabledItems) || (!disabledList.contains(ConfigMenuItem.getInstance()))) {
             ifList.add(ConfigMenuItem.getInstance());
             lastWasSeparator = false;
           }
-        } else if (order[i].compareTo(LeaveFullScreenMenuItem.LEAVEFULLSCREEN) == 0) {
+        } else if (element.compareTo(LeaveFullScreenMenuItem.LEAVEFULLSCREEN) == 0) {
           if ((includingDisabledItems) || (!disabledList.contains(LeaveFullScreenMenuItem.getInstance()))) {
             ifList.add(LeaveFullScreenMenuItem.getInstance());
             lastWasSeparator = false;
           }
         } else {
-          ContextMenuIf item = getContextMenuIfForId(order[i]);
+          ContextMenuIf item = getContextMenuIfForId(element);
           if ((item != null) && (includingDisabledItems || !disabledList.contains(item))) {
             lastWasSeparator = false;
             ifList.add(item);
@@ -307,18 +308,20 @@ public class ContextMenuManager {
     }
     
     for(int i = 0; i < pluginArr.length; i++) {
-      if(!ifList.contains(pluginArr[i]))
+      if(!ifList.contains(pluginArr[i])) {
         if ((includingDisabledItems) || ((pluginArr[i] != null) && (!disabledList.contains(pluginArr[i])))) {
           ifList.add(pluginArr[i]);
         }
-    } 
+      }
+    }
 
     for(int i = 0; i < dataServiceArr.length; i++) {
-      if(!ifList.contains(dataServiceArr[i]))
+      if(!ifList.contains(dataServiceArr[i])) {
         if ((includingDisabledItems) || ((dataServiceArr[i] != null) && (!disabledList.contains(dataServiceArr[i])))) {
           ifList.add(dataServiceArr[i]);
         }
-    } 
+      }
+    }
 
     if (!ifList.contains(LeaveFullScreenMenuItem.getInstance())) {
       if ((includingDisabledItems) || (!disabledList.contains(LeaveFullScreenMenuItem.getInstance()))) {
@@ -327,8 +330,9 @@ public class ContextMenuManager {
     }
     if (!ifList.contains(ConfigMenuItem.getInstance())) {
       if ((includingDisabledItems) || (!disabledList.contains(ConfigMenuItem.getInstance()))) {
-        if (!lastWasSeparator)
+        if (!lastWasSeparator) {
           ifList.add(new SeparatorMenuItem());
+        }
         ifList.add(ConfigMenuItem.getInstance());
       }
     }
@@ -364,8 +368,8 @@ public class ContextMenuManager {
 
     JMenu rootMenu = new JMenu();
     
-    for (int i = 0; i < menuIfArr.length; i++) {
-      ContextMenuIf menuIf = menuIfArr[i];
+    for (ContextMenuIf element : menuIfArr) {
+      ContextMenuIf menuIf = element;
 
       boolean equalsPlugin = false;
 
@@ -374,8 +378,9 @@ public class ContextMenuManager {
       }
 
       if (menuIf instanceof SeparatorMenuItem) {
-        if (rootMenu.getMenuComponentCount() > 0) // Only add Separator if Menu not Empty
-	        rootMenu.addSeparator();
+        if (rootMenu.getMenuComponentCount() > 0) {
+          rootMenu.addSeparator();
+        }
       } else if (menuIf instanceof ConfigMenuItem) {
         JMenuItem item = new JMenuItem(menuIf.toString());
         item.setIcon(TVBrowserIcons.preferences(TVBrowserIcons.SIZE_SMALL));
@@ -456,8 +461,8 @@ public class ContextMenuManager {
       return list;
     }
     
-    for (int i=0;i<disabled.length;i++) {
-      ContextMenuIf item = getContextMenuIfForId(disabled[i]);
+    for (String element : disabled) {
+      ContextMenuIf item = getContextMenuIfForId(element);
       if (item != null) {
         list.add(item);
       }
