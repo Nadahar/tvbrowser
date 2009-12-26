@@ -63,7 +63,10 @@ public class ListTableCellRenderer extends DefaultTableCellRenderer {
 
   private void updateHeight(JTable table, int row) {
     Dimension gaps = table.getIntercellSpacing();
-    int height = mCache[row][0].getPreferredSize().height;
+    int height = 0;
+    if (mCache[row][0] != null) {
+        height = mCache[row][0].getPreferredSize().height;
+    }
 
     for (int i = 0; i < 2; i++) {
       Program program = (Program) table.getValueAt(row, 1 + i);
