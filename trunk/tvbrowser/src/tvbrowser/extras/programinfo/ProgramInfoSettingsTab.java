@@ -33,6 +33,7 @@ import tvbrowser.core.plugin.PluginManagerImpl;
 import tvbrowser.ui.settings.util.ColorButton;
 import tvbrowser.ui.settings.util.ColorLabel;
 import util.program.ProgramTextCreator;
+import util.ui.EnhancedPanelBuilder;
 import util.ui.FontChooserPanel;
 import util.ui.Localizer;
 import util.ui.OrderChooser;
@@ -78,8 +79,6 @@ public class ProgramInfoSettingsTab implements SettingsTab {
   private String mOldLook;
   
   private JComboBox mLook;
-  
-  private static int mSelectedTab = 0;
   
   private String[] mLf = {
       "com.l2fprod.common.swing.plaf.aqua.AquaLookAndFeelAddons",
@@ -172,18 +171,18 @@ public class ProgramInfoSettingsTab implements SettingsTab {
     });
     
     CellConstraints cc = new CellConstraints();
-    PanelBuilder formatPanelBuilder = new PanelBuilder(new FormLayout("5dlu,10dlu,pref,pref,default:grow,5dlu",
+    PanelBuilder formatPanel = new PanelBuilder(new FormLayout("5dlu,10dlu,pref,pref,default:grow,5dlu",
         "pref,5dlu,pref,pref,pref,pref,10dlu,pref,5dlu,pref" +
         ",10dlu,pref,5dlu,pref,pref,10dlu,pref,5dlu,pref"));
-    formatPanelBuilder.setDefaultDialogBorder();
+    formatPanel.setDefaultDialogBorder();
     
-    formatPanelBuilder.addSeparator(ProgramInfo.mLocalizer.msg("font","Font settings"), cc.xyw(1,1,6));
-    formatPanelBuilder.add(mAntiAliasing, cc.xyw(2,3,4));
-    formatPanelBuilder.add(mUserFont, cc.xyw(2,4,4));
-    final JLabel titleLabel = formatPanelBuilder.addLabel(ProgramInfo.mLocalizer.msg("title", "Title font"), cc.xy(3,5));
-    formatPanelBuilder.add(mTitleFont, cc.xy(4,5));
-    final JLabel bodyLabel = formatPanelBuilder.addLabel(ProgramInfo.mLocalizer.msg("body", "Description font"), cc.xy(3,6));
-    formatPanelBuilder.add(mBodyFont, cc.xy(4,6));
+    formatPanel.addSeparator(ProgramInfo.mLocalizer.msg("font","Font settings"), cc.xyw(1,1,6));
+    formatPanel.add(mAntiAliasing, cc.xyw(2,3,4));
+    formatPanel.add(mUserFont, cc.xyw(2,4,4));
+    final JLabel titleLabel = formatPanel.addLabel(ProgramInfo.mLocalizer.msg("title", "Title font"), cc.xy(3,5));
+    formatPanel.add(mTitleFont, cc.xy(4,5));
+    final JLabel bodyLabel = formatPanel.addLabel(ProgramInfo.mLocalizer.msg("body", "Description font"), cc.xy(3,6));
+    formatPanel.add(mBodyFont, cc.xy(4,6));
     
     mUserFont.addChangeListener(new ChangeListener() {
       public void stateChanged(ChangeEvent e) {
@@ -199,15 +198,15 @@ public class ProgramInfoSettingsTab implements SettingsTab {
     titleLabel.setEnabled(mUserFont.isSelected());
     bodyLabel.setEnabled(mUserFont.isSelected());
 
-    formatPanelBuilder.addSeparator(ProgramInfo.mLocalizer.msg("design","Design"), cc.xyw(1,8,6));
-    formatPanelBuilder.add(mLook, cc.xyw(2,10,2));
+    formatPanel.addSeparator(ProgramInfo.mLocalizer.msg("design","Design"), cc.xyw(1,8,6));
+    formatPanel.add(mLook, cc.xyw(2,10,2));
     
-    formatPanelBuilder.addSeparator(ProgramInfoDialog.mLocalizer.msg("functions","Functions"), cc.xyw(1,12,6));
-    formatPanelBuilder.add(mShowFunctions, cc.xyw(2,14,5));
-    formatPanelBuilder.add(mShowTextSearchButton, cc.xyw(3,15,4));
+    formatPanel.addSeparator(ProgramInfoDialog.mLocalizer.msg("functions","Functions"), cc.xyw(1,12,6));
+    formatPanel.add(mShowFunctions, cc.xyw(2,14,5));
+    formatPanel.add(mShowTextSearchButton, cc.xyw(3,15,4));
     
-    formatPanelBuilder.addSeparator(ProgramInfo.mLocalizer.msg("favorites","Favorites"), cc.xyw(1,17,6));
-    formatPanelBuilder.add(mHighlight, cc.xyw(2,19,3));
+    formatPanel.addSeparator(ProgramInfo.mLocalizer.msg("favorites","Favorites"), cc.xyw(1,17,6));
+    formatPanel.add(mHighlight, cc.xyw(2,19,3));
     JPanel panel = new JPanel(new FlowLayout());
     mHighlightColorLb = new ColorLabel(settings.getHighlightColor());
     panel.add(mHighlightColorLb);
@@ -215,7 +214,7 @@ public class ProgramInfoSettingsTab implements SettingsTab {
     mHighlightButton = new ColorButton(mHighlightColorLb);
     panel.add(mHighlightButton);
     mHighlight.getActionListeners()[0].actionPerformed(null);
-    formatPanelBuilder.add(panel, cc.xy(5,19));
+    formatPanel.add(panel, cc.xy(5,19));
     
     mOldOrder = settings.getFieldOrder();
     mOldSetupState = ProgramInfo.getInstance().getSettings().getSetupwasdone();        
@@ -223,7 +222,7 @@ public class ProgramInfoSettingsTab implements SettingsTab {
     mList = new OrderChooser(mOldOrder, ProgramTextCreator.getDefaultOrder(),
         true);
     
-    JButton previewBtn = new JButton(ProgramInfo.mLocalizer.msg("preview", "Prewview"));
+    JButton previewBtn = new JButton(ProgramInfo.mLocalizer.msg("preview", "Preview"));
     previewBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         saveSettings();
@@ -240,12 +239,18 @@ public class ProgramInfoSettingsTab implements SettingsTab {
       }
     });
         
-    PanelBuilder builder = new PanelBuilder(new FormLayout("5dlu,default:grow,5dlu",
-        "default,5dlu,default,5dlu,default,10dlu,default,5dlu,fill:default:grow"));
-    builder.setDefaultDialogBorder();
+    EnhancedPanelBuilder orderPanel = new EnhancedPanelBuilder("default:grow");
+    orderPanel.setDefaultDialogBorder();
 
-    builder.addSeparator(Localizer.getLocalization(Localizer.I18N_PICTURES), cc.xyw(1,1,3));
-    builder.add(mPictureSettings = new PluginsPictureSettingsPanel(ProgramInfo.getInstance().getPictureSettings(),false), cc.xy(2,3));
+    orderPanel.addRow("fill:default:grow");
+    orderPanel.add(mList, cc.xy(1, orderPanel.getRowCount()));
+
+
+    EnhancedPanelBuilder picturePanel = new EnhancedPanelBuilder("default:grow");
+    picturePanel.setDefaultDialogBorder();
+    
+    picturePanel.addRow("default");
+    picturePanel.add(mPictureSettings = new PluginsPictureSettingsPanel(ProgramInfo.getInstance().getPictureSettings(),false), cc.xy(1, picturePanel.getRowCount()));
     
     PanelBuilder pb = new PanelBuilder(new FormLayout("default,2dlu,default,5dlu,default","default"));
     
@@ -266,11 +271,12 @@ public class ProgramInfoSettingsTab implements SettingsTab {
     mZoomValue.setEnabled(mZoomEnabled.isSelected());
     label.setEnabled(mZoomEnabled.isSelected());
     
-    builder.add(pb.getPanel(), cc.xy(2,5));
+    picturePanel.addRow("5dlu");
+    picturePanel.addRow("default");
+    picturePanel.add(pb.getPanel(), cc.xy(1, picturePanel.getRowCount()));
     
-    builder.addSeparator(ProgramInfo.mLocalizer.msg("order","Info choosing/ordering"), cc.xyw(1,7,3));
-    builder.add(mList, cc.xy(2,9));
-        
+
+    
     PluginAccess webPlugin = PluginManagerImpl.getInstance().getActivatedPluginForId("java.webplugin.WebPlugin");
 
     mAvailableTargetGroup = new ButtonGroup();
@@ -323,18 +329,18 @@ public class ProgramInfoSettingsTab implements SettingsTab {
     final JScrollPane scrollPane = new JScrollPane(buttonPanel);
     scrollPane.setBackground(UIManager.getDefaults().getColor("List.background"));
     scrollPane.getViewport().setBackground(UIManager.getDefaults().getColor("List.background"));
-    PanelBuilder actorSearchPanelBuilder = new PanelBuilder(
+    PanelBuilder actorPanel = new PanelBuilder(
         new FormLayout(
         "default:grow", "pref,3dlu,default,1dlu,fill:default:grow"));
-    actorSearchPanelBuilder.setDefaultDialogBorder();
+    actorPanel.setDefaultDialogBorder();
 
     mPersonSearchCB = new JCheckBox(ProgramInfo.mLocalizer.msg("enableSearch",
         "Show person names as links to person search"));
-    actorSearchPanelBuilder.add(mPersonSearchCB, cc.xy(1, 1));
+    actorPanel.add(mPersonSearchCB, cc.xy(1, 1));
     final JLabel searchLabel = new JLabel(ProgramInfo.mLocalizer.msg(
         "defaultActorSearchMethod", "Default search method:"));
-    actorSearchPanelBuilder.add(searchLabel, cc.xy(1, 3));
-    actorSearchPanelBuilder.add(scrollPane, cc.xy(1, 5));
+    actorPanel.add(searchLabel, cc.xy(1, 3));
+    actorPanel.add(scrollPane, cc.xy(1, 5));
     
     mPersonSearchCB.addActionListener(new ActionListener() {
 
@@ -350,16 +356,11 @@ public class ProgramInfoSettingsTab implements SettingsTab {
     mPersonSearchCB.getActionListeners()[0].actionPerformed(null);
     
     final JTabbedPane tabbedPane = new JTabbedPane();
-    tabbedPane.add(ProgramInfo.mLocalizer.msg("look","Look"), formatPanelBuilder.getPanel());
-    tabbedPane.add(ProgramInfo.mLocalizer.msg("pictureOrder","Pictures/order"), builder.getPanel());
-    tabbedPane.add(ProgramInfo.mLocalizer.msg("actorSearch","Actor search"), actorSearchPanelBuilder.getPanel());
-    tabbedPane.setSelectedIndex(mSelectedTab);
-    
-    tabbedPane.addChangeListener(new ChangeListener() {
-      public void stateChanged(ChangeEvent e) {
-        mSelectedTab = tabbedPane.getSelectedIndex();
-      }
-    });
+    tabbedPane.add(ProgramInfo.mLocalizer.msg("look","Look"), formatPanel.getPanel());
+    tabbedPane.add(ProgramInfo.mLocalizer.msg("fields","Fields"), orderPanel.getPanel());
+    tabbedPane.add(Localizer.getLocalization(Localizer.I18N_PICTURES), picturePanel.getPanel());
+    tabbedPane.add(ProgramInfo.mLocalizer.msg("actorSearch","Actor search"), actorPanel.getPanel());
+    tabbedPane.setSelectedIndex(0);
     
     FormLayout layout = new FormLayout("default,default:grow,default","pref");
     layout.setColumnGroups(new int[][] {{1,3}});
