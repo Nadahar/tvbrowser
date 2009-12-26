@@ -104,7 +104,7 @@ import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
-import tvbrowser.ui.DontShowAgainMessageBox;
+import tvbrowser.ui.DontShowAgainOptionBox;
 import tvbrowser.ui.aboutbox.AboutBox;
 import tvbrowser.ui.filter.dlgs.SelectFilterDlg;
 import tvbrowser.ui.finder.DateSelector;
@@ -1061,18 +1061,12 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
   }
 
   public void quit() {
-    if(Settings.propAskForExitConfirm.getBoolean()) {
-      JLabel text = new JLabel(mLocalizer.msg("exitConirmText","Do you really want to quit TV-Browser?"));
-      JCheckBox askNotAgain = new JCheckBox(mLocalizer.msg("askNotAgain","Don't show this confirmation again"));
-      
-      String[] options = {mLocalizer.msg("exitConfirmTitle","Exit TV-Browser"),Localizer.getLocalization(Localizer.I18N_CANCEL)};
-      
-      if(JOptionPane.showOptionDialog(this.isActive() ? this : null,new Object[] {text,askNotAgain},options[0],JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE,null,options,options[1]) == JOptionPane.NO_OPTION) {
-        return;
-      }
-      else {
-        Settings.propAskForExitConfirm.setBoolean(!askNotAgain.isSelected());
-      }
+    String[] options = {mLocalizer.msg("exitConfirmTitle","Exit TV-Browser"),Localizer.getLocalization(Localizer.I18N_CANCEL)};
+    
+    if(DontShowAgainOptionBox.showOptionDialog("MainFrame.askForExitConfirm",this.isActive() ? this : null,
+        mLocalizer.msg("exitConirmText","Do you really want to quit TV-Browser?"), options[0], JOptionPane.QUESTION_MESSAGE,
+        JOptionPane.YES_NO_OPTION, options, options[1], null) != JOptionPane.YES_OPTION) {
+      return;
     }
     
     TVBrowser.removeTray();
@@ -1583,8 +1577,8 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     resetOnAirArrays();
     mAutoDownloadTimer = -1;
 
-    DontShowAgainMessageBox
-        .showMessageDialog(
+    DontShowAgainOptionBox
+        .showOptionDialog(
             "downloadDone",
             MainFrame.getInstance(),
             mLocalizer

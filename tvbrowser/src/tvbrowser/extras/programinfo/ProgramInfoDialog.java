@@ -91,7 +91,7 @@ import tvbrowser.core.search.regexsearch.RegexSearcher;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.favoritesplugin.core.Favorite;
 import tvbrowser.extras.favoritesplugin.dlgs.FavoriteTreeModel;
-import tvbrowser.ui.DontShowAgainMessageBox;
+import tvbrowser.ui.DontShowAgainOptionBox;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.browserlauncher.Launch;
 import util.exc.TvBrowserException;
@@ -481,8 +481,8 @@ class ProgramInfoDialog {
       }
 
       private void searchWikipedia(String desc) {
-        DontShowAgainMessageBox
-            .showMessageDialog(
+        DontShowAgainOptionBox
+            .showOptionDialog(
                 "programInfoDialog.newActorSearch",
                 mDialog,
                 ProgramInfo.mLocalizer

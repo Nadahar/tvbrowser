@@ -71,7 +71,7 @@ import tvbrowser.core.ChannelList;
 import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.tvdataservice.ChannelGroupManager;
-import tvbrowser.ui.DontShowAgainMessageBox;
+import tvbrowser.ui.DontShowAgainOptionBox;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.settings.channel.ChannelConfigDlg;
 import tvbrowser.ui.settings.channel.ChannelFilter;
@@ -989,8 +989,8 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
 
 
     if (missingIcon) {
-      DontShowAgainMessageBox
-          .showMessageDialog(
+      DontShowAgainOptionBox
+          .showOptionDialog(
               "missingIcon",
               MainFrame.getInstance(),
               mLocalizer

@@ -38,7 +38,7 @@ import javax.swing.JProgressBar;
 
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
-import tvbrowser.ui.DontShowAgainMessageBox;
+import tvbrowser.ui.DontShowAgainOptionBox;
 import tvdataservice.MarkedProgramsList;
 import tvdataservice.MutableChannelDayProgram;
 import tvdataservice.TvDataUpdateManager;
@@ -232,7 +232,7 @@ public class TvDataUpdater {
       // require at least 2 differences, so a program move on one channel does
       // not yet trigger the message
       if (count >= 2) {
-        DontShowAgainMessageBox.showMessageDialog("wrongTimeZone", null,
+        DontShowAgainOptionBox.showOptionDialog("wrongTimeZone", null,
             mLocalizer.msg("timezone", ""));
       }
     }
