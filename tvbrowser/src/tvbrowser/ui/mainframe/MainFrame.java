@@ -71,7 +71,6 @@ import java.util.TooManyListenersException;
 import java.util.logging.Level;
 
 import javax.swing.BorderFactory;
-import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -784,6 +783,9 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       public void actionPerformed(ActionEvent e) {
         if (isFullScreenMode()) {
           TVBrowserActions.fullScreen.actionPerformed(null);
+        }
+        else {
+          mProgramTableScrollPane.getProgramTable().stopAutoScroll();
         }
       }
 
