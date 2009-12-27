@@ -253,7 +253,7 @@ public final class ImdbPlugin extends Plugin {
         }
       });
     }
-    if (mSettings.askCreateDatabase() && !mImdbDatabase.isInitialised()) {
+    if (mSettings.askCreateDatabase() && !mImdbDatabase.isInitialised() && getPluginManager().getSubscribedChannels().length > 0) {
       SwingUtilities.invokeLater(new Runnable(){
         public void run() {
           final JCheckBox askAgain = new JCheckBox(mLocalizer.msg(
