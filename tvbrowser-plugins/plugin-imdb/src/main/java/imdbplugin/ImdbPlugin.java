@@ -159,14 +159,14 @@ public final class ImdbPlugin extends Plugin {
     return builder.toString();
   }
 
-  private ImdbRating getEpisodeRating(final Program program) {
+  public ImdbRating getEpisodeRating(final Program program) {
     return mImdbDatabase.getRatingForId(mImdbDatabase.getMovieEpisodeId(program
         .getTitle(), program.getTextField(ProgramFieldType.EPISODE_TYPE),
         program.getTextField(ProgramFieldType.ORIGINAL_EPISODE_TYPE), program
             .getIntField(ProgramFieldType.PRODUCTION_YEAR_TYPE)));
   }
 
-  private ImdbRating getProgramRating(final Program program) {
+  public ImdbRating getProgramRating(final Program program) {
     return mImdbDatabase.getRatingForId(mImdbDatabase.getMovieId(program.getTitle(), "",
         program.getTextField(ProgramFieldType.ORIGINAL_TITLE_TYPE),
         program.getTextField(ProgramFieldType.ORIGINAL_EPISODE_TYPE), 
@@ -195,7 +195,7 @@ public final class ImdbPlugin extends Plugin {
   }
 
   private void showRatingDialog(final Program program) {
-    final ImdbRating episodeRating = getEpisodeRating(program);
+/*    final ImdbRating episodeRating = getEpisodeRating(program);
     final ImdbRating rating = getProgramRating(program);
     final StringBuilder message = new StringBuilder();
     final String title = program.getTitle();
@@ -203,7 +203,7 @@ public final class ImdbPlugin extends Plugin {
       if (episodeRating != null) {
         message.append(ratingMessage(title + " - "
             + program.getTextField(ProgramFieldType.EPISODE_TYPE),
-            episodeRating));
+            episodeRating));   
       }
       if (rating != null) {
         if (message.length() > 0) {
@@ -216,7 +216,10 @@ public final class ImdbPlugin extends Plugin {
       message.append(mLocalizer.msg("noRating", "No rating found!", title));
     }
     JOptionPane.showMessageDialog(UiUtilities
-        .getBestDialogParent(getParentFrame()), message.toString());
+        .getBestDialogParent(getParentFrame()), message.toString());     */
+
+    ImdbRatingsDialog dialog = new ImdbRatingsDialog(this, getParentFrame(), program);
+    UiUtilities.centerAndShow(dialog);
   }
 
   private String ratingMessage(final String title, final ImdbRating rating) {
@@ -498,6 +501,10 @@ public final class ImdbPlugin extends Plugin {
   @Override
   public Class<? extends PluginsFilterComponent>[] getAvailableFilterComponentClasses() {
     return (Class<? extends PluginsFilterComponent>[]) new Class[] { ImdbFilterComponent.class, VoteCountFilterComponent.class};
+  }
+
+  public ImdbDatabase getDatabase() {
+    return mImdbDatabase;
   }
 
   public String getDatabaseSizeMB() {

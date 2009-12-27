@@ -26,12 +26,14 @@ public final class ImdbRating {
   private String mDistribution;
   private int mVotes;
   private byte mRating;
+  private String mMovieId;
 
   public ImdbRating(final byte rating, final int votes,
       final String distribution, final String movieid) {
     mRating = rating;
     mVotes = votes;
     mDistribution = distribution;
+    mMovieId = movieid;
   }
 
   public ImdbRating(final int rating, final int votes,
@@ -57,5 +59,9 @@ public final class ImdbRating {
 
   public String getRatingText() {
     return RATING_TEXT_FORMAT.format((double) getRating() / 10);
+  }
+
+  public String getMovieId() {
+    return mMovieId;  
   }
 }
