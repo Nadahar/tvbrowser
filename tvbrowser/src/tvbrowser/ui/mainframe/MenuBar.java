@@ -628,6 +628,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 		for (Channel channel : channels) {
 			mGotoChannelMenu.add(createChannelMenuItem(channel));
 		}
+		mGotoChannelMenu.setEnabled(channels.length > 0);
 	}
 
 	public void updateDateItems() {
@@ -644,6 +645,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 			mGotoDateMenu.add(createDateMenuItem(curDate));
 			curDate = curDate.addDays(1);
 		}
+    mGotoDateMenu.setEnabled(ChannelList.getNumberOfSubscribedChannels() > 0);
 	}
 
 	public void updateFiltersMenu() {
@@ -940,6 +942,6 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
     mChannellistMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F6, 0));
 
     mFullscreenMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F11, 0));
-
   }
+  
 }
