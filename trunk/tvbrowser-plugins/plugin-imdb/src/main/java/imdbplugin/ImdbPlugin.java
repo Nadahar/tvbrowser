@@ -167,9 +167,10 @@ public final class ImdbPlugin extends Plugin {
   }
 
   private ImdbRating getProgramRating(final Program program) {
-    return mImdbDatabase.getRatingForId(mImdbDatabase.getMovieId(program
-        .getTitle(), "", program.getTextField(ProgramFieldType.ORIGINAL_TITLE_TYPE), program
-        .getIntField(ProgramFieldType.PRODUCTION_YEAR_TYPE)));
+    return mImdbDatabase.getRatingForId(mImdbDatabase.getMovieId(program.getTitle(), "",
+        program.getTextField(ProgramFieldType.ORIGINAL_TITLE_TYPE),
+        program.getTextField(ProgramFieldType.ORIGINAL_EPISODE_TYPE), 
+        program.getIntField(ProgramFieldType.PRODUCTION_YEAR_TYPE)));
   }
 
   @Override
