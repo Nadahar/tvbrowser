@@ -31,7 +31,6 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 import javax.swing.MenuElement;
@@ -235,6 +234,8 @@ public class ScrollableMenu extends JMenu {
       public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {}
 
       public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+        // reset the preferred size, because otherwise the height will not change after items have been added
+        getPopupMenu().setPreferredSize(null);
         getPopupMenu().setPreferredSize(new Dimension(maxWidth, getPopupMenu().getPreferredSize().height));
       }
     });
