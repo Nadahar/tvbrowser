@@ -365,7 +365,7 @@ public final class ImdbDatabase {
     return null;
   }
 
-  protected String getMovieId(final String title, final String episode, String originalTitle, final int year) {
+  protected String getMovieId(final String title, final String episode, String originalTitle, String originalEpisode, final int year) {
     if (mSearcher == null) {
       return null;
     }
@@ -388,12 +388,13 @@ public final class ImdbDatabase {
     // next search only original title
     if (originalTitle != null) {
       String normalisedOriginal = normalise(originalTitle);
-      movieId = getMovieIdFromTitle(normalisedOriginal, "", year, TYPE_MOVIE);
+      String normalisedOrigEpisode = normalise(originalEpisode);
+      movieId = getMovieIdFromTitle(normalisedOriginal, normalisedOrigEpisode, year, TYPE_MOVIE);
       if (movieId != null) {
         return movieId;
       }
       // original title in A.K.A. list (may happen with spelling alternatives)
-      movieId = getMovieIdFromTitle(normalisedOriginal, "", year, TYPE_AKA);
+      movieId = getMovieIdFromTitle(normalisedOriginal, normalisedOrigEpisode, year, TYPE_AKA);
       if (movieId != null) {
         return movieId;
       }
@@ -402,16 +403,27 @@ public final class ImdbDatabase {
     // and now try with shortened title if there is a common suffix
     for (String suffix : TITLE_SUFFIX) {
       if (title.endsWith(suffix)) {
-        return getMovieId(title.substring(0, title.length() - suffix.length()).trim(), episode, null, year);
+        return getMovieId(title.substring(0, title.length() - suffix.length()).trim(), episode, null, null, year);
       }
       if (originalTitle != null && originalTitle.endsWith(suffix)) {
-        return getMovieId(title, episode, originalTitle.substring(0, originalTitle.length() - suffix.length()).trim(), year);
+        return getMovieId(title, episode, originalTitle.substring(0, originalTitle.length() - suffix.length()).trim(), originalEpisode, year);
       }
     }
     
     // nothing found yet, so try everything again without year
     if (year > 0) {
-      return getMovieId(title, episode, originalTitle, 0);
+      String id =  getMovieId(title, episode, originalTitle, originalEpisode, 0);
+      if (id != null) {
+        return id;
+      }
+    }
+
+    // If the original Episode is given, try without it
+    if (originalEpisode != null && originalEpisode.length() > 0) {
+      String id =  getMovieId(title, episode, originalTitle, null, year);
+      if (id != null) {
+        return id;
+      }
     }
     
     return null;
@@ -421,7 +433,7 @@ public final class ImdbDatabase {
     BooleanQuery bQuery = new BooleanQuery();
     bQuery.add(new TermQuery(new Term(ITEM_TYPE, itemType)), BooleanClause.Occur.MUST);
     bQuery.add(new TermQuery(new Term(MOVIE_TITLE_NORMALISED, title)), BooleanClause.Occur.MUST);
-    if (itemType.equals(TYPE_MOVIE)) {
+    if (episode != null && episode.length() > 0) {
       bQuery.add(new TermQuery(new Term(EPISODE_TITLE_NORMALISED, episode)), BooleanClause.Occur.MUST);
     }
 
