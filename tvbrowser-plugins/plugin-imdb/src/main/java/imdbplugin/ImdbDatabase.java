@@ -108,7 +108,7 @@ public final class ImdbDatabase {
           Field.TermVector.NO));
       doc.add(new Field(MOVIE_YEAR, Integer.toString(year), Field.Store.YES, Field.Index.NOT_ANALYZED,
           Field.TermVector.NO));
-      if (episode != null) {
+      if (episode != null && episode.length() > 0) {
         doc.add(new Field(EPISODE_TITLE, episode, Field.Store.YES, Field.Index.NOT_ANALYZED, Field.TermVector.NO));
         doc.add(new Field(EPISODE_TITLE_NORMALISED, normalise(episode), Field.Store.YES, Field.Index.NOT_ANALYZED,
             Field.TermVector.NO));
@@ -131,7 +131,7 @@ public final class ImdbDatabase {
           Field.TermVector.NO));
       doc.add(new Field(MOVIE_YEAR, Integer.toString(year), Field.Store.YES, Field.Index.NOT_ANALYZED,
           Field.TermVector.NO));
-      if (episode != null) {
+      if (episode != null && episode.length() > 0) {
         doc.add(new Field(EPISODE_TITLE, episode, Field.Store.YES, Field.Index.NOT_ANALYZED, Field.TermVector.NO));
         doc.add(new Field(EPISODE_TITLE_NORMALISED, normalise(episode), Field.Store.YES, Field.Index.NOT_ANALYZED,
             Field.TermVector.NO));
@@ -143,6 +143,9 @@ public final class ImdbDatabase {
   }
 
   private String normalise(final String str) {
+    if (str == null) {
+      return "";
+    }
     if (str.length() == 0) {
       return str;
     }
@@ -153,19 +156,19 @@ public final class ImdbDatabase {
       final char character = lowerCase.charAt(i);
       switch (character) {
       // replace umlauts
-      case 'ä': {
+      case '\u00E4': {
         builder.append("ae");
         break;
       }
-      case 'ö': {
+      case '\u00F6': {
         builder.append("oe");
         break;
       }
-      case 'ü': {
+      case '\u00FC': {
         builder.append("ue");
         break;
       }
-      case 'ß': {
+      case '\u00DF': {
         builder.append("ss");
         break;
       }
@@ -299,7 +302,7 @@ public final class ImdbDatabase {
       bQuery.add(new TermQuery(new Term(ITEM_TYPE, TYPE_MOVIE)), BooleanClause.Occur.MUST);
       bQuery.add(new TermQuery(new Term(MOVIE_TITLE, movieTitle)), BooleanClause.Occur.MUST);
       bQuery.add(new TermQuery(new Term(MOVIE_YEAR, Integer.toString(year))), BooleanClause.Occur.MUST);
-      if (episode != null) {
+      if (episode != null && episode.length() > 0) {
         bQuery.add(new TermQuery(new Term(EPISODE_TITLE, episode)), BooleanClause.Occur.MUST);
       }
 
@@ -333,7 +336,7 @@ public final class ImdbDatabase {
   }
 
   private String getEpisodeId(final String title, final String episode, final int year) {
-    if (episode == null) {
+    if (episode == null || episode.length() == 0) {
       return null;
     }
     final String normalizedTitle = normalise(title);
@@ -357,7 +360,6 @@ public final class ImdbDatabase {
         return document.getField(MOVIE_ID).stringValue();
       }
     } catch (IOException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
     return null;

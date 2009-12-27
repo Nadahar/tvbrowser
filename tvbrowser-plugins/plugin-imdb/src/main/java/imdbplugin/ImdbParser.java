@@ -71,7 +71,9 @@ public class ImdbParser {
     if (mRunParser) {
       parseAkaTitles(new GZIPInputStream(progressInputStream), monitor);
     }
+    mDatabase.close();
     if (mRunParser) {
+      mDatabase.openForWriting();
       progressInputStream = new ProgressInputStream(ratingsFile, monitor, progressInputStream.getCurrentPosition());
       ratingCount = parseRatings(new GZIPInputStream(progressInputStream), monitor);
     }
