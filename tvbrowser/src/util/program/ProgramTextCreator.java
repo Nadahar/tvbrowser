@@ -901,6 +901,15 @@ public class ProgramTextCreator {
         }
       } else {
         text = prog.getIntFieldAsString(fieldType);
+        if (text == null && fieldType == ProgramFieldType.AGE_LIMIT_TYPE) {
+          final String ageRating = prog.getTextField(ProgramFieldType.AGE_RATING_TYPE);
+          if (ageRating != null && !ageRating.isEmpty()) {
+            int age = ProgramUtilities.getAgeLimit(ageRating);
+            if (age >= 0) {
+              text = Integer.toString(age);
+            }
+          }
+        }
       }
     }
 

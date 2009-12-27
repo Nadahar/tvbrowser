@@ -625,9 +625,22 @@ public class ProgramUtilities {
     if (rating.equalsIgnoreCase("VM18")) {
       return 18;
     }
-    // ratings without age
+    // MPAA/TV ratings without age
     if (rating.equals("TV-G") || rating.equals("TV-PG")) {
       return -1;
+    }
+    // German FSK
+    if (rating.toUpperCase().startsWith("FSK")) {
+      String num = rating.substring(3).trim();
+      if (num.startsWith("-")) {
+        num = num.substring(1).trim();
+        try {
+          int number = Integer.parseInt(num);
+          return number;
+        } catch (NumberFormatException e) {
+          e.printStackTrace();
+        }
+      }
     }
     // numerical codes
     try {
