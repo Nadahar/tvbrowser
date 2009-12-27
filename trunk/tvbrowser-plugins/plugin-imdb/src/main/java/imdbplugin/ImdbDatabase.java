@@ -28,6 +28,7 @@ import org.apache.lucene.index.IndexWriter.MaxFieldLength;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.FSDirectory;
@@ -494,6 +495,55 @@ public final class ImdbDatabase {
 
     return null;
   }
+
+  public ImdbMovie getMovieForId(final String id) {
+    if (id == null) {
+      return null;
+    }
+    try {
+      final BooleanQuery bQuery = new BooleanQuery();
+      bQuery.add(new TermQuery(new Term(ITEM_TYPE, TYPE_MOVIE)), BooleanClause.Occur.MUST);
+      bQuery.add(new TermQuery(new Term(MOVIE_ID, id)), BooleanClause.Occur.MUST);
+
+      final TopDocs topDocs = mSearcher.search(bQuery, null, 1);
+
+      if (topDocs.totalHits > 0) {
+        final Document document = mSearcher.doc(topDocs.scoreDocs[0].doc);
+
+        ImdbMovie movie = new ImdbMovie();
+        movie.setTitle(document.getField(MOVIE_TITLE).stringValue());
+        movie.setYear(Integer.parseInt(document.getField(MOVIE_YEAR).stringValue()));
+        if (document.getField(EPISODE_TITLE) != null) {
+          movie.setEpisode(document.getField(EPISODE_TITLE).stringValue());
+        }
+
+        final BooleanQuery bQueryAKA = new BooleanQuery();
+        bQueryAKA.add(new TermQuery(new Term(ITEM_TYPE, TYPE_AKA)), BooleanClause.Occur.MUST);
+        bQueryAKA.add(new TermQuery(new Term(MOVIE_ID, id)), BooleanClause.Occur.MUST);
+        final TopDocs topDocsAKA = mSearcher.search(bQueryAKA, null, 1);
+
+        for (ScoreDoc sdoc:topDocsAKA.scoreDocs) {
+          final Document doc = mSearcher.doc(sdoc.doc);
+          final String title = doc.getField(MOVIE_TITLE).stringValue();
+          final String episode;
+          if (doc.getField(EPISODE_TITLE) != null) {
+            episode = doc.getField(EPISODE_TITLE).stringValue();
+          } else {
+            episode = null;
+          }
+          
+          movie.addAka(new ImdbAka(title, episode, Integer.parseInt(doc.getField(MOVIE_YEAR).stringValue())));
+        }
+
+        return movie;
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+    return null;
+  }
+
 
   public String getDatabaseSizeMB() {
     if (!isInitialised()) {
