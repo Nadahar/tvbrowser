@@ -689,7 +689,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
       // elapsed minutes can not be larger than run time
       if (progLength > 0) {
         if (elapsedMinutes > progLength) {
-          mLog.severe("paint program panel: elapsed minutes to large");
+          mLog.severe("paint program panel: elapsed minutes to large; sT=" + startTime + " mAM=" + minutesAfterMidnight + " pL=" + progLength + " eM=" + elapsedMinutes);
         }
         elapsedMinutes = Math.min(elapsedMinutes, progLength);
       }
