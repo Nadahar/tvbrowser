@@ -76,7 +76,7 @@ final public class MovieAwardPlugin extends Plugin {
    */
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(MovieAwardPlugin.class);
   private static Logger mLog = Logger.getLogger(MovieAwardPlugin.class.getName());
-  private static final Version mVersion = new Version(0, 10);
+  private static final Version mVersion = new Version(0, 10, 1);
 
   private PluginInfo mPluginInfo;
   private ArrayList<MovieAward> mMovieAwards;
@@ -141,16 +141,18 @@ final public class MovieAwardPlugin extends Plugin {
     return mVersion;
   }
 
-  public void initDatabase() {
+  public synchronized void initDatabase() {
     // might be called multiple times
     if (mMovieAwards == null) {
       MovieDataFactory.loadMovieDatabase(mMovieDatabase, getClass()
           .getResourceAsStream("data/moviedatabase.xml"));
       mMovieAwards = new ArrayList<MovieAward>();
+      
       for (String awardName : KNOWN_AWARDS) {
         MovieAward award = MovieDataFactory.loadMovieDataFromStream(getClass()
 		    .getResourceAsStream("data/" + awardName + ".xml"),
 		    mMovieDatabase);
+        
         if (award != null) {
         	mMovieAwards.add(award);
         }
@@ -170,7 +172,7 @@ final public class MovieAwardPlugin extends Plugin {
         }
       }
     }
-
+    
     mLog.info("loaded movie award. " + mMovieAwards.size());
   }
 
@@ -281,6 +283,10 @@ final public class MovieAwardPlugin extends Plugin {
     return true;
   }
 
+  public int getMarkPriorityForProgram(Program p) {
+    return Program.NO_MARK_PRIORITY;
+  }
+  
   @Override
   public PluginTreeNode getRootNode() {
     if (mRootNode == null) {
@@ -382,7 +388,6 @@ final public class MovieAwardPlugin extends Plugin {
       if (iter != null) {
         while (iter.hasNext()) {
           final Program program = iter.next();
-          program.validateMarking();
         }
       }
     }
