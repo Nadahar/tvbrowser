@@ -18,6 +18,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.text.JTextComponent;
 
 import tvbrowser.core.icontheme.IconLoader;
+import tvbrowser.ui.mainframe.MainFrame;
 import util.ui.Localizer;
 import util.ui.TVBrowserIcons;
 
@@ -35,6 +36,19 @@ public class TextComponentPopupEventQueue extends EventQueue {
       .getLocalizerFor(TextComponentPopupEventQueue.class);
 
   protected void dispatchEvent(AWTEvent event) {
+    // stop auto scrolling on any mouse event
+    try {
+      if (event instanceof MouseEvent) {
+        MouseEvent me = (MouseEvent) event;
+        if (me.getButton() != MouseEvent.NOBUTTON) {
+          MainFrame.getInstance().getProgramTableScrollPane().getProgramTable().stopAutoScroll();
+        }
+      }
+    } catch (Exception e1) {
+      // TODO Auto-generated catch block
+      e1.printStackTrace();
+    }
+    
     try {
       super.dispatchEvent(event);
     }catch(Throwable e) {return;}
@@ -44,7 +58,7 @@ public class TextComponentPopupEventQueue extends EventQueue {
       return;
 
     MouseEvent me = (MouseEvent) event;
-
+    
     // interested only in popuptriggers
     if (!me.isPopupTrigger() || me.getComponent() == null)
       return;

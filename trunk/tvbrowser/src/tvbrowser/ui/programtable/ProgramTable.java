@@ -512,7 +512,7 @@ public class ProgramTable extends JPanel
     }
   }
 
-  private boolean stopAutoScroll() {
+  public boolean stopAutoScroll() {
     if (mAutoScrollThread != null && mAutoScrollThread.isAlive()) {
       mAutoScrollThread.interrupt();
       mAutoScrollThread = null;
