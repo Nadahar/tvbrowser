@@ -46,6 +46,8 @@ import devplugin.Version;
  */
 public class GenrePlugin extends Plugin {
 
+  private static final String[] GENRE_SUFFIX = new String[] {"film", "serie"};
+
   /**
    * plugin version
    */
@@ -159,9 +161,20 @@ public class GenrePlugin extends Plugin {
                 }
               }
               // some programs have multiple genres in the field
-              final String[] genres = genreField.split(",");
-              for (String g : genres) {
-                String genre = g.trim();
+              final String[] genres = genreField.split(",|/");
+              for (int genreIndex = 0; genreIndex < genres.length; genreIndex++) {
+                String genre = genres[genreIndex].trim();
+                // fix genres ending in dash
+                if (genre.endsWith("-")) {
+                  if (genreIndex < genres.length - 1) {
+                    for (String suffix : GENRE_SUFFIX) {
+                      if (genres[genreIndex + 1].endsWith(suffix)) {
+                        genre = genre.substring(0, genre.length() - 1).trim() + suffix;
+                        break;
+                      }
+                    }
+                  }
+                }
                 if (genre.length() >= MIN_GENRE_LENGTH && !hiddenGenres.contains(genre)) {
                   PluginTreeNode node = genreNodes.get(genre);
                   if (node == null) {
