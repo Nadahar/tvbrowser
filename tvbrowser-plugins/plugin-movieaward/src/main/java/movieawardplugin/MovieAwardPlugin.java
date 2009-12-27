@@ -236,29 +236,36 @@ final public class MovieAwardPlugin extends Plugin {
   }
 
   public boolean hasAwards(final Program program) {
-    // this can be called before startFinished due to the movie award filter
-    if (mMovieAwards == null) {
-      initDatabase();
-    }
-    // no awards for very short programs
-    final int length = program.getLength();
-    if (length > 0 && length < 5) {
-      return false;
-    }
-    // did we already check this program ?
-    if (mAwardCache.containsKey(program)) {
-      return mAwardCache.get(program);
-    }
+    try {
+			// this can be called before startFinished due to the movie award filter
+			if (mMovieAwards == null) {
+			  initDatabase();
+			}
+			// no awards for very short programs
+			final int length = program.getLength();
+			if (length > 0 && length < 5) {
+			  return false;
+			}
+			// did we already check this program ?
+			if (mAwardCache.containsKey(program)) {
+			  return mAwardCache.get(program);
+			}
 
-    for (MovieAward award : mMovieAwards) {
-      if (award.containsAwardFor(program)) {
-        mAwardCache.put(program, true);
-        addToPluginTree(program, award);
-        return true;
-      }
-    }
+			synchronized(mMovieAwards) {
+			  for (MovieAward award : mMovieAwards) {
+			    if (award.containsAwardFor(program)) {
+			      mAwardCache.put(program, true);
+			      addToPluginTree(program, award);
+			      return true;
+			    }
+			  }
+			}
 
-    mAwardCache.put(program, false);
+			mAwardCache.put(program, false);
+		} catch (Exception e) {
+			// catch any exception and just don't show an award
+			e.printStackTrace();
+		}
     return false;
   }
 
