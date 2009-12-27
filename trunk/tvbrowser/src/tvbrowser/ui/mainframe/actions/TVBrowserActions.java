@@ -308,7 +308,7 @@ public final class TVBrowserActions {
   /**
    * switch full screen action
    */
-  public final static TVBrowserAction fullScreen = new TVBrowserAction("fullScreen", TVBrowserIcons
+  public final static TVBrowserAction fullScreen = new TVBrowserAction("fullscreen", TVBrowserIcons
       .fullScreen(TVBrowserIcons.SIZE_SMALL), TVBrowserIcons.fullScreen(TVBrowserIcons.SIZE_LARGE), KeyEvent.VK_F11, 0,
       ToolBar.BUTTON_ACTION) {
 

@@ -60,7 +60,7 @@ public abstract class TVBrowserAction extends AbstractAction {
   }
 
   private String getToolbarTip() {
-    String text = mLocalizer.msg(getKey() + ".toolbar.tip", "");
+    String text = mLocalizer.msg(getKey() + ".toolbar.tip", "", false);
     if (text.indexOf('[') == 0) {
       text = getMenuHelpText();
     }
@@ -72,7 +72,7 @@ public abstract class TVBrowserAction extends AbstractAction {
   }
 
   public String getToolbarText() {
-    String text = mLocalizer.msg(getKey() + ".toolbar", "Toolbar: " + mKey);
+    String text = mLocalizer.msg(getKey() + ".toolbar", "Toolbar: " + mKey, false);
     // if no toolbar text is available, take the menu text
     if (text.indexOf('[') == 0) {
       text = getMenuText().replace("&", "");
