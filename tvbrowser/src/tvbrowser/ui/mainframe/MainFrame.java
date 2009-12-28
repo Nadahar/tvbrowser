@@ -240,6 +240,8 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
   private long mLastAutoUpdateRunBuffer;
   
   private int mAutoDownloadTimer;
+
+  private boolean mIsAskingUpdate = false;
   
   private MainFrame() {
     super(TVBrowser.MAINWINDOW_TITLE);
@@ -1758,33 +1760,41 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
    * @param numberOfDays
    * @param reason The reason for initiating the download
    */
-  public void updateTvData(final int numberOfDays, final String reason) {
-    if (ChannelList.getNumberOfSubscribedChannels() == 0) {
-      int result = JOptionPane.showOptionDialog(this, 
-          mLocalizer.msg("subscribeBeforeUpdate.msg", "You have not defined any channels.\n\nDo you want to subscribe to some channels before starting the data update?"), 
-          mLocalizer.msg("subscribeBeforeUpdate.title", "No subscribed channels"),
-          JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null,
-          null);
-      if (result == JOptionPane.YES_OPTION) {
-        showSettingsDialog(SettingsItem.CHANNELS);
-      }
+  synchronized public void updateTvData(final int numberOfDays, final String reason) {
+    if (mIsAskingUpdate) {
+      return;
     }
-    else {
-      if (TvDataUpdater.getInstance().isDownloading()) {
-        TvDataUpdater.getInstance().stopDownload();
-      } else {
-        UpdateDlg dlg = new UpdateDlg(this, true, reason);
-        if (numberOfDays > 0) {
-          dlg.setNumberOfDays(numberOfDays);
+    mIsAskingUpdate = true;
+    try {
+      if (ChannelList.getNumberOfSubscribedChannels() == 0) {
+        int result = JOptionPane.showOptionDialog(this, 
+            mLocalizer.msg("subscribeBeforeUpdate.msg", "You have not defined any channels.\n\nDo you want to subscribe to some channels before starting the data update?"), 
+            mLocalizer.msg("subscribeBeforeUpdate.title", "No subscribed channels"),
+            JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null,
+            null);
+        if (result == JOptionPane.YES_OPTION) {
+          showSettingsDialog(SettingsItem.CHANNELS);
         }
-        dlg.pack();
-        UiUtilities.centerAndShow(dlg);
-          
-        int daysToDownload = dlg.getResult();
-        if(daysToDownload != UpdateDlg.CANCEL && licenseForTvDataServicesWasAccepted(dlg.getSelectedTvDataServices())) {
-          runUpdateThread(daysToDownload, dlg.getSelectedTvDataServices(),false);
-        }        
       }
+      else {
+        if (TvDataUpdater.getInstance().isDownloading()) {
+          TvDataUpdater.getInstance().stopDownload();
+        } else {
+          UpdateDlg dlg = new UpdateDlg(this, true, reason);
+          if (numberOfDays > 0) {
+            dlg.setNumberOfDays(numberOfDays);
+          }
+          dlg.pack();
+          UiUtilities.centerAndShow(dlg);
+            
+          int daysToDownload = dlg.getResult();
+          if(daysToDownload != UpdateDlg.CANCEL && licenseForTvDataServicesWasAccepted(dlg.getSelectedTvDataServices())) {
+            runUpdateThread(daysToDownload, dlg.getSelectedTvDataServices(),false);
+          }        
+        }
+      }
+    } finally {
+      mIsAskingUpdate = false;
     }
   }
 
