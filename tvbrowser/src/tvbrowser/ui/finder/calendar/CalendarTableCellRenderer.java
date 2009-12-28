@@ -120,8 +120,8 @@ public final class CalendarTableCellRenderer implements
     public void paintBorder (Component c, Graphics g, int x, int y, int width, int height) {
       Insets insets = getBorderInsets(c);
       g.setColor (color);
-      int numWide = (int)Math.round(width / dashWidth);
-      int numHigh = (int)Math.round(height / dashHeight);
+      int numWide = width / dashWidth;
+      int numHigh = height / dashHeight;
       int startPoint;
       for (int i=0;i<=numWide;i+=2) {
         startPoint = x + dashWidth * i;

@@ -163,7 +163,7 @@ public class ChannelConfigDlg extends JDialog implements ActionListener, WindowC
     // time correction
     panel.add(new JLabel(mLocalizer.msg("time", "Time zone correction:")), cc.xy(1, 11));
     mCorrectionCB = new JComboBox(new String[] { "-1:00", "-0:45", "-0:30", "-0:15", "0:00", "+0:15", "+0:30", "+0:45", "+1:00" });
-    mCorrectionCB.setSelectedIndex((int) (Math.round(mChannel.getTimeZoneCorrectionMinutes() / 15) + 4));
+    mCorrectionCB.setSelectedIndex(mChannel.getTimeZoneCorrectionMinutes() / 15 + 4);
     panel.add(mCorrectionCB, cc.xy(3, 11));
 
     JTextArea txt = UiUtilities.createHelpTextArea(mLocalizer.msg("DLSTNote", ""));
