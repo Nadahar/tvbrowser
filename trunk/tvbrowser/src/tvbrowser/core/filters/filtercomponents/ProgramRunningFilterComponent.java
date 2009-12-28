@@ -39,35 +39,33 @@ import javax.swing.JPanel;
 import devplugin.Program;
 
 /**
- * Filtert ob eine Sendung schon gelaufen ist, gerade läuft oder noch laufen
- * wird
+ * Filtered if a show is currently running
  * 
  * @author bodo
  */
 public class ProgramRunningFilterComponent extends AbstractFilterComponent {
 
   /**
-   * Erzeugt einen leeren Filter
+   * Creates an unnamed filter
    */
   public ProgramRunningFilterComponent() {
     this("", "");
   }
 
   /**
-   * Erzeugt einen Filter
+   * Creates the filter
    * 
    * @param name
-   *          Name
+   *          name of the filter
    * @param description
-   *          Beschreibung
+   *          description of the filter
    */
   public ProgramRunningFilterComponent(String name, String description) {
     super(name, description);
   }
 
   /**
-   * Gibt die Version zurück
-   * 
+   * @return version of the filter
    * @see tvbrowser.core.filters.FilterComponent#getVersion()
    */
   public int getVersion() {
@@ -75,8 +73,7 @@ public class ProgramRunningFilterComponent extends AbstractFilterComponent {
   }
 
   /**
-   * Wird dieses Programm akzeptiert von diesem Filter ?
-   * 
+   * @return true if the program is now running
    * @see tvbrowser.core.filters.FilterComponent#accept(devplugin.Program)
    */
   public boolean accept(Program program) {
@@ -97,8 +94,8 @@ public class ProgramRunningFilterComponent extends AbstractFilterComponent {
   }
 
   /**
-   * Liest die Einstellungen für dieses Plugin aus dem Stream
-   * 
+   * read the settings
+   *
    * @see tvbrowser.core.filters.FilterComponent#read(java.io.ObjectInputStream,
    *      int)
    */
@@ -108,8 +105,8 @@ public class ProgramRunningFilterComponent extends AbstractFilterComponent {
   }
 
   /**
-   * Schreibt die Einstellungen dieses Plugins in den Stream
-   * 
+   * write the settings
+   *
    * @see tvbrowser.core.filters.FilterComponent#write(java.io.ObjectOutputStream)
    */
   public void write(ObjectOutputStream out) throws IOException {
@@ -117,8 +114,8 @@ public class ProgramRunningFilterComponent extends AbstractFilterComponent {
   }
 
   /**
-   * Gibt einen Panel zurück, der es ermöglicht, den Filter einzustellen
-   * 
+   * @return settings panel for this filter component
+   *
    * @see tvbrowser.core.filters.FilterComponent#getSettingsPanel()
    */
   public JPanel getSettingsPanel() {
@@ -129,28 +126,28 @@ public class ProgramRunningFilterComponent extends AbstractFilterComponent {
     c.fill = GridBagConstraints.HORIZONTAL;
     c.gridwidth = GridBagConstraints.REMAINDER;
 
-    _checkBox = new JCheckBox[3];
+    mCheckBox = new JCheckBox[3];
 
-    _checkBox[0] = new JCheckBox(mLocalizer.msg("finished", "Already finished"));
-    panel.add(_checkBox[0], c);
+    mCheckBox[0] = new JCheckBox(mLocalizer.msg("finished", "Already finished"));
+    panel.add(mCheckBox[0], c);
 
     if (bitSet(mSelectedBits, ALREADYFINISHED)) {
-      _checkBox[0].setSelected(true);
+      mCheckBox[0].setSelected(true);
     }
 
-    _checkBox[1] = new JCheckBox(mLocalizer.msg("nowrunning", "Now running"));
-    panel.add(_checkBox[1], c);
+    mCheckBox[1] = new JCheckBox(mLocalizer.msg("nowrunning", "Now running"));
+    panel.add(mCheckBox[1], c);
 
     if (bitSet(mSelectedBits, NOWRUNNING)) {
-      _checkBox[1].setSelected(true);
+      mCheckBox[1].setSelected(true);
     }
 
-    _checkBox[2] = new JCheckBox(mLocalizer.msg("notyetstarted",
+    mCheckBox[2] = new JCheckBox(mLocalizer.msg("notyetstarted",
         "Not yet started"));
-    panel.add(_checkBox[2], c);
+    panel.add(mCheckBox[2], c);
 
     if (bitSet(mSelectedBits, NOTYETSTARTED)) {
-      _checkBox[2].setSelected(true);
+      mCheckBox[2].setSelected(true);
     }
 
     JPanel centerPanel = new JPanel(new BorderLayout());
@@ -159,21 +156,20 @@ public class ProgramRunningFilterComponent extends AbstractFilterComponent {
   }
 
   /**
-   * Im Dialog wurde OK gedrückt, alle Einstellungen können nun übernommen
-   * werden
+   * save the settings
    * 
    * @see tvbrowser.core.filters.FilterComponent#saveSettings()
    */
   public void saveSettings() {
     int selectedBits = 0;
 
-    if (_checkBox[0].isSelected()) {
+    if (mCheckBox[0].isSelected()) {
       selectedBits = selectedBits | ALREADYFINISHED;
     }
-    if (_checkBox[1].isSelected()) {
+    if (mCheckBox[1].isSelected()) {
       selectedBits = selectedBits | NOWRUNNING;
     }
-    if (_checkBox[2].isSelected()) {
+    if (mCheckBox[2].isSelected()) {
       selectedBits = selectedBits | NOTYETSTARTED;
     }
 
@@ -181,7 +177,7 @@ public class ProgramRunningFilterComponent extends AbstractFilterComponent {
   }
 
   /**
-   * Gibt den Namen des Filters zurück
+   * @return name of the filter
    */
   @Override
   public String toString() {
@@ -189,30 +185,30 @@ public class ProgramRunningFilterComponent extends AbstractFilterComponent {
   }
 
   /**
-   * Überprüft, ob Bits gesetzt sind
+   * Check if a bit is set
    * 
    * @param num
-   *          hier prüfen
+   *          test this int
    * @param pattern
-   *          diese pattern prüfen
-   * @return Pattern gesetzt?
+   *          test for this pattern
+   * @return true, if pattern is set
    */
   private boolean bitSet(int num, int pattern) {
     return (num & pattern) == pattern;
   }
 
   /**
-   * Die gesetzten Bits
+   * the current selected bits
    */
   private int mSelectedBits = 0;
 
   /**
-   * Die CheckBoxen für den Panel
+   * checkbox for the settingspanel
    */
-  private JCheckBox[] _checkBox;
+  private JCheckBox[] mCheckBox;
 
   /**
-   * Der Lokalizer
+   * localization
    */
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer
       .getLocalizerFor(ProgramRunningFilterComponent.class);
