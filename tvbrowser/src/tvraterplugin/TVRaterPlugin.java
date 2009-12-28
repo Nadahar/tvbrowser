@@ -677,7 +677,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
     return new ProgramRatingIf[] {new ProgramRatingIf() {
 
       public String getName() {
-        return mLocalizer.msg("pluginName", "TV Rater");
+        return mLocalizer.msg("pluginName", "TV Addicted Rating");
       }
 
       public Icon getIcon() {
