@@ -30,6 +30,7 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.logging.Logger;
 
 import util.ui.Localizer;
 
@@ -48,6 +49,11 @@ public class Date implements Comparable<Date>, Serializable
    * getter-setter-pair.
    */
   public static Localizer LOCALIZER = util.ui.Localizer.getLocalizerFor(Date.class);
+
+  /**
+   * logger for this class.
+   */
+  private static final Logger LOGGER = Logger.getLogger(Date.class.getName());
 
 
   /**
@@ -467,7 +473,7 @@ public class Date implements Comparable<Date>, Serializable
       }
       else
       {
-        System.err.println("Date.DATE_CACHE_SIZE is to small (" + Date.DATE_CACHE_SIZE + ")!");
+        LOGGER.warning("Date.DATE_CACHE_SIZE is to small (" + Date.DATE_CACHE_SIZE + ")!");
       }
     }
     return result;
