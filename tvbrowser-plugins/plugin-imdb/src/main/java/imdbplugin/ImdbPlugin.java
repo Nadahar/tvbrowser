@@ -451,6 +451,10 @@ public final class ImdbPlugin extends Plugin {
       }
 
       public Icon getIconForProgram(final Program p) {
+        if (getPluginManager().getExampleProgram().equals(p)) {
+          return new ImdbIcon(EXAMPLE_RATING);
+        }
+
         final ImdbRating rating = getRatingFor(p);
         if (rating != null) {
           return new ImdbIcon(rating);
