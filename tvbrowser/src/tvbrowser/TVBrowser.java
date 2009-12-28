@@ -132,6 +132,7 @@ public class TVBrowser {
           "3.0 (alpha1)",
           "3.0 (alpha)",
           "3.0 (SVN)",
+          "2.7.5",
           "2.7.5 (SVN)",
           "2.7.4", "2.7.4 (SVN)",
           "2.7.3", "2.7.3beta", "2.7.3 (SVN)",
