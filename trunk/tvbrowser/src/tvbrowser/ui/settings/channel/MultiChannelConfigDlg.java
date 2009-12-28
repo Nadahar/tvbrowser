@@ -94,7 +94,7 @@ public class MultiChannelConfigDlg extends JDialog implements ActionListener, Wi
     panel.add(new JLabel(mLocalizer.msg("time", "Time zone correction")), cc.xy(1, 1));
 
     mCorrectionCB = new JComboBox(new String[] { "-1:00", "-0:45", "-0:30", "-0:15", "0:00", "+0:15", "+0:30", "+0:45", "+1:00" });
-    mCorrectionCB.setSelectedIndex((int) (Math.round(mChannel[0].getTimeZoneCorrectionMinutes() / 15) + 4));
+    mCorrectionCB.setSelectedIndex(mChannel[0].getTimeZoneCorrectionMinutes() / 15 + 4);
 
     panel.add(mCorrectionCB, cc.xy(3, 1));
 

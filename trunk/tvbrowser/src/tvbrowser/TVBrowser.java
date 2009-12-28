@@ -128,7 +128,7 @@ public class TVBrowser {
      We need the old version strings to import the settings.
   */
   /** The string array with the names of the earlier versions. */
-  public static final String[] ALL_VERSIONS = new String[]{
+  private static final String[] ALL_VERSIONS = new String[]{
           "3.0 (alpha1)",
           "3.0 (alpha)",
           "3.0 (SVN)",
@@ -1259,6 +1259,25 @@ public class TVBrowser {
    */
   public static boolean isStable() {
     return mIsStable;
+  }
+
+  /**
+   * get the version string of this version (for use in directories)
+   * @return version string suffix
+   * @since 3.0
+   */
+  public static String getCurrentVersionString() {
+    return ALL_VERSIONS[0];
+  }
+
+  /**
+   * get the version names of all released versions
+   * (for use in directory names)
+   * @return version string suffixes
+   * @since 3.0
+   */
+  public static String[] getAllVersionStrings() {
+    return ALL_VERSIONS.clone();
   }
 }
 

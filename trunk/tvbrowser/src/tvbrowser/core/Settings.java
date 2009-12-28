@@ -164,7 +164,7 @@ public class Settings {
   }
 
   public static String getUserSettingsDirName() {
-    String version = TVBrowser.ALL_VERSIONS[0];
+    String version = TVBrowser.getCurrentVersionString();
     
     if(version.toLowerCase().indexOf("nightly") != -1) {
       version = version.substring(0, version.indexOf('-'));
@@ -364,12 +364,13 @@ public class Settings {
       
       String[] directories = {getUserDirectoryName() ,System.getProperty("user.home") + "/TV-Browser",System.getProperty("user.home") + "/Library/Preferences/TV-Browser", System.getProperty("user.home") + "/.tvbrowser"};      
 
-      for(int j = 0; j < (TVBrowser.isTransportable() ? directories.length : countValue); j++) {        
-        for (int i = (j == 0 ? 1 : 0); i < TVBrowser.ALL_VERSIONS.length; i++) {
+      for(int j = 0; j < (TVBrowser.isTransportable() ? directories.length : countValue); j++) {
+        String[] allVersions = TVBrowser.getAllVersionStrings();
+        for (int i = (j == 0 ? 1 : 0); i < allVersions.length; i++) {
           testFile = new File(directories[j] + File.separator + 
-              TVBrowser.ALL_VERSIONS[i], SETTINGS_FILE);
+              allVersions[i], SETTINGS_FILE);
           if(testFile.isFile()) {
-            oldDir = new File(directories[j],TVBrowser.ALL_VERSIONS[i]);
+            oldDir = new File(directories[j], allVersions[i]);
             break;
           }
         }
