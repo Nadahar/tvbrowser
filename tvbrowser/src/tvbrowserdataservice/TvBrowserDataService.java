@@ -81,8 +81,10 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
   /** Contains the mirror urls usable for receiving the groups.txt from. */
   private static final String[] DEFAULT_CHANNEL_GROUPS_MIRRORS = {
     "http://tvbrowser.dyndns.tv",
-    "http://hdtv-online.org/TVB",
-    "http://www.tvbrowserserver.de/"
+    "http://daten.wannawork.de",
+    "http://www.gfx-software.de/tvbrowserorg",
+    "http://tvbrowser1.sam-schwedler.de",
+    "http://tvbrowser.nicht-langweilig.de/data"
   };
 
   private DownloadManager mDownloadManager;
@@ -664,24 +666,33 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
         CHANNEL_GROUPS_FILENAME.indexOf('.'))
         + "_" + Mirror.MIRROR_LIST_FILE_NAME);    
     
-    try {
-      return Mirror.chooseUpToDateMirror(Mirror.readMirrorListFromFile(file),null,"Groups.txt", "groups", TvBrowserDataService.class, "  Please inform the TV-Browser team.");
-    } catch (Exception exc) {
+    if(file.isFile()) {
       try {
-        if(DEFAULT_CHANNEL_GROUPS_MIRRORS.length > 0) {
-          Mirror[] mirr = new Mirror[DEFAULT_CHANNEL_GROUPS_MIRRORS.length];
-          
-          for(int i = 0; i < DEFAULT_CHANNEL_GROUPS_MIRRORS.length; i++)
-            mirr[i] = new Mirror(DEFAULT_CHANNEL_GROUPS_MIRRORS[i]);
-          
-          return Mirror.chooseUpToDateMirror(mirr,null,"Groups.txt", "groups",TvBrowserDataService.class, " Please inform the TV-Browser team.");
-        }
-        else
-          throw exc;
-      }catch (Exception exc2) {
-        return new Mirror(DEFAULT_CHANNEL_GROUPS_URL);
-      }
+        return Mirror.chooseUpToDateMirror(Mirror.readMirrorListFromFile(file),null,"Groups.txt", "groups", TvBrowserDataService.class, "  Please inform the TV-Browser team.");
+      } catch (Exception exc) {}
     }
+    
+    return getDefaultChannelGroupsMirror();
+  }
+  
+  private Mirror getDefaultChannelGroupsMirror() {
+    try {
+      if(DEFAULT_CHANNEL_GROUPS_MIRRORS.length > 0) {
+        Mirror[] mirr = new Mirror[DEFAULT_CHANNEL_GROUPS_MIRRORS.length];
+        
+        for(int i = 0; i < DEFAULT_CHANNEL_GROUPS_MIRRORS.length; i++) {
+          mirr[i] = new Mirror(DEFAULT_CHANNEL_GROUPS_MIRRORS[i]);
+        }
+        
+        Mirror choosenMirror = Mirror.chooseUpToDateMirror(mirr,null,"Groups.txt", "groups",TvBrowserDataService.class, " Please inform the TV-Browser team.");
+        
+        if(choosenMirror != null) {
+          return choosenMirror;
+        }
+      }
+    }catch (Exception exc2) {}
+    
+    return new Mirror(DEFAULT_CHANNEL_GROUPS_URL);
   }
 
   protected void downloadChannelGroupFile() throws TvBrowserException {
