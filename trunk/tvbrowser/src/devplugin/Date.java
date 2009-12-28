@@ -52,9 +52,14 @@ public class Date implements Comparable<Date>, Serializable
 
   /**
    * a cache for dates. static vars are not serialized.
-   * FIXME mem leak -> can grow unlimited
    */
   private static final HashMap<Integer, String> LONG_DATE_MAP = new HashMap<Integer, String>(28);
+
+  /**
+   * this linits the size of LONG_DATE_MAP to prevent a potential mem leak. the size was
+   * chosen quite random so its subject to change.
+   */
+  private static final byte DATE_CACHE_SIZE = 50;
 
 
 
@@ -455,7 +460,15 @@ public class Date implements Comparable<Date>, Serializable
     String result = LONG_DATE_MAP.get(hashCode);
     if (result == null) {
       result = getFormattedString(true, true);
-      LONG_DATE_MAP.put(hashCode, result);
+      //check cache size!
+      if (LONG_DATE_MAP.size() < DATE_CACHE_SIZE)
+      {
+        LONG_DATE_MAP.put(hashCode, result);
+      }
+      else
+      {
+        System.err.println("Date.DATE_CACHE_SIZE is to small (" + Date.DATE_CACHE_SIZE + ")!");
+      }
     }
     return result;
   }
