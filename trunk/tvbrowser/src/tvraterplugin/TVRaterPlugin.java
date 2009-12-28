@@ -538,19 +538,25 @@ public class TVRaterPlugin extends devplugin.Plugin {
     if (!mStartFinished) {
       return;
     }
+    Collection<Rating> ratings = getDatabase().getServerRatings();
+    
+    // do not recalculate the tree if we have no rating database
+    if (ratings.size() == 0) {
+      return;
+    }
+    
     mRootNode.removeAllChildren();
 
-    // add top ratings for each category
-    HashMap<String, HashSet<PluginTreeNode>> titles = new HashMap<String, HashSet<PluginTreeNode>>();
-    
     // sort ratings by title, so the nodes in the tree are sorted
-    Collection<Rating> ratings = getDatabase().getServerRatings();
     Rating[] ratingsArr = new Rating[ratings.size()];
     ratings.toArray(ratingsArr);
     Arrays.sort(ratingsArr, new Comparator<Rating>() {
       public int compare(Rating arg0, Rating arg1) {
         return arg0.getTitle().compareTo(arg1.getTitle());
       }});
+    
+    // add top ratings for each category
+    HashMap<String, HashSet<PluginTreeNode>> titles = new HashMap<String, HashSet<PluginTreeNode>>();
     
     // find all ratings with high values
     ArrayList<PluginTreeNode> listOverall = new ArrayList<PluginTreeNode>();
