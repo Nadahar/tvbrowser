@@ -301,7 +301,7 @@ abstract public class IconTheme {
       if (other.getBase() != null) {
         return false;
       }
-    } else if (!getBase().getAbsolutePath().equals(other.getBase().getAbsolutePath())) {
+    } else if (!getBase().getAbsolutePath().equalsIgnoreCase(other.getBase().getAbsolutePath())) {
       return false;
     }
     return true;
