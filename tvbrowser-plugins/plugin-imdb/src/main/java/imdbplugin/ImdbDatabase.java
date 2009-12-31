@@ -325,19 +325,19 @@ public final class ImdbDatabase {
     return null;
   }
 
-  public String getMovieEpisodeId(final String title, final String episode, final String originalEpisode, final int year) {
+  public String getMovieEpisodeId(final String title, final String episode, final String originalTitle, final String originalEpisode, final int year) {
     if (mSearcher == null) {
       return null;
     }
     String id = getEpisodeId(title, episode, year);
-    if (id == null) {
-      id = getEpisodeId(title, originalEpisode, year);
+    if (id == null && originalTitle != null) {
+      id = getEpisodeId(originalTitle, originalEpisode, year);
     }
     return id;
   }
 
   private String getEpisodeId(final String title, final String episode, final int year) {
-    if (episode == null || episode.length() == 0) {
+    if (episode == null || episode.isEmpty()) {
       return null;
     }
     final String normalizedTitle = normalise(title);

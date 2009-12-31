@@ -162,6 +162,7 @@ public final class ImdbPlugin extends Plugin {
   public ImdbRating getEpisodeRating(final Program program) {
     return mImdbDatabase.getRatingForId(mImdbDatabase.getMovieEpisodeId(program
         .getTitle(), program.getTextField(ProgramFieldType.EPISODE_TYPE),
+        program.getTextField(ProgramFieldType.ORIGINAL_TITLE_TYPE),
         program.getTextField(ProgramFieldType.ORIGINAL_EPISODE_TYPE), program
             .getIntField(ProgramFieldType.PRODUCTION_YEAR_TYPE)));
   }
@@ -218,7 +219,7 @@ public final class ImdbPlugin extends Plugin {
     JOptionPane.showMessageDialog(UiUtilities
         .getBestDialogParent(getParentFrame()), message.toString());     */
 
-    ImdbRatingsDialog dialog = new ImdbRatingsDialog(this, getParentFrame(), program);
+    ImdbRatingsDialog dialog = new ImdbRatingsDialog(getParentFrame(), program);
     UiUtilities.centerAndShow(dialog);
   }
 

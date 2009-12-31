@@ -1,13 +1,23 @@
 package imdbplugin;
 
-import com.jgoodies.forms.builder.ButtonBarBuilder2;
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.RowSpec;
-import com.jgoodies.forms.layout.Sizes;
-import devplugin.Program;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.Paint;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JEditorPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -18,23 +28,21 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.general.DatasetUtilities;
+
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 import util.ui.html.ExtendedHTMLDocument;
 import util.ui.html.ExtendedHTMLEditorKit;
 
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JEditorPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.SwingUtilities;
-import java.awt.Color;
-import java.awt.Frame;
-import java.awt.Paint;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import com.jgoodies.forms.builder.ButtonBarBuilder2;
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.RowSpec;
+
+import devplugin.Program;
 
 public class ImdbRatingsDialog extends JDialog implements WindowClosingIf {
   /**
@@ -42,47 +50,44 @@ public class ImdbRatingsDialog extends JDialog implements WindowClosingIf {
    */
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(ImdbRatingsDialog.class);
 
-  private Program program;
-  private ImdbPlugin plugin;
+  private Program mProgram;
 
-  public ImdbRatingsDialog(ImdbPlugin plug, Frame parentFrame, Program prog) {
+  public ImdbRatingsDialog(final Frame parentFrame, final Program prog) {
     super(UiUtilities.getBestDialogParent(parentFrame));
     setModal(true);
-    program = prog;
-    plugin = plug;
+    mProgram = prog;
     createGui();
     UiUtilities.registerForClosing(this);
   }
 
   private void createGui() {
-    setTitle(mLocalizer.msg("title", "ImdB Rating for {0}", program.getTitle()));
+    setTitle(mLocalizer.msg("title", "IMDb Rating for {0}", mProgram.getTitle()));
 
+    CellConstraints cc = new CellConstraints();
     final FormLayout layout = new FormLayout("fill:min:grow");
     final PanelBuilder panel = new PanelBuilder(layout, (JPanel) getContentPane());
 
     panel.setBorder(Borders.DLU4_BORDER);
 
+    ImdbRating rating = ImdbPlugin.getInstance().getProgramRating(mProgram);
+    ImdbRating episodeRating = ImdbPlugin.getInstance().getEpisodeRating(mProgram);
+    JComponent mainComponent;
+		if (episodeRating != null) {
+    	JTabbedPane pane = new JTabbedPane();
+    	JComponent editor = createEditor(rating);
+      editor.setBorder(BorderFactory.createEmptyBorder());
+			pane.addTab(mLocalizer.msg("rating", "Rating"), editor);
+			editor = createEditor(episodeRating);
+      editor.setBorder(BorderFactory.createEmptyBorder());
+    	pane.addTab(mLocalizer.msg("episodeRating", "Rating of Episode"), editor);
+    	mainComponent = pane;
+    }
+		else {
+			mainComponent = createEditor(rating);
+		}
+    
     layout.appendRow(RowSpec.decode("fill:min:grow"));
-
-    JEditorPane editor = new JEditorPane();
-    editor.setEditorKit(new ExtendedHTMLEditorKit());
-    editor.setText(createText((ExtendedHTMLDocument)editor.getDocument()));
-    editor.setEditable(false);
-    editor.setBackground(Color.WHITE);
-    editor.setOpaque(true);
-
-    CellConstraints cc = new CellConstraints();
-
-    final JScrollPane scroll = new JScrollPane(editor);
-    // Scroll to the beginning
-    Runnable runnable = new Runnable() {
-      public void run() {
-        scroll.getVerticalScrollBar().setValue(0);
-      }
-    };
-    SwingUtilities.invokeLater(runnable);
-
-    panel.add(scroll, cc.xy(1,panel.getRowCount()));
+    panel.add(mainComponent, cc.xy(1,panel.getRowCount()));
 
     layout.appendRow(RowSpec.decode("3dlu"));
     layout.appendRow(RowSpec.decode("pref"));
@@ -101,79 +106,92 @@ public class ImdbRatingsDialog extends JDialog implements WindowClosingIf {
     panel.add(buttonBuilder.getPanel(), cc.xy(1,panel.getRowCount()));
 
     getRootPane().setDefaultButton(okButton);
-    setSize(Sizes.dialogUnitXAsPixel(300, this),
-            Sizes.dialogUnitXAsPixel(200, this));
+    pack();
+    UiUtilities.setSize(this, 500, 450);
   }
 
-  private String createText(ExtendedHTMLDocument doc) {
+	private JComponent createEditor(final ImdbRating rating) {
+		JEditorPane editor = new JEditorPane();
+    editor.setEditorKit(new ExtendedHTMLEditorKit());
+    editor.setText(createText((ExtendedHTMLDocument)editor.getDocument(), rating));
+    editor.setEditable(false);
+    editor.setBackground(Color.WHITE);
+    editor.setOpaque(true);
+    editor.setBorder(BorderFactory.createEmptyBorder());
+
+    final JScrollPane scroll = new JScrollPane(editor);
+    // Scroll to the beginning
+    Runnable runnable = new Runnable() {
+      public void run() {
+        scroll.getVerticalScrollBar().setValue(0);
+      }
+    };
+    SwingUtilities.invokeLater(runnable);
+		return scroll;
+	}
+
+  private String createText(final ExtendedHTMLDocument doc, final ImdbRating rating) {
     StringBuilder builder = new StringBuilder();
-
-    ImdbRating episode = plugin.getEpisodeRating(program);
-    if (episode != null) {
-      builder.append("<h3>").append(mLocalizer.msg("episodeRating", "Rating of Episode")).append(":</h3>");
-      builder.append("<p style='margin-left:10px'>");
-      builder.append(makeTextForRating(doc, episode));
-      builder.append("</p>");
-      builder.append("<br><hr>");
-    }
-
-    ImdbRating rating = plugin.getProgramRating(program);
-    builder.append("<h3>").append(mLocalizer.msg("rating", "Rating")).append(":</h3>");
     builder.append("<p style='margin-left:10px'>");
     builder.append(makeTextForRating(doc, rating));
     builder.append("</p>");
-
     return builder.toString();
   }
 
-  private String makeTextForRating(ExtendedHTMLDocument doc, ImdbRating rating) {
+  private String makeTextForRating(final ExtendedHTMLDocument doc, final ImdbRating rating) {
     final StringBuilder builder = new StringBuilder();
-    final ImdbMovie movie = plugin.getDatabase().getMovieForId(rating.getMovieId());
+    final ImdbMovie movie = ImdbPlugin.getInstance().getDatabase().getMovieForId(rating.getMovieId());
 
     builder.append("<b>").append(movie.getTitle());
+    final String episode = movie.getEpisode();
+		if (episode != null && episode.length() > 0) {
+      builder.append(" - <i>").append(episode).append("</i>");
+    }
     if (movie.getYear() > 0) {
       builder.append(" (").append(movie.getYear()).append(")");
     }
     builder.append("</b><br>");
 
-    if (movie.getEpisode() != null && movie.getEpisode().length() > 0) {
-      builder.append("<i>").append(movie.getEpisode()).append("</i>").append("<br>");
-    }
-
-    builder.append("<br>");
-
-    builder.append(mLocalizer.msg("rating", "Rating")).append(": <i><b>").append(rating.getRatingText()).append("</b>/10</i> - ");
-    builder.append(mLocalizer.msg("votes", "votes")).append(" : <i><b>").append(rating.getVotes()).append("</b></i><br><br>");
-    builder.append(mLocalizer.msg("distribution", "Distribution")).append(":<br>");
+    builder.append(mLocalizer.msg("rating", "Rating")).append(": <b>").append(rating.getRatingText()).append("</b> ").append(mLocalizer.msg("ofTen", "of 10")).append("<br>");
+    builder.append(mLocalizer.msg("votes", "votes")).append(": <b>").append(rating.getVotes()).append("</b><br><br>");
 
     builder.append(doc.createCompTag(createChartForRating(rating))).append("<br>");
 
     ImdbAka[] akas = movie.getAkas();
     if (akas.length > 0) {
-      builder.append("<br>").append(mLocalizer.msg("alternativeTitle", "Alternative title")).append(":<br><ul>");
-      for (final ImdbAka aka:movie.getAkas()) {
-        builder.append("<li>");
-        builder.append(aka.getTitle());
-        if (aka.getEpisode() != null && aka.getEpisode().length() > 0) {
-          builder.append(" - ").append(aka.getEpisode());
-        }
-        builder.append(" (").append(aka.getYear()).append(")");
-        builder.append("</li>");
+      builder.append("<br>").append(mLocalizer.msg("alternativeTitle", "Alternative title")).append(": ");
+      if (akas.length == 1) {
+        appendAkaTitle(builder, akas[0]);
       }
-      builder.append("</ul>");
-
+      else {
+      	builder.append("<br><ul>");
+	      for (final ImdbAka aka : akas) {
+        	builder.append("<li>");
+	        appendAkaTitle(builder, aka);
+        	builder.append("</li>");
+	      }
+        builder.append("</ul>");
+      }
     }
 
     return builder.toString();
   }
 
-  private ChartPanel createChartForRating(ImdbRating rating) {
+	private void appendAkaTitle(final StringBuilder builder, final ImdbAka aka) {
+		builder.append(aka.getTitle());
+		if (aka.getEpisode() != null && aka.getEpisode().length() > 0) {
+		  builder.append(" - ").append(aka.getEpisode());
+		}
+		builder.append(" (").append(aka.getYear()).append(")");
+	}
+
+  private ChartPanel createChartForRating(final ImdbRating rating) {
     final JFreeChart chart = ChartFactory.createBarChart(
         null,         // chart title
         mLocalizer.msg("rating", "Rating"),                 // domain axis label
-        mLocalizer.msg("votesInPrecent","Votes in %"),                // range axis label
+        mLocalizer.msg("votesInPercent","Votes in %"),                // range axis label
         createDataSet(rating),      // data
-        PlotOrientation.HORIZONTAL, // orientation
+        PlotOrientation.VERTICAL, // orientation
         false,                       // include legend
         true,
         false
@@ -187,30 +205,32 @@ public class ImdbRatingsDialog extends JDialog implements WindowClosingIf {
     BarRenderer renderer = new BarRenderer(){
       @Override
       public Paint getItemPaint(int row, int column) {
-        return Color.yellow;
+        return UIManager.getColor("TextPane.selectionBackground");
       }
     };
     renderer.setDrawBarOutline(false);
-
     plot.setRenderer(renderer);
 
     final NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
     rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
 
-    return new ChartPanel(chart);
+    ChartPanel chartPanel = new ChartPanel(chart);
+    chartPanel.setPreferredSize(new Dimension(300, 200));
+		return chartPanel;
   }
 
-  private CategoryDataset createDataSet(ImdbRating rating) {
+  private CategoryDataset createDataSet(final ImdbRating rating) {
     final double[][] data = new double[1][10];
 
     String dist = rating.getDistribution();
     for (int i=0;i<10;i++){
-      if (dist.charAt(i) == '.') {
+      char character = dist.charAt(i);
+			if (character == '.') {
         data[0][i] = 0;
-      } else if (dist.charAt(i) == '*') {
+      } else if (character == '*') {
         data[0][i] = 100;
       } else {
-        data[0][i] = (Integer.parseInt(""+dist.charAt(i))) * 10 + 5;
+        data[0][i] = (character - '0') * 10 + 5;
       }
     }
 
