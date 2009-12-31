@@ -528,4 +528,8 @@ public class SelectableItemList extends JPanel {
       }
     }
   }
+
+  public int getItemCount() {
+    return mListModel.getSize();
+  }
 }
