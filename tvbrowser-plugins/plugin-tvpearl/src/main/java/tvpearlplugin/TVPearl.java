@@ -56,6 +56,7 @@ public class TVPearl {
   private List<TVPProgram> mProgramList;
   private Calendar mLastUpdate;
   private boolean mReindexAll = true;
+  private static final TVPProgram EXAMMPLE_PEARL = new TVPProgram("Me", "http://hilfe.tvbrowser.org", Calendar.getInstance(), "Example", "Channel", Calendar.getInstance(), "Info", "ID");
 
   public TVPearl() {
     mProgramList = new ArrayList<TVPProgram>();
@@ -207,6 +208,9 @@ public class TVPearl {
   }
 
   public synchronized TVPProgram getPearl(final Program program) {
+    if (program.equals(TVPearlPlugin.getInstance().getPluginManager().getExampleProgram())) {
+      return EXAMMPLE_PEARL;
+    }
     for (TVPProgram p : mProgramList) {
       if (p.getProgramID().equalsIgnoreCase(program.getID()) && program.getDate().equals(p.getDate())) {
         return p;
