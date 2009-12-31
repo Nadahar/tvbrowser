@@ -555,7 +555,7 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 
       @Override
       public String getSubName() {
-        return mLocalizer.msg("name", "TV Pearl");
+        return "";
       }
 
       public boolean accept(Program program) {
