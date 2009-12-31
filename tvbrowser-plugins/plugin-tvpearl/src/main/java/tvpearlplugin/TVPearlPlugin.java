@@ -44,9 +44,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 
-import devplugin.PluginsFilterComponent;
-import devplugin.PluginsProgramFilter;
-import devplugin.ProgramRatingIf;
 import util.paramhandler.ParamParser;
 import util.program.LocalPluginProgramFormating;
 import util.ui.Localizer;
@@ -55,7 +52,10 @@ import devplugin.ActionMenu;
 import devplugin.ContextMenuAction;
 import devplugin.PluginInfo;
 import devplugin.PluginTreeNode;
+import devplugin.PluginsFilterComponent;
+import devplugin.PluginsProgramFilter;
 import devplugin.Program;
+import devplugin.ProgramRatingIf;
 import devplugin.ProgramReceiveIf;
 import devplugin.ProgramReceiveTarget;
 import devplugin.SettingsTab;
@@ -217,7 +217,7 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 
 	public ActionMenu getContextMenuActions(final Program program)
 	{
-	  final TVPProgram p = mTVPearls.getPearl(program);
+	  final TVPProgram p = getPearl(program);
 
 		if (p != null || program.getID() == null)
 		{
@@ -229,7 +229,7 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 			{
 				public void actionPerformed(final ActionEvent event)
 				{
-					showPearlInfo(mTVPearls.getPearl(program));
+					showPearlInfo(getPearl(program));
 				}
 			});
 
@@ -559,9 +559,15 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
       }
 
       public boolean accept(Program program) {
-        return mTVPearls.getPearl(program) != null;
+        return hasPearl(program);
       }
     }};
+  }
+  
+  @Override
+  @SuppressWarnings("unchecked")
+  public Class<? extends PluginsFilterComponent>[] getAvailableFilterComponentClasses() {
+  	return (Class<? extends PluginsFilterComponent>[]) new Class[] {PearlFilterComponent.class};
   }
 
   @Override
@@ -577,26 +583,37 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
       }
 
       public int getRatingForProgram(Program program) {
-        if (mTVPearls.getPearl(program) != null) {
+        if (getPearl(program) != null) {
           return 100;
         }
         return -1;
       }
 
       public Icon getIconForProgram(Program program) {
-        if (mTVPearls.getPearl(program) != null) {
+        if (getPearl(program) != null) {
           return createImageIcon("actions", "pearl", 16);
         }
         return null;
       }
 
       public boolean hasDetailsDialog() {
-        return false;
+        return true;
       }
 
-      public void showDetailsFor(Program program) {
-        // NOP
+      public void showDetailsFor(final Program program) {
+        TVPProgram pearl = getPearl(program);
+        if (pearl != null) {
+        	showPearlInfo(pearl);
+        }
       }
     }};
   }
+
+	boolean hasPearl(final Program program) {
+		return getPearl(program) != null;
+	}
+
+	private TVPProgram getPearl(final Program program) {
+		return mTVPearls.getPearl(program);
+	}
 }
