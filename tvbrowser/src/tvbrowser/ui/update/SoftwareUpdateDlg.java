@@ -136,6 +136,7 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
       boolean onlyUpdate, SoftwareUpdateItem[] itemArr) {
     this(parent, null, onlyUpdate, itemArr);
     mSoftwareUpdateItemList.selectAll();
+    mDownloadBtn.setEnabled(mSoftwareUpdateItemList.getItemCount() > 0);
   }
 
   private void createGui(String downloadUrl, boolean onlyUpdate, SoftwareUpdateItem[] itemArr) {
