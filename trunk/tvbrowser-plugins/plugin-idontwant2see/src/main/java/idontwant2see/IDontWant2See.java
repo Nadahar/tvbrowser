@@ -123,16 +123,6 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
     mInstance = this;
     mSettings = new IDontWant2SeeSettings();
     mDateWasSet = false;
-    
-    mFilter = new PluginsProgramFilter(this) {
-      public String getSubName() {
-        return "";
-      }
-
-      public boolean accept(final Program prog) {
-        return acceptInternal(prog);
-      }
-    };
   }
   
   protected static IDontWant2See getInstance() {
@@ -427,7 +417,7 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         if(!update) {
-          getPluginManager().getFilterManager().setCurrentFilter(mFilter);
+          getPluginManager().getFilterManager().setCurrentFilter(getFilter());
         }
         else {
           getPluginManager().getFilterManager().setCurrentFilter(getPluginManager().getFilterManager().getCurrentFilter());
@@ -438,7 +428,22 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
   }
   
   public PluginsProgramFilter[] getAvailableFilter() {
-    return new PluginsProgramFilter[] {mFilter};
+    return new PluginsProgramFilter[] {getFilter()};
+  }
+
+  private PluginsProgramFilter getFilter() {
+    if (mFilter == null) {
+      mFilter = new PluginsProgramFilter(mInstance) {
+        public String getSubName() {
+          return "";
+        }
+
+        public boolean accept(final Program prog) {
+          return acceptInternal(prog);
+        }
+      };
+    }
+    return mFilter;
   }
   
   public void readData(final ObjectInputStream in) throws IOException,
