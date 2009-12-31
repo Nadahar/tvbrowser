@@ -196,29 +196,6 @@ public final class ImdbPlugin extends Plugin {
   }
 
   private void showRatingDialog(final Program program) {
-/*    final ImdbRating episodeRating = getEpisodeRating(program);
-    final ImdbRating rating = getProgramRating(program);
-    final StringBuilder message = new StringBuilder();
-    final String title = program.getTitle();
-    if (rating != null || episodeRating != null) {
-      if (episodeRating != null) {
-        message.append(ratingMessage(title + " - "
-            + program.getTextField(ProgramFieldType.EPISODE_TYPE),
-            episodeRating));   
-      }
-      if (rating != null) {
-        if (message.length() > 0) {
-          message.append("\n\n");
-        }
-        message.append(ratingMessage(title, rating));
-      }
-    }
-    else {
-      message.append(mLocalizer.msg("noRating", "No rating found!", title));
-    }
-    JOptionPane.showMessageDialog(UiUtilities
-        .getBestDialogParent(getParentFrame()), message.toString());     */
-
     ImdbRatingsDialog dialog = new ImdbRatingsDialog(getParentFrame(), program);
     UiUtilities.centerAndShow(dialog);
   }
