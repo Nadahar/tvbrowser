@@ -47,7 +47,7 @@ public class TVPGrabber
    * regular expression to grab the URL of the next forum page
    */
   private static final Pattern PATTERN_NEXT_URL = Pattern
-      .compile("<a href=\"([^\"]*?)\"[^>]*>Nächste</a>");
+      .compile("<a href=\"([^\"]*?)\"[^>]*>N\u00e4chste</a>");
 
   /**
    * format of the post create date

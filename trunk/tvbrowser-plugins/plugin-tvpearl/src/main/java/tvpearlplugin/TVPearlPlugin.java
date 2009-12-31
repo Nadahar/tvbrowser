@@ -44,6 +44,9 @@ import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 
+import devplugin.PluginsFilterComponent;
+import devplugin.PluginsProgramFilter;
+import devplugin.ProgramRatingIf;
 import util.paramhandler.ParamParser;
 import util.program.LocalPluginProgramFormating;
 import util.ui.Localizer;
@@ -546,4 +549,54 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
     return false;
   }
 
+  @Override
+  public PluginsProgramFilter[] getAvailableFilter() {
+    return new PluginsProgramFilter[] { new PluginsProgramFilter(this){
+
+      @Override
+      public String getSubName() {
+        return mLocalizer.msg("name", "TV Pearl");
+      }
+
+      public boolean accept(Program program) {
+        return mTVPearls.getPearl(program) != null;
+      }
+    }};
+  }
+
+  @Override
+  public ProgramRatingIf[] getRatingInterfaces() {
+    return new ProgramRatingIf[] { new ProgramRatingIf(){
+
+      public String getName() {
+        return mLocalizer.msg("name", "TV Pearl");
+      }
+
+      public Icon getIcon() {
+        return createImageIcon("actions", "pearl", 16);
+      }
+
+      public int getRatingForProgram(Program program) {
+        if (mTVPearls.getPearl(program) != null) {
+          return 100;
+        }
+        return -1;
+      }
+
+      public Icon getIconForProgram(Program program) {
+        if (mTVPearls.getPearl(program) != null) {
+          return createImageIcon("actions", "pearl", 16);
+        }
+        return null;
+      }
+
+      public boolean hasDetailsDialog() {
+        return false;
+      }
+
+      public void showDetailsFor(Program program) {
+        // NOP
+      }
+    }};
+  }
 }
