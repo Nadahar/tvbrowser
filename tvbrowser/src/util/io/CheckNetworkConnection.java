@@ -65,7 +65,6 @@ class CheckNetworkConnection {
   private final static String[] CHECK_URLS = {
     "http://www.google.com/",
     "http://www.yahoo.com/",
-    "http://www.lycos.com/",
     "http://www.bing.com/"
   };
 
