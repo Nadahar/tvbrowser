@@ -62,7 +62,7 @@ public class BlogThisPlugin extends Plugin {
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(BlogThisPlugin.class);
 
   /** Default URLs */
-  public static final String URL_WORDPRESS = "http://yoursite.com/wordpress/wp-admin/bookmarklet.php";
+  public static final String URL_WORDPRESS = "http://yoursite.com/wordpress/wp-admin/press-this.php";
 
   public static final String URL_B2EVOLUTION = "http://yourblog.com/admin.php";
 
@@ -207,10 +207,9 @@ public class BlogThisPlugin extends Plugin {
     } else if (mSettings.getBlogService() == BlogService.WordPress) {
       StringBuilder toUrl = new StringBuilder(mSettings.getBlogUrl(URL_WORDPRESS));
 
-      toUrl.append("?popuptitle=").append(URLEncoder.encode(title, "UTF-8"));
-      toUrl.append("&text=").append(URLEncoder.encode(content, "UTF-8"));
-      toUrl.append("&popupurl=").append(URLEncoder.encode(url, "UTF-8"));
-      toUrl.append("&sourceid=").append(URLEncoder.encode("TV-Browser", "UTF-8"));
+      toUrl.append("?t=").append(URLEncoder.encode(title, "UTF-8"));
+      toUrl.append("&s=").append(URLEncoder.encode(content, "UTF-8"));
+      toUrl.append("&u=").append(URLEncoder.encode(url, "UTF-8"));
 
       return toUrl.toString();
     } else if (mSettings.getBlogService() == BlogService.B2Evolution) {
