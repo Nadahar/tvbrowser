@@ -110,8 +110,7 @@ public class ToolBarDragAndDropSettings extends JDialog implements
 
     UiUtilities.registerForClosing(this);
 
-    this.getContentPane().setLayout(
-        new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
+    this.getContentPane().setLayout(new FormLayout("fill:pref:grow", "pref, 3dlu, fill:min:grow, 3dlu, pref, 3dlu, pref"));
     ((JPanel) this.getContentPane()).setBorder(BorderFactory.createEmptyBorder(
         0, 6, 2, 6));
 
@@ -240,10 +239,10 @@ public class ToolBarDragAndDropSettings extends JDialog implements
     mLocationCB.addActionListener(this);
 
     // Add the components to the window
-    this.getContentPane().add(tVisPanel);
-    this.getContentPane().add(pane);
-    this.getContentPane().add(tSetPanel);
-    this.getContentPane().add(okButtonPanel);
+    this.getContentPane().add(tVisPanel, cc.xy(1,1));
+    this.getContentPane().add(pane, cc.xy(1,3));
+    this.getContentPane().add(tSetPanel, cc.xy(1,5));
+    this.getContentPane().add(okButtonPanel, cc.xy(1,7));
 
     // Set up the windows attributes
     this.setSize(630, 400);
