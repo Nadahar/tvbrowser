@@ -88,7 +88,8 @@ public class WebPlugin extends Plugin {
       new WebAddress("Wikipedia (DE)", "http://de.wikipedia.org/wiki/Spezial:Search?search={urlencode(" + WEBSEARCH_ALL + ", \"ISO-8859-1\")}", null, false, Locale.getDefault().equals(Locale.GERMAN)),
       new WebAddress("Wikipedia (EN)", "http://en.wikipedia.org/wiki/Spezial:Search?search={urlencode(" + WEBSEARCH_ALL + ", \"ISO-8859-1\")}", null, false, Locale.getDefault().equals(Locale.ENGLISH)),
       new WebAddress(mLocalizer.msg("programPage", "Open website of program"),PROGRAM_SITE,null,false,true),
-      new WebAddress(mLocalizer.msg("channelPageGeneral", "Open website of channel"),CHANNEL_SITE,null,false,true)
+      new WebAddress(mLocalizer.msg("channelPageGeneral", "Open website of channel"),CHANNEL_SITE,null,false,true),
+      new WebAddress("moviepilot", "http://www.moviepilot.de/searches?q={urlencode(" + WEBSEARCH_ALL + ", \"UTF-8\")}", null, false, true),
   };
 
   /** The WebAddresses */
