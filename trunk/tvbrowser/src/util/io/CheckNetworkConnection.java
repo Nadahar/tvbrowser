@@ -50,7 +50,7 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 /**
- * Checks the Network and creates a Waiting-Dialog if neccesarry
+ * Checks the Network and creates a Waiting-Dialog if necessary
  * @since 2.2
  */
 class CheckNetworkConnection {
@@ -62,6 +62,12 @@ class CheckNetworkConnection {
 
   private JDialog mWaitingDialog;
 
+  private final static String[] CHECK_URLS = {
+    "http://www.google.com/",
+    "http://www.yahoo.com/",
+    "http://www.lycos.com/",
+    "http://www.bing.com/"
+  };
 
   /**
    * Check the Network
@@ -70,12 +76,12 @@ class CheckNetworkConnection {
    */
   public boolean checkConnection() {
     try {
-      String[] checkUrls = {"http://www.google.com/",
-                        "http://www.yahoo.com/",
-                        "http://tvbrowser.org"};
-      
-      for (String url : checkUrls) {
-        if(!Settings.propInternetConnectionCheck.getBoolean() || checkConnection(new URL(url))) {
+      // if checking is disabled, always assume existing connection
+      if (!Settings.propInternetConnectionCheck.getBoolean()) {
+        return true;
+      }
+      for (String url : CHECK_URLS) {
+        if (checkConnection(new URL(url))) {
           return true;
         }
       }
@@ -202,6 +208,10 @@ class CheckNetworkConnection {
       }
       mWaitingDialog.setVisible(mCheckRunning && MainFrame.getInstance().isVisible() && MainFrame.getInstance().getExtendedState() != Frame.ICONIFIED);
     }
+  }
+
+  public static String[] getUrls() {
+    return CHECK_URLS;
   }
 
 }
