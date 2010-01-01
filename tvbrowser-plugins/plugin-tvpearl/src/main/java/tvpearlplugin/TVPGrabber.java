@@ -38,6 +38,16 @@ import util.io.IOUtilities;
 public class TVPGrabber
 {
   /**
+   * do not parse anything which was created more than a month ago
+   */
+  private static final Date MIN_CREATION_DATE;
+  static {
+  	Calendar cal = Calendar.getInstance();
+  	cal.add(Calendar.MONTH, -1);
+  	MIN_CREATION_DATE = cal.getTime();
+  }
+
+	/**
    * regular expression to grab the content of a TV pearl
    */
   private static final Pattern PATTERN_CONTENT = Pattern
@@ -65,32 +75,22 @@ public class TVPGrabber
 		mConverter = new HTTPConverter();
 	}
 
-	public boolean getOnlyProgramInFuture()
+	boolean getOnlyProgramInFuture()
 	{
 		return mOnlyProgramInFuture;
 	}
 
-	public void setOnlyProgrammInFuture(final boolean onlyProgrammInFuture)
+	void setOnlyProgrammInFuture(final boolean onlyProgrammInFuture)
 	{
 		mOnlyProgramInFuture = onlyProgrammInFuture;
 	}
 
-	public boolean getRecusiveGrab()
-	{
-		return mRecursiveGrab;
-	}
-
-	public void setRecusiveGrab(final boolean recursive)
-	{
-		mRecursiveGrab = recursive;
-	}
-
-	public String getLastUrl()
+	String getLastUrl()
 	{
 		return lastUrl;
 	}
 
-	public List<TVPProgram> parse(final String url)
+	List<TVPProgram> parse(final String url)
 	{
 	  final List<TVPProgram> programList = new ArrayList<TVPProgram>();
 
@@ -207,9 +207,9 @@ public class TVPGrabber
 			//itemContent = itemContent.replaceAll("_+__<br[\\w\\W]+$", "");
 			itemContent = itemContent.replace("\n", "").replace("<br />", "\n").replaceAll("<.*?>", "");
 
-			if (createDate != null)
+			if (createDate != null && createDate.after(MIN_CREATION_DATE))
 			{
-				containsInfo(itemContent, author, contentUrl, createDate, programList);
+				parseInfo(itemContent, author, contentUrl, createDate, programList);
 			}
 		}
 	}
@@ -234,7 +234,7 @@ public class TVPGrabber
     return null;
   }
 
-	private void containsInfo(final String value, final String author,
+	private void parseInfo(final String value, final String author,
       final String contentUrl,
       final Date createDate,
       final List<TVPProgram> programList)
