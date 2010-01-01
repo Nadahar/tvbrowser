@@ -143,4 +143,8 @@ public class NetworkUtilities {
     return 0;
   }
 
+  public static String[] getConnectionCheckUrls() {
+    return CheckNetworkConnection.getUrls();
+  }
+
 }
