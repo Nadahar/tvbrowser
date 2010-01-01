@@ -580,7 +580,9 @@ private static Font getDynamicFontSize(Font font, int offset) {
       int[] infoBits = ProgramInfoHelper.getInfoBits();
       Icon[] infoIcons = ProgramInfoHelper.getInfoIcons();
       for (int pluginIdx = 0; pluginIdx < iconPluginArr.length; pluginIdx++) {
-        if (iconPluginArr[pluginIdx].compareTo(Settings.INFO_ID) == 0) {
+        System.out.println(iconPluginArr[pluginIdx]);
+
+        if (iconPluginArr[pluginIdx].equals(Settings.INFO_ID)) {
           // old style format (with all icons)
           if ((info != -1) && (info != 0)) {
             for (int i = 0; i < infoBits.length; i++) {
@@ -591,12 +593,12 @@ private static Font getDynamicFontSize(Font font, int offset) {
               }
             }
           }
-        } else if (iconPluginArr[pluginIdx].compareTo(Settings.PICTURE_ID) == 0) {
+        } else if (iconPluginArr[pluginIdx].equals(Settings.PICTURE_ID)) {
           // picture icon
           if (mProgram.hasFieldValue(ProgramFieldType.PICTURE_TYPE)) {
             iconList.add(new ImageIcon("imgs/Info_HasPicture.png"));
           }
-        } else if (iconPluginArr[pluginIdx].substring(0, 6).compareTo("FORMAT") == 0) {
+        } else if (iconPluginArr[pluginIdx].startsWith("FORMAT")) {
           // new style format (each icon separately)
           if ((info != -1) && (info != 0)) {
             int index = Integer.valueOf(iconPluginArr[pluginIdx].substring(7));
