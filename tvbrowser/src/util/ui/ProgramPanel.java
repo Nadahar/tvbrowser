@@ -580,7 +580,6 @@ private static Font getDynamicFontSize(Font font, int offset) {
       int[] infoBits = ProgramInfoHelper.getInfoBits();
       Icon[] infoIcons = ProgramInfoHelper.getInfoIcons();
       for (int pluginIdx = 0; pluginIdx < iconPluginArr.length; pluginIdx++) {
-        System.out.println(iconPluginArr[pluginIdx]);
 
         if (iconPluginArr[pluginIdx].equals(Settings.INFO_ID)) {
           // old style format (with all icons)
