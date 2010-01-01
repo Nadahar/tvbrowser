@@ -19,6 +19,7 @@ package tvbrowser.ui.finder.calendar;
 import java.awt.BorderLayout;
 import java.awt.Font;
 
+import java.awt.Point;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
@@ -86,6 +87,13 @@ public class CalendarTablePanel extends AbstractCalendarPanel implements ListSel
 
     setCurrentDate(date);
     mTableModel.setCurrentDate(date);
+
+    Point position = mTableModel.getPositionOfDate(date);
+    if (position != null) {
+      mTable.setColumnSelectionInterval(position.x, position.x);
+      mTable.setRowSelectionInterval(position.y, position.y);
+    }
+
     if (mDateChangedListener == null) {
       return;
     }

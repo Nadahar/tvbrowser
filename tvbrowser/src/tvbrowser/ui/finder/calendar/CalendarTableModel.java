@@ -16,6 +16,7 @@
  */
 package tvbrowser.ui.finder.calendar;
 
+import java.awt.Point;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -81,5 +82,17 @@ public final class CalendarTableModel extends AbstractTableModel {
     return mCurrentDate;
   }
   
-  
+  public Point getPositionOfDate(Date date) {
+    for (int row = 0;row < ROWS;row++) {
+      for (int column = 0;column < COLUMNS;column++) {
+        if (mDate[row][column].equals(date)) {
+          return new Point(column, row);
+        }
+      }
+    }
+
+    return null;
+  }
+
+
 }
