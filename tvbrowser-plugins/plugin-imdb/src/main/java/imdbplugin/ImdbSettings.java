@@ -33,7 +33,7 @@ final class ImdbSettings {
    * incremented to reflect that a new import of the data is necessary.
    * </p>
    */
-  private static final int CURRENT_DATABASE_VERSION = 4;
+  private static final int CURRENT_DATABASE_VERSION = 5;
   private static final String KEY_MINIMUM_RATING = "minimum rating";
   
   private Properties mProperties;
