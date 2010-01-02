@@ -16,6 +16,9 @@ public class IDontWant2SeeSettings {
   private Date mLastUsedDate = Date.getCurrentDate();
   private ArrayList<IDontWant2SeeListEntry> mSearchList = new ArrayList<IDontWant2SeeListEntry>();
 
+  //TODO After 3.0 release use value from Program class
+  private byte mProgramImportance = 3;
+
   public IDontWant2SeeSettings() {
   }
 
@@ -61,4 +64,11 @@ public class IDontWant2SeeSettings {
     IDontWant2See.getInstance().clearCache();
   }
 
+  public byte getProgramImportance() {
+    return mProgramImportance;
+  }
+  
+  public void setProgramImportance(final byte programImportance) {
+    mProgramImportance = programImportance;
+  }
 }

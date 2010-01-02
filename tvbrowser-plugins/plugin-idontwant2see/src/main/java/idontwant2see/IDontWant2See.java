@@ -147,6 +147,15 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
     mCurrentDate = Date.getCurrentDate();
   }
   
+  public byte getImportanceForProgram(Program p) {
+    if(!acceptInternal(p)) {
+      return mSettings.getProgramImportance();
+    }
+    
+  //TODO After 3.0 release user values from Program class
+    return /*Program.DEFAULT_PROGRAM_IMPORTANCE*/ -1;
+  }
+  
   protected boolean acceptInternal(final Program program) {
     if(!mDateWasSet) {
       mSettings.setLastUsedDate(getCurrentDate());
@@ -345,6 +354,7 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
       public void actionPerformed(final ActionEvent e) {
         final int index = getSearchTextIndexForProgram(p);
         mSettings.getSearchList().remove(index);
+        
         updateFilter(!mSettings.isSwitchToMyFilter());
       }
     };
@@ -414,6 +424,8 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
   }
   
   void updateFilter(final boolean update) {
+    clearCache();
+    
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         if(!update) {
@@ -424,6 +436,7 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
         }
       }
     });
+    
     saveMe();
   }
   
@@ -486,6 +499,14 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
       if(version >= 6) {
         mSettings.setLastUsedDate(new Date(in));
       }
+      if(version >= 7) {
+        mSettings.setProgramImportance(in.readByte());
+      }
+      else {
+        //TODO After 3.0 release user values from Program class
+        mSettings.setProgramImportance((byte)3);
+        //mSettings.setProgramImportance(Program.DEFAULT_PROGRAM_IMPORTANCE);
+      }
     }
   }
   
@@ -498,7 +519,7 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
       }
     });
     
-    out.writeInt(6); //version
+    out.writeInt(7); //version
     out.writeInt(mSettings.getSearchList().size());
     
     for(IDontWant2SeeListEntry entry : mSettings.getSearchList()) {
@@ -511,6 +532,8 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
     out.writeUTF(mSettings.getLastEnteredExclusionString());
     
     mSettings.getLastUsedDate().writeData(out);
+    
+    out.writeByte(mSettings.getProgramImportance());
   }
   
   public SettingsTab getSettingsTab() {
@@ -559,6 +582,16 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
   
   @Override
   public void onActivation() {
+    mFilter = new PluginsProgramFilter(this) {
+      public String getSubName() {
+        return "";
+      }
+
+      public boolean accept(final Program prog) {
+        return acceptInternal(prog);
+      }
+    };
+    
     Toolkit.getDefaultToolkit().addAWTEventListener(this,
         AWTEvent.KEY_EVENT_MASK);
   }
