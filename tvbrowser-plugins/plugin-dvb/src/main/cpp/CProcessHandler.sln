@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual C++ Express 2005
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CProcessHandler", "CProcessHandler.vcproj", "{5F0197C4-6768-48B3-9A4E-34C67C64BBA3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5F0197C4-6768-48B3-9A4E-34C67C64BBA3}.Debug|Win32.ActiveCfg = Debug|Win32
+		{5F0197C4-6768-48B3-9A4E-34C67C64BBA3}.Debug|Win32.Build.0 = Debug|Win32
+		{5F0197C4-6768-48B3-9A4E-34C67C64BBA3}.Release|Win32.ActiveCfg = Release|Win32
+		{5F0197C4-6768-48B3-9A4E-34C67C64BBA3}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
