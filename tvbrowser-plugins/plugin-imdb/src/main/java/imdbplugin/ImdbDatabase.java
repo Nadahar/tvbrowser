@@ -326,7 +326,7 @@ public final class ImdbDatabase {
   }
 
   public String getMovieEpisodeId(final String title, final String episode, final String originalTitle, final String originalEpisode, final int year) {
-    if (mSearcher == null) {
+    if (!isInitialised()) {
       return null;
     }
     String id = getEpisodeId(title, episode, year);
@@ -337,7 +337,7 @@ public final class ImdbDatabase {
   }
 
   private String getEpisodeId(final String title, final String episode, final int year) {
-    if (episode == null || episode.isEmpty()) {
+    if (episode == null || episode.isEmpty() || !isInitialised()) {
       return null;
     }
     final String normalizedTitle = normalise(title);
@@ -431,6 +431,10 @@ public final class ImdbDatabase {
   }
 
   private String getMovieIdFromTitle(final String title, final String episode, final int year, String itemType) {
+    if (!isInitialised()) {
+      return null;
+    }
+
     BooleanQuery bQuery = new BooleanQuery();
     bQuery.add(new TermQuery(new Term(ITEM_TYPE, itemType)), BooleanClause.Occur.MUST);
     bQuery.add(new TermQuery(new Term(MOVIE_TITLE_NORMALISED, title)), BooleanClause.Occur.MUST);
@@ -472,7 +476,7 @@ public final class ImdbDatabase {
   }
 
   public ImdbRating getRatingForId(final String id) {
-    if (id == null) {
+    if (id == null || !isInitialised()) {
       return null;
     }
     try {
@@ -497,7 +501,7 @@ public final class ImdbDatabase {
   }
 
   public ImdbMovie getMovieForId(final String id) {
-    if (id == null) {
+    if (id == null || !isInitialised()) {
       return null;
     }
     try {
