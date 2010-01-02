@@ -48,6 +48,7 @@
     <module>plugin-countrycode</module>
     <module>plugin-dataviewer</module>
     <module>plugin-dvb</module>
+    <module>plugin-dvbviewerdataservice</module>
     <module>plugin-idontwant2see</module>
     <module>plugin-imdb</module>
     <module>plugin-mediathek</module>
@@ -97,6 +98,10 @@
     <repository>
       <id>wannawork-maven-repository</id>
       <url>http://stuff.wannawork.de/maven2</url>
+    </repository>
+    <repository>
+        <id>java-net-maven-repository</id>
+        <url>http://download.java.net/maven/2</url>
     </repository>
   </repositories>
 </project>
