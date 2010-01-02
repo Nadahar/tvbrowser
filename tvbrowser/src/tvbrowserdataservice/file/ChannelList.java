@@ -34,10 +34,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.TimeZone;
-import java.util.logging.Level;
 import java.util.zip.GZIPOutputStream;
 
 import javax.swing.Icon;
@@ -48,9 +46,7 @@ import tvbrowserdataservice.TvBrowserDataService;
 import tvdataservice.TvDataService;
 import util.io.FileFormatException;
 import util.io.IOUtilities;
-import util.misc.ChangeTrackingProperties;
 import util.misc.SoftReferenceCache;
-import util.ui.AsynchronousImageIcon;
 import au.com.bytecode.opencsv.CSVReader;
 import devplugin.Channel;
 import devplugin.ChannelGroup;
@@ -74,9 +70,9 @@ public class ChannelList {
   /**
    * Icon Cache
    */
-  private static SoftReferenceCache<String, File> ICON_CACHE = new SoftReferenceCache<String, File>();
+  static SoftReferenceCache<String, File> ICON_CACHE = new SoftReferenceCache<String, File>();
 
-  private static ArrayList<String> BLOCKED_SERVERS = new ArrayList<String>(0);
+  static ArrayList<String> BLOCKED_SERVERS = new ArrayList<String>(0);
   
   public ChannelList(final String groupName) {
     mChannelList = new ArrayList<ChannelItem>();
@@ -265,92 +261,6 @@ public class ChannelList {
     } catch (FileFormatException exc) {
       file.delete();
       throw new FileFormatException("Writing file failed " + file.getAbsolutePath(), exc);
-    }
-  }
-
-  private static class IconLoader {
-    private File mIconDir;
-
-    private File mIconIndexFile;
-
-    private String mGroup;
-
-    private ChangeTrackingProperties mProperties;
-
-    public IconLoader(String group, File dir) throws IOException {
-      mGroup = group;
-      mIconDir = new File(dir + "/icons_" + mGroup);
-      if (!mIconDir.exists()) {
-        mIconDir.mkdirs();
-      }
-      mIconIndexFile = new File(mIconDir, "index.txt");
-      mProperties = new ChangeTrackingProperties();
-      if (mIconIndexFile.exists()) {
-        BufferedInputStream in = new BufferedInputStream(new FileInputStream(
-            mIconIndexFile), 0x1000);
-        mProperties.load(in);
-        in.close();
-      } else {
-        mLog.severe("index.txt not found");
-        // System.exit(-1);
-      }
-    }
-
-    public Icon getIcon(String channelId, String url) throws IOException {
-      String key = new StringBuilder("icons_").append(mGroup).append("_")
-          .append(channelId).toString();
-      String prevUrl = (String) mProperties.get(key);
-      Icon icon = null;
-      File iconFile = new File(mIconDir, channelId);
-      
-      if (url.equals(prevUrl)) {
-        // the url hasn't changed; we should have the icon locally
-        icon = getIconFromFile(iconFile);
-        return icon;
-      }
-
-      if (ICON_CACHE.containsKey(url)) {
-        try {
-          File iconCacheFile = ICON_CACHE.get(url);
-          if (iconCacheFile != null && !iconCacheFile.equals(iconFile)) {
-            IOUtilities.copy(ICON_CACHE.get(url), iconFile);
-            icon = getIconFromFile(iconFile);
-          }
-        } catch (Exception e) {
-          mLog.log(Level.SEVERE, "Problem while copying File from Cache", e);
-        }
-      }
-
-      if (icon == null && TvBrowserDataService.getInstance().hasRightToDownloadIcons()
-          && !BLOCKED_SERVERS.contains(url)) {
-        // download the icon
-        try {
-          util.io.IOUtilities.download(new URL(url), iconFile);
-          icon = getIconFromFile(iconFile);
-          ICON_CACHE.put(url, iconFile);
-        } catch (IOException e) {
-          BLOCKED_SERVERS.add(url);
-          mLog.warning("channel " + channelId + ": could not download icon from " + url);
-        } catch (Exception e) {
-          mLog.severe("Could not extract icon file");
-        }
-      }
-      if (icon != null) {
-        mProperties.setProperty(key, url);
-      }
-
-      return icon;
-    }
-
-    private Icon getIconFromFile(File file) {
-      return new AsynchronousImageIcon(file);
-    }
-
-    private void close() throws IOException {
-      FileOutputStream out = new FileOutputStream(mIconIndexFile);
-      out.getChannel().lock();
-      mProperties.store(out, null);
-      out.close();
     }
   }
 

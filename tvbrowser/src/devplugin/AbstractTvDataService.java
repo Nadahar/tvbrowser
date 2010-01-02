@@ -26,9 +26,12 @@
 
 package devplugin;
 
-import util.exc.TvBrowserException;
+import java.awt.Frame;
+import java.io.File;
+import java.io.IOException;
 
-import java.awt.*;
+import tvbrowserdataservice.file.IconLoader;
+import util.exc.TvBrowserException;
 
 /**
  * Superclass for all TvDataServices.
@@ -169,5 +172,9 @@ public abstract class AbstractTvDataService implements devplugin.TvDataService, 
    */
   public ActionMenu getContextMenuActions(Program program) {
     return null;
+  }
+  
+  protected IconLoader getIconLoader(final String groupId, final File workingDirectory) throws IOException {
+    return new IconLoader(groupId, workingDirectory);
   }
 }

@@ -24,6 +24,7 @@ import java.util.logging.Logger;
 
 import javax.swing.Icon;
 
+import tvbrowserdataservice.file.IconLoader;
 import tvdataservice.SettingsPanel;
 import tvdataservice.TvDataUpdateManager;
 import util.exc.TvBrowserException;
@@ -71,9 +72,9 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
   private boolean mHasRightToDownloadIcons;
 
   private DataHydraFileParser mParser = new DataHydraFileParser();
-  static final String SHOW_REGISTER_TEXT = "showRegisterText";
 
   private IconLoader iconLoader;
+  static final String SHOW_REGISTER_TEXT = "showRegisterText";
 
   /**
    * Creates a new instance of SweDBTvDataService
@@ -437,7 +438,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
   private void initializeIconLoader(DataHydraChannelGroup group) {
     iconLoader = null;
     try {
-      iconLoader = new IconLoader(this, group.getId(), mWorkingDirectory);
+      iconLoader = getIconLoader(group.getId(), mWorkingDirectory);
     } catch (IOException e) {
       mLog.severe("Unable to initialize IconLoader for group ID "
               + group.getId() + " in working directory "
