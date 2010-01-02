@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Properties;
@@ -1062,13 +1063,29 @@ public class Settings {
       mProp, "contextMenuDisabledItems", null);
 
   /**
+   * some plugins are installed by default, but not activated
+   */
+  private static final String[] DEFAULT_DISABLED_PLUGINS;
+  static {
+    ArrayList<String> plugins = new ArrayList<String>();
+    plugins.add("java.showviewplugin.ShowviewPlugin"); // no longer available
+    plugins.add("java.i18nplugin.I18NPlugin"); // developers only
+    plugins.add("java.tvraterplugin.TVRaterPlugin"); // needs login, shall be replaced in future
+    if (!OperatingSystem.isMacOs()) {
+      plugins.add("java.growlplugin.GrowlPlugin"); // needs Growl for Windows
+    }
+    plugins.add("java.blogthisplugin.BlogThisPlugin"); // typical users don't blog
+    DEFAULT_DISABLED_PLUGINS = plugins.toArray(new String[plugins.size()]);
+  }
+
+  /**
    * The ID's of the plugins that have been deactivated.
    * <p>
-   * NOTE: By remembering the deactivated plugins rather the activated plugins
+   * NOTE: By remembering the deactivated plugins rather then the activated plugins
    * new plugins are activated automatically.
    */
   public static final StringArrayProperty propDeactivatedPlugins = new StringArrayProperty(
-      mProp, "deactivatedPlugins", null);
+      mProp, "deactivatedPlugins", DEFAULT_DISABLED_PLUGINS);
 
   public static final IntProperty propDownloadPeriod = new IntProperty(mProp,
       "downloadperiod", 1);
