@@ -75,7 +75,7 @@ public final class LookAndFeelSettingsTab implements SettingsTab {
 
   private JComboBox mDateLayout;
 
-  private JTextArea mInfoArea;
+  private JTextArea mRestartMessage;
   
   private int mStartLookAndIndex;
   private int mStartIconIndex;
@@ -145,7 +145,7 @@ public final class LookAndFeelSettingsTab implements SettingsTab {
     
     mPluginViewPosition.addActionListener(new ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent e) {
-        checkIfAreaIsToMakeVisible();
+        updateRestartMessage();
       }
     });
     
@@ -166,7 +166,7 @@ public final class LookAndFeelSettingsTab implements SettingsTab {
 
     mDateLayout.addActionListener(new ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent e) {
-        checkIfAreaIsToMakeVisible();
+        updateRestartMessage();
       }
     });
 
@@ -245,11 +245,11 @@ public final class LookAndFeelSettingsTab implements SettingsTab {
     layout.appendRow(RowSpec.decode("fill:3dlu:grow"));
     layout.appendRow(RowSpec.decode("pref"));
 
-    mInfoArea = UiUtilities.createHelpTextArea(mLocalizer.msg("restartNote", "Please Restart"));
-    mInfoArea.setForeground(Color.RED);
-    mInfoArea.setVisible(mSomethingChanged);
+    mRestartMessage = UiUtilities.createHelpTextArea(mLocalizer.msg("restartNote", "Please Restart"));
+    mRestartMessage.setForeground(Color.RED);
+    mRestartMessage.setVisible(mSomethingChanged);
 
-    mSettingsPn.add(mInfoArea, cc.xyw(1, 13, 6));
+    mSettingsPn.add(mRestartMessage, cc.xyw(1, 13, 6));
     
     if(!mSomethingChanged) {
       mStartLookAndIndex = mLfComboBox.getSelectedIndex();
@@ -262,7 +262,7 @@ public final class LookAndFeelSettingsTab implements SettingsTab {
     
     mIconThemes.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        checkIfAreaIsToMakeVisible();
+        updateRestartMessage();
       }
     });
     
@@ -271,8 +271,8 @@ public final class LookAndFeelSettingsTab implements SettingsTab {
     return mSettingsPn;
   }
   
-  private void checkIfAreaIsToMakeVisible() {
-    mInfoArea.setVisible(
+  private void updateRestartMessage() {
+    mRestartMessage.setVisible(
         mLfComboBox.getSelectedIndex() != mStartLookAndIndex ||
         mIconThemes.getSelectedIndex() != mStartIconIndex ||
         mJGoodiesStartTheme.compareTo(Settings.propJGoodiesTheme.getString()) != 0 ||
@@ -292,7 +292,7 @@ public final class LookAndFeelSettingsTab implements SettingsTab {
       UiUtilities.centerAndShow(settings);
     }
     
-    checkIfAreaIsToMakeVisible();
+    updateRestartMessage();
   }
 
   protected void lookChanged() {
@@ -304,7 +304,7 @@ public final class LookAndFeelSettingsTab implements SettingsTab {
       mConfigBtn.setEnabled(false);
     }
     
-    checkIfAreaIsToMakeVisible();
+    updateRestartMessage();
   }
 
   public void saveSettings() {
@@ -314,7 +314,7 @@ public final class LookAndFeelSettingsTab implements SettingsTab {
     IconTheme theme = (IconTheme) mIconThemes.getSelectedItem();
     Settings.propIcontheme.setString("icons/" + theme.getBase().getName());
     
-    mSomethingChanged = mInfoArea.isVisible();
+    mSomethingChanged = mRestartMessage.isVisible();
     
     Settings.propPluginViewIsLeft.setBoolean(mPluginViewPosition.getSelectedIndex() == 1);
     Settings.propViewDateLayout.setInt(mDateLayout.getSelectedIndex());
