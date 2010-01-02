@@ -183,6 +183,14 @@ public interface Program {
   public static final int MEDIUM_MARK_PRIORITY = 2;
   public static final int HIGHER_MEDIUM_MARK_PRIORITY = 3;
   public static final int MAX_MARK_PRIORITY = 4;
+  
+  public static final byte DEFAULT_PROGRAM_IMPORTANCE = -1;
+  public static final byte MIN_PROGRAM_IMPORTANCE = 1;
+  public static final byte LOWER_MEDIUM_PROGRAM_IMPORTANCE = 3;
+  public static final byte MEDIUM_PROGRAM_IMPORTANCE = 5;
+  public static final byte HIGHER_MEDIUM_PROGRAM_IMPORTANCE = 7;
+  public static final byte MAX_PROGRAM_IMPORTANCE = 10;
+  
 
   /** @deprecated since 2.5.3 use MIN_MARK_PRIORITY instead */
   public static final int DEFAULT_MARK_PRIORITY = 0;

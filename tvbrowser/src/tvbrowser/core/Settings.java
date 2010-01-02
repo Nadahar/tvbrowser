@@ -624,7 +624,7 @@ public class Settings {
         propProgramPanelMarkedLowerMediumPriorityColor, propProgramPanelMarkedMinPriorityColor,
         propProgramPanelMarkedMediumPriorityColor, propProgramPanelMarkedMaxPriorityColor,
         propProgramTableColorOnAirLight, propProgramTableColorOnAirDark, propProgramPanelForegroundColor,
-        propProgramTableBackgroundSingleColor};
+        propProgramTableBackgroundSingleColor, propProgramPanelAllowTransparency};
 
     if (mProp.hasChanged(propArr)) {
       util.ui.ProgramPanel.updateFonts();
@@ -1166,6 +1166,9 @@ public class Settings {
   /** Color of the foreground of a program panel */
   public static final ColorProperty propProgramPanelForegroundColor = new ColorProperty(
       mProp, "programpanel.ColorForeground", Color.black);
+  /** If plugins are allowed to set the transparency of a program */
+  public static final BooleanProperty propProgramPanelAllowTransparency = new BooleanProperty(
+      mProp, "programpanel.AllowTransparency", true);
   
   /**
    * number of description lines show in program panel
