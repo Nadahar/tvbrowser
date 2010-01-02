@@ -23,8 +23,8 @@ import java.util.TimeZone;
 /**
  * A simple, tiny, nicely embeddable HTTP 1.0 server in Java
  *
- * <p> NanoHTTPD version 1.1,
- * Copyright &copy; 2001,2005-2007 Jarno Elonen (elonen@iki.fi, http://iki.fi/elonen/)
+ * <p> NanoHTTPD version 1.11,
+ * Copyright &copy; 2001,2005-2008 Jarno Elonen (elonen@iki.fi, http://iki.fi/elonen/)
  *
  * <p><b>Features + limitations: </b><ul>
  *
@@ -217,7 +217,7 @@ public class NanoHTTPD
 	 */
 	public static void main( String[] args )
 	{
-		System.out.println( "NanoHTTPD 1.1 (C) 2001,2005-2007 Jarno Elonen\n" +
+		System.out.println( "NanoHTTPD 1.11 (C) 2001,2005-2008 Jarno Elonen\n" +
 							"(Command line options: [port] [--licence])\n" );
 
 		// Show licence if requested
@@ -289,7 +289,7 @@ public class NanoHTTPD
 				if ( !st.hasMoreTokens())
 					sendError( HTTP_BADREQUEST, "BAD REQUEST: Missing URI. Usage: GET /example/file.html" );
 
-				String uri = decodePercent( st.nextToken());
+				String uri = st.nextToken();
 
 				// Decode parameters from the URI
 				Properties parms = new Properties();
@@ -299,6 +299,8 @@ public class NanoHTTPD
 					decodeParms( uri.substring( qmi+1 ), parms );
 					uri = decodePercent( uri.substring( 0, qmi ));
 				}
+				else uri = decodePercent(uri);
+
 
 				// If there's another token, it's protocol version,
 				// followed by HTTP headers. Ignore version but parse headers.
@@ -655,8 +657,8 @@ public class NanoHTTPD
 			FileInputStream fis = new FileInputStream( f );
 			fis.skip( startFrom );
 			Response r = new Response( HTTP_OK, mime, fis );
-			r.addHeader("Content-length", "" + (f.length() - startFrom));
-      r.addHeader("Content-range", "" + startFrom + "-" +
+			r.addHeader( "Content-length", "" + (f.length() - startFrom));
+			r.addHeader( "Content-range", "" + startFrom + "-" +
 						(f.length()-1) + "/" + f.length());
 			return r;
 		}
@@ -707,7 +709,7 @@ public class NanoHTTPD
 	 * The distribution licence
 	 */
 	private static final String LICENCE =
-		"Copyright (C) 2001,2005 by Jarno Elonen <elonen@iki.fi>\n"+
+		"Copyright (C) 2001,2005-2008 by Jarno Elonen <elonen@iki.fi>\n"+
 		"\n"+
 		"Redistribution and use in source and binary forms, with or without\n"+
 		"modification, are permitted provided that the following conditions\n"+
