@@ -39,6 +39,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
+import tvbrowser.core.icontheme.IconLoader;
 import util.misc.SoftReferenceCache;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
@@ -222,15 +223,19 @@ public final class ImdbPlugin extends Plugin {
     if (mImdbDatabase.isInitialised() && !mSettings.isDatabaseCurrentVersion()) {
       SwingUtilities.invokeLater(new Runnable(){
         public void run() {
-      JOptionPane
-          .showMessageDialog(
-              getParentFrame(),
-              mLocalizer
-                  .msg(
-                      "version.message",
-                      "Your local IMDb database must be imported again because the\ndatabase format has changed with this plugin version."),
-              mLocalizer.msg("version.title", "Database upgrade"),
-              JOptionPane.INFORMATION_MESSAGE);
+        	String[] buttons = new String[] {mLocalizer.msg("buttonImport", "Import now"), mLocalizer.msg("buttonLater", "Later")};
+					if (JOptionPane
+							.showOptionDialog(
+									getParentFrame(),
+									mLocalizer
+											.msg(
+													"version.message",
+													"Your local IMDb database must be imported again because the\ndatabase format has changed with this plugin version."),
+									mLocalizer.msg("version.title", "Database upgrade"),
+									JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE,
+									null, buttons, buttons[0]) == JOptionPane.YES_OPTION) {
+						showUpdateDialog();
+					}
         }
       });
     }
@@ -240,7 +245,7 @@ public final class ImdbPlugin extends Plugin {
           final JCheckBox askAgain = new JCheckBox(mLocalizer.msg(
               "dontShowAgain", "Don't show this message again"));
           Object[] shownObjects = new Object[2];
-          shownObjects[0] = mLocalizer.msg("downloadData", "No IMDB-Database available, should I download the ImDB-Data now (aprox. 10MB) ?");
+          shownObjects[0] = mLocalizer.msg("downloadData", "No IMDb-Database available, should I download the ImDB-Data now (approx. {0} MB)? It will take around {1} MB on disk.", 20, 400);
           shownObjects[1] = askAgain;
 
           final int ret = JOptionPane.showConfirmDialog(getParentFrame(),
@@ -487,5 +492,19 @@ public final class ImdbPlugin extends Plugin {
 
   public String getDatabaseSizeMB() {
     return mImdbDatabase.getDatabaseSizeMB();
+  }
+  
+  @Override
+  public ActionMenu getButtonAction() {
+  	AbstractAction action = new AbstractAction(mLocalizer.msg("download", "Download new IMDb data")) {
+			
+			public void actionPerformed(ActionEvent e) {
+				showUpdateDialog();
+			}
+		};
+		// TODO: use constants for icon size after 3.0 release
+		action.putValue(Action.SMALL_ICON, IconLoader.getInstance().getIconFromTheme("apps", "system-software-update", 16));
+		action.putValue(BIG_ICON, IconLoader.getInstance().getIconFromTheme("apps", "system-software-update", 22));
+		return new ActionMenu(action);
   }
 }
