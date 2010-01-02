@@ -58,12 +58,12 @@ public class CopyWaitingDlg extends JDialog {
 
     Localizer localizer = Localizer.getLocalizerFor(CopyWaitingDlg.class);
     
-    String msg = localizer.msg("waitingHeader", "Importing TV data (this can need some minutes).");
+    String msg = localizer.msg("waitingHeader", "Importing TV data (this can take some minutes).");
     JTextArea header = new JTextArea();
     header.setPreferredSize(new Dimension(370,30));
     
     if(messageType == IMPORT_MSG) {
-      msg = localizer.msg("waitingHeaderCopy", "Copying TV data (this can need some minutes).");
+      msg = localizer.msg("waitingHeaderCopy", "Copying TV data (this can take some minutes).");
     }
     else if(messageType == APPDATA_MSG) {
       msg = localizer.msg("appdataHeaderMsg", "Copying TV data (this can need some minutes).\nThe data and the settings are copied to the\n" +

@@ -93,7 +93,7 @@ public class MonitoringErrorStream extends OutputStream {
             } catch (Exception exc) {}
           }
           
-          // This thread loggs the error when no more lines arrived after a
+          // This thread logs the error when no more lines arrived after a
           // waiting time.
           Thread pollThread = new Thread("Error logging") {
             public void run() {
