@@ -18,12 +18,15 @@
  */
 package util.ui;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.image.FilteredImageSource;
 import java.awt.image.ImageFilter;
+import java.awt.image.RGBImageFilter;
 
 import javax.swing.GrayFilter;
 import javax.swing.Icon;
@@ -120,7 +123,7 @@ public class PictureAreaIcon implements Icon {
     return mCopyrightText.getIconWidth() + 6;
   }
 
-  public void paintIcon(Component c, Graphics g, int x, int y) {
+  public void paintIcon(final Component c, Graphics g, int x, int y) {
     if(mScaledIcon == null) {
       return;
     }
@@ -144,14 +147,26 @@ public class PictureAreaIcon implements Icon {
       mIsExpired = true;
     }
     
-    mScaledIcon.paintIcon(c,g,x,y);
-    
-    if(!mProgram.isExpired()) {
-      g.setColor(Color.black);
-    } else {
-      g.setColor(Color.gray);
+    if(c.getForeground().getAlpha() != 255) {
+      ImageFilter filter = new RGBImageFilter() {
+        public int filterRGB(int x, int y, int rgb) {
+          if ((rgb & 0xff000000) != 0)
+            return (rgb & 0xffffff) | (c.getForeground().getAlpha() << 24);
+          return rgb;
+        }
+      };
+      
+      mScaledIcon.setImage(c.createImage(new FilteredImageSource(mScaledIcon.getImage().getSource(),filter)));
     }
     
+    mScaledIcon.paintIcon(c,g,x,y);
+    /*
+    if(!mProgram.isExpired()) {
+      g.setColor(color);
+    } else {
+      g.setColor(color);
+    }
+    */
     mCopyrightText.paintIcon(null,g,x,y + mScaledIcon.getIconHeight());
     if (mDescriptionLines > 0 && mDescriptionText != null) {
       mDescriptionText.paintIcon(null,g,x,y + mScaledIcon.getIconHeight() + mCopyrightText.getIconHeight() + 1);

@@ -280,4 +280,10 @@ public class BeanShellPluginProxy extends AbstractPluginProxy {
       // TODO Auto-generated method stub
       
     }
+
+    @Override
+    protected byte doGetImportanceForProgram(Program p) {
+      // TODO Auto-generated method stub
+      return Program.DEFAULT_PROGRAM_IMPORTANCE;
+    }
  }

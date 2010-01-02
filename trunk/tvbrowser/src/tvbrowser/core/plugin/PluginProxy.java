@@ -34,6 +34,7 @@ import devplugin.ChannelDayProgram;
 import devplugin.PluginAccess;
 import devplugin.PluginTreeNode;
 import devplugin.PluginsProgramFilter;
+import devplugin.Program;
 import devplugin.ProgramRatingIf;
 
 /**
@@ -211,4 +212,23 @@ public interface PluginProxy extends PluginAccess {
    */
   public ActionMenu getContextMenuActions(final Channel channel);
 
+  /**
+   * Gets the importance of a program.The importance of all active plugins is used to determinate
+   * the opacity of the used colors of a program, therefor a mean value of all values is used.
+   * <p>
+   * The importance value can be.
+   * <ul>
+   * <li>{@link Program#DEFAULT_PROGRAM_IMPORTANCE},</li>
+   * <li>{@link Program#MIN_PROGRAM_IMPORTANCE},</li>
+   * <li>{@link Program#LOWER_MEDIUM_PROGRAM_IMPORTANCE},</li>
+   * <li>{@link Program#MEDIUM_PROGRAM_IMPORTANCE},</li>
+   * <li>{@link Program#HIGHER_MEDIUM_PROGRAM_IMPORTANCE} or</li>
+   * <li>{@link Program#MAX_PROGRAM_IMPORTANCE}.</li>
+   * </ul>
+   * <p>
+   * @param p The program to get the importance value for.
+   * @return The importance value for the given program.
+   * @since 3.0
+   */
+  public byte getImportanceForProgram(Program p);
 }

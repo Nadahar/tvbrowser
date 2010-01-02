@@ -613,4 +613,9 @@ public class JavaPluginProxy extends AbstractPluginProxy {
       ChannelDayProgram addedDayProgram) {
     mPlugin.handleTvDataTouched(removedDayProgram,addedDayProgram);
   }
+
+  @Override
+  protected byte doGetImportanceForProgram(Program p) {
+    return mPlugin.getImportanceForProgram(p);
+  }
 }

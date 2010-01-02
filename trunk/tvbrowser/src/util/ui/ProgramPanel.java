@@ -190,6 +190,9 @@ public class ProgramPanel extends JComponent implements ChangeListener, PluginSt
    * rectangle of the format icon area, used for tooltip calculation
    */
   private Rectangle mInfoIconRect;
+  
+  /** The importance of this program */
+  private byte mProgramImportance;
 
   /**
    * Creates a new instance of ProgramPanel.
@@ -642,7 +645,32 @@ private static Font getDynamicFontSize(Font font, int offset) {
       return iconList.toArray(new Icon[iconList.size()]);
     }
   }
-
+  
+  private byte getProgramImportance(final Program program) {
+    if (program.getProgramState() == Program.IS_VALID_STATE &&
+        Settings.propProgramPanelAllowTransparency.getBoolean()) {
+      int count = 0;
+      int addValue = 0;
+      
+      PluginProxy[] plugins = PluginProxyManager.getInstance().getActivatedPlugins();
+      
+      for(PluginProxy plugin : plugins) {
+        int value = plugin.getImportanceForProgram(program);
+        
+        if(value >= Program.MIN_PROGRAM_IMPORTANCE &&
+            value <= Program.MAX_PROGRAM_IMPORTANCE) {
+          count++;
+          addValue += value;
+        }
+      }
+      
+      if(count > 0) {
+        return (byte)(addValue/count);
+      }
+    }
+    
+    return Program.MAX_PROGRAM_IMPORTANCE;
+  }
   /**
    * Paints the component.
    * 
@@ -650,6 +678,13 @@ private static Font getDynamicFontSize(Font font, int offset) {
    *          The graphics context to paint to.
    */
   public void paintComponent(Graphics g) {
+    // lazy update of plugin icons and layout
+    if (mHasChanged) {
+      mIconArr = getPluginIcons(mProgram);
+      mProgramImportance = getProgramImportance(mProgram);
+      mHasChanged = false;
+    }
+    
     /* This is for debugging of the marking problem after an data update */
     if(mProgram.getProgramState() == Program.WAS_DELETED_STATE) {
       setForeground(Color.red);
@@ -704,12 +739,16 @@ private static Font getDynamicFontSize(Font font, int offset) {
           progressX = elapsedMinutes * width / progLength;
         }
 
-        grp.setColor(Settings.propProgramTableColorOnAirDark.getColor());
+        Color c = Settings.propProgramTableColorOnAirDark.getColor();
+        grp.setColor(new Color(c.getRed(), c.getGreen(), c.getBlue(), (int)(c.getAlpha()*mProgramImportance/10.)));
+        
         int fillWidth = progressX - borderWidth;
         if (fillWidth > 0) {
           grp.fillRect(borderWidth, borderWidth, fillWidth, height - borderWidth);
         }
-        grp.setColor(Settings.propProgramTableColorOnAirLight.getColor());
+        c = Settings.propProgramTableColorOnAirLight.getColor();
+        grp.setColor(new Color(c.getRed(), c.getGreen(), c.getBlue(), (int)(c.getAlpha()*mProgramImportance/10.)));
+        
         fillWidth = width - progressX - borderWidth * 2;
         if (fillWidth > 0) { 
           grp.fillRect(progressX, borderWidth, fillWidth, height - borderWidth);
@@ -722,7 +761,9 @@ private static Font getDynamicFontSize(Font font, int offset) {
           progressY = elapsedMinutes * height / progLength;
         }
 
-        grp.setColor(Settings.propProgramTableColorOnAirDark.getColor());
+        Color c = Settings.propProgramTableColorOnAirDark.getColor();
+        grp.setColor(new Color(c.getRed(), c.getGreen(), c.getBlue(), (int)(c.getAlpha()*mProgramImportance/10.)));
+        
         int fillHeight = progressY - borderWidth;
 
         if (fillHeight > height) {
@@ -733,7 +774,10 @@ private static Font getDynamicFontSize(Font font, int offset) {
         if (fillHeight > 0) {
           grp.fillRect(borderWidth, borderWidth, width - borderWidth * 2, fillHeight);
         }
-        grp.setColor(Settings.propProgramTableColorOnAirLight.getColor());
+        
+        c = Settings.propProgramTableColorOnAirLight.getColor();
+        grp.setColor(new Color(c.getRed(), c.getGreen(), c.getBlue(), (int)(c.getAlpha()*mProgramImportance/10.)));
+        
         fillHeight = height - progressY - borderWidth;
 
         if (fillHeight > height) {
@@ -758,11 +802,14 @@ private static Font getDynamicFontSize(Font font, int offset) {
       if(c == null) {
         c = Settings.propProgramPanelMarkedMinPriorityColor.getColor();
       }
-      
-      grp.setColor(c);
+
+      int alphaValue = (int)(c.getAlpha()*mProgramImportance/10.);
       
       if(mProgram.isExpired()) {
-        grp.setColor(new Color(grp.getColor().getRed(), grp.getColor().getGreen(), grp.getColor().getBlue(), (int)(grp.getColor().getAlpha()*6/10.)));
+        grp.setColor(new Color(c.getRed(), c.getGreen(), c.getBlue(), (int)(alphaValue*6/10.)));
+      }
+      else {
+        grp.setColor(new Color(c.getRed(), c.getGreen(), c.getBlue(), alphaValue));
       }
       
       if(mProgram.getMarkPriority() > Program.NO_MARK_PRIORITY) {
@@ -798,11 +845,15 @@ private static Font getDynamicFontSize(Font font, int offset) {
     
     // Draw all the text
     if (mPaintExpiredProgramsPale && mProgram.isExpired()) {
-      setForeground(Color.gray);
-      grp.setColor(Color.gray);
+      Color c = new Color(Color.gray.getRed(), Color.gray.getGreen(), Color.gray.getBlue(), (int)(Color.gray.getAlpha()*mProgramImportance/10.));
+      
+      setForeground(c);
+      grp.setColor(c);
     } else {
-      setForeground(mTextColor);
-      grp.setColor(mTextColor);
+      Color c = new Color(mTextColor.getRed(), mTextColor.getGreen(), mTextColor.getBlue(), (int)(mTextColor.getAlpha()*mProgramImportance/10.));
+      
+      setForeground(c);
+      grp.setColor(c);
     }
     grp.setFont(ProgramPanel.mTimeFont);
     grp.drawString(mProgramTimeAsString, 1, mTimeFont.getSize());
@@ -818,8 +869,12 @@ private static Font getDynamicFontSize(Font font, int offset) {
       }
 
       // Paint the icons pale if the program is expired
-      if (mPaintExpiredProgramsPale && mProgram.isExpired()) {
+      if (mPaintExpiredProgramsPale && mProgram.isExpired() && mProgramImportance == 10) {
         grp.setComposite(PALE_COMPOSITE);
+      }
+      else if (mProgramImportance != 10) {
+        grp.setComposite(AlphaComposite.getInstance(
+            AlphaComposite.SRC_OVER, mProgramImportance/10F));
       }
     }
     
@@ -834,15 +889,10 @@ private static Font getDynamicFontSize(Font font, int offset) {
       if (icons != null) {
         for(int i = icons.length - 1; i >= 0 ; i--) {
           x -= icons[i].getIconWidth();
+          
           icons[i].paintIcon(this, grp, x, y - icons[i].getIconHeight());
         }
       }
-    }
-    
-    // lazy update of plugin icons
-    if (mHasChanged) {
-      mIconArr = getPluginIcons(mProgram);
-      mHasChanged = false;
     }
     
     // Paint the icons on the left side
