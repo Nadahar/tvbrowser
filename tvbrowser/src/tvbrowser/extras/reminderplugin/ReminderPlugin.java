@@ -125,7 +125,7 @@ public class ReminderPlugin {
     mReminderList.setReminderTimerListener(new ReminderTimerListener(mSettings, mReminderList));
     loadReminderData();
 
-    mRootNode = new PluginTreeNode(mLocalizer.msg("pluginName","Reminder"));
+    mRootNode = new PluginTreeNode(mLocalizer.msg("pluginName","Reminders"));
 
     TvDataUpdater.getInstance().addTvDataUpdateListener(
         new TvDataUpdateListener() {
