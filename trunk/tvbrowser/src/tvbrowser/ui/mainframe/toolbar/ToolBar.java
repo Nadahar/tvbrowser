@@ -69,6 +69,7 @@ import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.mainframe.actions.TVBrowserAction;
 import tvbrowser.ui.settings.ToolBarDragAndDropSettings;
 import util.ui.ChannelContextMenu;
+import util.ui.PopupButton;
 import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 
@@ -325,7 +326,7 @@ public class ToolBar extends JToolBar {
   }
 
   private void addButton(final Action action) {
-    final JButton button = new JButton();
+    final JButton button = new PopupButton();
     addButtonProperties(button, action);
     button.setBorderPainted(false);
     button.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -334,7 +335,7 @@ public class ToolBar extends JToolBar {
     if(action.equals(((DefaultToolBarModel)mModel).getUpdateAction())) {
       mUpdateButton = button;
     }
-    
+
     button.addMouseListener(new MouseAdapter() {
       public void mouseEntered(MouseEvent e) {
         button.setBorderPainted(true);
@@ -357,8 +358,7 @@ public class ToolBar extends JToolBar {
       }
     });
     
-    action.addPropertyChangeListener(new PropertyChangeListener() {
-      
+    action.addPropertyChangeListener(new PropertyChangeListener() {      
       @Override
       public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals("enabled")) {
@@ -458,7 +458,7 @@ public class ToolBar extends JToolBar {
     String tooltip = (String) action.getValue(Action.SHORT_DESCRIPTION);
     Icon icon = getIcon(action);
     String title = getTitle(action);
-    
+
     button.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         action.actionPerformed(new ActionEvent(action,ActionEvent.ACTION_PERFORMED,""));
