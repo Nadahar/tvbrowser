@@ -152,6 +152,7 @@ public class ProgramListCellRenderer extends DefaultListCellRenderer {
       mProgramPanel.setProgram(program);
       mProgramPanel.setPaintExpiredProgramsPale(!isSelected);
       mProgramPanel.setTextColor(label.getForeground());
+      mProgramPanel.setBackground(label.getBackground());
 
       program.addChangeListener(new ChangeListener() {
         public void stateChanged(ChangeEvent e) {

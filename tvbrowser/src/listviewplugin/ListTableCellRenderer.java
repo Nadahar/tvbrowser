@@ -124,6 +124,7 @@ public class ListTableCellRenderer extends DefaultTableCellRenderer {
         }
         
         mProgramPanel[row][column - 1].setTextColor(label.getForeground());
+        mProgramPanel[row][column - 1].setBackground(label.getBackground());
         mCache[row][column].setForeground(label.getForeground());
         mCache[row][column].setBackground(label.getBackground());
         return mCache[row][column];

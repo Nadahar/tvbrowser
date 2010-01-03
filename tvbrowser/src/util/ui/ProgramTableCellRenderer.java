@@ -112,6 +112,7 @@ public class ProgramTableCellRenderer extends DefaultTableCellRenderer {
             
             mProgramPanel.setPaintExpiredProgramsPale(!isSelected);
             mProgramPanel.setTextColor(label.getForeground());
+            mProgramPanel.setBackground(label.getBackground());
             
             String dateString;
             
