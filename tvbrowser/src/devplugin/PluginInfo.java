@@ -330,7 +330,6 @@ public final class PluginInfo {
         url = "http://www.tvbrowser.org/showHelpFor.php?id="
           + id + "&lang="
           + Settings.propLanguage.getString();
-        System.out.println(url);
       }
       return url;
     }
