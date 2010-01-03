@@ -73,31 +73,7 @@ public class ChannelChooserPanel extends JPanel implements ListDropAction {
 
     mChannelChooserModel = new DefaultListModel();
 
-    mList = new JList(mChannelChooserModel) {
-      /*
-       * Fix for [TVB-250] cursor down key in channel settings leads to unwanted scrolling:
-       * Workaround for http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6510999
-       * 
-       * This workaround should be removed in the future (after release of JDK 7).
-       */
-      @Override
-      public void scrollRectToVisible(Rectangle rect) {
-        JScrollPane jScrollPane = (JScrollPane) SwingUtilities.getAncestorOfClass(
-            JScrollPane.class, this);
-        if (jScrollPane != null) {
-          int willScrollTo;
-          if (jScrollPane.getViewport().getHeight() == rect.height) {
-            willScrollTo = this.getSelectedIndex() + 1;
-          } else {
-            willScrollTo = this.getSelectedIndex() - 1;
-          }
-          Rectangle cellBounds = getCellBounds(willScrollTo, willScrollTo);
-          if (cellBounds != null) {
-            super.scrollRectToVisible(cellBounds);
-          }
-        }
-      }
-    };
+    mList = new JList(mChannelChooserModel);
     updateChannelChooser();
     setLayout(new BorderLayout());
     add(new JScrollPane(mList));
@@ -140,8 +116,15 @@ public class ChannelChooserPanel extends JPanel implements ListDropAction {
     
     mList.addMouseWheelListener(new MouseWheelListener() {
       public void mouseWheelMoved(MouseWheelEvent e) {
-        mList.setSelectedIndex(mList.getSelectedIndex() + e.getWheelRotation());
-        mList.ensureIndexIsVisible(mList.getSelectedIndex());
+        int selected = mList.getSelectedIndex() + e.getWheelRotation();
+        if (selected < 0) {
+          selected = 0;
+        } else if (selected > mList.getModel().getSize()) {
+          selected = mList.getModel().getSize();
+        }
+
+        mList.setSelectedIndex(selected);
+        mList.ensureIndexIsVisible(selected);
       }
     });
   }
@@ -162,8 +145,8 @@ public class ChannelChooserPanel extends JPanel implements ListDropAction {
         Settings.propShowChannelNamesInChannellist.getBoolean()));
     mChannelChooserModel.removeAllElements();
     Channel[] channelList = tvbrowser.core.ChannelList.getSubscribedChannels();
-    for (int i = 0; i < channelList.length; i++) {
-      mChannelChooserModel.addElement(channelList[i]);
+    for (Channel channel : channelList) {
+      mChannelChooserModel.addElement(channel);
     }
   }
 
@@ -183,9 +166,7 @@ public class ChannelChooserPanel extends JPanel implements ListDropAction {
     
     if (!Settings.propTrayUseSpecialChannels.getBoolean()) {
       Channel[] tempArr = new Channel[channelArr.length > 10 ? 10 : channelArr.length];
-      for (int i = 0; i < tempArr.length; i++)
-        tempArr[i] = channelArr[i];
-
+      System.arraycopy(channelArr, 0, tempArr, 0, tempArr.length);
       Settings.propTraySpecialChannels.setChannelArray(tempArr);
     }
     
@@ -198,6 +179,7 @@ public class ChannelChooserPanel extends JPanel implements ListDropAction {
   public void selectChannel(Channel channel) {
     disableSync = true;
     mList.setSelectedValue(channel,true);
+    mList.ensureIndexIsVisible(mList.getSelectedIndex());
   }
 
   public void setChannelGroup(ChannelFilterComponent channelFilter) {
