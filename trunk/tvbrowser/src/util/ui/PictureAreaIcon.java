@@ -160,6 +160,7 @@ public class PictureAreaIcon implements Icon {
     }
     
     mScaledIcon.paintIcon(c,g,x,y);
+    
     /*
     if(!mProgram.isExpired()) {
       g.setColor(color);
