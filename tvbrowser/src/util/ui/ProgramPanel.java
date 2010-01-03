@@ -714,12 +714,12 @@ private static Font getDynamicFontSize(Font font, int offset) {
       int progLength = mProgram.getLength();
       int startTime = mProgram.getStartTime();
       int elapsedMinutes = minutesAfterMidnight - startTime;
-      if (minutesAfterMidnight < startTime) {
+      if (elapsedMinutes < 0) {
         // The next day has begun -> we have to add 24 * 60 minutes
         // Example: Start time was 23:50 = 1430 minutes after midnight
         // now it is 0:03 = 3 minutes after midnight
         // elapsedMinutes = (24 * 60) + 3 - 1430 = 13 minutes
-        elapsedMinutes = (24 * 60) + minutesAfterMidnight - startTime;
+        elapsedMinutes += 24 * 60;
       }
 
       // elapsed minutes can not be larger than run time
