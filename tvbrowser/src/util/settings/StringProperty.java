@@ -109,4 +109,8 @@ public class StringProperty extends Property {
   public void resetToDefault() {
     setString(getDefault());
   }
+
+  public String toString() {
+    return getString();
+  }
 }
