@@ -51,6 +51,7 @@
     <module>plugin-dvbviewerdataservice</module>
     <module>plugin-idontwant2see</module>
     <module>plugin-imdb</module>
+    <module>plugin-logging</module>
     <module>plugin-mediathek</module>
     <module>plugin-movieaward</module>
     <module>plugin-notifyosd</module>
