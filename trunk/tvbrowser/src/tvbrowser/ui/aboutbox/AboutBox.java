@@ -69,7 +69,7 @@ public class AboutBox extends JDialog implements WindowClosingIf{
     
     UiUtilities.registerForClosing(this);
     
-    setTitle(mLocalizer.msg("about", "About"));
+    setTitle(mLocalizer.msg("about", "About {0}", TVBrowser.MAINWINDOW_TITLE));
     
     JPanel contentPane=(JPanel)getContentPane();
     contentPane.setBackground(Color.WHITE);
@@ -189,7 +189,7 @@ public class AboutBox extends JDialog implements WindowClosingIf{
                "  <body>" +
                "    <div id=\"title\">"+mLocalizer.msg("version", "Version")+": " + TVBrowser.VERSION.toString() +"</div>" +
                "<p>" +
-               "    <table width=\"100%\"");
+               "    <table width=\"100%\" border=\"1\">");
      
     
     createInfoEntry(buf, mLocalizer.msg("platform", "Platform") + ":",
@@ -224,8 +224,7 @@ public class AboutBox extends JDialog implements WindowClosingIf{
     buf.append("<div id=\"small\">");
     
     buf.append(mLocalizer.msg("copyrightText",
-          "Copyright (c) 04/2003 by Martin Oberhauser, Til Schneider, Bodo Tasche, Ren\\u00e9 Mach, under the"
-          + "GNU General Public License"));
+          "Copyright (c) {0} by {1}, under the GNU General Public License", "04/2003", "Martin Oberhauser, Til Schneider, Bodo Tasche, Ren\\u00e9 Mach, Michael Keppler"));
           
     buf.append("</div>");
     
