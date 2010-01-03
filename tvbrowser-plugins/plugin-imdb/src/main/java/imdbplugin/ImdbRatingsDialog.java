@@ -2,7 +2,6 @@ package imdbplugin;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Frame;
 import java.awt.Paint;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,6 +11,7 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -52,13 +52,22 @@ public class ImdbRatingsDialog extends JDialog implements WindowClosingIf {
 
   private Program mProgram;
 
-  public ImdbRatingsDialog(final Frame parentFrame, final Program prog) {
-    super(UiUtilities.getBestDialogParent(parentFrame));
-    setModal(true);
+  public ImdbRatingsDialog(final JDialog parent, final Program program) {
+    super(parent);
+    initialize(program);
+  }
+
+	public ImdbRatingsDialog(final JFrame parent, final Program program) {
+    super(parent);
+    initialize(program);
+	}
+
+	private void initialize(final Program prog) {
+		setModal(true);
     mProgram = prog;
     createGui();
     UiUtilities.registerForClosing(this);
-  }
+	}
 
   private void createGui() {
     setTitle(mLocalizer.msg("title", "IMDb Rating for {0}", mProgram.getTitle()));

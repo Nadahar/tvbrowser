@@ -45,7 +45,7 @@ public class TagValidation {
     }
 
     // must be long and short enough
-    if (result.isEmpty() || result.length() < MIN_TAG_LENGTH || result.length() > MAX_TAG_LENGTH) {
+    if (result.length() < MIN_TAG_LENGTH || result.length() > MAX_TAG_LENGTH) {
       return null;
     }
     return result;

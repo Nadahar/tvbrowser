@@ -66,7 +66,7 @@ public final class ImdbPlugin extends Plugin {
 
   private static final boolean IS_STABLE = true;
 
-  private static final Version mVersion = new Version(1, 4, IS_STABLE);
+  private static final Version mVersion = new Version(1, 4, 1, IS_STABLE);
 
   // Empty Rating for Cache
   private static final ImdbRating DUMMY_RATING = new ImdbRating(0, 0, "", "");
@@ -197,7 +197,14 @@ public final class ImdbPlugin extends Plugin {
   }
 
   private void showRatingDialog(final Program program) {
-    ImdbRatingsDialog dialog = new ImdbRatingsDialog(getParentFrame(), program);
+    Window dlgParent = UiUtilities.getBestDialogParent(getParentFrame());
+		ImdbRatingsDialog dialog;
+		if (dlgParent instanceof JDialog) {
+			dialog = new ImdbRatingsDialog((JDialog) dlgParent, program);
+		}
+		else {
+			dialog = new ImdbRatingsDialog((JFrame) dlgParent, program); 
+		}
     UiUtilities.centerAndShow(dialog);
   }
 
