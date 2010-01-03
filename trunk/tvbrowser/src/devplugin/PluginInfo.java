@@ -34,6 +34,7 @@ package devplugin;
 
 import java.lang.reflect.Method;
 
+import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginProxyManager;
 import util.misc.StringPool;
 
@@ -328,7 +329,8 @@ public final class PluginInfo {
       if (url == null) {
         url = "http://www.tvbrowser.org/showHelpFor.php?id="
           + id + "&lang="
-          + System.getProperty("user.language");
+          + Settings.propLanguage.getString();
+        System.out.println(url);
       }
       return url;
     }
