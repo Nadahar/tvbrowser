@@ -337,7 +337,7 @@ public final class ImdbDatabase {
   }
 
   private String getEpisodeId(final String title, final String episode, final int year) {
-    if (episode == null || episode.isEmpty() || !isInitialised()) {
+    if (episode == null || episode.length() == 0 || !isInitialised()) {
       return null;
     }
     final String normalizedTitle = normalise(title);

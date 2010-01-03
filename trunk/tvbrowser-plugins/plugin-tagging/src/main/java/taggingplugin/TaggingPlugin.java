@@ -283,7 +283,7 @@ final public class TaggingPlugin extends Plugin {
 					String programTitle = inputLine.substring(0, pos).trim();
 					// assume that any tag from server is corrupt
 					String tag = TagValidation.makeValidTag(inputLine.substring(pos + 1));
-					if (tag != null && !programTitle.isEmpty() && !tag.isEmpty()) {
+					if (tag != null && programTitle.length() > 0 && tag.length() > 0) {
 					  if (addTagInternal(programTitle, tag)) {
 						  // System.out.println(programTitle + ": " + tag);
 						}
