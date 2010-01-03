@@ -16,8 +16,6 @@
  */
 package checkerplugin;
 
-import java.awt.BorderLayout;
-
 import javax.swing.Icon;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
@@ -34,6 +32,10 @@ import devplugin.SettingsTab;
  */
 public class CheckerSettingsTab implements SettingsTab {
 
+  private static final util.ui.Localizer mLocalizer = util.ui.Localizer
+  .getLocalizerFor(CheckerSettingsTab.class);
+
+
   private JCheckBox mAutoStart;
   private CheckerSettings mSettings;
 
@@ -44,7 +46,7 @@ public class CheckerSettingsTab implements SettingsTab {
   @Override
   public JPanel createSettingsPanel() {
     JPanel panel = new JPanel(new FormLayout(FormFactory.RELATED_GAP_COLSPEC.encode() + "," + FormFactory.PREF_COLSPEC.encode(), "pref"));
-    mAutoStart = new JCheckBox(CheckerPlugin.mLocalizer.msg("autostart", "Run checks at startup"));
+    mAutoStart = new JCheckBox(mLocalizer.msg("autostart", "Run checks at startup"));
     mAutoStart.setSelected(mSettings.getAutostart());
     panel.add(mAutoStart, new CellConstraints().xy(2, 1));
     return panel;
