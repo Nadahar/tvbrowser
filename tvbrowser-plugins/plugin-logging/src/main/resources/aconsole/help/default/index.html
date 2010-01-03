@@ -1,0 +1,48 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+<title>TVBConsole Hilfe</title>
+</head>
+<body>
+
+TVBConsole zeigt ein Textfenster mit einer zeitlich sortierten und ggf. gefilterten Liste von Nachrichten welche normalerweise über die Java-Konsole ausgegeben werden. Diese Nachrichten sind in den meisten Fällen nur für die (Plugin-)Entwickler interessant. Die folgenden Nachrichten werden angezeigt:
+<ul>
+<li>Textausgaben über den Standard-Ausgabe-Stream (System.out)</li>
+<li>Textausgaben über die Fehler-Ausgabe-Stream (System.err)</li>
+<li>Logeinträge über das Package java.util.logging.Logger</li>
+</ul>
+Zur besseren Unterscheidung werden die Nachrichten farblich markiert. Die Standardfarben sind:
+<table>
+<tr><td>System.out</td><td>Blau</td></tr>
+<tr><td>System.err</td><td>Rot</td></tr>
+<tr><td>Logger (level=Severe)</td><td>Rot</td></tr>
+<tr><td>Logger (level=Warning)</td><td>Pink</td></tr>
+<tr><td>Logger (level=Info)</td><td>Schwarz</td></tr>
+<tr><td>Logger (level&lt;Info)</td><td>grau</td></tr>
+</table>
+Die Farben können über die Plugineinstellungen geändert werden.<p>
+<h3>Ausgabe filtern</h3>
+Die angezeigten Nachrichten können mit den Einstellungen am oberen Rand des TVBConsole-Fensters gefiltert werden. Die Filterfunktionen sind (von links nach rechts):
+<ol>
+<li><b>Name:</b> Logger-Nachrichten an Hand der Namen ihrer Logger filtern. Der Name eines Loggers ist in der Regel der vollständige Klassenname, angezeigt werden nur Nachrichten von Loggern deren Name mit den hier eingegeben Text beginnt. Beispiel:
+	<ul>
+	<li>"tvbrowser.core.plugin.PluginProxyManager": zeigt nur die Nachrichten der Klasse PluginProxyManager</li>
+	<li>"tvbrowser.core.plugin.": zeigt die Nachrichten aller Klassen im Package tvbrowser.core.plugin und all seinen Subpackages</li>
+	<li>"tvbrowser.": (Beachte den Punkt nach dem Paketnamen)zeigt die Nachrichten aller Klassen im TVBrowser-Kern (Package tvbrowser)</li>
+	<li>"tvbrowser": zeigt die Nachrichten aller Klassen im TVBrowser-Kern (Package tvbrowser) aber zum Beispiel auch
+		Nachrichten aus dem Package tvbrowserdataservice</li>
+	</ul>
+</li>
+<li><b>Level:</b> Logger-Nachrichten an Hand ihres Levels filtern. Gezeigt werden nur Nachrichten welche mindestens den hier eingestellten Level haben (normal ist "info", das ist equivalent zu Java-Konsole)</li>
+<li><b>Datum:</b> zeige/verstecke für Logger-Nachrichten ihr Erstellungs-Datum an.</li>
+<li><b>Zeit:</b> zeige/verstecke für Logger-Nachrichten ihre Erstellungs-Uhrzeit an.</li>
+<li><b>Klasse:</b> zeige/verstecke für Logger-Nachrichten den Namen des Loggers an. Das ist im Normalfall die Klasse welche die Nachricht sendet.</li>
+<li><b>Methode:</b> zeige/verstecke für Logger-Nachrichten den Namen der Methode an welche die Nachricht sendet. Der Methodenname wird aber häufig nicht protokoliert</li>
+<li><b>out:</b> zeige/verstecke die Standard-Ausgabe (System.out)</li> 
+<li><b>err:</b> zeige/verstecke die Fehler-Ausgabe (System.err)</li>
+</ol>
+
+
+</body>
+</html>
