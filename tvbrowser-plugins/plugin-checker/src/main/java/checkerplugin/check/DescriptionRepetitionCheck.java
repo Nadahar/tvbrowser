@@ -53,8 +53,8 @@ public class DescriptionRepetitionCheck extends AbstractCheck {
 		HashSet<String> set = new HashSet<String>(list.size());
 		set.addAll(list);
 		if (set.size() != list.size()) {
-			addError(mLocalizer.msg("desc.duplicate",
-					"{0} has duplicate parts", fieldName));
+			addError(mLocalizer.msg("duplicateLines",
+					"Duplicate lines in {0}", fieldName));
 		}
 		int size = 50;
 		if (desc.length() < size) {
@@ -64,8 +64,8 @@ public class DescriptionRepetitionCheck extends AbstractCheck {
 		int index = desc.indexOf(desc.substring(0, size), size);
 		if (index >= size) {
 			if (desc.indexOf(desc.substring(0, index - 1).trim(), index) == index) {
-				addError(mLocalizer.msg("desc.duplicate",
-						"{0} has duplicate parts", fieldName));
+				addError(mLocalizer.msg("duplicateStart",
+						"{0} has duplicate beginning", fieldName));
 			}
 		}
 	}
