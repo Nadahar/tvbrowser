@@ -321,7 +321,7 @@ public class FilterList {
 
     if (filterId != null && !filterId.equals("")) {
       String[] filterValues = filterId.split("###");
-      filterId = filterValues[0];
+      filterId = shortFilterClassName(filterValues[0]);
       filterName = filterValues[1];
     }
 
@@ -329,7 +329,7 @@ public class FilterList {
       if (filter.getClass().getName().equals("tvbrowser.core.filters.ShowAllFilter")) {
         allFilter = filter;
       } else
-      if (filterName != null && filter.getClass().getName().equals(filterId) && filter.getName().equals(filterName)) {
+      if (filterName != null && shortFilterClassName(filter.getClass().getName()).equals(filterId) && filter.getName().equals(filterName)) {
         return filter;
       }
     }
@@ -339,5 +339,13 @@ public class FilterList {
     }
 
     return new ShowAllFilter();
+  }
+
+  private String shortFilterClassName(final String className) {
+    int index = className.lastIndexOf('$');
+    if (index > 0) {
+      return className.substring(0, index);
+    }
+    return className;
   }
 }

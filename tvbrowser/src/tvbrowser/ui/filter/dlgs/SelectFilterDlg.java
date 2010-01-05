@@ -94,8 +94,10 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
     UiUtilities.registerForClosing(this);
 
     mFilterList = FilterList.getInstance();
-    mDefaultFilterId = Settings.propDefaultFilter.getString();
+    ProgramFilter defaultFilter = FilterManagerImpl.getInstance().getDefaultFilter();
+    mDefaultFilterId = defaultFilter.getClass().getName() + "###" + defaultFilter.getName();
     
+   
     mParent = parent;
     JPanel contentPane = (JPanel) getContentPane();
     contentPane.setLayout(new BorderLayout(7, 13));
