@@ -44,8 +44,7 @@ public class RecordFormatter extends Formatter {
 
 	// Line separator string.  This is the value of the line.separator
 	// property at the moment that the SimpleFormatter was created.
-	private String lineSeparator = (String) java.security.AccessController.doPrivileged(
-			   new sun.security.action.GetPropertyAction("line.separator"));
+	private String lineSeparator = System.getProperty("line.separator");
 	boolean showclass;
 	boolean showmethod;
 	public void setStyle(boolean showDate,boolean showTime,boolean showclass,boolean showmethod){
