@@ -11,9 +11,14 @@
   <name>TVB Logging Console</name>
   <developers>
     <developer>
-      <id>koomori</id>
-      <name>Thomas Schakert</name>
-      <email>ds10@tvbrowser.org</email>
+      <id>koumori</id>
+      <name>Tomas Schackert</name>
+      <email>koumori@web.de</email>
+    </developer>
+    <developer>
+    	<id>Tomas</id>
+    	<name>Tomas Schackert</name>
+    	<email>koumori@web.de</email>
     </developer>
   </developers>
   <licenses>
