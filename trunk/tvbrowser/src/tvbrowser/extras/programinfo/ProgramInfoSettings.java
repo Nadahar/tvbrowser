@@ -32,6 +32,8 @@ import devplugin.ProgramFieldType;
 
 class ProgramInfoSettings {
 
+  private static final int DEFAULT_BODY_STYLE = Font.PLAIN;
+  private static final int DEFAULT_TITLE_STYLE = Font.BOLD;
   private static final String KEY_FIELD_ORDER = "order";
   private static final String KEY_LOOK = "look";
   private static final int DEFAULT_BODY_FONT_SIZE = 11;
@@ -57,6 +59,8 @@ class ProgramInfoSettings {
   private static final String KEY_ACTOR_SEARCH_DEFAULT = "actorSearchDefault";
   private static final String KEY_HIGHLIGHT_COLOR = "highlightColor";
   private static final String KEY_HIGHLIGHT_ACTIVE = "highlightActive";
+  private static final String TITLE_FONT_STYLE = "titleFontStyle";
+  private static final String BODY_FONT_STYLE = "bodyFontStyle";
   private Properties mProperties;
 
   protected ProgramInfoSettings(final Properties properties) {
@@ -239,14 +243,17 @@ class ProgramInfoSettings {
   }
 
   protected Font getUsedTitleFont() {
-    return new Font(getUserFont() ? getTitleFontName()
-        : DEFAULT_TITLE_FONT_NAME, Font.BOLD,
-        getUserFont() ? getTitleFontSize() : DEFAULT_TITLE_FONT_SIZE);
+    if (getUserFont()) {
+      return new Font(getTitleFontName(), getTitleFontStyle(), getTitleFontSize());
+    }
+    return new Font(DEFAULT_TITLE_FONT_NAME, DEFAULT_TITLE_STYLE, DEFAULT_TITLE_FONT_SIZE);
   }
 
   protected Font getUsedBodyFont() {
-    return new Font(getUserFont() ? getBodyFontName() : DEFAULT_BODY_FONT_NAME,
-        Font.PLAIN, getUserFont() ? getBodyFontSize() : DEFAULT_BODY_FONT_SIZE);
+    if (getUserFont()) {
+      return new Font(getBodyFontName(), getBodyFontStyle(), getBodyFontSize());
+    }
+    return new Font(DEFAULT_BODY_FONT_NAME, DEFAULT_BODY_STYLE, DEFAULT_BODY_FONT_SIZE);
   }
 
   protected String getLook() {
@@ -310,5 +317,21 @@ class ProgramInfoSettings {
 
   protected void setHighlightFavorite(final boolean highlight) {
     setProperty(KEY_HIGHLIGHT_ACTIVE, highlight);
+  }
+
+  protected int getTitleFontStyle() {
+    return getProperty(TITLE_FONT_STYLE, DEFAULT_TITLE_STYLE);
+  }
+
+  protected int getBodyFontStyle() {
+    return getProperty(BODY_FONT_STYLE, DEFAULT_BODY_STYLE);
+  }
+
+  protected void setTitleFontStyle(final int style) {
+    setProperty(TITLE_FONT_STYLE, style);
+  }
+
+  protected void setBodyFontStyle(final int style) {
+    setProperty(BODY_FONT_STYLE, style);
   }
 }

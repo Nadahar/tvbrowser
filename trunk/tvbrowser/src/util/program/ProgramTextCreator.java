@@ -213,14 +213,19 @@ public class ProgramTextCreator {
 
     String titleFont, titleSize, bodyFont;
 
+    int bodyStyle;
+    int titleStyle;
     if (tFont == null && bFont != null) {
       titleFont = bodyFont = bFont.getFamily();
       titleSize = mBodyFontSize = String.valueOf(bFont.getSize());
+      titleStyle = bodyStyle = bFont.getStyle();
     } else if (tFont != null && bFont != null) {
       titleFont = tFont.getFamily();
       bodyFont = bFont.getFamily();
       titleSize = String.valueOf(tFont.getSize());
       mBodyFontSize = String.valueOf(bFont.getSize());
+      titleStyle = tFont.getStyle();
+      bodyStyle = bFont.getStyle();
     } else {
       return null;
     }
@@ -234,7 +239,7 @@ public class ProgramTextCreator {
 
     buffer.append(bodyFont);
 
-    buffer.append(";\"><tr>");
+    buffer.append(";").append(getCssStyle(bodyStyle)).append("\"><tr>");
     buffer.append("<td width=\"60\">");
     buffer.append("<p \"align=center\">");
     
@@ -279,10 +284,10 @@ public class ProgramTextCreator {
     buffer.append(titleSize);
 
     buffer.append("; line-height:2.5em; font-family:");
-    buffer.append(titleFont);
-    buffer.append("\"><b>");
+    buffer.append(titleFont).append(";").append(getCssStyle(titleStyle));
+    buffer.append("\">");
     buffer.append(prog.getTitle());
-    buffer.append("</b></div>");
+    buffer.append("</div>");
 
     String episode = CompoundedProgramFieldType.EPISODE_COMPOSITION.getFormattedValueForProgram(prog);
     
@@ -704,6 +709,17 @@ public class ProgramTextCreator {
 
     return buffer.toString();}catch(Exception e) {e.printStackTrace();}
     return "";
+  }
+
+  private static String getCssStyle(final int style) {
+    StringBuilder result = new StringBuilder();
+    if ((style & Font.BOLD) == Font.BOLD) {
+      result.append("font-weight:bold;");
+    }
+    if ((style & Font.ITALIC) == Font.ITALIC) {
+      result.append("font-style:italic;");
+    }
+    return result.toString();
   }
 
   private static String checkDescription(String desc) {
