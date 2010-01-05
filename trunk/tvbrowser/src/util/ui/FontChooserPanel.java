@@ -33,13 +33,17 @@ import java.awt.Font;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
 
 public class FontChooserPanel extends JPanel {
 
   /** The localizer for this class. */
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(FontChooserPanel.class);
 
-  private JComboBox mFontCB, mStyleCB, mSizeCB;
+  private JComboBox mFontCB, mStyleCB;
+
+  private JSpinner mSizeSpinner;
 
   private JLabel mTitle;
 
@@ -47,16 +51,12 @@ public class FontChooserPanel extends JPanel {
 
   private static final String[] FONTNAMES = ge.getAvailableFontFamilyNames();
 
-  private static final Integer[] FONTSIZES = new Integer[17];
-
   private static final String[] FONTSTYLES = { mLocalizer.msg("plain", "plain"), mLocalizer.msg("bold", "bold"),
       mLocalizer.msg("italic", "italic") };
 
-  {
-    for (int i = 0; i < FONTSIZES.length; i++) {
-      FONTSIZES[i] = i + 8;
-    }
-  }
+  private static final int FONTSIZE_MIN = 8;
+
+  private static final int FONTSIZE_MAX = 40;
 
   /**
    * create a new font chooser with optional style selection
@@ -70,20 +70,21 @@ public class FontChooserPanel extends JPanel {
       mTitle = new JLabel(title);
       add(mTitle, BorderLayout.NORTH);
     }
-    JPanel panel1 = new JPanel(new FlowLayout());
+    JPanel innerPanel = new JPanel(new FlowLayout());
 
     mFontCB = new JComboBox(FONTNAMES);
     mStyleCB = new JComboBox(FONTSTYLES);
-    mSizeCB = new JComboBox(FONTSIZES);
+    mSizeSpinner = new JSpinner(new SpinnerNumberModel(FONTSIZE_MIN, FONTSIZE_MIN, FONTSIZE_MAX, 1));
 
-    panel1.add(mFontCB);
+    innerPanel.add(mFontCB);
 
-    if (style)
-      panel1.add(mStyleCB);
+    if (style) {
+      innerPanel.add(mStyleCB);
+    }
 
-    panel1.add(mSizeCB);
+    innerPanel.add(mSizeSpinner);
     
-    add(panel1, BorderLayout.CENTER);
+    add(innerPanel, BorderLayout.CENTER);
 
     if (font != null) {
       selectFont(font);
@@ -132,12 +133,7 @@ public class FontChooserPanel extends JPanel {
       }
     }
 
-    for (int i = 0; i < mSizeCB.getItemCount(); i++) {
-      Integer item = (Integer) mSizeCB.getItemAt(i);
-      if (item.intValue() == font.getSize()) {
-        mSizeCB.setSelectedIndex(i);
-      }
-    }
+    mSizeSpinner.setValue(font.getSize());
 
     if (font.getStyle() == Font.BOLD) {
       mStyleCB.setSelectedIndex(1);
@@ -151,9 +147,10 @@ public class FontChooserPanel extends JPanel {
     super.setEnabled(enabled);
     mFontCB.setEnabled(enabled);
     mStyleCB.setEnabled(enabled);
-    mSizeCB.setEnabled(enabled);
-    if (mTitle != null)
+    mSizeSpinner.setEnabled(enabled);
+    if (mTitle != null) {
       mTitle.setEnabled(enabled);
+    }
   }
 
   public Font getChosenFont() {
@@ -167,7 +164,7 @@ public class FontChooserPanel extends JPanel {
     } else {
       style = Font.ITALIC;
     }
-    result = new Font((String) mFontCB.getSelectedItem(), style, ((Integer) mSizeCB.getSelectedItem()).intValue());
+    result = new Font((String) mFontCB.getSelectedItem(), style, ((Integer) mSizeSpinner.getValue()).intValue());
 
     return result;
   }
