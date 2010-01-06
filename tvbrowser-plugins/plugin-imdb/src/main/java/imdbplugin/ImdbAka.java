@@ -22,4 +22,40 @@ public class ImdbAka {
   public int getYear() {
     return year;
   }
+  
+  @Override
+  public boolean equals(Object obj) {
+    if (obj == null) {
+      return false;
+    }
+    if (obj == this) {
+      return true;
+    }
+    if (!(obj instanceof ImdbAka)) {
+      return false;
+    }
+    ImdbAka otherAka = (ImdbAka) obj;
+    if (year != otherAka.year) {
+      return false;
+    }
+    if (!title.equalsIgnoreCase(otherAka.title)) {
+      return false;
+    }
+    if ((episode == null) != (otherAka.episode == null)) {
+      return false;
+    }
+    if (episode != null && !episode.equalsIgnoreCase(otherAka.episode)) {
+      return false;
+    }
+    return true;
+  }
+  
+  @Override
+  public int hashCode() {
+    int hash = title.hashCode() + year;
+    if (episode != null) {
+      hash += episode.hashCode();
+    }
+    return hash;
+  }
 }
