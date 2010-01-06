@@ -524,7 +524,7 @@ public final class ImdbDatabase {
         final BooleanQuery bQueryAKA = new BooleanQuery();
         bQueryAKA.add(new TermQuery(new Term(ITEM_TYPE, TYPE_AKA)), BooleanClause.Occur.MUST);
         bQueryAKA.add(new TermQuery(new Term(MOVIE_ID, id)), BooleanClause.Occur.MUST);
-        final TopDocs topDocsAKA = mSearcher.search(bQueryAKA, null, 1000);
+        final TopDocs topDocsAKA = mSearcher.search(bQueryAKA, null, 100);
 
         for (ScoreDoc sdoc:topDocsAKA.scoreDocs) {
           final Document doc = mSearcher.doc(sdoc.doc);

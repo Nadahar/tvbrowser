@@ -1,12 +1,14 @@
 package imdbplugin;
 
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashSet;
 
 public class ImdbMovie {
   private String title;
   private int year;
   private String episode;
-  private ArrayList<ImdbAka> akaList = new ArrayList<ImdbAka>();
+  private HashSet<ImdbAka> akaList = new HashSet<ImdbAka>();
  
   public void setTitle(String title) {
     this.title = title;
@@ -37,6 +39,12 @@ public class ImdbMovie {
   }
 
   public ImdbAka[] getAkas() {
-    return akaList.toArray(new ImdbAka[akaList.size()]);
+    ImdbAka[] result = akaList.toArray(new ImdbAka[akaList.size()]);
+    Arrays.sort(result, new Comparator<ImdbAka>() {
+
+      public int compare(ImdbAka aka1, ImdbAka aka2) {
+        return aka1.getTitle().compareToIgnoreCase(aka2.getTitle());
+      }});
+    return result;
   }
 }
