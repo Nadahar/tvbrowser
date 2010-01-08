@@ -188,9 +188,14 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
               }
             } else if (xtvdProgram.getOriginalAirDate() != null) {
               Calendar aircal = Calendar.getInstance();
-              aircal.setTime(xtvdProgram.getOriginalAirDate().getDate());
+              java.util.Date date = xtvdProgram.getOriginalAirDate().getDate();
+              aircal.setTime(date);
               prog.setIntField(ProgramFieldType.PRODUCTION_YEAR_TYPE, aircal.get(Calendar.YEAR));
-              prog.setTextField(ProgramFieldType.REPETITION_OF_TYPE, new SimpleDateFormat().format(aircal.getTime()));
+              String repetition = new SimpleDateFormat().format(date);
+              if (repetition.endsWith("00:00")) {
+                repetition = repetition.substring(0, repetition.length() - "00:00".length()).trim();
+              }
+              prog.setTextField(ProgramFieldType.REPETITION_OF_TYPE, repetition);
             }
 
             StringBuilder desc = new StringBuilder();
