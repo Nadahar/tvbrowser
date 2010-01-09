@@ -35,7 +35,7 @@ import org.apache.lucene.store.FSDirectory;
 
 public final class ImdbDatabase {
   private static final int MAX_FIELD_LENGTH = 200;
-  private static final String[] TITLE_SUFFIX = { "(Fortsetzung)", "(Teil 1)", "(Teil 2)", "(Teil 3)", "(Teil 4)", "Part 1", "Part 2", "Part 3", "Part 4", "(1)", "(2)", "(3)", "(4)" };
+  private static final String[] TITLE_SUFFIX = { "(Fortsetzung)", "(Teil 1)", "(Teil 2)", "(Teil 3)", "(Teil 4)", "Part 1", "Part 2", "Part 3", "Part 4", "(Part 1)", "(Part 2)", "(Part 3)", "(Part 4)", "(1)", "(2)", "(3)", "(4)" };
   private static final String ITEM_TYPE = "ITEM_TYPE";
   private static final String TYPE_MOVIE = "TYPE_MOVIE";
   private static final String TYPE_AKA = "TYPE_AKA";
@@ -363,6 +363,11 @@ public final class ImdbDatabase {
     } catch (IOException e) {
       e.printStackTrace();
     }
+    for (String suffix : TITLE_SUFFIX) {
+      if (episode.endsWith(suffix)) {
+        return getEpisodeId(title, removeSuffix(episode, suffix), year);
+      }
+    }
     return null;
   }
 
@@ -404,10 +409,10 @@ public final class ImdbDatabase {
     // and now try with shortened title if there is a common suffix
     for (String suffix : TITLE_SUFFIX) {
       if (title.endsWith(suffix)) {
-        return getMovieId(title.substring(0, title.length() - suffix.length()).trim(), episode, null, null, year);
+        return getMovieId(removeSuffix(title, suffix), episode, null, null, year);
       }
       if (originalTitle != null && originalTitle.endsWith(suffix)) {
-        return getMovieId(title, episode, originalTitle.substring(0, originalTitle.length() - suffix.length()).trim(), originalEpisode, year);
+        return getMovieId(title, episode, removeSuffix(originalTitle, suffix), originalEpisode, year);
       }
     }
     
@@ -428,6 +433,14 @@ public final class ImdbDatabase {
     }
     
     return null;
+  }
+
+  private String removeSuffix(final String field, final String suffix) {
+    String result = field.substring(0, field.length() - suffix.length()).trim();
+    if (result.endsWith(",")) {
+      result = result.substring(0, result.length() - 1).trim();
+    }
+    return result;
   }
 
   private String getMovieIdFromTitle(final String title, final String episode, final int year, String itemType) {
