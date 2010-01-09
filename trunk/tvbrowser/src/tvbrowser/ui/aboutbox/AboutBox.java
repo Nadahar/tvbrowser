@@ -189,7 +189,7 @@ public class AboutBox extends JDialog implements WindowClosingIf{
                "  <body>" +
                "    <div id=\"title\">"+mLocalizer.msg("version", "Version")+": " + TVBrowser.VERSION.toString() +"</div>" +
                "<p>" +
-               "    <table width=\"100%\" border=\"1\">");
+               "    <table width=\"100%\" border=\"0\">");
      
     
     createInfoEntry(buf, mLocalizer.msg("platform", "Platform") + ":",
