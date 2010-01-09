@@ -53,9 +53,16 @@
     <module>plugin-imdb</module>
     <module>plugin-logging</module>
     <module>plugin-mediathek</module>
+    <module>plugin-mixeddataautoupdate</module>
+    <module>plugin-mixeddataservice</module>
+    <module>plugin-mixedupdatelock</module>
     <module>plugin-movieaward</module>
     <module>plugin-notifyosd</module>
+    <module>plugin-nextviewdataservice</module>
+    <module>plugin-nextviewdataupdatewatcher</module>
     <module>plugin-recommendation</module>
+    <module>plugin-sharedchannelautoupdate</module>
+    <module>plugin-shareddataservice</module>
     <module>plugin-snarl</module>
     <module>plugin-soundreminder</module>
     <module>plugin-speech</module>
