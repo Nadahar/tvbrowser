@@ -22,22 +22,6 @@
  */
 package simplemarkerplugin;
 
-import devplugin.Date;
-import devplugin.NodeFormatter;
-import devplugin.Plugin;
-import devplugin.PluginTreeNode;
-import devplugin.Program;
-import devplugin.ProgramItem;
-import devplugin.ProgramReceiveIf;
-import devplugin.ProgramReceiveTarget;
-import util.io.IOUtilities;
-import util.program.ProgramUtilities;
-import util.ui.Localizer;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.Icon;
-import javax.swing.SwingUtilities;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
@@ -48,8 +32,24 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.LinkedList;
-import java.util.Map.Entry;
 import java.util.Vector;
+import java.util.Map.Entry;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.Icon;
+import javax.swing.SwingUtilities;
+
+import util.io.IOUtilities;
+import util.program.ProgramUtilities;
+import util.ui.Localizer;
+import devplugin.Date;
+import devplugin.NodeFormatter;
+import devplugin.Plugin;
+import devplugin.PluginTreeNode;
+import devplugin.Program;
+import devplugin.ProgramItem;
+import devplugin.ProgramReceiveTarget;
 
 /**
  * SimpleMarkerPlugin 1.4 Plugin for TV-Browser since version 2.3 to only mark
@@ -411,7 +411,6 @@ public class MarkList extends Vector<Program> {
         root.update();
       }
     }
-    SimpleMarkerPlugin.getInstance().addGroupingActions(root);
   }
 
   private GroupUnmarkAction getUnmarkAction(PluginTreeNode dateNode) {
