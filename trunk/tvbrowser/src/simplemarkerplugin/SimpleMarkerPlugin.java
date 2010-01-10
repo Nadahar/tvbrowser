@@ -22,26 +22,17 @@
  */
 package simplemarkerplugin;
 
-import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-import devplugin.ActionMenu;
-import devplugin.ContextMenuAction;
-import devplugin.Plugin;
-import devplugin.PluginInfo;
-import devplugin.PluginTreeNode;
-import devplugin.PluginsFilterComponent;
-import devplugin.Program;
-import devplugin.ProgramReceiveTarget;
-import devplugin.SettingsTab;
-import devplugin.Version;
-import util.settings.PluginPictureSettings;
-import util.settings.ProgramPanelSettings;
-import util.ui.Localizer;
-import util.ui.ProgramList;
-import util.ui.TVBrowserIcons;
-import util.ui.UiUtilities;
-import util.ui.WindowClosingIf;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Properties;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -54,18 +45,29 @@ import javax.swing.JPanel;
 import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
 import javax.swing.WindowConstants;
-import java.awt.Dimension;
-import java.awt.Frame;
-import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Properties;
-import java.util.Vector;
+
+import util.settings.PluginPictureSettings;
+import util.settings.ProgramPanelSettings;
+import util.ui.Localizer;
+import util.ui.ProgramList;
+import util.ui.TVBrowserIcons;
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
+
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
+import devplugin.ActionMenu;
+import devplugin.ContextMenuAction;
+import devplugin.Plugin;
+import devplugin.PluginInfo;
+import devplugin.PluginTreeNode;
+import devplugin.PluginsFilterComponent;
+import devplugin.Program;
+import devplugin.ProgramReceiveTarget;
+import devplugin.SettingsTab;
+import devplugin.Version;
 
 /**
  * SimpleMarkerPlugin 1.4 Plugin for TV-Browser since version 2.3 to only mark
@@ -82,8 +84,6 @@ public class SimpleMarkerPlugin extends Plugin {
   
   /** The localizer for this class. */
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(SimpleMarkerPlugin.class);
-
-  private Program mProg = null;
 
   private static SimpleMarkerPlugin mInstance;
 
@@ -142,6 +142,7 @@ public class SimpleMarkerPlugin extends Plugin {
 
   public void loadSettings(Properties prop) {
     mSettings = new SimpleMarkerSettings(prop);
+    addGroupingActions(mRootNode);
   }
 
   public Properties storeSettings() {
@@ -173,16 +174,14 @@ public class SimpleMarkerPlugin extends Plugin {
   /**
    * @return The ActionMenu for this Plugin.
    */
-  public ActionMenu getContextMenuActions(Program p) {
-    if(p == null || p.equals(getPluginManager().getExampleProgram()) || getPluginManager().getFilterManager() == null) {
+  public ActionMenu getContextMenuActions(final Program program) {
+    if(program == null || program.equals(getPluginManager().getExampleProgram()) || getPluginManager().getFilterManager() == null) {
       return new ActionMenu(new ContextMenuAction(mLocalizer.msg("mark", "Mark"),createImageIcon("status", "mail-attachment", 16)));
     }
     
-    this.mProg = p;
-    
     if (mMarkListVector.size() == 1) {
       // Create context menu entry
-      return new ActionMenu(mMarkListVector.getListAt(0).getContextMenuAction(p, true));
+      return new ActionMenu(mMarkListVector.getListAt(0).getContextMenuAction(program, true));
     } else {
       Object[] submenu = new Object[mMarkListVector.size()];
       ContextMenuAction menu = new ContextMenuAction();
@@ -190,7 +189,7 @@ public class SimpleMarkerPlugin extends Plugin {
       menu.setSmallIcon(createImageIcon("status", "mail-attachment", 16));
       
       for (int i = 0; i < mMarkListVector.size(); i++) {
-        submenu[i] = mMarkListVector.getListAt(i).getContextMenuAction(p, false);
+        submenu[i] = mMarkListVector.getListAt(i).getContextMenuAction(program, false);
       }
       return new ActionMenu(menu, submenu);
     }
@@ -417,6 +416,7 @@ public class SimpleMarkerPlugin extends Plugin {
     }
     PluginTreeNode root = getRootNode();
     root.removeAllChildren();
+    root.removeAllActions();
     root.getMutableTreeNode().setShowLeafCountEnabled(false);
 
     for (Program p : getPluginManager().getMarkedPrograms()) {
@@ -438,9 +438,8 @@ public class SimpleMarkerPlugin extends Plugin {
             list.getReceiveTarget());
         list.createNodes(listNode, false);
       }
-      addGroupingActions(root);
     }
-   
+    addGroupingActions(root);
     root.update();
   }
 
