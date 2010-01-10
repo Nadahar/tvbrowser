@@ -1,19 +1,19 @@
 package imdbplugin;
 
-import com.jgoodies.forms.debug.FormDebugPanel;
+import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.Font;
+
+import javax.swing.BorderFactory;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+
+import util.ui.Localizer;
+
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Insets;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.border.AbstractBorder;
-import util.ui.Localizer;
 
 public class ImdbRatingPanel extends JPanel {
   /**
@@ -24,7 +24,7 @@ public class ImdbRatingPanel extends JPanel {
   private ImdbRating rating;
   private ImdbMovie movie;
 
-  public ImdbRatingPanel(ImdbMovie movie, ImdbRating rating) {
+  public ImdbRatingPanel(final ImdbMovie movie, final ImdbRating rating) {
     this.rating = rating;
     this.movie = movie;
     createGui();
@@ -36,32 +36,7 @@ public class ImdbRatingPanel extends JPanel {
     FormLayout layout = new FormLayout("fill:min:grow");
 
     setLayout(layout);
-
-    setBorder(new AbstractBorder(){
-      @Override
-      public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
-        g.setColor(new Color(240,240,240));
-        g.fillRect(x,y, x + width, y + 10);
-        g.fillRect(x,y + height - 10, x + width, y + height);
-        g.fillRect(x, y + 10, x + 10, y+ height - 10);
-        g.fillRect(x + width - 10, y + 10, x + width, y+height - 10);
-
-        g.setColor(new Color(222, 222, 222));
-        g.drawLine(x+10,y+10, x + width - 10, y + 10);
-
-        g.setColor(new Color(218, 218, 218));
-        g.drawLine(x+10,y+11, x+10, y + height - 11);
-        g.drawLine(x + width - 10,y+11, x + width - 10, y + height - 11);
-
-        g.setColor(new Color(181, 181, 181));
-        g.drawLine(x+10,y + height - 10, x + width - 10, y + height - 10);
-      }
-
-      @Override
-      public Insets getBorderInsets(Component c) {
-        return new Insets(20, 20, 20, 20);
-      }
-    });
+    setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
                                      
     CellConstraints cc = new CellConstraints();
 
@@ -99,7 +74,7 @@ public class ImdbRatingPanel extends JPanel {
     layout.appendRow(RowSpec.decode("pref"));
     JPanel diagramPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
     diagramPanel.setBackground(Color.WHITE);
-    diagramPanel.add(new RatingDiagramm(rating));
+    diagramPanel.add(new RatingDiagram(rating));
     add(diagramPanel, cc.xy(1,layout.getRowCount()));
     layout.appendRow(RowSpec.decode("3dlu"));
 
@@ -108,9 +83,9 @@ public class ImdbRatingPanel extends JPanel {
     if (akas.length > 0) {
       layout.appendRow(RowSpec.decode("pref"));
 
-      JLabel alternativeHead = new JLabel(mLocalizer.msg("alternativeTitle","Alternative Titel") + ":");
+      JLabel alternativeHead = new JLabel(mLocalizer.msg("alternativeTitle","Alternative Titles") + ":");
       alternativeHead.setForeground(Color.black);
-      alternativeHead.setFont(alternativeHead.getFont().deriveFont(12f).deriveFont(Font.BOLD));
+      alternativeHead.setFont(alternativeHead.getFont().deriveFont(Font.BOLD));
 
       add(alternativeHead, cc.xy(1,layout.getRowCount()));
 
@@ -121,17 +96,18 @@ public class ImdbRatingPanel extends JPanel {
 
       for (ImdbAka aka:akas) {
         if (akaString.length() > 0) {
-          akaString.append(", ");
+          akaString.append(",\n");
         }
         akaString.append(aka.getTitle());
         akaString.append(" (");
         if (aka.getEpisode() != null && aka.getEpisode().length() > 0) {
           akaString.append(aka.getEpisode()).append(", ");
         }
-        akaString.append(aka.getYear()).append(") ");
+        akaString.append(aka.getYear()).append(")");
       }
 
-      JLabel akaLabel = new JLabel(akaString.toString());
+      JTextArea akaLabel = new JTextArea(akaString.toString());
+      akaLabel.setEditable(false);
       akaLabel.setForeground(Color.black);
       akaLabel.setFont(alternativeHead.getFont().deriveFont(12f).deriveFont(Font.PLAIN));
       
