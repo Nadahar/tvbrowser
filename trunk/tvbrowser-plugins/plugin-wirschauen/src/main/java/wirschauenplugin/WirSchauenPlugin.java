@@ -145,10 +145,10 @@ public final class WirSchauenPlugin extends Plugin
    */
   private ArrayList<ProgramId> mLinkedPrograms = new ArrayList<ProgramId>();
 
-	/**
-	 * all settings of this plugin
-	 */
-	private WirSchauenSettings mSettings;
+  /**
+   * all settings of this plugin.
+   */
+  private WirSchauenSettings mSettings;
 
 
 
@@ -502,19 +502,25 @@ public final class WirSchauenPlugin extends Plugin
   @Override
   public void loadSettings(final Properties properties)
   {
-  	mSettings = new WirSchauenSettings(properties);
+    mSettings = new WirSchauenSettings(properties);
 
     //loadSettings is called after readData. so all linked programs are loaded. now we have to
     //(un)mark them.
-  	updateMarkings(mSettings.getMarkPrograms());
+    updateMarkings(mSettings.getMarkPrograms());
   }
 
+  /**
+   * (un)marks programs which are (not) in the plugin tree or in mLinkedPrograms.
+   *
+   * @param markPrograms true to mark the programs, false to unmark them
+   */
   void updateMarkings(final boolean markPrograms) {
     changeMarkingOfLinkedPrograms(markPrograms);
     changeMarkingOfProgramsInTree(markPrograms);
-	}
+  }
 
-	/**
+
+  /**
    * {@inheritDoc}
    * @see devplugin.Plugin#storeSettings()
    */
