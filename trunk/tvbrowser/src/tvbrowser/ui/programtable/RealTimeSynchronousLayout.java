@@ -73,8 +73,14 @@ public class RealTimeSynchronousLayout extends AbstractProgramTableLayout {
         ProgramPanel panel = model.getProgramPanel(col, row);
         Program program = panel.getProgram();
         
-        if (row == 0)
-          columnStartArr[col] = (int)(program.getStartTime() * scaleValue);
+        if (row == 0) {
+          if(model.getDate().compareTo(program.getDate()) < 0) {
+            columnStartArr[col] = (int)((program.getStartTime() + 24 * 60)* scaleValue);
+          }
+          else {
+            columnStartArr[col] = (int)(program.getStartTime() * scaleValue);
+          }
+        }
         
         if(row != rowCount - 1) {
           Program next = model.getProgramPanel(col, row + 1).getProgram();
