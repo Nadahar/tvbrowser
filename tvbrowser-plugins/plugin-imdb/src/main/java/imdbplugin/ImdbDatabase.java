@@ -432,6 +432,20 @@ public final class ImdbDatabase {
       }
     }
     
+    // sometimes the German title is "<originaltitle> - <some German string>"
+    if (originalTitle == null) {
+      int index = title.indexOf(" - ");
+      if (index > 0) {
+        String titlePart = title.substring(0, index).trim();
+        if (titlePart.length() >= 5) {
+          String id =  getMovieId(titlePart, episode, null, null, year);
+          if (id != null) {
+            return id;
+          }
+        }
+      }
+    }
+    
     return null;
   }
 
