@@ -46,15 +46,11 @@ import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JSlider;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerDateModel;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import tvbrowser.core.Settings;
 import tvbrowser.ui.settings.tablebackgroundstyles.DayTimeBackgroundStyle;
@@ -73,7 +69,6 @@ import com.jgoodies.forms.factories.DefaultComponentFactory;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
-import com.jgoodies.forms.layout.Sizes;
 
 import devplugin.SettingsTab;
 
@@ -93,11 +88,9 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
 
   private JButton mConfigBackgroundStyleBt;
 
-  private JSlider mColWidthSl;
-
   private JButton mDefaultBtn;
 
-  private JSpinner mStartOfDayTimeSp, mEndOfDayTimeSp;
+  private JSpinner mColWidth, mStartOfDayTimeSp, mEndOfDayTimeSp;
 
   private JCheckBox mMouseOverCb;
 
@@ -126,7 +119,7 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
   public void actionPerformed(ActionEvent event) {
     Object source = event.getSource();
     if (source == mDefaultBtn) {
-      mColWidthSl.setValue(200);
+      mColWidth.setValue(Settings.propColumnWidth.getDefault());
     }
   }
   
@@ -245,8 +238,6 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
         (currentRow += 2), 8));
     
     // column width
-    JPanel sliderPn = new JPanel(new BorderLayout());
-
     int width = Settings.propColumnWidth.getInt();
 
     if (width > Settings.MAX_COLUMN_WIDTH) {
@@ -257,25 +248,12 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
       width = Settings.MIN_COLUMN_WIDTH;
     }
 
-    mColWidthSl = new JSlider(SwingConstants.HORIZONTAL, Settings.MIN_COLUMN_WIDTH, Settings.MAX_COLUMN_WIDTH, width);
+    mColWidth = new JSpinner(new SpinnerNumberModel(
+            width, Settings.MIN_COLUMN_WIDTH, Settings.MAX_COLUMN_WIDTH, 1));
 
-    mColWidthSl.setPreferredSize(new Dimension(200, 25));
+    mSettingsPn.add(new JLabel(mLocalizer.msg("widthInPixels", "Width in Pixels")), cc.xy(2, (currentRow += 2)));
+    mSettingsPn.add(mColWidth, cc.xy(4, currentRow));
 
-    final JLabel colWidthLb = new JLabel(Integer.toString(mColWidthSl.getValue()), JLabel.RIGHT);
-    Dimension dim = colWidthLb.getPreferredSize();
-    colWidthLb.setPreferredSize(new Dimension(Sizes.dialogUnitXAsPixel(20, mSettingsPn), dim.height));
-    
-    mColWidthSl.addChangeListener(new ChangeListener() {
-      public void stateChanged(ChangeEvent e) {
-        colWidthLb.setText(Integer.toString(mColWidthSl.getValue()));
-      }
-    });
-
-    sliderPn.add(mColWidthSl, BorderLayout.CENTER);
-    sliderPn.add(colWidthLb, BorderLayout.EAST);
-
-    mSettingsPn.add(sliderPn, cc.xyw(2, (currentRow += 2), 3));
-    
     mDefaultBtn = new JButton(Localizer.getLocalization(Localizer.I18N_DEFAULT));
     mDefaultBtn.addActionListener(this);
 
@@ -538,7 +516,7 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
       Settings.propTableLayout.setString(Settings.LAYOUT_REAL_SYNCHRONOUS);
     }
     
-    Settings.propColumnWidth.setInt(mColWidthSl.getValue());
+    Settings.propColumnWidth.setInt((Integer)mColWidth.getValue());
     Settings.propProgramPanelForegroundColor.setColor(mForegroundColorLb.getColor());
 
     Calendar cal = Calendar.getInstance();
