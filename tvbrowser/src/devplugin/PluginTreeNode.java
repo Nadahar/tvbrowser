@@ -681,17 +681,27 @@ public class PluginTreeNode implements Comparable<PluginTreeNode> {
     
     // we have child nodes
     ArrayList<Object> list = new ArrayList<Object>();
+    addProgramItemsTo(list);
+
+    ProgramItem[] result = new ProgramItem[list.size()];
+    list.toArray(result);
+    return result;
+  }
+
+  private void addProgramItemsTo(final ArrayList<Object> list) {
+    if (mChildNodes == null || mChildNodes.isEmpty()) {
+      return;
+    }
     Iterator<PluginTreeNode> it = mChildNodes.iterator();
     while (it.hasNext()) {
       PluginTreeNode n = it.next();
       if (n.isLeaf()) {
         list.add(n.getUserObject());
       }
+      else {
+        n.addProgramItemsTo(list);
+      }
     }
-
-    ProgramItem[] result = new ProgramItem[list.size()];
-    list.toArray(result);
-    return result;
   }
 
   public Program[] getPrograms() {
@@ -702,6 +712,17 @@ public class PluginTreeNode implements Comparable<PluginTreeNode> {
     
     // we have child nodes
     ArrayList<Program> list = new ArrayList<Program>();
+    addProgramsTo(list);
+
+    Program[] result = new Program[list.size()];
+    list.toArray(result);
+    return result;
+  }
+
+  private void addProgramsTo(final ArrayList<Program> list) {
+    if (mChildNodes == null || mChildNodes.isEmpty()) {
+      return;
+    }
     Iterator<PluginTreeNode> it = mChildNodes.iterator();
     while (it.hasNext()) {
       PluginTreeNode n = it.next();
@@ -712,11 +733,10 @@ public class PluginTreeNode implements Comparable<PluginTreeNode> {
           list.add(program);
         }
       }
+      else {
+        n.addProgramsTo(list);
+      }
     }
-
-    Program[] result = new Program[list.size()];
-    list.toArray(result);
-    return result;
   }
 
 
