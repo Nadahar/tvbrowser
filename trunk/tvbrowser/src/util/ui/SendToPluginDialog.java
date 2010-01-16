@@ -177,7 +177,7 @@ public class SendToPluginDialog extends JDialog implements WindowClosingIf {
     // get the installed plugins
     ProgramReceiveIf[] installedPluginArr = Plugin.getPluginManager().getReceiveIfs(mCaller,mCallerTarget);
 
-    Arrays.sort(installedPluginArr, new ObjectComperator());
+    Arrays.sort(installedPluginArr, new ObjectComparator());
     
     mPluginList = new JComboBox(installedPluginArr);
     pb.add(mPluginList, cc.xy(2, 3));
@@ -291,7 +291,7 @@ public class SendToPluginDialog extends JDialog implements WindowClosingIf {
   /**
    * Comparator needed to Sort List of Plugins
    */
-  private static class ObjectComperator implements Comparator<ProgramReceiveIf> {
+  private static class ObjectComparator implements Comparator<ProgramReceiveIf> {
 
     public int compare(ProgramReceiveIf o1, ProgramReceiveIf o2) {
       return o1.toString().compareTo(o2.toString());
