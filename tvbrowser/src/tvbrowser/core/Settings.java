@@ -1003,7 +1003,7 @@ public class Settings {
           UIManager.getCrossPlatformLookAndFeelClassName()));
 
   public static final IntProperty propColumnWidth = new IntProperty(mProp,
-      "columnwidth", 180);
+      "columnwidth", 200);
 
   public static final IntArrayProperty propTimeButtons = new IntArrayProperty(
       mProp, "timeButtons", new int[] { 6 * 60, 12 * 60, 18 * 60, 20 * 60 + 15 });
@@ -1402,7 +1402,7 @@ public class Settings {
   /**
    * maximum width of the program table columns
    */
-  public static final int MAX_COLUMN_WIDTH = 300;
+  public static final int MAX_COLUMN_WIDTH = 600;
   
   /**
    * minimum width of the program table columns 
