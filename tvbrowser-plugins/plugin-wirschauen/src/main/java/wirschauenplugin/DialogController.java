@@ -36,7 +36,7 @@ import devplugin.Program;
 public class DialogController
 {
   /**
-   * the parant of the different dialogs.
+   * the parent of the different dialogs.
    */
   private Window mParent;
 
@@ -48,7 +48,7 @@ public class DialogController
 
 
   /**
-   * @param parent the parant of the different dialogs that are opened during the processing
+   * @param parent the parent of the different dialogs that are opened during the processing
    */
   public DialogController(final Window parent)
   {
