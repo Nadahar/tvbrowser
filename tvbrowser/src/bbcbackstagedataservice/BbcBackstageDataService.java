@@ -401,7 +401,9 @@ public class BbcBackstageDataService extends AbstractTvDataService {
     File[] files = mWorkingDir.listFiles();
     if (files != null) {
       for (File file : files) {
-        file.delete();
+        if (file.getName().endsWith(".xml")) {
+          file.delete();
+        }
       }
     }
     else {
