@@ -153,7 +153,7 @@ public final class EMailSettingsTab implements SettingsTab {
     
     setInputState();
 
-    mConfigPanel = new PluginProgramConfigurationPanel(mPlugin.getSelectedPluginProgramFormattings(), mPlugin.getAvailableLocalPluginProgramFormattings(), EMailPlugin.getDefaultFormatting(),false,true);
+    mConfigPanel = new PluginProgramConfigurationPanel(mPlugin.getSelectedPluginProgramFormattings(), mPlugin.getAvailableLocalPluginProgramFormattings(), EMailPlugin.getDefaultFormatting(), true ,true);
 
     configPanel.add(mConfigPanel, cc.xyw(1, 10, 7));
     
@@ -193,7 +193,7 @@ public final class EMailSettingsTab implements SettingsTab {
     mSettings.setDefaultApplication(mDefaultApplication.isSelected());
    
     mPlugin.setAvailableLocalPluginProgramFormattings(mConfigPanel.getAvailableLocalPluginProgramFormatings());
-    mPlugin.setSelectedPluginProgramFormatings(mConfigPanel.getSelectedPluginProgramFormatings());
+    mPlugin.setSelectedPluginProgramFormattings(mConfigPanel.getSelectedPluginProgramFormatings());
   }
 
   public Icon getIcon() {
