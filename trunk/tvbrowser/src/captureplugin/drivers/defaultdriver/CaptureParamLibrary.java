@@ -24,6 +24,7 @@
  */
 package captureplugin.drivers.defaultdriver;
 
+import captureplugin.CapturePlugin;
 import java.util.Calendar;
 import java.util.Collection;
 
@@ -203,8 +204,9 @@ public class CaptureParamLibrary extends ParamLibrary {
    * @return external ChannelName
    */
   private String getExternalChannelName(Program prg, boolean showError) {
-    
-    if ((mConfig.getChannels().get(prg.getChannel()) == null) || ((mConfig.getChannels().get(prg.getChannel())).length() == 0)) {
+    if (prg.equals(CapturePlugin.getInstance().getPluginManager().getExampleProgram())) {
+      return "WaltonTV";
+    } else if ((mConfig.getChannels().get(prg.getChannel()) == null) || ((mConfig.getChannels().get(prg.getChannel())).length() == 0)) {
 
       if (showError) {
         setErrors(true);
