@@ -303,8 +303,8 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
     mChangeChannelsBtn = new JButton(mLocalizer.msg("change", "Change"));
     mChannelArr = mFavorite.getLimitationConfiguration().getChannels();    
 
-    mLimitChannelCb = new JCheckBox(mLocalizer.msg("channels", "Channels:"));
-    mLimitTimeCb = new JCheckBox(mLocalizer.msg("time", "Time:"));
+    mLimitChannelCb = new JCheckBox(mLocalizer.msg("channels", "Channels:") + " ");
+    mLimitTimeCb = new JCheckBox(mLocalizer.msg("time", "Time:") + " ");
     
     mChannelLabel = new JLabel(getChannelString(mChannelArr));
 
@@ -561,7 +561,7 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
     panel.add(mReminderAfterDownloadCb = new JCheckBox(mLocalizer.msg("autoAlert",
         "Alert me, whenever a matching program is discovered")), cc.xyw(1, 1, 2));
 
-    panel.add(mPassProgramsCheckBox = new JCheckBox(mLocalizer.msg("passProgramsTo", "Pass programs to")), cc.xy(1, 3));
+    panel.add(mPassProgramsCheckBox = new JCheckBox(mLocalizer.msg("passProgramsTo", "Pass programs to") +" "), cc.xy(1, 3));
     panel.add(mPassProgramsLb, cc.xy(2, 3));
     panel.add(mChangePassProgramsBtn, cc.xy(3, 3));
     mReminderAfterDownloadCb.setSelected(mFavorite.isRemindAfterDownload());
