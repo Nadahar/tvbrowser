@@ -42,112 +42,126 @@ import javax.swing.JTextArea;
 import javax.swing.UIManager;
 
 import util.ui.Localizer;
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 
 
 /**
  * This Dialog shows the Result
  */
-public class ResultDialog extends JDialog {
-    /** Translator */
-    private static final Localizer mLocalizer = Localizer.getLocalizerFor(ResultDialog.class);
-    
-    /**
-     * Create the Dialog
-     * @param parent Parent
-     * @param input Input
-     * @param output Output
-     * @param error True if Error
-     */
-    public ResultDialog(Window parent, String input, String output, boolean error) {
+public class ResultDialog extends JDialog implements WindowClosingIf {
+  /**
+   * Translator
+   */
+  private static final Localizer mLocalizer = Localizer.getLocalizerFor(ResultDialog.class);
+
+  /**
+   * Create the Dialog
+   *
+   * @param parent Parent
+   * @param input  Input
+   * @param output Output
+   * @param error  True if Error
+   */
+  public ResultDialog(Window parent, String input, String output, boolean error) {
     super(parent);
     setModal(true);
-        createGui(input, output, error);
+    createGui(input, output, error);
+  }
+
+  public void createGui(String input, String output, boolean error) {
+    setTitle(mLocalizer.msg("Title", "Capture-Plugin"));
+
+    JPanel content = (JPanel) getContentPane();
+
+    content.setLayout(new BorderLayout());
+
+    JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+
+    JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
+
+    ok.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        close();
+      }
+    });
+
+    buttonPanel.add(ok);
+
+    content.add(buttonPanel, BorderLayout.SOUTH);
+
+    content.add(createResultPanel(input, output, error), BorderLayout.CENTER);
+
+    setSize(400, 250);
+
+    UiUtilities.registerForClosing(this);
+    getRootPane().setDefaultButton(ok);
+  }
+
+  /**
+   * Creates the Result-Panel
+   *
+   * @param input  Input
+   * @param output Output
+   * @param error  True, if error
+   * @return JPanel
+   */
+  private JPanel createResultPanel(String input, String output, boolean error) {
+
+    JPanel panel = new JPanel();
+    panel.setLayout(new GridBagLayout());
+
+
+    GridBagConstraints ic = new GridBagConstraints();
+    ic.gridheight = 4;
+    ic.weightx = 0;
+    ic.weighty = 1.0;
+    ic.anchor = GridBagConstraints.NORTHWEST;
+    ic.insets = new Insets(10, 5, 2, 2);
+    JLabel iconLabel = new JLabel();
+
+    if (error) {
+      iconLabel.setIcon(UIManager.getIcon("OptionPane.errorIcon"));
+    } else {
+      iconLabel.setIcon(UIManager.getIcon("OptionPane.informationIcon"));
     }
-    
-    public void createGui(String input, String output, boolean error) {
-        setTitle(mLocalizer.msg("Title","Capture-Plugin"));
-        
-        JPanel content = (JPanel) getContentPane();
-        
-        content.setLayout(new BorderLayout());
 
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        
-        JButton ok = new JButton (Localizer.getLocalization(Localizer.I18N_OK));
-        
-        ok.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-              setVisible(false);
-            }
-        });
-        
-        buttonPanel.add(ok);
+    panel.add(iconLabel, ic);
 
-        content.add(buttonPanel, BorderLayout.SOUTH);
-        
-        content.add(createResultPanel(input, output, error), BorderLayout.CENTER);
-        
-        setSize(400, 250);
-    }
+    GridBagConstraints lc = new GridBagConstraints();
+    lc.fill = GridBagConstraints.HORIZONTAL;
+    lc.weightx = 1.0;
+    lc.gridwidth = GridBagConstraints.REMAINDER;
+    lc.insets = new Insets(2, 5, 2, 5);
 
-    /**
-     * Creates the Result-Panel
-     * @param input Input
-     * @param output Output
-     * @param error True, if error
-     * @return JPanel
-     */
-    private JPanel createResultPanel(String input, String output, boolean error) {
-        
-        JPanel panel = new JPanel();
-        panel.setLayout(new GridBagLayout());
+    GridBagConstraints tc = new GridBagConstraints();
+    tc.fill = GridBagConstraints.BOTH;
+    tc.weightx = 1.0;
+    tc.weighty = 0.5;
+    tc.gridwidth = GridBagConstraints.REMAINDER;
+    tc.insets = new Insets(2, 5, 2, 5);
 
-        
-        GridBagConstraints ic = new GridBagConstraints();
-        ic.gridheight = 4;
-        ic.weightx = 0;
-        ic.weighty = 1.0;
-        ic.anchor = GridBagConstraints.NORTHWEST;
-        ic.insets = new Insets(10, 5, 2, 2);
-        JLabel iconLabel = new JLabel();
-        
-        if (error) {
-            iconLabel.setIcon(UIManager.getIcon("OptionPane.errorIcon"));
-        } else {
-            iconLabel.setIcon(UIManager.getIcon("OptionPane.informationIcon"));
-        }
-        
-        panel.add(iconLabel, ic);
-        
-        GridBagConstraints lc = new GridBagConstraints();
-        lc.fill = GridBagConstraints.HORIZONTAL;
-        lc.weightx = 1.0;
-        lc.gridwidth = GridBagConstraints.REMAINDER;
-        lc.insets = new Insets(2, 5, 2, 5);
-                
-        GridBagConstraints tc = new GridBagConstraints();
-        tc.fill = GridBagConstraints.BOTH;
-        tc.weightx = 1.0;
-        tc.weighty = 0.5;
-        tc.gridwidth = GridBagConstraints.REMAINDER;
-        tc.insets = new Insets(2, 5, 2, 5);
-        
-        panel.add(new JLabel(mLocalizer.msg("SendParams","Send Parameters:")), lc);
-        
-        JTextArea send = new JTextArea(input);
-        send.setEditable(false);
-        send.setLineWrap(true);
-        
-        panel.add(new JScrollPane(send), tc);
-        
-        panel.add(new JLabel(mLocalizer.msg("Result","Result:")), lc);
+    panel.add(new JLabel(mLocalizer.msg("SendParams", "Send Parameters:")), lc);
 
-        JTextArea received = new JTextArea(output);
-        received.setEditable(false);
-        received.setLineWrap(true);
-        
-        panel.add(new JScrollPane(received), tc);
-        
-        return panel;
-    }
+    JTextArea send = new JTextArea(input);
+    send.setEditable(false);
+    send.setLineWrap(true);
+
+    panel.add(new JScrollPane(send), tc);
+
+    panel.add(new JLabel(mLocalizer.msg("Result", "Result:")), lc);
+
+    JTextArea received = new JTextArea(output);
+    received.setEditable(false);
+    received.setLineWrap(true);
+
+    panel.add(new JScrollPane(received), tc);
+
+    return panel;
+  }
+
+  @Override
+  public void close() {
+    setVisible(false);
+  }
 }
