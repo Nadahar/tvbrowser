@@ -67,7 +67,7 @@ public class MailCreator {
   /** Settings for this Plugin */
   private EMailSettings mSettings;
   
-  private AbstractPluginProgramFormating mFormating;
+  private AbstractPluginProgramFormating mFormatting;
   
   /** The Plugin */
   private EMailPlugin mPlugin;
@@ -78,12 +78,12 @@ public class MailCreator {
    * Create the MailCreator
    * @param plugin Plugin to use
    * @param settings Settings for this MailCreator
-   * @param formating The program formating to use.
+   * @param formatting The program formatting to use.
    */
-  public MailCreator(EMailPlugin plugin, EMailSettings settings, AbstractPluginProgramFormating formating) {
+  public MailCreator(EMailPlugin plugin, EMailSettings settings, AbstractPluginProgramFormating formatting) {
     mPlugin = plugin;
     mSettings = settings;
-    mFormating = formating;
+    mFormatting = formatting;
   }
 
   /**
@@ -93,7 +93,7 @@ public class MailCreator {
    * @param program Programs to show in the Mail
    */
   void createMail(Frame parent, Program[] program) {
-    final String param = mFormating.getContentValue();// mSettings.getProperty("paramToUse",
+    final String param = mFormatting.getContentValue();// mSettings.getProperty("paramToUse",
                                                       // EMailPlugin.DEFAULT_PARAMETER);
     final StringBuilder result = new StringBuilder();
     ParamParser parser = new ParamParser();
@@ -110,16 +110,16 @@ public class MailCreator {
       return;
     }
 
-    mail(parent, result.toString());
+    mail(parent, result.toString(), parser.analyse(mFormatting.getTitleValue(), program[0]));
   }
 
-  private void mail(Frame parent, String content) {
+  private void mail(final Frame parent, final String content, final String title) {
     // Java 6 desktop API
     boolean sent = false;
     if (Desktop.isDesktopSupported()) {
       Desktop desktop = Desktop.getDesktop();
       try {
-        URI uriMailTo = new URI("mailto", "?body=" + content, null);
+        URI uriMailTo = new URI("mailto", "?body=" + content + "&subject=" + title, null);
         desktop.mail(uriMailTo);
         sent = true;
       } catch (Exception e) {
@@ -133,7 +133,7 @@ public class MailCreator {
 
     // fall back to non Java 6 code
     try {
-      final String mailTo = "mailto:?body=" + encodeString(content);
+      final String mailTo = "mailto:?body=" + encodeString(content) + "&subject=" + encodeString(title);
       String application;
       String execparam;
 
@@ -172,7 +172,7 @@ public class MailCreator {
 
     } catch (Exception e) {
       e.printStackTrace();
-      int ret = ErrorHandler.handle(mLocalizer.msg("ErrorWhileStarting", "Error while starting Mail-Application"), e,
+      int ret = ErrorHandler.handle(mLocalizer.msg("ErrorWhileStarting", "Error while starting mail application"), e,
           ErrorHandler.SHOW_YES_NO);
 
       if (ret == ErrorHandler.YES_PRESSED) {
@@ -195,7 +195,7 @@ public class MailCreator {
    * @throws UnsupportedEncodingException Problems during encoding
    */
   private String encodeString(String string) throws UnsupportedEncodingException {
-    return URLEncoder.encode(string.trim(), mFormating.getEncodingValue()/*.getProperty("encoding", "UTF-8"))*/).replaceAll("\\+",
+    return URLEncoder.encode(string.trim(), mFormatting.getEncodingValue()/*.getProperty("encoding", "UTF-8"))*/).replaceAll("\\+",
         "%20");
   }
 
@@ -219,7 +219,7 @@ public class MailCreator {
 
     CellConstraints cc = new CellConstraints();
 
-    panel.add(UiUtilities.createHelpTextArea(mLocalizer.msg("EMailOpened", "Email was opened. Configure it ?")), cc.xy(1,1));
+    panel.add(UiUtilities.createHelpTextArea(mLocalizer.msg("EMailOpened", "Email was opened. Configure it?")), cc.xy(1,1));
     
     final JCheckBox dontShowAgain = new JCheckBox(mLocalizer.msg("DontShowAgain", "Don't show this Dialog again"));
     panel.add(dontShowAgain, cc.xy(1,3));
@@ -340,10 +340,10 @@ public class MailCreator {
     
     if (kdeButton.isSelected()) {
       mSettings.setApplication("kfmclient");
-      mSettings.setParameter("exec {0}");
+      mSettings.setParameter("exec {content}");
     } else if (gnomeButton.isSelected()) {
       mSettings.setApplication("gnome-open");
-      mSettings.setParameter("{0}");
+      mSettings.setParameter("{content}");
     } else {
       Plugin.getPluginManager().showSettings(mPlugin);
       return false;

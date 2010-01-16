@@ -233,7 +233,7 @@ public class EMailPlugin extends Plugin {
     return mConfigs;
   }
   
-  protected void setSelectedPluginProgramFormatings(AbstractPluginProgramFormating[] value) {
+  protected void setSelectedPluginProgramFormattings(AbstractPluginProgramFormating[] value) {
     if(value == null || value.length < 1) {
       createDefaultConfig();
     } else {
