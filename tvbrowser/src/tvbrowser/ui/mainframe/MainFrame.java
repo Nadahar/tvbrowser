@@ -2306,6 +2306,11 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
           File pluginFile = new File(name);
           if (pluginFile.canRead()) {
             addPluginFile(pluginFile, files);
+            if (!files.isEmpty()) {
+              break;
+            }
+          }
+          else {
             try {
               URI uri = new URI(name);
               addPluginFile(new File(uri), files);
