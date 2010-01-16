@@ -169,6 +169,9 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
 
   private Timer mRefreshListTimer;
 
+  /** If no channel was found, ask to download them. But only once.*/
+  private boolean mInitChannelsAsked = false;
+
   /**
    * Create the SettingsTab
    */
@@ -381,7 +384,18 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
         Settings.propSelectedChannelCountry.setString(country);
       }
 
-      public void ancestorAdded(AncestorEvent event) {}
+      public void ancestorAdded(AncestorEvent event) {
+        if (!mInitChannelsAsked && mChannelListModel.getAvailableChannels().length == 0){
+          mInitChannelsAsked = true;
+          int ret = JOptionPane.showConfirmDialog(result,
+              mLocalizer.msg("loadChannelsQuestion", "Should I download the channel list?"),
+              mLocalizer.msg("loadChannelsTitle", "No channels found"), 
+              JOptionPane.YES_NO_OPTION);
+          if (ret == JOptionPane.YES_OPTION) {
+            refreshChannelList();
+          }
+        }
+      }
 
       public void ancestorMoved(AncestorEvent event) {}
     });
