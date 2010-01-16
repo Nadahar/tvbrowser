@@ -580,7 +580,13 @@ public class PluginTree extends JTree implements DragGestureListener,
       public void run() {
         tree.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
-        DataFlavor[] flavors = tr.getTransferDataFlavors();
+        DataFlavor[] flavors = null;
+        try {
+          flavors = tr.getTransferDataFlavors();
+        } catch (Exception e) {
+          // there seems to be a bug in Java, causing a NPE internally
+          e.printStackTrace();
+        }
 
         if (flavors != null && flavors.length == 1) {
           try {
