@@ -544,7 +544,7 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
     mChangePassProgramsBtn = new JButton(mLocalizer.msg("change", "Change"));
     mChangePassProgramsBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        PluginChooserDlg dlg = new PluginChooserDlg(EditFavoriteDialog.this, mPassProgramPlugins, null, ReminderPluginProxy.getInstance(), FavoritesPlugin.getInstance().getClientPluginTargetIds());
+        PluginChooserDlg dlg = new PluginChooserDlg((Window)EditFavoriteDialog.this, mPassProgramPlugins, null, ReminderPluginProxy.getInstance(), FavoritesPlugin.getInstance().getClientPluginTargetIds());
         UiUtilities.centerAndShow(dlg);
         ProgramReceiveTarget[] pluginArr = dlg.getReceiveTargets();
         if (pluginArr != null) {
