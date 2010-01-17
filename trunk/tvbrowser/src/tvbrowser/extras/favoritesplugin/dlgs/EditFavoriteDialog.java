@@ -348,7 +348,7 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
 
     mChangeChannelsBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        ChannelChooserDlg dlg = new ChannelChooserDlg(EditFavoriteDialog.this, mChannelArr, null,
+        ChannelChooserDlg dlg = new ChannelChooserDlg((Window)EditFavoriteDialog.this, mChannelArr, null,
             ChannelChooserDlg.SELECTABLE_ITEM_LIST);
         UiUtilities.centerAndShow(dlg);
         Channel[] chArr = dlg.getChannels();
