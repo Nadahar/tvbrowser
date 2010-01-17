@@ -22,18 +22,16 @@ package nextviewdataservice;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.io.IOException;
-
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Properties;
-import java.util.Enumeration;
 
-import javax.swing.JOptionPane;
 import javax.swing.Icon;
-
+import javax.swing.JOptionPane;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
@@ -41,7 +39,9 @@ import tvdataservice.MutableChannelDayProgram;
 import tvdataservice.MutableProgram;
 import tvdataservice.SettingsPanel;
 import tvdataservice.TvDataUpdateManager;
-
+import util.exc.TvBrowserException;
+import util.misc.OperatingSystem;
+import util.ui.ChannelLabel;
 import devplugin.AbstractTvDataService;
 import devplugin.Channel;
 import devplugin.ChannelGroup;
@@ -51,10 +51,6 @@ import devplugin.Program;
 import devplugin.ProgramFieldType;
 import devplugin.ProgressMonitor;
 import devplugin.Version;
-
-import util.exc.TvBrowserException;
-import util.misc.OperatingSystem;
-import util.ui.ChannelLabel;
 
 /**
  * Main class of the 'nxtvepg data plugin'
@@ -228,7 +224,7 @@ public class NextViewDataService extends AbstractTvDataService {
     HashMap<String, Channel> alternativeChannels1 = new HashMap<String, Channel>();
     Channel[]subScribedChannels = getPluginManager().getSubscribedChannels();
 
-    if (prop.getProperty(DATAMIX).equals("YES")) {
+    if (useAlternativeData()) {
       alternativeChannels0 = HelperMethods.getAlternativeChannels(0);
     }
     if (useAlternativeIcons()) {
@@ -275,7 +271,7 @@ public class NextViewDataService extends AbstractTvDataService {
 
    boolean noBreakFlg = true;
 
-    if (prop.getProperty(DATAMIX).equals("YES")) {
+    if (useAlternativeData()) {
       // Update sources before current day program is updated
       Channel altChannel = alternativeChannels.get(channel.getId());
       if (altChannel != null && altChannel.getUniqueId().startsWith("nextviewdataservice.NextViewDataService")) {
@@ -306,7 +302,7 @@ public class NextViewDataService extends AbstractTvDataService {
         }
       }
       // add additional data from other channels to nxtvepg data
-      if (prop.getProperty(DATAMIX).equals("YES")) {
+      if (useAlternativeData()) {
         dayProg = mixedDayProgram(dayProg, channel, alternativeChannels.get(channel.getId()), date, blockTime);
       }
       // repair damaged sat1 transmissions
@@ -324,7 +320,7 @@ public class NextViewDataService extends AbstractTvDataService {
       }
     }
 
-    if (isPartialUpdate && prop.getProperty(DATAMIX).equals("YES")){
+    if (isPartialUpdate && useAlternativeData()){
       // Update all day programs, were sources have been updated
       String key;
       for (Iterator<?> it = alternativeChannels.keySet().iterator(); it.hasNext();) {
@@ -588,7 +584,7 @@ public class NextViewDataService extends AbstractTvDataService {
 
 
   /**
-   * Gets if the data service supports auto upate of data.
+   * Gets if the data service supports auto update of data.
    * @return <code>True</code> if the data service supports the auto update,
    * <code>false</code> otherwise.
    * @since 2.7
@@ -603,7 +599,7 @@ public class NextViewDataService extends AbstractTvDataService {
     }
 
     long aktTime = (new java.util.Date()).getTime();
-    if (prop.getProperty(DATAMIX).toString().equals("YES")) {
+    if (useAlternativeData()) {
       isPartialUpdate = false;
       String updatesFileName = mixedChannelsDirName + "/NxtvepgDataSavings.prop";
       if (getPluginManager().getActivatedPluginForId("java.nextviewdataupdatewatcherplugin.NextViewDataUpdateWatcherPlugin")!=null) {
@@ -659,7 +655,7 @@ public class NextViewDataService extends AbstractTvDataService {
         }
       }
       if (isPartialUpdate) {
-        if (aktTime >= nextUpdate && prop.getProperty(AUTORUN).toString().equals("YES")) {
+        if (aktTime >= nextUpdate && getAutoRun()) {
           isPartialUpdate = false;
         }
         return true;
@@ -667,7 +663,7 @@ public class NextViewDataService extends AbstractTvDataService {
     }
 
 
-    if (!prop.getProperty(AUTORUN).toString().equals("YES")) {
+    if (!getAutoRun()) {
       return false;
     }
 
@@ -681,6 +677,10 @@ public class NextViewDataService extends AbstractTvDataService {
 
     nextUpdate = aktTime + Integer.parseInt((String) prop.getProperty(AUTOREPETITION)) * 60000;
     return true;
+  }
+
+  private boolean getAutoRun() {
+    return prop.getProperty(AUTORUN).toString().equals("YES");
   }
 
 
@@ -1197,10 +1197,40 @@ public class NextViewDataService extends AbstractTvDataService {
     if (info2 != null && (mixFlag.equals("replace") || info1==null)){
       currentProgram.setBinaryField(type,info2);
     }
-  }  
+  }
+  
+  /**
+   * replace diacritic characters by their respective counterpart without diacritics
+   * @param char1
+   * @return
+   */
+  private char replaceDiacritics(final char char1) {
+    if (char1 == 'á' || char1 == 'à' || char1 == 'â') {
+      return 'a';
+    }
+    if (char1 == 'é' || char1 == 'è' || char1 == 'ê') {
+      return 'e';
+    }
+    if (char1 == 'í' || char1 == 'ì' || char1 == 'î') {
+      return 'i';
+    }
+    if (char1 == 'ó' || char1 == 'ò' || char1 == 'ô') {
+      return 'o';
+    }
+    if (char1 == 'ú' || char1 == 'ù' || char1 == 'û') {
+      return 'u';
+    }
+    if (char1 == 'ç') {
+      return 'c';
+    }
+    if (char1 == 'ñ') {
+      return 'n';
+    }
+    return char1;
+  }
 
   /**
-   * Test, whether on program title is the short version of the other
+   * Test, whether one program title is the short version of the other
    * @param title1
    * @param title2
    * @return
@@ -1262,56 +1292,8 @@ public class NextViewDataService extends AbstractTvDataService {
           }
         }
       } else{
-        if (char1=='á' || char1=='à' || char1=='â'){
-          char1 = 'a';
-        } else{
-          if (char1=='é' || char1=='è' || char1=='ê'){
-            char1 = 'e';
-          }else{
-            if (char1=='í' || char1=='ì' || char1=='î'){
-              char1 = 'i';
-            }else{
-              if (char1=='ó' || char1=='ò' || char1=='ô'){
-                char1 = 'o';
-              }else{
-                if (char1=='ú' || char1=='ù' || char1=='û'){
-                  char1 = 'u';
-                }else{
-                  if (char1=='ç'){
-                    char1 = 'c';
-                  }else{
-                    if (char1=='ñ'){
-                      char1 = 'n';
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-        if (char2=='é' || char2=='è' || char2=='ê'){
-          char2 = 'e';
-        }else{
-          if (char2=='í' || char2=='ì' || char2=='î'){
-            char2 = 'i';
-          }else{
-            if (char2=='ó' || char2=='ò' || char2=='ô'){
-              char2 = 'o';
-            }else{
-              if (char2=='ú' || char2=='ù' || char2=='û'){
-                char2 = 'u';
-              }else{
-                if (char2=='ç'){
-                  char2 = 'c';
-                }else{
-                  if (char2=='ñ'){
-                    char2 = 'n';
-                  }
-                }
-              }
-            }
-          }
-        }
+        char1 = replaceDiacritics(char1);
+        char2 = replaceDiacritics(char2);
         if (char1==char2){
           count1++;
           count2++;
@@ -1350,7 +1332,7 @@ public class NextViewDataService extends AbstractTvDataService {
    * Repairs bad program entries like "Navy CIS 1,90 10,2 1,13 13,6"
    * @param dayProg the day program to be repaired
    * @param actChannel the channel of the day program
-   * @param date the day of the dammaged day program
+   * @param date the day of the damaged day program
    * @return the repaired day program
    */
   private MutableChannelDayProgram repairedSat1DayProgram(MutableChannelDayProgram dayProg, Channel actChannel, Date date){
@@ -1397,29 +1379,28 @@ public class NextViewDataService extends AbstractTvDataService {
 
   /**
    * Searches for bad program titles like "Navy CIS 1,90 10,2 1,13 13,6"
-   * Checks wether the last two words contain ","
+   * Checks whether the last two words contain ","
    * 
    * @param dayProg The dayprogram to be checked
    * @return true bad pattern is found on Sat1
    */
   private boolean sat1Error (MutableChannelDayProgram dayProg){
-    boolean errorFlg = false;
     if (dayProg != null && dayProg.getChannel().getId().equals("CNI0DB9")){
       int i = 0;
-      while (i < dayProg.getProgramCount() && !errorFlg){
+      while (i < dayProg.getProgramCount()){
         String [] titleCheck = dayProg.getProgramAt(i).getTitle().split(" ");
         int lastIndex = titleCheck.length -1;
         if (lastIndex>0 && titleCheck[lastIndex].contains(",") && titleCheck[lastIndex-1].contains(",") && !titleCheck[lastIndex].contains(" ") && !titleCheck[lastIndex-1].contains(" ")){
-          errorFlg = true;
+          return true;
         }
         i++;
       }
     }
-    return errorFlg;
+    return false;
   }
 
   /**
-   * Work around for unsufficient nextvepg's "expired display" settings;
+   * Work around for insufficient nextvepg's "expired display" settings;
    * fills day program with stored data up if the is a gap at the beginning of the day 
    * @param dayProg the day program to be repaired
    * @param channel of the day program
@@ -1447,7 +1428,7 @@ public class NextViewDataService extends AbstractTvDataService {
 
 
   /**
-   * Work around for unsufficient nextvepg's "expired display" settings;
+   * Work around for insufficient nextvepg's "expired display" settings;
    * creates a valid day program with stored program data
    * @param channel the channel of the day program
    * @param date the day (i.e normally yesterday)
@@ -1473,7 +1454,7 @@ public class NextViewDataService extends AbstractTvDataService {
   }
 
   /**
-   * Return wether alternative icons should be used
+   * Return whether alternative icons should be used
    * @return true or false
    */
   public boolean useAlternativeIcons (){
@@ -1484,7 +1465,7 @@ public class NextViewDataService extends AbstractTvDataService {
   }
 
   /**
-   * Return wether alternative icons should be used
+   * Return whether alternative icons should be used
    * @return true or false
    */
   public boolean useAlternativeData (){
