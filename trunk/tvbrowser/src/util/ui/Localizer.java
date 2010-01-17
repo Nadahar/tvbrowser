@@ -101,7 +101,7 @@ public class Localizer {
   public final static String I18N_INFO = "i18n_info";
   
   /** The logger for this class. */  
-  private static java.util.logging.Logger mLog
+  private static final java.util.logging.Logger mLog
     = java.util.logging.Logger.getLogger(Localizer.class.getName());
   
   private static HashMap<String, String> standardLocalizations;
@@ -125,7 +125,7 @@ public class Localizer {
   private static final Object[] THREE_ARGS_ARR = new Object[3];
   
   /** Contains for a Class (key) a Localizer (value). */
-  private static HashMap<Class, Localizer> mLocalizerCache = new HashMap<Class, Localizer>();
+  private static final HashMap<Class, Localizer> mLocalizerCache = new HashMap<Class, Localizer>();
     
   /** The base name of the ResourceBundle used by this Localizer. */  
   private String mBaseName;
@@ -142,23 +142,23 @@ public class Localizer {
    */  
   private String mKeyPrefix;
   
-  private ClassLoader mClassLoader;
-  
   /**
    * ellipsis suffix for use in menus
    */
   private static final String ELLIPSIS = "...";
+  
+  private ClassLoader mParentClassLoader;
 
   /**
    * Creates a new instance of Localizer.
    *
    * @param clazz The Class to create the Localizer for.
    */
-  protected Localizer(Class clazz) {
+  protected Localizer(final Class clazz) {
     initializeForClass(clazz);
   }
 
-  protected void initializeForClass(Class clazz) {
+  protected void initializeForClass(final Class clazz) {
     String className = clazz.getName();
     int lastDot = className.lastIndexOf('.');
     String packageName;
@@ -178,15 +178,16 @@ public class Localizer {
       mBaseName = packageName + packageName.substring(lastDot);
     }
     
-    mClassLoader = new LocalizerClassloader(clazz.getClassLoader());
-    
-    loadResourceBundle();
+    mParentClassLoader = clazz.getClassLoader();
   }
   
-  private void loadResourceBundle() {  
+  private HashMap<String, String> loadResourceBundle() {
+    if (mResource != null) {
+      return mResource;
+    }
     try {
       // load the resource bundle including all parents
-      ResourceBundle bundle = ResourceBundle.getBundle(mBaseName, Locale.getDefault(), mClassLoader);
+      ResourceBundle bundle = ResourceBundle.getBundle(mBaseName, Locale.getDefault(), new LocalizerClassloader(mParentClassLoader));
       if (bundle != null) {
         // now merge the bundle and all parents into one hash map to save memory
         mResource = new HashMap<String, String>();
@@ -201,6 +202,7 @@ public class Localizer {
     catch (MissingResourceException exc) {
       mLog.warning("ResourceBundle not found: '" + mBaseName + "'");
     }
+    return mResource;
   }
 
   protected static Localizer getCachedLocalizerFor(final Class clazz) {
@@ -213,7 +215,7 @@ public class Localizer {
    * @param clazz The Class to get the localizer for.
    * @return the Localizer for the specified Class.
    */  
-  public static Localizer getLocalizerFor(Class clazz) {
+  public static Localizer getLocalizerFor(final Class clazz) {
     Localizer localizer = getCachedLocalizerFor(clazz);
     
     if (localizer == null) {
@@ -224,7 +226,7 @@ public class Localizer {
     return localizer;
   }
 
-  protected static void addLocalizerToCache(Class clazz, final Localizer localizer) {
+  protected static void addLocalizerToCache(final Class clazz, final Localizer localizer) {
     mLocalizerCache.put(clazz, localizer);
   }
 
@@ -244,7 +246,7 @@ public class Localizer {
    * @param arg1 The argument that should replace <CODE>{0}</CODE>.
    * @return a localized message.
    */  
-  public String msg(String key, String defaultMsg, Object arg1) {
+  public String msg(final String key, final String defaultMsg, final Object arg1) {
     synchronized (ONE_ARG_ARR) {
       ONE_ARG_ARR[0] = arg1;
       
@@ -263,7 +265,7 @@ public class Localizer {
    * @param arg2 The argument that should replace <CODE>{1}</CODE>.
    * @return a localized message.
    */  
-  public String msg(String key, String defaultMsg, Object arg1, Object arg2) {
+  public String msg(final String key, final String defaultMsg, final Object arg1, final Object arg2) {
     synchronized (TWO_ARGS_ARR) {
       TWO_ARGS_ARR[0] = arg1;
       TWO_ARGS_ARR[1] = arg2;
@@ -284,8 +286,8 @@ public class Localizer {
    * @param arg3 The argument that should replace <CODE>{2}</CODE>.
    * @return a localized message.
    */  
-  public String msg(String key, String defaultMsg, Object arg1, Object arg2,
-    Object arg3)
+  public String msg(final String key, final String defaultMsg, final Object arg1, final Object arg2,
+    final Object arg3)
   {
     synchronized (THREE_ARGS_ARR) {
       THREE_ARGS_ARR[0] = arg1;
@@ -307,7 +309,7 @@ public class Localizer {
    *        See {@link java.text.MessageFormat} for details.
    * @return a localized message.
    */  
-  public String msg(String key, String defaultMsg, Object[] args) {
+  public String msg(final String key, final String defaultMsg, final Object[] args) {
     String msg = msg(key, defaultMsg);
     checkMessage(key, msg);
     
@@ -329,7 +331,7 @@ public class Localizer {
    * @param defaultMsg The default message (English)
    * @return a localized message.
    */  
-  public String msg(String key, String defaultMsg) {
+  public String msg(final String key, final String defaultMsg) {
     return msg(key,defaultMsg,true);
   }
   
@@ -342,11 +344,11 @@ public class Localizer {
    * @return a localized message.
    * @since 2.5.1
    */
-  public String msg(String key, String defaultMsg, boolean warn) {
+  public String msg(String key, final String defaultMsg, final boolean warn) {
     key = mKeyPrefix + key;
     
     String msg = null;
-    if (mResource != null) {
+    if (loadResourceBundle() != null) {
       try {
         msg = mResource.get(key);
         checkMessage(key, msg);
@@ -444,7 +446,7 @@ public class Localizer {
    * @param dir search this directory
    * @param langArray add found locales to this ArrayList
    */
-  private void addLocaleFiles(File dir, ArrayList<Locale> langArray) {
+  private void addLocaleFiles(final File dir, final ArrayList<Locale> langArray) {
     if (dir.exists() && dir.isDirectory()) {
       String[] files = dir.list();
       if (files != null) {
@@ -467,7 +469,7 @@ public class Localizer {
    * @param string String with Locale
    * @return Locale
    */
-  private Locale getLocaleForString(String string) {
+  private Locale getLocaleForString(final String string) {
     String[] split = string.split("_");
 
     if (split.length >= 3) {
@@ -555,7 +557,7 @@ public class Localizer {
     return ellipsisSuffix(getLocalization(key));
   }
   
-  private void checkMessage(String key, String localizedMessage) {
+  private void checkMessage(final String key, final String localizedMessage) {
     if (TVBrowser.isStable()) {
       return;
     }
@@ -564,7 +566,7 @@ public class Localizer {
     }
     if (standardLocalizations == null) {
       HashMap<String, String> std = new HashMap<String, String>(20);
-      HashMap<String, String> standardResource = Localizer.getLocalizerFor(Localizer.class).mResource;
+      HashMap<String, String> standardResource = Localizer.getLocalizerFor(Localizer.class).loadResourceBundle();
       for (Entry<String, String> entry : standardResource.entrySet()) {
         String standardKey = entry.getKey();
         if (standardKey.startsWith("Localizer.")) {
@@ -592,7 +594,7 @@ public class Localizer {
 
   private static String ellipsisSuffix(String msg) {
     if (msg.endsWith(ELLIPSIS)) {
-      msg = msg.substring(0, msg.length() - ELLIPSIS.length()).trim();
+      msg = msg.substring(0, msg.length() - ELLIPSIS.length()).trim(); // this is done to also correct the space before the ellipsis
     }
     return msg + ELLIPSIS;
   }
