@@ -2282,7 +2282,6 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
    * extract the drag and drop targets from the event
    * @param transferable 
    * @param dataFlavors 
-   * @param dtde
    * @return
    */
   private File[] getDragDropPlugins(final DataFlavor[] dataFlavors, final Transferable transferable) {
