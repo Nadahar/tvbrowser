@@ -269,7 +269,7 @@ public class PluginLoader {
       String description = in.readUTF();
       String license = in.readUTF();
       
-      Version version = new Version(in);
+      DummyPlugin.setCurrentVersion(new Version(in));
       
       String pluginId = in.readUTF();
       in.readLong(); // file size is unused
@@ -281,12 +281,13 @@ public class PluginLoader {
         deletePluginProxy(proxyFile);
         return null;
       }
+      
       // everything seems fine, create plugin proxy and plugin info
-      PluginInfo info = new PluginInfo(name, description, author, version, license);
+      PluginInfo info = new PluginInfo(DummyPlugin.class, name, description, author, license);
       // now get icon
       String iconFileName = getProxyIconFileName(proxyFile);
       return new JavaPluginProxy(info, lcFileName, pluginId, iconFileName);
-    } catch (Exception e) {
+    } catch (Exception e) {e.printStackTrace();
       // delete proxy on read error, maybe the format has changed
       deletePluginProxy(proxyFile);
       return null;
