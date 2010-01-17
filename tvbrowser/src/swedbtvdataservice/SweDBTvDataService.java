@@ -44,13 +44,6 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
   /** The default plugins download URL */
   private static final String DEFAULT_PLUGINS_DOWNLOAD_URL = "http://www.tvbrowser.org/mirrorlists";
 
-  /** Contains the mirror URLs usable for receiving the channellist.xml.gz from. */
-  private static final String[] DEFAULT_MIRRORS = {
-    "http://tvbrowser.dyndns.tv",
-    "http://hdtv-online.org/TVB",
-    "http://www.tvbrowserserver.de/"
-  };
-
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(SweDBTvDataService.class);
 
   private static Logger mLog = Logger.getLogger(SweDBTvDataService.class.getName());
@@ -89,7 +82,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
   }
 
   private void addGroup(DataHydraChannelGroup dataHydraChannelGroup) {
-    mChannelGroups.put(dataHydraChannelGroup.getId(), dataHydraChannelGroup); 
+    mChannelGroups.put(dataHydraChannelGroup.getId(), dataHydraChannelGroup);
   }
 
   public boolean supportsDynamicChannelList() {
@@ -299,7 +292,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
           monitor.setMessage(mLocalizer.msg("Progressmessage.30",
                   "Parsing channel list"));
         }
-        int fileSize = con.getContentLength(); 
+        int fileSize = con.getContentLength();
         if (fileSize == 0) {
           throw new TvBrowserException(SweDBTvDataService.class,
               "errorEmptyChannelList",
@@ -372,16 +365,18 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
       return Mirror.chooseUpToDateMirror(Mirror.readMirrorListFromFile(file),null,"DataHydra", "main", SweDBTvDataService.class, mLocalizer.msg("error.additional"," Please inform the TV-Browser team."));
     } catch (Exception exc) {
       try {
-        if(DEFAULT_MIRRORS.length > 0) {
-          Mirror[] mirr = new Mirror[DEFAULT_MIRRORS.length];
+        String[] defaultMirrors = getDefaultMirrors();
+        if(defaultMirrors.length > 0) {
+          Mirror[] mirr = new Mirror[defaultMirrors.length];
 
-          for(int i = 0; i < DEFAULT_MIRRORS.length; i++)
-            mirr[i] = new Mirror(DEFAULT_MIRRORS[i]);
+          for(int i = 0; i < defaultMirrors.length; i++) {
+            mirr[i] = new Mirror(defaultMirrors[i]);
+          }
 
           return Mirror.chooseUpToDateMirror(mirr,null,"DataHydra", "main", SweDBTvDataService.class, mLocalizer.msg("error.additional"," Please inform the TV-Browser team."));
-        }
-        else
+        } else {
           throw exc;
+        }
       }catch (Exception exc2) {
         return new Mirror(DEFAULT_PLUGINS_DOWNLOAD_URL);
       }

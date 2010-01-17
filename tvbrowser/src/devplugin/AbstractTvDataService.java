@@ -39,8 +39,17 @@ import util.exc.TvBrowserException;
  * Extend this class to provide your own TvDataService.
  */
 public abstract class AbstractTvDataService implements devplugin.TvDataService, tvdataservice.TvDataService {
-    /** The parent frame. May be used for dialogs. */
-    private Frame mParentFrame;
+  /** The parent frame. May be used for dialogs. */
+  private Frame mParentFrame;
+
+  /** Contains the mirror urls usable for receiving the groups.txt from. */
+  private static final String[] DEFAULT_CHANNEL_GROUPS_MIRRORS = { 
+    "http://tvbrowser.dyndns.tv",
+    "http://daten.wannawork.de", 
+    "http://www.gfx-software.de/tvbrowserorg", 
+    "http://tvbrowser1.sam-schwedler.de",
+    "http://tvbrowser.nicht-langweilig.de/data"
+  };
 
   /**
    * The plugin manager. It's the connection to TV-Browser.
@@ -176,5 +185,14 @@ public abstract class AbstractTvDataService implements devplugin.TvDataService, 
   
   protected IconLoader getIconLoader(final String groupId, final File workingDirectory) throws IOException {
     return new IconLoader(groupId, workingDirectory);
+  }
+  
+  /**
+   * get the default mirrors to ask for channel groups
+   * @return mirror url array
+   * @since 3.0
+   */
+  protected String[] getDefaultMirrors() {
+    return DEFAULT_CHANNEL_GROUPS_MIRRORS.clone();
   }
 }
