@@ -1070,7 +1070,6 @@ public class Settings {
     ArrayList<String> plugins = new ArrayList<String>();
     plugins.add("java.showviewplugin.ShowviewPlugin"); // no longer available
     plugins.add("java.i18nplugin.I18NPlugin"); // developers only
-    plugins.add("java.tvraterplugin.TVRaterPlugin"); // needs login, shall be replaced in future
     if (!OperatingSystem.isMacOs()) {
       plugins.add("java.growlplugin.GrowlPlugin"); // needs Growl for Windows
     }
