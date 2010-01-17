@@ -360,7 +360,7 @@ public class SearchHelper {
           }
         }
 
-        SendToPluginDialog send = new SendToPluginDialog(null, MainFrame.getInstance(), program);
+        SendToPluginDialog send = new SendToPluginDialog(null, (Window)MainFrame.getInstance(), program);
         send.setVisible(true);
       }
     });

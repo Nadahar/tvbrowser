@@ -27,6 +27,7 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import devplugin.Plugin;
 import devplugin.Program;
+import java.awt.Window;
 import util.settings.PluginPictureSettings;
 import util.settings.ProgramPanelSettings;
 import util.ui.Localizer;
@@ -307,7 +308,7 @@ public class ManagePanel {
 
     if(programs != null) {
       SendToPluginDialog send = new SendToPluginDialog(SimpleMarkerPlugin
-          .getInstance(), list.getReceiveTarget(), mParent, programs);
+          .getInstance(), list.getReceiveTarget(), (Window)mParent, programs);
 
       send.setVisible(true);
     }
