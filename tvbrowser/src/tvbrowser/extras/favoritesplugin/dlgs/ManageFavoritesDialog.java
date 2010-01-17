@@ -785,7 +785,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
       programs = mShowNew ? fav.getNewPrograms() : fav.getWhiteListPrograms();
     }
     
-    SendToPluginDialog send = new SendToPluginDialog(null, this, programs);
+    SendToPluginDialog send = new SendToPluginDialog(null, (Window)this, programs);
 
     send.setVisible(true);
   }

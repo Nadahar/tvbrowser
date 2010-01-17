@@ -27,6 +27,7 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -412,7 +413,7 @@ public class ProgramListPlugin extends Plugin {
             }
             if (programs != null && programs.length > 0) {
               SendToPluginDialog sendDialog = new SendToPluginDialog(
-                  ProgramListPlugin.getInstance(), mDialog, programs);
+                  ProgramListPlugin.getInstance(), (Window)mDialog, programs);
               sendDialog.setVisible(true);
             }
           }

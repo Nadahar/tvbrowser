@@ -375,7 +375,7 @@ public class ReminderListDialog extends JDialog implements WindowClosingIf {
     }
 
     if (programArr.length > 0) {
-      SendToPluginDialog send = new SendToPluginDialog(ReminderPluginProxy.getInstance(), this, programArr);
+      SendToPluginDialog send = new SendToPluginDialog(ReminderPluginProxy.getInstance(), (Window)this, programArr);
       send.setVisible(true);
     }
   }

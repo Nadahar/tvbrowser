@@ -27,6 +27,7 @@
 package tvbrowser.ui.filter.dlgs;
 
 import java.awt.Font;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -45,6 +46,7 @@ import util.ui.ProgramPanel;
 import util.ui.SendToPluginDialog;
 import devplugin.Program;
 import devplugin.ProgramFilter;
+import util.ui.UiUtilities;
 
 /**
  * Creates the Buttons for the Filters
@@ -160,7 +162,7 @@ public class FilterButtons implements ActionListener {
         
         Program[] prgs = collectPrograms();
         
-        SendToPluginDialog sendTo = new SendToPluginDialog(null, mMainFrame, prgs);
+        SendToPluginDialog sendTo = new SendToPluginDialog(null, (Window)mMainFrame, prgs);
         sendTo.setVisible(true);
     }
 
