@@ -82,7 +82,7 @@ public class BeanShellPluginProxy extends AbstractPluginProxy {
                 e.printStackTrace();
             }
         }
-        return new PluginInfo(mBshFile.getName());
+        return new PluginInfo(Class.class,mBshFile.getName());
     }
 
 

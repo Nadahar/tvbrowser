@@ -51,81 +51,6 @@ public final class PluginInfo {
     private String mHelpUrl=null;
     
     /**
-     * Creates an instance of PluginInfo with the
-     * default values and the given name.
-     * <p>
-     * @param name The name of the plugin.
-     * @deprecated since 2.6 Use {@link #PluginInfo(Class, String)} instead.
-     */
-    public PluginInfo(String name) {
-      this(Class.class,name,"");
-    }
-
-    /**
-     * Creates an instance of PluginInfo with the
-     * default values and the given name and description.
-     * <p>
-     * @param name The name of the plugin.
-     * @param desc The description for the plugin.
-     * @deprecated since 2.6 Use {@link #PluginInfo(Class, String, String)} instead.
-     */
-    public PluginInfo(String name, String desc) {
-      this(Class.class,name,desc,"");       
-    }
-    
-    /**
-     * Creates an instance of PluginInfo with the
-     * default values and the given name, description and author.
-     * <p>
-     * @param name The name of the plugin.
-     * @param desc The description for the plugin.
-     * @param author The author of the plugin.
-     * @deprecated since 2.6 Use {@link #PluginInfo(Class, String, String, String)} instead.
-     */
-    public PluginInfo(String name, String desc, String author) {
-      this(Class.class,name,desc,author,null,null,null);        
-    }
-    
-    /**
-     * Creates an instance of PluginInfo with the
-     * default values and the given name, description, author and version.
-     * <p>
-     * @param name The name of the plugin.
-     * @param desc The description for the plugin.
-     * @param author The author of the plugin.
-     * @param version The version of the plugin.
-     * @deprecated since 2.6 Use {@link #PluginInfo(Class, String, String, String)} instead
-     * and if this is for a Plugin let your Plugin hide {@link Plugin#getVersion()}.
-     */
-    public PluginInfo(String name, String desc, String author, Version version) {
-      this(Class.class,name,desc,author,null,null,version);
-    }
-
-  /**
-   * Creates an instance of PluginInfo with the default values and the given
-   * name, description, author, version and license.
-   * <p>
-   * 
-   * @param name
-   *          The name of the plugin.
-   * @param desc
-   *          The description for the plugin.
-   * @param author
-   *          The author of the plugin.
-   * @param version
-   *          The version of the plugin.
-   * @param license
-   *          The license of the plugin.
-   * @deprecated since 2.6 Use
-   *             {@link #PluginInfo(Class, String, String, String, String, String)}
-   *             instead and if this is for a Plugin let your Plugin hide
-   *             {@link Plugin#getVersion()}.
-   */
-    public PluginInfo(String name, String desc, String author, Version version, String license) {
-      this(Class.class,name,desc,author,license,null,version);      
-    }
-    
-    /**
      * Creates the default PluginVersion instance.
      */
     public PluginInfo() {
@@ -142,7 +67,7 @@ public final class PluginInfo {
      * @param name The name of the plugin.
      * @since 2.6
      */
-    public PluginInfo(Class caller, String name) {
+    public PluginInfo(Class<? extends Object> caller, String name) {
       this(caller, name,"");
     }
     
@@ -157,7 +82,7 @@ public final class PluginInfo {
      * @param desc The description for the plugin.
      * @since 2.6
      */
-    public PluginInfo(Class caller, String name, String desc) {
+    public PluginInfo(Class<? extends Object> caller, String name, String desc) {
       this(caller,name,desc,"");       
     }
     
@@ -173,8 +98,8 @@ public final class PluginInfo {
      * @param author The author of the plugin.
      * @since 2.6
      */
-    public PluginInfo(Class caller, String name, String desc, String author) {
-      this(caller, name,desc,author,null,null,null);        
+    public PluginInfo(Class<? extends Object> caller, String name, String desc, String author) {
+      this(caller, name,desc,author,null,null);        
     }
 
   /**
@@ -197,8 +122,8 @@ public final class PluginInfo {
    * 
    *          since 2.6
    */
-    public PluginInfo(Class caller, String name, String desc, String author, String license) {      
-      this(caller,name,desc,author,license,null,null);
+    public PluginInfo(Class<? extends Object> caller, String name, String desc, String author, String license) {      
+      this(caller,name,desc,author,license,null);
     }
 
   /**
@@ -223,36 +148,24 @@ public final class PluginInfo {
    * 
    *          since 2.6
    */
-    public PluginInfo(Class caller, String name, String desc, String author, String license, String helpUrl) {      
-      this(caller,name,desc,author,license,helpUrl,null);
-    }
-    
-    private PluginInfo(Class caller, String name, String desc, String author, String license, String helpUrl, Version version) {      
+    public PluginInfo(Class<? extends Object> caller, String name, String desc, String author, String license, String helpUrl) {      
       mName = name;
       mDescription = desc;
       mAuthor = author;
       mHelpUrl = helpUrl;
       
       if(caller != null && caller.getSuperclass() != null && 
-          (caller.getSuperclass().equals(Plugin.class) || 
+          (caller.getSuperclass().equals(Plugin.class) || caller.equals(Plugin.class) || 
               caller.getSuperclass().equals(AbstractTvDataService.class))) {
         try {
           Method m = caller.getMethod("getVersion", new Class[0]);
-          Version pluginVersion = (Version)m.invoke(caller,new Object[0]);
-          
-          if(version != null && version.compareTo(pluginVersion) > 0) {
-            mVersion = version;
-          }
-          else {
-            mVersion = pluginVersion;
-          }
-          
-        }catch(Exception e) {e.printStackTrace();
-          mVersion = version;
+          mVersion = (Version)m.invoke(caller,new Object[0]);
+        }catch(Exception e) {
+          mVersion = new Version(0,0);
         }
       }
       else {
-        mVersion = version;
+        mVersion = new Version(0,0);
       }
       
       mLicense = StringPool.getString(license);

@@ -104,7 +104,7 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
   }
 
   /** The localizer used by this class. */
-  private static final util.ui.Localizer mLocalizer
+  public static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(Plugin.class );
 
   private PluginTreeNode mRootNode;
@@ -311,7 +311,7 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
     String desc = mLocalizer.msg( "noDescription" ,"No description" );
     String author = mLocalizer.msg( "noAuthor" ,"No author given" );
 
-    return new PluginInfo(name, desc, author, getVersion());
+    return new PluginInfo(getClass(),name, desc, author);
   }
 
 

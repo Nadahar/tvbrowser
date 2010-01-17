@@ -289,7 +289,20 @@ public class JavaPluginProxy extends AbstractPluginProxy {
     if (mPluginInfo != null) {
       return mPluginInfo;
     }
-    return mPlugin.getInfo();
+    
+    PluginInfo info = null;
+    
+    try {
+      info = mPlugin.getInfo();
+    }catch(java.lang.NoSuchMethodError e) {
+      String name = devplugin.Plugin.mLocalizer.msg( "unkown" ,"Unknown" );
+      String desc = devplugin.Plugin.mLocalizer.msg( "noDescription" ,"No description" );
+      String author = devplugin.Plugin.mLocalizer.msg( "noAuthor" ,"No author given" );
+
+      return new PluginInfo(devplugin.Plugin.class,name, desc, author);
+    }
+    
+    return info;
   }
 
 
