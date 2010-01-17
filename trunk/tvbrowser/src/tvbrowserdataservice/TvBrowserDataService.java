@@ -78,15 +78,6 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
   protected static final String CHANNEL_GROUPS_FILENAME = "groups.txt";
   private static final String DEFAULT_CHANNEL_GROUPS_URL = "http://tvbrowser.org/listings";
   
-  /** Contains the mirror urls usable for receiving the groups.txt from. */
-  private static final String[] DEFAULT_CHANNEL_GROUPS_MIRRORS = {
-    "http://tvbrowser.dyndns.tv",
-    "http://daten.wannawork.de",
-    "http://www.gfx-software.de/tvbrowserorg",
-    "http://tvbrowser1.sam-schwedler.de",
-    "http://tvbrowser.nicht-langweilig.de/data"
-  };
-
   private DownloadManager mDownloadManager;
   private TvDataUpdateManager mTvDataBase;
   private int mTotalDownloadJobCount;
@@ -677,11 +668,12 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
   
   private Mirror getDefaultChannelGroupsMirror() {
     try {
-      if(DEFAULT_CHANNEL_GROUPS_MIRRORS.length > 0) {
-        Mirror[] mirr = new Mirror[DEFAULT_CHANNEL_GROUPS_MIRRORS.length];
+      String[] defaultMirrors = getDefaultMirrors();
+      if(defaultMirrors.length > 0) {
+        Mirror[] mirr = new Mirror[defaultMirrors.length];
         
-        for(int i = 0; i < DEFAULT_CHANNEL_GROUPS_MIRRORS.length; i++) {
-          mirr[i] = new Mirror(DEFAULT_CHANNEL_GROUPS_MIRRORS[i]);
+        for(int i = 0; i < defaultMirrors.length; i++) {
+          mirr[i] = new Mirror(defaultMirrors[i]);
         }
         
         Mirror choosenMirror = Mirror.chooseUpToDateMirror(mirr,null,"Groups.txt", "groups",TvBrowserDataService.class, " Please inform the TV-Browser team.");
