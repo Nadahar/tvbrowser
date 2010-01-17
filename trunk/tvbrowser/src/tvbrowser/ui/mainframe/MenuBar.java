@@ -670,12 +670,14 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
       mPluginsMenu.add(menuItem);
     }
 
-    mPluginsMenu.addSeparator();
-
     JMenuItem[] pluginItems = createPluginMenuItems();
+    if (pluginItems.length > 0) {
+      mPluginsMenu.addSeparator();
+    }
     for (JMenuItem pluginItem : pluginItems) {
       mPluginsMenu.add(pluginItem);
     }
+    
     mPluginsMenu.addSeparator();
     mPluginsMenu.add(mInstallPluginsMI);
     mPluginsMenu.add(mPluginManagerMI);
