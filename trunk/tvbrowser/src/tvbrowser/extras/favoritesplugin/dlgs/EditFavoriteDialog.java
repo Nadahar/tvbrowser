@@ -655,7 +655,7 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
     
     mOkWasPressed = true;
     setVisible(false);
-  }
+  }                      
   
   private boolean arrayContains(ProgramReceiveTarget[] targetArr, ProgramReceiveTarget target) {
     for(ProgramReceiveTarget arrayEntry : targetArr) {

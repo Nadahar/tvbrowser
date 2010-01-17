@@ -201,7 +201,7 @@ public class LocalPluginProgramFormatingSettingsDialog extends JDialog implement
     } else if(e.getSource() == mSetBack) {
       defaultPressed();
     } else if(e.getSource() == mHelp) {
-      ParamHelpDialog dialog = new ParamHelpDialog(this, new ParamLibrary());
+      ParamHelpDialog dialog = new ParamHelpDialog((Window)this, new ParamLibrary());
       dialog.setVisible(true);
     }
     else if(e.getSource() == mSetName) {
