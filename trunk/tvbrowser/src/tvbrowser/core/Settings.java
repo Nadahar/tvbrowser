@@ -66,6 +66,7 @@ import util.io.stream.ObjectInputStreamProcessor;
 import util.io.stream.ObjectOutputStreamProcessor;
 import util.io.stream.StreamUtilities;
 import util.misc.OperatingSystem;
+import util.misc.TextLineBreakerStringWidth;
 import util.settings.BooleanProperty;
 import util.settings.ByteProperty;
 import util.settings.ChannelArrayProperty;
@@ -638,9 +639,14 @@ public class Settings {
         propPictureDuration, propProgramTableCutTitle,
         propProgramTableCutTitleLines, propPictureDescriptionLines,
         propProgramPanelMaxLines, propProgramPanelShortDurationActive,
-        propProgramPanelShortDurationMinutes };
+        propProgramPanelShortDurationMinutes};
     
     if(mProp.hasChanged(propArr)) {
+      mainFrame.getProgramTableScrollPane().forceRepaintAll();
+    }
+
+    if(mProp.hasChanged(propProgramPanelHyphenation)) {
+      TextLineBreakerStringWidth.resetHyphenator();
       mainFrame.getProgramTableScrollPane().forceRepaintAll();
     }
 
@@ -1168,6 +1174,11 @@ public class Settings {
   /** If plugins are allowed to set the transparency of a program */
   public static final BooleanProperty propProgramPanelAllowTransparency = new BooleanProperty(
       mProp, "programpanel.AllowTransparency", true);
+  /**
+   * use hyphenation to break strings in a program panel
+   */
+  public static final BooleanProperty propProgramPanelHyphenation = new BooleanProperty(
+      mProp, "programpanel.Hyphenation", false);
   
   /**
    * number of description lines show in program panel
