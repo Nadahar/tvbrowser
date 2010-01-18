@@ -35,11 +35,11 @@ import devplugin.Date;
 import devplugin.Plugin;
 import devplugin.Program;
 import dvbplugin.Settings.TvbDvbVChannel;
-import dvbplugin.dvbviewer.ScheduledRecording;
 import dvbplugin.dvbviewer.DvbViewerTimers;
+import dvbplugin.dvbviewer.ScheduledRecording;
 
 /**
- * @author Probum (Tobias Bürner)
+ * @author Probum (Tobias BÃ¶rner)
  */
 class Marker {
 
@@ -60,7 +60,7 @@ class Marker {
 
   void mark() {
     unmarkAll();
-    Plugin plugin = Settings.getSettings().getPlugin();
+    Plugin plugin = DVBPlugin.getInstance();
     for (int i = 0; i < programs.size(); i++) {
       Program p = programs.get(i);
       p.mark(plugin);
@@ -72,7 +72,7 @@ class Marker {
     try {
       Program p = programs.get(index);
       programs.remove(index);
-      p.unmark(Settings.getSettings().getPlugin());
+      p.unmark(DVBPlugin.getInstance());
     } catch (Exception e) {
       // nichts tun
     }
@@ -81,7 +81,7 @@ class Marker {
 
   void unmarkAll() {
     Program[] p = Plugin.getPluginManager().getMarkedPrograms();
-    Plugin plugin = Settings.getSettings().getPlugin();
+    Plugin plugin = DVBPlugin.getInstance();
     for (int i = 0; i < p.length; i++) {
       p[i].unmark(plugin);
     }

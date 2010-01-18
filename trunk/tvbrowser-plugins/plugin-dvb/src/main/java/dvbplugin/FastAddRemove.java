@@ -33,9 +33,9 @@ import javax.swing.JOptionPane;
 import util.ui.Localizer;
 import devplugin.Program;
 import dvbplugin.Settings.TvbDvbVChannel;
+import dvbplugin.dvbviewer.DvbViewerTimers;
 import dvbplugin.dvbviewer.ProcessHandler;
 import dvbplugin.dvbviewer.ScheduledRecording;
-import dvbplugin.dvbviewer.DvbViewerTimers;
 
 /**
  * @author Probum
@@ -132,7 +132,7 @@ final class FastAddRemove {
     }
 
     if (set.isMarkRecordings()) {
-      program.mark(set.getPlugin());
+      program.mark(DVBPlugin.getInstance());
       set.getMarker().addProgram(program);
     }
 

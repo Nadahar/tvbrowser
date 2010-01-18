@@ -36,9 +36,12 @@ import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 
+import util.misc.OperatingSystem;
+import util.ui.ImageUtilities;
 import util.ui.Localizer;
 import devplugin.ActionMenu;
 import devplugin.Plugin;
@@ -60,19 +63,19 @@ public class DVBPlugin extends devplugin.Plugin {
   private static final String PROGRAMRECEIVE_ADD = "ADD";
 
   /** this plugin inherently only works on windows */
-  static final boolean isWindows = -1 != System.getProperty("os.name").toLowerCase().indexOf("windows");
+  private static final boolean isWindows = OperatingSystem.isWindows();
 
   /** the icon for the fast remove action */
-  static final String DVBPLUGIN_FASTREM_SMALLICON = "/dvbplugin/fastRemIcon16.gif";
+  private static final String DVBPLUGIN_FASTREM_SMALLICON = "/dvbplugin/fastRemIcon16.gif";
 
   /** the icon for the fast add action */
-  static final String DVBPLUGIN_FASTADD_SMALLICON = "/dvbplugin/fastIcon16.gif";
+  private static final String DVBPLUGIN_FASTADD_SMALLICON = "/dvbplugin/fastIcon16.gif";
 
   /** the large icon for the plugin */
-  static final String DVBPLUGIN_BIGICON = "/dvbplugin/icon24.png";
+  private static final String DVBPLUGIN_BIGICON = "/dvbplugin/icon24.png";
 
   /** the small icon for the plugin */
-  static final String DVBPLUGIN_SMALLICON = "/dvbplugin/icon16.png";
+  private static final String DVBPLUGIN_SMALLICON = "/dvbplugin/icon16.png";
 
   /** Translator */
   protected static final Localizer localizer = Localizer.getLocalizerFor(DVBPlugin.class);
@@ -99,10 +102,15 @@ public class DVBPlugin extends devplugin.Plugin {
   private ActionMenu mainMenuAction;
 
   /** contains the receive targets for programs sent by another plugin */
-  ProgramReceiveTarget[] receiveTargets;
+  private ProgramReceiveTarget[] receiveTargets;
 
   /** a cache for the plugin info */
   private PluginInfo pluginInfo;
+
+  /**
+   * singleton
+   */
+  private static DVBPlugin instance;
 
 
 
@@ -110,9 +118,7 @@ public class DVBPlugin extends devplugin.Plugin {
    * Creates a new instance of DVBPlugin
    */
   public DVBPlugin() {
-    if (!isWindows) { return; }
-
-    Settings.getSettings().setPlugin(this);
+    instance = this;
   }
 
 
@@ -228,7 +234,7 @@ public class DVBPlugin extends devplugin.Plugin {
    * @see devplugin.Plugin#getSettingsTab()
    */
   public SettingsTab getSettingsTab() {
-    DVBPluginSettingsTab set = new DVBPluginSettingsTab(isWindows);
+    DVBPluginSettingsTab set = new DVBPluginSettingsTab();
     return set;
   }
 
@@ -288,8 +294,8 @@ public class DVBPlugin extends devplugin.Plugin {
     logger.finer("DVBPlugin was asked for program receive targets");
     if (null == receiveTargets) {
       receiveTargets = new ProgramReceiveTarget[2];
-      receiveTargets[0] = new ProgramReceiveTarget(this, localizer.msg("action_add", "Add"), PROGRAMRECEIVE_ADD);
-      receiveTargets[1] = new ProgramReceiveTarget(this, localizer.msg("action_remove", "Remove"), PROGRAMRECEIVE_REMOVE);
+      receiveTargets[0] = new ProgramReceiveTarget(this, Localizer.getLocalization(Localizer.I18N_ADD), PROGRAMRECEIVE_ADD);
+      receiveTargets[1] = new ProgramReceiveTarget(this, Localizer.getLocalization(Localizer.I18N_DELETE), PROGRAMRECEIVE_REMOVE);
     }
 
      return receiveTargets;
@@ -637,5 +643,14 @@ public class DVBPlugin extends devplugin.Plugin {
     void setProgram(Program aProgram) {
       program = aProgram;
     }
+  }
+
+  public Icon getSmallIcon() {
+    return ImageUtilities.createImageIconFromJar(DVBPlugin.DVBPLUGIN_SMALLICON, getClass());
+  }
+
+
+  public static DVBPlugin getInstance() {
+    return instance;
   }
 }

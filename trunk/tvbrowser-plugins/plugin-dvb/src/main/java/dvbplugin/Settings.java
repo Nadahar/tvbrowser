@@ -45,9 +45,6 @@ import java.util.logging.Logger;
 
 import util.exc.ErrorHandler;
 import util.ui.Localizer;
-
-
-import devplugin.Plugin;
 import dvbplugin.dvbviewer.DvbViewerSetup;
 import dvbplugin.dvbviewer.ProcessHandler;
 
@@ -179,9 +176,6 @@ public final class Settings {
   /** the list of assigned channels */
   private List<TvbDvbVChannel> channels;
 
-  /** a refernce to the plugin */
-  private Plugin plugin;
-
   /** a reference to the recordings marker */
   private Marker marker;
 
@@ -213,16 +207,6 @@ public final class Settings {
    */
   static final void clear() {
     instance = null;
-  }
-
-
-  final void setPlugin(Plugin pluginRef) {
-    plugin = pluginRef;
-  }
-
-
-  final Plugin getPlugin() {
-    return plugin;
   }
 
 
