@@ -148,13 +148,14 @@ public class Date implements Comparable<Date>, Serializable
   /**
    * Creates a new instance from a RandomAccessFile.
    *
+   * IMPORTANT: This is needed for loading Date from the
+   *            tv data files and cannot be replaced with serialisation.
+   *
    * @param in the input to read from
    * @throws IOException if the stream could not be read
    * @throws ClassNotFoundException if the date could not be restored
    * @since 2.2
-   * @deprecated since 3.0, use the serialization mechanism instead
    */
-  @Deprecated
   public Date(final DataInput in) throws IOException, ClassNotFoundException {
     int version = in.readInt();
     if (version == 1) { // currently, version==3 is used
@@ -370,13 +371,15 @@ public class Date implements Comparable<Date>, Serializable
 
   /**
    * Writes this instance to a RandomAccessFile.
+   * 
+   * IMPORTANT: This is needed for writing Date to the 
+   *            tv data files and cannot be replaced with serialisation.
+   * 
    * @param out the file to write to
    * @throws IOException if something went wrong
    *
    * @since 2.2
-   * @deprecated since 3.0, use the serialisation mechanism instead
    */
-  @Deprecated
   public void writeToDataFile(final RandomAccessFile out) throws IOException {
     out.writeInt(3); // version
     out.writeShort(mYear);
