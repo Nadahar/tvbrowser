@@ -68,6 +68,10 @@ public class AdvancedFavorite extends Favorite {
 
   private String mPendingFilterName = null;
 
+  private AdvancedFavorite() {
+    super();
+  }
+  
   public AdvancedFavorite(ObjectInputStream in) throws IOException, ClassNotFoundException {
     super(in);
     int version = in.readInt();   // version
@@ -80,20 +84,6 @@ public class AdvancedFavorite extends Favorite {
         FavoritesPlugin.getInstance().addPendingFavorite(this);
       }
     }
-  }
-
-
-  /**
-   * @deprecated
-   * @param obj ignored (used to have a unique method signature)
-   * @param in
-   * @throws IOException
-   * @throws ClassNotFoundException
-   */
-  @Deprecated
-  public AdvancedFavorite(Object obj, ObjectInputStream in) throws IOException, ClassNotFoundException {
-    super();
-    readOldFavorite(in);
   }
 
   public AdvancedFavorite(String searchText) {
@@ -138,7 +128,20 @@ public class AdvancedFavorite extends Favorite {
     }
   }
 
-
+  /**
+   * Loads an old version favorite.
+   * <p>
+   * @param in The stream to read from.
+   * @return The loaded AdvancedFavorite.
+   * @throws IOException Thrown if something went wrong.
+   * @throws ClassNotFoundException Thrown if somethinge went wrong.
+   */
+  public static AdvancedFavorite loadOldFavorite(ObjectInputStream in) throws IOException, ClassNotFoundException {
+    AdvancedFavorite favorite = new AdvancedFavorite();
+    favorite.readOldFavorite(in);
+    
+    return favorite;
+  }
 
   private void readOldFavorite(ObjectInputStream in) throws IOException, ClassNotFoundException {
     int version = in.readInt();
