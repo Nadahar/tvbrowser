@@ -52,6 +52,7 @@ import javax.swing.JTextArea;
 import javax.swing.border.LineBorder;
 
 import util.exc.ErrorHandler;
+import util.misc.OperatingSystem;
 import util.ui.Localizer;
 import devplugin.Channel;
 import dvbplugin.Settings.TvbDvbVChannel;
@@ -83,11 +84,9 @@ class SettingsPanel extends JPanel implements java.awt.event.ActionListener,
    * Creates new form SettingsPanel.
    * If <code>isWindows</code> is true then the real settings panel is used.
    * Otherwise a short text is shown.
-   *
-   * @param isWindows do we are running on windows?
    */
-  SettingsPanel(boolean isWindows) {
-    if (isWindows) {
+  SettingsPanel() {
+    if (OperatingSystem.isWindows()) {
       initComponents();
       translateComponents();
 

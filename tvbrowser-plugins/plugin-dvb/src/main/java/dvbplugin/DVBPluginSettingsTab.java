@@ -32,26 +32,20 @@ import javax.swing.JPanel;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.Sizes;
 
-import util.ui.ImageUtilities;
-
 /**
  * Represents a page in the settings dialog.
  *
  * @author Probum
  */
-public class DVBPluginSettingsTab implements devplugin.SettingsTab {
+public final class DVBPluginSettingsTab implements devplugin.SettingsTab {
 
-  private boolean isWindows;
   private SettingsPanel set;
 
 
   /**
    * Creates a new instance of DVBPluginSettingsTab
-   *
-   * @param isWindows are we running on windows?
    */
-  public DVBPluginSettingsTab(boolean isWindows) {
-    this.isWindows = isWindows;
+  public DVBPluginSettingsTab() {
   }
 
 
@@ -59,7 +53,7 @@ public class DVBPluginSettingsTab implements devplugin.SettingsTab {
    * Creates the settings panel for this tab.
    */
   public JPanel createSettingsPanel() {
-    set = new SettingsPanel(isWindows);
+    set = new SettingsPanel();
     set.setBorder(Borders.createEmptyBorder(Sizes.DLUY5,Sizes.DLUX5,Sizes.DLUY5,Sizes.DLUX5));
     return set;
   }
@@ -69,8 +63,7 @@ public class DVBPluginSettingsTab implements devplugin.SettingsTab {
    * Returns the name of the tab-sheet.
    */
   public Icon getIcon() {
-    String iconName = DVBPlugin.DVBPLUGIN_SMALLICON;
-    return ImageUtilities.createImageIconFromJar(iconName, getClass());
+    return DVBPlugin.getInstance().getSmallIcon();
   }
 
 

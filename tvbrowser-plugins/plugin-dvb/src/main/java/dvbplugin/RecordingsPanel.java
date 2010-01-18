@@ -49,9 +49,9 @@ import util.ui.Localizer;
 import devplugin.Channel;
 import devplugin.Plugin;
 import devplugin.Program;
+import dvbplugin.dvbviewer.DvbViewerTimers;
 import dvbplugin.dvbviewer.ProcessHandler;
 import dvbplugin.dvbviewer.ScheduledRecording;
-import dvbplugin.dvbviewer.DvbViewerTimers;
 
 /**
  * @author Probum
@@ -827,7 +827,7 @@ public class RecordingsPanel extends JPanel implements java.awt.event.ActionList
 
         if (null != mProgram && set.isMarkRecordings()) {
           // we came from context menu so there is a program
-          mProgram.mark(set.getPlugin());
+          mProgram.mark(DVBPlugin.getInstance());
           set.getMarker().addProgram(mProgram);
           if (mProgram.isOnAir() && !isRunning) {
             requestRunningProgramReply = HelperClass.confirm(localizer.msg("request_startviewer",
