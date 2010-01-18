@@ -38,7 +38,7 @@ import util.exc.TvBrowserException;
  * <p>
  * Extend this class to provide your own TvDataService.
  */
-public abstract class AbstractTvDataService implements devplugin.TvDataService, tvdataservice.TvDataService {
+public abstract class AbstractTvDataService implements devplugin.TvDataService {
   /** The parent frame. May be used for dialogs. */
   private Frame mParentFrame;
 
