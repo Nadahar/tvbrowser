@@ -75,6 +75,21 @@ public class BbcBackstageDataService extends AbstractTvDataService {
    */
   private static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(BbcBackstageDataService.class
       .getName());
+  
+  private static HashMap<String, String> KNOWN_URLS; 
+  static {
+    KNOWN_URLS = new HashMap<String, String>();
+    KNOWN_URLS.put("BBC Radio 1","http://www.bbc.co.uk/radio1/");
+    KNOWN_URLS.put("BBC Radio 2","http://www.bbc.co.uk/radio2/");
+    KNOWN_URLS.put("BBC Radio 3","http://www.bbc.co.uk/radio3/");
+    KNOWN_URLS.put("BBC Radio 4","http://www.bbc.co.uk/radio4/");
+    KNOWN_URLS.put("BBC Radio 5 Live","http://www.bbc.co.uk/fivelive/");
+    KNOWN_URLS.put("1Xtra","http://www.bbc.co.uk/1xtra/");
+    KNOWN_URLS.put("BBC 6 Music","http://www.bbc.co.uk/6music/");
+    KNOWN_URLS.put("BBC 7","http://www.bbc.co.uk/bbc7/");
+    KNOWN_URLS.put("BBC Asian Network","http://www.bbc.co.uk/asiannetwork/");
+    KNOWN_URLS.put("BBC World Service","http://www.bbc.co.uk/worldservice/");    
+  }
 
   /**
    * Channelgroup
@@ -153,18 +168,7 @@ public class BbcBackstageDataService extends AbstractTvDataService {
   }
 
   private String getChannelUrl(String channelName) {
-    HashMap<String, String> urls = new HashMap<String, String>();
-    urls.put("BBC Radio 1","http://www.bbc.co.uk/radio1/");
-    urls.put("BBC Radio 2","http://www.bbc.co.uk/radio2/");
-    urls.put("BBC Radio 3","http://www.bbc.co.uk/radio3/");
-    urls.put("BBC Radio 4","http://www.bbc.co.uk/radio4/");
-    urls.put("BBC Radio 5 Live","http://www.bbc.co.uk/fivelive/");
-    urls.put("1Xtra","http://www.bbc.co.uk/1xtra/");
-    urls.put("BBC 6 Music","http://www.bbc.co.uk/6music/");
-    urls.put("BBC 7","http://www.bbc.co.uk/bbc7/");
-    urls.put("BBC Asian Network","http://www.bbc.co.uk/asiannetwork/");
-    urls.put("BBC World Service","http://www.bbc.co.uk/worldservice/");
-    String url = urls.get(channelName);
+    String url = KNOWN_URLS.get(channelName);
     if (url != null) {
       return url;
     }
@@ -412,7 +416,7 @@ public class BbcBackstageDataService extends AbstractTvDataService {
   }
 
   /**
-   * Add one zero if neccessary
+   * Add one zero if necessary
    * @param number
    * @return
    */

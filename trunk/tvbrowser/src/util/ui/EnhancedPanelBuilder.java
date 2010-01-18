@@ -57,7 +57,10 @@ public class EnhancedPanelBuilder extends PanelBuilder {
     }
     appendRow(FormFactory.PREF_ROWSPEC);
     incrementRowNumber();
-    return addSeparator(label);
+    if (label != null && !label.isEmpty()) {
+      return addSeparator(label);
+    }
+    return null;
   }
 
   /**
