@@ -191,10 +191,6 @@ public interface Program {
   public static final byte HIGHER_MEDIUM_PROGRAM_IMPORTANCE = 7;
   public static final byte MAX_PROGRAM_IMPORTANCE = 10;
   
-
-  /** @deprecated since 2.5.3 use MIN_MARK_PRIORITY instead */
-  public static final int DEFAULT_MARK_PRIORITY = 0;
-
   /** The key for the value of an action, to put the mark priority in 
    * @since 2.6 */
   public static final String MARK_PRIORITY = "MARK_PRIORITY";

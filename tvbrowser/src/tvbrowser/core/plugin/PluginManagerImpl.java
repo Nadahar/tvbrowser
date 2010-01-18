@@ -443,7 +443,6 @@ public class PluginManagerImpl implements PluginManager {
       prog.setTitle("Die Waltons");
       prog.setShortInfo("Die Verfilmung der Kindheits- und Jugenderinnerungen des Romanschriftstellers Earl Hamner jr.");
       prog.setDescription("Olivia ist schon seit einigen Tagen niedergeschlagen, obwohl ihr Geburtstag bevorsteht. Ihre einzige Freude scheint das Postflugzeug zu sein, dem sie allabendlich von der Haust\u00FCr aus sehnsuchtsvoll hinterhersieht.");
-      prog.setTextField(ProgramFieldType.SHOWVIEW_NR_TYPE, "123-456");
       prog.setTextField(ProgramFieldType.ACTOR_LIST_TYPE,
                         "Ralph Waite (Vater John Walton), Mary McDonough (Erin Walton), Michael Learned (Mutter Olivia Walton), Kami Cotler (Elisabeth Walton), Jon Walmsley (Jason Walton), Ellen Corby (Gro\u00dfmutter Ester Walton), David Harper (Jim Bob Walton), Judy Taylor (Mary Ellen Walton), Richard Thomas (John-Boy Walton)");
       prog.setIntField(ProgramFieldType.AGE_LIMIT_TYPE, 6);

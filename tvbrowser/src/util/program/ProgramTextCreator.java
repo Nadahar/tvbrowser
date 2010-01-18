@@ -956,8 +956,8 @@ public class ProgramTextCreator {
     }
 
     if (text == null || text.trim().length() < 1) {
-      if (ProgramFieldType.SHOWVIEW_NR_TYPE == fieldType) {
-        text = mLocalizer.msg("noShowview", "No Showview data ");
+      if (ProgramFieldType.CUSTOM_TYPE == fieldType) {
+        text = mLocalizer.msg("noCustom", "No custom information ");
       } else {
         return;
       }
@@ -1021,8 +1021,11 @@ public class ProgramTextCreator {
       buffer.append(HTMLTextHelper.convertTextToHtml(text, createLinks));
     }
     
-    if ((ProgramFieldType.SHOWVIEW_NR_TYPE == fieldType) && (showHelpLinks)) {
-      addHelpLink(buffer, mLocalizer.msg("showviewInfo", "http://wiki.tvbrowser.org/index.php/Showviewnummern"));
+    if ((ProgramFieldType.CUSTOM_TYPE == fieldType) && (showHelpLinks)) {
+      buffer.append(" (<a href=\"").append(
+          mLocalizer.msg("customInfo",
+              "http://enwiki.tvbrowser.org/index.php/CustomInformation")).append(
+          "\">?</a>)");
     }
     if ((ProgramFieldType.AGE_RATING_TYPE == fieldType) && (showHelpLinks)) {
       addHelpLink(buffer, mLocalizer.msg("ratingInfo", "http://en.wikipedia.org/wiki/Motion_picture_rating_system"));
@@ -1124,7 +1127,7 @@ public class ProgramTextCreator {
         ProgramFieldType.AGE_LIMIT_TYPE,
         ProgramFieldType.INFO_TYPE,
         ProgramFieldType.VPS_TYPE,
-        ProgramFieldType.SHOWVIEW_NR_TYPE, 
+        ProgramFieldType.CUSTOM_TYPE, 
         getDurationTypeString()}));
     // append missing fields (which may have been added in recent versions)
     for (Iterator<ProgramFieldType> iterator = ProgramFieldType.getTypeIterator(); iterator.hasNext();) {
