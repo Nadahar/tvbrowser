@@ -43,7 +43,6 @@ import javax.swing.Icon;
 import org.apache.commons.lang.StringEscapeUtils;
 
 import tvbrowserdataservice.TvBrowserDataService;
-import tvdataservice.TvDataService;
 import util.io.FileFormatException;
 import util.io.IOUtilities;
 import util.misc.SoftReferenceCache;
@@ -51,6 +50,7 @@ import au.com.bytecode.opencsv.CSVReader;
 import devplugin.Channel;
 import devplugin.ChannelGroup;
 import devplugin.ChannelGroupImpl;
+import devplugin.TvDataService;
 
 /**
  * 

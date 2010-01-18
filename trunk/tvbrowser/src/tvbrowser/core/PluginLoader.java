@@ -52,10 +52,8 @@ import tvbrowser.core.plugin.JavaPluginProxy;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.tvdataservice.DefaultTvDataServiceProxy;
-import tvbrowser.core.tvdataservice.DeprecatedTvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
-import tvdataservice.TvDataService;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
 import util.io.IOUtilities;
@@ -233,10 +231,6 @@ public class PluginLoader {
         if (deleteable) {
           mDeleteablePlugin.put(proxy, pluginFile);
         }
-      }
-      else if (plugin instanceof TvDataService) {
-        TvDataServiceProxy proxy = new DeprecatedTvDataServiceProxy((TvDataService)plugin);
-        TvDataServiceProxyManager.getInstance().registerTvDataService(proxy);
       }
 
       if(plugin != null) {

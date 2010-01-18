@@ -41,9 +41,8 @@ import javax.swing.ImageIcon;
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.ChannelUserSettings;
 import tvbrowser.core.tvdataservice.AbstractTvDataServiceProxy;
-import tvbrowser.core.tvdataservice.DeprecatedTvDataServiceProxy;
+import tvbrowser.core.tvdataservice.DefaultTvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
-import tvdataservice.TvDataService;
 import util.misc.StringPool;
 import util.ui.ImageUtilities;
 
@@ -83,7 +82,7 @@ public class Channel implements Comparable<Channel> {
   /**
    * @deprecated
    */
-  private TvDataService mDataService;
+  private AbstractTvDataService mDataService;
 
   private String mName;
   private String mUnescapedName;
@@ -126,7 +125,7 @@ public class Channel implements Comparable<Channel> {
         + "'" + country + "'");
     }
     
-    mDataService = dataService;
+    mDataService = (AbstractTvDataService) dataService;
     mName = name;
     mId = id;
     mTimeZone = timeZone;
@@ -630,7 +629,7 @@ public class Channel implements Comparable<Channel> {
   public TvDataServiceProxy getDataServiceProxy() {
     if(mDataService != null) {
       if (mProxy == null) {
-        mProxy = new DeprecatedTvDataServiceProxy(mDataService); 
+        mProxy = new DefaultTvDataServiceProxy(mDataService); 
       }
       return mProxy;
     } else {
