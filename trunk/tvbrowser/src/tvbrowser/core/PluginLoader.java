@@ -504,8 +504,16 @@ public class PluginLoader {
     // Create a plugin instance
     try {
       Class pluginClass = classLoader.loadClass(pluginName.toLowerCase() + "." + pluginName);
-      Method getVersion = null;
+      Method getVersion = pluginClass.getMethod("getVersion",new Class[0]);
       Version version1 = null;
+      try {
+        version1 = (Version)getVersion.invoke(pluginClass, new Object[0]);
+      } catch (Exception e) {
+      }
+      if (version1 == null || version1.toString().equals("0.0.0.0")) {
+        mLog.warning("Did not load plugin " + pluginName + ", version is too old.");
+        return null;
+      }
       
       if(pluginClass.getSuperclass().equals(devplugin.AbstractTvDataService.class) || classLoader2 != null) {
         getVersion = pluginClass.getMethod("getVersion",new Class[0]);
