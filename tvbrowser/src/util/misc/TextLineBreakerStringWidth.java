@@ -84,8 +84,10 @@ public class TextLineBreakerStringWidth {
     mCurrWordBuffer = new StringBuilder();
     mSpaceWidth = 1;
     mMinusWidth = 1;
-    
-    initializeHyphenator();
+
+    if (Settings.propProgramPanelHyphenation.getBoolean()) {
+      initializeHyphenator();
+    }
   }
 
   private void initializeHyphenator() {
@@ -436,6 +438,14 @@ public class TextLineBreakerStringWidth {
    */
   private boolean isEndOfLine(final int ch) {
     return (ch == '\n') || (ch == -1);
+  }
+  
+  /**
+   * to be used by Settings.handleChangedSettings()
+   */
+  public static void resetHyphenator() {
+    hyphenator = null;
+    useHyphenator = false;
   }
 
 }

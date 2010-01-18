@@ -48,6 +48,7 @@ import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.ui.settings.util.ColorButton;
 import tvbrowser.ui.settings.util.ColorLabel;
+import util.ui.EnhancedPanelBuilder;
 import util.ui.Localizer;
 import util.ui.OrderChooser;
 import util.ui.UiUtilities;
@@ -73,8 +74,6 @@ public class ProgramPanelSettingsTab implements SettingsTab {
 
   private static final String PICTURE_ICON_NAME = mLocalizer.msg("hasPicure", "Has picture");
 
-  private JPanel mSettingsPn;
-
   private OrderChooser mIconPluginOCh;
   private OrderChooser mInfoTextOCh;
 
@@ -84,23 +83,23 @@ public class ProgramPanelSettingsTab implements SettingsTab {
   private JCheckBox mBorderForOnAirPrograms;
 
   private ArrayList<IconPlugin> mFormatIcons;
+
+  private JCheckBox mHyphenator;
   
 
   /**
    * Creates the settings panel for this tab.
    */
   public JPanel createSettingsPanel() {
-    mSettingsPn = new JPanel(
-        new FormLayout(
-            "5dlu, fill:50dlu:grow, 3dlu, fill:50dlu:grow, 3dlu",
-            "pref, 5dlu, fill:default:grow, 3dlu, top:pref, 10dlu, pref, 5dlu, default, default, pref"));
-    mSettingsPn.setBorder(Borders.DIALOG_BORDER);
+    EnhancedPanelBuilder panel = new EnhancedPanelBuilder("5dlu, fill:50dlu:grow, 3dlu, fill:50dlu:grow, 3dlu");
+    panel.setBorder(Borders.DIALOG_BORDER);
 
     CellConstraints cc = new CellConstraints();
 
+    panel.addParagraph("");
     // icons
-    mSettingsPn.add(DefaultComponentFactory.getInstance()
-        .createSeparator(mLocalizer.msg("pluginIcons", "Plugin icons")), cc.xyw(1, 1, 2));
+    panel.add(DefaultComponentFactory.getInstance()
+        .createSeparator(mLocalizer.msg("pluginIcons", "Plugin icons")), cc.xyw(1, panel.getRowCount(), 2));
 
     IconPlugin[] allPluginArr = getAvailableIconPlugins();
     IconPlugin[] pluginOrderArr = getSelectedIconPlugins(allPluginArr);
@@ -138,27 +137,31 @@ public class ProgramPanelSettingsTab implements SettingsTab {
           }
         });
 
-    mSettingsPn.add(mIconPluginOCh, cc.xy(2, 3));
-    mSettingsPn.add(UiUtilities.createHelpTextArea(mLocalizer.msg("pluginIcons.description", "")), cc.xy(2, 5));
-
     // info text
-    mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("infoText", "Info text")), cc
-        .xyw(4, 1, 2));
+    panel.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("infoText", "Info text")), cc
+        .xyw(4, panel.getRowCount(), 2));
 
     ProgramFieldType[] allTypeArr = getAvailableTypes();
     ProgramFieldType[] typeOrderArr = getSelectedTypes();
     mInfoTextOCh = new OrderChooser(typeOrderArr, allTypeArr);
 
-    mSettingsPn.add(mInfoTextOCh, cc.xy(4, 3));
-    mSettingsPn.add(UiUtilities.createHelpTextArea(mLocalizer.msg("infoText.description", "")), cc.xy(4, 5));
+    panel.addGrowingRow();
+    panel.add(mIconPluginOCh, cc.xy(2, panel.getRowCount()));
+    panel.add(mInfoTextOCh, cc.xy(4, panel.getRowCount()));
 
-    mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("Colors", "Colors")), cc.xyw(
-        1, 7, 5));
+    panel.addRow("top:pref");
+    panel.add(UiUtilities.createHelpTextArea(mLocalizer.msg("pluginIcons.description", "")), cc.xy(2, panel.getRowCount()));
+    panel.add(UiUtilities.createHelpTextArea(mLocalizer.msg("infoText.description", "")), cc.xy(4, panel.getRowCount()));
 
-    mSettingsPn.add(mAllowProgramImportance = new JCheckBox(mLocalizer.msg("color.allowTransparency","Allow plugins to set the transparency of a program"),
-        Settings.propProgramPanelAllowTransparency.getBoolean()), cc.xyw(2,9,3));
-    mSettingsPn.add(mBorderForOnAirPrograms = new JCheckBox(mLocalizer.msg("color.programOnAirWithBorder",
-        "Border for programs on air"), Settings.propProgramTableOnAirProgramsShowingBorder.getBoolean()), cc.xyw(2, 10,
+    panel.addParagraph(mLocalizer.msg("Colors", "Colors"));
+
+    panel.addRow();
+    panel.add(mAllowProgramImportance = new JCheckBox(mLocalizer.msg("color.allowTransparency","Allow plugins to set the transparency of a program"),
+        Settings.propProgramPanelAllowTransparency.getBoolean()), cc.xyw(2, panel.getRowCount() ,3));
+    
+    panel.addRow();
+    panel.add(mBorderForOnAirPrograms = new JCheckBox(mLocalizer.msg("color.programOnAirWithBorder",
+        "Border for programs on air"), Settings.propProgramTableOnAirProgramsShowingBorder.getBoolean()), cc.xyw(2, panel.getRowCount(),
         3));
 
     JPanel colors = new JPanel();
@@ -190,9 +193,14 @@ public class ProgramPanelSettingsTab implements SettingsTab {
     mProgramItemKeyboardSelectedLb.setStandardColor(programItemDefaultKeyboardSelectedColor);
     colors.add(new ColorButton(mProgramItemKeyboardSelectedLb), cc.xy(5, 6));
 
-    mSettingsPn.add(colors, cc.xyw(2, 11, 4));
+    panel.addRow();
+    panel.add(colors, cc.xyw(2, panel.getRowCount(), panel.getColumnCount() - 1));
+    
+    panel.addParagraph(mLocalizer.msg("text", "Text"));
+    panel.addRow();
+    panel.add(mHyphenator = new JCheckBox(mLocalizer.msg("hyphenation", "Use hyphenation"), Settings.propProgramPanelHyphenation.getBoolean()), cc.xyw(2, panel.getRowCount(), panel.getColumnCount() - 1));
 
-    return mSettingsPn;
+    return panel.getPanel();
   }
 
   private IconPlugin[] getAvailableIconPlugins() {
@@ -301,6 +309,7 @@ public class ProgramPanelSettingsTab implements SettingsTab {
     Settings.propProgramTableColorOnAirLight.setColor(mProgramItemOnAirColorLb.getColor());
     Settings.propKeyboardSelectedColor.setColor(mProgramItemKeyboardSelectedLb.getColor());
     Settings.propProgramPanelAllowTransparency.setBoolean(mAllowProgramImportance.isSelected());
+    Settings.propProgramPanelHyphenation.setBoolean(mHyphenator.isSelected());
   }
 
   /**
