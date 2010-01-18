@@ -114,18 +114,6 @@ public class ReminderList implements ActionListener {
     }
   }
 
-  @Deprecated
-  public void add(Program[] programs, int minutes) {
-    for (Program program : programs) {
-      add(program, minutes);
-    }
-  }
-
-  @Deprecated
-  public void add(Program program, int minutes) {
-    add(program, minutes, 1);
-  }
-
   public void add(Program program, ReminderContent reminderContent) {
     add(program, reminderContent, 1);
   }

@@ -100,13 +100,6 @@ public class ProgramFieldType {
                            "description", "Description");
 
   /**
-   * @deprecated use {@link ProgramFieldType#PICTURE_TYPE}
-   */
-  public static final ProgramFieldType IMAGE_TYPE
-    = new ProgramFieldType(9, BINARY_FORMAT, true, "image",
-                           "image", "Image");
-
-  /**
    * Actor-List. Should be in this Format:
    *
    * ActorName\t\t-\t\tRole,\n

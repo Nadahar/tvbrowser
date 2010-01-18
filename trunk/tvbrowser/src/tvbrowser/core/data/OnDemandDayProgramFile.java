@@ -236,7 +236,7 @@ public class OnDemandDayProgramFile {
       Channel.readData(objIn, false); // unused channel
       new devplugin.Date(objIn); // unused date
 
-      prog.setBinaryField(ProgramFieldType.IMAGE_TYPE, (byte[]) objIn
+      prog.setBinaryField(ProgramFieldType.PICTURE_TYPE, (byte[]) objIn
           .readObject());
     } else {
       Channel.readData(objIn, false); // unused channel

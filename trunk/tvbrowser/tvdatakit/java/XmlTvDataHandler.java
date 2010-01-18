@@ -182,12 +182,7 @@ class XmlTvDataHandler extends DefaultHandler {
 
           mFrame = new ProgramFrame();
           addField(ProgramField.create(ProgramFieldType.START_TIME_TYPE,extractTime(start)));
-
-          String showView = attributes.getValue("showview");
-          if (showView != null) {
-            addField(ProgramField.create(ProgramFieldType.SHOWVIEW_NR_TYPE,showView));
-          }
-
+          
           String vps = attributes.getValue("vps-start");
           if (vps != null) {
             int time = extractTime(vps);
