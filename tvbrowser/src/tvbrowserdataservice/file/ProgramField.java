@@ -96,35 +96,6 @@ public class ProgramField implements Cloneable {
       mTypeId = 255;      
     }
 
-    /**
-     * @deprecated use the factory method
-     */
-    public ProgramField(ProgramFieldType type, String text) {
-        setType(type);
-        setTextData(text);
-    }
-
-    /**
-     * @deprecated use the factory method
-     */
-    public ProgramField(ProgramFieldType type, byte[] data) {
-        setType(type);
-        setBinaryData(data);
-    }
-
-    /**
-     * @deprecated use the factory method
-     */
-    public ProgramField(ProgramFieldType type, int value) {
-        setType(type);
-
-        if (type.getFormat() == ProgramFieldType.TIME_FORMAT) {
-            setTimeData(value);
-        } else {
-            setIntData(value);
-        }
-    }
-
     public static ProgramField create(ProgramFieldType type, String text) {
         if ((text == null) || (text.length() == 0)) {
             return null;

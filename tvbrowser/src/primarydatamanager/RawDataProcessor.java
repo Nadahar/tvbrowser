@@ -443,7 +443,7 @@ public class RawDataProcessor {
         levelFrame = (ProgramFrame) frame.clone();
         levelFrame.removeProgramFieldOfType(ProgramFieldType.DESCRIPTION_TYPE);
         levelFrame.removeProgramFieldOfType(ProgramFieldType.ACTOR_LIST_TYPE);
-        levelFrame.removeProgramFieldOfType(ProgramFieldType.IMAGE_TYPE);
+       // levelFrame.removeProgramFieldOfType(ProgramFieldType.IMAGE_TYPE);
         levelFrame.removeProgramFieldOfType(ProgramFieldType.PICTURE_TYPE);
         levelFrame.removeProgramFieldOfType(ProgramFieldType.PICTURE_DESCRIPTION_TYPE);
         levelFrame.removeProgramFieldOfType(ProgramFieldType.PICTURE_COPYRIGHT_TYPE);

@@ -96,28 +96,6 @@ public class ProgramListCellRenderer extends DefaultListCellRenderer {
   }
 
   /**
-   * Creates a new instance of ProgramListCellRenderer
-   * 
-   * @param settings
-   *          The settings for the program panel.
-   * @param axis
-   *          The axis of the progress bar of the program panel.
-   * @deprecated Since 2.7 Use
-   *             {@link #ProgramListCellRenderer(ProgramPanelSettings)} instead.
-   */
-  @Deprecated
-  public ProgramListCellRenderer(ProgramPanelSettings settings, int axis) {
-    if (settings == null) {
-      settings = new ProgramPanelSettings(ProgramPanelSettings.SHOW_PICTURES_NEVER, 1080, 1380, false, true, 90, axis);
-    } else {
-      settings = new ProgramPanelSettings(settings.getPictureShowingType(), settings.getPictureTimeRangeStart(),
-          settings.getPictureTimeRangeEnd(), settings.isShowingOnlyDateAndTitle(), settings
-              .isShowingPictureDescription(), settings.getDuration(), axis);
-    }
-    initializeSettings(settings);
-  }
-
-  /**
    * Return a component that has been configured to display the specified value.
    * That component's <code>paint</code> method is then called to "render" the
    * cell. If it is necessary to compute the dimensions of a list because the

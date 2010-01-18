@@ -163,19 +163,6 @@ public class ProgramPanel extends JComponent implements ChangeListener, PluginSt
    */
   private boolean mHasChanged = false;
 
-  /**
-   * Orientation of progress bar is X_AXIS
-   * 
-   * @deprecated since 2.7 Use {@link ProgramPanelSettings#X_AXIS} instead
-   */
-  final public static int X_AXIS = ProgramPanelSettings.X_AXIS;
-  /**
-   * Orientation of progress bar is Y_AXIS
-   * 
-   * @deprecated since 2.7 Use {@link ProgramPanelSettings#Y_AXIS} instead
-   */
-  final public static int Y_AXIS = ProgramPanelSettings.Y_AXIS;
-
   /** Orientation of progress bar */
   private int mAxis = ProgramPanelSettings.Y_AXIS;
   
@@ -1182,35 +1169,6 @@ private static Font getDynamicFontSize(Font font, int offset) {
 
   public void pluginUnloaded(PluginProxy plugin) {
     // noop
-  }
-  
-  /* Deprecated constructors from here */
-  
-  /**
-   * Creates a new instance of ProgramPanel.
-   * 
-   * @param prog
-   *          The program to show in this panel.
-   * @param axis
-   *          Orientation of ProgressBar (X_AXIS/Y_AXIS)
-   * @deprecated Since 2.7 Use {@link #ProgramPanel(Program, ProgramPanelSettings)} instead.
-   */
-  public ProgramPanel(Program prog, int axis) {
-    this();
-    mAxis = axis;
-    setProgram(prog);
-  }
-
-  /**
-   * Creates a new instance of ProgramPanel.
-   * 
-   * @param settings The settings for this program panel.
-   * @param axis The axis of the progress bar.
-   * @deprecated Since 2.7 Use {@link #ProgramPanel(ProgramPanelSettings)} instead.
-   */
-  public ProgramPanel(ProgramPanelSettings settings, int axis) {
-    this(settings);
-    mAxis = axis;
   }
 
   /**

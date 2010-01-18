@@ -407,38 +407,6 @@ public class ProgramList extends JList implements ChangeListener,
   public void pluginUnloaded(PluginProxy plugin) {
     // noop
   }
-  
-  /* Deprecated constructors from here */
-  
-  /**
-   * Creates the JList and adds the default MouseListeners (PopUpBox)
-   * 
-   * @param programs The program list.
-   * @param settings The program panel settings.
-   * @param axis The axis for the progress bar of the program table.
-   * @deprecated Since 2.7
-   */
-  public ProgramList(ListModel programs, ProgramPanelSettings settings, int axis) {
-    super(programs);
-    programs.addListDataListener(this);
-    setCellRenderer(new ProgramListCellRenderer(settings, axis));
-  }
-
-  /**
-   * Creates the JList and adds the default MouseListeners (PopUpBox)
-   * 
-   * @param programs
-   *          Model with Programs to show
-   * @param settings
-   *          The plugin picture settings for the program panel.
-   * @param axis
-   *          The orientation of the progress bar.
-   * @deprecated Since 2.7 Use {@link #ProgramList(ListModel, ProgramPanelSettings)} instead.
-   */
-  public ProgramList(ListModel programs, PluginPictureSettings settings,
-      int axis) {
-    this(programs, new ProgramPanelSettings(settings, false, axis), axis);
-  }
 
   @Override
   public String getToolTipText(MouseEvent event) {
