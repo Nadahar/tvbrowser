@@ -118,9 +118,6 @@ public class ProgramFieldType {
   = new ProgramFieldType(12, TEXT_FORMAT, true, "custom field",
                          "custom", "Custom information");
 
-/** @deprecated since 2.7.4 trademark issues */
-  public static final ProgramFieldType SHOWVIEW_NR_TYPE = CUSTOM_TYPE;
-
   public static final ProgramFieldType INFO_TYPE
     = new ProgramFieldType(13, INT_FORMAT, true, "info bits",
                            "formatInfo", "Format information");

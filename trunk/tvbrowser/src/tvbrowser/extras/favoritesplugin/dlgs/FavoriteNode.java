@@ -80,10 +80,7 @@ public class FavoriteNode extends DefaultMutableTreeNode implements Comparable<F
     else {
       setAllowsChildren(false);
       if (version <= 2) {
-        /* read favorites from older TV-Browser versions
-         * this should stay at least until version 3.0
-         * of TV-Browser */
-        userObject = new AdvancedFavorite(null, in);
+        userObject = AdvancedFavorite.loadOldFavorite(in);
       }
       else {
         String typeID = (String)in.readObject();
