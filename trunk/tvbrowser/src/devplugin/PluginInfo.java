@@ -63,7 +63,10 @@ public final class PluginInfo {
      * If the caller class is a Plugin/TvDataService it will be tried to get
      * the version from the static method getVersion() of Plugin/AbstractTvDataService.
      * <p>
-     * @param caller The class that want to create this PluginInfo
+     * So assumed you have a plugin class MyPlugin, you would do it like this:
+     * new PluginInfo(MyPlugin.class, "My Plugin");
+     * <p>
+     * @param caller The class (plugin class) that want to create this PluginInfo
      * @param name The name of the plugin.
      * @since 2.6
      */
@@ -77,7 +80,10 @@ public final class PluginInfo {
      * If the caller class is a Plugin/TvDataService it will be tried to get
      * the version from the static method getVersion() of Plugin/AbstractTvDataService.
      * <p>
-     * @param caller The class that want to create this PluginInfo
+     * So assumed you have a plugin class MyPlugin, you would do it like this:
+     * new PluginInfo(MyPlugin.class, "My Plugin", "This plugin does something.");
+     * <p>
+     * @param caller The class (plugin class) that want to create this PluginInfo
      * @param name The name of the plugin.
      * @param desc The description for the plugin.
      * @since 2.6
@@ -92,7 +98,10 @@ public final class PluginInfo {
      * If the caller class is a Plugin/TvDataService it will be tried to get
      * the version from the static method getVersion() of Plugin/AbstractTvDataService.
      * <p>
-     * @param caller The class that want to create this PluginInfo
+     * So assumed you have a plugin class MyPlugin, you would do it like this:
+     * new PluginInfo(MyPlugin.class, "My Plugin", "This plugin does something.", "My Name");
+     * <p>
+     * @param caller The class (plugin class) that want to create this PluginInfo
      * @param name The name of the plugin.
      * @param desc The description for the plugin.
      * @param author The author of the plugin.
@@ -102,52 +111,43 @@ public final class PluginInfo {
       this(caller, name,desc,author,null,null);        
     }
 
-  /**
-   * Creates an instance of PluginInfo with the default values and the given
-   * name, description, author, the help url and license. If the caller class is
-   * a Plugin/TvDataService it will be tried to get the version from the static
-   * method getVersion() of Plugin/AbstractTvDataService.
-   * <p>
-   * 
-   * @param caller
-   *          The class that want to create this PluginInfo
-   * @param name
-   *          The name of the plugin.
-   * @param desc
-   *          The description for the plugin.
-   * @param author
-   *          The author of the plugin.
-   * @param license
-   *          The license of the plugin.
-   * 
-   *          since 2.6
-   */
+    /**
+     * Creates an instance of PluginInfo with the default values and the given
+     * name, description, author, the help url and license. If the caller class is
+     * a Plugin/TvDataService it will be tried to get the version from the static
+     * method getVersion() of Plugin/AbstractTvDataService.
+     * <p>
+     * So assumed you have a plugin class MyPlugin, you would do it like this:
+     * new PluginInfo(MyPlugin.class, "My Plugin", "This plugin does something.", "My Name", "Some license");
+     * <p>
+     * @param caller The class (plugin class) that want to create this PluginInfo
+     * @param name The name of the plugin.
+     * @param desc The description for the plugin.
+     * @param author The author of the plugin.
+     * @param license The license of the plugin.
+     * @since 2.6
+     */
     public PluginInfo(Class<? extends Object> caller, String name, String desc, String author, String license) {      
       this(caller,name,desc,author,license,null);
     }
 
-  /**
-   * Creates an instance of PluginInfo with the default values and the given
-   * name, description, author, the help url and license. If the caller class is
-   * a Plugin/TvDataService it will be tried to get the version from the static
-   * method getVersion() of Plugin/AbstractTvDataService.
-   * <p>
-   * 
-   * @param caller
-   *          The class that want to create this PluginInfo
-   * @param name
-   *          The name of the plugin.
-   * @param desc
-   *          The description for the plugin.
-   * @param author
-   *          The author of the plugin.
-   * @param helpUrl
-   *          The url where to find help for the plugin.
-   * @param license
-   *          The license of the plugin.
-   * 
-   *          since 2.6
-   */
+    /**
+     * Creates an instance of PluginInfo with the default values and the given
+     * name, description, author, the help url and license. If the caller class is
+     * a Plugin/TvDataService it will be tried to get the version from the static
+     * method getVersion() of Plugin/AbstractTvDataService.
+     * <p>
+     * So assumed you have a plugin class MyPlugin, you would do it like this:
+     * new PluginInfo(MyPlugin.class, "My Plugin", "This plugin does something.", "My Name", "Some license", "http://myhelp.org/mypluginhelp");
+     * <p>
+     * @param caller The class (plugin class) that want to create this PluginInfo
+     * @param name The name of the plugin.
+     * @param desc The description for the plugin.
+     * @param author The author of the plugin.
+     * @param helpUrl The url where to find help for the plugin.
+     * @param license The license of the plugin.
+     * @since 2.6
+     */
     public PluginInfo(Class<? extends Object> caller, String name, String desc, String author, String license, String helpUrl) {      
       mName = name;
       mDescription = desc;
