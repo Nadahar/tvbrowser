@@ -19,7 +19,7 @@ package imdbplugin;
 import devplugin.PluginTreeNode;
 import devplugin.Program;
 
-public class RatingNode extends PluginTreeNode {
+public class RatingNode extends PluginTreeNode implements java.lang.Comparable<devplugin.PluginTreeNode> {
 
   private byte mRating;
   private Program mProgram;
