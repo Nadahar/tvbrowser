@@ -29,8 +29,11 @@ package devplugin;
 import java.awt.Frame;
 import java.io.File;
 import java.io.IOException;
+import java.util.Properties;
 
 import tvbrowserdataservice.file.IconLoader;
+import tvdataservice.SettingsPanel;
+import tvdataservice.TvDataUpdateManager;
 import util.exc.TvBrowserException;
 
 /**
@@ -38,7 +41,7 @@ import util.exc.TvBrowserException;
  * <p>
  * Extend this class to provide your own TvDataService.
  */
-public abstract class AbstractTvDataService implements devplugin.TvDataService {
+public abstract class AbstractTvDataService {
   /** The parent frame. May be used for dialogs. */
   private Frame mParentFrame;
 
@@ -134,11 +137,11 @@ public abstract class AbstractTvDataService implements devplugin.TvDataService {
    * @since 2.7
    */
   public void handleTvBrowserStartFinished() {
-
+    // do nothing
   }
   
   /**
-   * Gets if the data service supports auto upate of data.
+   * Gets if the data service supports auto update of data.
    * @return <code>True</code> if the data service supports the auto update,
    * <code>false</code> otherwise.
    * @since 2.7
@@ -195,4 +198,88 @@ public abstract class AbstractTvDataService implements devplugin.TvDataService {
   protected String[] getDefaultMirrors() {
     return DEFAULT_CHANNEL_GROUPS_MIRRORS.clone();
   }
+  
+  /**
+   * This method is called by the host application to set the working folder.
+   * If required, TvDataService implementations should store their data
+   * within this 'dataDir' directory
+   * @param dataDir
+   */
+  public abstract void setWorkingDirectory(File dataDir);
+
+  /**
+   * @return an array of the available channel groups.
+
+   */
+  public abstract ChannelGroup[] getAvailableGroups();
+
+  /**
+   * Updates the TV listings provided by this data service.
+   *
+   * @throws util.exc.TvBrowserException
+   */
+  public abstract void updateTvData(TvDataUpdateManager updateManager,
+                           Channel[] channelArr, Date startDate, int dateCount, ProgressMonitor monitor)
+    throws TvBrowserException;
+
+  /**
+   * Called by the host-application during start-up. Implement this method to
+   * load your dataservices settings from the file system.
+   */
+  public abstract void loadSettings(Properties settings);
+
+  /**
+   * Called by the host-application during shut-down. Implements this method to
+   * store your dataservices settings to the file system.
+   */
+  public abstract Properties storeSettings();
+
+  /**
+   * A TvDataService can have a settings panel within the settings dialog.
+   * If the hasSettingsPanel() method returns false, the getSettingsPanel()
+   * method is never called.
+   * @return true, if the settings panel feature is used by this TvDataService
+   */
+  public abstract boolean hasSettingsPanel();
+
+  /**
+   *
+   * @return the SettingsPanel of this TvDataService
+   */
+  public abstract SettingsPanel getSettingsPanel();
+
+  /**
+   * Gets the list of the channels that are available for the given channel group.
+   */
+  public abstract Channel[] getAvailableChannels(ChannelGroup group);
+
+  /**
+   * Some TvDataServices may need to connect to the Internet to know their
+   * channels. If supportsDanymicChannelList() returns true, this method is
+   * called to check for available channels.
+   * @param group
+   * @param monitor
+   * @return array of all available channels (new and old)
+   * @throws TvBrowserException
+   */
+  public abstract Channel[] checkForAvailableChannels(ChannelGroup group, ProgressMonitor monitor) throws TvBrowserException;
+
+  public abstract ChannelGroup[] checkForAvailableChannelGroups(ProgressMonitor monitor) throws TvBrowserException;
+
+  /**
+   *
+   * @return true, if this TvDataService can dynamically load other channels
+   */
+  public abstract boolean supportsDynamicChannelList();
+
+  /**
+   *
+   * @return true, if this TvDataService can dynamically load other groups
+   */
+  public abstract boolean supportsDynamicChannelGroups();
+
+  /**
+   * Gets information about this TvDataService
+   */
+  public abstract PluginInfo getInfo();
 }
