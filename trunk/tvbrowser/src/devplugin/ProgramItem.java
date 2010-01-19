@@ -38,18 +38,18 @@ import java.util.Set;
  * A wrapper class for programs to add properties to the program.
  */
 public class ProgramItem implements Comparable<ProgramItem> {
-   
+
   private Program mProgram;
   private Properties mProperties;
   private transient String mProgId;
   private transient Date mDate;
-    
-  
+
+
   public ProgramItem(Program prog) {
     mProgram = prog;
     mProperties = null; // defer initialization until needed
   }
-  
+
   public ProgramItem() {
     this(null);
   }
@@ -68,22 +68,22 @@ public class ProgramItem implements Comparable<ProgramItem> {
       String value = (String)in.readObject();
       mProperties.put(key, value);
     }
-    
+
   }
-  
+
   public void write(ObjectOutputStream out) throws IOException {
     out.writeInt(1); // version
     if (mDate != null) {
-      mDate.writeData(out);
+      out.writeObject(mDate);
     } else {
-      mProgram.getDate().writeData(out);
+      out.writeObject(mProgram.getDate());
     }
     if (mProgId != null) {
       out.writeObject(mProgId);
     } else {
       out.writeObject(mProgram.getID());
     }
-    
+
     if (mProperties == null) {
       out.writeInt(0);
     }
@@ -95,36 +95,37 @@ public class ProgramItem implements Comparable<ProgramItem> {
         String key = (String)it.next();
         String value = (String)mProperties.get(key);
         out.writeObject(key);
-        out.writeObject(value);      
+        out.writeObject(value);
       }
     }
   }
-  
+
   public void setProgram(Program prog) {
     mProgram = prog;
   }
-  
+
   public Program getProgram() {
     if (mProgram == null) {
       mProgram = Plugin.getPluginManager().getProgram(mDate, mProgId);
     }
     return mProgram;
   }
-  
+
   public void setProperty(String key, String value) {
     if (mProperties == null) {
       mProperties = new Properties();
     }
-    mProperties.put(key, value);  
+    mProperties.put(key, value);
   }
-  
+
   public String getProperty(String key) {
     if (mProperties == null) {
       return null;
     }
-    return (String)mProperties.get(key);  
+    return (String)mProperties.get(key);
   }
-  
+
+  @Override
   public String toString() {
     return mProgram.getTitle();
   }
@@ -132,7 +133,7 @@ public class ProgramItem implements Comparable<ProgramItem> {
   /**
    * Get the date of the program. Prefer this method over
    * getProgram().getDate().
-   * 
+   *
    * @return date of the program
    * @since 3.0
    */
@@ -145,7 +146,7 @@ public class ProgramItem implements Comparable<ProgramItem> {
 
   /**
    * get the start time of the program in minutes after midnight
-   * 
+   *
    * @return start time of the program
    * @since 3.0
    */
