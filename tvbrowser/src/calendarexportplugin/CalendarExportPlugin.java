@@ -608,7 +608,7 @@ public class CalendarExportPlugin extends Plugin {
           int treeNodeCount = in.readInt();
           ArrayList<PluginTreeNode> nodes = new ArrayList<PluginTreeNode>();
           for (int i = 0; i < treeNodeCount; i++) {
-            final ExporterIf exporter = findExporter((String)in.readObject());
+            final ExporterIf exporter = findExporter((String) in.readObject());
             PluginTreeNode node = null;
             if (exporter != null) {
               node = new PluginTreeNode(exporter.getName());
@@ -621,7 +621,7 @@ public class CalendarExportPlugin extends Plugin {
 
             int progCount = in.readInt();
             for (int v = 0; v < progCount; v++) {
-              Date programDate = new Date(in);
+              Date programDate = (Date) in.readObject();
               String progId = (String) in.readObject();
               if (node != null) {
                 Program program = Plugin.getPluginManager().getProgram(programDate, progId);
@@ -630,7 +630,7 @@ public class CalendarExportPlugin extends Plugin {
             }
           }
           Collections.sort(nodes, new Comparator<PluginTreeNode>() {
-            public int compare(PluginTreeNode o1, PluginTreeNode o2) {
+            public int compare(final PluginTreeNode o1, final PluginTreeNode o2) {
               return ((String) o1.getUserObject())
                   .compareToIgnoreCase((String) o2.getUserObject());
             }
@@ -642,7 +642,7 @@ public class CalendarExportPlugin extends Plugin {
 
         getRootNode().update();
       }
-    } catch (Exception e) {
+    } catch (final Exception e) {
     }
   }
 
