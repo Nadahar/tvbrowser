@@ -1,6 +1,6 @@
 /*
  * CapturePlugin by Andreas Hessel (Vidrec@gmx.de), Bodo Tasche
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -44,10 +44,10 @@ public final class ProgramTime implements Cloneable {
     private Calendar mEnd;
     /** Program to record */
     private Program mProgram;
-    
+
     /** Title of the Program */
     private String mTitle;
-    
+
     /**
      * Create ProgramTime
      */
@@ -56,7 +56,7 @@ public final class ProgramTime implements Cloneable {
         mEnd = Calendar.getInstance();
         mTitle = "";
     }
-    
+
     /**
      * Create ProgramTime
      * @param prg Program
@@ -64,7 +64,7 @@ public final class ProgramTime implements Cloneable {
     public ProgramTime(Program prg) {
         setProgram(prg);
     }
-    
+
     /**
      * Create ProgramTime
      * @param prg Program
@@ -79,7 +79,7 @@ public final class ProgramTime implements Cloneable {
         mEnd.setTime((Date)end.clone());
         mTitle = prg.getTitle();
     }
-    
+
     /**
      * Create ProgramTime
      * @param time copy from this ProgramTime
@@ -105,26 +105,26 @@ public final class ProgramTime implements Cloneable {
       c.set(Calendar.HOUR_OF_DAY, prg.getHours());
       c.set(Calendar.MINUTE, prg.getMinutes());
       c.set(Calendar.SECOND, 0);
-      
+
       mStart = c;
-      
+
       c = (Calendar) prg.getDate().getCalendar().clone();
 
       c.set(Calendar.HOUR_OF_DAY, prg.getHours());
       c.set(Calendar.MINUTE, prg.getMinutes());
-      
+
       if (prg.getLength() <= 0) {
         c.add(Calendar.MINUTE, 1);
       } else {
         c.add(Calendar.MINUTE, prg.getLength());
       }
       c.set(Calendar.SECOND, 0);
-      
+
       mEnd = c;
-      
+
       mTitle = prg.getTitle();
     }
-    
+
     /**
      * Returns the Program
      * @return Program
@@ -132,7 +132,7 @@ public final class ProgramTime implements Cloneable {
     public Program getProgram() {
         return mProgram;
     }
-    
+
     /**
      * Set the Start-Time
      * @param start new start-time
@@ -166,7 +166,7 @@ public final class ProgramTime implements Cloneable {
         mEnd = Calendar.getInstance();
         mEnd.setTime(end);
     }
-    
+
     /**
      * Returns the End-Time
      * @return current end-time
@@ -205,7 +205,7 @@ public final class ProgramTime implements Cloneable {
     public String getTitle() {
       return mTitle;
     }
-    
+
     /**
      * Seth the Title
      * @param title new Title
@@ -213,7 +213,7 @@ public final class ProgramTime implements Cloneable {
     public void setTitle(String title) {
       mTitle = title;
     }
-    
+
     /**
      * Clone
      */
@@ -222,36 +222,36 @@ public final class ProgramTime implements Cloneable {
         return new ProgramTime(this);
     }
 
+  /**
+   * Save Data into Stream.
+   * @param out save to this stream
+   * @throws IOException problems during save operation
+   */
+  public void writeData(final ObjectOutputStream out) throws IOException {
+    out.writeInt(2);
+    out.writeObject(mStart.getTime());
+    out.writeObject(mEnd.getTime());
+    out.writeObject(mProgram.getID());
+    out.writeObject(mProgram.getDate());
+    out.writeObject(mTitle);
+  }
+
     /**
-     * Save Data into Stream
-     * @param out save to this stream
-     * @throws IOException problems during save operation
-     */
-    public void writeData(ObjectOutputStream out) throws IOException {
-        out.writeInt(2);
-        out.writeObject(mStart.getTime());
-        out.writeObject(mEnd.getTime());
-        out.writeObject(mProgram.getID());
-        mProgram.getDate().writeData(out);
-        out.writeObject(mTitle);
-    }
-    
-    /**
-     * Read Data from Stream
+     * Read Data from Stream.
      * @param in read data from this stream
      * @throws IOException problems during load operation
      * @throws ClassNotFoundException problem during class creation
      */
     public void readData(ObjectInputStream in) throws IOException, ClassNotFoundException {
-    
+
         int version = in.readInt();
-        
+
         Date start = (Date) in.readObject();
         Date end = (Date) in.readObject();
-        
+
         String id = (String) in.readObject();
         devplugin.Date date = new devplugin.Date(in);
-        
+
         Program aktP = Plugin.getPluginManager().getProgram(date, id);
         if (aktP != null) {
             mProgram = aktP;
@@ -259,16 +259,16 @@ public final class ProgramTime implements Cloneable {
 
         setStart(start);
         setEnd(end);
-        
+
         if (version > 1) {
           setTitle((String) in.readObject());
         }
     }
-    
+
     /**
      * Checks if the program of this ProgramTime was deleted
      * or if it has not updated instead renew the instance of it.
-     * 
+     *
      * @return <code>true</code> if the program was deleted, <code>false</code> instead.
      * @since 2.11
      */
