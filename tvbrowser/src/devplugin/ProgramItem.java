@@ -54,18 +54,25 @@ public class ProgramItem implements Comparable<ProgramItem> {
     this(null);
   }
 
-  public void read(ObjectInputStream in) throws IOException, ClassNotFoundException {
+  /**
+   * read the object from the input stream.
+   *
+   * @param in the stream to read from
+   * @throws IOException if something went wrong reading the stream
+   * @throws ClassNotFoundException if the object could not be deserialized
+   */
+  public void read(final ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.readInt();  // version
-    mDate = new Date(in);
+    mDate = (Date) in.readObject();
     mProgId = (String) in.readObject();
 
     int keyCnt = in.readInt();
     if (keyCnt > 0) {
       mProperties = new Properties();
     }
-    for (int i=0; i<keyCnt; i++) {
-      String key = (String)in.readObject();
-      String value = (String)in.readObject();
+    for (int i = 0; i < keyCnt; i++) {
+      String key = (String) in.readObject();
+      String value = (String) in.readObject();
       mProperties.put(key, value);
     }
 
