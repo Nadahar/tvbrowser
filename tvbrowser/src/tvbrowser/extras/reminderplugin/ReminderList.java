@@ -99,7 +99,14 @@ public class ReminderList implements ActionListener {
     }
   }
 
-  public void writeData(ObjectOutputStream out) throws IOException {
+
+  /**
+   * serialize this object to a stream.
+   *
+   * @param out the stream to write to
+   * @throws IOException if something went wrong writing to the stream
+   */
+  public void writeData(final ObjectOutputStream out) throws IOException {
     out.writeInt(5); // version
     ReminderListItem[] items = getReminderItems();
     out.writeInt(items.length);
@@ -108,7 +115,7 @@ public class ReminderList implements ActionListener {
       out.writeInt(item.getMinutes());
       out.writeUTF(item.getComment());
       Date date = item.getProgram().getDate();
-      date.writeData(out);
+      out.writeObject(date);
       out.writeObject(item.getProgram().getID());
       out.writeInt(item.getReferenceCount());
     }
