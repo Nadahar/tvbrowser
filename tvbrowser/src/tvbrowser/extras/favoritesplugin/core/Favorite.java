@@ -147,12 +147,22 @@ public abstract class Favorite {
     mPrograms = programList;
 
     mNewPrograms = new ArrayList<Program>(0);
-    mRemovedPrograms = new HashMap<String,Integer>(0);
+    mRemovedPrograms = new HashMap<String, Integer>(0);
   }
 
-  private void readProgramsToList(ArrayList<Program> list, int size, ObjectInputStream in) throws IOException, ClassNotFoundException {
+  /**
+   * read the programs from the input stream to the list. all programs will be added
+   * to the list. the list is not cleared before reding the input stream.
+   *
+   * @param list out-param. the list of the programs from the input stream.
+   * @param size how many programs to read from the input stream
+   * @param in the input stream to read from
+   * @throws IOException if something went wrong reading from the stream
+   * @throws ClassNotFoundException if the program could not be deserialized
+   */
+  private void readProgramsToList(final ArrayList<Program> list, final int size, final ObjectInputStream in) throws IOException, ClassNotFoundException {
     for (int i = 0; i < size; i++) {
-      Date date = new Date(in);
+      Date date = (Date) in.readObject();
       String progID = (String) in.readObject();
       Program program = Plugin.getPluginManager().getProgram(date, progID);
       if (program != null) {
