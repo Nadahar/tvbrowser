@@ -168,6 +168,7 @@ public class ReminderPlugin {
     return mInstance;
   }
 
+  @Override
   public String toString() {
     return mLocalizer.msg("pluginName","Reminder");
   }
@@ -348,14 +349,21 @@ public class ReminderPlugin {
     in.close();
   }
 
-  private void readReminderFromBeforeTVBrowser20(ObjectInputStream in) throws IOException, ClassNotFoundException {
-     int version = in.readInt();
+  /**
+   * read the object from an input stream.
+   *
+   * @param in the stream to read from
+   * @throws IOException if something went wrong reading the stream
+   * @throws ClassNotFoundException if the object could not be deserialized
+   */
+  private void readReminderFromBeforeTVBrowser20(final ObjectInputStream in) throws IOException, ClassNotFoundException {
+    int version = in.readInt();
     if (version == 1) {
       int size = in.readInt();
       for (int i = 0; i < size; i++) {
         in.readInt();   // read version
         int reminderMinutes = in.readInt();
-        Date programDate = new Date(in);
+        Date programDate = (Date) in.readObject();
         String programId = (String) in.readObject();
         Program program = Plugin.getPluginManager().getProgram(programDate, programId);
 
@@ -365,7 +373,7 @@ public class ReminderPlugin {
         }
       }
     }
-    else if(version == 2) {
+    else if (version == 2) {
       mReminderList.setReminderTimerListener(null);
       mReminderList.read(in);
     }
@@ -410,7 +418,7 @@ public class ReminderPlugin {
         }
         else {
           String[] ids = plugins.split(";");
-        
+
           mClientPluginTargets = new ProgramReceiveTarget[ids.length];
 
           for(int i = 0; i < ids.length; i++) {
@@ -449,7 +457,7 @@ public class ReminderPlugin {
       }
       final ReminderListItem item = mReminderList.getReminderItem(program);
       String[] entries = ReminderFrame.REMIND_MSG_ARR;
-      
+
       ArrayList<ActionMenu> actions = new ArrayList<ActionMenu>(maxIndex + 2);
 
       actions.add(new ActionMenu(new AbstractAction(entries[0]) {
@@ -496,7 +504,7 @@ public class ReminderPlugin {
 
           if(mSettings.getProperty("showTimeSelectionDialog","true").compareTo("true") == 0) {
             UiUtilities.centerAndShow(dlg);
-            
+
             if (dlg.getOkPressed()) {
               mReminderList.add(program, dlg.getReminderContent());
               mReminderList.unblockProgram(program);
@@ -672,6 +680,7 @@ public class ReminderPlugin {
 
   private void saveReminders() {
     Thread thread = new Thread("Save reminders") {
+      @Override
       public void run() {
         store();
       }
@@ -734,6 +743,7 @@ public class ReminderPlugin {
         sequencer.start();
 
         new Thread("Reminder MIDI sequencer") {
+          @Override
           public void run() {
             setPriority(Thread.MIN_PRIORITY);
             while (sequencer.isRunning()) {
@@ -769,6 +779,7 @@ public class ReminderPlugin {
 
           new Thread("Reminder audio playing") {
             private boolean stopped;
+            @Override
             public void run() {
               byte[] myData = new byte[1024 * format.getFrameSize()];
               int numBytesToRead = myData.length;
@@ -916,7 +927,7 @@ public class ReminderPlugin {
     mReminderList.removeExpiredItems();
     updateRootNode(false);
   }
-  
-  
+
+
 
 }

@@ -66,9 +66,15 @@ public class ReminderList implements ActionListener {
     mList = new ArrayList<ReminderListItem>();
   }
 
-  public void read(ObjectInputStream in) throws IOException,
-      ClassNotFoundException {
 
+  /**
+   * reads the object from an input stream.
+   *
+   * @param in the input stream to read from.
+   * @throws IOException if something went wrong reading the input stream
+   * @throws ClassNotFoundException if the object could not be deserialized
+   */
+  public void read(final ObjectInputStream in) throws IOException, ClassNotFoundException {
     int version = in.readInt();
     if (version == 1 || version >= 3) { // version == 2 ==> read from plugin
       // tree
@@ -80,7 +86,7 @@ public class ReminderList implements ActionListener {
         if (version >= 5) {
           comment = in.readUTF();
         }
-        Date programDate = new Date(in);
+        Date programDate = (Date) in.readObject();
         String programId = (String) in.readObject();
         Program program = Plugin.getPluginManager().getProgram(programDate,
                 programId);
