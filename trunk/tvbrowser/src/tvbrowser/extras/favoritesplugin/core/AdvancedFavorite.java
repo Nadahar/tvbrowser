@@ -168,8 +168,8 @@ public class AdvancedFavorite extends Favorite {
       mSearchFormSettings = new SearchFormSettings(in);
     }
 
-    if (version >=5) {
-      super.setName((String)in.readObject());
+    if (version >= 5) {
+      super.setName((String) in.readObject());
     }
     else {
       super.setName(mSearchFormSettings.getSearchText());
@@ -180,10 +180,10 @@ public class AdvancedFavorite extends Favorite {
     if (version < 6) {
       String certainChannelServiceClassName = (String) in.readObject();
       String certainChannelId;
-      if (version==1) {
+      if (version == 1) {
         certainChannelId = Integer.toString(in.readInt());
-      }else{
-        certainChannelId=(String)in.readObject();
+      } else {
+        certainChannelId = (String) in.readObject();
       }
       Channel ch = Channel.getChannel(certainChannelServiceClassName, null, null, certainChannelId);
       if (ch != null) {
@@ -194,13 +194,13 @@ public class AdvancedFavorite extends Favorite {
       if (useCertainChannel) {
         int cnt = in.readInt();
         ArrayList<Channel> list = new ArrayList<Channel>();
-        for (int i=0; i<cnt; i++) {
+        for (int i = 0; i < cnt; i++) {
           String certainChannelServiceClassName = (String) in.readObject();
           String certainChannelId;
-          if (version==1) {
+          if (version == 1) {
             certainChannelId = Integer.toString(in.readInt());
           }else{
-            certainChannelId=(String)in.readObject();
+            certainChannelId = (String) in.readObject();
           }
 
           Channel channel = Channel.getChannel(certainChannelServiceClassName, null, null, certainChannelId);
@@ -258,7 +258,7 @@ public class AdvancedFavorite extends Favorite {
         /* For compatibility reasons we read the programs here.
            Later we perform an complete refresh.
          */
-        new Date(in); // program date
+        in.readObject(); // program date
         in.readObject(); // program id
       }
     }
