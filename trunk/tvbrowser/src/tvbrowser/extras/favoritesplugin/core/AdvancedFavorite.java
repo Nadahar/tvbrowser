@@ -71,14 +71,14 @@ public class AdvancedFavorite extends Favorite {
   private AdvancedFavorite() {
     super();
   }
-  
+
   public AdvancedFavorite(ObjectInputStream in) throws IOException, ClassNotFoundException {
     super(in);
     int version = in.readInt();   // version
     mSearchFormSettings = new SearchFormSettings(in);
     if (version > 1) {
       boolean useFilter = in.readBoolean();
-      
+
       if (useFilter) {
         mPendingFilterName = (String)in.readObject();
         FavoritesPlugin.getInstance().addPendingFavorite(this);
@@ -119,7 +119,7 @@ public class AdvancedFavorite extends Favorite {
     out.writeInt(2); // version
     mSearchFormSettings.writeData(out);
     out.writeBoolean(mFilter != null || mPendingFilterName != null);
-    
+
     if (mFilter != null) {
       out.writeObject(mFilter.getName());
     }
@@ -139,7 +139,7 @@ public class AdvancedFavorite extends Favorite {
   public static AdvancedFavorite loadOldFavorite(ObjectInputStream in) throws IOException, ClassNotFoundException {
     AdvancedFavorite favorite = new AdvancedFavorite();
     favorite.readOldFavorite(in);
-    
+
     return favorite;
   }
 
@@ -228,7 +228,7 @@ public class AdvancedFavorite extends Favorite {
     int size = in.readInt();
     ArrayList<Program> programList = new ArrayList<Program>(size);
     for (int i = 0; i < size; i++) {
-      Date date = new Date(in);
+      Date date = (Date) in.readObject();
       String progID = (String) in.readObject();
       Program program = Plugin.getPluginManager().getProgram(date, progID);
       if (program != null) {
@@ -239,17 +239,17 @@ public class AdvancedFavorite extends Favorite {
     Program[] mProgramArr = new Program[programList.size()];
     programList.toArray(mProgramArr);
 
-    if (version >=4) {
-        boolean useFilter = in.readBoolean();  // useFilter
-        mPendingFilterName = (String)in.readObject();
-        
-        if(useFilter) {
-          FavoritesPlugin.getInstance().addPendingFavorite(this);
-        } else {
-          mPendingFilterName = null;
-        }
+    if (version >= 4) {
+      boolean useFilter = in.readBoolean();  // useFilter
+      mPendingFilterName = (String) in.readObject();
+
+      if (useFilter) {
+        FavoritesPlugin.getInstance().addPendingFavorite(this);
+      } else {
+        mPendingFilterName = null;
+      }
     } else {
-        mFilter = null;
+      mFilter = null;
     }
 
     if (version >= 7) {
@@ -282,7 +282,7 @@ public class AdvancedFavorite extends Favorite {
    */
   private ProgramFilter getFilterByName(String name ){
     ProgramFilter[] flist = Plugin.getPluginManager().getFilterManager().getAvailableFilters();
-    
+
     for (ProgramFilter filter : flist) {
       if (filter != null && filter.getName().equals(name)) {
         return filter;
@@ -335,7 +335,7 @@ public class AdvancedFavorite extends Favorite {
       panelBuilder.add(mSearchForm, cc.xyw(1, 1, 3));
       panelBuilder.add(mFilterCheckbox = new JCheckBox(mLocalizer.msg("useFilter","Use filter:")), cc.xy(1, 3));
       panelBuilder.add(mFilterCombo = new JComboBox(Plugin.getPluginManager().getFilterManager().getAvailableFilters()), cc.xy(3, 3));
-      
+
       if (mFilter != null) {
         mFilterCheckbox.setSelected(true);
         mFilterCombo.setSelectedItem(mFilter);
@@ -377,8 +377,8 @@ public class AdvancedFavorite extends Favorite {
     public boolean check() {
       if (mSearchForm.getSearchFormSettings().getSearchText().equals("")) {
         JOptionPane.showMessageDialog(mSearchForm,
-            mLocalizer.msg("missingSearchText.message", "Please specify a search text for the favorite!"), 
-            mLocalizer.msg("missingSearchText.title", "Invalid search options"), 
+            mLocalizer.msg("missingSearchText.message", "Please specify a search text for the favorite!"),
+            mLocalizer.msg("missingSearchText.title", "Invalid search options"),
             JOptionPane.WARNING_MESSAGE);
         return false;
       }
@@ -388,14 +388,14 @@ public class AdvancedFavorite extends Favorite {
 
   /**
    * Loads the filters after TV-Browser start was finished.
-   * 
+   *
    * @since 2.5.1
    */
-  public void loadPendingFilter() {    
+  public void loadPendingFilter() {
     if(mPendingFilterName != null) {
       try {
         mFilter = getFilterByName(mPendingFilterName);
-        
+
         if(mFilter != null) {
           mPendingFilterName = null;
         }
