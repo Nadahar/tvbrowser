@@ -236,34 +236,34 @@ public final class ProgramTime implements Cloneable {
     out.writeObject(mTitle);
   }
 
-    /**
-     * Read Data from Stream.
-     * @param in read data from this stream
-     * @throws IOException problems during load operation
-     * @throws ClassNotFoundException problem during class creation
-     */
-    public void readData(ObjectInputStream in) throws IOException, ClassNotFoundException {
+  /**
+   * Read Data from Stream.
+   * @param in read data from this stream
+   * @throws IOException problems during load operation
+   * @throws ClassNotFoundException problem during class creation
+   */
+  public void readData(final ObjectInputStream in) throws IOException, ClassNotFoundException {
 
-        int version = in.readInt();
+    int version = in.readInt();
 
-        Date start = (Date) in.readObject();
-        Date end = (Date) in.readObject();
+    Date start = (Date) in.readObject();
+    Date end = (Date) in.readObject();
 
-        String id = (String) in.readObject();
-        devplugin.Date date = new devplugin.Date(in);
+    String id = (String) in.readObject();
+    devplugin.Date date = (devplugin.Date) in.readObject();
 
-        Program aktP = Plugin.getPluginManager().getProgram(date, id);
-        if (aktP != null) {
-            mProgram = aktP;
-        }
-
-        setStart(start);
-        setEnd(end);
-
-        if (version > 1) {
-          setTitle((String) in.readObject());
-        }
+    Program aktP = Plugin.getPluginManager().getProgram(date, id);
+    if (aktP != null) {
+      mProgram = aktP;
     }
+
+    setStart(start);
+    setEnd(end);
+
+    if (version > 1) {
+      setTitle((String) in.readObject());
+    }
+  }
 
     /**
      * Checks if the program of this ProgramTime was deleted
