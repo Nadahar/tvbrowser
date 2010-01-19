@@ -7,7 +7,7 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.tvbrowser</groupId>
-  <artifactId>tvbrowser-plugins-verysimlelist</artifactId>
+  <artifactId>tvbrowser-plugins-verysimplelist</artifactId>
   <name>Very Simple List Plugin</name>
   <developers>
     <developer>
@@ -55,10 +55,6 @@
     </plugins>
   </build>
   <dependencies>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-    </dependency>
     <dependency>
       <groupId>org.tvbrowser</groupId>
       <artifactId>tvbrowser</artifactId>
