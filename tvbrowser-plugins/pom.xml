@@ -76,6 +76,7 @@
     <module>plugin-twitter</module>
     <module>plugin-url4program</module>
     <module>plugin-virtualdataservice</module>
+    <module>plugin-verysimplelist</module>
     <module>plugin-widget</module>
     <module>plugin-wirschauen</module>
     <module>plugin-zattoo</module>
