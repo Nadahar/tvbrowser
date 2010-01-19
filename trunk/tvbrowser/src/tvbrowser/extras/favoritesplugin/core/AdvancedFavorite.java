@@ -228,7 +228,7 @@ public class AdvancedFavorite extends Favorite {
     int size = in.readInt();
     ArrayList<Program> programList = new ArrayList<Program>(size);
     for (int i = 0; i < size; i++) {
-      Date date = (Date) in.readObject();
+      Date date = new Date(in);
       String progID = (String) in.readObject();
       Program program = Plugin.getPluginManager().getProgram(date, progID);
       if (program != null) {
@@ -258,7 +258,7 @@ public class AdvancedFavorite extends Favorite {
         /* For compatibility reasons we read the programs here.
            Later we perform an complete refresh.
          */
-        in.readObject(); // program date
+        new Date(in); // program date
         in.readObject(); // program id
       }
     }
