@@ -99,7 +99,7 @@ public class MarkList extends Vector<Program> {
 
       int size = in.readInt();
       for (int i = 0; i < size; i++) {
-        Date programDate = (Date) in.readObject();
+        Date programDate = new Date(in);
         String progId = (String) in.readObject();
 
         Program program = Plugin.getPluginManager().getProgram(programDate,
@@ -224,7 +224,7 @@ public class MarkList extends Vector<Program> {
     out.writeInt(size());
 
     for (Program p : this) {
-      out.writeObject(p.getDate());
+      p.getDate().writeData(out);
       out.writeObject(p.getID());
     }
 

@@ -363,7 +363,7 @@ public class ReminderPlugin {
       for (int i = 0; i < size; i++) {
         in.readInt();   // read version
         int reminderMinutes = in.readInt();
-        Date programDate = (Date) in.readObject();
+        Date programDate = new Date(in);
         String programId = (String) in.readObject();
         Program program = Plugin.getPluginManager().getProgram(programDate, programId);
 

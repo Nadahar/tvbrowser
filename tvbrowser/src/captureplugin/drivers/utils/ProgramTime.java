@@ -232,7 +232,7 @@ public final class ProgramTime implements Cloneable {
     out.writeObject(mStart.getTime());
     out.writeObject(mEnd.getTime());
     out.writeObject(mProgram.getID());
-    out.writeObject(mProgram.getDate());
+    mProgram.getDate().writeData(out);
     out.writeObject(mTitle);
   }
 
@@ -250,7 +250,7 @@ public final class ProgramTime implements Cloneable {
     Date end = (Date) in.readObject();
 
     String id = (String) in.readObject();
-    devplugin.Date date = (devplugin.Date) in.readObject();
+    devplugin.Date date = new devplugin.Date(in);
 
     Program aktP = Plugin.getPluginManager().getProgram(date, id);
     if (aktP != null) {

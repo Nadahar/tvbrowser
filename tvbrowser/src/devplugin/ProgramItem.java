@@ -63,7 +63,7 @@ public class ProgramItem implements Comparable<ProgramItem> {
    */
   public void read(final ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.readInt();  // version
-    mDate = (Date) in.readObject();
+    mDate = new Date(in);
     mProgId = (String) in.readObject();
 
     int keyCnt = in.readInt();
@@ -81,9 +81,9 @@ public class ProgramItem implements Comparable<ProgramItem> {
   public void write(ObjectOutputStream out) throws IOException {
     out.writeInt(1); // version
     if (mDate != null) {
-      out.writeObject(mDate);
+      mDate.writeData(out);
     } else {
-      out.writeObject(mProgram.getDate());
+      mProgram.getDate().writeData(out);
     }
     if (mProgId != null) {
       out.writeObject(mProgId);
