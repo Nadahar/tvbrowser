@@ -137,10 +137,14 @@ public class DVBPlugin extends devplugin.Plugin {
       // plugin author(s)
       String author = localizer.msg("author", "Ullrich Poll\u00E4hne, Tobias B\u00FCrner");
 
-      pluginInfo = new PluginInfo(name, desc, author, new Version(2, 02, true));
+      pluginInfo = new PluginInfo(DVBPlugin.class, name, desc, author);
     }
 
     return pluginInfo;
+  }
+
+  public static Version getVersion() {
+      return new Version(2, 02, true);
   }
 
 
