@@ -43,7 +43,23 @@ public class RatingNode extends PluginTreeNode implements java.lang.Comparable<d
       }
 
     }
-    return super.compareTo(other);
+    // ToDo: activate the next line and remove the other following lines if 
+    // TVB 3.0 goes final
+    //return super.compareTo(other);
+    
+    final Object otherUserObject = other.getUserObject();
+    if (mObject instanceof ProgramItem
+          && otherUserObject instanceof ProgramItem) {
+        return ((ProgramItem) mObject).compareTo((ProgramItem) otherUserObject);
+    }
+    
+    if (mObject instanceof String && otherUserObject instanceof String) {
+      return ((String) mObject).compareToIgnoreCase((String) otherUserObject);
+    }
+    if (mObject instanceof String) {
+      return 1;
+    }
+    return -1;
   }
 
 }
