@@ -19,8 +19,7 @@ package imdbplugin;
 import devplugin.PluginTreeNode;
 import devplugin.Program;
 
-public class RatingNode extends PluginTreeNode implements
-    Comparable<RatingNode> {
+public class RatingNode extends PluginTreeNode {
 
   private byte mRating;
   private Program mProgram;
@@ -32,14 +31,19 @@ public class RatingNode extends PluginTreeNode implements
     setGroupingByDateEnabled(false);
   }
 
-  public int compareTo(final RatingNode other) {
-    if (mRating < other.mRating) {
-      return -1;
-    } else if (mRating > other.mRating) {
-      return 1;
-    } else {
-      return mProgram.getTitle().compareTo(other.mProgram.getTitle());
+  public int compareTo(final PluginTreeNode other) {
+    if (other instanceof RatingNode) {
+      RatingNode otherRating = (RatingNode) other;
+      if (mRating < otherRating.mRating) {
+        return -1;
+      } else if (mRating > otherRating.mRating) {
+        return 1;
+      } else {
+        return mProgram.getTitle().compareTo(otherRating.mProgram.getTitle());
+      }
+
     }
+    return super.compareTo(other);
   }
 
 }
