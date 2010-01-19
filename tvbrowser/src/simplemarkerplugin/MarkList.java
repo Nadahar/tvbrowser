@@ -73,46 +73,17 @@ public class MarkList extends Vector<Program> {
   private int mMarkPriority;
   private ArrayList<ProgramReceiveTarget> mReceiveTargets = new ArrayList<ProgramReceiveTarget>();
 
-  /**
-   * The constructor for a new list.
-   *
-   * @param name
-   *          The name of the list.
-   */
-  protected MarkList(String name) {
-    mName = name;
-    mMarkIcon = SimpleMarkerPlugin.getInstance().getIconForFileName(null);
-    mId = name + System.currentTimeMillis();
-    mMarkPriority = Program.MIN_MARK_PRIORITY;
-  }
 
-  /**
-   * @return The name of this list.
-   */
-  public String getName() {
-    return mName;
-  }
 
-  /**
-   * Set the name of this list.
-   *
-   * @param name
-   *          The name of this list.
-   */
-  public void setName(String name) {
-    mName = name;
-  }
 
   /**
    * Load the list entries from the data file.
    *
-   * @param in
-   *          The ObjectInputStream of the data file.
-   * @throws IOException
-   * @throws ClassNotFoundException
+   * @param in The ObjectInputStream of the data file.
+   * @throws IOException if something went wrong reading from the stream
+   * @throws ClassNotFoundException if the object could not be deserialized
    */
-  protected MarkList(ObjectInputStream in) throws IOException,
-      ClassNotFoundException {
+  protected MarkList(final ObjectInputStream in) throws IOException, ClassNotFoundException {
     int version = in.readInt();
 
     if (version >= 3) {
@@ -128,7 +99,7 @@ public class MarkList extends Vector<Program> {
 
       int size = in.readInt();
       for (int i = 0; i < size; i++) {
-        Date programDate = new Date(in);
+        Date programDate = (Date) in.readObject();
         String progId = (String) in.readObject();
 
         Program program = Plugin.getPluginManager().getProgram(programDate,
@@ -167,7 +138,7 @@ public class MarkList extends Vector<Program> {
 
           try {
             IOUtilities.copy(src, new File(dir, mName + ext));
-          } catch (Exception e) {
+          } catch (final Exception e) {
             e.printStackTrace();
           }
 
@@ -202,6 +173,42 @@ public class MarkList extends Vector<Program> {
       }
     }
   }
+
+
+
+
+
+  /**
+   * The constructor for a new list.
+   *
+   * @param name
+   *          The name of the list.
+   */
+  protected MarkList(String name) {
+    mName = name;
+    mMarkIcon = SimpleMarkerPlugin.getInstance().getIconForFileName(null);
+    mId = name + System.currentTimeMillis();
+    mMarkPriority = Program.MIN_MARK_PRIORITY;
+  }
+
+  /**
+   * @return The name of this list.
+   */
+  public String getName() {
+    return mName;
+  }
+
+  /**
+   * Set the name of this list.
+   *
+   * @param name
+   *          The name of this list.
+   */
+  public void setName(String name) {
+    mName = name;
+  }
+
+
 
   /**
    * Write the list to the data file.
