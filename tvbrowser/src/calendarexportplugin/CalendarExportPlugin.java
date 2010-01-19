@@ -219,25 +219,25 @@ public class CalendarExportPlugin extends Plugin {
 
       for (int i = 0; i < max; i++) {
         final ExporterIf export = activeExporter[i];
-        
+
         AbstractAction action = null;
         StringBuilder name = new StringBuilder();
         final PluginTreeNode node = getNodeForExporter(export);
-        
+
         if(node.contains(program)) {
           action = new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
               node.removeProgram(program);
               getRootNode().update();
-              
+
               if(getRootNode().contains(program,true)) {
                 program.mark(CalendarExportPlugin.getInstance());
               }
             }
           };
-          
+
           name.append(mLocalizer.msg("contextMenuDeleteText","Remove marking for "));
-          
+
           action.putValue(Action.SMALL_ICON, TVBrowserIcons.delete(TVBrowserIcons.SIZE_SMALL));
         }
         else {
@@ -254,11 +254,11 @@ public class CalendarExportPlugin extends Plugin {
               }, "Export to calendar").start();
             }
           };
-    
+
           if (max == 1) {
             name.append(mLocalizer.msg("contextMenuText", "Export to")).append(' ');
           }
-          
+
           action.putValue(Action.SMALL_ICON, getExporterIcon(export));
         }
 
@@ -284,19 +284,19 @@ public class CalendarExportPlugin extends Plugin {
           final int count = j;
 
           final PluginTreeNode node = getNodeForExporter(export);
-          
+
           if(node.contains(program)) {
             actions[j] = new AbstractAction() {
               public void actionPerformed(ActionEvent e) {
                 node.removeProgram(program);
                 getRootNode().update();
-                
+
                 if(getRootNode().contains(program,true)) {
                   program.mark(CalendarExportPlugin.getInstance());
                 }
               }
             };
-            
+
             actions[j].putValue(Action.NAME, new StringBuilder(mLocalizer.msg("contextMenuDeleteText","Remove marking for ")).append(mConfigs[j].getName()).toString());
             actions[j].putValue(Action.SMALL_ICON, TVBrowserIcons.delete(TVBrowserIcons.SIZE_SMALL));
           }
@@ -371,7 +371,7 @@ public class CalendarExportPlugin extends Plugin {
 
     return false;
   }
-  
+
   private void markProgram(Program program, ExporterIf export) {
     if (mSettings.getMarkItems()) {
       PluginTreeNode node = getNodeForExporter(export);
@@ -381,13 +381,13 @@ public class CalendarExportPlugin extends Plugin {
 
   private PluginTreeNode getNodeForExporter(ExporterIf export) {
     PluginTreeNode node = mTreeNodes.get(export);
-    
+
     if (node == null) {
       node = new PluginTreeNode(export.getName());
       node.getMutableTreeNode().setIcon(getExporterIcon(export));
-      
+
       createNodeActionForNode(node);
-      
+
       getRootNode().add(node);
       mTreeNodes.put(export, node);
       getRootNode().update();
@@ -399,14 +399,14 @@ public class CalendarExportPlugin extends Plugin {
   private void createNodeActionForNode(final PluginTreeNode node) {
     ContextMenuAction action = new ContextMenuAction(mLocalizer.msg("treeNodeDeleteAction",
     "Delete all markings"),TVBrowserIcons.delete(TVBrowserIcons.SIZE_SMALL));
-    
+
     action.setActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         Program[] programs = node.getPrograms();
-        
+
         node.removeAllChildren();
         node.update();
-        
+
         for(Program p : programs) {
           if(getRootNode().contains(p,true)) {
             p.mark(CalendarExportPlugin.getInstance());
@@ -414,10 +414,10 @@ public class CalendarExportPlugin extends Plugin {
         }
       }
     });
-    
+
     node.addAction(action);
   }
-  
+
   @Override
   public ProgramReceiveTarget[] getProgramReceiveTargets() {
     ExporterIf[] exporters = mExporterFactory.getActiveExporters();
@@ -558,9 +558,9 @@ public class CalendarExportPlugin extends Plugin {
         final PluginTreeNode node = mTreeNodes.get(exp);
         final Program[] nodePrograms = node.getPrograms();
         out.writeInt(nodePrograms.length);
-        for (final Program p:nodePrograms) {
+        for (final Program p : nodePrograms) {
           if (p != null) {
-            p.getDate().writeData(out);
+            out.writeObject(p.getDate());
             out.writeObject(p.getID());
           }
         }
@@ -572,7 +572,7 @@ public class CalendarExportPlugin extends Plugin {
   }
 
   @Override
-  public void readData(ObjectInputStream in) throws IOException, ClassNotFoundException {
+  public void readData(final ObjectInputStream in) throws IOException, ClassNotFoundException {
     try {
       int version = in.readInt();
 
@@ -613,7 +613,7 @@ public class CalendarExportPlugin extends Plugin {
             if (exporter != null) {
               node = new PluginTreeNode(exporter.getName());
               node.getMutableTreeNode().setIcon(getExporterIcon(exporter));
-              
+
               createNodeActionForNode(node);
               nodes.add(node);
               mTreeNodes.put(exporter, node);
@@ -639,7 +639,7 @@ public class CalendarExportPlugin extends Plugin {
             getRootNode().add(pluginTreeNode);
           }
         }
-        
+
         getRootNode().update();
       }
     } catch (Exception e) {
