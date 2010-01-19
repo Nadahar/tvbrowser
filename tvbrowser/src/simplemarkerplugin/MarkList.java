@@ -1,6 +1,6 @@
 /*
  * SimpleMarkerPlugin by Ren» Mach
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -54,11 +54,11 @@ import devplugin.ProgramReceiveTarget;
 /**
  * SimpleMarkerPlugin 1.4 Plugin for TV-Browser since version 2.3 to only mark
  * programs and add them to the Plugin tree.
- * 
+ *
  * (Formerly known as Just_Mark ;-))
- * 
+ *
  * A class that is a list with marked programs.
- * 
+ *
  * @author Ren» Mach
  */
 public class MarkList extends Vector<Program> {
@@ -75,7 +75,7 @@ public class MarkList extends Vector<Program> {
 
   /**
    * The constructor for a new list.
-   * 
+   *
    * @param name
    *          The name of the list.
    */
@@ -95,7 +95,7 @@ public class MarkList extends Vector<Program> {
 
   /**
    * Set the name of this list.
-   * 
+   *
    * @param name
    *          The name of this list.
    */
@@ -105,7 +105,7 @@ public class MarkList extends Vector<Program> {
 
   /**
    * Load the list entries from the data file.
-   * 
+   *
    * @param in
    *          The ObjectInputStream of the data file.
    * @throws IOException
@@ -195,7 +195,7 @@ public class MarkList extends Vector<Program> {
 
       if (version > 4) {
         int targets = in.readInt();
-        for (int i = 0;i<targets;i++){
+        for (int i = 0; i < targets; i++) {
           ProgramReceiveTarget t = new ProgramReceiveTarget(in);
           mReceiveTargets.add(t);
         }
@@ -205,12 +205,11 @@ public class MarkList extends Vector<Program> {
 
   /**
    * Write the list to the data file.
-   * 
-   * @param out
-   *          The ObjectOutputStream of the data file.
-   * @throws IOException
+   *
+   * @param out The ObjectOutputStream of the data file.
+   * @throws IOException if something went wrong with writing the data
    */
-  protected void writeData(ObjectOutputStream out) throws IOException {
+  protected void writeData(final ObjectOutputStream out) throws IOException {
     out.writeInt(5); // Version
     out.writeInt(mMarkPriority);
     out.writeObject(mName);
@@ -218,20 +217,20 @@ public class MarkList extends Vector<Program> {
     out.writeInt(size());
 
     for (Program p : this) {
-      p.getDate().writeData(out);
+      out.writeObject(p.getDate());
       out.writeObject(p.getID());
     }
 
     out.writeObject(mMarkIconPath);
 
     out.writeInt(mReceiveTargets.size());
-    for (ProgramReceiveTarget target:mReceiveTargets) {
+    for (ProgramReceiveTarget target : mReceiveTargets) {
       target.writeData(out);
     }
   }
 
   /**
-   * 
+   *
    * @param p
    *          The Program.
    * @param defaultText
@@ -242,7 +241,7 @@ public class MarkList extends Vector<Program> {
     AbstractAction action = new AbstractAction() {
       private static final long serialVersionUID = 1L;
 
-      public void actionPerformed(ActionEvent e) {
+      public void actionPerformed(final ActionEvent e) {
         SwingUtilities.invokeLater(new Runnable() {
           @Override
           public void run() {
@@ -298,10 +297,10 @@ public class MarkList extends Vector<Program> {
 
   /**
    * Remove all programs of the list
-   * 
+   *
    * @param node
    *          The parent node that contains the programs
-   * 
+   *
    */
   protected void handleAction(PluginTreeNode node) {
     if (node == null) {
@@ -320,7 +319,7 @@ public class MarkList extends Vector<Program> {
 
   /**
    * Create the tree part of this list.
-   * 
+   *
    * @param root
    *          The root node of this list.
    * @param update
@@ -489,7 +488,7 @@ public class MarkList extends Vector<Program> {
 
   /**
    * Return the programs with the given title.
-   * 
+   *
    * @param title
    *          The title of the programs to get.
    * @return The program with the given title.
@@ -501,7 +500,7 @@ public class MarkList extends Vector<Program> {
 
   /**
    * Removes the programs with the given title.
-   * 
+   *
    * @param title
    *          The title of the Programs to remove
    * @return The programs that were deleted.
@@ -530,17 +529,19 @@ public class MarkList extends Vector<Program> {
 
   /**
    * Gets the id String of this MarkList
-   * 
+   *
    * @return The id String of this MarkList.
    */
   public String getId() {
     return mId;
   }
 
+  @Override
   public String toString() {
     return mName;
   }
 
+  @Override
   public void addElement(Program p) {
     if (isEmpty()) {
       super.addElement(p);
@@ -563,7 +564,7 @@ public class MarkList extends Vector<Program> {
 
   /**
    * Gets the mark priority of this list.
-   * 
+   *
    * @return The mark priority of this list.
    */
   public int getMarkPriority() {
@@ -572,7 +573,7 @@ public class MarkList extends Vector<Program> {
 
   /**
    * Sets the mark priority of this list.
-   * 
+   *
    * @param value
    *          The new mark priority.
    */
