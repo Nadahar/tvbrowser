@@ -47,10 +47,10 @@ import util.io.FileFormatException;
 import util.io.IOUtilities;
 import util.misc.SoftReferenceCache;
 import au.com.bytecode.opencsv.CSVReader;
+import devplugin.AbstractTvDataService;
 import devplugin.Channel;
 import devplugin.ChannelGroup;
 import devplugin.ChannelGroupImpl;
-import devplugin.TvDataService;
 
 /**
  * 
@@ -111,11 +111,11 @@ public class ChannelList {
     return channelArr;
   }
 
-  public void readFromStream(InputStream stream, TvDataService dataService) throws IOException, FileFormatException {
+  public void readFromStream(InputStream stream, AbstractTvDataService dataService) throws IOException, FileFormatException {
     readFromStream(stream, dataService, true);
   }
 
-  public void readFromStream(InputStream stream, TvDataService dataService, boolean compressed) throws IOException, FileFormatException {
+  public void readFromStream(InputStream stream, AbstractTvDataService dataService, boolean compressed) throws IOException, FileFormatException {
     CSVReader reader;
 
     if (compressed) {
@@ -191,7 +191,7 @@ public class ChannelList {
     }
   }
 
-  public void readFromFile(File file, TvDataService dataService) throws IOException, FileFormatException {
+  public void readFromFile(File file, AbstractTvDataService dataService) throws IOException, FileFormatException {
     BufferedInputStream stream = null;
     try {
       stream = new BufferedInputStream(new FileInputStream(file), 0x2000);
