@@ -40,7 +40,6 @@ import util.io.IOUtilities;
 import util.misc.AppleScriptRunner;
 import util.misc.OperatingSystem;
 import util.paramhandler.ParamParser;
-import util.ui.AsynchronousImageIcon;
 import util.ui.Localizer;
 import devplugin.Program;
 
@@ -106,9 +105,6 @@ public class GrowlContainer {
       final Notification notification = new Notification(mApplication,
           mNotificationProgram, title, desc, program.getID());
       Icon icon = program.getChannel().getIcon();
-      if (icon instanceof AsynchronousImageIcon) {
-        icon = ((AsynchronousImageIcon) icon).getImageIcon();
-      }
       if (icon != null && icon instanceof ImageIcon) {
         try {
           File file = File.createTempFile("tvbrowser", ".png");

@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -30,7 +31,7 @@ import javax.swing.Icon;
 import tvbrowserdataservice.TvBrowserDataService;
 import util.io.IOUtilities;
 import util.misc.ChangeTrackingProperties;
-import util.ui.AsynchronousImageIcon;
+import util.ui.LazyImageIcon;
 
 public class IconLoader {
   private static Logger mLog = Logger.getLogger(IconLoader.class.getName());
@@ -131,7 +132,12 @@ public class IconLoader {
       }
     }
     // now load the (renamed) image
-    return new AsynchronousImageIcon(iconFile);
+    try {
+      return new LazyImageIcon(iconFile.toURI().toURL());
+    } catch (MalformedURLException e) {
+      e.printStackTrace();
+    }
+    return null;
   }
 
   public void close() throws IOException {
