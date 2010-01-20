@@ -8,6 +8,7 @@ import java.awt.Transparency;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
 import javax.swing.Icon;
@@ -15,7 +16,7 @@ import javax.swing.Icon;
 
 public class jbUtilities {
 
-  private static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(jbUtilities.class.getName());
+  private static final Logger mLog = java.util.logging.Logger.getLogger(jbUtilities.class.getName());
 
   public static void storeIcon (Icon icon, String type, String fileName){
     int w = icon.getIconWidth();

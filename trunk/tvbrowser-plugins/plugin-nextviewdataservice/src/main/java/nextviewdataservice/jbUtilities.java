@@ -23,20 +23,18 @@
  */
 package nextviewdataservice;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.FileOutputStream;
-
-import java.nio.channels.Channels;
-
-import java.awt.GraphicsEnvironment;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsConfiguration;
-import java.awt.image.BufferedImage;
 import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.Transparency;
-
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.channels.Channels;
 import java.util.jar.JarFile;
+import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 
 import javax.imageio.ImageIO;
@@ -50,7 +48,7 @@ import util.misc.OperatingSystem;
  */
 public class jbUtilities {
 
-  private static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(NextViewDataService.class.getName());
+  private static final Logger mLog = java.util.logging.Logger.getLogger(NextViewDataService.class.getName());
 
   /**
    * Creates a new instance of jbUtilities

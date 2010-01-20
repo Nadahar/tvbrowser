@@ -19,11 +19,12 @@
 package nextviewdataservice;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Properties;
+import java.util.logging.Logger;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -38,7 +39,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 public class NextViewChannelFinder extends DefaultHandler {
 
-  private static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(NextViewChannelFinder.class.getName());
+  private static final Logger mLog = java.util.logging.Logger.getLogger(NextViewChannelFinder.class.getName());
   private StringBuffer characters;
   private NextViewDataServiceData mData;
   private NextViewDataService mService;

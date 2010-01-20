@@ -26,15 +26,19 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Properties;
+import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
 
+import tvdataservice.MutableChannelDayProgram;
+import tvdataservice.MutableProgram;
+import tvdataservice.TvDataUpdateManager;
+import util.exc.TvBrowserException;
 import devplugin.AbstractTvDataService;
 import devplugin.Channel;
 import devplugin.ChannelGroup;
@@ -45,15 +49,9 @@ import devplugin.ProgramFieldType;
 import devplugin.ProgressMonitor;
 import devplugin.Version;
 
-import tvdataservice.MutableChannelDayProgram;
-import tvdataservice.MutableProgram;
-import tvdataservice.TvDataUpdateManager;
-
-import util.exc.TvBrowserException;
-
 public class MixedDataService extends AbstractTvDataService{
 
-  private static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(MixedDataService.class.getName());
+  private static final Logger mLog = java.util.logging.Logger.getLogger(MixedDataService.class.getName());
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(MixedDataService.class);
 
   public final ChannelGroup mMixedDataChannelGroup = new devplugin.ChannelGroupImpl("MixedData", "mixeddata", "Mixed Data of two subscribed channel", mLocalizer.msg("name", "Mixed Data"));

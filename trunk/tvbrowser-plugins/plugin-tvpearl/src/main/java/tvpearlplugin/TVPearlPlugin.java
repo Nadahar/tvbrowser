@@ -70,7 +70,7 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
   private static final String TARGET_PEARL_COPY = "pearlCopy";
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer
       .getLocalizerFor(TVPearlPlugin.class);
-	private static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(TVPearlPlugin.class.getName());
+	private static final Logger mLog = java.util.logging.Logger.getLogger(TVPearlPlugin.class.getName());
 
 	private static TVPearlPlugin mInstance;
 	private Thread mThread;
@@ -99,7 +99,7 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 		return mInstance;
 	}
 
-	public static Logger getLogger()
+	public static final Logger getLogger()
 	{
 		return mLog;
 	}

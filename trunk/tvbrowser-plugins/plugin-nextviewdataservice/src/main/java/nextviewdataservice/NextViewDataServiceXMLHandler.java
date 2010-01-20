@@ -19,12 +19,12 @@
 package nextviewdataservice;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.FileInputStream;
-
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.Properties;
 import java.util.Scanner;
+import java.util.logging.Logger;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -33,10 +33,9 @@ import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import tvdataservice.MutableProgram;
-
-import devplugin.ProgramFieldType;
 import devplugin.Channel;
 import devplugin.Date;
+import devplugin.ProgramFieldType;
 
 /**
  * XML Handler to parse nxtvepg's program data 
@@ -44,7 +43,7 @@ import devplugin.Date;
  */
 public class NextViewDataServiceXMLHandler extends DefaultHandler {
 
-  private static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(NextViewDataServiceXMLHandler.class.getName());
+  private static final Logger mLog = java.util.logging.Logger.getLogger(NextViewDataServiceXMLHandler.class.getName());
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(NextViewDataServiceXMLHandler.class);
 
   private StringBuffer characters;

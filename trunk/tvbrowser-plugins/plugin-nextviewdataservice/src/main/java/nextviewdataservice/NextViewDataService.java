@@ -29,6 +29,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Properties;
+import java.util.logging.Logger;
 
 import javax.swing.Icon;
 import javax.swing.JOptionPane;
@@ -58,7 +59,7 @@ import devplugin.Version;
  */
 public class NextViewDataService extends AbstractTvDataService {
 
-  private static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(NextViewDataService.class.getName());
+  private static final Logger mLog = java.util.logging.Logger.getLogger(NextViewDataService.class.getName());
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(NextViewDataService.class);
 
   public static final String PATH = OS_specific_Name("PATH");
