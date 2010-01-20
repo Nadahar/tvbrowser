@@ -97,7 +97,7 @@ public class DVBViewerCOM {
   /** Translator */
   private static final Localizer localizer = Localizer.getLocalizerFor(DVBViewerCOM.class);
 
-  static Logger logger = Logger.getLogger(DVBViewerCOM.class.getName());
+  static final Logger logger = Logger.getLogger(DVBViewerCOM.class.getName());
 
   /** The one and only COM reference to DVBViewer */
   private IDVBViewer dvbViewer;

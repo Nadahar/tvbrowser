@@ -72,7 +72,7 @@ import devplugin.SettingsTab;
 public class JavaPluginProxy extends AbstractPluginProxy {
 
   /** The logger for this class */
-  private static java.util.logging.Logger mLog
+  private static final Logger mLog
     = Logger.getLogger(JavaPluginProxy.class.getName());
   
   /** The plugin itself. */

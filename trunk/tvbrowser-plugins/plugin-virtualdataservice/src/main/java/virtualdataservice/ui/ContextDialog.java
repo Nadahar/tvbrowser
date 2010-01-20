@@ -29,6 +29,7 @@ import java.beans.PropertyVetoException;
 import java.text.NumberFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.logging.Logger;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -57,7 +58,7 @@ public class ContextDialog extends JDialog implements WindowClosingIf, ActionLis
 {
 	private static final long serialVersionUID = 1L;
 	protected static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(virtualdataservice.VirtualDataService.class);
-  private static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(ContextDialog.class.getName());
+  private static final Logger mLog = java.util.logging.Logger.getLogger(ContextDialog.class.getName());
 
   private static ContextDialog mInstance;
 

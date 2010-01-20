@@ -18,7 +18,7 @@ import devplugin.Version;
 
 public class SharedChannelAutoUpdatePlugin extends devplugin.Plugin {
 
-//private static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(SharedChannelAutoUpdatePlugin.class.getName());
+//private static final Logger mLog = java.util.logging.Logger.getLogger(SharedChannelAutoUpdatePlugin.class.getName());
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(SharedChannelAutoUpdatePlugin.class);
   private static SharedChannelAutoUpdatePlugin mInstance;
   private String mpropFile;

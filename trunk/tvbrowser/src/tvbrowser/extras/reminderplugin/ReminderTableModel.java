@@ -13,7 +13,7 @@ import util.ui.Localizer;
  * The model for the reminder table.
  */
 public class ReminderTableModel extends AbstractTableModel {
-  private static Localizer mLocalizer = Localizer.getLocalizerFor(ReminderTableModel.class);
+  private static final Localizer mLocalizer = Localizer.getLocalizerFor(ReminderTableModel.class);
   private static String mLastSelectedTitle = mLocalizer.msg("all","All");
   
   private ReminderList mList;

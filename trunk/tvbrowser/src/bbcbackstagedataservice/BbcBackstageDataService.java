@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.TimeZone;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -73,7 +74,7 @@ public class BbcBackstageDataService extends AbstractTvDataService {
   /**
    * Logger
    */
-  private static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(BbcBackstageDataService.class
+  private static final Logger mLog = Logger.getLogger(BbcBackstageDataService.class
       .getName());
   
   private static HashMap<String, String> KNOWN_URLS; 

@@ -18,6 +18,7 @@ package knotifyplugin;
 
 import java.io.IOException;
 import java.util.Properties;
+import java.util.logging.Logger;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -41,7 +42,7 @@ public class KNotifyPlugin extends Plugin {
   /**
    * logging
    */
-  private static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(KNotifyPlugin.class.getName());
+  private static final Logger mLog = Logger.getLogger(KNotifyPlugin.class.getName());
   
   /**
    * translation

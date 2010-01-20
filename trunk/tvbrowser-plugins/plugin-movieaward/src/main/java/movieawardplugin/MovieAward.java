@@ -31,7 +31,7 @@ import java.util.logging.Logger;
 import devplugin.Program;
 
 public class MovieAward implements Comparable<MovieAward> {
-  private static Logger mLog = Logger.getLogger(MovieAward.class.getName());
+  private static final Logger mLog = Logger.getLogger(MovieAward.class.getName());
 
   private HashMap<String, String> mNames = new HashMap<String, String>();
   private HashMap<String, MovieAwardCategory> mCategory = new HashMap<String, MovieAwardCategory>();

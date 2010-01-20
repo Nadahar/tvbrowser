@@ -75,7 +75,7 @@ import devplugin.ProgramFieldType;
  */
 public class ProgramInfoPrintDialog implements WindowClosingIf{
 
-  private static Localizer mLocalizer = Localizer.getLocalizerFor(ProgramInfoPrintDialog.class);
+  private static final Localizer mLocalizer = Localizer.getLocalizerFor(ProgramInfoPrintDialog.class);
   
   private JDialog mDialog;
   private PageFormat mPageFormat;

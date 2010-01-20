@@ -10,7 +10,7 @@ import devplugin.Channel;
 
 public class HelperMethods {
 
-// private static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(HelperMethods.class.getName());
+// private static final Logger mLog = java.util.logging.Logger.getLogger(HelperMethods.class.getName());
  /**
    * delete doubles; delete 'Spielfilm' if category contains 'Serie''
    * @param rawString

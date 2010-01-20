@@ -19,7 +19,7 @@ import devplugin.Version;
 
 public class NextViewDataUpdateWatcherPlugin extends devplugin.Plugin {
 
-//private static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(NextViewDataUpdateWatcherPlugin.class.getName());
+//private static final Logger mLog = java.util.logging.Logger.getLogger(NextViewDataUpdateWatcherPlugin.class.getName());
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(NextViewDataUpdateWatcherPlugin.class);
   private static NextViewDataUpdateWatcherPlugin mInstance;
   private String mpropFile;

@@ -60,7 +60,7 @@ public class ChannelList {
   /** a list of channels in the list. */
   private List<Channel> channels;
 
-  private static Logger logger = Logger.getLogger(ChannelList.class.getName());
+  private static final Logger logger = Logger.getLogger(ChannelList.class.getName());
 
 
   /**

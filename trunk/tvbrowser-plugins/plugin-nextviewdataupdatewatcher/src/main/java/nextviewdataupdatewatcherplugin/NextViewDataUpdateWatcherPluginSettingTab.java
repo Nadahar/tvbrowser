@@ -7,7 +7,7 @@ import javax.swing.JPanel;
 import devplugin.SettingsTab;
 
 public class NextViewDataUpdateWatcherPluginSettingTab implements SettingsTab {
-//  private static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(NextViewDataUpdateWatcherPluginSettingTab.class.getName());
+//  private static final Logger mLog = java.util.logging.Logger.getLogger(NextViewDataUpdateWatcherPluginSettingTab.class.getName());
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(NextViewDataUpdateWatcherPluginSettingTab.class);
   private Icon mIcon;
 

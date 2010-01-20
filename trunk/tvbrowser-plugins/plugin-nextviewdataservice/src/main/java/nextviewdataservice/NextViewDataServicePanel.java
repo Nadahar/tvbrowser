@@ -82,7 +82,7 @@ import devplugin.Channel;
 public class NextViewDataServicePanel extends SettingsPanel implements FocusListener {
 
   private static final long serialVersionUID = 1L;
-//private static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(NextViewDataServicePanel.class.getName());
+//private static final Logger mLog = java.util.logging.Logger.getLogger(NextViewDataServicePanel.class.getName());
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(NextViewDataServicePanel.class);
 
   private static NextViewDataServicePanel mInstance;

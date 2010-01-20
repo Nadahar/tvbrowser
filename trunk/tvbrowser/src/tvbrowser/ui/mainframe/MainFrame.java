@@ -69,6 +69,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TooManyListenersException;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
@@ -161,7 +162,7 @@ import devplugin.Version;
  */
 public class MainFrame extends JFrame implements DateListener,DropTargetListener {
 
-  private static java.util.logging.Logger mLog = java.util.logging.Logger
+  private static final Logger mLog = java.util.logging.Logger
       .getLogger(tvbrowser.TVBrowser.class.getName());
 
   /** The localizer for this class. */

@@ -75,7 +75,7 @@ public class MovieAwardHandler extends DefaultHandler {
 //Bolle Edit: Additional Information for Best Song and Animated Short Subject Category 
   private static final String ADD_INFO = "add_info";
 //  
-  private static Logger mLog = Logger.getLogger(MovieAwardHandler.class.getName());
+  private static final Logger mLog = Logger.getLogger(MovieAwardHandler.class.getName());
 
   /**
    * Holds the text of the current tag.

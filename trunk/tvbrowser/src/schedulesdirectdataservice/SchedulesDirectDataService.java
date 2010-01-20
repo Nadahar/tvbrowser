@@ -77,7 +77,7 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(SchedulesDirectDataService.class);
 
   /** The logger for this class */
-  private static java.util.logging.Logger mLog
+  private static final Logger mLog
     = Logger.getLogger(SchedulesDirectDataService.class.getName());
 
   private SchedulesDirectChannelGroup mChannelGroup = new SchedulesDirectChannelGroup();

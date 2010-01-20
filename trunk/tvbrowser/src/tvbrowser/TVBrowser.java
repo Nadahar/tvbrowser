@@ -112,11 +112,11 @@ import devplugin.Version;
  */
 public class TVBrowser {
 
-  private static java.util.logging.Logger mLog
-    = java.util.logging.Logger.getLogger(TVBrowser.class.getName());
+  private static final Logger mLog
+    = Logger.getLogger(TVBrowser.class.getName());
 
   /** The localizer for this class. */
-  public static util.ui.Localizer mLocalizer;
+  public static Localizer mLocalizer;
 
   private static String curLookAndFeel;
   

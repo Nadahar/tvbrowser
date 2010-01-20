@@ -26,7 +26,7 @@ import java.util.Calendar;
 public class VirtualProgram implements Externalizable, Comparable<VirtualProgram>
 {
 	private static final long serialVersionUID = -2157351926383423498L;
-//  private static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(VirtualProgram.class.getName());
+//  private static final Logger mLog = java.util.logging.Logger.getLogger(VirtualProgram.class.getName());
 
 	private String mTitle;
 	private Calendar mStart;

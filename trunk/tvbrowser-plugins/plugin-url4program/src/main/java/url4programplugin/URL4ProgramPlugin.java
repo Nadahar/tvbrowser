@@ -81,7 +81,7 @@ import devplugin.Version;
  */
 public class URL4ProgramPlugin extends Plugin {
   
-  private static Localizer mLocalizer = Localizer.getLocalizerFor(URL4ProgramPlugin.class);
+  private static final Localizer mLocalizer = Localizer.getLocalizerFor(URL4ProgramPlugin.class);
   
   private Hashtable<String,UrlListEntry> mProgram2Url = new Hashtable<String,UrlListEntry>();
   private JDialog mDialog;

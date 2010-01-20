@@ -66,7 +66,7 @@ import devplugin.Program;
 public class PluginProxyManager {
 
   /** The logger for this class */
-  private static java.util.logging.Logger mLog = Logger.getLogger(PluginProxyManager.class.getName());
+  private static final Logger mLog = Logger.getLogger(PluginProxyManager.class.getName());
 
   /** The localizer for this class. */
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer

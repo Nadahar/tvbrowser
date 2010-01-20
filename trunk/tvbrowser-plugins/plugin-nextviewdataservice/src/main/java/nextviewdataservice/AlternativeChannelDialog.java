@@ -6,40 +6,36 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPopupMenu;
-import javax.swing.JTextField;
-import javax.swing.JScrollPane;
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.Box;
-import javax.swing.JTable;
-import javax.swing.SwingConstants;
-
-
-import javax.swing.border.Border;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.event.ListSelectionEvent;
-
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-
 import java.util.ArrayList;
 import java.util.Properties;
+import java.util.logging.Logger;
+
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import javax.swing.border.Border;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
 
 import util.ui.ChannelLabel;
 import util.ui.Localizer;
@@ -49,7 +45,7 @@ public class AlternativeChannelDialog extends JDialog {
 
   private static final long serialVersionUID = 1L;
   public static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(AlternativeChannelDialog.class);
-  private static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(AlternativeChannelDialog.class.getName());
+  private static final Logger mLog = java.util.logging.Logger.getLogger(AlternativeChannelDialog.class.getName());
 
   public JTextField [] descriptor = new JTextField[4];
   public JDialog mDialog;

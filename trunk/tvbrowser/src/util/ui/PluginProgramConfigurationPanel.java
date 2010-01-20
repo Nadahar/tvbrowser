@@ -37,7 +37,7 @@ import devplugin.SettingsItem;
  * @since 2.5.1
  */
 public class PluginProgramConfigurationPanel extends JPanel implements ActionListener {
-  private static Localizer mLocalizer = Localizer.getLocalizerFor(PluginProgramConfigurationPanel.class);
+  private static final Localizer mLocalizer = Localizer.getLocalizerFor(PluginProgramConfigurationPanel.class);
   
   private OrderChooser mOrder;
   private JButton mAdd, mEdit, mDelete;

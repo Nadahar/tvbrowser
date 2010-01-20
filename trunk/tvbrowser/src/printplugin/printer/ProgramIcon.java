@@ -61,7 +61,7 @@ import devplugin.ProgramFieldType;
 public class ProgramIcon implements Icon {
 
 
-  private static Logger mLog
+  private static final Logger mLog
     = Logger.getLogger(ProgramIcon.class.getName());
 
 

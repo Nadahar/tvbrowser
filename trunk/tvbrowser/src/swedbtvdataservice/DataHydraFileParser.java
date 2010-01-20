@@ -20,7 +20,7 @@ import devplugin.ProgressMonitor;
 class DataHydraFileParser {
 
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(DataHydraFileParser.class);
-  private static Logger mLog = Logger.getLogger(DataHydraFileParser.class.getName());
+  private static final Logger mLog = Logger.getLogger(DataHydraFileParser.class.getName());
 
   protected void loadDataForChannel(SweDBTvDataService service, TvDataUpdateManager updateManager, Date startDate, int dateCount, ProgressMonitor monitor, Date testStart, DataHydraChannelContainer internalChannel, Channel channel) throws TvBrowserException {
     ArrayList<Date> modifiedDates = new ArrayList<Date>();

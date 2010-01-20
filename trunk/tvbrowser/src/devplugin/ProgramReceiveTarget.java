@@ -88,7 +88,7 @@ import util.ui.Localizer;
  * @since 2.5
  */
 public final class ProgramReceiveTarget implements Comparable<ProgramReceiveTarget> {
-  private static Localizer mLocalizer = Localizer.getLocalizerFor(ProgramReceiveTarget.class);
+  private static final Localizer mLocalizer = Localizer.getLocalizerFor(ProgramReceiveTarget.class);
   
   private String mReceiveIfId;
   private String mTargetId;

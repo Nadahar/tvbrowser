@@ -23,7 +23,7 @@ import java.io.File;
  * @author jb
  */
 public class MixedDataServiceData {
-//private static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(MixedDataServiceData.class.getName());
+//private static final Logger mLog = java.util.logging.Logger.getLogger(MixedDataServiceData.class.getName());
 
   private HashMap<String, Channel> channels = new HashMap<String, Channel>(); // ID - Channel
   private ProgramDispatcher dispatcher = new ProgramDispatcher(); // takes the programs

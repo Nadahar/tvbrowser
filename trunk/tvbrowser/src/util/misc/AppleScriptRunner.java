@@ -38,7 +38,7 @@ import util.io.ExecutionHandler;
  */
 public class AppleScriptRunner {
   /** The logger for this class */
-  private static java.util.logging.Logger mLog = Logger.getLogger(AppleScriptRunner.class.getName());
+  private static final Logger mLog = Logger.getLogger(AppleScriptRunner.class.getName());
 
   /**
    * Default TimeOut in Seconds

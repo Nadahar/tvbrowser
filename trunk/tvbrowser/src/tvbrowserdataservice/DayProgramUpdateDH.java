@@ -27,6 +27,7 @@ package tvbrowserdataservice;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.logging.Logger;
 
 import tvbrowserdataservice.file.DayProgramFile;
 import util.exc.TvBrowserException;
@@ -42,8 +43,8 @@ import devplugin.Date;
  */
 public class DayProgramUpdateDH implements DownloadHandler {
 
-  private static java.util.logging.Logger mLog
-    = java.util.logging.Logger.getLogger(DayProgramReceiveDH.class.getName());
+  private static final Logger mLog
+    = Logger.getLogger(DayProgramReceiveDH.class.getName());
   
   private TvBrowserDataService mDataService;
   private TvDataBaseUpdater mUpdater;

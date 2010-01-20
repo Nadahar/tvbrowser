@@ -28,6 +28,7 @@ package tvbrowser.core.icontheme;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.logging.Logger;
 
 import javax.swing.ImageIcon;
 
@@ -57,7 +58,7 @@ public class IconLoader {
   /**
    * problems logger 
    */
-  private static java.util.logging.Logger mLog = java.util.logging.Logger
+  private static final Logger mLog = java.util.logging.Logger
     .getLogger(IconLoader.class.getName());
   
   /** Singelton */

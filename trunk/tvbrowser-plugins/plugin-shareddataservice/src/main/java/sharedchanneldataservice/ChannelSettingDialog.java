@@ -61,7 +61,7 @@ public class ChannelSettingDialog extends JDialog{
   private static final long serialVersionUID = 1L;
 
   public static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(ChannelSettingDialog.class);
-//  private static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(ChannelSettingDialog.class.getName());
+//  private static final Logger mLog = java.util.logging.Logger.getLogger(ChannelSettingDialog.class.getName());
 
   private static ChannelSettingDialog mInstance;
   private String myServiceName = "sharedchanneldataservice.SharedChannelDataService";

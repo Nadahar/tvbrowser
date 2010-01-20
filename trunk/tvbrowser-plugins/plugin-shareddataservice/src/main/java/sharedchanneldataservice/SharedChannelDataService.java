@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.Properties;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
 
@@ -19,7 +20,6 @@ import tvdataservice.MutableChannelDayProgram;
 import tvdataservice.MutableProgram;
 import tvdataservice.TvDataUpdateManager;
 import util.exc.TvBrowserException;
-
 import devplugin.AbstractTvDataService;
 import devplugin.Channel;
 import devplugin.ChannelGroup;
@@ -32,7 +32,7 @@ import devplugin.Version;
 
 public class SharedChannelDataService extends AbstractTvDataService{
 
-  private static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(SharedChannelDataService.class.getName());
+  private static final Logger mLog = java.util.logging.Logger.getLogger(SharedChannelDataService.class.getName());
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(SharedChannelDataService.class);
 
   public final ChannelGroup mSharedChannelDataChannelGroup = new devplugin.ChannelGroupImpl("SharedChannelData", "sharedchanneldata", "Shared Channel", mLocalizer.msg("name", "Shared Channel Data"));

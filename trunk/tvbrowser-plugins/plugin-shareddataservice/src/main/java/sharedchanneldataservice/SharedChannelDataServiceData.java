@@ -17,7 +17,7 @@ import util.tvdataservice.ProgramDispatcher;
 import devplugin.Channel;
 
 public class SharedChannelDataServiceData {
-//private static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(SharedChannelDataServiceData.class.getName());
+//private static final Logger mLog = java.util.logging.Logger.getLogger(SharedChannelDataServiceData.class.getName());
 
   private HashMap<String, Channel> channels = new HashMap<String, Channel>(); // ID - Channel
   private ProgramDispatcher dispatcher = new ProgramDispatcher(); // takes the programs

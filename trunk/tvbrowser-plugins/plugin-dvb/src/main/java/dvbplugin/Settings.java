@@ -107,13 +107,13 @@ public final class Settings {
   /** used as initial value for string properties like viewerPath */
   public static final String EMPTYSTRING = "";
 
-  private static Logger logger = Logger.getLogger(Settings.class.getName());
+  private static final Logger logger = Logger.getLogger(Settings.class.getName());
 
   /** the one and only instance of this class */
   private static Settings instance;
 
   /** a logger that could be used */
-  // private static Logger logger = Logger.getLogger(dvbplugin.Settings.class.getName());
+  // private static final Logger logger = Logger.getLogger(dvbplugin.Settings.class.getName());
 
   /** text for an unknown (invalid) channel name */
   private static final String UNKNOWN = "UNKNOWN";

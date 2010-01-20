@@ -7,7 +7,7 @@ import javax.swing.JPanel;
 import devplugin.SettingsTab;
 
 public class MixedDataAutoUpdatePluginSettingTab implements SettingsTab {
-//  private static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(MixedDataAutoUpdatePluginSettingTab.class.getName());
+//  private static final Logger mLog = java.util.logging.Logger.getLogger(MixedDataAutoUpdatePluginSettingTab.class.getName());
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(MixedDataAutoUpdatePluginSettingTab.class);
   private Icon mIcon;
 

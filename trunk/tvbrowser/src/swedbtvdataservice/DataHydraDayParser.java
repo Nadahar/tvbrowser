@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Hashtable;
+import java.util.logging.Logger;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -33,8 +34,8 @@ import devplugin.ProgramFieldType;
 class DataHydraDayParser extends org.xml.sax.helpers.DefaultHandler {
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(DataHydraDayParser.class);
 
-  private static java.util.logging.Logger mLog
-          = java.util.logging.Logger.getLogger(DataHydraDayParser.class.getName());
+  private static final Logger mLog
+          = Logger.getLogger(DataHydraDayParser.class.getName());
 
   private devplugin.Date mStartDate;
 

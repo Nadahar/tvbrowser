@@ -71,7 +71,7 @@ class SettingsPanel extends JPanel implements java.awt.event.ActionListener,
   /** Translator */
   private static final Localizer localizer = Localizer.getLocalizerFor(SettingsPanel.class);
 
-  private static Logger logger = Logger.getLogger(SettingsPanel.class.getName());
+  private static final Logger logger = Logger.getLogger(SettingsPanel.class.getName());
 
   private Channel[] channel;
 
