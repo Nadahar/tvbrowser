@@ -1,14 +1,13 @@
 package primarydatamanager;
 
-import primarydatamanager.primarydataservice.PrimaryDataService;
-
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.PrintStream;
 import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import primarydatamanager.primarydataservice.PrimaryDataService;
 
 
 public class PDSRunner {
@@ -20,8 +19,7 @@ public class PDSRunner {
   
   private static final int CONCURRENT_DOWNLOADS=5;
   
-  private static java.util.logging.Logger mLog
-      = java.util.logging.Logger.getLogger(PDSRunner.class.getName());
+  private static final Logger mLog = Logger.getLogger(PDSRunner.class.getName());
   
   
   public PDSRunner(File baseDir) {

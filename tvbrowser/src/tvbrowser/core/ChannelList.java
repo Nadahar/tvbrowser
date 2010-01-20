@@ -39,6 +39,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import javax.swing.SwingUtilities;
 
@@ -69,7 +70,7 @@ public class ChannelList {
 
   private static final String FILENAME_CHANNEL_TIME_LIMIT = "channelTimeLimit.dat";
 
-  private static java.util.logging.Logger mLog = java.util.logging.Logger
+  private static final Logger mLog = Logger
       .getLogger(ChannelList.class.getName());
 
   private static ArrayList<Channel> mAvailableChannels = new ArrayList<Channel>();

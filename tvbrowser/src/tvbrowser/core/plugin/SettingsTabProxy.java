@@ -27,12 +27,12 @@
 package tvbrowser.core.plugin;
 
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.Icon;
 import javax.swing.JPanel;
 
 import util.ui.FixedSizeIcon;
-
 import devplugin.CancelableSettingsTab;
 import devplugin.SettingsTab;
 
@@ -43,7 +43,7 @@ import devplugin.SettingsTab;
  */
 public class SettingsTabProxy {
 
-  private static java.util.logging.Logger mLog = java.util.logging.Logger
+  private static final Logger mLog = java.util.logging.Logger
        .getLogger(SettingsTabProxy.class.getName());
 
 

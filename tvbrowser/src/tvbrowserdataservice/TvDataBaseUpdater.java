@@ -29,6 +29,7 @@ import java.io.File;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import tvbrowserdataservice.file.DayProgramFile;
 import tvbrowserdataservice.file.ProgramField;
@@ -51,8 +52,8 @@ import devplugin.ProgressMonitor;
  */
 public class TvDataBaseUpdater {
 
-  private static java.util.logging.Logger mLog
-    = java.util.logging.Logger.getLogger(TvDataBaseUpdater.class.getName());
+  private static final Logger mLog
+    = Logger.getLogger(TvDataBaseUpdater.class.getName());
   
   private TvBrowserDataService mDataService;
   private TvDataUpdateManager mDataBase;

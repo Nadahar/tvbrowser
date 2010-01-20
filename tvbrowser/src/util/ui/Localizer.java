@@ -42,6 +42,7 @@ import java.util.ResourceBundle;
 import java.util.Map.Entry;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.logging.Logger;
 
 import tvbrowser.TVBrowser;
 import tvbrowser.core.Settings;
@@ -102,7 +103,7 @@ public class Localizer {
   
   /** The logger for this class. */  
   private static final java.util.logging.Logger mLog
-    = java.util.logging.Logger.getLogger(Localizer.class.getName());
+    = Logger.getLogger(Localizer.class.getName());
   
   private static HashMap<String, String> standardLocalizations;
 

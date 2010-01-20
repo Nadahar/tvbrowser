@@ -31,6 +31,7 @@ import java.awt.Image;
 import java.awt.MediaTracker;
 import java.awt.Toolkit;
 import java.io.File;
+import java.util.logging.Logger;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -44,8 +45,8 @@ import util.io.IOUtilities;
  */
 public class ImageUtilities {
   
-  private static java.util.logging.Logger mLog
-    = java.util.logging.Logger.getLogger(ImageUtilities.class.getName());
+  private static final Logger mLog
+    = Logger.getLogger(ImageUtilities.class.getName());
 
   /** The helper label. */  
   private static final JLabel HELPER_LABEL = new JLabel();

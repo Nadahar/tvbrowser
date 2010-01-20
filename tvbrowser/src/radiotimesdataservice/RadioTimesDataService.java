@@ -32,6 +32,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Properties;
 import java.util.TimeZone;
+import java.util.logging.Logger;
 
 import tvdataservice.SettingsPanel;
 import tvdataservice.TvDataUpdateManager;
@@ -70,7 +71,7 @@ public class RadioTimesDataService extends AbstractTvDataService {
   /**
    * Logger
    */
-  private static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(RadioTimesDataService.class
+  private static final Logger mLog = Logger.getLogger(RadioTimesDataService.class
       .getName());
 
   /**

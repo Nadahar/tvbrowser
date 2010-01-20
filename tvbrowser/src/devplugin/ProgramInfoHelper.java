@@ -4,9 +4,12 @@
 package devplugin;
 
 import java.awt.MediaTracker;
+import java.util.logging.Logger;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+
+import util.ui.Localizer;
 
 /**
  * Holds all Information needed to Display the additional
@@ -18,12 +21,12 @@ public class ProgramInfoHelper {
     /**
      * The Translator
      */
-    private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(ProgramInfoHelper.class);
+    private static final Localizer mLocalizer = Localizer.getLocalizerFor(ProgramInfoHelper.class);
 
     /**
      * Logger for this class
      */
-    private static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(ProgramInfoHelper.class.getName());
+    private static final Logger mLog = Logger.getLogger(ProgramInfoHelper.class.getName());
     
     /**
      * The Bit-Array with all possibilities

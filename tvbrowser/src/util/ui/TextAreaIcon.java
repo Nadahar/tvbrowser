@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.Icon;
 
@@ -45,8 +46,8 @@ import util.misc.TextLineBreakerStringWidth;
  */
 public class TextAreaIcon implements Icon {
 
-  private static java.util.logging.Logger mLog
-    = java.util.logging.Logger.getLogger(TextAreaIcon.class.getName());
+  private static final Logger mLog
+    = Logger.getLogger(TextAreaIcon.class.getName());
   
   private int mWidth;
   private String[] mTextLineArr;

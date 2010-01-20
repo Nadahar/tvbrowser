@@ -43,6 +43,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -82,7 +83,7 @@ import devplugin.ProgramInfoHelper;
  */
 public class ProgramPanel extends JComponent implements ChangeListener, PluginStateListener {
 
-  private static java.util.logging.Logger mLog = java.util.logging.Logger
+  private static final Logger mLog = java.util.logging.Logger
       .getLogger(TextAreaIcon.class.getName());
 
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer

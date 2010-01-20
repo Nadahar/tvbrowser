@@ -30,6 +30,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import tvbrowser.core.Settings;
 
@@ -46,7 +47,7 @@ import tvbrowser.core.Settings;
  * @since 2.5
  */
 public class LocalizerClassloader extends ClassLoader {
-  private static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(LocalizerClassloader.class.getName());
+  private static final Logger mLog = Logger.getLogger(LocalizerClassloader.class.getName());
   /**
    * Create Localizer-Classloader
    * 

@@ -31,6 +31,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.TimeZone;
 import java.util.Vector;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -64,11 +65,11 @@ import devplugin.ProgramFieldType;
  */
 public class BbcFileParser {
   /** Logger */
-  private static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(BbcFileParser.class
+  private static final Logger mLog = Logger.getLogger(BbcFileParser.class
       .getName());
 
   /** Stores the Data */
-  private HashMap<Date, MutableChannelDayProgram> mCache;
+  private final HashMap<Date, MutableChannelDayProgram> mCache;
   /** Channel */
   private Channel mChannel;
   /** Current Date */

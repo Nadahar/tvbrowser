@@ -44,6 +44,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Properties;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.Sequencer;
@@ -91,11 +92,11 @@ import devplugin.SettingsItem;
 public class ReminderPlugin {
 
   /** The localizer for this class. */
-  public static util.ui.Localizer mLocalizer = util.ui.Localizer
+  public static Localizer mLocalizer = util.ui.Localizer
       .getLocalizerFor(ReminderPlugin.class);
 
-   private java.util.logging.Logger mLog
-      = java.util.logging.Logger.getLogger(ReminderPlugin.class.getName());
+  private static final java.util.logging.Logger mLog
+      = Logger.getLogger(ReminderPlugin.class.getName());
 
   private ReminderList mReminderList;
   private Properties mSettings;

@@ -29,6 +29,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.NumberFormat;
+import java.util.logging.Logger;
 
 import primarydatamanager.mirrorupdater.UpdateException;
 
@@ -39,8 +40,8 @@ import primarydatamanager.mirrorupdater.UpdateException;
  */
 public class FileDataTarget implements DataTarget {
 
-  private static java.util.logging.Logger mLog
-    = java.util.logging.Logger.getLogger(FileDataTarget.class.getName());
+  private static final Logger mLog
+    = Logger.getLogger(FileDataTarget.class.getName());
 
   private File mDir;
   

@@ -28,6 +28,8 @@ package devplugin;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import util.ui.Localizer;
+
 /**
  * Contains all the field types of a program.
  * 
@@ -39,7 +41,7 @@ import java.util.Iterator;
  */
 public class ProgramFieldType {
 
-  public static util.ui.Localizer mLocalizer
+  public static Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(ProgramFieldType.class);
 
   private static final ArrayList<ProgramFieldType> mKnownTypeList = new ArrayList<ProgramFieldType>();

@@ -5,14 +5,15 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.LinkedList;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author Til Schneider, www.murfman.de
  */
 public class DownloadManager {
 
-  private static java.util.logging.Logger mLog
-    = java.util.logging.Logger.getLogger(DownloadManager.class.getName());
+  private static final Logger mLog
+    = Logger.getLogger(DownloadManager.class.getName());
     
   private int mConcurrentDownloads;
   

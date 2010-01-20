@@ -26,6 +26,8 @@
 
 package util.io;
 
+import java.util.logging.Logger;
+
 /**
  * A little helper class that allows a simple profiling (time measuring).
  * 
@@ -35,8 +37,8 @@ package util.io;
 public class Profiler {
 
   /** The logger for this class. */  
-  private static java.util.logging.Logger mLog
-    = java.util.logging.Logger.getLogger(Profiler.class.getName());
+  private static final Logger mLog
+    = Logger.getLogger(Profiler.class.getName());
   
   /** The default profiler. */  
   private static Profiler mDefaultProfiler;

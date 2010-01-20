@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -64,8 +65,8 @@ public class TvDataUpdater {
     = util.ui.Localizer.getLocalizerFor(TvDataUpdater.class);
 
   /** The logger for this class. */
-  private static java.util.logging.Logger mLog
-    = java.util.logging.Logger.getLogger(TvDataUpdater.class.getName());
+  private static final Logger mLog
+    = Logger.getLogger(TvDataUpdater.class.getName());
 
   /** The singleton. */
   private static TvDataUpdater mSingleton;

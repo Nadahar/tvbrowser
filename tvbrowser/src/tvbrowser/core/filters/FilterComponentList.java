@@ -33,6 +33,7 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.logging.Logger;
 
 import tvbrowser.core.filters.filtercomponents.AgeLimitFilterComponent;
 import tvbrowser.core.filters.filtercomponents.BeanShellFilterComponent;
@@ -64,9 +65,7 @@ public class FilterComponentList {
 
   private static ArrayList<FilterComponent> mComponentList;
 
-  private static java.util.logging.Logger mLog
-  = java.util.logging.Logger
-      .getLogger(FilterComponentList.class.getName());
+  private static final Logger mLog = Logger.getLogger(FilterComponentList.class.getName());
 
   private FilterComponentList() {
     mComponentList = new ArrayList<FilterComponent>();

@@ -41,6 +41,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.StringTokenizer;
+import java.util.logging.Logger;
 import java.util.zip.GZIPOutputStream;
 
 import util.exc.TvBrowserException;
@@ -62,7 +63,7 @@ public class Mirror {
   /** The name extension of mirror files */
   public static final String MIRROR_LIST_FILE_NAME = "mirrorlist.gz";
 
-  private static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(Mirror.class.getName());
+  private static final Logger mLog = Logger.getLogger(Mirror.class.getName());
   /** The default weight of a mirror */
   public static final int DEFAULT_WEIGHT = 100;
 

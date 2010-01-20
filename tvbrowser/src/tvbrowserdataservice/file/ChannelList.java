@@ -36,6 +36,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.TimeZone;
+import java.util.logging.Logger;
 import java.util.zip.GZIPOutputStream;
 
 import javax.swing.Icon;
@@ -61,7 +62,7 @@ public class ChannelList {
 
   public static final String FILE_NAME = "channellist.gz";
 
-  private static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(ChannelList.class.getName());
+  private static final Logger mLog = Logger.getLogger(ChannelList.class.getName());
 
   private ArrayList<ChannelItem> mChannelList;
 

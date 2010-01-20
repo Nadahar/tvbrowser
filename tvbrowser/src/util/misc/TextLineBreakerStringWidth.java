@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 import net.davidashen.text.Hyphenator;
 import net.davidashen.util.ErrorHandler;
@@ -46,8 +47,8 @@ public class TextLineBreakerStringWidth {
 
   private static final String HYPHEN_DICT_FILENAME = "hyphen/dehyphx.tex";
 
-  private static java.util.logging.Logger mLog
-    = java.util.logging.Logger.getLogger(TextLineBreakerStringWidth.class.getName());
+  private static final Logger mLog
+    = Logger.getLogger(TextLineBreakerStringWidth.class.getName());
 
   /**
    * ellipsis used for shortened titles and descriptions<br>
