@@ -72,7 +72,7 @@ public class PluginLoader {
 	private static final String PLUGIN_INSTALL_EXTENSION = ".inst";
 
   /** The logger for this class */
-  private static java.util.logging.Logger mLog
+  private static final Logger mLog
       = Logger.getLogger(PluginLoader.class.getName());
 
   private static PluginLoader mInstance;

@@ -32,12 +32,11 @@ import java.io.ObjectOutputStream;
 import java.net.URL;
 import java.util.Locale;
 import java.util.Properties;
-import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 
-import util.exc.ErrorHandler;
 import util.ui.Localizer;
 import aconsole.config.PropertyPanel;
 import aconsole.data.Console;
@@ -52,7 +51,7 @@ import devplugin.PluginInfo;
 import devplugin.SettingsTab;
 import devplugin.Version;
 /**
- * Das TVBConsole-Plugin ist als Hilfsmittel für (Plugin-)Entwickler gedacht. Es zeigt die Ausgaben der 
+ * Das TVBConsole-Plugin ist als Hilfsmittel fï¿½r (Plugin-)Entwickler gedacht. Es zeigt die Ausgaben der 
  * Standard-Streams sowie die durch das java.util.logging-Package erstellten
  * Nachrichten. Die Ausgabe kann dynamisch nach Logger-Klasse und Nachrichten-Level gefiltert werden.
  * 
@@ -63,10 +62,10 @@ import devplugin.Version;
  * @author Tomas
  *
  *
- * TODO: Beim Verbreitern des Einstellungsdialogs und anschließendem Verkleinern bleibt das Panel auf maximaler Breite. und die Fenserposition wird nicht gespeichert 
+ * TODO: Beim Verbreitern des Einstellungsdialogs und anschlieï¿½endem Verkleinern bleibt das Panel auf maximaler Breite. und die Fenserposition wird nicht gespeichert 
  */
 public class AConsole extends Plugin {
-	public static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(AConsole.class.getName());
+	public static final Logger mLog = java.util.logging.Logger.getLogger(AConsole.class.getName());
 	static private final Localizer mLocalizer= Localizer.getLocalizerFor(AConsole.class);
 	private static Version PLUGINVERSION = new Version(0, 04,0,false);
 	Properties settings=new Properties();

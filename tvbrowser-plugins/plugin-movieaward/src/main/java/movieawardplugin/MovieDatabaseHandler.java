@@ -33,7 +33,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 
 public class MovieDatabaseHandler extends DefaultHandler {
-  private static Logger mLog = Logger.getLogger(MovieDatabaseHandler.class.getName());
+  private static final Logger mLog = Logger.getLogger(MovieDatabaseHandler.class.getName());
 
   /**
    * Holds the text of the current tag.

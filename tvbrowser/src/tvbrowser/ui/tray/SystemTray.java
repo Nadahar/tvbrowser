@@ -37,6 +37,7 @@ import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.logging.Logger;
 
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -83,7 +84,7 @@ public class SystemTray {
   private boolean mUseSystemTray;
 
   /** Logger */
-  private static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(SystemTray.class.getName());
+  private static final Logger mLog = Logger.getLogger(SystemTray.class.getName());
 
   /** The localizer for this class. */
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(SystemTray.class);

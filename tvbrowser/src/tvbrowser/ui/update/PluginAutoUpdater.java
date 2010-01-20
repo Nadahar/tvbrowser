@@ -40,7 +40,7 @@ import util.ui.Localizer;
  * @author René Mach
  */
 public class PluginAutoUpdater {
-  private static Localizer mLocalizer = Localizer.getLocalizerFor(PluginAutoUpdater.class);
+  private static final Localizer mLocalizer = Localizer.getLocalizerFor(PluginAutoUpdater.class);
   /** The name of the updates file. */
   public static final String PLUGIN_UPDATES_FILENAME = "plugins.txt";
   /** The default plugins download url */

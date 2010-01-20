@@ -59,7 +59,7 @@ import util.ui.Localizer;
 public class MoreButton extends JToggleButton implements ActionListener{ 
     private JToolBar toolbar;
     private JPopupMenu mPopupMenu;
-    private static Localizer mLocalizer = Localizer.getLocalizerFor(MoreButton.class);
+    private static final Localizer mLocalizer = Localizer.getLocalizerFor(MoreButton.class);
     
     private MoreButton(final JToolBar toolbar, MainFrame mainFrame){ 
         if((((ToolBar)toolbar).getStyle() == (ToolBar.STYLE_TEXT | ToolBar.STYLE_ICON)) || ((ToolBar)toolbar).getStyle() == ToolBar.STYLE_TEXT )

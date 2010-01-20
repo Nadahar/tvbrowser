@@ -28,6 +28,7 @@ package primarydatamanager;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.logging.Logger;
 
 import tvbrowserdataservice.file.ChannelList;
 import tvbrowserdataservice.file.DayProgramFile;
@@ -48,8 +49,7 @@ import devplugin.ProgramFieldType;
  */
 public class RawDataProcessor {
 
-  private static java.util.logging.Logger mLog
-    = java.util.logging.Logger.getLogger(RawDataProcessor.class.getName());
+  private static final Logger mLog = Logger.getLogger(RawDataProcessor.class.getName());
 
   /**
    * @Deprecated use #{tvdataservice.MutableProgram#MAX_SHORT_INFO_LENGTH}

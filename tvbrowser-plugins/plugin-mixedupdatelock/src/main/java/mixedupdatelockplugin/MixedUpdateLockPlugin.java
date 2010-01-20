@@ -11,7 +11,7 @@ import devplugin.Version;
 
 public class MixedUpdateLockPlugin extends devplugin.Plugin {
 
-//private static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(MixedUpdateLockPlugin.class.getName());
+//private static final Logger mLog = java.util.logging.Logger.getLogger(MixedUpdateLockPlugin.class.getName());
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(MixedUpdateLockPlugin.class);
   private static MixedUpdateLockPlugin mInstance;
   private String lckFileName;

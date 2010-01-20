@@ -44,7 +44,7 @@ import java.io.File;
  */
 public class NextViewDataServiceData {
 
-//private static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(NextViewDataServiceData.class.getName());
+//private static final Logger mLog = java.util.logging.Logger.getLogger(NextViewDataServiceData.class.getName());
 
   private HashMap<String, Channel> channels = new HashMap<String, Channel>(); // ID - Channel
   private ProgramDispatcher dispatcher = new ProgramDispatcher(); // takes the programs

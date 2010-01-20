@@ -33,7 +33,7 @@ public final class ZattooPlugin extends Plugin {
   private static final Version PLUGIN_VERSION = new Version(0, 6, 0, PLUGIN_IS_STABLE);
 
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(ZattooPlugin.class);
-  private static Logger mLog = Logger.getLogger(ZattooPlugin.class.getName());
+  private static final Logger mLog = Logger.getLogger(ZattooPlugin.class.getName());
 
   private ImageIcon mIcon;
   private static ZattooPlugin mInstance;

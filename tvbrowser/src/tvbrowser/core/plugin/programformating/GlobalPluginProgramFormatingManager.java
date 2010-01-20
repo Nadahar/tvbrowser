@@ -42,7 +42,7 @@ import util.ui.Localizer;
  * @since 2.5.1
  */
 public class GlobalPluginProgramFormatingManager {
-  private static Localizer mLocalizer = Localizer.getLocalizerFor(GlobalPluginProgramFormatingManager.class);
+  private static final Localizer mLocalizer = Localizer.getLocalizerFor(GlobalPluginProgramFormatingManager.class);
   
   private static GlobalPluginProgramFormatingManager mInstance;
   private GlobalPluginProgramFormating[] mAvailableProgramConfigurations;

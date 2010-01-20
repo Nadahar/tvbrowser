@@ -34,6 +34,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import tvbrowser.core.data.OnDemandDayProgramFile;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
@@ -55,7 +56,7 @@ import devplugin.ProgressMonitor;
 public class TvDataBase {
 
   /** The logger for this class. */
-  private static java.util.logging.Logger mLog = java.util.logging.Logger
+  private static final Logger mLog = Logger
       .getLogger(TvDataBase.class.getName());
 
   private static final String INVENTORY_FILE = "tv-data-inventory.dat";

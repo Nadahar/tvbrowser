@@ -19,7 +19,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * This class loads data from a XML file and creates the movie awards
  */
 public class MovieDataFactory {
-  private static Logger mLog = Logger.getLogger(MovieDataFactory.class.getName());
+  private static final Logger mLog = Logger.getLogger(MovieDataFactory.class.getName());
 
   public static MovieAward loadMovieDataFromStream(final InputStream stream,
       final MovieAward award) {

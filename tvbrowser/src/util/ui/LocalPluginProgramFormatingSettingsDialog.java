@@ -63,7 +63,7 @@ import devplugin.Plugin;
  * @since 2.5.1
  */
 public class LocalPluginProgramFormatingSettingsDialog extends JDialog implements WindowClosingIf, ActionListener {
-  private static Localizer mLocalizer = Localizer.getLocalizerFor(LocalPluginProgramFormatingSettingsDialog.class);
+  private static final Localizer mLocalizer = Localizer.getLocalizerFor(LocalPluginProgramFormatingSettingsDialog.class);
   
   private LocalPluginProgramFormating mConfig, mDefaultConfig;
   private JButton mSetName, mPreview, mSetBack, mHelp, mOk, mCancel;

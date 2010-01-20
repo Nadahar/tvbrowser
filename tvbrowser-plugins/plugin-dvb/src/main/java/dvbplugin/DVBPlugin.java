@@ -81,7 +81,7 @@ public class DVBPlugin extends devplugin.Plugin {
   protected static final Localizer localizer = Localizer.getLocalizerFor(DVBPlugin.class);
 
   /** the logger */
-  private static Logger logger = Logger.getLogger(DVBPlugin.class.getName());
+  private static final Logger logger = Logger.getLogger(DVBPlugin.class.getName());
 
   /** the parent action of all context menu actions */
   private ContextAction contextAction;

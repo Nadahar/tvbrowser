@@ -34,7 +34,7 @@ import util.misc.ChangeTrackingProperties;
 import util.ui.LazyImageIcon;
 
 public class IconLoader {
-  private static Logger mLog = Logger.getLogger(IconLoader.class.getName());
+  private static final Logger mLog = Logger.getLogger(IconLoader.class.getName());
 
   private File mIconDir;
 

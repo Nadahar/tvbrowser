@@ -67,7 +67,7 @@ public final class DvbViewerSetup {
   /** Translator */
   private static final Localizer localizer = Localizer.getLocalizerFor(DvbViewerSetup.class);
 
-  private static Logger logger = Logger.getLogger(DvbViewerSetup.class.getName());
+  private static final Logger logger = Logger.getLogger(DvbViewerSetup.class.getName());
 
 
   /**

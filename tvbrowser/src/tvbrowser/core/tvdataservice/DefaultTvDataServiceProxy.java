@@ -45,7 +45,7 @@ import devplugin.ProgressMonitor;
 public class DefaultTvDataServiceProxy extends AbstractTvDataServiceProxy {
 
   /** The logger for this class */
-  private static java.util.logging.Logger mLog = Logger
+  private static final Logger mLog = Logger
       .getLogger(DefaultTvDataServiceProxy.class.getName());
 
   private devplugin.AbstractTvDataService mTvDataService;

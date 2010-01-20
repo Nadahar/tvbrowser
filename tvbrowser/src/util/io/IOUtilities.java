@@ -40,12 +40,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
-import java.io.InputStreamReader;
-import java.io.BufferedReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Calendar;
+import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -67,8 +66,8 @@ import util.ui.TimeFormatter;
 public class IOUtilities {
 
   /** The logger for this class. */
-  private static java.util.logging.Logger mLog
-    = java.util.logging.Logger.getLogger(IOUtilities.class.getName());
+  private static final Logger mLog
+    = Logger.getLogger(IOUtilities.class.getName());
 
   /** A Calendar for time stuff */
   private static final Calendar CALENDAR = Calendar.getInstance();

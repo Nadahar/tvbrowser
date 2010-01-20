@@ -64,7 +64,7 @@ public class ChannelGrabber {
   private static final Localizer localizer = Localizer.getLocalizerFor(ChannelGrabber.class);
 
   /** the usual logger */
-  private static Logger logger = Logger.getLogger(ChannelGrabber.class.getName());
+  private static final Logger logger = Logger.getLogger(ChannelGrabber.class.getName());
 
 
   public static List<DVBViewerChannel> readChannels() {

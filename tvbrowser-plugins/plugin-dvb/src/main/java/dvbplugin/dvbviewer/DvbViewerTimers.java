@@ -54,7 +54,7 @@ public final class DvbViewerTimers {
   /** Translator */
   private static final Localizer localizer = Localizer.getLocalizerFor(DvbViewerTimers.class);
 
-  private static Logger logger = Logger.getLogger(DvbViewerTimers.class.getName());
+  private static final Logger logger = Logger.getLogger(DvbViewerTimers.class.getName());
 
 
   /**

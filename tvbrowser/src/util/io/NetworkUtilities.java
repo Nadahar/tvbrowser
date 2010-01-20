@@ -31,6 +31,7 @@ import java.net.SocketException;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.text.DecimalFormat;
+import java.util.logging.Logger;
 
 
 /**
@@ -41,7 +42,7 @@ import java.text.DecimalFormat;
  */
 public class NetworkUtilities {
 
-  private static java.util.logging.Logger mLog = java.util.logging.Logger
+  private static final Logger mLog = java.util.logging.Logger
     .getLogger(NetworkUtilities.class.getName());
 
   /**

@@ -27,6 +27,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -50,7 +51,7 @@ public class TVPearl {
    */
   private static final int UPDATE_WAIT_HOURS = 12;
 
-  private static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(TVPearlPlugin.class.getName());
+  private static final Logger mLog = java.util.logging.Logger.getLogger(TVPearlPlugin.class.getName());
 
   private String mUrl;
   private List<TVPProgram> mProgramList;

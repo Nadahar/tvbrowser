@@ -81,7 +81,7 @@ public class DVBViewerDataService extends AbstractTvDataService {
   private static final String COMPRESSEDCHANNELLIST = CHANNELFILENAME + ".gz";
 
   /** Logger */
-  private static java.util.logging.Logger logger = Logger.getLogger(DVBViewerDataService.class.getName());
+  private static final Logger logger = Logger.getLogger(DVBViewerDataService.class.getName());
 
   /** data directory */
   private File workingDir;

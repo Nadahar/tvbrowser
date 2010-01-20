@@ -46,7 +46,7 @@ public class ChannelChooserDialog extends JDialog {
   private static final long serialVersionUID = 1L;
   
   public static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(ChannelChooserDialog.class);
-//  private static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(ChannelChooserDialog.class.getName());
+//  private static final Logger mLog = java.util.logging.Logger.getLogger(ChannelChooserDialog.class.getName());
   
   public JTextField [] descriptor = new JTextField[4];
   private JSpinner mTime;

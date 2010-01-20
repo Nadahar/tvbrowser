@@ -31,6 +31,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.NumberFormat;
+import java.util.logging.Logger;
 
 import primarydatamanager.mirrorupdater.UpdateException;
 import util.io.IOUtilities;
@@ -42,8 +43,8 @@ import util.io.IOUtilities;
  */
 public class FileDataSource implements DataSource {
 
-  private static java.util.logging.Logger mLog
-    = java.util.logging.Logger.getLogger(FileDataSource.class.getName());
+  private static final Logger mLog
+    = Logger.getLogger(FileDataSource.class.getName());
 
   private File mDir;
 

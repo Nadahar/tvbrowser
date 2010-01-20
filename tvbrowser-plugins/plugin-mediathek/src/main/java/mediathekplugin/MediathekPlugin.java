@@ -93,7 +93,7 @@ public class MediathekPlugin extends Plugin {
   private static MediathekPlugin instance = null;
 
   /** The logger for this class */
-  private static java.util.logging.Logger logger = Logger
+  private static final Logger logger = Logger
       .getLogger(MediathekPlugin.class.getName());
 
   public static Version getVersion() {

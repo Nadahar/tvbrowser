@@ -134,7 +134,7 @@ public class PluginManagerImpl implements PluginManager {
   private Program mExampleProgram;
 
    /** The logger for this class */
-  private static java.util.logging.Logger mLog
+  private static final Logger mLog
     = Logger.getLogger(PluginManagerImpl.class.getName());
 
   private static PluginManagerImpl mInstance;

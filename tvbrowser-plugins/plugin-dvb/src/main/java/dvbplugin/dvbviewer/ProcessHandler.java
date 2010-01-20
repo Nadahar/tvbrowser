@@ -71,7 +71,7 @@ public class ProcessHandler {
   private static final Localizer localizer = Localizer.getLocalizerFor(ProcessHandler.class);
 
   /** the usual logger */
-  private static Logger logger = Logger.getLogger(ProcessHandler.class.getName());
+  private static final Logger logger = Logger.getLogger(ProcessHandler.class.getName());
 
   public static final String DVBVIEWERPLUGIN_USER_PATH = Plugin.getPluginManager().getTvBrowserSettings()
                                                                .getTvBrowserUserHome() + File.separatorChar

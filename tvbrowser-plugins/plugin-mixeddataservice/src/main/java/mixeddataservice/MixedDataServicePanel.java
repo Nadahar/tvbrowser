@@ -55,7 +55,7 @@ public class MixedDataServicePanel extends SettingsPanel {
    */
   private static final long serialVersionUID = 1L;
 
-//  private static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(MixedDataServicePanel.class.getName());
+//  private static final Logger mLog = java.util.logging.Logger.getLogger(MixedDataServicePanel.class.getName());
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(MixedDataServicePanel.class);
 
   public static MixedDataServicePanel mInstance;
@@ -325,7 +325,7 @@ public class MixedDataServicePanel extends SettingsPanel {
 
 class channelCellRenderer extends DefaultListCellRenderer {
 
-//private static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(channelCellRenderer.class.getName());
+//private static final Logger mLog = java.util.logging.Logger.getLogger(channelCellRenderer.class.getName());
 
   private static final long serialVersionUID = 1L;
 

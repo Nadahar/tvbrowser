@@ -38,7 +38,7 @@ import devplugin.ProgramFilter;
  * @since 2.5
  */
 public class FilterSelectionPanel extends JPanel {
-  private static Localizer mLocalizer = Localizer.getLocalizerFor(FilterSelectionPanel.class);
+  private static final Localizer mLocalizer = Localizer.getLocalizerFor(FilterSelectionPanel.class);
   private JComboBox mFilterSelection;
   
   public FilterSelectionPanel() {

@@ -78,7 +78,7 @@ import util.ui.UiUtilities;
  * @since 2.6
  */
 public class FavoriteTree extends JTree implements DragGestureListener, DropTargetListener {
-  private static Localizer mLocalizer = Localizer.getLocalizerFor(FavoriteTree.class);
+  private static final Localizer mLocalizer = Localizer.getLocalizerFor(FavoriteTree.class);
   
   private FavoriteNode mTransferNode;
   private Rectangle2D mCueLine = new Rectangle2D.Float();

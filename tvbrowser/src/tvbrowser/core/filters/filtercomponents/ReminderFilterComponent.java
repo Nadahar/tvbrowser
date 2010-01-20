@@ -20,7 +20,7 @@ import devplugin.Program;
  */
 public class ReminderFilterComponent extends AbstractFilterComponent {
 
-  private static Localizer mLocalizer = Localizer
+  private static final Localizer mLocalizer = Localizer
       .getLocalizerFor(ReminderFilterComponent.class);
 
   public ReminderFilterComponent(String name, String desc) {

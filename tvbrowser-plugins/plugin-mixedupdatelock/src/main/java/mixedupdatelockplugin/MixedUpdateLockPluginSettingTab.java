@@ -7,7 +7,7 @@ import javax.swing.JPanel;
 import devplugin.SettingsTab;
 
 public class MixedUpdateLockPluginSettingTab implements SettingsTab {
-//  private static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(MixedUpdateLockPluginSettingTab.class.getName());
+//  private static final Logger mLog = java.util.logging.Logger.getLogger(MixedUpdateLockPluginSettingTab.class.getName());
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(MixedUpdateLockPluginSettingTab.class);
   private Icon mIcon;
 

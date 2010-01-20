@@ -66,7 +66,7 @@ import devplugin.ProgramReceiveTarget;
  * @since 2.6
  */
 public class FavoriteTreeModel extends DefaultTreeModel {
-  private static Localizer mLocalizer = Localizer.getLocalizerFor(FavoriteTreeModel.class);
+  private static final Localizer mLocalizer = Localizer.getLocalizerFor(FavoriteTreeModel.class);
 
   private static FavoriteTreeModel mInstance;
 

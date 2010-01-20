@@ -29,6 +29,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
+import java.util.logging.Logger;
 
 import primarydatamanager.mirrorupdater.UpdateException;
 import primarydatamanager.mirrorupdater.data.DataSource;
@@ -45,8 +46,7 @@ import primarydatamanager.mirrorupdater.data.HttpDataSource;
  */
 public class PropertiesConfiguration implements Configuration {
 
-  private static java.util.logging.Logger mLog
-    = java.util.logging.Logger.getLogger(PropertiesConfiguration.class.getName());
+  private static final Logger mLog = Logger.getLogger(PropertiesConfiguration.class.getName());
     
   private static final String PRIMARY_SERVER_URL = "http://www.tvbrowser.org";
   

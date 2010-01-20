@@ -20,7 +20,7 @@ import devplugin.Program;
  */
 public class FavoritesFilterComponent extends AbstractFilterComponent {
 
-  private static Localizer mLocalizer = Localizer
+  private static final Localizer mLocalizer = Localizer
       .getLocalizerFor(FavoritesFilterComponent.class);
 
   public FavoritesFilterComponent(String name, String description) {

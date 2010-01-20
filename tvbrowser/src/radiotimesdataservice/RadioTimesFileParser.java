@@ -33,6 +33,7 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.logging.Logger;
 
 import tvdataservice.MutableChannelDayProgram;
 import tvdataservice.MutableProgram;
@@ -53,8 +54,8 @@ import devplugin.ProgramFieldType;
 public class RadioTimesFileParser {
 
   /** The logger for this class. */
-  private static java.util.logging.Logger mLog
-    = java.util.logging.Logger.getLogger(RadioTimesFileParser.class.getName());
+  private static final Logger mLog
+    = Logger.getLogger(RadioTimesFileParser.class.getName());
   
   /** Channel */
   private Channel mChannel;

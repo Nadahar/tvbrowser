@@ -108,7 +108,7 @@ public class SimpleMarkerPlugin extends Plugin {
     mInstance = this;
   }
 
-  public static Localizer getLocalizer() {
+  public static final Localizer getLocalizer() {
     return mLocalizer;
   }
   

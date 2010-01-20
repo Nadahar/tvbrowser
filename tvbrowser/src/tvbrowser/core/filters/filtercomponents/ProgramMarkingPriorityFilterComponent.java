@@ -48,7 +48,7 @@ import devplugin.Program;
 public class ProgramMarkingPriorityFilterComponent extends
     AbstractFilterComponent {
 
-  private static Localizer mLocalizer = Localizer
+  private static final Localizer mLocalizer = Localizer
       .getLocalizerFor(ProgramMarkingPriorityFilterComponent.class);
 
   private int mMarkPriority = Program.MIN_MARK_PRIORITY;

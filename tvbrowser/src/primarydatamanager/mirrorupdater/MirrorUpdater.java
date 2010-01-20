@@ -58,8 +58,7 @@ import devplugin.Date;
  */
 public class MirrorUpdater {
 
-  private static java.util.logging.Logger mLog
-    = java.util.logging.Logger.getLogger(MirrorUpdater.class.getName());
+  private static final Logger mLog = Logger.getLogger(MirrorUpdater.class.getName());
   
   private static final int MAX_DAYS_WITHOUT_DATA = 14;
 
