@@ -4,28 +4,25 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+import java.util.logging.Logger;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JComboBox;
 import javax.swing.JTextArea;
 import javax.swing.UIManager;
-
-import java.io.IOException;
-import java.io.InputStream;
-
-import java.util.Properties;
 
 import util.ui.ChannelLabel;
 import util.ui.Localizer;
@@ -37,7 +34,7 @@ public class AlternativeFineTuningDialog extends JDialog{
    private static final long serialVersionUID = 1L;
 
    public static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(AlternativeFineTuningDialog.class);
-   private static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(AlternativeFineTuningDialog.class.getName());
+   private static final Logger mLog = java.util.logging.Logger.getLogger(AlternativeFineTuningDialog.class.getName());
  
    private static AlternativeFineTuningDialog mInstance;
 

@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 import java.util.TimeZone;
+import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -57,7 +58,7 @@ import devplugin.Version;
 public class VirtualDataService extends AbstractTvDataService
 {
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(VirtualDataService.class);
-  private static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(VirtualDataService.class.getName());
+  private static final Logger mLog = java.util.logging.Logger.getLogger(VirtualDataService.class.getName());
 
   private static VirtualDataService mInstance = null;
 

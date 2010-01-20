@@ -1,23 +1,21 @@
 package mixeddataservice;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-
-import java.util.ArrayList;
-import java.util.Properties;
-
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Window;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Properties;
+import java.util.logging.Logger;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -35,7 +33,6 @@ import javax.swing.JTextField;
 import util.ui.ChannelLabel;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
-
 import devplugin.Channel;
 
 
@@ -45,7 +42,7 @@ public class ChannelSettingDialog extends JDialog{
   private static final long serialVersionUID = 1L;
 
   public static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(ChannelSettingDialog.class);
-  private static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(ChannelSettingDialog.class.getName());
+  private static final Logger mLog = java.util.logging.Logger.getLogger(ChannelSettingDialog.class.getName());
 
   private static ChannelSettingDialog mInstance;
 
