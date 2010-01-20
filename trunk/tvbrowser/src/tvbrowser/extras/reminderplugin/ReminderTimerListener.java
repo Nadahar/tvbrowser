@@ -36,6 +36,7 @@ package tvbrowser.extras.reminderplugin;
 import java.awt.Toolkit;
 import java.util.ArrayList;
 import java.util.Properties;
+import java.util.logging.Logger;
 
 import javax.swing.SwingUtilities;
 
@@ -53,7 +54,7 @@ public class ReminderTimerListener {
   private static final util.ui.Localizer mLocalizer
       = util.ui.Localizer.getLocalizerFor(ReminderTimerListener.class );
 
-  private static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(ReminderTimerListener.class.getName());
+  private static final Logger mLog = Logger.getLogger(ReminderTimerListener.class.getName());
 
   private Properties mSettings;
   private ReminderList mReminderList;

@@ -34,6 +34,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.logging.Logger;
 
 import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginManagerImpl;
@@ -56,8 +57,8 @@ public class FilterList {
       + "/filters";
 
 
-  private static java.util.logging.Logger mLog
-          = java.util.logging.Logger.getLogger(FilterList.class.getName());
+  private static final Logger mLog
+          = Logger.getLogger(FilterList.class.getName());
 
   private FilterList() {
     create();

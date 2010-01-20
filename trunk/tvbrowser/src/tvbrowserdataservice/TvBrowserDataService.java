@@ -40,6 +40,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
 
@@ -68,8 +69,8 @@ import devplugin.Version;
  */
 public class TvBrowserDataService extends devplugin.AbstractTvDataService {
 
-  private static java.util.logging.Logger mLog
-          = java.util.logging.Logger.getLogger(TvBrowserDataService.class.getName());
+  private static final Logger mLog
+          = Logger.getLogger(TvBrowserDataService.class.getName());
 
   /** The localizer for this class. */
   public static final util.ui.Localizer mLocalizer

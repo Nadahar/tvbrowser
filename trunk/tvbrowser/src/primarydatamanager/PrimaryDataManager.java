@@ -25,8 +25,20 @@
  */
 package primarydatamanager;
 
-import devplugin.ChannelGroup;
-import devplugin.Date;
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.StringTokenizer;
+import java.util.logging.FileHandler;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import primarydatamanager.primarydataservice.PrimaryDataService;
 import tvbrowserdataservice.file.ChannelList;
 import tvbrowserdataservice.file.DayProgramFile;
@@ -35,20 +47,8 @@ import util.io.FileFormatException;
 import util.io.IOUtilities;
 import util.io.Mirror;
 import util.io.VerySimpleFormatter;
-
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.StringTokenizer;
-import java.util.Arrays;
-import java.util.logging.FileHandler;
-import java.util.logging.Handler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import devplugin.ChannelGroup;
+import devplugin.Date;
 
 /**
  * 
@@ -57,8 +57,7 @@ import java.util.logging.Logger;
  */
 public class PrimaryDataManager {
 
-  private static java.util.logging.Logger mLog
-    = java.util.logging.Logger.getLogger(PrimaryDataManager.class.getName());
+  private static final Logger mLog = Logger.getLogger(PrimaryDataManager.class.getName());
   
   private File mRawDir;
   private File mPreparedDir;

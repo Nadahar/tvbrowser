@@ -26,13 +26,13 @@ package tvbrowser.ui.tray;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.TrayIcon;
-import java.awt.TrayIcon.MessageType;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
 import javax.swing.JDialog;
@@ -54,8 +54,8 @@ import util.ui.UiUtilities;
  */
 public class Java6Tray {
   /** Logger */
-  private static java.util.logging.Logger mLog
-  = java.util.logging.Logger.getLogger(Java6Tray.class.getName());
+  private static final Logger mLog
+  = Logger.getLogger(Java6Tray.class.getName());
   
   private java.awt.SystemTray mSystemTray;
   private TrayIcon mTrayIcon;

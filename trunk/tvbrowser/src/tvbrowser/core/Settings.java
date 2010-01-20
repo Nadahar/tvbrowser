@@ -41,6 +41,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -111,7 +112,7 @@ public class Settings {
   public static final String PICTURE_ID = "picture.id";
   private static final short INFO_DIALOG_WAITING_TIME = 1500;
 
-  private static java.util.logging.Logger mLog = java.util.logging.Logger
+  private static final Logger mLog = Logger
       .getLogger(Settings.class.getName());
 
   private static DefaultSettings mDefaultSettings = new DefaultSettings();

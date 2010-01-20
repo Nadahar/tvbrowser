@@ -44,6 +44,7 @@ import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 import javax.swing.AbstractButton;
 import javax.swing.Action;
@@ -86,7 +87,7 @@ public class ToolBar extends JToolBar {
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer
       .getLocalizerFor(ToolBar.class);
 
-  private static java.util.logging.Logger mLog = java.util.logging.Logger
+  private static final Logger mLog = java.util.logging.Logger
   .getLogger(ToolBar.class.getName());
 
   public static final String ACTION_VALUE = "ActionValue";

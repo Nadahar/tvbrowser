@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.text.NumberFormat;
+import java.util.logging.Logger;
 
 import primarydatamanager.mirrorupdater.UpdateException;
 import util.io.IOUtilities;
@@ -41,8 +42,8 @@ import util.io.IOUtilities;
  */
 public class HttpDataSource implements DataSource {
 
-  private static java.util.logging.Logger mLog
-    = java.util.logging.Logger.getLogger(HttpDataSource.class.getName());
+  private static final Logger mLog
+    = Logger.getLogger(HttpDataSource.class.getName());
 
   private String mBaseUrl;
   

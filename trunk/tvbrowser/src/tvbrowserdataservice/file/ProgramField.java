@@ -36,6 +36,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
@@ -54,8 +55,8 @@ import devplugin.ProgramFieldType;
  */
 public class ProgramField implements Cloneable {
 
-    private static java.util.logging.Logger mLog
-            = java.util.logging.Logger.getLogger(ProgramField.class.getName());
+    private static final Logger mLog
+            = Logger.getLogger(ProgramField.class.getName());
 
     private static final String TEXT_CHARSET = "UTF-8";
 

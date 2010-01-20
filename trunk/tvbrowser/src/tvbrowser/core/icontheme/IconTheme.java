@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -49,7 +50,7 @@ abstract public class IconTheme {
   /** Base-Directory of the IconTheme */
   private File mIconBase;
   /** Logger */
-  private static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(IconTheme.class.getName());
+  private static final Logger mLog = Logger.getLogger(IconTheme.class.getName());
   /** Name and Comment */
   private String mThemeName, mThemeComment;
   /** Directory-Entries in the index.theme File*/

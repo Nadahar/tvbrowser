@@ -39,6 +39,7 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import tvbrowserdataservice.file.ChannelList;
 import tvbrowserdataservice.file.SummaryFile;
@@ -81,7 +82,7 @@ public class ChannelGroup implements devplugin.ChannelGroup {
    */
   private TvBrowserDataServiceSettings mSettings;
 
-  private static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(ChannelGroup.class.getName());
+  private static final Logger mLog = Logger.getLogger(ChannelGroup.class.getName());
 
   /** The localizer for this class. */
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer

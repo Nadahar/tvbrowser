@@ -48,7 +48,7 @@ public class Date implements Comparable<Date>, Serializable
    * mechanism should be reworked somehow. this field however should be made private with a
    * getter-setter-pair.
    */
-  public static Localizer LOCALIZER = util.ui.Localizer.getLocalizerFor(Date.class);
+  public static Localizer LOCALIZER = Localizer.getLocalizerFor(Date.class);
 
   /**
    * logger for this class.
@@ -62,7 +62,7 @@ public class Date implements Comparable<Date>, Serializable
   private static final HashMap<Integer, String> LONG_DATE_MAP = new HashMap<Integer, String>(28);
 
   /**
-   * this linits the size of LONG_DATE_MAP to prevent a potential mem leak. the size was
+   * this limits the size of LONG_DATE_MAP to prevent a potential mem leak. the size was
    * chosen quite random so its subject to change.
    */
   private static final byte DATE_CACHE_SIZE = 50;

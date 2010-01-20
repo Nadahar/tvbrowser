@@ -28,6 +28,7 @@ package primarydatamanager.mirrorupdater.data;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.text.NumberFormat;
+import java.util.logging.Logger;
 
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
@@ -43,8 +44,8 @@ import primarydatamanager.mirrorupdater.UpdateException;
  */
 public class FtpDataTarget implements DataTarget {
 
-  private static java.util.logging.Logger mLog
-    = java.util.logging.Logger.getLogger(FtpDataTarget.class.getName());
+  private static final Logger mLog
+    = Logger.getLogger(FtpDataTarget.class.getName());
 
   private FTPClient mFTPClient;
   private String mServerUrl;
