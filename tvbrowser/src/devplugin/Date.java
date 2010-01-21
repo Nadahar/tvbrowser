@@ -42,6 +42,13 @@ import util.ui.Localizer;
 public class Date implements Comparable<Date>, Serializable
 {
   /**
+   * for the serialization process. serialized objects with a different
+   * serial version uid will throw an exception during deserialization.
+   */
+  private static final long serialVersionUID = 1L;
+
+
+  /**
    * the localizer for the date.
    * TODO this field must not be final cause its set elsewhere. there was a problem during
    * startup and some objects where initialized before the locale was set. so the localizer
@@ -371,10 +378,10 @@ public class Date implements Comparable<Date>, Serializable
 
   /**
    * Writes this instance to a RandomAccessFile.
-   * 
-   * IMPORTANT: This is needed for writing Date to the 
+   *
+   * IMPORTANT: This is needed for writing Date to the
    *            tv data files and cannot be replaced with serialisation.
-   * 
+   *
    * @param out the file to write to
    * @throws IOException if something went wrong
    *
