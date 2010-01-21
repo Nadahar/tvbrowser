@@ -686,9 +686,10 @@ public class MixedDataService extends AbstractTvDataService{
     setMixedTextField(currentProgram, prog1, prog2, ProgramFieldType.DESCRIPTION_TYPE, mixFlags[5], System.getProperty("line.separator") +  System.getProperty("line.separator"));
     setMixedTextField(currentProgram, prog1, prog2, ProgramFieldType.ACTOR_LIST_TYPE, mixFlags[6]);
     setMixedTextField(currentProgram, prog1, prog2, ProgramFieldType.DIRECTOR_TYPE, mixFlags[7]);
-    if (prog2 != null && prog1.getTimeField(ProgramFieldType.START_TIME_TYPE) == prog2.getTimeField(ProgramFieldType.START_TIME_TYPE)){
-      setMixedTextField(currentProgram, prog1, prog2, ProgramFieldType.SHOWVIEW_NR_TYPE, mixFlags[8]);
-    }
+//  Showview not longer available
+//    if (prog2 != null && prog1.getTimeField(ProgramFieldType.START_TIME_TYPE) == prog2.getTimeField(ProgramFieldType.START_TIME_TYPE)){
+//      setMixedTextField(currentProgram, prog1, prog2, ProgramFieldType.SHOWVIEW_NR_TYPE, mixFlags[8]);
+//    }
     setMixedInfo(currentProgram, prog1, prog2, ProgramFieldType.INFO_TYPE, mixFlags[9]);
     setMixedIntField(currentProgram, prog1, prog2, ProgramFieldType.AGE_LIMIT_TYPE, mixFlags[10]);
     setMixedTextField(currentProgram, prog1, prog2, ProgramFieldType.URL_TYPE, mixFlags[11]);
