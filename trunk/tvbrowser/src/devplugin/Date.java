@@ -22,9 +22,9 @@
 package devplugin;
 
 import java.io.DataInput;
+import java.io.DataOutput;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.io.RandomAccessFile;
 import java.text.SimpleDateFormat;
@@ -584,7 +584,7 @@ public class Date implements Comparable<Date>
    * @throws IOException if something went wrong
    * @since 3.0
    */
-  public void writeObject(final ObjectOutput out) throws IOException
+  public void writeObject(final DataOutput out) throws IOException
   {
     //version for compatibility issues
     out.writeInt(3);
