@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -206,17 +205,6 @@ public final class ImdbPlugin extends Plugin {
 			dialog = new ImdbRatingsDialog((JFrame) dlgParent, program); 
 		}
     UiUtilities.centerAndShow(dialog);
-  }
-
-  private String ratingMessage(final String title, final ImdbRating rating) {
-    return mLocalizer.msg("ratingFor", "Rating for \"{0}\":", title)
-        + "\n"
-        + mLocalizer.msg("rating", "Rating: {0}", new DecimalFormat("##.#")
-            .format((double) rating.getRating() / 10)) + "\n"
-        + mLocalizer.msg("votes", "Votes: {0}", rating.getVotes()
-            + "\n"
-            + mLocalizer.msg("distribution", "Distribution: {0}", rating
-                .getDistribution()));
   }
 
   @Override
@@ -460,7 +448,9 @@ public final class ImdbPlugin extends Plugin {
 
   @Override
   public void onActivation() {
-    initializeDatabase();
+    if (mStartFinished && (mImdbDatabase == null)) {
+      initializeDatabase();
+    }
   }
 
   @Override
