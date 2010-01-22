@@ -27,12 +27,13 @@
 package tvdataservice;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.TimeZone;
 import java.util.Vector;
+import java.util.logging.Logger;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -60,8 +61,8 @@ import devplugin.ProgramFieldType;
  */
 public class MutableProgram implements Program {
 
-  private static java.util.logging.Logger mLog
-    = java.util.logging.Logger.getLogger(MutableProgram.class.getName());
+  private static final Logger mLog
+    = Logger.getLogger(MutableProgram.class.getName());
   
   private static TimeZone mLocalTimeZone = TimeZone.getDefault();
 
@@ -106,9 +107,6 @@ public class MutableProgram implements Program {
   /** The normalized start time of the program. (in the client's time zone) */
   private short mNormalizedStartTime;
   
-  /** Contains for a {@link ProgramFieldType} (key) the field value. */
-  private HashMap<ProgramFieldType,Object> mFieldHash;
-
   /** The state of this program */
   private byte mState;
   
@@ -117,6 +115,16 @@ public class MutableProgram implements Program {
   
   /** Contains the current mark priority of this program */
   private byte mMarkPriority = Program.NO_MARK_PRIORITY;
+
+  /**
+   * storage for INT and TIME fields
+   */
+  private int[] mIntValues;
+
+  /**
+   * storage for TEXT and BINARY fields
+   */
+  private Object[] mObjectValues;
 
   /**
    * Creates a new instance of MutableProgram.
@@ -157,7 +165,7 @@ public class MutableProgram implements Program {
    * @param isLoading If the program is currently loading.
    * @see #setProgramLoadingIsComplete()
    */
-  public MutableProgram(Channel channel, devplugin.Date localDate, boolean isLoading) {
+  public MutableProgram(final Channel channel, final devplugin.Date localDate, final boolean isLoading) {
     if (channel == null) {
       throw new NullPointerException("channel is null");
     }
@@ -165,7 +173,9 @@ public class MutableProgram implements Program {
       throw new NullPointerException("localDate is null");
     }
     
-    mFieldHash = new HashMap<ProgramFieldType,Object>(8);
+    mIntValues = new int[ProgramFieldType.getIntFieldCount()];
+    Arrays.fill(mIntValues, -1);
+    mObjectValues = new Object[ProgramFieldType.getObjectFieldCount()];
     mListenerList = null; // defer initialization until needed, to save memory
     mMarkerArr = EMPTY_MARKER_ARR;
     mIsLoading = isLoading;
@@ -184,7 +194,7 @@ public class MutableProgram implements Program {
   }
 
 
-  private void normalizeTimeZone(Date localDate, int localStartTime) {
+  private void normalizeTimeZone(final Date localDate, final int localStartTime) {
     TimeZone channelTimeZone=mChannel.getTimeZone();
 
     int timeZoneOffset=(mLocalTimeZone.getRawOffset()-channelTimeZone.getRawOffset())/ 60000 + mChannel.getTimeZoneCorrectionMinutes();
@@ -502,16 +512,18 @@ public class MutableProgram implements Program {
 
   // FieldHash
   public byte[] getBinaryField(ProgramFieldType type) {
-    return (byte[]) getField(type, ProgramFieldType.BINARY_FORMAT);
+    checkFormat(type, ProgramFieldType.BINARY_FORMAT);
+    return (byte[]) getObjectValueField(type);
   }
 
 
   public String getTextField(ProgramFieldType type) {
+    checkFormat(type, ProgramFieldType.TEXT_FORMAT);
     if(type == ProgramFieldType.TITLE_TYPE && mTitle != null && mTitle.trim().length() > 0) {
       return mTitle;
     }
     
-    String value = (String) getField(type, ProgramFieldType.TEXT_FORMAT);
+    String value = (String) getObjectValueField(type);
 
     if (type == ProgramFieldType.SHORT_DESCRIPTION_TYPE) {
       value = validateShortInfo(value);
@@ -521,13 +533,18 @@ public class MutableProgram implements Program {
   }
 
 
-  public int getIntField(ProgramFieldType type) {
-    Integer value = (Integer) getField(type, ProgramFieldType.INT_FORMAT);
-    if (value == null) {
-      return -1;
-    } else {
-      return value.intValue();
-    }
+  /**
+   * access method to object field values. this allows ondemand programs to reimplement the access
+   * @param type
+   * @return
+   */
+  protected Object getObjectValueField(final ProgramFieldType type) {
+    return mObjectValues[type.getStorageIndex()];
+  }
+
+  public int getIntField(final ProgramFieldType type) {
+    checkFormat(type, ProgramFieldType.INT_FORMAT);
+    return mIntValues[type.getStorageIndex()];
   }
 
 
@@ -539,7 +556,7 @@ public class MutableProgram implements Program {
    * @return The value of the field as String or <code>null</code>, if there is
    *         no value for this field.
    */
-  public String getIntFieldAsString(ProgramFieldType type) {
+  public String getIntFieldAsString(final ProgramFieldType type) {
     int value = getIntField(type);
     if (value == -1) {
       return null;
@@ -549,13 +566,9 @@ public class MutableProgram implements Program {
   }
 
 
-  public int getTimeField(ProgramFieldType type) {
-    Integer value = (Integer) getField(type, ProgramFieldType.TIME_FORMAT);
-    if (value == null) {
-      return -1;
-    } else {
-      return value.intValue();
-    }
+  public int getTimeField(final ProgramFieldType type) {
+    checkFormat(type, ProgramFieldType.TIME_FORMAT);
+    return mIntValues[type.getStorageIndex()];
   }
 
 
@@ -566,7 +579,7 @@ public class MutableProgram implements Program {
    * @return The value of the field as String or <code>null</code>, if there is
    *         no value for this field.
    */
-  public String getTimeFieldAsString(ProgramFieldType type) {
+  public String getTimeFieldAsString(final ProgramFieldType type) {
     int value = getTimeField(type);
     if (value == -1) {
       return null;
@@ -594,33 +607,74 @@ public class MutableProgram implements Program {
     }
   }
 
-
-  protected Object getField(ProgramFieldType type, int fieldFormat) {
-    if (type.getFormat() != fieldFormat) {
-      throw new IllegalArgumentException("The field " + type.getName()
-        + " can't be read as " + ProgramFieldType.getFormatName(fieldFormat)
-        + ", because it is " + ProgramFieldType.getFormatName(type.getFormat()));
-    }
-
-    if(mState == IS_VALID_STATE) {
-      synchronized (mFieldHash) {
-        return mFieldHash.get(type);
-      }
-    }
-    else {
-      mLog.info("Access to not valid program: " + toString());
-      return null;
-    }
-  }
-
-
   /**
    * Gets the number of fields this program has.
    *
    * @return the number of fields this program has.
    */
   public int getFieldCount() {
-    return mFieldHash.size();
+    int count = 0;
+    for (int i = 0; i < mIntValues.length; i++) {
+      if (mIntValues[i] != -1) {
+        count++;
+      }
+    }
+    for (int i = 0; i < mObjectValues.length; i++) {
+      if (mObjectValues[i] != null) {
+        count++;
+      }
+    }
+    return count;
+  }
+  
+  private class ProgramFieldIterator implements Iterator<ProgramFieldType> {
+    private int mIndex;
+    private ArrayList<ProgramFieldType> mFieldTypes;
+
+    public ProgramFieldIterator(final MutableProgram program) {
+      mFieldTypes = new ArrayList<ProgramFieldType>(20);
+      for (Iterator<ProgramFieldType> iterator = ProgramFieldType.getTypeIterator(); iterator.hasNext();) {
+        ProgramFieldType fieldType = iterator.next();
+        int format = fieldType.getFormat();
+        if (format == ProgramFieldType.INT_FORMAT) {
+          if (program.getIntField(fieldType) != -1) {
+            mFieldTypes.add(fieldType);
+          }
+        }
+        else if (format == ProgramFieldType.TIME_FORMAT) {
+          if (program.getTimeField(fieldType) != -1) {
+            mFieldTypes.add(fieldType);
+          }
+        }
+        else if (format == ProgramFieldType.TEXT_FORMAT) {
+          if (program.getTextField(fieldType) != null) {
+            mFieldTypes.add(fieldType);
+          }
+        }
+        else if (format == ProgramFieldType.BINARY_FORMAT) {
+          if (program.getBinaryField(fieldType) != null) {
+            mFieldTypes.add(fieldType);
+          }
+        }
+      }
+      mIndex = 0;
+    }
+
+    @Override
+    public boolean hasNext() {
+      return mIndex < mFieldTypes.size();
+    }
+
+    @Override
+    public ProgramFieldType next() {
+      return mFieldTypes.get(mIndex++);
+    }
+
+    @Override
+    public void remove() {
+      // not implemented
+    }
+    
   }
 
 
@@ -630,7 +684,7 @@ public class MutableProgram implements Program {
    * @return an iterator over {@link ProgramFieldType}s.
    */
   public Iterator<ProgramFieldType> getFieldIterator() {
-    return mFieldHash.keySet().iterator();
+    return new ProgramFieldIterator(this);
   }
 
   /**
@@ -640,7 +694,25 @@ public class MutableProgram implements Program {
    * @param value The binary value to set.
    */
   public void setBinaryField(ProgramFieldType type, byte[] value) {
-    setField(type, ProgramFieldType.BINARY_FORMAT, value);
+    checkFormat(type, ProgramFieldType.BINARY_FORMAT);
+    setObjectValueField(type, value);
+    notifyChangedStatus();
+  }
+
+  protected void setObjectValueField(ProgramFieldType type, Object value) {
+    synchronized (mObjectValues) {
+      mObjectValues[type.getStorageIndex()] = value;
+    }
+  }
+
+  private void notifyChangedStatus() {
+    try {
+      if(!mIsLoading) {
+        ((MutableChannelDayProgram)TvDataBase.getInstance().getDayProgram(getDate(),getChannel())).setWasChangedByPlugin();
+      }
+    }catch(Exception e) {}
+
+    fireStateChanged();
   }
 
   /**
@@ -649,17 +721,39 @@ public class MutableProgram implements Program {
    * @param type The type of the field.
    * @param value The text value to set.
    */
-  public void setTextField(ProgramFieldType type, String value) {
+  public void setTextField(final ProgramFieldType type, String inValue) {
+    checkFormat(type, ProgramFieldType.TEXT_FORMAT);
+
     // Special field treating
     if (type == ProgramFieldType.SHORT_DESCRIPTION_TYPE) {
-      value = validateShortInfo(value);
+      inValue = validateShortInfo(inValue);
     }
-    // filter all the duplicate origin fields
-    if (type == ProgramFieldType.ORIGIN_TYPE || type == ProgramFieldType.GENRE_TYPE) {
-      setField(type, ProgramFieldType.TEXT_FORMAT, StringPool.getString(value));
+    String value;
+    // filter all the duplicate origin or other fields
+    if (inValue != null && inValue.equals("")) {
+      value = StringPool.getString("");
+    }
+    else if (type == ProgramFieldType.ORIGIN_TYPE || type == ProgramFieldType.GENRE_TYPE) {
+      value = StringPool.getString(inValue);
     }
     else {
-      setField(type, ProgramFieldType.TEXT_FORMAT, value);
+      value = inValue;
+    }
+
+    if (type == ProgramFieldType.TITLE_TYPE && value instanceof String) {
+      mTitle = (String)value;
+    }
+    
+    setObjectValueField(type, value);
+
+    notifyChangedStatus();
+  }
+
+  private void checkFormat(final ProgramFieldType type, final int format) {
+    if (type.getFormat() != format) {
+      throw new IllegalArgumentException("The field " + type.getName()
+        + " can't be accessed as " + ProgramFieldType.getFormatName(format)
+        + ", because it is " + ProgramFieldType.getFormatName(type.getFormat()));
     }
   }
 
@@ -671,17 +765,19 @@ public class MutableProgram implements Program {
    * @param value The int value to set.
    */
   public void setIntField(ProgramFieldType type, int value) {
+    checkFormat(type, ProgramFieldType.INT_FORMAT);
+    
     if (type == ProgramFieldType.RATING_TYPE && (value < 0 || (value > 100))) {
       mLog.warning("The value for field " + type.getName()
         + " must be between in [0..100], but it was set to " + value+"; program: "+toString());
       value = -1;
     }
 
-    Integer obj = null;
-    if (value != -1) {
-      obj = value;
+    synchronized (mIntValues) {
+      mIntValues[type.getStorageIndex()] = value;
     }
-    setField(type, ProgramFieldType.INT_FORMAT, obj);
+
+    notifyChangedStatus();
   }
 
 
@@ -692,54 +788,22 @@ public class MutableProgram implements Program {
    * @param value The time value to set.
    */
   public void setTimeField(ProgramFieldType type, int value) {
+    checkFormat(type, ProgramFieldType.TIME_FORMAT);
+    
     if ((value < 0) || (value >= (24 * 60))) {
       mLog.warning("The time value for field " + type.getName()
         + " must be between in [0..1439], but it was set to " + value+"; program: "+toString());
     }
 
-    Integer obj = null;
-    if (value != -1) {
-      obj = value;
+    synchronized (mIntValues) {
+      mIntValues[type.getStorageIndex()] = value;
     }
-    setField(type, ProgramFieldType.TIME_FORMAT, obj);
 
+    notifyChangedStatus();
+    
     if (type == ProgramFieldType.START_TIME_TYPE) {
       normalizeTimeZone(mLocalDate, value);
     }
-  }
-
-
-  protected void setField(ProgramFieldType type, int fieldFormat, Object value) {
-    if (type.getFormat() != fieldFormat) {
-      throw new IllegalArgumentException("The field " + type.getName()
-        + " can't be written as " + ProgramFieldType.getFormatName(fieldFormat)
-        + ", because it is " + ProgramFieldType.getFormatName(type.getFormat()));
-    }
-    
-    if (type == ProgramFieldType.TITLE_TYPE && value instanceof String) {
-      mTitle = (String)value;
-    }
-    
-    synchronized (mFieldHash) {
-      if (value == null) {
-        mFieldHash.remove(type);
-      } else {
-        if (value.equals("")) {
-          mFieldHash.put(type, StringPool.getString(""));
-        }
-        else {
-          mFieldHash.put(type, value);
-        }
-      }
-    }
-
-    try {
-      if(!mIsLoading) {
-        ((MutableChannelDayProgram)TvDataBase.getInstance().getDayProgram(getDate(),getChannel())).setWasChangedByPlugin();
-      }
-    }catch(Exception e) {}
-
-    fireStateChanged();
   }
 
   /**
@@ -1017,16 +1081,23 @@ public class MutableProgram implements Program {
     if (!equals(program)) {
       return false;
     }
-    if (mFieldHash.size() != program.mFieldHash.size()) {
+    if (!Arrays.equals(mIntValues, program.mIntValues)) {
       return false;
     }
-    Iterator<ProgramFieldType> it = mFieldHash.keySet().iterator();
-    while (it.hasNext()) {
-      ProgramFieldType fieldType = it.next();
-      Object thisValue = getField(fieldType, fieldType.getFormat());
-      Object otherValue = program.getField(fieldType, fieldType.getFormat());
-      if (!thisValue.equals(otherValue)) {
+    for (int i = 0; i < mObjectValues.length; i++) {
+      if ((mObjectValues[i] == null) != (program.mObjectValues[i] == null)) {
         return false;
+      }
+    }
+    for (Iterator<ProgramFieldType> iterator = ProgramFieldType.getTypeIterator(); iterator.hasNext();) {
+      ProgramFieldType fieldType = iterator.next();
+      int format = fieldType.getFormat();
+      if (format == ProgramFieldType.TEXT_FORMAT || format == ProgramFieldType.BINARY_FORMAT) {
+        Object thisValue = getObjectValueField(fieldType);
+        Object otherValue = program.getObjectValueField(fieldType);
+        if (thisValue!= null && !thisValue.equals(otherValue)) {
+          return false;
+        }
       }
     }
     return true;
@@ -1129,9 +1200,18 @@ public class MutableProgram implements Program {
     mMarkPriority = (byte) markPriority;
   }
 
-  public boolean hasFieldValue(ProgramFieldType type) {
-    synchronized (mFieldHash) {
-      return mFieldHash.get(type) != null;
+  public boolean hasFieldValue(final ProgramFieldType type) {
+    int format = type.getFormat();
+    if (format == ProgramFieldType.INT_FORMAT || format == ProgramFieldType.TIME_FORMAT) {
+      synchronized (mIntValues) {
+        return mIntValues[type.getStorageIndex()] != -1;
+      }
     }
+    else if (format == ProgramFieldType.TEXT_FORMAT || format == ProgramFieldType.BINARY_FORMAT) {
+      synchronized (mObjectValues) {
+        return mObjectValues[type.getStorageIndex()] != null;
+      }
+    }
+    return false;
   }
 }
