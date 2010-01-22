@@ -27,6 +27,7 @@ package tvbrowser.core.data;
 
 import java.lang.ref.SoftReference;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import tvdataservice.MutableProgram;
 import devplugin.Channel;
@@ -40,8 +41,8 @@ import devplugin.ProgramFieldType;
 public class OnDemandProgram extends MutableProgram {
 
   /** The logger for this class. */
-  private static java.util.logging.Logger mLog
-    = java.util.logging.Logger.getLogger(OnDemandProgram.class.getName());
+  private static final Logger mLog
+    = Logger.getLogger(OnDemandProgram.class.getName());
 
   /**
    * The Object that represents null-values in the cache. Used to distinct
@@ -62,8 +63,8 @@ public class OnDemandProgram extends MutableProgram {
    * @param channel The channel object of this program.
    * @param localDate The date of this program.
    */
-  public OnDemandProgram(Channel channel, devplugin.Date localDate,
-    OnDemandDayProgramFile onDemandFile)
+  public OnDemandProgram(final Channel channel, final devplugin.Date localDate,
+    final OnDemandDayProgramFile onDemandFile)
   {
     super(channel, localDate, true);
     
@@ -71,19 +72,24 @@ public class OnDemandProgram extends MutableProgram {
   }
 
 
-  public void setLargeField(ProgramFieldType type, long position) {
+  public void setLargeField(final ProgramFieldType type, final long position) {
     OnDemandValue onDemandValue = new OnDemandValue(position);
     
     if (type == ProgramFieldType.TITLE_TYPE) {
       mTitle = String.valueOf(onDemandValue.getValue(ProgramFieldType.TITLE_TYPE));
     }
     
-    super.setField(type, type.getFormat(), onDemandValue);
+    super.setObjectValueField(type, onDemandValue);
   }
 
 
-  protected Object getField(ProgramFieldType type, int fieldFormat) {
-    Object value = super.getField(type, fieldFormat);
+  /* 
+   * override the object access of MutableProgram to be able to load the values on demand only
+   * @see tvdataservice.MutableProgram#getObjectValueField(devplugin.ProgramFieldType)
+   */
+  @Override
+  protected Object getObjectValueField(final ProgramFieldType type) {
+    Object value = super.getObjectValueField(type);
     
     if (value instanceof OnDemandValue) {
       // If the value is from a large field then load it if needed
@@ -93,7 +99,7 @@ public class OnDemandProgram extends MutableProgram {
       return value;
     }
   }
-
+  
 
   private class OnDemandValue {
     
