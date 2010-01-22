@@ -24,9 +24,9 @@ package devplugin;
 import java.io.DataInput;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.io.RandomAccessFile;
-import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -39,15 +39,8 @@ import util.ui.Localizer;
  *
  * @author Martin Oberhauser
  */
-public class Date implements Comparable<Date>, Serializable
+public class Date implements Comparable<Date>
 {
-  /**
-   * for the serialization process. serialized objects with a different
-   * serial version uid will throw an exception during deserialization.
-   */
-  private static final long serialVersionUID = 1L;
-
-
   /**
    * the localizer for the date.
    * TODO this field must not be final cause its set elsewhere. there was a problem during
@@ -195,7 +188,7 @@ public class Date implements Comparable<Date>, Serializable
    * @param in the input to read from
    * @throws IOException if the stream could not be read
    * @throws ClassNotFoundException if the date could not be restored
-   * @deprecated since 3.0, use the serialisation mechanism instead
+   * @deprecated since 3.0
    */
   @Deprecated
   public Date(final ObjectInputStream in) throws IOException, ClassNotFoundException {
@@ -386,7 +379,9 @@ public class Date implements Comparable<Date>, Serializable
    * @throws IOException if something went wrong
    *
    * @since 2.2
+   * @deprecated since 3.0
    */
+  @Deprecated
   public void writeToDataFile(final RandomAccessFile out) throws IOException {
     out.writeInt(3); // version
     out.writeShort(mYear);
@@ -399,7 +394,7 @@ public class Date implements Comparable<Date>, Serializable
    *
    * @param out the stream to write to
    * @throws IOException if something went wrong
-   * @deprecated since 3.0, use the serialisation mechanism instead
+   * @deprecated since 3.0
    */
   @Deprecated
   public void writeData(final ObjectOutputStream out) throws IOException {
@@ -583,13 +578,13 @@ public class Date implements Comparable<Date>, Serializable
 
 
   /**
-   * writes this object to a stream. called by the serialization process.
+   * writes this object to a stream.
    *
    * @param out the stream to write to
    * @throws IOException if something went wrong
    * @since 3.0
    */
-  private void writeObject(final ObjectOutputStream out) throws IOException
+  public void writeObject(final ObjectOutput out) throws IOException
   {
     //version for compatibility issues
     out.writeInt(3);
@@ -597,43 +592,5 @@ public class Date implements Comparable<Date>, Serializable
     out.writeShort(mYear);
     out.writeByte(mMonth);
     out.writeByte(mDay);
-  }
-
-
-  /**
-   * reads this object from a stream. called by the serialization process.
-   *
-   * @param in the stream to read from
-   * @throws IOException if something went wrong
-   * @throws ClassNotFoundException if the format was not readable
-   * @since 3.0
-   */
-  private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException
-  {
-    //version for compatibility issues
-    int version = in.readInt();
-    if (version == 1)
-    {
-      int date = in.readInt();
-      long l = (long) date * 24 * 60 * 60 * 1000;
-      java.util.Date d = new java.util.Date(l);
-      Calendar mCalendar = Calendar.getInstance();
-      mCalendar.setTime(d);
-      mYear = (short) mCalendar.get(Calendar.YEAR);
-      mMonth = (byte) (mCalendar.get(Calendar.MONTH) + 1);
-      mDay = (byte) mCalendar.get(Calendar.DAY_OF_MONTH);
-    }
-    else if (version == 2)
-    {
-      mYear = (short) in.readInt();
-      mMonth = (byte) in.readInt();
-      mDay = (byte) in.readInt();
-    }
-    else
-    {
-      mYear = in.readShort();
-      mMonth = in.readByte();
-      mDay = in.readByte();
-    }
   }
 }
