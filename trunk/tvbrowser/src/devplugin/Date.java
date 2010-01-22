@@ -25,7 +25,6 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.RandomAccessFile;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -155,7 +154,9 @@ public class Date implements Comparable<Date>
    * @throws IOException if the stream could not be read
    * @throws ClassNotFoundException if the date could not be restored
    * @since 2.2
+   * @deprecated since 3.0. use readData instead.
    */
+  @Deprecated
   public Date(final DataInput in) throws IOException, ClassNotFoundException {
     int version = in.readInt();
     if (version == 1) { // currently, version==3 is used
@@ -188,7 +189,7 @@ public class Date implements Comparable<Date>
    * @param in the input to read from
    * @throws IOException if the stream could not be read
    * @throws ClassNotFoundException if the date could not be restored
-   * @deprecated since 3.0
+   * @deprecated since 3.0, use readData instead
    */
   @Deprecated
   public Date(final ObjectInputStream in) throws IOException, ClassNotFoundException {
@@ -379,7 +380,7 @@ public class Date implements Comparable<Date>
    * @throws IOException if something went wrong
    *
    * @since 2.2
-   * @deprecated since 3.0
+   * @deprecated since 3.0, use writeData instead
    */
   @Deprecated
   public void writeToDataFile(final RandomAccessFile out) throws IOException {
@@ -388,22 +389,6 @@ public class Date implements Comparable<Date>
     out.writeByte(mMonth);
     out.writeByte(mDay);
   }
-
-  /**
-   * Writes this instance to a stream.
-   *
-   * @param out the stream to write to
-   * @throws IOException if something went wrong
-   * @deprecated since 3.0
-   */
-  @Deprecated
-  public void writeData(final ObjectOutputStream out) throws IOException {
-    out.writeInt(3); // version
-    out.writeShort(mYear);
-    out.writeByte(mMonth);
-    out.writeByte(mDay);
-  }
-
 
   /**
    * A hash code implementation that returns the same code for equal Dates.
@@ -578,19 +563,55 @@ public class Date implements Comparable<Date>
 
 
   /**
-   * writes this object to a stream.
+   * Writes this instance to a DataOutput.
    *
-   * @param out the stream to write to
+   * @param out the output to write to
    * @throws IOException if something went wrong
-   * @since 3.0
    */
-  public void writeObject(final DataOutput out) throws IOException
-  {
-    //version for compatibility issues
-    out.writeInt(3);
-    //date
+  public void writeData(final DataOutput out) throws IOException {
+    out.writeInt(3); // version
     out.writeShort(mYear);
     out.writeByte(mMonth);
     out.writeByte(mDay);
+  }
+
+
+  /**
+   * reads an instance from a DataInput.
+   *
+   * @param in the input to read from
+   * @return the new created instance
+   * @throws IOException if somethin went wrong
+   */
+  public static Date readData(final DataInput in) throws IOException
+  {
+    int version = in.readInt();
+    short year;
+    byte month;
+    byte day;
+    if (version == 1) {
+      // currently, version==3 is used
+      int date = in.readInt();
+      long l = (long) date * 24 * 60 * 60 * 1000;
+      java.util.Date d = new java.util.Date(l);
+      Calendar mCalendar = Calendar.getInstance();
+      mCalendar.setTime(d);
+      year = (short) mCalendar.get(Calendar.YEAR);
+      month = (byte) (mCalendar.get(Calendar.MONTH) + 1);
+      day = (byte) mCalendar.get(Calendar.DAY_OF_MONTH);
+    }
+    else if (version == 2)
+    {
+      year = (short) in.readInt();
+      month = (byte) in.readInt();
+      day = (byte) in.readInt();
+    }
+    else
+    {
+      year = in.readShort();
+      month = in.readByte();
+      day = in.readByte();
+    }
+    return new Date(year, month, day);
   }
 }
