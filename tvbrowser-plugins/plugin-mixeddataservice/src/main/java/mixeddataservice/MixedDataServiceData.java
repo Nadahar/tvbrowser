@@ -10,8 +10,6 @@ import java.util.TimeZone;
 import javax.swing.ImageIcon;
 import javax.swing.Icon;
 
-import util.tvdataservice.ProgramDispatcher;
-
 import devplugin.Channel;
 
 import java.net.URL;
@@ -26,7 +24,6 @@ public class MixedDataServiceData {
 //private static final Logger mLog = java.util.logging.Logger.getLogger(MixedDataServiceData.class.getName());
 
   private HashMap<String, Channel> channels = new HashMap<String, Channel>(); // ID - Channel
-  private ProgramDispatcher dispatcher = new ProgramDispatcher(); // takes the programs
   private MixedDataService mService;
 
   /**
@@ -148,7 +145,7 @@ public class MixedDataServiceData {
     File file = new File(mService.mDataDir + "/icons/" + channelId + ".png");
     if (file.canRead()) {
       try {
-        iconUrl = file.toURL();
+        iconUrl = file.toURI().toURL();
       } catch (MalformedURLException e) {
       }
     }
@@ -176,10 +173,4 @@ public class MixedDataServiceData {
     return newChannels.toArray(new Channel[newChannels.size()]);
   }
 
-  /**
-   * @return TV-Browsers program dispatcher for this data service
-   */
-  public ProgramDispatcher getDispatcher() {
-    return dispatcher;
-  }
 }
