@@ -1033,9 +1033,6 @@ public class NextViewDataService extends AbstractTvDataService {
     }
     setMixedTextField(currentProgram, altProg, ProgramFieldType.ACTOR_LIST_TYPE, mixFlags[6]);
     setMixedTextField(currentProgram, altProg, ProgramFieldType.DIRECTOR_TYPE, mixFlags[7]);
-    if (currentProgram.getTimeField(ProgramFieldType.START_TIME_TYPE) == altProg.getTimeField(ProgramFieldType.START_TIME_TYPE)){
-      setMixedTextField(currentProgram, altProg, ProgramFieldType.SHOWVIEW_NR_TYPE, mixFlags[8]);
-    }
     setMixedInfo(currentProgram, altProg, ProgramFieldType.INFO_TYPE, mixFlags[9]);
     setMixedIntField(currentProgram, altProg, ProgramFieldType.AGE_LIMIT_TYPE, mixFlags[10]);
     setMixedTextField(currentProgram, altProg, ProgramFieldType.URL_TYPE, mixFlags[11]);
