@@ -27,7 +27,6 @@ import java.util.TimeZone;
 import javax.swing.ImageIcon;
 import javax.swing.Icon;
 
-import util.tvdataservice.ProgramDispatcher;
 
 import devplugin.Channel;
 
