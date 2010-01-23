@@ -1057,6 +1057,7 @@ public class NextViewDataService extends AbstractTvDataService {
     setMixedTextField(currentProgram, altProg, ProgramFieldType.ADDITIONAL_PERSONS_TYPE, mixFlags[26]);
     setMixedIntField(currentProgram, altProg, ProgramFieldType.RATING_TYPE, mixFlags[27]);
     if (version >= 300) {
+      setMixedTextField(currentProgram, altProg, ProgramFieldType.CUSTOM_TYPE, mixFlags[8], System.getProperty("line.separator") +  System.getProperty("line.separator"));
       setMixedTextField(currentProgram, altProg, ProgramFieldType.PRODUCTION_COMPANY_TYPE, mixFlags[28]);
     }
   }
