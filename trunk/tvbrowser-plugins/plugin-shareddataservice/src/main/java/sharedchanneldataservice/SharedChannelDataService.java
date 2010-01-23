@@ -608,7 +608,6 @@ public class SharedChannelDataService extends AbstractTvDataService{
       setTextField(newProgram, alienProg, ProgramFieldType.DESCRIPTION_TYPE);
       setTextField(newProgram, alienProg, ProgramFieldType.ACTOR_LIST_TYPE);
       setTextField(newProgram, alienProg, ProgramFieldType.DIRECTOR_TYPE);
-      setTextField(newProgram, alienProg, ProgramFieldType.SHOWVIEW_NR_TYPE);
       setInfo(newProgram, alienProg, ProgramFieldType.INFO_TYPE);
       setIntField(newProgram, alienProg, ProgramFieldType.AGE_LIMIT_TYPE);
       setTextField(newProgram, alienProg, ProgramFieldType.URL_TYPE);
@@ -633,6 +632,7 @@ public class SharedChannelDataService extends AbstractTvDataService{
       setTextField(newProgram, alienProg, ProgramFieldType.ADDITIONAL_PERSONS_TYPE);
       setIntField(newProgram, alienProg, ProgramFieldType.RATING_TYPE);
       if (version >= 300) {
+        setTextField(newProgram, alienProg, ProgramFieldType.CUSTOM_TYPE);
         setTextField(newProgram, alienProg, ProgramFieldType.PRODUCTION_COMPANY_TYPE);
       }
 
@@ -646,24 +646,24 @@ public class SharedChannelDataService extends AbstractTvDataService{
       switch (cutInfo) { 
       case 0: // Custom Information before
         if (alienProg.getStartTime() + alienProg.getLength() > maxEnd) {
-          if (newProgram.getTextField(ProgramFieldType.SHOWVIEW_NR_TYPE) == null) {
+          if (newProgram.getTextField(ProgramFieldType.CUSTOM_TYPE) == null) {
             prevText = "";
             infoText = mLocalizer.msg("missingEnd", "Missing End", alienProg.getStartTime() + alienProg.getLength() - maxEnd);
           } else {
-            prevText = newProgram.getTextField(ProgramFieldType.SHOWVIEW_NR_TYPE);
+            prevText = newProgram.getTextField(ProgramFieldType.CUSTOM_TYPE);
             infoText = mLocalizer.msg("missingEnd", "Missing End", alienProg.getStartTime() + alienProg.getLength() - maxEnd) + System.getProperty("line.separator");
           }
-          newProgram.setTextField(ProgramFieldType.SHOWVIEW_NR_TYPE, infoText + prevText);
+          newProgram.setTextField(ProgramFieldType.CUSTOM_TYPE, infoText + prevText);
         }
         if (alienProg.getStartTime() < minStart) {
-          if (newProgram.getTextField(ProgramFieldType.SHOWVIEW_NR_TYPE) == null) {
+          if (newProgram.getTextField(ProgramFieldType.CUSTOM_TYPE) == null) {
             prevText = "";
             infoText = mLocalizer.msg("missingStart", "Missing Start", (minStart - alienProg.getStartTime()));
           } else {
-            prevText = newProgram.getTextField(ProgramFieldType.SHOWVIEW_NR_TYPE);
+            prevText = newProgram.getTextField(ProgramFieldType.CUSTOM_TYPE);
             infoText = mLocalizer.msg("missingStart", "Missing Start", (minStart - alienProg.getStartTime())) + System.getProperty("line.separator");
           }
-          newProgram.setTextField(ProgramFieldType.SHOWVIEW_NR_TYPE, infoText + prevText);
+          newProgram.setTextField(ProgramFieldType.CUSTOM_TYPE, infoText + prevText);
         }
         break;
 
@@ -746,27 +746,41 @@ public class SharedChannelDataService extends AbstractTvDataService{
 
 
       case 4: // Custom Information after
-        if (alienProg.getStartTime() < minStart) {
-          if (newProgram.getTextField(ProgramFieldType.SHOWVIEW_NR_TYPE) == null) {
-            prevText = "";
-            infoText = mLocalizer.msg("missingStart", "Missing Start", (minStart - alienProg.getStartTime()));
-          } else {
-            prevText = newProgram.getTextField(ProgramFieldType.SHOWVIEW_NR_TYPE);
-            infoText = System.getProperty("line.separator") + mLocalizer.msg("missingStart", "Missing Start", (minStart - alienProg.getStartTime()));
-          }
-          newProgram.setTextField(ProgramFieldType.SHOWVIEW_NR_TYPE, prevText + infoText);
-        }
-        if (alienProg.getStartTime() + alienProg.getLength() > maxEnd) {
-          if (newProgram.getTextField(ProgramFieldType.SHOWVIEW_NR_TYPE) == null) {
-            prevText = "";
-            infoText = mLocalizer.msg("missingEnd", "Missing End", alienProg.getStartTime() + alienProg.getLength() - maxEnd);
-          } else {
-            prevText = newProgram.getTextField(ProgramFieldType.SHOWVIEW_NR_TYPE);
-            infoText = System.getProperty("line.separator") + mLocalizer.msg("missingEnd", "Missing End", alienProg.getStartTime() + alienProg.getLength() - maxEnd);
-          }
-          newProgram.setTextField(ProgramFieldType.SHOWVIEW_NR_TYPE, prevText + infoText);
-        }
-        break;
+        if (version >= 300) {
+			if (alienProg.getStartTime() < minStart) {
+				if (newProgram.getTextField(ProgramFieldType.CUSTOM_TYPE) == null) {
+					prevText = "";
+					infoText = mLocalizer.msg("missingStart", "Missing Start",
+							(minStart - alienProg.getStartTime()));
+				} else {
+					prevText = newProgram
+							.getTextField(ProgramFieldType.CUSTOM_TYPE);
+					infoText = System.getProperty("line.separator")
+							+ mLocalizer.msg("missingStart", "Missing Start",
+									(minStart - alienProg.getStartTime()));
+				}
+				newProgram.setTextField(ProgramFieldType.CUSTOM_TYPE, prevText
+						+ infoText);
+			}
+			if (alienProg.getStartTime() + alienProg.getLength() > maxEnd) {
+				if (newProgram.getTextField(ProgramFieldType.CUSTOM_TYPE) == null) {
+					prevText = "";
+					infoText = mLocalizer.msg("missingEnd", "Missing End",
+							alienProg.getStartTime() + alienProg.getLength()
+									- maxEnd);
+				} else {
+					prevText = newProgram
+							.getTextField(ProgramFieldType.CUSTOM_TYPE);
+					infoText = System.getProperty("line.separator")
+							+ mLocalizer.msg("missingEnd", "Missing End",
+									alienProg.getStartTime()
+											+ alienProg.getLength() - maxEnd);
+				}
+				newProgram.setTextField(ProgramFieldType.CUSTOM_TYPE, prevText
+						+ infoText);
+			}
+		}
+		break;
 
       case 5: // Description Field after
         if (alienProg.getStartTime() < minStart) {
