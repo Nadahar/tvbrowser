@@ -47,12 +47,14 @@ import checkerplugin.check.ModerationCheck;
 import checkerplugin.check.NetPlayTimeCheck;
 import checkerplugin.check.NewCheck;
 import checkerplugin.check.PersonsCheck;
+import checkerplugin.check.PrintableCharactersCheck;
 import checkerplugin.check.RepetitionCheck;
 import checkerplugin.check.SeriesEpisodeCheck;
 import checkerplugin.check.SeriesNumberCheck;
 import checkerplugin.check.ShortDescriptionLengthCheck;
 import checkerplugin.check.TextFieldFormatCheck;
 import checkerplugin.check.TitleFormatCheck;
+import checkerplugin.check.UnknownProgramCheck;
 import checkerplugin.check.UrlCheck;
 import devplugin.ActionMenu;
 import devplugin.Channel;
@@ -93,8 +95,8 @@ public class CheckerPlugin extends Plugin {
   private static final AbstractCheck[] ALL_CHECKS = new AbstractCheck[] { new ArticleCheck(),
       new DescriptionRepetitionCheck(), new DurationCheck(), new EllipsisCheck(), new EmptyLinesCheck(),
       new FormatCheck(), new GenreCategoryCheck(), new LiveCheck(), new ModerationCheck(), new NetPlayTimeCheck(),
-      new NewCheck(), new PersonsCheck(), new RepetitionCheck(), new SeriesEpisodeCheck(), new SeriesNumberCheck(),
-      new ShortDescriptionLengthCheck(), new TextFieldFormatCheck(), new TitleFormatCheck(), new UrlCheck() };
+      new NewCheck(), new PersonsCheck(), new PrintableCharactersCheck(), new RepetitionCheck(), new SeriesEpisodeCheck(), new SeriesNumberCheck(),
+      new ShortDescriptionLengthCheck(), new TextFieldFormatCheck(), new TitleFormatCheck(), new UnknownProgramCheck(), new UrlCheck() };
 
   public PluginInfo getInfo() {
     if (mPluginInfo == null) {

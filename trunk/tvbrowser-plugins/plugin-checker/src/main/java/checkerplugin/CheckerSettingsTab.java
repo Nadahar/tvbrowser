@@ -36,7 +36,7 @@ public class CheckerSettingsTab implements SettingsTab {
   .getLocalizerFor(CheckerSettingsTab.class);
 
 
-  private JCheckBox mAutoStart;
+  private JCheckBox mAutoStart = null;
   private CheckerSettings mSettings;
 
   public CheckerSettingsTab(final CheckerSettings settings) {
@@ -60,7 +60,7 @@ public class CheckerSettingsTab implements SettingsTab {
 
   @Override
   public String getTitle() {
-    // TODO Auto-generated method stub
+    // not used for plugin settings tabs
     return null;
   }
 
