@@ -16,27 +16,25 @@
  */
 package checkerplugin.check;
 
-import java.util.Iterator;
+import java.util.ArrayList;
 
 import devplugin.Program;
 import devplugin.ProgramFieldType;
 
 public class ArticleCheck extends AbstractCheck {
 
-  private static final String[] ARTICLES = new String[] {", Der", ", Die", ", Das", ", The", ", A"};
+  private static final String[] ARTICLES = new String[] { ", Der", ", Die", ", Das", ", The", ", A" };
+
+  private static final ArrayList<ProgramFieldType> TEXT_FIELDS = getFieldTypes(ProgramFieldType.TEXT_FORMAT);
 
   @Override
   protected void doCheck(final Program program) {
-    final Iterator<ProgramFieldType> it = ProgramFieldType.getTypeIterator();
-    while (it.hasNext()) {
-      final ProgramFieldType fieldType = it.next();
-      if (fieldType.getFormat() == ProgramFieldType.TEXT_FORMAT) {
-        final String content = program.getTextField(fieldType);
-        if (content != null) {
-          for (String article : ARTICLES) {
-            if (content.endsWith(article)) {
-              addError(mLocalizer.msg("article", "Field {0} ends with article", fieldType.getLocalizedName()));
-            }
+    for (ProgramFieldType fieldType : TEXT_FIELDS) {
+      final String content = program.getTextField(fieldType);
+      if (content != null) {
+        for (String article : ARTICLES) {
+          if (content.endsWith(article)) {
+            addError(mLocalizer.msg("article", "Field {0} ends with article", fieldType.getLocalizedName()));
           }
         }
       }

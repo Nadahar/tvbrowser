@@ -16,7 +16,7 @@
  */
 package checkerplugin.check;
 
-import java.util.Iterator;
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,64 +31,54 @@ public class TextFieldFormatCheck extends AbstractCheck {
   private static final Pattern MISSING_WHITE_PATTERN = Pattern
       .compile("\\s\\p{Lower}+\\p{Upper}");
 
+  private static final ArrayList<ProgramFieldType> TEXT_FIELDS = getFieldTypes(ProgramFieldType.TEXT_FORMAT);
+  
 	@Override
 	protected void doCheck(final Program program) {
-		final Iterator<ProgramFieldType> it = ProgramFieldType.getTypeIterator();
-		while (it.hasNext()) {
-			final ProgramFieldType fieldType = it.next();
-			if (fieldType.getFormat() == ProgramFieldType.TEXT_FORMAT) {
-				final String content = program.getTextField(fieldType);
-				if (content != null) {
-					if (content.trim().length() < content.length()) {
-						if (content.trim().length() == 0) {
-							addError(mLocalizer.msg("whitespaceOnly",
-									"Text field {0} contains only whitespace.", fieldType
-											.getLocalizedName()));
-						} else {
-							addError(mLocalizer.msg("trim",
-									"Text field {0} has whitespace at beginning or end.",
-									fieldType.getLocalizedName()));
-						}
-					}
-					Matcher matcher = HTML_PATTERN.matcher(content);
-					if (matcher.find()) {
-						addError(mLocalizer.msg("entity",
-								"Text field {0} contains HTML entity: {1}", fieldType
-										.getLocalizedName(), matcher.group()));
-					}
-					if (fieldType != ProgramFieldType.ACTOR_LIST_TYPE
-							&& fieldType != ProgramFieldType.DIRECTOR_TYPE
-							&& fieldType != ProgramFieldType.CAMERA_TYPE
-							&& fieldType != ProgramFieldType.CUTTER_TYPE
-							&& fieldType != ProgramFieldType.MODERATION_TYPE
-							&& fieldType != ProgramFieldType.ADDITIONAL_PERSONS_TYPE) {
-						if (MISSING_WHITE_PATTERN.matcher(content).find()) {
-							addWarning(mLocalizer.msg("missingWhitespace",
-									"Text field {0} probably misses whitespace.", fieldType
-											.getLocalizedName()));
-						}
-					}
-					int closing = 0;
-					int opening = 0;
-					for (int i = 0; i < content.length(); i++) {
-						if (content.charAt(i) == '(') {
-							opening++;
-						} else if (content.charAt(i) == ')') {
-							closing++;
-						}
-					}
-					if (closing != opening) {
-						addError(mLocalizer.msg("braces",
-								"Opening and closing braces don't match in {0}.", fieldType
-										.getLocalizedName()));
-					}
-					if (content.contains("\\-")) {
-						addError(mLocalizer.msg("dash", "Escaped dash in {0}.",
-								fieldType.getLocalizedName()));
-					}
-				}
-			}
-		}
+    for (ProgramFieldType fieldType : TEXT_FIELDS) {
+      final String content = program.getTextField(fieldType);
+      if (content != null) {
+        int length = content.length();
+        if (content.trim().length() < length) {
+          if (content.trim().length() == 0) {
+            addError(mLocalizer.msg("whitespaceOnly", "Text field {0} contains only whitespace.", fieldType
+                .getLocalizedName()));
+          } else {
+            addError(mLocalizer.msg("trim", "Text field {0} has whitespace at beginning or end.", fieldType
+                .getLocalizedName()));
+          }
+        }
+        Matcher matcher = HTML_PATTERN.matcher(content);
+        if (matcher.find()) {
+          addError(mLocalizer.msg("entity", "Text field {0} contains HTML entity: {1}", fieldType.getLocalizedName(),
+              matcher.group()));
+        }
+        if (fieldType != ProgramFieldType.ACTOR_LIST_TYPE && fieldType != ProgramFieldType.DIRECTOR_TYPE
+            && fieldType != ProgramFieldType.CAMERA_TYPE && fieldType != ProgramFieldType.CUTTER_TYPE
+            && fieldType != ProgramFieldType.MODERATION_TYPE && fieldType != ProgramFieldType.ADDITIONAL_PERSONS_TYPE) {
+          if (MISSING_WHITE_PATTERN.matcher(content).find()) {
+            addWarning(mLocalizer.msg("missingWhitespace", "Text field {0} probably misses whitespace.", fieldType
+                .getLocalizedName()));
+          }
+        }
+        int closing = 0;
+        int opening = 0;
+        for (int i = 0; i < length; i++) {
+          if (content.charAt(i) == '(') {
+            opening++;
+          } else if (content.charAt(i) == ')') {
+            closing++;
+          }
+        }
+        if (closing != opening) {
+          addError(mLocalizer.msg("braces", "Opening and closing braces don't match in {0}.", fieldType
+              .getLocalizedName()));
+        }
+        if (content.contains("\\-")) {
+          addError(mLocalizer.msg("dash", "Escaped dash in {0}.", fieldType.getLocalizedName()));
+        }
+      }
+	  }
 	}
 
 }

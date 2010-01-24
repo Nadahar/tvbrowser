@@ -17,11 +17,13 @@
 package checkerplugin.check;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import checkerplugin.ErrorIssue;
 import checkerplugin.Issue;
 import checkerplugin.WarningIssue;
 import devplugin.Program;
+import devplugin.ProgramFieldType;
 
 /**
  * @author bananeweizen
@@ -46,5 +48,17 @@ public abstract class AbstractCheck {
 	public void check(final Program program, final ArrayList<Issue> issues) {
 		mIssues = issues;
 		doCheck(program);
+	}
+	
+	protected static ArrayList<ProgramFieldType> getFieldTypes(final int format) {
+	  ArrayList<ProgramFieldType> result = new ArrayList<ProgramFieldType>(); 
+    final Iterator<ProgramFieldType> it = ProgramFieldType.getTypeIterator();
+    while (it.hasNext()) {
+      final ProgramFieldType fieldType = it.next();
+      if (fieldType.getFormat() == format) {
+        result.add(fieldType);
+      }
+    }
+    return result;
 	}
 }

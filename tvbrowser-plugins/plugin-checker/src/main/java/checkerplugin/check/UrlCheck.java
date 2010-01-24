@@ -26,7 +26,7 @@ public class UrlCheck extends AbstractCheck {
     final String url = program.getTextField(ProgramFieldType.URL_TYPE);
     if (url != null) {
       if (url.isEmpty()) {
-      	addError("URL length is zero.");
+      	addError(mLocalizer.msg("urlEmpty", "URL length is zero."));
       } else {
         if (!Character.isLetterOrDigit(url.charAt(0))) {
           addError(mLocalizer.msg("urlFormat",

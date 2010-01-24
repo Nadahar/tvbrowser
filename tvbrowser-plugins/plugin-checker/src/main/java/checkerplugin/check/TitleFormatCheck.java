@@ -23,20 +23,23 @@ public class TitleFormatCheck extends AbstractCheck {
 	@Override
 	protected void doCheck(final Program program) {
 		final String title = program.getTitle();
-		if (title.indexOf('\n') >= 0) {
+		int length = title.length();
+    if (title.indexOf('\n') >= 0) {
 			addError(mLocalizer.msg("linebreak",
 					"Title contains line break."));
 		} else {
-			for (int i = 0; i < title.length(); i++) {
-				if (Character.isWhitespace(title.charAt(i)) && (title.charAt(i) != ' ')) {
+			for (int i = 0; i < length; i++) {
+				char c = title.charAt(i);
+        if (Character.isWhitespace(c) && (c != ' ')) {
 					addError(mLocalizer.msg("whitespace",
 							"Title contains white space which is no space character."));
+					break;
 				}
 			}
 		}
-		if (title.length() >= 2) {
-			char lastChar = title.charAt(title.length() - 1);
-			if (title.charAt(title.length() - 2) == ' '
+		if (length >= 2) {
+			char lastChar = title.charAt(length - 1);
+			if (title.charAt(length - 2) == ' '
 					&& !Character.isLetterOrDigit(lastChar) && lastChar != '?'
 					&& lastChar != '!') {
 				addWarning(mLocalizer.msg("titleEnd",
