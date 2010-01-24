@@ -25,21 +25,21 @@ import devplugin.ContextMenuAction;
  * @author bananeweizen
  *
  */
-public class HideGenreAction extends ContextMenuAction {
+class HideGenreAction extends ContextMenuAction {
 
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(HideGenreAction.class);
 
-  private String genre;
+  private final String mGenre;
 
-  public HideGenreAction(final String genre) {
-    this.genre = genre;
+  HideGenreAction(final String genre) {
+    mGenre = genre;
     setText(mLocalizer.msg("label","Hide genre"));
     setSmallIcon(GenrePlugin.getInstance().createImageIcon("actions", "list-remove", 16));
   }
 
   @Override
   public void actionPerformed(final ActionEvent event) {
-    GenrePlugin.getInstance().hideGenre(genre);
+    GenrePlugin.getInstance().hideGenre(mGenre);
     GenrePlugin.getInstance().updateRootNode();
   }
 

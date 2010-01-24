@@ -49,7 +49,7 @@ import devplugin.SettingsTab;
  * @author bananeweizen
  *
  */
-public final class GenreSettingsTab implements SettingsTab {
+class GenreSettingsTab implements SettingsTab {
 
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(GenreSettingsTab.class);
   private GenrePlugin mPlugin;
@@ -61,7 +61,7 @@ public final class GenreSettingsTab implements SettingsTab {
   private JButton mRemoveFilter;
   private JCheckBox mUnifyBraces;
 
-  public GenreSettingsTab(final GenrePlugin plugin,
+  GenreSettingsTab(final GenrePlugin plugin,
       final ArrayList<String> hiddenGenres, final GenreSettings settings) {
     mPlugin = plugin;
     mListModel = new DefaultListModel();
