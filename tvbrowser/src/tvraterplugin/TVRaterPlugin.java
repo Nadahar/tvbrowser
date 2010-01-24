@@ -443,12 +443,8 @@ public class TVRaterPlugin extends devplugin.Plugin {
         return false;
       }
 
-      Iterator<Program> it = Plugin.getPluginManager().getChannelDayProgram(
-          program.getDate(), channel);
-
       Program last = null;
-
-      while ((it != null) && (it.hasNext())) {
+      for (Iterator<Program> it = Plugin.getPluginManager().getChannelDayProgram(program.getDate(), channel); it.hasNext();) {
         last = it.next();
       }
 
@@ -489,12 +485,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
     Date currentDate = getPluginManager().getCurrentDate();
     final Channel[] channels = getPluginManager().getSubscribedChannels();
     for (Channel channel : channels) {
-      final Iterator<Program> iter = getPluginManager().getChannelDayProgram(
-          currentDate, channel);
-      if (null == iter) {
-        continue;
-      }
-      while (iter.hasNext()) {
+      for (Iterator<Program> iter = getPluginManager().getChannelDayProgram(currentDate, channel); iter.hasNext();) {
         Program prog = iter.next();
         if (getRating(prog) != null) {
           prog.validateMarking();
@@ -579,9 +570,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
     Date date = Date.getCurrentDate();
     for (int d = 0; d < 31; d++) {
       for (Channel channel : channels) {
-        Iterator<Program> it = Plugin.getPluginManager().getChannelDayProgram(
-            date, channel);
-        while ((it != null) && (it.hasNext())) {
+        for (Iterator<Program> it = Plugin.getPluginManager().getChannelDayProgram(date, channel); it.hasNext();) {
           Program program = it.next();
           if (program != null) {
             String title = program.getTitle();

@@ -50,10 +50,10 @@ public class ElgatoConnection implements SimpleConnectionIf {
     /**
      * Logger
      */
-    private static Logger mLog = Logger.getLogger(ElgatoConnection.class.getName());
+    private static final Logger mLog = Logger.getLogger(ElgatoConnection.class.getName());
 
     /** AppleScript Runner */
-    private AppleScriptRunner mAppleScript = new AppleScriptRunner();
+    private final AppleScriptRunner mAppleScript = new AppleScriptRunner();
 
     /** Script to get the Channelllist */
     private static final String CHANNELLIST = "set chList to {}\n"
@@ -223,22 +223,17 @@ public class ElgatoConnection implements SimpleConnectionIf {
                 Channel chan = conf.getChannelForExternalId(channel);
 
                 if (chan != null) {
-                    Iterator<Program> it = CapturePlugin.getPluginManager()
-                            .getChannelDayProgram(date, chan);
+                  for (Iterator<Program> it = CapturePlugin.getPluginManager().getChannelDayProgram(date, chan); it.hasNext();) {
+                    Program prog = it.next();
 
-                    if (it != null) {
-                      while (it.hasNext()) {
-                          Program prog = it.next();
-
-                          if ((prog.getHours() == hour)
-                                  && (prog.getMinutes() == min)
-                                  && (prog.getTitle().trim().toLowerCase()
-                                          .equals(title.trim().toLowerCase()))) {
-                              programs.add(prog);
-                              mProgramMapping.put(prog, id);
-                          }
-                      }
+                    if ((prog.getHours() == hour)
+                            && (prog.getMinutes() == min)
+                            && (prog.getTitle().trim().toLowerCase()
+                                    .equals(title.trim().toLowerCase()))) {
+                        programs.add(prog);
+                        mProgramMapping.put(prog, id);
                     }
+                  }
                 }
 
             } catch (Exception e) {

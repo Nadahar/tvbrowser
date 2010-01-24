@@ -125,26 +125,19 @@ public class JobFactory {
 
   private static void addProgramToList(ArrayList<Program> progList, Date date, Channel channel, int startHour, int endHour, ProgramFilter filter) {
     // add programs of the current day
-    Iterator<Program> it = Plugin.getPluginManager().getChannelDayProgram(date,channel);
-    
-    if (it!=null) {
-      while (it.hasNext()) {
-        Program prog = it.next();
-        if (prog.getHours()>=startHour && prog.getHours()<endHour && filter.accept(prog)) {
-          progList.add(prog);
-        }
+    for (Iterator<Program> it = Plugin.getPluginManager().getChannelDayProgram(date,channel); it.hasNext();) {
+      Program prog = it.next();
+      if (prog.getHours()>=startHour && prog.getHours()<endHour && filter.accept(prog)) {
+        progList.add(prog);
       }
     }
 
     // add programs of the next day
     if (endHour>=24) {
-      it = Plugin.getPluginManager().getChannelDayProgram(date.addDays(1),channel);
-      if (it!=null) {
-        while (it.hasNext()) {
-          Program prog = it.next();
-          if (prog.getHours() < endHour-24 && filter.accept(prog)) {
-            progList.add(prog);
-          }
+      for (Iterator<Program> it = Plugin.getPluginManager().getChannelDayProgram(date.addDays(1),channel); it.hasNext();) {
+        Program prog = it.next();
+        if (prog.getHours() < endHour-24 && filter.accept(prog)) {
+          progList.add(prog);
         }
       }
     }

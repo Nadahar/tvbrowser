@@ -132,19 +132,17 @@ public class DreamboxChannelHandler extends DefaultHandler {
 
             Iterator<Program> itCurrProg = DreamboxDataService.getPluginManager().getChannelDayProgram(newDayProg.getDate(), mChannel);
             Iterator<Program> itNewProg = newDayProg.getPrograms();
-            if (itCurrProg != null && itNewProg != null) {
-                update = false;
-                while (itCurrProg.hasNext() && itNewProg.hasNext()) {
-                    MutableProgram currProg = (MutableProgram) itCurrProg.next();
-                    MutableProgram newProg = (MutableProgram) itNewProg.next();
-                    if (!currProg.equalsAllFields(newProg)) {
-                        update = true;
-                    }
-                }
-                // not the same number of programs ?
-                if (itCurrProg.hasNext() != itNewProg.hasNext()) {
+            update = false;
+            while (itCurrProg.hasNext() && itNewProg.hasNext()) {
+                MutableProgram currProg = (MutableProgram) itCurrProg.next();
+                MutableProgram newProg = (MutableProgram) itNewProg.next();
+                if (!currProg.equalsAllFields(newProg)) {
                     update = true;
                 }
+            }
+            // not the same number of programs ?
+            if (itCurrProg.hasNext() != itNewProg.hasNext()) {
+                update = true;
             }
             if (update) {
                 updateManager.updateDayProgram(newDayProg);

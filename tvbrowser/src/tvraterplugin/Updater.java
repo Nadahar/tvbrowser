@@ -435,8 +435,7 @@ public class Updater implements Progress {
     date = date.addDays(-1);
     for (int d = 0; d < 32; d++) {
       for (int i = 0; i < channels.length; i++) {
-        Iterator<Program> it = Plugin.getPluginManager().getChannelDayProgram(date, channels[i]);
-        while ((it != null) && (it.hasNext())) {
+        for (Iterator<Program> it = Plugin.getPluginManager().getChannelDayProgram(date, channels[i]); it.hasNext();) {
           Program program = it.next();
           if ((program != null) && _tvraterPlugin.isProgramRateable(program)) {
             if (!table.containsKey(program.getTitle())) {
