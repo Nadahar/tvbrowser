@@ -43,7 +43,6 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JPopupMenu;
 
-import devplugin.Version;
 import tvbrowser.TVBrowser;
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.Settings;
@@ -81,6 +80,7 @@ import devplugin.ProgramReceiveTarget;
 import devplugin.ProgramSearcher;
 import devplugin.ThemeIcon;
 import devplugin.TvBrowserSettings;
+import devplugin.Version;
 
 /**
  * The implementation of the PluginManager interface. This class is the
@@ -136,6 +136,27 @@ public class PluginManagerImpl implements PluginManager {
    /** The logger for this class */
   private static final Logger mLog
     = Logger.getLogger(PluginManagerImpl.class.getName());
+
+  /**
+   * empty program iterator for return when no matching day program is available
+   */
+  private static final Iterator<Program> EMPTY_ITERATOR = new Iterator<Program>() {
+
+    @Override
+    public boolean hasNext() {
+      return false;
+    }
+
+    @Override
+    public Program next() {
+      return null;
+    }
+
+    @Override
+    public void remove() {
+      // empty
+    }
+  };
 
   private static PluginManagerImpl mInstance;
   
@@ -319,14 +340,14 @@ public class PluginManagerImpl implements PluginManager {
    *
    * @param date The date of the programs.
    * @param channel The channel of the programs.
-   * @return an Iterator for all programs of one day and channel or
-   *         <code>null</code> if the requested data is not available.
+   * @return an Iterator for all programs of one day and channel.<br>
+   * If the requested data is not available, the iterator is empty, but not <code>null</code>.
    */
   public Iterator<Program> getChannelDayProgram(Date date, Channel channel) {
     ChannelDayProgram channelDayProgram = TvDataBase.getInstance()
         .getDayProgram(date, channel);
     if (channelDayProgram == null) {
-      return null;
+      return EMPTY_ITERATOR;
     }
     return channelDayProgram.getPrograms();
   }

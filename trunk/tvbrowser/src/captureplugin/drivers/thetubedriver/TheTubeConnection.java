@@ -23,13 +23,13 @@ public class TheTubeConnection implements SimpleConnectionIf {
   /**
     * Logger
     */
-   private static Logger mLog = Logger.getLogger(TheTubeConnection.class.getName());
+   private static final Logger mLog = Logger.getLogger(TheTubeConnection.class.getName());
 
 
   /**
    * AppleScript Runner
    */
-  private AppleScriptRunner mAppleScript = new AppleScriptRunner();
+  private final AppleScriptRunner mAppleScript = new AppleScriptRunner();
 
   private final static String CHANNELLIST = "set chList to {}\n"
       +
@@ -246,18 +246,13 @@ public class TheTubeConnection implements SimpleConnectionIf {
             Channel chan = conf.getChannelForExternalId(channel);
 
             if (chan != null) {
-                Iterator<Program> it = CapturePlugin.getPluginManager()
-                        .getChannelDayProgram(date, chan);
+              for (Iterator<Program> it = CapturePlugin.getPluginManager().getChannelDayProgram(date, chan); it.hasNext();) {
+                Program prog = it.next();
 
-                if (it != null) {
-                  while (it.hasNext()) {
-                      Program prog = it.next();
-
-                      if ((prog.getHours() == hour) && (prog.getMinutes() == min)) {
-                          programs.add(prog);
-                      }
-                  }
+                if ((prog.getHours() == hour) && (prog.getMinutes() == min)) {
+                  programs.add(prog);
                 }
+              }
             }
 
         } catch (Exception e) {

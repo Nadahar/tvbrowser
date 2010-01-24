@@ -26,6 +26,7 @@
 package tvdataservice;
 
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 import util.program.ProgramUtilities;
 import devplugin.Channel;
@@ -43,7 +44,7 @@ import devplugin.Program;
 public class MutableChannelDayProgram implements ChannelDayProgram {
 
   /** Logger */
-  private static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(MutableChannelDayProgram.class
+  private static final Logger mLog = Logger.getLogger(MutableChannelDayProgram.class
       .getName());
 
   /** The date of this program list. */

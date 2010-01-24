@@ -296,21 +296,19 @@ public class DreamboxConnector {
                     for (int i=0;i<=days;i++) {
                         Iterator<Program> it = Plugin.getPluginManager()
                                     .getChannelDayProgram(new Date(runner), tvbchannel);
-                        if (it != null) {
-                            boolean found = false;
+                        boolean found = false;
 
-                            while (it.hasNext() && !found) {
-                                Program prog = it.next();
-                                int progTime = prog.getHours() * 60 + prog.getMinutes() + (i*24*60);
+                        while (it.hasNext() && !found) {
+                            Program prog = it.next();
+                            int progTime = prog.getHours() * 60 + prog.getMinutes() + (i*24*60);
 
-                                if (progTime >= beginMinutes - 15 &&
-                                    progTime <= endMinutes + 15
-                                    && prog.getTitle().trim().equalsIgnoreCase(timer.get("e2name").trim())
-                                    ) {
+                            if (progTime >= beginMinutes - 15 &&
+                                progTime <= endMinutes + 15
+                                && prog.getTitle().trim().equalsIgnoreCase(timer.get("e2name").trim())
+                                ) {
 
-                                    found = true;
-                                    programs.add(new ProgramTime(prog, begin.getTime(), end.getTime()));
-                                }
+                                found = true;
+                                programs.add(new ProgramTime(prog, begin.getTime(), end.getTime()));
                             }
                         }
 

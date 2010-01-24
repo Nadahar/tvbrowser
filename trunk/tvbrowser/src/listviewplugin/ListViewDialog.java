@@ -226,7 +226,7 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
       } else {
         Iterator<Program> it = Plugin.getPluginManager().getChannelDayProgram(date, channel);
 
-        if ((it != null) && (it.hasNext())) {
+        if (it.hasNext()) {
           Program p = it.next();
           
           if (p.getStartTime() > time && mCurrentFilter.accept(p)) {
@@ -241,7 +241,7 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
         if(nprg == null) {
           it = Plugin.getPluginManager().getChannelDayProgram(date.addDays(1), channel);
           
-          while((it != null) && (it.hasNext()) && nprg == null) {
+          while(it.hasNext() && nprg == null) {
             Program p = it.next();
             
             if(mCurrentFilter.accept(p)) {
@@ -267,11 +267,11 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
     Program nprg = null;
     boolean last = false;
 
-    while ((it != null) && (it.hasNext())) {
+    while (it.hasNext()) {
       Program p = it.next();
 
       if (prg.equals(p) && it.hasNext()) {
-        while((it != null) && it.hasNext()) {
+        while (it.hasNext()) {
           Program test = it.next();
           
           if(mCurrentFilter.accept(test)) {
@@ -288,7 +288,7 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
     if (last) {
       it = Plugin.getPluginManager().getChannelDayProgram(prg.getDate().addDays(1), prg.getChannel());
 
-      while ((it != null) && (it.hasNext())) {
+      while (it.hasNext()) {
         Program p = it.next();
         
         if(mCurrentFilter.accept(p)) {
@@ -310,8 +310,7 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
    * @return added a Program
    */
   private Program findProgram(Date date, int time, Channel channel, boolean next) {
-    Iterator<Program> it = Plugin.getPluginManager().getChannelDayProgram(date, channel);
-    while ((it != null) && (it.hasNext())) {
+    for (Iterator<Program> it = Plugin.getPluginManager().getChannelDayProgram(date, channel); it.hasNext();) {
       Program program = it.next();
 
       int start = program.getStartTime();
