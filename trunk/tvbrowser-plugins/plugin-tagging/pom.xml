@@ -44,12 +44,9 @@
   </build>
   <dependencies>
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.tvbrowser</groupId>
       <artifactId>tvbrowser</artifactId>
+      <version>3.0-SNAPSHOT</version>
     </dependency>
   </dependencies>
 </project>

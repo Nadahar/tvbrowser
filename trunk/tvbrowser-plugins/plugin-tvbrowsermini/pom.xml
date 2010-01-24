@@ -56,22 +56,18 @@
   </build>
   <dependencies>
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.tvbrowser</groupId>
       <artifactId>tvbrowser</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>sqlitejdbc</groupId>
+      <artifactId>sqlitejdbc</artifactId>
+      <version>0.54</version>
     </dependency>
     <!-- 
     The sqlite jar is not available on the net. Therefore you need to add it to your local repository.
     In Eclipse, select the jar file in the package explorer then use Import->Maven->Install or deploy an artifact to a Maven repository.
     Set group and artifact to "sqlitejdbc", version to the exact version string used below.
     -->
-    <dependency>
-      <groupId>sqlitejdbc</groupId>
-      <artifactId>sqlitejdbc</artifactId>
-      <version>0.54</version>
-    </dependency>
   </dependencies>
 </project>
