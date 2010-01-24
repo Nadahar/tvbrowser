@@ -25,6 +25,7 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.RandomAccessFile;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -390,6 +391,21 @@ public class Date implements Comparable<Date>
     out.writeByte(mDay);
   }
 
+  /**
+   * Writes this instance to a stream.
+   * 
+   * @param out the stream to write to
+   * @throws IOException if something went wrong
+   * @deprecated since 3.0
+   */
+  @Deprecated
+  public void writeData(final ObjectOutputStream out) throws IOException {
+    out.writeInt(3); // version
+    out.writeShort(mYear);
+    out.writeByte(mMonth);
+    out.writeByte(mDay);
+  }
+  
   /**
    * A hash code implementation that returns the same code for equal Dates.
    * @return the hash code
