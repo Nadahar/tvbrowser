@@ -29,7 +29,6 @@ import javax.swing.Action;
 
 import util.ui.Localizer;
 import devplugin.Channel;
-import devplugin.ChannelDayProgram;
 import devplugin.Date;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
@@ -78,6 +77,9 @@ public class GenrePlugin extends Plugin {
 
   private boolean mStartFinished = false;
 
+  /**
+   * constructor, called from core
+   */
   public GenrePlugin() {
     super();
     instance = this;
@@ -108,11 +110,6 @@ public class GenrePlugin extends Plugin {
   public PluginTreeNode getRootNode() {
     if (mRootNode == null) {
       mRootNode = new PluginTreeNode(this);
-      loadRootNode(mRootNode);
-      mRootNode.getMutableTreeNode().setShowLeafCountEnabled(true);
-      if (mRootNode.isEmpty()) {
-        updateRootNode(true);
-      }
     }
     return mRootNode;
   }
@@ -142,50 +139,47 @@ public class GenrePlugin extends Plugin {
     final int maxDays = mSettings.getDays();
     for (int days = 0; days < maxDays; days++) {
       for (int i = 0; i < channels.length; ++i) {
-        final Iterator<Program> iter = devplugin.Plugin.getPluginManager()
-            .getChannelDayProgram(date, channels[i]);
-        if (iter != null) {
-          while (iter.hasNext()) {
-            final Program prog = iter.next();
-            String genreField = prog.getTextField(ProgramFieldType.GENRE_TYPE);
-            if (genreField != null) {
-              // some programs have buggy fields with brackets
-              if (genreField.startsWith("(") && genreField.endsWith(")")) {
-                genreField = genreField.substring(1, genreField.length() - 1);
+        for (Iterator<Program> iter = devplugin.Plugin.getPluginManager()
+            .getChannelDayProgram(date, channels[i]); iter.hasNext();) {
+          final Program prog = iter.next();
+          String genreField = prog.getTextField(ProgramFieldType.GENRE_TYPE);
+          if (genreField != null) {
+            // some programs have buggy fields with brackets
+            if (genreField.startsWith("(") && genreField.endsWith(")")) {
+              genreField = genreField.substring(1, genreField.length() - 1);
+            }
+            // remove sub genres in braces
+            if (mSettings.getUnifyBraceGenres()) {
+              int brace = genreField.indexOf('(');
+              if (brace > 0) {
+                genreField = genreField.substring(0, brace).trim();
               }
-              // remove sub genres in braces
-              if (mSettings.getUnifyBraceGenres()) {
-                int brace = genreField.indexOf('(');
-                if (brace > 0) {
-                  genreField = genreField.substring(0, brace).trim();
-                }
-              }
-              // some programs have multiple genres in the field
-              final String[] genres = genreField.split(",|/");
-              for (int genreIndex = 0; genreIndex < genres.length; genreIndex++) {
-                String genre = genres[genreIndex].trim();
-                // fix genres ending in dash
-                if (genre.endsWith("-")) {
-                  if (genreIndex < genres.length - 1) {
-                    for (String suffix : GENRE_SUFFIX) {
-                      if (genres[genreIndex + 1].endsWith(suffix)) {
-                        genre = genre.substring(0, genre.length() - 1).trim() + suffix;
-                        break;
-                      }
+            }
+            // some programs have multiple genres in the field
+            final String[] genres = genreField.split(",|/");
+            for (int genreIndex = 0; genreIndex < genres.length; genreIndex++) {
+              String genre = genres[genreIndex].trim();
+              // fix genres ending in dash
+              if (genre.endsWith("-")) {
+                if (genreIndex < genres.length - 1) {
+                  for (String suffix : GENRE_SUFFIX) {
+                    if (genres[genreIndex + 1].endsWith(suffix)) {
+                      genre = genre.substring(0, genre.length() - 1).trim() + suffix;
+                      break;
                     }
                   }
                 }
-                if (genre.length() >= MIN_GENRE_LENGTH && !hiddenGenres.contains(genre)) {
-                  PluginTreeNode node = genreNodes.get(genre);
-                  if (node == null) {
-                    node = new PluginTreeNode(genre);
-                    formatGenreNode(maxDays, node);
-                    genreNodes.put(genre, node);
-                    currentGenres.add(genre);
-                  }
-                  node.addProgramWithoutCheck(prog);
-                  progCount++;
+              }
+              if (genre.length() >= MIN_GENRE_LENGTH && !hiddenGenres.contains(genre)) {
+                PluginTreeNode node = genreNodes.get(genre);
+                if (node == null) {
+                  node = new PluginTreeNode(genre);
+                  formatGenreNode(maxDays, node);
+                  genreNodes.put(genre, node);
+                  currentGenres.add(genre);
                 }
+                node.addProgramWithoutCheck(prog);
+                progCount++;
               }
             }
           }
@@ -254,6 +248,14 @@ public class GenrePlugin extends Plugin {
   @Override
   public void handleTvBrowserStartFinished() {
     mStartFinished  = true;
+    loadRootNode(mRootNode);
+    mRootNode.getMutableTreeNode().setShowLeafCountEnabled(true);
+    if (mRootNode.isEmpty()) {
+      updateRootNode(true);
+    }
+    else {
+      mRootNode.update();
+    }
   }
 
   public ThemeIcon getMarkIconFromTheme() {
@@ -279,7 +281,7 @@ public class GenrePlugin extends Plugin {
     return mSettings.storeSettings();
   }
 
-  public void hideGenre(final String genre) {
+  protected void hideGenre(final String genre) {
     if (!hiddenGenres.contains(genre)) {
       hiddenGenres.add(genre);
     }
@@ -320,14 +322,6 @@ public class GenrePlugin extends Plugin {
     final PluginTreeNode[] children = node.getChildren();
     for (PluginTreeNode child : children) {
       formatGenreNode(maxDays, child);
-    }
-  }
-
-  @Override
-  public void handleTvDataDeleted(final ChannelDayProgram oldProg) {
-    if (oldProg != null) {
-      final Channel channel = oldProg.getChannel();
-      final Date date = oldProg.getDate();
     }
   }
 

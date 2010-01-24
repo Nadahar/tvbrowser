@@ -25,14 +25,14 @@ import util.settings.PropertyBasedSettings;
  * @author bananeweizen
  *
  */
-public final class GenreSettings extends PropertyBasedSettings {
+class GenreSettings extends PropertyBasedSettings {
 
   private final static String SETTINGS_DAYS = "days";
   private final static String FILTERED_GENRE = "filteredGenre";
   private final static String FILTERED_GENRES_COUNT = "filteredGenresCount";
   private static final String UNIFY_BRACE_GENRES = "unifyBraces";
 
-  public GenreSettings(final Properties properties) {
+  GenreSettings(final Properties properties) {
     super(properties);
   }
 
