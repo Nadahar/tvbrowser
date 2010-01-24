@@ -886,20 +886,31 @@ public class ProgramTextCreator {
             String line = lines[i];
             for (String tag : tags) {
               if (line.toLowerCase().startsWith(tag)
-                  || line.toLowerCase().startsWith(tag + ":")) {
-                String persons = line.substring(tag.length(), line.length())
+                  || line.toLowerCase().startsWith(tag + ':')) {
+                String personsString = line.substring(tag.length(), line.length())
                     .trim();
-                if (persons.startsWith(":")) {
-                  persons = persons.substring(1).trim();
+                if (personsString.startsWith(":")) {
+                  personsString = personsString.substring(1).trim();
                 }
-                if (persons.endsWith(".")) {
-                  persons = persons.substring(0, persons.length() - 1).trim();
+                if (personsString.endsWith(".")) {
+                  personsString = personsString.substring(0, personsString.length() - 1).trim();
                 }
-                for (String person : persons.split(" und ")) {
-                  int partCount = person.split(" ").length;
-                  if (partCount >= 2 && partCount < 4) {
-                    text = text.replaceFirst(person, addSearchLink(person));
+                String[] persons = personsString.split(" und ");
+                boolean doLink = true;
+                for (String person : persons) {
+                  if (person.isEmpty() || Character.isLowerCase(person.charAt(0))) {
+                    doLink = false;
+                    break;
                   }
+                }
+                if (doLink) {
+                  for (String person : persons) {
+                    int partCount = person.split(" ").length;
+                    if (partCount >= 2 && partCount < 4) {
+                      text = text.replaceFirst(person, addSearchLink(person));
+                    }
+                  }
+                  break;
                 }
               }
             }
