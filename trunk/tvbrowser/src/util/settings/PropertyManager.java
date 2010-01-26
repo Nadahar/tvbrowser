@@ -34,6 +34,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Properties;
+import java.util.logging.Logger;
 
 import tvbrowser.TVBrowser;
 import util.io.stream.OutputStreamProcessor;
@@ -46,8 +47,8 @@ import util.io.stream.StreamUtilities;
  */
 public class PropertyManager {
 
-  private static java.util.logging.Logger mLog
-    = java.util.logging.Logger.getLogger(PropertyManager.class.getName());
+  private static final Logger mLog
+    = Logger.getLogger(PropertyManager.class.getName());
   
   private Properties mProperties;
   private HashMap<String, Property> mPropertyHash;

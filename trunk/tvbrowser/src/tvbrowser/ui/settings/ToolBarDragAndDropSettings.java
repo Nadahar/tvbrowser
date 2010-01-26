@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Vector;
+import java.util.logging.Logger;
 
 import javax.swing.AbstractButton;
 import javax.swing.Action;
@@ -83,7 +84,7 @@ public class ToolBarDragAndDropSettings extends JDialog implements
   public static final util.ui.Localizer mLocalizer = util.ui.Localizer
       .getLocalizerFor(ToolBarDragAndDropSettings.class);
 
-  private static java.util.logging.Logger mLog = java.util.logging.Logger
+  private static final Logger mLog = java.util.logging.Logger
   .getLogger(ToolBarDragAndDropSettings.class.getName());
 
   private static final long serialVersionUID = 1L;

@@ -26,6 +26,7 @@
 package util.exc;
 
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.Icon;
 import javax.swing.JFrame;
@@ -58,8 +59,8 @@ public class ErrorHandler {
   public static final int NO_PRESSED = 3;
   
   /** The logger for this class. */
-  private static java.util.logging.Logger mLog
-    = java.util.logging.Logger.getLogger(ErrorHandler.class.getName());
+  private static final Logger mLog
+    = Logger.getLogger(ErrorHandler.class.getName());
 
   /** The localizer of this class. */
   static final util.ui.Localizer mLocalizer

@@ -25,6 +25,8 @@
  */
 package util.settings;
 
+import java.util.logging.Logger;
+
 import devplugin.ProgramFieldType;
 
 /**
@@ -34,7 +36,7 @@ import devplugin.ProgramFieldType;
  */
 public class ProgramFieldTypeArrayProperty extends Property {
 
-	private static java.util.logging.Logger mLog = java.util.logging.Logger
+	private static final Logger mLog = java.util.logging.Logger
 			.getLogger(ProgramFieldTypeArrayProperty.class.getName());
 
 	private ProgramFieldType[] mDefaultValue;

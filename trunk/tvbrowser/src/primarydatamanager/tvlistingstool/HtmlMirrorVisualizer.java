@@ -30,6 +30,7 @@ package primarydatamanager.tvlistingstool;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.logging.Logger;
 
 import primarydatamanager.mirrorupdater.UpdateException;
 import primarydatamanager.mirrorupdater.data.DataSource;
@@ -44,8 +45,8 @@ import devplugin.Date;
 
 public class HtmlMirrorVisualizer implements MirrorVisualizer {
 
-  private static java.util.logging.Logger mLog
-    = java.util.logging.Logger.getLogger(HtmlMirrorVisualizer.class.getName());
+  private static final Logger mLog
+    = Logger.getLogger(HtmlMirrorVisualizer.class.getName());
     
   private static final int DAY_COUNT = 25; 
   private static Date TODAY = Date.getCurrentDate();

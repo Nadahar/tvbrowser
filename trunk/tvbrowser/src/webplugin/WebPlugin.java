@@ -34,6 +34,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Locale;
+import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -64,7 +65,7 @@ import devplugin.Version;
 public class WebPlugin extends Plugin {
   private static final Version mVersion = new Version(2,70);
 
-  private static java.util.logging.Logger mLog = java.util.logging.Logger
+  private static final Logger mLog = java.util.logging.Logger
   .getLogger(WebPlugin.class.getName());
   
   private static final String CHANNEL_SITE = "channelSite";

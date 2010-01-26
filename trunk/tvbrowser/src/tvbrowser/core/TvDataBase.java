@@ -426,7 +426,7 @@ public class TvDataBase {
     mTvDataHash.remove(key);
   }
 
-  public static String getDayProgramKey(Date date, Channel channel) {
+  protected static String getDayProgramKey(Date date, Channel channel) {
     // check the input
     if (date == null) {
       throw new NullPointerException("date is null");
@@ -436,7 +436,7 @@ public class TvDataBase {
         date.getDateString()).toString();
   }
 
-  public static String getChannelKey(Channel channel) {
+  private static String getChannelKey(Channel channel) {
     // check the input
     if (channel == null) {
       throw new NullPointerException("channel is null");

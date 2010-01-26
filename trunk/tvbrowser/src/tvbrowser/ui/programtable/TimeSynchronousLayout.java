@@ -77,7 +77,7 @@ public class TimeSynchronousLayout extends AbstractProgramTableLayout {
         if (panel != null) {
           Program program = panel.getProgram();
           if (program != null) {
-            long startTime = program.getDate().getValue() * 10000
+            long startTime = ((long)program.getDate().getValue()) * 10000
                 + program.getStartTime();
             
             if (startTime < minStartTime) {
