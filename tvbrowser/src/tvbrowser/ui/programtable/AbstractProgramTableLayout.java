@@ -6,14 +6,16 @@
 
 package tvbrowser.ui.programtable;
 
+import java.util.logging.Logger;
+
 /**
  *
  * @author  Til
  */
 public abstract class AbstractProgramTableLayout implements ProgramTableLayout {
 
-  private static java.util.logging.Logger mLog
-    = java.util.logging.Logger.getLogger(AbstractProgramTableLayout.class.getName());
+  private static final Logger mLog
+    = Logger.getLogger(AbstractProgramTableLayout.class.getName());
   
   /** Holds the y position of the first program of a column. */
   private int[] mColumnStartArr;

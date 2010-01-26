@@ -893,7 +893,7 @@ public class Channel implements Comparable<Channel> {
    * @since 2.7
    */
   public String getUniqueId() {
-    return new StringBuilder(getDataServiceProxy().getId()).append("_").append(getGroup().getId()).append("_").append(getCountry()).append("_").append(getId()).toString();
+    return new StringBuilder(getDataServiceProxy().getId()).append('_').append(getGroup().getId()).append('_').append(getCountry()).append('_').append(getId()).toString();
   }
 
   /**

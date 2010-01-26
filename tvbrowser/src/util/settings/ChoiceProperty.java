@@ -26,6 +26,7 @@
 package util.settings;
 
 import java.util.HashSet;
+import java.util.logging.Logger;
 
 /**
  * 
@@ -34,8 +35,8 @@ import java.util.HashSet;
  */
 public class ChoiceProperty extends Property {
 
-  private static java.util.logging.Logger mLog
-    = java.util.logging.Logger.getLogger(ChoiceProperty.class.getName());
+  private static final Logger mLog
+    = Logger.getLogger(ChoiceProperty.class.getName());
 
   private HashSet<String> mAllowedValueSet;
   private String mDefaultValue;

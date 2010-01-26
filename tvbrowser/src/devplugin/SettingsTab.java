@@ -52,6 +52,8 @@ public interface SettingsTab {
   
   /**
    * Returns the icon of the tab-sheet.
+   * <br>
+   * For plugins the plugin icon is used if this method returns null.
    */
   public Icon getIcon();
   

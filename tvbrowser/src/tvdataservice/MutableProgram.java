@@ -740,7 +740,7 @@ public class MutableProgram implements Program {
       value = inValue;
     }
 
-    if (type == ProgramFieldType.TITLE_TYPE && value instanceof String) {
+    if (type == ProgramFieldType.TITLE_TYPE) {
       mTitle = (String)value;
     }
     

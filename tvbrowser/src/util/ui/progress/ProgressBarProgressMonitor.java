@@ -25,6 +25,8 @@
  */
 package util.ui.progress;
 
+import java.util.logging.Logger;
+
 import javax.swing.JLabel;
 import javax.swing.JProgressBar;
 import javax.swing.SwingUtilities;
@@ -38,7 +40,7 @@ import devplugin.ProgressMonitor;
  */
 public class ProgressBarProgressMonitor implements ProgressMonitor {
 
-    private static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(ProgressBarProgressMonitor.class.getName());
+    private static final Logger mLog = Logger.getLogger(ProgressBarProgressMonitor.class.getName());
 
     private JProgressBar mProgressBar;
 
