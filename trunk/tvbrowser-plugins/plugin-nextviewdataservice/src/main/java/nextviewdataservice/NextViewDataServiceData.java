@@ -138,7 +138,7 @@ public class NextViewDataServiceData {
             File file = new File(mService.mDataDir + "/alternative_icons/" + channelId + ".png");
             if (file.canRead()) {
               try {
-                iconUrl = file.toURL();
+                iconUrl = file.toURI().toURL();
               } catch (MalformedURLException e) {
               }
             }
