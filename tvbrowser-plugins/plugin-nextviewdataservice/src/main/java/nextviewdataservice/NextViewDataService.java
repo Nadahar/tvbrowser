@@ -1,6 +1,6 @@
 /*
  * NextViewDataService Plugin by jb (j.bollwahn@arcor.de) / Original written by Andreas Hessel (Vidrec@gmx.de)
- * 
+ *
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -57,7 +57,7 @@ import devplugin.Version;
  * Main class of the 'nxtvepg data plugin'
  * @author jb
  */
-public class NextViewDataService extends AbstractTvDataService {
+public final class NextViewDataService extends AbstractTvDataService {
 
   private static final Logger mLog = java.util.logging.Logger.getLogger(NextViewDataService.class.getName());
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(NextViewDataService.class);
@@ -94,17 +94,10 @@ public class NextViewDataService extends AbstractTvDataService {
   public NextViewDataService() {
     mInstance = this;
     data = new NextViewDataServiceData(this);
-    prop.setProperty(PATH, NextViewDataServicePanel.getNxtvApplication(""));
-    prop.setProperty(PROVIDER, "merged");
-    prop.setProperty(AUTORUN, "NO");
-    prop.setProperty(AUTOSTART, "30");
-    prop.setProperty(AUTOREPETITION, "60");
-    prop.setProperty(DATAMIX, "NO");
-    prop.setProperty(ALTERNATIVEICONS, "NO");
   }
 
   /**
-   * 
+   *
    * @return current instance of NextViewDataService
    * throws RuntimeException if  no instance available
    */
@@ -179,7 +172,7 @@ public class NextViewDataService extends AbstractTvDataService {
               }
               index++;
             }
-          }           
+          }
         }
 
       }
@@ -191,7 +184,7 @@ public class NextViewDataService extends AbstractTvDataService {
         dateArray[day] = date;
         date = date.addDays(1);
       }
-    }    
+    }
 
     if (channelArr.length>0) {
       monitor.setMaximum(channelArr.length+2);
@@ -221,7 +214,7 @@ public class NextViewDataService extends AbstractTvDataService {
     monitor.setValue(2);
 
     // get alternative chanels for adding additional data to nxtvepg data
-    HashMap<String, Channel> alternativeChannels0 = new HashMap<String, Channel>(); 
+    HashMap<String, Channel> alternativeChannels0 = new HashMap<String, Channel>();
     HashMap<String, Channel> alternativeChannels1 = new HashMap<String, Channel>();
     Channel[]subScribedChannels = getPluginManager().getSubscribedChannels();
 
@@ -257,7 +250,7 @@ public class NextViewDataService extends AbstractTvDataService {
           jbUtilities.storeIcon(icon, "png", mDataDir + "/alternative_icons/" + channelArr[i].getId() + ".png");
           channelArr[i].setDefaultIcon(icon);
         }
-      }   
+      }
 
       monitor.setValue(i + 2);
 
@@ -341,8 +334,8 @@ public class NextViewDataService extends AbstractTvDataService {
             }
           }
         }
-      }     
-    }    
+      }
+    }
     return noBreakFlg;
   }
 
@@ -360,13 +353,13 @@ public class NextViewDataService extends AbstractTvDataService {
       dateArray[j] = Date.createYYYYMMDD(dateStringArray[j].substring(0, 4) + "-" + dateStringArray[j].substring(4, 6)+ "-" + dateStringArray[j].substring(6, 8),"-");
     }
     return dateArray;
-  } 
+  }
 
 
   /**
-   * Called by the host-application during start-up. 
+   * Called by the host-application during start-up.
    * Loads settings for this data service.
-   * @param p ; poperty list to handle the settings
+   * @param p ; property list to handle the settings
    *
    */
   public void loadSettings(Properties p) {
@@ -375,13 +368,13 @@ public class NextViewDataService extends AbstractTvDataService {
       propKey = e.nextElement().toString();
       this.prop.setProperty(propKey, p.getProperty(propKey));
     }
-    firstUpdate = firstUpdate + Integer.parseInt((String) prop.get(AUTOSTART)) * 60000;
+    firstUpdate = firstUpdate + Integer.parseInt(prop.getProperty(AUTOSTART, "30")) * 60000;
     nextUpdate = firstUpdate;
 
   }
 
   /**
-   * Called by the host-application during shut-down, 
+   * Called by the host-application during shut-down,
    * to store the settings returned to the file system.
    * @return a property list with settings of this data service.
    */
@@ -434,7 +427,7 @@ public class NextViewDataService extends AbstractTvDataService {
    * Prompt nxtvepg to export program data an read the available channels from this file.
    * Stores available channels in file 'channels.properties' for future use.
    * @return array of channels
-   */  
+   */
   public Channel[] checkForAvailableChannels(ChannelGroup group, ProgressMonitor monitor) {
     monitor.setMessage(mLocalizer.msg("msg_channels", "reading channels from 'nxtvepg'"));
     this.getTvData(true, false, monitor);
@@ -514,7 +507,7 @@ public class NextViewDataService extends AbstractTvDataService {
 
   /**
    * Gets the Version of the implemented API
-   * Since TV-Browser 0.9.7 getAPIVersion must return 1.0 
+   * Since TV-Browser 0.9.7 getAPIVersion must return 1.0
    */
   public static Version getVersion() {
     return new Version(2, 19, 6, false, null);
@@ -676,12 +669,12 @@ public class NextViewDataService extends AbstractTvDataService {
       return false;
     }
 
-    nextUpdate = aktTime + Integer.parseInt((String) prop.getProperty(AUTOREPETITION)) * 60000;
+    nextUpdate = aktTime + Integer.parseInt((String) prop.getProperty(AUTOREPETITION, "60")) * 60000;
     return true;
   }
 
   private boolean getAutoRun() {
-    return prop.getProperty(AUTORUN).toString().equals("YES");
+    return prop.getProperty(AUTORUN, "NO").toString().equals("YES");
   }
 
 
@@ -709,7 +702,7 @@ public class NextViewDataService extends AbstractTvDataService {
 
           if (update || !fOutFile.exists()) {
 
-            // backup previous export file 
+            // backup previous export file
 
             String backFile = outFileDir + "/xmlback";
             File fBackFile = new File(backFile);
@@ -719,11 +712,11 @@ public class NextViewDataService extends AbstractTvDataService {
 
             // create command string to call application nxtvegp
 
-            String nxtApp = (String) prop.getProperty(PATH);
+            String nxtApp = (String) prop.getProperty(PATH, NextViewDataServicePanel.getNxtvApplication(""));
 
-            String nxtIni = (String) prop.getProperty(RCFILE);
-            String nxtDBDir = (String) prop.getProperty(DBDIR);
-            String nxtProv = (String) prop.getProperty(PROVIDER);
+            String nxtIni = (String) prop.getProperty(RCFILE, "");
+            String nxtDBDir = (String) prop.getProperty(DBDIR, "");
+            String nxtProv = (String) prop.getProperty(PROVIDER, "merged");
 
             String[] next2xmlCmd = new String[11];
 
@@ -822,7 +815,7 @@ public class NextViewDataService extends AbstractTvDataService {
         }
       }
     };
- 
+
     // Start thread:
     t.start();
     try {
@@ -845,7 +838,7 @@ public class NextViewDataService extends AbstractTvDataService {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see devplugin.TvDataService#supportsDynamicChannelGroups()
    */
   public boolean supportsDynamicChannelGroups() {
@@ -854,7 +847,7 @@ public class NextViewDataService extends AbstractTvDataService {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see devplugin.TvDataService#supportsDynamicChannelList()
    */
   public ChannelGroup[] checkForAvailableChannelGroups(ProgressMonitor monitor) throws TvBrowserException {
@@ -864,7 +857,7 @@ public class NextViewDataService extends AbstractTvDataService {
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see devplugin.TvDataService#getAvailableGroups()
    */
   public ChannelGroup[] getAvailableGroups() {
@@ -874,7 +867,7 @@ public class NextViewDataService extends AbstractTvDataService {
 
   /**
    * Add program data of alternative channel to the given day program
-   * 
+   *
    * @param dayProg the dayprog with nxtvepg data
    * @param actChannel the nxtvepg channel of the dayProg
    * @param alternativeChannel the channel with the additional data
@@ -913,7 +906,7 @@ public class NextViewDataService extends AbstractTvDataService {
         }
 
         if (dayProg == null || dayProg.getProgramCount() == 0) {
-          // fill empty day program with alternative data        
+          // fill empty day program with alternative data
           if (dayProg == null) {
             dayProg = new MutableChannelDayProgram(date, actChannel);
           }
@@ -949,7 +942,7 @@ public class NextViewDataService extends AbstractTvDataService {
                     alternativeProgram = altDayProg.get(j);
                     maxDiff = aktDiff;
                   }
-                }               
+                }
               }
 
               // if alternativeProgram was the only match it's done. Otherwise...
@@ -977,7 +970,7 @@ public class NextViewDataService extends AbstractTvDataService {
                     }
                     if (counter1 == counter2) {
                       alternativeProgram = altDayProg.get(index);
-                    }   
+                    }
                     index++;
                   }
                 }
@@ -1003,7 +996,7 @@ public class NextViewDataService extends AbstractTvDataService {
                 addAlternativeInfo(currentProgram, altDayProg.get(i), repairMix);
                 currentProgram.setProgramLoadingIsComplete();
                 dayProg.addProgram(currentProgram);
-              }              
+              }
             }
           }
         }
@@ -1104,7 +1097,7 @@ public class NextViewDataService extends AbstractTvDataService {
 
     if (info2 != null && info2.length()>0 && (mixFlag.equals("replace") || info1==null || info1.length()<1)){
       retInfo = info2;
-    } 
+    }
     if (type == ProgramFieldType.GENRE_TYPE){
       retInfo = HelperMethods.cleanUpCategories(retInfo);
     }
@@ -1138,7 +1131,7 @@ public class NextViewDataService extends AbstractTvDataService {
     } else {
       if (info2 >=0 && (mixFlag.equals("replace") || info1<0)){
         currentProgram.setInfo(info2);
-      } 
+      }
     }
   }
 
@@ -1197,7 +1190,7 @@ public class NextViewDataService extends AbstractTvDataService {
       currentProgram.setBinaryField(type,info2);
     }
   }
-  
+
   /**
    * replace diacritic characters by their respective counterpart without diacritics
    * @param char1
@@ -1247,7 +1240,7 @@ public class NextViewDataService extends AbstractTvDataService {
     int max1 = test1.length()-1;
     int max2 = test2.length()-1;
 
-    while (count1<=max1 & count2<=max2){
+    while (count1<=max1 && count2<=max2){
       char char1 = test1.charAt(count1);
       while (count1 <= max1 && (char1 ==' '||char1 =='!'||char1 =='\"'||char1 =='#'||char1 =='$'||char1 =='%'||char1 =='&'||char1 =='\''||char1 =='('||char1 ==')'||char1 =='*'||char1 =='+'||char1 ==','||char1 =='-'||char1 =='.'||char1 =='/'||char1 ==':'||char1 ==';'||char1 =='<'||char1 =='='||char1 =='>'||char1 =='?'||char1 =='['||char1 =='\\'||char1 ==']'||char1 =='_'||char1 =='')){
         count1++;
@@ -1327,7 +1320,7 @@ public class NextViewDataService extends AbstractTvDataService {
   }
 
 
-  /** 
+  /**
    * Repairs bad program entries like "Navy CIS 1,90 10,2 1,13 13,6"
    * @param dayProg the day program to be repaired
    * @param actChannel the channel of the day program
@@ -1379,7 +1372,7 @@ public class NextViewDataService extends AbstractTvDataService {
   /**
    * Searches for bad program titles like "Navy CIS 1,90 10,2 1,13 13,6"
    * Checks whether the last two words contain ","
-   * 
+   *
    * @param dayProg The dayprogram to be checked
    * @return true bad pattern is found on Sat1
    */
@@ -1400,7 +1393,7 @@ public class NextViewDataService extends AbstractTvDataService {
 
   /**
    * Work around for insufficient nextvepg's "expired display" settings;
-   * fills day program with stored data up if the is a gap at the beginning of the day 
+   * fills day program with stored data up if the is a gap at the beginning of the day
    * @param dayProg the day program to be repaired
    * @param channel of the day program
    * @param date the day (i.e normally today)
@@ -1457,7 +1450,7 @@ public class NextViewDataService extends AbstractTvDataService {
    * @return true or false
    */
   public boolean useAlternativeIcons (){
-    if (prop.getProperty(ALTERNATIVEICONS).equals("YES")){
+    if (prop.getProperty(ALTERNATIVEICONS, "NO").equals("YES")){
       return true;
     }
     return false;
@@ -1468,7 +1461,7 @@ public class NextViewDataService extends AbstractTvDataService {
    * @return true or false
    */
   public boolean useAlternativeData (){
-    if (prop.getProperty(DATAMIX).equals("YES")){
+    if (prop.getProperty(DATAMIX, "NO").equals("YES")){
       return true;
     }
     return false;

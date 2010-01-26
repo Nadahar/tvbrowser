@@ -18,30 +18,28 @@
  */
 package nextviewdataservice;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.TimeZone;
 
-import javax.swing.ImageIcon;
 import javax.swing.Icon;
-
+import javax.swing.ImageIcon;
 
 import devplugin.Channel;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.net.URL;
-import java.net.MalformedURLException;
-import java.io.File;
-
 /**
- * Handles channel and program data 
+ * Handles channel and program data
  * @author jb
  */
-public class NextViewDataServiceData {
+public final class NextViewDataServiceData {
 
 //private static final Logger mLog = java.util.logging.Logger.getLogger(NextViewDataServiceData.class.getName());
 
