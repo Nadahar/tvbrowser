@@ -61,7 +61,7 @@ public final class WirSchauenPlugin extends Plugin
   /**
    * Localizer.
    */
-  protected static final Localizer LOCALIZER = Localizer.getLocalizerFor(WirSchauenPlugin.class);
+  static final Localizer LOCALIZER = Localizer.getLocalizerFor(WirSchauenPlugin.class);
 
   /**
    * true, if this plugin is stable. false otherwise. used for the version-object.
@@ -474,17 +474,7 @@ public final class WirSchauenPlugin extends Plugin
       {
         //load the linked programs and mark them
         mLinkedPrograms = (ArrayList<ProgramId>) in.readObject();
-
-        //remove programs from the list which are no longer available. crawl backwards
-        //through the list so removed items will not interfere.
-        for (int i = mLinkedPrograms.size() - 1; i >= 0; i--)
-        {
-          ProgramId programId = mLinkedPrograms.get(i);
-          if (getPluginManager().getProgram(programId.getDate(), programId.getId()) == null)
-          {
-            mLinkedPrograms.remove(i);
-          }
-        }
+        // do not remove invalid programs here, but in handleStartFinished
       }
     }
     catch (final EOFException e)
@@ -503,10 +493,6 @@ public final class WirSchauenPlugin extends Plugin
   public void loadSettings(final Properties properties)
   {
     mSettings = new WirSchauenSettings(properties);
-
-    //loadSettings is called after readData. so all linked programs are loaded. now we have to
-    //(un)mark them.
-    updateMarkings(mSettings.getMarkPrograms());
   }
 
   /**
@@ -622,16 +608,19 @@ public final class WirSchauenPlugin extends Plugin
    */
   private boolean isProgramAllowed(final Program program)
   {
+    if (getPluginManager().getExampleProgram().equals(program)) {
+      return true;
+    }
     String name = "";
 
     if (program.getChannel().getDataServiceProxy() != null)
     {
-      name = program.getChannel().getDataServiceProxy().getId() + ":";
+      name = program.getChannel().getDataServiceProxy().getId() + ':';
     }
 
     name = name + program.getChannel().getId();
 
-    return (getPluginManager().getExampleProgram().equals(program) || mAllowedChannels.contains(name));
+    return mAllowedChannels.contains(name);
   }
 
 
@@ -682,6 +671,24 @@ public final class WirSchauenPlugin extends Plugin
     for (Program program : getRootNode().getPrograms())
     {
       changeMarkingOfProgram(program, mark);
+    }
+  }
+
+  @Override
+  public void handleTvBrowserStartFinished() {
+    //remove programs from the list which are no longer available. crawl backwards
+    //through the list so removed items will not interfere.
+    for (int i = mLinkedPrograms.size() - 1; i >= 0; i--)
+    {
+      ProgramId programId = mLinkedPrograms.get(i);
+      if (getPluginManager().getProgram(programId.getDate(), programId.getId()) == null)
+      {
+        mLinkedPrograms.remove(i);
+      }
+    }
+    // mark the linked programs. do this here instead of directly after loading settings for better startup performance
+    if (mSettings.getMarkPrograms()) {
+      updateMarkings(true);
     }
   }
 }
