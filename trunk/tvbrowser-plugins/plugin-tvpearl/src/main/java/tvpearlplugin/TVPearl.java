@@ -1,6 +1,6 @@
 /*
  * TV-Pearl by Reinhard Lehrbaum
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -122,29 +122,32 @@ public class TVPearl {
       if (!channelList.isEmpty()) {
         pearl.setStatus(IProgramStatus.STATUS_FOUND_CHANNEL);
       }
+      if (pearl.getStart().compareTo(getViewLimit()) <= 0) {
+        return;
+      }
       for (Channel channel : channelList) {
-        if (pearl.getStart().compareTo(getViewLimit()) > 0) {
-          Iterator<Program> it = Plugin.getPluginManager().getChannelDayProgram(pearl.getDate(), channel);
-          while ((it != null) && (it.hasNext())) {
-            final Program program = it.next();
-            if (compareTitle(program.getTitle(), pearl.getTitle())
-                && Math.abs(program.getStartTime() - pearl.getStartTime()) <= ALLOWED_DEVIATION_MINUTES) {
-              pearl.setProgram(program);
-              return;
-            }
+        Iterator<Program> it = Plugin.getPluginManager().getChannelDayProgram(pearl.getDate(), channel);
+        while ((it != null) && (it.hasNext())) {
+          final Program program = it.next();
+          if (compareTitle(program.getTitle(), pearl.getTitle())
+              && Math.abs(program.getStartTime() - pearl.getStartTime()) <= ALLOWED_DEVIATION_MINUTES) {
+            pearl.setProgram(program);
+            return;
           }
-          // search on next day (for programs shortly after midnight)
-          it = Plugin.getPluginManager().getChannelDayProgram(pearl.getDate().addDays(1), channel);
-          while ((it != null) && (it.hasNext())) {
-            final Program program = it.next();
-            if (compareTitle(program.getTitle(), pearl.getTitle())
-                && Math.abs((program.getStartTime() + 24 * 60) - pearl.getStartTime()) <= ALLOWED_DEVIATION_MINUTES) {
-              pearl.setProgram(program);
-              return;
-            }
+          if (program.getStartTime() - pearl.getStartTime() > ALLOWED_DEVIATION_MINUTES) {
+            // we are beyond the pearl start time
+            return;
           }
-        } else {
-          return;
+        }
+        // search on next day (for programs shortly after midnight)
+        it = Plugin.getPluginManager().getChannelDayProgram(pearl.getDate().addDays(1), channel);
+        while ((it != null) && (it.hasNext())) {
+          final Program program = it.next();
+          if (compareTitle(program.getTitle(), pearl.getTitle())
+              && Math.abs((program.getStartTime() + 24 * 60) - pearl.getStartTime()) <= ALLOWED_DEVIATION_MINUTES) {
+            pearl.setProgram(program);
+            return;
+          }
         }
       }
     }
@@ -176,7 +179,7 @@ public class TVPearl {
 
   /**
    * get all subscribed channels which match the given channel name
-   * 
+   *
    * @param channelName
    * @return
    */
@@ -209,7 +212,7 @@ public class TVPearl {
   }
 
   public synchronized TVPProgram getPearl(final Program program) {
-    if (program.equals(TVPearlPlugin.getInstance().getPluginManager().getExampleProgram())) {
+    if (program.equals(TVPearlPlugin.getPluginManager().getExampleProgram())) {
       return EXAMMPLE_PEARL;
     }
     for (TVPProgram p : mProgramList) {
@@ -381,7 +384,7 @@ public class TVPearl {
 
   /**
    * mark or unmark the program (and repetitions or continuations)
-   * 
+   *
    * @param program
    * @param setMark
    *          whether to mark or unmark the program
