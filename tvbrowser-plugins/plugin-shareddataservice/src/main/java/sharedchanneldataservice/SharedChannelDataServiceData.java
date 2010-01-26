@@ -123,7 +123,7 @@ public class SharedChannelDataServiceData {
     File file = new File(mService.mDataDir + "/icons/" + channelId + ".png");
     if (file.canRead()) {
       try {
-        iconUrl = file.toURL();
+        iconUrl = file.toURI().toURL();
       } catch (MalformedURLException e) {
       }
     }
