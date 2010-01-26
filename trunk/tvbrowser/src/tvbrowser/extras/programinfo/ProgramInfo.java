@@ -40,6 +40,7 @@ import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.programtable.ProgramTable;
 import util.exc.ErrorHandler;
 import util.settings.PluginPictureSettings;
+import util.ui.Localizer;
 import util.ui.UiUtilities;
 
 import com.l2fprod.common.swing.plaf.LookAndFeelAddons;
@@ -51,12 +52,12 @@ import devplugin.Program;
 
 /**
  * TV-Browser
- * 
+ *
  * @author Martin Oberhauser
  */
 public class ProgramInfo {
 
-  public static util.ui.Localizer mLocalizer = util.ui.Localizer
+  public static Localizer mLocalizer = util.ui.Localizer
       .getLocalizerFor(ProgramInfo.class);
 
   private static final String DATAFILE_PREFIX = "programinfo.ProgramInfo";
@@ -68,13 +69,13 @@ public class ProgramInfo {
   private ConfigurationHandler mConfigurationHandler;
 
   private static ProgramInfo mInstance;
-  
+
   private Object[] mOrder;
-  
+
   private static boolean mIsShowing = false;
-  
+
   private Thread mInitThread;
-  
+
   private ArrayList<Program> mHistory = new ArrayList<Program>();
   private int mHistoryIndex = 0;
 
@@ -144,7 +145,7 @@ public class ProgramInfo {
     if ((splitWidht > 0) && (splitHeigt > 0)) {
       mLeftSplit = new Dimension(splitWidht, splitHeigt);
     }
-    
+
   }
 
   /**
@@ -166,7 +167,7 @@ public class ProgramInfo {
 
   /**
    * Parses a Number from a String.
-   * 
+   *
    * @param str
    *          Number in String to Parse
    * @return Number if successful. Default is 0
@@ -231,10 +232,10 @@ public class ProgramInfo {
     if(mOrder == null) {
       mOrder = mSettings.getFieldOrder();
     }
-    
+
     return mOrder;
   }
-  
+
   protected void setOrder() {
     mOrder = mSettings.getFieldOrder();
   }
@@ -245,7 +246,7 @@ public class ProgramInfo {
         return;
       }
       String lf = mSettings.getLook();
-      
+
       if (lf.length() > 0) {
         LookAndFeelAddons.setAddon(lf);
       } else {
@@ -257,20 +258,20 @@ public class ProgramInfo {
       // ignore
     }
   }
-  
+
   @Override
   public String toString() {
+    return getName();
+  }
+
+  static String getName() {
     return mLocalizer.msg("pluginName","Program details");
   }
-  
-  protected String getId() {
-    return getProgramInfoPluginId();
-  }
-  
+
   protected PluginPictureSettings getPictureSettings() {
     return new PluginPictureSettings(mSettings.getPictureSettings());
   }
-    
+
   /**
    * return whether the program info is currently shown or is to be shown immediately
    * @return
@@ -285,7 +286,7 @@ public class ProgramInfo {
 
   /**
    * get the plugin id without loading the plugin
-   * 
+   *
    * @return the plugin id
    * @since 3.0
    */

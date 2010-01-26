@@ -1,16 +1,16 @@
 /*
  * Copyright Michael Keppler
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -70,7 +70,7 @@ public class GenrePlugin extends Plugin {
   private static GenrePlugin instance;
 
   private GenreSettings mSettings;
-  
+
   private ArrayList<String> hiddenGenres = new ArrayList<String>();
 
   private List<String> currentGenres;
@@ -84,7 +84,7 @@ public class GenrePlugin extends Plugin {
     super();
     instance = this;
   }
-  
+
   protected static GenrePlugin getInstance() {
     return instance;
   }
@@ -93,7 +93,7 @@ public class GenrePlugin extends Plugin {
   public boolean canUseProgramTree() {
     return true;
   }
-  
+
   public static Version getVersion() {
     return PLUGIN_VERSION;
   }
@@ -113,7 +113,7 @@ public class GenrePlugin extends Plugin {
     }
     return mRootNode;
   }
-  
+
   @Override
   public SettingsTab getSettingsTab() {
     return new GenreSettingsTab(this, hiddenGenres, mSettings);
@@ -130,7 +130,7 @@ public class GenrePlugin extends Plugin {
     final PluginTreeNode root = getRootNode();
     root.removeAllActions();
     root.removeAllChildren();
-    
+
     int progCount = 0;
     final HashMap<String, PluginTreeNode> genreNodes = new HashMap<String, PluginTreeNode>();
     currentGenres = new ArrayList<String>();
@@ -248,7 +248,7 @@ public class GenrePlugin extends Plugin {
   @Override
   public void handleTvBrowserStartFinished() {
     mStartFinished  = true;
-    loadRootNode(mRootNode);
+    loadRootNode(getRootNode());
     mRootNode.getMutableTreeNode().setShowLeafCountEnabled(true);
     if (mRootNode.isEmpty()) {
       updateRootNode(true);

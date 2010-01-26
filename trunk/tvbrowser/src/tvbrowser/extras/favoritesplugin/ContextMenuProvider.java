@@ -71,7 +71,7 @@ public class ContextMenuProvider {
       Favorite[] favArr = favorites.toArray(new Favorite[favorites.size()]);
       ContextMenuAction menu = new ContextMenuAction();
       menu.setText(mLocalizer.msg("favorites", "Favorites"));
-      menu.setSmallIcon(FavoritesPlugin.getInstance().getFavoritesIcon(16));
+      menu.setSmallIcon(FavoritesPlugin.getFavoritesIcon(16));
 
       if (favorites.isEmpty()) {
         return new ActionMenu(menu, new ActionMenu[] {
@@ -80,9 +80,9 @@ public class ContextMenuProvider {
             });
       }
       else {
-        ActionMenu blackListAction = createBlackListFavoriteMenuAction(favArr, program); 
+        ActionMenu blackListAction = createBlackListFavoriteMenuAction(favArr, program);
         ActionMenu repetitions = FavoritesPlugin.getInstance().isShowingRepetitions() ? createRepetitionsMenuAction(favArr, program) : null;
-        
+
         ArrayList<Object> subItems = new ArrayList<Object>(8);
         subItems.add(createManageFavoriteMenuAction(favArr));
         subItems.add(createEditFavoriteMenuAction(favArr));
@@ -102,7 +102,7 @@ public class ContextMenuProvider {
     }
 
   public ImageIcon getIconFromTheme(String category, String icon, int size) {
-    return FavoritesPlugin.getInstance().getIconFromTheme(category, icon, size);
+    return FavoritesPlugin.getIconFromTheme(category, icon, size);
   }
 
   private ActionMenu createGlobalExclusionMenu(final Program program) {
@@ -114,12 +114,12 @@ public class ContextMenuProvider {
         FavoritesPlugin.getInstance().showExcludeProgramsDialog(null,program);
       }
     });
-    return new ActionMenu(menu);    
+    return new ActionMenu(menu);
   }
 
   private ActionMenu createAddToFavoritesActionMenu(final Program program) {
     ContextMenuAction menu = new ContextMenuAction();
-      menu.setSmallIcon(FavoritesPlugin.getInstance().getFavoritesIcon(16));
+      menu.setSmallIcon(FavoritesPlugin.getFavoritesIcon(16));
       menu.setText(mLocalizer.msg("addToFavorites", "Add to favorite programs"));
       menu.setActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent event) {
@@ -151,7 +151,7 @@ public class ContextMenuProvider {
       for (int i=0; i<subItems.length; i++) {
         final Favorite fav = favArr[i];
         subItems[i] = new ContextMenuAction(favArr[i].getName());
-        subItems[i].setSmallIcon(FavoritesPlugin.getInstance().getFavoritesIcon(16));
+        subItems[i].setSmallIcon(FavoritesPlugin.getFavoritesIcon(16));
         subItems[i].setActionListener(new ActionListener(){
           public void actionPerformed(ActionEvent e) {
             FavoritesPlugin.getInstance().showExcludeProgramsDialog(fav, program);
@@ -166,7 +166,7 @@ public class ContextMenuProvider {
   private ActionMenu createManageFavoriteMenuAction(final Favorite[] favArr) {
     if (favArr.length == 1) {
       ContextMenuAction action = new ContextMenuAction();
-      action.setSmallIcon(FavoritesPlugin.getInstance().getFavoritesIcon(16));
+      action.setSmallIcon(FavoritesPlugin.getFavoritesIcon(16));
       action.setText(mLocalizer.ellipsisMsg("manageFavorite","Manage favorite '{0}'", favArr[0].getName()));
       action.setActionListener(new ActionListener(){
         public void actionPerformed(ActionEvent e) {
@@ -177,13 +177,13 @@ public class ContextMenuProvider {
     }
     else {
       ContextMenuAction menu = new ContextMenuAction();
-      menu.setSmallIcon(FavoritesPlugin.getInstance().getFavoritesIcon(16));
+      menu.setSmallIcon(FavoritesPlugin.getFavoritesIcon(16));
       menu.setText(mLocalizer.msg("manage","Manage Favorite"));
       ContextMenuAction[] subItems = new ContextMenuAction[favArr.length];
       for (int i=0; i<subItems.length; i++) {
         final Favorite fav = favArr[i];
         subItems[i] = new ContextMenuAction(favArr[i].getName());
-        subItems[i].setSmallIcon(FavoritesPlugin.getInstance().getFavoritesIcon(16));
+        subItems[i].setSmallIcon(FavoritesPlugin.getFavoritesIcon(16));
         subItems[i].setActionListener(new ActionListener(){
           public void actionPerformed(ActionEvent e) {
             FavoritesPlugin.getInstance().showManageFavoritesDialog(fav);
@@ -215,7 +215,7 @@ public class ContextMenuProvider {
       for (int i=0; i<subItems.length; i++) {
         final Favorite fav = favArr[i];
         subItems[i] = new ContextMenuAction(favArr[i].getName());
-        subItems[i].setSmallIcon(FavoritesPlugin.getInstance().getFavoritesIcon(16));
+        subItems[i].setSmallIcon(FavoritesPlugin.getFavoritesIcon(16));
         subItems[i].setActionListener(new ActionListener(){
           public void actionPerformed(ActionEvent e) {
             FavoritesPlugin.getInstance().editFavorite(fav);
@@ -231,35 +231,35 @@ public class ContextMenuProvider {
     ContextMenuAction topMenu = new ContextMenuAction();
     topMenu.setSmallIcon(TVBrowserIcons.search(TVBrowserIcons.SIZE_SMALL));
     topMenu.setText(mLocalizer.msg("repetitions", "More programs"));
-    
+
     if (favorites.length==1) {
       return createFavoriteRepetitionMenu(topMenu,favorites[0], p);
     }
     else {
       ArrayList<ActionMenu> menus = new ArrayList<ActionMenu>();
-      
+
       for (Favorite favorite : favorites) {
         ContextMenuAction subItem = new ContextMenuAction(favorite.getName());
         ActionMenu menu = createFavoriteRepetitionMenu(subItem,favorite, p);
-        
+
         if(menu != null) {
           menus.add(menu);
         }
       }
-      
+
       return menus.isEmpty() ? null : new ActionMenu(topMenu, menus.toArray(new ActionMenu[menus.size()]));
     }
   }
 
   private ActionMenu createFavoriteRepetitionMenu(ContextMenuAction parent, Favorite favorite, Program p) {
     Program[] programs = favorite.getPrograms();
-  
+
     if(programs == null || (programs.length == 1 && programs[0].equals(p))) {
       return null;
     }
-    
+
     ArrayList<ContextMenuAction> subItems = new ArrayList<ContextMenuAction>();
-  
+
     for (final Program program : programs) {
       if(!program.isExpired() && !program.equals(p)) {
         ContextMenuAction subItem = new ContextMenuAction(FavoriteTreeModel.getFavoriteLabel(favorite, program, p.getChannel()));
@@ -271,7 +271,7 @@ public class ContextMenuProvider {
             }
           }
         });
-      
+
         subItems.add(subItem);
         if (subItems.size() >= 30) {
           break;
@@ -283,7 +283,7 @@ public class ContextMenuProvider {
     if (subItems.size() == 0) {
       return null;
     }
-  
+
     return new ActionMenu(parent, subItems.toArray(new ContextMenuAction[subItems.size()]));
   }
 
@@ -307,7 +307,7 @@ public class ContextMenuProvider {
         for (int i=0; i<subItems.length; i++) {
           final Favorite fav = favArr[i];
           subItems[i] = new ContextMenuAction(favArr[i].getName());
-          subItems[i].setSmallIcon(FavoritesPlugin.getInstance().getFavoritesIcon(16));
+          subItems[i].setSmallIcon(FavoritesPlugin.getFavoritesIcon(16));
           subItems[i].setActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
               FavoritesPlugin.getInstance().askAndDeleteFavorite(fav);
@@ -323,7 +323,7 @@ public class ContextMenuProvider {
   private ActionMenu createBlackListFavoriteMenuAction(final Favorite[] favArr, final Program program) {
     if (favArr.length == 1) {
       ContextMenuAction action = new ContextMenuAction();
-      
+
       if(favArr[0].isOnBlackList(program)) {
         action.setSmallIcon(TVBrowserIcons.refresh(TVBrowserIcons.SIZE_SMALL));
         action.setText(mLocalizer.msg("removeFavoriteFromBlackList","Put this program back into '{0}'", favArr[0].getName()));
@@ -332,7 +332,7 @@ public class ContextMenuProvider {
             favArr[0].removeFromBlackList(program);
           }
         });
-        
+
         return (new ActionMenu(action));
       } else {
         return null;
@@ -340,30 +340,30 @@ public class ContextMenuProvider {
     }
     else {
       ArrayList<Favorite> fromList = new ArrayList<Favorite>();
-      
+
       for (Favorite favorite : favArr) {
         if(favorite.isOnBlackList(program)) {
           fromList.add(favorite);
         }
       }
-            
+
       ContextMenuAction reactivate = new ContextMenuAction(mLocalizer.ellipsisMsg("removeFromBlackList",
           "Put this program back into"));
       reactivate.setSmallIcon(TVBrowserIcons.refresh(TVBrowserIcons.SIZE_SMALL));
-      
+
       ContextMenuAction[] reactivateAction = new ContextMenuAction[fromList.size()];
-            
+
       for(int i = 0; i < fromList.size(); i++) {
         final Favorite fav = fromList.get(i);
         reactivateAction[i] = new ContextMenuAction(fav.getName());
-        reactivateAction[i].setSmallIcon(FavoritesPlugin.getInstance().getFavoritesIcon(16));
+        reactivateAction[i].setSmallIcon(FavoritesPlugin.getFavoritesIcon(16));
         reactivateAction[i].setActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent e) {            
+          public void actionPerformed(ActionEvent e) {
             fav.removeFromBlackList(program);
           }
         });
       }
-      
+
       if(!fromList.isEmpty()) {
         return new ActionMenu(reactivate,reactivateAction);
       } else {

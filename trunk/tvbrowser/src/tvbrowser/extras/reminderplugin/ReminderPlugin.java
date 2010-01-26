@@ -107,7 +107,7 @@ public class ReminderPlugin {
 
   private ConfigurationHandler mConfigurationHandler;
 
-  private PluginTreeNode mRootNode;
+  private static final PluginTreeNode mRootNode = new PluginTreeNode(mLocalizer.msg("pluginName","Reminders"));
 
   private boolean mHasRightToStartTimer = false;
 
@@ -125,8 +125,6 @@ public class ReminderPlugin {
     mReminderList = new ReminderList();
     mReminderList.setReminderTimerListener(new ReminderTimerListener(mSettings, mReminderList));
     loadReminderData();
-
-    mRootNode = new PluginTreeNode(mLocalizer.msg("pluginName","Reminders"));
 
     TvDataUpdater.getInstance().addTvDataUpdateListener(
         new TvDataUpdateListener() {
@@ -171,6 +169,10 @@ public class ReminderPlugin {
 
   @Override
   public String toString() {
+    return getName();
+  }
+
+  static String getName() {
     return mLocalizer.msg("pluginName","Reminder");
   }
 
@@ -271,7 +273,7 @@ public class ReminderPlugin {
   /**
    * Halt the reminder listener.
    */
-  public void pauseRemider() {
+  public void pauseReminder() {
     mReminderList.stopTimer();
   }
 
@@ -442,7 +444,7 @@ public class ReminderPlugin {
                                           final Program program) {
     if (mReminderList.contains(program)) {
       ContextMenuAction action = new ContextMenuAction();
-      action.setText(mLocalizer.msg("pluginName", "Reminder"));
+      action.setText(getName());
       action.setSmallIcon(IconLoader.getInstance().getIconFromTheme("apps",
           "appointment", 16));
 
@@ -627,7 +629,7 @@ public class ReminderPlugin {
    * <p>
    * @return The root node for the plugin tree.
    */
-  public PluginTreeNode getRootNode() {
+  public static PluginTreeNode getRootNode() {
     return mRootNode;
   }
 
@@ -691,31 +693,14 @@ public class ReminderPlugin {
   }
 
 
-  protected ActionMenu getButtonAction() {
+  protected static ActionMenu getButtonAction() {
     AbstractAction action = new AbstractAction() {
       public void actionPerformed(ActionEvent evt) {
-
-        Window w = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
-        ReminderListDialog dlg = new ReminderListDialog(w, mReminderList);
-
-        int x = Integer.parseInt(mSettings.getProperty("dlgXPos","-1"));
-        int y = Integer.parseInt(mSettings.getProperty("dlgYPos","-1"));
-
-        if(x == -1 || y == -1) {
-          UiUtilities.centerAndShow(dlg);
-        } else {
-          dlg.setLocation(x,y);
-          dlg.setVisible(true);
-        }
-
-        mSettings.setProperty("dlgXPos", String.valueOf(dlg.getX()));
-        mSettings.setProperty("dlgYPos", String.valueOf(dlg.getY()));
-        mSettings.setProperty("dlgWidth", String.valueOf(dlg.getWidth()));
-        mSettings.setProperty("dlgHeight", String.valueOf(dlg.getHeight()));
+        getInstance().showManageRemindersDialog();
       }
     };
 
-    action.putValue(Action.NAME, mLocalizer.msg("pluginName", "Reminder"));
+    action.putValue(Action.NAME, getName());
     action.putValue(Action.SMALL_ICON, IconLoader.getInstance()
         .getIconFromTheme("apps", "appointment", 16));
     action.putValue(Plugin.BIG_ICON, IconLoader.getInstance().getIconFromTheme("apps", "appointment", 22));
@@ -853,15 +838,6 @@ public class ReminderPlugin {
   }
 
   /**
-   * Gets the id of this plugin.
-   * <p>
-   * @return The id of this plugin.
-   */
-  public String getId() {
-    return getReminderPluginId();
-  }
-
-  /**
    * get the ID of the plugin (without the need to load the plugin)
    *
    * @return the id
@@ -927,6 +903,26 @@ public class ReminderPlugin {
   protected void handleTvDataUpdateFinished() {
     mReminderList.removeExpiredItems();
     updateRootNode(false);
+  }
+
+  private void showManageRemindersDialog() {
+    Window w = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
+    ReminderListDialog dlg = new ReminderListDialog(w, mReminderList);
+
+    int x = Integer.parseInt(mSettings.getProperty("dlgXPos","-1"));
+    int y = Integer.parseInt(mSettings.getProperty("dlgYPos","-1"));
+
+    if(x == -1 || y == -1) {
+      UiUtilities.centerAndShow(dlg);
+    } else {
+      dlg.setLocation(x,y);
+      dlg.setVisible(true);
+    }
+
+    mSettings.setProperty("dlgXPos", String.valueOf(dlg.getX()));
+    mSettings.setProperty("dlgYPos", String.valueOf(dlg.getY()));
+    mSettings.setProperty("dlgWidth", String.valueOf(dlg.getWidth()));
+    mSettings.setProperty("dlgHeight", String.valueOf(dlg.getHeight()));
   }
 
 

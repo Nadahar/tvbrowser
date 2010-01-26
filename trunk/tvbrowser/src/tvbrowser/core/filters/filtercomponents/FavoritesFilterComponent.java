@@ -14,9 +14,9 @@ import devplugin.Program;
 
 /**
  * This filter filters all programs that are marked as Favorites.
- * 
+ *
  * @author René Mach
- * 
+ *
  */
 public class FavoritesFilterComponent extends AbstractFilterComponent {
 
@@ -41,7 +41,7 @@ public class FavoritesFilterComponent extends AbstractFilterComponent {
   }
 
   public boolean accept(final Program program) {
-    final String favPluginId = FavoritesPlugin.getInstance().getId();
+    final String favPluginId = FavoritesPlugin.getFavoritesPluginId();
     for (Marker marker : program.getMarkerArr()) {
       if (favPluginId.equals(marker.getId())) {
         return true;

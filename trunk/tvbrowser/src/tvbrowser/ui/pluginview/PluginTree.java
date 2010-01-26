@@ -97,7 +97,7 @@ import devplugin.ProgramReceiveTarget;
  */
 public class PluginTree extends JTree implements DragGestureListener,
     DropTargetListener, DragSourceListener {
-  
+
   private Rectangle2D mCueLine = new Rectangle2D.Float();
   private Object mPlugin = null;
   private Thread mDropThread = null;
@@ -111,19 +111,19 @@ public class PluginTree extends JTree implements DragGestureListener,
 
   public PluginTree(TreeModel model) {
     super(model);
-    
+
     setRootVisible(false);
     setShowsRootHandles(true);
     setRowHeight(17);
-    
+
     expandPath(new TreePath(model.getRoot()));
-    
+
     mInstance = this;
     /* remove the F2 key from the keyboard bindings of the JTree */
     InputMap inputMap = getInputMap();
     KeyStroke keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0);
     inputMap.put(keyStroke, "none");
-    
+
     new OverlayListener(this);
     (new DragSource()).createDefaultDragGestureRecognizer(this,
         DnDConstants.ACTION_MOVE, this);
@@ -168,7 +168,7 @@ public class PluginTree extends JTree implements DragGestureListener,
 
   /**
    * Calculates the number of Childs
-   * 
+   *
    * @param node
    *          use this Node
    * @return Number of Child-Nodes
@@ -181,7 +181,7 @@ public class PluginTree extends JTree implements DragGestureListener,
         count++;
       }
       else {
-        count += getLeafCount(child); 
+        count += getLeafCount(child);
       }
     }
     return count;
@@ -335,7 +335,7 @@ public class PluginTree extends JTree implements DragGestureListener,
   public void dragEnter(DropTargetDragEvent e) {
     checkAndPaintTarget(e);
   }
-  
+
   private void checkAndPaintTarget(DropTargetDragEvent e) {
     boolean reject = true;
     boolean changed = false;
@@ -353,19 +353,19 @@ public class PluginTree extends JTree implements DragGestureListener,
 
           if (targetPath != null) {
             Node target = (Node)targetPath.getLastPathComponent();
-            
+
             if(target.getProgramReceiveTarget() == null && targetPath.getPathCount() <= 2) {
               target = (Node) targetPath.getPathComponent(1);
             }
-  
+
             if (flavors[0].getHumanPresentableName().equals("NodeExport")) {
               TreePath sourcePath = ((PluginTree) ((DropTarget) e.getSource())
                   .getComponent()).getSelectionPath();
               Node plugin = (Node) sourcePath.getPathComponent(1);
-              
+
               if (!target.equals(plugin) && !targetPath.isDescendant(sourcePath) &&
                   !sourcePath.isDescendant(targetPath)) {
-                if (target.equals(ReminderPlugin.getInstance().getRootNode()
+                if (target.equals(ReminderPlugin.getRootNode()
                     .getMutableTreeNode())) {
                   e.acceptDrag(e.getDropAction());
                   reject = false;
@@ -373,7 +373,7 @@ public class PluginTree extends JTree implements DragGestureListener,
                   rejected = false;
                 } else if(target.getProgramReceiveTarget() == null) {
                   PluginProxy[] pluginAccessArray = PluginProxyManager.getInstance().getActivatedPlugins();
-  
+
                   for (PluginProxy pluginAccess : pluginAccessArray) {
                     if (pluginAccess.getRootNode() != null) {
                       if (pluginAccess.getRootNode().getMutableTreeNode().equals(target)) {
@@ -401,13 +401,13 @@ public class PluginTree extends JTree implements DragGestureListener,
               }
             } else if (flavors[0].getHumanPresentableName().equals("Program")) {
               if (targetPath.getPathCount() <= 2) {
-                if (FavoritesPlugin.getInstance().getRootNode()
+                if (FavoritesPlugin.getRootNode()
                     .getMutableTreeNode().equals(target)) {
                   e.acceptDrag(e.getDropAction());
                   rejected = false;
                   reject = false;
                   temp = FavoritesPlugin.getInstance();
-                } else if (ReminderPlugin.getInstance().getRootNode()
+                } else if (ReminderPlugin.getRootNode()
                     .getMutableTreeNode().equals(target)) {
                   e.acceptDrag(e.getDropAction());
                   rejected = false;
@@ -415,24 +415,24 @@ public class PluginTree extends JTree implements DragGestureListener,
                   temp = ReminderPlugin.getInstance();
                 } else {
                   PluginProxy[] pa = PluginProxyManager.getInstance().getActivatedPlugins();
-  
+
                   for (PluginProxy pluginAccess : pa) {
                     if (pluginAccess.getRootNode() != null) {
                       if (pluginAccess.getRootNode().getMutableTreeNode().equals(target)) {
-    
+
                         /*
                          * This would only work with Java 1.5
-                         * 
+                         *
                          * Transferable tr = e.getTransferable(); Program program =
                          * (Program) tr.getTransferData(flavors[0]);
                          */
-    
+
                         if (getAction(pluginAccess.getContextMenuActions(Plugin
                             .getPluginManager().getExampleProgram())) == null) {
                           mPlugin = null;
                           break;
                         }
-    
+
                         e.acceptDrag(e.getDropAction());
                         reject = false;
                         rejected = false;
@@ -443,14 +443,14 @@ public class PluginTree extends JTree implements DragGestureListener,
                 }
               }
             }
-  
+
             if (!reject && (mPlugin == null || temp != mPlugin)) {
               changed = true;
               this.paintImmediately(mCueLine.getBounds());
-              
+
               mCueLine.setRect(((PluginTree) ((DropTarget) e.getSource())
                   .getComponent()).getPathBounds(targetPath));
-              
+
               Graphics2D g2 = (Graphics2D) getGraphics();
               Color c = new Color(255, 0, 0, 40);
               g2.setColor(c);
@@ -532,7 +532,7 @@ public class PluginTree extends JTree implements DragGestureListener,
           mCurrentPoint = location;
         }
       }
-      
+
     } catch (Exception ee) {}
 
     if (this.getVisibleRect().width < this.getSize().width
@@ -593,7 +593,7 @@ public class PluginTree extends JTree implements DragGestureListener,
             TreePath targetPath = ((PluginTree) ((DropTarget) src)
                 .getComponent()).getPathForLocation(loc.x, loc.y);
             Node target = (Node) targetPath.getLastPathComponent();
-            
+
             if(target.getProgramReceiveTarget() == null && targetPath.getPathCount() <= 2) {
               target = (Node) targetPath.getPathComponent(1);
             }
@@ -619,14 +619,14 @@ public class PluginTree extends JTree implements DragGestureListener,
                   vec = getLeafElements(source, new Vector<Program>());
                 }
                 Program[] p = vec.toArray(new Program[vec.size()]);
-                
+
                 if(p.length > 0) {
-                  if (target.equals(ReminderPlugin.getInstance().getRootNode()
+                  if (target.equals(ReminderPlugin.getRootNode()
                       .getMutableTreeNode())) {
                       ReminderPlugin.getInstance().addPrograms(p);
                   } else if(target.getProgramReceiveTarget() == null) {
                     PluginProxy[] pa = PluginProxyManager.getInstance().getActivatedPlugins();
-  
+
                     for (PluginProxy pluginAccess : pa) {
                       if (pluginAccess.getRootNode() != null) {
                         if (pluginAccess.getRootNode().getMutableTreeNode().equals(target)) {
@@ -670,11 +670,11 @@ public class PluginTree extends JTree implements DragGestureListener,
               if (!found) {
                 Action action = null;
 
-                if (FavoritesPlugin.getInstance().getRootNode()
+                if (FavoritesPlugin.getRootNode()
                     .getMutableTreeNode().equals(target)) {
                   action = getAction(FavoritesPluginProxy.getInstance()
                       .getContextMenuActions(program));
-                } else if (ReminderPlugin.getInstance().getRootNode()
+                } else if (ReminderPlugin.getRootNode()
                     .getMutableTreeNode().equals(target)) {
                   action = getAction(ReminderPluginProxy.getInstance()
                       .getContextMenuActions(program));
@@ -724,7 +724,7 @@ public class PluginTree extends JTree implements DragGestureListener,
 
   /**
    * Get the Programs of a node and it's child nodes
-   * 
+   *
    * @param node
    *          Node to start the search
    * @param entries
@@ -761,14 +761,14 @@ public class PluginTree extends JTree implements DragGestureListener,
   }
 
   public void dragExit(DragSourceEvent dse) {}
-  
+
   public void updateUI() {
     if(mUpdateAllowed) {
       setUI(new PluginTreeUI(SingleAndDoubleClickTreeUI.EXPAND_AND_COLLAPSE, getSelectionPath()));
       invalidate();
     }
   }
-  
+
   private static class PluginTreeUI extends SingleAndDoubleClickTreeUI {
     private GraphicsConfiguration mGC;
     private JLabel mProgramLabel = new JLabel();
@@ -777,27 +777,27 @@ public class PluginTree extends JTree implements DragGestureListener,
       super(type, selectionPath);
     }
 
-    protected void paintRow(Graphics g, Rectangle clipBounds, Insets insets, Rectangle bounds, TreePath path, int row, boolean isExpanded, boolean hasBeenExpanded, boolean isLeaf)  {      
+    protected void paintRow(Graphics g, Rectangle clipBounds, Insets insets, Rectangle bounds, TreePath path, int row, boolean isExpanded, boolean hasBeenExpanded, boolean isLeaf)  {
       if(path.getLastPathComponent() instanceof Node && (tree.getSelectionPath() == null || !tree.getSelectionPath().equals(path))) {
         Node node = (Node)path.getLastPathComponent();
-        
+
         if(node.getType() == Node.PROGRAM) {
           Program program = ((ProgramItem)node.getUserObject()).getProgram();
-          
+
           if(UIManager.getLookAndFeel().getClass().getCanonicalName().equals("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel")) {
             bounds.setBounds(bounds.x,bounds.y+1,bounds.width,bounds.height);
           }
-          
+
           boolean cleaned = false;
-          
+
           /*if(program.getMarkerArr().length > 0 && program.getMarkPriority() >= Program.MIN_MARK_PRIORITY) {
             cleaned = true;
-            
+
             if(!program.isExpired()) {
               g.setColor(Color.white);
               g.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
             }
-            
+
             switch(program.getMarkPriority()) {
               case Program.MIN_MARK_PRIORITY: g.setColor(Settings.propProgramPanelMarkedMinPriorityColor.getColor());break;
               case Program.LOWER_MEDIUM_MARK_PRIORITY: g.setColor(Settings.propProgramPanelMarkedLowerMediumPriorityColor.getColor());break;
@@ -805,35 +805,35 @@ public class PluginTree extends JTree implements DragGestureListener,
               case Program.HIGHER_MEDIUM_MARK_PRIORITY: g.setColor(Settings.propProgramPanelMarkedHigherMediumPriorityColor.getColor());break;
               case Program.MAX_MARK_PRIORITY: g.setColor(Settings.propProgramPanelMarkedMaxPriorityColor.getColor());break;
             }
-            
+
             if(program.isExpired()) {
               g.setColor(new Color(g.getColor().getRed(), g.getColor().getGreen(), g.getColor().getBlue(), (int)(g.getColor().getAlpha()*6/10.)));
             }
-            
+
             g.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
           }*/
-          
+
           if(program.isOnAir()) {
             if(!cleaned) {
               g.setColor(Color.white);
               g.fillRect(bounds.x, bounds.y+1, bounds.width, bounds.height-2);
             }
-            
+
             int runTime = IOUtilities.getMinutesAfterMidnight() - program.getStartTime();
             if (runTime < 0) {
               runTime += 24 * 60;
             }
             int progressX = (int)((bounds.width)/(double)program.getLength() * runTime);
-            
+
             g.setColor(Settings.propProgramTableColorOnAirDark.getColor());
-            g.fillRect(bounds.x,bounds.y+1,progressX,bounds.height-2);            
-            
+            g.fillRect(bounds.x,bounds.y+1,progressX,bounds.height-2);
+
             g.setColor(Settings.propProgramTableColorOnAirLight.getColor());
             g.fillRect(bounds.x + progressX,bounds.y+1,bounds.width-progressX,bounds.height-2);
           }
-          
+
           if(program.isExpired()) {
-            g.setColor(UIManager.getColor("ComboBox.disabledForeground"));            
+            g.setColor(UIManager.getColor("ComboBox.disabledForeground"));
           }
           else if(FilterManagerImpl.getInstance().getCurrentFilter().accept(program)) {
             g.setColor(UIManager.getColor("Label.foreground"));
@@ -841,20 +841,20 @@ public class PluginTree extends JTree implements DragGestureListener,
           else {
             g.setColor(Color.red);
           }
-          
-          String text = node.getNodeFormatter().format((ProgramItem)node.getUserObject());          
-          
+
+          String text = node.getNodeFormatter().format((ProgramItem)node.getUserObject());
+
           // use an image to be able to display HTML content on the node
           BufferedImage textImage = getImage(bounds);
           Graphics lg = textImage.getGraphics();
-          
+
           mProgramLabel.setFont(tree.getFont());
           mProgramLabel.setForeground(g.getColor());
           mProgramLabel.setText(text);
           mProgramLabel.setOpaque(false);
           mProgramLabel.setBounds(0, 0, bounds.width, bounds.height);
           mProgramLabel.paint(lg);
-          
+
           g.drawImage(textImage, bounds.x, bounds.y, mProgramLabel);
           lg.dispose();
         }
@@ -870,7 +870,7 @@ public class PluginTree extends JTree implements DragGestureListener,
     /**
      * Returns a new image with size of the defined bounds.<p>
      * This is used as target image to render the HTML label.
-     * 
+     *
      * @param bounds
      * @return BufferedImage
      */
@@ -882,7 +882,7 @@ public class PluginTree extends JTree implements DragGestureListener,
 
     /**
      * Returns the default GraphicsConfiguration.
-     * 
+     *
      * @return
      */
     private GraphicsConfiguration getGraphicsConfiguration() {

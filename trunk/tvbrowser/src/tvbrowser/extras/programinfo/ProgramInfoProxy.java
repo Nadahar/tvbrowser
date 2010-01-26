@@ -41,9 +41,9 @@ import devplugin.SettingsTab;
  * @author René Mach
  */
 public class ProgramInfoProxy extends AbstractInternalPluginProxy implements ContextMenuIf {
-  
+
   private static ProgramInfoProxy mInstance;
-  
+
   private ProgramInfoProxy() {
     mInstance = this;
   }
@@ -54,20 +54,20 @@ public class ProgramInfoProxy extends AbstractInternalPluginProxy implements Con
   public static synchronized ProgramInfoProxy getInstance() {
     if(mInstance == null)
       new ProgramInfoProxy();
-    
+
     return mInstance;
   }
-  
+
   public ActionMenu getContextMenuActions(Program program) {
     return ProgramInfo.getInstance().getContextMenuActions(program);
   }
 
   public String getId() {
-    return ProgramInfo.getInstance().getId();
+    return ProgramInfo.getProgramInfoPluginId();
   }
-  
+
   public String toString() {
-    return ProgramInfo.getInstance().toString();
+    return ProgramInfo.getName();
   }
 
   public String getButtonActionDescription() {

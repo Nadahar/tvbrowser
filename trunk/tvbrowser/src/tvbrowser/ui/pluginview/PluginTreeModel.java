@@ -56,7 +56,7 @@ public class PluginTreeModel extends DefaultTreeModel {
 
   private PluginTreeModel() {
     super(new Node(Node.ROOT, "Plugins"));
-    
+
     TvDataUpdater.getInstance().addTvDataUpdateListener(new TvDataUpdateListener() {
       public void tvDataUpdateFinished() {
         mDisableUpdate = false;
@@ -79,16 +79,16 @@ public class PluginTreeModel extends DefaultTreeModel {
       Enumeration<DefaultMutableTreeNode> e = rootNode.children();
       while (e.hasMoreElements() && !mDisableUpdate) {
         DefaultMutableTreeNode n = e.nextElement();
-        
+
         Object o = n.getUserObject();
         if (o instanceof Plugin) {
           Plugin p = (Plugin) o;
           p.getRootNode().update();
         }
-        else if(n.equals(FavoritesPlugin.getInstance().getRootNode().getMutableTreeNode())) {
-          FavoritesPlugin.getInstance().getRootNode().update();
-        } else if(n.equals(ReminderPlugin.getInstance().getRootNode().getMutableTreeNode())) {
-          ReminderPlugin.getInstance().getRootNode().update();
+        else if(n.equals(FavoritesPlugin.getRootNode().getMutableTreeNode())) {
+          FavoritesPlugin.getRootNode().update();
+        } else if(n.equals(ReminderPlugin.getRootNode().getMutableTreeNode())) {
+          ReminderPlugin.getRootNode().update();
         }
       }
     }
@@ -117,22 +117,22 @@ public class PluginTreeModel extends DefaultTreeModel {
 
   private void insertSorted(PluginTreeNode pluginRoot) {
     MutableTreeNode rootNode = (MutableTreeNode) this.getRoot();
-    ArrayList<String> pluginNames = new ArrayList<String>();    
-    
+    ArrayList<String> pluginNames = new ArrayList<String>();
+
     for (int i = 0; i < rootNode.getChildCount(); i++) {
       pluginNames.add(rootNode.getChildAt(i).toString());
     }
-    
+
     Collections.sort(pluginNames);
     int index = pluginNames.indexOf(pluginRoot.getUserObject().toString());
-    
+
     if(index == -1) {
       index = Collections.binarySearch(pluginNames, pluginRoot.getUserObject().toString());
     }
     else {
       index = -index-1;
     }
-    
+
     rootNode.insert(pluginRoot.getMutableTreeNode(), -index-1);
 
     if(pluginRoot.getMutableTreeNode().getIcon() == null) {
@@ -183,7 +183,7 @@ public class PluginTreeModel extends DefaultTreeModel {
 
   public void reload(TreeNode node) {
     TreePath selection = PluginTree.getInstance() != null ? PluginTree.getInstance().getSelectionPath() : null;
-    
+
     TreePath treePath = new TreePath(getPathToRoot(node));
     Enumeration<TreePath> e = null;
 
@@ -193,9 +193,9 @@ public class PluginTreeModel extends DefaultTreeModel {
         e = PluginTree.getInstance().getExpandedDescendants(treePath);
       }
     }
-    
+
     super.reload(node);
-    
+
     if (e != null) {
       while (e.hasMoreElements()) {
         TreePath tree = e.nextElement();
@@ -204,7 +204,7 @@ public class PluginTreeModel extends DefaultTreeModel {
 
         for (int i = 1; i < o.length; i++) {
           TreeNode[] pathNodes = getPathToRoot((TreeNode) o[i]);
-          
+
           if (node == null || pathNodes[0].toString().compareTo("Plugins") != 0) {
             TreeNode n1 = (TreeNode) o[i - 1];
             @SuppressWarnings("unchecked")
@@ -219,12 +219,12 @@ public class PluginTreeModel extends DefaultTreeModel {
             }
           }
         }
-        
+
         tree = new TreePath(o);
         PluginTree.getInstance().expandPath(tree);
       }
     }
-    
+
     if(selection != null) {
       PluginTree.getInstance().setSelectionPath(selection);
     }

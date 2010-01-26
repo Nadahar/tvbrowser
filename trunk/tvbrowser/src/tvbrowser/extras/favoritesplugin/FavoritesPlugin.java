@@ -122,23 +122,23 @@ public class FavoritesPlugin {
           .getLocalizerFor(FavoritesPlugin.class);
 
   private static FavoritesPlugin mInstance;
-  
+
   private Properties mSettings = new Properties();
 
-  private static String DATAFILE_PREFIX = "favoritesplugin.FavoritesPlugin";
+  private static final String DATAFILE_PREFIX = "favoritesplugin.FavoritesPlugin";
 
   private ConfigurationHandler mConfigurationHandler;
 
-  private PluginTreeNode mRootNode;
+  private static final PluginTreeNode mRootNode = new PluginTreeNode(getName());
 
   private boolean mShowInfoOnNewProgramsFound = true;
-  
+
   private boolean mHasRightToUpdate = false;
 
   private boolean mHasToUpdate = false;
-  
+
   /**
-   * do not save the favorite tree during TV data updates because it might not be consistent 
+   * do not save the favorite tree during TV data updates because it might not be consistent
    */
   private boolean mHasRightToSave = true;
   private boolean mIsShuttingDown = false;
@@ -148,25 +148,24 @@ public class FavoritesPlugin {
 
   private ArrayList<AdvancedFavorite> mPendingFavorites;
   private int mMarkPriority = -2;
-  
+
   private Exclusion[] mExclusions;
   private ArrayList<UpdateInfoThread> mUpdateInfoThreads;
-  
+
   private boolean mShowInfoDialog = false;
   private ThreadPoolExecutor mThreadPool;
-  
+
   /**
    * Creates a new instance of FavoritesPlugin.
    */
   private FavoritesPlugin() {
     mInstance = this;
     mExclusions = new Exclusion[0];
-    mPendingFavorites = new ArrayList<AdvancedFavorite>(0); 
+    mPendingFavorites = new ArrayList<AdvancedFavorite>(0);
     mClientPluginTargets = new ProgramReceiveTarget[0];
     mConfigurationHandler = new ConfigurationHandler(DATAFILE_PREFIX);
     mUpdateInfoThreads = new ArrayList<UpdateInfoThread>(0);
     load();
-    mRootNode = new PluginTreeNode(mLocalizer.msg("manageFavorites","Favorites"));
 
     TvDataBase.getInstance().addTvDataListener(new TvDataBaseListener() {
       public void dayProgramTouched(final ChannelDayProgram removedDayProgram,
@@ -174,16 +173,16 @@ public class FavoritesPlugin {
         if(mThreadPool == null) {
           mThreadPool = new ThreadPoolExecutor(5, 10, 100, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
         }
-        
+
         Runnable update = new Runnable() {
           public void run() {
             if(removedDayProgram != null) {
               Iterator<Program> it = removedDayProgram.getPrograms();
-              
+
               while (it.hasNext()) {
                 try {
                   Program p = it.next();
-                  
+
                   for (Favorite fav : FavoriteTreeModel.getInstance().getFavoriteArr()) {
                     fav.removeProgram(p);
                   }
@@ -192,27 +191,27 @@ public class FavoritesPlugin {
                 }
               }
             }
-            
+
             if(addedDayProgram != null) {
               Iterator<Program> it = addedDayProgram.getPrograms();
               while (it.hasNext()) {
                 final Program p = it.next();
-      
-                for (Favorite fav : FavoriteTreeModel.getInstance().getFavoriteArr()) {                
+
+                for (Favorite fav : FavoriteTreeModel.getInstance().getFavoriteArr()) {
                   try {
                     fav.tryToMatch(p);
                   } catch (TvBrowserException e) {
                     ErrorHandler.handle(e);
-                  }                
+                  }
                 }
               }
             }
           }
         };
-        
+
         mThreadPool.execute(update);
       }
-      
+
       public void dayProgramAdded(ChannelDayProgram prog) {}
       public void dayProgramDeleted(ChannelDayProgram prog) {}
       public void dayProgramAdded(MutableChannelDayProgram prog) {}
@@ -222,7 +221,7 @@ public class FavoritesPlugin {
       public void tvDataUpdateStarted() {
         mHasRightToSave = false;
         mSendPluginsTable.clear();
-        
+
         for (Favorite favorite : FavoriteTreeModel.getInstance().getFavoriteArr()) {
           favorite.clearNewPrograms();
           favorite.clearRemovedPrograms();
@@ -240,7 +239,7 @@ public class FavoritesPlugin {
       }
     });
   }
-  
+
   /**
    * Waits for finishing the update threads.
    * @since 2.7.2
@@ -249,7 +248,7 @@ public class FavoritesPlugin {
     if (mThreadPool != null) {
       mLog.info("Favorites: Wait for update threads to finish");
       mThreadPool.shutdown();
-      
+
       try {
         boolean success = mThreadPool.awaitTermination(Math.max(
             FavoriteTreeModel.getInstance().getFavoriteArr().length, 10),
@@ -264,7 +263,7 @@ public class FavoritesPlugin {
       } catch (InterruptedException e) {
         mLog.log(Level.INFO,"Waiting for favorite update finishing was interrupted",e);
       }
-      
+
       mThreadPool = null;
     }
   }
@@ -276,47 +275,47 @@ public class FavoritesPlugin {
       Thread update = new Thread("Favorites: handle update finished") {
         public void run() {
           mHasToUpdate = false;
-    
+
           ManageFavoritesDialog dlg = ManageFavoritesDialog.getInstance();
-          
+
           if(dlg != null) {
             dlg.favoriteSelectionChanged();
           }
-          
+
           //FavoriteTreeModel.getInstance().reload();
-    
+
           mHasRightToSave = true;
           updateRootNode(true);
-    
+
           ArrayList<Favorite> showInfoFavorites = new ArrayList<Favorite>(0);
-    
+
           Favorite[] favoriteArr = FavoriteTreeModel.getInstance().getFavoriteArr();
-    
+
           for (Favorite favorite : favoriteArr) {
             favorite.clearRemovedPrograms();
-            
+
             if (favorite.isRemindAfterDownload() && favorite.getNewPrograms().length > 0) {
               showInfoFavorites.add(favorite);
             }
           }
-           
+
           if(!showInfoFavorites.isEmpty()) {
             UpdateInfoThread thread = new UpdateInfoThread(showInfoFavorites.toArray(new Favorite[showInfoFavorites.size()]));
             thread.setPriority(Thread.MIN_PRIORITY);
-    
+
             mUpdateInfoThreads.add(thread);
             thread.start();
           }
-          
+
           Favorite[] favorites = FavoriteTreeModel.getInstance().getFavoriteArr();
-          
+
           for(Favorite fav : favorites) {
             fav.revalidatePrograms();
           }
         }
       };
       update.start();
-      
+
       try {
         update.join();
       } catch (InterruptedException e) {
@@ -325,47 +324,47 @@ public class FavoritesPlugin {
     }
   }
 
-  
+
   public void handleTvBrowserIsShuttingDown() {
     mIsShuttingDown = true;
-    
+
     try {
       if(!mUpdateInfoThreads.isEmpty()) {
         for(int i = mUpdateInfoThreads.size() - 1; i >= 0; i--) {
           UpdateInfoThread thread = mUpdateInfoThreads.get(i);
-          
+
           thread.interrupt();
           thread.showDialog();
         }
       }
     }catch(Throwable t) {
-      ErrorHandler.handle("Error during showing new Favorites on TV-Browser shutting down.",t);  
+      ErrorHandler.handle("Error during showing new Favorites on TV-Browser shutting down.",t);
     }
   }
-  
+
   public static synchronized FavoritesPlugin getInstance() {
     if (mInstance == null) {
       new FavoritesPlugin();
     }
     return mInstance;
   }
-  
+
   public void handleTvBrowserStartFinished() {
     updateRootNode(false);
     if(!mPendingFavorites.isEmpty()) {
       for(AdvancedFavorite fav : mPendingFavorites) {
         fav.loadPendingFilter();
       }
-      
+
       mPendingFavorites.clear();
       mPendingFavorites = null;
     }
-    
+
     mHasRightToUpdate = true;
-    
+
     if(mHasToUpdate) {
       handleTvDataUpdateFinished();
-    }    
+    }
   }
 
   private void load() {
@@ -405,19 +404,19 @@ public class FavoritesPlugin {
     }
   }
 
-  public ImageIcon getIconFromTheme(String category, String Icon, int size) {
+  public static ImageIcon getIconFromTheme(String category, String Icon, int size) {
     return IconLoader.getInstance().getIconFromTheme(category, Icon, size);
   }
 
   private void readData(ObjectInputStream in) throws IOException,
           ClassNotFoundException {
     int version = in.readInt();
-    
+
     Favorite[] newFavoriteArr;
-    
+
     if(version < 6) {
       int size = in.readInt();
-      
+
       newFavoriteArr = new Favorite[size];
       for (int i = 0; i < size; i++) {
         if (version <= 2) {
@@ -437,7 +436,7 @@ public class FavoritesPlugin {
           else if (AdvancedFavorite.TYPE_ID.equals(typeID)) {
             newFavoriteArr[i] = new AdvancedFavorite(in);
           }
-  
+
         }
       }
       FavoriteTreeModel.initInstance(newFavoriteArr);
@@ -459,10 +458,10 @@ public class FavoritesPlugin {
     // Get the client plugins
     if(version <= 4) {
       int size = in.readInt();
-      ArrayList<ProgramReceiveTarget> list = new ArrayList<ProgramReceiveTarget>(0); 
+      ArrayList<ProgramReceiveTarget> list = new ArrayList<ProgramReceiveTarget>(0);
       for (int i = 0; i < size; i++) {
         String id = null;
-        
+
         if (version == 1) {
           // In older versions of TV-Browser, not the plugin ID was saved,
           // but its class name.
@@ -478,12 +477,12 @@ public class FavoritesPlugin {
             reminderFound = true;
           }
         }
-        
+
         if(version > 2 || (version <= 2 && id.compareTo("java.reminderplugin.ReminderPlugin") != 0)) {
           list.add(ProgramReceiveTarget.createDefaultTargetForProgramReceiveIfId(id));
         }
       }
-      
+
       if(!list.isEmpty()) {
         mClientPluginTargets = list.toArray(new ProgramReceiveTarget[list.size()]);
       }
@@ -491,7 +490,7 @@ public class FavoritesPlugin {
     else {
       int n = in.readInt();
       mClientPluginTargets = new ProgramReceiveTarget[n];
-      
+
       for (int i = 0; i < n; i++) {
         mClientPluginTargets[i] = new ProgramReceiveTarget(in);
       }
@@ -501,17 +500,17 @@ public class FavoritesPlugin {
       for (Favorite newFavorite : newFavoriteArr) {
         newFavorite.getReminderConfiguration().setReminderServices(new String[] {ReminderConfiguration.REMINDER_DEFAULT});
       }
-      
+
       updateAllFavorites();
     }
 
     if(version >= 4) {
       this.mShowInfoOnNewProgramsFound = in.readBoolean();
     }
-    
+
     if(version >= 7) {
       mExclusions = new Exclusion[in.readInt()];
-      
+
       for(int i = 0; i < mExclusions.length; i++) {
         mExclusions[i] = new Exclusion(in);
       }
@@ -561,31 +560,31 @@ public class FavoritesPlugin {
     Collection<ReceiveTargetItem> targets = mSendPluginsTable.values();
     StringBuilder buffer = new StringBuilder();
     ArrayList<Favorite> errorFavorites = new ArrayList<Favorite>(0);
-    
+
     for(ReceiveTargetItem target : targets) {
       if(!target.getReceiveTarget().getReceifeIfForIdOfTarget().receivePrograms(target.getPrograms(), target.getReceiveTarget())) {
         Favorite[] favs =FavoriteTreeModel.getInstance().getFavoritesContainingReceiveTarget(target.getReceiveTarget());
-        
+
         for(Favorite fav : favs) {
           if(!errorFavorites.contains(fav)) {
             errorFavorites.add(fav);
           }
         }
-        
+
         buffer.append(
             target.getReceiveTarget().getReceifeIfForIdOfTarget().toString())
             .append(" - ").append(target.toString()).append('\n');
       }
     }
-    
+
     if(buffer.length() > 0) {
       buffer.insert(0,mLocalizer.msg("sendError","Error by sending programs to other plugins.\n\nPlease check the favorites that should send\nprograms to the following plugins:\n"));
       buffer.append(mLocalizer.msg("sendErrorFavorites","\nThe following Favorites are affected by this:\n"));
-      
+
       ScrollableJPanel panel = new ScrollableJPanel();
       panel.setBorder(BorderFactory.createEmptyBorder(0,1,0,1));
       panel.setLayout(new BoxLayout(panel,BoxLayout.Y_AXIS));
-      
+
       for(Favorite fav : errorFavorites) {
         final Favorite finalFav = fav;
         panel.add(UiUtilities.createHtmlHelpTextArea("<a href=\"#link\">" + fav.getName() + "</a>",new HyperlinkListener() {
@@ -596,19 +595,19 @@ public class FavoritesPlugin {
           }
         }));
       }
-      
+
       JScrollPane pane = new JScrollPane(panel);
       pane.setPreferredSize(new Dimension(0,100));
-      
+
       Object[] msg = {buffer.toString(),pane};
-      
+
       JOptionPane.showMessageDialog(UiUtilities.getLastModalChildOf(MainFrame.getInstance()),msg,Localizer.getLocalization(Localizer.I18N_ERROR),JOptionPane.ERROR_MESSAGE);
     }
   }
-  
+
   /**
    * Add the programs to send to other Plugins to a Hashtable.
-   * 
+   *
    * @param targets The ProgramReceiveTargets to send the programs for.
    * @param programs The Programs to send.
    */
@@ -617,12 +616,12 @@ public class FavoritesPlugin {
       if(target != null && target.getReceifeIfForIdOfTarget() != null) {
         synchronized(mSendPluginsTable) {
           ReceiveTargetItem item = mSendPluginsTable.get(getKeyForReceiveTarget(target));
-          
+
           if(item == null) {
             item = new ReceiveTargetItem(target);
             mSendPluginsTable.put(getKeyForReceiveTarget(target), item);
           }
-          
+
           item.addPrograms(programs);
         }
       }
@@ -630,17 +629,17 @@ public class FavoritesPlugin {
   }
 
   /**
-   * @return If the management dialog should show the 
+   * @return If the management dialog should show the
    * programs on the black list too.
    */
   public boolean isShowingBlackListEntries() {
     return mSettings.getProperty("showBlackEntries","false").compareTo("true") == 0;
   }
-  
+
   /**
    * Set the value for showing black list entries
    * in the management dialog.
-   * 
+   *
    * @param value If the programs are to show.
    */
   public void setIsShowingBlackListEntries(boolean value) {
@@ -658,9 +657,9 @@ public class FavoritesPlugin {
     }
 
     out.writeBoolean(mShowInfoOnNewProgramsFound);
-    
+
     out.writeInt(mExclusions.length);
-    
+
     for (Exclusion exclusion : mExclusions) {
       exclusion.writeData(out);
     }
@@ -688,11 +687,11 @@ public class FavoritesPlugin {
     return res;
   }
 
-  protected ActionMenu getButtonAction() {
+  protected static ActionMenu getButtonAction() {
     ButtonAction action = new ButtonAction();
     action.setActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        showManageFavoritesDialog();
+        getInstance().showManageFavoritesDialog();
       }
     });
 
@@ -700,7 +699,7 @@ public class FavoritesPlugin {
     action.setSmallIcon(getIconFromTheme(ICON_CATEGORY, ICON_NAME, 16));
     action.setShortDescription(mLocalizer.msg("favoritesManager",
             "Manage favorite programs"));
-    action.setText(mLocalizer.msg("manageFavorites", "Favorites"));
+    action.setText(getName());
 
     return new ActionMenu(action);
   }
@@ -735,7 +734,7 @@ public class FavoritesPlugin {
             200);
     ManageFavoritesDialog dlg = new ManageFavoritesDialog(MainFrame.getInstance(), favoriteArr, splitPanePosition, showNew, initialSelection);
     dlg.setModal(true);
-    
+
     if(mShowInfoOnNewProgramsFound) {
       dlg.addComponentListener(new ComponentAdapter() {
         public void componentShown(ComponentEvent e) {
@@ -744,24 +743,24 @@ public class FavoritesPlugin {
             Object[] o = {mLocalizer.msg("newPrograms-description","Favorites that contains new programs will be shown in this dialog.\nWhen you click on a Favorite you can see the new programs in the right list.\n\n"),
                 chb
             };
-            
+
             JOptionPane.showMessageDialog(e.getComponent(),o);
 
             if(chb.isSelected()) {
               mShowInfoOnNewProgramsFound = false;
             }
-          }    
+          }
         }
       });
     }
 
     Settings.layoutWindow("extras.manageFavoritesDlg",dlg,new Dimension(650,450));
     dlg.setVisible(true);
-    
+
     splitPanePosition = dlg.getSplitpanePosition();
     mSettings.setProperty("splitpanePosition", Integer
         .toString(splitPanePosition));
-    
+
     if (!showNew) {
       updateRootNode(true);
     }
@@ -778,7 +777,7 @@ public class FavoritesPlugin {
   public boolean isShowingPictures() {
     return mSettings.getProperty("showPictures","false").compareTo("true") == 0;
   }
-  
+
   public void setIsShowingPictures(boolean value) {
     mSettings.setProperty("showPictures",String.valueOf(value));
   }
@@ -790,7 +789,7 @@ public class FavoritesPlugin {
   public void showCreateFavoriteWizard(Program program, String path) {
     showCreateFavoriteWizardInternal(program, null, null);
   }
-  
+
   public void showCreateActorFavoriteWizard(Program program, String actor) {
     showCreateFavoriteWizardInternal(program, actor, null);
   }
@@ -798,7 +797,7 @@ public class FavoritesPlugin {
   public void showCreateTopicFavoriteWizard(Program program, String topic) {
     showCreateFavoriteWizardInternal(program, null, topic);
   }
-  
+
   private void showCreateFavoriteWizardInternal(Program program, String actor,
       String topic) {
     Window parent = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
@@ -812,7 +811,7 @@ public class FavoritesPlugin {
       }
 
     } else {
-      WizardHandler handler; 
+      WizardHandler handler;
       TypeWizardStep initialStep = new TypeWizardStep(program);
       if (topic != null) {
         initialStep.setTopic(topic);
@@ -824,14 +823,14 @@ public class FavoritesPlugin {
     }
 
     if (favorite != null) {
-      try {        
+      try {
         favorite.updatePrograms();
         FavoriteTreeModel.getInstance().addFavorite(favorite);
-        
+
         if(ManageFavoritesDialog.getInstance() != null) {
           ManageFavoritesDialog.getInstance().addFavorite(favorite, null);
         }
-        
+
       }catch (TvBrowserException exc) {
         ErrorHandler.handle(mLocalizer.msg("couldNotUpdateFavorites","Could not update favorites."), exc);
       }
@@ -869,7 +868,7 @@ public class FavoritesPlugin {
         }
       }
     }
-    
+
     saveFavorites();
   }
 
@@ -887,13 +886,13 @@ public class FavoritesPlugin {
   public void showExcludeProgramsDialog(Favorite fav, Program program) {
     WizardHandler handler = new WizardHandler(UiUtilities.getLastModalChildOf(MainFrame.getInstance()), new ExcludeWizardStep(fav, program));
     Object exclusion = handler.show();
-    
+
     if (exclusion != null) {
       if(fav == null) {
         Exclusion[] exclusionArr = new Exclusion[mExclusions.length + 1];
         System.arraycopy(mExclusions,0,exclusionArr,0,mExclusions.length);
         exclusionArr[mExclusions.length] = (Exclusion)exclusion;
-        
+
         setGlobalExclusions(exclusionArr);
       }else {
         if(exclusion instanceof Exclusion) {
@@ -914,12 +913,12 @@ public class FavoritesPlugin {
         .getLocalization(Localizer.I18N_DELETE),
               JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
       FavoriteTreeModel.getInstance().deleteFavorite(fav);
-      
+
       saveFavorites();
     }
   }
 
-  public PluginTreeNode getRootNode() {
+  public static PluginTreeNode getRootNode() {
     return mRootNode;
   }
 
@@ -951,14 +950,14 @@ public class FavoritesPlugin {
     };
     openSettings.putValue(Action.SMALL_ICON, TVBrowserIcons.preferences(TVBrowserIcons.SIZE_SMALL));
     openSettings.putValue(Action.NAME, Localizer.getEllipsisLocalization(Localizer.I18N_SETTINGS));
-    
+
     mRootNode.addAction(manageFavorite);
     mRootNode.addAction(addFavorite);
     mRootNode.addAction(null);
     mRootNode.addAction(openSettings);
     mRootNode.removeAllChildren();
     mRootNode.getMutableTreeNode().setShowLeafCountEnabled(false);
-    
+
     PluginTreeNode topicNode = mRootNode.addNode(Localizer.getLocalization(Localizer.I18N_PROGRAMS));
     topicNode.setGroupingByDateEnabled(false);
     PluginTreeNode dateNode = mRootNode.addNode(mLocalizer.msg("days", "Days"));
@@ -968,20 +967,20 @@ public class FavoritesPlugin {
 
     mRootNode.update();
     ReminderPlugin.getInstance().updateRootNode(mHasRightToSave);
-    
+
     if(save && mHasRightToSave) {
       saveFavorites();
     }
   }
 
-  public ImageIcon getFavoritesIcon(int size) {
+  public static ImageIcon getFavoritesIcon(int size) {
     return getIconFromTheme(ICON_CATEGORY, ICON_NAME, size);
   }
 
 	public ProgramReceiveTarget[] getClientPluginTargetIds() {
     return mClientPluginTargets;
   }
-  
+
   public void setClientPluginTargets(ProgramReceiveTarget[] clientPluginTargetArr) {
     mClientPluginTargets = clientPluginTargetArr;
   }
@@ -997,10 +996,10 @@ public class FavoritesPlugin {
     return list.toArray(new ProgramReceiveTarget[list.size()]);
   }
 
-  public String getId() {
+  public static String getFavoritesPluginId() {
     return DATAFILE_PREFIX;
   }
-  
+
   /**
    * @return The settings of the FavoritesPlugin.
    * @since 2.2.2
@@ -1008,17 +1007,17 @@ public class FavoritesPlugin {
   public Properties getSettings() {
     return mSettings;
   }
-  
+
   /**
    * Adds a AdvancedFavorite to the pending list (for loading filters after TV-Browser start was finished).
-   * 
+   *
    * @param fav The AdvancedFavorite to add.
    * @since 2.5.1
    */
   public void addPendingFavorite(AdvancedFavorite fav) {
     mPendingFavorites.add(fav);
   }
-  
+
   protected boolean isShowingRepetitions() {
     return mSettings.getProperty("showRepetitions","true").compareTo("true") == 0;
   }
@@ -1026,20 +1025,20 @@ public class FavoritesPlugin {
   protected void setShowRepetitions(boolean value) {
     mSettings.setProperty("showRepetitions", String.valueOf(value));
   }
-  
+
   /**
    * Gets if reminder should be automatically selected for new Favorites
-   * 
+   *
    * @return If the reminder should be selected.
    */
-  public boolean isAutoSelectingRemider() {
+  public boolean isAutoSelectingReminder() {
     return mSettings.getProperty("autoSelectReminder","true").compareTo("true") == 0;
   }
 
   protected void setAutoSelectingReminder(boolean value) {
     mSettings.setProperty("autoSelectReminder", String.valueOf(value));
   }
-  
+
   protected int getMarkPriority() {
     if(mMarkPriority == - 2 && mSettings != null) {
       mMarkPriority = Integer.parseInt(mSettings.getProperty("markPriority",String.valueOf(Program.MIN_MARK_PRIORITY)));
@@ -1048,38 +1047,42 @@ public class FavoritesPlugin {
       return mMarkPriority;
     }
   }
-  
+
   protected void setMarkPriority(int priority) {
     mMarkPriority = priority;
-    
+
     Favorite[] favoriteArr = FavoriteTreeModel.getInstance().getFavoriteArr();
-    
+
     for(Favorite favorite: favoriteArr) {
       Program[] programs = favorite.getWhiteListPrograms();
-      
+
       for(Program program : programs) {
         program.validateMarking();
       }
     }
-    
+
     mSettings.setProperty("markPriority",String.valueOf(priority));
-    
+
     saveFavorites();
   }
-  
+
   public String toString() {
+    return getName();
+  }
+
+  static String getName() {
     return mLocalizer.msg("manageFavorites","Favorites");
   }
-  
+
   private static class ReceiveTargetItem {
     private ProgramReceiveTarget mTarget;
     private ArrayList<Program> mProgramsList;
-    
+
     protected ReceiveTargetItem(ProgramReceiveTarget target) {
       mTarget = target;
       mProgramsList = new ArrayList<Program>(0);
     }
-    
+
     protected void addPrograms(Program[] programs) {
       for(Program p : programs) {
         if(!mProgramsList.contains(p)) {
@@ -1087,31 +1090,31 @@ public class FavoritesPlugin {
         }
       }
     }
-    
+
     protected ProgramReceiveTarget getReceiveTarget() {
       return mTarget;
     }
-    
+
     protected Program[] getPrograms() {
       return mProgramsList.toArray(new Program[mProgramsList.size()]);
     }
-    
+
     public String toString() {
       return mTarget.toString();
     }
   }
-  
+
   private String getKeyForReceiveTarget(ProgramReceiveTarget target) {
     if(target != null) {
       return target.getReceiveIfId() + "###" + target.getTargetId();
     }
-    
+
     return null;
   }
-  
+
   protected void setGlobalExclusions(Exclusion[] exclusions) {
     mExclusions = exclusions;
-    
+
     new Thread("globalFavoriteExclusionRefreshThread") {
       public void run() {
         setPriority(Thread.MIN_PRIORITY);
@@ -1119,7 +1122,7 @@ public class FavoritesPlugin {
       }
     }.start();
   }
-  
+
   /**
    * Gets the global exclusions.
    * <p>
@@ -1128,46 +1131,46 @@ public class FavoritesPlugin {
   public Exclusion[] getGlobalExclusions() {
     return mExclusions;
   }
-  
+
   private class UpdateInfoThread extends Thread {
     private Favorite[] mFavoriteArr;
-    
+
     protected UpdateInfoThread(Favorite[] favArr) {
       super("Manage favorites");
       mFavoriteArr = favArr;
     }
-    
+
     public void run() {
       while(Settings.propAutoDataDownloadEnabled.getBoolean() && (!MainFrame.getInstance().isVisible() || MainFrame.getInstance().getExtendedState() == JFrame.ICONIFIED) && !mIsShuttingDown && !mShowInfoDialog) {
         try {
           sleep(5000);
         }catch(Exception e) {
           mUpdateInfoThreads.remove(this);
-          
+
           if(mUpdateInfoThreads.isEmpty()) {
             mShowInfoDialog = false;
           }
-          
+
           return;
         }
       }
-      
+
       showDialog();
-    
+
       mUpdateInfoThreads.remove(this);
-      
+
       if(mUpdateInfoThreads.isEmpty()) {
         mShowInfoDialog = false;
       }
     }
-    
+
     protected void showDialog() {
       showManageFavoritesDialog(true, mFavoriteArr, null);
     }
   }
-  
+
   public void showInfoDialog() {
     mShowInfoDialog = true;
   }
-  
+
 }

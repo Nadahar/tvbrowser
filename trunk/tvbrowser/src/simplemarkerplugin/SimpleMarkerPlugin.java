@@ -1,6 +1,6 @@
 /*
  * SimpleMarkerPlugin by René Mach
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -72,16 +72,16 @@ import devplugin.Version;
 /**
  * SimpleMarkerPlugin 1.4 Plugin for TV-Browser since version 2.3 to only mark
  * programs and add them to the Plugin tree.
- * 
+ *
  * (Formerly known as Just_Mark ;-))
- * 
+ *
  * License: GNU General Public License (GPL)
- * 
+ *
  * @author René Mach
  */
 public class SimpleMarkerPlugin extends Plugin {
   private static final Version mVersion = new Version(2,70,0);
-  
+
   /** The localizer for this class. */
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(SimpleMarkerPlugin.class);
 
@@ -92,7 +92,7 @@ public class SimpleMarkerPlugin extends Plugin {
   private PluginTreeNode mRootNode = new PluginTreeNode(this, false);
 
   private boolean mHasRightToUpdate = false, mHasToUpdate = false;
-  
+
   private ManagePanel mManagePanel = null;
 
   private PluginInfo mPluginInfo;
@@ -111,16 +111,16 @@ public class SimpleMarkerPlugin extends Plugin {
   public static final Localizer getLocalizer() {
     return mLocalizer;
   }
-  
+
   public void onActivation() {
     mMarkListVector = new MarkListsVector();
     updateTree();
   }
-  
+
   public static Version getVersion() {
     return mVersion;
   }
-  
+
   /**
    * @return The instance of this class.
    */
@@ -133,10 +133,10 @@ public class SimpleMarkerPlugin extends Plugin {
     if(mPluginInfo == null) {
       String name = mLocalizer.msg("name","Marker plugin");
       String description = mLocalizer.msg("description", "A simple marker plugin (formerly Just_Mark)");
-      
+
       mPluginInfo = new PluginInfo(SimpleMarkerPlugin.class, name, description, "René Mach", "GPL");
     }
-    
+
     return mPluginInfo;
   }
 
@@ -156,7 +156,7 @@ public class SimpleMarkerPlugin extends Plugin {
     if(p == null || p.equals(getPluginManager().getExampleProgram())) {
       return new Icon[] {mMarkListVector.get(0).getMarkIcon()};
     }
-    
+
     String[] lists = mMarkListVector.getNamesOfListsContainingProgram(p);
     Icon[] icons = new Icon[lists.length];
 
@@ -166,7 +166,7 @@ public class SimpleMarkerPlugin extends Plugin {
 
     return icons;
   }
-  
+
   public SettingsTab getSettingsTab() {
     return (new SimpleMarkerPluginSettingsTab());
   }
@@ -178,7 +178,7 @@ public class SimpleMarkerPlugin extends Plugin {
     if(program == null || program.equals(getPluginManager().getExampleProgram()) || getPluginManager().getFilterManager() == null) {
       return new ActionMenu(new ContextMenuAction(mLocalizer.msg("mark", "Mark"),createImageIcon("status", "mail-attachment", 16)));
     }
-    
+
     if (mMarkListVector.size() == 1) {
       // Create context menu entry
       return new ActionMenu(mMarkListVector.getListAt(0).getContextMenuAction(program, true));
@@ -187,15 +187,15 @@ public class SimpleMarkerPlugin extends Plugin {
       ContextMenuAction menu = new ContextMenuAction();
       menu.setText(mLocalizer.msg("mark", "Mark"));
       menu.setSmallIcon(createImageIcon("status", "mail-attachment", 16));
-      
+
       for (int i = 0; i < mMarkListVector.size(); i++) {
         submenu[i] = mMarkListVector.getListAt(i).getContextMenuAction(program, false);
       }
       return new ActionMenu(menu, submenu);
     }
-    
+
   }
-  
+
   public boolean canReceiveProgramsWithTarget() {
     return true;
   }
@@ -203,7 +203,7 @@ public class SimpleMarkerPlugin extends Plugin {
   public ProgramReceiveTarget[] getProgramReceiveTargets() {
     return mMarkListVector.getReceiveTargets();
   }
-  
+
   public boolean receivePrograms(Program[] programs, ProgramReceiveTarget target) {
     MarkList targetList = mMarkListVector.getMarkListForTarget(target);
 
@@ -223,22 +223,22 @@ public class SimpleMarkerPlugin extends Plugin {
 
     return true;
   }
-  
+
   public int getMarkPriorityForProgram(Program p) {
     int priority = Program.NO_MARK_PRIORITY;
-    
+
     if(p != null) {
       String[] lists = mMarkListVector.getNamesOfListsContainingProgram(p);
-      
+
       for(String list : lists) {
         priority = Math.max(priority,mMarkListVector.getListForName(list).getMarkPriority());
-        
+
         if(priority == Program.MAX_MARK_PRIORITY) {
           break;
         }
       }
     }
-    
+
     return priority;
   }
 
@@ -249,38 +249,38 @@ public class SimpleMarkerPlugin extends Plugin {
       mHasToUpdate = false;
 
       ArrayList<Program> deletedPrograms = new ArrayList<Program>();
-      
+
       for (MarkList list : mMarkListVector) {
         list.revalidateContainingPrograms(deletedPrograms);
       }
-      
+
       if (!deletedPrograms.isEmpty() && mSettings.showDeletedPrograms()) {
         ProgramList deletedProgramList = new ProgramList(deletedPrograms.toArray(new Program[deletedPrograms.size()]), new ProgramPanelSettings(new PluginPictureSettings(PluginPictureSettings.NO_PICTURE_TYPE),true));
-        
+
         Window parent = UiUtilities.getLastModalChildOf(getParentFrame());
         JDialog deletedListDialog = new JDialog(parent);
-        
+
         deletedListDialog.setModal(false);
         deletedListDialog.getContentPane().setLayout(new FormLayout("default:grow","default,5dlu,fill:default:grow,5dlu,default"));
         deletedListDialog.setTitle(getInfo().getName() + " - " + mLocalizer.msg("deletedPrograms","Deleted programs"));
         ((JPanel)deletedListDialog.getContentPane()).setBorder(Borders.DIALOG_BORDER);
-        
+
         CellConstraints cc = new CellConstraints();
-        
+
         deletedListDialog.getContentPane().add(new JLabel(mLocalizer.msg("deletedProgramsMsg","During the data update the following programs were deleted:")),cc.xy(1,1));
         deletedListDialog.getContentPane().add(new JScrollPane(deletedProgramList), cc.xy(1,3));
-        
+
         final JDialog dlg = deletedListDialog;
-        
+
         JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_CLOSE));
         ok.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
             dlg.dispose();
           }
         });
-        
+
         deletedListDialog.getContentPane().add(ok, cc.xy(1,5));
-        
+
         UiUtilities.registerForClosing(new WindowClosingIf() {
           public void close() {
             dlg.dispose();
@@ -290,9 +290,9 @@ public class SimpleMarkerPlugin extends Plugin {
             return dlg.getRootPane();
           }
         });
-        
+
         layoutWindow("deletedListDialog", deletedListDialog, new Dimension(400,300));
-        
+
         new Thread("simpleMarkerShowDeletedListDlg") {
           public void run() {
             while(UiUtilities.containsModalDialogChild(getParentFrame())) {
@@ -300,7 +300,7 @@ public class SimpleMarkerPlugin extends Plugin {
                 Thread.sleep(500);
               } catch (InterruptedException e) {}
             }
-            
+
             dlg.setVisible(true);
           }
         }.start();
@@ -331,25 +331,30 @@ public class SimpleMarkerPlugin extends Plugin {
     if(mMarkListVector.isEmpty()) {
       mMarkListVector.addElement(new MarkList(mLocalizer.msg("default","default")));
     }
-    
+
+    // now really load the programs which we currently only know as by date and id
+    for (MarkList markList : mMarkListVector) {
+      markList.loadPrograms();
+    }
+
     mHasRightToUpdate = true;
     updateTree();
     if (mHasToUpdate) {
       handleTvDataUpdateFinished();
     }
-    
-    
+
+
   }
-  
+
   private void showProgramsList() {
     final JDialog dialog = UiUtilities.createDialog(getParentFrame(), true);
     dialog.setTitle(mLocalizer.msg("name","Marker plugin"));
     dialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-    
+
     mManagePanel = new ManagePanel(dialog, mMarkListVector);
-    
+
     layoutWindow("manageDlg", dialog, new Dimension(434, 330));
-    
+
     dialog.setVisible(true);
     updateTree();
   }
@@ -509,7 +514,7 @@ public class SimpleMarkerPlugin extends Plugin {
   public PluginTreeNode getRootNode() {
     return mRootNode;
   }
-  
+
   protected Icon getIconForFileName(String fileName) {
     if (fileName != null) {
       return createImageIconForFileName(fileName);
@@ -521,17 +526,17 @@ public class SimpleMarkerPlugin extends Plugin {
   protected Frame getSuperFrame() {
     return getParentFrame();
   }
- 
+
   protected void refreshManagePanel(boolean scroll) {
     if(mManagePanel != null) {
       mManagePanel.selectPrograms(scroll);
     }
   }
-  
+
   protected void resetManagePanel() {
     mManagePanel = null;
   }
-  
+
   public Class<? extends PluginsFilterComponent>[] getAvailableFilterComponentClasses() {
     if(mMarkListVector.size() > 1) {
       // Make sure the compiler not has to make unsafe class cast, therefore class is casted manually to needed type
@@ -540,11 +545,11 @@ public class SimpleMarkerPlugin extends Plugin {
 
     return null;
   }
-    
+
   protected SimpleMarkerSettings getSettings() {
     return mSettings;
   }
-  
+
   protected void save() {
     saveMe();
   }

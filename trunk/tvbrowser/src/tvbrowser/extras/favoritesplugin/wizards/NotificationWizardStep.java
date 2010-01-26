@@ -74,7 +74,7 @@ public class NotificationWizardStep extends AbstractWizardStep {
     panelBuilder.add(mReminderCb = new JCheckBox(mLocalizer.msg("option.remind","Automatisch an diese Sendung erinnern.")), cc.xy(1,3));
     panelBuilder.add(mCheckOnUpdateCb = new JCheckBox(mLocalizer.msg("option.checkAfterUpdate","Sofort alarmieren, wenn die Sendung nach einer Aktualisierung gefunden wird.")), cc.xy(1,5));
 
-    mReminderCb.setSelected(FavoritesPlugin.getInstance().isAutoSelectingRemider());
+    mReminderCb.setSelected(FavoritesPlugin.getInstance().isAutoSelectingReminder());
     JPanel result = panelBuilder.getPanel();
     result.addFocusListener(new FocusAdapter() {
 

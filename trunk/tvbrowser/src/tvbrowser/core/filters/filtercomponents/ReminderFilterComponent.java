@@ -14,9 +14,9 @@ import devplugin.Program;
 
 /**
  * This filter filters all programs that are marked by the Reminder
- * 
+ *
  * @author René Mach
- * 
+ *
  */
 public class ReminderFilterComponent extends AbstractFilterComponent {
 
@@ -41,7 +41,7 @@ public class ReminderFilterComponent extends AbstractFilterComponent {
   }
 
   public boolean accept(Program program) {
-    String reminderPluginId = ReminderPlugin.getInstance().getId();
+    String reminderPluginId = ReminderPlugin.getReminderPluginId();
     Marker[] mark = program.getMarkerArr();
 
     for (Marker element : mark) {

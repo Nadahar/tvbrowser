@@ -52,35 +52,33 @@ public class ReminderPluginProxy extends AbstractInternalPluginProxy implements 
 
   private static final String PROGRAM_TARGET_REMIND = "target_remind";
   private static ReminderPluginProxy mInstance;
-  private static ReminderPlugin mReminderInstance;
   private Icon mMarkIcon;
-  
+
   private ReminderPluginProxy() {
     mInstance = this;
   }
-  
+
   /**
    * @return The instance of the ReminderPluginProxy
    */
   public static ReminderPluginProxy getInstance() {
     if(mInstance == null) {
-      mReminderInstance = ReminderPlugin.getInstance();
       new ReminderPluginProxy();
     }
-    
+
     return mInstance;
   }
-  
+
   public ActionMenu getContextMenuActions(Program program) {
-    return mReminderInstance.getContextMenuActions(program);
+    return getReminderInstance().getContextMenuActions(program);
   }
 
   public String getId() {
-    return mReminderInstance.getId();
+    return ReminderPlugin.getReminderPluginId();
   }
-  
+
   public String toString() {
-    return mReminderInstance.toString();
+    return ReminderPlugin.getName();
   }
 
   public boolean canReceiveProgramsWithTarget() {
@@ -88,19 +86,19 @@ public class ReminderPluginProxy extends AbstractInternalPluginProxy implements 
   }
 
   public boolean receivePrograms(Program[] programArr, ProgramReceiveTarget receiveTarget) {
-    mReminderInstance.addPrograms(programArr);
+    getReminderInstance().addPrograms(programArr);
     return true;
   }
-  
+
   public ProgramReceiveTarget[] getProgramReceiveTargets() {
     return new ProgramReceiveTarget[] { new ProgramReceiveTarget(this,
         mLocalizer.msg("programTarget", "Remind"), PROGRAM_TARGET_REMIND) };
   }
-  
+
   public Icon getMarkIcon() {
     if(mMarkIcon == null)
       mMarkIcon = IconLoader.getInstance().getIconFromTheme("apps", "appointment", 16);
-    
+
     return mMarkIcon;
   }
 
@@ -109,7 +107,7 @@ public class ReminderPluginProxy extends AbstractInternalPluginProxy implements 
   }
 
   public int getMarkPriorityForProgram(Program p) {
-    return mReminderInstance.getMarkPriority();
+    return getReminderInstance().getMarkPriority();
   }
 
   public String getButtonActionDescription() {
@@ -133,7 +131,7 @@ public class ReminderPluginProxy extends AbstractInternalPluginProxy implements 
   }
 
   public ActionMenu getButtonAction() {
-    return mReminderInstance.getButtonAction();
+    return ReminderPlugin.getButtonAction();
   }
 
   public boolean receiveValues(String[] values,
@@ -143,6 +141,10 @@ public class ReminderPluginProxy extends AbstractInternalPluginProxy implements 
 
   @Override
   public void handleTvDataUpdateFinished() {
-    mReminderInstance.handleTvDataUpdateFinished();
+    getReminderInstance().handleTvDataUpdateFinished();
+  }
+
+  private static ReminderPlugin getReminderInstance() {
+    return ReminderPlugin.getInstance();
   }
 }
