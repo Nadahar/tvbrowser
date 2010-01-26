@@ -73,7 +73,24 @@ public class MarkList extends Vector<Program> {
   private int mMarkPriority;
   private ArrayList<ProgramReceiveTarget> mReceiveTargets = new ArrayList<ProgramReceiveTarget>();
 
+  private static class MarkListProgramItem {
+    private final String mProgramId;
+    private final Date mDate;
 
+    public MarkListProgramItem(final Date date, final String programId) {
+      mProgramId = programId;
+      mDate = date;
+    }
+
+    public Program getProgram() {
+      return Plugin.getPluginManager().getProgram(mDate, mProgramId);
+    }
+  }
+
+  /**
+   * during startup the marked programs are known as MarkListProgramItems only to avoid loading full day programs
+   */
+  private final ArrayList<MarkListProgramItem> mProgramItems = new ArrayList<MarkListProgramItem>();
 
 
   /**
@@ -98,19 +115,21 @@ public class MarkList extends Vector<Program> {
       SimpleMarkerPlugin.getInstance().addList(this);
 
       int size = in.readInt();
+      mProgramItems.ensureCapacity(size);
       for (int i = 0; i < size; i++) {
         Date programDate = new Date(in);
         String progId = (String) in.readObject();
+        mProgramItems.add(new MarkListProgramItem(programDate, progId));
 
-        Program program = Plugin.getPluginManager().getProgram(programDate,
-            progId);
-
-        // Only add items that were able to load their program
-        if (program != null) {
-          addElement(program);
-          program.mark(SimpleMarkerPlugin.getInstance());
-          program.validateMarking();
-        }
+//        Program program = Plugin.getPluginManager().getProgram(programDate,
+//            progId);
+//
+//        // Only add items that were able to load their program
+//        if (program != null) {
+//          addElement(program);
+//          program.mark(SimpleMarkerPlugin.getInstance());
+//          program.validateMarking();
+//        }
       }
 
       mMarkIconPath = (String) in.readObject();
@@ -607,5 +626,19 @@ public class MarkList extends Vector<Program> {
     mReceiveTargets = new ArrayList<ProgramReceiveTarget>(targets);
   }
 
+  /**
+   * convert the program items to programs after start finished
+   */
+  public void loadPrograms() {
+    for (MarkListProgramItem programItem : mProgramItems) {
+      Program program = programItem.getProgram();
+      if (program != null) {
+        addProgram(program);
+        program.mark(SimpleMarkerPlugin.getInstance());
+        program.validateMarking();
+      }
+    }
+    mProgramItems.clear();
+  }
 
 }

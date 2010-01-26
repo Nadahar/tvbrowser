@@ -124,7 +124,7 @@ import devplugin.SettingsItem;
 
 /**
  * TV-Browser
- * 
+ *
  * @author Martin Oberhauser
  */
 
@@ -167,7 +167,7 @@ class ProgramInfoDialog {
    *          The size of the Functions Panel.
    * @param showSettings
    *          Show the settings button.
-   * 
+   *
    * @return The instance of this ProgramInfoDialog
    */
   public static synchronized ProgramInfoDialog getInstance(Program program,
@@ -796,7 +796,7 @@ class ProgramInfoDialog {
             "id_configure", mFindAsYouType);
         lastEntry = contextMenuIf;
       } else if (contextMenuIf.getId().compareTo(
-          ProgramInfo.getInstance().getId()) == 0) {
+          ProgramInfo.getProgramInfoPluginId()) == 0) {
         // don't show the program info action in the program info dialog
       } else {
         ActionMenu menu = contextMenuIf.getContextMenuActions(mProgram);
@@ -961,7 +961,7 @@ class ProgramInfoDialog {
   /**
    * Close this dialog.
    * <p>
-   * 
+   *
    * @return <code>True</code> if the dialog was visible, <code>false</code>
    *         otherwise.
    */

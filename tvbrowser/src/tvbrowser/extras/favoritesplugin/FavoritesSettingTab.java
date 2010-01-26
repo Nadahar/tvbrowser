@@ -30,6 +30,7 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.swing.Icon;
 import javax.swing.JButton;
@@ -61,17 +62,17 @@ import devplugin.SettingsTab;
  */
 public class FavoritesSettingTab implements SettingsTab {
 
-  /** The localizer for this class. */  
+  /** The localizer for this class. */
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(FavoritesSettingTab.class);
-  
+
   private ProgramReceiveTarget[] mClientPluginTargets, mCurrentClientPluginTargets;
   private JLabel mPluginLabel;
   private JCheckBox mExpertMode, mShowRepetitions, mAutoSelectRemider;
-  
+
   private DefaultMarkingPrioritySelectionPanel mMarkingsPanel;
   private ExclusionPanel mExclusionPanel;
-  
+
   /**
    * Creates the settings panel for this tab.
    */
@@ -83,29 +84,29 @@ public class FavoritesSettingTab implements SettingsTab {
         "pref,10dlu,pref,5dlu,pref,10dlu,pref,5dlu,pref,10dlu," +
         "pref,5dlu,pref"));
     builder.setDefaultDialogBorder();
-    
+
     mPluginLabel = new JLabel();
-    JButton choose = new JButton(mLocalizer.msg("selectPlugins","Choose Plugins"));    
+    JButton choose = new JButton(mLocalizer.msg("selectPlugins","Choose Plugins"));
     mExpertMode = new JCheckBox(mLocalizer.msg("expertMode","Always show advanced favorite edit dialog"),FavoritesPlugin.getInstance().isUsingExpertMode());
     mShowRepetitions = new JCheckBox(mLocalizer.msg("showRepetitions","Show repetitions in context menu of a favorite program"),FavoritesPlugin.getInstance().isShowingRepetitions());
-    mAutoSelectRemider = new JCheckBox(mLocalizer.msg("autoSelectReminder","Automatically remind of new favorite programs"),FavoritesPlugin.getInstance().isAutoSelectingRemider());
-    
+    mAutoSelectRemider = new JCheckBox(mLocalizer.msg("autoSelectReminder","Automatically remind of new favorite programs"),FavoritesPlugin.getInstance().isAutoSelectingReminder());
+
     ProgramReceiveTarget[] targetsArr
-    = FavoritesPlugin.getInstance().getClientPluginTargetIds();    
-    
+    = FavoritesPlugin.getInstance().getClientPluginTargetIds();
+
     ArrayList<ProgramReceiveTarget> clientPlugins = new ArrayList<ProgramReceiveTarget>();
-    
+
     for (ProgramReceiveTarget target : targetsArr) {
       ProgramReceiveIf plugin = target.getReceifeIfForIdOfTarget();
       if(plugin != null) {
         clientPlugins.add(target);
       }
     }
-    
+
     mCurrentClientPluginTargets = mClientPluginTargets = clientPlugins.toArray(new ProgramReceiveTarget[clientPlugins.size()]);
-    
+
     handlePluginSelection();
-    
+
     choose.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         Window parent = UiUtilities
@@ -113,18 +114,18 @@ public class FavoritesSettingTab implements SettingsTab {
         PluginChooserDlg chooser = null;
         chooser = new PluginChooserDlg(parent, mClientPluginTargets, null,
             ReminderPluginProxy.getInstance());
-        
+
         chooser.setLocationRelativeTo(parent);
         chooser.setVisible(true);
-        
+
         if(chooser.getReceiveTargets() != null) {
           mClientPluginTargets = chooser.getReceiveTargets();
         }
-        
+
         handlePluginSelection();
       }
     });
-    
+
     builder.addSeparator(mLocalizer.msg("passTo", "Pass favorite programs to"), cc.xyw(1,1,5));
     builder.add(mPluginLabel, cc.xy(2,3));
     builder.add(choose, cc.xy(4,3));
@@ -140,22 +141,22 @@ public class FavoritesSettingTab implements SettingsTab {
 
     builder.addSeparator(DefaultMarkingPrioritySelectionPanel.getTitle(), cc.xyw(1,21,4));
     builder.add(mMarkingsPanel = DefaultMarkingPrioritySelectionPanel.createPanel(FavoritesPlugin.getInstance().getMarkPriority(),false,false), cc.xyw(2,23,3));
-    
+
     return builder.getPanel();
   }
 
   private void handlePluginSelection() {
     ArrayList<ProgramReceiveIf> plugins = new ArrayList<ProgramReceiveIf>();
-    
+
     if(mClientPluginTargets != null) {
       for (ProgramReceiveTarget element : mClientPluginTargets) {
         if(!plugins.contains(element.getReceifeIfForIdOfTarget())) {
           plugins.add(element.getReceifeIfForIdOfTarget());
         }
       }
-    
+
       ProgramReceiveIf[] mClientPlugins = plugins.toArray(new ProgramReceiveIf[plugins.size()]);
-    
+
       if(mClientPlugins.length > 0) {
         mPluginLabel.setText(mClientPlugins[0].toString());
         mPluginLabel.setEnabled(true);
@@ -164,54 +165,54 @@ public class FavoritesSettingTab implements SettingsTab {
         mPluginLabel.setText(mLocalizer.msg("noPlugins","No Plugins choosen"));
         mPluginLabel.setEnabled(false);
       }
-    
+
       for (int i = 1; i < (mClientPlugins.length > 4 ? 3 : mClientPlugins.length); i++) {
         mPluginLabel.setText(mPluginLabel.getText() + ", " + mClientPlugins[i]);
       }
-    
+
       if(mClientPlugins.length > 4) {
         mPluginLabel.setText(mPluginLabel.getText() + " (" + (mClientPlugins.length - 3) + " " + mLocalizer.ellipsisMsg("otherPlugins","others") + ")");
       }
     }
   }
-  
+
   /**
    * Called by the host-application, if the user wants to save the settings.
    */
   public void saveSettings() {
-    if(mCurrentClientPluginTargets != mClientPluginTargets) {
+    if(!Arrays.equals(mCurrentClientPluginTargets, mClientPluginTargets)) {
       FavoritesPlugin.getInstance().setClientPluginTargets(mClientPluginTargets);
-      
+
       Favorite[] favoriteArr = FavoriteTreeModel.getInstance().getFavoriteArr();
-      
+
       for(Favorite favorite : favoriteArr) {
         favorite.handleNewGlobalReceiveTargets(mCurrentClientPluginTargets);
       }
     }
-    FavoritesPlugin.getInstance().setIsUsingExpertMode(mExpertMode.isSelected());    
+    FavoritesPlugin.getInstance().setIsUsingExpertMode(mExpertMode.isSelected());
     FavoritesPlugin.getInstance().setShowRepetitions(mShowRepetitions.isSelected());
     FavoritesPlugin.getInstance().setAutoSelectingReminder(mAutoSelectRemider.isSelected());
     FavoritesPlugin.getInstance().setMarkPriority(mMarkingsPanel.getSelectedPriority());
-    
+
     if(mExclusionPanel.wasChanged()) {
       FavoritesPlugin.getInstance().setGlobalExclusions(mExclusionPanel.getExclusions());
     }
-    
+
     FavoritesPlugin.getInstance().saveFavorites();
   }
-  
+
   /**
    * Returns the icon of the tab-sheet.
    */
   public Icon getIcon() {
-    return FavoritesPlugin.getInstance().getFavoritesIcon(16);
+    return FavoritesPlugin.getFavoritesIcon(16);
   }
-  
+
   /**
    * Returns the title of the tab-sheet.
    */
   public String getTitle() {
     return mLocalizer.msg("name", "Favorite programs");
   }
-  
+
 }

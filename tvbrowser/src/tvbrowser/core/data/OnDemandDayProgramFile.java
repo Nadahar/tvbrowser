@@ -44,7 +44,7 @@ import devplugin.ProgramFieldType;
 /**
  * An encapsulated access on a file containing TV data that allows an access of
  * single data fields on demand.
- * 
+ *
  * @author Til Schneider, www.murfman.de
  */
 public class OnDemandDayProgramFile {
@@ -65,7 +65,7 @@ public class OnDemandDayProgramFile {
    * replaced by another one
    */
   private boolean mValid;
-  
+
   private boolean mTimeLimitationlData;
 
   public OnDemandDayProgramFile(File file, Date date, Channel channel) {
@@ -87,10 +87,10 @@ public class OnDemandDayProgramFile {
   public MutableChannelDayProgram getDayProgram() {
     return mDayProgram;
   }
-  
+
   /**
    * Loads the day program for on demand access.
-   * 
+   *
    * @param update <code>True</code> if this is called from TV data update,
    *        <code>false</code> otherwise.
    * @throws IOException
@@ -99,7 +99,7 @@ public class OnDemandDayProgramFile {
   public synchronized void loadDayProgram(boolean update) throws IOException,
       ClassNotFoundException {
     checkValid();
-    
+//    System.out.println(mDayProgram.getDate().toString() + " " + mDayProgram.getChannel().getName());
     mTimeLimitationlData = !update;
 
     BufferedRandomAccessFile dataFile = null;
@@ -121,7 +121,7 @@ public class OnDemandDayProgramFile {
       }
 
       mDayProgram.setLastProgramHadEndOnUpdate(dataFile.readBoolean());
-      
+
       Date date = new Date(dataFile);
       Channel channel = Channel.readData(dataFile, false);
 
@@ -133,7 +133,7 @@ public class OnDemandDayProgramFile {
       mDayProgram.removeAllPrograms();
       for (int i = 0; i < size; i++) {
         Program prog = loadProgram(dataFile, date, channel);
-        
+
         if(prog != null) {
           int time = prog.getHours() * 60 + prog.getMinutes();
           if(timeLimited && !update) {
@@ -162,10 +162,10 @@ public class OnDemandDayProgramFile {
 
   /**
    * Does an update of the version 1 on demand data file to version 2.
-   * 
+   *
    * @throws IOException
    * @throws ClassNotFoundException
-   * 
+   *
    * @since 2.2
    */
   private void updateToVersion2() throws IOException, ClassNotFoundException {
@@ -203,7 +203,7 @@ public class OnDemandDayProgramFile {
 
   /**
    * Loads the data of the old on demand data file version.
-   * 
+   *
    * @param objIn
    * @param date
    * @param channel
@@ -259,15 +259,15 @@ public class OnDemandDayProgramFile {
         }
       }
     }
-    
+
     prog.setProgramLoadingIsComplete();
-    
+
     return prog;
   }
 
   /**
    * Saves the day program to the on demand data file.
-   * 
+   *
    * @throws IOException
    */
   public synchronized void saveDayProgram() throws IOException {
@@ -290,7 +290,7 @@ public class OnDemandDayProgramFile {
       dataFile.writeInt(2); // version
 
       dataFile.writeBoolean(mDayProgram.getLastProgramHadEndOnUpdate());
-      
+
       date.writeToDataFile(dataFile);
       channel.writeToDataFile(dataFile);
 
@@ -313,22 +313,22 @@ public class OnDemandDayProgramFile {
 
   /**
    * Loads the data from a RandomAccessFile.
-   * 
-   * @since 2.2 
+   *
+   * @since 2.2
    */
   private Program loadProgram(RandomAccessFile dataFile, Date date,
       Channel channel) throws IOException, ClassNotFoundException {
     int version = dataFile.readInt();
-    
+
     OnDemandProgram prog = new OnDemandProgram(channel, date, this);
 
     if (version == 3) {
       int fieldCount = dataFile.readInt();
-      
+
       for (int i = 0; i < fieldCount; i++) {
         int typeId = dataFile.readInt();
         ProgramFieldType type = ProgramFieldType.getTypeForId(typeId);
-        
+
         if (type.getFormat() == ProgramFieldType.UNKNOWN_FORMAT)
           return null;
         else if (type.getFormat() == ProgramFieldType.BINARY_FORMAT) {
@@ -356,17 +356,17 @@ public class OnDemandDayProgramFile {
                 prog.setTextField(type, value);
               }
             }
-          } 
+          }
         } else if (type.getFormat() == ProgramFieldType.INT_FORMAT) {
           prog.setIntField(type, dataFile.readInt());
         } else if (type.getFormat() == ProgramFieldType.TIME_FORMAT) {
           prog.setTimeField(type, dataFile.readInt());
         }
-      }      
+      }
     }
-    
+
     prog.setProgramLoadingIsComplete();
-    
+
     return prog;
   }
 
@@ -432,7 +432,7 @@ public class OnDemandDayProgramFile {
    * Checks whether this day program is still valid.
    * <p>
    * This is not the case if it was replaced by another one.
-   * 
+   *
    * @throws IOException
    *           When the day program is not valid any more.
    */
@@ -445,7 +445,7 @@ public class OnDemandDayProgramFile {
 
   /**
    * Gets if this file data file is loaded for data base.
-   * 
+   *
    * @return <code>True</code> if this data is used in program table,
    *         <code>false</code> if this data is used for data update.
    * @since 2.2.4/2.6
@@ -456,34 +456,34 @@ public class OnDemandDayProgramFile {
 
   /**
    * Calculates the time limits of this file.
-   * 
+   *
    * @since 2.2.4/2.6
    */
   public void calculateTimeLimits() {
     if(mDayProgram.getChannel().isTimeLimited()) {
       ArrayList<Program> programs = new ArrayList<Program>();
-      
+
       for(int i = 0; i < mDayProgram.getProgramCount(); i++) {
         programs.add(mDayProgram.getProgramAt(i));
       }
-      
+
       mDayProgram.removeAllPrograms();
-      
+
       Channel channel = mDayProgram.getChannel();
-      
+
       for(Program prog : programs) {
         int time = prog.getHours() * 60 + prog.getMinutes();
-        
+
         int startTimeLimit = channel.getStartTimeLimit();
         int endTimeLimit = channel.getEndTimeLimit();
-        
+
         if((startTimeLimit < endTimeLimit && time >= startTimeLimit && time < endTimeLimit) ||
             (endTimeLimit < startTimeLimit && (time < endTimeLimit || time >= startTimeLimit))) {
           mDayProgram.addProgram(prog);
         }
       }
     }
-    
+
     mTimeLimitationlData = true;
   }
 }

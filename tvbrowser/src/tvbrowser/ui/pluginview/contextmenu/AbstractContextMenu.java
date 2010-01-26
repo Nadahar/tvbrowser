@@ -129,7 +129,7 @@ public abstract class AbstractContextMenu implements ContextMenu {
 
     return action;
   }
-  
+
   /**
    * Create a Export-To-Other-Plugins Action
    * @return Export-To-Other-Plugins Action
@@ -137,23 +137,23 @@ public abstract class AbstractContextMenu implements ContextMenu {
    */
   protected JMenu getExportMenu(TreePath paths) {
     final Node node = (Node) paths.getLastPathComponent();
-    
+
     JMenu menu = new JMenu(mLocalizer.msg("export","Export"));
     menu.setFont(MenuUtil.CONTEXT_MENU_PLAINFONT);
-    
+
     if ((node.getChildCount() == 0) && (node.getType() != Node.PROGRAM)) {
       menu.setEnabled(false);
       return menu;
     }
-    
+
     Object o = getObjectForNode(node);
     Plugin currentPlugin = null;
-    
+
     if(o instanceof Plugin) {
       currentPlugin = (Plugin)o;
     }
-    
-    if(o != ReminderPlugin.getInstance().getRootNode().getMutableTreeNode()) {
+
+    if(o != ReminderPlugin.getRootNode().getMutableTreeNode()) {
       final ProgramReceiveTarget reminderTarget = ReminderPluginProxy
           .getInstance().getProgramReceiveTargets()[0];
       JMenuItem item = new JMenuItem(reminderTarget.getTargetName());
@@ -168,9 +168,9 @@ public abstract class AbstractContextMenu implements ContextMenu {
                 reminderTarget);
           }
         }
-      });      
+      });
     }
-    
+
     PluginProxy[] plugins = PluginProxyManager.getInstance().getActivatedPlugins();
     for (final PluginProxy plugin : plugins) {
      if ((plugin.canReceiveProgramsWithTarget())
@@ -245,7 +245,7 @@ public abstract class AbstractContextMenu implements ContextMenu {
 
     return menu;
   }
-  
+
   protected JMenuItem getFilterMenuItem(final TreePath treePath) {
     final Node node = (Node) treePath.getLastPathComponent();
     String pathName = "";
@@ -299,59 +299,59 @@ public abstract class AbstractContextMenu implements ContextMenu {
     item.setIcon(TVBrowserIcons.filter(TVBrowserIcons.SIZE_SMALL));
     return item;
   }
-  
+
   /**
    * Returns the Plugin for this Node.
    * It searches for a Parent-Node containing a Plugin.
-   * 
+   *
    * @param node Node to use
    * @return Plugin-Parent of this Node
    */
   public Object getObjectForNode(Node node) {
-    
+
     Node parent = node;
-    
-    while (parent != null && parent.getType() != Node.PLUGIN_ROOT && parent != ReminderPlugin.getInstance().getRootNode().getMutableTreeNode() && parent.getProgramReceiveTarget() == null) {
+
+    while (parent != null && parent.getType() != Node.PLUGIN_ROOT && parent != ReminderPlugin.getRootNode().getMutableTreeNode() && parent.getProgramReceiveTarget() == null) {
       parent = (Node) parent.getParent();
     }
-        
+
     if (parent != null){
       if(parent.getProgramReceiveTarget() != null) {
         return parent.getProgramReceiveTarget();
       }
 
       Object o = parent.getUserObject();
-      
+
       if(o instanceof Plugin) {
         return o;
       } else {
         return parent;
       }
     }
-    
+
     return null;
   }
-  
+
   /**
    * Runs through all Child-Nodes and collects the Program-Elements
-   * 
+   *
    * @param node Node to search in
    * @return all found Programs within this Node
    */
   public Program[] collectProgramsFromNode(Node node) {
-    
+
     if (node.getType() == Node.PROGRAM) {
       return new Program[]{ ((ProgramItem) node.getUserObject()).getProgram() };
     }
-    
+
     if (node.getChildCount() == 0) {
       return null;
     }
-    
+
     ArrayList<Program> array = new ArrayList<Program>();
-    
+
     for (int i=0;i<node.getChildCount();i++) {
-      
+
       Program[] programs = collectProgramsFromNode((Node)node.getChildAt(i));
       if ((programs != null) && (programs.length != 0)) {
 
@@ -362,7 +362,7 @@ public abstract class AbstractContextMenu implements ContextMenu {
         }
       }
     }
-    
+
     return array.toArray(new Program[array.size()]);
   }
 }

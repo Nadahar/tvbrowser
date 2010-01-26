@@ -834,7 +834,7 @@ public class SystemTray {
   private void toggleReminderState(boolean tvbShown) {
     if (mReminderItem.getText().compareTo(mLocalizer.msg("menu.pauseReminder", "Pause Reminder")) == 0 && !tvbShown) {
       mReminderItem.setText(mLocalizer.msg("menu.continueReminder", "Continue Reminder"));
-      ReminderPlugin.getInstance().pauseRemider();
+      ReminderPlugin.getInstance().pauseReminder();
     } else {
       mReminderItem.setText(mLocalizer.msg("menu.pauseReminder", "Pause Reminder"));
       ReminderPlugin.getInstance().handleTvBrowserStartFinished();

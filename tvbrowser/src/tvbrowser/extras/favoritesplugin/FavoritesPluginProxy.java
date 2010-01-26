@@ -49,39 +49,37 @@ import devplugin.SettingsTab;
  * @author René Mach
  */
 public class FavoritesPluginProxy extends AbstractInternalPluginProxy implements ButtonActionIf, ContextMenuIf, Marker {
-  
+
   private static FavoritesPluginProxy mInstance;
-  private static FavoritesPlugin mFavoritesInstance;
   private Icon mMarkIcon;
   private Icon[] mMarkIconArr;
   private Icon[] mMultipleIconArr;
-  
+
   private FavoritesPluginProxy() {
     mInstance = this;
   }
-  
+
   /**
    * @return The instance of the FavoritesPluginProxy
    */
   public static FavoritesPluginProxy getInstance() {
     if(mInstance == null) {
-      mFavoritesInstance = FavoritesPlugin.getInstance();
       new FavoritesPluginProxy();
     }
-    
+
     return mInstance;
   }
-  
+
   public ActionMenu getContextMenuActions(Program program) {
-    return mFavoritesInstance.getContextMenuActions(program);
+    return getFavoritesInstance().getContextMenuActions(program);
   }
 
   public String getId() {
-    return mFavoritesInstance.getId();
+    return FavoritesPlugin.getFavoritesPluginId();
   }
 
   public String toString() {
-    return mFavoritesInstance.toString();
+    return FavoritesPlugin.getName();
   }
 
   public Icon getMarkIcon() {
@@ -91,7 +89,7 @@ public class FavoritesPluginProxy extends AbstractInternalPluginProxy implements
 
   private void createIcons() {
     if (mMarkIcon == null) {
-      mMarkIcon = mFavoritesInstance.getFavoritesIcon(16);
+      mMarkIcon = FavoritesPlugin.getFavoritesIcon(16);
       mMultipleIconArr = new Icon[] { getDoubleIcon(mMarkIcon, 12) };
       mMarkIconArr = new Icon[] { mMarkIcon };
     }
@@ -107,7 +105,7 @@ public class FavoritesPluginProxy extends AbstractInternalPluginProxy implements
   }
 
   public int getMarkPriorityForProgram(Program p) {
-    return mFavoritesInstance.getMarkPriority();
+    return getFavoritesInstance().getMarkPriority();
   }
 
   public Icon getIcon() {
@@ -117,7 +115,7 @@ public class FavoritesPluginProxy extends AbstractInternalPluginProxy implements
   public String getName() {
     return toString();
   }
-  
+
   public String getButtonActionDescription() {
     return FavoritesPlugin.mLocalizer.msg("description","Automatically marks your favorite programs and passes them to other plugins.");
   }
@@ -131,7 +129,7 @@ public class FavoritesPluginProxy extends AbstractInternalPluginProxy implements
   }
 
   public ActionMenu getButtonAction() {
-    return mFavoritesInstance.getButtonAction();
+    return FavoritesPlugin.getButtonAction();
   }
 
   private Icon getDoubleIcon(final Icon icon, final int width) {
@@ -170,7 +168,11 @@ public class FavoritesPluginProxy extends AbstractInternalPluginProxy implements
 
   @Override
   public void handleTvDataUpdateFinished() {
-    mFavoritesInstance.handleTvDataUpdateFinished();
+    getFavoritesInstance().handleTvDataUpdateFinished();
   }
-  
+
+  private static FavoritesPlugin getFavoritesInstance() {
+    return FavoritesPlugin.getInstance();
+  }
+
 }

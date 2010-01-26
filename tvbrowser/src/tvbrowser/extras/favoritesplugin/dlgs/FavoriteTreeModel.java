@@ -61,7 +61,7 @@ import devplugin.ProgramReceiveTarget;
 
 /**
  * The model for the favorite tree.
- * 
+ *
  * @author René Mach
  * @since 2.6
  */
@@ -72,8 +72,8 @@ public class FavoriteTreeModel extends DefaultTreeModel {
 
   /**
    * Creates an instance of this class.
-   * 
-   * @param root The root node for this model. 
+   *
+   * @param root The root node for this model.
    */
   private FavoriteTreeModel(TreeNode root) {
     super(root, true);
@@ -121,10 +121,10 @@ public class FavoriteTreeModel extends DefaultTreeModel {
     super.reload(node);
     @SuppressWarnings("unchecked")
     Enumeration<FavoriteNode> e = node.children();
-    
+
     while(e.hasMoreElements()) {
       FavoriteNode child = e.nextElement();
-      
+
       if(child.isDirectoryNode()) {
         reload(child);
       }
@@ -157,7 +157,7 @@ public class FavoriteTreeModel extends DefaultTreeModel {
   public void reload() {
     reload(root);
   }
-  
+
   public boolean isLeaf(Object nodeObject) {
     if (nodeObject instanceof FavoriteNode) {
       FavoriteNode node = (FavoriteNode) nodeObject;
@@ -288,7 +288,7 @@ public class FavoriteTreeModel extends DefaultTreeModel {
 
   /**
    * Adds a favorite to this tree at the given target node.
-   * 
+   *
    * @param fav
    *          The favorite to add.
    * @param parent
@@ -315,7 +315,7 @@ public class FavoriteTreeModel extends DefaultTreeModel {
     String progdate;
 
     Date currentDate = Date.getCurrentDate();
-    
+
     if (d.equals(currentDate.addDays(-1))) {
       progdate = Localizer.getLocalization(Localizer.I18N_YESTERDAY);
     } else if (d.equals(currentDate)) {
@@ -374,8 +374,8 @@ public class FavoriteTreeModel extends DefaultTreeModel {
             node.add(newNode);
           }
         } else {
-          newNode.getMutableTreeNode().setIcon(FavoritesPlugin.getInstance().getFavoritesIcon(16));
-          
+          newNode.getMutableTreeNode().setIcon(FavoritesPlugin.getFavoritesIcon(16));
+
           Program[] progArr = child.getFavorite().getWhiteListPrograms();
           if (progArr.length > 0) {
             node.add(newNode);
@@ -510,16 +510,16 @@ public class FavoriteTreeModel extends DefaultTreeModel {
       }
     }
   }
-  
+
   /**
    * Gets the Favorites containing the given receive target in an array.
-   * 
+   *
    * @param target The target to check.
    * @return The Favorites that contains the given receive target in an array.
    */
   public Favorite[] getFavoritesContainingReceiveTarget(ProgramReceiveTarget target) {
     Favorite[] favorites = getFavoriteArr();
-    
+
     ProgramReceiveTarget[] defaultTargets = FavoritesPlugin.getInstance().getDefaultClientPluginsTargets();
 
     for(ProgramReceiveTarget defaultTarget : defaultTargets) {
@@ -527,22 +527,22 @@ public class FavoriteTreeModel extends DefaultTreeModel {
         return favorites;
       }
     }
-    
+
     ArrayList<Favorite> receiveFavorites = new ArrayList<Favorite>();
-    
+
     for(Favorite fav : favorites) {
       if(fav.containsReceiveTarget(target)) {
         receiveFavorites.add(fav);
       }
     }
-    
+
     return receiveFavorites.toArray(new Favorite[receiveFavorites.size()]);
   }
 
   public void updatePluginTree(final PluginTreeNode topicNode, final PluginTreeNode dateNode) {
     updatePluginTree(topicNode, dateNode, null);
   }
-  
+
   /**
    * get an array of all favorites containing the given program
    * @param program program to search for
@@ -551,7 +551,7 @@ public class FavoriteTreeModel extends DefaultTreeModel {
    */
   public Favorite[] getFavoritesContainingProgram(Program program) {
     ArrayList<Favorite> containing = new ArrayList<Favorite>();
-    
+
     for (Favorite favorite : getFavoriteArr()) {
       for (Program favProgram : favorite.getPrograms()) {
         if (favProgram.equals(program)) {
@@ -562,7 +562,7 @@ public class FavoriteTreeModel extends DefaultTreeModel {
     }
     return containing.toArray(new Favorite[containing.size()]);
   }
-    
+
   public boolean isInMultipleFavorites(final Program program) {
     int found = 0;
     for (Favorite favorite : getFavoriteArr()) {

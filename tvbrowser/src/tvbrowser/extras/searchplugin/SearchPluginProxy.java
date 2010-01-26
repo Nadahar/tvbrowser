@@ -40,33 +40,33 @@ import devplugin.SettingsTab;
  * @author René Mach
  */
 public class SearchPluginProxy extends AbstractInternalPluginProxy implements ButtonActionIf, ContextMenuIf {
-  
+
   private static SearchPluginProxy mInstance;
 
   private SearchPluginProxy() {
     mInstance = this;
   }
-  
+
   /**
    * @return The instance of the SearchPluginProxy
    */
   public static synchronized SearchPluginProxy getInstance() {
     if(mInstance == null)
       new SearchPluginProxy();
-    
+
     return mInstance;
   }
-  
+
   public ActionMenu getContextMenuActions(Program program) {
-    return SearchPlugin.getInstance().getContextMenuActions(program);
+    return SearchPlugin.getContextMenuActions(program);
   }
 
   public String getId() {
-    return SearchPlugin.getInstance().getId();
+    return SearchPlugin.getSearchPluginId();
   }
-  
+
   public String toString() {
-    return SearchPlugin.getInstance().toString();
+    return SearchPlugin.getName();
   }
 
   public String getButtonActionDescription() {
@@ -90,7 +90,7 @@ public class SearchPluginProxy extends AbstractInternalPluginProxy implements Bu
   }
 
   public ActionMenu getButtonAction() {
-    return SearchPlugin.getInstance().getButtonAction();
+    return SearchPlugin.getButtonAction();
   }
 
   @Override

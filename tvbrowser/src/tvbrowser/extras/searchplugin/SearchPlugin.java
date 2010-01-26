@@ -56,7 +56,7 @@ import devplugin.ThemeIcon;
 
 /**
  * Provides a dialog for searching programs.
- * 
+ *
  * @author Til Schneider, www.murfman.de
  */
 public class SearchPlugin {
@@ -64,9 +64,9 @@ public class SearchPlugin {
   /**
    * The localizer for this class.
    */
-  public static final util.ui.Localizer mLocalizer = util.ui.Localizer
+  protected static final util.ui.Localizer mLocalizer = util.ui.Localizer
       .getLocalizerFor(SearchPlugin.class);
-  private static String DATAFILE_PREFIX = "searchplugin.SearchPlugin";
+  private static final String DATAFILE_PREFIX = "searchplugin.SearchPlugin";
 
   private static SearchPlugin mInstance;
 
@@ -194,11 +194,11 @@ public class SearchPlugin {
     out.writeInt(mRepetitionTimeSelect);
   }
 
-  protected ActionMenu getButtonAction() {
+  protected static ActionMenu getButtonAction() {
     ButtonAction action = new ButtonAction();
     action.setActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        openSearchDialog("");
+        getInstance().openSearchDialog("");
       }
     });
 
@@ -213,20 +213,13 @@ public class SearchPlugin {
     return new ActionMenu(action);
   }
 
-  protected ActionMenu getContextMenuActions(final Program program) {
+  protected static ActionMenu getContextMenuActions(final Program program) {
     ContextMenuAction action = new ContextMenuAction();
     action.setText(mLocalizer.msg("searchRepetion", "Search repetition"));
     action.setSmallIcon(TVBrowserIcons.search(TVBrowserIcons.SIZE_SMALL));
     action.setActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent event) {
-
-        Window parent = UiUtilities
-            .getLastModalChildOf(MainFrame.getInstance());
-        Channel channel = program.getChannel();
-        RepetitionDialog dlg = new RepetitionDialog(parent, channel);
-
-        dlg.setPatternText(program.getTitle());
-        UiUtilities.centerAndShow(dlg);
+        getInstance().searchRepetitions(program);
       }
     });
     return new ActionMenu(action);
@@ -256,18 +249,22 @@ public class SearchPlugin {
     return new SearchSettingsTab();
   }
 
-  public String getId() {
+  public static String getSearchPluginId() {
     return DATAFILE_PREFIX;
   }
 
   @Override
   public String toString() {
+    return getName();
+  }
+
+  static String getName() {
     return mLocalizer.msg("title", "Search");
   }
 
   /**
    * Select this entry in the RepetitionDialog
-   * 
+   *
    * @return
    */
   public int getRepetitionTimeSelection() {
@@ -276,7 +273,7 @@ public class SearchPlugin {
 
   /**
    * Set the selected entry in the RepetitionDialog
-   * 
+   *
    * @param selectedIndex
    *          selected entry
    */
@@ -288,6 +285,16 @@ public class SearchPlugin {
     Window parent = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
     SearchDialog dlg = new SearchDialog(parent);
     dlg.setSearchText(text);
+    UiUtilities.centerAndShow(dlg);
+  }
+
+  private void searchRepetitions(final Program program) {
+    Window parent = UiUtilities
+        .getLastModalChildOf(MainFrame.getInstance());
+    Channel channel = program.getChannel();
+    RepetitionDialog dlg = new RepetitionDialog(parent, channel);
+
+    dlg.setPatternText(program.getTitle());
     UiUtilities.centerAndShow(dlg);
   }
 }

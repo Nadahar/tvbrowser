@@ -69,7 +69,7 @@ import devplugin.ProgramItem;
 
 
 public class PluginView extends JPanel implements MouseListener, KeyListener {
-    
+
   private PluginTree mTree;
   private PluginTreeModel mModel;
 
@@ -83,13 +83,13 @@ public class PluginView extends JPanel implements MouseListener, KeyListener {
 
     PluginTreeCellRenderer renderer = new PluginTreeCellRenderer();
     renderer.setLeafIcon(null);
-    
+
     mTree = new PluginTree(mModel);
     mTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
     mTree.addMouseListener(this);
     mTree.setCellRenderer(renderer);
     mTree.addKeyListener(this);
-    
+
     add(new JScrollPane(mTree), BorderLayout.CENTER);
   }
 
@@ -117,10 +117,10 @@ public class PluginView extends JPanel implements MouseListener, KeyListener {
     }
 
     for (int i = menuIfs.length - 1; i >= 0; i--) {
-      if(menuIfs[i].getId().compareTo(FavoritesPlugin.getInstance().getId()) == 0) {
-        mModel.addCustomNode(FavoritesPlugin.getInstance().getRootNode());
-      } else if(menuIfs[i].getId().compareTo(ReminderPlugin.getInstance().getId()) == 0) {
-        mModel.addCustomNode(ReminderPlugin.getInstance().getRootNode());
+      if(menuIfs[i].getId().compareTo(FavoritesPlugin.getFavoritesPluginId()) == 0) {
+        mModel.addCustomNode(FavoritesPlugin.getRootNode());
+      } else if(menuIfs[i].getId().compareTo(ReminderPlugin.getReminderPluginId()) == 0) {
+        mModel.addCustomNode(ReminderPlugin.getRootNode());
       } else if(pluginList.contains(menuIfs[i].getId())) {
         PluginProxy plugin = PluginProxyManager.getInstance().getPluginForId(menuIfs[i].getId());
         mModel.addPluginTree(plugin);
@@ -132,7 +132,7 @@ public class PluginView extends JPanel implements MouseListener, KeyListener {
       mModel.addPluginTree(PluginProxyManager.getInstance().getPluginForId(pluginList.get(i)));
     }
   }
-  
+
   public void update() {
     mModel.update();
   }
@@ -147,8 +147,8 @@ public class PluginView extends JPanel implements MouseListener, KeyListener {
     if (e.isPopupTrigger()) {
       showPopup(e);
     }
-  }    
-  
+  }
+
 
   public void mouseClicked(MouseEvent e) {
 
@@ -189,17 +189,17 @@ public class PluginView extends JPanel implements MouseListener, KeyListener {
     if (!mTree.getSelectionModel().isPathSelected(path)) {
       mTree.setSelectionPath(path);
     }
-    
+
     TreePath[] selectedPaths = mTree.getSelectionPaths();
 
     ContextMenu menu = createContextMenu(selectedPaths);
     if (menu == null) {
       return;
     }
-    
+
     menu.getPopupMenu().show(mTree, e.getX(), e.getY());
   }
-  
+
 
   public ContextMenu createContextMenu(TreePath[] selectedPath) {
     if (selectedPath == null || selectedPath.length == 0) {
@@ -259,7 +259,7 @@ public class PluginView extends JPanel implements MouseListener, KeyListener {
       if (label != null) {
         label.setBackground(tree.getBackground());
         label.setOpaque(!sel && !hasFocus);
-        
+
         if (leaf && value instanceof Node) {
           Node node = (Node)value;
           if(node.isDirectoryNode()) {
@@ -276,7 +276,7 @@ public class PluginView extends JPanel implements MouseListener, KeyListener {
           }
         }
       }
-      
+
       if(UIManager.getLookAndFeel().getClass().getCanonicalName().equals("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel")) {
         if(sel) {
           label.setOpaque(true);
@@ -286,7 +286,7 @@ public class PluginView extends JPanel implements MouseListener, KeyListener {
           label.setOpaque(false);
         }
       }
-      
+
       return label;
     }
   }
