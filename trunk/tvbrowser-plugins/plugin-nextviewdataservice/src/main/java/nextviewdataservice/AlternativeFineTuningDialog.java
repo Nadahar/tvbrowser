@@ -29,13 +29,13 @@ import util.ui.Localizer;
 import util.ui.UiUtilities;
 
 
-public class AlternativeFineTuningDialog extends JDialog{
+public final class AlternativeFineTuningDialog extends JDialog{
 
    private static final long serialVersionUID = 1L;
 
    public static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(AlternativeFineTuningDialog.class);
    private static final Logger mLog = java.util.logging.Logger.getLogger(AlternativeFineTuningDialog.class.getName());
- 
+
    private static AlternativeFineTuningDialog mInstance;
 
    private JLabel[]fieldLabel;
@@ -47,7 +47,7 @@ public class AlternativeFineTuningDialog extends JDialog{
    private String origId;
    private JPanel titlePanel;
    private boolean okPressed;
-   
+
    /**
     * Create the Dialog
     * @param parent Parent-Frame
@@ -65,23 +65,23 @@ public class AlternativeFineTuningDialog extends JDialog{
        super(parent, true);
        createGui();
    }
-   
+
    private void createGui(){
-     
+
        JPanel backgroundPanel = (JPanel) getContentPane();
        backgroundPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-       backgroundPanel.setLayout(new BoxLayout(backgroundPanel, BoxLayout.PAGE_AXIS));    
+       backgroundPanel.setLayout(new BoxLayout(backgroundPanel, BoxLayout.PAGE_AXIS));
 
        titlePanel = new JPanel();
        titlePanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 0, 0));
-      
+
        backgroundPanel.add(titlePanel);
-       
+
        JPanel tuningPanel = new JPanel();
        GridBagLayout tuningLayout = new GridBagLayout();
        GridBagConstraints tuningConstraints = new GridBagConstraints();
        tuningPanel.setLayout(tuningLayout);
-       
+
        String fieldsFileName = "files/alternative_fields.properties";
        final InputStream stream = getClass().getResourceAsStream(fieldsFileName);
        Properties fieldsProp = new Properties();
@@ -90,13 +90,13 @@ public class AlternativeFineTuningDialog extends JDialog{
       } catch (IOException ioe) {
          mLog.warning(ioe.toString());
        }
-      
+
       numberOfFields=fieldsProp.size();
       fieldLabel = new JLabel[numberOfFields];
       fieldName = new String [numberOfFields];
       fieldSetting = new JComboBox[numberOfFields];
       fieldIndex = new int[numberOfFields];
-      
+
 
       for (int i=0; i< numberOfFields; i++) {
         String fieldDesc[]= fieldsProp.getProperty(Integer.toString(i), "-1").split(";");
@@ -107,7 +107,7 @@ public class AlternativeFineTuningDialog extends JDialog{
         tuningConstraints.anchor = GridBagConstraints.WEST;
         tuningLayout.setConstraints(fieldLabel[i], tuningConstraints);
         tuningPanel.add(fieldLabel[i]);
-        
+
         String []items = new String[]{mLocalizer.msg("unchanged", "unchanged"), mLocalizer.msg("replaced", "replaced")};
         if (fieldIndex[i]==13){
           items = new String[]{mLocalizer.msg("unchanged", "unchanged"), mLocalizer.msg("replaced", "replaced"), mLocalizer.msg("added", "added")};
@@ -115,7 +115,7 @@ public class AlternativeFineTuningDialog extends JDialog{
         if (fieldIndex[i]==7||fieldIndex[i]==8||fieldIndex[i]==12||fieldIndex[i]==16){
           items = new String[]{mLocalizer.msg("unchanged", "unchanged"), mLocalizer.msg("replaced", "replaced"), mLocalizer.msg("before", "before"), mLocalizer.msg("after", "after")};
         }
-       
+
         fieldSetting[i]= new JComboBox(items);
        tuningConstraints = makegbc(1, i, 1, 1);
         tuningConstraints.fill = GridBagConstraints.HORIZONTAL;
@@ -123,15 +123,15 @@ public class AlternativeFineTuningDialog extends JDialog{
         tuningLayout.setConstraints(fieldSetting[i], tuningConstraints);
         fieldSetting[i].setEditable(false);
         tuningPanel.add(fieldSetting[i]);
-        
-        
+
+
       }
-     
-     
+
+
       JScrollPane tScroller = new JScrollPane(tuningPanel);
       tScroller.setPreferredSize(new Dimension(400, 400));
        backgroundPanel.add(tScroller);
-       
+
        JPanel buttonPanel = new JPanel();
        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.LINE_AXIS));
        buttonPanel.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 0));
@@ -156,40 +156,40 @@ public class AlternativeFineTuningDialog extends JDialog{
              } catch (IOException ioe) {
                mLog.warning(ioe.toString());
              }
-             
+
              setBoxes();
 
            }
-        });    
+        });
       buttonPanel.add(resetButton);
-     
+
 
       buttonPanel.add(Box.createHorizontalGlue());
-    
+
        JButton cancelButton = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
        cancelButton.addActionListener(new ActionListener() {
          public void actionPerformed(ActionEvent e) {
             setVisible(false);
           }
-         
-     });    
+
+     });
        buttonPanel.add(cancelButton);
-    
+
        JButton okButton = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
        okButton.addActionListener(new ActionListener() {
          public void actionPerformed(ActionEvent e) {
            okPressed = true;
            setVisible(false);
         }
-       });    
+       });
       buttonPanel.add(okButton);
-       
+
        backgroundPanel.add (buttonPanel);
-     
+
       pack();
-       
+
    }
-   
+
    /**
     * Returns the current instance of this panel. If no instance is given, create a new one.
      * @return instance of setting panel
@@ -199,7 +199,7 @@ public class AlternativeFineTuningDialog extends JDialog{
        mInstance = new AlternativeFineTuningDialog(parent);
      }
      return mInstance;
-   } 
+   }
    /**
     * Returns the current instance of this panel. If no instance is given, create a new one.
      * @return instance of setting panel
@@ -209,8 +209,8 @@ public class AlternativeFineTuningDialog extends JDialog{
        mInstance = new AlternativeFineTuningDialog(parent);
      }
      return mInstance;
-   } 
-   
+   }
+
    public void showGui (String id, String origName, ChannelLabel channelLabel, String[]alternativeMix){
      okPressed= false;
     origId =id;
@@ -221,8 +221,8 @@ public class AlternativeFineTuningDialog extends JDialog{
      GridBagLayout titleLayout = new GridBagLayout();
      GridBagConstraints titleConstraints = new GridBagConstraints();
      titlePanel.setLayout(titleLayout);
-     
-     
+
+
      JLabel chnLabel;
      if (channelLabel != null) {
        chnLabel = channelLabel;
@@ -237,7 +237,7 @@ public class AlternativeFineTuningDialog extends JDialog{
          titleConstraints.gridwidth = GridBagConstraints.REMAINDER;
          JTextArea warningText = UiUtilities.createHelpTextArea(mLocalizer.msg("warningText", "Warning: Changing detail information for all channels will delete all channel specific settings done before!"));
          titleLayout.setConstraints(warningText, titleConstraints);
-         titlePanel.add(warningText);       
+         titlePanel.add(warningText);
        }
        else{
        chnLabel = new JLabel (origName);
@@ -249,13 +249,13 @@ public class AlternativeFineTuningDialog extends JDialog{
      titleLayout.setConstraints(chnLabel, titleConstraints);
      titlePanel.add(chnLabel);
 
-     
+
      titlePanel.repaint();
      setBoxes ();
      UiUtilities.centerAndShow(mInstance);
    }
-   
-   
+
+
    private void setBoxes (){
      int maxCounter = Math.min(detailMix.length, numberOfFields);
      for (int i=0; i< maxCounter; i++) {
@@ -280,13 +280,13 @@ public class AlternativeFineTuningDialog extends JDialog{
        }
      }
    }
-   
+
    public String[]readSettings(){
- 
+
      if (!okPressed){
        return null;
      }
-     
+
      String []settings = new String[30];
      for (int i = 0; i<30; i++){
        if (i>=numberOfFields || fieldSetting[i].getSelectedIndex()==0){
@@ -307,13 +307,13 @@ public class AlternativeFineTuningDialog extends JDialog{
          if (fieldSetting[i].getSelectedIndex()==3){
            settings[i] = "after";
          }
-       }   
+       }
      }
      return settings;
    }
-   
-   
-   
+
+
+
    /* makegbc
     * helper function for the GridBagLayout */
    private static GridBagConstraints makegbc(
@@ -329,5 +329,5 @@ public class AlternativeFineTuningDialog extends JDialog{
      gbc.fill = GridBagConstraints.NONE;
      gbc.anchor = GridBagConstraints.NORTHWEST;
      return gbc;
-   } 
+   }
 }

@@ -19,67 +19,59 @@
 package nextviewdataservice;
 
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.Font;
 import java.awt.Window;
-
-import java.awt.font.TextAttribute;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Properties;
-import java.util.Map;
-
+import java.awt.font.TextAttribute;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
-
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
-import javax.swing.filechooser.FileFilter;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JFileChooser;
+import javax.swing.JFormattedTextField;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
-import javax.swing.JFormattedTextField;
-import javax.swing.JCheckBox;
-import javax.swing.ImageIcon;
-import javax.swing.JPanel;
-import javax.swing.JFrame;
-import javax.swing.JDialog;
+import javax.swing.filechooser.FileFilter;
 
 import tvdataservice.SettingsPanel;
-
 import util.misc.OperatingSystem;
 import util.ui.ChannelLabel;
 import util.ui.UiUtilities;
-
-import devplugin.Plugin;
 import devplugin.Channel;
+import devplugin.Plugin;
 
 /**
  * The settings panel of this data service
  * @author jb
  */
-public class NextViewDataServicePanel extends SettingsPanel implements FocusListener {
+public final class NextViewDataServicePanel extends SettingsPanel implements FocusListener {
 
   private static final long serialVersionUID = 1L;
 //private static final Logger mLog = java.util.logging.Logger.getLogger(NextViewDataServicePanel.class.getName());
@@ -391,7 +383,7 @@ public class NextViewDataServicePanel extends SettingsPanel implements FocusList
     gbc21.gridheight = GridBagConstraints.REMAINDER;
     timerPanel.add(fooPanel,gbc21);
 
-    /* mixer pane */ 
+    /* mixer pane */
 
     JPanel mixerPanel = new JPanel();
     mixerPanel.setBorder(BorderFactory.createEmptyBorder(20, 0, 10, 0));
@@ -612,9 +604,9 @@ public class NextViewDataServicePanel extends SettingsPanel implements FocusList
           }
         }
       }
- 
+
       // these arrays have corresponing indexes!
-      channelList = new Channel[subChannelCount]; //subscribed nxtv channels; 
+      channelList = new Channel[subChannelCount]; //subscribed nxtv channels;
       alternativeId = new String[subChannelCount]; //uniqueIds of the alternative channels
       boolean[][] checkings = new boolean[subChannelCount][2]; // dataMix and logo flags
 
@@ -1088,7 +1080,7 @@ public class NextViewDataServicePanel extends SettingsPanel implements FocusList
   }
 
   /**
-   * File filter for FileChooser Dialog: 
+   * File filter for FileChooser Dialog:
    * nxtvepg application path
    */
   public FileFilter setNxtvAppFilter() {
@@ -1123,7 +1115,7 @@ public class NextViewDataServicePanel extends SettingsPanel implements FocusList
   }
 
   /**
-   * Returns default path for the nxtvepg application if no 
+   * Returns default path for the nxtvepg application if no
    * other path is specified by the user.
    * @param nxtvApp
    * @return full pathname of the nxtvepg application
@@ -1148,7 +1140,7 @@ public class NextViewDataServicePanel extends SettingsPanel implements FocusList
 
 
   /**
-   * Returns default path for the nxtvepg data base directory if no 
+   * Returns default path for the nxtvepg data base directory if no
    * other path is specified by the user.
    * @return full pathname
    */
@@ -1174,7 +1166,7 @@ public class NextViewDataServicePanel extends SettingsPanel implements FocusList
   }
 
   /**
-   * Returns default path for the nxtvepg ini/rc file if no 
+   * Returns default path for the nxtvepg ini/rc file if no
    * other path is specified by the user.
    * @return full pathname
    */
@@ -1208,9 +1200,9 @@ public class NextViewDataServicePanel extends SettingsPanel implements FocusList
     }
 
     try {
-      Integer.parseInt((String) autoRepeatField.getText());
+      Integer.parseInt(autoRepeatField.getText());
     } catch (Exception ex) {
-      autoRepeatField.setText((String) mProp.getProperty(NextViewDataService.AUTOREPETITION));
+      autoRepeatField.setText(mProp.getProperty(NextViewDataService.AUTOREPETITION));
     }
 
     try {
@@ -1219,11 +1211,11 @@ public class NextViewDataServicePanel extends SettingsPanel implements FocusList
       minUpdateTime = 30;
     }
 
-    if (minUpdateTime > Integer.parseInt((String) autoStartField.getText())) {
-      autoStartField.setText((new Integer(minUpdateTime)).toString());
+    if (minUpdateTime > Integer.parseInt(autoStartField.getText())) {
+      autoStartField.setText(Integer.toString(minUpdateTime));
     }
-    if (minUpdateTime > Integer.parseInt((String) autoRepeatField.getText())) {
-      autoRepeatField.setText((new Integer(minUpdateTime)).toString());
+    if (minUpdateTime > Integer.parseInt(autoRepeatField.getText())) {
+      autoRepeatField.setText(Integer.toString(minUpdateTime));
     }
 
   }
@@ -1255,7 +1247,7 @@ public class NextViewDataServicePanel extends SettingsPanel implements FocusList
       }
       alternativeMixTable[index] = dialog.getDetails();
       setAlienFont(alternativeChannelField[index][0], alternativeId[index], alienIds);
-    }   
+    }
   }
 
   private void setAlienFont (JLabel label, String id, String [] testIds){
@@ -1291,6 +1283,6 @@ public class NextViewDataServicePanel extends SettingsPanel implements FocusList
     gbc.fill = GridBagConstraints.NONE;
     gbc.anchor = GridBagConstraints.CENTER;
     return gbc;
-  } 
+  }
 }
 
