@@ -89,7 +89,7 @@
   <path id="docpath">
     <path refid="sourcepath"/>
   </path>
-	
+
   <path id="ant-deb.classpath">
 	 <fileset dir="${deployment.dir}/linux/ant-deb-task" includes="*.jar"/>
   </path>
@@ -101,7 +101,7 @@
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 
   <!-- Creates an .app file for Mac OS X (http://informagen.com/JarBundler/)  -->
-  <taskdef name="jarbundler" 
+  <taskdef name="jarbundler"
            classpath="deployment/macosx/jarbundler-2.0.0.jar"
            classname="net.sourceforge.jarbundler.JarBundler" />
 
@@ -111,12 +111,12 @@
 	    classpath="${deployment.dir}/win/launch4j/launch4j.jar:${deployment.dir}/win/launch4j/lib/xstream.jar" />
 
   <!-- Creates a linux desktopEntry-->
-	<taskdef name="desktopEntry" 
-		classname="com.googlecode.ant_deb_task.DesktopEntry" 
+	<taskdef name="desktopEntry"
+		classname="com.googlecode.ant_deb_task.DesktopEntry"
 		classpathref="ant-deb.classpath"/>
-	
+
   <!-- Creates an Ubuntu package-->
-	<taskdef name="deb" 
+	<taskdef name="deb"
 		classname="com.googlecode.ant_deb_task.Deb"
 		classpathref="ant-deb.classpath"/>
 
@@ -183,7 +183,7 @@
   <target name="clean-default" depends="clean">
     <delete dir="${tvbrowser-default.runtime.dir}"/>
   </target>
-	
+
   <!-- Deletes the classes and the runtime directory. -->
   <target name="clean-transportable" depends="clean">
 	<delete dir="${tvbrowser-transportable.runtime.dir}"/>
@@ -310,13 +310,13 @@
     <unjar src="${lib.dir}/forms-1.2.1.jar" dest="${unpacked.dir}/forms-1.2.1.jar"/>
     <unjar src="${lib.dir}/looks-2.3.0.jar" dest="${unpacked.dir}/looks-2.2.2.jar"/>
     <unjar src="${lib.dir}/l2fprod-common-tasks.jar" dest="${unpacked.dir}/l2fprod-common-tasks.jar"/>
-    <unjar src="${lib.dir}/jRegistryKey.jar" dest="${unpacked.dir}/jRegistryKey.jar" /> 	 
-    <unjar src="${lib.dir}/TVAnytimeAPI.jar" dest="${unpacked.dir}/TVAnytimeAPI.jar" /> 	 
+    <unjar src="${lib.dir}/jRegistryKey.jar" dest="${unpacked.dir}/jRegistryKey.jar" />
+    <unjar src="${lib.dir}/TVAnytimeAPI.jar" dest="${unpacked.dir}/TVAnytimeAPI.jar" />
     <unjar src="${lib.dir}/commons-compress-1.0.jar" dest="${unpacked.dir}/commons-compress-1.0.jar" />
     <unjar src="${lib.dir}/commons-codec-1.4.jar" dest="${unpacked.dir}/commons-codec-1.3.jar" />
     <unjar src="${lib.dir}/commons-lang-2.4.jar" dest="${unpacked.dir}/commons-lang-2.4.jar" />
     <unjar src="${lib.dir}/gdata-calendar-2.0.jar" dest="${unpacked.dir}/gdata-calendar-2.0.jar" />
-    <unjar src="${lib.dir}/gdata-client-1.0.jar" dest="${unpacked.dir}/gdata-client-1.0.jar" /> 	   	
+    <unjar src="${lib.dir}/gdata-client-1.0.jar" dest="${unpacked.dir}/gdata-client-1.0.jar" />
     <unjar src="${lib.dir}/gdata-core-1.0.jar" dest="${unpacked.dir}/gdata-core-1.0.jar" />
     <unjar src="${lib.dir}/jcom.jar" dest="${unpacked.dir}/jcom.jar" />
     <unjar src="${lib.dir}/opencsv-2.0.jar" dest="${unpacked.dir}/opencsv-1.8.jar" />
@@ -353,7 +353,7 @@
     </jar>
 
     <!-- Pack the plugin jars -->
-	
+
     <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/BlogThisPlugin.jar"
          compress="false">
       <fileset dir="${classes.dir}" includes="blogthisplugin/**"/>
@@ -362,9 +362,9 @@
     <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/CalendarExportPlugin.jar"
          compress="false">
         <fileset dir="${classes.dir}" includes="calendarexportplugin/**"/>
-        <fileset dir="${unpacked.dir}/gdata-calendar-2.0.jar" includes="**" /> 	 
-        <fileset dir="${unpacked.dir}/gdata-client-1.0.jar" includes="**" /> 	 
-        <fileset dir="${unpacked.dir}/gdata-core-1.0.jar" includes="**" /> 	 
+        <fileset dir="${unpacked.dir}/gdata-calendar-2.0.jar" includes="**" />
+        <fileset dir="${unpacked.dir}/gdata-client-1.0.jar" includes="**" />
+        <fileset dir="${unpacked.dir}/gdata-core-1.0.jar" includes="**" />
         <fileset dir="${unpacked.dir}/jcom.jar" includes="**" />
     </jar>
 
@@ -387,13 +387,13 @@
          compress="false">
       <fileset dir="${classes.dir}" includes="genreplugin/**"/>
     </jar>
-  	
+
     <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/GrowlPlugin.jar"
          compress="false">
       <fileset dir="${classes.dir}" includes="growlplugin/**"/>
-      <fileset dir="${unpacked.dir}/libgrowl.jar" includes="**" />   
+      <fileset dir="${unpacked.dir}/libgrowl.jar" includes="**" />
     </jar>
-    
+
     <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/ProgramListPlugin.jar"
          compress="false">
       <fileset dir="${classes.dir}" includes="programlistplugin/**"/>
@@ -419,8 +419,8 @@
       <fileset dir="${classes.dir}" includes="printplugin/**"/>
     </jar>
 
-    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/SimpleMarkerPlugin.jar" compress="false"> 	 
-      <fileset dir="${classes.dir}" includes="simplemarkerplugin/**" /> 	 
+    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/SimpleMarkerPlugin.jar" compress="false">
+      <fileset dir="${classes.dir}" includes="simplemarkerplugin/**" />
     </jar>
 
   	<jar jarfile="${tvbrowser-default.runtime.dir}/plugins/TVRaterPlugin.jar"
@@ -431,8 +431,8 @@
     <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/WebPlugin.jar"
          compress="false">
       <fileset dir="${classes.dir}" includes="webplugin/**"/>
-      <fileset dir="${unpacked.dir}/aclibico-2.1.jar" includes="**" />   
-      <fileset dir="${unpacked.dir}/log4j-1.2.15.jar" includes="**" />   
+      <fileset dir="${unpacked.dir}/aclibico-2.1.jar" includes="**" />
+      <fileset dir="${unpacked.dir}/log4j-1.2.15.jar" includes="**" />
     </jar>
 
     <!-- Pack the TV data service jars -->
@@ -441,36 +441,36 @@
       <fileset dir="${classes.dir}" includes="tvbrowserdataservice/**"/>
     </jar>
 
-    <!-- Pack Swedb data service --> 	 
-    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/SweDBTvDataService.jar" compress="false"> 	 
-            <fileset dir="${classes.dir}" includes="swedbtvdataservice/**" /> 	 
-    </jar> 	 
+    <!-- Pack Swedb data service -->
+    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/SweDBTvDataService.jar" compress="false">
+            <fileset dir="${classes.dir}" includes="swedbtvdataservice/**" />
+    </jar>
 
-    <!-- Pack BBC data service --> 	 
+    <!-- Pack BBC data service -->
     <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/BbcBackstageDataService.jar" compress="false">
-            <fileset dir="${classes.dir}" includes="bbcbackstagedataservice/**" /> 	 
-            <fileset dir="${unpacked.dir}/TVAnytimeAPI.jar" includes="bbc/**" /> 	 
-            <fileset dir="${unpacked.dir}/commons-compress-1.0.jar" includes="**" /> 	 
-    </jar> 	 
+            <fileset dir="${classes.dir}" includes="bbcbackstagedataservice/**" />
+            <fileset dir="${unpacked.dir}/TVAnytimeAPI.jar" includes="bbc/**" />
+            <fileset dir="${unpacked.dir}/commons-compress-1.0.jar" includes="**" />
+    </jar>
     <!-- Pack RadioTimes data service -->
-    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/RadioTimesDataService.jar" compress="false"> 	 
-            <fileset dir="${classes.dir}" includes="radiotimesdataservice/**" /> 	 
-    </jar>  	
+    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/RadioTimesDataService.jar" compress="false">
+            <fileset dir="${classes.dir}" includes="radiotimesdataservice/**" />
+    </jar>
       <!-- Pack Dreambox data service -->
       <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/DreamboxDataService.jar" compress="false">
-              <fileset dir="${classes.dir}" includes="dreamboxdataservice/**" /> 	 
+              <fileset dir="${classes.dir}" includes="dreamboxdataservice/**" />
       </jar>
 
 
     <unjar src="${lib.dir}/stax-1.2.0.jar" dest="${unpacked.dir}/stax-1.2.0.jar" />
     <unjar src="${lib.dir}/stax-api-1.0.1.jar" dest="${unpacked.dir}/stax-api-1.0.1.jar" />
-    <unjar src="${lib.dir}/xtvd-lib-2.0.jar" dest="${unpacked.dir}/xtvd-lib-2.0.jar" />
-    <!-- Pack Dreambox data service -->
+    <unjar src="${lib.dir}/xtvd-lib-2.0.2.jar" dest="${unpacked.dir}/xtvd-lib-2.0.2.jar" />
+    <!-- Pack SchedulesDirect data service -->
     <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/SchedulesDirectDataService.jar" compress="false">
         <fileset dir="${classes.dir}" includes="schedulesdirectdataservice/**" />
         <fileset dir="${unpacked.dir}/stax-1.2.0.jar" includes="com/**"/>
         <fileset dir="${unpacked.dir}/stax-api-1.0.1.jar" includes="javax/**"/>
-        <fileset dir="${unpacked.dir}/xtvd-lib-2.0.jar" includes="net/**"/>
+        <fileset dir="${unpacked.dir}/xtvd-lib-2.0.2.jar" includes="net/**"/>
     </jar>
 
 
@@ -527,7 +527,7 @@
 
 
   <!-- Creates the runtime folder for the transportable version -->
-  <target name="runtime-transportable" depends="clean-transportable, make-transportable, runtime, test">  	
+  <target name="runtime-transportable" depends="clean-transportable, make-transportable, runtime, test">
 	<echo message="deployment dir is ${deployment.dir}, win is ${win.dir}" />
 	<mkdir dir="${tvbrowser-transportable.runtime.dir}"/>
   	<mkdir dir="${tvbrowser-transportable.runtime.dir}/settings"/>
@@ -537,7 +537,7 @@
 	  <fileset dir="${win.dir}/jcom" includes="jcom.dll" />
 	</copy>
   </target>
-	
+
   <!-- Creates the runtime folder for the windows platform -->
   <target name="runtime-win" depends="clean-win, make-win, runtime">
     <echo message="deployment dir is ${deployment.dir}, win is ${win.dir}" />
@@ -580,7 +580,7 @@
                 jars="${tvbrowser-default.runtime.dir}/tvbrowser.jar">
         <resourcefileset dir="${tvbrowser-default.runtime.dir}">
              <exclude name="tvbrowser.jar"/>
-        </resourcefileset>                            
+        </resourcefileset>
     </jarbundler>
 
     <copy todir="${tvbrowser-mac.runtime.dir}/TV-Browser.app/Contents/Resources">
@@ -590,7 +590,7 @@
   </target>
 
   <!-- Creates the desktop entry file for Linux platforms -->
-  <target name="tvbrowser-desktop-entry"> 	
+  <target name="tvbrowser-desktop-entry">
   	<desktopEntry
         toFile="${tvbrowser-linux.runtime.dir}/tvbrowser.desktop"
         name="TV-Browser"
@@ -607,9 +607,9 @@
     	<comment lang="de" value="Anpassbare und einfach zu benutzende TV-Zeitschrift - geschrieben in Java"/>
    	</desktopEntry>
   </target>
-	
+
   <!-- Creates the desktop entry file for Ubuntu platform -->
-  <target name="tvbrowser-desktop-entry-deb"> 	
+  <target name="tvbrowser-desktop-entry-deb">
   	<desktopEntry
         toFile="${tvbrowser-linux.runtime.dir}/tvbrowser.desktop"
         name="${programname}"
@@ -623,10 +623,10 @@
     	<genericName lang="de" value="Digitale TV-Zeitschrift"/>
     	<comment value="Themeable and easy to use TV Guide - written in Java"/>
     	<comment lang="de" value="Anpassbare und einfach zu benutzende TV-Zeitschrift - geschrieben in Java"/>
-    	
+
    	</desktopEntry>
   </target>
-	
+
   <!-- Creates the runtime folder for linux platforms -->
   <target name="runtime-linux" depends="clean-linux, make-linux, runtime">
     <delete dir="${tvbrowser-linux.runtime.dir}"/>
@@ -796,35 +796,35 @@
 
   <target name="public-nightly" depends="runtime-transportable">
   	<mkdir dir="${public.dir}"/>
-  	
+
     <tstamp>
       <format property="TODAY" pattern="yyyy-MM-dd"/>
     </tstamp>
-  	
+
   	<echo file="${tvbrowser-transportable.runtime.dir}/NIGHTLY_VALUES" append="false">${TODAY}-nightly</echo>
-  	
+
 	<zip destfile="${public.dir}/tvbrowser_${tvbrowser.version}_${TODAY}_nightly_bin_transportable.zip">
-		<zipfileset prefix="tvbrowser-nightly-transportable" dir="${tvbrowser-transportable.runtime.dir}"/>		
+		<zipfileset prefix="tvbrowser-nightly-transportable" dir="${tvbrowser-transportable.runtime.dir}"/>
 	</zip>
-  	
+
   </target>
-	
+
   <target name="public-ubuntu" depends="runtime-linux, tvbrowser-desktop-entry-deb">
   	<mkdir dir="${public.dir}"/>
-  	
+
   	<deb
         todir="${public.dir}"
         package="tvbrowser"
         section="utils"
         depends="sun-java6-jre | openjdk-6-jre | sun-java7-jre | openjdk-7-jre | default-jre"
   		recommends="sun-java6-jre">
-  		
+
         <version upstream="${tvbrowser.version}"/>
         <maintainer name="TV-Browser team" email="dev@tvbrowser.org"/>
 
   		<!-- do not indent the description, otherwise the indent will be visible in the package manager and other tools -->
         <description synopsis="Digital TV Guide">Themeable and easy to use TV Guide - written in Java.</description>
-  	   	  		
+
   	    <tarfileset dir="${tvbrowser-linux.runtime.dir}" prefix="usr/share/tvbrowser">
   	    	<include name="imgs/**"/>
   	    	<include name="plugins/**"/>
@@ -840,10 +840,10 @@
   		<tarfileset dir="${tvbrowser-linux.runtime.dir}" prefix="usr/share/applications" includes="**/tvbrowser.desktop"/>
   	   	<tarfileset dir="${deployment.dir}/linux"
   	                 prefix="usr/bin"
-  	   	   filemode="755" includes="**/tvbrowser" />	
+  	   	   filemode="755" includes="**/tvbrowser" />
   	</deb>
   </target>
-	
+
   <!-- Creates the release binaries (.zip) for the platform independent transportable TV-Browser version -->
   <target name="public-transportable" depends="transportable-exe">
   	<mkdir dir="${public.dir}"/>
@@ -851,8 +851,8 @@
    	<copy todir="${tvbrowser-transportable.runtime.dir}">
    	  <fileset dir="${linux.dir}" includes="tvbrowser.sh"/>
    	</copy>
-   	<move file="${tvbrowser-transportable.runtime.dir}/tvbrowser.sh" tofile="${tvbrowser-transportable.runtime.dir}/tvbrowser-transportable.sh"/>  	
-  	
+   	<move file="${tvbrowser-transportable.runtime.dir}/tvbrowser.sh" tofile="${tvbrowser-transportable.runtime.dir}/tvbrowser-transportable.sh"/>
+
 	  <zip destfile="${public.dir}/tvbrowser_${tvbrowser.version}_bin_transportable.zip">
       <zipfileset prefix="tvbrowser-transportable"
                   dir="${tvbrowser-transportable.runtime.dir}"
@@ -884,26 +884,26 @@
     <jsmoothgen project="${jsmooth.dir}/tvbrowser_noDD.jsmooth" skeletonroot="${jsmooth.dir}/skeletons"/>
 -->
   	<launch4j configFile="${deployment.dir}/win/launch4j/tvbrowser.xml"
-  		fileversion="${tvbrowser.version.file}" 
-  		productversion="${tvbrowser.version.file}" 
-  		txtfileversion="${tvbrowser.version}" 
+  		fileversion="${tvbrowser.version.file}"
+  		productversion="${tvbrowser.version.file}"
+  		txtfileversion="${tvbrowser.version}"
   		txtproductversion="${tvbrowser.version}"/>
-  	<launch4j configFile="${deployment.dir}/win/launch4j/tvbrowser_noDD.xml"  
-  		fileversion="${tvbrowser.version.file}" 
-  		productversion="${tvbrowser.version.file}" 
-  		txtfileversion="${tvbrowser.version}" 
+  	<launch4j configFile="${deployment.dir}/win/launch4j/tvbrowser_noDD.xml"
+  		fileversion="${tvbrowser.version.file}"
+  		productversion="${tvbrowser.version.file}"
+  		txtfileversion="${tvbrowser.version}"
   		txtproductversion="${tvbrowser.version}"/>
   </target>
 
   <!-- Creates the windows transportable exe file -->
   <target name="transportable-exe" depends="runtime-transportable">
   	<launch4j configFile="${deployment.dir}/win/launch4j/tvbrowser-transportable.xml"
-  		fileversion="${tvbrowser.version.file}" 
-  		productversion="${tvbrowser.version.file}" 
-  		txtfileversion="${tvbrowser.version}" 
+  		fileversion="${tvbrowser.version.file}"
+  		productversion="${tvbrowser.version.file}"
+  		txtfileversion="${tvbrowser.version}"
   		txtproductversion="${tvbrowser.version}"/>
   </target>
-	
+
   <!-- Creates the release binaries (.exe installer) for windows platforms -->
   <target name="public-win" depends="exe">
     <mkdir dir="${public.dir}"/>
@@ -955,14 +955,14 @@
       <exec executable="hdiutil" os="Mac OS X">
           <arg value="mount"/>
           <arg value="tvbrowser.sparseimage"/>
-      </exec>    
+      </exec>
 
       <!-- Copy Contents of .app-File with command line tool. Only this way the +x is copied-->
       <exec executable="cp" os="Mac OS X">
           <arg value="-r"/>
           <arg value="${tvbrowser-mac.runtime.dir}/TV-Browser.app/Contents"/>
           <arg value="/Volumes/TV-Browser/TV-Browser.app"/>
-      </exec>    
+      </exec>
 
       <!-- Copy additional files into .spareseimage -->
       <copy todir="/Volumes/TV-Browser/">
@@ -974,12 +974,12 @@
       <exec executable="hdiutil" os="Mac OS X">
            <arg value="eject"/>
            <arg value="/Volumes/TV-Browser/"/>
-      </exec>    
+      </exec>
 
       <!-- Delete existing Files -->
       <delete file="${public.dir}/tvbrowser_${tvbrowser.version}_mac.dmg" />
 
-      <!-- Convert .sparseimage to dmg -->    
+      <!-- Convert .sparseimage to dmg -->
       <exec executable="hdiutil" os="Mac OS X">
         <arg value="convert"/>
         <arg value="tvbrowser.sparseimage"/>
