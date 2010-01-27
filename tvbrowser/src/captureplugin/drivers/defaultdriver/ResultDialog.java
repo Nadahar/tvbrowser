@@ -25,6 +25,7 @@
 package captureplugin.drivers.defaultdriver;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -40,6 +41,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.UIManager;
+
+import captureplugin.CapturePlugin;
 
 import util.ui.Localizer;
 import util.ui.UiUtilities;
@@ -92,10 +95,10 @@ public class ResultDialog extends JDialog implements WindowClosingIf {
 
     content.add(createResultPanel(input, output, error), BorderLayout.CENTER);
 
-    setSize(400, 250);
-
     UiUtilities.registerForClosing(this);
     getRootPane().setDefaultButton(ok);
+    
+    CapturePlugin.getInstance().layoutWindow("resultDialog",this,new Dimension(400,250));
   }
 
   /**
