@@ -474,7 +474,7 @@ public final class WirSchauenPlugin extends Plugin
       {
         //load the linked programs and mark them
         mLinkedPrograms = (ArrayList<ProgramId>) in.readObject();
-        // do not remove invalid programs here, but in handleStartFinished
+        // do not remove invalid programs here, but in handleStartFinished (for performance)
       }
     }
     catch (final EOFException e)
@@ -674,6 +674,15 @@ public final class WirSchauenPlugin extends Plugin
     }
   }
 
+
+  /**
+   * this method is called after the program table was drawn. we postpone some
+   * cleanup work (ie removing programs from the 'marked' list that are no longer
+   * available and mark linked programs) until now so the program table is displayed
+   * earlier.
+   *
+   * @see devplugin.Plugin#handleTvBrowserStartFinished()
+   */
   @Override
   public void handleTvBrowserStartFinished() {
     //remove programs from the list which are no longer available. crawl backwards
