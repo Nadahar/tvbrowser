@@ -70,7 +70,7 @@ public class ChannelTableModel extends AbstractTableModel {
         }
         TreeMap<Channel, String> channels = mData.getChannels();
 
-        Channel[] channelArray = pl.getSubscribedChannels();
+        final Channel[] channelArray = pl.getSubscribedChannels();
         for (Channel channel : channelArray) {
             if (!channels.containsKey(channel)) {
                 channels.put(channel, "");
@@ -90,7 +90,22 @@ public class ChannelTableModel extends AbstractTableModel {
         
         Collections.sort(mChannelRows, new Comparator<Channel>() {
           public int compare(Channel a, Channel b) {
-            return a.getName().compareToIgnoreCase(b.getName());
+            int aPos = 0;
+            int bPos = 0;
+            
+            int counter = 0;
+            
+            while(counter < channelArray.length && !channelArray[counter].equals(a)) {
+              aPos = counter++;
+            }
+            
+            counter = 0;
+            
+            while(counter < channelArray.length && !channelArray[counter].equals(b)) {
+              bPos = counter++;
+            }
+            
+            return aPos - bPos;
           }
         });
     }
