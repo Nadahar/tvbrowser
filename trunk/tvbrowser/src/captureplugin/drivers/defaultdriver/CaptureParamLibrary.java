@@ -157,7 +157,33 @@ public class CaptureParamLibrary extends ParamLibrary {
   }
 
   public String getStringForKey(Program prg, String key) {
-    if (key.equalsIgnoreCase("channel_name_external")) {
+    if (key.equals("title")) {
+      return String.valueOf(mPrgTime.getTitle());
+    } else if (key.equals("start_day")) {
+      return String.valueOf(mStartTime.get(Calendar.DAY_OF_MONTH));
+    } else if (key.equals("start_month")) {
+      return String.valueOf(mStartTime.get(Calendar.MONTH)+1);
+    } else if (key.equals("start_year")) {
+      return String.valueOf(mStartTime.get(Calendar.YEAR));
+    } else if (key.equals("start_hour")) {
+      return String.valueOf(mStartTime.get(Calendar.HOUR_OF_DAY));
+    } else if (key.equals("start_minute")) {
+      return String.valueOf(mStartTime.get(Calendar.MINUTE));
+    } else if (key.equals("end_day")) {
+      return String.valueOf(mEndTime.get(Calendar.DAY_OF_MONTH));
+    } else if (key.equals("end_month")) {
+      return String.valueOf(mEndTime.get(Calendar.MONTH)+1);
+    } else if (key.equals("end_year")) {
+      return String.valueOf(mEndTime.get(Calendar.YEAR));
+    } else if (key.equals("end_hour")) {
+      return String.valueOf(mEndTime.get(Calendar.HOUR_OF_DAY));
+    } else if (key.equals("end_minute")) {
+      return String.valueOf(mEndTime.get(Calendar.MINUTE));
+    } else if (key.equalsIgnoreCase("length_minutes")) {
+      return String.valueOf(mPrgTime.getLength());
+    } else if (key.equalsIgnoreCase("length_sec")) {
+      return String.valueOf(mPrgTime.getLength() * 60);
+    } else if (key.equalsIgnoreCase("channel_name_external")) {
       return getExternalChannelName(prg, true);
     } else if (key.equalsIgnoreCase("channel_name_external_quiet")) {
       return getExternalChannelName(prg, false);

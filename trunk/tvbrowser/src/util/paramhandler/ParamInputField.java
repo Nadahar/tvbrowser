@@ -27,6 +27,7 @@ package util.paramhandler;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
@@ -121,7 +122,6 @@ public class ParamInputField extends JPanel {
     mParamText.setText(text);
     
     if (singleLine) {
-      mParamText.setLineWrap(true);
       mParamText.addKeyListener(new KeyAdapter() {
 
         public void keyPressed(KeyEvent ke) {
@@ -136,6 +136,7 @@ public class ParamInputField extends JPanel {
       
       add(scroll, cc.xyw(1,1, layout.getColumnCount()));
     } else {
+      mParamText.setLineWrap(true);
       add(new JScrollPane(mParamText), cc.xyw(1,1,layout.getColumnCount()));
     }
     
@@ -246,5 +247,9 @@ public class ParamInputField extends JPanel {
    */
   public String toString() {
     return getText();
+  }
+  
+  public void addFocusListener(FocusListener listener) {
+    mParamText.addFocusListener(listener);
   }
 }
