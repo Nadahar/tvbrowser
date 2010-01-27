@@ -26,6 +26,8 @@ package captureplugin.drivers.defaultdriver.configpanels;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -84,12 +86,24 @@ public class ParameterPanel extends JPanel {
 
       pb.addGrowingRow();
       mAddFormatTextField = new ParamInputField(new CaptureParamLibrary(mData), mData.getParameterFormatAdd(), false);
+      mAddFormatTextField.addFocusListener(new FocusAdapter() {
+        public void focusLost(FocusEvent e) {
+          addFormatChanged();
+        }
+      });
+      
       pb.add(mAddFormatTextField, cc.xyw(2, pb.getRow(), pb.getColumnCount() - 1));
       
       pb.addParagraph(mLocalizer.msg("parametersDelete", "Parameters for deletion"));
 
       pb.addGrowingRow();
       mRemFormatTextField = new ParamInputField(new CaptureParamLibrary(mData), mData.getParameterFormatRem(), false);
+      mRemFormatTextField.addFocusListener(new FocusAdapter() {
+        public void focusLost(FocusEvent e) {
+          remFormatChanged();
+        }
+      });
+      
       pb.add(mRemFormatTextField, cc.xyw(2, pb.getRow(), pb.getColumnCount() - 1));
       
       pb.addParagraph(mLocalizer.msg("parametersAdditional", "Additional commands"));
