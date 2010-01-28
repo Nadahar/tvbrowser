@@ -26,6 +26,7 @@ package captureplugin.drivers.utils;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -111,7 +112,7 @@ public class ProgramTimeDialog extends JDialog {
           mEnd.setSpinnerBackground(new Color(255, 153, 153));
         }
 
-        EnhancedPanelBuilder panel = new EnhancedPanelBuilder("2dlu, pref:grow,pref");
+        EnhancedPanelBuilder panel = new EnhancedPanelBuilder("2dlu,default,5dlu,default:grow");
         
         panel.addParagraph(Localizer.getLocalization(Localizer.I18N_PROGRAM));
 
@@ -136,19 +137,18 @@ public class ProgramTimeDialog extends JDialog {
         panel.addRow();
         panel.add(new JLabel(mLocalizer.msg("StartTime","Start time")), cc.xy(2, panel.getRow()));
         mStart = new TimeDateSpinner(mPrgTime.getStart());
-        panel.add(mStart, cc.xy(3, panel.getRow()));
+        panel.add(mStart, cc.xy(4, panel.getRow()));
         
         panel.addRow();
         panel.add(new JLabel(mLocalizer.msg("EndTime","End time")), cc.xy(2, panel.getRow()));
         mEnd =  new TimeDateSpinner(mPrgTime.getEnd());
-        panel.add(mEnd, cc.xy(3, panel.getRow()));
+        panel.add(mEnd, cc.xy(4, panel.getRow()));
 
         if (additionalText != null) {
             panel.addParagraph(additionalText);
             panel.addRow();
-            panel.add(additionalComponent, cc.xy(2, panel.getRow()));
+            panel.add(additionalComponent, cc.xyw(2, panel.getRow(), panel.getColumnCount() - 1));
         }
-
 
         content.add(panel.getPanel(), BorderLayout.CENTER);
         
@@ -186,7 +186,7 @@ public class ProgramTimeDialog extends JDialog {
         
         content.add(btPanel.getPanel(), BorderLayout.SOUTH);
         
-        pack();
+        CapturePlugin.getInstance().layoutWindow("programTimeDialog",this,new Dimension(300,270));
     }
     
     
