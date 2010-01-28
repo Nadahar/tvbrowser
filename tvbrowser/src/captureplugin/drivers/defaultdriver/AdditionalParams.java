@@ -26,6 +26,7 @@ package captureplugin.drivers.defaultdriver;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -160,7 +161,7 @@ public class AdditionalParams extends JDialog implements WindowClosingIf{
         
         mList.setCellRenderer(new ParamEntryCellRenderer());
 
-        pack();
+        CapturePlugin.getInstance().layoutWindow("additionalParams",this,new Dimension(400,300));
     }
 
     /**

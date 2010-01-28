@@ -149,6 +149,7 @@ public class ResultDialog extends JDialog implements WindowClosingIf {
     JTextArea send = new JTextArea(input);
     send.setEditable(false);
     send.setLineWrap(true);
+    send.setWrapStyleWord(true);
 
     panel.add(new JScrollPane(send), tc);
 
@@ -157,6 +158,7 @@ public class ResultDialog extends JDialog implements WindowClosingIf {
     JTextArea received = new JTextArea(output);
     received.setEditable(false);
     received.setLineWrap(true);
+    received.setWrapStyleWord(true);
 
     panel.add(new JScrollPane(received), tc);
 
