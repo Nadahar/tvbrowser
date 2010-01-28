@@ -43,6 +43,7 @@ import javax.swing.JDialog;
 import util.misc.OperatingSystem;
 import util.ui.ImageUtilities;
 import util.ui.Localizer;
+import util.ui.UiUtilities;
 import devplugin.ActionMenu;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
@@ -549,7 +550,11 @@ public class DVBPlugin extends devplugin.Plugin {
     void setProgram(Program aProgram) {
       program = aProgram;
       if (null != program) {
-        putValue(Action.SMALL_ICON, program.getChannel().getIcon());
+        Icon icon = program.getChannel().getIcon();
+        if (icon.getIconWidth() > 16) {
+          icon = UiUtilities.scaleIcon(icon, 16);
+        }
+        putValue(Action.SMALL_ICON, icon);
       }
     }
   }
@@ -616,7 +621,7 @@ public class DVBPlugin extends devplugin.Plugin {
      */
     public FastRemoveAction(Plugin aPlugin, ImageIcon smallIcon) {
       plugin = aPlugin;
-      putValue(Action.NAME, localizer.msg("action_remove", "Remove"));
+      putValue(Action.NAME, Localizer.getLocalization(Localizer.I18N_DELETE));
       putValue(Action.SMALL_ICON, smallIcon);
       putValue(Action.SHORT_DESCRIPTION, localizer.msg("action_remove_tooltip",
                 "Removes this program from the list of scheduled recordings"));
