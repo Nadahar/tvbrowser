@@ -149,7 +149,7 @@ public final class DefaultDevice implements DeviceIf {
             
             JOptionPane.showMessageDialog(parent,
                     mLocalizer.msg("MaxRecordings", "Sorry, the maximum of simultanious recodings is reached!\n(See the Settings to enable this)"),
-                    mLocalizer.msg("Error","Error"),
+                    Localizer.getLocalization(Localizer.I18N_ERROR),
                     JOptionPane.ERROR_MESSAGE);
             
             return false;
@@ -170,7 +170,7 @@ public final class DefaultDevice implements DeviceIf {
         if (mConfig.getMarkedPrograms().getMaxProgramsInTime(prgTime) >= mConfig.getMaxSimultanious()) {
             JOptionPane.showMessageDialog(parent,
                     mLocalizer.msg("MaxRecordings", "Sorry, the maximum of simultanious recodings is reached!\n(See the Settings to enable this)"),
-                    mLocalizer.msg("Error","Error"),
+                    Localizer.getLocalization(Localizer.I18N_ERROR),
                     JOptionPane.ERROR_MESSAGE);
             return false;
         }
@@ -197,7 +197,7 @@ public final class DefaultDevice implements DeviceIf {
             
             int ret = JOptionPane.showConfirmDialog(parent,
                     mLocalizer.msg("DeleteConfirmOnError", "There was an error while deleting the Program.\nShould I remove it from the List?"),
-                    mLocalizer.msg("Error","Error"),
+                    Localizer.getLocalization(Localizer.I18N_ERROR),
                     JOptionPane.YES_NO_OPTION);
             
             if (ret == JOptionPane.YES_OPTION) {
