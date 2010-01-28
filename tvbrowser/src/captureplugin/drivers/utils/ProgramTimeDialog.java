@@ -30,6 +30,9 @@ import java.awt.Dimension;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.Calendar;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -37,15 +40,21 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import util.ui.EnhancedPanelBuilder;
 import util.ui.Localizer;
-import util.ui.ProgramPanel;
+import util.ui.ProgramList;
+import util.ui.ProgramRangeSelectionPanel;
 import captureplugin.CapturePlugin;
-
 import com.jgoodies.forms.builder.ButtonBarBuilder2;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
+
+import devplugin.Program;
 
 
 /**
@@ -65,6 +74,9 @@ public class ProgramTimeDialog extends JDialog {
     private TimeDateSpinner mEnd;
     /** Title-Input */
     private JTextField mTitle;
+    
+    private boolean mEndDateChanging;
+    private boolean mProgramSelectionChanging;
     
     /**
      * Crate the Dialog
@@ -102,91 +114,156 @@ public class ProgramTimeDialog extends JDialog {
      * @param titleEditable is the Title editable ?
      */
     private void createGui(final boolean titleEditable, final String additionalText, final JComponent additionalComponent) {
-        setTitle(mLocalizer.msg("SetTime","Set Time"));
-        
-        JPanel content = (JPanel)getContentPane();
-        content.setBorder(Borders.DIALOG_BORDER);
-        content.setLayout(new BorderLayout());
-        
-        if (mPrgTime.getProgram().getLength() <= 0) {
-          mEnd.setSpinnerBackground(new Color(255, 153, 153));
-        }
+      /* calculate the post time for selection with program selection panel */
+      Calendar programEnd = mPrgTime.getProgram().getDate().getCalendar();
+      
+      programEnd.set(Calendar.HOUR_OF_DAY, mPrgTime.getProgram().getHours());
+      programEnd.set(Calendar.MINUTE, mPrgTime.getProgram().getMinutes());
 
-        EnhancedPanelBuilder panel = new EnhancedPanelBuilder("2dlu,default,5dlu,default:grow");
-        
-        panel.addParagraph(Localizer.getLocalization(Localizer.I18N_PROGRAM));
+      if (mPrgTime.getProgram().getLength() <= 0) {
+        programEnd.add(Calendar.MINUTE, 1);
+      } else {
+        programEnd.add(Calendar.MINUTE, mPrgTime.getProgram().getLength());
+      }
+      programEnd.set(Calendar.SECOND, 0);
+      
+      final int postTime = (int)((mPrgTime.getEndAsCalendar().getTimeInMillis() - programEnd.getTimeInMillis() + 1000)/60000);
+      
+      setTitle(mLocalizer.msg("SetTime","Set Time"));
+      
+      JPanel content = (JPanel)getContentPane();
+      content.setBorder(Borders.DIALOG_BORDER);
+      content.setLayout(new BorderLayout());
+
+      EnhancedPanelBuilder panel = new EnhancedPanelBuilder("2dlu,default,5dlu,default:grow");
+      
+      CellConstraints cc = new CellConstraints();
+
+      if (titleEditable) {
+        panel.addParagraph(mLocalizer.msg("Title", "Title"));
+        mTitle = new JTextField(mPrgTime.getTitle());
 
         panel.addRow();
-        ProgramPanel p = new ProgramPanel(mPrgTime.getProgram());
-        p.setToolTipText("");
-        p.addPluginContextMenuMouseListener(CapturePlugin.getInstance());
-        p.setWidth(200);
-        
-        CellConstraints cc = new CellConstraints();
-        panel.add(p, cc.xyw(2, panel.getRow(), panel.getColumnCount() - 1));
+        panel.add(mTitle, cc.xyw(2, panel.getRow(), panel.getColumnCount() - 1));
+      }
 
-        if (titleEditable) {
-          panel.addParagraph(mLocalizer.msg("Title", "Title"));
-          mTitle = new JTextField(mPrgTime.getTitle());
-
+      panel.addParagraph(mLocalizer.msg("Times","Times"));
+      panel.addRow();
+      panel.add(new JLabel(mLocalizer.msg("StartTime","Start time")), cc.xy(2, panel.getRow()));
+      mStart = new TimeDateSpinner(mPrgTime.getStart());
+      panel.add(mStart, cc.xy(4, panel.getRow()));
+      
+      panel.addRow();
+      panel.add(new JLabel(mLocalizer.msg("EndTime","End time")), cc.xy(2, panel.getRow()));
+      mEnd =  new TimeDateSpinner(mPrgTime.getEnd());        
+      panel.add(mEnd, cc.xy(4, panel.getRow()));
+      
+      if (mPrgTime.getProgram().getLength() <= 0) {
+        mEnd.setSpinnerBackground(new Color(255, 153, 153));
+      }
+      
+      if (additionalText != null) {
+          panel.addParagraph(additionalText);
           panel.addRow();
-          panel.add(mTitle, cc.xyw(2, panel.getRow(), panel.getColumnCount() - 1));
-        }
+          panel.add(additionalComponent, cc.xyw(2, panel.getRow(), panel.getColumnCount() - 1));
+      }
+      
+      final ProgramRangeSelectionPanel programSelection = ProgramRangeSelectionPanel.createPanel(mPrgTime.getProgram(),(short)6);
+      
+      panel.addParagraph(mLocalizer.msg("programSelection","Program selection"));
+      panel.addRow();
+      panel.add(programSelection, cc.xyw(2, panel.getRow(), panel.getColumnCount() - 1));
 
-        panel.addParagraph(mLocalizer.msg("Times","Times"));
-        panel.addRow();
-        panel.add(new JLabel(mLocalizer.msg("StartTime","Start time")), cc.xy(2, panel.getRow()));
-        mStart = new TimeDateSpinner(mPrgTime.getStart());
-        panel.add(mStart, cc.xy(4, panel.getRow()));
-        
-        panel.addRow();
-        panel.add(new JLabel(mLocalizer.msg("EndTime","End time")), cc.xy(2, panel.getRow()));
-        mEnd =  new TimeDateSpinner(mPrgTime.getEnd());
-        panel.add(mEnd, cc.xy(4, panel.getRow()));
-
-        if (additionalText != null) {
-            panel.addParagraph(additionalText);
-            panel.addRow();
-            panel.add(additionalComponent, cc.xyw(2, panel.getRow(), panel.getColumnCount() - 1));
-        }
-
-        content.add(panel.getPanel(), BorderLayout.CENTER);
-        
-        ButtonBarBuilder2 btPanel = new ButtonBarBuilder2();
-        btPanel.setBorder(Borders.DLU4_BORDER);
-        
-        JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
-        ok.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                mPrgTime.setStart(mStart.getDate());
-                mPrgTime.setEnd(mEnd.getDate());
-                if (titleEditable) {
-                    mPrgTime.setTitle(mTitle.getText());
+      programSelection.addListSelectionListener(new ListSelectionListener() {
+        public void valueChanged(ListSelectionEvent e) {           
+          if(!e.getValueIsAdjusting()) {
+            /* prevent concurrent changing of end date */
+            if(!mEndDateChanging) {
+              mProgramSelectionChanging = true;
+              
+              Program[] progs = ((ProgramList)e.getSource()).getSelectedPrograms();
+              
+              if(progs != null) {
+                Program prog = progs[progs.length-1];
+                
+                Calendar c = Calendar.getInstance();
+                
+                c.setTimeInMillis(prog.getDate().getCalendar().getTimeInMillis());
+                c.set(Calendar.HOUR_OF_DAY, prog.getHours());
+                c.set(Calendar.MINUTE, prog.getMinutes());
+  
+                if (prog.getLength() <= 0) {
+                  c.add(Calendar.MINUTE, 1);
+                } else {
+                  c.add(Calendar.MINUTE, prog.getLength());
                 }
-                setVisible(false);
+                c.set(Calendar.SECOND, 0);
+                
+                c.add(Calendar.MINUTE, postTime);
+                
+                mEnd.setValue(c.getTime());
+                mProgramSelectionChanging = false;
+              }
             }
-        });
-        
-        btPanel.addGlue();
-        
-        JButton cancel = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
-        
-        cancel.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                mPrgTime = null;
-                setVisible(false);
+          }
+        }
+      });
+      
+      mEnd.addChangeListener(new ChangeListener() {
+        public void stateChanged(ChangeEvent e) {
+          try {
+            /* prevent concurrent changing of end date */
+            if(!mProgramSelectionChanging) {
+              mEndDateChanging = true;
+              programSelection.setEndDate(mEnd.getDate());
+              mEndDateChanging = false;
             }
-            
-        });
+          }catch(Throwable t) {t.printStackTrace();}
+        }
+      });
+      
+      content.add(panel.getPanel(), BorderLayout.CENTER);
+      
+      ButtonBarBuilder2 btPanel = new ButtonBarBuilder2();
+      btPanel.setBorder(Borders.DLU4_BORDER);
+      
+      JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
+      ok.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+              mPrgTime.setStart(mStart.getDate());
+              mPrgTime.setEnd(mEnd.getDate());
+              if (titleEditable) {
+                  mPrgTime.setTitle(mTitle.getText());
+              }
+              setVisible(false);
+          }
+      });
+      
+      btPanel.addGlue();
+      
+      JButton cancel = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
+      
+      cancel.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+              mPrgTime = null;
+              setVisible(false);
+          }
+      });
+      
+      btPanel.addButton(ok, cancel);
 
-        
-        btPanel.addButton(ok, cancel);
-
-        getRootPane().setDefaultButton(ok);
-        
-        content.add(btPanel.getPanel(), BorderLayout.SOUTH);
-        
-        CapturePlugin.getInstance().layoutWindow("programTimeDialog",this,new Dimension(300,270));
+      getRootPane().setDefaultButton(ok);
+      
+      addWindowListener(new WindowAdapter() {
+        @Override
+        public void windowClosing(WindowEvent e) {
+          mPrgTime = null;
+        }
+      });
+      
+      content.add(btPanel.getPanel(), BorderLayout.SOUTH);
+      
+      CapturePlugin.getInstance().layoutWindow("programTimeDialog",this,new Dimension(300,270));
     }
     
     
