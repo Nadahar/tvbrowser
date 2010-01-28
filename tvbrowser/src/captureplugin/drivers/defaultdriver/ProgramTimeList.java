@@ -96,9 +96,13 @@ public class ProgramTimeList {
      */
     public ProgramTime getProgramTimeForProgram(Program program) {
         for (ProgramTime time : mPrgTimeList) {
-            if (time.getProgram() == program) {
-                return time;
+          Program[] test = time.getAllPrograms();
+          
+          for(Program p : test) {
+            if (p == program) {
+              return time;
             }
+          }
         }
 
         return null;
@@ -117,13 +121,17 @@ public class ProgramTimeList {
      * @return Programs in this List
      */
     public Program[] getPrograms() {
-        Program[] prg = new Program[mPrgTimeList.size()];
+        ArrayList<Program> list = new ArrayList<Program>();
         
         for (int i = 0; i < mPrgTimeList.size(); i++) {
-            prg[i] = mPrgTimeList.get(i).getProgram();
+            Program[] progs = mPrgTimeList.get(i).getAllPrograms();
+            
+            for(Program p : progs) {
+              list.add(p);
+            }
         }
         
-        return prg;
+        return list.toArray(new Program[list.size()]);
     }
     
     /**

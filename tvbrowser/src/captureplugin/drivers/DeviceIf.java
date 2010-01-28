@@ -166,4 +166,14 @@ public interface DeviceIf extends Cloneable {
      * @since 2.11
      */
     public void removeProgramWithoutExecution(Program p);
+    
+    /**
+     * Gets the program that is the program on which the programming was done.
+     * 
+     * @param p The program to get the base program for.
+     * @return The base program or <code>null</code> if the given program
+     *         is not contained by this device.
+     * @since 3.0
+     */
+    public Program getProgramForProgramInList(Program p);
 }

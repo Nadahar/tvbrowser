@@ -364,4 +364,17 @@ public final class DreamboxDevice implements DeviceIf {
             }
         }
     }
+    
+    @Override
+    public Program getProgramForProgramInList(Program p) {
+      for(ProgramTime time : _programTimeList) {
+        for(Program prog : time.getAllPrograms()) {
+          if(prog.equals(p)) {
+            return time.getProgram();
+          }
+        }
+      }
+      
+      return null;
+    }
 }

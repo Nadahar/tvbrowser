@@ -315,4 +315,16 @@ public final class DefaultDevice implements DeviceIf {
       ProgramTime prgTime = mConfig.getMarkedPrograms().getProgramTimeForProgram(p);
       mConfig.getMarkedPrograms().remove(prgTime);
     }
+
+
+    @Override
+    public Program getProgramForProgramInList(Program p) {
+      ProgramTime time = mConfig.getMarkedPrograms().getProgramTimeForProgram(p);
+      
+      if(time != null) {
+        return time.getProgram();
+      }
+      
+      return null;
+    }
 }
