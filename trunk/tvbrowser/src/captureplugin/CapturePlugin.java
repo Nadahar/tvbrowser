@@ -74,7 +74,7 @@ import devplugin.Version;
  * @author Andreas Hessel, Bodo Tasche
  */
 public class CapturePlugin extends devplugin.Plugin {
-  private static final Version mVersion = new Version(2,72);
+  private static final Version mVersion = new Version(3,00);
   
     /**
      * Translator
@@ -212,11 +212,12 @@ public class CapturePlugin extends devplugin.Plugin {
             ArrayList<AbstractAction> commandList = new ArrayList<AbstractAction>();
 
             if (dev.isAbleToAddAndRemovePrograms()) {
-
-                if (dev.isInList(program)) {
+                final Program test = dev.getProgramForProgramInList(program);
+                
+                if (test != null) {
                     AbstractAction caction = new AbstractAction() {
                         public void actionPerformed(ActionEvent evt) {
-                            dev.remove(parent, program);
+                            dev.remove(parent, test);
                             updateMarkedPrograms();
                         }
                     };

@@ -255,4 +255,19 @@ public final class SimpleDevice implements DeviceIf {
     public SimpleConnectionIf getConnection() {
         return mConnection;
     }
+    
+    @Override
+    public Program getProgramForProgramInList(Program p) {
+      if (mListOfRecordings == null) {
+        mListOfRecordings = mConnection.getAllRecordings(mConfig);
+      }
+      
+      for(Program prog : mListOfRecordings) {
+        if(prog.equals(p)) {
+          return prog;
+        }
+      }
+      
+      return null;
+    }
 }

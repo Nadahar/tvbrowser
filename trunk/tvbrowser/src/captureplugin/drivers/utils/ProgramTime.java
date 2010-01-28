@@ -27,9 +27,14 @@ package captureplugin.drivers.utils;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 
+import captureplugin.CapturePlugin;
+
+import devplugin.Channel;
 import devplugin.Plugin;
 import devplugin.Program;
 
@@ -44,6 +49,8 @@ public final class ProgramTime implements Cloneable {
     private Calendar mEnd;
     /** Program to record */
     private Program mProgram;
+    /** Additional programs that are in the time range */
+    private Program[] mAdditionalPrograms;
 
     /** Title of the Program */
     private String mTitle;
@@ -132,6 +139,22 @@ public final class ProgramTime implements Cloneable {
     public Program getProgram() {
         return mProgram;
     }
+    
+    /**
+     * Retuns all programs that are contained in this program time.
+     * @return A Program array.
+     */
+    public Program[] getAllPrograms() {
+      if(mAdditionalPrograms != null && mAdditionalPrograms.length > 0) {
+        Program[] progs = new Program[mAdditionalPrograms.length+1];
+        progs[0] = mProgram;
+        System.arraycopy(mAdditionalPrograms,0,progs,1,mAdditionalPrograms.length);
+        
+        return progs;
+      }
+      
+      return new Program[] {mProgram};
+    }
 
     /**
      * Set the Start-Time
@@ -165,6 +188,65 @@ public final class ProgramTime implements Cloneable {
     public void setEnd(Date end) {
         mEnd = Calendar.getInstance();
         mEnd.setTime(end);
+        findAddionalProgramForEnd();
+    }
+    
+    private void findAddionalProgramForEnd() {
+      /* Taken from WtvcgScheduler2 and changed for CapturePlugin */
+      ArrayList<Program> additonalPrograms = new ArrayList<Program>(0);
+      
+      int startTime = mStart.get(Calendar.HOUR_OF_DAY) * 60 + mStart.get(Calendar.MINUTE);
+      int day = mStart.get(Calendar.DAY_OF_MONTH);
+      
+      int endTime = mEnd.get(Calendar.HOUR_OF_DAY) * 60 + mEnd.get(Calendar.MINUTE);
+      
+      if(mEnd.get(Calendar.DAY_OF_MONTH) != day) {
+        endTime += 60 * 24;
+      }
+      
+      devplugin.Date programDate = mProgram.getDate();
+      Channel programChannel = mProgram.getChannel();
+      
+      Iterator<Program> channelDayProgram = CapturePlugin.getPluginManager().getChannelDayProgram(programDate, programChannel);
+      
+      boolean found = false;
+      
+      while(channelDayProgram != null && channelDayProgram.hasNext()) {
+        Program prog = channelDayProgram.next();
+
+        if(prog.equals(mProgram)) {
+          found = true;
+        }
+        else if(found && prog.getStartTime() >= startTime && (prog.getStartTime() + prog.getLength()) <= endTime) {          
+          additonalPrograms.add(prog);
+        }
+        else if(found) {
+          break;
+        }
+      }
+      
+      if(endTime > 60 * 24) {
+        if(programDate.getDayOfMonth() == day) {
+          programDate = programDate.addDays(1);
+          
+          channelDayProgram = CapturePlugin.getPluginManager().getChannelDayProgram(programDate, programChannel);
+          
+          endTime -= 60 * 24;
+          
+          while(channelDayProgram != null && channelDayProgram.hasNext()) {
+            Program prog = channelDayProgram.next();
+            
+            if((prog.getStartTime() + prog.getLength()) <= endTime) {
+              additonalPrograms.add(prog);
+            }
+            else {
+              break;
+            }
+          }
+        }
+      }
+      
+      mAdditionalPrograms = additonalPrograms.toArray(new Program[additonalPrograms.size()]);
     }
 
     /**
@@ -228,12 +310,23 @@ public final class ProgramTime implements Cloneable {
    * @throws IOException problems during save operation
    */
   public void writeData(final ObjectOutputStream out) throws IOException {
-    out.writeInt(2);
+    out.writeInt(3);
     out.writeObject(mStart.getTime());
     out.writeObject(mEnd.getTime());
     out.writeObject(mProgram.getID());
-    mProgram.getDate().writeData(out);
+    mProgram.getDate().writeData((java.io.DataOutput)out);
     out.writeObject(mTitle);
+    
+    out.writeBoolean(mAdditionalPrograms != null);
+    
+    if(mAdditionalPrograms != null) {
+      out.writeInt(mAdditionalPrograms.length);
+      
+      for(Program prog : mAdditionalPrograms) {
+        out.writeUTF(prog.getID());
+        prog.getDate().writeData((java.io.DataOutput)out);
+      }
+    }
   }
 
   /**
@@ -250,7 +343,7 @@ public final class ProgramTime implements Cloneable {
     Date end = (Date) in.readObject();
 
     String id = (String) in.readObject();
-    devplugin.Date date = new devplugin.Date(in);
+    devplugin.Date date = devplugin.Date.readData(in);
 
     Program aktP = Plugin.getPluginManager().getProgram(date, id);
     if (aktP != null) {
@@ -262,6 +355,29 @@ public final class ProgramTime implements Cloneable {
 
     if (version > 1) {
       setTitle((String) in.readObject());
+    }
+    
+    if(version >= 3) {
+      if(in.readBoolean()) {
+        int n = in.readInt();
+        
+        ArrayList<Program> tempList = new ArrayList<Program>();
+        
+        for(int i = 0; i < n; i++) {
+          id = in.readUTF();
+          devplugin.Date programDate = devplugin.Date.readData(in);
+          
+          Program prog = CapturePlugin.getPluginManager().getProgram(programDate, id);
+          
+          if(prog != null) {
+            tempList.add(prog);
+          }
+        }
+        
+        if(!tempList.isEmpty()) {
+          mAdditionalPrograms = tempList.toArray(new Program[tempList.size()]);
+        }
+      }
     }
   }
 
