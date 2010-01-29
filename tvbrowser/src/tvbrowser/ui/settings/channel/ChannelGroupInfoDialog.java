@@ -40,6 +40,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
+import org.apache.commons.lang.StringUtils;
+
 import tvbrowser.core.tvdataservice.ChannelGroupManager;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import util.browserlauncher.Launch;
@@ -58,7 +60,7 @@ import devplugin.Channel;
 import devplugin.ChannelGroup;
 
 /**
- * Shows the ChannelGroup Information Dialog 
+ * Shows the ChannelGroup Information Dialog
  */
 public class ChannelGroupInfoDialog extends JDialog implements WindowClosingIf{
   /** Translation */
@@ -132,7 +134,7 @@ public class ChannelGroupInfoDialog extends JDialog implements WindowClosingIf{
   }
 
   private String getNotNull(String s) {
-    if (s == null || s.trim().length()==0) {
+    if (StringUtils.isBlank(s)) {
       return "<unknown>";
     }
     return s;
@@ -166,7 +168,7 @@ public class ChannelGroupInfoDialog extends JDialog implements WindowClosingIf{
     TvDataServiceProxy proxy = ChannelGroupManager.getInstance().getTvDataService(mChannelGroup);
     if (proxy != null) {
       Channel[] ch = proxy.getAvailableChannels(mChannelGroup);
-      
+
       if (ch != null) {
         StringBuilder buf = new StringBuilder();
 

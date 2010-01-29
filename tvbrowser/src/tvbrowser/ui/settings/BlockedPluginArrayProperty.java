@@ -26,15 +26,17 @@ package tvbrowser.ui.settings;
 
 import java.util.ArrayList;
 
-import devplugin.PluginAccess;
-import devplugin.Version;
+import org.apache.commons.lang.StringUtils;
+
 import tvbrowser.ui.mainframe.SoftwareUpdater;
 import util.settings.Property;
 import util.settings.PropertyManager;
+import devplugin.PluginAccess;
+import devplugin.Version;
 
 /**
  * A array with the blocked plugins.
- * 
+ *
  * @author René Mach
  */
 public final class BlockedPluginArrayProperty extends Property {
@@ -42,7 +44,7 @@ public final class BlockedPluginArrayProperty extends Property {
   private BlockedPlugin[] mCachedValue;
   private BlockedPlugin[] mOldValue;
   private ArrayList<BlockedPlugin> mNewValues;
-  
+
   /**
    * Creates the blocked plugins array.
    * @param manager Manager
@@ -50,7 +52,7 @@ public final class BlockedPluginArrayProperty extends Property {
    */
   public BlockedPluginArrayProperty(PropertyManager manager, String key) {
     super(manager, key);
-    
+
     mCachedValue = null;
     mOldValue = null;
     mNewValues = new ArrayList<BlockedPlugin>(0);
@@ -62,7 +64,7 @@ public final class BlockedPluginArrayProperty extends Property {
   public BlockedPlugin[] getBlockedPluginArray() {
     if (mCachedValue == null) {
       String asString = getProperty();
-      if (asString == null || asString.trim().length() == 0) {
+      if (StringUtils.isBlank(asString)) {
         mCachedValue = new BlockedPlugin[0];
       } else {
         mCachedValue = loadBlockedPlugins(asString);
@@ -71,7 +73,7 @@ public final class BlockedPluginArrayProperty extends Property {
 
     return mCachedValue;
   }
-  
+
   /**
    * @param plugin The plugin to test.
    * @return <code>True</code> if the plugin is blocked.
@@ -80,21 +82,21 @@ public final class BlockedPluginArrayProperty extends Property {
     if(mCachedValue == null) {
       getBlockedPluginArray();
     }
-    
+
     for(BlockedPlugin blocked : mCachedValue) {
       if(blocked.isBlockedVersion(plugin)) {
         return true;
       }
     }
-    
+
     return false;
   }
-  
+
   /**
    * (Even if the block start version is higher than 0.0.0.0, the
    * 0.0.0.0 version will always been acknowledged as blocked.)
-   * 
-   * @param pluginId The id to test. 
+   *
+   * @param pluginId The id to test.
    * @param version The version to test.
    * @return <code>True</code> if the given plugin id version combination is blocked.
    */
@@ -102,16 +104,16 @@ public final class BlockedPluginArrayProperty extends Property {
     if(mCachedValue == null) {
       getBlockedPluginArray();
     }
-    
+
     for(BlockedPlugin blocked : mCachedValue) {
       if(blocked.isBlockedVersion(pluginId, version)) {
         return true;
       }
     }
-    
+
     return false;
   }
-  
+
   /**
    * Adds a plugin to the block array.
    * <p>
@@ -128,24 +130,24 @@ public final class BlockedPluginArrayProperty extends Property {
     }
     else if(updater != null && updater.isRequestingToBlockAPlugin(pluginId)) {
       BlockedPlugin[] blockedArray = new BlockedPlugin[mCachedValue.length+1];
-      
+
       System.arraycopy(mCachedValue,0,blockedArray,0,mCachedValue.length);
       blockedArray[mCachedValue.length] = new BlockedPlugin(blockStart,blockEnd,pluginId);
-      
+
       mCachedValue = blockedArray;
     }
-    
+
     if(!checkAndRemoveValueFromOld(mCachedValue[mCachedValue.length-1])) {
       mNewValues.add(mCachedValue[mCachedValue.length-1]);
     }
-    
+
     setBlockedPluginArray(mCachedValue);
   }
-  
+
   /**
    * Checks if the given plugin is already blocked and
    * removes it from the old value array if so.
-   * 
+   *
    * @param plugin The plugin to check if already blocked.
    * @return If the given id was already blocked.
    */
@@ -156,13 +158,13 @@ public final class BlockedPluginArrayProperty extends Property {
         return true;
       }
     }
-    
+
     return false;
   }
-  
+
   /**
    * Clears the blocked plugin array.
-   * 
+   *
    * @param updater The software updater that is requesting the
    * clearance of the array.
    */
@@ -174,30 +176,30 @@ public final class BlockedPluginArrayProperty extends Property {
       setProperty("");
     }
   }
-  
+
   private void setBlockedPluginArray(BlockedPlugin[] blockedPluginArray) {
     if(blockedPluginArray != null) {
       StringBuilder asString = new StringBuilder();
-      
+
       asString.append(blockedPluginArray[0].getPropertyString());
-      
+
       for(int i = 1; i < blockedPluginArray.length; i++) {
         asString.append("#_#");
         asString.append(blockedPluginArray[i].getPropertyString());
       }
-      
+
       setProperty(asString.toString());
     }
   }
-  
+
   private BlockedPlugin[] loadBlockedPlugins(String settingsValue) {
     BlockedPlugin[] blockedPlugins = null;
-    
+
     if(settingsValue != null) {
       String[] parts = settingsValue.split("#_#");
-      
+
       blockedPlugins = new BlockedPlugin[parts.length];
-      
+
       for(int i = 0; i < parts.length; i++) {
         blockedPlugins[i] = new BlockedPlugin(parts[i]);
       }
@@ -205,15 +207,15 @@ public final class BlockedPluginArrayProperty extends Property {
     else {
       blockedPlugins = new BlockedPlugin[0];
     }
-      
+
     return blockedPlugins;
   }
-  
+
   @Override
   protected void clearCache() {
     mCachedValue = null;
   }
-  
+
   /**
    * Gets the plugins that were newly blocked at the last update.
    * <p>

@@ -29,12 +29,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import org.apache.commons.lang.StringUtils;
+
 import tvbrowser.core.search.AbstractSearcher;
 import util.exc.TvBrowserException;
 
 /**
  * Searches for programs using a regular expression.
- * 
+ *
  * @author Til Schneider, www.murfman.de
  */
 public class RegexSearcher extends AbstractSearcher {
@@ -59,26 +61,26 @@ public class RegexSearcher extends AbstractSearcher {
 
   /**
    * Creates a new instance of RegexSearcher.
-   * 
+   *
    * @param regex
    * @param caseSensitive
    * @throws TvBrowserException If there is a syntax error in the regular expression.
    */
   public RegexSearcher(String regex, boolean caseSensitive)
     throws TvBrowserException
-  {    
+  {
     // Check whether the pattern matches everything
-    if (regex.trim().length() == 0) {
+    if (StringUtils.isBlank(regex)) {
       // It does -> Use a null pattern
       mPattern = null;
     } else {
-      mPattern = createSearchPattern(regex, caseSensitive);      
+      mPattern = createSearchPattern(regex, caseSensitive);
     }
   }
 
   /**
    * Creates a new instance of RegexSearcher.
-   * 
+   *
    * @param regex
    * @param caseSensitive
    * @throws TvBrowserException If there is a syntax error in the regular expression.
@@ -100,7 +102,7 @@ public class RegexSearcher extends AbstractSearcher {
 
   /**
    * Creates a pattern for a regular expression.
-   * 
+   *
    * @param regex The regular expression
    * @param caseSensitive Should the search be case sensitive?
    * @return The pattern
@@ -140,7 +142,7 @@ public class RegexSearcher extends AbstractSearcher {
    * @param matchKeyword Specifies whether the regex should match a keyword
    *        (= substring). If false the returned regex will only match if the
    *        checked String matches exactly
-   * 
+   *
    * @return The search text as regular expression
    */
   public static String searchTextToRegex(String searchText, boolean matchKeyword) {
@@ -149,10 +151,10 @@ public class RegexSearcher extends AbstractSearcher {
     //       if the search text is empty.
     //       -> An empty pattern will cause an empty result.
     //          (See RegexSearcher(String, boolean))
-    if (searchText.trim().length() == 0) {
+    if (StringUtils.isBlank(searchText)) {
       return "";
-    }    
-    
+    }
+
     // NOTE: We replace all whitespace with a regex that matches whitespace.
     //       This way the search hits will contain "The film", when the user
     //       entered "The    film"
@@ -171,7 +173,7 @@ public class RegexSearcher extends AbstractSearcher {
 
   /**
    * Checks whether a value matches to the criteria of this searcher.
-   * 
+   *
    * @param value The value to check
    * @return Whether the value matches.
    */

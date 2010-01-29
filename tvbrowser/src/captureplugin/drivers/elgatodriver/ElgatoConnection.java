@@ -1,6 +1,6 @@
 /*
  * CapturePlugin by Andreas Hessel (Vidrec@gmx.de), Bodo Tasche
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -31,6 +31,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.logging.Logger;
 
+import org.apache.commons.lang.StringUtils;
+
 import util.misc.AppleScriptRunner;
 import captureplugin.CapturePlugin;
 import captureplugin.drivers.simpledevice.SimpleChannel;
@@ -43,7 +45,7 @@ import devplugin.Program;
 
 /**
  * This Class represents the Connection to the Elgato EyeTV.
- * 
+ *
  * @author bodum
  */
 public class ElgatoConnection implements SimpleConnectionIf {
@@ -149,7 +151,7 @@ public class ElgatoConnection implements SimpleConnectionIf {
 
     /**
      * Get the List of all available Channels
-     * 
+     *
      * @return All available Channels, <code>null</code> if error while loading
      */
     public SimpleChannel[] getAvailableChannels() {
@@ -198,7 +200,7 @@ public class ElgatoConnection implements SimpleConnectionIf {
             e.printStackTrace();
         }
 
-        if (res == null || res.trim().length() == 0) {
+        if (StringUtils.isBlank(res)) {
             return new Program[0];
         }
 
@@ -246,7 +248,7 @@ public class ElgatoConnection implements SimpleConnectionIf {
 
     /**
      * Record Program
-     * 
+     *
      * @param conf Config
      * @param prg Program to record
      * @return true if successfull
@@ -280,7 +282,7 @@ public class ElgatoConnection implements SimpleConnectionIf {
 
     /**
      * Remove Recording
-     * 
+     *
      * @param conf
      * @param prg Remove recording of this Program
      */
@@ -296,7 +298,7 @@ public class ElgatoConnection implements SimpleConnectionIf {
 
     /**
      * Switch to Channel of Program
-     * 
+     *
      * @param conf Config to use
      * @param channel Switch to Channel
      */

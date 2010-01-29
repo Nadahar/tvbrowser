@@ -1,6 +1,6 @@
 /*
  * CapturePlugin by Andreas Hessel (Vidrec@gmx.de), Bodo Tasche
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -49,6 +49,8 @@ import javax.swing.JTextField;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import org.apache.commons.lang.StringUtils;
+
 import util.paramhandler.ParamInputField;
 import util.ui.Localizer;
 import util.ui.TVBrowserIcons;
@@ -62,7 +64,7 @@ import captureplugin.CapturePlugin;
 public class AdditionalParams extends JDialog implements WindowClosingIf{
     /** Translator */
     private static final Localizer mLocalizer = Localizer.getLocalizerFor(AdditionalParams.class);
-    
+
     /** List of ParamEntries */
     private JList mList;
     /** ListModell */
@@ -79,13 +81,13 @@ public class AdditionalParams extends JDialog implements WindowClosingIf{
     private boolean mDeleting = false;
     /** Button for aktivation/deaktivation of the Param */
     private JButton mStartStop;
-    
+
     /** Start-Icon */
     private final ImageIcon mStartIcon = TVBrowserIcons.refresh(TVBrowserIcons.SIZE_SMALL);
 
     /** Stop-Icon */
     private final ImageIcon mStopIcon = CapturePlugin.getInstance().createImageIcon("actions", "process-stop", 16);
-    
+
     /**
      * Create Dialog
      * @param parent Parent Dialog
@@ -94,7 +96,7 @@ public class AdditionalParams extends JDialog implements WindowClosingIf{
     public AdditionalParams(JDialog parent, DeviceConfig config) {
         super(parent, true);
         mConfig = config;
-        
+
         fillModel(config);
         createGUI();
     }
@@ -110,9 +112,9 @@ public class AdditionalParams extends JDialog implements WindowClosingIf{
       if (vec.size() == 0) {
         mListModel.addElement(new ParamEntry());
       }
-      
+
     }
-    
+
     /**
      *  Create GUI
      */
@@ -120,7 +122,7 @@ public class AdditionalParams extends JDialog implements WindowClosingIf{
         setTitle(mLocalizer.msg("Additional","Additional Commands"));
 
         UiUtilities.registerForClosing(this);
-        
+
         JPanel content = (JPanel) getContentPane();
         content.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
@@ -158,7 +160,7 @@ public class AdditionalParams extends JDialog implements WindowClosingIf{
         content.add(buttonPanel, BorderLayout.SOUTH);
 
         mList.setSelectedIndex(0);
-        
+
         mList.setCellRenderer(new ParamEntryCellRenderer());
 
         CapturePlugin.getInstance().layoutWindow("additionalParams",this,new Dimension(400,300));
@@ -173,7 +175,7 @@ public class AdditionalParams extends JDialog implements WindowClosingIf{
         panel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 5));
 
         panel.add(new JLabel(mLocalizer.msg("command", "Command")), BorderLayout.NORTH);
-        
+
         mList = new JList(mListModel);
         panel.add(new JScrollPane(mList), BorderLayout.CENTER);
 
@@ -213,9 +215,9 @@ public class AdditionalParams extends JDialog implements WindowClosingIf{
           public void actionPerformed(ActionEvent e) {
             upPressed();
           }
-          
+
         });
-        
+
         final JButton down = new JButton(TVBrowserIcons.down(TVBrowserIcons.SIZE_SMALL));
         down.setToolTipText(Localizer.getLocalization(Localizer.I18N_DOWN));
         buttons.add(down);
@@ -225,20 +227,20 @@ public class AdditionalParams extends JDialog implements WindowClosingIf{
           public void actionPerformed(ActionEvent e) {
             downPressed();
           }
-          
+
         });
-        
+
         mStartStop = new JButton(mStartIcon);
         mStartStop.setToolTipText(mLocalizer.msg("startstop","Activate or Deactivate Parameter"));
-        
+
         mStartStop.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
             startStopPressed();
           }
         });
-        
+
         buttons.add(mStartStop);
-        
+
         panel.add(buttons, BorderLayout.SOUTH);
 
         mList.addListSelectionListener(new ListSelectionListener() {
@@ -265,22 +267,22 @@ public class AdditionalParams extends JDialog implements WindowClosingIf{
 
     private void startStopPressed() {
       mSelectedEntry.setEnabled(!mSelectedEntry.isEnabled());
-      
+
       if (mSelectedEntry.isEnabled()) {
         mStartStop.setIcon(mStopIcon);
       } else {
         mStartStop.setIcon(mStartIcon);
       }
     }
-    
+
     private void upPressed() {
       UiUtilities.moveSelectedItems(mList, -1);
     }
-    
+
     private void downPressed() {
       UiUtilities.moveSelectedItems(mList, 1);
     }
-    
+
     /**
      * Create Details-Panel
      * @return Details-Panel
@@ -316,32 +318,32 @@ public class AdditionalParams extends JDialog implements WindowClosingIf{
 
         return panel;
     }
-    
+
     /**
      * OK was pressed
      */
     protected void okPressed() {
         saveSelected();
-        
+
         Vector<ParamEntry> l = new Vector<ParamEntry>();
-        
+
         for (int i = 0; i < mListModel.size(); i++) {
             ParamEntry e = (ParamEntry) mListModel.get(i);
-            
+
             if ((e.getName().trim().length() > 0) || (e.getParam().trim().length() > 0)) {
-                if (e.getName().trim().length() == 0) {
+                if (StringUtils.isBlank(e.getName())) {
                     e.setName("?");
                 }
-                
+
                 l.add(e);
             }
-            
+
         }
-        
+
         mConfig.setParamList(l);
         setVisible(false);
     }
-    
+
     /**
      *  Remove was pressed
      */
@@ -391,11 +393,11 @@ public class AdditionalParams extends JDialog implements WindowClosingIf{
      * Selection changed
      */
     private void selectionChanged() {
-        
+
         if (mDeleting) {
             return;
         }
-        
+
         saveSelected();
 
         if (mList.getSelectedValue() != null) {

@@ -25,18 +25,20 @@
  */
 package util.settings;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
- * 
- * 
+ *
+ *
  * @author Til Schneider, www.murfman.de
  */
 public class IntArrayProperty extends Property {
 
   private int[] mDefaultValue;
   private int[] mCachedValue;
-  
-  
-  
+
+
+
   public IntArrayProperty(PropertyManager manager, String key,
     int[] defaultValue)
   {
@@ -62,18 +64,18 @@ public class IntArrayProperty extends Property {
           for (int i = 0; i < intArr.length; i++) {
             intArr[i] = Integer.parseInt(splits[i]);
           }
-            
+
           // Reading succeed -> Set the mCachedValue
-          mCachedValue = intArr;      
+          mCachedValue = intArr;
         }
         catch(NumberFormatException exc) {
           // We use the default value
           exc.printStackTrace();
         }
-      } else if ((asString != null) && (asString.length() == 0)){
+      } else if ((asString != null) && (StringUtils.isEmpty(asString))){
         mCachedValue = new int[0];
       }
-  
+
       if (mCachedValue == null) {
         mCachedValue = mDefaultValue;
       }
@@ -81,13 +83,13 @@ public class IntArrayProperty extends Property {
 
     return mCachedValue;
   }
-  
-  
+
+
   public void setIntArray(int[] value) {
     if (value == null) {
       throw new IllegalArgumentException("You can't set a null value");
     }
-    
+
     boolean equalsDefault = false;
     if ((mDefaultValue != null) && (value.length == mDefaultValue.length)) {
       equalsDefault = true;
@@ -98,26 +100,26 @@ public class IntArrayProperty extends Property {
         }
       }
     }
-    
+
     if (equalsDefault) {
       setProperty(null);
     } else {
       StringBuilder buffer = new StringBuilder();
-    
+
       for (int i = 0; i < value.length; i++) {
         if (i != 0) {
           buffer.append(',');
         }
         buffer.append(value[i]);
       }
-      
+
       setProperty(buffer.toString());
     }
-    
+
     mCachedValue = value;
   }
-  
-  
+
+
   protected void clearCache() {
     mCachedValue = null;
   }

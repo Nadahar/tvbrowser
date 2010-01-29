@@ -1,6 +1,6 @@
 /*
  * CapturePlugin by Andreas Hessel (Vidrec@gmx.de), Bodo Tasche
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -50,6 +50,8 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import org.apache.commons.lang.StringUtils;
+
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
@@ -62,7 +64,7 @@ import com.jgoodies.forms.builder.ButtonBarBuilder2;
 public class DeviceCreatorDialog extends JDialog implements WindowClosingIf {
     /** Translator */
     private static final Localizer mLocalizer = Localizer.getLocalizerFor(DeviceCreatorDialog.class);
- 
+
     /** Available Drivers */
     private JComboBox mDriverCombo;
 
@@ -77,7 +79,7 @@ public class DeviceCreatorDialog extends JDialog implements WindowClosingIf {
 
   /**
    * Creates the Dialog
-   * 
+   *
    * @param parent
    *          Parent-Frame
    */
@@ -87,27 +89,27 @@ public class DeviceCreatorDialog extends JDialog implements WindowClosingIf {
         createGUI();
         setTitle(mLocalizer.msg("Title", "Create Device"));
     }
-    
+
     /**
      * Create the GUI
      */
     private void createGUI() {
         UiUtilities.registerForClosing(this);
-      
+
         DriverIf[] drivers = DriverFactory.getInstance().getDrivers();
 
         mDriverCombo = new JComboBox(drivers);
         mDriverCombo.setRenderer(new DefaultListCellRenderer() {
           public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-            
+
             if (value instanceof DriverIf) {
               value = ((DriverIf)value).getDriverName();
             }
-            
+
             return super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
           }
         });
-        
+
         JPanel panel = (JPanel) getContentPane();
 
         panel.setLayout(new GridBagLayout());
@@ -134,7 +136,7 @@ public class DeviceCreatorDialog extends JDialog implements WindowClosingIf {
 
         mDesc = UiUtilities.createHtmlHelpTextArea("");
         mDesc.setEditable(false);
-        
+
         panel.add(new JLabel(mLocalizer.msg("Description", "Description")), input);
 
         GridBagConstraints descC = new GridBagConstraints();
@@ -152,7 +154,7 @@ public class DeviceCreatorDialog extends JDialog implements WindowClosingIf {
         desc = "<html><div style=\"color:#000000;font-family:"+ font.getName() +"; font-size:"+font.getSize()+";\">"+desc+"</div></html>";
         mDesc.setText(desc);
         mDesc.setFont(font);
-        
+
         mDriverCombo.addItemListener(new ItemListener() {
 
             public void itemStateChanged(ItemEvent e) {
@@ -186,12 +188,12 @@ public class DeviceCreatorDialog extends JDialog implements WindowClosingIf {
           public void removeUpdate(DocumentEvent e) {
             updateButtons();
           }
-          
+
           @Override
           public void insertUpdate(DocumentEvent e) {
             updateButtons();
           }
-          
+
           @Override
           public void changedUpdate(DocumentEvent e) {
             updateButtons();
@@ -205,7 +207,7 @@ public class DeviceCreatorDialog extends JDialog implements WindowClosingIf {
         ButtonBarBuilder2 builder = new ButtonBarBuilder2();
         builder.addGlue();
         builder.addButton(new JButton[] {ok, cancel});
-        
+
         getRootPane().setDefaultButton(ok);
 
         input.insets = new Insets(5, 5, 5, 5);
@@ -221,7 +223,7 @@ public class DeviceCreatorDialog extends JDialog implements WindowClosingIf {
      */
     private void okPressed() {
 
-        if (mName.getText().trim().length() == 0) {
+        if (StringUtils.isBlank(mName.getText())) {
             JOptionPane.showMessageDialog(this, mLocalizer.msg("NoName", "No Name was entered"), Localizer.getLocalization(Localizer.I18N_ERROR), JOptionPane.ERROR_MESSAGE);
 
         } else {
@@ -232,7 +234,7 @@ public class DeviceCreatorDialog extends JDialog implements WindowClosingIf {
 
     /**
      * Create the Device
-     * 
+     *
      * @return Device
      */
     public DeviceIf createDevice() {
@@ -244,7 +246,7 @@ public class DeviceCreatorDialog extends JDialog implements WindowClosingIf {
 
     /**
      * Which Button was pressed ? JOptionPane.OK_OPTION / CANCEL_OPTION
-     * 
+     *
      * @return Button that was pressed (JOptionPane.OK_OPTION / CANCEL_OPTION)
      */
     public int getReturnValue() {

@@ -66,6 +66,8 @@ import javax.swing.Timer;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 
+import org.apache.commons.lang.StringUtils;
+
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.PluginLoader;
 import tvbrowser.core.Settings;
@@ -119,11 +121,11 @@ public class TVBrowser {
   public static Localizer mLocalizer;
 
   private static String curLookAndFeel;
-  
+
   private static final boolean mIsStable = false;
   private static final int mMajorVersion = 3;
   private static final int mMinorVersion = 0;
-  
+
   /* If you want to change the version string, add it to the beginning of this array.
      We need the old version strings to import the settings.
   */
@@ -144,7 +146,7 @@ public class TVBrowser {
           "2.6.3", "2.6.3beta",
           "2.6.2",
           "2.6.1", "2.6.1beta", "2.6.1 (SVN)",
-          "2.6", "2.6beta2", "2.6beta1", "2.6alpha3", "2.6alpha2", "2.6alpha1", "2.6 (alpha)", 
+          "2.6", "2.6beta2", "2.6beta1", "2.6alpha3", "2.6alpha2", "2.6alpha1", "2.6 (alpha)",
           "2.5.3", "2.5.3beta3", "2.5.3beta2", "2.5.3beta1", "2.5.3 (alpha)",
           "2.5.2",
           "2.5.1", "2.5.1beta3", "2.5.1beta2", "2.5.1beta1",
@@ -156,26 +158,26 @@ public class TVBrowser {
           "2.2.1", "2.2.1beta3",
           "2.2", "2.2beta2", "2.2beta1", "2.2 (SVN)"
   };
-  
+
   static {
     File nightlyValues = new File("NIGHTLY_VALUES");
-    
+
     if(!mIsStable && nightlyValues.isFile()) {
       try {
         RandomAccessFile in = new RandomAccessFile(nightlyValues, "r");
-        
+
         String versionAppendix = "-" + in.readLine();
         ALL_VERSIONS[0] += versionAppendix;
-        
+
         in.close();
       } catch (Exception e) {
         // ignore
       }
     }
   }
-  
+
   /** The current version. */
-  
+
   private static final boolean mIsTransportable = new File("settings").isDirectory();
   public static final devplugin.Version VERSION=new devplugin.Version(mMajorVersion,mMinorVersion,mIsStable,ALL_VERSIONS[0] + (mIsTransportable ? " transportable" : ""));
 
@@ -217,9 +219,9 @@ public class TVBrowser {
    * avoid initializing the look and feel multiple times
    */
   private static boolean lookAndFeelInitialized = false;
-  
+
   private static Timer mAutoDownloadWaitingTimer;
-  
+
   /**
    * Entry point of the application
    * @param args The arguments given in the command line.
@@ -227,7 +229,7 @@ public class TVBrowser {
   public static void main(String[] args) {
     // Read the command line parameters
     parseCommandline(args);
-    
+
     try {
       Toolkit.getDefaultToolkit().setDynamicLayout((Boolean) Toolkit.getDefaultToolkit().getDesktopProperty("awt.dynamicLayoutSupported"));
     } catch (Exception e) {
@@ -250,7 +252,7 @@ public class TVBrowser {
     if(mIsTransportable) {
       System.getProperties().remove("propertiesfile");
     }
-    
+
     // setup logging
 
     // Get the default Logger
@@ -258,7 +260,7 @@ public class TVBrowser {
 
     // Use a even simpler Formatter for console logging
     mainLogger.getHandlers()[0].setFormatter(createFormatter());
-    
+
     if(mIsTransportable) {
       File settingsDir = new File("settings");
       try {
@@ -270,7 +272,7 @@ public class TVBrowser {
         } catch (Exception e1) {
           //ignore
         }
-        
+
         JTextArea area = new JTextArea(mLocalizer.msg("error.noWriteRightsText","You are using the transportable version of TV-Browser but you have no writing rights in the settings directory:\n\n{0}'\n\nTV-Browser will be closed.",settingsDir.getAbsolutePath()));
         area.setFont(new JLabel().getFont());
         area.setFont(area.getFont().deriveFont((float)14).deriveFont(Font.BOLD));
@@ -280,16 +282,16 @@ public class TVBrowser {
         area.setEditable(false);
         area.setBorder(null);
         area.setOpaque(false);
-        
+
         JOptionPane.showMessageDialog(null,area,mLocalizer.msg("error.noWriteRightsTitle","No write rights in settings directory"),JOptionPane.ERROR_MESSAGE);
         System.exit(1);
       }
     }
-    
-    // Load the settings    
+
+    // Load the settings
     Settings.loadSettings();
     Locale.setDefault(new Locale(Settings.propLanguage.getString(), Settings.propCountry.getString()));
-    
+
     if (Settings.propFirstStartDate.getDate() == null) {
       Settings.propFirstStartDate.setDate(Date.getCurrentDate());
     }
@@ -336,23 +338,23 @@ public class TVBrowser {
 
     Version tmpVer = Settings.propTVBrowserVersion.getVersion();
     final Version currentVersion = tmpVer != null ? new Version(tmpVer.getMajor(),tmpVer.getMinor(),Settings.propTVBrowserVersionIsStable.getBoolean()) : tmpVer;
-    
+
     if(!isTransportable() && Launch.isOsWindowsNtBranch() && currentVersion != null && currentVersion.compareTo(new Version(3,0,true)) < 0) {
       String tvDataDir = Settings.propTVDataDirectory.getString().replace("/",File.separator);
-      
+
       if(!tvDataDir.startsWith(System.getenv("appdata"))) {
         StringBuilder oldDefaultTvDataDir = new StringBuilder(System.getProperty("user.home")).append(File.separator).append("TV-Browser").append(File.separator).append("tvdata");
-        
+
         if(oldDefaultTvDataDir.toString().equals(tvDataDir)) {
           Settings.propTVDataDirectory.setString(Settings.propTVDataDirectory.getDefault());
         }
       }
     }
-    
-    
+
+
     Settings.propTVBrowserVersion.setVersion(VERSION);
     Settings.propTVBrowserVersionIsStable.setBoolean(VERSION.isStable());
-    
+
     final Splash splash;
 
     if (mShowSplashScreen && Settings.propSplashShow.getBoolean()) {
@@ -369,7 +371,7 @@ public class TVBrowser {
 
     /* Initialize the MarkedProgramsList */
     MarkedProgramsList.getInstance();
-    
+
     /*Maybe there are tvdataservices to install (.jar.inst files)*/
     PluginLoader.getInstance().installPendingPlugins();
 
@@ -404,7 +406,7 @@ public class TVBrowser {
 
     mLog.info("Starting up...");
     splash.setMessage(mLocalizer.msg("splash.ui", "Starting up..."));
-    
+
     Toolkit.getDefaultToolkit().getSystemEventQueue().push(new TextComponentPopupEventQueue());
 
     // Init the UI
@@ -412,17 +414,17 @@ public class TVBrowser {
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         initUi(splash, fStartMinimized);
-        
+
         new Thread("Start finished callbacks") {
           public void run() {
             setPriority(Thread.MIN_PRIORITY);
 
             mLog.info("Deleting expired TV listings...");
             TvDataBase.getInstance().deleteExpiredFiles(1, false);
-            
+
             // first reset "starting" flag of mainframe
             mainFrame.handleTvBrowserStartFinished();
-            
+
             // initialize program info for fast reaction to program table click
             ProgramInfo.getInstance().handleTvBrowserStartFinished();
 
@@ -438,7 +440,7 @@ public class TVBrowser {
 
             // finally submit plugin caused updates to database
             TvDataBase.getInstance().handleTvBrowserStartFinished();
-            
+
             startPeriodicSaveSettings();
 
           }
@@ -587,7 +589,7 @@ public class TVBrowser {
         });
       }
     });
-    
+
      // register the shutdown hook
     Runtime.getRuntime().addShutdownHook(new Thread("Shutdown hook") {
       public void run() {
@@ -647,7 +649,7 @@ public class TVBrowser {
       } else if (argument.startsWith("-D")) {
         if (argument.indexOf("=") >= 2) {
           String key = argument.substring(2, argument.indexOf("="));
-          String value = argument.substring(argument.indexOf("=") + 1);
+          String value = StringUtils.substringAfter(argument, "=");
           if (key.equals("user.language")) {
             System.getProperties().setProperty("user.language", value);
             Locale.setDefault(new Locale(value));
@@ -670,11 +672,11 @@ public class TVBrowser {
    */
   private static boolean createLockFile() {
     String dir = Settings.getUserDirectoryName();
-    
+
     if(!new File(dir).isDirectory()) {
       new File(dir).mkdirs();
     }
-      
+
     File lockFile = new File(dir, ".lock");
 
     if(lockFile.exists()) {
@@ -743,7 +745,7 @@ public class TVBrowser {
     mainFrame=MainFrame.getInstance();
     PluginProxyManager.getInstance().setParentFrame(mainFrame);
     TvDataServiceProxyManager.getInstance().setParamFrame(mainFrame);
-    
+
     // Set the program icon
     ArrayList<Image> iconImages = new ArrayList<Image>(2);
     iconImages.add(ImageUtilities.createImage("imgs/tvbrowser128.png"));
@@ -751,7 +753,7 @@ public class TVBrowser {
     iconImages.add(ImageUtilities.createImage("imgs/tvbrowser32.png"));
     iconImages.add(ImageUtilities.createImage("imgs/tvbrowser16.png"));
     mainFrame.setIconImages(iconImages);
-    
+
     mTray = new SystemTray();
 
     if (mTray.initSystemTray()) {
@@ -760,32 +762,32 @@ public class TVBrowser {
       mLog.info("platform independent mode is ON");
       addTrayWindowListener();
     }
-    
+
     // Set the right size
     mLog.info("Setting frame size and location");
-    
+
     int windowWidth = Settings.propWindowWidth.getInt();
     int windowHeight = Settings.propWindowHeight.getInt();
     mainFrame.setSize(windowWidth, windowHeight);
     int windowX = Settings.propWindowX.getInt();
     int windowY = Settings.propWindowY.getInt();
-    
+
     Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-    
+
     if (windowX + windowWidth < 0 || windowX > screen.width + 10 || windowY + windowHeight < 0 || windowY > screen.height + 10 || windowWidth < 200 || windowHeight < 200) {
       UiUtilities.centerAndShow(mainFrame);
     } else {
       mainFrame.setLocation(windowX, windowY);
-      
+
     }
-    
+
     mainFrame.setVisible(true);
     ErrorHandler.setFrame(mainFrame);
 
     splash.hideSplash();
-    
+
     mainFrame.repaint();
-  
+
     // maximize the frame if wanted
     if (Settings.propIsWindowMaximized.getBoolean()) {
       SwingUtilities.invokeLater(new Runnable() {
@@ -833,10 +835,10 @@ public class TVBrowser {
       });
     }
   }
-  
+
   /**
    * Saves the main settings.
-   * 
+   *
    * @param log If it should be written into the log.
    */
   public static synchronized void flushSettings(boolean log) {
@@ -858,10 +860,10 @@ public class TVBrowser {
       mLog.info("Storing window size and location");
 
       int state = mainFrame.getExtendedState();
-      
+
       boolean maximized = (state & JFrame.MAXIMIZED_BOTH) == JFrame.MAXIMIZED_BOTH;
       Settings.propIsWindowMaximized.setBoolean(maximized);
-      
+
       if (! maximized) {
         // Save the window size and location only when not maximized
         Settings.propWindowWidth.setInt(mainFrame.getWidth());
@@ -895,16 +897,16 @@ public class TVBrowser {
     }
     mainFrame.addWindowListener(mMainWindowAdapter);
   }
-  
+
   /**
    * Gets if the system tray is used.
-   * 
+   *
    * @return <code>true</code> if the system tray is used, <code>false</code> otherwise.
    */
   public static boolean isUsingSystemTray() {
     return mTray.isTrayUsed();
   }
-  
+
   /**
    * Loads the tray icon.
    */
@@ -919,7 +921,7 @@ public class TVBrowser {
       }
     }
   }
-  
+
   /**
    * Remove the tray icon.
    */
@@ -927,7 +929,7 @@ public class TVBrowser {
     if(mTray.isTrayUsed()) {
       mTray.setVisible(false);
       addTrayWindowListener();
-      
+
       if(!MainFrame.getInstance().isVisible()) {
         SwingUtilities.invokeLater(new Runnable() {
           public void run() {
@@ -937,7 +939,7 @@ public class TVBrowser {
       }
     }
   }
-  
+
   /**
    * Shows a balloon tip on the TV-Browser tray icon.
    * <p>
@@ -950,8 +952,8 @@ public class TVBrowser {
     if(mTray.isTrayUsed()) {
       return mTray.showBalloonTip(caption,message,messageType);
     }
-    
-    return false; 
+
+    return false;
   }
 
   /**
@@ -971,11 +973,11 @@ public class TVBrowser {
       return false;
     }
 
-    if((mAutoDownloadWaitingTimer != null 
+    if((mAutoDownloadWaitingTimer != null
           && mAutoDownloadWaitingTimer.isRunning())) {
       return true;
     }
-    
+
     if(Settings.propAutoDownloadWaitingTime.getShort() > 0) {
       final long timerStart = Calendar.getInstance().getTimeInMillis();
       if(mAutoDownloadWaitingTimer == null) {
@@ -1006,10 +1008,10 @@ public class TVBrowser {
     else {
       return performAutomaticDownload();
     }
-    
+
     return true;
   }
-  
+
   private static boolean isAutomaticDownloadDateReached() {
     String autoDLType = Settings.propAutoDownloadType.getString();
     final Date lastDownloadDate = Settings.propLastDownloadDate.getDate();
@@ -1057,15 +1059,15 @@ public class TVBrowser {
     }
   }
 
-  
+
   private static void updateLookAndFeel() {
     if (OperatingSystem.isWindows()) {
       UIManager.installLookAndFeel("Extended Windows Look And Feel",  "com.jgoodies.looks.windows.WindowsLookAndFeel");
     }
     UIManager.installLookAndFeel("Plastic Look And Feel",           "com.jgoodies.looks.plastic.PlasticLookAndFeel");
     UIManager.installLookAndFeel("Plastic 3D Look And Feel",        "com.jgoodies.looks.plastic.Plastic3DLookAndFeel");
-    UIManager.installLookAndFeel("Plastic XP Look And Feel",        "com.jgoodies.looks.plastic.PlasticXPLookAndFeel");    
-    UIManager.installLookAndFeel("Skin Look And Feel",              "com.l2fprod.gui.plaf.skin.SkinLookAndFeel");    
+    UIManager.installLookAndFeel("Plastic XP Look And Feel",        "com.jgoodies.looks.plastic.PlasticXPLookAndFeel");
+    UIManager.installLookAndFeel("Skin Look And Feel",              "com.l2fprod.gui.plaf.skin.SkinLookAndFeel");
 
     if (Settings.propLookAndFeel.getString().equals(
         "com.l2fprod.gui.plaf.skin.SkinLookAndFeel")) {
@@ -1098,7 +1100,7 @@ public class TVBrowser {
         Settings.propLookAndFeel.setString(Settings.propLookAndFeel.getDefault());
       }
     }
-    
+
     if (curLookAndFeel == null || !curLookAndFeel.equals(Settings.propLookAndFeel.getString())) {
       try {
         curLookAndFeel = Settings.propLookAndFeel.getString();
@@ -1140,7 +1142,7 @@ public class TVBrowser {
 
     // set colors for action pane at UIManager
     UIManager.put("TaskPane.foreGround",(new JButton()).getForeground());
-    
+
     if(UIManager.getColor("List.selectionBackground") == null) {
       UIManager.put("List.selectionBackground",UIManager.getColor("Tree.selectionBackground"));
     }
@@ -1153,7 +1155,7 @@ public class TVBrowser {
     if(UIManager.getColor("ComboBox.disabledForeground") == null) {
       UIManager.put("ComboBox.disabledForeground", Color.gray);
     }
-    
+
     if (mainFrame != null) {
       SwingUtilities.updateComponentTreeUI(mainFrame);
       mainFrame.validate();
@@ -1164,7 +1166,7 @@ public class TVBrowser {
 
   /**
    * Creates a very simple Formatter for log formatting
-   * 
+   *
    * @return a very simple Formatter for log formatting.
    */
   private static Formatter createFormatter() {
@@ -1173,7 +1175,7 @@ public class TVBrowser {
         StringBuilder sb = new StringBuilder();
 
         DateFormat mTimeFormat = DateFormat.getTimeInstance(DateFormat.MEDIUM);
-        
+
         String message = formatMessage(record);
         sb.append(mTimeFormat.format(new java.util.Date(System.currentTimeMillis())));
         sb.append(' ');
@@ -1196,7 +1198,7 @@ public class TVBrowser {
       }
     };
   }
-  
+
   /**
    * Called when TV-Browser shuts down.
    * <p>
@@ -1246,9 +1248,9 @@ public class TVBrowser {
 
   /**
    * Gets if TV-Browser runs as portable version.
-   * 
+   *
    * @return If TV-Browser runa as portable version.
-   * @since 2.2.2/2.5.1 
+   * @since 2.2.2/2.5.1
    */
   public static boolean isTransportable() {
     return mIsTransportable;
@@ -1290,7 +1292,7 @@ public class TVBrowser {
 
     /**
      * Creates an instance of FileLoggingHandler.
-     * 
+     *
      * @param fName The name of the log file.
      * @param formatter The formatter for the log file.
      * @throws IOException Is thrown if something goes wrong.

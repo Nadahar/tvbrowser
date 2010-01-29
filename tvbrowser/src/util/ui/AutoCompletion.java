@@ -19,6 +19,8 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.PlainDocument;
 
+import org.apache.commons.lang.StringUtils;
+
 public class AutoCompletion extends PlainDocument {
   JComboBox comboBox;
   ComboBoxModel model;
@@ -29,12 +31,12 @@ public class AutoCompletion extends PlainDocument {
   boolean hidePopupOnFocusLoss;
   boolean hitBackspace = false;
   boolean hitBackspaceOnSelection;
-  
+
   boolean firstUpper = false;
 
   transient KeyListener editorKeyListener;
   transient FocusListener editorFocusListener;
-  
+
   public AutoCompletion(final JComboBox comboBox) {
     this(comboBox, false);
   }
@@ -157,7 +159,7 @@ public class AutoCompletion extends PlainDocument {
     }
     // make first letter upper case
     if (offs == 0 && firstUpper) {
-      str = str.substring(0,1).toUpperCase() + str.substring(1);
+      str = StringUtils.capitalize(str);
     }
     // insert the string into the document
     super.insertString(offs, str, a);

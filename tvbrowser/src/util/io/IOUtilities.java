@@ -53,6 +53,7 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.StringUtils;
 
 import tvbrowser.core.Settings;
 import util.ui.TimeFormatter;
@@ -127,13 +128,13 @@ public class IOUtilities {
       } catch (IOException exc) {}
     }
   }
-  
+
   /**
    * Gets an InputStream to the given URL.
    * <p>
    * The connection has the Settings.propDefaultNetworkConnectionTimeout
    * as connection timeout.
-   * 
+   *
    * @param page The page to get the stream to.
    * @param followRedirects If the stream should be also established if the page not exists
    *        at the location but contains a redirect to an other location.
@@ -173,7 +174,7 @@ public class IOUtilities {
   public static InputStream getStream(URL page, boolean followRedirects, int timeout) throws IOException {
     return getStream(page, followRedirects, timeout, null, null);
   }
-  
+
   /**
    * Originally copied from javax.swing.JEditorPane.
    * <p>
@@ -211,7 +212,7 @@ public class IOUtilities {
       String encodedPassword = new String(Base64.encodeBase64(password.getBytes()));
       conn.setRequestProperty  ("Authorization", "Basic " + encodedPassword);
     }
-    
+
     if (timeout > 0) {
       conn.setReadTimeout(timeout);
     }
@@ -219,7 +220,7 @@ public class IOUtilities {
     if (followRedirects && (conn instanceof HttpURLConnection)) {
       HttpURLConnection hconn = (HttpURLConnection) conn;
       hconn.setInstanceFollowRedirects(false);
-      
+
       int response = hconn.getResponseCode();
       boolean redirect = (response >= 300 && response <= 399);
 
@@ -239,7 +240,7 @@ public class IOUtilities {
         return getStream(page, followRedirects, timeout, userName, userPassword);
       }
     }
-    
+
     InputStream in = conn.getInputStream();
     return in;
   }
@@ -249,7 +250,7 @@ public class IOUtilities {
    * <p>
    * The connection has the Settings.propDefaultNetworkConnectionTimeout
    * as connection timeout.
-   * 
+   *
    * @param page The page to get the stream to.
    * @return The stream to the page.
    * @throws IOException Thrown if something goes wrong.
@@ -265,7 +266,7 @@ public class IOUtilities {
    * <p>
    * The connection has the given timeout
    * as connection timeout.
-   * 
+   *
    * @param page The page to get the stream to.
    * @param timeout The timeout for the connection, use 0 for no timeout.
    * @return The stream to the page.
@@ -282,7 +283,7 @@ public class IOUtilities {
    * <p>
    * The connection has the Settings.propDefaultNetworkConnectionTimeout
    * as connection timeout.
-   * 
+   *
    * @param url The URL of the file
    * @return The content of the file
    * @throws IOException When the download failed
@@ -291,11 +292,11 @@ public class IOUtilities {
   public static byte[] loadFileFromHttpServer(URL url) throws IOException {
     return loadFileFromHttpServer(url, Settings.propDefaultNetworkConnectionTimeout.getInt());
   }
-  
+
   /**
    * Loads a file from a Http server with the given
    * read timeout.
-   * 
+   *
    * @param url The URL of the file
    * @param timeout The read timeout for the connection.
    * @return The content of the file
@@ -307,9 +308,9 @@ public class IOUtilities {
     try {
       in = IOUtilities.getStream(url, timeout);
       ByteArrayOutputStream out = new ByteArrayOutputStream();
-      
+
       pipeStreams(in, out);
-      
+
       out.close();
       return out.toByteArray();
     }
@@ -319,8 +320,8 @@ public class IOUtilities {
       }
     }
   }
-  
-  
+
+
 
   /**
    * Pipes all data from the specified InputStream to the specified OutputStream,
@@ -381,7 +382,7 @@ public class IOUtilities {
 
   /**
    * Copies files given in source to the target directory.
-   * 
+   *
    * @param src The files to copy.
    * @param targetDir The target dir of the files.
    * @throws IOException Thrown if something goes wrong.
@@ -389,10 +390,10 @@ public class IOUtilities {
   public static void copy(File[] src, File targetDir) throws IOException {
     copy(src, targetDir, false);
   }
-  
+
   /**
    * Copies files given in source to the target directory.
-   * 
+   *
    * @param src The files to copy.
    * @param targetDir The target dir of the files.
    * @param onlyNew Overwrite only older files.
@@ -402,7 +403,7 @@ public class IOUtilities {
   public static void copy(File[] src, File targetDir, boolean onlyNew) throws IOException {
     copy(targetDir,src,targetDir, onlyNew);
   }
-  
+
   private static void copy(File firstTargetDir, File[] src, File targetDir, boolean onlyNew) throws IOException {
     // src might be null, if listFiles wasn't able to read the directory
     if (src == null) {
@@ -422,7 +423,7 @@ public class IOUtilities {
 
   /**
    * Copies a file.
-   * 
+   *
    * @param src The file to read from
    * @param target The file to write to
    * @throws IOException If copying failed
@@ -430,10 +431,10 @@ public class IOUtilities {
   public static void copy(File src, File target) throws IOException {
     copy(src, target, false);
   }
-  
+
   /**
    * Copies a file.
-   * 
+   *
    * @param src The file to read from
    * @param target The file to write to
    * @param onlyNew Overwrite only older files.
@@ -447,12 +448,12 @@ public class IOUtilities {
       FileOutputStream outFile = new FileOutputStream(target);
       in = new BufferedInputStream(new FileInputStream(src), 0x4000);
       out = new BufferedOutputStream(outFile, 0x4000);
-      
+
       if(!onlyNew || target.length() < 1 || (src.lastModified() > target.lastModified())) {
-        outFile.getChannel().truncate(0);                  
+        outFile.getChannel().truncate(0);
         pipeStreams(in, out);
       }
-      
+
       in.close();
       out.close();
     }
@@ -465,12 +466,12 @@ public class IOUtilities {
       }
     }
   }
-  
-  
-  
+
+
+
   /**
    * Deletes a directory with all its files and subdirectories.
-   * 
+   *
    * @param dir The directory to delete.
    * @throws IOException Thrown if something goes wrong.
    */
@@ -479,11 +480,11 @@ public class IOUtilities {
       // Nothing to do
       return;
     }
-    
+
     if (! dir.isDirectory()) {
       throw new IOException("File is not a directory: " + dir.getAbsolutePath());
     }
-    
+
     // Delete all the files and subdirectories
     File[] fileArr = dir.listFiles();
     if (fileArr != null) {
@@ -497,15 +498,15 @@ public class IOUtilities {
         }
       }
     }
-    
+
     // Delete the directory
     if (! dir.delete()) {
       throw new IOException("Can't delete directory: " + dir.getAbsolutePath());
     }
   }
 
-  
-  
+
+
   /**
    * L�dt eine Datei aus einem Jar-File und gibt sie zur�ck.
    * <P>
@@ -522,13 +523,13 @@ public class IOUtilities {
     throws IOException
   {
     if (fileName == null) throw new IllegalArgumentException("fileName == null");
-    if (fileName.length() == 0) throw new IllegalArgumentException("fileName is empty");
+    if (StringUtils.isEmpty(fileName)) throw new IllegalArgumentException("fileName is empty");
 //	if (srcClass == null) srcClass = IOUtilities.class;
 
     // Der Dateiname muss mit einem '/' anfangen, sonst wird er nicht gefunden.
-    
+
     InputStream in;
-    
+
     if (srcClass==null) {
     	in=new java.io.FileInputStream(fileName);
     }
@@ -536,15 +537,15 @@ public class IOUtilities {
 		if ((fileName.charAt(0) != '/') && (fileName.charAt(0) != '\\')) {
 			fileName = "/" + fileName;
 		}
-    
+
 		in = srcClass.getResourceAsStream(fileName);
-		
-    	
+
+
     }
 	if (in == null) {
 		throw new IOException("Resource not found: '" + fileName + "'");
 	}
-    
+
 
     byte[] buffer = new byte[10240];
     byte[] data = new byte[0];
@@ -561,9 +562,9 @@ public class IOUtilities {
 
     return data;
   }
-  
-  
-  
+
+
+
   /**
    * Unzips a file from a ZIP-Archive (.zip, .jar).
    * <p>
@@ -573,13 +574,13 @@ public class IOUtilities {
    * @param entryName The name of the file in the ZIP-archive to unzip.
    * @param targetFile The file where to store the data.
    * @throws IOException Thrown if something goes wrong.
-   */  
+   */
   public static void unzip(File srcFile, String entryName, File targetFile)
     throws IOException
   {
     mLog.info("Unzipping '" + entryName + "' from '"
       + srcFile.getAbsolutePath() + "' to '" + targetFile.getAbsolutePath() + "'");
-    
+
     InputStream stream = null;
     try {
       ZipFile zipFile = new ZipFile(srcFile);
@@ -599,27 +600,27 @@ public class IOUtilities {
     }
   }
 
-  
-  
+
+
   /**
    * Unzips a GZIP-file (.gz).
    *
    * @param srcFile The GZIP-File to unzip
    * @param targetFile The file where to store the data.
    * @throws IOException Thrown if something goes wrong.
-   */  
+   */
   public static void ungzip(File srcFile, File targetFile)
     throws IOException
   {
     mLog.info("Ungzipping '" + srcFile.getAbsolutePath() +
       "' to '" + targetFile.getAbsolutePath() + "'");
-    
+
     InputStream stream = null;
     InputStream gzipStream = null;
     try {
       stream = new BufferedInputStream(new FileInputStream(srcFile), 0x4000);
       gzipStream = openSaveGZipInputStream(stream);
-      
+
       saveStream(gzipStream, targetFile);
     }
     finally {
@@ -629,9 +630,9 @@ public class IOUtilities {
       } catch (IOException exc) {}
     }
   }
-  
-  
-  
+
+
+
   /**
    * Appends an integer to a StringBuffer. If the length of the integer's
    * String representation is smaller than minChars, the missing chars will be
@@ -645,12 +646,12 @@ public class IOUtilities {
     String asString = Integer.toString(number);
     for (int i = asString.length(); i < minChars; i++) {
       buffer.append('0');
-    }    
+    }
     buffer.append(asString);
   }
 
-  
-  
+
+
   /**
    * Replaces a substring in the specified String.
    *
@@ -658,15 +659,15 @@ public class IOUtilities {
    * @param pattern The pattern to replace.
    * @param str The String to replace. This string may contain the pattern.
    * @return The result.
-   */  
+   */
   public static String replace(String original, String pattern, String str) {
     StringBuffer buffer = new StringBuffer(original);
     replace(buffer, pattern, str);
     return buffer.toString();
   }
-  
 
-  
+
+
   /**
    * Replaces in <code>buffer</code> the <code>pattern</code> by <code>str</code>.
    *
@@ -679,33 +680,33 @@ public class IOUtilities {
     int patternIdx;
     do {
       patternIdx = buffer.indexOf(pattern, offset);
-      
+
       if (patternIdx != -1) {
         buffer.replace(patternIdx, patternIdx + pattern.length(), str);
       }
-      
+
       offset = patternIdx + str.length();
     } while (patternIdx != -1);
   }
-  
-  
-  
+
+
+
   /**
    * Clears an StringBuffer
-   * 
+   *
    * @param buffer The buffer to clear
    */
   public static void clear(StringBuffer buffer) {
     buffer.delete(0, buffer.length());
   }
 
-  
+
 
   /**
    * Gets the number of minutes since midnight
    * <p>
    * This method does not create any objects.
-   * 
+   *
    * @return The number of minutes since midnight as integer
    */
   public static int getMinutesAfterMidnight() {
@@ -714,12 +715,12 @@ public class IOUtilities {
       return CALENDAR.get(Calendar.HOUR_OF_DAY) * 60 + CALENDAR.get(Calendar.MINUTE);
     }
   }
-  
-  
+
+
   /**
    * Gets a String representation in the format h:mm for a time in minutes after
    * midnight.
-   * 
+   *
    * @param minutesAfterMidnight The time to get the String for
    * @return A String for the time
    */
@@ -729,8 +730,8 @@ public class IOUtilities {
     int minutes = minutesAfterMidnight % 60;
     return TIME_FORMATTER.formatTime(hours, minutes);
   }
-  
-    
+
+
   /**
    * Encodes the specified String using a simple XOR encryption.
    *
@@ -740,7 +741,7 @@ public class IOUtilities {
    */
   public static String xorEncode(String text, long seed) {
     java.util.Random rnd = new java.util.Random(seed);
-    
+
     char[] charArr = new char[text.length()];
     for (int i = 0; i < charArr.length; i++) {
       charArr[i] = (char)(text.charAt(i) ^ rnd.nextInt()); // XOR
@@ -748,8 +749,8 @@ public class IOUtilities {
     return new String(charArr);
   }
 
-  
-  
+
+
   /**
    * Decodes the specified String using a simple XOR encryption.
    *
@@ -765,7 +766,7 @@ public class IOUtilities {
 
   /**
    * Reads a number of bytes into an array.
-   * 
+   *
    * @param stream The stream to read from
    * @param length The number of bytes to read
    * @return An array containing the read bytes
@@ -784,7 +785,7 @@ public class IOUtilities {
       }
       offset += len;
     }
-    
+
     return data;
   }
 
@@ -832,14 +833,14 @@ public class IOUtilities {
         is.close();
         return bytes;
     }
-    
+
     /**
      * Writes the given image icon to the given file in the given imageType.
-     * 
+     *
      * @param icon The icon to write.
      * @param imageType The image type.
      * @param targetFile The file to write the image to.
-     * 
+     *
      * @return <code>True</code> if the file could be written, <code>false</code> if something went wrong.
      * @since 2.6
      */
@@ -849,20 +850,20 @@ public class IOUtilities {
         Graphics2D g2 = iconimage.createGraphics();
         icon.paintIcon(null, g2, 0, 0);
         g2.dispose();
-        
+
         ImageIO.write(iconimage, imageType , targetFile);
       }catch(Exception e) {
         return false;
       }
-      
+
       return true;
     }
-    
+
     /**
      * Read the image from the given file to an icon image.
-     * 
+     *
      * @param srcFile The file to read from.
-     * 
+     *
      * @return The read icon image or <code>null</code> if something went wrong.
      * @since 2.6
      */
@@ -870,7 +871,7 @@ public class IOUtilities {
       try {
         return new ImageIcon(ImageIO.read(srcFile));
       }catch(Exception e) {}
-      
+
       return null;
     }
 

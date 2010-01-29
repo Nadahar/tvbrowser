@@ -31,95 +31,96 @@ import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 
 
 public class TagReader {
-  
+
   private Reader mIn;
   private String mEncoding;
- 
+
   private boolean mExpectTag;
   private int mChar;
-  
+
   public TagReader(Reader in) throws IOException {
     mIn=in;
     mChar=in.read();
-    
+
     mExpectTag=true;
   }
-  
+
   public void setEncoding(String encoding) throws UnsupportedEncodingException {
      new String("".getBytes(), encoding); // create a string to test the encoding
-     mEncoding=encoding; 
+     mEncoding=encoding;
   }
-  
+
   public Tag next() {
     HTMLTag tag;
-    try {     
+    try {
       if (mExpectTag) {
         tag=new HTMLTag(true);
         while (mChar!=-1 && mChar!='<') {
           mChar=mIn.read();
         }
       mChar=mIn.read();
-      
+
       while (mChar!=-1 && mChar!='>') {
         tag.append((char)mChar);
         mChar=mIn.read();
       }
       mChar=mIn.read();
-      
+
     }
     else {
       tag=new HTMLTag(false, mEncoding);
       while (mChar!=-1 && mChar!='<') {
         tag.append((char)mChar);
-        mChar=mIn.read(); 
-      }      
-    }    
-    
+        mChar=mIn.read();
+      }
+    }
+
     mExpectTag=!mExpectTag;
-    
+
     if (mChar==-1) return null;
-    
+
     }catch(IOException e) {
       return null;
     }
-    
-    if (tag.getName().trim().length()==0) {
+
+    if (StringUtils.isBlank(tag.getName())) {
       return next();
     }else{
       return tag;
     }
   }
-  
+
 }
 
 
 class HTMLTag implements Tag {
-  
+
   private StringBuffer mBuf;
   private boolean mIsTag;
   private char mPrevChar;
   private boolean mIsConverted;
   private String mEncoding;
-  
+
   public HTMLTag(boolean isTag) {
     mBuf=new StringBuffer();
     mIsTag=isTag;
     mPrevChar=0;
     mIsConverted=true;
   }
-  
+
   public HTMLTag(boolean isTag, String encoding) {
     this(isTag);
     mEncoding=encoding;
   }
-  
+
   public boolean isTextTag() {
     return !mIsTag;
   }
-  
+
   public String getTagName() {
     if (mIsTag) {
       String res=mBuf.toString().toLowerCase();
@@ -131,7 +132,7 @@ class HTMLTag implements Tag {
     }
     return "";
   }
-  
+
   public String getName() {
     if (!mIsConverted && !mIsTag) {
       mBuf=convert(mBuf);
@@ -139,10 +140,10 @@ class HTMLTag implements Tag {
     }
     return mBuf.toString();
   }
-  
- 
+
+
   public String getAttribute(String attributeName) {
-    
+
     if (mIsTag) {
       String[] attributes=mBuf.toString().split(" ");
       if (attributes.length>1) {
@@ -154,13 +155,13 @@ class HTMLTag implements Tag {
             if (key.trim().equalsIgnoreCase(attributeName)) {
               return val.trim();
             }
-          }          
-        }        
-      }    
+          }
+        }
+      }
     }
     return null;
   }
-  
+
   public void append(char ch) {
     mIsConverted=false;
     if (Character.isWhitespace(ch)) {
@@ -173,11 +174,11 @@ class HTMLTag implements Tag {
       mBuf.append(ch);
       mPrevChar=ch;
     }
-    
-    
+
+
   }
 
-  
+
    private StringBuffer convert(StringBuffer line) {
      StringBuffer result=null;
      if (mEncoding!=null) {
@@ -199,5 +200,5 @@ class HTMLTag implements Tag {
   public String toString() {
     return getName();
   }
-  
+
 }

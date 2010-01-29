@@ -17,6 +17,7 @@ import java.util.logging.Logger;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.apache.commons.lang.StringUtils;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXParseException;
@@ -195,17 +196,17 @@ class DataHydraDayParser extends org.xml.sax.helpers.DefaultHandler {
           try {
             String time = attributes.getValue("start");
             SimpleDateFormat format = new SimpleDateFormat("yyyyMMddkkmmss ZZZZ");
-            
-            Calendar cal = Calendar.getInstance();            
+
+            Calendar cal = Calendar.getInstance();
             cal.setTime(format.parse(time.substring(0,20)));
             cal.setTimeInMillis(cal.getTimeInMillis() - cal.getTimeZone().getRawOffset());
-            
-            mStartDate = new devplugin.Date(cal.get(Calendar.YEAR), 
+
+            mStartDate = new devplugin.Date(cal.get(Calendar.YEAR),
                 cal.get(Calendar.MONTH)+1, cal.get(Calendar.DAY_OF_MONTH));
 
             mStartHour = cal.get(Calendar.HOUR_OF_DAY);
             mStartMin = cal.get(Calendar.MINUTE);
-            
+
             mState = STATUS_PROG;
           } catch (Exception E) {
             System.out.println("invalid start time format: "
@@ -215,11 +216,11 @@ class DataHydraDayParser extends org.xml.sax.helpers.DefaultHandler {
             String time = attributes.getValue("stop");
             if (time.length() > 0) {
               SimpleDateFormat format = new SimpleDateFormat("yyyyMMddkkmmss ZZZZ");
-              
+
               Calendar cal = Calendar.getInstance();
-              
+
               cal.setTime(format.parse(time.substring(0,20)));
-              cal.setTimeInMillis(cal.getTimeInMillis() - cal.getTimeZone().getRawOffset());              
+              cal.setTimeInMillis(cal.getTimeInMillis() - cal.getTimeZone().getRawOffset());
 
               mEndHour = cal.get(Calendar.HOUR_OF_DAY);
               mEndMin = cal.get(Calendar.MINUTE);
@@ -372,9 +373,9 @@ class DataHydraDayParser extends org.xml.sax.helpers.DefaultHandler {
           // Since we don't have a field for sub titles, we add it to description
           mDescription = (mSubTitle + "\n" + mDescription).trim();
 
-          String shortDesc = MutableProgram.generateShortInfoFromDescription(mDescription);           
+          String shortDesc = MutableProgram.generateShortInfoFromDescription(mDescription);
           prog.setShortInfo(shortDesc);
-                    
+
           if (((DataHydraChannelGroup)mChannel.getGroup()).isShowRegister() && mDataService.getShowRegisterText()) {
             mDescription += "\n\n" + mLocalizer.msg("register", "Please Register at {0}", mChannel.getWebpage());
           }
@@ -382,7 +383,7 @@ class DataHydraDayParser extends org.xml.sax.helpers.DefaultHandler {
           prog.setDescription(mDescription);
 
           if (mGenre.length() > 0) {
-            mGenre = mGenre.substring(0, 1).toUpperCase() + mGenre.substring(1);
+            mGenre = StringUtils.capitalize(mGenre);
             prog.setTextField(ProgramFieldType.GENRE_TYPE, mGenre);
           }
           if (mActors.length() > 0) {

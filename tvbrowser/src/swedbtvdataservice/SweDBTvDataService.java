@@ -24,6 +24,8 @@ import java.util.logging.Logger;
 
 import javax.swing.Icon;
 
+import org.apache.commons.lang.StringUtils;
+
 import tvbrowserdataservice.file.IconLoader;
 import tvdataservice.SettingsPanel;
 import tvdataservice.TvDataUpdateManager;
@@ -49,7 +51,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
   private static final Logger mLog = Logger.getLogger(SweDBTvDataService.class.getName());
 
   private File mWorkingDirectory;
-  
+
   private DataHydraSettings mSettings = new DataHydraSettings();
 
   private HashMap<String, DataHydraChannelGroup> mChannelGroups;
@@ -181,7 +183,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
                   ""), properties.getProperty("ChannelBaseUrl-" + i, ""), properties
                   .getProperty("ChannelIconUrl-" + i, ""), properties.getProperty(
                   "ChannelLastUpdate-" + i, ""));
-    
+
           Channel ch = createTVBrowserChannel(dataHydraChannelGroup, container);
           mInternalChannels.put(ch, container);
           channels.add(ch);
@@ -266,7 +268,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
       try {
         IOUtilities.download(new URL(urlMirror + (urlMirror.endsWith("/") ? "" : "/") + "main_" + Mirror.MIRROR_LIST_FILE_NAME), new File(mWorkingDirectory , "main_" + Mirror.MIRROR_LIST_FILE_NAME));
       } catch(Exception ee) {}
-      
+
       if (monitor != null) {
         monitor.setMessage(mLocalizer.msg("Progressmessage.20",
                 "Getting channel list from")
@@ -300,16 +302,16 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
         }
         else {
           DataHydraChannelContainer[] DataHydracontainers = DataHydraChannelParser.parse(IOUtilities.openSaveGZipInputStream(con.getInputStream()));
-  
+
           if (monitor != null) {
             monitor.setMessage(mLocalizer.msg("Progressmessage.40", "Found {0} channels, downloading channel icons...", DataHydracontainers.length));
           }
-  
+
           mLastGroupUpdate.put(hydraGroup, con.getLastModified());
           con.disconnect();
-  
+
           ArrayList<Channel> loadedChannels = new ArrayList<Channel>();
-  
+
           for (DataHydraChannelContainer container : DataHydracontainers) {
             initializeIconLoader(hydraGroup);
             Channel ch = createTVBrowserChannel(hydraGroup, container);
@@ -317,24 +319,24 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
             mInternalChannels.put(ch, container);
             loadedChannels.add(ch);
           }
-  
+
           channels = loadedChannels.toArray(new Channel[loadedChannels.size()]);
-  
+
           if (monitor != null) {
             monitor.setMessage(mLocalizer.msg("Progressmessage.50",
                     "All channels have been retrieved"));
           }
-  
+
           /**
            * Update Channel list of the data plugin
            */
-  
+
           // Remove all Channels of current Group
           Channel[] chs = getAvailableChannels(hydraGroup);
           for (Channel ch : chs) {
             mChannels.remove(ch);
           }
-  
+
           // Add all Channels for current Group
           mChannels.addAll(loadedChannels);
         }
@@ -399,7 +401,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
               container.getId(), TimeZone.getTimeZone("UTC"), group.getCountry(),
               group.getCopyright(), group.getUrl(), group, null, category);
 
-      if (!container.getIconUrl().equals("")) {
+      if (StringUtils.isNotEmpty(container.getIconUrl())) {
         try {
           Icon icon = iconLoader.getIcon(container.getId(), container.getIconUrl());
           channel.setDefaultIcon(icon);

@@ -32,17 +32,19 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.apache.commons.lang.StringUtils;
+
 public class HTMLParser {
-  
+
   private InputStream in;
   private int la;
   private int ch;
-  
+
   private HTMLParser(InputStream in) throws IOException {
     this.in=in;
     la=in.read();
   }
-  
+
   private void next() throws IOException {
     ch=la;
     if (ch!=-1) {
@@ -52,18 +54,18 @@ public class HTMLParser {
       la=-1;
     }
   }
-  
-  
+
+
   private String getText() throws IOException {
-    
+
     StringBuilder buf = new StringBuilder();
     while (ch=='\n') {
        next();
     }
-    
+
     boolean wasSpace=false;
     while(ch!=-1 && ch!='<') {
-      
+
       if (Character.isWhitespace((char)ch)) {
         if (wasSpace) {
           // ignore character
@@ -76,42 +78,42 @@ public class HTMLParser {
       else {
         wasSpace=false;
         buf.append((char)ch);
-      }      
+      }
       next();
     }
-     
+
     String text=buf.toString().trim();
-    if (text.length()==0) {
+    if (StringUtils.isEmpty(text)) {
       return null;
     }
     return buf.toString();
-    
-  
-    
+
+
+
   }
- 
+
   private String getTag() throws IOException {
     StringBuilder buf = new StringBuilder();
-    
+
     if (ch!='<') {
       //throw new RuntimeException("'<' expected.");
       return null;
     }
     while (la!=-1 && la!='>') {
       buf.append((char)la);
-      next();      
+      next();
     }
     next();
     next();
     String res=buf.toString();
-    if (res.length()==0) {
+    if (StringUtils.isEmpty(res)) {
       return null;
     }
     return res;
-    
-    
+
+
   }
- 
+
 
   private Iterator<Tag> getTags() throws IOException {
     ArrayList<Tag> tags=new ArrayList<Tag>();
@@ -130,7 +132,7 @@ public class HTMLParser {
       }
       txt=getTag();
       if (txt!=null) {
-        
+
         Tag t=new Tag(txt);
         if (curTextTag!=null && ("br".equals(t.getName()) || "p".equals(t.getName()))) {
           curTextTag.append("\n");
@@ -140,7 +142,7 @@ public class HTMLParser {
         }
         else {
           //tags.add(new Tag(txt));
-          
+
           //tags.add(t);
           if (txt.endsWith("/")) {
             txt=txt.substring(0,txt.length()-1);
@@ -159,12 +161,12 @@ public class HTMLParser {
     //  System.out.println(o[i]);
     //}
     return tags.iterator();
-    
+
   }
-    
-  
+
+
   private Tag addTag(int depth, Tag openTag, Iterator<Tag> it) {
-    
+
       while (it.hasNext()) {
         Tag curTag=it.next();
         if (curTag.isText()) {
@@ -183,22 +185,22 @@ public class HTMLParser {
       }
       return null;
     }
-  
-  
- 
+
+
+
   public static Tag parse(InputStream in) throws IOException {
-    
+
     HTMLParser parser=new HTMLParser(in);
     Iterator<Tag> it=parser.getTags();
     Tag result=it.next();
     parser.addTag(0,result,it);
-    return result;    
+    return result;
   }
-  
+
   public static void dumpTag(PrintStream out, Tag tag) {
-    dumpTag(out,0,tag);    
+    dumpTag(out,0,tag);
   }
-  
+
   private static void dumpTag(PrintStream out, int depth, Tag t) {
     for (int i=0;i<depth;i++) out.print(" ");
     out.println(t.toString());
@@ -206,10 +208,10 @@ public class HTMLParser {
     for (int i=0;i<list.length;i++) {
       dumpTag(out,depth+1,list[i]);
     }
-    
-  }
-  
-  
 
-  
+  }
+
+
+
+
 }

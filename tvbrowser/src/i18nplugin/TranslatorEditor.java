@@ -35,6 +35,8 @@ import javax.swing.UIManager;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import org.apache.commons.lang.StringUtils;
+
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 
@@ -46,7 +48,7 @@ import com.jgoodies.forms.layout.FormLayout;
 /**
  * This is the Editor-Component. It shows the original text and a input field
  * for the translation.
- * 
+ *
  * @author bodum
  */
 public class TranslatorEditor extends JPanel {
@@ -69,7 +71,7 @@ public class TranslatorEditor extends JPanel {
   private PropertiesEntryNode mPropertiesEntryNode;
 
   private JLabel mIcon;
-  
+
   public TranslatorEditor(Locale locale) {
     mCurrentLocale = locale;
     createGui();
@@ -87,9 +89,9 @@ public class TranslatorEditor extends JPanel {
     mOriginal = new JTextArea();
     mOriginal.setWrapStyleWord(false);
     mOriginal.setEditable(false);
-    
+
     topPanel.add(new JScrollPane(mOriginal), cc.xy(1,3));
-    
+
     // Bottom
     PanelBuilder bottomPanel = new PanelBuilder(new FormLayout("fill:10dlu:grow", "pref, 5dlu, fill:pref:grow"));
     bottomPanel.setBorder(Borders.DLU4_BORDER);
@@ -107,25 +109,25 @@ public class TranslatorEditor extends JPanel {
       }});
     mOriginal.setBackground(mTranslation.getBackground());
     mOriginal.setForeground(mTranslation.getForeground());
-    
+
     bottomPanel.add(new JScrollPane(mTranslation), cc.xy(1,3));
 
     // Splitpane
-    
+
     final JSplitPane split = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
     split.setBorder(null);
-    
+
     split.setTopComponent(topPanel.getPanel());
     split.setBottomComponent(bottomPanel.getPanel());
-    
+
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         split.setDividerLocation(0.5);
       }
     });
-    
+
     add(split, cc.xy(1,1));
-    
+
     // translation state
     PanelBuilder panel = new PanelBuilder(new FormLayout("pref, 2dlu, fill:10dlu:grow", "pref, 3dlu, pref"));
     panel.setBorder(Borders.DLU4_BORDER);
@@ -140,7 +142,7 @@ public class TranslatorEditor extends JPanel {
 
   /**
    * Set the selected Property-Node
-   * 
+   *
    * @param node selected Node
    */
   public void setSelectedProperties(PropertiesEntryNode node) {
@@ -149,7 +151,7 @@ public class TranslatorEditor extends JPanel {
     mCurrentPropertyKey = node.getPropertyName();
     updateText();
   }
-  
+
   /**
    * Update the Text
    */
@@ -158,11 +160,11 @@ public class TranslatorEditor extends JPanel {
       String original = mPropertiesNode.getPropertyValue(mCurrentPropertyKey);
       mOriginal.setText(original);
       mOriginal.setCaretPosition(0);
-      
+
       String translated = mPropertiesNode.getPropertyValue(mCurrentLocale, mCurrentPropertyKey);
       mTranslation.setText(translated);
       mTranslation.setCaretPosition(0);
-      
+
       updateState();
     }
   }
@@ -187,7 +189,7 @@ public class TranslatorEditor extends JPanel {
     else if (state == LanguageNodeIf.STATE_OK) {
       text = mLocalizer.msg("state.ok", "OK");
     }
-    
+
     mState.setText(text);
     mIcon.setVisible(state != LanguageNodeIf.STATE_OK);
     if (state != LanguageNodeIf.STATE_OK) {
@@ -208,14 +210,14 @@ public class TranslatorEditor extends JPanel {
     mCurrentLocale = locale;
     updateText();
   }
-  
+
   /**
    * Save the current state in the Property
    */
   public void save() {
     if (mCurrentPropertyKey != null) {
       String text =  mTranslation.getText();
-      if (text.length() == 0) {
+      if (StringUtils.isEmpty(text)) {
         mPropertiesNode.setPropertyValue(mCurrentLocale, mCurrentPropertyKey,null);
       } else {
         mPropertiesNode.setPropertyValue(mCurrentLocale, mCurrentPropertyKey,text);

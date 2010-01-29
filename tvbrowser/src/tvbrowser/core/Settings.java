@@ -47,6 +47,8 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
+import org.apache.commons.lang.StringUtils;
+
 import tvbrowser.TVBrowser;
 import tvbrowser.core.plugin.DefaultSettings;
 import tvbrowser.core.settings.DeferredFontProperty;
@@ -97,10 +99,10 @@ import devplugin.Version;
 /**
  * The Settings class provides access to the settings of the whole application
  * (except the plugins).
- * 
+ *
  * @author Martin Oberhauser
  */
-public class Settings {  
+public class Settings {
   public static final String LAYOUT_OPTIMIZED_COMPACT_TIME_BLOCK = "optimizedCompactTimeBlock";
   public static final String LAYOUT_COMPACT_TIME_BLOCK = "compactTimeBlock";
   public static final String LAYOUT_TIME_BLOCK = "timeBlock";
@@ -137,13 +139,13 @@ public class Settings {
 
   private static boolean mShowWaiting;
   private static boolean mShowSettingsCopyWaiting;
-  
+
   private static HashMap<String,WindowSetting> mWindowSettings;
-  
+
  /**
    * Returns the Default-Settings. These Settings are stored in the mac, windows
    * and linux.properties-Files
-   * 
+   *
    * @return Default-Settings
    */
   public static DefaultSettings getDefaultSettings() {
@@ -158,7 +160,7 @@ public class Settings {
         File.separator).append(DEFAULT_USER_DIR).toString();
     return TVBrowser.isTransportable() ? new File("settings").getAbsolutePath() : mDefaultSettings.getProperty("userdir", dir);
   }
-  
+
   public static String getOSLibraryDirectoryName() {
   	if (OperatingSystem.isMacOs()) {
   		return "/Library/Application Support/TV-Browser/";
@@ -168,11 +170,11 @@ public class Settings {
 
   public static String getUserSettingsDirName() {
     String version = TVBrowser.getCurrentVersionString();
-    
+
     if(version.toLowerCase().indexOf("nightly") != -1) {
-      version = version.substring(0, version.indexOf('-'));
+      version = StringUtils.substringBefore(version,"-");
     }
-    
+
     return new StringBuilder(getUserDirectoryName())
         .append(File.separator).append(version).toString();
   }
@@ -187,11 +189,11 @@ public class Settings {
     if (!f.exists()) {
       f.mkdirs();
     }
-    
+
     File settingsFile = new File(getUserSettingsDirName(), SETTINGS_FILE);
     File firstSettingsBackupFile = new File(getUserSettingsDirName(), SETTINGS_FILE+ "_backup1");
     File secondSettingsBackupFile = new File(getUserSettingsDirName(), SETTINGS_FILE+ "_backup2");
-    
+
     // Create backup of settings file backup
     try {
       if(firstSettingsBackupFile.isFile()) {
@@ -199,28 +201,28 @@ public class Settings {
         firstSettingsBackupFile.renameTo(secondSettingsBackupFile);
       }
     }catch(Exception e) {}
-    
+
     try {
       mProp.writeToFile(settingsFile);
-      
+
       try {
         if(settingsFile.isFile()) {
           IOUtilities.copy(settingsFile,firstSettingsBackupFile);
         }
       }catch (Exception e) {}
-      
+
     } catch (IOException exc) {
       throw new TvBrowserException(Settings.class, "error.1",
           "Error when saving settings!\n({0})", settingsFile.getAbsolutePath(),
           exc);
     }
-    
+
     if(log) {
       mLog.info("Storing window settings");
     }
     storeWindowSettings();
   }
-  
+
   /**
    * Stores the window settings for this plugin
    */
@@ -236,7 +238,7 @@ public class Settings {
 
             for(String key : mWindowSettings.keySet()) {
               WindowSetting setting = mWindowSettings.get(key);
-              
+
               if(setting != null) {
                 out.writeUTF(key);
                 mWindowSettings.get(key).saveSettings(out);
@@ -264,29 +266,29 @@ public class Settings {
     if (settingsFile.exists() || firstSettingsBackupFile.exists() || secondSettingsBackupFile.exists()) {
       try {
         mProp.readFromFile(settingsFile);
-        
+
         if(((mProp.getProperty("subscribedchannels") == null || mProp.getProperty("subscribedchannels").trim().length() < 1) && (mProp.getProperty("channelsWereConfigured") != null && mProp.getProperty("channelsWereConfigured").equals("true")) )
             && (firstSettingsBackupFile.isFile() || secondSettingsBackupFile.isFile())) {
           throw new IOException();
         }
         else {
-          mLog.info("Using settings from file " + settingsFile.getAbsolutePath());  
+          mLog.info("Using settings from file " + settingsFile.getAbsolutePath());
         }
       } catch (IOException evt) {
-        
+
         if(firstSettingsBackupFile.isFile() || secondSettingsBackupFile.isFile()) {
           Localizer localizer = Localizer.getLocalizerFor(Settings.class);
           if(JOptionPane.showConfirmDialog(null,localizer.msg("settingBroken","Settings file broken.\nWould you like to load the backup file?\n\n(If you select No, the\ndefault settings are used)"),Localizer.getLocalization(Localizer.I18N_ERROR),JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION) {
             boolean loadSecondBackup = !firstSettingsBackupFile.isFile();
-            
+
             if(firstSettingsBackupFile.isFile()) {
               try {
                 mProp.readFromFile(firstSettingsBackupFile);
-                
+
                 if((mProp.getProperty("subscribedchannels") == null || mProp.getProperty("subscribedchannels").trim().length() < 1) && secondSettingsBackupFile.isFile()) {
                   loadSecondBackup = true;
                 }
-                else {                
+                else {
                   mLog.info("Using settings from file " + firstSettingsBackupFile.getAbsolutePath());
                   loadSecondBackup = false;
                 }
@@ -303,7 +305,7 @@ public class Settings {
                 loadSecondBackup = true;
               }
             }
-            
+
             if(loadSecondBackup) {
               mLog.info("Could not read settings - using default user settings");
             } else {
@@ -323,15 +325,15 @@ public class Settings {
      */
     else if (!oldDirectoryName.equals(newDirectoryName)) {
       mShowSettingsCopyWaiting = true;
-      
+
       new Thread("settings import info thread") {
         public void run() {
           try {
             sleep(INFO_DIALOG_WAITING_TIME);
-            
+
             if(mShowSettingsCopyWaiting) {
               final CopyWaitingDlg waiting = new CopyWaitingDlg(new JFrame(),CopyWaitingDlg.IMPORT_SETTINGS_MSG);
-              
+
               new Thread("settings import waiting thread") {
                 public void run() {
                   while(mShowSettingsCopyWaiting) {
@@ -341,11 +343,11 @@ public class Settings {
                       e1.printStackTrace();
                     }
                   }
-                  
+
                   waiting.setVisible(false);
                 }
               }.start();
-              
+
               waiting.setVisible(mShowSettingsCopyWaiting);
             }
           } catch (InterruptedException e) {
@@ -353,57 +355,57 @@ public class Settings {
           }
         }
       }.start();
-      
+
       mLog.info("Try to load settings from a previous version of TV-Browser");
-            
+
       File oldDir = null;
       File testFile = null;
-      
+
       int countValue = 1;
-      
+
       if(Launch.isOsWindowsNtBranch()) {
         countValue = 2;
       }
-      
-      String[] directories = {getUserDirectoryName() ,System.getProperty("user.home") + "/TV-Browser",System.getProperty("user.home") + "/Library/Preferences/TV-Browser", System.getProperty("user.home") + "/.tvbrowser"};      
+
+      String[] directories = {getUserDirectoryName() ,System.getProperty("user.home") + "/TV-Browser",System.getProperty("user.home") + "/Library/Preferences/TV-Browser", System.getProperty("user.home") + "/.tvbrowser"};
 
       for(int j = 0; j < (TVBrowser.isTransportable() ? directories.length : countValue); j++) {
         String[] allVersions = TVBrowser.getAllVersionStrings();
         for (int i = (j == 0 ? 1 : 0); i < allVersions.length; i++) {
-          testFile = new File(directories[j] + File.separator + 
+          testFile = new File(directories[j] + File.separator +
               allVersions[i], SETTINGS_FILE);
           if(testFile.isFile()) {
             oldDir = new File(directories[j], allVersions[i]);
             break;
           }
         }
-        
+
         if(oldDir == null) {
           testFile = new File(directories[j], SETTINGS_FILE);
-          
+
           if(testFile.isFile()) {
             oldDir = new File(directories[j]);
           } else {
             testFile = new File(oldDirectoryName, SETTINGS_FILE);
-            
+
             if(testFile.isFile()) {
               oldDir = new File(oldDirectoryName);
             }
-          }  
+          }
         }
-        
+
         if(oldDir != null) {
           break;
         }
-      }      
-      
+      }
+
       if (oldDir != null && oldDir.isDirectory() && oldDir.exists()) {
         final File newDir = new File(getUserSettingsDirName());
 
         File oldTvDataDir = null;
-        
+
         final Properties prop = new Properties();
-        
+
         try {
           StreamUtilities.inputStream(testFile, new InputStreamProcessor() {
             public void process(InputStream input) throws IOException {
@@ -411,27 +413,27 @@ public class Settings {
             }
           });
         }catch(Exception e) {}
-        
+
         String versionString = prop.getProperty("version",null);
         Version testVersion = null;
-        
+
         if(versionString != null) {
           try {
             int asInt = Integer.parseInt(versionString);
             int major = asInt / 100;
             int minor = asInt % 100;
-            testVersion = new Version(major,minor);  
+            testVersion = new Version(major,minor);
           }
           catch(NumberFormatException exc) {
             // Ignore
           }
         }
-        
+
         String temp = prop.getProperty("dir.tvdata", null);
-        boolean versionTest = !TVBrowser.isTransportable() && Launch.isOsWindowsNtBranch() && testVersion != null && testVersion.compareTo(new Version(3,0,true)) < 0 
+        boolean versionTest = !TVBrowser.isTransportable() && Launch.isOsWindowsNtBranch() && testVersion != null && testVersion.compareTo(new Version(3,0,true)) < 0
                                && (temp == null || temp.replace("/","\\").equals(System.getProperty("user.home")+"\\TV-Browser\\tvdata"));
-        
-        if((TVBrowser.isTransportable() || versionTest) 
+
+        if((TVBrowser.isTransportable() || versionTest)
             && !(new File(getUserDirectoryName(),"tvdata").isDirectory())) {
           try {
             if(temp != null) {
@@ -441,10 +443,10 @@ public class Settings {
             } else if(new File(oldDir.getParent(), "tvdata").isDirectory()) {
               oldTvDataDir = new File(oldDir.getParent(), "tvdata");
             }
-            
+
           }catch(Exception e) {}
         }
-        
+
         if (newDir.mkdirs()) {
           try {
             IOUtilities.copy(oldDir.listFiles(new FilenameFilter() {
@@ -455,9 +457,9 @@ public class Settings {
                     && !name.equalsIgnoreCase("lang");
               }
             }), newDir);
-            
+
             mShowSettingsCopyWaiting = false;
-            
+
             mLog.info("settings from previous version copied successfully");
             File newSettingsFile = new File(newDir, SETTINGS_FILE);
             mProp.readFromFile(newSettingsFile);
@@ -482,7 +484,7 @@ public class Settings {
               if (settings != null) {
                 for (int i = 0; i < settings.length; i++) {
                   String name = "java." + settings[i].getName();
-  
+
                   if (!settings[i].getName().toLowerCase().startsWith("java.")) {
                     version1 = true;
                     settings[i].renameTo(new File(settings[i].getParent(), name));
@@ -497,40 +499,40 @@ public class Settings {
                     + File.separator + "tvbrowser_BACKUP"));
               }
             }
-            
+
             /*
              * Test if and copy TV data for the portable version.
              */
             if(oldTvDataDir != null && oldTvDataDir.isDirectory()) {
               final File targetDir = new File(getUserDirectoryName(),"tvdata");
-              
+
               if(!oldTvDataDir.equals(targetDir)) {
                 targetDir.mkdirs();
-                
+
                 final CopyWaitingDlg waiting = new CopyWaitingDlg(new JFrame(), versionTest ? CopyWaitingDlg.APPDATA_MSG : CopyWaitingDlg.IMPORT_MSG);
-                
+
                 mShowWaiting = true;
-                
+
                 final File srcDir = oldTvDataDir;
-                
+
                 Thread copyDataThread = new Thread("Copy TV data directory") {
                   public void run() {
                     try {
                       IOUtilities.copy(srcDir.listFiles(), targetDir, true);
                     }catch(Exception e) {}
-                    
+
                     mShowWaiting = false;
                     waiting.setVisible(false);
                   }
                 };
                 copyDataThread.start();
-                
+
                 waiting.setVisible(mShowWaiting);
               }
             }
-            
+
             /*
-             * Test if a settings file exist in the user directory, move the 
+             * Test if a settings file exist in the user directory, move the
              * settings to backup.
              */
             if ((new File(getUserDirectoryName(), SETTINGS_FILE)).isFile()) {
@@ -567,17 +569,17 @@ public class Settings {
       }
     }
     mShowSettingsCopyWaiting = false;
-    
+
     File settingsDir = new File(newDirectoryName);
 
     if (!settingsDir.exists()) {
       mLog.info("Creating " + newDirectoryName);
       settingsDir.mkdir();
     }
-    
+
     loadWindowSettings();
   }
-  
+
   private static void loadWindowSettings() {
     File windowSettingsFile = new File(Settings.getUserSettingsDirName(),
         WINDOW_SETTINGS_FILE);
@@ -621,7 +623,7 @@ public class Settings {
     propArr = new Property[] { propProgramTitleFont, propProgramInfoFont,
         propProgramTimeFont, propChannelNameFont, propUseDefaultFonts,
         propEnableAntialiasing, propProgramTableOnAirProgramsShowingBorder,
-        propProgramPanelUsesExtraSpaceForMarkIcons, 
+        propProgramPanelUsesExtraSpaceForMarkIcons,
         propProgramPanelWithMarkingsShowingBoder, propProgramPanelUsedDefaultMarkPriority,
         propProgramPanelMarkedLowerMediumPriorityColor, propProgramPanelMarkedMinPriorityColor,
         propProgramPanelMarkedMediumPriorityColor, propProgramPanelMarkedMaxPriorityColor,
@@ -634,14 +636,14 @@ public class Settings {
       ProgramTableScrollPane scrollPane = mainFrame.getProgramTableScrollPane();
       scrollPane.forceRepaintAll();
     }
-    
+
     propArr = new Property[] {propPictureType, propPictureStartTime,
         propPictureEndTime, propIsPictureShowingDescription, propPicturePluginIds,
         propPictureDuration, propProgramTableCutTitle,
         propProgramTableCutTitleLines, propPictureDescriptionLines,
         propProgramPanelMaxLines, propProgramPanelShortDurationActive,
         propProgramPanelShortDurationMinutes};
-    
+
     if(mProp.hasChanged(propArr)) {
       mainFrame.getProgramTableScrollPane().forceRepaintAll();
     }
@@ -681,7 +683,7 @@ public class Settings {
       ProgramTableScrollPane scrollPane = mainFrame.getProgramTableScrollPane();
       scrollPane.getProgramTable().updateBackground();
     }
-    
+
     if(mProp.hasChanged(propTimeBlockSize)) {
       mainFrame.getProgramTableScrollPane().forceRepaintAll();
     }
@@ -721,31 +723,31 @@ public class Settings {
       model.setDate(mainFrame.getCurrentSelectedDate(), null, null);
     }
 
-    propArr = new Property[] { 
+    propArr = new Property[] {
         propShowChannelIconsInProgramTable, propShowChannelIconsInChannellist,
         propShowChannelNamesInProgramTable, propShowChannelNamesInChannellist };
     if (mProp.hasChanged(propArr)) {
       mainFrame.getProgramTableScrollPane().updateChannelPanel();
       mainFrame.updateChannelChooser();
     }
-    
+
     if(mProp.hasChanged(propTVDataDirectory)) {
       TvDataServiceProxyManager.getInstance().setTvDataDir(new File(propTVDataDirectory.getString()));
-      
-      TvDataBase.getInstance().updateTvDataBase();      
+
+      TvDataBase.getInstance().updateTvDataBase();
       TvDataBase.getInstance().checkTvDataInventory();
-      
-      MainFrame.getInstance().handleChangedTvDataDir();      
+
+      MainFrame.getInstance().handleChangedTvDataDir();
     }
-    
+
     if (mProp.hasChanged(propViewDateLayout)) {
       MainFrame.getInstance().createDateSelector();
       MainFrame.getInstance().setShowDatelist(true, false);
     }
-    
+
 
     mProp.clearChanges();
-    
+
     try {
       storeSettings(true);
     }catch(Exception e) {}
@@ -761,10 +763,10 @@ public class Settings {
       return "HH:mm";
     }
   }
-  
+
   public static final VersionProperty propTVBrowserVersion = new VersionProperty(
       mProp, "version", null);
-  
+
   public static final BooleanProperty propTVBrowserVersionIsStable = new BooleanProperty(
       mProp, "versionIsStable", false);
 
@@ -849,8 +851,8 @@ public class Settings {
       mProp, "webbrowserParams", "{0}");
 
   public static final ColorProperty propProgramTableBackgroundSingleColor = new ColorProperty(
-      mProp, "backgroundSingleColor", Color.white);  
-  
+      mProp, "backgroundSingleColor", Color.white);
+
   /*
    * Basic tray settings
    */
@@ -875,7 +877,7 @@ public class Settings {
 
   public static final ChannelArrayProperty propTraySpecialChannels = new ChannelArrayProperty(
       mProp, "traySpecialChannels", new devplugin.Channel[] {});
-  
+
   public static final IntProperty propTrayChannelWidth = new IntProperty(
       mProp, "trayChannelWidth", 72);
 
@@ -885,7 +887,7 @@ public class Settings {
 
   public static final BooleanProperty propTrayOnTimeProgramsEnabled = new BooleanProperty(
       mProp, "trayOnTimeProgramsEnabled", true);
-  
+
   public static final BooleanProperty propTrayOnTimeProgramsInSubMenu = new BooleanProperty(
       mProp, "trayOnTimeProgramsInSubMenus", true);
 
@@ -903,7 +905,7 @@ public class Settings {
 
   public static final BooleanProperty propTrayOnTimeProgramsShowProgress = new BooleanProperty(
       mProp, "trayOnTimeProgramsShowProgress", true);
-  
+
   public static final ColorProperty propTrayOnTimeProgramsDarkBackground = new ColorProperty(
       mProp, "trayOnTimeProgramsDarkBackground", new Color(255, 150, 0, 80));
 
@@ -958,7 +960,7 @@ public class Settings {
   public static final IntProperty propTrayImportantProgramsPriority = new IntProperty(
       mProp, "trayImportantProgramsPriority", 0
       );
-  
+
   public static final BooleanProperty propTrayImportantProgramsEnabled = new BooleanProperty(
       mProp, "trayImportantProgramsEnabled", true);
 
@@ -1025,10 +1027,10 @@ public class Settings {
 
   public static final StringProperty propToolbarLocation = new StringProperty(
       mProp, "toolbarLocation", "north");
-  
+
   public static final StringProperty propLeftSingleClickIf = new StringProperty(
       mProp, "leftSingleClickIf", ProgramInfo.getProgramInfoPluginId());
-  
+
   public static final StringProperty propDoubleClickIf = new StringProperty(
       mProp, "contextmenudefaultplugin", ProgramInfo.getProgramInfoPluginId());
 
@@ -1140,7 +1142,7 @@ public class Settings {
   /** Color for Program on Air - This shows how much is not shown until now */
   public static final ColorProperty propProgramTableColorOnAirLight = new ColorProperty(
       mProp, "programpanel.ColorOnAirLight", new Color(0, 0, 255, 30));
-  
+
   /**
    * Used to track if a program panel should use additional space for the mark
    * icons
@@ -1153,7 +1155,7 @@ public class Settings {
       mProp, "programpanel.markingsShowingBorder", true);
   /** Used default mark priority for markings of plugins. */
   public static final IntProperty propProgramPanelUsedDefaultMarkPriority = new IntProperty(
-      mProp, "programpanel.defaultMarkPriority", 0);  
+      mProp, "programpanel.defaultMarkPriority", 0);
   /** Color for Programs marked with MIN_PRIORITY */
   public static final ColorProperty propProgramPanelMarkedMinPriorityColor = new ColorProperty(
       mProp, "programpanel.ColorMarked", new Color(140, 255, 0, 60));
@@ -1180,7 +1182,7 @@ public class Settings {
    */
   public static final BooleanProperty propProgramPanelHyphenation = new BooleanProperty(
       mProp, "programpanel.Hyphenation", false);
-  
+
   /**
    * number of description lines show in program panel
    */
@@ -1244,7 +1246,7 @@ public class Settings {
       mProp, "programtable.endofday", 5 * 60);
   public static final BooleanProperty propHttpProxyUseProxy = new BooleanProperty(
       mProp, "proxy.http.useProxy", false);
-  
+
   public static final IntProperty propDefaultNetworkConnectionTimeout = new IntProperty(
       mProp, "network.defaultConnectionTimeout", 60000);
 
@@ -1253,16 +1255,16 @@ public class Settings {
 
   public static final IntProperty propPictureType = new IntProperty(
       mProp, "pictures.type", ProgramPanelSettings.SHOW_PICTURES_FOR_DURATION);
-  
+
   public static final IntProperty propPictureDescriptionLines = new IntProperty(
 	  mProp, "pictures.lines", 8);
 
   public static final StringArrayProperty propPicturePluginIds = new StringArrayProperty(
       mProp, "pictures.pluginIds", new String[0]);
-  
+
   public static final IntProperty propPictureStartTime = new IntProperty(
       mProp, "pictures.startTime", 18 * 60);
-  
+
   public static final IntProperty propPictureEndTime = new IntProperty(
       mProp, "pictures.endTime", 23 * 60);
 
@@ -1271,7 +1273,7 @@ public class Settings {
 
   public static final BooleanProperty propIsPictureShowingDescription = new BooleanProperty(
       mProp, "pictures.showDescription", true);
-  
+
   public static final StringProperty propHttpProxyHost = new StringProperty(
       mProp, "proxy.http.host", "");
 
@@ -1347,11 +1349,11 @@ public class Settings {
       "language", System.getProperty("user.language"));
 
   public static final StringProperty propCountry = new StringProperty(mProp,
-      "country", System.getProperty("user.country", ""));  
-  
+      "country", System.getProperty("user.country", ""));
+
   public static final StringProperty propVariant = new StringProperty(mProp,
-      "variant", System.getProperty("user.variant",""));  
-  
+      "variant", System.getProperty("user.variant",""));
+
   public static final StringProperty propTimezone = new StringProperty(mProp,
       "timeZone", null);
 
@@ -1366,16 +1368,16 @@ public class Settings {
 
   public static final BooleanProperty propShowChannelNamesInProgramTable = new BooleanProperty(
       mProp, "showChannelNamesInProgramtable", true);
-  
+
   public static final BooleanProperty propShowChannelIconsInChannellist = new BooleanProperty(
       mProp, "showChannelIconsInChannellist", true);
 
   public static final BooleanProperty propShowChannelNamesInChannellist = new BooleanProperty(
       mProp, "showChannelNamesInChannellist", true);
-  
+
   public static final StringArrayProperty propUsedChannelGroups = new StringArrayProperty(
       mProp, "usedChannelGroups", null);
-  
+
   public static final StringArrayProperty propDeleteFilesAtStart = new StringArrayProperty(
       mProp, "deleteFilesAtStart", new String[0]);
 
@@ -1407,48 +1409,48 @@ public class Settings {
   public static final StringArrayProperty propAcceptedLicenseArrForServiceIds = new StringArrayProperty(
       mProp, "licnseIds", new String[] {});
 
-  /** the class name of the last settings tab that has been closed with OK before */ 
+  /** the class name of the last settings tab that has been closed with OK before */
   public static final StringProperty propLastUsedSettingsPath = new StringProperty(mProp, "lastUsedSettingsTabClassName", "#channels");
-  
+
   /**
    * maximum width of the program table columns
    */
   public static final int MAX_COLUMN_WIDTH = 600;
-  
+
   /**
-   * minimum width of the program table columns 
+   * minimum width of the program table columns
    */
   public static final int MIN_COLUMN_WIDTH = 60;
-  
+
   /** The setting that contains the global picture settings value */
   public static final IntProperty propPluginsPictureSetting = new IntProperty(
       mProp, "pluginsPictureSetting", PluginPictureSettings.PICTURE_AND_DISCRIPTION_TYPE);
-  
+
   /** The user selected default filter */
   public static final StringProperty propDefaultFilter = new StringProperty(
       mProp, "defaultFilter", "");
-  
+
   /** If the plugin updates should be found automatically */
   public static final BooleanProperty propAutoUpdatePlugins = new BooleanProperty(
       mProp, "autoUpdatePlugins", true);
-  
+
   public static final DateProperty propLastPluginsUpdate = new DateProperty(
       mProp, "lastPluginsUpdate", null);
-  
+
   /**
    * enable checking date and time via NTP if no TV data can be downloaded
    */
   public static final BooleanProperty propNTPTimeCheck = new BooleanProperty(mProp, "ntpTimeCheckEnabled", true);
-  
+
   /**
    * date of last NTP internet time check
    */
   public static final DateProperty propLastNTPCheck = new DateProperty(mProp, "lastNTPCheck", null);
- 
+
   /** If the internet connection should be checked before accessing internet */
   public static final BooleanProperty propInternetConnectionCheck = new BooleanProperty(
       mProp, "internetConnectionCheck", true);
-  
+
   /**
    * If the plugin view is on the left side and the channel list on the right side.
    * @since 2.7
@@ -1458,7 +1460,7 @@ public class Settings {
 
   /**
    * if calendar view is active
-   * 
+   *
    * @since 3.0
    */
   public static final IntProperty propViewDateLayout = new IntProperty(
@@ -1466,11 +1468,11 @@ public class Settings {
 
   /**
    * The time between auto updates of data services
-   * @since 2.7 
+   * @since 2.7
    */
   public static final IntProperty propDataServiceAutoUpdateTime = new IntProperty(
       mProp, "dataServiceAutoUpdateTime", 30);
-  
+
   /**
    * list of hidden message boxes
    * @since 2.7
@@ -1483,15 +1485,15 @@ public class Settings {
    */
   public static final BooleanProperty propShowChannelTooltipInProgramTable = new BooleanProperty(
       mProp, "showChannelTooltipInProgramtable", true);
-  
+
   /** Saves the date of the very first TV-Browser start */
   public static final DateProperty propFirstStartDate = new DateProperty(
       mProp, "firstStartDate", null);
-  
+
   /** Saves if the plugin info dialog was already shown */
   public static final BooleanProperty propPluginInfoDialogWasShown = new BooleanProperty(
       mProp, "pluginInfoDialogWasShown", false);
-  
+
   /** Saves the selected channel category filter index */
   public static final ByteProperty propSelectedChannelCategoryIndex = new ByteProperty(
       mProp, "selectedChannelCategoryIndex", (byte)1);
@@ -1505,14 +1507,14 @@ public class Settings {
 
   public static final BooleanProperty propAutoDataDownloadEnabled = new BooleanProperty(
       mProp, "autoDataDownloadEnabled", true);
-  
+
   public static final ShortProperty propAutoDownloadWaitingTime = new ShortProperty(
       mProp, "autoDownloadWaitingTime", (short) 5);
 
   /**
    * if a long program title is to be shown in the program table, shall it be
    * cut?
-   * 
+   *
    * @since 3.0
    */
   public static final BooleanProperty propProgramTableCutTitle = new BooleanProperty(
@@ -1520,7 +1522,7 @@ public class Settings {
 
   /**
    * how many lines of the title shall be shown if it is cut
-   * 
+   *
    * @since 3.0
    */
   public static final IntProperty propProgramTableCutTitleLines = new IntProperty(
@@ -1528,19 +1530,19 @@ public class Settings {
 
   /**
    * auto scroll table after panning?
-   * 
+   *
    * @since 3.0
    */
   public static final BooleanProperty propProgramTableMouseAutoScroll = new BooleanProperty(
       mProp, "programTableMouseAutoScroll", true);
-  
+
   /**
    * @since 3.0
    */
   public static final StringArrayProperty propCurrentlyUsedDataServiceIds = new StringArrayProperty(mProp, "currentDataServices", new String[0]);
 
   public static final BlockedPluginArrayProperty propBlockedPluginArray = new BlockedPluginArrayProperty(mProp, "blockedPlugins");
-  
+
   /**
    * id of the last active program receive target plugin
    * @since 3.0
@@ -1561,40 +1563,40 @@ public class Settings {
    */
   public static final BooleanProperty propChannelsWereConfigured = new BooleanProperty(
       mProp, "channelsWereConfigured", false);
-  
+
   /**
    * Sets the window position and size for the given window with the values of
    * the given id.
-   * 
+   *
    * @param windowId
    *          The id of the values to set.
    * @param window
    *          The window to layout.
-   * 
+   *
    * @since 2.7
    */
   public static final void layoutWindow(String windowId, Window window) {
     layoutWindow(windowId, window, null);
   }
-  
+
   /**
    * Sets the window position and size for the given window with the values of the given id.
 
    * @param windowId The id of the values to set.
    * @param window The window to layout.
    * @param defaultSize The default size for the window.
-   * 
+   *
    * @since 2.7
    */
-  public static final void layoutWindow(String windowId, Window window, Dimension defaultSize) {    
+  public static final void layoutWindow(String windowId, Window window, Dimension defaultSize) {
     WindowSetting setting = mWindowSettings.get(windowId);
-    
+
     if(setting == null) {
       setting = new WindowSetting(defaultSize);
-      
+
       mWindowSettings.put(windowId, setting);
     }
-    
+
     setting.layout(window);
   }
 }

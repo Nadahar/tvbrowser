@@ -25,6 +25,8 @@ import java.io.File;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
+import org.apache.commons.lang.StringUtils;
+
 import util.program.AbstractPluginProgramFormating;
 import util.ui.ExtensionFileFilter;
 import util.ui.Localizer;
@@ -41,7 +43,7 @@ public abstract class CalExporter extends AbstractExporter {
 
   /** Path for File */
   private String mSavePath;
-  
+
   private String mExtension;
   private String mExtensionFilter;
 
@@ -81,7 +83,7 @@ public abstract class CalExporter extends AbstractExporter {
 
   /**
    * Shows a file chooser for calendar Files.
-   * 
+   *
    * @return selected File
    * @param programs
    *          programs that are exported
@@ -109,7 +111,7 @@ public abstract class CalExporter extends AbstractExporter {
 
     fileName = CalendarToolbox.cleanFilename(fileName);
 
-    if (!fileName.equals("")) {
+    if (StringUtils.isNotEmpty(fileName)) {
       if (mSavePath == null) {
         mSavePath = "";
       }

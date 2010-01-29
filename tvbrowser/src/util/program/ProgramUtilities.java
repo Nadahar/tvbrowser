@@ -25,6 +25,8 @@ import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringUtils;
+
 import tvbrowser.core.ChannelList;
 import util.io.IOUtilities;
 import devplugin.Date;
@@ -33,7 +35,7 @@ import devplugin.ProgramFieldType;
 
 /**
  * Provides utilities for program stuff.
- * 
+ *
  * @author René Mach
  *
  */
@@ -43,7 +45,7 @@ public class ProgramUtilities {
 
   /**
    * Helper method to check if a program runs.
-   * 
+   *
    * @param p
    *          The program to check.
    * @return True if the program runs.
@@ -69,7 +71,7 @@ public class ProgramUtilities {
   }
 
   /**
-   * comparator to sort programs by date, time and position in channel list 
+   * comparator to sort programs by date, time and position in channel list
    */
   public static Comparator<Program> getProgramComparator() {
     return sProgramComparator;
@@ -112,7 +114,7 @@ public class ProgramUtilities {
 
   /**
    * A helper method to get if a program is not in a time range.
-   * 
+   *
    * @param timeFrom The beginning of the time range to check
    * @param timeTo The ending of the time range
    * @param p The program to check
@@ -125,19 +127,19 @@ public class ProgramUtilities {
     if(timeFrom > timeTo) {
       timeFromParsed -= 60*24;
     }
-    
-    int startTime = p.getStartTime(); 
-    
+
+    int startTime = p.getStartTime();
+
     if(timeFrom > timeTo && startTime >= timeFrom) {
       startTime -= 60*24;
     }
-    
+
     return (startTime < timeFromParsed || startTime > timeTo);
   }
-  
+
   /**
    * get the actors and roles of a program
-   * 
+   *
    * @param program the program containing the actors
    * @return array of 2 lists, where one contains roles and the other actors
    * @since 2.6
@@ -174,22 +176,22 @@ public class ProgramUtilities {
           actor = actor.substring(0, actor.length() - 1).trim();
         }
         // if this actor has been deleted, do the next iteration
-        if (actor.length() == 0) {
+        if (StringUtils.isEmpty(actor)) {
           continue;
         }
         if (actor.contains(ACTOR_ROLE_SEPARATOR)) {
-          addNames(nameFrom(actor.substring(0, actor.indexOf(ACTOR_ROLE_SEPARATOR))),
-          nameFrom(actor.substring(actor.indexOf(ACTOR_ROLE_SEPARATOR) + ACTOR_ROLE_SEPARATOR.length())));
+          addNames(nameFrom(StringUtils.substringBefore(actor, ACTOR_ROLE_SEPARATOR)),
+          nameFrom(StringUtils.substringAfter(actor, ACTOR_ROLE_SEPARATOR)));
         }
         // actor and role separated by tab
         else if (actor.contains("\t")) {
-          addNames(nameFrom(actor.substring(0, actor.indexOf('\t'))),
-          nameFrom(actor.substring(actor.indexOf('\t') + 1)));
+          addNames(nameFrom(StringUtils.substringBefore(actor, "\t")),
+          nameFrom(StringUtils.substringAfter(actor, "\t")));
         }
         // actor and role separated by colon
         else if (actor.contains(":")) {
-          addNames(nameFrom(actor.substring(0, actor.indexOf(':'))),
-          nameFrom(actor.substring(actor.indexOf(':') + 1)));
+          addNames(nameFrom(StringUtils.substringBefore(actor, ":")),
+          nameFrom(StringUtils.substringAfter(actor, ":")));
         }
         // actor and role separated by brackets
         else if (actor.contains("(") || actor.contains(")")) {
@@ -209,7 +211,7 @@ public class ProgramUtilities {
               Matcher matcher = agePattern.matcher(actor);
               if (matcher.matches()) {
                 String age = matcher.group(1);
-                actor = nameFrom(actor.substring(0, actor.indexOf(age)) + actor.substring(actor.indexOf(age) + age.length()));
+                actor = nameFrom(StringUtils.substringBefore(actor, age) + StringUtils.substringAfter(actor, age));
                 secondPart = nameFrom(actor.substring(actor.indexOf('(') + 1,
                     actor.lastIndexOf(')')));
               }
@@ -218,14 +220,14 @@ public class ProgramUtilities {
             int indexOpen = secondPart.indexOf('(');
             int indexClose = secondPart.indexOf(')');
             if ((indexOpen == -1 && indexClose == -1) || (indexOpen < indexClose)) {
-              addNames(nameFrom(actor.substring(0, actor.indexOf('('))),secondPart);
+              addNames(nameFrom(StringUtils.substringBefore(actor, "(")),secondPart);
             }
             else {
               return null; // error: multiple brackets in one name
             }
           }
           else {
-            return null; // error: only a left or only a right bracket 
+            return null; // error: only a left or only a right bracket
           }
         }
         else {
@@ -240,7 +242,7 @@ public class ProgramUtilities {
     }
     return null;
   }
-  
+
   private static void addNames(final String firstName, final String secondName) {
     if (firstName.equalsIgnoreCase("und andere") || secondName.equalsIgnoreCase("und andere")) {
       return;
@@ -256,7 +258,7 @@ public class ProgramUtilities {
 
   /**
    * extract the actor names from the actor field
-   * 
+   *
    * @param program the program to work on
    * @return list of real actor names or null (if it can not be decided)
    * @since 2.6
@@ -310,8 +312,8 @@ public class ProgramUtilities {
   /**
    * decide which of the 2 lists contains the real actor names and which
    * the role names by using statistical methods
-   *  
-   * @param program 
+   *
+   * @param program
    * @param listFirst first list of names
    * @param listSecond second list of names
    * @since 2.6
@@ -371,7 +373,7 @@ public class ProgramUtilities {
           singleName[i]++;
         }
         else {
-          String familyName = name.substring(name.lastIndexOf(" ")+1);
+          String familyName = StringUtils.substringAfter(name, " ");
           Integer count = 1;
           if (familyNames[i].containsKey(familyName)) {
             count = familyNames[i].get(familyName);
@@ -473,12 +475,12 @@ public class ProgramUtilities {
       return null;
     }
   }
-  
+
   /**
    * Gets the time zone corrected program id of the given program id.
    * If the current time zone is the same like the time zone of the given
    * id the given id will be returned.
-   * <p> 
+   * <p>
    * @param progID The id to get the time zone corrected for.
    * @return The time zone corrected program id.
    * @since 2.7
@@ -488,32 +490,32 @@ public class ProgramUtilities {
     String timeString = progID.substring(index + 1);
     int hourIndex = timeString.indexOf(':');
     int offsetIndex = timeString.lastIndexOf(':');
-    
+
     if(hourIndex != offsetIndex) {
       int timeZoneOffset = Integer.parseInt(timeString.substring(offsetIndex + 1));
       int currentTimeZoneOffset = TimeZone.getDefault().getRawOffset()/60000;
-      
+
       if(timeZoneOffset != currentTimeZoneOffset) {
         String[] hourMinute = timeString.split(":");
         int timeZoneDiff = currentTimeZoneOffset - timeZoneOffset;
-        
+
         int hour = Integer.parseInt(hourMinute[0]) + (timeZoneDiff/60);
         int minute = Integer.parseInt(hourMinute[1]) + (timeZoneDiff%60);
-        
+
         if(hour >= 24) {
           hour -= 24;
         }
         else if(hour < 0) {
           hour += 24;
         }
-        
+
         hourMinute[0] = String.valueOf(hour);
         hourMinute[1] = String.valueOf(minute);
         hourMinute[2] = String.valueOf(currentTimeZoneOffset);
-        
+
         StringBuilder newId = new StringBuilder(progID.substring(index + 1));
         newId.append(hourMinute[0]).append(":").append(hourMinute[1]).append(":").append(hourMinute[2]);
-        
+
         return newId.toString();
       }
     }
@@ -521,16 +523,16 @@ public class ProgramUtilities {
       String[] hourMinute = timeString.split(":");
       StringBuilder newId = new StringBuilder(progID.substring(index + 1));
       newId.append(hourMinute[0]).append(":").append(hourMinute[1]).append(":").append(TimeZone.getDefault().getRawOffset()/60000);
-      
+
       return newId.toString();
     }
-    
+
     return progID;
   }
-  
+
   /**
    * extract a list of person names out of the given string
-   * 
+   *
    * @param field
    * @return list of person names
    */
@@ -563,7 +565,7 @@ public class ProgramUtilities {
 
   /**
    * get the age limit for a given textual rating
-   * 
+   *
    * @param rating
    * @return age limit or -1
    * @since 3.0
@@ -652,5 +654,5 @@ public class ProgramUtilities {
     System.out.println("Unknown rating code: " + rating);
     return -1;
   }
-  
+
 }

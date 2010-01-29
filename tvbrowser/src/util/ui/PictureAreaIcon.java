@@ -18,12 +18,10 @@
  */
 package util.ui;
 
-import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.image.FilteredImageSource;
 import java.awt.image.ImageFilter;
 import java.awt.image.RGBImageFilter;
@@ -32,39 +30,40 @@ import javax.swing.GrayFilter;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
-import tvbrowser.core.Settings;
+import org.apache.commons.lang.StringUtils;
 
+import tvbrowser.core.Settings;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
 
 /**
  * A class for painting a picture with copyright and description info.
- * 
+ *
  * @author René Mach
  * @since 2.2.2
  */
 public class PictureAreaIcon implements Icon {
-  
+
   /**
    * the description text icon will be null, if the string to be shown is empty
    */
   private TextAreaIcon mDescriptionText;
-  private TextAreaIcon mCopyrightText;  
+  private TextAreaIcon mCopyrightText;
   private ImageIcon mScaledIcon;
   private Program mProgram;
   private boolean mIsExpired;
   private boolean mIsGrayFilter;
   private int mDescriptionLines;
-  
+
   /**
-   * Constructor for programs with no picture or if pictures for 
+   * Constructor for programs with no picture or if pictures for
    * a program should not be shown.
    */
   public PictureAreaIcon() {}
-  
+
   /**
    * Constructor for programs with picture.
-   * 
+   *
    * @param p The program with the picture.
    * @param f The font for the description.
    * @param width The width of this area.
@@ -82,26 +81,26 @@ public class PictureAreaIcon implements Icon {
     else {
       mDescriptionLines = 0;
     }
-    
-    byte[] picture = p.getBinaryField(ProgramFieldType.PICTURE_TYPE);    
-    
+
+    byte[] picture = p.getBinaryField(ProgramFieldType.PICTURE_TYPE);
+
     if(picture != null) {
       ImageIcon imic = new ImageIcon(picture);
-      
+
       if(width == -1) {
         width = imic.getIconWidth()+6;
       }
-      
+
       if(imic.getIconWidth() > width-6 || (zoom && imic.getIconWidth() != width)) {
         mScaledIcon = (ImageIcon)UiUtilities.scaleIcon(imic, width - 6);
       } else {
         mScaledIcon = imic;
       }
     }
-    
+
     mCopyrightText = new TextAreaIcon(p.getTextField(ProgramFieldType.PICTURE_COPYRIGHT_TYPE),f.deriveFont((float)(f.getSize() * 0.9)),width-6);
     String pictureText = showDescription ? p.getTextField(ProgramFieldType.PICTURE_DESCRIPTION_TYPE) : "";
-    if ((pictureText != null) && !(pictureText.equals(""))) {
+    if (StringUtils.isNotEmpty(pictureText)) {
       mDescriptionText = new TextAreaIcon(pictureText,f,width-6);
       mDescriptionText.setMaximumLineCount(mDescriptionLines);
     }
@@ -110,7 +109,7 @@ public class PictureAreaIcon implements Icon {
       mDescriptionLines = 0;
     }
   }
-  
+
   public int getIconHeight() {
     if(mScaledIcon == null) {
       return 0;
@@ -127,26 +126,26 @@ public class PictureAreaIcon implements Icon {
     if(mScaledIcon == null) {
       return;
     }
-    
-    y += 2;    
-    
+
+    y += 2;
+
     Color color = g.getColor();
-    
+
     g.setColor(c.getBackground());
     g.fillRect(x,y,getIconWidth(),getIconHeight()-2);
-    
+
     g.setColor(color);
     g.drawRect(x,y,getIconWidth()-1,getIconHeight()-3);
 
     y += 3;
     x += 3;
-    
+
     if(mIsGrayFilter && !mIsExpired && mProgram.isExpired()) {
       ImageFilter filter = new GrayFilter(true, 60);
       mScaledIcon.setImage(c.createImage(new FilteredImageSource(mScaledIcon.getImage().getSource(),filter)));
       mIsExpired = true;
     }
-    
+
     if(c.getForeground().getAlpha() != 255) {
       ImageFilter filter = new RGBImageFilter() {
         public int filterRGB(int x, int y, int rgb) {
@@ -155,12 +154,12 @@ public class PictureAreaIcon implements Icon {
           return rgb;
         }
       };
-      
+
       mScaledIcon.setImage(c.createImage(new FilteredImageSource(mScaledIcon.getImage().getSource(),filter)));
     }
-    
+
     mScaledIcon.paintIcon(c,g,x,y);
-    
+
     /*
     if(!mProgram.isExpired()) {
       g.setColor(color);

@@ -31,6 +31,8 @@ import java.util.TimeZone;
 
 import javax.swing.JOptionPane;
 
+import org.apache.commons.lang.StringUtils;
+
 import util.exc.ErrorHandler;
 import util.io.IOUtilities;
 import util.paramhandler.ParamParser;
@@ -124,7 +126,7 @@ public class GoogleExporter extends AbstractExporter {
 
         if (entry != null) {
           int ret = JOptionPane.showConfirmDialog(null, mLocalizer.msg("alreadyAvailable", "already available", program.getTitle()), mLocalizer.msg("title", "Add event?"),  JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-          
+
           if (ret != JOptionPane.YES_OPTION) {
             createEvent = false;
           }
@@ -255,7 +257,7 @@ public class GoogleExporter extends AbstractExporter {
 
   /**
    * Show the Login-Dialog
-   * 
+   *
    * @param settings
    *          Settings to use for this Dialog
    * @return true, if successful
@@ -273,7 +275,7 @@ public class GoogleExporter extends AbstractExporter {
       return false;
     }
 
-    if ((login.getUsername().trim().length() == 0) || (login.getPassword().trim().length() == 0)) {
+    if ((StringUtils.isBlank(login.getUsername()) || (StringUtils.isBlank(login.getPassword())))) {
       JOptionPane.showMessageDialog(parent, mLocalizer.msg("noUserOrPassword",
           "No Username or Password entered!"), Localizer
           .getLocalization(Localizer.I18N_ERROR), JOptionPane.ERROR_MESSAGE);

@@ -1,16 +1,16 @@
 /*
  * TV-Browser Copyright (C) 04-2003 Martin Oberhauser (martin_oat@yahoo.de)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  * Place - Suite 330, Boston, MA 02111-1307, USA.
@@ -34,6 +34,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.lang.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -51,7 +52,7 @@ import devplugin.Program;
 
 /**
  * This class contains the communication with the server
- * 
+ *
  * @author bodo tasche
  */
 public class Updater implements Progress {
@@ -76,7 +77,7 @@ public class Updater implements Progress {
 
   /**
    * Creates the Updater
-   * 
+   *
    * @param tvraterPlugin Plugin that uses the Updater
    */
   public Updater(final TVRaterPlugin tvraterPlugin, final TVRaterSettings settings) {
@@ -90,10 +91,7 @@ public class Updater implements Progress {
   public void run() {
     String name = settings.getName();
     String password = settings.getPassword();
-    if ((name == null)
-        || (name.length() == 0)
-        || (password == null)
-        || (password.length() == 0)) {
+    if (StringUtils.isEmpty(name) || (StringUtils.isEmpty(password))) {
 
       JOptionPane.showMessageDialog(_tvraterPlugin.getParentFrameForTVRater(), mLocalizer.msg("noUser",
           "Please Enter your Userdata in the\nconfiguration of this Plugin"), mLocalizer.msg("error",
@@ -103,7 +101,7 @@ public class Updater implements Progress {
 
     try {
       if (!NetworkUtilities.checkConnection(new URL("http://www.tvaddicted.de"))) {
-        JOptionPane.showMessageDialog(null, 
+        JOptionPane.showMessageDialog(null,
             mLocalizer.msg("noConnectionMessage", "No Connection!"),
             mLocalizer.msg("noConnectionTitle", "No Connection!"),
             JOptionPane.ERROR_MESSAGE);
@@ -150,7 +148,7 @@ public class Updater implements Progress {
 
   /**
    * Was the update successfull?
-   * 
+   *
    * @return Successfully updated ?
    */
   public boolean wasSuccessfull() {
@@ -159,7 +157,7 @@ public class Updater implements Progress {
 
   /**
    * Gets the Text within a Node
-   * 
+   *
    * @param data Node to rip the Text from
    * @return Text in the Node
    */
@@ -181,7 +179,7 @@ public class Updater implements Progress {
 
   /**
    * Reads the String returned by the PHP-Skript and parses the DOM
-   * 
+   *
    */
   private void readData(Node node) {
     Node child = node.getFirstChild();
@@ -195,7 +193,7 @@ public class Updater implements Progress {
 
   /**
    * Reads the Data in this Node
-   * 
+   *
    * @param node Node to analyse
    */
   private void readRatingData(Node node) {
@@ -211,7 +209,7 @@ public class Updater implements Progress {
 
   /**
    * Reads a single Rating
-   * 
+   *
    * @param node Rating as DOM-Node
    */
   private void readRating(Node node) {
@@ -270,7 +268,7 @@ public class Updater implements Progress {
 
   /**
    * Returns the Text-Value in this Node
-   * 
+   *
    * @param node get Text from this Node
    * @return Text in this Node
    */
@@ -290,7 +288,7 @@ public class Updater implements Progress {
 
   /**
    * Writes the Data into the Outputstream
-   * 
+   *
    * @param output the Outputstream
    * @throws ParserConfigurationException
    * @throws IOException
@@ -369,7 +367,7 @@ public class Updater implements Progress {
 
   /**
    * Creates a Node with a filled TextNode
-   * 
+   *
    * @param doc Create Node with this Document
    * @param nodename Name of the Node to create
    * @param value Text-Value in this Node
@@ -383,7 +381,7 @@ public class Updater implements Progress {
 
   /**
    * Creates a Node with a filled TextNode
-   * 
+   *
    * @param doc Create Node with this Document
    * @param nodename Name of the Node to create
    * @param value Text-Value in this Node
@@ -395,7 +393,7 @@ public class Updater implements Progress {
 
   /**
    * Reads the Data in a URLConnection
-   * 
+   *
    * @param uc Connection
    * @return Data returned from the URL
    * @throws Exception IOException etc...
@@ -423,7 +421,7 @@ public class Updater implements Progress {
   /**
    * Runs thru all Days and Channels, creates a List of Programs that need to
    * get a rating
-   * 
+   *
    * @return Hashtable filled with Programs to rate
    */
   private Hashtable<String, Program> createUpdateList() {

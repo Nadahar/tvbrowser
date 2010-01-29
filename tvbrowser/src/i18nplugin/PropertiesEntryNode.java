@@ -32,17 +32,19 @@ import java.util.regex.Pattern;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import org.apache.commons.lang.StringUtils;
+
 import util.i18n.WritingConversion;
 
 /**
  * Entry for a Property
- * 
+ *
  * @author bodum
  */
 public class PropertiesEntryNode extends DefaultMutableTreeNode implements LanguageNodeIf, FilterNodeIf {
-  
+
   private String filter;
-  
+
   private boolean matches;
 
   /**
@@ -73,11 +75,11 @@ public class PropertiesEntryNode extends DefaultMutableTreeNode implements Langu
 
   protected int getTranslationState(String original, String translated) {
     // if no original is available, we don't need a translation, too
-    if (original.length() == 0 && translated.length() == 0) {
+    if (StringUtils.isEmpty(original) && StringUtils.isEmpty(translated)) {
       return STATE_OK;
     }
     // check existence of translation
-    if (translated.length() == 0) {
+    if (StringUtils.isEmpty(translated)) {
       return STATE_MISSING_TRANSLATION;
     }
     // check same number of arguments
@@ -135,7 +137,7 @@ public class PropertiesEntryNode extends DefaultMutableTreeNode implements Langu
 
   public void save() {
   }
-  
+
   @Override
   public boolean isLeaf() {
     return true;
@@ -159,17 +161,17 @@ public class PropertiesEntryNode extends DefaultMutableTreeNode implements Langu
       if (!(getParent() instanceof PropertiesNode)) {
         return;
       }
-      
+
       String text = null;
       String translated = ((PropertiesNode)getParent()).getPropertyValue(locale, getPropertyName());
       // check existence of translation
-      if (translated.length() != 0) {
+      if (StringUtils.isNotEmpty(translated)) {
         text = translated;
       } else {
         // check original
         text = ((PropertiesNode) getParent()).getPropertyValue(getPropertyName());
       }
-      
+
       if (text != null && text.toLowerCase().indexOf(filter.toLowerCase()) != -1) {
         matches = true;
       }

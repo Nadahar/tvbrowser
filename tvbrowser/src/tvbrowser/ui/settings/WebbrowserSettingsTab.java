@@ -39,6 +39,8 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
+import org.apache.commons.lang.StringUtils;
+
 import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
 import util.browserlauncher.Launch;
@@ -67,18 +69,18 @@ public class WebbrowserSettingsTab implements devplugin.SettingsTab {
   private JRadioButton mUseWebbrowser;
 
   private JButton mChooseButton;
-  
+
   /**
    * Creates the settings panel for this tab.
    */
   public JPanel createSettingsPanel() {
     mSettingsPn = new JPanel(new FormLayout("5dlu, 10dlu, pref, 3dlu, pref, 3dlu, pref, fill:3dlu:grow, 3dlu", "pref, 5dlu, pref, 5dlu, pref, 5dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref"));
     mSettingsPn.setBorder(Borders.DIALOG_BORDER);
-    
+
     CellConstraints cc = new CellConstraints();
-    
+
     mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("browser", "Web browser")), cc.xyw(1,1,9));
-    
+
     JButton testButton = new LinkButton(mLocalizer.msg("testBrowser", "Test Webbrowser"), "http://www.tvbrowser.org", LinkButton.LEFT, false);
     testButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -92,9 +94,9 @@ public class WebbrowserSettingsTab implements devplugin.SettingsTab {
     });
 
     mSettingsPn.add(UiUtilities.createHelpTextArea(mLocalizer.msg("help", "Help Text")), cc.xyw(2,3,7));
-    
+
     mSettingsPn.add(testButton, cc.xyw(2, 5, 7));
-    
+
     mSettingsPn.add(new JLabel(mLocalizer.msg("whichBrowser", "which browser")), cc.xyw(2,7,7));
 
     JRadioButton useDefault = new JRadioButton(mLocalizer.msg("defaultWebbrowser", "Default Webbrowser"));
@@ -104,9 +106,9 @@ public class WebbrowserSettingsTab implements devplugin.SettingsTab {
         updateInputFields();
       }
     });
-    
+
     mSettingsPn.add(useDefault, cc.xyw(2, 9, 4));
-    
+
     mUseWebbrowser = new JRadioButton(mLocalizer.msg("userDefinedWebbrowser","user defined webbrowser"));
     mUseWebbrowser.setSelected(Settings.propUserDefinedWebbrowser.getString() != null);
 
@@ -119,16 +121,16 @@ public class WebbrowserSettingsTab implements devplugin.SettingsTab {
     ButtonGroup group = new ButtonGroup();
     group.add(useDefault);
     group.add(mUseWebbrowser);
-    
+
     mSettingsPn.add(mUseWebbrowser, cc.xyw(2, 11, 7));
-    
+
     mSettingsPn.add(new JLabel(mLocalizer.msg("browserExecutable", "Executable") + ":"), cc.xy(3, 13));
 
 
     mFileTextField = new JTextField(30);
     mFileTextField.setText(Settings.propUserDefinedWebbrowser.getString());
     mSettingsPn.add(mFileTextField, cc.xy(5, 13));
-    
+
     mChooseButton = new JButton(Localizer.getLocalization(Localizer.I18N_SELECT));
     mChooseButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent event) {
@@ -141,7 +143,7 @@ public class WebbrowserSettingsTab implements devplugin.SettingsTab {
             mFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
           }
         }
-        
+
         int retVal = mFileChooser.showOpenDialog(mSettingsPn.getParent());
         if (retVal == JFileChooser.APPROVE_OPTION) {
           File f=mFileChooser.getSelectedFile();
@@ -162,7 +164,7 @@ public class WebbrowserSettingsTab implements devplugin.SettingsTab {
     mSettingsPn.add(new JLabel(mLocalizer.msg("browserParameterHelp", "{0} will be replaced by the url.")), cc.xyw(5,17,4));
 
     updateInputFields();
-    
+
     return mSettingsPn;
   }
 
@@ -183,7 +185,7 @@ public class WebbrowserSettingsTab implements devplugin.SettingsTab {
       webbrowser = mFileTextField.getText();
 
       String params = mParams.getText().trim();
-      if (params.length() == 0) {
+      if (StringUtils.isEmpty(params)) {
         params = "{0}";
       }
       Settings.propUserDefinedWebbrowserParams.setString(params);

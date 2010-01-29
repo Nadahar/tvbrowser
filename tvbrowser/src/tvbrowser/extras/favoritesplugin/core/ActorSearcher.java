@@ -25,12 +25,14 @@
  */
 package tvbrowser.extras.favoritesplugin.core;
 
+import org.apache.commons.lang.StringUtils;
+
 import tvbrowser.core.search.regexsearch.RegexSearcher;
 import util.exc.TvBrowserException;
 
 /**
  * This is the actual Searcher for the Actors
- * 
+ *
  * @author bananeweizen
  */
 public class ActorSearcher extends RegexSearcher {
@@ -43,7 +45,7 @@ public class ActorSearcher extends RegexSearcher {
     String[] actorStr = actor.trim().split("\\s");
     mLastName = actorStr[actorStr.length-1].toLowerCase();
   }
-  
+
   @Override
   protected boolean matches(String value) {
     // the last name part _must_ occur in the string
@@ -59,19 +61,19 @@ public class ActorSearcher extends RegexSearcher {
       return null;
     }
     actor = actor.trim();
-    if (actor.length() == 0) {
+    if (StringUtils.isEmpty(actor)) {
       return null;
     }
     String[] actorStr = actor.split("\\s");
-    
+
     // first pattern is actor name without changes
     String regEx = ".*\\b((" + actor+")";
-    
+
     // use additional variants, if the name consists of multiple parts
     int actorMax = actorStr.length-1;
     if (actorStr.length > 1) {
-      regEx = regEx 
-        // _Doe,_Jon_ 
+      regEx = regEx
+        // _Doe,_Jon_
         + "|(" + actorStr[actorMax] + "\\s*,\\s*"+ actorStr[0]+")"
         // _J._Doe_
         // _Jon_M._Doe_

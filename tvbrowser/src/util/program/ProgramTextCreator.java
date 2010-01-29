@@ -41,6 +41,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 
+import org.apache.commons.lang.StringUtils;
+
 import tvbrowser.core.Settings;
 import tvbrowser.extras.common.InternalPluginProxyIf;
 import tvbrowser.extras.common.InternalPluginProxyList;
@@ -76,13 +78,13 @@ public class ProgramTextCreator {
       .getLocalizerFor(ProgramTextCreator.class);
 
   private static String mBodyFontSize;
-  
+
   /** The used link protocol for actor links */
   public static final String TVBROWSER_URL_PROTOCOL = "tvbrowser://";
 
 
   /**
-   * 
+   *
    * @param prog
    *          The Program to show
    * @param doc
@@ -94,13 +96,13 @@ public class ProgramTextCreator {
    * @param showHelpLinks Show the Help-Links (Quality of Data, ShowView)
    * @return The HTML String.
    */
-  public static String createInfoText(Program prog, ExtendedHTMLDocument doc, 
+  public static String createInfoText(Program prog, ExtendedHTMLDocument doc,
       Object[] fieldArr, Font tFont, Font bFont, boolean showImage, boolean showHelpLinks) {
     return createInfoText(prog,doc,fieldArr,tFont,bFont,new ProgramPanelSettings(showImage ? ProgramPanelSettings.SHOW_PICTURES_EVER : ProgramPanelSettings.SHOW_PICTURES_NEVER, -1, -1, false, true, 10),showHelpLinks, 100);
   }
-  
+
   /**
-   * 
+   *
    * @param prog
    *          The Program to show
    * @param doc
@@ -111,22 +113,22 @@ public class ProgramTextCreator {
    *          The title Font.
    * @param bFont
    *          The body Font.
-   * @param settings 
-   *          Settings of the ProgramPanel 
+   * @param settings
+   *          Settings of the ProgramPanel
    * @param showHelpLinks
    *          Show the Help-Links (Quality of Data, ShowView)
    * @param zoom The zoom value for the picture.
    * @return The HTML String.
    * @since 2.2.2
    */
-  public static String createInfoText(Program prog, ExtendedHTMLDocument doc, 
-      Object[] fieldArr, Font tFont, Font bFont, ProgramPanelSettings settings, 
+  public static String createInfoText(Program prog, ExtendedHTMLDocument doc,
+      Object[] fieldArr, Font tFont, Font bFont, ProgramPanelSettings settings,
       boolean showHelpLinks, int zoom) {
     return createInfoText(prog,doc,fieldArr,tFont,bFont,settings,showHelpLinks, zoom, true);
   }
 
   /**
-   * 
+   *
    * @param prog
    *          The Program to show
    * @param doc
@@ -137,22 +139,22 @@ public class ProgramTextCreator {
    *          The title Font.
    * @param bFont
    *          The body Font.
-   * @param settings 
-   *          Settings of the ProgramPanel 
+   * @param settings
+   *          Settings of the ProgramPanel
    * @param showHelpLinks
    *          Show the Help-Links (Quality of Data, ShowView)
    * @param zoom The zoom value for the picture.
    * @return The HTML String.
    * @since 2.6
    */
-  public static String createInfoText(Program prog, ExtendedHTMLDocument doc, 
-      Object[] fieldArr, Font tFont, Font bFont, PluginPictureSettings settings, 
+  public static String createInfoText(Program prog, ExtendedHTMLDocument doc,
+      Object[] fieldArr, Font tFont, Font bFont, PluginPictureSettings settings,
       boolean showHelpLinks, int zoom) {
     return createInfoText(prog,doc,fieldArr,tFont,bFont,new ProgramPanelSettings(settings,false),showHelpLinks, zoom, true);
   }
-  
+
   /**
-   * 
+   *
    * @param prog
    *          The Program to show
    * @param doc
@@ -172,15 +174,15 @@ public class ProgramTextCreator {
    * @return The HTML String.
    * @since 2.5.3
    */
-  public static String createInfoText(Program prog, ExtendedHTMLDocument doc, 
-      Object[] fieldArr, Font tFont, Font bFont, ProgramPanelSettings settings, 
+  public static String createInfoText(Program prog, ExtendedHTMLDocument doc,
+      Object[] fieldArr, Font tFont, Font bFont, ProgramPanelSettings settings,
       boolean showHelpLinks, int zoom, boolean showPluginIcons) {
     return createInfoText(prog, doc, fieldArr, tFont, bFont, settings,
         showHelpLinks, zoom, showPluginIcons, true);
   }
 
   /**
-   * 
+   *
    * @param prog
    *          The Program to show
    * @param doc
@@ -242,18 +244,18 @@ public class ProgramTextCreator {
     buffer.append(";").append(getCssStyle(bodyStyle)).append("\"><tr>");
     buffer.append("<td width=\"60\">");
     buffer.append("<p \"align=center\">");
-    
+
     JLabel channelLogo = new JLabel(prog.getChannel().getIcon());
     channelLogo.setToolTipText(prog.getChannel().getName());
     buffer.append(doc.createCompTag(channelLogo));
-    
+
     buffer.append("</p></td><td><table width=\"100%\" border=\""+ debugTables +"\"><tr><td>");
     buffer.append("<div style=\"color:#ff0000; font-size:");
 
     buffer.append(mBodyFontSize);
 
     buffer.append(";\"><b>");
-    
+
     Date currentDate = Date.getCurrentDate();
     Date programDate = prog.getDate();
     if(programDate.equals(currentDate.addDays(-1))) {
@@ -269,7 +271,7 @@ public class ProgramTextCreator {
       buffer.append(" · ");
     }
     buffer.append(prog.getDateString());
-    
+
     buffer.append(" · ");
     buffer.append(prog.getTimeString());
     if (prog.getLength() > 0) {
@@ -290,7 +292,7 @@ public class ProgramTextCreator {
     buffer.append("</div>");
 
     String episode = CompoundedProgramFieldType.EPISODE_COMPOSITION.getFormattedValueForProgram(prog);
-    
+
     if (episode != null && episode.trim().length() > 0) {
       buffer.append("<div style=\"color:#808080; font-size:");
 
@@ -326,15 +328,15 @@ public class ProgramTextCreator {
     });
     btn.setEnabled(ProgramInfo.getInstance().canNavigateForward());
     btn.setToolTipText(ProgramInfo.getInstance().navigationForwardText());
-    
+
     buffer.append("</td></tr></table></td></tr></table></td></tr>");
 
     boolean show = false;
-    
+
     if(settings.isShowingPictureForPlugins()) {
       String[] pluginIds = settings.getPluginIds();
       Marker[] markers = prog.getMarkerArr();
-      
+
       if(markers != null && pluginIds != null) {
         for (Marker marker : markers) {
           for (String pluginId : pluginIds) {
@@ -346,10 +348,10 @@ public class ProgramTextCreator {
         }
       }
     }
-    
+
     Color foreground = Settings.propProgramPanelForegroundColor.getColor();
-    
-    if(settings.isShowingPictureEver() || 
+
+    if(settings.isShowingPictureEver() ||
       (settings.isShowingPictureInTimeRange() && !ProgramUtilities.isNotInTimeRange(settings.getPictureTimeRangeStart(),settings.getPictureTimeRangeEnd(), prog)) ||
       show || (settings.isShowingPictureForDuration() && settings.getDuration() <= prog.getLength())) {
       byte[] image = prog.getBinaryField(ProgramFieldType.PICTURE_TYPE);
@@ -358,18 +360,18 @@ public class ProgramTextCreator {
         buffer.append(line);
         try {
           ImageIcon imageIcon = new ImageIcon(image);
-          
+
           if(zoom != 100) {
             imageIcon = (ImageIcon)UiUtilities.scaleIcon(imageIcon, imageIcon.getIconWidth() * zoom/100);
           }
-          
+
           StringBuilder value = new StringBuilder();
-            
+
           String textField = prog.getTextField(ProgramFieldType.PICTURE_COPYRIGHT_TYPE);
           if (textField != null) {
             value.append(textField);
           }
-          
+
           if (settings.isShowingPictureDescription()) {
               textField = prog
                   .getTextField(ProgramFieldType.PICTURE_DESCRIPTION_TYPE);
@@ -377,7 +379,7 @@ public class ProgramTextCreator {
                 value.append("<br>").append(textField);
               }
           }
-                    
+
           buffer.append(doc.createCompTag(new JLabel(imageIcon)));
           buffer.append("<div style=\"font-size:");
 
@@ -385,7 +387,7 @@ public class ProgramTextCreator {
 
           buffer.append("\">");
           buffer.append(value);
-          buffer.append("</div>");          
+          buffer.append("</div>");
           buffer.append("</td></tr>");
         } catch (Exception e) {
           // Picture was wrong;
@@ -505,7 +507,7 @@ public class ProgramTextCreator {
             // Empty Catch
           }
         }
-        
+
         if (type == null) {
           int length = prog.getLength();
           if (length > 0 && ((String) id).trim().length() > 0) {
@@ -547,16 +549,16 @@ public class ProgramTextCreator {
       } else if(id instanceof CompoundedProgramFieldType) {
         CompoundedProgramFieldType value = (CompoundedProgramFieldType) id;
         String entry = value.getFormattedValueForProgram(prog);
-        
+
         if(entry != null) {
           startInfoSection(buffer, value.getName());
           buffer.append(HTMLTextHelper.convertTextToHtml(entry, false));
-          
+
           addSeparator(doc,buffer);
         }
       }
       else {
-        type = (ProgramFieldType) id;      
+        type = (ProgramFieldType) id;
 
         if (type == ProgramFieldType.DESCRIPTION_TYPE) {
           String description = checkDescription(prog.getDescription());
@@ -574,44 +576,44 @@ public class ProgramTextCreator {
           if ((info != -1) && (info != 0)) {
             buffer
                 .append("<tr><td valign=\"top\" style=\"color:gray; font-size:");
-  
+
             buffer.append(mBodyFontSize);
-  
+
             buffer.append("\"><b>");
             buffer
                 .append(type.getLocalizedName());
             buffer
                 .append("</b></td><td valign=\"middle\" style=\"font-size:5\">");
-  
+
             openPara(buffer, "info");
             // Workaround: Without the &nbsp; the component are not put in one
             // line.
             buffer.append("&nbsp;");
-  
+
             int[] infoBitArr = ProgramInfoHelper.getInfoBits();
             Icon[] infoIconArr = ProgramInfoHelper.getInfoIcons();
             String[] infoMsgArr = ProgramInfoHelper.getInfoIconMessages();
-  
+
             for (int i = 0; i < infoBitArr.length; i++) {
               if (ProgramInfoHelper.bitSet(info, infoBitArr[i])) {
                 JLabel iconLabel;
-                
-                if (infoIconArr[i] != null) {  
+
+                if (infoIconArr[i] != null) {
                   iconLabel = new JLabel(infoIconArr[i]);
                 }
                 else {
                   iconLabel = new JLabel(infoMsgArr[i]);
                 }
-                
+
                 iconLabel.setToolTipText(infoMsgArr[i]);
                 buffer.append(doc.createCompTag(iconLabel));
 
                 buffer.append("&nbsp;&nbsp;");
               }
             }
-  
+
             closePara(buffer);
-  
+
             buffer.append("</td></tr>");
             addSeparator(doc, buffer);
           }
@@ -790,8 +792,8 @@ public class ProgramTextCreator {
         String part1 = actor;
         String part2 = "";
         if (actor.contains("\t")) {
-          part1 = actor.substring(0, actor.indexOf("\t")).trim();
-          part2 = actor.substring(actor.indexOf("\t")).trim();
+          part1 = StringUtils.substringBefore(actor,"\t").trim();
+          part2 = StringUtils.substringAfter(actor,"\t").trim();
         }
         else if (actor.contains("(") && actor.contains(")")) {
           part1 = actor.substring(0, actor.indexOf("(")).trim();
@@ -810,13 +812,13 @@ public class ProgramTextCreator {
 
   private static String addSearchLink(String topic, String displayText) {
     Color foreground = Settings.propProgramPanelForegroundColor.getColor();
-    
+
     String style = " style=\"color:rgb("+ foreground.getRed() + "," + foreground.getGreen() + "," + foreground.getBlue() + "); border-bottom: 1px dashed;\"";
       StringBuilder buffer = new StringBuilder(32);
       buffer.append("<a href=\"");
       buffer.append(TVBROWSER_URL_PROTOCOL);
       buffer.append(topic.replaceAll("\"", "").replaceAll("'", ""));
-      
+
       buffer.append("\" ");
       buffer.append(style);
       buffer.append('>');
@@ -831,7 +833,7 @@ public class ProgramTextCreator {
     }
     return addSearchLink(topic, topic);
   }
-  
+
   private static void addEntry(ExtendedHTMLDocument doc, StringBuilder buffer,
       Program prog, ProgramFieldType fieldType, boolean showHelpLinks,
       boolean showPersonLinks) {
@@ -917,7 +919,7 @@ public class ProgramTextCreator {
           }
         }
       }
-      
+
     } else if (fieldType.getFormat() == ProgramFieldType.TIME_FORMAT) {
       text = prog.getTimeFieldAsString(fieldType);
     } else if (fieldType.getFormat() == ProgramFieldType.INT_FORMAT) {
@@ -960,10 +962,10 @@ public class ProgramTextCreator {
           name = ProgramFieldType.LAST_PRODUCTION_YEAR_TYPE.getLocalizedName();
           text = temp;
         } else {
-         
+
           text += " - " + temp;
         }
-      }      
+      }
     }
 
     if (text == null || text.trim().length() < 1) {
@@ -973,7 +975,7 @@ public class ProgramTextCreator {
         return;
       }
     }
-    
+
     startInfoSection(buffer, name);
 
     // add person links
@@ -1031,7 +1033,7 @@ public class ProgramTextCreator {
     } else {
       buffer.append(HTMLTextHelper.convertTextToHtml(text, createLinks));
     }
-    
+
     if ((ProgramFieldType.CUSTOM_TYPE == fieldType) && (showHelpLinks)) {
       buffer.append(" (<a href=\"").append(
           mLocalizer.msg("customInfo",
@@ -1058,7 +1060,7 @@ public class ProgramTextCreator {
   /**
    * remove line breaks from description texts which are formatted as block text
    * with lines up to around 80 characters
-   * 
+   *
    * @param text
    * @return floating text
    */
@@ -1084,7 +1086,7 @@ public class ProgramTextCreator {
 
   private static void startInfoSection(StringBuilder buffer, String section) {
     Color foreground = Settings.propProgramPanelForegroundColor.getColor();
-    
+
     buffer.append("<tr><td valign=\"top\" style=\"color:#808080; font-size:");
     buffer.append(mBodyFontSize);
     buffer.append("\"><b>");
@@ -1138,7 +1140,7 @@ public class ProgramTextCreator {
         ProgramFieldType.AGE_LIMIT_TYPE,
         ProgramFieldType.INFO_TYPE,
         ProgramFieldType.VPS_TYPE,
-        ProgramFieldType.CUSTOM_TYPE, 
+        ProgramFieldType.CUSTOM_TYPE,
         getDurationTypeString()}));
     // append missing fields (which may have been added in recent versions)
     for (Iterator<ProgramFieldType> iterator = ProgramFieldType.getTypeIterator(); iterator.hasNext();) {
