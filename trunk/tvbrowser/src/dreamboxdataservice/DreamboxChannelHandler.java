@@ -30,6 +30,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import org.apache.commons.lang.StringUtils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -83,7 +84,7 @@ public class DreamboxChannelHandler extends DefaultHandler {
                     shortDesc = "";
                 }
 
-                if (shortDesc.length() == 0) {
+                if (StringUtils.isEmpty(shortDesc)) {
                     shortDesc = mCurrentEvent.get("e2eventdescriptionextended");
                 }
 

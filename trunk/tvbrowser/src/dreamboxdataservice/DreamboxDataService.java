@@ -43,6 +43,7 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.StringUtils;
 import org.xml.sax.SAXException;
 
 import tvdataservice.SettingsPanel;
@@ -89,7 +90,7 @@ public class DreamboxDataService extends AbstractTvDataService {
     public void updateTvData(TvDataUpdateManager updateManager, Channel[] channelArr, Date startDate, int dateCount, ProgressMonitor monitor) throws TvBrowserException {
         String ip = mProperties.getProperty("ip", "").trim();
 
-        if (ip.length() != 0) {
+        if (StringUtils.isNotEmpty(ip)) {
             int max = channelArr.length;
 
             monitor.setMaximum(max);
@@ -163,7 +164,7 @@ public class DreamboxDataService extends AbstractTvDataService {
 
     public Channel[] checkForAvailableChannels(ChannelGroup group, ProgressMonitor monitor) throws TvBrowserException {
         String ip = mProperties.getProperty("ip", "").trim();
-        if (ip.length() != 0) {
+        if (StringUtils.isNotEmpty(ip)) {
             mChannels = getChannels();
         } else {
             mChannels = new ArrayList<Channel>();

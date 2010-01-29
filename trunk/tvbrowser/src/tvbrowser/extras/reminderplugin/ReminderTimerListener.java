@@ -40,6 +40,8 @@ import java.util.logging.Logger;
 
 import javax.swing.SwingUtilities;
 
+import org.apache.commons.lang.StringUtils;
+
 import util.exc.ErrorHandler;
 import util.io.ExecutionHandler;
 import util.io.IOUtilities;
@@ -96,7 +98,7 @@ public class ReminderTimerListener {
     }
     if ("true".equals(mSettings.getProperty("useexec"))) {
       String fName = mSettings.getProperty("execfile", "").trim();
-      if (!fName.equals("")) {
+      if (StringUtils.isNotEmpty(fName)) {
         for (ReminderListItem reminder : reminders) {
           ParamParser parser = new ParamParser();
           String fParam = parser.analyse(
@@ -116,7 +118,7 @@ public class ReminderTimerListener {
         mLog.warning("Reminder program name is not defined!");
       }
     }
-    
+
     // send to receiving plugins
     ProgramReceiveTarget[] targets = ReminderPlugin.getInstance()
         .getClientPluginsTargets();
@@ -133,7 +135,7 @@ public class ReminderTimerListener {
             target);
       }
     }
-    
+
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         new Thread("Update reminder tree") {
@@ -162,12 +164,12 @@ public class ReminderTimerListener {
      */
     private int getAutoCloseReminderTime(Program p) {
       int autoCloseReminderTime = 0;
-      try {        
+      try {
         if(mSettings.getProperty("autoCloseBehaviour","onEnd").equals("onEnd")) {
           int endTime = p.getStartTime() + p.getLength();
-          
+
           int currentTime = IOUtilities.getMinutesAfterMidnight();
-          int dateDiff = p.getDate().compareTo(Date.getCurrentDate()); 
+          int dateDiff = p.getDate().compareTo(Date.getCurrentDate());
           if (dateDiff == -1) { // program started yesterday
             currentTime += 1440;
           }
@@ -178,7 +180,7 @@ public class ReminderTimerListener {
         }
         else if(mSettings.getProperty("autoCloseBehaviour","onTime").equals("onTime")){
           String asString = mSettings.getProperty("autoCloseReminderTime", "10");
-          autoCloseReminderTime = Integer.parseInt(asString);          
+          autoCloseReminderTime = Integer.parseInt(asString);
         } else {
           autoCloseReminderTime = 0;
         }

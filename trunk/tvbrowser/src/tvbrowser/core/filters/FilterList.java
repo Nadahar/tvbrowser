@@ -36,6 +36,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Logger;
 
+import org.apache.commons.lang.StringUtils;
+
 import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginManagerImpl;
 import tvbrowser.ui.mainframe.searchfield.SearchFilter;
@@ -320,7 +322,7 @@ public class FilterList {
     String filterId = Settings.propDefaultFilter.getString();
     String filterName = null;
 
-    if (filterId != null && !filterId.equals("")) {
+    if (StringUtils.isNotEmpty(filterId)) {
       String[] filterValues = filterId.split("###");
       filterId = shortFilterClassName(filterValues[0]);
       filterName = filterValues[1];

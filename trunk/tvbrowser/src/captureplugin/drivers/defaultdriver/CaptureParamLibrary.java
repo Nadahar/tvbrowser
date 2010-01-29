@@ -1,6 +1,6 @@
 /*
  * CapturePlugin by Andreas Hessel (Vidrec@gmx.de), Bodo Tasche
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -24,18 +24,20 @@
  */
 package captureplugin.drivers.defaultdriver;
 
-import captureplugin.CapturePlugin;
 import java.util.Calendar;
 import java.util.Collection;
 
+import org.apache.commons.lang.StringUtils;
+
 import util.paramhandler.ParamLibrary;
 import util.ui.Localizer;
+import captureplugin.CapturePlugin;
 import captureplugin.drivers.utils.ProgramTime;
 import devplugin.Program;
 
 /**
  * This Class extends the ParamLibrary with Capture-Plugin-Specific Parameters.
- * 
+ *
  * @author bodum
  */
 public class CaptureParamLibrary extends ParamLibrary {
@@ -46,12 +48,12 @@ public class CaptureParamLibrary extends ParamLibrary {
   private ProgramTime mPrgTime;
   /** Configuration */
   private DeviceConfig mConfig;
-  
+
   /** Start-Time */
   private Calendar mEndTime;
   /** End-Time */
   private Calendar mStartTime;
-  
+
   /**
    * Create the ParamLibrary
    * @param config Configuration
@@ -59,7 +61,7 @@ public class CaptureParamLibrary extends ParamLibrary {
   public CaptureParamLibrary(DeviceConfig config) {
     mConfig = config;
   }
-  
+
   /**
    * Create the ParamLibrary
    * @param config Configuration
@@ -80,13 +82,13 @@ public class CaptureParamLibrary extends ParamLibrary {
     mEndTime.setTime(prgTime.getEnd());
     mStartTime = Calendar.getInstance();
     mStartTime.setTime(prgTime.getStart());
-    
+
     if (mConfig.useTimeZone()) {
       mEndTime.setTimeZone(mConfig.getTimeZone());
       mStartTime.setTimeZone(mConfig.getTimeZone());
     }
   }
-  
+
   /**
    * Get the ProgramTime this ParamLibrary uses to calculate start/endtime
    * @return ProgramTime
@@ -94,49 +96,49 @@ public class CaptureParamLibrary extends ParamLibrary {
   public ProgramTime getProgramTime() {
     return mPrgTime;
   }
-  
+
   public String getDescriptionForFunctions(String function) {
     String translation = mLocalizer.msg("function_" + function, "", false);
     if (translation.startsWith("[CaptureParamLibrary.function")) {
       return super.getDescriptionForFunctions(function);
     }
-    
+
     return translation;
   }
 
   public String[] getPossibleFunctions() {
     String[] additionalKeys = {"variable"};
-    
+
     return concat(super.getPossibleFunctions(), additionalKeys);
   }
 
   public String getStringForFunction(Program prg, String function, String[] params) {
-    
+
     if (function.equals("variable")) {
       if (params.length != 1) {
         setErrors(true);
         setErrorString(mLocalizer.msg("variable_Wrong_Usage", "Wrong usage of command variable. Only one Param is allowed"));
         return null;
       }
-      
+
       try {
         int i = Integer.parseInt(params[0]);
         final Collection<Variable> variables = mConfig.getVariables();
         Variable[] varArray = variables.toArray(new Variable[variables.size()]);
-        
+
         if (varArray.length < i) {
           return "";
         }
-        
+
         return varArray[i-1].getValue();
       } catch (Exception e) {
         setErrors(true);
         setErrorString(mLocalizer.msg("variable_Not_A_Number", "The variable-Command needs a Number."));
         return null;
       }
-      
+
     }
-    
+
     return super.getStringForFunction(prg, function, params);
   }
 
@@ -145,14 +147,14 @@ public class CaptureParamLibrary extends ParamLibrary {
     if (translation.startsWith("[CaptureParamLibrary.parameter")) {
       return super.getDescriptionForKey(key);
     }
-    
+
     return translation;
   }
 
 
   public String[] getPossibleKeys() {
     String[] additionalKeys = {"channel_name_external","channel_name_external_quiet" , "device_username", "device_password"};
-    
+
     return concat(super.getPossibleKeys(), additionalKeys);
   }
 
@@ -200,12 +202,12 @@ public class CaptureParamLibrary extends ParamLibrary {
    * @return UserName
    */
   private String getUserName() {
-    if ((mConfig.getUserName() == null) || (mConfig.getUserName().length() == 0)) {
+    if (StringUtils.isEmpty(mConfig.getUserName())) {
       setErrors(true);
       setErrorString(mLocalizer.msg("NoUser", "Please specify Username!"));
       return null;
     }
-    
+
     return mConfig.getUserName();
   }
 
@@ -214,15 +216,15 @@ public class CaptureParamLibrary extends ParamLibrary {
    * @return Password
    */
   private String getPassword() {
-    if ((mConfig.getPassword() == null) || (mConfig.getPassword().length() == 0)) {
+    if (StringUtils.isEmpty(mConfig.getPassword())) {
       setErrors(true);
       setErrorString(mLocalizer.msg("NoPwd", "Please specify Password!"));
       return null;
     }
-    
+
     return mConfig.getPassword();
   }
-  
+
   /**
    * Get the external ChannelName
    * @param prg Program to get the external ChannelName for
@@ -230,9 +232,9 @@ public class CaptureParamLibrary extends ParamLibrary {
    * @return external ChannelName
    */
   private String getExternalChannelName(Program prg, boolean showError) {
-    if (prg.equals(CapturePlugin.getInstance().getPluginManager().getExampleProgram())) {
+    if (prg.equals(CapturePlugin.getPluginManager().getExampleProgram())) {
       return "WaltonTV";
-    } else if ((mConfig.getChannels().get(prg.getChannel()) == null) || ((mConfig.getChannels().get(prg.getChannel())).length() == 0)) {
+    } else if (StringUtils.isEmpty(mConfig.getChannels().get(prg.getChannel()))) {
 
       if (showError) {
         setErrors(true);
@@ -242,10 +244,10 @@ public class CaptureParamLibrary extends ParamLibrary {
         return "";
       }
     }
-    
+
     return mConfig.getChannels().get(prg.getChannel());
   }
-  
+
   /**
    * concatenates two String-Arrays
    * @param ar1 Array One

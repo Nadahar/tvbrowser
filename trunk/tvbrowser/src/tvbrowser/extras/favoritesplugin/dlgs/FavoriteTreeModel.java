@@ -40,6 +40,8 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
+import org.apache.commons.lang.StringUtils;
+
 import tvbrowser.extras.common.ReminderConfiguration;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.favoritesplugin.FavoritesPluginProxy;
@@ -103,7 +105,7 @@ public class FavoriteTreeModel extends DefaultTreeModel {
    */
   private static void fixRootNode(final FavoriteNode rootNode) {
     String rootLabel = mLocalizer.msg("rootLabel", "All favorites");
-    if (rootLabel.length() == 0) {
+    if (StringUtils.isEmpty(rootLabel)) {
       rootLabel = "FAVORITES_ROOT";
     }
     rootNode.setUserObject(rootLabel);
@@ -331,7 +333,7 @@ public class FavoriteTreeModel extends DefaultTreeModel {
       description = description + "  " + p.getTitle();
     }
     String episode = p.getTextField(ProgramFieldType.EPISODE_TYPE);
-    if (episode != null && (! episode.trim().equalsIgnoreCase(""))) {
+    if (StringUtils.isNotBlank(episode)) {
       if (episode.length()<=3) {
         episode = ProgramFieldType.EPISODE_TYPE.getLocalizedName() + " " + episode;
       }
@@ -407,7 +409,7 @@ public class FavoriteTreeModel extends DefaultTreeModel {
             boolean episodeOnly = progArr.length > 1;
             for (Program program : progArr) {
               String episode = program.getTextField(ProgramFieldType.EPISODE_TYPE);
-              if (episode == null || episode.length() == 0 || episode.trim().length() == 0) {
+              if (StringUtils.isBlank(episode)) {
                 episodeOnly = false;
                 break;
               }

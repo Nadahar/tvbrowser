@@ -49,6 +49,7 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.StringUtils;
 import org.xml.sax.SAXException;
 
 import util.io.IOUtilities;
@@ -330,7 +331,7 @@ public class DreamboxConnector {
      */
     private long getLong(String longStr) {
         if (longStr.contains(".")) {
-            longStr = longStr.substring(0, longStr.indexOf('.'));
+            longStr = StringUtils.substringBefore(longStr, ".");
         }
 
         try {
@@ -550,7 +551,7 @@ public class DreamboxConnector {
       return false;
     }
     boolean success = false;
-    
+
     if (new File(mConfig.getMediaplayer()).exists()) {
       try {
         final URL url = new URL("http://" + mConfig.getDreamboxAddress() + "/web/stream.m3u?ref=" + URLEncoder.encode(channel.getReference(), "UTF8"));
@@ -567,7 +568,7 @@ public class DreamboxConnector {
         e.printStackTrace();
       }
     }
-    
+
     return success;
   }
 }

@@ -1,6 +1,6 @@
 /*
  * CapturePlugin by Andreas Hessel (Vidrec@gmx.de), Bodo Tasche
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -32,6 +32,8 @@ import java.util.TreeMap;
 
 import javax.swing.table.AbstractTableModel;
 
+import org.apache.commons.lang.ArrayUtils;
+
 import util.ui.Localizer;
 import captureplugin.drivers.defaultdriver.DeviceConfig;
 import devplugin.Channel;
@@ -44,13 +46,13 @@ import devplugin.PluginManager;
 public class ChannelTableModel extends AbstractTableModel {
     /** Translator */
     private static final Localizer mLocalizer = Localizer.getLocalizerFor(ChannelTableModel.class);
-    
+
     /** Data */
     private DeviceConfig mData;
 
     /** The Rows in the TableModel */
     private ArrayList<Channel> mChannelRows;
-    
+
     /**
      * creates a new ChannelTableModel
      * @param data Configuration
@@ -77,9 +79,9 @@ public class ChannelTableModel extends AbstractTableModel {
             }
         }
         mData.setChannels(channels);
-        
+
         mChannelRows = new ArrayList<Channel>();
-        
+
         Iterator<Channel> it = mData.getChannels().keySet().iterator();
         Channel key;
 
@@ -87,29 +89,14 @@ public class ChannelTableModel extends AbstractTableModel {
             key = it.next();
             mChannelRows.add(key);
         }
-        
+
         Collections.sort(mChannelRows, new Comparator<Channel>() {
           public int compare(Channel a, Channel b) {
-            int aPos = 0;
-            int bPos = 0;
-            
-            int counter = 0;
-            
-            while(counter < channelArray.length && !channelArray[counter].equals(a)) {
-              aPos = counter++;
-            }
-            
-            counter = 0;
-            
-            while(counter < channelArray.length && !channelArray[counter].equals(b)) {
-              bPos = counter++;
-            }
-            
-            return aPos - bPos;
+            return ArrayUtils.indexOf(channelArray, a) - ArrayUtils.indexOf(channelArray, b);
           }
         });
     }
-    
+
     /**
      * return the "Internal Name" for col 0, "External Name" for col 1
      */
@@ -138,15 +125,15 @@ public class ChannelTableModel extends AbstractTableModel {
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         return columnIndex == 1;
     }
-    
+
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-      
+
       Channel key = getKeyForRow(rowIndex);
-      
+
       if (key != null) {
         mData.getChannels().put(key, (String)aValue);
       }
-      
+
       super.setValueAt(aValue, rowIndex, columnIndex);
     }
 
@@ -162,7 +149,7 @@ public class ChannelTableModel extends AbstractTableModel {
           return mData.getChannels().get(key);
         }
     }
-    
+
     /**
      * Get the Channel for a specific Row
      * @param row Row to get Channel for

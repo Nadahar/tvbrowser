@@ -6,12 +6,14 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Properties;
 
+import org.apache.commons.lang.StringUtils;
+
 import devplugin.Program;
 
 /**
  * This class helps guessing the category (movie, series, show) for a program
  * using the genre
- * 
+ *
  * @since 2.6
  */
 public class InfoCategoryParser {
@@ -65,10 +67,10 @@ public class InfoCategoryParser {
   public int getCategory(String genreText) {
     genreText = genreText.trim().replaceAll("(-| )", "").toLowerCase();
 
-    if (genreText.length() == 0) {
+    if (StringUtils.isEmpty(genreText)) {
       return 0;
     }
-    
+
     String[] genreParts = genreText.split(",");
     for (int part = 0; part < genreParts.length; part++) {
       String genre = genreParts[part].trim();

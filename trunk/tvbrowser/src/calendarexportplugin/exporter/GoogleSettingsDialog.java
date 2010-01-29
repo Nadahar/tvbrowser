@@ -16,6 +16,8 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import org.apache.commons.lang.StringUtils;
+
 import util.exc.ErrorHandler;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
@@ -115,7 +117,7 @@ public class GoogleSettingsDialog extends JDialog  implements WindowClosingIf {
     v.add(new GoogleComboboxItem( 2880, mLocalizer.msg("2880_minutes","2 days")));
     v.add(new GoogleComboboxItem(10080, mLocalizer.msg("10080_minutes","1 week")));
     mRemindMinutes = new JComboBox(v);
-    
+
     String minutes = settings.getExporterProperty(GoogleExporter.REMINDERMINUTES);
     for (GoogleComboboxItem item : v) {
       if (item.getKey().equals(minutes)) {
@@ -237,7 +239,7 @@ public class GoogleSettingsDialog extends JDialog  implements WindowClosingIf {
       CalendarEntry entry = resultFeed.getEntries().get(i);
 
       String id = entry.getId();
-      id = id.substring(id.lastIndexOf('/') + 1);
+      id = StringUtils.substringAfterLast(id, "/");
 
       model.addElement(new GoogleComboboxItem(id, entry.getTitle().getPlainText()));
 

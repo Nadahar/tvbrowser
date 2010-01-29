@@ -33,6 +33,8 @@ import java.io.ObjectOutputStream;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
+import org.apache.commons.lang.StringUtils;
+
 import util.ui.ImageUtilities;
 import devplugin.Plugin;
 
@@ -47,7 +49,7 @@ public final class WebAddress implements Cloneable {
   private String mUrl;
 
   /** Icon */
-  private String mIconFile;
+  private String mIconFileName;
 
   /** Name */
   private String mName;
@@ -65,7 +67,7 @@ public final class WebAddress implements Cloneable {
 
   /**
    * Create the Address
-   * 
+   *
    * @param name
    *          Name
    * @param url
@@ -79,7 +81,7 @@ public final class WebAddress implements Cloneable {
    */
   public WebAddress(String name, String url, String iconFile, boolean userEntry, boolean active) {
     mName = name;
-    mIconFile = iconFile;
+    mIconFileName = iconFile;
     mUrl = url;
     mUserEntry = userEntry;
     mActive = active;
@@ -92,7 +94,7 @@ public final class WebAddress implements Cloneable {
    */
   public WebAddress(WebAddress address) {
     mName = address.getName();
-    mIconFile = address.getIconFile();
+    mIconFileName = address.getIconFile();
     mUrl = address.getUrl();
     mUserEntry = address.isUserEntry();
     mActive = address.isActive();
@@ -101,8 +103,8 @@ public final class WebAddress implements Cloneable {
   /**
    * Create a WebAddress with a Stream
    * @param in Input-Stream
-   * @throws IOException 
-   * @throws ClassNotFoundException 
+   * @throws IOException
+   * @throws ClassNotFoundException
    */
   public WebAddress(ObjectInputStream in) throws IOException, ClassNotFoundException {
     readData(in);
@@ -125,13 +127,13 @@ public final class WebAddress implements Cloneable {
   }
 
   public void setIconFile(String iconFile) {
-    mIconFile = iconFile;
+    mIconFileName = iconFile;
     // reset currently loaded icon
     mIcon = null;
   }
 
   public String getIconFile() {
-    return mIconFile;
+    return mIconFileName;
   }
 
   public Icon getIcon() {
@@ -143,29 +145,29 @@ public final class WebAddress implements Cloneable {
       DEFAULT_ICON = WebPlugin.getInstance().createImageIcon("actions", "web-search", 16);
     }
 
-    if (mIconFile == null || mIconFile.length() == 0) { return DEFAULT_ICON; }
+    if (StringUtils.isEmpty(mIconFileName)) { return DEFAULT_ICON; }
 
     try {
       StringBuilder filePath = new StringBuilder(Plugin.getPluginManager()
           .getTvBrowserSettings().getTvBrowserUserHome());
-      filePath.append(File.separator).append("WebFavIcons").append(File.separator).append(mIconFile);
-      
+      filePath.append(File.separator).append("WebFavIcons").append(File.separator).append(mIconFileName);
+
       mIcon = new ImageIcon(ImageUtilities.createImageAsynchronous(filePath.toString()));
       if ((mIcon != null) && (mIcon.getIconWidth() > 0)) {
         return mIcon;
       }
     } catch (Exception e) {
     }
-    
+
     mIcon = null;
     return DEFAULT_ICON;
   }
 
   public boolean isActive() {
 
-    if ((mUrl == null) || (mUrl.trim().length() == 0)) { return false; }
+    if (StringUtils.isBlank(mUrl)) { return false; }
 
-    if (mName.trim().length() == 0) { return false; }
+    if (StringUtils.isBlank(mName)) { return false; }
 
     return mActive;
   }
@@ -194,19 +196,19 @@ public final class WebAddress implements Cloneable {
     int version = in.readInt();
 
     mName = (String) in.readObject();
-    mIconFile = (String) in.readObject();
-    
-    if(version  == 2 && mIconFile != null) {
-      File iconFile = new File(mIconFile);
-      
+    mIconFileName = (String) in.readObject();
+
+    if(version  == 2 && mIconFileName != null) {
+      File iconFile = new File(mIconFileName);
+
       if(iconFile.isFile())
-        mIconFile = iconFile.getName();
+        mIconFileName = iconFile.getName();
       else
-        mIconFile = "";
+        mIconFileName = "";
     }
-    
+
     mUrl = (String) in.readObject();
-    
+
     if (version == 1) {
       String encoding = (String) in.readObject();
       mUrl = mUrl.replaceAll("\\{0\\}", "{urlencode(title, \""+encoding+"\")}");
@@ -219,7 +221,7 @@ public final class WebAddress implements Cloneable {
     out.writeInt(3);
 
     out.writeObject(mName);
-    out.writeObject(mIconFile);
+    out.writeObject(mIconFileName);
     out.writeObject(mUrl);
     out.writeBoolean(mUserEntry);
     out.writeBoolean(mActive);

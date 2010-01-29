@@ -46,6 +46,8 @@ import java.util.logging.Logger;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
+import org.apache.commons.lang.StringUtils;
+
 import tvbrowser.core.plugin.AbstractPluginProxy;
 import tvbrowser.core.plugin.BeanShellPluginProxy;
 import tvbrowser.core.plugin.JavaPluginProxy;
@@ -85,9 +87,9 @@ public class PluginLoader {
   private HashMap<Object, File> mDeleteablePlugin;
 
   private ArrayList<PluginProxy> loadedProxies;
-  
+
   private ArrayList<String> mNewInstalledPlugins = new ArrayList<String>();
-  
+
   private PluginLoader() {
     mSuccessfullyLoadedPluginFiles = new HashSet<String>();
     mDeleteablePlugin = new HashMap<Object, File>();
@@ -122,7 +124,7 @@ public class PluginLoader {
       String fileName = file.getAbsolutePath();
       String oldFileName = fileName.substring(0, fileName.length() - PLUGIN_INSTALL_EXTENSION.length());
       File oldFile = new File(oldFileName);
-      
+
       // delete the old proxy, this will force loading of the new plugin (even if it's not active)
       String oldProxyName = getProxyFileName(oldFile);
       File oldProxy = new File(oldProxyName);
@@ -143,11 +145,11 @@ public class PluginLoader {
       if (!file.renameTo(oldFile)) {
         mLog.warning("Installing pending plugin failed: " + fileName);
       }
-      
+
       mNewInstalledPlugins.add(oldFileName);
     }
   }
-  
+
   private PluginProxy loadProxy(File proxyFile) {
     String lcFileName = proxyFile.getName().toLowerCase();
     if (!lcFileName.endsWith(".proxy")) {
@@ -181,7 +183,7 @@ public class PluginLoader {
       mLog.warning("cannot load plugin "+pluginFile.getAbsolutePath()+" - already loaded");
       return null;
     }
-    
+
     try {
       if (lcFileName.endsWith(".jar")) {
         plugin = loadJavaPlugin(pluginFile);
@@ -216,7 +218,7 @@ public class PluginLoader {
         if (deleteable) {
           mDeleteablePlugin.put(javaplugin, pluginFile);
         }
-        
+
         saveProxyInfo(pluginFile, javaplugin);
       }
       else if (plugin instanceof AbstractPluginProxy) {
@@ -250,21 +252,21 @@ public class PluginLoader {
    * read the contents of a proxy file to get the necessary
    * information about the plugin managed by this proxy to recreate
    * the proxy without the plugin actually being loaded
-   * 
+   *
    * @param proxyFile
    * @return pluginProxy
    */
   private JavaPluginProxy readPluginProxy(File proxyFile) {
     try {
       DataInputStream in = new DataInputStream(new BufferedInputStream(new FileInputStream(proxyFile)));
-      
+
       String name = in.readUTF();
       String author = in.readUTF();
       String description = in.readUTF();
       String license = in.readUTF();
-      
+
       DummyPlugin.setCurrentVersion(new Version(in));
-      
+
       String pluginId = in.readUTF();
       in.readLong(); // file size is unused
       String lcFileName = in.readUTF();
@@ -275,7 +277,7 @@ public class PluginLoader {
         deletePluginProxy(proxyFile);
         return null;
       }
-      
+
       // everything seems fine, create plugin proxy and plugin info
       PluginInfo info = new PluginInfo(DummyPlugin.class, name, description, author, license);
       // now get icon
@@ -305,7 +307,7 @@ public class PluginLoader {
       String proxyFileName = getProxyFileName(pluginFile);
       DataOutputStream out = new DataOutputStream(new
           BufferedOutputStream(new FileOutputStream(proxyFileName)));
-      
+
       PluginInfo info = proxy.getInfo();
       out.writeUTF(info.getName());
       out.writeUTF(info.getAuthor());
@@ -315,9 +317,9 @@ public class PluginLoader {
         license = "";
       }
       out.writeUTF(license);
-      
+
       info.getVersion().writeData(out); //write version
-      
+
       out.writeUTF(proxy.getId());
       out.writeLong(pluginFile.length());
       out.writeUTF(proxy.getPluginFileName());
@@ -342,13 +344,13 @@ public class PluginLoader {
    */
   private String getProxyIconFileName(File pluginFile) {
     String name = pluginFile.getName();
-    name = name.substring(0, name.indexOf('.'));
+    name = StringUtils.substringBefore(name,".");
     return Settings.getUserSettingsDirName() + File.separatorChar + name + ".icon.png";
   }
 
   /**
    * file name of the proxy file for a plugin
-   * 
+   *
    * @param pluginFile
    * @return proxy file name
    */
@@ -366,7 +368,7 @@ public class PluginLoader {
     if (loadedProxies == null) {
       loadedProxies = new ArrayList<PluginProxy>();
       final String[] deactivatedPluginArr = Settings.propDeactivatedPlugins.getStringArray();
-      
+
       // only check proxies if at least one plugin is not active
       if (deactivatedPluginArr != null && deactivatedPluginArr.length > 0) {
         File settingsDir = new File(Settings.getUserSettingsDirName());
@@ -397,7 +399,7 @@ public class PluginLoader {
         }
       }
     }
-    
+
     File[] fileArr = folder.listFiles(new FilenameFilter(){
       public boolean accept(File dir, String name) {
         return !("FavoritesPlugin.jar".equals(name)
@@ -428,9 +430,9 @@ public class PluginLoader {
   public void loadAllPlugins() {
 
     /* 0) delete all plugins the user doesn't want anymore */
-    
+
     String[] files = Settings.propDeleteFilesAtStart.getStringArray();
-    
+
     if ((files != null) && (files.length > 0)) {
       for (String file : files) {
         try {
@@ -440,11 +442,11 @@ public class PluginLoader {
           e.printStackTrace();
         }
       }
-      
+
       Settings.propDeleteFilesAtStart.setStringArray(new String[0]);
     }
-    
-    
+
+
     /* 1) load all plugins from the plugins folder in the user's home directory */
     String pluginsFolderName = Settings.propPluginsDirectory.getString();
     File f = new File(pluginsFolderName);
@@ -476,11 +478,11 @@ public class PluginLoader {
     // Create a class loader for the plugin
     ClassLoader classLoader;
     ClassLoader classLoader2 = null;
-    
+
     try {
       URL[] urls = new URL[] { jarFile.toURI().toURL() };
       classLoader = URLClassLoader.newInstance(urls, ClassLoader.getSystemClassLoader());
-      
+
       try {
         if(!new File(PLUGIN_DIRECTORY).equals(jarFile.getParentFile()) && new File(PLUGIN_DIRECTORY,jarFile.getName()).isFile()) {
           urls = new URL[] { new File(PLUGIN_DIRECTORY, jarFile.getName()).toURI().toURL() };
@@ -500,7 +502,7 @@ public class PluginLoader {
     }
 
     boolean isBlockedDataService = false;
-    
+
     // Create a plugin instance
     try {
       Class pluginClass = classLoader.loadClass(pluginName.toLowerCase() + "." + pluginName);
@@ -514,34 +516,34 @@ public class PluginLoader {
         mLog.warning("Did not load plugin " + pluginName + ", version is too old.");
         return null;
       }
-      
+
       if(pluginClass.getSuperclass().equals(devplugin.AbstractTvDataService.class) || classLoader2 != null) {
         getVersion = pluginClass.getMethod("getVersion",new Class[0]);
         version1 = (Version)getVersion.invoke(pluginClass, new Object[0]);
-        
+
         if(pluginClass.getSuperclass().equals(devplugin.AbstractTvDataService.class)) {
           isBlockedDataService = Settings.propBlockedPluginArray.isBlocked(pluginName.toLowerCase() + "." + pluginName, version1);
         }
       }
-      
+
       if(classLoader2 != null) {
         try {
           Class pluginClass2 = classLoader2.loadClass(pluginName.toLowerCase() + "." + pluginName);
           Method getVersion2 = pluginClass2.getMethod("getVersion",new Class[0]);
-          
+
           Version version2 = (Version)getVersion2.invoke(pluginClass2, new Object[0]);
-          
+
           if(version2.compareTo(version1) > 0) {
             return null;
-          }        
+          }
         }catch(Throwable t) {}
       }
-            
+
       try {
         Method preInstancing = pluginClass.getMethod("preInstancing",new Class[0]);
         preInstancing.invoke(pluginClass,new Object[0]);
       }catch(Throwable ti) {}
-      
+
       if(!isBlockedDataService) {
         plugin = pluginClass.newInstance();
       }
@@ -591,11 +593,11 @@ public class PluginLoader {
     File file = mDeleteablePlugin.get(plugin);
     if (file != null) {
       Settings.propDeleteFilesAtStart.addItem(file.toString());
-      
+
       // mark proxy file for deletion
       String proxyFile = getProxyFileName(file);
       Settings.propDeleteFilesAtStart.addItem(proxyFile);
-      
+
       mDeleteablePlugin.remove(plugin);
       return true;
     }

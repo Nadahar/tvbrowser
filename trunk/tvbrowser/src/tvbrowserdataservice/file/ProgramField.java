@@ -45,6 +45,8 @@ import javax.imageio.ImageWriter;
 import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
 import javax.imageio.stream.ImageOutputStream;
 
+import org.apache.commons.lang.StringUtils;
+
 import util.io.FileFormatException;
 import util.io.IOUtilities;
 import util.ui.UiUtilities;
@@ -84,21 +86,21 @@ public class ProgramField implements Cloneable {
         mDataFormat = ProgramFieldType.UNKNOWN_FORMAT;
         mType = null;
     }
-    
+
     /**
      * Used for creating an instance of ProgramField to
      * read/store the additional ProgramFrame id in.
-     * 
+     *
      * @param o Dummy parameter.
      * @since 2.2.2
      */
     protected ProgramField(Object o) {
       mDataFormat = ProgramFieldType.UNKNOWN_FORMAT;
-      mTypeId = 255;      
+      mTypeId = 255;
     }
 
     public static ProgramField create(ProgramFieldType type, String text) {
-        if ((text == null) || (text.length() == 0)) {
+        if (StringUtils.isEmpty(text)) {
             return null;
         }
 
@@ -172,7 +174,7 @@ public class ProgramField implements Cloneable {
             g2d.dispose();
 
             BufferedImage newImage = UiUtilities.scaleIconToBufferedImage(tempPic, newx, newy);
- 
+
             ByteArrayOutputStream out = new ByteArrayOutputStream();
 
             // Find a jpeg writer
@@ -419,10 +421,10 @@ public class ProgramField implements Cloneable {
       throws IOException, FileFormatException {
       writeToStream(stream, true);
     }
-    
+
     /**
      * Writes the data to a stream.
-     * 
+     *
      * @param stream The stream to write on
      * @param check If the format should be checked
      * @throws IOException Thrown if something goes wrong.

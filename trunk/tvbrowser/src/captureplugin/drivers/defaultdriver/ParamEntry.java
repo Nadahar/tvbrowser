@@ -1,6 +1,6 @@
 /*
  * CapturePlugin by Andreas Hessel (Vidrec@gmx.de), Bodo Tasche
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -27,6 +27,8 @@ package captureplugin.drivers.defaultdriver;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 
+import org.apache.commons.lang.StringUtils;
+
 
 /**
  * An for the additional Param-List
@@ -39,7 +41,7 @@ public class ParamEntry {
     private String mParam;
     /** Is the Param enabled ? */
     private boolean mEnabled;
-    
+
     /**
      * Createa a empty Param
      */
@@ -48,7 +50,7 @@ public class ParamEntry {
         mParam = "";
         mEnabled = true;
     }
-    
+
     /**
      * Creates a Param
      * @param name Name
@@ -60,7 +62,7 @@ public class ParamEntry {
         mParam = param;
         mEnabled = enabled;
     }
-    
+
     /**
      * Save data to Stream
      * @param out save to this stream
@@ -72,7 +74,7 @@ public class ParamEntry {
         out.writeObject(mParam);
         out.writeBoolean(mEnabled);
     }
-    
+
     /**
      * Read Data from Stream
      * @param in read data from this stream
@@ -86,7 +88,7 @@ public class ParamEntry {
 
         mEnabled = version < 2 || in.readBoolean();
     }
-    
+
     /**
      * Get Name
      * @return Name of this paramentry
@@ -94,7 +96,7 @@ public class ParamEntry {
     public String getName() {
         return mName;
     }
-    
+
     /**
      * Set Name
      * @param name new name of this paramentry
@@ -102,7 +104,7 @@ public class ParamEntry {
     public void setName(String name) {
         this.mName = name;
     }
-    
+
     /**
      * Get Param
      * @return Parameter
@@ -110,7 +112,7 @@ public class ParamEntry {
     public String getParam() {
         return mParam;
     }
-    
+
     /**
      * Set Param
      * @param param new parameter
@@ -118,12 +120,12 @@ public class ParamEntry {
     public void setParam(String param) {
         this.mParam = param;
     }
-    
+
     /**
      * Returns Name
      */
     public String toString() {
-        if (mName.length() == 0) {
+        if (StringUtils.isEmpty(mName)) {
             return " ";
         }
         return mName;

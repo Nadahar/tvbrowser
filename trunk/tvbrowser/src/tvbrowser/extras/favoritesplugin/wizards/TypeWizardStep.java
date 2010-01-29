@@ -42,6 +42,8 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
+import org.apache.commons.lang.StringUtils;
+
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.favoritesplugin.core.ActorsFavorite;
 import tvbrowser.extras.favoritesplugin.core.AdvancedFavorite;
@@ -91,7 +93,7 @@ public class TypeWizardStep extends AbstractWizardStep {
    * preselected actor in type step
    */
   private String mActor;
-  
+
   private FavoriteNode mParentNode;
 
   /**
@@ -102,7 +104,7 @@ public class TypeWizardStep extends AbstractWizardStep {
   public TypeWizardStep() {
     this(null);
   }
-  
+
   public TypeWizardStep(Program program) {
     this(program, (FavoriteNode) FavoriteTreeModel.getInstance().getRoot());
   }
@@ -110,7 +112,7 @@ public class TypeWizardStep extends AbstractWizardStep {
   public TypeWizardStep(Program program, FavoriteNode parent) {
     mProgram = program;
     mParentNode = parent;
-    
+
     if (mProgram == null) {
       mMainQuestion = mLocalizer.msg("mainQuestion.create",
           "Choose the condition that your favorite program needs to match:");
@@ -189,7 +191,7 @@ public class TypeWizardStep extends AbstractWizardStep {
         if (dlg.getOkWasPressed()) {
           FavoriteTreeModel.getInstance().addFavorite(favorite, mParentNode);
           FavoritesPlugin.getInstance().updateRootNode(true);
-          
+
           if(ManageFavoritesDialog.getInstance() != null) {
             ManageFavoritesDialog.getInstance().addFavorite(favorite, false);
           }
@@ -208,19 +210,19 @@ public class TypeWizardStep extends AbstractWizardStep {
     }
 
     mContent = panelBuilder.getPanel();
-    
+
     mContent.addComponentListener(new ComponentAdapter() {
       public void componentResized(ComponentEvent e) {
         handleFocusEvent();
       }
     });
-    
+
     mContent.addFocusListener(new FocusAdapter() {
       public void focusGained(FocusEvent e) {
         handleFocusEvent();
       }
     });
-    
+
     if (mTopic != null) {
       mTopicRb.setSelected(true);
       updateTextfields();
@@ -234,10 +236,10 @@ public class TypeWizardStep extends AbstractWizardStep {
       updateTextfields();
       mActorsCb.setSelectedItem(mActor);
     }
-    
+
     return mContent;
   }
-  
+
   private void handleFocusEvent() {
     if (mProgramNameTf.isEnabled()) {
       mProgramNameTf.requestFocusInWindow();
@@ -295,8 +297,8 @@ public class TypeWizardStep extends AbstractWizardStep {
         return true;
       }
       JOptionPane.showMessageDialog(mContent,
-          mLocalizer.msg("warningTitleMessage", "Enter Title!"), 
-          mLocalizer.msg("warningTitleTitle", "Enter Title"), 
+          mLocalizer.msg("warningTitleMessage", "Enter Title!"),
+          mLocalizer.msg("warningTitleTitle", "Enter Title"),
           JOptionPane.WARNING_MESSAGE);
       mProgramNameTf.requestFocusInWindow();
     } else if (mTopicRb.isSelected()) {
@@ -305,8 +307,8 @@ public class TypeWizardStep extends AbstractWizardStep {
         return true;
       }
       JOptionPane.showMessageDialog(mContent,
-          mLocalizer.msg("warningTopicMessage", "Enter Topic!"), 
-          mLocalizer.msg("warningTopicTitle", "Enter Topic"), 
+          mLocalizer.msg("warningTopicMessage", "Enter Topic!"),
+          mLocalizer.msg("warningTopicTitle", "Enter Topic"),
           JOptionPane.WARNING_MESSAGE);
       mTopicTf.requestFocusInWindow();
     } else if (mActorsRb.isSelected()) {
@@ -327,16 +329,16 @@ public class TypeWizardStep extends AbstractWizardStep {
   public int[] getButtons() {
     return new int[] { WizardStep.BUTTON_DONE, WizardStep.BUTTON_CANCEL, WizardStep.BUTTON_NEXT };
   }
-  
+
   public void setActor(String actor) {
-    if (actor == null || actor.trim().length() == 0) {
+    if (StringUtils.isBlank(actor)) {
       return;
     }
     mActor = actor;
   }
 
   public void setTopic(String topic) {
-    if (topic == null || topic.trim().length() == 0) {
+    if (StringUtils.isBlank(topic)) {
       return;
     }
     mTopic = topic;

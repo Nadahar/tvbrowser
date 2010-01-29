@@ -34,13 +34,16 @@ import java.util.logging.Logger;
 
 import net.davidashen.text.Hyphenator;
 import net.davidashen.util.ErrorHandler;
+
+import org.apache.commons.lang.StringUtils;
+
 import tvbrowser.core.Settings;
 import util.io.stream.InputStreamProcessor;
 import util.io.stream.StreamUtilities;
 
 /**
  * Breaks a text into lines.
- * 
+ *
  * @author Til Schneider, www.murfman.de
  */
 public class TextLineBreakerStringWidth {
@@ -61,7 +64,7 @@ public class TextLineBreakerStringWidth {
   private StringBuilder mCurrLineBuffer;
   /** Word Buffer */
   private StringBuilder mCurrWordBuffer;
-  
+
   /** Next Word */
   private String mNextWord;
   /** Width of next Word */
@@ -70,13 +73,13 @@ public class TextLineBreakerStringWidth {
   private int mSpaceWidth;
   /** Width of a Minus-Character */
   private int mMinusWidth;
-  
+
   private static Hyphenator hyphenator;
   /**
    * don't use hyphenator if it can not be initialized correctly
    */
   private static boolean useHyphenator = false;
-  
+
   /**
    * Create the LineBreaker
    */
@@ -130,7 +133,7 @@ public class TextLineBreakerStringWidth {
       File dictionary = new File(HYPHEN_DICT_FILENAME);
       if (dictionary.exists()) {
         StreamUtilities.inputStream(HYPHEN_DICT_FILENAME, new InputStreamProcessor() {
-          
+
           @Override
           public void process(InputStream input) throws IOException {
             hyphenator.loadTable(input);
@@ -153,7 +156,7 @@ public class TextLineBreakerStringWidth {
   public void setSpaceWidth(int spaceWidth) {
     mSpaceWidth = spaceWidth;
   }
-  
+
   /**
    * Set the Width of a Minus Character
    * @param minusWidth new Minus-Width
@@ -161,7 +164,7 @@ public class TextLineBreakerStringWidth {
   public void setMinusWidth(int minusWidth) {
     mMinusWidth = minusWidth;
   }
-  
+
   /**
    * Break a Text into separate Lines
    * @param textReader Text to separate
@@ -172,7 +175,7 @@ public class TextLineBreakerStringWidth {
   public String[] breakLines(Reader textReader, int width) throws IOException {
     return breakLines(textReader, width, Integer.MAX_VALUE);
   }
-  
+
   /**
    * Break a Text into separate Lines
    * @param textReader Text to separate
@@ -188,18 +191,18 @@ public class TextLineBreakerStringWidth {
     if (width <= 0) {
       width = Settings.propColumnWidth.getInt();
     }
-    
+
     mNextWordWidth = -1;
-    
+
     if (maxLines == -1) {
       maxLines = Integer.MAX_VALUE;
     }
-        
+
     ArrayList<String> lineList = new ArrayList<String>();
     boolean allProcessed;
     do {
       String line = readNextLine(textReader, width);
-      
+
       allProcessed = (mCurrChar == -1) && (mNextWordWidth == -1);
       if (((lineList.size() + 1) == maxLines) && (! allProcessed)
         && (line.length() != 0))
@@ -213,17 +216,17 @@ public class TextLineBreakerStringWidth {
     while ((lineList.size() < maxLines) && (! allProcessed));
     int lastInx = lineList.size()-1;
     String lastLine = lineList.get(lastInx);
-    if (lastLine.trim().length()==0 || lineList.size() > maxLines) {
+    if (StringUtils.isBlank(lastLine) || lineList.size() > maxLines) {
       lineList.remove(lastInx);
     }
     String[] lineArr = new String[lineList.size()];
     lineList.toArray(lineArr);
     return lineArr;
   }
-  
+
   /**
    * Read the Next Line in TextReader
-   * @param textReader get next Line from this Reader 
+   * @param textReader get next Line from this Reader
    * @param maxWidth Max width of each Line
    * @return one Line
    * @throws IOException
@@ -233,7 +236,7 @@ public class TextLineBreakerStringWidth {
   {
     // Clear the current line
     mCurrLineBuffer.setLength(0);
-    
+
     int lineWidth = 0;
     while (true) {
       // Check whether there is a word that has to be processed first
@@ -241,7 +244,7 @@ public class TextLineBreakerStringWidth {
         // There is no unprocessed word any more -> Read to the next word
         // (A length of -1 means it was processed)
 
-        // Ignore white space 
+        // Ignore white space
         do {
           mCurrChar = textReader.read();
 
@@ -257,19 +260,19 @@ public class TextLineBreakerStringWidth {
         mNextWord = readNextWord(textReader);
         mNextWordWidth = getStringWidth(mNextWord);
       }
-      
+
       int newLineWidth = lineWidth + mNextWordWidth;
       if (lineWidth != 0) {
         newLineWidth += mSpaceWidth;
       }
-      
+
       int lineLength = mCurrLineBuffer.length();
       if (newLineWidth - mSpaceWidth > maxWidth) {
         // The next word does not fit
         if (lineWidth == 0 || (maxWidth - lineWidth > 20)) {
           // The line is empty -> Break the word
           int breakPos = findBreakPos(mNextWord, maxWidth - lineWidth, lineWidth == 0);
-          
+
           if (breakPos <= 0) {
             return mCurrLineBuffer.toString();
           }
@@ -278,16 +281,16 @@ public class TextLineBreakerStringWidth {
             mCurrLineBuffer.append(' ');
           }
           mCurrLineBuffer.append(firstPart);
-          
+
           // Append a minus if the last character is a letter or digit
           char lastChar = firstPart.charAt(firstPart.length() - 1);
           if (Character.isLetterOrDigit(lastChar)) {
             mCurrLineBuffer.append('-');
           }
-          
+
           mNextWord = mNextWord.substring(breakPos);
           mNextWordWidth = getStringWidth(mNextWord);
-          
+
           return mCurrLineBuffer.toString();
         } else {
           // Make a line break here (and process the word the next time)
@@ -328,10 +331,10 @@ public class TextLineBreakerStringWidth {
   {
     // Clear the current word
     mCurrWordBuffer.setLength(0);
-    
+
     do {
       mCurrWordBuffer.append((char) mCurrChar);
-      
+
       mCurrChar = textReader.read();
     }
     // a word stops at whitespace, line end or if a "-" occurs (but not if a space is in front of the "-")
@@ -347,7 +350,7 @@ public class TextLineBreakerStringWidth {
   /**
    * Finds the best position to break the word in order to fit into a maximum
    * width.
-   * 
+   *
    * @param word The word to break
    * @param maxWidth The maximum width of the word
    * @param mustBreak this word must break, even if no hyphenation is found
@@ -356,13 +359,13 @@ public class TextLineBreakerStringWidth {
   private int findBreakPos(final String word, int maxWidth, boolean mustBreak) {
     // Reserve some space for the minus
     maxWidth -= mMinusWidth;
-    
+
     // Binary search for the last fitting character
     int left = 0;
     int right = word.length() - 1;
     while (left < right) {
       int middle = (left + right + 1) / 2; // +1 to enforce taking the ceiling
-      
+
       // Check whether this substring fits
       String subWord = word.substring(0, middle);
       int subWordWidth = getStringWidth(subWord);
@@ -375,7 +378,7 @@ public class TextLineBreakerStringWidth {
       }
     }
     int lastFittingPos = left;
-    
+
     // Try to find a char that is no letter or digit
     // E.g. if the word is "Stadt-Land-Fluss" we try to break it in
     // "Stadt-" and "Land-Fluss" rather than "Stadt-La" and "nd-Fluss"
@@ -386,7 +389,7 @@ public class TextLineBreakerStringWidth {
         return i + 1;
       }
     }
-    
+
     if (useHyphenator) {
       int endCharacters;
       if (Character.isLetter(word.charAt(word.length() - 1))) {
@@ -414,15 +417,15 @@ public class TextLineBreakerStringWidth {
         }
       }
     }
-    
+
     // We did not find a better break char -> break at the last fitting char
     if (mustBreak) {
       return lastFittingPos;
     }
-    
+
     return 0;
   }
-  
+
   /**
    * Get the Width of a String
    * @param str get Width of this String
@@ -431,16 +434,16 @@ public class TextLineBreakerStringWidth {
   public int getStringWidth(final String str) {
     return str.length();
   }
-  
+
   /**
-   * Test if the character is a EOL-Char 
+   * Test if the character is a EOL-Char
    * @param ch test this Char
    * @return true if ch is a EOL Char
    */
   private boolean isEndOfLine(final int ch) {
     return (ch == '\n') || (ch == -1);
   }
-  
+
   /**
    * to be used by Settings.handleChangedSettings()
    */

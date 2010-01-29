@@ -33,13 +33,15 @@ import java.util.jar.JarFile;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * This Node creates a Tree of all Properties in a certain Jar-File
- * 
+ *
  * @author bodum
  */
 public class TranslationNode extends PathNode {
-  
+
   /**
    * Create Tree
    * @param string Name of Tree-Node
@@ -47,40 +49,40 @@ public class TranslationNode extends PathNode {
    */
   public TranslationNode(String string, File file) {
     super(string);
-    
+
     try {
       JarFile jarfile = new JarFile(file);
-      
+
       Enumeration<JarEntry> entries = jarfile.entries();
-      
+
       while(entries.hasMoreElements()) {
         JarEntry entry = entries.nextElement();
-        
+
         if (entry.getName().endsWith(".properties")) {
           String name = entry.getName();
 
           name = name.substring(0, name.length()-11);
-          
+
           if (name.indexOf('/') >= 0) {
-            String dir = name.substring(0, name.lastIndexOf('/'));
-            
+            String dir = StringUtils.substringBeforeLast(name, "/");
+
             if (dir.contains("/")) {
-							dir = dir.substring(dir.lastIndexOf('/')+1);
+							dir = StringUtils.substringAfterLast(dir, "/");
 						}
 
-            name = name.substring(name.lastIndexOf('/')+1);
-            
+            name = StringUtils.substringAfterLast(name,"/");
+
             if (name.equals(dir)) {
 							addEntry(jarfile, entry);
 						}
           }
         }
       }
-      
+
     } catch (IOException e) {
       e.printStackTrace();
     }
-    
+
   }
 
   /**
@@ -96,7 +98,7 @@ public class TranslationNode extends PathNode {
 
   /**
    * Get Path for String. If Path doesn't exist, it will be created
-   * 
+   *
    * @param string Path
    * @return Node
    */
@@ -107,7 +109,7 @@ public class TranslationNode extends PathNode {
   /**
    * Find the path recursive. If the Path was not found, it will
    * be created
-   * 
+   *
    * @param node Node to add Path
    * @param strings Path-Elements
    * @param deep Current Path
@@ -119,27 +121,27 @@ public class TranslationNode extends PathNode {
       if (node.getChildAt(i) instanceof PathNode) {
         PathNode child = (PathNode) node.getChildAt(i);
         if(child.toString().equals(strings[deep])) {
-          
+
           if (deep == strings.length-1) {
 						return child;
 					}
-          
+
           return findPath(child, strings, deep+1);
         }
       }
     }
 
     PathNode child = node;
-    
+
     for (int i=deep;i<strings.length;i++) {
       PathNode newchild = new PathNode(strings[i]);
       child.add(newchild);
       child = newchild;
     }
-    
+
     return child;
   }
-  
+
   @Override
   public boolean isLeaf() {
     return false;
@@ -177,7 +179,7 @@ public class TranslationNode extends PathNode {
     }
     this.filter = filter;
   }
-  
+
   @Override
   public int getChildCount() {
     if (filter == null) {
@@ -186,7 +188,7 @@ public class TranslationNode extends PathNode {
       return filteredChildren.size();
     }
   }
-  
+
   @Override
   public TreeNode getChildAt(int index) {
     if (filter == null) {
@@ -195,7 +197,7 @@ public class TranslationNode extends PathNode {
       return filteredChildren.get(index);
     }
   }
-  
+
   @Override
   public int getIndex(TreeNode child) {
     if (filter == null) {
@@ -204,7 +206,7 @@ public class TranslationNode extends PathNode {
       return filteredChildren.indexOf(child);
     }
   }
-  
+
   @Override
   public TreeNode getChildAfter(TreeNode child) {
     if (filter == null) {
@@ -227,7 +229,7 @@ public class TranslationNode extends PathNode {
       }
     }
   }
-  
+
   @Override
   public TreeNode getChildBefore(TreeNode child) {
     if (filter == null) {
@@ -250,6 +252,6 @@ public class TranslationNode extends PathNode {
       }
     }
   }
- 
+
 
 }

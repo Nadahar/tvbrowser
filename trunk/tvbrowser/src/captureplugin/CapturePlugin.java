@@ -1,6 +1,6 @@
 /*
  * CapturePlugin by Andreas Hessel (Vidrec@gmx.de), Bodo Tasche
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -54,6 +54,8 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
+import org.apache.commons.lang.StringUtils;
+
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import captureplugin.drivers.DeviceIf;
@@ -75,7 +77,7 @@ import devplugin.Version;
  */
 public class CapturePlugin extends devplugin.Plugin {
   private static final Version mVersion = new Version(3,00);
-  
+
     /**
      * Translator
      */
@@ -98,9 +100,9 @@ public class CapturePlugin extends devplugin.Plugin {
 
     private boolean mAllowedToShowDialog = false;
     private boolean mNeedsUpdate = false;
-    
+
     private Properties mSettings;
-    
+
     /**
      * Root-Node for the Program-Tree
      */
@@ -109,7 +111,7 @@ public class CapturePlugin extends devplugin.Plugin {
     private static final String REMOVE = "##remove";
 
     private PluginInfo mPluginInfo;
-    
+
     /**
      * Creates the Plugin
      */
@@ -171,7 +173,7 @@ public class CapturePlugin extends devplugin.Plugin {
     public static Version getVersion() {
       return mVersion;
     }
-    
+
     /**
      * Implement this function to provide information about your plugin.
      */
@@ -213,7 +215,7 @@ public class CapturePlugin extends devplugin.Plugin {
 
             if (dev.isAbleToAddAndRemovePrograms()) {
                 final Program test = dev.getProgramForProgramInList(program);
-                
+
                 if (test != null) {
                     AbstractAction caction = new AbstractAction() {
                         public void actionPerformed(ActionEvent evt) {
@@ -359,7 +361,7 @@ public class CapturePlugin extends devplugin.Plugin {
         CapturePluginDialog dialog = new CapturePluginDialog(getParentFrame(), mConfig);
 
         layoutWindow("captureDlg", dialog, new Dimension(500,450));
-        
+
         if (mConfig.getDevices().isEmpty()) {
             dialog.show(CapturePluginPanel.TAB_DEVICELIST);
         } else {
@@ -400,7 +402,7 @@ public class CapturePlugin extends devplugin.Plugin {
 
         for (Object o : mConfig.getDevices()) {
             final DeviceIf device = (DeviceIf) o;
-            
+
             PluginTreeNode node;
             if (mConfig.getDevices().size() > 1) {
               node = new PluginTreeNode(device.getName());
@@ -409,7 +411,7 @@ public class CapturePlugin extends devplugin.Plugin {
             else {
               node = mRootNode;
             }
-            
+
             if(device.isAbleToAddAndRemovePrograms()) {
               node.getMutableTreeNode().setProgramReceiveTarget(new ProgramReceiveTarget(this, device.getName() + " - " + mLocalizer.msg("record", "record"), device.getId() + RECORD));
             }
@@ -421,7 +423,7 @@ public class CapturePlugin extends devplugin.Plugin {
                   node.addProgram(program);
               }
             }
-            
+
             node.addAction(new AbstractAction(mLocalizer.msg("configure", "Configure '{0}'", device.getName())) {
               @Override
               public void actionPerformed(ActionEvent e) {
@@ -460,7 +462,7 @@ public class CapturePlugin extends devplugin.Plugin {
         }
 
         String id = receiveTarget.getTargetId();
-        String deviceid = id.substring(0, id.indexOf('#'));
+        String deviceid = StringUtils.substringBefore(id,"#");
     String command = id.substring(id.indexOf('#'));
 
         for (DeviceIf device : mConfig.getDevices()) {
@@ -519,35 +521,35 @@ public class CapturePlugin extends devplugin.Plugin {
 
         return targets.toArray(new ProgramReceiveTarget[targets.size()]);
     }
-    
+
     public void handleTvBrowserStartFinished() {
       mAllowedToShowDialog = true;
-      
+
       if(mNeedsUpdate) {
         handleTvDataUpdateFinished();
       }
     }
-    
+
     /**
      * Check the programs after data update.
      */
     public void handleTvDataUpdateFinished() {
       mNeedsUpdate = true;
-      
+
       if(mAllowedToShowDialog) {
         mNeedsUpdate = false;
-        
+
         DeviceIf[] devices = mConfig.getDeviceArray();
-      
+
         final DefaultTableModel model = new DefaultTableModel() {
           public boolean isCellEditable(int row, int column) {
             return false;
           }
         };
-      
+
         model.setColumnCount(5);
         model.setColumnIdentifiers(new String[] {mLocalizer.msg("device","Device"),Localizer.getLocalization(Localizer.I18N_CHANNEL),mLocalizer.msg("date","Date"),ProgramFieldType.START_TIME_TYPE.getLocalizedName(),ProgramFieldType.TITLE_TYPE.getLocalizedName()});
-      
+
         JTable table = new JTable(model);
         table.getTableHeader().setReorderingAllowed(false);
         table.getTableHeader().setResizingAllowed(false);
@@ -555,26 +557,26 @@ public class CapturePlugin extends devplugin.Plugin {
           public Component getTableCellRendererComponent(JTable renderTable, Object value,
               boolean isSelected, boolean hasFocus, int row, int column) {
             Component c = super.getTableCellRendererComponent(renderTable,value,isSelected,hasFocus,row,column);
-            
+
             if(value instanceof DeviceIf) {
               if(((DeviceIf)value).getDeleteRemovedProgramsAutomatically() && !isSelected) {
                 c.setForeground(Color.red);
               }
             }
-            
+
             return c;
           }
         });
-      
+
         int columnWidth[] = new int[5];
-      
+
         for(int i = 0; i < columnWidth.length; i++) {
           columnWidth[i] =  UiUtilities.getStringWidth(table.getFont(),model.getColumnName(i)) + 10;
         }
-      
+
         for (DeviceIf device : devices) {
           Program[] deleted = device.checkProgramsAfterDataUpdateAndGetDeleted();
-        
+
           if(deleted != null && deleted.length > 0) {
             for(Program p : deleted) {
               if(device.getDeleteRemovedProgramsAutomatically() && !p.isExpired() && !p.isOnAir()) {
@@ -582,43 +584,43 @@ public class CapturePlugin extends devplugin.Plugin {
               } else {
                 device.removeProgramWithoutExecution(p);
               }
-            
+
               if(!p.isExpired()) {
                 Object[] o = new Object[] {device,p.getChannel().getName(),p.getDateString(),p.getTimeString(),p.getTitle()};
-            
+
                 for(int i = 0; i < columnWidth.length; i++) {
                   columnWidth[i] = Math.max(columnWidth[i],UiUtilities.getStringWidth(table.getFont(),o[i].toString())+10);
                 }
-            
+
                 model.addRow(o);
               }
             }
           }
-          
+
           device.getProgramList();
         }
-        
+
         if(model.getRowCount() > 0) {
           int sum = 0;
-          
+
           for(int i = 0; i < columnWidth.length; i++) {
             table.getColumnModel().getColumn(i).setPreferredWidth(columnWidth[i]);
-            
+
             if(i < columnWidth.length-1) {
               table.getColumnModel().getColumn(i).setMaxWidth(columnWidth[i]);
             }
-            
+
             sum += columnWidth[i];
           }
-          
+
           JScrollPane scrollPane = new JScrollPane(table);
           scrollPane.setPreferredSize(new Dimension(450,250));
-          
+
           if(sum > 500) {
             table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
             scrollPane.getViewport().setPreferredSize(new Dimension(sum,scrollPane.getViewport().getPreferredSize().height));
           }
-          
+
           JButton export = new JButton(mLocalizer.msg("exportList","Export list"));
           export.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -633,36 +635,36 @@ public class CapturePlugin extends devplugin.Plugin {
                   return "*.txt";
                 }
               });
-              
+
               chooser.setSelectedFile(new File("RemovedPrograms.txt"));
               if (chooser.showSaveDialog(UiUtilities.getLastModalChildOf(getParentFrame())) == JFileChooser.APPROVE_OPTION) {
                 if(chooser.getSelectedFile() != null) {
                   String file = chooser.getSelectedFile().getAbsolutePath();
-                  
+
                   if (!file.toLowerCase().endsWith(".txt")
                     && file.indexOf('.') == -1) {
                     file = file + ".txt";
                   }
-                  
+
                   if (file.indexOf('.') != -1) {
                     try {
                       RandomAccessFile write = new RandomAccessFile(file,"rw");
                       write.setLength(0);
-                      
+
                       String eolStyle = File.separator.equals("/") ? "\n" : "\r\n";
-                      
+
                       for(int i = 0; i < model.getRowCount(); i++) {
                         StringBuilder line = new StringBuilder();
-                        
+
                         for(int j = 0; j < model.getColumnCount(); j++) {
                           line.append(model.getValueAt(i, j)).append(' ');
                         }
-                        
+
                         line.append(eolStyle);
-                        
+
                         write.writeBytes(line.toString());
                       }
-                      
+
                       write.close();
                     }catch(Exception ee) {}
                   }
@@ -670,17 +672,17 @@ public class CapturePlugin extends devplugin.Plugin {
               }
             }
           });
-                    
+
           Object[] message = {mLocalizer.msg("deletedText","The data was changed and the following programs were deleted:"),scrollPane,export};
-        
+
           JOptionPane pane = new JOptionPane();
           pane.setMessage(message);
           pane.setMessageType(JOptionPane.PLAIN_MESSAGE);
-        
+
           final JDialog d = pane.createDialog(UiUtilities.getLastModalChildOf(getParentFrame()), mLocalizer.msg("CapturePlugin","CapturePlugin") + " - " + mLocalizer.msg("deletedTitle","Deleted programs"));
           d.setResizable(true);
           d.setModal(false);
-        
+
           SwingUtilities.invokeLater(new Runnable() {
             public void run() {
               d.setVisible(true);
@@ -689,14 +691,14 @@ public class CapturePlugin extends devplugin.Plugin {
         }
       }
     }
-    
+
     /**
      * @return The parent frame.
      */
     public Frame getSuperFrame() {
       return getParentFrame();
     }
-    
+
     public int getMarkPriorityForProgram(Program p) {
       return mConfig.getMarkPriority();
     }

@@ -74,8 +74,8 @@ public class Channel implements Comparable<Channel> {
   public static final int CATEGORY_PAY_TV = 1 << 9;
   /** The identifier for a channel that is in the category payed data TV */
   public static final int CATEGORY_PAYED_DATA_TV = 1 << 10;
-  
-  private static HashMap<Integer, String> categoryName; 
+
+  private static HashMap<Integer, String> categoryName;
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer
       .getLocalizerFor(Channel.class);
 
@@ -97,7 +97,7 @@ public class Channel implements Comparable<Channel> {
 
   /** The Default-Icon */
   private Icon mDefaultIcon;
-  
+
   private AbstractTvDataServiceProxy mProxy;
 
 
@@ -124,7 +124,7 @@ public class Channel implements Comparable<Channel> {
         + "ISO country code (as used in top level domains, e.g. 'de' or 'us'): "
         + "'" + country + "'");
     }
-    
+
     mDataService = dataService;
     mName = name;
     mId = id;
@@ -191,9 +191,9 @@ public class Channel implements Comparable<Channel> {
    * @param group The group of this channel.
    */
   public Channel(AbstractTvDataService dataService, String name, String id, TimeZone timeZone, String country, String copyrightNotice, String webpage, devplugin.ChannelGroup group) {
-     this(dataService,name,id,timeZone,country,copyrightNotice,webpage,group,null);  
+     this(dataService,name,id,timeZone,country,copyrightNotice,webpage,group,null);
   }
-  
+
   /**
    * Creates an instance of this class.
    * <p>
@@ -207,10 +207,10 @@ public class Channel implements Comparable<Channel> {
    */
   public Channel(AbstractTvDataService dataService, String name, String id,
       TimeZone timeZone, String country, String copyrightNotice, String webpage) {
-        
-    this(dataService,name,id,timeZone,country,copyrightNotice,webpage,null);     
+
+    this(dataService,name,id,timeZone,country,copyrightNotice,webpage,null);
   }
-  
+
   /**
    * Creates an instance of this class.
    * <p>
@@ -258,7 +258,7 @@ public class Channel implements Comparable<Channel> {
    {
       this(dataService,name,id,timeZone,country,"(no copyright notice)",null);
    }
-  
+
   /**
    * Creates an instance of this class from a stream.
    * <p>
@@ -273,12 +273,12 @@ public class Channel implements Comparable<Channel> {
   throws IOException, ClassNotFoundException
   {
     int version = in.readInt();
-        
+
     String dataServiceId = null;
     String groupId = null;
     String country = null;
     String channelId;
-    
+
     if (version==1) {
       dataServiceId = (String)in.readObject();
       channelId = Integer.toString(in.readInt());
@@ -296,9 +296,9 @@ public class Channel implements Comparable<Channel> {
       dataServiceId = in.readUTF();
       groupId = in.readUTF();
       country = in.readUTF();
-      channelId = in.readUTF();      
+      channelId = in.readUTF();
     }
-        
+
     Channel channel = getChannel(dataServiceId, groupId, country, channelId);
     if ((channel == null) && (! allowNull)) {
       throw new IOException("Channel with id " + channelId + " of data service "
@@ -310,13 +310,13 @@ public class Channel implements Comparable<Channel> {
 
   /**
    * Method for OnDemandDayProgramFile file format version 2.
-   * 
+   *
    * @param in The file too read the Data from.
    * @param allowNull
    * @return channel
    * @throws IOException
    * @throws ClassNotFoundException
-   * 
+   *
    * @since 2.2
    */
   public static Channel readData(DataInput in, boolean allowNull)
@@ -324,24 +324,24 @@ public class Channel implements Comparable<Channel> {
   {
     int version = in.readInt();
     Channel channel = null;
-    
+
     String dataServiceId = null;
     String groupId = null;
     String country = null;
     String channelId = null;
-    
+
     if(version < 3) {
       throw new IOException();
     }
-    
+
     if(version == 3) {
       int length = in.readInt();
       byte[] b = new byte[length];
-    
+
       in.readFully(b);
-    
-      dataServiceId = new String(b);    
-    
+
+      dataServiceId = new String(b);
+
       length = in.readInt();
       b = new byte[length];
       in.readFully(b);
@@ -356,24 +356,24 @@ public class Channel implements Comparable<Channel> {
       dataServiceId = in.readUTF();
       groupId = in.readUTF();
       country = in.readUTF();
-      channelId = in.readUTF();      
+      channelId = in.readUTF();
     }
-    
+
     channel = getChannel(dataServiceId, groupId, country, channelId);
-    
+
     if ((channel == null) && (! allowNull)) {
       throw new IOException("Channel with id " + channelId + " of data service "
         + dataServiceId + " not found!");
     }
     return channel;
   }
-  
+
   /**
    * Method for OnDemandDayProgramFile file format version 2.
-   * 
+   *
    * @param out The file to write the Data in.
    * @throws IOException
-   * 
+   *
    * @since 2.2
    */
   public void writeToDataFile(RandomAccessFile out) throws IOException {
@@ -383,11 +383,11 @@ public class Channel implements Comparable<Channel> {
     out.writeUTF(getCountry());
     out.writeUTF(mId);
   }
-  
+
   /**
    * Serialized this object.
    * @param out The stream to write the values of this channel to.
-   * @throws IOException 
+   * @throws IOException
    */
   public void writeData(ObjectOutputStream out) throws IOException {
     out.writeInt(5); // version
@@ -396,7 +396,7 @@ public class Channel implements Comparable<Channel> {
     out.writeUTF(getCountry());
     out.writeUTF(mId);
   }
-  
+
   /**
    * Gets the copyright notice for this channel.
    * <p>
@@ -405,7 +405,7 @@ public class Channel implements Comparable<Channel> {
   public String getCopyrightNotice() {
     return mCopyrightNotice!=null?mCopyrightNotice:"";
   }
-  
+
   /**
    * Gets the webpage for this channel.
    * <p>
@@ -417,7 +417,7 @@ public class Channel implements Comparable<Channel> {
     }
     return mWebpage;
   }
-  
+
   /**
    * Gets the channel group of this channel.
    * <p>
@@ -441,7 +441,7 @@ public class Channel implements Comparable<Channel> {
    * @param groupId The group id of the channel to get.
    * @param country The country of the channel to get.
    * @param channelId The id of the channel to get.
-   * 
+   *
    * @return The channel with the given ids or <code>null</code> if no channel with the ids was found.
    */
   public static Channel getChannel(String dataServiceId, String groupId, String country, String channelId) {
@@ -449,26 +449,26 @@ public class Channel implements Comparable<Channel> {
       // Fast return
       return null;
     }
-    
+
     Channel[] channelArr = Plugin.getPluginManager().getSubscribedChannels();
     for (Channel channel : channelArr) {
       String chDataServiceId = channel.getDataServiceProxy().getId();
       String chGroupId = channel.getGroup().getId();
       String chChannelId = channel.getId();
       String chCountry = channel.getCountry();
-      
+
       if (dataServiceId.compareTo(chDataServiceId) == 0 &&
           ((groupId != null && groupId.compareTo(chGroupId) == 0) || groupId == null) &&
           ((country != null && country.compareTo(chCountry) == 0) || country == null) &&
           channelId.compareTo(chChannelId) == 0)
       {
         return channel;
-      }      
+      }
     }
-    
+
     return null;
   }
-  
+
   /**
    * Gets the time zone of this channel.
    * <p>
@@ -477,7 +477,7 @@ public class Channel implements Comparable<Channel> {
   public TimeZone getTimeZone() {
     return mTimeZone;
   }
-  
+
   /**
    * Gets the country of this channel.
    * <p>
@@ -486,7 +486,7 @@ public class Channel implements Comparable<Channel> {
   public String getCountry() {
     return mCountry;
   }
-  
+
   /**
    * Sets the day light saving time correction.
    * <p>
@@ -496,7 +496,7 @@ public class Channel implements Comparable<Channel> {
   public void setDayLightSavingTimeCorrection(int hours) {
     setTimeZoneCorrectionMinutes(hours * 60);
   }
-  
+
   /**
    * Corrects the time zone offset of the channel.
    * <p>
@@ -506,7 +506,7 @@ public class Channel implements Comparable<Channel> {
   public void setTimeZoneCorrectionMinutes(int minutes) {
     ChannelUserSettings.getSettings(this).setTimeZoneCorrectionMinutes(minutes);
   }
-  
+
   /**
    * Gets the day light saving time correction of this channel.
    * <p>
@@ -529,7 +529,7 @@ public class Channel implements Comparable<Channel> {
 
   /**
    * Gets the data service of this channel
-   * 
+   *
    * @return The data service of this channel
    * @deprecated use getDataServiceProxy() instead
    */
@@ -545,7 +545,7 @@ public class Channel implements Comparable<Channel> {
   public TvDataServiceProxy getDataServiceProxy() {
     if(mDataService != null) {
       if (mProxy == null) {
-        mProxy = new DefaultTvDataServiceProxy(mDataService); 
+        mProxy = new DefaultTvDataServiceProxy(mDataService);
       }
       return mProxy;
     } else {
@@ -583,7 +583,7 @@ public class Channel implements Comparable<Channel> {
   public String getName() {
     if (getUserChannelName() != null) {
       return getUserChannelName();
-    } 
+    }
     return mName;
   }
 
@@ -600,17 +600,17 @@ public class Channel implements Comparable<Channel> {
    * @return the Icon for this Channel
    */
   public Icon getIcon() {
-    if ((isUsingUserIcon()) && (mIcon == null) && (getUserIconFileName() != null)){
+    if (isUsingUserIcon() && (mIcon == null) && (getUserIconFileName() != null)){
       Image img = ImageUtilities.createImageAsynchronous(getUserIconFileName());
       if (img != null) {
         mIcon = new ImageIcon(img);
       }
     }
-      
+
     if (mIcon == null) {
       return mDefaultIcon;
     }
-      
+
     return mIcon;
   }
 
@@ -621,18 +621,18 @@ public class Channel implements Comparable<Channel> {
    * <code>false</code> otherwise.
    */
   public boolean hasIcon() {
-    if ((isUsingUserIcon()) && (mIcon == null) && (getUserIconFileName() != null)) {
+    if (isUsingUserIcon() && (mIcon == null) && (getUserIconFileName() != null)) {
       getIcon();
     }
 
     return (mIcon != null) || (mDefaultIcon != null);
 
   }
-  
+
   /**
    * Sets the user icon file name.
    * <p>
-   * 
+   *
    * @param filename
    *          The file name of the user icon file.
    */
@@ -673,25 +673,25 @@ public class Channel implements Comparable<Channel> {
   public Icon getDefaultIcon() {
     return mDefaultIcon;
   }
-  
+
   /**
-   * Set the ChannelName used by the User 
+   * Set the ChannelName used by the User
    * @param name new ChannelName
    * @since 2.1
    */
   public void setUserChannelName(String name) {
     ChannelUserSettings.getSettings(this).setChannelName(name);
   }
-  
+
   /**
-   * Get the ChannelName used by the User 
+   * Get the ChannelName used by the User
    * @return ChannelName
    * @since 2.1
    */
   public String getUserChannelName() {
     return ChannelUserSettings.getSettings(this).getChannelName();
   }
-  
+
   /**
    * Get the default ChannelName
    * @return default ChannelName
@@ -703,7 +703,7 @@ public class Channel implements Comparable<Channel> {
 
   /**
    * Set the WebPage used by the User
-   * 
+   *
    * @param url
    *          WebPage
    * @since 2.1
@@ -711,16 +711,16 @@ public class Channel implements Comparable<Channel> {
   public void setUserWebPage(String url) {
     ChannelUserSettings.getSettings(this).setWebPage(url);
   }
-  
+
   /**
    * Get the WebPage used by the User
    * @return WebPage
-   * @since 2.1 
+   * @since 2.1
    */
   public String getUserWebPage() {
     return ChannelUserSettings.getSettings(this).getWebPage();
   }
-  
+
   /**
    * Get the Default WebPage
    * @return WebPage
@@ -729,7 +729,7 @@ public class Channel implements Comparable<Channel> {
   public String getDefaultWebPage() {
     return mWebpage;
   }
-  
+
   @Override
   public boolean equals(Object obj) {
     if (obj != null && obj instanceof Channel) {
@@ -745,28 +745,28 @@ public class Channel implements Comparable<Channel> {
       try {
         String channelId = getId();
         String cmpChannelId = cmp.getId();
-        
+
     	  if (channelId.compareTo(cmpChannelId) != 0) {
     		  return false;
     	  }
 
     	  String groupId = getGroup().getId();
         String cmpGroupId = cmp.getGroup().getId();
-        
+
         if (groupId.compareTo(cmpGroupId) != 0) {
           return false;
         }
-        
+
         String dataServiceId = getDataServiceProxy().getId();
         String cmpDataServiceId = cmp.getDataServiceProxy().getId();
-        
+
         if(dataServiceId.compareTo(cmpDataServiceId) != 0) {
           return false;
         }
-        
+
         String country = getCountry();
         String cmpCountry = cmp.getCountry();
-        
+
         return country.compareTo(cmpCountry) == 0;
       }catch(Exception e) {
       }
@@ -777,29 +777,29 @@ public class Channel implements Comparable<Channel> {
 
   /**
    * Gets if this channel is limited in start and end time.
-   * 
+   *
    * @return <code>True</code> if this channel is time limited.
    * @since 2.2.4/2.6
    */
   public boolean isTimeLimited() {
     return ChannelUserSettings.getSettings(this).isTimeLimited();
   }
-  
+
   /**
    * Gets the start time limit in minutes of day.
    * This is used to exclude programs from the day program
    * that starts before the start time limit.
-   * 
+   *
    * @return The start time limit in minutes of day.
    * @since 2.2.4/2.6
    */
   public int getStartTimeLimit() {
     return ChannelUserSettings.getSettings(this).getStartTimeLimit();
   }
-  
+
   /**
    * Sets the start time limit to the new value.
-   * 
+   *
    * @param startTimeLimit The new value for start time
    * limit in minutes of day.
    * @since 2.2.4/2.6
@@ -812,17 +812,17 @@ public class Channel implements Comparable<Channel> {
    * Gets the end time limit in minutes of day.
    * This is used to exclude programs from the day program
    * that starts after the end time limit.
-   * 
+   *
    * @return The start time limit in minutes of day.
    * @since 2.2.4/2.6
    */
   public int getEndTimeLimit() {
     return ChannelUserSettings.getSettings(this).getEndTimeLimit();
   }
-  
+
   /**
    * Sets the end time limit to the new value.
-   * 
+   *
    * @param endTimeLimit The new value for end time
    * limit in minutes of day.
    * @since 2.2.4/2.6
@@ -834,11 +834,11 @@ public class Channel implements Comparable<Channel> {
   public int compareTo(Channel other) {
     return getName().toLowerCase().compareTo(other.getName().toLowerCase());
   }
-  
+
   /**
    * Sets the name of this channel.
    * If this is used by a Plugin nothing will happen.
-   * 
+   *
    * @param name The new name for the channel.
    * @since 2.2.5/2.6.3
    */
@@ -847,11 +847,11 @@ public class Channel implements Comparable<Channel> {
       mName = name;
     }
   }
-  
+
   /**
    * Sets the copyright notice of this channel.
    * If this is used by a Plugin nothing will happen.
-   * 
+   *
    * @param copyrightNotice The new copyright notice for the channel.
    * @since 2.2.5/2.6.3
    */
@@ -860,11 +860,11 @@ public class Channel implements Comparable<Channel> {
       mCopyrightNotice = copyrightNotice;
     }
   }
-  
+
   /**
    * Sets the webpage of this channel.
    * If this is used by a Plugin nothing will happen.
-   * 
+   *
    * @param webpage The new webpage for the channel.
    * @since 2.2.5/2.6.3
    */
@@ -885,7 +885,7 @@ public class Channel implements Comparable<Channel> {
     }
     return mName;
   }
-  
+
   /**
    * Gets a unique identifier of this channel.
    * <p>
@@ -898,7 +898,7 @@ public class Channel implements Comparable<Channel> {
 
   /**
    * get the localized name of the given category
-   * 
+   *
    * @param category
    *          category bit, see Channel.CATEGORY_XYZ
    * @return localized name

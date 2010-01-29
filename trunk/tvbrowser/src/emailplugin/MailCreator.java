@@ -1,6 +1,6 @@
 /*
  * EMailPlugin by Bodo Tasche
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -40,6 +40,8 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JRootPane;
 
+import org.apache.commons.lang.StringUtils;
+
 import tvbrowser.ui.mainframe.MainFrame;
 import util.exc.ErrorHandler;
 import util.io.ExecutionHandler;
@@ -60,15 +62,15 @@ import devplugin.Program;
 /**
  * This class creates the Mail and launches the Mail-Application.
  * If no Mail-Application is found, it asks the User to specify the App.
- * 
+ *
  * @author bodum
  */
 public class MailCreator {
   /** Settings for this Plugin */
   private EMailSettings mSettings;
-  
+
   private AbstractPluginProgramFormating mFormatting;
-  
+
   /** The Plugin */
   private EMailPlugin mPlugin;
   /** Localizer */
@@ -88,7 +90,7 @@ public class MailCreator {
 
   /**
    * Create the Mail
-   * 
+   *
    * @param parent Parent-Frame for Dialogs
    * @param program Programs to show in the Mail
    */
@@ -148,7 +150,7 @@ public class MailCreator {
           execparam = "url.dll,FileProtocolHandler " + mailTo;
         }
 
-      } else if (mSettings.getApplication().trim().equals("")) {
+      } else if (StringUtils.isBlank(mSettings.getApplication())) {
         if (OperatingSystem.isOther()) {
           if (!showKdeGnomeDialog(parent)) {
             return;
@@ -189,7 +191,7 @@ public class MailCreator {
 
   /**
    * Encodes a String into an Url-Encoded String
-   * 
+   *
    * @param string String to Encode
    * @return URL-Encoded String
    * @throws UnsupportedEncodingException Problems during encoding
@@ -201,18 +203,18 @@ public class MailCreator {
 
   /**
    * Show the EMail-Open Dialog.
-   * 
+   *
    * This Dialog says that the EMail should have been opened. It gives the User
    * a chance to specify another EMail Program if it went wrong.
-   * 
+   *
    * @param parent
    *          Parent-Frame
    */
   private void showEMailOpenedDialog(Frame parent) {
     final JDialog dialog = new JDialog(parent, true);
-    
+
     dialog.setTitle(mLocalizer.msg("EMailOpenedTitel", "Email was opened"));
-    
+
     JPanel panel = (JPanel) dialog.getContentPane();
     panel.setLayout(new FormLayout("fill:200dlu:grow", "default, 3dlu, default, 3dlu, default"));
     panel.setBorder(Borders.DIALOG_BORDER);
@@ -220,10 +222,10 @@ public class MailCreator {
     CellConstraints cc = new CellConstraints();
 
     panel.add(UiUtilities.createHelpTextArea(mLocalizer.msg("EMailOpened", "Email was opened. Configure it?")), cc.xy(1,1));
-    
+
     final JCheckBox dontShowAgain = new JCheckBox(mLocalizer.msg("DontShowAgain", "Don't show this Dialog again"));
     panel.add(dontShowAgain, cc.xy(1,3));
-    
+
     JButton configure = new JButton(mLocalizer.msg("configure", "Configure"));
     configure.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -231,7 +233,7 @@ public class MailCreator {
         dialog.setVisible(false);
       }
     });
-    
+
     JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
     ok.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -241,7 +243,7 @@ public class MailCreator {
         dialog.setVisible(false);
       }
     });
-    
+
     JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     buttonPanel.add(configure);
     buttonPanel.add(ok);
@@ -255,21 +257,21 @@ public class MailCreator {
         return dialog.getRootPane();
       }
     });
-    
+
     dialog.getRootPane().setDefaultButton(ok);
-    
+
     dialog.pack();
     UiUtilities.centerAndShow(dialog);
   }
 
   /**
    * Shows a Warning if the Plugin was not configured correctly.
-   * 
+   *
    * @param parent Parent-Dialog
    */
   private void showNotConfiguredCorrectly(Frame parent) {
     int ret = JOptionPane.showConfirmDialog(parent, mLocalizer.msg("NotConfiguredCorrectly", "Not configured correctly"), Localizer.getLocalization(Localizer.I18N_ERROR), JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
-    
+
     if (ret == JOptionPane.YES_OPTION) {
       Plugin.getPluginManager().showSettings(mPlugin);
     }
@@ -278,7 +280,7 @@ public class MailCreator {
   /**
    * Gives the User the opportunity to specify which Desktop he uses (KDE or
    * Gnome)
-   * 
+   *
    * @param parent
    *          Parent Dialog
    * @return true if KDE or Gnome has been selected, false if the User wanted to
@@ -286,13 +288,13 @@ public class MailCreator {
    */
   private boolean showKdeGnomeDialog(Frame parent) {
     final JDialog dialog = new JDialog(parent, true);
-    
+
     dialog.setTitle(mLocalizer.msg("chooseTitle", "Choose"));
-    
+
     JPanel panel = (JPanel) dialog.getContentPane();
     panel.setLayout(new FormLayout("10dlu, fill:pref:grow", "default, 3dlu, default, 3dlu, default, 3dlu, default, 3dlu:grow, default"));
     panel.setBorder(Borders.DIALOG_BORDER);
-   
+
     CellConstraints cc = new CellConstraints();
 
     panel.add(UiUtilities.createHelpTextArea(mLocalizer.msg("cantConfigure", "Can't configure on your system")), cc.xyw(1,1, 2));
@@ -310,16 +312,16 @@ public class MailCreator {
     group.add(kdeButton);
     group.add(gnomeButton);
     group.add(selfButton);
-    
+
     selfButton.setSelected(true);
-    
+
     JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
     ok.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         dialog.setVisible(false);
       }
     });
-    
+
     JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     buttonPanel.add(ok);
     panel.add(buttonPanel, cc.xy(2, 9));
@@ -332,12 +334,12 @@ public class MailCreator {
         return dialog.getRootPane();
       }
     });
-    
+
     dialog.getRootPane().setDefaultButton(ok);
-    
+
     dialog.pack();
     UiUtilities.centerAndShow(dialog);
-    
+
     if (kdeButton.isSelected()) {
       mSettings.setApplication("kfmclient");
       mSettings.setParameter("exec {content}");
@@ -348,7 +350,7 @@ public class MailCreator {
       Plugin.getPluginManager().showSettings(mPlugin);
       return false;
     }
-    
+
     return true;
   }
 

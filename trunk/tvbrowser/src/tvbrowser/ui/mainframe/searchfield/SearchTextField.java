@@ -33,24 +33,26 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+
+import org.apache.commons.lang.StringUtils;
 /**
- * The TextField for the Search in the Toolbar 
+ * The TextField for the Search in the Toolbar
  * @author bodum
  */
 public class SearchTextField extends JTextField implements FocusListener{
-  /** The localizer of this class. */  
+  /** The localizer of this class. */
   protected static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(SearchTextField.class);
   /** Color */
   private Color mTextColor, mNoTextColor;
-  
+
   /**
    * Create the Search-Field
    * @param len Specified amount of Columns
    */
   public SearchTextField(int len) {
     super(len);
-    
+
     addFocusListener(this);
     addMouseListener(new MouseAdapter() {
       public void mouseClicked(MouseEvent e) {
@@ -59,33 +61,33 @@ public class SearchTextField extends JTextField implements FocusListener{
         }
       }
     });
-    
+
     int r = (getForeground().getRed()   + getBackground().getRed())   >> 1;
     int g = (getForeground().getGreen() + getBackground().getGreen()) >> 1;
     int b = (getForeground().getBlue()  + getBackground().getBlue())  >> 1;
-    
+
     mNoTextColor = new Color(r,g,b);
     mTextColor = getForeground();
-    
+
     setText(mLocalizer.ellipsisMsg("search","Search"));
     setForeground(mNoTextColor);
   }
-  
+
   public void focusGained(FocusEvent e) {
     if (getText().equals(mLocalizer.ellipsisMsg("search","Search"))) {
       setText("");
     }
-    
+
     setForeground(mTextColor);
   }
 
   public void focusLost(FocusEvent e) {
-    if (getText().length() == 0) {
+    if (StringUtils.isEmpty(getText())) {
       setText(mLocalizer.ellipsisMsg("search","Search"));
       setForeground(mNoTextColor);
     }
-      
+
     repaint();
   }
-  
+
 }

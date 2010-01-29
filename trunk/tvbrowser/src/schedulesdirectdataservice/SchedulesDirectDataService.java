@@ -50,6 +50,9 @@ import net.sf.xtvdclient.xtvd.datatypes.Schedule;
 import net.sf.xtvdclient.xtvd.datatypes.StarRating;
 import net.sf.xtvdclient.xtvd.datatypes.Station;
 import net.sf.xtvdclient.xtvd.datatypes.Xtvd;
+
+import org.apache.commons.lang.StringUtils;
+
 import tvdataservice.MutableChannelDayProgram;
 import tvdataservice.MutableProgram;
 import tvdataservice.SettingsPanel;
@@ -163,7 +166,7 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
             }
 
             prog.setInfo(info);
-            
+
             prog.setTitle(xtvdProgram.getTitle());
 
             if (xtvdProgram.getSyndicatedEpisodeNumber() != null) {
@@ -260,7 +263,7 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
             if (xtvdProgram.getShowType()!= null) {
               desc.append("\nShowType : ").append(xtvdProgram.getShowType());
             } */
-            
+
             if (schedule.getPart() != null) {
               final Part part = schedule.getPart();
               desc.append("\nPart " + part.getNumber() + " of " + part.getTotal());
@@ -365,7 +368,7 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
     personField.append(member.getGivenname()).append(' ').append(member.getSurname());
     personField.append("\t\t-\t\t").append(member.getRole());
   }
-  
+
   private void appendPerson(final StringBuilder personField, final CrewMember member) {
     if (personField.length() > 0) {
       personField.append('\n');
@@ -494,7 +497,7 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
 
   public Channel[] checkForAvailableChannels(ChannelGroup group, ProgressMonitor monitor) throws TvBrowserException {
     String username = mProperties.getProperty("username", "").trim();
-    if (username.length() != 0) {
+    if (StringUtils.isNotEmpty(username)) {
       monitor.setMessage(mLocalizer.msg("loadingChannels","Loading SchedulesDirect-Channels"));
       mChannels = getChannels();
       monitor.setMessage(mLocalizer.msg("loadingChannelsDone","Done loading SchedulesDirect-Channels"));

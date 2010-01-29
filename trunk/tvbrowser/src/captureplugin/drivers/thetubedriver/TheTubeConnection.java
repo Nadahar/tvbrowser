@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.logging.Logger;
 
+import org.apache.commons.lang.StringUtils;
+
 import util.misc.AppleScriptRunner;
 import captureplugin.CapturePlugin;
 import captureplugin.drivers.simpledevice.SimpleChannel;
@@ -214,7 +216,7 @@ public class TheTubeConnection implements SimpleConnectionIf {
         e.printStackTrace();
     }
 
-    if (res == null || res.trim().length() == 0) {
+    if (StringUtils.isBlank(res)) {
         return new Program[0];
     }
 
@@ -281,7 +283,7 @@ public class TheTubeConnection implements SimpleConnectionIf {
       }
 
       call = call.replaceAll("\\{7\\}", Integer.toString(((SimpleChannel)conf.getExternalChannel(prg.getProgram().getChannel())).getNumber()));
-      
+
       String res = null;
 
       try {

@@ -27,11 +27,13 @@ package util.settings;
 
 import java.util.logging.Logger;
 
+import org.apache.commons.lang.StringUtils;
+
 import devplugin.ProgramFieldType;
 
 /**
- * 
- * 
+ *
+ *
  * @author Til Schneider, www.murfman.de
  */
 public class ProgramFieldTypeArrayProperty extends Property {
@@ -61,7 +63,7 @@ public class ProgramFieldTypeArrayProperty extends Property {
 
 			if (asString != null) {
 
-				if (asString.trim().length() == 0) {
+				if (StringUtils.isBlank(asString)) {
 					mCachedValue = new ProgramFieldType[0];
 				} else {
 

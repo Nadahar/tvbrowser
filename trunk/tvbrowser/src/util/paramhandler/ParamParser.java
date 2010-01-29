@@ -30,6 +30,8 @@ import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
 
+import org.apache.commons.lang.StringUtils;
+
 import util.ui.Localizer;
 import devplugin.Program;
 
@@ -37,9 +39,9 @@ import devplugin.Program;
 /**
  *  The ParamParser analyzes a String and calls a ParamLibrary for each
  *  Key/Function it finds.
- *  
+ *
  *  This System is easily extendible. For an example look into the CapturePlugin code
- *   
+ *
  *  @author bodum
  */
 public class ParamParser {
@@ -49,7 +51,7 @@ public class ParamParser {
   private String mErrorString = "";
   /** This is true, if an error occurred*/
   private boolean mErrors = false;
-  
+
   /**
    * Create a ParamParser with the default ParamLibrary
    */
@@ -72,7 +74,7 @@ public class ParamParser {
   public boolean hasErrors() {
     return mErrors;
   }
-  
+
   /**
    * The Error-String for Details about an Error
    * @return Error-String
@@ -80,7 +82,7 @@ public class ParamParser {
   public String getErrorString() {
     return mErrorString;
   }
-  
+
   /**
    * The used ParamLibrary
    * @return ParamLibrary used in this Parser
@@ -88,7 +90,7 @@ public class ParamParser {
   public ParamLibrary getParamLibrary() {
     return mLibrary;
   }
-  
+
   /**
    * Set the ParamLibrary that this Parser uses
    * @param lib ParamLibrary to use
@@ -96,12 +98,12 @@ public class ParamParser {
   public void setParamLibrary(ParamLibrary lib) {
     mLibrary = lib;
   }
-  
+
   /**
    * Analyze a String and return the parsed String.
-   * 
-   * If an error occurred, the return value is null. 
-   * 
+   *
+   * If an error occurred, the return value is null.
+   *
    * @param command String to parse
    * @param prg Program to use while parsing
    * @return parsed String, null if an error occurred
@@ -113,9 +115,9 @@ public class ParamParser {
     StringBuilder cmdBuffer = new StringBuilder();
     char[] chars = command.toCharArray();
     StringBuilder ret = new StringBuilder();
-    
+
     for (int pos=0;pos<chars.length;pos++) {
-      
+
       if (escapemode) {
         ret.append(chars[pos]);
         escapemode = false;
@@ -131,29 +133,29 @@ public class ParamParser {
         cmdBuffer = new StringBuilder();
       } else if (chars[pos] == '}'){
         String newCommand = cmdBuffer.toString().trim();
-        
+
         String retu = analyseCommand(prg, newCommand, pos-cmdBuffer.length());
-        
+
         if (retu == null) {
           return null;
         }
-        
+
         ret.append(retu);
-        
+
         commandmode = false;
       } else if (commandmode) {
         cmdBuffer.append(chars[pos]);
       } else {
         ret.append(chars[pos]);
       }
-      
+
     }
-    
+
     if (commandmode) {
       setError("One \"{\" was not closed properly");
       return null;
     }
-    
+
     return ret.toString();
   }
 
@@ -161,10 +163,10 @@ public class ParamParser {
     mErrors = true;
     mErrorString = message;
   }
-  
+
   /**
    * Analyze a command and calls the Functions in the ParamLibrary
-   * 
+   *
    * @param prg Program to use
    * @param newCommand Command to analyze
    * @param pos Pos of Command in String
@@ -172,7 +174,7 @@ public class ParamParser {
    */
   private String analyseCommand(Program prg, String newCommand, int pos) {
     String ret;
-    
+
     if (newCommand.startsWith("\"") && newCommand.endsWith("\"")) {
       ret = newCommand.substring(1, newCommand.length()-1);
     } else if (newCommand.indexOf('(') > -1) {
@@ -183,7 +185,7 @@ public class ParamParser {
       ret = funcRet;
     } else {
       String cmdRet = mLibrary.getStringForKey(prg, newCommand.trim());
-      
+
       if ((cmdRet == null) && (!mLibrary.hasErrors())) {
         setError("Could not understand Param \""+newCommand+"\" at Position "+ (pos) + ".");
         return null;
@@ -192,38 +194,38 @@ public class ParamParser {
         mErrorString = mLibrary.getErrorString();
         return null;
       }
-      
+
       ret = cmdRet;
     }
-    
+
     return ret;
   }
-  
+
   /**
    * This Function analyzes Functions
-   * 
+   *
    * @param prg Program to use
    * @param function found Function
    * @param pos Pos of Command in String
    * @return null if error, otherwise result of Function
    */
   private String parseFunction(Program prg, String function, int pos) {
-    
-    String funcname = function.substring(0, function.indexOf('(')).trim();
-    
-    if (funcname.length() == 0) {
+
+    String funcname = StringUtils.substringBefore(function,"(").trim();
+
+    if (StringUtils.isEmpty(funcname)) {
       setError("A ( without a function-name was found at Position " + pos);
       return null;
     }
-   
+
     if (!function.endsWith(")")) {
       setError("Function-Call \""+funcname+"\" doesn't end with \")\" at Position " + pos);
       return null;
     }
- 
+
     String params = function.substring(function.indexOf('(') + 1, function
         .lastIndexOf(')'));
-    
+
     String[] splitparams = splitParams(params, pos);
 
     if(splitparams == null) {
@@ -232,22 +234,22 @@ public class ParamParser {
 
     for (int i=0;i<splitparams.length;i++) {
       splitparams[i] = analyseCommand(prg, splitparams[i], pos);
-      
+
       if (splitparams[i] == null) {
         return null;
       }
     }
-    
-    String result = mLibrary.getStringForFunction(prg, funcname, splitparams); 
-    
+
+    String result = mLibrary.getStringForFunction(prg, funcname, splitparams);
+
     if (result == null) {
       mErrors = mLibrary.hasErrors();
       mErrorString = mLibrary.getErrorString();
     }
-    
+
     return result;
-  } 
-  
+  }
+
   /**
    * Splits a String into the separate parameters
    * @param params String to split
@@ -258,13 +260,13 @@ public class ParamParser {
     int infunction = 0;
     boolean instring = false;
     StringBuilder curparam = new StringBuilder();
-    
+
     ArrayList<String> list = new ArrayList<String>();
-    
+
     char[] chars = params.toCharArray();
-    
+
     for (int pos = 0; pos < chars.length;pos++) {
- 
+
       if (chars[pos] == '"') {
         instring = !instring;
         curparam.append(chars[pos]);
@@ -282,13 +284,13 @@ public class ParamParser {
       } else {
         curparam.append(chars[pos]);
       }
-      
+
       if (infunction<0) {
         setError("One \")\" at the wrong Position found");
         return null;
       }
     }
-    
+
     if (instring) {
       setError("One \" was not closed properly");
       return null;
@@ -296,13 +298,13 @@ public class ParamParser {
       setError("One \"(\" was not closed properly");
       return null;
     }
-    
+
     list.add(curparam.toString().trim());
     return list.toArray(new String[list.size()]);
   }
 
   /**
-   * show the parser error(s), if there were errors during parsing 
+   * show the parser error(s), if there were errors during parsing
    * @param parent parent window
    * @return <code>true</code>, if an error exists in the parser, <code>false</code> otherwise
    * @since 3.0
@@ -316,7 +318,7 @@ public class ParamParser {
   }
 
   /**
-   * show the parser error(s), if there were errors during parsing 
+   * show the parser error(s), if there were errors during parsing
    * @return <code>true</code>, if an error exists in the parser, <code>false</code> otherwise
    * @since 3.0
    */
