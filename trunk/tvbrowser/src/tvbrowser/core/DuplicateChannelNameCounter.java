@@ -2,6 +2,8 @@ package tvbrowser.core;
 
 import java.util.Hashtable;
 
+import org.apache.commons.lang.StringUtils;
+
 import devplugin.Channel;
 
 /**
@@ -34,9 +36,9 @@ public class DuplicateChannelNameCounter {
         count++;
         mChannelNames.put(key, count);
       }
-      
+
       // names and country
-      key = normalizeName(ch.getDefaultName())+ch.getCountry().toLowerCase();
+      key = key +ch.getCountry().toLowerCase();
       count = mChannelCountryNames.get(key);
 
       if (count == null) {
@@ -57,7 +59,7 @@ public class DuplicateChannelNameCounter {
    * @return normalize name
    */
   private String normalizeName(String name) {
-    return name.toLowerCase().replaceAll(" ", "");
+    return StringUtils.remove(name.toLowerCase(),' ');
   }
 
   /**

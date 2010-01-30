@@ -10,6 +10,8 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
 
+import org.apache.commons.lang.StringUtils;
+
 import util.misc.StringPool;
 
 class DataHydraChannelContainer {
@@ -19,7 +21,10 @@ class DataHydraChannelContainer {
   private String baseUrl;
   private String iconUrl;
 
-  private Hashtable<String, Long> lastUpdate = new Hashtable<String, Long>();
+  /**
+   * lazily initialized hashtable
+   */
+  private Hashtable<String, Long> lastUpdate;
 
   /**
    * Creates a new instance of DataHydraChannelContainer
@@ -29,22 +34,24 @@ class DataHydraChannelContainer {
     this.baseUrl = baseUrl;
     this.iconUrl = StringPool.getString(iconUrl);
     this.id = id;
-    try {
-      devplugin.Date now = new devplugin.Date();
-      StringTokenizer ST = new StringTokenizer(timeString, "_");
-      while (ST.hasMoreTokens()) {
-        String part = ST.nextToken();
-        StringTokenizer ST2 = new StringTokenizer(part, "-");
-        String dateinfo = ST2.nextToken();
-        StringTokenizer ST3 = new StringTokenizer(dateinfo, ":");
-        devplugin.Date day = new devplugin.Date(Integer.parseInt(ST3.nextToken()), Integer.parseInt(ST3.nextToken()), Integer.parseInt(ST3.nextToken()));
-        if (now.compareTo(day) <= 0) {
-          lastUpdate.put(dateinfo, Long.valueOf(ST2.nextToken()));
+    if (StringUtils.isNotEmpty(timeString)) {
+      try {
+        devplugin.Date now = new devplugin.Date();
+        StringTokenizer ST = new StringTokenizer(timeString, "_");
+        while (ST.hasMoreTokens()) {
+          String part = ST.nextToken();
+          StringTokenizer ST2 = new StringTokenizer(part, "-");
+          String dateinfo = ST2.nextToken();
+          StringTokenizer ST3 = new StringTokenizer(dateinfo, ":");
+          devplugin.Date day = new devplugin.Date(Integer.parseInt(ST3.nextToken()), Integer.parseInt(ST3.nextToken()), Integer.parseInt(ST3.nextToken()));
+          if (now.compareTo(day) <= 0) {
+            getLastUpdateTable().put(dateinfo, Long.valueOf(ST2.nextToken()));
+          }
         }
+      } catch (RuntimeException E) {
+        // ignore any parsing exception
       }
-    } catch (Exception E) {
     }
-    //lastUpdate = time;
   }
 
 
@@ -125,7 +132,7 @@ class DataHydraChannelContainer {
    * @return Value of property lastUpdate.
    */
   protected long getLastUpdate(devplugin.Date day) {
-    Long temp = lastUpdate.get(Integer.toString(day.getYear()) + ":" + Integer.toString(day.getMonth()) + ":" + Integer.toString(day.getDayOfMonth()));
+    Long temp = getLastUpdateTable().get(Integer.toString(day.getYear()) + ":" + Integer.toString(day.getMonth()) + ":" + Integer.toString(day.getDayOfMonth()));
     if (temp == null) {
       return 0;
     } else {
@@ -139,21 +146,28 @@ class DataHydraChannelContainer {
    * @param lastUpdate New value of property lastUpdate.
    */
   protected void setLastUpdate(final devplugin.Date day, final long lastUpdate) {
-    this.lastUpdate.put(Integer.toString(day.getYear()) + ':'
+    this.getLastUpdateTable().put(Integer.toString(day.getYear()) + ':'
         + Integer.toString(day.getMonth()) + ':'
         + Integer.toString(day.getDayOfMonth()), lastUpdate);
   }
 
   public String getLastUpdateString() {
     StringBuilder buffer = new StringBuilder();
-    Enumeration<String> enu = lastUpdate.keys();
+    Enumeration<String> enu = getLastUpdateTable().keys();
     while (enu.hasMoreElements()) {
       String date = (String) enu.nextElement();
       buffer.append(date);
       buffer.append('-');
-      buffer.append(lastUpdate.get(date).toString());
+      buffer.append(getLastUpdateTable().get(date).toString());
       buffer.append('_');
     }
     return buffer.toString();
+  }
+
+  private Hashtable<String, Long> getLastUpdateTable() {
+    if (lastUpdate == null) {
+      lastUpdate = new Hashtable<String, Long>();
+    }
+    return lastUpdate;
   }
 }

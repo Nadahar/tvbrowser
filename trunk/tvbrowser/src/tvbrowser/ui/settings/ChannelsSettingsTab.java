@@ -104,7 +104,7 @@ import devplugin.SettingsTab;
 
 /**
  * This Class represents the Channel-Settings-Tab
- * 
+ *
  * @author Bodo Tasche
  */
 public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
@@ -180,7 +180,7 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
 
   /**
    * Create the SettingsPanel
-   * 
+   *
    * @return the SettingsPanel
    */
   public JPanel createSettingsPanel() {
@@ -370,7 +370,7 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
     fillSubscribedChannelsListBox();
     fillAvailableChannelsListBox();
     mListUpdating = false;
-    
+
     panel.addAncestorListener(new AncestorListener() {
       public void ancestorRemoved(AncestorEvent event) {
         Settings.propSelectedChannelCategoryIndex.setByte((byte)mCategoryCB.getSelectedIndex());
@@ -389,7 +389,7 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
           mInitChannelsAsked = true;
           int ret = JOptionPane.showConfirmDialog(result,
               mLocalizer.msg("loadChannelsQuestion", "Should I download the channel list?"),
-              mLocalizer.msg("loadChannelsTitle", "No channels found"), 
+              mLocalizer.msg("loadChannelsTitle", "No channels found"),
               JOptionPane.YES_NO_OPTION);
           if (ret == JOptionPane.YES_OPTION) {
             refreshChannelList();
@@ -399,14 +399,14 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
 
       public void ancestorMoved(AncestorEvent event) {}
     });
-    
+
     result.setBorder(BorderFactory.createEmptyBorder(9, 9, 9, 9));
     return result;
   }
 
   /**
    * Create the Panel with the Filter-Interface
-   * 
+   *
    * @return Panel with Filter Interface
    */
   private JPanel createFilterPanel() {
@@ -599,8 +599,8 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
       items.add(new FilterItem(locale.getDisplayCountry(), country));
     }
     Collections.sort(items);
-    
-    String defaultCountry = Settings.propSelectedChannelCountry.getString(); 
+
+    String defaultCountry = Settings.propSelectedChannelCountry.getString();
     for (FilterItem item : items) {
       mCountryCB.addItem(item);
       // select last used country (or default country of this system)
@@ -608,7 +608,7 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
         mCountryCB.setSelectedIndex(mCountryCB.getItemCount() - 1);
       }
     }
-    
+
     // select "all countries" if nothing else matches
     if(mCountryCB.getSelectedIndex() == -1) {
       mCountryCB.setSelectedIndex(0);
@@ -622,7 +622,7 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
 
   /**
    * Checks if a Channellist contains a specific Category
-   * 
+   *
    * @param allChannels
    *          Check in this List of Channels
    * @param category
@@ -665,7 +665,7 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
 
   /**
    * Show the context menu for the channel list
-   * 
+   *
    * @param e
    *          Mouse Event
    */
@@ -680,7 +680,7 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
 
   /**
    * Create the ButtonPanel for up/down Buttons
-   * 
+   *
    * @param btn1
    *          Button 1
    * @param btn2
@@ -701,7 +701,7 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
 
   /**
    * Create the ButtonPanel for up/down Buttons
-   * 
+   *
    * @param btn1
    *          Button 1
    * @param btn2
@@ -727,7 +727,7 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
   private void saveSettingsInternal(boolean autoUpdate) {
     Object[] list = ((DefaultListModel) mSubscribedChannels.getModel())
         .toArray();
-    
+
     // Convert the list into a Channel[] and fill channels
     ArrayList<String> groups = new ArrayList<String>();
 
@@ -749,7 +749,7 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
     Settings.propSubscribedChannels.setChannelArray(channelArr);
     Settings.propUsedChannelGroups.setStringArray(groups
         .toArray(new String[groups.size()]));
-    
+
     Settings.propChannelsWereConfigured.setBoolean(ChannelList.getNumberOfSubscribedChannels() > 0);
 
     if (!Settings.propTrayUseSpecialChannels.getBoolean()) {
@@ -767,7 +767,7 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
     saveSettingsInternal(true);
   }
 
-  
+
   public void saveSettingsWithoutDataUpdate() {
     saveSettingsInternal(false);
   }
@@ -794,7 +794,7 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
 
     subscribedChannelArr = new Channel[mChannelListModel.getSubscribedChannels().size()];
     ((DefaultListModel) mSubscribedChannels.getModel()).clear();
-    
+
     Channel[] channels = mChannelListModel.getAvailableChannels();
     for (Channel channel : channels) {
       int pos = ChannelList.getPos(channel);
@@ -810,7 +810,7 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
             .addElement(aSubscribedChannelArr);
       }
     }
-    
+
     updateChannelNumbers();
   }
 
@@ -893,13 +893,13 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
 
   /**
    * Creates a Comparator that is able to compare Channels
-   * 
+   *
    * @return ChannelComparator
    */
   private Comparator<Channel> createChannelComparator() {
     return new Comparator<Channel>() {
       public int compare(Channel o1, Channel o2) {
-        return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
+        return o1.getName().compareToIgnoreCase(o2.getName());
       }
     };
   }
@@ -950,7 +950,7 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
     List<Channel> channelsAfter = Arrays.asList(channelsAfterArr);
     ChannelListChangesDialog.showChannelChanges(SettingsDialog.getInstance().getDialog(), channelsBefore, channelsAfter);
   }
-  
+
   /**
    * Display the Config-Channel
    */

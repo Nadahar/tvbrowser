@@ -55,7 +55,7 @@ import devplugin.Channel;
  * ChannelList contains a list of all available mAvailableChannels in the
  * system. Use this class to subscribe mAvailableChannels. The available
  * mAvailableChannels are listed in the file CHANNEL_FILE.
- * 
+ *
  * @author Martin Oberhauser
  */
 public class ChannelList {
@@ -92,7 +92,7 @@ public class ChannelList {
 
   private static HashMap<String, String> mChannelIconMap, mChannelNameMap,
       mChannelWebpagesMap, mChannelDayLightCorrectionMap;
-  
+
   private static Channel mCurrentChangeChannel = null;
 
   /**
@@ -115,35 +115,35 @@ public class ChannelList {
         .getInstance().getDataServices();
 
     HashMap<Channel, Channel> availableChannels = new HashMap<Channel, Channel>(mAvailableChannelsMap.size());
-    
+
     for (TvDataServiceProxy proxy : dataServiceArr) {
       addDataServiceChannels(proxy,availableChannels);
     }
 
     boolean removed = false;
-    
+
     for(int i = mAvailableChannels.size()-1; i >= 0; i--) {
       Channel ch = (Channel)mAvailableChannels.get(i);
-      
+
       if(!availableChannels.containsKey(ch)) {
         mAvailableChannels.remove(i);
         mAvailableChannelsMap.remove(ch.getUniqueId());
-        
+
         /* remove subscribed channels which are not available any more */
         if(mSubscribedChannels.contains(ch)) {
           mLog.warning(ch+" is not available any more");
           unsubscribeChannel(ch);
-          
+
           removed = true;
         }
       }
     }
-    
+
     if(removed) {
       Settings.propSubscribedChannels.setChannelArray(mSubscribedChannels.toArray(new Channel[mSubscribedChannels.size()]));
       calculateChannelPositions();
     }
-    
+
     MainFrame.resetOnAirArrays();
   }
 
@@ -182,7 +182,7 @@ public class ChannelList {
   private static void addDataServiceChannels(TvDataServiceProxy dataService,
       HashMap<Channel, Channel> availableChannels) {
     Channel[] channelArr = dataService.getAvailableChannels();
-    
+
     for (Channel channel : channelArr) {
       addChannelToAvailableChannels(channel,availableChannels);
     }
@@ -198,12 +198,13 @@ public class ChannelList {
   }
 
   private static void addChannelToAvailableChannels(Channel channel, HashMap<Channel, Channel> availableChannels) {
-    mCurrentChangeChannel = mAvailableChannelsMap.get(channel.getUniqueId());
-    
+    final String channelId = channel.getUniqueId();
+    mCurrentChangeChannel = mAvailableChannelsMap.get(channelId);
+
     if (mCurrentChangeChannel == null) {
       availableChannels.put(channel, channel);
       mAvailableChannels.add(channel);
-      mAvailableChannelsMap.put(channel.getUniqueId(), channel);
+      mAvailableChannelsMap.put(channelId, channel);
 
       if (!mChannelDayLightCorrectionMap.isEmpty()) {
         setDayLightSavingTimeCorrectionsForChannel(channel);
@@ -226,10 +227,10 @@ public class ChannelList {
       mCurrentChangeChannel.setDefaultIcon(channel.getDefaultIcon());
       mCurrentChangeChannel.setChannelCopyrightNotice(channel.getCopyrightNotice());
       mCurrentChangeChannel.setChannelWebpage(channel.getDefaultWebPage());
-      
+
       availableChannels.put(mCurrentChangeChannel, mCurrentChangeChannel);
     }
-    
+
     mCurrentChangeChannel = null;
   }
 
@@ -262,7 +263,7 @@ public class ChannelList {
 
   /**
    * Subscribes a channel
-   * 
+   *
    * @param channel
    */
   public static void subscribeChannel(Channel channel) {
@@ -274,7 +275,7 @@ public class ChannelList {
     mSubscribedChannelPosition = new HashMap<String, Integer>();
     for (int i = 0; i < mSubscribedChannels.size(); i++) {
       Channel ch = mSubscribedChannels.get(i);
-      
+
       if (ch != null) {
         mSubscribedChannelPosition.put(ch.getUniqueId(), i);
       }
@@ -284,7 +285,7 @@ public class ChannelList {
   /**
    * Marks the specified mAvailableChannels as 'subscribed'. All other
    * mAvailableChannels become 'unsubscribed'
-   * 
+   *
    * @param channelArr
    *          The channels to set as subscribed channels,
    */
@@ -294,7 +295,7 @@ public class ChannelList {
 
   /**
    * Sets the subscribed channels.
-   * 
+   *
    * @param channelArr The array with the subscribed channels.
    * @param update ?
    */
@@ -307,7 +308,7 @@ public class ChannelList {
         }
       }
     }
-    
+
     // remember channels which are no longer subscribed
     ArrayList<Channel> unsubscribedChannels = new ArrayList<Channel>();
     for (Channel channel : mSubscribedChannels) {
@@ -331,14 +332,14 @@ public class ChannelList {
         mSubscribedChannels.add(channel);
       }
     }
-    
+
     calculateChannelPositions();
 
     // now remove all unsubscribed TV data
     for (Channel channel : unsubscribedChannels) {
       handleChannelUnsubscribed(channel);
     }
-    
+
     if (channelsAdded && update) {
       SwingUtilities.invokeLater(new Runnable() {
         public void run() {
@@ -358,7 +359,7 @@ public class ChannelList {
   /**
    * Returns a new Channel object with the specified IDs or null, if the given
    * IDs does not exist.
-   * 
+   *
    * @param dataServiceId
    *          The id of the data service to get the channel from.
    * @param groupId
@@ -367,10 +368,10 @@ public class ChannelList {
    *          The country of the channel.
    * @param channelId
    *          The id of the channel.
-   * 
+   *
    * @return The specified channel or <code>null</code> if the channel wasn't
    *         found.
-   * 
+   *
    * @since 2.2.1
    */
   public static Channel getChannel(String dataServiceId, String groupId,
@@ -386,7 +387,7 @@ public class ChannelList {
     }
 
     int n = mAvailableChannels.size();
-    
+
     for(int i = 0; i < n; i++) {
       Channel channel = mAvailableChannels.get(i);
 
@@ -404,7 +405,7 @@ public class ChannelList {
      * try to find it // in an unsubscribed group. // If we find it there, we
      * subscribe the affected group and add all channels of this group to // the
      * 'available channels' list
-     * 
+     *
      * if(dataService != null) { ChannelGroup[] groupArr =
      * dataService.getAvailableGroups(); for (int i=0; i<groupArr.length; i++) {
      * if (!ChannelGroupManager.getInstance().isSubscribedGroup(groupArr[i]) &&
@@ -425,7 +426,7 @@ public class ChannelList {
   /**
    * Gets the position of the channel in the subscribed channel array, or -1 if
    * the channel isn't a subscribed channel.
-   * 
+   *
    * @param channel
    *          The channel to get the position for.
    * @return The position or -1
@@ -440,7 +441,7 @@ public class ChannelList {
         return pos.intValue();
       }
     }
-    
+
     return -1;
   }
 
@@ -455,7 +456,7 @@ public class ChannelList {
 
   /**
    * Returns true, if the specified channel is currently subscribed.
-   * 
+   *
    * @param channel
    *          The channel to check if it is subscribed,
    * @return True if the channel is subscribed, false otherwise.
@@ -474,7 +475,7 @@ public class ChannelList {
 
   /**
    * Returns the number of subscribed mAvailableChannels.
-   * 
+   *
    * @return The number of the subscribed channels.
    */
   public static int getNumberOfSubscribedChannels() {
@@ -483,7 +484,7 @@ public class ChannelList {
 
   /**
    * Returns all subscribed mAvailableChannels.
-   * 
+   *
    * @return All subscribed channels in an array.
    */
   public static Channel[] getSubscribedChannels() {
@@ -496,7 +497,7 @@ public class ChannelList {
 
   /**
    * Set the day light time correction for a channel.
-   * 
+   *
    * @param channel
    *          The channel to set the value.
    */
@@ -511,7 +512,7 @@ public class ChannelList {
 
   /**
    * Set the icon for a channel.
-   * 
+   *
    * @param channel
    *          The channel to set the value for.
    */
@@ -534,7 +535,7 @@ public class ChannelList {
 
   /**
    * Sets the name for the given channel.
-   * 
+   *
    * @param channel
    *          The channel to set the name for.
    */
@@ -548,7 +549,7 @@ public class ChannelList {
 
   /**
    * Sets the web page for a channel.
-   * 
+   *
    * @param channel
    *          The channel to set the web page for.
    */
@@ -605,10 +606,10 @@ public class ChannelList {
               + ";" + filename.trim()));
         }
       }
-      
+
       if(mChannelIconMap != null) {
         Set<String> keys = mChannelIconMap.keySet();
-        
+
         for(String key : keys) {
           if(!isSubscribedChannel(getChannelForKey(key))) {
             out.print(key);
@@ -648,10 +649,10 @@ public class ChannelList {
       }
       // remember the currently active services for faster startup
       Settings.propCurrentlyUsedDataServiceIds.setStringArray(subscribedServices.toArray(new String[subscribedServices.size()]));
-      
+
       if(mChannelNameMap != null) {
         Set<String> keys = mChannelNameMap.keySet();
-        
+
         for(String key : keys) {
           if(!isSubscribedChannel(getChannelForKey(key))) {
             out.print(key);
@@ -670,7 +671,7 @@ public class ChannelList {
 
   /**
    * Saves the web pages of all channels.
-   * 
+   *
    */
   private static void storeChannelWebPages() {
     File f = new File(Settings.getUserSettingsDirName(), FILENAME_CHANNEL_WEBPAGES);
@@ -688,10 +689,10 @@ public class ChannelList {
           out.println(createPropertyForChannel(channel, userWebPage.trim()));
         }
       }
-      
+
       if(mChannelWebpagesMap != null) {
         Set<String> keys = mChannelWebpagesMap.keySet();
-        
+
         for(String key : keys) {
           if(!isSubscribedChannel(getChannelForKey(key))) {
             out.print(key);
@@ -737,7 +738,7 @@ public class ChannelList {
 
   /**
    * Create a HashMap from a Settings-File
-   * 
+   *
    * @param f
    *          File to Load
    * @return HashMap filled with Channel-Key, Value
@@ -807,7 +808,7 @@ public class ChannelList {
 
   /**
    * Writes the channels time limits to data file.
-   * 
+   *
    * @since 2.2.4/2.6
    */
   public static void loadChannelTimeLimits() {
@@ -844,7 +845,7 @@ public class ChannelList {
 
   /**
    * Writes the channels time limits to data file.
-   * 
+   *
    * @since 2.2.4/2.6
    */
   public static void storeChannelTimeLimits() {
@@ -868,13 +869,13 @@ public class ChannelList {
           }
         });
   }
-  
+
   private static Channel getChannelForKey(String key) {
     Channel ch = null;
-    
+
     if(key != null) {
       String[] keyParts = key.split(":");
-      
+
       if(keyParts.length == 4) {
         ch = getChannel(keyParts[0],keyParts[1],keyParts[2],keyParts[3]);
       }
@@ -885,13 +886,13 @@ public class ChannelList {
         ch = getChannel(keyParts[0],null,null,keyParts[1]);
       }
     }
-    
+
     return ch;
   }
-    
+
   /**
    * Gets if the channel values are allowed to be changed for the given channel.
-   * 
+   *
    * @param ch The channel to check if the value change is allowed.
    * @return <code>True</code> if the channel value are allowed to be changed, <code>false</code> otherwise.
    */

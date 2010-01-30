@@ -208,7 +208,7 @@ public class DreamboxDataService extends AbstractTvDataService {
                     TreeMap<String, String> map = getServiceData(URLEncoder.encode(key, "UTF8"));
 
                     for (String mkey : map.keySet()) {
-                        Channel ch = new Channel(this, map.get(mkey), "DREAM" + mkey.replaceAll(":", "_"), TimeZone.getTimeZone("GMT+1:00"), "de",
+                        Channel ch = new Channel(this, map.get(mkey), "DREAM" + StringUtils.replace(mkey, ":", "_"), TimeZone.getTimeZone("GMT+1:00"), "de",
                                 "Imported from Dreambox", "", mChannelGroup, null, Channel.CATEGORY_TV);
                         allChannels.add(ch);
                     }
@@ -298,7 +298,7 @@ public class DreamboxDataService extends AbstractTvDataService {
 
     private void getEPGData(TvDataUpdateManager updateManager, Channel ch) {
         try {
-            URL url = new URL("http://" + mProperties.getProperty("ip", "") + "/web/epgservice?sRef=" + ch.getId().substring(5).replaceAll("_", ":").replaceAll(" ", "%20"));
+            URL url = new URL("http://" + mProperties.getProperty("ip", "") + "/web/epgservice?sRef=" + StringUtils.replace(StringUtils.replace(ch.getId().substring(5), "_", ":"), " ", "%20"));
 
             URLConnection connection = url.openConnection();
 

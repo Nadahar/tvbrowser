@@ -99,6 +99,7 @@ public class Channel implements Comparable<Channel> {
   private Icon mDefaultIcon;
 
   private AbstractTvDataServiceProxy mProxy;
+  private String mUniqueId;
 
 
   /**
@@ -893,7 +894,10 @@ public class Channel implements Comparable<Channel> {
    * @since 2.7
    */
   public String getUniqueId() {
-    return new StringBuilder(getDataServiceProxy().getId()).append('_').append(getGroup().getId()).append('_').append(getCountry()).append('_').append(getId()).toString();
+    if (mUniqueId == null) {
+      mUniqueId = new StringBuilder(getDataServiceProxy().getId()).append('_').append(getGroup().getId()).append('_').append(getCountry()).append('_').append(getId()).toString();
+    }
+    return mUniqueId;
   }
 
   /**
