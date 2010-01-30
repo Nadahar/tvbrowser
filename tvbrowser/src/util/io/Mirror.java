@@ -44,13 +44,15 @@ import java.util.StringTokenizer;
 import java.util.logging.Logger;
 import java.util.zip.GZIPOutputStream;
 
+import org.apache.commons.lang.math.RandomUtils;
+
 import util.exc.TvBrowserException;
 import devplugin.Date;
 import devplugin.ProgressMonitor;
 
 /**
- * 
- * 
+ *
+ *
  * @author Til Schneider, www.murfman.de
  */
 public class Mirror {
@@ -59,7 +61,7 @@ public class Mirror {
 
   private static final int MAX_UP_TO_DATE_CHECKS = 10;
   private static final int MAX_LAST_UPDATE_DAYS = 5;
-  
+
   /** The name extension of mirror files */
   public static final String MIRROR_LIST_FILE_NAME = "mirrorlist.gz";
 
@@ -70,7 +72,7 @@ public class Mirror {
   private String mUrl;
 
   private int mWeight;
-  
+
   /** List of blocked Servers */
   private static ArrayList<String> BLOCKEDSERVERS = new ArrayList<String>();
 
@@ -80,7 +82,7 @@ public class Mirror {
   private static boolean mDownloadException = false;
   /** Data of Mirror-Download*/
   private static byte[] mMirrorDownloadData = null;
-  
+
   /**
    * @param url
    * @param weight
@@ -94,7 +96,7 @@ public class Mirror {
   /**
    * Creates an instance with the given URL
    * and the default weight for this mirror.
-   * 
+   *
    * @param url The URL of the mirror.
    */
   public Mirror(String url) {
@@ -103,7 +105,7 @@ public class Mirror {
 
   /**
    * Gets the URL of this Mirror.
-   * 
+   *
    * @return The URL of this Mirror.
    */
   public String getUrl() {
@@ -112,7 +114,7 @@ public class Mirror {
 
   /**
    * Gets the weight of this Mirror.
-   * 
+   *
    * @return The weight of this Mirror.
    */
   public int getWeight() {
@@ -121,7 +123,7 @@ public class Mirror {
 
   /**
    * Sets the weight of this Mirror.
-   * 
+   *
    * @param weight The new weight of this Mirror.
    */
   public void setWeight(int weight) {
@@ -130,7 +132,7 @@ public class Mirror {
 
   /**
    * Reads the mirrors from the given stream.
-   * 
+   *
    * @param stream
    *          The stream to read the mirrors from.
    * @return The mirror array read from the stream.
@@ -181,7 +183,7 @@ public class Mirror {
 
   /**
    * Reads the mirrors in the given file.
-   * 
+   *
    * @param file
    *          The file to read the mirrors from.
    * @return The mirror array read from the file.
@@ -208,7 +210,7 @@ public class Mirror {
 
   /**
    * Write the mirror array to the given stream.
-   * 
+   *
    * @param stream The stream to write the mirror array to.
    * @param mirrorArr The mirror array to write.
    * @throws IOException Thrown if something went wrong.
@@ -228,8 +230,8 @@ public class Mirror {
   }
 
   /**
-   * 
-   * 
+   *
+   *
    * @param file The file to write the mirror array to.
    * @param mirrorArr The mirror array to write.
    * @throws IOException Thrown if something went wrong.
@@ -288,12 +290,12 @@ public class Mirror {
     }
     return true;
   }
-  
+
   /**
-   * Loads the mirror lists from the given file 
+   * Loads the mirror lists from the given file
    * and the given server defined mirror array.
-   * 
-   * @param file The file to load the mirrors from. 
+   *
+   * @param file The file to load the mirrors from.
    * @param mirrorUrlArr The array with the current mirrors urls.
    * @param serverDefindedMirros The array with the server definded mirrors
    * @return The load mirror array.
@@ -326,15 +328,15 @@ public class Mirror {
           mirrorList.add(new Mirror(mirrorUrlArr[i]));
         }
       }
-      
+
       return mirrorList.toArray(new Mirror[mirrorList.size()]);
     }
   }
-  
+
   /**
    * Get the Server-Domain of the Url
    * @param url Url to fetch the Server-Domain from
-   * @return Server-Domain 
+   * @return Server-Domain
    */
   private static String getServerBase(String url) {
     if (url.startsWith("http://")) {
@@ -343,13 +345,13 @@ public class Mirror {
     if (url.indexOf('/') >= 0) {
       url = url.substring(0, url.indexOf('/'));
     }
-    
+
     return url;
   }
-    
+
   private static Mirror chooseMirror(Mirror[] mirrorArr, Mirror oldMirror, String name, Class caller) throws TvBrowserException {
     Mirror[] oldMirrorArr = mirrorArr;
-    
+
     /* remove the old mirror from the mirrorlist */
     if (oldMirror != null) {
       ArrayList<Mirror> mirrors = new ArrayList<Mirror>();
@@ -369,7 +371,7 @@ public class Mirror {
     }
 
     // Choose a weight
-    int chosenWeight = (int) (Math.random() * totalWeight);
+    int chosenWeight = RandomUtils.nextInt(totalWeight);
 
     // Find the chosen mirror
     int currWeight = 0;
@@ -415,18 +417,18 @@ public class Mirror {
 
     throw new TvBrowserException(caller, "error.2", "No mirror found\ntried following mirrors: ", name, buf.toString());
   }
-  
+
   /**
    * Chooses a up to date mirror.
-   * 
+   *
    * @param mirrorArr The mirror array to check.
    * @param monitor The progress monitor to use.
    * @param name The name of the file to check.
    * @param id The id of the file to check.
    * @param caller The caller class.
    * @param additionalErrorMsg An additional error message value.
-   * @return The choosen mirror or <code>null</code>, if no up to date mirror was found or something went wrong. 
-   * @throws TvBrowserException 
+   * @return The choosen mirror or <code>null</code>, if no up to date mirror was found or something went wrong.
+   * @throws TvBrowserException
    */
   public static Mirror chooseUpToDateMirror(Mirror[] mirrorArr, ProgressMonitor monitor, String name, String id, Class caller, String additionalErrorMsg) throws TvBrowserException {
     boolean isUpToDate = false;
@@ -452,14 +454,14 @@ public class Mirror {
           }
         }
       } catch (TvBrowserException exc) {
-        String blockedServer = getServerBase(mirror.getUrl()); 
+        String blockedServer = getServerBase(mirror.getUrl());
         BLOCKEDSERVERS.add(blockedServer);
         mLog.info("Server blocked : " + blockedServer);
-        
+
         if(mirrorArr.length == 1 && mirrorArr[0].equals(mirror)) {
           return null;
         }
-        
+
         // This one is not available -> choose another one
         Mirror oldMirror = mirror;
         mirror = chooseMirror(mirrorArr, mirror, name, caller);
@@ -485,9 +487,9 @@ public class Mirror {
     mMirrorDownloadRunning = true;
     mMirrorDownloadData = null;
     mDownloadException = false;
-    
+
     mLog.info("Loading MirrorDate from " + url);
-    
+
     new Thread(new Runnable() {
       public void run() {
         try {
@@ -514,7 +516,7 @@ public class Mirror {
       mLog.info("Server " + url +" is down!");
       return false;
     }
-    
+
     try {
       // Parse is. E.g.: '2003-10-09 11:48:45'
       String asString = new String(mMirrorDownloadData);
@@ -535,7 +537,7 @@ public class Mirror {
 
     return false;
   }
-  
+
   /**
    * Reset the List of banned Servers
    */

@@ -247,7 +247,7 @@ public final class NextViewDataService extends AbstractTvDataService {
           if (icon == null){
             icon = new ChannelLabel(alternativeChannels1.get(channelArr[i].getId())).getIcon();
           }
-          jbUtilities.storeIcon(icon, "png", mDataDir + "/alternative_icons/" + channelArr[i].getId() + ".png");
+          JbUtilities.storeIcon(icon, "png", mDataDir + "/alternative_icons/" + channelArr[i].getId() + ".png");
           channelArr[i].setDefaultIcon(icon);
         }
       }
@@ -368,7 +368,7 @@ public final class NextViewDataService extends AbstractTvDataService {
       propKey = e.nextElement().toString();
       this.prop.setProperty(propKey, p.getProperty(propKey));
     }
-    firstUpdate = firstUpdate + Integer.parseInt(prop.getProperty(AUTOSTART, "30")) * 60000;
+    firstUpdate = firstUpdate + Integer.parseInt(prop.getProperty(AUTOSTART, "30")) * 60000L;
     nextUpdate = firstUpdate;
 
   }
@@ -523,13 +523,13 @@ public final class NextViewDataService extends AbstractTvDataService {
 
     String lckFile = mDataDir + "/autoUpLck.bak";
     if (!(new File(lckFile)).exists()) {
-      jbUtilities.getFileFromThisJar(mInstance.getClass(), "files/autoUpLck.bak", lckFile);
+      JbUtilities.getFileFromThisJar(mInstance.getClass(), "files/autoUpLck.bak", lckFile);
     }
 
     String cni_map_File = mDataDir + "/cni.map.properties";
     String channelDesc = mDataDir + "/cni.desc.properties";
-    jbUtilities.getFileFromThisJar(mInstance.getClass(), "files/cni.map.properties", cni_map_File);
-    jbUtilities.getFileFromThisJar(mInstance.getClass(), "files/cni.desc.properties", channelDesc);
+    JbUtilities.getFileFromThisJar(mInstance.getClass(), "files/cni.map.properties", cni_map_File);
+    JbUtilities.getFileFromThisJar(mInstance.getClass(), "files/cni.desc.properties", channelDesc);
 
     File iconDir = new File (mDataDir + "/alternative_icons");
     if (!iconDir.exists()){
@@ -556,7 +556,7 @@ public final class NextViewDataService extends AbstractTvDataService {
         // end of removal
       }
       else{
-        jbUtilities.getFileFromThisJar(mInstance.getClass(), "files/alternative_sources.properties", newMixedDesc);
+        JbUtilities.getFileFromThisJar(mInstance.getClass(), "files/alternative_sources.properties", newMixedDesc);
       }
     }
   }
@@ -669,7 +669,7 @@ public final class NextViewDataService extends AbstractTvDataService {
       return false;
     }
 
-    nextUpdate = aktTime + Integer.parseInt((String) prop.getProperty(AUTOREPETITION, "60")) * 60000;
+    nextUpdate = aktTime + Integer.parseInt((String) prop.getProperty(AUTOREPETITION, "60")) * 60000L;
     return true;
   }
 
@@ -756,7 +756,7 @@ public final class NextViewDataService extends AbstractTvDataService {
             // run external nxtvepg process
             try {
               if (!fOutFile.exists()) {
-                jbUtilities.runExtProcess(cmdParameters, outFileDir);
+                JbUtilities.runExtProcess(cmdParameters, outFileDir);
                 if (!fOutFile.exists()) {
                   mLog.warning("nxtvepg export Error: Unable to create: " + fOutFile.getCanonicalFile());
                   updateError = true;

@@ -904,14 +904,14 @@ public final class NextViewDataServicePanel extends SettingsPanel implements Foc
     }
 
 
-    if (!mProp.getProperty(NextViewDataService.AUTORUN).equals(newAutoRun) || !autoStartField.getText().equals((String) mProp.get(NextViewDataService.AUTOSTART)) || !autoRepeatField.getText().equals((String) mProp.get(NextViewDataService.AUTOREPETITION))) {
+    if (!mProp.getProperty(NextViewDataService.AUTORUN).equals(newAutoRun) || !autoStartField.getText().equals(mProp.get(NextViewDataService.AUTOSTART)) || !autoRepeatField.getText().equals((String) mProp.get(NextViewDataService.AUTOREPETITION))) {
       if (mService.firstUpdate == mService.nextUpdate) {
-        mService.nextUpdate = mService.nextUpdate - Integer.parseInt((String) mProp.getProperty(NextViewDataService.AUTOSTART)) * 60000;
-        mService.nextUpdate = mService.nextUpdate + Integer.parseInt((String) autoStartField.getText()) * 60000;
+        mService.nextUpdate = mService.nextUpdate - Integer.parseInt(mProp.getProperty(NextViewDataService.AUTOSTART)) * 60000L;
+        mService.nextUpdate = mService.nextUpdate + Integer.parseInt(autoStartField.getText()) * 60000L;
         mService.firstUpdate = mService.nextUpdate;
       } else {
-        mService.nextUpdate = mService.nextUpdate - Integer.parseInt((String) mProp.getProperty(NextViewDataService.AUTOREPETITION)) * 60000;
-        mService.nextUpdate = mService.nextUpdate + Integer.parseInt((String) autoRepeatField.getText()) * 60000;
+        mService.nextUpdate = mService.nextUpdate - Integer.parseInt(mProp.getProperty(NextViewDataService.AUTOREPETITION)) * 60000L;
+        mService.nextUpdate = mService.nextUpdate + Integer.parseInt(autoRepeatField.getText()) * 60000L;
       }
 
       mProp.setProperty(NextViewDataService.AUTORUN, newAutoRun);
@@ -972,7 +972,7 @@ public final class NextViewDataServicePanel extends SettingsPanel implements Foc
               if (icon == null){
                 icon = new ChannelLabel(alternativeChannels.get(chn.getId())).getIcon();
               }
-              jbUtilities.storeIcon(icon, "png", mService.mDataDir + "/alternative_icons/" + chn.getId() + ".png");
+              JbUtilities.storeIcon(icon, "png", mService.mDataDir + "/alternative_icons/" + chn.getId() + ".png");
               chn.setDefaultIcon(icon);
             }
             else{

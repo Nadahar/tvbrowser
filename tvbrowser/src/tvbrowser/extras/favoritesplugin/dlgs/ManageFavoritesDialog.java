@@ -713,7 +713,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
       path = path.getParentPath();
     }
 
-    mSortAlphaBt.setEnabled((enabled && (path != null && ((FavoriteNode)path.getLastPathComponent()).isDirectoryNode() && ((FavoriteNode)path.getLastPathComponent()).getChildCount() > 1 || path.getLastPathComponent().equals(mFavoriteTree.getRoot()))) || path == null);
+    mSortAlphaBt.setEnabled(path == null || (enabled && (path != null && ((FavoriteNode)path.getLastPathComponent()).isDirectoryNode() && ((FavoriteNode)path.getLastPathComponent()).getChildCount() > 1 || path.getLastPathComponent().equals(mFavoriteTree.getRoot()))));
     mSortCountBt.setEnabled(mSortAlphaBt.isEnabled());
   }
 

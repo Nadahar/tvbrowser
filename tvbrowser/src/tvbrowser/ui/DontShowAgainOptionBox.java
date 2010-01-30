@@ -59,7 +59,7 @@ public class DontShowAgainOptionBox {
   public static int showOptionDialog(String messageBoxId, Component parent,
       String message, String title, int messageType, int optionType, Object[] options,
       Object initialValue, String dontShowAgainLabel) {
-    
+
     if (Settings.propHiddenMessageBoxes.containsItem(messageBoxId)) {
       return JOptionPane.YES_OPTION;
     }
@@ -67,21 +67,21 @@ public class DontShowAgainOptionBox {
     if (!message.endsWith("\n\n")) {
       message = message.concat("\n\n");
     }
-    
+
     JCheckBox askAgain = new JCheckBox(dontShowAgainLabel == null ? mLocalizer.msg("dontShowAgain", "Don't show this message again") : dontShowAgainLabel);
     Object[] shownObjects = new Object[2];
     shownObjects[0] = message;
     shownObjects[1] = askAgain;
-    
+
     int result = JOptionPane.showOptionDialog(parent, shownObjects, title, optionType, messageType, null, options, initialValue);
-    
-    if ((result == JOptionPane.YES_OPTION || result == JOptionPane.OK_OPTION) && askAgain.isSelected()) {
+
+    if (result == JOptionPane.YES_OPTION && askAgain.isSelected()) {
       Settings.propHiddenMessageBoxes.addItem(messageBoxId);
     }
-    
+
     return result;
   }
-  
+
   /**
    * Creates an option dialog with JOptionPane.
    * <p>
@@ -90,7 +90,7 @@ public class DontShowAgainOptionBox {
    * @param message The message to show the user.
    * @param title The title of the option dialog.
    * @param messageType The message type of the option dialog, value are {#javax.swing.JOptionPane.ERROR_MESSAGE}, {#javax.swing.JOptionPane.INFORMATION_MESSAGE}, {#javax.swing.JOptionPane.WARNING_MESSAGE}.
-   * 
+   *
    * @return The result of the option dialog, values are the possible values for optionType.
    */
   public static int showOptionDialog(String messageBoxId, Component parent,
@@ -105,7 +105,7 @@ public class DontShowAgainOptionBox {
    * @param parentComponent The praent component of this dialog.
    * @param message The message to show the user.
    * @param title The title of the option dialog.
-   * 
+   *
    * @return The result of the option dialog, values are the possible values for optionType.
    */
   public static int showOptionDialog(String messageBoxId, Component parentComponent,
@@ -120,7 +120,7 @@ public class DontShowAgainOptionBox {
    * @param messageBoxId The id for this message box.
    * @param parentComponent The praent component of this dialog.
    * @param message The message to show the user.
-   * 
+   *
    * @return The result of the option dialog, values are the possible values for optionType.
    */
   public static int showOptionDialog(String messageBoxId, Component parentComponent,

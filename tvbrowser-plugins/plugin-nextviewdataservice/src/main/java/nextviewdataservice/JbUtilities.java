@@ -46,15 +46,9 @@ import util.misc.OperatingSystem;
  * A collection of static methods collected by the author
  * to be used somewhere else in the plugin.
  */
-public class jbUtilities {
+public class JbUtilities {
 
   private static final Logger mLog = java.util.logging.Logger.getLogger(NextViewDataService.class.getName());
-
-  /**
-   * Creates a new instance of jbUtilities
-   */
-  public jbUtilities() {
-  }
 
   /**
    * Starts an external process and waits until the process is finished.
@@ -77,7 +71,7 @@ public class jbUtilities {
 
   /**
    * Copy internal file from actual jar-file to the file system
-   * @param clazz ; class of the calling object, 
+   * @param clazz ; class of the calling object,
    * @param fileName ; the inner path name of the file to be copied
    * @param destination ; the full pathname of the location to be copied to.
    */
@@ -127,7 +121,7 @@ public class jbUtilities {
 
     jarFile.close();
   }
-  
+
   public static void storeIcon (Icon icon, String type, String fileName){
     int w = icon.getIconWidth();
     int h = icon.getIconHeight();

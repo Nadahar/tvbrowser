@@ -37,6 +37,8 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 
+import org.apache.commons.lang.math.RandomUtils;
+
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import tvbrowser.ui.DontShowAgainOptionBox;
@@ -55,7 +57,7 @@ import devplugin.ProgressMonitor;
 
 /**
  * Updates the TV data.
- * 
+ *
  * @author Til Schneider, www.murfman.de
  */
 public class TvDataUpdater {
@@ -75,7 +77,7 @@ public class TvDataUpdater {
 
   /** Set to true if Stop was forced */
   private boolean mStopDownloading = false;
-  
+
   /**
    * set to true if some changed data was given to the TV database
    */
@@ -204,7 +206,7 @@ public class TvDataUpdater {
 
     // Reset the download flag
     mIsDownloading = false;
-    
+
     checkLocalDateUsingNTP();
 
     ProgressMonitor monitor = monitorGroup.getNextProgressMonitor(subscribedChannels.length+1);
@@ -212,11 +214,11 @@ public class TvDataUpdater {
     TvDataBase.getInstance().reCalculateTvData(daysToDownload, monitor);
     TvDataBase.getInstance().updateTvDataBase();
     MarkedProgramsList.getInstance().revalidatePrograms();
-    
+
     // Inform the listeners
     fireTvDataUpdateFinished();
     monitor.setMessage("");
-    
+
     checkLocalTime();
 
     // reset flag to avoid unnecessary favorite updates
@@ -243,7 +245,7 @@ public class TvDataUpdater {
    * Check if a known program is found with an offset of exactly 1 or 2 hours
    * for the known start time (for 3 days starting today). This is a sign for
    * incorrect time zone configuration.
-   * 
+   *
    * @param channelName
    * @param programTitle
    * @param minutesAfterMidnight
@@ -291,7 +293,7 @@ public class TvDataUpdater {
     if (!tvDataWasChanged() && Settings.propNTPTimeCheck.getBoolean()) {
       if (Settings.propLastNTPCheck.getDate() == null || Settings.propLastNTPCheck.getDate().compareTo(Date.getCurrentDate()) < 0) {
         Settings.propLastNTPCheck.setDate(Date.getCurrentDate());
-        int serverNum = (int) (Math.random() * 4);
+        int serverNum = RandomUtils.nextInt(4);
         int differenceSecs = NetworkUtilities
             .getTimeDifferenceSeconds(Integer.toString(serverNum) + ".tvbrowser.pool.ntp.org");
         if (Math.abs(differenceSecs) >= 86400) {
@@ -339,7 +341,7 @@ public class TvDataUpdater {
           mLog.log(Level.WARNING, "Fireing event 'TV data update finished' failed", thr);
         }
       }
-      
+
     }
   }
 
@@ -353,7 +355,7 @@ public class TvDataUpdater {
 
 
   private void doUpdateDayProgram(MutableChannelDayProgram program) {
-    
+
     // Pass the new ChannelDayProgram to the data base
     TvDataBase.getInstance().setDayProgram(program);
   }
@@ -402,7 +404,7 @@ public class TvDataUpdater {
     jobList.toArray(jobArr);
     return jobArr;
   }
-  
+
   // inner class UpdateJob
 
 
@@ -437,9 +439,9 @@ public class TvDataUpdater {
   }
 
   /**
-   * check whether the last TV data update changed some data in the TV database 
+   * check whether the last TV data update changed some data in the TV database
    * @return <code>true</code>, if data was changed during last update
-   * @since 2.6 
+   * @since 2.6
    */
   public boolean tvDataWasChanged() {
     return mTvDataWasChanged;

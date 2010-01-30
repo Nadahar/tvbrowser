@@ -17,13 +17,14 @@
 package teletextplugin;
 
 import java.util.Enumeration;
+import java.util.logging.Logger;
 
 /**
  * @author bananeweizen
  *
  */
 public class TeleTextChannelProperties extends ChannelProperties {
-  private static java.util.logging.Logger mLog = java.util.logging.Logger
+  private static final Logger mLog = java.util.logging.Logger
       .getLogger(TeleTextPlugin.class.getName());
 
   @Override

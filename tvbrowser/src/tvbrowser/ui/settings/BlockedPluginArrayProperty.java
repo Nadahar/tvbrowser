@@ -137,8 +137,10 @@ public final class BlockedPluginArrayProperty extends Property {
       mCachedValue = blockedArray;
     }
 
-    if(!checkAndRemoveValueFromOld(mCachedValue[mCachedValue.length-1])) {
-      mNewValues.add(mCachedValue[mCachedValue.length-1]);
+    if (mCachedValue != null && mCachedValue.length > 0) {
+      if(!checkAndRemoveValueFromOld(mCachedValue[mCachedValue.length-1])) {
+        mNewValues.add(mCachedValue[mCachedValue.length-1]);
+      }
     }
 
     setBlockedPluginArray(mCachedValue);

@@ -63,7 +63,7 @@ public class MutableProgram implements Program {
 
   private static final Logger mLog
     = Logger.getLogger(MutableProgram.class.getName());
-  
+
   private static TimeZone mLocalTimeZone = TimeZone.getDefault();
 
   /**
@@ -71,7 +71,7 @@ public class MutableProgram implements Program {
    * (long) description.
    */
   public static final int MAX_SHORT_INFO_LENGTH = 200;
-  
+
   /** A plugin array that can be shared by all the programs that are not marked
    * by any plugin. */
   protected static final Marker[] EMPTY_MARKER_ARR = new Marker[0];
@@ -82,16 +82,16 @@ public class MutableProgram implements Program {
   /** Contains all Plugins that mark this program. We use a simple array,
    * because it takes less memory. */
   private Marker[] mMarkerArr;
-  
+
   /** Tracks if the program is current loading/ being created. */
   private boolean mIsLoading;
 
   /** The cached ID of this program. */
   private String mId;
-  
+
   /** The cached unique ID of this program. */
   private String mUniqueId;
-  
+
   /** The date format, which is used in the unique ID */
   public static final String ID_DATE_FORMAT = "yyyy-MM-dd";
 
@@ -106,13 +106,13 @@ public class MutableProgram implements Program {
 
   /** The normalized start time of the program. (in the client's time zone) */
   private short mNormalizedStartTime;
-  
+
   /** The state of this program */
   private byte mState;
-  
+
   /** Contains the title */
   protected String mTitle;
-  
+
   /** Contains the current mark priority of this program */
   private byte mMarkPriority = Program.NO_MARK_PRIORITY;
 
@@ -131,7 +131,7 @@ public class MutableProgram implements Program {
    * <p>
    * The parameters channel, date, hours and minutes build the ID. That's why
    * they are not mutable.
-   * 
+   *
    * @param channel
    *          The channel object of this program.
    * @param localDate
@@ -142,14 +142,14 @@ public class MutableProgram implements Program {
    *          The minute-component of the start time of the program.
    * @param isLoading
    *          If the program is currently being created.
-   * 
+   *
    * @see #setProgramLoadingIsComplete()
    */
   public MutableProgram(Channel channel, devplugin.Date localDate,
     int localHours, int localMinutes, boolean isLoading)
   {
     this (channel, localDate, isLoading);
-    
+
     int localStartTime = localHours * 60 + localMinutes;
     setTimeField(ProgramFieldType.START_TIME_TYPE, localStartTime);
   }
@@ -172,7 +172,7 @@ public class MutableProgram implements Program {
     if (localDate == null) {
       throw new NullPointerException("localDate is null");
     }
-    
+
     mIntValues = new int[ProgramFieldType.getIntFieldCount()];
     Arrays.fill(mIntValues, -1);
     mObjectValues = new Object[ProgramFieldType.getObjectFieldCount()];
@@ -268,7 +268,7 @@ public class MutableProgram implements Program {
   public final String getTimeString() {
     return IOUtilities.timeToString(getStartTime());
   }
-  
+
   public final String getEndTimeString() {
 	return IOUtilities.timeToString(getStartTime() + getLength());
   }
@@ -325,22 +325,22 @@ public class MutableProgram implements Program {
     if(mState == Program.IS_VALID_STATE) {
       boolean alreadyMarked = getMarkedByPluginIndex(marker) != -1;
       int oldCount = mMarkerArr.length;
-  
+
       if (! alreadyMarked) {
         // Append the new plugin
         Marker[] newArr = new Marker[oldCount + 1];
         System.arraycopy(mMarkerArr, 0, newArr, 0, oldCount);
         newArr[oldCount] = marker;
         mMarkerArr = newArr;
-        
+
         Arrays.sort(mMarkerArr,new Comparator<Marker>() {
           public int compare(Marker o1, Marker o2) {
             return o1.getId().compareTo(o2.getId());
           }
         });
-        
+
         mMarkPriority = (byte) Math.max(mMarkPriority,marker.getMarkPriorityForProgram(this));
-  
+
         // add program to artificial plugin tree
         if (marker instanceof PluginProxy) {
           PluginProxy proxy = (PluginProxy) marker;
@@ -350,17 +350,17 @@ public class MutableProgram implements Program {
             }
           }
         }
-  
+
         fireStateChanged();
       }
-  
+
       if(oldCount < 1) {
         MarkedProgramsList.getInstance().addProgram(this);
       }
     }
     else if(mState == Program.WAS_UPDATED_STATE) {
       Program p = Plugin.getPluginManager().getProgram(getDate(), getID());
-      
+
       if(p != null) {
         p.mark(marker);
       }
@@ -388,16 +388,16 @@ public class MutableProgram implements Program {
           Marker[] newArr = new Marker[oldCount - 1];
           System.arraycopy(mMarkerArr, 0, newArr, 0, idx);
           System.arraycopy(mMarkerArr, idx + 1, newArr, idx, oldCount - idx - 1);
-          
+
           mMarkPriority = Program.NO_MARK_PRIORITY;
-          
+
           for(Marker mark : newArr) {
             mMarkPriority = (byte) Math.max(mMarkPriority,mark.getMarkPriorityForProgram(this));
           }
-          
+
           mMarkerArr = newArr;
         }
-  
+
         // remove from artificial plugin tree
         if (marker instanceof PluginProxy) {
           PluginProxy proxy = (PluginProxy) marker;
@@ -405,17 +405,17 @@ public class MutableProgram implements Program {
             proxy.getArtificialRootNode().removeProgram(this);
           }
         }
-  
+
         fireStateChanged();
       }
-  
+
       if(mMarkerArr.length < 1) {
         MarkedProgramsList.getInstance().removeProgram(this);
       }
     }
     else if(mState == Program.WAS_UPDATED_STATE) {
       Program p = Plugin.getPluginManager().getProgram(getDate(), getID());
-      
+
       if(p != null) {
         p.unmark(marker);
       }
@@ -485,7 +485,7 @@ public class MutableProgram implements Program {
     }
     return mId;
   }
-  
+
   /**
    * {@inheritDoc}
    */
@@ -522,7 +522,7 @@ public class MutableProgram implements Program {
     if(type == ProgramFieldType.TITLE_TYPE && mTitle != null && mTitle.trim().length() > 0) {
       return mTitle;
     }
-    
+
     String value = (String) getObjectValueField(type);
 
     if (type == ProgramFieldType.SHORT_DESCRIPTION_TYPE) {
@@ -626,8 +626,8 @@ public class MutableProgram implements Program {
     }
     return count;
   }
-  
-  private class ProgramFieldIterator implements Iterator<ProgramFieldType> {
+
+  private static class ProgramFieldIterator implements Iterator<ProgramFieldType> {
     private int mIndex;
     private ArrayList<ProgramFieldType> mFieldTypes;
 
@@ -674,7 +674,7 @@ public class MutableProgram implements Program {
     public void remove() {
       // not implemented
     }
-    
+
   }
 
 
@@ -743,7 +743,7 @@ public class MutableProgram implements Program {
     if (type == ProgramFieldType.TITLE_TYPE) {
       mTitle = (String)value;
     }
-    
+
     setObjectValueField(type, value);
 
     notifyChangedStatus();
@@ -766,7 +766,7 @@ public class MutableProgram implements Program {
    */
   public void setIntField(ProgramFieldType type, int value) {
     checkFormat(type, ProgramFieldType.INT_FORMAT);
-    
+
     if (type == ProgramFieldType.RATING_TYPE && (value < 0 || (value > 100))) {
       mLog.warning("The value for field " + type.getName()
         + " must be between in [0..100], but it was set to " + value+"; program: "+toString());
@@ -789,7 +789,7 @@ public class MutableProgram implements Program {
    */
   public void setTimeField(ProgramFieldType type, int value) {
     checkFormat(type, ProgramFieldType.TIME_FORMAT);
-    
+
     if ((value < 0) || (value >= (24 * 60))) {
       mLog.warning("The time value for field " + type.getName()
         + " must be between in [0..1439], but it was set to " + value+"; program: "+toString());
@@ -800,7 +800,7 @@ public class MutableProgram implements Program {
     }
 
     notifyChangedStatus();
-    
+
     if (type == ProgramFieldType.START_TIME_TYPE) {
       normalizeTimeZone(mLocalDate, value);
     }
@@ -1050,18 +1050,19 @@ public class MutableProgram implements Program {
 
 
   public boolean equals(Object o) {
-    if (o instanceof devplugin.Program) {
-      if(o == this) {
-        return true;
-      }
-      
-      devplugin.Program program = (devplugin.Program)o;
-      
+    if (o == this) {
+      return true;
+    }
+    if (o == null) {
+      return false;
+    }
+    if (o instanceof Program) {
+      Program program = (Program)o;
+
       String title = getTitle();
-      String otherTitle = program != null ? program.getTitle() : null;
-      
-      return program!=null
-        && getStartTime() == program.getStartTime()
+      String otherTitle = program.getTitle();
+
+      return getStartTime() == program.getStartTime()
         && equals(mChannel, program.getChannel())
         && equals(getDate(), program.getDate())
         && title != null && otherTitle != null
@@ -1072,7 +1073,7 @@ public class MutableProgram implements Program {
 
   /**
    * check if two programs are identical by their field contents
-   * 
+   *
    * @param program
    * @return <code>true</code>, if all fields are equal
    * @since 2.6
@@ -1147,11 +1148,11 @@ public class MutableProgram implements Program {
    */
   public final void validateMarking() {
     mMarkPriority = Program.NO_MARK_PRIORITY;
-    
+
     for(Marker mark : mMarkerArr) {
       mMarkPriority = (byte) Math.max(mMarkPriority,mark.getMarkPriorityForProgram(this));
     }
-    
+
     fireStateChanged();
   }
 
@@ -1180,19 +1181,19 @@ public class MutableProgram implements Program {
   public void setProgramLoadingIsComplete() {
     mIsLoading = false;
   }
-  
+
   /**
    * Gets the priority of the marking of this program.
-   * 
+   *
    * @return The mark priority.
    * @since 2.5.1
    */
   public int getMarkPriority() {
     return mMarkPriority;
   }
-  
+
   /**
-   * Sets the mark priority for this program 
+   * Sets the mark priority for this program
    *
    * @since 2.5.1
    */

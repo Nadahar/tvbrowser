@@ -20,6 +20,7 @@ package timelineplugin.format;
 import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -34,7 +35,7 @@ public class TextLine
   private static final Pattern MAXLINES_PATTERN = Pattern.compile(
           "\\{ *multiline *\\( *([0-9]+) *\\) *}", Pattern.CASE_INSENSITIVE);
 
-  private static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(timelineplugin.TimelinePlugin.class.getName());
+  private static final Logger mLog = java.util.logging.Logger.getLogger(timelineplugin.TimelinePlugin.class.getName());
 
 	private List<ITextObject> mList;
 	private int mY;
