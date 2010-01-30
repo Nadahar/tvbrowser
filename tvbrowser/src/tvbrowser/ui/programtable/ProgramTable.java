@@ -35,6 +35,7 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.Shape;
 import java.awt.dnd.DnDConstants;
 import java.awt.dnd.DragGestureEvent;
 import java.awt.dnd.DragGestureListener;
@@ -107,11 +108,11 @@ public class ProgramTable extends JPanel
   private Runnable mCallback;
 
   private Thread mClickThread;
-  
+
   private Thread mLeftClickThread;
-  
+
   private Thread mAutoScrollThread;
-  
+
   private boolean mPerformingSingleClick;
 
   /**
@@ -123,7 +124,7 @@ public class ProgramTable extends JPanel
   private int mLastDragDeltaY;
   private Point mAutoScroll;
 
-  private Point mDraggingPointOnScreen;  
+  private Point mDraggingPointOnScreen;
 
   /**
    * Creates a new instance of ProgramTable.
@@ -136,7 +137,7 @@ public class ProgramTable extends JPanel
     mCurrentCol = -1;
     mCurrentRow = -1;
     mCurrentY = 0;
-    
+
     mPerformingSingleClick = false;
 
     setColumnWidth(Settings.propColumnWidth.getInt());
@@ -189,7 +190,7 @@ public class ProgramTable extends JPanel
         if (evt.isPopupTrigger()) {
           showPopup(evt);
         }
-        
+
         if (SwingUtilities.isMiddleMouseButton(evt)) {
           stopAutoScroll();
         }
@@ -341,8 +342,8 @@ public class ProgramTable extends JPanel
           if (((y + cellHeight) > clipBounds.y)
               && (y < (clipBounds.y + clipBounds.height))) {
 
+            Rectangle rec = new Rectangle(x, y, mColumnWidth, cellHeight);
             if (Settings.propProgramTableMouseOver.getBoolean()) {
-              Rectangle rec = new Rectangle(x, y, mColumnWidth, cellHeight);
               if ((mMouse != null) && (rec.contains(mMouse))) {
                 mouseOver = true;
               } else {
@@ -350,13 +351,21 @@ public class ProgramTable extends JPanel
               }
             }
 
+            // calculate clipping intersection between global clip border and current cell rectangle
+            Shape oldClip = grp.getClip();
+            rec = rec.intersection((Rectangle)oldClip);
+
             // Paint the cell
-            grp.translate(x, y);
+            if (rec.width > 0 || rec.height > 0) {
+              grp.setClip(rec);
+              grp.translate(x, y);
 
-            panel.setSize(mColumnWidth, cellHeight);
-            panel.paint(mouseOver,(row == mCurrentRow && col == mCurrentCol), grp);
+              panel.setSize(mColumnWidth, cellHeight);
+              panel.paint(mouseOver,(row == mCurrentRow && col == mCurrentCol), grp);
 
-            grp.translate(-x, -y);
+              grp.translate(-x, -y);
+              grp.setClip(oldClip);
+            }
           }
 
           // Move to the next row in this column
@@ -372,6 +381,7 @@ public class ProgramTable extends JPanel
       x += mColumnWidth;
     }
 
+    grp.setClip(clipBounds);
 
     // Paint the copyright notices
     grp.setColor(Settings.propProgramPanelForegroundColor.getColor());
@@ -526,7 +536,7 @@ public class ProgramTable extends JPanel
   /**
    * Creates a context menu containing all subscribed plugins that support
    * context menus.
-   * 
+   *
    * @param program
    *          The program to create the context menu for.
    * @return a plugin context menu.
@@ -550,7 +560,7 @@ public class ProgramTable extends JPanel
 
   private void handleMousePressed(MouseEvent evt) {
     requestFocus();
-    
+
     if(mClickThread == null || !mClickThread.isAlive()) {
       mClickThread = new Thread("Single click") {
         public void run() {
@@ -581,11 +591,11 @@ public class ProgramTable extends JPanel
     if(mClickThread != null && mClickThread.isAlive()) {
       mClickThread.interrupt();
     }
-    
+
     mMouse = evt.getPoint();
     repaint();
     final Program program = getProgramAt(evt.getX(), evt.getY());
-    
+
     if (SwingUtilities.isLeftMouseButton(evt) && (evt.getClickCount() == 1) && evt.getModifiersEx() == 0) {
       mLeftClickThread = new Thread("Program table single click thread") {
         public void run() {
@@ -593,16 +603,16 @@ public class ProgramTable extends JPanel
             mPerformingSingleClick = false;
             sleep(Plugin.SINGLE_CLICK_WAITING_TIME);
             mPerformingSingleClick = true;
-            
+
             if(program != null) {
               deSelectItem();
               Plugin.getPluginManager().handleProgramSingleClick(program);
             }
-            
+
             if(mClickThread != null && mClickThread.isAlive()) {
               mClickThread.interrupt();
             }
-            
+
             setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             mPerformingSingleClick = false;
           } catch (InterruptedException e) {
@@ -610,7 +620,7 @@ public class ProgramTable extends JPanel
           }
         }
       };
-      
+
       mLeftClickThread.setPriority(Thread.MIN_PRIORITY);
       mLeftClickThread.start();
     }
@@ -618,35 +628,35 @@ public class ProgramTable extends JPanel
       if(!mPerformingSingleClick && mLeftClickThread != null && mLeftClickThread.isAlive()) {
         mLeftClickThread.interrupt();
       }
-      
+
       if (program != null && !mPerformingSingleClick) {
         deSelectItem();
-        
+
         // This is a left double click
         // -> Execute the program using the user defined default plugin
-        
+
         if(evt.getModifiersEx() == 0) {
           Plugin.getPluginManager().handleProgramDoubleClick(program);
         }
       }
-      
+
       setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
     }
     else if (SwingUtilities.isLeftMouseButton(evt) && (evt.getClickCount() == 1) &&
-        (evt.isShiftDown())) {      
+        (evt.isShiftDown())) {
       if (program != null) {
         if(!isSelectedItemAt(evt.getX(),evt.getY())) {
-          selectItemAt(evt.getX(),evt.getY());          
+          selectItemAt(evt.getX(),evt.getY());
         }
         else {
-          deSelectItem();          
+          deSelectItem();
         }
       }
     }
     else if (SwingUtilities.isMiddleMouseButton(evt) && (evt.getClickCount() == 1)) {
       if (program != null) {
         deSelectItem();
-        
+
         // This is a middle click
         // -> Execute the program using the user defined middle click plugin
         Plugin.getPluginManager().handleProgramMiddleClick(program);
@@ -694,7 +704,7 @@ public class ProgramTable extends JPanel
 
   /**
    * repaint the program table cell with the given index
-   * 
+   *
    * @param cellIndex index of the program panel
    * @since 2.6
    */
@@ -706,12 +716,12 @@ public class ProgramTable extends JPanel
           if (cellRect != null) {
             repaint(cellRect);
           }
-        }        
+        }
       }
     });
   }
 
-  
+
   /**
    * repaint the currently selected cell (keyboard selection)
    * @since 2.6
@@ -719,8 +729,8 @@ public class ProgramTable extends JPanel
   private void repaintCurrentCell() {
     repaintCell(new Point(mCurrentCol, mCurrentRow));
   }
-  
-  
+
+
   private void handleMouseExited(MouseEvent evt) {
     if (Settings.propProgramTableMouseOver.getBoolean()) {
       JViewport viewport = (JViewport) getParent();
@@ -732,11 +742,11 @@ public class ProgramTable extends JPanel
     }
   }
 
-  
+
   /**
    * get the average Y coordinate of the center of the program panels of all
    * columns where the program is running at the given time
-   * 
+   *
    * @param minutesAfterMidnight
    * @return y offset
    */
@@ -768,7 +778,7 @@ public class ProgramTable extends JPanel
   /**
    * get the Y coordinate of the center of the program panel in this column
    * where the program is running at the given time
-   * 
+   *
    * @param col
    * @param minutesAfterMidnight
    * @return
@@ -791,7 +801,7 @@ public class ProgramTable extends JPanel
       if (startTime == minutesAfterMidnight) {
         return timeY;
       }
-      
+
       // somewhere inside current panel
       final int progLength = program.getLength();
       int panelHeight = panel.getHeight();
@@ -814,7 +824,7 @@ public class ProgramTable extends JPanel
         }
         return timeY;
       }
-      
+
       timeY += panelHeight;
       lastPanelHeight = panelHeight;
     }
@@ -850,14 +860,14 @@ public class ProgramTable extends JPanel
    * runs the Runnable callback that scrolls to the wanted place
    * in the ProgramTable
    */
-  public void runCallback() {    
+  public void runCallback() {
     SwingUtilities.invokeLater(new Runnable(){
       public void run() {
         if(mCallback != null) {
           mCallback.run();
         }
         mCallback = null;
-      }     
+      }
     });
   }
 
@@ -881,7 +891,7 @@ public class ProgramTable extends JPanel
   /**
    * Opens the PopupMenu for the selected program.
    *
-   */  
+   */
   public void showPopoupFromKeyboard() {
     if(mCurrentCol == -1 || mCurrentRow == -1) {
       return;
@@ -902,7 +912,7 @@ public class ProgramTable extends JPanel
   public void startMiddleClickPluginFromKeyboard() {
     if(mCurrentCol == -1 || mCurrentRow == -1) {
       return;
-    }   
+    }
 
     Program program = mModel.getProgramPanel(mCurrentCol, mCurrentRow).getProgram();
 
@@ -915,28 +925,28 @@ public class ProgramTable extends JPanel
   public void startLeftSingleClickPluginFromKeyboard() {
     if(mCurrentCol == -1 || mCurrentRow == -1) {
       return;
-    }   
+    }
 
     Program program = mModel.getProgramPanel(mCurrentCol, mCurrentRow).getProgram();
 
-    Plugin.getPluginManager().handleProgramSingleClick(program);   
+    Plugin.getPluginManager().handleProgramSingleClick(program);
   }
-  
+
   /**
    * Starts the double click Plugin.
    */
   public void startDoubleClickPluginFromKeyboard() {
     if(mCurrentCol == -1 || mCurrentRow == -1) {
       return;
-    }   
+    }
 
     Program program = mModel.getProgramPanel(mCurrentCol, mCurrentRow).getProgram();
 
-    Plugin.getPluginManager().handleProgramDoubleClick(program);   
+    Plugin.getPluginManager().handleProgramDoubleClick(program);
   }
 
   /**
-   * Go to the right program of the current program. 
+   * Go to the right program of the current program.
    *
    */
   public void right() {
@@ -946,7 +956,7 @@ public class ProgramTable extends JPanel
 
     if(cols == 0) {
       return;
-    }    
+    }
 
     if(mCurrentCol != -1) {
       if(mCurrentCol < cols -1) {
@@ -968,14 +978,14 @@ public class ProgramTable extends JPanel
         Rectangle rectPrev = getCellRect(previousCol,mCurrentRow);
         Rectangle rectCur = getCellRect(mCurrentCol,1);
 
-        if(rectCur != null && rectPrev != null) {          
+        if(rectCur != null && rectPrev != null) {
           Point cellIndex = getMatrix(rectCur.x, mCurrentY);
           if(cellIndex.y != -1) {
             ProgramPanel panel = mModel.getProgramPanel(cellIndex.x, cellIndex.y);
             if(panel != null && !panel.getProgram().isExpired()) {
               find = false;
               found = true;
-              mCurrentRow = cellIndex.y;              
+              mCurrentRow = cellIndex.y;
             }
           }
         }
@@ -1035,7 +1045,7 @@ public class ProgramTable extends JPanel
       repaintCurrentCell();
       mCurrentY = getCellRect(mCurrentCol, mCurrentRow).y;
       scrollToSelection();
-    }    
+    }
   }
 
   /**
@@ -1074,24 +1084,24 @@ public class ProgramTable extends JPanel
     repaintCurrentCell();
     if(mCurrentCol == -1) {
       right();
-    } else {      
+    } else {
       int previousCol = mCurrentCol;
       boolean found = false, find = true;
 
-      do {       
+      do {
         if(mCurrentCol == 0) {
           mCurrentCol = mModel.getColumnCount() - 1;
         } else {
           mCurrentCol--;
         }
 
-        int rows = mModel.getRowCount(mCurrentCol);       
+        int rows = mModel.getRowCount(mCurrentCol);
 
         if(previousCol != -1 && rows > 0) {
           Rectangle rectPrev = getCellRect(previousCol,mCurrentRow);
           Rectangle rectCur = getCellRect(mCurrentCol,1);
 
-          if(rectCur != null && rectPrev != null) {          
+          if(rectCur != null && rectPrev != null) {
             Point cellIndex = getMatrix(rectCur.x, mCurrentY);
             if(cellIndex.y != -1) {
               ProgramPanel panel = mModel.getProgramPanel(cellIndex.x, cellIndex.y);
@@ -1099,7 +1109,7 @@ public class ProgramTable extends JPanel
                 find = false;
                 found = true;
                 mCurrentRow = cellIndex.y;
-              } 
+              }
             }
           }
         }
@@ -1148,7 +1158,7 @@ public class ProgramTable extends JPanel
 
   /**
    * Returns the cell indices for the given point with pixel coordinates
-   * 
+   *
    * @param pointX X position of the point.
    * @param pointY Y position of the point.
    * @return a point, where x is the column and y is the row number
@@ -1162,7 +1172,7 @@ public class ProgramTable extends JPanel
     int currY = mLayout.getColumnStart(col);
     if (pointY < currY) {
       return new Point(-1, -1);
-    }  
+    }
 
     int rowCount = mModel.getRowCount(col);
     for (int row = 0; row < rowCount; row++) {
@@ -1192,7 +1202,7 @@ public class ProgramTable extends JPanel
   }
 
   /**
-   * 
+   *
    * @param x X position of the point
    * @param y Y position of the point
    * @return Is the point at a selected program?
@@ -1206,7 +1216,7 @@ public class ProgramTable extends JPanel
     if(!evt.getTriggerEvent().isShiftDown()) {
       return;
     }
-    mMouse = evt.getDragOrigin();    
+    mMouse = evt.getDragOrigin();
 
     Program program = getProgramAt(mMouse.x, mMouse.y);
     if (program != null) {
@@ -1248,15 +1258,15 @@ public class ProgramTable extends JPanel
       }
     }
   }
-  
+
   // Fix for [TVB-50]
-  
+
   @Override
   public void addNotify() {
     super.addNotify();
     PluginProxyManager.getInstance().addPluginStateListener(this);
   }
-  
+
   @Override
   public void removeNotify() {
     super.removeNotify();
@@ -1356,7 +1366,7 @@ public class ProgramTable extends JPanel
       if (tooltip != null && tooltip.length() > 0) {
         return tooltip;
       }
-      
+
       StringBuilder buffer = new StringBuilder();
       // if program is partially not visible then show the title as tooltip
       final JViewport viewport = MainFrame.getInstance()
