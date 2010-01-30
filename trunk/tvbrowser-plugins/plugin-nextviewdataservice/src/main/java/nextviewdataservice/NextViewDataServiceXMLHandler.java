@@ -38,7 +38,7 @@ import devplugin.Date;
 import devplugin.ProgramFieldType;
 
 /**
- * XML Handler to parse nxtvepg's program data 
+ * XML Handler to parse nxtvepg's program data
  * @author jb
  */
 public class NextViewDataServiceXMLHandler extends DefaultHandler {
@@ -77,8 +77,8 @@ public class NextViewDataServiceXMLHandler extends DefaultHandler {
   /*
    * (non-Javadoc)
    * @see org.xml.sax.helpers.DefaultHandler#characters(char[], int, int)
-   * 
-   * The characters method reports each chunk of character 
+   *
+   * The characters method reports each chunk of character
    * data and appends it to the characters buffer.
    */
   @Override
@@ -89,14 +89,14 @@ public class NextViewDataServiceXMLHandler extends DefaultHandler {
   /*
    * (non-Javadoc)
    * @see org.xml.sax.helpers.DefaultHandler#startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes)
-   * 
+   *
    * if start tag is
    * channel:   keep channel id
    * programme: add new program to program list of the data service
    *            setting start time, length, VPS,
    * subtitles: keep subtitles
-   * tv:		keep timezone of file creation           
-   * 
+   * tv:		keep timezone of file creation
+   *
    */
   @Override
   public void startElement(String namespaceURI, String simpleName,
@@ -169,7 +169,7 @@ public class NextViewDataServiceXMLHandler extends DefaultHandler {
             currentSubtitles = attrs.getValue("type");
           } else
             if (currentElement.equals("tv")) {
-              // Get timezone during data export to compare with 
+              // Get timezone during data export to compare with
               // timezone of program information at DST change.
               String nxtvTime = attrs.getValue("date");
               if (nxtvTime != null) {
@@ -193,7 +193,7 @@ public class NextViewDataServiceXMLHandler extends DefaultHandler {
   /*
    * (non-Javadoc)
    * @see org.xml.sax.helpers.DefaultHandler#endElement(java.lang.String, java.lang.String, java.lang.String)
-   * 
+   *
    * if end tag is
    * channel:	  add channel to channel list of this program
    * programme:   add info bits depending on the genre info
@@ -205,7 +205,7 @@ public class NextViewDataServiceXMLHandler extends DefaultHandler {
    * stereo:	  if given, set stereo or surround bit of program
    * star-rating: add rating to the program
    * rating:      add agelimit to the programm
-   * subtitles:   if telelext, set INFO_SUBTITLE_FOR_AURALLY_HANDICAPPED bit of program          	
+   * subtitles:   if telelext, set INFO_SUBTITLE_FOR_AURALLY_HANDICAPPED bit of program
    */
   @Override
   public void endElement(String namespaceURI, String simpleName,
@@ -392,19 +392,19 @@ public class NextViewDataServiceXMLHandler extends DefaultHandler {
                 isInteger = true;
               } catch (NumberFormatException nfe) {
               }
-            }
-            if (isInteger) {
-              currentProgram.setIntField(ProgramFieldType.AGE_LIMIT_TYPE, ageLimit);
-            } else {
-              if (rating.equals("general")) {
-                rating = mLocalizer.msg("noAgeLimit", "no age limit");
+              if (isInteger) {
+                currentProgram.setIntField(ProgramFieldType.AGE_LIMIT_TYPE, ageLimit);
               } else {
-                rating = mLocalizer.msg("ageLimit", "age limit")+ ": " + rating;
+                if (rating.equals("general")) {
+                  rating = mLocalizer.msg("noAgeLimit", "no age limit");
+                } else {
+                  rating = mLocalizer.msg("ageLimit", "age limit")+ ": " + rating;
+                }
+                if (currentProgram.getTextField(ProgramFieldType.DESCRIPTION_TYPE) != null) {
+                  rating = currentProgram.getTextField(ProgramFieldType.DESCRIPTION_TYPE) + System.getProperty("line.separator") + System.getProperty("line.separator") + rating;
+                }
+                currentProgram.setTextField(ProgramFieldType.DESCRIPTION_TYPE, rating);
               }
-              if (currentProgram.getTextField(ProgramFieldType.DESCRIPTION_TYPE) != null) {
-                rating = currentProgram.getTextField(ProgramFieldType.DESCRIPTION_TYPE) + System.getProperty("line.separator") + System.getProperty("line.separator") + rating;
-              }
-              currentProgram.setTextField(ProgramFieldType.DESCRIPTION_TYPE, rating);
             }
 
           } else if (currentElement.equals("subtitles")) {
@@ -435,7 +435,7 @@ public class NextViewDataServiceXMLHandler extends DefaultHandler {
   }
 
 
-  /** 
+  /**
    * Extracts the date information from a XMLTV time string.
    *
    * @param value ; the string to extract the date from.
@@ -474,7 +474,7 @@ public class NextViewDataServiceXMLHandler extends DefaultHandler {
 
   /**
    * Extracts the hour information from a XMLTV time value.
-   * @param value ; the calue 
+   * @param value ; the value
    * @return the hour of the day as int
    * @throws IOException
    */

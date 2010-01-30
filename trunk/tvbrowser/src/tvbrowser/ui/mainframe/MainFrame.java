@@ -86,6 +86,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.WindowConstants;
 
+import org.apache.commons.lang.math.RandomUtils;
+
 import tvbrowser.TVBrowser;
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.DateListener;
@@ -157,7 +159,7 @@ import devplugin.Version;
 
 /**
  * TV-Browser
- * 
+ *
  * @author Martin Oberhauser
  */
 public class MainFrame extends JFrame implements DateListener,DropTargetListener {
@@ -204,10 +206,10 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
   private Component mCenterComponent;
 
   private boolean mIsVisible;
-  
+
   private static boolean mShuttingDown = false;
   private static boolean mStarting = true;
-  
+
   private Node mMainframeNode;
 
   private Node mNavigationNode;
@@ -217,42 +219,42 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
   private Date mCurrentDay;
 
   private PluginView mPluginView;
-  
+
   private int mXPos, mYPos, mWidth, mHeight;
 
   /** Panel that Displays current Filter-Name */
   private FilterPanel mFilterPanel;
 
   private TimeChooserPanel mTimeChooserPanel;
-  
+
   /** Store the Viewposition if a Filter is selected*/
   private Point mStoredViewPosition;
-  
+
   private String mCurrentFilterName;
-  
+
   private int mLastTimerMinutesAfterMidnight;
-  
+
   private static Date[] mChannelDateArr;
   private static int[] mOnAirRowProgramsArr;
 
   private boolean mSettingsWillBeOpened;
-  
+
   private long mLastAutoUpdateRun;
   private long mLastAutoUpdateRunBuffer;
-  
+
   private int mAutoDownloadTimer;
 
   private boolean mIsAskingUpdate = false;
-  
+
   private MainFrame() {
     super(TVBrowser.MAINWINDOW_TITLE);
     mIsVisible = false;
     mSettingsWillBeOpened = false;
-    
+
     mAutoDownloadTimer = -1;
     mLastTimerMinutesAfterMidnight = -1;
     mLastAutoUpdateRun = System.currentTimeMillis();
-    
+
     mChannelDateArr = null;
     mOnAirRowProgramsArr = null;
     mStatusBar = new StatusBar();
@@ -296,7 +298,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     mFilterPanel.setVisible(false);
 
     mTimeChooserPanel = new TimeChooserPanel(this);
-    
+
     centerPanel.add(mFilterPanel, BorderLayout.NORTH);
 
     Channel[] channelArr = ChannelList.getSubscribedChannels();
@@ -306,13 +308,13 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
         endOfDay);
     mProgramTableScrollPane = new ProgramTableScrollPane(mProgramTableModel);
     centerPanel.add(mProgramTableScrollPane);
-    
+
     createDateSelector();
 
     skinPanel.add(centerPanel, BorderLayout.CENTER);
 
     mChannelChooser = new ChannelChooserPanel(this);
-    
+
     /* create structure */
     mRootNode = new Node(null);
 
@@ -322,17 +324,17 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     else {
       mNavigationNode = new Node(mRootNode);
     }
-    
+
     mMainframeNode = new Node(mRootNode);
     Node programtableNode = new Node(mMainframeNode);
-    
+
     if(Settings.propPluginViewIsLeft.getBoolean()) {
       mNavigationNode = new Node(mMainframeNode);
     }
     else {
       mPluginsNode = new Node(mMainframeNode);
     }
-    
+
     mTimebuttonsNode = new Node(mNavigationNode);
     mDateChannelNode = new Node(mNavigationNode);
     mDateNode = new Node(mDateChannelNode);
@@ -370,7 +372,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
 
     ProgramFilter filter = filterList
         .getFilterByName(Settings.propLastUsedFilter.getString());
-    
+
     if (filter == null) {
       filter = FilterManagerImpl.getInstance().getDefaultFilter();
     }
@@ -396,7 +398,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     timer.start();
 
     setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-    
+
     //create the drop target for installation of Plugins with Drag'N'Drop on MainFrame
     DropTarget target = new DropTarget();
     try {
@@ -404,12 +406,12 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     } catch (TooManyListenersException e1) {
       //ignore
     }
-    
+
     this.setDropTarget(target);
   }
 
   /**
-   * 
+   *
    */
   public void createDateSelector() {
     switch (Settings.propViewDateLayout.getInt()) {
@@ -419,13 +421,13 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     }
     mFinderPanel.setDateListener(this);
   }
-  
+
   /**
    * Switch the fullscreen mode of TV-Browser
    */
   public void switchFullscreenMode() {
     dispose();
-    
+
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         GraphicsDevice device = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
@@ -434,13 +436,13 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
           // switch back from fullscreen
           device.setFullScreenWindow(null);
           setUndecorated(false);
-          setBounds(mXPos, mYPos, mWidth, mHeight);          
-          
+          setBounds(mXPos, mYPos, mWidth, mHeight);
+
           if(mMenuBar != null) {
             mMenuBar.setFullscreenItemChecked(false);
             mMenuBar.setVisible(true);
           }
-      
+
           if(mToolBarPanel != null) {
             mToolBarPanel.setVisible(Settings.propIsTooolbarVisible.getBoolean());
           }
@@ -448,18 +450,18 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
           if(mStatusBar != null) {
             mStatusBar.setVisible(Settings.propIsStatusbarVisible.getBoolean());
           }
-      
+
           if(mChannelChooser != null) {
             mChannelChooser.setVisible(Settings.propShowChannels.getBoolean());
           }
-          
+
           if(mFinderPanel != null) {
             mFinderPanel.getComponent().setVisible(Settings.propShowDatelist.getBoolean());
           }
-        
+
           setVisible(true);
-          
-          setShowPluginOverview(Settings.propShowPluginView.getBoolean(),false);      
+
+          setShowPluginOverview(Settings.propShowPluginView.getBoolean(),false);
           setShowTimeButtons(Settings.propShowTimeButtons.getBoolean(), false);
           setShowDatelist(Settings.propShowDatelist.getBoolean(), false);
           setShowChannellist(Settings.propShowChannels.getBoolean(), false);
@@ -470,56 +472,56 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
           mYPos = getY();
           mWidth = getWidth();
           mHeight = getHeight();
-    
+
           setShowPluginOverview(false, false);
           setShowTimeButtons(false, false);
           setShowDatelist(false, false);
           setShowChannellist(false, false);
-          
+
           if(mStatusBar != null) {
             mMenuBar.setFullscreenItemChecked(true);
             mStatusBar.setVisible(false);
           }
-          
+
           if(mChannelChooser != null) {
             mChannelChooser.setVisible(false);
           }
-          
+
           if(mMenuBar != null) {
             mMenuBar.setVisible(false);
           }
-          
+
           if(mToolBarPanel != null) {
             mToolBarPanel.setVisible(false);
           }
-          
+
           if(mFinderPanel != null) {
             mFinderPanel.getComponent().setVisible(false);
           }
-          
+
           setUndecorated(true);
           final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-          
-          if(device.isFullScreenSupported() && (Launch.getOs() == Launch.OS_MAC)) {            
+
+          if(device.isFullScreenSupported() && (Launch.getOs() == Launch.OS_MAC)) {
             device.setFullScreenWindow(MainFrame.getInstance());
           }
           else {
             setLocation(0,0);
             setSize(screen);
           }
-          
+
           setVisible(true);
           mProgramTableScrollPane.requestFocusInWindow();
-          
+
           new Thread("Fullscreen border detection") {
             public void run() {
-              setPriority(Thread.MIN_PRIORITY);          
-              
+              setPriority(Thread.MIN_PRIORITY);
+
               while(isFullScreenMode()) {
                 final Point p = MouseInfo.getPointerInfo().getLocation();
-                
+
                 if(isActive()) {
-                  
+
                   // mouse pointer is at top
                   if(p.y <= 10) {
                     if(mToolBarPanel != null && mToolBar.getToolbarLocation().compareTo(BorderLayout.NORTH) == 0) {
@@ -527,7 +529,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
                         mToolBarPanel.setVisible(Settings.propIsTooolbarVisible.getBoolean());
                       }
                     }
-                    
+
                       if(p.y == 0) {
                         mMenuBar.setVisible(true);
                       }
@@ -536,12 +538,12 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
                     if(mMenuBar.isVisible()) {
                       mMenuBar.setVisible(!isFullScreenMode());
                     }
-                      
+
                     if(mToolBarPanel != null && mToolBarPanel.isVisible() && mToolBar.getToolbarLocation().compareTo(BorderLayout.NORTH) == 0) {
                       mToolBarPanel.setVisible(!isFullScreenMode());
                     }
                   }
-                
+
                   // mouse pointer is at the bottom
                   if(p.y >= screen.height - 1 ) {
                     if(mStatusBar != null && !mStatusBar.isVisible()) {
@@ -551,7 +553,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
                   else if(mStatusBar != null && mStatusBar.isVisible() && p.y < screen.height - mStatusBar.getHeight()) {
                     mStatusBar.setVisible(!isFullScreenMode());
                   }
-                
+
                   // mouse pointer is on the left side
                   if(p.x <= 5) {
                     if(p.x == 0 && mToolBarPanel != null && mToolBar.getToolbarLocation().compareTo(BorderLayout.WEST) == 0) {
@@ -559,14 +561,14 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
                         mToolBarPanel.setVisible(Settings.propIsTooolbarVisible.getBoolean());
                       }
                     }
-                    
+
                     if(Settings.propPluginViewIsLeft.getBoolean()) {
                       if(Settings.propShowPluginView.getBoolean())  {
                         SwingUtilities.invokeLater(new Runnable() {
                           public void run() {
                             setShowPluginOverview(true, false);
                           }
-                        });                        
+                        });
                       }
                     }
                     else {
@@ -575,11 +577,11 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
                   }
                   else {
                     int toolBarWidth = (mToolBarPanel != null && mToolBarPanel.isVisible() && mToolBar.getToolbarLocation().compareTo(BorderLayout.WEST) == 0) ? mToolBarPanel.getWidth() : 0;
-                  
+
                     if(p.x > toolBarWidth && toolBarWidth != 0) {
                       mToolBarPanel.setVisible(!isFullScreenMode());
                     }
-                    
+
                     if(Settings.propPluginViewIsLeft.getBoolean()) {
                       if(Settings.propShowPluginView.getBoolean() && mPluginView != null && mPluginView.isVisible() && p.x > mPluginView.getWidth() + toolBarWidth + 25) {
                         SwingUtilities.invokeLater(new Runnable() {
@@ -597,11 +599,11 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
                           if(mChannelChooser != null && mChannelChooser.isVisible() && p.x > mChannelChooser.getWidth()) {
                             setShowChannellist(!isFullScreenMode(), false);
                           }
-                          
+
                           if(mFinderPanel != null && mFinderPanel.getComponent().isVisible() && p.x > mFinderPanel.getComponent().getWidth()) {
                             setShowDatelist(!isFullScreenMode(), false);
                           }
-                          
+
                           if(mTimeChooserPanel != null && mTimeChooserPanel.isVisible() && p.x > mTimeChooserPanel.getWidth()) {
                             setShowTimeButtons(!isFullScreenMode(), false);
                           }
@@ -609,7 +611,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
                       });
                     }
                   }
-                  
+
                   // mouse pointer is on the right side
                   if(p.x >= screen.width - 1) {
                     if(!Settings.propPluginViewIsLeft.getBoolean()) {
@@ -618,7 +620,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
                           public void run() {
                             setShowPluginOverview(true, false);
                           }
-                        });                        
+                        });
                       }
                     }
                     else {
@@ -643,11 +645,11 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
                           if(mChannelChooser != null && mChannelChooser.isVisible() && p.x < screen.width - mChannelChooser.getWidth()) {
                             setShowChannellist(!isFullScreenMode(), false);
                           }
-                          
+
                           if(mFinderPanel != null && mFinderPanel.getComponent().isVisible() && p.x < screen.width - mFinderPanel.getComponent().getWidth()) {
                             setShowDatelist(!isFullScreenMode(), false);
                           }
-                          
+
                           if(mTimeChooserPanel != null && mTimeChooserPanel.isVisible() && p.x < screen.width - mTimeChooserPanel.getWidth()) {
                             setShowTimeButtons(!isFullScreenMode(), false);
                           }
@@ -662,11 +664,11 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
               }
             }
           }.start();
-        }      
+        }
       }
     });
   }
-  
+
   private void checkIfToShowTimeDateChannelList() {
     if(Settings.propShowTimeButtons.getBoolean() ||
         Settings.propShowDatelist.getBoolean() ||
@@ -676,11 +678,11 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
           if(Settings.propShowTimeButtons.getBoolean() && !mTimeChooserPanel.isVisible()) {
             setShowTimeButtons(true, false);
           }
-         
+
           if(Settings.propShowDatelist.getBoolean() && !mFinderPanel.getComponent().isVisible()) {
             setShowDatelist(true, false);
           }
-         
+
           if(Settings.propShowChannels.getBoolean() && !mChannelChooser.isVisible()) {
             setShowChannellist(true, false);
           }
@@ -688,10 +690,10 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       });
     }
   }
-  
+
   /**
    * Adds the keyboard actions for going to the program table with the keyboard.
-   * 
+   *
    */
   public void addKeyboardAction() {
     mProgramTableScrollPane.deSelectItem();
@@ -709,15 +711,15 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
         }, keyStroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
       }
     }
-    
+
     KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.CTRL_MASK);
     rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,
         KeyboardAction.KEY_UP), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
-    
+
     stroke = KeyStroke.getKeyStroke(KeyEvent.VK_KP_UP, InputEvent.CTRL_MASK);
     rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,
         KeyboardAction.KEY_UP), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
-    
+
     stroke = KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, InputEvent.CTRL_MASK);
     rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,
         KeyboardAction.KEY_RIGHT), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
@@ -762,7 +764,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,
         KeyboardAction.KEY_SINGLECLICK), stroke,
         JComponent.WHEN_IN_FOCUSED_WINDOW);
-    
+
     stroke = KeyStroke.getKeyStroke(KeyEvent.VK_D, 0, true);
     rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,
         KeyboardAction.KEY_DOUBLECLICK), stroke,
@@ -811,11 +813,11 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       }
 
     }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
-    
-    
+
+
     stroke = KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, InputEvent.SHIFT_MASK);
     rootPane.registerKeyboardAction(new ActionListener() {
-      
+
       @Override
       public void actionPerformed(ActionEvent e) {
         mProgramTableScrollPane.scrollPageRight();
@@ -824,7 +826,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
 
     stroke = KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, InputEvent.SHIFT_MASK);
     rootPane.registerKeyboardAction(new ActionListener() {
-      
+
       @Override
       public void actionPerformed(ActionEvent e) {
         mProgramTableScrollPane.scrollPageLeft();
@@ -840,7 +842,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
 
     stroke = KeyStroke.getKeyStroke(KeyEvent.VK_ADD, InputEvent.CTRL_MASK);
     rootPane.registerKeyboardAction(TVBrowserActions.fontSizeLarger, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
-    
+
     this.setRootPane(rootPane);
   }
 
@@ -872,7 +874,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     mToolBarModel = DefaultToolBarModel.getInstance();
     mToolBar = new ToolBar(mToolBarModel);
     mToolBar.setOpaque(false);
-    
+
     String location = mToolBar.getToolbarLocation();
 
     if (Settings.propIsTooolbarVisible.getBoolean()) {
@@ -888,7 +890,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       } else {
         mToolBarPanel.removeAll();
       }
-      
+
       if (location.compareTo(BorderLayout.NORTH) == 0) {
         mToolBarPanel.add(MoreButton.wrapToolBar(mToolBar,this), BorderLayout.CENTER);
         if(Settings.propIsSearchFieldVisible.getBoolean()) {
@@ -903,7 +905,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
 
       contentPane.add(mToolBarPanel, location);
     }
-    
+
     contentPane.invalidate();
     contentPane.updateUI();
   }
@@ -954,11 +956,11 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     mTimeChooserPanel.updateButtons();
     mMenuBar.updateTimeItems();
   }
-  
+
   public boolean isShowAllFilterActivated() {
     return (mProgramTableModel == null) || (mProgramTableModel.getProgramFilter() instanceof ShowAllFilter);
   }
-  
+
   /**
    * check if the default filter is active
    * @return true, if the default filter is active
@@ -968,32 +970,32 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     if (mProgramTableModel == null) {
       return true;
     }
-    ProgramFilter filter = mProgramTableModel.getProgramFilter(); 
-    return (Settings.propDefaultFilter.getString().equals(filter.getClass().getName() + "###" + filter.getName())); 
+    ProgramFilter filter = mProgramTableModel.getProgramFilter();
+    return (Settings.propDefaultFilter.getString().equals(filter.getClass().getName() + "###" + filter.getName()));
   }
 
   public void setProgramFilter(ProgramFilter filter) {
     boolean isDefaultFilter = filter.equals(FilterManagerImpl.getInstance().getDefaultFilter());
-    
+
     if (!isDefaultFilter) { // Store Position
       mStoredViewPosition = mProgramTableScrollPane.getViewport().getViewPosition();
     }
-    
+
     if (mProgramTableModel.getProgramFilter() instanceof SearchFilter && !(filter instanceof SearchFilter)) {
       mSearchField.deactivateSearch();
     }
-    
+
     mProgramTableScrollPane.deSelectItem();
     mProgramTableModel.setProgramFilter(filter);
     mMenuBar.updateFiltersMenu();
-    
+
     mToolBarModel.setFilterButtonSelected(!isDefaultFilter);
 
     updateFilterPanel();
 
     mToolBar.update();
     addKeyboardAction();
-    
+
     if(mPluginView != null) {
       mPluginView.repaint();
     }
@@ -1019,11 +1021,11 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
         });
       }
     }
-    
+
     mCurrentFilterName = filter.getName();
     mProgramTableScrollPane.requestFocusInWindow();
   }
-  
+
   /**
    * Set the active channel group
    * @param channelFilter
@@ -1057,7 +1059,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     }
     return mProgramTableModel.getProgramFilter();
   }
-  
+
   public ChannelFilterComponent getChannelGroup() {
     if (mProgramTableModel == null) {
       return null;
@@ -1067,13 +1069,13 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
 
   public void quit() {
     String[] options = {mLocalizer.msg("exitConfirmTitle","Exit TV-Browser"),Localizer.getLocalization(Localizer.I18N_CANCEL)};
-    
+
     if(DontShowAgainOptionBox.showOptionDialog("MainFrame.askForExitConfirm",this.isActive() ? this : null,
         mLocalizer.msg("exitConirmText","Do you really want to quit TV-Browser?"), options[0], JOptionPane.QUESTION_MESSAGE,
         JOptionPane.YES_NO_OPTION, options, options[1], null) != JOptionPane.YES_OPTION) {
       return;
     }
-    
+
     TVBrowser.removeTray();
     quit(true);
   }
@@ -1084,11 +1086,11 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       info.setModal(true);
       info.setUndecorated(true);
       info.toFront();
-      
+
       JPanel main = new JPanel(new FormLayout("5dlu,pref,5dlu","5dlu,pref,5dlu"));
       main.setBorder(BorderFactory.createLineBorder(Color.black));
       main.add(new JLabel(mLocalizer.msg("downloadinfo","A data update is running. TV-Browser will be closed when the update is done.")), new CellConstraints().xy(2,2));
-      
+
       info.setContentPane(main);
       info.pack();
       info.setLocationRelativeTo(this);
@@ -1097,17 +1099,17 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
         public void run() {
           if(downloadingThread != null && downloadingThread.isAlive()) {
             try {
-              downloadingThread.join();              
+              downloadingThread.join();
             } catch (InterruptedException e) {
               e.printStackTrace();
             }
           }
-          
+
           info.setVisible(false);
           info.dispose();
         }
       });
-      
+
       info.setVisible(true);
     }
     if(log && this.isUndecorated()) {
@@ -1121,7 +1123,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     if(log) {
       FavoritesPlugin.getInstance().handleTvBrowserIsShuttingDown();
     }
-    
+
     if (log) {
       mLog.info("Finishing plugins");
     }
@@ -1131,7 +1133,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       mLog.info("Storing dataservice settings");
     }
     TvDataServiceProxyManager.getInstance().shutDown();
-    
+
     FavoritesPlugin.getInstance().store();
     ReminderPlugin.getInstance().store();
 
@@ -1154,7 +1156,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       System.exit(0);
     }
   }
-  
+
   /**
    * Gets if TV-Browser is currently being shutting down.
    * @return True if TV-Browser is shutting down.
@@ -1163,48 +1165,48 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
   public static boolean isShuttingDown() {
     return mShuttingDown;
   }
-  
+
   /**
-   * Gets whether TV-Browser is currently being started. 
+   * Gets whether TV-Browser is currently being started.
    * @return True if TV-Browser is currently being started.
    * @since 2.5.3
    */
   public static boolean isStarting() {
     return mStarting;
   }
-  
+
   /**
    * Handles done TV-Browser start.
    */
   public void handleTvBrowserStartFinished() {
     mStarting = false;
   }
-  
+
   private void runAutoUpdate() {
     ArrayList<TvDataServiceProxy> dataServices = new ArrayList<TvDataServiceProxy>();
     ArrayList<TvDataServiceProxy> checkedServices = new ArrayList<TvDataServiceProxy>(0);
-    
+
     Channel[] channels = Settings.propSubscribedChannels.getChannelArray();
-    
+
     for(Channel channel : channels) {
       if(!checkedServices.contains(channel.getDataServiceProxy())) {
         checkedServices.add(channel.getDataServiceProxy());
-        
+
         if(channel.getDataServiceProxy().supportsAutoUpdate()) {
           dataServices.add(channel.getDataServiceProxy());
         }
       }
     }
-    
+
     checkedServices.clear();
-    
+
     if(!dataServices.isEmpty() && licenseForTvDataServicesWasAccepted(dataServices.toArray(new TvDataServiceProxy[dataServices.size()]))) {
       runUpdateThread(14, dataServices.toArray(new TvDataServiceProxy[dataServices.size()]), true);
     }
-    
+
     mLastAutoUpdateRun = System.currentTimeMillis();
   }
-  
+
   /**
    * Resets the arrays of on air programs for relaoding all.
    */
@@ -1215,12 +1217,12 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
 
   private void handleTimerEvent() {
     Date date = Date.getCurrentDate();
-    
+
     if(mLastTimerMinutesAfterMidnight == -1) {
       resetOnAirArrays();
-      mAutoDownloadTimer = (int)(Math.random() * 1430);
+      mAutoDownloadTimer = RandomUtils.nextInt(24 * 60 - 10);
     }
-      
+
     // Avoid a repaint 6 times a minute (Once a minute is enough)
     try {
       int minutesAfterMidnight = IOUtilities.getMinutesAfterMidnight();
@@ -1228,7 +1230,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       if (minutesAfterMidnight != mLastTimerMinutesAfterMidnight && (downloadingThread == null || !downloadingThread.isAlive())) {
         mLastTimerMinutesAfterMidnight = minutesAfterMidnight;
         Channel[] ch = ChannelList.getSubscribedChannels();
-      
+
         if(ch != null) {
           /* If no date array is available we have to find
            * the on air programs */
@@ -1241,22 +1243,22 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
             for(int i = 0; i < mChannelDateArr.length; i++) {
               if(mChannelDateArr[i] != null) {
                 ChannelDayProgram chProg = TvDataBase.getInstance().getDayProgram(mChannelDateArr[i],ch[i]);
-            
+
                 if(chProg != null && chProg.getProgramCount() > 0 && mOnAirRowProgramsArr[i] != -1) {
                   if (mOnAirRowProgramsArr[i] >= chProg.getProgramCount()) {
                     fillOnAirArrays(ch);
                     mLog.warning("Reset of on-air-arrays");
                   }
                   Program p = chProg.getProgramAt(mOnAirRowProgramsArr[i]);
-              
+
                   if(p.isOnAir()) {
                     p.validateMarking();
                   } else if(p.isExpired()) {
                     onAirChanged = true;
                     p.validateMarking();
-              
+
                     int n = mOnAirRowProgramsArr[i]+1;
-              
+
                     if(n < chProg.getProgramCount()) {
                       mOnAirRowProgramsArr[i] = n;
                       chProg.getProgramAt(mOnAirRowProgramsArr[i]).validateMarking();
@@ -1265,9 +1267,9 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
                       /* The last day program is expired so we have to
                        * look for the on air program on the next day */
                       mChannelDateArr[i] = mChannelDateArr[i].addDays(1);
-                
+
                       chProg = TvDataBase.getInstance().getDayProgram(mChannelDateArr[i],ch[i]);
-                
+
                       // The next day has no data
                       if(chProg == null || chProg.getProgramCount() < 1) {
                         mOnAirRowProgramsArr[i] = -1;
@@ -1283,9 +1285,9 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
                    * earlier than today we have to use today instead */
                   mChannelDateArr[i] = Date.getCurrentDate();
                   onAirChanged = true;
-              
+
                   chProg = TvDataBase.getInstance().getDayProgram(mChannelDateArr[i],ch[i]);
-              
+
                   if(chProg != null && chProg.getProgramCount() > 0) {
                     mOnAirRowProgramsArr[i] = 0;
                     chProg.getProgramAt(mOnAirRowProgramsArr[i]).validateMarking();
@@ -1296,46 +1298,46 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
           }
         }
       }
-      
+
       if (onAirChanged) {
         if(Settings.propTableLayout.getString().equals(Settings.LAYOUT_OPTIMIZED_COMPACT_TIME_BLOCK)) {
           mProgramTableScrollPane.getProgramTable().updateLayout();
         }
-        
+
         // update filtered view if the "on air" condition changed for any program
         if(!getProgramFilter().equals(FilterManagerImpl.getInstance().getDefaultFilter())) {
           setProgramFilter(getProgramFilter());
         }
       }
     }catch(Exception e) {}
-    
+
     if (mPluginView != null) {
       mPluginView.repaint();
     }
-    
-    if ((mLastAutoUpdateRun + Settings.propDataServiceAutoUpdateTime.getInt() * 60000) <= System.currentTimeMillis() && !TvDataUpdater.getInstance().isDownloading()) {
+
+    if ((mLastAutoUpdateRun + Settings.propDataServiceAutoUpdateTime.getInt() * 60000L) <= System.currentTimeMillis() && !TvDataUpdater.getInstance().isDownloading()) {
       runAutoUpdate();
     }
-    
+
     if(Settings.propAutoDataDownloadEnabled.getBoolean() && (mAutoDownloadTimer < IOUtilities.getMinutesAfterMidnight() || !date.equals(mCurrentDay)) && mAutoDownloadTimer != -1 && (downloadingThread == null || !downloadingThread.isAlive())) {
       TVBrowser.handleAutomaticDownload();
       mAutoDownloadTimer = -1;
     }
-    
+
     if (date.equals(mCurrentDay)) {
       return;
     }
-    
+
     if(mCurrentDay != null) {
       if(mProgramTableModel.getDate().compareTo(Date.getCurrentDate().addDays(-1)) < 0) {
         scrollToNow();
       }
-      
+
       Thread deletionThread = new Thread("Deferring data deletion") {
         @Override
         public void run() {
           // wait up to an hour to start data deletion
-          // this better distributes the server load which is caused by the (plugins) Internet access during the data update 
+          // this better distributes the server load which is caused by the (plugins) Internet access during the data update
           try {
             sleep((long) (Math.random() * 3600 * 1000));
           } catch (InterruptedException e) {
@@ -1352,10 +1354,10 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       };
       deletionThread.start();
     }
-    
+
     mLastTimerMinutesAfterMidnight = -1;
     mCurrentDay = date;
-    
+
     if (mFinderPanel != null) {
       mFinderPanel.updateContent();
     }
@@ -1367,18 +1369,18 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
   private void fillOnAirArrays(Channel[] ch) {
     mChannelDateArr = new Date[ch.length];
     mOnAirRowProgramsArr = new int[ch.length];
-    
+
     Arrays.fill(mOnAirRowProgramsArr, -1);
-    
+
     Date currentDate = Date.getCurrentDate();
     for(int i = 0; i < ch.length; i++) {
       ChannelDayProgram chProg = TvDataBase.getInstance().getDayProgram(currentDate,ch[i]);
-     
+
       if(chProg == null) {
         mChannelDateArr[i] = null;
       } else {
         int n = chProg.getProgramCount();
-    
+
         for(int j = 0; j < n; j++) {
           Program p = chProg.getProgramAt(j);
           if(p.isOnAir() || !p.isExpired()) {
@@ -1388,15 +1390,15 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
             break;
           }
         }
-    
+
         if(mOnAirRowProgramsArr[i] == -1) {
           chProg = TvDataBase.getInstance().getDayProgram(currentDate.addDays(1),ch[i]);
-      
+
           if(chProg != null && chProg.getProgramCount() > 0 && chProg.getProgramAt(0).isOnAir()) {
             chProg.getProgramAt(0).validateMarking();
             mOnAirRowProgramsArr[i] = 0;
           }
-        
+
           mChannelDateArr[i] = currentDate.addDays(1);
         }
       }
@@ -1410,7 +1412,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
   public void scrollToProgram(final Program program) {
     scrollToProgram(program, null);
   }
-  
+
   public void scrollToProgram(final Program program, final Runnable callback) {
     if (!getProgramFilter().accept(program)) {
       int result = JOptionPane.showOptionDialog(this, mLocalizer.msg("programFiltered", "The program {0} is not visible with the filter {1} being active.\nDo you want to deactivate the filter?", program.getTitle(), getProgramFilter().getName()),mLocalizer.msg("programNotVisible","Program not visible"),
@@ -1442,7 +1444,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     devplugin.Date day = new devplugin.Date();
     scrollTo(day, hour * 60 + cal.get(Calendar.MINUTE));
   }
-  
+
   private void scrollTo(Date day, int minute) {
     scrollTo(day, minute, null);
   }
@@ -1499,11 +1501,11 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     mConfigAssistantDialog.setVisible(false);
     mConfigAssistantDialog.dispose();
     mConfigAssistantDialog = null;
-    
+
     Settings.handleChangedSettings();
-    
+
     boolean dataAvailable = TvDataBase.getInstance().dataAvailable(new Date());
-    
+
     if (!dataAvailable) {
       askForDataUpdateNoDataAvailable();
     }
@@ -1518,7 +1520,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     mToolBarModel.store();
     mToolBar.storeSettings();
     mRootNode.storeProperties();
-    
+
     ProgramFilter filter = getProgramFilter();
     if (filter != null) {
       if (!(filter instanceof SearchFilter)) {
@@ -1529,7 +1531,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     } else {
       Settings.propLastUsedFilter.setString(FilterManagerImpl.getInstance().getDefaultFilter().getName());
     }
-    
+
     ChannelFilterComponent channelGroup = getChannelGroup();
     if (channelGroup != null) {
       Settings.propLastUsedChannelGroup.setString(channelGroup.getName());
@@ -1538,29 +1540,29 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       Settings.propLastUsedChannelGroup.setString(null);
     }
   }
-  
+
   protected void showPluginInfoDlg() {
     Window parent = UiUtilities.getLastModalChildOf(this);
     PluginInformationDialog dlg = new PluginInformationDialog(parent);
 
     Settings.layoutWindow("main.pluginInfoDlg",dlg, new Dimension(Sizes.dialogUnitXAsPixel(420,dlg),Sizes.dialogUnitYAsPixel(215,dlg)));
-    
+
     dlg.setVisible(true);
   }
 
   private void onDownloadStart() {
     mAutoDownloadTimer = -1;
     TVBrowserActions.update.setUpdating(true);
-    
+
     if(!Settings.propPluginInfoDialogWasShown.getBoolean()) {
       Date compareDate = Settings.propFirstStartDate.getDate().addDays((int)(Math.random() * 4 + 3));
-      
+
       if(compareDate.compareTo(Date.getCurrentDate()) <= 0) {
         showPluginInfoDlg();
         Settings.propPluginInfoDialogWasShown.setBoolean(true);
       }
     }
-    
+
     mLastAutoUpdateRunBuffer = mLastAutoUpdateRun;
     mLastAutoUpdateRun = System.currentTimeMillis() + 3600000;
     mToolBar.updateUpdateButton(true);
@@ -1575,9 +1577,9 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
 
     mToolBar.updateUpdateButton(false);
     mMenuBar.showUpdateMenuItem();
-    
+
     mLastAutoUpdateRun = mLastAutoUpdateRunBuffer;
-    
+
     mFinderPanel.updateItems();
     resetOnAirArrays();
     mAutoDownloadTimer = -1;
@@ -1593,7 +1595,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
             mLocalizer.msg("downloaddone.title", "Done"));
 
   }
-  
+
   /**
    * Updates the entries of the finder panal.
    * @since 2.2.2/2.5.1
@@ -1627,7 +1629,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     } else {
       changeDate(mFinderPanel.getSelectedDate(), null, null);
     }
-    
+
     mMenuBar.updateDateItems();
   }
 
@@ -1654,7 +1656,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     mProgramTableScrollPane.deSelectItem();
     mFinderPanel.markNextWeek();
   }
-  
+
   /**
    * show same week day 7 days earlier
    * @since 2.7
@@ -1663,7 +1665,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     mProgramTableScrollPane.deSelectItem();
     mFinderPanel.markPreviousWeek();
   }
-  
+
   /**
    * @since 2.7
    */
@@ -1682,7 +1684,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
         final int currentTime = mProgramTableScrollPane.getScrolledTime();
         mProgramTableScrollPane.deSelectItem();
         mProgramTableModel.setDate(date, monitor, new Runnable() {
-          
+
           @Override
           public void run() {
             if (callback != null) {
@@ -1715,11 +1717,11 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     downloadingThread = new Thread("TV data update") {
       public void run() {
         onDownloadStart();
-        
+
         final boolean scroll = !autoUpdate && !TvDataBase.getInstance().dataAvailable(Date.getCurrentDate())
-        && getProgramTableModel().getDate() != null 
+        && getProgramTableModel().getDate() != null
         && getProgramTableModel().getDate().compareTo(Date.getCurrentDate()) == 0;
-        
+
         JProgressBar progressBar = mStatusBar.getProgressBar();
         try {
           TvDataUpdater.getInstance().downloadTvData(daysToDownload, services,
@@ -1732,14 +1734,14 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
             public void run() {
               onDownloadDone();
               newTvDataAvailable(scroll);
-              
+
               if((Settings.propLastPluginsUpdate.getDate() == null || Settings.propLastPluginsUpdate.getDate().addDays(7).compareTo(Date.getCurrentDate()) <= 0)) {
                 PluginAutoUpdater.searchForPluginUpdates(mStatusBar.getLabel());
               }
-            }          
+            }
           });
         }
-        
+
       }
     };
     downloadingThread.setPriority(Thread.MIN_PRIORITY);
@@ -1757,7 +1759,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
 
   /**
    * Starts the TV listings update with the given reason shown in the dialog
-   * 
+   *
    * @param numberOfDays
    * @param reason The reason for initiating the download
    */
@@ -1768,8 +1770,8 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     mIsAskingUpdate = true;
     try {
       if (ChannelList.getNumberOfSubscribedChannels() == 0) {
-        int result = JOptionPane.showOptionDialog(this, 
-            mLocalizer.msg("subscribeBeforeUpdate.msg", "You have not defined any channels.\n\nDo you want to subscribe to some channels before starting the data update?"), 
+        int result = JOptionPane.showOptionDialog(this,
+            mLocalizer.msg("subscribeBeforeUpdate.msg", "You have not defined any channels.\n\nDo you want to subscribe to some channels before starting the data update?"),
             mLocalizer.msg("subscribeBeforeUpdate.title", "No subscribed channels"),
             JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null,
             null);
@@ -1787,11 +1789,11 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
           }
           dlg.pack();
           UiUtilities.centerAndShow(dlg);
-            
+
           int daysToDownload = dlg.getResult();
           if(daysToDownload != UpdateDlg.CANCEL && licenseForTvDataServicesWasAccepted(dlg.getSelectedTvDataServices())) {
             runUpdateThread(daysToDownload, dlg.getSelectedTvDataServices(),false);
-          }        
+          }
         }
       }
     } finally {
@@ -1808,43 +1810,43 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
 
   /**
    * Checks if all users services license were accepted.
-   * 
+   *
    * @param updateServices
    *          The service to check for license.
-   * 
+   *
    * @return If all used service licenses were accepted.
    */
-  public boolean licenseForTvDataServicesWasAccepted(TvDataServiceProxy[] updateServices) {    
-    boolean accept = true;    
+  public boolean licenseForTvDataServicesWasAccepted(TvDataServiceProxy[] updateServices) {
+    boolean accept = true;
     String[] acceptedFor = Settings.propAcceptedLicenseArrForServiceIds.getStringArray();
-    
+
     for (TvDataServiceProxy serviceProxy : updateServices) {
       boolean found = false;
-      
+
       for (String acceptedService : acceptedFor) {
         if(serviceProxy.getId().compareTo(acceptedService) == 0) {
           found = true;
           break;
         }
       }
-      
+
       if(!found && serviceProxy.getInfo().getLicense() != null) {
         LicenseBox box=new LicenseBox(this, serviceProxy.getInfo().getLicense(), true);
         util.ui.UiUtilities.centerAndShow(box);
         accept = accept && box.agreed();
-        
+
         if(box.agreed()) {
           String[] oldIds = Settings.propAcceptedLicenseArrForServiceIds.getStringArray();
           String[] newIds = new String[oldIds.length + 1];
-          
+
           System.arraycopy(acceptedFor,0,newIds,0,oldIds.length);
           newIds[newIds.length-1] = serviceProxy.getId();
-          
+
           Settings.propAcceptedLicenseArrForServiceIds.setStringArray(newIds);
         }
       }
     }
-    
+
     return accept;
   }
 
@@ -1857,7 +1859,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
 
   /**
    * Show Settings Dialog for a specific TabId
-   * 
+   *
    * @param visibleTabId
    *          Id of the specific Tab
    */
@@ -1865,11 +1867,11 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     if(mSettingsWillBeOpened) {
       return;
     }
-    
+
     new Thread(new Runnable() {
       public void run() {
         mSettingsWillBeOpened = true;
-        
+
         // show busy cursor
         Window comp = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
         ProgramTable programTable = MainFrame.getInstance().getProgramTableScrollPane().getProgramTable();
@@ -1884,7 +1886,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
         // restore cursors
         programTable.setCursor(oldTableCursor);
         comp.setCursor(oldWindowCursor);
-        
+
         SwingUtilities.invokeLater(new Runnable() {
           public void run() {
             Settings.handleChangedSettings();
@@ -1900,7 +1902,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
 
   /*****************************************************************************
    * Show the Settings for a specific Plugin
-   * 
+   *
    * @param plugin
    *          Plugin to show
    */
@@ -1920,7 +1922,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
 
   public void showUpdatePluginsDlg(boolean noQuestion) {
     int answer = JOptionPane.YES_OPTION;
-  
+
     if(!noQuestion) {
       Object[] options = { mLocalizer.msg("checknow", "Check now"),
           Localizer.getLocalization(Localizer.I18N_CANCEL) };
@@ -1935,10 +1937,10 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       updatePlugins(PluginAutoUpdater.DEFAULT_PLUGINS_DOWNLOAD_URL, false, mStatusBar.getLabel(),false);
     }
   }
-  
+
   /**
    * Search for updates of plugins.
-   * 
+   *
    * @param baseUrl The url string to load the plugin updates from.
    * @param showOnlyUpdates If the dialog is only to show when updates of
    *                        installed plugins are found.
@@ -1959,7 +1961,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
         } catch (java.io.IOException e) {
           e.printStackTrace();
         }
-        
+
         if(!dontShowUpdateDlg) {
           if (mSoftwareUpdateItems == null && !showOnlyUpdates) {
             JOptionPane.showMessageDialog(UiUtilities.getLastModalChildOf(MainFrame.getInstance()), mLocalizer.msg("error.1",
@@ -1972,24 +1974,24 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
                 .getInstance());
             SoftwareUpdateDlg dlg = new SoftwareUpdateDlg(parent, baseUrl,
                 showOnlyUpdates, mSoftwareUpdateItems);
-     
+
             //dlg.setSoftwareUpdateItems(mSoftwareUpdateItems);
             dlg.setLocationRelativeTo(parent);
             dlg.setVisible(true);
           }
         }
-        
+
         BlockedPlugin[] newlyBlocked = Settings.propBlockedPluginArray.getNewBlockedPlugins();
-        
+
         if(newlyBlocked != null && newlyBlocked.length > 0) {
           StringBuilder message = new StringBuilder();
-          
+
           for(BlockedPlugin blockedPlugin : newlyBlocked) {
             PluginProxy plugin = PluginProxyManager.getInstance().getPluginForId(blockedPlugin.getPluginId());
-            
+
             if(plugin == null) {
               TvDataServiceProxy dataService = TvDataServiceProxyManager.getInstance().findDataServiceById(blockedPlugin.getPluginId());
-              
+
               if(dataService != null && blockedPlugin.isBlockedVersion(dataService.getId(),dataService.getInfo().getVersion())) {
                 message.append("\n").append(dataService.getInfo().getName()).append(" (").append(blockedPlugin.getBlockStart()).append(" - ").append(blockedPlugin.getBlockEnd()).append(")");
               }
@@ -1998,16 +2000,16 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
               message.append("\n").append(plugin.getInfo().getName()).append(" (").append(blockedPlugin.getBlockStart()).append(" - ").append(blockedPlugin.getBlockEnd()).append(")");
             }
           }
-          
+
           if(message.length() > 0) {
             message.insert(0,mLocalizer.msg("update.blockedInfo","The following Plugins were blocked and cannot be used in their current version:\n"));
-            
+
             showInfoTextMessage(mLocalizer.msg("update.blockedPlugins","Plugins blocked!"),message.toString(),450);
           }
         }
-        
+
         Settings.propLastPluginsUpdate.setDate(Date.getCurrentDate());
-        
+
         infoLabel.setText("");
         mSoftwareUpdateItems = null;
       }
@@ -2030,7 +2032,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     super.repaint();
     mRootNode.update();
   }
-  
+
   public void askForDataUpdate(final String message, final int numberOfDays) {
     updateTvData(numberOfDays, message);
   }
@@ -2038,14 +2040,14 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
   private void askForDataUpdate(final String reason) {
     askForDataUpdate(reason, 0);
   }
-  
+
   public void askForDataUpdateNoDataAvailable() {
     if(mProgramTableModel.getAvailableChannelCount() > 0) {
       askForDataUpdate(mLocalizer.msg("askforupdatedlg.noData",
         "No TV data for todays program available."));
     }
   }
-  
+
   public void askForDataUpdateChannelsAdded() {
 	  askForDataUpdate(mLocalizer.msg("askforupdatedlg.addedChannels",
       "You have added channels."));
@@ -2056,7 +2058,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     util.ui.UiUtilities.centerAndShow(dlg);
     mMenuBar.updateFiltersMenu();
   }
-  
+
   public void updateFilterMenu() {
     mMenuBar.updateFiltersMenu();
   }
@@ -2089,7 +2091,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     mMenuBar.updateViewToolbarItem();
     updateToolbar();
   }
-  
+
   public void setShowSearchField(boolean visible) {
     Settings.propIsSearchFieldVisible.setBoolean(visible);
     updateToolbar();
@@ -2103,7 +2105,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       jcontentPane.add(mCenterComponent, BorderLayout.CENTER);
       jcontentPane.validate();
       jcontentPane.requestFocus();
-      
+
       mRootNode.update();
     }
   }
@@ -2111,60 +2113,60 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
   public void setShowTimeButtons(boolean visible) {
     setShowTimeButtons(visible, true);
   }
-  
+
   public void setShowTimeButtons(boolean visible, boolean save) {
     if (visible) {
       mTimebuttonsNode.setLeaf(mTimeChooserPanel);
     } else {
       mTimebuttonsNode.setLeaf(null);
     }
-    
+
     mTimeChooserPanel.setVisible(visible);
-    
+
     if(save) {
       Settings.propShowTimeButtons.setBoolean(visible);
     }
-    
+
     updateViews();
   }
 
   public void setShowDatelist(boolean visible) {
     setShowDatelist(visible, true);
   }
-  
+
   public void setShowDatelist(boolean visible, boolean save) {
     if (visible) {
       mDateNode.setLeaf(new DateChooserPanel(this, mFinderPanel.getComponent()));
     } else {
       mDateNode.setLeaf(null);
     }
-    
+
     mFinderPanel.getComponent().setVisible(visible);
-    
+
     if(save) {
       Settings.propShowDatelist.setBoolean(visible);
     }
-    
+
     updateViews();
   }
 
   public void setShowChannellist(boolean visible) {
     setShowChannellist(visible, true);
   }
-  
+
   public void setShowChannellist(boolean visible, boolean save) {
     if (visible) {
       mChannelNode.setLeaf(mChannelChooser);
     } else {
       mChannelNode.setLeaf(null);
     }
-    
+
     mChannelChooser.setVisible(visible);
-    
+
     if(save) {
       Settings.propShowChannels.setBoolean(visible);
     }
-    
+
     updateViews();
   }
 
@@ -2173,7 +2175,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       mToolBar.update();
     }
   }
-  
+
   public void setShowPluginOverview(boolean visible) {
     setShowPluginOverview(visible, true);
   }
@@ -2196,7 +2198,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     }
     mPluginsNode.setLeaf(mPluginView);
     TVBrowserActions.pluginView.putValue(ToolBar.ACTION_IS_SELECTED, Boolean.valueOf(visible));
-    mMenuBar.setPluginViewItemChecked(visible);      
+    mMenuBar.setPluginViewItemChecked(visible);
     if(save) {
       Settings.propShowPluginView.setBoolean(visible);
     }
@@ -2206,7 +2208,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
 
   /**
    * Makes the StatusBar visible
-   * 
+   *
    * @param visible
    *          true if Statusbar should be visible
    */
@@ -2228,14 +2230,14 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
   public ProgressMonitor createProgressMonitor() {
     return mStatusBar.createProgressMonitor();
   }
-  
+
   public void selectChannel(Channel channel) {
     mChannelChooser.selectChannel(channel);
   }
 
   /**
    * increase/decrease the font of the program table
-   * 
+   *
    * @param offset positive values increase font, negative values decrease font, zero sets to default again
    */
   public void changeFontSize(int offset) {
@@ -2248,7 +2250,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
 
   /**
    * increase/decrease the width of the program table columns
-   * 
+   *
    * @param offset positive values increase column width,
    * negative values decrease column width, zero sets to default again
    */
@@ -2265,7 +2267,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
 
   /**
    * get whether the mainframe is currently in full screen mode
-   * 
+   *
    * @return in full screen mode
    * @since 2.5.3
    */
@@ -2278,11 +2280,11 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       mPluginView.refreshTree();
     }
   }
-  
+
   /**
    * extract the drag and drop targets from the event
-   * @param transferable 
-   * @param dataFlavors 
+   * @param transferable
+   * @param dataFlavors
    * @return
    */
   private File[] getDragDropPlugins(final DataFlavor[] dataFlavors, final Transferable transferable) {
@@ -2290,7 +2292,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     for(DataFlavor flavor : dataFlavors) {
       try {
         Object data = transferable.getTransferData(flavor);
-        
+
         if(data instanceof List) {
           for(Object o : ((List)data)) {
             if(o instanceof File) {
@@ -2359,7 +2361,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
   public void drop(DropTargetDropEvent dtde) {
     dtde.acceptDrop(dtde.getDropAction());
     File[] files = getDragDropPlugins(dtde.getCurrentDataFlavors(),  dtde.getTransferable());
-    
+
     try {
       File tmpFile = File.createTempFile("plugins",".txt");
       StringBuilder alreadyInstalled = new StringBuilder();
@@ -2375,53 +2377,55 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
 
         }
 
-        // Get the plugin name
-        String pluginName = jarFile.getName();
-        pluginName = pluginName.substring(0, pluginName.length() - 4);
+        if (classLoader != null) {
+          // Get the plugin name
+          String pluginName = jarFile.getName();
+          pluginName = pluginName.substring(0, pluginName.length() - 4);
 
-        try {
-          String pluginId = "java." + pluginName.toLowerCase() + "." + pluginName;
-
-          PluginProxy installedPlugin = PluginProxyManager.getInstance().getPluginForId(pluginId);
-          TvDataServiceProxy service = TvDataServiceProxyManager.getInstance().findDataServiceById(
-              pluginName.toLowerCase() + "." + pluginName);
-
-          Class pluginClass = classLoader.loadClass(pluginName.toLowerCase() + "." + pluginName);
-
-          Method getVersion = pluginClass.getMethod("getVersion", new Class[0]);
-          
-          Version version1 = null;
           try {
-            version1 = (Version) getVersion.invoke(pluginClass, new Object[0]);
-          } catch (Throwable t1) {
-            t1.printStackTrace();
+            String pluginId = "java." + pluginName.toLowerCase() + "." + pluginName;
+
+            PluginProxy installedPlugin = PluginProxyManager.getInstance().getPluginForId(pluginId);
+            TvDataServiceProxy service = TvDataServiceProxyManager.getInstance().findDataServiceById(
+                pluginName.toLowerCase() + '.' + pluginName);
+
+            Class<?> pluginClass = classLoader.loadClass(pluginName.toLowerCase() + '.' + pluginName);
+
+            Method getVersion = pluginClass.getMethod("getVersion", new Class[0]);
+
+            Version version1 = null;
+            try {
+              version1 = (Version) getVersion.invoke(pluginClass, new Object[0]);
+            } catch (Throwable t1) {
+              t1.printStackTrace();
+            }
+
+            if (installedPlugin != null && (installedPlugin.getInfo().getVersion().compareTo(version1) > 0 || (installedPlugin.getInfo().getVersion().compareTo(version1) == 0 && version1.isStable()))) {
+              alreadyInstalled.append(installedPlugin.getInfo().getName()).append('\n');
+            } else if (service != null && (service.getInfo().getVersion().compareTo(version1) > 0 || (service.getInfo().getVersion().compareTo(version1) == 0 && version1.isStable()))) {
+              alreadyInstalled.append(service.getInfo().getName()).append('\n');
+            } else {
+              RandomAccessFile write = new RandomAccessFile(tmpFile, "rw");
+
+              String versionString = Integer.toString(version1.getMajor()) + '.' + (version1.getMinor() / 10) + (version1.getMinor() % 10)
+                  + '.' + version1.getSubMinor();
+
+              write.seek(write.length());
+
+              write.writeBytes("[plugin:" + pluginName + "]\n");
+              write.writeBytes("name_en=" + pluginName + "\n");
+              write.writeBytes("filename=" + jarFile.getName() + "\n");
+              write.writeBytes("version=" + versionString + "\n");
+              write.writeBytes("stable=" + version1.isStable() + "\n");
+              write.writeBytes("download=" + jarFile.toURI().toURL() + "\n");
+              write.writeBytes("category=unknown\n");
+
+              write.close();
+
+            }
+          } catch (Exception e) {
+            notCompatiblePlugins.append(jarFile.getName()).append("\n");
           }
-
-          if (installedPlugin != null && (installedPlugin.getInfo().getVersion().compareTo(version1) > 0 || (installedPlugin.getInfo().getVersion().compareTo(version1) == 0 && version1.isStable()))) {
-            alreadyInstalled.append(installedPlugin.getInfo().getName()).append("\n");
-          } else if (service != null && (service.getInfo().getVersion().compareTo(version1) > 0 || (service.getInfo().getVersion().compareTo(version1) == 0 && version1.isStable()))) {
-            alreadyInstalled.append(service.getInfo().getName()).append("\n");
-          } else {
-            RandomAccessFile write = new RandomAccessFile(tmpFile, "rw");
-
-            String versionString = +version1.getMajor() + "." + (version1.getMinor() / 10) + (version1.getMinor() % 10)
-                + "." + version1.getSubMinor();
-
-            write.seek(write.length());
-
-            write.writeBytes("[plugin:" + pluginName + "]\n");
-            write.writeBytes("name_en=" + pluginName + "\n");
-            write.writeBytes("filename=" + jarFile.getName() + "\n");
-            write.writeBytes("version=" + versionString + "\n");
-            write.writeBytes("stable=" + version1.isStable() + "\n");
-            write.writeBytes("download=" + jarFile.toURI().toURL() + "\n");
-            write.writeBytes("category=unknown\n");
-
-            write.close();
-
-          }
-        } catch (Exception e) {
-          notCompatiblePlugins.append(jarFile.getName()).append("\n");
         }
       }
 
@@ -2434,8 +2438,8 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
         showInfoTextMessage(mLocalizer.msg("update.noTVBPlugin", "This following files are not TV-Browser Plugins:"),
             notCompatiblePlugins.toString(), 400);
       }
-      
-      
+
+
       if (tmpFile.length() > 0) {
         java.net.URL url = tmpFile.toURI().toURL();
         SoftwareUpdater softwareUpdater = new SoftwareUpdater(url, false, true);
@@ -2458,26 +2462,26 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     } catch (IOException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
-    }        
+    }
   }
 
   @Override
   public void dropActionChanged(DropTargetDragEvent dtde) {
     // TODO Auto-generated method stub
-    
+
   }
-  
+
   private void showInfoTextMessage(String header, String infoText, int width) {
     JTextArea textArea = new JTextArea(infoText);
     textArea.setEditable(false);
     textArea.setLineWrap(true);
     textArea.setWrapStyleWord(true);
-    
+
     JScrollPane scrollPane = new JScrollPane(textArea);
-    
+
     scrollPane.setPreferredSize(new Dimension(width,150));
-    
+
     Object[] msg = {header,scrollPane};
-    JOptionPane.showMessageDialog(this,msg,Localizer.getLocalization(Localizer.I18N_INFO),JOptionPane.INFORMATION_MESSAGE);            
+    JOptionPane.showMessageDialog(this,msg,Localizer.getLocalization(Localizer.I18N_INFO),JOptionPane.INFORMATION_MESSAGE);
   }
 }

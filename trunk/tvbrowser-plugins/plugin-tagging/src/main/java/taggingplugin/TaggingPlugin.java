@@ -31,6 +31,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
+import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -70,7 +71,7 @@ final public class TaggingPlugin extends Plugin {
 	private static final util.ui.Localizer mLocalizer = util.ui.Localizer
 			.getLocalizerFor(TaggingPlugin.class);
 
-	private static java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(TaggingPlugin.class.getName());
+	private static final Logger mLog = java.util.logging.Logger.getLogger(TaggingPlugin.class.getName());
 
 	private static final String MAIN_URL = "http://tv-browser.appspot.com/";
 //  private static final String MAIN_URL = "http://localhost:8080/";
