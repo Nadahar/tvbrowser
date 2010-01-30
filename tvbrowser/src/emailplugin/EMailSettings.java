@@ -1,25 +1,26 @@
 /*
  * Copyright Michael Keppler
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package emailplugin;
 
 import java.util.Properties;
-import java.util.regex.Pattern;
 
 import util.settings.PropertyBasedSettings;
+
+import com.l2fprod.util.StringUtils;
 
 /**
  * @author bananeweizen
@@ -47,7 +48,7 @@ public final class EMailSettings extends PropertyBasedSettings {
   public String getParameter() {
     String value = get(KEY_PARAMETER, "{" + EMailParamLibrary.KEY_MAIL_TEXT + "}");
     // replace old parameter system with new param library value
-    return value.replaceAll(Pattern.quote("{0}"), "{" + EMailParamLibrary.KEY_MAIL_TEXT + "}");
+    return StringUtils.replace(value, "{0}", "{" + EMailParamLibrary.KEY_MAIL_TEXT + "}");
   }
 
   public void setApplication(final String application) {

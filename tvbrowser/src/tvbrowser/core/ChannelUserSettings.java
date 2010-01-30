@@ -50,23 +50,21 @@ public class ChannelUserSettings {
   public static ChannelUserSettings getSettings(Channel ch) {
     if(ch == null || ch.getDataServiceProxy() == null || ch.getGroup() == null) {
       ChannelUserSettings settings = mChannelUserSettings.get(null);
-      
+
       if (settings == null) {
         settings = new ChannelUserSettings();
         mChannelUserSettings.put(null, settings);
       }
-      
+
       return settings;
     }
-      
-    String idValue = (new StringBuilder(ch.getDataServiceProxy().getId())
-        .append(ch.getGroup().getId()).append(":").append(ch.getId()))
-        .toString();
-    
-    ChannelUserSettings settings = mChannelUserSettings.get(idValue);
+
+    String channelId = ch.getUniqueId();
+
+    ChannelUserSettings settings = mChannelUserSettings.get(channelId);
     if (settings == null) {
       settings = new ChannelUserSettings();
-      mChannelUserSettings.put(idValue, settings);
+      mChannelUserSettings.put(channelId, settings);
     }
     return settings;
   }
@@ -112,16 +110,16 @@ public class ChannelUserSettings {
   public String getWebPage() {
     return mWebPage;
   }
-  
+
   public void setWebPage(String webpage) {
     mWebPage = webpage;
   }
-  
+
   /**
    * Gets the start time limit in minutes of day.
    * This is used to exclude programs from the day program
    * that starts before the start time limit.
-   * 
+   *
    * @return The start time limit in minutes of day.
    * @since 2.2.4/2.6
    */
@@ -131,7 +129,7 @@ public class ChannelUserSettings {
 
   /**
    * Sets the start time limit to the new value.
-   * 
+   *
    * @param startTimeLimit The new value for start time
    * limit in minutes of day.
    * @since 2.2.4/2.6
@@ -144,7 +142,7 @@ public class ChannelUserSettings {
    * Gets the end time limit in minutes of day.
    * This is used to exclude programs from the day program
    * that starts after the end time limit.
-   * 
+   *
    * @return The start time limit in minutes of day.
    * @since 2.2.4/2.6
    */
@@ -154,7 +152,7 @@ public class ChannelUserSettings {
 
   /**
    * Sets the end time limit to the new value.
-   * 
+   *
    * @param endTimeLimit The new value for end time
    * limit in minutes of day.
    * @since 2.2.4/2.6
@@ -162,10 +160,10 @@ public class ChannelUserSettings {
   public void setEndTimeLimit(int endTimeLimit) {
     mEndTimeLimit = endTimeLimit;
   }
-  
+
   /**
    * Gets if the start and end time limit should be used.
-   * 
+   *
    * @return <code>True</code> if the time limit is used,
    * <code>false</code> otherwise.
    * @since 2.2.4/2.6

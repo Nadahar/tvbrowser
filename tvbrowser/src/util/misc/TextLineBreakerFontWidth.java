@@ -33,14 +33,14 @@ import javax.swing.JLabel;
 
 /**
  * Breaks a text into lines using Font-Metrics.
- * 
+ *
  * @author Til Schneider, www.murfman.de
  */
 public class TextLineBreakerFontWidth extends TextLineBreakerStringWidth{
-  
-  private static HashMap<Font, FontMetrics> FONT_METRICS_CACHE = new HashMap<Font, FontMetrics>();
 
-  /** The helper label. */  
+  private static final HashMap<Font, FontMetrics> FONT_METRICS_CACHE = new HashMap<Font, FontMetrics>();
+
+  /** The helper label. */
   private static final JLabel HELPER_LABEL = new JLabel();
   /** Font-Metrics of current Font */
   private FontMetrics mFontMetrics;
@@ -53,7 +53,7 @@ public class TextLineBreakerFontWidth extends TextLineBreakerStringWidth{
     super();
     setFont(font);
   }
-  
+
   /**
    * Set the Font to use for Width-Calculation
    * @param font Font to use
@@ -67,15 +67,15 @@ public class TextLineBreakerFontWidth extends TextLineBreakerStringWidth{
     setSpaceWidth(mFontMetrics.charWidth(' '));
     setMinusWidth(mFontMetrics.charWidth('-'));
   }
-  
+
   /**
    * Get the width of a String
    * @param str Calculate Width of this String
-   * @return Width of String 
+   * @return Width of String
    */
   @Override
   public int getStringWidth(String str) {
     return mFontMetrics.stringWidth(str);
   }
-  
+
 }

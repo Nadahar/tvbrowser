@@ -32,6 +32,9 @@ import java.util.Calendar;
 
 import util.misc.TextLineBreakerStringWidth;
 import util.ui.Localizer;
+
+import com.l2fprod.util.StringUtils;
+
 import devplugin.Program;
 import devplugin.ProgramFieldType;
 
@@ -39,7 +42,7 @@ import devplugin.ProgramFieldType;
  * The default ParamLibrary. If you want to add new parameters or functions for your
  * plugin, extend this class and overwrite the public methods. For an example
  * see the code in the CapturePlugin
- * 
+ *
  * @author bodum
  */
 public class ParamLibrary {
@@ -54,7 +57,7 @@ public class ParamLibrary {
 
   /**
    * Has an Error occurred ?
-   * 
+   *
    * @return true if an error occurred
    */
   public boolean hasErrors() {
@@ -63,7 +66,7 @@ public class ParamLibrary {
 
   /**
    * Set the Error-Boolean
-   * 
+   *
    * @param errors True, if an error occurred
    */
   public void setErrors(boolean errors) {
@@ -79,7 +82,7 @@ public class ParamLibrary {
 
   /**
    * Set the Error
-   * 
+   *
    * @param error the Error
    */
   public void setErrorString(String error) {
@@ -88,7 +91,7 @@ public class ParamLibrary {
 
   /**
    * Get the possible Keys
-   * 
+   *
    * @return Array with possible Keys
    */
   public String[] getPossibleKeys() {
@@ -101,7 +104,7 @@ public class ParamLibrary {
 
   /**
    * Get the description for one Key
-   * 
+   *
    * @return description for one key
    */
   public String getDescriptionForKey(String key) {
@@ -114,7 +117,7 @@ public class ParamLibrary {
 
   /**
    * Get the List of possible Functions
-   * 
+   *
    * @return List of possible Functions
    */
   public String[] getPossibleFunctions() {
@@ -124,7 +127,7 @@ public class ParamLibrary {
 
   /**
    * Get the description for a specific Function
-   * 
+   *
    * @return
    */
   public String getDescriptionForFunctions(String function) {
@@ -139,7 +142,7 @@ public class ParamLibrary {
 
   /**
    * Get the String for a key
-   * 
+   *
    * @param program Program to use
    * @param key Key to use
    * @return Value of key in program
@@ -191,10 +194,10 @@ public class ParamLibrary {
     } else if (key.equalsIgnoreCase("url")) {
       return removeNull(program.getTextField(ProgramFieldType.URL_TYPE));
     } else if (key.equalsIgnoreCase("start_day_of_week")) {
-      SimpleDateFormat format = new SimpleDateFormat("EEEE"); 
-      return format.format(new java.util.Date(program.getDate().getCalendar().getTimeInMillis()));    
+      SimpleDateFormat format = new SimpleDateFormat("EEEE");
+      return format.format(new java.util.Date(program.getDate().getCalendar().getTimeInMillis()));
     } else if (key.equalsIgnoreCase("start_month_name")) {
-      SimpleDateFormat format = new SimpleDateFormat("MMMM"); 
+      SimpleDateFormat format = new SimpleDateFormat("MMMM");
       return format.format(new java.util.Date(program.getDate().getCalendar().getTimeInMillis()));
     } else if (key.equalsIgnoreCase("start_unix")) {
       return Long.toString(createStartTime(program).getTimeInMillis() / 1000);
@@ -209,7 +212,7 @@ public class ParamLibrary {
       }
       return Integer.toString(epNum);
     }
-    
+
     mError = true;
     mErrorString = mLocalizer.msg("unkownParam", "Unknown Parameter") + ": '" + key + "'";
 
@@ -218,7 +221,7 @@ public class ParamLibrary {
 
   /**
    * If the string is null, it returns "".
-   * 
+   *
    * @param str String
    * @return "" if str is null, otherwise str
    */
@@ -231,7 +234,7 @@ public class ParamLibrary {
 
   /**
    * Returns a Calendar-Field of the End-Time from a Program
-   * 
+   *
    * @param prg Program
    * @param field Calendar-Field to return
    * @return int-Value
@@ -273,7 +276,7 @@ public class ParamLibrary {
 
   /**
    * Returns the Value of a function
-   * 
+   *
    * @param prg Program to use
    * @param function Function to use
    * @param params Params for the Function
@@ -306,7 +309,7 @@ public class ParamLibrary {
       if (params.length == 3) {
         return params[2];
       }
-      
+
       return "";
     } else if (function.equalsIgnoreCase("urlencode")) {
       if (params.length != 2) {
@@ -379,25 +382,25 @@ public class ParamLibrary {
         mErrorString = mLocalizer.msg("splitAtNumberProblems", "Could not parse Number") + " : " + params[1];
         return null;
       }
-      
+
       TextLineBreakerStringWidth breaker = new TextLineBreakerStringWidth();
 
       StringBuilder result = new StringBuilder();
-      
+
       try {
         String[] lines = breaker.breakLines(new StringReader(params[0]), num);
-        
+
         for (int i=0;i<lines.length;i++) {
           result.append(lines[i]);
           result.append('\n');
         }
-        
+
       } catch (Exception ex) {
         mError = true;
         mErrorString = mLocalizer.msg("splitAtSplitProblems", "Could not split String") + " :\n " + ex.toString();
         return null;
       }
-      
+
       return result.toString().trim();
     } else if (function.equalsIgnoreCase("maxlength")) {
       if (params.length != 2) {
@@ -433,7 +436,7 @@ public class ParamLibrary {
 
   /**
    * Adds leading Zeros to the String
-   * 
+   *
    * @param string
    * @param num
    * @return
@@ -450,7 +453,7 @@ public class ParamLibrary {
 
   /**
    * Clean a String. Replace every non A-Za-z0-9 Char into a "_"
-   * 
+   *
    * @param clean String to clean
    * @return cleaned String
    */
@@ -471,18 +474,18 @@ public class ParamLibrary {
     }
 
     String retStr = buffer.toString();
-    
+
     while (retStr.indexOf("__") >= 0) {
-      retStr = retStr.replaceAll("__", "_");
+      retStr = StringUtils.replace(retStr, "__", "_");
     }
-    
+
     return retStr;
   }
 
   /**
    * Clean a String. Replace every non non Char/Digit into "_". ÄÖÜ and
    * other Locale Letters will remain.
-   * 
+   *
    * @param clean String to clean
    * @return cleaned String
    */
@@ -499,12 +502,12 @@ public class ParamLibrary {
     }
 
     String retStr = buffer.toString();
-    
+
     while (retStr.indexOf("__") >= 0) {
-      retStr = retStr.replaceAll("__", "_");
+      retStr = StringUtils.replace(retStr, "__", "_");
     }
-    
+
     return retStr;
-  }  
-  
+  }
+
 }

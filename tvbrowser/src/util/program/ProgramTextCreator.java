@@ -817,7 +817,7 @@ public class ProgramTextCreator {
       StringBuilder buffer = new StringBuilder(32);
       buffer.append("<a href=\"");
       buffer.append(TVBROWSER_URL_PROTOCOL);
-      buffer.append(topic.replaceAll("\"", "").replaceAll("'", ""));
+      buffer.append(StringUtils.remove(StringUtils.remove(topic, '"'), '\''));
 
       buffer.append("\" ");
       buffer.append(style);

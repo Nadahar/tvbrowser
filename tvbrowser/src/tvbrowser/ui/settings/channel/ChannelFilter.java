@@ -25,12 +25,18 @@
  */
 package tvbrowser.ui.settings.channel;
 
+import org.apache.commons.lang.StringUtils;
+
 import devplugin.Channel;
 
 /**
  * Filters for a specific Country, Category and/or Channelname
  */
 public class ChannelFilter {
+  private static final String[] NORMALIZE_REPLACE = new String[] {"o", "a", "u", "s", "o", "a", "u", "s"};
+
+  private static final String[] NORMALIZE_SEARCH = new String[] {"ö", "ä", "ü", "ß", "oe", "ae", "ue", "ss"};
+
   private String mCountry;
 
   private int[] mCategories;
@@ -43,11 +49,11 @@ public class ChannelFilter {
   public ChannelFilter() {
     setFilter(null, new int[]{Integer.MAX_VALUE}, null);
   }
-  
+
   /**
    * Creates the Filter
    * @param country Country to use or NULL
-   * @param categories Category to use, if &lt; 0 use exact category, if MAX_INT don't use category 
+   * @param categories Category to use, if &lt; 0 use exact category, if MAX_INT don't use category
    * @param name Name to search for. This is an "and" Search. Search-Terms are separated by Whitespace
    */
   public ChannelFilter(String country, int categories, String name) {
@@ -72,8 +78,8 @@ public class ChannelFilter {
    */
   public void setFilter(String country, int[] categories, String name) {
     mCountry = country;
-    mCategories = categories;
-    if ((mChannelName != null) && (name != null)) {
+    mCategories = categories.clone();
+    if ((mChannelName != null) && (StringUtils.isNotBlank(name))) {
       mChannelName = name.trim().split("\\s");
       for (int i = 0; i < mChannelName.length; i++) {
         mChannelName[i] = normalizeCharacters(mChannelName[i]);
@@ -82,7 +88,7 @@ public class ChannelFilter {
       mChannelName = new String[]{};
     }
   }
-  
+
   /**
    * @param channel Channel to check
    * @return True if Channel is accepted by this Filter
@@ -102,15 +108,16 @@ public class ChannelFilter {
     if (mChannelName.length > 0) {
       String channelName = normalizeCharacters(channel.getName());
       for (String name:mChannelName) {
-          if (!channelName.contains(name))
+          if (!channelName.contains(name)) {
             return false;
+          }
       }
     }
 
     boolean categoryTest = false;
     int i = 0;
     int max = mCategories.length;
-    
+
     while (i < max && !categoryTest) {
       int category = mCategories[i];
 
@@ -121,8 +128,9 @@ public class ChannelFilter {
             categoryTest = true;
           }
         } else if (category == 0) {
-          if (channel.getCategories() == 0)
+          if (channel.getCategories() == 0) {
             categoryTest = true;
+          }
         } else if ((channel.getCategories() & category) != 0) {
           categoryTest = true;
         }
@@ -132,26 +140,22 @@ public class ChannelFilter {
 
       i++;
     }
-    
-    if (!categoryTest) 
+
+    if (!categoryTest) {
       return false;
-    
+    }
+
     return true;
   }
 
   /**
    * Normalizes the Text for better Search results
-   * 
+   *
    * @param text Text to normalize
    * @return normalized Text
    */
   private String normalizeCharacters(String text) {
-    text = text.toLowerCase().trim();
-
-    text = text.replaceAll("ö", "o").replaceAll("ä", "a").replaceAll("ü", "u").replaceAll("ß", "s").replaceAll("oe",
-        "o").replaceAll("ae", "a").replaceAll("ue", "u").replaceAll("ss", "s");
-
-    return text;
+    return StringUtils.replaceEach(text.toLowerCase().trim(), NORMALIZE_SEARCH, NORMALIZE_REPLACE);
   }
 
 }

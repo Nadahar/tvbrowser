@@ -197,8 +197,8 @@ public class MailCreator {
    * @throws UnsupportedEncodingException Problems during encoding
    */
   private String encodeString(String string) throws UnsupportedEncodingException {
-    return URLEncoder.encode(string.trim(), mFormatting.getEncodingValue()/*.getProperty("encoding", "UTF-8"))*/).replaceAll("\\+",
-        "%20");
+    return URLEncoder.encode(string.trim(), StringUtils.replace(mFormatting.getEncodingValue()/*.getProperty("encoding", "UTF-8"))*/, "+",
+        "%20"));
   }
 
   /**
