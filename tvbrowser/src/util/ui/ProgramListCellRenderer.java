@@ -30,6 +30,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Insets;
+import java.util.HashSet;
 
 import javax.swing.AbstractListModel;
 import javax.swing.DefaultListCellRenderer;
@@ -53,10 +54,41 @@ import devplugin.Program;
  * <i>Keep in mind:</i> This Renderer internally uses "static" data for each
  * displayed program. If program data changes the container using this renderer
  * should be repainted to display the changed data.
- * 
+ *
  * @author Til Schneider, www.murfman.de
  */
 public class ProgramListCellRenderer extends DefaultListCellRenderer {
+
+  private static final class ProgramListChangeListener implements ChangeListener {
+    private final JList mList;
+
+    private ProgramListChangeListener(JList list) {
+      mList = list;
+    }
+
+    public void stateChanged(ChangeEvent e) {
+      if (mList != null) {
+        Object source = e.getSource();
+        if (source instanceof Program) {
+          Program program = (Program) source;
+          AbstractListModel model = (AbstractListModel) mList.getModel();
+          ListDataListener[] listeners = model.getListDataListeners();
+          int itemIndex = -1;
+          for (int i = 0; i < model.getSize(); i++) {
+            if (model.getElementAt(i) == program) {
+              itemIndex = i;
+              break;
+            }
+          }
+          if (itemIndex >= 0) {
+            for (int i = 0; i < listeners.length; i++) {
+              listeners[i].contentsChanged(new ListDataEvent(program, ListDataEvent.CONTENTS_CHANGED, itemIndex, itemIndex));
+            }
+          }
+        }
+      }
+    }
+  }
 
   private static final Color SECOND_ROW_COLOR = new Color(220, 220, 220, 150);
   private static final Color SECOND_ROW_COLOR_EXPIRED = new Color(220, 220, 220, 55);
@@ -64,6 +96,7 @@ public class ProgramListCellRenderer extends DefaultListCellRenderer {
   private JPanel mMainPanel;
   private JLabel mHeaderLb;
   private ProgramPanel mProgramPanel;
+  private HashSet<Program> mProgramSet = new HashSet<Program>();
 
   /**
    * Creates a new instance of ProgramListCellRenderer
@@ -74,10 +107,10 @@ public class ProgramListCellRenderer extends DefaultListCellRenderer {
 
   /**
    * Creates a new instance of ProgramListCellRenderer
-   * 
+   *
    * @param settings
    *          The settings for the program panel.
-   * 
+   *
    * @since 2.2.2
    */
   public ProgramListCellRenderer(ProgramPanelSettings settings) {
@@ -101,7 +134,7 @@ public class ProgramListCellRenderer extends DefaultListCellRenderer {
    * cell. If it is necessary to compute the dimensions of a list because the
    * list cells do not have a fixed size, this method is called to generate a
    * component on which <code>getPreferredSize</code> can be invoked.
-   * 
+   *
    * @param list
    *          The JList we're painting.
    * @param value
@@ -113,7 +146,7 @@ public class ProgramListCellRenderer extends DefaultListCellRenderer {
    * @param cellHasFocus
    *          True if the specified cell has the focus.
    * @return A component whose paint() method will render the specified value.
-   * 
+   *
    * @see JList
    * @see ListSelectionModel
    * @see ListModel
@@ -132,30 +165,10 @@ public class ProgramListCellRenderer extends DefaultListCellRenderer {
       mProgramPanel.setTextColor(label.getForeground());
       mProgramPanel.setBackground(label.getBackground());
 
-      program.addChangeListener(new ChangeListener() {
-        public void stateChanged(ChangeEvent e) {
-          if (list != null) {
-            Object source = e.getSource();
-            if (source instanceof Program) {
-              Program program = (Program) source;
-              AbstractListModel model = (AbstractListModel) list.getModel();
-              ListDataListener[] listeners = model.getListDataListeners();
-              int itemIndex = -1;
-              for (int i = 0; i < model.getSize(); i++) {
-                if (model.getElementAt(i) == program) {
-                  itemIndex = i;
-                  break;
-                }
-              }
-              if (itemIndex >= 0) {
-                for (int i = 0; i < listeners.length; i++) {
-                  listeners[i].contentsChanged(new ListDataEvent(program, ListDataEvent.CONTENTS_CHANGED, itemIndex, itemIndex));
-                }
-              }
-            }
-          }
-        }
-      });
+      if (!mProgramSet.contains(program)) {
+        mProgramSet.add(program);
+        program.addChangeListener(new ProgramListChangeListener(list));
+      }
 
       StringBuilder labelString = new StringBuilder();
       int days = program.getDate().getNumberOfDaysSince(Date.getCurrentDate());
@@ -202,7 +215,7 @@ public class ProgramListCellRenderer extends DefaultListCellRenderer {
       if (((index & 1) == 1) && (!isSelected) && program.getMarkPriority() < Program.MIN_MARK_PRIORITY) {
         mMainPanel.setBackground(program.isExpired() ? SECOND_ROW_COLOR_EXPIRED : SECOND_ROW_COLOR);
       }
-      
+
       return mMainPanel;
     }
 
