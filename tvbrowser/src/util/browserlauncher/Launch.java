@@ -54,7 +54,7 @@ import devplugin.SettingsItem;
 
 /**
  * This Class opens an Url in a Web-Browser.
- * 
+ *
  * If the Web-Browser was not found or a problem occurred, the User is asked to
  * enter his Web-Browser in the Configuration.
  */
@@ -99,19 +99,20 @@ public class Launch {
               opened = true;
             }
           } catch (Exception e) {
-            BrowserLauncher.openURL(url);
+            // do nothing
+            opened = false;
           }
         }
-        // use alternative code for systems where desktop is not supported
+        // use alternative code for systems where desktop is not supported, or if exception occured
         if (!opened) {
           BrowserLauncher.openURL(url);
         }
       }
-      
+
       if (Settings.propShowBrowserOpenDialog.getBoolean()){
         final JDialog dialog = new JDialog(MainFrame.getInstance(), true);
         dialog.setTitle(mLocalizer.msg("okTitle", "okTitle"));
-        
+
         UiUtilities.registerForClosing(new WindowClosingIf() {
           public void close() {
             dialog.setVisible(false);
@@ -121,20 +122,20 @@ public class Launch {
             return dialog.getRootPane();
           }
         });
-        
+
         JPanel content = (JPanel) dialog.getContentPane();
         content.setBorder(Borders.DIALOG_BORDER);
-        
+
         FormLayout layout = new FormLayout("fill:235dlu:grow", "default, 3dlu, default, 3dlu, default");
         dialog.getContentPane().setLayout(layout);
-        
+
         CellConstraints cc = new CellConstraints();
-        
+
         content.add(UiUtilities.createHelpTextArea(mLocalizer.msg("okMessage", "OK Message")), cc.xy(1, 1));
-        
-        final JCheckBox showBrowserDialog = new JCheckBox(mLocalizer.msg("okCheckbox", "OK Checkbox")); 
+
+        final JCheckBox showBrowserDialog = new JCheckBox(mLocalizer.msg("okCheckbox", "OK Checkbox"));
         content.add(showBrowserDialog, cc.xy(1, 3));
-        
+
         JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
         ok.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
@@ -146,7 +147,7 @@ public class Launch {
             }
           };
         });
-        
+
         JButton configure = new JButton(mLocalizer.msg("okConfigure", "Configure"));
         configure.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
@@ -154,26 +155,26 @@ public class Launch {
             MainFrame.getInstance().showSettingsDialog(SettingsItem.WEBBROWSER);
           }
         });
-        
+
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         buttonPanel.add(configure);
         buttonPanel.add(ok);
         content.add(buttonPanel, cc.xy(1, 5));
-        
+
         dialog.pack();
         UiUtilities.centerAndShow(dialog);
       }
-      
+
     } catch (IOException e) {
       e.printStackTrace();
       int ret = ErrorHandler.handle(mLocalizer.msg("error", "An error occured"), e, ErrorHandler.SHOW_YES_NO);
-      
+
       if (ret == ErrorHandler.YES_PRESSED) {
         MainFrame.getInstance().showSettingsDialog(SettingsItem.WEBBROWSER);
       }
     }
   }
-  
+
   /**
    * Returns the OS of the VM
    * @return VM OS_MAC, OS_WINDOWS or OS_OTHER
