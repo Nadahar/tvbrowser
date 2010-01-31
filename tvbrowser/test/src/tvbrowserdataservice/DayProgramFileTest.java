@@ -93,7 +93,7 @@ public class DayProgramFileTest extends TestCase {
     ProgramField field = new ProgramField();
 
     // Test int field
-    int testInt = RandomUtils.nextInt(Integer.MIN_VALUE);
+    int testInt = (int) (Math.random() * Integer.MIN_VALUE);
     field.setIntData(testInt);
     int readInt = field.getIntData();
     assertEquals(testInt, readInt);
