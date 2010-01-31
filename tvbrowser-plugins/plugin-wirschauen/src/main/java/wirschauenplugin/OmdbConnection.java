@@ -261,7 +261,7 @@ public class OmdbConnection
   {
     if (!setLanguage(language))
     {
-      return null;
+      throw new IOException("Connection failed: Could not set language");
     }
     return loadAbstract(movieId);
   }

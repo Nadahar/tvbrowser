@@ -284,6 +284,8 @@ public class DialogController
                 public void run()
                 {
                   JOptionPane.showMessageDialog(mParent, WirSchauenPlugin.LOCALIZER.msg("ConnectionFailed", "Connection failed"), WirSchauenPlugin.LOCALIZER.msg("Error", "Error"), JOptionPane.ERROR_MESSAGE);
+                  loadingOmdbDataDialog.setVisible(false);
+                  loadingOmdbDataDialog.dispose();
                 }
               });
             }
