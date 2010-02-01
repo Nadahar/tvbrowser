@@ -86,7 +86,7 @@ public class ReminderList implements ActionListener {
         if (version >= 5) {
           comment = in.readUTF();
         }
-        Date programDate = new Date(in);
+        Date programDate = Date.readData(in);
         String programId = (String) in.readObject();
         Program program = Plugin.getPluginManager().getProgram(programDate,
                 programId);

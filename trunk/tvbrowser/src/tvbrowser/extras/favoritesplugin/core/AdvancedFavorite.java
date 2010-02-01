@@ -228,7 +228,7 @@ public class AdvancedFavorite extends Favorite {
     int size = in.readInt();
     ArrayList<Program> programList = new ArrayList<Program>(size);
     for (int i = 0; i < size; i++) {
-      Date date = new Date(in);
+      Date date = Date.readData(in);
       String progID = (String) in.readObject();
       Program program = Plugin.getPluginManager().getProgram(date, progID);
       if (program != null) {
@@ -248,7 +248,8 @@ public class AdvancedFavorite extends Favorite {
       } else {
         mPendingFilterName = null;
       }
-    } else {
+    }
+    else {
       mFilter = null;
     }
 
@@ -258,7 +259,7 @@ public class AdvancedFavorite extends Favorite {
         /* For compatibility reasons we read the programs here.
            Later we perform an complete refresh.
          */
-        new Date(in); // program date
+        Date.readData(in); // program date
         in.readObject(); // program id
       }
     }
@@ -267,7 +268,8 @@ public class AdvancedFavorite extends Favorite {
 
     try {
       this.updatePrograms();
-    } catch (TvBrowserException exc) {
+    }
+    catch (final TvBrowserException exc) {
       ErrorHandler.handle("Could not update favorites.", exc);
 
     }
@@ -276,7 +278,7 @@ public class AdvancedFavorite extends Favorite {
 
 
   /**
-   * Returns a specific Filter
+   * Returns a specific Filter.
    * @param name Name of the Filter
    * @return The Filter if found, otherwise null
    */

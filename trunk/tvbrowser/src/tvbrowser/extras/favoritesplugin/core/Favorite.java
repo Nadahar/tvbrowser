@@ -162,7 +162,7 @@ public abstract class Favorite {
    */
   private void readProgramsToList(final ArrayList<Program> list, final int size, final ObjectInputStream in) throws IOException, ClassNotFoundException {
     for (int i = 0; i < size; i++) {
-      Date date = new Date(in);
+      Date date = Date.readData(in);
       String progID = (String) in.readObject();
       Program program = Plugin.getPluginManager().getProgram(date, progID);
       if (program != null) {
