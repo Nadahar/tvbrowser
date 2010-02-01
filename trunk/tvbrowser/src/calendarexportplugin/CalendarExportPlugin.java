@@ -302,7 +302,7 @@ public class CalendarExportPlugin extends Plugin {
           }
           else {
             actions[j] = new AbstractAction() {
-              public void actionPerformed(ActionEvent e) {
+              public void actionPerformed(final ActionEvent e) {
                 new Thread(new Runnable() {
                   public void run() {
                     Program[] programArr = {program};
@@ -512,7 +512,7 @@ public class CalendarExportPlugin extends Plugin {
   }
 
   @Override
-  public void writeData(ObjectOutputStream out) throws IOException {
+  public void writeData(final ObjectOutputStream out) throws IOException {
     out.writeInt(4); // write version
 
     if (mConfigs != null) {
@@ -560,7 +560,7 @@ public class CalendarExportPlugin extends Plugin {
         out.writeInt(nodePrograms.length);
         for (final Program p : nodePrograms) {
           if (p != null) {
-            p.getDate().writeData(out);
+            p.getDate().writeData((java.io.DataOutput) out);
             out.writeObject(p.getID());
           }
         }

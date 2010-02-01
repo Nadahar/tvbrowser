@@ -243,7 +243,7 @@ public class MarkList extends Vector<Program> {
     out.writeInt(size());
 
     for (Program p : this) {
-      p.getDate().writeData(out);
+      p.getDate().writeData((java.io.DataOutput) out);
       out.writeObject(p.getID());
     }
 

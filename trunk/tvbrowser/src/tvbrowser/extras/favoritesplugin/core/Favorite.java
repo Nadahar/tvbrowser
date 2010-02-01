@@ -299,7 +299,7 @@ public abstract class Favorite {
     // Don't save the programs but only their date and id
     out.writeInt(mPrograms.size());
     for (Program p : mPrograms) {
-      p.getDate().writeData(out);
+      p.getDate().writeData((java.io.DataOutput) out);
       out.writeObject(p.getID());
     }
 
@@ -310,7 +310,7 @@ public abstract class Favorite {
     else {
       out.writeInt(mBlackList.size());
       for (Program p : mBlackList) {
-        p.getDate().writeData(out);
+        p.getDate().writeData((java.io.DataOutput) out);
         out.writeObject(p.getID());
       }
     }
@@ -327,16 +327,16 @@ public abstract class Favorite {
     return mExclusionList.toArray(new Exclusion[mExclusionList.size()]);
   }
 
-  public void addExclusion(Exclusion exclusion) {
+  public void addExclusion(final Exclusion exclusion) {
     if (mExclusionList == null) {
       mExclusionList = new ArrayList<Exclusion>(1);
     }
     mExclusionList.add(exclusion);
     try {
-      refreshPrograms(ManageFavoritesDialog.getInstance() != null &&
-          ManageFavoritesDialog.getInstance().isShowingNewFoundPrograms());
+      refreshPrograms(ManageFavoritesDialog.getInstance() != null
+          && ManageFavoritesDialog.getInstance().isShowingNewFoundPrograms());
       FavoritesPlugin.getInstance().updateRootNode(true);
-    } catch (TvBrowserException exc) {
+    } catch (final TvBrowserException exc) {
       ErrorHandler.handle("Could not update favorites.", exc);
     }
     updateManageDialog();

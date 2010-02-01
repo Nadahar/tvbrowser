@@ -274,7 +274,7 @@ public class OnDemandDayProgramFile {
     saveDayProgram(false);
   }
 
-  private void saveDayProgram(boolean update) throws IOException {
+  private void saveDayProgram(final boolean update) throws IOException {
     checkValid();
 
     Date date = mDayProgram.getDate();
@@ -283,15 +283,19 @@ public class OnDemandDayProgramFile {
     RandomAccessFile dataFile = null;
     try {
       if (update)
+      {
         dataFile = new RandomAccessFile(mFile + "_to_ver_2_update", "rw");
+      }
       else
+      {
         dataFile = new RandomAccessFile(mFile, "rw");
+      }
 
       dataFile.writeInt(2); // version
 
       dataFile.writeBoolean(mDayProgram.getLastProgramHadEndOnUpdate());
 
-      date.writeToDataFile(dataFile);
+      date.writeData(dataFile);
       channel.writeToDataFile(dataFile);
 
       int programCount = mDayProgram.getProgramCount();
@@ -306,7 +310,7 @@ public class OnDemandDayProgramFile {
       if (dataFile != null) {
         try {
           dataFile.close();
-        } catch (IOException exc) {}
+        } catch (final IOException exc) {}
       }
     }
   }
