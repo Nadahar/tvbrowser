@@ -122,7 +122,7 @@ public class OnDemandDayProgramFile {
 
       mDayProgram.setLastProgramHadEndOnUpdate(dataFile.readBoolean());
 
-      Date date = new Date(dataFile);
+      Date date = Date.readData(dataFile);
       Channel channel = Channel.readData(dataFile, false);
 
       boolean timeLimited = channel.isTimeLimited();
@@ -134,11 +134,11 @@ public class OnDemandDayProgramFile {
       for (int i = 0; i < size; i++) {
         Program prog = loadProgram(dataFile, date, channel);
 
-        if(prog != null) {
+        if (prog != null) {
           int time = prog.getHours() * 60 + prog.getMinutes();
-          if(timeLimited && !update) {
-            if((startTimeLimit < endTimeLimit && time >= startTimeLimit && time < endTimeLimit) ||
-                (endTimeLimit < startTimeLimit && (time < endTimeLimit || time >= startTimeLimit))) {
+          if (timeLimited && !update) {
+            if ((startTimeLimit < endTimeLimit && time >= startTimeLimit && time < endTimeLimit)
+                || (endTimeLimit < startTimeLimit && (time < endTimeLimit || time >= startTimeLimit))) {
               mDayProgram.addProgram(prog);
             }
           }
@@ -176,7 +176,7 @@ public class OnDemandDayProgramFile {
 
       objIn.readInt();
 
-      Date date = new Date(objIn);
+      Date date = Date.readData(objIn);
       Channel channel = Channel.readData(objIn, false);
 
       int size = objIn.readInt();
@@ -234,13 +234,13 @@ public class OnDemandDayProgramFile {
       prog.setInfo(objIn.readInt());
 
       Channel.readData(objIn, false); // unused channel
-      new devplugin.Date(objIn); // unused date
+      devplugin.Date.readData(objIn); // unused date
 
       prog.setBinaryField(ProgramFieldType.PICTURE_TYPE, (byte[]) objIn
           .readObject());
     } else {
       Channel.readData(objIn, false); // unused channel
-      new devplugin.Date(objIn); // unused date
+      devplugin.Date.readData(objIn); // unused date
 
       int fieldCount = objIn.readInt();
       for (int i = 0; i < fieldCount; i++) {
@@ -377,7 +377,7 @@ public class OnDemandDayProgramFile {
     dataFile.writeInt(fieldCount);
     Iterator<ProgramFieldType> iter = program.getFieldIterator();
     for (int i = 0; i < fieldCount; i++) {
-      ProgramFieldType type = (ProgramFieldType) iter.next();
+      ProgramFieldType type = iter.next();
       dataFile.writeInt(type.getTypeId());
 
       if (type.getFormat() == ProgramFieldType.BINARY_FORMAT) {

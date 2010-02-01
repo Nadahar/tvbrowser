@@ -621,7 +621,7 @@ public class CalendarExportPlugin extends Plugin {
 
             int progCount = in.readInt();
             for (int v = 0; v < progCount; v++) {
-              Date programDate = new Date(in);
+              Date programDate = Date.readData(in);
               String progId = (String) in.readObject();
               if (node != null) {
                 Program program = Plugin.getPluginManager().getProgram(programDate, progId);
@@ -642,7 +642,8 @@ public class CalendarExportPlugin extends Plugin {
 
         getRootNode().update();
       }
-    } catch (final Exception e) {
+    }
+    catch (final Exception e) {
     }
   }
 

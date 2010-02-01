@@ -117,7 +117,7 @@ public class MarkList extends Vector<Program> {
       int size = in.readInt();
       mProgramItems.ensureCapacity(size);
       for (int i = 0; i < size; i++) {
-        Date programDate = new Date(in);
+        Date programDate = Date.readData(in);
         String progId = (String) in.readObject();
         mProgramItems.add(new MarkListProgramItem(programDate, progId));
 
