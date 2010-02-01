@@ -87,9 +87,9 @@ public class ProgramItem implements Comparable<ProgramItem> {
   public void write(final ObjectOutputStream out) throws IOException {
     out.writeInt(1); // version
     if (mDate != null) {
-      mDate.writeData(out);
+      mDate.writeData((java.io.DataOutput) out);
     } else {
-      mProgram.getDate().writeData(out);
+      mProgram.getDate().writeData((java.io.DataOutput) out);
     }
     if (mProgId != null) {
       out.writeObject(mProgId);
@@ -105,8 +105,8 @@ public class ProgramItem implements Comparable<ProgramItem> {
       out.writeInt(keys.size());
       Iterator<Object> it = keys.iterator();
       while (it.hasNext()) {
-        String key = (String)it.next();
-        String value = (String)mProperties.get(key);
+        String key = (String) it.next();
+        String value = (String) mProperties.get(key);
         out.writeObject(key);
         out.writeObject(value);
       }

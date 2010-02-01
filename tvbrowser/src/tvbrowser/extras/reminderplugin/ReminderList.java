@@ -121,17 +121,17 @@ public class ReminderList implements ActionListener {
       out.writeInt(item.getMinutes());
       out.writeUTF(item.getComment());
       Date date = item.getProgram().getDate();
-      date.writeData(out);
+      date.writeData((java.io.DataOutput) out);
       out.writeObject(item.getProgram().getID());
       out.writeInt(item.getReferenceCount());
     }
   }
 
-  public void add(Program program, ReminderContent reminderContent) {
+  public void add(final Program program, final ReminderContent reminderContent) {
     add(program, reminderContent, 1);
   }
 
-  private void add(Program program, int minutes, int referenceCount) {
+  private void add(final Program program, final int minutes, final int referenceCount) {
     if (!program.isExpired()) {
       ReminderListItem item = getReminderItem(program);
 
