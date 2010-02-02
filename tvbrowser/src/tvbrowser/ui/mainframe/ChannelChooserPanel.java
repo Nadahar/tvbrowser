@@ -27,7 +27,6 @@
 package tvbrowser.ui.mainframe;
 
 import java.awt.BorderLayout;
-import java.awt.Rectangle;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -80,7 +79,7 @@ public class ChannelChooserPanel extends JPanel implements ListDropAction {
 
     ListDragAndDropHandler dnDHandler = new ListDragAndDropHandler(mList,
         mList, this);
-    new DragAndDropMouseListener(mList, mList, this, dnDHandler);    
+    new DragAndDropMouseListener(mList, mList, this, dnDHandler);
     
     mList.addListSelectionListener(new ListSelectionListener() {
       public void valueChanged(ListSelectionEvent e) {
@@ -93,20 +92,23 @@ public class ChannelChooserPanel extends JPanel implements ListDropAction {
     
     mList.addKeyListener(new KeyAdapter() {
       public void keyPressed(KeyEvent e) {
-        if(e.getKeyCode() == KeyEvent.VK_SPACE)
+        if(e.getKeyCode() == KeyEvent.VK_SPACE) {
           showChannel();
+        }
       }
     });
     
     mList.addMouseListener(new MouseAdapter() {
       public void mouseClicked(MouseEvent e) {
-        if(SwingUtilities.isLeftMouseButton(e))
+        if(SwingUtilities.isLeftMouseButton(e)) {
           showChannel();
+        }
       }
       
       public void mousePressed(MouseEvent e) {
-        if(SwingUtilities.isRightMouseButton(e))
+        if(SwingUtilities.isRightMouseButton(e)) {
           mList.setSelectedIndex(mList.locationToIndex(e.getPoint()));
+        }
         showPopupMenu(e);
       }
       
@@ -131,13 +133,15 @@ public class ChannelChooserPanel extends JPanel implements ListDropAction {
   
   private void showChannel() {
     Channel selectedChannel = (Channel) mList.getSelectedValue();
-    if (selectedChannel != null)
+    if (selectedChannel != null) {
       mParent.showChannel(selectedChannel);
+    }
   }
   
   private void showPopupMenu(MouseEvent e) {
-    if(e.isPopupTrigger())     
+    if(e.isPopupTrigger()) {
       new ChannelContextMenu(e,(Channel)mList.getModel().getElementAt(mList.locationToIndex(e.getPoint())),this);
+    }
   }
   
   public void updateChannelChooser() {

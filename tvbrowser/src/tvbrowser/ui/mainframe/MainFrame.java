@@ -76,6 +76,7 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
@@ -2483,5 +2484,9 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
 
     Object[] msg = {header,scrollPane};
     JOptionPane.showMessageDialog(this,msg,Localizer.getLocalization(Localizer.I18N_INFO),JOptionPane.INFORMATION_MESSAGE);
+  }
+
+  public void updateChannelGroupMenu(JMenu channelGroupMenu) {
+    mMenuBar.updateChannelGroupMenu(channelGroupMenu);
   }
 }

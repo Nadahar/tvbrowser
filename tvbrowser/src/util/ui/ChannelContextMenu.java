@@ -10,7 +10,6 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
-import javax.swing.JSeparator;
 
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.Settings;
@@ -20,7 +19,6 @@ import tvbrowser.core.filters.filtercomponents.ChannelFilterComponent;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
-import tvbrowser.ui.filter.dlgs.EditFilterComponentDlg;
 import tvbrowser.ui.mainframe.ChannelChooserPanel;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.mainframe.actions.TVBrowserActions;
@@ -34,9 +32,9 @@ import devplugin.Channel;
 
 /**
  * A class that builds a PopupMenu for a Channel.
- * 
+ *
  * @author René Mach
- * 
+ *
  */
 public class ChannelContextMenu implements ActionListener {
 
@@ -48,7 +46,8 @@ public class ChannelContextMenu implements ActionListener {
 
   private JPopupMenu mMenu;
 
-  private JMenuItem mChAdd, mChConf, mChGoToURL, mFilterChannels;
+  private JMenuItem mChAdd, mChConf, mChGoToURL;
+  private JMenu mFilterChannels;
 
   private Object mSource;
 
@@ -64,7 +63,7 @@ public class ChannelContextMenu implements ActionListener {
 
   /**
    * Constructs the PopupMenu.
-   * 
+   *
    * @param e
    *          The event that requested the PopupMenu.
    * @param ch
@@ -86,41 +85,9 @@ public class ChannelContextMenu implements ActionListener {
             "internet-web-browser"));
 
     // dynamically create filters from available channel filter components
-    String channelFilterName = Settings.propLastUsedChannelGroup.getString();
     mFilterChannels = new JMenu(mLocalizer.msg("filterChannels",
         "Channel filter"));
-    JRadioButtonMenuItem menuItem = new JRadioButtonMenuItem(mLocalizer.msg(
-        "filterAll", "All channels"));
-    menuItem.setSelected(channelFilterName == null);
-    menuItem.addActionListener(this);
-    mFilterChannels.add(menuItem);
-    String[] channelFilterNames = FilterComponentList.getInstance()
-        .getChannelFilterNames();
-    for (String filterName : channelFilterNames) {
-      menuItem = new JRadioButtonMenuItem(filterName);
-      menuItem.addActionListener(this);
-      mFilterChannels.add(menuItem);
-      if (channelFilterName != null && filterName.equals(channelFilterName)) {
-        menuItem.setSelected(true);
-      }
-    }
-    mFilterChannels.add(new JSeparator());
-    JMenuItem menuItemAdd = new JMenuItem(mLocalizer.msg("filterNew",
-        "Add channel filter"));
-    menuItemAdd.addActionListener(new ActionListener() {
-
-      public void actionPerformed(ActionEvent e) {
-        EditFilterComponentDlg dlg = new EditFilterComponentDlg(null, null,
-            ChannelFilterComponent.class);
-        FilterComponent rule = dlg.getFilterComponent();
-        if ((rule != null) && (rule instanceof ChannelFilterComponent)) {
-          FilterComponentList.getInstance().add(rule);
-          FilterComponentList.getInstance().store();
-          setChannelGroup((ChannelFilterComponent) rule);
-        }
-      }
-    });
-    mFilterChannels.add(menuItemAdd);
+    MainFrame.getInstance().updateChannelGroupMenu(mFilterChannels);
 
     mChAdd.addActionListener(this);
     mChConf.addActionListener(this);
