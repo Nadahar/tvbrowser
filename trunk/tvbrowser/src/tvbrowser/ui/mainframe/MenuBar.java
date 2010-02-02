@@ -91,14 +91,14 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 
   protected JMenuItem mQuitMI, mToolbarMI, mSettingsMI, mAboutMI; // these are accessed in MacOS menu sub class
   protected JMenu mPluginsMenu, mHelpMenu; // these are accessed in common menu sub class
-	
+
 	private JMenuItem mStatusbarMI,
 			mTimeBtnsMI, mDatelistMI, mChannellistMI, mPluginOverviewMI,
 			mViewFilterBarMI, mPluginManagerMI, mInstallPluginsMI,
 			mDonorMI, mFaqMI, mBackupMI, mForumMI, mWebsiteMI, mHandbookMI,
 			mDownloadMI, mConfigAssistantMI, mKeyboardShortcutsMI,
 			mEditTimeButtonsMenuItem, mToolbarCustomizeMI,
-			mFullscreenMI,  
+			mFullscreenMI,
 			mPluginInfoDlgMI;
 
 	private JMenu mFiltersMenu, mLicenseMenu, mGoMenu, mViewMenu, mToolbarMenu,
@@ -125,19 +125,19 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 	}
 
 	public void showUpdateMenuItem() {
-/*	  
+/*
 		setLabelAndAccessKeys("menuitem.update", "Update", mUpdateMI, false);
 		mUpdateMI.setIcon(IconLoader.getInstance().getIconFromTheme("apps",
 				"system-software-update", 16));
-*/				
+*/
 	}
 
 	public void showStopMenuItem() {
-/*	  
+/*
 		setLabelAndAccessKeys("menuitem.stopUpdate", "Stop", mUpdateMI, false);
 		mUpdateMI.setIcon(IconLoader.getInstance().getIconFromTheme("actions",
 				"process-stop", 16));
-*/				
+*/
 	}
 
 	private void createMenuItems() {
@@ -212,7 +212,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 		updateFiltersMenu();
 
 		mChannelGroupMenu = createMenu("menuitem.channelgroup", "Channel group");
-		updateChannelGroupMenu();
+		updateChannelGroupMenu(mChannelGroupMenu);
 
 		mGoMenu = createMenu("menu.go", "Go");
 
@@ -455,9 +455,14 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 		}
 	}
 
-	void updateChannelGroupMenu() {
-		mChannelGroupMenu.removeAll();
+  void updateChannelGroupMenu() {
+    updateChannelGroupMenu(mChannelGroupMenu);
+  }
+
+	public void updateChannelGroupMenu(JMenu menu) {
+	  menu.removeAll();
 		String channelFilterName = Settings.propLastUsedChannelGroup.getString();
+		// all channels
 		JRadioButtonMenuItem menuItem = new JRadioButtonMenuItem(mLocalizer.msg(
 				"channelGroupAll", "All channels"));
 		menuItem.setSelected(channelFilterName == null);
@@ -467,7 +472,8 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 				MainFrame.getInstance().setChannelGroup(null);
 			}
 		});
-		mChannelGroupMenu.add(menuItem);
+		// selective groups
+		menu.add(menuItem);
 		String[] channelFilterNames = FilterComponentList.getInstance()
 				.getChannelFilterNames();
 		for (final String filterName : channelFilterNames) {
@@ -480,12 +486,13 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 									.getFilterComponentByName(filterName));
 				}
 			});
-			mChannelGroupMenu.add(menuItem);
+			menu.add(menuItem);
 			if (channelFilterName != null && filterName.equals(channelFilterName)) {
 				menuItem.setSelected(true);
 			}
 		}
-		mChannelGroupMenu.add(new JSeparator());
+		menu.add(new JSeparator());
+		// new channel group
 		JMenuItem menuItemAdd = createMenuItem("channelGroupNew",
 				"Add channel group", null, true);
 		menuItemAdd.addActionListener(new ActionListener() {
@@ -502,7 +509,30 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 				}
 			}
 		});
-		mChannelGroupMenu.add(menuItemAdd);
+		menu.add(menuItemAdd);
+		// edit channel group
+    JMenuItem menuItemEdit = createMenuItem("channelGroupEdit",
+        "Edit current channel group", null, true);
+    menuItemEdit.addActionListener(new ActionListener() {
+
+      public void actionPerformed(ActionEvent e) {
+        FilterComponent rule = MainFrame.getInstance().getChannelGroup();
+        if (rule != null) {
+          // rule must be removed before editing it, otherwise the dialog doesn't save it
+          FilterComponentList.getInstance().remove(rule.getName());
+          EditFilterComponentDlg dlg = new EditFilterComponentDlg(null, rule);
+          FilterComponent newRule = dlg.getFilterComponent();
+          if (newRule == null) { // restore original rule
+            newRule = rule;
+          }
+          FilterComponentList.getInstance().add(newRule);
+          FilterComponentList.getInstance().store();
+          MainFrame.getInstance().setChannelGroup((ChannelFilterComponent) newRule);
+        }
+      }
+    });
+    menu.add(menuItemEdit);
+    menuItemEdit.setEnabled(!MainFrame.isStarting() && MainFrame.getInstance().getChannelGroup() != null);
 	}
 
 	private JMenuItem createDateMenuItem(final Date date) {
@@ -677,7 +707,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
     for (JMenuItem pluginItem : pluginItems) {
       mPluginsMenu.add(pluginItem);
     }
-    
+
     mPluginsMenu.addSeparator();
     mPluginsMenu.add(mInstallPluginsMI);
     mPluginsMenu.add(mPluginManagerMI);
@@ -945,5 +975,5 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 
     mFullscreenMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F11, 0));
   }
-  
+
 }
