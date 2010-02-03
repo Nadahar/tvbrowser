@@ -90,10 +90,10 @@ public class LoginDialog extends JDialog implements WindowClosingIf {
     setTitle(mLocalizer.msg("login", "Login"));
 
     UiUtilities.registerForClosing(this);
-    
+
     JPanel content = (JPanel)getContentPane();
     
-    content.setLayout(new FormLayout("pref:grow(0.5), 3dlu, 100dlu, fill:pref:grow(0.5), 5dlu", 
+    content.setLayout(new FormLayout("5dlu, pref, 3dlu, fill:100dlu:grow(0.5), pref, 5dlu",
         "30dlu, 5dlu, pref, 3dlu, pref, 3dlu, pref, fill:pref:grow, pref, 5dlu"));
 
     CellConstraints cc = new CellConstraints();
@@ -111,26 +111,26 @@ public class LoginDialog extends JDialog implements WindowClosingIf {
     black.setBackground(Color.BLACK);
     panel.add(black, cc.xyw(1,4,3));
     
-    content.add(panel, cc.xyw(1,1,5));
+    content.add(panel, cc.xyw(1,1,6));
 
     JLabel name = new JLabel(mLocalizer.msg("user", "Username")+":");
-    content.add(name, cc.xy(1, 3));
+    content.add(name, cc.xy(2, 3));
     
     mNameField = new JTextField();
-    content.add(mNameField, cc.xy(3,3));
+    content.add(mNameField, cc.xy(4,3));
 
     mNameField.setText(mUsername);
     
     JLabel password = new JLabel(mLocalizer.msg("password", "Password")+":");
-    content.add(password, cc.xy(1, 5));
+    content.add(password, cc.xy(2, 5));
     
     mPasswordField = new JPasswordField();
-    content.add(mPasswordField, cc.xy(3,5));
+    content.add(mPasswordField, cc.xy(4,5));
 
     mPasswordField.setText(mPassword);
     
     mStorePassword = new JCheckBox(mLocalizer.msg("storePassword", "Store Password"));
-    content.add(mStorePassword, cc.xy(3,7));
+    content.add(mStorePassword, cc.xy(4,7));
     
     mStorePassword.setSelected(mStore);
     
@@ -158,7 +158,7 @@ public class LoginDialog extends JDialog implements WindowClosingIf {
     
     builder.addButton(new JButton[] {ok, cancel});
 
-    content.add(builder.getPanel(), cc.xyw(1,9,4));
+    content.add(builder.getPanel(), cc.xyw(1,9,5));
     
     setSize(Sizes.dialogUnitXAsPixel(200, this), Sizes.dialogUnitYAsPixel(140, this));
   }
