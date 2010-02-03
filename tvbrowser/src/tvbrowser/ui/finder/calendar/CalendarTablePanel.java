@@ -1,16 +1,16 @@
 /*
  * Copyright Michael Keppler
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -18,8 +18,8 @@ package tvbrowser.ui.finder.calendar;
 
 import java.awt.BorderLayout;
 import java.awt.Font;
-
 import java.awt.Point;
+
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
@@ -39,6 +39,8 @@ public class CalendarTablePanel extends AbstractCalendarPanel implements ListSel
   private int mLastColumn = -1;
 
   private int mLastRow = -1;
+
+  private boolean mAllowEvents = true;
 
   public CalendarTablePanel() {
     setLayout(new BorderLayout());
@@ -77,7 +79,7 @@ public class CalendarTablePanel extends AbstractCalendarPanel implements ListSel
       askForDataUpdate(date);
       return;
     }
-    
+
     if (date.equals(getSelectedDate())) {
       if (callback != null) {
         callback.run();
@@ -90,7 +92,9 @@ public class CalendarTablePanel extends AbstractCalendarPanel implements ListSel
 
     Point position = mTableModel.getPositionOfDate(date);
     if (position != null) {
+      mAllowEvents  = false;
       mTable.setColumnSelectionInterval(position.x, position.x);
+      mAllowEvents = true;
       mTable.setRowSelectionInterval(position.y, position.y);
     }
 
@@ -114,6 +118,9 @@ public class CalendarTablePanel extends AbstractCalendarPanel implements ListSel
   @Override
   public void valueChanged(ListSelectionEvent e) {
     if (e.getValueIsAdjusting()) {
+      return;
+    }
+    if (!mAllowEvents) {
       return;
     }
     int column = mTable.getSelectedColumn();
