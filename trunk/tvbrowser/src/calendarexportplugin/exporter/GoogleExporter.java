@@ -104,7 +104,7 @@ public class GoogleExporter extends AbstractExporter {
         }
       }
 
-      CalendarService myService = new CalendarService("tvbrowser-tvbrowsercalenderplugin-" + CalendarExportPlugin.getInstance().getInfo().getVersion().toString());
+      GoogleService myService = new GoogleService("cl", "tvbrowser-tvbrowsercalenderplugin-" + CalendarExportPlugin.getInstance().getInfo().getVersion().toString());
       myService.setUserCredentials(settings.getExporterProperty(USERNAME).trim(), mPassword);
 
       URL postUrl =
