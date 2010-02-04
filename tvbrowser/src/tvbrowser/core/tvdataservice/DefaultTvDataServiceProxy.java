@@ -185,7 +185,7 @@ public class DefaultTvDataServiceProxy extends AbstractTvDataServiceProxy {
 
   /**
    * Called by the host-application to provide the parent frame.
-   * 
+   *
    * @param parent
    *          The parent frame.
    * @since 2.7
@@ -202,7 +202,7 @@ public class DefaultTvDataServiceProxy extends AbstractTvDataServiceProxy {
    * Gets the parent frame.
    * <p>
    * The parent frame may be used for showing dialogs.
-   * 
+   *
    * @return The parent frame.
    * @since 2.7
    */
@@ -217,7 +217,7 @@ public class DefaultTvDataServiceProxy extends AbstractTvDataServiceProxy {
 
   /**
    * This method is called when the TV-Browser start is complete.
-   * 
+   *
    * @since 2.7
    */
   public void handleTvBrowserStartFinished() {
@@ -230,7 +230,7 @@ public class DefaultTvDataServiceProxy extends AbstractTvDataServiceProxy {
 
   /**
    * Gets if the data service supports auto upate of data.
-   * 
+   *
    * @return <code>True</code> if the data service supports the auto update,
    *         <code>false</code> otherwise.
    * @since 2.7
@@ -243,15 +243,15 @@ public class DefaultTvDataServiceProxy extends AbstractTvDataServiceProxy {
     }
     return false;
   }
-  
-  /** 
+
+  /**
    * Gets the action menu with the action supported for toolbar actions.
-   * @return The action menu with the supported toolbar actions 
+   * @return The action menu with the supported toolbar actions
    */
   public ActionMenu getButtonAction() {
     return mTvDataService.getButtonAction();
   }
-  
+
   /**
    * Gets the description for this ButtonActionIf.
    * @return The description for this ButtonActionIf.
@@ -259,16 +259,21 @@ public class DefaultTvDataServiceProxy extends AbstractTvDataServiceProxy {
   public String getButtonActionDescription() {
     return mTvDataService.getButtonActionDescription();
   }
-  
-  
+
+
   /**
    * Gets the actions for the context menu of a program.
-   * 
+   *
    * @param program The program the context menu will be shown for.
    * @return the actions this plugin provides for the given program or
    *         <code>null</code> if the plugin does not provide this feature.
    */
   public ActionMenu getContextMenuActions(Program program) {
     return mTvDataService.getContextMenuActions(program);
+  }
+
+  @Override
+  public String getDataServicePackageName() {
+    return mTvDataService.getClass().getPackage().getName();
   }
 }

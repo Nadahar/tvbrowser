@@ -26,9 +26,9 @@
 
 package tvbrowser.core.tvdataservice;
 
+import java.awt.Frame;
 import java.io.File;
 import java.util.Properties;
-import java.awt.*;
 
 import tvbrowser.core.plugin.ButtonActionIf;
 import tvdataservice.SettingsPanel;
@@ -114,7 +114,7 @@ public interface TvDataServiceProxy extends ContextMenuIf, ButtonActionIf {
   public Channel[] checkForAvailableChannels(ChannelGroup group, ProgressMonitor monitor) throws TvBrowserException;
 
   public Channel[] getAvailableChannels(ChannelGroup group);
-  
+
   /**
    * @return The channels that have to be loaded on TVB start.
    * @since 2.3
@@ -164,7 +164,7 @@ public interface TvDataServiceProxy extends ContextMenuIf, ButtonActionIf {
    * @since 2.7
    */
   public void handleTvBrowserStartFinished();
-  
+
   /**
    * Gets if the data service supports auto upate of data.
    * @return <code>True</code> if the data service supports the auto update,
@@ -173,7 +173,7 @@ public interface TvDataServiceProxy extends ContextMenuIf, ButtonActionIf {
    */
   public boolean supportsAutoUpdate();
 
-  
+
   /**
    * comparator for data service proxies (sorting alphabetically by name)
    * @since 2.7
@@ -184,5 +184,12 @@ public interface TvDataServiceProxy extends ContextMenuIf, ButtonActionIf {
     public int compare(TvDataServiceProxy proxy1, TvDataServiceProxy proxy2) {
       return proxy1.getInfo().getName().compareTo(proxy2.getInfo().getName());
     }
-  };
+  }
+
+
+  /**
+   * @return
+   * @since 3.0
+   */
+  public String getDataServicePackageName();
 }

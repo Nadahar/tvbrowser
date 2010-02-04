@@ -938,4 +938,8 @@ public class Channel implements Comparable<Channel> {
     }
     return categoryName.get(category);
   }
+
+  public String getDataServicePackageName() {
+    return getDataServiceProxy().getDataServicePackageName();
+  }
 }
