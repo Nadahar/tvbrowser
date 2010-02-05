@@ -55,9 +55,19 @@ public class DefaultTvDataServiceProxy extends AbstractTvDataServiceProxy {
   }
 
   private void logError(Throwable e, String action) {
-    mLog.severe("The TV data service '" + mTvDataService.getInfo().getName()
-        + "' has caused an error during " + action + ": "
-        + e.getLocalizedMessage());
+    StringBuilder errorMsg = new StringBuilder("The TV data service '");
+    errorMsg.append(mTvDataService.getInfo().getName());
+    errorMsg.append("' has caused an error during ");
+    errorMsg.append(action).append(": ");
+    errorMsg.append(e.getLocalizedMessage()).append("\n");
+    
+    StackTraceElement[] stacktrace = e.getStackTrace();
+    
+    for (int i = 0; i < stacktrace.length; i++) {
+      errorMsg.append(stacktrace[i].toString()).append("\n");
+    }
+    
+    mLog.severe(errorMsg.toString());
   }
 
   public void setWorkingDirectory(File dataDir) {
