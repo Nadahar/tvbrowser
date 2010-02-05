@@ -49,6 +49,8 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(SweDBTvDataService.class);
 
   private static final Logger mLog = Logger.getLogger(SweDBTvDataService.class.getName());
+  
+  private static final Version VERSION = new Version(3,0);
 
   private File mWorkingDirectory;
 
@@ -457,7 +459,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
   }
 
   public static Version getVersion() {
-    return new Version(2, 62);
+    return VERSION;
   }
 
   public PluginInfo getInfo() {

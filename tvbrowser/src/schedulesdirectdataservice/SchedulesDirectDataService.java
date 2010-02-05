@@ -83,6 +83,8 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
   private static final Logger mLog
     = Logger.getLogger(SchedulesDirectDataService.class.getName());
 
+  private static final Version VERSION = new Version(3,0);
+  
   private SchedulesDirectChannelGroup mChannelGroup = new SchedulesDirectChannelGroup();
 
   private Properties mProperties;
@@ -521,7 +523,7 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
 
 
   public static Version getVersion() {
-    return new Version(0, 7, 0);
+    return VERSION;
   }
 
   public PluginInfo getInfo() {
