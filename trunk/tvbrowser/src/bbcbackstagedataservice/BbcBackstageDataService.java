@@ -77,6 +77,8 @@ public class BbcBackstageDataService extends AbstractTvDataService {
    */
   private static final Logger mLog = Logger.getLogger(BbcBackstageDataService.class
       .getName());
+  
+  private static final Version VERSION = new Version(3,0);
 
   private static HashMap<String, String> KNOWN_URLS;
   static {
@@ -186,7 +188,7 @@ public class BbcBackstageDataService extends AbstractTvDataService {
   }
 
   public static Version getVersion() {
-    return new Version(2,61);
+    return VERSION;
   }
 
   public PluginInfo getInfo() {
