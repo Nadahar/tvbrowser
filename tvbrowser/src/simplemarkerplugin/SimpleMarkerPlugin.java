@@ -89,7 +89,7 @@ public class SimpleMarkerPlugin extends Plugin {
 
   private MarkListsVector mMarkListVector;
 
-  private PluginTreeNode mRootNode = new PluginTreeNode(this, false);
+  private PluginTreeNode mRootNode = new PluginTreeNode(false,this);
 
   private boolean mHasRightToUpdate = false, mHasToUpdate = false;
 
@@ -244,7 +244,7 @@ public class SimpleMarkerPlugin extends Plugin {
 
   public void handleTvDataUpdateFinished() {
     mHasToUpdate = true;
-
+    
     if (mHasRightToUpdate) {
       mHasToUpdate = false;
 

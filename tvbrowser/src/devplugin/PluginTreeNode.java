@@ -125,6 +125,21 @@ public class PluginTreeNode implements Comparable<PluginTreeNode> {
   
   /**
    * Creates a new root PluginTreeNode
+   * @param plugin
+   * @param handleTvDataUpdate specifies, if the {@link PluginTreeListener}
+   * should get called on TV listings updates
+   * @since 3.0
+   */
+  public PluginTreeNode(final boolean handleTvDataUpdate, final Plugin plugin) {
+    this(Node.PLUGIN_ROOT, plugin);
+
+    if (handleTvDataUpdate) {
+      addRemovedProgramsListener();
+    }
+  }
+  
+  /**
+   * Creates a new root PluginTreeNode
    * @param marker
    * @param handleTvDataUpdate specifies, if the {@link PluginTreeListener}
    * should get called on TV listings updates
