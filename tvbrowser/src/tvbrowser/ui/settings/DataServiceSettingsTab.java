@@ -26,6 +26,7 @@
 
 package tvbrowser.ui.settings;
 
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
@@ -85,7 +86,7 @@ public class DataServiceSettingsTab implements devplugin.SettingsTab {
     contentPanel.setBorder(Borders.DLU4_BORDER);
 
     CellConstraints cc = new CellConstraints();
-    contentPanel.add(UiUtilities.createHelpTextArea(mLocalizer.msg(
+    contentPanel.add(UiUtilities.createHtmlHelpTextArea(mLocalizer.msg(
         "description", "description")), cc.xyw(1, 1, 2));
 
     mTableModel = new DefaultTableModel() {
@@ -116,6 +117,7 @@ public class DataServiceSettingsTab implements devplugin.SettingsTab {
         PluginTableCellRenderer.getInstance());
     mTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     mTable.setRowHeight(40);
+    mTable.setPreferredScrollableViewportSize(new Dimension(200,200));
     mTable.setShowVerticalLines(false);
     mTable.setShowHorizontalLines(false);
     // mTable.getModel().addTableModelListener(this);
