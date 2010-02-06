@@ -80,7 +80,7 @@ import devplugin.Version;
  * @author René Mach
  */
 public class SimpleMarkerPlugin extends Plugin {
-  private static final Version mVersion = new Version(2,70,0);
+  private static final Version mVersion = new Version(3,0);
 
   /** The localizer for this class. */
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(SimpleMarkerPlugin.class);

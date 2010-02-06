@@ -50,7 +50,7 @@ import devplugin.Version;
 public class GrowlPlugin extends Plugin {
   private static final String GROWL_TARGET_ID = "growlnotify";
 
-  private static final Version mVersion = new Version(2, 70);
+  private static final Version mVersion = new Version(3,0);
   
   /** Translator */
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(GrowlPlugin.class);

@@ -50,7 +50,7 @@ public class GenrePlugin extends Plugin {
   /**
    * plugin version
    */
-  private static final Version PLUGIN_VERSION = new Version(2,70);
+  private static final Version PLUGIN_VERSION = new Version(3,0);
 
   /**
    * localizer for this class
