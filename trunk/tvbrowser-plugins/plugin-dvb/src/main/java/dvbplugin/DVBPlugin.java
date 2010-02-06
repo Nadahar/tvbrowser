@@ -63,7 +63,7 @@ public class DVBPlugin extends devplugin.Plugin {
   /** field <code>PROGRAMRECEIVE_ADD</code> */
   private static final String PROGRAMRECEIVE_ADD = "ADD";
   
-  private static final Version VERSION = new Version(2, 02, 1);
+  private static final Version VERSION = new Version(2, 02, 2);
 
   /** this plugin inherently only works on windows */
   private static final boolean isWindows = OperatingSystem.isWindows();
@@ -553,10 +553,13 @@ public class DVBPlugin extends devplugin.Plugin {
       program = aProgram;
       if (null != program) {
         Icon icon = program.getChannel().getIcon();
-        if (icon.getIconWidth() > 16) {
-          icon = UiUtilities.scaleIcon(icon, 16);
+        
+        if(icon != null) {
+          if (icon.getIconWidth() > 16) {
+            icon = UiUtilities.scaleIcon(icon, 16);
+          }
+          putValue(Action.SMALL_ICON, icon);
         }
-        putValue(Action.SMALL_ICON, icon);
       }
     }
   }
