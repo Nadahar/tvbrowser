@@ -49,7 +49,7 @@ import devplugin.Version;
  * @author bodum
  */
 public class I18NPlugin extends Plugin {
-  private static final Version mVersion = new Version(2,70);
+  private static final Version mVersion = new Version(3,0);
   
   /** Translator */
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(I18NPlugin.class);

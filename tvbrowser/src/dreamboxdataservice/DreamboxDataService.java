@@ -71,6 +71,8 @@ public class DreamboxDataService extends AbstractTvDataService {
      */
     private static final Localizer mLocalizer = Localizer.getLocalizerFor(DreamboxDataService.class);
 
+    private static final Version VERSION = new Version(0, 6, 2); 
+    
     private DreamboxChannelGroup mChannelGroup = new DreamboxChannelGroup();
 
     private Properties mProperties;
@@ -186,7 +188,7 @@ public class DreamboxDataService extends AbstractTvDataService {
 
 
     public static Version getVersion() {
-        return new Version(0, 6, 1);
+        return VERSION;
     }
 
     public PluginInfo getInfo() {
