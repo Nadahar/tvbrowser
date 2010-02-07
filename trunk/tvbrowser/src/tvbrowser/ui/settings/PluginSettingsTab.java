@@ -35,6 +35,8 @@ import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.Action;
 import javax.swing.Icon;
@@ -87,6 +89,8 @@ import devplugin.PluginInfo;
 public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListener {
   /** Localizer */
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(PluginSettingsTab.class);
+  /** Logger */
+  private static final Logger mLog = Logger.getLogger(PluginSettingsTab.class.getName());
   /** List of Plugins */
   private JTable mTable;
   /** Buttons of Panel */
@@ -540,7 +544,12 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
           PluginProxyManager.getInstance().deactivatePlugin(plugin);
         } else {
           PluginProxyManager.getInstance().activatePlugin(plugin, true);
-          PluginProxyManager.getInstance().fireTvBrowserStartFinished(plugin);
+          try {
+            PluginProxyManager.getInstance().fireTvBrowserStartFinished(plugin);
+          }catch(Throwable t) {
+            /* Catch all possible not catched errors that occur in the plugin mehtod*/
+            mLog.log(Level.WARNING, "A not catched error occured in 'fireTvBrowserStartFinishedThread' of Plugin '" + plugin +"'.", t);
+          }
         }
       } catch (TvBrowserException exc) {
         ErrorHandler.handle(exc);
