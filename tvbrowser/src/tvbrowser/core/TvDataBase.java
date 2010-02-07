@@ -275,6 +275,14 @@ public class TvDataBase {
     return getDayProgram(date, channel, false);
   }
 
+  public void setDayProgramWasChangedByPlugin(Date date, Channel channel) {
+    OnDemandDayProgramFile progFile = getCacheEntry(date, channel, false, false);
+    
+    if(progFile != null) {
+      progFile.getDayProgram().setWasChangedByPlugin();
+    }
+  }
+  
   private ChannelDayProgram getDayProgram(Date date, Channel channel, boolean update) {
     OnDemandDayProgramFile progFile = getCacheEntry(date, channel, true, update);
 
@@ -399,7 +407,24 @@ public class TvDataBase {
     }
   }
 
-  private synchronized OnDemandDayProgramFile getCacheEntry(Date date,
+  private OnDemandDayProgramFile getCacheEntry(Date date,
+      Channel channel, boolean loadFromDisk, boolean update) {
+    if(!loadFromDisk) {
+      String key = getDayProgramKey(date, channel);
+  
+      //Try to get the program from the cache
+      OnDemandDayProgramFile progFile =  mTvDataHash.get(key);
+      
+      if(progFile != null) {
+        return progFile;
+      }
+    }
+    
+    return getCacheEntryBlocking(date,channel,loadFromDisk,update);
+  }
+  
+  
+  private synchronized OnDemandDayProgramFile getCacheEntryBlocking(Date date,
       Channel channel, boolean loadFromDisk, boolean update) {
     String key = getDayProgramKey(date, channel);
 

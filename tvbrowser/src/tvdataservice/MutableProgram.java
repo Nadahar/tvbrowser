@@ -708,7 +708,7 @@ public class MutableProgram implements Program {
   private void notifyChangedStatus() {
     try {
       if(!mIsLoading) {
-        ((MutableChannelDayProgram)TvDataBase.getInstance().getDayProgram(getDate(),getChannel())).setWasChangedByPlugin();
+        TvDataBase.getInstance().setDayProgramWasChangedByPlugin(getDate(),getChannel());
       }
     }catch(Exception e) {}
 
