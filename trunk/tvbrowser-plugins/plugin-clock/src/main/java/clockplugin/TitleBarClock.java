@@ -7,29 +7,29 @@ import java.util.Locale;
 
 /**
  * The clock for the title bar.
- * 
+ *
  * @author René Mach
  */
 public class TitleBarClock extends Thread{
 
   private boolean mRun;
-  
+
   /**
-   * The default contructor for this class.
+   * The default constructor for this class.
    */
   public TitleBarClock() {
     mRun = true;
-    setPriority(TitleBarClock.MIN_PRIORITY);
+    setPriority(Thread.MIN_PRIORITY);
     start();
   }
-  
+
   /**
    * Stop the title bar clock.
    */
   public void stopp() {
     mRun = false;
   }
-  
+
   public void run() {
     DateFormat df = DateFormat.getTimeInstance(DateFormat.SHORT,Locale.getDefault());
     String lasttime = null;
@@ -41,7 +41,7 @@ public class TitleBarClock extends Thread{
           String title = parent.getTitle();
           int pos = title.lastIndexOf(":");
           String time = df.format(new Date(System.currentTimeMillis()));
-          
+
           if(pos != -1) {
             try {
               Integer.parseInt(title.substring(pos + 1,pos + 3));
@@ -50,46 +50,50 @@ public class TitleBarClock extends Thread{
               title += " - " + time;
               parent.setTitle(title);
             }
-          }
-          else
+          } else {
             title += " - " + time;
-          
+          }
+
           if(lasttime == null || !time.equals(lasttime) || pos == -1) {
             parent.setTitle(title);
             lasttime = time;
           }
-        }        
+        }
       }catch(InterruptedException e){}
     }
-    
-    if(ClockPlugin.getInstance().getSuperFrame() != null)
+
+    if(ClockPlugin.getInstance().getSuperFrame() != null) {
       ClockPlugin.getInstance().getSuperFrame().setTitle(getTitle(true));
+    }
   }
-  
+
   private String getTitle(boolean cut) {
     DateFormat df = DateFormat.getTimeInstance(DateFormat.SHORT,Locale.getDefault());
     Frame parent = ClockPlugin.getInstance().getSuperFrame();
-    
+
     if(parent != null) {
       String title = parent.getTitle();
       int pos = title.lastIndexOf(":");
       String time = df.format(new Date(System.currentTimeMillis()));
-      
+
       if(pos != -1) {
         try {
           Integer.parseInt(title.substring(pos + 1,pos + 3));
-          if(!cut)
+          if(!cut) {
             title = title.substring(0,title.length() - time.length() - 3) + " - " + time;
-          else
+          } else {
             title = title.substring(0,title.length() - time.length() - 3);
+          }
         }catch(NumberFormatException e) {
-          if(!cut)
-            title += " - " + time;          
+          if(!cut) {
+            title += " - " + time;
+          }
         }
       }
-      else if(!cut)
+      else if(!cut) {
         title += " - " + time;
-      
+      }
+
       return title;
     }
     return null;
