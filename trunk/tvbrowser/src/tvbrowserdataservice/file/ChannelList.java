@@ -46,7 +46,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import tvbrowserdataservice.TvBrowserDataService;
 import util.io.FileFormatException;
 import util.io.IOUtilities;
-import util.misc.SoftReferenceCache;
+import util.tvdataservice.IconLoader;
 import au.com.bytecode.opencsv.CSVReader;
 import devplugin.AbstractTvDataService;
 import devplugin.Channel;
@@ -67,24 +67,15 @@ public class ChannelList {
   private ArrayList<ChannelItem> mChannelList;
 
   private ChannelGroup mGroup;
-
-  /**
-   * Icon Cache
-   */
-  static SoftReferenceCache<String, File> ICON_CACHE = new SoftReferenceCache<String, File>();
-
-  static ArrayList<String> BLOCKED_SERVERS = new ArrayList<String>(0);
   
   public ChannelList(final String groupName) {
     mChannelList = new ArrayList<ChannelItem>();
     mGroup = new ChannelGroupImpl(groupName, groupName, "");
-    BLOCKED_SERVERS = new ArrayList<String>(0);
   }
 
   public ChannelList(ChannelGroup group) {
     mChannelList = new ArrayList<ChannelItem>();
     mGroup = group;
-    BLOCKED_SERVERS = new ArrayList<String>(0);
   }
 
   public void addChannel(Channel channel) {
@@ -136,7 +127,7 @@ public class ChannelList {
     IconLoader iconLoader = null;
     if (dataService != null && dataService instanceof TvBrowserDataService) {
       File dataDir = ((TvBrowserDataService) dataService).getWorkingDirectory();
-      iconLoader = new IconLoader(mGroup.getId(), dataDir);
+      iconLoader = new IconLoader(TvBrowserDataService.getInstance(), mGroup.getId(), dataDir);
     }
 
     String[] tokens;

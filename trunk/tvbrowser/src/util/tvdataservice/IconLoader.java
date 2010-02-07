@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package tvbrowserdataservice.file;
+package util.tvdataservice;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -23,18 +23,24 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.Icon;
 
-import tvbrowserdataservice.TvBrowserDataService;
 import util.io.IOUtilities;
 import util.misc.ChangeTrackingProperties;
+import util.misc.SoftReferenceCache;
 import util.ui.LazyImageIcon;
 
 import com.l2fprod.util.StringUtils;
 
+import devplugin.AbstractTvDataService;
+
+/**
+ * A class that loads for Channels from a server.
+ */
 public class IconLoader {
   private static final Logger mLog = Logger.getLogger(IconLoader.class.getName());
 
@@ -45,8 +51,22 @@ public class IconLoader {
   private String mChannelGroup;
 
   private ChangeTrackingProperties mProperties;
+  
+  private AbstractTvDataService mDataService;
+  
 
-  public IconLoader(final String channelGroup, final File dir) throws IOException {
+  /**
+   * A cache for icons.
+   */
+  private static final SoftReferenceCache<String, File> ICON_CACHE = new SoftReferenceCache<String, File>();
+
+  /**
+   * A list with servers that don't respond on last access.
+   */
+  private static final ArrayList<String> BLOCKED_SERVERS = new ArrayList<String>(0);
+
+  public IconLoader(final AbstractTvDataService service, final String channelGroup, final File dir) throws IOException {
+    mDataService = service;
     mChannelGroup = channelGroup;
     mIconDir = new File(dir + "/icons_" + mChannelGroup);
     if (!mIconDir.exists()) {
@@ -80,11 +100,11 @@ public class IconLoader {
               + ". prevUrl=" + prevUrl + ". currentUrl=" + url);
     }
 
-    if (ChannelList.ICON_CACHE.containsKey(url)) {
+    if (ICON_CACHE.containsKey(url)) {
       try {
-        File iconCacheFile = ChannelList.ICON_CACHE.get(url);
+        File iconCacheFile = ICON_CACHE.get(url);
         if (iconCacheFile != null && !iconCacheFile.equals(iconFile)) {
-          IOUtilities.copy(ChannelList.ICON_CACHE.get(url), iconFile);
+          IOUtilities.copy(ICON_CACHE.get(url), iconFile);
           icon = getIconFromFile(iconFile);
         }
       } catch (Exception e) {
@@ -92,15 +112,15 @@ public class IconLoader {
       }
     }
 
-    if (icon == null && TvBrowserDataService.getInstance().hasRightToDownloadIcons()
-        && !ChannelList.BLOCKED_SERVERS.contains(url)) {
+    if (icon == null && mDataService.hasRightToDownloadIcons()
+        && !BLOCKED_SERVERS.contains(url)) {
       // download the icon
       try {
         util.io.IOUtilities.download(new URL(url), iconFile);
         icon = getIconFromFile(iconFile);
-        ChannelList.ICON_CACHE.put(url, iconFile);
+        ICON_CACHE.put(url, iconFile);
       } catch (IOException e) {
-        ChannelList.BLOCKED_SERVERS.add(url);
+        BLOCKED_SERVERS.add(url);
         mLog.warning("channel " + channelId + ": could not download icon from " + url);
       } catch (Exception e) {
         mLog.severe("Could not extract icon file");

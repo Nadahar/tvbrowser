@@ -26,7 +26,7 @@ import javax.swing.Icon;
 
 import org.apache.commons.lang.StringUtils;
 
-import tvbrowserdataservice.file.IconLoader;
+import util.tvdataservice.IconLoader;
 import tvdataservice.SettingsPanel;
 import tvdataservice.TvDataUpdateManager;
 import util.exc.TvBrowserException;
@@ -445,7 +445,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
     }
   }
 
-  protected boolean hasRightToDownloadIcons() {
+  public boolean hasRightToDownloadIcons() {
     return mHasRightToDownloadIcons;
   }
 
