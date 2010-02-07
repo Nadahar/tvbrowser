@@ -33,6 +33,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -257,8 +258,10 @@ public class PluginLoader {
    * @return pluginProxy
    */
   private JavaPluginProxy readPluginProxy(File proxyFile) {
+    DataInputStream in = null;
+    
     try {
-      DataInputStream in = new DataInputStream(new BufferedInputStream(new FileInputStream(proxyFile)));
+      in = new DataInputStream(new BufferedInputStream(new FileInputStream(proxyFile)));
 
       String name = in.readUTF();
       String author = in.readUTF();
@@ -284,6 +287,13 @@ public class PluginLoader {
       String iconFileName = getProxyIconFileName(proxyFile);
       return new JavaPluginProxy(info, lcFileName, pluginId, iconFileName);
     } catch (Exception e) {e.printStackTrace();
+      if(in != null) {
+        try {
+          in.close();
+        } catch (IOException e1) {
+          // ignore
+        }
+      }
       // delete proxy on read error, maybe the format has changed
       deletePluginProxy(proxyFile);
       return null;
