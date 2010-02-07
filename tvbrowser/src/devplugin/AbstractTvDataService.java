@@ -29,12 +29,14 @@ package devplugin;
 import java.awt.Frame;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Properties;
 
-import tvbrowserdataservice.file.IconLoader;
 import tvdataservice.SettingsPanel;
 import tvdataservice.TvDataUpdateManager;
 import util.exc.TvBrowserException;
+import util.misc.SoftReferenceCache;
+import util.tvdataservice.IconLoader;
 
 /**
  * Superclass for all TvDataServices.
@@ -53,7 +55,7 @@ public abstract class AbstractTvDataService {
     "http://tvbrowser1.sam-schwedler.de",
     "http://tvbrowser.nicht-langweilig.de/data"
   };
-
+  
   /**
    * The plugin manager. It's the connection to TV-Browser.
    * <p>
@@ -187,7 +189,7 @@ public abstract class AbstractTvDataService {
   }
   
   protected IconLoader getIconLoader(final String groupId, final File workingDirectory) throws IOException {
-    return new IconLoader(groupId, workingDirectory);
+    return new IconLoader(this, groupId, workingDirectory);
   }
   
   /**
@@ -282,4 +284,8 @@ public abstract class AbstractTvDataService {
    * Gets information about this TvDataService
    */
   public abstract PluginInfo getInfo();
+  
+  public boolean hasRightToDownloadIcons() {
+    return false;
+  }
 }
