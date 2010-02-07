@@ -46,6 +46,7 @@
     <module>plugin-balloon</module>
     <module>plugin-checker</module>
     <module>plugin-countrycode</module>
+    <module>plugin-clock</module>
     <module>plugin-dataviewer</module>
     <module>plugin-dvb</module>
     <module>plugin-dvbviewerdataservice</module>
