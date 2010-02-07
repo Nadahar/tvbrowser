@@ -2306,21 +2306,23 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
         }
         else if (data instanceof String) {
           String name = ((String) data).trim();
-          File pluginFile = new File(name);
-          if (pluginFile.canRead()) {
-            addPluginFile(pluginFile, files);
-            if (!files.isEmpty()) {
-              break;
+          if (name.toLowerCase().endsWith("jar")) {
+            File pluginFile = new File(name);
+            if (pluginFile.canRead()) {
+              addPluginFile(pluginFile, files);
+              if (!files.isEmpty()) {
+                break;
+              }
             }
-          }
-          else {
-            try {
-              URI uri = new URI(name);
-              addPluginFile(new File(uri), files);
-            } catch (URISyntaxException e) { // ignore
-            }
-            if (!files.isEmpty()) {
-              break;
+            else {
+              try {
+                URI uri = new URI(name);
+                addPluginFile(new File(uri), files);
+              } catch (URISyntaxException e) { // ignore
+              }
+              if (!files.isEmpty()) {
+                break;
+              }
             }
           }
         }
