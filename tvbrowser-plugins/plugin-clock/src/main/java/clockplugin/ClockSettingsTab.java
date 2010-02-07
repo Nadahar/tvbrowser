@@ -18,7 +18,7 @@ import devplugin.SettingsTab;
 
 /**
  * The settings tab for the ClockPlugin. License: GPL
- * 
+ *
  * @author René Mach
  */
 public class ClockSettingsTab implements SettingsTab, ActionListener {
@@ -28,15 +28,7 @@ public class ClockSettingsTab implements SettingsTab, ActionListener {
   private JLabel mLabel;
 
   /** The localizer for this class. */
-  public static util.ui.Localizer mLocalizer;
-
-  /**
-   * The default contructor of this class.
-   * 
-   */
-  public ClockSettingsTab() {
-    mLocalizer = util.ui.Localizer.getLocalizerFor(ClockSettingsTab.class);
-  }
+  private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(ClockSettingsTab.class);
 
   public JPanel createSettingsPanel() {
     PanelBuilder pb = new PanelBuilder(new FormLayout(
@@ -68,7 +60,7 @@ public class ClockSettingsTab implements SettingsTab, ActionListener {
     mFontSize = new JSpinner();
     mFontSize.setModel(new SpinnerNumberModel(ClockPlugin.getInstance()
         .getFontValue(), 10, 30, 1));
-    
+
     pb.add(mMove, cc.xyw(2, 2, 4));
     pb.add(mShowBorder, cc.xyw(2, 3, 4));
     pb.add(mTitleClock, cc.xyw(2, 4, 4));
@@ -89,7 +81,7 @@ public class ClockSettingsTab implements SettingsTab, ActionListener {
       mTime.setEnabled(false);
       mLabel.setEnabled(false);
     }
-    
+
     return pb.getPanel();
   }
 

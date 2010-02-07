@@ -9,6 +9,7 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.lang.reflect.Constructor;
 import java.util.Properties;
+
 import javax.swing.Action;
 import javax.swing.SwingUtilities;
 
@@ -21,7 +22,7 @@ import devplugin.Version;
 
 /**
  * Clock Plugin for TV-Browser. License: GPL
- * 
+ *
  * @author René Mach
  */
 public class ClockPlugin extends Plugin {
@@ -34,45 +35,45 @@ public class ClockPlugin extends Plugin {
   private TitleBarClock mTitleBarClock;
   private Point mLocation;
   private Dimension mParentSize;
-  
+
   private static final Version mVersion = new Version(1, 76, 1, true);
-  
+
   /** The localizer for this class. */
-  public static util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(ClockPlugin.class);
+  public static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(ClockPlugin.class);
 
   public static Version getVersion() {
     return mVersion;
   }
-  
+
   /** Plugin info */
   public PluginInfo getInfo() {
-    Class pluginInfo = PluginInfo.class;
-    
+    Class<?> pluginInfo = PluginInfo.class;
+
     try {
-      Constructor constructor = pluginInfo.getConstructor(new Class[] {Class.class,String.class,String.class,String.class,String.class});
-      
+      Constructor<?> constructor = pluginInfo.getConstructor(new Class[] {Class.class,String.class,String.class,String.class,String.class});
+
       return (PluginInfo)constructor.newInstance(new Object[] {ClockPlugin.class,"ClockPlugin",mLocalizer.msg("desc",
       "Clock for TV-Browser"),"René Mach","GPL"});
     } catch (Exception e) {
       try {
-        Constructor constructor = pluginInfo.getConstructor(new Class[] {String.class,String.class,String.class,Version.class,String.class});
-        
+        Constructor<?> constructor = pluginInfo.getConstructor(new Class[] {String.class,String.class,String.class,Version.class,String.class});
+
         return (PluginInfo)constructor.newInstance(new Object[] {"ClockPlugin",mLocalizer.msg("desc",
-        "Clock for TV-Browser"),"René Mach",mVersion,"GPL"});        
+        "Clock for TV-Browser"),"René Mach",mVersion,"GPL"});
       }catch(Exception ee) {};
-    } 
+    }
     return new PluginInfo();
   }
-  
+
   /**
    * Constructor.
    */
   public ClockPlugin() {
     mInstance = this;
   }
-  
+
   /**
-   * 
+   *
    * @return The instance of this Plugin.
    */
   public static ClockPlugin getInstance() {
@@ -80,19 +81,20 @@ public class ClockPlugin extends Plugin {
   }
 
   /**
-   * 
+   *
    * @return The time to show the time dialog in seconds.
    */
   public int getTimeValue() {
     String time = mProperties.getProperty("time");
-    if (time != null && time.length() != 0)
+    if (time != null && time.length() != 0) {
       return Integer.parseInt(time);
-    else
+    } else {
       return 5;
+    }
   }
 
   /**
-   * 
+   *
    * @param time
    *          The value the user selected to show the time dialog in seconds.
    */
@@ -109,30 +111,36 @@ public class ClockPlugin extends Plugin {
       mProperties = p;
       String time = p.getProperty("time");
 
-      if (time != null && time.length() > 0)
+      if (time != null && time.length() > 0) {
         mShowTime = Integer.parseInt(time);
-      else
+      } else {
         mShowTime = 5;
+      }
     }
 
     if (mProperties.getProperty("titleBarClock") != null
-        && mProperties.getProperty("titleBarClock").equals("true"))
+        && mProperties.getProperty("titleBarClock").equals("true")) {
       mTitleBarClock = new TitleBarClock();
+    }
     if (mProperties.getProperty("moveOnScreen") != null
-        && mProperties.getProperty("moveOnScreen").equals("true"))
+        && mProperties.getProperty("moveOnScreen").equals("true")) {
       mMoveOnScreen = true;
-    else
+    } else {
       mMoveOnScreen = false;
-    if (mProperties.getProperty("showBorder") == null)
+    }
+    if (mProperties.getProperty("showBorder") == null) {
       mProperties.setProperty("showBorder", "true");
+    }
     if (mProperties.getProperty("showForever") != null
-        && mProperties.getProperty("showForever").equals("true"))
+        && mProperties.getProperty("showForever").equals("true")) {
       mShowForever = true;
+    }
   }
 
   public void onDeactivation() {
-    if (mClock != null && mClock.getThread().isAlive())
+    if (mClock != null && mClock.getThread().isAlive()) {
       mClock.stopp();
+    }
   }
 
   public Properties storeSettings() {
@@ -162,7 +170,7 @@ public class ClockPlugin extends Plugin {
   }
 
   /**
-   * 
+   *
    * @return The font size of the clock.
    */
   public int getFontValue() {
@@ -170,12 +178,13 @@ public class ClockPlugin extends Plugin {
     if (fontsize == null || fontsize.length() == 0) {
       mProperties.setProperty("fontsize", "28");
       return 28;
-    } else
+    } else {
       return Integer.parseInt(fontsize);
+    }
   }
 
   /**
-   * 
+   *
    * @param i
    *          The font size of the clock.
    */
@@ -184,34 +193,37 @@ public class ClockPlugin extends Plugin {
   }
 
   /**
-   * 
+   *
    * @param value
    *          Show the clock forever?
    */
   public void setShowForever(boolean value) {
     mProperties.setProperty("showForever", value + "");
 
-    if (mClock != null && mClock.getThread().isAlive())
+    if (mClock != null && mClock.getThread().isAlive()) {
       mClock.setShowForever(value);
-    else if (value)
+    } else if (value) {
       toggleOnOffClock();
+    }
   }
 
   /**
-   * 
+   *
    * @return Show the clock forever or not.
    */
   public boolean getShowForever() {
     String value = mProperties.getProperty("showForever");
-    if (value != null && value.length() > 0)
-      if (value.equals("true"))
+    if (value != null && value.length() > 0) {
+      if (value.equals("true")) {
         return true;
+      }
+    }
 
     return false;
   }
 
   /**
-   * 
+   *
    * @param value
    *          Clock moveOnScreen with TV-Browser?
    */
@@ -222,87 +234,98 @@ public class ClockPlugin extends Plugin {
   }
 
   /**
-   * 
+   *
    * @return Clock moveOnScreen with TV-Browser.
    */
   public boolean getMoveOnScreen() {
     String value = mProperties.getProperty("moveOnScreen");
-    if (value != null && value.length() > 0)
-      if (value.equals("true"))
+    if (value != null && value.length() > 0) {
+      if (value.equals("true")) {
         return true;
+      }
+    }
 
     return false;
   }
 
   /**
-   * 
+   *
    * @param value
    *          Clock has border?
    */
   public void setShowBorder(boolean value) {
     mProperties.setProperty("showBorder", value + "");
-    if (mClock != null && mClock.getThread().isAlive())
+    if (mClock != null && mClock.getThread().isAlive()) {
       mClock.setBorder(value);
+    }
   }
 
   /**
-   * 
+   *
    * @return Clock has Border.
    */
   public boolean getShowBorder() {
     String value = mProperties.getProperty("showBorder");
-    if (value != null && value.length() > 0)
-      if (value.equals("true"))
+    if (value != null && value.length() > 0) {
+      if (value.equals("true")) {
         return true;
-      else
+      } else {
         return false;
-    else
+      }
+    } else {
       return false;
+    }
   }
 
   /**
-   * 
+   *
    * @param value
    *          Clock in the title bar?
    */
   public void setTitleBarClock(boolean value) {
     mProperties.setProperty("titleBarClock", value + "");
     if (value) {
-      if (mTitleBarClock == null || !mTitleBarClock.isAlive())
+      if (mTitleBarClock == null || !mTitleBarClock.isAlive()) {
         mTitleBarClock = new TitleBarClock();
-    } else if (mTitleBarClock != null && mTitleBarClock.isAlive())
+      }
+    } else if (mTitleBarClock != null && mTitleBarClock.isAlive()) {
       mTitleBarClock.stopp();
+    }
   }
 
   /**
-   * 
+   *
    * @return Clock in the title bar.
    */
   public boolean getTitleBarClock() {
     String value = mProperties.getProperty("titleBarClock");
-    if (value != null && value.length() > 0)
-      if (value.equals("true"))
+    if (value != null && value.length() > 0) {
+      if (value.equals("true")) {
         return true;
-      else
+      } else {
         return false;
-    else
+      }
+    } else {
       return false;
+    }
   }
 
   // show the clock
   private synchronized void toggleOnOffClock() {
-    if (getParentFrame().isUndecorated() && (mClock == null || !mClock.getThread().isAlive()))
+    if (getParentFrame().isUndecorated() && (mClock == null || !mClock.getThread().isAlive())) {
       return;
-    
+    }
+
     if ((mClock == null || !mClock.isVisible()) && getParentFrame().isVisible()) {
       mClock = new Clock(mShowTime, mProperties);
       Thread t = new Thread() {
         public void run() {
           try {
-            while(mClock.getThread().isAlive())
+            while(mClock.getThread().isAlive()) {
               Thread.sleep(500);
+            }
           }catch(Exception e) {e.printStackTrace();}
-          
+
           SwingUtilities.invokeLater(new Runnable() {
             public void run() {
               mClock.setVisible(false);
@@ -314,31 +337,34 @@ public class ClockPlugin extends Plugin {
       t.setPriority(Thread.MIN_PRIORITY);
       t.start();
     }
-    else if(mClock != null && mClock.isVisible())
+    else if(mClock != null && mClock.isVisible()) {
       mClock.stopp();
+    }
   }
 
   public void handleTvBrowserStartFinished() {
-    if (mShowForever && mClock == null)
+    if (mShowForever && mClock == null) {
       toggleOnOffClock();
-    
+    }
+
     mLocation = getParentFrame().getLocation();
     mParentSize = getParentFrame().getSize();
-    
+
     getParentFrame().addComponentListener(new ComponentAdapter() {
       boolean mWasVisible = false;
-      
+
       public void componentHidden(ComponentEvent e) {
-        if(mClock != null && mClock.getThread().isAlive())
+        if(mClock != null && mClock.getThread().isAlive()) {
           mClock.setShowForever(true);
+        }
       }
 
       public void componentResized(ComponentEvent e) {
         if (mMoveOnScreen && !getParentFrame().isUndecorated()) {
           Dimension d = getParentFrame().getSize();
-          
+
           int diff = d.width - mParentSize.width;
-          
+
           if(diff != 0) {
             if (mClock != null && mClock.getThread().isAlive()) {
               mClock.setLocation(mClock.getLocation().x + diff, mClock
@@ -363,7 +389,7 @@ public class ClockPlugin extends Plugin {
           mWasVisible = false;
         }
       }
-      
+
       public void componentMoved(ComponentEvent e) {
         if (mMoveOnScreen && !getParentFrame().isUndecorated()) {
           Point p = getParentFrame().getLocation();
@@ -394,17 +420,19 @@ public class ClockPlugin extends Plugin {
 
       public void componentShown(ComponentEvent e) {
         if (!getShowForever()) {
-          if(mClock != null && mClock.getThread().isAlive())
+          if(mClock != null && mClock.getThread().isAlive()) {
             mClock.setShowForever(false);
+          }
         }
-        else if(mClock == null || !mClock.getThread().isAlive())
+        else if(mClock == null || !mClock.getThread().isAlive()) {
           toggleOnOffClock();
+        }
       }
     });
   }
 
   /**
-   * 
+   *
    * @return The parent frame of this Plugin.
    */
   public Frame getSuperFrame() {

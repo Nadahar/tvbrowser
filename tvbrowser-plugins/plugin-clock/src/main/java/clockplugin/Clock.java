@@ -12,12 +12,14 @@ import java.text.DateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Properties;
+
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.WindowConstants;
 
 /**
  * The clock dialog. License: GPL
@@ -61,10 +63,11 @@ public class Clock extends JDialog implements Runnable, MouseListener, MouseMoti
     if (showForever == null || showForever.length() == 0) {
       mShowForever = false;
       config.setProperty("showForever", false + "");
-    } else if (showForever.equals("true"))
+    } else if (showForever.equals("true")) {
       mShowForever = true;
-    else
+    } else {
       mShowForever = false;
+    }
 
     int fontsize = Integer.parseInt(config.getProperty("fontsize","28"));
     int oldFontSize = Integer.parseInt(config.getProperty("oldFontSize", "-1"));
@@ -74,8 +77,9 @@ public class Clock extends JDialog implements Runnable, MouseListener, MouseMoti
     mProperties.setProperty("oldFontSize", fontsize + "");
 
     mTimePanel = new JPanel();
-    if (ClockPlugin.getInstance().getShowBorder())
+    if (ClockPlugin.getInstance().getShowBorder()) {
       mTimePanel.setBorder(BorderFactory.createEtchedBorder());
+    }
     mTimePanel.addMouseListener(this);
     mTimePanel.addMouseMotionListener(this);
     mTimePanel.setLayout(new GridLayout());
@@ -98,7 +102,7 @@ public class Clock extends JDialog implements Runnable, MouseListener, MouseMoti
     this.getContentPane().addMouseListener(this);
     this.getContentPane().addMouseMotionListener(this);
     this.setUndecorated(true);
-    this.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+    this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
     mTime.setText(mTimeFormat.format(new Date(System.currentTimeMillis())));
     
     if (width < 15 || height < 5 || fontsize != oldFontSize) {
@@ -109,14 +113,15 @@ public class Clock extends JDialog implements Runnable, MouseListener, MouseMoti
     }
     
     if ((xPos - width < (width * -1)) || (xPos - width > d.width) ||
-        (yPos - height < (height * -1)) || (yPos - height > d.height))
+        (yPos - height < (height * -1)) || (yPos - height > d.height)) {
       this.setLocation(d.width - this.getSize().width, 0);
-    else {
+    } else {
       this.setLocation(xPos, yPos);
     }
 
-    if (ClockPlugin.getInstance().getSuperFrame() != null)
+    if (ClockPlugin.getInstance().getSuperFrame() != null) {
       this.setVisible(true);
+    }
     mClockThread.start();
     
     ClockPlugin.getInstance().getSuperFrame().toFront();
@@ -150,16 +155,18 @@ public class Clock extends JDialog implements Runnable, MouseListener, MouseMoti
     try {
       do {
         Thread.sleep(500);
-        if (!mShowForever)
+        if (!mShowForever) {
           mShowTime -= 500;
+        }
         mTime.setText(mTimeFormat.format(new Date(System.currentTimeMillis())));
       } while (mShowTime > 0 && !mStop);
     } catch (InterruptedException e) {
     }
     
     try {
-      while(mDontStop)
+      while(mDontStop) {
         Thread.sleep(200);
+      }
     }catch(InterruptedException e) {
     }
   }
@@ -173,10 +180,11 @@ public class Clock extends JDialog implements Runnable, MouseListener, MouseMoti
   }
 
   public void mouseReleased(MouseEvent e) {
-    mDraggingPoint = null; 
+    mDraggingPoint = null;
     mDontStop = false;
-    if(ClockPlugin.getInstance().getSuperFrame().isVisible())
+    if(ClockPlugin.getInstance().getSuperFrame().isVisible()) {
       ClockPlugin.getInstance().getSuperFrame().toFront();
+    }
   }
 
   public void mouseEntered(MouseEvent e) {
@@ -191,13 +199,14 @@ public class Clock extends JDialog implements Runnable, MouseListener, MouseMoti
    * @param value
    */
   public void setBorder(boolean value) {
-    if (value)
+    if (value) {
       mTimePanel.setBorder(BorderFactory.createEtchedBorder());
-    else
+    } else {
       mTimePanel.setBorder(BorderFactory.createEmptyBorder());
+    }
   }
 
-  public void mouseDragged(MouseEvent e) {    
+  public void mouseDragged(MouseEvent e) {
     if (mDraggingPoint != null && !e.isShiftDown()) {
       int xP = e.getX();
       int yP = e.getY();
