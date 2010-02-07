@@ -1,6 +1,6 @@
 /*
  * VirtualDataService by Reinhard Lehrbaum
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -121,40 +121,40 @@ public class VirtualDataServiceSettingsPanel extends SettingsPanel implements Ac
 		mProgramList.getColumnModel().getColumn(0).setMaxWidth(Sizes.dialogUnitXAsPixel(10, mProgramList));
 		final JScrollPane scrollProgram = new JScrollPane(mProgramList);
 
-		mChannelAdd = new JButton(mLocalizer.msg("add", "Add"),
+		mChannelAdd = new JButton(Localizer.getLocalization(Localizer.I18N_ADD),
         Plugin.getPluginManager().getIconFromTheme(null, "actions",
             "document-new", 16));
 		mChannelAdd.setToolTipText(mLocalizer.msg("addChannel", "Add channel"));
 		mChannelAdd.setHorizontalAlignment(SwingConstants.LEFT);
 		mChannelAdd.addActionListener(this);
-		mChannelDel = new JButton(mLocalizer.msg("del", "Delete"), Plugin.getPluginManager().getIconFromTheme(null, "actions", "edit-delete", 16));
+		mChannelDel = new JButton(Localizer.getLocalization(Localizer.I18N_DELETE), Plugin.getPluginManager().getIconFromTheme(null, "actions", "edit-delete", 16));
 		mChannelDel.setToolTipText(mLocalizer.msg("delChannel", "Delete channel"));
 		mChannelDel.setHorizontalAlignment(SwingConstants.LEFT);
 		mChannelDel.setEnabled(false);
 		mChannelDel.addActionListener(this);
-		mChannelEdit = new JButton(mLocalizer.msg("edit", "Edit"), Plugin.getPluginManager().getIconFromTheme(null, "actions", "document-edit", 16));
+		mChannelEdit = new JButton(Localizer.getLocalization(Localizer.I18N_EDIT), Plugin.getPluginManager().getIconFromTheme(null, "actions", "document-edit", 16));
 		mChannelEdit.setToolTipText(mLocalizer.msg("editChannel", "Edit channel"));
 		mChannelEdit.setHorizontalAlignment(SwingConstants.LEFT);
 		mChannelEdit.setEnabled(false);
 		mChannelEdit.addActionListener(this);
-		mProgramAdd = new JButton(mLocalizer.msg("add", "Add"), Plugin.getPluginManager().getIconFromTheme(null, "actions", "document-new", 16));
+		mProgramAdd = new JButton(Localizer.getLocalization(Localizer.I18N_ADD), Plugin.getPluginManager().getIconFromTheme(null, "actions", "document-new", 16));
 		mProgramAdd.setToolTipText(mLocalizer.msg("addProgram", "Add program"));
 		mProgramAdd.setHorizontalAlignment(SwingConstants.LEFT);
 		mProgramAdd.setEnabled(false);
 		mProgramAdd.addActionListener(this);
-		mProgramDel = new JButton(mLocalizer.msg("del", "Delete"), Plugin.getPluginManager().getIconFromTheme(null, "actions", "edit-delete", 16));
+		mProgramDel = new JButton(Localizer.getLocalization(Localizer.I18N_DELETE), Plugin.getPluginManager().getIconFromTheme(null, "actions", "edit-delete", 16));
 		mProgramDel.setToolTipText(mLocalizer.msg("delProgram", "Delete program"));
 		mProgramDel.setHorizontalAlignment(SwingConstants.LEFT);
 		mProgramDel.setEnabled(false);
 		mProgramDel.addActionListener(this);
-		mProgramEdit = new JButton(mLocalizer.msg("edit", "Edit"), Plugin.getPluginManager().getIconFromTheme(null, "actions", "document-edit", 16));
+		mProgramEdit = new JButton(Localizer.getLocalization(Localizer.I18N_EDIT), Plugin.getPluginManager().getIconFromTheme(null, "actions", "document-edit", 16));
 		mProgramEdit.setToolTipText(mLocalizer.msg("editProgram", "Edit program"));
 		mProgramEdit.setHorizontalAlignment(SwingConstants.LEFT);
 		mProgramEdit.setEnabled(false);
 		mProgramEdit.addActionListener(this);
 
 		int row = 2;
-		builder.addLabel(mLocalizer.msg("channel", "Channel"), cc.xyw(2, row, 3));
+		builder.addLabel(Localizer.getLocalization(Localizer.I18N_CHANNEL), cc.xyw(2, row, 3));
 		row += 2;
 		builder.add(scrollChannel, cc.xywh(2, row, 1, 6));
 		builder.add(mChannelAdd, cc.xy(4, row));
@@ -163,7 +163,7 @@ public class VirtualDataServiceSettingsPanel extends SettingsPanel implements Ac
 		row += 2;
 		builder.add(mChannelEdit, cc.xy(4, row));
 		row += 3;
-		builder.addLabel(mLocalizer.msg("program", "Program"), cc.xyw(2, row, 3));
+		builder.addLabel(Localizer.getLocalization(Localizer.I18N_PROGRAM), cc.xyw(2, row, 3));
 		row += 2;
 		builder.add(scrollProgram, cc.xywh(2, row, 1, 6));
 		builder.add(mProgramAdd, cc.xy(4, row));
