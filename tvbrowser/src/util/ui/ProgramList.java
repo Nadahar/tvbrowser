@@ -255,6 +255,7 @@ public class ProgramList extends JList implements ChangeListener,
     addMouseListener(new MouseAdapter() {
       private Thread mLeftSingleClickThread;
       private boolean mPerformingSingleClick = false;
+      private boolean mUpdatingUI = false;
       private static final byte LEFT_SINGLE_CLICK = 1;
       private static final byte LEFT_DOUBLE_CLICK = 2;
       private static final byte MIDDLE_CLICK = 3;
@@ -272,7 +273,7 @@ public class ProgramList extends JList implements ChangeListener,
       }
 
       public void mouseClicked(final MouseEvent e) {
-        if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 1) && e.getModifiersEx() == 0) {
+        if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 1) && e.getModifiersEx() == 0 && !mUpdatingUI) {
           mLeftSingleClickThread = new Thread("Single click") {
             public void run() {
               try {
@@ -291,7 +292,7 @@ public class ProgramList extends JList implements ChangeListener,
           mLeftSingleClickThread.setPriority(Thread.MIN_PRIORITY);
           mLeftSingleClickThread.start();
         }
-        else if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 2) && e.getModifiersEx() == 0) {
+        else if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 2) && e.getModifiersEx() == 0 && !mUpdatingUI) {
           if(!mPerformingSingleClick && mLeftSingleClickThread != null && mLeftSingleClickThread.isAlive()) {
             mLeftSingleClickThread.interrupt();
           }
@@ -300,35 +301,35 @@ public class ProgramList extends JList implements ChangeListener,
             handleClick(LEFT_DOUBLE_CLICK, e);
           }
         }
-        else if (SwingUtilities.isMiddleMouseButton(e) && (e.getClickCount() == 1)) {
+        else if (SwingUtilities.isMiddleMouseButton(e) && (e.getClickCount() == 1) && !mUpdatingUI) {
           handleClick(MIDDLE_CLICK, e);
         }
       }
       
       private void handleClick(byte type, MouseEvent e) {
-        if(e != null && e.getPoint() != null) {
-          int inx = locationToIndex(e.getPoint());
-          if (inx >= 0) {
-            Object prog = ProgramList.this.getModel()
-            .getElementAt(inx);
-  
-            if(prog instanceof Program) {
-              if(type == LEFT_SINGLE_CLICK) {
-                Plugin.getPluginManager().handleProgramSingleClick((Program)prog, caller);
-              }
-              else if(type == LEFT_DOUBLE_CLICK) {
-                Plugin.getPluginManager().handleProgramDoubleClick((Program)prog, caller);
-              }
-              else if(type == MIDDLE_CLICK) {
-                Plugin.getPluginManager().handleProgramMiddleClick((Program)prog, caller);
-              }
-              // force recalculation of program panel sizes
-              SwingUtilities.invokeLater(new Runnable() {
-                public void run() {
-                  updateUI();    
-                }
-              });
+        final int inx = locationToIndex(e.getPoint());
+        if (inx >= 0) {
+          final Object prog = ProgramList.this.getModel()
+          .getElementAt(inx);
+
+          if(prog instanceof Program) {
+            if(type == LEFT_SINGLE_CLICK) {
+              Plugin.getPluginManager().handleProgramSingleClick((Program)prog, caller);
             }
+            else if(type == LEFT_DOUBLE_CLICK) {
+              Plugin.getPluginManager().handleProgramDoubleClick((Program)prog, caller);
+            }
+            else if(type == MIDDLE_CLICK) {
+              Plugin.getPluginManager().handleProgramMiddleClick((Program)prog, caller);
+            }
+            
+            // force recalculation of program panel sizes
+            SwingUtilities.invokeLater(new Runnable() {
+              public void run() {
+                getCellRenderer().getListCellRendererComponent(ProgramList.this,prog,inx,getSelectedIndex() == inx,getSelectedIndex() == inx).repaint();
+              }
+            });
+            
           }
         }
       }
