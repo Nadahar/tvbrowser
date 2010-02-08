@@ -308,12 +308,12 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 
 		mDownloadMI = createMenuItem("menuitem.download", "Download", urlBrowserImg);
 		mDownloadMI.addActionListener(this);
-		new MenuHelpTextAdapter(mForumMI, mLocalizer.msg("website.download", ""),
+		new MenuHelpTextAdapter(mForumMI, mLocalizer.msg("website.download", "http://tvbrowser.org/download_tvbrowser.php"),
 				mLabel);
 
 		mDonorMI = createMenuItem("menuitem.donors", "Donors", urlBrowserImg);
 		mDonorMI.addActionListener(this);
-		new MenuHelpTextAdapter(mDonorMI, mLocalizer.msg("website.donors", ""),
+		new MenuHelpTextAdapter(mDonorMI, mLocalizer.msg("website.donors", "http://tvbrowser.org/donors.html"),
 				mLabel);
 
 		mConfigAssistantMI = createMenuItem("menuitem.configAssistant",
@@ -913,9 +913,9 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 		} else if (source == mForumMI) {
 			Launch.openURL(mLocalizer.msg("website.forum", ""));
 		} else if (source == mDownloadMI) {
-			Launch.openURL(mLocalizer.msg("website.download", ""));
+			Launch.openURL(mLocalizer.msg("website.download", "http://tvbrowser.org/download_tvbrowser.php"));
 		} else if (source == mDonorMI) {
-			Launch.openURL(mLocalizer.msg("website.donors", ""));
+			Launch.openURL(mLocalizer.msg("website.donors", "http://tvbrowser.org/donors.html"));
 		} else if (source == mConfigAssistantMI) {
 			mMainFrame.runSetupAssistant();
 		} else if (source == mPluginInfoDlgMI) {

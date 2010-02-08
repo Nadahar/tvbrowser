@@ -87,7 +87,7 @@ public class SkinLNFSettings extends JDialog implements WindowClosingIf {
 
     content.add(DefaultComponentFactory.getInstance().createSeparator(Localizer.getLocalization(Localizer.I18N_HELP)), cc.xyw(1,1,3));
 
-    content.add(UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("skinLFInfo", "Skin Info", "http://tvbrowser.org/de/downloads-mainmenu-5/themepacks-mainmenu-30.html")), cc.xyw(2,3,2));
+    content.add(UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("skinLFInfo", "Skin Info", "http://tvbrowser.org/themepacks.php")), cc.xyw(2,3,2));
 
     String temp = Settings.propSkinLFThemepack.getString();
     temp = StringUtils.substringAfterLast(temp, File.separator);
