@@ -672,6 +672,10 @@ private static Font getDynamicFontSize(Font font, int offset) {
       mProgramImportance = getProgramImportance(mProgram);
       mHasChanged = false;
     }
+    
+    if (mSettings.isShowingOnlyDateAndTitle()) {
+      mProgramImportance = Program.MAX_PROGRAM_IMPORTANCE;
+    }
 
     /* This is for debugging of the marking problem after an data update */
     if(mProgram.getProgramState() == Program.WAS_DELETED_STATE) {
