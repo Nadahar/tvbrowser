@@ -637,7 +637,8 @@ private static Font getDynamicFontSize(Font font, int offset) {
 
   private byte getProgramImportance(final Program program) {
     if (program.getProgramState() == Program.IS_VALID_STATE &&
-        Settings.propProgramPanelAllowTransparency.getBoolean()) {
+        Settings.propProgramPanelAllowTransparency.getBoolean() &&
+        !mSettings.isIgnoringProgramImportance()) {
       int count = 0;
       int addValue = 0;
 
@@ -653,7 +654,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
       }
 
       if(count > 0) {
-        return (byte)(addValue/count);
+        return (byte)Math.max(addValue/count, Program.MIN_MARK_PRIORITY);
       }
     }
 
@@ -673,7 +674,8 @@ private static Font getDynamicFontSize(Font font, int offset) {
       mHasChanged = false;
     }
     
-    if (mSettings.isShowingOnlyDateAndTitle()) {
+    /* Prevent accidentally set program importance to take effect */
+    if(mSettings.isIgnoringProgramImportance()) {
       mProgramImportance = Program.MAX_PROGRAM_IMPORTANCE;
     }
 

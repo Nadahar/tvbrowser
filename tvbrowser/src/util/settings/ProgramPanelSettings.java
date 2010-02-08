@@ -48,6 +48,7 @@ public class ProgramPanelSettings {
   private int mAxis;
   private boolean mShowOnlyDateAndTitle; 
   private boolean mShowDescription;
+  private boolean mIgnoreProgramImportance;
   private String[] mPluginIds;
 
   /**
@@ -71,9 +72,39 @@ public class ProgramPanelSettings {
    * 
    * @param settings The PluginPictureSettings to be used.
    * @param showOnlyDateAndTitle If the program panel should only contain date and title.
+   * @param axis The axis for the ProgramPanel.
+   * @param ignoreProgramImportance If the program importance should be ignored.
+   * @since 3.0
+   */
+  public ProgramPanelSettings(PluginPictureSettings settings, boolean showOnlyDateAndTitle, int axis, boolean ignoreProgramImportance) {
+    mType = settings.isShowingPictures() ? SHOW_PICTURES_EVER : SHOW_PICTURES_NEVER;
+    mShowDescription = settings.isShowingDescription();
+    
+    mShowOnlyDateAndTitle = showOnlyDateAndTitle;
+    mAxis = axis;
+    mIgnoreProgramImportance = ignoreProgramImportance;
+  }
+  
+  /**
+   * Creates an instance of this class with the given values.
+   * 
+   * @param settings The PluginPictureSettings to be used.
+   * @param showOnlyDateAndTitle If the program panel should only contain date and title.
    */
   public ProgramPanelSettings(PluginPictureSettings settings, boolean showOnlyDateAndTitle) {
     this(settings, showOnlyDateAndTitle, X_AXIS);
+  }
+  
+  /**
+   * Creates an instance of this class with the given values.
+   * 
+   * @param settings The PluginPictureSettings to be used.
+   * @param showOnlyDateAndTitle If the program panel should only contain date and title.
+   * @param ignoreProgramImportance If the program importance should be ignored.
+   * @since 3.0
+   */
+  public ProgramPanelSettings(PluginPictureSettings settings, boolean showOnlyDateAndTitle, boolean ignoreProgramImportance) {
+    this(settings, showOnlyDateAndTitle, X_AXIS, ignoreProgramImportance);
   }
   
   /**
@@ -88,6 +119,22 @@ public class ProgramPanelSettings {
    */
   public ProgramPanelSettings(int type, int timeRangeStart, int timeRangeEnd, boolean showOnlyDateAndTitle, boolean showDescription, int duration) {
     this(type, timeRangeStart, timeRangeEnd,showOnlyDateAndTitle, showDescription, duration, null);
+  }
+  
+  /**
+   * Creates an instance of this class.
+   * 
+   * @param type The picture showing type.
+   * @param timeRangeStart The time range start time.
+   * @param timeRangeEnd The time range end time.
+   * @param showOnlyDateAndTitle If the program panel should only contain date and title.
+   * @param showDescription If the picture description should be shown.
+   * @param duration The minimum duration of the programs the pictures should be shown for.
+   * @param ignoreProgramImportance If the program importance should be ignored.
+   * @since 3.0
+   */
+  public ProgramPanelSettings(int type, int timeRangeStart, int timeRangeEnd, boolean showOnlyDateAndTitle, boolean showDescription, int duration, boolean ignoreProgramImportance) {
+    this(type, timeRangeStart, timeRangeEnd,showOnlyDateAndTitle, showDescription, duration, null, ignoreProgramImportance);
   }
 
   /**
@@ -121,6 +168,23 @@ public class ProgramPanelSettings {
     this(type,timeRangeStart,timeRangeEnd,showOnlyDateAndTitle,showDescription,duration,pluginIds,Y_AXIS);
   }
 
+  /**
+   * Creates an instance of this class.
+   * 
+   * @param type The picture showing type.
+   * @param timeRangeStart The time range start time.
+   * @param timeRangeEnd The time range end time.
+   * @param showOnlyDateAndTitle If the program panel should only contain date and title.
+   * @param showDescription If the picture description should be shown.
+   * @param pluginIds The ids of the plugins to show the pictures for.
+   * @param duration The minimum duration of the programs the pictures should be shown for.
+   * @param ignoreProgramImportance If the program importance should be ignored.
+   * @since 3.0
+   */
+  public ProgramPanelSettings(int type, int timeRangeStart, int timeRangeEnd, boolean showOnlyDateAndTitle, boolean showDescription, int duration, String[] pluginIds, boolean ignoreProgramImportance) {
+    this(type,timeRangeStart,timeRangeEnd,showOnlyDateAndTitle,showDescription,duration,pluginIds,Y_AXIS,ignoreProgramImportance);
+  }
+
   
   /**
    * Creates an instance of this class.
@@ -136,6 +200,24 @@ public class ProgramPanelSettings {
    * @since 2.7
    */
   public ProgramPanelSettings(int type, int timeRangeStart, int timeRangeEnd, boolean showOnlyDateAndTitle, boolean showDescription, int duration, String[] pluginIds, int axis) {
+    this(type,timeRangeStart,timeRangeEnd,showOnlyDateAndTitle,showDescription,duration,pluginIds,axis,false);
+  }
+  
+  /**
+   * Creates an instance of this class.
+   * 
+   * @param type The picture showing type.
+   * @param timeRangeStart The time range start time.
+   * @param timeRangeEnd The time range end time.
+   * @param showOnlyDateAndTitle If the program panel should only contain date and title.
+   * @param showDescription If the picture description should be shown.
+   * @param pluginIds The ids of the plugins to show the pictures for.
+   * @param duration The minimum duration of the programs the pictures should be shown for.
+   * @param axis The axis for the progress bar of the program panel.
+   * @param ignoreProgramImportance If the program importance should be ignored. 
+   * @since 3.0
+   */
+  public ProgramPanelSettings(int type, int timeRangeStart, int timeRangeEnd, boolean showOnlyDateAndTitle, boolean showDescription, int duration, String[] pluginIds, int axis, boolean ignoreProgramImportance) {
     mType = type;
     mTimeRangeStart = timeRangeStart;
     mTimeRangeEnd = timeRangeEnd;
@@ -144,6 +226,7 @@ public class ProgramPanelSettings {
     mPluginIds = pluginIds;
     mDuration = duration;
     mAxis = axis;
+    mIgnoreProgramImportance = ignoreProgramImportance;
   }
   
   /**
@@ -285,5 +368,14 @@ public class ProgramPanelSettings {
    */
   public void setShowOnlyDateAndTitle(boolean value) {
     mShowOnlyDateAndTitle = value;
+  }
+  
+  /**
+   * Gets if the program importance should be ignored.
+   * <p>
+   * @return If the program importance should be ignored.
+   */
+  public boolean isIgnoringProgramImportance() {
+    return mIgnoreProgramImportance;
   }
 }
