@@ -1,19 +1,18 @@
 /*
- * SimpleMarkerPlugin by RenÈ Mach
+ * SimpleMarkerPlugin by René Mach
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  *
  * SVN information:
  *     $Date$
@@ -71,6 +70,7 @@ public class MarkList extends Vector<Program> {
   private Icon mMarkIcon;
   private String mMarkIconPath;
   private int mMarkPriority;
+  private byte mProgramImportance;
   private ArrayList<ProgramReceiveTarget> mReceiveTargets = new ArrayList<ProgramReceiveTarget>();
 
   private static class MarkListProgramItem {
@@ -191,6 +191,13 @@ public class MarkList extends Vector<Program> {
         }
       }
     }
+    
+    if(version >= 6) {
+      mProgramImportance = in.readByte();
+    }
+    else {
+      mProgramImportance = Program.DEFAULT_PROGRAM_IMPORTANCE;
+    }
   }
 
 
@@ -208,6 +215,7 @@ public class MarkList extends Vector<Program> {
     mMarkIcon = SimpleMarkerPlugin.getInstance().getIconForFileName(null);
     mId = name + System.currentTimeMillis();
     mMarkPriority = Program.MIN_MARK_PRIORITY;
+    mProgramImportance = Program.DEFAULT_PROGRAM_IMPORTANCE;
   }
 
   /**
@@ -236,7 +244,7 @@ public class MarkList extends Vector<Program> {
    * @throws IOException if something went wrong with writing the data
    */
   protected void writeData(final ObjectOutputStream out) throws IOException {
-    out.writeInt(5); // Version
+    out.writeInt(6); // Version
     out.writeInt(mMarkPriority);
     out.writeObject(mName);
     out.writeUTF(mId);
@@ -253,6 +261,8 @@ public class MarkList extends Vector<Program> {
     for (ProgramReceiveTarget target : mReceiveTargets) {
       target.writeData(out);
     }
+    
+    out.writeByte(mProgramImportance);
   }
 
   /**
@@ -308,10 +318,14 @@ public class MarkList extends Vector<Program> {
     return action;
   }
 
+  /**
+   * Add a program to this list.
+   * <p>
+   * @param p The program to add.
+   */
   public void addProgram(Program p) {
     if (mReceiveTargets != null) {
       for (ProgramReceiveTarget target:mReceiveTargets){
-        System.out.println(target.getReceiveIfId());
         target.receivePrograms(new Program[] {p});
       }
     }
@@ -489,6 +503,11 @@ public class MarkList extends Vector<Program> {
     }
   }
 
+  /**
+   * Sets the file name of the mark icon of this list.
+   * <p>
+   * @param fileName The file name of the icon.
+   */
   public void setMarkIconFileName(String fileName) {
     mMarkIconPath = "/simplemarkericons/" + fileName;
     mMarkIcon = SimpleMarkerPlugin.getInstance().getIconForFileName(
@@ -497,6 +516,11 @@ public class MarkList extends Vector<Program> {
             + mMarkIconPath);
   }
 
+  /**
+   * Gets the mark icon of this list.
+   * <p>
+   * @return The mark icon of this list.
+   */
   public Icon getMarkIcon() {
     return mMarkIcon;
   }
@@ -605,6 +629,25 @@ public class MarkList extends Vector<Program> {
    */
   public void setMarkPriority(int value) {
     mMarkPriority = value;
+  }
+
+  /**
+   * Gets the importance value of this list.
+   *
+   * @return The importance value of this list.
+   */
+  public byte getProgramImportance() {
+    return mProgramImportance;
+  }
+  
+  /**
+   * Sets the importance value of this list.
+   *
+   * @param value
+   *          The new importance value.
+   */
+  public void setProgramImportance(byte value) {
+    mProgramImportance = value;
   }
 
   /**

@@ -1,19 +1,18 @@
 /*
  * SimpleMarkerPlugin by René Mach
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  *
  * SVN information:
  *     $Date$
@@ -108,6 +107,11 @@ public class SimpleMarkerPlugin extends Plugin {
     mInstance = this;
   }
 
+  /**
+   * Gets the localizer of this plugin class.
+   * <p>
+   * @return The localizer.
+   */
   public static final Localizer getLocalizer() {
     return mLocalizer;
   }
@@ -224,6 +228,35 @@ public class SimpleMarkerPlugin extends Plugin {
     return true;
   }
 
+  public byte getImportanceForProgram(Program p) {
+    byte importance = Program.DEFAULT_PROGRAM_IMPORTANCE;
+    
+    if(p != null) {
+      String[] lists = mMarkListVector.getNamesOfListsContainingProgram(p);
+
+      importance = 0;
+      byte count = 0;
+      
+      for(String list : lists) {
+        byte test = mMarkListVector.getListForName(list).getProgramImportance();
+        System.out.println(list + " " + test);
+        if(test > Program.DEFAULT_PROGRAM_IMPORTANCE) {
+          count++;
+          importance += test;
+        }
+      }
+      System.out.println(count);
+      if(count > 0) {
+        importance = (byte)(importance / count);
+      }
+      else {
+        importance = Program.DEFAULT_PROGRAM_IMPORTANCE;
+      }
+    }
+
+    return importance;
+  }
+  
   public int getMarkPriorityForProgram(Program p) {
     int priority = Program.NO_MARK_PRIORITY;
 
@@ -475,6 +508,11 @@ public class SimpleMarkerPlugin extends Plugin {
     return mMarkListVector.toArray(new MarkList[mMarkListVector.size()]);
   }
 
+  /**
+   * Sets the mark lists.
+   * <p>
+   * @param markLists The new mark lists.
+   */
   public void setMarkLists(MarkList[] markLists) {
     mMarkListVector = new MarkListsVector();
     mMarkListVector.addAll(Arrays.asList(markLists));
