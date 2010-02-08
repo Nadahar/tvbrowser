@@ -742,7 +742,7 @@ public class Settings {
 
     if (mProp.hasChanged(propViewDateLayout)) {
       MainFrame.getInstance().createDateSelector();
-      MainFrame.getInstance().setShowDatelist(true, false);
+      MainFrame.getInstance().setShowDatelist(true, true); // set date list visible (and save), otherwise the setting has no effect on restart
     }
 
 
