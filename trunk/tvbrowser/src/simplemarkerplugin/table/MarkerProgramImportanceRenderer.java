@@ -21,39 +21,36 @@
  */
 package simplemarkerplugin.table;
 
+import devplugin.Program;
 import simplemarkerplugin.MarkList;
 
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.Component;
-import java.awt.FlowLayout;
 
 /**
- * The renderer for the mark icon column
+ * The cell renderer for the importance column
  * 
  * @author René Mach
  */
-public class MarkerIconRenderer extends DefaultTableCellRenderer {
-  private JPanel mPanel;
-  private JLabel mLabel;
+public class MarkerProgramImportanceRenderer extends DefaultTableCellRenderer {
 
   @Override
   public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
     Component c = super.getTableCellRendererComponent(table, value,
         isSelected, hasFocus, row, column);
-
-    if (mPanel == null) {
-      mPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-      mLabel = new JLabel();
-      mPanel.add(mLabel);
+    
+    switch(((MarkList)value).getProgramImportance()) {
+      case Program.MIN_PROGRAM_IMPORTANCE: ((JLabel)c).setText(MarkListProgramImportanceCellEditor.importanceValues[1]);break;
+      case Program.LOWER_MEDIUM_PROGRAM_IMPORTANCE: ((JLabel)c).setText(MarkListProgramImportanceCellEditor.importanceValues[2]);break;
+      case Program.MEDIUM_PROGRAM_IMPORTANCE: ((JLabel)c).setText(MarkListProgramImportanceCellEditor.importanceValues[3]);break;
+      case Program.HIGHER_MEDIUM_PROGRAM_IMPORTANCE: ((JLabel)c).setText(MarkListProgramImportanceCellEditor.importanceValues[4]);break;
+      case Program.MAX_PROGRAM_IMPORTANCE: ((JLabel)c).setText(MarkListProgramImportanceCellEditor.importanceValues[5]);break;
+    
+      default: ((JLabel)c).setText(MarkListProgramImportanceCellEditor.importanceValues[0]);
     }
-
-    mLabel.setIcon(((MarkList)value).getMarkIcon());
-    mPanel.setOpaque(true);
-    mPanel.setBackground(c.getBackground());
-
-    return mPanel;
+    
+    return c;
   }
 }

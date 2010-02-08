@@ -1,19 +1,18 @@
 /*
  * SimpleMarkerPlugin by René Mach
  * 
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  *
  * SVN information:
  *     $Date$
@@ -24,7 +23,6 @@ package simplemarkerplugin;
 
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.Sizes;
 import devplugin.Plugin;
 import devplugin.SettingsItem;
 import devplugin.SettingsTab;
@@ -34,7 +32,9 @@ import simplemarkerplugin.table.MarkListTableModel;
 import simplemarkerplugin.table.MarkerIDRenderer;
 import simplemarkerplugin.table.MarkerIconRenderer;
 import simplemarkerplugin.table.MarkerPriorityRenderer;
+import simplemarkerplugin.table.MarkerProgramImportanceRenderer;
 import simplemarkerplugin.table.MarkerSendToPluginRenderer;
+import simplemarkerplugin.table.MarkListProgramImportanceCellEditor;
 import util.io.IOUtilities;
 import util.ui.ExtensionFileFilter;
 import util.ui.Localizer;
@@ -69,7 +69,6 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -115,15 +114,29 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
     mModel = new MarkListTableModel(mMarkLists);
 
     mListTable = new JTable(mModel);
+    mListTable.getTableHeader().setReorderingAllowed(false);
+    mListTable.getTableHeader().setResizingAllowed(false);
     mListTable.getColumnModel().getColumn(0).setCellRenderer(new MarkerIDRenderer());
     mListTable.getColumnModel().getColumn(1).setCellRenderer(new MarkerIconRenderer());
-    mListTable.getColumnModel().getColumn(1).setMaxWidth(Sizes.dialogUnitXAsPixel(20,mListTable));
+    
+    int columnWidth = UiUtilities.getStringWidth(mListTable.getFont(),mModel.getColumnName(1)) + 10;
+    mListTable.getColumnModel().getColumn(1).setMaxWidth(columnWidth);
+    mListTable.getColumnModel().getColumn(1).setMinWidth(columnWidth);
+    
     mListTable.getColumnModel().getColumn(2).setCellRenderer(new MarkerPriorityRenderer());
-    mListTable.getColumnModel().getColumn(2).setMaxWidth(Sizes.dialogUnitXAsPixel(70,mListTable));
-    mListTable.getColumnModel().getColumn(2).setMinWidth(Sizes.dialogUnitXAsPixel(70,mListTable));
-    mListTable.getColumnModel().getColumn(3).setCellRenderer(new MarkerSendToPluginRenderer());
-    mListTable.getColumnModel().getColumn(3).setMaxWidth(Sizes.dialogUnitXAsPixel(70,mListTable));
-    mListTable.getColumnModel().getColumn(3).setMinWidth(Sizes.dialogUnitXAsPixel(70,mListTable));
+    columnWidth = UiUtilities.getStringWidth(mListTable.getFont(),mModel.getColumnName(2)) + 10;
+    mListTable.getColumnModel().getColumn(2).setMaxWidth(columnWidth);
+    mListTable.getColumnModel().getColumn(2).setMinWidth(columnWidth);
+
+    mListTable.getColumnModel().getColumn(3).setCellRenderer(new MarkerProgramImportanceRenderer());
+    columnWidth = UiUtilities.getStringWidth(mListTable.getFont(),mModel.getColumnName(3)) + 10;
+    mListTable.getColumnModel().getColumn(3).setMaxWidth(columnWidth);
+    mListTable.getColumnModel().getColumn(3).setMinWidth(columnWidth);
+    
+    mListTable.getColumnModel().getColumn(4).setCellRenderer(new MarkerSendToPluginRenderer());
+    columnWidth = UiUtilities.getStringWidth(mListTable.getFont(),mModel.getColumnName(4)) + 10;
+    mListTable.getColumnModel().getColumn(4).setMaxWidth(columnWidth);
+    mListTable.getColumnModel().getColumn(4).setMinWidth(columnWidth);
     
     mListTable.setRowHeight(25);
     
@@ -138,7 +151,8 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
     mListTable.addMouseListener(this);
     mListTable.addKeyListener(this);
     mListTable.getColumnModel().getColumn(2).setCellEditor(new MarkListPriorityCellEditor());
-    mListTable.getColumnModel().getColumn(3).setCellEditor(new MarkListSendToPluginCellEditor());
+    mListTable.getColumnModel().getColumn(3).setCellEditor(new MarkListProgramImportanceCellEditor());
+    mListTable.getColumnModel().getColumn(4).setCellEditor(new MarkListSendToPluginCellEditor());
 
     JScrollPane pane = new JScrollPane(mListTable);
 
@@ -168,7 +182,13 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
     mHelpLabel = UiUtilities.createHtmlHelpTextArea(SimpleMarkerPlugin.getLocalizer().msg("settings.prioHelp","The mark priority is used for selecting the marking color. The marking colors of the priorities can be change in the <a href=\"#link\">program panel settings</a>. If a program is marked by more than one plugin/list the color with the highest priority given by the marking plugins/lists is used."), new HyperlinkListener() {
       public void hyperlinkUpdate(HyperlinkEvent e) {
         if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-          Plugin.getPluginManager().showSettings(SettingsItem.PROGRAMPANELMARKING);
+          if(e.getDescription() != null) {
+            if(e.getDescription().equals("#link1")) {
+              Plugin.getPluginManager().showSettings(SettingsItem.PROGRAMPANELMARKING);
+            }
+            else if(e.getDescription().equals("#link2")) 
+              Plugin.getPluginManager().showSettings(SettingsItem.PROGRAMPANELLOOK);
+          }
         }
       }
     });
@@ -343,8 +363,6 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
         if(!dir.isDirectory()) {
           dir.mkdir();
         }
-
-        System.out.println(dir);
 
         String ext =  chooser.getSelectedFile().getName();
         ext = ext.substring(ext.lastIndexOf('.'));

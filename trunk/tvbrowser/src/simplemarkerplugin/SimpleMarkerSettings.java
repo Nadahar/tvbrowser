@@ -13,6 +13,11 @@
  * 
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * SVN information:
+ *     $Date$
+ *   $Author$
+ * $Revision$
  */
 package simplemarkerplugin;
 
@@ -50,14 +55,29 @@ public final class SimpleMarkerSettings extends PropertyBasedSettings{
     return get(KEY_SHOW_DELETED_PROGRAM, true);
   }
 
+  /**
+   * Sets the show deleted program after update value.
+   * <p>
+   * @param show If the deleted programs should be shown.
+   */
   public void setShowDeletedPrograms(boolean show) {
     set(KEY_SHOW_DELETED_PROGRAM, show);
   }
 
+  /**
+   * Gets the position of the split pane divider.
+   * <p>
+   * @return The position of the split pane divider.
+   */
   public int getSplitPosition() {
     return get(KEY_SPLIT_POSITION, -1);
   }
 
+  /**
+   * Sets the position of the split pane divider.
+   * <p>
+   * @param dividerLocation The new location of the split pane divider.
+   */
   public void setSplitPosition(int dividerLocation) {
     set(KEY_SPLIT_POSITION, dividerLocation);
   }
@@ -70,6 +90,11 @@ public final class SimpleMarkerSettings extends PropertyBasedSettings{
     set(KEY_GROUPING, grouping);
   }
 
+  /**
+   * Gets if the programs in tree should be grouped by title and date.
+   * <p>
+   * @return If the programs should be grouped by title and date.
+   */
   public boolean isGroupingByBoth() {
     return isGrouping(GROUPING_BY_TITLE_AND_DATE);
   }
@@ -82,6 +107,11 @@ public final class SimpleMarkerSettings extends PropertyBasedSettings{
     setNodeGrouping(GROUPING_BY_TITLE);
   }
 
+  /**
+   * Gets if the programs in tree should be grouped by title.
+   * <p>
+   * @return If the program should be grouped by title.
+   */
   public boolean isGroupingByTitle() {
     return isGrouping(GROUPING_BY_TITLE);
   }
@@ -90,6 +120,11 @@ public final class SimpleMarkerSettings extends PropertyBasedSettings{
     setNodeGrouping(GROUPING_BY_DATE);
   }
 
+  /**
+   * Gets if the programs in tree should be grouped by date.
+   * <p>
+   * @return If the program should be grouped by date.
+   */
   public boolean isGroupingByDate() {
     return isGrouping(GROUPING_BY_DATE);
   }
