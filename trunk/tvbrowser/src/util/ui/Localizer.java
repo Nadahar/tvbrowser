@@ -70,9 +70,9 @@ import util.io.IOUtilities;
  */
 public class Localizer {
   private static Localizer mLocalizer = null;
-  
+
   public final static String I18N_OK = "i18n_ok";
-  public final static String I18N_CANCEL = "i18n_cancel";  
+  public final static String I18N_CANCEL = "i18n_cancel";
   public final static String I18N_CLOSE = "i18n_close";
   public final static String I18N_DELETE = "i18n_delete";
   public final static String I18N_EDIT = "i18n_edit";
@@ -100,54 +100,54 @@ public class Localizer {
   public final static String I18N_TODAY = "i18n_today";
   public final static String I18N_TOMORROW = "i18n_tomorrow";
   public final static String I18N_INFO = "i18n_info";
-  
-  /** The logger for this class. */  
+
+  /** The logger for this class. */
   private static final java.util.logging.Logger mLog
     = Logger.getLogger(Localizer.class.getName());
-  
+
   private static HashMap<String, String> standardLocalizations;
 
   /**
    * To avoid the creation of to many objects, this array is used for calls using
    * one argument.
-   */  
+   */
   private static final Object[] ONE_ARG_ARR = new Object[1];
-  
+
   /**
    * To avoid the creation of to many objects, this array is used for calls using
    * two arguments.
-   */  
+   */
   private static final Object[] TWO_ARGS_ARR = new Object[2];
-  
+
   /**
    * To avoid the creation of to many objects, this array is used for calls using
    * three arguments.
-   */  
+   */
   private static final Object[] THREE_ARGS_ARR = new Object[3];
-  
+
   /** Contains for a Class (key) a Localizer (value). */
   private static final HashMap<Class, Localizer> mLocalizerCache = new HashMap<Class, Localizer>();
-    
-  /** The base name of the ResourceBundle used by this Localizer. */  
+
+  /** The base name of the ResourceBundle used by this Localizer. */
   private String mBaseName;
-  
+
   /**
    * map of localized strings of this localizer (merged translated and default strings)
    */
   private HashMap<String, String> mResource;
-  
+
   /**
    * Because one ResourceBundle is used by all the Localizers of classes from the
    * same package, a prefix is added to the key to distinguish the keys from different
    * classes.
-   */  
+   */
   private String mKeyPrefix;
-  
+
   /**
    * ellipsis suffix for use in menus
    */
   private static final String ELLIPSIS = "...";
-  
+
   private ClassLoader mParentClassLoader;
 
   /**
@@ -178,10 +178,10 @@ public class Localizer {
     } else {
       mBaseName = packageName + packageName.substring(lastDot);
     }
-    
+
     mParentClassLoader = clazz.getClassLoader();
   }
-  
+
   private HashMap<String, String> loadResourceBundle() {
     if (mResource != null) {
       return mResource;
@@ -209,21 +209,21 @@ public class Localizer {
   protected static Localizer getCachedLocalizerFor(final Class clazz) {
     return mLocalizerCache.get(clazz);
   }
-  
+
   /**
    * Gets the Localizer for the specified Class.
    *
    * @param clazz The Class to get the localizer for.
    * @return the Localizer for the specified Class.
-   */  
+   */
   public static Localizer getLocalizerFor(final Class clazz) {
     Localizer localizer = getCachedLocalizerFor(clazz);
-    
+
     if (localizer == null) {
       localizer = new Localizer(clazz);
       addLocalizerToCache(clazz, localizer);
     }
-    
+
     return localizer;
   }
 
@@ -246,17 +246,17 @@ public class Localizer {
    * @param defaultMsg The default message (English)
    * @param arg1 The argument that should replace <CODE>{0}</CODE>.
    * @return a localized message.
-   */  
+   */
   public String msg(final String key, final String defaultMsg, final Object arg1) {
     synchronized (ONE_ARG_ARR) {
       ONE_ARG_ARR[0] = arg1;
-      
+
       return msg(key, defaultMsg, ONE_ARG_ARR);
     }
   }
 
-  
-  
+
+
   /**
    * Gets a localized message.
    *
@@ -265,18 +265,18 @@ public class Localizer {
    * @param arg1 The argument that should replace <CODE>{0}</CODE>.
    * @param arg2 The argument that should replace <CODE>{1}</CODE>.
    * @return a localized message.
-   */  
+   */
   public String msg(final String key, final String defaultMsg, final Object arg1, final Object arg2) {
     synchronized (TWO_ARGS_ARR) {
       TWO_ARGS_ARR[0] = arg1;
       TWO_ARGS_ARR[1] = arg2;
-      
+
       return msg(key, defaultMsg, TWO_ARGS_ARR);
     }
   }
 
-  
-  
+
+
   /**
    * Gets a localized message.
    *
@@ -286,7 +286,7 @@ public class Localizer {
    * @param arg2 The argument that should replace <CODE>{1}</CODE>.
    * @param arg3 The argument that should replace <CODE>{2}</CODE>.
    * @return a localized message.
-   */  
+   */
   public String msg(final String key, final String defaultMsg, final Object arg1, final Object arg2,
     final Object arg3)
   {
@@ -294,13 +294,13 @@ public class Localizer {
       THREE_ARGS_ARR[0] = arg1;
       THREE_ARGS_ARR[1] = arg2;
       THREE_ARGS_ARR[2] = arg3;
-      
+
       return msg(key, defaultMsg, THREE_ARGS_ARR);
     }
   }
-  
-  
-  
+
+
+
   /**
    * Gets a localized message.
    *
@@ -309,33 +309,33 @@ public class Localizer {
    * @param args The arguments that should replace the appropriate place holder.
    *        See {@link java.text.MessageFormat} for details.
    * @return a localized message.
-   */  
+   */
   public String msg(final String key, final String defaultMsg, final Object[] args) {
     String msg = msg(key, defaultMsg);
     checkMessage(key, msg);
-    
+
     // Workaround: The MessageFormat uses the ' char for quoting strings.
     //             so the "{0}" in "AB '{0}' CD" will not be replaced.
     //             In order to avoid this we quote every ' with '', so
     //             everything will be replaced as expected.
     msg = IOUtilities.replace(msg, "'", "''");
-    
-    return MessageFormat.format(msg, args);    
+
+    return MessageFormat.format(msg, args);
   }
-  
-  
-  
+
+
+
   /**
    * Gets a localized message.
    *
    * @param key The key of the message.
    * @param defaultMsg The default message (English)
    * @return a localized message.
-   */  
+   */
   public String msg(final String key, final String defaultMsg) {
     return msg(key,defaultMsg,true);
   }
-  
+
   /**
    * Gets a localized message.
    *
@@ -347,18 +347,20 @@ public class Localizer {
    */
   public String msg(String key, final String defaultMsg, final boolean warn) {
     key = mKeyPrefix + key;
-    
+
     String msg = null;
     if (loadResourceBundle() != null) {
       try {
         msg = mResource.get(key);
-        checkMessage(key, msg);
+        if (warn) {
+          checkMessage(key, msg);
+        }
       }
       catch (MissingResourceException exc) {
         //Empty
       }
     }
-    
+
     if (msg == null) {
       if (mResource != null && warn) {
         // Workaround: There is a bug in the logging mechanism of Java.
@@ -386,12 +388,12 @@ public class Localizer {
       return msg;
     }
   }
-  
+
   /**
    * Scans all Language-Directories for different Versions of tvbrowser/tvbrowser.properties.
-   * 
+   *
    * This is faster than analyzing all Files
-   *  
+   *
    * @return all available Locales
    * @since 2.3
    */
@@ -410,9 +412,9 @@ public class Localizer {
 
       // First Step: look into tvbrowser.jar
       JarFile file = new JarFile(jar);
-      
+
       Enumeration<JarEntry> entries = file.entries();
-      
+
       while (entries.hasMoreElements()) {
         JarEntry entry = entries.nextElement();
         String name = entry.getName();
@@ -421,7 +423,7 @@ public class Localizer {
           langArray.add(getLocaleForString(name));
         }
       }
-      
+
       addLocaleFiles(new File(Settings.getUserSettingsDirName() + "/lang/tvbrowser"), langArray);
       addLocaleFiles(new File("lang/tvbrowser"), langArray);
     } catch (FileNotFoundException e) {
@@ -431,19 +433,19 @@ public class Localizer {
     }
 
     Locale[] locales = langArray.toArray(new Locale[langArray.size()]);
-    
+
     Arrays.sort(locales, new Comparator<Locale>() {
       public int compare(Locale o1, Locale o2) {
         return o1.getDisplayName().compareTo(o2.getDisplayName());
       }
     });
-    
+
     return locales;
   }
 
   /**
    * Adds all found Locales of tvbrowser/tvbrowser.properties to the langArray
-   * 
+   *
    * @param dir search this directory
    * @param langArray add found locales to this ArrayList
    */
@@ -466,7 +468,7 @@ public class Localizer {
   /**
    * Get the Locale for a specific String.
    * The String is in this format: "lang_country_variant"
-   * 
+   *
    * @param string String with Locale
    * @return Locale
    */
@@ -481,7 +483,7 @@ public class Localizer {
       return new Locale(split[0]);
     }
   }
-  
+
   /**
    * get a standard localization
    * @param key one of the constant values defined in the Localizer class
@@ -491,9 +493,9 @@ public class Localizer {
     if(mLocalizer == null) {
       mLocalizer = Localizer.getLocalizerFor(Localizer.class);
     }
-    
+
     String value = mLocalizer.msg(key,null);
-    
+
     if(value == null) {
       if(key.equals(I18N_OK)) {
         value = "OK";
@@ -545,10 +547,10 @@ public class Localizer {
         value = "Default";
       }
     }
-    
+
     return value;
   }
-  
+
   /**
    * get a standard localization with ellipsis as suffix
    * @param key one of the constant values defined in the Localizer class
@@ -557,7 +559,7 @@ public class Localizer {
   public static String getEllipsisLocalization(final String key) {
     return ellipsisSuffix(getLocalization(key));
   }
-  
+
   private void checkMessage(final String key, final String localizedMessage) {
     if (TVBrowser.isStable()) {
       return;
@@ -607,11 +609,11 @@ public class Localizer {
    * @param defaultMsg The default message (English)
    * @param arg1 The argument that should replace <CODE>{0}</CODE>.
    * @return a localized message.
-   */  
+   */
   public String ellipsisMsg(final String key, final String defaultMsg, final Object arg1) {
     return ellipsisSuffix(msg(key, defaultMsg, arg1));
   }
-  
+
   /**
    * check if a given message key exists
    * @param key
