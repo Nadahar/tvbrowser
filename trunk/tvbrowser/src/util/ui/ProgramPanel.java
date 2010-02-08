@@ -77,7 +77,7 @@ import devplugin.ProgramInfoHelper;
 
 /**
  * A ProgramPanel is a JComponent representing a single program.
- * 
+ *
  * @author Martin Oberhauser
  * @author Til Schneider, www.murfman.de
  */
@@ -88,8 +88,8 @@ public class ProgramPanel extends JComponent implements ChangeListener, PluginSt
 
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer
       .getLocalizerFor(ProgramPanel.class);
-  
-  private static final boolean USE_FULL_HEIGHT = true;  
+
+  private static final boolean USE_FULL_HEIGHT = true;
 
   private static final Composite NORMAL_COMPOSITE = AlphaComposite.SrcOver;
   private static final Composite PALE_COMPOSITE = AlphaComposite.getInstance(
@@ -105,7 +105,7 @@ public class ProgramPanel extends JComponent implements ChangeListener, PluginSt
    * the font size offset for the currently selected dynamic font size
    */
   private static int fontSizeOffset = 0;
-  
+
   private static int columnWidthOffset = 0;
 
   /** The width of the left part (the time). */
@@ -116,8 +116,8 @@ public class ProgramPanel extends JComponent implements ChangeListener, PluginSt
   private static int WIDTH_TOTAL = WIDTH_LEFT + WIDTH_RIGHT;
 
   /** Formatter for the Time-String */
-  private static final TimeFormatter TIME_FORMATTER = new TimeFormatter(); 
-  
+  private static final TimeFormatter TIME_FORMATTER = new TimeFormatter();
+
   /**
    * horizontal distance between format icons
    */
@@ -127,7 +127,7 @@ public class ProgramPanel extends JComponent implements ChangeListener, PluginSt
    * vertical distance between format icons
    */
   private static final int ICON_DISTANCE_Y = 2;
-  
+
   /** The height. */
   private int mHeight = 0;
   /**
@@ -142,10 +142,10 @@ public class ProgramPanel extends JComponent implements ChangeListener, PluginSt
   private TextAreaIcon mTitleIcon;
   /** The icon used to render the description. */
   private TextAreaIcon mDescriptionIcon;
-  
+
   /** The icon used to paint the picture with */
   private PictureAreaIcon mPictureAreaIcon;
-  
+
   /** The icons to show on the left side under the start time. */
   private Icon[] mIconArr;
   /** The program. */
@@ -158,7 +158,7 @@ public class ProgramPanel extends JComponent implements ChangeListener, PluginSt
   private boolean mMouseOver = false;
 
   private boolean mIsSelected = false;
-  
+
   /**
    * this panel has been changed by third party, needs update before painting
    */
@@ -166,19 +166,19 @@ public class ProgramPanel extends JComponent implements ChangeListener, PluginSt
 
   /** Orientation of progress bar */
   private int mAxis = ProgramPanelSettings.Y_AXIS;
-  
+
   /** The vertical gap between the programs */
   private static int V_GAP = 5;
-  
+
   private ProgramPanelSettings mSettings;
-  
+
   private boolean mPaintExpiredProgramsPale = true;
 
   /**
    * rectangle of the format icon area, used for tooltip calculation
    */
   private Rectangle mInfoIconRect;
-  
+
   /** The importance of this program */
   private byte mProgramImportance;
 
@@ -188,34 +188,34 @@ public class ProgramPanel extends JComponent implements ChangeListener, PluginSt
   public ProgramPanel() {
     this(new ProgramPanelSettings(Settings.propPictureType.getInt(), Settings.propPictureStartTime.getInt(), Settings.propPictureEndTime.getInt(), false, Settings.propIsPictureShowingDescription.getBoolean(), Settings.propPictureDuration.getInt(), Settings.propPicturePluginIds.getStringArray()));
   }
-  
+
   /**
    * Creates a new instance of ProgramPanel.
-   * @param settings The settings for this program panel. 
-   * 
+   * @param settings The settings for this program panel.
+   *
    * @since 2.2.2
    */
   public ProgramPanel(ProgramPanelSettings settings) {
     setToolTipText("");
     mSettings = settings;
     mAxis = settings.getAxis();
-    
+
     if (mTitleFont == null) {
       updateFonts();
     }
 
     calculateWidth();
-    
+
     mTitleIcon = new TextAreaIcon(null, mTitleFont, WIDTH_RIGHT - 5);
     mDescriptionIcon = new TextAreaIcon(null, mNormalFont, WIDTH_RIGHT - 5);
     mDescriptionIcon.setMaximumLineCount(3);
-    
+
     setBackground(UIManager.getColor("programPanel.background"));
   }
 
   /**
    * Creates a new instance of ProgramPanel.
-   * 
+   *
    * @param prog
    *          The program to show in this panel.
    */
@@ -223,10 +223,10 @@ public class ProgramPanel extends JComponent implements ChangeListener, PluginSt
     this();
     setProgram(prog);
   }
-  
+
   /**
    * Creates a new instance of ProgramPanel.
-   * 
+   *
    * @param prog
    *          The program to show in this panel.
    * @param settings The settings for this program panel.
@@ -240,7 +240,7 @@ public class ProgramPanel extends JComponent implements ChangeListener, PluginSt
 
   /**
    * Creates a new instance of ProgramPanel.
-   * 
+   *
    * @param prog
    *          The program to show in this panel.
    * @param axis
@@ -318,7 +318,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
   }
   return font.deriveFont(size);
 }
-  
+
   /**
    * Reloads the font settings and sets the dynamic font size
    * to standard font size again
@@ -326,10 +326,10 @@ private static Font getDynamicFontSize(Font font, int offset) {
   public static void updateFonts() {
     updateFonts(0);
   }
-  
+
   /**
    * Change the settings of this panel.
-   * 
+   *
    * @param settings The settings of this panel.
    */
   public void setProgramPanelSettings(ProgramPanelSettings settings) {
@@ -357,7 +357,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
   public static void updateColumnWidth() {
     updateColumnWidth(0);
   }
-  
+
   public static int updateColumnWidth(int newOffset) {
     if (newOffset == 0) {
       columnWidthOffset = 0;
@@ -382,7 +382,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
    * Gets the preferred height.
    * <p>
    * It's the height the panel has with a maximum of 3 information rows.
-   * 
+   *
    * @return The preferred height.
    */
   public int getPreferredHeight() {
@@ -391,7 +391,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
 
   /**
    * Sets the height of this panel
-   * 
+   *
    * @param height
    */
   public void setHeight(int height) {
@@ -407,7 +407,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
 
   /**
    * Gets the height.
-   * 
+   *
    * @return The height.
    */
   public int getHeight() {
@@ -416,7 +416,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
 
   /**
    * Sets the program this panel shows.
-   * 
+   *
    * @param program
    *          The program to show in this panel.
    */
@@ -426,24 +426,24 @@ private static Font getDynamicFontSize(Font font, int offset) {
 
   /**
    * Sets the program this panel shows.
-   * 
+   *
    * @param program
    *          The program to show in this panel.
    * @param maxHeight
    *          The maximum height the program should have (in pixels).
    */
-  public void setProgram(Program program, int maxHeight) {    
+  public void setProgram(Program program, int maxHeight) {
     Program oldProgram = mProgram;
     mProgram = program;
-    
+
     if (Settings.propProgramTableCutTitle.getBoolean()) {
       mTitleIcon.setMaximumLineCount(Settings.propProgramTableCutTitleLines
           .getInt());
     } else {
       mTitleIcon.setMaximumLineCount(-1);
     }
-    mDescriptionIcon.setMaximumLineCount(-1);    
-    
+    mDescriptionIcon.setMaximumLineCount(-1);
+
     boolean programChanged = (oldProgram != program);
     if (programChanged) {
       // Get the start time, filter duplicate strings
@@ -456,13 +456,13 @@ private static Font getDynamicFontSize(Font font, int offset) {
         programHasChanged();
       }
     }
-    
+
     boolean dontShow = true;
-    
+
     if(mSettings.isShowingPictureForPlugins()) {
       String[] pluginIds = mSettings.getPluginIds();
       Marker[] markers = mProgram.getMarkerArr();
-      
+
       if(markers != null && pluginIds != null) {
         for (Marker marker : markers) {
           for (String pluginId : pluginIds) {
@@ -474,14 +474,14 @@ private static Font getDynamicFontSize(Font font, int offset) {
         }
       }
     }
-    
+
     // Create the picture area icon
     int length = program.getLength();
     if (!mSettings.isShowingOnlyDateAndTitle()
         && mProgram.hasFieldValue(ProgramFieldType.PICTURE_TYPE)
-        && ( 
-        mSettings.isShowingPictureEver() || !dontShow || 
-        (mSettings.isShowingPictureInTimeRange() && 
+        && (
+        mSettings.isShowingPictureEver() || !dontShow ||
+        (mSettings.isShowingPictureInTimeRange() &&
          !ProgramUtilities.isNotInTimeRange(mSettings.getPictureTimeRangeStart(),mSettings.getPictureTimeRangeEnd(),program)) ||
          (mSettings
             .isShowingPictureForDuration() && mSettings.getDuration() <= length)
@@ -490,7 +490,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
     } else {
       mPictureAreaIcon = new PictureAreaIcon();
     }
-    
+
     // Calculate the maximum description lines
     int titleHeight = mTitleIcon.getIconHeight();
     int maxDescLines;
@@ -504,11 +504,11 @@ private static Font getDynamicFontSize(Font font, int offset) {
       maxDescLines = Settings.propProgramPanelMaxLines.getInt();
     }
     int additionalHeight = Settings.propProgramPanelUsesExtraSpaceForMarkIcons.getBoolean() && program.getMarkerArr().length > 0 ? 16 : 0;
-    
+
     if (maxHeight != -1) {
       maxDescLines = (maxHeight - titleHeight - mPictureAreaIcon.getIconHeight() - additionalHeight - V_GAP) / mNormalFont.getSize();
     }
-    
+
     if (programChanged
         || (maxDescLines != mDescriptionIcon.getMaximumLineCount())) {
       int descHeight = 0;
@@ -528,14 +528,14 @@ private static Font getDynamicFontSize(Font font, int offset) {
       } else {
         descHeight = 0;
       }
-      
+
       // Calculate the height
       mHeight = titleHeight + descHeight + mPictureAreaIcon.getIconHeight() + additionalHeight + V_GAP;
       setPreferredSize(new Dimension(WIDTH_TOTAL, mHeight));
 
       // Calculate the preferred height
       mPreferredHeight = titleHeight + (maxDescLines * mNormalFont.getSize()) + mPictureAreaIcon.getIconHeight() + additionalHeight + V_GAP;
-      
+
       if (mHeight < mPreferredHeight) {
         mPreferredHeight = mHeight;
       }
@@ -553,7 +553,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
 
   /**
    * Gets the plugin icons for a program to show them on the left below the start time.
-   * 
+   *
    * @param program
    *          The program to get the icons for.
    * @return The icons for the program.
@@ -633,35 +633,35 @@ private static Font getDynamicFontSize(Font font, int offset) {
       return iconList.toArray(new Icon[iconList.size()]);
     }
   }
-  
+
   private byte getProgramImportance(final Program program) {
     if (program.getProgramState() == Program.IS_VALID_STATE &&
         Settings.propProgramPanelAllowTransparency.getBoolean()) {
       int count = 0;
       int addValue = 0;
-      
+
       PluginProxy[] plugins = PluginProxyManager.getInstance().getActivatedPlugins();
-      
+
       for(PluginProxy plugin : plugins) {
         int value = plugin.getImportanceForProgram(program);
-        
+
         if(value >= Program.MIN_PROGRAM_IMPORTANCE &&
             value <= Program.MAX_PROGRAM_IMPORTANCE) {
           count++;
           addValue += value;
         }
       }
-      
+
       if(count > 0) {
         return (byte)(addValue/count);
       }
     }
-    
+
     return Program.MAX_PROGRAM_IMPORTANCE;
   }
   /**
    * Paints the component.
-   * 
+   *
    * @param g
    *          The graphics context to paint to.
    */
@@ -672,7 +672,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
       mProgramImportance = getProgramImportance(mProgram);
       mHasChanged = false;
     }
-    
+
     /* This is for debugging of the marking problem after an data update */
     if(mProgram.getProgramState() == Program.WAS_DELETED_STATE) {
       setForeground(Color.red);
@@ -681,7 +681,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
       setForeground(Color.blue);
       mTextColor = Color.blue;
     }
-    
+
     int width = getWidth();
     if (getTextIconWidth(width) != mDescriptionIcon.getIconWidth()) {
       recreateTextIcons(width);
@@ -689,7 +689,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
 
     int height = USE_FULL_HEIGHT ? getHeight() : mHeight;
     Graphics2D grp = (Graphics2D) g;
-    
+
     // if program table is anti-aliased, then this program panel too
     if (Settings.propEnableAntialiasing.getBoolean()) {
       grp.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
@@ -729,16 +729,16 @@ private static Font getDynamicFontSize(Font font, int offset) {
 
         Color c = Settings.propProgramTableColorOnAirDark.getColor();
         grp.setColor(new Color(c.getRed(), c.getGreen(), c.getBlue(), (int)(c.getAlpha()*mProgramImportance/10.)));
-        
+
         int fillWidth = progressX - borderWidth;
         if (fillWidth > 0) {
           grp.fillRect(borderWidth, borderWidth, fillWidth, height - borderWidth);
         }
         c = Settings.propProgramTableColorOnAirLight.getColor();
         grp.setColor(new Color(c.getRed(), c.getGreen(), c.getBlue(), (int)(c.getAlpha()*mProgramImportance/10.)));
-        
+
         fillWidth = width - progressX - borderWidth * 2;
-        if (fillWidth > 0) { 
+        if (fillWidth > 0) {
           grp.fillRect(progressX, borderWidth, fillWidth, height - borderWidth);
         }
 
@@ -751,7 +751,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
 
         Color c = Settings.propProgramTableColorOnAirDark.getColor();
         grp.setColor(new Color(c.getRed(), c.getGreen(), c.getBlue(), (int)(c.getAlpha()*mProgramImportance/10.)));
-        
+
         int fillHeight = progressY - borderWidth;
 
         if (fillHeight > height) {
@@ -762,10 +762,10 @@ private static Font getDynamicFontSize(Font font, int offset) {
         if (fillHeight > 0) {
           grp.fillRect(borderWidth, borderWidth, width - borderWidth * 2, fillHeight);
         }
-        
+
         c = Settings.propProgramTableColorOnAirLight.getColor();
         grp.setColor(new Color(c.getRed(), c.getGreen(), c.getBlue(), (int)(c.getAlpha()*mProgramImportance/10.)));
-        
+
         fillHeight = height - progressY - borderWidth;
 
         if (fillHeight > height) {
@@ -786,20 +786,20 @@ private static Font getDynamicFontSize(Font font, int offset) {
     Marker[] markedByPluginArr = mProgram.getMarkerArr();
     if (markedByPluginArr.length != 0) {
       Color c = Plugin.getPluginManager().getTvBrowserSettings().getColorForMarkingPriority(mProgram.getMarkPriority());
-      
+
       if(c == null) {
         c = Settings.propProgramPanelMarkedMinPriorityColor.getColor();
       }
 
       int alphaValue = (int)(c.getAlpha()*mProgramImportance/10.);
-      
+
       if(mProgram.isExpired()) {
         grp.setColor(new Color(c.getRed(), c.getGreen(), c.getBlue(), (int)(alphaValue*6/10.)));
       }
       else {
         grp.setColor(new Color(c.getRed(), c.getGreen(), c.getBlue(), alphaValue));
       }
-      
+
       if(mProgram.getMarkPriority() > Program.NO_MARK_PRIORITY) {
         if(Settings.propProgramPanelWithMarkingsShowingBoder.getBoolean()) {
           grp.fill3DRect(0, 0, width, height, true);
@@ -820,26 +820,28 @@ private static Font getDynamicFontSize(Font font, int offset) {
 
       Stroke str = grp.getStroke();
       Color col = grp.getColor();
-      float dash[] = { 10.0f };
-      BasicStroke dashed = new BasicStroke(1.0f, BasicStroke.CAP_BUTT,
+      float dash[] = { 2.0f };
+      int lineWidth = 1;
+      BasicStroke dashed = new BasicStroke(lineWidth, BasicStroke.CAP_BUTT,
           BasicStroke.JOIN_MITER, 10.0f, dash, 0.0f);
       grp.setColor(Color.BLACK);
       grp.setStroke(dashed);
-      grp.drawRect(0, 0, width - 1, height - 1);
-      
+
+      grp.drawRect(lineWidth - 1, lineWidth - 1, width - lineWidth, height - lineWidth);
+
       grp.setStroke(str);
       grp.setColor(col);
     }
-    
+
     // Draw all the text
     if (mPaintExpiredProgramsPale && mProgram.isExpired()) {
       Color c = new Color(Color.gray.getRed(), Color.gray.getGreen(), Color.gray.getBlue(), (int)(Color.gray.getAlpha()*mProgramImportance/10.));
-      
+
       setForeground(c);
       grp.setColor(c);
     } else {
       Color c = new Color(mTextColor.getRed(), mTextColor.getGreen(), mTextColor.getBlue(), (int)(mTextColor.getAlpha()*mProgramImportance/10.));
-      
+
       setForeground(c);
       grp.setColor(c);
     }
@@ -850,7 +852,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
 
     if (!mSettings.isShowingOnlyDateAndTitle()) {
       mPictureAreaIcon.paintIcon(this,grp, WIDTH_LEFT, mTitleIcon.getIconHeight());
-      
+
       if (mHeight >= mPreferredHeight) {
         mDescriptionIcon.paintIcon(this, grp, WIDTH_LEFT, mTitleIcon
             .getIconHeight() + mPictureAreaIcon.getIconHeight());
@@ -865,8 +867,8 @@ private static Font getDynamicFontSize(Font font, int offset) {
             AlphaComposite.SRC_OVER, mProgramImportance/10F));
       }
     }
-    
-    
+
+
     // paint the icons of the plugins that have marked the program (lower right corner)
     int x = width - 1;
     int y = mTitleIcon.getIconHeight() + mDescriptionIcon.getIconHeight()
@@ -877,12 +879,12 @@ private static Font getDynamicFontSize(Font font, int offset) {
       if (icons != null) {
         for(int i = icons.length - 1; i >= 0 ; i--) {
           x -= icons[i].getIconWidth();
-          
+
           icons[i].paintIcon(this, grp, x, y - icons[i].getIconHeight());
         }
       }
     }
-    
+
     // Paint the icons on the left side
     if (mIconArr != null) {
       x = ICON_DISTANCE_X;
@@ -943,7 +945,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
             y - iconsTopLeft.y + iconHeight);
       }
     }
-    
+
     // Reset the old composite
     if (mPaintExpiredProgramsPale && mProgram.isExpired()) {
       grp.setComposite(NORMAL_COMPOSITE);
@@ -974,7 +976,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
 
   /**
    * Gets the program object of this ProgramPanel.
-   * 
+   *
    * @return the program object of this ProgramPanel.
    */
   public Program getProgram() {
@@ -984,7 +986,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
   /**
    * Adds a MouseListener that shows the plugin context menu when the user does
    * a right click on the program panel.
-   * 
+   *
    * @param caller
    *          The ContextMenuIf to exclude from the context menu. When
    *          <code>null</code> no ContextMenuIf is excluded.
@@ -993,7 +995,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
     addMouseListener(new MouseAdapter() {
       private Thread mLeftClickThread;
       private boolean mPerformingSingleClick = false;
-      
+
       public void mousePressed(MouseEvent e) {
         if (e.isPopupTrigger()) {
           showPopup(e, caller);
@@ -1006,7 +1008,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
         }
       }
 
-      public void mouseClicked(final MouseEvent evt) {        
+      public void mouseClicked(final MouseEvent evt) {
         if (SwingUtilities.isLeftMouseButton(evt) && (evt.getClickCount() == 1) && evt.getModifiersEx() == 0) {
           mLeftClickThread = new Thread("Single click") {
             public void run() {
@@ -1014,14 +1016,14 @@ private static Font getDynamicFontSize(Font font, int offset) {
                 mPerformingSingleClick = false;
                 sleep(Plugin.SINGLE_CLICK_WAITING_TIME);
                 mPerformingSingleClick = true;
-                
+
                 Plugin.getPluginManager().handleProgramSingleClick(mProgram, caller);
                 mPerformingSingleClick = false;
               } catch (InterruptedException e) { // ignore
               }
             }
           };
-          
+
           mLeftClickThread.setPriority(Thread.MIN_PRIORITY);
           mLeftClickThread.start();
         }
@@ -1029,7 +1031,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
           if(!mPerformingSingleClick && mLeftClickThread != null && mLeftClickThread.isAlive()) {
             mLeftClickThread.interrupt();
           }
-          
+
           if(!mPerformingSingleClick) {
             Plugin.getPluginManager().handleProgramDoubleClick(mProgram, caller);
           }
@@ -1044,7 +1046,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
 
   /**
    * Shows the Popup
-   * 
+   *
    * @param evt
    *          Event for X/Y-Coordinates
    * @param caller
@@ -1069,7 +1071,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
    * register at the programs as ChangeListener and call this method when
    * {@link ChangeListener#stateChanged(javax.swing.event.ChangeEvent)} was
    * called.
-   * 
+   *
    * @see Program#addChangeListener(ChangeListener)
    */
   public void programHasChanged() {
@@ -1084,7 +1086,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
    * Called when the state of the program has changed.
    * <p>
    * repaints the panel.
-   * 
+   *
    * @param evt
    *          The event describing the change.
    */
@@ -1097,7 +1099,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
 
   /**
    * Sets the Color of the Text
-   * 
+   *
    * @param col
    *          Color of the Text
    */
@@ -1107,7 +1109,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
 
   /**
    * Returns the Color of the Text
-   * 
+   *
    * @return Color of the Text
    */
   public Color getTextColor() {
@@ -1116,14 +1118,14 @@ private static Font getDynamicFontSize(Font font, int offset) {
 
   /**
    * Paints the ProgramPanel
-   * 
+   *
    * @param mouse
    *          under a Mouse and needs highlight?
    * @param isSelected
    *          IsSelected program?
    * @param g
    *          Graphics-Object
-   * 
+   *
    */
   public void paint(boolean mouse, boolean isSelected, Graphics g) {
     mMouseOver = mouse;
@@ -1137,7 +1139,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
   public int getMinimumHeight() {
     return mTitleIcon.getIconHeight() + mPictureAreaIcon.getIconHeight() + 3 + (Settings.propProgramPanelUsesExtraSpaceForMarkIcons.getBoolean() && mProgram.getMarkerArr().length > 0 ? 16 : 0);
   }
-  
+
   /**
    * Sets if expired programs should be painted pale.
    * <p>
@@ -1148,7 +1150,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
   public void setPaintExpiredProgramsPale(boolean value) {
     mPaintExpiredProgramsPale = value;
   }
-  
+
   public void pluginActivated(PluginProxy plugin) {
     if (plugin.getProgramTableIcons(Plugin.getPluginManager().getExampleProgram()) != null) {
       updatePrograms();
@@ -1174,7 +1176,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
 
   /**
    * get the tooltip text for the local mouse coordinates x and y
-   * 
+   *
    * @param x
    * @param y
    * @return
@@ -1192,17 +1194,17 @@ private static Font getDynamicFontSize(Font font, int offset) {
       int markerY = mTitleIcon.getIconHeight()
           + mDescriptionIcon.getIconHeight() + mPictureAreaIcon.getIconHeight()
           + 2;
-      markerY = Math.min(markerY, getHeight() - 16); 
+      markerY = Math.min(markerY, getHeight() - 16);
       if ((y >= markerY) && (y <= markerY + 16)) {
         return getMarkedByTooltip();
       }
     }
-    
+
     // show full title if the title has been shortened
     if (mTitleIcon.isTextCut()) {
       return mProgram.getTitle();
     }
-    
+
     return null;
   }
 
@@ -1288,10 +1290,10 @@ private static Font getDynamicFontSize(Font font, int offset) {
     }
     return null;
   }
-  
+
   /**
    * get the X offset of the title in pixels
-   * 
+   *
    * @return
    */
   public int getTitleX() {
@@ -1314,7 +1316,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
     super.setSize(width, height);
     setWidth(width);
   }
-  
+
   public void setWidth(int newWidth) {
     int oldWidth = getWidth();
     int textIconWidth = getTextIconWidth(newWidth);
@@ -1343,6 +1345,6 @@ private static Font getDynamicFontSize(Font font, int offset) {
       setProgram(p);
     }
   }
-  
-  
+
+
 }
