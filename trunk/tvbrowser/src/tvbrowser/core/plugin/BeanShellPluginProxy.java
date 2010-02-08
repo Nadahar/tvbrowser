@@ -16,6 +16,7 @@ import bsh.Interpreter;
 import devplugin.ActionMenu;
 import devplugin.Channel;
 import devplugin.ChannelDayProgram;
+import devplugin.ImportanceValue;
 import devplugin.PluginInfo;
 import devplugin.PluginTreeNode;
 import devplugin.PluginsFilterComponent;
@@ -282,8 +283,8 @@ public class BeanShellPluginProxy extends AbstractPluginProxy {
     }
 
     @Override
-    protected byte doGetImportanceForProgram(Program p) {
+    protected ImportanceValue doGetImportanceValueForProgram(Program p) {
       // TODO Auto-generated method stub
-      return Program.DEFAULT_PROGRAM_IMPORTANCE;
+      return new ImportanceValue((byte)1,Program.DEFAULT_PROGRAM_IMPORTANCE);
     }
  }

@@ -31,6 +31,7 @@ import tvdataservice.MutableProgram;
 import devplugin.ActionMenu;
 import devplugin.Channel;
 import devplugin.ChannelDayProgram;
+import devplugin.ImportanceValue;
 import devplugin.PluginAccess;
 import devplugin.PluginTreeNode;
 import devplugin.PluginsProgramFilter;
@@ -213,10 +214,10 @@ public interface PluginProxy extends PluginAccess {
   public ActionMenu getContextMenuActions(final Channel channel);
 
   /**
-   * Gets the importance of a program.The importance of all active plugins is used to determinate
+   * Gets the importance value of a program.The importance of all active plugins is used to determinate
    * the opacity of the used colors of a program, therefor a mean value of all values is used.
    * <p>
-   * The importance value can be.
+   * The importance value can be created as a weighted total of the following values.
    * <ul>
    * <li>{@link Program#DEFAULT_PROGRAM_IMPORTANCE},</li>
    * <li>{@link Program#MIN_PROGRAM_IMPORTANCE},</li>
@@ -230,5 +231,5 @@ public interface PluginProxy extends PluginAccess {
    * @return The importance value for the given program.
    * @since 3.0
    */
-  public byte getImportanceForProgram(Program p);
+  public ImportanceValue getImportanceValueForProgram(Program p);
 }

@@ -59,6 +59,7 @@ import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.ActionMenu;
 import devplugin.ContextMenuAction;
+import devplugin.ImportanceValue;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.PluginTreeNode;
@@ -228,33 +229,28 @@ public class SimpleMarkerPlugin extends Plugin {
     return true;
   }
 
-  public byte getImportanceForProgram(Program p) {
-    byte importance = Program.DEFAULT_PROGRAM_IMPORTANCE;
-    
+  public ImportanceValue getImportanceValueForProgram(Program p) {
     if(p != null) {
       String[] lists = mMarkListVector.getNamesOfListsContainingProgram(p);
 
-      importance = 0;
+      short importance = 0;
       byte count = 0;
       
       for(String list : lists) {
         byte test = mMarkListVector.getListForName(list).getProgramImportance();
-        System.out.println(list + " " + test);
+        
         if(test > Program.DEFAULT_PROGRAM_IMPORTANCE) {
           count++;
           importance += test;
         }
       }
-      System.out.println(count);
+      
       if(count > 0) {
-        importance = (byte)(importance / count);
-      }
-      else {
-        importance = Program.DEFAULT_PROGRAM_IMPORTANCE;
+        return new ImportanceValue(count,importance);
       }
     }
 
-    return importance;
+    return new ImportanceValue((byte)1,Program.DEFAULT_PROGRAM_IMPORTANCE);
   }
   
   public int getMarkPriorityForProgram(Program p) {

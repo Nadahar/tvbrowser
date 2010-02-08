@@ -54,6 +54,7 @@ import devplugin.ActionMenu;
 import devplugin.Channel;
 import devplugin.ChannelDayProgram;
 import devplugin.ContextMenuAction;
+import devplugin.ImportanceValue;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.PluginTreeNode;
@@ -628,7 +629,7 @@ public class JavaPluginProxy extends AbstractPluginProxy {
   }
 
   @Override
-  protected byte doGetImportanceForProgram(Program p) {
-    return mPlugin.getImportanceForProgram(p);
+  protected ImportanceValue doGetImportanceValueForProgram(Program p) {
+    return mPlugin.getImportanceValueForProgram(p);
   }
 }
