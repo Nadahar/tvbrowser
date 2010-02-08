@@ -910,10 +910,10 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
   }
   
   /**
-   * Gets the importance of a program.The importance of all active plugins is used to determinate
+   * Gets the importance value of a program.The importance of all active plugins is used to determinate
    * the opacity of the used colors of a program, therefor a mean value of all values is used.
    * <p>
-   * The importance value can be.
+   * The importance value can be created as a weighted total of the following values.
    * <ul>
    * <li>{@link Program#DEFAULT_PROGRAM_IMPORTANCE},</li>
    * <li>{@link Program#MIN_PROGRAM_IMPORTANCE},</li>
@@ -927,7 +927,7 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
    * @return The importance value for the given program.
    * @since 3.0
    */
-  public byte getImportanceForProgram(Program p) {
-    return Program.DEFAULT_PROGRAM_IMPORTANCE;
+  public ImportanceValue getImportanceValueForProgram(Program p) {
+    return new ImportanceValue((byte)1,Program.DEFAULT_PROGRAM_IMPORTANCE);
   }
 }

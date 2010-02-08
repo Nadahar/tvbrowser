@@ -68,6 +68,7 @@ import util.misc.StringPool;
 import util.program.ProgramUtilities;
 import util.settings.ProgramPanelSettings;
 import devplugin.ContextMenuIf;
+import devplugin.ImportanceValue;
 import devplugin.Marker;
 import devplugin.Plugin;
 import devplugin.PluginAccess;
@@ -643,12 +644,11 @@ private static Font getDynamicFontSize(Font font, int offset) {
       PluginProxy[] plugins = PluginProxyManager.getInstance().getActivatedPlugins();
 
       for(PluginProxy plugin : plugins) {
-        int value = plugin.getImportanceForProgram(program);
+        ImportanceValue value = plugin.getImportanceValueForProgram(program);
 
-        if(value >= Program.MIN_PROGRAM_IMPORTANCE &&
-            value <= Program.MAX_PROGRAM_IMPORTANCE) {
-          count++;
-          addValue += value;
+        if(value.getWeight() > 0 && value.getTotalImportance() >= Program.MIN_MARK_PRIORITY) {
+          count += value.getWeight();
+          addValue += value.getTotalImportance();
         }
       }
 
