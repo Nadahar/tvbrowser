@@ -25,6 +25,7 @@
  */
 package tvbrowser.ui.settings.looksSettings;
 
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -86,7 +87,7 @@ public class SkinLNFSettings extends JDialog implements WindowClosingIf {
 
     content.add(DefaultComponentFactory.getInstance().createSeparator(Localizer.getLocalization(Localizer.I18N_HELP)), cc.xyw(1,1,3));
 
-    content.add(UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("skinLFInfo", "Skin Info")), cc.xyw(2,3,2));
+    content.add(UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("skinLFInfo", "Skin Info", "http://tvbrowser.org/de/downloads-mainmenu-5/themepacks-mainmenu-30.html")), cc.xyw(2,3,2));
 
     String temp = Settings.propSkinLFThemepack.getString();
     temp = StringUtils.substringAfterLast(temp, File.separator);
@@ -122,7 +123,8 @@ public class SkinLNFSettings extends JDialog implements WindowClosingIf {
 
     UiUtilities.registerForClosing(this);
 
-    setSize(Sizes.dialogUnitXAsPixel(270, this), Sizes.dialogUnitYAsPixel(145, this));
+    setPreferredSize(new Dimension(Sizes.dialogUnitXAsPixel(270, this), Sizes.dialogUnitYAsPixel(180, this)));
+    pack();
   }
 
   private String[] getThemePacks() {
