@@ -306,23 +306,29 @@ public class ProgramList extends JList implements ChangeListener,
       }
       
       private void handleClick(byte type, MouseEvent e) {
-        int inx = locationToIndex(e.getPoint());
-        if (inx >= 0) {
-          Object prog = ProgramList.this.getModel()
-          .getElementAt(inx);
-
-          if(prog instanceof Program) {
-            if(type == LEFT_SINGLE_CLICK) {
-              Plugin.getPluginManager().handleProgramSingleClick((Program)prog, caller);
+        if(e != null && e.getPoint() != null) {
+          int inx = locationToIndex(e.getPoint());
+          if (inx >= 0) {
+            Object prog = ProgramList.this.getModel()
+            .getElementAt(inx);
+  
+            if(prog instanceof Program) {
+              if(type == LEFT_SINGLE_CLICK) {
+                Plugin.getPluginManager().handleProgramSingleClick((Program)prog, caller);
+              }
+              else if(type == LEFT_DOUBLE_CLICK) {
+                Plugin.getPluginManager().handleProgramDoubleClick((Program)prog, caller);
+              }
+              else if(type == MIDDLE_CLICK) {
+                Plugin.getPluginManager().handleProgramMiddleClick((Program)prog, caller);
+              }
+              // force recalculation of program panel sizes
+              SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                  updateUI();    
+                }
+              });
             }
-            else if(type == LEFT_DOUBLE_CLICK) {
-              Plugin.getPluginManager().handleProgramDoubleClick((Program)prog, caller);
-            }
-            else if(type == MIDDLE_CLICK) {
-              Plugin.getPluginManager().handleProgramMiddleClick((Program)prog, caller);
-            }
-            // force recalculation of program panel sizes
-            updateUI();
           }
         }
       }
