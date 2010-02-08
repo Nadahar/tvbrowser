@@ -74,7 +74,7 @@ public class MarkListPriorityCellEditor extends AbstractCellEditor implements
   public Component getTableCellEditorComponent(JTable table, Object value,
     boolean isSelected, int row, int column) {
     mItem = (MarkList)table.getValueAt(table.getSelectedRow(),0);
-    mComboBox.setSelectedIndex(mItem.getMarkPriority());
+    mComboBox.setSelectedIndex(mItem.getMarkPriority()+1);
     return mComboBox;
   }
 }

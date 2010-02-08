@@ -40,6 +40,7 @@ public class MarkerProgramImportanceRenderer extends DefaultTableCellRenderer {
   public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
     Component c = super.getTableCellRendererComponent(table, value,
         isSelected, hasFocus, row, column);
+    ((JLabel)c).setHorizontalAlignment(JLabel.CENTER);
     
     switch(((MarkList)value).getProgramImportance()) {
       case Program.MIN_PROGRAM_IMPORTANCE: ((JLabel)c).setText(MarkListProgramImportanceCellEditor.importanceValues[1]);break;
