@@ -675,7 +675,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
     }
     
     /* Prevent accidentally set program importance to take effect */
-    if(mSettings.isIgnoringProgramImportance()) {
+    if(mSettings.isIgnoringProgramImportance() || mProgram.getProgramState() == Program.WAS_DELETED_STATE) {
       mProgramImportance = Program.MAX_PROGRAM_IMPORTANCE;
     }
 
