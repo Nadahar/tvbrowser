@@ -284,7 +284,7 @@ public class SimpleMarkerPlugin extends Plugin {
       }
 
       if (!deletedPrograms.isEmpty() && mSettings.showDeletedPrograms()) {
-        ProgramList deletedProgramList = new ProgramList(deletedPrograms.toArray(new Program[deletedPrograms.size()]), new ProgramPanelSettings(new PluginPictureSettings(PluginPictureSettings.NO_PICTURE_TYPE),true));
+        ProgramList deletedProgramList = new ProgramList(deletedPrograms.toArray(new Program[deletedPrograms.size()]), new ProgramPanelSettings(new PluginPictureSettings(PluginPictureSettings.NO_PICTURE_TYPE),true,true));
 
         Window parent = UiUtilities.getLastModalChildOf(getParentFrame());
         JDialog deletedListDialog = new JDialog(parent);
