@@ -273,7 +273,7 @@ public class FavoritesPlugin {
 
     if(mHasRightToUpdate) {
       Thread update = new Thread("Favorites: handle update finished") {
-        public void run() {
+        public void run() {try{
           mHasToUpdate = false;
 
           ManageFavoritesDialog dlg = ManageFavoritesDialog.getInstance();
@@ -312,15 +312,14 @@ public class FavoritesPlugin {
           for(Favorite fav : favorites) {
             fav.revalidatePrograms();
           }
+        }catch(Throwable t) {t.printStackTrace();}
         }
       };
       update.start();
 
       try {
         update.join();
-      } catch (InterruptedException e) {
-        e.printStackTrace();
-      }
+      } catch (InterruptedException e) { /* ignore */ }
     }
   }
 
