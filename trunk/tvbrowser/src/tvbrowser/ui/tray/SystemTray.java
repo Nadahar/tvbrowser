@@ -442,12 +442,16 @@ public class SystemTray {
 
       // filter duplicates from additional programs
       for (ProgramMenuItem addItem : additional) {
+        boolean equal = false;
         for (ProgramMenuItem item : programs) {
           if (item.getProgram().equals(addItem.getProgram())) {
+            equal = true;
             break;
           }
         }
-        programs.add(addItem);
+        if (!equal) {
+          programs.add(addItem);
+        }
       }
 
       if (Settings.propTrayNowProgramsEnabled.getBoolean() && (programs.size() > 0 || additional.size() > 0)) {
@@ -686,22 +690,24 @@ public class SystemTray {
       if (!acceptedChannel(pItem)) {
         continue;
       }
-      boolean found = false;
-      for (int i = 0; i < menu.getMenuComponentCount(); i++) {
-        Component comp = menu.getMenuComponent(i);
-        if (comp instanceof ProgramMenuItem) {
-          ProgramMenuItem oldItem = (ProgramMenuItem) comp;
-          if (oldItem.getProgram().equals(pItem.getProgram())) {
-            found = true;
-            break;
-          }
-        }
-      }
-      if (!found) {
+      if (!containsProgram(menu, pItem)) {
         pItem.setBackground(menu.getItemCount());
         menu.add(pItem);
       }
     }
+  }
+
+  private boolean containsProgram(final JMenu menu, ProgramMenuItem pItem) {
+    for (int i = 0; i < menu.getMenuComponentCount(); i++) {
+      Component comp = menu.getMenuComponent(i);
+      if (comp instanceof ProgramMenuItem) {
+        ProgramMenuItem oldItem = (ProgramMenuItem) comp;
+        if (oldItem.getProgram().equals(pItem.getProgram())) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   private void addMenuItems(final JComponent subMenu, final ArrayList<ProgramMenuItem> programs) {
