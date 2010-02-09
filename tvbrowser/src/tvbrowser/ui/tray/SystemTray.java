@@ -53,6 +53,7 @@ import javax.swing.event.PopupMenuListener;
 import tvbrowser.TVBrowser;
 import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataBase;
+import tvbrowser.core.filters.filtercomponents.ChannelFilterComponent;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.ButtonActionIf;
 import tvbrowser.core.plugin.PluginProxy;
@@ -106,14 +107,14 @@ public class SystemTray {
 
   /**
    * Creates the SystemTray
-   * 
+   *
    */
   public SystemTray() {
   }
 
   /**
    * Initializes the System
-   * 
+   *
    * @return true if successful
    */
   public boolean initSystemTray() {
@@ -145,7 +146,7 @@ public class SystemTray {
 
   /**
    * Creates the Menus
-   * 
+   *
    */
   public void createMenus() {
     if (!mUseSystemTray) {
@@ -277,7 +278,7 @@ public class SystemTray {
 
   /**
    * Sets the visibility of the tray.
-   * 
+   *
    * @param value
    *          True if visible.
    */
@@ -288,7 +289,7 @@ public class SystemTray {
   /**
    * Shows a balloon tip on the TV-Browser tray icon.
    * <p>
-   * 
+   *
    * @param caption
    *          The caption of the displayed message.
    * @param message
@@ -438,7 +439,7 @@ public class SystemTray {
       }
 
       boolean now = false;
-      
+
       // filter duplicates from additional programs
       for (ProgramMenuItem addItem : additional) {
         for (ProgramMenuItem item : programs) {
@@ -484,7 +485,7 @@ public class SystemTray {
 
   /**
    * Adds the important programs to the menu.
-   * 
+   *
    * @param menu
    *          The menu to on
    * @return The filled menu menu.
@@ -598,7 +599,7 @@ public class SystemTray {
 
   /**
    * Creates the entries of a time menu.
-   * 
+   *
    * @param menu
    *          The menu to put the programs on
    * @param time
@@ -672,7 +673,7 @@ public class SystemTray {
 
   /**
    * add a limited number of items to the current tray menu (or sub menu)
-   * 
+   *
    * @param menu
    * @param items
    */
@@ -681,6 +682,9 @@ public class SystemTray {
     for (ProgramMenuItem pItem : items) {
       if (menu.getItemCount() >= maxCount) {
         break;
+      }
+      if (!acceptedChannel(pItem)) {
+        continue;
       }
       boolean found = false;
       for (int i = 0; i < menu.getMenuComponentCount(); i++) {
@@ -704,12 +708,22 @@ public class SystemTray {
     int maxCount = getMaxItemCount();
     int itemCount = 0;
     for (ProgramMenuItem item : programs) {
-      subMenu.add(item);
-      itemCount++;
-      if (itemCount >= maxCount) {
-        break;
+      if (acceptedChannel(item)) {
+        subMenu.add(item);
+        itemCount++;
+        if (itemCount >= maxCount) {
+          break;
+        }
       }
     }
+  }
+
+  private boolean acceptedChannel(final ProgramMenuItem item) {
+    ChannelFilterComponent channelGroup = MainFrame.getInstance().getChannelGroup();
+    if (channelGroup == null) {
+      return true;
+    }
+    return channelGroup.accept(item.getProgram());
   }
 
   private int getMaxItemCount() {
@@ -737,7 +751,7 @@ public class SystemTray {
 
   /**
    * Checks and adds programs to a next list.
-   * 
+   *
    * @param program
    *          The program to check and add.
    */
@@ -761,7 +775,7 @@ public class SystemTray {
 
   /**
    * Checks and adds programs to a now running list.
-   * 
+   *
    * @param program
    *          The program to check and add to a list.
    * @param listStandard
@@ -779,7 +793,7 @@ public class SystemTray {
 
   /**
    * Toggle the Text in the Open/Close-Menu
-   * 
+   *
    * @param open
    *          True, if "Open" should be displayed
    */
@@ -843,7 +857,7 @@ public class SystemTray {
 
   /**
    * Creates the Plugin-Menus
-   * 
+   *
    * @return Plugin-Menu
    */
   private static JMenu createPluginsMenu() {
@@ -890,7 +904,7 @@ public class SystemTray {
 
   /**
    * Is the Tray activated and used?
-   * 
+   *
    * @return is Tray used?
    */
   public boolean isTrayUsed() {
