@@ -860,6 +860,9 @@ public class Settings {
   public static final BooleanProperty propTrayIsEnabled = new BooleanProperty(
       mProp, "trayIsEnabled", true);
 
+  public static final BooleanProperty propTrayIsAntialiasing = new BooleanProperty(
+      mProp, "trayIsAntialiasing", true);
+
   public static final BooleanProperty propTrayMinimizeTo = new BooleanProperty(
       mProp, "MinimizeToTray", false);
 
