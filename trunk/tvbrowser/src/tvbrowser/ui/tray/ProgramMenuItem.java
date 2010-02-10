@@ -178,7 +178,12 @@ public class ProgramMenuItem extends JMenuItem {
           }
         }
         else if(SwingUtilities.isMiddleMouseButton(e)) {
-          Plugin.getPluginManager().handleProgramMiddleClick(mProgram);
+          if(!ContextMenuManager.getInstance().getMiddleClickIf().equals(DoNothingContextMenuItem.getInstance())) {
+            Plugin.getPluginManager().handleProgramMiddleClick(mProgram);
+          }
+          else {
+            Plugin.getPluginManager().handleProgramMiddleDoubleClick(mProgram);
+          }
         } else if (SwingUtilities.isRightMouseButton(e)) {
           Point point = e.getPoint();
           SwingUtilities.convertPointToScreen(point,e.getComponent());

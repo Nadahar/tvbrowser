@@ -129,6 +129,9 @@ public class ReminderListDialog extends JDialog implements WindowClosingIf {
     mTable.addMouseListener(new MouseAdapter() {
       private Thread mLeftClickThread;
       private boolean mPerformingSingleClick = false;
+
+      private Thread mMiddleSingleClickThread;
+      private boolean mPerformingMiddleSingleClick = false;
       
       public void mousePressed(MouseEvent evt) {
         if (evt.isPopupTrigger()) {
@@ -197,12 +200,51 @@ public class ReminderListDialog extends JDialog implements WindowClosingIf {
           }
         }
         else if (SwingUtilities.isMiddleMouseButton(e) && (e.getClickCount() == 1)) {
-          int row = mTable.rowAtPoint(e.getPoint());
-          mTable.changeSelection(row, 0, false, false);
-          Program p = (Program) mTable.getModel().getValueAt(row, 0);
+          mMiddleSingleClickThread = new Thread("Single click") {
+            public void run() {
+              try {
+                mPerformingMiddleSingleClick = false;
+                sleep(Plugin.SINGLE_CLICK_WAITING_TIME);
+                mPerformingMiddleSingleClick = true;
+                
+                if (mTable.columnAtPoint(e.getPoint()) == 1)
+                  return;
 
-          PluginManagerImpl.getInstance().handleProgramMiddleClick(p, ReminderPluginProxy.getInstance());
+                int row = mTable.rowAtPoint(e.getPoint());
+
+                mTable.changeSelection(row, 0, false, false);
+                Program p = (Program) mTable.getModel().getValueAt(row, 0);
+                
+                Plugin.getPluginManager().handleProgramMiddleClick(p, ReminderPluginProxy.getInstance());
+                mPerformingMiddleSingleClick = false;
+              } catch (InterruptedException ex) { // ignore
+              }
+            }
+          };
+          
+          mMiddleSingleClickThread.setPriority(Thread.MIN_PRIORITY);
+          mMiddleSingleClickThread.start();
         }
+        else if (SwingUtilities.isMiddleMouseButton(e) && (e.getClickCount() == 2)) {
+          if(!mPerformingMiddleSingleClick && mMiddleSingleClickThread != null && mMiddleSingleClickThread.isAlive()) {
+            mMiddleSingleClickThread.interrupt();
+          }
+          
+          if(!mPerformingMiddleSingleClick) {
+            int column = mTable.columnAtPoint(e.getPoint());
+  
+            if (column == 1)
+              return;
+  
+            int row = mTable.rowAtPoint(e.getPoint());
+  
+            mTable.changeSelection(row, 0, false, false);
+            Program p = (Program) mTable.getModel().getValueAt(row, 0);
+  
+            PluginManagerImpl.getInstance().handleProgramMiddleDoubleClick(p, ReminderPluginProxy.getInstance());
+          }
+        }
+        
         mTable.repaint();
       }
     });

@@ -585,9 +585,9 @@ public class PluginManagerImpl implements PluginManager {
   /**
    * Handles a middle click on a program.
    * <p>
-   * Executes the middle click context menu plugin.
+   * Executes the middle click context menu action.
    *
-   * @param program The program to pass to the middle click context menu plugin.
+   * @param program The program to pass to the middle click context menu action.
    * @param caller ContextMenuIf that calls this. Prevents the ContextMenuIf to be activated twice.
    *
    * @since 1.1
@@ -610,6 +610,51 @@ public class PluginManagerImpl implements PluginManager {
     }
 
     handleAction(program, middleClickIf.getContextMenuActions(program));
+  }
+  
+  /**
+   * Handles a middle click on a program.
+   * <p>
+   * Executes the middle click context menu action. Plugins should use
+   * handleProgramMiddleClick(Program program, Plugin caller). It prevents the
+   * Plugin to be activated a second time.
+   *
+   * @param program The program to pass to the middle click context menu action.
+   *
+   * @since 3.0
+   */
+  public void handleProgramMiddleDoubleClick(Program program) {
+    handleProgramMiddleDoubleClick(program, null);
+  }
+  
+  /**
+   * Handles a middle double click on a program.
+   * <p>
+   * Executes the middle double click context menu action.
+   *
+   * @param program The program to pass to the middle double click context menu action.
+   * @param caller ContextMenuIf that calls this. Prevents the ContextMenuIf to be activated twice.
+   *
+   * @since 3.0
+   */
+  public void handleProgramMiddleDoubleClick(Program program, ContextMenuIf caller) {
+    if (program == null) {
+      // Nothing to do
+      return;
+    }
+
+    ContextMenuIf middleDoubleClickIf
+      = ContextMenuManager.getInstance().getMiddleDoubleClickIf();
+
+    if (middleDoubleClickIf == null) {
+      return;
+    }
+    
+    if ((caller != null)  && (middleDoubleClickIf.getId().equals(caller.getId()))) {
+      return;
+    }
+
+    handleAction(program, middleDoubleClickIf.getContextMenuActions(program));
   }
   
   private void handleAction(Program program, ActionMenu menu) {

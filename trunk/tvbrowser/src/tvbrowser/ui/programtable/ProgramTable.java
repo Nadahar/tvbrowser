@@ -110,10 +110,12 @@ public class ProgramTable extends JPanel
   private Thread mClickThread;
 
   private Thread mLeftClickThread;
+  private Thread mMiddleSingleClickThread;
 
   private Thread mAutoScrollThread;
 
   private boolean mPerformingSingleClick;
+  private boolean mPerformingMiddleSingleClick;
 
   /**
    * index of the panel underneath the mouse
@@ -654,13 +656,45 @@ public class ProgramTable extends JPanel
       }
     }
     else if (SwingUtilities.isMiddleMouseButton(evt) && (evt.getClickCount() == 1)) {
-      if (program != null) {
-        deSelectItem();
+      mMiddleSingleClickThread = new Thread("Program table single middle click thread") {
+        public void run() {
+          try {
+            mPerformingMiddleSingleClick = false;
+            sleep(Plugin.SINGLE_CLICK_WAITING_TIME);
+            mPerformingMiddleSingleClick = true;
 
-        // This is a middle click
-        // -> Execute the program using the user defined middle click plugin
-        Plugin.getPluginManager().handleProgramMiddleClick(program);
+            if(program != null) {
+              deSelectItem();
+              Plugin.getPluginManager().handleProgramMiddleClick(program);
+            }
+
+            if(mClickThread != null && mClickThread.isAlive()) {
+              mClickThread.interrupt();
+            }
+
+            mPerformingMiddleSingleClick = false;
+          } catch (InterruptedException e) {
+            // IGNORE
+          }
+        }
+      };
+
+      mMiddleSingleClickThread.setPriority(Thread.MIN_PRIORITY);
+      mMiddleSingleClickThread.start();
+    }
+    if (SwingUtilities.isMiddleMouseButton(evt) && (evt.getClickCount() == 2)) {
+      if(!mPerformingMiddleSingleClick && mMiddleSingleClickThread != null && mMiddleSingleClickThread.isAlive()) {
+        mMiddleSingleClickThread.interrupt();
       }
+
+      if (program != null && !mPerformingMiddleSingleClick) {
+        deSelectItem();
+        // This is a middle double click
+        // -> Execute the program using the user defined default plugin
+        Plugin.getPluginManager().handleProgramMiddleDoubleClick(program);
+      }
+
+      setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
     }
   }
 
@@ -917,6 +951,19 @@ public class ProgramTable extends JPanel
     Program program = mModel.getProgramPanel(mCurrentCol, mCurrentRow).getProgram();
 
     Plugin.getPluginManager().handleProgramMiddleClick(program);
+  }
+  
+  /**
+   * Starts the middle double click Plugin.
+   */
+  public void startMiddleDoubleClickPluginFromKeyboard() {
+    if(mCurrentCol == -1 || mCurrentRow == -1) {
+      return;
+    }
+
+    Program program = mModel.getProgramPanel(mCurrentCol, mCurrentRow).getProgram();
+
+    Plugin.getPluginManager().handleProgramMiddleDoubleClick(program);
   }
 
   /**

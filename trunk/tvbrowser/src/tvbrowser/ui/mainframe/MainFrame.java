@@ -776,6 +776,11 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
         KeyboardAction.KEY_MIDDLECLICK), stroke,
         JComponent.WHEN_IN_FOCUSED_WINDOW);
 
+    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_O, 0, true);
+    rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,
+        KeyboardAction.KEY_MIDDLE_DOUBLE_CLICK), stroke,
+        JComponent.WHEN_IN_FOCUSED_WINDOW);
+    
     stroke = KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_MASK);
     rootPane.registerKeyboardAction(TVBrowserActions.goToNextDay, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
 
