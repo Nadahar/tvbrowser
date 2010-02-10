@@ -171,7 +171,7 @@ public class ProgramMenuItemUI extends BasicMenuItemUI {
   }
 
   protected void paintText(Graphics g, JMenuItem menuItem, Rectangle textRect, String text) {
-    if (g instanceof Graphics2D) {
+    if (g instanceof Graphics2D && Settings.propTrayIsAntialiasing.getBoolean()) {
       Graphics2D g2d = (Graphics2D) g;
       g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
     }
