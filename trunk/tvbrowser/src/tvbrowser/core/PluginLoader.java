@@ -415,7 +415,8 @@ public class PluginLoader {
         return !("FavoritesPlugin.jar".equals(name)
                 || "ReminderPlugin.jar".equals(name)
                 || "ProgramInfo.jar".equals(name)
-                || "SearchPlugin.jar".equals(name));
+                || "SearchPlugin.jar".equals(name)
+                || "ShowviewPlugin.jar".equals(name));
       }
     });
     if (fileArr == null) {
