@@ -298,7 +298,7 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
     if(mAskForExitConfirmation.isSelected()) {
       Settings.propHiddenMessageBoxes.removeItem("MainFrame.askForExitConfirm");
     }
-    else {
+    else if(!Settings.propHiddenMessageBoxes.containsItem("MainFrame.askForExitConfirm")){
       Settings.propHiddenMessageBoxes.addItem("MainFrame.askForExitConfirm");
     }
   }

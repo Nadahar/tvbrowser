@@ -96,9 +96,10 @@ public class StringArrayProperty  extends Property {
    */
   public void addItem(String str) {
     String[] arr = getStringArray();
+    
     if (arr == null) {
       setStringArray(new String[] { str });
-    } else {
+    } else if(indexOfItem(str) == -1) {
       String[] newArr = new String[arr.length + 1];
       System.arraycopy(arr, 0, newArr, 0, arr.length);
       newArr[newArr.length - 1] = str;
