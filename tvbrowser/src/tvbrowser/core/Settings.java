@@ -127,13 +127,13 @@ public class Settings {
 
   private static String DEFAULT_FONT_NAME = "Dialog";
   private static Font DEFAULT_PROGRAMTITLEFONT = new Font(DEFAULT_FONT_NAME,
-      Font.BOLD, 12);
+      Font.BOLD, 11);
   private static Font DEFAULT_PROGRAMINFOFONT = new Font(DEFAULT_FONT_NAME,
       Font.PLAIN, 10);
   private static final Font DEFAULT_CHANNELNAMEFONT = new Font(
-      DEFAULT_FONT_NAME, Font.BOLD, 12);
+      DEFAULT_FONT_NAME, Font.BOLD, 11);
   private static Font DEFAULT_PROGRAMTIMEFONT = new Font(DEFAULT_FONT_NAME,
-      Font.BOLD, 12);
+      Font.BOLD, 11);
 
   private static PropertyManager mProp = new PropertyManager();
 
