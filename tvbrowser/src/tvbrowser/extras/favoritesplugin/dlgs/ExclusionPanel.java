@@ -62,7 +62,8 @@ public class ExclusionPanel extends JPanel{
   private JButton mEditExclusionBtn;
   private JButton mDeleteExclusionBtn;
   
-  private boolean mWasChanged;
+  private boolean mWasAdded;
+  private boolean mWasEditedOrDeleted;
 
   /**
    * Creates an instance of this class.
@@ -77,7 +78,7 @@ public class ExclusionPanel extends JPanel{
    */
   public ExclusionPanel(Exclusion[] exclusions, final Window parent,
       final Favorite favorite) {
-    mWasChanged = false;
+    mWasEditedOrDeleted = mWasAdded = false;
     
     setLayout(new FormLayout("5dlu, fill:pref:grow, 3dlu, pref",
         "pref, 3dlu, pref, 3dlu, pref, 3dlu, fill:pref:grow"));
@@ -137,7 +138,7 @@ public class ExclusionPanel extends JPanel{
         Exclusion exclusion = (Exclusion) handler.show();
         if (exclusion != null) {
           ((DefaultListModel) mExclusionsList.getModel()).addElement(exclusion);
-          mWasChanged = true;
+          mWasAdded = true;
         }
 
       }
@@ -151,7 +152,7 @@ public class ExclusionPanel extends JPanel{
         if (newExclusion != null) {
           int inx = mExclusionsList.getSelectedIndex();
           ((DefaultListModel) mExclusionsList.getModel()).setElementAt(newExclusion, inx);
-          mWasChanged = true;
+          mWasEditedOrDeleted = true;
         }
       }
     });
@@ -161,7 +162,7 @@ public class ExclusionPanel extends JPanel{
         Exclusion exclusion = (Exclusion) mExclusionsList.getSelectedValue();
         if (exclusion != null) {
           ((DefaultListModel) mExclusionsList.getModel()).removeElement(exclusion);
-          mWasChanged = true;
+          mWasEditedOrDeleted = true;
         }
       }
     });
@@ -194,6 +195,24 @@ public class ExclusionPanel extends JPanel{
    * @return <code>True</code> if the exlusions were changed, <code>false</code> otherwise.
    */
   public boolean wasChanged() {
-    return mWasChanged;
+    return mWasEditedOrDeleted || mWasAdded;
+  }
+  
+  /**
+   * Gets if entries to exclusion list were added.
+   * <p>
+   * @return <code>True</code> if entries were added, <code>false</code> otherwise.
+   */
+  public boolean wasAdded() {
+    return mWasAdded;
+  }
+  
+  /**
+   * Gets if entries to exclusion list were edited or deleted.
+   * <p>
+   * @return <code>True</code> if entries were edited or deleted, <code>false</code> otherwise.
+   */
+  public boolean wasEditedOrDeleted() {
+    return mWasEditedOrDeleted;
   }
 }
