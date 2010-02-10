@@ -322,14 +322,6 @@ public class ProgramList extends JList implements ChangeListener,
             else if(type == MIDDLE_CLICK) {
               Plugin.getPluginManager().handleProgramMiddleClick((Program)prog, caller);
             }
-            
-            // force recalculation of program panel sizes
-            SwingUtilities.invokeLater(new Runnable() {
-              public void run() {
-                getCellRenderer().getListCellRendererComponent(ProgramList.this,prog,inx,getSelectedIndex() == inx,getSelectedIndex() == inx).repaint();
-              }
-            });
-            
           }
         }
       }
