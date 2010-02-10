@@ -34,7 +34,7 @@ public class DeferredFontProperty extends FontProperty {
    * if any of these fonts is found on the system then it is used as default
    * font
    */
-  private static final String[] KNOWN_GOOD_FONTS = { "Trebuchet MS",
+  private static final String[] KNOWN_GOOD_FONTS = { "Tahoma", "Trebuchet MS",
       "Arial Narrow" };
 
   private Font mDefFont;
