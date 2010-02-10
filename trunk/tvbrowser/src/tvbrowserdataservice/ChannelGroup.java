@@ -437,17 +437,23 @@ public class ChannelGroup implements devplugin.ChannelGroup {
 
     // Get a random Mirror that is up to date
     Mirror mirror = Mirror.chooseUpToDateMirror(mirrorArr, monitor, getName(), mID, ChannelGroup.class, " Please contact the TV data provider for help.");
-    mLog.info("Using mirror " + mirror.getUrl());
-
-    // Update the mirrorlist (for the next time)
-    updateMetaFile(mirror.getUrl(), mID + "_" + Mirror.MIRROR_LIST_FILE_NAME);
-
-    // Update the groupname file
-    updateMetaFile(mirror.getUrl(), mID + "_info");
-
-    // Update the channel list
-    updateChannelList(mirror, true);
-    return getAvailableChannels();
+    
+    if(mirror != null) {
+      mLog.info("Using mirror " + mirror.getUrl());
+  
+      // Update the mirrorlist (for the next time)
+      updateMetaFile(mirror.getUrl(), mID + "_" + Mirror.MIRROR_LIST_FILE_NAME);
+  
+      // Update the groupname file
+      updateMetaFile(mirror.getUrl(), mID + "_info");
+  
+      // Update the channel list
+      updateChannelList(mirror, true);
+      return getAvailableChannels();
+    }
+    else {
+      return new Channel[0];
+    }
   }
 
   /**
