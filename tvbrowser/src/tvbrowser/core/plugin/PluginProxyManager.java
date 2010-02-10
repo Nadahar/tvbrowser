@@ -248,7 +248,7 @@ public class PluginProxyManager {
 
         // Convert the middle double click context menu plugin from class name to ID
         String middleDoubleClickPluginClassName = Settings.propMiddleDoubleClickIf.getString();
-        Settings.propMiddleDoubleClickIf.setString("java." + middleClickPluginClassName);
+        Settings.propMiddleDoubleClickIf.setString("java." + middleDoubleClickPluginClassName);
       }
     }
 
