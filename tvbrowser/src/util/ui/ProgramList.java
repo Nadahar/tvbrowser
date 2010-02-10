@@ -254,11 +254,14 @@ public class ProgramList extends JList implements ChangeListener,
   public void addMouseListeners(final ContextMenuIf caller) {
     addMouseListener(new MouseAdapter() {
       private Thread mLeftSingleClickThread;
+      private Thread mMiddleSingleClickThread;
       private boolean mPerformingSingleClick = false;
-      private boolean mUpdatingUI = false;
+      private boolean mPerformingSingleMiddleClick = false;
+      
       private static final byte LEFT_SINGLE_CLICK = 1;
       private static final byte LEFT_DOUBLE_CLICK = 2;
       private static final byte MIDDLE_CLICK = 3;
+      private static final byte MIDDLE_DOUBLE_CLICK = 4;
       
       public void mousePressed(MouseEvent e) {
         if (e.isPopupTrigger()) {
@@ -273,8 +276,8 @@ public class ProgramList extends JList implements ChangeListener,
       }
 
       public void mouseClicked(final MouseEvent e) {
-        if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 1) && e.getModifiersEx() == 0 && !mUpdatingUI) {
-          mLeftSingleClickThread = new Thread("Single click") {
+        if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 1) && e.getModifiersEx() == 0) {
+          mLeftSingleClickThread = new Thread("Single left click") {
             public void run() {
               try {
                 mPerformingSingleClick = false;
@@ -292,7 +295,7 @@ public class ProgramList extends JList implements ChangeListener,
           mLeftSingleClickThread.setPriority(Thread.MIN_PRIORITY);
           mLeftSingleClickThread.start();
         }
-        else if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 2) && e.getModifiersEx() == 0 && !mUpdatingUI) {
+        else if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 2) && e.getModifiersEx() == 0) {
           if(!mPerformingSingleClick && mLeftSingleClickThread != null && mLeftSingleClickThread.isAlive()) {
             mLeftSingleClickThread.interrupt();
           }
@@ -301,8 +304,33 @@ public class ProgramList extends JList implements ChangeListener,
             handleClick(LEFT_DOUBLE_CLICK, e);
           }
         }
-        else if (SwingUtilities.isMiddleMouseButton(e) && (e.getClickCount() == 1) && !mUpdatingUI) {
-          handleClick(MIDDLE_CLICK, e);
+        else if (SwingUtilities.isMiddleMouseButton(e) && (e.getClickCount() == 1)) {
+          mMiddleSingleClickThread = new Thread("Single middle click") {
+            public void run() {
+              try {
+                mPerformingSingleMiddleClick = false;
+                Thread.sleep(Plugin.SINGLE_CLICK_WAITING_TIME);
+                mPerformingSingleMiddleClick = true;
+                
+                handleClick(MIDDLE_CLICK, e);
+                
+                mPerformingSingleMiddleClick = false;
+              } catch (InterruptedException e) {
+                // ignore
+              }              
+            }
+          };
+          mMiddleSingleClickThread.setPriority(Thread.MIN_PRIORITY);
+          mMiddleSingleClickThread.start();
+        }
+        else if (SwingUtilities.isMiddleMouseButton(e) && (e.getClickCount() == 2)) {
+          if(!mPerformingSingleMiddleClick && mMiddleSingleClickThread != null && mMiddleSingleClickThread.isAlive()) {
+            mMiddleSingleClickThread.interrupt();
+          }
+          
+          if(!mPerformingSingleMiddleClick) {
+            handleClick(MIDDLE_DOUBLE_CLICK, e);
+          }
         }
       }
       
@@ -321,6 +349,9 @@ public class ProgramList extends JList implements ChangeListener,
             }
             else if(type == MIDDLE_CLICK) {
               Plugin.getPluginManager().handleProgramMiddleClick((Program)prog, caller);
+            }
+            else if(type == MIDDLE_DOUBLE_CLICK) {
+              Plugin.getPluginManager().handleProgramMiddleDoubleClick((Program)prog, caller);
             }
           }
         }

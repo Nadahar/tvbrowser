@@ -120,6 +120,9 @@ public class ProgramListPanel extends JPanel {
         mProgramTable.addMouseListener(new MouseAdapter() {
             private Thread mLeftSingleClickThread;
             private boolean mPerformingSingleClick = false;
+            
+            private Thread mMiddleSingleClickThread;
+            private boolean mPerformingSingleMiddleClick = false;
           
             public void mousePressed(MouseEvent evt) {
               if (evt.isPopupTrigger()) {
@@ -140,7 +143,7 @@ public class ProgramListPanel extends JPanel {
                 }
                 
                 if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 1) && e.getModifiersEx() == 0) {
-                  mLeftSingleClickThread = new Thread("Single click") {
+                  mLeftSingleClickThread = new Thread("Single left click") {
                     public void run() {
                       try {
                         mPerformingSingleClick = false;
@@ -175,11 +178,39 @@ public class ProgramListPanel extends JPanel {
                     }
                 }
                 else if (SwingUtilities.isMiddleMouseButton(e) && (e.getClickCount() == 1)) {
-                    int row = mProgramTable.rowAtPoint(e.getPoint());
-                    mProgramTable.changeSelection(row, 0, false, false);
-                    Program p = (Program) mProgramTableModel.getValueAt(row, 1);
+                  mMiddleSingleClickThread = new Thread("Single middle click") {
+                    public void run() {
+                      try {
+                        mPerformingSingleMiddleClick = false;
+                        sleep(Plugin.SINGLE_CLICK_WAITING_TIME);
+                        mPerformingSingleMiddleClick = true;
 
-                    devplugin.Plugin.getPluginManager().handleProgramMiddleClick(p, CapturePlugin.getInstance());
+                        int row = mProgramTable.rowAtPoint(e.getPoint());
+                        mProgramTable.changeSelection(row, 0, false, false);
+                        Program p = (Program) mProgramTableModel.getValueAt(row, 1);
+
+                        devplugin.Plugin.getPluginManager().handleProgramMiddleClick(p, CapturePlugin.getInstance());
+                        mPerformingSingleMiddleClick = false;
+                      } catch (InterruptedException e) { // ignore
+                      }
+                    }
+                  };
+                  
+                  mMiddleSingleClickThread.setPriority(Thread.MIN_PRIORITY);
+                  mMiddleSingleClickThread.start();
+                }
+                else if (SwingUtilities.isMiddleMouseButton(e) && (e.getClickCount() == 2)) {
+                    if(!mPerformingSingleMiddleClick && mMiddleSingleClickThread != null && mMiddleSingleClickThread.isAlive()) {
+                      mMiddleSingleClickThread.interrupt();
+                    }
+                    
+                    if(!mPerformingSingleMiddleClick) {
+                      int row = mProgramTable.rowAtPoint(e.getPoint());
+                      mProgramTable.changeSelection(row, 0, false, false);
+                      Program p = (Program) mProgramTableModel.getValueAt(row, 1);
+  
+                      devplugin.Plugin.getPluginManager().handleProgramMiddleDoubleClick(p, CapturePlugin.getInstance());
+                    }
                 }
               }
         });

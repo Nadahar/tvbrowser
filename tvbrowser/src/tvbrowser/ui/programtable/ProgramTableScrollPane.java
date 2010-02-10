@@ -285,6 +285,13 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
   public void handleMiddleClick() {
     mProgramTable.startMiddleClickPluginFromKeyboard();
   }
+  
+  /**
+   * Starts the middle double click Plugin.
+   */
+  public void handleMiddleDoubleClick() {
+    mProgramTable.startMiddleDoubleClickPluginFromKeyboard();
+  }
 
   /**
    * Starts the double click Plugin.

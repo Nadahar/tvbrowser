@@ -81,6 +81,12 @@ public class ContextMenuManager {
    */
   private ContextMenuIf mDefaultMiddleClickIf;
   
+  /**
+   * The context menu interface that should be executed by default when
+   * double-middle-clicking a program in the program table.
+   */
+  private ContextMenuIf mDefaultMiddleDoubleClickIf;  
+  
   private ContextMenuManager() {
     mInstance = this;
     init();
@@ -119,6 +125,17 @@ public class ContextMenuManager {
       }
     }
     setMiddleClickIf(menuIf);
+    
+    // Get the middle double click context menu action
+    id = Settings.propMiddleDoubleClickIf.getString();
+    menuIf = getContextMenuIfForId(id);
+    if (menuIf == null) {
+      menuIf = getContextMenuIfForId(Settings.propMiddleDoubleClickIf.getDefault());
+      if (menuIf != null) {
+        Settings.propMiddleDoubleClickIf.setString(menuIf.getId());
+      }
+    }
+    setMiddleDoubleClickIf(menuIf);
   }
   
   /**
@@ -210,6 +227,20 @@ public class ContextMenuManager {
   }
   
   /**
+   * Gets the middle double click context menu interface.
+   * <p>
+   * This is the context menu that should be executed by default when double middle-clicking
+   * a program in the program table. It is shown with a dark blue font in the context
+   * menu.
+   *
+   * @return The middle click context menu interface or <code>null</code> if there is no
+   *         middle click context menu interface defined.
+   */
+  public ContextMenuIf getMiddleDoubleClickIf() {
+    return mDefaultMiddleDoubleClickIf;
+  }
+  
+  /**
    * Sets the left single click context menu interface.
    *
    * @param value The ContextMenuIf to set as left single click context menu interface.
@@ -234,6 +265,15 @@ public class ContextMenuManager {
    */
   public void setMiddleClickIf(ContextMenuIf value) {
     mDefaultMiddleClickIf = value;
+  }
+  
+  /**
+   * Sets the middle double click context menu interface.
+   *
+   * @param value The ContextMenuIf to set as middle double click context menu interface.
+   */
+  public void setMiddleDoubleClickIf(ContextMenuIf value) {
+    mDefaultMiddleDoubleClickIf = value;
   }
   
   /**
@@ -364,6 +404,7 @@ public class ContextMenuManager {
     ContextMenuIf leftSingleClickIf = getInstance().getLeftSingleClickIf();
     ContextMenuIf defaultIf = getInstance().getDefaultContextMenuIf();
     ContextMenuIf middleClickIf = getInstance().getMiddleClickIf();
+    ContextMenuIf middleDoubleClickIf = getInstance().getMiddleDoubleClickIf();
     ContextMenuIf[] menuIfArr = getInstance().getAvailableContextMenuIfs(false, true);
 
     JMenu rootMenu = new JMenu();
@@ -427,6 +468,9 @@ public class ContextMenuManager {
             if (!actionMenu.hasSubItems() && actionMenu.getAction() != null) {
               menuItem.setFont(MenuUtil.CONTEXT_MENU_ITALICFONT);
             }
+          }
+          else if (menuIf == middleDoubleClickIf && markDefaultIf && !menuIf.equals(DoNothingContextMenuItem.getInstance())) {
+            menuItem.setForeground(new Color(0,0,90));
           }
           rootMenu.add(menuItem);
         }

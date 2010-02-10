@@ -54,6 +54,7 @@ import tvbrowser.core.plugin.DefaultSettings;
 import tvbrowser.core.settings.DeferredFontProperty;
 import tvbrowser.core.settings.JGoodiesThemeProperty;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
+import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.programinfo.ProgramInfo;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import tvbrowser.ui.mainframe.MainFrame;
@@ -1040,6 +1041,9 @@ public class Settings {
   public static final StringProperty propMiddleClickIf = new StringProperty(
       mProp, "middleclickplugin", ReminderPlugin.getReminderPluginId());
 
+  public static final StringProperty propMiddleDoubleClickIf = new StringProperty(
+      mProp, "middledoubleclickplugin", FavoritesPlugin.getFavoritesPluginId());
+  
   /**
    * the last active program filter
    */

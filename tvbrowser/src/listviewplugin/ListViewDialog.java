@@ -138,7 +138,10 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
 
   private Thread mLeftClickThread;
   private boolean mPerformingSingleClick;
-  
+
+  private Thread mMiddleSingleClickThread;
+  private boolean mPerformingMiddleSingleClick;
+
   private JComboBox mFilterBox;
   private ProgramFilter mCurrentFilter;
   
@@ -651,7 +654,7 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
       return;
     }
     if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 1) && e.getModifiersEx() == 0) {
-      mLeftClickThread = new Thread("Single click") {
+      mLeftClickThread = new Thread("Single left click") {
         @Override
         public void run() {
           try {
@@ -679,7 +682,32 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
       }
     }
     else if (SwingUtilities.isMiddleMouseButton(e) && (e.getClickCount() == 1)) {
-      devplugin.Plugin.getPluginManager().handleProgramMiddleClick(prg, mPlugin);
+      mMiddleSingleClickThread = new Thread("Single click") {
+        @Override
+        public void run() {
+          try {
+            mPerformingMiddleSingleClick = false;
+            sleep(Plugin.SINGLE_CLICK_WAITING_TIME);
+            mPerformingMiddleSingleClick = true;
+
+            Plugin.getPluginManager().handleProgramMiddleClick(prg, mPlugin);
+            mPerformingMiddleSingleClick = false;
+          } catch (InterruptedException e) { // ignore
+          }
+        }
+      };
+
+      mMiddleSingleClickThread.setPriority(Thread.MIN_PRIORITY);
+      mMiddleSingleClickThread.start();
+    }
+    else if (SwingUtilities.isMiddleMouseButton(e) && (e.getClickCount() == 2)) {
+      if(!mPerformingMiddleSingleClick && mMiddleSingleClickThread != null && mMiddleSingleClickThread.isAlive()) {
+        mMiddleSingleClickThread.interrupt();
+      }
+      
+      if(!mPerformingMiddleSingleClick) {
+        devplugin.Plugin.getPluginManager().handleProgramMiddleDoubleClick(prg, mPlugin);
+      }
     }
   }
 

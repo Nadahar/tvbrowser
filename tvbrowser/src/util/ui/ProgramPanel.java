@@ -1001,6 +1001,9 @@ private static Font getDynamicFontSize(Font font, int offset) {
     addMouseListener(new MouseAdapter() {
       private Thread mLeftClickThread;
       private boolean mPerformingSingleClick = false;
+      
+      private Thread mMiddleSingleClickThread;
+      private boolean mPerformingMiddleSingleClick = false;
 
       public void mousePressed(MouseEvent e) {
         if (e.isPopupTrigger()) {
@@ -1042,9 +1045,32 @@ private static Font getDynamicFontSize(Font font, int offset) {
             Plugin.getPluginManager().handleProgramDoubleClick(mProgram, caller);
           }
         }
-        else if (SwingUtilities.isMiddleMouseButton(evt)
-            && (evt.getClickCount() == 1)) {
-          Plugin.getPluginManager().handleProgramMiddleClick(mProgram, caller);
+        else if (SwingUtilities.isMiddleMouseButton(evt) && (evt.getClickCount() == 1)) {
+          mMiddleSingleClickThread = new Thread("Single click") {
+            public void run() {
+              try {
+                mPerformingMiddleSingleClick = false;
+                sleep(Plugin.SINGLE_CLICK_WAITING_TIME);
+                mPerformingMiddleSingleClick = true;
+
+                Plugin.getPluginManager().handleProgramMiddleClick(mProgram, caller);
+                mPerformingMiddleSingleClick = false;
+              } catch (InterruptedException e) { // ignore
+              }
+            }
+          };
+
+          mMiddleSingleClickThread.setPriority(Thread.MIN_PRIORITY);
+          mMiddleSingleClickThread.start();
+        }
+        else if (SwingUtilities.isMiddleMouseButton(evt) && (evt.getClickCount() == 2)) {
+          if(!mPerformingMiddleSingleClick && mMiddleSingleClickThread != null && mMiddleSingleClickThread.isAlive()) {
+            mMiddleSingleClickThread.interrupt();
+          }
+
+          if(!mPerformingMiddleSingleClick) {
+            Plugin.getPluginManager().handleProgramMiddleDoubleClick(mProgram, caller);
+          }
         }
       }
     });
