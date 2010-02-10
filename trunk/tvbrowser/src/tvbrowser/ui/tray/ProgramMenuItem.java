@@ -74,7 +74,6 @@ public class ProgramMenuItem extends JMenuItem {
   private Program mProgram;
   private Color mBackground, mFill = null;
   private Insets mInsets;
-  private boolean mSelected;
   private Timer mTimer;
   private static Font mPlainFont = (new JMenuItem()).getFont();
   private static Font mBoldFont = mPlainFont.deriveFont(Font.BOLD);
@@ -166,8 +165,6 @@ public class ProgramMenuItem extends JMenuItem {
       mIconHeight = mIcon.getIconHeight();
       setMargin(new Insets(1,getMargin().left,1,getMargin().right));
     }
-    
-    mSelected = false;
     
     addMouseListener(new MouseAdapter() {
       @Override
