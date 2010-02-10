@@ -130,9 +130,11 @@ public class PictureAreaIcon implements Icon {
     y += 2;
 
     Color color = g.getColor();
-
-    g.setColor(c.getBackground());
-    g.fillRect(x,y,getIconWidth(),getIconHeight()-2);
+    
+    if(!colorsInEqualRange(c.getBackground(),c.getForeground()) && !mProgram.isExpired()) {
+      g.setColor(c.getBackground());
+      g.fillRect(x,y,getIconWidth(),getIconHeight()-2);
+    }
 
     g.setColor(color);
     g.drawRect(x,y,getIconWidth()-1,getIconHeight()-3);
@@ -172,5 +174,16 @@ public class PictureAreaIcon implements Icon {
       mDescriptionText.paintIcon(null,g,x,y + mScaledIcon.getIconHeight() + mCopyrightText.getIconHeight() + 1);
     }
     g.setColor(color);
+  }
+  
+  private boolean colorsInEqualRange(Color c1, Color c2) {
+     boolean notInRange = c1.getRed() > c2.getRed()+5;
+     notInRange = notInRange || c1.getRed() < c2.getRed()-5;
+     notInRange = notInRange || c1.getBlue() > c2.getBlue()+5;
+     notInRange = notInRange || c1.getBlue() < c2.getBlue()-5;
+     notInRange = notInRange || c1.getGreen() > c2.getGreen()+5;
+     notInRange = notInRange || c1.getGreen() < c2.getGreen()-5;
+     
+     return !notInRange;
   }
 }
