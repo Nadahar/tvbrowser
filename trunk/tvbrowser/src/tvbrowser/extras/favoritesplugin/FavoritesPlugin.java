@@ -892,7 +892,7 @@ public class FavoritesPlugin {
         System.arraycopy(mExclusions,0,exclusionArr,0,mExclusions.length);
         exclusionArr[mExclusions.length] = (Exclusion)exclusion;
 
-        setGlobalExclusions(exclusionArr);
+        setGlobalExclusions(exclusionArr, true);
       }else {
         if(exclusion instanceof Exclusion) {
           fav.addExclusion((Exclusion)exclusion);
@@ -1111,13 +1111,24 @@ public class FavoritesPlugin {
     return null;
   }
 
-  protected void setGlobalExclusions(Exclusion[] exclusions) {
+  protected void setGlobalExclusions(Exclusion[] exclusions, final boolean onlyAdded) {
     mExclusions = exclusions;
 
     new Thread("globalFavoriteExclusionRefreshThread") {
       public void run() {
         setPriority(Thread.MIN_PRIORITY);
-        handleTvDataUpdateFinished();
+        for(Favorite fav : FavoriteTreeModel.getInstance().getFavoriteArr()) {
+          try {
+            if(!onlyAdded) {
+              fav.updatePrograms(false);
+            }
+            else {
+              fav.refreshPrograms(true);
+            }
+          } catch (TvBrowserException e) {
+            // ignore
+          }
+        }
       }
     }.start();
   }

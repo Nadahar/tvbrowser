@@ -195,7 +195,7 @@ public class FavoritesSettingTab implements SettingsTab {
     FavoritesPlugin.getInstance().setMarkPriority(mMarkingsPanel.getSelectedPriority());
 
     if(mExclusionPanel.wasChanged()) {
-      FavoritesPlugin.getInstance().setGlobalExclusions(mExclusionPanel.getExclusions());
+      FavoritesPlugin.getInstance().setGlobalExclusions(mExclusionPanel.getExclusions(),mExclusionPanel.wasAdded() && !mExclusionPanel.wasEditedOrDeleted());
     }
 
     FavoritesPlugin.getInstance().saveFavorites();
