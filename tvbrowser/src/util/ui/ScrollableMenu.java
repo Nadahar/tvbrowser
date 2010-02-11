@@ -20,6 +20,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -786,5 +787,17 @@ public class ScrollableMenu extends JMenu {
         mTimer.stop();
       }
     }
+  }
+  
+  public MenuElement[] getSubElements() {
+    ArrayList<MenuElement> elements = new ArrayList<MenuElement>();
+    
+    for(Component c : scrollableItems) {
+      if(c instanceof MenuElement) {
+        elements.add((MenuElement)c);
+      }
+    }
+    
+    return elements.toArray(new MenuElement[elements.size()]);
   }
 }
