@@ -44,6 +44,7 @@ import devplugin.ProgramFieldType;
  */
 public class PictureAreaIcon implements Icon {
 
+  private static final int MAX_COLOR_DIFF = 20;
   /**
    * the description text icon will be null, if the string to be shown is empty
    */
@@ -130,7 +131,7 @@ public class PictureAreaIcon implements Icon {
     y += 2;
 
     Color color = g.getColor();
-    
+
     if(!colorsInEqualRange(c.getBackground(),c.getForeground()) && !mProgram.isExpired()) {
       g.setColor(c.getBackground());
       g.fillRect(x,y,getIconWidth(),getIconHeight()-2);
@@ -175,15 +176,10 @@ public class PictureAreaIcon implements Icon {
     }
     g.setColor(color);
   }
-  
-  private boolean colorsInEqualRange(Color c1, Color c2) {
-     boolean notInRange = c1.getRed() > c2.getRed()+5;
-     notInRange = notInRange || c1.getRed() < c2.getRed()-5;
-     notInRange = notInRange || c1.getBlue() > c2.getBlue()+5;
-     notInRange = notInRange || c1.getBlue() < c2.getBlue()-5;
-     notInRange = notInRange || c1.getGreen() > c2.getGreen()+5;
-     notInRange = notInRange || c1.getGreen() < c2.getGreen()-5;
-     
-     return !notInRange;
+
+  private boolean colorsInEqualRange(final Color c1, final Color c2) {
+    return Math.abs(c1.getRed() - c2.getRed()) <= MAX_COLOR_DIFF
+      && Math.abs(c1.getBlue() - c2.getBlue()) <= MAX_COLOR_DIFF
+      && Math.abs(c1.getGreen() - c2.getGreen()) <= MAX_COLOR_DIFF;
   }
 }
