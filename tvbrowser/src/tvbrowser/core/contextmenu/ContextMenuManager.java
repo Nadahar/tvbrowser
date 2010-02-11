@@ -470,7 +470,7 @@ public class ContextMenuManager {
             }
           }
           else if (menuIf == middleDoubleClickIf && markDefaultIf && !menuIf.equals(DoNothingContextMenuItem.getInstance())) {
-            menuItem.setForeground(new Color(0,0,90));
+            menuItem.setForeground(new Color(0,0,160));
           }
           rootMenu.add(menuItem);
         }
