@@ -24,6 +24,7 @@
 package util.ui;
 
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import javax.swing.JPanel;
 import javax.swing.event.HyperlinkEvent;
@@ -48,13 +49,16 @@ public class DefaultMarkingPrioritySelectionPanel extends JPanel {
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(DefaultMarkingPrioritySelectionPanel.class);
   private JComboBox mPrioritySelection;
   private JEditorPane mHelpLabel;
+  private JComponent mSeparator;
+  private JComponent mLabel;
   
   private DefaultMarkingPrioritySelectionPanel(int priority, boolean showTitle, boolean withDefaultDialogBorder) {
     CellConstraints cc = new CellConstraints();
     PanelBuilder pb = new PanelBuilder(showTitle ? new FormLayout("5dlu,pref,5dlu,pref,0dlu:grow","pref,5dlu,pref,fill:0dlu:grow,10dlu,pref") : new FormLayout("5dlu,pref,5dlu,pref,0dlu:grow","pref,fill:0dlu:grow,10dlu,pref"),this);
     
-    if(withDefaultDialogBorder)
+    if(withDefaultDialogBorder) {
       pb.setDefaultDialogBorder();
+    }
     
     mPrioritySelection = new JComboBox(getMarkingColorNames(true));
     mPrioritySelection.setSelectedIndex(priority+1);
@@ -71,11 +75,11 @@ public class DefaultMarkingPrioritySelectionPanel extends JPanel {
     int y = 1;
     
     if(showTitle) {
-      pb.addSeparator(getTitle(),cc.xyw(1,y++,5));
+      mSeparator = pb.addSeparator(getTitle(),cc.xyw(1,y++,5));
       y++;
     }
     
-    pb.addLabel(mLocalizer.msg("color","Highlighting color"), cc.xy(2,y));
+    mLabel = pb.addLabel(mLocalizer.msg("color","Highlighting color"), cc.xy(2,y));
     pb.add(mPrioritySelection, cc.xy(4,y++));y++;
     pb.add(mHelpLabel, cc.xyw(2,++y,4));
   }
@@ -124,5 +128,15 @@ public class DefaultMarkingPrioritySelectionPanel extends JPanel {
     else {
       return new String[] {MarkingsSettingsTab.mLocalizer.msg("color.minPriority","1. Color (minimum priority)"),MarkingsSettingsTab.mLocalizer.msg("color.lowerMediumPriority","2. Color (lower medium priority)"),MarkingsSettingsTab.mLocalizer.msg("color.mediumPriority","3. Color (Medium priority)"),MarkingsSettingsTab.mLocalizer.msg("color.higherMediumPriority","4. Color (higher medium priority)"),MarkingsSettingsTab.mLocalizer.msg("color.maxPriority","5. Color (maximum priority)")};
     }
+  }
+  
+  public void setEnabled(boolean enabled) {
+    if(mSeparator != null) {
+      mSeparator.setEnabled(enabled);
+    }
+    
+    mHelpLabel.setEnabled(enabled);
+    mLabel.setEnabled(enabled);
+    mPrioritySelection.setEnabled(enabled);
   }
 }
