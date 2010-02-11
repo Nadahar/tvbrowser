@@ -38,37 +38,48 @@ public class WirSchauenSettingsTab implements SettingsTab
    * the checkbox that holds the marker-option (whether or not to mark the linked programs).
    */
   private JCheckBox mMarkerCheckbox;
+
+  /**
+   * a panel to select the color for marking linked programs.
+   */
   private DefaultMarkingPrioritySelectionPanel mHasOmdbLink;
-	private WirSchauenSettings mSettings;
+
+  /**
+   * the underlying settings.
+   */
+  private WirSchauenSettings mSettings;
 
 
+  /**
+   * @param settings the underlying settings for this tab.
+   */
   public WirSchauenSettingsTab(final WirSchauenSettings settings) {
-  	mSettings = settings;
-	}
+    mSettings = settings;
+  }
 
 
-	/**
+  /**
    * {@inheritDoc}
    * @see devplugin.SettingsTab#createSettingsPanel()
    */
   public JPanel createSettingsPanel()
   {
     mMarkerCheckbox = new JCheckBox(WirSchauenPlugin.LOCALIZER.msg("Settings.ShowMarking", "Highlight programs which are linked with the OMDB."), mSettings.getMarkPrograms());
-    mHasOmdbLink = DefaultMarkingPrioritySelectionPanel.createPanel(mSettings.getMarkPriorityForOmdbLink(),false,false);
+    mHasOmdbLink = DefaultMarkingPrioritySelectionPanel.createPanel(mSettings.getMarkPriorityForOmdbLink(), false, false);
     mHasOmdbLink.setEnabled(mMarkerCheckbox.isSelected());
-    
+
     CellConstraints cc = new CellConstraints();
     PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu, default:grow", "5dlu, pref, 5dlu, pref"));
-    
+
     pb.add(mMarkerCheckbox, cc.xy(2, 2));
-    pb.add(mHasOmdbLink, cc.xy(2,4));
-    
+    pb.add(mHasOmdbLink, cc.xy(2, 4));
+
     mMarkerCheckbox.addItemListener(new ItemListener() {
-      public void itemStateChanged(ItemEvent e) {
-        mHasOmdbLink.setEnabled(e.getStateChange() == ItemEvent.SELECTED);        
+      public void itemStateChanged(final ItemEvent e) {
+        mHasOmdbLink.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
       }
     });
-    
+
     return pb.getPanel();
   }
 
@@ -102,7 +113,7 @@ public class WirSchauenSettingsTab implements SettingsTab
     //this is not the persistence api for the settings, but the callback
     //for the ok-button. as soon as the user accepts the settings, this
     //method will be called. so tell the plugin the new settings.
-  	mSettings.setMarkPrograms(mMarkerCheckbox.isSelected());
-  	mSettings.setMarkPriorityForOmdbLink(mHasOmdbLink.getSelectedPriority());
+    mSettings.setMarkPrograms(mMarkerCheckbox.isSelected());
+    mSettings.setMarkPriorityForOmdbLink(mHasOmdbLink.getSelectedPriority());
   }
 }
