@@ -70,6 +70,8 @@ import devplugin.Version;
  */
 public class PluginLoader {
 
+  private static final String[] IGNORED_PLUGINS = new String[]{"FavoritesPlugin.jar", "ReminderPlugin.jar", "ProgramInfo.jar", "SearchPlugin.jar", "ShowviewPlugin.jar"};
+
   private static final String PLUGIN_PROXY_EXTENSION = ".jar.proxy";
 
 	private static final String PLUGIN_INSTALL_EXTENSION = ".inst";
@@ -259,7 +261,7 @@ public class PluginLoader {
    */
   private JavaPluginProxy readPluginProxy(File proxyFile) {
     DataInputStream in = null;
-    
+
     try {
       in = new DataInputStream(new BufferedInputStream(new FileInputStream(proxyFile)));
 
@@ -411,12 +413,13 @@ public class PluginLoader {
     }
 
     File[] fileArr = folder.listFiles(new FilenameFilter(){
-      public boolean accept(File dir, String name) {
-        return !("FavoritesPlugin.jar".equals(name)
-                || "ReminderPlugin.jar".equals(name)
-                || "ProgramInfo.jar".equals(name)
-                || "SearchPlugin.jar".equals(name)
-                || "ShowviewPlugin.jar".equals(name));
+      public boolean accept(File dir, String fileName) {
+        for (String ignored : IGNORED_PLUGINS) {
+          if (fileName.equalsIgnoreCase(ignored)) {
+            return false;
+          }
+        }
+        return true;
       }
     });
     if (fileArr == null) {
