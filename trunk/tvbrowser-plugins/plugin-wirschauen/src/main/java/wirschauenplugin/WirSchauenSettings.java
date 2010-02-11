@@ -18,6 +18,8 @@ package wirschauenplugin;
 
 import java.util.Properties;
 
+import devplugin.Program;
+
 
 /**
  * container for the settings of a plugin. this general mechanism is
@@ -32,6 +34,8 @@ public class WirSchauenSettings extends PropertyBasedSettings {
    * (see storeSettings and loadSettings).
    */
   private static final String OPTION_KEY_SHOW_MARKINGS = "showMarkings";
+  
+  private static final String OPTION_KEY_OMDB_MARK_PRIORITY = "omdbMarkPriority";
 
 
   /**
@@ -59,5 +63,26 @@ public class WirSchauenSettings extends PropertyBasedSettings {
       set(OPTION_KEY_SHOW_MARKINGS, showMarkings);
       WirSchauenPlugin.getInstance().updateMarkings(showMarkings);
     }
+  }
+  
+  /**
+   * Sets the mark priority for the omdb link highlighting.
+   * 
+   * @param markPriority The new mark priority.
+   */
+  public void setMarkPriorityForOmdbLink(int markPriority) {
+    if(getMarkPriorityForOmdbLink() != markPriority) {
+      set(OPTION_KEY_OMDB_MARK_PRIORITY, markPriority);
+      WirSchauenPlugin.getInstance().updateMarkingOfProgramsInTree();
+    }
+  }
+  
+  /**
+   * Gets the mark priority for the omdb link highlighting.
+   * 
+   * @return The mark priority.
+   */
+  public int getMarkPriorityForOmdbLink() {
+    return get(OPTION_KEY_OMDB_MARK_PRIORITY, Program.LOWER_MEDIUM_MARK_PRIORITY);
   }
 }

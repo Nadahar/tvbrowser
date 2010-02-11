@@ -14,11 +14,16 @@
  */
 package wirschauenplugin;
 
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+
 import javax.swing.Icon;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 
-import com.jgoodies.forms.factories.Borders;
+import util.ui.DefaultMarkingPrioritySelectionPanel;
+
+import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
@@ -33,6 +38,7 @@ public class WirSchauenSettingsTab implements SettingsTab
    * the checkbox that holds the marker-option (whether or not to mark the linked programs).
    */
   private JCheckBox mMarkerCheckbox;
+  private DefaultMarkingPrioritySelectionPanel mHasOmdbLink;
 	private WirSchauenSettings mSettings;
 
 
@@ -47,11 +53,23 @@ public class WirSchauenSettingsTab implements SettingsTab
    */
   public JPanel createSettingsPanel()
   {
-    JPanel panel = new JPanel(new FormLayout("pref, 3dlu, pref:grow", "pref"));
-    panel.setBorder(Borders.DLU4_BORDER);
-    mMarkerCheckbox = new JCheckBox(WirSchauenPlugin.LOCALIZER.msg("Settings.ShowMarking", "Mark programs which are linked with the OMDB."), mSettings.getMarkPrograms());
-    panel.add(mMarkerCheckbox, new CellConstraints().xy(1, 1));
-    return panel;
+    mMarkerCheckbox = new JCheckBox(WirSchauenPlugin.LOCALIZER.msg("Settings.ShowMarking", "Highlight programs which are linked with the OMDB."), mSettings.getMarkPrograms());
+    mHasOmdbLink = DefaultMarkingPrioritySelectionPanel.createPanel(mSettings.getMarkPriorityForOmdbLink(),false,false);
+    mHasOmdbLink.setEnabled(mMarkerCheckbox.isSelected());
+    
+    CellConstraints cc = new CellConstraints();
+    PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu, default:grow", "5dlu, pref, 5dlu, pref"));
+    
+    pb.add(mMarkerCheckbox, cc.xy(2, 2));
+    pb.add(mHasOmdbLink, cc.xy(2,4));
+    
+    mMarkerCheckbox.addItemListener(new ItemListener() {
+      public void itemStateChanged(ItemEvent e) {
+        mHasOmdbLink.setEnabled(e.getStateChange() == ItemEvent.SELECTED);        
+      }
+    });
+    
+    return pb.getPanel();
   }
 
 
@@ -85,5 +103,6 @@ public class WirSchauenSettingsTab implements SettingsTab
     //for the ok-button. as soon as the user accepts the settings, this
     //method will be called. so tell the plugin the new settings.
   	mSettings.setMarkPrograms(mMarkerCheckbox.isSelected());
+  	mSettings.setMarkPriorityForOmdbLink(mHasOmdbLink.getSelectedPriority());
   }
 }
