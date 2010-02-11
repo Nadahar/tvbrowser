@@ -254,7 +254,7 @@ public class OmdbConnection
    *
    * @param movieId the omdb-id of the movie
    * @param language OmdbConnection.EN or OmdbConnection.DE
-   * @return the abstract or null if no abstract was found or setLanguage returned false
+   * @return the abstract or null if no abstract was found
    * @throws IOException if the communication with omdb failed
    */
   public String loadAbstract(final long movieId, final byte language) throws IOException
