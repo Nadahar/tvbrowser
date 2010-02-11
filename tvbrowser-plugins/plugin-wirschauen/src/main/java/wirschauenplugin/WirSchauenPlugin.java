@@ -71,7 +71,7 @@ public final class WirSchauenPlugin extends Plugin
   /**
    * the version of this plugin.
    */
-  private static final Version VERSION = new Version(0, 15, 1, IS_STABLE);
+  private static final Version VERSION = new Version(0, 15, 2, IS_STABLE);
 
   /**
    * this class is a singleton. kind of. the constructor is not restricted so
@@ -280,12 +280,12 @@ public final class WirSchauenPlugin extends Plugin
     if (getRootNode().contains(program))
     {
       //mark all programs which were linked by the user (those are in the tree)
-      prio = Program.LOWER_MEDIUM_MARK_PRIORITY;
+      prio = super.getMarkPriorityForProgram(program);
     }
     else if (program.getTextField(ProgramFieldType.URL_TYPE) != null)
     {
       //mark all programs with omdb-link
-      prio = Program.MIN_MARK_PRIORITY;
+      prio = mSettings.getMarkPriorityForOmdbLink();
     }
     return prio;
   }
@@ -698,6 +698,22 @@ public final class WirSchauenPlugin extends Plugin
     // mark the linked programs. do this here instead of directly after loading settings for better startup performance
     if (mSettings.getMarkPrograms()) {
       updateMarkings(true);
+    }
+  }
+  
+  /**
+   * this walks through plugin tree an update all programs.
+   *
+   */
+  public void updateMarkingOfProgramsInTree()
+  {
+    for (ProgramId programId : mLinkedPrograms)
+    {
+      Program program = getPluginManager().getProgram(programId.getDate(), programId.getId());
+      
+      if (program != null) {
+        program.validateMarking();
+      }
     }
   }
 }
