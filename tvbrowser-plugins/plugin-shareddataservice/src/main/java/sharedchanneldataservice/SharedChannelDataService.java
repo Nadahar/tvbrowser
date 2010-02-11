@@ -528,16 +528,16 @@ public class SharedChannelDataService extends AbstractTvDataService{
   private MutableChannelDayProgram getSharedDayProgram(final Channel channel, final Date date, final String[]alienID, final int[]alienStart, Channel[] subScribedChannels){
     MutableChannelDayProgram dayProgram = new MutableChannelDayProgram(date, channel);
     if (alienStart[0]>0){
-      getSharedDayPartProgram (dayProgram, channel, date, alienID[alienID.length-1], 0, alienStart[0], subScribedChannels);
+      getSharedDayPartProgram (dayProgram, channel, date, alienID[alienID.length-1], 0, alienStart[0], subScribedChannels, false);
     }
     for (int i = 0; i < alienID.length-1; i++){
-      getSharedDayPartProgram (dayProgram, channel, date, alienID[i], alienStart[i], alienStart[i+1], subScribedChannels);
+      getSharedDayPartProgram (dayProgram, channel, date, alienID[i], alienStart[i], alienStart[i+1], subScribedChannels, true);
     }
-    getSharedDayPartProgram (dayProgram, channel, date, alienID[alienID.length-1], alienStart[alienID.length-1], alienStart[0]+1440, subScribedChannels);
+    getSharedDayPartProgram (dayProgram, channel, date, alienID[alienID.length-1], alienStart[alienID.length-1], alienStart[0]+1440, subScribedChannels, true);
     return dayProgram;
   }
 
-  private void getSharedDayPartProgram (MutableChannelDayProgram dayProgram, final Channel channel, final Date date, final String alienID, final int startTime, final int endTime, Channel[] subScribedChannels){
+  private void getSharedDayPartProgram (MutableChannelDayProgram dayProgram, final Channel channel, final Date date, final String alienID, final int startTime, final int endTime, Channel[] subScribedChannels, boolean fillStartFlg){
     Channel alienChannel = HelperMethods.getChannelFromId(alienID, subScribedChannels);
     Iterator<Program> alienDayProgram;
     MutableChannelDayProgram  changedAlienDayProgram = sharedSourcesUpdate.get(alienID+date.getDateString());
@@ -552,20 +552,42 @@ public class SharedChannelDataService extends AbstractTvDataService{
       boolean isFirst = true;
       Program alienProg = null;
       while (alienDayProgram.hasNext()) {
-        alienProg = alienDayProgram.next();
-        if (alienProg.getStartTime()+alienProg.getLength() > startTime && alienProg.getStartTime() < endTime) {
-          if (isFirst){
-            if (alienProg.getStartTime()>startTime){
-              dayProgram.addProgram(dummyProgram(channel, date, startTime, alienProg.getStartTime(), alienChannel.getName()));
-              isFirst= false;
-            }
-          }
-          dayProgram.addProgram(copiedProgram(alienProg, channel, date, startTime, endTime));
+    	  alienProg = alienDayProgram.next();
+    	  if (alienProg.getStartTime()+alienProg.getLength() > startTime && alienProg.getStartTime() < endTime) {
+    		  if (isFirst){
+    			  if (alienProg.getStartTime()>startTime && fillStartFlg){
+    				  	// check for yesterdays last program to fill the gap after midnight
+     					  Iterator<Program> alienYesterdayProgram;
+    					  Date yesterday = date.addDays(-1);
+    					  MutableChannelDayProgram  changedAlienYesterdayProgram = sharedSourcesUpdate.get(alienID+yesterday.getDateString());
+    					  if (changedAlienYesterdayProgram!=null && changedAlienYesterdayProgram.getProgramCount()>0) {
+    						  alienYesterdayProgram = changedAlienYesterdayProgram.getPrograms();
+    					  } else {
+    						  alienYesterdayProgram = getPluginManager().getChannelDayProgram(yesterday, alienChannel);
+    						  if (alienDayProgram == null || !alienDayProgram.hasNext()){
+    							  dayProgram.addProgram(dummyProgram(channel, date, startTime, endTime, alienChannel.getName()));
+    						  } else {
+    							  Program alienStartProg = null;
+    							  while (alienYesterdayProgram.hasNext()) {
+     								  alienStartProg = alienYesterdayProgram.next();
+
+    							  }
+    							  if (alienStartProg==null){
+    								  dayProgram.addProgram(dummyProgram(channel, date, startTime, alienProg.getStartTime(), alienChannel.getName()));
+
+    							  } else {
+    								  dayProgram.addProgram(copiedProgram(alienStartProg, channel, date, startTime, endTime, true));
+    							  }
+    						  }
+    					  }
+    			  }
+    			  isFirst= false;
+    		  }
+    		  dayProgram.addProgram(copiedProgram(alienProg, channel, date, startTime, endTime, false));
         }
       }
       if (alienProg!= null && alienProg.getStartTime()+alienProg.getLength()<endTime){
         dayProgram.addProgram(dummyProgram(channel, date, startTime, alienProg.getStartTime(), alienChannel.getName()));
-        isFirst= false;
       }
     }
   }
@@ -584,10 +606,10 @@ public class SharedChannelDataService extends AbstractTvDataService{
     return dummyProg;
   }
 
-  private MutableProgram copiedProgram(Program alienProg, Channel channel, Date date, int minStart, int maxEnd){
+  private MutableProgram copiedProgram(Program alienProg, Channel channel, Date date, int minStart, int maxEnd, boolean midNightFlg){
 
     int progStart;
-    if (alienProg.getStartTime() >= minStart) {
+    if (alienProg.getStartTime() >= minStart && !midNightFlg) {
       progStart = alienProg.getStartTime();
     } else {
       progStart = minStart;
@@ -643,6 +665,10 @@ public class SharedChannelDataService extends AbstractTvDataService{
 
       int cutInfo = Integer.parseInt((String)mProp.getProperty("cutInfoIndex"));
 
+      if (midNightFlg){
+    	  maxEnd = maxEnd+1440;
+    	  minStart = minStart + 1440;
+      }
       switch (cutInfo) { 
       case 0: // Custom Information before
         if (alienProg.getStartTime() + alienProg.getLength() > maxEnd) {
