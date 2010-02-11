@@ -212,15 +212,17 @@ public class ProgramList extends JList implements ChangeListener,
   }
 
   private void removeFromPrograms(int indexFirst, int indexLast) {
-    while(indexFirst >= mPrograms.size()) {
-      indexFirst = mPrograms.size() - 1;
-    }
-    while(indexLast >= mPrograms.size()) {
-      indexLast = mPrograms.size() - 1;
-    }
-    if(indexFirst >= 0) {
-      for (int i = indexLast; i >= indexFirst; i--) {
-        mPrograms.remove(i).removeChangeListener(this);
+    synchronized(mPrograms) {
+      while(indexFirst >= mPrograms.size()) {
+        indexFirst = mPrograms.size() - 1;
+      }
+      while(indexLast >= mPrograms.size()) {
+        indexLast = mPrograms.size() - 1;
+      }
+      if(indexFirst >= 0) {
+        for (int i = indexLast; i >= indexFirst; i--) {
+          mPrograms.remove(i).removeChangeListener(this);
+        }
       }
     }
   }
