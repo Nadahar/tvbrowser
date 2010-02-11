@@ -35,6 +35,7 @@ import java.util.List;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.MenuElement;
 
 import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginProxy;
@@ -452,26 +453,21 @@ public class ContextMenuManager {
           JMenuItem menuItem = MenuUtil.createMenuItem(actionMenu);
           items.add(menuItem);
           if (menuIf == leftSingleClickIf && markDefaultIf && !menuIf.equals(DoNothingContextMenuItem.getInstance())) {
-            menuItem.setForeground(new Color(0,90,0));
-          }
-          if (menuIf == defaultIf && menuIf == middleClickIf && markDefaultIf && !menuIf.equals(DoNothingContextMenuItem.getInstance())) {
-            if (!actionMenu.hasSubItems() && actionMenu.getAction() != null) {
-              menuItem.setFont(MenuUtil.CONTEXT_MENU_BOLDITALICFONT);
-            }
-          }
-          else if (menuIf == defaultIf && markDefaultIf && !menuIf.equals(DoNothingContextMenuItem.getInstance())) {
-            if (!actionMenu.hasSubItems() && actionMenu.getAction() != null) {
-              menuItem.setFont(MenuUtil.CONTEXT_MENU_BOLDFONT);
-            }
-          }
-          else if (menuIf == middleClickIf && markDefaultIf && !menuIf.equals(DoNothingContextMenuItem.getInstance())) {
-            if (!actionMenu.hasSubItems() && actionMenu.getAction() != null) {
-              menuItem.setFont(MenuUtil.CONTEXT_MENU_ITALICFONT);
-            }
+            ((JMenuItem)getLastFirstMenuEntry(menuItem)).setForeground(new Color(0,90,0));
           }
           else if (menuIf == middleDoubleClickIf && markDefaultIf && !menuIf.equals(DoNothingContextMenuItem.getInstance())) {
-            menuItem.setForeground(new Color(0,0,160));
+            ((JMenuItem)getLastFirstMenuEntry(menuItem)).setForeground(new Color(0,0,160));
           }
+          if (menuIf == defaultIf && menuIf == middleClickIf && markDefaultIf && !menuIf.equals(DoNothingContextMenuItem.getInstance())) {
+            ((JMenuItem)getLastFirstMenuEntry(menuItem)).setFont(MenuUtil.CONTEXT_MENU_BOLDITALICFONT);
+          }
+          else if (menuIf == defaultIf && markDefaultIf && !menuIf.equals(DoNothingContextMenuItem.getInstance())) {
+            ((JMenuItem)getLastFirstMenuEntry(menuItem)).setFont(MenuUtil.CONTEXT_MENU_BOLDFONT);
+          }
+          else if (menuIf == middleClickIf && markDefaultIf && !menuIf.equals(DoNothingContextMenuItem.getInstance())) {
+            ((JMenuItem)getLastFirstMenuEntry(menuItem)).setFont(MenuUtil.CONTEXT_MENU_ITALICFONT);
+          }
+
           rootMenu.add(menuItem);
         }
       }
@@ -513,5 +509,13 @@ public class ContextMenuManager {
     }
     
     return list;
+  }
+  
+  private MenuElement getLastFirstMenuEntry(MenuElement menu) {
+    if(menu.getSubElements().length == 0) {
+      return menu;
+    }
+    
+    return getLastFirstMenuEntry(menu.getSubElements()[0]);
   }
 }
