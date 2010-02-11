@@ -105,7 +105,7 @@ public final class NextViewDataService extends AbstractTvDataService {
     if (mInstance == null) {
       throw new RuntimeException("no instance of NextViewDataService class available");
     }
-    return mInstance;
+   return mInstance;
   }
 
   /**
@@ -363,13 +363,24 @@ public final class NextViewDataService extends AbstractTvDataService {
    *
    */
   public void loadSettings(Properties p) {
-    String propKey;
-    for (Enumeration<?> e = p.keys(); e.hasMoreElements();) {
-      propKey = e.nextElement().toString();
-      this.prop.setProperty(propKey, p.getProperty(propKey));
-    }
-    firstUpdate = firstUpdate + Integer.parseInt(prop.getProperty(AUTOSTART, "30")) * 60000L;
-    nextUpdate = firstUpdate;
+	  if (p.isEmpty()){
+		  prop.put(PATH, NextViewDataServicePanel.getNxtvApplication(""));
+		  prop.put(PROVIDER, "merged");
+		  prop.put(AUTORUN, "NO");
+		  prop.put(AUTOSTART, "30");
+		  prop.put(AUTOREPETITION, "60");
+		  prop.put(DATAMIX, "NO");
+		  prop.put(ALTERNATIVEICONS, "NO");
+
+	  } else {
+		  String propKey;
+		  for (Enumeration<?> e = p.keys(); e.hasMoreElements();) {
+			  propKey = e.nextElement().toString();
+			  this.prop.setProperty(propKey, p.getProperty(propKey));
+		  }
+	  }
+	  firstUpdate = firstUpdate + Integer.parseInt(prop.getProperty(AUTOSTART, "30")) * 60000L;
+	  nextUpdate = firstUpdate;
 
   }
 
@@ -687,153 +698,227 @@ public final class NextViewDataService extends AbstractTvDataService {
    */
   private void getTvData(final Boolean update, final Boolean full, final ProgressMonitor monitor) {
 
-    // Definition of the thread to export nxtvepg data and to parse it
-    Thread t = new Thread() {
+	  String nxtAppPath = (String) prop
+	  .getProperty(PATH, NextViewDataServicePanel
+			  .getNxtvApplication(""));
 
-      @Override
-      public void run() {
-        try {
-          boolean updateError = false;
-          String outFileDir = mDataDir.getCanonicalPath();
-          String outFile = outFileDir + "/xmldata";
-          File fOutFile = new File(outFile);
-
-          // prompt nxtvepg to export a new data file
-
-          if (update || !fOutFile.exists()) {
-
-            // backup previous export file
-
-            String backFile = outFileDir + "/xmlback";
-            File fBackFile = new File(backFile);
-            if (fOutFile.exists()&& (fOutFile.length()>1024)){
-              fOutFile.renameTo(fBackFile);
-            }
-
-            // create command string to call application nxtvegp
-
-            String nxtApp = (String) prop.getProperty(PATH, NextViewDataServicePanel.getNxtvApplication(""));
-
-            String nxtIni = (String) prop.getProperty(RCFILE, "");
-            String nxtDBDir = (String) prop.getProperty(DBDIR, "");
-            String nxtProv = (String) prop.getProperty(PROVIDER, "merged");
-
-            String[] next2xmlCmd = new String[11];
-
-            next2xmlCmd[0] = nxtApp;
-            next2xmlCmd[1] = "-dump";
-            next2xmlCmd[2] = "xml5ltz";
-
-            next2xmlCmd[3] = "-outfile";
-            next2xmlCmd[4] = outFile;
-
-            if (nxtProv.equals("") || nxtProv.equals("FF")) {
-              nxtProv = "merged";
-            }
-
-            next2xmlCmd[5] = "-prov";
-            next2xmlCmd[6] = nxtProv;
-
-            int argCounter = 7;
-
-            if (!nxtIni.equals("")) {
-              next2xmlCmd[7] = "-rcfile";
-              next2xmlCmd[8] = (new File(nxtIni)).getCanonicalPath();
-              argCounter = 9;
-            }
-
-            if (!nxtDBDir.equals("")) {
-              next2xmlCmd[argCounter] = "-dbdir";
-              next2xmlCmd[argCounter + 1] = (new File(nxtDBDir)).getCanonicalPath();
-              argCounter = argCounter + 2;
-            }
-
-            fOutFile.delete();
-
-            String[] cmdParameters = new String[argCounter];
-            System.arraycopy(next2xmlCmd, 0, cmdParameters, 0, argCounter);
-
-            // run external nxtvepg process
-            try {
-              if (!fOutFile.exists()) {
-                JbUtilities.runExtProcess(cmdParameters, outFileDir);
-                if (!fOutFile.exists()) {
-                  mLog.warning("nxtvepg export Error: Unable to create: " + fOutFile.getCanonicalFile());
-                  updateError = true;
-                }
-              } else {
-                mLog.warning("nxtvepg export Error: file already exists: " + fOutFile.getCanonicalFile());
-                updateError = true;
-              }
-            } catch (Exception e) {
-              mLog.warning("CatchError: nxtvepg-Export -- " + e);
-              updateError = true;
-            }
-            if (!fOutFile.exists()||(fOutFile.length()<1024)){
-              if (fBackFile.exists()){
-                if (fOutFile.exists()){
-                  fOutFile.delete();
-                }
-                fBackFile.renameTo(fOutFile);
-                String failedMessage = mLocalizer.msg("failedExportMessage", "Nxtvepg: Data export failed!" + System.getProperty("line.separator") + System.getProperty("line.separator") +  "Please check:" + System.getProperty("line.separator")  + "1.) The settings of the Nxtvepg Data Plugin here in 'TV-Browser'" + System.getProperty("line.separator") + "2.) The settings in the application the nxtvepg itself");
-                JOptionPane.showMessageDialog(null, failedMessage, mLocalizer.msg("errorTitle", "Severe Error in: Nxtvepg Data Plugin"), JOptionPane.ERROR_MESSAGE);
-              }
-
-            }
-            fBackFile.delete();
-
-          }
-
-          // parse nxtvepg data
-
-          if (!updateError) {
-            SAXParserFactory factory = SAXParserFactory.newInstance();
-            if (full) {
-              monitor.setValue(1);
-              NextViewDataServiceXMLHandler handler = new NextViewDataServiceXMLHandler(data);
-              SAXParser saxParser = factory.newSAXParser();
-              saxParser.parse(new File(outFile).toURI().toString(), handler);
-            } else {
-              NextViewChannelFinder handler = new NextViewChannelFinder(data);
-              SAXParser saxParser = factory.newSAXParser();
-              saxParser.parse(new File(outFile).toURI().toString(), handler);
-            }
-          }
+	  File nxtvApp = new File (nxtAppPath);
 
 
 
-        } catch (Exception e) {
-          mLog.warning(e.toString());
-        } catch (OutOfMemoryError oome) {
-          String wMessage =
-            "Java VM out of Memory in NextViewDataService" + System.getProperty("line.separator") + "Please try one of these:" + System.getProperty("line.separator") + "- reduce the filter 'expired display' in your nxtvepg rcfile to max. 2 days." + System.getProperty("line.separator") + "- increase memory of Java VM, i.e. run TV-Browser with 'javaw.exe -Xmx256M -jar tvbrowser.jar'." + System.getProperty("line.separator") + "- reduce the amount of channels(networks) in your nxtvepg rcfile (ini-file)." + System.getProperty("line.separator");
-          mLog.warning(wMessage);
+    if (nxtvApp.exists()) {
+		// Definition of the thread to export nxtvepg data and to parse it
+		Thread t = new Thread() {
+			@Override
+			public void run() {
+				try {
+					boolean updateError = false;
+					String outFileDir = mDataDir.getCanonicalPath();
+					String outFile = outFileDir + "/xmldata";
+					File fOutFile = new File(outFile);
 
-          wMessage = mLocalizer.msg("outOfMemMessage", "Java VM Out Of Memory!" + System.getProperty("line.separator") + System.getProperty("line.separator") + "If this message appears on a regular basis, try the proposals for" + System.getProperty("line.separator") + "solution from page 'Nxtvepg Data Plugin' in the TV-Browser Wiki." + System.getProperty("line.separator") +  "(You'll find a direct link to this page in the 'Nxtvepg Data Plugin' settings help.)");
+					// prompt nxtvepg to export a new data file
 
-          JOptionPane.showMessageDialog(null, wMessage, mLocalizer.msg("errorTitle", "Severe Error in: Nxtvepg Data Plugin"), JOptionPane.ERROR_MESSAGE);
-        }
-      }
-    };
+					if (update || !fOutFile.exists()) {
 
-    // Start thread:
-    t.start();
-    try {
-      // 3000*100ms = 300 Sek max
-      int count = 3000;
-      while (t.isAlive() && (count > 0)) {
-        Thread.sleep(100);
-        count--;
-      }
-      if (t.isAlive()) {
-        mLog.warning("NextViewDataService: update failed -- forcing thread to terminated");
+						// backup previous export file
 
-        String wMessage = mLocalizer.msg("updateErrorMessage", "Receiving Program Data in Nxtvepg Data Plugin failed.");
+						String backFile = outFileDir + "/xmlback";
+						File fBackFile = new File(backFile);
+						if (fOutFile.exists() && (fOutFile.length() > 1024)) {
+							fOutFile.renameTo(fBackFile);
+						}
 
-        JOptionPane.showMessageDialog(null, wMessage, mLocalizer.msg("errorTitle", "Error in: Nxtvepg Data Plugin"), JOptionPane.ERROR_MESSAGE);
-      }
-    } catch (Exception e) {
-    }
+						// create command string to call application nxtvegp
+
+						String nxtApp = (String) prop
+								.getProperty(PATH, NextViewDataServicePanel
+										.getNxtvApplication(""));
+
+						String nxtIni = (String) prop.getProperty(RCFILE, "");
+						String nxtDBDir = (String) prop.getProperty(DBDIR, "");
+						String nxtProv = (String) prop.getProperty(PROVIDER,
+								"merged");
+
+						String[] next2xmlCmd = new String[11];
+
+						next2xmlCmd[0] = nxtApp;
+						next2xmlCmd[1] = "-dump";
+						next2xmlCmd[2] = "xml5ltz";
+
+						next2xmlCmd[3] = "-outfile";
+						next2xmlCmd[4] = outFile;
+
+						if (nxtProv.equals("") || nxtProv.equals("FF")) {
+							nxtProv = "merged";
+						}
+
+						next2xmlCmd[5] = "-prov";
+						next2xmlCmd[6] = nxtProv;
+
+						int argCounter = 7;
+
+						if (!nxtIni.equals("")) {
+							next2xmlCmd[7] = "-rcfile";
+							next2xmlCmd[8] = (new File(nxtIni))
+									.getCanonicalPath();
+							argCounter = 9;
+						}
+
+						if (!nxtDBDir.equals("")) {
+							next2xmlCmd[argCounter] = "-dbdir";
+							next2xmlCmd[argCounter + 1] = (new File(nxtDBDir))
+									.getCanonicalPath();
+							argCounter = argCounter + 2;
+						}
+
+						fOutFile.delete();
+
+						String[] cmdParameters = new String[argCounter];
+						System.arraycopy(next2xmlCmd, 0, cmdParameters, 0,
+								argCounter);
+
+						// run external nxtvepg process
+						try {
+							if (!fOutFile.exists()) {
+								JbUtilities.runExtProcess(cmdParameters,
+										outFileDir);
+								if (!fOutFile.exists()) {
+									mLog
+											.warning("nxtvepg export Error: Unable to create: "
+													+ fOutFile
+															.getCanonicalFile());
+									updateError = true;
+								}
+							} else {
+								mLog
+										.warning("nxtvepg export Error: file already exists: "
+												+ fOutFile.getCanonicalFile());
+								updateError = true;
+							}
+						} catch (Exception e) {
+							mLog.warning("CatchError: nxtvepg-Export -- " + e);
+							updateError = true;
+						}
+						if (!fOutFile.exists() || (fOutFile.length() < 1024)) {
+							if (fBackFile.exists()) {
+								if (fOutFile.exists()) {
+									fOutFile.delete();
+								}
+								fBackFile.renameTo(fOutFile);
+								String failedMessage = mLocalizer
+										.msg(
+												"failedExportMessage",
+												"Nxtvepg: Data export failed!"
+														+ System
+																.getProperty("line.separator")
+														+ System
+																.getProperty("line.separator")
+														+ "Please check:"
+														+ System
+																.getProperty("line.separator")
+														+ "1.) The settings of the Nxtvepg Data Plugin here in 'TV-Browser'"
+														+ System
+																.getProperty("line.separator")
+														+ "2.) The settings in the application the nxtvepg itself");
+								JOptionPane
+										.showMessageDialog(
+												null,
+												failedMessage,
+												mLocalizer
+														.msg("errorTitle",
+																"Severe Error in: Nxtvepg Data Plugin"),
+												JOptionPane.ERROR_MESSAGE);
+							}
+
+						}
+						fBackFile.delete();
+
+					}
+
+					// parse nxtvepg data
+
+					if (!updateError) {
+						SAXParserFactory factory = SAXParserFactory
+								.newInstance();
+						if (full) {
+							monitor.setValue(1);
+							NextViewDataServiceXMLHandler handler = new NextViewDataServiceXMLHandler(
+									data);
+							SAXParser saxParser = factory.newSAXParser();
+							saxParser.parse(new File(outFile).toURI()
+									.toString(), handler);
+						} else {
+							NextViewChannelFinder handler = new NextViewChannelFinder(
+									data);
+							SAXParser saxParser = factory.newSAXParser();
+							saxParser.parse(new File(outFile).toURI()
+									.toString(), handler);
+						}
+					}
+
+				} catch (Exception e) {
+					mLog.warning(e.toString());
+				} catch (OutOfMemoryError oome) {
+					String wMessage = "Java VM out of Memory in NextViewDataService"
+							+ System.getProperty("line.separator")
+							+ "Please try one of these:"
+							+ System.getProperty("line.separator")
+							+ "- reduce the filter 'expired display' in your nxtvepg rcfile to max. 2 days."
+							+ System.getProperty("line.separator")
+							+ "- increase memory of Java VM, i.e. run TV-Browser with 'javaw.exe -Xmx256M -jar tvbrowser.jar'."
+							+ System.getProperty("line.separator")
+							+ "- reduce the amount of channels(networks) in your nxtvepg rcfile (ini-file)."
+							+ System.getProperty("line.separator");
+					mLog.warning(wMessage);
+
+					wMessage = mLocalizer
+							.msg(
+									"outOfMemMessage",
+									"Java VM Out Of Memory!"
+											+ System
+													.getProperty("line.separator")
+											+ System
+													.getProperty("line.separator")
+											+ "If this message appears on a regular basis, try the proposals for"
+											+ System
+													.getProperty("line.separator")
+											+ "solution from page 'Nxtvepg Data Plugin' in the TV-Browser Wiki."
+											+ System
+													.getProperty("line.separator")
+											+ "(You'll find a direct link to this page in the 'Nxtvepg Data Plugin' settings help.)");
+
+					JOptionPane.showMessageDialog(null, wMessage, mLocalizer
+							.msg("errorTitle",
+									"Severe Error in: Nxtvepg Data Plugin"),
+							JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		};
+		// Start thread:
+		t.start();
+		try {
+			// 3000*100ms = 300 Sek max
+			int count = 3000;
+			while (t.isAlive() && (count > 0)) {
+				Thread.sleep(100);
+				count--;
+			}
+			if (t.isAlive()) {
+				mLog
+						.warning("NextViewDataService: update failed -- forcing thread to terminated");
+
+				String wMessage = mLocalizer
+						.msg("updateErrorMessage",
+								"Receiving Program Data in Nxtvepg Data Plugin failed.");
+
+				JOptionPane.showMessageDialog(null, wMessage, mLocalizer.msg(
+						"errorTitle", "Error in: Nxtvepg Data Plugin"),
+						JOptionPane.ERROR_MESSAGE);
+			}
+		} catch (Exception e) {
+		}
+	}
   }
 
   /*
