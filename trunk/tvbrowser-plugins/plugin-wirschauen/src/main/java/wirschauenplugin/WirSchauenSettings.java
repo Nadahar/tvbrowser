@@ -34,7 +34,10 @@ public class WirSchauenSettings extends PropertyBasedSettings {
    * (see storeSettings and loadSettings).
    */
   private static final String OPTION_KEY_SHOW_MARKINGS = "showMarkings";
-  
+
+  /**
+   * this is the key used to store the prio for the markings of linked programs.
+   */
   private static final String OPTION_KEY_OMDB_MARK_PRIORITY = "omdbMarkPriority";
 
 
@@ -64,22 +67,22 @@ public class WirSchauenSettings extends PropertyBasedSettings {
       WirSchauenPlugin.getInstance().updateMarkings(showMarkings);
     }
   }
-  
+
   /**
    * Sets the mark priority for the omdb link highlighting.
-   * 
+   *
    * @param markPriority The new mark priority.
    */
-  public void setMarkPriorityForOmdbLink(int markPriority) {
-    if(getMarkPriorityForOmdbLink() != markPriority) {
+  public void setMarkPriorityForOmdbLink(final int markPriority) {
+    if (getMarkPriorityForOmdbLink() != markPriority) {
       set(OPTION_KEY_OMDB_MARK_PRIORITY, markPriority);
       WirSchauenPlugin.getInstance().updateMarkingOfProgramsInTree();
     }
   }
-  
+
   /**
    * Gets the mark priority for the omdb link highlighting.
-   * 
+   *
    * @return The mark priority.
    */
   public int getMarkPriorityForOmdbLink() {
