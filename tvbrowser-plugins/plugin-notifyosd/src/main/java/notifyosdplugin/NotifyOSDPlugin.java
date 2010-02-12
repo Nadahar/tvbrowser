@@ -1,16 +1,16 @@
 /*
  * Copyright Michael Keppler
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -205,6 +205,12 @@ public class NotifyOSDPlugin extends Plugin {
     final ExecutionHandler executionHandler = new ExecutionHandler("notify-send", "which");
     try {
       executionHandler.execute(true);
+      try {
+        executionHandler.getInputStreamReaderThread().join(2000);
+      } catch (InterruptedException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
       String location = executionHandler.getInputStreamReaderThread().getOutput();
       if (location != null) {
         location = location.trim();
@@ -232,12 +238,12 @@ public class NotifyOSDPlugin extends Plugin {
   public void loadSettings(final Properties properties) {
     mSettings = new NotifyOSDSettings(properties);
   }
-  
+
   @Override
   public Properties storeSettings() {
     return mSettings.storeSettings();
   }
-  
+
   @Override
   public SettingsTab getSettingsTab() {
     return new NotifyOSDSettingsTab(this, mSettings);

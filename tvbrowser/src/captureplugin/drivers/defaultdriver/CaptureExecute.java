@@ -283,12 +283,12 @@ public class CaptureExecute {
         String errors = ""; // also capture STDERR output FSCHAECK - 2008-06-13
 
         if(!executionHandler.getInputStreamReaderThread().isAlive()) {
-          output = executionHandler.getInputStreamReaderThread().getOutput();
+          output = executionHandler.getOutput();
         }
 
         // read STDERR output and add to return value if necessary - FSCHAECK - 2008-06-13
         if(!executionHandler.getErrorStreamReaderThread().isAlive()) {
-          errors = executionHandler.getErrorStreamReaderThread().getOutput();
+          errors = executionHandler.getOutput();
           if (errors.length()>0) {
             if (output.length()>0) {
               output = output+"\n\n"+errors;

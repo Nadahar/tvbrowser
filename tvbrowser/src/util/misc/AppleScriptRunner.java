@@ -129,7 +129,7 @@ public class AppleScriptRunner {
     String output = "";
 
     if (!executionHandler.getInputStreamReaderThread().isAlive()) {
-      output = executionHandler.getInputStreamReaderThread().getOutput();
+      output = executionHandler.getOutput();
     }
 
     mLog.info("AppleScript Output:");
