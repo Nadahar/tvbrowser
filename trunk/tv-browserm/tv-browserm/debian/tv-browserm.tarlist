@@ -1,0 +1,16 @@
+755 root root . opt  /
+755 root root . opt/tv-browserm  /
+644 root root . opt/tv-browserm/tv-browserm debian/tv-browserm/opt/tv-browserm/tv-browserm
+644 root root . opt/tv-browserm/tv-browserm_de_DE.qm debian/tv-browserm/opt/tv-browserm/tv-browserm_de_DE.qm
+644 root root . opt/tv-browserm/tv-browserm_en_EN.qm debian/tv-browserm/opt/tv-browserm/tv-browserm_en_EN.qm
+755 root root . usr  /
+755 root root . usr/share  /
+755 root root . usr/share/applications  /
+755 root root . usr/share/applications/hildon  /
+644 root root . usr/share/applications/hildon/tv-browserm.desktop debian/tv-browserm/usr/share/applications/hildon/tv-browserm.desktop
+755 root root . usr/share/doc  /
+755 root root . usr/share/doc/tv-browserm  /
+644 root root . usr/share/doc/tv-browserm/copyright debian/tv-browserm/usr/share/doc/tv-browserm/copyright
+644 root root . usr/share/doc/tv-browserm/README.Debian debian/tv-browserm/usr/share/doc/tv-browserm/README.Debian
+755 root root . usr/share/pixmaps  /
+644 root root . usr/share/pixmaps/tvbrowser64.png debian/tv-browserm/usr/share/pixmaps/tvbrowser64.png

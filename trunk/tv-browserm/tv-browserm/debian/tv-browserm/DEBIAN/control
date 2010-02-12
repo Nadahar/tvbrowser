@@ -1,0 +1,16 @@
+Package: tv-browserm
+Version: 0.1-1
+Architecture: armel
+Maintainer: Jan Bergmann <dev_jb@gmx.de>
+Installed-Size: 3265
+Depends: libc6 (>= 2.5.0-1), libgcc1 (>= 1:4.2.1), libqt4-core (>= 4.5.3~git20090723), libqt4-gui (>= 4.5.3~git20090723)
+Section: user/desktop
+Priority: extra
+Description: tv-browserm a free EPG
+ you need to install the TV-Browser from www.tvbrowser.org and use the export
+ "TV-Browser Mini Export Plugin" for getting the tv data.
+ The exported file must be named "tvexp.tvd" and stored in the "tv-browserm"
+ directory on your n900
+Bugtracker: http://tvbrowser.org:8080/jira/browse/TVBM
+Maemo-Icon-26: 
+ iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAABGdBTUEAALGPC/xhBQAAAwBQTFRFAAAAMUp1TU9UUFNVVlhaXl5eR2V6TGR0X2Fiam93bW9xdnZ2dHl9enp6fn9+D0moEk6rFlOvHFmyHl+3J1uPMU6CJ1ysLFuoIlqxJ16zMV+uO22eJWSqJGSvK2WgKWaqK2mmLGusJGe2ImW7JWm6LmGzK261LnGyLXO+PW+vNma2NnOnMXGqO3isM3eyM3q+One/O3y+MHnFNH/MXHeKQXWoQnWvQHqnQXS9RXC6Rny1R3i6SnezTHK2SXS8Tny3UHWlUH2lUH+vbXiBYXukWH3AN4HDN4LNOofRR4S3WIWoWYetXYapXo6vUIi3VYu4WoG6XI23XY6+YoCbbYGdc4ORc4SZeIqeZYGtZISoYoqlZY2vaoKuao2kZ4a2bIqwbYy5bpSsYJG7a5S2fo+ke5erfpytdJWxepO0e5G7e5m+f5i4dKG7RofESI3EQI3RQo/UT5bOSpDTSZPWUI/AXoPCU5nXaYnFbo3GZpnAapvKcZDJe5fLf5rDa6HDbabMYKDYZaXZZ6rZaqbbe6bHcKvadK/ecbPcf7PTeLXfbrTocbbidrLjc7bpebbnfLvqfL/uesTygoKChIWHiYmJjIyMg4+XjJWckJCQk5OTlpeZm5ydn5+eg5Gmhpmuh5m1hp2/lZ+qlJ2wgKC7haK5mKSskqW3m6q4oqOkp6enpairq6qqr66voqm0pq62s7Ozt7e2sLO5tLi+urq7v7++hJzHgZvOgKfKhqrEg6zPjKHIjaXQjbDIh7TTk6vCmKjGmrLUo63Bo7HIprnNrrbErLnJrbjOpbTQrL7RqbvYuLzBsr/YgMXxrsDVs8TawsLDxsfGwMTIy8rKzs7OwcrUwMrdyMvRzNLf0tLS1tXV0tXb2dnZ3d3dyNLj1Nvn2d7j3uLo4ODg5OPj5ufn4+bs6urr7+/vAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAE6zgPAAAAQB0Uk5T////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AFP3ByUAAAAZdEVYdFNvZnR3YXJlAFBhaW50Lk5FVCB2My41LjLX7mlDAAACYElEQVQ4T2P4TwAwUFXB3Gu37zx89Pjp1RgkYxFWrL10+dqx46dPn77+9NmzTLgSmALOLecP7tq2bVtNzbZtu08/eXaPEaoEqsB5w8aE6oqKiq3lIFBRc/XZE1GICogCzjWLbEtdXV33X94KJIGgdPezJxAzIApWLpSyswSCI5cOgSggsKt4dhehYNYKcVUtILA8f+EiiAYB/pPPamEmMM12EZCQBIK4LacuBIAYQCCg+uAJTMHkWWKCQiAwf3PC+QVglpCQoOCBpxFQN8wIgQquXyu06RSULSRk8fQkVMFUB2EwsFmTIZy9xRrCAYL7D6AKpmgqg0H8anvlgM1ZEA4QnHsMUcAxecrUGTNnzZ6zYqWSrPyGdUoqBhcv37gJiheIAtZJoWFh4eEpKXMjZWVk5m0wk024cPTw4RNnbz2EWsFnZQQEavLyGkYaakHrszSWnQeLnL0DVcDrZGxsrKhoZGzsLidiuGa58aZN6gpA3pXbMAXBHh6K6h4eBUW50qamy9ZUbdjnoa/gXnTjBFQBF0++m05+cVlDg2NQs+Pi1evWby8u0NPbeTkdFlncPnrann6BSYHebT1J0StXr0n299TVvXgJHptcPOZ5Da1tbW09fX1tXktXrmptbSxccn4JIrq5nUu6+qGgMnXF0v7+3pbNp5DSAwu3c9MEKOiMmr1jwoS96zewISn4z8HtXD/hDATU+fZP2LN6jQlykvv/n5mbO7Z94kSQggndHQtXrGBHTbRAHhc3d2hiXX19Ttr0WbOnQaVhaRLC5eLl5ZsEijlnuDSqAiRhBJPyzAsAQoWzy+DObDgAAAAASUVORK5CYII=
