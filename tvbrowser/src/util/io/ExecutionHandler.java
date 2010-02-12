@@ -29,7 +29,7 @@ import java.util.ArrayList;
 
 /**
  * Handles the execution of external processes.
- * 
+ *
  * @author René Mach
  * @since 2.6.1/2.2.5
  */
@@ -38,31 +38,31 @@ public class ExecutionHandler {
   private File mRuntimeDirectory;
   private StreamReaderThread mInputStream;
   private StreamReaderThread mErrorStream;
-  
+
   private Process mProcess;
 
   /**
    * Creates an instance of this class.
-   * 
+   *
    * @param parameter The parameter to pass to the application.
    * @param programPath The path to the application.
    */
   public ExecutionHandler(String parameter, String programPath) {
     this(parameter, programPath, (File) null);
-    
+
     if(programPath.contains(File.separator)) {
       String path = programPath.substring(0,programPath.lastIndexOf(File.separator) + 1);
-      
+
       if(path == null || path.length() < 1 || !(new File(path).isDirectory()))
         path = System.getProperty("user.dir");
-      
+
       mRuntimeDirectory = new File(path.trim());
     }
   }
-  
+
   /**
    * Creates an instance of this class.
-   * 
+   *
    * @param parameter The parameter to parse to the application.
    * @param programPath The path to the application.
    * @param runtimeDirectory The runtime directory for the application.
@@ -73,7 +73,7 @@ public class ExecutionHandler {
 
   /**
    * Creates an instance of this class.
-   * 
+   *
    * @param parameter The parameter to parse to the application.
    * @param programPath The path to the application.
    * @param runtimeDirectory The runtime directory for the application.
@@ -82,29 +82,29 @@ public class ExecutionHandler {
     mParameter = calculateParameter(parameter, programPath);
     mRuntimeDirectory = runtimeDirectory;
   }
-  
+
   /**
    * Creates an instance of this class.
-   * 
+   *
    * @param parameterWithProgramPath The parameter to parse to the application with the path to the program.
    */
   public ExecutionHandler(String[] parameterWithProgramPath) {
     this(parameterWithProgramPath, (File) null);
   }
-  
+
   /**
    * Creates an instance of this class.
-   * 
+   *
    * @param parameterWithProgramPath The parameter to parse to the application with the path to the program.
    * @param runtimeDirectory The runtime directory for the application.
    */
   public ExecutionHandler(String[] parameterWithProgramPath, String runtimeDirectory) {
     this(parameterWithProgramPath, new File(runtimeDirectory.trim()));
   }
-  
+
   /**
    * Creates an instance of this class.
-   * 
+   *
    * @param parameterWithProgramPath The parameter to parse to the application with the path to the program.
    * @param runtimeDirectory The runtime directory for the application.
    */
@@ -124,21 +124,21 @@ public class ExecutionHandler {
   /**
    * Executes the given application with the given parameters in the given runtime directory.
    * @param encoding The encoding for the reading of the process console output.
-   * 
+   *
    * @throws IOException Thrown if something went wrong on process building.
    */
   public void execute(String encoding) throws IOException {
     execute(false,false,encoding);
   }
-  
+
   /**
    * Executes the given application with the given parameters in the given runtime directory.
    * @param logInputStream <code>True</code> means that the console output of the output stream
    * of the process will be logged and can be get after the process was stopped (it's output stream
    * is an input stream for the process starter).
-   * 
+   *
    * @throws IOException Thrown if something went wrong on process building.
-   */  
+   */
   public void execute(boolean logInputStream) throws IOException {
     execute(logInputStream,false);
   }
@@ -149,9 +149,9 @@ public class ExecutionHandler {
    * of the process will be logged and can be get after the process was stopped (it's output stream
    * is an input stream for the process starter).
    * @param encoding The encoding for the reading of the process console output.
-   *  
+   *
    * @throws IOException Thrown if something went wrong on process building.
-   */  
+   */
   public void execute(boolean logInputStream, String encoding) throws IOException {
     execute(logInputStream,false,encoding);
   }
@@ -165,13 +165,13 @@ public class ExecutionHandler {
    * is an input stream for the process starter).
    * @param logErrorStream <code>True</code> means that the console output of the error stream
    * of the process will be logged and can be get after the process was stopped.
-   * 
+   *
    * @throws IOException Thrown if something went wrong on process building.
-   */  
+   */
   public void execute(boolean logInputStream, boolean logErrorStream) throws IOException {
     execute(logInputStream, logErrorStream, null);
   }
-  
+
   /**
    * Executes the given application with the given parameters in the given runtime directory.
    * @param logInputStream <code>True</code> means that the console output of the output stream
@@ -180,31 +180,31 @@ public class ExecutionHandler {
    * @param logErrorStream <code>True</code> means that the console output of the error stream
    * of the process will be logged and can be get after the process was stopped.
    * @param encoding The encoding for the reading of the process console output.
-   * 
+   *
    * @throws IOException Thrown if something went wrong on process building.
-   */  
+   */
   public void execute(boolean logInputStream, boolean logErrorStream, String encoding) throws IOException {
     mProcess = Runtime.getRuntime().exec(mParameter,null,mRuntimeDirectory);
-    
+
     mInputStream = new StreamReaderThread(mProcess.getInputStream(),logInputStream,encoding);
     mErrorStream = new StreamReaderThread(mProcess.getErrorStream(),logErrorStream,encoding);
-    
+
     mInputStream.start();
     mErrorStream.start();
   }
-  
+
   /**
    * Gets the started process.
-   * 
+   *
    * @return The started process or <code>null</code> if the process wasn't started.
    */
   public Process getProcess() {
     return mProcess;
   }
-  
+
   /**
    * The exit value of the process.
-   * 
+   *
    * @return The exit value of the process.
    * @throws IllegalThreadStateException Thrown if the process wasn't started or is not finished.
    */
@@ -212,34 +212,34 @@ public class ExecutionHandler {
     if(mProcess == null) {
       throw new IllegalThreadStateException("Process wasn't started.");
     }
-    
+
     return mProcess.exitValue();
   }
-  
+
   /**
    * Gets the input stream reader thread (it logs the console output of the process).
-   * 
+   *
    * @return The input stream reader thread.
    */
   public StreamReaderThread getInputStreamReaderThread() {
     return mInputStream;
   }
-  
+
   /**
    * Gets the error stream reader thread.
-   * 
+   *
    * @return The error stream reader thread.
    */
   public StreamReaderThread getErrorStreamReaderThread() {
     return mErrorStream;
   }
-  
+
   private String[] calculateParameter(String parameter, String programPath) {
     StringBuilder lastString = null;
     ArrayList<String> args = new ArrayList<String>();
-    
+
     args.add(programPath.trim());
-    
+
     for (String part : parameter.split(" ")) {
       if (part.length() > 0 && part.charAt(0) == '"') {
         if (part.charAt(part.length()-1) == '"') {
@@ -263,7 +263,24 @@ public class ExecutionHandler {
         args.add(part);
       }
     }
-    
+
     return args.toArray(new String[args.size()]);
+  }
+
+
+  /**
+   * get console output of the execution handler after execution
+   * @return output
+   * @since 3.0
+   */
+  public String getOutput() {
+    StreamReaderThread thread = getInputStreamReaderThread();
+    try {
+      thread.join(2000);
+    } catch (InterruptedException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    return thread.getOutputString();
   }
 }
