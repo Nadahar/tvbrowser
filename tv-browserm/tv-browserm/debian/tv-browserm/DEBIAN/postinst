@@ -1,0 +1,12 @@
+#!/bin/sh
+# postinst script for tv-browserm
+#
+# see: dh_installdeb(1)
+
+gtk-update-icon-cache -f /usr/share/pixmaps
+mkdir -p /home/user/MyDocs/tv-browserm
+chmod 755 /opt/tv-browserm/tv-browserm
+  
+exit 0
+
+
