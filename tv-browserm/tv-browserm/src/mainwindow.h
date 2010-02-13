@@ -1,6 +1,6 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
-#include "mymodel.h"
+#include "runsnowmodel.h"
 #include <QMainWindow>
 #include <QDateTime>
 
@@ -13,7 +13,7 @@ class MainWindow : public QMainWindow {
 public:
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
-    MyModel *model;
+    runsnowmodel *model;
 
 
 protected:
@@ -29,7 +29,7 @@ private slots:
     void on_pbRefresh_clicked();
     void AddToTable(QString sender, QString Sendung, QString VonBis, QString sid);
     void ClearTable();
-    QString DecryptText(char* sText);
+    QString DecryptText(char* sText, bool replace8);
     void LoadTVData(QDateTime dts);
     QString GetKurzinfo(QString sSID);
 };

@@ -1,7 +1,7 @@
-#ifndef MYMODEL_H
-#define MYMODEL_H
+#ifndef runsnowmodel_H
+#define runsnowmodel_H
 
-#include "mymodel.h"
+#include "runsnowmodel.h"
 #include <QAbstractTableModel>
 #include <QPair>
 #include <QList>
@@ -29,13 +29,13 @@ struct QPair4
 
 
 //! [0]
-class MyModel : public QAbstractTableModel
+class runsnowmodel : public QAbstractTableModel
 {
     Q_OBJECT
 
 public:
-    MyModel(QObject *parent=0);
-    MyModel(QList< QPair4<QString, QString, QString, QString> > listofPairs, QObject *parent=0);
+    runsnowmodel(QObject *parent=0);
+    runsnowmodel(QList< QPair4<QString, QString, QString, QString> > listofPairs, QObject *parent=0);
 
     int rowCount(const QModelIndex &parent) const;
     int columnCount(const QModelIndex &parent) const;

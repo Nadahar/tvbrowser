@@ -1,6 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "mymodel.h"
+#include "runsnowmodel.h"
 #include <QMessageBox>
 #include <QAbstractTableModel>
 #include <QStringList>
@@ -23,16 +23,19 @@ MainWindow::MainWindow(QWidget *parent) :
     this->setWindowTitle("TV-BrowserM");
 
 
-    model = new MyModel(this);
+    model = new runsnowmodel(this);
 
     ui->tableView->setModel(model);
     ui->tableView->setColumnHidden (2, true);
     ui->tableView->setColumnHidden (3, true);
     ui->tableView->setColumnWidth(0,250);
     ui->tableView->setColumnWidth(1,500);
+    //ui->tableView->verticalHeader()->setDefaultSectionSize(50); //setHeight
     ui->tableView->setColumnWidth(2,0);
 
+    ui->tableView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    ui->tableView->setSelectionMode(QAbstractItemView::SingleSelection);
 
 #ifdef Q_WS_HILDON
        this->setProperty("FingerScrollable", true);
@@ -110,7 +113,7 @@ void MainWindow::changeEvent(QEvent *e)
 
 
 
-QString MainWindow::DecryptText(char* sText)
+QString MainWindow::DecryptText(char* sText, bool replace8)
 {
     QString sResult = "";
     QString sText2 = "";
@@ -128,10 +131,15 @@ QString MainWindow::DecryptText(char* sText)
         sResult = sResult + QString((char) (int(cchar) - 7));
     }
 
-    //problem mit qt auf maemo 5.
-    // ü wird zur 8
-    // unschöne lösung :(
-    sResult = sResult.replace("8", "ü",Qt::CaseSensitive);
+
+    if (replace8 == true)
+    {
+        //problem mit qt auf maemo 5.
+        // ü wird zur 8
+        // unschöne lösung :(
+        sResult = sResult.replace("8", "ü",Qt::CaseSensitive);
+    }
+
     return sResult;
 }
 
@@ -156,7 +164,7 @@ void MainWindow::LoadTVData(QDateTime dts)
     if( !f.exists() )
     {
       QMessageBox::critical(NULL, tr("No Databasefile"), tr("There is no Databasefile in: \n") + DBd);
-      QApplication::quit();
+      //QApplication::quit();
       return;
     }
 
@@ -170,7 +178,17 @@ void MainWindow::LoadTVData(QDateTime dts)
     }
     sqlite3_stmt *vm;
     const char *tail;
-    QString statement ="SELECT channel.name,broadcast.id,title,start,end FROM broadcast INNER JOIN channel on channel.id = broadcast.channel_id where  datetime('" + dts.toString("yyyy-MM-dd hh:mm:ss") +"') between start and end order by channel.name";
+    //QString statement ="SELECT channel.name,broadcast.id,title,start,end FROM broadcast INNER JOIN channel on channel.id = broadcast.channel_id where  datetime('" + dts.toString("yyyy-MM-dd hh:mm:ss") +"') between start and end order by channel.name";
+
+
+    QString statement ="SELECT channel.name,broadcast.id,title,start,end, info.genre,info.produced, info.location ";
+            statement = statement + " FROM broadcast ";
+            statement = statement + " INNER JOIN channel on channel.id = broadcast.channel_id ";
+            statement = statement + " INNER JOIN info on info.broadcast_id = broadcast.id ";
+            statement = statement + " where  (datetime('" + dts.toString("yyyy-MM-dd hh:mm:ss") +"') between start and end) and (end > datetime('" + dts.toString("yyyy-MM-dd hh:mm:ss") + "')) ";
+            statement = statement + " order by channel.name ";
+
+
     sqlite3_prepare(db,statement.toUtf8().data(),statement.toUtf8().length(),&vm, &tail);
     if (err == SQLITE_OK){
         while ( sqlite3_step(vm) == SQLITE_ROW ){
@@ -186,17 +204,49 @@ void MainWindow::LoadTVData(QDateTime dts)
              char* cStart       = (char *) sqlite3_column_text(vm, 3);
              char* cEnd         = (char *) sqlite3_column_text(vm, 4);
 
+             char* cGenre         = (char *) sqlite3_column_text(vm, 5);
+             char* cProduced         = (char *) sqlite3_column_text(vm, 6);
+             char* cLocation         = (char *) sqlite3_column_text(vm, 7);
 
-             QVariant vStart(cStart);
-             QVariant vEnd(cEnd);
 
-             QString sVonBisF = vStart.toDateTime().toString("hh:mm") + " - " + vEnd.toDateTime().toString("hh:mm");
-             QString sTitleF  = sVonBisF + " - ";
+
              QString sChanName = QString::fromUtf8(cChanName,strlen(cChanName));
 
+             QString sTitleF ="";
+             QString sTitle2 = "";
+             QString sVonBisF = QVariant(cStart).toDateTime().toString("hh:mm") + " - " + QVariant(cEnd).toDateTime().toString("hh:mm");
 
 
-             sTitleF = sTitleF + " " +  QString::fromUtf8(cTitel,strlen(cTitel));
+             if (cGenre != NULL)
+             {
+                 sTitle2  = DecryptText(cGenre,true);
+             }
+             if (cLocation != NULL)
+             {
+                 if (sTitle2 == "")
+                 {
+                    sTitle2  = DecryptText(cLocation,true);
+                 }else
+                 {
+                    sTitle2  = sTitle2  + " - " + DecryptText(cLocation,true);
+                 }
+
+             }
+             if (cProduced != NULL)
+             {
+                 if (sTitle2 == "")
+                 {
+                    sTitle2  = DecryptText(cProduced,false);
+                 }else
+                 {
+                    sTitle2  = sTitle2  + " - " + DecryptText(cProduced,false);
+                 }
+             }
+
+
+             sTitleF = sVonBisF + " - " +  QString::fromUtf8(cTitel,strlen(cTitel)) + "\n" + sTitle2;
+
+
              AddToTable(sChanName,sTitleF, sVonBisF,QString::fromUtf8(cBroadcastID,strlen(cBroadcastID)));
 
 
@@ -206,6 +256,8 @@ void MainWindow::LoadTVData(QDateTime dts)
     }
     sqlite3_finalize(vm);
     sqlite3_close(db);
+    ui->tableView->resizeRowsToContents();
+    ui->tableView->resizeColumnsToContents();
 }
 
 
@@ -226,7 +278,7 @@ QString MainWindow::GetKurzinfo(QString sSID)
     if( !f.exists() )
     {
       QMessageBox::critical(NULL, tr("No Databasefile"), tr("There is no Databasefile in: \n") + DBd);
-      QApplication::quit();
+      //QApplication::quit();
       return "";
     }
 
@@ -236,18 +288,23 @@ QString MainWindow::GetKurzinfo(QString sSID)
     if ( err ) {
         lastErrorMessage = sqlite3_errmsg(db);
         sqlite3_close(db);
-        return "";
+        return lastErrorMessage;
     }
     sqlite3_stmt *vm;
     QString sInfo ="";
     const char *tail;
-    QString statement ="select shortdescription from info where broadcast_id='" + sSID + "'";
+    QString statement ="select shortdescription,description  from info where broadcast_id='" + sSID + "'";
     sqlite3_prepare(db,statement.toUtf8().data(),statement.toUtf8().length(),&vm, &tail);
     if (err == SQLITE_OK){
         while ( sqlite3_step(vm) == SQLITE_ROW ){
-            char* Text    = (char *) sqlite3_column_text(vm, 0);
 
-             sInfo = DecryptText(Text);
+            char* Text    = (char *) sqlite3_column_text(vm,0);
+            if (Text == NULL)
+            {
+               Text    = (char *) sqlite3_column_text(vm,1);
+            }
+
+             sInfo = DecryptText(Text,true);
 
         }
 

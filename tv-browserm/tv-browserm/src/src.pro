@@ -14,10 +14,10 @@ TRANSLATIONS = tv-browserm_en_EN.ts \
 SOURCES += main.cpp \
     mainwindow.cpp \
     sqlite_source/sqlite3.c \
-    mymodel.cpp
+    runsnowmodel.cpp
 HEADERS += mainwindow.h \
     sqlite_source/sqlite3.h \
-    mymodel.h
+    runsnowmodel.h
 
 FORMS    += mainwindow.ui
 RESOURCES += main.qrc
