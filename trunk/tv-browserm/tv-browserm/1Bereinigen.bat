@@ -2,11 +2,12 @@ rem attribute entfernen
 attrib -r -s -h /s
 
 rem ordner/dateien löschen
-
-del /s /q c:\MADDE\0.6.14\home\berja\tv-browserm\src\debug
-del /s /q c:\MADDE\0.6.14\home\berja\tv-browserm\src\release
-rmdir c:\MADDE\0.6.14\home\berja\tv-browserm\src\debug
-rmdir c:\MADDE\0.6.14\home\berja\tv-browserm\src\release
+rd /s /q c:\MADDE\0.6.14\home\JBergmann\tv-browserm\src\debug
+rd /s /q c:\MADDE\0.6.14\home\JBergmann\tv-browserm\src\release
+rd /s /q c:\MADDE\0.6.14\home\JBergmann\tv-browserm\debian\tv-browserm
+rd /s /q c:\MADDE\0.6.14\home\berjan\tv-browserm\src\debug
+rd /s /q c:\MADDE\0.6.14\home\berjan\tv-browserm\src\release
+rd /s /q c:\MADDE\0.6.14\home\berjan\tv-browserm\debian\tv-browserm
 
 del /s /q *.o
 del /s /q moc*.*
