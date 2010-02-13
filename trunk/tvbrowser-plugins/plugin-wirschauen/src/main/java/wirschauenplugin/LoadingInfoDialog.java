@@ -14,6 +14,7 @@
  */
 package wirschauenplugin;
 
+import java.awt.Dimension;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -65,12 +66,13 @@ public class LoadingInfoDialog extends JDialog implements WindowClosingIf
   {
     //create the window
     super(parent, WirSchauenPlugin.LOCALIZER.msg("LoadingInfoDialog.DialogTitle", "Loading data from {0}...", webSite), ModalityType.APPLICATION_MODAL);
+    setPreferredSize(new Dimension(300, 80));
     setResizable(false);
     //register esc key
     UiUtilities.registerForClosing(this);
     JPanel contentPane = (JPanel) getContentPane();
     contentPane.setBorder(Borders.DLU4_BORDER);
-    contentPane.setLayout(new FormLayout("center:pref", "pref, 3dlu, pref"));
+    contentPane.setLayout(new FormLayout("center:pref:grow", "pref, 10dlu, pref"));
     CellConstraints cellConstraints = new CellConstraints();
     //register window control
     addWindowListener(new WindowAdapter()
@@ -85,7 +87,7 @@ public class LoadingInfoDialog extends JDialog implements WindowClosingIf
     //add the progress bar
     JProgressBar progressBar = new JProgressBar();
     progressBar.setIndeterminate(true);
-    progressBar.setSize(200, 10);
+    progressBar.setPreferredSize(new Dimension(260, 15));
     contentPane.add(progressBar, cellConstraints.xy(1, 1));
 
     //add the cancel button

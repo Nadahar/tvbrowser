@@ -17,6 +17,7 @@ package wirschauenplugin;
 import java.awt.Dimension;
 import java.awt.Window;
 import java.io.IOException;
+import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -46,6 +47,10 @@ public class DialogController
   private Program mProgram;
 
 
+  /**
+   * logging for this class
+   */
+  private static final Logger mLog = Logger.getLogger(DialogController.class.getName());
 
   /**
    * @param parent the parent of the different dialogs that are opened during the processing
@@ -77,7 +82,7 @@ public class DialogController
     final LoadingInfoDialog loadingInfoDialog = new LoadingInfoDialog(mParent, "WirSchauen");
 
     //load the wirschauen data in a new thread.
-    Thread loader = new Thread() {
+    Thread loader = new Thread("Load wirschauen data") {
       @Override
       public void run()
       {
@@ -85,7 +90,7 @@ public class DialogController
         {
           final WirSchauenEvent wirSchauenEvent = WirSchauenConnection.getEvent(program);
           //switch back to the event dispatching thread (swing)
-          SwingUtilities.invokeLater(new Thread()
+          SwingUtilities.invokeLater(new Runnable()
           {
             @Override
             public void run()
@@ -96,17 +101,7 @@ public class DialogController
         }
         catch (final IOException e)
         {
-          //connection to wirschauen failed.
-          e.printStackTrace(System.err);
-          //switch back to event dispatching thread (swing)
-          SwingUtilities.invokeLater(new Thread()
-          {
-            @Override
-            public void run()
-            {
-              JOptionPane.showMessageDialog(mParent, WirSchauenPlugin.LOCALIZER.msg("ConnectionFailed", "Connection failed"), WirSchauenPlugin.LOCALIZER.msg("Error", "Error"), JOptionPane.ERROR_MESSAGE);
-            }
-          });
+          handleConnectionError(e, "wirschauen");
         }
       }
     };
@@ -144,7 +139,7 @@ public class DialogController
         int buttonPressed = 0;
         if (mProgram.getDate().compareTo(Date.getCurrentDate()) > 0)
         {
-          buttonPressed = JOptionPane.showOptionDialog(mParent, WirSchauenPlugin.LOCALIZER.msg("NoOmdbLink", "This program is not yet linked with OMDB. Do you want to create a link now?"), WirSchauenPlugin.LOCALIZER.msg("CreateLinkQuestionTitle", "Create OMDB Link"), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+          buttonPressed = JOptionPane.showOptionDialog(mParent, WirSchauenPlugin.LOCALIZER.msg("NoOmdbLink", "This program is not yet linked with omdb. Do you want to create a link now?"), WirSchauenPlugin.LOCALIZER.msg("CreateLinkQuestionTitle", "Create OMDB Link"), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
         }
         if (buttonPressed == 0)
         {
@@ -157,7 +152,7 @@ public class DialogController
           if (!createOmdbLinkDialog.isCancelled())
           {
             //save the new data (= omdb link) in wirschauen (in its own thread)
-            Thread saver = new Thread()
+            Thread saver = new Thread("Save wirschauen data")
             {
               @Override
               public void run()
@@ -168,7 +163,7 @@ public class DialogController
                   //add the program to the plugin program tree
                   WirSchauenPlugin.getInstance().updateTreeAndMarks(mProgram);
                   //be polite but switch back to event dispatching thread (swing)
-                  SwingUtilities.invokeLater(new Thread()
+                  SwingUtilities.invokeLater(new Runnable()
                   {
                     @Override
                     public void run()
@@ -179,17 +174,7 @@ public class DialogController
                 }
                 catch (final IOException e)
                 {
-                  //connection to wirschauen failed.
-                  e.printStackTrace(System.err);
-                  //switch back to event dispatching thread (swing)
-                  SwingUtilities.invokeLater(new Thread()
-                  {
-                    @Override
-                    public void run()
-                    {
-                      JOptionPane.showMessageDialog(mParent, WirSchauenPlugin.LOCALIZER.msg("ConnectionFailed", "Connection failed"), WirSchauenPlugin.LOCALIZER.msg("Error", "Error"), JOptionPane.ERROR_MESSAGE);
-                    }
-                  });
+                  handleConnectionError(e, "wirschauen");
                 }
               }
             };
@@ -207,7 +192,7 @@ public class DialogController
           if (!createWirSchauenDataDialog.isCancelled() && !createWirSchauenDataDialog.getWirSchauenInput().equals(wirSchauenEvent, true))
           {
             //save the new data in wirschauen (in its own thread)
-            Thread saver = new Thread()
+            Thread saver = new Thread("Save wirschauen data")
             {
               @Override
               public void run()
@@ -218,7 +203,7 @@ public class DialogController
                   //add the program to the plugin program tree
                   WirSchauenPlugin.getInstance().updateTreeAndMarks(mProgram);
                   //be polite but switch back to event dispatching thread (swing)
-                  SwingUtilities.invokeLater(new Thread()
+                  SwingUtilities.invokeLater(new Runnable()
                   {
                     @Override
                     public void run()
@@ -232,12 +217,12 @@ public class DialogController
                   //connection to wirschauen failed.
                   e.printStackTrace(System.err);
                   //switch back to event dispatching thread (swing)
-                  SwingUtilities.invokeLater(new Thread()
+                  SwingUtilities.invokeLater(new Runnable()
                   {
                     @Override
                     public void run()
                     {
-                      JOptionPane.showMessageDialog(mParent, WirSchauenPlugin.LOCALIZER.msg("ConnectionFailed", "Connection failed"), WirSchauenPlugin.LOCALIZER.msg("Error", "Error"), JOptionPane.ERROR_MESSAGE);
+                      JOptionPane.showMessageDialog(mParent, WirSchauenPlugin.LOCALIZER.msg("ConnectionFailed", "Connection failed", e.getMessage()), Localizer.getLocalization(Localizer.I18N_ERROR), JOptionPane.ERROR_MESSAGE);
                     }
                   });
                 }
@@ -251,9 +236,9 @@ public class DialogController
       {
         //the event has an omdb-link. load omdb-data.
         //create i-am-busy-dialog
-        final LoadingInfoDialog loadingOmdbDataDialog = new LoadingInfoDialog(mParent, "OMDB");
+        final LoadingInfoDialog loadingOmdbDataDialog = new LoadingInfoDialog(mParent, "omdb.org");
         //load omdb-data in its own thread.
-        Thread loader = new Thread()
+        Thread loader = new Thread("Load omdb abstract")
         {
           @Override
           public void run()
@@ -264,7 +249,7 @@ public class DialogController
               //loses the session. the language is set to en in that case.
               final String omdbAbstract = new OmdbConnection().loadAbstract(OmdbConnection.getIdFromUrl(wirSchauenEvent.getOmdbUrl()), OmdbConnection.DE);
               //switch back to event dispatching thread (swing)
-              SwingUtilities.invokeLater(new Thread()
+              SwingUtilities.invokeLater(new Runnable()
               {
                 @Override
                 public void run()
@@ -275,15 +260,12 @@ public class DialogController
             }
             catch (final IOException e)
             {
-              //connection to omdb failed.
-              e.printStackTrace(System.err);
-              //switch back to event dispatching thread (swing)
-              SwingUtilities.invokeLater(new Thread()
+              handleConnectionError(e, "omdb");
+              SwingUtilities.invokeLater(new Runnable()
               {
                 @Override
                 public void run()
                 {
-                  JOptionPane.showMessageDialog(mParent, WirSchauenPlugin.LOCALIZER.msg("ConnectionFailed", "Connection failed"), WirSchauenPlugin.LOCALIZER.msg("Error", "Error"), JOptionPane.ERROR_MESSAGE);
                   loadingOmdbDataDialog.setVisible(false);
                   loadingOmdbDataDialog.dispose();
                 }
@@ -327,7 +309,7 @@ public class DialogController
       if (!createOmdbAbstractDialog.isCancelled() && !createOmdbAbstractDialog.getOmdbAbstractInput().equals(omdbAbstract))
       {
         //save the abstract to omdb
-        Thread saver = new Thread()
+        Thread saver = new Thread("Save omdb abstract")
         {
           @Override
           public void run()
@@ -340,7 +322,7 @@ public class DialogController
               //add the program to the plugin program tree
               WirSchauenPlugin.getInstance().updateTreeAndMarks(mProgram);
               //be polite but switch back to event dispatching thread (swing)
-              SwingUtilities.invokeLater(new Thread()
+              SwingUtilities.invokeLater(new Runnable()
               {
                 @Override
                 public void run()
@@ -351,22 +333,28 @@ public class DialogController
             }
             catch (final IOException e)
             {
-              //connection to omdb failed.
-              e.printStackTrace(System.err);
-              //switch back to event dispatching thread (swing)
-              SwingUtilities.invokeLater(new Thread()
-              {
-                @Override
-                public void run()
-                {
-                  JOptionPane.showMessageDialog(mParent, WirSchauenPlugin.LOCALIZER.msg("ConnectionFailed", "Connection failed"), WirSchauenPlugin.LOCALIZER.msg("Error", "Error"), JOptionPane.ERROR_MESSAGE);
-                }
-              });
+              handleConnectionError(e, "omdb");
             }
           }
         };
         saver.start();
       }
     }
+  }
+
+
+
+  private void handleConnectionError(final IOException e, final String website) {
+    //connection failed.
+    mLog.warning(website + " connection failed: " + e.getMessage());
+    //switch back to event dispatching thread (swing)
+    SwingUtilities.invokeLater(new Runnable()
+    {
+      @Override
+      public void run()
+      {
+        JOptionPane.showMessageDialog(mParent, WirSchauenPlugin.LOCALIZER.msg("ConnectionFailed", "Connection failed", e.getMessage()), Localizer.getLocalization(Localizer.I18N_ERROR), JOptionPane.ERROR_MESSAGE);
+      }
+    });
   }
 }
