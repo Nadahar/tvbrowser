@@ -220,7 +220,6 @@ public class OmdbConnection
   {
     HttpGet getMethod = new HttpGet(String.format(OmdbConnection.GET_ABSTRACT_URL, movieId));
     HttpResponse response = mHttpClient.execute(getMethod);
-    String result = null;
     if (response.getStatusLine().getStatusCode() == 200)
     {
       HttpEntity entity = response.getEntity();
@@ -236,15 +235,15 @@ public class OmdbConnection
           String movieAbstract = matcher.group(1);
           if ("".equals(movieAbstract) || "no abstract defined".equals(movieAbstract)
               || "Es wurde noch keine Kurzbeschreibung eingegeben".equals(movieAbstract)) {
-            result  = null;
+            return  null;
           } else {
-            result = movieAbstract.trim();
+            return movieAbstract.trim();
           }
         }
       }
     }
     getMethod.abort();
-    return result;
+    throw new IOException(response.getStatusLine().getReasonPhrase());
   }
 
 
@@ -261,7 +260,7 @@ public class OmdbConnection
   {
     if (!setLanguage(language))
     {
-      throw new IOException("Connection failed: Could not set language");
+      throw new IOException("Could not set language");
     }
     return loadAbstract(movieId);
   }
