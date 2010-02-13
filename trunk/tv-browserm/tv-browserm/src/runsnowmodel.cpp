@@ -1,30 +1,30 @@
-#include "mymodel.h"
+#include "runsnowmodel.h"
 
 
-MyModel::MyModel(QObject *parent)
+runsnowmodel::runsnowmodel(QObject *parent)
     : QAbstractTableModel(parent)
 {
 }
 
-MyModel::MyModel(QList< QPair4<QString, QString, QString, QString> > pairs, QObject *parent)
+runsnowmodel::runsnowmodel(QList< QPair4<QString, QString, QString, QString> > pairs, QObject *parent)
     : QAbstractTableModel(parent)
 {    
     listOfPairs=pairs;
 }
 
-int MyModel::rowCount(const QModelIndex &parent) const
+int runsnowmodel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
     return listOfPairs.size();
 }
 
-int MyModel::columnCount(const QModelIndex &parent) const
+int runsnowmodel::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
     return 4;
 }
 
-QVariant MyModel::data(const QModelIndex &index, int role) const
+QVariant runsnowmodel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid())
         return QVariant();
@@ -47,7 +47,7 @@ QVariant MyModel::data(const QModelIndex &index, int role) const
     return QVariant();
 }
 
-QString MyModel::getData(int row, int col) const
+QString runsnowmodel::getData(int row, int col) const
 {
     if (row >= listOfPairs.size() || row < 0)
         return "";
@@ -66,7 +66,7 @@ QString MyModel::getData(int row, int col) const
         else return "";
 }
 
-QVariant MyModel::headerData(int section, Qt::Orientation orientation, int role) const
+QVariant runsnowmodel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if (role != Qt::DisplayRole)
         return QVariant();
@@ -88,7 +88,7 @@ QVariant MyModel::headerData(int section, Qt::Orientation orientation, int role)
     return QVariant();
 }
 
-bool MyModel::insertRows(int position, int rows, const QModelIndex &index)
+bool runsnowmodel::insertRows(int position, int rows, const QModelIndex &index)
 {
     Q_UNUSED(index);
     beginInsertRows(QModelIndex(), position, position+rows-1);
@@ -102,7 +102,7 @@ bool MyModel::insertRows(int position, int rows, const QModelIndex &index)
     return true;
 }
 
-bool MyModel::removeRows(int position, int rows, const QModelIndex &index)
+bool runsnowmodel::removeRows(int position, int rows, const QModelIndex &index)
 {
     Q_UNUSED(index);
     beginRemoveRows(QModelIndex(), position, position+rows-1);
@@ -115,7 +115,7 @@ bool MyModel::removeRows(int position, int rows, const QModelIndex &index)
     return true;
 }
 
-bool MyModel::setData(const QModelIndex &index, const QVariant &value, int role)
+bool runsnowmodel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
         if (index.isValid() && role == Qt::EditRole) {
                 int row = index.row();
@@ -142,7 +142,7 @@ bool MyModel::setData(const QModelIndex &index, const QVariant &value, int role)
         return false;
 }
 
-Qt::ItemFlags MyModel::flags(const QModelIndex &index) const
+Qt::ItemFlags runsnowmodel::flags(const QModelIndex &index) const
 {
     if (!index.isValid())
         return Qt::ItemIsEnabled;
@@ -150,7 +150,7 @@ Qt::ItemFlags MyModel::flags(const QModelIndex &index) const
     return QAbstractTableModel::flags(index) | Qt::ItemIsEditable;
 }
 
-QList< QPair4<QString, QString, QString, QString> > MyModel::getList()
+QList< QPair4<QString, QString, QString, QString> > runsnowmodel::getList()
 {
     return listOfPairs;
 }
