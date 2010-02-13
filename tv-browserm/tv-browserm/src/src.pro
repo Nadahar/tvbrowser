@@ -26,14 +26,14 @@ RESOURCES += main.qrc
 
 #CONFIG = qt resources warn_on debug
 
-unix { 
+unix {
     # VARIABLES
     isEmpty(PREFIX):PREFIX = /opt
     BINDIR = /opt/tv-browserm
     DATADIR = /usr/share
     DEFINES += DATADIR=\"$$DATADIR\" \
-		PKGDATADIR=\"$$PKGDATADIR\"
-    
+                PKGDATADIR=\"$$PKGDATADIR\"
+
     # MAKE INSTALL
     INSTALLS += target \
         desktop \

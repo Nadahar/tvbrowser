@@ -127,6 +127,11 @@ QString MainWindow::DecryptText(char* sText)
         char  cchar = ba.at(i);
         sResult = sResult + QString((char) (int(cchar) - 7));
     }
+
+    //problem mit qt auf maemo 5.
+    // ü wird zur 8
+    // unschöne lösung :(
+    sResult = sResult.replace("8", "ü",Qt::CaseSensitive);
     return sResult;
 }
 
@@ -315,7 +320,7 @@ void MainWindow::on_tableView_doubleClicked(QModelIndex index)
   QString sTitel = model->getData(index.row(),1);
   QString sSID = model->getData(index.row(),3);
   QString sInfo = GetKurzinfo(sSID);
-  QMessageBox::information(NULL, sTitel, sInfo);
+  QMessageBox::information(NULL, sTitel, sInfo,tr("Done"));
 }
 
 void MainWindow::on_rbCB_toggled(bool checked)
