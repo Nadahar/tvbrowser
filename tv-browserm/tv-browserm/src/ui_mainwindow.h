@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading ui file 'mainwindow.ui'
 **
-** Created: Sun 14. Feb 01:01:34 2010
+** Created: Sun 14. Feb 01:47:58 2010
 **      by: Qt User Interface Compiler version 4.5.3
 **
 ** WARNING! All changes made in this file will be lost when recompiling ui file!
@@ -42,12 +42,12 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QString::fromUtf8("MainWindow"));
-        MainWindow->resize(800, 600);
+        MainWindow->resize(800, 420);
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QString::fromUtf8("centralWidget"));
         tableView = new QTableView(centralWidget);
         tableView->setObjectName(QString::fromUtf8("tableView"));
-        tableView->setGeometry(QRect(0, 150, 800, 450));
+        tableView->setGeometry(QRect(0, 170, 800, 251));
         cbTime = new QComboBox(centralWidget);
         cbTime->setObjectName(QString::fromUtf8("cbTime"));
         cbTime->setGeometry(QRect(140, 20, 171, 41));
