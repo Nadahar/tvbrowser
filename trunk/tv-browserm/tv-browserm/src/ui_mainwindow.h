@@ -1,10 +1,10 @@
 /********************************************************************************
-** Form generated from reading UI file 'mainwindow.ui'
+** Form generated from reading ui file 'mainwindow.ui'
 **
-** Created: Sat 13. Feb 22:30:24 2010
-**      by: Qt User Interface Compiler version 4.6.1
+** Created: Sun 14. Feb 01:01:34 2010
+**      by: Qt User Interface Compiler version 4.5.3
 **
-** WARNING! All changes made in this file will be lost when recompiling UI file!
+** WARNING! All changes made in this file will be lost when recompiling ui file!
 ********************************************************************************/
 
 #ifndef UI_MAINWINDOW_H
@@ -35,6 +35,8 @@ public:
     QRadioButton *rbCB;
     QRadioButton *rbAm;
     QPushButton *pbRefresh;
+    QPushButton *pbNext;
+    QPushButton *pbLast;
 
     void setupUi(QMainWindow *MainWindow)
     {
@@ -45,13 +47,13 @@ public:
         centralWidget->setObjectName(QString::fromUtf8("centralWidget"));
         tableView = new QTableView(centralWidget);
         tableView->setObjectName(QString::fromUtf8("tableView"));
-        tableView->setGeometry(QRect(0, 150, 801, 451));
+        tableView->setGeometry(QRect(0, 150, 800, 450));
         cbTime = new QComboBox(centralWidget);
         cbTime->setObjectName(QString::fromUtf8("cbTime"));
         cbTime->setGeometry(QRect(140, 20, 171, 41));
         dteTime = new QDateTimeEdit(centralWidget);
         dteTime->setObjectName(QString::fromUtf8("dteTime"));
-        dteTime->setGeometry(QRect(140, 90, 341, 41));
+        dteTime->setGeometry(QRect(140, 90, 291, 41));
         rbCB = new QRadioButton(centralWidget);
         rbCB->setObjectName(QString::fromUtf8("rbCB"));
         rbCB->setGeometry(QRect(10, 20, 111, 41));
@@ -60,11 +62,25 @@ public:
         rbAm->setGeometry(QRect(10, 90, 82, 41));
         pbRefresh = new QPushButton(centralWidget);
         pbRefresh->setObjectName(QString::fromUtf8("pbRefresh"));
-        pbRefresh->setGeometry(QRect(640, 30, 80, 71));
+        pbRefresh->setGeometry(QRect(460, 70, 80, 71));
         QIcon icon;
-        icon.addFile(QString::fromUtf8(":/img/res/Refresh.png"), QSize(), QIcon::Normal, QIcon::Off);
+        icon.addFile(QString::fromUtf8(":/img/res/refresh.png"), QSize(), QIcon::Normal, QIcon::Off);
         pbRefresh->setIcon(icon);
         pbRefresh->setIconSize(QSize(120, 120));
+        pbNext = new QPushButton(centralWidget);
+        pbNext->setObjectName(QString::fromUtf8("pbNext"));
+        pbNext->setGeometry(QRect(700, 70, 80, 71));
+        QIcon icon1;
+        icon1.addFile(QString::fromUtf8(":/img/res/forward_alt.png"), QSize(), QIcon::Normal, QIcon::Off);
+        pbNext->setIcon(icon1);
+        pbNext->setIconSize(QSize(120, 120));
+        pbLast = new QPushButton(centralWidget);
+        pbLast->setObjectName(QString::fromUtf8("pbLast"));
+        pbLast->setGeometry(QRect(600, 70, 80, 71));
+        QIcon icon2;
+        icon2.addFile(QString::fromUtf8(":/img/res/back_alt.png"), QSize(), QIcon::Normal, QIcon::Off);
+        pbLast->setIcon(icon2);
+        pbLast->setIconSize(QSize(120, 120));
         MainWindow->setCentralWidget(centralWidget);
 
         retranslateUi(MainWindow);
@@ -78,6 +94,9 @@ public:
         rbCB->setText(QApplication::translate("MainWindow", "Es l\303\244uft", 0, QApplication::UnicodeUTF8));
         rbAm->setText(QApplication::translate("MainWindow", "Am", 0, QApplication::UnicodeUTF8));
         pbRefresh->setText(QString());
+        pbNext->setText(QString());
+        pbLast->setText(QString());
+        Q_UNUSED(MainWindow);
     } // retranslateUi
 
 };

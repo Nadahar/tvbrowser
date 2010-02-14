@@ -23,11 +23,14 @@ private:
     Ui::MainWindow *ui;
 
 private slots:
+    void on_pbLast_clicked();
+    void on_pbNext_clicked();
     void on_rbAm_toggled(bool checked);
     void on_rbCB_toggled(bool checked);
     void on_tableView_doubleClicked(QModelIndex index);
     void on_pbRefresh_clicked();
     void AddToTable(QString sender, QString Sendung, QString VonBis, QString sid);
+    void ChangeTVData(int Step);
     void ClearTable();
     QString DecryptText(char* sText, bool replace8);
     void LoadTVData(QDateTime dts);

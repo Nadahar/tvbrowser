@@ -28,8 +28,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->tableView->setModel(model);
     ui->tableView->setColumnHidden (2, true);
     ui->tableView->setColumnHidden (3, true);
-    ui->tableView->setColumnWidth(0,250);
-    ui->tableView->setColumnWidth(1,500);
+    ui->tableView->setColumnWidth(0,220);
+    ui->tableView->setColumnWidth(1,580);
     //ui->tableView->verticalHeader()->setDefaultSectionSize(50); //setHeight
     ui->tableView->setColumnWidth(2,0);
 
@@ -257,7 +257,141 @@ void MainWindow::LoadTVData(QDateTime dts)
     sqlite3_finalize(vm);
     sqlite3_close(db);
     ui->tableView->resizeRowsToContents();
-    ui->tableView->resizeColumnsToContents();
+    //ui->tableView->resizeColumnToContents(0);
+}
+
+void MainWindow::ChangeTVData(int Step)
+{
+
+#ifdef Q_WS_HILDON
+    QString sAppDir = QDir::homePath() + QLatin1String("/MyDocs/tv-browserm");
+    QDir dir;
+    dir.mkpath(sAppDir);
+#else
+    QString sAppDir = QApplication::applicationDirPath();
+#endif
+
+
+
+    QString sID;
+    QString lastErrorMessage;
+    QString DBd = sAppDir + "/tvexp.tvd";
+
+    QFile f( DBd);
+    if( !f.exists() )
+    {
+      QMessageBox::critical(NULL, tr("No Databasefile"), tr("There is no Databasefile in: \n") + DBd);
+      //QApplication::quit();
+      return;
+    }
+
+    sqlite3 *db;
+    int err=0;
+    err = sqlite3_open(DBd.toUtf8().data(), &db);
+    if ( err ) {
+        lastErrorMessage = sqlite3_errmsg(db);
+        sqlite3_close(db);
+        return;
+    }
+    sqlite3_stmt *vm;
+    const char *tail;
+
+    QString sBroadcastIDs ="";
+    int iRows = model->rowCount( QModelIndex());
+    for(int i=iRows -1; i >= 0; i = i - 1)
+    {
+        if (sBroadcastIDs == "")
+        {
+
+            sBroadcastIDs ="'" + QVariant( QVariant(QString(model->getData(i,3))).toInt() + Step).toString() + "'";
+        }else
+        {
+            sBroadcastIDs = sBroadcastIDs + ",'" + QVariant( QVariant(QString(model->getData(i,3))).toInt() + Step).toString() + "'";
+        }
+    }
+    if (sBroadcastIDs == "")
+    {
+        return;
+    }
+    ClearTable();
+
+    QString statement ="SELECT channel.name,broadcast.id,title,start,end, info.genre,info.produced, info.location ";
+            statement = statement + " FROM broadcast ";
+            statement = statement + " INNER JOIN channel on channel.id = broadcast.channel_id ";
+            statement = statement + " INNER JOIN info on info.broadcast_id = broadcast.id ";
+            statement = statement + " where  broadcast.id in(" + sBroadcastIDs + ") ";
+            statement = statement + " order by channel.name ";
+
+
+    sqlite3_prepare(db,statement.toUtf8().data(),statement.toUtf8().length(),&vm, &tail);
+    if (err == SQLITE_OK){
+        while ( sqlite3_step(vm) == SQLITE_ROW ){
+             //QTime dieTime = QTime::currentTime().addSecs(2);
+             //while( QTime::currentTime() < dieTime )
+             //QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
+
+
+
+             char* cChanName    = (char *) sqlite3_column_text(vm, 0);
+             char* cBroadcastID = (char *) sqlite3_column_text(vm, 1);
+             char* cTitel       = (char *) sqlite3_column_text(vm, 2);
+             char* cStart       = (char *) sqlite3_column_text(vm, 3);
+             char* cEnd         = (char *) sqlite3_column_text(vm, 4);
+
+             char* cGenre         = (char *) sqlite3_column_text(vm, 5);
+             char* cProduced         = (char *) sqlite3_column_text(vm, 6);
+             char* cLocation         = (char *) sqlite3_column_text(vm, 7);
+
+
+
+             QString sChanName = QString::fromUtf8(cChanName,strlen(cChanName));
+
+             QString sTitleF ="";
+             QString sTitle2 = "";
+             QString sVonBisF = QVariant(cStart).toDateTime().toString("hh:mm") + " - " + QVariant(cEnd).toDateTime().toString("hh:mm");
+
+
+             if (cGenre != NULL)
+             {
+                 sTitle2  = DecryptText(cGenre,true);
+             }
+             if (cLocation != NULL)
+             {
+                 if (sTitle2 == "")
+                 {
+                    sTitle2  = DecryptText(cLocation,true);
+                 }else
+                 {
+                    sTitle2  = sTitle2  + " - " + DecryptText(cLocation,true);
+                 }
+
+             }
+             if (cProduced != NULL)
+             {
+                 if (sTitle2 == "")
+                 {
+                    sTitle2  = DecryptText(cProduced,false);
+                 }else
+                 {
+                    sTitle2  = sTitle2  + " - " + DecryptText(cProduced,false);
+                 }
+             }
+
+
+             sTitleF = sVonBisF + " - " +  QString::fromUtf8(cTitel,strlen(cTitel)) + "\n" + sTitle2;
+
+
+             AddToTable(sChanName,sTitleF, sVonBisF,QString::fromUtf8(cBroadcastID,strlen(cBroadcastID)));
+
+
+
+        }
+
+    }
+    sqlite3_finalize(vm);
+    sqlite3_close(db);
+    ui->tableView->resizeRowsToContents();
+    //ui->tableView->resizeColumnToContents(0);
 }
 
 
@@ -396,4 +530,14 @@ void MainWindow::on_rbAm_toggled(bool checked)
        ui->dteTime->setEnabled(true);
        ui->cbTime->setEnabled(false);
     }
+}
+
+void MainWindow::on_pbNext_clicked()
+{
+    ChangeTVData(+1);
+}
+
+void MainWindow::on_pbLast_clicked()
+{
+   ChangeTVData(-1);
 }
