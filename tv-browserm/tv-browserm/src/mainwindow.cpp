@@ -29,7 +29,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->tableView->setColumnHidden (2, true);
     ui->tableView->setColumnHidden (3, true);
     ui->tableView->setColumnWidth(0,220);
-    ui->tableView->setColumnWidth(1,580);
+    ui->tableView->setColumnWidth(1,560);
     //ui->tableView->verticalHeader()->setDefaultSectionSize(50); //setHeight
     ui->tableView->setColumnWidth(2,0);
 
