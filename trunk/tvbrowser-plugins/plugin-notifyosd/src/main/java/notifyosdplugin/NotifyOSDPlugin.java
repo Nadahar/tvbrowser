@@ -24,6 +24,7 @@ import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Properties;
+import java.util.logging.Logger;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -45,6 +46,8 @@ public class NotifyOSDPlugin extends Plugin {
   private static final Version mVersion = new Version(2, 70, 0, IS_STABLE);
 
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(NotifyOSDPlugin.class);
+
+  private static final Logger mLog = Logger.getLogger(NotifyOSDPlugin.class.getName());
 
   private static final String TARGET = "NOTIFYOSD_TARGET";
 
@@ -217,6 +220,9 @@ public class NotifyOSDPlugin extends Plugin {
         if (location.length() > 0) {
           return true;
         }
+      }
+      else {
+        mLog.warning("'notify-send' command not found");
       }
     } catch (IOException e) {
       e.printStackTrace();
