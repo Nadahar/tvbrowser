@@ -19,8 +19,8 @@
      <rect>
       <x>0</x>
       <y>150</y>
-      <width>801</width>
-      <height>451</height>
+      <width>800</width>
+      <height>450</height>
      </rect>
     </property>
    </widget>
@@ -39,7 +39,7 @@
      <rect>
       <x>140</x>
       <y>90</y>
-      <width>341</width>
+      <width>291</width>
       <height>41</height>
      </rect>
     </property>
@@ -73,8 +73,8 @@
    <widget class="QPushButton" name="pbRefresh">
     <property name="geometry">
      <rect>
-      <x>640</x>
-      <y>30</y>
+      <x>460</x>
+      <y>70</y>
       <width>80</width>
       <height>71</height>
      </rect>
@@ -84,7 +84,53 @@
     </property>
     <property name="icon">
      <iconset resource="main.qrc">
-      <normaloff>:/img/res/Refresh.png</normaloff>:/img/res/Refresh.png</iconset>
+      <normaloff>:/img/res/refresh.png</normaloff>:/img/res/refresh.png</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>120</width>
+      <height>120</height>
+     </size>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pbNext">
+    <property name="geometry">
+     <rect>
+      <x>700</x>
+      <y>70</y>
+      <width>80</width>
+      <height>71</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset resource="main.qrc">
+      <normaloff>:/img/res/forward_alt.png</normaloff>:/img/res/forward_alt.png</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>120</width>
+      <height>120</height>
+     </size>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pbLast">
+    <property name="geometry">
+     <rect>
+      <x>600</x>
+      <y>70</y>
+      <width>80</width>
+      <height>71</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="icon">
+     <iconset resource="main.qrc">
+      <normaloff>:/img/res/back_alt.png</normaloff>:/img/res/back_alt.png</iconset>
     </property>
     <property name="iconSize">
      <size>

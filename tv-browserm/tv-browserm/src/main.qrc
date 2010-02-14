@@ -1,5 +1,8 @@
 <RCC>
     <qresource prefix="/img">
-        <file>res/Refresh.png</file>
+        <file>res/tvbrowser64.png</file>
+        <file>res/back_alt.png</file>
+        <file>res/forward_alt.png</file>
+        <file>res/refresh.png</file>
     </qresource>
 </RCC>
