@@ -71,7 +71,7 @@ public final class WirSchauenPlugin extends Plugin
   /**
    * the version of this plugin.
    */
-  private static final Version VERSION = new Version(0, 15, 2, IS_STABLE);
+  private static final Version VERSION = new Version(0, 16, 2, IS_STABLE);
 
   /**
    * this class is a singleton. kind of. the constructor is not restricted so
@@ -277,10 +277,16 @@ public final class WirSchauenPlugin extends Plugin
   public int getMarkPriorityForProgram(final Program program)
   {
     int prio = Program.NO_MARK_PRIORITY;
+    //TODO: why is this method called during startup of tv-browser while the settings are not loaded yet?
+    if (mSettings == null)
+    {
+      System.out.println("#####NULL!!!!");
+      return prio;
+    }
     if (getRootNode().contains(program))
     {
       //mark all programs which were linked by the user (those are in the tree)
-      prio = super.getMarkPriorityForProgram(program);
+      prio = mSettings.getMarkPriorityForOwnOmdbLink();
     }
     else if (program.getTextField(ProgramFieldType.URL_TYPE) != null)
     {
@@ -662,7 +668,7 @@ public final class WirSchauenPlugin extends Plugin
 
 
   /**
-   * this walks through plugin tree an (un)marks all programs.
+   * this walks through plugin tree and (un)marks all programs.
    *
    * @param mark true to mark the programs, false otherwise
    */
@@ -698,22 +704,42 @@ public final class WirSchauenPlugin extends Plugin
     // mark the linked programs. do this here instead of directly after loading settings for better startup performance
     if (mSettings.getMarkPrograms()) {
       updateMarkings(true);
+      //FIXME this is a workaround. see getMarkPriorityForProgram
+      updateMarkingOfProgramsInTree();
     }
+    //FIXME this is a workaround. the plugin tree is empty after startup of the tvb!
+    mRootNode.update();
   }
-  
+
+
   /**
-   * this walks through plugin tree an update all programs.
-   *
+   * this walks through the linked programs and updates the markings.
+   * call this method, if the mark prio (i.e. color) for linked
+   * programs changes.
    */
-  public void updateMarkingOfProgramsInTree()
+  protected void updateMarkingOfLinkedPrograms()
   {
     for (ProgramId programId : mLinkedPrograms)
     {
       Program program = getPluginManager().getProgram(programId.getDate(), programId.getId());
-      
+
       if (program != null) {
         program.validateMarking();
       }
+    }
+  }
+
+
+  /**
+   * this walks through plugin tree and updates the markings.
+   * call this method, if the mark prio (i.e. color) for linked
+   * programs (linked by the user himself) changes.
+   */
+  protected void updateMarkingOfProgramsInTree()
+  {
+    for (Program program : getRootNode().getPrograms())
+    {
+      program.validateMarking();
     }
   }
 }

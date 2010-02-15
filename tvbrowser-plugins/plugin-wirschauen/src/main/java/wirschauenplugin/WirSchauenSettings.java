@@ -24,8 +24,8 @@ import devplugin.Program;
 /**
  * container for the settings of a plugin. this general mechanism is
  * 'best practice', so we used it even if we could have saved some mem
- * by using a simple boolean. on the plus side we have now an easy to
- * extend mechanism for the plugin settings.
+ * otherwise. on the plus side we have now an easy to extend mechanism
+ * for the plugin settings.
  */
 public class WirSchauenSettings extends PropertyBasedSettings {
 
@@ -39,6 +39,14 @@ public class WirSchauenSettings extends PropertyBasedSettings {
    * this is the key used to store the prio for the markings of linked programs.
    */
   private static final String OPTION_KEY_OMDB_MARK_PRIORITY = "omdbMarkPriority";
+
+  /**
+   * this is the key used to store the prio for the markings of linked programs
+   * which were linked by the user himself.
+   */
+  private static final String OPTION_KEY_MY_OMDB_MARK_PRIORITY = "myOmdbMarkPriority";
+
+
 
 
   /**
@@ -76,7 +84,7 @@ public class WirSchauenSettings extends PropertyBasedSettings {
   public void setMarkPriorityForOmdbLink(final int markPriority) {
     if (getMarkPriorityForOmdbLink() != markPriority) {
       set(OPTION_KEY_OMDB_MARK_PRIORITY, markPriority);
-      WirSchauenPlugin.getInstance().updateMarkingOfProgramsInTree();
+      WirSchauenPlugin.getInstance().updateMarkingOfLinkedPrograms();
     }
   }
 
@@ -86,6 +94,29 @@ public class WirSchauenSettings extends PropertyBasedSettings {
    * @return The mark priority.
    */
   public int getMarkPriorityForOmdbLink() {
-    return get(OPTION_KEY_OMDB_MARK_PRIORITY, Program.LOWER_MEDIUM_MARK_PRIORITY);
+    return get(OPTION_KEY_OMDB_MARK_PRIORITY, Program.MIN_MARK_PRIORITY);
+  }
+
+  /**
+   * Sets the mark priority for the omdb link highlighting for
+   * programs which were linked by the user himself.
+   *
+   * @param markPriority The new mark priority.
+   */
+  public void setMarkPriorityForOwnOmdbLink(final int markPriority) {
+    if (getMarkPriorityForOwnOmdbLink() != markPriority) {
+      set(OPTION_KEY_MY_OMDB_MARK_PRIORITY, markPriority);
+      WirSchauenPlugin.getInstance().updateMarkingOfProgramsInTree();
+    }
+  }
+
+  /**
+   * Gets the mark priority for the omdb link highlighting for
+   * programs which were linked by the user himself.
+   *
+   * @return The mark priority.
+   */
+  public int getMarkPriorityForOwnOmdbLink() {
+    return get(OPTION_KEY_MY_OMDB_MARK_PRIORITY, Program.LOWER_MEDIUM_MARK_PRIORITY);
   }
 }
