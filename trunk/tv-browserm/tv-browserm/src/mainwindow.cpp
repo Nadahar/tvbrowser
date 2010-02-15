@@ -20,7 +20,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    this->setWindowTitle("TV-BrowserM");
+    this->setWindowTitle("TV-Browser");
 
 
     model = new runsnowmodel(this);
@@ -147,7 +147,7 @@ void MainWindow::LoadTVData(QDateTime dts)
 {
 
 #ifdef Q_WS_HILDON
-    QString sAppDir = QDir::homePath() + QLatin1String("/MyDocs/tv-browserm");
+    QString sAppDir = QDir::homePath() + QLatin1String("/MyDocs/tv-browser");
     QDir dir;
     dir.mkpath(sAppDir);
 #else
@@ -264,7 +264,7 @@ void MainWindow::ChangeTVData(int Step)
 {
 
 #ifdef Q_WS_HILDON
-    QString sAppDir = QDir::homePath() + QLatin1String("/MyDocs/tv-browserm");
+    QString sAppDir = QDir::homePath() + QLatin1String("/MyDocs/tv-browser");
     QDir dir;
     dir.mkpath(sAppDir);
 #else
@@ -398,7 +398,7 @@ void MainWindow::ChangeTVData(int Step)
 QString MainWindow::GetKurzinfo(QString sSID)
 {
 #ifdef Q_WS_HILDON
-    QString sAppDir = QDir::homePath() + QLatin1String("/MyDocs/tv-browserm");
+    QString sAppDir = QDir::homePath() + QLatin1String("/MyDocs/tv-browser");
     QDir dir;
     dir.mkpath(sAppDir);
 #else

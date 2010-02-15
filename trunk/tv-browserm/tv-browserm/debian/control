@@ -11,7 +11,7 @@ Depends: libc6 (>= 2.5.0-1), libgcc1 (>= 1:4.2.1), libqt4-core (>= 4.5.3~git2009
 Description: tv-browserm a free EPG
  you need to install the TV-Browser from www.tvbrowser.org and use the export
  "TV-Browser Mini Export Plugin" for getting the tv data.
- The exported file must be named "tvexp.tvd" and stored in the "tv-browserm"
+ The exported file must be named "tvexp.tvd" and stored in the "tv-browser"
  directory on your n900
 XSBC-Bugtracker: http://tvbrowser.org:8080/jira/browse/TVBM
 XB-Maemo-Icon-26:
