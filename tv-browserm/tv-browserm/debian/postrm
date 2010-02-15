@@ -24,7 +24,7 @@ case "$1" in
 	;;
 	purge|remove)	
 	#killall -9 tv-browserm
-	test -f /home/user/MyDocs/tv-browserm && rm -f /home/user/MyDocs/tv-browserm 
+	test -f /home/user/MyDocs/tv-browser && rm -f /home/user/MyDocs/tv-browser
 	test -f /opt/tv-browserm/tv-browserm && rm -f /opt/tv-browserm/tv-browserm
 	test -f /usr/share/pixmaps/tvbrowser64.png && rm -f /usr/share/pixmaps/tvbrowser64.png
 	test -f /usr/share/applications/hildon/tv-browserm.desktop && rm -f /usr/share/applications/hildon/tv-browserm.desktop

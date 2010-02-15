@@ -4,7 +4,7 @@
 # see: dh_installdeb(1)
 
 gtk-update-icon-cache -f /usr/share/pixmaps
-mkdir -p /home/user/MyDocs/tv-browserm
+mkdir -p /home/user/MyDocs/tv-browser
 chmod 755 /opt/tv-browserm/tv-browserm
   
 exit 0
