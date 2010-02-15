@@ -1,0 +1,39 @@
+So hier ein kleines HowTo damit das Programm weiterlebt sollte mir was passieren.
+
+software die man braucht zum entwickeln:
+1. QT von Nokia: http://qt.nokia.com/ (Qt SDK for Windows)
+2. MADDE für windows: http://wiki.maemo.org/MADDE
+
+QT brauch man um entwickeln zu können
+MADDE brauch man um die das programm auf ARMEL zu compilieren.
+
+
+zur entwicklung:
+den quellcode sollte man in home verzeichniss von madde legen. bsp: c:\MADDE\0.6.14\home\%USERNAME%\tv-browserm
+
+zum entwickeln mit QT Creator die src.pro im src verzeichniss öffnen.
+bsp: c:\MADDE\0.6.14\home\%USERNAME%\tv-browserm\src\src.pro
+
+vor dem compilieren am besten immer die vom compiler erstellten dateien löschen. das problem ist, dass der QT Creator unter
+windows andere dateien erzeugt wie der crosscompiler unter MADDE. die compiler überschreiben die dateien dann nicht einfach
+sondern spinnen total rum und schmeissen wilde fehlermeldungen um sich. deswegen zur sicherheit immer aufräumen. 8)
+ich hab dafür eine .bat datei geschrieben.
+bsp: c:\MADDE\0.6.14\home\%USERNAME%\tv-browserm\1Bereinigen.bat
+
+manchmal spinnt der QT Creator beim erzeugen. in so einem fall die src.pro öffnen und den
+unix { ..... } part temporär entfernen. dann sollte sich alles erzeugen lassen. nach dem erzeugen den unix {.....} part wieder rein machen
+sonst gibts später problem beim .deb erzeugen
+
+compilen unter madde:
+das MADDE terminal öffnen und linux like in das src verzeichniss browsen. vor dem erzeugen 1Bereinigen.bat aufrufen (unter windows aufrufen nicht im madde terminal)
+unter madde im src verzeichniss als 1. "mad qmake" eingeben. das erzeugt ein makefile mit den richtigen verweisen.
+danach zum compilieren "mad make" aufrufen.
+wenn alles geklappt hat entsteht ein brauchbares binary. (um das programm auf dem handy zum laufen zu bringen muss es in ein ausführbaren ordner.
+z.b. /opt oder /usr/bin und dort mit chmod ausführbar gemacht werden)
+
+für das n900 gibt es einen ssh server wenn man den hat, einfach mit winscp alles raufschieben.
+
+um eine installationroutine (.deb) zu erstellen einfach mit madde in das verzeichniss c:\MADDE\0.6.14\home\%USERNAME%\tv-browserm\
+(nicht in das SRC) dann wie immer 1Bereinigen.bat ausführen.
+im madde terminal "./3maddebuild_bin" eingeben. dieses kleine shell script erzeugt das debian paket.
+

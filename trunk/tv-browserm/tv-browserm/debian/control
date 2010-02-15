@@ -8,7 +8,7 @@ Standards-Version: 0.1
 Package: tv-browserm
 Architecture: any
 Depends: libc6 (>= 2.5.0-1), libgcc1 (>= 1:4.2.1), libqt4-core (>= 4.5.3~git20090723), libqt4-gui (>= 4.5.3~git20090723)
-Description: tv-browserm a free EPG
+Description: TV-Browser a free EPG
  you need to install the TV-Browser from www.tvbrowser.org and use the export
  "TV-Browser Mini Export Plugin" for getting the tv data.
  The exported file must be named "tvexp.tvd" and stored in the "tv-browser"
