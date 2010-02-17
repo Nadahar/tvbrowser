@@ -134,8 +134,9 @@ public final class WirSchauenPlugin extends Plugin
 
   /**
    * the root node for the plugin tree. overrides Plugin with a marked tree.
+   * this field is lazy loaded, so NEVER access it directly but user getRootNode().
    */
-  private PluginTreeNode mRootNode = new PluginTreeNode(this, false);
+  private PluginTreeNode mRootNode;
 
   /**
    * this list holds all the program-ids that are linked with the omdb. its
@@ -278,11 +279,11 @@ public final class WirSchauenPlugin extends Plugin
   {
     int prio = Program.NO_MARK_PRIORITY;
     //TODO: why is this method called during startup of tv-browser while the settings are not loaded yet?
-    if (mSettings == null)
-    {
-      System.out.println("#####NULL!!!!");
-      return prio;
-    }
+//    if (mSettings == null)
+//    {
+//      System.out.println("#####NULL!!!!");
+//      return prio;
+//    }
     if (getRootNode().contains(program))
     {
       //mark all programs which were linked by the user (those are in the tree)
@@ -394,6 +395,12 @@ public final class WirSchauenPlugin extends Plugin
   @Override
   public PluginTreeNode getRootNode()
   {
+    //lazy loading of the serialized root node
+    if (mRootNode == null)
+    {
+      mRootNode = new PluginTreeNode(this, false);
+      loadTree();
+    }
     return mRootNode;
   }
 
@@ -414,7 +421,7 @@ public final class WirSchauenPlugin extends Plugin
     try
     {
       ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(file)));
-      mRootNode.store(out);
+      getRootNode().store(out);
       out.close();
     }
     catch (final IOException e)
@@ -426,24 +433,28 @@ public final class WirSchauenPlugin extends Plugin
 
   /**
    * loads the tree from a file. this is the same as Plugin.loadRootNode. it
-   * was copied because loadRootNode is protected and cant be called.
+   * was copied for backward compatibility.
    * TODO use Plugin.loadRootNode after 3.0 was released
-   *
-   * @throws IOException if the file cant be read
-   * @throws ClassNotFoundException TODO maybe catch this and delete the file?
    */
-  private void loadTree() throws IOException, ClassNotFoundException
+  private void loadTree()
   {
-    if (mRootNode == null)
-    {
-      return;
-    }
     File file = new File(Settings.getUserSettingsDirName(), getId() + ".node");
-    if (file.canRead())
+    try
     {
-      ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(file)));
-      mRootNode.load(in);
-      in.close();
+      if (file.canRead())
+      {
+        ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(file)));
+        mRootNode.load(in);
+        in.close();
+      }
+    }
+    catch (final IOException e)
+    {
+      util.exc.ErrorHandler.handle(LOCALIZER.msg("error.couldNotReadFile", "Reading file '{0}' failed.", file.getAbsolutePath()), e);
+    }
+    catch (final ClassNotFoundException e)
+    {
+      util.exc.ErrorHandler.handle(LOCALIZER.msg("error.couldNotReadFile", "Reading file '{0}' failed.", file.getAbsolutePath()), e);
     }
   }
 
@@ -470,8 +481,6 @@ public final class WirSchauenPlugin extends Plugin
   @Override
   public void readData(final ObjectInputStream in) throws IOException, ClassNotFoundException
   {
-    loadTree();
-
     try
     {
       //read version (for future compatibility issues)
@@ -708,7 +717,7 @@ public final class WirSchauenPlugin extends Plugin
       updateMarkingOfProgramsInTree();
     }
     //FIXME this is a workaround. the plugin tree is empty after startup of the tvb!
-    mRootNode.update();
+    getRootNode().update();
   }
 
 
