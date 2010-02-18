@@ -28,6 +28,7 @@ package tvbrowser.ui.filter.dlgs;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
@@ -187,8 +188,7 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
     contentPane.add(ta, BorderLayout.NORTH);
 
     updateBtns();
-    UiUtilities.setSize(this, 350, 400);
-
+    Settings.layoutWindow("selectFilterDlg", this, new Dimension(350,400));
   }
 
   public void updateBtns() {
