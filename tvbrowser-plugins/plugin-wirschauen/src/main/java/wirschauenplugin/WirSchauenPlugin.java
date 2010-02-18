@@ -278,12 +278,6 @@ public final class WirSchauenPlugin extends Plugin
   public int getMarkPriorityForProgram(final Program program)
   {
     int prio = Program.NO_MARK_PRIORITY;
-    //TODO: why is this method called during startup of tv-browser while the settings are not loaded yet?
-//    if (mSettings == null)
-//    {
-//      System.out.println("#####NULL!!!!");
-//      return prio;
-//    }
     if (getRootNode().contains(program))
     {
       //mark all programs which were linked by the user (those are in the tree)
@@ -713,8 +707,6 @@ public final class WirSchauenPlugin extends Plugin
     // mark the linked programs. do this here instead of directly after loading settings for better startup performance
     if (mSettings.getMarkPrograms()) {
       updateMarkings(true);
-      //FIXME this is a workaround. see getMarkPriorityForProgram
-      updateMarkingOfProgramsInTree();
     }
     //FIXME this is a workaround. the plugin tree is empty after startup of the tvb!
     getRootNode().update();
