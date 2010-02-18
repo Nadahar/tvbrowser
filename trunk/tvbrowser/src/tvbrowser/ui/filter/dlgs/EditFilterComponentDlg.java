@@ -27,6 +27,7 @@
 package tvbrowser.ui.filter.dlgs;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -52,6 +53,7 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
 
+import tvbrowser.core.Settings;
 import tvbrowser.core.filters.FilterComponent;
 import tvbrowser.core.filters.FilterComponentList;
 import tvbrowser.core.filters.filtercomponents.AgeLimitFilterComponent;
@@ -240,10 +242,8 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
     }
 
     updateOkBtn();
-
-    setSize(500, 500);
-    UiUtilities.centerAndShow(this);
-
+    Settings.layoutWindow("editFilterComponentDlg", this, new Dimension(500,500));
+    setVisible(true);
   }
 
   private void setFilterComponent(FilterComponent comp) {

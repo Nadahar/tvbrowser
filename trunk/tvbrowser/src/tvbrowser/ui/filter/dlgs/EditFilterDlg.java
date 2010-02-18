@@ -27,6 +27,7 @@ package tvbrowser.ui.filter.dlgs;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
@@ -63,6 +64,7 @@ import javax.swing.table.AbstractTableModel;
 
 import com.jgoodies.forms.factories.DefaultComponentFactory;
 
+import tvbrowser.core.Settings;
 import tvbrowser.core.filters.FilterComponent;
 import tvbrowser.core.filters.FilterComponentList;
 import tvbrowser.core.filters.FilterList;
@@ -246,9 +248,9 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
     }
 
     updateBtns();
-    UiUtilities.setSize(this, 600, 300);
-    UiUtilities.centerAndShow(this);
-
+    
+    Settings.layoutWindow("editFilterDlg",this,new Dimension(600,300));
+    setVisible(true);
   }
 
   private void updateBtns() {
