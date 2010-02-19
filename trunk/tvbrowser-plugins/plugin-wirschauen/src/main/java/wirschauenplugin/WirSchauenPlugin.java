@@ -134,7 +134,7 @@ public final class WirSchauenPlugin extends Plugin
 
   /**
    * the root node for the plugin tree. overrides Plugin with a marked tree.
-   * this field is lazy loaded, so NEVER access it directly but user getRootNode().
+   * this field is lazy loaded, so NEVER access it directly but use getRootNode().
    */
   private PluginTreeNode mRootNode;
 
