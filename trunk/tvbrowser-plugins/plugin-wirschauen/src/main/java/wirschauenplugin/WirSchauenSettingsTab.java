@@ -37,12 +37,7 @@ public class WirSchauenSettingsTab implements SettingsTab
   /**
    * a panel to select the color for marking linked programs.
    */
-  private DefaultMarkingPrioritySelectionPanel mLinkedProgramColorChooser;
-
-  /**
-   * a panel to select the color for marking programs that were linked by the user.
-   */
-  private DefaultMarkingPrioritySelectionPanel mOwnLinkedProgramColorChooser;
+  private DefaultMarkingPrioritySelectionPanel mMarkingColorChooser;
 
   /**
    * the underlying settings.
@@ -65,16 +60,14 @@ public class WirSchauenSettingsTab implements SettingsTab
   public JPanel createSettingsPanel()
   {
     mMarkerCheckbox = new JCheckBox(WirSchauenPlugin.LOCALIZER.msg("Settings.ShowMarking", "Highlight programs which are linked with the OMDB."), mSettings.getMarkPrograms());
-    mLinkedProgramColorChooser = DefaultMarkingPrioritySelectionPanel.createPanel(mSettings.getMarkPriorityForOmdbLink(), WirSchauenPlugin.LOCALIZER.msg("Settings.LinkedPrio", "How to mark programs which are linked with omdb.org."), false, false, false);
+    mMarkingColorChooser = DefaultMarkingPrioritySelectionPanel.createPanel(new int[] {mSettings.getMarkPriorityForOmdbLink(), mSettings.getMarkPriorityForOwnOmdbLink()}, new String[] {WirSchauenPlugin.LOCALIZER.msg("Settings.LinkedPrio", "How to mark programs which are linked with omdb.org."), WirSchauenPlugin.LOCALIZER.msg("Settings.OwnLinkedPrio", "How to mark programs which I have linked with omdb.org.")}, false, false, false);
 //    mLinkedProgramColorChooser.setEnabled(mMarkerCheckbox.isSelected());
-    mOwnLinkedProgramColorChooser = DefaultMarkingPrioritySelectionPanel.createPanel(mSettings.getMarkPriorityForOwnOmdbLink(), WirSchauenPlugin.LOCALIZER.msg("Settings.OwnLinkedPrio", "How to mark programs which I have linked with omdb.org."), false, false, false);
 
     CellConstraints cc = new CellConstraints();
-    PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu, default:grow", "5dlu, pref, 5dlu, pref, 5dlu, pref"));
+    PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu, default:grow", "5dlu, pref, 5dlu, pref"));
 
     pb.add(mMarkerCheckbox, cc.xy(2, 2));
-    pb.add(mLinkedProgramColorChooser, cc.xy(2, 4));
-    pb.add(mOwnLinkedProgramColorChooser, cc.xy(2, 6));
+    pb.add(mMarkingColorChooser, cc.xy(2, 4));
 
 //    mMarkerCheckbox.addItemListener(new ItemListener() {
 //      public void itemStateChanged(final ItemEvent e) {
@@ -116,7 +109,7 @@ public class WirSchauenSettingsTab implements SettingsTab
     //for the ok-button. as soon as the user accepts the settings, this
     //method will be called. so tell the plugin the new settings.
     mSettings.setMarkPrograms(mMarkerCheckbox.isSelected());
-    mSettings.setMarkPriorityForOmdbLink(mLinkedProgramColorChooser.getSelectedPriority());
-    mSettings.setMarkPriorityForOwnOmdbLink(mOwnLinkedProgramColorChooser.getSelectedPriority());
+    mSettings.setMarkPriorityForOmdbLink(mMarkingColorChooser.getSelectedPriority(0));
+    mSettings.setMarkPriorityForOwnOmdbLink(mMarkingColorChooser.getSelectedPriority(1));
   }
 }
