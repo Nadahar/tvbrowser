@@ -50,9 +50,9 @@ public final class DefaultMarkingPrioritySelectionPanel extends JPanel {
   private static final Localizer LOCALIZER = Localizer.getLocalizerFor(DefaultMarkingPrioritySelectionPanel.class);
 
   /**
-   * the drop down for the mark priority selection.
+   * the dropdowns for the mark priority selection.
    */
-  private JComboBox mPrioritySelection;
+  private JComboBox[] mPrioritySelection;
 
   /**
    * a comment/help text shown below the drop down for the
@@ -66,9 +66,9 @@ public final class DefaultMarkingPrioritySelectionPanel extends JPanel {
   private JComponent mSeparator;
 
   /**
-   * the label for the drop down.
+   * the labels for the dropdowns.
    */
-  private JComponent mLabel;
+  private JComponent[] mLabel;
 
 
 
@@ -91,18 +91,60 @@ public final class DefaultMarkingPrioritySelectionPanel extends JPanel {
    * @since 3.0
    */
   private DefaultMarkingPrioritySelectionPanel(final int priority, final String label, final boolean showTitle, final boolean showHelpLabel, final boolean withDefaultDialogBorder) {
-    CellConstraints cc = new CellConstraints();
-    PanelBuilder pb = new PanelBuilder(showTitle ? new FormLayout("5dlu,pref,5dlu,pref,0dlu:grow", "pref,5dlu,pref,fill:0dlu:grow,10dlu,pref") : new FormLayout("5dlu,pref,5dlu,pref,0dlu:grow", "pref,fill:0dlu:grow,10dlu,pref"), this);
+    this(new int[] {priority}, new String[] {label}, showTitle, showHelpLabel, withDefaultDialogBorder);
+  }
 
+
+  /**
+   * the arrays for label and priority must have the same length. the index of
+   * both arrays must be in the range of an integer. both indexes must be > 0.
+   *
+   * @param priority which priority is selected in the dropdowns. must not be null.
+   * @param label the labels for the dropdowns. must not be null.
+   * @param showTitle if true, show the title
+   * @param showHelpLabel if true, show the help text
+   * @param withDefaultDialogBorder if true, use the default border
+   * @since 3.0
+   */
+  private DefaultMarkingPrioritySelectionPanel(final int[] priority, final String[] label, final boolean showTitle, final boolean showHelpLabel, final boolean withDefaultDialogBorder) {
+    CellConstraints cc = new CellConstraints();
+    //how many selectors do we have to draw?
+    int choosersToDraw = Math.min(priority.length, label.length);
+
+    //build the layout string for the y-axis
+    StringBuilder layoutString = new StringBuilder();
+    if (showTitle)
+    {
+      layoutString.append("pref,5dlu,");
+    }
+    for (int i = 0; i < choosersToDraw; i++)
+    {
+      layoutString.append("pref,fill:0dlu:grow,");
+    }
+    if (showHelpLabel)
+    {
+      layoutString.append("10dlu,pref");
+    }
+
+    PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,pref,5dlu,pref,0dlu:grow", layoutString.toString()), this);
     if (withDefaultDialogBorder)
     {
       pb.setDefaultDialogBorder();
     }
 
-    mPrioritySelection = new JComboBox(getMarkingColorNames(true));
-    mPrioritySelection.setSelectedIndex(priority + 1);
-    mPrioritySelection.setRenderer(new MarkPriorityComboBoxRenderer());
+    //init the dropdowns
+    mPrioritySelection = new JComboBox[choosersToDraw];
+    for (int i = 0; i < choosersToDraw; i++)
+    {
+      mPrioritySelection[i] = new JComboBox(getMarkingColorNames(true));
+      mPrioritySelection[i].setSelectedIndex(priority[i] + 1);
+      mPrioritySelection[i].setRenderer(new MarkPriorityComboBoxRenderer());
+    }
 
+    //init the labels
+    mLabel = new JComponent[choosersToDraw];
+
+    //init help label
     if (showHelpLabel)
     {
       mHelpLabel = UiUtilities.createHtmlHelpTextArea(LOCALIZER.msg("help", "The selected higlighting color is only shown if the program is only higlighted by this plugin or if the other higlightings have a lower or the same priority. The higlighting colors of the priorities can be change in the <a href=\"#link\">higlighting settings</a>."), new HyperlinkListener() {
@@ -114,15 +156,20 @@ public final class DefaultMarkingPrioritySelectionPanel extends JPanel {
       });
     }
 
+    //add all the sub components to this panel
     int y = 1;
-
     if (showTitle) {
       mSeparator = pb.addSeparator(getTitle(), cc.xyw(1, y++, 5));
       y++;
     }
 
-    mLabel = pb.addLabel(label, cc.xy(2, y));
-    pb.add(mPrioritySelection, cc.xy(4, y++)); y++;
+    for (int i = 0; i < choosersToDraw; i++)
+    {
+      mLabel[i] = pb.addLabel(label[i], cc.xy(2, y));
+      pb.add(mPrioritySelection[i], cc.xy(4, y++));
+      y++;
+    }
+
     if (showHelpLabel)
     {
       pb.add(mHelpLabel, cc.xyw(2, ++y, 4));
@@ -160,12 +207,46 @@ public final class DefaultMarkingPrioritySelectionPanel extends JPanel {
   }
 
   /**
-   * Gets the selected marking priority.
+   * the arrays for label and priority must have the same length. the index of
+   * both arrays must be in the range of an integer. both indexes must be > 0.
    *
-   * @return The selected marking priority.
+   * @param priority which priority is selected in the dropdowns. must not be null.
+   * @param label the labels for the dropdowns. must not be null.
+   * @param showTitle if true, show the title
+   * @param showHelpLabel if true, show the help text
+   * @param withDefaultDialogBorder if true, use the default border
+   * @return The created instance of this class.
+   * @since 3.0
+   */
+  public static DefaultMarkingPrioritySelectionPanel createPanel(final int[] priority, final String[] label, final boolean showTitle, final boolean showHelpLabel, final boolean withDefaultDialogBorder) {
+    return new DefaultMarkingPrioritySelectionPanel(priority, label, showTitle, showHelpLabel, withDefaultDialogBorder);
+  }
+
+  /**
+   * @return The selected marking priority of the first dropdown
    */
   public int getSelectedPriority() {
-    return mPrioritySelection.getSelectedIndex() - 1;
+    return mPrioritySelection[0].getSelectedIndex() - 1;
+  }
+
+  /**
+   * @param index the index of the dropdown
+   * @return The selected marking priority of the dropdown with the given index
+   */
+  public int getSelectedPriority(final int index) {
+    return mPrioritySelection[index].getSelectedIndex() - 1;
+  }
+
+  /**
+   * @return The selected marking priorities of all dropdowns
+   */
+  public int[] getSelectedPriorities() {
+    int[] prios = new int[mPrioritySelection.length];
+    for (int i = 0; i < mPrioritySelection.length; i++)
+    {
+      prios[i] = getSelectedPriority(i);
+    }
+    return prios;
   }
 
   /**
@@ -207,7 +288,10 @@ public final class DefaultMarkingPrioritySelectionPanel extends JPanel {
     {
       mHelpLabel.setEnabled(enabled);
     }
-    mLabel.setEnabled(enabled);
-    mPrioritySelection.setEnabled(enabled);
+    for (int i = 0; i < mLabel.length; i++)
+    {
+      mLabel[i].setEnabled(enabled);
+      mPrioritySelection[i].setEnabled(enabled);
+    }
   }
 }
