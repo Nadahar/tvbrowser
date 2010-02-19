@@ -30,7 +30,10 @@ import com.jgoodies.forms.layout.FormLayout;
  *
  */
 public class EnhancedPanelBuilder extends PanelBuilder {
-
+  public EnhancedPanelBuilder(FormLayout layout, JPanel panel) {
+    super(layout,panel);
+  }
+  
   public EnhancedPanelBuilder(FormLayout layout) {
     super(layout);
   }
@@ -39,8 +42,8 @@ public class EnhancedPanelBuilder extends PanelBuilder {
     super(new FormLayout(encodedColumnSpecs,""));
   }
 
-  public EnhancedPanelBuilder(final String encodedColumnSpecs, JPanel parent) {
-    super(new FormLayout(encodedColumnSpecs,""), parent);
+  public EnhancedPanelBuilder(final String encodedColumnSpecs, JPanel panel) {
+    super(new FormLayout(encodedColumnSpecs,""), panel);
   }
 
   /**
@@ -102,6 +105,18 @@ public class EnhancedPanelBuilder extends PanelBuilder {
    */
   public PanelBuilder addRow(final String rowHeightCode) {
     appendRow(FormFactory.LINE_GAP_ROWSPEC);
+    appendRow(rowHeightCode);
+    incrementRowNumber();
+    return this;
+  }
+  
+  /**
+   * add a new layout row with the given height to the builders layout<br>
+   * Use {@link #getRowCount()} to address this line
+   * @param rowHeightCode row height
+   * @return the builder
+   */
+  public PanelBuilder addSingleRow(final String rowHeightCode) {
     appendRow(rowHeightCode);
     incrementRowNumber();
     return this;

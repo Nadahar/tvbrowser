@@ -24,7 +24,6 @@ import javax.swing.event.HyperlinkListener;
 import tvbrowser.ui.settings.MarkingsSettingsTab;
 import tvbrowser.ui.settings.SettingsDialog;
 
-import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
@@ -108,45 +107,43 @@ public final class DefaultMarkingPrioritySelectionPanel extends JPanel {
    */
   private DefaultMarkingPrioritySelectionPanel(final int[] priority, final String[] label, final boolean showTitle, final boolean showHelpLabel, final boolean withDefaultDialogBorder) {
     CellConstraints cc = new CellConstraints();
+    FormLayout layout = new FormLayout("5dlu,pref,5dlu,pref,0dlu:grow");
+    EnhancedPanelBuilder pb = new EnhancedPanelBuilder(layout,this);
+    
     //how many selectors do we have to draw?
     int choosersToDraw = Math.min(priority.length, label.length);
 
-    //build the layout string for the y-axis
-    StringBuilder layoutString = new StringBuilder();
-    if (showTitle)
-    {
-      layoutString.append("pref,5dlu,");
-    }
-    for (int i = 0; i < choosersToDraw; i++)
-    {
-      layoutString.append("pref,fill:0dlu:grow,");
-    }
-    if (showHelpLabel)
-    {
-      layoutString.append("10dlu,pref");
-    }
-
-    PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,pref,5dlu,pref,0dlu:grow", layoutString.toString()), this);
-    if (withDefaultDialogBorder)
-    {
+    if (withDefaultDialogBorder) {
       pb.setDefaultDialogBorder();
     }
 
-    //init the dropdowns
+    //init the components
+    mLabel = new JComponent[choosersToDraw];
     mPrioritySelection = new JComboBox[choosersToDraw];
-    for (int i = 0; i < choosersToDraw; i++)
-    {
-      mPrioritySelection[i] = new JComboBox(getMarkingColorNames(true));
-      mPrioritySelection[i].setSelectedIndex(priority[i] + 1);
-      mPrioritySelection[i].setRenderer(new MarkPriorityComboBoxRenderer());
+    
+    //add all the sub components to this panel
+    if (showTitle) {
+      pb.addSingleRow("pref");
+      mSeparator = pb.addSeparator(getTitle(), cc.xyw(1, pb.getRowCount(), 5));
+      pb.addSingleRow("5dlu");
     }
 
-    //init the labels
-    mLabel = new JComponent[choosersToDraw];
+    for (int i = 0; i < choosersToDraw; i++) {
+      pb.addSingleRow("pref");
+      mLabel[i] = pb.addLabel(label[i], cc.xy(2, pb.getRowCount()));
+      
+      mPrioritySelection[i] = new JComboBox(getMarkingColorNames(true));
+      mPrioritySelection[i].setSelectedIndex(priority[i] + 1);
+      mPrioritySelection[i].setRenderer(new MarkPriorityComboBoxRenderer());      
+      
+      pb.add(mPrioritySelection[i], cc.xy(4, pb.getRowCount()));
+      
+      if(i+1 < choosersToDraw) {
+        pb.addSingleRow("2dlu");
+      }
+    }
 
-    //init help label
-    if (showHelpLabel)
-    {
+    if (showHelpLabel) {  
       mHelpLabel = UiUtilities.createHtmlHelpTextArea(LOCALIZER.msg("help", "The selected higlighting color is only shown if the program is only higlighted by this plugin or if the other higlightings have a lower or the same priority. The higlighting colors of the priorities can be change in the <a href=\"#link\">higlighting settings</a>."), new HyperlinkListener() {
         public void hyperlinkUpdate(final HyperlinkEvent e) {
           if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
@@ -154,25 +151,12 @@ public final class DefaultMarkingPrioritySelectionPanel extends JPanel {
           }
         }
       });
-    }
-
-    //add all the sub components to this panel
-    int y = 1;
-    if (showTitle) {
-      mSeparator = pb.addSeparator(getTitle(), cc.xyw(1, y++, 5));
-      y++;
-    }
-
-    for (int i = 0; i < choosersToDraw; i++)
-    {
-      mLabel[i] = pb.addLabel(label[i], cc.xy(2, y));
-      pb.add(mPrioritySelection[i], cc.xy(4, y++));
-      y++;
-    }
-
-    if (showHelpLabel)
-    {
-      pb.add(mHelpLabel, cc.xyw(2, ++y, 4));
+      
+      pb.addSingleRow("fill:0dlu:grow");
+      pb.addSingleRow("10dlu");
+      pb.addSingleRow("pref");
+      
+      pb.add(mHelpLabel, cc.xyw(2, pb.getRowCount(), 4));
     }
   }
 
