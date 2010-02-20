@@ -1,13 +1,14 @@
-package de.misi.tvbrowser.activities.settings;
+package org.tvbrowser.android.activities.settings;
+
+import org.tvbrowser.android.R;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import de.misi.tvbrowser.R;
 
 public class SettingsDialog extends Activity {
 
-   public static final String TVBROWSER_PREFERENCES = "tvbrowser_prefs";
+   private static final String TVBROWSER_PREFERENCES = "tvbrowser_prefs";
 
    @Override
    protected void onCreate(Bundle bundle) {

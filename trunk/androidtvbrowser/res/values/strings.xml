@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-   <string name="app_name">TVBrowser</string>
+   <string name="app_name">TV-Browser</string>
 
    <string name="main_menu_selectdate">Select date</string>
    <string name="main_menu_jumphour">Jump to hour</string>
@@ -9,14 +9,14 @@
    <string name="main_menu_selecttime">Select time</string>
 
    <string name="menu_showdetail">Show details</string>
-   <string name="menu_searchforrepeat">Search for repeat</string>
+   <string name="menu_searchforrepeat">Search for repetition</string>
    <string name="menu_addreminder">Add reminder</string>
    <string name="menu_editreminder">Edit reminder</string>
    <string name="menu_deletereminder">Delete reminder</string>
 
    <string name="settings_title">Settings</string>
 
-   <string name="no_data_available">No data available. Please load data from your TVBrowser-Application on your PC.</string>
+   <string name="no_data_available">No data available. Please load data from the TV-Browser application on your PC.</string>
 
    <string name="search_title">Search broadcast</string>
    <string name="search_lbl_text">Search for</string>
@@ -37,13 +37,13 @@
 
    <string name="outputdateformat">MMM d, yyyy</string>
 
-   <string name="reminder_from">TVBrowser</string>
+   <string name="reminder_from">TV-Browser</string>
    <string name="reminder_tickertext">%1$s is starting in %2$s minutes.</string>
    <string name="reminder_tickertextmultiple">This reminds you on %1$d broadcasts.</string>
 
    <string-array name="reminder_times">
-      <item>10 Minutes</item>
-      <item>30 Minutes</item>
+      <item>10 minutes</item>
+      <item>30 minutes</item>
       <item>1 hour</item>
       <item>12 hours</item>
       <item>1 day</item>

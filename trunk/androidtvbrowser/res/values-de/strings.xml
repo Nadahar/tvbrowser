@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-   <string name="app_name">TVBrowser</string>
+   <string name="app_name">TV-Browser</string>
 
    <string name="main_menu_selectdate">Datum auswählen</string>
    <string name="main_menu_jumphour">Springe zu Stunde</string>
@@ -10,13 +10,13 @@
 
    <string name="menu_showdetail">Details anzeigen</string>
    <string name="menu_searchforrepeat">Wiederholung suchen</string>
-   <string name="menu_addreminder">Erinnerung erstellen</string>
+   <string name="menu_addreminder">Daran erinnern</string>
    <string name="menu_editreminder">Erinnerung bearbeiten</string>
    <string name="menu_deletereminder">Erinnerung löschen</string>
 
    <string name="settings_title">Einstellungen</string>
 
-   <string name="no_data_available">Keine Daten vorhanden. Bitte laden Sie aktuelle Daten von Ihrer TVBrowser-Version Ihres PCs herunter.</string>
+   <string name="no_data_available">Keine Daten vorhanden. Bitte laden Sie aktuelle Daten von der TV-Browser-Version Ihres PCs herunter.</string>
 
    <string name="search_title">Sendung suchen</string>
    <string name="search_lbl_text">Suchen nach</string>
