@@ -150,7 +150,7 @@ public class KNotifyPlugin extends Plugin {
         }
       }
       else {
-        mLog.warning("dcop command not found");
+        mLog.warning("'dcop' command not found");
       }
     } catch (IOException e) {
       // TODO Auto-generated catch block
