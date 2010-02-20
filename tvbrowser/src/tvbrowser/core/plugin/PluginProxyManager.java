@@ -30,8 +30,8 @@ import java.awt.Frame;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -63,7 +63,7 @@ import devplugin.Program;
  * <p>
  * Note: This class is not called "PluginManager" as in older versions, to make
  * a difference to the class {@link devplugin.PluginManager}.
- * 
+ *
  * @author Til Schneider, www.murfman.de
  */
 public class PluginProxyManager {
@@ -104,7 +104,9 @@ public class PluginProxyManager {
    * An activated plugin has loaded its settings and is ready to be used.
    */
   private static final int ACTIVATED_STATE = 3;
-  
+
+  private static final long MAX_THREAD_POOL_WAIT_SECONDS = 30;
+
   /**
    * The list containing all plugins (PluginListItem objects) in the right
    * order.
@@ -120,11 +122,25 @@ public class PluginProxyManager {
 
   /** All plugins. This is only a cache, it might be null. */
   private PluginProxy[] mAllPluginCache;
-  
+
   /**
    * list of plugins which got a startFinished callback, to not call it twice
    */
   private ArrayList<PluginProxy> mStartFinishedPlugins = new ArrayList<PluginProxy>();
+
+  private abstract class ThreadPoolMethod {
+    private String mName;
+
+    public ThreadPoolMethod(final String name) {
+      mName = name;
+    }
+
+    public String getName() {
+      return mName;
+    }
+
+    public abstract void run(final ExecutorService threadPool);
+  }
 
   /**
    * Creates a new instance of PluginProxyManager.
@@ -167,7 +183,7 @@ public class PluginProxyManager {
 
   /**
    * Gets the singleton.
-   * 
+   *
    * @return the singleton.
    */
   public static PluginProxyManager getInstance() {
@@ -204,7 +220,7 @@ public class PluginProxyManager {
 
   /**
    * This method must be called on start-up.
-   * 
+   *
    * @throws TvBrowserException If initialization failed.
    */
   public void init() throws TvBrowserException {
@@ -263,7 +279,7 @@ public class PluginProxyManager {
 
   /**
    * Sets the parent frame to all plugins.
-   * 
+   *
    * @param parent The parent frame to set.
    */
   public void setParentFrame(Frame parent) {
@@ -278,7 +294,7 @@ public class PluginProxyManager {
    * Converts an array of class names of installed (= activated) plugins (that's
    * the way plugins were saved in former times) into an array of IDs of
    * deactivated plugins (that's the way plugins are saved now).
-   * 
+   *
    * @param installedPluginClassNameArr The (old) array of class names of
    *          installed (= activated) plugins
    * @return The (new) array of IDs of deactivated plugins.
@@ -319,7 +335,7 @@ public class PluginProxyManager {
    * <p>
    * The order will not be saved to the settings. This must be done by the
    * caller.
-   * 
+   *
    * @param pluginOrderArr The IDs of the plugins in the wanted order. All
    *          missing plugins will be appended at the end.
    */
@@ -358,7 +374,7 @@ public class PluginProxyManager {
 
   /**
    * Activates all plugins except for the given ones
-   * 
+   *
    * @param deactivatedPluginIdArr The IDs of the plugins that should NOT be
    *          activated.
    */
@@ -394,7 +410,7 @@ public class PluginProxyManager {
 
   /**
    * Activates a plugin.
-   * 
+   *
    * @param plugin The plugin to activate
    * @throws TvBrowserException If activating failed
    */
@@ -404,7 +420,7 @@ public class PluginProxyManager {
 
   /**
    * Activates a plugin.
-   * 
+   *
    * @param plugin The plugin to activate
    * @throws TvBrowserException If activating failed
    */
@@ -412,14 +428,14 @@ public class PluginProxyManager {
     PluginListItem item = getItemForPlugin(plugin);
     if (item != null) {
       boolean activated = activatePlugin(item);
-      
+
       if(activated) {
         if (setParentFrame) {
           item.getPlugin().setParentFrame(MainFrame.getInstance());
         }
-        
+
         PluginsProgramFilter[] filters = item.getPlugin().getAvailableFilter();
-      
+
         if(filters != null) {
           for(PluginsProgramFilter filter : filters) {
             FilterManagerImpl.getInstance().addFilter(filter);
@@ -428,7 +444,7 @@ public class PluginProxyManager {
       }
     }
   }
-  
+
   /**
    * Reacts on a change of the blocked plugins setting
    * and deactivates all blocked plugins.
@@ -447,7 +463,7 @@ public class PluginProxyManager {
 
   /**
    * Activates a plugin.
-   * 
+   *
    * @param item The item of the plugin to activate
    * @throws TvBrowserException If activating failed
    */
@@ -459,27 +475,27 @@ public class PluginProxyManager {
     else {
       // Check the state
       checkStateChange(item, LOADED_STATE, ACTIVATED_STATE);
-  
+
       // Log this event
       AbstractPluginProxy plugin = item.getPlugin();
       mLog.info("Activating plugin " + plugin.getId());
-  
+
       // Set the plugin active
       item.setState(ACTIVATED_STATE);
-      
+
       // Tell the plugin that we activate it now
       plugin.onActivation();
-  
+
       // Get the user directory
       String userDirectoryName = Settings.getUserSettingsDirName();
       File userDirectory = new File(userDirectoryName);
-          
+
       // Load the plugin settings
       plugin.loadSettings(userDirectory);
-  
+
       // Clear the activated plugins cache
       mActivatedPluginCache = null;
-      
+
       // Inform the listeners
       firePluginActivated(plugin);
       return true;
@@ -488,7 +504,7 @@ public class PluginProxyManager {
 
   /**
    * Deactivates a plugin.
-   * 
+   *
    * @param plugin The plugin to deactivate
    * @throws TvBrowserException If deactivating failed
    */
@@ -496,12 +512,12 @@ public class PluginProxyManager {
     PluginListItem item = getItemForPlugin(plugin);
     if (item != null) {
       PluginsProgramFilter[] filters = FilterList.getInstance().getPluginsProgramFiltersForPlugin(plugin);
-    
+
       for(PluginsProgramFilter filter : filters) {
         if(FilterManagerImpl.getInstance().getCurrentFilter() == filter) {
           FilterManagerImpl.getInstance().setCurrentFilter(FilterManagerImpl.getInstance().getDefaultFilter());
         }
-      
+
         FilterList.getInstance().remove(filter);
       }
 
@@ -509,7 +525,7 @@ public class PluginProxyManager {
       MainFrame.getInstance().updateFilterMenu();
 
       deactivatePlugin(item, true);
-      
+
       // Update the settings
       String[] deactivatedPlugins = getDeactivatedPluginIds();
       Settings.propDeactivatedPlugins.setStringArray(deactivatedPlugins);
@@ -519,7 +535,7 @@ public class PluginProxyManager {
 
   /**
    * Deactivates a plugin.
-   * 
+   *
    * @param item The item of the plugin to deactivate //@throws
    *          TvBrowserException If deactivating failed
    */
@@ -531,7 +547,7 @@ public class PluginProxyManager {
     if (log) {
       mLog.info("Deactivating plugin " + item.getPlugin().getId());
     }
-    
+
     // Try to save the plugin settings. If saving fails, we continue
     // deactivating the plugin.
     try {
@@ -553,7 +569,7 @@ public class PluginProxyManager {
 
     // Inform the listeners
     firePluginDeactivated(item.getPlugin(), log);
-    
+
     // Run through all Programs and unmark this Plugin
     if(plugin != null && !MainFrame.isShuttingDown()) {
       new Thread("Unmark all programs of plugin") {
@@ -573,7 +589,7 @@ public class PluginProxyManager {
 
   /**
    * Deactivates a plugin and removes it from the PluginList
-   * 
+   *
    * @param plugin The plugin to deactivate
    * @throws TvBrowserException If deactivating failed
    */
@@ -589,7 +605,7 @@ public class PluginProxyManager {
       mAllPluginCache = null;
     }
   }
-  
+
   /**
    * Saves the settings for the given PluginProxy.
    * <p>
@@ -602,10 +618,10 @@ public class PluginProxyManager {
     }catch(Exception e) {
       return false;
     }
-    
+
     return true;
   }
-  
+
   private void saveSettings(PluginListItem item) throws TvBrowserException {
     // Get the user directory
     String userDirectoryName = Settings.getUserSettingsDirName();
@@ -615,13 +631,13 @@ public class PluginProxyManager {
     if (!userDirectory.exists()) {
       userDirectory.mkdirs();
     }
-    
-    item.getPlugin().saveSettings(userDirectory,!MainFrame.isShuttingDown());    
+
+    item.getPlugin().saveSettings(userDirectory,!MainFrame.isShuttingDown());
   }
 
   /**
    * Deactivates and shuts down all plugins.
-   * 
+   *
    * @param log If the logging is activated.
    */
   public void shutdownAllPlugins(boolean log) {
@@ -654,7 +670,7 @@ public class PluginProxyManager {
 
   /**
    * Checks, whether a plugin state change is allowed.
-   * 
+   *
    * @param item The item of the plugin, whichs state should be changed.
    * @param requiredState The state the plugin should have at the moment.
    * @param newState The state the plugin will have after changing
@@ -678,7 +694,7 @@ public class PluginProxyManager {
 
   /**
    * Gets the localized name of a state.
-   * 
+   *
    * @param state The state to get the localized name for.
    * @return The localized name for the given state.
    */
@@ -696,7 +712,7 @@ public class PluginProxyManager {
 
   /**
    * Gets all plugins.
-   * 
+   *
    * @return All plugins.
    */
   public PluginProxy[] getAllPlugins() {
@@ -725,7 +741,7 @@ public class PluginProxyManager {
 
   /**
    * Gets all activated plugins.
-   * 
+   *
    * @return All activated plugins.
    */
   public PluginProxy[] getActivatedPlugins() {
@@ -762,7 +778,7 @@ public class PluginProxyManager {
 
   /**
    * Gets the IDs of all deactivated plugins.
-   * 
+   *
    * @return the IDs of all deactivated plugins.
    */
   public String[] getDeactivatedPluginIds() {
@@ -781,7 +797,7 @@ public class PluginProxyManager {
 
   /**
    * Gets the plugin with the given ID.
-   * 
+   *
    * @param pluginId The ID of the wanted plugin.
    * @param state The state the plugin must have. Pass <code>-1</code> if the
    *          state does not matter.
@@ -793,7 +809,7 @@ public class PluginProxyManager {
       return null;
     }
     synchronized (mPluginList) {
-      PluginListItem item = mPluginMap.get(pluginId); 
+      PluginListItem item = mPluginMap.get(pluginId);
       if (item != null) {
         if ((state == -1) || (item.getState() == state)) {
           return item.getPlugin();
@@ -809,7 +825,7 @@ public class PluginProxyManager {
 
   /**
    * Gets the plugin with the given ID.
-   * 
+   *
    * @param pluginId The ID of the wanted plugin.
    * @return The plugin with the given ID or <code>null</code> if no such
    *         plugin exists.
@@ -820,7 +836,7 @@ public class PluginProxyManager {
 
   /**
    * Gets the activated plugin with the given ID.
-   * 
+   *
    * @param pluginId The ID of the wanted plugin.
    * @return The plugin with the given ID or <code>null</code> if no such
    *         plugin exists or if the plugin is not activated.
@@ -831,7 +847,7 @@ public class PluginProxyManager {
 
   /**
    * Gets a list item for the given plugin proxy.
-   * 
+   *
    * @param plugin The plugin to get the list item for.
    * @return The list item for the given plugin proxy.
    */
@@ -851,7 +867,7 @@ public class PluginProxyManager {
 
   /**
    * Creates a context menu for the given program containing all plugins.
-   * 
+   *
    * @param program The program to create the context menu for
    * @return a context menu for the given program.
    */
@@ -862,7 +878,7 @@ public class PluginProxyManager {
 
   /**
    * Creates a context menu for the given program containing all plugins.
-   * 
+   *
    * @param program The program to create the context menu for
    * @param menuIf The ContextMenuIf that wants to create the ContextMenu
    * @return a context menu for the given program.
@@ -882,7 +898,7 @@ public class PluginProxyManager {
 
   /**
    * Registers a PluginStateListener.
-   * 
+   *
    * @param listener The PluginStateListener to register
    */
   public void addPluginStateListener(PluginStateListener listener) {
@@ -893,7 +909,7 @@ public class PluginProxyManager {
 
   /**
    * Deregisters a PluginStateListener.
-   * 
+   *
    * @param listener The PluginStateListener to deregister
    */
   public void removePluginStateListener(PluginStateListener listener) {
@@ -904,7 +920,7 @@ public class PluginProxyManager {
 
   /**
    * Tells all registered PluginStateListeners that a plugin was deactivated.
-   * 
+   *
    * @param plugin The deactivated plugin
    */
   private void firePluginLoaded(PluginProxy plugin) {
@@ -921,7 +937,7 @@ public class PluginProxyManager {
 
   /**
    * Tells all registered PluginStateListeners that a plugin was deactivated.
-   * 
+   *
    * @param plugin The deactivated plugin
    */
   private void firePluginUnloaded(PluginProxy plugin) {
@@ -938,7 +954,7 @@ public class PluginProxyManager {
 
   /**
    * Tells all registered PluginStateListeners that a plugin was deactivated.
-   * 
+   *
    * @param plugin The deactivated plugin
    */
   private void firePluginActivated(PluginProxy plugin) {
@@ -955,7 +971,7 @@ public class PluginProxyManager {
 
   /**
    * Tells all registered PluginStateListeners that a plugin was deactivated.
-   * 
+   *
    * @param plugin The deactivated plugin
    */
   private void firePluginDeactivated(PluginProxy plugin, boolean log) {
@@ -975,198 +991,182 @@ public class PluginProxyManager {
   /**
    * Calls for every active plugin the handleTvDataAdded(...) method, so the
    * plugin can react on the new data.
-   * 
+   *
    * @param newProg The added program
    * @see PluginProxy#handleTvDataAdded(ChannelDayProgram)
    */
   private void fireTvDataAdded(final MutableChannelDayProgram newProg) {
-    ThreadPoolExecutor threadPool = new ThreadPoolExecutor(5, 10, 100, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
-    
-    for (PluginListItem item : getPluginListCopy()) {
-      if (item.getPlugin().isActivated()) {
-        final AbstractPluginProxy plugin = item.getPlugin();
-        
-        final Thread addThread = new Thread("handleTvDataAdded(MutableChannelDayProgram) for " + plugin) {
-          public void run() {
-            try {
-              plugin.handleTvDataAdded(newProg);
-            }catch(Throwable t) {
-              /* Catch all possible not catched errors that occur in the plugin mehtod*/
-              mLog.log(Level.WARNING, "A not catched error occured in 'handleTvDataAdded(MutableChannelDayProgram)' of Plugin '" + plugin +"'.", t);
-            }
-          }
-        };
+    runWithThreadPool(new ThreadPoolMethod("HandleTvDataAdded(MutableChannelDayProgram) for '" + newProg.getChannel() + "' on " + newProg.getDate()){
 
-        threadPool.execute(addThread);
-      }
-    }
-    
-    try {
-      threadPool.shutdown();
-      
-      if(!threadPool.awaitTermination(5,TimeUnit.SECONDS)) {
-        mLog.warning("HandleTvDataAdded(MutableChannelDayProgram) blocked on Channel '" + newProg.getChannel() + "' on Date '" + newProg.getDate() + "'. Forced termination.");
-      }
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }
+      @Override
+      public void run(ExecutorService threadPool) {
+        for (PluginListItem item : getPluginListCopy()) {
+          if (item.getPlugin().isActivated()) {
+            final AbstractPluginProxy plugin = item.getPlugin();
+
+            final Runnable addThread = new Runnable() {
+              public void run() {
+                try {
+                  plugin.handleTvDataAdded(newProg);
+                }catch(Throwable t) {
+                  /* Catch all possible not catched errors that occur in the plugin mehtod*/
+                  mLog.log(Level.WARNING, "A not catched error occured in 'handleTvDataAdded(MutableChannelDayProgram)' of Plugin '" + plugin +"'.", t);
+                }
+              }
+            };
+
+            threadPool.execute(addThread);
+          }
+        }
+      }});
   }
-  
+
   /**
    * Calls for every active plugin the handleTvDataAdded(...) method, so the
    * plugin can react on the new data.
-   * 
+   *
    * @param newProg The added program
    * @see PluginProxy#handleTvDataAdded(ChannelDayProgram)
    */
   private void fireTvDataAdded(final ChannelDayProgram newProg) {
-    ThreadPoolExecutor threadPool = new ThreadPoolExecutor(5, 10, 100, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
-    
-    for (PluginListItem item : getPluginListCopy()) {
-      if (item.getPlugin().isActivated()) {
-        final AbstractPluginProxy plugin = item.getPlugin();
-        
-        final Thread addThread = new Thread("handleTvDataAdded(ChannelDayProgram) for " + plugin) {
-          public void run() {
-            try {
-              plugin.handleTvDataAdded(newProg);
-            }catch(Throwable t) {
-              /* Catch all possible not catched errors that occur in the plugin mehtod*/
-              mLog.log(Level.WARNING, "A not catched error occured in 'handleTvDataAdded(ChannelDayProgram)' of Plugin '" + plugin +"'.", t);
-            }
-          }
-        };
+    runWithThreadPool(new ThreadPoolMethod("HandleTvDataAdded(ChannelDayProgram) for '" + newProg.getChannel() + "' on " + newProg.getDate()){
 
-        threadPool.execute(addThread);
-      }
-    }
-    
-    try {
-      threadPool.shutdown();
-      
-      if(!threadPool.awaitTermination(5,TimeUnit.SECONDS)) {
-        mLog.warning("HandleTvDataAdded(ChannelDayProgram) blocked on Channel '" + newProg.getChannel() + "' on Date '" + newProg.getDate() + "'. Forced termination.");
-      }
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }
+      @Override
+      public void run(ExecutorService threadPool) {
+        for (PluginListItem item : getPluginListCopy()) {
+          if (item.getPlugin().isActivated()) {
+            final AbstractPluginProxy plugin = item.getPlugin();
+
+            final Runnable addThread = new Runnable() {
+              public void run() {
+                try {
+                  plugin.handleTvDataAdded(newProg);
+                }catch(Throwable t) {
+                  /* Catch all possible not catched errors that occur in the plugin mehtod*/
+                  mLog.log(Level.WARNING, "A not catched error occured in 'handleTvDataAdded(ChannelDayProgram)' of Plugin '" + plugin +"'.", t);
+                }
+              }
+            };
+
+            threadPool.execute(addThread);
+          }
+        }
+      }});
   }
 
   /**
    * Calls for every subscribed plugin the handleTvDataDeleted(...) method, so
    * the plugin can react on the deleted data.
-   * 
+   *
    * @param deletedProg The deleted program
    * @see PluginProxy#handleTvDataDeleted(ChannelDayProgram)
    */
   private void fireTvDataDeleted(final ChannelDayProgram deletedProg) {
-    ThreadPoolExecutor threadPool = new ThreadPoolExecutor(5, 10, 100, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
-    
-    for (PluginListItem item : getPluginListCopy()) {
-      if (item.getPlugin().isActivated()) {
-        final AbstractPluginProxy plugin = item.getPlugin();
-        
-        final Thread deletedThread = new Thread("handleTvDataDeleted for " + plugin) {
-          public void run() {
-            try {
-              plugin.handleTvDataDeleted(deletedProg);
-            }catch(Throwable t) {
-              /* Catch all possible not catched errors that occur in the plugin mehtod*/
-              mLog.log(Level.WARNING, "A not catched error occured in 'handleTvDataDeleted' of Plugin '" + plugin +"'.", t);
-            }
-          }
-        };
+    runWithThreadPool(new ThreadPoolMethod("handleTvDataDeleted for '" + deletedProg.getChannel() + "' on " + deletedProg.getDate()){
 
-        threadPool.execute(deletedThread);
-      }
-    }
-    
-    try {
-      threadPool.shutdown();
-      
-      if(!threadPool.awaitTermination(5,TimeUnit.SECONDS)) {
-        mLog.warning("handleTvDataDeleted blocked on Channel '" + deletedProg.getChannel() + "' on Date '" + deletedProg.getDate() + "'. Forced termination.");
-      }
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }
+      @Override
+      public void run(ExecutorService threadPool) {
+        for (PluginListItem item : getPluginListCopy()) {
+          if (item.getPlugin().isActivated()) {
+            final AbstractPluginProxy plugin = item.getPlugin();
+
+            final Runnable deletedRunnable = new Runnable() {
+              public void run() {
+                try {
+                  plugin.handleTvDataDeleted(deletedProg);
+                }catch(Throwable t) {
+                  /* Catch all possible not catched errors that occur in the plugin mehtod*/
+                  mLog.log(Level.WARNING, "A not catched error occured in 'handleTvDataDeleted' of Plugin '" + plugin +"'.", t);
+                }
+              }
+            };
+
+            threadPool.execute(deletedRunnable);
+          }
+        }
+      }});
   }
-  
+
   /**
    * Calls for every subscribed plugin the fireTvDataTouched(...) method, so
    * the plugin can react on the added/deleted/changed data.
-   * 
+   *
    * @param removedDayProgram The removed program
    * @param addedDayProgram The added program
    * @see PluginProxy#handleTvDataTouched(ChannelDayProgram,ChannelDayProgram)
    */
   private void fireTvDataTouched(final ChannelDayProgram removedDayProgram,
       final ChannelDayProgram addedDayProgram) {
-    ThreadPoolExecutor threadPool = new ThreadPoolExecutor(5, 10, 100, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
-    
-    for (PluginListItem item : getPluginListCopy()) {
-      if (item.getPlugin().isActivated()) {
-        final AbstractPluginProxy plugin = item.getPlugin();
-        
-        final Thread touchedThread = new Thread("handleTvDataTouched for " + plugin) {
-          public void run() {
-            try {
-              plugin.handleTvDataTouched(removedDayProgram,addedDayProgram);
-            }catch(Throwable t) {
-              /* Catch all possible not catched errors that occur in the plugin mehtod*/
-              mLog.log(Level.WARNING, "A not catched error occured in 'handleTvDataTouched' of Plugin '" + plugin +"'.", t);
-            }
-          }
-        };
+    String name = "handleTvDataTouched";
+    if (removedDayProgram != null) {
+      name += " for '" + removedDayProgram.getChannel() + "' on " + removedDayProgram.getDate();
+    }
+    runWithThreadPool(new ThreadPoolMethod(name) {
 
-        threadPool.execute(touchedThread);
+      @Override
+      public void run(final ExecutorService threadPool) {
+        for (PluginListItem item : getPluginListCopy()) {
+          if (item.getPlugin().isActivated()) {
+            final AbstractPluginProxy plugin = item.getPlugin();
+
+            final Runnable touchedThread = new Runnable() {
+              public void run() {
+                try {
+                  plugin.handleTvDataTouched(removedDayProgram,addedDayProgram);
+                }catch(Throwable t) {
+                  /* Catch all possible not catched errors that occur in the plugin mehtod*/
+                  mLog.log(Level.WARNING, "A not catched error occured in 'handleTvDataTouched' of Plugin '" + plugin +"'.", t);
+                }
+              }
+            };
+
+            threadPool.execute(touchedThread);
+          }
+        }
       }
-    }
-    
-    try {
-      threadPool.shutdown();
-      
-      if(!threadPool.awaitTermination(5,TimeUnit.SECONDS)) {
-        mLog.warning("handleTvDataTouched blocked on Channel '" + removedDayProgram.getChannel() + "' on Date '" + removedDayProgram.getDate() + "'. Forced termination.");
-      }
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }
+    });
   }
 
   /**
    * Calls for every subscribed plugin the handleTvDataUpdateFinished() method,
    * so the plugin can react on the new data.
-   * 
+   *
    * @see PluginProxy#handleTvDataUpdateFinished()
    */
   private void fireTvDataUpdateFinished() {
-    ThreadPoolExecutor threadPool = new ThreadPoolExecutor(5, 10, 100, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
-    
-    for (PluginListItem item : getPluginListCopy()) {
-      if (item.getPlugin().isActivated()) {
-        final AbstractPluginProxy plugin = item.getPlugin();
-        
-        final Thread updateFinishedThread = new Thread("handleTvDataUpdateFinished for " + plugin) {
-          public void run() {
-            try {
-              plugin.handleTvDataUpdateFinished();
-            }catch(Throwable t) {
-              /* Catch all possible not catched errors that occur in the plugin mehtod*/
-              mLog.log(Level.WARNING, "A not catched error occured in 'handleTvDataUpdateFinished' of Plugin '" + plugin +"'.", t);
-            }
-          }
-        };
+    runWithThreadPool(new ThreadPoolMethod("handleTvDataUpdateFinished") {
 
-        threadPool.execute(updateFinishedThread);
-      }
-    }
-    
+      @Override
+      public void run(final ExecutorService threadPool) {
+        for (PluginListItem item : getPluginListCopy()) {
+          if (item.getPlugin().isActivated()) {
+            final AbstractPluginProxy plugin = item.getPlugin();
+
+            final Runnable updateFinishedThread = new Runnable() {
+              public void run() {
+                try {
+                  plugin.handleTvDataUpdateFinished();
+                }catch(Throwable t) {
+                  /* Catch all possible not catched errors that occur in the plugin mehtod*/
+                  mLog.log(Level.WARNING, "A not catched error occured in 'handleTvDataUpdateFinished' of Plugin '" + plugin +"'.", t);
+                }
+              }
+            };
+
+            threadPool.execute(updateFinishedThread);
+          }
+        }
+      }});
+  }
+
+  private void runWithThreadPool(final ThreadPoolMethod threadPoolMethod) {
+    ExecutorService threadPool = Executors.newFixedThreadPool(4);
+    threadPoolMethod.run(threadPool);
     try {
       threadPool.shutdown();
-      
-      if(!threadPool.awaitTermination(10,TimeUnit.SECONDS)) {
-        mLog.warning("HandleTvDataUpdateFinished blocked. Forced termination.");
+
+      if(!threadPool.awaitTermination(MAX_THREAD_POOL_WAIT_SECONDS,TimeUnit.SECONDS)) {
+        mLog.warning(threadPoolMethod.getName() + " blocked. Forced termination.");
       }
     } catch (InterruptedException e) {
       e.printStackTrace();
@@ -1180,7 +1180,7 @@ public class PluginProxyManager {
     }
     return localList;
   }
-  
+
   /**
    * Calls for every subscribed plugin the handleTvBrowserStartComplete() method,
    * so the plugin knows when the TV-Browser start is finished.
@@ -1188,54 +1188,47 @@ public class PluginProxyManager {
    * @see PluginProxy#handleTvBrowserStartFinished()
    */
   public void fireTvBrowserStartFinished() {
-    ThreadPoolExecutor threadPool = new ThreadPoolExecutor(5, 10, 100, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
-    
-    ((PluginManagerImpl)PluginManagerImpl.getInstance()).handleTvBrowserStartFinished();
-    for (PluginListItem item : getPluginListCopy()) {
-      final AbstractPluginProxy plugin = item.getPlugin();
-      if (plugin.isActivated()) {
-        
-        Thread fireTvBrowserStartFinishedThread = new Thread("fireTvBrowserStartFinishedThread") {
-          public void run() {
-            try {
-              fireTvBrowserStartFinished(plugin);
-            }catch(Throwable t) {
-              /* Catch all possible not catched errors that occur in the plugin mehtod*/
-              mLog.log(Level.WARNING, "A not catched error occured in 'fireTvBrowserStartFinishedThread' of Plugin '" + plugin +"'.", t);
-            }
-            
-            if (plugin.hasArtificialPluginTree()) {
-              int childCount = plugin.getArtificialRootNode().size();
-              // update all children of the artificial tree or remove the tree completely
-              if (childCount > 0 && childCount < 100) {
-                plugin.getArtificialRootNode().update();
-              }
-              else {
-                plugin.removeArtificialPluginTree();
-              }
-              SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                  MainFrame.getInstance().updatePluginTree();
+    runWithThreadPool(new ThreadPoolMethod("HandleTvDataUpdateFinished"){
+
+      @Override
+      public void run(ExecutorService threadPool) {
+        ((PluginManagerImpl)PluginManagerImpl.getInstance()).handleTvBrowserStartFinished();
+        for (PluginListItem item : getPluginListCopy()) {
+          final AbstractPluginProxy plugin = item.getPlugin();
+          if (plugin.isActivated()) {
+
+            Runnable fireTvBrowserStartFinishedThread = new Runnable() {
+              public void run() {
+                try {
+                  fireTvBrowserStartFinished(plugin);
+                }catch(Throwable t) {
+                  /* Catch all possible not catched errors that occur in the plugin mehtod*/
+                  mLog.log(Level.WARNING, "A not catched error occured in 'fireTvBrowserStartFinishedThread' of Plugin '" + plugin +"'.", t);
                 }
-              });
-            }            
+
+                if (plugin.hasArtificialPluginTree()) {
+                  int childCount = plugin.getArtificialRootNode().size();
+                  // update all children of the artificial tree or remove the tree completely
+                  if (childCount > 0 && childCount < 100) {
+                    plugin.getArtificialRootNode().update();
+                  }
+                  else {
+                    plugin.removeArtificialPluginTree();
+                  }
+                  SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                      MainFrame.getInstance().updatePluginTree();
+                    }
+                  });
+                }
+              }
+            };
+
+            threadPool.execute(fireTvBrowserStartFinishedThread);
           }
-        };
-        
-        threadPool.execute(fireTvBrowserStartFinishedThread);
-      }
-    }
-    
-    try {
-      threadPool.shutdown();
-      
-      if(!threadPool.awaitTermination(20,TimeUnit.SECONDS)) {
-        mLog.warning("HandleTvDataUpdateFinished blocked. Forced termination.");
-      }
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }
+        }
+      }});
   }
 
   public void fireTvBrowserStartFinished(PluginProxy plugin) throws Throwable {
@@ -1259,7 +1252,7 @@ public class PluginProxyManager {
 
     /**
      * Creates a new instance of PluginListItem.
-     * 
+     *
      * @param plugin The plugin of this list item
      */
     public PluginListItem(AbstractPluginProxy plugin) {
@@ -1269,7 +1262,7 @@ public class PluginProxyManager {
 
     /**
      * Gets the plugin.
-     * 
+     *
      * @return the plugin.
      */
     public AbstractPluginProxy getPlugin() {
@@ -1278,7 +1271,7 @@ public class PluginProxyManager {
 
     /**
      * Sets the state of the plugin.
-     * 
+     *
      * @param state The new state.
      */
     public void setState(int state) {
@@ -1290,7 +1283,7 @@ public class PluginProxyManager {
 
     /**
      * Gets the state of the plugin.
-     * 
+     *
      * @return The state of the plugin.
      */
     public int getState() {

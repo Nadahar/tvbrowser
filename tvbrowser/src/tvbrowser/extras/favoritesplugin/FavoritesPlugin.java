@@ -40,8 +40,8 @@ import java.util.Collection;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Properties;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -153,7 +153,7 @@ public class FavoritesPlugin {
   private ArrayList<UpdateInfoThread> mUpdateInfoThreads;
 
   private boolean mShowInfoDialog = false;
-  private ThreadPoolExecutor mThreadPool;
+  private ExecutorService mThreadPool;
 
   /**
    * Creates a new instance of FavoritesPlugin.
@@ -171,7 +171,7 @@ public class FavoritesPlugin {
       public void dayProgramTouched(final ChannelDayProgram removedDayProgram,
           final ChannelDayProgram addedDayProgram) {
         if(mThreadPool == null) {
-          mThreadPool = new ThreadPoolExecutor(5, 10, 100, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
+          mThreadPool = Executors.newFixedThreadPool(4);
         }
 
         Runnable update = new Runnable() {
