@@ -944,7 +944,7 @@ public abstract class Favorite {
   }
 
   public void revalidatePrograms() {
-    new Thread("revaildate favorites") {
+    new Thread("revalidate favorites") {
       @Override
       public void run() {
         setPriority(Thread.MIN_PRIORITY);
