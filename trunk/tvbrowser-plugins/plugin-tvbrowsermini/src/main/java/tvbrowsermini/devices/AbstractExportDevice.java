@@ -1,22 +1,22 @@
 package tvbrowsermini.devices;
 
-import devplugin.Channel;
-import devplugin.Date;
-import devplugin.Plugin;
-import devplugin.Program;
-import util.exc.ErrorHandler;
-
-import javax.swing.*;
+import java.awt.Frame;
 import java.io.File;
 import java.io.IOException;
-import java.sql.*;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.text.ParseException;
-import java.util.*;
-import java.awt.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+import javax.swing.JProgressBar;
 
 import tvbrowsermini.TVBrowserMini;
+import tvbrowsermini.TVBrowserMiniSettings;
+import util.exc.ErrorHandler;
+import devplugin.Channel;
+import devplugin.Plugin;
+import devplugin.Program;
+import devplugin.ProgramFieldType;
 
 public abstract class AbstractExportDevice {
 
@@ -41,50 +41,56 @@ public abstract class AbstractExportDevice {
   protected boolean elementRepetitionOn;
   protected boolean elementRepetitionOf;
 
-  protected Properties mSettings;
+  protected TVBrowserMiniSettings mSettings;
   protected Channel[] mSelectedChannels;
   protected JProgressBar progress;
 
-  private Map<String, Integer> dbChannelIds;
-  private Map<String, Long> mDateIds;
+  protected abstract void createTables(Connection connection, Statement stmt) throws SQLException;
 
-   protected AbstractExportDevice(Properties mSettings, Channel[] mSelectedChannels, JProgressBar progress) {
-    this.mSettings = mSettings;
-    this.mSelectedChannels = mSelectedChannels;
+  protected abstract void createIndices(Connection conn, Statement stmt) throws SQLException;
+
+  protected abstract void exportFile(Connection connection, Frame parentFrame, Statement stmt) throws IOException;
+
+  protected abstract void exportChannels(Connection connection) throws SQLException;
+
+  protected AbstractExportDevice(final TVBrowserMiniSettings settings, final Channel[] selectedChannels,
+      final JProgressBar progress) {
+    this.mSettings = settings;
+    this.mSelectedChannels = selectedChannels;
     this.progress = progress;
     loadSettings();
   }
 
   private void loadSettings() {
-    elementDescription = isPropertyTrue("elementDescription");
-    elementShortDescription = isPropertyTrue("elementShortDescription");
-    elementGenre = isPropertyTrue("elementGenre");
-    elementProductionTime = isPropertyTrue("elementProductionTime");
-    elementProductionLocation = isPropertyTrue("elementProductionLocation");
-    elementDirector = isPropertyTrue("elementDirector");
-    elementScript = isPropertyTrue("elementScript");
-    elementActor = isPropertyTrue("elementActor");
-    elementMusic = isPropertyTrue("elementMusic");
-    elementOriginalTitel = isPropertyTrue("elementOriginalTitel");
-    elementFSK = isPropertyTrue("elementFSK");
-    elementForminformation = isPropertyTrue("elementForminformation");
-    elementShowView = isPropertyTrue("elementShowView");
-    elementEpisode = isPropertyTrue("elementEpisode");
-    elementOriginalEpisode = isPropertyTrue("elementOriginalEpisode");
-    elementModeration = isPropertyTrue("elementModeration");
-    elementWebside = isPropertyTrue("elementWebside");
-    elementVPS = isPropertyTrue("elementVPS");
-    elementRepetitionOn = isPropertyTrue("elementRepetitionOn");
-    elementRepetitionOf = isPropertyTrue("elementRepetitionOf");
+    elementDescription = isExportField(ProgramFieldType.DESCRIPTION_TYPE);
+    elementShortDescription = isExportField(ProgramFieldType.SHORT_DESCRIPTION_TYPE);
+    elementGenre = isExportField(ProgramFieldType.GENRE_TYPE);
+    elementProductionTime = isExportField(ProgramFieldType.PRODUCTION_YEAR_TYPE);
+    elementProductionLocation = isExportField(ProgramFieldType.ORIGIN_TYPE);
+    elementDirector = isExportField(ProgramFieldType.DIRECTOR_TYPE);
+    elementScript = isExportField(ProgramFieldType.SCRIPT_TYPE);
+    elementActor = isExportField(ProgramFieldType.ACTOR_LIST_TYPE);
+    elementMusic = isExportField(ProgramFieldType.MUSIC_TYPE);
+    elementOriginalTitel = isExportField(ProgramFieldType.ORIGINAL_TITLE_TYPE);
+    elementFSK = isExportField(ProgramFieldType.AGE_LIMIT_TYPE);
+    elementForminformation = isExportField(ProgramFieldType.INFO_TYPE);
+    elementEpisode = isExportField(ProgramFieldType.EPISODE_TYPE);
+    elementOriginalEpisode = isExportField(ProgramFieldType.ORIGINAL_EPISODE_TYPE);
+    elementModeration = isExportField(ProgramFieldType.MODERATION_TYPE);
+    elementWebside = isExportField(ProgramFieldType.URL_TYPE);
+    elementVPS = isExportField(ProgramFieldType.VPS_TYPE);
+    elementRepetitionOn = isExportField(ProgramFieldType.REPETITION_ON_TYPE);
+    elementRepetitionOf = isExportField(ProgramFieldType.REPETITION_OF_TYPE);
   }
 
-  private boolean isPropertyTrue(String propertyName) {
-    return mSettings.getProperty(propertyName).equals("true");
+  private boolean isExportField(final ProgramFieldType fieldType) {
+    return mSettings.getProgramField(fieldType);
   }
 
   public void export(Frame parentFrame) {
-    File file = new File(mSettings.getProperty("path") + "_temp");
-    //Wenn bereits eine DB-Datei besteht einfach löschen - das geht schneller als leeren
+    File file = new File(mSettings.getPath() + "_temp");
+    // Wenn bereits eine DB-Datei besteht einfach lï¿½schen - das geht schneller
+    // als leeren
     if (file.exists()) {
       file.delete();
     }
@@ -95,22 +101,22 @@ public abstract class AbstractExportDevice {
     }
     String oldUserDir = System.getProperty("user.dir");
     System.setProperty("user.dir", Plugin.getPluginManager().getTvBrowserSettings().getTvBrowserUserHome());
-    String pfad = mSettings.getProperty("path");
-    pfad = pfad.replace('\\', '/');
-    if (pfad.charAt(1) == ':') {
-      char first = pfad.charAt(0);
+    String path = mSettings.getPath();
+    path = path.replace('\\', '/');
+    if (path.charAt(1) == ':') {
+      char first = path.charAt(0);
       first = Character.toLowerCase(first);
-      pfad = first + pfad.substring(1, pfad.length());
+      path = first + path.substring(1, path.length());
     } else {
-      pfad = "/" + pfad;
+      path = "/" + path;
     }
-    //SQL-Verbindung zur neuen DB-Datei
+    // SQL-Verbindung zur neuen DB-Datei
     Connection conn = null;
     Statement stmt = null;
     try {
 
       Class.forName("org.sqlite.JDBC");
-      conn = DriverManager.getConnection("jdbc:sqlite:/" + pfad + "_temp");//+mSettings.getProperty("path"));
+      conn = DriverManager.getConnection("jdbc:sqlite:/" + path + "_temp");// +mSettings.getProperty("path"));
       System.setProperty("user.dir", oldUserDir);
 
       stmt = conn.createStatement();
@@ -118,7 +124,7 @@ public abstract class AbstractExportDevice {
 
       try {
         exportFile(conn, parentFrame, stmt);
-        File temp = new File(mSettings.getProperty("path"));
+        File temp = new File(mSettings.getPath());
         if (temp.exists()) {
           temp.delete();
         }
@@ -150,88 +156,24 @@ public abstract class AbstractExportDevice {
     }
   }
 
-  protected abstract void createTables(Connection connection, Statement stmt) throws SQLException;
-
-  protected abstract void createIndices(Connection conn, Statement stmt) throws SQLException;
-
-  protected abstract void exportFile(Connection connection, Frame parentFrame, Statement stmt) throws IOException;
-
-  protected void createDateIds() throws SQLException {
-    mDateIds = new HashMap<String, Long>();
-    Date date = new Date();
-    Calendar currentCalendar = date.getCalendar();
-    currentCalendar.set(Calendar.HOUR, 0);
-    currentCalendar.set(Calendar.MINUTE, 0);
-    currentCalendar.set(Calendar.SECOND, 0);
-    currentCalendar.set(Calendar.MILLISECOND, 0);
-    date = new Date(currentCalendar);
-    date = date.addDays(-2);
-    int maxDays = Integer.parseInt(mSettings.getProperty("exportDays"));
-    if (maxDays == 0)
-      maxDays = 32;
-    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-    for (int d = 0; d <= maxDays; d++) {
-      date = date.addDays(1);
-      Calendar calendar = date.getCalendar();
-      String formattedDate = dateFormat.format(calendar.getTime());
-      try {
-         calendar.setTime(dateFormat.parse(formattedDate));
-      } catch (ParseException e) {
-      }
-      long id = calendar.getTimeInMillis();
-      mDateIds.put(formattedDate, id);
-    }
-  }
-
-  protected void exportChannels(Connection connection) throws SQLException {
-    PreparedStatement statement = connection.prepareStatement("INSERT INTO channel (id, channelid, name, category) VALUES (?, ?, ?, ?)");
-    int id = 1;
-    dbChannelIds = new HashMap<String, Integer>();
-    for (Channel channel : mSelectedChannels) {
-      int categories = channel.getCategories();
-      String channelId = getChannelId(channel);
-      statement.setInt(1, id);
-      statement.setString(2, channelId);
-      statement.setString(3, channel.getName());
-      statement.setString(4, categories == 0 || categories == 2 ? "r" : "t");
-      statement.execute();
-      dbChannelIds.put(channelId, id);
-      id++;
-    }
-    statement.close();
-  }
-
-  protected int findDBChannel(Channel selectedChannel) {
-    return dbChannelIds.get(getChannelId(selectedChannel));
-  }
-
   protected String getChannelId(Channel channel) {
-    return new StringBuffer(channel.getDataServiceProxy().getId()).append(":").append(channel.getGroup().getId()).append(":").append(channel.getCountry()).append(":").append(channel.getId()).toString();
-  }
-
-  protected long findDBDate(String date) {
-    return mDateIds.get(date);
+    return new StringBuffer(channel.getDataServiceProxy().getId()).append(":").append(channel.getGroup().getId())
+        .append(":").append(channel.getCountry()).append(":").append(channel.getId()).toString();
   }
 
   protected String encrypt(String text) {
-    String result = "";
-
-    try {
-      //Copyright by tvbrowser.org - Please do not change this part!
-      for (int i = 0; i < text.length(); i++) {
-        int position = (int) text.charAt(i);
-        position = position + 7;
-        result += (char) position;
-      }
+    int length = text.length();
+    StringBuilder result = new StringBuilder(length);
+    // Copyright by tvbrowser.org - Please do not change this part!
+    for (int i = 0; i < length; i++) {
+      char c = text.charAt(i);
+      c += 7;
+      result.append(c);
     }
-    catch (Exception e) {
-      result = "error";
-    }
-    result = result.replace("'", "@_@");
-    return result;
+    return result.toString().replace("'", "@_@");
   }
 
-  protected boolean bitSet(int num, int pattern) {
+  private boolean bitSet(int num, int pattern) {
     return (num & pattern) == pattern;
   }
 
@@ -270,7 +212,7 @@ public abstract class AbstractExportDevice {
         info.append("|black and white");
       }
       if (info.length() > 0) {
-        info = info.deleteCharAt(0); //Delete first seperator
+        info = info.deleteCharAt(0); // Delete first separator
       }
     }
     return info;

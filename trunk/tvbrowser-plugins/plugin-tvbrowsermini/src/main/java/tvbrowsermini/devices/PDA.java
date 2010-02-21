@@ -1,12 +1,9 @@
 package tvbrowsermini.devices;
 
-import devplugin.*;
-import util.ui.UiUtilities;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Frame;
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.DateFormat;
@@ -14,12 +11,23 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
-import java.util.Properties;
+
+import javax.swing.JOptionPane;
+import javax.swing.JProgressBar;
+
+import tvbrowsermini.TVBrowserMiniSettings;
+import util.ui.UiUtilities;
+import devplugin.Channel;
+import devplugin.Date;
+import devplugin.Marker;
+import devplugin.Plugin;
+import devplugin.Program;
+import devplugin.ProgramFieldType;
 
 public class PDA extends AbstractExportDevice {
 
-  public PDA(Properties mSettings, Channel[] mSelectedChannels, JProgressBar progress) {
-    super(mSettings, mSelectedChannels, progress);
+  public PDA(final TVBrowserMiniSettings settings, final Channel[] selectedChannels, final JProgressBar progress) {
+    super(settings, selectedChannels, progress);
   }
 
   protected void createTables(Connection connection, Statement stmt) throws SQLException {
@@ -58,13 +66,7 @@ public class PDA extends AbstractExportDevice {
     DateFormat formater = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     try {
       Class.forName("org.sqlite.JDBC");
-      for (Channel c : mSelectedChannels) {
-        char category = 't';
-        if (c.getCategories() == 0 || c.getCategories() == 2) {
-          category = 'r';
-        }
-        stmt.addBatch("INSERT INTO channel (id, name, category) VALUES ('" + getChannelId(c) + "', '" + c.getName() + "', '" + category + "')");
-      }
+      exportChannels(connection);
       Date date = new Date();
       date = date.addDays(-2);
       Calendar calStart = Calendar.getInstance();
@@ -72,11 +74,7 @@ public class PDA extends AbstractExportDevice {
 
       int counter = 0;
 
-      int maxDays = Integer.parseInt(mSettings.getProperty("exportDays"));
-      if (maxDays == 0)
-        maxDays = 32;
-      maxDays++; //first day is always yesterday
-
+      int maxDays = mSettings.getDaysToExport();
 
       for (int d = 0; d < maxDays; d++) {
         date = date.addDays(1);
@@ -205,12 +203,6 @@ public class PDA extends AbstractExportDevice {
                 info = getFormatInformation(program, info);
                 statementPart2.append(", '" + encrypt(info.toString()) + "'");
               }
-              if (elementShowView) {
-                if (program.getTextField(ProgramFieldType.SHOWVIEW_NR_TYPE) != null) {
-                  statementPart1.append(", showview");
-                  statementPart2.append(", '" + encrypt(program.getTextField(ProgramFieldType.SHOWVIEW_NR_TYPE)) + "'");
-                }
-              }
               if (elementEpisode) {
                 if (program.getTextField(ProgramFieldType.EPISODE_TYPE) != null) {
                   statementPart1.append(", episode");
@@ -286,7 +278,6 @@ public class PDA extends AbstractExportDevice {
         connection.setAutoCommit(false);
         stmt.executeBatch();
         connection.setAutoCommit(true);
-        connection.close();
       }
       catch (Exception e) {
         JOptionPane.showMessageDialog(UiUtilities.getBestDialogParent(parentFrame), e.getMessage());
@@ -297,5 +288,19 @@ public class PDA extends AbstractExportDevice {
       System.out.println(e.getMessage());
       System.out.println(e.toString());
     }
+  }
+
+  protected void exportChannels(final Connection connection) throws SQLException {
+    PreparedStatement statement = connection
+    .prepareStatement("INSERT INTO channel (id, name, category) VALUES (?, ?, ?)");
+    for (Channel channel : mSelectedChannels) {
+      int categories = channel.getCategories();
+      String channelId = getChannelId(channel);
+      statement.setString(1, channelId);
+      statement.setString(2, channel.getName());
+      statement.setString(3, categories == 0 || categories == 2 ? "r" : "t");
+      statement.execute();
+    }
+    statement.close();
   }
 }
