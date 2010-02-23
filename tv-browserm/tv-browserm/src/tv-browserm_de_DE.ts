@@ -6,100 +6,87 @@
     <message>
         <location filename="mainwindow.ui" line="14"/>
         <source>MainWindow</source>
-        <translation></translation>
+        <translation type="unfinished"></translation>
     </message>
     <message utf8="true">
         <location filename="mainwindow.ui" line="57"/>
         <source>Es läuft</source>
-        <translation></translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="70"/>
         <source>Am</source>
-        <translation></translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="44"/>
+        <location filename="mainwindow.cpp" line="46"/>
         <source>Now</source>
         <translation>Jetzt</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="45"/>
+        <location filename="mainwindow.cpp" line="47"/>
         <source>in 15 minutes</source>
         <translation>in 15 Minuten</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="46"/>
+        <location filename="mainwindow.cpp" line="48"/>
         <source>in 30 minutes</source>
         <translation>in 30 Minuten</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="47"/>
-        <source>on 06:00</source>
+        <location filename="mainwindow.cpp" line="49"/>
+        <source>at 06:00</source>
         <translation>um 06:00</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="48"/>
-        <source>on 12:00</source>
+        <location filename="mainwindow.cpp" line="50"/>
+        <source>at 12:00</source>
         <translation>um 12:00</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="49"/>
-        <source>on 18:00</source>
+        <location filename="mainwindow.cpp" line="51"/>
+        <source>at 18:00</source>
         <translation>um 18:00</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="50"/>
-        <source>on 20:15</source>
+        <location filename="mainwindow.cpp" line="52"/>
+        <source>at 20:15</source>
         <translation>um 20:15</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="51"/>
-        <source>on 22:00</source>
+        <location filename="mainwindow.cpp" line="53"/>
+        <source>at 22:00</source>
         <translation>um 22:00</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="57"/>
-        <source>DateTime</source>
-        <translation>am</translation>
+        <location filename="mainwindow.cpp" line="59"/>
+        <source>On</source>
+        <translation>Am</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="58"/>
-        <source>On TV</source>
+        <location filename="mainwindow.cpp" line="60"/>
+        <source>Running</source>
         <translation>Es läuft</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="164"/>
-        <location filename="mainwindow.cpp" line="278"/>
+        <location filename="mainwindow.cpp" line="166"/>
+        <location filename="mainwindow.cpp" line="283"/>
+        <location filename="mainwindow.cpp" line="414"/>
         <source>No Databasefile</source>
-        <translation>Keine Datenbank</translation>
+        <translation>Keine Datenbank gefunden</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="164"/>
-        <location filename="mainwindow.cpp" line="278"/>
+        <location filename="mainwindow.cpp" line="166"/>
+        <location filename="mainwindow.cpp" line="283"/>
+        <location filename="mainwindow.cpp" line="414"/>
         <source>There is no Databasefile in: 
 </source>
-        <translation>Es wurde keine Datenbank gefunden:</translation>
+        <translation>Datenbankpfad:</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="378"/>
+        <location filename="mainwindow.cpp" line="514"/>
         <source>Done</source>
         <translation>OK</translation>
-    </message>
-</context>
-<context>
-    <name>MyModel</name>
-    <message>
-        <source>Channel</source>
-        <translation type="obsolete">Sender</translation>
-    </message>
-    <message>
-        <source>broadcast</source>
-        <translation type="obsolete">Sendung</translation>
-    </message>
-    <message>
-        <source>begin - end</source>
-        <translation type="obsolete">von - bis</translation>
     </message>
 </context>
 <context>
@@ -107,17 +94,17 @@
     <message>
         <location filename="runsnowmodel.cpp" line="77"/>
         <source>Channel</source>
-        <translation type="unfinished">Sender</translation>
+        <translation>Sender</translation>
     </message>
     <message>
         <location filename="runsnowmodel.cpp" line="79"/>
-        <source>broadcast</source>
-        <translation type="unfinished">Sendung</translation>
+        <source>Program</source>
+        <translation>Sendung</translation>
     </message>
     <message>
         <location filename="runsnowmodel.cpp" line="81"/>
         <source>begin - end</source>
-        <translation type="unfinished">von - bis</translation>
+        <translation>von - bis</translation>
     </message>
 </context>
 </TS>

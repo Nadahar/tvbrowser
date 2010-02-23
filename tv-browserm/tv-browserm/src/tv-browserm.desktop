@@ -1,8 +1,8 @@
 [Desktop Entry]
 Encoding=UTF-8
 Type=Application
-Name=TV-Browser
-Comment=TV-Browser - a free EPG
+Name=TV-Browserm
+Comment=TV-Browserm - a free EPG
 Exec=run-standalone.sh /opt/tv-browserm/tv-browserm
 Icon=tvbrowser64
 X-HildonDesk-ShowInToolbar=false

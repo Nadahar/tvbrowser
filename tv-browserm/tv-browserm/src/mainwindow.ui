@@ -27,7 +27,7 @@
    <widget class="QComboBox" name="cbTime">
     <property name="geometry">
      <rect>
-      <x>140</x>
+      <x>151</x>
       <y>20</y>
       <width>171</width>
       <height>41</height>
@@ -37,7 +37,7 @@
    <widget class="QDateTimeEdit" name="dteTime">
     <property name="geometry">
      <rect>
-      <x>140</x>
+      <x>151</x>
       <y>90</y>
       <width>291</width>
       <height>41</height>
@@ -49,7 +49,7 @@
      <rect>
       <x>10</x>
       <y>20</y>
-      <width>111</width>
+      <width>131</width>
       <height>41</height>
      </rect>
     </property>
