@@ -76,7 +76,7 @@ QVariant runsnowmodel::headerData(int section, Qt::Orientation orientation, int 
             case 0:
                 return tr("Channel");
             case 1:
-                return tr("broadcast");
+                return tr("Program");
             case 2:
                 return tr("begin - end");
             case 3:

@@ -46,18 +46,18 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->cbTime->addItem(tr("Now"),QVariant("0"));
     ui->cbTime->addItem(tr("in 15 minutes"),QVariant("1"));
     ui->cbTime->addItem(tr("in 30 minutes"),QVariant("2"));
-    ui->cbTime->addItem(tr("on 06:00"),QVariant("3"));
-    ui->cbTime->addItem(tr("on 12:00"),QVariant("4"));
-    ui->cbTime->addItem(tr("on 18:00"),QVariant("5"));
-    ui->cbTime->addItem(tr("on 20:15"),QVariant("6"));
-    ui->cbTime->addItem(tr("on 22:00"),QVariant("7"));
+    ui->cbTime->addItem(tr("at 06:00"),QVariant("3"));
+    ui->cbTime->addItem(tr("at 12:00"),QVariant("4"));
+    ui->cbTime->addItem(tr("at 18:00"),QVariant("5"));
+    ui->cbTime->addItem(tr("at 20:15"),QVariant("6"));
+    ui->cbTime->addItem(tr("at 22:00"),QVariant("7"));
 
     ui->cbTime->setCurrentIndex(0);
     ui->dteTime->setDateTime(QDateTime::currentDateTime());
 
 
-    ui->rbAm->setText(tr("DateTime"));
-    ui->rbCB->setText(tr("On TV"));
+    ui->rbAm->setText(tr("On"));
+    ui->rbCB->setText(tr("Running"));
 
     ui->rbCB->setChecked(true);
 

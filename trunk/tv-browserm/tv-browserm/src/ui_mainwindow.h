@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading ui file 'mainwindow.ui'
 **
-** Created: Sun 14. Feb 01:47:58 2010
+** Created: Tue 23. Feb 19:54:54 2010
 **      by: Qt User Interface Compiler version 4.5.3
 **
 ** WARNING! All changes made in this file will be lost when recompiling ui file!
@@ -50,13 +50,13 @@ public:
         tableView->setGeometry(QRect(0, 170, 800, 251));
         cbTime = new QComboBox(centralWidget);
         cbTime->setObjectName(QString::fromUtf8("cbTime"));
-        cbTime->setGeometry(QRect(140, 20, 171, 41));
+        cbTime->setGeometry(QRect(151, 20, 171, 41));
         dteTime = new QDateTimeEdit(centralWidget);
         dteTime->setObjectName(QString::fromUtf8("dteTime"));
-        dteTime->setGeometry(QRect(140, 90, 291, 41));
+        dteTime->setGeometry(QRect(151, 90, 291, 41));
         rbCB = new QRadioButton(centralWidget);
         rbCB->setObjectName(QString::fromUtf8("rbCB"));
-        rbCB->setGeometry(QRect(10, 20, 111, 41));
+        rbCB->setGeometry(QRect(10, 20, 131, 41));
         rbAm = new QRadioButton(centralWidget);
         rbAm->setObjectName(QString::fromUtf8("rbAm"));
         rbAm->setGeometry(QRect(10, 90, 82, 41));
