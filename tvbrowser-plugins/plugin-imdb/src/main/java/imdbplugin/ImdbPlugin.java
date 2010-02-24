@@ -3,12 +3,12 @@
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -111,6 +111,11 @@ public final class ImdbPlugin extends Plugin {
     return new Icon[]{new ImdbIcon(rating)};
   }
 
+  /**
+   * get rating for a program
+   * @param program
+   * @return
+   */
   protected ImdbRating getRatingFor(final Program program) {
     // have extra rating for example program to avoid full database initialization when only getting the plugin icon
     if (Plugin.getPluginManager().getExampleProgram().equals(program)) {
@@ -119,28 +124,30 @@ public final class ImdbPlugin extends Plugin {
     if (mImdbDatabase == null) {
     	return null;
     }
-    ImdbRating rating = null;
-    if (!mExcludedChannels.contains(program.getChannel())) {
-      final String cacheKey = getCacheKey(program);
-      rating = mRatingCache.get(cacheKey);
-      if (rating == null) {
-        rating = getEpisodeRating(program);
+    // synchronized because this method is exposed to other plugins via rating interface
+    synchronized (this) {
+      ImdbRating rating = null;
+      if (!mExcludedChannels.contains(program.getChannel())) {
+        final String cacheKey = getCacheKey(program);
+        rating = mRatingCache.get(cacheKey);
         if (rating == null) {
-          rating = getProgramRating(program);
+          rating = getEpisodeRating(program);
+          if (rating == null) {
+            rating = getProgramRating(program);
+          }
+          if (rating != null) {
+            mRatingCache.put(cacheKey, rating);
+          } else {
+            mRatingCache.put(cacheKey, DUMMY_RATING);
+          }
         }
-        if (rating != null) {
-          mRatingCache.put(cacheKey, rating);
-        } else {
-          mRatingCache.put(cacheKey, DUMMY_RATING);
-        }
-      }
 
-      if (rating == DUMMY_RATING) {
-        rating = null;
+        if (rating == DUMMY_RATING) {
+          rating = null;
+        }
       }
+      return rating;
     }
-
-    return rating;
   }
 
   /**
@@ -170,7 +177,7 @@ public final class ImdbPlugin extends Plugin {
   public ImdbRating getProgramRating(final Program program) {
     return mImdbDatabase.getRatingForId(mImdbDatabase.getMovieId(program.getTitle(), "",
         program.getTextField(ProgramFieldType.ORIGINAL_TITLE_TYPE),
-        program.getTextField(ProgramFieldType.ORIGINAL_EPISODE_TYPE), 
+        program.getTextField(ProgramFieldType.ORIGINAL_EPISODE_TYPE),
         program.getIntField(ProgramFieldType.PRODUCTION_YEAR_TYPE)));
   }
 
@@ -202,7 +209,7 @@ public final class ImdbPlugin extends Plugin {
 			dialog = new ImdbRatingsDialog((JDialog) dlgParent, program);
 		}
 		else {
-			dialog = new ImdbRatingsDialog((JFrame) dlgParent, program); 
+			dialog = new ImdbRatingsDialog((JFrame) dlgParent, program);
 		}
     UiUtilities.centerAndShow(dialog);
   }
@@ -477,7 +484,7 @@ public final class ImdbPlugin extends Plugin {
     mSettings.setNumberOfMovies(ratingCount);
     mSettings.setUpdateDate(Date.getCurrentDate());
   }
-  
+
   @Override
   public Class<? extends PluginsFilterComponent>[] getAvailableFilterComponentClasses() {
     return (Class<? extends PluginsFilterComponent>[]) new Class[] { ImdbFilterComponent.class, VoteCountFilterComponent.class};
@@ -490,11 +497,11 @@ public final class ImdbPlugin extends Plugin {
   public String getDatabaseSizeMB() {
     return mImdbDatabase.getDatabaseSizeMB();
   }
-  
+
   @Override
   public ActionMenu getButtonAction() {
   	AbstractAction action = new AbstractAction(mLocalizer.msg("download", "Download new IMDb data")) {
-			
+
 			public void actionPerformed(ActionEvent e) {
 				showUpdateDialog();
 			}

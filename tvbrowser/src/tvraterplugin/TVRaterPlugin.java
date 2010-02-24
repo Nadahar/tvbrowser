@@ -59,10 +59,10 @@ import devplugin.Version;
 
 /**
  * This Plugin gives the User the possibility to rate a Movie
- * 
+ *
  * TODO: Get Personal Ratings from Server
- * TODO: Send Original-Titles to Server 
- * 
+ * TODO: Send Original-Titles to Server
+ *
  * @author Bodo Tasche
  */
 public class TVRaterPlugin extends devplugin.Plugin {
@@ -245,7 +245,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
    * Plugin.
    * <p>
    * Return <code>null</code> if your plugin does not provide this feature.
-   * 
+   *
    * @return The description text for the program table icons.
    * @see #getProgramTableIcons(Program)
    */
@@ -258,7 +258,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
    * will be shown in the program table under the start time.
    * <p>
    * Return <code>null</code> if your plugin does not provide this feature.
-   * 
+   *
    * @param program
    *            The programs to get the icons for.
    * @return The icons for the given program or <code>null</code>.
@@ -268,7 +268,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
     if (program == getPluginManager().getExampleProgram()) {
       return new Icon[] { RatingIconTextFactory.getImageIconForRating(3) };
     }
-    
+
     final Rating rating = getRating(program);
 
     if (rating != null) {
@@ -282,16 +282,15 @@ public class TVRaterPlugin extends devplugin.Plugin {
   /**
    * Returns the Rating for a program.
    * This Function returns the personal rating if the settings say these ratings
-   * are preferred
+   * are preferred<br>
+   * synchronized because this method is exposed to other plugins via rating interface
    *
    * @param program Get rating for this program
    * @return Rating
    */
-  public Rating getRating(final Program program) {
-    Rating rating;
-
+  public synchronized Rating getRating(final Program program) {
     if (_settings.getPreferOwnRating()) {
-      rating = getPersonalRating(program);
+      Rating rating = getPersonalRating(program);
       if (rating != null) {
         return rating;
       }
@@ -302,10 +301,10 @@ public class TVRaterPlugin extends devplugin.Plugin {
 
   /**
    * Get the personal rating for the given program
-   * 
+   *
    * @param program
    * @return personal rating or <code>null</code> if no personal rating is available
-   * @since 2.6 
+   * @since 2.6
    */
   private Rating getPersonalRating(final Program program) {
     return _tvraterDB.getPersonalRating(program);
@@ -313,7 +312,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
 
   /**
    * Returns the Database for the Ratings
-   * 
+   *
    * @return Rating-Database
    */
   public Database getDatabase() {
@@ -322,7 +321,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
 
   /**
    * Called by the host-application during start-up.
-   * 
+   *
    * @see #writeData(ObjectOutputStream)
    */
   public void readData(final ObjectInputStream in) throws IOException,
@@ -332,7 +331,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
 
   /**
    * Counterpart to loadData. Called when the application shuts down.
-   * 
+   *
    * @see #readData(ObjectInputStream)
    */
   public void writeData(final ObjectOutputStream out) throws IOException {
@@ -346,7 +345,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
    * Gets the parent frame.
    * <p>
    * The parent frame may be used for showing dialogs.
-   * 
+   *
    * @return The parent frame.
    */
   public java.awt.Frame getParentFrameForTVRater() {
@@ -376,7 +375,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
 
   /**
    * Updates the Database
-   * @param showMessage 
+   * @param showMessage
    */
   protected void runUpdate(final boolean showMessage, final Runnable afterUpdate) {
     final TVRaterPlugin tvrater = this;
@@ -388,10 +387,10 @@ public class TVRaterPlugin extends devplugin.Plugin {
         } catch (InterruptedException e) {
           // Ignore
         }
-        
+
         Updater up = new Updater(tvrater, _settings);
         up.run();
-        
+
         if (showMessage) {
           if (up.wasSuccessfull()) {
             JOptionPane.showMessageDialog(getParentFrameForTVRater(), mLocalizer.msg("updateSuccess",
@@ -407,14 +406,14 @@ public class TVRaterPlugin extends devplugin.Plugin {
     updateThread.setPriority(Thread.MIN_PRIORITY);
     updateThread.start();
   }
-  
+
   private void updateDB() {
     runUpdate(false, null);
   }
 
   /**
    * Returns an Instance of this Plugin
-   * 
+   *
    * @return Instance of this Plugin
    */
   public static TVRaterPlugin getInstance() {
@@ -422,7 +421,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
   }
 
   /**
-   * Returns true if Program is rateable (Length > MINLENGTH or last Program of Day) 
+   * Returns true if Program is rateable (Length > MINLENGTH or last Program of Day)
    * @param program Program to check
    * @return true if program is rateable
    */
@@ -437,7 +436,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
       if (channel == null) {
         return false;
       }
-      
+
       Date date = program.getDate();
       if (date == null) {
         return false;
@@ -472,9 +471,9 @@ public class TVRaterPlugin extends devplugin.Plugin {
   /**
    * Force an update of the currently shown programs in the program table
    * where we need to add/update a TV rating.
-   * 
+   *
    * Internally called after a successful update of the TV ratings database.
-   * 
+   *
    * @since 2.6
    */
   public void updateCurrentDate() {
@@ -515,14 +514,14 @@ public class TVRaterPlugin extends devplugin.Plugin {
     }
     return mRootNode;
   }
-  
+
   protected void updateRootNode() {
     updateRootNode(false);
   }
 
   /**
    * collect all expired favorites without rating for the plugin tree
-   * 
+   *
    * @since 2.6
    */
   private void updateRootNode(final boolean force) {
@@ -530,12 +529,12 @@ public class TVRaterPlugin extends devplugin.Plugin {
       return;
     }
     Collection<Rating> ratings = getDatabase().getServerRatings();
-    
+
     // do not recalculate the tree if we have no rating database
     if (ratings.size() == 0) {
       return;
     }
-    
+
     mRootNode.removeAllChildren();
 
     // sort ratings by title, so the nodes in the tree are sorted
@@ -545,10 +544,10 @@ public class TVRaterPlugin extends devplugin.Plugin {
       public int compare(Rating arg0, Rating arg1) {
         return arg0.getTitle().compareTo(arg1.getTitle());
       }});
-    
+
     // add top ratings for each category
     HashMap<String, HashSet<PluginTreeNode>> titles = new HashMap<String, HashSet<PluginTreeNode>>();
-    
+
     // find all ratings with high values
     ArrayList<PluginTreeNode> listOverall = new ArrayList<PluginTreeNode>();
     ArrayList<PluginTreeNode> listAction = new ArrayList<PluginTreeNode>();
@@ -601,7 +600,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
     addList(topErotic, listErotic);
     addList(topTension, listTension);
     addList(topEntitlement, listEntitlement);
-    
+
     // add unrated favorites
     PluginTreeNode favoritesNode = mRootNode.addNode(mLocalizer.msg(
         "unratedFavorites", "Unrated favorites"));

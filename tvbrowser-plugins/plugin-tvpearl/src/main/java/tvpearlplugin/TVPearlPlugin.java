@@ -1,6 +1,6 @@
 /*
  * TV-Pearl by Reinhard Lehrbaum
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -66,7 +66,7 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 
 	private static final boolean PLUGIN_IS_STABLE = true;
   private static final Version PLUGIN_VERSION = new Version(0, 20, 2, PLUGIN_IS_STABLE);
-  
+
   private static final String TARGET_PEARL_COPY = "pearlCopy";
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer
       .getLocalizerFor(TVPearlPlugin.class);
@@ -563,7 +563,7 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
       }
     }};
   }
-  
+
   @Override
   @SuppressWarnings("unchecked")
   public Class<? extends PluginsFilterComponent>[] getAvailableFilterComponentClasses() {
@@ -613,7 +613,13 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 		return getPearl(program) != null;
 	}
 
-	private TVPProgram getPearl(final Program program) {
+	/**
+	 * get pearl for program<br>
+	 * synchronized because this method is exposed via rating interface
+	 * @param program
+	 * @return
+	 */
+	private synchronized TVPProgram getPearl(final Program program) {
 		return mTVPearls.getPearl(program);
 	}
 }
