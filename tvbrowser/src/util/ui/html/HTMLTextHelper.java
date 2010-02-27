@@ -10,7 +10,7 @@ import util.io.IOUtilities;
 
 /**
  * This is a Helper-Class for converting Text to HMTL
- * 
+ *
  * @author bodum
  * @since 2.1
  */
@@ -19,9 +19,9 @@ public class HTMLTextHelper {
   /**
    * Convert Text to HTML. > and < will be converted to &gt; and &lt;
    * \n will be <code>&lt;br&gt;</code>
-   * 
+   *
    * Links in the text will be made clickable.
-   * 
+   *
    * @param text text to display
    * @return Result
    * @since 2.7
@@ -33,9 +33,9 @@ public class HTMLTextHelper {
   /**
    * Convert Text to HTML. > and < will be converted to &gt; and &lt;
    * \n will be <code>&lt;br&gt;</code>
-   * 
+   *
    * If createLinks is true, it will try to find links and make them clickable
-   * 
+   *
    * @param text text to display
    * @param createLinks if true, it will create links
    * @return Result
@@ -52,30 +52,36 @@ public class HTMLTextHelper {
 
     // Create links for URLs
     if (createLinks) {
-      
+
       Matcher matcher = Pattern.compile("(http://|www\\.)[^\\s<\"']*").matcher(text);
-      
+
       StringBuilder result = new StringBuilder();
-      
+
       int end = 0;
-      
+
       while (matcher.find()) {
         result.append(text.substring(end, matcher.start()));
         end = matcher.end();
-        result.append("<a href=\"");
-        
+
         String linkText = text.substring(matcher.start(), matcher.end());
-        
+
+        // remove brackets
+        if (linkText.endsWith(")") && result.length() > 0 && result.charAt(result.length() - 1) == '(') {
+          linkText = linkText.substring(0, linkText.length() - 1);
+          end--;
+        }
+
         // remove trailing characters which are not part of the URL
         while (linkText.endsWith(".")) {
           linkText = linkText.substring(0, linkText.length() - 1);
           end--;
         }
-      
+
+        result.append("<a href=\"");
         if (!linkText.startsWith("http://")) {
           result.append("http://");
         }
-        
+
         result.append(linkText);
         result.append("\">");
         if (linkText.startsWith("http://")) {
@@ -89,16 +95,16 @@ public class HTMLTextHelper {
       }
 
       result.append(text.substring(end));
-      
+
       text = result.toString();
     }
 
     return text;
   }
-  
+
   /**
    * Replaces HTML German umlauts and the HTML formatting tags with a Java String.
-   * 
+   *
    * @param html The HTML text to replace.
    * @return The text with the replaced Strings.
    * @since 2.7
@@ -108,10 +114,10 @@ public class HTMLTextHelper {
       return null;
     }
     String temp = Translate.decode(html);
-    
+
     temp = temp.replace("<br>","\n");
-    
+
     return temp;
   }
-  
+
 }
