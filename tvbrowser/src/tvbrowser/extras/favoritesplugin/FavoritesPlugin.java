@@ -150,7 +150,8 @@ public class FavoritesPlugin {
   private int mMarkPriority = -2;
 
   private Exclusion[] mExclusions;
-  private ArrayList<UpdateInfoThread> mUpdateInfoThreads;
+  
+  private static UpdateInfoThread mUpdateInfoThread;
 
   private boolean mShowInfoDialog = false;
   private ExecutorService mThreadPool;
@@ -164,7 +165,6 @@ public class FavoritesPlugin {
     mPendingFavorites = new ArrayList<AdvancedFavorite>(0);
     mClientPluginTargets = new ProgramReceiveTarget[0];
     mConfigurationHandler = new ConfigurationHandler(DATAFILE_PREFIX);
-    mUpdateInfoThreads = new ArrayList<UpdateInfoThread>(0);
     load();
 
     TvDataBase.getInstance().addTvDataListener(new TvDataBaseListener() {
@@ -234,7 +234,7 @@ public class FavoritesPlugin {
           if(!mSendPluginsTable.isEmpty()) {
             sendToPlugins();
           }
-          handleTvDataUpdateFinished();
+          //handleTvDataUpdateFinished();
         }
       }
     });
@@ -275,7 +275,7 @@ public class FavoritesPlugin {
       Thread update = new Thread("Favorites: handle update finished") {
         public void run() {try{
           mHasToUpdate = false;
-
+          
           ManageFavoritesDialog dlg = ManageFavoritesDialog.getInstance();
 
           if(dlg != null) {
@@ -300,11 +300,13 @@ public class FavoritesPlugin {
           }
 
           if(!showInfoFavorites.isEmpty()) {
-            UpdateInfoThread thread = new UpdateInfoThread(showInfoFavorites.toArray(new Favorite[showInfoFavorites.size()]));
-            thread.setPriority(Thread.MIN_PRIORITY);
-
-            mUpdateInfoThreads.add(thread);
-            thread.start();
+            if(mUpdateInfoThread == null || !mUpdateInfoThread.isAlive()) {
+              mUpdateInfoThread = new UpdateInfoThread();
+              mUpdateInfoThread.setPriority(Thread.MIN_PRIORITY);
+              mUpdateInfoThread.start();
+            }
+            
+            mUpdateInfoThread.addFavorites(showInfoFavorites.toArray(new Favorite[showInfoFavorites.size()]));
           }
 
           Favorite[] favorites = FavoriteTreeModel.getInstance().getFavoriteArr();
@@ -326,19 +328,18 @@ public class FavoritesPlugin {
 
   public void handleTvBrowserIsShuttingDown() {
     mIsShuttingDown = true;
-
+    handleTrayRightClick();
+  }
+  
+  public void handleTrayRightClick() {
     try {
-      if(!mUpdateInfoThreads.isEmpty()) {
-        for(int i = mUpdateInfoThreads.size() - 1; i >= 0; i--) {
-          UpdateInfoThread thread = mUpdateInfoThreads.get(i);
-
-          thread.interrupt();
-          thread.showDialog();
-        }
+      if(mUpdateInfoThread != null && mUpdateInfoThread.isAlive()) {
+        mUpdateInfoThread.interrupt();
+        mUpdateInfoThread.showDialog();
       }
     }catch(Throwable t) {
       ErrorHandler.handle("Error during showing new Favorites on TV-Browser shutting down.",t);
-    }
+    }    
   }
 
   public static synchronized FavoritesPlugin getInstance() {
@@ -1143,11 +1144,40 @@ public class FavoritesPlugin {
   }
 
   private class UpdateInfoThread extends Thread {
-    private Favorite[] mFavoriteArr;
+    private Favorite[] mFavorites;
 
-    protected UpdateInfoThread(Favorite[] favArr) {
+    protected UpdateInfoThread() {
       super("Manage favorites");
-      mFavoriteArr = favArr;
+      mFavorites = new Favorite[0];
+    }
+    
+    protected void addFavorites(Favorite[] favArr) {
+      ArrayList<Favorite> newFavoriteList = new ArrayList<Favorite>(mFavorites.length + favArr.length);
+      Favorite[] newFavorites = new Favorite[0];
+      
+      synchronized (mFavorites) {
+        for(Favorite fav : favArr) {
+          boolean found = false;
+          
+          for(Favorite knownFavorite : mFavorites) {
+            if(fav.equals(knownFavorite)) {
+              found = true;
+              break;
+            }
+          }
+          
+          if(!found) {
+            newFavoriteList.add(fav);
+          }
+        }
+        
+        newFavorites = new Favorite[mFavorites.length + newFavoriteList.size()];
+        
+        System.arraycopy(mFavorites,0,newFavorites,0,mFavorites.length);
+        System.arraycopy(newFavoriteList.toArray(),0,newFavorites,mFavorites.length,newFavoriteList.size());
+      }
+      
+      mFavorites = newFavorites;
     }
 
     public void run() {
@@ -1155,9 +1185,7 @@ public class FavoritesPlugin {
         try {
           sleep(5000);
         }catch(Exception e) {
-          mUpdateInfoThreads.remove(this);
-
-          if(mUpdateInfoThreads.isEmpty()) {
+          if(mFavorites.length > 0) {
             mShowInfoDialog = false;
           }
 
@@ -1166,16 +1194,13 @@ public class FavoritesPlugin {
       }
 
       showDialog();
-
-      mUpdateInfoThreads.remove(this);
-
-      if(mUpdateInfoThreads.isEmpty()) {
-        mShowInfoDialog = false;
-      }
+      mShowInfoDialog = false;
     }
 
     protected void showDialog() {
-      showManageFavoritesDialog(true, mFavoriteArr, null);
+      synchronized (mFavorites) {
+        showManageFavoritesDialog(true, mFavorites, null);        
+      }
     }
   }
 

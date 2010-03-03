@@ -677,10 +677,10 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
       else {
         if(mProgramListModel != null) {
           mProgramListModel.clear();
+          mDeleteBt.setEnabled(false);
+          mSendBt.setEnabled(false);
+          enableButtons(false);
         }
-        mDeleteBt.setEnabled(false);
-        mSendBt.setEnabled(false);
-        enableButtons(false);
       }
     }
   }

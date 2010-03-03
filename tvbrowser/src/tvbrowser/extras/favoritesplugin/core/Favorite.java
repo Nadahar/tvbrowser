@@ -69,7 +69,8 @@ public abstract class Favorite {
 
   private HashMap<String,Integer> mRemovedPrograms;
   private ArrayList<Program> mRemovedBlacklistPrograms;
-
+  private boolean mNewProgramsWasRequested;
+  
   /**
    * unsorted list of blacklisted (non-favorite) programs
    */
@@ -84,7 +85,8 @@ public abstract class Favorite {
     mRemovedBlacklistPrograms = new ArrayList<Program>(0);
     mExclusionList = null; // defer initialisation until needed, save memory
     mBlackList = null; // defer initialization until needed
-
+    mNewProgramsWasRequested = false;
+    
     mForwardPluginArr = new ProgramReceiveTarget[0];
     handleNewGlobalReceiveTargets(new ProgramReceiveTarget[0]);
   }
@@ -252,13 +254,13 @@ public abstract class Favorite {
   }
 
   public Program[] getNewPrograms() {
+    mNewProgramsWasRequested = true;
     Program[] programs = mNewPrograms.toArray(new Program[mNewPrograms.size()]);
     if (programs.length > 0) {
       Arrays.sort(programs, ProgramUtilities.getProgramComparator());
     }
     return programs;
   }
-
 
   public void handleContainingPrograms(Program[] progs) {
     for (Program p : progs) {
@@ -927,7 +929,10 @@ public abstract class Favorite {
    * @since 2.7
    */
   public void clearNewPrograms() {
-    mNewPrograms = new ArrayList<Program>(0);
+    if(mNewProgramsWasRequested) {
+      mNewPrograms = new ArrayList<Program>(0);
+      mNewProgramsWasRequested = false;
+    }
   }
 
   /**
