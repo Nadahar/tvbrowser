@@ -255,6 +255,25 @@ public abstract class Favorite {
 
   public Program[] getNewPrograms() {
     mNewProgramsWasRequested = true;
+    
+    for(int i = mNewPrograms.size()-1; i >= 0; i--) {
+      Program test = mNewPrograms.get(i);
+      
+      if(test != null) {
+        Program newProg = Plugin.getPluginManager().getProgram(mNewPrograms.get(i).getUniqueID());
+        
+        if(newProg != null && newProg.getProgramState() == Program.IS_VALID_STATE) {
+          mNewPrograms.set(i,newProg);
+        }
+        else {
+          mNewPrograms.remove(i); 
+        }
+      }
+      else {
+        mNewPrograms.remove(i);
+      }
+    }
+    
     Program[] programs = mNewPrograms.toArray(new Program[mNewPrograms.size()]);
     if (programs.length > 0) {
       Arrays.sort(programs, ProgramUtilities.getProgramComparator());

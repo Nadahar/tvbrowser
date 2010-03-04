@@ -351,7 +351,9 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
       mFavoritesListModel = new DefaultListModel();
       mFavoritesListModel.ensureCapacity(favoriteArr.length);
       for (Favorite element : favoriteArr) {
-        mFavoritesListModel.addElement(element);
+        if(element.getNewPrograms().length >= 0) {
+          mFavoritesListModel.addElement(element);
+        }
       }
 
       mFavoritesList = new JList(mFavoritesListModel);
