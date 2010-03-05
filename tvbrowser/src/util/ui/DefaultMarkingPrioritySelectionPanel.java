@@ -109,7 +109,7 @@ public final class DefaultMarkingPrioritySelectionPanel extends JPanel {
     CellConstraints cc = new CellConstraints();
     FormLayout layout = new FormLayout("5dlu,pref,5dlu,pref,0dlu:grow");
     EnhancedPanelBuilder pb = new EnhancedPanelBuilder(layout,this);
-    
+
     //how many selectors do we have to draw?
     int choosersToDraw = Math.min(priority.length, label.length);
 
@@ -120,42 +120,36 @@ public final class DefaultMarkingPrioritySelectionPanel extends JPanel {
     //init the components
     mLabel = new JComponent[choosersToDraw];
     mPrioritySelection = new JComboBox[choosersToDraw];
-    
+
     //add all the sub components to this panel
     if (showTitle) {
-      pb.addSingleRow("pref");
+      pb.addRow();
       mSeparator = pb.addSeparator(getTitle(), cc.xyw(1, pb.getRowCount(), 5));
-      pb.addSingleRow("5dlu");
     }
 
     for (int i = 0; i < choosersToDraw; i++) {
-      pb.addSingleRow("pref");
+      pb.addRow();
       mLabel[i] = pb.addLabel(label[i], cc.xy(2, pb.getRowCount()));
-      
+
       mPrioritySelection[i] = new JComboBox(getMarkingColorNames(true));
       mPrioritySelection[i].setSelectedIndex(priority[i] + 1);
-      mPrioritySelection[i].setRenderer(new MarkPriorityComboBoxRenderer());      
-      
+      mPrioritySelection[i].setRenderer(new MarkPriorityComboBoxRenderer());
+
       pb.add(mPrioritySelection[i], cc.xy(4, pb.getRowCount()));
-      
-      if(i+1 < choosersToDraw) {
-        pb.addSingleRow("2dlu");
-      }
     }
 
-    if (showHelpLabel) {  
-      mHelpLabel = UiUtilities.createHtmlHelpTextArea(LOCALIZER.msg("help", "The selected higlighting color is only shown if the program is only higlighted by this plugin or if the other higlightings have a lower or the same priority. The higlighting colors of the priorities can be change in the <a href=\"#link\">higlighting settings</a>."), new HyperlinkListener() {
+    if (showHelpLabel) {
+      mHelpLabel = UiUtilities.createHtmlHelpTextArea(LOCALIZER.msg("help", "The selected higlighting color is only shown if the program is higlighted by this plugin only or if the other higlightings have a lower or the same priority. The higlighting colors of the priorities can be changed in the <a href=\"#link\">higlighting settings</a>."), new HyperlinkListener() {
         public void hyperlinkUpdate(final HyperlinkEvent e) {
           if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
             SettingsDialog.getInstance().showSettingsTab(SettingsItem.PROGRAMPANELMARKING);
           }
         }
       });
-      
-      pb.addSingleRow("fill:0dlu:grow");
-      pb.addSingleRow("10dlu");
-      pb.addSingleRow("pref");
-      
+
+      pb.addGrowingRow();
+      pb.addRow();
+
       pb.add(mHelpLabel, cc.xyw(2, pb.getRowCount(), 4));
     }
   }
