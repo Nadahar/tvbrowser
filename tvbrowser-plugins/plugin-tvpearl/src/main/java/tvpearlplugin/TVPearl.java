@@ -108,7 +108,11 @@ public class TVPearl {
   }
 
   private synchronized void addProgram(final TVPProgram program) {
-    if (indexOf(program) == -1) {
+    int index = indexOf(program);
+    if (index == -1 || mProgramList.get(index).getProgramID().length() == 0) {
+      if (index != -1) {
+        mProgramList.remove(index);
+      }
       setProgramID(program, false);
       mProgramList.add(program);
     }
@@ -128,7 +132,7 @@ public class TVPearl {
       for (Channel channel : channelList) {
         Iterator<Program> it = Plugin.getPluginManager().getChannelDayProgram(pearl.getDate(), channel);
         while ((it != null) && (it.hasNext())) {
-          final Program program = it.next();
+          Program program = it.next();
           if (compareTitle(program.getTitle(), pearl.getTitle())
               && Math.abs(program.getStartTime() - pearl.getStartTime()) <= ALLOWED_DEVIATION_MINUTES) {
             pearl.setProgram(program);
@@ -136,6 +140,15 @@ public class TVPearl {
           }
           if (program.getStartTime() - pearl.getStartTime() > ALLOWED_DEVIATION_MINUTES) {
             // we are beyond the pearl start time
+            it = Plugin.getPluginManager().getChannelDayProgram(pearl.getDate().addDays(-1), channel);
+            while ((it != null) && (it.hasNext())) {
+              program = it.next();
+              if (compareTitle(program.getTitle(), pearl.getTitle())
+                  && Math.abs(program.getStartTime() - pearl.getStartTime()) <= ALLOWED_DEVIATION_MINUTES) {
+                pearl.setProgram(program);
+                return;
+              }
+            }
             return;
           }
         }
