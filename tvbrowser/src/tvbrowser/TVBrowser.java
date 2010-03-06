@@ -313,6 +313,12 @@ public class TVBrowser {
         ErrorHandler.handle(msg, exc);
       }
     }
+    else {
+      // if no logging is configured, show WARNING or worse for normal usage, show everything for unstable versions
+      if (TVBrowser.isStable()) {
+        mainLogger.setLevel(Level.WARNING);
+      }
+    }
 
     // Capture unhandled exceptions
     //System.setErr(new PrintStream(new MonitoringErrorStream()));
