@@ -14,20 +14,19 @@
   <icon>..\..\..\runtime\tvbrowser_win\imgs\desktop.ico</icon>
   <jre>
     <path></path>
-    <minVersion>1.5.0</minVersion>
-    <maxVersion></maxVersion>
+    <minVersion>1.6.0</minVersion>
     <dontUsePrivateJres>false</dontUsePrivateJres>
     <initialHeapSize>0</initialHeapSize>
     <maxHeapSize>0</maxHeapSize>
     <opt>-Dpropertiesfile=windows.properties</opt>
   </jre>
   <versionInfo>
-    <fileVersion>2.5.1.0</fileVersion>
-    <txtFileVersion>2.5.1</txtFileVersion>
+    <fileVersion>3.0.0.0</fileVersion>
+    <txtFileVersion>3.0</txtFileVersion>
     <fileDescription>TV-Browser</fileDescription>
     <copyright>Copyright (c) 04/2003 by Martin Oberhauser, Til Schneider, Bodo Tasche, Ren� Mach, Michael Keppler under GNU General Public License.</copyright>
-    <productVersion>2.5.1.0</productVersion>
-    <txtProductVersion>2.5.1</txtProductVersion>
+    <productVersion>3.0.0.0</productVersion>
+    <txtProductVersion>3.0</txtProductVersion>
     <productName>TV-Browser</productName>
     <companyName></companyName>
     <internalName>TV-Browser</internalName>
