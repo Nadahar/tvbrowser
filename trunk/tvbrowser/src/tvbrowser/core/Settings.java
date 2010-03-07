@@ -50,6 +50,7 @@ import javax.swing.UIManager;
 import org.apache.commons.lang.StringUtils;
 
 import tvbrowser.TVBrowser;
+import tvbrowser.core.contextmenu.SeparatorMenuItem;
 import tvbrowser.core.plugin.DefaultSettings;
 import tvbrowser.core.settings.DeferredFontProperty;
 import tvbrowser.core.settings.JGoodiesThemeProperty;
@@ -1069,8 +1070,10 @@ public class Settings {
   /**
    * Order of the Plugins in the Context-Menu.
    */
-  public static final StringArrayProperty propContextMenuOrder = new StringArrayProperty(
-      mProp, "contextMenuOrder", null);
+  public static final StringArrayProperty propContextMenuOrder = new StringArrayProperty(mProp, "contextMenuOrder",
+      new String[] { "programinfo.ProgramInfo", "searchplugin.SearchPlugin", "reminderplugin.ReminderPlugin",
+          "favoritesplugin.FavoritesPlugin", SeparatorMenuItem.SEPARATOR, "java.webplugin.WebPlugin",
+          "java.simplemarkerplugin.SimpleMarkerPlugin", "java.captureplugin.CapturePlugin" });
 
   /**
    * All disabled Items of the ContextMenu

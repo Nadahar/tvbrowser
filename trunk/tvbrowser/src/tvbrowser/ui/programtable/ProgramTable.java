@@ -926,7 +926,7 @@ public class ProgramTable extends JPanel
    * Opens the PopupMenu for the selected program.
    *
    */
-  public void showPopoupFromKeyboard() {
+  public void showPopupFromKeyboard() {
     if(mCurrentCol == -1 || mCurrentRow == -1) {
       return;
     }
