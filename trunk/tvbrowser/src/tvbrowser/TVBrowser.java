@@ -131,6 +131,7 @@ public class TVBrowser {
   */
   /** The string array with the names of the earlier versions. */
   private static final String[] ALL_VERSIONS = new String[]{
+          "3.0beta2",
           "3.0beta1",
           "3.0 (alpha2)",
           "3.0 (alpha1)",
@@ -346,6 +347,9 @@ public class TVBrowser {
     Version tmpVer = Settings.propTVBrowserVersion.getVersion();
     final Version currentVersion = tmpVer != null ? new Version(tmpVer.getMajor(),tmpVer.getMinor(),Settings.propTVBrowserVersionIsStable.getBoolean()) : tmpVer;
 
+    /*TODO Create an update service for installed TV data services that doesn't
+     *     work with TV-Browser 3.0 and updates for them are known.
+     */
     if(!isTransportable() && Launch.isOsWindowsNtBranch() && currentVersion != null && currentVersion.compareTo(new Version(3,0,true)) < 0) {
       String tvDataDir = Settings.propTVDataDirectory.getString().replace("/",File.separator);
 
