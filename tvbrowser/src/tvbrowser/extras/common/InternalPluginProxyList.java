@@ -35,29 +35,29 @@ import tvbrowser.extras.searchplugin.SearchPluginProxy;
 /**
  * A class that contains all available internal plugin proxys.
  * Add all internal plugin proxys to this list.
- * 
+ *
  * @author René Mach
  * @since 2.6
  */
 public class InternalPluginProxyList {
   private ArrayList<InternalPluginProxyIf> mList;
   private static InternalPluginProxyList mInstance;
-  
+
   private InternalPluginProxyList() {
     mInstance = this;
-    
+
     mList = new ArrayList<InternalPluginProxyIf>();
 
-    mList.add(FavoritesPluginProxy.getInstance());
-    mList.add(ReminderPluginProxy.getInstance());
     mList.add(ProgramInfoProxy.getInstance());
     mList.add(SearchPluginProxy.getInstance());
+    mList.add(ReminderPluginProxy.getInstance());
+    mList.add(FavoritesPluginProxy.getInstance());
     TvDataUpdater.getInstance().addTvDataUpdateListener(new TvDataUpdateListener() {
-      
+
       @Override
       public void tvDataUpdateStarted() {
       }
-      
+
       @Override
       public void tvDataUpdateFinished() {
         for (InternalPluginProxyIf proxy : mList) {
@@ -66,33 +66,33 @@ public class InternalPluginProxyList {
       }
     });
   }
-  
+
   /**
    * Gets the instance of this class.
    * If there is no instance it will be created.
-   * 
+   *
    * @return The instance of this class.
    */
   public static InternalPluginProxyList getInstance() {
     if(mInstance == null) {
       new InternalPluginProxyList();
     }
-    
+
     return mInstance;
   }
-  
+
   /**
    * Gets all available internal plugin proxies.
-   * 
+   *
    * @return All available internal plugin proxies.
    */
   public InternalPluginProxyIf[] getAvailableProxys() {
     return mList.toArray(new InternalPluginProxyIf[mList.size()]);
   }
-  
+
   /**
    * Gets the internal plugin proxy for the given id.
-   * 
+   *
    * @param id The id to get the internal plugin proxy for.
    * @return The internal plugin proxy for the given id or
    * <code>null</code> if the id was not found.
@@ -103,7 +103,7 @@ public class InternalPluginProxyList {
         return internalPluginProxy;
       }
     }
-    
+
     return null;
   }
 }

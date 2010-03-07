@@ -302,10 +302,12 @@ public class ContextMenuManager {
         }
       }
 
+      ifList.add(new SeparatorMenuItem());
       for (PluginProxy pluginProxy : pluginArr) {
         ifList.add(pluginProxy);
       }
       
+      ifList.add(new SeparatorMenuItem());
       for(TvDataServiceProxy dataService : dataServiceArr) {
         ifList.add(dataService);
       }

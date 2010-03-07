@@ -276,7 +276,7 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
    * 
    */
   public void showPopupMenu() {
-    mProgramTable.showPopoupFromKeyboard();
+    mProgramTable.showPopupFromKeyboard();
   }
 
   /**
