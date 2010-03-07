@@ -51,7 +51,6 @@ import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
-import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
@@ -81,6 +80,7 @@ import tvbrowser.extras.favoritesplugin.wizards.ExcludeWizardStep;
 import tvbrowser.extras.favoritesplugin.wizards.TypeWizardStep;
 import tvbrowser.extras.favoritesplugin.wizards.WizardHandler;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
+import tvbrowser.ui.DontShowAgainOptionBox;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvdataservice.MutableChannelDayProgram;
 import util.exc.ErrorHandler;
@@ -150,7 +150,7 @@ public class FavoritesPlugin {
   private int mMarkPriority = -2;
 
   private Exclusion[] mExclusions;
-  
+
   private static UpdateInfoThread mUpdateInfoThread;
 
   private boolean mShowInfoDialog = false;
@@ -275,7 +275,7 @@ public class FavoritesPlugin {
       Thread update = new Thread("Favorites: handle update finished") {
         public void run() {try{
           mHasToUpdate = false;
-          
+
           ManageFavoritesDialog dlg = ManageFavoritesDialog.getInstance();
 
           if(dlg != null) {
@@ -305,7 +305,7 @@ public class FavoritesPlugin {
               mUpdateInfoThread.setPriority(Thread.MIN_PRIORITY);
               mUpdateInfoThread.start();
             }
-            
+
             mUpdateInfoThread.addFavorites(showInfoFavorites.toArray(new Favorite[showInfoFavorites.size()]));
           }
 
@@ -330,7 +330,7 @@ public class FavoritesPlugin {
     mIsShuttingDown = true;
     handleTrayRightClick();
   }
-  
+
   public void handleTrayRightClick() {
     try {
       if(mUpdateInfoThread != null && mUpdateInfoThread.isAlive()) {
@@ -339,7 +339,7 @@ public class FavoritesPlugin {
       }
     }catch(Throwable t) {
       ErrorHandler.handle("Error during showing new Favorites on TV-Browser shutting down.",t);
-    }    
+    }
   }
 
   public static synchronized FavoritesPlugin getInstance() {
@@ -739,16 +739,7 @@ public class FavoritesPlugin {
       dlg.addComponentListener(new ComponentAdapter() {
         public void componentShown(ComponentEvent e) {
           if(showNew) {
-            JCheckBox chb = new JCheckBox(mLocalizer.msg("dontShow","Don't show this description again."));
-            Object[] o = {mLocalizer.msg("newPrograms-description","Favorites that contains new programs will be shown in this dialog.\nWhen you click on a Favorite you can see the new programs in the right list.\n\n"),
-                chb
-            };
-
-            JOptionPane.showMessageDialog(e.getComponent(),o);
-
-            if(chb.isSelected()) {
-              mShowInfoOnNewProgramsFound = false;
-            }
+            DontShowAgainOptionBox.showOptionDialog("foundFavorites", e.getComponent(), mLocalizer.msg("newPrograms.description","Favorites that contains new programs will be shown in this dialog.\nWhen you click on a Favorite you can see the new programs in the right list."), mLocalizer.msg("newPrograms.title", "Found favorites"));
           }
         }
       });
@@ -1150,33 +1141,33 @@ public class FavoritesPlugin {
       super("Manage favorites");
       mFavorites = new Favorite[0];
     }
-    
+
     protected void addFavorites(Favorite[] favArr) {
       ArrayList<Favorite> newFavoriteList = new ArrayList<Favorite>(mFavorites.length + favArr.length);
       Favorite[] newFavorites = new Favorite[0];
-      
+
       synchronized (mFavorites) {
         for(Favorite fav : favArr) {
           boolean found = false;
-          
+
           for(Favorite knownFavorite : mFavorites) {
             if(fav.equals(knownFavorite)) {
               found = true;
               break;
             }
           }
-          
+
           if(!found) {
             newFavoriteList.add(fav);
           }
         }
-        
+
         newFavorites = new Favorite[mFavorites.length + newFavoriteList.size()];
-        
+
         System.arraycopy(mFavorites,0,newFavorites,0,mFavorites.length);
         System.arraycopy(newFavoriteList.toArray(),0,newFavorites,mFavorites.length,newFavoriteList.size());
       }
-      
+
       mFavorites = newFavorites;
     }
 
@@ -1199,7 +1190,7 @@ public class FavoritesPlugin {
 
     protected void showDialog() {
       synchronized (mFavorites) {
-        showManageFavoritesDialog(true, mFavorites, null);        
+        showManageFavoritesDialog(true, mFavorites, null);
       }
     }
   }
