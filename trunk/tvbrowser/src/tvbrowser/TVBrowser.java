@@ -1112,13 +1112,7 @@ public class TVBrowser {
       try {
         curLookAndFeel = Settings.propLookAndFeel.getString();
         // check if LnF is still available
-        boolean foundCurrent = false;
-        for (LookAndFeelInfo lnfInfo : UIManager.getInstalledLookAndFeels()) {
-          if (lnfInfo.getClassName().equals(curLookAndFeel)) {
-            foundCurrent = true;
-            break;
-          }
-        }
+        boolean foundCurrent = lookAndFeelExists(curLookAndFeel);
         // reset look and feel?
         if (!foundCurrent) {
           if (JOptionPane
@@ -1289,6 +1283,17 @@ public class TVBrowser {
    */
   public static String[] getAllVersionStrings() {
     return ALL_VERSIONS.clone();
+  }
+
+  private static boolean lookAndFeelExists(String lnf) {
+    boolean foundLNF = false;
+    for (LookAndFeelInfo lnfInfo : UIManager.getInstalledLookAndFeels()) {
+      if (lnfInfo.getClassName().equals(lnf)) {
+        foundLNF = true;
+        break;
+      }
+    }
+    return foundLNF;
   }
 }
 

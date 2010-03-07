@@ -29,9 +29,9 @@ import util.browserlauncher.Launch;
 
 /**
  * Checks which OS is used.
- * 
+ *
  * Uses the BrowserLauncher-Detection-Code
- * 
+ *
  * @author bodum
  * @since 2.2
  */
@@ -42,14 +42,14 @@ public class OperatingSystem {
   public static boolean isWindows() {
     return Launch.getOs() == Launch.OS_WINDOWS;
   }
-  
+
   /**
    * @return true, if the Operating System is MacOS
    */
   public static boolean isMacOs() {
     return Launch.getOs() == Launch.OS_MAC;
   }
-  
+
   /**
    * @return <code>True</code>, if the Operation System is Linux.
    * @since 2.2.4/2.6
@@ -57,7 +57,7 @@ public class OperatingSystem {
   public static boolean isLinux() {
     return Launch.getOs() == Launch.OS_LINUX;
   }
-  
+
   /**
    * @return true, if the Operating System is not Windows or MacOS
    */
@@ -72,5 +72,25 @@ public class OperatingSystem {
   public static boolean isWindows64() {
     return isWindows() && System.getProperty("sun.arch.data.model").equals("64"); // this may or may not work
   }
-  
+
+  /**
+   * @return true, if a KDE session is running
+   * @since 3.0
+   */
+  public static boolean isKDE() {
+    if (!isLinux()) {
+      return false;
+    }
+    try {
+      final String kdeSession = System.getenv("KDE_FULL_SESSION");
+      if (kdeSession != null) {
+        return kdeSession.compareToIgnoreCase("true") == 0;
+      }
+    } catch (Exception e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    return false;
+  }
+
 }

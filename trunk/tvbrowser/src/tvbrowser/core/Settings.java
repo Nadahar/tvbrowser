@@ -464,7 +464,7 @@ public class Settings {
             mLog.info("settings from previous version copied successfully");
             File newSettingsFile = new File(newDir, SETTINGS_FILE);
             mProp.readFromFile(newSettingsFile);
-            mLog.info("settings from previous version read succesfully");
+            mLog.info("settings from previous version read successfully");
 
             /*
              * This is the .tvbrowser dir, if there are settings form version
@@ -1013,7 +1013,7 @@ public class Settings {
 
   public static final StringProperty propLookAndFeel = new StringProperty(
       mProp, "lookandfeel1_1", mDefaultSettings.getProperty("lookandfeel",
-          UIManager.getCrossPlatformLookAndFeelClassName()));
+          UIManager.getSystemLookAndFeelClassName()));
 
   public static final IntProperty propColumnWidth = new IntProperty(mProp,
       "columnwidth", 200);
@@ -1043,7 +1043,7 @@ public class Settings {
 
   public static final StringProperty propMiddleDoubleClickIf = new StringProperty(
       mProp, "middledoubleclickplugin", FavoritesPlugin.getFavoritesPluginId());
-  
+
   /**
    * the last active program filter
    */
