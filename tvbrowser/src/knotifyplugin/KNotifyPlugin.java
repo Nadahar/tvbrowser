@@ -24,6 +24,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
 import util.io.ExecutionHandler;
+import util.misc.OperatingSystem;
 import util.paramhandler.ParamParser;
 import util.ui.ImageUtilities;
 import util.ui.Localizer;
@@ -73,13 +74,7 @@ public class KNotifyPlugin extends Plugin {
   }
 
   private boolean isKDE() {
-    try {
-      final String kdeSession = System.getenv("KDE_FULL_SESSION");
-      if (kdeSession != null) {
-        return kdeSession.compareToIgnoreCase("true") == 0;
-      }
-    }catch(Exception e) {}
-    return false;
+    return OperatingSystem.isKDE();
   }
 
   @Override
