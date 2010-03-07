@@ -30,6 +30,7 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Font;
 
+import javax.swing.BorderFactory;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -70,7 +71,8 @@ public class FontChooserPanel extends JPanel {
       mTitle = new JLabel(title);
       add(mTitle, BorderLayout.NORTH);
     }
-    JPanel innerPanel = new JPanel(new FlowLayout());
+    JPanel innerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
+    innerPanel.setBorder(BorderFactory.createEmptyBorder());
 
     mFontCB = new JComboBox(FONTNAMES);
     mStyleCB = new JComboBox(FONTSTYLES);
@@ -83,7 +85,7 @@ public class FontChooserPanel extends JPanel {
     }
 
     innerPanel.add(mSizeSpinner);
-    
+
     add(innerPanel, BorderLayout.CENTER);
 
     if (font != null) {
@@ -102,14 +104,14 @@ public class FontChooserPanel extends JPanel {
 
   /**
    * Creates a Font-Chooser without Title-Bar, but with style selection
-   * 
+   *
    * @param font
    * @since 2.2
    */
   public FontChooserPanel(Font font) {
     this(null, font, true);
   }
-  
+
   /**
    * create a font chooser without title bar
    * @param font
@@ -119,7 +121,7 @@ public class FontChooserPanel extends JPanel {
   public FontChooserPanel(final Font font, boolean enableStyleSelection) {
     this(null, font, enableStyleSelection);
   }
-  
+
   public FontChooserPanel(String title) {
     this(title, null);
   }
