@@ -172,6 +172,10 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
   /** If no channel was found, ask to download them. But only once.*/
   private boolean mInitChannelsAsked = false;
 
+  private JButton mLeftButton;
+
+  private JButton mRightButton;
+
   /**
    * Create the SettingsTab
    */
@@ -228,24 +232,23 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
 */
     centerPn.add(listBoxPnLeft);
 
-    // Buttons in the Middle
-    JButton rightBt = new JButton(TVBrowserIcons.right(TVBrowserIcons.SIZE_LARGE));
+    mRightButton = new JButton(TVBrowserIcons.right(TVBrowserIcons.SIZE_LARGE));
 
-    rightBt.addActionListener(new ActionListener() {
+    mRightButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         moveChannelsToRight();
       }
     });
 
-    JButton leftBt = new JButton(TVBrowserIcons.left(TVBrowserIcons.SIZE_LARGE));
+    mLeftButton = new JButton(TVBrowserIcons.left(TVBrowserIcons.SIZE_LARGE));
 
-    leftBt.addActionListener(new ActionListener() {
+    mLeftButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         moveChannelsToLeft();
       }
     });
 
-    JPanel btnPanel = createButtonPn(rightBt, leftBt);
+    JPanel btnPanel = createButtonPn(mRightButton, mLeftButton);
     btnPanel.setBorder(BorderFactory.createEmptyBorder(0, Sizes
         .dialogUnitXAsPixel(3, btnPanel), 0, Sizes.dialogUnitXAsPixel(3,
         btnPanel)));
@@ -810,6 +813,7 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
             .addElement(aSubscribedChannelArr);
       }
     }
+    mLeftButton.setEnabled(mSubscribedChannels.getModel().getSize() > 0);
 
     updateChannelNumbers();
   }
@@ -824,6 +828,7 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
    * Fills the List with the available Channels
    */
   private void fillAvailableChannelsListBox() {
+    Object oldSelectedChannel = mAllChannels.getSelectedValue();
     FilterItem selectedCountry = (FilterItem) mCountryCB.getSelectedItem();
     FilterItem selectedCategory = (FilterItem) mCategoryCB.getSelectedItem();
     if (selectedCountry == null || selectedCategory == null) {
@@ -881,9 +886,20 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
     }
     mAllChannels.setModel(newModel);
 
+    mRightButton.setEnabled(!newModel.isEmpty());
+    mAllChannels.setEnabled(!newModel.isEmpty());
     if (mAllChannels.getModel().getSize() == 0) {
       ((DefaultListModel) mAllChannels.getModel()).addElement(mLocalizer.msg(
           "noChannelFound", "No Channel Found"));
+    }
+    else {
+      Object newSelection = availableChannelArr[0];
+      if (oldSelectedChannel != null) {
+        if (newModel.contains(oldSelectedChannel)) {
+          newSelection = oldSelectedChannel;
+        }
+      }
+      mAllChannels.setSelectedValue(newSelection, true);
     }
     mSubscribedChannels.repaint();
     mSubscribedChannelListener.restore();
@@ -989,18 +1005,17 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
   private void moveChannelsToRight() {
     Object[] objects = UiUtilities.moveSelectedItems(mAllChannels,
         mSubscribedChannels);
-
     boolean missingIcon = false;
 
     for (Object object : objects) {
-      mChannelListModel.subscribeChannel((Channel) object);
-      if ((((Channel)object).getIcon() == null)) {
-        missingIcon = true;
+      if (object instanceof Channel) {
+        Channel channel = (Channel) object;
+        mChannelListModel.subscribeChannel(channel);
+        if (channel.getIcon() == null) {
+          missingIcon = true;
+        }
       }
     }
-
-
-
 
     if (missingIcon) {
       DontShowAgainOptionBox
@@ -1013,8 +1028,6 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
                       "You have added a channel without channel icon. Due to copyright reasons we cannot provide icons for each channel.\nFor better visual differentiation you can add your icon to the channel using the right mouse menu in the channel list."),
               mLocalizer.msg("noIconAvailable.title", "No channel icon"));
     }
-
-
   }
 
   /**
@@ -1026,6 +1039,7 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
     for (Object object : objects) {
       mChannelListModel.unsubscribeChannel((Channel) object);
     }
+    mLeftButton.setEnabled(mSubscribedChannels.getModel().getSize() > 0);
     fillAvailableChannelsListBox();
   }
 
