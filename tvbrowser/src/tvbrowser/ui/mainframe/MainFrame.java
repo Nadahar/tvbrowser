@@ -780,7 +780,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,
         KeyboardAction.KEY_MIDDLE_DOUBLE_CLICK), stroke,
         JComponent.WHEN_IN_FOCUSED_WINDOW);
-    
+
     stroke = KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_MASK);
     rootPane.registerKeyboardAction(TVBrowserActions.goToNextDay, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
 
@@ -1771,6 +1771,12 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
    */
   synchronized public void updateTvData(final int numberOfDays, final String reason) {
     if (mIsAskingUpdate) {
+      return;
+    }
+    if (TvDataUpdater.getInstance().isDownloading()) {
+      return;
+    }
+    if (downloadingThread != null && downloadingThread.isAlive()) {
       return;
     }
     mIsAskingUpdate = true;
