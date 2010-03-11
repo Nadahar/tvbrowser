@@ -49,16 +49,17 @@ public class GolemSettings {
   }
 
   public void addProgram(Program p) {
-    programList.add(p);
-    GolemPlugin.getInstance().getRootNode().addProgram(p);
-    if (isMarkEnabled()) {
-      p.mark(GolemPlugin.getInstance());
-    }
+    if (!programList.contains(p)) {
+      programList.add(p);
+      GolemPlugin.getInstance().getRootNode().addProgram(p);
+      if (isMarkEnabled()) {
+        p.mark(GolemPlugin.getInstance());
+      }
 
-    for (ProgramReceiveTarget t : receiveTargets) {
-      t.receivePrograms(new Program[]{p});
+      for (ProgramReceiveTarget t : receiveTargets) {
+        t.receivePrograms(new Program[]{p});
+      }
     }
-
   }
 
   public Collection<Program> getProgramList() {
