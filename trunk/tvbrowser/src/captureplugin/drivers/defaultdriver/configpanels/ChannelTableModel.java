@@ -27,7 +27,6 @@ package captureplugin.drivers.defaultdriver.configpanels;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.TreeMap;
 
 import javax.swing.table.AbstractTableModel;
@@ -44,118 +43,113 @@ import devplugin.PluginManager;
  * TableModel for ChannelTable
  */
 public class ChannelTableModel extends AbstractTableModel {
-    /** Translator */
-    private static final Localizer mLocalizer = Localizer.getLocalizerFor(ChannelTableModel.class);
+  /** Translator */
+  private static final Localizer mLocalizer = Localizer.getLocalizerFor(ChannelTableModel.class);
 
-    /** Data */
-    private DeviceConfig mData;
+  /** Data */
+  private DeviceConfig mData;
 
-    /** The Rows in the TableModel */
-    private ArrayList<Channel> mChannelRows;
+  /** The Rows in the TableModel */
+  private ArrayList<Channel> mChannelRows;
 
-    /**
-     * creates a new ChannelTableModel
-     * @param data Configuration
-     */
-    public ChannelTableModel(DeviceConfig data) {
-        mData = data;
-        updateChannels();
+  /**
+   * creates a new ChannelTableModel
+   *
+   * @param data
+   *          Configuration
+   */
+  public ChannelTableModel(DeviceConfig data) {
+    mData = data;
+    updateChannels();
+  }
+
+  /**
+   * Updates the List of Channels
+   */
+  private void updateChannels() {
+    PluginManager pl = Plugin.getPluginManager();
+    if (pl == null) {
+      return;
     }
+    TreeMap<Channel, String> channels = mData.getChannels();
 
-    /**
-     * Updates the List of Channels
-     */
-    private void updateChannels() {
-        PluginManager pl = Plugin.getPluginManager();
-        if (pl == null) {
-            return;
-        }
-        TreeMap<Channel, String> channels = mData.getChannels();
-
-        final Channel[] channelArray = pl.getSubscribedChannels();
-        for (Channel channel : channelArray) {
-            if (!channels.containsKey(channel)) {
-                channels.put(channel, "");
-            }
-        }
-        mData.setChannels(channels);
-
-        mChannelRows = new ArrayList<Channel>();
-
-        Iterator<Channel> it = mData.getChannels().keySet().iterator();
-        Channel key;
-
-        while (it.hasNext()) {
-            key = it.next();
-            mChannelRows.add(key);
-        }
-
-        Collections.sort(mChannelRows, new Comparator<Channel>() {
-          public int compare(Channel a, Channel b) {
-            return ArrayUtils.indexOf(channelArray, a) - ArrayUtils.indexOf(channelArray, b);
-          }
-        });
-    }
-
-    /**
-     * return the "Internal Name" for col 0, "External Name" for col 1
-     */
-    public String getColumnName(int column) {
-        if (column == 0) {
-          return mLocalizer.msg("IntName", "Internal Name");
-        } else {
-          return mLocalizer.msg("ExtName", "External Name");
-        }
-    }
-
-    /**
-     * returns 2
-     */
-    public int getColumnCount() {
-        return 2;
-    }
-
-    /**
-     * returns the count of rows in the table
-     */
-    public int getRowCount() {
-        return mData.getChannels().size();
-    }
-
-    public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return columnIndex == 1;
-    }
-
-    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-
-      Channel key = getKeyForRow(rowIndex);
-
-      if (key != null) {
-        mData.getChannels().put(key, (String)aValue);
+    final Channel[] channelArray = pl.getSubscribedChannels();
+    for (Channel channel : channelArray) {
+      if (!channels.containsKey(channel)) {
+        channels.put(channel, "");
       }
+    }
+    mData.setChannels(channels);
+    mChannelRows = new ArrayList<Channel>(mData.getChannels().keySet());
 
-      super.setValueAt(aValue, rowIndex, columnIndex);
+    Collections.sort(mChannelRows, new Comparator<Channel>() {
+      public int compare(Channel a, Channel b) {
+        return ArrayUtils.indexOf(channelArray, a) - ArrayUtils.indexOf(channelArray, b);
+      }
+    });
+  }
+
+  /**
+   * return the "Internal Name" for col 0, "External Name" for col 1
+   */
+  public String getColumnName(int column) {
+    if (column == 0) {
+      return mLocalizer.msg("IntName", "Internal Name");
+    } else {
+      return mLocalizer.msg("ExtName", "External Name");
+    }
+  }
+
+  /**
+   * returns 2
+   */
+  public int getColumnCount() {
+    return 2;
+  }
+
+  /**
+   * returns the count of rows in the table
+   */
+  public int getRowCount() {
+    return mData.getChannels().size();
+  }
+
+  public boolean isCellEditable(int rowIndex, int columnIndex) {
+    return columnIndex == 1;
+  }
+
+  public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+
+    Channel key = getKeyForRow(rowIndex);
+
+    if (key != null) {
+      mData.getChannels().put(key, (String) aValue);
     }
 
-    /**
-     * returns the value at Table-Position (row,col)
-     */
-    public Object getValueAt(int row, int col) {
-        Channel key = getKeyForRow(row);
+    super.setValueAt(aValue, rowIndex, columnIndex);
+  }
 
-        if (col == 0) {
-          return key;
-        } else {
-          return mData.getChannels().get(key);
-        }
-    }
+  /**
+   * returns the value at Table-Position (row,col)
+   */
+  public Object getValueAt(int row, int col) {
+    Channel key = getKeyForRow(row);
 
-    /**
-     * Get the Channel for a specific Row
-     * @param row Row to get Channel for
-     * @return Channel for Row
-     */
-    private Channel getKeyForRow(int row){
-      return mChannelRows.get(row);
+    if (col == 0) {
+      return key;
+    } else {
+      return mData.getChannels().get(key);
     }
+  }
+
+  /**
+   * Get the Channel for a specific Row
+   *
+   * @param row
+   *          Row to get Channel for
+   * @return Channel for Row
+   */
+  private Channel getKeyForRow(int row) {
+    return mChannelRows.get(row);
+  }
 }

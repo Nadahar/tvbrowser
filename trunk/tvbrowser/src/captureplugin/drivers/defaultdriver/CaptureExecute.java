@@ -32,6 +32,7 @@ package captureplugin.drivers.defaultdriver;
 
 import java.awt.Window;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -45,6 +46,8 @@ import org.apache.commons.lang.StringUtils;
 
 import util.exc.ErrorHandler;
 import util.io.ExecutionHandler;
+import util.io.stream.InputStreamProcessor;
+import util.io.stream.StreamUtilities;
 import util.paramhandler.ParamParser;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
@@ -52,24 +55,24 @@ import captureplugin.drivers.utils.ProgramTime;
 import captureplugin.utils.CaptureUtilities;
 
 /**
- * This Class contains excutes the Application/URL
+ * This Class executes the Application/URL
  */
-public class CaptureExecute {
+class CaptureExecute {
 
-    /** Translator */
-    private static final Localizer mLocalizer = Localizer.getLocalizerFor(CaptureExecute.class);
+  /** Translator */
+  private static final Localizer mLocalizer = Localizer.getLocalizerFor(CaptureExecute.class);
 
-    /** Data for Export */
-    private DeviceConfig mData = new DeviceConfig();
+  /** Data for Export */
+  private DeviceConfig mData = new DeviceConfig();
 
-    /** parent window */
+  /** parent window */
   private Window mParent;
 
-    /** Success ? */
-    private boolean mError = true;
-    private int mExitValue = 0;
+  /** Success ? */
+  private boolean mError = true;
+  private int mExitValue = 0;
 
-    private static CaptureExecute mInstance = null;
+  private static CaptureExecute mInstance = null;
 
   /**
    * Creates the Execute
@@ -79,15 +82,15 @@ public class CaptureExecute {
    * @param data
    *          Data
    */
-    private CaptureExecute(Window window, DeviceConfig data) {
+  private CaptureExecute(Window window, DeviceConfig data) {
     mParent = window;
-        mData = data;
-        mInstance = this;
-    }
+    mData = data;
+    mInstance = this;
+  }
 
-    private DefaultKonfigurator createDialog() {
-      return new DefaultKonfigurator(mParent, mData);
-    }
+  private DefaultKonfigurator createDialog() {
+    return new DefaultKonfigurator(mParent, mData);
+  }
 
   /**
    * Gets the capture execute for the given values.
@@ -98,256 +101,270 @@ public class CaptureExecute {
    *          The configuration for the capture execute.
    * @return The capture execute for the given values.
    */
-    public static CaptureExecute getInstance(Window window, DeviceConfig data) {
-      if(mInstance == null) {
-        new CaptureExecute(window, data);
+  public static CaptureExecute getInstance(Window window, DeviceConfig data) {
+    if (mInstance == null) {
+      new CaptureExecute(window, data);
+    } else {
+      mInstance.mParent = window;
+      mInstance.mData = data;
+    }
+
+    return mInstance;
+  }
+
+  /**
+   * Add a Program
+   *
+   * @param programTime
+   *          Program to add
+   * @return Success?
+   */
+  public boolean addProgram(ProgramTime programTime) {
+    if (StringUtils.isBlank(mData.getParameterFormatAdd())) {
+      JOptionPane.showMessageDialog(mParent, mLocalizer.msg("NoParamsAdd",
+          "Please specify parameters for adding of the program!"), mLocalizer.msg("CapturePlugin", "Capture Plugin"),
+          JOptionPane.OK_OPTION);
+      createDialog().show(DefaultKonfigurator.TAB_PARAMETER);
+      return false;
+    }
+    return execute(programTime, mData.getParameterFormatAdd());
+  }
+
+  /**
+   * Remove a Program
+   *
+   * @param programTime
+   *          Program to remove
+   * @return Success?
+   */
+  public boolean removeProgram(ProgramTime programTime) {
+    if (StringUtils.isBlank(mData.getParameterFormatAdd()) || (StringUtils.isBlank(mData.getParameterFormatRem()))) {
+      JOptionPane.showMessageDialog(mParent, mLocalizer.msg("NoParams", "Please specify Parameters for the Program!"),
+          mLocalizer.msg("CapturePlugin", "Capture Plugin"), JOptionPane.OK_OPTION);
+      createDialog().show(DefaultKonfigurator.TAB_PARAMETER);
+      return false;
+    }
+
+    return execute(programTime, mData.getParameterFormatRem());
+  }
+
+  /**
+   * Executes the Program in mData and uses program
+   *
+   * @param programTime
+   *          Program to use for Command-Line
+   * @param param
+   *          Parameter
+   * @return true if successful
+   */
+  public boolean execute(ProgramTime programTime, String param) {
+    try {
+      String output;
+
+      if (!checkParams()) {
+        return false;
+      }
+
+      ParamParser parser = new ParamParser(new CaptureParamLibrary(mData, programTime));
+
+      String params = parser.analyse(param, programTime.getProgram());
+
+      if (parser.showErrors(mParent)) {
+        return false;
+      }
+
+      if (mData.getUseWebUrl()) {
+        output = executeUrl(params);
       } else {
-        mInstance.mParent = window;
-        mInstance.mData = data;
+        output = executeApplication(params);
       }
 
-      return mInstance;
-    }
+      params = CaptureUtilities.replaceIgnoreCase(params, mData.getPassword(), "***");
+      output = CaptureUtilities.replaceIgnoreCase(output, mData.getPassword(), "***");
 
-    /**
-     * Add a Program
-     * @param programTime Program to add
-     * @return Success?
-     */
-    public boolean addProgram(ProgramTime programTime) {
-        if (StringUtils.isBlank(mData.getParameterFormatAdd())) {
-            JOptionPane.showMessageDialog(mParent, mLocalizer.msg("NoParamsAdd", "Please specify parameters for adding of the program!"),
-                    mLocalizer.msg("CapturePlugin", "Capture Plugin"), JOptionPane.OK_OPTION);
-            createDialog().show(DefaultKonfigurator.TAB_PARAMETER);
-            return false;
-        }
-
-        if (StringUtils.isBlank(mData.getParameterFormatRem())) {
-          JOptionPane.showMessageDialog(mParent, mLocalizer.msg("NoParamsRemove", "Please specify parameters for removing of the program!"),
-                  mLocalizer.msg("CapturePlugin", "Capture Plugin"), JOptionPane.OK_OPTION);
-          createDialog().show(DefaultKonfigurator.TAB_PARAMETER);
-          return false;
+      if (!mData.useReturnValue()) {
+        mError = false;
       }
 
-        return execute(programTime, mData.getParameterFormatAdd());
+      if (mError && mExitValue != 249) {
+        ResultDialog dialog = new ResultDialog(mParent, params, output, true);
+        UiUtilities.centerAndShow(dialog);
+        return false;
+      }
+
+      if (!mData.getDialogOnlyOnError() || (mData.getDialogOnlyOnError() && mError && mExitValue != 249)) {
+        ResultDialog dialog = new ResultDialog(mParent, params, output, false);
+        UiUtilities.centerAndShow(dialog);
+      }
+
+    } catch (Exception e) {
+      ErrorHandler.handle(mLocalizer.msg("ErrorExecute", "Error while excecuting."), e);
+      return false;
     }
 
-    /**
-     * Remove a Program
-     * @param programTime Program to remove
-     * @return Success?
-     */
-    public boolean removeProgram(ProgramTime programTime) {
-        if (StringUtils.isBlank(mData.getParameterFormatAdd()) || (StringUtils.isBlank(mData.getParameterFormatRem()))){
-            JOptionPane.showMessageDialog(mParent, mLocalizer.msg("NoParams", "Please specify Parameters for the Program!"),
-                    mLocalizer.msg("CapturePlugin", "Capture Plugin"), JOptionPane.OK_OPTION);
-            createDialog().show(DefaultKonfigurator.TAB_PARAMETER);
-            return false;
-        }
+    return mExitValue == 0;
+  }
 
-        return execute(programTime, mData.getParameterFormatRem());
+  /**
+   * Checks the Parameters
+   *
+   * @return true if OK
+   */
+  private boolean checkParams() {
+    if (!mData.getUseWebUrl() && StringUtils.isBlank(mData.getProgramPath())) {
+      JOptionPane.showMessageDialog(mParent, mLocalizer.msg("NoProgram", "Please specify Application to use!"),
+          mLocalizer.msg("CapturePlugin", "Capture Plugin"), JOptionPane.OK_OPTION);
+      createDialog().show(DefaultKonfigurator.TAB_PATH);
+      return false;
+    }
+    if (mData.getUseWebUrl() && StringUtils.isBlank(mData.getWebUrl())) {
+      JOptionPane.showMessageDialog(mParent, mLocalizer.msg("NoUrl", "Please specify URL to use!"), mLocalizer.msg(
+          "CapturePlugin", "Capture Plugin"), JOptionPane.OK_OPTION);
+      createDialog().show(DefaultKonfigurator.TAB_PATH);
+      return false;
+    }
+    return true;
+  }
+
+  /**
+   * Starts an Application
+   *
+   * @param params
+   *          Params for the Application
+   * @return Output of Application
+   */
+  private String executeApplication(String params) {
+    ExecutionHandler executionHandler;
+
+    try {
+      executionHandler = new ExecutionHandler(params, mData.getProgramPath());
+      executionHandler.execute(true, true);
+    } catch (Exception e) {
+      ErrorHandler.handle(mLocalizer.msg("ProblemAtStart", "Problems while starting Application."), e);
+      return null;
     }
 
-    /**
-     * Executes the Program in mData and uses program
-     *
-     * @param programTime Program to use for Command-Line
-     * @param param Parameter
-     * @return true if successful
-     */
-    public boolean execute(ProgramTime programTime, String param) {
+    int time = 0;
+
+    // wait until the process has exited, max MaxTimouts
+
+    if (mData.getTimeout() > 0) {
+      while (time < mData.getTimeout() * 1000) {
         try {
-            String output;
-
-            if (!checkParams()) {
-                return false;
-            }
-
-            ParamParser parser = new ParamParser(new CaptureParamLibrary(mData, programTime));
-
-            String params = parser.analyse(param, programTime.getProgram());
-
-            if (parser.showErrors(mParent)) {
-              return false;
-            }
-
-            if (mData.getUseWebUrl()) {
-                output = executeUrl(params);
-            } else {
-                output = executeApplication(params);
-            }
-
-            params = CaptureUtilities.replaceIgnoreCase(params, mData.getPassword(), "***");
-            output = CaptureUtilities.replaceIgnoreCase(output, mData.getPassword(), "***");
-
-            if (!mData.useReturnValue()) {
-                mError = false;
-            }
-
-            if (mError && mExitValue != 249) {
-                ResultDialog dialog = new ResultDialog(mParent, params, output, true);
-                UiUtilities.centerAndShow(dialog);
-                return false;
-            }
-
-            if (!mData.getDialogOnlyOnError() || (mData.getDialogOnlyOnError() && mError && mExitValue != 249)) {
-                ResultDialog dialog = new ResultDialog(mParent, params, output, false);
-                UiUtilities.centerAndShow(dialog);
-            }
-
+          Thread.sleep(100);
+          time += 100;
+          executionHandler.exitValue();
+          break;
         } catch (Exception e) {
-            ErrorHandler.handle( mLocalizer.msg("ErrorExecute", "Error while excecuting."), e);
-            return false;
+          // Empty
         }
-
-        return mExitValue == 0;
-    }
-
-    /**
-     * Checks the Parameters
-     * @return true if OK
-     */
-    private boolean checkParams() {
-        if (!mData.getUseWebUrl() && StringUtils.isBlank(mData.getProgramPath())) {
-            JOptionPane.showMessageDialog(mParent, mLocalizer.msg("NoProgram", "Please specify Application to use!"), mLocalizer
-                    .msg("CapturePlugin", "Capture Plugin"), JOptionPane.OK_OPTION);
-            createDialog().show(DefaultKonfigurator.TAB_PATH);
-            return false;
-        }
-        if (mData.getUseWebUrl() && StringUtils.isBlank(mData.getWebUrl())) {
-            JOptionPane.showMessageDialog(mParent, mLocalizer.msg("NoUrl", "Please specify URL to use!"), mLocalizer
-                    .msg("CapturePlugin", "Capture Plugin"), JOptionPane.OK_OPTION);
-            createDialog().show(DefaultKonfigurator.TAB_PATH);
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * Starts an Application
-     * @param params Params for the Application
-     * @return Output of Application
-     */
-    private String executeApplication(String params) {
-        ExecutionHandler executionHandler;
-
+      }
+    } else {
+      while (true) {
         try {
-            executionHandler = new ExecutionHandler(params, mData.getProgramPath());
-            executionHandler.execute(true,true);
+          Thread.sleep(100);
+          executionHandler.exitValue();
+          break;
         } catch (Exception e) {
-            ErrorHandler.handle(mLocalizer.msg("ProblemAtStart", "Problems while starting Application."), e);
-            return null;
+          // Empty
         }
+      }
+    }
 
+    while (time < mData.getTimeout() * 1000) {
+      try {
+        Thread.sleep(100);
+        time += 100;
+        executionHandler.exitValue();
+        break;
+      } catch (Exception e) {
+        // Empty
+      }
+    }
 
-        int time = 0;
+    // get the process output
+    String output = "";
+    String errors = ""; // also capture STDERR output FSCHAECK - 2008-06-13
 
-        // wait until the process has exited, max MaxTimouts
+    if (!executionHandler.getInputStreamReaderThread().isAlive()) {
+      output = executionHandler.getOutput();
+    }
 
-        if (mData.getTimeout() > 0 ){
-            while (time < mData.getTimeout() * 1000) {
-                try {
-                    Thread.sleep(100);
-                    time += 100;
-                    executionHandler.exitValue();
-                    break;
-                } catch (Exception e) {
-                    // Empty
-                }
-            }
+    // read STDERR output and add to return value if necessary - FSCHAECK -
+    // 2008-06-13
+    if (!executionHandler.getErrorStreamReaderThread().isAlive()) {
+      errors = executionHandler.getOutput();
+      if (errors.length() > 0) {
+        if (output.length() > 0) {
+          output = output + "\n\n" + errors;
         } else {
-            while (true) {
-                try {
-                    Thread.sleep(100);
-                    executionHandler.exitValue();
-                    break;
-                } catch (Exception e) {
-                    // Empty
-                }
-            }
+          output = errors;
         }
+      }
+    }
 
-        while (time < mData.getTimeout() * 1000) {
-            try {
-                Thread.sleep(100);
-                time += 100;
-                executionHandler.exitValue();
-                break;
-            } catch (Exception e) {
-                // Empty
-            }
-        }
+    mError = executionHandler.exitValue() != 0;
+    mExitValue = executionHandler.exitValue();
 
-        // get the process output
-        String output = "";
-        String errors = ""; // also capture STDERR output FSCHAECK - 2008-06-13
+    return output;
+  }
 
-        if(!executionHandler.getInputStreamReaderThread().isAlive()) {
-          output = executionHandler.getOutput();
-        }
+  /**
+   * Executes the URL
+   *
+   * @param params
+   *          Params for the URL
+   * @return Result-Page
+   * @throws Exception
+   *           Problems while loading the URL
+   */
+  private String executeUrl(String params) throws Exception {
+    final StringBuilder result = new StringBuilder();
 
-        // read STDERR output and add to return value if necessary - FSCHAECK - 2008-06-13
-        if(!executionHandler.getErrorStreamReaderThread().isAlive()) {
-          errors = executionHandler.getOutput();
-          if (errors.length()>0) {
-            if (output.length()>0) {
-              output = output+"\n\n"+errors;
-            } else {
-              output = errors;
+    URL url = new URL(mData.getWebUrl() + '?' + params);
+
+    URLConnection uc = url.openConnection();
+
+    String userpassword = mData.getUserName() + ':' + mData.getPassword();
+    String encoded = new String(Base64.encodeBase64(userpassword.getBytes()));
+
+    uc.setRequestProperty("Authorization", "Basic " + encoded);
+
+    if (uc instanceof HttpURLConnection) {
+      if (((HttpURLConnection) uc).getResponseCode() != HttpURLConnection.HTTP_OK) {
+        InputStream content = ((HttpURLConnection) uc).getErrorStream();
+        StreamUtilities.inputStream(content, new InputStreamProcessor() {
+
+          @Override
+          public void process(InputStream input) throws IOException {
+            BufferedReader in = new BufferedReader(new InputStreamReader(input));
+            String line;
+            while ((line = in.readLine()) != null) {
+              result.append(line);
             }
           }
-        }
-
-        mError = executionHandler.exitValue() != 0;
-        mExitValue = executionHandler.exitValue();
-
-        return output;
+        });
+        mError = true;
+        mExitValue = 1;
+        return result.toString();
+      }
     }
 
+    StreamUtilities.inputStream(uc, new InputStreamProcessor() {
 
-    /**
-     * Executes the URL
-     * @param params Params for the URL
-     * @return Result-Page
-     * @throws Exception Problems while loading the URL
-     */
-    private String executeUrl(String params) throws Exception{
-      StringBuilder result = new StringBuilder();
-
-        URL url = new URL (mData.getWebUrl() + "?" +params);
-
-        URLConnection uc = url.openConnection();
-
-        String userpassword = mData.getUserName() + ":" + mData.getPassword();
-        String encoded = new String(Base64.encodeBase64(userpassword.getBytes()));
-
-        uc.setRequestProperty  ("Authorization", "Basic " + encoded);
-
-        if (uc instanceof HttpURLConnection) {
-            if (((HttpURLConnection)uc).getResponseCode() != HttpURLConnection.HTTP_OK) {
-                InputStream content = ((HttpURLConnection)uc).getErrorStream();
-                BufferedReader in =  new BufferedReader (new InputStreamReader (content));
-                String line;
-                while ((line = in.readLine()) != null) {
-                  result.append(line);
-                }
-                mError = true;
-                mExitValue = 1;
-                return result.toString();
-            }
-        }
-
-        InputStream content = uc.getInputStream();
-        BufferedReader in =  new BufferedReader (new InputStreamReader (content));
+      @Override
+      public void process(InputStream input) throws IOException {
+        BufferedReader in = new BufferedReader(new InputStreamReader(input));
         String line;
         while ((line = in.readLine()) != null) {
           result.append(line);
         }
+      }
+    });
 
-        mError = false;
-        mExitValue = 0;
-        return result.toString();
-    }
-
+    mError = false;
+    mExitValue = 0;
+    return result.toString();
+  }
 
 }

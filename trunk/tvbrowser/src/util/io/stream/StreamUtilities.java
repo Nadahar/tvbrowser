@@ -1,16 +1,16 @@
 /*
  * Copyright Michael Keppler
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -32,39 +32,38 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.URL;
+import java.net.URLConnection;
 
 import util.io.IOUtilities;
 
 /**
  * Stream processor class for working with streams
- * 
+ *
  * This class does all the IOException handling for working with streams, so you
  * can concentrate on your algorithm instead.
- * 
+ *
  * @author Bananeweizen
  * @since 3.0
- * 
+ *
  */
 public class StreamUtilities {
 
-  /**
-   * Lets you work with a file based input stream. It is guaranteed that the
-   * underlying stream is closed, even if IOExceptions occur (which are still
-   * thrown further to the caller of this method)
-   * 
-   * @param file
-   * @param processor
-   * @throws IOException
-   * @since 3.0
-   */
-  public static void inputStream(final File file,
+  interface IInputStreamMethod {
+    InputStream openInputStream() throws IOException;
+  }
+
+  interface IOutputStreamMethod {
+    OutputStream openOutputStream() throws IOException;
+  }
+
+  private static void inputStream(final IInputStreamMethod inputMethod,
       final InputStreamProcessor processor)
       throws IOException {
     IOException processException = null;
     InputStream input = null;
     BufferedInputStream bufferedStream = null;
     try {
-      input = new FileInputStream(file);
+      input = inputMethod.openInputStream();
       bufferedStream = new BufferedInputStream(input);
       processor.process(bufferedStream);
     } catch (IOException e) {
@@ -99,11 +98,78 @@ public class StreamUtilities {
     }
   }
 
+
+  /**
+   * Lets you work with a file based input stream. It is guaranteed that the
+   * underlying stream is closed, even if IOExceptions occur (which are still
+   * thrown further to the caller of this method)
+   *
+   * @param file
+   * @param processor
+   * @throws IOException
+   * @since 3.0
+   */
+  public static void inputStream(final File file,
+      final InputStreamProcessor processor)
+      throws IOException {
+    inputStream(new IInputStreamMethod() {
+
+      @Override
+      public InputStream openInputStream() throws IOException {
+        return new FileInputStream(file);
+      }
+    }, processor);
+  }
+
+  /**
+   * Lets you work with a URL based input stream. It is guaranteed that the
+   * underlying stream is closed, even if IOExceptions occur (which are still
+   * thrown further to the caller of this method)
+   *
+   * @param urlConnection
+   * @param processor
+   * @throws IOException
+   * @since 3.0
+   */
+  public static void inputStream(final URLConnection urlConnection,
+      final InputStreamProcessor processor)
+      throws IOException {
+    inputStream(new IInputStreamMethod() {
+
+      @Override
+      public InputStream openInputStream() throws IOException {
+        return urlConnection.getInputStream();
+      }
+    }, processor);
+  }
+
+  /**
+   * Lets you work with a generic input stream. It is guaranteed that the
+   * stream is closed after the method, even if IOExceptions occur (which are still
+   * thrown further to the caller of this method)
+   *
+   * @param inputStream
+   * @param processor
+   * @throws IOException
+   * @since 3.0
+   */
+  public static void inputStream(final InputStream inputStream,
+      final InputStreamProcessor processor)
+      throws IOException {
+    inputStream(new IInputStreamMethod() {
+
+      @Override
+      public InputStream openInputStream() throws IOException {
+        return inputStream;
+      }
+    }, processor);
+  }
+
   /**
    * Lets you work with a file name based input stream. It is guaranteed that
    * the underlying stream is closed, even if IOExceptions occur (which are not
    * thrown)
-   * 
+   *
    * @param fileName
    * @param processor
    * @since 3.0
@@ -132,7 +198,7 @@ public class StreamUtilities {
    * Lets you work with a file based input stream. It is guaranteed that the
    * underlying stream is closed, even if IOExceptions occur (which are still
    * thrown further to the caller of this method)
-   * 
+   *
    * @param url URL to open
    * @param processor
    * @throws IOException
@@ -141,43 +207,13 @@ public class StreamUtilities {
   public static void inputStream(final URL url,
       final InputStreamProcessor processor)
       throws IOException {
-    IOException processException = null;
-    InputStream input = null;
-    BufferedInputStream bufferedStream = null;
-    try {
-      input = IOUtilities.getStream(url);
-      bufferedStream = new BufferedInputStream(input);
-      processor.process(bufferedStream);
-    } catch (IOException e) {
-      processException = e;
-    } finally {
-      // close stream
-      if (bufferedStream != null) {
-        try {
-          bufferedStream.close();
-        } catch (IOException e) {
-          if (processException != null) {
-            processException = new IOException(processException);
-          } else {
-            processException = e;
-          }
-        }
+    inputStream(new IInputStreamMethod() {
+
+      @Override
+      public InputStream openInputStream() throws IOException {
+        return IOUtilities.getStream(url);
       }
-      if (input != null) {
-        try {
-          input.close();
-        } catch (IOException e) {
-          if (processException != null) {
-            processException = new IOException(processException);
-          } else {
-            processException = e;
-          }
-        }
-      }
-      if (processException != null) {
-        throw processException;
-      }
-    }
+    }, processor);
   }
 
   public static void bufferedReader(final File file,
@@ -237,14 +273,14 @@ public class StreamUtilities {
     bufferedReader(new File(fileName), processor);
   }
 
-  public static void outputStream(final File file,
+  private static void outputStream(final IOutputStreamMethod outputMethod,
       final OutputStreamProcessor processor)
       throws IOException {
     IOException processException = null;
     OutputStream output = null;
     BufferedOutputStream bufferedStream = null;
     try {
-      output = new FileOutputStream(file);
+      output = outputMethod.openOutputStream();
       bufferedStream = new BufferedOutputStream(output);
       processor.process(bufferedStream);
     } catch (IOException e) {
@@ -277,6 +313,18 @@ public class StreamUtilities {
         throw processException;
       }
     }
+  }
+
+  public static void outputStream(final File file,
+      final OutputStreamProcessor processor)
+      throws IOException {
+    outputStream(new IOutputStreamMethod() {
+
+      @Override
+      public OutputStream openOutputStream() throws IOException {
+        return new FileOutputStream(file);
+      }
+    }, processor);
   }
 
   public static void outputStream(final String fileName,
@@ -403,7 +451,7 @@ public class StreamUtilities {
    * Lets you work with a file based input stream. It is guaranteed that the
    * underlying stream is closed, even if IOExceptions occur (which are still
    * thrown further to the caller of this method)
-   * 
+   *
    * @param file
    * @param processor
    * @throws IOException
@@ -418,7 +466,7 @@ public class StreamUtilities {
    * Lets you work with a file based input stream. It is guaranteed that the
    * underlying stream is closed, even if IOExceptions occur (which are still
    * thrown further to the caller of this method)
-   * 
+   *
    * @param file
    * @param processor
    * @throws IOException
