@@ -445,7 +445,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
           }
 
           if(mToolBarPanel != null) {
-            mToolBarPanel.setVisible(Settings.propIsTooolbarVisible.getBoolean());
+            mToolBarPanel.setVisible(Settings.propIsToolbarVisible.getBoolean());
           }
 
           if(mStatusBar != null) {
@@ -503,7 +503,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
           setUndecorated(true);
           final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
 
-          if(device.isFullScreenSupported() && (Launch.getOs() == Launch.OS_MAC)) {
+          if(device.isFullScreenSupported() && OperatingSystem.isMacOs()) {
             device.setFullScreenWindow(MainFrame.getInstance());
           }
           else {
@@ -520,6 +520,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
 
               while(isFullScreenMode()) {
                 final Point p = MouseInfo.getPointerInfo().getLocation();
+                SwingUtilities.convertPointFromScreen(p, MainFrame.this);
 
                 if(isActive()) {
 
@@ -527,15 +528,15 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
                   if(p.y <= 10) {
                     if(mToolBarPanel != null && mToolBar.getToolbarLocation().compareTo(BorderLayout.NORTH) == 0) {
                       if(!mToolBarPanel.isVisible()) {
-                        mToolBarPanel.setVisible(Settings.propIsTooolbarVisible.getBoolean());
+                        mToolBarPanel.setVisible(Settings.propIsToolbarVisible.getBoolean());
                       }
                     }
 
-                      if(p.y == 0) {
-                        mMenuBar.setVisible(true);
-                      }
+                    if (p.y <= 0) {
+                      mMenuBar.setVisible(true);
+                    }
                   }
-                  else if(p.y > (mMenuBar != null && mMenuBar.isVisible() ? mMenuBar.getHeight() : 0) + (Settings.propIsTooolbarVisible.getBoolean() ? mToolBarPanel.getHeight() : 0)) {
+                  else if(p.y > (mMenuBar != null && mMenuBar.isVisible() ? mMenuBar.getHeight() : 0) + (Settings.propIsToolbarVisible.getBoolean() ? mToolBarPanel.getHeight() : 0)) {
                     if(mMenuBar.isVisible()) {
                       mMenuBar.setVisible(!isFullScreenMode());
                     }
@@ -559,7 +560,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
                   if(p.x <= 5) {
                     if(p.x == 0 && mToolBarPanel != null && mToolBar.getToolbarLocation().compareTo(BorderLayout.WEST) == 0) {
                       if(!mToolBarPanel.isVisible()) {
-                        mToolBarPanel.setVisible(Settings.propIsTooolbarVisible.getBoolean());
+                        mToolBarPanel.setVisible(Settings.propIsToolbarVisible.getBoolean());
                       }
                     }
 
@@ -883,7 +884,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
 
     String location = mToolBar.getToolbarLocation();
 
-    if (Settings.propIsTooolbarVisible.getBoolean()) {
+    if (Settings.propIsToolbarVisible.getBoolean()) {
       if (mToolBarPanel == null) {
         mToolBarPanel = new JPanel(new BorderLayout()) {
           public void updateUI() {
@@ -2099,7 +2100,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
   }
 
   public void setShowToolbar(boolean visible) {
-    Settings.propIsTooolbarVisible.setBoolean(visible);
+    Settings.propIsToolbarVisible.setBoolean(visible);
     mMenuBar.updateViewToolbarItem();
     updateToolbar();
   }

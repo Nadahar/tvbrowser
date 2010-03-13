@@ -152,7 +152,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 
 		mToolbarMI = new JCheckBoxMenuItem(ToolBarDragAndDropSettings.mLocalizer
 				.msg("showToolbar", "Show toolbar"));
-		mToolbarMI.setSelected(Settings.propIsTooolbarVisible.getBoolean());
+		mToolbarMI.setSelected(Settings.propIsToolbarVisible.getBoolean());
 		mToolbarMI.addActionListener(this);
 		new MenuHelpTextAdapter(mToolbarMI, mLocalizer.msg("menuinfo.toolbar", ""),
 				mLabel);
@@ -649,7 +649,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 	}
 
 	public void updateViewToolbarItem() {
-		mToolbarMI.setSelected(Settings.propIsTooolbarVisible.getBoolean());
+		mToolbarMI.setSelected(Settings.propIsToolbarVisible.getBoolean());
 	}
 
 	public void updateChannelItems() {

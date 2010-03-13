@@ -691,7 +691,7 @@ public class Settings {
     }
 
     propArr = new Property[] { propToolbarButtonStyle, propToolbarButtons,
-        propToolbarLocation, propIsTooolbarVisible, propToolbarUseBigIcons };
+        propToolbarLocation, propIsToolbarVisible, propToolbarUseBigIcons };
     if (mProp.hasChanged(propArr)) {
       mainFrame.updateToolbar();
     }
@@ -997,7 +997,7 @@ public class Settings {
   public static final ChoiceProperty propToolbarButtonStyle = new ChoiceProperty(
       mProp, "buttontype", "icon", new String[] { "text&icon", "text", "icon" });
 
-  public static final BooleanProperty propIsTooolbarVisible = new BooleanProperty(
+  public static final BooleanProperty propIsToolbarVisible = new BooleanProperty(
       mProp, "isToolbarVisible", true);
 
   public static final BooleanProperty propIsStatusbarVisible = new BooleanProperty(

@@ -64,7 +64,7 @@ public class ContextMenu {
   protected static JMenu getSubMenu() {
     JMenu menu = new JMenu(mLocalizer.msg("toolbar", "Toolbar"));
     menu.add(createViewMenu());
-    if(Settings.propIsTooolbarVisible.getBoolean())
+    if(Settings.propIsToolbarVisible.getBoolean())
       menu.add(createViewSearchMenu());
     menu.addSeparator();
     menu.add(createConfigureItem());
@@ -75,7 +75,7 @@ public class ContextMenu {
   private void update() {
     mMenu.removeAll();
     mMenu.add(createViewMenu());
-    if(Settings.propIsTooolbarVisible.getBoolean())
+    if(Settings.propIsToolbarVisible.getBoolean())
       mMenu.add(createViewSearchMenu());
     mMenu.addSeparator();
     if (ToolBarDragAndDropSettings.getInstance() == null)
@@ -100,7 +100,7 @@ public class ContextMenu {
     final JCheckBoxMenuItem show = new JCheckBoxMenuItem(
         ToolBarDragAndDropSettings.mLocalizer
             .msg("showToolbar", "Show toolbar"));
-    show.setSelected(Settings.propIsTooolbarVisible.getBoolean());
+    show.setSelected(Settings.propIsToolbarVisible.getBoolean());
     show.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         MainFrame.getInstance().setShowToolbar(show.isSelected());

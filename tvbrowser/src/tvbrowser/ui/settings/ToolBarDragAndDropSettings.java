@@ -165,7 +165,7 @@ public class ToolBarDragAndDropSettings extends JDialog implements
 
     mShowToolbarCb = new JCheckBox(mLocalizer
         .msg("showToolbar", "Show toolbar"));
-    mShowToolbarCb.setSelected(Settings.propIsTooolbarVisible.getBoolean());
+    mShowToolbarCb.setSelected(Settings.propIsToolbarVisible.getBoolean());
 
     tVisPanel.add(mShowToolbarCb);
     tVisPanel.add(Box.createHorizontalGlue());
