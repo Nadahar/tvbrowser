@@ -39,8 +39,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Arrays;
 import java.util.Vector;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -61,8 +59,11 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.PlainDocument;
 
-import com.jgoodies.forms.factories.DefaultComponentFactory;
+import org.apache.commons.lang.StringUtils;
 
 import tvbrowser.core.Settings;
 import tvbrowser.core.filters.FilterComponent;
@@ -73,6 +74,8 @@ import tvbrowser.core.filters.UserFilter;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
+
+import com.jgoodies.forms.factories.DefaultComponentFactory;
 
 public class EditFilterDlg extends JDialog implements ActionListener, DocumentListener, CaretListener, WindowClosingIf {
 
@@ -101,9 +104,9 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
   public EditFilterDlg(JFrame parent, FilterList filterList, UserFilter filter) {
 
     super(parent, true);
-    
+
     UiUtilities.registerForClosing(this);
-    
+
     mFilterList = filterList;
     mParent = parent;
     mFilter = filter;
@@ -122,7 +125,15 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
     JPanel northPanel = new JPanel();
     northPanel.setLayout(new BoxLayout(northPanel, BoxLayout.Y_AXIS));
 
-    mFilterNameTF = new JTextField(30);
+    mFilterNameTF = new JTextField(new PlainDocument() {
+
+      public void insertString(int offset, String str, AttributeSet a) throws BadLocationException {
+        str = str.replaceAll("[\\p{Punct}&&[^_]]", "_");
+        super.insertString(offset, str, a);
+      }
+    }, "", 30);
+
+
     mFilterNameTF.getDocument().addDocumentListener(this);
     JPanel panel = new JPanel(new BorderLayout(7, 7));
     panel.setBorder(BorderFactory.createEmptyBorder(0, 0, 7, 0));
@@ -182,12 +193,12 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
         updateBtns();
       }
     });
-    
+
     mRuleTableBox.addMouseListener(new MouseAdapter() {
       public void mouseClicked(MouseEvent e) {
         if(SwingUtilities.isLeftMouseButton(e) && e.getClickCount() >= 2) {
           int row = mRuleTableBox.rowAtPoint(e.getPoint());
-          
+
           if(mRuleTableBox.getSelectedRow() == row && mEditBtn.isEnabled())
             actionPerformed(new ActionEvent(mEditBtn,ActionEvent.ACTION_PERFORMED, mEditBtn.getActionCommand()));
         }
@@ -195,13 +206,13 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
     });
 
     mRuleTableBox.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-    
+
     mRuleTableBox.setShowGrid(false);
     mRuleTableBox.setShowVerticalLines(true);
     mRuleTableBox.getColumnModel().getColumn(0).setPreferredWidth(125);
     mRuleTableBox.getColumnModel().getColumn(1).setPreferredWidth(320);
 //    mRuleTableBox.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-    
+
     // Dispatchs the KeyEvent to the RootPane for Closing the Dialog.
     // Needed for Java 1.4.
     mRuleTableBox.addKeyListener(new KeyAdapter() {
@@ -210,8 +221,8 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
           mRuleTableBox.getRootPane().dispatchEvent(e);
       }
     });
-    
-    
+
+
     JPanel ruleListBoxPanel = new JPanel(new BorderLayout());
     ruleListBoxPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 7, 0));
     ruleListBoxPanel.add(new JScrollPane(mRuleTableBox), BorderLayout.CENTER);
@@ -248,7 +259,7 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
     }
 
     updateBtns();
-    
+
     Settings.layoutWindow("editFilterDlg",this,new Dimension(600,300));
     setVisible(true);
   }
@@ -271,11 +282,7 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
       validRule = false;
     }
 
-    Pattern p = Pattern.compile("[\\p{Punct}&&[^_]]");
-    Matcher m = p.matcher(mFilterNameTF.getText());
-    
-    mOkBtn.setEnabled(mFilterNameTF.getText().trim().length() > 0 && !m.find() && !("".equals(mFilterRuleTF.getText()))
-        && mComponentTableModel.getRowCount() > 0 && validRule);
+    mOkBtn.setEnabled(StringUtils.isNotBlank(mFilterNameTF.getText()) && mComponentTableModel.getRowCount() > 0 && validRule);
   }
 
   public void actionPerformed(ActionEvent e) {
@@ -297,10 +304,10 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
       }
     } else if (o == mEditBtn) {
       int inx = mRuleTableBox.getSelectedRow();
-      
+
       if(inx == -1)
         return;
-      
+
       FilterComponent rule = mComponentTableModel.getElement(inx);
       FilterComponentList.getInstance().remove(rule.getName());
       mComponentTableModel.removeElement(rule);
@@ -334,7 +341,7 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
               "This filter component is used by filter '{0}'\nRemove the filter first.", mFilterNameTF.getText()));
         }
       } catch (Exception ex) {
-        // Filter creation failed, asume the old one is correct
+        // Filter creation failed, assume the old one is correct
         if ((mFilter != null) && (mFilter.containsRuleComponent(fc.getName()))) {
           allowRemove = false;
           JOptionPane.showMessageDialog(this, mLocalizer.msg("usedByAnotherFilter",
@@ -388,7 +395,6 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
 
   public void changedUpdate(DocumentEvent e) {
     updateBtns();
-
   }
 
   public void insertUpdate(DocumentEvent e) {
