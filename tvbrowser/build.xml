@@ -127,12 +127,13 @@
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 
 
-  <target name="targets">
+  <target name="targets" description="lists all the available public targets">
     <echo message="usage: build [target]"/>
     <echo message=""/>
     <echo message="main targets:"/>
     <echo message="============="/>
     <echo message="  targets               Shows this list of targets."/>
+    <echo message="  download-libs         Downloads all necessary libraries from the Internet."/>
     <echo message="  dump-info             Dumps some information (VM-Version...)."/>
     <echo message="  public-default        Creates platform-independent binaries"/>
     <echo message="  public-win            Creates binaries for the Microsoft Windows Platforms (requires Windows)"/>
@@ -301,30 +302,29 @@
     <!-- Make the TV-Browser runtime -->
     <delete dir="${tvbrowser-default.runtime.dir}"/>
     <mkdir dir="${tvbrowser-default.runtime.dir}"/>
-	<mkdir dir="${tvbrowser-default.runtime.dir}/plugins"/>
+		<mkdir dir="${tvbrowser-default.runtime.dir}/plugins"/>
 
     <!-- Extract the libraries for the tvbrowser.jar into the temp.dir -->
-    <mkdir dir="${unpacked.dir}/skinlf.jar"/>
-    <unjar src="${lib.dir}/skinlf.jar" dest="${unpacked.dir}/skinlf.jar"/>
-    <unjar src="${lib.dir}/bsh-2.0b4.jar" dest="${unpacked.dir}/bsh-2.0b4.jar"/>
-    <unjar src="${lib.dir}/forms-1.3.0.jar" dest="${unpacked.dir}/forms-1.3.0.jar"/>
-    <unjar src="${lib.dir}/looks-2.3.1.jar" dest="${unpacked.dir}/looks-2.3.1.jar"/>
-    <unjar src="${lib.dir}/l2fprod-common-tasks.jar" dest="${unpacked.dir}/l2fprod-common-tasks.jar"/>
-    <unjar src="${lib.dir}/jRegistryKey.jar" dest="${unpacked.dir}/jRegistryKey.jar" />
-    <unjar src="${lib.dir}/TVAnytimeAPI.jar" dest="${unpacked.dir}/TVAnytimeAPI.jar" />
-    <unjar src="${lib.dir}/commons-compress-1.0.jar" dest="${unpacked.dir}/commons-compress-1.0.jar" />
-    <unjar src="${lib.dir}/commons-codec-1.4.jar" dest="${unpacked.dir}/commons-codec-1.3.jar" />
-    <unjar src="${lib.dir}/commons-lang-2.4.jar" dest="${unpacked.dir}/commons-lang-2.4.jar" />
-    <unjar src="${lib.dir}/gdata-calendar-2.0.jar" dest="${unpacked.dir}/gdata-calendar-2.0.jar" />
-    <unjar src="${lib.dir}/gdata-client-1.0.jar" dest="${unpacked.dir}/gdata-client-1.0.jar" />
-    <unjar src="${lib.dir}/gdata-core-1.0.jar" dest="${unpacked.dir}/gdata-core-1.0.jar" />
-    <unjar src="${lib.dir}/jcom.jar" dest="${unpacked.dir}/jcom.jar" />
-    <unjar src="${lib.dir}/opencsv-2.1.jar" dest="${unpacked.dir}/opencsv-2.1.jar" />
-    <unjar src="${lib.dir}/htmlparser.jar" dest="${unpacked.dir}/htmlparser.jar" />
-    <unjar src="${lib.dir}/aclibico-2.1.jar" dest="${unpacked.dir}/aclibico-2.1.jar" />
-    <unjar src="${lib.dir}/log4j-1.2.15.jar" dest="${unpacked.dir}/log4j-1.2.15.jar" />
-    <unjar src="${lib.dir}/libgrowl.jar" dest="${unpacked.dir}/libgrowl.jar" />
-    <unjar src="${lib.dir}/texhyphj.jar" dest="${unpacked.dir}/texhyphj.jar" />
+    <unjar src="${lib.dir}/${lib.skinlf.name}-${lib.skinlf.version}.jar" dest="${unpacked.dir}/${lib.skinlf.name}.jar"/>
+    <unjar src="${lib.dir}/${lib.bsh.name}-${lib.bsh.version}.jar" dest="${unpacked.dir}/${lib.bsh.name}.jar"/>
+    <unjar src="${lib.dir}/${lib.forms.name}-${lib.forms.version}.jar" dest="${unpacked.dir}/${lib.forms.name}.jar"/>
+    <unjar src="${lib.dir}/${lib.looks.name}-${lib.looks.version}.jar" dest="${unpacked.dir}/${lib.looks.name}.jar"/>
+    <unjar src="${lib.dir}/${lib.tasks.name}-${lib.tasks.version}.jar" dest="${unpacked.dir}/${lib.tasks.name}.jar"/>
+    <unjar src="${lib.dir}/${lib.jregistrykey.name}-${lib.jregistrykey.version}.jar" dest="${unpacked.dir}/${lib.jregistrykey.name}.jar" />
+    <unjar src="${lib.dir}/${lib.tvanytime.name}-${lib.tvanytime.version}.jar" dest="${unpacked.dir}/${lib.tvanytime.name}.jar" />
+    <unjar src="${lib.dir}/${lib.commons.compress.name}-${lib.commons.compress.version}.jar" dest="${unpacked.dir}/${lib.commons.compress.name}.jar" />
+    <unjar src="${lib.dir}/${lib.commons.codec.name}-${lib.commons.codec.version}.jar" dest="${unpacked.dir}/${lib.commons.codec.name}.jar" />
+    <unjar src="${lib.dir}/${lib.commons.lang.name}-${lib.commons.lang.version}.jar" dest="${unpacked.dir}/${lib.commons.lang.name}.jar" />
+    <unjar src="${lib.dir}/${lib.gdata.calendar.name}-${lib.gdata.calendar.version}.jar" dest="${unpacked.dir}/${lib.gdata.calendar.name}.jar" />
+    <unjar src="${lib.dir}/${lib.gdata.client.name}-${lib.gdata.client.version}.jar" dest="${unpacked.dir}/${lib.gdata.client.name}.jar" />
+    <unjar src="${lib.dir}/${lib.gdata.core.name}-${lib.gdata.core.version}.jar" dest="${unpacked.dir}/${lib.gdata.core.name}.jar" />
+    <unjar src="${lib.dir}/${lib.jcom.name}.jar-${lib.jcom.name}" dest="${unpacked.dir}/${lib.jcom.name}.jar" />
+    <unjar src="${lib.dir}/${lib.opencsv.name}-${lib.opencsv.version}.jar" dest="${unpacked.dir}/${lib.opencsv.name}.jar" />
+    <unjar src="${lib.dir}/${lib.htmlparser.name}-${lib.htmlparser.version}.jar" dest="${unpacked.dir}/${lib.htmlparser.name}.jar" />
+    <unjar src="${lib.dir}/${lib.aclibico.name}-${lib.aclibico.version}.jar" dest="${unpacked.dir}/${lib.aclibico.name}.jar" />
+    <unjar src="${lib.dir}/${lib.log4j.name}-${lib.log4j.version}.jar" dest="${unpacked.dir}/${lib.log4j.name}.jar" />
+    <unjar src="${lib.dir}/${lib.libgrowl.name}-${lib.libgrowl.version}.jar" dest="${unpacked.dir}/${lib.libgrowl.name}.jar" />
+    <unjar src="${lib.dir}/${lib.texhyphj.name}-${lib.texhyphj.version}.jar" dest="${unpacked.dir}/${lib.texhyphj.name}.jar" />
 
     <!-- Pack the tvbrowser.jar -->
     <jar jarfile="${tvbrowser-default.runtime.dir}/tvbrowser.jar"
@@ -338,18 +338,18 @@
       <fileset dir="${classes.dir}" includes="tvdataservice/**"/>
       <fileset dir="${classes.dir}" includes="util/**"/>
       <fileset dir="${classes.dir}" includes="com/**"/>
-      <fileset dir="${unpacked.dir}/skinlf.jar" includes="com/**"/>
-   	  <fileset dir="${unpacked.dir}/skinlf.jar" includes="org/**"/>
-      <fileset dir="${unpacked.dir}/bsh-2.0b4.jar" includes="bsh/**"/>
-      <fileset dir="${unpacked.dir}/forms-1.3.0.jar" includes="com/**"/>
-      <fileset dir="${unpacked.dir}/looks-2.3.1.jar" includes="com/**"/>
-      <fileset dir="${unpacked.dir}/l2fprod-common-tasks.jar" includes="com/**"/>
-      <fileset dir="${unpacked.dir}/jRegistryKey.jar" includes="ca/**" />
-      <fileset dir="${unpacked.dir}/commons-codec-1.3.jar" includes="org/**" />
-      <fileset dir="${unpacked.dir}/commons-lang-2.4.jar" includes="org/**" />
-      <fileset dir="${unpacked.dir}/opencsv-2.1.jar" includes="au/**"/>
-      <fileset dir="${unpacked.dir}/htmlparser.jar" includes="org/**"/>
-      <fileset dir="${unpacked.dir}/texhyphj.jar" includes="net/**"/>
+      <fileset dir="${unpacked.dir}/${lib.skinlf.name}.jar" includes="com/**"/>
+   	  <fileset dir="${unpacked.dir}/${lib.skinlf.name}.jar" includes="org/**"/>
+      <fileset dir="${unpacked.dir}/${lib.bsh.name}.jar" includes="bsh/**"/>
+      <fileset dir="${unpacked.dir}/${lib.forms.name}.jar" includes="com/**"/>
+      <fileset dir="${unpacked.dir}/${lib.looks.name}.jar" includes="com/**"/>
+      <fileset dir="${unpacked.dir}/${lib.tasks.name}.jar" includes="com/**"/>
+      <fileset dir="${unpacked.dir}/${lib.jregistrykey.name}.jar" includes="ca/**" />
+      <fileset dir="${unpacked.dir}/${lib.commons.codec.name}.jar" includes="org/**" />
+      <fileset dir="${unpacked.dir}/${lib.commons.lang.name}.jar" includes="org/**" />
+      <fileset dir="${unpacked.dir}/${lib.opencsv.name}.jar" includes="au/**"/>
+      <fileset dir="${unpacked.dir}/${lib.htmlparser.name}.jar" includes="org/**"/>
+      <fileset dir="${unpacked.dir}/${lib.texhyphj.name}.jar" includes="net/**"/>
     </jar>
 
     <!-- Pack the plugin jars -->
@@ -362,10 +362,10 @@
     <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/CalendarExportPlugin.jar"
          compress="false">
         <fileset dir="${classes.dir}" includes="calendarexportplugin/**"/>
-        <fileset dir="${unpacked.dir}/gdata-calendar-2.0.jar" includes="**" />
-        <fileset dir="${unpacked.dir}/gdata-client-1.0.jar" includes="**" />
-        <fileset dir="${unpacked.dir}/gdata-core-1.0.jar" includes="**" />
-        <fileset dir="${unpacked.dir}/jcom.jar" includes="**" />
+        <fileset dir="${unpacked.dir}/${lib.gdata.calendar.name}.jar" includes="**" />
+        <fileset dir="${unpacked.dir}/${lib.gdata.client.name}.jar" includes="**" />
+        <fileset dir="${unpacked.dir}/${lib.gdata.core.name}.jar" includes="**" />
+        <fileset dir="${unpacked.dir}/${lib.jcom.name}.jar" includes="**" />
     </jar>
 
   	<jar jarfile="${tvbrowser-default.runtime.dir}/plugins/CapturePlugin.jar"
@@ -391,7 +391,7 @@
     <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/GrowlPlugin.jar"
          compress="false">
       <fileset dir="${classes.dir}" includes="growlplugin/**"/>
-      <fileset dir="${unpacked.dir}/libgrowl.jar" includes="**" />
+      <fileset dir="${unpacked.dir}/${lib.libgrowl.name}.jar" includes="**" />
     </jar>
 
     <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/ProgramListPlugin.jar"
@@ -431,8 +431,8 @@
     <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/WebPlugin.jar"
          compress="false">
       <fileset dir="${classes.dir}" includes="webplugin/**"/>
-      <fileset dir="${unpacked.dir}/aclibico-2.1.jar" includes="**" />
-      <fileset dir="${unpacked.dir}/log4j-1.2.15.jar" includes="**" />
+      <fileset dir="${unpacked.dir}/${lib.aclibico.name}.jar" includes="**" />
+      <fileset dir="${unpacked.dir}/${lib.log4j.name}.jar" includes="**" />
     </jar>
 
     <!-- Pack the TV data service jars -->
@@ -449,8 +449,8 @@
     <!-- Pack BBC data service -->
     <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/BbcBackstageDataService.jar" compress="false">
             <fileset dir="${classes.dir}" includes="bbcbackstagedataservice/**" />
-            <fileset dir="${unpacked.dir}/TVAnytimeAPI.jar" includes="bbc/**" />
-            <fileset dir="${unpacked.dir}/commons-compress-1.0.jar" includes="**" />
+            <fileset dir="${unpacked.dir}/${lib.tvanytime.name}.jar" includes="bbc/**" />
+            <fileset dir="${unpacked.dir}/${lib.commons.compress.name}.jar" includes="**" />
     </jar>
     <!-- Pack RadioTimes data service -->
     <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/RadioTimesDataService.jar" compress="false">
@@ -462,15 +462,15 @@
       </jar>
 
 
-    <unjar src="${lib.dir}/stax-1.2.0.jar" dest="${unpacked.dir}/stax-1.2.0.jar" />
-    <unjar src="${lib.dir}/stax-api-1.0.1.jar" dest="${unpacked.dir}/stax-api-1.0.1.jar" />
-    <unjar src="${lib.dir}/xtvd-lib-2.0.2.jar" dest="${unpacked.dir}/xtvd-lib-2.0.2.jar" />
+    <unjar src="${lib.dir}/${lib.stax.name}-${lib.stax.version}.jar" dest="${unpacked.dir}/${lib.stax.name}.jar" />
+    <unjar src="${lib.dir}/${lib.stax.api.name}-${lib.stax.api.version}.jar" dest="${unpacked.dir}/${lib.stax.api.name}.jar" />
+    <unjar src="${lib.dir}/${lib.xtvd.name}-${lib.xtvd.version}.jar" dest="${unpacked.dir}/${lib.xtvd.name}.jar" />
     <!-- Pack SchedulesDirect data service -->
     <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/SchedulesDirectDataService.jar" compress="false">
         <fileset dir="${classes.dir}" includes="schedulesdirectdataservice/**" />
-        <fileset dir="${unpacked.dir}/stax-1.2.0.jar" includes="com/**"/>
-        <fileset dir="${unpacked.dir}/stax-api-1.0.1.jar" includes="javax/**"/>
-        <fileset dir="${unpacked.dir}/xtvd-lib-2.0.2.jar" includes="net/**"/>
+        <fileset dir="${unpacked.dir}/${lib.stax.name}.jar" includes="com/**"/>
+        <fileset dir="${unpacked.dir}/${lib.stax.api.name}.jar" includes="javax/**"/>
+        <fileset dir="${unpacked.dir}/${lib.xtvd.name}.jar" includes="net/**"/>
     </jar>
 
 
@@ -515,8 +515,8 @@
   	</zip>
 
     <!-- Extract the libraries for the tvbrowser.jar into the temp.dir -->
-    <mkdir dir="${unpacked.dir}/commons-net-2.0.jar"/>
-    <unjar src="${lib.dir}/commons-net-2.0.jar" dest="${unpacked.dir}/commons-net-2.0.jar"/>
+    <mkdir dir="${unpacked.dir}/${lib.commons.net.name}.jar"/>
+    <unjar src="${lib.dir}/${lib.commons.net.name}-${lib.commons.net.version}.jar" dest="${unpacked.dir}/${lib.commons.net.name}.jar"/>
 
   </target>
 
@@ -654,16 +654,12 @@
     <mkdir dir="${tvdatatools.runtime.dir}/prepared"/>
 
     <!-- Extract the libraries for the jars into the temp.dir -->
-    <mkdir dir="${unpacked.dir}/commons-net-2.0.jar"/>
-    <unjar src="${lib.dir}/commons-net-2.0.jar" dest="${unpacked.dir}/commons-net-2.0.jar"/>
-
-    <mkdir dir="${unpacked.dir}/commons-lang-2.4.jar"/>
-    <unjar src="${lib.dir}/commons-lang-2.4.jar" dest="${unpacked.dir}/commons-net-2.0.jar"/>
-
-    <unjar src="${lib.dir}/looks-2.3.1.jar" dest="${unpacked.dir}/looks-2.3.1.jar"/>
-    <unjar src="${lib.dir}/jakarta-oro-2.0.8.jar" dest="${unpacked.dir}/jakarta-oro-2.0.8.jar"/>
-	<unjar src="${lib.dir}/opencsv-2.1.jar" dest="${unpacked.dir}/opencsv-2.1.jar" />
-    <unjar src="${lib.dir}/htmlparser.jar" dest="${unpacked.dir}/htmlparser.jar" />
+    <unjar src="${lib.dir}/${lib.commons.net.name}-${lib.commons.net.version}.jar" dest="${unpacked.dir}/${lib.commons.net.name}.jar"/>
+    <unjar src="${lib.dir}/${lib.commons.lang.name}-${lib.commons.lang.version}.jar" dest="${unpacked.dir}/${lib.commons.lang.name}.jar"/>
+    <unjar src="${lib.dir}/${lib.looks.name}-${lib.looks.version}.jar" dest="${unpacked.dir}/${lib.looks.name}.jar"/>
+    <unjar src="${lib.dir}/${lib.oro.name}-${lib.oro.version}.jar" dest="${unpacked.dir}/${lib.oro.name}.jar"/>
+		<unjar src="${lib.dir}/${lib.opencsv.name}-${lib.opencsv.version}.jar" dest="${unpacked.dir}/${lib.opencsv.name}.jar" />
+    <unjar src="${lib.dir}/${lib.htmlparser.name}-${lib.htmlparser.version}.jar" dest="${unpacked.dir}/${lib.htmlparser.name}.jar" />
 
     <!-- Pack the MirrorUpdater.jar -->
     <jar jarfile="${tvdatatools.runtime.dir}/MirrorUpdater.jar"
@@ -683,12 +679,12 @@
       <fileset dir="${classes.dir}" includes="tvbrowser/core/Settings*"/>
       <fileset dir="${classes.dir}" includes="tvbrowser/core/plugin/DefaultSettings*"/>-->
       <fileset dir="${classes.dir}" includes="tvbrowser/**"/>
-      <fileset dir="${unpacked.dir}/commons-net-2.0.jar" includes="org/**"/>
-      <fileset dir="${unpacked.dir}/commons-lang-2.4.jar" includes="org/**"/>
-      <fileset dir="${unpacked.dir}/looks-2.3.1.jar" includes="com/**"/>
-      <fileset dir="${unpacked.dir}/jakarta-oro-2.0.8.jar" includes="org/**"/>
-      <fileset dir="${unpacked.dir}/opencsv-2.1.jar" includes="au/**"/>
-      <fileset dir="${unpacked.dir}/htmlparser.jar" includes="org/**"/>
+      <fileset dir="${unpacked.dir}/${lib.commons.net.name}.jar" includes="org/**"/>
+      <fileset dir="${unpacked.dir}/${lib.commons.lang.name}.jar" includes="org/**"/>
+      <fileset dir="${unpacked.dir}/${lib.looks.name}.jar" includes="com/**"/>
+      <fileset dir="${unpacked.dir}/${lib.oro.name}.jar" includes="org/**"/>
+      <fileset dir="${unpacked.dir}/${lib.opencsv.name}.jar" includes="au/**"/>
+      <fileset dir="${unpacked.dir}/${lib.htmlparser.name}.jar" includes="org/**"/>
     </jar>
 
     <!-- Pack the PrimaryDataManager.jar -->
@@ -706,10 +702,10 @@
       <fileset dir="${classes.dir}" includes="devplugin/**"/>
       <fileset dir="${classes.dir}" includes="util/**"/>
       <fileset dir="${classes.dir}" includes="tvbrowser/**"/>
-      <fileset dir="${unpacked.dir}/looks-2.3.1.jar" includes="com/**"/>
-      <fileset dir="${unpacked.dir}/opencsv-2.1.jar" includes="au/**"/>
-      <fileset dir="${unpacked.dir}/commons-lang-2.4.jar" includes="org/**"/>
-      <fileset dir="${unpacked.dir}/htmlparser.jar" includes="org/**"/>
+      <fileset dir="${unpacked.dir}/${lib.looks.name}.jar" includes="com/**"/>
+      <fileset dir="${unpacked.dir}/${lib.opencsv.name}.jar" includes="au/**"/>
+      <fileset dir="${unpacked.dir}/${lib.commons.lang.name}.jar" includes="org/**"/>
+      <fileset dir="${unpacked.dir}/${lib.htmlparser.name}.jar" includes="org/**"/>
     </jar>
 
     <!-- Pack the PDSRunner.jar -->
@@ -727,10 +723,10 @@
       <fileset dir="${classes.dir}" includes="devplugin/**"/>
       <fileset dir="${classes.dir}" includes="util/**"/>
       <fileset dir="${classes.dir}" includes="tvbrowser/**"/>
-      <fileset dir="${unpacked.dir}/looks-2.3.1.jar" includes="com/**"/>
-      <fileset dir="${unpacked.dir}/opencsv-2.1.jar" includes="au/**"/>
-      <fileset dir="${unpacked.dir}/commons-lang-2.4.jar" includes="org/**"/>
-      <fileset dir="${unpacked.dir}/htmlparser.jar" includes="org/**"/>
+      <fileset dir="${unpacked.dir}/${lib.looks.name}.jar" includes="com/**"/>
+      <fileset dir="${unpacked.dir}/${lib.opencsv.name}.jar" includes="au/**"/>
+      <fileset dir="${unpacked.dir}/${lib.commons.lang.name}.jar" includes="org/**"/>
+      <fileset dir="${unpacked.dir}/${lib.htmlparser.name}.jar" includes="org/**"/>
     </jar>
 
     <!-- Copy the file(s) -->
@@ -785,7 +781,7 @@
 
 
   <!-- Creates the release binaries (.zip) for the platform independent TV-Browser version -->
-  <target name="public-default" depends="runtime-default">
+  <target name="public-default" depends="runtime-default" description="creates platform-independent binaries">
     <mkdir dir="${public.dir}"/>
 
     <zip destfile="${public.dir}/tvbrowser_${tvbrowser.version}_bin.zip">
@@ -794,7 +790,7 @@
     </zip>
   </target>
 
-  <target name="public-nightly" depends="runtime-transportable">
+  <target name="public-nightly" depends="runtime-transportable" description="Creates platform-independent binaries for nightly transportable version of TV-Browser (without platform dependent starters)">
   	<mkdir dir="${public.dir}"/>
 
     <tstamp>
@@ -809,7 +805,7 @@
 
   </target>
 
-  <target name="public-ubuntu" depends="runtime-linux, tvbrowser-desktop-entry-deb">
+  <target name="public-ubuntu" depends="runtime-linux, tvbrowser-desktop-entry-deb" description="Creates binaries for Ubuntu platforms">
   	<mkdir dir="${public.dir}"/>
 
   	<deb
@@ -845,7 +841,7 @@
   </target>
 
   <!-- Creates the release binaries (.zip) for the platform independent transportable TV-Browser version -->
-  <target name="public-transportable" depends="transportable-exe">
+  <target name="public-transportable" depends="transportable-exe" description="Creates platform-independent binaries for transportable version of TV-Browser (requires Windows)">
   	<mkdir dir="${public.dir}"/>
 
    	<copy todir="${tvbrowser-transportable.runtime.dir}">
@@ -864,7 +860,7 @@
   </target>
 
   <!-- Creates the release binaries (.tar.gz) for linux platforms -->
-  <target name="public-linux" depends="runtime-linux, tvbrowser-desktop-entry">
+  <target name="public-linux" depends="runtime-linux, tvbrowser-desktop-entry" description="Creates binaries for Linux platforms">
     <mkdir dir="${public.dir}"/>
 
     <tar tarfile="${public.dir}/tvbrowser_${tvbrowser.version}_bin.tar.gz" compression="gzip">
@@ -905,7 +901,7 @@
   </target>
 
   <!-- Creates the release binaries (.exe installer) for windows platforms -->
-  <target name="public-win" depends="exe">
+  <target name="public-win" depends="exe" description="Creates binaries for the Microsoft Windows Platforms (requires Windows)">
     <mkdir dir="${public.dir}"/>
     <exec executable="${installer.dir}/makensis.exe" failonerror="true">
       <arg value="/NOCD"/>
@@ -936,7 +932,7 @@
   </target>
 
    <!-- Creates the release binaries (.dmg) for mac os x -->
-    <target name="public-mac" depends="runtime-mac">
+    <target name="public-mac" depends="runtime-mac" description="Creates binaries for the Mac OS X (requires Mac OS X)">
       <mkdir dir="${public.dir}"/>
 
       <echo message="creating disk image..."/>
@@ -999,7 +995,7 @@
     | This target depends on clean-runtime to be sure that the runtime
     | directory contains no stuff we don't want to be destributed.
     +-->
-  <target name="public-tvdatakit" depends="runtime-tvdatakit">
+  <target name="public-tvdatakit" depends="runtime-tvdatakit" description="Creates a .zip file containing the TV-Browser TV data kit">
 
     <!-- Pack the TvDataStarterKit zip -->
     <mkdir dir="${public.dir}"/>
@@ -1059,7 +1055,7 @@
   <!--
   | Generates the JavaDoc documentation.
   +-->
-  <target name="public-doc">
+  <target name="public-doc" description="Generates the JavaDoc documentation">
     <echo message="Generating JavaDoc documentation ..." />
     <delete dir="${doc.dir}"/>
     <mkdir dir="${doc.dir}"/>
@@ -1106,7 +1102,7 @@
 
 
 
-  <target name="public-src">
+  <target name="public-src" description="Creates a .zip file containing the full source code of TV-Browser">
     <mkdir dir="${public.dir}"/>
     <zip destfile="${public.dir}/tvbrowser_${tvbrowser.version}_src.zip">
       <zipfileset prefix="tvbrowser-${tvbrowser.version}"
@@ -1122,6 +1118,230 @@
   </target>
 
 
+	<!-- - - - - - - - - - - - - - - - - -
+          internal target: download-zipped-lib
+         - - - - - - - - - - - - - - - - - -->
+  <target name="download-zipped-lib">
 
+  	<macrodef name="propertycopy">
+  	  <attribute name="name"/>
+  	  <attribute name="from"/>
+  	  <sequential>
+  	    <property name="@{name}" value="${@{from}}"/>
+  	  </sequential>
+  	</macrodef>
+
+		<propertycopy name="lib.url" from="lib.${lib}.url"/>
+		<propertycopy name="lib.name" from="lib.${lib}.name"/>
+		<propertycopy name="lib.version" from="lib.${lib}.version"/>
+
+  	<get dest="${lib.dir}/download.zip" src="${lib.url}"/>
+  	<unzip src="${lib.dir}/download.zip" dest="${lib.dir}/download">
+		  <patternset>
+		    <include name="**/${lib.name}*.jar"/>
+		  </patternset>
+  		<flattenmapper/>
+		</unzip>
+    <copy todir="${lib.dir}" verbose="true" overwrite="true">
+      <fileset dir="${lib.dir}/download">
+        <include name="${lib.name}.jar"/>
+        <include name="${lib.name}-?.?.jar"/>
+        <include name="${lib.name}-?.?.?.jar"/>
+        <include name="${lib.name}-?.?.??.jar"/>
+      </fileset>
+    	<mapper>
+    		<mergemapper to="${lib.name}-${lib.version}.jar"/>
+    	</mapper>
+    </copy>
+  	<delete dir="${lib.dir}/download"/>
+  </target>
+
+<!-- - - - - - - - - - - - - - - - - -
+        internal target: download-tarred-lib
+       - - - - - - - - - - - - - - - - - -->
+  <target name="download-tarred-lib">
+  	<macrodef name="propertycopy">
+  	  <attribute name="name"/>
+  	  <attribute name="from"/>
+  	  <sequential>
+  	    <property name="@{name}" value="${@{from}}"/>
+  	  </sequential>
+  	</macrodef>
+
+		<propertycopy name="lib.url" from="lib.${lib}.url"/>
+		<propertycopy name="lib.name" from="lib.${lib}.name"/>
+		<propertycopy name="lib.version" from="lib.${lib}.version"/>
+
+  	<get dest="${lib.dir}/download.tar.gz" src="${lib.url}"/>
+		<gunzip src="${lib.dir}/download.tar.gz"/>
+		<untar src="${lib.dir}/download.tar" dest="${lib.dir}/download">
+		  <patternset>
+		    <include name="**/${lib.name}*.jar"/>
+		  </patternset>
+  		<flattenmapper/>
+		</untar>
+    <copy todir="${lib.dir}" verbose="true" overwrite="true">
+      <fileset dir="${lib.dir}/download">
+        <include name="${lib.name}.jar"/>
+        <include name="${lib.name}-?.?.jar"/>
+        <include name="${lib.name}-?.?.?.jar"/>
+        <include name="${lib.name}-?.?.??.jar"/>
+      </fileset>
+    	<mapper>
+    		<mergemapper to="${lib.name}-${lib.version}.jar"/>
+    	</mapper>
+    </copy>
+  	<delete dir="${lib.dir}/download"/>
+  </target>
+
+<!-- - - - - - - - - - - - - - - - - -
+          internal target: download-lib
+         - - - - - - - - - - - - - - - - - -->
+  <target name="download-lib">
+  	<macrodef name="propertycopy">
+  	  <attribute name="name"/>
+  	  <attribute name="from"/>
+  	  <sequential>
+  	    <property name="@{name}" value="${@{from}}"/>
+  	  </sequential>
+  	</macrodef>
+
+		<propertycopy name="lib.url" from="lib.${lib}.url"/>
+		<propertycopy name="lib.name" from="lib.${lib}.name"/>
+		<propertycopy name="lib.version" from="lib.${lib}.version"/>
+
+		<get dest="${lib.dir}/${lib.name}-${lib.version}.jar" src="${lib.url}"/>
+  </target>
+
+	<target name="download-libs" description="downloads all necessary library files">
+		<mkdir dir="${lib.dir}"/>
+
+		<!--  aclibico  -->
+		<antcall target="download-zipped-lib">
+			<param name="lib" value="aclibico"/>
+		</antcall>
+
+		<!-- bsh -->
+		<antcall target="download-lib">
+			<param name="lib" value="bsh"/>
+		</antcall>
+
+		<!-- commons codec -->
+		<antcall target="download-zipped-lib">
+			<param name="lib" value="commons.codec"/>
+		</antcall>
+
+		<!-- commons compress -->
+		<antcall target="download-zipped-lib">
+			<param name="lib" value="commons.compress"/>
+		</antcall>
+
+		<!-- commons lang -->
+		<antcall target="download-zipped-lib">
+			<param name="lib" value="commons.lang"/>
+		</antcall>
+
+		<!-- commons net -->
+		<antcall target="download-zipped-lib">
+			<param name="lib" value="commons.net"/>
+		</antcall>
+
+		<!-- jakarta oro -->
+		<antcall target="download-zipped-lib">
+			<param name="lib" value="oro"/>
+		</antcall>
+
+		<!-- jcom -->
+		<antcall target="download-zipped-lib">
+			<param name="lib" value="jcom"/>
+		</antcall>
+
+		<!-- jgoodies forms -->
+		<antcall target="download-zipped-lib">
+			<param name="lib" value="forms"/>
+		</antcall>
+
+		<!-- gdata calendar -->
+		<antcall target="download-zipped-lib">
+			<param name="lib" value="gdata.calendar"/>
+		</antcall>
+		<antcall target="download-zipped-lib">
+			<param name="lib" value="gdata.client"/>
+		</antcall>
+		<antcall target="download-zipped-lib">
+			<param name="lib" value="gdata.core"/>
+		</antcall>
+
+		<!-- htmlparser -->
+		<antcall target="download-zipped-lib">
+			<param name="lib" value="htmlparser"/>
+		</antcall>
+
+		<!-- jRegistryKey -->
+		<antcall target="download-zipped-lib">
+			<param name="lib" value="jregistrykey"/>
+		</antcall>
+
+		<!-- l2prod common tasks -->
+		<antcall target="download-zipped-lib">
+			<param name="lib" value="tasks"/>
+		</antcall>
+
+		<!-- log4j -->
+		<antcall target="download-zipped-lib">
+			<param name="lib" value="log4j"/>
+		</antcall>
+
+		<!-- libgrowl -->
+		<antcall target="download-lib">
+			<param name="lib" value="libgrowl"/>
+		</antcall>
+
+		<!-- jgoodies looks -->
+		<antcall target="download-zipped-lib">
+			<param name="lib" value="looks"/>
+		</antcall>
+
+		<!-- opencsv -->
+		<antcall target="download-tarred-lib">
+			<param name="lib" value="opencsv"/>
+		</antcall>
+
+		<!-- skinlf -->
+		<antcall target="download-zipped-lib">
+			<param name="lib" value="skinlf"/>
+		</antcall>
+
+		<!-- stax -->
+		<antcall target="download-lib">
+			<param name="lib" value="stax"/>
+		</antcall>
+		<antcall target="download-lib">
+			<param name="lib" value="stax.api"/>
+		</antcall>
+
+		<!-- texhyphj -->
+		<antcall target="download-zipped-lib">
+			<param name="lib" value="texhyphj"/>
+		</antcall>
+
+		<!-- TVAnytime -->
+		<antcall target="download-zipped-lib">
+			<param name="lib" value="tvanytime"/>
+		</antcall>
+
+		<!-- xtvd -->
+		<antcall target="download-lib">
+			<param name="lib" value="xtvd"/>
+		</antcall>
+
+		<delete dir="${lib.dir}">
+		  <patternset>
+		    <include name="*.zip"/>
+		    <include name="*.tar.gz"/>
+		    <include name="*.tar"/>
+		  </patternset>
+		</delete>
+	</target>
 
 </project>
