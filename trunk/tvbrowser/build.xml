@@ -318,7 +318,7 @@
     <unjar src="${lib.dir}/${lib.gdata.calendar.name}-${lib.gdata.calendar.version}.jar" dest="${unpacked.dir}/${lib.gdata.calendar.name}.jar" />
     <unjar src="${lib.dir}/${lib.gdata.client.name}-${lib.gdata.client.version}.jar" dest="${unpacked.dir}/${lib.gdata.client.name}.jar" />
     <unjar src="${lib.dir}/${lib.gdata.core.name}-${lib.gdata.core.version}.jar" dest="${unpacked.dir}/${lib.gdata.core.name}.jar" />
-    <unjar src="${lib.dir}/${lib.jcom.name}.jar-${lib.jcom.name}" dest="${unpacked.dir}/${lib.jcom.name}.jar" />
+    <unjar src="${lib.dir}/${lib.jcom.name}.jar-${lib.jcom.version}" dest="${unpacked.dir}/${lib.jcom.name}.jar" />
     <unjar src="${lib.dir}/${lib.opencsv.name}-${lib.opencsv.version}.jar" dest="${unpacked.dir}/${lib.opencsv.name}.jar" />
     <unjar src="${lib.dir}/${lib.htmlparser.name}-${lib.htmlparser.version}.jar" dest="${unpacked.dir}/${lib.htmlparser.name}.jar" />
     <unjar src="${lib.dir}/${lib.aclibico.name}-${lib.aclibico.version}.jar" dest="${unpacked.dir}/${lib.aclibico.name}.jar" />
