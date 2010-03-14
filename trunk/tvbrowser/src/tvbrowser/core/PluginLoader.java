@@ -39,6 +39,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.logging.Level;
@@ -423,11 +424,27 @@ public class PluginLoader {
       }
     });
     if (fileArr == null) {
-      // Nothing to do
       return;
     }
 
+    // remove old cleverepg service, if new one is found
+    File oldService = null;
+    ArrayList<File> files = new ArrayList<File>(Arrays.asList(fileArr));
     for (File file : fileArr) {
+      if (file.getName().equalsIgnoreCase("CleverEPGDataService3.jar")) {
+        for (File file2 : files) {
+          if (file2.getName().equalsIgnoreCase("CleverEPGDataService.jar")) {
+            oldService = file2;
+            break;
+          }
+        }
+      }
+    }
+    if (oldService != null) {
+      files.remove(oldService);
+    }
+
+    for (File file : files) {
       boolean load = true;
       for (PluginProxy proxy : loadedProxies) {
         if (proxy.getPluginFileName().equalsIgnoreCase(file.getPath())) {
