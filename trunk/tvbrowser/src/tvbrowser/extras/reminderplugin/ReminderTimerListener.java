@@ -92,10 +92,15 @@ public class ReminderTimerListener {
       // sort reminders by time
       HashMap<Integer, ArrayList<ReminderListItem>> sortedReminders = new HashMap<Integer, ArrayList<ReminderListItem>>(reminders.size());
       for (ReminderListItem reminder : reminders) {
-        ArrayList<ReminderListItem> list = sortedReminders.get(reminder.getMinutes());
+        int time = reminder.getProgram().getStartTime();
+        // take all already running programs together because there are no different reminder options for them
+        if (reminder.getProgram().isOnAir() || reminder.getProgram().isExpired()) {
+          time = -1;
+        }
+        ArrayList<ReminderListItem> list = sortedReminders.get(time);
         if (list == null) {
           list = new ArrayList<ReminderListItem>();
-          sortedReminders.put(reminder.getMinutes(), list);
+          sortedReminders.put(time, list);
         }
         list.add(reminder);
       }
