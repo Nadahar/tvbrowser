@@ -266,10 +266,16 @@ public class Date implements Comparable<Date>
     {
       return null;
     }
-    short year = Short.parseShort(s[0]);
-    byte month = Byte.parseByte(s[1]);
-    byte day = Byte.parseByte(s[2]);
-    return new Date(year, month, day);
+    try {
+      short year = Short.parseShort(s[0]);
+      byte month = Byte.parseByte(s[1]);
+      byte day = Byte.parseByte(s[2]);
+      return new Date(year, month, day);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+    return null;
   }
 
 
@@ -290,10 +296,15 @@ public class Date implements Comparable<Date>
     {
       return null;
     }
-    short year = Short.parseShort(s[0]);
-    byte month = Byte.parseByte(s[1]);
-    byte day = Byte.parseByte(s[2]);
-    return new Date(year, month, day);
+    try {
+      short year = Short.parseShort(s[2]);
+      byte month = Byte.parseByte(s[1]);
+      byte day = Byte.parseByte(s[0]);
+      return new Date(year, month, day);
+    } catch(Exception e){
+      e.printStackTrace();
+    }
+    return null;
   }
 
 
