@@ -34,6 +34,7 @@ public class InfoCategoryParser {
     loadProperties(Program.INFO_CATEGORIE_DOCUMENTARY, "documentary");
     loadProperties(Program.INFO_CATEGORIE_ARTS, "arts");
     loadProperties(Program.INFO_CATEGORIE_SPORTS, "sports");
+    loadProperties(Program.INFO_CATEGORIE_CHILDRENS, "childrens");
     loadProperties(Program.INFO_CATEGORIE_OTHERS, "others");
   }
 
