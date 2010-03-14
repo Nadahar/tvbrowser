@@ -35,6 +35,7 @@ package tvbrowser.extras.reminderplugin;
 
 import java.awt.Toolkit;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Properties;
 import java.util.logging.Logger;
 
@@ -88,8 +89,20 @@ public class ReminderTimerListener {
     }
 
     if ("true" .equals(mSettings.getProperty( "usemsgbox" ))) {
-      new ReminderFrame(mReminderList, reminders,
-          getAutoCloseReminderTime(reminders));
+      // sort reminders by time
+      HashMap<Integer, ArrayList<ReminderListItem>> sortedReminders = new HashMap<Integer, ArrayList<ReminderListItem>>(reminders.size());
+      for (ReminderListItem reminder : reminders) {
+        ArrayList<ReminderListItem> list = sortedReminders.get(reminder.getMinutes());
+        if (list == null) {
+          list = new ArrayList<ReminderListItem>();
+          sortedReminders.put(reminder.getMinutes(), list);
+        }
+        list.add(reminder);
+      }
+      // show reminders at same time in one window
+      for (ArrayList<ReminderListItem> singleTimeReminders : sortedReminders.values()) {
+        new ReminderFrame(mReminderList, singleTimeReminders, getAutoCloseReminderTime(singleTimeReminders));
+      }
     } else {
       for (ReminderListItem reminder : reminders) {
         mReminderList.removeWithoutChecking(reminder.getProgramItem());
