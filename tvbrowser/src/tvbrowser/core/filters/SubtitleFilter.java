@@ -30,7 +30,7 @@ import devplugin.ProgramFilter;
 
 /**
  * This Filter filters Movies that have a Subtitle for Handicaped Persons or are
- * Original with Subtitle
+ * Original with Subtitle or sign language
  */
 public class SubtitleFilter implements ProgramFilter {
   /**
@@ -39,7 +39,7 @@ public class SubtitleFilter implements ProgramFilter {
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(SubtitleFilter.class);
 
   /**
-   * Accept only Programs with Subtitle
+   * Accept only programs with subtitle or sign language
    *
    * @param prog Program to check
    * @return true if prog is subtitled
@@ -48,8 +48,8 @@ public class SubtitleFilter implements ProgramFilter {
     int info = prog.getInfo();
 
     return info >= 1 && (bitSet(info, Program.INFO_SUBTITLE_FOR_AURALLY_HANDICAPPED) ||
-            bitSet(info, Program.INFO_ORIGINAL_WITH_SUBTITLE));
-
+            bitSet(info, Program.INFO_ORIGINAL_WITH_SUBTITLE) ||
+            bitSet(info, Program.INFO_SIGN_LANGUAGE));
   }
 
   /**

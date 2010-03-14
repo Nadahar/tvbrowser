@@ -272,6 +272,9 @@ public class DayProgramFileTranslator {
       if (bitSet(info, Program.INFO_CATEGORIE_SPORTS)) {
         buf.append("Sports  ");
       }
+      if (bitSet(info, Program.INFO_SIGN_LANGUAGE)) {
+        buf.append("Sign Language  ");
+      }
 
     return buf.toString();
   }
