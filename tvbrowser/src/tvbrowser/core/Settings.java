@@ -684,6 +684,7 @@ public class Settings {
     if (mProp.hasChanged(propArr)) {
       ProgramTableScrollPane scrollPane = mainFrame.getProgramTableScrollPane();
       scrollPane.getProgramTable().updateBackground();
+      mainFrame.getProgramTableScrollPane().forceRepaintAll();
     }
 
     if(mProp.hasChanged(propTimeBlockSize)) {
