@@ -143,9 +143,9 @@ class XmlTvDataHandler extends DefaultHandler {
       String[] s = channelId.split("_");
       Channel channel;
       if (s.length == 2) {
-        channel = new Channel(s[0], s[1]);
+        channel = new Channel(null, s[0], s[1], java.util.TimeZone.getTimeZone("GMT+1"), "de", "(c) by TV-Browser");
       } else {
-        channel = new Channel(s[0]);
+        channel = new Channel(null, s[0], s[0], java.util.TimeZone.getTimeZone("GMT+1"), "de", "(c) by TV-Browser");
       }
       dispatcher = new ProgramFrameDispatcher(channel);
       mDispatcherHash.put(channelId, dispatcher);
