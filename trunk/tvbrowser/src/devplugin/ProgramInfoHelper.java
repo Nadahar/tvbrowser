@@ -46,7 +46,7 @@ public class ProgramInfoHelper {
             Program.INFO_CATEGORIE_SHOW, Program.INFO_CATEGORIE_MAGAZINE_INFOTAINMENT,
             Program.INFO_CATEGORIE_DOCUMENTARY, Program.INFO_CATEGORIE_ARTS,
             Program.INFO_CATEGORIE_SPORTS, Program.INFO_CATEGORIE_CHILDRENS,
-            Program.INFO_CATEGORIE_OTHERS
+            Program.INFO_CATEGORIE_OTHERS, Program.INFO_SIGN_LANGUAGE
     };
 
     /**
@@ -79,7 +79,8 @@ public class ProgramInfoHelper {
       createIcon("Info_Arts.png"), // Arts
       createIcon("Info_Sports.png"), // Sports
       createIcon("Info_Children.png"), // Children
-      null // Others
+      null, // Others
+      createIcon("Info_Signlanguage.png"), // Sign Language
     };
 
   /**
@@ -112,7 +113,8 @@ public class ProgramInfoHelper {
       "Info_Arts.png", // Arts
       "Info_Sports.png", // Sports
       "Info_Children.png", // Children
-      null // Others
+      null, // Others
+      "Info_Signlanguage.png" // Sign Language
   };
 
   /**
@@ -153,6 +155,7 @@ public class ProgramInfoHelper {
             mLocalizer.msg("categorie_sports", "Sports"),
             mLocalizer.msg("categorie_childrens", "Children's Programming"),
             mLocalizer.msg("categorie_others", "Other Program"),
+            mLocalizer.msg("sign_language", "Sign language"),
     };
 
 

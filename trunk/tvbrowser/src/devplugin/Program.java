@@ -172,7 +172,13 @@ public interface Program {
    * @since 2.7
    */ 
   public static final int INFO_CATEGORIE_OTHERS = 1 << 24;
-  
+
+  /**
+   * This program has sign language
+   * @since 2.7
+   */
+  public static final int INFO_SIGN_LANGUAGE = 1 << 25;
+
   public static final int IS_VALID_STATE = 0;
   public static final int WAS_UPDATED_STATE = 1;
   public static final int WAS_DELETED_STATE = 2;
