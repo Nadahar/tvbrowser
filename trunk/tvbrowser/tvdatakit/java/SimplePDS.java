@@ -30,10 +30,13 @@ public class SimplePDS extends AbstractPrimaryDataService {
      * Create the Channellist
      */
     public SimplePDS() {
+        java.util.TimeZone zone = java.util.TimeZone.getTimeZone("GMT+1");
+        String c = "(c) by TV-Browser";
+
         mChannelList = new Channel[] {
-            new Channel("kanal12"),
-            new Channel("quiz44"),
-            new Channel("einkauf"),
+            new Channel(null, "Kanal 12", "kanal12", zone, "de", c),
+            new Channel(null, "Quiz 44", "quiz44", zone, "de", c),
+            new Channel(null, "Einkauf", "einkauf", zone, "de", c),
         };
     }
 
