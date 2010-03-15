@@ -48,6 +48,22 @@
     <name lang="de">Bester Film Musical oder Komödie</name>
     <name lang="en">Best Motion Picture - Musical or Comedy</name>
   </category>
+<category id="best_animated_feature">
+    <name lang="de">Bester Trickfilm</name>
+    <name lang="en">Best Animated Feature</name>
+  </category>
+<category id="best_song">
+    <name lang="de">Bester Song</name>
+    <name lang="en">Best Song</name>
+  </category>
+<category id="best_music">
+    <name lang="de">Beste Filmmusik</name>
+    <name lang="en">Best Music</name>
+  </category>
+<category id="best_writing">
+    <name lang="de">Bestes Drehbuch</name>
+    <name lang="en">Best Writing</name>
+  </category>
 </categories>
   
 <awards>
@@ -3004,5 +3020,64 @@
 <award category="best_actress_in_a_supporting_role" status="winner" movie="movie_db_4230" year="1953" recipient="Katy Jurado"/>
 <award category="best_actor_in_a_leading_role_drama" status="winner" movie="movie_db_4230" year="1953" recipient="Gary Cooper"/>
 <award category="best_movie_drama" status="nominated" movie="movie_db_4230" year="1953" recipient="Fred Zinnemann"/>
+<award category="best_movie_musical_comedy" status="nominated" movie="movie_db_4237" year="2010" recipient="Marc Webb"/>
+<award category="best_actor_in_a_leading_role_musical_comedy" status="nominated" movie="movie_db_4237" year="2010" recipient="Joseph Gordon-Levitt"/>
+<award category="best_actor_in_a_leading_role_musical_comedy" status="nominated" movie="movie_db_4238" year="2010" recipient="Michael Stuhlbarg"/>
+<award category="best_actress_in_a_supporting_role" status="nominated" movie="movie_db_4239" year="2010" recipient="Julianne Moore"/>
+<award category="best_actor_in_a_leading_role_drama" status="nominated" movie="movie_db_4239" year="2010" recipient="Colin Firth"/>
+<award category="best_actress_in_a_leading_role_drama" status="nominated" movie="movie_db_4241" year="2010" recipient="Carey Mulligan"/>
+<award category="best_movie_drama" status="winner" movie="movie_db_4242" year="2010" recipient="James Cameron"/>
+<award category="best_director" status="winner" movie="movie_db_4242" year="2010" recipient="James Cameron"/>
+<award category="best_foreign_language_film" status="nominated" movie="movie_db_4243" year="2010" recipient="Giuseppe Tornatore"/>
+<award category="best_actress_in_a_leading_role_drama" status="winner" movie="movie_db_4244" year="2010" recipient="Sandra Bullock"/>
+<award category="best_actor_in_a_leading_role_drama" status="nominated" movie="movie_db_4246" year="2010" recipient="Tobey Maguire"/>
+<award category="best_animated_feature" status="nominated" movie="movie_db_4250" year="2010" recipient="Henry Selick"/>
+<award category="best_actor_in_a_leading_role_drama" status="winner" movie="movie_db_4251" year="2010" recipient="Jeff Bridges"/>
+<award category="best_song" status="winner" movie="movie_db_4251" year="2010" recipient="The Weary Kind"/>
+<award category="best_foreign_language_film" status="winner" movie="movie_db_4253" year="2010" recipient="Michael Haneke"/>
+<award category="best_animated_feature" status="nominated" movie="movie_db_4254" year="2010" recipient="Wes Anderson"/>
+<award category="best_actor_in_a_leading_role_musical_comedy" status="nominated" movie="movie_db_4255" year="2010" recipient="Matt Damon"/>
+<award category="best_actress_in_a_leading_role_musical_comedy" status="nominated" movie="movie_db_4258" year="2010" recipient="Julia Roberts"/>
+<award category="best_foreign_language_film" status="nominated" movie="movie_db_4259" year="2010" recipient="Jacques Audiard"/>
+<award category="best_actress_in_a_leading_role_drama" status="nominated" movie="movie_db_4260" year="2010" recipient="Helen Mirren"/>
+<award category="best_actor_in_a_supporting_role" status="nominated" movie="movie_db_4260" year="2010" recipient="Christopher Plummer"/>
+<award category="best_movie_musical_comedy" status="winner" movie="movie_db_4265" year="2010" recipient="Todd Phillips"/>
+<award category="best_actor_in_a_supporting_role" status="nominated" movie="movie_db_4268" year="2010" recipient="Stanley Tucci"/>
+<award category="best_movie_drama" status="nominated" movie="movie_db_4270" year="2010" recipient="Quentin Tarantino"/>
+<award category="best_director" status="nominated" movie="movie_db_4270" year="2010" recipient="Quentin Tarantino"/>
+<award category="best_actor_in_a_supporting_role" status="winner" movie="movie_db_4270" year="2010" recipient="Christoph Waltz"/>
+<award category="best_director" status="nominated" movie="movie_db_4272" year="2010" recipient="Clint Eastwood"/>
+<award category="best_actor_in_a_leading_role_drama" status="nominated" movie="movie_db_4272" year="2010" recipient="Morgan Freeman"/>
+<award category="best_actor_in_a_supporting_role" status="nominated" movie="movie_db_4272" year="2010" recipient="Matt Damon"/>
+<award category="best_actress_in_a_leading_role_musical_comedy" status="winner" movie="movie_db_4273" year="2010" recipient="Meryl Streep"/>
+<award category="best_movie_musical_comedy" status="nominated" movie="movie_db_4273" year="2010" recipient="Nora Ephron"/>
+<award category="best_animated_feature" status="nominated" movie="movie_db_4275" year="2010" recipient="Ron Clements, John Musker"/>
+<award category="best_foreign_language_film" status="nominated" movie="movie_db_4277" year="2010" recipient="Sebastián Silva"/>
+<award category="best_actress_in_a_supporting_role" status="nominated" movie="movie_db_4282" year="2010" recipient="Penélope Cruz"/>
+<award category="best_actor_in_a_leading_role_musical_comedy" status="nominated" movie="movie_db_4282" year="2010" recipient="Daniel Day-Lewis"/>
+<award category="best_movie_musical_comedy" status="nominated" movie="movie_db_4282" year="2010" recipient="Rob Marshall"/>
+<award category="best_actress_in_a_leading_role_musical_comedy" status="nominated" movie="movie_db_4282" year="2010" recipient="Marion Cotillard"/>
+<award category="best_animated_feature" status="winner" movie="movie_db_4283" year="2010" recipient="Pete Docter, Bob Peterson"/>
+<award category="Best_music" status="winner" movie="movie_db_4283" year="2010" recipient="Michael Giacchino"/>
+<award category="best_actress_in_a_leading_role_drama" status="nominated" movie="movie_db_4285" year="2010" recipient="Gabourey Sidibe"/>
+<award category="best_actress_in_a_supporting_role" status="winner" movie="movie_db_4285" year="2010" recipient="Mo’Nique"/>
+<award category="best_movie_drama" status="nominated" movie="movie_db_4285" year="2010" recipient="Lee Daniels"/>
+<award category="best_actress_in_a_leading_role_musical_comedy" status="nominated" movie="movie_db_4286" year="2010" recipient="Sandra Bullock"/>
+<award category="best_actor_in_a_leading_role_musical_comedy" status="winner" movie="movie_db_4287" year="2010" recipient="Robert Downey junior"/>
+<award category="best_actor_in_a_supporting_role" status="nominated" movie="movie_db_4292" year="2010" recipient="Woody Harrelson"/>
+<award category="best_actress_in_a_leading_role_drama" status="nominated" movie="movie_db_4297" year="2010" recipient="Emily Blunt"/>
+<award category="best_movie_drama" status="nominated" movie="movie_db_4298" year="2010" recipient="Kathryn Bigelow"/>
+<award category="best_director" status="nominated" movie="movie_db_4298" year="2010" recipient="Kathryn Bigelow"/>
+<award category="best_actor_in_a_leading_role_drama" status="nominated" movie="movie_db_4300" year="2010" recipient="George Clooney"/>
+<award category="best_actress_in_a_supporting_role" status="nominated" movie="movie_db_4300" year="2010" recipient="Anna Kendrick"/>
+<award category="best_director" status="nominated" movie="movie_db_4300" year="2010" recipient="Jason Reitman"/>
+<award category="best_movie_drama" status="nominated" movie="movie_db_4300" year="2010" recipient="Jason Reitman"/>
+<award category="best_actress_in_a_supporting_role" status="nominated" movie="movie_db_4300" year="2010" recipient="Vera Farmiga"/>
+<award category="best_writing" status="winner" movie="movie_db_4300" year="2010" recipient="Jason Reitman, Sheldon Turner"/>
+<award category="best_movie_musical_comedy" status="nominated" movie="movie_db_4302" year="2010" recipient="Nancy Meyers"/>
+<award category="best_actress_in_a_leading_role_musical_comedy" status="nominated" movie="movie_db_4302" year="2010" recipient="Meryl Streep"/>
+<award category="best_animated_feature" status="nominated" movie="movie_db_4304" year="2010" recipient="Phil Lord, Chris Miller"/>
+<award category="best_foreign_language_film" status="nominated" movie="movie_db_4305" year="2010" recipient="Pedro Almodóvar"/>
+
 </awards>
 </awarddata>
