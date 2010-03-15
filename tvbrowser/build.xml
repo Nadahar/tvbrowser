@@ -670,7 +670,7 @@
       </manifest>
       <fileset dir="${classes.dir}" includes="primarydatamanager/mirrorupdater/**"/>
       <fileset dir="${classes.dir}" includes="primarydatamanager/tvlistingstool/**"/>
-      <fileset dir="${classes.dir}" includes="tvbrowserdataservice/file/**"/>
+      <fileset dir="${classes.dir}" includes="tvbrowserdataservice/**"/>
       <fileset dir="${classes.dir}" includes="tvdataservice/**"/>
       <fileset dir="${classes.dir}" includes="devplugin/**"/>
       <fileset dir="${classes.dir}" includes="util/**"/>
