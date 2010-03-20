@@ -247,7 +247,7 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
           while(it.hasNext() && nprg == null) {
             Program p = it.next();
             
-            if(mCurrentFilter.accept(p)) {
+            if(!p.isExpired() && mCurrentFilter.accept(p)) {
               nprg = p;
             }
           }
@@ -277,7 +277,7 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
         while (it.hasNext()) {
           Program test = it.next();
           
-          if(mCurrentFilter.accept(test)) {
+          if(!test.isExpired() && mCurrentFilter.accept(test)) {
             return test;
           }
         }
@@ -294,7 +294,7 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
       while (it.hasNext()) {
         Program p = it.next();
         
-        if(mCurrentFilter.accept(p)) {
+        if(!p.isExpired() && mCurrentFilter.accept(p)) {
           return p;
         }
       }
