@@ -84,8 +84,6 @@ public class GolemUpdater {
 
         SimpleDateFormat f = new SimpleDateFormat();
 
-        System.out.println(f.format(start.getTime()));
-
         // String summary = event.getSummary().getValue(); Not used atm
         String[] desc = event.getDescription().getValue().split("\n");
 
