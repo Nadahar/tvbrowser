@@ -77,7 +77,7 @@ public abstract class Repeat
 
 	public boolean isBevorEnd(final Calendar date)
 	{
-		if (mEndDate != null && mEndDate.compareTo(date) > 0)
+		if (mEndDate != null && HelperMethods.compareDay(mEndDate, date) > 0)
 			{
 				return false;
 			}
