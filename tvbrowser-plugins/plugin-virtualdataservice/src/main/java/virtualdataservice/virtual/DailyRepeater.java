@@ -34,7 +34,7 @@ public class DailyRepeater extends Repeat
 
 	public boolean isDayProgram(final Calendar date, final Calendar programStart)
 	{
-		if (validOptions() && programStart.compareTo(date) <= 0 && isBevorEnd(date))
+		if (validOptions() && HelperMethods.compareDay(programStart, date) <= 0 && isBevorEnd(date))
 		{
 		  final long delta = diffDayPeriods(programStart, date);
 			if (delta % mDays == 0)
