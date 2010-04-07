@@ -150,7 +150,7 @@ public class GolemPlugin extends devplugin.Plugin {
   @Override
   public PluginTreeNode getRootNode() {
     if (rootNode == null) {
-      rootNode = new PluginTreeNode(this, false);
+      rootNode = new PluginTreeNode(false, this);
 
       final AtomicReference<ActionMenu> update = new AtomicReference<ActionMenu>(new ActionMenu(new AbstractAction(mLocalizer.msg("update", "Update now")) {
         public void actionPerformed(final ActionEvent e) {
