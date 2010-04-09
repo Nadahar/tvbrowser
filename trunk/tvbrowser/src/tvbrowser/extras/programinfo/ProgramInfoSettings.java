@@ -268,7 +268,11 @@ class ProgramInfoSettings {
     if (!getSetupwasdone()) {
       return ProgramTextCreator.getDefaultOrder();
     }
-    final String[] id = getProperty(KEY_FIELD_ORDER, "").trim().split(";");
+    StringBuilder defaultOrder = new StringBuilder();
+    for (Object field : ProgramTextCreator.getDefaultOrder()) {
+      defaultOrder.append(field.toString()).append(";");
+    }
+    final String[] id = getProperty(KEY_FIELD_ORDER, defaultOrder.toString()).trim().split(";");
     final Object[] result = new Object[id.length];
     for (int i = 0; i < id.length; i++) {
       final int parsedId = Integer.parseInt(id[i]);
