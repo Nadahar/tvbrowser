@@ -303,8 +303,8 @@ public class ProgramTextCreator {
       buffer.append("</div>");
     }
 
-    buffer.append("</td><td align=\"right\"><table border=\"" + debugTables +"\"><tr><td>");
-    JButton btn = new JButton(TVBrowserIcons.left(TVBrowserIcons.SIZE_LARGE));
+    buffer.append("</td><td align=\"right\" valign=\"top\"><table border=\"" + debugTables +"\"><tr><td>");
+    JButton btn = new JButton(TVBrowserIcons.left(TVBrowserIcons.SIZE_SMALL));
     buffer.append(doc.createCompTag(btn));
     btn.addActionListener(new ActionListener() {
 
@@ -317,7 +317,7 @@ public class ProgramTextCreator {
     btn.setToolTipText(ProgramInfo.getInstance().navigationBackwardText());
 
     buffer.append("</td><td>");
-    btn = new JButton(TVBrowserIcons.right(TVBrowserIcons.SIZE_LARGE));
+    btn = new JButton(TVBrowserIcons.right(TVBrowserIcons.SIZE_SMALL));
     buffer.append(doc.createCompTag(btn));
     btn.addActionListener(new ActionListener() {
 
