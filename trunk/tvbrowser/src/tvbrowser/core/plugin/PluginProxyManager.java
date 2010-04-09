@@ -68,6 +68,183 @@ import devplugin.Program;
  */
 public class PluginProxyManager {
 
+  private class TvDataAddedMutableThreadPoolMethod extends ThreadPoolMethod {
+
+    private MutableChannelDayProgram mDayProgram;
+
+    public TvDataAddedMutableThreadPoolMethod(MutableChannelDayProgram newProg) {
+      super("HandleTvDataAdded(MutableChannelDayProgram) for '" + newProg.getChannel() + "' on " + newProg.getDate());
+      mDayProgram = newProg;
+      }
+
+    @Override
+    public void run() {
+      for (PluginListItem item : getPluginListCopy()) {
+        if (item.getPlugin().isActivated()) {
+          final AbstractPluginProxy plugin = item.getPlugin();
+          try {
+            plugin.handleTvDataAdded(mDayProgram);
+          }catch(Throwable t) {
+            /* Catch all possible not catched errors that occur in the plugin method*/
+            mLog.log(Level.WARNING, "A not catched error occured in 'handleTvDataAdded(MutableChannelDayProgram)' of Plugin '" + plugin +"'.", t);
+          }
+        }
+      };
+    }
+  }
+
+  private class TvBrowserStartFinishedThreadPoolMethod extends ThreadPoolMethod {
+
+    private AbstractPluginProxy mPlugin;
+
+    public TvBrowserStartFinishedThreadPoolMethod(final AbstractPluginProxy plugin) {
+      super("HandleStartFinished");
+      mPlugin = plugin;
+    }
+
+    @Override
+    public void run() {
+      try {
+        fireTvBrowserStartFinished(mPlugin);
+      }catch(Throwable t) {
+        /* Catch all possible not catched errors that occur in the plugin method*/
+        mLog.log(Level.WARNING, "A not catched error occured in 'fireTvBrowserStartFinishedThread' of Plugin '" + mPlugin +"'.", t);
+      }
+
+      if (mPlugin.hasArtificialPluginTree()) {
+        int childCount = mPlugin.getArtificialRootNode().size();
+        // update all children of the artificial tree or remove the tree completely
+        if (childCount > 0 && childCount < 100) {
+          mPlugin.getArtificialRootNode().update();
+        }
+        else {
+          mPlugin.removeArtificialPluginTree();
+        }
+        SwingUtilities.invokeLater(new Runnable() {
+          @Override
+          public void run() {
+            MainFrame.getInstance().updatePluginTree();
+          }
+        });
+      }
+    }
+
+  }
+
+  private abstract class ThreadPoolMethod {
+    private String mName;
+
+    public ThreadPoolMethod(final String name) {
+      mName = name;
+    }
+
+    public String getName() {
+      return mName;
+    }
+
+    public abstract void run();
+  }
+
+  private class TvDataUpdateFinishedThreadPoolMethod extends ThreadPoolMethod {
+
+    public TvDataUpdateFinishedThreadPoolMethod() {
+      super("handleTvDataUpdateFinished");
+    }
+
+    @Override
+    public void run() {
+      for (PluginListItem item : getPluginListCopy()) {
+        if (item.getPlugin().isActivated()) {
+          final AbstractPluginProxy plugin = item.getPlugin();
+          try {
+            plugin.handleTvDataUpdateFinished();
+          }catch(Throwable t) {
+            /* Catch all possible not catched errors that occur in the plugin method*/
+            mLog.log(Level.WARNING, "A not catched error occured in 'handleTvDataUpdateFinished' of Plugin '" + plugin +"'.", t);
+          }
+        }
+      }
+    }
+  }
+
+  private class TvDataTouchedThreadPoolMethod extends ThreadPoolMethod {
+
+    private ChannelDayProgram mRemovedDayProgram;
+    private ChannelDayProgram mAddedDayProgram;
+
+    public TvDataTouchedThreadPoolMethod(final ChannelDayProgram removedDayProgram, final ChannelDayProgram addedDayProgram) {
+      super("handleTvDataTouched" + (removedDayProgram != null ? " for '" + removedDayProgram.getChannel() + "' on " + removedDayProgram.getDate() : ""));
+      mRemovedDayProgram = removedDayProgram;
+      mAddedDayProgram = addedDayProgram;
+    }
+
+    @Override
+    public void run() {
+      for (PluginListItem item : getPluginListCopy()) {
+        if (item.getPlugin().isActivated()) {
+          final AbstractPluginProxy plugin = item.getPlugin();
+          try {
+            plugin.handleTvDataTouched(mRemovedDayProgram, mAddedDayProgram);
+          }catch(Throwable t) {
+            /* Catch all possible not catched errors that occur in the plugin method*/
+            mLog.log(Level.WARNING, "A not catched error occured in 'handleTvDataTouched' of Plugin '" + plugin +"'.", t);
+          }
+        }
+      }
+    }
+  }
+
+  private class TvDataDeletedThreadPoolMethod extends ThreadPoolMethod {
+    private ChannelDayProgram mChannelDayProgram;
+
+    public TvDataDeletedThreadPoolMethod(final ChannelDayProgram deletedProg) {
+      super("handleTvDataDeleted for '" + deletedProg.getChannel() + "' on " + deletedProg.getDate());
+    }
+
+    @Override
+    public void run() {
+      for (PluginListItem item : getPluginListCopy()) {
+        if (item.getPlugin().isActivated()) {
+          final AbstractPluginProxy plugin = item.getPlugin();
+          try {
+            plugin.handleTvDataDeleted(mChannelDayProgram);
+          }catch(Throwable t) {
+            /* Catch all possible not catched errors that occur in the plugin method*/
+            mLog.log(Level.WARNING, "A not catched error occured in 'handleTvDataDeleted' of Plugin '" + plugin +"'.", t);
+          }
+        }
+      }
+    }
+  }
+
+  private class TvDataAddedThreadPoolMethod extends ThreadPoolMethod {
+    private ChannelDayProgram mChannelDayProgram;
+
+    public TvDataAddedThreadPoolMethod(ChannelDayProgram newProg) {
+      super("HandleTvDataAdded(ChannelDayProgram) for '" + newProg.getChannel() + "' on " + newProg.getDate());
+      mChannelDayProgram = newProg;
+    }
+
+    @Override
+    public void run() {
+      for (PluginListItem item : getPluginListCopy()) {
+        if (item.getPlugin().isActivated()) {
+          final AbstractPluginProxy plugin = item.getPlugin();
+          try {
+            plugin.handleTvDataAdded(mChannelDayProgram);
+          } catch (Throwable t) {
+            /*
+             * Catch all possible not catched errors that occur in the plugin
+             * method
+             */
+            mLog.log(Level.WARNING, "A not catched error occured in 'handleTvDataAdded(ChannelDayProgram)' of Plugin '"
+                + plugin + "'.", t);
+          }
+        }
+      }
+    }
+  }
+
   /** The logger for this class */
   private static final Logger mLog = Logger.getLogger(PluginProxyManager.class.getName());
 
@@ -128,19 +305,9 @@ public class PluginProxyManager {
    */
   private ArrayList<PluginProxy> mStartFinishedPlugins = new ArrayList<PluginProxy>();
 
-  private abstract class ThreadPoolMethod {
-    private String mName;
+  private ArrayList<ThreadPoolMethod> mPoolMethods = new ArrayList<ThreadPoolMethod>();
 
-    public ThreadPoolMethod(final String name) {
-      mName = name;
-    }
-
-    public String getName() {
-      return mName;
-    }
-
-    public abstract void run(final ExecutorService threadPool);
-  }
+  private ExecutorService mThreadPool;
 
   /**
    * Creates a new instance of PluginProxyManager.
@@ -996,30 +1163,8 @@ public class PluginProxyManager {
    * @see PluginProxy#handleTvDataAdded(ChannelDayProgram)
    */
   private void fireTvDataAdded(final MutableChannelDayProgram newProg) {
-    runWithThreadPool(new ThreadPoolMethod("HandleTvDataAdded(MutableChannelDayProgram) for '" + newProg.getChannel() + "' on " + newProg.getDate()){
-
-      @Override
-      public void run(ExecutorService threadPool) {
-        for (PluginListItem item : getPluginListCopy()) {
-          if (item.getPlugin().isActivated()) {
-            final AbstractPluginProxy plugin = item.getPlugin();
-
-            final Runnable addThread = new Runnable() {
-              public void run() {
-                try {
-                  plugin.handleTvDataAdded(newProg);
-                }catch(Throwable t) {
-                  /* Catch all possible not catched errors that occur in the plugin mehtod*/
-                  mLog.log(Level.WARNING, "A not catched error occured in 'handleTvDataAdded(MutableChannelDayProgram)' of Plugin '" + plugin +"'.", t);
-                }
-              }
-            };
-
-            threadPool.execute(addThread);
-          }
-        }
-      }});
-  }
+    runWithThreadPool(new TvDataAddedMutableThreadPoolMethod(newProg));
+    }
 
   /**
    * Calls for every active plugin the handleTvDataAdded(...) method, so the
@@ -1029,29 +1174,7 @@ public class PluginProxyManager {
    * @see PluginProxy#handleTvDataAdded(ChannelDayProgram)
    */
   private void fireTvDataAdded(final ChannelDayProgram newProg) {
-    runWithThreadPool(new ThreadPoolMethod("HandleTvDataAdded(ChannelDayProgram) for '" + newProg.getChannel() + "' on " + newProg.getDate()){
-
-      @Override
-      public void run(ExecutorService threadPool) {
-        for (PluginListItem item : getPluginListCopy()) {
-          if (item.getPlugin().isActivated()) {
-            final AbstractPluginProxy plugin = item.getPlugin();
-
-            final Runnable addThread = new Runnable() {
-              public void run() {
-                try {
-                  plugin.handleTvDataAdded(newProg);
-                }catch(Throwable t) {
-                  /* Catch all possible not catched errors that occur in the plugin mehtod*/
-                  mLog.log(Level.WARNING, "A not catched error occured in 'handleTvDataAdded(ChannelDayProgram)' of Plugin '" + plugin +"'.", t);
-                }
-              }
-            };
-
-            threadPool.execute(addThread);
-          }
-        }
-      }});
+    runWithThreadPool(new TvDataAddedThreadPoolMethod(newProg));
   }
 
   /**
@@ -1062,29 +1185,7 @@ public class PluginProxyManager {
    * @see PluginProxy#handleTvDataDeleted(ChannelDayProgram)
    */
   private void fireTvDataDeleted(final ChannelDayProgram deletedProg) {
-    runWithThreadPool(new ThreadPoolMethod("handleTvDataDeleted for '" + deletedProg.getChannel() + "' on " + deletedProg.getDate()){
-
-      @Override
-      public void run(ExecutorService threadPool) {
-        for (PluginListItem item : getPluginListCopy()) {
-          if (item.getPlugin().isActivated()) {
-            final AbstractPluginProxy plugin = item.getPlugin();
-
-            final Runnable deletedRunnable = new Runnable() {
-              public void run() {
-                try {
-                  plugin.handleTvDataDeleted(deletedProg);
-                }catch(Throwable t) {
-                  /* Catch all possible not catched errors that occur in the plugin mehtod*/
-                  mLog.log(Level.WARNING, "A not catched error occured in 'handleTvDataDeleted' of Plugin '" + plugin +"'.", t);
-                }
-              }
-            };
-
-            threadPool.execute(deletedRunnable);
-          }
-        }
-      }});
+    runWithThreadPool(new TvDataDeletedThreadPoolMethod(deletedProg));
   }
 
   /**
@@ -1097,34 +1198,7 @@ public class PluginProxyManager {
    */
   private void fireTvDataTouched(final ChannelDayProgram removedDayProgram,
       final ChannelDayProgram addedDayProgram) {
-    String name = "handleTvDataTouched";
-    if (removedDayProgram != null) {
-      name += " for '" + removedDayProgram.getChannel() + "' on " + removedDayProgram.getDate();
-    }
-    runWithThreadPool(new ThreadPoolMethod(name) {
-
-      @Override
-      public void run(final ExecutorService threadPool) {
-        for (PluginListItem item : getPluginListCopy()) {
-          if (item.getPlugin().isActivated()) {
-            final AbstractPluginProxy plugin = item.getPlugin();
-
-            final Runnable touchedThread = new Runnable() {
-              public void run() {
-                try {
-                  plugin.handleTvDataTouched(removedDayProgram,addedDayProgram);
-                }catch(Throwable t) {
-                  /* Catch all possible not catched errors that occur in the plugin mehtod*/
-                  mLog.log(Level.WARNING, "A not catched error occured in 'handleTvDataTouched' of Plugin '" + plugin +"'.", t);
-                }
-              }
-            };
-
-            threadPool.execute(touchedThread);
-          }
-        }
-      }
-    });
+    runWithThreadPool(new TvDataTouchedThreadPoolMethod(removedDayProgram, addedDayProgram));
   }
 
   /**
@@ -1134,43 +1208,61 @@ public class PluginProxyManager {
    * @see PluginProxy#handleTvDataUpdateFinished()
    */
   private void fireTvDataUpdateFinished() {
-    runWithThreadPool(new ThreadPoolMethod("handleTvDataUpdateFinished") {
-
-      @Override
-      public void run(final ExecutorService threadPool) {
-        for (PluginListItem item : getPluginListCopy()) {
-          if (item.getPlugin().isActivated()) {
-            final AbstractPluginProxy plugin = item.getPlugin();
-
-            final Runnable updateFinishedThread = new Runnable() {
-              public void run() {
-                try {
-                  plugin.handleTvDataUpdateFinished();
-                }catch(Throwable t) {
-                  /* Catch all possible not catched errors that occur in the plugin mehtod*/
-                  mLog.log(Level.WARNING, "A not catched error occured in 'handleTvDataUpdateFinished' of Plugin '" + plugin +"'.", t);
-                }
-              }
-            };
-
-            threadPool.execute(updateFinishedThread);
-          }
-        }
-      }});
+    runWithThreadPool(new TvDataUpdateFinishedThreadPoolMethod());
   }
 
   private void runWithThreadPool(final ThreadPoolMethod threadPoolMethod) {
-    ExecutorService threadPool = Executors.newFixedThreadPool(4);
-    threadPoolMethod.run(threadPool);
+    mPoolMethods.add(threadPoolMethod);
+//    mLog.info("Pool: " + mPoolMethods.size());
+    if (mThreadPool == null) {
+      int processors = Runtime.getRuntime().availableProcessors();
+      mThreadPool = Executors.newFixedThreadPool(processors);
+      for (int i = 0; i < processors; i++) {
+        mThreadPool.execute(new Runnable() {
+          
+          @Override
+          public void run() {
+            while(true) {
+              ThreadPoolMethod poolMethod = null;
+              int count;
+              synchronized (mPoolMethods) {
+                count = mPoolMethods.size();
+                if (count > 0) {
+                  poolMethod = mPoolMethods.remove(0);
+                }
+              }
+              if (poolMethod != null) {
+//                mLog.info("Exec (" + count + "): " + poolMethod.mName);
+                poolMethod.run();
+              }
+              else {
+                try {
+                  Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                  // TODO Auto-generated catch block
+                  e.printStackTrace();
+                }
+              }
+            }
+          }
+        });
+      }
+    }
+  }
+  
+  private void terminateThreadPool() {
     try {
-      threadPool.shutdown();
-
-      if(!threadPool.awaitTermination(MAX_THREAD_POOL_WAIT_SECONDS,TimeUnit.SECONDS)) {
-        mLog.warning(threadPoolMethod.getName() + " blocked. Forced termination.");
+      mThreadPool.shutdown();
+      if(!mThreadPool.awaitTermination(MAX_THREAD_POOL_WAIT_SECONDS,TimeUnit.SECONDS)) {
+        mThreadPool.shutdownNow();
+        if(!mThreadPool.awaitTermination(MAX_THREAD_POOL_WAIT_SECONDS,TimeUnit.SECONDS)) {
+          mLog.warning("thread pool blocked. Forced termination.");
+        }
       }
     } catch (InterruptedException e) {
       e.printStackTrace();
     }
+
   }
 
   private ArrayList<PluginListItem> getPluginListCopy() {
@@ -1188,47 +1280,13 @@ public class PluginProxyManager {
    * @see PluginProxy#handleTvBrowserStartFinished()
    */
   public void fireTvBrowserStartFinished() {
-    runWithThreadPool(new ThreadPoolMethod("HandleTvDataUpdateFinished"){
-
-      @Override
-      public void run(ExecutorService threadPool) {
-        ((PluginManagerImpl)PluginManagerImpl.getInstance()).handleTvBrowserStartFinished();
+    ((PluginManagerImpl)PluginManagerImpl.getInstance()).handleTvBrowserStartFinished();
         for (PluginListItem item : getPluginListCopy()) {
           final AbstractPluginProxy plugin = item.getPlugin();
           if (plugin.isActivated()) {
-
-            Runnable fireTvBrowserStartFinishedThread = new Runnable() {
-              public void run() {
-                try {
-                  fireTvBrowserStartFinished(plugin);
-                }catch(Throwable t) {
-                  /* Catch all possible not catched errors that occur in the plugin mehtod*/
-                  mLog.log(Level.WARNING, "A not catched error occured in 'fireTvBrowserStartFinishedThread' of Plugin '" + plugin +"'.", t);
-                }
-
-                if (plugin.hasArtificialPluginTree()) {
-                  int childCount = plugin.getArtificialRootNode().size();
-                  // update all children of the artificial tree or remove the tree completely
-                  if (childCount > 0 && childCount < 100) {
-                    plugin.getArtificialRootNode().update();
-                  }
-                  else {
-                    plugin.removeArtificialPluginTree();
-                  }
-                  SwingUtilities.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                      MainFrame.getInstance().updatePluginTree();
-                    }
-                  });
-                }
-              }
-            };
-
-            threadPool.execute(fireTvBrowserStartFinishedThread);
+            runWithThreadPool(new TvBrowserStartFinishedThreadPoolMethod(plugin));
           }
         }
-      }});
   }
 
   public void fireTvBrowserStartFinished(PluginProxy plugin) throws Throwable {
