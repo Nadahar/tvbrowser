@@ -28,12 +28,12 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 
 import captureplugin.CapturePlugin;
-
 import devplugin.Channel;
 import devplugin.Plugin;
 import devplugin.Program;
@@ -141,19 +141,18 @@ public final class ProgramTime implements Cloneable {
     }
     
     /**
-     * Retuns all programs that are contained in this program time.
+     * Returns all programs that are contained in this program time.
      * @return A Program array.
      */
     public Program[] getAllPrograms() {
-      if(mAdditionalPrograms != null && mAdditionalPrograms.length > 0) {
-        Program[] progs = new Program[mAdditionalPrograms.length+1];
-        progs[0] = mProgram;
-        System.arraycopy(mAdditionalPrograms,0,progs,1,mAdditionalPrograms.length);
-        
-        return progs;
+      ArrayList<Program> list = new ArrayList<Program>();
+      if (mProgram != null) {
+        list.add(mProgram);
       }
-      
-      return new Program[] {mProgram};
+      if(mAdditionalPrograms != null && mAdditionalPrograms.length > 0) {
+        list.addAll(Arrays.asList(mAdditionalPrograms));
+      }
+      return list.toArray(new Program[list.size()]);
     }
 
     /**
@@ -193,7 +192,10 @@ public final class ProgramTime implements Cloneable {
     
     private void findAddionalProgramForEnd() {
       /* Taken from WtvcgScheduler2 and changed for CapturePlugin */
-      ArrayList<Program> additonalPrograms = new ArrayList<Program>(0);
+      if (mProgram == null) {
+        return;
+      }
+      ArrayList<Program> additionalPrograms = new ArrayList<Program>(0);
       
       int startTime = mStart.get(Calendar.HOUR_OF_DAY) * 60 + mStart.get(Calendar.MINUTE);
       int day = mStart.get(Calendar.DAY_OF_MONTH);
@@ -218,7 +220,7 @@ public final class ProgramTime implements Cloneable {
           found = true;
         }
         else if(found && prog.getStartTime() >= startTime && (prog.getStartTime() + prog.getLength()) <= endTime) {          
-          additonalPrograms.add(prog);
+          additionalPrograms.add(prog);
         }
         else if(found) {
           break;
@@ -237,7 +239,7 @@ public final class ProgramTime implements Cloneable {
             Program prog = channelDayProgram.next();
             
             if((prog.getStartTime() + prog.getLength()) <= endTime) {
-              additonalPrograms.add(prog);
+              additionalPrograms.add(prog);
             }
             else {
               break;
@@ -246,7 +248,7 @@ public final class ProgramTime implements Cloneable {
         }
       }
       
-      mAdditionalPrograms = additonalPrograms.toArray(new Program[additonalPrograms.size()]);
+      mAdditionalPrograms = additionalPrograms.toArray(new Program[additionalPrograms.size()]);
     }
 
     /**
@@ -289,7 +291,7 @@ public final class ProgramTime implements Cloneable {
     }
 
     /**
-     * Seth the Title
+     * Set the Title
      * @param title new Title
      */
     public void setTitle(String title) {
@@ -389,6 +391,9 @@ public final class ProgramTime implements Cloneable {
      * @since 2.11
      */
     public boolean checkIfRemovedOrUpdateInstead() {
+      if (mProgram == null) {
+        return true;
+      }
       if(mProgram.getProgramState() == Program.WAS_UPDATED_STATE) {
         mProgram = Plugin.getPluginManager().getProgram(mProgram.getDate(), mProgram.getID());
       } else if(mProgram.getProgramState() == Program.WAS_DELETED_STATE) {
@@ -402,7 +407,7 @@ public final class ProgramTime implements Cloneable {
      * Calculates the time difference between start and end in minutes
      *
      * @return Time in Minutes between start and end
-     * Ïsince 2.6.1
+     * @since 2.6.1
      */
     public int getLength() {
         long diff = mEnd.getTimeInMillis() - mStart.getTimeInMillis();
