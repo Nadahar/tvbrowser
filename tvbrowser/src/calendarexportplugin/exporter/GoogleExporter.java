@@ -45,7 +45,6 @@ import calendarexportplugin.utils.CalendarToolbox;
 
 import com.google.gdata.client.GoogleService;
 import com.google.gdata.client.Query;
-import com.google.gdata.client.calendar.CalendarService;
 import com.google.gdata.data.DateTime;
 import com.google.gdata.data.PlainTextConstruct;
 import com.google.gdata.data.calendar.CalendarEventEntry;
@@ -72,14 +71,14 @@ public class GoogleExporter extends AbstractExporter {
 
   protected static final String USERNAME = "Google_Username";
   private static final String PASSWORD = "Google_Password";
-  protected static final String STOREPASSWORD = "Google_StorePassword";
-  protected static final String STORESETTINGS = "Google_StoreSettgins";
-  protected static final String SELECTEDCALENDAR = "Google_SelectedCalendar";
+  protected static final String STORE_PASSWORD = "Google_StorePassword";
+  protected static final String STORE_SETTINGS = "Google_StoreSettgins";
+  protected static final String SELECTED_CALENDAR = "Google_SelectedCalendar";
   protected static final String REMINDER = "Google_Reminder";
-  protected static final String REMINDERMINUTES = "Google_ReminderMinutes";
-  protected static final String REMINDERSMS = "Google_ReminderSMS";
-  protected static final String REMINDEREMAIL = "Google_ReminderEMAIL";
-  protected static final String REMINDERALERT = "Google_ReminderAlert";
+  protected static final String REMINDER_MINUTES = "Google_ReminderMinutes";
+  protected static final String REMINDER_SMS = "Google_ReminderSMS";
+  protected static final String REMINDER_EMAIL = "Google_ReminderEMAIL";
+  protected static final String REMINDER_ALERT = "Google_ReminderAlert";
 
   private String mPassword = "";
 
@@ -92,13 +91,13 @@ public class GoogleExporter extends AbstractExporter {
       boolean uploadedItems = false;
       mPassword = IOUtilities.xorDecode(settings.getExporterProperty(PASSWORD), 345903).trim();
 
-      if (!settings.getExporterProperty(STOREPASSWORD, false)) {
+      if (!settings.getExporterProperty(STORE_PASSWORD, false)) {
         if (!showLoginDialog(settings)) {
           return false;
         }
       }
 
-      if (!settings.getExporterProperty(STORESETTINGS, false)) {
+      if (!settings.getExporterProperty(STORE_SETTINGS, false)) {
         if (!showCalendarSettings(settings)) {
           return false;
         }
@@ -108,7 +107,7 @@ public class GoogleExporter extends AbstractExporter {
       myService.setUserCredentials(settings.getExporterProperty(USERNAME).trim(), mPassword);
 
       URL postUrl =
-              new URL("http://www.google.com/calendar/feeds/" + settings.getExporterProperty(SELECTEDCALENDAR) + "/private/full");
+              new URL("http://www.google.com/calendar/feeds/" + settings.getExporterProperty(SELECTED_CALENDAR) + "/private/full");
 
       SimpleDateFormat formatDay = new SimpleDateFormat("yyyy-MM-dd");
       formatDay.setTimeZone(TimeZone.getTimeZone("GMT"));
@@ -160,20 +159,20 @@ public class GoogleExporter extends AbstractExporter {
             int reminderMinutes = 0;
 
             try {
-              reminderMinutes = settings.getExporterProperty(REMINDERMINUTES, 0);
+              reminderMinutes = settings.getExporterProperty(REMINDER_MINUTES, 0);
             } catch (NumberFormatException e) {
               e.printStackTrace();
             }
 
-            if (settings.getExporterProperty(REMINDERALERT, false)) {
+            if (settings.getExporterProperty(REMINDER_ALERT, false)) {
               addReminder(myEntry, reminderMinutes, Reminder.Method.ALERT);
             }
 
-            if (settings.getExporterProperty(REMINDEREMAIL, false)) {
+            if (settings.getExporterProperty(REMINDER_EMAIL, false)) {
               addReminder(myEntry, reminderMinutes, Reminder.Method.EMAIL);
             }
 
-            if (settings.getExporterProperty(REMINDERSMS, false)) {
+            if (settings.getExporterProperty(REMINDER_SMS, false)) {
               addReminder(myEntry, reminderMinutes, Reminder.Method.SMS);
             }
 
@@ -198,7 +197,7 @@ public class GoogleExporter extends AbstractExporter {
       return true;
     } catch (AuthenticationException e) {
       ErrorHandler.handle(mLocalizer.msg("loginFailure", "Problems during login to Service.\nMaybe bad username or password?"), e);
-      settings.setExporterProperty(STOREPASSWORD, false);
+      settings.setExporterProperty(STORE_PASSWORD, false);
     } catch (Exception e) {
       ErrorHandler.handle(mLocalizer.msg("commError", "Error while communicating with Google!"), e);
     }
@@ -269,7 +268,7 @@ public class GoogleExporter extends AbstractExporter {
 
     login = new LoginDialog(parent, settings.getExporterProperty(USERNAME),
         IOUtilities.xorDecode(settings.getExporterProperty(PASSWORD), 345903),
-        settings.getExporterProperty(STOREPASSWORD, false));
+        settings.getExporterProperty(STORE_PASSWORD, false));
 
     if (login.askLogin() != JOptionPane.OK_OPTION) {
       return false;
@@ -286,10 +285,10 @@ public class GoogleExporter extends AbstractExporter {
 
     if (login.storePasswords()) {
       settings.setExporterProperty(PASSWORD, IOUtilities.xorEncode(login.getPassword().trim(), 345903));
-      settings.setExporterProperty(STOREPASSWORD, true);
+      settings.setExporterProperty(STORE_PASSWORD, true);
     } else {
       settings.setExporterProperty(PASSWORD, "");
-      settings.setExporterProperty(STOREPASSWORD, false);
+      settings.setExporterProperty(STORE_PASSWORD, false);
     }
 
     mPassword = login.getPassword().trim();
@@ -308,7 +307,7 @@ public class GoogleExporter extends AbstractExporter {
         showCalendarSettings(settings);
       } catch (AuthenticationException e) {
         ErrorHandler.handle(mLocalizer.msg("loginFailure", "Problems while Login to Service.\nMaybee bad Username/Password ?"), e);
-        settings.setExporterProperty(STOREPASSWORD, false);
+        settings.setExporterProperty(STORE_PASSWORD, false);
       } catch (Exception e) {
         ErrorHandler.handle(mLocalizer.msg("commError", "Error while communicating with Google!"), e);
       }

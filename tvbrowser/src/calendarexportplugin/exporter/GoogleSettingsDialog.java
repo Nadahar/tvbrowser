@@ -118,7 +118,7 @@ public class GoogleSettingsDialog extends JDialog  implements WindowClosingIf {
     v.add(new GoogleComboboxItem(10080, mLocalizer.msg("10080_minutes","1 week")));
     mRemindMinutes = new JComboBox(v);
 
-    String minutes = settings.getExporterProperty(GoogleExporter.REMINDERMINUTES);
+    String minutes = settings.getExporterProperty(GoogleExporter.REMINDER_MINUTES);
     for (GoogleComboboxItem item : v) {
       if (item.getKey().equals(minutes)) {
         mRemindMinutes.setSelectedItem(item);
@@ -176,7 +176,7 @@ public class GoogleSettingsDialog extends JDialog  implements WindowClosingIf {
         } catch (AuthenticationException e) {
           loadingFailed();
           ErrorHandler.handle(mErrorLocalizer.msg("loginFailure", "Problems during login to service.\nMaybe bad username or password?"), e);
-          settings.setExporterProperty(GoogleExporter.STOREPASSWORD, false);
+          settings.setExporterProperty(GoogleExporter.STORE_PASSWORD, false);
         } catch (Exception e) {
           loadingFailed();
           ErrorHandler.handle(mErrorLocalizer.msg("commError", "Error while communicating with Google!"), e);
@@ -188,26 +188,26 @@ public class GoogleSettingsDialog extends JDialog  implements WindowClosingIf {
   }
 
   private void loadValues(CalendarExportSettings settings) {
-    mUseAlert.setSelected(settings.getExporterProperty(GoogleExporter.REMINDERALERT, false));
-    mUseEMail.setSelected(settings.getExporterProperty(GoogleExporter.REMINDEREMAIL, false));
-    mUseSMS.setSelected(settings.getExporterProperty(GoogleExporter.REMINDERSMS, false));
+    mUseAlert.setSelected(settings.getExporterProperty(GoogleExporter.REMINDER_ALERT, false));
+    mUseEMail.setSelected(settings.getExporterProperty(GoogleExporter.REMINDER_EMAIL, false));
+    mUseSMS.setSelected(settings.getExporterProperty(GoogleExporter.REMINDER_SMS, false));
 
     mReminderCheckBox.setSelected(settings.getExporterProperty(GoogleExporter.REMINDER, false));
-    mReminderStore.setSelected(settings.getExporterProperty(GoogleExporter.STORESETTINGS, false));
+    mReminderStore.setSelected(settings.getExporterProperty(GoogleExporter.STORE_SETTINGS, false));
   }
 
   private void okPressed(CalendarExportSettings settings) {
     mReturnValue = JOptionPane.OK_OPTION;
     setVisible(false);
 
-    settings.setExporterProperty(GoogleExporter.SELECTEDCALENDAR, ((GoogleComboboxItem)mCalendarChooser.getSelectedItem()).getKey());
+    settings.setExporterProperty(GoogleExporter.SELECTED_CALENDAR, ((GoogleComboboxItem)mCalendarChooser.getSelectedItem()).getKey());
     settings.setExporterProperty(GoogleExporter.REMINDER, mReminderCheckBox.isSelected());
-    settings.setExporterProperty(GoogleExporter.REMINDERALERT, mUseAlert.isSelected());
-    settings.setExporterProperty(GoogleExporter.REMINDEREMAIL, mUseEMail.isSelected());
-    settings.setExporterProperty(GoogleExporter.REMINDERSMS,   mUseSMS.isSelected());
-    settings.setExporterProperty(GoogleExporter.REMINDERMINUTES, ((GoogleComboboxItem)mRemindMinutes.getSelectedItem()).getKey());
+    settings.setExporterProperty(GoogleExporter.REMINDER_ALERT, mUseAlert.isSelected());
+    settings.setExporterProperty(GoogleExporter.REMINDER_EMAIL, mUseEMail.isSelected());
+    settings.setExporterProperty(GoogleExporter.REMINDER_SMS,   mUseSMS.isSelected());
+    settings.setExporterProperty(GoogleExporter.REMINDER_MINUTES, ((GoogleComboboxItem)mRemindMinutes.getSelectedItem()).getKey());
 
-    settings.setExporterProperty(GoogleExporter.STORESETTINGS,   mReminderStore.isSelected());
+    settings.setExporterProperty(GoogleExporter.STORE_SETTINGS,   mReminderStore.isSelected());
   }
 
   private void loadingFailed() {
@@ -243,7 +243,7 @@ public class GoogleSettingsDialog extends JDialog  implements WindowClosingIf {
 
       model.addElement(new GoogleComboboxItem(id, entry.getTitle().getPlainText()));
 
-      if (id.equals(settings.getExporterProperty(GoogleExporter.SELECTEDCALENDAR))) {
+      if (id.equals(settings.getExporterProperty(GoogleExporter.SELECTED_CALENDAR))) {
         mCalendarChooser.setSelectedIndex(model.getSize() - 1);
       }
     }
