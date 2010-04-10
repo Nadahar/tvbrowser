@@ -1249,12 +1249,13 @@ public class TVBrowser {
     System.setProperty("http.proxyPort",     httpPort);
     System.setProperty("http.proxyUser",     httpUser);
     System.setProperty("http.proxyPassword", httpPassword);
+    System.setProperty("https.proxyHost",     httpHost);
   }
 
   /**
    * Gets if TV-Browser runs as portable version.
    *
-   * @return If TV-Browser runa as portable version.
+   * @return If TV-Browser runs as portable version.
    * @since 2.2.2/2.5.1
    */
   public static boolean isTransportable() {
