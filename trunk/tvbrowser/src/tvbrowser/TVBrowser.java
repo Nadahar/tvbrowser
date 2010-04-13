@@ -1300,6 +1300,14 @@ public class TVBrowser {
     }
     return foundLNF;
   }
+
+  public static void stopAutomaticDownload() {
+    if (mAutoDownloadWaitingTimer != null) {
+      mAutoDownloadWaitingTimer.stop();
+      mainFrame.getStatusBarLabel().setText("");
+      mAutoDownloadWaitingTimer = null;
+    }
+  }
 }
 
   class FileLoggingHandler extends Handler {

@@ -798,6 +798,12 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
         }
         else {
           mProgramTableScrollPane.getProgramTable().stopAutoScroll();
+          mAutoDownloadTimer = -1;
+          mLastTimerMinutesAfterMidnight = IOUtilities.getMinutesAfterMidnight();
+          TVBrowser.stopAutomaticDownload();
+          if (TVBrowserActions.update.isUpdating()) {
+            TVBrowserActions.update.actionPerformed(null);
+          }
         }
       }
 
@@ -1215,7 +1221,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
   }
 
   /**
-   * Resets the arrays of on air programs for relaoding all.
+   * Resets the arrays of on air programs for reloading all.
    */
   public static void resetOnAirArrays() {
     mChannelDateArr = null;
