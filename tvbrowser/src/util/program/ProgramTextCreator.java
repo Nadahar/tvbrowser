@@ -1068,7 +1068,7 @@ public class ProgramTextCreator {
     String[] lines = text.split("\n");
     if (lines.length > 5) {
       int avg = (text.length() - lines.length + 1) / lines.length;
-      if (avg < 100 && avg > 50) {
+      if (avg < 120 && avg > 50) {
         StringBuilder result = new StringBuilder();
         for (int i = 0; i < lines.length; i++) {
           result.append(lines[i]);
