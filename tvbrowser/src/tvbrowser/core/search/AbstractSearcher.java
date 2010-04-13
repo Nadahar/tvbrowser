@@ -32,6 +32,9 @@ import java.util.Comparator;
 import javax.swing.DefaultListModel;
 import javax.swing.SwingUtilities;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.text.StrBuilder;
+
 import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataBase;
 import util.program.ProgramUtilities;
@@ -45,7 +48,7 @@ import devplugin.ProgressMonitor;
 
 /**
  * An abstract searcher implementation that reduces the checks on String checks.
- * 
+ *
  * @author Til Schneider, www.murfman.de
  */
 public abstract class AbstractSearcher implements ProgramSearcher {
@@ -53,14 +56,14 @@ public abstract class AbstractSearcher implements ProgramSearcher {
 
   /** The comparator that compares two programs by their start time and date */
   private static Comparator<Program> mStartTimeComparator;
-  
+
   /** Indicates if the special characters should be replaced.*/
   protected boolean mReplaceSpCh = false;
 
 
   /**
    * Gets or creates the start time comparator.
-   * 
+   *
    * @return The start time comparator
    */
   private static Comparator<Program> getStartTimeComparator() {
@@ -86,7 +89,7 @@ public abstract class AbstractSearcher implements ProgramSearcher {
   /**
    * Checks whether a field of a program matches to the criteria of this
    * searcher.
-   * 
+   *
    * @param prog The program to check.
    * @param fieldArr The fields to search in.
    * @return Whether at least one field of the program matches.
@@ -98,26 +101,46 @@ public abstract class AbstractSearcher implements ProgramSearcher {
     }
 
     /* Concatenate all fields into one string and do the match */
-    String s = getProgramFieldsText(prog, fieldArr);
-    
-    if(s.length() == 0) {
+    String allFields = getProgramFieldsText(prog, fieldArr);
+
+    if(StringUtils.isEmpty(allFields)) {
       return false;
     } else {
-      return matches(s);
+      return matches(allFields);
     }
   }
 
   /**
    * get the searchable text for all given program fields contained in this
    * program
-   * 
+   *
    * @param prog
    * @param fieldArr
    * @return concatenated string for use in regex search
    */
   private String getProgramFieldsText(Program prog, ProgramFieldType[] fieldArr) {
-    StringBuilder buf = new StringBuilder();
+    if (fieldArr.length == 1) {
+      ProgramFieldType fieldType = fieldArr[0];
+      if (fieldType.getFormat() == ProgramFieldType.TEXT_FORMAT) {
+        return prog.getTextField(fieldType);
+      }
+      else if (fieldType.getFormat() == ProgramFieldType.INT_FORMAT) {
+        return prog.getIntFieldAsString(fieldType);
+      }
+      else if (fieldType.getFormat() == ProgramFieldType.TIME_FORMAT) {
+        if (fieldType == ProgramFieldType.START_TIME_TYPE) {
+          return prog.getTimeString();
+        }
+        else if (fieldType == ProgramFieldType.END_TIME_TYPE) {
+          return prog.getEndTimeString();
+        }
+        else {
+          return prog.getTimeFieldAsString(fieldType);
+        }
+      }
+    }
 
+    StrBuilder buffer = new StrBuilder();
     for (ProgramFieldType fieldType : fieldArr) {
       // Get the field value as String
       String value = null;
@@ -142,39 +165,27 @@ public abstract class AbstractSearcher implements ProgramSearcher {
       }
 
       if (value != null) {
-        buf.append(value).append(' ');
+        buffer.append(value).append(' ');
       }
     }
 
     /* Remove special characters */
-    String s = buf.toString();
-    
+
     if(mReplaceSpCh) {
-      s = s.replaceAll("\\p{Punct}", ";");
+      buffer.replaceAll("\\p{Punct}", ";");
     }
 
-    // remove line breaks. for performance, do this manually
-    int stringLength = s.length();
-    char[] arr = s.toCharArray();
-    StringBuilder res = new StringBuilder(stringLength);
-    for (int i = 0; i < stringLength; i++) {
-      if (arr[i] != '\n') {
-        res.append(arr[i]);
-      }
-      else {
-        res.append(' ');
-      }
-    }
-    s = res.toString().trim();
-    return s;
+    // remove line breaks
+    buffer.replaceAll('\n', ' ');
+    return buffer.trim().toString();
   }
-  
+
   public synchronized Program[] search(ProgramFieldType[] fieldArr, Date startDate,
                           int nrDays, Channel[] channels, boolean sortByStartTime, ProgressMonitor progress)
   {
     return search(fieldArr, startDate, nrDays, channels, sortByStartTime, progress, null);
   }
-  
+
   public synchronized Program[] search(ProgramFieldType[] fieldArr, Date startDate,
                           int nrDays, Channel[] channels, boolean sortByStartTime, ProgressMonitor progress, final DefaultListModel listModel)
   {
@@ -216,20 +227,20 @@ public abstract class AbstractSearcher implements ProgramSearcher {
                     SwingUtilities.invokeLater(new Runnable() {
                       public void run() {
                         int insertIndex = 0;
-                        
+
                         for(int index = 0; index < listModel.getSize(); index++) {
                           Program p = (Program)listModel.get(index);
-                          
+
                           if(ProgramUtilities.getProgramComparator().compare(p,prog) < 0) {
                             insertIndex = index+1;
                           }
                         }
 
-                        listModel.add(insertIndex,prog);                        
+                        listModel.add(insertIndex,prog);
                       }
                     });
                   }
-                  
+
                   hitList.add(prog);
                 }
               }
@@ -259,7 +270,7 @@ public abstract class AbstractSearcher implements ProgramSearcher {
       progress.setValue(0);
       progress.setMessage("");
     }
-    
+
     // return the result
     return hitArr;
   }
@@ -269,10 +280,10 @@ public abstract class AbstractSearcher implements ProgramSearcher {
   {
     return search(fieldArr, startDate, nrDays, channels, sortByStartTime, null);
   }
-  
+
   /**
    * Checks whether a value matches to the criteria of this searcher.
-   * 
+   *
    * @param value The value to check
    * @return Whether the value matches.
    */
