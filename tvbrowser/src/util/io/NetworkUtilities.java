@@ -36,7 +36,7 @@ import java.util.logging.Logger;
 
 /**
  * Network Helper Class with some utility functions
- * 
+ *
  * @author bodum
  * @since 2.2
  */
@@ -46,8 +46,8 @@ public class NetworkUtilities {
     .getLogger(NetworkUtilities.class.getName());
 
   /**
-   * Checks if a internet connection can be established
-   * 
+   * Checks if a Internet connection can be established
+   *
    * @return true, if a connection can be established
    */
   public static boolean checkConnection() {
@@ -55,19 +55,19 @@ public class NetworkUtilities {
   }
 
   /**
-   * Checks if a internet connection to a specific Server can be established
-   * 
+   * Checks if a Internet connection to a specific Server can be established
+   *
    * @param url check this Server
    * @return true, if a connection can be established
    */
   public static boolean checkConnection(URL url) {
     return new CheckNetworkConnection().checkConnection(url);
   }
-  
-  
+
+
   /**
    * get the time difference from a NTP server
-   * 
+   *
    * @param serverName
    * @return time difference in seconds
    * @since 2.6
@@ -85,50 +85,50 @@ public class NetworkUtilities {
       byte[] buf = new NtpMessage().toByteArray();
       DatagramPacket packet =
         new DatagramPacket(buf, buf.length, address, 123);
-      
+
       // Set the transmit timestamp *just* before sending the packet
       // ToDo: Does this actually improve performance or not?
       NtpMessage.encodeTimestamp(packet.getData(), 40,
         (System.currentTimeMillis()/1000.0) + 2208988800.0);
-      
+
       socket.send(packet);
-      
-      
+
+
       // Get response
       mLog.info("NTP request sent, waiting for response...");
       packet = new DatagramPacket(buf, buf.length);
       socket.receive(packet);
-      
+
       // Immediately record the incoming timestamp
       double destinationTimestamp =
         (System.currentTimeMillis()/1000.0) + 2208988800.0;
-      
-      
+
+
       // Process response
       NtpMessage msg = new NtpMessage(packet.getData());
-      
+
       // Corrected, according to RFC2030 errata
       double roundTripDelay = (destinationTimestamp-msg.originateTimestamp) -
         (msg.transmitTimestamp-msg.receiveTimestamp);
-        
+
       double localClockOffset =
         ((msg.receiveTimestamp - msg.originateTimestamp) +
         (msg.transmitTimestamp - destinationTimestamp)) / 2;
-      
-      
+
+
       // Display response
       mLog.info("NTP server: " + serverName);
       mLog.info(msg.toString());
-      
+
       mLog.info("Dest. timestamp:     " +
         NtpMessage.timestampToString(destinationTimestamp));
-      
+
       mLog.info("Round-trip delay: " +
         new DecimalFormat("0.00").format(roundTripDelay*1000) + " ms");
-      
+
       mLog.info("Local clock offset: " +
         new DecimalFormat("0.00").format(localClockOffset*1000) + " ms");
-      
+
       socket.close();
       return (int) localClockOffset;
     } catch (SocketException e) {

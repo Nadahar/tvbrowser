@@ -324,7 +324,7 @@ public class TvDataUpdater {
         try {
           lst.tvDataUpdateStarted();
         } catch(Throwable thr) {
-          mLog.log(Level.WARNING, "Fireing event 'TV data update started' failed", thr);
+          mLog.log(Level.WARNING, "Firing event 'TV data update started' failed", thr);
         }
       }
     }
@@ -338,7 +338,7 @@ public class TvDataUpdater {
         try {
           lst.tvDataUpdateFinished();
         } catch(Throwable thr) {
-          mLog.log(Level.WARNING, "Fireing event 'TV data update finished' failed", thr);
+          mLog.log(Level.WARNING, "Firing event 'TV data update finished' failed", thr);
         }
       }
 
@@ -347,7 +347,7 @@ public class TvDataUpdater {
 
 
   /**
-   * Stopps the current download.
+   * Stops the current download.
    */
   public void stopDownload() {
     mStopDownloading = true;

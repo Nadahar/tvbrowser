@@ -29,13 +29,11 @@ package devplugin;
 import java.awt.Frame;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Properties;
 
 import tvdataservice.SettingsPanel;
 import tvdataservice.TvDataUpdateManager;
 import util.exc.TvBrowserException;
-import util.misc.SoftReferenceCache;
 import util.tvdataservice.IconLoader;
 
 /**
@@ -48,14 +46,14 @@ public abstract class AbstractTvDataService {
   private Frame mParentFrame;
 
   /** Contains the mirror urls usable for receiving the groups.txt from. */
-  private static final String[] DEFAULT_CHANNEL_GROUPS_MIRRORS = { 
+  private static final String[] DEFAULT_CHANNEL_GROUPS_MIRRORS = {
     "http://tvbrowser.dyndns.tv",
-    "http://daten.wannawork.de", 
-    "http://www.gfx-software.de/tvbrowserorg", 
+    "http://daten.wannawork.de",
+    "http://www.gfx-software.de/tvbrowserorg",
     "http://tvbrowser1.sam-schwedler.de",
     "http://tvbrowser.nicht-langweilig.de/data"
   };
-  
+
   /**
    * The plugin manager. It's the connection to TV-Browser.
    * <p>
@@ -75,14 +73,14 @@ public abstract class AbstractTvDataService {
   final public Version getAPIVersion() {
     return new Version(1,0);
   }
-  
+
   /**
    * Use this method to call methods of the plugin manager.
    * <p>
    * The plugin manager is your connection to TV-Browser. Every communication
    * between TV-Browser and the data service is either initiated by TV-Browser or made
    * by using the plugin manager.
-   * 
+   *
    * @return The plugin manager.
    * @since 2.6
    */
@@ -92,7 +90,7 @@ public abstract class AbstractTvDataService {
 
   /**
    * Called by the host-application to provide access to the plugin manager.
-   * 
+   *
    * @param manager The plugin manager the plugins should use.
    */
   final public static void setPluginManager(PluginManager manager) {
@@ -100,10 +98,10 @@ public abstract class AbstractTvDataService {
       mPluginManager = manager;
     }
   }
-  
+
   /**
    * Gets the version of this data service.
-   * 
+   *
    * @return The version of this data service.
    */
   public static Version getVersion() {
@@ -141,7 +139,7 @@ public abstract class AbstractTvDataService {
   public void handleTvBrowserStartFinished() {
     // do nothing
   }
-  
+
   /**
    * Gets if the data service supports auto update of data.
    * @return <code>True</code> if the data service supports the auto update,
@@ -151,15 +149,15 @@ public abstract class AbstractTvDataService {
   public boolean supportsAutoUpdate() {
     return false;
   }
-  
-  /** 
+
+  /**
    * Gets the action menu with the action supported for toolbar actions.
-   * @return The action menu with the supported toolbar actions 
+   * @return The action menu with the supported toolbar actions
    */
   public ActionMenu getButtonAction() {
     return null;
   }
-  
+
   /**
    * Gets the id of this ButtonActionIf.
    * @return The id of this ButtonActionIf.
@@ -167,7 +165,7 @@ public abstract class AbstractTvDataService {
   final public String getId() {
     return this.getClass().toString();
   }
-  
+
   /**
    * Gets the description for this ButtonActionIf.
    * @return The description for this ButtonActionIf.
@@ -175,11 +173,11 @@ public abstract class AbstractTvDataService {
   public String getButtonActionDescription() {
     return getInfo().getDescription();
   }
-  
-  
+
+
   /**
    * Gets the actions for the context menu of a program.
-   * 
+   *
    * @param program The program the context menu will be shown for.
    * @return the actions this plugin provides for the given program or
    *         <code>null</code> if the plugin does not provide this feature.
@@ -187,11 +185,11 @@ public abstract class AbstractTvDataService {
   public ActionMenu getContextMenuActions(Program program) {
     return null;
   }
-  
+
   protected IconLoader getIconLoader(final String groupId, final File workingDirectory) throws IOException {
     return new IconLoader(this, groupId, workingDirectory);
   }
-  
+
   /**
    * get the default mirrors to ask for channel groups
    * @return mirror url array
@@ -200,7 +198,7 @@ public abstract class AbstractTvDataService {
   protected String[] getDefaultMirrors() {
     return DEFAULT_CHANNEL_GROUPS_MIRRORS.clone();
   }
-  
+
   /**
    * This method is called by the host application to set the working folder.
    * If required, TvDataService implementations should store their data
@@ -226,19 +224,19 @@ public abstract class AbstractTvDataService {
 
   /**
    * Called by the host-application during start-up. Implement this method to
-   * load your dataservices settings from the file system.
+   * load your data service settings from the file system.
    */
   public abstract void loadSettings(Properties settings);
 
   /**
    * Called by the host-application during shut-down. Implements this method to
-   * store your dataservices settings to the file system.
+   * store your data service settings to the file system.
    */
   public abstract Properties storeSettings();
 
   /**
    * A TvDataService can have a settings panel within the settings dialog.
-   * If the hasSettingsPanel() method returns false, the getSettingsPanel()
+   * If the hasSettingsPanel() method returns false, the {@link #getSettingsPanel()}
    * method is never called.
    * @return true, if the settings panel feature is used by this TvDataService
    */
@@ -257,7 +255,7 @@ public abstract class AbstractTvDataService {
 
   /**
    * Some TvDataServices may need to connect to the Internet to know their
-   * channels. If supportsDanymicChannelList() returns true, this method is
+   * channels. If {@link #supportsDynamicChannelList()} returns true, this method is
    * called to check for available channels.
    * @param group
    * @param monitor
@@ -284,7 +282,7 @@ public abstract class AbstractTvDataService {
    * Gets information about this TvDataService
    */
   public abstract PluginInfo getInfo();
-  
+
   public boolean hasRightToDownloadIcons() {
     return false;
   }
