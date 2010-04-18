@@ -287,7 +287,7 @@ public class FavoritesPlugin {
           mHasRightToSave = true;
           updateRootNode(true);
 
-          ArrayList<Favorite> showInfoFavorites = new ArrayList<Favorite>(0);
+          ArrayList<Favorite> infoFavoriteList = new ArrayList<Favorite>(0);
 
           Favorite[] favoriteArr = FavoriteTreeModel.getInstance().getFavoriteArr();
 
@@ -295,18 +295,21 @@ public class FavoritesPlugin {
             favorite.clearRemovedPrograms();
 
             if (favorite.isRemindAfterDownload() && favorite.getNewPrograms().length > 0) {
-              showInfoFavorites.add(favorite);
+              infoFavoriteList.add(favorite);
             }
           }
 
-          if(!showInfoFavorites.isEmpty()) {
+          if(!infoFavoriteList.isEmpty()) {
+            Favorite[] infoFavoriteArr = infoFavoriteList.toArray(new Favorite[infoFavoriteList.size()]);
             if(mUpdateInfoThread == null || !mUpdateInfoThread.isAlive()) {
               mUpdateInfoThread = new UpdateInfoThread();
               mUpdateInfoThread.setPriority(Thread.MIN_PRIORITY);
+              mUpdateInfoThread.addFavorites(infoFavoriteArr);
               mUpdateInfoThread.start();
             }
-
-            mUpdateInfoThread.addFavorites(showInfoFavorites.toArray(new Favorite[showInfoFavorites.size()]));
+            else {
+              mUpdateInfoThread.addFavorites(infoFavoriteArr);
+            }
           }
 
           Favorite[] favorites = FavoriteTreeModel.getInstance().getFavoriteArr();
