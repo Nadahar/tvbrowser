@@ -33,24 +33,24 @@ import tvbrowser.core.search.AbstractSearcher;
 
 /**
  * Zentrale Kontrollklasse f�r boolsche Suchen.
- * 
+ *
  * Muster: WOrt AND WOrt OR NOT (WOrt AND WOrt). Jedes Wort kann alle
  * Zeichenfolgen inklusive " " enthalten.
- * 
+ *
  * Ausnahmen (casesensitive): "AND", "OR", "&&", "||", "NOT", "(", ")" und
  * regex-Ausdr�cke. " "-Zeichen werden durch den regex-Ausdr�ck "\s" ersetzt.
- * 
+ *
  * regex-Ausdr�ck in den W�rtern f�hren zu unvOrhersagbarem Verhalten
- * 
+ *
  * PriOrit�tsreihenfolge: NOT, AND, OR. Beispiele: WOrt AND WOrt OR WOrt =>
  * (WOrt AND WOrt) OR WOrt WOrt AND NOT WOrt OR WOrt => (WOrt AND (NOT WOrt)) OR
  * WOrt
- * 
+ *
  * Klammern m�ssen nicht geschlossen werden.
- * 
+ *
  * Die Klammerung kann beliebig verschaltet werden. (was aber schwer auf die
  * Performance der Kompilierung schlagen kann)
- * 
+ *
  * @author Gilson Laurent, pumpkin@gmx.de
  */
 public class BooleanSearcher extends AbstractSearcher {
@@ -67,7 +67,7 @@ public class BooleanSearcher extends AbstractSearcher {
 
   /**
    * Checks whether a value matches to the criteria of this searcher.
-   * 
+   *
    * @param value The value to check
    * @return Whether the value matches.
    */
@@ -89,19 +89,19 @@ public class BooleanSearcher extends AbstractSearcher {
    * Erzeugt einen neuen Suchbaum. Der Baum wird automatisch optimiert. Es kann
    * immer nur ein Konstruktor gleichzeitig laufen. Fuer Synchronization ist
    * gesorgt.
-   * @throws ParserException 
+   * @throws ParserException
    */
   public BooleanSearcher(String pattern, boolean CaseSensitive) throws ParserException {
     Hashtable<String, Object> matcherTab = new Hashtable<String, Object>();
     caseSensitive = CaseSensitive;
     mReplaceSpCh = true;
-    
+
     pattern = pattern.trim();
     pattern = pattern.replaceAll("\\\"", " ");
     pattern = pattern.replaceAll("\\(", " ( ");
     pattern = pattern.replaceAll("\\)", " ) ");
-    pattern = pattern.replaceAll("[\\p{Punct}&&[^()]]", ";");
-    
+    pattern = pattern.replaceAll("[\\p{Punct}&&[^()]]", " AND ");
+
     StringTokenizer ST = new StringTokenizer(pattern);
     Vector<Object> part = new Vector<Object>();
     while (ST.hasMoreElements()) {
