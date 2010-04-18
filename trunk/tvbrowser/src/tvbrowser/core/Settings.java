@@ -94,6 +94,7 @@ import util.settings.VersionProperty;
 import util.settings.WindowSetting;
 import util.ui.Localizer;
 import util.ui.view.SplitViewProperty;
+import devplugin.Channel;
 import devplugin.Date;
 import devplugin.ProgramFieldType;
 import devplugin.Version;
@@ -795,8 +796,18 @@ public class Settings {
       mProp, "dir.plugins", mDefaultSettings.getProperty("pluginsdir",
           getDefaultPluginsDir()));
 
+  /**
+   * selected channel country filter in channel settings
+   * @since 3.0
+   */
+  public static final StringProperty propSelectedChannelCountry = new StringProperty(
+      mProp, "selectedChannelCountry", Locale.getDefault().getCountry().toLowerCase());
+
+  /**
+   * subscribed channels
+   */
   public static final ChannelArrayProperty propSubscribedChannels = new ChannelArrayProperty(
-      mProp, "subscribedchannels", new devplugin.Channel[] {});
+      mProp, "subscribedchannels", new Channel[0]);
 
   public static final ChoiceProperty propTableLayout = new ChoiceProperty(
       mProp, "table.layout", LAYOUT_OPTIMIZED_COMPACT_TIME_BLOCK, new String[] {
@@ -1508,13 +1519,6 @@ public class Settings {
   /** Saves the selected channel category filter index */
   public static final ByteProperty propSelectedChannelCategoryIndex = new ByteProperty(
       mProp, "selectedChannelCategoryIndex", (byte)1);
-
-  /**
-   * selected channel country filter in channel settings
-   * @since 3.0
-   */
-  public static final StringProperty propSelectedChannelCountry = new StringProperty(
-      mProp, "selectedChannelCountry", Locale.getDefault().getCountry().toLowerCase());
 
   public static final BooleanProperty propAutoDataDownloadEnabled = new BooleanProperty(
       mProp, "autoDataDownloadEnabled", true);

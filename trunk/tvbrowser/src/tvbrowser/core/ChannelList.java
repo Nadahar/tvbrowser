@@ -60,6 +60,46 @@ import devplugin.Channel;
  */
 public class ChannelList {
 
+  private static final String[] DEFAULT_CHANNELS_DE = new String[] {
+      "tvbrowserdataservice.TvBrowserDataService_main_de_ard", "tvbrowserdataservice.TvBrowserDataService_main_de_zdf",
+      "tvbrowserdataservice.TvBrowserDataService_main_de_rtl",
+      "tvbrowserdataservice.TvBrowserDataService_main_de_sat1",
+      "tvbrowserdataservice.TvBrowserDataService_main_de_pro7",
+      "tvbrowserdataservice.TvBrowserDataService_main_de_kabel1",
+      "tvbrowserdataservice.TvBrowserDataService_main_de_rtl2",
+      "tvbrowserdataservice.TvBrowserDataService_main_de_vox",
+      "tvbrowserdataservice.TvBrowserDataService_main_de_superrtl",
+      "tvbrowserdataservice.TvBrowserDataService_others_at_3sat" };
+
+  private static final String[] DEFAULT_CHANNELS_AT = new String[] {
+    "tvbrowserdataservice.TvBrowserDataService_austria_at_orf1",
+    "tvbrowserdataservice.TvBrowserDataService_austria_at_orf2",
+    "tvbrowserdataservice.TvBrowserDataService_main_de_ard",
+    "tvbrowserdataservice.TvBrowserDataService_main_de_zdf",
+    "tvbrowserdataservice.TvBrowserDataService_main_de_rtl",
+    "tvbrowserdataservice.TvBrowserDataService_main_de_sat1",
+    "tvbrowserdataservice.TvBrowserDataService_main_de_pro7",
+    "tvbrowserdataservice.TvBrowserDataService_main_de_kabel1",
+    "tvbrowserdataservice.TvBrowserDataService_main_de_rtl2",
+    "tvbrowserdataservice.TvBrowserDataService_main_de_vox",
+    "tvbrowserdataservice.TvBrowserDataService_main_de_superrtl",
+    "tvbrowserdataservice.TvBrowserDataService_others_at_3sat" };
+
+  private static final String[] DEFAULT_CHANNELS_CH = new String[] {
+    "tvbrowserdataservice.TvBrowserDataService_others_ch_sfdrs1",
+    "tvbrowserdataservice.TvBrowserDataService_others_ch_sfdrs2",
+    "tvbrowserdataservice.TvBrowserDataService_others_ch_sfinfo",
+    "tvbrowserdataservice.TvBrowserDataService_main_de_ard",
+    "tvbrowserdataservice.TvBrowserDataService_main_de_zdf",
+    "tvbrowserdataservice.TvBrowserDataService_main_de_rtl",
+    "tvbrowserdataservice.TvBrowserDataService_main_de_sat1",
+    "tvbrowserdataservice.TvBrowserDataService_main_de_pro7",
+    "tvbrowserdataservice.TvBrowserDataService_main_de_kabel1",
+    "tvbrowserdataservice.TvBrowserDataService_main_de_rtl2",
+    "tvbrowserdataservice.TvBrowserDataService_main_de_vox",
+    "tvbrowserdataservice.TvBrowserDataService_main_de_superrtl",
+    "tvbrowserdataservice.TvBrowserDataService_others_at_3sat" };
+
   private static final String FILENAME_DAYLIGHT_CORRECTION = "daylight_correction.txt";
 
   private static final String FILENAME_CHANNEL_NAMES = "channel_names.txt";
@@ -158,6 +198,9 @@ public class ChannelList {
    */
   public static void initSubscribedChannels() {
     Channel[] channelArr = Settings.propSubscribedChannels.getChannelArray();
+    if (channelArr.length == 0) {
+      channelArr = getDefaultChannels(Settings.propSelectedChannelCountry.getString());
+    }
 
     for (Channel channel : channelArr) {
       if (channel != null) {
@@ -902,6 +945,35 @@ public class ChannelList {
 
   public static Channel getChannel(final String uniqueId) {
     return mAvailableChannelsMap.get(uniqueId);
+  }
+
+  /**
+   * get the list of channels subscribed by default
+   * @param country
+   * @return
+   * @since 3.0
+   */
+  private static Channel[] getDefaultChannels(final String country) {
+    ArrayList<Channel> list = new ArrayList<Channel>();
+    if (country.equalsIgnoreCase("de")) {
+      addChannels(list, DEFAULT_CHANNELS_DE);
+    }
+    else if (country.equalsIgnoreCase("at")) {
+      addChannels(list, DEFAULT_CHANNELS_AT);
+    }
+    else if (country.equalsIgnoreCase("ch")) {
+      addChannels(list, DEFAULT_CHANNELS_CH);
+    }
+    return list.toArray(new Channel[list.size()]);
+  }
+
+  private static void addChannels(ArrayList<Channel> list, String[] channels) {
+    for (String id : channels) {
+      Channel channel = getChannel(id);
+      if (channel != null) {
+        list.add(channel);
+      }
+    }
   }
 
 }
