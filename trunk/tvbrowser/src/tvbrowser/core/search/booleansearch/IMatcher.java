@@ -26,33 +26,20 @@
 package tvbrowser.core.search.booleansearch;
 
 /**
- * Implementiert die Negation.
+ * Jedes Element in dem Suchbaum erbt von dieser Klasse.
  * 
  * @author Gilson Laurent, pumpkin@gmx.de
  */
-public class Not implements Block {
+public interface IMatcher {
 
-  private Block block;
+  /** Testet einen String. Gibt true zurück wenn die Bedinung erfüllt ist */
+  public boolean matches(String s);
 
-
-  public Not(Block b1) {
-    block = b1;
-  }
-
-
-  public boolean test(String s) {
-    return !block.test(s);
-  }
-
-
-  public String toString() {
-    return "( NOT " + block.toString() + ")";
-  }
-
-
-  public Block finish() {
-    block = block.finish();
-    return this;
-  }
+  /**
+   * Initialisiert und optimiert den IMatcher. Da der IMatcher u.U. ausgetauscht
+   * werden muss gibt die Methode einen (neuen) IMatcher zurück. Dieser ist zu
+   * verwenden.
+   */
+  public IMatcher optimize();
 
 }

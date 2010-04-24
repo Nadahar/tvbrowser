@@ -38,7 +38,8 @@ import tvbrowser.core.search.AbstractSearcher;
  * Zeichenfolgen inklusive " " enthalten.
  *
  * Ausnahmen (casesensitive): "AND", "OR", "&&", "||", "NOT", "(", ")" und
- * regex-Ausdr�cke. " "-Zeichen werden durch den regex-Ausdr�ck "\s" ersetzt.
+ * regex-Ausdr�cke. " "-Zeichen werden durch den regex-Ausdr�ck "\s"
+ * ersetzt.
  *
  * regex-Ausdr�ck in den W�rtern f�hren zu unvOrhersagbarem Verhalten
  *
@@ -56,106 +57,102 @@ import tvbrowser.core.search.AbstractSearcher;
 public class BooleanSearcher extends AbstractSearcher {
 
   /** The localizer of this class. */
-  private static final util.ui.Localizer mLocalizer
-    = util.ui.Localizer.getLocalizerFor(BooleanSearcher.class);
+  private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(BooleanSearcher.class);
 
+  private IMatcher mRootMatcher;
 
-  private Block root;
-
-  private boolean caseSensitive;
-
+  private boolean mCaseSensitive;
 
   /**
    * Checks whether a value matches to the criteria of this searcher.
    *
-   * @param value The value to check
+   * @param searchTerm
+   *          The value to check
    * @return Whether the value matches.
    */
-  protected boolean matches(String value) {
-    if (!caseSensitive){
-      value = value.toLowerCase();
+  protected boolean matches(String searchTerm) {
+    if (!mCaseSensitive) {
+      searchTerm = searchTerm.toLowerCase();
     }
-    return root.test(value.replaceAll("\\s+"," "));
+    return mRootMatcher.matches(searchTerm.replaceAll("\\s+", " "));
   }
 
-
-  /** Debug-Methode: Gibt den Suchbaum als String zurueck. */
   public String toString() {
-    return root.toString();
+    return mRootMatcher.toString();
   }
-
 
   /**
    * Erzeugt einen neuen Suchbaum. Der Baum wird automatisch optimiert. Es kann
    * immer nur ein Konstruktor gleichzeitig laufen. Fuer Synchronization ist
    * gesorgt.
+   *
    * @throws ParserException
    */
-  public BooleanSearcher(String pattern, boolean CaseSensitive) throws ParserException {
+  public BooleanSearcher(String pattern, boolean caseSensitive) throws ParserException {
     Hashtable<String, Object> matcherTab = new Hashtable<String, Object>();
-    caseSensitive = CaseSensitive;
+    mCaseSensitive = caseSensitive;
     mReplaceSpCh = true;
 
     pattern = pattern.trim();
     pattern = pattern.replaceAll("\\\"", " ");
     pattern = pattern.replaceAll("\\(", " ( ");
     pattern = pattern.replaceAll("\\)", " ) ");
-    pattern = pattern.replaceAll("[\\p{Punct}&&[^()]]", " AND ");
 
-    StringTokenizer ST = new StringTokenizer(pattern);
-    Vector<Object> part = new Vector<Object>();
-    while (ST.hasMoreElements()) {
+    StringTokenizer tokenizer = new StringTokenizer(pattern);
+    Vector<Object> parts = new Vector<Object>();
+    while (tokenizer.hasMoreElements()) {
 
-      String S = ST.nextToken();
-      if (S.equals("(")) {
-        part.add(subPart(ST));
+      String s = tokenizer.nextToken();
+      if (s.equals("(")) {
+        parts.add(subPart(tokenizer));
       } else {
-        part.add(S);
+        parts.add(s);
       }
     }
-    root = getBlock(part, caseSensitive, matcherTab);
-    root = root.finish();
+    mRootMatcher = getMatcher(parts, mCaseSensitive, matcherTab);
+    mRootMatcher = mRootMatcher.optimize();
   }
 
-  private static Object expect(Vector<Object> part, int index, Class<Block> expectedClass, String expectedName) throws ParserException {
+  private static Object expect(Vector<Object> part, int index, Class<IMatcher> expectedClass, String expectedName)
+      throws ParserException {
     Object o = part.get(index);
     if (expectedClass.isInstance(o)) {
       return o;
-    }
-    else {
-      throw new ParserException(mLocalizer.msg("expectFailed","Expected {0}, but found '{1}')", expectedName, o.toString()));
+    } else {
+      throw new ParserException(mLocalizer.msg("expectFailed", "Expected {0}, but found '{1}')", expectedName, o
+          .toString()));
     }
   }
 
-  private static Block getBlock(Vector<Object> part, boolean caseSensitive,
-                                Hashtable<String, Object> matcherTable) throws ParserException {
+  private static IMatcher getMatcher(Vector<Object> part, boolean caseSensitive, Hashtable<String, Object> matcherTable)
+      throws ParserException {
     boolean lastWasMatch = false;
     for (int i = 0; i < part.size(); i++) {
-      Object O = part.get(i);
-      if (O instanceof String) {
-        String s = (String) O;
-        if (!isKey(s)) {
+      Object o = part.get(i);
+      if (o instanceof String) {
+        String s = (String) o;
+        if (!isKeyWord(s)) {
           if (lastWasMatch) {
             Object Otemp = part.get(i - 1);
-            if (Otemp instanceof Matcher) {
-              MatcherEx ME = new MatcherEx(((Matcher) Otemp).toString(), s,
-                  caseSensitive, matcherTable);
+            if (Otemp instanceof StringMatcher) {
+              StringMatcherRegEx ME = new StringMatcherRegEx(((StringMatcher) Otemp).toString(), s, caseSensitive,
+                  matcherTable);
               part.set(i - 1, ME);
             } else {
-              MatcherEx ME = (MatcherEx) Otemp;
+              StringMatcherRegEx ME = (StringMatcherRegEx) Otemp;
               ME.addPart(s);
             }
             part.remove(i);
             i--;
             continue;
           }
-          Matcher m = new Matcher(s, caseSensitive, matcherTable);
+          StringMatcher m = new StringMatcher(s, caseSensitive, matcherTable);
           part.set(i, m);
           lastWasMatch = true;
           continue;
         }
       }
-      if (O instanceof Vector) {
+      if (o instanceof Vector) {
         if (lastWasMatch) {
           part.insertElementAt("AND", i);
           i = 0;
@@ -170,7 +167,7 @@ public class BooleanSearcher extends AbstractSearcher {
       if (O instanceof Vector) {
         @SuppressWarnings("unchecked")
         Vector<Object> v = (Vector<Object>) O;
-        part.set(i, getBlock(v, caseSensitive, matcherTable));
+        part.set(i, getMatcher(v, caseSensitive, matcherTable));
       }
     }
 
@@ -181,18 +178,18 @@ public class BooleanSearcher extends AbstractSearcher {
         Object O = part.get(i);
         if ((O instanceof String) && (O.toString().equals("NOT"))) {
           if (i + 1 >= part.size()) {
-            throw new ParserException(mLocalizer.msg("unexpectedEndOfInput","Unexpected end of input"));
+            throw new ParserException(mLocalizer.msg("unexpectedEndOfInput", "Unexpected end of input"));
           }
-          Object O2 = expect(part, i+1, Block.class, mLocalizer.msg("expression","expression"));
-          Not n = new Not((Block) O2);
+          Object O2 = expect(part, i + 1, IMatcher.class, mLocalizer.msg("expression", "expression"));
+          NotMatcher n = new NotMatcher((IMatcher) O2);
           part.remove(i);
           part.remove(i);
 
           /*
-          * If the previous Element is not "AND" insert an "AND"-Element
-          */
-          if ((i>0) && !(part.get(i-1) instanceof And) &&
-              !((part.get(i-1) instanceof String) && ((String)part.get(i-1)).equals("AND"))) {
+           * If the previous Element is not "AND" insert an "AND"-Element
+           */
+          if ((i > 0) && !(part.get(i - 1) instanceof AndMatcher)
+              && !((part.get(i - 1) instanceof String) && ((String) part.get(i - 1)).equals("AND"))) {
             part.insertElementAt("AND", i);
             i++;
           }
@@ -208,18 +205,17 @@ public class BooleanSearcher extends AbstractSearcher {
       found = false;
       for (int i = 0; i < part.size(); i++) {
         Object O = part.get(i);
-        if ((O instanceof String)
-            && ((O.toString().equals("AND")) || ((O.toString().equals("&&"))))) {
+        if ((O instanceof String) && ((O.toString().equals("AND")) || ((O.toString().equals("&&"))))) {
 
           if (i <= 0) {
-            throw new ParserException(mLocalizer.msg("missingExprBeforeAND","Missing expression before 'AND'"));
+            throw new ParserException(mLocalizer.msg("missingExprBeforeAND", "Missing expression before 'AND'"));
           }
           if (i + 1 >= part.size()) {
-            throw new ParserException(mLocalizer.msg("unexpectedEndOfInput","Unexpected end of input"));
+            throw new ParserException(mLocalizer.msg("unexpectedEndOfInput", "Unexpected end of input"));
           }
-          Block O2 = (Block) expect(part, i-1, Block.class, mLocalizer.msg("expression","expression"));
-          Block O1 = (Block) expect(part, i+1, Block.class, mLocalizer.msg("expression","expression"));
-          And a = new And(O1, O2);
+          IMatcher O2 = (IMatcher) expect(part, i - 1, IMatcher.class, mLocalizer.msg("expression", "expression"));
+          IMatcher O1 = (IMatcher) expect(part, i + 1, IMatcher.class, mLocalizer.msg("expression", "expression"));
+          AndMatcher a = new AndMatcher(O1, O2);
           part.remove(i - 1);
           part.remove(i - 1);
           part.remove(i - 1);
@@ -235,17 +231,16 @@ public class BooleanSearcher extends AbstractSearcher {
       found = false;
       for (int i = 0; i < part.size(); i++) {
         Object O = part.get(i);
-        if ((O instanceof String)
-            && ((O.toString().equals("OR")) || (O.toString().equals("||")))) {
+        if ((O instanceof String) && ((O.toString().equals("OR")) || (O.toString().equals("||")))) {
           if (i <= 0) {
             throw new ParserException("Missing expression before \"OR\"");
           }
           if (i + 1 >= part.size()) {
             throw new ParserException("Unexpected end of input");
           }
-          Block O2 = (Block) expect(part, i-1, Block.class, mLocalizer.msg("expression","expression"));
-          Block O1 = (Block) expect(part, i+1, Block.class, mLocalizer.msg("expression","expression"));
-          Or a = new Or(O1, O2);
+          IMatcher O2 = (IMatcher) expect(part, i - 1, IMatcher.class, mLocalizer.msg("expression", "expression"));
+          IMatcher O1 = (IMatcher) expect(part, i + 1, IMatcher.class, mLocalizer.msg("expression", "expression"));
+          OrMatcher a = new OrMatcher(O1, O2);
           part.remove(i - 1);
           part.remove(i - 1);
           part.remove(i - 1);
@@ -255,31 +250,28 @@ public class BooleanSearcher extends AbstractSearcher {
         }
       }
     }
-    return (Block) part.get(0);
+    return (IMatcher) part.get(0);
   }
 
-
-  private static boolean isKey(String s) {
-    return (s.equals("AND") || s.equals("OR") || s.equals("&&")
-        || s.equals("||") || s.equals("NOT"));
+  private static boolean isKeyWord(String s) {
+    return (s.equals("AND") || s.equals("OR") || s.equals("&&") || s.equals("||") || s.equals("NOT"));
   }
 
-
-  private static Vector<Object> subPart(StringTokenizer ST) throws ParserException {
+  private static Vector<Object> subPart(StringTokenizer tokenizer) throws ParserException {
     Vector<Object> v = new Vector<Object>();
-    while (ST.hasMoreElements()) {
-      String S = ST.nextToken();
-      if (S.equals("(")) {
-        v.add(subPart(ST));
+    while (tokenizer.hasMoreElements()) {
+      String s = tokenizer.nextToken();
+      if (s.equals("(")) {
+        v.add(subPart(tokenizer));
       } else {
-        if (S.equals(")")) {
+        if (s.equals(")")) {
           return v;
         } else {
-          v.add(S);
+          v.add(s);
         }
       }
     }
-    throw new ParserException(mLocalizer.msg("parenthesisExpected","'(' expected"));
+    throw new ParserException(mLocalizer.msg("parenthesisExpected", "'(' expected"));
   }
 
 }
