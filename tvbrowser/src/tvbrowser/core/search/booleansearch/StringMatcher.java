@@ -32,52 +32,45 @@ import java.util.Hashtable;
  * 
  * @author Gilson Laurent, pumpkin@gmx.de
  */
-public class Matcher implements Block, StringCompare {
+class StringMatcher implements IMatcher, IStringSize {
 
-  private String toTest;
+  private String mMatchString;
+  private Hashtable<String, Object> mMultiTable;
+  private boolean mCaseSensitive;
 
-  private Hashtable<String, Object> multiTable;
-
-  private boolean caseSen;
-
-
-  public Matcher(String s, boolean caseSensitive, Hashtable<String, Object> matcherTab) {
-    caseSen = caseSensitive;
-    toTest = s;
+  public StringMatcher(String s, boolean caseSensitive, Hashtable<String, Object> matcherTab) {
+    mCaseSensitive = caseSensitive;
+    mMatchString = s;
     if (!caseSensitive) {
-      toTest = toTest.toLowerCase();
+      mMatchString = mMatchString.toLowerCase();
     }
-    multiTable = matcherTab;
-    Object O = multiTable.get(toTest);
-    if (O == null) {
-      multiTable.put(toTest, this);
+    mMultiTable = matcherTab;
+    Object o = mMultiTable.get(mMatchString);
+    if (o == null) {
+      mMultiTable.put(mMatchString, this);
     } else {
-      if (O instanceof Matcher) {
-        MatcherReuse mr = new MatcherReuse(toTest, caseSen);
-        multiTable.put(toTest, mr);
+      if (o instanceof StringMatcher) {
+        MatcherReuse mr = new MatcherReuse(mMatchString, mCaseSensitive);
+        mMultiTable.put(mMatchString, mr);
       }
     }
   }
 
-
-  public boolean test(String s) {
-    return s.indexOf(toTest) != -1;
+  public boolean matches(final String searchTerm) {
+    return searchTerm.indexOf(mMatchString) != -1;
   }
-
 
   public String toString() {
-    return toTest;
+    return mMatchString;
   }
-
 
   public int size() {
-    return toTest.length();
+    return mMatchString.length();
   }
 
-
-  public Block finish() {
-    Block b = (Block) multiTable.get(toTest);
-    multiTable = null;
+  public IMatcher optimize() {
+    IMatcher b = (IMatcher) mMultiTable.get(mMatchString);
+    mMultiTable = null;
     return b;
   }
 }

@@ -35,14 +35,13 @@ package tvbrowser.core.search.booleansearch;
  * 
  * @author Gilson Laurent, pumpkin@gmx.de
  */
-public class MatcherReuse implements Block, StringCompare {
+public class MatcherReuse implements IMatcher, IStringSize {
 
   private String toTest;
 
   private String lasttest;
 
   private boolean lastResult;
-
 
   public MatcherReuse(String s, boolean caseSensitive) {
     toTest = s;
@@ -51,8 +50,7 @@ public class MatcherReuse implements Block, StringCompare {
     }
   }
 
-
-  public boolean test(String s) {
+  public boolean matches(String s) {
     if (lasttest == null || !lasttest.equals(s)) {
       lasttest = s;
       lastResult = s.indexOf(toTest) != -1;
@@ -60,18 +58,15 @@ public class MatcherReuse implements Block, StringCompare {
     return lastResult;
   }
 
-
   public String toString() {
     return toTest;
   }
-
 
   public int size() {
     return toTest.length();
   }
 
-
-  public Block finish() {
+  public IMatcher optimize() {
     return this;
   }
 }

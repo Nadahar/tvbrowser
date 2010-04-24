@@ -31,7 +31,7 @@ package tvbrowser.core.search.booleansearch;
  * 
  * @author Gilson Laurent, pumpkin@gmx.de
  */
-public interface StringCompare {
+public interface IStringSize {
 
   public int size();
 

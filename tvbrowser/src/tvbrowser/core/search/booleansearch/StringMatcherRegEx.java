@@ -31,44 +31,40 @@ import java.util.regex.Pattern;
 
 /**
  * Erkennt Wörter mit " "-Zeichen.
- * 
+ *
  * @author Gilson Laurent, pumpkin@gmx.de
  */
-public class MatcherEx implements Block {
+public class StringMatcherRegEx implements IMatcher {
 
-  private Block pretest;
+  private IMatcher mPretest;
 
-  private Pattern pattern;
+  private Pattern mPattern;
 
   /** Wird nur während des Baumaufbaus benutzt und danach entsorgt. */
   private Vector<String> vtemp = new Vector<String>();
 
-  private boolean caseSensitive;
+  private boolean mCaseSensitive;
 
-  private Hashtable<String, Object> matcherTab;
+  private Hashtable<String, Object> mMatcherTab;
 
-
-  public MatcherEx(String s1, String s2, boolean CaseSensitive,
-      Hashtable<String, Object> matcherTable) {
-    matcherTab = matcherTable;
-    caseSensitive = CaseSensitive;
-    pretest = new And(new Matcher(s1, caseSensitive, matcherTable),
-        new Matcher(s2, caseSensitive, matcherTable));
+  public StringMatcherRegEx(String s1, String s2, boolean CaseSensitive, Hashtable<String, Object> matcherTable) {
+    mMatcherTab = matcherTable;
+    mCaseSensitive = CaseSensitive;
+    mPretest = new AndMatcher(new StringMatcher(s1, mCaseSensitive, matcherTable), new StringMatcher(s2, mCaseSensitive,
+        matcherTable));
     vtemp.add(s1);
     vtemp.add(s2);
   }
 
-
   public void addPart(String s) {
-    pretest = new And(pretest, new Matcher(s, caseSensitive, matcherTab));
+    mPretest = new AndMatcher(mPretest, new StringMatcher(s, mCaseSensitive, mMatcherTab));
     vtemp.add(s);
   }
 
-
-  public Block finish() {
+  public IMatcher optimize() {
     String[] toTest = vtemp.toArray(new String[vtemp.size()]);
     int flags = Pattern.DOTALL;
-    if (!caseSensitive) {
+    if (!mCaseSensitive) {
       flags |= Pattern.CASE_INSENSITIVE;
     }
 
@@ -79,33 +75,31 @@ public class MatcherEx implements Block {
       regex.append("\\s").append(toTest[i]);
     }
     regex.append(").*");
-    pattern = Pattern.compile(regex.toString(), flags);
+    mPattern = Pattern.compile(regex.toString(), flags);
 
-    //mal kucken ob sich der pretest optimierten lässt:
-    pretest = pretest.finish();
+    // mal kucken ob sich der mPretest optimierten lässt:
+    mPretest = mPretest.optimize();
 
     vtemp = null;
     return this;
   }
 
-
   /**
-   * Zuerst wird schnell über AND-verknüpfte Matcher getestet ob alle Elemente
-   * vorhanden sind. Danach kommt ein Regex zum Einsatz.
+   * Zuerst wird schnell über AND-verknüpfte StringMatcher getestet ob alle
+   * Elemente vorhanden sind. Danach kommt ein Regex zum Einsatz.
    */
-  public boolean test(String s) {
-    if (pretest.test(s)) {
-      return pattern.matcher(s).matches();
+  public boolean matches(String s) {
+    if (mPretest.matches(s)) {
+      return mPattern.matcher(s).matches();
     }
     return false;
   }
 
-
   public String toString() {
-    if (pattern != null) {
-      return "(" + pattern.pattern() + "[" + pretest.toString() + "])";
+    if (mPattern != null) {
+      return "(" + mPattern.pattern() + "[" + mPretest.toString() + "])";
     } else {
-      return "([" + pretest.toString() + "])";
+      return "([" + mPretest.toString() + "])";
     }
   }
 
