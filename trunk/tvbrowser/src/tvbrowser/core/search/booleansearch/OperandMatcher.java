@@ -39,7 +39,13 @@ abstract class OperandMatcher implements IMatcher {
 
   public IMatcher optimize() {
     // remove duplicates
-    subMatcher = new ArrayList<IMatcher>(new HashSet<IMatcher>(subMatcher));
+    ArrayList<IMatcher> nonDuplicates = new ArrayList<IMatcher>(new HashSet<IMatcher>(subMatcher));
+
+    // optimize children
+    subMatcher = new ArrayList<IMatcher>(nonDuplicates.size());
+    for (IMatcher matcher : nonDuplicates) {
+      subMatcher.add(matcher.optimize());
+    }
 
     // sort String matchers to the beginning
     Collections.sort(subMatcher, new Comparator<IMatcher>() {
