@@ -29,6 +29,8 @@ import java.util.Hashtable;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import org.apache.commons.lang.StringUtils;
+
 import tvbrowser.core.search.AbstractSearcher;
 
 /**
@@ -94,6 +96,10 @@ public class BooleanSearcher extends AbstractSearcher {
     mReplaceSpCh = true;
 
     pattern = pattern.trim();
+    int braceDifference = StringUtils.countMatches(pattern, "(") - StringUtils.countMatches(pattern, ")");
+    if (braceDifference > 0) {
+      pattern = pattern + StringUtils.repeat(")", braceDifference);
+    }
     pattern = pattern.replaceAll("\\\"", " ");
     pattern = pattern.replaceAll("\\(", " ( ");
     pattern = pattern.replaceAll("\\)", " ) ");
