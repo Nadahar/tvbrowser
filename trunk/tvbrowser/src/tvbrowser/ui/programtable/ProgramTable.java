@@ -952,7 +952,7 @@ public class ProgramTable extends JPanel
 
     Plugin.getPluginManager().handleProgramMiddleClick(program);
   }
-  
+
   /**
    * Starts the middle double click Plugin.
    */
@@ -1409,12 +1409,12 @@ public class ProgramTable extends JPanel
       }
       final int panelX = mousePoint.x - panelIndex.x * mColumnWidth;
       final int panelY = mousePoint.y - currY;
+      StringBuilder buffer = new StringBuilder();
       String tooltip = panel.getToolTipText(panelX, panelY);
       if (tooltip != null && tooltip.length() > 0) {
-        return tooltip;
+        buffer.append(tooltip);
       }
 
-      StringBuilder buffer = new StringBuilder();
       // if program is partially not visible then show the title as tooltip
       final JViewport viewport = MainFrame.getInstance()
           .getProgramTableScrollPane().getViewport();
@@ -1425,7 +1425,9 @@ public class ProgramTable extends JPanel
           || (panelIndex.x * mColumnWidth + panel.getTitleX() < viewPos.x)
           || ((panelIndex.x + 1) * mColumnWidth - 1 > viewPos.x
               + viewSize.width)) {
-        buffer.append(program.getTitle());
+        if (buffer.indexOf(program.getTitle()) < 0) {
+          appendTooltip(buffer, program.getTitle());
+        }
       }
 
       // show end time if start time of next
@@ -1433,6 +1435,7 @@ public class ProgramTable extends JPanel
       ProgramPanel nextPanel = mModel.getProgramPanel(panelIndex.x,
           panelIndex.y + 1);
 
+      boolean showTime = (nextPanel == null && program.getLength() > 0);
       if (nextPanel != null) {
         int length = program.getLength();
         int nextStartTime = nextPanel.getProgram().getStartTime();
@@ -1441,18 +1444,25 @@ public class ProgramTable extends JPanel
         }
         if ((length > 0)
             && (program.getStartTime() + length + 1 < nextStartTime)) {
-          if (buffer.length() > 0) {
-            buffer.append(" - ");
-          }
-          buffer.append(mLocalizer.msg("until", "until {0}", program
-              .getEndTimeString()));
+          showTime = true;
         }
+      }
+      if (showTime) {
+        appendTooltip(buffer, mLocalizer.msg("until", "until {0}", program
+          .getEndTimeString()));
       }
       if (buffer.length() > 0) {
         return buffer.toString();
       }
     }
     return null;
+  }
+
+  private void appendTooltip(final StringBuilder buffer, final String text) {
+    if (buffer.length() > 0) {
+      buffer.append(" - ");
+    }
+    buffer.append(text);
   }
 
   private void startAutoScroll(final Point scroll, int scaling) {
