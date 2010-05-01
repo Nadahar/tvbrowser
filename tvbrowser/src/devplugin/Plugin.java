@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Properties;
+import java.util.logging.Logger;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -66,6 +67,11 @@ import util.ui.ImageUtilities;
  * @author Til Schneider, www.murfman.de
  */
 abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf {
+
+  /**
+   * logger for this class.
+   */
+  private static final Logger LOGGER = Logger.getLogger(Plugin.class.getName());
 
   /**
    * The name to use for the big icon (the 22x22 one for the toolbar) of the
@@ -724,8 +730,9 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
               }
             });
       } catch (Exception e) {
-        util.exc.ErrorHandler.handle(mLocalizer.msg("error.couldNotReadFile",
-            "Reading file '{0}' failed.", nodeFile.getAbsolutePath()), e);
+        LOGGER.severe(mLocalizer.msg("error.couldNotReadFile",
+            "Reading file '{0}' failed.", nodeFile.getAbsolutePath()));
+        node.removeAllChildren();
       }
     }
   }
@@ -753,7 +760,7 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
         }
       });
     } catch (IOException e) {
-      util.exc.ErrorHandler.handle(mLocalizer.msg("error.couldNotWriteFile","Storing file '{0}' failed.", f.getAbsolutePath()), e);
+      LOGGER.severe(mLocalizer.msg("error.couldNotWriteFile","Storing file '{0}' failed.", f.getAbsolutePath()));
     }
   }
 
@@ -908,7 +915,7 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
   public int compareTo(ProgramReceiveIf o) {
     return getInfo().getName().compareTo(o.toString());
   }
-  
+
   /**
    * Gets the importance value of a program.The importance of all active plugins is used to determinate
    * the opacity of the used colors of a program, therefor a mean value of all values is used.
