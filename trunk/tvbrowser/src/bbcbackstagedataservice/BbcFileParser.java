@@ -60,7 +60,7 @@ import devplugin.ProgramFieldType;
 
 /**
  * This class parses the BBC Files
- * 
+ *
  * @author bodum
  */
 public class BbcFileParser {
@@ -78,9 +78,9 @@ public class BbcFileParser {
   private int mHour = 0;
 
   /**
-   * 
+   *
    * @param cache
-   * @param channel 
+   * @param channel
    * @param channeldate
    */
   public BbcFileParser(HashMap<Date, MutableChannelDayProgram> cache, Channel channel, Date channeldate) {
@@ -99,7 +99,7 @@ public class BbcFileParser {
     if (new File(file.getAbsoluteFile() + "_pi.xml").exists())
       analyseFile(file);
   }
-  
+
   /**
    * Parses the BBC Files
    * @param file
@@ -124,7 +124,7 @@ public class BbcFileParser {
       parser.parse(new File(file.getAbsoluteFile() + "_cr.xml"));
     } catch (NonFatalXMLException nfxe) {
     }
-    
+
     ProgramLocationTable programLocationTable = parser.getProgramLocationTable();
     ProgramInformationTable programInformationTable = parser.getProgramInformationTable();
 
@@ -133,32 +133,29 @@ public class BbcFileParser {
       mutablechanneldayprogram = new MutableChannelDayProgram(mChannelDate, mChannel);
       mCache.put(mChannelDate, mutablechanneldayprogram);
     }
-    
+
     // Search through all schedules in program location table
     for (int schedulect=0; schedulect<programLocationTable.getNumSchedules(); schedulect++) {
       Schedule schedule = programLocationTable.getSchedule(schedulect);
       if (schedule.getServiceID().equals(mChannel.getId())) {
         // Found schedule for a particular service, e.g. BBC 1
         for (int eventct=0; eventct<schedule.getNumScheduleEvents(); eventct++) {
-          
+
           ScheduleEvent event = schedule.getScheduleEvent(eventct);
 
           @SuppressWarnings("unchecked")
           Vector<ProgramInformation> vector = programInformationTable.getProgramInformation(event.getCRID());
-          
+
           if (vector.size() == 1) {
             ProgramInformation programInformation = vector.elementAt(0);
-            
+
             Calendar cal = Calendar.getInstance();
             cal.setTimeZone(TimeZone.getTimeZone("GMT"));
             cal.setTime(event.getPublishedStartTime());
 
-            // Workaround for Stupid Bug in TVAnytime API
-            cal.add(Calendar.MILLISECOND, TimeZone.getDefault().getRawOffset());
-            
             int hour = cal.get(Calendar.HOUR_OF_DAY);
             int minutes = cal.get(Calendar.MINUTE);
-            
+
             if (hour < mHour) {
               mChannelDate = mChannelDate.addDays(1);
 
@@ -168,12 +165,12 @@ public class BbcFileParser {
                 mCache.put(mChannelDate, mutablechanneldayprogram);
               }
             }
-            
+
             mHour = hour;
             MutableProgram prog = new MutableProgram(mChannel,mChannelDate,hour, minutes, true);
-            
+
             prog.setTitle(programInformation.getBasicDescription().getTitle(0).getText());
-            
+
             Duration duration = event.getPublishedDuration();
             if (duration != null) {
               minutes = (int) (duration.getDurationInMsec() / 1000 /60);
@@ -181,16 +178,16 @@ public class BbcFileParser {
                 prog.setLength(minutes);
               }
             }
-            
+
             // Get Description
-            
+
             StringBuilder shortBuffer = new StringBuilder();
             StringBuilder longBuffer = new StringBuilder();
-            
+
             int maxSyn = programInformation.getBasicDescription().getNumSynopses();
             for (int syni=0;syni<maxSyn;syni++) {
               Synopsis synopsis = programInformation.getBasicDescription().getSynopsis(syni);
-              
+
               if (synopsis.getLength() == Synopsis.SHORT) {
                 if ((synopsis.getLanguage() == null) || (synopsis.getLanguage().equals("en"))) {
                   String text = synopsis.getText();
@@ -208,43 +205,43 @@ public class BbcFileParser {
                   mLog.warning("Unsupported Language: " + synopsis.getLanguage());
                 }
               }
-              
+
             }
-            
+
             if (shortBuffer.length() > 0)
               prog.setShortInfo(shortBuffer.toString().trim());
             if (longBuffer.length() > 0)
               prog.setDescription(longBuffer.toString().trim());
-            
+
             // Get Credits
-            
+
             CreditsList credits = programInformation.getBasicDescription().getCreditsList();
-            
+
             int cmax = credits.getNumCreditsItems();
-            
+
             for (int ci = 0; ci< cmax;ci++){
               CreditsItem credit = credits.getCreditsItem(ci);
-              
+
               if (credit.getRole() != null && credit.getRole().endsWith("DIRECTOR")) {
                 String director = getPersonNames(credit);
                 prog.setTextField(ProgramFieldType.DIRECTOR_TYPE, director);
               }
               else if (credit.getRole() != null && credit.getRole().endsWith("ACTOR")) {
-                
+
                 StringBuilder creditList = new StringBuilder();
                 if (credit.getNumPersonNames() > 0) {
                   StringBuilder person = new StringBuilder();
-                  
+
                   for (int cv =0;cv<credit.getNumCharacters();cv++) {
                     person.append(credit.getCharacter(cv).getName().trim());
                     person.append('/');
                   }
-  
+
                   person = new StringBuilder(person.substring(0, person
                       .length() - 1));
-                  
+
                   person.append('\t');
-                  
+
                   for (int cv =0;cv<credit.getNumPersonNames();cv++) {
                     String name = credit.getPersonName(cv).getName().trim();
                     if (name.startsWith("..")) {
@@ -253,7 +250,7 @@ public class BbcFileParser {
                     person.append(name);
                     person.append('/');
                   }
-  
+
                   creditList.append(person.substring(0, person.length()-1));
                 }
                 if (creditList.length() > 0) {
@@ -267,46 +264,46 @@ public class BbcFileParser {
 */
               }
 
-            
+
             // Genre
             int maxg = programInformation.getBasicDescription().getNumGenres();
-            
+
             StringBuilder genrebuffer = new StringBuilder();
-            
+
             for (int gi=0;gi<maxg;gi++) {
               genrebuffer.append(programInformation.getBasicDescription().getGenre(gi).getMPEG7Name(Genre.MAIN).trim()).append(", ");
             }
 
             if (genrebuffer.length() > 0) {
               String genre = genrebuffer.substring(0, genrebuffer.length()-2);
-              
+
               Pattern pattern = Pattern.compile("\\b[ÄÖÜA-Z]([ÖÄÜA-Z]*)\\b");
               Matcher matcher = pattern.matcher(genre);
-              
+
               StringBuilder builder = new StringBuilder();
-              
+
               int pos = 0;
-              
+
               while (matcher.find()) {
                 builder.append(genre.substring(pos, matcher.start(1)));
                 builder.append(genre.substring(matcher.start(1), matcher.end(1)).toLowerCase());
                 pos = matcher.end(1);
               }
               builder.append(genre.substring(pos));
-              
+
               prog.setTextField(ProgramFieldType.GENRE_TYPE, builder.toString());
             }
-            
+
             // Close Caption
             int bitset = 0;
-            
+
             if (programInformation.getBasicDescription().getNumCaptionLanguages() > 0) {
               bitset = bitset | Program.INFO_SUBTITLE_FOR_AURALLY_HANDICAPPED;
             }
-            
+
             // Audio Format
             AVAttributes avattributes = programInformation.getAVAttributes();
-            
+
             AudioAttributes audio = avattributes.getAudioAttributes();
 
             if (audio != null) {
@@ -318,10 +315,10 @@ public class BbcFileParser {
                 bitset = bitset | Program.INFO_AUDIO_DOLBY_SURROUND;
               }
             }
-            
+
             // Video Format
             VideoAttributes video = avattributes.getVideoAttributes();
-            
+
             if (video != null) {
               boolean wide = false;
               for (int vi =0;vi< video.getNumAspectRatios();vi++) {
@@ -336,15 +333,15 @@ public class BbcFileParser {
                 bitset = bitset | Program.INFO_VISION_4_TO_3;
               }
             }
-            
+
             if (bitset != 0) {
               prog.setInfo(bitset);
             }
-            
+
             prog.setProgramLoadingIsComplete();
             mutablechanneldayprogram.addProgram(prog);
           }
-          
+
         }
       }
     }
