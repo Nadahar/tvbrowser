@@ -39,25 +39,24 @@ import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 
-import devplugin.Channel;
-import devplugin.Plugin;
-
 import tvdataservice.SettingsPanel;
 import util.ui.ChannelLabel;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
+import devplugin.Channel;
+import devplugin.Plugin;
 
 public class SharedChannelDataServicePanel extends SettingsPanel {
 
   /**
-   * 
+   *
    */
   private static final long serialVersionUID = 1L;
 
 //private static final Logger mLog = java.util.logging.Logger.getLogger(SharedChannelDataServicePanel.class.getName());
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(SharedChannelDataServicePanel.class);
 
-  public static SharedChannelDataServicePanel mInstance;
+  static SharedChannelDataServicePanel mInstance;
   private SharedChannelDataService mService;
   private JPanel selChannelPanel;
   public Properties channelDescriptions;
@@ -87,7 +86,7 @@ public class SharedChannelDataServicePanel extends SettingsPanel {
 
     selList = new JList(selModel);
     selList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-    selList.setCellRenderer(new channelCellRenderer());
+    selList.setCellRenderer(new ChannelCellRenderer());
     selList.addMouseListener(new MouseAdapter() {
       public void mousePressed(MouseEvent e) {
         if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() > 1) {
@@ -253,13 +252,13 @@ public class SharedChannelDataServicePanel extends SettingsPanel {
         if (icon == null){
           icon = new ChannelLabel(alienChannel).getIcon();
         }
-        jbUtilities.storeIcon(icon, "png", iconFilename);
+        JbUtilities.storeIcon(icon, "png", iconFilename);
       } else {
         File iconFile = new File (iconFilename);
         iconFile.delete();
       }
 
-    }  
+    }
     Channel[] availableChannels = mService.getAvailableChannels(null);
     Channel[] subScribedChannels = SharedChannelDataService.getPluginManager().getSubscribedChannels();
     for (int i = 0; i < subScribedChannels.length; i++){
@@ -352,9 +351,9 @@ public class SharedChannelDataServicePanel extends SettingsPanel {
 }
 
 
-class channelCellRenderer extends DefaultListCellRenderer {
+class ChannelCellRenderer extends DefaultListCellRenderer {
 
-//private static final Logger mLog = java.util.logging.Logger.getLogger(channelCellRenderer.class.getName());
+//private static final Logger mLog = java.util.logging.Logger.getLogger(ChannelCellRenderer.class.getName());
 
   private static final long serialVersionUID = 1L;
 
@@ -370,7 +369,7 @@ class channelCellRenderer extends DefaultListCellRenderer {
           isSelected,
           hasFocus);
     String [] channelDescriptor = SharedChannelDataServicePanel.mInstance.channelDescriptions.getProperty(list.getModel().getElementAt(index).toString()).split(";");
-    ; 
+    ;
 
     int iconIndex = (2*(Integer.parseInt((String)channelDescriptor[1])))+6;
     Channel channel = HelperMethods.getChannelFromId(channelDescriptor[iconIndex], SharedChannelDataService.getPluginManager().getSubscribedChannels());

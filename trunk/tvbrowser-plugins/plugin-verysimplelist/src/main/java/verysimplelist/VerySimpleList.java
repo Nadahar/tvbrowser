@@ -1,32 +1,28 @@
 package verysimplelist;
 
-import devplugin.*;
-import devplugin.ActionMenu;
-import tvdataservice.MutableChannelDayProgram;
-import util.io.IOUtilities;
-
+import java.awt.Color;
+import java.awt.event.ActionEvent;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Properties;
 
-import javax.swing.Icon;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
-import javax.swing.text.html.HTMLEditorKit;
 
-import java.util.*;
-import javax.swing.JEditorPane;
-import java.io.*;
-import javax.swing.JScrollPane;
-import java.awt.BorderLayout;
-import javax.swing.JPanel;
 import util.ui.UiUtilities;
-import javax.swing.JCheckBox;
-import java.awt.Color;
-import java.text.MessageFormat;
-import java.awt.event.ActionEvent;
-import javax.swing.AbstractAction;
-import javax.swing.Action;
+import devplugin.ActionMenu;
+import devplugin.Channel;
+import devplugin.PluginInfo;
+import devplugin.PluginManager;
+import devplugin.Program;
+import devplugin.SettingsTab;
+import devplugin.Version;
 
 public class VerySimpleList extends devplugin.Plugin
 {
@@ -78,21 +74,16 @@ public class VerySimpleList extends devplugin.Plugin
   */
 
   private void internalexecute() {
-    int i;
-    int minutes;
     Object[] dlgComponents = new Object[5];
-    Program prog = null;
-    Iterator it = null;
     String theTime = (new java.sql.Time((new java.util.Date()).getTime())).toString().substring(0,5);
     devplugin.Date theDate = new devplugin.Date();
-    ArrayList prgList = new ArrayList();
-    boolean vortag;
+    ArrayList<Program> prgList = new ArrayList<Program>();
 
     // build the dialog components
     dlgComponents[0] = mLocalizer.msg("day", "Day");
 
     JComboBox cb = new JComboBox();
-    for (i = 0; i < 14; i++)
+    for (int i = 0; i < 14; i++)
     {
       cb.addItem(theDate.toString());
       theDate = theDate.addDays(1);
@@ -120,6 +111,7 @@ public class VerySimpleList extends devplugin.Plugin
       PluginManager pm = getPluginManager();
       Channel[] ch = pm.getSubscribedChannels();
 
+      int minutes;
       try
       {
         minutes = Integer.parseInt(theTime.substring(0,2)) * 60 + Integer.parseInt(theTime.substring(3,5));
@@ -134,19 +126,18 @@ public class VerySimpleList extends devplugin.Plugin
 
       if (minutes >= 0)
       {
-        for (i = 0; i < ch.length; i++)
-        //for (i = 3; i < 4; i++)
+        for (Channel element : ch) //for (i = 3; i < 4; i++)
         {
-          vortag = false;
+          boolean vortag = false;
 
           // Vortag
           theDate = new devplugin.Date().addDays(cb.getSelectedIndex() - 1);
-          it = pm.getChannelDayProgram(theDate, ch[i]);
+          Iterator<Program> it = pm.getChannelDayProgram(theDate, element);
           if (it != null)
           {
             while (it.hasNext())
             {
-              prog = (Program) it.next();
+              Program prog = it.next();
               /*
               JOptionPane.showMessageDialog(
                 null,
@@ -165,12 +156,12 @@ public class VerySimpleList extends devplugin.Plugin
           }
 
           theDate = new devplugin.Date().addDays(cb.getSelectedIndex());
-          it = pm.getChannelDayProgram(theDate, ch[i]);
+          it = pm.getChannelDayProgram(theDate, element);
           if (it != null)
           {
             while (it.hasNext())
             {
-              prog = (Program) it.next();
+              Program prog = it.next();
 
               if (vortag)
               {
@@ -178,7 +169,9 @@ public class VerySimpleList extends devplugin.Plugin
                 break;
               }
 
-              if (prog.getStartTime() > minutes) break;
+              if (prog.getStartTime() > minutes) {
+                break;
+              }
 
               /*
               JOptionPane.showMessageDialog(
@@ -197,15 +190,15 @@ public class VerySimpleList extends devplugin.Plugin
                 {
                   if (it.hasNext())
                   {
-                    prog = (Program) it.next();
+                    prog = it.next();
                     prgList.add(prog);
                   }
                   else
                   {
-                    it = pm.getChannelDayProgram(theDate, ch[i]);
+                    it = pm.getChannelDayProgram(theDate, element);
                     if (it.hasNext())
                     {
-                      prog = (Program) it.next();
+                      prog = it.next();
                       prgList.add(prog);
                     }
                   }
@@ -275,15 +268,15 @@ public class VerySimpleList extends devplugin.Plugin
         internalexecute();
       }
     };
-    // Der Aktion einen Namen geben. Dieser Name wird dann im Menü und in der Symbolleiste gezeigt
+    // Der Aktion einen Namen geben. Dieser Name wird dann im Menï¿½ und in der Symbolleiste gezeigt
     action.putValue(Action.NAME, mLocalizer.msg("button", "Simple List"));
 
-    // Der Aktion ein kleines Icon geben. Dieses Icon wird im Menü gezeigt
-    // Das Icon sollte 16x16 Pixel groß sein
+    // Der Aktion ein kleines Icon geben. Dieses Icon wird im Menï¿½ gezeigt
+    // Das Icon sollte 16x16 Pixel groï¿½ sein
     action.putValue(Action.SMALL_ICON, getMarkIcon());
 
-    // Der Aktion ein großes Icon geben. Dieses Icon wird in der Symbolleiste gezeigt
-    // Das Icon sollte 24x24 Pixel groß sein
+    // Der Aktion ein groï¿½es Icon geben. Dieses Icon wird in der Symbolleiste gezeigt
+    // Das Icon sollte 24x24 Pixel groï¿½ sein
     action.putValue(BIG_ICON, createImageIcon("verysimplelist/greenlist24.png"));
 
     return new ActionMenu(action);
@@ -305,7 +298,7 @@ public class VerySimpleList extends devplugin.Plugin
     return new PluginInfo(VerySimpleList.class,
       mLocalizer.msg("menu", "Simple List"),
       mLocalizer.msg("info", "Simple List Info"),
-      "Achim Kröber", "GPL3");
+      "Achim Krï¿½ber", "GPL3");
   }
 
   public static Version getVersion() {

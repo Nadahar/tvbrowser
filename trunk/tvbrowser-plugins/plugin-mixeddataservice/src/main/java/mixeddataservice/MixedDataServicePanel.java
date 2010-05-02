@@ -38,27 +38,26 @@ import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 
-import devplugin.Channel;
-import devplugin.Plugin;
-
 import tvdataservice.SettingsPanel;
 import util.ui.ChannelLabel;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
+import devplugin.Channel;
+import devplugin.Plugin;
 
 
 
 public class MixedDataServicePanel extends SettingsPanel {
 
   /**
-   * 
+   *
    */
   private static final long serialVersionUID = 1L;
 
 //  private static final Logger mLog = java.util.logging.Logger.getLogger(MixedDataServicePanel.class.getName());
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(MixedDataServicePanel.class);
 
-  public static MixedDataServicePanel mInstance;
+  static MixedDataServicePanel mInstance;
   private MixedDataService mService;
   private JPanel selChannelPanel;
   public Properties channelDescriptions;
@@ -72,7 +71,7 @@ public class MixedDataServicePanel extends SettingsPanel {
     this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
    JPanel backgroundPanel = new JPanel(new BorderLayout(0, 10));
    backgroundPanel.setBorder(BorderFactory.createEmptyBorder(8, 0, 0, 0));
-  
+
     ImageIcon newIcon = Plugin.getPluginManager().getIconFromTheme(null,"actions", "document-new", 16);
     ImageIcon editIcon = Plugin.getPluginManager().getIconFromTheme(null,"actions", "document-edit", 16);
     ImageIcon removeIcon = Plugin.getPluginManager().getIconFromTheme(null,"actions", "edit-delete", 16);
@@ -82,7 +81,7 @@ public class MixedDataServicePanel extends SettingsPanel {
 
     selList = new JList(selModel);
     selList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-    selList.setCellRenderer(new channelCellRenderer());
+    selList.setCellRenderer(new ChannelCellRenderer());
     selList.addMouseListener(new MouseAdapter() {
       public void mousePressed(MouseEvent e) {
         if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() > 1) {
@@ -116,7 +115,7 @@ public class MixedDataServicePanel extends SettingsPanel {
         newButtonPressed(e);
       }
     });
-    
+
     // Remove-Button
     JButton removeButton = new JButton(Localizer.getLocalization(Localizer.I18N_DELETE));
     removeButton.setIcon(removeIcon);
@@ -130,7 +129,7 @@ public class MixedDataServicePanel extends SettingsPanel {
         removeButtonPressed(e);
       }
     });
- 
+
     buttonPanel.add(Box.createRigidArea(new Dimension(0, removeButton.getInsets().top +removeButton.getIcon().getIconHeight()+removeButton.getInsets().bottom)));
 
     // Edit-Button
@@ -205,7 +204,7 @@ public class MixedDataServicePanel extends SettingsPanel {
       channelDescriptions.store(new FileOutputStream(MixedDataService.getInstance().mixedChannelsDirName + "/mixedChannels.properties"), "Mixed Channels Descriptions");
     } catch (IOException e) {
     }
-    
+
 
     // store channel icons
 
@@ -217,7 +216,7 @@ public class MixedDataServicePanel extends SettingsPanel {
       if ("primary".equals(alienDescriptor[3])){
         alienChannel = HelperMethods.getChannelFromId(alienDescriptor[1], MixedDataService.getPluginManager().getSubscribedChannels());
       } else{
-        if ("additional".equals(alienDescriptor[3])){     
+        if ("additional".equals(alienDescriptor[3])){
           alienChannel = HelperMethods.getChannelFromId(alienDescriptor[2], MixedDataService.getPluginManager().getSubscribedChannels());
         } else{
           alienChannel = null;
@@ -229,13 +228,13 @@ public class MixedDataServicePanel extends SettingsPanel {
         if (icon == null){
           icon = new ChannelLabel(alienChannel).getIcon();
         }
-        jbUtilities.storeIcon(icon, "png", iconFilename);
+        JbUtilities.storeIcon(icon, "png", iconFilename);
       } else {
         File iconFile = new File (iconFilename);
         iconFile.delete();
       }
 
-    }  
+    }
     Channel[] availableChannels = mService.getAvailableChannels(null);
     Channel[] subScribedChannels = MixedDataService.getPluginManager().getSubscribedChannels();
     for (int i = 0; i < subScribedChannels.length; i++){
@@ -323,9 +322,9 @@ public class MixedDataServicePanel extends SettingsPanel {
 
 
 
-class channelCellRenderer extends DefaultListCellRenderer {
+class ChannelCellRenderer extends DefaultListCellRenderer {
 
-//private static final Logger mLog = java.util.logging.Logger.getLogger(channelCellRenderer.class.getName());
+//private static final Logger mLog = java.util.logging.Logger.getLogger(ChannelCellRenderer.class.getName());
 
   private static final long serialVersionUID = 1L;
 
@@ -341,11 +340,11 @@ class channelCellRenderer extends DefaultListCellRenderer {
           isSelected,
           hasFocus);
     String [] channelDescriptor = MixedDataServicePanel.mInstance.channelDescriptions.getProperty(list.getModel().getElementAt(index).toString()).split(";");
-    Channel channel; 
+    Channel channel;
     if ("primary".equals(channelDescriptor[3])){
       channel = HelperMethods.getChannelFromId(channelDescriptor[1], MixedDataService.getPluginManager().getSubscribedChannels());
     } else{
-      if ("additional".equals(channelDescriptor[3])){     
+      if ("additional".equals(channelDescriptor[3])){
         channel = HelperMethods.getChannelFromId(channelDescriptor[2], MixedDataService.getPluginManager().getSubscribedChannels());
       } else{
         channel = null;

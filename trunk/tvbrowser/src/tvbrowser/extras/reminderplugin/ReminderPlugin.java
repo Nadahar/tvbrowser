@@ -92,7 +92,7 @@ import devplugin.SettingsItem;
 public class ReminderPlugin {
 
   /** The localizer for this class. */
-  public static Localizer mLocalizer = util.ui.Localizer
+  static Localizer mLocalizer = util.ui.Localizer
       .getLocalizerFor(ReminderPlugin.class);
 
   private static final java.util.logging.Logger mLog
@@ -923,6 +923,10 @@ public class ReminderPlugin {
     mSettings.setProperty("dlgYPos", String.valueOf(dlg.getY()));
     mSettings.setProperty("dlgWidth", String.valueOf(dlg.getWidth()));
     mSettings.setProperty("dlgHeight", String.valueOf(dlg.getHeight()));
+  }
+
+  public static void resetLocalizer() {
+    mLocalizer = Localizer.getLocalizerFor(ReminderPlugin.class);
   }
 
 

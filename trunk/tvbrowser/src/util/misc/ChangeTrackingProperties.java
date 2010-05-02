@@ -34,9 +34,9 @@ import util.io.stream.StreamUtilities;
 /**
  * properties implementation which tracks changes and only stores itself to disk
  * if there were changes in the properties collection
- * 
+ *
  * @author Bananeweizen
- * 
+ *
  */
 public class ChangeTrackingProperties extends Properties {
 
@@ -51,10 +51,10 @@ public class ChangeTrackingProperties extends Properties {
   /**
    * whether or not the properties stored in this object have changed since
    * object creation
-   * 
+   *
    * @return changed
    */
-  public boolean changed() {
+  synchronized public boolean changed() {
     return mChanged;
   }
 

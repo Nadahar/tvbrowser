@@ -1,17 +1,30 @@
 package verysimplelist;
 
-import devplugin.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Properties;
-import javax.swing.*;
-import util.ui.*;
+
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JColorChooser;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextPane;
+import javax.swing.SwingUtilities;
+
+import util.ui.ImageUtilities;
+import util.ui.TabLayout;
+import devplugin.SettingsTab;
 
 public class VerySimpleListSettingsTab implements SettingsTab
 {
@@ -22,8 +35,8 @@ public class VerySimpleListSettingsTab implements SettingsTab
   private JPanel mSettingsPn;
   private JCheckBox mNextCheckBox;
   private JTextPane mStyleSheetText;
-  private ArrayList lines1;
-  private ArrayList lines2;
+  private ArrayList<JLabel> lines1;
+  private ArrayList<JLabel> lines2;
   private Color line1Color;
   private Color line2Color;
   private Color text1Color;
@@ -79,12 +92,12 @@ public class VerySimpleListSettingsTab implements SettingsTab
     }
   };
 
-  private void paintLine(ArrayList list, Color col, Color txt)
+  private void paintLine(ArrayList<JLabel> list, Color col, Color txt)
   {
-    Iterator it = list.iterator();
+    Iterator<JLabel> it = list.iterator();
     while ( it.hasNext() )
     {
-      paintLabel((JLabel) it.next(), col, txt);
+      paintLabel(it.next(), col, txt);
     }
   }
 
@@ -137,8 +150,8 @@ public class VerySimpleListSettingsTab implements SettingsTab
     liste.setLayout(new GridLayout(9,1));
     liste.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("settingslist", "Colors for list")));
 
-    lines1 = new ArrayList();
-    lines2 = new ArrayList();
+    lines1 = new ArrayList<JLabel>();
+    lines2 = new ArrayList<JLabel>();
 
     JLabel lbl = new JLabel(mLocalizer.msg("settingshead", "Header"));
     lbl.addMouseListener(lines2click);
@@ -214,23 +227,23 @@ public class VerySimpleListSettingsTab implements SettingsTab
   public void saveSettings()
   {
     // mSettings.setProperty("css", new String(mStyleSheetText.getText()));
-    mSettings.setProperty("shownext", new Boolean(mNextCheckBox.isSelected()).toString());
+    mSettings.setProperty("shownext", String.valueOf(mNextCheckBox.isSelected()));
 
-    mSettings.setProperty("color1r", new Integer(line1Color.getRed()).toString());
-    mSettings.setProperty("color1g", new Integer(line1Color.getGreen()).toString());
-    mSettings.setProperty("color1b", new Integer(line1Color.getBlue()).toString());
+    mSettings.setProperty("color1r", String.valueOf(line1Color.getRed()));
+    mSettings.setProperty("color1g", String.valueOf(line1Color.getGreen()));
+    mSettings.setProperty("color1b", String.valueOf(line1Color.getBlue()));
 
-    mSettings.setProperty("color2r", new Integer(line2Color.getRed()).toString());
-    mSettings.setProperty("color2g", new Integer(line2Color.getGreen()).toString());
-    mSettings.setProperty("color2b", new Integer(line2Color.getBlue()).toString());
+    mSettings.setProperty("color2r", String.valueOf(line2Color.getRed()));
+    mSettings.setProperty("color2g", String.valueOf(line2Color.getGreen()));
+    mSettings.setProperty("color2b", String.valueOf(line2Color.getBlue()));
 
-    mSettings.setProperty("tcolor1r", new Integer(text1Color.getRed()).toString());
-    mSettings.setProperty("tcolor1g", new Integer(text1Color.getGreen()).toString());
-    mSettings.setProperty("tcolor1b", new Integer(text1Color.getBlue()).toString());
+    mSettings.setProperty("tcolor1r", String.valueOf(text1Color.getRed()));
+    mSettings.setProperty("tcolor1g", String.valueOf(text1Color.getGreen()));
+    mSettings.setProperty("tcolor1b", String.valueOf(text1Color.getBlue()));
 
-    mSettings.setProperty("tcolor2r", new Integer(text2Color.getRed()).toString());
-    mSettings.setProperty("tcolor2g", new Integer(text2Color.getGreen()).toString());
-    mSettings.setProperty("tcolor2b", new Integer(text2Color.getBlue()).toString());
+    mSettings.setProperty("tcolor2r", String.valueOf(text2Color.getRed()));
+    mSettings.setProperty("tcolor2g", String.valueOf(text2Color.getGreen()));
+    mSettings.setProperty("tcolor2b", String.valueOf(text2Color.getBlue()));
  }
 
   public Icon getIcon()

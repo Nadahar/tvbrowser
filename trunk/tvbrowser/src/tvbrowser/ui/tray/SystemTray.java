@@ -295,7 +295,7 @@ public class SystemTray {
    * @param message
    *          The message to display in the balloon tip.
    * @param messageType
-   *          The type of the displayed balllon tip.
+   *          The type of the displayed ballon tip.
    * @return If the balloon tip could be shown.
    */
   public boolean showBalloonTip(String caption, String message, java.awt.TrayIcon.MessageType messageType) {

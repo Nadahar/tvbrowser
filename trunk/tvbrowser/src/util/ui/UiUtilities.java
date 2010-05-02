@@ -26,6 +26,7 @@
 
 package util.ui;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
@@ -43,6 +44,7 @@ import java.awt.Insets;
 import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
+import java.awt.Transparency;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
@@ -79,12 +81,12 @@ import util.misc.OperatingSystem;
 
 /**
  * Provides utilities for UI stuff.
- * 
+ *
  * @author Til Schneider, www.murfman.de
  */
 /**
  * @author MadMan
- * 
+ *
  */
 public class UiUtilities {
 
@@ -101,7 +103,7 @@ public class UiUtilities {
    * Centers a window to its parent frame and shows it.
    * <p>
    * If the window has no parent frame it will be centered to the screen.
-   * 
+   *
    * @param win
    *          The window to center and show.
    */
@@ -169,7 +171,7 @@ public class UiUtilities {
    * visible modal dialog in the component tree.
    * <p>
    * If there is no visible modal dialog the root frame will be returned.
-   * 
+   *
    * @param parent
    *          One component of the component tree.
    * @return the best dialog parent for a new JDialog.
@@ -183,7 +185,7 @@ public class UiUtilities {
    * Gets the last visible modal child dialog of the specified window.
    * <p>
    * If there is no visible modal child the window itself will be returned.
-   * 
+   *
    * @param parent
    *          The window to get the child from.
    * @return the last visible modal child dialog of the specified window.
@@ -205,12 +207,12 @@ public class UiUtilities {
 
   /**
    * Gets if a dialog child of the given window is modal.
-   * 
+   *
    * @param parent
    *          The window to check the children of.
    * @return <code>True</code> if a child is modal, <code>false</code>
    *         otherwise.
-   * 
+   *
    * @since 2.7
    */
   public static boolean containsModalDialogChild(Window parent) {
@@ -233,7 +235,7 @@ public class UiUtilities {
    * <P>
    * Wenn text und iconDateiname angegeben sind, dann wird text als TooltipText
    * gesetzt.
-   * 
+   *
    * @param text
    *          Der Text des Buttons (Kann null sein, wenn der Button keinen Text
    *          enthalten soll)
@@ -273,7 +275,7 @@ public class UiUtilities {
 
   /**
    * Gets the width of the specified String.
-   * 
+   *
    * @param str
    *          The String to get the width for.
    * @param font
@@ -291,7 +293,7 @@ public class UiUtilities {
 
   /**
    * Gets the width of the specified char array.
-   * 
+   *
    * @param chars
    *          The char array to get the width for.
    * @param offset
@@ -314,7 +316,7 @@ public class UiUtilities {
 
   /**
    * Creates a text area that holds a help text.
-   * 
+   *
    * @param msg
    *          The help text.
    * @return A text area containing the help text.
@@ -328,9 +330,9 @@ public class UiUtilities {
     descTA.setWrapStyleWord(true);
     descTA.setLineWrap(true);
     descTA.setFocusable(false);
-    
+
     Color bg = new JPanel().getBackground();
-    
+
     descTA.setBackground(new Color(bg.getRed(),bg.getGreen(),bg.getBlue()));
 
     return descTA;
@@ -338,9 +340,9 @@ public class UiUtilities {
 
   /**
    * Creates a Html EditorPane that holds a HTML-Help Text
-   * 
+   *
    * Links will be displayed and are clickable
-   * 
+   *
    * @param html
    *          HTML-Text to display
    * @return EditorPane that holds a Help Text
@@ -349,12 +351,12 @@ public class UiUtilities {
   public static JEditorPane createHtmlHelpTextArea(String html) {
     return createHtmlHelpTextArea(html, new JPanel().getBackground());
   }
-  
+
   /**
    * Creates a Html EditorPane that holds a HTML-Help Text
-   * 
+   *
    * Links will be displayed and are clickable
-   * 
+   *
    * @param html
    *          HTML-Text to display
    * @param background The color for the background.
@@ -390,9 +392,9 @@ public class UiUtilities {
 
   /**
    * Creates a Html EditorPane that holds a HTML-Help Text.
-   * 
+   *
    * Add a Listener if you want to have clickable Links
-   * 
+   *
    * @param html
    *          HTML-Text to display
    * @param listener
@@ -404,12 +406,12 @@ public class UiUtilities {
       HyperlinkListener listener) {
     return createHtmlHelpTextArea(html,listener,new JPanel().getBackground());
   }
-  
+
   /**
    * Creates a Html EditorPane that holds a HTML-Help Text.
-   * 
+   *
    * Add a Listener if you want to have clickable Links
-   * 
+   *
    * @param html
    *          HTML-Text to display
    * @param listener
@@ -427,10 +429,10 @@ public class UiUtilities {
           .substring(html.indexOf("<html>") + 6, html.indexOf("</html>"));
     }
     Font font = new JLabel().getFont();
-    
+
     html = "<html><div style=\"color:#000000;font-family:" + font.getName()
         + "; font-size:" + font.getSize() +";background-color:rgb(" + background.getRed() + "," + background.getGreen() + "," + background.getBlue() + ");\">" + html + "</div></html>";
-    
+
     final JEditorPane pane = new JEditorPane("text/html", html);
     pane.setBorder(BorderFactory.createEmptyBorder());
     pane.setEditable(false);
@@ -446,7 +448,7 @@ public class UiUtilities {
 
   /**
    * Moves Selected Items from one List to another
-   * 
+   *
    * @param fromList
    *          Move from this List
    * @param toList
@@ -522,7 +524,7 @@ public class UiUtilities {
 
   /**
    * Moves Selected Items from one List to another
-   * 
+   *
    * @param fromList
    *          Move from this List
    * @param toList
@@ -574,7 +576,7 @@ public class UiUtilities {
 
   /**
    * Move selected Items in the JList
-   * 
+   *
    * @param list
    *          Move Items in this List
    * @param row
@@ -616,7 +618,7 @@ public class UiUtilities {
 
   /**
    * Move selected Items in the JList
-   * 
+   *
    * @param list
    *          Move Items in this List
    * @param nrRows
@@ -655,7 +657,7 @@ public class UiUtilities {
 
   /**
    * Scale Icons to a specific width. The aspect ratio is kept.
-   * 
+   *
    * @param icon
    *          The icon to scale.
    * @param newWidth
@@ -669,7 +671,7 @@ public class UiUtilities {
 
   /**
    * Scales Icons to a specific size
-   * 
+   *
    * @param icon
    *          Icon that should be scaled
    * @param x
@@ -711,56 +713,170 @@ public class UiUtilities {
 
   /**
    * Scales an image to a specific size and returns an BufferedImage
-   * 
+   *
    * @param img
    *          Scale this IMage
-   * @param x
-   *          new X-Value
-   * @param y
-   *          new Y-Value
+   * @param width
+   *          new width
+   * @param height
+   *          new height
    * @return Scaled BufferedImage
-   * 
+   *
    * @since 2.5
    */
   public static BufferedImage scaleIconToBufferedImage(BufferedImage img,
-      int x, int y) {
-    return scaleIconToBufferedImage(img, x, y, img.getType());
+      int width, int height) {
+    return scaleIconToBufferedImage(img, width, height, img.getType());
   }
-  
+
   /**
    * Scales an image to a specific size and returns an BufferedImage
-   * 
+   *
    * @param img
-   *          Scale this IMage
-   * @param x
-   *          new X-Value
-   * @param y
-   *          new Y-Value
+   *          Scale this image
+   * @param width
+   *          new width
+   * @param height
+   *          new height
    * @param type The type of the image.
    * @return Scaled BufferedImage
-   * 
+   *
    * @since 2.7
    */
   public static BufferedImage scaleIconToBufferedImage(BufferedImage img,
-      int x, int y, int type) {
-    // Scale Image
-    Image image = img.getScaledInstance(x, y, Image.SCALE_SMOOTH);
+      int width, int height, int type) {
+    return scaleIconToBufferedImage(img, width, height, type, null);
+  }
 
-    BufferedImage im = new BufferedImage(x, y, type);
+  /**
+   * Scales an image to a specific size and returns an BufferedImage
+   *
+   * @param img
+   *          Scale this image
+   * @param width
+   *          new width
+   * @param height
+   *          new height
+   * @param type The type of the image.
+   * @return Scaled BufferedImage
+   *
+   * @since 3.0
+   */
+  public static BufferedImage scaleIconToBufferedImage(BufferedImage img,
+      int width, int height, int type, Color backgroundColor) {
+    // Scale Image
+    Image image = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+
+    BufferedImage im = new BufferedImage(width, height, type);
 
     Graphics2D g2 = im.createGraphics();
+    if (backgroundColor != null) {
+      g2.setColor(backgroundColor);
+      g2.fillRect(0, 0 , width, height);
+    }
+
     g2.drawImage(image, null, null);
     g2.dispose();
 
     im.flush();
     return im;
+
+  }
+
+  static BufferedImage createResizedCopy(Image originalImage, int scaledWidth, int scaledHeight, boolean preserveAlpha) {
+    System.out.println("resizing...");
+    int imageType = preserveAlpha ? BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB;
+    BufferedImage scaledBI = new BufferedImage(scaledWidth, scaledHeight, imageType);
+    Graphics2D g = scaledBI.createGraphics();
+    if (preserveAlpha) {
+      g.setComposite(AlphaComposite.Src);
+    }
+    g.drawImage(originalImage, 0, 0, scaledWidth, scaledHeight, null);
+    g.dispose();
+    return scaledBI;
   }
 
   /**
+   * Convenience method that returns a scaled instance of the
+   * provided {@code BufferedImage}.
+   *
+   * @param img the original image to be scaled
+   * @param targetWidth the desired width of the scaled instance,
+   *    in pixels
+   * @param targetHeight the desired height of the scaled instance,
+   *    in pixels
+   * @param hint one of the rendering hints that corresponds to
+   *    {@code RenderingHints.KEY_INTERPOLATION} (e.g.
+   *    {@code RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR},
+   *    {@code RenderingHints.VALUE_INTERPOLATION_BILINEAR},
+   *    {@code RenderingHints.VALUE_INTERPOLATION_BICUBIC})
+   * @param higherQuality if true, this method will use a multi-step
+   *    scaling technique that provides higher quality than the usual
+   *    one-step technique (only useful in downscaling cases, where
+   *    {@code targetWidth} or {@code targetHeight} is
+   *    smaller than the original dimensions, and generally only when
+   *    the {@code BILINEAR} hint is specified)
+   * @return a scaled version of the original {@code BufferedImage}
+   */
+  public static BufferedImage getScaledInstance(BufferedImage img,
+                                         int targetWidth,
+                                         int targetHeight,
+                                         Object hint,
+                                         boolean higherQuality)
+  {
+      int type = (img.getTransparency() == Transparency.OPAQUE) ?
+          BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB;
+      BufferedImage ret = (BufferedImage)img;
+      int w, h;
+      if (higherQuality) {
+          // Use multi-step technique: start with original size, then
+          // scale down in multiple passes with drawImage()
+          // until the target size is reached
+          w = img.getWidth();
+          h = img.getHeight();
+      } else {
+          // Use one-step technique: scale directly from original
+          // size to target size with a single drawImage() call
+          w = targetWidth;
+          h = targetHeight;
+      }
+
+      do {
+          if (higherQuality && w > targetWidth) {
+              w /= 2;
+              if (w < targetWidth) {
+                  w = targetWidth;
+              }
+          }
+
+          if (higherQuality && h > targetHeight) {
+              h /= 2;
+              if (h < targetHeight) {
+                  h = targetHeight;
+              }
+          }
+
+          BufferedImage tmp = new BufferedImage(w, h, type);
+          Graphics2D g2 = tmp.createGraphics();
+          g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, hint);
+        g2.setColor(Color.RED);
+        g2.fillRect(0, 0 , w, h);
+          g2.drawImage(ret, 0, 0, w, h, null);
+          g2.dispose();
+
+          ret = tmp;
+      } while (w != targetWidth || h != targetHeight);
+
+      return ret;
+  }
+
+
+
+  /**
    * Creates a scaled Version of the Icon.
-   * 
+   *
    * The scaled Version will have a Background and a Border.
-   * 
+   *
    * @param ic
    * @return ImageIcon
    * @since 2.1
@@ -804,7 +920,7 @@ public class UiUtilities {
 
   /**
    * Registers the escape key as close key for a component.
-   * 
+   *
    * @param component
    *          The component to close on pressing escape key.
    */
@@ -845,7 +961,7 @@ public class UiUtilities {
   /**
    * set the size of a dialog, but never sizes it smaller than the preferred
    * size
-   * 
+   *
    * @param dialog
    *          dialog to be sized
    * @param width

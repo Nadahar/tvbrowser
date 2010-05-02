@@ -1,6 +1,6 @@
 /*
  * Data Mixer Plugin by jb (j.bollwahn@arcor.de)
- * 
+ *
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -94,14 +94,14 @@ public class MixedDataService extends AbstractTvDataService{
 
   /**
    * Gets the Version of the implemented API
-   * Since TV-Browser 0.9.7 getAPIVersion must return 1.0 
+   * Since TV-Browser 0.9.7 getAPIVersion must return 1.0
    */
   public static Version getVersion() {
     return new Version(0, 0, 3, false, null);
   }
 
   /**
-   * Called by the host-application during start-up. 
+   * Called by the host-application during start-up.
    * Loads settings for this data service.
    * @param p ; poperty list to handle the settings
    *
@@ -110,7 +110,7 @@ public class MixedDataService extends AbstractTvDataService{
   }
 
   /**
-   * Called by the host-application during shut-down, 
+   * Called by the host-application during shut-down,
    * to store the settings returned to the file system.
    * @return a property list with settings of this data service.
    */
@@ -211,7 +211,7 @@ public class MixedDataService extends AbstractTvDataService{
       iconDir.mkdir();
     }
 
-    mixedChannelsDirName =getPluginManager().getTvBrowserSettings().getTvBrowserUserHome() + "/MixedChannels"; 
+    mixedChannelsDirName =getPluginManager().getTvBrowserSettings().getTvBrowserUserHome() + "/MixedChannels";
     File mixedChannelsDir = new File (mixedChannelsDirName);
     if (!mixedChannelsDir.exists()){
       mixedChannelsDir.mkdir();
@@ -242,7 +242,7 @@ public class MixedDataService extends AbstractTvDataService{
 
   /**
    * @return array of channels
-   */  
+   */
   public Channel[] checkForAvailableChannels(ChannelGroup group, ProgressMonitor monitor) {
     return getAvailableChannels(group);
   }
@@ -250,7 +250,7 @@ public class MixedDataService extends AbstractTvDataService{
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see devplugin.TvDataService#supportsDynamicChannelGroups()
    */
   public boolean supportsDynamicChannelGroups() {
@@ -259,7 +259,7 @@ public class MixedDataService extends AbstractTvDataService{
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see devplugin.TvDataService#supportsDynamicChannelList()
    */
   public ChannelGroup[] checkForAvailableChannelGroups(ProgressMonitor monitor) throws TvBrowserException {
@@ -270,7 +270,7 @@ public class MixedDataService extends AbstractTvDataService{
 
   /*
    * (non-Javadoc)
-   * 
+   *
    * @see devplugin.TvDataService#getAvailableGroups()
    */
   public ChannelGroup[] getAvailableGroups() {
@@ -300,7 +300,7 @@ public class MixedDataService extends AbstractTvDataService{
     }
     if (channelDefinitions.size() == 0) {
       return new Channel[0];
-    } 
+    }
 
     String channelID;
     for (Enumeration<?> e = channelDefinitions.keys(); e.hasMoreElements();) {
@@ -378,7 +378,7 @@ public class MixedDataService extends AbstractTvDataService{
               }
               index++;
             }
-          }           
+          }
         }
 
       }
@@ -436,7 +436,7 @@ public class MixedDataService extends AbstractTvDataService{
         for (int j = 0; j < dateArray.length; j++){
           dateArray[j] = Date.createYYYYMMDD(dateStringArray[j].substring(0, 4) + "-" + dateStringArray[j].substring(4, 6)+ "-" + dateStringArray[j].substring(6, 8),"-");
         }
-      } 
+      }
 
       for (int day = 0; day < dateArray.length; day++) {
         if (dateArray[day].compareTo(startDate)>=0) {
@@ -462,7 +462,7 @@ public class MixedDataService extends AbstractTvDataService{
 
     boolean noBreakFlg = true;
     // Update sources before current day program is updated
-    Channel [] subChannel= {HelperMethods.getChannelFromId(channelDesc[1], subScribedChannels),HelperMethods.getChannelFromId(channelDesc[2], subScribedChannels)}; 
+    Channel [] subChannel= {HelperMethods.getChannelFromId(channelDesc[1], subScribedChannels),HelperMethods.getChannelFromId(channelDesc[2], subScribedChannels)};
     for (int ci = 0; ci < 2; ci++) {
       if (channelDesc[ci + 1].startsWith("mixeddataservice.MixedDataService")) {
         if (!(subChannel[ci] == null || mixedSourcesUpdate.containsKey(subChannel[ci].getUniqueId() + date.getDateString()))) {
@@ -504,10 +504,10 @@ public class MixedDataService extends AbstractTvDataService{
     if (dayProg2==null){
       dayProg2  = getDayProgram (subChannel[1],  date);
     }
-    
+
     MutableChannelDayProgram dayProg;
     if (!mixedSourcesUpdate.containsKey(channel.getUniqueId()+date.getDateString())){
-      dayProg = mixedDayProgram(channel, dayProg1, dayProg2, date, mixFlags); 
+      dayProg = mixedDayProgram(channel, dayProg1, dayProg2, date, mixFlags);
       mixedSourcesUpdate.put(channel.getUniqueId()+date.getDateString(), dayProg);
       if (dayProg != null && dayProg.getProgramCount() > 0) {
         updateManager.updateDayProgram(dayProg);
@@ -515,7 +515,7 @@ public class MixedDataService extends AbstractTvDataService{
       // Check whether the download should be canceled
       if (updateManager.cancelDownload()) {
         noBreakFlg=false;
-      } 
+      }
     }
 
     if (isAutoUpdate){
@@ -547,7 +547,7 @@ public class MixedDataService extends AbstractTvDataService{
             }
           }
         }
-      }     
+      }
    }
     return noBreakFlg;
   }
@@ -555,7 +555,7 @@ public class MixedDataService extends AbstractTvDataService{
 
   /**
    * Mix program data of two different channel and create a new day program
-   * 
+   *
    * @param currentChannel the Mixed Data channel of the dayProg
    * @param alternativeChannel the channel with the additional data
    * @param date the day of the dayprogram
@@ -651,7 +651,7 @@ public class MixedDataService extends AbstractTvDataService{
         mixInfos(currentProgram, currentProg, currentProg, noMix);
         currentProgram.setProgramLoadingIsComplete();
         dayProg.addProgram(currentProgram);
-      }     
+      }
     }
   }
 
@@ -761,13 +761,13 @@ public class MixedDataService extends AbstractTvDataService{
       if (info2.length()>0&& (mixFlag.equals("additional") ||  info1.length()<1)) {
         retInfo = info2;
       }
-    }   
+    }
     if (type == ProgramFieldType.GENRE_TYPE){
       retInfo = HelperMethods.cleanUpCategories(retInfo);
     }
     if (type == ProgramFieldType.SHORT_DESCRIPTION_TYPE && retInfo.length()>MutableProgram.MAX_SHORT_INFO_LENGTH){
       retInfo = retInfo.substring(0, MutableProgram.MAX_SHORT_INFO_LENGTH-3)+"...";
-    } 
+    }
 
     if (retInfo.length()>0){
       currentProgram.setTextField(type, retInfo);
@@ -798,7 +798,7 @@ public class MixedDataService extends AbstractTvDataService{
         if (info2>=0) {
           currentProgram.setInfo(info2);
         }
-      } 
+      }
     }
   }
 
@@ -884,14 +884,14 @@ public class MixedDataService extends AbstractTvDataService{
     } else{
       return prog.getIntField(type);
     }
-  }      
+  }
   private int getTimeField (Program prog, ProgramFieldType type){
     if (prog==null){
       return -1;
     } else{
       return prog.getTimeField(type);
     }
-  }   
+  }
 
   private byte[] getBinaryField (Program prog, ProgramFieldType type){
     if (prog==null){
@@ -899,7 +899,7 @@ public class MixedDataService extends AbstractTvDataService{
     } else{
       return prog.getBinaryField(type);
     }
-  }      
+  }
 
   /**
    * Test, whether on program title is the short version of the other
@@ -920,7 +920,7 @@ public class MixedDataService extends AbstractTvDataService{
     int max1 = test1.length()-1;
     int max2 = test2.length()-1;
 
-    while (count1<=max1 & count2<=max2){
+    while (count1<=max1 && count2<=max2){
       char char1 = test1.charAt(count1);
       while (count1 <= max1 && (char1 ==' '||char1 =='!'||char1 =='\"'||char1 =='#'||char1 =='$'||char1 =='%'||char1 =='&'||char1 =='\''||char1 =='('||char1 ==')'||char1 =='*'||char1 =='+'||char1 ==','||char1 =='-'||char1 =='.'||char1 =='/'||char1 ==':'||char1 ==';'||char1 =='<'||char1 =='='||char1 =='>'||char1 =='?'||char1 =='['||char1 =='\\'||char1 ==']'||char1 =='_'||char1 =='')){
         count1++;

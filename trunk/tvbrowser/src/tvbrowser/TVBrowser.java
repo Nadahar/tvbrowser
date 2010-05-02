@@ -118,7 +118,7 @@ public class TVBrowser {
     = Logger.getLogger(TVBrowser.class.getName());
 
   /** The localizer for this class. */
-  public static Localizer mLocalizer;
+  private static Localizer mLocalizer;
 
   private static String curLookAndFeel;
 
@@ -333,10 +333,10 @@ public class TVBrowser {
     // refresh the localizers because we know the language now
     Localizer.emptyLocalizerCache();
     mLocalizer = Localizer.getLocalizerFor(TVBrowser.class);
-    ProgramInfo.mLocalizer = Localizer.getLocalizerFor(ProgramInfo.class);
-    ReminderPlugin.mLocalizer = Localizer.getLocalizerFor(ReminderPlugin.class);
-    Date.LOCALIZER = util.ui.Localizer.getLocalizerFor(Date.class);
-    ProgramFieldType.mLocalizer = Localizer.getLocalizerFor(ProgramFieldType.class);
+    ProgramInfo.resetLocalizer();
+    ReminderPlugin.resetLocalizer();
+    Date.resetLocalizer();
+    ProgramFieldType.resetLocalizer();
 
     // Set the proxy settings
     updateProxySettings();

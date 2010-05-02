@@ -32,7 +32,7 @@ import util.ui.Localizer;
 
 /**
  * Contains all the field types of a program.
- * 
+ *
  * @see Program#getBinaryField(ProgramFieldType)
  * @see Program#getTextField(ProgramFieldType)
  * @see Program#getIntField(ProgramFieldType)
@@ -41,12 +41,12 @@ import util.ui.Localizer;
  */
 public class ProgramFieldType {
 
-  public static Localizer mLocalizer
+  private static Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(ProgramFieldType.class);
 
   private static final ArrayList<ProgramFieldType> mKnownTypeList = new ArrayList<ProgramFieldType>();
   private static ProgramFieldType[] mKnownTypeArray;
-  
+
   public static final int UNKNOWN_FORMAT = 1;
   /**
    * @deprecated since 3.0, use {@link UNKNOWN_FORMAT} instead
@@ -56,7 +56,7 @@ public class ProgramFieldType {
   public static final int TEXT_FORMAT = 3;
   public static final int INT_FORMAT = 4;
   public static final int TIME_FORMAT = 5;
-  
+
   /**
    * number of Object fields (TEXT and BINARY format)
    */
@@ -66,54 +66,54 @@ public class ProgramFieldType {
    * number of int fields (INT and TIME format)
    */
   private static final int INT_FIELDS_COUNT = 12;
-  
+
   /**
    * sanity check to control that no int storage index is used twice
    */
   private static final boolean[] usedIntField = new boolean[INT_FIELDS_COUNT];
-  
+
   /**
    * sanity check to control that no object storage index is used twice
    */
-  private static final boolean[] usedObjectField = new boolean[OBJECT_FIELDS_COUNT]; 
+  private static final boolean[] usedObjectField = new boolean[OBJECT_FIELDS_COUNT];
 
 
   public static final ProgramFieldType START_TIME_TYPE
     = new ProgramFieldType(1, TIME_FORMAT, true, "start time",
                            "startTime", "Start time", 0);
-                           
+
   public static final ProgramFieldType END_TIME_TYPE
     = new ProgramFieldType(2, TIME_FORMAT, true, "end time",
                            "endTime", "End time", 1);
-                           
+
   /**
    * title
    */
   public static final ProgramFieldType TITLE_TYPE
     = new ProgramFieldType(3, TEXT_FORMAT, true, "title",
                            "title", "Title", 0);
-    
+
   /**
    * original language title
    */
   public static final ProgramFieldType ORIGINAL_TITLE_TYPE
     = new ProgramFieldType(4, TEXT_FORMAT, true, "original title",
                            "originalTitle", "Original title", 1);
-    
+
   /**
    * episode title
    */
   public static final ProgramFieldType EPISODE_TYPE
     = new ProgramFieldType(5, TEXT_FORMAT, true, "episode",
                            "episode", "Episode", 2);
-    
+
   /**
    * original language episode title
    */
   public static final ProgramFieldType ORIGINAL_EPISODE_TYPE
     = new ProgramFieldType(6, TEXT_FORMAT, true, "original episode",
                            "originalEpisode", "Original episode", 3);
-    
+
   public static final ProgramFieldType SHORT_DESCRIPTION_TYPE
     = new ProgramFieldType(7, TEXT_FORMAT, true, "short description",
                            "shortDescription", "Short description", 4);
@@ -152,17 +152,17 @@ public class ProgramFieldType {
   public static final ProgramFieldType URL_TYPE
     = new ProgramFieldType(15, TEXT_FORMAT, true, "film URL",
                            "filmUrl", "Website", 9);
-                           
+
   public static final ProgramFieldType GENRE_TYPE
     = new ProgramFieldType(16, TEXT_FORMAT, true, "genre",
-                           "genre", "Genre", 10);                         
+                           "genre", "Genre", 10);
 
   public static final ProgramFieldType ORIGIN_TYPE
     = new ProgramFieldType(17, TEXT_FORMAT, true, "origin",
                            "origin", "Origin", 11);
 
   /**
-   * net playing time in minutes (may be shorter than end time-start time 
+   * net playing time in minutes (may be shorter than end time-start time
    * due to commercials in between)
    */
   public static final ProgramFieldType NET_PLAYING_TIME_TYPE
@@ -183,15 +183,15 @@ public class ProgramFieldType {
   public static final ProgramFieldType REPETITION_OF_TYPE
     = new ProgramFieldType(21, TEXT_FORMAT, true, "repetition of",
                            "repetitionOf", "Repetition of", 13);
-   
+
   public static final ProgramFieldType MUSIC_TYPE
     = new ProgramFieldType(22, TEXT_FORMAT, true, "music",
                            "music", "Music", 14);
-    
+
   public static final ProgramFieldType MODERATION_TYPE
     = new ProgramFieldType(23, TEXT_FORMAT, true, "moderation",
                            "moderation", "Moderation", 15);
-    
+
   public static final ProgramFieldType PRODUCTION_YEAR_TYPE
     = new ProgramFieldType(24, INT_FORMAT, true, "production year",
                            "productionYear", "Production year", 6);
@@ -217,7 +217,7 @@ public class ProgramFieldType {
 
   /**
    * number of this episode
-   * 
+   *
    * @since 2.6/2.2.4
    */
   public static final ProgramFieldType EPISODE_NUMBER_TYPE
@@ -226,7 +226,7 @@ public class ProgramFieldType {
 
   /**
    * total number of episodes
-   * 
+   *
    * @since 2.6/2.2.4
    */
   public static final ProgramFieldType EPISODE_TOTAL_NUMBER_TYPE
@@ -235,7 +235,7 @@ public class ProgramFieldType {
 
   /**
    * number of season
-   * 
+   *
    * @since 2.6/2.2.4
    */
   public static final ProgramFieldType SEASON_NUMBER_TYPE
@@ -244,7 +244,7 @@ public class ProgramFieldType {
 
   /**
    * Producer, <b>this is not the producing company</b>
-   * 
+   *
    * @since 2.6/2.2.4
    * @see devplugin.ProgramFieldType.PRODUCTION_COMPANY_TYPE
    */
@@ -254,7 +254,7 @@ public class ProgramFieldType {
 
   /**
    * Camera
-   * 
+   *
    * @since 2.6/2.2.4
    */
   public static final ProgramFieldType CAMERA_TYPE
@@ -263,7 +263,7 @@ public class ProgramFieldType {
 
   /**
    * Cutter
-   * 
+   *
    * @since 2.6/2.2.4
    */
   public static final ProgramFieldType CUTTER_TYPE
@@ -295,29 +295,29 @@ public class ProgramFieldType {
 
   /**
    * Production Company, <b>this is not the producer name</b>
-   * 
+   *
    * @since 2.7
    * @see PRODUCER_TYPE
    */
   public static final ProgramFieldType PRODUCTION_COMPANY_TYPE
        = new ProgramFieldType(37, TEXT_FORMAT, true, "production company",
-                              "productionCompany", "Production company", 24); 
-  
+                              "productionCompany", "Production company", 24);
+
   /**
    * Age rating. This is the text version, whereas "age limit" should
    * contain the age in years.
-   * 
+   *
    * @since 3.0
    * @see AGE_LIMIT_TYPE
    */
   public static final ProgramFieldType AGE_RATING_TYPE
   = new ProgramFieldType(38, TEXT_FORMAT, true, "age rating",
-                         "ageRating", "Age rating", 25); 
+                         "ageRating", "Age rating", 25);
 
   /**
    * Last production year if a program was produced over several years.
    * First production year has then to be added to PRODUCTION_YEAR_TYPE.
-   * 
+   *
    * @since 3.0
    * @see PRODUCTION_YEAR_TYPE
    */
@@ -328,22 +328,22 @@ public class ProgramFieldType {
   /**
    * Background information that does not belong into the description of
    * the program. E.g. star portraits, awards, reception.
-   * 
+   *
    * @since 3.0
    */
   public static final ProgramFieldType ADDITIONAL_INFORMATION_TYPE
   = new ProgramFieldType(40, TEXT_FORMAT, true, "additional information",
                          "additionalInformation", "Additional information", 26);
 
-  
+
   private int mTypeId;
 
   private String mName;
 
   private String mLocalizedName;
-  
+
   private String mLocalizerKey, mLocalizerDefaultMsg;
-  
+
   private int mFormat;
 
   /**
@@ -367,7 +367,7 @@ public class ProgramFieldType {
     mLocalizerKey = localizerKey;
     mLocalizerDefaultMsg = localizerDefaultMsg;
     mStorageIndex = storageIndex;
-    
+
     if (isKnownType) {
       mKnownTypeList.add(this);
       int maxTypeId = 0;
@@ -400,19 +400,19 @@ public class ProgramFieldType {
       }
     }
   }
-  
-  
-  
+
+
+
   public static ProgramFieldType getTypeForId(int typeId) {
     if (typeId< mKnownTypeArray.length) {
       return mKnownTypeArray[typeId];
     }
-    
+
     return new ProgramFieldType(typeId, UNKNOWN_FORMAT, false,
                                 "unknown (" + typeId + ")","unknown", "Unknown", -1);
   }
-  
-  
+
+
   public static String getFormatName(int format) {
     switch (format) {
       case BINARY_FORMAT: return "binary format";
@@ -422,44 +422,44 @@ public class ProgramFieldType {
       default: return "unknown format";
     }
   }
-  
-  
+
+
   public static Iterator<ProgramFieldType> getTypeIterator() {
     return mKnownTypeList.iterator();
   }
 
 
- 
+
   public int getTypeId() {
     return mTypeId;
   }
 
 
- 
+
   public String getName() {
     return mName;
   }
-  
+
 
   public String getLocalizedName() {
     if(mLocalizedName == null)
       mLocalizedName = mLocalizer.msg(mLocalizerKey, mLocalizerDefaultMsg);
-    
-    return mLocalizedName; 
+
+    return mLocalizedName;
   }
 
 
   public int getFormat() {
     return mFormat;
   }
-  
-  
+
+
   public boolean isRightFormat(int format) {
     return (mFormat == format)
       || (format == UNKNOWN_FORMAT) || (mFormat == UNKNOWN_FORMAT);
   }
-  
-  
+
+
   public String toString() {
     // We return the localized name here. This way ProgramFieldType objects
     // can be used directly in GUI components like JLists etc.
@@ -490,5 +490,11 @@ public class ProgramFieldType {
   public static int getObjectFieldCount() {
     return OBJECT_FIELDS_COUNT;
   }
-  
+
+
+
+  public static void resetLocalizer() {
+    mLocalizer = Localizer.getLocalizerFor(ProgramFieldType.class);
+  }
+
 }

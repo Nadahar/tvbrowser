@@ -325,7 +325,7 @@ class CaptureExecute {
 
     URLConnection uc = url.openConnection();
 
-    String userpassword = mData.getUserName() + ':' + mData.getPassword();
+    String userpassword = mData.getUsername() + ':' + mData.getPassword();
     String encoded = new String(Base64.encodeBase64(userpassword.getBytes()));
 
     uc.setRequestProperty("Authorization", "Basic " + encoded);

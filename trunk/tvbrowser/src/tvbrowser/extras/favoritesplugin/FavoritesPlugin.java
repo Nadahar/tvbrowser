@@ -476,12 +476,12 @@ public class FavoritesPlugin {
         }
 
         if(version <= 2) {
-          if(id.compareTo("java.reminderplugin.ReminderPlugin") == 0) {
+          if(id.equals("java.reminderplugin.ReminderPlugin")) {
             reminderFound = true;
           }
         }
 
-        if(version > 2 || (version <= 2 && id.compareTo("java.reminderplugin.ReminderPlugin") != 0)) {
+        if(version > 2 || (version <= 2 && !id.equals("java.reminderplugin.ReminderPlugin"))) {
           list.add(ProgramReceiveTarget.createDefaultTargetForProgramReceiveIfId(id));
         }
       }

@@ -42,13 +42,10 @@ import util.ui.Localizer;
 public class Date implements Comparable<Date>
 {
   /**
-   * the localizer for the date.
-   * TODO this field must not be final cause its set elsewhere. there was a problem during
-   * startup and some objects where initialized before the locale was set. so the localizer
-   * mechanism should be reworked somehow. this field however should be made private with a
-   * getter-setter-pair.
+   * the localizer for the date. It is not final because it must be reinitialized after setting the language
+   * from the settings.
    */
-  public static Localizer LOCALIZER = Localizer.getLocalizerFor(Date.class);
+  private static Localizer LOCALIZER = Localizer.getLocalizerFor(Date.class);
 
   /**
    * logger for this class.
@@ -404,7 +401,7 @@ public class Date implements Comparable<Date>
 
   /**
    * Writes this instance to a stream.
-   * 
+   *
    * @param out the stream to write to
    * @throws IOException if something went wrong
    * @deprecated since 3.0
@@ -416,7 +413,7 @@ public class Date implements Comparable<Date>
     out.writeByte(mMonth);
     out.writeByte(mDay);
   }
-  
+
   /**
    * A hash code implementation that returns the same code for equal Dates.
    * @return the hash code
@@ -640,5 +637,9 @@ public class Date implements Comparable<Date>
       day = in.readByte();
     }
     return new Date(year, month, day);
+  }
+
+  public static void resetLocalizer() {
+    LOCALIZER = util.ui.Localizer.getLocalizerFor(Date.class);
   }
 }

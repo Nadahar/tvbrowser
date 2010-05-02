@@ -980,7 +980,7 @@ public final class Settings {
    */
   public static final class TvbDvbVChannel implements Comparable<TvbDvbVChannel> {
     /** TV-Browser's name of the channel */
-    protected String tvBrowserName;
+    private String tvBrowserName;
 
     /** contains the DVBViewer channel infos*/
     private DVBViewerChannel dvbChannel;

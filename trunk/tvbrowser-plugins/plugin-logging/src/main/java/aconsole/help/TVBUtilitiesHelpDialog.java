@@ -9,18 +9,18 @@
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation, in version 3 of the License.
- 
+
  This program is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU General Public License for more details.
- 
+
  You should have received a copy of the GNU General Public License
  along with this program, in a file called LICENSE in the top
- directory of the distribution; if not, write to 
- the Free Software Foundation, Inc., 59 Temple Place, Suite 330, 
+ directory of the distribution; if not, write to
+ the Free Software Foundation, Inc., 59 Temple Place, Suite 330,
  Boston, MA  02111-1307  USA
- 
+
  *******************************************************************/
 
 package aconsole.help;
@@ -52,10 +52,10 @@ public class TVBUtilitiesHelpDialog implements ActionListener{
 	/** The localizer for this class. */
 	private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(TVBUtilitiesHelpDialog.class);
 
-	/** The minimum size of the help dialog. */  
+	/** The minimum size of the help dialog. */
 	public static final Dimension MIN_HELP_DIALOG_SIZE = new Dimension(350, 400);
 
-	/** The maximum size of the help dialog. */  
+	/** The maximum size of the help dialog. */
 	public static final Dimension MAX_HELP_DIALOG_SIZE = new Dimension(500, 10000);
 
 	/**
@@ -65,7 +65,7 @@ public class TVBUtilitiesHelpDialog implements ActionListener{
 	 */
 	private static TVBUtilitiesHelpDialog mDialogSingleton;
 
-	/** The dialog. */  
+	/** The dialog. */
 	private JDialog mDialog;
 
 	private TVBUtilitiesHelpPanel panel;
@@ -78,7 +78,7 @@ public class TVBUtilitiesHelpDialog implements ActionListener{
 	 * Shows the specified site in the help dialog. If there is currently no help
 	 * dialog shown, one is created.
 	 *
-	 * @param parent If there is currently no help dialog shown, this parent is 
+	 * @param parent If there is currently no help dialog shown, this parent is
 	 *        used for creating a new one.
 	 * @param filename The name of the HTML file to show.
 	 * @param clazz A class in the jar where the HTML file is in.
@@ -140,7 +140,7 @@ public class TVBUtilitiesHelpDialog implements ActionListener{
 	// Hilfsmethoden
 
 	/**
-	 * Lädt eine HTML-Seite und gibt deren Inhalt als String zurück.
+	 * Lï¿½dt eine HTML-Seite und gibt deren Inhalt als String zurï¿½ck.
 	 * <p>
 	 * Die Seite kann auch in der Jar-Datei sein, in dem diese Klasse ist.
 	 *
@@ -171,11 +171,11 @@ public class TVBUtilitiesHelpDialog implements ActionListener{
 
 		}
 	}
-	static void showHelpDialog(Component parent,String helpTitle){
+	synchronized static void showHelpDialog(Component parent,String helpTitle){
 		if ((mDialogSingleton== null) || (! mDialogSingleton.mDialog.isShowing())){
-			mDialogSingleton = new TVBUtilitiesHelpDialog();
+		  mDialogSingleton = new TVBUtilitiesHelpDialog();
 			mDialogSingleton.initHelpUi(parent,helpTitle);
-		}  	
+		}
 	}
 	static void showHelpDialog(Component parent){
 		showHelpDialog(parent,null);

@@ -55,7 +55,7 @@ import devplugin.Channel;
  */
 public class ChannelGroupDialog extends JDialog {
     /** Current ChannelGroup */
-    private ChannelGroup mGroup;
+    private TvBrowserDataServiceChannelGroup mGroup;
     /** The localizer for this class. */
     private static final util.ui.Localizer mLocalizer = util.ui.Localizer
       .getLocalizerFor(ChannelGroupDialog.class);
@@ -65,7 +65,7 @@ public class ChannelGroupDialog extends JDialog {
      * @param parent Parent-Frame
      * @param group Group to show
      */
-    public ChannelGroupDialog(Window parent, ChannelGroup group) {
+    public ChannelGroupDialog(Window parent, TvBrowserDataServiceChannelGroup group) {
     super(parent);
     setModal(true);
         mGroup = group;
