@@ -31,107 +31,64 @@ import util.program.AbstractPluginProgramFormating;
 
 /**
  * A class for global program configuration settings.
- * 
+ *
  * @author René Mach
  * @since 2.5.1
  */
-public class GlobalPluginProgramFormating extends AbstractPluginProgramFormating {  
-  private String mId;
-  private String mName;
-  private String mTitleValue;
-  private String mContentValue;
-  private String mEncodingValue;  
+public class GlobalPluginProgramFormating extends AbstractPluginProgramFormating {
 
-  /**
-   * Creates an empty instance of this class.
-   */
-  public GlobalPluginProgramFormating() {
-    mName = null;
-    mTitleValue = null;
-    mContentValue = null;
-    mEncodingValue = null;
+  protected GlobalPluginProgramFormating(String id, String name, String titleValue, String contentValue, String encodingValue) {
+    super(id, name, titleValue, contentValue, encodingValue);
   }
-  
+
   protected GlobalPluginProgramFormating(String name, String titleValue, String contentValue, String encodingValue) {
-    mName = name;
-    mTitleValue = titleValue;
-    mContentValue = contentValue;
-    mEncodingValue = encodingValue;
-    mId = "#id_" + System.currentTimeMillis();
-  }  
+    this("#id_" + System.currentTimeMillis(), name, titleValue, contentValue, encodingValue);
+  }
 
-  protected void setName(String name) {
-    mName = name;
-  }
-  
-  protected void setTitleValue(String value) {
-    mTitleValue = value;
-  }
-  
-  protected void setContentValue(String value) {
-    mContentValue = value;
-  }
-  
-  protected void setEncodingValue(String value) {
-    mEncodingValue = value;
-  }
-  
   public String getContentValue() {
-    GlobalPluginProgramFormating config = GlobalPluginProgramFormatingManager.getInstance().getConfigurationForId(mId);
-    
-    if(config != null)
+    GlobalPluginProgramFormating config = GlobalPluginProgramFormatingManager.getInstance().getConfigurationForId(getId());
+
+    if(config != null) {
       return config.mContentValue;
-    else if(mContentValue != null)
+    } else {
       return mContentValue;
-    
-    return null;
+    }
   }
 
   public String getEncodingValue() {
-    GlobalPluginProgramFormating config = GlobalPluginProgramFormatingManager.getInstance().getConfigurationForId(mId);
-    
-    if(config != null)
+    GlobalPluginProgramFormating config = GlobalPluginProgramFormatingManager.getInstance().getConfigurationForId(getId());
+
+    if(config != null) {
       return config.mEncodingValue;
-    else if(mEncodingValue != null)
+    } else {
       return mEncodingValue;
-    
-    return null;
+    }
   }
 
   public String getName() {
-    GlobalPluginProgramFormating config = GlobalPluginProgramFormatingManager.getInstance().getConfigurationForId(mId);
-    
-    if(config != null)
+    GlobalPluginProgramFormating config = GlobalPluginProgramFormatingManager.getInstance().getConfigurationForId(getId());
+
+    if(config != null) {
       return config.mName;
-    else if(mName != null)
+    } else {
       return mName;
-    
-    return null;
+    }
   }
 
   public String getTitleValue() {
-    GlobalPluginProgramFormating config = GlobalPluginProgramFormatingManager.getInstance().getConfigurationForId(mId);
-    
-    if(config != null)
+    GlobalPluginProgramFormating config = GlobalPluginProgramFormatingManager.getInstance().getConfigurationForId(getId());
+
+    if(config != null) {
       return config.mTitleValue;
-    else if(mTitleValue != null)
+    } else {
       return mTitleValue;
-    
-    return null;
+    }
   }
-  
+
   protected static GlobalPluginProgramFormating load(ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.readInt(); //read version
-    
-    GlobalPluginProgramFormating config = new GlobalPluginProgramFormating();
-    
-    config.mId = (String)in.readObject();
-    config.mName = (String)in.readObject();
-    config.mTitleValue = (String)in.readObject();
-    config.mContentValue = (String)in.readObject();
-    config.mEncodingValue = (String)in.readObject();
-    
-    return config;
+
+    return new GlobalPluginProgramFormating((String)in.readObject(), (String)in.readObject(), (String)in.readObject(), (String)in.readObject(), (String)in.readObject());
   }
 
   protected void store(ObjectOutputStream out) throws IOException {
@@ -142,48 +99,41 @@ public class GlobalPluginProgramFormating extends AbstractPluginProgramFormating
     out.writeObject(mContentValue);
     out.writeObject(mEncodingValue);
   }
-  
+
   protected void loadData(ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.readInt(); //read version
-    mId = (String)in.readObject();
+    setId((String)in.readObject());
   }
-  
+
   protected void storeData(ObjectOutputStream out) throws IOException {
     out.writeInt(1); //write version
-    out.writeObject(mId);
+    out.writeObject(getId());
   }
-  
+
   /**
    * Checks if this global program configuration has the given id.
-   * 
+   *
    * @param id The id to check.
    * @return <code>true</code> if the ids are the same, <code>false</code> otherwise;
    */
   public boolean hasId(String id) {
-    if(id != null)
-      return id.compareTo(mId) == 0;
-    
+    if(id != null) {
+      return id.equals(getId());
+    }
+
     return false;
   }
-  
-  public String toString() {
-    return getName();
-  }
-  
+
   public boolean equals(Object o) {
-    if(o != null && o instanceof GlobalPluginProgramFormating)
-      return ((GlobalPluginProgramFormating)o).mId.compareTo(mId) == 0;
-    
+    if(o != null && o instanceof GlobalPluginProgramFormating) {
+      return ((GlobalPluginProgramFormating)o).getId().equals(getId());
+    }
+
     return false;
   }
 
   @Override
   public boolean isValid() {
-    return GlobalPluginProgramFormatingManager.getInstance().getConfigurationForId(mId) != null;
-  }
-
-  @Override
-  public String getId() {
-    return mId;
+    return GlobalPluginProgramFormatingManager.getInstance().getConfigurationForId(getId()) != null;
   }
 }

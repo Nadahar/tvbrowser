@@ -65,6 +65,7 @@ import util.ui.Localizer;
 import devplugin.AbstractTvDataService;
 import devplugin.Channel;
 import devplugin.ChannelGroup;
+import devplugin.ChannelGroupImpl;
 import devplugin.Date;
 import devplugin.PluginInfo;
 import devplugin.Program;
@@ -84,8 +85,8 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
     = Logger.getLogger(SchedulesDirectDataService.class.getName());
 
   private static final Version VERSION = new Version(3,0);
-  
-  private SchedulesDirectChannelGroup mChannelGroup = new SchedulesDirectChannelGroup();
+
+  private ChannelGroup mChannelGroup = new ChannelGroupImpl("SchedulesDirect", "SchedulesDirect", "SchedulesDirect", "SchedulesDirect");
 
   private Properties mProperties;
   /**

@@ -29,7 +29,9 @@ package devplugin;
 
 public class ChannelGroupImpl implements ChannelGroup {
 
-  private String mId, mName, mDescription, mProvider;
+  private String mId, mName;
+  protected String mDescription;
+  protected String mProvider;
 
 	public ChannelGroupImpl(String id, String name, String description, String provider) {
     mId = id;
@@ -45,7 +47,7 @@ public class ChannelGroupImpl implements ChannelGroup {
 	public String getName() {
 		return mName;
 	}
-	
+
 	public String getId() {
 		return mId;
 	}
@@ -56,6 +58,19 @@ public class ChannelGroupImpl implements ChannelGroup {
 
   public String getProviderName() {
     return mProvider;
+  }
+
+  public boolean equals(Object obj) {
+    if (obj instanceof ChannelGroup) {
+      ChannelGroup group = (ChannelGroup) obj;
+      return group.getId().equalsIgnoreCase(getId());
+    }
+    return false;
+  }
+
+  @Override
+  public int hashCode() {
+    return getId().toLowerCase().hashCode();
   }
 
 }

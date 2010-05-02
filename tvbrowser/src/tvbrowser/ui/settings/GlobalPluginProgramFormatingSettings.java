@@ -38,8 +38,9 @@ import javax.swing.event.ListSelectionListener;
 
 import tvbrowser.core.plugin.programformating.GlobalPluginProgramFormating;
 import tvbrowser.core.plugin.programformating.GlobalPluginProgramFormatingManager;
-import tvbrowser.core.plugin.programformating.GlobalPluginProgramFormatingSettingsDialog;
 import tvbrowser.ui.mainframe.MainFrame;
+import util.program.AbstractPluginProgramFormating;
+import util.ui.LocalPluginProgramFormatingSettingsDialog;
 import util.ui.Localizer;
 import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
@@ -52,64 +53,64 @@ import com.jgoodies.forms.layout.FormLayout;
 import devplugin.SettingsTab;
 
 /**
- * The settings for the global program configurations. 
- * 
+ * The settings for the global program configurations.
+ *
  * @author René Mach
  */
 public class GlobalPluginProgramFormatingSettings implements SettingsTab, ActionListener {
   /** The localizer for this class */
   public static final Localizer mLocalizer = Localizer.getLocalizerFor(GlobalPluginProgramFormatingSettings.class);
-  
+
   private SortableItemList mConfigurations;
   private JButton mAdd, mEdit, mDelete;
-  
+
   public JPanel createSettingsPanel() {
     try {
       CellConstraints cc = new CellConstraints();
       PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,default:grow,5dlu","pref,5dlu,fill:default:grow,5dlu,pref,10dlu,pref"));
       pb.setDefaultDialogBorder();
-      
+
       mConfigurations = new SortableItemList("",GlobalPluginProgramFormatingManager.getInstance().getAvailableGlobalPluginProgramFormatings());
       mConfigurations.getList().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-      
+
       mConfigurations.getList().addMouseListener(new MouseAdapter() {
         public void mouseClicked(MouseEvent e) {
           if(SwingUtilities.isLeftMouseButton(e) && e.getClickCount() >= 2) {
-            GlobalPluginProgramFormatingSettingsDialog.createInstance(UiUtilities.getLastModalChildOf(MainFrame.getInstance()), (GlobalPluginProgramFormating)mConfigurations.getList().getSelectedValue(), GlobalPluginProgramFormatingManager.getDefaultConfiguration(), true, true);
+            LocalPluginProgramFormatingSettingsDialog.createInstance(UiUtilities.getLastModalChildOf(MainFrame.getInstance()), (AbstractPluginProgramFormating)mConfigurations.getList().getSelectedValue(), GlobalPluginProgramFormatingManager.getDefaultConfiguration(), true, true);
             mConfigurations.getList().repaint();
           }
         }
       });
-      
+
       pb.addSeparator(mLocalizer.msg("title","Plugin program formating"), cc.xyw(1,1,3));
       pb.add(mConfigurations, cc.xy(2,3));
-      
+
       FormLayout layout = new FormLayout("default,5dlu,default,5dlu,default","pref");
       layout.setColumnGroups(new int[][] {{1,3,5}});
-      
+
       JPanel buttonPanel = new JPanel(layout);
-      
+
       mAdd = new JButton(Localizer.getLocalization(Localizer.I18N_ADD));
       mAdd.setIcon(TVBrowserIcons.newIcon(TVBrowserIcons.SIZE_SMALL));
       mAdd.addActionListener(this);
-      
+
       mEdit = new JButton(Localizer.getLocalization(Localizer.I18N_EDIT));
       mEdit.setIcon(TVBrowserIcons.edit(TVBrowserIcons.SIZE_SMALL));
       mEdit.setEnabled(false);
       mEdit.addActionListener(this);
-      
-      mDelete = new JButton(Localizer.getLocalization(Localizer.I18N_DELETE));      
+
+      mDelete = new JButton(Localizer.getLocalization(Localizer.I18N_DELETE));
       mDelete.setIcon(TVBrowserIcons.delete(TVBrowserIcons.SIZE_SMALL));
       mDelete.setEnabled(false);
       mDelete.addActionListener(this);
-      
+
       buttonPanel.add(mAdd, cc.xy(1,1));
       buttonPanel.add(mEdit, cc.xy(3,1));
       buttonPanel.add(mDelete, cc.xy(5,1));
-      
+
       pb.add(buttonPanel, cc.xy(2,5));
       pb.addLabel(mLocalizer.msg("help","<html>This list of formating can be used by several plugins. So a formating don't have to be entered in every plugin that should use the formating. The selection of the formating can be done in the settings of the plugin.</html>"), cc.xy(2,7));
-      
+
       mConfigurations.getList().addListSelectionListener(new ListSelectionListener() {
         public void valueChanged(ListSelectionEvent e) {
           if(!e.getValueIsAdjusting()) {
@@ -118,9 +119,9 @@ public class GlobalPluginProgramFormatingSettings implements SettingsTab, Action
           }
         }
       });
-      
+
       return pb.getPanel();
-      
+
     }catch(Exception e) {e.printStackTrace();}
     return null;
   }
@@ -135,38 +136,38 @@ public class GlobalPluginProgramFormatingSettings implements SettingsTab, Action
 
   public void saveSettings() {
     Object[] o = mConfigurations.getItems();
-    
+
     if(o != null && o.length > 0) {
       GlobalPluginProgramFormating[] p = new GlobalPluginProgramFormating[o.length];
-    
+
       for(int i = 0; i < o.length; i++)
         p[i] = (GlobalPluginProgramFormating)o[i];
-    
+
       GlobalPluginProgramFormatingManager.getInstance().setAvailableProgramConfigurations(p);
     }
     else {
       final GlobalPluginProgramFormating[] formating = new GlobalPluginProgramFormating[2];
       formating[0] = GlobalPluginProgramFormatingManager.getDefaultConfiguration();
-      
+
       Thread t = new Thread("Plugin formating setting") {
         public void run() {
           try {
             Thread.sleep(100);
           } catch (InterruptedException e) {}
-          
+
           formating[1] = GlobalPluginProgramFormatingManager.getTvPearlFormating();
         }
       };
-      
+
       t.start();
-      
+
       try {
         t.join();
       } catch (InterruptedException e) {}
-      
+
       GlobalPluginProgramFormatingManager.getInstance().setAvailableProgramConfigurations(formating);
     }
-    
+
     GlobalPluginProgramFormatingManager.getInstance().store();
   }
 
@@ -176,7 +177,7 @@ public class GlobalPluginProgramFormatingSettings implements SettingsTab, Action
     else if(e.getSource() == mDelete)
       mConfigurations.removeElementAt(mConfigurations.getList().getSelectedIndex());
     else if(e.getSource() == mEdit) {
-      GlobalPluginProgramFormatingSettingsDialog.createInstance(UiUtilities.getLastModalChildOf(MainFrame.getInstance()), (GlobalPluginProgramFormating)mConfigurations.getList().getSelectedValue(), GlobalPluginProgramFormatingManager.getDefaultConfiguration(), true, true);
+      LocalPluginProgramFormatingSettingsDialog.createInstance(UiUtilities.getLastModalChildOf(MainFrame.getInstance()), (AbstractPluginProgramFormating)mConfigurations.getList().getSelectedValue(), GlobalPluginProgramFormatingManager.getDefaultConfiguration(), true, true);
       mConfigurations.getList().repaint();
     }
   }

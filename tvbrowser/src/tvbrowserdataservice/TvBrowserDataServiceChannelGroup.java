@@ -50,14 +50,13 @@ import util.io.Mirror;
 import util.io.stream.InputStreamProcessor;
 import util.io.stream.StreamUtilities;
 import devplugin.Channel;
+import devplugin.ChannelGroupImpl;
 import devplugin.ProgressMonitor;
 
 /**
  * The ChannelGroup implementation of the TvBrowserDataService
  */
-public class TvBrowserDataServiceChannelGroup implements devplugin.ChannelGroup {
-
-  private String mID;
+public class TvBrowserDataServiceChannelGroup extends ChannelGroupImpl {
 
   private String[] mMirrorUrlArr;
 
@@ -72,8 +71,6 @@ public class TvBrowserDataServiceChannelGroup implements devplugin.ChannelGroup 
   private String mName = null;
 
   private TvBrowserDataService mDataService;
-
-  private String mDescription, mProviderName;
 
   private HashSet<Channel> mChannels;
 
@@ -102,10 +99,8 @@ public class TvBrowserDataServiceChannelGroup implements devplugin.ChannelGroup 
    * @param settings The properties of the group.
    */
   public TvBrowserDataServiceChannelGroup(TvBrowserDataService dataservice, String id, String name, String description, String provider, String[] mirrorUrls, TvBrowserDataServiceSettings settings) {
-    mID = id;
+    super(id, name, description, provider);
     mName = name;
-    mDescription = description;
-    mProviderName = provider;
     mDataService = dataservice;
     mMirrorUrlArr = mirrorUrls;
     mChannels = new HashSet<Channel>();
@@ -128,16 +123,6 @@ public class TvBrowserDataServiceChannelGroup implements devplugin.ChannelGroup 
 
   protected String[] getMirrorArr() {
     return mMirrorUrlArr;
-  }
-
-  /**
-   * Checks if a channel is a member of this group.
-   *
-   * @param ch The channel to check.
-   * @return True if the channel is a member of this group, false otherwise.
-   */
-  public boolean isGroupMember(Channel ch) {
-    return ch.getGroup() != null && ch.getGroup().getId() != null && ch.getGroup().getId().equalsIgnoreCase(mID);
   }
 
   /**
@@ -185,7 +170,7 @@ public class TvBrowserDataServiceChannelGroup implements devplugin.ChannelGroup 
       return mDescription;
     }
 
-    File file = new File(mDataDir, mID + "_info");
+    File file = new File(mDataDir, getId() + "_info");
     if (!file.exists()) { return ""; }
     final Properties prop = new Properties();
     // TODO init all props at once
@@ -202,8 +187,8 @@ public class TvBrowserDataServiceChannelGroup implements devplugin.ChannelGroup 
   public String getName() {
     if (mName != null) { return mName; }
 
-    File file = new File(mDataDir, mID + "_info");
-    if (!file.exists()) { return mID; }
+    File file = new File(mDataDir, getId() + "_info");
+    if (!file.exists()) { return getId(); }
 
     final Properties prop = new Properties();
     try {
@@ -216,27 +201,27 @@ public class TvBrowserDataServiceChannelGroup implements devplugin.ChannelGroup 
       String language = locale.getLanguage();
       String result = prop.getProperty(language);
       if (result == null) {
-        result = prop.getProperty("default", mID);
+        result = prop.getProperty("default", getId());
       }
       return result;
 
     } catch (IOException e) {
-      return mID;
+      return getId();
     }
 
   }
 
 
   public String getProviderName() {
-    if (mProviderName != null) {
-      return mProviderName;
+    if (mProvider != null) {
+      return mProvider;
     }
-    String providerName = mSettings.getProvider(mID);
+    String providerName = mSettings.getProvider(getId());
     if (providerName != null) {
-      mProviderName = providerName;
+      mProvider = providerName;
       return providerName;
     }
-    File file = new File(mDataDir, mID + "_info");
+    File file = new File(mDataDir, getId() + "_info");
     if (!file.exists()) { return ""; }
     final Properties prop = new Properties();
     try {
@@ -246,8 +231,8 @@ public class TvBrowserDataServiceChannelGroup implements devplugin.ChannelGroup 
         }
       });
       providerName = prop.getProperty("provider",mLocalizer.msg("unknownProvider","unknown"));
-      mSettings.setProvider(mID, providerName);
-      mProviderName = providerName;
+      mSettings.setProvider(getId(), providerName);
+      mProvider = providerName;
       return providerName;
     } catch (IOException e) {
       mLog.log(Level.SEVERE, "Could not read provider name",e);
@@ -263,16 +248,16 @@ public class TvBrowserDataServiceChannelGroup implements devplugin.ChannelGroup 
   protected void chooseMirrors() throws TvBrowserException {
     // load the mirror list
     Mirror[] serverDefindeMirros = getServerDefinedMirrors();
-    Mirror[] mirrorArr = Mirror.loadMirrorList(new File(mDataDir, mID + "_" + Mirror.MIRROR_LIST_FILE_NAME), mMirrorUrlArr, serverDefindeMirros);
+    Mirror[] mirrorArr = Mirror.loadMirrorList(new File(mDataDir, getId() + "_" + Mirror.MIRROR_LIST_FILE_NAME), mMirrorUrlArr, serverDefindeMirros);
 
     // Get a random Mirror that is up to date
-    mCurMirror = Mirror.chooseUpToDateMirror(mirrorArr, null, getName(), mID, TvBrowserDataServiceChannelGroup.class, " Please contact the TV data provider for help.");
+    mCurMirror = Mirror.chooseUpToDateMirror(mirrorArr, null, getName(), getId(), TvBrowserDataServiceChannelGroup.class, " Please contact the TV data provider for help.");
 
     if (mCurMirror != null) {
       mLog.info("Using mirror " + mCurMirror.getUrl());
 
       // Update the mirrorlist (for the next time)
-      updateMetaFile(mCurMirror.getUrl(), mID + "_" + Mirror.MIRROR_LIST_FILE_NAME);
+      updateMetaFile(mCurMirror.getUrl(), getId() + "_" + Mirror.MIRROR_LIST_FILE_NAME);
 
       // Update the channel list
       // NOTE: We have to load the channel list before the programs, because
@@ -287,7 +272,7 @@ public class TvBrowserDataServiceChannelGroup implements devplugin.ChannelGroup 
       }
     }
     else {
-      mLog.info("No up to date mirror available for "+mID);
+      mLog.info("No up to date mirror available for "+getId());
     }
   }
 
@@ -308,7 +293,7 @@ public class TvBrowserDataServiceChannelGroup implements devplugin.ChannelGroup 
   }
 
   private SummaryFile loadSummaryFile(Mirror mirror) throws IOException, FileFormatException {
-    String url = mirror.getUrl() + (mirror.getUrl().endsWith("/") ? "" : "/") + mID + "_" + SummaryFile.SUMMARY_FILE_NAME;
+    String url = mirror.getUrl() + (mirror.getUrl().endsWith("/") ? "" : "/") + getId() + "_" + SummaryFile.SUMMARY_FILE_NAME;
 
     InputStream stream = null;
     try {
@@ -344,7 +329,7 @@ public class TvBrowserDataServiceChannelGroup implements devplugin.ChannelGroup 
         while (line != null) {
           String[] s = line.split(";");
 
-          if (s.length>=5 && s[0].compareTo(mID) == 0) {
+          if (s.length>=5 && s[0].compareTo(getId()) == 0) {
             int n = s.length-4;
             mirrorArr = new Mirror[n];
 
@@ -399,7 +384,7 @@ public class TvBrowserDataServiceChannelGroup implements devplugin.ChannelGroup 
   }
 
   private void updateChannelList(Mirror mirror, boolean forceUpdate) throws TvBrowserException {
-    String fileName = mID + "_" + ChannelList.FILE_NAME;
+    String fileName = getId() + "_" + ChannelList.FILE_NAME;
     File file = new File(mDataDir, fileName + ".new");
     if (forceUpdate || needsUpdate(file)) {
       String url = mirror.getUrl() + (mirror.getUrl().endsWith("/") ? "" : "/") + fileName;
@@ -407,7 +392,7 @@ public class TvBrowserDataServiceChannelGroup implements devplugin.ChannelGroup 
         IOUtilities.download(new URL(url), file);
         if (file.canRead() && file.length() > 0) {
           // try reading the file
-          devplugin.ChannelGroup group = new devplugin.ChannelGroupImpl(mID, getName(), null, getProviderName());
+          devplugin.ChannelGroup group = new devplugin.ChannelGroupImpl(getId(), getName(), null, getProviderName());
           ChannelList channelList = new ChannelList(group);
           channelList.readFromFile(file, mDataService);
           // ok, we can read it, so use this new file instead of the old
@@ -433,19 +418,19 @@ public class TvBrowserDataServiceChannelGroup implements devplugin.ChannelGroup 
   public Channel[] checkForAvailableChannels(ProgressMonitor monitor) throws TvBrowserException {
     // load the mirror list
     Mirror[] serverDefindeMirros = getServerDefinedMirrors();
-    Mirror[] mirrorArr = Mirror.loadMirrorList(new File(mDataDir, mID + "_" + Mirror.MIRROR_LIST_FILE_NAME), mMirrorUrlArr, serverDefindeMirros);
+    Mirror[] mirrorArr = Mirror.loadMirrorList(new File(mDataDir, getId() + "_" + Mirror.MIRROR_LIST_FILE_NAME), mMirrorUrlArr, serverDefindeMirros);
 
     // Get a random Mirror that is up to date
-    Mirror mirror = Mirror.chooseUpToDateMirror(mirrorArr, monitor, getName(), mID, TvBrowserDataServiceChannelGroup.class, " Please contact the TV data provider for help.");
+    Mirror mirror = Mirror.chooseUpToDateMirror(mirrorArr, monitor, getName(), getId(), TvBrowserDataServiceChannelGroup.class, " Please contact the TV data provider for help.");
 
     if(mirror != null) {
       mLog.info("Using mirror " + mirror.getUrl());
 
       // Update the mirrorlist (for the next time)
-      updateMetaFile(mirror.getUrl(), mID + "_" + Mirror.MIRROR_LIST_FILE_NAME);
+      updateMetaFile(mirror.getUrl(), getId() + "_" + Mirror.MIRROR_LIST_FILE_NAME);
 
       // Update the groupname file
-      updateMetaFile(mirror.getUrl(), mID + "_info");
+      updateMetaFile(mirror.getUrl(), getId() + "_info");
 
       // Update the channel list
       updateChannelList(mirror, true);
@@ -463,10 +448,10 @@ public class TvBrowserDataServiceChannelGroup implements devplugin.ChannelGroup 
    */
   public synchronized Channel[] getAvailableChannels() {
     if (mAvailableChannelArr == null) {
-      File channelFile = new File(mDataDir, mID + "_" + ChannelList.FILE_NAME);
+      File channelFile = new File(mDataDir, getId() + "_" + ChannelList.FILE_NAME);
       if (channelFile.exists()) {
         try {
-          devplugin.ChannelGroup group = new devplugin.ChannelGroupImpl(mID, getName(), null, getProviderName());
+          devplugin.ChannelGroup group = new devplugin.ChannelGroupImpl(getId(), getName(), null, getProviderName());
           ChannelList channelList = new ChannelList(group);
           channelList.readFromFile(channelFile, mDataService);
           mAvailableChannelArr = channelList.createChannelArray();
@@ -478,32 +463,12 @@ public class TvBrowserDataServiceChannelGroup implements devplugin.ChannelGroup 
       if (mAvailableChannelArr == null) {
         // There is no channel file or loading failed
         // -> create a list without any channels
-        mLog.warning("No channels available for group '"+mID+"' no channellist available?");
+        mLog.warning("No channels available for group '"+getId()+"' no channellist available?");
         mAvailableChannelArr = new Channel[] {};
       }
     }
 
     return mAvailableChannelArr;
-  }
-
-  public String getId() {
-    return mID;
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-
-    if (obj instanceof devplugin.ChannelGroup) {
-      devplugin.ChannelGroup group = (devplugin.ChannelGroup) obj;
-      return group.getId().equalsIgnoreCase(mID);
-    }
-    return false;
-
-  }
-
-  @Override
-  public int hashCode() {
-    return mID.toLowerCase().hashCode();
   }
 
   /**
@@ -512,7 +477,7 @@ public class TvBrowserDataServiceChannelGroup implements devplugin.ChannelGroup 
    * @since 2.6
    */
   public void deleteAllFiles() {
-    File channelFile = new File(mDataDir, mID + "_" + ChannelList.FILE_NAME);
+    File channelFile = new File(mDataDir, getId() + "_" + ChannelList.FILE_NAME);
     if (channelFile.exists()) {
       try {
         channelFile.delete();
@@ -520,7 +485,7 @@ public class TvBrowserDataServiceChannelGroup implements devplugin.ChannelGroup 
         e.printStackTrace();
       }
     }
-    File mirrorFile = new File(mDataDir, mID + "_" + Mirror.MIRROR_LIST_FILE_NAME);
+    File mirrorFile = new File(mDataDir, getId() + "_" + Mirror.MIRROR_LIST_FILE_NAME);
     if (mirrorFile.exists()) {
       try {
         mirrorFile.delete();
@@ -528,7 +493,7 @@ public class TvBrowserDataServiceChannelGroup implements devplugin.ChannelGroup 
         e.printStackTrace();
       }
     }
-    File infoFile = new File(mDataDir, mID + "_info");
+    File infoFile = new File(mDataDir, getId() + "_info");
     if (infoFile.exists()) {
       try {
         infoFile.delete();

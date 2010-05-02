@@ -30,29 +30,26 @@ import java.io.ObjectOutputStream;
 
 /**
  * Settings for program formating. This is the class for
- * using for creating configuration used only by the 
+ * using for creating configuration used only by the
  * plugin which creates the instance of this class.
- * 
+ *
  * @author René Mach
  * @since 2.5.1
  */
 public class LocalPluginProgramFormating extends AbstractPluginProgramFormating {
-  private String mId;
-  private String mName;
-  private String mTitleValue;
-  private String mContentValue;
-  private String mEncodingValue;
-  
+
   /**
    * Creates an empty instance of this class,
    * for example for loading the values from
    * an ObjectInputStream.
    */
-  public LocalPluginProgramFormating() {}
+  public LocalPluginProgramFormating() {
+    super(null, null, null, null, null);
+  }
 
   /**
    * Creates an instance of a program configuration.
-   * 
+   *
    * @param id The id of this formating.
    * @param name The name of the configuration.
    * @param titleValue The value for the title configuration.
@@ -60,151 +57,63 @@ public class LocalPluginProgramFormating extends AbstractPluginProgramFormating 
    * @param encodingValue The encoding value.
    */
   public LocalPluginProgramFormating(String id, String name, String titleValue, String contentValue, String encodingValue) {
-    mId = "#id_local_" + id;
-    mName = name;
-    mTitleValue = titleValue;
-    mContentValue = contentValue;
-    mEncodingValue = encodingValue;
+    super("#id_local_" + id, name, titleValue, contentValue, encodingValue);
   }
 
   /**
    * Creates an instance of a program configuration.
-   * 
+   *
    * @param name The name of the configuration.
    * @param titleValue The value for the title configuration.
    * @param contentValue The value for the content.
    * @param encodingValue The encoding value.
    */
   public LocalPluginProgramFormating(String name, String titleValue, String contentValue, String encodingValue) {
-    mId = "#id_local_" + System.currentTimeMillis();
-    mName = name;
-    mTitleValue = titleValue;
-    mContentValue = contentValue;
-    mEncodingValue = encodingValue;
-  }
-  
-  /**
-   * Gets the name of this configuration
-   * 
-   * @return The name of this configuration
-   */
-  public String getName() {
-    return mName;
-  }
-  
-  /**
-   * Gets the value for title formating
-   * 
-   * @return The value for title formating
-   */
-  public String getTitleValue() {
-    return mTitleValue;
-  }
-  
-  /**
-   * Gets the value for the content formating
-   * 
-   * @return The value for the content formating
-   */
-  public String getContentValue() {
-    return mContentValue;
-  }
-  
-  /**
-   * Gets the value for the formating
-   * 
-   * @return The value for the formating
-   */
-  public String getEncodingValue() {
-    return mEncodingValue;
-  }
-  
-  /**
-   * Sets the name of this configuration
-   * 
-   * @param value The new name
-   */
-  public void setName(String value) {
-    mName = value;
-  }
-  
-  /**
-   * Sets the title formating value
-   * 
-   * @param value The new title value
-   */
-  public void setTitleValue(String value) {
-    mTitleValue = value;
+    super("#id_local_" + System.currentTimeMillis(), name, titleValue, contentValue, encodingValue);
   }
 
   /**
-   * Sets the content formating value
-   * 
-   * @param value The new content value
-   */
-  public void setContentValue(String value) {
-    mContentValue = value;
-  }
-  
-  /**
-   * Sets the encoding value of this configuraion
-   * 
-   * @param value The new encoding
-   */
-  public void setEncodingValue(String value) {
-    mEncodingValue = value;
-  }
-  
-  /**
    * Creates an instance of a ProgramConfiguration from an ObjetcInputStream-
-   * 
+   *
    * @param in The stream to read the values from
    * @throws IOException Thrown if something goes wrong
    * @throws ClassNotFoundException Thrown if something goes wrong
    */
   protected void loadData(ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.readInt(); //read version
-    
-    mId = (String)in.readObject();
-    mName = (String)in.readObject();
-    mTitleValue = (String)in.readObject();
-    mContentValue = (String)in.readObject();
-    mEncodingValue = (String)in.readObject();
+
+    setId((String)in.readObject());
+    setName((String)in.readObject());
+    setTitleValue((String)in.readObject());
+    setContentValue((String)in.readObject());
+    setEncodingValue((String)in.readObject());
   }
-  
+
   /**
    * Saves this configuration in an ObjectOutputStream
-   * 
+   *
    * @param out The stream to save the values in
    * @throws IOException Thrown if something goes wrong
    */
   protected void storeData(ObjectOutputStream out) throws IOException {
     out.writeInt(1); //write version
-    out.writeObject(mId);
-    out.writeObject(mName);
-    out.writeObject(mTitleValue);
-    out.writeObject(mContentValue);
-    out.writeObject(mEncodingValue);
+    out.writeObject(getId());
+    out.writeObject(getName());
+    out.writeObject(getTitleValue());
+    out.writeObject(getContentValue());
+    out.writeObject(getEncodingValue());
   }
-  
-  public String toString() {
-    return mName;
-  }
-  
+
   public boolean equals(Object o) {
-    if(o != null && o instanceof LocalPluginProgramFormating)
-      return ((LocalPluginProgramFormating)o).mId.compareTo(mId) == 0;
-    
+    if(o != null && o instanceof LocalPluginProgramFormating) {
+      return ((LocalPluginProgramFormating)o).getId().equals(getId());
+    }
+
     return false;
   }
 
   @Override
   public boolean isValid() {
     return true;
-  }
-
-  @Override
-  public String getId() {
-    return mId;
   }
 }

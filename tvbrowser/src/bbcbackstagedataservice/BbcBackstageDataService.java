@@ -56,6 +56,7 @@ import util.ui.Localizer;
 import devplugin.AbstractTvDataService;
 import devplugin.Channel;
 import devplugin.ChannelGroup;
+import devplugin.ChannelGroupImpl;
 import devplugin.Date;
 import devplugin.PluginInfo;
 import devplugin.ProgressMonitor;
@@ -77,7 +78,7 @@ public class BbcBackstageDataService extends AbstractTvDataService {
    */
   private static final Logger mLog = Logger.getLogger(BbcBackstageDataService.class
       .getName());
-  
+
   private static final Version VERSION = new Version(3,0);
 
   private static HashMap<String, String> KNOWN_URLS;
@@ -98,7 +99,7 @@ public class BbcBackstageDataService extends AbstractTvDataService {
   /**
    * Channelgroup
    */
-  private ChannelGroup mBbcChannelGroup = new BbcChannelGroup("BBC Backstage", "bbcbackstage",
+  private ChannelGroup mBbcChannelGroup = new ChannelGroupImpl("BBC Backstage", "bbcbackstage",
       mLocalizer.msg("desc", "Data from BBC Backstage"), "BBC Backstage");
 
   /**
