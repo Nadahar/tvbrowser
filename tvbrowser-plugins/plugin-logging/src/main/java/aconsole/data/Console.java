@@ -9,18 +9,18 @@
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation, in version 3 of the License.
- 
+
  This program is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU General Public License for more details.
- 
+
  You should have received a copy of the GNU General Public License
  along with this program, in a file called LICENSE in the top
- directory of the distribution; if not, write to 
- the Free Software Foundation, Inc., 59 Temple Place, Suite 330, 
+ directory of the distribution; if not, write to
+ the Free Software Foundation, Inc., 59 Temple Place, Suite 330,
  Boston, MA  02111-1307  USA
- 
+
  *******************************************************************/
 package aconsole.data;
 
@@ -34,7 +34,6 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
-
 import aconsole.AConsole;
 import aconsole.gui.AbstractGuiTask;
 import aconsole.gui.AbstractNotifyTask;
@@ -45,7 +44,7 @@ import aconsole.properties.IntProperty;
  *
  */
 public class Console {
-	public class LoggerConsoleEvent{
+	static public class LoggerConsoleEvent{
 		LogRecord record;
 		LoggerConsoleEvent(LogRecord record){
 			this.record=record;
@@ -82,15 +81,15 @@ public class Console {
 		public String getResourceBundleName() {
 			return record.getResourceBundleName();
 		}
-   
+
 		/**
 		 * Get the logging message level, for example Level.SEVERE.
 		 * @return the logging message level
-		 */  
+		 */
 		public Level getLevel() {
 			return record.getLevel();
 		}
-		/** 
+		/**
 		 * Get the sequence number.
 		 * <p>
 		 * Sequence numbers are normally assigned in the LogRecord
@@ -114,7 +113,7 @@ public class Console {
 		 * May be null if no information could be obtained.
 		 *
 		 * @return the source class name
-		 */  
+		 */
 		public String getSourceClassName() {
 			return record.getSourceClassName();
 		}
@@ -131,7 +130,7 @@ public class Console {
 		 * May be null if no information could be obtained.
 		 *
 		 * @return the source method name
-		 */  
+		 */
 		public String getSourceMethodName() {
 			return record.getSourceMethodName();
 		}
@@ -212,7 +211,7 @@ public class Console {
 	Vector<Listener> listeners=new Vector<Listener>();
 	static private Console instance=new Console();
 	MyStreamHandler sh;
-	
+
 	synchronized public void addListener(final Listener l){
 		new AbstractGuiTask() {
 			@Override
@@ -222,10 +221,10 @@ public class Console {
 					LoggerConsoleEvent ce=it.next();
 					l.addText(ce);
 				}
-				listeners.add(l);		
+				listeners.add(l);
 			}
 		}.invokeLater();
-		
+
 
 	}
 	synchronized public void removeListener(Listener l){
@@ -235,7 +234,7 @@ public class Console {
 		if (history!=null) {
 			if (historysize<0){
 				IntProperty p=AConsole.getConsoleBufferSize();
-				if (p!=null)this.historysize=p.get();	
+				if (p!=null)this.historysize=p.get();
 			}else{
 				while (history.size()>historysize){
 					history.remove(0);
@@ -254,7 +253,7 @@ public class Console {
 				l.addText(ce);
 			}
 		};
-		 
+
 	}
 	synchronized private void fireShutdown(){
 		Iterator<Listener> it=new Vector<Listener>(listeners).iterator();
@@ -272,7 +271,7 @@ public class Console {
 	}
 	private class MyStreamHandler extends Handler{
 		/**
-		 * 
+		 *
 		 */
 		public MyStreamHandler() {
 			super();
@@ -316,7 +315,7 @@ public class Console {
 		System.setOut(systemout);
 		java.util.logging.Logger.global.removeHandler(sh);
 		java.util.logging.Logger.getLogger("").removeHandler(sh);
-		
+
 	}
 	synchronized public void shutdownConsole(){
 		if (instance!=null){
@@ -349,7 +348,7 @@ public class Console {
 			int nl_index=s.lastIndexOf('\n');
 			if (nl_index>0){
 				if (s.length()>nl_index+1){
-					buffer=s.substring(nl_index+1);	
+					buffer=s.substring(nl_index+1);
 				}else{
 					buffer="";
 				}

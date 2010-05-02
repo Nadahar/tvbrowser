@@ -26,13 +26,13 @@ import javax.swing.Icon;
 
 import org.apache.commons.lang.StringUtils;
 
-import util.tvdataservice.IconLoader;
 import tvdataservice.SettingsPanel;
 import tvdataservice.TvDataUpdateManager;
 import util.exc.TvBrowserException;
 import util.io.IOUtilities;
 import util.io.Mirror;
 import util.misc.SoftReferenceCache;
+import util.tvdataservice.IconLoader;
 import util.ui.Localizer;
 import devplugin.Channel;
 import devplugin.ChannelGroup;
@@ -49,7 +49,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(SweDBTvDataService.class);
 
   private static final Logger mLog = Logger.getLogger(SweDBTvDataService.class.getName());
-  
+
   private static final Version VERSION = new Version(3,0);
 
   private File mWorkingDirectory;
@@ -249,10 +249,13 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
   }
 
   public Channel[] checkForAvailableChannels(ChannelGroup group, ProgressMonitor monitor) throws TvBrowserException {
+    if (!(group instanceof DataHydraChannelGroup)) {
+      return new Channel[0];
+    }
     DataHydraChannelGroup hydraGroup = (DataHydraChannelGroup) group;
     mHasRightToDownloadIcons = true;
 
-    Channel[] channels = new Channel[0];
+    Channel[] channels;
 
     try {
       if (monitor != null) {

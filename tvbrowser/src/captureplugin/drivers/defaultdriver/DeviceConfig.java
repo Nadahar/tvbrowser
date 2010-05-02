@@ -140,7 +140,7 @@ public class DeviceConfig {
         setWebUrl(data.getWebUrl());
         setUseWebUrl(data.getUseWebUrl());
         setPassword(data.getPassword());
-        setUserName(data.getUserName());
+        setUserName(data.getUsername());
         setName(data.getName());
         setUseReturnValue(data.useReturnValue());
         setMaxSimultanious(data.getMaxSimultanious());
@@ -323,7 +323,7 @@ public class DeviceConfig {
     /**
      * @return
      */
-    public String getUserName() {
+    public String getUsername() {
         return mUserName;
     }
 
@@ -510,7 +510,7 @@ public class DeviceConfig {
         
         writeChannelMappings(stream);
         
-        stream.writeObject(getUserName());
+        stream.writeObject(getUsername());
         stream.writeObject(getPassword());
         stream.writeBoolean(getUseWebUrl());
         stream.writeObject(getProgramPath());

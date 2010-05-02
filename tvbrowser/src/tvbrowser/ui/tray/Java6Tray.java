@@ -23,6 +23,7 @@
  */
 package tvbrowser.ui.tray;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.TrayIcon;
@@ -50,40 +51,40 @@ import util.ui.UiUtilities;
 /**
  * Tray for TV-Browser on systems
  * with Java 6 and tray support.
- * 
+ *
  * @author René Mach
  */
 public class Java6Tray {
   /** Logger */
   private static final Logger mLog
   = Logger.getLogger(Java6Tray.class.getName());
-  
+
   private java.awt.SystemTray mSystemTray;
   private TrayIcon mTrayIcon;
   private JPopupMenu mPopupMenu;
   private ActionListener mLeftClickListener, mLeftDoubleClickListener, mRightClickListener;
-  
+
   private JDialog mTrayParent;
-  
+
   private static Java6Tray mInstance;
-  
+
   private Java6Tray() {
     mInstance = this;
   }
-  
+
   /**
    * Creates the Java 6 tray.
-   * 
+   *
    * @return The Java 6 tray instance.
    */
   public static Java6Tray create() {
     if(mInstance == null) {
       new Java6Tray();
     }
-    
+
     return mInstance;
   }
-  
+
   /**
    * Add a Left-Click-Action
    * @param listener Action that is triggered on left click
@@ -110,7 +111,7 @@ public class Java6Tray {
 
   /**
    * Init the System-Tray
-   * 
+   *
    * @param parent Parent-Frame
    * @param tooltip Tooltip
    * @return true, if successfull
@@ -125,46 +126,47 @@ public class Java6Tray {
             if(new File("imgs/TrayIcon.png").isFile()) {
               mTrayIcon = new TrayIcon(ImageIO.read(new File("imgs/TrayIcon.png")), tooltip);
             }
-            else {            
+            else {
               Dimension trayIconSize = getTrayIconSize();
               BufferedImage trayIconImage = null;
-              
+              Color backgroundColor = null;
+
               if(trayIconSize.height > 16 && trayIconSize.height <= 32 && new File("imgs/tvbrowser32.png").isFile()) {
                 trayIconImage = UiUtilities.scaleIconToBufferedImage(ImageIO.read(new File("imgs/tvbrowser32.png")),
-                    trayIconSize.width-1, trayIconSize.height-1, BufferedImage.TYPE_INT_ARGB);
+                    trayIconSize.width, trayIconSize.height, BufferedImage.TYPE_INT_ARGB, backgroundColor);
               }
               else if(trayIconSize.height > 32 && trayIconSize.height <= 48 && new File("imgs/tvbrowser48.png").isFile()) {
                 trayIconImage = UiUtilities.scaleIconToBufferedImage(ImageIO.read(new File("imgs/tvbrowser48.png")),
-                    trayIconSize.width-1, trayIconSize.height-1, BufferedImage.TYPE_INT_ARGB);                
+                    trayIconSize.width, trayIconSize.height, BufferedImage.TYPE_INT_ARGB, backgroundColor);
               }
               else if(trayIconSize.height > 48 && new File("imgs/tvbrowser128.png").isFile()) {
                 trayIconImage = UiUtilities.scaleIconToBufferedImage(ImageIO.read(new File("imgs/tvbrowser128.png")),
-                    trayIconSize.width-1, trayIconSize.height-1, BufferedImage.TYPE_INT_ARGB);
+                    trayIconSize.width, trayIconSize.height, BufferedImage.TYPE_INT_ARGB, backgroundColor);
               }
               else {
                 trayIconImage = ImageIO.read(new File("imgs/tvbrowser16.png"));
               }
-              
+
               mTrayIcon = new TrayIcon(trayIconImage, tooltip);
             }
           }catch(Throwable sizeFault) {
             mTrayIcon = new TrayIcon(ImageIO.read(new File("imgs/tvbrowser16.png")), tooltip);
           }
-          
+
           mTrayParent = new JDialog();
           mTrayParent.setTitle("Tray-Menu");
-  
+
           mTrayParent.setSize(0, 0);
           mTrayParent.setUndecorated(true);
           mTrayParent.setAlwaysOnTop(true);
           mTrayParent.setVisible(false);
-          
+
           mLog.info("Java 6 Tray inited.");
         }
         else {
           mLog.info("Java 6 Tray is not supported on current platform.");
         }
-        
+
         return isSupported;
       }catch(Exception e) {
         mLog.log(Level.SEVERE, "Java 6 Tray could not be inited.", e);
@@ -182,8 +184,8 @@ public class Java6Tray {
    * @param trayMenu Popup
    */
   public void setTrayPopUp(JPopupMenu trayMenu) {
-    mPopupMenu = trayMenu;  
-    
+    mPopupMenu = trayMenu;
+
     mPopupMenu.addPopupMenuListener(new PopupMenuListener() {
       public void popupMenuWillBecomeVisible(PopupMenuEvent e) {}
 
@@ -193,7 +195,7 @@ public class Java6Tray {
 
       public void popupMenuCanceled(PopupMenuEvent e) {}
     });
-    
+
     mTrayIcon.addMouseListener(new MouseAdapter() {
 
       public void mouseClicked(MouseEvent e) {
@@ -204,8 +206,8 @@ public class Java6Tray {
             mLeftDoubleClickListener.actionPerformed(null);
         }
       }
-      
-      public void mousePressed(MouseEvent e) {        
+
+      public void mousePressed(MouseEvent e) {
         if (e.isPopupTrigger()) {
           if(SwingUtilities.isRightMouseButton(e) && mRightClickListener != null)
             mRightClickListener.actionPerformed(null);
@@ -224,21 +226,21 @@ public class Java6Tray {
       }
     });
   }
-  
+
   private void showPopup(final Point p) {
     FavoritesPlugin.getInstance().handleTrayRightClick();
     mTrayParent.setVisible(true);
     mTrayParent.toFront();
-    
+
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         Point p2 = computeDisplayPoint(p.x,p.y,mPopupMenu.getPreferredSize());
-        
+
         mPopupMenu.show(mTrayParent,p2.x - mTrayParent.getLocation().x,p2.y - mTrayParent.getLocation().y);
       }
     });
   }
-  
+
   /**
    * Compute the proper position for a popup
    */
@@ -261,10 +263,10 @@ public class Java6Tray {
     else {
       try {
         mSystemTray.remove(mTrayIcon);
-      }catch(Exception e) {}      
+      }catch(Exception e) {}
     }
   }
-  
+
   /**
    * Gets the useable size for tray icon.
    * <p>
@@ -276,10 +278,10 @@ public class Java6Tray {
         return mSystemTray.getTrayIconSize();
       }
     }catch(Exception e) {}
-    
+
     return null;
   }
-  
+
   /**
    * Shows a balloon tip on the TV-Browser tray icon.
    * <p>
@@ -291,10 +293,10 @@ public class Java6Tray {
   public boolean showBalloonTip(String caption, String message, java.awt.TrayIcon.MessageType messageType) {
     if(mSystemTray != null) {
       mTrayIcon.displayMessage(caption,message,messageType);
-      
+
       return true;
     }
-    
+
     return false;
   }
 }

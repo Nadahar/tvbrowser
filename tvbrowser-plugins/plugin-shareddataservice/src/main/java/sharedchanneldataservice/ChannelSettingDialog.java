@@ -51,7 +51,6 @@ import javax.swing.table.TableColumn;
 import util.ui.ChannelLabel;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
-
 import devplugin.Channel;
 import devplugin.Plugin;
 
@@ -125,7 +124,7 @@ public class ChannelSettingDialog extends JDialog{
 
     JPanel backgroundPanel = (JPanel) getContentPane();
     backgroundPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-    backgroundPanel.setLayout(new BoxLayout(backgroundPanel, BoxLayout.PAGE_AXIS));    
+    backgroundPanel.setLayout(new BoxLayout(backgroundPanel, BoxLayout.PAGE_AXIS));
 
 
     basicPanel = new JPanel();
@@ -215,7 +214,7 @@ public class ChannelSettingDialog extends JDialog{
         setVisible(false);
       }
 
-    });    
+    });
     buttonPanel.add(cancelButton);
 
     JButton okButton = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
@@ -224,7 +223,7 @@ public class ChannelSettingDialog extends JDialog{
         okPressed=true;
         setVisible(false);
       }
-    });    
+    });
     buttonPanel.add(okButton);
 
     backgroundPanel.add (buttonPanel);
@@ -241,10 +240,10 @@ public class ChannelSettingDialog extends JDialog{
     if (descString==null){
       isEditing = false;
       descString = id + ";-1;1;-1;xs;";
-    } 
-    
+    }
+
     chnSetting = descString.split(";",6);
-    
+
     myId =id;
     myName=chnSetting[0];
     myIconIndex=Integer.parseInt((String)chnSetting[1]);
@@ -273,8 +272,8 @@ public class ChannelSettingDialog extends JDialog{
       }
     }
     sharedChannelSources = channelDescriptions;
- 
- 
+
+
     Channel[] subscribedList = SharedChannelDataService.getPluginManager().getSubscribedChannels();
     ArrayList <Channel> alienList = new ArrayList <Channel> ();
     for (int i = 0; i < subscribedList.length; i++) {
@@ -355,7 +354,7 @@ public class ChannelSettingDialog extends JDialog{
     for (int i = 0; i< selAlienChns.length; i++){
        selAlienChns[i]= HelperMethods.getChannelFromId(chnDescSplit[(i*2)+1], subscribedList);
     }
- 
+
     JLabel iconLabel = new JLabel (mLocalizer.msg("channelIcon", "Channel Icon"));
     basicConstraints = makegbc(0, 2, 1, 1);
     basicConstraints.insets = new Insets(10, 10, 10, 10);
@@ -371,7 +370,7 @@ public class ChannelSettingDialog extends JDialog{
        chnNames[i+1]=mLocalizer.msg("none", "n.n");
       }
     }
-    
+
     iconBox = new JComboBox(chnNames);
     iconBox.setSelectedIndex(myIconIndex+1);
     if (myIconIndex >=0 && selAlienChns[myIconIndex]!=null){
@@ -381,9 +380,9 @@ public class ChannelSettingDialog extends JDialog{
     }
     else{
       myChannelLabel.setIcon(new ImageIcon (getClass().getResource("icons/shared.png")));
-    } 
+    }
 
-    iconBox.addActionListener( new ActionListener() { 
+    iconBox.addActionListener( new ActionListener() {
       public void actionPerformed( ActionEvent e ){
         JComboBox cb = (JComboBox) e.getSource();
         Icon newIcon = null;
@@ -394,7 +393,7 @@ public class ChannelSettingDialog extends JDialog{
             alienLabel.setChannel(channel);
             newIcon = alienLabel.getIcon();
           }
-        } 
+        }
         if (newIcon == null){
           newIcon = new ImageIcon (getClass().getResource("icons/shared.png"));
         }
@@ -402,7 +401,7 @@ public class ChannelSettingDialog extends JDialog{
       }
     });
 
- 
+
     basicConstraints = makegbc(1, 2, 2, 1);
     basicConstraints.insets = new Insets(10, 10, 10, 10);
     basicConstraints.fill = GridBagConstraints.HORIZONTAL;
@@ -452,7 +451,7 @@ public class ChannelSettingDialog extends JDialog{
           for (int i = 0; i<selectedIndices.length; i++){
             myCategoryIndex = myCategoryIndex + (1<< (selectedIndices[i]-1));
           }
-            
+
         }
       }
     });
@@ -496,7 +495,7 @@ public class ChannelSettingDialog extends JDialog{
 
   public void updateGui (String id, String alienString){
 
-   
+
     tablePanel.removeAll();
     String[]alienDesc;
     if (alienString.equals("")){
@@ -516,7 +515,7 @@ public class ChannelSettingDialog extends JDialog{
       public boolean isCellEditable(int row, int column) {
         return false;
       }
-    };    
+    };
     selector.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     SharedTableCellRenderer render = new SharedTableCellRenderer();
     for (int i = 0; i < 2; i++) {
@@ -538,7 +537,7 @@ public class ChannelSettingDialog extends JDialog{
 
     JScrollPane sScrollPane = new JScrollPane(selector);
     sizeColumnsToFit(sScrollPane, selector.getRowCount());
-    selector.setRowHeight(28);    
+    selector.setRowHeight(28);
     int vScrollBarWidth = sScrollPane.getVerticalScrollBar().getPreferredSize().width;
     int headerHeight = selector.getTableHeader().getPreferredSize().height +6;
     Dimension dimTable = selector.getPreferredSize();
@@ -568,7 +567,7 @@ public class ChannelSettingDialog extends JDialog{
       addChannel (channelId, startTime, false, false);
       pack();
       tablePanel.repaint();
-    } 
+    }
 
   }
   /**
@@ -611,20 +610,20 @@ public class ChannelSettingDialog extends JDialog{
    * remove channel
    */
   public void removeChannel(int index){
-    
+
     StringBuffer newAlien = new StringBuffer();
     int iconIndex = iconBox.getSelectedIndex();
     int webIndex = webBox.getSelectedIndex();
 
     String [] newChnNames = new String [iconBox.getItemCount()-1];
     newChnNames[0] = iconBox.getItemAt(0).toString();
- 
+
     if (selector.getRowCount()>1) {
      for (int i = 0; i < index; i++) {
         newAlien.append(";" + selectorData[i][0] + ";" + selectorData[i][1]);
         newChnNames[i+1] = iconBox.getItemAt(i+1).toString();
       }
-      
+
       if (index == iconIndex-1){
         iconIndex=0;
       }
@@ -642,14 +641,14 @@ public class ChannelSettingDialog extends JDialog{
         newAlien.append(";" + selectorData[i][0] + ";" + selectorData[i][1]);
         newChnNames[i] = iconBox.getItemAt(i+1).toString();
      }
- 
+
     } else {
       iconIndex=0;
       webIndex=0;
      newAlien.append(";");
     }
     updateGui(myId, newAlien.substring(1));
-    
+
     iconBox.setModel(new DefaultComboBoxModel(newChnNames));
     iconBox.setSelectedIndex(iconIndex);
     webBox.setModel(new DefaultComboBoxModel(newChnNames));
@@ -663,7 +662,7 @@ public class ChannelSettingDialog extends JDialog{
     int iconIndex = iconBox.getSelectedIndex();
     int webIndex = webBox.getSelectedIndex();
 
-  
+
     String [] newChnNames = new String [iconBox.getItemCount()+1];
     newChnNames[0] = iconBox.getItemAt(0).toString();
     for (index = 0; index<selector.getRowCount(); index++){
@@ -676,7 +675,7 @@ public class ChannelSettingDialog extends JDialog{
     }
 
      newAlien.append (";" + startTime+ ";" +channelId);
- 
+
     if (isNewIconIndex) {
       iconIndex = index+1;
      } else {
@@ -701,13 +700,13 @@ public class ChannelSettingDialog extends JDialog{
       newAlien.append (";" + selectorData[i][0]+ ";" +selectorData[i][1]);
       newChnNames[i+2] = iconBox.getItemAt(i+1).toString();
     }
-  
-    updateGui (myId, newAlien.substring(1));   
+
+    updateGui (myId, newAlien.substring(1));
     iconBox.setModel(new DefaultComboBoxModel(newChnNames));
     iconBox.setSelectedIndex(iconIndex);
     webBox.setModel(new DefaultComboBoxModel(newChnNames));
     webBox.setSelectedIndex(webIndex);
-    
+
     if (channel!=null && countryBox.isVisible()) {
       String newCCode = channel.getCountry();
       if (newCCode!=null && newCCode.length()==2) {
@@ -722,7 +721,7 @@ public class ChannelSettingDialog extends JDialog{
         }
       }
     }
-     
+
   }
 
   private void sizeColumnsToFit(JScrollPane tScroll, int maxRows) {
@@ -749,7 +748,7 @@ public class ChannelSettingDialog extends JDialog{
   col.setWidth(prefSize+24);
     }
     }
-  
+
   public int [] getMyCategories (){
     boolean [] hasCategory = new boolean [12];
     int tempIndex = myCategoryIndex;
@@ -816,7 +815,7 @@ public class ChannelSettingDialog extends JDialog{
         retValue = true;
       }else {
         String [] channelId = propValue[2].split("_");
-        retValue = retValue ||("mixeddataservice.MixedDataService".equals(channelId[0])&& isMixedAncestor(channelId[3]))||("nextviewdataservice.NextViewDataService".equals(channelId[0]) && isNxtvepgAncestor(channelId[3]))||("sharedchannelservice.SharedChannelService".equals(channelId[0]) && isSharedAncestor(channelId[3]));          
+        retValue = retValue ||("mixeddataservice.MixedDataService".equals(channelId[0])&& isMixedAncestor(channelId[3]))||("nextviewdataservice.NextViewDataService".equals(channelId[0]) && isNxtvepgAncestor(channelId[3]))||("sharedchannelservice.SharedChannelService".equals(channelId[0]) && isSharedAncestor(channelId[3]));
       }
     }
     return retValue;
@@ -831,7 +830,7 @@ public class ChannelSettingDialog extends JDialog{
           retValue = true;
         } else {
           String [] channelId = propValue[i].split("_");
-          retValue = retValue ||("mixeddataservice.MixedDataService".equals(channelId[0])&& isMixedAncestor(channelId[3]))||("nextviewdataservice.NextViewDataService".equals(channelId[0]) && isNxtvepgAncestor(channelId[3]))||("sharedchannelservice.SharedChannelService".equals(channelId[0]) && isSharedAncestor(channelId[3]));          
+          retValue = retValue ||("mixeddataservice.MixedDataService".equals(channelId[0])&& isMixedAncestor(channelId[3]))||("nextviewdataservice.NextViewDataService".equals(channelId[0]) && isNxtvepgAncestor(channelId[3]))||("sharedchannelservice.SharedChannelService".equals(channelId[0]) && isSharedAncestor(channelId[3]));
         }
       }
     }
@@ -850,7 +849,7 @@ public class ChannelSettingDialog extends JDialog{
           String [] channelId = propValue[i].split("_");
           if (channelId.length==4) {
             retValue = retValue || ("mixeddataservice.MixedDataService".equals(channelId[0]) && isMixedAncestor(channelId[3])) || ("nextviewdataservice.NextViewDataService".equals(channelId[0]) && isNxtvepgAncestor(channelId[3])) || ("sharedchannelservice.SharedChannelService".equals(channelId[0]) && isSharedAncestor(channelId[3]));
-          }          
+          }
         }
       }
     }
@@ -873,7 +872,7 @@ public class ChannelSettingDialog extends JDialog{
     gbc.fill = GridBagConstraints.NONE;
     gbc.anchor = GridBagConstraints.NORTHWEST;
     return gbc;
-  } 
+  }
   /**
    * Returns the current instance of this panel. If no instance is given, create a new one.
    * @return instance of setting panel
@@ -883,7 +882,7 @@ public class ChannelSettingDialog extends JDialog{
       mInstance = new ChannelSettingDialog(parent);
     }
     return mInstance;
-  } 
+  }
   /**
    * Returns the current instance of this panel. If no instance is given, create a new one.
    * @return instance of setting panel
@@ -893,7 +892,7 @@ public class ChannelSettingDialog extends JDialog{
       mInstance = new ChannelSettingDialog(parent);
     }
     return mInstance;
-  } 
+  }
 }
 
 
@@ -912,9 +911,9 @@ class SharedHeaderRenderer extends JPanel implements TableCellRenderer {
 
 
 
-  public Component getTableCellRendererComponent(JTable table, 
-      Object value, 
-      boolean isSelected, 
+  public Component getTableCellRendererComponent(JTable table,
+      Object value,
+      boolean isSelected,
       boolean hasFocus,
       int row, int column) {
     label.setText(value.toString());
@@ -927,7 +926,7 @@ class SharedHeaderRenderer extends JPanel implements TableCellRenderer {
     label.setBorder(new CompoundBorder(border, margin));
 
 
-    setOpaque(true);     
+    setOpaque(true);
 
     return this;
   }
@@ -936,7 +935,7 @@ class SharedHeaderRenderer extends JPanel implements TableCellRenderer {
 
 class SharedTableCellRenderer extends DefaultTableCellRenderer {
   /**
-   * 
+   *
    */
   private static final long serialVersionUID = 1L;
   //private static final java.util.logging.Logger mLog = java.util.logging.Logger.getLogger(StatTableCellRenderer.class.getName());
@@ -958,12 +957,12 @@ class SharedTableCellRenderer extends DefaultTableCellRenderer {
     }else{
       String alienId = (String)value;
       Channel channel = HelperMethods.getChannelFromId(alienId, SharedChannelDataService.getPluginManager().getSubscribedChannels());
-      if (channel == null){
-        label.setIcon(new ImageIcon (getClass().getResource("icons/shared.png")));
-      } else{
+      if (channel != null) {
         label.setIcon(new ChannelLabel(channel).getIcon());
+        label.setText(channel.getName());
+      } else {
+        label.setIcon(new ImageIcon (getClass().getResource("icons/shared.png")));
       }
-      label.setText(channel.getName());
     }
     return(label);
 

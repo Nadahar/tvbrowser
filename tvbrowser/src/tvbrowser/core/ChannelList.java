@@ -833,7 +833,7 @@ public class ChannelList {
   /**
    * @return The Thread of loading the not used channels.
    */
-  public static Thread getChannelLoadThread() {
+  synchronized public static Thread getChannelLoadThread() {
     if (mCompleteChannelThread == null) {
       mCompleteChannelThread = new Thread("Load not subscribed channels") {
         public void run() {

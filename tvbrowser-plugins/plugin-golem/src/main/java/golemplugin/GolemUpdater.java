@@ -23,19 +23,19 @@
  */
 package golemplugin;
 
-import devplugin.Channel;
-import devplugin.Date;
-import devplugin.Program;
 import java.net.URL;
-import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import net.fortuna.ical4j.data.CalendarBuilder;
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.Component;
 import net.fortuna.ical4j.model.component.VEvent;
+import devplugin.Channel;
+import devplugin.Date;
+import devplugin.Program;
 
 public class GolemUpdater {
   private static final Logger logger = Logger.getLogger(GolemUpdater.class.getName());
@@ -82,8 +82,6 @@ public class GolemUpdater {
         java.util.Calendar start = java.util.Calendar.getInstance();
         start.setTime(event.getStartDate().getDate());
 
-        SimpleDateFormat f = new SimpleDateFormat();
-
         // String summary = event.getSummary().getValue(); Not used atm
         String[] desc = event.getDescription().getValue().split("\n");
 
@@ -124,7 +122,7 @@ public class GolemUpdater {
     }
 
     for (Channel ch : channels) {
-      if (ch.getName().compareToIgnoreCase(chname) == 0) {
+      if (ch.getName().equalsIgnoreCase(chname)) {
         return ch;
       }
     }

@@ -135,8 +135,8 @@ public class TvDataBaseUpdater {
     // Create a DayProgramFile that contains the data of all levels
     DayProgramFile prog = new DayProgramFile();
     
-    for (int i = 0; i < DayProgramFile.LEVEL_ARR.length; i++) {
-      String level = DayProgramFile.LEVEL_ARR[i].getId();
+    for (int i = 0; i < DayProgramFile.getLevels().length; i++) {
+      String level = DayProgramFile.getLevels()[i].getId();
       String fileName = DayProgramFile.getProgramFileName(date,
         channel.getCountry(), channel.getId(), level);
       File file = new File(mDataService.getDataDir(), fileName);

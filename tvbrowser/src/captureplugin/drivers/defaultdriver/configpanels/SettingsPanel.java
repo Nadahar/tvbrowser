@@ -110,7 +110,7 @@ public class SettingsPanel extends ScrollableJPanel implements ActionListener, C
       mPreTimeSpinner = new JSpinner(new SpinnerNumberModel(mData.getPreTime(), 0, null, 1));
       mPostTimeTextField = new JSpinner(new SpinnerNumberModel(mData.getPostTime(), 0, null, 1));
       
-      mUserName.setText(mData.getUserName());
+      mUserName.setText(mData.getUsername());
       mUserPwd.setText(mData.getPassword());
       
       mMaxSimult = new JSpinner(new SpinnerNumberModel(mData.getMaxSimultanious(), 1, null, 1));

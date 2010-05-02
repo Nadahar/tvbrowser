@@ -150,7 +150,7 @@ public final class RecommendationPlugin extends Plugin {
     return mWeightings;
   }
 
-  private void showWeightDialog() {
+  synchronized private void showWeightDialog() {
     final WeightDialog dialog = new WeightDialog(UiUtilities.getLastModalChildOf(getParentFrame()));
 
     updateRecommendations();

@@ -57,7 +57,7 @@ import devplugin.Program;
  */
 public class ProgramInfo {
 
-  public static Localizer mLocalizer = util.ui.Localizer
+  static Localizer mLocalizer = util.ui.Localizer
       .getLocalizerFor(ProgramInfo.class);
 
   private static final String DATAFILE_PREFIX = "programinfo.ProgramInfo";
@@ -335,6 +335,10 @@ public class ProgramInfo {
       return null;
     }
     return mHistory.get(mHistoryIndex + 1).getTitle();
+  }
+
+  public static void resetLocalizer() {
+    mLocalizer = Localizer.getLocalizerFor(ProgramInfo.class);
   }
 
 }

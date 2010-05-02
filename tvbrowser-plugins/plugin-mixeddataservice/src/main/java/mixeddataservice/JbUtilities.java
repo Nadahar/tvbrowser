@@ -1,4 +1,4 @@
-package sharedchanneldataservice;
+package mixeddataservice;
 
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
@@ -13,10 +13,9 @@ import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.Icon;
 
+public class JbUtilities {
 
-public class jbUtilities {
-
-  private static final Logger mLog = java.util.logging.Logger.getLogger(jbUtilities.class.getName());
+  private static final Logger mLog = java.util.logging.Logger.getLogger(JbUtilities.class.getName());
 
   public static void storeIcon (Icon icon, String type, String fileName){
     int w = icon.getIconWidth();

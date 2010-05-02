@@ -90,7 +90,7 @@ public class TvBrowserDataServiceSettingsPanel extends SettingsPanel implements 
 
   private DefaultListModel mGroupListModel;
 
-  private ChannelGroup mGroup;
+  private TvBrowserDataServiceChannelGroup mGroup;
 
   private static SettingsPanel mInstance;
 
@@ -113,7 +113,7 @@ public class TvBrowserDataServiceSettingsPanel extends SettingsPanel implements 
 
     levelList.add(new JLabel(mLocalizer.msg("downloadLevel", "Download this data")));
 
-    TvDataLevel[] levelArr = DayProgramFile.LEVEL_ARR;
+    TvDataLevel[] levelArr = DayProgramFile.getLevels();
 
     String[] levelIds = settings.getLevelIds();
 
@@ -203,7 +203,7 @@ public class TvBrowserDataServiceSettingsPanel extends SettingsPanel implements 
       public void valueChanged(ListSelectionEvent arg0) {
         mRemoveBtn.setEnabled(mGroupList.getSelectedIndex() >= 0);
         mInfoBtn.setEnabled(mGroupList.getSelectedIndex() >= 0);
-        ChannelGroup group = (ChannelGroup) mGroupList.getSelectedValue();
+        TvBrowserDataServiceChannelGroup group = (TvBrowserDataServiceChannelGroup) mGroupList.getSelectedValue();
         if (group == null) {
           mGroupDescriptionTA.setText("");
         } else {
@@ -218,9 +218,9 @@ public class TvBrowserDataServiceSettingsPanel extends SettingsPanel implements 
 
   }
 
-  private void fillGroupList(ChannelGroup[] groups) {
-    Arrays.sort(groups,new Comparator<ChannelGroup>() {
-      public int compare(ChannelGroup g1, ChannelGroup g2) {
+  private void fillGroupList(TvBrowserDataServiceChannelGroup[] groups) {
+    Arrays.sort(groups,new Comparator<TvBrowserDataServiceChannelGroup>() {
+      public int compare(TvBrowserDataServiceChannelGroup g1, TvBrowserDataServiceChannelGroup g2) {
         return g1.getName().compareToIgnoreCase(g2.getName());
       }
     });
@@ -251,8 +251,8 @@ public class TvBrowserDataServiceSettingsPanel extends SettingsPanel implements 
 
     for (int i = 0; i < mLevelCheckboxes.length; i++) {
       if (mLevelCheckboxes[i].isSelected()) {
-        levelIds.add(DayProgramFile.LEVEL_ARR[i].getId());
-        levelList.add(DayProgramFile.LEVEL_ARR[i]);
+        levelIds.add(DayProgramFile.getLevels()[i].getId());
+        levelList.add(DayProgramFile.getLevels()[i]);
       }
     }
     TvBrowserDataService.getInstance().setTvDataLevel(levelList.toArray(new TvDataLevel[levelList.size()]));
@@ -268,32 +268,32 @@ public class TvBrowserDataServiceSettingsPanel extends SettingsPanel implements 
     Object[] groups = mGroupListModel.toArray();
 
     for (int i = 0; i < groups.length - 1; i++) {
-      buf.append(((ChannelGroup) groups[i]).getId()).append(':');
+      buf.append(((TvBrowserDataServiceChannelGroup) groups[i]).getId()).append(':');
     }
     if (groups.length > 0) {
-      buf.append(((ChannelGroup) groups[groups.length - 1]).getId());
+      buf.append(((TvBrowserDataServiceChannelGroup) groups[groups.length - 1]).getId());
     }
     mSettings.setGroupName(buf.toString());
     for (int i = 0; i < groups.length; i++) {
       StringBuilder urlBuf = new StringBuilder();
-      String[] mirrorArr = ((ChannelGroup) groups[i]).getMirrorArr();
+      String[] mirrorArr = ((TvBrowserDataServiceChannelGroup) groups[i]).getMirrorArr();
       for (int j = 0; j < mirrorArr.length - 1; j++) {
         urlBuf.append(mirrorArr[j]).append(';');
       }
       if (mirrorArr.length > 0) {
         urlBuf.append(mirrorArr[mirrorArr.length - 1]);
       }
-      mSettings.setGroupUrls(((ChannelGroup) groups[i]).getId(), urlBuf.toString());
+      mSettings.setGroupUrls(((TvBrowserDataServiceChannelGroup) groups[i]).getId(), urlBuf.toString());
     }
   }
 
-  private ChannelGroup getChannelGroupByURL(String url, devplugin.ProgressMonitor monitor) throws TvBrowserException {
+  private TvBrowserDataServiceChannelGroup getChannelGroupByURL(String url, devplugin.ProgressMonitor monitor) throws TvBrowserException {
     int pos = url.lastIndexOf('/');
     String groupId = url.substring(pos + 1, url.length());
 
     String groupUrl = url.substring(0, pos);
 
-    ChannelGroup group = new ChannelGroup(TvBrowserDataService.getInstance(), groupId, new String[] { groupUrl }, mSettings);
+    TvBrowserDataServiceChannelGroup group = new TvBrowserDataServiceChannelGroup(TvBrowserDataService.getInstance(), groupId, new String[] { groupUrl }, mSettings);
     group.checkForAvailableChannels(monitor);
     return group;
   }
@@ -339,7 +339,7 @@ public class TvBrowserDataServiceSettingsPanel extends SettingsPanel implements 
         storeGroups();
       }
     } else if (source == mRemoveBtn) {
-      ChannelGroup group = (ChannelGroup) mGroupList.getSelectedValue();
+      TvBrowserDataServiceChannelGroup group = (TvBrowserDataServiceChannelGroup) mGroupList.getSelectedValue();
       Object[] options = { mLocalizer.msg("removeGroup", "yes,remove"), mLocalizer.msg("keepGroup", "Keep!") };
       int deleteGroup = JOptionPane.showOptionDialog(this, mLocalizer.msg("removeGroupQuestion",
               "Do you want to remove group '{0}' ?", group.getName()), mLocalizer.msg("removeGroupDlgTitle", "Remove group"),
@@ -351,7 +351,7 @@ public class TvBrowserDataServiceSettingsPanel extends SettingsPanel implements 
         storeGroups();
       }
     } else if (source == mInfoBtn) {
-      ChannelGroup group = (ChannelGroup) mGroupList.getSelectedValue();
+      TvBrowserDataServiceChannelGroup group = (TvBrowserDataServiceChannelGroup) mGroupList.getSelectedValue();
 
       if (group != null) {
         Window parent = UiUtilities.getBestDialogParent(this);

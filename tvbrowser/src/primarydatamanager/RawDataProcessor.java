@@ -191,10 +191,10 @@ public class RawDataProcessor {
     prepareDayProgram(rawProg, date, country, channel);
     
     // Get the file names of the level-complete-files
-    String[] levelFileNameArr = new String[DayProgramFile.LEVEL_ARR.length];
+    String[] levelFileNameArr = new String[DayProgramFile.getLevels().length];
     for (int i = 0; i < levelFileNameArr.length; i++) {
       levelFileNameArr[i] = DayProgramFile.getProgramFileName(date, country,
-        channel, DayProgramFile.LEVEL_ARR[i].getId());
+        channel, DayProgramFile.getLevels()[i].getId());
     }
     
     // Load the level files if they exist
@@ -209,7 +209,7 @@ public class RawDataProcessor {
         }
         catch (Exception exc) {
           throw new PreparationException("Loading complete file for level "
-            + DayProgramFile.LEVEL_ARR[i] + " failed: " + levelFileNameArr[i],
+            + DayProgramFile.getLevels()[i] + " failed: " + levelFileNameArr[i],
             exc);
         }
       }
@@ -249,7 +249,7 @@ public class RawDataProcessor {
     
     // Split the raw file in the levels
     DayProgramFile newLevelProgArr[]
-      = new DayProgramFile[DayProgramFile.LEVEL_ARR.length];
+      = new DayProgramFile[DayProgramFile.getLevels().length];
     for (int i = 0; i < newLevelProgArr.length; i++) {
       newLevelProgArr[i] = extractLevel(rawProg, i);
     }
@@ -275,7 +275,7 @@ public class RawDataProcessor {
         // We already have an old program file
         
         // Check whether the new version should come into quarantine
-        String level = DayProgramFile.LEVEL_ARR[i].getId();
+        String level = DayProgramFile.getLevels()[i].getId();
         if (quarantine) {
           // Copy the old files
           copyFiles(levelProgArr[i], date, country, channel, level,
@@ -409,8 +409,8 @@ public class RawDataProcessor {
     if (someProgramsAreUnmapped) {
       // Get the maximum ID from the complete file and all update files
       int maxId = PrimaryDataUtilities.getMaxId(preparedFile);
-      for (int i = 0; i < DayProgramFile.LEVEL_ARR.length; i++) {
-        String level = DayProgramFile.LEVEL_ARR[i].getId();
+      for (int i = 0; i < DayProgramFile.getLevels().length; i++) {
+        String level = DayProgramFile.getLevels()[i].getId();
         int updateMaxId = getMaxIdOfUpdateFiles(date, country, channel, level,
                                                 preparedDir);
         if (updateMaxId > maxId) {

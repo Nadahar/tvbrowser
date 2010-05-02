@@ -55,7 +55,7 @@ import devplugin.ProgressMonitor;
 /**
  * The ChannelGroup implementation of the TvBrowserDataService
  */
-public class ChannelGroup implements devplugin.ChannelGroup {
+public class TvBrowserDataServiceChannelGroup implements devplugin.ChannelGroup {
 
   private String mID;
 
@@ -82,17 +82,17 @@ public class ChannelGroup implements devplugin.ChannelGroup {
    */
   private TvBrowserDataServiceSettings mSettings;
 
-  private static final Logger mLog = Logger.getLogger(ChannelGroup.class.getName());
+  private static final Logger mLog = Logger.getLogger(TvBrowserDataServiceChannelGroup.class.getName());
 
   /** The localizer for this class. */
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer
-      .getLocalizerFor(ChannelGroup.class);
+      .getLocalizerFor(TvBrowserDataServiceChannelGroup.class);
 
   private static final int MAX_META_DATA_AGE = 2;
 
   /**
    * Creates a new ChannelGroup
-   * 
+   *
    * @param dataservice The data service of the group.
    * @param id The id of the group.
    * @param name The name of the group.
@@ -101,7 +101,7 @@ public class ChannelGroup implements devplugin.ChannelGroup {
    * @param mirrorUrls The mirror urls of the group.
    * @param settings The properties of the group.
    */
-  public ChannelGroup(TvBrowserDataService dataservice, String id, String name, String description, String provider, String[] mirrorUrls, TvBrowserDataServiceSettings settings) {
+  public TvBrowserDataServiceChannelGroup(TvBrowserDataService dataservice, String id, String name, String description, String provider, String[] mirrorUrls, TvBrowserDataServiceSettings settings) {
     mID = id;
     mName = name;
     mDescription = description;
@@ -121,7 +121,7 @@ public class ChannelGroup implements devplugin.ChannelGroup {
    * @param mirrorUrls The mirror urls of the group.
    * @param settings The properties of the group.
    */
-  public ChannelGroup(TvBrowserDataService dataservice, String id, String[] mirrorUrls, TvBrowserDataServiceSettings settings) {
+  public TvBrowserDataServiceChannelGroup(TvBrowserDataService dataservice, String id, String[] mirrorUrls, TvBrowserDataServiceSettings settings) {
     this(dataservice, id, null, null, null, mirrorUrls, settings);
   }
 
@@ -266,19 +266,19 @@ public class ChannelGroup implements devplugin.ChannelGroup {
     Mirror[] mirrorArr = Mirror.loadMirrorList(new File(mDataDir, mID + "_" + Mirror.MIRROR_LIST_FILE_NAME), mMirrorUrlArr, serverDefindeMirros);
 
     // Get a random Mirror that is up to date
-    mCurMirror = Mirror.chooseUpToDateMirror(mirrorArr, null, getName(), mID, ChannelGroup.class, " Please contact the TV data provider for help.");
+    mCurMirror = Mirror.chooseUpToDateMirror(mirrorArr, null, getName(), mID, TvBrowserDataServiceChannelGroup.class, " Please contact the TV data provider for help.");
 
     if (mCurMirror != null) {
       mLog.info("Using mirror " + mCurMirror.getUrl());
-  
+
       // Update the mirrorlist (for the next time)
       updateMetaFile(mCurMirror.getUrl(), mID + "_" + Mirror.MIRROR_LIST_FILE_NAME);
-  
+
       // Update the channel list
       // NOTE: We have to load the channel list before the programs, because
       // we need it for the programs.
       updateChannelList(mCurMirror, false);
-  
+
       try {
         mSummary = loadSummaryFile(mCurMirror);
       } catch (Exception exc) {
@@ -343,15 +343,15 @@ public class ChannelGroup implements devplugin.ChannelGroup {
         String line = in.readLine();
         while (line != null) {
           String[] s = line.split(";");
-          
+
           if (s.length>=5 && s[0].compareTo(mID) == 0) {
             int n = s.length-4;
             mirrorArr = new Mirror[n];
-            
+
             for(int i = 0; i < n; i++) {
               mirrorArr[i] = new Mirror(s[i+4], 1);
             }
-            
+
             break;
           }
 
@@ -372,7 +372,7 @@ public class ChannelGroup implements devplugin.ChannelGroup {
 
     return mirrorArr;
   }
-  
+
   private boolean needsUpdate(File file) {
     if (!file.exists()) {
       return true;
@@ -384,7 +384,7 @@ public class ChannelGroup implements devplugin.ChannelGroup {
 
   private void updateMetaFile(String serverUrl, String metaFileName) throws TvBrowserException {
     File file = new File(mDataDir, metaFileName);
-    
+
     // Download the new file if needed
     if (needsUpdate(file)) {
       String url = serverUrl + "/" + metaFileName;
@@ -425,7 +425,7 @@ public class ChannelGroup implements devplugin.ChannelGroup {
 
   /**
    * Checks and returns the available channels of this group.
-   * 
+   *
    * @param monitor The progress monitor that is to be used.
    * @return The available channel array.
    * @throws TvBrowserException
@@ -436,17 +436,17 @@ public class ChannelGroup implements devplugin.ChannelGroup {
     Mirror[] mirrorArr = Mirror.loadMirrorList(new File(mDataDir, mID + "_" + Mirror.MIRROR_LIST_FILE_NAME), mMirrorUrlArr, serverDefindeMirros);
 
     // Get a random Mirror that is up to date
-    Mirror mirror = Mirror.chooseUpToDateMirror(mirrorArr, monitor, getName(), mID, ChannelGroup.class, " Please contact the TV data provider for help.");
-    
+    Mirror mirror = Mirror.chooseUpToDateMirror(mirrorArr, monitor, getName(), mID, TvBrowserDataServiceChannelGroup.class, " Please contact the TV data provider for help.");
+
     if(mirror != null) {
       mLog.info("Using mirror " + mirror.getUrl());
-  
+
       // Update the mirrorlist (for the next time)
       updateMetaFile(mirror.getUrl(), mID + "_" + Mirror.MIRROR_LIST_FILE_NAME);
-  
+
       // Update the groupname file
       updateMetaFile(mirror.getUrl(), mID + "_info");
-  
+
       // Update the channel list
       updateChannelList(mirror, true);
       return getAvailableChannels();
@@ -458,7 +458,7 @@ public class ChannelGroup implements devplugin.ChannelGroup {
 
   /**
    * Gets the list of the channels that are available by this data service.
-   * 
+   *
    * @return The available channel array.
    */
   public synchronized Channel[] getAvailableChannels() {
@@ -505,7 +505,7 @@ public class ChannelGroup implements devplugin.ChannelGroup {
   public int hashCode() {
     return mID.toLowerCase().hashCode();
   }
-  
+
   /**
    * delete all the files created by this channel group,
    * only to be called on deletion of a channel group

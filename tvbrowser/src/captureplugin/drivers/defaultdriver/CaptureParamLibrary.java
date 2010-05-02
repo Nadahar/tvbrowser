@@ -202,13 +202,13 @@ public class CaptureParamLibrary extends ParamLibrary {
    * @return UserName
    */
   private String getUserName() {
-    if (StringUtils.isEmpty(mConfig.getUserName())) {
+    if (StringUtils.isEmpty(mConfig.getUsername())) {
       setErrors(true);
       setErrorString(mLocalizer.msg("NoUser", "Please specify Username!"));
       return null;
     }
 
-    return mConfig.getUserName();
+    return mConfig.getUsername();
   }
 
   /**

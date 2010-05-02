@@ -54,7 +54,7 @@ public class DayProgramFile extends AbstractFile {
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(DayProgramFile.class);
 
-  public static final TvDataLevel[] LEVEL_ARR = new TvDataLevel[] {
+  private static final TvDataLevel[] LEVEL_ARR = new TvDataLevel[] {
     new TvDataLevel("base", mLocalizer.msg("basicTVListings","Basic TV listings"),true),
     new TvDataLevel("more00-16",mLocalizer.msg("more00-16","")),
     new TvDataLevel("more16-00",mLocalizer.msg("more16-00","")),
@@ -299,12 +299,12 @@ public class DayProgramFile extends AbstractFile {
             targetFrame.addProgramField(copy);
           }
         }
-        
+
         /* If the frame now is empty we have to remove it to prevent
          * it is misinterpreted as a to deleting program frame */
         if(frame.getProgramFieldCount() == 0) {
           index = getProgramFrameIndexForId(frame.getId());
-          
+
           if(index != -1) {
             removeProgramFrameAt(index);
           }
@@ -396,7 +396,7 @@ public class DayProgramFile extends AbstractFile {
     mVersion = gIn.read();
 
     int programCount = gIn.read();
-    
+
     if(programCount == 254) {
       try {
         if(job.getServerUrl() != null) {
@@ -456,10 +456,10 @@ public class DayProgramFile extends AbstractFile {
     gOut.write(mVersion);
 
     String fileName = getAdditionalFileName(file.toString());
-    
+
     if(new File(fileName).isFile())
       new File(fileName).delete();
-    
+
     if(getProgramFrameCount() >= 254) {
       if(file != null) {
         FileOutputStream write = null;
@@ -490,13 +490,13 @@ public class DayProgramFile extends AbstractFile {
   }
   private String getAdditionalFileName(String fileName) {
     int index = fileName.indexOf("_update_");
-    
+
     if(index != -1)
       return fileName.substring(0,index) + fileName.substring(index+8,fileName.indexOf(".prog.gz")) + "_additional.prog.gz";
     else
       return fileName.substring(0,fileName.indexOf(".prog.gz")) + "_additional.prog.gz";
   }
-  
+
   public String getProgramFileName() {
     if (mChannel==null || mDate==null) return null;
     return getProgramFileName(mDate,mChannel);
@@ -656,6 +656,10 @@ public class DayProgramFile extends AbstractFile {
     } else {
       return false;
     }
+  }
+
+  public static TvDataLevel[] getLevels() {
+    return LEVEL_ARR.clone();
   }
 
 }
