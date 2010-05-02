@@ -16,21 +16,20 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * 
+ *
  */
 
 package swedbtvdataservice;
 
 import util.misc.StringPool;
+import devplugin.ChannelGroupImpl;
 
 /**
  * Each channel should belong to exactly one channel group. The ChannelGroup interface
- * represents a channel goup.
+ * represents a channel group.
  */
-class DataHydraChannelGroup implements devplugin.ChannelGroup {
+class DataHydraChannelGroup extends ChannelGroupImpl {
 
-  private String mId;
-  private String mProvider;
   private String mCopyright;
   private String mUrl;
   private String mChannelFile;
@@ -42,52 +41,12 @@ class DataHydraChannelGroup implements devplugin.ChannelGroup {
   }
 
   protected DataHydraChannelGroup(String id, String provider, String copyright, String url, String channelFile, String country, boolean showRegister) {
-    mId = id;
-    mProvider = provider;
+    super(id, "DataHydra", "DataHydra", provider);
     mCopyright = StringPool.getString(copyright);
     mUrl = url;
     mChannelFile = channelFile;
     mCountry = StringPool.getString(country);
     mShowRegister = showRegister;
-  }
-
-  /**
-   * @return the title of this group
-   */
-  public String getName() {
-    return "DataHydra";
-  }
-
-  /**
-   * @return unique identifier of this group
-   */
-  public String getId() {
-    return mId;
-  }
-
-  /**
-   * @return short description of this group
-   */
-  public String getDescription() {
-    return "DataHydra";
-  }
-
-  /**
-   * @return the name of the provider
-   * @since 1.1
-   */
-  public String getProviderName() {
-    return mProvider;
-  }
-
-  public boolean equals(Object obj) {
-
-    if (obj instanceof devplugin.ChannelGroup) {
-      devplugin.ChannelGroup group = (devplugin.ChannelGroup) obj;
-      return group.getId().equalsIgnoreCase(mId);
-    }
-    return false;
-
   }
 
   public String getCopyright() {

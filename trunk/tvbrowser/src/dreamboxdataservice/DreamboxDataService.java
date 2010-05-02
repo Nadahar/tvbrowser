@@ -54,6 +54,7 @@ import util.ui.Localizer;
 import devplugin.AbstractTvDataService;
 import devplugin.Channel;
 import devplugin.ChannelGroup;
+import devplugin.ChannelGroupImpl;
 import devplugin.Date;
 import devplugin.PluginInfo;
 import devplugin.ProgressMonitor;
@@ -71,9 +72,9 @@ public class DreamboxDataService extends AbstractTvDataService {
      */
     private static final Localizer mLocalizer = Localizer.getLocalizerFor(DreamboxDataService.class);
 
-    private static final Version VERSION = new Version(0, 6, 2); 
-    
-    private DreamboxChannelGroup mChannelGroup = new DreamboxChannelGroup();
+    private static final Version VERSION = new Version(0, 6, 2);
+
+    private ChannelGroup mChannelGroup = new ChannelGroupImpl("Dreambox", "Dreambox", "Dreambox", "Dreambox");
 
     private Properties mProperties;
     /**

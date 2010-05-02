@@ -29,7 +29,7 @@ package devplugin;
 
 /**
  * Each channel should belong to exactly one channel group. The ChannelGroup interface
- * represents a channel goup.
+ * represents a channel group.
  */
 public interface ChannelGroup {
 

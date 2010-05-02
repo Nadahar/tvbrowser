@@ -42,6 +42,7 @@ import util.ui.Localizer;
 import devplugin.AbstractTvDataService;
 import devplugin.Channel;
 import devplugin.ChannelGroup;
+import devplugin.ChannelGroupImpl;
 import devplugin.Date;
 import devplugin.PluginInfo;
 import devplugin.ProgressMonitor;
@@ -49,13 +50,13 @@ import devplugin.Version;
 
 /**
  * This Dataservice collects Data from
- * 
+ *
  * http://xmltv.radiotimes.com/xmltv/channels.dat
- * 
+ *
  * and
- * 
+ *
  * http://xmltv.radiotimes.com/xmltv/92.dat
- * 
+ *
  * @author bodum
  */
 public class RadioTimesDataService extends AbstractTvDataService {
@@ -75,11 +76,11 @@ public class RadioTimesDataService extends AbstractTvDataService {
       .getName());
 
   private static final Version VERSION = new Version(3,0);
-  
+
   /**
    * Channelgroup
    */
-  private ChannelGroup mRadioTimesChannelGroup = new RadioTimesChannelGroup("Radio Times", "radiotimes", mLocalizer
+  private ChannelGroup mRadioTimesChannelGroup = new ChannelGroupImpl("radiotimes", "Radio Times", mLocalizer
       .msg("desc", "Data from Radio Times"), "Radio Times");
 
   /**
@@ -99,7 +100,7 @@ public class RadioTimesDataService extends AbstractTvDataService {
 
       // Do the parsing...
       BufferedReader reader = new BufferedReader(new InputStreamReader(IOUtilities.getStream(new URL(BASEURL + "channels.dat"))));
-      
+
       String line;
 
       while ((line = reader.readLine()) != null) {
@@ -141,7 +142,7 @@ public class RadioTimesDataService extends AbstractTvDataService {
   public static Version getVersion() {
     return VERSION;
   }
-  
+
   public PluginInfo getInfo() {
     return new PluginInfo(RadioTimesDataService.class, mLocalizer.msg("name", "Radio Times Data"), mLocalizer.msg("desc", "Data from Radio Times."),
         "Bodo Tasche");
@@ -207,7 +208,7 @@ public class RadioTimesDataService extends AbstractTvDataService {
       ProgressMonitor monitor) throws TvBrowserException {
 
     int max = channelArr.length;
-    Date endDate = startDate.addDays(dateCount-1); 
+    Date endDate = startDate.addDays(dateCount-1);
 
     monitor.setMaximum(max);
     monitor.setMessage(mLocalizer.msg("parsing", "Parsing Radio Times Data"));

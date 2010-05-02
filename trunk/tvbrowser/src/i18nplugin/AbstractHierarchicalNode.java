@@ -51,7 +51,7 @@ public abstract class AbstractHierarchicalNode extends DefaultMutableTreeNode
   public int translationStateFor(Locale locale) {
     int max = getChildCount();
     int result = STATE_OK;
-    
+
     for (int i=0;i<max;i++) {
       int state = ((LanguageNodeIf)getChildAt(i)).translationStateFor(locale);
       if (state == STATE_MISSING_TRANSLATION) {
@@ -61,7 +61,7 @@ public abstract class AbstractHierarchicalNode extends DefaultMutableTreeNode
         result = STATE_NON_WELLFORMED;
       }
     }
-    
+
     return result;
   }
 
@@ -69,7 +69,7 @@ public abstract class AbstractHierarchicalNode extends DefaultMutableTreeNode
   public boolean isLeaf() {
     return false;
   }
-  
+
   public boolean matches() {
     return filter != null && !filteredChildren.isEmpty();
   }
@@ -85,13 +85,11 @@ public abstract class AbstractHierarchicalNode extends DefaultMutableTreeNode
         if (filter != null && node.matches()) {
           filteredChildren.add(childAt);
         }
-      } else {
-        System.err.println("error setting filter: " + childAt.getClass());
       }
     }
     this.filter = filter;
   }
-  
+
   @Override
   public int getChildCount() {
     if (filter == null) {
@@ -164,5 +162,5 @@ public abstract class AbstractHierarchicalNode extends DefaultMutableTreeNode
       }
     }
   }
-  
+
 }
