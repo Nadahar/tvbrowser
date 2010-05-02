@@ -419,13 +419,13 @@ public class SystemTray {
         }
       }
 
-      // Show important program?
+      // Show important programs?
       if (Settings.propTrayImportantProgramsEnabled.getBoolean()) {
         if (Settings.propTrayImportantProgramsInSubMenu.getBoolean()) {
           mTrayMenu.add(addToImportantMenu(new ScrollableMenu(mLocalizer.msg("menu.programsImportant",
-              "Important programs"))));
+              "Important programs")), programs));
         } else {
-          addToImportantMenu(mTrayMenu);
+          addToImportantMenu(mTrayMenu, programs);
         }
       }
 
@@ -492,23 +492,28 @@ public class SystemTray {
    *
    * @param menu
    *          The menu to on
+   * @param normalPrograms
    * @return The filled menu menu.
    */
-  private JComponent addToImportantMenu(JComponent menu) {
-    Program[] p = MarkedProgramsList.getInstance().getTimeSortedProgramsForTray(
+  private JComponent addToImportantMenu(JComponent menu, ArrayList<ProgramMenuItem> normalProgramItems) {
+    Program[] marked = MarkedProgramsList.getInstance().getTimeSortedProgramsForTray(
         MainFrame.getInstance().getProgramFilter(), Settings.propTrayImportantProgramsPriority.getInt(),
-        Settings.propTrayImportantProgramsSize.getInt(), !Settings.propTrayNowProgramsEnabled.getBoolean());
+        Settings.propTrayImportantProgramsSize.getInt(), true);
 
-    boolean added = false;
-
-    if (p.length > 0) {
-      for (int i = 0; i < p.length; i++) {
-        menu.add(new ProgramMenuItem(p[i], ProgramMenuItem.IMPORTANT_TYPE, -1, i));
-        added = true;
-      }
+    ArrayList<Program> normalPrograms = new ArrayList<Program>(normalProgramItems.size());
+    for (ProgramMenuItem programMenuItem : normalProgramItems) {
+      normalPrograms.add(programMenuItem.getProgram());
     }
 
-    if (p.length == 0 || !added) {
+    ArrayList<Program> importantPrograms = new ArrayList<Program>(Arrays.asList(marked));
+    importantPrograms.removeAll(normalPrograms);
+
+    int index = 0;
+    for (Program program : importantPrograms) {
+      menu.add(new ProgramMenuItem(program, ProgramMenuItem.IMPORTANT_TYPE, -1, index++));
+    }
+
+    if (importantPrograms.isEmpty()) {
       JMenuItem item = new JMenuItem(mLocalizer.msg("menu.noImportantPrograms", "No important programs found."));
 
       item.setEnabled(false);
