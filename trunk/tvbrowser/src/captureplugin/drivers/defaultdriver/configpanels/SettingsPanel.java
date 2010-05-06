@@ -45,12 +45,17 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import util.ui.Localizer;
+import util.ui.ProgramReceiveTargetSelectionPanel;
 import util.ui.ScrollableJPanel;
+import util.ui.UiUtilities;
+import captureplugin.CapturePlugin;
 import captureplugin.drivers.defaultdriver.DeviceConfig;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
+
+import devplugin.ProgramReceiveTarget;
 
 
 /**
@@ -86,6 +91,8 @@ public class SettingsPanel extends ScrollableJPanel implements ActionListener, C
     private JComboBox mTimeZones;
 
     private JLabel mTimeZoneLabel;
+    
+    private ProgramReceiveTargetSelectionPanel mProgramReceiveTargetSelection;
 
     /**
      * Creates the SettingsPanel
@@ -104,7 +111,7 @@ public class SettingsPanel extends ScrollableJPanel implements ActionListener, C
       PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,12dlu,pref:grow,5dlu,pref:grow,5dlu",
       "pref,5dlu,pref,1dlu,pref,10dlu,pref,5dlu,pref,1dlu,"+
       "pref,10dlu,pref,5dlu,pref,1dlu,pref,7dlu,pref,pref," +
-      "pref,pref,pref,7dlu,pref,pref"),this);
+      "pref,pref,pref,7dlu,pref,pref,10dlu,pref"),this);
       pb.setDefaultDialogBorder();
       
       mPreTimeSpinner = new JSpinner(new SpinnerNumberModel(mData.getPreTime(), 0, null, 1));
@@ -179,6 +186,11 @@ public class SettingsPanel extends ScrollableJPanel implements ActionListener, C
       
       pb.add(timeZonePanel, cc.xyw(3,26,3));
       
+      mProgramReceiveTargetSelection = new ProgramReceiveTargetSelectionPanel(UiUtilities.getLastModalChildOf(CapturePlugin.getInstance().getSuperFrame()),
+          mData.getProgramReceiveTargets(),null,CapturePlugin.getInstance(),true,mLocalizer.msg("sendToTitle","Send scheduled programs to:"));
+      mProgramReceiveTargetSelection.addChangeListener(this);
+      pb.add(mProgramReceiveTargetSelection, cc.xyw(1,28,5));
+      
       // add ChangeListener to the spinners
       mPreTimeSpinner.addChangeListener(this);
       mPostTimeTextField.addChangeListener(this);
@@ -240,7 +252,11 @@ public class SettingsPanel extends ScrollableJPanel implements ActionListener, C
         mData.setPreTime((Integer) mPreTimeSpinner.getValue());
       } else if(e.getSource().equals(mPostTimeTextField)) {
         mData.setPostTime((Integer) mPostTimeTextField.getValue());
+      } else if(e.getSource().equals(mProgramReceiveTargetSelection)) {
+        mData.setProgramReceiveTargets(mProgramReceiveTargetSelection.getCurrentSelection());
       }
     }
+    
+
 
 }

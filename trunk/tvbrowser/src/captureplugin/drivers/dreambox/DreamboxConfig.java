@@ -38,6 +38,7 @@ import captureplugin.drivers.utils.IDGenerator;
 import captureplugin.utils.ConfigIf;
 import captureplugin.utils.ExternalChannelIf;
 import devplugin.Channel;
+import devplugin.ProgramReceiveTarget;
 
 /**
  * The configuration for the dreambox
@@ -73,6 +74,9 @@ public class DreamboxConfig implements ConfigIf {
     /** Timeout for connection to the dreambox */
     private int mTimeout = 1000;
     
+    /** The targets for the program export */
+    private ProgramReceiveTarget[] mReceiveTargets = new ProgramReceiveTarget[0];
+    
     /**
      * Constructor
      */
@@ -97,6 +101,7 @@ public class DreamboxConfig implements ConfigIf {
         mUsername = dreamboxConfig.getUserName();
         mPassword = dreamboxConfig.getPassword();
         mMediaplayer = dreamboxConfig.getMediaplayer();
+        mReceiveTargets = dreamboxConfig.getProgramReceiveTargets();
     }
 
     /**
@@ -129,7 +134,7 @@ public class DreamboxConfig implements ConfigIf {
      * @throws IOException io errors
      */
     public void writeData(ObjectOutputStream stream) throws IOException {
-        stream.writeInt(4);
+        stream.writeInt(5);
         stream.writeUTF(getId());
 
         stream.writeUTF(mDreamboxAddress);
@@ -168,6 +173,12 @@ public class DreamboxConfig implements ConfigIf {
         stream.writeUTF(IOUtilities.xorEncode(mPassword, 21341));
         
         stream.writeUTF(mMediaplayer);
+        
+        stream.writeInt(mReceiveTargets.length);
+        
+        for(ProgramReceiveTarget receiveTarget : mReceiveTargets) {
+          receiveTarget.writeData(stream);
+        }
     }
 
     /**
@@ -222,6 +233,14 @@ public class DreamboxConfig implements ConfigIf {
         mPassword = IOUtilities.xorDecode(stream.readUTF(), 21341);
         
         mMediaplayer = stream.readUTF();
+        
+        if(version > 4) {
+          mReceiveTargets = new ProgramReceiveTarget[stream.readInt()];
+          
+          for(int i = 0; i < mReceiveTargets.length; i++) {
+            mReceiveTargets[i] = new ProgramReceiveTarget(stream);
+          }
+        }
     }
 
     /**
@@ -427,5 +446,21 @@ public class DreamboxConfig implements ConfigIf {
     public boolean hasValidAddress() {
       final String address = getDreamboxAddress();
       return address != null && !address.trim().isEmpty();
+    }
+    
+    /**
+     * Sets the program receive targets for this device.
+     * @param receiveTargets The receive targets for this device.
+     */
+    public void setProgramReceiveTargets(ProgramReceiveTarget[] receiveTargets) {
+      mReceiveTargets = receiveTargets;
+    }
+    
+    /**
+     * Gets the program receive targets of this device.
+     * @return The program receive targets of this device.
+     */
+    public ProgramReceiveTarget[] getProgramReceiveTargets() {
+      return mReceiveTargets;
     }
 }
