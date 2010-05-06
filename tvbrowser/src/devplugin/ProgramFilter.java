@@ -23,7 +23,7 @@
  *   $Author$
  * $Revision$
  */
- 
+
 package devplugin;
 
 /**
@@ -33,10 +33,10 @@ public interface ProgramFilter {
 
   /**
    *
-   * @param prog
+   * @param program the program to be checked
    * @return true, if the filter accepts the specified program
    */
-	public boolean accept(Program program);
+	public boolean accept(final Program program);
 
 	public String toString();
 
@@ -45,5 +45,5 @@ public interface ProgramFilter {
    * @return the name of this filter
    */
 	public String getName();
-	
+
 }
