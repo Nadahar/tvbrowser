@@ -41,6 +41,7 @@ import captureplugin.drivers.DriverIf;
 import captureplugin.drivers.utils.ProgramTime;
 import captureplugin.drivers.utils.ProgramTimeDialog;
 import devplugin.Program;
+import devplugin.ProgramReceiveTarget;
 
 /**
  * The Default-Device
@@ -326,5 +327,15 @@ public final class DefaultDevice implements DeviceIf {
       }
       
       return null;
+    }
+
+
+    @Override
+    public void sendProgramsToReceiveTargets(Program[] progs) {
+      ProgramReceiveTarget[] targets = mConfig.getProgramReceiveTargets();
+      
+      for(ProgramReceiveTarget target : targets) {
+        target.receivePrograms(progs);
+      }
     }
 }

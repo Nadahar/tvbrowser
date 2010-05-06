@@ -228,7 +228,9 @@ public class CapturePlugin extends devplugin.Plugin {
                 } else {
                     AbstractAction caction = new AbstractAction() {
                         public void actionPerformed(ActionEvent evt) {
-                            dev.add(parent, program);
+                            if(dev.add(parent, program)) {
+                              dev.sendProgramsToReceiveTargets(new Program[] {program});
+                            }
                             updateMarkedPrograms();
                         }
                     };
@@ -476,9 +478,14 @@ public class CapturePlugin extends devplugin.Plugin {
                     updateMarkedPrograms();
                     return true;
                 } else if (command.equals(RECORD)) {
+                    ArrayList<Program> successfullPrograms = new ArrayList<Program>(programArr.length);
+                  
                     for (Program program:programArr) {
-                        device.add(getParentFrame(), program);
+                        if(device.add(getParentFrame(), program)) {
+                          successfullPrograms.add(program);
+                        }
                     }
+                    device.sendProgramsToReceiveTargets(successfullPrograms.toArray(new Program[successfullPrograms.size()]));
                     updateMarkedPrograms();
                     return true;
                 }

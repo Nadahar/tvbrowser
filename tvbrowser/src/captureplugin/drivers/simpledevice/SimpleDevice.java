@@ -270,4 +270,10 @@ public final class SimpleDevice implements DeviceIf {
       
       return null;
     }
+
+    @Override
+    public void sendProgramsToReceiveTargets(Program[] progs) {
+      // TODO Auto-generated method stub
+      
+    }
 }

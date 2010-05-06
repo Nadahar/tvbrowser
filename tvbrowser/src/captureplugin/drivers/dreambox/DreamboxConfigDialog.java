@@ -53,6 +53,7 @@ import javax.swing.table.TableCellEditor;
 
 import util.ui.EnhancedPanelBuilder;
 import util.ui.Localizer;
+import util.ui.ProgramReceiveTargetSelectionPanel;
 import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
@@ -105,6 +106,8 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
     private JTextField mMediaplayer;
 
     private JButton mRefreshButton;
+    
+    private ProgramReceiveTargetSelectionPanel mProgramReceiveTargetSelection;
 
   /**
    * Create the Dialog
@@ -304,6 +307,13 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
             }
         });
         extendedPanel.add(select, cc.xy(6, extendedPanel.getRow()));
+        
+        mProgramReceiveTargetSelection = new ProgramReceiveTargetSelectionPanel(UiUtilities.getLastModalChildOf(CapturePlugin.getInstance().getSuperFrame()),
+            mConfig.getProgramReceiveTargets(),null,CapturePlugin.getInstance(),true,mLocalizer.msg("sendToTitle","Send scheduled programs to:"));
+        
+        extendedPanel.addRow();
+        extendedPanel.addRow();
+        extendedPanel.add(mProgramReceiveTargetSelection, cc.xyw(1,extendedPanel.getRow(),7));
 
         builder = new ButtonBarBuilder2();
 
@@ -446,7 +456,8 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
         mConfig.setPassword(mPasswordField.getPassword());
         
         mConfig.setMediaplayer(mMediaplayer.getText());
-
+        mConfig.setProgramReceiveTargets(mProgramReceiveTargetSelection.getCurrentSelection());
+        
         setVisible(false);
     }
 

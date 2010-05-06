@@ -37,6 +37,7 @@ import util.ui.Localizer;
 import captureplugin.drivers.utils.IDGenerator;
 import captureplugin.utils.ChannelComparator;
 import devplugin.Channel;
+import devplugin.ProgramReceiveTarget;
 
 
 /**
@@ -119,6 +120,9 @@ public class DeviceConfig {
      *  update should be deleted automatically */
     private boolean mDeletePrograms = true;
 
+    /** The targets for the program export */
+    private ProgramReceiveTarget[] mReceiveTargets = new ProgramReceiveTarget[0];
+    
     /**
      * Create a empty Config
      */
@@ -154,6 +158,7 @@ public class DeviceConfig {
         setId(data.getId());
         setShowTitleAndTimeDialog(data.getShowTitleAndTimeDialog());
         setDeleteRemovedPrograms(data.getDeleteRemovedPrograms());
+        setProgramReceiveTargets(data.getProgramReceiveTargets());
     }
 
     /**
@@ -504,7 +509,7 @@ public class DeviceConfig {
      */
     public void writeData(ObjectOutputStream stream) throws IOException {
 
-        stream.writeInt(10);
+        stream.writeInt(11);
 
         stream.writeObject(getName());
         
@@ -548,6 +553,12 @@ public class DeviceConfig {
         stream.writeObject(mId);
         stream.writeBoolean(mShowTitleAndTimeDialog);
         stream.writeBoolean(mDeletePrograms);
+        
+        stream.writeInt(mReceiveTargets.length);
+        
+        for(ProgramReceiveTarget receiveTarget : mReceiveTargets) {
+          receiveTarget.writeData(stream);
+        }
     }
 
     /**
@@ -630,6 +641,13 @@ public class DeviceConfig {
         if (version > 9) {
           mShowTitleAndTimeDialog = stream.readBoolean();
           mDeletePrograms = stream.readBoolean();
+        }
+        if(version > 10) {
+          mReceiveTargets = new ProgramReceiveTarget[stream.readInt()];
+          
+          for(int i = 0; i < mReceiveTargets.length; i++) {
+            mReceiveTargets[i] = new ProgramReceiveTarget(stream);
+          }
         }
     }
     
@@ -736,5 +754,21 @@ public class DeviceConfig {
      */
     public boolean getDeleteRemovedPrograms() {
       return mDeletePrograms;
+    }
+    
+    /**
+     * Sets the program receive targets for this device.
+     * @param receiveTargets The receive targets for this device.
+     */
+    public void setProgramReceiveTargets(ProgramReceiveTarget[] receiveTargets) {
+      mReceiveTargets = receiveTargets;
+    }
+    
+    /**
+     * Gets the program receive targets of this device.
+     * @return The program receive targets of this device.
+     */
+    public ProgramReceiveTarget[] getProgramReceiveTargets() {
+      return mReceiveTargets;
     }
 }

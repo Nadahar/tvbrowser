@@ -46,6 +46,7 @@ import captureplugin.drivers.utils.ProgramTime;
 import captureplugin.drivers.utils.ProgramTimeDialog;
 import captureplugin.utils.ExternalChannelIf;
 import devplugin.Program;
+import devplugin.ProgramReceiveTarget;
 
 /**
  * The Dreambox-Device
@@ -376,5 +377,14 @@ public final class DreamboxDevice implements DeviceIf {
       }
       
       return null;
+    }
+
+    @Override
+    public void sendProgramsToReceiveTargets(Program[] progs) {
+      ProgramReceiveTarget[] targets = mConfig.getProgramReceiveTargets();
+      
+      for(ProgramReceiveTarget target : targets) {
+        target.receivePrograms(progs);
+      }
     }
 }
