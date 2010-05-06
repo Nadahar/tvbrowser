@@ -132,7 +132,6 @@ public class PluginLoader {
       // delete the old proxy, this will force loading of the new plugin (even if it's not active)
       String oldProxyName = getProxyFileName(oldFile);
       File oldProxy = new File(oldProxyName);
-      System.out.println(oldProxy);
       if (oldProxy.exists()) {
         deletePluginProxy(oldProxy);
       }
