@@ -50,6 +50,7 @@
     <module>plugin-dataviewer</module>
     <module>plugin-dvb</module>
     <module>plugin-dvbviewerdataservice</module>
+    <module>plugin-filterview</module>
     <module>plugin-golem</module>
     <module>plugin-idontwant2see</module>
     <module>plugin-imdb</module>
