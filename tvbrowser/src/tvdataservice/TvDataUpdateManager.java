@@ -29,22 +29,22 @@ import devplugin.Channel;
 import devplugin.Date;
 
 /**
- * 
- * 
+ *
+ *
  * @author Til Schneider, www.murfman.de
  */
 public interface TvDataUpdateManager {
 
   /**
    * Updates the given day program.
-   * 
+   *
    * @param program The day program to update.
    */
   public void updateDayProgram(MutableChannelDayProgram program);
-  
+
   /**
    * Gets whether a certain day program is available.
-   * 
+   *
    * @param date The date of the day program to check.
    * @param channel The channel of the day program to check.
    * @return Whether the day program is available.
@@ -53,9 +53,17 @@ public interface TvDataUpdateManager {
 
   /**
    * Returns whether the download should be canceled.
-   * 
+   *
    * @return Whether the download should be canceled.
-   */  
+   */
   public boolean cancelDownload();
+
+
+  /**
+   * checks the network connection. Shows only 1 error message during
+   * a data update, even if called multiple times
+   * @return <code>true</code>, if the network is available
+   */
+  public boolean checkConnection();
 
 }

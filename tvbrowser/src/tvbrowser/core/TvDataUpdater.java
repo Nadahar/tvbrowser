@@ -155,6 +155,9 @@ public class TvDataUpdater {
 
     // Create a interactor that translates the database orders
     TvDataUpdateManager updateManager = new TvDataUpdateManager() {
+
+      private boolean mMessageShown = false;
+
       public void updateDayProgram(MutableChannelDayProgram program) {
         mTvDataWasChanged = true;
         doUpdateDayProgram(program);
@@ -166,6 +169,19 @@ public class TvDataUpdater {
 
       public boolean cancelDownload() {
         return mStopDownloading;
+      }
+
+      @Override
+      public boolean checkConnection() {
+        boolean result = NetworkUtilities.checkConnection();
+        if (!result && !mMessageShown ) {
+          mMessageShown = true;
+          JOptionPane.showMessageDialog(null,
+              mLocalizer.msg("noConnectionMessage", "No connection!"),
+              mLocalizer.msg("noConnectionTitle", "No connection!"),
+              JOptionPane.ERROR_MESSAGE);
+        }
+        return result;
       }
     };
 
