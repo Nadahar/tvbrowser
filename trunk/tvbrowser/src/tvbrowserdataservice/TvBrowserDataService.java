@@ -42,8 +42,6 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.swing.JOptionPane;
-
 import tvbrowserdataservice.file.DayProgramFile;
 import tvbrowserdataservice.file.SummaryFile;
 import tvbrowserdataservice.file.TvDataLevel;
@@ -54,7 +52,6 @@ import util.exc.TvBrowserException;
 import util.io.DownloadManager;
 import util.io.IOUtilities;
 import util.io.Mirror;
-import util.io.NetworkUtilities;
 import devplugin.Channel;
 import devplugin.Date;
 import devplugin.PluginInfo;
@@ -63,8 +60,8 @@ import devplugin.Version;
 
 
 /**
- * 
- * 
+ *
+ *
  * @author Til Schneider, www.murfman.de
  */
 public class TvBrowserDataService extends devplugin.AbstractTvDataService {
@@ -77,12 +74,12 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
           = util.ui.Localizer.getLocalizerFor(TvBrowserDataService.class);
 
   private static final Version VERSION = new Version(3,0);
-  
+
   protected static final String CHANNEL_GROUPS_FILENAME = "groups.txt";
   private static final String DEFAULT_CHANNEL_GROUPS_URL = "http://tvbrowser.org/listings";
-  
+
   private DownloadManager mDownloadManager;
-  private TvDataUpdateManager mTvDataBase;
+  private TvDataUpdateManager mUpdateManager;
   private int mTotalDownloadJobCount;
   private ProgressMonitor mProgressMonitor;
   private boolean mHasRightToDownloadIcons;
@@ -118,7 +115,7 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
   private TvDataLevel[] mSubscribedLevelArr;
 
   private static TvBrowserDataService mInstance;
-  
+
   private boolean mGroupFileWasLoaded = false;
 
 
@@ -182,23 +179,19 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
    *
    *
    */
-  public void updateTvData(TvDataUpdateManager dataBase, Channel[] channelArr,
+  public void updateTvData(TvDataUpdateManager updateManager, Channel[] channelArr,
                            Date startDate, int dateCount, ProgressMonitor monitor) {
-    boolean groupsWereAllreadyUpdated = false;
+    boolean groupsWereAlreadyUpdated = false;
     mHasRightToDownloadIcons = true;
-    // Check for Connection
-    if (!NetworkUtilities.checkConnection()) {
-      JOptionPane.showMessageDialog(null,
-          mLocalizer.msg("noConnectionMessage", "No connection!"),
-          mLocalizer.msg("noConnectionTitle", "No connection!"),
-          JOptionPane.ERROR_MESSAGE);
+    // Check for connection
+    if (!updateManager.checkConnection()) {
       return;
     }
 
     // Reset list of banned Servers
     Mirror.resetBannedServers();
 
-    mTvDataBase=dataBase;
+    mUpdateManager=updateManager;
     mProgressMonitor = monitor;
 
     HashSet<TvBrowserDataServiceChannelGroup> groups=new HashSet<TvBrowserDataServiceChannelGroup>();
@@ -217,8 +210,8 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
           curGroup.chooseMirrors();
         } catch(TvBrowserException e) {
           try {
-            if(!groupsWereAllreadyUpdated) {
-              groupsWereAllreadyUpdated = true;
+            if(!groupsWereAlreadyUpdated) {
+              groupsWereAlreadyUpdated = true;
               downloadChannelGroupFile();
             }
             setMirrorUrlForServerDefinedChannelGroup(curGroup);
@@ -241,7 +234,7 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
 
     // Create a download manager and add all the jobs
     mDownloadManager = new DownloadManager();
-    TvDataBaseUpdater updater = new TvDataBaseUpdater(this, dataBase);
+    TvDataBaseUpdater updater = new TvDataBaseUpdater(this, updateManager);
 
     // Add a receive or a update job for each channel and day
     DayProgramReceiveDH receiveDH = new DayProgramReceiveDH(this, updater);
@@ -266,7 +259,7 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
             Iterator<Channel> it=group.getChannels();
             while (it.hasNext()) {
               Channel ch=it.next();
-              addDownloadJob(dataBase, group.getMirror(), date, level, ch,
+              addDownloadJob(updateManager, group.getMirror(), date, level, ch,
                       ch.getCountry(), receiveDH, updateDH, summaryFile);
             }
           }
@@ -297,10 +290,10 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
 
       // Clean up resources
       mDownloadManager = null;
-      mTvDataBase = null;
+      mUpdateManager = null;
       mProgressMonitor = null;
     }
-    
+
     mHasRightToDownloadIcons = false;
   }
 
@@ -406,11 +399,11 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
 
 
   void checkCancelDownload() {
-    if (mTvDataBase != null && mDownloadManager != null) {
-      if (mTvDataBase.cancelDownload()) {
+    if (mUpdateManager != null && mDownloadManager != null) {
+      if (mUpdateManager.cancelDownload()) {
         mDownloadManager.removeAllDownloadJobs();
       }
-  
+
       // Update the ProgressMonitor
       int jobCount = mDownloadManager.getDownloadJobCount();
       mProgressMonitor.setValue(mTotalDownloadJobCount - jobCount);
@@ -419,7 +412,7 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
 
 
   boolean isDayProgramInDataBase(Date date, Channel channel) {
-    return mTvDataBase.isDayProgramAvailable(date, channel);
+    return mUpdateManager.isDayProgramAvailable(date, channel);
   }
 
   File getDataDir() {
@@ -500,7 +493,7 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
   public void setTvDataLevel(TvDataLevel[] levelArr) {
     mSubscribedLevelArr = levelArr;
   }
-  
+
   public TvBrowserDataServiceChannelGroup[] getUserDefinedChannelGroups() {
     Collection<TvBrowserDataServiceChannelGroup> col1 = getUserDefinedChannelGroupsCollection();
     Collection<TvBrowserDataServiceChannelGroup> col2 = getServerDefinedChannelGroupsCollection();
@@ -556,14 +549,14 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
           String name = s[1];
           String providername = s[2];
           String description = s[3];
-          
+
           int n = s.length - 4;
-          
+
           String[] mirrors = new String[n];
-          
+
           for(int i = 0; i < n; i++)
             mirrors[i] = s[i+4];
-          
+
           TvBrowserDataServiceChannelGroup group = new TvBrowserDataServiceChannelGroup(this, id, name, description, providername, mirrors, mSettings);
           group.setWorkingDirectory(mDataDir);
           list.add(group);
@@ -658,49 +651,49 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
   private Mirror getChannelGroupsMirror() {
     File file = new File(mDataDir, CHANNEL_GROUPS_FILENAME.substring(0,
         CHANNEL_GROUPS_FILENAME.indexOf('.'))
-        + "_" + Mirror.MIRROR_LIST_FILE_NAME);    
-    
+        + "_" + Mirror.MIRROR_LIST_FILE_NAME);
+
     if(file.isFile()) {
       try {
         return Mirror.chooseUpToDateMirror(Mirror.readMirrorListFromFile(file),null,"Groups.txt", "groups", TvBrowserDataService.class, "  Please inform the TV-Browser team.");
       } catch (Exception exc) {}
     }
-    
+
     return getDefaultChannelGroupsMirror();
   }
-  
+
   private Mirror getDefaultChannelGroupsMirror() {
     try {
       String[] defaultMirrors = getDefaultMirrors();
       if(defaultMirrors.length > 0) {
         Mirror[] mirr = new Mirror[defaultMirrors.length];
-        
+
         for(int i = 0; i < defaultMirrors.length; i++) {
           mirr[i] = new Mirror(defaultMirrors[i]);
         }
-        
+
         Mirror choosenMirror = Mirror.chooseUpToDateMirror(mirr,null,"Groups.txt", "groups",TvBrowserDataService.class, " Please inform the TV-Browser team.");
-        
+
         if(choosenMirror != null) {
           return choosenMirror;
         }
       }
     }catch (Exception exc2) {}
-    
+
     return new Mirror(DEFAULT_CHANNEL_GROUPS_URL);
   }
 
   protected void downloadChannelGroupFile() throws TvBrowserException {
     if(!mGroupFileWasLoaded) {
       String url = getChannelGroupsMirror().getUrl();
-    
+
       try {
         String name = CHANNEL_GROUPS_FILENAME.substring(0,
             CHANNEL_GROUPS_FILENAME.indexOf('.'))
             + "_" + Mirror.MIRROR_LIST_FILE_NAME;
         IOUtilities.download(new URL(url + (url.endsWith("/") ? "" : "/") + name), new File(mDataDir, name));
       } catch(Exception ee) {}
-    
+
       try {
         try {
           IOUtilities.download(new URL(url + (url.endsWith("/") ? "" : "/") + CHANNEL_GROUPS_FILENAME), new File(mDataDir, CHANNEL_GROUPS_FILENAME));
@@ -746,7 +739,7 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
   public Channel[] checkForAvailableChannels(devplugin.ChannelGroup g, ProgressMonitor monitor) throws TvBrowserException {
     mHasRightToDownloadIcons = true;
     downloadChannelGroupFile();
-    
+
     TvBrowserDataServiceChannelGroup group = getChannelGroupById(g.getId());
     if (group == null) {
       mLog.warning("Unknown group: "+g.getId());
@@ -761,9 +754,9 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
     for (int j=0;j<ch.length;j++) {
       channelList.add(ch[j]);
     }
-    
+
     mHasRightToDownloadIcons = false;
-    
+
     return channelList.toArray(new Channel[channelList.size()]);
   }
 
@@ -779,7 +772,7 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
   public static Version getVersion() {
     return VERSION;
   }
-  
+
 
   /**
    * Gets information about this TvDataService
@@ -791,10 +784,10 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
             "Til Schneider, www.murfman.de",
             mLocalizer.msg("license","Terms of Use:\n=============\nAll TV/Radio listings provided by TV-Browser (http://www.tvbrowser.org) are protected by copyright laws and may only be used within TV-Browser or other name like applications authorizied by the manufacturer of TV-Browser (http://www.tvbrowser.org) for information about the upcoming program of the available channels.\nEvery other manner of using, reproducing or redistributing of the TV/Radio listings is illegal and may be prosecuted on civil or criminal law.\n\nOn downloading the TV/Radio listings you declare your agreement to these terms.\n\nIf you have any questions concerning these terms please contact dev@tvbrowser.org"));
   }
-  
+
   /**
    * Gets if it is allowed to download the channel icons.
-   * 
+   *
    * @return <code>True</code> if the download of the channel icons is allowed.
    */
   public boolean hasRightToDownloadIcons() {

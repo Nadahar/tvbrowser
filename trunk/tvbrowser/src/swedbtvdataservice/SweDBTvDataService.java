@@ -133,6 +133,10 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
   public void updateTvData(TvDataUpdateManager updateManager,
                            Channel[] channelArr, Date startDate, int dateCount,
                            ProgressMonitor monitor) throws TvBrowserException {
+    // Check for connection
+    if (!updateManager.checkConnection()) {
+      return;
+    }
 
     mHasRightToDownloadIcons = true;
     mLog.info("Starting update for DataHydraTvDataService from " + startDate.toString() + " for " + dateCount + " days");

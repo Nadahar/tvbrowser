@@ -105,6 +105,11 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
   }
 
   public void updateTvData(TvDataUpdateManager updateManager, Channel[] channelArr, Date startDate, int dateCount, ProgressMonitor monitor) throws TvBrowserException {
+    // Check for connection
+    if (!updateManager.checkConnection()) {
+      return;
+    }
+
     final String userName = mProperties.getProperty("username", "").trim();
     if (!userName.isEmpty()) {
       int max = channelArr.length;

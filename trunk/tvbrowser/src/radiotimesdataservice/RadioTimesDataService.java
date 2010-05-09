@@ -206,6 +206,10 @@ public class RadioTimesDataService extends AbstractTvDataService {
 
   public void updateTvData(TvDataUpdateManager updateManager, Channel[] channelArr, Date startDate, int dateCount,
       ProgressMonitor monitor) throws TvBrowserException {
+    // Check for connection
+    if (!updateManager.checkConnection()) {
+      return;
+    }
 
     int max = channelArr.length;
     Date endDate = startDate.addDays(dateCount-1);
