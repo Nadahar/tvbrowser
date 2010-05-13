@@ -1,6 +1,6 @@
 /*
  * VirtualDataService by Reinhard Lehrbaum
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -47,6 +47,7 @@ import devplugin.AbstractTvDataService;
 import devplugin.ActionMenu;
 import devplugin.Channel;
 import devplugin.ChannelGroup;
+import devplugin.ChannelGroupImpl;
 import devplugin.ContextMenuSeparatorAction;
 import devplugin.Date;
 import devplugin.Plugin;
@@ -64,10 +65,10 @@ public class VirtualDataService extends AbstractTvDataService
 
   private static Properties mProperties;
 
-  private ChannelGroup mVirtualChannelGroup = new VirtualChannelGroup("Virtual", "virtual", mLocalizer.msg("desc", "Virtual"), "Virtual");
+  private ChannelGroup mVirtualChannelGroup = new ChannelGroupImpl("Virtual", "virtual", mLocalizer.msg("desc", "Virtual"), "Virtual");
   private ArrayList<Channel> mChannels = null;
   private File mWorkingDir;
-  
+
 //modified by jb:
   final private ImageIcon vcIcon = DummyPlugin.getInstance().createImageIcon("emblems", "emblem-symbolic-link", 16);
   final private ImageIcon copyIcon = DummyPlugin.getInstance().createImageIcon("emblems", "go-next", 16);
@@ -189,7 +190,7 @@ public class VirtualDataService extends AbstractTvDataService
         final VirtualChannel vCh = manager.getChannel(Integer.parseInt(channel
             .getId().substring(2)));
         final Calendar cal = startDate.getCalendar();
- 
+
 // modified by jb:
         int prevEnd = 0;
         int actStart;
@@ -215,7 +216,7 @@ public class VirtualDataService extends AbstractTvDataService
 	                dummyPrev.setLength(actStart-prevEnd);
 	                dayProgram.addProgram(dummyPrev);
 	              }
-	 
+
 	              final MutableProgram p = new MutableProgram(channel, d, program
 	                  .getStart().get(Calendar.HOUR_OF_DAY), program.getStart()
 	                  .get(Calendar.MINUTE), false);
@@ -252,11 +253,11 @@ public class VirtualDataService extends AbstractTvDataService
               prevEnd = 0;
             }
           }
-          
-          
+
+
 // modified by jb //
           updateManager.updateDayProgram(dayProgram);
-          
+
           cal.add(Calendar.DAY_OF_MONTH, 1);
         }
       }
@@ -276,16 +277,16 @@ public class VirtualDataService extends AbstractTvDataService
    }
 
 // added by jb :
-  
+
   public ActionMenu getContextMenuActions(final Program program){
 
     final VirtualChannelManager vcm = new VirtualChannelManager(mWorkingDir
         .getAbsolutePath());
     final List<VirtualChannel> channels = vcm.getChannels();
-    
+
     Collections.sort(channels);
     final ArrayList<AbstractAction> actionList = new ArrayList<AbstractAction>();
-    
+
     VirtualChannel channel = null;
     boolean isValidVcProgram = false;
 
@@ -297,13 +298,13 @@ public class VirtualDataService extends AbstractTvDataService
           if (vProg.getTitle().equals(program.getTitle()) && vProg.getStart().get(Calendar.HOUR_OF_DAY) == cal.get(Calendar.HOUR_OF_DAY) && vProg.getStart().get(Calendar.MINUTE) == cal.get(Calendar.MINUTE) && vProg.getLength()== program.getLength()) {
             isValidVcProgram = true;
           }
-          
+
         }
       }
     }
-    
+
     if (channel != null){
-      
+
       final VirtualChannel fChannel = channel;
 
       if (isValidVcProgram) {
@@ -329,7 +330,7 @@ public class VirtualDataService extends AbstractTvDataService
             .getLocalization(Localizer.I18N_EDIT));
         editAction.putValue(Action.SMALL_ICON, editIcon);
         actionList.add(editAction);
-        
+
         actionList.add(ContextMenuSeparatorAction.getInstance());
       }
 
@@ -364,7 +365,7 @@ public class VirtualDataService extends AbstractTvDataService
     }
     final Action[] actions = new Action[actionList.size()];
     actionList.toArray(actions);
-   
+
     if (actions.length == 0) {
       return null;
      }
@@ -379,7 +380,7 @@ public class VirtualDataService extends AbstractTvDataService
       boolean isConfirmed) {
     {
       final Calendar cal = getProgramStart(program);
-      
+
        {
          final VirtualChannelManager vcm = new VirtualChannelManager(mWorkingDir
             .getAbsolutePath());
@@ -422,9 +423,9 @@ public class VirtualDataService extends AbstractTvDataService
          }
        }
      }
-      
+
   }
-  
+
   private void copyProgram(final VirtualChannel channel, final Program program) {
     handleProgram( channel,  program,  false, false);
   }
@@ -442,7 +443,7 @@ public class VirtualDataService extends AbstractTvDataService
   {
     final ContextDialog editor = ContextDialog
         .getInstance(getParentFrame());
-     
+
     final Calendar calStart = getProgramStart(program);
     final Calendar calEnd = getProgramEnd(program);
      String title;
@@ -453,7 +454,7 @@ public class VirtualDataService extends AbstractTvDataService
        title = getProgramTitle(program, delFlg);
      }
      editor.setFields(title, calStart, calEnd, program.getLength());
- 
+
      editor.setModal(true);
      UiUtilities.centerAndShow(editor);
      final VirtualProgram vProg = editor.getProgram();
@@ -482,13 +483,13 @@ public class VirtualDataService extends AbstractTvDataService
     }
     return "("+program.getChannel().getName()+ ") " + program.getTitle();
   }
-  
+
   private Calendar getProgramStart(final Program program) {
     final int hours = program.getStartTime() / 60;
     return getCalendar(program, hours, program.getStartTime() - (hours*60));
   }
-  
-  
+
+
   private Calendar getProgramEnd(final Program program) {
     int endTime = program.getStartTime() + program.getLength();
     final int dayDiff = endTime / 1440;
@@ -496,7 +497,7 @@ public class VirtualDataService extends AbstractTvDataService
     final int hours = endTime / 60;
     return getCalendar(program, hours, endTime - (hours*60), dayDiff);
   }
-  
+
   private Calendar getCalendar(final Program program, final int hours,
       final int minutes) {
    return getCalendar(program, hours, minutes, 0);
@@ -514,7 +515,7 @@ public class VirtualDataService extends AbstractTvDataService
     cal.set(Calendar.MILLISECOND, 0);
     return cal;
  }
-  
+
 
   }
 
@@ -533,7 +534,7 @@ class DummyPlugin extends Plugin {
     }
     return mInstance;
   }
-  
+
 //added by jb //
-  
+
 }
