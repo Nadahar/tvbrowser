@@ -33,12 +33,12 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import tvdataservice.SettingsPanel;
+import util.ui.Localizer;
+
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
-
-import tvdataservice.SettingsPanel;
-import util.ui.Localizer;
 
 
 /**
@@ -67,7 +67,7 @@ public class DVBViewerSettingsPanel extends SettingsPanel implements ChangeListe
 
 
   /**
-   * Costruct the panel and insert the default data given by <code>epgSettings</code>
+   * Construct the panel and insert the default data given by <code>epgSettings</code>
    *
    * @param epgSettings the settings to show and modify
    */
