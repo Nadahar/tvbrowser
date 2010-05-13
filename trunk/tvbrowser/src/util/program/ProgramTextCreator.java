@@ -249,7 +249,7 @@ public class ProgramTextCreator {
     channelLogo.setToolTipText(prog.getChannel().getName());
     buffer.append(doc.createCompTag(channelLogo));
 
-    buffer.append("</p></td><td><table width=\"100%\" border=\""+ debugTables +"\"><tr><td>");
+    buffer.append("</p></td><td><table width=\"100%\" border=\""+ debugTables +"\" cellpadding=\"0\"><tr><td>");
     buffer.append("<div style=\"color:#ff0000; font-size:");
 
     buffer.append(mBodyFontSize);
