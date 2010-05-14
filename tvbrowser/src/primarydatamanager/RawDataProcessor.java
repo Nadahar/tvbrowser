@@ -443,6 +443,7 @@ public class RawDataProcessor {
         levelFrame = (ProgramFrame) frame.clone();
         levelFrame.removeProgramFieldOfType(ProgramFieldType.DESCRIPTION_TYPE);
         levelFrame.removeProgramFieldOfType(ProgramFieldType.ACTOR_LIST_TYPE);
+        levelFrame.removeProgramFieldOfType(ProgramFieldType.ADDITIONAL_INFORMATION_TYPE);
        // levelFrame.removeProgramFieldOfType(ProgramFieldType.IMAGE_TYPE);
         levelFrame.removeProgramFieldOfType(ProgramFieldType.PICTURE_TYPE);
         levelFrame.removeProgramFieldOfType(ProgramFieldType.PICTURE_DESCRIPTION_TYPE);
@@ -460,6 +461,7 @@ public class RawDataProcessor {
             if (PrimaryDataUtilities.getProgramStartTime(frame) < (16 * 60)) {
               levelField1 = frame.getProgramFieldOfType(ProgramFieldType.DESCRIPTION_TYPE);
               levelField2 = frame.getProgramFieldOfType(ProgramFieldType.ACTOR_LIST_TYPE);
+              levelField3 = frame.getProgramFieldOfType(ProgramFieldType.ADDITIONAL_INFORMATION_TYPE);
             }
             break;
           case 2:
@@ -468,6 +470,7 @@ public class RawDataProcessor {
             if (PrimaryDataUtilities.getProgramStartTime(frame) >= (16 * 60)) {
               levelField1 = frame.getProgramFieldOfType(ProgramFieldType.DESCRIPTION_TYPE);
               levelField2 = frame.getProgramFieldOfType(ProgramFieldType.ACTOR_LIST_TYPE);
+              levelField3 = frame.getProgramFieldOfType(ProgramFieldType.ADDITIONAL_INFORMATION_TYPE);
             }
             break;
          /* case 3:
