@@ -574,6 +574,14 @@ public class ProgramUtilities {
     if (rating == null || rating.isEmpty()) {
       return -1;
     }
+    if (rating.contains(",")) {
+      String[] ratings = rating.split(",");
+      int result = -1;
+      for (String r : ratings) {
+        result = Math.max(result, getAgeLimit(r.trim()));
+      }
+      return result;
+    }
     if (rating.equalsIgnoreCase("NR") || rating.equalsIgnoreCase("Unrated")) {
       return -1;
     }
@@ -586,6 +594,9 @@ public class ProgramUtilities {
     }
     if (rating.equalsIgnoreCase("NC-17")) {
       return 18;
+    }
+    if (rating.equalsIgnoreCase("M")) {
+      return 15;
     }
     // X-Rating
     if (rating.startsWith("X")) {
