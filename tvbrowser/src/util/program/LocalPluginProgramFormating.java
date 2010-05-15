@@ -28,6 +28,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+import util.misc.HashCodeUtilities;
+
 /**
  * Settings for program formating. This is the class for
  * using for creating configuration used only by the
@@ -110,6 +112,11 @@ public class LocalPluginProgramFormating extends AbstractPluginProgramFormating 
     }
 
     return false;
+  }
+
+  @Override
+  public int hashCode() {
+    return HashCodeUtilities.hash(getId());
   }
 
   @Override

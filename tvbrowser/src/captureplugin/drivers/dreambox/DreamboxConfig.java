@@ -43,7 +43,7 @@ import devplugin.ProgramReceiveTarget;
 /**
  * The configuration for the dreambox
  */
-public class DreamboxConfig implements ConfigIf {
+public final class DreamboxConfig implements ConfigIf, Cloneable {
     /** ID */
     private String mId;
     /** IP */
@@ -67,16 +67,16 @@ public class DreamboxConfig implements ConfigIf {
     private String mUsername = "";
     /** Password for Authentification */
     private String mPassword = "";
-    
+
     /** Path to a Mediaplayer typically vlc */
     private String mMediaplayer = "vlc";
-    
+
     /** Timeout for connection to the dreambox */
     private int mTimeout = 1000;
-    
+
     /** The targets for the program export */
     private ProgramReceiveTarget[] mReceiveTargets = new ProgramReceiveTarget[0];
-    
+
     /**
      * Constructor
      */
@@ -171,11 +171,11 @@ public class DreamboxConfig implements ConfigIf {
 
         stream.writeUTF(mUsername);
         stream.writeUTF(IOUtilities.xorEncode(mPassword, 21341));
-        
+
         stream.writeUTF(mMediaplayer);
-        
+
         stream.writeInt(mReceiveTargets.length);
-        
+
         for(ProgramReceiveTarget receiveTarget : mReceiveTargets) {
           receiveTarget.writeData(stream);
         }
@@ -231,12 +231,12 @@ public class DreamboxConfig implements ConfigIf {
 
         mUsername = stream.readUTF();
         mPassword = IOUtilities.xorDecode(stream.readUTF(), 21341);
-        
+
         mMediaplayer = stream.readUTF();
-        
+
         if(version > 4) {
           mReceiveTargets = new ProgramReceiveTarget[stream.readInt()];
-          
+
           for(int i = 0; i < mReceiveTargets.length; i++) {
             mReceiveTargets[i] = new ProgramReceiveTarget(stream);
           }
@@ -447,7 +447,7 @@ public class DreamboxConfig implements ConfigIf {
       final String address = getDreamboxAddress();
       return address != null && !address.trim().isEmpty();
     }
-    
+
     /**
      * Sets the program receive targets for this device.
      * @param receiveTargets The receive targets for this device.
@@ -455,7 +455,7 @@ public class DreamboxConfig implements ConfigIf {
     public void setProgramReceiveTargets(ProgramReceiveTarget[] receiveTargets) {
       mReceiveTargets = receiveTargets;
     }
-    
+
     /**
      * Gets the program receive targets of this device.
      * @return The program receive targets of this device.

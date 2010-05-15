@@ -44,7 +44,7 @@ import devplugin.ProgramFilter;
 
 /**
  * A class that contains all marked programs.
- * 
+ *
  * @author René Mach
  * @since 2.2
  */
@@ -69,7 +69,7 @@ public class MarkedProgramsList {
     }
     return mInstance;
   }
-  
+
   private Thread getProgramTableRefreshThread() {
     mProgramTableRefreshThreadWaitTime = 500;
     return new Thread("Program table refresh") {
@@ -80,7 +80,7 @@ public class MarkedProgramsList {
             mProgramTableRefreshThreadWaitTime -= 100;
           }catch(Exception e) {}
         }
-        
+
         SwingUtilities.invokeLater(new Runnable() {
           public void run() {
             MainFrame.getInstance().getProgramTableModel().updateTableContent();
@@ -95,11 +95,11 @@ public class MarkedProgramsList {
       synchronized(mMarkedPrograms) {
         mMarkedPrograms.add(p);
       }
-      
+
       handleFilterMarking(p);
     }
   }
-  
+
   private boolean contains(MutableProgram p) {
     if(p != null) {
       synchronized(mMarkedPrograms) {
@@ -110,7 +110,7 @@ public class MarkedProgramsList {
         }
       }
     }
-    
+
     return false;
   }
 
@@ -119,17 +119,17 @@ public class MarkedProgramsList {
       synchronized(mMarkedPrograms) {
         mMarkedPrograms.remove(p);
       }
-      
+
       handleFilterMarking(p);
     }
   }
-  
+
   private void handleFilterMarking(Program p) {
     if(!MainFrame.isStarting() && !MainFrame.isShuttingDown() && PluginManagerImpl.getInstance().getFilterManager() != null && !PluginManagerImpl.getInstance().getFilterManager().getCurrentFilter().equals(PluginManagerImpl.getInstance().getFilterManager().getDefaultFilter())) {
       try {
         boolean contained = MainFrame.getInstance().getProgramTableModel().contains(p);
         boolean accepted = PluginManagerImpl.getInstance().getFilterManager().getCurrentFilter().accept(p);
-        
+
         if((contained && !accepted) || (!contained && accepted)) {
           if(mProgramTableRefreshThread == null || !mProgramTableRefreshThread.isAlive()) {
             mProgramTableRefreshThread = getProgramTableRefreshThread();
@@ -150,7 +150,7 @@ public class MarkedProgramsList {
    */
   public Program[] getMarkedPrograms() {
     Program[] p = null;
-    
+
     synchronized(mMarkedPrograms) {
       p = new Program[mMarkedPrograms.size()];
       mMarkedPrograms.toArray(p);
@@ -167,10 +167,10 @@ public class MarkedProgramsList {
    * @return The time sorted programs for the tray.
    */
   public Program[] getTimeSortedProgramsForTray(ProgramFilter filter, int markPriority, int numberOfPrograms, boolean includeOnAirPrograms) {
-    
+
     synchronized(mMarkedPrograms) {
       List<Program> programs = new ArrayList<Program>();
-  
+
       Iterator<MutableProgram> it = mMarkedPrograms.iterator();
       while (it.hasNext()) {
         MutableProgram p = it.next();
@@ -188,7 +188,7 @@ public class MarkedProgramsList {
       }
       programs = programs.subList(0, maxCount);
       Collections.sort(programs, ProgramUtilities.getProgramComparator()); // needed twice due to sublist not guaranteeing the order
-      
+
       return programs.toArray(new Program[programs.size()]);
     }
 
@@ -206,12 +206,12 @@ public class MarkedProgramsList {
         MutableProgram testProg = (MutableProgram)PluginManagerImpl.getInstance().getProgram(programInList.getDate(), programInList.getID());
 
         boolean titleWasChangedToMuch = false;
-        
+
         if(testProg != null && testProg.getTitle() != null && programInList.getTitle() != null
             && programInList.getTitle().toLowerCase().compareTo(testProg.getTitle().toLowerCase()) != 0) {
           String[] titleParts = programInList.getTitle().toLowerCase().replaceAll("\\p{Punct}"," ").replaceAll("\\s+"," ").split(" ");
           String compareTitle = testProg.getTitle().toLowerCase();
-          
+
           for(String titlePart : titleParts) {
             if(compareTitle.indexOf(titlePart) == -1) {
               titleWasChangedToMuch = true;
@@ -219,7 +219,7 @@ public class MarkedProgramsList {
             }
           }
         }
-        
+
         if(testProg == null || titleWasChangedToMuch) {
           programInList.setMarkerArr(MutableProgram.EMPTY_MARKER_ARR);
           programInList.setProgramState(Program.WAS_DELETED_STATE);
@@ -227,7 +227,7 @@ public class MarkedProgramsList {
         else if(testProg != programInList) {
           Marker[] testMarkerArr = testProg.getMarkerArr();
           Marker[] currentMarkerArr = programInList.getMarkerArr();
-          
+
           if(testMarkerArr == MutableProgram.EMPTY_MARKER_ARR) {
             testProg.setMarkerArr(currentMarkerArr);
             testProg.setMarkPriority(programInList.getMarkPriority());
@@ -244,17 +244,17 @@ public class MarkedProgramsList {
                 newMarkerList.add(marker);
               }
             }
-            
+
             java.util.Collections.sort(newMarkerList,new Comparator<Marker>() {
               public int compare(Marker o1, Marker o2) {
                 return o1.getId().compareTo(o2.getId());
               }
             });
-            
+
             testProg.setMarkerArr(newMarkerList.toArray(new Marker[newMarkerList.size()]));
             testProg.setMarkPriority(Math.max(testProg.getMarkPriority(),programInList.getMarkPriority()));
           }
-          
+
           programInList.setMarkerArr(MutableProgram.EMPTY_MARKER_ARR);
           programInList.setMarkPriority(-1);
           programInList.setProgramState(Program.WAS_UPDATED_STATE);

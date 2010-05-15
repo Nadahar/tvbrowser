@@ -43,6 +43,7 @@ import tvbrowser.core.TvDataBase;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import util.io.IOUtilities;
+import util.misc.HashCodeUtilities;
 import util.misc.StringPool;
 import util.program.ProgramUtilities;
 import devplugin.Channel;
@@ -1069,6 +1070,15 @@ public class MutableProgram implements Program {
         && title.compareTo(otherTitle) == 0;
     }
     return false;
+  }
+
+  @Override
+  public int hashCode() {
+    int result = HashCodeUtilities.hash(getStartTime());
+    result = HashCodeUtilities.hash(result, mChannel);
+    result = HashCodeUtilities.hash(result, getDate());
+    result = HashCodeUtilities.hash(result, getTitle());
+    return result;
   }
 
   /**

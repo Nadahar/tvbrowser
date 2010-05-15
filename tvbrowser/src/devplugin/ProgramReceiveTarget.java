@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+import util.misc.HashCodeUtilities;
 import util.ui.Localizer;
 
 /**
@@ -83,20 +84,20 @@ import util.ui.Localizer;
  * With this code the plugin MyPlugin is able to receive the programs from other
  * plugins and handle it in the specified manner. <br>
  * <br>
- * 
+ *
  * @author René Mach
  * @since 2.5
  */
 public final class ProgramReceiveTarget implements Comparable<ProgramReceiveTarget> {
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(ProgramReceiveTarget.class);
-  
+
   private String mReceiveIfId;
   private String mTargetId;
   private String mTargetName;
 
   /**
    * Creates the default target for a ProgramReceiveIf.
-   * 
+   *
    * @param receiveIf The ProgramReceiveIf to create the null target for.
    * @return The default target for ProgramReceiveIf.
    */
@@ -106,7 +107,7 @@ public final class ProgramReceiveTarget implements Comparable<ProgramReceiveTarg
 
   /**
    * Creates the default target for an id of a ProgramReceiveIf.
-   * 
+   *
    * @param receiveIfId
    *          The id of the ProgramReceiveIf to create for.
    * @return The default target for the id of the ProgramReceiveIf.
@@ -117,10 +118,10 @@ public final class ProgramReceiveTarget implements Comparable<ProgramReceiveTarg
   /**
    * Creates an instance of the ProgramReceiveTarget.
    * Use this to create a target from the plugin for the other plugins to read.
-   * 
+   *
    * @param receiveIfId The ProgramReceiveIf id (your Plugin) to create for.
    * @param name The name of the target.
-   * @param targetId The unique id of the target. 
+   * @param targetId The unique id of the target.
    */
   private ProgramReceiveTarget(String receiveIfId, String name, String targetId) {
     mReceiveIfId = receiveIfId;
@@ -131,7 +132,7 @@ public final class ProgramReceiveTarget implements Comparable<ProgramReceiveTarg
   /**
    * Creates an instance of the ProgramReceiveTarget.
    * Use this to create a target from the plugin for the other plugins to read.
-   * 
+   *
    * @param receiveIf The ProgramReceiveIf (your Plugin) to create for.
    * @param name The name of the target.
    * @param targetId The unique id of the target.
@@ -141,11 +142,11 @@ public final class ProgramReceiveTarget implements Comparable<ProgramReceiveTarg
     mTargetName = name;
     mTargetId = targetId;
   }
-  
+
   /**
    * Creates an instance of the ProgramReceiveTarget.
    * Use this to load an target previously saved with {@link #writeData(ObjectOutputStream)}.
-   * 
+   *
    * @param in The input stream.
    * @throws IOException
    * @throws ClassNotFoundException
@@ -156,10 +157,10 @@ public final class ProgramReceiveTarget implements Comparable<ProgramReceiveTarg
     mTargetId = in.readUTF();
     mTargetName = in.readUTF();
   }
-  
+
   /**
    * Use this to save a target.
-   * 
+   *
    * @param out
    * @throws IOException
    */
@@ -172,18 +173,18 @@ public final class ProgramReceiveTarget implements Comparable<ProgramReceiveTarg
 
   /**
    * get the target name (for display)
-   * 
+   *
    * @return target name
    * @since 3.0
    */
   public String getTargetName() {
     return mTargetName;
   }
-  
+
   public String toString() {
     return getTargetName();
   }
-  
+
   /**
    * @return The id of the ProgramReceiveIf of this target.
    */
@@ -206,17 +207,24 @@ public final class ProgramReceiveTarget implements Comparable<ProgramReceiveTarg
 
     return false;
   }
-  
+
+  @Override
+  public int hashCode() {
+    int result = HashCodeUtilities.hash(mReceiveIfId);
+    result = HashCodeUtilities.hash(result, mTargetId);
+    return result;
+  }
+
   /**
    * @return The ProgramReceiveIf for the ProgramReceiveIfId of this target.
    */
   public ProgramReceiveIf getReceifeIfForIdOfTarget() {
     return Plugin.getPluginManager().getReceiceIfForId(mReceiveIfId);
   }
-  
+
   /**
    * Checks if the given target is the default target for the given ProgramReceiveIf.
-   * 
+   *
    * @param receiveIf The ProgramReceiveIf to check.
    * @param receiveTarget The ProgramReceiveTarget to check.
    * @return True if the receiveTarget is the default ProgramReceiveTarget for the ProgramReceiveIf.
@@ -224,14 +232,14 @@ public final class ProgramReceiveTarget implements Comparable<ProgramReceiveTarg
   public static boolean isDefaultProgramReceiveTargetForProgramReceiveIf(ProgramReceiveIf receiveIf, ProgramReceiveTarget receiveTarget) {
     if(receiveIf == null || receiveTarget == null)
       return false;
-    
+
     return receiveIf.getId().compareTo(receiveTarget.mReceiveIfId) == 0 && receiveTarget.mTargetId.compareTo("NULL") == 0;
   }
-  
+
   /**
    * Checks if the given id is used by this instance of ProgramReceiveTarget
    * and contains to the given ProgramReceiveIf.
-   * 
+   *
    * @param id The id to check.
    * @param receiveIf The receive if to which the ProgramReceiveTarget is connected.
    * @return True if this instance is using the id and contains to the given ProgramReceiveIf.
@@ -239,7 +247,7 @@ public final class ProgramReceiveTarget implements Comparable<ProgramReceiveTarg
   public boolean isReceiveTargetWithIdOfProgramReceiveIf(ProgramReceiveIf receiveIf, String id) {
     if(receiveIf == null || id == null)
       return false;
-    
+
     return receiveIf.getId().compareTo(mReceiveIfId) == 0 && id.compareTo(mTargetId) == 0;
   }
 

@@ -31,30 +31,30 @@ import javax.swing.Action;
 /**
  * A class that brings support for adding separators
  * to the context menu of a plugin.
- * 
+ *
  * Simply add the instance of this class to your context menu,
  * it will be replaced with a separator so the user will
  * see a separator in the context menu.
- * 
+ *
  * @author René Mach
  */
 public final class ContextMenuSeparatorAction extends AbstractAction {
   private static ContextMenuSeparatorAction mInstance;
   private static ContextMenuSeparatorAction mDisabledOnTaskMenuInstance;
-  
+
   private static final String SEPARATOR_NAME = "###PLUGIN###SEPARATOR###";
 
   private ContextMenuSeparatorAction() {
     super.putValue(Action.NAME,SEPARATOR_NAME);
   }
-  
+
   /**
    * Gets an instance of this class.
    * The instance is also shown in task menu of the ProgramInfoDialog.
-   * 
+   *
    * @see {@link #getDisabledOnTaskMenuInstance()} to get an instance that
-   * isn't shown in the task menu of the ProgramInfoDialog. 
-   * 
+   * isn't shown in the task menu of the ProgramInfoDialog.
+   *
    * @return The instance of this class, that is shown in the task
    * menu of the ProgramInfoDialog.
    */
@@ -62,17 +62,17 @@ public final class ContextMenuSeparatorAction extends AbstractAction {
     if(mInstance == null) {
       mInstance = new ContextMenuSeparatorAction();
     }
-    
+
     return mInstance;
   }
-  
+
   /**
    * Gets an instance of this class.
    * The instance is <b>not</b> shown in task menu of the ProgramInfoDialog.
-   * 
+   *
    * @see {@link #getInstance()} to get an instance that
-   * is shown in the task menu of the ProgramInfoDialog. 
-   * 
+   * is shown in the task menu of the ProgramInfoDialog.
+   *
    * @return The instance of this class, that is <b>not</b> shown in the task
    * menu of the ProgramInfoDialog.
    */
@@ -81,10 +81,10 @@ public final class ContextMenuSeparatorAction extends AbstractAction {
       mDisabledOnTaskMenuInstance = new ContextMenuSeparatorAction();
       mDisabledOnTaskMenuInstance.setDisabledOnTaskMenu();
     }
-    
+
     return mDisabledOnTaskMenuInstance;
   }
-  
+
   private void setDisabledOnTaskMenu() {
     super.putValue(Plugin.DISABLED_ON_TASK_MENU, true);
   }
@@ -94,17 +94,22 @@ public final class ContextMenuSeparatorAction extends AbstractAction {
    * use it, it has no effect.
    */
   public void putValue(String key, Object newValue) {}
-  
+
   public void actionPerformed(ActionEvent e) {
     //Do nothing, it's only a action for separator support of plugin menus.
   }
-  
+
   public boolean equals(Object o) {
     if(o instanceof Action) {
       String name = ((Action)o).getValue(Action.NAME).toString();
       return SEPARATOR_NAME.equals(name);
     }
-    
+
     return false;
+  }
+
+  @Override
+  public int hashCode() {
+    return 0;
   }
 }
