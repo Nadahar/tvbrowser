@@ -38,7 +38,9 @@ import devplugin.Version;
  *
  */
 final public class FilterViewPlugin extends Plugin {
-  private static final Version mVersion = new Version(2, 70, 1);
+  private static final boolean IS_STABLE = false;
+
+  private static final Version mVersion = new Version(2, 70, 1, IS_STABLE);
 
   private PluginInfo mPluginInfo;
 
