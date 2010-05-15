@@ -259,6 +259,29 @@ public class Channel implements Comparable<Channel> {
    {
       this(dataService,name,id,timeZone,country,"(no copyright notice)",null);
    }
+  
+  /**
+   * Creates an instance of this class.
+   * <p>
+   * @param id The id of this channel.
+   * @param timeZone The time zone of this channel.
+   * @param country The country of this channel.
+   */
+  public Channel(String id, TimeZone timeZone, String country)
+   {
+      this(null,id,id,timeZone,country,"(no copyright notice)",null);
+   }
+  
+  /**
+   * Creates an instance of this class.
+   * <p>
+   * @param id The id of this channel.
+   * @param country The country of this channel.
+   */
+  public Channel(String id, String country)
+   {
+      this(null,id,id,TimeZone.getDefault(),country,"(no copyright notice)",null);
+   }
 
   /**
    * Creates an instance of this class from a stream.
