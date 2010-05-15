@@ -1,6 +1,6 @@
 /*
  * CapturePlugin by Andreas Hessel (Vidrec@gmx.de), Bodo Tasche
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -43,7 +43,7 @@ import devplugin.Plugin;
  *
  * @author bodum
  */
-public class SimpleConfig implements ConfigIf {
+public final class SimpleConfig implements ConfigIf, Cloneable {
     /**
      * Mapping TVB Channels - external channels
      */

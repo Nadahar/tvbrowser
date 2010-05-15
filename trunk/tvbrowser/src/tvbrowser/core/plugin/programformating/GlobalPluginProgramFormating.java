@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+import util.misc.HashCodeUtilities;
 import util.program.AbstractPluginProgramFormating;
 
 /**
@@ -130,6 +131,11 @@ public class GlobalPluginProgramFormating extends AbstractPluginProgramFormating
     }
 
     return false;
+  }
+
+  @Override
+  public int hashCode() {
+    return HashCodeUtilities.hash(getId());
   }
 
   @Override

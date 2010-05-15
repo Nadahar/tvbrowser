@@ -49,6 +49,7 @@ import org.apache.commons.lang.StringUtils;
 
 import util.io.FileFormatException;
 import util.io.IOUtilities;
+import util.misc.HashCodeUtilities;
 import util.ui.UiUtilities;
 import devplugin.ProgramFieldType;
 
@@ -468,4 +469,10 @@ public class ProgramField implements Cloneable {
         }
     }
 
+    @Override
+    public int hashCode() {
+      int result = HashCodeUtilities.hash(getTypeId());
+      result = HashCodeUtilities.hash(result, mData);
+      return result;
+    }
 }

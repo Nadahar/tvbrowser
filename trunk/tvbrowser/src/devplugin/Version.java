@@ -36,29 +36,31 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import util.misc.HashCodeUtilities;
+
 /**
  * A class for the Version value off
  * TV-Browser and it's plugins.
  */
 public final class Version implements Comparable<Version> {
-  
+
   private int mMajor, mMinor, mSubMinor;
   private boolean mIsStable;
   private String mName;
 
   /**
    * Creates an instance of this class.
-   * 
+   *
    * @param major The major version (the first number).
    * @param minor The minor version (used for the second and third number).
    */
   public Version(int major, int minor) {
     this(major, minor, 0, true, null);
   }
-  
+
   /**
    * Creates an instance of this class.
-   * 
+   *
    * @param major The major version (the first number).
    * @param minor The minor version (used for the second and third number).
    * @param isStable If the version is stable.
@@ -66,14 +68,14 @@ public final class Version implements Comparable<Version> {
   public Version(int major, int minor, boolean isStable) {
     this(major, minor, 0, isStable, null);
   }
-  
+
   /**
    * Creates an instance of this class.
-   * 
+   *
    * @param major The major version (the first number).
    * @param minor The minor version (used for the second and third number).
    * @param isStable If the version is stable.
-   * @param name The name String of this verison, use <code>null</code>
+   * @param name The name String of this version, use <code>null</code>
    *             to let the name be created from the version numbers.
    */
   public Version(int major, int minor, boolean isStable, String name) {
@@ -82,11 +84,11 @@ public final class Version implements Comparable<Version> {
 
   /**
    * Creates an instance of this class.
-   * 
+   *
    * @param major The major version (the first number).
    * @param minor The minor version (used for the second and third number).
    * @param subMinor The sub minor version (the 4th number).
-   * 
+   *
    * @since 2.2.4/2.6
    */
   public Version(int major, int minor, int subMinor) {
@@ -95,28 +97,28 @@ public final class Version implements Comparable<Version> {
 
   /**
    * Creates an instance of this class.
-   * 
+   *
    * @param major The major version (the first number).
    * @param minor The minor version (used for the second and third number).
    * @param subMinor The sub minor version (the 4th number).
    * @param isStable If the version is stable.
-   * 
+   *
    * @since 2.2.4/2.6
    */
   public Version(int major, int minor, int subMinor, boolean isStable) {
     this(major, minor, subMinor, isStable, null);
   }
-  
+
   /**
    * Creates an instance of this class.
-   * 
+   *
    * @param major The major version (the first number).
    * @param minor The minor version (used for the second and third number).
    * @param subMinor The sub minor version (the 4th number).
    * @param isStable If the version is stable.
-   * @param name The name String of this verison, use <code>null</code>
+   * @param name The name String of this version, use <code>null</code>
    *             to let the name be created from the version numbers.
-   *             
+   *
    * @since 2.2.4/2.6
    */
   public Version(int major, int minor, int subMinor, boolean isStable, String name) {
@@ -136,46 +138,46 @@ public final class Version implements Comparable<Version> {
 
   /**
    * Gets if this version is stable.
-   * 
+   *
    * @return <code>True</code> if the version is stable,
    * <code>false</code> otherwise.
    */
   public boolean isStable() {
   	return mIsStable;
   }
-  
+
   /**
    * Gets the major version.
-   * 
+   *
    * @return The major version (first number).
    */
   public int getMajor() {
     return mMajor;
   }
-  
+
   /**
    * Gets the minor version.
-   * 
+   *
    * @return The minor version (seconds and third number).
    */
   public int getMinor() {
     return mMinor;
   }
-  
+
   /**
    * Gets the sub minor version
-   * 
+   *
    * @return The sub minor version (4th number).
    */
   public int getSubMinor() {
     return mSubMinor;
   }
-  
+
   public int compareTo(Version v) throws ClassCastException {
   	if (mMajor>v.mMajor) {
   		return 1;
   	}else if (mMajor<v.mMajor) {
-  		return -1;  		
+  		return -1;
   	}else {  // major is equals
   		if (mMinor>v.mMinor) {
   			return 1;
@@ -194,16 +196,16 @@ public final class Version implements Comparable<Version> {
     				return 1;
     			}
     			else if (!mIsStable && v.mIsStable){
-    				return -1;				
+    				return -1;
     			}
     			else {
     				return 0;
     			}
   		  }
-  		}   		
-  	} 	
+  		}
+  	}
   }
-  
+
   public boolean equals(Object obj) {
     if (obj instanceof Version) {
       Version ver = (Version) obj;
@@ -212,9 +214,18 @@ public final class Version implements Comparable<Version> {
       return false;
     }
   }
-  
+
+  @Override
+  public int hashCode() {
+    int result = HashCodeUtilities.hash(mMajor);
+    result = HashCodeUtilities.hash(result, mMinor);
+    result = HashCodeUtilities.hash(result, mSubMinor);
+    result = HashCodeUtilities.hash(result, mIsStable);
+    return result;
+  }
+
   /**
-   * Writes tis object to a stream.
+   * Writes this object to a stream.
    * <p>
    * @param out The stream to write to.
    * @throws IOException Thrown if something went wrong.
@@ -225,9 +236,9 @@ public final class Version implements Comparable<Version> {
     out.writeInt(mMinor);
     out.writeInt(mSubMinor);
     out.writeBoolean(mIsStable);
-    
+
     out.writeBoolean(mName != null);
-    
+
     if(mName != null) {
       out.writeUTF(mName);
     }
@@ -246,7 +257,7 @@ public final class Version implements Comparable<Version> {
     mMinor = in.readInt();
     mSubMinor = in.readInt();
     mIsStable = in.readBoolean();
-    
+
     if(in.readBoolean()) {
       mName = in.readUTF();
     }

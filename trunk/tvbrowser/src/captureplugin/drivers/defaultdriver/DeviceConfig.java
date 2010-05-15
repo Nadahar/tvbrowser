@@ -1,6 +1,6 @@
 /*
  * CapturePlugin by Andreas Hessel (Vidrec@gmx.de), Bodo Tasche
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -43,7 +43,7 @@ import devplugin.ProgramReceiveTarget;
 /**
  * The Configuration for this Device
  */
-public class DeviceConfig {
+public final class DeviceConfig implements Cloneable {
     /** Translator */
     private static final Localizer mLocalizer = Localizer.getLocalizerFor(DeviceConfig.class);
 
@@ -52,7 +52,7 @@ public class DeviceConfig {
 
     /** Device-Name */
     private String mName = "";
-    
+
     /** Channels */
     private TreeMap<Channel, String> mChannels = new TreeMap<Channel, String>(new ChannelComparator());
 
@@ -64,10 +64,10 @@ public class DeviceConfig {
 
     /** URL to WebFrontend */
     private String mWebURL = "";
-    
+
     /** Use the WebFrontend */
     private boolean mUseWeb = false;
-    
+
     /** Parameters for Add */
     private String mParameterFormatAdd = "";
 
@@ -82,7 +82,7 @@ public class DeviceConfig {
 
     /** Username */
     private String mUserName = "";
-    
+
     /** Password */
     private String mPassword = "";
 
@@ -91,28 +91,28 @@ public class DeviceConfig {
 
     /** Maximum simultaneous recordings */
     private int mMaxSimultanious = 1;
-    
+
     /** Dialog only on Error */
     private boolean mResultDialogOnlyOnError = false;
-    
+
     /** Only Programs in the Future */
     private boolean mOnlyFuture = true;
-    
+
     /** MaximTime to Timeout */
     private int mMaxTimeout = 5;
-    
+
     /** Param-Entries */
     private ArrayList<ParamEntry> mParamEntries = new ArrayList<ParamEntry>();
-    
+
     /** Variables */
     private ArrayList<Variable> mVariables = new ArrayList<Variable>();
-    
+
     /** Use TimeZone */
     private boolean mUseTimeZone = false;
-    
+
     /** The TimeZone used */
     private TimeZone mTimeZone = TimeZone.getDefault();
-    
+
     /** If the dialog for entering the title and time */
     private boolean mShowTitleAndTimeDialog = true;
 
@@ -122,13 +122,13 @@ public class DeviceConfig {
 
     /** The targets for the program export */
     private ProgramReceiveTarget[] mReceiveTargets = new ProgramReceiveTarget[0];
-    
+
     /**
      * Create a empty Config
      */
     public DeviceConfig() {
     }
-    
+
     /**
      * Copy Config
      * @param data Config to copy
@@ -181,17 +181,17 @@ public class DeviceConfig {
      */
     public Collection<ParamEntry> getEnabledParamList() {
       ArrayList<ParamEntry> params = new ArrayList<ParamEntry>();
-      
+
       for (int i=0;i< mParamEntries.size();i++) {
         ParamEntry entry = mParamEntries.get(i);
         if (entry.isEnabled()) {
           params.add(entry);
         }
       }
-      
+
       return params;
     }
-    
+
     /**
      * @param onlyFuturePrograms
      */
@@ -292,7 +292,7 @@ public class DeviceConfig {
      */
     public void setWebUrl(String url) {
        mWebURL = url;
-        
+
     }
 
 
@@ -302,7 +302,7 @@ public class DeviceConfig {
     public void setMarkedPrograms(ProgramTimeList markedPrograms) {
         this.mMarkedPrograms = markedPrograms;
     }
-    
+
     /**
      * @return
      */
@@ -374,7 +374,7 @@ public class DeviceConfig {
    public void setChannels(TreeMap<Channel, String> channels) {
        this.mChannels = channels;
    }
-    
+
     /**
      * @return
      */
@@ -393,7 +393,7 @@ public class DeviceConfig {
     public void setName(String name) {
         mName = name;
     }
-    
+
 
     /**
      * return
@@ -401,7 +401,7 @@ public class DeviceConfig {
     public String getName() {
         return mName;
     }
-    
+
     /**
      * Use the Return-Value ?
      * @return use Return Value?
@@ -409,7 +409,7 @@ public class DeviceConfig {
     public boolean useReturnValue() {
         return mUseReturnValue;
     }
-    
+
     /**
      * Use the Return Value?
      * @param retvalue Use Return Value ?
@@ -426,7 +426,7 @@ public class DeviceConfig {
     public int getMaxSimultanious() {
         return mMaxSimultanious;
     }
-    
+
 
     /**
      * Sets the maximum simultanious recordings for this device
@@ -435,7 +435,7 @@ public class DeviceConfig {
     public void setMaxSimultanious(int max) {
         mMaxSimultanious = max;
     }
-    
+
     /**
      * Set the sec to timeout
      * @param sec Secs
@@ -443,7 +443,7 @@ public class DeviceConfig {
     public void setTimeout(int sec) {
         mMaxTimeout = sec;
     }
-    
+
     /**
      * Get the Timeout in secs
      * @return Timeout in secs
@@ -451,7 +451,7 @@ public class DeviceConfig {
     public int getTimeout() {
         return mMaxTimeout;
     }
-    
+
     /**
      * Get the Variables
      * @return Variables
@@ -459,7 +459,7 @@ public class DeviceConfig {
     public Collection<Variable> getVariables() {
       return mVariables;
     }
-    
+
     /**
      * Set the Variables
      * @param variables Variables
@@ -483,7 +483,7 @@ public class DeviceConfig {
     public void setUseTimeZone(boolean timeZone) {
       mUseTimeZone = timeZone;
     }
-    
+
     /**
      * Return the current TimeZone
      * @return TimeZone
@@ -499,9 +499,9 @@ public class DeviceConfig {
     public void setTimeZone(TimeZone timeZone) {
       mTimeZone = timeZone;
     }
-    
-    
-    
+
+
+
     /**
      * Write the Config into a Stream
      * @param stream
@@ -512,9 +512,9 @@ public class DeviceConfig {
         stream.writeInt(11);
 
         stream.writeObject(getName());
-        
+
         writeChannelMappings(stream);
-        
+
         stream.writeObject(getUsername());
         stream.writeObject(getPassword());
         stream.writeBoolean(getUseWebUrl());
@@ -522,40 +522,40 @@ public class DeviceConfig {
         stream.writeObject(getWebUrl());
         stream.writeInt(getPreTime());
         stream.writeInt(getPostTime());
-        
+
         stream.writeObject(getParameterFormatAdd());
         stream.writeObject(getParameterFormatRem());
-        
+
         getMarkedPrograms().writeData(stream);
-        
+
         stream.writeBoolean(mUseReturnValue);
         stream.writeInt(mMaxSimultanious);
         stream.writeBoolean(mResultDialogOnlyOnError);
         stream.writeBoolean(mOnlyFuture);
-        
+
         stream.writeInt(mParamEntries.size());
-        
+
         for (int i = 0; i < mParamEntries.size(); i++) {
             (mParamEntries.get(i)).writeData(stream);
         }
-        
+
         stream.writeInt(mMaxTimeout);
 
         stream.writeInt(mVariables.size());
-        
+
         for (int i = 0; i < mVariables.size(); i++) {
             (mVariables.get(i)).writeData(stream);
         }
-        
+
         stream.writeBoolean(mUseTimeZone);
         stream.writeObject(mTimeZone);
 
         stream.writeObject(mId);
         stream.writeBoolean(mShowTitleAndTimeDialog);
         stream.writeBoolean(mDeletePrograms);
-        
+
         stream.writeInt(mReceiveTargets.length);
-        
+
         for(ProgramReceiveTarget receiveTarget : mReceiveTargets) {
           receiveTarget.writeData(stream);
         }
@@ -570,13 +570,13 @@ public class DeviceConfig {
      */
     public void readData(ObjectInputStream stream, boolean importDevice) throws IOException, ClassNotFoundException {
         int version = stream.readInt();
-        
+
         if (version < 4) {
           throw new IOException(
               mLocalizer.msg("NoOlderVersionSupported",
           "Sorry, older Versions of the CapturePlugin are not longer supported. Please create a new Device!"));
         }
-        
+
         setName((String) stream.readObject());
         readChannelsMappings(stream, version);
         setUserName((String) stream.readObject());
@@ -589,41 +589,41 @@ public class DeviceConfig {
 
         setParameterFormatAdd((String) stream.readObject());
         setParameterFormatRem((String) stream.readObject());
-        
+
         ProgramTimeList list = new ProgramTimeList();
         list.readData(stream);
-        
+
         setMarkedPrograms(list);
-        
+
         mUseReturnValue = stream.readBoolean();
         mMaxSimultanious = stream.readInt();
         mResultDialogOnlyOnError = stream.readBoolean();
         mOnlyFuture = stream.readBoolean();
-        
+
         int size = stream.readInt();
-        
+
         mParamEntries = new ArrayList<ParamEntry>();
-        
+
         for (int i = 0; i < size; i++) {
             ParamEntry entry = new ParamEntry();
             entry.readData(stream);
             mParamEntries.add(entry);
         }
-        
+
         mMaxTimeout = stream.readInt();
-        
+
         mVariables = new ArrayList<Variable>();
-        
+
         if (version > 4) {
           size = stream.readInt();
-          
+
           for (int i = 0; i < size; i++) {
             Variable var = new Variable();
             var.readData(stream);
             mVariables.add(var);
           }
         }
-        
+
         if (version > 5) {
           mUseTimeZone = stream.readBoolean();
           mTimeZone = (TimeZone) stream.readObject();
@@ -631,7 +631,7 @@ public class DeviceConfig {
 
         if (version > 8) {
             mId = (String) stream.readObject();
-            
+
             if(importDevice) {
             	mId = IDGenerator.generateUniqueId();
             }
@@ -644,13 +644,13 @@ public class DeviceConfig {
         }
         if(version > 10) {
           mReceiveTargets = new ProgramReceiveTarget[stream.readInt()];
-          
+
           for(int i = 0; i < mReceiveTargets.length; i++) {
             mReceiveTargets[i] = new ProgramReceiveTarget(stream);
           }
         }
     }
-    
+
     /**
      * Write the Channel-Mappings to a Stream
      * @param stream Write to this Stream
@@ -659,7 +659,7 @@ public class DeviceConfig {
     private void writeChannelMappings(ObjectOutputStream stream) throws IOException {
       stream.writeInt(mChannels.keySet().size());
       Iterator<Channel> it = mChannels.keySet().iterator();
-      
+
       while (it.hasNext()) {
         Channel channel = it.next();
         channel.writeData(stream);
@@ -667,7 +667,7 @@ public class DeviceConfig {
       }
     }
 
-    
+
     /**
      * Read the ChannelMappings from a Stream
      * @param stream read from this Stream
@@ -681,11 +681,11 @@ public class DeviceConfig {
         if(version < 8) {
           String dataServiceClassName = (String)stream.readObject();
           String groupId = null;
-        
+
           if(version == 7) {
             groupId = (String)stream.readObject();
           }
-            
+
           String channelId = (String)stream.readObject();
           String value = (String)stream.readObject();
           Channel ch = Channel.getChannel(dataServiceClassName, groupId, null, channelId);
@@ -697,7 +697,7 @@ public class DeviceConfig {
         else {
           Channel ch = Channel.readData(stream, true);
           String value = (String)stream.readObject();
-          
+
           if (ch!=null) {
             mChannels.put(ch, value);
           }
@@ -755,7 +755,7 @@ public class DeviceConfig {
     public boolean getDeleteRemovedPrograms() {
       return mDeletePrograms;
     }
-    
+
     /**
      * Sets the program receive targets for this device.
      * @param receiveTargets The receive targets for this device.
@@ -763,7 +763,7 @@ public class DeviceConfig {
     public void setProgramReceiveTargets(ProgramReceiveTarget[] receiveTargets) {
       mReceiveTargets = receiveTargets;
     }
-    
+
     /**
      * Gets the program receive targets of this device.
      * @return The program receive targets of this device.

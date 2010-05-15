@@ -24,11 +24,12 @@
  */
 package tvbrowser.ui.settings;
 
+import util.misc.HashCodeUtilities;
 import devplugin.PluginAccess;
 import devplugin.Version;
 
 /**
- * A class that contains informations about a blocked plugin.
+ * A class that contains information about a blocked plugin.
  *
  * @author René Mach
  */
@@ -51,7 +52,7 @@ public final class BlockedPlugin {
   }
 
   /**
-   * Creates an instance of a blocked plugins
+   * Creates an instance of a blocked plugin
    * from the given String.
    *
    * @param asString The String that contains the information about the blocked plugin.
@@ -88,10 +89,11 @@ public final class BlockedPlugin {
    * @return <code>True</code> if the given plugin is blocked.
    */
   public boolean isBlockedVersion(PluginAccess plugin) {
-     return plugin != null && plugin.getId().equals(mPluginId) &&
-     (((mBlockEnd == null || plugin.getInfo().getVersion().compareTo(mBlockEnd) <= 0) &&
-     (mBlockStart == null || plugin.getInfo().getVersion().compareTo(mBlockStart) >= 0))
-     || plugin.getInfo().getVersion().compareTo(new Version(0,0,0,true)) <= 0) ;
+    return plugin != null
+        && plugin.getId().equals(mPluginId)
+        && (((mBlockEnd == null || plugin.getInfo().getVersion().compareTo(mBlockEnd) <= 0) && (mBlockStart == null || plugin
+            .getInfo().getVersion().compareTo(mBlockStart) >= 0)) || plugin.getInfo().getVersion().compareTo(
+            new Version(0, 0, 0, true)) <= 0);
   }
 
   /**
@@ -100,10 +102,11 @@ public final class BlockedPlugin {
    * @return <code>True</code> if the given plugin id version combination is blocked.
    */
   public boolean isBlockedVersion(String pluginId, Version version) {
-    return pluginId != null && version != null && pluginId.equals(mPluginId) &&
-    (((mBlockEnd == null || version.compareTo(mBlockEnd) <= 0) &&
-    (mBlockStart == null || version.compareTo(mBlockStart) >= 0))
-    || version.compareTo(new Version(0,0,0,true)) <= 0) ;
+    return pluginId != null
+        && version != null
+        && pluginId.equals(mPluginId)
+        && (((mBlockEnd == null || version.compareTo(mBlockEnd) <= 0) && (mBlockStart == null || version
+            .compareTo(mBlockStart) >= 0)) || version.compareTo(new Version(0, 0, 0, true)) <= 0);
   }
 
   protected String getPropertyString() {
@@ -156,6 +159,14 @@ public final class BlockedPlugin {
     }
 
     return false;
+  }
+
+  @Override
+  public int hashCode() {
+    int result = HashCodeUtilities.hash(mPluginId);
+    result = HashCodeUtilities.hash(result, mBlockStart);
+    result = HashCodeUtilities.hash(result, mBlockEnd);
+    return result;
   }
 
   /**

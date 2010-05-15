@@ -68,4 +68,16 @@ class DataHydraChannelGroup extends ChannelGroupImpl {
   public boolean isShowRegister() {
     return mShowRegister;
   }
+
+  @Override
+  public boolean equals(Object obj) {
+    // for static code analysis only
+    return super.equals(obj);
+  }
+
+  @Override
+  public int hashCode() {
+    // for static code analysis only
+    return super.hashCode();
+  }
 }

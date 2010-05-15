@@ -1,6 +1,6 @@
 /*
  * CapturePlugin by Andreas Hessel (Vidrec@gmx.de), Bodo Tasche
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -36,11 +36,11 @@ import devplugin.Program;
 /**
  * A List of ProgramTimes
  */
-public class ProgramTimeList {
+public final class ProgramTimeList implements Cloneable {
 
     /** List of ProgramTimes */
     private ArrayList<ProgramTime> mPrgTimeList = new ArrayList<ProgramTime>();
-    
+
     /**
      * Create empty List
      *
@@ -48,14 +48,14 @@ public class ProgramTimeList {
     public ProgramTimeList() {
         mPrgTimeList = new ArrayList<ProgramTime>();
     }
-    
+
     /**
      * Copy another List
      * @param list List to copy
      */
     public ProgramTimeList(ProgramTimeList list) {
         mPrgTimeList = new ArrayList<ProgramTime>();
-        
+
         ProgramTime[] prgTimes = list.getProgramTimes();
 
         for (ProgramTime prgTime : prgTimes) {
@@ -63,7 +63,7 @@ public class ProgramTimeList {
         }
 
     }
-    
+
     /**
      * Clone
      */
@@ -72,7 +72,7 @@ public class ProgramTimeList {
     }
 
     /**
-     * Contains Progam in list?
+     * Contains Program in list?
      * @param program Program
      * @return true if Program is in List
      */
@@ -97,7 +97,7 @@ public class ProgramTimeList {
     public ProgramTime getProgramTimeForProgram(Program program) {
         for (ProgramTime time : mPrgTimeList) {
           Program[] test = time.getAllPrograms();
-          
+
           for(Program p : test) {
             if (p == program) {
               return time;
@@ -122,33 +122,33 @@ public class ProgramTimeList {
      */
     public Program[] getPrograms() {
         ArrayList<Program> list = new ArrayList<Program>();
-        
+
         for (int i = 0; i < mPrgTimeList.size(); i++) {
             Program[] progs = mPrgTimeList.get(i).getAllPrograms();
-            
+
             for(Program p : progs) {
               list.add(p);
             }
         }
-        
+
         return list.toArray(new Program[list.size()]);
     }
-    
+
     /**
      * Returns an Array of ProgramTimes in this List
      * @return List of all programtimes
      */
     public ProgramTime[] getProgramTimes() {
         ProgramTime[] prgTime = new ProgramTime[mPrgTimeList.size()];
-        
+
         for (int i = 0; i < mPrgTimeList.size(); i++) {
             prgTime[i] = mPrgTimeList.get(i);
         }
-        
+
         return prgTime;
     }
-    
-    
+
+
     /**
      * Save data to Stream
      * @param out save to this stream
@@ -156,14 +156,14 @@ public class ProgramTimeList {
      */
     public void writeData(ObjectOutputStream out) throws IOException {
         out.writeInt(1);
-        
+
         out.writeInt(mPrgTimeList.size());
 
         for (ProgramTime time : mPrgTimeList) {
             time.writeData(out);
         }
     }
-    
+
     /**
      * Read Data from Stream
      * @param in read from this stream
@@ -172,11 +172,11 @@ public class ProgramTimeList {
      */
     public void readData(java.io.ObjectInputStream in)throws IOException, ClassNotFoundException {
         in.readInt(); // version not yet used
-        
+
         int size = in.readInt();
-        
+
         mPrgTimeList = new ArrayList<ProgramTime>();
-        
+
         for (int i = 0; i < size; i++) {
             ProgramTime prgTime = new ProgramTime();
             prgTime.readData(in);
@@ -188,7 +188,7 @@ public class ProgramTimeList {
 
     /**
      * Returns the Maximum amount of overlapping Programs
-     * 
+     *
      * @param prgTime Check for Time-Overlappings with this Program
      * @return number of time-overlappings with Program
      */
@@ -198,12 +198,12 @@ public class ProgramTimeList {
 
         Calendar end = Calendar.getInstance();
         end.setTime(prgTime.getEnd());
-        
+
         cal.add(Calendar.MINUTE, 1);
         end.add(Calendar.MINUTE, -1);
-        
+
         int max = 0;
-        
+
         while (cal.getTime().before(end.getTime())) {
             int cur = 0;
 
@@ -219,12 +219,12 @@ public class ProgramTimeList {
             if (cur > max) {
                 max = cur;
             }
-            
+
             cal.add(Calendar.MINUTE, 1);
         }
         return max;
     }
 
 
-    
+
 }
