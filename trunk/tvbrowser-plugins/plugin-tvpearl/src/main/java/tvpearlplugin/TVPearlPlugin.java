@@ -87,6 +87,7 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 	private PluginTreeNode mRootNode = new PluginTreeNode(this, false);
 
   private TVPearlSettings mSettings;
+  private boolean mUpdating = false;
 
 	public TVPearlPlugin()
 	{
@@ -319,8 +320,12 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 		updateChanges();
 	}
 
-  private void update()
+  synchronized private void update()
 	{
+    if (mUpdating) {
+      return;
+    }
+    mUpdating = true;
 		mThread = new Thread(this, "TV Pearl Update");
 		mThread.setPriority(Thread.MIN_PRIORITY);
 		mThread.start();
@@ -449,17 +454,21 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 		{}
 	}
 
-	public void run()
+	synchronized public void run()
 	{
-		mLog.info("Start TV Pearl update.");
-		mTVPearls.update();
-		mLog.info("TV Pearl update finished.");
-		mTVPearls.logInfo();
-		updateChanges();
-		if (mDialog != null)
-		{
-			mDialog.updateProgramList();
-		}
+		try {
+      mLog.info("Start TV Pearl update.");
+      mTVPearls.update();
+      mLog.info("TV Pearl update finished.");
+      mTVPearls.logInfo();
+      updateChanges();
+      if (mDialog != null)
+      {
+      	mDialog.updateProgramList();
+      }
+    } finally {
+      mUpdating = false;
+    }
 	}
 
 	public void updateDialog()
@@ -467,6 +476,7 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 		mDialog.update();
 	}
 
+	@Override
 	public int getMarkPriorityForProgram(final Program p)
 	{
 		return mSettings.getMarkPriority();
