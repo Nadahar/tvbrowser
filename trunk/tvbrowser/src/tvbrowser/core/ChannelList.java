@@ -190,7 +190,7 @@ public class ChannelList {
   private static void unsubscribeChannel(Channel channel) {
     mSubscribedChannels.remove(channel);
     mSubscribedChannelPosition.remove(channel.getUniqueId());
-    handleChannelUnsubscribed(channel);
+    TvDataBase.getInstance().unsubscribeChannels(new Channel[] {channel});
   }
 
   /**
@@ -379,9 +379,7 @@ public class ChannelList {
     calculateChannelPositions();
 
     // now remove all unsubscribed TV data
-    for (Channel channel : unsubscribedChannels) {
-      handleChannelUnsubscribed(channel);
-    }
+    TvDataBase.getInstance().unsubscribeChannels(unsubscribedChannels.toArray(new Channel[unsubscribedChannels.size()]));
 
     if (channelsAdded && update) {
       SwingUtilities.invokeLater(new Runnable() {
@@ -390,13 +388,6 @@ public class ChannelList {
         }
       });
     }
-  }
-
-  private static void handleChannelUnsubscribed(Channel channel) {
-    if (channel == null) {
-      return;
-    }
-    TvDataBase.getInstance().unsubscribeChannel(channel);
   }
 
   /**
