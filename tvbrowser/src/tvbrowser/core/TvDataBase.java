@@ -277,12 +277,12 @@ public class TvDataBase {
 
   public void setDayProgramWasChangedByPlugin(Date date, Channel channel) {
     OnDemandDayProgramFile progFile = getCacheEntry(date, channel, false, false);
-    
+
     if(progFile != null) {
       progFile.getDayProgram().setWasChangedByPlugin();
     }
   }
-  
+
   private ChannelDayProgram getDayProgram(Date date, Channel channel, boolean update) {
     OnDemandDayProgramFile progFile = getCacheEntry(date, channel, true, update);
 
@@ -411,19 +411,19 @@ public class TvDataBase {
       Channel channel, boolean loadFromDisk, boolean update) {
     if(!loadFromDisk) {
       String key = getDayProgramKey(date, channel);
-  
+
       //Try to get the program from the cache
       OnDemandDayProgramFile progFile =  mTvDataHash.get(key);
-      
+
       if(progFile != null) {
         return progFile;
       }
     }
-    
+
     return getCacheEntryBlocking(date,channel,loadFromDisk,update);
   }
-  
-  
+
+
   private synchronized OnDemandDayProgramFile getCacheEntryBlocking(Date date,
       Channel channel, boolean loadFromDisk, boolean update) {
     String key = getDayProgramKey(date, channel);
@@ -532,7 +532,14 @@ public class TvDataBase {
     updateAvailableDateSet();
   }
 
-  private void deleteFiles(boolean informPlugins, FilenameFilter filter,
+  /**
+   * @param informPlugins
+   * @param filter
+   * @param channelArr
+   * @param channelIdArr
+   * @return whether a data finished callback was triggered during file deletion
+   */
+  private boolean deleteFiles(boolean informPlugins, FilenameFilter filter,
       Channel[] channelArr, String[] channelIdArr) {
     File fileList[] = new File(Settings.propTVDataDirectory.getString())
         .listFiles(filter);
@@ -562,7 +569,9 @@ public class TvDataBase {
 
     if(informPlugins && somethingDeleted) {
       TvDataUpdater.getInstance().fireTvDataUpdateFinished();
+      return true;
     }
+    return false;
   }
 
   private synchronized void correctDayProgramFile(Date date,
@@ -943,14 +952,29 @@ public class TvDataBase {
     return false;
   }
 
+  public void unsubscribeChannels(final Channel[] channels) {
+    boolean callback = false;
+    for (Channel channel : channels) {
+      // only trigger the plugin update after the last channel
+      if (unsubscribeChannel(channel, channel == channels[channels.length - 1])) {
+        callback = true;
+      }
+    }
+    // run the callback manually
+    if (!callback) {
+      TvDataUpdater.getInstance().fireTvDataUpdateFinished();
+    }
+  }
+
   /**
    * delete all program files of a channel after unsubscribing it
    *
    * @param channel
+   * @return whether a data update finished callback was triggered or not
    */
-  public void unsubscribeChannel(final Channel channel) {
+  private boolean unsubscribeChannel(final Channel channel, final boolean informPlugins) {
     if (channel == null) {
-      return;
+      return false;
     }
     final Channel[] channelArr = new Channel[] { channel };
     final String[] channelIdArr = new String[] { getChannelKey(channel) };
@@ -969,7 +993,7 @@ public class TvDataBase {
     };
 
     // delete all channel files
-    deleteFiles(true, filter, channelArr, channelIdArr);
+    return deleteFiles(informPlugins, filter, channelArr, channelIdArr);
   }
 
   /**

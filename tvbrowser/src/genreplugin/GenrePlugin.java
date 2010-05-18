@@ -123,7 +123,7 @@ public class GenrePlugin extends Plugin {
     updateRootNode(false);
   }
 
-  private void updateRootNode(final boolean force) {
+  synchronized private void updateRootNode(final boolean force) {
     if (!mStartFinished && !force) {
       return;
     }
