@@ -76,8 +76,7 @@ public class RadioTimesFileParser {
   private static final int RT_MOVIE = 7;
   @SuppressWarnings("unused")
   private static final int RT_REPETITION = 8; // is a repetition
-  @SuppressWarnings("unused")
-  private static final int RT_SUBTITLED = 9; // this does not mean ORIGINAL_WITH_SUBTITLE
+  private static final int RT_SUBTITLED = 9; // (Signed programmes)
   private static final int RT_16_TO_9 = 10;
   private static final int RT_NEW_SERIES = 11;
   private static final int RT_SUBTITLES_FOR_AURALLY_HANDICAPPED = 12;
@@ -188,12 +187,81 @@ public class RadioTimesFileParser {
                 prog.setTextField(ProgramFieldType.ACTOR_LIST_TYPE, createCast(field));
               }
               
+              int bitset = 0;
+              
               field = items[RT_GENRE];
               if ((field.length() > 0)&& (!field.equals("No Genre"))) {
                 prog.setTextField(ProgramFieldType.GENRE_TYPE, field);
+                
+                if (field.equals("Animation")) {
+                  bitset |= Program.INFO_CATEGORIE_SERIES;
+                } else if (field.equals("Business")) {
+                  bitset |= Program.INFO_CATEGORIE_MAGAZINE_INFOTAINMENT;
+                } else if (field.equals("Children")) {
+                  bitset |= Program.INFO_CATEGORIE_CHILDRENS;
+                } else if (field.equals("Comedy")) {
+                  bitset |= Program.INFO_CATEGORIE_SHOW;
+                } else if (field.equals("Consumer")) {
+                  bitset |= Program.INFO_CATEGORIE_MAGAZINE_INFOTAINMENT;
+                } else if (field.equals("Cookery")) {
+                  //
+                } else if (field.equals("Current affairs")) {
+                  bitset |= Program.INFO_CATEGORIE_MAGAZINE_INFOTAINMENT;
+                } else if (field.equals("Documentary")) {
+                  bitset |= Program.INFO_CATEGORIE_DOCUMENTARY;
+                } else if (field.equals("Drama")) {
+                  bitset |= Program.INFO_CATEGORIE_SERIES;
+                } else if (field.equals("Education")) {
+                  bitset |= Program.INFO_CATEGORIE_MAGAZINE_INFOTAINMENT;
+                } else if (field.equals("Entertainment")) {
+                  bitset |= Program.INFO_CATEGORIE_SHOW;
+                } else if (field.equals("Film")) {
+                  bitset |= Program.INFO_CATEGORIE_MOVIE;
+                } else if (field.equals("Game show")) {
+                  bitset |= Program.INFO_CATEGORIE_SHOW;
+                } else if (field.equals("Gardening")) {
+                  bitset |= Program.INFO_CATEGORIE_MAGAZINE_INFOTAINMENT;
+                } else if (field.equals("Health")) {
+                  bitset |= Program.INFO_CATEGORIE_MAGAZINE_INFOTAINMENT;
+                } else if (field.equals("Interests")) {
+                  bitset |= Program.INFO_CATEGORIE_MAGAZINE_INFOTAINMENT;
+                } else if (field.equals("Music and Arts")) {
+                  bitset |= Program.INFO_CATEGORIE_ARTS;
+                } else if (field.equals("News and Current Affairs")) {
+                  bitset |= Program.INFO_CATEGORIE_NEWS;                
+                } else if (field.equals("Science")) {
+                  bitset |= Program.INFO_CATEGORIE_MAGAZINE_INFOTAINMENT;
+                } else if (field.equals("Sitcom")) {
+                  bitset |= Program.INFO_CATEGORIE_SERIES;
+                } else if (field.equals("Soap")) {
+                  bitset |= Program.INFO_CATEGORIE_SERIES;
+                } else if (field.equals("Sport")) {
+                  bitset |= Program.INFO_CATEGORIE_SPORTS;
+                } else if (field.equals("Talk show")) {
+                  bitset |= Program.INFO_CATEGORIE_SHOW;
+                } else if (field.equals("Travel")) {
+                  //
+                } else if (field.equals("Youth")) {
+                  //
+                  
+                } else if (field.equals("Environment")) {
+                  bitset |= Program.INFO_CATEGORIE_MAGAZINE_INFOTAINMENT;  
+                } else if (field.equals("Religion")) {
+                  //
+                } else if (field.equals("Transport")) {
+                  //
+                } else if (field.equals("Seasonal special")) {
+                  //
+                } else if (field.equals("Gaelic")) {
+                  //
+                } else if (field.equals("Disability")) {
+                  //not used?
+                } 
               }
 
-              int bitset = 0;
+              if (Boolean.parseBoolean(items[RT_SUBTITLED])) {
+                bitset |= Program.INFO_SIGN_LANGUAGE;
+              }
               
               if (Boolean.parseBoolean(items[RT_SUBTITLES_FOR_AURALLY_HANDICAPPED])) {
                 bitset |= Program.INFO_SUBTITLE_FOR_AURALLY_HANDICAPPED;
