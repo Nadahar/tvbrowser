@@ -26,7 +26,6 @@
 
 package util.ui;
 
-import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
@@ -674,36 +673,34 @@ public class UiUtilities {
    *
    * @param icon
    *          Icon that should be scaled
-   * @param x
-   *          new X-Value
-   * @param y
-   *          new Y-Value
+   * @param width
+   *          scaled width
+   * @param height
+   *          scaled height
    * @return Scaled Icon
    */
-  public static Icon scaleIcon(Icon icon, int x, int y) {
+  public static Icon scaleIcon(Icon icon, int width, int height) {
     int currentWidth = icon.getIconWidth();
     int currentHeight = icon.getIconHeight();
-    if ((currentWidth == x) && (currentHeight == y)) {
+    if ((currentWidth == width) && (currentHeight == height)) {
       return icon;
     }
     try {
       // Create Image with Icon
-      BufferedImage iconimage = new BufferedImage(x, y,
+      BufferedImage iconImage = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(),
           BufferedImage.TYPE_INT_ARGB);
-      Graphics2D g2 = iconimage.createGraphics();
+      Graphics2D g2 = iconImage.createGraphics();
       g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
           RenderingHints.VALUE_INTERPOLATION_BICUBIC);
       g2.setRenderingHint(RenderingHints.KEY_RENDERING,
           RenderingHints.VALUE_RENDER_QUALITY);
       AffineTransform z = g2.getTransform();
-      z.scale((double) x / currentWidth, (double) y / currentHeight);
       g2.setTransform(z);
       icon.paintIcon(null, g2, 0, 0);
       g2.dispose();
-
+      BufferedImage scaled = scaleDown(iconImage, width, height);
       // Return new Icon
-      return new ImageIcon(iconimage);
-
+      return new ImageIcon(scaled);
     } catch (Exception ex) {
       ex.printStackTrace();
     }
@@ -783,19 +780,6 @@ public class UiUtilities {
 
   }
 
-  static BufferedImage createResizedCopy(Image originalImage, int scaledWidth, int scaledHeight, boolean preserveAlpha) {
-    System.out.println("resizing...");
-    int imageType = preserveAlpha ? BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB;
-    BufferedImage scaledBI = new BufferedImage(scaledWidth, scaledHeight, imageType);
-    Graphics2D g = scaledBI.createGraphics();
-    if (preserveAlpha) {
-      g.setComposite(AlphaComposite.Src);
-    }
-    g.drawImage(originalImage, 0, 0, scaledWidth, scaledHeight, null);
-    g.dispose();
-    return scaledBI;
-  }
-
   /**
    * Convenience method that returns a scaled instance of the
    * provided {@code BufferedImage}.
@@ -805,72 +789,40 @@ public class UiUtilities {
    *    in pixels
    * @param targetHeight the desired height of the scaled instance,
    *    in pixels
-   * @param hint one of the rendering hints that corresponds to
-   *    {@code RenderingHints.KEY_INTERPOLATION} (e.g.
-   *    {@code RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR},
-   *    {@code RenderingHints.VALUE_INTERPOLATION_BILINEAR},
-   *    {@code RenderingHints.VALUE_INTERPOLATION_BICUBIC})
-   * @param higherQuality if true, this method will use a multi-step
-   *    scaling technique that provides higher quality than the usual
-   *    one-step technique (only useful in downscaling cases, where
-   *    {@code targetWidth} or {@code targetHeight} is
-   *    smaller than the original dimensions, and generally only when
-   *    the {@code BILINEAR} hint is specified)
    * @return a scaled version of the original {@code BufferedImage}
    */
-  public static BufferedImage getScaledInstance(BufferedImage img,
-                                         int targetWidth,
-                                         int targetHeight,
-                                         Object hint,
-                                         boolean higherQuality)
-  {
-      int type = (img.getTransparency() == Transparency.OPAQUE) ?
-          BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB;
-      BufferedImage ret = (BufferedImage)img;
-      int w, h;
-      if (higherQuality) {
-          // Use multi-step technique: start with original size, then
-          // scale down in multiple passes with drawImage()
-          // until the target size is reached
-          w = img.getWidth();
-          h = img.getHeight();
-      } else {
-          // Use one-step technique: scale directly from original
-          // size to target size with a single drawImage() call
-          w = targetWidth;
-          h = targetHeight;
+  public static BufferedImage scaleDown(final BufferedImage img, final int targetWidth, final int targetHeight) {
+    if (targetWidth > img.getWidth() || targetHeight > img.getHeight()) {
+      return scaleIconToBufferedImage(img, targetWidth, targetHeight);
+    }
+
+    int type = (img.getTransparency() == Transparency.OPAQUE) ? BufferedImage.TYPE_INT_RGB
+        : BufferedImage.TYPE_INT_ARGB;
+    BufferedImage result = img;
+    int w = img.getWidth();
+    int h = img.getHeight();
+
+    do {
+      w /= 2;
+      if (w < targetWidth) {
+        w = targetWidth;
+      }
+      h /= 2;
+      if (h < targetHeight) {
+        h = targetHeight;
       }
 
-      do {
-          if (higherQuality && w > targetWidth) {
-              w /= 2;
-              if (w < targetWidth) {
-                  w = targetWidth;
-              }
-          }
+      BufferedImage tmp = new BufferedImage(w, h, type);
+      Graphics2D g2 = tmp.createGraphics();
+      g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+      g2.drawImage(result, 0, 0, w, h, null);
+      g2.dispose();
 
-          if (higherQuality && h > targetHeight) {
-              h /= 2;
-              if (h < targetHeight) {
-                  h = targetHeight;
-              }
-          }
+      result = tmp;
+    } while (w != targetWidth || h != targetHeight);
 
-          BufferedImage tmp = new BufferedImage(w, h, type);
-          Graphics2D g2 = tmp.createGraphics();
-          g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, hint);
-        g2.setColor(Color.RED);
-        g2.fillRect(0, 0 , w, h);
-          g2.drawImage(ret, 0, 0, w, h, null);
-          g2.dispose();
-
-          ret = tmp;
-      } while (w != targetWidth || h != targetHeight);
-
-      return ret;
+    return result;
   }
-
-
 
   /**
    * Creates a scaled Version of the Icon.
