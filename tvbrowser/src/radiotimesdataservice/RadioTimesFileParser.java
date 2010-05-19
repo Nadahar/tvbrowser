@@ -76,10 +76,10 @@ public class RadioTimesFileParser {
   private static final int RT_MOVIE = 7;
   @SuppressWarnings("unused")
   private static final int RT_REPETITION = 8; // is a repetition
-  private static final int RT_SUBTITLED = 9; // (Signed programmes)
+  private static final int RT_SUBTITLED = 9;
   private static final int RT_16_TO_9 = 10;
   private static final int RT_NEW_SERIES = 11;
-  private static final int RT_SUBTITLES_FOR_AURALLY_HANDICAPPED = 12;
+  private static final int RT_DEAF_SIGNED = 12;
   private static final int RT_BLACK_WHITE = 13;
   private static final int RT_STAR_RATING = 14; // 1 to 5 stars
   private static final int RT_AGE_LIMIT = 15;
@@ -260,11 +260,11 @@ public class RadioTimesFileParser {
               }
 
               if (Boolean.parseBoolean(items[RT_SUBTITLED])) {
-                bitset |= Program.INFO_SIGN_LANGUAGE;
+                bitset |= Program.INFO_SUBTITLE_FOR_AURALLY_HANDICAPPED;
               }
               
-              if (Boolean.parseBoolean(items[RT_SUBTITLES_FOR_AURALLY_HANDICAPPED])) {
-                bitset |= Program.INFO_SUBTITLE_FOR_AURALLY_HANDICAPPED;
+              if (Boolean.parseBoolean(items[RT_DEAF_SIGNED])) {
+                bitset |= Program.INFO_SIGN_LANGUAGE;
               }
               
               if (Boolean.parseBoolean(items[RT_16_TO_9])) {
