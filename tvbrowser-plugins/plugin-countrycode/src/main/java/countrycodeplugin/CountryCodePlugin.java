@@ -1,16 +1,16 @@
 /*
  * Copyright Michael Keppler
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -33,13 +33,13 @@ import devplugin.Version;
  *
  */
 public final class CountryCodePlugin extends Plugin {
-  private static final Version mVersion = new Version(2, 70, 6);
+  private static final Version mVersion = new Version(2, 70, 7);
 
   private PluginInfo mPluginInfo;
 
   private Pattern mPattern;
 
-  /** The localizer for this class. */  
+  /** The localizer for this class. */
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(CountryCodePlugin.class);
 
@@ -55,7 +55,7 @@ public final class CountryCodePlugin extends Plugin {
       mPluginInfo = new PluginInfo(CountryCodePlugin.class, name, desc, "Michael Keppler",
           "GPL 3");
     }
-    
+
     return mPluginInfo;
   }
 
