@@ -846,7 +846,9 @@ public class MutableProgram implements Program {
   private String validateShortInfo(String shortInfo) {
     if ((shortInfo != null) && (shortInfo.length() > MAX_SHORT_INFO_LENGTH + 4)) {
       shortInfo = generateShortInfoFromDescription(shortInfo);
-      mLog.warning("Short description longer than " + MAX_SHORT_INFO_LENGTH + " characters: ("+shortInfo.length()+") " + this.toString());
+      // nowadays this should be checked with the checker plugin
+      // these messages will not help the users in any way
+      // mLog.warning("Short description longer than " + MAX_SHORT_INFO_LENGTH + " characters: ("+shortInfo.length()+") " + this.toString());
     }
 
     return shortInfo;
