@@ -39,6 +39,8 @@ import devplugin.ProgramFieldType;
  *
  */
 public abstract class AbstractXmlTvDataHandler extends DefaultHandler {
+  private static final String PRESENTED_BY = "presented by";
+  private static final String ACTOR_ROLE_SEPARATOR = "\t\t-\t\t";
   private static final String COMMA_SPACE = ", ";
   private static final String COMMA_LINE_BREAK = ",\n";
   /**
@@ -71,8 +73,23 @@ public abstract class AbstractXmlTvDataHandler extends DefaultHandler {
    */
   private boolean mIsValid = false;
   private String mEpisodeType;
+  /**
+   * title of the currently parsed program
+   */
   private String mTitle;
   private boolean mSetTitle;
+  /**
+   * role of the currently parsed actor
+   */
+  private String mRole;
+  /**
+   * unit of the program length: seconds | minutes | hours
+   */
+  private String mLengthUnit;
+  /**
+   * subtitle kind of the currently parsed program: teletext | onscreen | deaf-signed
+   */
+  private String mSubtitles;
 
   /**
    * Handles the occurrence of tag text by buffering it for later analysis
@@ -146,7 +163,14 @@ public abstract class AbstractXmlTvDataHandler extends DefaultHandler {
       }
     } else if ("episode-num".equals(qName)) {
       mEpisodeType = attributes.getValue("system");
+    } else if ("actor".equals(qName)) {
+      mRole = attributes.getValue("role");
+    } else if ("length".equals(qName)) {
+      mLengthUnit = attributes.getValue("units");
+    } else if ("subtitles".equals(qName)) {
+      mSubtitles = attributes.getValue("type");
     }
+
   }
 
   /**
@@ -167,7 +191,7 @@ public abstract class AbstractXmlTvDataHandler extends DefaultHandler {
       // every value shall be trimmed by default
       String text = mText.toString().trim();
 
-      if (qName.equals("title")) {
+      if ("title".equalsIgnoreCase(qName)) {
         mTitle = text;
         if ((mLang == null) || mLang.equals(getChannelCountry()) || getCountries(mLang).contains(getChannelCountry())) {
           addField(ProgramFieldType.TITLE_TYPE, text);
@@ -175,90 +199,120 @@ public abstract class AbstractXmlTvDataHandler extends DefaultHandler {
         } else {
           addField(ProgramFieldType.ORIGINAL_TITLE_TYPE, text);
         }
-      } else if (qName.equals("sub-title")) {
+      } else if ("sub-title".equalsIgnoreCase(qName)) { // do not mix this up with "subtitles" !
         if ((mLang == null) || mLang.equals(getChannelCountry())) {
           addField(ProgramFieldType.EPISODE_TYPE, text);
         } else {
           addField(ProgramFieldType.ORIGINAL_EPISODE_TYPE, text);
         }
-      } else if (qName.equals("desc")) {
+      } else if ("desc".equalsIgnoreCase(qName)) {
         addField(ProgramFieldType.DESCRIPTION_TYPE, text);
-      } else if (qName.equals("date")) {
+      } else if ("date".equalsIgnoreCase(qName)) {
         if (text.length() < 4) {
           logMessage("WARNING: The date value must have at least 4 chars: '" + text + '\'');
         } else {
           int year = Integer.parseInt(text.substring(0, 4));
           addField(ProgramFieldType.PRODUCTION_YEAR_TYPE, year);
         }
-      } else if (qName.equals("rating")) {
+      } else if ("rating".equalsIgnoreCase(qName)) {
         try {
           int ageLimit = Integer.valueOf(text);
           addField(ProgramFieldType.AGE_LIMIT_TYPE, ageLimit);
         } catch (NumberFormatException exc) {
           addField(ProgramFieldType.AGE_RATING_TYPE, text);
         }
-      } else if (qName.equals("url")) {
+      } else if ("url".equalsIgnoreCase(qName)) {
         addField(ProgramFieldType.URL_TYPE, text);
-      } else if (qName.equals("category")) {
+      } else if ("category".equalsIgnoreCase(qName)) {
         text = text.substring(0, 1).toUpperCase() + text.substring(1);
         if (text.toLowerCase().indexOf("serie") > -1) {
           setInfoBit(Program.INFO_CATEGORIE_SERIES);
         } else if (text.toLowerCase().indexOf("movie") > -1) {
           setInfoBit(Program.INFO_CATEGORIE_MOVIE);
+        } else if (text.toLowerCase().indexOf("sport") > -1) {
+          setInfoBit(Program.INFO_CATEGORIE_SPORTS);
+        } else if (text.toLowerCase().indexOf("music") > -1) {
+          setInfoBit(Program.INFO_CATEGORIE_ARTS);
+        } else if (text.toLowerCase().indexOf("news") > -1) {
+          setInfoBit(Program.INFO_CATEGORIE_NEWS);
         }
         addToList(ProgramFieldType.GENRE_TYPE, text, COMMA_SPACE);
-      } else if (qName.equals("country")) {
+      } else if ("country".equalsIgnoreCase(qName)) {
         addField(ProgramFieldType.ORIGIN_TYPE, text);
-      } else if (qName.equals("subtitles")) {
-        if ((mLang == null) || mLang.equals(getChannelCountry())) {
-          setInfoBit(Program.INFO_SUBTITLE_FOR_AURALLY_HANDICAPPED);
-        } else {
-          setInfoBit(Program.INFO_ORIGINAL_WITH_SUBTITLE);
+      } else if ("subtitles".equalsIgnoreCase(qName)) {
+        if ("deaf-signed".equalsIgnoreCase(mSubtitles)) {
+          setInfoBit(Program.INFO_SIGN_LANGUAGE);
         }
-      } else if (qName.equals("live")) {
+        else {
+          if ((mLang == null) || mLang.equals(getChannelCountry())) {
+            setInfoBit(Program.INFO_SUBTITLE_FOR_AURALLY_HANDICAPPED);
+          } else {
+            setInfoBit(Program.INFO_ORIGINAL_WITH_SUBTITLE);
+          }
+        }
+      } else if ("live".equalsIgnoreCase(qName)) {
         setInfoBit(Program.INFO_LIVE);
-      } else if (qName.equals("length")) {
+      } else if ("length".equalsIgnoreCase(qName)) {
         try {
           int length = Integer.parseInt(text);
-          addField(ProgramFieldType.NET_PLAYING_TIME_TYPE, length);
+          if ("seconds".equalsIgnoreCase(mLengthUnit)) {
+            addField(ProgramFieldType.NET_PLAYING_TIME_TYPE, length / 60);
+          }
+          else if ("minutes".equalsIgnoreCase(mLengthUnit)) {
+            addField(ProgramFieldType.NET_PLAYING_TIME_TYPE, length);
+          }
+          else if ("hours".equalsIgnoreCase(mLengthUnit)) {
+            addField(ProgramFieldType.NET_PLAYING_TIME_TYPE, length * 60);
+          }
+          else {
+            addField(ProgramFieldType.NET_PLAYING_TIME_TYPE, length);
+          }
         } catch (NumberFormatException exc) {
           logMessage("WARNING: length is no number: '" + text + "' and will be ignored.");
         }
-      } else if (qName.equals("actor")) {
-        Matcher m = ACTOR_PATTERN.matcher(text);
-        if (m.matches()) {
-          text = m.group(2).trim() + "\t\t-\t\t" + m.group(1).trim();
+      } else if ("actor".equalsIgnoreCase(qName)) {
+        if (mRole != null && mRole.length() > 0) {
+          text = text + ACTOR_ROLE_SEPARATOR + mRole;
         }
-        if (text.toLowerCase().startsWith("presented by")) {
-          text = text.substring("Presented By".length()).trim();
+        else {
+          Matcher m = ACTOR_PATTERN.matcher(text);
+          if (m.matches()) {
+            text = m.group(2).trim() + ACTOR_ROLE_SEPARATOR + m.group(1).trim();
+          }
+        }
+        // some "actors" are really presenters
+        if (text.toLowerCase().startsWith(PRESENTED_BY)) {
+          text = text.substring(PRESENTED_BY.length()).trim();
           addToList(ProgramFieldType.MODERATION_TYPE, text, COMMA_SPACE);
         }
         else {
           addToList(ProgramFieldType.ACTOR_LIST_TYPE, text, COMMA_LINE_BREAK);
         }
-      } else if (qName.equals("director")) {
+      } else if ("director".equalsIgnoreCase(qName)) {
         addToList(ProgramFieldType.DIRECTOR_TYPE, text, COMMA_SPACE);
-      } else if (qName.equals("writer")) {
+      } else if ("writer".equalsIgnoreCase(qName) || "adapter".equalsIgnoreCase(qName)) {
         addToList(ProgramFieldType.SCRIPT_TYPE, text, COMMA_SPACE);
-      } else if (qName.equals("presenter")) {
+      } else if ("presenter".equalsIgnoreCase(qName) || "commentator".equalsIgnoreCase(qName)) {
         addToList(ProgramFieldType.MODERATION_TYPE, text, COMMA_SPACE);
-      } else if (qName.equals("music")) {
+      } else if ("music".equalsIgnoreCase(qName) || "composer".equalsIgnoreCase(qName)) {
         addToList(ProgramFieldType.MUSIC_TYPE, text, COMMA_SPACE);
-      } else if (qName.equals("producer")) {
+      } else if ("producer".equalsIgnoreCase(qName)) {
         addToList(ProgramFieldType.PRODUCER_TYPE, text, COMMA_SPACE);
-      } else if (qName.equals("colour")) {
+      } else if ("guest".equalsIgnoreCase(qName) || "editor".equalsIgnoreCase(qName)) {
+        addToList(ProgramFieldType.ADDITIONAL_PERSONS_TYPE, text, COMMA_SPACE);
+      } else if ("colour".equalsIgnoreCase(qName)) {
         if (text.equals("no")) {
           setInfoBit(Program.INFO_VISION_BLACK_AND_WHITE);
         } else if (!text.equals("yes")) {
           logMessage("WARNING: value of colour tag must be 'yes' or 'no'," + " but it is '" + text + '\'');
         }
-      } else if (qName.equals("quality")) {
+      } else if ("quality".equalsIgnoreCase(qName)) {
         if (text.equals("HDTV")) {
           setInfoBit(Program.INFO_VISION_HD);
         } else {
           logMessage("WARNING: value of quality tag must be 'HDTV' but it is '" + text + '\'');
         }
-      } else if (qName.equals("aspect")) {
+      } else if ("aspect".equalsIgnoreCase(qName)) {
         if (text.equals("4:3")) {
           setInfoBit(Program.INFO_VISION_4_TO_3);
         } else if (text.equals("16:9")) {
@@ -266,16 +320,22 @@ public abstract class AbstractXmlTvDataHandler extends DefaultHandler {
         } else {
           logMessage("WARNING: value of aspect tag must be '4:3' or '16:9'," + " but it is '" + text + '\'');
         }
-      } else if (qName.equals("stereo")) {
+      } else if ("stereo".equalsIgnoreCase(qName)) {
         if (text.equals("mono")) {
           setInfoBit(Program.INFO_AUDIO_MONO);
         } else if (text.equals("stereo")) {
           setInfoBit(Program.INFO_AUDIO_STEREO);
         } else if (text.equals("surround")) {
           setInfoBit(Program.INFO_AUDIO_DOLBY_SURROUND);
+        } else if (text.equals("dolby")) {
+          setInfoBit(Program.INFO_AUDIO_DOLBY_SURROUND);
         } else if (text.equals("5.1")) {
           setInfoBit(Program.INFO_AUDIO_DOLBY_DIGITAL_5_1);
+        } else if (text.equals("dolby digital")) {
+          setInfoBit(Program.INFO_AUDIO_DOLBY_DIGITAL_5_1);
         } else if (text.equals("two channel tone")) {
+          setInfoBit(Program.INFO_AUDIO_TWO_CHANNEL_TONE);
+        } else if (text.equals("bilingual")) {
           setInfoBit(Program.INFO_AUDIO_TWO_CHANNEL_TONE);
         } else if (text.equals("audio description")) {
           setInfoBit(Program.INFO_AUDIO_DESCRIPTION);
@@ -283,7 +343,7 @@ public abstract class AbstractXmlTvDataHandler extends DefaultHandler {
           logMessage("WARNING: value of stereo tag must be one of 'mono', "
               + "'stereo', 'surround', '5.1' or 'two channel tone' but it is '" + text + '\'');
         }
-      } else if (qName.equals("picture")) {
+      } else if ("picture".equalsIgnoreCase(qName)) {
         File file = new File(text);
         if (file.exists() && file.isFile()) {
           try {
@@ -294,13 +354,13 @@ public abstract class AbstractXmlTvDataHandler extends DefaultHandler {
         } else {
           logMessage("Warning: File does not exist: " + text);
         }
-      } else if (qName.equals("picture-copyright")) {
+      } else if ("picture-copyright".equalsIgnoreCase(qName)) {
         addField(ProgramFieldType.PICTURE_COPYRIGHT_TYPE, text);
-      } else if (qName.equals("picture-description")) {
+      } else if ("picture-description".equalsIgnoreCase(qName)) {
         addField(ProgramFieldType.PICTURE_DESCRIPTION_TYPE, text);
-      } else if (qName.equals("value")) {
+      } else if ("value".equalsIgnoreCase(qName)) {
         mValue = text;
-      } else if (qName.equals("star-rating")) {
+      } else if ("star-rating".equalsIgnoreCase(qName)) {
         if (mValue != null) {
 
           if (mValue.contains("/")) {
@@ -318,9 +378,9 @@ public abstract class AbstractXmlTvDataHandler extends DefaultHandler {
         }
 
         mValue = null;
-      } else if (qName.equals("new")) {
+      } else if ("new".equalsIgnoreCase(qName) || "premiere".equalsIgnoreCase(qName)) {
         setInfoBit(Program.INFO_NEW);
-      } else if (qName.equals("programme")) {
+      } else if ("programme".equalsIgnoreCase(qName)) {
         // if we only set the original title, then we still need to set the title
         if (!mSetTitle && mTitle != null) {
           addField(ProgramFieldType.TITLE_TYPE, mTitle);
@@ -366,6 +426,15 @@ public abstract class AbstractXmlTvDataHandler extends DefaultHandler {
           }
         }
 
+      } else if ("credits".equalsIgnoreCase(qName)) {
+        // already parsed as actor, director,...
+      } else if ("tv".equalsIgnoreCase(qName)) {
+        // root element, no useful information
+      } else if ("video".equalsIgnoreCase(qName)) {
+        // already parsed as colour, aspect, quality
+      }
+      else {
+        logMessage("Warning: Unknown element '" + qName + '\'');
       }
     }
     // Clear lang
