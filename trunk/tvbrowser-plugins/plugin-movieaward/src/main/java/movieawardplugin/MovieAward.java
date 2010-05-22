@@ -26,12 +26,10 @@ package movieawardplugin;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
-import java.util.logging.Logger;
 
 import devplugin.Program;
 
 public class MovieAward implements Comparable<MovieAward> {
-  private static final Logger mLog = Logger.getLogger(MovieAward.class.getName());
 
   private HashMap<String, String> mNames = new HashMap<String, String>();
   private HashMap<String, MovieAwardCategory> mCategory = new HashMap<String, MovieAwardCategory>();
