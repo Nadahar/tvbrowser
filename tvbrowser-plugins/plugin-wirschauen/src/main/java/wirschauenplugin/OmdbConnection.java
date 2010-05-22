@@ -28,6 +28,8 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
+import util.ui.html.HTMLTextHelper;
+
 
 /**
  * this is the connection object to communicate with the omdb. it uses a
@@ -237,7 +239,7 @@ public class OmdbConnection
               || "Es wurde noch keine Kurzbeschreibung eingegeben".equals(movieAbstract)) {
             return  null;
           } else {
-            return movieAbstract.trim();
+            return HTMLTextHelper.convertHtmlToText(movieAbstract.trim());
           }
         }
       }
