@@ -2,6 +2,7 @@ package movieawardplugin;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
@@ -11,7 +12,10 @@ import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 
+import util.browserlauncher.Launch;
 import util.ui.Localizer;
 import util.ui.WindowClosingIf;
 
@@ -45,9 +49,6 @@ public class MovieAwardDialog extends JDialog implements WindowClosingIf {
     createDialog(mMovieAwards, program);
   }
 
-  
-  // Bolle Edit: New Method createDialog(), with formatted text (table added), add_info ,
-  // Nominee and setCaretPosition(0)
   private void createDialog(final ArrayList<MovieAward> mMovieAwards,
       final Program program) {
     setTitle(mLocalizer.msg("title", "Movie Awards"));
@@ -60,8 +61,6 @@ public class MovieAwardDialog extends JDialog implements WindowClosingIf {
     final CellConstraints cc = new CellConstraints();
     final StringBuilder text = new StringBuilder();
 
-    // Bolle Edit: Styles/Classes for formatting text added to the
-    // JEditorPane
     String stylesheetDef = "<head><style type=\"text/css\">"
         + ".headlineSmall { line-height:100%;text-indent:0em;font-size:16 pt; color:#000000;font-family:Verdana, Arial, Helvetica;}"
         + ".headlineFilm { line-height:110%;margin-bottom:5 px;text-indent:0em;font-size:20 pt; color:#003366; font-weight:bold;font-family:Verdana, Arial, Helvetica;}"
@@ -77,13 +76,19 @@ public class MovieAwardDialog extends JDialog implements WindowClosingIf {
             program.getTitle()).append("</div>");
     text.append("<table>");
 
-    for (MovieAward maward : mMovieAwards) {
-      for (Award award : maward.getAwardsFor(program)) {
-        text.append("<tr  class=\"uTRow\"><td style=\"margin-left:10 px;\" valign=\"top\">&#x25CF;</td><td class=\"category\">").append(
-            maward.getName()).append(' ').append(
-            award.getAwardYear()).append(": ");
+    for (MovieAward movieAward : mMovieAwards) {
+      for (Award award : movieAward.getAwardsFor(program)) {
+        text.append("<tr  class=\"uTRow\"><td style=\"margin-left:10 px;\" valign=\"top\">&#x25CF;</td><td class=\"category\">");
 
-        final String category = maward.getCategoryName(award
+        String url = movieAward.getUrl();
+        if (url != null && url.length() > 0) {
+          text.append("<a href=\"").append(url).append("\">").append(movieAward.getName()).append("</a>");
+        } else {
+          text.append(movieAward.getName());
+        }
+        text.append(' ').append(award.getAwardYear()).append(": ");
+
+        final String category = movieAward.getCategoryName(award
             .getCategory());
         switch (award.getStatus()) {
         case NOMINATED:
@@ -132,12 +137,9 @@ public class MovieAwardDialog extends JDialog implements WindowClosingIf {
                 .severe("Missing implementation for award recipient");
           }
         }
-        // Bolle Edit: Additional Information for Song and Animated
-        // Short Subject added
-        if (award.getAdd_Info() != null) {
-          text.append("</td></tr><tr class=\"reciepient\"><td></td><td>"+award.getAdd_Info());
+        if (award.getAdditionalInfo() != null) {
+          text.append("</td></tr><tr class=\"reciepient\"><td></td><td>"+award.getAdditionalInfo());
         }
-        //
         text.append("</td></tr>");
       }
     }
@@ -146,6 +148,16 @@ public class MovieAwardDialog extends JDialog implements WindowClosingIf {
 
     final JEditorPane pane = new JEditorPane("text/html", text.toString());
     pane.setEditable(false);
+    pane.addHyperlinkListener(new HyperlinkListener() {
+
+      public void hyperlinkUpdate(HyperlinkEvent hyperlinkEvent) {
+        HyperlinkEvent.EventType type = hyperlinkEvent.getEventType();
+        final URL url = hyperlinkEvent.getURL();
+        if (type == HyperlinkEvent.EventType.ACTIVATED && url != null) {
+          Launch.openURL(url.toString());
+        }
+      }
+    });
     panel.add(new JScrollPane(pane), cc.xy(1, 1));
 
     final ButtonBarBuilder builder = new ButtonBarBuilder();
@@ -163,15 +175,13 @@ public class MovieAwardDialog extends JDialog implements WindowClosingIf {
     builder.addGridded(ok);
 
     panel.add(builder.getPanel(), cc.xy(1, 3));
-    // Edit by Bolle Pixel
     setSize(Sizes.dialogUnitXAsPixel(620, this), Sizes.dialogUnitYAsPixel(
         310, this));
 
     getRootPane().setDefaultButton(ok);
     ok.requestFocusInWindow();
-    // Edit by Bolle: Scroll to the top of the dialog
+    // scroll to the top of the dialog
     pane.setCaretPosition(0);
-    //
   }
 
   public void close() {
