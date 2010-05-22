@@ -33,30 +33,25 @@ public class Award {
   private Status mStatus;
   private String mMovieId;
   private String mRecipient;
-//Bolle Edit: Additional Information for Best Song and Animated Short Subject Category  
-  private String mAdd_Info;
-//
-  
-//Bolle Edit: New Constructor for Award (old,old,old,old,old,new: add_Info)
-  public Award(final String category, final String status,
-        final String movieId, final int awardYear, final String recipient, final String add_Info) {
-      mCategory = category;
-      if (status.equalsIgnoreCase("winner")) {
-        mStatus = Status.WINNER;
-      } else if (status.equalsIgnoreCase("nominated")) {
-        mStatus = Status.NOMINATED;
-      } else if (status.equalsIgnoreCase("honored")) {
-        mStatus = Status.HONORED;
-      }
-      mMovieId = movieId;
-      mAwardYear = awardYear;
-      mRecipient = recipient;
-    //Bolle Edit: Additional Information for Best Song and Animated Short Subject Category  
-      mAdd_Info = add_Info;
-    //
+  private String mAdditionalInfo;
+
+  public Award(final String category, final String status, final String movieId, final int awardYear,
+      final String recipient, final String additionalInfo) {
+    mCategory = category;
+    if (status.equalsIgnoreCase("winner")) {
+      mStatus = Status.WINNER;
+    } else if (status.equalsIgnoreCase("nominated")) {
+      mStatus = Status.NOMINATED;
+    } else if (status.equalsIgnoreCase("honored")) {
+      mStatus = Status.HONORED;
     }
-//
-public String getMovieId() {
+    mMovieId = movieId;
+    mAwardYear = awardYear;
+    mRecipient = recipient;
+    mAdditionalInfo = additionalInfo;
+  }
+
+  public String getMovieId() {
     return mMovieId;
   }
 
@@ -96,15 +91,12 @@ public String getMovieId() {
     mRecipient = recipient;
   }
 
-//Bolle Edit: Additional Information for Best Song and Animated Short Subject Category  
-
-  public String getAdd_Info() {
-      return mAdd_Info;
+  public String getAdditionalInfo() {
+      return mAdditionalInfo;
   }
 
   public String setAdd_Info() {
-      return mAdd_Info;
+      return mAdditionalInfo;
   }
-//
 
 }

@@ -24,6 +24,7 @@ public class MovieDataFactory {
   public static MovieAward loadMovieDataFromStream(final InputStream stream,
       final MovieAward award) {
     parse(stream, new MovieAwardHandler(award));
+    mLog.info("Loaded award '" + award.toString() + '\'');
     return award;
   }
 

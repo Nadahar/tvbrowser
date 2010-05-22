@@ -33,6 +33,22 @@ import org.xml.sax.helpers.DefaultHandler;
 
 
 public class MovieDatabaseHandler extends DefaultHandler {
+  private static final String ELEMENT_ALTERNATIVETITLE = "alternativetitle";
+
+  private static final String ATTRIBUTE_LANG = "lang";
+
+  private static final String ATTRIBUTE_ID = "id";
+
+  private static final String ELEMENT_TITLE = "title";
+
+  private static final String ATTRIBUTE_YEAR = "year";
+
+  private static final String ATTRIBUTE_DIRECTOR = "director";
+
+  private static final String ELEMENT_MOVIES = "movies";
+
+  private static final String ELEMENT_MOVIE = "movie";
+
   private static final Logger mLog = Logger.getLogger(MovieDatabaseHandler.class.getName());
 
   /**
@@ -80,22 +96,22 @@ public class MovieDatabaseHandler extends DefaultHandler {
 
     mAttributes = attributes;
 
-    if ("movie".equals(qName)) {
-      mMovie = new Movie(attributes.getValue("id"));
+    if (ELEMENT_MOVIE.equals(qName)) {
+      mMovie = new Movie(attributes.getValue(ATTRIBUTE_ID));
 
       int year;
       try {
-        year = Integer.parseInt(attributes.getValue("year"));
+        year = Integer.parseInt(attributes.getValue(ATTRIBUTE_YEAR));
       } catch (NumberFormatException ex) {
         year = -1;
       }
 
       mMovie.setProductionYear(year);
-      mMovie.setDirector(attributes.getValue("director"));
-    } else if ("movies".equals(qName)|| "title".equals(qName)){
-      // Do nothing
+      mMovie.setDirector(attributes.getValue(ATTRIBUTE_DIRECTOR));
     } else {
-      mLog.log(Level.INFO, "Unknown Element : " + qName);
+      if (!ELEMENT_MOVIES.equals(qName) && !ELEMENT_TITLE.equals(qName) && !ELEMENT_ALTERNATIVETITLE.equals(qName)) {
+        mLog.log(Level.INFO, "Unknown Element : " + qName);
+      }
     }
 
   }
@@ -112,14 +128,14 @@ public class MovieDatabaseHandler extends DefaultHandler {
       parent = mNodeNames.get(mNodeNames.size() - 2);
     }
 
-    if ("title".equals(qName) && "movie".equals(parent)) {
+    if (ELEMENT_TITLE.equals(qName) && ELEMENT_MOVIE.equals(parent)) {
       final boolean original = "yes".equalsIgnoreCase(mAttributes
           .getValue("original"));
-      mMovie.addTitle(mAttributes.getValue("lang"), mText.toString(), original);
-    } else if ("movie".equals(qName)) {
+      mMovie.addTitle(mAttributes.getValue(ATTRIBUTE_LANG), mText.toString(), original);
+    } else if (ELEMENT_MOVIE.equals(qName)) {
       mMovieDatabase.addMovie(mMovie);
-    } if ("alternativetitle".equals(qName) && "movie".equals(parent)) {
-      mMovie.addAlternativeTitle(mAttributes.getValue("lang"), mText.toString());
+    } if (ELEMENT_ALTERNATIVETITLE.equals(qName) && ELEMENT_MOVIE.equals(parent)) {
+      mMovie.addAlternativeTitle(mAttributes.getValue(ATTRIBUTE_LANG), mText.toString());
     }
 
     mNodeNames.remove(mNodeNames.size() -1);
