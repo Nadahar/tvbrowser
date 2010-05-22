@@ -28,6 +28,8 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -111,7 +113,7 @@ final public class MovieAwardPlugin extends Plugin {
    * Database of movies to reduce duplication
    */
   private MovieDatabase mMovieDatabase = new MovieDatabase();
-  
+
   /**
    * disable graphical updates of root node during full award search
    */
@@ -141,18 +143,18 @@ final public class MovieAwardPlugin extends Plugin {
     return mVersion;
   }
 
-  public synchronized void initDatabase() {
+  synchronized public void initDatabase() {
     // might be called multiple times
     if (mMovieAwards == null) {
       MovieDataFactory.loadMovieDatabase(mMovieDatabase, getClass()
           .getResourceAsStream("data/moviedatabase.xml"));
       mMovieAwards = new ArrayList<MovieAward>();
-      
+
       for (String awardName : KNOWN_AWARDS) {
         MovieAward award = MovieDataFactory.loadMovieDataFromStream(getClass()
 		    .getResourceAsStream("data/" + awardName + ".xml"),
 		    mMovieDatabase);
-        
+
         if (award != null) {
         	mMovieAwards.add(award);
         }
@@ -172,8 +174,6 @@ final public class MovieAwardPlugin extends Plugin {
         }
       }
     }
-    
-    mLog.info("loaded movie award. " + mMovieAwards.size());
   }
 
   @Override
@@ -223,7 +223,7 @@ final public class MovieAwardPlugin extends Plugin {
     final Window window = UiUtilities.getLastModalChildOf(getParentFrame());
 
     final MovieAwardDialog dialog;
-    
+
     if (window instanceof JDialog) {
       dialog = new MovieAwardDialog((JDialog)window, mMovieAwards, program);
     } else {
@@ -234,7 +234,7 @@ final public class MovieAwardPlugin extends Plugin {
     //
     UiUtilities.registerForClosing(dialog);
     UiUtilities.centerAndShow(dialog);
-    
+
   }
 
   public boolean hasAwards(final Program program) {
@@ -286,7 +286,7 @@ final public class MovieAwardPlugin extends Plugin {
   public int getMarkPriorityForProgram(Program p) {
     return Program.NO_MARK_PRIORITY;
   }
-  
+
   @Override
   public PluginTreeNode getRootNode() {
     if (mRootNode == null) {
@@ -426,7 +426,15 @@ final public class MovieAwardPlugin extends Plugin {
         mRootNode.add(mDateNode);
       }
       else if (mSettings.isGroupingByAward()) {
-        for (PluginTreeNode award : mAwardNodes.values()) {
+        ArrayList<PluginTreeNode> nodes = new ArrayList<PluginTreeNode>(mAwardNodes.size());
+        nodes.addAll(mAwardNodes.values());
+        Collections.sort(nodes, new Comparator<PluginTreeNode>() {
+
+          public int compare(PluginTreeNode o1, PluginTreeNode o2) {
+            return o1.toString().compareTo(o2.toString());
+          }
+        });
+        for (PluginTreeNode award : nodes) {
           mRootNode.add(award);
         }
       } else if (mSettings.isGroupingByDate()) {
@@ -461,7 +469,7 @@ final public class MovieAwardPlugin extends Plugin {
         public boolean accept(final Program prog) {
          return hasAwards(prog);
         }
-      };      
+      };
     }
 
     return new PluginsProgramFilter[] {mFilter};
@@ -523,6 +531,6 @@ final public class MovieAwardPlugin extends Plugin {
   public Properties storeSettings() {
     return mSettings.storeSettings();
   }
-  
-  
+
+
 }
