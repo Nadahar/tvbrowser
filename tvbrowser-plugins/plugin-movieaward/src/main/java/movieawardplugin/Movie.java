@@ -46,8 +46,9 @@ public class Movie {
     return mId;
   }
 
-  public void addTitle(final String lang, final String title,
+  public void addTitle(final String lang, String title,
       final boolean original) {
+    title = title.trim();
     if (original) {
       mOriginalTitle = title;
     }
@@ -76,12 +77,12 @@ public class Movie {
 
   public void addAlternativeTitle(final String lang, final String title) {
     ArrayList<String> list = mAlternativeTitles.get(lang);
-    
+
     if (list == null) {
       list = new ArrayList<String>();
       mAlternativeTitles.put(lang, list);
     }
-    list.add(title.toLowerCase());
+    list.add(title.trim().toLowerCase());
   }
 
   public boolean matchesProgram(final Program program) {
@@ -135,7 +136,7 @@ public class Movie {
 
     return false;
   }
-  
+
   public final HashMap<String, String> getTitles() {
     return mTitles;
   }

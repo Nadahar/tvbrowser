@@ -41,7 +41,7 @@ public class MovieAward implements Comparable<MovieAward> {
   private String mProviderUrl;
 
   private MovieDatabase mMovieDatabase;
-  
+
   private MovieHashMap mMovies;
 
   public MovieAward(final MovieDatabase database) {
@@ -54,8 +54,9 @@ public class MovieAward implements Comparable<MovieAward> {
    * @param language Language (e.g. en, de, de-at)
    * @param name Name of the Award
    */
-  public void addName(final String language, final String name) {
-    mLog.info("Added movie award " + name + " (" + language + ')');
+  public void addName(String language, String name) {
+    language = language.trim();
+    name = name.trim();
     mNames.put(language.toLowerCase(), name);
   }
 
@@ -83,6 +84,9 @@ public class MovieAward implements Comparable<MovieAward> {
 
   public void setUrl(final String url) {
     mUrl = url;
+    if (mUrl != null) {
+      mUrl = mUrl.trim();
+    }
   }
 
   public String getUrl() {
@@ -148,7 +152,7 @@ public class MovieAward implements Comparable<MovieAward> {
     if (cat == null) {
       return category;
     }
-    
+
     String name = cat.getName(Locale.getDefault().getLanguage());
 
     if (name == null) {
@@ -159,11 +163,14 @@ public class MovieAward implements Comparable<MovieAward> {
   }
 
   public void setProviderName(final String providerName) {
-    mProviderName = providerName;
+    mProviderName = providerName.trim();
   }
 
   public void setProviderUrl(final String providerUrl) {
     mProviderUrl = providerUrl;
+    if (mProviderUrl != null) {
+      mProviderUrl = mProviderUrl.trim();
+    }
   }
 
   public String getProviderUrl() {
@@ -177,7 +184,7 @@ public class MovieAward implements Comparable<MovieAward> {
   public int compareTo(final MovieAward other) {
     return getName().compareTo(other.getName());
   }
-  
+
   public String toString() {
     return getName();
   }
