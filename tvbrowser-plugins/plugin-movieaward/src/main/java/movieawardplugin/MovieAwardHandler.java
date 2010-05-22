@@ -71,10 +71,9 @@ public class MovieAwardHandler extends DefaultHandler {
   private static final String ATTRIBUTE_ID = "id";
 
   private static final String CATEGORY = "category";
-  
-//Bolle Edit: Additional Information for Best Song and Animated Short Subject Category 
+
   private static final String ADD_INFO = "add_info";
-//  
+
   private static final Logger mLog = Logger.getLogger(MovieAwardHandler.class.getName());
 
   /**
@@ -121,11 +120,6 @@ public class MovieAwardHandler extends DefaultHandler {
     // A new tag begins -> Clear the text buffer
     clear(mText);
 
-    String parent = null;
-    if (mNodeNames.size() > 1) {
-      parent = mNodeNames.get(mNodeNames.size() - 2);
-    }
-
     mAttributes = new Properties();
 
     for (int i = 0; i < attributes.getLength(); i++) {
@@ -165,20 +159,17 @@ public class MovieAwardHandler extends DefaultHandler {
                                 attributes.getValue(MOVIE),
                                 year,
                                 attributes.getValue(RECIPIENT),
-                                //Bolle Edit: ADD_INFO added
                                 attributes.getValue(ADD_INFO)
           ));
     } else if (PROVIDED_BY.equals(qName)) {
       if (attributes.getValue(URL) != null) {
         mAward.setProviderUrl(attributes.getValue(URL));
       }
-    } else if (AWARD_DATA.equals(qName) || NAME.equals(qName)
+    } else if (!(AWARD_DATA.equals(qName) || NAME.equals(qName)
         || MOVIES.equals(qName) || AWARDS.equals(qName)
         || ALTERNATIVE_TITLE.equals(qName) || CATEGORIES.equals(qName)
         || CATEGORY.equals(qName) || TITLE.equals(qName)
-        || URL.equals(qName)) {
-      // Do nothing
-    } else {
+        || URL.equals(qName))) {
       mLog.log(Level.INFO, "Unknown Element : " + qName);
     }
 
