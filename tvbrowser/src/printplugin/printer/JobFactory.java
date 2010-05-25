@@ -63,8 +63,8 @@ public class JobFactory {
     DefaultPageModel pageModel = new DefaultPageModel();
     DefaultColumnModel colModel = new DefaultColumnModel("Spalte");
     pageModel.addColumn(colModel);
-    for (int i=0; i<programs.length; i++) {
-      colModel.addProgram(programs[i]);
+    for (Program program : programs) {
+      colModel.addProgram(program);
     }
 
 
@@ -101,14 +101,14 @@ public class JobFactory {
       Date date=startDate.addDays(dateInx);
       DefaultPageModel pageModel = new DefaultPageModel(date.getLongDateString());
       pageModelList.add(pageModel);
-      for (int chInx=0;chInx<channelArr.length;chInx++) {
+      for (Channel element : channelArr) {
         ArrayList<Program> progList = new ArrayList<Program>();
-        addProgramToList(progList, date, channelArr[chInx], dayStartHour, dayEndHour, settings.getProgramFilter());
+        addProgramToList(progList, date, element, dayStartHour, dayEndHour, settings.getProgramFilter());
         Program[] progArr=new Program[progList.size()];
         progList.toArray(progArr);
-                
+
         if (progArr.length>0) {
-          pageModel.addColumn(new DefaultColumnModel(channelArr[chInx].getName(), progArr));
+          pageModel.addColumn(new DefaultColumnModel(element.getName(), progArr));
         }
       }
     }
@@ -124,19 +124,13 @@ public class JobFactory {
 
 
   private static void addProgramToList(ArrayList<Program> progList, Date date, Channel channel, int startHour, int endHour, ProgramFilter filter) {
-    // add programs of the current day
-    for (Iterator<Program> it = Plugin.getPluginManager().getChannelDayProgram(date,channel); it.hasNext();) {
-      Program prog = it.next();
-      if (prog.getHours()>=startHour && prog.getHours()<endHour && filter.accept(prog)) {
-        progList.add(prog);
-      }
-    }
-
-    // add programs of the next day
-    if (endHour>=24) {
-      for (Iterator<Program> it = Plugin.getPluginManager().getChannelDayProgram(date.addDays(1),channel); it.hasNext();) {
+    for (int dateOffset = -1; dateOffset <= 1; dateOffset++) {
+      for (Iterator<Program> it = Plugin.getPluginManager().getChannelDayProgram(date.addDays(dateOffset),channel); it.hasNext();) {
         Program prog = it.next();
-        if (prog.getHours() < endHour-24 && filter.accept(prog)) {
+        if (prog.getDate().getNumberOfDaysSince(date) == 0 && prog.getHours()>=startHour && prog.getHours()<endHour && filter.accept(prog)) {
+          progList.add(prog);
+        }
+        else if (prog.getDate().getNumberOfDaysSince(date) == 1 && prog.getHours()>=startHour-24 && prog.getHours()<endHour-24 && filter.accept(prog)) {
           progList.add(prog);
         }
       }
