@@ -5,12 +5,12 @@
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  *
@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -37,11 +38,11 @@ import java.util.Map.Entry;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Icon;
-import javax.swing.SwingUtilities;
 
 import util.io.IOUtilities;
 import util.program.ProgramUtilities;
 import util.ui.Localizer;
+import util.ui.UIThreadRunner;
 import devplugin.Date;
 import devplugin.NodeFormatter;
 import devplugin.Plugin;
@@ -65,7 +66,7 @@ public class MarkList extends Vector<Program> {
 
   private String mName;
   private String mId;
-  transient private PluginTreeNode mRootNode;
+  private transient PluginTreeNode mRootNode;
   private Hashtable<String, LinkedList<Program>> mProgram = new Hashtable<String, LinkedList<Program>>();
   private Icon mMarkIcon;
   private String mMarkIconPath;
@@ -77,12 +78,12 @@ public class MarkList extends Vector<Program> {
     private final String mProgramId;
     private final Date mDate;
 
-    public MarkListProgramItem(final Date date, final String programId) {
+    MarkListProgramItem(final Date date, final String programId) {
       mProgramId = programId;
       mDate = date;
     }
 
-    public Program getProgram() {
+    Program getProgram() {
       return Plugin.getPluginManager().getProgram(mDate, mProgramId);
     }
   }
@@ -191,7 +192,7 @@ public class MarkList extends Vector<Program> {
         }
       }
     }
-    
+
     if(version >= 6) {
       mProgramImportance = in.readByte();
     }
@@ -261,7 +262,7 @@ public class MarkList extends Vector<Program> {
     for (ProgramReceiveTarget target : mReceiveTargets) {
       target.writeData(out);
     }
-    
+
     out.writeByte(mProgramImportance);
   }
 
@@ -278,20 +279,28 @@ public class MarkList extends Vector<Program> {
       private static final long serialVersionUID = 1L;
 
       public void actionPerformed(final ActionEvent e) {
-        SwingUtilities.invokeLater(new Runnable() {
-          @Override
-          public void run() {
-            if (contains(p)) {
-              removeElement(p);
-              SimpleMarkerPlugin.getInstance().revalidate(new Program[] { p });
-            } else {
-              addProgram(p);
+        try {
+          UIThreadRunner.invokeAndWait(new Runnable() {
+            @Override
+            public void run() {
+              if (contains(p)) {
+                removeElement(p);
+                SimpleMarkerPlugin.getInstance().revalidate(new Program[] { p });
+              } else {
+                addProgram(p);
+              }
+              createNodes(mRootNode, true);
+              SimpleMarkerPlugin.getInstance().refreshManagePanel(false);
+              SimpleMarkerPlugin.getInstance().save();
             }
-            createNodes(mRootNode, true);
-            SimpleMarkerPlugin.getInstance().refreshManagePanel(false);
-            SimpleMarkerPlugin.getInstance().save();
-          }
-        });
+          });
+        } catch (InterruptedException e1) {
+          // TODO Auto-generated catch block
+          e1.printStackTrace();
+        } catch (InvocationTargetException e1) {
+          // TODO Auto-generated catch block
+          e1.printStackTrace();
+        }
       }
     };
 
@@ -323,7 +332,7 @@ public class MarkList extends Vector<Program> {
    * <p>
    * @param p The program to add.
    */
-  public void addProgram(Program p) {
+  void addProgram(Program p) {
     if (mReceiveTargets != null) {
       for (ProgramReceiveTarget target:mReceiveTargets){
         target.receivePrograms(new Program[] {p});
@@ -416,20 +425,20 @@ public class MarkList extends Vector<Program> {
               public String format(ProgramItem pitem) {
                 Program p = pitem.getProgram();
                 Date progDate = p.getDate();
-                String progdate;
+                String progDateText;
 
                 if (progDate.equals(currentDate.addDays(-1))) {
-                  progdate = Localizer
+                  progDateText = Localizer
                       .getLocalization(Localizer.I18N_YESTERDAY);
                 } else if (progDate.equals(currentDate)) {
-                  progdate = Localizer.getLocalization(Localizer.I18N_TODAY);
+                  progDateText = Localizer.getLocalization(Localizer.I18N_TODAY);
                 } else if (progDate.equals(currentDate.addDays(1))) {
-                  progdate = Localizer.getLocalization(Localizer.I18N_TOMORROW);
+                  progDateText = Localizer.getLocalization(Localizer.I18N_TOMORROW);
                 } else {
-                  progdate = p.getDateString();
+                  progDateText = p.getDateString();
                 }
 
-                return (progdate + "  " + p.getTimeString() + "  " + p
+                return (progDateText + "  " + p.getTimeString() + "  " + p
                     .getChannel());
               }
             });
@@ -639,7 +648,7 @@ public class MarkList extends Vector<Program> {
   public byte getProgramImportance() {
     return mProgramImportance;
   }
-  
+
   /**
    * Sets the importance value of this list.
    *
@@ -672,7 +681,7 @@ public class MarkList extends Vector<Program> {
   /**
    * convert the program items to programs after start finished
    */
-  public void loadPrograms() {
+  void loadPrograms() {
     for (MarkListProgramItem programItem : mProgramItems) {
       Program program = programItem.getProgram();
       if (program != null) {
