@@ -48,7 +48,7 @@ import devplugin.ProgramFieldType;
 
 /**
  * Parses the RadioTimes Data
- * 
+ *
  * @author bodum
  */
 public class RadioTimesFileParser {
@@ -56,10 +56,10 @@ public class RadioTimesFileParser {
   /** The logger for this class. */
   private static final Logger mLog
     = Logger.getLogger(RadioTimesFileParser.class.getName());
-  
+
   /** Channel */
   private Channel mChannel;
-  
+
   /**
    * map of lazily created update channel day programs
    */
@@ -101,7 +101,7 @@ public class RadioTimesFileParser {
 
   /**
    * Parse the Data
-   * 
+   *
    * @param updateManager
    * @param endDate
    * @throws Exception
@@ -112,11 +112,11 @@ public class RadioTimesFileParser {
     urlString.append(".dat");
 
     StreamUtilities.inputStream(new URL(urlString.toString()), new InputStreamProcessor() {
-      
+
       @Override
       public void process(InputStream inputStream) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "UTF8"));
-        
+
         int countProgram = 0;
         String line;
         String lastLine = "";
@@ -133,11 +133,11 @@ public class RadioTimesFileParser {
               }
               Date date = parseDate(items[RT_DATE]);
               MutableChannelDayProgram mutDayProg = getMutableDayProgram(date);
-              
+
               int[] time = parseTime(items[RT_START_TIME]);
-              
+
               MutableProgram prog = new MutableProgram(mChannel,date, time[0], time[1], true);
-              
+
               prog.setTitle(items[RT_TITLE]);
 
               StringBuilder desc = new StringBuilder(items[RT_SUBTITLE].trim()).append("\n\n");
@@ -160,7 +160,7 @@ public class RadioTimesFileParser {
               if (field.length() > 0) {
                 prog.setTextField(ProgramFieldType.EPISODE_TYPE, field);
               }
-              
+
               field = items[RT_YEAR];
               if (field.length() > 0) {
                 try {
@@ -181,18 +181,18 @@ public class RadioTimesFileParser {
               if (field.length() > 0) {
                 prog.setTextField(ProgramFieldType.DIRECTOR_TYPE, field);
               }
-              
+
               field = items[RT_ACTORS];
               if (field.length() > 0) {
                 prog.setTextField(ProgramFieldType.ACTOR_LIST_TYPE, createCast(field));
               }
-              
+
               int bitset = 0;
-              
+
               field = items[RT_GENRE];
               if ((field.length() > 0)&& (!field.equals("No Genre"))) {
                 prog.setTextField(ProgramFieldType.GENRE_TYPE, field);
-                
+
                 if (field.equals("Animation")) {
                   bitset |= Program.INFO_CATEGORIE_SERIES;
                 } else if (field.equals("Business")) {
@@ -228,7 +228,7 @@ public class RadioTimesFileParser {
                 } else if (field.equals("Music and Arts")) {
                   bitset |= Program.INFO_CATEGORIE_ARTS;
                 } else if (field.equals("News and Current Affairs")) {
-                  bitset |= Program.INFO_CATEGORIE_NEWS;                
+                  bitset |= Program.INFO_CATEGORIE_NEWS;
                 } else if (field.equals("Science")) {
                   bitset |= Program.INFO_CATEGORIE_MAGAZINE_INFOTAINMENT;
                 } else if (field.equals("Sitcom")) {
@@ -243,9 +243,9 @@ public class RadioTimesFileParser {
                   //
                 } else if (field.equals("Youth")) {
                   //
-                  
+
                 } else if (field.equals("Environment")) {
-                  bitset |= Program.INFO_CATEGORIE_MAGAZINE_INFOTAINMENT;  
+                  bitset |= Program.INFO_CATEGORIE_MAGAZINE_INFOTAINMENT;
                 } else if (field.equals("Religion")) {
                   //
                 } else if (field.equals("Transport")) {
@@ -256,29 +256,29 @@ public class RadioTimesFileParser {
                   //
                 } else if (field.equals("Disability")) {
                   //not used?
-                } 
+                }
               }
 
               if (Boolean.parseBoolean(items[RT_SUBTITLED])) {
                 bitset |= Program.INFO_SUBTITLE_FOR_AURALLY_HANDICAPPED;
               }
-              
+
               if (Boolean.parseBoolean(items[RT_DEAF_SIGNED])) {
                 bitset |= Program.INFO_SIGN_LANGUAGE;
               }
-              
+
               if (Boolean.parseBoolean(items[RT_16_TO_9])) {
                 bitset |= Program.INFO_VISION_16_TO_9;
               }
-              
+
               if (Boolean.parseBoolean(items[RT_BLACK_WHITE])) {
                 bitset |= Program.INFO_VISION_BLACK_AND_WHITE;
               }
-              
+
               if (Boolean.parseBoolean(items[RT_MOVIE])) {
                 bitset |= Program.INFO_CATEGORIE_MOVIE;
               }
-              
+
               if (Boolean.parseBoolean(items[RT_MOVIE_PREMIERE])) {
                 bitset |= Program.INFO_NEW;
               }
@@ -287,19 +287,20 @@ public class RadioTimesFileParser {
                 bitset |= Program.INFO_NEW;
                 bitset |= Program.INFO_CATEGORIE_MOVIE;
               }
-      
+
               prog.setInfo(bitset);
-              
+
               try {
                 int age = Integer.parseInt(items[RT_AGE_LIMIT]);
                 prog.setIntField(ProgramFieldType.AGE_LIMIT_TYPE, age);
               } catch (Exception e) {
+                // do nothing if field is non numeric
               }
-              
-              
+
+
               int[] endtime = parseTime(items[RT_END_TIME]);
               prog.setTimeField(ProgramFieldType.END_TIME_TYPE, endtime[0] * 60 + endtime[1]);
-              
+
               prog.setProgramLoadingIsComplete();
               mutDayProg.addProgram(prog);
               countProgram ++;
@@ -331,15 +332,15 @@ public class RadioTimesFileParser {
     storeDayPrograms(updateManager);
   }
 
-  private int translateRating(final String rating) {
+  private static int translateRating(final String rating) {
     if (rating.equals("1")) {
-      return 20;
+      return 0;
     } else if (rating.equals("2")) {
-      return 40;
+      return 25;
     } else if (rating.equals("3")) {
-      return 60;
+      return 50;
     } else if (rating.equals("4")) {
-      return 80;
+      return 75;
     } else if (rating.equals("5")) {
       return 100;
     }
@@ -355,7 +356,7 @@ public class RadioTimesFileParser {
     for (MutableChannelDayProgram newDayProg : getAllMutableDayPrograms()) {
       // compare new and existing programs to avoid unnecessary updates
       boolean update = true;
-      
+
       Iterator<Program> itCurrProg = AbstractTvDataService.getPluginManager().getChannelDayProgram(newDayProg.getDate(), mChannel);
       Iterator<Program> itNewProg = newDayProg.getPrograms();
       update = false;
@@ -380,22 +381,22 @@ public class RadioTimesFileParser {
    * @param string Analyze this String
    * @return Create Actor List from String
    */
-  private String createCast(String string) {
+  private static String createCast(String string) {
     if (string.contains("|")) {
       StringBuilder actors = new StringBuilder();
-      
+
       String[] actorlist = string.split("\\|");
-      
+
       for (String actor : actorlist) {
         String[] names = actor.split("\\*");
-        
+
         if (names.length == 2) {
           actors.append(names[1]).append('\t').append(names[0]).append('\n');
         } else {
           actors.append(names[0]).append('\n');
         }
       }
-      
+
       return actors.toString();
     } else {
       return string.trim();
@@ -406,7 +407,7 @@ public class RadioTimesFileParser {
    * @param string Parse this Time
    * @return {hour, minute}
    */
-  private int[] parseTime(String string) {
+  private static int[] parseTime(String string) {
     int[] times = new int[2];
     times[0] = Integer.parseInt(string.substring(0, 2));
     times[1] = Integer.parseInt(string.substring(3, 5));
@@ -415,20 +416,20 @@ public class RadioTimesFileParser {
 
   /**
    * Parse Date
-   * 
+   *
    * @param string Date to parse
    * @return Date
    * @throws Exception
    */
-  private Date parseDate(String string) throws Exception {
+  private static Date parseDate(String string) {
     int day   = Integer.parseInt(string.substring(0, 2));
     int month = Integer.parseInt(string.substring(3, 5));
     int year  = Integer.parseInt(string.substring(6));
-    
+
     if (year < 2000) {
       year += 2000;
     }
-    
+
     return new Date(year, month, day);
   }
 
@@ -445,12 +446,12 @@ public class RadioTimesFileParser {
    */
   private MutableChannelDayProgram getMutableDayProgram(Date date) {
     MutableChannelDayProgram dayProgram = mMutMap.get(date);
-    
+
     if (dayProgram == null) {
       dayProgram = new MutableChannelDayProgram(date, mChannel);
       mMutMap.put(date, dayProgram);
     }
-   
+
     return dayProgram;
   }
 
