@@ -16,6 +16,8 @@
  */
 package filterviewplugin;
 
+import java.awt.Frame;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Properties;
 
@@ -37,10 +39,10 @@ import devplugin.Version;
  * @author bananeweizen
  *
  */
-final public class FilterViewPlugin extends Plugin {
+public final class FilterViewPlugin extends Plugin {
   private static final boolean IS_STABLE = false;
 
-  private static final Version mVersion = new Version(2, 70, 1, IS_STABLE);
+  private static final Version mVersion = new Version(2, 70, 2, IS_STABLE);
 
   private PluginInfo mPluginInfo;
 
@@ -96,13 +98,14 @@ final public class FilterViewPlugin extends Plugin {
     root.clear();
     for (ProgramFilter filter : mSettings.getActiveFilters()) {
       PluginTreeNode filterNode = root.addNode(filter.getName());
+      filterNode.getMutableTreeNode().setIcon(mSettings.getFilterIcon(filter));
       filterNode.addAction(new SetFilterAction(filter));
       final Channel[] channels = devplugin.Plugin.getPluginManager().getSubscribedChannels();
       Date date = Date.getCurrentDate();
       final int maxDays = mSettings.getDays();
       for (int days = 0; days < maxDays; days++) {
-        for (int i = 0; i < channels.length; ++i) {
-          for (Iterator<Program> iter = devplugin.Plugin.getPluginManager().getChannelDayProgram(date, channels[i]); iter
+        for (Channel channel : channels) {
+          for (Iterator<Program> iter = devplugin.Plugin.getPluginManager().getChannelDayProgram(date, channel); iter
               .hasNext();) {
             final Program prog = iter.next();
             if (filter.accept(prog)) {
@@ -156,5 +159,32 @@ final public class FilterViewPlugin extends Plugin {
 
   private static void setInstance(final FilterViewPlugin plugin) {
     instance = plugin;
+  }
+
+  @Override
+  public Icon[] getProgramTableIcons(Program program) {
+    ArrayList<Icon> list = new ArrayList<Icon>();
+    for (ProgramFilter filter : mSettings.getActiveFiltersWithIcon()) {
+      if (filter.accept(program)) {
+        list.add(mSettings.getFilterIcon(filter));
+      }
+    }
+    if (list.isEmpty()) {
+      return null;
+    }
+    return list.toArray(new Icon[list.size()]);
+  }
+
+  @Override
+  public String getProgramTableIconText() {
+    return mLocalizer.msg("iconText", "Filter icons");
+  }
+
+  Frame getSuperFrame() {
+    return super.getParentFrame();
+  }
+
+  Icon getIcon(final String fileName) {
+    return createImageIconForFileName(fileName);
   }
 }
