@@ -16,11 +16,16 @@
  */
 package filterviewplugin;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
+
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -33,12 +38,16 @@ class FilterViewSettings extends PropertyBasedSettings {
   private static final String KEY_FILTER_NAMES = "filterNames";
   private static final String SEPARATOR = "|||";
   private static final String KEY_DAYS = "days";
+  private static final String KEY_ICON = "icon";
+  private HashMap<ProgramFilter, Icon> mIconCache = new HashMap<ProgramFilter, Icon>();
+  private ProgramFilter[] mActiveFilters;
+  private ProgramFilter[] mActiveFiltersWithIcon;
 
-  public FilterViewSettings(final Properties properties) {
+  FilterViewSettings(final Properties properties) {
     super(properties);
   }
 
-  public String[] getAvailableFilterNames() {
+  static String[] getAvailableFilterNames() {
     ArrayList<String> names = new ArrayList<String>();
     for (ProgramFilter filter : getAvailableFilters()) {
       names.add(filter.getName());
@@ -46,7 +55,7 @@ class FilterViewSettings extends PropertyBasedSettings {
     return names.toArray(new String[names.size()]);
   }
 
-  private ProgramFilter[] getAvailableFilters() {
+  private static ProgramFilter[] getAvailableFilters() {
     ProgramFilter[] allFilters = Plugin.getPluginManager().getFilterManager().getAvailableFilters().clone();
     Arrays.sort(allFilters, new Comparator<ProgramFilter>() {
 
@@ -59,32 +68,94 @@ class FilterViewSettings extends PropertyBasedSettings {
     return filters.toArray(new ProgramFilter[filters.size()]);
   }
 
-  public String[] getActiveFilterNames() {
+  String[] getActiveFilterNames() {
     return StringUtils.split(get(KEY_FILTER_NAMES, ""), SEPARATOR);
   }
 
-  public ProgramFilter[] getActiveFilters() {
-    ArrayList<ProgramFilter> result = new ArrayList<ProgramFilter>();
-    List<String> filterNames = Arrays.asList(getActiveFilterNames());
-    for (ProgramFilter filter : Plugin.getPluginManager().getFilterManager().getAvailableFilters()) {
-      if (filterNames.contains(filter.getName())) {
-        result.add(filter);
+  ProgramFilter[] getActiveFilters() {
+    if (mActiveFilters == null) {
+      ArrayList<ProgramFilter> list = new ArrayList<ProgramFilter>();
+      List<String> filterNames = Arrays.asList(getActiveFilterNames());
+      for (ProgramFilter filter : Plugin.getPluginManager().getFilterManager().getAvailableFilters()) {
+        if (filterNames.contains(filter.getName())) {
+          list.add(filter);
+        }
       }
+      mActiveFilters = list.toArray(new ProgramFilter[list.size()]);
     }
-    return result.toArray(new ProgramFilter[result.size()]);
+    return mActiveFilters;
   }
 
-  public void setActiveFilterNames(Object[] objects) {
+  ProgramFilter[] getActiveFiltersWithIcon() {
+    if (mActiveFiltersWithIcon == null) {
+      ArrayList<ProgramFilter> list = new ArrayList<ProgramFilter>();
+      for (ProgramFilter filter : getActiveFilters()) {
+        if (getFilterIcon(filter) != null) {
+          list.add(filter);
+        }
+      }
+      mActiveFiltersWithIcon = list.toArray(new ProgramFilter[list.size()]);
+    }
+    return mActiveFiltersWithIcon;
+  }
+
+  void setActiveFilterNames(Object[] objects) {
     set(KEY_FILTER_NAMES, StringUtils.join(objects, SEPARATOR));
+    mActiveFilters = null;
+    mActiveFiltersWithIcon = null;
     FilterViewPlugin.getInstance().updateRootNode();
   }
 
-  public int getDays() {
+  int getDays() {
     return get(KEY_DAYS, 3);
   }
 
-  public void setDays(int days) {
+  void setDays(int days) {
     set(KEY_DAYS, days);
   }
 
+  public Icon getFilterIcon(ProgramFilter filter) {
+    if (!mIconCache.containsKey(filter)) {
+      String fileName = getFilterIconName(filter);
+      if (!StringUtils.isEmpty(fileName)) {
+        mIconCache.put(filter, new ImageIcon(getIconDirectoryName() + File.separatorChar + fileName));
+      }
+      else {
+        mIconCache.put(filter, null);
+      }
+    }
+    return mIconCache.get(filter);
+  }
+
+  static String getIconDirectoryName() {
+    File dir = new File(Plugin.getPluginManager().getTvBrowserSettings().getTvBrowserUserHome(),"filtericons");
+    return dir.toString();
+  }
+
+  String getFilterIconName(ProgramFilter filter) {
+    String fileName = get(KEY_ICON + filter.getName());
+    if (StringUtils.isEmpty(fileName)) {
+      return null;
+    }
+    return fileName;
+  }
+
+  protected ProgramFilter getFilter(final String filterName) {
+    for (ProgramFilter filter : Plugin.getPluginManager().getFilterManager().getAvailableFilters()) {
+      if (filter.getName().equalsIgnoreCase(filterName)) {
+        return filter;
+      }
+    }
+    return null;
+  }
+
+  public void setFilterIconName(final ProgramFilter filter, final String fileName) {
+    mIconCache.clear();
+    mActiveFiltersWithIcon = null;
+    if (StringUtils.isEmpty(fileName)) {
+      set(KEY_ICON + filter.getName(), "");
+      return;
+    }
+    set(KEY_ICON + filter.getName(), fileName);
+  }
 }

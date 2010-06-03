@@ -28,7 +28,7 @@ class SetFilterAction extends ContextMenuAction {
   private ProgramFilter mFilter;
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(SetFilterAction.class);
 
-  public SetFilterAction(final ProgramFilter filter) {
+  SetFilterAction(final ProgramFilter filter) {
     super(mLocalizer.msg("filter", "Set as active filter"));
     mFilter = filter;
   }
