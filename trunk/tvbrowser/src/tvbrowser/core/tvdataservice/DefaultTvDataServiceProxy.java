@@ -28,6 +28,8 @@ package tvbrowser.core.tvdataservice;
 
 import java.awt.Frame;
 import java.io.File;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Properties;
 import java.util.logging.Logger;
 
@@ -60,13 +62,15 @@ public class DefaultTvDataServiceProxy extends AbstractTvDataServiceProxy {
     errorMsg.append("' has caused an error during ");
     errorMsg.append(action).append(": ");
     errorMsg.append(e.getLocalizedMessage()).append("\n");
-    
-    StackTraceElement[] stacktrace = e.getStackTrace();
-    
-    for (int i = 0; i < stacktrace.length; i++) {
-      errorMsg.append(stacktrace[i].toString()).append("\n");
-    }
-    
+
+    // print stack trace
+    StringWriter stringWriter = new StringWriter();
+    PrintWriter printWriter = new PrintWriter(stringWriter, true);
+    e.printStackTrace(printWriter);
+    printWriter.flush();
+    stringWriter.flush();
+    errorMsg.append(stringWriter.toString());
+
     mLog.severe(errorMsg.toString());
   }
 
