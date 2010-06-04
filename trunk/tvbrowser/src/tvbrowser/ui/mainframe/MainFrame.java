@@ -1448,6 +1448,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
   public void scrollToTime(int time) {
     mProgramTableScrollPane.deSelectItem();
     mProgramTableScrollPane.scrollToTime(time);
+    mProgramTableScrollPane.requestFocusInWindow();
   }
 
   public void scrollToNow() {
@@ -1456,6 +1457,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     int hour = cal.get(Calendar.HOUR_OF_DAY);
     devplugin.Date day = new devplugin.Date();
     scrollTo(day, hour * 60 + cal.get(Calendar.MINUTE));
+    mProgramTableScrollPane.requestFocusInWindow();
   }
 
   private void scrollTo(Date day, int minute) {

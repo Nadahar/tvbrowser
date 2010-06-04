@@ -46,6 +46,7 @@ import javax.swing.Icon;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
+import javax.swing.SwingConstants;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
@@ -86,8 +87,8 @@ public class DefaultToolBarModel implements ToolBarModel, DateListener {
 
   private Action mUpdateAction, mSettingsAction, mFilterAction,
       mPluginViewAction, mSeparatorAction, mScrollToNowAction,
-      mGoToTodayAction, mGoToPreviousDayAction, mGoToNextDayAction, 
-      mGoToPreviousWeekAction, mGoToNextWeekAction, 
+      mGoToTodayAction, mGoToPreviousDayAction, mGoToNextDayAction,
+      mGoToPreviousWeekAction, mGoToNextWeekAction,
       mGoToDateAction, mScrollToChannelAction, mScrollToTimeAction,
       mGlueAction, mSpaceAction, mFontSizeSmallerAction, mFontSizeLargerAction;
 
@@ -98,7 +99,7 @@ public class DefaultToolBarModel implements ToolBarModel, DateListener {
     mSeparatorAction = getSeparatorAction();
     mGlueAction = getGlueAction();
     mSpaceAction = getSpaceAction();
-    
+
     setButtonIds(buttonIds);
   }
 
@@ -120,14 +121,14 @@ public class DefaultToolBarModel implements ToolBarModel, DateListener {
 
   public void setFilterButtonSelected(boolean arg) {
     mFilterAction.putValue(ToolBar.ACTION_IS_SELECTED, Boolean.valueOf(arg));
-    
+
     if (arg) {
       mFilterAction.putValue(Action.SMALL_ICON,
           IconLoader.getInstance().getIconFromTheme("status","view-filter-set-list",16));
-      mFilterAction.putValue(Plugin.BIG_ICON, 
+      mFilterAction.putValue(Plugin.BIG_ICON,
           IconLoader.getInstance().getIconFromTheme("status","view-filter-set-list",22));
     } else {
-      mFilterAction.putValue(Action.SMALL_ICON, 
+      mFilterAction.putValue(Action.SMALL_ICON,
           IconLoader.getInstance().getIconFromTheme("actions","view-filter-list",16));
       mFilterAction.putValue(Plugin.BIG_ICON,
           IconLoader.getInstance().getIconFromTheme("actions","view-filter-list",22));
@@ -155,26 +156,26 @@ public class DefaultToolBarModel implements ToolBarModel, DateListener {
     updateTimeButtons();
 
     InternalPluginProxyIf[] internalPlugins = InternalPluginProxyList.getInstance().getAvailableProxys();
-    
+
     for (InternalPluginProxyIf internalPlugin : internalPlugins) {
       if(internalPlugin instanceof ButtonActionIf) {
         createPluginAction((ButtonActionIf)internalPlugin);
       }
     }
-    
+
     PluginProxy[] pluginProxys = PluginProxyManager.getInstance().getActivatedPlugins();
-    
-    for (int i = 0; i < pluginProxys.length; i++) {
-      createPluginAction(pluginProxys[i]);
+
+    for (PluginProxy pluginProxy : pluginProxys) {
+      createPluginAction(pluginProxy);
     }
-    
+
     TvDataServiceProxy[] dataServiceProxys = TvDataServiceProxyManager.getInstance().getDataServices();
-    
+
     for(TvDataServiceProxy dataServiceProxy : dataServiceProxys) {
       createPluginAction(dataServiceProxy);
     }
   }
-  
+
   private void createPluginAction(ButtonActionIf plugin) {
     ActionMenu actionMenu = plugin.getButtonAction();
     if (actionMenu != null) {
@@ -191,7 +192,7 @@ public class DefaultToolBarModel implements ToolBarModel, DateListener {
       }
     }
   }
-  
+
   private void createPluginAction(ButtonActionIf plugin, ActionMenu[] subMenus) {
     for(ActionMenu menu : subMenus) {
       if(menu.hasSubItems()) {
@@ -217,21 +218,21 @@ public class DefaultToolBarModel implements ToolBarModel, DateListener {
       }
     }
   }
-  
+
   protected void updatePluginButtons() {
     PluginProxy[] activatedPlugins = PluginProxyManager.getInstance().getActivatedPlugins();
-    
+
     for(int i = 0; i < activatedPlugins.length; i++) {
       if(!mAvailableActions.containsKey(activatedPlugins[i].getId())) {
         createPluginAction(activatedPlugins[i]);
-        
+
         String[] buttonNames = Settings.propToolbarButtons.getStringArray();
-        
+
         if(buttonNames != null) {
           for (int j = 0; j < buttonNames.length; j++) {
             if(buttonNames[j].compareTo(activatedPlugins[i].getId()) == 0) {
               Action action = mAvailableActions.get(buttonNames[j]);
-          
+
               if(action != null) {
                 int index = mVisibleActions.size();
                 mVisibleActions.add(j > index ? index : j , action);
@@ -241,16 +242,16 @@ public class DefaultToolBarModel implements ToolBarModel, DateListener {
         }
       }
     }
-    
+
     String[] deactivatedPlugins = PluginProxyManager.getInstance().getDeactivatedPluginIds();
-    
-    for(int i = 0; i < deactivatedPlugins.length; i++) {
-      if(mAvailableActions.containsKey(deactivatedPlugins[i])) {
-        mVisibleActions.remove(mAvailableActions.remove(deactivatedPlugins[i]));
+
+    for (String deactivatedPlugin : deactivatedPlugins) {
+      if(mAvailableActions.containsKey(deactivatedPlugin)) {
+        mVisibleActions.remove(mAvailableActions.remove(deactivatedPlugin));
       }
     }
   }
-  
+
   protected void updateTimeButtons() {
     String[] keys = new String[mAvailableActions.keySet().size()];
     mAvailableActions.keySet().toArray(keys);
@@ -308,27 +309,27 @@ public class DefaultToolBarModel implements ToolBarModel, DateListener {
 
   private void createVisibleActions(String[] buttonNames) {
     mVisibleActions = new ArrayList<Action>();
-    for (int i = 0; i < buttonNames.length; i++) {
-      Action action = mAvailableActions.get(buttonNames[i]);
-      
+    for (String buttonName : buttonNames) {
+      Action action = mAvailableActions.get(buttonName);
+
       if (action != null) {
         mVisibleActions.add(action);
-      } else if ("#separator".equals(buttonNames[i])) {
+      } else if ("#separator".equals(buttonName)) {
         mVisibleActions.add(mSeparatorAction);
-      } else if ("#glue".equals(buttonNames[i])) {
+      } else if ("#glue".equals(buttonName)) {
         mVisibleActions.add(mGlueAction);
-      } else if ("#space".equals(buttonNames[i])) {
+      } else if ("#space".equals(buttonName)) {
         mVisibleActions.add(mSpaceAction);
-      } else if (buttonNames[i].equals("java.searchplugin.SearchPlugin") || buttonNames[i].equals("#search")) {
+      } else if (buttonName.equals("java.searchplugin.SearchPlugin") || buttonName.equals("#search")) {
         mVisibleActions.add(mAvailableActions.get("searchplugin.SearchPlugin"));
-      } else if (buttonNames[i].equals("java.reminderplugin.ReminderPlugin") || buttonNames[i].equals("#reminder")) {
+      } else if (buttonName.equals("java.reminderplugin.ReminderPlugin") || buttonName.equals("#reminder")) {
         mVisibleActions.add(mAvailableActions.get("reminderplugin.ReminderPlugin"));
-      } else if (buttonNames[i].equals("java.favoritesplugin.FavoritesPlugin") || buttonNames[i].equals("#favorite")) {
+      } else if (buttonName.equals("java.favoritesplugin.FavoritesPlugin") || buttonName.equals("#favorite")) {
         mVisibleActions.add(mAvailableActions.get("favoritesplugin.FavoritesPlugin"));
       } else { // if the buttonName is not valid, we try to add the
         // prefix '.java' - maybe it's a plugin from
         // TV-Browser 1.0
-        action = mAvailableActions.get("java." + buttonNames[i]);
+        action = mAvailableActions.get("java." + buttonName);
         if (action != null) {
           mVisibleActions.add(action);
         }
@@ -342,11 +343,11 @@ public class DefaultToolBarModel implements ToolBarModel, DateListener {
     mVisibleActions.add(mUpdateAction);
     mVisibleActions.add(mPluginViewAction);
     mVisibleActions.add(mSettingsAction);
-    
+
     // internal plugins
     mVisibleActions.add(getSeparatorAction());
     InternalPluginProxyIf[] internalPlugins = InternalPluginProxyList.getInstance().getAvailableProxys();
-    
+
     for(InternalPluginProxyIf internalPlugin : internalPlugins) {
       if(internalPlugin instanceof ButtonActionIf) {
         addButtonActionIfToVisibleActions((ButtonActionIf)internalPlugin);
@@ -356,30 +357,30 @@ public class DefaultToolBarModel implements ToolBarModel, DateListener {
     // activated default plugins
     mVisibleActions.add(getSeparatorAction());
     PluginProxy[] pluginProxys = PluginProxyManager.getInstance().getActivatedPlugins();
-    
-    for (int i = 0; i < pluginProxys.length; i++) {
-      addButtonActionIfToVisibleActions(pluginProxys[i]);
+
+    for (PluginProxy pluginProxy : pluginProxys) {
+      addButtonActionIfToVisibleActions(pluginProxy);
     }
-    
+
     // remaining actions right aligned
     mVisibleActions.add(getGlueAction());
-    
+
     // filter and view
     mVisibleActions.add(mFilterAction);
     mVisibleActions.add(getSeparatorAction());
     mVisibleActions.add(mFontSizeSmallerAction);
     mVisibleActions.add(mFontSizeLargerAction);
     mVisibleActions.add(getSeparatorAction());
-    
+
     // date navigation
     mVisibleActions.add(mGoToPreviousDayAction);
     mVisibleActions.add(mGoToTodayAction);
     mVisibleActions.add(mGoToNextDayAction);
     mVisibleActions.add(mScrollToNowAction);
-    
+
     // search bar has its own space, so we don't add the space action
   }
-  
+
   private void addButtonActionIfToVisibleActions(ButtonActionIf buttonAction) {
     ActionMenu actionMenu = buttonAction.getButtonAction();
     if (actionMenu != null) {
@@ -417,19 +418,19 @@ public class DefaultToolBarModel implements ToolBarModel, DateListener {
         public void paintIcon(Component c, Graphics g, int x, int y) {
           int width = c.getWidth();
           int height = c.getHeight();
-          
+
           int xStart = width/2 - 1;
-          
+
           g.setColor(c.getBackground().darker().darker());
           g.drawLine(xStart,1,xStart++,height/2);
           g.setColor(c.getBackground().brighter());
-          g.drawLine(xStart,1,xStart,height/2);          
-        }        
+          g.drawLine(xStart,1,xStart,height/2);
+        }
       });
     }
     return mSeparatorAction;
   }
-  
+
   public Action getGlueAction() {
     if(mGlueAction == null) {
       mGlueAction = new AbstractAction() {
@@ -437,7 +438,7 @@ public class DefaultToolBarModel implements ToolBarModel, DateListener {
 
         }
       };
-      
+
       mGlueAction.putValue(ToolBar.ACTION_ID_KEY, "#glue");
       mGlueAction.putValue(ToolBar.ACTION_TYPE_KEY, ToolBar.GLUE);
       mGlueAction.putValue(Action.NAME, mLocalizer.msg("flexibleSpace","Flexible Space"));
@@ -454,34 +455,34 @@ public class DefaultToolBarModel implements ToolBarModel, DateListener {
         public void paintIcon(Component c, Graphics g, int x, int y) {
           int width = c.getWidth();
           int height = c.getHeight();
-          
-          int yMiddle = height/4 + 2;          
+
+          int yMiddle = height/4 + 2;
           int xStart = width/2 - 20;
-          
+
           int[] x1Values = {xStart + 4,xStart + 11,xStart + 11};
-          int[] x2Values = {xStart + 36,xStart + 29,xStart + 29};          
+          int[] x2Values = {xStart + 36,xStart + 29,xStart + 29};
 
           int[] yValues = {yMiddle, yMiddle - 7, yMiddle + 7};
-          
+
           g.setColor(c.getBackground().darker().darker());
           g.drawRect(xStart,1,40,height/2+1);
           g.setColor(c.getBackground().brighter());
           g.fillRect(xStart+1,2,38,height/2-1);
-          
+
           g.setColor(Color.gray);
           g.fillPolygon(x1Values,yValues,3);
           g.fillPolygon(x2Values,yValues,3);
-          
+
           for(int i = 0; i < 4; i++) {
             g.drawRect(xStart + 13 + 4*i,yMiddle,1,1);
           }
-        }        
+        }
       });
     }
-    
+
     return mGlueAction;
   }
-  
+
   public Action getSpaceAction() {
     if(mSpaceAction == null) {
       mSpaceAction = new AbstractAction() {
@@ -489,7 +490,7 @@ public class DefaultToolBarModel implements ToolBarModel, DateListener {
 
         }
       };
-      
+
       mSpaceAction.putValue(ToolBar.ACTION_ID_KEY, "#space");
       mSpaceAction.putValue(ToolBar.ACTION_TYPE_KEY, ToolBar.SPACE);
       mSpaceAction.putValue(Action.NAME, mLocalizer.msg("space","Space"));
@@ -506,18 +507,18 @@ public class DefaultToolBarModel implements ToolBarModel, DateListener {
         public void paintIcon(Component c, Graphics g, int x, int y) {
           int width = c.getWidth();
           int height = c.getHeight();
-          
+
           int xStart = width/2 - 10;
-          
+
           g.setColor(c.getBackground().darker().darker());
           g.drawRect(xStart,1,20,height/2+1);
           g.setColor(c.getBackground().brighter());
-          g.fillRect(xStart+1,2,18,height/2-1);          
-        }        
+          g.fillRect(xStart+1,2,18,height/2-1);
+        }
       });
 
     }
-    
+
     return mSpaceAction;
   }
 
@@ -554,8 +555,7 @@ public class DefaultToolBarModel implements ToolBarModel, DateListener {
 
   public Action[] getAvailableActions() {
     ArrayList<Action> orderedList = new ArrayList<Action>(actionOrder);
-    for (Iterator<Action> iter = mAvailableActions.values().iterator(); iter.hasNext();) {
-		Action action = iter.next();
+    for (Action action : mAvailableActions.values()) {
 		if (! orderedList.contains(action)) {
 			orderedList.add(action);
 		}
@@ -572,7 +572,7 @@ public class DefaultToolBarModel implements ToolBarModel, DateListener {
   protected Action getUpdateAction() {
     return mUpdateAction;
   }
-  
+
   protected void showStopButton() {
     mUpdateAction.putValue(Action.NAME, TVBrowserActions.update.getToolbarText());
     mUpdateAction.putValue(Action.SMALL_ICON, IconLoader.getInstance()
@@ -604,15 +604,15 @@ public class DefaultToolBarModel implements ToolBarModel, DateListener {
       popup = new SelectFilterPopup(MainFrame.getInstance());
     } else if (item == mGoToDateAction) {
       popup = new JPopupMenu();
-      
+
       Date curDate = Date.getCurrentDate().addDays(-1);
 
       if(TvDataBase.getInstance().dataAvailable(curDate)) {
         popup.add(createDateMenuItem(curDate));
       }
-      
+
       curDate = curDate.addDays(1);
-      
+
       Date maxDate = TvDataBase.getInstance().getMaxSupportedDate();
       while (maxDate.getNumberOfDaysSince(curDate) >= 0) {
         if(!TvDataBase.getInstance().dataAvailable(curDate)) {
@@ -621,7 +621,7 @@ public class DefaultToolBarModel implements ToolBarModel, DateListener {
         if (curDate.isFirstDayOfWeek()) {
           popup.addSeparator();
         }
-        
+
         popup.add(createDateMenuItem(curDate));
         curDate = curDate.addDays(1);
       }
@@ -630,16 +630,16 @@ public class DefaultToolBarModel implements ToolBarModel, DateListener {
       popup = menu.getPopupMenu();
 
       Channel[] channels = Settings.propSubscribedChannels.getChannelArray();
-      for (int i = 0; i < channels.length; i++) {
-        menu.add(createChannelMenuItem(channels[i], btn));
+      for (Channel channel : channels) {
+        menu.add(createChannelMenuItem(channel, btn));
       }
     } else if (item == mScrollToTimeAction) {
       popup = new JPopupMenu();
 
       int[] array = Settings.propTimeButtons.getIntArray();
 
-      for (int i = 0; i < array.length; i++) {
-        popup.add(createTimeMenuItem(array[i], btn));
+      for (int element : array) {
+        popup.add(createTimeMenuItem(element, btn));
       }
 
       if (popup.getComponentCount() > 0) {
@@ -647,7 +647,7 @@ public class DefaultToolBarModel implements ToolBarModel, DateListener {
       }
 
       JMenuItem menuItem = new JMenuItem(TVBrowserActions.scrollToNow.getValue(Action.NAME).toString());
-      menuItem.setHorizontalTextPosition(JMenuItem.CENTER);
+      menuItem.setHorizontalTextPosition(SwingConstants.CENTER);
 
       menuItem.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
@@ -658,7 +658,7 @@ public class DefaultToolBarModel implements ToolBarModel, DateListener {
       });
       popup.add(menuItem);
     }
-    
+
     if (popup != null) {
       popup.addPopupMenuListener(new PopupMenuListener() {
         public void popupMenuCanceled(PopupMenuEvent e) {  }
@@ -689,7 +689,7 @@ public class DefaultToolBarModel implements ToolBarModel, DateListener {
 
   private JMenuItem createDateMenuItem(final Date date) {
     String buttonText;
-    
+
     if(date.equals(Date.getCurrentDate().addDays(-1))) {
       buttonText = Localizer.getLocalization(Localizer.I18N_YESTERDAY);
     }
@@ -702,13 +702,13 @@ public class DefaultToolBarModel implements ToolBarModel, DateListener {
     else {
       buttonText = date.toString();
     }
-    
+
     JRadioButtonMenuItem item = new JRadioButtonMenuItem(buttonText);
-    
+
     if(MainFrame.getInstance().getProgramTableModel().getDate().equals(date)) {
       item.setFont(item.getFont().deriveFont(Font.BOLD));
     }
-    
+
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         MainFrame.getInstance().goTo(date);
@@ -720,7 +720,7 @@ public class DefaultToolBarModel implements ToolBarModel, DateListener {
   private JMenuItem createChannelMenuItem(final Channel ch,
       final AbstractButton btn) {
     JMenuItem item = new JMenuItem();
-    
+
     if (Settings.propShowChannelNamesInChannellist.getBoolean()) {
       item.setText(ch.getName());
     }
@@ -753,7 +753,7 @@ public class DefaultToolBarModel implements ToolBarModel, DateListener {
     }
 
     JMenuItem item = new JMenuItem(hour + ":" + minute);
-    item.setHorizontalTextPosition(JMenuItem.CENTER);
+    item.setHorizontalTextPosition(SwingConstants.CENTER);
 
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
