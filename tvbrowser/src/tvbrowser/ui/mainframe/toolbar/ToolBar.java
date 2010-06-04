@@ -121,7 +121,7 @@ public class ToolBar extends JToolBar {
   private boolean disabled = false;
 
   private JButton mUpdateButton = null;
-  
+
   public ToolBar(ToolBarModel model) {
     super();
     mModel = model;
@@ -142,7 +142,7 @@ public class ToolBar extends JToolBar {
           mContextMenu.show(e.getX(), e.getY());
         }
       }
-      
+
     });
   }
 
@@ -150,29 +150,29 @@ public class ToolBar extends JToolBar {
     ((DefaultToolBarModel) mModel).updatePluginButtons();
     update();
   }
-  
+
   public void updateTimeButtons() {
     ((DefaultToolBarModel) mModel).updateTimeButtons();
     update();
   }
-  
+
   public void updateUpdateButton(boolean showStopButton) {
     if(showStopButton) {
       ((DefaultToolBarModel)mModel).showStopButton();
     } else {
       ((DefaultToolBarModel)mModel).showUpdateButton();
     }
-    
+
     if(mUpdateButton != null) {
       mUpdateButton.removeActionListener(mUpdateButton.getActionListeners()[0]);
       addButtonProperties(mUpdateButton, ((DefaultToolBarModel)mModel).getUpdateAction());
     }
   }
-  
+
   public void update() {
     super.removeAll();
     mUpdateButton = null;
-    
+
     Action[] actions = mModel.getActions();
     for (Action action : actions) {
       Integer typeInteger = (Integer) action.getValue(ACTION_TYPE_KEY);
@@ -180,7 +180,7 @@ public class ToolBar extends JToolBar {
       if (typeInteger != null) {
         type = typeInteger.intValue();
       }
-      
+
       if (type == TOOGLE_BUTTON_ACTION) {
         addToggleButton(action);
       } else if (type == SEPARATOR) {
@@ -196,13 +196,13 @@ public class ToolBar extends JToolBar {
         spacePanel.setOpaque(false);
         spacePanel.setBorder(BorderFactory.createEmptyBorder());
         spacePanel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        
+
         int height = (mLocation.equals(BorderLayout.NORTH) ? getPreferredSize().height : 20);
-        
+
         spacePanel.setPreferredSize(new Dimension(20,height));
         spacePanel.setMaximumSize(new Dimension(20,height));
         spacePanel.setMinimumSize(new Dimension(20,height));
-          
+
         add(spacePanel);
       } else {
         addButton(action);
@@ -212,15 +212,15 @@ public class ToolBar extends JToolBar {
     updateUI();
     disabled = false;
   }
-  
+
   public void updateUI() {
     super.updateUI();
   }
-  
+
   public void setBorder(Border b) {
     super.setBorder(BorderFactory.createEmptyBorder());
   }
-  
+
   public void setLayout(LayoutManager manager) {
     if(mLocation != null) {
       if(mLocation.equals(BorderLayout.NORTH)) {
@@ -230,10 +230,10 @@ public class ToolBar extends JToolBar {
       }
     }
   }
-  
+
   /**
    * Set up the ToolBar for Drag'n'Drop.
-   * 
+   *
    * @param s
    *          The Drag'n'Drop Class.
    * @param west
@@ -255,7 +255,7 @@ public class ToolBar extends JToolBar {
 
     this.repaint();
     setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-    
+
     int x = this.getComponentCount();
 
     /* Prepare all ToolBar buttons for Drag'n'Drop */
@@ -273,15 +273,15 @@ public class ToolBar extends JToolBar {
       }
       else if(this.getComponent(i) instanceof JPanel) {
         JPanel filler = ((JPanel)this.getComponent(i));
-        
+
         filler.setSize(filler.getWidth(),10);
         filler.setVisible(true);
         filler.setOpaque(true);
         filler.setBackground(filler.getBackground().brighter());
-        
+
         filler.setBorder(BorderFactory.createLineBorder(getBackground().darker().darker().darker()));
       }
-      
+
       this.getComponent(i).addMouseListener(s);
     }
   }
@@ -289,7 +289,7 @@ public class ToolBar extends JToolBar {
   private void addToggleButton(final Action action) {
     final JToggleButton button = new JToggleButton();
     button.setAlignmentX(Component.CENTER_ALIGNMENT);
-    
+
     action.putValue(ACTION_VALUE, button);
     addButtonProperties(button, action);
     Boolean isSelected = (Boolean) action.getValue(ACTION_IS_SELECTED);
@@ -358,8 +358,8 @@ public class ToolBar extends JToolBar {
         }
       }
     });
-    
-    action.addPropertyChangeListener(new PropertyChangeListener() {      
+
+    action.addPropertyChangeListener(new PropertyChangeListener() {
       @Override
       public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals("enabled")) {
@@ -376,10 +376,10 @@ public class ToolBar extends JToolBar {
     String label = mLocalizer.ellipsisMsg("configure", "Configure");
     String name = null;
     boolean configItemEnabled = false;
-    
+
     if (e.getSource() instanceof AbstractButton) {
       name = ((AbstractButton) e.getSource()).getName();
-      
+
       if (name.startsWith("#scrollTo") && name.indexOf("Channel") == -1) {
         configItemEnabled = true;
         label = mLocalizer.ellipsisMsg("configureTime", "Configure time buttons");
@@ -407,7 +407,7 @@ public class ToolBar extends JToolBar {
       return;
     }
 
-    
+
     JMenuItem item = new JMenuItem(label);
     item.setActionCommand(name);
     item.setEnabled(configItemEnabled);
@@ -463,9 +463,13 @@ public class ToolBar extends JToolBar {
     button.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         action.actionPerformed(new ActionEvent(action,ActionEvent.ACTION_PERFORMED,""));
+        final AbstractButton btn = (AbstractButton) action.getValue(ToolBar.ACTION_VALUE);
+        if (!(btn instanceof JToggleButton)) {
+          MainFrame.getInstance().getProgramTableScrollPane().requestFocusInWindow();
+        }
       }
     });
-    
+
     button.setText(title);
     button.setIcon(icon);
     button.setName(action.getValue(ToolBar.ACTION_ID_KEY).toString());
@@ -543,10 +547,10 @@ public class ToolBar extends JToolBar {
 
     if (mLocation.equals(BorderLayout.EAST) || mLocation.equals(BorderLayout.WEST)) {
       setOrientation(SwingConstants.VERTICAL);
-    } else {        
+    } else {
       setOrientation(SwingConstants.HORIZONTAL);
     }
-    
+
     setLayout(null);
   }
 
@@ -595,24 +599,24 @@ public class ToolBar extends JToolBar {
   public void dateChanged(Date date, ProgressMonitor monitor, Runnable callback) {
     mModel.dateChanged(date, monitor, callback);
   }
-  
+
   /**
-   * This ToolBarSeparatorPanel tracks component changes 
+   * This ToolBarSeparatorPanel tracks component changes
    * to dynamically adjust it's size.
-   * 
+   *
    * @author Torsten Keil
    * @since 2.7
    */
   private class ToolBarSeparatorPanel extends JPanel implements ContainerListener {
-    
+
     public ToolBarSeparatorPanel() {
       super();
       initUI();
     }
-    
+
     /**
      * Use this method to easily change access to the tool bar.
-     * 
+     *
      * @return
      */
     private ToolBar getToolBar() {
@@ -626,11 +630,11 @@ public class ToolBar extends JToolBar {
       } else {
         setLayout(new FormLayout("default:grow","0dlu:grow,default,0dlu:grow"));
       }
-        
+
       setOpaque(false);
       setBorder(BorderFactory.createEmptyBorder());
       setAlignmentX(Component.CENTER_ALIGNMENT);
-      
+
       if(BorderLayout.NORTH.equals(toolbarLocation)) {
         add(new JSeparator(SwingConstants.VERTICAL), new CellConstraints().xy(2,1));
       } else {
@@ -638,10 +642,10 @@ public class ToolBar extends JToolBar {
       }
 
       adjustSize();
-      
+
       ToolBar.this.addContainerListener(this);
     }
-    
+
     public void componentRemoved(ContainerEvent e) {
       adjustSize();
     }
@@ -649,7 +653,7 @@ public class ToolBar extends JToolBar {
     public void componentAdded(ContainerEvent e) {
       adjustSize();
     }
-      
+
     /**
      * Adjust the size if changed.
      */
