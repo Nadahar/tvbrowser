@@ -190,72 +190,55 @@ public class RadioTimesFileParser {
               int bitset = 0;
 
               field = items[RT_GENRE];
-              if ((field.length() > 0)&& (!field.equals("No Genre"))) {
+              if ((field.length() > 0)&& (!field.equalsIgnoreCase("No Genre"))) {
                 prog.setTextField(ProgramFieldType.GENRE_TYPE, field);
 
-                if (field.equals("Animation")) {
-                  bitset |= Program.INFO_CATEGORIE_SERIES;
-                } else if (field.equals("Business")) {
+                if (field.equalsIgnoreCase("Business")) {
                   bitset |= Program.INFO_CATEGORIE_MAGAZINE_INFOTAINMENT;
-                } else if (field.equals("Children")) {
+                } else if (field.equalsIgnoreCase("Children")) {
                   bitset |= Program.INFO_CATEGORIE_CHILDRENS;
-                } else if (field.equals("Comedy")) {
+                } else if (field.equalsIgnoreCase("Comedy")) {
                   bitset |= Program.INFO_CATEGORIE_SHOW;
-                } else if (field.equals("Consumer")) {
+                } else if (field.equalsIgnoreCase("Consumer")) {
                   bitset |= Program.INFO_CATEGORIE_MAGAZINE_INFOTAINMENT;
-                } else if (field.equals("Cookery")) {
-                  //
-                } else if (field.equals("Current affairs")) {
+                } else if (field.equalsIgnoreCase("Cookery")) {
                   bitset |= Program.INFO_CATEGORIE_MAGAZINE_INFOTAINMENT;
-                } else if (field.equals("Documentary")) {
+                } else if (field.equalsIgnoreCase("Current affairs")) {
+                  bitset |= Program.INFO_CATEGORIE_MAGAZINE_INFOTAINMENT;
+                } else if (field.equalsIgnoreCase("Documentary")) {
                   bitset |= Program.INFO_CATEGORIE_DOCUMENTARY;
-                } else if (field.equals("Drama")) {
-                  bitset |= Program.INFO_CATEGORIE_SERIES;
-                } else if (field.equals("Education")) {
+                } else if (field.equalsIgnoreCase("Education")) {
                   bitset |= Program.INFO_CATEGORIE_MAGAZINE_INFOTAINMENT;
-                } else if (field.equals("Entertainment")) {
+                } else if (field.equalsIgnoreCase("Entertainment")) {
                   bitset |= Program.INFO_CATEGORIE_SHOW;
-                } else if (field.equals("Film")) {
+                } else if (field.equalsIgnoreCase("Film")) {
                   bitset |= Program.INFO_CATEGORIE_MOVIE;
-                } else if (field.equals("Game show")) {
+                } else if (field.equalsIgnoreCase("Game show")) {
                   bitset |= Program.INFO_CATEGORIE_SHOW;
-                } else if (field.equals("Gardening")) {
+                } else if (field.equalsIgnoreCase("Gardening")) {
                   bitset |= Program.INFO_CATEGORIE_MAGAZINE_INFOTAINMENT;
-                } else if (field.equals("Health")) {
+                } else if (field.equalsIgnoreCase("Health")) {
                   bitset |= Program.INFO_CATEGORIE_MAGAZINE_INFOTAINMENT;
-                } else if (field.equals("Interests")) {
+                } else if (field.equalsIgnoreCase("Interests")) {
                   bitset |= Program.INFO_CATEGORIE_MAGAZINE_INFOTAINMENT;
-                } else if (field.equals("Music and Arts")) {
+                } else if (field.equalsIgnoreCase("Music and Arts")) {
                   bitset |= Program.INFO_CATEGORIE_ARTS;
-                } else if (field.equals("News and Current Affairs")) {
+                } else if (field.equalsIgnoreCase("News and Current Affairs")) {
                   bitset |= Program.INFO_CATEGORIE_NEWS;
-                } else if (field.equals("Science")) {
+                } else if (field.equalsIgnoreCase("Science")) {
                   bitset |= Program.INFO_CATEGORIE_MAGAZINE_INFOTAINMENT;
-                } else if (field.equals("Sitcom")) {
+                } else if (field.equalsIgnoreCase("Sitcom")) {
                   bitset |= Program.INFO_CATEGORIE_SERIES;
-                } else if (field.equals("Soap")) {
+                } else if (field.equalsIgnoreCase("Soap")) {
                   bitset |= Program.INFO_CATEGORIE_SERIES;
-                } else if (field.equals("Sport")) {
+                } else if (field.equalsIgnoreCase("Sport")) {
                   bitset |= Program.INFO_CATEGORIE_SPORTS;
-                } else if (field.equals("Talk show")) {
+                } else if (field.equalsIgnoreCase("Talk show")) {
                   bitset |= Program.INFO_CATEGORIE_SHOW;
-                } else if (field.equals("Travel")) {
-                  //
-                } else if (field.equals("Youth")) {
-                  //
-
-                } else if (field.equals("Environment")) {
+                } else if (field.equalsIgnoreCase("Travel")) {
+                  bitset |= Program.INFO_CATEGORIE_DOCUMENTARY;
+                } else if (field.equalsIgnoreCase("Environment")) {
                   bitset |= Program.INFO_CATEGORIE_MAGAZINE_INFOTAINMENT;
-                } else if (field.equals("Religion")) {
-                  //
-                } else if (field.equals("Transport")) {
-                  //
-                } else if (field.equals("Seasonal special")) {
-                  //
-                } else if (field.equals("Gaelic")) {
-                  //
-                } else if (field.equals("Disability")) {
-                  //not used?
                 }
               }
 
