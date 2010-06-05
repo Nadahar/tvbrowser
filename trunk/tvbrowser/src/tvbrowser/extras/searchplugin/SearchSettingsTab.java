@@ -46,12 +46,12 @@ import devplugin.SettingsTab;
  *
  * @author bodum
  */
-public class SearchSettingsTab implements SettingsTab {
+class SearchSettingsTab implements SettingsTab {
 
   /** The localizer of this class. */
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(SearchSettingsTab.class);
-  
+
 
   /**
    * Create the Settings-Panel
@@ -60,7 +60,7 @@ public class SearchSettingsTab implements SettingsTab {
   public JPanel createSettingsPanel() {
     PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,pref,0dlu:grow","pref,5dlu,pref"));
     pb.setDefaultDialogBorder();
-    CellConstraints cc = new CellConstraints();    
+    CellConstraints cc = new CellConstraints();
 
     JButton clearHistory = new JButton(mLocalizer.msg("clearHistory", "Clear Search History"));
 
@@ -71,7 +71,7 @@ public class SearchSettingsTab implements SettingsTab {
     });
 
     pb.addSeparator(mLocalizer.msg("title", "Search"), cc.xyw(1,1,3));
-    pb.add(clearHistory, cc.xy(2,3));    
+    pb.add(clearHistory, cc.xy(2,3));
 
     return pb.getPanel();
   }
@@ -79,7 +79,7 @@ public class SearchSettingsTab implements SettingsTab {
   /**
    * Save Settings
    */
-  public void saveSettings() {    
+  public void saveSettings() {
   }
 
   /**

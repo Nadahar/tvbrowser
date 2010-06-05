@@ -97,8 +97,8 @@ public class SearchPlugin {
         }
       });
     } catch (IOException e) {
-      ErrorHandler.handle(mLocalizer.msg("couldNotLoadFavorites",
-          "Could not load favorites"), e);
+      ErrorHandler.handle(mLocalizer.msg("loadError",
+          "Could not load search history"), e);
     }
   }
 
@@ -110,8 +110,8 @@ public class SearchPlugin {
         }
       });
     } catch (IOException e) {
-      ErrorHandler.handle(mLocalizer.msg("couldNotStoreFavorites",
-          "Could not store favorites"), e);
+      ErrorHandler.handle(mLocalizer.msg("storeError",
+          "Could not store search history"), e);
     }
   }
 
@@ -143,15 +143,15 @@ public class SearchPlugin {
         }
         settings.setCaseSensitive(caseSensitive);
         switch (option) {
-        case 0:
-          settings.setSearcherType(PluginManager.SEARCHER_TYPE_EXACTLY);
-          break;
         case 1:
           settings.setSearcherType(PluginManager.SEARCHER_TYPE_KEYWORD);
           break;
         case 2:
           settings
               .setSearcherType(PluginManager.SEARCHER_TYPE_REGULAR_EXPRESSION);
+          break;
+        default:
+          settings.setSearcherType(PluginManager.SEARCHER_TYPE_EXACTLY);
           break;
         }
       }
@@ -219,7 +219,7 @@ public class SearchPlugin {
     action.setSmallIcon(TVBrowserIcons.search(TVBrowserIcons.SIZE_SMALL));
     action.setActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent event) {
-        getInstance().searchRepetitions(program);
+        searchRepetitions(program);
       }
     });
     return new ActionMenu(action);
@@ -265,7 +265,7 @@ public class SearchPlugin {
   /**
    * Select this entry in the RepetitionDialog
    *
-   * @return
+   * @return index of selected time
    */
   public int getRepetitionTimeSelection() {
     return mRepetitionTimeSelect;
@@ -288,7 +288,7 @@ public class SearchPlugin {
     UiUtilities.centerAndShow(dlg);
   }
 
-  private void searchRepetitions(final Program program) {
+  private static void searchRepetitions(final Program program) {
     Window parent = UiUtilities
         .getLastModalChildOf(MainFrame.getInstance());
     Channel channel = program.getChannel();

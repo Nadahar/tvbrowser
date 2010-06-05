@@ -63,7 +63,7 @@ import devplugin.PluginManager;
  * A dialog specifically for repetitions. It only shows a simple Input-Form and
  * helps the User to focus on the Task.
  */
-public class RepetitionDialog extends JDialog implements WindowClosingIf {
+class RepetitionDialog extends JDialog implements WindowClosingIf {
   /**
    * The localizer of this class.
    */
@@ -85,23 +85,23 @@ public class RepetitionDialog extends JDialog implements WindowClosingIf {
 
   /**
    * Create the dialog
-   * 
+   *
    * @param parent
    *          Parent-Dialog
    */
-  public RepetitionDialog(Window parent) {
+  RepetitionDialog(Window parent) {
     this(parent, null);
   }
 
   /**
    * Create the dialog
-   * 
+   *
    * @param parent
    *          Parent-Dialog
    * @param channel
    *          defines the first channel of the channel list
    */
-  public RepetitionDialog(Window parent, Channel channel) {
+  RepetitionDialog(Window parent, Channel channel) {
     super(parent);
     setModal(true);
     createGui(channel);
@@ -253,7 +253,7 @@ public class RepetitionDialog extends JDialog implements WindowClosingIf {
 
   /**
    * Set the text for the search
-   * 
+   *
    * @param text
    *          text to search
    */
