@@ -200,20 +200,23 @@ public class TvDataBase {
 
         if ((knownStatus == TvDataInventory.UNKNOWN)
             || (knownStatus == TvDataInventory.OTHER_VERSION)) {
-          if (!somethingChanged) {
-            // This is the first changed day program -> fire update start
-            TvDataUpdater.getInstance().fireTvDataUpdateStarted();
-          }
+          // do not try to read very old unknown files
+          if (isValidDate(date)) {
+            if (!somethingChanged) {
+              // This is the first changed day program -> fire update start
+              TvDataUpdater.getInstance().fireTvDataUpdateStarted();
+            }
 
-          // Inform the listeners
-          mLog.info("Day program was changed by third party: " + date + " on "
-              + channel.getName());
-          ChannelDayProgram newDayProg = getDayProgram(date, channel, false);
-          if (newDayProg != null) {
-            handleKnownStatus(knownStatus, newDayProg, version);
-          }
+            // Inform the listeners
+            mLog.info("Day program was changed by third party: " + date + " on "
+                + channel.getName());
+            ChannelDayProgram newDayProg = getDayProgram(date, channel, false);
+            if (newDayProg != null) {
+              handleKnownStatus(knownStatus, newDayProg, version);
+            }
 
-          somethingChanged = true;
+            somethingChanged = true;
+          }
         }
       }
     }
@@ -541,7 +544,7 @@ public class TvDataBase {
    */
   private boolean deleteFiles(boolean informPlugins, FilenameFilter filter,
       Channel[] channelArr, String[] channelIdArr) {
-    File fileList[] = new File(Settings.propTVDataDirectory.getString())
+    File[] fileList = new File(Settings.propTVDataDirectory.getString())
         .listFiles(filter);
     boolean somethingDeleted = false;
 
@@ -657,7 +660,7 @@ public class TvDataBase {
       if(oldProg != null || somethingChanged) {
         OnDemandDayProgramFile dayProgramFile = getCacheEntry(date, channel, true, false);
 
-        ChannelDayProgram dayProgram = (ChannelDayProgram)dayProgramFile.getDayProgram();
+        ChannelDayProgram dayProgram = dayProgramFile.getDayProgram();
 
         if(oldProg instanceof ChannelDayProgram) {
           fireDayProgramTouched((ChannelDayProgram)oldProg,dayProgram);
@@ -783,7 +786,7 @@ public class TvDataBase {
       }
     };
 
-    String fileNameList[] = tvDataDir.list(filter);
+    String[] fileNameList = tvDataDir.list(filter);
     if (fileNameList != null) {
       for (String fileName : fileNameList) {
         if (fileName.length() > 8) {
