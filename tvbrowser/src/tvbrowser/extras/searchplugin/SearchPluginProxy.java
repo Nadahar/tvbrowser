@@ -51,8 +51,9 @@ public class SearchPluginProxy extends AbstractInternalPluginProxy implements Bu
    * @return The instance of the SearchPluginProxy
    */
   public static synchronized SearchPluginProxy getInstance() {
-    if(mInstance == null)
+    if(mInstance == null) {
       new SearchPluginProxy();
+    }
 
     return mInstance;
   }
