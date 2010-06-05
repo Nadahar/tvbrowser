@@ -63,7 +63,7 @@ import devplugin.ProgramFieldType;
  *
  * @author bodum
  */
-public class BbcFileParser {
+class BbcFileParser {
   /** Logger */
   private static final Logger mLog = Logger.getLogger(BbcFileParser.class
       .getName());
@@ -83,7 +83,7 @@ public class BbcFileParser {
    * @param channel
    * @param channeldate
    */
-  public BbcFileParser(HashMap<Date, MutableChannelDayProgram> cache, Channel channel, Date channeldate) {
+  BbcFileParser(HashMap<Date, MutableChannelDayProgram> cache, Channel channel, Date channeldate) {
     mCache = cache;
     mChannelDate = channeldate;
     mChannel = channel;
@@ -96,8 +96,9 @@ public class BbcFileParser {
    * @throws TVAnytimeException
    */
   public void parseFile(File file) throws IOException, TVAnytimeException {
-    if (new File(file.getAbsoluteFile() + "_pi.xml").exists())
+    if (new File(file.getAbsoluteFile() + "_pi.xml").exists()) {
       analyseFile(file);
+    }
   }
 
   /**
@@ -106,7 +107,7 @@ public class BbcFileParser {
    * @throws IOException
    * @throws TVAnytimeException
    */
-  public void analyseFile(File file) throws IOException, TVAnytimeException {
+  private void analyseFile(File file) throws IOException, TVAnytimeException {
     // Create parser
     SAXXMLParser parser = new SAXXMLParser();
 
@@ -208,10 +209,12 @@ public class BbcFileParser {
 
             }
 
-            if (shortBuffer.length() > 0)
+            if (shortBuffer.length() > 0) {
               prog.setShortInfo(shortBuffer.toString().trim());
-            if (longBuffer.length() > 0)
+            }
+            if (longBuffer.length() > 0) {
               prog.setDescription(longBuffer.toString().trim());
+            }
 
             // Get Credits
 
@@ -298,7 +301,7 @@ public class BbcFileParser {
             int bitset = 0;
 
             if (programInformation.getBasicDescription().getNumCaptionLanguages() > 0) {
-              bitset = bitset | Program.INFO_SUBTITLE_FOR_AURALLY_HANDICAPPED;
+              bitset |= Program.INFO_SUBTITLE_FOR_AURALLY_HANDICAPPED;
             }
 
             // Audio Format
@@ -308,11 +311,11 @@ public class BbcFileParser {
 
             if (audio != null) {
               if (audio.getNumOfChannels() == 1) {
-                bitset = bitset | Program.INFO_AUDIO_MONO;
+                bitset |= Program.INFO_AUDIO_MONO;
               } else if (audio.getNumOfChannels() == 2) {
-                bitset = bitset | Program.INFO_AUDIO_STEREO;
+                bitset |= Program.INFO_AUDIO_STEREO;
               } else if (audio.getNumOfChannels() > 2) {
-                bitset = bitset | Program.INFO_AUDIO_DOLBY_SURROUND;
+                bitset |= Program.INFO_AUDIO_DOLBY_SURROUND;
               }
             }
 
@@ -328,9 +331,9 @@ public class BbcFileParser {
               }
 
               if (wide) {
-                bitset = bitset | Program.INFO_VISION_16_TO_9;
+                bitset |= Program.INFO_VISION_16_TO_9;
               } else {
-                bitset = bitset | Program.INFO_VISION_4_TO_3;
+                bitset |= Program.INFO_VISION_4_TO_3;
               }
             }
 
@@ -347,7 +350,7 @@ public class BbcFileParser {
     }
   }
 
-  private String getPersonNames(CreditsItem credit) {
+  private static String getPersonNames(final CreditsItem credit) {
     StringBuilder result = new StringBuilder();
     for (int i = 0; i < credit.getNumPersonNames(); i++) {
       if (i > 0) {

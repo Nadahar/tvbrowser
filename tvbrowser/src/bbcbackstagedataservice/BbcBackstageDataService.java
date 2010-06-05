@@ -110,7 +110,7 @@ public class BbcBackstageDataService extends AbstractTvDataService {
   /**
    * Working-Directory
    */
-  private File mWorkingDir;
+  private File mWorkingDir = null;
 
   public ChannelGroup[] checkForAvailableChannelGroups(ProgressMonitor monitor) throws TvBrowserException {
     return new ChannelGroup[] { mBbcChannelGroup };
@@ -126,7 +126,7 @@ public class BbcBackstageDataService extends AbstractTvDataService {
 
       Matcher m = Pattern.compile("<channel channel_id=\"(.*)\" name=\"(.*)\" />", Pattern.MULTILINE).matcher(channelInfo);
 
-      Pattern genrePattern = Pattern.compile("<genre genre_id=\".*\" name=\"(.*)/>", Pattern.MULTILINE);
+      Pattern genrePattern = Pattern.compile("<genre genre_id=\".*\" name=\"(.*)\"", Pattern.MULTILINE);
       Pattern iconPattern = Pattern.compile("<logo url=\"(.*_small.gif)\" type=\"image/gif\" width=\"\\d*\" height=\"\\d*\" />", Pattern.MULTILINE);
 
       while (m.find()) {
@@ -138,10 +138,10 @@ public class BbcBackstageDataService extends AbstractTvDataService {
 
         if (ma.find()) {
           // find out, whether this is radio or TV
-          if (ma.group(1).equals("Audio and video")) {
+          if (ma.group(1).equalsIgnoreCase("Audio and video")) {
             categories = Channel.CATEGORY_TV;
           }
-          else if (ma.group(1).equals("Audio only".toLowerCase())) {
+          else if (ma.group(1).equalsIgnoreCase("Audio only")) {
             categories = Channel.CATEGORY_RADIO;
           }
         }
@@ -149,7 +149,6 @@ public class BbcBackstageDataService extends AbstractTvDataService {
         Icon icon = null;
         ma = iconPattern.matcher(details);
         if (ma.find()) {
-          System.out.println(mWorkingDir.getAbsolutePath());
           IOUtilities.download(new URL(ma.group(1)), new File(mWorkingDir, m.group(1) + ".gif"));
           icon = new ImageIcon(new File(mWorkingDir, m.group(1) + ".gif").getAbsolutePath());
         }
@@ -172,7 +171,7 @@ public class BbcBackstageDataService extends AbstractTvDataService {
     }
   }
 
-  private String getChannelUrl(String channelName) {
+  private static String getChannelUrl(String channelName) {
     String url = KNOWN_URLS.get(channelName);
     if (url != null) {
       return url;
@@ -429,7 +428,7 @@ public class BbcBackstageDataService extends AbstractTvDataService {
    * @param number
    * @return
    */
-  private CharSequence addZero(int number) {
+  private static CharSequence addZero(int number) {
     StringBuilder builder = new StringBuilder();
 
     if (number < 10) {
