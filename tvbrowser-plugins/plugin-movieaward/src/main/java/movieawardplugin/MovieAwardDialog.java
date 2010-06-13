@@ -66,7 +66,7 @@ public class MovieAwardDialog extends JDialog implements WindowClosingIf {
         + ".headlineFilm { line-height:110%;margin-bottom:5 px;text-indent:0em;font-size:20 pt; color:#003366; font-weight:bold;font-family:Verdana, Arial, Helvetica;}"
         + ".category { line-height:100%;font-size:12 pt; color:#000000; font-family: Verdana, Arial, Helvetica;}"
         + ".uTRow {line-height:100%;margin-left:20 px;font-size:12 pt;  font-family:Verdana, Arial, Helvetica; }"
-        + ".reciepient { line-height:100%;font-size:12 pt; color:#003366; font-family:Verdana, Arial, Helvetica;}"
+        + ".recipient { line-height:100%;font-size:12 pt; color:#003366; font-family:Verdana, Arial, Helvetica;}"
         + "td { margin-right:5 px;margin-top:0 px;margin-bottom:0 px;vertical-align:top;padding-right:0 px;padding-top:0 px;padding-bottom:0 px;padding-left:0 px;}"
         + "</style></head>";
 
@@ -77,30 +77,51 @@ public class MovieAwardDialog extends JDialog implements WindowClosingIf {
     text.append("<table>");
 
     for (MovieAward movieAward : mMovieAwards) {
+      final StringBuilder winnerText = new StringBuilder();
+      final StringBuilder nomineeText = new StringBuilder();
+      final StringBuilder honoredText = new StringBuilder();
+      
       for (Award award : movieAward.getAwardsFor(program)) {
-        text.append("<tr  class=\"uTRow\"><td style=\"margin-left:10 px;\" valign=\"top\">&#x25CF;</td><td class=\"category\">");
+        final StringBuilder tmpText;
+        
+        switch (award.getStatus()) {
+        case NOMINATED:
+          tmpText = nomineeText;
+          break;
+        case WINNER:
+          tmpText = winnerText;
+          break;
+        case HONORED:
+          tmpText = honoredText;
+          break;
+        default:
+          mLog.severe("Missing implementation for award status");
+          tmpText = text;
+        }
+        
+        tmpText.append("<tr  class=\"uTRow\"><td style=\"margin-left:10 px;\" valign=\"top\">&#x25CF;</td><td class=\"category\">");
 
         String url = movieAward.getUrl();
         if (url != null && url.length() > 0) {
-          text.append("<a href=\"").append(url).append("\">").append(movieAward.getName()).append("</a>");
+          tmpText.append("<a href=\"").append(url).append("\">").append(movieAward.getName()).append("</a>");
         } else {
-          text.append(movieAward.getName());
+          tmpText.append(movieAward.getName());
         }
-        text.append(' ').append(award.getAwardYear()).append(": ");
+        tmpText.append(' ').append(award.getAwardYear()).append(": ");
 
         final String category = movieAward.getCategoryName(award
             .getCategory());
         switch (award.getStatus()) {
         case NOMINATED:
-          text.append(mLocalizer.msg("nominated",
+          tmpText.append(mLocalizer.msg("nominated",
               "Nominated for the category {0}", category));
           break;
         case WINNER:
-          text.append(mLocalizer.msg("winner",
+          tmpText.append(mLocalizer.msg("winner",
               "Winner of the category {0}", category));
           break;
         case HONORED:
-          text.append(mLocalizer.msg("honored",
+          tmpText.append(mLocalizer.msg("honored",
               "Honored in the category {0}", category));
           break;
         default:
@@ -112,22 +133,22 @@ public class MovieAwardDialog extends JDialog implements WindowClosingIf {
           //
           // Bolle edit: Difference between Nominee and Winner (and
           // Honored)added here and in localizer/properties
-          text.append("</td></tr><tr class=\"reciepient\"><td></td><td>");
+          tmpText.append("</td></tr><tr class=\"recipient\"><td></td><td>");
           switch (award.getStatus()) {
           case NOMINATED:
-            text.append(mLocalizer.msg("forNominee",
+            tmpText.append(mLocalizer.msg("forNominee",
                         "nominee: {0}", award
                             .getRecipient()))
                 .append("");
             break;
           case WINNER:
-            text.append(mLocalizer.msg("forAwardee",
+            tmpText.append(mLocalizer.msg("forAwardee",
                         "awardee: {0}", award
                             .getRecipient()))
                 .append("");
             break;
           case HONORED:
-            text.append(mLocalizer.msg("forHonored",
+            tmpText.append(mLocalizer.msg("forHonored",
                         "honored: {0}", award
                             .getRecipient()))
                 .append("");
@@ -137,11 +158,14 @@ public class MovieAwardDialog extends JDialog implements WindowClosingIf {
                 .severe("Missing implementation for award recipient");
           }
         }
+
         if (award.getAdditionalInfo() != null) {
-          text.append("</td></tr><tr class=\"reciepient\"><td></td><td>"+award.getAdditionalInfo());
+          tmpText.append("</td></tr><tr class=\"reciepient\"><td></td><td>"+award.getAdditionalInfo());
         }
-        text.append("</td></tr>");
+        tmpText.append("</td></tr>");
       }
+      text.append(winnerText).append(nomineeText).append(honoredText);
+
     }
 
     text.append("</table></body></html>");
