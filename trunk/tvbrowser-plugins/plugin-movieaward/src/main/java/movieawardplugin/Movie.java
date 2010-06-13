@@ -97,9 +97,15 @@ public class Movie {
     final String country = program.getChannel().getCountry();
     final String localizedTitle = mTitles.get(country);
     final String programTitle = program.getTitle();
-    if (programTitle.equalsIgnoreCase(localizedTitle)
-        || (mOriginalTitle != null && programTitle.equalsIgnoreCase(
-            mOriginalTitle))) {
+    if (programTitle.equalsIgnoreCase(localizedTitle)) {
+      return true;
+    }
+    final String originalTitle = 
+      program.getTextField(ProgramFieldType.ORIGINAL_TITLE_TYPE);
+    if ((mOriginalTitle != null 
+        && (programTitle.equalsIgnoreCase(mOriginalTitle) 
+            || (originalTitle != null 
+                && originalTitle.equalsIgnoreCase(mOriginalTitle))))) {
       return true;
     }
     // do not use toLowerCase on each program repeatedly
