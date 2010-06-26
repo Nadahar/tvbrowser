@@ -82,6 +82,8 @@ public final class ImdbPlugin extends Plugin {
 
   private PluginTreeNode mRootNode = new PluginTreeNode(this, false);
 
+  private ImdbHistogram mHistogram;
+
   @Override
   public PluginInfo getInfo() {
     if (mPluginInfo == null) {
@@ -116,7 +118,7 @@ public final class ImdbPlugin extends Plugin {
    * @param program
    * @return
    */
-  protected ImdbRating getRatingFor(final Program program) {
+  ImdbRating getRatingFor(final Program program) {
     // have extra rating for example program to avoid full database initialization when only getting the plugin icon
     if (Plugin.getPluginManager().getExampleProgram().equals(program)) {
       return EXAMPLE_RATING;
@@ -318,6 +320,7 @@ public final class ImdbPlugin extends Plugin {
   @Override
   public void loadSettings(final Properties properties) {
     mSettings = new ImdbSettings(properties);
+    mHistogram = new ImdbHistogram(mSettings);
   }
 
   @Override
@@ -510,5 +513,14 @@ public final class ImdbPlugin extends Plugin {
 		action.putValue(Action.SMALL_ICON, IconLoader.getInstance().getIconFromTheme("apps", "system-software-update", 16));
 		action.putValue(BIG_ICON, IconLoader.getInstance().getIconFromTheme("apps", "system-software-update", 22));
 		return new ActionMenu(action);
+  }
+
+  void storeHistogram(final ImdbHistogram histogram) {
+    mHistogram = histogram;
+    mSettings.setHistogram(mHistogram);
+  }
+
+  ImdbHistogram getHistogram() {
+    return mHistogram;
   }
 }
