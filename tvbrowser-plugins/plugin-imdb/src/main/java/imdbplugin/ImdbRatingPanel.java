@@ -37,7 +37,7 @@ public class ImdbRatingPanel extends JPanel {
 
     setLayout(layout);
     setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-                                     
+
     CellConstraints cc = new CellConstraints();
 
     JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -78,6 +78,14 @@ public class ImdbRatingPanel extends JPanel {
     add(diagramPanel, cc.xy(1,layout.getRowCount()));
     layout.appendRow(RowSpec.decode("3dlu"));
 
+    ImdbHistogram histogram = ImdbPlugin.getInstance().getHistogram();
+    if (histogram != null && histogram.isValid()) {
+      layout.appendRow(RowSpec.decode("pref"));
+      JLabel percentile = new JLabel(mLocalizer.msg("percentile", "Better than {0} percent of all rated movies.", histogram.getPercentile(rating)));
+      add(percentile, cc.xy(1,layout.getRowCount()));
+      layout.appendRow(RowSpec.decode("10dlu"));
+    }
+
     ImdbAka[] akas = movie.getAkas();
 
     if (akas.length > 0) {
@@ -110,7 +118,7 @@ public class ImdbRatingPanel extends JPanel {
       akaLabel.setEditable(false);
       akaLabel.setForeground(Color.black);
       akaLabel.setFont(alternativeHead.getFont().deriveFont(12f).deriveFont(Font.PLAIN));
-      
+
       add(akaLabel, cc.xy(1,layout.getRowCount()));
     }
 

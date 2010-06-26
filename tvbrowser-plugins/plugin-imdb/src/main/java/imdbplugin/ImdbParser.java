@@ -3,12 +3,12 @@
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -115,7 +115,7 @@ public class ImdbParser {
     final Integer[] fileSizes = new Integer[] { 5950067, 5067908 };
 
     try {
-      
+
       int size = 0;
       final String filesizes = new String(IOUtilities
           .loadFileFromHttpServer(new URL(server + "filesizes")));
@@ -219,6 +219,7 @@ public class ImdbParser {
       final ProgressMonitor monitor) throws IOException {
     final Pattern ratingPattern = Pattern
         .compile("^(.*)(?:\\W\\((\\d{4,4}|\\?\\?\\?\\?).*?\\))(?:\\W\\((.*)\\))?(?:\\W\\{(.*)\\})?$");
+    final ImdbHistogram histogram = new ImdbHistogram();
 
     final BufferedReader reader = new BufferedReader(new InputStreamReader(
         inputStream, "ISO-8859-15"));
@@ -261,6 +262,8 @@ public class ImdbParser {
           final String episode = cleanEpisodeTitle(matcher.group(4));
 
           mDatabase.addRating(mDatabase.getOrCreateMovieId(movieTitle, episode, year), rating, votes, distribution);
+
+          histogram.addRating(rating, votes);
           if (++count % STEPS_TO_REPORT_PROGRESS == 0 || count == 1) {
             monitor.setMessage(mLocalizer.msg("ratings", "Rating {0}", count));
           }
@@ -275,6 +278,7 @@ public class ImdbParser {
     }
 
     reader.close();
+    ImdbPlugin.getInstance().storeHistogram(histogram);
     return count;
   }
 

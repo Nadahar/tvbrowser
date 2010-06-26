@@ -3,12 +3,12 @@
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -89,7 +89,7 @@ public final class ImdbSettingsTab implements SettingsTab {
 
     panel.add(channelConfig, cc.xy(4,panel.getRow()));
     panel.nextRow(2);
-    
+
     panel.add(new JLabel(mLocalizer.msg("minimumRating","Minimum rating to show in plugin tree")), cc.xy(2, panel.getRow()));
     mMinRating = new JSpinner(new SpinnerNumberModel(mSettings.getMinimumRating() / 10.0, 0.0, 10.0, 0.1));
     panel.add(mMinRating, cc.xy(4, panel.getRow()));
@@ -97,7 +97,7 @@ public final class ImdbSettingsTab implements SettingsTab {
 
     panel.addSeparator(mLocalizer.msg("titleDatabase", "Database"), cc.xyw(1, panel.getRow(), 5));
     panel.nextRow(2);
-    
+
     panel.add(new JLabel(mLocalizer.msg("lastUpdate", "Last update")), cc.xy(2, panel.getRow()));
     mLabelUpdate = new JLabel();
     panel.add(mLabelUpdate, cc.xy(4, panel.getRow()));
@@ -112,7 +112,7 @@ public final class ImdbSettingsTab implements SettingsTab {
     mLabelSize = new JLabel();
     panel.add(mLabelSize, cc.xy(4, panel.getRow()));
     panel.nextRow(2);
-    
+
     updateStatistics();
 
     final JButton update = new JButton(mLocalizer.msg("updateDB",
@@ -134,7 +134,7 @@ public final class ImdbSettingsTab implements SettingsTab {
     return panel.getPanel();
   }
 
-  protected void updateStatistics() {
+  void updateStatistics() {
     mLabelUpdate.setText(mSettings.getUpdateDate());
     mLabelRatings.setText(mSettings.getNumberOfMovies());
     mLabelSize.setText(ImdbPlugin.getInstance().getDatabaseSizeMB() + " MB");
