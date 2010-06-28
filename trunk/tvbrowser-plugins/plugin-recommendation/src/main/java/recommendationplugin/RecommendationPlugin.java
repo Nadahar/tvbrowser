@@ -17,6 +17,7 @@
 package recommendationplugin;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -28,6 +29,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.Timer;
 
 import recommendationplugin.weighting.FavoriteWeighting;
 import recommendationplugin.weighting.FilterWeighting;
@@ -79,6 +81,15 @@ public final class RecommendationPlugin extends Plugin {
     mRootNode.setGroupingByDateEnabled(true); // to force neither alphabetic nor
                                               // date sorting
     updateRecommendations();
+    // update the recommendations regularly (to remove expired programs)
+    Timer updateTimer = new Timer(10 * 60 * 1000, new ActionListener() {
+
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        updateRecommendations();
+      }
+    });
+    updateTimer.start();
   }
 
   public void initializeWeightings() {
@@ -173,7 +184,7 @@ public final class RecommendationPlugin extends Plugin {
     if (usedWeightings.isEmpty()) {
       return;
     }
-
+    ProgramWeight.resetMaxWeight();
     final HashMap<String, RecommendationNode> nodes = new HashMap<String, RecommendationNode>(200);
 
     final Date today = Date.getCurrentDate();
@@ -193,19 +204,21 @@ public final class RecommendationPlugin extends Plugin {
           if (sumWeight > 0) {
             ProgramWeight programWeight = new ProgramWeight(program, (short) sumWeight);
             mRecommendations.add(programWeight);
-            String key = String.valueOf(sumWeight) + program.getTitle();
-            RecommendationNode node = nodes.get(key);
-            if (node == null) {
-              node = new RecommendationNode(programWeight);
-              nodes.put(key, node);
-            }
-            node.addProgram(program);
           }
         }
       }
     }
 
     Collections.sort(mRecommendations);
+    for (ProgramWeight programWeight : mRecommendations) {
+      String key = String.valueOf(programWeight.getWeight()) + programWeight.getProgram().getTitle();
+      RecommendationNode node = nodes.get(key);
+      if (node == null) {
+        node = new RecommendationNode(programWeight);
+        nodes.put(key, node);
+      }
+      node.addProgram(programWeight.getProgram());
+    }
 
     ArrayList<RecommendationNode> nodeList = new ArrayList<RecommendationNode>(nodes.values());
     Collections.sort(nodeList);

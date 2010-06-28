@@ -6,9 +6,14 @@ public class ProgramWeight implements Comparable<ProgramWeight> {
   private Program mProgram;
   private short mWeight;
 
+  private static int maxWeight;
+
   public ProgramWeight(final Program p, final short weight) {
     mProgram = p;
     mWeight = weight;
+    if (mWeight > maxWeight) {
+      maxWeight = weight;
+    }
   }
 
   public Program getProgram() {
@@ -29,4 +34,11 @@ public class ProgramWeight implements Comparable<ProgramWeight> {
     return mProgram.getTitle().compareTo(programWeight.mProgram.getTitle());
   }
 
+  static int getMaxWeight() {
+    return maxWeight;
+  }
+
+  static void resetMaxWeight() {
+    maxWeight = 0;
+  }
 }
