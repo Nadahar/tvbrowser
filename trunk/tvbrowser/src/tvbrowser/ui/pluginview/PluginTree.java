@@ -37,6 +37,7 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Transparency;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
@@ -457,9 +458,9 @@ public class PluginTree extends JTree implements DragGestureListener,
               g2.fill(mCueLine);
               mPlugin = temp;
             }
-          }
-          else
+          } else {
             e.rejectDrag();
+          }
         } catch (Exception e2) {
           e.rejectDrag();
         }
@@ -876,7 +877,7 @@ public class PluginTree extends JTree implements DragGestureListener,
      */
     private BufferedImage getImage(Rectangle bounds) {
       GraphicsConfiguration gc = getGraphicsConfiguration();
-      BufferedImage textImage = gc.createCompatibleImage(bounds.width, bounds.height, BufferedImage.TRANSLUCENT);
+      BufferedImage textImage = gc.createCompatibleImage(bounds.width, bounds.height, Transparency.TRANSLUCENT);
       return textImage;
     }
 

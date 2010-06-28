@@ -92,7 +92,7 @@ public class ReminderSettingsTab implements SettingsTab {
   private JCheckBox mBeep;
   private JCheckBox mExecChB;
   private JCheckBox mShowTimeSelectionDlg;
-  private JCheckBox mShowRemovedDlg;  
+  private JCheckBox mShowRemovedDlg;
   private JCheckBox mShowTimeCounter;
   private JButton mExecFileDialogBtn;
   private JCheckBox mShowAlwaysOnTop;
@@ -126,7 +126,7 @@ public class ReminderSettingsTab implements SettingsTab {
         "pref,5dlu,pref,3dlu,pref,10dlu,pref,5dlu,pref");
     layout.setColumnGroups(new int[][] {{7,9}});
     PanelBuilder pb = new PanelBuilder(layout, new ScrollableJPanel());
-    pb.setDefaultDialogBorder();    
+    pb.setDefaultDialogBorder();
     
     CellConstraints cc = new CellConstraints();
     
@@ -157,7 +157,7 @@ public class ReminderSettingsTab implements SettingsTab {
     mBeep = new JCheckBox(mLocalizer.msg("beep", "Speaker sound"), mSettings.getProperty("usebeep","true").equalsIgnoreCase("true"));
 
     mExecFileStr = mSettings.getProperty("execfile", "");
-    mExecParamStr = mSettings.getProperty("execparam", "");    
+    mExecParamStr = mSettings.getProperty("execparam", "");
     
     final JButton soundTestBt = new JButton(mLocalizer.msg("test", "Test"));
     
@@ -224,7 +224,7 @@ public class ReminderSettingsTab implements SettingsTab {
     mAutoCloseReminderTimeSp.setEnabled(mCloseOnTime.isSelected() && mReminderWindowChB.isSelected());
     
     mShowTimeCounter = new JCheckBox(mLocalizer.msg("showTimeCounter","Show time counter"),mSettings.getProperty("showTimeCounter","false").compareTo("true") == 0);
-    mShowTimeCounter.setEnabled(!mCloseNever.isSelected() && mReminderWindowChB.isSelected());    
+    mShowTimeCounter.setEnabled(!mCloseNever.isSelected() && mReminderWindowChB.isSelected());
     
     PanelBuilder autoClosePanel = new PanelBuilder(new FormLayout("12dlu,default,2dlu,default:grow","pref,2dlu,pref,2dlu,pref,2dlu,pref,10dlu,pref"));
     autoClosePanel.add(mCloseOnEnd, cc.xyw(1,1,4));
@@ -251,9 +251,9 @@ public class ReminderSettingsTab implements SettingsTab {
       }
     }
         
-    mShowTimeSelectionDlg = new JCheckBox(mLocalizer.msg("showTimeSelectionDialog","Show time selection dialog"));    
+    mShowTimeSelectionDlg = new JCheckBox(mLocalizer.msg("showTimeSelectionDialog","Show time selection dialog"));
     mShowTimeSelectionDlg.setSelected(mSettings.getProperty("showTimeSelectionDialog","true").compareTo("true") == 0);
-    mShowRemovedDlg = new JCheckBox(mLocalizer.msg("showRemovedDialog","Show removed reminders after data update"));    
+    mShowRemovedDlg = new JCheckBox(mLocalizer.msg("showRemovedDialog","Show removed reminders after data update"));
     mShowRemovedDlg.setSelected(mSettings.getProperty("showRemovedDialog","true").compareTo("true") == 0);
         
     pb.addSeparator(mLocalizer.msg("remindBy", "Remind me by"), cc.xyw(1,1,10));
@@ -282,7 +282,7 @@ public class ReminderSettingsTab implements SettingsTab {
     pb.addSeparator(mLocalizer.msg("defaltReminderEntry","Default reminder time"), cc.xyw(1,19,10));
     pb.add(reminderEntry, cc.xyw(2,21,4));
     
-    pb.addSeparator(mLocalizer.msg("miscSettings","Misc settings"), cc.xyw(1,23,10));    
+    pb.addSeparator(mLocalizer.msg("miscSettings","Misc settings"), cc.xyw(1,23,10));
     pb.add(mShowTimeSelectionDlg, cc.xyw(2,25,7));
     pb.add(mShowRemovedDlg, cc.xyw(2,27,7));
     
@@ -353,7 +353,7 @@ public class ReminderSettingsTab implements SettingsTab {
     
     mSoundFileChB.getTextField().addKeyListener(new KeyAdapter() {
       public void keyReleased(KeyEvent e) {
-        String text = mSoundFileChB.getTextField().getText();        
+        String text = mSoundFileChB.getTextField().getText();
         if((new File(text)).isFile()) {
           boolean notFound = true;
           for (String extension : extArr) {
@@ -394,7 +394,7 @@ public class ReminderSettingsTab implements SettingsTab {
       public void itemStateChanged(ItemEvent e) {
         mAutoCloseReminderTimeSp.setEnabled(mCloseOnTime.isSelected());
         secondsLabel.setEnabled(mCloseOnTime.isSelected());
-        mShowTimeCounter.setEnabled(mCloseOnTime.isSelected() || mCloseOnEnd.isSelected());        
+        mShowTimeCounter.setEnabled(mCloseOnTime.isSelected() || mCloseOnEnd.isSelected());
       }
     };
     
@@ -403,7 +403,7 @@ public class ReminderSettingsTab implements SettingsTab {
     
     mCloseOnTime.addItemListener(new ItemListener() {
       public void itemStateChanged(ItemEvent e) {
-        mShowTimeCounter.setEnabled(e.getStateChange() == ItemEvent.SELECTED);        
+        mShowTimeCounter.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
       }
     });
     

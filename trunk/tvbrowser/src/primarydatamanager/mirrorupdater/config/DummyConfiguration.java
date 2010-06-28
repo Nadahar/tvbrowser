@@ -57,7 +57,7 @@ public class DummyConfiguration implements Configuration {
 
 
   public String[] getChannelgroups() {
-    return new String[]{"premiere"}; 
+    return new String[]{"premiere"};
   }
 
 }

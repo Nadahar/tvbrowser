@@ -140,8 +140,9 @@ public class GlobalPluginProgramFormatingSettings implements SettingsTab, Action
     if(o != null && o.length > 0) {
       GlobalPluginProgramFormating[] p = new GlobalPluginProgramFormating[o.length];
 
-      for(int i = 0; i < o.length; i++)
+      for(int i = 0; i < o.length; i++) {
         p[i] = (GlobalPluginProgramFormating)o[i];
+      }
 
       GlobalPluginProgramFormatingManager.getInstance().setAvailableProgramConfigurations(p);
     }
@@ -172,11 +173,11 @@ public class GlobalPluginProgramFormatingSettings implements SettingsTab, Action
   }
 
   public void actionPerformed(ActionEvent e) {
-    if(e.getSource() == mAdd)
+    if(e.getSource() == mAdd) {
       mConfigurations.addElement(GlobalPluginProgramFormatingManager.getDefaultConfiguration());
-    else if(e.getSource() == mDelete)
+    } else if(e.getSource() == mDelete) {
       mConfigurations.removeElementAt(mConfigurations.getList().getSelectedIndex());
-    else if(e.getSource() == mEdit) {
+    } else if(e.getSource() == mEdit) {
       LocalPluginProgramFormatingSettingsDialog.createInstance(UiUtilities.getLastModalChildOf(MainFrame.getInstance()), (AbstractPluginProgramFormating)mConfigurations.getList().getSelectedValue(), GlobalPluginProgramFormatingManager.getDefaultConfiguration(), true, true);
       mConfigurations.getList().repaint();
     }

@@ -60,7 +60,7 @@ public abstract class SoftwareUpdateItem {
    * @param value The value for the key.
    */
   public void addProperty(String key, String value) {
-    mPropertyMap.put(key, value);  
+    mPropertyMap.put(key, value);
   }
   
   /**
@@ -130,7 +130,7 @@ public abstract class SoftwareUpdateItem {
    * 
    * @return <code>True</code> if the current OS
    * is supported by the plugin, <code>false</code> otherwise.
-   * @since 2.2.4/2.6 
+   * @since 2.2.4/2.6
    */
   public boolean isSupportingCurrentOs() {
     String prop = getProperty("os.name");
@@ -149,19 +149,21 @@ public abstract class SoftwareUpdateItem {
     }
     else if (prop.indexOf('o') != -1 && OperatingSystem.isOther()) {
       return true;
-    }    
+    }
     
     return false;
   }
   
   private Version getVersion(String value) {
-    if (value==null)
+    if (value==null) {
       return null;
+    }
     
     String[] s = value.split("\\.");
     
-    if (s.length<2)
+    if (s.length<2) {
       return null;
+    }
     
     int major, minor, subMinor = 0;
     try {
@@ -174,7 +176,7 @@ public abstract class SoftwareUpdateItem {
     }catch(NumberFormatException e) {
       return null;
     }
-    return new Version(major, minor, subMinor);    
+    return new Version(major, minor, subMinor);
   }
   
   /**
@@ -185,7 +187,7 @@ public abstract class SoftwareUpdateItem {
    */
   public Version getRequiredVersion() {
     return getVersion(getProperty("requires"));
-  }  
+  }
   
   /**
    * Gets the maximum supported TV-Browser version.
@@ -193,7 +195,7 @@ public abstract class SoftwareUpdateItem {
    * @return The maximum supported TV-Browser version.
    */
   public Version getMaximumVersion() {
-    return getVersion(getProperty("maximalVersion"));    
+    return getVersion(getProperty("maximalVersion"));
   }
   
   /**
@@ -204,13 +206,15 @@ public abstract class SoftwareUpdateItem {
   public String getName() {
     String n = getProperty("name_de");
     
-    if(!isLocaleGerman())
+    if(!isLocaleGerman()) {
       n = getProperty("name_en");
+    }
     
-    if(n != null)
+    if(n != null) {
       return n;
-    else
+    } else {
       return getClassName();
+    }
   }
   
   /**
@@ -221,13 +225,15 @@ public abstract class SoftwareUpdateItem {
   public String getDescription() {
     String d = getProperty("description");
     
-    if(!isLocaleGerman())
+    if(!isLocaleGerman()) {
       d = getProperty("description_en");
+    }
     
-    if(d != null)
+    if(d != null) {
       return d;
-    else
+    } else {
       return "";
+    }
   }
   
   /**
@@ -238,14 +244,15 @@ public abstract class SoftwareUpdateItem {
   public String getWebsite() {
     String w = getProperty("website");
     
-    if(!isLocaleGerman())
+    if(!isLocaleGerman()) {
       w = getProperty("website_en");
+    }
     
     return w;
   }
 
   /**
-   * @return true if current locale language is german 
+   * @return true if current locale language is german
    */
   private boolean isLocaleGerman() {
     return Locale.getDefault().getLanguage().equals(Locale.GERMAN.getLanguage());
@@ -257,7 +264,7 @@ public abstract class SoftwareUpdateItem {
    * @return The class name of this update item.
    */
 	public String getClassName() {
-    return mClassName;   
+    return mClassName;
   }
 	
 	/**
@@ -270,7 +277,7 @@ public abstract class SoftwareUpdateItem {
    *         <code>false</code> otherwise.
 	 * @throws TvBrowserException
 	 */
-	public boolean download(String downloadUrl) throws TvBrowserException {	 
+	public boolean download(String downloadUrl) throws TvBrowserException {
     String url = getProperty("downloadtype") == null
         || !getProperty("downloadtype").equalsIgnoreCase("mirrors") ? getProperty("download")
         : downloadUrl + "/" + getProperty("filename");

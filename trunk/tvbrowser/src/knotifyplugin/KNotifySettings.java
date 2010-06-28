@@ -43,7 +43,7 @@ public final class KNotifySettings extends PropertyBasedSettings {
   }
 
   public void setDescription(final String description) {
-    set("description", description);      
+    set("description", description);
   }
 
 }

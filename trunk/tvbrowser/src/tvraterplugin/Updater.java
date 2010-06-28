@@ -66,14 +66,14 @@ public class Updater implements Progress {
   private static String LOCATION = "http://tvaddicted.de/updater.php";
 
   /** The Plugin */
-  private TVRaterPlugin _tvraterPlugin;
+  private TVRaterPlugin mPlugin;
 
   /** Update Successfull ? */
-  private boolean _wasSuccessfull = false;
+  private boolean mWasSuccessfull = false;
 
-  private Hashtable<String, Program> _updateList;
+  private Hashtable<String, Program> mUpdateList;
 
-  private TVRaterSettings settings;
+  private TVRaterSettings mSettings;
 
   /**
    * Creates the Updater
@@ -81,19 +81,19 @@ public class Updater implements Progress {
    * @param tvraterPlugin Plugin that uses the Updater
    */
   public Updater(final TVRaterPlugin tvraterPlugin, final TVRaterSettings settings) {
-    _tvraterPlugin = tvraterPlugin;
-    this.settings = settings;
+    mPlugin = tvraterPlugin;
+    this.mSettings = settings;
   }
 
   /**
    * Does the Update
    */
   public void run() {
-    String name = settings.getName();
-    String password = settings.getPassword();
+    String name = mSettings.getName();
+    String password = mSettings.getPassword();
     if (StringUtils.isEmpty(name) || (StringUtils.isEmpty(password))) {
 
-      JOptionPane.showMessageDialog(_tvraterPlugin.getParentFrameForTVRater(), mLocalizer.msg("noUser",
+      JOptionPane.showMessageDialog(mPlugin.getParentFrameForTVRater(), mLocalizer.msg("noUser",
           "Please Enter your Userdata in the\nconfiguration of this Plugin"), mLocalizer.msg("error",
           "Error while updating TV Rater"), JOptionPane.ERROR_MESSAGE);
       return;
@@ -108,9 +108,9 @@ public class Updater implements Progress {
         return;
       }
 
-      _updateList = createUpdateList();
-      if (_updateList.size() == 0) {
-        _wasSuccessfull = true;
+      mUpdateList = createUpdateList();
+      if (mUpdateList.size() == 0) {
+        mWasSuccessfull = true;
         return;
       }
 
@@ -130,13 +130,13 @@ public class Updater implements Progress {
       if (data.getNodeName().equals("error")) {
         String message = getTextFromNode(data);
 
-        JOptionPane.showMessageDialog(_tvraterPlugin.getParentFrameForTVRater(), mLocalizer.msg("serverError",
+        JOptionPane.showMessageDialog(mPlugin.getParentFrameForTVRater(), mLocalizer.msg("serverError",
             "The Server has send the following error:")
             + "\n" + message, mLocalizer.msg("error", "Error while updating TV Rater"), JOptionPane.ERROR_MESSAGE);
       } else {
         readData(data);
-        _wasSuccessfull = true;
-        _tvraterPlugin.updateCurrentDate();
+        mWasSuccessfull = true;
+        mPlugin.updateCurrentDate();
       }
 
       out.close();
@@ -152,7 +152,7 @@ public class Updater implements Progress {
    * @return Successfully updated ?
    */
   public boolean wasSuccessfull() {
-    return _wasSuccessfull;
+    return mWasSuccessfull;
   }
 
   /**
@@ -197,7 +197,7 @@ public class Updater implements Progress {
    * @param node Node to analyse
    */
   private void readRatingData(Node node) {
-    _tvraterPlugin.getDatabase().clearServer();
+    mPlugin.getDatabase().clearServer();
     Node child = node.getFirstChild();
     while (child != null) {
       if (child.getNodeName().equals("rating")) {
@@ -250,7 +250,7 @@ public class Updater implements Progress {
         rating.setOnlineID(onlineID);
 
         if (rating.getTitle() != null) {
-          Rating personal = _tvraterPlugin.getDatabase().getPersonalRating(rating.getTitle());
+          Rating personal = mPlugin.getDatabase().getPersonalRating(rating.getTitle());
 
           if (personal != null) {
             personal.setOnlineID(onlineID);
@@ -263,7 +263,7 @@ public class Updater implements Progress {
       child = child.getNextSibling();
     }
 
-    _tvraterPlugin.getDatabase().setServerRating(rating);
+    mPlugin.getDatabase().setServerRating(rating);
   }
 
   /**
@@ -304,10 +304,10 @@ public class Updater implements Progress {
     // User
     Element user = document.createElement("user");
 
-    Element name = createNodeWithTextValue(document, "name", settings.getName());
+    Element name = createNodeWithTextValue(document, "name", mSettings.getName());
     user.appendChild(name);
 
-    Element password = createNodeWithTextValue(document, "password", IOUtilities.xorEncode(settings
+    Element password = createNodeWithTextValue(document, "password", IOUtilities.xorEncode(mSettings
         .getPassword(), 21));
     user.appendChild(password);
 
@@ -325,7 +325,7 @@ public class Updater implements Progress {
     Element setratings = document.createElement("setratings");
     data.appendChild(setratings);
 
-    ArrayList<Rating> list = _tvraterPlugin.getDatabase().getChangedPersonal();
+    ArrayList<Rating> list = mPlugin.getDatabase().getChangedPersonal();
     for (int i = 0; i < list.size(); i++) {
       Element ratingElement = document.createElement("rating");
       setratings.appendChild(ratingElement);
@@ -344,13 +344,13 @@ public class Updater implements Progress {
       ratingElement.appendChild(createNodeWithTextValue(document, "genre", rating.getGenre()));
 
     }
-    _tvraterPlugin.getDatabase().clearChangedPersonal();
+    mPlugin.getDatabase().clearChangedPersonal();
 
     // GetRatings
     Element getratings = document.createElement("getratings");
     data.appendChild(getratings);
 
-    Enumeration<Program> en = _updateList.elements();
+    Enumeration<Program> en = mUpdateList.elements();
     while (en.hasMoreElements()) {
       Element program = document.createElement("program");
       getratings.appendChild(program);
@@ -432,10 +432,10 @@ public class Updater implements Progress {
     Date date = new Date();
     date = date.addDays(-1);
     for (int d = 0; d < 32; d++) {
-      for (int i = 0; i < channels.length; i++) {
-        for (Iterator<Program> it = Plugin.getPluginManager().getChannelDayProgram(date, channels[i]); it.hasNext();) {
+      for (Channel channel : channels) {
+        for (Iterator<Program> it = Plugin.getPluginManager().getChannelDayProgram(date, channel); it.hasNext();) {
           Program program = it.next();
-          if ((program != null) && _tvraterPlugin.isProgramRateable(program)) {
+          if ((program != null) && mPlugin.isProgramRateable(program)) {
             if (!table.containsKey(program.getTitle())) {
               table.put(program.getTitle(), program);
             }

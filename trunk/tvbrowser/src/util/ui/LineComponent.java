@@ -55,5 +55,5 @@ public class LineComponent extends JComponent {
     int y = getHeight() / 2;
     g.setColor(getForeground());
     g.drawLine(5, y, getWidth() - 10, y);
-  } 
+  }
 }

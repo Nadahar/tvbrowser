@@ -75,7 +75,7 @@ public class DayProgramFileTranslator {
           if (! fileArr[i].delete()) {
             throw new IOException("Can't delete old translation: "
               + fileArr[i].getAbsolutePath());
-          } 
+          }
         }
       }
     }
@@ -83,9 +83,9 @@ public class DayProgramFileTranslator {
     // Go through all files and translate
     fileArr = srcDir.listFiles();
     if (fileArr != null) {
-      for (int i = 0; i < fileArr.length; i++) {
-        if (fileArr[i].getName().endsWith(".prog.gz")) {
-          translateDayProgram(fileArr[i],destDir);
+      for (File element : fileArr) {
+        if (element.getName().endsWith(".prog.gz")) {
+          translateDayProgram(element,destDir);
         }
       }
     }
@@ -175,7 +175,7 @@ public class DayProgramFileTranslator {
       if (stream != null) {
         try { stream.close(); } catch (IOException exc) {}
       }
-    }    
+    }
   }
 
     /**
@@ -296,8 +296,8 @@ public class DayProgramFileTranslator {
       System.out.println("Please specify at least one file or directory");
     } else {
       try {
-        for (int i = 0; i < args.length; i++) {
-          File file = new File(args[i]);
+        for (String arg : args) {
+          File file = new File(arg);
           if (! file.exists()) {
             System.out.println("File does not exist: " + file.getAbsolutePath());
           } else {

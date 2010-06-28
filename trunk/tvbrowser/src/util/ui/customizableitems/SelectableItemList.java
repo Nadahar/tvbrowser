@@ -55,7 +55,7 @@ import com.jgoodies.forms.layout.FormLayout;
 
 /**
  * A class that provides a list that contains selectable items.
- *  
+ * 
  * @author René Mach
  * 
  */
@@ -69,7 +69,7 @@ public class SelectableItemList extends JPanel {
   private SelectableItemRenderer mItemRenderer;
   
   private JButton mSelectAllBt;
-  private JButton mDeSelectAllBt; 
+  private JButton mDeSelectAllBt;
   
   private JList mList;
   private boolean mIsEnabled = true;
@@ -97,7 +97,7 @@ public class SelectableItemList extends JPanel {
    */
   public SelectableItemList(Object[] currSelection, Object[] allItems, Object[] notSelectableItems) {
     this(currSelection, allItems, false, notSelectableItems);
-  } 
+  }
   
   /**
    * Creates the SelectableItemList.
@@ -160,9 +160,9 @@ public class SelectableItemList extends JPanel {
       public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_SPACE) {
           Object[] objs = mList.getSelectedValues();
-          for (int i=0;i<objs.length;i++){
-            if (objs[i] instanceof SelectableItem) {
-              SelectableItem item = (SelectableItem) objs[i];
+          for (Object obj : objs) {
+            if (obj instanceof SelectableItem) {
+              SelectableItem item = (SelectableItem) obj;
               item.setSelected(!item.isSelected());
             }
           }
@@ -187,7 +187,7 @@ public class SelectableItemList extends JPanel {
     mSelectAllBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         selectAll();
-      }      
+      }
     });
     p3.add(mSelectAllBt, cc.xy(1,1));
 
@@ -196,12 +196,13 @@ public class SelectableItemList extends JPanel {
     mDeSelectAllBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         clearSelection();
-      }      
+      }
     });
     p3.add(mDeSelectAllBt, cc.xy(3,1));
     
-    if(showSelectionButtons)
+    if(showSelectionButtons) {
       add(p3, BorderLayout.SOUTH);
+    }
     
   }
   
@@ -267,8 +268,9 @@ public class SelectableItemList extends JPanel {
     
     ArrayList<Object> selectionList = new ArrayList<Object>();
     
-    for (int i = 0; i < currSelection.length; i++)
-      selectionList.add(currSelection[i]);
+    for (Object element : currSelection) {
+      selectionList.add(element);
+    }
     
     for (int i = 0; i < allItems.length; i++) {
       SelectableItem item = new SelectableItem(allItems[i], selectionList.remove(allItems[i]),!arrayContainsItem(disabledItems,allItems[i]));
@@ -289,7 +291,7 @@ public class SelectableItemList extends JPanel {
   }
   
   /**
-   * Attention: This is not a List with all selected Items in the List. This List 
+   * Attention: This is not a List with all selected Items in the List. This List
    * is a List with all checked Items
    * 
    * @return The selected Objects

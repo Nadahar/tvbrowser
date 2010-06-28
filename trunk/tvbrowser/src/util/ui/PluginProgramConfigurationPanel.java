@@ -61,7 +61,7 @@ public class PluginProgramConfigurationPanel extends JPanel implements ActionLis
     PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,default:grow,5dlu","pref,fill:default:grow,5dlu,pref,10dlu,pref"), this);
     
     mDefaultLocalFormating = (defaultLocalFormating == null) ? new LocalPluginProgramFormating("Plugin - Default","{title}","{channel_name} - {title}\n{leadingZero(start_day,\"2\")}.{leadingZero(start_month,\"2\")}.{start_year} {leadingZero(start_hour,\"2\")}:{leadingZero(start_minute,\"2\")}-{leadingZero(end_hour,\"2\")}:{leadingZero(end_minute,\"2\")}\n\n{splitAt(short_info,\"78\")}\n\n","UTF-8") : defaultLocalFormating;
-    mShowTitleSetting = showTitleSetting; 
+    mShowTitleSetting = showTitleSetting;
     mShowEncodingSetting = showEncodingSetting;
     
     AbstractPluginProgramFormating[] availableGlobalFormatings = Plugin.getPluginManager().getAvailableGlobalPuginProgramFormatings();
@@ -97,14 +97,14 @@ public class PluginProgramConfigurationPanel extends JPanel implements ActionLis
     mEdit.setEnabled(false);
     mEdit.addActionListener(this);
     
-    mDelete = new JButton(Localizer.getLocalization(Localizer.I18N_DELETE));      
+    mDelete = new JButton(Localizer.getLocalization(Localizer.I18N_DELETE));
     mDelete.setIcon(TVBrowserIcons.delete(TVBrowserIcons.SIZE_SMALL));
     mDelete.setEnabled(false);
     mDelete.addActionListener(this);
     
     buttonPanel.add(mAdd, cc.xy(1,1));
     buttonPanel.add(mEdit, cc.xy(3,1));
-    buttonPanel.add(mDelete, cc.xy(5,1));    
+    buttonPanel.add(mDelete, cc.xy(5,1));
     
     mOrder = new OrderChooser(selectedValues == null ? allArr : selectedValues, allArr);
     mOrder.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);

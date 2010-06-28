@@ -72,7 +72,7 @@ public class ConfigPluginSettingsTab implements CancelableSettingsTab {
   public ConfigPluginSettingsTab(PluginProxy plugin) {
     mPlugin = plugin;
     if (mPlugin.isActivated()) {
-      mSettingsTab = mPlugin.getSettingsTab();      
+      mSettingsTab = mPlugin.getSettingsTab();
     } else {
       mSettingsTab = null;
     }

@@ -53,8 +53,9 @@ public class NewsList {
       }
     }
     
-    if(i == mList.size())
+    if(i == mList.size()) {
       mList.add(news);
+    }
   }
   
   /**
@@ -69,7 +70,7 @@ public class NewsList {
    * Gets the last news time.
    * 
    * @param defaultValue The default value to return if there are
-   *                     no news. 
+   *                     no news.
    * @return The last news time.
    */
   public long getLastNewsTime(long defaultValue) {

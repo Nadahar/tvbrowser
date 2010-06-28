@@ -75,12 +75,12 @@ public class ActionMenu {
   public ActionMenu(Action action, Object[] subItems) {
     mAction = action;
     ArrayList<ActionMenu> subMenus = new ArrayList<ActionMenu>();
-    for (int i=0; i<subItems.length; i++) {
-      if (subItems[i] instanceof Action) {
-        subMenus.add(new ActionMenu((Action) subItems[i]));
+    for (Object subItem : subItems) {
+      if (subItem instanceof Action) {
+        subMenus.add(new ActionMenu((Action) subItem));
       }
-      else if (subItems[i] instanceof ActionMenu) {
-        subMenus.add((ActionMenu) subItems[i]);
+      else if (subItem instanceof ActionMenu) {
+        subMenus.add((ActionMenu) subItem);
       }
     }
     mSubItems = new ActionMenu[subMenus.size()];

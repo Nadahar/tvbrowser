@@ -455,7 +455,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
    * The TV data can be modified by the plugin!
    * <p>
    * Override this method if you want to change/add data.
-   * Don't do other things than changing/adding data, 
+   * Don't do other things than changing/adding data,
    * use {@link #handleTvDataAdded(ChannelDayProgram)} istead.
    * 
    * @param newProg The new ChannelDayProgram.
@@ -478,7 +478,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
    * The TV data can be modified by the plugin!
    * <p>
    * Override this method if you want to change/add data.
-   * Don't do other things than changing/adding data, 
+   * Don't do other things than changing/adding data,
    * use {@link #handleTvDataAdded(ChannelDayProgram)} istead.
    * 
    * @param newProg The new ChannelDayProgram.
@@ -732,7 +732,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
    * 
    * @param values The value array passed from the other plugin.
    * @param target The receive target of the programs.
-   * @return <code>True</code> if the value array was handled correct, 
+   * @return <code>True</code> if the value array was handled correct,
    * </code>false</code> otherwise.
    * 
    * @see #canReceiveProgramsWithTarget()
@@ -754,7 +754,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
    * 
    * @param values The value array passed from the other plugin.
    * @param target The receive target of the programs.
-   * @return <code>True</code> if the value array was handled correct, 
+   * @return <code>True</code> if the value array was handled correct,
    * </code>false</code> otherwise.
    * 
    * @see #canReceiveProgramsWithTarget()

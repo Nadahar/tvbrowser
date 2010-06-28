@@ -44,7 +44,7 @@ public class SplitViewProperty extends ViewProperty {
       mManager = manager;
       mKey = key;
       mDefaultValue = new Property(verticalSplit, leftComponentIsFixed, fixedComponentWidth);
-      mCachedValue = null;        
+      mCachedValue = null;
     }
     
     private SplitViewProperty(PropertyManager manager, String key, Property prop) {
@@ -73,8 +73,8 @@ public class SplitViewProperty extends ViewProperty {
           int width = Integer.parseInt(s[2]);
           return new Property(verticalSplit, leftComponent, width);
         }catch(NumberFormatException e) {
-          return mDefaultValue;  
-        }        
+          return mDefaultValue;
+        }
       }
       return mDefaultValue;
     }
@@ -92,7 +92,7 @@ public class SplitViewProperty extends ViewProperty {
         mCachedValue = new Property(mDefaultValue);
       }
       mCachedValue.setLeftComponentFix(fixed);
-      setProperty(createPropertyString(mCachedValue));        
+      setProperty(createPropertyString(mCachedValue));
     }
  
     public void setFixedComponentWidth(int width) {
@@ -100,8 +100,8 @@ public class SplitViewProperty extends ViewProperty {
         mCachedValue = new Property(mDefaultValue);
       }
       mCachedValue.setFixComponentWidth(width);
-      setProperty(createPropertyString(mCachedValue));        
-    }       
+      setProperty(createPropertyString(mCachedValue));
+    }
     
     public boolean getVerticalSplit() {
       if (mCachedValue == null) {
@@ -126,7 +126,7 @@ public class SplitViewProperty extends ViewProperty {
     }
     
     protected void clearCache() {
-      mCachedValue = null;  
+      mCachedValue = null;
         
     }
     
@@ -145,7 +145,7 @@ public class SplitViewProperty extends ViewProperty {
       public Property(boolean verticalSplit, boolean leftComponentIsFixed, int width) {
         mVerticalSplit = verticalSplit;
         mLeftComponentIsFixed = leftComponentIsFixed;
-        mFixedComponentWidth = width;  
+        mFixedComponentWidth = width;
       }
       
       public Property(Property prop) {

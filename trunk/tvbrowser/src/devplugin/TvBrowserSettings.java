@@ -30,7 +30,7 @@ import java.awt.Color;
 
 /**
  * Provides information of the current user settings.
- *  
+ * 
  */
 public interface TvBrowserSettings {
 

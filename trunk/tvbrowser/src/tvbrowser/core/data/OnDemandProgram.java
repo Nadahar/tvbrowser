@@ -47,10 +47,10 @@ public class OnDemandProgram extends MutableProgram {
   /**
    * The Object that represents null-values in the cache. Used to distinct
    * null-values from unloaded or forgotten values.
-   */  
+   */
   private Object NULL_VALUE = "<null>";
 
-  /** The file to load values from, when they are demanded */  
+  /** The file to load values from, when they are demanded */
   private OnDemandDayProgramFile mOnDemandFile;
   
 
@@ -83,7 +83,7 @@ public class OnDemandProgram extends MutableProgram {
   }
 
 
-  /* 
+  /*
    * override the object access of MutableProgram to be able to load the values on demand only
    * @see tvdataservice.MutableProgram#getObjectValueField(devplugin.ProgramFieldType)
    */

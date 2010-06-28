@@ -41,7 +41,7 @@ public final class HashCodeUtilities {
    * chars.
    */
   public static int hash(int aSeed, char aChar) {
-    return firstTerm(aSeed) + (int) aChar;
+    return firstTerm(aSeed) + aChar;
   }
 
   public static int hash(final char value) {

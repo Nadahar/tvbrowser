@@ -282,7 +282,7 @@ public final class DreamboxConfig implements ConfigIf, Cloneable {
     /**
      * @param channels all channels on the dreambox
      */
-    protected void setDreamboxChannels(DreamboxChannel[] channels) {
+    void setDreamboxChannels(DreamboxChannel[] channels) {
         Arrays.sort(channels, new Comparator<DreamboxChannel>() {
             public int compare(DreamboxChannel o1, DreamboxChannel o2) {
                 return o1.getName().compareToIgnoreCase(o2.getName());

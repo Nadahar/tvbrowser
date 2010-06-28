@@ -31,8 +31,8 @@ import org.apache.commons.lang.StringUtils;
 
 import util.paramhandler.ParamLibrary;
 import util.ui.Localizer;
-import captureplugin.CapturePlugin;
 import captureplugin.drivers.utils.ProgramTime;
+import devplugin.Plugin;
 import devplugin.Program;
 
 /**
@@ -232,7 +232,7 @@ public class CaptureParamLibrary extends ParamLibrary {
    * @return external ChannelName
    */
   private String getExternalChannelName(Program prg, boolean showError) {
-    if (prg.equals(CapturePlugin.getPluginManager().getExampleProgram())) {
+    if (prg.equals(Plugin.getPluginManager().getExampleProgram())) {
       return "WaltonTV";
     } else if (StringUtils.isEmpty(mConfig.getChannels().get(prg.getChannel()))) {
 

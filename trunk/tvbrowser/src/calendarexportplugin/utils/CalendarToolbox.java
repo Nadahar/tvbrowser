@@ -9,13 +9,13 @@ import devplugin.Program;
 
 /**
  * This Class is a ToolBox for the iCal/vCal exporter
- * 
+ *
  * @author bodo
  */
 public class CalendarToolbox {
   /**
    * Replaces Newline-Characters with ' '
-   * 
+   *
    * @param b replace here
    * @return String without Newline
    */
@@ -28,7 +28,7 @@ public class CalendarToolbox {
 
   /**
    * Gets the Start-Time as Calendar
-   * 
+   *
    * @param p Program
    * @return Start-Time
    */
@@ -39,7 +39,7 @@ public class CalendarToolbox {
 
     int hour = min % 60;
 
-    min = min - (hour * 60);
+    min -= hour * 60;
 
     cal.set(Calendar.HOUR_OF_DAY, hour);
     cal.set(Calendar.MINUTE, min);
@@ -51,7 +51,7 @@ public class CalendarToolbox {
 
   /**
    * Gets the End-Time as Calendar
-   * 
+   *
    * @param p Program
    * @return End-Time
    */
@@ -59,11 +59,11 @@ public class CalendarToolbox {
     Calendar cal = getStartAsCalendar(p);
 
     int leng = p.getLength();
-    
+
     if (leng <= 0) {
       leng = 0;
     }
-    
+
     cal.add(Calendar.MINUTE, leng);
 
     return cal;

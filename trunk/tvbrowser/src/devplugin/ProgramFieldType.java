@@ -51,6 +51,7 @@ public class ProgramFieldType {
   /**
    * @deprecated since 3.0, use {@link UNKNOWN_FORMAT} instead
    */
+  @Deprecated
   public static final int UNKOWN_FORMAT = UNKNOWN_FORMAT;
   public static final int BINARY_FORMAT = 2;
   public static final int TEXT_FORMAT = 3;
@@ -442,8 +443,9 @@ public class ProgramFieldType {
 
 
   public String getLocalizedName() {
-    if(mLocalizedName == null)
+    if(mLocalizedName == null) {
       mLocalizedName = mLocalizer.msg(mLocalizerKey, mLocalizerDefaultMsg);
+    }
 
     return mLocalizedName;
   }

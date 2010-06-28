@@ -48,6 +48,7 @@ import util.io.stream.ObjectInputStreamProcessor;
 import util.io.stream.ObjectOutputStreamProcessor;
 import util.io.stream.StreamUtilities;
 import util.ui.ImageUtilities;
+import util.ui.TVBrowserIcons;
 
 /**
  * Superclass for all Java-TV-Browser plugins.
@@ -220,6 +221,18 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
    */
   final public ImageIcon createImageIcon(String category, String icon, int size) {
     return getPluginManager().getIconFromTheme(this, category, icon, size);
+  }
+
+  /**
+   * Helper method that Loads an ImageIcon from the IconTheme with default size
+   *
+   * @param category Category the Icon resists in
+   * @param icon Icon to load (without extension)
+   * @return The Icon
+   * @since 2.2
+   */
+  final public ImageIcon createImageIcon(String category, String icon) {
+    return getPluginManager().getIconFromTheme(this, category, icon, TVBrowserIcons.SIZE_SMALL);
   }
 
   /**
@@ -452,7 +465,7 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
    * This method is only called, if the option to show program table icons for
    * this plugin is set in the options.
    *
-   * @param program The programs to get the icons for.
+   * @param program The program to get the icons for.
    * @return The icons for the given program or <code>null</code> if the plugin
    *         does not provide this feature.
    *
@@ -511,15 +524,17 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
    * @since 2.5
    */
   public final Icon[] getMarkIcons(Program p) {
-    if(getMarkIcon() != null)
+    if(getMarkIcon() != null) {
       return new Icon[] {getMarkIcon()};
+    }
 
     Icon[] icon = getMarkIconsForProgram(p);
 
-    if(icon == null)
+    if(icon == null) {
       return new Icon[0];
-    else
+    } else {
       return icon;
+    }
   }
 
 

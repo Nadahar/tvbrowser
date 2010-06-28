@@ -171,16 +171,16 @@ public class NewsPlugin extends Plugin {
             int addCount = 0;
             
             // Add the new news
-            for (int i = 0; i < newsArr.length; i++) {
-              if((newsArr[i].getTime().getTime() - lastNews) > 5000) {
-                mNewsList.add(newsArr[i]);
+            for (News element : newsArr) {
+              if((element.getTime().getTime() - lastNews) > 5000) {
+                mNewsList.add(element);
                 addCount++;
               }
             }
             
             if(addCount > 0) {
               // Show the dialog
-              final int newNewsCount = addCount; 
+              final int newNewsCount = addCount;
               SwingUtilities.invokeLater(new Runnable() {
                 public void run() {
                   NewsDialog dlg = new NewsDialog(getParentFrame(), mNewsList.getList(),
@@ -251,7 +251,7 @@ public class NewsPlugin extends Plugin {
 
   private News[] parseNews(String news) {
     // Create a regex that extracts news
-    String regex = 
+    String regex =
             "<news date=\"([^\"]*)\" author=\"([^\"]*)\">"
             + "\\s*<title>([^<]*)</title>" + "\\s*<text>([^<]*)</text>";
 

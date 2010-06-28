@@ -98,7 +98,9 @@ public class IOUtilities {
     }
     finally {
       try {
-        if (stream != null) stream.close();
+        if (stream != null) {
+          stream.close();
+        }
       } catch (IOException exc) {}
     }
   }
@@ -124,7 +126,9 @@ public class IOUtilities {
     }
     finally {
       try {
-        if (out != null) out.close();
+        if (out != null) {
+          out.close();
+        }
       } catch (IOException exc) {}
     }
   }
@@ -522,9 +526,13 @@ public class IOUtilities {
   public static byte[] loadFileFromJar(String fileName, Class srcClass)
     throws IOException
   {
-    if (fileName == null) throw new IllegalArgumentException("fileName == null");
-    if (StringUtils.isEmpty(fileName)) throw new IllegalArgumentException("fileName is empty");
+    if (fileName == null) {
+      throw new IllegalArgumentException("fileName == null");
+    }
+    if (StringUtils.isEmpty(fileName)) {
+      throw new IllegalArgumentException("fileName is empty");
 //	if (srcClass == null) srcClass = IOUtilities.class;
+    }
 
     // Der Dateiname muss mit einem '/' anfangen, sonst wird er nicht gefunden.
 
@@ -595,7 +603,9 @@ public class IOUtilities {
     }
     finally {
       try {
-        if (stream != null) stream.close();
+        if (stream != null) {
+          stream.close();
+        }
       } catch (IOException exc) {}
     }
   }
@@ -625,8 +635,12 @@ public class IOUtilities {
     }
     finally {
       try {
-        if (gzipStream != null) gzipStream.close();
-        if (stream != null) stream.close();
+        if (gzipStream != null) {
+          gzipStream.close();
+        }
+        if (stream != null) {
+          stream.close();
+        }
       } catch (IOException exc) {}
     }
   }

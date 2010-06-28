@@ -42,11 +42,10 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.UIManager;
 
-import captureplugin.CapturePlugin;
-
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
+import captureplugin.CapturePlugin;
 
 
 /**

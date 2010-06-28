@@ -450,39 +450,39 @@ class BrowserLauncher {
                 }
                 String[] systemFolderFiles = systemFolder.list();
                 // Avoid a FilenameFilter because that can't be stopped mid-list
-                for(int i = 0; i < systemFolderFiles.length; i++) {
-                    try {
-                        File file = new File(systemFolder, systemFolderFiles[i]);
-                        if (!file.isFile()) {
-                            continue;
-                        }
-                        // We're looking for a file with a creator code of 'MACS' and
-                        // a type of 'FNDR'.  Only requiring the type results in non-Finder
-                        // applications being picked up on certain Mac OS 9 systems,
-                        // especially German ones, and sending a GURL event to those
-                        // applications results in a logout under Multiple Users.
-                        Object fileType = getFileType.invoke(null, new Object[] { file });
-                        if (FINDER_TYPE.equals(fileType.toString())) {
-                            Object fileCreator = getFileCreator.invoke(null, new Object[] { file });
-                            if (FINDER_CREATOR.equals(fileCreator.toString())) {
-                                browser = file.toString();  // Actually the Finder, but that's OK
-                                return browser;
-                            }
-                        }
-                    } catch (IllegalArgumentException iare) {
-                        browser = null;
-                        errorMessage = iare.getMessage();
-                        return null;
-                    } catch (IllegalAccessException iae) {
-                        browser = null;
-                        errorMessage = iae.getMessage();
-                        return browser;
-                    } catch (InvocationTargetException ite) {
-                        browser = null;
-                        errorMessage = ite.getTargetException().getClass() + ": " + ite.getTargetException().getMessage();
-                        return browser;
-                    }
-                }
+          for (String systemFolderFile : systemFolderFiles) {
+              try {
+                  File file = new File(systemFolder, systemFolderFile);
+                  if (!file.isFile()) {
+                      continue;
+                  }
+                  // We're looking for a file with a creator code of 'MACS' and
+                  // a type of 'FNDR'.  Only requiring the type results in non-Finder
+                  // applications being picked up on certain Mac OS 9 systems,
+                  // especially German ones, and sending a GURL event to those
+                  // applications results in a logout under Multiple Users.
+                  Object fileType = getFileType.invoke(null, new Object[] { file });
+                  if (FINDER_TYPE.equals(fileType.toString())) {
+                      Object fileCreator = getFileCreator.invoke(null, new Object[] { file });
+                      if (FINDER_CREATOR.equals(fileCreator.toString())) {
+                          browser = file.toString();  // Actually the Finder, but that's OK
+                          return browser;
+                      }
+                  }
+              } catch (IllegalArgumentException iare) {
+                  browser = null;
+                  errorMessage = iare.getMessage();
+                  return null;
+              } catch (IllegalAccessException iae) {
+                  browser = null;
+                  errorMessage = iae.getMessage();
+                  return browser;
+              } catch (InvocationTargetException ite) {
+                  browser = null;
+                  errorMessage = ite.getTargetException().getClass() + ": " + ite.getTargetException().getMessage();
+                  return browser;
+              }
+          }
                 browser = null;
                 break;
             case MRJ_3_0:

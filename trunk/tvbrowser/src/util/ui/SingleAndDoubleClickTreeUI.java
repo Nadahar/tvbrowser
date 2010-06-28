@@ -135,7 +135,7 @@ public class SingleAndDoubleClickTreeUI extends javax.swing.plaf.basic.BasicTree
           }
           else if(!mWasExpanded && mLastSelectionPath != null && tree.getSelectionPath().equals(mLastSelectionPath)){
             tree.collapsePath(path);
-          }          
+          }
         }
         else {
           mLastSelectionPath = path;

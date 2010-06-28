@@ -74,8 +74,8 @@ public class TimeChooserPanel extends JPanel implements ChangeListener, MouseLis
       JButton nowBt=new JButton(msg);
       nowBt.addActionListener(new ActionListener(){
         public void actionPerformed(ActionEvent arg0) {
-            mParent.scrollToNow();    
-        }});      
+            mParent.scrollToNow();
+        }});
       add(nowBt, BorderLayout.SOUTH);
       nowBt.addMouseListener(this);
       
@@ -98,8 +98,7 @@ public class TimeChooserPanel extends JPanel implements ChangeListener, MouseLis
       
       int[] times = Settings.propTimeButtons.getIntArray();
       
-      for (int i=0; i<times.length; i++) {
-        final int time = times[i];
+      for (final int time : times) {
         int h = time/60;
         int m = time%60;
         JButton btn = new JButton(formatter.formatTime(h, m));

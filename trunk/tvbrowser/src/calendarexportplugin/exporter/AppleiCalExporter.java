@@ -85,7 +85,7 @@ public class AppleiCalExporter extends AbstractExporter {
           "\tend tell\n" +
           "\ttell theISOTime\n" +
           "\t\tset hours of myDate to item 1\n" +
-          "\t\tset minutes of myDate to item 2\n" +  
+          "\t\tset minutes of myDate to item 2\n" +
           "\t\tset seconds of myDate to 0\n" +
           "\tend tell\n" +
           "\t\n" +

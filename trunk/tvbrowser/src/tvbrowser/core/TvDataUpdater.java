@@ -379,9 +379,7 @@ public class TvDataUpdater {
   private UpdateJob[] toUpdateJobArr(Channel[] subscribedChannels, TvDataServiceProxy[] services) {
 
     ArrayList<UpdateJob> jobList = new ArrayList<UpdateJob>();
-    for (int channelIdx = 0; channelIdx < subscribedChannels.length; channelIdx++) {
-      Channel channel = subscribedChannels[channelIdx];
-
+    for (Channel channel : subscribedChannels) {
       // Get the UpdateJob for this channel
       UpdateJob job = null;
       for (int i = 0; i < jobList.size(); i++) {
@@ -397,8 +395,8 @@ public class TvDataUpdater {
           // check, if we can use this dataservice
           TvDataServiceProxy service = channel.getDataServiceProxy();
           boolean useService = false;
-          for (int k = 0; k<services.length; k++) {
-            if (services[k].getId().equals(service.getId())) {
+          for (TvDataServiceProxy service2 : services) {
+            if (service2.getId().equals(service.getId())) {
               useService = true;
               break;
             }

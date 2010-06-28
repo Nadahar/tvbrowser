@@ -85,10 +85,10 @@ public class FtpDataTarget implements DataTarget {
         mFTPClient.disconnect();
       } catch (IOException e) {
         // ignore
-      }      
+      }
     }
     
-    // Connect to the server    
+    // Connect to the server
        mFTPClient = new FTPClient();
        try {
          mFTPClient.connect(mServerUrl, mPort);
@@ -222,7 +222,7 @@ public class FtpDataTarget implements DataTarget {
         System.err.println("Could not write file '"+fileName+"'. Reason: "+exc.getMessage());
         if (tryCount>0) {
           System.err.println("trying again...");
-          reset(); 
+          reset();
         }
       }
     }

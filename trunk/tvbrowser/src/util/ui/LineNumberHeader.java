@@ -51,7 +51,7 @@ public class LineNumberHeader extends JComponent {
    * 
    * @param textArea TextArea to use
    * @param borderWidth Width of the Border
-   * @param borderLine Draw Border-Lines 
+   * @param borderLine Draw Border-Lines
    */
   public LineNumberHeader(JTextComponent textArea, int borderWidth, boolean borderLine) {
     this(textArea);
@@ -96,7 +96,7 @@ public class LineNumberHeader extends JComponent {
 
   
   /**
-   * Set local FontMetrics from the <code>JTextArea</code> 
+   * Set local FontMetrics from the <code>JTextArea</code>
    * Calls revalidate() and repaint()
    */
   private void setMetrics() {
@@ -111,7 +111,7 @@ public class LineNumberHeader extends JComponent {
         refFont = this.textComponent.getFont();
     }
 
-    metrics = this.textComponent.getFontMetrics(refFont);     
+    metrics = this.textComponent.getFontMetrics(refFont);
      
     revalidate();
     repaint();
@@ -182,8 +182,9 @@ public class LineNumberHeader extends JComponent {
     }
 
     int start = y / h;
-    if (start == 0)
+    if (start == 0) {
       start = 1;
+    }
     int end = Math.min(maxLines, rect.height / h + start);
 
     for (int i = start; i <= end; i++) {

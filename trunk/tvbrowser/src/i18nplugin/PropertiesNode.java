@@ -43,6 +43,7 @@ import javax.swing.tree.TreeNode;
 import tvbrowser.core.Settings;
 import util.io.stream.InputStreamProcessor;
 import util.io.stream.StreamUtilities;
+import devplugin.Plugin;
 
 /**
  * A Properties-File
@@ -294,7 +295,7 @@ public class PropertiesNode extends AbstractHierarchicalNode implements FilterNo
         SortedProperties sorted = new SortedProperties();
         sorted.putAll(newprop);
         sorted.store(new FileOutputStream(propFile),
-            "Translation for TV-Browser Version " + I18NPlugin.getPluginManager().getTVBrowserVersion().toString() + "\n"+
+            "Translation for TV-Browser Version " + Plugin.getPluginManager().getTVBrowserVersion().toString() + "\n"+
             "Saved by i18n Plugin Version "
                 + I18NPlugin.getInstance().getInfo().getVersion());
       }

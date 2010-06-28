@@ -85,7 +85,7 @@ public class ReminderListDialog extends JDialog implements WindowClosingIf {
   private JButton mUndo, mDelete, mSend;
   private JComboBox mTitleSelection;
   
-  private static ReminderListDialog mInstance; 
+  private static ReminderListDialog mInstance;
 
   public ReminderListDialog(Window parent, ReminderList list) {
     super(parent);
@@ -121,8 +121,9 @@ public class ReminderListDialog extends JDialog implements WindowClosingIf {
     mTable = new JTable();
     mTable.addKeyListener(new KeyAdapter() {
       public void keyPressed(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_ESCAPE || e.getKeyCode() == KeyEvent.VK_ENTER)
+        if (e.getKeyCode() == KeyEvent.VK_ESCAPE || e.getKeyCode() == KeyEvent.VK_ENTER) {
           mTable.getRootPane().dispatchEvent(e);
+        }
       }
     });
 
@@ -152,7 +153,7 @@ public class ReminderListDialog extends JDialog implements WindowClosingIf {
           if (column == 1) {
             int row = mTable.rowAtPoint(e.getPoint());
             mTable.editCellAt(row,column);
-            ((MinutesCellEditor)mTable.getCellEditor()).getComboBox().showPopup(); 
+            ((MinutesCellEditor)mTable.getCellEditor()).getComboBox().showPopup();
           }
           
           mLeftClickThread = new Thread("Single click") {
@@ -162,8 +163,9 @@ public class ReminderListDialog extends JDialog implements WindowClosingIf {
                 sleep(Plugin.SINGLE_CLICK_WAITING_TIME);
                 mPerformingSingleClick = true;
                 
-                if (mTable.columnAtPoint(e.getPoint()) == 1)
+                if (mTable.columnAtPoint(e.getPoint()) == 1) {
                   return;
+                }
 
                 int row = mTable.rowAtPoint(e.getPoint());
 
@@ -188,8 +190,9 @@ public class ReminderListDialog extends JDialog implements WindowClosingIf {
           if(!mPerformingSingleClick) {
             int column = mTable.columnAtPoint(e.getPoint());
   
-            if (column == 1)
+            if (column == 1) {
               return;
+            }
   
             int row = mTable.rowAtPoint(e.getPoint());
   
@@ -207,8 +210,9 @@ public class ReminderListDialog extends JDialog implements WindowClosingIf {
                 sleep(Plugin.SINGLE_CLICK_WAITING_TIME);
                 mPerformingMiddleSingleClick = true;
                 
-                if (mTable.columnAtPoint(e.getPoint()) == 1)
+                if (mTable.columnAtPoint(e.getPoint()) == 1) {
                   return;
+                }
 
                 int row = mTable.rowAtPoint(e.getPoint());
 
@@ -233,8 +237,9 @@ public class ReminderListDialog extends JDialog implements WindowClosingIf {
           if(!mPerformingMiddleSingleClick) {
             int column = mTable.columnAtPoint(e.getPoint());
   
-            if (column == 1)
+            if (column == 1) {
               return;
+            }
   
             int row = mTable.rowAtPoint(e.getPoint());
   
@@ -310,7 +315,7 @@ public class ReminderListDialog extends JDialog implements WindowClosingIf {
     });
     
     builder.addFixed(mUndo);
-    builder.addRelatedGap();    
+    builder.addRelatedGap();
 
     JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_CLOSE));
 
@@ -330,7 +335,7 @@ public class ReminderListDialog extends JDialog implements WindowClosingIf {
 
     getRootPane().setDefaultButton(ok);
     
-    Settings.layoutWindow("extras.reminderListDlg", this, new Dimension(550,350)); 
+    Settings.layoutWindow("extras.reminderListDlg", this, new Dimension(550,350));
   }
   
   private void installTableModel(ReminderTableModel model) {
@@ -353,13 +358,14 @@ public class ReminderListDialog extends JDialog implements WindowClosingIf {
 
       ArrayList<ReminderListItem> itemList = new ArrayList<ReminderListItem>();
       
-      for (int i = 0; i < selected.length; i++) {
-        Program prog = (Program) mTable.getValueAt(selected[i], 0);
+      for (int element : selected) {
+        Program prog = (Program) mTable.getValueAt(element, 0);
 
         ReminderListItem item = reminderList.removeWithoutChecking(prog);
         
-        if(item != null)
+        if(item != null) {
           itemList.add(item);
+        }
       }
       
       mDeletedItems = itemList.toArray(new ReminderListItem[itemList.size()]);
@@ -405,13 +411,15 @@ public class ReminderListDialog extends JDialog implements WindowClosingIf {
       ReminderListItem[] items = reminderList.getReminderItems();
       programArr = new Program[items.length];
 
-      for (int i = 0; i < items.length; i++)
+      for (int i = 0; i < items.length; i++) {
         programArr[i] = items[i].getProgram();
+      }
     } else {
       ArrayList<Program> programs = new ArrayList<Program>();
 
-      for (int i = 0; i < rows.length; i++)
-        programs.add((Program) mTable.getValueAt(rows[i], 0));
+      for (int row : rows) {
+        programs.add((Program) mTable.getValueAt(row, 0));
+      }
 
       programArr = programs.toArray(new Program[programs.size()]);
     }

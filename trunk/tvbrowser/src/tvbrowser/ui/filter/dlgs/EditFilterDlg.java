@@ -199,8 +199,9 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
         if(SwingUtilities.isLeftMouseButton(e) && e.getClickCount() >= 2) {
           int row = mRuleTableBox.rowAtPoint(e.getPoint());
 
-          if(mRuleTableBox.getSelectedRow() == row && mEditBtn.isEnabled())
+          if(mRuleTableBox.getSelectedRow() == row && mEditBtn.isEnabled()) {
             actionPerformed(new ActionEvent(mEditBtn,ActionEvent.ACTION_PERFORMED, mEditBtn.getActionCommand()));
+          }
         }
       }
     });
@@ -217,8 +218,9 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
     // Needed for Java 1.4.
     mRuleTableBox.addKeyListener(new KeyAdapter() {
       public void keyPressed(KeyEvent e) {
-        if(e.getKeyCode() == KeyEvent.VK_ESCAPE)
+        if(e.getKeyCode() == KeyEvent.VK_ESCAPE) {
           mRuleTableBox.getRootPane().dispatchEvent(e);
+        }
       }
     });
 
@@ -254,8 +256,8 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
 
     Arrays.sort(fc, new FilterComponent.NameComparator());
 
-    for (int i = 0; i < fc.length; i++) {
-      mComponentTableModel.addElement(fc[i]);
+    for (FilterComponent element : fc) {
+      mComponentTableModel.addElement(element);
     }
 
     updateBtns();
@@ -305,8 +307,9 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
     } else if (o == mEditBtn) {
       int inx = mRuleTableBox.getSelectedRow();
 
-      if(inx == -1)
+      if(inx == -1) {
         return;
+      }
 
       FilterComponent rule = mComponentTableModel.getElement(inx);
       FilterComponentList.getInstance().remove(rule.getName());

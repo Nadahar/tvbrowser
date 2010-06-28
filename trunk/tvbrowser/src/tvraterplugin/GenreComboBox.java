@@ -80,7 +80,7 @@ public class GenreComboBox extends JComboBox implements ListCellRenderer, Compar
             	label.setBackground(new Color(202, 203, 222));
         	}
             label.setForeground(Color.BLACK);
-        }        
+        }
         return label;
     }
 
@@ -98,7 +98,7 @@ public class GenreComboBox extends JComboBox implements ListCellRenderer, Compar
 			return -1;
 		} else if (a.charAt(0) > b.charAt(0)) {
 			return 1;
-		} 
+		}
 
 		String aText = RatingIconTextFactory.getGenres().getProperty(a, "-");
     String bText = RatingIconTextFactory.getGenres().getProperty(b, "-");

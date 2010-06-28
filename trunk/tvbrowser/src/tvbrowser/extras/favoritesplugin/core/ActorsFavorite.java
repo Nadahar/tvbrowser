@@ -135,8 +135,8 @@ public class ActorsFavorite extends Favorite {
     public boolean check() {
       if (mSearchTextTf.getText().trim().equals("")) {
         JOptionPane.showMessageDialog(mSearchTextTf,
-            mLocalizer.msg("missingActor.message", "Please specify an actor for the favorite!"), 
-            mLocalizer.msg("missingActor.title", "Invalid options"), 
+            mLocalizer.msg("missingActor.message", "Please specify an actor for the favorite!"),
+            mLocalizer.msg("missingActor.title", "Invalid options"),
             JOptionPane.WARNING_MESSAGE);
         return false;
       }

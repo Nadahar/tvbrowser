@@ -77,14 +77,18 @@ public class DragAndDropMouseListener extends MouseAdapter {
    */
   public void restore() {
     MouseListener[] listeners = mSource.getMouseListeners();
-    for (int i = 0; i < listeners.length; i++)
-      if(!(listeners[i] instanceof ToolTipManager))
+    for (int i = 0; i < listeners.length; i++) {
+      if(!(listeners[i] instanceof ToolTipManager)) {
         mSource.removeMouseListener(listeners[i]);
+      }
+    }
     
     MouseMotionListener[] mlisteners = mSource.getMouseMotionListeners();
-    for (int i = 0; i < mlisteners.length; i++)
-      if(!(mlisteners[i] instanceof ToolTipManager))
+    for (int i = 0; i < mlisteners.length; i++) {
+      if(!(mlisteners[i] instanceof ToolTipManager)) {
         mSource.removeMouseMotionListener(mlisteners[i]);
+      }
+    }
     
     (new DragSource()).createDefaultDragGestureRecognizer(mSource,
         DnDConstants.ACTION_MOVE, mListener);
@@ -93,8 +97,9 @@ public class DragAndDropMouseListener extends MouseAdapter {
   }
 
   public void mouseClicked(MouseEvent e) {
-    if (mSource.isEnabled() && !mSource.hasFocus())
+    if (mSource.isEnabled() && !mSource.hasFocus()) {
       mSource.requestFocusInWindow();
+    }
     
     if (mSource.isEnabled() && SwingUtilities.isLeftMouseButton(e)
         && e.getClickCount() == 2 && mSource != mTarget) {
@@ -108,7 +113,7 @@ public class DragAndDropMouseListener extends MouseAdapter {
   // Rebuild the selection of the JList with the needed
   // functions.
   public void mousePressed(MouseEvent e) {
-    if (mSource.isEnabled())
+    if (mSource.isEnabled()) {
       if (e.isShiftDown() && SwingUtilities.isLeftMouseButton(e)) {
         int index = mSource.locationToIndex(e.getPoint());
         mSource.setSelectionInterval(index, mLastSelectedIndex);
@@ -122,6 +127,7 @@ public class DragAndDropMouseListener extends MouseAdapter {
           mLastSelectedIndex = index;
         }
       }
+    }
   }
 
   // Rebuild the selection of the JList with the needed
@@ -129,15 +135,16 @@ public class DragAndDropMouseListener extends MouseAdapter {
   public void mouseReleased(MouseEvent e) {
     int index = mSource.locationToIndex(e.getPoint());
 
-    if (mSource.isEnabled())
+    if (mSource.isEnabled()) {
       if (e.isControlDown() && SwingUtilities.isLeftMouseButton(e)) {
         DefaultListSelectionModel model = (DefaultListSelectionModel) mSource
             .getSelectionModel();
 
-        if (model.isSelectedIndex(index))
+        if (model.isSelectedIndex(index)) {
           model.removeSelectionInterval(index, index);
-        else
+        } else {
           model.addSelectionInterval(index, index);
+        }
 
         mLastSelectedIndex = index;
       } else if (!e.isShiftDown() && !e.isControlDown()
@@ -145,5 +152,6 @@ public class DragAndDropMouseListener extends MouseAdapter {
         mSource.setSelectedIndex(index);
         mLastSelectedIndex = index;
       }
+    }
   }
 }

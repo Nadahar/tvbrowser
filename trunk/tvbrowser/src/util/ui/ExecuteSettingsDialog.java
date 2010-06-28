@@ -87,6 +87,7 @@ public class ExecuteSettingsDialog extends JDialog implements WindowClosingIf{
    *          parameters for the File
    * @deprecated since 3.0
    */
+  @Deprecated
   public ExecuteSettingsDialog(JDialog parent, String execFile, String execParam) {
     this((Window) parent, execFile, execParam);
   }
@@ -123,6 +124,7 @@ public class ExecuteSettingsDialog extends JDialog implements WindowClosingIf{
    *          parameters for the File
    * @deprecated since 3.0
    */
+  @Deprecated
   public ExecuteSettingsDialog(JDialog parent, String execFile,
       String execParam, ParamLibrary library) {
     this((Window) parent, execFile, execParam, library);
@@ -139,6 +141,7 @@ public class ExecuteSettingsDialog extends JDialog implements WindowClosingIf{
    *          parameters for the File
    * @deprecated since 3.0
    */
+  @Deprecated
   public ExecuteSettingsDialog(JFrame parent, String execFile, String execParam) {
     this((Window) parent, execFile, execParam);
   }
@@ -154,6 +157,7 @@ public class ExecuteSettingsDialog extends JDialog implements WindowClosingIf{
    *          parameters for the File
    * @deprecated since 3.0
    */
+  @Deprecated
   public ExecuteSettingsDialog(JFrame parent, String execFile, String execParam, ParamLibrary library) {
     this((Window) parent, execFile, execParam, library);
   }

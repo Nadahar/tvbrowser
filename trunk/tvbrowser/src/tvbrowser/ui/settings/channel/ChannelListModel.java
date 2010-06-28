@@ -55,8 +55,8 @@ public class ChannelListModel {
     Channel[] channels = ChannelList.getSubscribedChannels();
     mAvailableChannels = ChannelList.getAvailableChannels();
     mSubscribedChannels.clear();
-    for (int i = 0; i < channels.length; i++) {
-      subscribeChannel(channels[i]);
+    for (Channel channel : channels) {
+      subscribeChannel(channel);
     }
   }
 

@@ -210,7 +210,7 @@ public class PrintPlugin extends Plugin {
         if(getPluginManager().getFilterManager() != null) {
           MainPrintDialog mainDialog = new MainPrintDialog(getParentFrame());
           
-          layoutWindow("mainDlg", mainDialog, new Dimension(300,150)); 
+          layoutWindow("mainDlg", mainDialog, new Dimension(300,150));
           
           mainDialog.setVisible(true);
           
@@ -450,7 +450,7 @@ public class PrintPlugin extends Plugin {
   }
   
   protected void setMarkPriority(int priority) {
-    mMarkPriority = priority;    
+    mMarkPriority = priority;
     mSettings.setProperty("markPriority",String.valueOf(priority));
     
     handleTvBrowserStartFinished();

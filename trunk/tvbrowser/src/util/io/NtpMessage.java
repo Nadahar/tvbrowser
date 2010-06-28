@@ -34,18 +34,18 @@ import java.util.Date;
  * socket.receive(packet);
  * System.out.println(msg.toString());
  * 
- *  
+ * 
  * This code is copyright (c) Adam Buckley 2004
  *
- * This program is free software; you can redistribute it and/or modify it 
- * under the terms of the GNU General Public License as published by the Free 
- * Software Foundation; either version 2 of the License, or (at your option) 
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
  * any later version.  A HTML version of the GNU General Public License can be
  * seen at http://www.gnu.org/licenses/gpl.html
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT 
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
- * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
  * more details.
  * 
  * 
@@ -104,7 +104,7 @@ public class NtpMessage
 	 * In unicast and anycast modes, the client sets this field to 3 (client)
 	 * in the request and the server sets it to 4 (server) in the reply. In
 	 * multicast mode, the server sets this field to 5 (broadcast).
-	 */ 
+	 */
 	public byte mode = 0;
 	
 	
@@ -155,7 +155,7 @@ public class NtpMessage
 	 * This value indicates the nominal error relative to the primary reference
 	 * source, in seconds.  The values  that normally appear in this field
 	 * range from 0 to several hundred milliseconds.
-	 */ 
+	 */
 	public double rootDispersion = 0;
 	
 	
@@ -230,7 +230,7 @@ public class NtpMessage
 	 */
 	public NtpMessage(byte[] array)
 	{
-		// See the packet format diagram in RFC 2030 for details 
+		// See the packet format diagram in RFC 2030 for details
 		leapIndicator = (byte) ((array[0] >> 6) & 0x3);
 		version = (byte) ((array[0] >> 3) & 0x7);
 		mode = (byte) (array[0] & 0x7);
@@ -238,12 +238,12 @@ public class NtpMessage
 		pollInterval = array[2];
 		precision = array[3];
 		
-		rootDelay = (array[4] * 256.0) + 
+		rootDelay = (array[4] * 256.0) +
 			unsignedByteToShort(array[5]) +
 			(unsignedByteToShort(array[6]) / 256.0) +
 			(unsignedByteToShort(array[7]) / 65536.0);
 		
-		rootDispersion = (unsignedByteToShort(array[8]) * 256.0) + 
+		rootDispersion = (unsignedByteToShort(array[8]) * 256.0) +
 			unsignedByteToShort(array[9]) +
 			(unsignedByteToShort(array[10]) / 256.0) +
 			(unsignedByteToShort(array[11]) / 65536.0);
@@ -270,7 +270,7 @@ public class NtpMessage
 		// Note that all the other member variables are already set with
 		// appropriate default values.
 		this.mode = 3;
-		this.transmitTimestamp = (System.currentTimeMillis()/1000.0) + 2208988800.0; 
+		this.transmitTimestamp = (System.currentTimeMillis()/1000.0) + 2208988800.0;
 	}
 	
 	
@@ -285,8 +285,8 @@ public class NtpMessage
 
 		p[0] = (byte) (leapIndicator << 6 | version << 3 | mode);
 		p[1] = (byte) stratum;
-		p[2] = (byte) pollInterval;
-		p[3] = (byte) precision;
+		p[2] = pollInterval;
+		p[3] = precision;
 		
 		// root delay is a signed 16.16-bit FP, in Java an int is 32-bits
 		int l = (int) (rootDelay * 65536.0);
@@ -296,7 +296,7 @@ public class NtpMessage
 		p[7] = (byte) (l & 0xFF);
 		
 		// root dispersion is an unsigned 16.16-bit FP, in Java there are no
-		// unsigned primitive types, so we use a long which is 64-bits 
+		// unsigned primitive types, so we use a long which is 64-bits
 		long ul = (long) (rootDispersion * 65536.0);
 		p[8] = (byte) ((ul >> 24) & 0xFF);
 		p[9] = (byte) ((ul >> 16) & 0xFF);
@@ -313,7 +313,7 @@ public class NtpMessage
 		encodeTimestamp(p, 32, receiveTimestamp);
 		encodeTimestamp(p, 40, transmitTimestamp);
 		
-		return p; 
+		return p;
 	}
 	
 	
@@ -331,9 +331,9 @@ public class NtpMessage
 			"Mode: " + mode + "\n" +
 			"Stratum: " + stratum + "\n" +
 			"Poll: " + pollInterval + "\n" +
-			"Precision: " + precision + " (" + precisionStr + " seconds)\n" + 
+			"Precision: " + precision + " (" + precisionStr + " seconds)\n" +
 			"Root delay: " + new DecimalFormat("0.00").format(rootDelay*1000) + " ms\n" +
-			"Root dispersion: " + new DecimalFormat("0.00").format(rootDispersion*1000) + " ms\n" + 
+			"Root dispersion: " + new DecimalFormat("0.00").format(rootDispersion*1000) + " ms\n" +
 			"Reference identifier: " + referenceIdentifierToString(referenceIdentifier, stratum, version) + "\n" +
 			"Reference timestamp: " + timestampToString(referenceTimestamp) + "\n" +
 			"Originate timestamp: " + timestampToString(originateTimestamp) + "\n" +
@@ -349,8 +349,11 @@ public class NtpMessage
 	 */
 	public static short unsignedByteToShort(byte b)
 	{
-		if((b & 0x80)==0x80) return (short) (128 + (b & 0x7f));
-		else return (short) b;
+		if((b & 0x80)==0x80) {
+      return (short) (128 + (b & 0x7f));
+    } else {
+      return b;
+    }
 	}
 	
 	
@@ -389,7 +392,7 @@ public class NtpMessage
 			array[pointer+i] = (byte) (timestamp / base);
 
 			// Subtract captured value from remaining total
-			timestamp = timestamp - (double) (unsignedByteToShort(array[pointer+i]) * base);
+			timestamp = timestamp - (unsignedByteToShort(array[pointer+i]) * base);
 		}
 		
 		// From RFC 2030: It is advisable to fill the non-significant
@@ -403,14 +406,16 @@ public class NtpMessage
 	
 	/**
 	 * Returns a timestamp (number of seconds since 00:00 1-Jan-1900) as a
-	 * formatted date/time string. 
+	 * formatted date/time string.
 	 */
 	public static String timestampToString(double timestamp)
 	{
-		if(timestamp==0) return "0";
+		if(timestamp==0) {
+      return "0";
+    }
 		
 		// timestamp is relative to 1900, utc is used by Java and is relative
-		// to 1970 
+		// to 1970
 		double utc = timestamp - (2208988800.0);
 		
 		// milliseconds
@@ -457,7 +462,7 @@ public class NtpMessage
 		// of the latest transmit timestamp of the reference source.
 		else if(version==4)
 		{
-			return "" + ((unsignedByteToShort(ref[0]) / 256.0) + 
+			return "" + ((unsignedByteToShort(ref[0]) / 256.0) +
 				(unsignedByteToShort(ref[1]) / 65536.0) +
 				(unsignedByteToShort(ref[2]) / 16777216.0) +
 				(unsignedByteToShort(ref[3]) / 4294967296.0));
@@ -465,5 +470,5 @@ public class NtpMessage
 		
 		return "";
 	}
-}   
+}
 

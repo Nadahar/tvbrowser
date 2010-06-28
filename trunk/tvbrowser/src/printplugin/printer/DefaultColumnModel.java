@@ -31,7 +31,7 @@ import devplugin.Program;
 
 public class DefaultColumnModel extends AbstractColumnModel {
  
-  private String mTitle;         
+  private String mTitle;
 
   public DefaultColumnModel(String title, Program[] progs) {
     super(progs);

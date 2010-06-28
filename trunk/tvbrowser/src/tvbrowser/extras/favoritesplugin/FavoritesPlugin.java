@@ -1147,7 +1147,7 @@ public class FavoritesPlugin {
 
     protected void addFavorites(Favorite[] favArr) {
       ArrayList<Favorite> newFavoriteList = new ArrayList<Favorite>(mFavorites.length + favArr.length);
-      Favorite[] newFavorites = new Favorite[0];
+      Favorite[] newFavorites;
 
       synchronized (mFavorites) {
         for(Favorite fav : favArr) {

@@ -135,6 +135,7 @@ public class AlphaColorChooser extends JDialog implements ChangeListener {
    *          The standard color
    * @deprecated since 3.0
    */
+  @Deprecated
   public AlphaColorChooser(JDialog parent, String title, Color color,
       Color stdColor) {
     this((Window) parent, title, color, stdColor);
@@ -153,6 +154,7 @@ public class AlphaColorChooser extends JDialog implements ChangeListener {
    *          The standard color
    * @deprecated since 3.0
    */
+    @Deprecated
     public AlphaColorChooser(JFrame parent, String title, Color color, Color stdColor) {
       this((Window) parent, title, color, stdColor);
     }
@@ -258,9 +260,9 @@ public class AlphaColorChooser extends JDialog implements ChangeListener {
             public void actionPerformed(ActionEvent e) {
               setColor(mStandardColor);
               mCurrentColor = mStandardColor;
-            }        
-          });        
-          buttonPanel.add(def, cc.xy(1,1));         
+            }
+          });
+          buttonPanel.add(def, cc.xy(1,1));
         }
         
         buttonPanel.add(ok, cc.xy(3,1));

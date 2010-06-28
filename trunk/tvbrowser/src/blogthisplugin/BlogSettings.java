@@ -1,16 +1,16 @@
 /*
  * Copyright Michael Keppler
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -24,24 +24,24 @@ import util.settings.PropertyBasedSettings;
  * @author bananeweizen
  *
  */
-public class BlogSettings extends PropertyBasedSettings {
+final class BlogSettings extends PropertyBasedSettings {
 
   private static final String KEY_BLOG_URL = "BlogUrl";
   private static final String KEY_BLOG_SERVICE = "BlogService";
   /** Service Names */
-  public static final String BLOGGER = "BLOGGER";
-  public static final String WORDPRESS = "WORDPRESS";
-  public static final String B2EVOLUTION = "B2EVOLUTION";
+  private static final String BLOGGER = "BLOGGER";
+  private static final String WORDPRESS = "WORDPRESS";
+  private static final String B2EVOLUTION = "B2EVOLUTION";
 
-  public BlogSettings(Properties settings) {
+  BlogSettings(Properties settings) {
     super(settings);
   }
 
-  public final String getBlogUrl() {
+  String getBlogUrl() {
     return getBlogUrl(null);
   }
 
-  public void setService(final BlogService service) {
+  void setService(final BlogService service) {
     if (service == null) {
       remove(KEY_BLOG_SERVICE);
       return;
@@ -65,7 +65,7 @@ public class BlogSettings extends PropertyBasedSettings {
     }
   }
 
-  public BlogService getBlogService() {
+  BlogService getBlogService() {
     String service = get(KEY_BLOG_SERVICE, "");
     if (service.equals(BlogSettings.BLOGGER)) {
       return BlogService.Blogger;
@@ -79,15 +79,15 @@ public class BlogSettings extends PropertyBasedSettings {
     return null;
   }
 
-  public void setBlogUrl(final String url) {
+  void setBlogUrl(final String url) {
     set(KEY_BLOG_URL, url);
   }
 
-  public String getBlogUrl(final String defaultUrl) {
+  String getBlogUrl(final String defaultUrl) {
     return get(KEY_BLOG_URL, defaultUrl);
   }
 
 
 
-  
+
 }

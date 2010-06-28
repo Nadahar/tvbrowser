@@ -27,10 +27,10 @@ package printplugin;
 import javax.swing.Icon;
 import javax.swing.JPanel;
 
+import util.ui.DefaultMarkingPrioritySelectionPanel;
+
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
-
-import util.ui.DefaultMarkingPrioritySelectionPanel;
 
 import devplugin.SettingsTab;
 
@@ -50,7 +50,7 @@ public class PrintPluginSettingsTab implements SettingsTab {
     return panel;
   }
 
-  public Icon getIcon() {    
+  public Icon getIcon() {
     return null;
   }
 

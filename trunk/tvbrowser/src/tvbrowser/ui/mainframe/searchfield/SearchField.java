@@ -84,7 +84,7 @@ import devplugin.Plugin;
  * @author bodum
  */
 public class SearchField extends JPanel {
-  /** The localizer of this class. */  
+  /** The localizer of this class. */
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(SearchField.class);
   /** TextField */
@@ -100,7 +100,7 @@ public class SearchField extends JPanel {
   /**
    * Create SearchField
    */
-  public SearchField() { 
+  public SearchField() {
     readSearchFormSettings();
     createGui();
     mGoButton = true;
@@ -127,7 +127,7 @@ public class SearchField extends JPanel {
           });
     }catch(Exception e) {
       createDefaultSearchFormSettings();
-    }    
+    }
   }
   
   /**
@@ -159,7 +159,7 @@ public class SearchField extends JPanel {
    */
   private void createGui() {
     final JPanel panel = new JPanel(new BorderLayout(3,0));
-    panel.setBorder(BorderFactory.createCompoundBorder(UIManager.getBorder("TextField.border"),BorderFactory.createEmptyBorder(2,2,1,2)));    
+    panel.setBorder(BorderFactory.createCompoundBorder(UIManager.getBorder("TextField.border"),BorderFactory.createEmptyBorder(2,2,1,2)));
     mText = new SearchTextField(15);
     if(UIManager.getLookAndFeel().getClass().getCanonicalName().equals("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel")) {
       mText.setBackground(Color.white);
@@ -210,7 +210,7 @@ public class SearchField extends JPanel {
     
     panel.setBackground(mText.getBackground());
 
-    mSearchButton = new JButton(TVBrowserIcons.search(TVBrowserIcons.SIZE_SMALL)); 
+    mSearchButton = new JButton(TVBrowserIcons.search(TVBrowserIcons.SIZE_SMALL));
     mSearchButton.setBorder(BorderFactory.createEmptyBorder());
     mSearchButton.setContentAreaFilled(false);
     mSearchButton.setMargin(new Insets(0, 0, 0, 0));
@@ -229,7 +229,7 @@ public class SearchField extends JPanel {
     });
     mSearchButton.setToolTipText(mLocalizer.msg("preferences.tooltip", "Click to change search preferences"));
 
-    mGoOrCancelButton = new JButton(IconLoader.getInstance().getIconFromTheme("action", "media-playback-start", 16)); 
+    mGoOrCancelButton = new JButton(IconLoader.getInstance().getIconFromTheme("action", "media-playback-start", 16));
     mGoOrCancelButton.setBorder(BorderFactory.createEmptyBorder());
     mGoOrCancelButton.setContentAreaFilled(false);
     mGoOrCancelButton.setMargin(new Insets(0, 0, 0, 0));
@@ -274,7 +274,7 @@ public class SearchField extends JPanel {
           
           SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-              mText.setCaretPosition(mText.getText().length());    
+              mText.setCaretPosition(mText.getText().length());
             }
           });
         } catch (TvBrowserException e1) {
@@ -304,7 +304,7 @@ public class SearchField extends JPanel {
 
   /**
    * Show the Configuration-Dialog
-   * @param textField 
+   * @param textField
    */
   protected void showConfigureDialog(final SearchTextField textField) {
     final SearchForm form = new SearchForm(false, false, true);
@@ -346,7 +346,7 @@ public class SearchField extends JPanel {
       public JRootPane getRootPane() {
         return configure.getRootPane();
       }
-    });    
+    });
     
     configure.pack();
     
@@ -362,10 +362,11 @@ public class SearchField extends JPanel {
     
     Point p = mSearchButton.getLocationOnScreen();
     
-    if(MainFrame.getInstance().getToolbar().getToolbarLocation().compareTo(BorderLayout.NORTH) == 0)
+    if(MainFrame.getInstance().getToolbar().getToolbarLocation().compareTo(BorderLayout.NORTH) == 0) {
       configure.setLocation(p.x - configure.getWidth() + mSearchButton.getWidth(),p.y + mSearchButton.getHeight());
-    else
+    } else {
       configure.setLocation(p.x ,p.y - configure.getHeight());
+    }
     configure.setVisible(true);
   }
 

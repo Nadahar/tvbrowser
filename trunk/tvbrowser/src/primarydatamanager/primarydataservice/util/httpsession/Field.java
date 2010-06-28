@@ -6,7 +6,7 @@ public class Field {
   
   public Field(String key, String value) {
     mKey = key;
-    mValue = value; 
+    mValue = value;
   }
   
   public String getKey() {

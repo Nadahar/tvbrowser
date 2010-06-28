@@ -47,8 +47,8 @@ public abstract class AbstractColumnModel implements ColumnModel {
   }
 
   public void setPrograms(Program[] progs) {
-    for (int i=0; i<progs.length; i++) {
-      mPrograms.add(progs[i]);
+    for (Program prog : progs) {
+      mPrograms.add(prog);
     }
   }
 

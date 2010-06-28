@@ -31,7 +31,6 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 
 import util.io.FileFormatException;
-
 import devplugin.ProgramFieldType;
 
 /**
@@ -133,7 +132,9 @@ public class ProgramFrame implements Cloneable {
 
 
   public void addProgramField(ProgramField field) {
-    if (field==null) return;
+    if (field==null) {
+      return;
+    }
     mProgramFieldList.add(field);
   }
 
@@ -218,8 +219,8 @@ public class ProgramFrame implements Cloneable {
       try {
         field.readFromStream(stream);
         mId += field.getIntData();
-      }catch(Exception e) { 
-          /*Ignore, maybe this is not a field that contains the id*/ 
+      }catch(Exception e) {
+          /*Ignore, maybe this is not a field that contains the id*/
         }
     }
   }
@@ -235,12 +236,13 @@ public class ProgramFrame implements Cloneable {
      * Check if the id of this ProgramFrame is greater
      * than or equal to 255. If this is so we only write
      * 255 to stream as track value that we have an
-     * additional id in a ProgramField. 
+     * additional id in a ProgramField.
      */
-    if(mId >= 255)
+    if(mId >= 255) {
       stream.write(255);
-    else
+    } else {
       stream.write(mId);
+    }
   
     stream.write(getProgramFieldCount());
     
@@ -251,7 +253,7 @@ public class ProgramFrame implements Cloneable {
   
     /*
      * Write the additional ProgramField, that contains
-     * the additional id value. 
+     * the additional id value.
      */
     if(mId >= 255) {
       ProgramField additional = new ProgramField(null);

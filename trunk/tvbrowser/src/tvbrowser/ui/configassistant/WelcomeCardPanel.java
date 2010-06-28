@@ -46,7 +46,7 @@ class WelcomeCardPanel extends AbstractCardPanel {
   private JPanel mContent;
   
   private static final util.ui.Localizer mLocalizer
-        = util.ui.Localizer.getLocalizerFor(WelcomeCardPanel.class); 
+        = util.ui.Localizer.getLocalizerFor(WelcomeCardPanel.class);
  
   public WelcomeCardPanel(PrevNextButtons btns) {
     super(btns);
@@ -72,6 +72,6 @@ class WelcomeCardPanel extends AbstractCardPanel {
   }
   
   public JPanel getPanel() {
-    return mContent;    
-  }  
+    return mContent;
+  }
 }

@@ -18,7 +18,6 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
-import javax.swing.JRootPane;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.ToolTipManager;
@@ -41,12 +40,12 @@ import com.jgoodies.forms.layout.FormLayout;
  * 
  * @author Santhosh
  * 
- * Changed for support of a search bar instead of a search popup by René Mach: 
+ * Changed for support of a search bar instead of a search popup by René Mach:
  *   - added the needed components for the search bar
- *   - added ComponentListener to initialize the search when the 
+ *   - added ComponentListener to initialize the search when the
  *     search bar becomes visible
  *   - added Runnable to support closing the search bar automatically if the
- *     search was started with a key type. 
+ *     search was started with a key type.
  *   - added Localizer
  *   - added MouseAdapter for the search bar buttons
  */
@@ -92,9 +91,11 @@ public class TextComponentFindAction extends FindAction implements
     
     MouseListener[] ml = mSearchCloseBtn.getMouseListeners();
     
-    for(int i = 0; i < ml.length; i++)
-      if(!(ml[i] instanceof ToolTipManager))      
+    for(int i = 0; i < ml.length; i++) {
+      if(!(ml[i] instanceof ToolTipManager)) {
         mSearchCloseBtn.removeMouseListener(ml[i]);
+      }
+    }
 
     final JTextField searchField = getSearchField();
 
@@ -152,16 +153,16 @@ public class TextComponentFindAction extends FindAction implements
     };
 
     KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-    searchField.getInputMap(JRootPane.WHEN_FOCUSED).put(stroke, "CLOSE_SEARCH");
+    searchField.getInputMap(JComponent.WHEN_FOCUSED).put(stroke, "CLOSE_SEARCH");
     searchField.getActionMap().put("CLOSE_SEARCH", close);
 
-    mFindNext.getInputMap(JRootPane.WHEN_FOCUSED).put(stroke, "CLOSE_SEARCH");
+    mFindNext.getInputMap(JComponent.WHEN_FOCUSED).put(stroke, "CLOSE_SEARCH");
     mFindNext.getActionMap().put("CLOSE_SEARCH", close);
 
-    mFindPrev.getInputMap(JRootPane.WHEN_FOCUSED).put(stroke, "CLOSE_SEARCH");
+    mFindPrev.getInputMap(JComponent.WHEN_FOCUSED).put(stroke, "CLOSE_SEARCH");
     mFindPrev.getActionMap().put("CLOSE_SEARCH", close);
 
-    mSearchCloseBtn.getInputMap(JRootPane.WHEN_FOCUSED).put(stroke,
+    mSearchCloseBtn.getInputMap(JComponent.WHEN_FOCUSED).put(stroke,
         "CLOSE_SEARCH");
     mSearchCloseBtn.getActionMap().put("CLOSE_SEARCH", close);
 
@@ -170,7 +171,7 @@ public class TextComponentFindAction extends FindAction implements
   }
 
   /**
-   * MouseAdapter for painting borders for a JButton if the mouse is over it 
+   * MouseAdapter for painting borders for a JButton if the mouse is over it
    * and handling actions of the closeButton.
    * 
    * @param button
@@ -184,48 +185,55 @@ public class TextComponentFindAction extends FindAction implements
       public void mouseEntered(MouseEvent e) {
         mOver = true;
         JButton b = (JButton) e.getSource();
-        if (b.isEnabled())
-          if (b.equals(mFindPrev) || b.equals(mFindNext))
+        if (b.isEnabled()) {
+          if (b.equals(mFindPrev) || b.equals(mFindNext)) {
             setBorder(b, mPressed);
-          else if (mPressed)
+          } else if (mPressed) {
             b.setIcon(IconLoader.getInstance().getIconFromTheme("actions",
                 "close-pressed", 16));
-          else
+          } else {
             b.setIcon(IconLoader.getInstance().getIconFromTheme("status",
                 "close-over", 16));
+          }
+        }
       }
 
       public void mouseExited(MouseEvent e) {
         mOver = false;
         JButton b = (JButton) e.getSource();
-        if (b.isEnabled())
-          if (b.equals(mFindPrev) || b.equals(mFindNext))
+        if (b.isEnabled()) {
+          if (b.equals(mFindPrev) || b.equals(mFindNext)) {
             b.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
-          else
+          } else {
             b.setIcon(IconLoader.getInstance().getIconFromTheme("actions",
                 "process-stop", 16));
+          }
+        }
       }
 
       public void mousePressed(MouseEvent e) {
         mPressed = true;
         JButton b = (JButton) e.getSource();
-        if (b.isEnabled())
-          if (b.equals(mFindPrev) || b.equals(mFindNext))
+        if (b.isEnabled()) {
+          if (b.equals(mFindPrev) || b.equals(mFindNext)) {
             setBorder(b, true);
-          else
+          } else {
             b.setIcon(IconLoader.getInstance().getIconFromTheme("actions",
                 "close-pressed", 16));
+          }
+        }
       }
 
       public void mouseReleased(MouseEvent e) {
         mPressed = false;
         JButton b = (JButton) e.getSource();
-        if (b.isEnabled())
+        if (b.isEnabled()) {
           if (b.equals(mFindPrev) || b.equals(mFindNext)) {
-            if (mOver)
+            if (mOver) {
               setBorder(b, false);
-            else
+            } else {
               b.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+            }
           } else {
             b.setIcon(IconLoader.getInstance().getIconFromTheme("actions",
                 "process-stop", 16));
@@ -237,6 +245,7 @@ public class TextComponentFindAction extends FindAction implements
               interrupt();
             }
           }
+        }
       }
 
     });
@@ -288,8 +297,9 @@ public class TextComponentFindAction extends FindAction implements
       if (index != -1) {
         textComp.select(index, index + str.length());
         return true;
-      } else
+      } else {
         return false;
+      }
     }
   }
 
@@ -369,8 +379,9 @@ public class TextComponentFindAction extends FindAction implements
    * Interrupts the closing Thread.
    */
   public void interrupt() {
-    if (getThread() != null && getThread().isAlive())
+    if (getThread() != null && getThread().isAlive()) {
       getThread().interrupt();
+    }
     setWaitTime(5000);
   }
 
@@ -405,7 +416,7 @@ public class TextComponentFindAction extends FindAction implements
     return mSearchBar.isVisible() && isBlockAutoClosing();
   }
   
-  /** 
+  /**
    * @return The close button of the search bar.
    */
   public JButton getCloseButton() {

@@ -42,7 +42,17 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 
 import util.ui.Localizer;
 import util.ui.UiUtilities;
@@ -101,8 +111,8 @@ public class ReminderDialog extends JDialog implements WindowClosingIf {
 
     JLabel channelLabel=new JLabel(program.getChannel().getName());
     channelLabel.setIcon(UiUtilities.createChannelIcon(program.getChannel().getIcon()));
-    channelLabel.setVerticalTextPosition(JLabel.BOTTOM);
-    channelLabel.setHorizontalTextPosition(JLabel.CENTER);
+    channelLabel.setVerticalTextPosition(SwingConstants.BOTTOM);
+    channelLabel.setHorizontalTextPosition(SwingConstants.CENTER);
 
     JLabel titleLabel=new JLabel(program.getTitle());
     JPanel infoPanel=new JPanel(new GridLayout(2,1));

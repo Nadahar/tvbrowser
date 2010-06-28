@@ -39,26 +39,26 @@ import com.jgoodies.forms.layout.FormLayout;
 
 /**
  * The Dialog for the Extended Settings.
- * 
- * This Settings should not be visible in the Settings-Tab. They are too complicated 
- * 
+ *
+ * This Settings should not be visible in the Settings-Tab. They are too
+ * complicated
+ *
  * @author bodum
  */
 public class ExtendedDialog extends JDialog {
   /** Translator */
-  private static final Localizer mLocalizer = Localizer
-          .getLocalizerFor(ExtendedDialog.class);
-  
+  private static final Localizer mLocalizer = Localizer.getLocalizerFor(ExtendedDialog.class);
+
   private PluginProgramConfigurationPanel mConfigPanel;
 
   /**
    * Creates the Dialog
-   * 
+   *
    * @param parent
    *          Parent-Frame
    */
   public ExtendedDialog(Window parent) {
-    super(parent, mLocalizer.msg("title", "Formatings selection"));
+    super(parent, mLocalizer.msg("title", "Formattings selection"));
     setModal(true);
     createGui();
   }
@@ -66,46 +66,53 @@ public class ExtendedDialog extends JDialog {
   /**
    * Create the GUI
    */
-  private void createGui() {try {
-    CellConstraints cc = new CellConstraints();
-    PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,default:grow,5dlu","pref,5dlu,fill:default:grow,5dlu,pref"), (JPanel)this.getContentPane());
-    pb.setDefaultDialogBorder();
-    
-    mConfigPanel = new PluginProgramConfigurationPanel(CalendarExportPlugin.getInstance().getSelectedPluginProgramFormattings(), CalendarExportPlugin.getInstance().getAvailableLocalPluginProgramFormatings(), CalendarExportPlugin.getDefaultFormatting(),true,false);
-    
-    pb.addSeparator(mLocalizer.msg("title","Formatings selection"), cc.xyw(1,1,3));
-    pb.add(mConfigPanel, cc.xy(2,3));
-    
-    FormLayout layout = new FormLayout("0dlu:grow,pref,5dlu,pref","pref");
-    layout.setColumnGroups(new int[][] {{2,4}});
-    
-    JPanel buttonPanel = new JPanel(layout);
-    
-    JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
-    
-    ok.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        okPressed();
-      }
-    });
-    
-    JButton cancel = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
-    cancel.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        cancelPressed();
-      }
-    });
-    
-    buttonPanel.add(ok, cc.xy(2,1));
-    buttonPanel.add(cancel, cc.xy(4,1));
-    
-    pb.add(buttonPanel, cc.xy(2,5));
-        
-    getRootPane().setDefaultButton(ok);
-    
-    setSize(550, 400);}catch(Exception e) {e.printStackTrace();}
+  private void createGui() {
+    try {
+      CellConstraints cc = new CellConstraints();
+      PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,default:grow,5dlu",
+          "pref,5dlu,fill:default:grow,5dlu,pref"), (JPanel) this.getContentPane());
+      pb.setDefaultDialogBorder();
+
+      mConfigPanel = new PluginProgramConfigurationPanel(CalendarExportPlugin.getInstance()
+          .getSelectedPluginProgramFormattings(), CalendarExportPlugin.getInstance()
+          .getAvailableLocalPluginProgramFormatings(), CalendarExportPlugin.getDefaultFormatting(), true, false);
+
+      pb.addSeparator(mLocalizer.msg("title", "Formatings selection"), cc.xyw(1, 1, 3));
+      pb.add(mConfigPanel, cc.xy(2, 3));
+
+      FormLayout layout = new FormLayout("0dlu:grow,pref,5dlu,pref", "pref");
+      layout.setColumnGroups(new int[][] { { 2, 4 } });
+
+      JPanel buttonPanel = new JPanel(layout);
+
+      JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
+
+      ok.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          okPressed();
+        }
+      });
+
+      JButton cancel = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
+      cancel.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          cancelPressed();
+        }
+      });
+
+      buttonPanel.add(ok, cc.xy(2, 1));
+      buttonPanel.add(cancel, cc.xy(4, 1));
+
+      pb.add(buttonPanel, cc.xy(2, 5));
+
+      getRootPane().setDefaultButton(ok);
+
+      setSize(550, 400);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
-  
+
   /**
    * Cancel was pressed
    */
@@ -117,10 +124,12 @@ public class ExtendedDialog extends JDialog {
    * OK was pressed, the Settings will be saved
    */
   private void okPressed() {
-    CalendarExportPlugin.getInstance().setAvailableLocalPluginProgramFormatings(mConfigPanel.getAvailableLocalPluginProgramFormatings());
-    CalendarExportPlugin.getInstance().setSelectedPluginProgramFormattings(mConfigPanel.getSelectedPluginProgramFormatings());
-    
+    CalendarExportPlugin.getInstance().setAvailableLocalPluginProgramFormatings(
+        mConfigPanel.getAvailableLocalPluginProgramFormatings());
+    CalendarExportPlugin.getInstance().setSelectedPluginProgramFormattings(
+        mConfigPanel.getSelectedPluginProgramFormatings());
+
     setVisible(false);
   }
- 
+
 }

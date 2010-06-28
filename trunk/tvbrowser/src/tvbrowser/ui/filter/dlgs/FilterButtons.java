@@ -46,7 +46,6 @@ import util.ui.ProgramPanel;
 import util.ui.SendToPluginDialog;
 import devplugin.Program;
 import devplugin.ProgramFilter;
-import util.ui.UiUtilities;
 
 /**
  * Creates the Buttons for the Filters

@@ -57,7 +57,7 @@ public class ProxySettingsTab implements devplugin.SettingsTab {
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(ProxySettingsTab.class);
   
-  private ProxySettingsPanel mHttpProxySettingsPanel;  
+  private ProxySettingsPanel mHttpProxySettingsPanel;
   private JPanel mSettingsPn;
 
   

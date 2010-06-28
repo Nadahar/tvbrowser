@@ -202,11 +202,13 @@ public class HTMLParser {
   }
 
   private static void dumpTag(PrintStream out, int depth, Tag t) {
-    for (int i=0;i<depth;i++) out.print(" ");
+    for (int i=0;i<depth;i++) {
+      out.print(" ");
+    }
     out.println(t.toString());
     Tag[] list=t.getSubtags();
-    for (int i=0;i<list.length;i++) {
-      dumpTag(out,depth+1,list[i]);
+    for (Tag element : list) {
+      dumpTag(out,depth+1,element);
     }
 
   }

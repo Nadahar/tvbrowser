@@ -55,7 +55,7 @@ public class ListTable extends JTable implements ChangeListener {
     }
 
     /**
-     * Sets the Model 
+     * Sets the Model
      * @param model Model to use
      */
     public void setModel(ListTableModel model) {
@@ -103,7 +103,7 @@ public class ListTable extends JTable implements ChangeListener {
     }
 
     /**
-     * Remove Listeners form all Programs  
+     * Remove Listeners form all Programs
      */
     private void removeFromAllPrograms() {
         for (int i = 0; i < mPrograms.size(); i++) {

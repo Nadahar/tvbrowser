@@ -75,7 +75,7 @@ class FinderItem extends JComponent implements ProgressMonitor {
    
     setLayout(new BorderLayout());
     add(mLabel,BorderLayout.CENTER);
-  }   
+  }
   
   public Date getDate() {
     return mDate;
@@ -87,13 +87,13 @@ class FinderItem extends JComponent implements ProgressMonitor {
    */
   public void setChoosen() {
     mLabel.setOpaque(true);
-    mLabel.setBackground(UIManager.getColor("List.selectionBackground"));   
+    mLabel.setBackground(UIManager.getColor("List.selectionBackground"));
     mLabel.setForeground(UIManager.getColor("List.selectionForeground"));
   }
   
   public void setSelected() {
      mLabel.setOpaque(true);
-     mLabel.setBackground(mColorSelected); 
+     mLabel.setBackground(mColorSelected);
   }
     
   public void setOpaque(boolean b) {
@@ -111,7 +111,7 @@ class FinderItem extends JComponent implements ProgressMonitor {
     
     if (listener==null) {
       return;
-    } 
+    }
     
     remove(mLabel);
     add(mProgressBar,BorderLayout.CENTER);
@@ -122,10 +122,10 @@ class FinderItem extends JComponent implements ProgressMonitor {
         stopProgress();
       }
     };
-    thread.start();    
+    thread.start();
   }
   
-  public void stopProgress() {    
+  public void stopProgress() {
     remove(mProgressBar);
     add(mLabel,BorderLayout.CENTER);
     mList.repaint();
@@ -136,12 +136,12 @@ class FinderItem extends JComponent implements ProgressMonitor {
   }
   
   public void setValue(int value) {
-    mProgressBar.setValue(value);  
-    mList.repaint();       
+    mProgressBar.setValue(value);
+    mList.repaint();
   }
 
   
-  public void setMessage(String msg) {    
+  public void setMessage(String msg) {
   }
   
   

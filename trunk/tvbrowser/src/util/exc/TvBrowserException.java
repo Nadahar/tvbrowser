@@ -37,13 +37,13 @@ import util.ui.Localizer;
  */
 public class TvBrowserException extends Exception {
   
-  /** The class whichs localizer should be used to get the localized error message. */  
+  /** The class whichs localizer should be used to get the localized error message. */
   private Class mMsgClass;
-  /** The key of the error message. */  
+  /** The key of the error message. */
   private String mMsgKey;
   /** The default error message (english). */
   private String mDefaultMsg;
-  /** The arguments to parse into the error message. */  
+  /** The arguments to parse into the error message. */
   private Object[] mMsgArgs;
 
   
@@ -71,7 +71,7 @@ public class TvBrowserException extends Exception {
    * @param defaultMsg The deafault error message (english).
    * @param msgArg1 The argument that should replace <CODE>{0}</CODE>.
    */
-  public TvBrowserException(Class msgClass, String msgKey, String defaultMsg, 
+  public TvBrowserException(Class msgClass, String msgKey, String defaultMsg,
     Object msgArg1)
   {
     this(msgClass, msgKey, defaultMsg, msgArg1, (Throwable)null);
@@ -89,7 +89,7 @@ public class TvBrowserException extends Exception {
    * @param msgArg1 The argument that should replace <CODE>{0}</CODE>.
    * @param msgArg2 The argument that should replace <CODE>{1}</CODE>.
    */
-  public TvBrowserException(Class msgClass, String msgKey, String defaultMsg, 
+  public TvBrowserException(Class msgClass, String msgKey, String defaultMsg,
     Object msgArg1, Object msgArg2)
   {
     this(msgClass, msgKey, defaultMsg, msgArg1, msgArg2, (Throwable)null);
@@ -108,7 +108,7 @@ public class TvBrowserException extends Exception {
    * @param msgArg2 The argument that should replace <CODE>{1}</CODE>.
    * @param msgArg3 The argument that should replace <CODE>{2}</CODE>.
    */
-  public TvBrowserException(Class msgClass, String msgKey, String defaultMsg, 
+  public TvBrowserException(Class msgClass, String msgKey, String defaultMsg,
     Object msgArg1, Object msgArg2, Object msgArg3)
   {
     this(msgClass, msgKey, defaultMsg, msgArg1, msgArg2, msgArg3, (Throwable)null);
@@ -126,7 +126,7 @@ public class TvBrowserException extends Exception {
    * @param msgArgs The arguments that should replace the appropriate place holder.
    *        See {@link java.text.MessageFormat} for details.
    */
-  public TvBrowserException(Class msgClass, String msgKey, String defaultMsg, 
+  public TvBrowserException(Class msgClass, String msgKey, String defaultMsg,
     Object[] msgArgs)
   {
     this(msgClass, msgKey, defaultMsg, msgArgs, (Throwable)null);
@@ -143,7 +143,7 @@ public class TvBrowserException extends Exception {
    * @param defaultMsg The deafault error message (english).
    * @param cause The exception that causes this exception. (nested exception).
    */
-  public TvBrowserException(Class msgClass, String msgKey, String defaultMsg, 
+  public TvBrowserException(Class msgClass, String msgKey, String defaultMsg,
     Throwable cause)
   {
     this(msgClass, msgKey, defaultMsg, null, cause);
@@ -161,7 +161,7 @@ public class TvBrowserException extends Exception {
    * @param msgArg1 The argument that should replace <CODE>{0}</CODE>.
    * @param cause The exception that causes this exception. (nested exception).
    */
-  public TvBrowserException(Class msgClass, String msgKey, String defaultMsg, 
+  public TvBrowserException(Class msgClass, String msgKey, String defaultMsg,
     Object msgArg1, Throwable cause)
   {
     this(msgClass, msgKey, defaultMsg, new Object[] { msgArg1 }, cause);
@@ -180,7 +180,7 @@ public class TvBrowserException extends Exception {
    * @param msgArg2 The argument that should replace <CODE>{1}</CODE>.
    * @param cause The exception that causes this exception. (nested exception).
    */
-  public TvBrowserException(Class msgClass, String msgKey, String defaultMsg, 
+  public TvBrowserException(Class msgClass, String msgKey, String defaultMsg,
     Object msgArg1, Object msgArg2, Throwable cause)
   {
     this(msgClass, msgKey, defaultMsg, new Object[] { msgArg1, msgArg2 }, cause);
@@ -200,7 +200,7 @@ public class TvBrowserException extends Exception {
    * @param msgArg3 The argument that should replace <CODE>{2}</CODE>.
    * @param cause The exception that causes this exception. (nested exception).
    */
-  public TvBrowserException(Class msgClass, String msgKey, String defaultMsg, 
+  public TvBrowserException(Class msgClass, String msgKey, String defaultMsg,
     Object msgArg1, Object msgArg2, Object msgArg3, Throwable cause)
   {
     this(msgClass, msgKey, defaultMsg, new Object[] { msgArg1, msgArg2, msgArg3 }, cause);
@@ -236,7 +236,7 @@ public class TvBrowserException extends Exception {
    * Gets the error message. (NOT localized!)
    *
    * @return the error message. (NOT localized!)
-   */  
+   */
   public String getMessage() {
     if (mMsgArgs == null) {
       return mDefaultMsg;

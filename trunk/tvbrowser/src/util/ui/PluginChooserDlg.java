@@ -76,12 +76,12 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
   private SelectableItemList mPluginItemList;
   private ProgramReceiveTarget[] mCurrentTargets;
   private boolean mOkWasPressed;
-  
+
   private static final util.ui.Localizer mLocalizer
      = util.ui.Localizer.getLocalizerFor(PluginChooserDlg.class);
 
   /**
-   * 
+   *
    * @param parent
    * @param pluginArr
    *          The initially selected ProgramReceiveIfs.
@@ -100,7 +100,7 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
 
   /**
    * use the same method with the Window type parent instead
-   * 
+   *
    * @param parent
    * @param pluginArr
    *          The initially selected ProgramReceiveIfs.
@@ -110,12 +110,13 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
    *          The caller ProgramReceiveIf.
    * @deprecated since 3.0
    */
+  @Deprecated
   public PluginChooserDlg(Dialog parent, ProgramReceiveIf[] pluginArr, String description, ProgramReceiveIf caller) {
     this((Window) parent, pluginArr, description, caller);
   }
 
   /**
-   * 
+   *
    * @param parent
    * @param pluginArr
    *          The initially selected ProgramReceiveIfs.
@@ -129,15 +130,15 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
       String description, ProgramReceiveIf caller) {
     super(parent);
     setModal(true);
-   
+
    Hashtable<ProgramReceiveIf,ArrayList<ProgramReceiveTarget>> table = createReceiveTable(pluginArr);
-   
+
    init(table.keySet().toArray(new ProgramReceiveIf[table.keySet().size()]), description, caller, table, null);
  }
- 
+
   /**
    * use the same method with the Window type for parent instead
-   * 
+   *
    * @param parent
    * @param pluginArr
    *          The initially selected ProgramReceiveIfs.
@@ -147,13 +148,14 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
    *          The caller ProgramReceiveIf.
    * @deprecated since 3.0
    */
+  @Deprecated
   public PluginChooserDlg(Dialog parent, ProgramReceiveTarget[] pluginArr,
       String description, ProgramReceiveIf caller) {
     this((Window) parent, pluginArr, description, caller);
   }
- 
+
   /**
-   * 
+   *
    * @param parent
    * @param pluginArr
    *          The initially selected ProgramReceiveIfs.
@@ -178,7 +180,7 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
   }
 
   /**
-   * 
+   *
    * @param parent
    * @param pluginArr
    *          The initially selected ProgramReceiveIfs.
@@ -191,13 +193,14 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
    * @since 2.7.2
    * @deprecated since 3.0
    */
+  @Deprecated
   public PluginChooserDlg(Dialog parent, ProgramReceiveTarget[] pluginArr, String description, ProgramReceiveIf caller, ProgramReceiveTarget[] disabledTargets) {
     this((Window) parent, pluginArr, description, caller, disabledTargets);
   }
 
   /**
    * use the same method with the Window type instead
-   * 
+   *
    * @param parent
    * @param pluginArr
    *          The initially selected ProgramReceiveIfs.
@@ -207,10 +210,11 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
    *          The caller ProgramReceiveIf.
    * @deprecated since 3.0
    */
+  @Deprecated
   public PluginChooserDlg(Frame parent, ProgramReceiveIf[] pluginArr, String description, ProgramReceiveIf caller) {
     this((Window) parent, pluginArr, description, caller);
   }
-  
+
   /**
    * @param parent
    * @param targets
@@ -218,12 +222,13 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
    * @param caller
    * @deprecated since 3.0
    */
+  @Deprecated
   public PluginChooserDlg(Frame parent, ProgramReceiveTarget[] targets, String description, ProgramReceiveIf caller) {
     this((Window) parent, targets, description, caller);
   }
 
   /**
-   * 
+   *
    * @param parent
    * @param targets
    *          The initially selected ProgramReceiveTargets.
@@ -236,39 +241,40 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
    * @since 2.7.2
    * @deprecated since 3.0
    */
+  @Deprecated
   public PluginChooserDlg(Frame parent, ProgramReceiveTarget[] targets, String description, ProgramReceiveIf caller, ProgramReceiveTarget[] disabledTargets) {
     this((Window) parent, targets, description, caller, disabledTargets);
   }
-  
+
   private Hashtable<ProgramReceiveIf,ArrayList<ProgramReceiveTarget>> createReceiveTable(ProgramReceiveTarget[] targets) {
     Hashtable<ProgramReceiveIf,ArrayList<ProgramReceiveTarget>> table = new Hashtable<ProgramReceiveIf,ArrayList<ProgramReceiveTarget>>();
-    
+
     if(targets != null) {
       for(ProgramReceiveTarget target : targets) {
         if(target != null && target.getReceifeIfForIdOfTarget() != null) {
           ArrayList<ProgramReceiveTarget> receiveTargetList = table.get(target.getReceifeIfForIdOfTarget());
-          
+
           if(receiveTargetList != null) {
             receiveTargetList.add(target);
           }
           else {
             receiveTargetList = new ArrayList<ProgramReceiveTarget>();
             receiveTargetList.add(target);
-            
+
             table.put(target.getReceifeIfForIdOfTarget(),receiveTargetList);
           }
         }
       }
     }
-    
+
     return table;
   }
-  
+
   private void init(ProgramReceiveIf[] pluginArr, String description, ProgramReceiveIf caller, Hashtable<ProgramReceiveIf,ArrayList<ProgramReceiveTarget>> targetTable, final ProgramReceiveTarget[] disabledReceiveTargets) {
     mOkWasPressed = false;
     setTitle(mLocalizer.msg("title","Choose Plugins"));
     UiUtilities.registerForClosing(this);
-    
+
     if (pluginArr == null) {
       mPluginArr = new ProgramReceiveIf[]{};
       mResultPluginArr = new ProgramReceiveIf[]{};
@@ -285,9 +291,9 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
     contentPane.setLayout(layout);
     contentPane.setBorder(Borders.DLU4_BORDER);
     CellConstraints cc = new CellConstraints();
-    
+
     ProgramReceiveIf[] tempProgramReceiveIf = Plugin.getPluginManager().getReceiveIfs(caller,null);
-        
+
     ArrayList<ProgramReceiveIf> disabledList = new ArrayList<ProgramReceiveIf>(disabledReceiveTargets != null ? disabledReceiveTargets.length : 0);
 
     if(disabledReceiveTargets != null) {
@@ -295,16 +301,16 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
         disabledList.add(target.getReceifeIfForIdOfTarget());
       }
     }
-    
+
     if(caller != null) {
       ArrayList<ProgramReceiveIf> list = new ArrayList<ProgramReceiveIf>();
-    
+
       for(ProgramReceiveIf tempIf : tempProgramReceiveIf) {
         if(tempIf.getId().compareTo(caller.getId()) != 0) {
           list.add(tempIf);
         }
       }
-            
+
       mPluginItemList = new SelectableItemList(mResultPluginArr,
           list.toArray(), disabledList.toArray());
     } else {
@@ -313,11 +319,11 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
     }
 
     mPluginItemList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-    
+
     int pos = 1;
     layout.appendRow(RowSpec.decode("fill:default:grow"));
     layout.appendRow(RowSpec.decode("3dlu"));
-    
+
     if (targetTable != null) {
       JSplitPane splitPane = new JSplitPane();
 
@@ -398,7 +404,7 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
     mPluginItemList.setSelectedIndex(0);
 
     pos += 2;
-    
+
     if (description != null) {
       JLabel lb = new JLabel(description);
       layout.appendRow(RowSpec.decode("pref"));
@@ -433,12 +439,12 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
     ButtonBarBuilder2 builder = new ButtonBarBuilder2();
     builder.addGlue();
     builder.addButton(new JButton[] {okBt, cancelBt});
-    
+
     layout.appendRow(RowSpec.decode("pref"));
     contentPane.add(builder.getPanel(), cc.xy(1,pos));
-    
+
     Settings.layoutWindow("pluginChooserDlg", this, new Dimension(350,300));
-    
+
     setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
     addWindowListener(new WindowAdapter() {
       @Override
@@ -447,21 +453,9 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
       }
     });
   }
-  
-  private boolean arrayContainsValue(ProgramReceiveTarget[] targetArr, ProgramReceiveTarget target) {
-    if(targetArr != null && target != null) {
-      for(ProgramReceiveTarget arrayEntry : targetArr) {        
-        if(arrayEntry.getReceiveIfId().equals(target.getReceiveIfId()) && arrayEntry.getTargetId().equals(target.getTargetId())) {
-          return true;
-        }
-      }
-    }
-    
-    return false;
-  }
 
   /**
-   * 
+   *
    * @return an array of the selected plugins. If the user canceled the dialog,
    *         the array from the constructor call is returned.
    */
@@ -471,7 +465,7 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
     }
     return mResultPluginArr.clone();
   }
-  
+
   public ProgramReceiveTarget[] getReceiveTargets() {
     if(mOkWasPressed) {
       ArrayList<ProgramReceiveTarget> targetList = new ArrayList<ProgramReceiveTarget>();
@@ -484,7 +478,7 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
           }
         }
       }
-      
+
       return targetList.toArray(new ProgramReceiveTarget[targetList.size()]);
     } else {
       return null;

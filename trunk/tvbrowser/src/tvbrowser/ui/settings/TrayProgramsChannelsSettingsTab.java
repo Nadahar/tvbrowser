@@ -115,7 +115,7 @@ public class TrayProgramsChannelsSettingsTab implements SettingsTab {
     builder.addSeparator(mLocalizer.msg("channelColumnWidth","Column with for channel name"), cc.xyw(1, 1, 8));
     builder.add(mChannelWidth, cc.xy(2,3));
     final JLabel valueLabel = builder.addLabel(String.valueOf(mChannelWidth.getValue()), cc.xy(4,3));
-    valueLabel.setHorizontalAlignment(JLabel.RIGHT);
+    valueLabel.setHorizontalAlignment(SwingConstants.RIGHT);
     Dimension dim = valueLabel.getPreferredSize();
     valueLabel.setPreferredSize(new Dimension(Sizes.dialogUnitXAsPixel(20, builder.getPanel()), dim.height));
 
@@ -166,12 +166,13 @@ public class TrayProgramsChannelsSettingsTab implements SettingsTab {
     else if(!mNow && !mSoon && !mOnTime) {
       mHelpLabel.setVisible(true);
       mHelpLabel.setText(createHtml(mHelpLabel.getFont(),mLocalizer.msg("helpPrograms","<html>These settings are used only by the Now, Soon and At... programs. Enable at least one of that to enable these settings.</html>")));
+    } else {
+      mHelpLabel.setVisible(false);
     }
-    else
-      mHelpLabel.setVisible(false);     
     
-    if(trayStateChange)
+    if(trayStateChange) {
       mSeparator1.setEnabled(mTrayIsEnabled);
+    }
     
     mUseUserChannels.setEnabled(mTrayIsEnabled && (mNow || mSoon || mOnTime));
     mChannelOCh.setEnabled(mTrayIsEnabled && mUseUserChannels.isSelected() && (mNow || mSoon || mOnTime));
@@ -189,14 +190,17 @@ public class TrayProgramsChannelsSettingsTab implements SettingsTab {
       ch = new Channel[order.length > 10 ? 10 : order.length];
     }
 
-    for (int i = 0; i < ch.length; i++)
+    for (int i = 0; i < ch.length; i++) {
       ch[i] = (Channel) order[i];
+    }
     
-    if (order != null)
+    if (order != null) {
       Settings.propTraySpecialChannels.setChannelArray(ch);
+    }
     
-    if (mChannelWidth != null)
+    if (mChannelWidth != null) {
       Settings.propTrayChannelWidth.setInt(mChannelWidth.getValue());
+    }
   }
 
   public Icon getIcon() {
@@ -209,25 +213,29 @@ public class TrayProgramsChannelsSettingsTab implements SettingsTab {
 
   protected static void setTrayIsEnabled(boolean value) {
     mTrayIsEnabled = value;
-    if(mInstance != null)
+    if(mInstance != null) {
       mInstance.setEnabled(true);
+    }
   }
   
   protected static void setNowIsEnabled(boolean value) {
     mNow = value;
-    if(mInstance != null)
+    if(mInstance != null) {
       mInstance.setEnabled(false);
+    }
   }
   
   protected static void setSoonIsEnabled(boolean value) {
     mSoon = value;
-    if(mInstance != null)
+    if(mInstance != null) {
       mInstance.setEnabled(false);
+    }
   }
 
   protected static void setOnTimeIsEnabled(boolean value) {
     mOnTime = value;
-    if(mInstance != null)
+    if(mInstance != null) {
       mInstance.setEnabled(false);
+    }
   }
 }

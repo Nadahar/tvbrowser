@@ -63,7 +63,7 @@ public class PluginPictureSettings {
    * @throws IOException Thrown if something went wrong.
    * @throws ClassNotFoundException Thrown if something went wrong.
    */
-  public PluginPictureSettings(ObjectInputStream in) throws IOException, ClassNotFoundException {    
+  public PluginPictureSettings(ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.readShort(); // version
     
     mType = in.readInt();
@@ -84,7 +84,7 @@ public class PluginPictureSettings {
   /**
    * Gets if the pictures should be shown for this setting.
    * 
-   * @return <code>True</code> if the picture is to be shown, 
+   * @return <code>True</code> if the picture is to be shown,
    * <code>false</code> otherwise.
    */
   public boolean isShowingPictures() {

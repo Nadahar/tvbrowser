@@ -430,7 +430,7 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
         // compare new and existing programs to avoid unnecessary updates
         boolean update = true;
 
-        Iterator<Program> itCurrProg = SchedulesDirectDataService.getPluginManager().getChannelDayProgram(newDayProg.getDate(), ch);
+        Iterator<Program> itCurrProg = AbstractTvDataService.getPluginManager().getChannelDayProgram(newDayProg.getDate(), ch);
         Iterator<Program> itNewProg = newDayProg.getPrograms();
         update = false;
         while (itCurrProg.hasNext() && itNewProg.hasNext()) {

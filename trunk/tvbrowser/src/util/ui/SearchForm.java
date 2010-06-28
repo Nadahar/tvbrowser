@@ -66,11 +66,11 @@ import devplugin.ProgramFieldType;
  */
 public class SearchForm extends JPanel {
 
-  /** The localizer of this class. */  
+  /** The localizer of this class. */
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(SearchForm.class);
   
-  /** The messages for the time combo box. */  
+  /** The messages for the time combo box. */
   private static final String[] TIME_STRING_ARR = new String[] {
     Localizer.getLocalization(Localizer.I18N_TODAY),
     Localizer.getLocalization(Localizer.I18N_TOMORROW),
@@ -80,7 +80,7 @@ public class SearchForm extends JPanel {
       mLocalizer.msg("search.1000", "All data")
   };
 
-  /** The values for the time combo box. */  
+  /** The values for the time combo box. */
   private static final int[] TIME_VALUE_ARR = new int[] {
     0, 1, 7, 14, 21, -1
   };
@@ -133,7 +133,7 @@ public class SearchForm extends JPanel {
   /**
    * Creates a new search form.
    * 
-   * @param showInputfield Should there be a Input-Field? 
+   * @param showInputfield Should there be a Input-Field?
    * @param showHistory Should there be a history?
    * @param showTimeSelection Should the search time (number of days) be selectable?
    *        See {@link devplugin.PluginManager#search(String, boolean, ProgramFieldType[], devplugin.Date, int, devplugin.Channel[], boolean)}.
@@ -294,7 +294,7 @@ public class SearchForm extends JPanel {
       //             until the editing is finished. The editor finishes editing
       //             after he has called all the listeners.
       //             To ensure that editing is finished we call our listener,
-      //             after the editor is done  
+      //             after the editor is done
       ActionListener invokeLaterListener = new ActionListener() {
         public void actionPerformed(final ActionEvent evt) {
           SwingUtilities.invokeLater(new Runnable() {
@@ -635,7 +635,7 @@ public class SearchForm extends JPanel {
         "Please select the fields to search for");
       main.add(UiUtilities.createHelpTextArea(msg + "\n"), BorderLayout.NORTH);
       
-      mSelectableItemList = new SelectableItemList(selectedTypeArr,getSearchableFieldTypes());      
+      mSelectableItemList = new SelectableItemList(selectedTypeArr,getSearchableFieldTypes());
       main.add(mSelectableItemList, BorderLayout.CENTER);
       
       JPanel buttonPn = new JPanel(new FlowLayout(FlowLayout.TRAILING));

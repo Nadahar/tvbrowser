@@ -280,15 +280,15 @@ public class CustomizableItemsPanel extends JPanel {
 
   public void setElementsLeft(Object[] items) {
     mLeftListModel.clear();
-    for (int i=0; i<items.length; i++) {
-      mLeftListModel.addElement(items[i]);
+    for (Object item : items) {
+      mLeftListModel.addElement(item);
     }
   }
 
   public void setElementsRight(Object[] items) {
     mRightListModel.clear();
-    for (int i=0; i<items.length; i++) {
-      mRightListModel.addElement(items[i]);
+    for (Object item : items) {
+      mRightListModel.addElement(item);
     }
   }
 

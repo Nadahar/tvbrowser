@@ -29,7 +29,7 @@ import tvdataservice.MutableChannelDayProgram;
 import devplugin.ChannelDayProgram;
 
 /**
- * A listener that listens for TV data events  
+ * A listener that listens for TV data events
  * 
  * @author Til Schneider, www.murfman.de
  */

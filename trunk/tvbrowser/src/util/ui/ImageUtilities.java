@@ -48,7 +48,7 @@ public class ImageUtilities {
   private static final Logger mLog
     = Logger.getLogger(ImageUtilities.class.getName());
 
-  /** The helper label. */  
+  /** The helper label. */
   private static final JLabel HELPER_LABEL = new JLabel();
 
   /**

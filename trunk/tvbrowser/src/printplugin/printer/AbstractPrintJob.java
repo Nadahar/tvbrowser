@@ -55,10 +55,10 @@ public abstract class AbstractPrintJob implements PrintJob {
 
   private void prepare() {
     ArrayList<Page> pages = new ArrayList<Page>();
-    for (int i=0;i<mPageModelArr.length;i++) {
-      Page[] p = createPages(mPageModelArr[i]);
-      for (int j=0;j<p.length;j++) {
-        pages.add(p[j]);
+    for (PageModel element : mPageModelArr) {
+      Page[] p = createPages(element);
+      for (Page element2 : p) {
+        pages.add(element2);
       }
     }
     mPages = new Page[pages.size()];

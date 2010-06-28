@@ -41,7 +41,6 @@ import javax.swing.plaf.basic.BasicMenuItemUI;
 import javax.swing.plaf.basic.BasicMenuUI;
 
 import util.ui.ScrollableMenu;
-
 import devplugin.ActionMenu;
 import devplugin.ContextMenuSeparatorAction;
 import devplugin.Plugin;
@@ -184,7 +183,7 @@ public class MenuUtil {
             
             g.drawString(text, textRect.x, textRect.y + menuItem.getFontMetrics(menuItem.getFont()).getAscent());
           }
-        });    
+        });
       }
     }
   }

@@ -27,7 +27,7 @@ package devplugin;
 
 /**
  * This Class holds a List of SettingItem-IDs. With this it's possible for Plugins to open
- * specific Settings. 
+ * specific Settings.
  * 
  * E.g.:
  * <code>

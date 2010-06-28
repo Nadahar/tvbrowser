@@ -69,7 +69,7 @@ import devplugin.ProgramFieldType;
 /**
  * A class that creates a dialog for setting up the
  * printing of the Program infos.
- *  
+ * 
  * @author René Mach
  *
  */
@@ -99,7 +99,7 @@ public class ProgramInfoPrintDialog implements WindowClosingIf{
     mDialog.setTitle(mLocalizer.msg("title","Print program info"));
 
     final OrderChooser fieldChooser = new OrderChooser(ProgramInfoPrintSettings.getInstance().getFieldTypes(),ProgramTextCreator.getDefaultOrder(),true);
-    final FontChooserPanel fontChooser = new FontChooserPanel("",ProgramInfoPrintSettings.getInstance().getFont(), false);    
+    final FontChooserPanel fontChooser = new FontChooserPanel("",ProgramInfoPrintSettings.getInstance().getFont(), false);
     final JCheckBox printImage = new JCheckBox(mLocalizer.msg("printImage","Print image"), ProgramInfoPrintSettings.getInstance().isPrintImage());
     final JCheckBox printPluginIcons = new JCheckBox(mLocalizer.msg("printPluginIcons","Print plugin icons"), ProgramInfoPrintSettings.getInstance().isPrintPluginIcons());
     final PrinterJob printerJob = PrinterJob.getPrinterJob();
@@ -264,8 +264,8 @@ public class ProgramInfoPrintDialog implements WindowClosingIf{
     pane.setEditorKit(new ExtendedHTMLEditorKit());
     ExtendedHTMLDocument doc = (ExtendedHTMLDocument) pane.getDocument();
     
-    String html = /*ProgramTextCreator.createInfoText(program, doc, 
-          mFieldTypes, null, fontChooser.getChosenFont(), printImage.isSelected(), false);*/ 
+    String html = /*ProgramTextCreator.createInfoText(program, doc,
+          mFieldTypes, null, fontChooser.getChosenFont(), printImage.isSelected(), false);*/
     
     ProgramTextCreator.createInfoText(program, doc, mFieldTypes, null, fontChooser.getChosenFont(), new ProgramPanelSettings(printImage.isSelected() ? ProgramPanelSettings.SHOW_PICTURES_EVER : ProgramPanelSettings.SHOW_PICTURES_NEVER, -1, -1, false, true, 10), false, 100, printIcons.isSelected());
     

@@ -32,7 +32,7 @@ import devplugin.Program;
 /**
  * Does a program panel layout that is real time synchronous.
  * This means that equi distant time spans in the program table result
- * in equi distant heights in the program table. 
+ * in equi distant heights in the program table.
  * 
  * @author René Mach
  * 
@@ -94,9 +94,9 @@ public class RealTimeSynchronousLayout extends AbstractProgramTableLayout {
           int length = endTime - startTime;
           
           panel.setHeight((int)(length * scaleValue));
-        }
-        else
+        } else {
           panel.setHeight(panel.getProgram().getLength() > 0 ? (int)(panel.getProgram().getLength() * scaleValue) : panel.getPreferredHeight());
+        }
       }
     }
 

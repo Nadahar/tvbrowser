@@ -30,7 +30,7 @@ package printplugin.printer;
 
 /**
  * The PageModel consists of one or more columns. A PageModel does not map real
- * pages. 
+ * pages.
  */
 public interface PageModel {
   

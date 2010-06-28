@@ -73,8 +73,8 @@ public class InfoCategoryParser {
     }
 
     String[] genreParts = genreText.split(",");
-    for (int part = 0; part < genreParts.length; part++) {
-      String genre = genreParts[part].trim();
+    for (String genrePart : genreParts) {
+      String genre = genrePart.trim();
       if (genre.length() > 0) {
         for (int i = 0; i < mGenres.size(); i++) {
           if (mGenres.get(i).contains(genre)) {

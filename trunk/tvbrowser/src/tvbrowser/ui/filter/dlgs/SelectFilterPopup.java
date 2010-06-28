@@ -49,9 +49,9 @@ public class SelectFilterPopup extends JPopupMenu{
         FilterButtons filterButtons = new FilterButtons(mMainFrame);
         
         JMenuItem[] filterMenuItems = filterButtons.createFilterMenuItems();
-        for (int i=0; i<filterMenuItems.length; i++) {
-          if (filterMenuItems[i] != null) {
-              add(filterMenuItems[i]);
+        for (JMenuItem filterMenuItem : filterMenuItems) {
+          if (filterMenuItem != null) {
+              add(filterMenuItem);
           } else {
               addSeparator();
           }

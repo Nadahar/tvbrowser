@@ -62,7 +62,7 @@ public class StatusPanel extends JPanel {
     
     String text = "";
     if (selected == NETWORK) {
-      text = mLocalizer.msg("network", "Network"); 
+      text = mLocalizer.msg("network", "Network");
     }
     else if (selected == CHANNELS) {
       text = mLocalizer.msg("channel", "Choose channel");

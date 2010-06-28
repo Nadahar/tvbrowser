@@ -40,6 +40,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.WindowConstants;
 
 import tvbrowser.core.Settings;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
@@ -69,7 +70,7 @@ public class ConfigAssistant extends JDialog implements ActionListener, PrevNext
     super(parent, true);
 
     UiUtilities.registerForClosing(this);
-    setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+    setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
     addWindowListener(new WindowAdapter() {
       public void windowClosing(WindowEvent e) {
@@ -104,7 +105,7 @@ public class ConfigAssistant extends JDialog implements ActionListener, PrevNext
     CardPanel networkSuccessPanel = new NetworkSuccessPanel(this);
 
     CardPanel subscribeChannelPanel = new SubscribeChannelCardPanel(this);
-    
+
     mFinishedPanel = new FinishCardPanel(this);
 
     mCardPn.add(welcomePanel.getPanel(), welcomePanel.toString());
@@ -157,10 +158,11 @@ public class ConfigAssistant extends JDialog implements ActionListener, PrevNext
   }
 
   private boolean isDynamicChannelListSupported() {
-    TvDataServiceProxy services[] = TvDataServiceProxyManager.getInstance().getDataServices();
-    for (int i = 0; i < services.length; i++) {
-      if (services[i].supportsDynamicChannelList())
+    TvDataServiceProxy[] services = TvDataServiceProxyManager.getInstance().getDataServices();
+    for (TvDataServiceProxy service : services) {
+      if (service.supportsDynamicChannelList()) {
         return true;
+      }
     }
     return false;
   }
@@ -174,7 +176,7 @@ public class ConfigAssistant extends JDialog implements ActionListener, PrevNext
         mNextBt.setEnabled(false);
         mBackBt.setEnabled(false);
         mCancelBt.setEnabled(false);
-        
+
         Object o = e.getSource();
         if (o == mBackBt) {
           if (mCurCardPanel == mFinishedPanel) {
@@ -220,14 +222,14 @@ public class ConfigAssistant extends JDialog implements ActionListener, PrevNext
               mBackBt.setEnabled(true);
             }
           }
-          
+
         } else if (o == mCancelBt) {
           cancel();
           mNextBt.setEnabled(next);
           mBackBt.setEnabled(back);
           mCancelBt.setEnabled(cancel);
         }
-        
+
       }
     }).start();
 
@@ -270,8 +272,9 @@ public class ConfigAssistant extends JDialog implements ActionListener, PrevNext
     if (mCurCardPanel == mFinishedPanel) {
       tvbrowser.core.Settings.propShowAssistant.setBoolean(false);
       setVisible(false);
-    } else
+    } else {
       cancel();
+    }
   }
 
 }

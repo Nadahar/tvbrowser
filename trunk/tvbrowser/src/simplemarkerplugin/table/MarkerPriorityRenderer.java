@@ -21,18 +21,19 @@
  */
 package simplemarkerplugin.table;
 
-import devplugin.Plugin;
-import devplugin.Program;
-import simplemarkerplugin.MarkList;
-import simplemarkerplugin.SimpleMarkerPlugin;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.FlowLayout;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.FlowLayout;
+
+import simplemarkerplugin.MarkList;
+import simplemarkerplugin.SimpleMarkerPlugin;
+import devplugin.Plugin;
+import devplugin.Program;
 
 /**
  * The cell renderer for the priority column

@@ -43,6 +43,7 @@ import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.WindowConstants;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 
@@ -119,7 +120,7 @@ public class AboutBox extends JDialog implements WindowClosingIf{
       }
     });
     
-    setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+    setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
     
     getRootPane().setDefaultButton(closeBtn);
     btnPanel.add(closeBtn);
@@ -213,10 +214,10 @@ public class AboutBox extends JDialog implements WindowClosingIf{
     java.util.TimeZone timezone = java.util.TimeZone.getDefault();
     int tzOffset = timezone.getRawOffset() / 1000 / 60 / 60;
     String tzOffsetAsString = mLocalizer.msg("hours",
-        "({0,number,+#;#} hours)", tzOffset);           
+        "({0,number,+#;#} hours)", tzOffset);
                
     createInfoEntry(buf, mLocalizer.msg("timezone", "Timezone") + ":",
-       timezone.getDisplayName() + " " + tzOffsetAsString);         
+       timezone.getDisplayName() + " " + tzOffsetAsString);
                 
                
     buf.append("</table></p>");

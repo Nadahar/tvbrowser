@@ -41,6 +41,7 @@ import util.paramhandler.ParamParser;
 import util.program.AbstractPluginProgramFormating;
 import util.program.LocalPluginProgramFormating;
 import util.ui.Localizer;
+import util.ui.TVBrowserIcons;
 import devplugin.ActionMenu;
 import devplugin.ContextMenuAction;
 import devplugin.Plugin;
@@ -52,7 +53,7 @@ import devplugin.Version;
 
 /**
  * The Main-Class for the Blog-Plugin
- * 
+ *
  * @author bodum
  */
 public class BlogThisPlugin extends Plugin {
@@ -113,7 +114,7 @@ public class BlogThisPlugin extends Plugin {
   }
 
   public ActionMenu getContextMenuActions(final Program program) {
-    ImageIcon img = createImageIcon("apps", "internet-web-browser", 16);
+    ImageIcon img = createImageIcon("apps", "internet-web-browser", TVBrowserIcons.SIZE_SMALL);
 
     if (mConfigs.length > 1) {
       ContextMenuAction blog = new ContextMenuAction(mLocalizer.ellipsisMsg("contextMenuText",
@@ -122,12 +123,13 @@ public class BlogThisPlugin extends Plugin {
       ArrayList<AbstractAction> list = new ArrayList<AbstractAction>();
 
       for (final AbstractPluginProgramFormating config : mConfigs) {
-        if (config != null && config.isValid())
+        if (config != null && config.isValid()) {
           list.add(new AbstractAction(config.getName()) {
             public void actionPerformed(ActionEvent e) {
               blogThis(program, config);
             }
           });
+        }
       }
 
       blog.putValue(Action.SMALL_ICON, img);
@@ -148,7 +150,7 @@ public class BlogThisPlugin extends Plugin {
 
   /**
    * Creates a new Blog-Entry
-   * 
+   *
    * @param program
    *          Program to use for the Entry
    */
@@ -182,7 +184,7 @@ public class BlogThisPlugin extends Plugin {
 
   /**
    * Creates the URL that should open in the Web-Browser
-   * 
+   *
    * @param title
    *          Title to show
    * @param content
@@ -190,7 +192,7 @@ public class BlogThisPlugin extends Plugin {
    * @param url
    *          URL of the Channel
    * @return URL for the Web-Browser
-   * 
+   *
    * @throws UnsupportedEncodingException
    *           Problems with the selected Encoding
    */
@@ -263,28 +265,35 @@ public class BlogThisPlugin extends Plugin {
     if (mConfigs != null) {
       ArrayList<AbstractPluginProgramFormating> list = new ArrayList<AbstractPluginProgramFormating>();
 
-      for (AbstractPluginProgramFormating config : mConfigs)
-        if (config != null)
+      for (AbstractPluginProgramFormating config : mConfigs) {
+        if (config != null) {
           list.add(config);
+        }
+      }
 
       out.writeInt(list.size());
 
-      for (AbstractPluginProgramFormating config : list)
+      for (AbstractPluginProgramFormating config : list) {
         config.writeData(out);
-    } else
+      }
+    } else {
       out.writeInt(0);
+    }
 
     if (mLocalFormattings != null) {
       ArrayList<AbstractPluginProgramFormating> list = new ArrayList<AbstractPluginProgramFormating>();
 
-      for (AbstractPluginProgramFormating config : mLocalFormattings)
-        if (config != null)
+      for (AbstractPluginProgramFormating config : mLocalFormattings) {
+        if (config != null) {
           list.add(config);
+        }
+      }
 
       out.writeInt(list.size());
 
-      for (AbstractPluginProgramFormating config : list)
+      for (AbstractPluginProgramFormating config : list) {
         config.writeData(out);
+      }
     }
 
   }
@@ -301,8 +310,9 @@ public class BlogThisPlugin extends Plugin {
         AbstractPluginProgramFormating value = AbstractPluginProgramFormating.readData(in);
 
         if (value != null) {
-          if (value.equals(DEFAULT_CONFIG))
+          if (value.equals(DEFAULT_CONFIG)) {
             DEFAULT_CONFIG = (LocalPluginProgramFormating) value;
+          }
 
           list.add(value);
         }
@@ -313,7 +323,7 @@ public class BlogThisPlugin extends Plugin {
       mLocalFormattings = new LocalPluginProgramFormating[in.readInt()];
 
       for (int i = 0; i < mLocalFormattings.length; i++) {
-        LocalPluginProgramFormating value = (LocalPluginProgramFormating) LocalPluginProgramFormating.readData(in);
+        LocalPluginProgramFormating value = (LocalPluginProgramFormating) AbstractPluginProgramFormating.readData(in);
         LocalPluginProgramFormating loadedInstance = getInstanceOfFormatingFromSelected(value);
 
         mLocalFormattings[i] = loadedInstance == null ? value : loadedInstance;
@@ -324,9 +334,11 @@ public class BlogThisPlugin extends Plugin {
   }
 
   private LocalPluginProgramFormating getInstanceOfFormatingFromSelected(LocalPluginProgramFormating value) {
-    for (AbstractPluginProgramFormating config : mConfigs)
-      if (config.equals(value))
+    for (AbstractPluginProgramFormating config : mConfigs) {
+      if (config.equals(value)) {
         return (LocalPluginProgramFormating) config;
+      }
+    }
 
     return null;
   }
@@ -344,10 +356,11 @@ public class BlogThisPlugin extends Plugin {
   }
 
   protected void setAvailableLocalPluginProgramFormattings(LocalPluginProgramFormating[] formattings) {
-    if (formattings == null || formattings.length < 1)
+    if (formattings == null || formattings.length < 1) {
       createDefaultAvailable();
-    else
+    } else {
       mLocalFormattings = formattings;
+    }
   }
 
   protected AbstractPluginProgramFormating[] getSelectedPluginProgramFormattings() {
@@ -355,9 +368,10 @@ public class BlogThisPlugin extends Plugin {
   }
 
   protected void setSelectedPluginProgramFormattings(AbstractPluginProgramFormating[] formattings) {
-    if (formattings == null || formattings.length < 1)
+    if (formattings == null || formattings.length < 1) {
       createDefaultConfig();
-    else
+    } else {
       mConfigs = formattings;
+    }
   }
 }

@@ -53,8 +53,8 @@ public class ChoiceProperty extends Property {
     mCachedValue = null;
     
     mAllowedValueSet = new HashSet<String>(allowedValueArr.length);
-    for (int i = 0; i < allowedValueArr.length; i++) {
-      mAllowedValueSet.add(allowedValueArr[i]);
+    for (String element : allowedValueArr) {
+      mAllowedValueSet.add(element);
     }
   }
   

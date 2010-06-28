@@ -92,13 +92,13 @@ public class DirectoryChooserPanel extends JPanel {
       }
     });
     
-    add(mBtn,BorderLayout.EAST); 
+    add(mBtn,BorderLayout.EAST);
   }
   
   public void setEnabled(boolean enabled) {
     super.setEnabled(enabled);
     mTextField.setEnabled(enabled);
-    mBtn.setEnabled(enabled);  
+    mBtn.setEnabled(enabled);
     mLabel.setEnabled(enabled);
   }
   

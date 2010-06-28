@@ -73,7 +73,8 @@ public class ParamHelpDialog extends JDialog implements WindowClosingIf {
    *          Parent
    * @deprecated since 3.0
    */
-	public ParamHelpDialog(JDialog dialog) {
+	@Deprecated
+  public ParamHelpDialog(JDialog dialog) {
 	  this((Window) dialog);
 	}
 
@@ -103,7 +104,8 @@ public class ParamHelpDialog extends JDialog implements WindowClosingIf {
    *          Library to use
    * @deprecated since 3.0
    */
-	public ParamHelpDialog(JDialog dialog, ParamLibrary lib) {
+	@Deprecated
+  public ParamHelpDialog(JDialog dialog, ParamLibrary lib) {
 	  this((Window) dialog, lib);
 	}
 
@@ -114,7 +116,8 @@ public class ParamHelpDialog extends JDialog implements WindowClosingIf {
    *          Parent
    * @deprecated since 3.0
    */
-	public ParamHelpDialog(JFrame frame) {
+	@Deprecated
+  public ParamHelpDialog(JFrame frame) {
 	  this((Window) frame);
 	}
 
@@ -127,7 +130,8 @@ public class ParamHelpDialog extends JDialog implements WindowClosingIf {
    *          Library to use
    * @deprecated since 3.0
    */
-	public ParamHelpDialog(JFrame frame, ParamLibrary lib) {
+	@Deprecated
+  public ParamHelpDialog(JFrame frame, ParamLibrary lib) {
 	  this((Window) frame, lib);
 	}
 

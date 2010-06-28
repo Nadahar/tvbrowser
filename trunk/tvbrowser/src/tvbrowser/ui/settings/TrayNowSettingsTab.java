@@ -69,7 +69,7 @@ public class TrayNowSettingsTab implements SettingsTab {
     ButtonGroup bg1 = new ButtonGroup();
     bg1.add(mShowIconAndName);
     bg1.add(mShowIcon);
-    bg1.add(mShowName);    
+    bg1.add(mShowName);
     
     mShowTime = new JCheckBox(mLocalizer.msg("showTime","Show start time"),Settings.propTrayNowProgramsContainsTime.getBoolean());
     mShowToolTip = new JCheckBox(mLocalizer.msg("showToolTip","Show additional information of the program in a tool tip"),Settings.propTrayNowProgramsContainsToolTip.getBoolean());
@@ -91,7 +91,7 @@ public class TrayNowSettingsTab implements SettingsTab {
     JPanel c1 = (JPanel) builder.addSeparator(mLocalizer.msg("iconNameSeparator","Channel icons/channel name"), cc.xyw(1,7,4));
     builder.add(mShowIconAndName, cc.xyw(2,9,2));
     builder.add(mShowIcon, cc.xyw(2,10,2));
-    builder.add(mShowName, cc.xyw(2,11,2));    
+    builder.add(mShowName, cc.xyw(2,11,2));
     
     JPanel c2 = (JPanel) builder.addSeparator(mLocalizer.msg("settings","Settings"), cc.xyw(1,13,4));
     builder.add(mShowTime, cc.xyw(2,15,2));
@@ -126,7 +126,7 @@ public class TrayNowSettingsTab implements SettingsTab {
     mSeparator2.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
     mShowInSubMenu.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
     mShowInTray.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
-    mShowName.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);    
+    mShowName.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
     mShowIconAndName.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
     mShowIcon.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
     mShowTime.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
@@ -134,18 +134,22 @@ public class TrayNowSettingsTab implements SettingsTab {
   }
   
   public void saveSettings() {
-    if(mIsEnabled != null)
+    if(mIsEnabled != null) {
       Settings.propTrayNowProgramsEnabled.setBoolean(mIsEnabled.isSelected());
-    if(mShowInSubMenu != null)
+    }
+    if(mShowInSubMenu != null) {
       Settings.propTrayNowProgramsInSubMenu.setBoolean(mShowInSubMenu.isSelected());
+    }
     if(mShowIconAndName != null && mShowName != null && mShowIcon != null) {
       Settings.propTrayNowProgramsContainsName.setBoolean(mShowIconAndName.isSelected() || mShowName.isSelected());
       Settings.propTrayNowProgramsContainsIcon.setBoolean(mShowIconAndName.isSelected() || mShowIcon.isSelected());
     }
-    if(mShowTime != null)
+    if(mShowTime != null) {
       Settings.propTrayNowProgramsContainsTime.setBoolean(mShowTime.isSelected());
-    if(mShowToolTip != null)
+    }
+    if(mShowToolTip != null) {
       Settings.propTrayNowProgramsContainsToolTip.setBoolean(mShowToolTip.isSelected());
+    }
   }
 
   public Icon getIcon() {
@@ -158,7 +162,8 @@ public class TrayNowSettingsTab implements SettingsTab {
 
   protected static void setTrayIsEnabled(boolean value) {
     mTrayIsEnabled = value;
-    if(mInstance != null)
+    if(mInstance != null) {
       mInstance.setEnabled(true);
+    }
   }
 }

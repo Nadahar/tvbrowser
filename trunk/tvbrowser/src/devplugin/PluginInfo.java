@@ -89,7 +89,7 @@ public final class PluginInfo {
      * @since 2.6
      */
     public PluginInfo(Class<? extends Object> caller, String name, String desc) {
-      this(caller,name,desc,"");       
+      this(caller,name,desc,"");
     }
     
     /**
@@ -108,7 +108,7 @@ public final class PluginInfo {
      * @since 2.6
      */
     public PluginInfo(Class<? extends Object> caller, String name, String desc, String author) {
-      this(caller, name,desc,author,null,null);        
+      this(caller, name,desc,author,null,null);
     }
 
     /**
@@ -127,7 +127,7 @@ public final class PluginInfo {
      * @param license The license of the plugin.
      * @since 2.6
      */
-    public PluginInfo(Class<? extends Object> caller, String name, String desc, String author, String license) {      
+    public PluginInfo(Class<? extends Object> caller, String name, String desc, String author, String license) {
       this(caller,name,desc,author,license,null);
     }
 
@@ -148,14 +148,14 @@ public final class PluginInfo {
      * @param license The license of the plugin.
      * @since 2.6
      */
-    public PluginInfo(Class<? extends Object> caller, String name, String desc, String author, String license, String helpUrl) {      
+    public PluginInfo(Class<? extends Object> caller, String name, String desc, String author, String license, String helpUrl) {
       mName = name;
       mDescription = desc;
       mAuthor = author;
       mHelpUrl = helpUrl;
       
-      if(caller != null && caller.getSuperclass() != null && 
-          (caller.getSuperclass().equals(Plugin.class) || caller.equals(Plugin.class) || 
+      if(caller != null && caller.getSuperclass() != null &&
+          (caller.getSuperclass().equals(Plugin.class) || caller.equals(Plugin.class) ||
               caller.getSuperclass().equals(AbstractTvDataService.class))) {
         try {
           Method m = caller.getMethod("getVersion", new Class[0]);
@@ -177,7 +177,7 @@ public final class PluginInfo {
      * @return The name of the plugin.
      */
     public String getName() {
-      return mName; 
+      return mName;
     }
     
     /**
@@ -213,9 +213,9 @@ public final class PluginInfo {
      * <p>
      * @return The version of the plugin.
      */
-    public Version getVersion() { 
+    public Version getVersion() {
       return mVersion;
-    }    
+    }
     
     /**
      * Gets the license of the plugin.

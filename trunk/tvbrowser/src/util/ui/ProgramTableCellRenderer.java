@@ -43,8 +43,8 @@ import devplugin.Program;
 
 /**
  * CellRenderer for Program in Table<p>
- * <i>Keep in mind:</i> This Renderer internally uses "static" data for 
- * each displayed program. If program data changes the container 
+ * <i>Keep in mind:</i> This Renderer internally uses "static" data for
+ * each displayed program. If program data changes the container
  * using this renderer should be repainted to display the changed
  * data.
  * 
@@ -75,7 +75,7 @@ public class ProgramTableCellRenderer extends DefaultTableCellRenderer {
      * @since 2.6
      */
     public ProgramTableCellRenderer(PluginPictureSettings settings) {
-      this(new ProgramPanelSettings(new PluginPictureSettings(PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE),false));      
+      this(new ProgramPanelSettings(new PluginPictureSettings(PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE),false));
     }
     
     /**
@@ -143,8 +143,9 @@ public class ProgramTableCellRenderer extends DefaultTableCellRenderer {
             mMainPanel.setEnabled(label.isEnabled());
             mMainPanel.setBorder(label.getBorder());
 
-            if (table.getRowHeight(row) != mMainPanel.getPreferredSize().height)
-                table.setRowHeight(row, mMainPanel.getPreferredSize().height);
+            if (table.getRowHeight(row) != mMainPanel.getPreferredSize().height) {
+              table.setRowHeight(row, mMainPanel.getPreferredSize().height);
+            }
             
             return mMainPanel;
         }

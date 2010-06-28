@@ -34,31 +34,31 @@ import java.awt.LayoutManager;
 public class GridFlowLayout implements LayoutManager {
 
     public static final int CENTER = 0, LEFT = 1, RIGHT = 2, TOP = LEFT, BOTTOM = RIGHT;
-    
+
     private int mHGap, mVGap;
     private int mVAlign, mHAlign;
-    
-    
+
+
     public GridFlowLayout(int hgap, int vgap, int valign, int halign) {
       mHGap = hgap;
       mVGap = vgap;
       mVAlign = valign;
       mHAlign = halign;
     }
-    
+
     public GridFlowLayout(int hgap, int vgap) {
       this(hgap, vgap, CENTER, CENTER);
     }
-    
+
     public GridFlowLayout() {
       this(0,0);
     }
-    
+
     private Dimension getMaximumComponentSize(Container container) {
       int width = 0;
       int height = 0;
       int cnt = container.getComponentCount();
-      
+
       for (int i = 0; i<cnt; i++) {
         Component c = container.getComponent(i);
         Dimension dim = c.getPreferredSize();
@@ -70,9 +70,9 @@ public class GridFlowLayout implements LayoutManager {
         }
       }
       return new Dimension(width, height);
-        
+
     }
-    
+
     public void removeLayoutComponent(Component arg0) {
     }
 
@@ -80,21 +80,21 @@ public class GridFlowLayout implements LayoutManager {
       synchronized (container.getTreeLock()) {
         Dimension compDimension = getMaximumComponentSize(container);
         int cnt = container.getComponentCount();
-        
+
         int width = container.getWidth();
         if (width == 0) {
           width = 1;
         }
         int height = container.getHeight();
-        
+
         int totalLength = (int)(compDimension.getWidth()+mHGap) * cnt;
-        
+
         int rows = totalLength / width +1;
         int compsPerRow = (int) (width / (compDimension.getWidth()+mHGap));
 				if (compsPerRow == 0) {
           compsPerRow = 1;
 				}
-        
+
         int rowLength = (int) (compsPerRow * compDimension.getWidth()+ (mHGap*compsPerRow-1));
         int rowHeight = (int) (rows * compDimension.getHeight()+ (mVGap*rows-1));
         int hIndent=0;
@@ -104,7 +104,7 @@ public class GridFlowLayout implements LayoutManager {
         else if (mHAlign == RIGHT) {
           hIndent = width-rowLength;
         }
-        
+
         int vIndent=0;
         if (mVAlign == CENTER) {
             vIndent = (height-rowHeight)/2;
@@ -112,12 +112,12 @@ public class GridFlowLayout implements LayoutManager {
         else if (mVAlign == BOTTOM) {
             vIndent = height-rowHeight;
         }
-        
-        
+
+
         for (int i = 0; i<cnt; i++) {
           Component c = container.getComponent(i);
-          int x = (int)((i%compsPerRow)*(compDimension.getWidth() + mHGap)) + hIndent;
-          int y = (int)((i/compsPerRow)*(compDimension.getHeight()+ mVGap)) + vIndent;
+          int x = (i%compsPerRow)*(compDimension.width + mHGap) + hIndent;
+          int y = (i/compsPerRow)*(compDimension.height+ mVGap) + vIndent;
           c.setLocation(x, y);
           c.setSize(compDimension);
         }
@@ -134,7 +134,7 @@ public class GridFlowLayout implements LayoutManager {
     public Dimension preferredLayoutSize(Container c) {
         return minimumLayoutSize(c);
     }
-    
-    
-    
+
+
+
 }

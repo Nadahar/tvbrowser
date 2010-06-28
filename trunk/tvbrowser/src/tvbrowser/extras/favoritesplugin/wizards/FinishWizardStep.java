@@ -31,6 +31,7 @@ import java.awt.event.FocusEvent;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
@@ -49,7 +50,7 @@ public class FinishWizardStep extends AbstractWizardStep {
   public JPanel createContent(WizardHandler handler) {
     JPanel pn = new JPanel(new FormLayout("fill:default:grow", "fill:pref:grow"));
     CellConstraints cc = new CellConstraints();
-    pn.add(new JLabel(mLocalizer.msg("msg", "Die Lieblingssendung ist nun eingerichtet!"), JLabel.CENTER), cc.xy(1,1));
+    pn.add(new JLabel(mLocalizer.msg("msg", "Die Lieblingssendung ist nun eingerichtet!"), SwingConstants.CENTER), cc.xy(1,1));
     handler.allowCancel(false);
     final WizardDlg dialog=handler.getDialog();
     pn.addFocusListener(new FocusAdapter() {

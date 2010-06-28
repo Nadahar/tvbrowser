@@ -180,7 +180,7 @@ public interface DeviceIf extends Cloneable {
     /**
      * Sends the given programs to the program receive targets.
      * This only works for decives that are able to handle receive targets!!!
-     * @param progs The programs to send. 
+     * @param progs The programs to send.
      * @since 3.0
      */
     public void sendProgramsToReceiveTargets(Program[] progs);

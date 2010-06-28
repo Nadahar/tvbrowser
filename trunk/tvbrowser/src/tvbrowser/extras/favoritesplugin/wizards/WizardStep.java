@@ -30,13 +30,13 @@ import javax.swing.JPanel;
 
 public interface WizardStep {
 
-  public final int BUTTON_NEXT = 1;
+  public static final int BUTTON_NEXT = 1;
 
-  public final int BUTTON_DONE = 2;
+  public static final int BUTTON_DONE = 2;
 
-  public final int BUTTON_BACK = 3;
+  public static final int BUTTON_BACK = 3;
 
-  public final int BUTTON_CANCEL = 4;
+  public static final int BUTTON_CANCEL = 4;
 
   public int[] getButtons();
 
@@ -51,7 +51,7 @@ public interface WizardStep {
   public WizardStep back();
 
   public boolean isValid();
-  
+
   public String getDoneBtnText();
 
   /**

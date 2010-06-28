@@ -36,7 +36,7 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 /**
- * The Finish-Card 
+ * The Finish-Card
  */
 class FinishCardPanel extends AbstractCardPanel {
 

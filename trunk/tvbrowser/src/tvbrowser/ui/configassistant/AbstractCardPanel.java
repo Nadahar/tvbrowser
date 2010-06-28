@@ -44,15 +44,17 @@ abstract class AbstractCardPanel implements CardPanel {
     return true;
   }
   public void onShow() {
-    if (hasNext())
+    if (hasNext()) {
       mBtns.enableNextButton();
-    else
+    } else {
       mBtns.disableNextButton();
+    }
       
-    if (hasPrev())
+    if (hasPrev()) {
       mBtns.enablePrevButton();
-    else
+    } else {
       mBtns.disablePrevButton();
+    }
   }
   
   public CardPanel getNext() {

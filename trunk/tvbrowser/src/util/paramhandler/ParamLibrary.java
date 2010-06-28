@@ -328,22 +328,22 @@ public class ParamLibrary {
     } else if (function.equalsIgnoreCase("concat")) {
       StringBuilder buffer = new StringBuilder();
 
-      for (int i = 0; i < params.length; i++) {
-        buffer.append(params[i]);
+      for (String param : params) {
+        buffer.append(param);
       }
       return buffer.toString();
     } else if (function.equalsIgnoreCase("clean")) {
       StringBuilder buffer = new StringBuilder();
 
-      for (int i = 0; i < params.length; i++) {
-        buffer.append(clean(params[i]));
+      for (String param : params) {
+        buffer.append(clean(param));
       }
       return buffer.toString();
     } else if (function.equalsIgnoreCase("cleanLess")) {
       StringBuilder buffer = new StringBuilder();
 
-      for (int i = 0; i < params.length; i++) {
-        buffer.append(cleanLess(params[i]));
+      for (String param : params) {
+        buffer.append(cleanLess(param));
       }
       return buffer.toString();
     } else if (function.equalsIgnoreCase("leadingZero")) {
@@ -390,8 +390,8 @@ public class ParamLibrary {
       try {
         String[] lines = breaker.breakLines(new StringReader(params[0]), num);
 
-        for (int i=0;i<lines.length;i++) {
-          result.append(lines[i]);
+        for (String line : lines) {
+          result.append(line);
           result.append('\n');
         }
 
@@ -461,13 +461,13 @@ public class ParamLibrary {
     StringBuilder buffer = new StringBuilder();
     char[] chars = clean.trim().toCharArray();
 
-    for (int i = 0; i < chars.length; i++) {
-      if ((chars[i] >= 'A') && (chars[i] <= 'Z')) {
-        buffer.append(chars[i]);
-      } else if ((chars[i] >= 'a') && (chars[i] <= 'z')) {
-        buffer.append(chars[i]);
-      } else if ((chars[i] >= '0') && (chars[i] <= '9')) {
-        buffer.append(chars[i]);
+    for (char c : chars) {
+      if ((c >= 'A') && (c <= 'Z')) {
+        buffer.append(c);
+      } else if ((c >= 'a') && (c <= 'z')) {
+        buffer.append(c);
+      } else if ((c >= '0') && (c <= '9')) {
+        buffer.append(c);
       } else {
         buffer.append('_');
       }
@@ -493,9 +493,9 @@ public class ParamLibrary {
     StringBuilder buffer = new StringBuilder();
     char[] chars = clean.trim().toCharArray();
 
-    for (int i = 0; i < chars.length; i++) {
-      if (Character.isDigit(chars[i]) || Character.isLetter(chars[i])) {
-        buffer.append(chars[i]);
+    for (char c : chars) {
+      if (Character.isDigit(c) || Character.isLetter(c)) {
+        buffer.append(c);
       } else {
         buffer.append('_');
       }

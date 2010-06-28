@@ -67,14 +67,14 @@ abstract public class AbstractPrimaryDataService implements PrimaryDataService {
    * @return A channel group.
    */
   private static final devplugin.ChannelGroup createChannelGroup(final String id) {
-    return new devplugin.ChannelGroupImpl(id, id, "");    
+    return new devplugin.ChannelGroupImpl(id, id, "");
   }
 
 
   /**
    * Gets the raw TV data and writes it to a directory
    * 
-   * @param dir The directory to write the raw TV data to. 
+   * @param dir The directory to write the raw TV data to.
    * @param err The stream to print error messages to.
    * @return Whether there were errors.
    */
@@ -89,7 +89,7 @@ abstract public class AbstractPrimaryDataService implements PrimaryDataService {
   /**
    * Gets the raw TV data and writes it to a directory
    * 
-   * @param dir The directory to write the raw TV data to. 
+   * @param dir The directory to write the raw TV data to.
    */
   abstract protected void execute(String dir);
 
@@ -166,13 +166,15 @@ abstract public class AbstractPrimaryDataService implements PrimaryDataService {
    * @param s The String to search for a number.
    * @return The found number or -1 if there was no number.
    */
-  public static int findNumber(String s) {    
-    if (s==null) return -1;
+  public static int findNumber(String s) {
+    if (s==null) {
+      return -1;
+    }
     char[] str=s.toCharArray();
     int first=0;
     int last;
     while (first<str.length && !Character.isDigit(str[first])) {
-      first++;  
+      first++;
     }
     last=first;
     while (last<str.length && Character.isDigit(str[last])) {
@@ -180,9 +182,9 @@ abstract public class AbstractPrimaryDataService implements PrimaryDataService {
     }
     if (first<str.length) {
       String resStr=s.substring(first,last);
-      return Integer.parseInt(resStr); 
-    }    
-    return -1;  
+      return Integer.parseInt(resStr);
+    }
+    return -1;
   }
   
 }

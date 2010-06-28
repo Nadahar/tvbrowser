@@ -111,8 +111,8 @@ public class TitleFavorite extends Favorite {
     public boolean check() {
       if (mSearchTextTf.getText().trim().equals("")) {
         JOptionPane.showMessageDialog(mSearchTextTf,
-            mLocalizer.msg("missingTitle.message", "Please specify a title for the favorite!"), 
-            mLocalizer.msg("missingTitle.title", "Invalid options"), 
+            mLocalizer.msg("missingTitle.message", "Please specify a title for the favorite!"),
+            mLocalizer.msg("missingTitle.title", "Invalid options"),
             JOptionPane.WARNING_MESSAGE);
         return false;
       }

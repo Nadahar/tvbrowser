@@ -18,10 +18,10 @@
  */
 package tvraterplugin;
 
+import util.ui.Localizer;
+import devplugin.Plugin;
 import devplugin.PluginsProgramFilter;
 import devplugin.Program;
-import devplugin.Plugin;
-import util.ui.Localizer;
 
 /**
  * This Filter only accepts good shows/movies

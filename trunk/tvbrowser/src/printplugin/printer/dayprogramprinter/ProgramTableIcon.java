@@ -136,7 +136,7 @@ public class ProgramTableIcon implements Icon {
            nextDay = true;
          }
          y = (int)(getPreferredPosition(prog,nextDay)/mZoom);
-         mProgramItems[col][i].setPos(x,y);  
+         mProgramItems[col][i].setPos(x,y);
        }
 
        // step 2: The last program in the column is positioned at the bottom
@@ -244,8 +244,8 @@ public class ProgramTableIcon implements Icon {
        g.drawString(mColHeaders[i],cw*i + (cw-w)/2,-(HEADER_SPACE-COL_HEADER_FONT.getSize())/2);
      }
         
-     g.drawRect(0,-HEADER_SPACE,(int)(mWidth/mZoom),(int)(mColumnHeight/mZoom)+HEADER_SPACE);    
-     g.drawLine(0,0,(int)(mWidth/mZoom),0);    
+     g.drawRect(0,-HEADER_SPACE,(int)(mWidth/mZoom),(int)(mColumnHeight/mZoom)+HEADER_SPACE);
+     g.drawLine(0,0,(int)(mWidth/mZoom),0);
      
      g.setColor(Color.lightGray);
      
@@ -253,9 +253,9 @@ public class ProgramTableIcon implements Icon {
        g.drawLine(COLUMN_WIDTH*i,0,COLUMN_WIDTH*i,(int)(mColumnHeight/mZoom));
      }
 
-     for (int i=0;i<mProgramItems.length;i++) {
-       for (int j=0;j<mProgramItems[i].length;j++) {
-         mProgramItems[i][j].paint(g);
+     for (ProgramItem[] mProgramItem : mProgramItems) {
+       for (int j=0;j<mProgramItem.length;j++) {
+         mProgramItem[j].paint(g);
        }
      }
       

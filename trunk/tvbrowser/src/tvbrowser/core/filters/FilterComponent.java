@@ -32,7 +32,7 @@ import java.io.ObjectOutputStream;
 import javax.swing.JPanel;
 
 /**
- * An interface for the program filter system of TV-Browser. 
+ * An interface for the program filter system of TV-Browser.
  */
 public interface FilterComponent {
   
@@ -107,7 +107,7 @@ public interface FilterComponent {
    * 
    * @param desc The new description of the FilterComponent.
    */
-  public void setDescription(String desc);  
+  public void setDescription(String desc);
 
   /**
    * comparator for filter components (comparing by name)

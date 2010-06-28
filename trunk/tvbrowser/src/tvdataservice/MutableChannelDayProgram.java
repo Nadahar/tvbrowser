@@ -132,7 +132,7 @@ public class MutableChannelDayProgram implements ChannelDayProgram {
       else if(idlength == 4) {
         String[] temp = id.split("_");
         
-        id = temp[0] + "_" + temp[1] + "_" + temp[temp.length - 2] + "_" + temp[temp.length - 1];        
+        id = temp[0] + "_" + temp[1] + "_" + temp[temp.length - 2] + "_" + temp[temp.length - 1];
       }
       
     }
@@ -191,7 +191,7 @@ public class MutableChannelDayProgram implements ChannelDayProgram {
       }
       else if (program.getDate().compareTo(cmp.getDate())<0) {
         continue;
-      } 
+      }
 	  
       if (cmpTime == time) {
         // We already have this program
@@ -268,10 +268,10 @@ public class MutableChannelDayProgram implements ChannelDayProgram {
   }
 
   /**
-   * Sets the changed state to let the day program 
+   * Sets the changed state to let the day program
    * be saved again to take over the changes.
    *
-   * This works only if called from 
+   * This works only if called from
    * devplugin.Plugin#handleTvDataAdded(ChannelDayProgram)
    * otherwise the changes won't be saved.
    * 
@@ -282,7 +282,7 @@ public class MutableChannelDayProgram implements ChannelDayProgram {
   }
   
   /**
-   * Get if the day program was changed by a 
+   * Get if the day program was changed by a
    * plugin and reset the changed state.
    * 
    * @return If this day program was changed by a plugin.

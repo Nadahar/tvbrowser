@@ -28,7 +28,7 @@ package tvdataservice;
 public interface PictureSettingsIf {
   
   public static final int NO_PICTURES = 0;
-  public static final int MORNING_PICTURES = 1; 
+  public static final int MORNING_PICTURES = 1;
   public static final int EVENING_PICTURES = 2;
   public static final int ALL_PICTURES = 3;
   

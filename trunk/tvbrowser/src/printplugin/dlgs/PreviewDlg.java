@@ -182,7 +182,7 @@ public class PreviewDlg extends JDialog implements ActionListener, WindowClosing
     
     updateDialogState();
     
-    pack();    
+    pack();
     
     Properties prop = PrintPlugin.getInstance().getSettings();
 
@@ -213,7 +213,7 @@ public class PreviewDlg extends JDialog implements ActionListener, WindowClosing
     mZoomOut.setEnabled(!mPreviewComponent.minZoom());
     
     mPrevBt.addActionListener(this);
-    mNextBt.addActionListener(this); 
+    mNextBt.addActionListener(this);
   }
   
   public void scrollBy(int deltaX, int deltaY) {
@@ -243,7 +243,7 @@ public class PreviewDlg extends JDialog implements ActionListener, WindowClosing
     }
   }
   
-  private void updateDialogState() {    
+  private void updateDialogState() {
     mSiteLb.setText(mLocalizer.msg("pageInfo", "page {0} of {1}",
         mPreviewComponent.getPageIndex() + 1, mPreviewComponent
             .getNumberOfPages()));

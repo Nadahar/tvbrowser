@@ -38,7 +38,7 @@ public interface PrimaryDataService {
   /**
    * Gets the raw TV data and writes it to a directory
    * 
-   * @param dir The directory to write the raw TV data to. 
+   * @param dir The directory to write the raw TV data to.
    * @param err The stream to print error messages to.
    * @return Whether there were errors.
    */

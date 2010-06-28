@@ -36,8 +36,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
 /**
- * Created by: Martin Oberhauser (martin@tvbrowser.org) 
- * Date: 01.05.2005 
+ * Created by: Martin Oberhauser (martin@tvbrowser.org)
+ * Date: 01.05.2005
  * Time: 14:21:28
  */
 

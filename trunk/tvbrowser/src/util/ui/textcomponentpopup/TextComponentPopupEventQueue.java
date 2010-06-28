@@ -56,26 +56,30 @@ public class TextComponentPopupEventQueue extends EventQueue {
       return;}
 
     // interested only in mouseevents
-    if (!(event instanceof MouseEvent))
+    if (!(event instanceof MouseEvent)) {
       return;
+    }
 
     MouseEvent me = (MouseEvent) event;
     
     // interested only in popuptriggers
-    if (!me.isPopupTrigger() || me.getComponent() == null)
+    if (!me.isPopupTrigger() || me.getComponent() == null) {
       return;
+    }
 
     // me.getComponent(...) returns the heavy weight component on which event
     // occured
     Component comp = SwingUtilities.getDeepestComponentAt(me.getComponent(), me.getX(), me.getY());
 
     // interested only in textcomponents
-    if (!(comp instanceof JTextComponent))
+    if (!(comp instanceof JTextComponent)) {
       return;
+    }
 
     // no popup shown by user code
-    if (MenuSelectionManager.defaultManager().getSelectedPath().length > 0)
+    if (MenuSelectionManager.defaultManager().getSelectedPath().length > 0) {
       return;
+    }
 
     // create popup menu and show
     JTextComponent tc = (JTextComponent) comp;
@@ -133,8 +137,9 @@ public class TextComponentPopupEventQueue extends EventQueue {
       if (comp.isEditable() && comp.isEnabled()) {
         Transferable contents = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(this);
         return contents.isDataFlavorSupported(DataFlavor.stringFlavor);
-      } else
+      } else {
         return false;
+      }
     }
   }
 

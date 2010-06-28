@@ -124,8 +124,9 @@ public class SortableItemList extends JPanel implements ActionListener, ListDrop
     mListModel = new DefaultListModel();
     mList.setModel(mListModel);
     
-    for(int i = 0; i < objects.length; i++)
-      mListModel.addElement(objects[i]);
+    for (Object object : objects) {
+      mListModel.addElement(object);
+    }
     
     mList.addListSelectionListener(new ListSelectionListener(){
       public void valueChanged(ListSelectionEvent e) {

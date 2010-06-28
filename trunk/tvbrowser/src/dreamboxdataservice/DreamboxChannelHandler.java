@@ -38,6 +38,7 @@ import org.xml.sax.helpers.DefaultHandler;
 import tvdataservice.MutableChannelDayProgram;
 import tvdataservice.MutableProgram;
 import tvdataservice.TvDataUpdateManager;
+import devplugin.AbstractTvDataService;
 import devplugin.Channel;
 import devplugin.Date;
 import devplugin.Program;
@@ -131,7 +132,7 @@ public class DreamboxChannelHandler extends DefaultHandler {
             // compare new and existing programs to avoid unnecessary updates
             boolean update = true;
 
-            Iterator<Program> itCurrProg = DreamboxDataService.getPluginManager().getChannelDayProgram(newDayProg.getDate(), mChannel);
+            Iterator<Program> itCurrProg = AbstractTvDataService.getPluginManager().getChannelDayProgram(newDayProg.getDate(), mChannel);
             Iterator<Program> itNewProg = newDayProg.getPrograms();
             update = false;
             while (itCurrProg.hasNext() && itNewProg.hasNext()) {

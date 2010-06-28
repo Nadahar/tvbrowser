@@ -96,8 +96,9 @@ public class ReminderPluginProxy extends AbstractInternalPluginProxy implements 
   }
 
   public Icon getMarkIcon() {
-    if(mMarkIcon == null)
+    if(mMarkIcon == null) {
       mMarkIcon = IconLoader.getInstance().getIconFromTheme("apps", "appointment", 16);
+    }
 
     return mMarkIcon;
   }

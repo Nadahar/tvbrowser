@@ -265,24 +265,24 @@ public class ParamParser {
 
     char[] chars = params.toCharArray();
 
-    for (int pos = 0; pos < chars.length;pos++) {
+    for (char c : chars) {
 
-      if (chars[pos] == '"') {
+      if (c == '"') {
         instring = !instring;
-        curparam.append(chars[pos]);
-      } else if (chars[pos] == ')') {
+        curparam.append(c);
+      } else if (c == ')') {
         infunction--;
-        curparam.append(chars[pos]);
-      } else if (chars[pos] == '(') {
+        curparam.append(c);
+      } else if (c == '(') {
         infunction++;
-        curparam.append(chars[pos]);
+        curparam.append(c);
       } else if ((infunction>0)||instring) {
-        curparam.append(chars[pos]);
-      } else if (chars[pos] == ',') {
+        curparam.append(c);
+      } else if (c == ',') {
         list.add(curparam.toString().trim());
         curparam = new StringBuilder();
       } else {
-        curparam.append(chars[pos]);
+        curparam.append(c);
       }
 
       if (infunction<0) {

@@ -119,7 +119,7 @@ public class KNotifySettingsTab implements SettingsTab {
   public void saveSettings() {
     if (mInitialized && mSettings != null){
       mSettings.setTitle(mTitle.getText());
-      mSettings.setDescription(mDescription.getText());      
+      mSettings.setDescription(mDescription.getText());
     }
   }
 

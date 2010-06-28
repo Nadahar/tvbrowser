@@ -25,6 +25,7 @@
 package tvbrowser.ui.mainframe;
 
 import java.awt.Toolkit;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 
 import javax.swing.JLabel;
@@ -50,7 +51,7 @@ public class DefaultMenuBar extends MenuBar {
     mHelpMenu.addSeparator();
     mHelpMenu.add(mAboutMI);
 
-    mQuitMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, KeyEvent.ALT_DOWN_MASK));
+    mQuitMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, InputEvent.ALT_DOWN_MASK));
     mSettingsMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, Toolkit.getDefaultToolkit()
         .getMenuShortcutKeyMask()));
   }

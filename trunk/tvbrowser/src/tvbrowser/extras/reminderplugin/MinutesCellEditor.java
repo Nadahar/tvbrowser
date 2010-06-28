@@ -57,5 +57,5 @@ public class MinutesCellEditor extends AbstractCellEditor implements TableCellEd
       boolean isSelected, int row, int column) {
     setValue((ReminderListItem) value);
     return mComboBox;
-  }  
+  }
 }

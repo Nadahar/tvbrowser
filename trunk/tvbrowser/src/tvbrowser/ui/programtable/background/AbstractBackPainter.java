@@ -75,7 +75,7 @@ public abstract class AbstractBackPainter implements BackgroundPainter {
       int px = x;
         for (int py = minY; py < maxY; py += imgHeight) {
           grp.drawImage(img, px, py, null);
-        }  
+        }
 //      }
     }
   }
@@ -84,7 +84,7 @@ public abstract class AbstractBackPainter implements BackgroundPainter {
    * Gets the component that should be shown in the west of the table.
    * <p>
    * If nothing should be shown in the west, null is returned.
-   *  
+   * 
    * @return The table west.
    */
   public JComponent getTableWest() {

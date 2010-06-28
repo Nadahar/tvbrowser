@@ -46,7 +46,7 @@ public class ProgramPanelSettings {
   private int mTimeRangeEnd;
   private int mDuration;
   private int mAxis;
-  private boolean mShowOnlyDateAndTitle; 
+  private boolean mShowOnlyDateAndTitle;
   private boolean mShowDescription;
   private boolean mIgnoreProgramImportance;
   private String[] mPluginIds;
@@ -214,7 +214,7 @@ public class ProgramPanelSettings {
    * @param pluginIds The ids of the plugins to show the pictures for.
    * @param duration The minimum duration of the programs the pictures should be shown for.
    * @param axis The axis for the progress bar of the program panel.
-   * @param ignoreProgramImportance If the program importance should be ignored. 
+   * @param ignoreProgramImportance If the program importance should be ignored.
    * @since 3.0
    */
   public ProgramPanelSettings(int type, int timeRangeStart, int timeRangeEnd, boolean showOnlyDateAndTitle, boolean showDescription, int duration, String[] pluginIds, int axis, boolean ignoreProgramImportance) {
@@ -230,10 +230,10 @@ public class ProgramPanelSettings {
   }
   
   /**
-   * @return If the type of the picture showing is set to show pictures in time range. 
+   * @return If the type of the picture showing is set to show pictures in time range.
    */
   public boolean isShowingPictureInTimeRange() {
-    return mType == SHOW_PICTURES_IN_TIME_RANGE || 
+    return mType == SHOW_PICTURES_IN_TIME_RANGE ||
            mType == SHOW_PICTURES_IN_TIME_RANGE + SHOW_PICTURES_FOR_DURATION + SHOW_PICTURES_FOR_PLUGINS ||
            mType == SHOW_PICTURES_IN_TIME_RANGE + SHOW_PICTURES_FOR_DURATION ||
            mType == SHOW_PICTURES_IN_TIME_RANGE + SHOW_PICTURES_FOR_PLUGINS;
@@ -326,30 +326,31 @@ public class ProgramPanelSettings {
    * Checks if a given type to check contains a type.
    * 
    * @param typeToCheck The type to check.
-   * @param containingType The type to which should the typeToCheck is to check for. 
+   * @param containingType The type to which should the typeToCheck is to check for.
    * @return True if the typeToCheck contains the containingType
    */
   public static boolean typeContainsType(int typeToCheck, int containingType) {
-    if(containingType == SHOW_PICTURES_FOR_PLUGINS)
-      return 
-        typeToCheck == SHOW_PICTURES_FOR_PLUGINS || 
+    if(containingType == SHOW_PICTURES_FOR_PLUGINS) {
+      return
+        typeToCheck == SHOW_PICTURES_FOR_PLUGINS ||
         typeToCheck == SHOW_PICTURES_FOR_PLUGINS + SHOW_PICTURES_IN_TIME_RANGE + SHOW_PICTURES_FOR_DURATION ||
         typeToCheck == SHOW_PICTURES_FOR_PLUGINS + SHOW_PICTURES_IN_TIME_RANGE ||
         typeToCheck == SHOW_PICTURES_FOR_PLUGINS + SHOW_PICTURES_FOR_DURATION;
-    else if(containingType == SHOW_PICTURES_FOR_DURATION)
+    } else if(containingType == SHOW_PICTURES_FOR_DURATION) {
       return
         typeToCheck == SHOW_PICTURES_FOR_DURATION ||
         typeToCheck == SHOW_PICTURES_FOR_DURATION + SHOW_PICTURES_FOR_PLUGINS + SHOW_PICTURES_IN_TIME_RANGE ||
         typeToCheck == SHOW_PICTURES_FOR_DURATION + SHOW_PICTURES_FOR_PLUGINS ||
         typeToCheck == SHOW_PICTURES_FOR_DURATION + SHOW_PICTURES_IN_TIME_RANGE;
-    else if(containingType == SHOW_PICTURES_IN_TIME_RANGE)
+    } else if(containingType == SHOW_PICTURES_IN_TIME_RANGE) {
       return
-        typeToCheck == SHOW_PICTURES_IN_TIME_RANGE || 
+        typeToCheck == SHOW_PICTURES_IN_TIME_RANGE ||
         typeToCheck == SHOW_PICTURES_IN_TIME_RANGE + SHOW_PICTURES_FOR_DURATION + SHOW_PICTURES_FOR_PLUGINS ||
         typeToCheck == SHOW_PICTURES_IN_TIME_RANGE + SHOW_PICTURES_FOR_DURATION ||
         typeToCheck == SHOW_PICTURES_IN_TIME_RANGE + SHOW_PICTURES_FOR_PLUGINS;
-    else 
+    } else {
       return typeToCheck == containingType;
+    }
   }
   
   /**

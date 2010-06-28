@@ -36,8 +36,8 @@ import util.ui.AlphaColorChooser;
 import util.ui.UiUtilities;
 
 /**
- * Created by: Martin Oberhauser (martin@tvbrowser.org) 
- * Date: 01.05.2005 
+ * Created by: Martin Oberhauser (martin@tvbrowser.org)
+ * Date: 01.05.2005
  * Time: 14:22:05
  */
 public class ColorButton extends JButton {

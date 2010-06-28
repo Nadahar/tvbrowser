@@ -53,22 +53,22 @@ import util.ui.WindowClosingIf;
 public class DialogOverview extends JDialog implements WindowClosingIf {
 
   /** Localizer */
-  private static final Localizer _mLocalizer = Localizer.getLocalizerFor(DialogOverview.class);
+  private static final Localizer mLocalizer = Localizer.getLocalizerFor(DialogOverview.class);
 
   /** The TVRaterPlugin with the Database */
-  private TVRaterPlugin _tvraterPlugin;
+  private TVRaterPlugin mPlugin;
 
   /** The tabbed Pane */
-  private JTabbedPane _tabbed;
+  private JTabbedPane mTabbedPane;
 
   /** List of personal Ratings */
-  private JList _personal;
+  private JList mPersonalRatings;
 
   /** List of overall Ratings */
-  private JList _overall;
+  private JList mOverallRatings;
 
   /** Der Update-Button */
-  private JButton _update;
+  private JButton mBtnUpdate;
 
   /**
    * Creates the Overview Dialog
@@ -78,9 +78,9 @@ public class DialogOverview extends JDialog implements WindowClosingIf {
    */
   public DialogOverview(Frame parent, TVRaterPlugin tvraterPlugin) {
     super(parent, true);
-    setTitle(_mLocalizer.msg("title", "Rating-Overview"));
+    setTitle(mLocalizer.msg("title", "Rating-Overview"));
 
-    _tvraterPlugin = tvraterPlugin;
+    mPlugin = tvraterPlugin;
 
     createGUI();
   }
@@ -96,14 +96,14 @@ public class DialogOverview extends JDialog implements WindowClosingIf {
 
     RatingComparator comperator = new RatingComparator();
 
-    Vector<Rating> overallData = new Vector<Rating>(_tvraterPlugin.getDatabase().getServerRatings());
+    Vector<Rating> overallData = new Vector<Rating>(mPlugin.getDatabase().getServerRatings());
     Collections.sort(overallData, comperator);
 
-    _tabbed = new JTabbedPane();
+    mTabbedPane = new JTabbedPane();
 
-    _overall = new JList(overallData);
-    _overall.setCellRenderer(new RatingCellRenderer());
-    _overall.addMouseListener(new MouseAdapter() {
+    mOverallRatings = new JList(overallData);
+    mOverallRatings.setCellRenderer(new RatingCellRenderer());
+    mOverallRatings.addMouseListener(new MouseAdapter() {
 
       public void mousePressed(MouseEvent evt) {
         if (evt.isPopupTrigger()) {
@@ -125,14 +125,14 @@ public class DialogOverview extends JDialog implements WindowClosingIf {
       }
     });
 
-    _tabbed.addTab(_mLocalizer.msg("overall", "Overall Ratings"), new JScrollPane(_overall));
+    mTabbedPane.addTab(mLocalizer.msg("overall", "Overall Ratings"), new JScrollPane(mOverallRatings));
 
-    Vector<Rating> personalData = new Vector<Rating>(_tvraterPlugin.getDatabase().getPersonalRatings());
+    Vector<Rating> personalData = new Vector<Rating>(mPlugin.getDatabase().getPersonalRatings());
     Collections.sort(personalData, comperator);
 
-    _personal = new JList(personalData);
-    _personal.setCellRenderer(new RatingCellRenderer());
-    _personal.addMouseListener(new MouseAdapter() {
+    mPersonalRatings = new JList(personalData);
+    mPersonalRatings.setCellRenderer(new RatingCellRenderer());
+    mPersonalRatings.addMouseListener(new MouseAdapter() {
       public void mousePressed(MouseEvent evt) {
         if (evt.isPopupTrigger()) {
           showPopUpMenu(evt);
@@ -153,9 +153,9 @@ public class DialogOverview extends JDialog implements WindowClosingIf {
       }
     });
 
-    _tabbed.addTab(_mLocalizer.msg("personal", "Your Ratings"), new JScrollPane(_personal));
+    mTabbedPane.addTab(mLocalizer.msg("personal", "Your Ratings"), new JScrollPane(mPersonalRatings));
 
-    panel.add(_tabbed, BorderLayout.CENTER);
+    panel.add(mTabbedPane, BorderLayout.CENTER);
 
     JPanel buttonpanel = new JPanel(new GridBagLayout());
 
@@ -173,9 +173,9 @@ public class DialogOverview extends JDialog implements WindowClosingIf {
     c.fill = GridBagConstraints.NONE;
     c.insets = new Insets(5, 5, 5, 5);
 
-    _update = new JButton(_mLocalizer.msg("update", "Update"));
-    buttonpanel.add(_update, c);
-    _update.addActionListener(new java.awt.event.ActionListener() {
+    mBtnUpdate = new JButton(mLocalizer.msg("update", "Update"));
+    buttonpanel.add(mBtnUpdate, c);
+    mBtnUpdate.addActionListener(new java.awt.event.ActionListener() {
 
       public void actionPerformed(ActionEvent e) {
         update();
@@ -188,7 +188,7 @@ public class DialogOverview extends JDialog implements WindowClosingIf {
 
     buttonpanel.add(new JPanel(), c2);
 
-    JButton view = new JButton(_mLocalizer.msg("view", "View"));
+    JButton view = new JButton(mLocalizer.msg("view", "View"));
     buttonpanel.add(view, c);
     view.addActionListener(new java.awt.event.ActionListener() {
 
@@ -230,7 +230,7 @@ public class DialogOverview extends JDialog implements WindowClosingIf {
 
     Rating selRating = (Rating) list.getSelectedValue();
 
-    JMenuItem item = new JMenuItem(_mLocalizer.msg("showDetails", "Show Details"));
+    JMenuItem item = new JMenuItem(mLocalizer.msg("showDetails", "Show Details"));
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         view();
@@ -250,17 +250,17 @@ public class DialogOverview extends JDialog implements WindowClosingIf {
    * Creates a DialogRating with the selected Rating
    */
   protected void view() {
-    if ((_tabbed.getSelectedIndex() == 0) && (_overall.getSelectedValue() != null)) {
+    if ((mTabbedPane.getSelectedIndex() == 0) && (mOverallRatings.getSelectedValue() != null)) {
 
-      DialogRating dlg = new DialogRating(_tvraterPlugin.getParentFrameForTVRater(), _tvraterPlugin, ((Rating) _overall
+      DialogRating dlg = new DialogRating(mPlugin.getParentFrameForTVRater(), mPlugin, ((Rating) mOverallRatings
           .getSelectedValue()).getTitle());
 
       UiUtilities.centerAndShow(dlg);
 
       updateLists();
-    } else if ((_tabbed.getSelectedIndex() == 1) && (_personal.getSelectedValue() != null)) {
-      DialogRating dlg = new DialogRating(_tvraterPlugin.getParentFrameForTVRater(), _tvraterPlugin,
-          ((Rating) _personal.getSelectedValue()).getTitle());
+    } else if ((mTabbedPane.getSelectedIndex() == 1) && (mPersonalRatings.getSelectedValue() != null)) {
+      DialogRating dlg = new DialogRating(mPlugin.getParentFrameForTVRater(), mPlugin,
+          ((Rating) mPersonalRatings.getSelectedValue()).getTitle());
       UiUtilities.centerAndShow(dlg);
       updateLists();
     }
@@ -272,17 +272,17 @@ public class DialogOverview extends JDialog implements WindowClosingIf {
   private void updateLists() {
     RatingComparator comperator = new RatingComparator();
 
-    Vector<Rating> personalVector = new Vector<Rating>(_tvraterPlugin.getDatabase().getPersonalRatings());
+    Vector<Rating> personalVector = new Vector<Rating>(mPlugin.getDatabase().getPersonalRatings());
     Collections.sort(personalVector, comperator);
-    int index = _personal.getSelectedIndex();
-    _personal.setListData(personalVector);
-    _personal.setSelectedIndex(index);
+    int index = mPersonalRatings.getSelectedIndex();
+    mPersonalRatings.setListData(personalVector);
+    mPersonalRatings.setSelectedIndex(index);
 
-    Vector<Rating> overallVector = new Vector<Rating>(_tvraterPlugin.getDatabase().getServerRatings());
+    Vector<Rating> overallVector = new Vector<Rating>(mPlugin.getDatabase().getServerRatings());
     Collections.sort(overallVector, comperator);
-    index = _overall.getSelectedIndex();
-    _overall.setListData(overallVector);
-    _overall.setSelectedIndex(index);
+    index = mOverallRatings.getSelectedIndex();
+    mOverallRatings.setListData(overallVector);
+    mOverallRatings.setSelectedIndex(index);
 
   }
 
@@ -290,12 +290,12 @@ public class DialogOverview extends JDialog implements WindowClosingIf {
    * Updates the Database from the Server
    */
   protected void update() {
-    _update.setEnabled(false);
-    _tvraterPlugin.runUpdate(true, new Runnable() {
+    mBtnUpdate.setEnabled(false);
+    mPlugin.runUpdate(true, new Runnable() {
 
       @Override
       public void run() {
-        _update.setEnabled(true);
+        mBtnUpdate.setEnabled(true);
       }});
   }
 

@@ -30,13 +30,13 @@ import javax.swing.JRadioButton;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
+import tvbrowser.ui.settings.SettingsDialog;
+import util.settings.PluginPictureSettings;
+
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.SettingsItem;
-
-import tvbrowser.ui.settings.SettingsDialog;
-import util.settings.PluginPictureSettings;
 
 /**
  * A settings panel for the setup of the plugins picture settings.
@@ -67,7 +67,7 @@ public class PluginsPictureSettingsPanel extends JPanel {
     
     mGlobalSettings = new JRadioButton(mLocalizer.msg("globalSettings","Use default settings for plugins"), settings.getType() == PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE);
     mPictureAndDescription = new JRadioButton(mLocalizer.msg("pictureAndDesc","Show picture and picture description (if available)"), settings.getType() == PluginPictureSettings.PICTURE_AND_DISCRIPTION_TYPE);
-    mOnlyPictures = new JRadioButton(mLocalizer.msg("onlyPictures","Show only pictures (if available)"), settings.getType() == PluginPictureSettings.ONLY_PICTURE_TYPE);    
+    mOnlyPictures = new JRadioButton(mLocalizer.msg("onlyPictures","Show only pictures (if available)"), settings.getType() == PluginPictureSettings.ONLY_PICTURE_TYPE);
     
     ButtonGroup bg = new ButtonGroup();
     

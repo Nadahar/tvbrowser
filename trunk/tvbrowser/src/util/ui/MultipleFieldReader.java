@@ -46,7 +46,7 @@ public class MultipleFieldReader extends Reader {
   private static final String DEFAULT_FIELD_SEPARATOR = " - ";
 
   /** The program to read the fields from. */
-  private Program mProgram; 
+  private Program mProgram;
   
   /** The String to use for separating fields. */
   private String mFieldSeparator;
@@ -198,8 +198,8 @@ public class MultipleFieldReader extends Reader {
    * @return Whether the array contains the description type.
    */
   private boolean containsDescription(ProgramFieldType[] infoFieldArr) {
-    for (int i = 0; i < infoFieldArr.length; i++) {
-      if (infoFieldArr[i] == ProgramFieldType.DESCRIPTION_TYPE) {
+    for (ProgramFieldType element : infoFieldArr) {
+      if (element == ProgramFieldType.DESCRIPTION_TYPE) {
         return true;
       }
     }
@@ -224,8 +224,9 @@ public class MultipleFieldReader extends Reader {
 
     StringBuilder shortInfo = new StringBuilder(shortDesc.trim());
     
-    while(shortInfo.toString().endsWith("."))
+    while(shortInfo.toString().endsWith(".")) {
       shortInfo.deleteCharAt(shortInfo.length() - 1);
+    }
     
     return description.trim().startsWith(shortInfo.toString());
   }

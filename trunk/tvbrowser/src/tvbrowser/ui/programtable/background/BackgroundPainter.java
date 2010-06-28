@@ -63,7 +63,7 @@ public interface BackgroundPainter {
    * Gets the component that should be shown in the west of the table.
    * <p>
    * If nothing should be shown in the west, null is returned.
-   *  
+   * 
    * @return The table west.
    */
   public JComponent getTableWest();

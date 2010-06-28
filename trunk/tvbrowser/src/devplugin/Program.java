@@ -52,7 +52,7 @@ public interface Program {
   public static final int INFO_VISION_16_TO_9          = 1 << 3;
   
   /**
-   * single channel audio 
+   * single channel audio
    */
   public static final int INFO_AUDIO_MONO              = 1 << 4;
   
@@ -72,7 +72,7 @@ public interface Program {
   public static final int INFO_AUDIO_DOLBY_DIGITAL_5_1 = 1 << 7;
   
   /**
-   * Audio channels with different languages are available. 
+   * Audio channels with different languages are available.
    */
   public static final int INFO_AUDIO_TWO_CHANNEL_TONE  = 1 << 8;
 
@@ -97,7 +97,7 @@ public interface Program {
   
   /**
    * This program is a movie.
-   * @since 2.6/2.2.4 
+   * @since 2.6/2.2.4
    */
   public static final int INFO_CATEGORIE_MOVIE = 1 << 12;
 
@@ -114,7 +114,7 @@ public interface Program {
   public static final int INFO_NEW = 1 << 14;
 
   /**
-   * Audio description is available for people with limited vision. 
+   * Audio description is available for people with limited vision.
    * @since 2.6/2.2.4
    */
   public static final int INFO_AUDIO_DESCRIPTION = 1 << 15;
@@ -138,10 +138,10 @@ public interface Program {
   public static final int INFO_CATEGORIE_MAGAZINE_INFOTAINMENT = 1 << 18;
 
   /**
-   * video high definition quality 
+   * video high definition quality
    * @since 2.7
    */
-  public static final int INFO_VISION_HD          = 1 << 19;  
+  public static final int INFO_VISION_HD          = 1 << 19;
 
   /**
    * This program is a documentary or a feature
@@ -170,7 +170,7 @@ public interface Program {
   /**
    * This program does not fit in any of the other categories
    * @since 2.7
-   */ 
+   */
   public static final int INFO_CATEGORIE_OTHERS = 1 << 24;
 
   /**
@@ -197,7 +197,7 @@ public interface Program {
   public static final byte HIGHER_MEDIUM_PROGRAM_IMPORTANCE = 7;
   public static final byte MAX_PROGRAM_IMPORTANCE = 10;
   
-  /** The key for the value of an action, to put the mark priority in 
+  /** The key for the value of an action, to put the mark priority in
    * @since 2.6 */
   public static final String MARK_PRIORITY = "MARK_PRIORITY";
 
@@ -215,7 +215,7 @@ public interface Program {
    * @param listener the ChangeListener to remove
    * @see #addChangeListener
    */
-  public void removeChangeListener(ChangeListener listener);  
+  public void removeChangeListener(ChangeListener listener);
   
   /**
    * Gets the ID of this program. This ID is unique for a certain date.
@@ -310,7 +310,7 @@ public interface Program {
    * 
    * @param type The type of the wanted field. Must have a binary format.
    * @return The value of the field or <code>null</code>, if there is no
-   *         value for this field. 
+   *         value for this field.
    */
   public byte[] getBinaryField(ProgramFieldType type);
 
@@ -319,7 +319,7 @@ public interface Program {
    * 
    * @param type The type of the wanted field. Must have a text format.
    * @return The value of the field or <code>null</code>, if there is no
-   *         value for this field. 
+   *         value for this field.
    */
   public String getTextField(ProgramFieldType type);
 
@@ -328,7 +328,7 @@ public interface Program {
    * 
    * @param type The type of the wanted field. Must have a int format.
    * @return The value of the field or <code>-1</code>, if there is no
-   *         value for this field. 
+   *         value for this field.
    */
   public int getIntField(ProgramFieldType type);
 
@@ -337,7 +337,7 @@ public interface Program {
    * 
    * @param type The type of the wanted field. Must have a int format.
    * @return The value of the field as String or <code>null</code>, if there is
-   *         no value for this field. 
+   *         no value for this field.
    */
   public String getIntFieldAsString(ProgramFieldType type);
 
@@ -346,7 +346,7 @@ public interface Program {
    * 
    * @param type The type of the wanted field. Must have a time format.
    * @return The value of the field or <code>-1</code>, if there is no
-   *         value for this field. 
+   *         value for this field.
    */
   public int getTimeField(ProgramFieldType type);
 
@@ -355,7 +355,7 @@ public interface Program {
    * 
    * @param type The type of the wanted field. Must have a time format.
    * @return The value of the field as String or <code>null</code>, if there is
-   *         no value for this field. 
+   *         no value for this field.
    */
   public String getTimeFieldAsString(ProgramFieldType type);
   
@@ -430,7 +430,7 @@ public interface Program {
   
   /**
    * Informs the ChangeListeners for repainting if a Plugin
-   * uses more than one Icon for the Program. 
+   * uses more than one Icon for the Program.
    *
    * @see Plugin#getMarkIconsForProgram(Program)
    * @since 2.5

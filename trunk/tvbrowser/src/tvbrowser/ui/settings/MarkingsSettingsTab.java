@@ -75,8 +75,8 @@ public class MarkingsSettingsTab implements SettingsTab {
 
     defaultMarkings.add(mProgramPanelUsesExtraSpaceForMarkIcons = new JCheckBox(mLocalizer.msg("panel.extraSpace","Use additional space for the mark icons"), Settings.propProgramPanelUsesExtraSpaceForMarkIcons.getBoolean()), cc.xyw(1,1,3));
     defaultMarkings.add(mProgramItemWithMarkingsIsShowingBorder = new JCheckBox(mLocalizer.msg("color.showBorder","Show border for highlighted programs"), Settings.propProgramPanelWithMarkingsShowingBoder.getBoolean()), cc.xyw(1,3,3));
-    defaultMarkings.add(new JLabel(mLocalizer.msg("color.showColor","Highlight with color (default color):")), cc.xy(1,5));    
-    defaultMarkings.add(mDefaultColor = new JComboBox(colors), cc.xy(3,5));    
+    defaultMarkings.add(new JLabel(mLocalizer.msg("color.showColor","Highlight with color (default color):")), cc.xy(1,5));
+    defaultMarkings.add(mDefaultColor = new JComboBox(colors), cc.xy(3,5));
     mDefaultColor.setSelectedIndex(Settings.propProgramPanelUsedDefaultMarkPriority.getInt()+1);
     
     mDefaultColor.setRenderer(new MarkPriorityComboBoxRenderer());
@@ -128,11 +128,11 @@ public class MarkingsSettingsTab implements SettingsTab {
     mHelpLabel = UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("color.help","The priority that a plugin uses for a program is used to decide which color have to be used for the marking. A higher priority color replaces a lower priority color. The setting for the default color is only for plugins that do not care about the priority. But it works like for plugins that uses the priorities, so if you select the highest priority color there, all marking of plugin which do not care about the priority will replace lower marking colors."), new HyperlinkListener() {
       public void hyperlinkUpdate(HyperlinkEvent e) {
       }
-    });    
+    });
     
     pb.addSeparator(mLocalizer.msg("color.programMarked","Highlighting by plugins"), cc.xyw(1,1,2));
     pb.add(defaultMarkings, cc.xy(2,3));
-    pb.addSeparator(mLocalizer.msg("color.programMarkedAdditional","Additional colors (replacing default color)"), cc.xyw(1,5,2));    
+    pb.addSeparator(mLocalizer.msg("color.programMarkedAdditional","Additional colors (replacing default color)"), cc.xyw(1,5,2));
     pb.add(markings, cc.xy(2,7));
     pb.add(mHelpLabel, cc.xy(2,9));
     
@@ -149,7 +149,7 @@ public class MarkingsSettingsTab implements SettingsTab {
 
   public void saveSettings() {
     Settings.propProgramPanelUsesExtraSpaceForMarkIcons.setBoolean(mProgramPanelUsesExtraSpaceForMarkIcons.isSelected());
-    Settings.propProgramPanelWithMarkingsShowingBoder.setBoolean(mProgramItemWithMarkingsIsShowingBorder.isSelected());    
+    Settings.propProgramPanelWithMarkingsShowingBoder.setBoolean(mProgramItemWithMarkingsIsShowingBorder.isSelected());
     Settings.propProgramPanelUsedDefaultMarkPriority.setInt(mDefaultColor.getSelectedIndex() - 1);
         
     Settings.propProgramPanelMarkedMinPriorityColor.setColor(mProgramItemMinMarkedColorLb.getColor());

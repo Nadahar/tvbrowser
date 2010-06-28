@@ -63,7 +63,7 @@ public class Exclusion {
    * @param timeFrom lower time limit (or -1, if no lower limit exists)
    * @param timeTo upper time limit (or -1, if no upper limit exists)
    * @param dayOfWeek The day of week to use.
-   * @param filterName The name of the filter to use; 
+   * @param filterName The name of the filter to use;
    */
   public Exclusion(String title, String topic, Channel channel, int timeFrom, int timeTo, int dayOfWeek, String filterName) {
     mTitle = title;
@@ -84,8 +84,9 @@ public class Exclusion {
         String channelServiceClassName = (String) in.readObject();
         String channelGroupId = null;
       
-        if(version >= 2)
+        if(version >= 2) {
           channelGroupId = (String) in.readObject();
+        }
       
         String channelId=(String)in.readObject();
         Channel ch = Channel.getChannel(channelServiceClassName, channelGroupId, null, channelId);
@@ -200,8 +201,9 @@ public class Exclusion {
     boolean dayExcl = false;
     boolean filterExclusion = false;
     
-    if(isInvalid())
+    if(isInvalid()) {
       return false;
+    }
     
     if (mChannel != null && !mChannel.isNullChannel()) {
       Channel ch = prog.getChannel();
@@ -227,17 +229,19 @@ public class Exclusion {
       StringBuilder value = new StringBuilder();
       
       while(types.hasNext()) {
-        ProgramFieldType type = (ProgramFieldType)types.next();
+        ProgramFieldType type = types.next();
         
-        if(type.getFormat() == ProgramFieldType.TEXT_FORMAT)
+        if(type.getFormat() == ProgramFieldType.TEXT_FORMAT) {
           value.append(prog.getTextField(type)).append(' ');
+        }
       }
             
-      if (value.toString() != null && value.toString().toLowerCase().indexOf(mTopic.toLowerCase()) >=0)
+      if (value.toString() != null && value.toString().toLowerCase().indexOf(mTopic.toLowerCase()) >=0) {
         topicExcl = true;
-    }
-    else
+      }
+    } else {
       topicExcl = true;
+    }
     
     if(mFilterName != null) {
       ProgramFilter filter = getFilter();
@@ -259,13 +263,15 @@ public class Exclusion {
     if(mTimeFrom > mTimeTo) {
       timeFromParsed -= 60*24;
       
-      if(progTime > mTimeTo)
+      if(progTime > mTimeTo) {
         progTime -= 24*60;
+      }
     }
         
     if (mTimeFrom >=0 && mTimeTo >=0) {
-      if (progTime >= timeFromParsed && progTime <= mTimeTo)
+      if (progTime >= timeFromParsed && progTime <= mTimeTo) {
         timeExcl = true;
+      }
     }
     else if (mTimeFrom >=0) {
       if (progTime >= timeFromParsed) {

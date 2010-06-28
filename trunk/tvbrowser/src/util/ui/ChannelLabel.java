@@ -150,7 +150,7 @@ public class ChannelLabel extends JLabel {
     mChannelIconsVisible = channelIconsVisible;
     mTextIsVisible = Settings.propShowChannelNamesInChannellist.getBoolean();
     setChannel(ch);
-  }  
+  }
 
   /**
    * Sets the Channel to display
@@ -231,7 +231,7 @@ public class ChannelLabel extends JLabel {
         super.setIcon(getDefaultIcon());
       }
       else {
-        Icon resizedIcon =UiUtilities.createChannelIcon(icon); 
+        Icon resizedIcon =UiUtilities.createChannelIcon(icon);
         ICONCACHE.put(channel, resizedIcon);
         super.setIcon(resizedIcon);
       }
@@ -279,6 +279,6 @@ public class ChannelLabel extends JLabel {
    * @since 3.0
    */
   public Channel getChannel() {
-    return mChannel;  
+    return mChannel;
   }
 }

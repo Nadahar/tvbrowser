@@ -596,7 +596,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 
 	private JMenu createLicenseMenuItems() {
 		JMenu licenseMenu = new JMenu();
-		TvDataServiceProxy services[] = TvDataServiceProxyManager.getInstance()
+		TvDataServiceProxy[] services = TvDataServiceProxyManager.getInstance()
 				.getDataServices();
 		for (TvDataServiceProxy service : services) {
 			final String license = service.getInfo().getLicense();

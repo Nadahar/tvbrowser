@@ -34,7 +34,6 @@ import java.net.Proxy;
 import java.net.ProxySelector;
 import java.net.URI;
 import java.net.Proxy.Type;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -163,8 +162,7 @@ class NetworkCardPanel extends AbstractCardPanel {
       System.getProperty("java.net.useSystemProxies", "true");
       List<Proxy> l = ProxySelector.getDefault().select(new URI("http://www.yahoo.com/"));
 
-      for (Iterator<Proxy> iter = l.iterator(); iter.hasNext();) {
-        Proxy proxy = iter.next();
+      for (Proxy proxy : l) {
         if (proxy.type() == Type.DIRECT) {
           return;
         }

@@ -59,7 +59,7 @@ abstract public class IconTheme {
   /**
    * Create the IconTheme
    * 
-   * The Directory must contain a index.theme-File. 
+   * The Directory must contain a index.theme-File.
    * For Details please look into the Specs.
    * 
    * @param iconDir Directory for this Theme
@@ -77,7 +77,7 @@ abstract public class IconTheme {
   }
 
   /**
-   * Load the .theme-File and parses it 
+   * Load the .theme-File and parses it
    * @return true if successfull
    */
   private boolean loadThemeFile() {
@@ -101,7 +101,7 @@ abstract public class IconTheme {
       for (int i = 0;i<len;i++) {
         HashMap<String, String> dirMap = iniReader.getSection(directories[i]);
         
-        String context = dirMap.get("Context"); 
+        String context = dirMap.get("Context");
         String type = dirMap.get("Type");
         int size = parseInt(dirMap.get("Size"));
         int maxsize = parseInt(dirMap.get("MaxSize"));
@@ -204,7 +204,7 @@ abstract public class IconTheme {
     it = mDirectories.iterator();
     while (it.hasNext()) {
       Directory dir = it.next();
-      int distance = sizeDistance(dir, icon.getSize()); 
+      int distance = sizeDistance(dir, icon.getSize());
       if (distance < minSize) {
         StringBuilder iconFile = new StringBuilder(dir.getName()).append("/")
             .append(icon.getName()).append(".png");
@@ -225,7 +225,7 @@ abstract public class IconTheme {
   }
 
   /**
-   * Tests if the Size of the Directory matches 
+   * Tests if the Size of the Directory matches
    * @param dir Directory to test
    * @param size Size that is needed
    * @return true if Size matches
@@ -240,7 +240,7 @@ abstract public class IconTheme {
     }
     
     if (dir.getType().equals("Threshold")) {
-      return (dir.getSize() - dir.getThreshold() <= size) && (size <= dir.getSize() + dir.getThreshold()); 
+      return (dir.getSize() - dir.getThreshold() <= size) && (size <= dir.getSize() + dir.getThreshold());
     }
     
     return false;

@@ -169,7 +169,7 @@ public class LoginDialog extends JDialog implements WindowClosingIf {
   public void close() {
     mReturnValue = JOptionPane.CANCEL_OPTION;
     setVisible(false);
-  }  
+  }
   
   /**
    * Show the Dialog

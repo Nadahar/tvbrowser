@@ -34,7 +34,7 @@ import java.io.RandomAccessFile;
  */
 public class BufferedRandomAccessFile extends RandomAccessFile {
 
-  private byte buffer[];
+  private byte[] buffer;
 
   private int buf_end = 0;
 
@@ -62,8 +62,9 @@ public class BufferedRandomAccessFile extends RandomAccessFile {
 
   public final int read() throws IOException {
     if (buf_pos >= buf_end) {
-      if (fillBuffer() < 0)
+      if (fillBuffer() < 0) {
         return -1;
+      }
     }
     if (buf_end == 0) {
       return -1;
@@ -101,9 +102,9 @@ public class BufferedRandomAccessFile extends RandomAccessFile {
     }
     for (int i = 0; i < len; i++) {
       int c = this.read();
-      if (c != -1)
+      if (c != -1) {
         b[off + i] = (byte) c;
-      else {
+      } else {
         return i;
       }
     }

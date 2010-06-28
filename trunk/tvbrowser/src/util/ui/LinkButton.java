@@ -82,8 +82,8 @@ public class LinkButton extends JButton implements ActionListener{
     }
     
     /**
-     * creates the Button 
-     * @param useLinkAction 
+     * creates the Button
+     * @param useLinkAction
      */
     private void createButton(boolean useLinkAction) {
         setBorder(BorderFactory.createEmptyBorder(2,0,0,0));
@@ -93,8 +93,9 @@ public class LinkButton extends JButton implements ActionListener{
         setRolloverEnabled(true);
         setUI(new MetalButtonUI());
         setToolTipText(mUrl);
-        if (useLinkAction)
+        if (useLinkAction) {
           addActionListener(this);
+        }
     }
     
     /**

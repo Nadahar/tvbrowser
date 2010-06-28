@@ -50,9 +50,10 @@ public class ProgramFrameDispatcher {
   
   /**
      * @deprecated
-     */  
+     */
+  @Deprecated
   public ProgramFrameDispatcher(String directory) {
-    mDirectory=directory;    
+    mDirectory=directory;
   }
   
   public ProgramFrameDispatcher(Channel channel) {
@@ -84,8 +85,8 @@ public class ProgramFrameDispatcher {
       file=new DayProgramFile(date,mChannel);
       mDayPrograms.put(date,file);
     }
-    file.addProgramFrame(frame);   
-    //dumpFrame(frame);    
+    file.addProgramFrame(frame);
+    //dumpFrame(frame);
     
   }
   
@@ -110,7 +111,7 @@ public class ProgramFrameDispatcher {
   public void store(String directory) throws FileFormatException, IOException {
     Iterator<DayProgramFile> it = getDayProgramFiles();
     while (it.hasNext()) {
-      DayProgramFile f=(DayProgramFile)it.next();
+      DayProgramFile f=it.next();
       int cnt=f.getProgramFrameCount();
       for (int i=0;i<cnt;i++) {
         ProgramFrame frame=f.getProgramFrameAt(i);
@@ -119,17 +120,18 @@ public class ProgramFrameDispatcher {
       }
       
       
-      f.writeToFile(new File(directory,f.getProgramFileName()));      
+      f.writeToFile(new File(directory,f.getProgramFileName()));
     }
   }
   
   
   /**
-   * @throws IOException 
-   * @throws FileFormatException 
+   * @throws IOException
+   * @throws FileFormatException
    * @deprecated Use {@link #dispatchProgramFrame(ProgramFrame, devplugin.Date)}
    *             instead.
-   */  
+   */
+  @Deprecated
   public void dispatch(ProgramFrame frame, devplugin.Date date, Channel channel) throws IOException, FileFormatException {
     String country=channel.getCountry();
     String ch=channel.getId();
@@ -139,7 +141,7 @@ public class ProgramFrameDispatcher {
       mCurFile=new DayProgramFile();
       mCurFilename=DayProgramFile.getProgramFileName(date,country,ch);
       frame.setId(mCurID);
-      mCurFile.addProgramFrame(frame);      
+      mCurFile.addProgramFrame(frame);
     }
     else {
       frame.setId(mCurID);
@@ -161,12 +163,13 @@ public class ProgramFrameDispatcher {
   }
   
   /**
-   * @throws IOException 
-   * @throws FileFormatException 
+   * @throws IOException
+   * @throws FileFormatException
    * @deprecated
-     */  
+     */
+  @Deprecated
   public void flush() throws IOException, FileFormatException {
-    mCurFile.writeToFile(new File(mDirectory,mCurFilename));    
+    mCurFile.writeToFile(new File(mDirectory,mCurFilename));
   }
   
 }

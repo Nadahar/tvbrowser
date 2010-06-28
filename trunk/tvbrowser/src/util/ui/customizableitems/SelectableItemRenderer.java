@@ -35,6 +35,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListCellRenderer;
+import javax.swing.SwingConstants;
 
 import tvbrowser.core.Settings;
 import util.ui.UiUtilities;
@@ -51,7 +52,7 @@ public class SelectableItemRenderer implements ListCellRenderer {
   
   private HashMap<Class,SelectableItemRendererCenterComponentIf> mCenterComponentMap = new HashMap<Class,SelectableItemRendererCenterComponentIf>();
   
-  private JScrollPane mParentScrollPane; 
+  private JScrollPane mParentScrollPane;
   
   public Component getListCellRendererComponent(JList list, Object value,
   int index, boolean isSelected, boolean cellHasFocus) {
@@ -74,7 +75,7 @@ public class SelectableItemRenderer implements ListCellRenderer {
     }
     
     if(renderIf != null) {
-      cb.setVerticalAlignment(JCheckBox.TOP);
+      cb.setVerticalAlignment(SwingConstants.TOP);
       cb.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(3,3,0,0),cb.getBorder()));
       
       p.add(renderIf.createCenterPanel(list,selectableItem.getItem(),index,isSelected,mIsEnabled, mParentScrollPane, mSelectionWidth + 2), BorderLayout.CENTER);
@@ -87,8 +88,9 @@ public class SelectableItemRenderer implements ListCellRenderer {
         l.setText(selectableItem.getItem().toString());
       }
       
-      if(!mIsEnabled)
+      if(!mIsEnabled) {
         l.setEnabled(false);
+      }
       
       l.setOpaque(false);
       
@@ -98,10 +100,11 @@ public class SelectableItemRenderer implements ListCellRenderer {
       
       p.add(l, BorderLayout.CENTER);
       
-      if(isSelected && mIsEnabled)
+      if(isSelected && mIsEnabled) {
         l.setForeground(list.getSelectionForeground());
-      else
+      } else {
         l.setForeground(list.getForeground());
+      }
     } else {
       cb.setText(selectableItem.getItem().toString());
     }

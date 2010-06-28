@@ -70,6 +70,7 @@ import tvbrowser.core.icontheme.IconLoader;
 import util.browserlauncher.Launch;
 import util.exc.TvBrowserException;
 import util.ui.EnhancedPanelBuilder;
+import util.ui.LinkButton;
 import util.ui.Localizer;
 import util.ui.TVBrowserIcons;
 import util.ui.TextAreaIcon;
@@ -91,7 +92,7 @@ import devplugin.Version;
 
 /**
  * A dialog class that shows the plugin updates/new plugins.
- * 
+ *
  */
 public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSelectionListener, WindowClosingIf {
 
@@ -99,13 +100,13 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(SoftwareUpdateDlg.class);
 
   private JButton mCloseBtn, mDownloadBtn;
-  
+
   private String mDownloadUrl;
-  
+
   private JCheckBox mAutoUpdates;
-  
+
   private SelectableItemList mSoftwareUpdateItemList;
-  
+
   private int mLastIndex;
 
   private JButton mHelpBtn;
@@ -157,7 +158,7 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
     mHelpBtn.setEnabled(false);
 
     ButtonBarBuilder2 builder = new ButtonBarBuilder2();
-    
+
     if(onlyUpdate) {
       mAutoUpdates = new JCheckBox(mLocalizer.msg("autoUpdates","Find plugin updates automatically"), Settings.propAutoUpdatePlugins.getBoolean());
       mAutoUpdates.addItemListener(new ItemListener() {
@@ -165,101 +166,101 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
           Settings.propAutoUpdatePlugins.setBoolean(e.getStateChange() == ItemEvent.SELECTED);
         }
       });
-      
+
       builder.addFixed(mAutoUpdates);
       builder.addRelatedGap();
     }
     builder.addFixed(mHelpBtn);
-    
+
     builder.addGlue();
     builder.addFixed(mDownloadBtn);
     builder.addRelatedGap();
     builder.addFixed(mCloseBtn);
 
     final CellConstraints cc = new CellConstraints();
-    
+
     FormLayout layout = new FormLayout("default,5dlu,0dlu:grow","default");
-    
+
     JPanel northPn = new JPanel(layout);
     northPn.add(new JLabel(onlyUpdate ?mLocalizer.msg("updateHeader","Updates for installed plugins were found.") :
       mLocalizer.msg("header","Here you can download new plugins and updates for it.")), cc.xyw(1,1,3));
-    
+
     JPanel southPn = new JPanel(new BorderLayout());
 
     southPn.add(builder.getPanel(), BorderLayout.SOUTH);
-    
+
     ArrayList<SoftwareUpdateItem> selectedItems = new ArrayList<SoftwareUpdateItem>();
     for (SoftwareUpdateItem item : itemArr) {
 			if (item.isAlreadyInstalled() && item.getInstalledVersion().compareTo(item.getVersion()) < 0) {
 				selectedItems.add(item);
 			}
 		}
-    
+
     mDownloadBtn.setEnabled(!selectedItems.isEmpty());
-    
+
     mSoftwareUpdateItemList = new SelectableItemList(selectedItems.toArray(new SoftwareUpdateItem[selectedItems.size()]),itemArr);
     mSoftwareUpdateItemList.addListSelectionListener(this);
     mSoftwareUpdateItemList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     mSoftwareUpdateItemList.setListUI(new MyListUI());
     mSoftwareUpdateItemList.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-    
+
     mSoftwareUpdateItemList.addCenterRendererComponent(PluginsSoftwareUpdateItem.class,new SelectableItemRendererCenterComponentIf() {
       private final ImageIcon NEW_VERSION_ICON = IconLoader.getInstance().getIconFromTheme("status", "software-update-available", 16);
-      
+
       public JPanel createCenterPanel(JList list, Object value, int index, boolean isSelected, boolean isEnabled, JScrollPane parentScrollPane, int leftColumnWidth) {
         FormLayout lay = new FormLayout("5dlu,default,5dlu,default:grow","2dlu,default,2dlu,fill:pref:grow,2dlu");
         EnhancedPanelBuilder pb = new EnhancedPanelBuilder(lay);
         pb.getPanel().setOpaque(false);
-        
+
         SoftwareUpdateItem item = (SoftwareUpdateItem)value;
-        
+
         JLabel label = pb.addLabel(HTMLTextHelper.convertHtmlToText(item.getName()) + " " + item.getVersion(), cc.xy(2,2));
         label.setFont(label.getFont().deriveFont(Font.BOLD, label.getFont().getSize2D()+2));
-        
+
         int width = parentScrollPane.getSize().width - parentScrollPane.getVerticalScrollBar().getWidth() - leftColumnWidth - Sizes.dialogUnitXAsPixel(5,pb.getPanel()) * 4 - parentScrollPane.getInsets().left - parentScrollPane.getInsets().right;
-        
+
         if (width <= 0) {
           width = Settings.propColumnWidth.getInt();
         }
-        
+
         TextAreaIcon icon = new TextAreaIcon(HTMLTextHelper.convertHtmlToText(item.getDescription()), new JLabel().getFont(), width, 2);
 
         JLabel iconLabel = new JLabel("");
         iconLabel.setIcon(icon);
-        
+
         pb.add(iconLabel, cc.xyw(2,4,3));
-        
+
         JLabel label3 = new JLabel();
-        
+
         if (item.isAlreadyInstalled()) {
 	        Version installedVersion = item.getInstalledVersion();
 	        if ((installedVersion != null) && (installedVersion.compareTo(item.getVersion()) < 0)) {
 	          label.setIcon(NEW_VERSION_ICON);
-	          
+
 	          label3.setText("(" + mLocalizer.msg("installed","Installed version: ") + installedVersion.toString()+")");
 	          label3.setFont(label3.getFont().deriveFont(label3.getFont().getSize2D()+2));
-	          
+
 	          pb.add(label3, cc.xy(4,2));
 	        }
         }
-        
+
         if (isSelected && isEnabled) {
           label.setForeground(list.getSelectionForeground());
-          
+
           String author = item.getProperty("author");
           String website = item.getWebsite();
 
           FormLayout authorAndWebsiteLayout = new FormLayout("default,5dlu,default","default");
           JPanel authorAndWebsite = new JPanel(authorAndWebsiteLayout);
           authorAndWebsite.setOpaque(false);
-          
+
           if (author != null) {
             lay.appendRow(RowSpec.decode("2dlu"));
             lay.appendRow(RowSpec.decode("default"));
             lay.appendRow(RowSpec.decode("2dlu"));
-            
+
             pb.add(authorAndWebsite, cc.xyw(2,7,3));
-            
+
             JLabel authorLabel = new JLabel(mLocalizer.msg("author", "Author"));
             authorLabel.setFont(authorLabel.getFont().deriveFont(Font.BOLD));
             authorLabel.setForeground(list.getSelectionForeground());
@@ -267,39 +268,39 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
 
             JLabel authorName = new JLabel(HTMLTextHelper.convertHtmlToText(author));
             authorName.setForeground(list.getSelectionForeground());
-            
+
             authorAndWebsite.add(authorLabel, cc.xy(1,1));
             authorAndWebsite.add(authorName, cc.xy(3,1));
           }
-          
+
           if (website != null) {
             if(author == null) {
               lay.appendRow(RowSpec.decode("2dlu"));
               lay.appendRow(RowSpec.decode("default"));
               lay.appendRow(RowSpec.decode("2dlu"));
-              
+
               pb.add(authorAndWebsite, cc.xyw(2,7,3));
             }
             else {
               authorAndWebsiteLayout.appendRow(RowSpec.decode("1dlu"));
               authorAndWebsiteLayout.appendRow(RowSpec.decode("default"));
             }
-            
+
             JLabel webLabel = new JLabel(mLocalizer.msg("website", "Website"));
             webLabel.setFont(webLabel.getFont().deriveFont(Font.BOLD));
             webLabel.setForeground(list.getSelectionForeground());
             webLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-            
-            JLabel webLink = new JLabel(HTMLTextHelper.convertHtmlToText(website));
+
+            LinkButton webLink = new LinkButton(HTMLTextHelper.convertHtmlToText(website));
             webLink.setForeground(list.getSelectionForeground());
-            
+
             authorAndWebsite.add(webLabel, cc.xy(1,author == null ? 1 : 3));
             authorAndWebsite.add(webLink, cc.xy(3,author == null ? 1 : 3));
           }
-          
+
           icon.setMaximumLineCount(-1);
           iconLabel.setForeground(list.getSelectionForeground());
-                    
+
           label3.setForeground(list.getSelectionForeground());
         } else {
           if(!item.isStable()) {
@@ -308,13 +309,13 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
           else {
             label.setForeground(list.getForeground());
           }
-          
+
           icon.setMaximumLineCount(1);
           iconLabel.setForeground(list.getSelectionForeground());
           iconLabel.setForeground(list.getForeground());
           label3.setForeground(Color.gray);
         }
-        
+
         return pb.getPanel();
       }
 
@@ -324,7 +325,7 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
         }
       }
     });
-    
+
     mSoftwareUpdateItemList.addMouseListener(new MouseAdapter() {
       @Override
       public void mousePressed(MouseEvent e) {
@@ -340,23 +341,23 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
         }
       }
     });
-    
+
     if(!onlyUpdate) {
       layout.appendRow(RowSpec.decode("5dlu"));
       layout.appendRow(RowSpec.decode("default"));
-      
+
       JLabel filterLabel = new JLabel(mLocalizer.msg("filterLabel","Show only Plugins with the following category:"));
-      
+
       northPn.add(filterLabel, cc.xy(1,3));
-      
+
       ArrayList<FilterItem> filterList = new ArrayList<FilterItem>(0);
-      
+
       for(SoftwareUpdateItem item : itemArr) {
         int index = 0;
-        
+
         for(int i = 0; i < filterList.size(); i++) {
           int compareValue = filterList.get(i).compareTo(item.getCategory());
-          
+
           if(compareValue == 0) {
             index = -1;
             break;
@@ -365,27 +366,27 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
             index = i+1;
           }
         }
-        
+
         if(index != -1) {
           filterList.add(index,new FilterItem(item.getCategory()));
         }
       }
-      
+
       filterList.add(0, new FilterItem("all"));
-      
+
       JComboBox filterBox = new JComboBox(filterList.toArray());
-      
+
       mSoftwareUpdateItemList.setFilterComboBox(filterBox);
-      
+
       northPn.add(filterBox, cc.xy(3,3));
     }
-        
+
     contentPane.add(northPn, BorderLayout.NORTH);
     contentPane.add(mSoftwareUpdateItemList, BorderLayout.CENTER);
     contentPane.add(southPn, BorderLayout.SOUTH);
 
     Settings.layoutWindow("softwareUpdateDlg", this, new Dimension(700,600));
-    
+
     setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
     addWindowListener(new WindowAdapter() {
@@ -394,7 +395,7 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
         close();
       }
     });
-    
+
     UiUtilities.registerForClosing(this);
   }
 
@@ -436,16 +437,16 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
 
   public void valueChanged(ListSelectionEvent event) {
     mDownloadBtn.setEnabled(mSoftwareUpdateItemList.getSelection().length > 0);
-    
+
     if(event.getSource() instanceof JList) {
       if(!event.getValueIsAdjusting()) {
         JList list = ((JList)event.getSource());
-        
+
         if(mLastIndex != -1 && list.getSelectedIndex() != mLastIndex && list.getModel().getSize()-1 >= mLastIndex) {
           ((MyListUI)list.getUI()).setCellHeight(mLastIndex,list.getCellRenderer().getListCellRendererComponent(list, list.getModel().getElementAt(mLastIndex),
               mLastIndex, false, false).getPreferredSize().height);
         }
-        
+
         mLastIndex = list.getSelectedIndex();
         if (mLastIndex < 0) {
           mHelpBtn.setEnabled(false);
@@ -457,7 +458,7 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
         }
       }
     }
-    
+
     mSoftwareUpdateItemList.calculateSize();
   }
 
@@ -465,70 +466,70 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
     setVisible(false);
     dispose();
   }
-  
+
   private static class MyListUI extends javax.swing.plaf.basic.BasicListUI {
     protected synchronized void setCellHeight(int row, int height) {
       cellHeights[row] = height;
     }
-    
+
     @Override
     public Dimension getPreferredSize(JComponent c) {
       int width = super.getPreferredSize(c).width;
       int height = 0;
-      
+
       Insets i = c.getInsets();
-      
+
       height += i.top + i.bottom;
-      
+
       for(int localCellHeight : cellHeights) {
         height += localCellHeight;
       }
-      
+
       return new Dimension(width,height);
     }
   }
-  
+
   private void showPopupMenu(MouseEvent e) {
     if(e.getSource() instanceof JList) {
       JList list = (JList)e.getSource();
-      
+
       Object listItem = list.getModel().getElementAt(list.locationToIndex(e.getPoint()));
-      
+
       if(listItem instanceof SelectableItem) {
         final Object item = ((SelectableItem)listItem).getItem();
-        
+
         if(item instanceof SoftwareUpdateItem) {
           if(((SoftwareUpdateItem)item).getWebsite() != null) {
             JPopupMenu menu = new JPopupMenu();
-            
+
             JMenuItem menuItem = new JMenuItem(mLocalizer.msg("openWebsite","Open website"), TVBrowserIcons.webBrowser(TVBrowserIcons.SIZE_SMALL));
             menuItem.addActionListener(new ActionListener() {
               public void actionPerformed(ActionEvent e) {
                 Launch.openURL(((SoftwareUpdateItem)item).getWebsite());
               }
             });
-            
+
             menu.add(menuItem);
-            
+
             menu.show(e.getComponent(), e.getX(), e.getY());
           }
         }
       }
     }
   }
-  
+
   private static class FilterItem implements ItemFilter {
     private String mType;
-    
+
     protected FilterItem(String type) {
       mType = type;
     }
-    
+
     @Override
     public String toString() {
       return mLocalizer.msg(mType,mType);
     }
-    
+
     @Override
     public boolean equals(Object o) {
       if(o != null) {
@@ -539,10 +540,10 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
           return mType.equals(o);
         }
       }
-      
+
       return false;
     }
-    
+
     /**
      * Compares the names of this filter item and
      * the given Object if it is a filter item or
@@ -562,7 +563,7 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
           return toString().compareToIgnoreCase(mLocalizer.msg((String)o,(String)o));
         }
       }
-      
+
       return 0;
     }
 
@@ -571,10 +572,10 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
         if(mType.equals("all")) {
           return true;
         }
-        
+
         return equals(((SoftwareUpdateItem)o).getCategory());
       }
-      
+
       return false;
     }
   }

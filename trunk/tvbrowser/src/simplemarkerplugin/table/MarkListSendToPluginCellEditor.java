@@ -21,17 +21,6 @@
  */
 package simplemarkerplugin.table;
 
-import devplugin.ProgramReceiveTarget;
-import simplemarkerplugin.MarkList;
-import simplemarkerplugin.SimpleMarkerPlugin;
-import tvbrowser.ui.mainframe.MainFrame;
-import util.ui.PluginChooserDlg;
-import util.ui.UiUtilities;
-
-import javax.swing.AbstractCellEditor;
-import javax.swing.JButton;
-import javax.swing.JTable;
-import javax.swing.table.TableCellEditor;
 import java.awt.Component;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
@@ -40,6 +29,18 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EventObject;
+
+import javax.swing.AbstractCellEditor;
+import javax.swing.JButton;
+import javax.swing.JTable;
+import javax.swing.table.TableCellEditor;
+
+import simplemarkerplugin.MarkList;
+import simplemarkerplugin.SimpleMarkerPlugin;
+import tvbrowser.ui.mainframe.MainFrame;
+import util.ui.PluginChooserDlg;
+import util.ui.UiUtilities;
+import devplugin.ProgramReceiveTarget;
 
 /**
  * The cell editor for the send to plugins column

@@ -18,8 +18,8 @@ import java.awt.geom.Rectangle2D;
 import javax.swing.JList;
 
 /**
- * A class for DnD in JLists and between two of them. 
- *  
+ * A class for DnD in JLists and between two of them.
+ * 
  * @author René Mach
  *
  */
@@ -50,15 +50,16 @@ public class ListDragAndDropHandler implements DropTargetListener,
     mPaint1 = true;
     mPaint2 = true;
     new DropTarget(mList1, this);
-    if(list2 != null && list1 != list2)
+    if(list2 != null && list1 != list2) {
       new DropTarget(mList2, this);
+    }
     mAction = action;
   }
   
   /**
    * Enable printing of cueLines in the lists on DnD.
    * 
-   * @param list1 Set this false to disables cueLine for the first list. 
+   * @param list1 Set this false to disables cueLine for the first list.
    * @param list2 Set this false to disables cueLine for the second list.
    */
   public void setPaintCueLine(boolean list1, boolean list2) {
@@ -66,7 +67,7 @@ public class ListDragAndDropHandler implements DropTargetListener,
     mPaint2 = list2;
   }
   
-  public void dragGestureRecognized(DragGestureEvent e) {    
+  public void dragGestureRecognized(DragGestureEvent e) {
     if(e.getComponent().equals(mList1)) {
       mSource = mList1;
       mTarget = mList2;
@@ -75,8 +76,9 @@ public class ListDragAndDropHandler implements DropTargetListener,
       mSource = mList2;
       mTarget = mList1;
     }
-    if(mSource.isEnabled())
+    if(mSource.isEnabled()) {
       e.startDrag(null,new TransferEntries(mSource.getSelectedIndices(),"JList","Indices"));
+    }
   }
   
   public void dragEnter(DropTargetDragEvent e) {
@@ -96,23 +98,25 @@ public class ListDragAndDropHandler implements DropTargetListener,
       return;
     }
     mCue = null;
-    if(((DropTarget)e.getSource()).getComponent().equals(mSource))
+    if(((DropTarget)e.getSource()).getComponent().equals(mSource)) {
       mCue = mSource;
-    else if (((DropTarget)e.getSource()).getComponent().equals(mTarget))
+    } else if (((DropTarget)e.getSource()).getComponent().equals(mTarget)) {
       mCue = mTarget;
+    }
     
-    if((!mPaint1 && mCue.equals(mList1)) || (!mPaint2 && mCue.equals(mList2)))
+    if((!mPaint1 && mCue.equals(mList1)) || (!mPaint2 && mCue.equals(mList2))) {
       mCue = null;
+    }
     
     if (mCue != null) {
       Point p = e.getLocation();
       Rectangle rect = mCue.getVisibleRect();
       int i = mCue.locationToIndex(p);
       
-      if(i != -1) {      
+      if(i != -1) {
         Rectangle listRect = mCue.getCellBounds(mCue.locationToIndex(p),
-            mCue.locationToIndex(p));   
-        Graphics2D g2 = (Graphics2D) mCue.getGraphics(); 
+            mCue.locationToIndex(p));
+        Graphics2D g2 = (Graphics2D) mCue.getGraphics();
         boolean paint = false;
         
         if(listRect != null) {
@@ -148,17 +152,19 @@ public class ListDragAndDropHandler implements DropTargetListener,
             g2.setColor(c);
             g2.fill(mCueLine);
           }
-        }        
+        }
       }
       else {
         mOldIndex = -1;
         mCue.paintImmediately(mCueLine.getBounds());
-      } 
+      }
       
-      if(p.y + 20 > rect.y + rect.height)
+      if(p.y + 20 > rect.y + rect.height) {
         mCue.scrollRectToVisible(new Rectangle(p.x,p.y + 15,1,1));
-      if(p.y - 20 < rect.y)
+      }
+      if(p.y - 20 < rect.y) {
         mCue.scrollRectToVisible(new Rectangle(p.x,p.y - 15,1,1));
+      }
     }
   }
 
@@ -168,21 +174,21 @@ public class ListDragAndDropHandler implements DropTargetListener,
   }
 
   public void dragExit(DropTargetEvent e) {
-    if(((DropTarget)e.getSource()).getComponent().equals(mTarget)) {      
+    if(((DropTarget)e.getSource()).getComponent().equals(mTarget)) {
       mOldIndex = -1;
       mTarget.paintImmediately(mCueLine.getBounds());
     }
     else if(((DropTarget)e.getSource()).getComponent().equals(mSource)) {
       mOldIndex = -1;
-      mTarget.paintImmediately(mCueLine.getBounds());      
+      mTarget.paintImmediately(mCueLine.getBounds());
     }
   }
 
-  public void drop(DropTargetDropEvent e) { 
+  public void drop(DropTargetDropEvent e) {
     e.acceptDrop(e.getDropAction());
     Transferable tr = e.getTransferable();
       
-    DataFlavor[] flavors = tr.getTransferDataFlavors(); 
+    DataFlavor[] flavors = tr.getTransferDataFlavors();
     
     // If theTransferable is a TransferEntries drop it
     if(flavors != null && flavors.length == 2 &&
@@ -190,17 +196,18 @@ public class ListDragAndDropHandler implements DropTargetListener,
         flavors[1].getHumanPresentableName().equals("Source")) {
       try {
         JList target = (JList)((DropTarget)e.getSource()).getComponent();
-        int x = target.locationToIndex(e.getLocation());        
+        int x = target.locationToIndex(e.getLocation());
         
         Rectangle rect = target.getCellBounds(x,x);
         if(rect != null) {
           rect.setSize(rect.width,rect.height/2);
         
-          if(!rect.contains(e.getLocation()))
+          if(!rect.contains(e.getLocation())) {
             x++;
-        }
-        else
+          }
+        } else {
           x = 0;
+        }
                 
         if(target.equals(mTarget)) {
           mAction.drop(mSource,mTarget,x,false);
@@ -210,7 +217,7 @@ public class ListDragAndDropHandler implements DropTargetListener,
         }
         
       }catch(Exception ee) {ee.printStackTrace();}
-    }  
+    }
     e.dropComplete(true);
   }
 

@@ -35,9 +35,9 @@ import devplugin.ActionMenu;
  */
 public interface ButtonActionIf {
   
-  /** 
+  /**
    * Gets the action menu with the action supported for toolbar actions.
-   * @return The action menu with the supported toolbar actions 
+   * @return The action menu with the supported toolbar actions
    */
   public ActionMenu getButtonAction();
   

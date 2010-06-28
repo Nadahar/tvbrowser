@@ -85,7 +85,7 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
 
   public JPanel createSettingsPanel() {
     createList();
-    
+
     PanelBuilder contentPanel = new PanelBuilder(new FormLayout("5dlu, pref, 3dlu, pref, fill:pref:grow, 3dlu",
         "pref, 5dlu, pref, 3dlu, fill:pref:grow"));
     contentPanel.setBorder(Borders.DIALOG_BORDER);
@@ -95,7 +95,7 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
         1, 6));
 
     contentPanel.add(UiUtilities.createHelpTextArea(mLocalizer.msg("ItemOrder", "Item Order:")), cc.xyw(2, 3, 4));
-    
+
     contentPanel.add(mList, cc.xyw(2, 5, 4));
 
     fillListbox();
@@ -105,7 +105,7 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
 
   private void createList() {
     mList = new SortableItemList();
-    
+
     mList.getList().addMouseListener(new MouseAdapter() {
       @Override
       public void mouseReleased(MouseEvent evt) {
@@ -116,13 +116,13 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
             if (!mDeactivatedItems.remove(item)) {
               mDeactivatedItems.add(item);
             }
-              
+
             mList.repaint();
           }
         }
       }
     });
-    
+
     mList.setCellRenderer(new ContextMenuCellRenderer());
 
     PluginProxyManager.getInstance().addPluginStateListener(new PluginStateAdapter() {
@@ -134,7 +134,7 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
         fillListbox();
       }
     });
-    
+
     JButton addSeparator = new LineButton();
     addSeparator.setToolTipText(mLocalizer.msg("separator", "Add Separator"));
     addSeparator.addActionListener(new ActionListener() {
@@ -148,9 +148,9 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
         mList.getList().ensureIndexIsVisible(pos);
       }
     });
-    
+
     mList.addButton(addSeparator);
-    
+
     final JButton garbage = new JButton(TVBrowserIcons.delete(TVBrowserIcons.SIZE_LARGE));
     garbage.setToolTipText(mLocalizer.msg("garbage", "Remove Separator"));
     garbage.addActionListener(new ActionListener(){
@@ -161,7 +161,7 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
         }
       };
     });
-    
+
     mList.getList().addListSelectionListener(new ListSelectionListener() {
       public void valueChanged(javax.swing.event.ListSelectionEvent e) {
         Object[] items = mList.getList().getSelectedValues();
@@ -175,15 +175,15 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
             return;
           }
         }
-        
+
         garbage.setEnabled(true);
       };
     });
 
     garbage.setEnabled(false);
-    mList.addButton(garbage);    
+    mList.addButton(garbage);
   }
-  
+
   private void fillListbox() {
     if (mList == null) {
       return;
@@ -207,12 +207,12 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
         }
       }
     }
-    
+
     mDeactivatedItems = new ArrayList<ContextMenuIf>(ContextMenuManager.getInstance().getDisabledContextMenuIfs());
   }
 
   public void saveSettings() {
-    Object o[] = mList.getItems();
+    Object[] o = mList.getItems();
 
     ArrayList<String> pluginIDsList = new ArrayList<String>();
     String[] orderIDs = new String[o.length];
@@ -229,7 +229,7 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
 
     Settings.propContextMenuOrder.setStringArray(orderIDs);
     Settings.propPluginOrder.setStringArray(pluginIDs);
-    
+
     PluginProxyManager.getInstance().setPluginOrder(pluginIDs);
 
     String[] deactivated = new String[mDeactivatedItems.size()];
@@ -246,17 +246,17 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
   public String getTitle() {
     return mLocalizer.msg("title", "context menu");
   }
-  
+
   class ContextMenuCellRenderer extends DefaultListCellRenderer {
     private JCheckBox mItemSelected;
     private JLabel mItemLabel;
     private JPanel mItemPanel;
-    
+
     public ContextMenuCellRenderer() {
       mItemSelected = new JCheckBox();
       mItemSelected.setOpaque(false);
       mSelectionWidth = mItemSelected.getPreferredSize().width;
-      
+
       mItemLabel = new JLabel();
       mItemPanel = new JPanel(new BorderLayout());
       mItemPanel.add(mItemSelected, BorderLayout.WEST);
@@ -268,7 +268,7 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
         boolean cellHasFocus) {
 
       JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-      
+
       if (value instanceof SeparatorMenuItem) {
         LineComponent comp = new LineComponent(label.getForeground());
         comp.setBackground(label.getBackground());
@@ -284,7 +284,7 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
 
         mItemPanel.setBackground(label.getBackground());
         mItemPanel.setOpaque(isSelected);
-        
+
         return mItemPanel;
       } else if (value instanceof LeaveFullScreenMenuItem) {
         mItemSelected.setSelected(!mDeactivatedItems.contains(value));
@@ -295,7 +295,7 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
 
         mItemPanel.setBackground(label.getBackground());
         mItemPanel.setOpaque(isSelected);
-        
+
         return mItemPanel;
       } else if (value instanceof ContextMenuIf) {
         ContextMenuIf menuIf = (ContextMenuIf) value;
@@ -326,17 +326,17 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
         mItemLabel.setIcon(icon);
         mItemLabel.setText(text.toString());
         mItemLabel.setForeground(label.getForeground());
-        
+
         mItemSelected.setSelected(!mDeactivatedItems.contains(value));
-        
+
         mItemPanel.setBackground(label.getBackground());
         mItemPanel.setOpaque(isSelected);
         return mItemPanel;
       }
-      
+
       return label;
     }
 
   }
-  
+
 }

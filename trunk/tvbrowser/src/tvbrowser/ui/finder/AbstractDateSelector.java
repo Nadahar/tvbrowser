@@ -39,7 +39,7 @@ import devplugin.Date;
 public abstract class AbstractDateSelector extends JPanel implements
     MouseListener {
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer
-      .getLocalizerFor(AbstractDateSelector.class);  
+      .getLocalizerFor(AbstractDateSelector.class);
 
   private Date mCurChoosenDate = Date.getCurrentDate();
   protected Date mToday;

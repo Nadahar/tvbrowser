@@ -201,10 +201,11 @@ public final class WebAddress implements Cloneable {
     if(version  == 2 && mIconFileName != null) {
       File iconFile = new File(mIconFileName);
 
-      if(iconFile.isFile())
+      if(iconFile.isFile()) {
         mIconFileName = iconFile.getName();
-      else
+      } else {
         mIconFileName = "";
+      }
     }
 
     mUrl = (String) in.readObject();

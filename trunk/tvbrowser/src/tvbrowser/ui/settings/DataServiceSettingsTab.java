@@ -188,8 +188,8 @@ public class DataServiceSettingsTab implements devplugin.SettingsTab {
     // add all services
     TvDataServiceProxy[] services = TvDataServiceProxyManager.getInstance().getDataServices();
     Arrays.sort(services, new TvDataServiceProxy.Comparator());
-    for (int i = 0; i < services.length; i++) {
-      mTableModel.addRow(new Object[]{true, services[i]});
+    for (TvDataServiceProxy service : services) {
+      mTableModel.addRow(new Object[]{true, service});
     }
   }
   
@@ -243,8 +243,8 @@ public class DataServiceSettingsTab implements devplugin.SettingsTab {
     // count the removed channels
     int channelCount = 0;
     Channel[] subscribed = ChannelList.getSubscribedChannels();
-    for (int i = 0; i < subscribed.length; i++) {
-      if (subscribed[i].getDataServiceProxy().equals(service)) {
+    for (Channel element : subscribed) {
+      if (element.getDataServiceProxy().equals(service)) {
         channelCount++;
       }
     }

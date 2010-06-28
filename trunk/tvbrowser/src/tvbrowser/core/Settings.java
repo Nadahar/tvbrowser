@@ -551,8 +551,8 @@ public class Settings {
                 });
 
                 if (files != null) {
-                  for (int i = 0; i < files.length; i++) {
-                    files[i].renameTo(new File(backupDir,files[i].getName()));
+                  for (File file : files) {
+                    file.renameTo(new File(backupDir,file.getName()));
                   }
                 }
               }

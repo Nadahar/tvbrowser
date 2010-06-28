@@ -163,7 +163,7 @@ public class ChannelList {
     boolean removed = false;
 
     for(int i = mAvailableChannels.size()-1; i >= 0; i--) {
-      Channel ch = (Channel)mAvailableChannels.get(i);
+      Channel ch = mAvailableChannels.get(i);
 
       if(!availableChannels.containsKey(ch)) {
         mAvailableChannels.remove(i);
@@ -893,10 +893,10 @@ public class ChannelList {
 
             out.writeShort(channels.length); // write number of channels
 
-            for (int i = 0; i < channels.length; i++) {
-              channels[i].writeData(out);
-              out.writeShort(channels[i].getStartTimeLimit());
-              out.writeShort(channels[i].getEndTimeLimit());
+            for (Channel channel : channels) {
+              channel.writeData(out);
+              out.writeShort(channel.getStartTimeLimit());
+              out.writeShort(channel.getEndTimeLimit());
             }
 
             out.close();

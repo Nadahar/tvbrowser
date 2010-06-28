@@ -1,14 +1,17 @@
 package util.ui;
 
-import javax.swing.*;
-import java.awt.event.ActionListener;
+import java.awt.Color;
+import java.awt.GradientPaint;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
-import java.awt.event.HierarchyListener;
-import java.awt.event.HierarchyEvent;
-import java.awt.event.ComponentListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.*;
+import java.awt.event.ActionListener;
+
+import javax.swing.JComponent;
+import javax.swing.JEditorPane;
+import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.Timer;
 
 /**
  * A scrolling panel for credits
@@ -26,8 +29,8 @@ public class CreditsScrollerPanel extends JScrollPane implements ActionListener 
 
     this.scrollOffset = scrollOffset;
 
-    setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-    setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+    setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+    setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
 
     component.setVisible(false);
     getViewport().setBackground(component.getBackground());
@@ -36,7 +39,7 @@ public class CreditsScrollerPanel extends JScrollPane implements ActionListener 
   }
 
   /**
-   * Start the scrolling. Please don't forget to call stopScrolling 
+   * Start the scrolling. Please don't forget to call stopScrolling
    * at the end
    */
   public void startScrolling() {

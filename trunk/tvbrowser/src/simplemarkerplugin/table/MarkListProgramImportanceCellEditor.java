@@ -21,19 +21,18 @@
  */
 package simplemarkerplugin.table;
 
-import simplemarkerplugin.MarkList;
-import simplemarkerplugin.SimpleMarkerPlugin;
+import java.awt.Component;
+import java.awt.event.MouseEvent;
+import java.util.EventObject;
 
 import javax.swing.AbstractCellEditor;
 import javax.swing.JComboBox;
 import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
 
+import simplemarkerplugin.MarkList;
+import simplemarkerplugin.SimpleMarkerPlugin;
 import devplugin.Program;
-
-import java.awt.Component;
-import java.awt.event.MouseEvent;
-import java.util.EventObject;
 
 /**
  * The cell editor for the program importance column

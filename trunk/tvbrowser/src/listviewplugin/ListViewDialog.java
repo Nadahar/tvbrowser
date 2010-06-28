@@ -57,6 +57,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SpinnerDateModel;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -161,7 +162,7 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
     mModel = new ListTableModel();
     mPerformingSingleClick = false;
     
-    mCurrentFilter = ListViewPlugin.getPluginManager().getFilterManager().getCurrentFilter();
+    mCurrentFilter = Plugin.getPluginManager().getFilterManager().getCurrentFilter();
     
     generateList(new Date(), getCurrentTime());
     createGUI();
@@ -488,17 +489,17 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
     mTimeSpinner.setEnabled(false);
 
     JLabel filterLabel = new JLabel("Filter:");
-    filterLabel.setHorizontalAlignment(JLabel.RIGHT);
+    filterLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 
-    mFilterBox = new JComboBox(ListViewPlugin.getPluginManager().getFilterManager().getAvailableFilters());
-    mFilterBox.setSelectedItem(ListViewPlugin.getPluginManager().getFilterManager().getCurrentFilter());
+    mFilterBox = new JComboBox(Plugin.getPluginManager().getFilterManager().getAvailableFilters());
+    mFilterBox.setSelectedItem(Plugin.getPluginManager().getFilterManager().getCurrentFilter());
     mFilterBox.addItemListener(new ItemListener() {
       public void itemStateChanged(ItemEvent e) {
         if(e.getStateChange() == ItemEvent.SELECTED) {
           mCurrentFilter = (ProgramFilter)e.getItem();
           refreshView();
         }
-      }      
+      }
     });
     
     // Upper Panel

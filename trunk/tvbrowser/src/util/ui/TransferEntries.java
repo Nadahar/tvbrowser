@@ -8,7 +8,7 @@ import java.io.IOException;
 import javax.swing.JList;
 
 /**
- * The TransferEntries for JList Drag'n'Drop. 
+ * The TransferEntries for JList Drag'n'Drop.
  * @author René Mach
  *
  */
@@ -37,21 +37,25 @@ public class TransferEntries implements Transferable {
   }
 
   public boolean isDataFlavorSupported(DataFlavor e) {
-    if(e.equals(mIF))
+    if(e.equals(mIF)) {
       return true;
-    if(e.equals(mSF))
+    }
+    if(e.equals(mSF)) {
       return true;
-    else
+    } else {
       return false;
+    }
   }
   
   public Object getTransferData(DataFlavor e) throws UnsupportedFlavorException, IOException {
-    if(e.equals(mIF))
+    if(e.equals(mIF)) {
       return mIndices;
-    if(e.equals(mSF))
+    }
+    if(e.equals(mSF)) {
       return mSource;
-    else
+    } else {
       return null;
+    }
   }
   
 }

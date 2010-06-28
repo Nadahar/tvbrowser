@@ -37,7 +37,7 @@ public class RatingCellRenderer extends JLabel implements ListCellRenderer {
     public Component getListCellRendererComponent(JList list, Object obj,
             int index, boolean isSelected, boolean hasFocus) {
        
-        if (obj == null) { 
+        if (obj == null) {
             return new JLabel("");
         }
 

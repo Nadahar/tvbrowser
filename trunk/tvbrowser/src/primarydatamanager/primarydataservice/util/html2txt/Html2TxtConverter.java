@@ -39,37 +39,37 @@ import java.io.Writer;
 
 
 public class Html2TxtConverter extends FilterReader {
- 
- 
+
+
   private Reader mBuf;
   public static final int HIDE_ALL=0;
   public static final int A=1 << 1;
   public static final int IMG=1 << 2;
   public static final int I=1 << 3;
-  
+
   private String mEncoding;
-    
-  
+
+
   public Html2TxtConverter(int mode, Reader in, String encoding) throws IOException {
-    super(in);  
-    @SuppressWarnings("unused")
-    int ch=in.read();
-    
+    super(in);
+
+    in.read(); // unused
+
     StringWriter out=new StringWriter();
     convert(mode, in,out,encoding);
     StringBuffer sb=out.getBuffer();
     mBuf=new StringReader(sb.toString());
-    
+
   }
-  
+
 	public Html2TxtConverter(int mode, Reader in) throws IOException {
 		this(mode, in, null);
 	}
-  
+
 
 
   public int read(char[] cbuf, int off, int len) throws IOException {
-    
+
     int character=read();
     if (character==-1) {
       return -1;
@@ -80,11 +80,11 @@ public class Html2TxtConverter extends FilterReader {
       cbuf[off+i]=(char)character;
       if (character==-1) {
         return i;
-      }      
+      }
     }
     return len;
   }
-   
+
   public int read() throws IOException {
     int result=mBuf.read();
     if (result==160) {
@@ -97,7 +97,7 @@ public class Html2TxtConverter extends FilterReader {
     if (s==null) {
       return null;
     }
-    
+
     String result=s;
     try {
 			result = new String(s.getBytes(), mEncoding);
@@ -106,19 +106,19 @@ public class Html2TxtConverter extends FilterReader {
 		}
     return result;
   }
-  
+
   public static String convert(int mode, String in) {
     return convert(mode, in, null);
   }
-  
+
   public static String convert(int mode, String in, String encoding) {
     StringBuffer content = new StringBuffer();
     StringReader input = new StringReader(in);
-    
+
     try {
     Html2TxtConverter txtReader = new Html2TxtConverter(mode, input, encoding);
     BufferedReader reader = new BufferedReader(txtReader);
-   
+
     String line = reader.readLine();
     while (line != null) {
       content.append(line).append("\n");
@@ -142,14 +142,14 @@ public class Html2TxtConverter extends FilterReader {
     PrintWriter writer=new PrintWriter(out);
     Tag tag=reader.next();
     while (tag!=null) {
-      
-            
+
+
       if (tag.isTextTag()) {
         writer.print(tag.getName());
       }
-     
+
       else if (tag.getTagName()!=null && tag.getTagName().startsWith("br")) {
-        writer.print("\n"); 
+        writer.print("\n");
       }
       else if ("p".equals(tag.getName())) {
         writer.println();
@@ -160,7 +160,7 @@ public class Html2TxtConverter extends FilterReader {
       else if ((mode & Html2TxtConverter.I)>0 && "/i".equals(tag.getName())) {
         writer.print("@@/I");
       }
-      
+
       else if ((mode & Html2TxtConverter.A)>0 && "a".equals(tag.getTagName())) {
         String href=tag.getAttribute("href");
         if (href!=null) {
@@ -178,9 +178,9 @@ public class Html2TxtConverter extends FilterReader {
         if (src!=null) {
           writer.print("@@IMG="+src+"@@");
         }
-      }      
+      }
       tag=reader.next();
     }
   }
-}  
-  
+}
+

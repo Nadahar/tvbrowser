@@ -87,8 +87,8 @@ public class ExclusionPanel extends JPanel{
 
     DefaultListModel listModel = new DefaultListModel();
     mExclusionsList = new JList(listModel);
-    for (int i = 0; i < exclusions.length; i++) {
-      listModel.addElement(exclusions[i]);
+    for (Exclusion exclusion : exclusions) {
+      listModel.addElement(exclusion);
     }
     mExclusionsList.setCellRenderer(new ExclusionListCellRenderer());
     

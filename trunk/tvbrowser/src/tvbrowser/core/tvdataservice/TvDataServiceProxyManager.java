@@ -225,7 +225,7 @@ public class TvDataServiceProxyManager {
 
   public void fireTvBrowserStartFinished() {
     for (TvDataServiceProxy proxy : getDataServices()) {
-        proxy.handleTvBrowserStartFinished();    
+        proxy.handleTvBrowserStartFinished();
     }
   }
 

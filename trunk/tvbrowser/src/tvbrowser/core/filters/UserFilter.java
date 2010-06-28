@@ -103,9 +103,7 @@ public class UserFilter implements devplugin.ProgramFilter {
 
             @Override
             public void process(final ObjectInputStream in) throws IOException {
-              @SuppressWarnings("unused")
-              // version not yet used
-              int version = in.readInt();
+              in.readInt(); // version not yet used
               try {
                 mName = (String) in.readObject();
                 mRule = (String) in.readObject();
@@ -456,8 +454,6 @@ abstract class Node {
 
   public abstract boolean accept(devplugin.Program prog);
 
-  public abstract void dump();
-
   public boolean containsRuleComponent(String compName) {
     Iterator<Node> it = mNodes.iterator();
     while (it.hasNext()) {
@@ -485,16 +481,6 @@ class OrNode extends Node {
     }
     return false;
   }
-
-  public void dump() {
-    Iterator<Node> it = mNodes.iterator();
-    while (it.hasNext()) {
-      Node n = it.next();
-      n.dump();
-    }
-    System.out.println("}");
-  }
-
 }
 
 class AndNode extends Node {
@@ -512,20 +498,10 @@ class AndNode extends Node {
     }
     return true;
   }
-
-  public void dump() {
-    System.out.println("AndNode {");
-    Iterator<Node> it = mNodes.iterator();
-    while (it.hasNext()) {
-      Node n = it.next();
-      n.dump();
-    }
-    System.out.println("}");
-  }
 }
 
 class NotNode extends Node {
-  private Node mNode;
+  private Node mNode = null;
 
   public NotNode() {
   }
@@ -536,10 +512,6 @@ class NotNode extends Node {
 
   public boolean accept(devplugin.Program prog) {
     return !mNode.accept(prog);
-  }
-
-  public void dump() {
-    System.out.println("NotNode { }");
   }
 }
 
@@ -552,10 +524,6 @@ class ItemNode extends Node {
 
   public boolean accept(devplugin.Program prog) {
     return mRule.accept(prog);
-  }
-
-  public void dump() {
-    System.out.println("ItemNode {" + mRule.toString() + " }");
   }
 
   public boolean containsRuleComponent(String compName) {

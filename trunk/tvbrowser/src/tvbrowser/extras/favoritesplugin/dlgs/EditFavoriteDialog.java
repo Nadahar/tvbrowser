@@ -100,7 +100,7 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
   private Channel[] mChannelArr;
 
   private JComboBox mLimitDaysCB;
-  
+
   private TimePeriodChooser mTimePeriodChooser;
 
   private JCheckBox mPassProgramsCheckBox;
@@ -114,9 +114,9 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
   private boolean mOkWasPressed;
 
   private FavoriteConfigurator mFavoriteConfigurator;
-  
+
   private JLabel mName;
-  
+
   private ExclusionPanel mExclusionPanel;
 
   /**
@@ -138,11 +138,11 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
     mFavoriteConfigurator = mFavorite.createConfigurator();
 
     setTitle(mLocalizer.msg("title", "Edit Favorite"));
-    
+
     ScrollableJPanel rootPn = new ScrollableJPanel();
     rootPn.setLayout(new BorderLayout());
     rootPn.setBorder(Borders.DLU4_BORDER);
-    
+
     JPanel content = new JPanel(new TabLayout(1));
     content.setBorder(new EmptyBorder(10, 10, 10, 10));
 
@@ -185,65 +185,65 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
 
     rootPn.add(BorderLayout.NORTH, content);
     rootPn.add(BorderLayout.SOUTH, buttons.getPanel());
-    
+
     getRootPane().setDefaultButton(okBtn);
-    
+
     JScrollPane scrollPane = new JScrollPane(rootPn);
     scrollPane.setBorder(null);
 
     setContentPane(scrollPane);
     pack();
-    
+
     Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
 
     if (d.height < getHeight()) {
       setSize(getWidth(), d.height);
     }
   }
-  
+
   private JPanel createTitleChangePanel() {
     CellConstraints cc = new CellConstraints();
-    
+
     if(mFavorite.getName().length() < 1) {
       mName = new JLabel(mLocalizer.msg("defaultName","Is going to be created automatically"));
       mName.setEnabled(false);
     } else {
       mName = new JLabel(mFavorite.getName());
-    }    
-    
+    }
+
     JPanel panel = new JPanel(new FormLayout("pref,3dlu,30dlu:grow,3dlu,pref","pref"));
     panel.add(new JLabel(mLocalizer.msg("name","Name:")), cc.xy(1,1));
-    panel.add(mName, cc.xy(3,1));    
-    
+    panel.add(mName, cc.xy(3,1));
+
     JButton changeTitle = new JButton(mLocalizer.msg("changeName","Change name"));
     changeTitle.setFocusable(false);
-    
+
     changeTitle.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         setFavoriteName();
       }
     });
-    
+
     panel.add(changeTitle, cc.xy(5,1));
-    
+
     return panel;
   }
-  
+
   private void setFavoriteName() {
     String newName = (String) JOptionPane.showInputDialog(this,
         mLocalizer.msg("name","Name:"), mLocalizer.msg("renameFav","Rename Favorite"), JOptionPane.PLAIN_MESSAGE, null, null,
         mName.getText());
     if (isValidName(newName)) {
       mName.setText(newName);
-      mName.setEnabled(true);          
+      mName.setEnabled(true);
     }
     else if(mName.getText().compareTo(mLocalizer.msg("defaultName","Is going to be created automatically")) == 0) {
       mName.setEnabled(false);
-    }    
+    }
   }
 
-  private boolean isValidName(String name) {
-    return name != null && name.length() > 0 && 
+  private static boolean isValidName(String name) {
+    return name != null && name.length() > 0 &&
         (name.compareTo(mLocalizer.msg("defaultName","Is going to be created automatically")) != 0);
   }
 
@@ -266,7 +266,7 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
       if(mChannelLabel != null) {
         mChannelLabel.setForeground((new JLabel()).getForeground());
       }
-      
+
       return result;
     } else if(!mLimitChannelCb.isSelected()){
       return mLocalizer.msg("allChannels", "All channels");
@@ -279,7 +279,7 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
     mChangeChannelsBtn.setEnabled(enabled);
     mChannelLabel.setEnabled(enabled);
     mChannelLabel.setText(getChannelString(mChannelArr));
-    
+
     if(mChannelArr == null || mChannelArr.length < 1) {
       mChannelLabel.setForeground(Color.red);
     } else {
@@ -301,11 +301,11 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
     mTimePeriodChooser = new TimePeriodChooser(from, to, TimePeriodChooser.ALIGN_RIGHT);
 
     mChangeChannelsBtn = new JButton(mLocalizer.msg("change", "Change"));
-    mChannelArr = mFavorite.getLimitationConfiguration().getChannels();    
+    mChannelArr = mFavorite.getLimitationConfiguration().getChannels();
 
     mLimitChannelCb = new JCheckBox(mLocalizer.msg("channels", "Channels:") + " ");
     mLimitTimeCb = new JCheckBox(mLocalizer.msg("time", "Time:") + " ");
-    
+
     mChannelLabel = new JLabel(getChannelString(mChannelArr));
 
     mLimitDaysCB = new JComboBox(new Object[] {
@@ -387,8 +387,8 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
     panel.add(mUseReminderCb = new JCheckBox(mLocalizer.msg("reminderWindow", "Reminder window")));
 
     String[] s = mFavorite.getReminderConfiguration().getReminderServices();
-    for (int i = 0; i < s.length; i++) {
-      if (ReminderConfiguration.REMINDER_DEFAULT.equals(s[i])) {
+    for (String element : s) {
+      if (ReminderConfiguration.REMINDER_DEFAULT.equals(element)) {
         mUseReminderCb.setSelected(true);
       }
     }
@@ -411,7 +411,7 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
       listModel.addElement(exclusions[i]);
     }
     mExclusionsList.setCellRenderer(new ExclusionListCellRenderer());
-    
+
     mExclusionsList.addListSelectionListener(new ListSelectionListener() {
       public void valueChanged(ListSelectionEvent e) {
         if (!e.getValueIsAdjusting()) {
@@ -452,7 +452,7 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
     content.add(mDeleteExclusionBtn, cc.xy(4, 5));
 
     final EditFavoriteDialog parent = this;
-    
+
     mNewExclusionBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent event) {
 
@@ -497,21 +497,21 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
     mDeleteExclusionBtn.setEnabled(selectedItem != null);
   }*/
 
-  private String getForwardPluginsLabelString(ProgramReceiveTarget[] receiveTargetArr) {
+  private static String getForwardPluginsLabelString(ProgramReceiveTarget[] receiveTargetArr) {
     ArrayList<ProgramReceiveIf> plugins = new ArrayList<ProgramReceiveIf>();
-    
+
     for(int i = 0; i < receiveTargetArr.length; i++) {
       if(!plugins.contains(receiveTargetArr[i].getReceifeIfForIdOfTarget())) {
         ProgramReceiveIf target = receiveTargetArr[i].getReceifeIfForIdOfTarget();
-        
+
         if(target != null) {
           plugins.add(target);
         }
       }
     }
-    
+
     ProgramReceiveIf[] pluginArr = plugins.toArray(new ProgramReceiveIf[plugins.size()]);
-    
+
     if (pluginArr != null && pluginArr.length > 0) {
       StringBuilder buf = new StringBuilder();
       if (pluginArr.length > 0) {
@@ -639,7 +639,7 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
     } catch (TvBrowserException exc) {
       ErrorHandler.handle(mLocalizer.msg("error.updateFavoriteFailed", "Could not update favorite"), exc);
     }
-    
+
     for (ProgramReceiveTarget target : mPassProgramPlugins) {
       target.getReceifeIfForIdOfTarget().receivePrograms(mFavorite.getPrograms(),target);
     }
@@ -648,25 +648,25 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
       ReminderPlugin.getInstance().addPrograms(mFavorite.getPrograms());
       ReminderPlugin.getInstance().updateRootNode(true);
     }
-    
+
     if(mName.getText().length() > 0 && mName.getText().compareTo(mLocalizer.msg("defaultName","Is going to be created automatically")) != 0) {
       mFavorite.setName(mName.getText());
     }
-    
+
     mOkWasPressed = true;
     setVisible(false);
-  }                      
-  
+  }
+
   private boolean arrayContains(ProgramReceiveTarget[] targetArr, ProgramReceiveTarget target) {
     for(ProgramReceiveTarget arrayEntry : targetArr) {
       if(arrayEntry.getReceiveIfId().equals(target.getReceiveIfId()) && arrayEntry.getTargetId().equals(target.getTargetId())) {
         return true;
       }
     }
-    
+
     return false;
   }
-  
+
   public void close() {
     setVisible(false);
   }

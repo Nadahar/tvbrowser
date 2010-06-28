@@ -27,7 +27,6 @@ package tvbrowserdataservice;
 
 import java.io.File;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -107,10 +106,8 @@ public class TvDataBaseUpdater {
     synchronized(mUpdateJobSet) {
       monitor.setMaximum(mUpdateJobSet.size());
       int i=0;
-      for (Iterator<UpdateJob> iter = mUpdateJobSet.iterator(); iter.hasNext();) {
+      for (UpdateJob updateJob : mUpdateJobSet) {
         monitor.setValue(i++);
-        UpdateJob updateJob = iter.next();
-        
         try {
           MutableChannelDayProgram prog
             = createChannelDayProgram(updateJob.getDate(), updateJob.getChannel());
@@ -173,7 +170,7 @@ public class TvDataBaseUpdater {
       for (int i = 0; i < prog.getProgramFrameCount(); i++) {
         ProgramFrame frame = prog.getProgramFrameAt(i);
         target.addProgram(createProgramFromFrame(frame, date, channel));
-      }    
+      }
       return target;
     }
     catch (TvBrowserException exc) {

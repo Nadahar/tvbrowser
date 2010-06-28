@@ -34,16 +34,17 @@ import java.util.logging.Logger;
  * @author Til Schneider, www.murfman.de
  * @deprecated since 3.0
  */
+@Deprecated
 public class Profiler {
 
-  /** The logger for this class. */  
+  /** The logger for this class. */
   private static final Logger mLog
     = Logger.getLogger(Profiler.class.getName());
   
-  /** The default profiler. */  
+  /** The default profiler. */
   private static Profiler mDefaultProfiler;
   
-  /** The last measure. */  
+  /** The last measure. */
   private long mLastMillis = -1;
   
   

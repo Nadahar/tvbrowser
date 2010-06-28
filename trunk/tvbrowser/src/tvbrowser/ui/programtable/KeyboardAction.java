@@ -41,24 +41,33 @@ public class KeyboardAction implements ActionListener {
   public void actionPerformed(ActionEvent e) {
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
-        if (mType == KEY_UP)
+        if (mType == KEY_UP) {
           mScrollPane.up();
-        if (mType == KEY_DOWN)
+        }
+        if (mType == KEY_DOWN) {
           mScrollPane.down();
-        if (mType == KEY_LEFT)
+        }
+        if (mType == KEY_LEFT) {
           mScrollPane.left();
-        if (mType == KEY_RIGHT)
+        }
+        if (mType == KEY_RIGHT) {
           mScrollPane.right();
-        if (mType == KEY_CONTEXTMENU)
+        }
+        if (mType == KEY_CONTEXTMENU) {
           mScrollPane.showPopupMenu();
-        if (mType == KEY_DESELECT)
+        }
+        if (mType == KEY_DESELECT) {
           mScrollPane.deSelectItem();
-        if (mType == KEY_MIDDLECLICK)
+        }
+        if (mType == KEY_MIDDLECLICK) {
           mScrollPane.handleMiddleClick();
-        if (mType == KEY_DOUBLECLICK)
+        }
+        if (mType == KEY_DOUBLECLICK) {
           mScrollPane.handleDoubleClick();
-        if (mType == KEY_SINGLECLICK)
+        }
+        if (mType == KEY_SINGLECLICK) {
           mScrollPane.handleLeftSingleClick();
+        }
         if (mType == KEY_MIDDLE_DOUBLE_CLICK) {
           mScrollPane.handleMiddleDoubleClick();
         }

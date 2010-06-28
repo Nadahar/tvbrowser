@@ -33,22 +33,23 @@ import javax.swing.event.ChangeListener;
 
 public class MenuHelpTextAdapter implements ChangeListener {
   
-  private JMenuItem mMenuItem; 
+  private JMenuItem mMenuItem;
   private String mHelpText;
-  private JLabel mStatusBar; 
+  private JLabel mStatusBar;
 
-  public MenuHelpTextAdapter(JMenuItem menuItem, String helpText, JLabel statusBar) { 
-    mMenuItem = menuItem; 
-    mHelpText = helpText; 
-    mStatusBar = statusBar; 
-    mMenuItem.addChangeListener(this); 
-  } 
+  public MenuHelpTextAdapter(JMenuItem menuItem, String helpText, JLabel statusBar) {
+    mMenuItem = menuItem;
+    mHelpText = helpText;
+    mStatusBar = statusBar;
+    mMenuItem.addChangeListener(this);
+  }
 
-  public void stateChanged(ChangeEvent evt) { 
-    if (mMenuItem.isArmed()) 
-      mStatusBar.setText(mHelpText); 
-    else 
-      mStatusBar.setText(" "); 
-  } 
+  public void stateChanged(ChangeEvent evt) {
+    if (mMenuItem.isArmed()) {
+      mStatusBar.setText(mHelpText);
+    } else {
+      mStatusBar.setText(" ");
+    }
+  }
 
 }

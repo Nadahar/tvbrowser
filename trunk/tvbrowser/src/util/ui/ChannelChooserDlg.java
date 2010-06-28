@@ -97,6 +97,7 @@ public class ChannelChooserDlg extends JDialog implements WindowClosingIf {
    *          A description text below the channel list.
    * @deprecated since 3.0
    */
+  @Deprecated
   public ChannelChooserDlg(Dialog parent, Channel[] channelArr, String description) {
     this((Window) parent, channelArr, description);
   }
@@ -110,6 +111,7 @@ public class ChannelChooserDlg extends JDialog implements WindowClosingIf {
    *          A description text below the channel list.
    * @deprecated since 3.0
    */
+  @Deprecated
   public ChannelChooserDlg(Frame parent, Channel[] channelArr, String description) {
     this((Window) parent, channelArr, description);
   }
@@ -143,7 +145,8 @@ public class ChannelChooserDlg extends JDialog implements WindowClosingIf {
    *          The type of this ChannelChooser
    * @deprecated since 3.0
    */
- public ChannelChooserDlg(Dialog parent, Channel[] channelArr, String description, int type) {
+ @Deprecated
+public ChannelChooserDlg(Dialog parent, Channel[] channelArr, String description, int type) {
    this((Window) parent, channelArr, description, type);
  }
 
@@ -158,7 +161,8 @@ public class ChannelChooserDlg extends JDialog implements WindowClosingIf {
    *          The type of this ChannelChooser
    * @deprecated since 3.0
    */
- public ChannelChooserDlg(Frame parent, Channel[] channelArr, String description, int type) {
+ @Deprecated
+public ChannelChooserDlg(Frame parent, Channel[] channelArr, String description, int type) {
    this((Window) parent, channelArr, description, type);
  }
 

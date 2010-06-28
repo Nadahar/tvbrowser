@@ -75,7 +75,7 @@ public class MirrorUpdater {
 
 
   public MirrorUpdater(Configuration config) {
-    Logger.getLogger("sun.awt.X11.timeoutTask.XToolkit").setLevel(Level.INFO);      
+    Logger.getLogger("sun.awt.X11.timeoutTask.XToolkit").setLevel(Level.INFO);
     mDataSource = config.getDataSource();
     mDataTarget = config.getDataTarget();
     mPrimaryServerUrl = config.getPrimaryServerUrl();
@@ -102,9 +102,9 @@ public class MirrorUpdater {
       Channel[] channelArr = updateChannelLists();
       
       // Update the day programs for all channels
-      for (int i = 0; i < channelArr.length; i++) {
+      for (Channel element : channelArr) {
         for (int j = 0; j < DayProgramFile.getLevels().length; j++) {
-          updateDayProgramsFor(channelArr[i], DayProgramFile.getLevels()[j].getId());
+          updateDayProgramsFor(element, DayProgramFile.getLevels()[j].getId());
         }
       }
       
@@ -119,7 +119,7 @@ public class MirrorUpdater {
     }
     finally {
       // Close data source and data target
-      mDataSource.close(); 
+      mDataSource.close();
       mDataTarget.close();
     }
   }
@@ -153,10 +153,10 @@ public class MirrorUpdater {
   private Channel[] updateChannelLists() throws UpdateException {
 		
     HashSet<Channel> channelSet=new HashSet<Channel>();
-    for (int i=0;i<mChannelGroupArr.length;i++) {
-      Channel[] ch=updateChannelList(mChannelGroupArr[i]);
-      for (int j=0;j<ch.length;j++) {
-        channelSet.add(ch[j]);
+    for (String element : mChannelGroupArr) {
+      Channel[] ch=updateChannelList(element);
+      for (Channel element2 : ch) {
+        channelSet.add(element2);
       }
     }
     
@@ -259,10 +259,11 @@ public class MirrorUpdater {
           
           int index = completeFileName.indexOf("_update_");
             
-          if(index != -1)
+          if(index != -1) {
             additionalFileName = completeFileName.substring(0,index) + completeFileName.substring(index+8,completeFileName.indexOf(".prog.gz")) + "_additional.prog.gz";
-          else
+          } else {
             additionalFileName = completeFileName.substring(0,completeFileName.indexOf(".prog.gz")) + "_additional.prog.gz";
+          }
 
           mLog.log(Level.INFO, "Checking for old additional file: " + additionalFileName);
           for(String value : mTargetFileArr) {
@@ -273,7 +274,7 @@ public class MirrorUpdater {
             }
           }
 
-          if(mDataSource.fileExists(additionalFileName)) {            
+          if(mDataSource.fileExists(additionalFileName)) {
             mLog.fine("Adding new additional file: " + additionalFileName);
             byte[] data = mDataSource.loadFile(additionalFileName);
             mDataTarget.writeFile(additionalFileName, data);
@@ -305,8 +306,8 @@ public class MirrorUpdater {
 
 
   private boolean fileIsOnMirror(String fileName) {
-    for (int i = 0; i < mTargetFileArr.length; i++) {
-      if (mTargetFileArr[i].equals(fileName)) {
+    for (String element : mTargetFileArr) {
+      if (element.equals(fileName)) {
         return true;
       }
     }
@@ -316,16 +317,14 @@ public class MirrorUpdater {
 
   private void writeGroupFile(DataTarget target, byte[] data, String fName) throws UpdateException {
     
-    for (int i=0;i<mChannelGroupArr.length;i++) {
-      String group=mChannelGroupArr[i];
+    for (String group : mChannelGroupArr) {
       target.writeFile(group+"_"+fName, data);
-    }    
+    }
   }
 
   private void copyGroupFile(DataTarget target, DataSource source, String fName) throws UpdateException {
     
-    for (int i=0;i<mChannelGroupArr.length;i++) {
-      String group=mChannelGroupArr[i];
+    for (String group : mChannelGroupArr) {
       byte[] data = mDataSource.loadFile(group+"_"+fName);
       target.writeFile(group+"_"+fName, data);
     }
@@ -345,8 +344,7 @@ public class MirrorUpdater {
     // Copy the summary.gz
     //copyGroupFile(mDataTarget,mDataSource,SummaryFile.SUMMARY_FILE_NAME);
     if (mChannelGroupArr!=null) {
-      for (int i=0;i<mChannelGroupArr.length;i++) {
-        String group=mChannelGroupArr[i];
+      for (String group : mChannelGroupArr) {
         data = mDataSource.loadFile(group+"_"+SummaryFile.SUMMARY_FILE_NAME);
         mDataTarget.writeFile(group+"_"+SummaryFile.SUMMARY_FILE_NAME, data);
       }
@@ -355,9 +353,9 @@ public class MirrorUpdater {
     
     // Copy the group files
     if (mChannelGroupArr!=null) {
-      for (int i=0;i<mChannelGroupArr.length;i++) {
-        data = mDataSource.loadFile(mChannelGroupArr[i]+"_info");
-        mDataTarget.writeFile(mChannelGroupArr[i]+"_info", data);
+      for (String element : mChannelGroupArr) {
+        data = mDataSource.loadFile(element+"_info");
+        mDataTarget.writeFile(element+"_info", data);
       }
     }
     
@@ -405,9 +403,9 @@ public class MirrorUpdater {
 
     buffer.append("<p>It contains the TV-Data of the following channels:");
     buffer.append("<ul>");
-    for (int i = 0; i < channelArr.length; i++) {
-      buffer.append("<li><code>" + channelArr[i].getName()
-        + "</code> from <code>" + channelArr[i].getCountry() + "</code></li>");
+    for (Channel element : channelArr) {
+      buffer.append("<li><code>" + element.getName()
+        + "</code> from <code>" + element.getCountry() + "</code></li>");
     }
     buffer.append("</ul></p>");
 
@@ -450,9 +448,9 @@ public class MirrorUpdater {
     }
 
     // Set the String to use for indicating the user agent in http requests
-    System.setProperty("http.agent", PROGRAM_TITLE); 
+    System.setProperty("http.agent", PROGRAM_TITLE);
 
-    // Start the update    
+    // Start the update
     
     try {
       Configuration config = new PropertiesConfiguration(configFileName);

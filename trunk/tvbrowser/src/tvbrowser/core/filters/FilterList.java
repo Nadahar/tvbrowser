@@ -123,9 +123,11 @@ public class FilterList {
     for (PluginAccess plugin : plugins) {
       PluginsProgramFilter[] filters = plugin.getAvailableFilter();
 
-      if (filters != null)
-        for (PluginsProgramFilter filter : filters)
+      if (filters != null) {
+        for (PluginsProgramFilter filter : filters) {
           filterList.put(filter.getName(), filter);
+        }
+      }
     }
 
     final ArrayList<ProgramFilter> filterArr = new ArrayList<ProgramFilter>();
@@ -194,8 +196,9 @@ public class FilterList {
 
     for (ProgramFilter filter : mFilterArr) {
       if (filter instanceof PluginsProgramFilter) {
-        if (((PluginsProgramFilter) filter).getPluginAccessOfFilter().equals(plugin))
+        if (((PluginsProgramFilter) filter).getPluginAccessOfFilter().equals(plugin)) {
           list.add((PluginsProgramFilter) filter);
+        }
       }
     }
 

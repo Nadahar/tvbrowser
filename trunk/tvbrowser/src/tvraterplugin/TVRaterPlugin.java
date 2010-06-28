@@ -70,7 +70,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
 
   protected final static int MINLENGTH = 15;
 
-  private TVRaterSettings _settings;
+  private TVRaterSettings mSettings;
 
   /**
    * Root-Node for the Program-Tree
@@ -85,7 +85,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
    */
   private static final String FAVORITES_PLUGIN_ID = "favoritesplugin.FavoritesPlugin";
 
-  private Database _tvraterDB = new Database();
+  private Database mTvraterDB = new Database();
 
   /** Instance of this Plugin */
   private static TVRaterPlugin _tvRaterInstance;
@@ -165,8 +165,8 @@ public class TVRaterPlugin extends devplugin.Plugin {
    * plugin from the menu.
    */
   public void showDialog() {
-    if ((_settings.getName().isEmpty())
-        || (_settings.getPassword().isEmpty())) {
+    if ((mSettings.getName().isEmpty())
+        || (mSettings.getPassword().isEmpty())) {
       showNotConfigured();
     } else {
       final DialogOverview dlg = new DialogOverview(getParentFrame(), this);
@@ -197,8 +197,8 @@ public class TVRaterPlugin extends devplugin.Plugin {
   }
 
   public void showRatingDialog(final Program program) {
-    if ((_settings.getName().isEmpty())
-        || (_settings.getPassword().isEmpty())) {
+    if ((mSettings.getName().isEmpty())
+        || (mSettings.getPassword().isEmpty())) {
       showNotConfigured();
     } else {
       DialogRating dlg = new DialogRating(getParentFrame(), this, program);
@@ -225,15 +225,15 @@ public class TVRaterPlugin extends devplugin.Plugin {
   }
 
   public Properties storeSettings() {
-    return _settings.storeSettings();
+    return mSettings.storeSettings();
   }
 
   public void loadSettings(final Properties properties) {
-    this._settings = new TVRaterSettings(properties);
+    this.mSettings = new TVRaterSettings(properties);
   }
 
   public SettingsTab getSettingsTab() {
-    return new TVRaterSettingsTab(_settings);
+    return new TVRaterSettingsTab(mSettings);
   }
 
   public String getMarkIconName() {
@@ -289,14 +289,14 @@ public class TVRaterPlugin extends devplugin.Plugin {
    * @return Rating
    */
   public synchronized Rating getRating(final Program program) {
-    if (_settings.getPreferOwnRating()) {
+    if (mSettings.getPreferOwnRating()) {
       Rating rating = getPersonalRating(program);
       if (rating != null) {
         return rating;
       }
     }
 
-    return _tvraterDB.getServerRating(program);
+    return mTvraterDB.getServerRating(program);
   }
 
   /**
@@ -307,7 +307,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
    * @since 2.6
    */
   private Rating getPersonalRating(final Program program) {
-    return _tvraterDB.getPersonalRating(program);
+    return mTvraterDB.getPersonalRating(program);
   }
 
   /**
@@ -316,7 +316,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
    * @return Rating-Database
    */
   public Database getDatabase() {
-    return _tvraterDB;
+    return mTvraterDB;
   }
 
   /**
@@ -326,7 +326,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
    */
   public void readData(final ObjectInputStream in) throws IOException,
       ClassNotFoundException {
-    _tvraterDB.readData(in);
+    mTvraterDB.readData(in);
   }
 
   /**
@@ -335,7 +335,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
    * @see #readData(ObjectInputStream)
    */
   public void writeData(final ObjectOutputStream out) throws IOException {
-    _tvraterDB.writeData(out);
+    mTvraterDB.writeData(out);
     if (mRootNode != null && !mRootNode.isEmpty()) {
       storeRootNode(mRootNode);
     }
@@ -355,16 +355,16 @@ public class TVRaterPlugin extends devplugin.Plugin {
 
   public void handleTvBrowserStartFinished() {
     mStartFinished = true;
-    if (_settings.getUpdateInterval() == UpdateInterval.OnStart) {
+    if (mSettings.getUpdateInterval() == UpdateInterval.OnStart) {
       updateDB();
     }
   }
 
   public void handleTvDataUpdateFinished() {
-    if (!((_settings.getName().isEmpty()) || (_settings
+    if (!((mSettings.getName().isEmpty()) || (mSettings
         .getPassword().isEmpty()))
         && mStartFinished && IOUtilities.getMinutesAfterMidnight() > 1) {
-      if (_settings.getUpdateInterval() != UpdateInterval.Manually) {
+      if (mSettings.getUpdateInterval() != UpdateInterval.Manually) {
         updateDB();
       }
     }
@@ -388,7 +388,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
           // Ignore
         }
 
-        Updater up = new Updater(tvrater, _settings);
+        Updater up = new Updater(tvrater, mSettings);
         up.run();
 
         if (showMessage) {
@@ -460,7 +460,7 @@ public class TVRaterPlugin extends devplugin.Plugin {
   @SuppressWarnings("unchecked")
   public Class<? extends PluginsFilterComponent>[] getAvailableFilterComponentClasses() {
     //manually cast to avoid unsafe compiler cast
-    return (Class<? extends PluginsFilterComponent>[]) new Class[] { TVRaterFilter.class, TVRaterFilterAllCategories.class };
+    return new Class[] { TVRaterFilter.class, TVRaterFilterAllCategories.class };
   }
 
   @Override
@@ -701,6 +701,6 @@ public class TVRaterPlugin extends devplugin.Plugin {
   }
 
   protected UpdateInterval getUpdateInterval() {
-    return _settings.getUpdateInterval();
+    return mSettings.getUpdateInterval();
   }
 }

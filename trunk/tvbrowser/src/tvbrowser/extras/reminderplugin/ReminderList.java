@@ -48,6 +48,8 @@ import devplugin.ProgramItem;
  */
 public class ReminderList implements ActionListener {
 
+  private static final int MINUTES_PER_DAY = 24 * 60;
+
   private ReminderTimerListener mListener = null;
 
   private javax.swing.Timer mTimer;
@@ -384,8 +386,8 @@ public class ReminderList implements ActionListener {
     int remindTime = prog.getStartTime() - remindMinutes;
     if (remindTime < 0) {
       remindTime = -remindTime;
-      int days = remindTime / 1440 + 1;
-      remindTime = 1440 - (remindTime % 1440);
+      int days = remindTime / MINUTES_PER_DAY + 1;
+      remindTime = MINUTES_PER_DAY - (remindTime % MINUTES_PER_DAY);
       remindDate = remindDate.addDays(-days);
     }
     int diff = today.compareTo(remindDate);

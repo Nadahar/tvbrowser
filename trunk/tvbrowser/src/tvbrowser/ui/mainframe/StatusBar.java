@@ -26,8 +26,6 @@
 
 package tvbrowser.ui.mainframe;
 
-import devplugin.ProgressMonitor;
-
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 
@@ -35,6 +33,8 @@ import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
+
+import devplugin.ProgressMonitor;
 
 /**
  * Statusbar

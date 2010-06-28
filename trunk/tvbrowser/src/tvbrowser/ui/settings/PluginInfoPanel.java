@@ -27,6 +27,7 @@
 package tvbrowser.ui.settings;
 
 import java.awt.Font;
+
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 

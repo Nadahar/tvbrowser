@@ -200,17 +200,19 @@ public class Java6Tray {
 
       public void mouseClicked(MouseEvent e) {
         if(SwingUtilities.isLeftMouseButton(e)) {
-          if(e.getClickCount() == 1 && mLeftClickListener != null)
+          if(e.getClickCount() == 1 && mLeftClickListener != null) {
             mLeftClickListener.actionPerformed(null);
-          else if(e.getClickCount() == 2 && mLeftDoubleClickListener != null)
+          } else if(e.getClickCount() == 2 && mLeftDoubleClickListener != null) {
             mLeftDoubleClickListener.actionPerformed(null);
+          }
         }
       }
 
       public void mousePressed(MouseEvent e) {
         if (e.isPopupTrigger()) {
-          if(SwingUtilities.isRightMouseButton(e) && mRightClickListener != null)
+          if(SwingUtilities.isRightMouseButton(e) && mRightClickListener != null) {
             mRightClickListener.actionPerformed(null);
+          }
 
           showPopup(e.getPoint());
         }
@@ -218,8 +220,9 @@ public class Java6Tray {
 
       public void mouseReleased(MouseEvent e) {
         if (e.isPopupTrigger()) {
-          if(SwingUtilities.isRightMouseButton(e) && mRightClickListener != null)
+          if(SwingUtilities.isRightMouseButton(e) && mRightClickListener != null) {
             mRightClickListener.actionPerformed(null);
+          }
 
           showPopup(e.getPoint());
         }
@@ -245,8 +248,12 @@ public class Java6Tray {
    * Compute the proper position for a popup
    */
   private Point computeDisplayPoint(int x, int y, Dimension dim) {
-      if (x - dim.width > 0) x -= dim.width;
-      if (y - dim.height > 0) y -= dim.height;
+      if (x - dim.width > 0) {
+        x -= dim.width;
+      }
+      if (y - dim.height > 0) {
+        y -= dim.height;
+      }
       return new Point(x, y);
   }
 

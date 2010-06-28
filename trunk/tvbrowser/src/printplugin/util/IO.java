@@ -70,8 +70,8 @@ public class IO {
 
     ProgramFieldType[] fields = settings.getProgramInfoFields();
     out.writeInt(fields.length);
-    for (int i=0; i<fields.length; i++) {
-      out.writeInt(fields[i].getTypeId());
+    for (ProgramFieldType field : fields) {
+      out.writeInt(field.getTypeId());
     }
   }
 

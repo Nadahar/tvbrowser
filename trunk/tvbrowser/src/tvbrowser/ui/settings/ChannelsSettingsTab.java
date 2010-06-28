@@ -793,7 +793,7 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
    * Fills the List with the subscribed CHannels
    */
   private void fillSubscribedChannelsListBox() {
-    Channel[] subscribedChannelArr = null;
+    Channel[] subscribedChannelArr;
 
     subscribedChannelArr = new Channel[mChannelListModel.getSubscribedChannels().size()];
     ((DefaultListModel) mSubscribedChannels.getModel()).clear();
@@ -939,8 +939,8 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
         Channel[] channels = mChannelListModel.getAvailableChannels();
         // make a copy of the channel list
         final ArrayList<Channel> before = new ArrayList<Channel>();
-        for (int i = 0; i < channels.length; i++) {
-          before.add(channels[i]);
+        for (Channel channel : channels) {
+          before.add(channel);
         }
         ChannelGroupManager.getInstance().checkForAvailableGroupsAndChannels(
             win);

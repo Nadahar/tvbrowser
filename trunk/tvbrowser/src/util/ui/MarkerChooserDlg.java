@@ -91,6 +91,7 @@ public class MarkerChooserDlg extends JDialog implements WindowClosingIf {
    *          A description text below the Plugin list.
    * @deprecated since 3.0
    */
+  @Deprecated
   public MarkerChooserDlg(Dialog parent, Marker[] pluginArr, String description) {
     this((Window) parent, pluginArr, description);
   }
@@ -104,6 +105,7 @@ public class MarkerChooserDlg extends JDialog implements WindowClosingIf {
    *          A description text below the Plugin list.
    * @deprecated since 3.0
    */
+  @Deprecated
   public MarkerChooserDlg(Frame parent, Marker[] pluginArr, String description) {
     this((Window) parent, pluginArr, description);
   }

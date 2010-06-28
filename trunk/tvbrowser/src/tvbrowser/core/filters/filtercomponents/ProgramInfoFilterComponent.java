@@ -177,8 +177,8 @@ public class ProgramInfoFilterComponent extends AbstractFilterComponent {
     String[] infoMessages = ProgramInfoHelper.getInfoIconMessages();
     int[] infoBits = ProgramInfoHelper.getInfoBits();
     final Object[] checked = mList.getSelection();
-    for (int checkedIndex = 0; checkedIndex < checked.length; checkedIndex++) {
-      final String item = (String) checked[checkedIndex];
+    for (Object element : checked) {
+      final String item = (String) element;
       for (int infoIndex = 0; infoIndex < infoMessages.length; infoIndex++) {
         if (item.equals(infoMessages[infoIndex])) {
           bits |= infoBits[infoIndex];

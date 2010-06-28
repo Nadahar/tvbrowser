@@ -24,7 +24,7 @@ package devplugin;
  * @author René Mach
  */
 public abstract class PluginsProgramFilter implements ProgramFilter {
-  private String mPluginId;  
+  private String mPluginId;
   
   /**
    * Creates an instance of PluginsProgramFilter.

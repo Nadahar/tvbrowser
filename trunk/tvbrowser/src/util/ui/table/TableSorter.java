@@ -10,13 +10,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JTable;
+import javax.swing.SwingConstants;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
@@ -61,7 +61,7 @@ import devplugin.Channel;
  * </ul>
  * <p/> This is a long overdue rewrite of a class of the same name that first
  * appeared in the swing table demos in 1997.
- * 
+ *
  * @author Philip Milne
  * @author Brendon McLean
  * @author Dan van Enckevort
@@ -319,8 +319,7 @@ public class TableSorter extends AbstractTableModel {
       int row1 = modelIndex;
       int row2 = other.modelIndex;
 
-      for (Iterator<Directive> it = sortingColumns.iterator(); it.hasNext();) {
-        Directive directive = it.next();
+      for (Directive directive : sortingColumns) {
         int column = directive.column;
         Object o1 = tableModel.getValueAt(row1, column);
         Object o2 = tableModel.getValueAt(row2, column);
@@ -364,7 +363,7 @@ public class TableSorter extends AbstractTableModel {
 
       // We can map a cell event through to the view without widening
       // when the following conditions apply:
-      // 
+      //
       // a) all the changes are on one row (e.getFirstRow() == e.getLastRow())
       // and,
       // b) all the changes are in one column (column !=
@@ -375,7 +374,7 @@ public class TableSorter extends AbstractTableModel {
       //
       // Note: INSERT and DELETE events fail this test as they have column ==
       // ALL_COLUMNS.
-      // 
+      //
       // The last check, for (modelToView != null) is to see if modelToView
       // is already allocated. If we don't do this check; sorting can become
       // a performance bottleneck for applications where cells
@@ -439,9 +438,9 @@ public class TableSorter extends AbstractTableModel {
 
     public void paintIcon(Component c, Graphics g, int x, int y) {
       Color color = c == null ? Color.GRAY : c.getBackground();
-      // In a compound sort, make each succesive triangle 20%
+      // In a compound sort, make each successive triangle 20%
       // smaller than the previous one.
-      int dx = (int) (size / 2 * Math.pow(0.8, priority));
+      int dx = (int) (Math.pow(0.8, priority) * size / 2);
       int dy = descending ? dx : -dx;
       // Align icon (roughly) with font baseline.
       y = y + 5 * size / 6 + (descending ? -dy : 0);
@@ -492,7 +491,7 @@ public class TableSorter extends AbstractTableModel {
           value, isSelected, hasFocus, row, column);
       if (c instanceof JLabel) {
         JLabel l = (JLabel) c;
-        l.setHorizontalTextPosition(JLabel.LEFT);
+        l.setHorizontalTextPosition(SwingConstants.LEFT);
         int modelColumn = table.convertColumnIndexToModel(column);
         l.setIcon(getHeaderRendererIcon(modelColumn, l.getFont().getSize()));
       }

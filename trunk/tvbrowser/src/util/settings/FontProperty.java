@@ -66,7 +66,7 @@ public class FontProperty extends Property {
             int style = Integer.parseInt(splits[1]);
             int size = Integer.parseInt(splits[2]);
             
-            mCachedValue = new Font(name, style, size);      
+            mCachedValue = new Font(name, style, size);
           }
           catch(NumberFormatException exc) {
             // We use the default value
@@ -92,7 +92,7 @@ public class FontProperty extends Property {
       setProperty(null);
     } else {
       String asString = value.getName() + "," + value.getStyle() + ","
-        + value.getSize(); 
+        + value.getSize();
       setProperty(asString);
     }
     

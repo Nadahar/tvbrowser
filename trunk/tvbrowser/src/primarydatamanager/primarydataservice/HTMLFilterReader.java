@@ -23,8 +23,8 @@ public class HTMLFilterReader extends FilterReader {
     super(in);
     mBuf=new byte[0];
     mBufPos=0;
-    ch=in.read();  
-    mCurStyle=Entry.NONE;    
+    ch=in.read();
+    mCurStyle=Entry.NONE;
   }
 
 
@@ -46,7 +46,7 @@ public class HTMLFilterReader extends FilterReader {
       cbuf[off+i]=(char)character;
       if (character==-1) {
         return i;
-      }      
+      }
     }
     return len;
     
@@ -57,7 +57,7 @@ public class HTMLFilterReader extends FilterReader {
     StringBuilder tagBuf = new StringBuilder();
     while (ch!=-1 && ch!='>' && ch!=' ') {
       tagBuf.append(Character.toLowerCase((char)ch));
-      ch=in.read();        
+      ch=in.read();
     }
     return tagBuf.toString();
   }
@@ -68,7 +68,7 @@ public class HTMLFilterReader extends FilterReader {
     while (ch!=-1 && ch!='>' && ch!='"') {
       buf.append((char)ch);
       ch=in.read();
-    }    
+    }
     if (ch=='"') {
       ch=in.read();
     }
@@ -103,7 +103,9 @@ public class HTMLFilterReader extends FilterReader {
       ch=in.read();
       
       
-      while (ch==' ') ch=in.read();
+      while (ch==' ') {
+        ch=in.read();
+      }
       String value=null;
       if (ch=='"') {
         value=readQuotedAttribute();
@@ -134,17 +136,19 @@ public class HTMLFilterReader extends FilterReader {
     mBufStr=new StringBuffer();
   // for (;;) {
     //ch=in.read();
-    while (ch!=-1 && ch!='<') ch=in.read();
+    while (ch!=-1 && ch!='<') {
+      ch=in.read();
+    }
          
-    // begin of a new tag   
+    // begin of a new tag
     if (ch!=-1) {
       String tag=readTag();
       //System.out.println("<"+tag+">");
       if ("b".equals(tag)) {
-        mCurStyle=(mCurStyle|Entry.BOLD);        
+        mCurStyle=(mCurStyle|Entry.BOLD);
       }
       else if ("/b".equals(tag)) {
-        mCurStyle=(byte)(mCurStyle^Entry.BOLD);       
+        mCurStyle=(byte)(mCurStyle^Entry.BOLD);
       }
       else if ("i".equals(tag)) {
         mCurStyle=(mCurStyle|Entry.ITALIC);
@@ -187,18 +191,22 @@ public class HTMLFilterReader extends FilterReader {
         }
       }
       
-      while (ch!=-1 && ch!='>') ch=in.read();
+      while (ch!=-1 && ch!='>') {
+        ch=in.read();
+      }
       
       
        
     //  mBufStr=new StringBuffer();
       StringBuilder buf = new StringBuilder();
-      if (ch!=-1) ch=in.read();
+      if (ch!=-1) {
+        ch=in.read();
+      }
       while (ch!=-1 && ch!='<') {
         if (ch!='\n' && ch!='\r') {
           buf.append((char)ch);
         }
-        ch=in.read();   
+        ch=in.read();
       }
       
       String line=buf.toString().trim();
@@ -229,7 +237,9 @@ public class HTMLFilterReader extends FilterReader {
   public int read() throws IOException {
     
     while (mBufPos>=mBuf.length) {
-      if (fillBuffer()) return -1;
+      if (fillBuffer()) {
+        return -1;
+      }
     }
     return mBuf[mBufPos++];
     

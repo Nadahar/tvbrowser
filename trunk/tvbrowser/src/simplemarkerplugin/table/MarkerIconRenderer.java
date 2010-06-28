@@ -21,14 +21,15 @@
  */
 package simplemarkerplugin.table;
 
-import simplemarkerplugin.MarkList;
+import java.awt.Component;
+import java.awt.FlowLayout;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
-import java.awt.Component;
-import java.awt.FlowLayout;
+
+import simplemarkerplugin.MarkList;
 
 /**
  * The renderer for the mark icon column

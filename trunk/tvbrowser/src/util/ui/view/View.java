@@ -33,7 +33,7 @@ public interface View {
   
   public void setComponents(Component[] components);
   public void setProperty(ViewProperty prop);
-  public ViewProperty getProperty();  
+  public ViewProperty getProperty();
   public Component getContent();
   public void storeProperties();
   public void update();

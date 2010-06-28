@@ -11,6 +11,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 
 import tvbrowser.core.filters.FilterManagerImpl;
@@ -18,10 +19,10 @@ import tvbrowser.ui.mainframe.MainFrame;
 import devplugin.ProgramFilter;
 
 /**
- * This Class represents the Panel above the ProgramPanel. If a 
+ * This Class represents the Panel above the ProgramPanel. If a
  * Filter is selected, this Panel is visible and shows the name of
- * the current selected filter 
- * 
+ * the current selected filter
+ *
  * @author bodum
  */
 public class FilterPanel extends JPanel {
@@ -32,10 +33,10 @@ public class FilterPanel extends JPanel {
    * remember current filter name to avoid repeated UI updates
    */
   private String mCurrentName;
-  
+
   private static final util.ui.Localizer mLocalizer
   = util.ui.Localizer.getLocalizerFor(FilterPanel.class);
-  
+
   /**
    * Create the Filter-Panel
    */
@@ -43,20 +44,20 @@ public class FilterPanel extends JPanel {
     setLayout(new BorderLayout());
     setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
     setBackground(Color.WHITE);
-    
+
     mFilterLabel = new JLabel();
-    
-    mFilterLabel.setHorizontalAlignment(JLabel.LEFT);
+
+    mFilterLabel.setHorizontalAlignment(SwingConstants.LEFT);
     add(mFilterLabel, BorderLayout.CENTER);
-    
+
     JButton deactivate = new JButton(mLocalizer.msg("deactivate", "Deactivate"));
-    
+
     deactivate.addActionListener(new ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent e) {
         MainFrame.getInstance().setProgramFilter(FilterManagerImpl.getInstance().getDefaultFilter());
       };
     });
-    
+
     add(deactivate, BorderLayout.EAST);
   }
 
@@ -70,9 +71,9 @@ public class FilterPanel extends JPanel {
       return;
     }
     mCurrentName = name;
-    mFilterLabel.setText("<html><body><b>" + mLocalizer.msg("filterActive", "Active Filter:")+ ":</b> "+name+"</body></html>"); 
+    mFilterLabel.setText("<html><body><b>" + mLocalizer.msg("filterActive", "Active Filter:")+ ":</b> "+name+"</body></html>");
   }
-  
+
   /**
    * Set the current Filter.
    * This updates the JLabel to represent the current Filter
@@ -81,7 +82,7 @@ public class FilterPanel extends JPanel {
   public void setCurrentFilter(ProgramFilter filter) {
     setFilterLabel(filter.getName());
   }
-  
+
   /**
    * Paints the component
    */
@@ -93,12 +94,12 @@ public class FilterPanel extends JPanel {
     int width = getWidth();
     int height = getHeight();
 
-    // Create the gradient paint        
+    // Create the gradient paint
     GradientPaint paint =
-        new GradientPaint(width/3, 0, getBackground(), width, height, UIManager.getColor("List.selectionBackground"), false);
+        new GradientPaint((float)width / 3, 0, getBackground(), width, height, UIManager.getColor("List.selectionBackground"), false);
 
     g2d.setPaint(paint);
     g2d.fillRect(0, 0, width, height);
   }
-  
+
 }

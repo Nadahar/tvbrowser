@@ -7,7 +7,7 @@ public class Form {
   private ArrayList<Field> mFields;
   
   public Form() {
-    mFields = new ArrayList<Field>(); 
+    mFields = new ArrayList<Field>();
   }
   
   public void addField(String key, String value) {

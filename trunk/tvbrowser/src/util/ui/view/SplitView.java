@@ -140,10 +140,11 @@ public class SplitView extends AbstractView {
           prop.setFixedComponentWidth(comp.getHeight());
         }
         else {
-          if(prop.getLeftComponentFixed())
+          if(prop.getLeftComponentFixed()) {
             prop.setFixedComponentWidth(comp.getWidth());
-          else
+          } else {
             prop.setFixedComponentWidth(comp.getWidth() + splitPane.getDividerSize());
+          }
         }
       }
     }

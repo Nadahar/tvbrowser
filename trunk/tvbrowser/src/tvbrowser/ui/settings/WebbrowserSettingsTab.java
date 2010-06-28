@@ -38,6 +38,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -81,7 +82,7 @@ public class WebbrowserSettingsTab implements devplugin.SettingsTab {
 
     mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("browser", "Web browser")), cc.xyw(1,1,9));
 
-    JButton testButton = new LinkButton(mLocalizer.msg("testBrowser", "Test Webbrowser"), "http://www.tvbrowser.org", LinkButton.LEFT, false);
+    JButton testButton = new LinkButton(mLocalizer.msg("testBrowser", "Test Webbrowser"), "http://www.tvbrowser.org", SwingConstants.LEFT, false);
     testButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         String buffer = Settings.propUserDefinedWebbrowser.getString();

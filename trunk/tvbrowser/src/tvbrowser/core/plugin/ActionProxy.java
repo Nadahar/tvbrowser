@@ -31,7 +31,7 @@ import java.beans.PropertyChangeListener;
 import javax.swing.Action;
 
 /**
- * A ActionProxy handles Erros throwns by Plugins and enables the User to 
+ * A ActionProxy handles Erros throwns by Plugins and enables the User to
  * deactivate those Plugins
  * 
  * @author bodum
@@ -46,7 +46,7 @@ public class ActionProxy implements Action {
   /**
    * Create the Proxy
    * 
-   * @param pluginProxy PluginProxy to use 
+   * @param pluginProxy PluginProxy to use
    * @param action Action that gets a better Error-Handling
    */
   public ActionProxy(PluginProxy pluginProxy, Action action) {

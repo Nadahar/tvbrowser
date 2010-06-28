@@ -123,8 +123,9 @@ public class ProgramField implements Cloneable {
             // If the FieldType is a Picture it has to be resized and recompressed
 
             byte[] newdata = recreateImage(data);
-            if (newdata == null)
-                return null;
+            if (newdata == null) {
+              return null;
+            }
 
             p.setBinaryData(newdata);
 
@@ -435,8 +436,9 @@ public class ProgramField implements Cloneable {
     protected void writeToStream(OutputStream stream, boolean check)
             throws IOException, FileFormatException {
         // Check whether the field has the right format
-      if(check)
+      if(check) {
         checkFormat();
+      }
 
         stream.write(mTypeId);
 

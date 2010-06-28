@@ -24,7 +24,7 @@ public class PDSRunner {
   
   public PDSRunner(File baseDir) {
     Logger.getLogger("sun.awt.X11.timeoutTask.XToolkit").setLevel(Level.INFO);
-    mPDSList=new LinkedList<PrimaryDataService>();    
+    mPDSList=new LinkedList<PrimaryDataService>();
     mRawDir=new File(baseDir,"raw");
     mLogDir=new File(baseDir,"pdslog");
   }
@@ -61,7 +61,7 @@ public class PDSRunner {
     mWaitingThread = Thread.currentThread();
     
     //  Set the max. connections
-    if (CONCURRENT_DOWNLOADS > 5) {    
+    if (CONCURRENT_DOWNLOADS > 5) {
       System.setProperty("http.maxConnections", Integer.toString(CONCURRENT_DOWNLOADS));
     }
     
@@ -74,7 +74,7 @@ public class PDSRunner {
       downloadThread.start();
     }
     
-    //  Wait until all jobs are processed    
+    //  Wait until all jobs are processed
     boolean isFinished;
     do {
       try {
@@ -145,7 +145,7 @@ public class PDSRunner {
       System.exit(1);
     }
     
-    for (int i=0;i<args.length;i++) { 
+    for (int i=0;i<args.length;i++) {
       
       if ("-raw".equalsIgnoreCase(args[i])) {
         if ((i + 1) >= args.length) {
@@ -153,7 +153,7 @@ public class PDSRunner {
            System.exit(1);
         } else {
            i++;
-           pdsRunner.setRawDir(new File(args[i])); 
+           pdsRunner.setRawDir(new File(args[i]));
         }
       }
       else if ("-log".equalsIgnoreCase(args[i])) {

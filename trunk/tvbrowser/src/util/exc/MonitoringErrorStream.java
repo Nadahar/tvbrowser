@@ -41,7 +41,7 @@ import util.io.IOUtilities;
  */
 public class MonitoringErrorStream extends OutputStream {
 
-  /** The localizer of this class. */  
+  /** The localizer of this class. */
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(MonitoringErrorStream.class);
   

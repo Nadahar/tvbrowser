@@ -136,7 +136,7 @@ class CheckNetworkConnection {
 
     hideDialog();
     return mResult;
-  }  
+  }
   
   
   private void hideDialog() {

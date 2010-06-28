@@ -67,17 +67,17 @@ public class ParamDescriptionPanel extends JPanel {
     JEditorPane helpPanel = new JEditorPane();
     helpPanel.setContentType("text/html");
     helpPanel.setEditable(false);
-    StringBuilder text = new StringBuilder("<html>" + 
-        " <head>" + 
-        "<style type=\"text/css\" media=\"screen\">" + 
-        "<!--" + 
+    StringBuilder text = new StringBuilder("<html>" +
+        " <head>" +
+        "<style type=\"text/css\" media=\"screen\">" +
+        "<!--" +
         "body {font-family:Dialog;}" +
-        "-->" + 
-        "</style>" + 
-        "  </head>" + 
+        "-->" +
+        "</style>" +
+        "  </head>" +
         "<body>" + "<b>" +
         mLocalizer.msg("possibleParameters", "Possible Parameters") +
-        ":</b>\n\n" + 
+        ":</b>\n\n" +
         "<table>");
     
     List<String> params = Arrays.asList(lib.getPossibleKeys());

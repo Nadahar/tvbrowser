@@ -70,13 +70,13 @@ public class ChannelArrayProperty extends Property {
         
         ArrayList<Channel> channels = new ArrayList<Channel>();
         
-        for (int i = 0; i < splits.length; i++) {
-          int pos = splits[i].indexOf(':');
+        for (String split : splits) {
+          int pos = split.indexOf(':');
           if (pos > 0) {
-            String dataServiceId = splits[i].substring(0, pos);
+            String dataServiceId = split.substring(0, pos);
             String groupId = null;
             String country = null;
-            String channelId = splits[i].substring(pos + 1);
+            String channelId = split.substring(pos + 1);
             
             if (channelId.indexOf(':') != -1) {
               String[] values = channelId.split(":");
@@ -85,9 +85,9 @@ public class ChannelArrayProperty extends Property {
               if(values.length > 2) {
                 country = values[1];
                 channelId = values[2];
-              }
-              else
+              } else {
                 channelId = values[1];
+              }
             }
             
             Channel ch = ChannelList.getChannel(dataServiceId, groupId, country, channelId);
@@ -132,8 +132,9 @@ public class ChannelArrayProperty extends Property {
       StringBuilder buffer = new StringBuilder();
     
       for (int i = 0; i < value.length; i++) {
-        if (value[i] == null)
+        if (value[i] == null) {
           continue;
+        }
         if (i != 0) {
           buffer.append(',');
         }

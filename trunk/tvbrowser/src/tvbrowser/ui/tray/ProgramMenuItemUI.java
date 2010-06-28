@@ -97,15 +97,16 @@ public class ProgramMenuItemUI extends BasicMenuItemUI {
 
     boolean isMarked = mProgram.getMarkPriority() > Program.NO_MARK_PRIORITY;
 
-    if (menuItem.isArmed())
+    if (menuItem.isArmed()) {
       g.setColor(bgColor);
-    else if (!isOnAir
+    } else if (!isOnAir
         && !isMarked
         && ((mTime != -1 && Settings.propTrayOnTimeProgramsLightBackground.getColor().getAlpha() == 0 && Settings.propTrayOnTimeProgramsDarkBackground
-            .getColor().getAlpha() == 0) || mTime == -1))
+            .getColor().getAlpha() == 0) || mTime == -1)) {
       g.setColor(menuItem.getBackground());
-    else
+    } else {
       g.setColor(((ProgramMenuItem) menuItem).getDefaultBackground());
+    }
 
     g.fillRect(0, 0, menuItem.getWidth(), menuItem.getHeight());
 
@@ -158,7 +159,7 @@ public class ProgramMenuItemUI extends BasicMenuItemUI {
         g.fillRect(x + progressX - i.right - i.left, top, width - progressX + i.right + i.left, bottom);
       }
       g.setColor(mTime == -1 ? Settings.propProgramTableColorOnAirDark.getColor() : isMarked ? new Color(markedColor
-          .darker().getRed(), markedColor.darker().getGreen(), markedColor.darker().getBlue(), (int) (markedColor
+          .darker().getRed(), markedColor.darker().getGreen(), markedColor.darker().getBlue(), (markedColor
           .darker().getAlpha() / 3)) : Settings.propTrayOnTimeProgramsDarkBackground.getColor());
 
       g.fillRect(x, top, progressX - i.right - i.left, bottom);
@@ -166,8 +167,9 @@ public class ProgramMenuItemUI extends BasicMenuItemUI {
       ((ProgramMenuItem) menuItem).stopTimer();
     }
 
-    if (mIcon != null)
+    if (mIcon != null) {
       mIcon.paintIcon(menuItem, g, menuItem.getMargin().left, menuItem.getMargin().top);
+    }
   }
 
   protected void paintText(Graphics g, JMenuItem menuItem, Rectangle textRect, String text) {

@@ -174,7 +174,7 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
       for(PluginAccess plugin : plugins) {
         Class<? extends PluginsFilterComponent>[] clazzes = plugin.getAvailableFilterComponentClasses();
         
-        if(clazzes != null)
+        if(clazzes != null) {
           for(Class<? extends PluginsFilterComponent> clazz : clazzes) {
             try {
               set.add(clazz.newInstance());
@@ -186,6 +186,7 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
               e.printStackTrace();
             }
           }
+        }
       }
     }
     else {
@@ -225,7 +226,7 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
     buttonPn.add(mCancelBtn);
 
     JPanel panel = new JPanel(new BorderLayout());
-    panel.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("componentSettings", "Component settings:")), BorderLayout.NORTH);    
+    panel.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("componentSettings", "Component settings:")), BorderLayout.NORTH);
 
     mCenterPanel = new JPanel(new BorderLayout());
     panel.add(mCenterPanel, BorderLayout.CENTER);

@@ -59,7 +59,7 @@ import devplugin.ThemeIcon;
 import devplugin.Version;
 
 /**
- * This Plugin is a generic Web-Tool. 
+ * This Plugin is a generic Web-Tool.
  * A User can configure his favorite Search-Engines and search for the given Movie
  */
 public class WebPlugin extends Plugin {
@@ -274,7 +274,7 @@ public class WebPlugin extends Plugin {
         	if (i == mAddresses.size() - 1) {
         	  actionList.add(ContextMenuSeparatorAction.getInstance());
         	}
-*/        	
+*/
         }
         if (address != null && address.isActive()) {
           // create items for a possible sub menu
@@ -436,7 +436,7 @@ public class WebPlugin extends Plugin {
       
       if (adr.isActive()) {
         list.add(new ProgramReceiveTarget(this,mLocalizer.msg("SearchOn", "Search on ") + " " + adr.getName(),adr.getName() + "." + adr.getUrl()));
-      }      
+      }
     }
     
     return list.toArray(new ProgramReceiveTarget[list.size()]);

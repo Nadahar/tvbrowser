@@ -151,7 +151,7 @@ public class WebSettingsTab implements SettingsTab,  ListDropAction {
     
     mAddressList = new JList(mListModel);
     // Register DnD on the List.
-    ListDragAndDropHandler dnDHandler = new ListDragAndDropHandler(mAddressList,mAddressList,this);    
+    ListDragAndDropHandler dnDHandler = new ListDragAndDropHandler(mAddressList,mAddressList,this);
     new DragAndDropMouseListener(mAddressList,mAddressList,this,dnDHandler);
 
     mAddressList.setSelectedIndex(0);
@@ -297,7 +297,7 @@ public class WebSettingsTab implements SettingsTab,  ListDropAction {
         resetIcons();
       }
 
-    }); 
+    });
   }
 
   /**

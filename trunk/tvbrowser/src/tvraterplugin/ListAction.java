@@ -39,23 +39,23 @@ public class ListAction extends AbstractAction {
     	.getLocalizerFor(ListAction.class);
 
     /** Title of Program to show */
-    private String _title;
+    private String mTitle;
     /** Parent */
     private Window mParent;
     
     /**
-     * Creates the Action 
+     * Creates the Action
      * @param parent Parent
      * @param title Title of Program to display in List
      */
     public ListAction(Window parent, String title) {
         mParent = parent;
-        _title = title;
+        mTitle = title;
         createGui(true, true);
     }
 
     /**
-     * Creates the Action 
+     * Creates the Action
      * @param parent Parent
      * @param title Title of Program to display in List
      * @paran icon show Icon?
@@ -63,7 +63,7 @@ public class ListAction extends AbstractAction {
      */
     public ListAction(Window parent, String title, boolean icon, boolean name) {
         mParent = parent;
-        _title = title;
+        mTitle = title;
         createGui(icon, name);
     }
 
@@ -75,15 +75,17 @@ public class ListAction extends AbstractAction {
     private void createGui(boolean icon, boolean name) {
         putValue(Action.SHORT_DESCRIPTION, mLocalizer.msg("showList", "Show List"));
 
-        if (name)
-            putValue(Action.NAME, mLocalizer.msg("showList", "Show List"));
+        if (name) {
+          putValue(Action.NAME, mLocalizer.msg("showList", "Show List"));
+        }
         
-        if (icon)
-            putValue(Action.SMALL_ICON, TVBrowserIcons.search(TVBrowserIcons.SIZE_SMALL));
+        if (icon) {
+          putValue(Action.SMALL_ICON, TVBrowserIcons.search(TVBrowserIcons.SIZE_SMALL));
+        }
     }
 
     public void actionPerformed(ActionEvent e) {
-        ProgramListDialog dialog = new ProgramListDialog(mParent, _title);
+        ProgramListDialog dialog = new ProgramListDialog(mParent, mTitle);
         
         Dimension dimensionDialog = dialog.getSize();
         if (dimensionDialog.width < 300) {
@@ -97,7 +99,7 @@ public class ListAction extends AbstractAction {
         }
         dialog.setSize(dimensionDialog);
         
-        UiUtilities.centerAndShow(dialog);        
+        UiUtilities.centerAndShow(dialog);
     }
 
 }

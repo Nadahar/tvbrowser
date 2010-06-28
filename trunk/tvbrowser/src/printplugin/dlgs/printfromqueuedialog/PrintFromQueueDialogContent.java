@@ -65,8 +65,8 @@ public class PrintFromQueueDialogContent implements DialogContent {
   public void printingDone() {
     if (mGeneralTab.emptyQueueAfterPrinting()) {
       Program[] progs = mRootNode.getPrograms();
-      for (int i=0; i<progs.length; i++) {
-        progs[i].unmark(PrintPlugin.getInstance());
+      for (Program prog : progs) {
+        prog.unmark(PrintPlugin.getInstance());
       }
       mRootNode.removeAllChildren();
       mRootNode.update();

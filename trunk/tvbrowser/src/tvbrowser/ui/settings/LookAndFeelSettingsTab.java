@@ -70,22 +70,22 @@ public final class LookAndFeelSettingsTab implements SettingsTab {
   private JButton mConfigBtn;
 
   private JComboBox mIconThemes;
-  
+
   private JComboBox mPluginViewPosition;
 
   private JComboBox mDateLayout;
 
   private JTextArea mRestartMessage;
-  
+
   private int mStartLookAndIndex;
   private int mStartIconIndex;
   private int mStartPluginViewPositionIndex;
 
   private String mJGoodiesStartTheme;
   private boolean mJGoodiesStartShadow;
-  
+
   private String mSkinLFStartTheme;
-  
+
   private boolean mSomethingChanged = false;
 
   private static class LookAndFeelObj implements Comparable<LookAndFeelObj> {
@@ -133,22 +133,22 @@ public final class LookAndFeelSettingsTab implements SettingsTab {
     layout.appendRow(RowSpec.decode("pref"));
 
     mSettingsPn.add(new JLabel(mLocalizer.msg("channelPosition", "Channel list position") +":"), cc.xy(2, 3));
-    
+
     mPluginViewPosition = new JComboBox(new String[] {Localizer.getLocalization(Localizer.I18N_LEFT),Localizer.getLocalization(Localizer.I18N_RIGHT)});
-    
+
     if(Settings.propPluginViewIsLeft.getBoolean()) {
       mPluginViewPosition.setSelectedIndex(1);
     }
     else {
       mPluginViewPosition.setSelectedIndex(0);
     }
-    
+
     mPluginViewPosition.addActionListener(new ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent e) {
         updateRestartMessage();
       }
     });
-    
+
     mSettingsPn.add(mPluginViewPosition, cc.xy(4,3));
 
     layout.appendRow(RowSpec.decode("5dlu"));
@@ -187,29 +187,29 @@ public final class LookAndFeelSettingsTab implements SettingsTab {
         mLfComboBox.setSelectedItem(lfObject);
       }
     }
-    
+
     mLfComboBox.addActionListener(new ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent e) {
         lookChanged();
       }
     });
-    
+
     mSettingsPn.add(mLfComboBox, cc.xy(4, 7));
-    
+
     mConfigBtn = new JButton(mLocalizer.msg("config", "Config"));
     mConfigBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         configTheme();
       }
     });
-    
+
     mSettingsPn.add(mConfigBtn, cc.xy(6, 7));
 
     layout.appendRow(RowSpec.decode("3dlu"));
     layout.appendRow(RowSpec.decode("pref"));
 
     mSettingsPn.add(new JLabel(mLocalizer.msg("icons", "Icons") + ":"), cc.xy(2, 9));
-    
+
     mIconThemes = new JComboBox(IconLoader.getInstance().getAvailableThemes());
     mIconThemes.setRenderer(new DefaultListCellRenderer() {
       @Override
@@ -222,7 +222,7 @@ public final class LookAndFeelSettingsTab implements SettingsTab {
         return label;
       }
     });
-    
+
     if (Settings.propIcontheme.getString() != null) {
       IconTheme theme = IconLoader.getInstance().getIconTheme(IconLoader.getInstance().getIconThemeFile(Settings.propIcontheme.getString()));
       if (theme.loadTheme()) {
@@ -233,7 +233,7 @@ public final class LookAndFeelSettingsTab implements SettingsTab {
     } else {
       mIconThemes.setSelectedItem(IconLoader.getInstance().getDefaultTheme());
     }
-    
+
     mSettingsPn.add(mIconThemes, cc.xy(4, 9));
 
     layout.appendRow(RowSpec.decode("3dlu"));
@@ -241,7 +241,7 @@ public final class LookAndFeelSettingsTab implements SettingsTab {
 
     mSettingsPn.add(new LinkButton(mLocalizer.msg("findMoreIcons","You can find more Icons on our Web-Page."),
         "http://www.tvbrowser.org/iconthemes.php"), cc.xy(4, 11));
-    
+
     layout.appendRow(RowSpec.decode("fill:3dlu:grow"));
     layout.appendRow(RowSpec.decode("pref"));
 
@@ -250,7 +250,7 @@ public final class LookAndFeelSettingsTab implements SettingsTab {
     mRestartMessage.setVisible(mSomethingChanged);
 
     mSettingsPn.add(mRestartMessage, cc.xyw(1, 13, 6));
-    
+
     if(!mSomethingChanged) {
       mStartLookAndIndex = mLfComboBox.getSelectedIndex();
       mStartIconIndex = mIconThemes.getSelectedIndex();
@@ -259,18 +259,18 @@ public final class LookAndFeelSettingsTab implements SettingsTab {
       mJGoodiesStartShadow = Settings.propJGoodiesShadow.getBoolean();
       mSkinLFStartTheme = Settings.propSkinLFThemepack.getString();
     }
-    
+
     mIconThemes.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         updateRestartMessage();
       }
     });
-    
+
     lookChanged();
-    
+
     return mSettingsPn;
   }
-  
+
   private void updateRestartMessage() {
     mRestartMessage.setVisible(
         mLfComboBox.getSelectedIndex() != mStartLookAndIndex ||
@@ -281,9 +281,9 @@ public final class LookAndFeelSettingsTab implements SettingsTab {
         mPluginViewPosition.getSelectedIndex() != mStartPluginViewPositionIndex);
   }
 
-  protected void configTheme() {
+  void configTheme() {
     String classname = ((LookAndFeelObj)mLfComboBox.getSelectedItem()).getLFClassName();
-    
+
     if (classname.startsWith("com.jgoodies")) {
       JGoodiesLNFSettings settings = new JGoodiesLNFSettings((JDialog) UiUtilities.getBestDialogParent(mSettingsPn));
       UiUtilities.centerAndShow(settings);
@@ -291,31 +291,31 @@ public final class LookAndFeelSettingsTab implements SettingsTab {
       SkinLNFSettings settings = new SkinLNFSettings((JDialog) UiUtilities.getBestDialogParent(mSettingsPn));
       UiUtilities.centerAndShow(settings);
     }
-    
+
     updateRestartMessage();
   }
 
-  protected void lookChanged() {
+  void lookChanged() {
     String classname = ((LookAndFeelObj)mLfComboBox.getSelectedItem()).getLFClassName();
-    
+
     if (classname.startsWith("com.jgoodies") || classname.startsWith("com.l2fprod")) {
       mConfigBtn.setEnabled(true);
     } else {
       mConfigBtn.setEnabled(false);
     }
-    
+
     updateRestartMessage();
   }
 
   public void saveSettings() {
     LookAndFeelObj obj = (LookAndFeelObj) mLfComboBox.getSelectedItem();
     Settings.propLookAndFeel.setString(obj.getLFClassName());
-    
+
     IconTheme theme = (IconTheme) mIconThemes.getSelectedItem();
     Settings.propIcontheme.setString("icons/" + theme.getBase().getName());
-    
+
     mSomethingChanged = mRestartMessage.isVisible();
-    
+
     Settings.propPluginViewIsLeft.setBoolean(mPluginViewPosition.getSelectedIndex() == 1);
     Settings.propViewDateLayout.setInt(mDateLayout.getSelectedIndex());
   }
