@@ -9,18 +9,18 @@
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation, in version 3 of the License.
- 
+
  This program is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU General Public License for more details.
- 
+
  You should have received a copy of the GNU General Public License
  along with this program, in a file called LICENSE in the top
- directory of the distribution; if not, write to 
- the Free Software Foundation, Inc., 59 Temple Place, Suite 330, 
+ directory of the distribution; if not, write to
+ the Free Software Foundation, Inc., 59 Temple Place, Suite 330,
  Boston, MA  02111-1307  USA
- 
+
  *******************************************************************/
 package aconsole.gui;
 import java.awt.BorderLayout;
@@ -72,20 +72,20 @@ final class ConsolePanel extends JPanel implements ComponentListener,Console.Lis
 	private JScrollPane jScrollPane1=null;
 	private boolean moveToEndOfOutputArea=false;					//if moveToEndOfOutputArea=true outputTextArea will scroll down at the next resize; see componentResized
 	Console console=null;
-	
+
 	RecordFormatter formatter=new RecordFormatter();
 	String loggerFilterText="";
 	Level loggerFilterLevel=Level.ALL;
 	private boolean initGui=false;
-	
+
 	private boolean showDate=false;
 	private boolean showClass=false;
 	private boolean showTime=true;
 	private boolean showMethod=false;
 	private boolean showOut=true;
 	private boolean showErr=true;
-	
-	private static final Level loggerLevels[]={
+
+	private static final Level[] loggerLevels={
 		Level.SEVERE,
 		Level.WARNING,
 		Level.INFO,
@@ -106,8 +106,10 @@ final class ConsolePanel extends JPanel implements ComponentListener,Console.Lis
 		showOut=AConsole.getShowOut().get();
 		showErr=AConsole.getShowErr().get();
 		int defaultLoggerLevel=AConsole.getLoggerLevel().get();
-		if (defaultLoggerLevel<0 && defaultLoggerLevel>loggerLevels.length)defaultLoggerLevel=1;
-		
+		if (defaultLoggerLevel<0 && defaultLoggerLevel>loggerLevels.length) {
+      defaultLoggerLevel=1;
+    }
+
 		formatter.setStyle(showDate,showTime,showClass,showMethod);
 
 		setLayout(new BorderLayout());
@@ -119,7 +121,7 @@ final class ConsolePanel extends JPanel implements ComponentListener,Console.Lis
 		jScrollPane1.setAutoscrolls(true);
 		setFont(font,caretcolor,disabledcolor);
 		add(jScrollPane1, BorderLayout.CENTER);
-		
+
 		toolbar.setLayout(new BorderLayout());
 		tf_loggerFilterText = new JTextField();
 		tf_loggerFilterText.setToolTipText(mLocalizer.msg("loggerfilter_tt","show logger with names starting with this pattern"));
@@ -145,14 +147,14 @@ final class ConsolePanel extends JPanel implements ComponentListener,Console.Lis
 				ConsolePanel.this.console.addListener(ConsolePanel.this);
 			}
 		});
-		
+
 		JPanel buttonpanel=new JPanel();
 		toolbar.add(buttonpanel,BorderLayout.EAST);
 		final JComboBox cb_loggerFilterLevel=new JComboBox(loggerLevels);
 		cb_loggerFilterLevel.setToolTipText(mLocalizer.msg("loggerlevel_tt","set the minimum level for logger events to show"));
 		buttonpanel.add(cb_loggerFilterLevel);
-		
-		
+
+
 		loggerFilterLevel=loggerLevels[defaultLoggerLevel];
 		cb_loggerFilterLevel.setSelectedItem(loggerFilterLevel);
 		cb_loggerFilterLevel.addActionListener(new AbstractAction(){
@@ -171,12 +173,12 @@ final class ConsolePanel extends JPanel implements ComponentListener,Console.Lis
 			}
 		});
 		cb_loggerFilterLevel.setEditable(false);
-		
-		
+
+
 		final JToggleButton btnShowDate= new JToggleButton(mLocalizer.msg("date","date"));
 		btnShowDate.setToolTipText(mLocalizer.msg("date_tt","show/hide logger-event date"));
 		btnShowDate.setSelected(showDate);
-		
+
 		buttonpanel.add(btnShowDate);
 		final JToggleButton btnShowTime= new JToggleButton(mLocalizer.msg("time","time"));
 		btnShowTime.setToolTipText(mLocalizer.msg("time_tt","show/hide logger-event time"));
@@ -204,7 +206,9 @@ final class ConsolePanel extends JPanel implements ComponentListener,Console.Lis
 
 			public void actionPerformed(ActionEvent e) {
 				try{
-					if (!initGui) return;
+					if (!initGui) {
+            return;
+          }
 					ConsolePanel.this.console.removeListener(ConsolePanel.this);
 					AConsole.getShowDate().set(showDate=btnShowDate.isSelected());
 					AConsole.getShowTime().set(showTime=btnShowTime.isSelected());
@@ -212,7 +216,7 @@ final class ConsolePanel extends JPanel implements ComponentListener,Console.Lis
 					AConsole.getShowMethod().set(showMethod=btnShowMethod.isSelected());
 					AConsole.getShowOut().set(showOut=btnShowOut.isSelected());
 					AConsole.getShowErr().set(showErr=btnShowErr.isSelected());
-					
+
 					formatter.setStyle(
 						btnShowDate.isSelected(),
 						btnShowTime.isSelected(),
@@ -226,8 +230,8 @@ final class ConsolePanel extends JPanel implements ComponentListener,Console.Lis
 				}
 			}
 		};
-		
-		
+
+
 		btnShowDate.addActionListener(styleactionlistener);
 		btnShowTime.addActionListener(styleactionlistener);
 		btnShowClass.addActionListener(styleactionlistener);
@@ -235,25 +239,25 @@ final class ConsolePanel extends JPanel implements ComponentListener,Console.Lis
 		btnShowOut.addActionListener(styleactionlistener);
 		btnShowErr.addActionListener(styleactionlistener);
 
-		
-		buttonpanel.add(getOpenHelpButton(frame));		
+
+		buttonpanel.add(getOpenHelpButton(frame));
 		add(toolbar, BorderLayout.NORTH);
-		
+
 		fastscroll=false;
-		
+
 		Property.Listener colorChangedListener=new Property.Listener(){
 			public void changedProperty(Property<?> p) {
 				ConsolePanel.this.console.removeListener(ConsolePanel.this);
 				clear();
-				
+
 				outputTextArea.setForeground(AConsole.getSystemOutText().get());
 				setBackground(AConsole.getBg().get());
 				outputTextArea.setBackground(AConsole.getBg().get());
 				outputTextArea.setSelectionColor(AConsole.getSelection().get());
-				
+
 				ConsolePanel.this.console.addListener(ConsolePanel.this);
 			}
-			
+
 		};
 		AConsole.getBg().addListener(colorChangedListener);
 		AConsole.getSelection().addListener(colorChangedListener);
@@ -280,29 +284,41 @@ final class ConsolePanel extends JPanel implements ComponentListener,Console.Lis
 	public void setFastScroll(boolean fs){
 		fastscroll=fs;
 	}
-	
+
 	/*add/remove text*********************************************/
 	/**
 	 * @see tvbconsole.Console.Listener#addText(tvbconsole.Console.LoggerConsoleEvent)
 	 */
 	public void addText(Console.LoggerConsoleEvent ce) {
-		if (!initGui) return;
+		if (!initGui) {
+      return;
+    }
 		Color textcolor=null;
 		String text=null;
 		try{
 			String loggername=ce.getLoggerName();
 			if (loggername!=null && loggername.equals(Console.SYSTEMOUT_LOGGER)){
-				if (!showOut) return;
+				if (!showOut) {
+          return;
+        }
 				textcolor=AConsole.getSystemOutText().get();
 				text=ce.getMessage();
-				if (!text.endsWith("\n"))text+="\n";
+				if (!text.endsWith("\n")) {
+          text+="\n";
+        }
 			}else if (loggername!=null && loggername.equals(Console.SYSTEMERR_LOGGER)){
-				if (!showErr) return;
+				if (!showErr) {
+          return;
+        }
 				textcolor=AConsole.getSystemErrText().get();
 				text=ce.getMessage();
-				if (!text.endsWith("\n"))text+="\n";
+				if (!text.endsWith("\n")) {
+          text+="\n";
+        }
 			}else{
-				if (loggerFilterText!=null && !(ce.getLoggerName().startsWith(loggerFilterText) && ce.getLevel().intValue()>=loggerFilterLevel.intValue())) return;
+				if (loggerFilterText!=null && !(ce.getLoggerName().startsWith(loggerFilterText) && ce.getLevel().intValue()>=loggerFilterLevel.intValue())) {
+          return;
+        }
 				int level=ce.getLevel().intValue();
 				if (level>=Level.SEVERE.intValue()){
 					textcolor=AConsole.getLevelSevereText().get();
@@ -319,23 +335,27 @@ final class ConsolePanel extends JPanel implements ComponentListener,Console.Lis
 			DefaultStyledDocument doc=(DefaultStyledDocument)outputTextArea.getStyledDocument();
 			MutableAttributeSet attr = new SimpleAttributeSet();
 			StyleConstants.setForeground(attr, textcolor);
-	
+
 			try {
 				doc.insertString(doc.getLength(),text,attr);
 			} catch (BadLocationException e1) {
 				e1.printStackTrace();
 			}
-	
+
 			if (outputTextArea.isDisplayable()) {
 				try {
 					outputTextArea.setCaretPosition(Integer.MAX_VALUE); // Scroll to end of window
 				} catch (Exception e) {} // Just for safety
 			}
 			validate();
-			if (!fastscroll)componentResized(null);
+			if (!fastscroll) {
+        componentResized(null);
+      }
 		}catch (Exception e){
 			AConsole.mLog.warning("skipping message because it caused an exception: "+e.toString());
-			if (console!=null && console.systemerr!=null)e.printStackTrace(console.systemerr);
+			if (console!=null && console.systemerr!=null) {
+        e.printStackTrace(console.systemerr);
+      }
 			return;
 		}
 	}
@@ -343,15 +363,18 @@ final class ConsolePanel extends JPanel implements ComponentListener,Console.Lis
 		outputTextArea.setText("");
 		validate();
 		JScrollBar sb=jScrollPane1.getVerticalScrollBar();
-		if (sb!=null)
-			sb.setValue(0);
+		if (sb!=null) {
+      sb.setValue(0);
+    }
 		try {
 			outputTextArea.setCaretPosition(0); // Scroll to begin of window
 		} catch (Exception e) {} // Just for safety
 		return;
 	}
 	public boolean save(String filename){
-		if (!initGui) return false;
+		if (!initGui) {
+      return false;
+    }
 		System.err.print("Dumping console content to "+filename+"...");
 		Vector<String> textvec=new Vector<String>();
 		StringReader sr=new StringReader(outputTextArea.getText());
@@ -361,8 +384,9 @@ final class ConsolePanel extends JPanel implements ComponentListener,Console.Lis
 			try {
 				oneline=br.readLine();
 			} catch (Exception ex) {}
-			if (oneline!=null)
-				textvec.addElement(oneline);
+			if (oneline!=null) {
+        textvec.addElement(oneline);
+      }
 		} while (oneline!=null);
 		try {
 			writefromvec(textvec,filename);
@@ -376,8 +400,9 @@ final class ConsolePanel extends JPanel implements ComponentListener,Console.Lis
 	/* intern stuff *********************************************/
 	private static void writefromvec(Vector<String> vec, String filename) throws IOException
 	{
-		if (vec==null)
-			return;
+		if (vec==null) {
+      return;
+    }
 		BufferedWriter outfile;
 		outfile = new BufferedWriter(new FileWriter(filename));
 		for (int i=0;i<vec.size();i++) {
@@ -393,7 +418,9 @@ final class ConsolePanel extends JPanel implements ComponentListener,Console.Lis
 	public void componentMoved(ComponentEvent e){
 	}
 	public void componentResized(ComponentEvent e){
-		if (!initGui) return;
+		if (!initGui) {
+      return;
+    }
 		if (moveToEndOfOutputArea){
 			try{
 				Dimension d=outputTextArea.getSize();
@@ -403,7 +430,7 @@ final class ConsolePanel extends JPanel implements ComponentListener,Console.Lis
 					moveToEndOfOutputArea=false;
 				}
 			}catch (RuntimeException re){
-				//what the ... 
+				//what the ...
 			}
 		}
 	}
@@ -416,7 +443,9 @@ final class ConsolePanel extends JPanel implements ComponentListener,Console.Lis
 		initGui=false;
 		clear();
 		console.removeListener(this);
-		if (console!=null)console=null;
+		if (console!=null) {
+      console=null;
+    }
 	}
 	public static JButton getOpenHelpButton(final JFrame frame) {
 		JButton helpBtn = new JButton(mLocalizer.msg("help", "help"));
@@ -435,6 +464,6 @@ final class ConsolePanel extends JPanel implements ComponentListener,Console.Lis
 		});
 		return helpBtn;
 	}
-	
-	
+
+
 }

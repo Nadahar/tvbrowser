@@ -38,7 +38,6 @@ import java.util.logging.Logger;
 
 import util.exc.ErrorHandler;
 import util.ui.Localizer;
-
 import devplugin.Plugin;
 import dvbplugin.Settings;
 import dvbplugin.Settings.TvbDvbVChannel;

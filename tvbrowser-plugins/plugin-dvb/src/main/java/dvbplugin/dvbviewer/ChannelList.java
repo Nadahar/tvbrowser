@@ -542,7 +542,7 @@ public class ChannelList {
     private short encrypted;
 
 
-    protected Channel(final ByteBuffer buffer) {
+    Channel(final ByteBuffer buffer) {
       byte[] byteBuffer = new byte[MAXSTRINGBUFFER];
 
       tuner = new Tuner(buffer);

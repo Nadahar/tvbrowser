@@ -313,12 +313,11 @@ public class ChannelSettingDialog extends JDialog{
 
     basicPanel.removeAll();
     GridBagLayout basicLayout = new GridBagLayout();
-    GridBagConstraints basicConstraints = new GridBagConstraints();
     basicPanel.setLayout(basicLayout);
 
 
     myChannelLabel = new JLabel ();
-    basicConstraints = makegbc(0, 0, 1, 1);
+    GridBagConstraints basicConstraints = makegbc(0, 0, 1, 1);
     basicConstraints.insets = new Insets(10, 10, 10, 10);
     basicLayout.setConstraints(myChannelLabel, basicConstraints);
     basicPanel.add(myChannelLabel);

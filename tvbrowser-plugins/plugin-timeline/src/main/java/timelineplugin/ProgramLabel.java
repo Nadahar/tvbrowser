@@ -1,6 +1,6 @@
 /*
  * Timeline by Reinhard Lehrbaum
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -42,8 +42,8 @@ public class ProgramLabel extends JComponent implements ChangeListener, MouseLis
 {
 	private static final long serialVersionUID = 1L;
 
-	transient private Program mProgram;
-  transient private TextFormatter mTextFormatter = null;
+	private transient Program mProgram;
+	private transient TextFormatter mTextFormatter = null;
 
 	public ProgramLabel()
 	{
@@ -184,7 +184,7 @@ public class ProgramLabel extends JComponent implements ChangeListener, MouseLis
 		{
 			g.setColor(new Color(g.getColor().getRed(), g.getColor().getGreen(), g.getColor().getBlue(), (int) (g.getColor().getAlpha() * 6 / 10.)));
 		}
-		g.setFont(TimelinePlugin.getInstance().getFont());
+    g.setFont(TimelinePlugin.getFont());
 		//		if (this.getLocation().x >= 0)
 		//		{
 		getFormatter().paint(mProgram, g, rb.width, rb.height);
@@ -216,7 +216,7 @@ public class ProgramLabel extends JComponent implements ChangeListener, MouseLis
 		mProgram.removeChangeListener(this);
 	}
 
-	private void redispatch(final MouseEvent e)
+	private static void redispatch(final MouseEvent e)
 	{
 	  final Component source = e.getComponent();
     final Component destination = source.getParent();

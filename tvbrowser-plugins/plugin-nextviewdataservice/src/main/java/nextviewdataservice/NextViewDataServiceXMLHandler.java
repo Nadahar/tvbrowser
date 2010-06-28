@@ -537,8 +537,9 @@ public class NextViewDataServiceXMLHandler extends DefaultHandler {
    * @return normalized string
    */
   private String normalize (String value){
-    if (value.length()<2)
+    if (value.length()<2) {
       value = "0"+value;
+    }
     return value;
   }
 

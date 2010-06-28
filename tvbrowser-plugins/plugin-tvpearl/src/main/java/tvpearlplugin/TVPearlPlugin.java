@@ -150,7 +150,7 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 		return new ActionMenu(action);
 	}
 
-	protected void showDialog()
+	void showDialog()
 	{
 		if (mDialog == null)
 		{
@@ -351,7 +351,7 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 	  }
 	}
 
-	protected static String getDayName(final Calendar cal, final boolean showToday)
+	static String getDayName(final Calendar cal, final boolean showToday)
 	{
 	  final SimpleDateFormat df = new SimpleDateFormat("E");
 		String day = df.format(cal.getTime());
@@ -501,7 +501,7 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 		return list.toArray(new ProgramReceiveTarget[list.size()]);
 	}
 
-	protected void setClientPluginsTargets(final ProgramReceiveTarget[] targets)
+	void setClientPluginsTargets(final ProgramReceiveTarget[] targets)
 	{
 		if (targets != null)
 		{

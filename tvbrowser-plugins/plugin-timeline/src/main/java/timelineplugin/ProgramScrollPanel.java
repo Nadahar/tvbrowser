@@ -1,6 +1,6 @@
 /*
  * Timeline by Reinhard Lehrbaum
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -18,6 +18,7 @@
 package timelineplugin;
 
 import java.awt.Color;
+import java.awt.event.InputEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.util.Iterator;
@@ -97,14 +98,16 @@ public class ProgramScrollPanel extends JScrollPane implements MouseWheelListene
 			  final Date dayToShow = choosenDay.addDays(j);
         final Iterator<Program> it = Plugin.getPluginManager()
             .getChannelDayProgram(dayToShow, channels[i]);
-				while ((it != null) && (it.hasNext()))
-				{
-				  final Program p = (Program) it.next();
-					if (filter.accept(p))
-					{
-						addProgram(p, channelTop, delta * (j + p.getDate().compareTo(dayToShow)));
-					}
-				}
+        if (it != null) {
+  				while (it.hasNext())
+  				{
+  				  final Program p = it.next();
+  					if (filter.accept(p))
+  					{
+  						addProgram(p, channelTop, delta * (j + p.getDate().compareTo(dayToShow)));
+  					}
+  				}
+        }
 			}
 		}
 		final JLabel dummy = new JLabel("");
@@ -132,7 +135,7 @@ public class ProgramScrollPanel extends JScrollPane implements MouseWheelListene
 	{
 		if (e.getScrollType() == MouseWheelEvent.WHEEL_UNIT_SCROLL)
 		{
-			if ((e.getModifiersEx() & MouseWheelEvent.SHIFT_DOWN_MASK) == 0)
+			if ((e.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) == 0)
 			{
 			  final int amount = e.getUnitsToScroll()
             * getHorizontalScrollBar().getUnitIncrement();
@@ -179,9 +182,9 @@ public class ProgramScrollPanel extends JScrollPane implements MouseWheelListene
 	//	public int getMinutes()
 	//	{
 	//		JScrollBar sb = getHorizontalScrollBar();
-	//		
+	//
 	//		//return (int) Math.round(24 * 60 * ((double) (sb.getValue() - mOffset) / (double) (sb.getMaximum() - 2 * mOffset)));
-	//		//return (int) Math.round((double) ((sb.getValue() - mOffset + (sb.getSize().width / 2)) * 24 * 60) / (double) (sb.getMaximum() - 2 + mOffset));		
+	//		//return (int) Math.round((double) ((sb.getValue() - mOffset + (sb.getSize().width / 2)) * 24 * 60) / (double) (sb.getMaximum() - 2 + mOffset));
 	//		return (int) Math.round(((double) (sb.getValue() - mOffset + (sb.getSize().width / 2)) / (double) mSizeHour) * 60);
 	//	}
 

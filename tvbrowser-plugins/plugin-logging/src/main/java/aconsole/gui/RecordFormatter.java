@@ -9,18 +9,18 @@
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation, in version 3 of the License.
- 
+
  This program is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU General Public License for more details.
- 
+
  You should have received a copy of the GNU General Public License
  along with this program, in a file called LICENSE in the top
- directory of the distribution; if not, write to 
- the Free Software Foundation, Inc., 59 Temple Place, Suite 330, 
+ directory of the distribution; if not, write to
+ the Free Software Foundation, Inc., 59 Temple Place, Suite 330,
  Boston, MA  02111-1307  USA
- 
+
  *******************************************************************/
 package aconsole.gui;
 
@@ -40,7 +40,7 @@ public class RecordFormatter extends Formatter {
 	private String timeformat = "{0,date} {0,time}";
 	private MessageFormat formatter;
 
-	private Object args[] = new Object[1];
+	private Object[] args = new Object[1];
 
 	// Line separator string.  This is the value of the line.separator
 	// property at the moment that the SimpleFormatter was created.
@@ -65,7 +65,7 @@ public class RecordFormatter extends Formatter {
 		this.showclass=showclass;
 		this.showmethod=showmethod;
 	}
-	
+
 	/**
 	 * Format the given LogRecord.
 	 * @param record the log record to be formatted.
@@ -84,14 +84,14 @@ public class RecordFormatter extends Formatter {
 		sb.append(text);
 		sb.append(" ");
 		if (showclass){
-			if (record.getSourceClassName() != null) {	
+			if (record.getSourceClassName() != null) {
 				sb.append(record.getSourceClassName());
 			} else {
 				sb.append(record.getLoggerName());
 			}
 		}
 		if (showmethod){
-			if (record.getSourceMethodName() != null) {	
+			if (record.getSourceMethodName() != null) {
 				sb.append(".");
 				sb.append(record.getSourceMethodName());
 				sb.append("(...)");
@@ -113,7 +113,9 @@ public class RecordFormatter extends Formatter {
 				PrintWriter pw = new PrintWriter(sw);
 				record.getThrown().printStackTrace(pw);
 				pw.close();
-				if (showclass || showmethod)sb.append("\t");
+				if (showclass || showmethod) {
+          sb.append("\t");
+        }
 			sb.append(sw.toString());
 			} catch (Exception ex) {
 			}

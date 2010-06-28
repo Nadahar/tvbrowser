@@ -110,10 +110,10 @@ public class AlternativeChannelDialog extends JDialog {
     ArrayList <String> alienList = new ArrayList <String> ();
     String myServiceName = NextViewDataService.class.getName();
 
-    for (int i = 0; i < subscribedIds.length; i++) {
-      String [] channelId = subscribedIds[i].split("_");
+    for (String subscribedId : subscribedIds) {
+      String [] channelId = subscribedId.split("_");
       if (!((myServiceName.equals(channelId[0])&& (myId.equals(channelId[3])|| isNxtvepgAncestor(channelId[3])))||("mixeddataservice.MixedDataService".equals(channelId[0]) && isMixedAncestor(channelId[3]))||("sharedchannelservice.SharedChannelService".equals(channelId[0]) && isSharedAncestor(channelId[3])))){
-        alienList.add(subscribedIds[i]);
+        alienList.add(subscribedId);
       }
     }
     final String[] alienIds = alienList.toArray(new String[alienList.size()]);
@@ -121,7 +121,7 @@ public class AlternativeChannelDialog extends JDialog {
     setTitle(mLocalizer.msg("editChannel", "Edit Addition Data Source"));
     JPanel backgroundPanel = (JPanel) getContentPane();
     backgroundPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-    backgroundPanel.setLayout(new BoxLayout(backgroundPanel, BoxLayout.PAGE_AXIS)); 
+    backgroundPanel.setLayout(new BoxLayout(backgroundPanel, BoxLayout.PAGE_AXIS));
 
     JPanel titlePanel = new JPanel();
     titlePanel.setLayout(new BoxLayout(titlePanel, BoxLayout.LINE_AXIS));
@@ -208,7 +208,7 @@ public class AlternativeChannelDialog extends JDialog {
           detailMix = result;
         }
       }
-    });    
+    });
     Dimension dim = detailButton.getPreferredSize();
     int prefferedWidth = dim.width;
     dim.setSize(prefferedWidth, descriptorLabel.getPreferredSize().height+4);
@@ -235,7 +235,7 @@ public class AlternativeChannelDialog extends JDialog {
       descriptor[i].setInheritsPopupMenu(false);
       descriptor[i].setComponentPopupMenu(popup);
       if (i==1) {
-        descriptor[i].setHorizontalAlignment(JLabel.CENTER);
+        descriptor[i].setHorizontalAlignment(SwingConstants.CENTER);
         margin = new EmptyBorder(0, 4, 0, 4);
       }
       else{
@@ -279,7 +279,7 @@ public class AlternativeChannelDialog extends JDialog {
           descriptor[i].setText(descText[i]);
         }
       }
-    });    
+    });
     buttonPanel.add(resetButton);
     buttonPanel.add(Box.createHorizontalGlue());
 
@@ -289,7 +289,7 @@ public class AlternativeChannelDialog extends JDialog {
         setVisible(false);
       }
 
-    });    
+    });
     buttonPanel.add(cancelButton);
     JButton okButton = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
     okButton.addActionListener(new ActionListener() {
@@ -297,7 +297,7 @@ public class AlternativeChannelDialog extends JDialog {
         okPressed = true;
         setVisible(false);
       }
-    });    
+    });
     buttonPanel.add(okButton);
 
 
@@ -330,7 +330,7 @@ public class AlternativeChannelDialog extends JDialog {
         retValue = true;
       }else {
         String [] channelId = propValue.split("_");
-       retValue = retValue ||("mixeddataservice.MixedDataService".equals(channelId[0])&& isMixedAncestor(channelId[3]))||("nextviewdataservice.NextViewDataService".equals(channelId[0]) && isNxtvepgAncestor(channelId[3]))||("sharedchannelservice.SharedChannelService".equals(channelId[0]) && isSharedAncestor(channelId[3]));          
+       retValue = retValue ||("mixeddataservice.MixedDataService".equals(channelId[0])&& isMixedAncestor(channelId[3]))||("nextviewdataservice.NextViewDataService".equals(channelId[0]) && isNxtvepgAncestor(channelId[3]))||("sharedchannelservice.SharedChannelService".equals(channelId[0]) && isSharedAncestor(channelId[3]));
       }
     }
     return retValue;
@@ -345,7 +345,7 @@ public class AlternativeChannelDialog extends JDialog {
           retValue = true;
         } else {
           String [] channelId = propValue[i].split("_");
-          retValue = retValue ||("mixeddataservice.MixedDataService".equals(channelId[0])&& isMixedAncestor(channelId[3]))||("nextviewdataservice.NextViewDataService".equals(channelId[0]) && isNxtvepgAncestor(channelId[3]))||("sharedchannelservice.SharedChannelService".equals(channelId[0]) && isSharedAncestor(channelId[3]));          
+          retValue = retValue ||("mixeddataservice.MixedDataService".equals(channelId[0])&& isMixedAncestor(channelId[3]))||("nextviewdataservice.NextViewDataService".equals(channelId[0]) && isNxtvepgAncestor(channelId[3]))||("sharedchannelservice.SharedChannelService".equals(channelId[0]) && isSharedAncestor(channelId[3]));
         }
       }
     }
@@ -364,7 +364,7 @@ public class AlternativeChannelDialog extends JDialog {
           String [] channelId = propValue[i].split("_");
           if (channelId.length==4) {
             retValue = retValue || ("mixeddataservice.MixedDataService".equals(channelId[0]) && isMixedAncestor(channelId[3])) || ("nextviewdataservice.NextViewDataService".equals(channelId[0]) && isNxtvepgAncestor(channelId[3])) || ("sharedchannelservice.SharedChannelService".equals(channelId[0]) && isSharedAncestor(channelId[3]));
-          }          
+          }
         }
       }
     }
@@ -405,9 +405,9 @@ class TableHeaderRenderer extends JPanel implements TableCellRenderer {
 
 
 
-  public Component getTableCellRendererComponent(JTable table, 
-      Object value, 
-      boolean isSelected, 
+  public Component getTableCellRendererComponent(JTable table,
+      Object value,
+      boolean isSelected,
       boolean hasFocus,
       int row, int column) {
     label.setText(value.toString());
@@ -426,7 +426,7 @@ class TableHeaderRenderer extends JPanel implements TableCellRenderer {
     label.setBorder(new CompoundBorder(border, margin));
 
 
-    setOpaque(true);     
+    setOpaque(true);
 
     return this;
   }
@@ -451,12 +451,12 @@ class SelectorTableCellRenderer extends DefaultTableCellRenderer {
 
     if (column == 1){
       setBorder(new EmptyBorder(0,4,0,4));
-      setHorizontalAlignment(JLabel.CENTER);
+      setHorizontalAlignment(SwingConstants.CENTER);
 
     }
     else{
       setBorder(new EmptyBorder(0,8,0,4));
-      setHorizontalAlignment(JLabel.LEFT);
+      setHorizontalAlignment(SwingConstants.LEFT);
     }
     super.setValue(value);
     return this;

@@ -79,7 +79,6 @@ public final class AlternativeFineTuningDialog extends JDialog{
 
        JPanel tuningPanel = new JPanel();
        GridBagLayout tuningLayout = new GridBagLayout();
-       GridBagConstraints tuningConstraints = new GridBagConstraints();
        tuningPanel.setLayout(tuningLayout);
 
        String fieldsFileName = "files/alternative_fields.properties";
@@ -98,9 +97,10 @@ public final class AlternativeFineTuningDialog extends JDialog{
       fieldIndex = new int[numberOfFields];
 
 
+      GridBagConstraints tuningConstraints;
       for (int i=0; i< numberOfFields; i++) {
-        String fieldDesc[]= fieldsProp.getProperty(Integer.toString(i), "-1").split(";");
-        fieldIndex [i] = Integer.parseInt((String) fieldDesc[0]);
+        String[] fieldDesc= fieldsProp.getProperty(Integer.toString(i), "-1").split(";");
+        fieldIndex [i] = Integer.parseInt(fieldDesc[0]);
         fieldName [i]= mLocalizer.msg(fieldDesc[1], fieldDesc[1]);
         fieldLabel[i]= new JLabel(fieldName[i]);
         tuningConstraints = makegbc(0, i, 1, 1);
@@ -219,11 +219,11 @@ public final class AlternativeFineTuningDialog extends JDialog{
 
      titlePanel.removeAll();
      GridBagLayout titleLayout = new GridBagLayout();
-     GridBagConstraints titleConstraints = new GridBagConstraints();
      titlePanel.setLayout(titleLayout);
 
 
      JLabel chnLabel;
+     GridBagConstraints titleConstraints;
      if (channelLabel != null) {
        chnLabel = channelLabel;
     }

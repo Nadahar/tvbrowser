@@ -51,6 +51,7 @@ import devplugin.Program;
  * @deprecated to be removed after 3.0. instead use util.
  * 
  */
+@Deprecated
 public final class ProgramListDialog extends JDialog implements WindowClosingIf {
 
   /**
@@ -108,10 +109,10 @@ public final class ProgramListDialog extends JDialog implements WindowClosingIf 
         .getProgramTableEndOfDay();
     for (int d = 0; d < 2; d++) {
 
-      for (int i = 0; i < channels.length; i++) {
+      for (Channel channel : channels) {
         final Iterator<Program> it = Plugin.getPluginManager()
             .getChannelDayProgram(
-            date, channels[i]);
+            date, channel);
         if (it != null) {
           while (it.hasNext()) {
             final Program program = it.next();
@@ -169,7 +170,7 @@ public final class ProgramListDialog extends JDialog implements WindowClosingIf 
     
     final JButton buttonSettings = new JButton(TimeListPlugin.getInstance()
         .createImageIcon("categories",
-        "preferences-system", 16));    
+        "preferences-system", 16));
     buttonSettings.setToolTipText(mLocalizer.msg("settings","Open settings"));
 
     buttonSettings.addActionListener(new ActionListener() {

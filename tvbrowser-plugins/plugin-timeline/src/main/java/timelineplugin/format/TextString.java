@@ -1,6 +1,6 @@
 /*
  * Timeline by Reinhard Lehrbaum
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -71,9 +71,9 @@ public class TextString implements ITextObject
 					if (w + mX > width)
 					{
 						lines--;
-						if (lastLine(lines, mY, height, g.getFont().getSize()))
+						if (isLastLine(lines, mY, height, g.getFont().getSize()))
 						{
-							printString(shrinkString(value, metric, width - mX, "..."), g, mX, mY);
+							printString(shrinkString(value, metric, width - mX, "…"), g, mX, mY);
 							value = "";
 							mX = width + 1;
 							break;
@@ -91,7 +91,7 @@ public class TextString implements ITextObject
 							}
 							else
 							{
-								printString(shrinkString("", metric, width - mX, "..."), g, mX, mY);
+								printString(shrinkString("", metric, width - mX, "…"), g, mX, mY);
 								value = "";
 								mX = width + 1;
 								break;
@@ -114,13 +114,13 @@ public class TextString implements ITextObject
 		mX += metric.stringWidth(value);
 	}
 
-	private void printString(final String value, final Graphics g, final int x,
+	private static void printString(final String value, final Graphics g, final int x,
       final int y)
 	{
 		g.drawString(value, x, y);
 	}
 
-	private String shrinkString(String value, final FontMetrics metric,
+	private static String shrinkString(String value, final FontMetrics metric,
       final int width, final String trailer)
 	{
 	  final int usedWidth = width - metric.stringWidth(trailer);
@@ -150,7 +150,7 @@ public class TextString implements ITextObject
 		return value;
 	}
 
-	private boolean lastLine(final int lines, final int y, final int height,
+	private static boolean isLastLine(final int lines, final int y, final int height,
       final int fontSize)
 	{
 		if (lines <= 0)

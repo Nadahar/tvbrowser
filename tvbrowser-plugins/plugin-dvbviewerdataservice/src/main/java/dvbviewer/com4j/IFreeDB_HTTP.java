@@ -1,6 +1,8 @@
 package dvbviewer.com4j  ;
 
-import com4j.*;
+import com4j.Com4jObject;
+import com4j.IID;
+import com4j.VTID;
 
 /**
  * The FreeDB object allows you to download informations about a AudioCD from freedb

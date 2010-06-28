@@ -246,9 +246,15 @@ public final class DVBViewerChannel implements Serializable, Comparable<DVBViewe
    */
   @Override
   public boolean equals(Object obj) {
-    if (this == obj) return true;
-    if (obj == null) return false;
-    if (!(obj instanceof DVBViewerChannel)) return false;
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null) {
+      return false;
+    }
+    if (!(obj instanceof DVBViewerChannel)) {
+      return false;
+    }
     final DVBViewerChannel rhs = (DVBViewerChannel)obj;
     return 0 == compareTo(rhs);
   }

@@ -566,22 +566,22 @@ public final class NextViewDataServicePanel extends SettingsPanel implements Foc
       GridBagConstraints selectionGbc;
       Channel[] subscribedList = NextViewDataService.getPluginManager().getSubscribedChannels();
       ArrayList <Channel> chnList = new ArrayList <Channel> ();
-       for (int i = 0; i < subscribedList.length; i++) {
-        String [] channelId = subscribedList[i].getUniqueId().split("_");
+       for (Channel element : subscribedList) {
+        String [] channelId = element.getUniqueId().split("_");
         index = 0;
         boolean isSearching = true;
         while (isSearching && index < chnList.size()){
           String [] chnId = chnList.get(index).getUniqueId().split("_");
-          if (chnList.get(index).getName().trim().compareToIgnoreCase(subscribedList[i].getName().trim())>0 ){
+          if (chnList.get(index).getName().trim().compareToIgnoreCase(element.getName().trim())>0 ){
             isSearching = false;
           } else {
-            if (chnList.get(index).getName().trim().compareToIgnoreCase(subscribedList[i].getName().trim())==0 && chnId[2].compareTo(channelId[2])>0){
+            if (chnList.get(index).getName().trim().compareToIgnoreCase(element.getName().trim())==0 && chnId[2].compareTo(channelId[2])>0){
               isSearching = false;
             }else {
-              if (chnList.get(index).getName().trim().compareToIgnoreCase(subscribedList[i].getName().trim())==0 && chnId[2].compareTo(channelId[2])==0 && chnId[0].compareTo(channelId[0])>0){
+              if (chnList.get(index).getName().trim().compareToIgnoreCase(element.getName().trim())==0 && chnId[2].compareTo(channelId[2])==0 && chnId[0].compareTo(channelId[0])>0){
                 isSearching = false;
               }else {
-                if (chnList.get(index).getName().trim().compareToIgnoreCase(subscribedList[i].getName().trim())==0 && chnId[2].compareTo(channelId[2])==0 && chnId[0].compareTo(channelId[0])==0 && chnId[1].compareTo(channelId[1])>0){
+                if (chnList.get(index).getName().trim().compareToIgnoreCase(element.getName().trim())==0 && chnId[2].compareTo(channelId[2])==0 && chnId[0].compareTo(channelId[0])==0 && chnId[1].compareTo(channelId[1])>0){
                   isSearching = false;
                 } else{
                   index++;
@@ -590,16 +590,16 @@ public final class NextViewDataServicePanel extends SettingsPanel implements Foc
             }
           }
         }
-        chnList.add(index, subscribedList[i]);
+        chnList.add(index, element);
       }
       subscribedList = chnList.toArray(new Channel[chnList.size()]);
 
       Channel[] availableList = mService.getAvailableChannels();
       channelCount = availableList.length;
       subChannelCount = 0;
-      for (int i = 0; i < subscribedList.length; i++) {
-        for (int j = 0; j < availableList.length; j++) {
-          if (subscribedList[i].getUniqueId().equals(availableList[j].getUniqueId())) {
+      for (Channel element : subscribedList) {
+        for (Channel element2 : availableList) {
+          if (element.getUniqueId().equals(element2.getUniqueId())) {
             subChannelCount++;
           }
         }
@@ -619,11 +619,11 @@ public final class NextViewDataServicePanel extends SettingsPanel implements Foc
       }
 
       subChannelCount = 0;
-      for (int i = 0; i < subscribedList.length; i++) {
-        for (int j = 0; j < availableList.length; j++) {
-          if (subscribedList[i].getUniqueId().equals(availableList[j].getUniqueId())) {
-            channelList[subChannelCount] = availableList[j];
-            String channelDesc = alternativeChannelsDesc.getProperty(availableList[j].getId());
+      for (Channel element : subscribedList) {
+        for (Channel element2 : availableList) {
+          if (element.getUniqueId().equals(element2.getUniqueId())) {
+            channelList[subChannelCount] = element2;
+            String channelDesc = alternativeChannelsDesc.getProperty(element2.getId());
             if (channelDesc != null) {
               String[] chnDescs = channelDesc.split(";");
               alternativeId[subChannelCount] = chnDescs[2];

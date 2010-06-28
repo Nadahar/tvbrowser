@@ -31,36 +31,36 @@ import devplugin.Version;
 
 /**
  * A plugin class for TV-Browser to control the tooltip settings.
- * 
+ *
  * @author René Mach
  */
 public final class ToolTipControlPlugin extends Plugin {
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(ToolTipControlPlugin.class);
   private Properties mSettings;
-  
+
   private static ToolTipControlPlugin mInstance;
-  
+
   public static Version getVersion() {
     return new Version(0, 21, true);
   }
-  
+
   /**
    * Creates an instance of this plugin.
    */
   public ToolTipControlPlugin() {
     mInstance = this;
   }
-  
+
   public PluginInfo getInfo() {
     return new PluginInfo(ToolTipControlPlugin.class, mLocalizer.msg(
         "pluginName", "Tooltip control"), mLocalizer.msg("description",
         "Controls the function of all tooltips."), "René Mach", "GPL");
   }
-    
+
   public SettingsTab getSettingsTab() {
     return new ToolTipControlPluginSettingsTab(mSettings);
   }
-  
+
   public void loadSettings(Properties settings) {
     if(settings == null) {
       mSettings = new Properties();
@@ -68,25 +68,25 @@ public final class ToolTipControlPlugin extends Plugin {
     else {
       mSettings = settings;
     }
-    
+
     if(!mSettings.containsKey("dismissDelay")) {
       mSettings.setProperty("isEnabled", String.valueOf(ToolTipManager.sharedInstance().isEnabled()));
       mSettings.setProperty("dismissDelay",String.valueOf(ToolTipManager.sharedInstance().getDismissDelay()));
       mSettings.setProperty("initialDelay",String.valueOf(ToolTipManager.sharedInstance().getInitialDelay()));
-      mSettings.setProperty("reshowDelay",String.valueOf(ToolTipManager.sharedInstance().getReshowDelay()));        
+      mSettings.setProperty("reshowDelay",String.valueOf(ToolTipManager.sharedInstance().getReshowDelay()));
     }
-    
+
     ToolTipManager.sharedInstance().setEnabled(mSettings.getProperty("isEnabled","true").equals("true"));
     ToolTipManager.sharedInstance().setInitialDelay(Integer.parseInt(mSettings.getProperty("initialDelay","500")));
     ToolTipManager.sharedInstance().setDismissDelay(Integer.parseInt(mSettings.getProperty("dismissDelay","500")));
     ToolTipManager.sharedInstance().setReshowDelay(Integer.parseInt(mSettings.getProperty("reshowDelay","500")));
   }
-  
+
   public Properties storeSettings() {
     return mSettings;
   }
-  
-  protected static void save() {
+
+  static void save() {
     try {
       Method m = mInstance.getClass().getMethod("saveMe", new Class[0]);
       m.invoke(mInstance, new Object[0]);

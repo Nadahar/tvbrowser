@@ -1,6 +1,5 @@
 package dvbviewer.com4j  ;
 
-import com4j.*;
 
 /**
  * Describes the possible action which can be executed after a recording

@@ -1,16 +1,16 @@
 /*
  * Copyright Michael Keppler
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -56,9 +56,11 @@ import devplugin.Version;
 
 /**
  * @author bananeweizen
- * 
+ *
  */
-final public class TaggingPlugin extends Plugin {
+public final class TaggingPlugin extends Plugin {
+  private static final int DAYS_TO_CHECK = 30;
+
   private static final Version mVersion = new Version(2, 70, 0);
 
   private static TaggingPlugin mInstance;
@@ -147,12 +149,12 @@ final public class TaggingPlugin extends Plugin {
 		};
 	}
 
-	protected Program[] findMatchingPrograms(final String wantedTag) {
+	Program[] findMatchingPrograms(final String wantedTag) {
 		ArrayList<Program> programs = new ArrayList<Program>();
-		final Channel[] channels = devplugin.Plugin.getPluginManager()
+		final Channel[] channels = Plugin.getPluginManager()
 				.getSubscribedChannels();
 		Date date = Date.getCurrentDate();
-		for (int days = 0; days < 30; days++) {
+		for (int days = 0; days < DAYS_TO_CHECK; days++) {
 			for (Channel channel : channels) {
 				final Iterator<Program> iter = Plugin.getPluginManager()
 						.getChannelDayProgram(date, channel);
@@ -179,12 +181,12 @@ final public class TaggingPlugin extends Plugin {
 		};
 		return action;
 	}
-	
+
 	private String getTagInput(final String message) {
 	  return TagValidation.makeValidTag(JOptionPane.showInputDialog(UiUtilities.getBestDialogParent(getParentFrame()), message));
 	}
 
-	protected void addTag(final Program program) {
+	void addTag(final Program program) {
 		final String tag = getTagInput(mLocalizer.msg("addTag", "Add tag for {0}", program.getTitle()));
 		Thread tagThread = new Thread("Add tag") {
 		  @Override
@@ -248,9 +250,9 @@ final public class TaggingPlugin extends Plugin {
 		return false;
 	}
 
-	private URL createUrl(final String target, final HashMap<String, String> params) throws MalformedURLException, UnsupportedEncodingException {
+	private static URL createUrl(final String target, final HashMap<String, String> params) throws MalformedURLException, UnsupportedEncodingException {
 	  params.put("v", String.valueOf(getVersion().getMajor() * 100 + getVersion().getMinor()));
-    StringBuilder builder = new StringBuilder(100);
+    StringBuilder builder = new StringBuilder(200);
     builder.append(MAIN_URL).append(target).append("?");
     for (Entry<String, String> param : params.entrySet()) {
       builder.append(param.getKey()).append('=').append(URLEncoder.encode(param.getValue(), "UTF-8")).append('&');
@@ -361,13 +363,13 @@ final public class TaggingPlugin extends Plugin {
 		updateTagsFromServer();
 		mRootNode.removeAllChildren();
 		HashMap<String, PluginTreeNode> nodes = new HashMap<String, PluginTreeNode>(
-				30);
+				DAYS_TO_CHECK);
 
 		// search all programs
 		final Channel[] channels = devplugin.Plugin.getPluginManager()
 				.getSubscribedChannels();
 		Date date = Date.getCurrentDate();
-		for (int days = 0; days < 30; days++) {
+		for (int days = 0; days < DAYS_TO_CHECK; days++) {
 			for (Channel channel : channels) {
 				final Iterator<Program> iter = Plugin.getPluginManager()
 						.getChannelDayProgram(date, channel);
@@ -412,17 +414,17 @@ final public class TaggingPlugin extends Plugin {
   public TaggingPlugin() {
     mInstance = this;
   }
-  
+
   @Override
   public Class<? extends PluginsFilterComponent>[] getAvailableFilterComponentClasses() {
     return (Class<? extends PluginsFilterComponent>[]) new Class[] {TagFilterComponent.class};
   }
-  
+
   @Override
   public boolean canReceiveProgramsWithTarget() {
     return true;
   }
-  
+
   @Override
   public boolean receivePrograms(Program[] programArr, ProgramReceiveTarget receiveTarget) {
     if (programArr == null || programArr.length == 0) {
@@ -445,7 +447,7 @@ final public class TaggingPlugin extends Plugin {
     }
     return true;
   }
-  
+
   @Override
   public ProgramReceiveTarget[] getProgramReceiveTargets() {
     final ProgramReceiveTarget target = new ProgramReceiveTarget(this, mLocalizer.msg("target", "Tag program"), TARGET);

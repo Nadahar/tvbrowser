@@ -78,8 +78,9 @@ public class TimeListCellRenderer extends DefaultListCellRenderer {
       });
       mMainPanel.setBackground(label.getBackground());
 
-      if (isSelected)
+      if (isSelected) {
         mMainPanel.setForeground(label.getForeground());
+      }
 
       mMainPanel.setEnabled(label.isEnabled());
       mMainPanel.setBorder(label.getBorder());

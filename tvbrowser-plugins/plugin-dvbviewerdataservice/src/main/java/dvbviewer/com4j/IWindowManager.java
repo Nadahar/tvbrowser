@@ -1,6 +1,8 @@
 package dvbviewer.com4j  ;
 
-import com4j.*;
+import com4j.Com4jObject;
+import com4j.IID;
+import com4j.VTID;
 
 @IID("{142150A3-6184-40C9-9E26-BB5F46AD33DE}")
 public interface IWindowManager extends Com4jObject {

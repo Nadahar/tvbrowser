@@ -17,8 +17,8 @@
  
  You should have received a copy of the GNU General Public License
  along with this program, in a file called LICENSE in the top
- directory of the distribution; if not, write to 
- the Free Software Foundation, Inc., 59 Temple Place, Suite 330, 
+ directory of the distribution; if not, write to
+ the Free Software Foundation, Inc., 59 Temple Place, Suite 330,
  Boston, MA  02111-1307  USA
  
  *******************************************************************/
@@ -28,6 +28,7 @@ package aconsole.help;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Iterator;
@@ -68,14 +69,14 @@ public class TVBUtilitiesHelpPanel extends JPanel implements  HyperlinkListener 
 		this.listeners.remove(l);
 	}
   
-  /** The minimum size of the help dialog. */  
+  /** The minimum size of the help dialog. */
   public static final Dimension MIN_HELP_DIALOG_SIZE = new Dimension(350, 400);
   
-  /** The maximum size of the help dialog. */  
+  /** The maximum size of the help dialog. */
   public static final Dimension MAX_HELP_DIALOG_SIZE = new Dimension(500, 10000);
 
   
-  /** The history. */  
+  /** The history. */
   private Stack<HistoryStackElement> mHistoryStack;
 
   
@@ -116,7 +117,7 @@ public class TVBUtilitiesHelpPanel extends JPanel implements  HyperlinkListener 
    * @param text The HTML text.
    * @param updateScrollBarTo The relative position to scroll to. (Between 0 and 1)
    * @param url The URL of the page, used to display images
-   */  
+   */
   protected void setEditorText(URL url, double updateScrollBarTo,String text) {
   	this.mUrl=url;
   	if (text!=null){
@@ -131,7 +132,7 @@ public class TVBUtilitiesHelpPanel extends JPanel implements  HyperlinkListener 
 				mEditorPane.setPage(url);
 				SwingUtilities.invokeLater(new ScrollBarUpdater(updateScrollBarTo));
 			} catch (IOException e) {
-			}	
+			}
   		}else{
 			mEditorPane.setText("");
   		}
@@ -140,9 +141,9 @@ public class TVBUtilitiesHelpPanel extends JPanel implements  HyperlinkListener 
 
 
   /**
-   * Hilfsmethode für {@link #hyperlinkUpdate(HyperlinkEvent) hyperlinkUpdate}.
+   * Hilfsmethode fï¿½r {@link #hyperlinkUpdate(HyperlinkEvent) hyperlinkUpdate}.
    * <p>
-   * Fügt die aktuelle Seite zum mHistoryStack hinzu.
+   * Fï¿½gt die aktuelle Seite zum mHistoryStack hinzu.
    */
   protected void addThisSiteToHistory() {
 	// Neues HistoryStackElement erstellen
@@ -156,7 +157,7 @@ public class TVBUtilitiesHelpPanel extends JPanel implements  HyperlinkListener 
 	// Neues HistoryStackElement auf Stack werfen
 	mHistoryStack.push(newSite);
 
-	// zurück-Button sichtbar machen
+	// zurï¿½ck-Button sichtbar machen
 	fireStateChanged();
   }
   private void fireStateChanged(){
@@ -173,12 +174,12 @@ public class TVBUtilitiesHelpPanel extends JPanel implements  HyperlinkListener 
 
 
   /**
-   * Hilfsmethode für {@link #actionPerformed(ActionEvent)}.
+   * Hilfsmethode fï¿½r {@link #actionPerformed(ActionEvent)}.
    * <P>
    * Ruft die oberste Seite des mHistoryStack wieder auf.
    */
   protected void popFromHistory() {
-	HistoryStackElement lastSite = (HistoryStackElement) mHistoryStack.pop();
+	HistoryStackElement lastSite = mHistoryStack.pop();
 
 	double updateScrollBarTo = lastSite.mVerticalScrollBarRelValue;
 	setEditorText(lastSite.mUrl, updateScrollBarTo,lastSite.mText);
@@ -190,7 +191,7 @@ public class TVBUtilitiesHelpPanel extends JPanel implements  HyperlinkListener 
 
 
   /**
-   * Lädt eine HTML-Seite und gibt deren Inhalt als String zurück.
+   * Lï¿½dt eine HTML-Seite und gibt deren Inhalt als String zurï¿½ck.
    * <p>
    * Die Seite kann auch in der Jar-Datei sein, in dem diese Klasse ist.
    *

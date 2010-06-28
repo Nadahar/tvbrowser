@@ -51,7 +51,7 @@ public abstract class AbstractCheck {
 	}
 	
 	protected static ArrayList<ProgramFieldType> getFieldTypes(final int format) {
-	  ArrayList<ProgramFieldType> result = new ArrayList<ProgramFieldType>(); 
+	  ArrayList<ProgramFieldType> result = new ArrayList<ProgramFieldType>();
     final Iterator<ProgramFieldType> it = ProgramFieldType.getTypeIterator();
     while (it.hasNext()) {
       final ProgramFieldType fieldType = it.next();

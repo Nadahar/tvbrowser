@@ -1,6 +1,8 @@
 package dvbviewer.com4j  ;
 
-import com4j.*;
+import com4j.Com4jObject;
+import com4j.IID;
+import com4j.VTID;
 
 @IID("{663FF9A7-E59F-4700-8076-375200A1A122}")
 public interface IRecording extends Com4jObject {

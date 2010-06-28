@@ -1,6 +1,10 @@
 package dvbviewer.com4j  ;
 
-import com4j.*;
+import com4j.Com4jObject;
+import com4j.IID;
+import com4j.NativeType;
+import com4j.ReturnValue;
+import com4j.VTID;
 
 /**
  * The Main object of the DVBViewer COM server

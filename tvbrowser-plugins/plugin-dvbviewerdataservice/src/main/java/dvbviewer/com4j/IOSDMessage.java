@@ -1,6 +1,8 @@
 package dvbviewer.com4j  ;
 
-import com4j.*;
+import com4j.IID;
+import com4j.ReturnValue;
+import com4j.VTID;
 
 @IID("{D0D14E3A-EE5D-4109-804F-98AF39B2A44A}")
 public interface IOSDMessage extends dvbviewer.com4j.IOSDItem {

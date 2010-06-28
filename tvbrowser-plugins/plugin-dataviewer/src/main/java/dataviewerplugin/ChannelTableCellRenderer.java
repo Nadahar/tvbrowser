@@ -5,6 +5,7 @@ import java.awt.Component;
 
 import javax.swing.JLabel;
 import javax.swing.JTable;
+import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 
 /**
@@ -27,7 +28,7 @@ public class ChannelTableCellRenderer extends DefaultTableCellRenderer {
    
       label.setForeground(Color.black);
       label.setBackground(new Color(255, 221, 221));
-      label.setHorizontalAlignment(JLabel.RIGHT);
+      label.setHorizontalAlignment(SwingConstants.RIGHT);
    return label;
   }
 }

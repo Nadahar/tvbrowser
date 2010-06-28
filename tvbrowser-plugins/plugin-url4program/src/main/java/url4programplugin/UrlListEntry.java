@@ -100,7 +100,7 @@ public class UrlListEntry {
   }
   
   /**
-   * Writes the values of this entry. 
+   * Writes the values of this entry.
    * @param out The stream to write to.
    * @throws IOException Thrown if something went wrong.
    */

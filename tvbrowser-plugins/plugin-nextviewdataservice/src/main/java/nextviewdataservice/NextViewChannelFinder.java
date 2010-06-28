@@ -33,7 +33,7 @@ import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
- * XML Handler to check for available channels 
+ * XML Handler to check for available channels
  * @author jb
  */
 
@@ -67,7 +67,7 @@ public class NextViewChannelFinder extends DefaultHandler {
    * (non-Javadoc)
    * @see org.xml.sax.helpers.DefaultHandler#characters(char[], int, int)
    * 
-   * The characters method reports each chunk of character 
+   * The characters method reports each chunk of character
    * data and appends it to the characters buffer;
    * here: the channel name
    */
@@ -148,7 +148,7 @@ public class NextViewChannelFinder extends DefaultHandler {
 
         }
         currentChannelId = null;
-      } 
+      }
 
     } catch (Exception e) {
       mLog.warning(e.toString());

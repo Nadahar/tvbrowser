@@ -175,7 +175,7 @@ public class DVBViewerEPGParser {
     }
 
     if (null != shortDescription) {
-      shortDescription = validateShortInfo(shortDescription); 
+      shortDescription = validateShortInfo(shortDescription);
       prog.setShortInfo(shortDescription);
     }
     if (null != longDescription) {

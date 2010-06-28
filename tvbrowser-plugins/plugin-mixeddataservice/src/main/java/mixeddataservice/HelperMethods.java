@@ -5,7 +5,7 @@ import devplugin.Channel;
 public class HelperMethods {
 
   public static String [] getChannelName (String uniqueChannelId, String defaultName){
-    
+
     if (uniqueChannelId.equals("")){
       return createChannelNameArray(defaultName,"","","");
    }
@@ -19,17 +19,17 @@ public class HelperMethods {
       return createChannelNameArray(chn.getName(), uniqueId[2], chn.getDataServiceProxy().getInfo().getName(), uniqueId[1]);
     }
   }
-  
-  public static String [] createChannelNameArray(String name, String country, String provider, String group){
-    String channelNameArray[] = {name, country, provider, group};
+
+  public static String[] createChannelNameArray(String name, String country, String provider, String group){
+    String[] channelNameArray = {name, country, provider, group};
     return channelNameArray;
   }
-  
+
 
   public static Channel getChannel(String [] uniqueId){
   return Channel.getChannel(uniqueId[0], uniqueId[1], uniqueId[2], uniqueId[3]);
 }
-  
+
 
 
   public static Channel getChannelFromId (String id, Channel[] channelList){
@@ -39,8 +39,8 @@ public class HelperMethods {
         if (channelList[i].getUniqueId().equals(id)){
           channel = channelList[i];
          }
-      }     
-    }     
+      }
+    }
     return channel;
   }
 
@@ -71,7 +71,7 @@ public class HelperMethods {
     }
     return info;
   }
-  
+
   /**
    * delete doubles; delete 'Spielfilm' if category contains 'Serie''
    * @param rawString
@@ -92,7 +92,7 @@ public class HelperMethods {
     String[] cats = category.split(", ");
     category = "";
 
-    // Delete doubles 
+    // Delete doubles
     for (int i = 0; i < cats.length; i++) {
       for (int j = 0; j < cats.length; j++) {
         if (i != j && !cats[j].equals("") && ((cats[i].equals(cats[j])) || (cats[i].toLowerCase().contains(cats[j].toLowerCase())))) {
@@ -114,5 +114,5 @@ public class HelperMethods {
 
     return category;
   }
- 
+
 }

@@ -1,16 +1,16 @@
 /*
  * Copyright Michael Keppler
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -19,7 +19,7 @@ package timelineplugin;
 import java.awt.Rectangle;
 import java.util.Properties;
 
-public class TimelineSettings {
+final class TimelineSettings {
   private static final String VALUE_FALSE = "0";
   private static final String VALUE_TRUE = "1";
   private static final String KEY_CHANNEL_WIDTH = "ChannelWidth";
@@ -36,7 +36,7 @@ public class TimelineSettings {
   private Properties mProperties;
   private String mTitleFormat = DEFAULT_TITLE_FORMAT;
 
-  public TimelineSettings(final Properties prop) {
+  TimelineSettings(final Properties prop) {
     if (prop != null) {
       mProperties = prop;
     } else {
@@ -51,7 +51,7 @@ public class TimelineSettings {
   int getHourWidth() {
     return getProperty(KEY_HOUR_WIDTH, 120);
   }
-  
+
   void setHourWidth(final int width) {
     mProperties.setProperty(KEY_HOUR_WIDTH, Integer.toString(width));
   }
@@ -83,7 +83,7 @@ public class TimelineSettings {
   boolean showChannelIcon() {
     return getProperty(KEY_SHOW_CHANNEL_ICON, true);
   }
-  
+
   private boolean getProperty(final String key, final boolean defaultValue) {
     return getProperty(key, defaultValue ? 1 : 0) == 1;
   }
@@ -187,7 +187,7 @@ public class TimelineSettings {
   public Rectangle getPosition() {
     final int x = getProperty("xpos", 0);
     final int y = getProperty("ypos", 0);
-    final int width = getProperty("width", 620);
+    final int width = getOffset();
     final int height = getProperty("height", 390);
     return new Rectangle(x, y, width, height);
   }

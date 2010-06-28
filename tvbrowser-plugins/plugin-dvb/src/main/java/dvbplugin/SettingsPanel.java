@@ -151,8 +151,8 @@ class SettingsPanel extends JPanel implements java.awt.event.ActionListener,
     channel = devplugin.Plugin.getPluginManager().getSubscribedChannels();
 
     // fill combobox with the subscribed channels
-    for (int i = 0; i < channel.length; i++) {
-      tvbName.addItem(channel[i].getName());
+    for (Channel element : channel) {
+      tvbName.addItem(element.getName());
     }
   }
 
@@ -634,13 +634,21 @@ class SettingsPanel extends JPanel implements java.awt.event.ActionListener,
 
 
   private boolean checkSettings(Properties tmp) {
-    if (tmp.size() < 3) return false;
+    if (tmp.size() < 3) {
+      return false;
+    }
 
-    if (!tmp.containsKey("DVBPath")) return false;
+    if (!tmp.containsKey("DVBPath")) {
+      return false;
+    }
 
-    if (!tmp.containsKey("DVBExecute")) return false;
+    if (!tmp.containsKey("DVBExecute")) {
+      return false;
+    }
 
-    if (!tmp.containsKey("Mark")) return false;
+    if (!tmp.containsKey("Mark")) {
+      return false;
+    }
 
     return true;
   }
@@ -711,7 +719,7 @@ class SettingsPanel extends JPanel implements java.awt.event.ActionListener,
     if (comboListener) {
       String name = dvbName.getSelectedItem().toString();
       String value = dvbChannels.getProperty(name);
-      String ids[] = value.split("\\|");
+      String[] ids = value.split("\\|");
 
       textfieldServicePID.setText(ids[0]);
       textfieldDVBName.setText(name);
@@ -764,7 +772,7 @@ class SettingsPanel extends JPanel implements java.awt.event.ActionListener,
     String dvbviewerName = textfieldDVBName.getText();
     Settings set = Settings.getSettings();
     String value = dvbChannels.getProperty(dvbviewerName);
-    String ids[] = value.split("\\|");
+    String[] ids = value.split("\\|");
     String serviceID = null;
     String audioID = null;
     String tunertype = null;
@@ -799,7 +807,7 @@ class SettingsPanel extends JPanel implements java.awt.event.ActionListener,
 
     // get text and parse
     String s = l.getText().trim();
-    String t[] = s.split(" -> ");
+    String[] t = s.split(" -> ");
 
     Settings set = Settings.getSettings();
 

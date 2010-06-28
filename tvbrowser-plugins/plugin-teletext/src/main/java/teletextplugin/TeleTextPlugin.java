@@ -1,16 +1,16 @@
 /*
  * Copyright Michael Keppler
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -36,12 +36,18 @@ import devplugin.Version;
  * @author bananeweizen
  *
  */
-final public class TeleTextPlugin extends Plugin {
+public final class TeleTextPlugin extends Plugin {
   private static final Version mVersion = new Version(2, 70, 11);
 
-  private PluginInfo mPluginInfo;
+  /**
+   * created lazily on first access
+   */
+  private PluginInfo mPluginInfo = null;
 
-  private ImageIcon mIcon;
+  /**
+   * loaded lazily on first access
+   */
+  private ImageIcon mIcon = null;
 
   /** The localizer for this class. */
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer
@@ -77,7 +83,7 @@ final public class TeleTextPlugin extends Plugin {
 
     return getChannelTextAction(program.getChannel());
   }
-  
+
   public ActionMenu getContextMenuActions(final Channel channel) {
     if (channel != null) {
       return getChannelTextAction(channel);

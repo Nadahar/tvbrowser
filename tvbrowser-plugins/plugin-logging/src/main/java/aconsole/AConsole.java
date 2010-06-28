@@ -17,8 +17,8 @@
  
  You should have received a copy of the GNU General Public License
  along with this program, in a file called LICENSE in the top
- directory of the distribution; if not, write to 
- the Free Software Foundation, Inc., 59 Temple Place, Suite 330, 
+ directory of the distribution; if not, write to
+ the Free Software Foundation, Inc., 59 Temple Place, Suite 330,
  Boston, MA  02111-1307  USA
  
  *******************************************************************/
@@ -51,18 +51,18 @@ import devplugin.PluginInfo;
 import devplugin.SettingsTab;
 import devplugin.Version;
 /**
- * Das TVBConsole-Plugin ist als Hilfsmittel f�r (Plugin-)Entwickler gedacht. Es zeigt die Ausgaben der 
+ * Das TVBConsole-Plugin ist als Hilfsmittel f�r (Plugin-)Entwickler gedacht. Es zeigt die Ausgaben der
  * Standard-Streams sowie die durch das java.util.logging-Package erstellten
  * Nachrichten. Die Ausgabe kann dynamisch nach Logger-Klasse und Nachrichten-Level gefiltert werden.
  * 
  * The TVBConsole plugin is meant als utility for (plugin) developers.
- * It shows the output of the system streams and the message sent to the java.util.logging package. 
+ * It shows the output of the system streams and the message sent to the java.util.logging package.
  * The output can be filtered by the logger-class and the message-level.
  * 
  * @author Tomas
  *
  *
- * TODO: Beim Verbreitern des Einstellungsdialogs und anschlie�endem Verkleinern bleibt das Panel auf maximaler Breite. und die Fenserposition wird nicht gespeichert 
+ * TODO: Beim Verbreitern des Einstellungsdialogs und anschlie�endem Verkleinern bleibt das Panel auf maximaler Breite. und die Fenserposition wird nicht gespeichert
  */
 public class AConsole extends Plugin {
 	public static final Logger mLog = java.util.logging.Logger.getLogger(AConsole.class.getName());
@@ -130,11 +130,11 @@ public class AConsole extends Plugin {
 		action.putValue(Action.NAME,mLocalizer.msg("buttonname","TVBConsole"));
 		action.putValue(Action.SMALL_ICON, createImageIcon("aconsole/log16.gif"));
 		action.putValue(BIG_ICON, createImageIcon("aconsole/log24.gif"));
-		return new ActionMenu(action);  
+		return new ActionMenu(action);
 	}
 	public PluginInfo getInfo() {
 		String name = "TVBConsole";
-		String desc = mLocalizer.msg("description","show the java default output"); 
+		String desc = mLocalizer.msg("description","show the java default output");
 		String author = "Tomas Schackert";
 		return new PluginInfo(AConsole.class,name, desc, author);
 	}
@@ -222,8 +222,11 @@ public class AConsole extends Plugin {
 		String filename_default=filenamebase+"/default/"+filename;
 		Locale locale = Locale.getDefault();
 		String localeSuffix = locale.toString();
-		if (localeSuffix.length() > 0) filename_local = filenamebase+"/" + localeSuffix+"/"+filename;
-		else filename_local = filename_default;
+		if (localeSuffix.length() > 0) {
+      filename_local = filenamebase+"/" + localeSuffix+"/"+filename;
+    } else {
+      filename_local = filename_default;
+    }
 		InputStream in = AConsole.class.getResourceAsStream(filename_local);
 		if (in == null) {
 			filename_local=filename_default;

@@ -1,6 +1,7 @@
 package dvbviewer.com4j.events;
 
-import com4j.*;
+import com4j.DISPID;
+import com4j.IID;
 
 @IID("{B397FB16-A027-4D5B-88EB-FD9A2AA28D92}")
 public abstract class IDVBViewerEvents {

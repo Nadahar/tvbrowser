@@ -265,7 +265,7 @@ public final class TwitterLoginDialog extends JDialog implements WindowClosingIf
     updateEnableStates();
   }
 
-  protected void updateEnableStates() {
+  void updateEnableStates() {
     // oauth controls
     mPIN.setEnabled(mOAuth.isSelected());
     mUrlButton.setEnabled(mOAuth.isSelected());

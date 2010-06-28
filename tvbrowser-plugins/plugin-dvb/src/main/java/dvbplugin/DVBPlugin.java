@@ -62,7 +62,7 @@ public class DVBPlugin extends devplugin.Plugin {
 
   /** field <code>PROGRAMRECEIVE_ADD</code> */
   private static final String PROGRAMRECEIVE_ADD = "ADD";
-  
+
   private static final Version VERSION = new Version(2, 02, 2);
 
   /** this plugin inherently only works on windows */
@@ -333,7 +333,7 @@ public class DVBPlugin extends devplugin.Plugin {
     }
 
     int actIndex = 0;
-    AbstractAction subActions[] = new AbstractAction[3];
+    AbstractAction[] subActions = new AbstractAction[3];
     if(remove) {
       subActions[actIndex++] = fastRemoveAction;
     } else {
@@ -553,7 +553,7 @@ public class DVBPlugin extends devplugin.Plugin {
       program = aProgram;
       if (null != program) {
         Icon icon = program.getChannel().getIcon();
-        
+
         if(icon != null) {
           if (icon.getIconWidth() > 16) {
             icon = UiUtilities.scaleIcon(icon, 16);

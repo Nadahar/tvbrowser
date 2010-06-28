@@ -5,6 +5,7 @@ import java.awt.Component;
 
 import javax.swing.JLabel;
 import javax.swing.JTable;
+import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 
 /**
@@ -30,7 +31,7 @@ public class DataTableCellRenderer extends DefaultTableCellRenderer {
       boolean isSelected, boolean hasFocus, int row, int column) {
     JLabel label = (JLabel) super.getTableCellRendererComponent(table, value,
         isSelected, hasFocus, row, column);
-    label.setHorizontalAlignment(JLabel.CENTER);
+    label.setHorizontalAlignment(SwingConstants.CENTER);
     
     String bool = (String) value;
 
@@ -38,9 +39,9 @@ public class DataTableCellRenderer extends DefaultTableCellRenderer {
       if(bool.endsWith("pict")) {
         label.setForeground(COMPLETE.darker());
         label.setText("pict");
-      }
-      else
+      } else {
         label.setForeground(COMPLETE);
+      }
       label.setBackground(COMPLETE);
     } else if (bool.compareTo("false") == 0) {
       label.setForeground(NODATA);
@@ -49,9 +50,9 @@ public class DataTableCellRenderer extends DefaultTableCellRenderer {
       if(bool.endsWith("pict")) {
         label.setForeground(UNCOMPLETE.darker());
         label.setText("pict");
-      }
-      else
+      } else {
         label.setForeground(UNCOMPLETE);
+      }
       
       label.setBackground(UNCOMPLETE);
     }

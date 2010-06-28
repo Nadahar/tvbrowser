@@ -94,7 +94,9 @@ public class TVBUtilitiesHelpDialog implements ActionListener{
 //	}
 	private void initHelpUi(Component parent,String helpTitle) {
 		mDialog = UiUtilities.createDialog(parent, false);
-		if (helpTitle==null)helpTitle=mLocalizer.msg("titleHelp", "Help");
+		if (helpTitle==null) {
+      helpTitle=mLocalizer.msg("titleHelp", "Help");
+    }
 		mDialog.setTitle(helpTitle);
 
 		JPanel main = new JPanel(new BorderLayout());

@@ -1,6 +1,9 @@
 package dvbviewer.com4j  ;
 
-import com4j.*;
+import com4j.Com4jObject;
+import com4j.DefaultMethod;
+import com4j.IID;
+import com4j.VTID;
 
 /**
  * The EPGCollection is a list of EPGEntries

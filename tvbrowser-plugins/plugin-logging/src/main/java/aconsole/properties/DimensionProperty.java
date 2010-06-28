@@ -19,8 +19,8 @@ package aconsole.properties;
  
  You should have received a copy of the GNU General Public License
  along with this program, in a file called LICENSE in the top
- directory of the distribution; if not, write to 
- the Free Software Foundation, Inc., 59 Temple Place, Suite 330, 
+ directory of the distribution; if not, write to
+ the Free Software Foundation, Inc., 59 Temple Place, Suite 330,
  Boston, MA  02111-1307  USA
  
  *******************************************************************/
@@ -97,19 +97,27 @@ public class DimensionProperty extends BaseProperty<Dimension>{
 		set(src.width,src.height);
 	}
 	public Dimension get(){
-		if (!loaded) load();
+		if (!loaded) {
+      load();
+    }
 		return new Dimension(width,height);
 	}
 	public int getWidth(){
-		if (!loaded) load();
+		if (!loaded) {
+      load();
+    }
 		return width;
 	}
 	public int getHeight(){
-		if (!loaded) load();
+		if (!loaded) {
+      load();
+    }
 		return height;
 	}
 	public Point getPoint(){
-		if (!loaded) load();
+		if (!loaded) {
+      load();
+    }
 		return new Point(width,height);
 	}
 	public void set(Dimension v){
@@ -129,7 +137,9 @@ public class DimensionProperty extends BaseProperty<Dimension>{
 		set(defaultvalue);
 	}
 	public boolean isDefault(){
-		if (!loaded) load();
+		if (!loaded) {
+      load();
+    }
 		return width==defaultvalue.width && height==defaultvalue.height;
 	}
 	public Dimension getDefaultValue(){

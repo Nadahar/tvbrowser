@@ -1,6 +1,6 @@
 /*
  * Timeline by Reinhard Lehrbaum
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -141,7 +141,7 @@ public class ProgramPanel extends JPanel
 		super.paintComponent(g);
 		final Rectangle drawHere = g.getClipBounds();
 
-		g.setFont(TimelinePlugin.getInstance().getFont());
+    g.setFont(TimelinePlugin.getFont());
 
 		final Graphics2D g2 = (Graphics2D) g;
 
