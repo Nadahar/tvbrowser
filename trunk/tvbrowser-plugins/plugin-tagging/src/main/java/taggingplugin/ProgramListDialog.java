@@ -1,16 +1,16 @@
 /*
  * Copyright Michael Keppler
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -40,15 +40,15 @@ import util.ui.ProgramList;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
-import com.jgoodies.forms.builder.ButtonBarBuilder;
+import com.jgoodies.forms.builder.ButtonBarBuilder2;
 
 import devplugin.Program;
 
 /**
  * @author bananeweizen
- * 
+ *
  */
-public final class ProgramListDialog extends JDialog implements WindowClosingIf {
+final class ProgramListDialog extends JDialog implements WindowClosingIf {
 
   /**
    * vector of programs shown in the dialog
@@ -65,14 +65,14 @@ public final class ProgramListDialog extends JDialog implements WindowClosingIf 
 
   /**
    * Creates the Dialog
-   * 
+   *
    * @param parent
    *          parent frame
    */
   public ProgramListDialog(final Window parent, final Program[] programs, final String title, final JComponent additionalButton) {
     super(parent);
     setModalityType(ModalityType.APPLICATION_MODAL);
-    mPrograms = programs;
+    mPrograms = programs.clone();
     Arrays.sort(mPrograms, ProgramUtilities.getProgramComparator());
     mTitle = title;
     mAdditionalButton = additionalButton;
@@ -113,9 +113,9 @@ public final class ProgramListDialog extends JDialog implements WindowClosingIf 
 
     content.add(scrollPane, BorderLayout.CENTER);
 
-    ButtonBarBuilder buttonBar = new ButtonBarBuilder();
+    ButtonBarBuilder2 buttonBar = new ButtonBarBuilder2();
     buttonBar.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-    
+
     final JButton closeButton = new JButton(Localizer
         .getLocalization(Localizer.I18N_CLOSE));
     closeButton.addActionListener(new ActionListener() {

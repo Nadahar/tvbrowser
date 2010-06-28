@@ -1,6 +1,6 @@
 /*
  * Timeline by Reinhard Lehrbaum
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -118,7 +118,7 @@ public final class TimelinePlugin extends devplugin.Plugin
 		return new ActionMenu(action);
 	}
 
-	protected void showTimeline()
+	void showTimeline()
 	{
 		if (mDialog != null && mDialog.isVisible())
 		{
@@ -174,9 +174,8 @@ public final class TimelinePlugin extends devplugin.Plugin
 			{
 			  final Channel[] mChannels = Plugin.getPluginManager()
             .getSubscribedChannels();
-				for (int i = 0; i < mChannels.length; i++)
-				{
-				  final int width = fm.stringWidth(mChannels[i].getName());
+				for (Channel mChannel : mChannels) {
+				  final int width = fm.stringWidth(mChannel.getName());
 					if (neededWidth < width)
 					{
 						neededWidth = width;
@@ -209,7 +208,7 @@ public final class TimelinePlugin extends devplugin.Plugin
 		mChannelWidth = -1;
 	}
 
-	Font getFont()
+	static Font getFont()
 	{
 		return DEFAULT_FONT;
 	}
@@ -224,7 +223,7 @@ public final class TimelinePlugin extends devplugin.Plugin
 		mChoosenDate = d;
 	}
 
-	int getNowMinute()
+	static int getNowMinute()
 	{
 	  final Calendar now = Calendar.getInstance();
 		return now.get(Calendar.HOUR_OF_DAY) * 60 + now.get(Calendar.MINUTE);

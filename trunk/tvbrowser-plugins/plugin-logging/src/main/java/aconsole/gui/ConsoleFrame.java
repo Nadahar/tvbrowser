@@ -17,26 +17,24 @@
  
  You should have received a copy of the GNU General Public License
  along with this program, in a file called LICENSE in the top
- directory of the distribution; if not, write to 
- the Free Software Foundation, Inc., 59 Temple Place, Suite 330, 
+ directory of the distribution; if not, write to
+ the Free Software Foundation, Inc., 59 Temple Place, Suite 330,
  Boston, MA  02111-1307  USA
  
  *******************************************************************/
 package aconsole.gui;
 
-import javax.swing.*;
-
-
-import util.ui.ImageUtilities;
-
-
-import aconsole.AConsole;
-import aconsole.data.*;
-import aconsole.properties.DimensionProperty;
-
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+
+import javax.swing.JFrame;
+
+import util.ui.ImageUtilities;
+import aconsole.AConsole;
+import aconsole.data.Console;
+import aconsole.properties.DimensionProperty;
 
 /**
  * this is contains the JFrame for the console

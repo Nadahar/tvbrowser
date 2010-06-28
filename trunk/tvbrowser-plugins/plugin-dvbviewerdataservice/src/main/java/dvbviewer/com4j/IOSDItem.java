@@ -1,6 +1,12 @@
 package dvbviewer.com4j  ;
 
-import com4j.*;
+import com4j.Com4jObject;
+import com4j.DefaultMethod;
+import com4j.IID;
+import com4j.MarshalAs;
+import com4j.NativeType;
+import com4j.ReturnValue;
+import com4j.VTID;
 
 @IID("{1A2F98E3-535D-43BE-AA0F-24AB83EF1C51}")
 public interface IOSDItem extends Com4jObject {

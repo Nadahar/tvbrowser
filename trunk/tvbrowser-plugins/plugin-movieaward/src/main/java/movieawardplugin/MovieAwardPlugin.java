@@ -339,7 +339,7 @@ final public class MovieAwardPlugin extends Plugin {
         .msg("grouping.grouping", "Grouping")), groupActions));
   }
 
-  protected void updateNodeGrouping() {
+  void updateNodeGrouping() {
     // clear children and reset root node
     if (mRootNode != null) {
       mRootNode.clear();

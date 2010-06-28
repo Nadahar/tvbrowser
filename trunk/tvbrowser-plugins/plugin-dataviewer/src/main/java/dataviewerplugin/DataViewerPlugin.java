@@ -51,9 +51,9 @@ import devplugin.Version;
 
 /**
  * DataViewer for TV-Browser.
- * 
+ *
  * @author René Mach
- * 
+ *
  */
 public final class DataViewerPlugin extends Plugin implements Runnable {
 
@@ -87,7 +87,7 @@ public final class DataViewerPlugin extends Plugin implements Runnable {
 
   /**
    * Gets the instance of this plugin.
-   * 
+   *
    * @return The instance of this plugin.
    */
   public static DataViewerPlugin getInstance() {
@@ -546,7 +546,7 @@ public final class DataViewerPlugin extends Plugin implements Runnable {
     }
   }
 
-  private void putInHashMap(HashMap<Channel, HashMap<Integer, ArrayList<Program>>> map, Program p, Channel channel, Integer n) {
+  private static void putInHashMap(HashMap<Channel, HashMap<Integer, ArrayList<Program>>> map, Program p, Channel channel, Integer n) {
 
     if (map.containsKey(channel)) {
       HashMap<Integer, ArrayList<Program>> dates = map.get(channel);
@@ -568,15 +568,15 @@ public final class DataViewerPlugin extends Plugin implements Runnable {
     }
   }
 
-  protected int getAcceptableGap() {
+  int getAcceptableGap() {
     return Integer.parseInt(mProperties.getProperty("acceptableGap","1"));
   }
 
-  protected int getAcceptableDuration() {
+  int getAcceptableDuration() {
 	return Integer.parseInt(mProperties.getProperty("acceptableDuration","15"));
   }
-  
-  protected void setAcceptableDuration(int duration) {
+
+  void setAcceptableDuration(int duration) {
 	    if(Integer.parseInt(mProperties.getProperty("acceptableDuration","15")) != duration) {
 	      mProperties.setProperty("acceptableDuration", String.valueOf(duration));
 
@@ -595,8 +595,8 @@ public final class DataViewerPlugin extends Plugin implements Runnable {
 
 	    }
 	  }
-  
-  protected void setAcceptableGap(int gap) {
+
+  void setAcceptableGap(int gap) {
     if(Integer.parseInt(mProperties.getProperty("acceptableGap","1")) != gap) {
       mProperties.setProperty("acceptableGap", String.valueOf(gap));
 
@@ -616,7 +616,7 @@ public final class DataViewerPlugin extends Plugin implements Runnable {
     }
   }
 
-  protected Icon getIcon() {
+  Icon getIcon() {
     return createImageIcon("actions",
         "format-justify-fill",16);
   }

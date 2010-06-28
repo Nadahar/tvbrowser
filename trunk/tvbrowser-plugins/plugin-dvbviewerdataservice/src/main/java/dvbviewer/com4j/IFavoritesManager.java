@@ -1,6 +1,9 @@
 package dvbviewer.com4j  ;
 
-import com4j.*;
+import com4j.Com4jObject;
+import com4j.IID;
+import com4j.ReturnValue;
+import com4j.VTID;
 
 @IID("{6AF57FCE-44D9-4DC8-9276-87F8F9CFE818}")
 public interface IFavoritesManager extends Com4jObject {

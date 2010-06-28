@@ -1,6 +1,8 @@
 package dvbviewer.com4j  ;
 
-import com4j.*;
+import com4j.Com4jObject;
+import com4j.IID;
+import com4j.VTID;
 
 /**
  * The Tagreaderobject offers you reading and writing of various tag formats

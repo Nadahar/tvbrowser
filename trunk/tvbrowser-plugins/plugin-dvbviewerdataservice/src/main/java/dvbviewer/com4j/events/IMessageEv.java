@@ -1,6 +1,7 @@
 package dvbviewer.com4j.events;
 
-import com4j.*;
+import com4j.DISPID;
+import com4j.IID;
 
 @IID("{9891B0B0-086D-4A6D-B1F5-2287BF06C2C4}")
 public abstract class IMessageEv {

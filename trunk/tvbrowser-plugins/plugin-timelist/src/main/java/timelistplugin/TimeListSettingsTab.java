@@ -40,17 +40,17 @@ public final class TimeListSettingsTab implements SettingsTab {
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(TimeListSettingsTab.class);
   
   /**
-   * plugin instance 
+   * plugin instance
    */
   private TimeListPlugin mPlugin;
   
   /**
-   * show program description in list view 
+   * show program description in list view
    */
   private JCheckBox mDescription;
   
   /**
-   * show expired programs in the list view 
+   * show expired programs in the list view
    */
   private JCheckBox mExpired;
 

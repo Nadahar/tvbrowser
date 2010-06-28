@@ -1,6 +1,6 @@
 /*
  * TV-Pearl by Reinhard Lehrbaum
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -180,7 +180,7 @@ public final class PearlDialog extends JDialog implements WindowClosingIf
 				if (!mDataList.getValueIsAdjusting())
 				{
 					boolean isEnable = false;
-					final Object selectedValues[] = mDataList.getSelectedValues();
+					final Object[] selectedValues = mDataList.getSelectedValues();
 					if (selectedValues.length == 1
               && (selectedValues[0] instanceof TVPProgram)) {
 					  final TVPProgram p = (TVPProgram) selectedValues[0];
@@ -343,7 +343,7 @@ public final class PearlDialog extends JDialog implements WindowClosingIf
 	 */
 	private void showSendDialog()
 	{
-	  final Object selectedValues[] = mDataList.getSelectedValues();
+	  final Object[] selectedValues = mDataList.getSelectedValues();
 		if (selectedValues.length == 1)
 		{
 			if (selectedValues[0] instanceof TVPProgram)

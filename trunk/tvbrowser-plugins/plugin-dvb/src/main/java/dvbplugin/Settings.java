@@ -357,7 +357,7 @@ public final class Settings {
       }
 
       if (null != tvbName) {
-        String tmp[] = entry.getValue().split("\\|");
+        String[] tmp = entry.getValue().split("\\|");
         String sid = tmp[0];
         String dvbvName = tmp[1];
         String aid = null;
@@ -424,8 +424,7 @@ public final class Settings {
       props.setProperty(PROPS_VIEWER_EXE_NAME, viewerExeName);
     }
 
-    for (Iterator<TvbDvbVChannel> it = channels.iterator(); it.hasNext();) {
-      TvbDvbVChannel channel = it.next();
+    for (TvbDvbVChannel channel : channels) {
       StringBuilder value = new StringBuilder(64);
       value.append(channel.getDVBChannel().serviceID).append('|');
       value.append(channel.getDVBChannel().name).append('|');
@@ -795,10 +794,10 @@ public final class Settings {
         String line = reader.readLine();
         while (line != null) {
           if (line.startsWith("UserMode")) {
-            String ini[] = line.split("=");
+            String[] ini = line.split("=");
             setViewerMode(ini[1]);
           } else if (line.startsWith("Root")) {
-            String ini[] = line.split("=");
+            String[] ini = line.split("=");
             viewerRoot = ini[1];
           }
           line = reader.readLine();
@@ -896,8 +895,7 @@ public final class Settings {
   public final TvbDvbVChannel getChannelByTVBrowserName(String name) {
     if (null == name) { return UNKNOWN_CHANNEL; }
 
-    for (Iterator<TvbDvbVChannel> it = channels.iterator(); it.hasNext();) {
-      TvbDvbVChannel ch = it.next();
+    for (TvbDvbVChannel ch : channels) {
       if (name.equals(ch.tvBrowserName)) { return ch; }
     }
     return UNKNOWN_CHANNEL;
@@ -915,8 +913,7 @@ public final class Settings {
   final TvbDvbVChannel getChannelByDVBViewerName(String name) {
     if (null == name) { return UNKNOWN_CHANNEL; }
 
-    for (Iterator<TvbDvbVChannel> it = channels.iterator(); it.hasNext();) {
-      TvbDvbVChannel ch = it.next();
+    for (TvbDvbVChannel ch : channels) {
       if (name.equals(ch.getDVBChannel().name)) { return ch; }
     }
     return UNKNOWN_CHANNEL;

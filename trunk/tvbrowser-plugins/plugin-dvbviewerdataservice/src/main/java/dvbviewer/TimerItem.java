@@ -135,10 +135,11 @@ public final class TimerItem {
     cal.set(Calendar.HOUR_OF_DAY, program.getHours());
     cal.set(Calendar.MINUTE, program.getMinutes());
     // add the duration
-    if (program.getLength() <= 0)
+    if (program.getLength() <= 0) {
       cal.add(Calendar.MINUTE, 1);
-    else
+    } else {
       cal.add(Calendar.MINUTE, program.getLength());
+    }
     cal.set(Calendar.SECOND, 0);
     // add the value after
     cal.add(Calendar.MINUTE, after);

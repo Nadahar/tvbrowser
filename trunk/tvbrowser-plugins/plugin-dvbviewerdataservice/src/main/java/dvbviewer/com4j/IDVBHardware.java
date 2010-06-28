@@ -1,6 +1,10 @@
 package dvbviewer.com4j  ;
 
-import com4j.*;
+import com4j.Com4jObject;
+import com4j.IID;
+import com4j.NativeType;
+import com4j.ReturnValue;
+import com4j.VTID;
 
 @IID("{B5E7BC35-DDBD-412C-8B01-0501131897FB}")
 public interface IDVBHardware extends Com4jObject {

@@ -1,6 +1,9 @@
 package dvbviewer.com4j  ;
 
-import com4j.*;
+import com4j.Com4jObject;
+import com4j.DefaultMethod;
+import com4j.IID;
+import com4j.VTID;
 
 @IID("{F614DFEE-06E8-4AC8-B78A-0F5FF4EAA3C3}")
 public interface IRecordManager extends Com4jObject,Iterable<Com4jObject> {

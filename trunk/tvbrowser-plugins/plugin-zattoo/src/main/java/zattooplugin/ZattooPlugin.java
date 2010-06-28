@@ -44,7 +44,7 @@ public final class ZattooPlugin extends Plugin {
   /**
    * Creates an instance of this plugin.
    */
-  public ZattooPlugin() throws IOException {
+  public ZattooPlugin() {
     mInstance = this;
   }
 
@@ -195,7 +195,7 @@ public final class ZattooPlugin extends Plugin {
 
   @Override
   public Class<? extends PluginsFilterComponent>[] getAvailableFilterComponentClasses() {
-    return (Class<? extends PluginsFilterComponent>[]) new Class[] { ZattooFilterComponent.class };
+    return new Class[] { ZattooFilterComponent.class };
   }
 
   public boolean isChannelSupported(final Channel channel) {

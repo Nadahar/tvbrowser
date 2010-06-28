@@ -39,13 +39,12 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import util.exc.ErrorHandler;
+import util.ui.Localizer;
 import dvbplugin.Settings.DVBViewerChannel;
 import dvbplugin.dvbviewer.ChannelList;
 import dvbplugin.dvbviewer.ProcessHandler;
 import dvbplugin.dvbviewer.ChannelList.Channel;
-
-import util.exc.ErrorHandler;
-import util.ui.Localizer;
 
 /**
  * @author Probum

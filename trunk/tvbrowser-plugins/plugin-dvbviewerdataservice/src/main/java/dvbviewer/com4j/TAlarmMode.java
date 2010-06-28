@@ -1,6 +1,5 @@
 package dvbviewer.com4j  ;
 
-import com4j.*;
 
 /**
  * Describes the alarmtype of a alarm

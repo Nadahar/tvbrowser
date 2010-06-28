@@ -33,6 +33,7 @@ import java.util.TimeZone;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
+import devplugin.AbstractTvDataService;
 import devplugin.Channel;
 
 /**
@@ -61,7 +62,7 @@ public final class NextViewDataServiceData {
    * @return the channel name as String
    */
   public String getChannelName(String ID) {
-    Channel c = (Channel) channels.get(ID);
+    Channel c = channels.get(ID);
     if (c == null) {
       return null;
     } else {
@@ -76,7 +77,7 @@ public final class NextViewDataServiceData {
    * @return the channel itself
    */
   public Channel getChannel(String ID) {
-    return (Channel) channels.get(ID);
+    return channels.get(ID);
   }
 
   /**
@@ -198,7 +199,7 @@ public final class NextViewDataServiceData {
       String alterDesc = alternativeChannelsDesc.getProperty(channelId);
       if (alterDesc!=null){
         String alterId = alterDesc.split(";",4)[2];
-        Channel [] subScribedChannels = NextViewDataService.getPluginManager().getSubscribedChannels();
+        Channel [] subScribedChannels = AbstractTvDataService.getPluginManager().getSubscribedChannels();
         if (subScribedChannels!=null){
           int index = 0;
           while (index < subScribedChannels.length){
@@ -233,7 +234,7 @@ public final class NextViewDataServiceData {
 
     int index = 0;
     while (i.hasNext()) {
-      newChannels[index] = (Channel) i.next();
+      newChannels[index] = i.next();
       index++;
     }
     return newChannels;

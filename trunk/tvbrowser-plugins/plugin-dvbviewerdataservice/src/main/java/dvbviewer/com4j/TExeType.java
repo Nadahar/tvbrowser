@@ -1,6 +1,5 @@
 package dvbviewer.com4j  ;
 
-import com4j.*;
 
 /**
  * The Execute type describes the type of command send to the executor Object of the DVBViewer

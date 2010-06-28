@@ -25,11 +25,10 @@
  */
 package dvbplugin.dvbviewer;
 
+import devplugin.Program;
 import dvbplugin.HelperClass;
 import dvbplugin.Settings;
 import dvbplugin.Settings.TvbDvbVChannel;
-
-import devplugin.Program;
 
 /**
  * Container for the data that is contained in the DVBViewer scheduled
@@ -170,7 +169,7 @@ public final class ScheduledRecording {
    * @param entry the scheduled recording line from DVBViewer
    */
   ScheduledRecording(String entry) {
-    String fields[] = entry.split(VALUE_SEP);
+    String[] fields = entry.split(VALUE_SEP);
     String tmp;
 
     tmp = fields[FIELD_TITLE];
@@ -180,7 +179,7 @@ public final class ScheduledRecording {
 
     tmp = fields[FIELD_CHANNEL];
     if (null != tmp) {
-      String chnl[] = tmp.split("\\|");
+      String[] chnl = tmp.split("\\|");
 
       tmp = chnl[FIELD_CHANNEL_ID];
       if (tmp != null) {

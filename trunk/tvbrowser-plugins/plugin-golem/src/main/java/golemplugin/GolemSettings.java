@@ -23,16 +23,17 @@
  */
 package golemplugin;
 
-import devplugin.Date;
-import devplugin.Plugin;
-import devplugin.Program;
-import devplugin.ProgramReceiveTarget;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+
+import devplugin.Date;
+import devplugin.Plugin;
+import devplugin.Program;
+import devplugin.ProgramReceiveTarget;
 
 public class GolemSettings {
   private ArrayList<Program> programList = new ArrayList<Program>();
@@ -67,7 +68,7 @@ public class GolemSettings {
   }
 
   private void readData(ObjectInputStream in) throws IOException, ClassNotFoundException {
-    int version = in.readInt();
+    in.readInt(); // version, currently unused
 
     markEnabled = in.readBoolean();
     markPriority = in.readInt();

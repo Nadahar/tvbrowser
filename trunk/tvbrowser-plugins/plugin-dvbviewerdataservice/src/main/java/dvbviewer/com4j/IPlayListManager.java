@@ -1,6 +1,9 @@
 package dvbviewer.com4j  ;
 
-import com4j.*;
+import com4j.Com4jObject;
+import com4j.IID;
+import com4j.ReturnValue;
+import com4j.VTID;
 
 @IID("{64EBF69D-6D41-4D3E-A229-4F11640C7D4B}")
 public interface IPlayListManager extends Com4jObject {

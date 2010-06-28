@@ -1,6 +1,6 @@
 /*
  * Timeline by Reinhard Lehrbaum
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -39,7 +39,9 @@ import devplugin.Plugin;
 
 public class ChannelHeader extends JComponent
 {
-	private static final long serialVersionUID = 1L;
+	private static final int MINIMUM_CHANNEL_HEIGHT = 20;
+
+  private static final long serialVersionUID = 1L;
 
 	private static final Cursor linkCursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
 	private static final Cursor normalCursor = Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
@@ -47,7 +49,7 @@ public class ChannelHeader extends JComponent
 	private static final Cursor resizeColumnCursor = Cursor.getPredefinedCursor(Cursor.E_RESIZE_CURSOR);
 
 	private int mChannelCount;
-	transient private Channel[] mChannels;
+	private transient Channel[] mChannels;
 	private int mChannelHeight;
 	private boolean mShowName;
   private boolean mShowIcon;
@@ -170,15 +172,15 @@ public class ChannelHeader extends JComponent
 
 		final Color c = g.getColor();
     final Color cr = new Color(240, 240, 240);
-		g.setFont(TimelinePlugin.getInstance().getFont());
+    g.setFont(TimelinePlugin.getFont());
 		g.setColor(c);
 
 		int delta = 0;
 		int h = g.getFontMetrics().getHeight();
-		if (mChannelHeight > 20)
+		if (mChannelHeight > MINIMUM_CHANNEL_HEIGHT)
 		{
 			h += (mChannelHeight - h) / 2;
-			delta = (mChannelHeight - 20) / 2;
+			delta = (mChannelHeight - MINIMUM_CHANNEL_HEIGHT) / 2;
 		}
 		final int w = this.getSize().width;
 		g.setColor(Color.WHITE);
@@ -245,7 +247,7 @@ public class ChannelHeader extends JComponent
 
 	private boolean isMouseOverIcon(final Point p)
 	{
-	  final int logoBegin = ((int) ((double) p.getY() / mChannelHeight))
+	  final int logoBegin = ((int) (p.getY() / mChannelHeight))
         * mChannelHeight
         + (mChannelHeight > 20 ? (mChannelHeight - 20) / 2 : 0);
     final int maxHeight = mChannelCount * mChannelHeight;

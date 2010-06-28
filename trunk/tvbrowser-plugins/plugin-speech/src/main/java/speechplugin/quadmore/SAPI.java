@@ -22,7 +22,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import speechplugin.SpeechPlugin;
+import devplugin.Plugin;
 
 final public class SAPI {
   private QuadmoreTTS quadmore;
@@ -77,7 +77,7 @@ final public class SAPI {
 
       // Delete on exit
       dll.deleteOnExit();
-      SpeechPlugin.getPluginManager().deleteFileOnNextStart(dll.getPath());
+      Plugin.getPluginManager().deleteFileOnNextStart(dll.getPath());
     } catch (Throwable e) {
       e.printStackTrace();
       return null;

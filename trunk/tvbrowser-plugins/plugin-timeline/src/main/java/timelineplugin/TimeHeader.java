@@ -1,6 +1,6 @@
 /*
  * Timeline by Reinhard Lehrbaum
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -75,7 +75,7 @@ public class TimeHeader extends JComponent implements MouseListener, MouseInputL
 		g.setColor(Color.WHITE);
 		g.fillRect(0, 0, this.getSize().width, this.getSize().height);
 		g.setColor(!mResizing ? c : Color.LIGHT_GRAY);
-		g.setFont(TimelinePlugin.getInstance().getFont());
+		g.setFont(TimelinePlugin.getFont());
 
 		final int h = g.getFontMetrics().getHeight() + 2;
     final int h5 = h + 5;
@@ -110,7 +110,7 @@ public class TimeHeader extends JComponent implements MouseListener, MouseInputL
 		}
 	}
 
-	private String formatTime(final int hour)
+	private static String formatTime(final int hour)
 	{
 	  final StringBuilder sb = new StringBuilder();
 		sb.append("0").append(hour).append(":00");
@@ -183,7 +183,7 @@ public class TimeHeader extends JComponent implements MouseListener, MouseInputL
 			return false;
 		}
 		final int x = p.x - mStartX;
-		if ((p.y >= TimelinePlugin.getInstance().getFont().getSize() + 2 + 5 + 4) && (x % mSizeHour == 0))
+    if ((p.y >= TimelinePlugin.getFont().getSize() + 2 + 5 + 4) && (x % mSizeHour == 0))
 		{
 			return true;
 		}

@@ -125,7 +125,7 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
     mDateWasSet = false;
   }
 
-  protected static IDontWant2See getInstance() {
+  static IDontWant2See getInstance() {
     return mInstance;
   }
 
@@ -156,7 +156,7 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
     return /*Program.DEFAULT_PROGRAM_IMPORTANCE*/ -1;
   }
 
-  protected boolean acceptInternal(final Program program) {
+  boolean acceptInternal(final Program program) {
     if(!mDateWasSet) {
       mSettings.setLastUsedDate(getCurrentDate());
       mDateWasSet = true;
@@ -540,7 +540,7 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
     return new IDontWant2SeeSettingsTab(mSettings);
   }
 
-  protected static Date getCurrentDate() {
+  static Date getCurrentDate() {
     return mCurrentDate;
   }
 

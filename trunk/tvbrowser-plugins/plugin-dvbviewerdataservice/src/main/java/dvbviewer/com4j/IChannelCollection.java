@@ -1,6 +1,10 @@
 package dvbviewer.com4j  ;
 
-import com4j.*;
+import com4j.Com4jObject;
+import com4j.DefaultMethod;
+import com4j.Holder;
+import com4j.IID;
+import com4j.VTID;
 
 /**
  * A list of Channelitems optained from the Channelmanager.

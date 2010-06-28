@@ -1,16 +1,16 @@
 /*
  * Copyright Michael Keppler
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -33,7 +33,7 @@ import devplugin.PluginManager;
 import devplugin.Program;
 
 public class WidgetServer extends NanoHTTPD {
-	
+
 	private static final String PARAM_ID = "id";
 
 	private static final String PARAM_ACTION = "action";
@@ -94,14 +94,14 @@ public class WidgetServer extends NanoHTTPD {
 			return mLocalizer.msg("noSubscriptions", "No channels subscribed");
 		}
 		final Date date = Date.getCurrentDate();
-		for (int i = 0; i < channels.length; i++) {
+		for (Channel channel : channels) {
 		  final Iterator<Program> dayProgram = Plugin.getPluginManager()
-          .getChannelDayProgram(date, channels[i]);
+          .getChannelDayProgram(date, channel);
 			if (dayProgram != null) {
 				while (dayProgram.hasNext()) {
 				  final Program program = dayProgram.next();
 					if (program.isOnAir()) {
-						result.append(convert(channels[i].getName())).append(" - ").append(
+						result.append(convert(channel.getName())).append(" - ").append(
 								program.getTimeString()).append(" <a href=\"").append(
 								getProgramLink(program)).append('"');
             final String shortInfo = program.getShortInfo();
@@ -132,7 +132,7 @@ public class WidgetServer extends NanoHTTPD {
 		return result.toString();
 	}
 
-	private String convert(String in) {
+	private static String convert(String in) {
 		in = HTMLTextHelper.convertTextToHtml(in.replaceAll("\n", " "), false);
 		final StringBuilder buf = new StringBuilder();
     final int len = in.length();
@@ -146,8 +146,8 @@ public class WidgetServer extends NanoHTTPD {
 		}
 		return buf.toString();
 	}
-	
-	private String getProgramLink(final Program program) {
+
+	private static String getProgramLink(final Program program) {
 		return "?" + PARAM_ACTION + "=" + CMD_SHOWPROGRAMINFO + "&" + PARAM_ID + "=" + program.getID();
 	}
 

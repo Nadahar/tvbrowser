@@ -103,7 +103,7 @@ public class TVBrowserMini extends Plugin {
 
   public PluginInfo getInfo() {
     String name = mLocalizer.msg("pluginName", "TV-Browser Mini Export");
-    String desc = mLocalizer.msg("description", "Exports the Data for your Pocket PC");
+    String desc = mLocalizer.msg("description", "Exports the Data for your Pocket PC or Android device");
     String author = "Bodo Tasche, René Mach, Benedikt Grabenmeier, Michael Keppler";
     return new PluginInfo(TVBrowserMini.class, name, desc, author);
   }

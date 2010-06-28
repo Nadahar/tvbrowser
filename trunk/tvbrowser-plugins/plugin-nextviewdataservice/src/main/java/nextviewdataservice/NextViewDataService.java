@@ -194,13 +194,13 @@ public final class NextViewDataService extends AbstractTvDataService {
 
 
     // Clear MutableChannelDayProgram to avoid 'Shadow-Programs'
-    for (int i = 0; i < channelArr.length; i++) {
+    for (Channel element : channelArr) {
       if (isPartialUpdate){
-        dateArray = getDateArray (changedList, alternativesDescription.getProperty(channelArr[i].getId()).split(";")[2]);
+        dateArray = getDateArray (changedList, alternativesDescription.getProperty(element.getId()).split(";")[2]);
       }
-      for (int day = 0; day < dateArray.length; day++) {
-        if (dateArray[day].compareTo(startDate)>=0) {
-          MutableChannelDayProgram prog = data.getDispatcher().getChannelDayProgram(dateArray[day], channelArr[i]);
+      for (Date element2 : dateArray) {
+        if (element2.compareTo(startDate)>=0) {
+          MutableChannelDayProgram prog = data.getDispatcher().getChannelDayProgram(element2, element);
           if (prog != null) {
             prog.removeAllPrograms();
           }
@@ -317,13 +317,13 @@ public final class NextViewDataService extends AbstractTvDataService {
     if (isPartialUpdate && useAlternativeData()){
       // Update all day programs, were sources have been updated
       String key;
-      for (Iterator<?> it = alternativeChannels.keySet().iterator(); it.hasNext();) {
-        key = it.next().toString();
+      for (Object name : alternativeChannels.keySet()) {
+        key = name.toString();
         if (alternativeChannels.get(key).getUniqueId().equals(channel.getUniqueId())){
           Channel[] availableChannel = getAvailableChannels(null);
-          for (int i = 0; i < availableChannel.length; i++) {
-            if (availableChannel[i].getId().equals(key)) {
-              Channel nextChannel = HelperMethods.getChannelFromId(availableChannel[i].getUniqueId(), subScribedChannels);
+          for (Channel element : availableChannel) {
+            if (element.getId().equals(key)) {
+              Channel nextChannel = HelperMethods.getChannelFromId(element.getUniqueId(), subScribedChannels);
               if (!(nextChannel == null || nxtvepgSourcesUpdate.containsKey(nextChannel.getUniqueId() + date.getDateString()))) {
                 noBreakFlg = updateDayProgram(channelArr, nextChannel, date, alternativeChannels, subScribedChannels, updateManager);
                 if (!noBreakFlg) {
@@ -976,7 +976,7 @@ public final class NextViewDataService extends AbstractTvDataService {
           altDayProg.add(alterIt.next());
         }
 
-        String mixFlags[] = new String[30];
+        String[] mixFlags = new String[30];
         Properties alternativeChannelsDesc = new Properties();
 
         try {

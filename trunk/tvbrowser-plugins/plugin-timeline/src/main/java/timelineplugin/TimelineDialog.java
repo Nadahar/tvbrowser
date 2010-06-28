@@ -1,6 +1,6 @@
 /*
  * Timeline by Reinhard Lehrbaum
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -38,7 +38,6 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JRootPane;
 import javax.swing.JScrollBar;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
@@ -67,7 +66,7 @@ public final class TimelineDialog extends JDialog implements WindowClosingIf
 	private JComboBox mDateList;
 	private JComboBox mTimeList;
 	private JComboBox mFilterList;
-	transient private Timer mTimer;
+	private transient Timer mTimer;
 	private int[] mTimes;
 	private boolean mLockNow = false;
 	private boolean mStartWithNow = false;
@@ -451,7 +450,7 @@ public final class TimelineDialog extends JDialog implements WindowClosingIf
 		mMainPane.gotoTime(minute, delta);
 	}
 
-	private Vector<Date> getDateList()
+	private static Vector<Date> getDateList()
 	{
 	  final Vector<Date> list = new Vector<Date>();
     final Date today = Date.getCurrentDate();
@@ -471,10 +470,9 @@ public final class TimelineDialog extends JDialog implements WindowClosingIf
 		mTimes = Plugin.getPluginManager().getTvBrowserSettings().getTimeButtonTimes();
 		final TimeFormatter formatter = new TimeFormatter();
 
-		for (int i = 0; i < mTimes.length; i++)
-		{
-		  final int h = mTimes[i] / 60;
-      final int m = mTimes[i] % 60;
+		for (int mTime : mTimes) {
+		  final int h = mTime / 60;
+      final int m = mTime % 60;
 			list.add(formatter.formatTime(h, m));
 		}
 		return list;
@@ -500,7 +498,7 @@ public final class TimelineDialog extends JDialog implements WindowClosingIf
 				}
 			}
 		}
-		gotoTime(TimelinePlugin.getInstance().getNowMinute());
+		gotoTime(TimelinePlugin.getNowMinute());
 	}
 
 	private int getDayLimit()

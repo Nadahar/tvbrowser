@@ -1,6 +1,6 @@
 /*
  * Timeline by Reinhard Lehrbaum
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -39,6 +39,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
+import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.plaf.basic.BasicComboBoxRenderer;
@@ -120,7 +121,7 @@ public final class TimelinePluginSettingsTab implements SettingsTab
 		{
 			mProgressBar.setSelectedIndex(1);
 		}
-		mFocusDelta = new JSlider(JSlider.HORIZONTAL, 0, 100, TimelinePlugin
+		mFocusDelta = new JSlider(SwingConstants.HORIZONTAL, 0, 100, TimelinePlugin
         .getSettings().getFocusDelta());
 		mFocusDelta.setToolTipText("xxx");
 		mFocusDelta.addChangeListener(new ChangeListener()
@@ -242,7 +243,8 @@ public final class TimelinePluginSettingsTab implements SettingsTab
 		mFormat = new JTextArea(5, 20);
 		mFormat.setText(TimelinePlugin.getSettings().getTitleFormat());
 		final JScrollPane scrollFormat = new JScrollPane(mFormat);
-		mFontPanel = new FontChooserPanel(TimelinePlugin.getInstance().getFont());
+		TimelinePlugin.getInstance();
+    mFontPanel = new FontChooserPanel(TimelinePlugin.getFont());
 		final JButton addFontBtn = new JButton(Localizer
         .getLocalization(Localizer.I18N_ADD));
 		addFontBtn.setToolTipText(mLocalizer.msg("addHint", "Add font"));
@@ -268,7 +270,7 @@ public final class TimelinePluginSettingsTab implements SettingsTab
 			public void actionPerformed(final ActionEvent e)
 			{
 				mFormat.setText(TimelinePlugin.getSettings().getDefaultTitleFormat());
-				mFontPanel.selectFont(TimelinePlugin.getInstance().getFont());
+				mFontPanel.selectFont(TimelinePlugin.getFont());
 			}
 		});
 
@@ -369,7 +371,7 @@ public final class TimelinePluginSettingsTab implements SettingsTab
 			}
 		});
 		mDurationLabel = new JLabel("60");
-		mDuration = new JSlider(JSlider.HORIZONTAL, 5, 120, 60);
+		mDuration = new JSlider(SwingConstants.HORIZONTAL, 5, 120, 60);
 		mDuration.addChangeListener(new ChangeListener()
 		{
 			public void stateChanged(final ChangeEvent e)
@@ -424,7 +426,7 @@ public final class TimelinePluginSettingsTab implements SettingsTab
 		mPreview.setPreferredSize(new Dimension(pw + 5, ph + 10));
 		mPreviewProgram.setPreferredSize(new Dimension(pw, ph));
 		final TextFormatter formatter = new TextFormatter();
-		formatter.setFont(TimelinePlugin.getInstance().getFont());
+		formatter.setFont(TimelinePlugin.getFont());
 		formatter.setInitialiseMaxLine(true);
 		formatter.setFormat(mFormat.getText());
 		if (!formatter.testFormat())

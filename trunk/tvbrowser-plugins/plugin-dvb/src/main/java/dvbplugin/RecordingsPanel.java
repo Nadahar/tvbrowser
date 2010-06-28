@@ -31,7 +31,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
@@ -177,9 +176,7 @@ public class RecordingsPanel extends JPanel implements java.awt.event.ActionList
     Vector<Vector<String>> data = new Vector<Vector<String>>();
     if (set.isValid()) {
       entries = DvbViewerTimers.getEntries(set.getViewerTimersPath());
-      for (Iterator<ScheduledRecording> it = entries.iterator(); it.hasNext();) {
-        ScheduledRecording rec = it.next();
-
+      for (ScheduledRecording rec : entries) {
         Vector<String> rows = new Vector<String>(5);
         // channel
         rows.add(rec.getDvbViewerChannel());
@@ -681,7 +678,9 @@ public class RecordingsPanel extends JPanel implements java.awt.event.ActionList
 
 
   protected void miAlActionPerformed(ActionEvent evt) {
-    if (table.getSelectedRows().length > 0) removeRows();
+    if (table.getSelectedRows().length > 0) {
+      removeRows();
+    }
   }
 
 
@@ -716,9 +715,9 @@ public class RecordingsPanel extends JPanel implements java.awt.event.ActionList
 
     // find icon for the channel
     Channel[] channels = Plugin.getPluginManager().getSubscribedChannels();
-    for (int i = 0; i < channels.length; i++) {
-      if (channels[i].getName().equals(fieldChannel.getText())) {
-        labelChannelIcon.setIcon(channels[i].getIcon());
+    for (Channel channel : channels) {
+      if (channel.getName().equals(fieldChannel.getText())) {
+        labelChannelIcon.setIcon(channel.getIcon());
         break;
       }
     }
@@ -757,7 +756,9 @@ public class RecordingsPanel extends JPanel implements java.awt.event.ActionList
 
 
   private void buttonDeleteMouseClicked(MouseEvent evt) {// GEN-FIRST:event_buttonDeleteMouseClicked
-    if (table.getSelectedRows().length > 0) removeRows();
+    if (table.getSelectedRows().length > 0) {
+      removeRows();
+    }
   }// GEN-LAST:event_buttonDeleteMouseClicked
 
 

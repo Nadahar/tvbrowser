@@ -1,6 +1,6 @@
 /*
  * Timeline by Reinhard Lehrbaum
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -41,7 +41,7 @@ public class ProgramToolTip extends JToolTip
 	{
 		private ProgramPanel mProgramPanel;
 
-		public ProgramToolTipUI(final Program p)
+		ProgramToolTipUI(final Program p)
 		{
 			mProgramPanel = new ProgramPanel(p);
 			mProgramPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));

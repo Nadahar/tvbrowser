@@ -1,6 +1,5 @@
 package dvbviewer.com4j  ;
 
-import com4j.*;
 
 /**
  * Describes the differnt Tag-audioformats supported by the Tagreader

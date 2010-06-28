@@ -603,6 +603,7 @@ public class XMLElement
      * @deprecated Use {@link #setAttribute(java.lang.String, java.lang.Object)
      *             setAttribute} instead.
      */
+    @Deprecated
     public void addProperty(String name,
                             Object value)
     {
@@ -666,6 +667,7 @@ public class XMLElement
      * @deprecated Use {@link #setIntAttribute(java.lang.String, int)
      *             setIntAttribute} instead.
      */
+    @Deprecated
     public void addProperty(String key,
                             int    value)
     {
@@ -729,6 +731,7 @@ public class XMLElement
      * @deprecated Use {@link #setDoubleAttribute(java.lang.String, double)
      *             setDoubleAttribute} instead.
      */
+    @Deprecated
     public void addProperty(String name,
                             double value)
     {
@@ -821,6 +824,7 @@ public class XMLElement
      * @deprecated Use {@link #enumerateAttributeNames()
      *             enumerateAttributeNames} instead.
      */
+    @Deprecated
     public Enumeration enumeratePropertyNames()
     {
         return this.enumerateAttributeNames();
@@ -880,6 +884,7 @@ public class XMLElement
      *
      * @deprecated Use {@link #getContent() getContent} instead.
      */
+    @Deprecated
     public String getContents()
     {
         return this.getContent();
@@ -1481,6 +1486,7 @@ public class XMLElement
      *             java.util.Hashtable, java.lang.String, boolean)
      *             getIntAttribute} instead.
      */
+    @Deprecated
     public int getIntProperty(String    name,
                               Hashtable valueSet,
                               String    defaultKey)
@@ -1495,6 +1501,7 @@ public class XMLElement
      * @deprecated Use {@link #getStringAttribute(java.lang.String)
      *             getStringAttribute} instead.
      */
+    @Deprecated
     public String getProperty(String name)
     {
         return this.getStringAttribute(name);
@@ -1507,6 +1514,7 @@ public class XMLElement
      * @deprecated Use {@link #getStringAttribute(java.lang.String,
      *             java.lang.String) getStringAttribute} instead.
      */
+    @Deprecated
     public String getProperty(String name,
                               String defaultValue)
     {
@@ -1520,6 +1528,7 @@ public class XMLElement
      * @deprecated Use {@link #getIntAttribute(java.lang.String, int)
      *             getIntAttribute} instead.
      */
+    @Deprecated
     public int getProperty(String name,
                            int    defaultValue)
     {
@@ -1533,6 +1542,7 @@ public class XMLElement
      * @deprecated Use {@link #getDoubleAttribute(java.lang.String, double)
      *             getDoubleAttribute} instead.
      */
+    @Deprecated
     public double getProperty(String name,
                               double defaultValue)
     {
@@ -1547,6 +1557,7 @@ public class XMLElement
      *             java.lang.String, java.lang.String, boolean)
      *             getBooleanAttribute} instead.
      */
+    @Deprecated
     public boolean getProperty(String  key,
                                String  trueValue,
                                String  falseValue,
@@ -1564,6 +1575,7 @@ public class XMLElement
      *             java.util.Hashtable, java.lang.String, boolean)
      *             getAttribute} instead.
      */
+    @Deprecated
     public Object getProperty(String    name,
                               Hashtable valueSet,
                               String    defaultKey)
@@ -1579,6 +1591,7 @@ public class XMLElement
      *             java.util.Hashtable, java.lang.String, boolean)
      *             getStringAttribute} instead.
      */
+    @Deprecated
     public String getStringProperty(String    name,
                                     Hashtable valueSet,
                                     String    defaultKey)
@@ -1594,6 +1607,7 @@ public class XMLElement
      *             java.util.Hashtable, java.lang.String, boolean)
      *             getIntAttribute} instead.
      */
+    @Deprecated
     public int getSpecialIntProperty(String    name,
                                      Hashtable valueSet,
                                      String    defaultKey)
@@ -1609,6 +1623,7 @@ public class XMLElement
      *             java.util.Hashtable, java.lang.String, boolean)
      *             getDoubleAttribute} instead.
      */
+    @Deprecated
     public double getSpecialDoubleProperty(String    name,
                                            Hashtable valueSet,
                                            String    defaultKey)
@@ -1633,6 +1648,7 @@ public class XMLElement
      *
      * @deprecated Use {@link #getName() getName} instead.
      */
+    @Deprecated
     public String getTagName()
     {
         return this.getName();
@@ -2052,6 +2068,7 @@ public class XMLElement
      * @deprecated Use {@link #removeAttribute(java.lang.String)
      *             removeAttribute} instead.
      */
+    @Deprecated
     public void removeProperty(String name)
     {
         this.removeAttribute(name);
@@ -2067,6 +2084,7 @@ public class XMLElement
      * @deprecated Use {@link #removeAttribute(java.lang.String)
      *             removeAttribute} instead.
      */
+    @Deprecated
     public void removeChild(String name)
     {
         this.removeAttribute(name);
@@ -2107,6 +2125,7 @@ public class XMLElement
      *
      * @deprecated Use {@link #setName(java.lang.String) setName} instead.
      */
+    @Deprecated
     public void setTagName(String name)
     {
         this.setName(name);

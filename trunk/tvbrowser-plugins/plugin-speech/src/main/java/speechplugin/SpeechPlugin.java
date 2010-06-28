@@ -1,16 +1,16 @@
 /*
  * Copyright Michael Keppler
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -50,7 +50,7 @@ import devplugin.Version;
 
 /**
  * @author Bananeweizen
- * 
+ *
  */
 public final class SpeechPlugin extends Plugin {
 
@@ -104,7 +104,7 @@ public final class SpeechPlugin extends Plugin {
 
   /**
    * Gets the instance of this plugin.
-   * 
+   *
    * @return The instance of this plugin.
    */
   public static SpeechPlugin getInstance() {
@@ -213,7 +213,7 @@ public final class SpeechPlugin extends Plugin {
     return new ActionMenu(contextMenuAction, result);
   }
 
-  protected List<String> getAvailableVoices() {
+  List<String> getAvailableVoices() {
     if (mEngine != null) {
       final List<String> result = mEngine.getVoices();
       if (result != null) {
@@ -223,7 +223,7 @@ public final class SpeechPlugin extends Plugin {
     return new ArrayList<String>();
   }
 
-  protected void speak(final String text) {
+  void speak(final String text) {
     startEngine();
     if (mEngine != null) {
       // switch voice after changed settings
@@ -287,13 +287,13 @@ public final class SpeechPlugin extends Plugin {
     }
   }
 
-  protected void stopSpeaking() {
+  void stopSpeaking() {
     if (mEngine != null) {
       mEngine.stopSpeaking();
     }
   }
 
-  protected static LocalPluginProgramFormating getDefaultFormatting() {
+  static LocalPluginProgramFormating getDefaultFormatting() {
     return new LocalPluginProgramFormating(mLocalizer.msg("defaultFormatName",
         "SpeechPlugin - Default"), ProgramFieldType.TITLE_TYPE
         .getLocalizedName(), "{title}", "UTF-8");
@@ -305,28 +305,35 @@ public final class SpeechPlugin extends Plugin {
     if (mConfigs != null) {
       final ArrayList<AbstractPluginProgramFormating> list = new ArrayList<AbstractPluginProgramFormating>();
 
-      for (AbstractPluginProgramFormating config : mConfigs)
-        if (config != null)
+      for (AbstractPluginProgramFormating config : mConfigs) {
+        if (config != null) {
           list.add(config);
+        }
+      }
 
       out.writeInt(list.size());
 
-      for (AbstractPluginProgramFormating config : list)
+      for (AbstractPluginProgramFormating config : list) {
         config.writeData(out);
-    } else
+      }
+    } else {
       out.writeInt(0);
+    }
 
     if (mLocalFormattings != null) {
       final ArrayList<AbstractPluginProgramFormating> list = new ArrayList<AbstractPluginProgramFormating>();
 
-      for (AbstractPluginProgramFormating config : mLocalFormattings)
-        if (config != null)
+      for (AbstractPluginProgramFormating config : mLocalFormattings) {
+        if (config != null) {
           list.add(config);
+        }
+      }
 
       out.writeInt(list.size());
 
-      for (AbstractPluginProgramFormating config : list)
+      for (AbstractPluginProgramFormating config : list) {
         config.writeData(out);
+      }
     }
 
   }
@@ -345,8 +352,9 @@ public final class SpeechPlugin extends Plugin {
             .readData(in);
 
         if (value != null) {
-          if (value.equals(FORMATTING_TITLE))
+          if (value.equals(FORMATTING_TITLE)) {
             FORMATTING_TITLE = (LocalPluginProgramFormating) value;
+          }
 
           list.add(value);
         }
@@ -357,7 +365,7 @@ public final class SpeechPlugin extends Plugin {
       mLocalFormattings = new LocalPluginProgramFormating[in.readInt()];
 
       for (int i = 0; i < mLocalFormattings.length; i++) {
-        final LocalPluginProgramFormating value = (LocalPluginProgramFormating) LocalPluginProgramFormating
+        final LocalPluginProgramFormating value = (LocalPluginProgramFormating) AbstractPluginProgramFormating
             .readData(in);
         final LocalPluginProgramFormating loadedInstance = getInstanceOfFormattingFromSelected(value);
 
@@ -371,39 +379,43 @@ public final class SpeechPlugin extends Plugin {
 
   private LocalPluginProgramFormating getInstanceOfFormattingFromSelected(
       final LocalPluginProgramFormating value) {
-    for (AbstractPluginProgramFormating config : mConfigs)
-      if (config.equals(value))
+    for (AbstractPluginProgramFormating config : mConfigs) {
+      if (config.equals(value)) {
         return (LocalPluginProgramFormating) config;
+      }
+    }
 
     return null;
   }
 
-  protected static LocalPluginProgramFormating getDefaultFormating() {
+  static LocalPluginProgramFormating getDefaultFormating() {
     return FORMATTING_TITLE;
   }
 
-  protected LocalPluginProgramFormating[] getAvailableLocalPluginProgramFormattings() {
+  LocalPluginProgramFormating[] getAvailableLocalPluginProgramFormattings() {
     return mLocalFormattings;
   }
 
-  protected void setAvailableLocalPluginProgramFormattings(
+  void setAvailableLocalPluginProgramFormattings(
       final LocalPluginProgramFormating[] value) {
-    if (value == null || value.length < 1)
+    if (value == null || value.length < 1) {
       createDefaultAvailable();
-    else
+    } else {
       mLocalFormattings = value;
+    }
   }
 
-  protected AbstractPluginProgramFormating[] getSelectedPluginProgramFormattings() {
+  AbstractPluginProgramFormating[] getSelectedPluginProgramFormattings() {
     return mConfigs;
   }
 
-  protected void setSelectedPluginProgramFormatings(
+  void setSelectedPluginProgramFormatings(
       final AbstractPluginProgramFormating[] value) {
-    if (value == null || value.length < 1)
+    if (value == null || value.length < 1) {
       createDefaultConfig();
-    else
+    } else {
       mConfigs = value;
+    }
   }
 
   private void createDefaultConfig() {

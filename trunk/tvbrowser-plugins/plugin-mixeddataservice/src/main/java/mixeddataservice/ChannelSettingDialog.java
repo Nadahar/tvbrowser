@@ -78,8 +78,8 @@ public class ChannelSettingDialog extends JDialog{
   private boolean okPressed;
   public boolean countryCodeFixed;
 
-  private String alienIds[];
- 
+  private String[] alienIds;
+
   private Properties nxtvepgAlternatives;
   private Properties sharedChannelSources;
   private Properties mixedDataSources;
@@ -109,7 +109,7 @@ public class ChannelSettingDialog extends JDialog{
 
     JPanel backgroundPanel = (JPanel) getContentPane();
     backgroundPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-    backgroundPanel.setLayout(new BoxLayout(backgroundPanel, BoxLayout.PAGE_AXIS));    
+    backgroundPanel.setLayout(new BoxLayout(backgroundPanel, BoxLayout.PAGE_AXIS));
 
 
     basicPanel = new JPanel();
@@ -123,7 +123,6 @@ public class ChannelSettingDialog extends JDialog{
 
     JPanel tuningPanel = new JPanel();
     GridBagLayout tuningLayout = new GridBagLayout();
-    GridBagConstraints tuningConstraints = new GridBagConstraints();
     tuningPanel.setLayout(tuningLayout);
 
     String fieldsFileName = "files/fields.properties";
@@ -141,8 +140,9 @@ public class ChannelSettingDialog extends JDialog{
     fieldSetting = new JComboBox[numberOfFields];
     fieldIndex = new int[numberOfFields];
 
+    GridBagConstraints tuningConstraints;
     for (int i=0; i< numberOfFields; i++) {
-      String fieldDesc[]= fieldsProp.getProperty(Integer.toString(i), "-1").split(";");
+      String[] fieldDesc= fieldsProp.getProperty(Integer.toString(i), "-1").split(";");
       fieldIndex [i] = Integer.parseInt((String) fieldDesc[0]);
       fieldName [i]= mLocalizer.msg(fieldDesc[1], fieldDesc[1]);
       fieldLabel[i]= new JLabel(fieldName[i]);
@@ -185,7 +185,7 @@ public class ChannelSettingDialog extends JDialog{
         setVisible(false);
       }
 
-    });    
+    });
     buttonPanel.add(cancelButton);
 
     JButton okButton = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
@@ -194,7 +194,7 @@ public class ChannelSettingDialog extends JDialog{
         okPressed=true;
         setVisible(false);
       }
-    });    
+    });
     buttonPanel.add(okButton);
 
     backgroundPanel.add (buttonPanel);
@@ -214,7 +214,7 @@ public class ChannelSettingDialog extends JDialog{
     if (descString==null){
       isEditing = false;
       descString = id + ";;;;;;xx;" + defaultMix;
-    } 
+    }
 
     chnSetting = descString.split(";",8);
 
@@ -293,12 +293,11 @@ public class ChannelSettingDialog extends JDialog{
 
     basicPanel.removeAll();
     GridBagLayout basicLayout = new GridBagLayout();
-    GridBagConstraints basicConstraints = new GridBagConstraints();
     basicPanel.setLayout(basicLayout);
 
 
     myChannelLabel = new JLabel ();
-    basicConstraints = makegbc(0, 0, 1, 1);
+    GridBagConstraints basicConstraints = makegbc(0, 0, 1, 1);
     basicConstraints.insets = new Insets(10, 10, 10, 10);
     basicLayout.setConstraints(myChannelLabel, basicConstraints);
     basicPanel.add(myChannelLabel);
@@ -333,7 +332,7 @@ public class ChannelSettingDialog extends JDialog{
 
     chn1Label = new ChannelLabel(true,true);
     if (channel1!=null){
-      chn1Label.setChannel(channel1); 
+      chn1Label.setChannel(channel1);
     }
     chn1Label.addMouseListener(new MouseAdapter() {
       public void mousePressed(MouseEvent e) {
@@ -370,7 +369,7 @@ public class ChannelSettingDialog extends JDialog{
 
     chn2Label = new ChannelLabel(true, true);
     if (channel2!=null){
-      chn2Label.setChannel(channel2); 
+      chn2Label.setChannel(channel2);
     }
     chn2Label.addMouseListener(new MouseAdapter() {
       public void mousePressed(MouseEvent e) {
@@ -391,7 +390,7 @@ public class ChannelSettingDialog extends JDialog{
       public void actionPerformed(ActionEvent e) {
         selectChannel (chn2Label, 2);
       }
-    });    
+    });
     basicConstraints = makegbc(2, 3, 1, 1);
     basicConstraints.insets = new Insets(10, 10, 10, 10);
     basicConstraints.fill = GridBagConstraints.HORIZONTAL;
@@ -425,7 +424,7 @@ public class ChannelSettingDialog extends JDialog{
       }
     }
 
-    iconBox.addActionListener( new ActionListener() { 
+    iconBox.addActionListener( new ActionListener() {
       public void actionPerformed( ActionEvent e ){
         JComboBox cb = (JComboBox) e.getSource();
         if (cb.getSelectedIndex()==2 && id2.length()>0){
@@ -546,7 +545,10 @@ public class ChannelSettingDialog extends JDialog{
         id2 = result;
       }
     }
-    Channel channel = HelperMethods.getChannel(result.split("_"));
+    Channel channel = null;
+    if (result != null) {
+      channel = HelperMethods.getChannel(result.split("_"));
+    }
     if (channel!=null && countryBox.isVisible()) {
       String newCCode = channel.getCountry();
       if (newCCode!=null && newCCode.length()==2) {
@@ -565,11 +567,13 @@ public class ChannelSettingDialog extends JDialog{
         }
       }
     }
-    label.setChannel(channel);
-    if (iconBox.getSelectedIndex()>0 && channel!=null){
-      myChannelLabel.setIcon(label.getIcon());
+    if (channel != null) {
+      label.setChannel(channel);
+      if (iconBox.getSelectedIndex()>0 && channel!=null){
+        myChannelLabel.setIcon(label.getIcon());
+      }
+      sharedChannelSources.setProperty(id, readSettings());
     }
-    sharedChannelSources.setProperty(id, readSettings());
 
     basicPanel.repaint();
 
@@ -674,7 +678,7 @@ public class ChannelSettingDialog extends JDialog{
         retValue = true;
       }else {
         String [] channelId = propValue[2].split("_");
-        retValue = retValue ||("mixeddataservice.MixedDataService".equals(channelId[0])&& isMixedAncestor(channelId[3]))||("nextviewdataservice.NextViewDataService".equals(channelId[0]) && isNxtvepgAncestor(channelId[3]))||("sharedchannelservice.SharedChannelService".equals(channelId[0]) && isSharedAncestor(channelId[3]));          
+        retValue = retValue ||("mixeddataservice.MixedDataService".equals(channelId[0])&& isMixedAncestor(channelId[3]))||("nextviewdataservice.NextViewDataService".equals(channelId[0]) && isNxtvepgAncestor(channelId[3]))||("sharedchannelservice.SharedChannelService".equals(channelId[0]) && isSharedAncestor(channelId[3]));
       }
     }
     return retValue;
@@ -689,7 +693,7 @@ public class ChannelSettingDialog extends JDialog{
           retValue = true;
         } else {
           String [] channelId = propValue[i].split("_");
-          retValue = retValue ||("mixeddataservice.MixedDataService".equals(channelId[0])&& isMixedAncestor(channelId[3]))||("nextviewdataservice.NextViewDataService".equals(channelId[0]) && isNxtvepgAncestor(channelId[3]))||("sharedchannelservice.SharedChannelService".equals(channelId[0]) && isSharedAncestor(channelId[3]));          
+          retValue = retValue ||("mixeddataservice.MixedDataService".equals(channelId[0])&& isMixedAncestor(channelId[3]))||("nextviewdataservice.NextViewDataService".equals(channelId[0]) && isNxtvepgAncestor(channelId[3]))||("sharedchannelservice.SharedChannelService".equals(channelId[0]) && isSharedAncestor(channelId[3]));
         }
       }
     }
@@ -708,7 +712,7 @@ public class ChannelSettingDialog extends JDialog{
           String [] channelId = propValue[i].split("_");
           if (channelId.length==4) {
             retValue = retValue || ("mixeddataservice.MixedDataService".equals(channelId[0]) && isMixedAncestor(channelId[3])) || ("nextviewdataservice.NextViewDataService".equals(channelId[0]) && isNxtvepgAncestor(channelId[3])) || ("sharedchannelservice.SharedChannelService".equals(channelId[0]) && isSharedAncestor(channelId[3]));
-          }          
+          }
         }
       }
     }
@@ -725,7 +729,7 @@ public class ChannelSettingDialog extends JDialog{
       mInstance = new ChannelSettingDialog(parent);
     }
     return mInstance;
-  } 
+  }
   /**
    * Returns the current instance of this panel. If no instance is given, create a new one.
    * @return instance of setting panel
@@ -735,7 +739,7 @@ public class ChannelSettingDialog extends JDialog{
       mInstance = new ChannelSettingDialog(parent);
     }
     return mInstance;
-  } 
+  }
 
 
   /* makegbc
@@ -753,6 +757,6 @@ public class ChannelSettingDialog extends JDialog{
     gbc.fill = GridBagConstraints.NONE;
     gbc.anchor = GridBagConstraints.NORTHWEST;
     return gbc;
-  } 
+  }
 
 }

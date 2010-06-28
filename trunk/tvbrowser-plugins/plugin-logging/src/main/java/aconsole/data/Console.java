@@ -234,7 +234,9 @@ public class Console {
 		if (history!=null) {
 			if (historysize<0){
 				IntProperty p=AConsole.getConsoleBufferSize();
-				if (p!=null)this.historysize=p.get();
+				if (p!=null) {
+          this.historysize=p.get();
+        }
 			}else{
 				while (history.size()>historysize){
 					history.remove(0);
@@ -266,7 +268,9 @@ public class Console {
 		activate();
 	}
 	synchronized public static Console getConsole(){
-		if (instance==null)instance=new Console();
+		if (instance==null) {
+      instance=new Console();
+    }
 		return instance;
 	}
 	private class MyStreamHandler extends Handler{
@@ -298,7 +302,9 @@ public class Console {
 		}
 	}
 	synchronized public void activate(){
-		if (activ) return;
+		if (activ) {
+      return;
+    }
 		activ=true;
 		systemout=System.out;
 		systemerr=System.err;
@@ -309,7 +315,9 @@ public class Console {
 		java.util.logging.Logger.getLogger("").addHandler(sh);
 	}
 	synchronized public void deactivate(){
-		if (!activ) return;
+		if (!activ) {
+      return;
+    }
 		activ=false;
 		System.setErr(systemerr);
 		System.setOut(systemout);
@@ -371,7 +379,9 @@ public class Console {
 			write(ba, 0,1);
 		}
 		synchronized public void close(){
-			if (forward!=null)forward.close();
+			if (forward!=null) {
+        forward.close();
+      }
 		}
 	}
 }

@@ -6,6 +6,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Properties;
 
+import devplugin.AbstractTvDataService;
 import devplugin.Channel;
 
 public class HelperMethods {
@@ -31,7 +32,7 @@ public class HelperMethods {
     String[] cats = category.split(", ");
     category = "";
 
-    // Delete doubles 
+    // Delete doubles
     for (int i = 0; i < cats.length; i++) {
       for (int j = 0; j < cats.length; j++) {
         if (i != j && !cats[j].equals("") && ((cats[i].equals(cats[j])) || (cats[i].toLowerCase().contains(cats[j].toLowerCase())))) {
@@ -53,7 +54,7 @@ public class HelperMethods {
 
     return category;
   }
-  
+
   /**
    * Mix the info bits of two programs
    * @param currentBits
@@ -83,10 +84,10 @@ public class HelperMethods {
   }
 
   public static HashMap<String, Channel> getAlternativeChannels(int index){
-    // get alternative chanels for adding additional data to nxtvepg data
-    Channel [] subscribedChannels = NextViewDataService.getPluginManager().getSubscribedChannels();
+    // get alternative channels for adding additional data to nxtvepg data
+    Channel [] subscribedChannels = AbstractTvDataService.getPluginManager().getSubscribedChannels();
     Properties alternativeChannelsDesc = new Properties();
-    HashMap<String, Channel> alternativeChannels = new HashMap<String, Channel>(); 
+    HashMap<String, Channel> alternativeChannels = new HashMap<String, Channel>();
 
       try {
         String propKey;
@@ -107,12 +108,12 @@ public class HelperMethods {
       } catch (IOException e) {
       }
     return alternativeChannels;
-     
+
   }
-  
-  
+
+
   public static String [] getChannelName (String uniqueChannelId, String defaultName){
-    
+
     if (uniqueChannelId.equals("")){
       return createChannelNameArray(defaultName,"","","");
    }
@@ -126,12 +127,12 @@ public class HelperMethods {
       return createChannelNameArray(chn.getName(), uniqueId[2], chn.getDataServiceProxy().getInfo().getName(), uniqueId[1]);
     }
   }
-  
-  public static String [] createChannelNameArray(String name, String country, String provider, String group){
-    String channelNameArray[] = {name, country, provider, group};
+
+  public static String[] createChannelNameArray(String name, String country, String provider, String group){
+    String[] channelNameArray = {name, country, provider, group};
     return channelNameArray;
   }
-  
+
   public static Channel getChannel(String [] uniqueId){
   return Channel.getChannel(uniqueId[0], uniqueId[1], uniqueId[2], uniqueId[3]);
 }
@@ -139,12 +140,12 @@ public class HelperMethods {
   public static Channel getChannelFromId (String id, Channel[] channelList){
     Channel channel=null;
     if (id!=null){
-      for (int i = 0; i < channelList.length; i++) {
-        if (channelList[i].getUniqueId().equals(id)){
-          channel = channelList[i];
+      for (Channel element : channelList) {
+        if (element.getUniqueId().equals(id)){
+          channel = element;
          }
-      }     
-    }     
+      }
+    }
     return channel;
   }
 

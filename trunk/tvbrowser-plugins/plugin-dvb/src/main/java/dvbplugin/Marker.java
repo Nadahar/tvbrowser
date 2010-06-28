@@ -54,7 +54,9 @@ class Marker {
 
 
   void addProgram(Program p) {
-    if (!programs.contains(p)) programs.add(p);
+    if (!programs.contains(p)) {
+      programs.add(p);
+    }
   }
 
 
@@ -82,8 +84,8 @@ class Marker {
   void unmarkAll() {
     Program[] p = Plugin.getPluginManager().getMarkedPrograms();
     Plugin plugin = DVBPlugin.getInstance();
-    for (int i = 0; i < p.length; i++) {
-      p[i].unmark(plugin);
+    for (Program element : p) {
+      element.unmark(plugin);
     }
   }
 
@@ -97,9 +99,7 @@ class Marker {
     devplugin.Date date = new devplugin.Date();
 
     for (int tage = 0; tage < 31; tage++) {
-      for (Iterator<ScheduledRecording> it = entries.iterator(); it.hasNext();) {
-        ScheduledRecording rec = it.next();
-
+      for (ScheduledRecording rec : entries) {
         Channel channel = null;
 
         TvbDvbVChannel chnl = set.getChannelByDVBViewerName(rec.getDvbViewerChannel());
