@@ -35,14 +35,14 @@ public class ShowDetailsAction extends AbstractAction {
             .getLocalizerFor(ShowDetailsAction.class);
 
     /** ID of Program in Database */
-    private int _id;
+    private int mId;
     
     /**
      * Creates the Action
      * @param id ID of Program in Database
      */
     public ShowDetailsAction(int id) {
-        _id = id;
+        mId = id;
         createGui(true, true);
     }
 
@@ -54,7 +54,7 @@ public class ShowDetailsAction extends AbstractAction {
      * @param name show Name?
      */
     public ShowDetailsAction(int id, boolean icon, boolean name) {
-        _id = id;
+        mId = id;
         createGui(icon, name);
     }
     
@@ -65,20 +65,22 @@ public class ShowDetailsAction extends AbstractAction {
      * @param name show Name?
      */
     private void createGui(boolean icon, boolean name) {
-        if (_id < 0) {
+        if (mId < 0) {
             setEnabled(false);
         }
 
         putValue(Action.SHORT_DESCRIPTION, mLocalizer.msg("showDetailsOnWeb", "Show Details on the Web"));
         
-        if (name)
-            putValue(Action.NAME, mLocalizer.msg("showDetailsOnWeb", "Show Details on the Web"));
-        if (icon)
-            putValue(Action.SMALL_ICON, TVRaterPlugin.getInstance().createImageIcon("apps", "internet-web-browser", 16));
-    }    
+        if (name) {
+          putValue(Action.NAME, mLocalizer.msg("showDetailsOnWeb", "Show Details on the Web"));
+        }
+        if (icon) {
+          putValue(Action.SMALL_ICON, TVRaterPlugin.getInstance().createImageIcon("apps", "internet-web-browser", 16));
+        }
+    }
     
     public void actionPerformed(ActionEvent e) {
-      Launch.openURL("http://tvaddicted.de/index.php?showId=" + _id);
+      Launch.openURL("http://tvaddicted.de/index.php?showId=" + mId);
     }
 
 }

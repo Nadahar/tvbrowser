@@ -1,6 +1,6 @@
 /*
  * TV-Browser
- * Copyright (C) 05-2010 TV-Browser team (dev@tvbrowser.org) 
+ * Copyright (C) 05-2010 TV-Browser team (dev@tvbrowser.org)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -52,7 +52,7 @@ public class ProgramReceiveTargetSelectionPanel extends JPanel {
   private static final Localizer LOCALIZER = Localizer.getLocalizerFor(ProgramReceiveTargetSelectionPanel.class);
   private JLabel mReceiveTargetLabel;
   private ProgramReceiveTarget[] mReceiveTargets;
-  private ChangeListener[] mChangeListenerArray = new ChangeListener[0]; 
+  private ChangeListener[] mChangeListenerArray = new ChangeListener[0];
   
   /**
    * Creates an program receive target selection panel.
@@ -107,7 +107,7 @@ public class ProgramReceiveTargetSelectionPanel extends JPanel {
     }
     else {
       pb.add(mReceiveTargetLabel, cc.xy(2,1));
-      pb.add(selectionButton, cc.xy(4,1));      
+      pb.add(selectionButton, cc.xy(4,1));
     }
     
     handlePluginSelection();

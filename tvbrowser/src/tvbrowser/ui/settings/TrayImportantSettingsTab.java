@@ -30,7 +30,7 @@ import devplugin.SettingsTab;
 
 /**
  * The settings tab for the IMPORTANT_TYPE of the ProgramMenuItem.
- *  
+ * 
  * @author René Mach
  *
  */
@@ -187,24 +187,31 @@ public class TrayImportantSettingsTab implements SettingsTab {
   }
   
   public void saveSettings() {
-    if(mIsEnabled != null)
+    if(mIsEnabled != null) {
       Settings.propTrayImportantProgramsEnabled.setBoolean(mIsEnabled.isSelected());
-    if(mShowInSubMenu != null)
+    }
+    if(mShowInSubMenu != null) {
       Settings.propTrayImportantProgramsInSubMenu.setBoolean(mShowInSubMenu.isSelected());
-    if(mSize != null)
+    }
+    if(mSize != null) {
       Settings.propTrayImportantProgramsSize.setInt(((Integer)mSize.getValue()).intValue());
+    }
     if(mShowIconAndName != null && mShowName != null && mShowIcon != null) {
       Settings.propTrayImportantProgramsContainsName.setBoolean(mShowIconAndName.isSelected() || mShowName.isSelected());
       Settings.propTrayImportantProgramsContainsIcon.setBoolean(mShowIconAndName.isSelected() || mShowIcon.isSelected());
     }
-    if(mShowDate != null)
+    if(mShowDate != null) {
       Settings.propTrayImportantProgramsContainsDate.setBoolean(mShowDate.isSelected());
-    if(mShowTime != null)
+    }
+    if(mShowTime != null) {
       Settings.propTrayImportantProgramsContainsTime.setBoolean(mShowTime.isSelected());
-    if(mShowToolTip != null)
+    }
+    if(mShowToolTip != null) {
       Settings.propTrayImportantProgramsContainsToolTip.setBoolean(mShowToolTip.isSelected());
-    if(mPriority != null)
+    }
+    if(mPriority != null) {
       Settings.propTrayImportantProgramsPriority.setInt(mPriority.getSelectedIndex());
+    }
   }
 
   public Icon getIcon() {
@@ -217,8 +224,9 @@ public class TrayImportantSettingsTab implements SettingsTab {
   
   protected static void setTrayIsEnabled(boolean value) {
     mTrayIsEnabled = value;
-    if(mInstance != null)
+    if(mInstance != null) {
       mInstance.setEnabled(true);
+    }
   }
 
 }

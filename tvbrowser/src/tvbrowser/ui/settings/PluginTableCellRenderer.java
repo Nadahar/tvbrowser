@@ -189,7 +189,7 @@ public class PluginTableCellRenderer extends DefaultTableCellRenderer {
       mName.setOpaque(false);
       mName.setForeground(table.getForeground());
       mName.setText(nameValue);
-      mName.setEnabled(isActivated);        
+      mName.setEnabled(isActivated);
       
       mPanel.setOpaque(true);
       

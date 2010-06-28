@@ -105,8 +105,8 @@ public class LayoutTab extends JPanel {
   private void updateLayoutCombobox(int val) {
     mLayoutCBModel.removeAllElements();
     int[] primes = getPrimes(val);
-    for (int i=0; i<primes.length; i++) {
-      mLayoutCBModel.addElement(new LayoutOption(val, primes[i]));
+    for (int prime : primes) {
+      mLayoutCBModel.addElement(new LayoutOption(val, prime));
     }
 
   }

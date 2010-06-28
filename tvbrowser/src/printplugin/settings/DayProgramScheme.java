@@ -82,8 +82,8 @@ public class DayProgramScheme extends Scheme {
     }
     else {
       out.writeInt(channels.length);
-      for (int i=0; i<channels.length; i++) {
-        out.writeObject(channels[i].getId());
+      for (Channel channel : channels) {
+        out.writeObject(channel.getId());
       }
     }
   }
@@ -98,9 +98,9 @@ public class DayProgramScheme extends Scheme {
     ArrayList<Channel> list = new ArrayList<Channel>();
     for (int i=0; i<cnt; i++) {
       String channelId = (String)in.readObject();
-      for (int chInx = 0; chInx<subscribedChannels.length; chInx++) {
-        if (channelId.equals(subscribedChannels[chInx].getId())) {
-          list.add(subscribedChannels[chInx]);
+      for (Channel subscribedChannel : subscribedChannels) {
+        if (channelId.equals(subscribedChannel.getId())) {
+          list.add(subscribedChannel);
           break;
         }
       }

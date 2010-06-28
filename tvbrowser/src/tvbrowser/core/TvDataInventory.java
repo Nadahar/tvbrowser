@@ -43,7 +43,7 @@ import devplugin.Date;
  * <p>
  * This way the TV data directory may be changed by other users, other
  * clients or by hand and events of these changes will be sent anyway. This
- * ensures that all plugins can react on data changed by third parties. 
+ * ensures that all plugins can react on data changed by third parties.
  * 
  * @author Til Schneider, www.murfman.de
  */
@@ -100,7 +100,7 @@ public class TvDataInventory {
    * @param date The day program's date
    * @param channel The day program's channel
    * @param version The day program's version (e.g. file size)
-   */  
+   */
   public synchronized void setKnown(Date date, Channel channel, int version) {
     String key = TvDataBase.getDayProgramKey(date, channel);
     mInventoryHash.put(key, version);
@@ -112,7 +112,7 @@ public class TvDataInventory {
    * 
    * @param date The day program's date
    * @param channel The day program's channel
-   */  
+   */
   public synchronized void setUnknown(Date date, Channel channel) {
     String key = TvDataBase.getDayProgramKey(date, channel);
     mInventoryHash.remove(key);
@@ -143,8 +143,8 @@ public class TvDataInventory {
   
   /**
    * Loads the inventory list.
-   * @throws IOException 
-   * @throws ClassNotFoundException 
+   * @throws IOException
+   * @throws ClassNotFoundException
    *
    * @see #writeData(File)
    */
@@ -180,8 +180,8 @@ public class TvDataInventory {
    * It is essential that this list is saved at the shut down of TV-Browser!
    * If TV-Browser failes to save the plugin data then the inventory list should
    * NOT be saved too. Doing so the plugins will update themselves automatically
-   * on the next startup, because new TV data will be treated as unknown. 
-   * @throws IOException 
+   * on the next startup, because new TV data will be treated as unknown.
+   * @throws IOException
    *
    * @see #readData(File)
    */
@@ -193,7 +193,7 @@ public class TvDataInventory {
         out.writeInt(mInventoryHash.size());
         Iterator<String> iter = mInventoryHash.keySet().iterator();
         while (iter.hasNext()) {
-          String key = (String) iter.next();
+          String key = iter.next();
           Integer ver = mInventoryHash.get(key);
           out.writeObject(key);
           out.writeInt(ver.intValue());

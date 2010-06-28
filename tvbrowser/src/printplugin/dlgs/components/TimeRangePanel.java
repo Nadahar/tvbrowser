@@ -48,7 +48,7 @@ public class TimeRangePanel extends JPanel {
 
   public TimeRangePanel() {
     CellConstraints cc = new CellConstraints();
-    
+
     PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,pref,10dlu,pref:grow",
         "pref,5dlu,pref,2dlu,pref,10dlu"), this);
     pb.addSeparator(mLocalizer.msg("dayBoundaries","Day boundaries"), cc.xyw(1,1,4));
@@ -56,7 +56,7 @@ public class TimeRangePanel extends JPanel {
     pb.add(mDayStartCb=new JComboBox(createIntegerArray(0,23,1)), cc.xy(4,3));
     pb.addLabel(mLocalizer.msg("endOfDay","End of day")+":", cc.xy(2,5));
     pb.add(mDayEndCb=new JComboBox(createIntegerArray(12,36,1)), cc.xy(4,5));
-    
+
     mDayStartCb.setRenderer(new TimeListCellRenderer());
     mDayEndCb.setRenderer(new TimeListCellRenderer());
 
@@ -107,7 +107,7 @@ public class TimeRangePanel extends JPanel {
           label.setText(val+":00");
         }
         else {
-          label.setText((val-24)+":00 ("+ mLocalizer.msg("nextDay","naechster Tag")+")");
+          label.setText((val-24)+":00 ("+ mLocalizer.msg("nextDay","next day")+")");
         }
       }
 

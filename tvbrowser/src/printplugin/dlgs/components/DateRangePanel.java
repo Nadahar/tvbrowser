@@ -62,15 +62,17 @@ public class DateRangePanel extends JPanel {
     Date[] result = new Date[days];
     Date today = Date.getCurrentDate();
     
-    for (int i=0;i<result.length;i++)
+    for (int i=0;i<result.length;i++) {
       result[i]=today.addDays(i);
+    }
     
     return result;
   }
 
   public void setFromDate(Date date) {
-    if (date != null)
+    if (date != null) {
       mDateCb.setSelectedItem(date);
+    }
   }
 
   public void setNumberOfDays(int days) {

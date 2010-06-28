@@ -25,11 +25,11 @@
  */
 package util.ui.progress;
 
-import devplugin.ProgressMonitor;
-
 import java.io.FilterInputStream;
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
+
+import devplugin.ProgressMonitor;
 
 /**
  * This inputstream can display the current position of a file using a

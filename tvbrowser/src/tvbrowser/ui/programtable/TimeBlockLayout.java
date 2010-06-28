@@ -32,7 +32,7 @@ import devplugin.Date;
 
 /**
  * Define blocks of <i>n</i> hours. Each of these blocks starts at the same height in all columns
- * (so the borders of these time blocks are time synchronous). 
+ * (so the borders of these time blocks are time synchronous).
  * The height of a certain block is calculated by the channel with the most programs in that block.
  * 
  * @author René Mach
@@ -93,7 +93,7 @@ public class TimeBlockLayout extends AbstractProgramTableLayout {
           int startTime = panel.getProgram().getStartTime();
           if(panel.getProgram().getDate().equals(nextProgramTableDate)) {
             startTime += 24 * 60;
-          }         
+          }
           
           if((startTime >= block * blockSize) && (startTime < (block+1) * blockSize)) {
             blockProgramList[column].add(panel);
@@ -129,7 +129,7 @@ public class TimeBlockLayout extends AbstractProgramTableLayout {
         if(!list.isEmpty()) {
           if(list.get(0).equals(model.getProgramPanel(col,0))) {
             columnStartArr[col] = blockStart;
-          }    
+          }
           
           int internHeight = blockStart;
           int internLastHeight = internHeight;
@@ -137,7 +137,7 @@ public class TimeBlockLayout extends AbstractProgramTableLayout {
           int additionalHeight = 0;
           int additionalHeight2 = 0;
           
-          if(mOptimizedCompactLayout) {            
+          if(mOptimizedCompactLayout) {
             additionalHeight = (blockEnd - blockStart - minimumBlockHeight[col]) / list.size();
             
             int additionalCount = 0;
@@ -145,7 +145,7 @@ public class TimeBlockLayout extends AbstractProgramTableLayout {
             int minimumSizeHeights = 0;
             
             for(int i = 0; i < list.size(); i++) {
-              ProgramPanel panel = (ProgramPanel)list.get(i);
+              ProgramPanel panel = list.get(i);
               
               if(panel.getPreferredHeight() < (panel.getMinimumHeight() + additionalHeight) || panel.getProgram().isOnAir()) {
                 preferredSizeHeights += panel.getPreferredHeight();
@@ -158,11 +158,11 @@ public class TimeBlockLayout extends AbstractProgramTableLayout {
             
             if(additionalCount != 0) {
               additionalHeight2 = (blockEnd - blockStart - preferredSizeHeights - minimumSizeHeights) / additionalCount;
-            }            
+            }
           }
           
           for(int i = 0; i < list.size(); i++) {
-            ProgramPanel panel = (ProgramPanel)list.get(i);
+            ProgramPanel panel = list.get(i);
             
             if(mCompactLayout && !mOptimizedCompactLayout) {
               panel.setHeight(panel.getMinimumHeight());
@@ -178,7 +178,7 @@ public class TimeBlockLayout extends AbstractProgramTableLayout {
             internHeight += panel.getHeight();
           }
           
-          lastLayoutComponentList[col] = new LastLayoutComponent((ProgramPanel)list.get(list.size()-1),internLastHeight);
+          lastLayoutComponentList[col] = new LastLayoutComponent(list.get(list.size()-1),internLastHeight);
         }
       }
     }

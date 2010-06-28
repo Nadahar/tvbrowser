@@ -67,8 +67,9 @@ public class PropertyManager {
 
   public void writeToFile(File settingsFile) throws IOException {
     if(TVBrowser.isTransportable()) {
-      if(!mProperties.getProperty("dir.tvdata","").startsWith("."))
+      if(!mProperties.getProperty("dir.tvdata","").startsWith(".")) {
         mProperties.setProperty("dir.tvdata","./settings/tvdata");
+      }
       
       mProperties.remove("dir.plugins");
     }
@@ -88,8 +89,9 @@ public class PropertyManager {
       mProperties.load(in);
       
       if(TVBrowser.isTransportable()) {
-        if(!mProperties.getProperty("dir.tvdata","./settings/tvdata").startsWith("./settings/tvdata"))
+        if(!mProperties.getProperty("dir.tvdata","./settings/tvdata").startsWith("./settings/tvdata")) {
           mProperties.remove("dir.tvdata");
+        }
         mProperties.remove("dir.plugins");
       }
       
@@ -102,8 +104,9 @@ public class PropertyManager {
       }
     }
     
-    if(mProperties.isEmpty())
+    if(mProperties.isEmpty()) {
       throw new IOException("Settings file is empty!");
+    }
   }
   
   
@@ -146,8 +149,8 @@ public class PropertyManager {
   
   
   public boolean hasChanged(Property[] propArr) {
-    for (int i = 0; i < propArr.length; i++) {
-      if (mChangedKeySet.contains(propArr[i].getKey())) {
+    for (Property element : propArr) {
+      if (mChangedKeySet.contains(element.getKey())) {
         return true;
       }
     }
@@ -175,7 +178,7 @@ public class PropertyManager {
     while (iter.hasNext()) {
       String key = (String) iter.next();
 
-      // Check whether this key is known      
+      // Check whether this key is known
       boolean isKnown = (mPropertyHash.get(key) != null);
       
       if (! isKnown) {

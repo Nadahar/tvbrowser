@@ -109,15 +109,16 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
 
     ProgramFilter[] filterArr = mFilterList.getFilterArr();
     for (int i = 0; i < filterArr.length; i++) {
-      if (!(filterArr[i] instanceof SearchFilter))
+      if (!(filterArr[i] instanceof SearchFilter)) {
         mFilterListModel.addElement(filterArr[i]);
+      }
     }
 
     mFilterListBox = new JList(mFilterListModel);
     mFilterListBox.setCellRenderer(new FilterListCellRenderer());
     
     // Register DnD on the List.
-    ListDragAndDropHandler dnDHandler = new ListDragAndDropHandler(mFilterListBox,mFilterListBox,this);    
+    ListDragAndDropHandler dnDHandler = new ListDragAndDropHandler(mFilterListBox,mFilterListBox,this);
     new DragAndDropMouseListener(mFilterListBox,mFilterListBox,this,dnDHandler);
     
     mFilterListBox.setVisibleRowCount(5);
@@ -131,8 +132,9 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
     mFilterListBox.addMouseListener(new MouseAdapter() {
       public void mouseClicked(MouseEvent e) {
         if(SwingUtilities.isLeftMouseButton(e) && e.getClickCount() >= 2) {
-          if(mFilterListBox.getSelectedIndex() != -1 && mEditBtn.isEnabled())
+          if(mFilterListBox.getSelectedIndex() != -1 && mEditBtn.isEnabled()) {
             actionPerformed(new ActionEvent(mEditBtn,ActionEvent.ACTION_PERFORMED, mEditBtn.getActionCommand()));
+          }
         }
       }
     });
@@ -257,7 +259,7 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
     } else if (e.getSource() == mSeperator) {
       mFilterListModel.addElement(new SeparatorFilter());
     } else if (e.getSource() == mDefaultFilterBtn) {
-      ProgramFilter filter = ((ProgramFilter)mFilterListBox.getSelectedValue());      
+      ProgramFilter filter = ((ProgramFilter)mFilterListBox.getSelectedValue());
       mDefaultFilterId = filter.getClass().getName() + "###" + filter.getName();
       mFilterListBox.repaint();
       updateBtns();

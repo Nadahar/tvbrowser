@@ -110,7 +110,7 @@ class DataHydraFileParser {
               channel.getName()));
       while (en.hasMoreElements()) {
         try {
-          Date date = (Date) (en.nextElement());
+          Date date = (en.nextElement());
           String strFileDate = createFileName(date);
           mLog.info("getting: " + internalChannel.getBaseUrl()
                   + internalChannel.getId() + "_" + strFileDate

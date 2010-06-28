@@ -66,7 +66,7 @@ public class MarkPriorityComboBoxRenderer extends DefaultListCellRenderer {
         c.setBackground(color);
       }
       
-      colorPanel.setOpaque(false);        
+      colorPanel.setOpaque(false);
       colorPanel.add(c, new CellConstraints().xy(1,1));
       
       c = colorPanel;

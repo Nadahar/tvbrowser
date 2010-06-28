@@ -64,7 +64,7 @@ import devplugin.Version;
  *
  * @author bodo
  */
-public class CalendarExportPlugin extends Plugin {
+public final class CalendarExportPlugin extends Plugin {
   private static final Version mVersion = new Version(3,0);
 
   /**
@@ -192,7 +192,7 @@ public class CalendarExportPlugin extends Plugin {
 
   @Override
   public ThemeIcon getMarkIconFromTheme() {
-    return new ThemeIcon("apps", "office-calendar", 16);
+    return new ThemeIcon("apps", "office-calendar");
   }
 
   @Override
@@ -205,7 +205,7 @@ public class CalendarExportPlugin extends Plugin {
 
     Action mainaction = new devplugin.ContextMenuAction();
     mainaction.putValue(Action.NAME, mLocalizer.msg("contextMenuText", "Export to Calendar-File"));
-    mainaction.putValue(Action.SMALL_ICON, createImageIcon("apps", "office-calendar", 16));
+    mainaction.putValue(Action.SMALL_ICON, createImageIcon("apps", "office-calendar"));
 
     if (mConfigs == null || mConfigs.length <= 1) {
       if (mConfigs == null || mConfigs.length == 0) {
@@ -319,7 +319,7 @@ public class CalendarExportPlugin extends Plugin {
         }
 
         ContextMenuAction context = new ContextMenuAction(activeExporter[i].getName());
-        context.putValue(Action.SMALL_ICON, createImageIcon("apps", "office-calendar", 16));
+        context.putValue(Action.SMALL_ICON, createImageIcon("apps", "office-calendar"));
 
         exporters[i] = new ActionMenu(context, actions);
       }
@@ -334,7 +334,7 @@ public class CalendarExportPlugin extends Plugin {
       return new ImageIcon(getClass().getResource(
           "icons/16x16/apps/" + iconName));
     }
-    return createImageIcon("apps", "office-calendar", 16);
+    return createImageIcon("apps", "office-calendar");
   }
 
   @Override
@@ -666,15 +666,15 @@ public class CalendarExportPlugin extends Plugin {
     return null;
   }
 
-  protected static LocalPluginProgramFormating getDefaultFormatting() {
+  static LocalPluginProgramFormating getDefaultFormatting() {
     return new LocalPluginProgramFormating(mLocalizer.msg("defaultName", "ClipboardPlugin - Default"), "{title}", "{channel_name} - {title}\n{leadingZero(start_day,\"2\")}.{leadingZero(start_month,\"2\")}.{start_year} {leadingZero(start_hour,\"2\")}:{leadingZero(start_minute,\"2\")}-{leadingZero(end_hour,\"2\")}:{leadingZero(end_minute,\"2\")}\n\n{splitAt(short_info,\"78\")}\n\n", "UTF-8");
   }
 
-  protected LocalPluginProgramFormating[] getAvailableLocalPluginProgramFormatings() {
+  LocalPluginProgramFormating[] getAvailableLocalPluginProgramFormatings() {
     return mLocalFormattings;
   }
 
-  protected void setAvailableLocalPluginProgramFormatings(LocalPluginProgramFormating[] value) {
+  void setAvailableLocalPluginProgramFormatings(LocalPluginProgramFormating[] value) {
     if (value == null || value.length < 1) {
       createDefaultAvailable();
     } else {
@@ -682,11 +682,11 @@ public class CalendarExportPlugin extends Plugin {
     }
   }
 
-  protected AbstractPluginProgramFormating[] getSelectedPluginProgramFormattings() {
+  AbstractPluginProgramFormating[] getSelectedPluginProgramFormattings() {
     return mConfigs;
   }
 
-  protected void setSelectedPluginProgramFormattings(AbstractPluginProgramFormating[] value) {
+  void setSelectedPluginProgramFormattings(AbstractPluginProgramFormating[] value) {
     if (value == null || value.length < 1) {
       createDefaultConfig();
     } else {

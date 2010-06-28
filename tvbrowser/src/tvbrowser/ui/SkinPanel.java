@@ -132,7 +132,7 @@ public class SkinPanel extends JPanel {
 			 stepY=hImg;
 		 }else if (mode==ROWS) {
 			 stepX=wImg;
-			 stepY=rowDiff;	
+			 stepY=rowDiff;
 		 }
 		 if (stepX==0 || stepY==0) {
 		 	throw new RuntimeException();

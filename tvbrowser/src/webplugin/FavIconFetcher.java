@@ -71,12 +71,14 @@ public class FavIconFetcher {
     }
     int pos = urlString.indexOf("//");
     int firstslash = urlString.indexOf("/", pos + 2);
-    if (firstslash >= 0)
+    if (firstslash >= 0) {
       urlString = urlString.substring(0, firstslash);
+    }
 
     int params = urlString.indexOf("?", pos + 2);
-    if (params >= 0)
+    if (params >= 0) {
       urlString = urlString.substring(0, params);
+    }
 
     String fav = urlString + "/favicon.ico";
     URL url;

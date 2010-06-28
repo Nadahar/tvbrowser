@@ -29,9 +29,9 @@ package primarydatamanager.primarydataservice.util.html2txt;
 
 public interface Tag {
   
-  public boolean isTextTag();  
+  public boolean isTextTag();
   public String getName();
-  public String getTagName();  
+  public String getTagName();
   public String getAttribute(String attributeName);
   
 }

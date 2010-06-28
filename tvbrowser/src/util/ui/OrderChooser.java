@@ -62,21 +62,21 @@ public class OrderChooser extends JPanel implements ListDropAction{
    * Der Bereich, in dem ein Mausklick als Selektion/Deselektion und nicht als
    * Markierung aufgefasst wird.
    * (Wird vom Renderer gesetzt)
-   */  
+   */
   private JList mList;
   private DefaultListModel mListModel;
   private SelectableItemRenderer mItemRenderer;
   private JButton mUpBt;
   private JButton mDownBt;
   private JButton mSelectAllBt;
-  private JButton mDeSelectAllBt;  
+  private JButton mDeSelectAllBt;
   private boolean mIsEnabled = true;
   private JScrollPane mScrollPane;
 
 
   /**
    * Constructs an OrderChooser without selection Buttons.
-   *  
+   * 
    * @param currOrder Die aktuelle Reihenfolge
    * @param allItems Alle moeglichen Objekte (die Objekte der aktuellen Reihenfolge
    *        eingeschlossen)
@@ -121,7 +121,7 @@ public class OrderChooser extends JPanel implements ListDropAction{
     }
 
     // Register DnD on the List.
-    ListDragAndDropHandler dnDHandler = new ListDragAndDropHandler(mList,mList,this);    
+    ListDragAndDropHandler dnDHandler = new ListDragAndDropHandler(mList,mList,this);
     new DragAndDropMouseListener(mList,mList,this,dnDHandler);
     
     // MouseListener hinzufügen, der das Selektieren/Deselektieren übernimmt
@@ -141,9 +141,9 @@ public class OrderChooser extends JPanel implements ListDropAction{
       public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_SPACE) {
           Object[] objs = mList.getSelectedValues();
-          for (int i=0;i<objs.length;i++){
-            if (objs[i] instanceof SelectableItem) {
-              SelectableItem item = (SelectableItem) objs[i];
+          for (Object obj : objs) {
+            if (obj instanceof SelectableItem) {
+              SelectableItem item = (SelectableItem) obj;
               item.setSelected(!item.isSelected());
             }
           }
@@ -187,7 +187,7 @@ public class OrderChooser extends JPanel implements ListDropAction{
     mSelectAllBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         selectAll();
-      }      
+      }
     });
     p3.add(mSelectAllBt, BorderLayout.WEST);
 
@@ -196,19 +196,20 @@ public class OrderChooser extends JPanel implements ListDropAction{
     mDeSelectAllBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         clearSelection();
-      }      
+      }
     });
     p3.add(mDeSelectAllBt, BorderLayout.EAST);
     
-    if(showSelectionButtons)
+    if(showSelectionButtons) {
       main.add(p3, BorderLayout.SOUTH);
+    }
   }
 
   private void setEntries(Object[] currOrder, Object[] allItems) {
     mListModel.removeAllElements();
-    for (int i = 0; i < currOrder.length; i++) {
-      if (contains(allItems, currOrder[i])) {
-        SelectableItem item = new SelectableItem(currOrder[i], true);
+    for (Object element : currOrder) {
+      if (contains(allItems, element)) {
+        SelectableItem item = new SelectableItem(element, true);
         mListModel.addElement(item);
       }
     }
@@ -229,8 +230,8 @@ public class OrderChooser extends JPanel implements ListDropAction{
   }
 
   private boolean contains(Object[] array, Object obj) {
-    for (int i = 0; i < array.length; i++) {
-      if (array[i].equals(obj)) {
+    for (Object element : array) {
+      if (element.equals(obj)) {
         return true;
       }
     }
@@ -277,7 +278,7 @@ public class OrderChooser extends JPanel implements ListDropAction{
   public void setOrder(Object[] currOrder, Object[] allItems) {
     setEntries(currOrder, allItems);
     
-    mList.repaint();    
+    mList.repaint();
   }
   
   public void clearSelection() {

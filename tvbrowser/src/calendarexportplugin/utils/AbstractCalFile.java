@@ -1,16 +1,16 @@
 /*
  * Copyright Michael Keppler
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -44,7 +44,7 @@ public abstract class AbstractCalFile {
 
   /**
    * Exports a list of Programs into a iCal/vCal file
-   * 
+   *
    * @param intothis
    *          into this File
    * @param list
@@ -80,7 +80,7 @@ public abstract class AbstractCalFile {
 
             printCreated(out, mDate.format(c.getTime()) + "T"
                 + mTime.format(c.getTime()), i);
-            
+
             if (settings.isClassificationPrivate()) {
               out.println("CLASS:PRIVATE");
             }
@@ -118,8 +118,6 @@ public abstract class AbstractCalFile {
             if (!nulltime) {
               c = CalendarToolbox.getEndAsCalendar(p);
             }
-
-            int showtime = 0;
 
             if (settings.isShowBusy()) {
               out.println("TRANSP:" + opaque());

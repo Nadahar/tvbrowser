@@ -1,16 +1,16 @@
 /*
  * Copyright Michael Keppler
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  *
@@ -21,9 +21,9 @@
  */
 package simplemarkerplugin;
 
-import util.settings.PropertyBasedSettings;
-
 import java.util.Properties;
+
+import util.settings.PropertyBasedSettings;
 
 /**
  * @author bananeweizen
@@ -47,11 +47,11 @@ public final class SimpleMarkerSettings extends PropertyBasedSettings{
   private static final int GROUPING_BY_DATE = 2;
   private static final String KEY_GROUPING = "grouping";
 
-  protected SimpleMarkerSettings(final Properties properties) {
+  SimpleMarkerSettings(final Properties properties) {
     super(properties);
   }
 
-  protected boolean showDeletedPrograms() {
+  boolean showDeletedPrograms() {
     return get(KEY_SHOW_DELETED_PROGRAM, true);
   }
 
@@ -82,7 +82,7 @@ public final class SimpleMarkerSettings extends PropertyBasedSettings{
     set(KEY_SPLIT_POSITION, dividerLocation);
   }
 
-  protected void setNodeGroupingByBoth() {
+  void setNodeGroupingByBoth() {
     setNodeGrouping(GROUPING_BY_TITLE_AND_DATE);
   }
 
@@ -103,7 +103,7 @@ public final class SimpleMarkerSettings extends PropertyBasedSettings{
     return get(KEY_GROUPING, 0) == grouping;
   }
 
-  protected void setNodeGroupingByTitle() {
+  void setNodeGroupingByTitle() {
     setNodeGrouping(GROUPING_BY_TITLE);
   }
 
@@ -116,7 +116,7 @@ public final class SimpleMarkerSettings extends PropertyBasedSettings{
     return isGrouping(GROUPING_BY_TITLE);
   }
 
-  protected void setNodeGroupingByDate() {
+  void setNodeGroupingByDate() {
     setNodeGrouping(GROUPING_BY_DATE);
   }
 

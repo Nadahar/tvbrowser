@@ -224,12 +224,13 @@ public class DocumentRenderer implements Printable {
       
       if (pageIndex > mPageStarts.size()-1) {
         double lastSize = 0;
-        if (mPageStarts.size() > 0)
+        if (mPageStarts.size() > 0) {
           lastSize = (mPageStarts.get(mPageStarts.size()-1)).doubleValue();
+        }
         if (pageIndex > 0) {
-          mPageStartY = lastSize + height; 
+          mPageStartY = lastSize + height;
         } else {
-          mPageStartY = lastSize; 
+          mPageStartY = lastSize;
         }
         mPageStarts.add(mPageStartY);
       } else {

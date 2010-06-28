@@ -3,6 +3,7 @@ package util.ui.findasyoutype;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -98,11 +99,11 @@ public abstract class FindAction extends AbstractAction implements DocumentListe
     return mMessage;
   }
   
-  //reset the find bar to initial state 
+  //reset the find bar to initial state
   protected void reset() {
     mSearchField.setBackground(mBg);
     mSearchField.setForeground(mFg);
-    mMessage.setVisible(false);    
+    mMessage.setVisible(false);
   }
   
   /**
@@ -129,7 +130,7 @@ public abstract class FindAction extends AbstractAction implements DocumentListe
       mThread = new Thread(this);
       mThread.setPriority(Thread.MIN_PRIORITY);
       mThread.start();
-    }    
+    }
   }
   
   //End of added methods
@@ -172,7 +173,7 @@ public abstract class FindAction extends AbstractAction implements DocumentListe
     }
     else {
       mSearchField.setBackground(new Color(255,102,102));
-      mSearchField.setForeground(Color.white);      
+      mSearchField.setForeground(Color.white);
       mMessage.setVisible(true);
     }
   }
@@ -208,7 +209,7 @@ public abstract class FindAction extends AbstractAction implements DocumentListe
     controlDown = ke.isControlDown();
     metaDown = ke.isMetaDown();
     
-    switch (ke.getKeyCode()) {    
+    switch (ke.getKeyCode()) {
     case KeyEvent.VK_F3:
       next();
       break;
@@ -231,8 +232,8 @@ public abstract class FindAction extends AbstractAction implements DocumentListe
 
   /*-------------------------------------------------[ Installation ]---------------------------------------------------*/
   private void install(JComponent comp) {
-    comp.registerKeyboardAction(this, KeyStroke.getKeyStroke('I', KeyEvent.CTRL_MASK), JComponent.WHEN_FOCUSED);
-    comp.registerKeyboardAction(this, KeyStroke.getKeyStroke('I', KeyEvent.CTRL_MASK | KeyEvent.SHIFT_MASK),
+    comp.registerKeyboardAction(this, KeyStroke.getKeyStroke('I', InputEvent.CTRL_MASK), JComponent.WHEN_FOCUSED);
+    comp.registerKeyboardAction(this, KeyStroke.getKeyStroke('I', InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK),
         JComponent.WHEN_FOCUSED);
   }
   
@@ -240,7 +241,7 @@ public abstract class FindAction extends AbstractAction implements DocumentListe
     comp.addKeyListener(new KeyAdapter() {
 
       public void keyTyped(KeyEvent e) {
-        if (Character.isLetterOrDigit(e.getKeyChar()) && 
+        if (Character.isLetterOrDigit(e.getKeyChar()) &&
             !(e.isControlDown()||e.isMetaDown())) {
           actionPerformed(new ActionEvent(this, 0, "show"));
           mSearchField.setText(Character.toString(e.getKeyChar()));

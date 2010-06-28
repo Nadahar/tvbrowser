@@ -35,7 +35,7 @@ import devplugin.Channel;
 import devplugin.ProgramFilter;
 
 /**
- * A renderer class for rendering the exclusion list. 
+ * A renderer class for rendering the exclusion list.
  */
 public class ExclusionListCellRenderer extends DefaultListCellRenderer {
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(ExclusionListCellRenderer.class);

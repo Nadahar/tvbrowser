@@ -64,7 +64,7 @@ import util.ui.html.ExtendedHTMLEditorKit;
  */
 public class NewsDialog implements WindowClosingIf {
 
-  /** The localizer used by this class. */  
+  /** The localizer used by this class. */
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(NewsDialog.class);
   

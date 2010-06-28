@@ -48,7 +48,7 @@ import tvbrowser.ui.programtable.background.BackgroundPainter;
 import devplugin.Channel;
 
 /**
- * 
+ *
  * @author Til Schneider, www.murfman.de
  */
 public class ProgramTableScrollPane extends JScrollPane implements ProgramTableModelListener,
@@ -102,7 +102,7 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
       }
     });
     handleBackgroundPainterChanged(mProgramTable.getBackgroundPainter());
-    
+
     getViewport().addChangeListener(this);
     addComponentListener(new ComponentListener() {
 
@@ -118,10 +118,10 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
 
       public void componentShown(ComponentEvent e) {
       }});
-    
+
     // whenever the vertical scroll bar is moved, reset the current time
     getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
-      
+
       @Override
       public void adjustmentValueChanged(AdjustmentEvent e) {
         resetScrolledTime();
@@ -176,7 +176,7 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
       if (channel.equals(shownChannelArr[col])) {
         Point scrollPos = getViewport().getViewPosition();
         if (scrollPos != null) {
-          int visibleColumns = (int) Math.floor(getViewport().getWidth() / mProgramTable.getColumnWidth());
+          int visibleColumns = getViewport().getWidth() / mProgramTable.getColumnWidth();
           scrollPos.x = (col - visibleColumns / 2) * mProgramTable.getColumnWidth();
           if (scrollPos.x < 0) {
             scrollPos.x = 0;
@@ -206,7 +206,7 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
     }
 
     getViewport().setViewPosition(scrollPos);
-    
+
     mScrolledTime = minutesAfterMidnight;
   }
 
@@ -241,7 +241,7 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
 
   /**
    * Go to the right program of the current program.
-   * 
+   *
    */
   public void right() {
     mProgramTable.right();
@@ -249,7 +249,7 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
 
   /**
    * Go to the program on top of the current program.
-   * 
+   *
    */
   public void up() {
     mProgramTable.up();
@@ -257,7 +257,7 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
 
   /**
    * Go to the program under the current program.
-   * 
+   *
    */
   public void down() {
     mProgramTable.down();
@@ -265,7 +265,7 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
 
   /**
    * Go to the left program of the current program.
-   * 
+   *
    */
   public void left() {
     mProgramTable.left();
@@ -273,7 +273,7 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
 
   /**
    * Opens the PopupMenu for the selected program.
-   * 
+   *
    */
   public void showPopupMenu() {
     mProgramTable.showPopupFromKeyboard();
@@ -285,7 +285,7 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
   public void handleMiddleClick() {
     mProgramTable.startMiddleClickPluginFromKeyboard();
   }
-  
+
   /**
    * Starts the middle double click Plugin.
    */
@@ -299,7 +299,7 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
   public void handleLeftSingleClick() {
     mProgramTable.startLeftSingleClickPluginFromKeyboard();
   }
-  
+
   /**
    * Starts the double click Plugin.
    */
@@ -309,7 +309,7 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
 
   /**
    * Deselect the selected program.
-   * 
+   *
    */
   public void deSelectItem() {
     mProgramTable.deSelectItem();
@@ -350,7 +350,7 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
     int columnWidth = mProgramTable.getColumnWidth();
     getHorizontalScrollBar().setBlockIncrement(getFullColumns() * columnWidth);
   }
-  
+
   private int getFullColumns() {
     int columnWidth = mProgramTable.getColumnWidth();
     int fullColumns = (getViewport().getWidth() + 8) / columnWidth;

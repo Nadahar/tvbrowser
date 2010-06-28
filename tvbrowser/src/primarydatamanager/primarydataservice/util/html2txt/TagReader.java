@@ -81,7 +81,9 @@ public class TagReader {
 
     mExpectTag=!mExpectTag;
 
-    if (mChar==-1) return null;
+    if (mChar==-1) {
+      return null;
+    }
 
     }catch(IOException e) {
       return null;

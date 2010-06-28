@@ -32,6 +32,7 @@ public class ProgramInfoHelper {
      * The Bit-Array with all possibilities
      * @deprecated since 3.0, use {@link #getInfoBits()} instead
      */
+    @Deprecated
     public static final int[] mInfoBitArr = new int[] {
             Program.INFO_VISION_BLACK_AND_WHITE, Program.INFO_VISION_4_TO_3,
             Program.INFO_VISION_16_TO_9, Program.INFO_AUDIO_MONO,
@@ -41,7 +42,7 @@ public class ProgramInfoHelper {
             Program.INFO_SUBTITLE_FOR_AURALLY_HANDICAPPED, Program.INFO_LIVE,
             Program.INFO_ORIGINAL_WITH_SUBTITLE, Program.INFO_NEW,
             Program.INFO_AUDIO_DESCRIPTION, Program.INFO_VISION_HD,
-            Program.INFO_CATEGORIE_MOVIE, Program.INFO_CATEGORIE_SERIES, 
+            Program.INFO_CATEGORIE_MOVIE, Program.INFO_CATEGORIE_SERIES,
             Program.INFO_CATEGORIE_NEWS,
             Program.INFO_CATEGORIE_SHOW, Program.INFO_CATEGORIE_MAGAZINE_INFOTAINMENT,
             Program.INFO_CATEGORIE_DOCUMENTARY, Program.INFO_CATEGORIE_ARTS,
@@ -51,8 +52,9 @@ public class ProgramInfoHelper {
 
     /**
      * The Icons for the Bits
-     * @deprecated since 3.0, use {@link #getInfoIcons()} instead 
+     * @deprecated since 3.0, use {@link #getInfoIcons()} instead
      */
+    @Deprecated
     public static final Icon[] mInfoIconArr = new Icon[] {
       createIcon("Info_BlackAndWhite.gif"), // INFO_VISION_BLACK_AND_WHITE
       null, // INFO_VISION_4_TO_3
@@ -87,6 +89,7 @@ public class ProgramInfoHelper {
    * The Icons for the Bits
    * @deprecated since 3.0, use {@link #getInfoIconFilenames()} instead
    */
+  @Deprecated
   public static final String[] mInfoIconFileName = new String[] {
       "Info_BlackAndWhite.gif", // INFO_VISION_BLACK_AND_WHITE
       null, // INFO_VISION_4_TO_3
@@ -121,6 +124,7 @@ public class ProgramInfoHelper {
    * The String representation of the Bits
    * @deprecated since 3.0, use {@link #getInfoIconMessages()} instead
    */
+    @Deprecated
     public static final String[] mInfoMsgArr = new String[] {
             mLocalizer.msg("blackAndWhite", "Black and white"),
             // INFO_VISION_BLACK_AND_WHITE
@@ -175,8 +179,8 @@ public class ProgramInfoHelper {
     /**
      * Returns whether a bit (or combination of bits) is set in the specified
      * number.
-     * @param num 
-     * @param pattern 
+     * @param num
+     * @param pattern
      * @return <code>true</code>, if the bit is set
      */
     public static boolean bitSet(int num, int pattern) {

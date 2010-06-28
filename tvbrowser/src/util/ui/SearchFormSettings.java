@@ -67,7 +67,7 @@ public class SearchFormSettings {
   /**
    * Specifies the searcher type.
    *
-   * @see devplugin.PluginManager#createProgramSearcher(int, String, boolean) 
+   * @see devplugin.PluginManager#createProgramSearcher(int, String, boolean)
    */
   private int mSearcherType;
   /** Specifies whether to search case sensitive. */
@@ -148,8 +148,8 @@ public class SearchFormSettings {
     
     if ((mSearchIn == SEARCH_IN_USER_DEFINED) && (mUserDefinedFieldTypes != null)) {
       out.writeInt(mUserDefinedFieldTypes.length);
-      for (int i = 0; i < mUserDefinedFieldTypes.length; i++) {
-        out.writeInt(mUserDefinedFieldTypes[i].getTypeId());
+      for (ProgramFieldType mUserDefinedFieldType : mUserDefinedFieldTypes) {
+        out.writeInt(mUserDefinedFieldType.getTypeId());
       }
     } else {
       out.writeInt(0); // No field types
@@ -345,7 +345,7 @@ public class SearchFormSettings {
    *
    * If this value is negative, it searches all data (including yesterday)
    *
-   * @return number of days to search 
+   * @return number of days to search
    */
   public int getNrDays() {
     return mNrDays;

@@ -37,7 +37,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Properties;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -52,6 +51,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -125,8 +125,8 @@ public class TvBrowserDataServiceSettingsPanel extends SettingsPanel implements 
         mLevelCheckboxes[i].setSelected(true);
         mLevelCheckboxes[i].setEnabled(false);
       } else {
-        for (int j = 0; j < levelIds.length; j++) {
-          if (levelIds[j].equals(levelArr[i].getId())) {
+        for (String levelId : levelIds) {
+          if (levelId.equals(levelArr[i].getId())) {
             mLevelCheckboxes[i].setSelected(true);
           }
         }
@@ -162,9 +162,9 @@ public class TvBrowserDataServiceSettingsPanel extends SettingsPanel implements 
         .getPluginManager().getIconFromTheme(null, "actions", "help-browser",
             16));
 
-    mAddBtn.setHorizontalAlignment(JButton.LEFT);
-    mRemoveBtn.setHorizontalAlignment(JButton.LEFT);
-    mInfoBtn.setHorizontalAlignment(JButton.LEFT);
+    mAddBtn.setHorizontalAlignment(SwingConstants.LEFT);
+    mRemoveBtn.setHorizontalAlignment(SwingConstants.LEFT);
+    mInfoBtn.setHorizontalAlignment(SwingConstants.LEFT);
 
     btnPn.add(mAddBtn);
     btnPn.add(mRemoveBtn);
@@ -225,8 +225,8 @@ public class TvBrowserDataServiceSettingsPanel extends SettingsPanel implements 
       }
     });
     mGroupListModel.removeAllElements();
-    for (int i = 0; i < groups.length; i++) {
-      mGroupListModel.addElement(groups[i]);
+    for (TvBrowserDataServiceChannelGroup group : groups) {
+      mGroupListModel.addElement(group);
     }
   }
 
@@ -274,16 +274,16 @@ public class TvBrowserDataServiceSettingsPanel extends SettingsPanel implements 
       buf.append(((TvBrowserDataServiceChannelGroup) groups[groups.length - 1]).getId());
     }
     mSettings.setGroupName(buf.toString());
-    for (int i = 0; i < groups.length; i++) {
+    for (Object group : groups) {
       StringBuilder urlBuf = new StringBuilder();
-      String[] mirrorArr = ((TvBrowserDataServiceChannelGroup) groups[i]).getMirrorArr();
+      String[] mirrorArr = ((TvBrowserDataServiceChannelGroup) group).getMirrorArr();
       for (int j = 0; j < mirrorArr.length - 1; j++) {
         urlBuf.append(mirrorArr[j]).append(';');
       }
       if (mirrorArr.length > 0) {
         urlBuf.append(mirrorArr[mirrorArr.length - 1]);
       }
-      mSettings.setGroupUrls(((TvBrowserDataServiceChannelGroup) groups[i]).getId(), urlBuf.toString());
+      mSettings.setGroupUrls(((TvBrowserDataServiceChannelGroup) group).getId(), urlBuf.toString());
     }
   }
 
@@ -365,10 +365,12 @@ public class TvBrowserDataServiceSettingsPanel extends SettingsPanel implements 
   public int getPictureState() {
     int i = PictureSettingsIf.NO_PICTURES;
     
-    if(mLevelCheckboxes[mLevelCheckboxes.length-2].isSelected())
+    if(mLevelCheckboxes[mLevelCheckboxes.length-2].isSelected()) {
       i = PictureSettingsIf.MORNING_PICTURES;
-    if(mLevelCheckboxes[mLevelCheckboxes.length-1].isSelected())
+    }
+    if(mLevelCheckboxes[mLevelCheckboxes.length-1].isSelected()) {
       i += PictureSettingsIf.EVENING_PICTURES;
+    }
     
     return i;
   }

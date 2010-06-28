@@ -118,8 +118,8 @@ public class ChannelListCellRenderer extends DefaultListCellRenderer {
 
       boolean found = (mChannels == null);
       if (mChannels != null) {
-        for (int i = 0; i < mChannels.length; i++) {
-          if (mChannels[i].equals(value)) {
+        for (Channel mChannel2 : mChannels) {
+          if (mChannel2.equals(value)) {
             found = true;
             break;
           }
@@ -133,7 +133,7 @@ public class ChannelListCellRenderer extends DefaultListCellRenderer {
   }
   
   public Component getListComponent() {
-   return mChannel; 
+   return mChannel;
   }
   
   public void setChannels(Channel[] channels) {

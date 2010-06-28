@@ -145,7 +145,7 @@ public class ButtonsSettingsTab implements SettingsTab {
       setLayout(new BorderLayout());
 
       mTimeSp = new JSpinner(new SpinnerDateModel());
-      JSpinner.DateEditor dateEditor = new JSpinner.DateEditor(mTimeSp, Settings.getTimePattern()); 
+      JSpinner.DateEditor dateEditor = new JSpinner.DateEditor(mTimeSp, Settings.getTimePattern());
       mTimeSp.setEditor(dateEditor);
 
       CaretPositionCorrector.createCorrector(dateEditor.getTextField(), new char[] {':'}, -1);
@@ -190,8 +190,8 @@ public class ButtonsSettingsTab implements SettingsTab {
       mListPn.setLayout(new BoxLayout(mListPn, BoxLayout.Y_AXIS));
       add(mListPn, cc.xy(1, 1));
 
-      for (int i = 0; i < times.length; i++) {
-        final Row row = new Row(times[i]);
+      for (int time : times) {
+        final Row row = new Row(time);
         row.setBorder(BorderFactory.createEmptyBorder(2, 0, 2, 0));
         mRows.add(row);
         row.getRemoveButton().addActionListener(new ActionListener() {

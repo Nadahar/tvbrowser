@@ -1,10 +1,10 @@
 package util.misc;
 
-import java.util.Map;
-import java.util.HashMap;
-import java.lang.ref.SoftReference;
-import java.lang.ref.ReferenceQueue;
 import java.lang.ref.Reference;
+import java.lang.ref.ReferenceQueue;
+import java.lang.ref.SoftReference;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This class implements a Cache using soft references.

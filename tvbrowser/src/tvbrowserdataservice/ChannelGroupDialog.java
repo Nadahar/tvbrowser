@@ -159,7 +159,7 @@ public class ChannelGroupDialog extends JDialog {
     }
     
     /**
-     * Create a Text Area for the Description 
+     * Create a Text Area for the Description
      * @param text Text to show
      * @return filled Textarea
      */

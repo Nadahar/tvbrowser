@@ -33,7 +33,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 
-import captureplugin.CapturePlugin;
 import devplugin.Channel;
 import devplugin.Plugin;
 import devplugin.Program;
@@ -209,7 +208,7 @@ public final class ProgramTime implements Cloneable {
       devplugin.Date programDate = mProgram.getDate();
       Channel programChannel = mProgram.getChannel();
       
-      Iterator<Program> channelDayProgram = CapturePlugin.getPluginManager().getChannelDayProgram(programDate, programChannel);
+      Iterator<Program> channelDayProgram = Plugin.getPluginManager().getChannelDayProgram(programDate, programChannel);
       
       boolean found = false;
       
@@ -219,7 +218,7 @@ public final class ProgramTime implements Cloneable {
         if(prog.equals(mProgram)) {
           found = true;
         }
-        else if(found && prog.getStartTime() >= startTime && (prog.getStartTime() + prog.getLength()) <= endTime) {          
+        else if(found && prog.getStartTime() >= startTime && (prog.getStartTime() + prog.getLength()) <= endTime) {
           additionalPrograms.add(prog);
         }
         else if(found) {
@@ -231,7 +230,7 @@ public final class ProgramTime implements Cloneable {
         if(programDate.getDayOfMonth() == day) {
           programDate = programDate.addDays(1);
           
-          channelDayProgram = CapturePlugin.getPluginManager().getChannelDayProgram(programDate, programChannel);
+          channelDayProgram = Plugin.getPluginManager().getChannelDayProgram(programDate, programChannel);
           
           endTime -= 60 * 24;
           
@@ -369,7 +368,7 @@ public final class ProgramTime implements Cloneable {
           id = in.readUTF();
           devplugin.Date programDate = devplugin.Date.readData(in);
           
-          Program prog = CapturePlugin.getPluginManager().getProgram(programDate, id);
+          Program prog = Plugin.getPluginManager().getProgram(programDate, id);
           
           if(prog != null) {
             tempList.add(prog);

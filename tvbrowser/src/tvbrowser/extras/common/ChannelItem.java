@@ -89,7 +89,7 @@ public class ChannelItem {
         mCountry = mChannel.getCountry();
       }
     }
-    else {      
+    else {
       mChannelDataServiceId = in.readUTF();
       mGroupId = in.readUTF();
       mCountry = in.readUTF();
@@ -110,7 +110,7 @@ public class ChannelItem {
    * <code>false</code> otherwise.
    */
   public boolean isValid() {
-    return mChannelDataServiceId != null && mGroupId != null && mCountry != null && mCertainChannelId != null; 
+    return mChannelDataServiceId != null && mGroupId != null && mCountry != null && mCertainChannelId != null;
   }
   
   /**

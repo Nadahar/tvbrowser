@@ -52,8 +52,9 @@ public class ProgramInfoProxy extends AbstractInternalPluginProxy implements Con
    * @return The instance of the ProgramInfoProxy
    */
   public static synchronized ProgramInfoProxy getInstance() {
-    if(mInstance == null)
+    if(mInstance == null) {
       new ProgramInfoProxy();
+    }
 
     return mInstance;
   }

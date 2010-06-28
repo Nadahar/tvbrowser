@@ -168,7 +168,7 @@ public class ProgramListPlugin extends Plugin {
     for (ProgramFilter filter : Plugin.getPluginManager().getFilterManager()
         .getAvailableFilters()) {
       filters.add(filter);
-    } 
+    }
     if (mRecieveFilter != null) {
       filters.add(mRecieveFilter);
     }

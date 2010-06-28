@@ -29,7 +29,8 @@ package tvbrowser.ui.mainframe;
 
 import java.awt.BorderLayout;
 
-import javax.swing.*;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
 
 public class DateChooserPanel extends JPanel {
   

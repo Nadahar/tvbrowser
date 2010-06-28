@@ -93,7 +93,9 @@ public class TabLayout implements LayoutManager {
    *        size equal to their preferred size.
    */
   public TabLayout(int columns, int xAbs, int yAbs, boolean dontMaximizeComponents) {
-    if (columns < 1) columns = 1;
+    if (columns < 1) {
+      columns = 1;
+    }
     this.anzahlSpalten = columns;
     this.dontMaximizeComponents = dontMaximizeComponents;
     this.xAbs = xAbs;
@@ -119,24 +121,29 @@ public class TabLayout implements LayoutManager {
 
   int[] getBreiten(int gesBreite, Component[][] comp) {
     int[] breite = new int[comp.length];
-    for (int i = 0;i<breite.length;i++) breite[i] = 0;
+    for (int i = 0;i<breite.length;i++) {
+      breite[i] = 0;
+    }
 
-    for (int y = 0;y<comp[0].length;y++)
+    for (int y = 0;y<comp[0].length;y++) {
       for (int x = 0;x<comp.length;x++) {
         if (comp[x][y]!=null && comp[x][y].isVisible()) {
           Dimension d = comp[x][y].getPreferredSize();
           breite[x] = Math.max(breite[x], d.width);
         }
       }
+    }
 
     // Skalierung
     if (gesBreite>0) {
       int prefGesBreite = -xAbs;
-      for (int i = 0;i<breite.length;i++)
-        prefGesBreite += breite[i] + xAbs;
+      for (int element : breite) {
+        prefGesBreite += element + xAbs;
+      }
       double skal = ((double)gesBreite)/prefGesBreite;
-      for (int i = 0;i<breite.length;i++)
+      for (int i = 0;i<breite.length;i++) {
         breite[i] = (int)(breite[i]*skal);
+      }
     }
 
     return breite;
@@ -146,24 +153,29 @@ public class TabLayout implements LayoutManager {
 
   int[] getHoehen(int gesHoehe, Component[][] comp) {
     int[] hoehe = new int[comp[0].length];
-    for (int i = 0;i<hoehe.length;i++) hoehe[i] = 0;
+    for (int i = 0;i<hoehe.length;i++) {
+      hoehe[i] = 0;
+    }
 
-    for (int y = 0;y<comp[0].length;y++)
-      for (int x = 0;x<comp.length;x++) {
-        if (comp[x][y]!=null && comp[x][y].isVisible()) {
-          Dimension d = comp[x][y].getPreferredSize();
+    for (int y = 0;y<comp[0].length;y++) {
+      for (Component[] element : comp) {
+        if (element[y]!=null && element[y].isVisible()) {
+          Dimension d = element[y].getPreferredSize();
           hoehe[y] = Math.max(hoehe[y], d.height);
         }
       }
+    }
 
     // Skalierung
     if (gesHoehe>0) {
       int prefGesHoehe = -yAbs;
-      for (int i = 0;i<hoehe.length;i++)
-        prefGesHoehe += hoehe[i] + yAbs;
+      for (int element : hoehe) {
+        prefGesHoehe += element + yAbs;
+      }
       double ySkal = ((double)gesHoehe)/prefGesHoehe;
-      for (int i = 0;i<hoehe.length;i++)
+      for (int i = 0;i<hoehe.length;i++) {
         hoehe[i] = (int)(hoehe[i]*ySkal);
+      }
     }
 
     return hoehe;
@@ -190,10 +202,12 @@ public class TabLayout implements LayoutManager {
       int[] hoehe = getHoehen(0, comp);
 
       Dimension dim = new Dimension(-xAbs, -yAbs);
-      for (int i = 0;i<breite.length;i++)
-        dim.width += breite[i] + xAbs;
-      for (int i = 0;i<hoehe.length;i++)
-        dim.height += hoehe[i] + yAbs;
+      for (int element : breite) {
+        dim.width += element + xAbs;
+      }
+      for (int element : hoehe) {
+        dim.height += element + yAbs;
+      }
       Insets insets = c.getInsets();
       dim.width += insets.left + insets.right;
       dim.height += insets.top + insets.bottom;

@@ -41,6 +41,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
 
 import util.paramhandler.ParamCheckDialog;
 import util.paramhandler.ParamHelpDialog;
@@ -135,8 +136,8 @@ public class WebAddressEditDialog extends JDialog {
     mUrl.setText(mWebAddress.getUrl());
     mUrl.setLineWrap(true);
     
-    JScrollPane scroll = new JScrollPane(mUrl, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-        JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+    JScrollPane scroll = new JScrollPane(mUrl, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+        ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
     panel.add(scroll, cc.xywh(3, 3, 1, 4));
 
     JButton test = new JButton(mLocalizer.msg("check", "Check"));
@@ -167,7 +168,7 @@ public class WebAddressEditDialog extends JDialog {
         dialog.setVisible(true);
       }
       
-    });    
+    });
     
     panel.add(help, cc.xy(5, 5));
 

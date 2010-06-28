@@ -87,7 +87,8 @@ public abstract class AbstractXmlTvDataHandler extends DefaultHandler {
    */
   private String mLengthUnit;
   /**
-   * subtitle kind of the currently parsed program: teletext | onscreen | deaf-signed
+   * subtitle kind of the currently parsed program: teletext | onscreen |
+   * deaf-signed
    */
   private String mSubtitles;
 
@@ -123,9 +124,9 @@ public abstract class AbstractXmlTvDataHandler extends DefaultHandler {
       } else if (mChannelId == null) {
         logMessage("Channel missing in programme tag");
       } else {
-        try {
-          Date startDate = extractDate(startDateTime);
-          int startTime = extractTime(startDateTime);
+        Date startDate = extractDate(startDateTime);
+        int startTime = extractTime(startDateTime);
+        if (startDate != null && startTime > -1) {
           startProgram(startDate, startTime);
 
           addField(ProgramFieldType.START_TIME_TYPE, startTime);
@@ -143,23 +144,17 @@ public abstract class AbstractXmlTvDataHandler extends DefaultHandler {
           }
 
           mIsValid = true;
-        } catch (IOException exc) {
-          logException(exc);
         }
       }
     } else if (qName.equals("previously-shown")) {
-      try {
-        Date prevDate = extractDate(attributes.getValue("start"));
+      Date prevDate = extractDate(attributes.getValue("start"));
+      if (prevDate != null) {
         addField(ProgramFieldType.REPETITION_OF_TYPE, prevDate.toString());
-      } catch (IOException exc) {
-        logException(exc);
       }
     } else if (qName.equals("next-time-shown")) {
-      try {
-        Date nextDate = extractDate(attributes.getValue("start"));
+      Date nextDate = extractDate(attributes.getValue("start"));
+      if (nextDate != null) {
         addField(ProgramFieldType.REPETITION_ON_TYPE, nextDate.toString());
-      } catch (IOException exc) {
-        logException(exc);
       }
     } else if ("episode-num".equals(qName)) {
       mEpisodeType = attributes.getValue("system");
@@ -199,7 +194,8 @@ public abstract class AbstractXmlTvDataHandler extends DefaultHandler {
         } else {
           addField(ProgramFieldType.ORIGINAL_TITLE_TYPE, text);
         }
-      } else if ("sub-title".equalsIgnoreCase(qName)) { // do not mix this up with "subtitles" !
+      } else if ("sub-title".equalsIgnoreCase(qName)) { // do not mix this up
+                                                        // with "subtitles" !
         if ((mLang == null) || mLang.equals(getChannelCountry())) {
           addField(ProgramFieldType.EPISODE_TYPE, text);
         } else {
@@ -242,8 +238,7 @@ public abstract class AbstractXmlTvDataHandler extends DefaultHandler {
       } else if ("subtitles".equalsIgnoreCase(qName)) {
         if ("deaf-signed".equalsIgnoreCase(mSubtitles)) {
           setInfoBit(Program.INFO_SIGN_LANGUAGE);
-        }
-        else {
+        } else {
           if ((mLang == null) || mLang.equals(getChannelCountry())) {
             setInfoBit(Program.INFO_SUBTITLE_FOR_AURALLY_HANDICAPPED);
           } else {
@@ -257,14 +252,11 @@ public abstract class AbstractXmlTvDataHandler extends DefaultHandler {
           int length = Integer.parseInt(text);
           if ("seconds".equalsIgnoreCase(mLengthUnit)) {
             addField(ProgramFieldType.NET_PLAYING_TIME_TYPE, length / 60);
-          }
-          else if ("minutes".equalsIgnoreCase(mLengthUnit)) {
+          } else if ("minutes".equalsIgnoreCase(mLengthUnit)) {
             addField(ProgramFieldType.NET_PLAYING_TIME_TYPE, length);
-          }
-          else if ("hours".equalsIgnoreCase(mLengthUnit)) {
+          } else if ("hours".equalsIgnoreCase(mLengthUnit)) {
             addField(ProgramFieldType.NET_PLAYING_TIME_TYPE, length * 60);
-          }
-          else {
+          } else {
             addField(ProgramFieldType.NET_PLAYING_TIME_TYPE, length);
           }
         } catch (NumberFormatException exc) {
@@ -272,9 +264,8 @@ public abstract class AbstractXmlTvDataHandler extends DefaultHandler {
         }
       } else if ("actor".equalsIgnoreCase(qName)) {
         if (mRole != null && mRole.length() > 0) {
-          text = text + ACTOR_ROLE_SEPARATOR + mRole;
-        }
-        else {
+          text += ACTOR_ROLE_SEPARATOR + mRole;
+        } else {
           Matcher m = ACTOR_PATTERN.matcher(text);
           if (m.matches()) {
             text = m.group(2).trim() + ACTOR_ROLE_SEPARATOR + m.group(1).trim();
@@ -284,8 +275,7 @@ public abstract class AbstractXmlTvDataHandler extends DefaultHandler {
         if (text.toLowerCase().startsWith(PRESENTED_BY)) {
           text = text.substring(PRESENTED_BY.length()).trim();
           addToList(ProgramFieldType.MODERATION_TYPE, text, COMMA_SPACE);
-        }
-        else {
+        } else {
           addToList(ProgramFieldType.ACTOR_LIST_TYPE, text, COMMA_LINE_BREAK);
         }
       } else if ("director".equalsIgnoreCase(qName)) {
@@ -381,7 +371,8 @@ public abstract class AbstractXmlTvDataHandler extends DefaultHandler {
       } else if ("new".equalsIgnoreCase(qName) || "premiere".equalsIgnoreCase(qName)) {
         setInfoBit(Program.INFO_NEW);
       } else if ("programme".equalsIgnoreCase(qName)) {
-        // if we only set the original title, then we still need to set the title
+        // if we only set the original title, then we still need to set the
+        // title
         if (!mSetTitle && mTitle != null) {
           addField(ProgramFieldType.TITLE_TYPE, mTitle);
         }
@@ -432,8 +423,7 @@ public abstract class AbstractXmlTvDataHandler extends DefaultHandler {
         // root element, no useful information
       } else if ("video".equalsIgnoreCase(qName)) {
         // already parsed as colour, aspect, quality
-      }
-      else {
+      } else {
         logMessage("Warning: Unknown element '" + qName + '\'');
       }
     }
@@ -441,7 +431,7 @@ public abstract class AbstractXmlTvDataHandler extends DefaultHandler {
     mLang = null;
   }
 
-  private String getCountries(final String language) {
+  private static String getCountries(final String language) {
     if (language == null) {
       return null;
     }
@@ -512,11 +502,12 @@ public abstract class AbstractXmlTvDataHandler extends DefaultHandler {
    * @param dateTime
    *          The value to extract the time from.
    * @return The time in minutes after midnight
-   * @throws java.io.IOException
-   *           If the value has the wrong format.
    */
-  private int extractTime(final String dateTime) throws IOException {
+  private int extractTime(final String dateTime) {
     Calendar cal = parseDateTime(dateTime);
+    if (cal == null) {
+      return -1;
+    }
     int hour = cal.get(Calendar.HOUR_OF_DAY);
     int minute = cal.get(Calendar.MINUTE);
     return hour * 60 + minute;
@@ -528,15 +519,16 @@ public abstract class AbstractXmlTvDataHandler extends DefaultHandler {
    * @param dateTime
    *          The value to extract the date from.
    * @return The date.
-   * @throws java.io.IOException
-   *           If the value has the wrong format.
    */
-  private Date extractDate(final String dateTime) throws IOException {
+  private Date extractDate(final String dateTime) {
     Calendar cal = parseDateTime(dateTime);
+    if (cal == null) {
+      return null;
+    }
     return new devplugin.Date(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1, cal.get(Calendar.DAY_OF_MONTH));
   }
 
-  synchronized private Calendar parseDateTime(final String time) {
+  private synchronized Calendar parseDateTime(final String time) {
     try {
       Calendar calendar = Calendar.getInstance();
       calendar.setTime(DATE_FORMAT.parse(time.substring(0, 20)));
@@ -561,13 +553,13 @@ public abstract class AbstractXmlTvDataHandler extends DefaultHandler {
    * Adds a text to a field that builds a comma separated value (e.g. the actor
    * list).
    *
-   * @param type
+   * @param fieldType
    *          The type of the field to add the text to.
-   * @param text
+   * @param value
    *          The text to add.
    * @param separator
    *          separator to add after each new entry
    */
-  abstract protected void addToList(final ProgramFieldType fieldType, String value, final String separator);
+  protected abstract void addToList(final ProgramFieldType fieldType, String value, final String separator);
 
 }

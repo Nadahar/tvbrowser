@@ -27,15 +27,8 @@
 
 package tvbrowser.ui.pluginview.contextmenu;
 
-import devplugin.Plugin;
-import devplugin.Program;
-import devplugin.ProgramItem;
-import tvbrowser.core.contextmenu.ContextMenuManager;
-import tvbrowser.ui.mainframe.MainFrame;
-import tvbrowser.ui.pluginview.Node;
-import tvbrowser.ui.pluginview.PluginTree;
-import tvbrowser.ui.programtable.ProgramTable;
-import util.ui.menu.MenuUtil;
+import java.awt.Component;
+import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -43,8 +36,16 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.tree.TreePath;
-import java.awt.Component;
-import java.awt.event.ActionEvent;
+
+import tvbrowser.core.contextmenu.ContextMenuManager;
+import tvbrowser.ui.mainframe.MainFrame;
+import tvbrowser.ui.pluginview.Node;
+import tvbrowser.ui.pluginview.PluginTree;
+import tvbrowser.ui.programtable.ProgramTable;
+import util.ui.menu.MenuUtil;
+import devplugin.Plugin;
+import devplugin.Program;
+import devplugin.ProgramItem;
 
 /**
  * Created by: Martin Oberhauser (martin@tvbrowser.org)

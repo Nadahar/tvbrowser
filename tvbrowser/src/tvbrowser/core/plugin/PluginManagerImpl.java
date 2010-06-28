@@ -237,7 +237,7 @@ public class PluginManagerImpl implements PluginManager {
         newId.append(hourMinute[0]).append(":").append(hourMinute[1]).append(":").append(TimeZone.getDefault().getRawOffset()/60000);
         
         progID = newId.toString();
-      }      
+      }
       
       if(ch.getTimeZone().getRawOffset() != TimeZone.getDefault().getRawOffset()) {
         String[] hourMinute = timeString.split(":");
@@ -257,7 +257,7 @@ public class PluginManagerImpl implements PluginManager {
       
       ChannelDayProgram dayProg = db.getDayProgram(date, ch);
       
-      if (dayProg != null) {        
+      if (dayProg != null) {
         Program prog = dayProg.getProgram(progID);
         if (prog != null) {
           return prog;
@@ -313,7 +313,7 @@ public class PluginManagerImpl implements PluginManager {
       }
     }
 
-    String[] s = progId.split("_");    
+    String[] s = progId.split("_");
     
     if(s.length < 4) {
       return ChannelList.getChannel(null, null, null, s[0]);
@@ -390,7 +390,7 @@ public class PluginManagerImpl implements PluginManager {
         try {
           return new BooleanSearcher(searchTerm, caseSensitive);
         }catch (ParserException e) {
-          throw new TvBrowserException(PluginManagerImpl.class, "parser.error","Invalid input: {0}", e.getLocalizedMessage());          
+          throw new TvBrowserException(PluginManagerImpl.class, "parser.error","Invalid input: {0}", e.getLocalizedMessage());
         }
       default: throw new IllegalArgumentException("Unknown searcher type: " + type);
     }
@@ -506,7 +506,7 @@ public class PluginManagerImpl implements PluginManager {
       return;
     }
     
-    ContextMenuIf leftSingleClickIf = 
+    ContextMenuIf leftSingleClickIf =
       ContextMenuManager.getInstance().getLeftSingleClickIf();
     
     if (leftSingleClickIf == null) {
@@ -551,7 +551,7 @@ public class PluginManagerImpl implements PluginManager {
       return;
     }
     
-    ContextMenuIf defaultContextMenuIf = 
+    ContextMenuIf defaultContextMenuIf =
       ContextMenuManager.getInstance().getDefaultContextMenuIf();
 
     if (defaultContextMenuIf == null) {
@@ -760,7 +760,7 @@ public class PluginManagerImpl implements PluginManager {
 
   /**
    * Returns an icon from the icon-theme-system
-   *  
+   * 
    * If your plugin has icons that are not available as icons within an theme, you can add
    * your icons into your jar-file.
    * 
@@ -771,9 +771,9 @@ public class PluginManagerImpl implements PluginManager {
    * Please try to use the icon naming conventions of the FreeDesktop project:
    * http://cvs.freedesktop.org/[*]checkout[*]/icon-theme/default-icon-theme/spec/icon-naming-spec.xml
    * (please remove the [ ])
-   *  
+   * 
    * @param plugin Plugin that wants to load an icon
-   * @param category Category of the icon (action, etc...) 
+   * @param category Category of the icon (action, etc...)
    * @param iconName icon name without file extension
    * @param size Size of the icon
    * @return Icon if found, <code>null</code> if not
@@ -785,7 +785,7 @@ public class PluginManagerImpl implements PluginManager {
 
   /**
    * Returns an Icon from the Icon-Theme-System
-   *  
+   * 
    * If your Plugin has Icons that are not available as Icons within an Theme, you can add
    * your Icons into your Jar-File.
    * 
@@ -796,7 +796,7 @@ public class PluginManagerImpl implements PluginManager {
    * Please try to use the FreeDesktop-Icon Naming Conventions
    * http://cvs.freedesktop.org/[*]checkout[*]/icon-theme/default-icon-theme/spec/icon-naming-spec.xml
    * (please remove the [ ])
-   *  
+   * 
    * @param plugin Plugin that wants to load an Icon
    * @param icon ThemeIcon that represents the Icon
    *
@@ -830,7 +830,7 @@ public class PluginManagerImpl implements PluginManager {
     else {
       SettingsDialog.getInstance().showSettingsTab(settingsItem);
     }
-  }  
+  }
   
   /**
    * Return all marked programs.
@@ -910,7 +910,7 @@ public class PluginManagerImpl implements PluginManager {
    * 
    * @param program The program to scroll to.
    * @since 2.5
-   */  
+   */
   public void scrollToProgram(Program program) {
     if(program != null) {
       MainFrame.getInstance().scrollToProgram(program);

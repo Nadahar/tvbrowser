@@ -48,15 +48,17 @@ public class ContextMenu {
   private JPopupMenu mMenu;
 
   public ContextMenu(JComponent component) {
-    if(ToolBarDragAndDropSettings.getInstance() != null)
+    if(ToolBarDragAndDropSettings.getInstance() != null) {
       return;
-    mComponent = component;    
+    }
+    mComponent = component;
     mMenu = new JPopupMenu();
   }
 
   public void show(int x, int y) {
-    if(ToolBarDragAndDropSettings.getInstance() != null)
+    if(ToolBarDragAndDropSettings.getInstance() != null) {
       return;
+    }
     update();
     mMenu.show(mComponent, x, y);
   }
@@ -64,8 +66,9 @@ public class ContextMenu {
   protected static JMenu getSubMenu() {
     JMenu menu = new JMenu(mLocalizer.msg("toolbar", "Toolbar"));
     menu.add(createViewMenu());
-    if(Settings.propIsToolbarVisible.getBoolean())
+    if(Settings.propIsToolbarVisible.getBoolean()) {
       menu.add(createViewSearchMenu());
+    }
     menu.addSeparator();
     menu.add(createConfigureItem());
 
@@ -75,11 +78,13 @@ public class ContextMenu {
   private void update() {
     mMenu.removeAll();
     mMenu.add(createViewMenu());
-    if(Settings.propIsToolbarVisible.getBoolean())
+    if(Settings.propIsToolbarVisible.getBoolean()) {
       mMenu.add(createViewSearchMenu());
+    }
     mMenu.addSeparator();
-    if (ToolBarDragAndDropSettings.getInstance() == null)
+    if (ToolBarDragAndDropSettings.getInstance() == null) {
       mMenu.add(createConfigureItem());
+    }
   }
 
   private static JCheckBoxMenuItem createViewSearchMenu() {
@@ -91,9 +96,9 @@ public class ContextMenu {
       public void actionPerformed(ActionEvent e) {
         MainFrame.getInstance().setShowSearchField(showSearch.isSelected());
       }
-    });    
+    });
     
-    return showSearch;    
+    return showSearch;
   }
   
   private static JCheckBoxMenuItem createViewMenu() {
@@ -105,7 +110,7 @@ public class ContextMenu {
       public void actionPerformed(ActionEvent e) {
         MainFrame.getInstance().setShowToolbar(show.isSelected());
       }
-    });    
+    });
     
     return show;
   }

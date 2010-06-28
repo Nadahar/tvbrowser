@@ -93,7 +93,7 @@ public class FinderPanel extends AbstractDateSelector implements DateSelector,
     MouseMotionListener, KeyListener {
 
   private static final util.ui.Localizer mLocalizer
-  = util.ui.Localizer.getLocalizerFor(FinderPanel.class);  
+  = util.ui.Localizer.getLocalizerFor(FinderPanel.class);
   
   private DateListener mDateChangedListener;
 
@@ -183,8 +183,8 @@ public class FinderPanel extends AbstractDateSelector implements DateSelector,
   public void updateItems() {
     Object[] o = mModel.toArray();
     
-    for (int i = 0; i < o.length; i++) {
-      FinderItem item = (FinderItem) o[i];
+    for (Object element : o) {
+      FinderItem item = (FinderItem) element;
       
       if(!item.isEnabled()) {
         if (isValidDate(item.getDate())) {

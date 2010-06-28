@@ -35,7 +35,7 @@ import devplugin.ActionMenu;
  * It capsulates Actions into ActionProxies. These ActionProxies will
  * show an Error Dialog that enables the User to deactive a malfuncioning Plugin
  * 
- *  
+ * 
  * @author bodum
  *
  */
@@ -65,7 +65,7 @@ public class ActionMenuProxy extends ActionMenu {
    * Returns SubItems that are encapsulated by ActionMenuProxies
    */
   public ActionMenu[] getSubItems() {
-    ActionMenu[] items =super.getSubItems(); 
+    ActionMenu[] items =super.getSubItems();
     
     ActionMenu[] result = new ActionMenuProxy[items.length];
     

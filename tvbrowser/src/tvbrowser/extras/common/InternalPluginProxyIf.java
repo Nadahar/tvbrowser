@@ -42,7 +42,7 @@ public interface InternalPluginProxyIf {
    */
   public static final String KEYBOARD_ACCELERATOR = "####KEYBOARD_ACCELERATOR####";
   
-  /** Gets the icon of this internal plugin. 
+  /** Gets the icon of this internal plugin.
    * @return The icon for this internal plugin. */
   public Icon getIcon();
   

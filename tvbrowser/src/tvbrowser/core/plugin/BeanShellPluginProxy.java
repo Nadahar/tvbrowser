@@ -104,8 +104,8 @@ public class BeanShellPluginProxy extends AbstractPluginProxy {
       }
       else {
         ActionMenu[] subItems = menu.getSubItems();
-        for (int i=0; i<subItems.length; i++) {
-          setActionMenuDefaultValues(subItems[i]);
+        for (ActionMenu subItem : subItems) {
+          setActionMenuDefaultValues(subItem);
         }
       }
     }
@@ -194,10 +194,10 @@ public class BeanShellPluginProxy extends AbstractPluginProxy {
     }
 
  
-    public void doOnActivation() {        
+    public void doOnActivation() {
     }
 
-    public void doOnDeactivation() {       
+    public void doOnDeactivation() {
     }
 
     public boolean doCanUseProgramTree() {

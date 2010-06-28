@@ -10,32 +10,32 @@ import java.net.URLConnection;
 
 
 public class HttpSession {
-  
+
   private HttpURLConnection mUrlConnection;
   private String mCookie;
-  
+
   public HttpSession() {
-     
+
   }
-  
+
   public HttpSession(URL url) throws IOException {
     mUrlConnection = (HttpURLConnection) url.openConnection();
-   
+
     String cookie=mUrlConnection.getHeaderField("Set-Cookie");
     if (cookie!=null) {
-      String s[]=cookie.split(";");
-      if (s.length>0) {        
+      String[] s=cookie.split(";");
+      if (s.length>0) {
         mCookie=s[0];
-      }         
+      }
     }
-    System.out.println("cookie: "+mCookie);        
+    System.out.println("cookie: "+mCookie);
   }
-  
+
   public InputStream openPage(URL url) throws IOException {
     mUrlConnection = (HttpURLConnection) url.openConnection();
     if (mCookie!=null) {
       mUrlConnection.addRequestProperty("Cookie",mCookie);
-    } 
+    }
     return mUrlConnection.getInputStream();
   }
 
@@ -162,18 +162,18 @@ public class HttpSession {
   }
 
   public InputStream postForm(URL scriptUrl, Form form) throws IOException {
-    
-    
+
+
     URLConnection uconn=scriptUrl.openConnection();
     if (mCookie!=null) {
       uconn.addRequestProperty("Cookie",mCookie);
-    } 
-    uconn.setDoInput(true); 
-    uconn.setDoOutput(true); 
-    uconn.setUseCaches(false); 
-    uconn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded"); 
-    
-    DataOutputStream out = new DataOutputStream (uconn.getOutputStream ()); 
+    }
+    uconn.setDoInput(true);
+    uconn.setDoOutput(true);
+    uconn.setUseCaches(false);
+    uconn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+
+    DataOutputStream out = new DataOutputStream (uconn.getOutputStream ());
     Field[] formFields = form.getFields();
     StringBuilder contentBuf = new StringBuilder();
     for (int i=0; i<formFields.length; i++) {
@@ -183,22 +183,22 @@ public class HttpSession {
       contentBuf.append(formFields[i].getKey()).append('=').append(
           formFields[i].getValue());
     }
-    
+
     String content = contentBuf.toString().replaceAll(" ","+");
-      
-    out.writeBytes (content); 
-    out.flush (); 
+
+    out.writeBytes (content);
+    out.flush ();
     out.close ();
 
 
 
     return uconn.getInputStream();
-    
-   
+
+
      }
-    
-   
-  
+
+
+
   public HttpURLConnection getURLConnection() {
     return mUrlConnection;
   }
@@ -206,9 +206,9 @@ public class HttpSession {
   public void setCookie(String cookie) {
     mCookie = cookie;
   }
-  
+
   public String getCookie() {
     return mCookie;
   }
-  
+
 }

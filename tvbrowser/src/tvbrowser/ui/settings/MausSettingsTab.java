@@ -138,16 +138,16 @@ public class MausSettingsTab implements devplugin.SettingsTab {
 
     ContextMenuIf[] menuIfList = ContextMenuManager.getInstance().getAvailableContextMenuIfs(true, false);
     Program exampleProgram = Plugin.getPluginManager().getExampleProgram();
-    for (int i = 0; i < menuIfList.length; i++) {
-      if (menuIfList[i] instanceof SeparatorMenuItem) {
-      } else if (menuIfList[i] instanceof ConfigMenuItem || menuIfList[i] instanceof LeaveFullScreenMenuItem) {
+    for (ContextMenuIf element : menuIfList) {
+      if (element instanceof SeparatorMenuItem) {
+      } else if (element instanceof ConfigMenuItem || element instanceof LeaveFullScreenMenuItem) {
       } else {
-        ActionMenu actionMenu = menuIfList[i].getContextMenuActions(exampleProgram);
+        ActionMenu actionMenu = element.getContextMenuActions(exampleProgram);
         if (actionMenu != null) {
-          mLeftSingleClickBox.addItem(menuIfList[i]);
-          mDoubleClickBox.addItem(menuIfList[i]);
-          mMiddleClickBox.addItem(menuIfList[i]);
-          mMiddleDoubleClickBox.addItem(menuIfList[i]);
+          mLeftSingleClickBox.addItem(element);
+          mDoubleClickBox.addItem(element);
+          mMiddleClickBox.addItem(element);
+          mMiddleDoubleClickBox.addItem(element);
         }
       }
     }

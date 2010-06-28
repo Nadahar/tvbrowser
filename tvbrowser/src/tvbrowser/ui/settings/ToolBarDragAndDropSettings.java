@@ -444,8 +444,8 @@ public class ToolBarDragAndDropSettings extends JDialog implements
           .getComponent();
       
       if (target.equals(mButtonPanel)) {
-        if (index == -1 && !separator.getValue(Action.NAME).equals(name) 
-            && !glue.getValue(Action.NAME).equals(name) 
+        if (index == -1 && !separator.getValue(Action.NAME).equals(name)
+            && !glue.getValue(Action.NAME).equals(name)
             && !space.getValue(Action.NAME).equals(name)) {
           for (Action a : mCurrentActions) {
             if (a.getValue(Action.NAME).equals(name)) {
@@ -457,7 +457,7 @@ public class ToolBarDragAndDropSettings extends JDialog implements
         } else if (index != -1) {
           Action a = mCurrentActions.elementAt(index);
           mCurrentActions.removeElementAt(index);
-          if (!separator.getValue(Action.NAME).equals(name) 
+          if (!separator.getValue(Action.NAME).equals(name)
               && !glue.getValue(Action.NAME).equals(name)
               && !space.getValue(Action.NAME).equals(name)
               ) {
@@ -467,7 +467,7 @@ public class ToolBarDragAndDropSettings extends JDialog implements
         saveSettings();
       } else if (target.equals(MainFrame.getInstance().getToolbar())
           || ((DropTarget) e.getSource()).getComponent().equals(
-              MainFrame.getInstance().getToolBarPanel())) {        
+              MainFrame.getInstance().getToolBarPanel())) {
         
         Point location = e.getLocation();
 
@@ -524,7 +524,7 @@ public class ToolBarDragAndDropSettings extends JDialog implements
             
           for (Action a : mAvailableActions) {
             if (a.getValue(Action.NAME).equals(name)) {
-              if (!separator.getValue(Action.NAME).equals(name) 
+              if (!separator.getValue(Action.NAME).equals(name)
                   && !glue.getValue(Action.NAME).equals(name)
                   && !space.getValue(Action.NAME).equals(name)) {
                 mAvailableActions.removeElement(a);
@@ -570,7 +570,7 @@ public class ToolBarDragAndDropSettings extends JDialog implements
         }
       }
       if (action.getValue(Action.NAME).equals(text)
-          || separator.getValue(Action.NAME).equals(text) 
+          || separator.getValue(Action.NAME).equals(text)
           || glue.getValue(Action.NAME).equals(text)
           || space.getValue(Action.NAME).equals(text)
           || text.equals("notext")) {
@@ -675,7 +675,7 @@ public class ToolBarDragAndDropSettings extends JDialog implements
         
         Point p = SwingUtilities.convertPoint(toolBarPanel, location, c);
         
-        Rectangle oldCueLineBounds = mCueLine.getBounds();        
+        Rectangle oldCueLineBounds = mCueLine.getBounds();
         
         if (mWest) {
           mCueLine.setRect(1,
@@ -742,7 +742,7 @@ public class ToolBarDragAndDropSettings extends JDialog implements
         for (int i = 0; i < mAvailableActions.size(); i++) {
           Action a = mAvailableActions.elementAt(i);
           if (a.getValue(Action.NAME).equals(name)) {
-            if (!separator.getValue(Action.NAME).equals(name) 
+            if (!separator.getValue(Action.NAME).equals(name)
                 && !glue.getValue(Action.NAME).equals(name)
                 && !space.getValue(Action.NAME).equals(name)) {
               mAvailableActions.removeElement(a);

@@ -53,8 +53,9 @@ public class ExecutionHandler {
     if(programPath.contains(File.separator)) {
       String path = programPath.substring(0,programPath.lastIndexOf(File.separator) + 1);
 
-      if(path == null || path.length() < 1 || !(new File(path).isDirectory()))
+      if(path == null || path.length() < 1 || !(new File(path).isDirectory())) {
         path = System.getProperty("user.dir");
+      }
 
       mRuntimeDirectory = new File(path.trim());
     }

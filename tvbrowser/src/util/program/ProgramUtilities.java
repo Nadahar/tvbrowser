@@ -147,7 +147,7 @@ public class ProgramUtilities {
   public static ArrayList<String>[] splitActors(Program program) {
     String actorsField = program.getTextField(ProgramFieldType.ACTOR_LIST_TYPE);
     if (actorsField != null) {
-      String[] actors = new String[0];
+      String[] actors;
       // actor list separated by newlines
       if (actorsField.contains("\n")) {
         actors = actorsField.split("\n");
@@ -336,26 +336,26 @@ public class ProgramUtilities {
       scripts = scriptField.split(",");
     }
     String lowerTitle = program.getTitle().toLowerCase();
-    for (int i = 0; i < list.length; i++) {
+    for (ArrayList<String> element : list) {
       // search for director in actors list
       for (String director : directors) {
-        if (list[i].contains(director)) {
-          return list[i];
+        if (element.contains(director)) {
+          return element;
         }
       }
       // search for script in actors list
       for (String script : scripts) {
-        if (list[i].contains(script)) {
-          return list[i];
+        if (element.contains(script)) {
+          return element;
         }
       }
     }
     // which list contains more names with one part only (i.e. no family name) -> role names
-    int singleName[] = new int[list.length];
+    int[] singleName = new int[list.length];
     // which list contains more abbreviations at the beginning -> role names
-    int abbreviation[] = new int[list.length];
+    int[] abbreviation = new int[list.length];
     // which list contains more slashes -> double roles for a single actor
-    int slashes[] = new int[list.length];
+    int[] slashes = new int[list.length];
     // which list has duplicate family names -> roles
     @SuppressWarnings("unchecked")
     HashMap<String,Integer>[] familyNames = new HashMap[list.length];

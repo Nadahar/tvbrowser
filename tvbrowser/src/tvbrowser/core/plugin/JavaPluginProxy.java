@@ -90,7 +90,7 @@ public class JavaPluginProxy extends AbstractPluginProxy {
   private Icon mPluginIcon;
   
   /**
-   * file name of the icon of this plugin proxy, used for lazy loading 
+   * file name of the icon of this plugin proxy, used for lazy loading
    */
   private String mIconFileName;
   
@@ -169,7 +169,7 @@ public class JavaPluginProxy extends AbstractPluginProxy {
     oldDatFile.renameTo(datFile);
     oldPropFile.renameTo(propFile);
     
-    // load plugin data        
+    // load plugin data
     if (datFile.exists()) {
       ObjectInputStream in = null;
       try {
@@ -225,8 +225,9 @@ public class JavaPluginProxy extends AbstractPluginProxy {
    * @throws TvBrowserException If saving failed.
    */
   protected void doSaveSettings(File userDirectory, boolean log) throws TvBrowserException {
-    if(log)
+    if(log) {
       mLog.info("Storing plugin settings for " + getId() + "...");
+    }
 
     // save the plugin data in a temp file
     File tmpDatFile = new File(userDirectory, getId() + ".dat.temp");
@@ -270,7 +271,7 @@ public class JavaPluginProxy extends AbstractPluginProxy {
       throw new TvBrowserException(getClass(), "error.6",
           "Saving settings for plugin {0} failed.\n({1})",
           getInfo().getName(), tmpPropFile.getAbsolutePath(), thr);
-    }    
+    }
     finally {
       if (fOut != null) {
         try { fOut.close(); } catch (IOException exc) {
@@ -512,8 +513,9 @@ public class JavaPluginProxy extends AbstractPluginProxy {
   protected boolean doReceivePrograms(Program[] programArr, ProgramReceiveTarget receiveTarget) {
     boolean value = mPlugin.receivePrograms(programArr, receiveTarget);
     
-    if(!value)
+    if(!value) {
       JOptionPane.showMessageDialog(UiUtilities.getLastModalChildOf(MainFrame.getInstance()),mLocalizer.msg("error.noTarget","The programs for the target \"{0}\" couldn't be processed by \"{1}\".",receiveTarget,mPlugin.getInfo().getName()),Localizer.getLocalization(Localizer.I18N_ERROR),JOptionPane.ERROR_MESSAGE);
+    }
     
     return value;
   }
@@ -529,7 +531,7 @@ public class JavaPluginProxy extends AbstractPluginProxy {
   protected ProgramReceiveTarget[] doGetProgramReceiveTargets() {
     ProgramReceiveTarget[] targets = mPlugin.getProgramReceiveTargets();
     
-    return targets != null ? targets : ProgramReceiveTarget.createDefaultTargetArrayForProgramReceiveIf(mPlugin); 
+    return targets != null ? targets : ProgramReceiveTarget.createDefaultTargetArrayForProgramReceiveIf(mPlugin);
   }
 
   /**
@@ -559,7 +561,7 @@ public class JavaPluginProxy extends AbstractPluginProxy {
    * @return The available plugins filter components classes or <code>null</code> if no plugins filter components are supported.
    * @since 2.5
    */
-  protected  Class<? extends PluginsFilterComponent>[] doGetAvailableFilterComponentClasses() {    
+  protected  Class<? extends PluginsFilterComponent>[] doGetAvailableFilterComponentClasses() {
     return mPlugin.getAvailableFilterComponentClasses();
   }
 

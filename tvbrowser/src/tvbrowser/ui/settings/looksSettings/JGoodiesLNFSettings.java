@@ -67,7 +67,7 @@ public class JGoodiesLNFSettings extends JDialog implements WindowClosingIf {
   private JCheckBox mShadow;
   
   /**
-   * Create the Dialog 
+   * Create the Dialog
    * 
    * @param parent Parent-Dialog
    */

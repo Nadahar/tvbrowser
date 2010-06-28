@@ -21,21 +21,24 @@
  */
 package simplemarkerplugin;
 
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-import devplugin.Plugin;
-import devplugin.PluginsFilterComponent;
-import devplugin.Program;
-import util.ui.Localizer;
-import util.ui.UiUtilities;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+
+import util.ui.Localizer;
+import util.ui.UiUtilities;
+
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
+import devplugin.Plugin;
+import devplugin.PluginsFilterComponent;
+import devplugin.Program;
 
 /**
  * The filter component for the SimpleMarkerPlugin.

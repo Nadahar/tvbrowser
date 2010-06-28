@@ -84,6 +84,7 @@ public class SendToPluginDialog extends JDialog implements WindowClosingIf {
    *          List of Programs to send
    * @deprecated since 3.0
    */
+  @Deprecated
   public SendToPluginDialog(ProgramReceiveIf caller, Frame owner, Program[] prg) {
     this(caller, null, (Window) owner, prg);
   }
@@ -99,6 +100,7 @@ public class SendToPluginDialog extends JDialog implements WindowClosingIf {
    *          List of Programs to send
    * @deprecated since 3.0
    */
+  @Deprecated
   public SendToPluginDialog(ProgramReceiveIf caller, Dialog owner, Program[] prg) {
     this(caller, null, (Window) owner, prg);
   }
@@ -116,6 +118,7 @@ public class SendToPluginDialog extends JDialog implements WindowClosingIf {
    *          List of Programs to send
    * @deprecated since 3.0
    */
+  @Deprecated
   public SendToPluginDialog(ProgramReceiveIf caller, ProgramReceiveTarget callerTarget, Frame owner, Program[] prg) {
     this(caller, callerTarget, (Window) owner, prg);
   }
@@ -158,6 +161,7 @@ public class SendToPluginDialog extends JDialog implements WindowClosingIf {
    * @since 2.5
    * @deprecated since 3.0
    */
+  @Deprecated
   public SendToPluginDialog(ProgramReceiveIf caller, ProgramReceiveTarget callerTarget, Dialog owner, Program[] prg) {
     this(caller, callerTarget, (Window) owner, prg);
   }
@@ -199,9 +203,11 @@ public class SendToPluginDialog extends JDialog implements WindowClosingIf {
           model.removeAllElements();
           
           if(((ProgramReceiveIf)e.getItem()).canReceiveProgramsWithTarget()) {
-            for(ProgramReceiveTarget target : targets)
-              if(!target.equals(mCallerTarget))
+            for(ProgramReceiveTarget target : targets) {
+              if(!target.equals(mCallerTarget)) {
                 model.addElement(target);
+              }
+            }
             
             mTargetList.setEnabled(targets.length > 1);
           }
@@ -278,7 +284,7 @@ public class SendToPluginDialog extends JDialog implements WindowClosingIf {
           "Are you really sure to send {0} programs\nto \"{1}\"?",
           mPrograms.length, plug.toString()),
           mLocalizer.msg("Attention", "Attention"), JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-    }    
+    }
 
     if (result == JOptionPane.YES_OPTION) {
       ProgramReceiveTarget target = (ProgramReceiveTarget)mTargetList.getSelectedItem();
@@ -301,5 +307,5 @@ public class SendToPluginDialog extends JDialog implements WindowClosingIf {
 
   public void close() {
     setVisible(false);
-  }  
+  }
 }

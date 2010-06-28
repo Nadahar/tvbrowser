@@ -8,7 +8,7 @@ import java.io.IOException;
 import devplugin.Program;
 
 /**
- * A class for Drag'n'Drop of Programs. 
+ * A class for Drag'n'Drop of Programs.
  * @author René Mach
  */
 public class TransferProgram implements Transferable {
@@ -30,17 +30,19 @@ public class TransferProgram implements Transferable {
   }
 
   public boolean isDataFlavorSupported(DataFlavor e) {
-    if(e.equals(mPF))
+    if(e.equals(mPF)) {
       return true;
-    else
+    } else {
       return false;
+    }
   }
   
   public Object getTransferData(DataFlavor e) throws UnsupportedFlavorException, IOException {
-    if(e.equals(mPF))
+    if(e.equals(mPF)) {
       return mProgram;
-    else
+    } else {
       return null;
+    }
   }
 
 }

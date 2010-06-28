@@ -46,7 +46,7 @@ public class PluginsSoftwareUpdateItem extends SoftwareUpdateItem {
     = util.ui.Localizer.getLocalizerFor(PluginsSoftwareUpdateItem.class);
 
   public PluginsSoftwareUpdateItem(String name) {
-    super(name); 
+    super(name);
   }
 
   protected boolean downloadFrom(final String url) throws TvBrowserException {
@@ -69,8 +69,9 @@ public class PluginsSoftwareUpdateItem extends SoftwareUpdateItem {
       dialog.setLocationRelativeTo(w);
       dialog.setVisible(true);
       
-      if(!ok.equals(pane.getValue()))
+      if(!ok.equals(pane.getValue())) {
         return false;
+      }
     }
 
     final File toFile=new File(Settings.propPluginsDirectory.getString(),getClassName() + ".jar.inst");

@@ -163,6 +163,7 @@ public class AdvancedFavorite extends Favorite {
         case 1: mSearchFormSettings.setSearcherType(PluginManager.SEARCHER_TYPE_EXACTLY); break;
         case 2: mSearchFormSettings.setSearcherType(PluginManager.SEARCHER_TYPE_KEYWORD); break;
         case 3: mSearchFormSettings.setSearcherType(PluginManager.SEARCHER_TYPE_REGULAR_EXPRESSION); break;
+        default: mSearchFormSettings.setSearcherType(PluginManager.SEARCHER_TYPE_EXACTLY); break;
       }
     } else {
       mSearchFormSettings = new SearchFormSettings(in);
@@ -282,7 +283,7 @@ public class AdvancedFavorite extends Favorite {
    * @param name Name of the Filter
    * @return The Filter if found, otherwise null
    */
-  private ProgramFilter getFilterByName(String name ){
+  private static ProgramFilter getFilterByName(String name ){
     ProgramFilter[] flist = Plugin.getPluginManager().getFilterManager().getAvailableFilters();
 
     for (ProgramFilter filter : flist) {
@@ -300,9 +301,9 @@ public class AdvancedFavorite extends Favorite {
 
     if (mFilter != null) {
       ArrayList<Program> list = new ArrayList<Program>();
-      for (int i=0; i<progArr.length; i++) {
-        if (mFilter.accept(progArr[i])) {
-          list.add(progArr[i]);
+      for (Program element : progArr) {
+        if (mFilter.accept(element)) {
+          list.add(element);
         }
       }
       return list.toArray(new Program[list.size()]);
@@ -322,9 +323,6 @@ public class AdvancedFavorite extends Favorite {
     private SearchForm mSearchForm;
     private JCheckBox mFilterCheckbox;
     private JComboBox mFilterCombo;
-    public Configurator() {
-
-    }
 
     public JPanel createConfigurationPanel() {
       mSearchForm = new SearchForm(true, false, false, SearchForm.LAYOUT_HORIZONTAL);

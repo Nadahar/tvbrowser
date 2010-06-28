@@ -32,7 +32,7 @@ import devplugin.Program;
 
 /**
  * Exporter for vCal-Files
- *  
+ * 
  * @author bodum
  */
 public class VCalExporter extends CalExporter {

@@ -266,7 +266,7 @@ public abstract class Favorite {
           mNewPrograms.set(i,newProg);
         }
         else {
-          mNewPrograms.remove(i); 
+          mNewPrograms.remove(i);
         }
       }
       else {

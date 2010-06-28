@@ -46,7 +46,7 @@ public interface FilterManager {
    * 
    * @return The "ShowAll" filter of the program table.
    */
-  public ProgramFilter getAllFilter();  
+  public ProgramFilter getAllFilter();
   
   /**
    * Activates a filter.

@@ -47,9 +47,9 @@ public interface SelectableItemRendererCenterComponentIf {
    * @return The JPanel with the rendered item.
    */
   public JPanel createCenterPanel(JList list, Object value, int index, boolean isSelected, boolean isEnabled, JScrollPane parentScrollPane, int leftColumnWidth);
-  
+
   /**
-   * Calcualtes the size of the content pane used to paint the whole item.
+   * Calculates the size of the content pane used to paint the whole item.
    * <p>
    * @param list The list with the items.
    * @param index The index if the currently rendered item.

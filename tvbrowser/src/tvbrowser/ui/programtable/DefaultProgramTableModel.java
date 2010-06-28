@@ -244,7 +244,7 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
       if (it!=null) {
         while (it.hasNext()) {
           Program prog=it.next();
-          int progTime=prog.getStartTime();          
+          int progTime=prog.getStartTime();
 	        Date progDate = prog.getDate();
 	        // program starts before given end time
 	        if (compareDateTime(progDate, progTime, toDate, toMinutes) <= 0) {
@@ -256,7 +256,7 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
               }
             }
   	        else {
-              // add the last program _before_ the day start time which is still running afterwards  
+              // add the last program _before_ the day start time which is still running afterwards
   	          if (mProgramColumn[col].isEmpty()) {
   	            if (compareDateTime(progDate, progTime + prog.getLength(), fromDate, fromMinutes) > 0) {
                   if (filterAccepts(prog)) {
@@ -384,7 +384,7 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
 
   public int getRowCount(int col) {
     checkThread();
-    return mShownProgramColumn[col].size();   
+    return mShownProgramColumn[col].size();
   }
 
   public ProgramPanel getProgramPanel(int col, int row) {
@@ -405,7 +405,7 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
         Program prog = panel.getProgram();
         prog.removeChangeListener(this);
       }
-    }          
+    }
   }
 
   private void registerAtPrograms(ArrayList<ProgramPanel>[] columns) {
@@ -519,7 +519,7 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
               mOnAirRows[col] = -1;
             } else {
               mOnAirRows[col] = mOnAirRows[col]+1;
-              fireTableCellUpdated(col, mOnAirRows[col]);              
+              fireTableCellUpdated(col, mOnAirRows[col]);
             }
           }
         }

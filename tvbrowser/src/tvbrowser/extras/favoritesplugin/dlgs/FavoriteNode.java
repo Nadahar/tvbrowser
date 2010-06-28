@@ -52,8 +52,9 @@ public class FavoriteNode extends DefaultMutableTreeNode implements Comparable<F
    * @param userObject The user object for this node.
    */
   public FavoriteNode(Object userObject) {
-    if(userObject instanceof Favorite)
+    if(userObject instanceof Favorite) {
       setAllowsChildren(false);
+    }
     
     this.userObject = userObject;
   }
@@ -71,7 +72,7 @@ public class FavoriteNode extends DefaultMutableTreeNode implements Comparable<F
       int n = in.readInt();
       setUserObject(in.readObject());
       
-      mWasExpanded = in.readBoolean();      
+      mWasExpanded = in.readBoolean();
       for(int i = 0; i < n; i++) {
         FavoriteNode node = new FavoriteNode(in, version);
         add(node);
@@ -101,12 +102,13 @@ public class FavoriteNode extends DefaultMutableTreeNode implements Comparable<F
   }
   
   public String toString() {
-    if(userObject instanceof String)
+    if(userObject instanceof String) {
       return userObject.toString();
-    else if(userObject != null)
+    } else if(userObject != null) {
       return ((Favorite)userObject).getName();
-    else
+    } else {
       return "NULL";
+    }
   }
   
   /**
@@ -134,10 +136,11 @@ public class FavoriteNode extends DefaultMutableTreeNode implements Comparable<F
    * there is no favorite.
    */
   public Favorite getFavorite() {
-    if(containsFavorite())
+    if(containsFavorite()) {
       return (Favorite)userObject;
-    else
+    } else {
       return null;
+    }
   }
   
   protected boolean wasExpanded() {
@@ -183,10 +186,11 @@ public class FavoriteNode extends DefaultMutableTreeNode implements Comparable<F
   }
   
   public boolean equals(Object o) {
-    if(o instanceof Favorite)
+    if(o instanceof Favorite) {
       return containsFavorite() && userObject == o;
-    else
+    } else {
       return this == o;
+    }
   }
 
   public int compareTo(FavoriteNode other) {

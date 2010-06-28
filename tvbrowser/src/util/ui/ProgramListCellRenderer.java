@@ -81,8 +81,8 @@ public class ProgramListCellRenderer extends DefaultListCellRenderer {
             }
           }
           if (itemIndex >= 0) {
-            for (int i = 0; i < listeners.length; i++) {
-              listeners[i].contentsChanged(new ListDataEvent(program, ListDataEvent.CONTENTS_CHANGED, itemIndex, itemIndex));
+            for (ListDataListener listener : listeners) {
+              listener.contentsChanged(new ListDataEvent(program, ListDataEvent.CONTENTS_CHANGED, itemIndex, itemIndex));
             }
           }
         }

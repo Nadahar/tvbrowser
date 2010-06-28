@@ -201,7 +201,7 @@ public final class SimpleConfig implements ConfigIf, Cloneable {
 
         int mapCount = stream.readInt();
 
-        Channel channels[] = Plugin.getPluginManager().getSubscribedChannels();
+        Channel[] channels = Plugin.getPluginManager().getSubscribedChannels();
 
         for (int i = 0; i < mapCount; i++) {
             String chanId = stream.readUTF();

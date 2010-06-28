@@ -32,15 +32,15 @@ public class ParserException extends Exception {
     private String mMsg;
  
     public ParserException(int pos, String msg) {
-        super(msg);   
+        super(msg);
         mPos=pos;
-        mMsg=msg; 
+        mMsg=msg;
     }
     
     public ParserException(String msg) {
         super(msg);
         mMsg=msg;
-        mPos=-1;  
+        mPos=-1;
     }
     
     public int getPos() {

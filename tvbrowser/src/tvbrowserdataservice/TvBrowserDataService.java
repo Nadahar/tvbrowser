@@ -195,10 +195,10 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
     mProgressMonitor = monitor;
 
     HashSet<TvBrowserDataServiceChannelGroup> groups=new HashSet<TvBrowserDataServiceChannelGroup>();
-    for (int i=0;i<channelArr.length;i++) {
-      TvBrowserDataServiceChannelGroup curGroup=getChannelGroupById(channelArr[i].getGroup().getId());
+    for (Channel element : channelArr) {
+      TvBrowserDataServiceChannelGroup curGroup=getChannelGroupById(element.getGroup().getId());
       if (curGroup==null) {
-        mLog.warning("Invalid channel group id: "+channelArr[i].getGroup().getId());
+        mLog.warning("Invalid channel group id: "+element.getGroup().getId());
         continue;
       }
 
@@ -222,7 +222,7 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
         }
       }
 
-      curGroup.addChannel(channelArr[i]);
+      curGroup.addChannel(element);
 
     }
 
@@ -254,8 +254,8 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
       if (summaryFile != null) {
         Date date = startDate;
         for (int day = 0; day < dateCount; day++) {
-          for (int levelIdx = 0; levelIdx < mSubscribedLevelArr.length; levelIdx++) {
-            String level = mSubscribedLevelArr[levelIdx].getId();
+          for (TvDataLevel element : mSubscribedLevelArr) {
+            String level = element.getId();
             Iterator<Channel> it=group.getChannels();
             while (it.hasNext()) {
               Channel ch=it.next();
@@ -307,8 +307,8 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
       mLog.warning("Cannot read data dir for file deletion: " + mDataDir);
       return;
     }
-    for (int i = 0; i < fileArr.length; i++) {
-      String fileName = fileArr[i].getName();
+    for (File element : fileArr) {
+      String fileName = element.getName();
       if (fileName.endsWith(".prog.gz")) {
         try {
           int year = Integer.parseInt(fileName.substring(0, 4));
@@ -319,7 +319,7 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
           // Is this day program older than the deadline day?
           if (date.compareTo(deadlineDay) < 0) {
             // It is -> delete the file
-            fileArr[i].delete();
+            element.delete();
           }
         }
         catch (Exception exc) {
@@ -425,9 +425,9 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
     Iterator<TvBrowserDataServiceChannelGroup> it = mAvailableChannelGroupsSet.iterator();
     while (it.hasNext()) {
       Channel[] chArr = getAvailableChannels(it.next());
-      for (int i=0; i<chArr.length; i++) {
-        if (chArr[i].getCountry().equals(country) && chArr[i].getId().equals(channelName)) {
-          return chArr[i];
+      for (Channel element : chArr) {
+        if (element.getCountry().equals(country) && element.getId().equals(channelName)) {
+          return element;
         }
       }
     }
@@ -467,8 +467,8 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
         levelList.add(DayProgramFile.getLevels()[i]);
       }
       else{
-        for (int j=0;j<levelIds.length;j++) {
-          if (levelIds[j].equals(DayProgramFile.getLevels()[i].getId())) {
+        for (String levelId : levelIds) {
+          if (levelId.equals(DayProgramFile.getLevels()[i].getId())) {
             levelList.add(DayProgramFile.getLevels()[i]);
           }
         }
@@ -518,11 +518,11 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
     else {
 
       groupNamesArr=groupNames.split(":");
-      for (int i=0;i<groupNamesArr.length;i++) {
-        if (groupNamesArr[i].trim().length()>0) {
-          String groupUrls=mSettings.getGroupUrls(groupNamesArr[i]);
+      for (String element : groupNamesArr) {
+        if (element.trim().length()>0) {
+          String groupUrls=mSettings.getGroupUrls(element);
           String[] groupUrlArr=groupUrls.split(";");
-          result.add(new TvBrowserDataServiceChannelGroup(this, groupNamesArr[i],groupUrlArr,mSettings));
+          result.add(new TvBrowserDataServiceChannelGroup(this, element,groupUrlArr,mSettings));
         }
       }
 
@@ -554,8 +554,9 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
 
           String[] mirrors = new String[n];
 
-          for(int i = 0; i < n; i++)
+          for(int i = 0; i < n; i++) {
             mirrors[i] = s[i+4];
+          }
 
           TvBrowserDataServiceChannelGroup group = new TvBrowserDataServiceChannelGroup(this, id, name, description, providername, mirrors, mSettings);
           group.setWorkingDirectory(mDataDir);
@@ -568,10 +569,11 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
       mLog.log(Level.SEVERE, "Could not read group list "+CHANNEL_GROUPS_FILENAME, e);
     }
     finally {
-      if(in != null)
+      if(in != null) {
         try {
           in.close();
         }catch(Exception ee) {}
+      }
     }
 
     return list;
@@ -605,10 +607,11 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
       mLog.log(Level.SEVERE, "Could not read group list "+CHANNEL_GROUPS_FILENAME, e);
     }
     finally {
-      if(in != null)
+      if(in != null) {
         try {
           in.close();
         }catch(Exception ee) {}
+      }
     }
   }
 
@@ -751,8 +754,8 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
       monitor.setMessage(mLocalizer.msg("checkingForAvailableChannels","Checking for group {0}", g.getName()));
     }
     Channel[] ch=group.checkForAvailableChannels(null);
-    for (int j=0;j<ch.length;j++) {
-      channelList.add(ch[j]);
+    for (Channel element : ch) {
+      channelList.add(element);
     }
 
     mHasRightToDownloadIcons = false;

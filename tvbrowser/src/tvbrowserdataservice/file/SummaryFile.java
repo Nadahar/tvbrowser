@@ -62,7 +62,7 @@ public class SummaryFile extends AbstractFile {
    *  value = ChannelFrame)
    */
   private HashMap<String, ChannelFrame> mChannelFrameHash;
-  /** The number of levels used in this summary. */  
+  /** The number of levels used in this summary. */
   private int mLevelCount;
   
   
@@ -209,10 +209,10 @@ public class SummaryFile extends AbstractFile {
   }
 
   /**
-   * Generates a Date. 
+   * Generates a Date.
    * The Constructor of Date is deprecated, it has some troubles with OS/2, but in this
    * class we only use it to compute the difference between two days. Only for this purpose
-   * it's ok. 
+   * it's ok.
    * 
    * @param daysSince1970 Days since 1970
    * @return Date-Object
@@ -352,7 +352,7 @@ public class SummaryFile extends AbstractFile {
     int daylight = cal.get(Calendar.DST_OFFSET);
     java.util.Date utilDate = cal.getTime();
     long millis = utilDate.getTime() + zoneOffset + daylight;
-    return (int) (millis / 1000L / 60L / 60L / 24L);    
+    return (int) (millis / 1000L / 60L / 60L / 24L);
   }
   
   
@@ -467,7 +467,7 @@ public class SummaryFile extends AbstractFile {
     
     /**
      * Sets the version array for a particular date.
-     *  
+     * 
      * @param date The date to set the version array for.
      * @param versionArr The version array to set.
      */
@@ -483,7 +483,7 @@ public class SummaryFile extends AbstractFile {
       } else {
         // We already have versions
 
-        // Check whether the date fits 
+        // Check whether the date fits
         int differenceDays = dateDaysSince1970 - mStartDaysSince1970;
         if (differenceDays < 0) {
           // We have to insert empty version arrays

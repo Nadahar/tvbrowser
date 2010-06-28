@@ -14,16 +14,16 @@ import util.ui.Localizer;
 /**
  * The Icon and Text that is displayed in the ProgramTable
  * and various other Dialogs
- * 
+ *
  * @author bodo
  */
 public class RatingIconTextFactory {
 
     /** Localizer */
-    private static final Localizer _mLocalizer = Localizer.getLocalizerFor(RatingIconTextFactory.class);
+    private static final Localizer mLocalizer = Localizer.getLocalizerFor(RatingIconTextFactory.class);
 
     /** Icons used to show the Ratings */
-    private final static ImageIcon _icons[] = new ImageIcon[] {
+    private final static ImageIcon[] ICONS = new ImageIcon[] {
             new ImageIcon(RatingIconTextFactory.class.getResource("imgs/0.png")),
             new ImageIcon(RatingIconTextFactory.class.getResource("imgs/1.png")),
             new ImageIcon(RatingIconTextFactory.class.getResource("imgs/2.png")),
@@ -33,42 +33,42 @@ public class RatingIconTextFactory {
             new ImageIcon(RatingIconTextFactory.class.getResource("imgs/-1.png"))};
 
     /** The Genres */
-    private static Properties _genre = null;
-    
+    private static Properties mGenre = null;
+
     /**
      * Returns the Genre-Property
      * @return Genre-Property
      */
     public static synchronized Properties getGenres() {
-        if (_genre == null) {
+        if (mGenre == null) {
             try {
-                _genre = new Properties();
-                _genre.load(RatingIconTextFactory.class.getResourceAsStream("genre_de.properties"));
-                System.out.println(_genre.size() + " Genres");
+                mGenre = new Properties();
+                mGenre.load(RatingIconTextFactory.class.getResourceAsStream("genre_de.properties"));
+                System.out.println(mGenre.size() + " Genres");
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        
-        return _genre;
+
+        return mGenre;
     }
-    
+
     /**
      * Returns an Icon for a Rating
      * @param rating Rating (0-5)
      * @return Icon for Rating
      */
     public static ImageIcon getImageIconForRating(int rating) {
-        
+
         if (rating == -1) {
-            return _icons[_icons.length - 1];
-        }
-        
-        if ((rating < 0) || (rating >= _icons.length)) { 
-            return new ImageIcon( new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB)); 
+            return ICONS[ICONS.length - 1];
         }
 
-        return _icons[rating];
+        if ((rating < 0) || (rating >= ICONS.length)) {
+            return new ImageIcon( new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB));
+        }
+
+        return ICONS[rating];
     }
 
     /**
@@ -81,7 +81,7 @@ public class RatingIconTextFactory {
         String ratingText = "-";
 
         String prefix = "";
-        
+
         if (type == Rating.OVERALL_RATING_KEY) {
             prefix = "Overall.";
         } else if (type == Rating.ACTION_RATING_KEY) {
@@ -95,26 +95,26 @@ public class RatingIconTextFactory {
         } else if (type == Rating.TENSION_RATING_KEY) {
             prefix = "Tension.";
         }
-        
-        
+
+
         switch (rating) {
         case 0:
-            ratingText = _mLocalizer.msg(prefix+"crap", "crap");
+            ratingText = mLocalizer.msg(prefix+"crap", "crap");
             break;
         case 1:
-            ratingText = _mLocalizer.msg(prefix+"mediocre", "mediocre");
+            ratingText = mLocalizer.msg(prefix+"mediocre", "mediocre");
             break;
         case 2:
-            ratingText = _mLocalizer.msg(prefix+"nice", "nice");
+            ratingText = mLocalizer.msg(prefix+"nice", "nice");
             break;
         case 3:
-            ratingText = _mLocalizer.msg(prefix+"enjoyable", "enjoyable");
+            ratingText = mLocalizer.msg(prefix+"enjoyable", "enjoyable");
             break;
         case 4:
-            ratingText = _mLocalizer.msg(prefix+"excellent", "excellent");
+            ratingText = mLocalizer.msg(prefix+"excellent", "excellent");
             break;
         case 5:
-            ratingText = _mLocalizer.msg(prefix+"super", "super");
+            ratingText = mLocalizer.msg(prefix+"super", "super");
             break;
         default:
             ratingText = "-";

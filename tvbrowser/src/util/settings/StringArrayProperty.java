@@ -191,18 +191,18 @@ public class StringArrayProperty  extends Property {
    * @return String-Array
    */
   private String[] splitStrings(String string) {
-    String[] splitted = string.split(","); 
+    String[] splitted = string.split(",");
     
     ArrayList<String> list = new ArrayList<String>();
     
     StringBuilder current = new StringBuilder();
     
-    for (int i= 0;i<splitted.length;i++) {
-      if (splitted[i].endsWith("\\") && ((countEndSlashes(splitted[i]) & 1) == 1)) {
-        current.append(splitted[i].substring(0, splitted[i].length()-1));
+    for (String element : splitted) {
+      if (element.endsWith("\\") && ((countEndSlashes(element) & 1) == 1)) {
+        current.append(element.substring(0, element.length()-1));
         current.append(',');
       } else {
-        current.append(splitted[i]);
+        current.append(element);
         list.add(current.toString().replaceAll("\\\\\\\\", "\\\\"));
         current = new StringBuilder();
       }
@@ -236,7 +236,7 @@ public class StringArrayProperty  extends Property {
   
   /**
    * Adds Slashes to \ and ,
-   * @param string 
+   * @param string
    * @return String with Slashes
    */
   private String addSlashes(String string) {

@@ -84,6 +84,7 @@ class DataHydraDayParser extends AbstractXmlTvDataHandler {
   }
 
   public void fatalError(SAXParseException e) {
+    // empty
   }
 
   public void error(SAXParseException e) {

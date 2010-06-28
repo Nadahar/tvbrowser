@@ -53,7 +53,7 @@ public class CaretPositionCorrector {
    * 
    * @param field The JFormattedTextField to correct the caret position of.
    * @param jumpCharacters The character to jump from if the caret is in front of it.
-   * @param startIndexChar The character that is used to find the start position of the caret. 
+   * @param startIndexChar The character that is used to find the start position of the caret.
    * 
    */
   public static void createCorrector(JFormattedTextField field, char[] jumpCharacters, char startIndexChar) {
@@ -68,7 +68,7 @@ public class CaretPositionCorrector {
    * 
    * @param field The JFormattedTextField to correct the caret position of.
    * @param jumpCharacters The character to jump from if the caret is in front of it.
-   * @param startPosition The start position for the caret. 
+   * @param startPosition The start position for the caret.
    * 
    */
   public static void createCorrector(JFormattedTextField field, char[] jumpCharacters, int startPosition) {
@@ -79,16 +79,19 @@ public class CaretPositionCorrector {
   private void createCaretListener(final JFormattedTextField field) {
     mCaretListener = new CaretListener() {
       public void caretUpdate(final CaretEvent e) {
-        if(mCaretPosition != -1 && field.getSelectedText() == null)
+        if(mCaretPosition != -1 && field.getSelectedText() == null) {
           mCaretPosition = field.getCaretPosition();
+        }
       }
     };
   }
   
-  private boolean hasToMoveCaret(String text, int pos) {    
-    for(char value : mJumpCharacters)
-      if(text.charAt(pos) == value)
+  private boolean hasToMoveCaret(String text, int pos) {
+    for(char value : mJumpCharacters) {
+      if(text.charAt(pos) == value) {
         return true;
+      }
+    }
     
     return false;
   }
@@ -99,14 +102,14 @@ public class CaretPositionCorrector {
       public void keyPressed(KeyEvent e) {
         if(KeyEvent.VK_UP == e.getKeyCode() || KeyEvent.VK_DOWN == e.getKeyCode()) {
           mCaretPosition = field.getCaretPosition();
-          if(mCaretPosition <= field.getText().length() && mCaretPosition > 0 && 
+          if(mCaretPosition <= field.getText().length() && mCaretPosition > 0 &&
               field.getSelectedText() == null &&
               (mCaretPosition >= field.getText().length() || hasToMoveCaret(field.getText(), mCaretPosition))) {
             field.setCaretPosition(--mCaretPosition);
           }
         }
       }
-    });  
+    });
   }
   
   /** Add mouse listener to the field to track clicks and get the location of it */
@@ -121,7 +124,7 @@ public class CaretPositionCorrector {
         mMouseDown = false;
         mCaretPosition = field.getUI().viewToModel(field, e.getPoint());
         
-        if(mCaretPosition <= field.getText().length() && mCaretPosition > 0 && 
+        if(mCaretPosition <= field.getText().length() && mCaretPosition > 0 &&
             field.getSelectedText() == null &&
             (mCaretPosition >= field.getText().length() || hasToMoveCaret(field.getText(), mCaretPosition))) {
           field.setCaretPosition(--mCaretPosition);
@@ -133,27 +136,30 @@ public class CaretPositionCorrector {
   /**  Add focus listener to set the location of the caret to the right place */
   private void addFocusListenerToField(final JFormattedTextField field) {
     field.addFocusListener(new FocusListener() {
-      public void focusGained(FocusEvent e) {        
+      public void focusGained(FocusEvent e) {
         if(mCaretPosition == -1) {
-          if(mStartIndexChar != '\0')
+          if(mStartIndexChar != '\0') {
             mCaretPosition = field.getText().indexOf(String.valueOf(mStartIndexChar)) + 1;
-          else if(mStartPosition != -1)
+          } else if(mStartPosition != -1) {
             mCaretPosition = mStartPosition;
-          else
+          } else {
             mCaretPosition = 0;
+          }
         }
         
         SwingUtilities.invokeLater(new Runnable() {
-          public void run() {              
-            if(mClickLocation != null)
+          public void run() {
+            if(mClickLocation != null) {
               mCaretPosition = field.getUI().viewToModel(field, mClickLocation);
+            }
             
             mClickLocation = null;
             
-            if(mCaretPosition <= field.getText().length() && mCaretPosition > 0 && 
+            if(mCaretPosition <= field.getText().length() && mCaretPosition > 0 &&
                 field.getSelectedText() == null && !mMouseDown &&
-                (mCaretPosition >= field.getText().length() || hasToMoveCaret(field.getText(), mCaretPosition)))
-              mCaretPosition--;            
+                (mCaretPosition >= field.getText().length() || hasToMoveCaret(field.getText(), mCaretPosition))) {
+              mCaretPosition--;
+            }
             
             field.setCaretPosition(mCaretPosition);
             field.addCaretListener(mCaretListener);
@@ -165,6 +171,6 @@ public class CaretPositionCorrector {
         mCaretPosition = field.getCaretPosition();
         field.removeCaretListener(mCaretListener);
       }
-    });      
+    });
   }
 }

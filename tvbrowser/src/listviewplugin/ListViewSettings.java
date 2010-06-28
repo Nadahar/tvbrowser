@@ -66,13 +66,13 @@ public class ListViewSettings implements SettingsTab {
   /**
    * Create the Panel
    */
-  public JPanel createSettingsPanel() {    
+  public JPanel createSettingsPanel() {
     EnhancedPanelBuilder panel = new EnhancedPanelBuilder(FormFactory.RELATED_GAP_COLSPEC.encode() + ",default:grow");
     
     CellConstraints cc = new CellConstraints();
     
     mShowAtStart = new JCheckBox(mLocalizer.msg("showAtStart", "Show at startup"));
-    mShowAtStart.setSelected(mSettings.getProperty("showAtStartup", "false").equals("true"));    
+    mShowAtStart.setSelected(mSettings.getProperty("showAtStartup", "false").equals("true"));
 
     mPictureSettings = new PluginsPictureSettingsPanel(ListViewPlugin.getInstance().getPictureSettings(), false);
     

@@ -615,13 +615,13 @@ public class MutableProgram implements Program {
    */
   public int getFieldCount() {
     int count = 0;
-    for (int i = 0; i < mIntValues.length; i++) {
-      if (mIntValues[i] != -1) {
+    for (int mIntValue : mIntValues) {
+      if (mIntValue != -1) {
         count++;
       }
     }
-    for (int i = 0; i < mObjectValues.length; i++) {
-      if (mObjectValues[i] != null) {
+    for (Object mObjectValue : mObjectValues) {
+      if (mObjectValue != null) {
         count++;
       }
     }

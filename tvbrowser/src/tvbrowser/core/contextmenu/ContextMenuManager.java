@@ -86,7 +86,7 @@ public class ContextMenuManager {
    * The context menu interface that should be executed by default when
    * double-middle-clicking a program in the program table.
    */
-  private ContextMenuIf mDefaultMiddleDoubleClickIf;  
+  private ContextMenuIf mDefaultMiddleDoubleClickIf;
   
   private ContextMenuManager() {
     mInstance = this;

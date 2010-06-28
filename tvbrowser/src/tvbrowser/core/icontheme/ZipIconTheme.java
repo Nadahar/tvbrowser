@@ -25,7 +25,6 @@
  */
 package tvbrowser.core.icontheme;
 
-import java.awt.Image;
 import java.awt.Toolkit;
 import java.io.File;
 import java.io.IOException;

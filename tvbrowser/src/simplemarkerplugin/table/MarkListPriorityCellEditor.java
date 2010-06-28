@@ -21,17 +21,18 @@
  */
 package simplemarkerplugin.table;
 
-import simplemarkerplugin.MarkList;
-import simplemarkerplugin.SimpleMarkerPlugin;
-import util.ui.MarkPriorityComboBoxRenderer;
+import java.awt.Component;
+import java.awt.event.MouseEvent;
+import java.util.EventObject;
 
 import javax.swing.AbstractCellEditor;
 import javax.swing.JComboBox;
 import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
-import java.awt.Component;
-import java.awt.event.MouseEvent;
-import java.util.EventObject;
+
+import simplemarkerplugin.MarkList;
+import simplemarkerplugin.SimpleMarkerPlugin;
+import util.ui.MarkPriorityComboBoxRenderer;
 
 /**
  * The cell editor for the priority column

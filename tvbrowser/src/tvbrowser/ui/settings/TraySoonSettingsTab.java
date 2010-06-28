@@ -34,7 +34,7 @@ public class TraySoonSettingsTab implements SettingsTab {
 
   private static final Localizer mLocalizer = TrayBaseSettingsTab.mLocalizer;
   private JCheckBox mIsEnabled, mShowTime, mShowToolTip;
-  private JLabel mIconSeparator,mSeparator1, mSeparator2; 
+  private JLabel mIconSeparator,mSeparator1, mSeparator2;
   private static boolean mTrayIsEnabled = Settings.propTrayIsEnabled.getBoolean();
   
   private JEditorPane mHelpLabel;
@@ -124,16 +124,19 @@ public class TraySoonSettingsTab implements SettingsTab {
   }
   
   public void saveSettings() {
-    if(mIsEnabled != null)
+    if(mIsEnabled != null) {
       Settings.propTraySoonProgramsEnabled.setBoolean(mIsEnabled.isSelected());
+    }
     if(mShowIconAndName != null && mShowName != null && mShowIcon != null) {
       Settings.propTraySoonProgramsContainsName.setBoolean(mShowIconAndName.isSelected() || mShowName.isSelected());
       Settings.propTraySoonProgramsContainsIcon.setBoolean(mShowIconAndName.isSelected() || mShowIcon.isSelected());
     }
-    if(mShowTime != null)
+    if(mShowTime != null) {
       Settings.propTraySoonProgramsContainsTime.setBoolean(mShowTime.isSelected());
-    if(mShowToolTip != null)
+    }
+    if(mShowToolTip != null) {
       Settings.propTraySoonProgramsContainsToolTip.setBoolean(mShowToolTip.isSelected());
+    }
   }
 
   public Icon getIcon() {
@@ -146,7 +149,8 @@ public class TraySoonSettingsTab implements SettingsTab {
   
   protected static void setTrayIsEnabled(boolean value) {
     mTrayIsEnabled = value;
-    if(mInstance != null)
+    if(mInstance != null) {
       mInstance.setEnabled(true);
+    }
   }
 }

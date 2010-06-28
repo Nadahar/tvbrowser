@@ -63,7 +63,7 @@ public class VersionProperty extends Property {
           int asInt = Integer.parseInt(asString);
           int major = asInt / 100;
           int minor = asInt % 100;
-          mCachedValue = new devplugin.Version(major,minor);  
+          mCachedValue = new devplugin.Version(major,minor);
         }
         catch(NumberFormatException exc) {
           // We use the default value

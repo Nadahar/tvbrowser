@@ -25,11 +25,13 @@
 */
 package devplugin;
 
+import util.ui.TVBrowserIcons;
+
 /**
  * This Class represents an Icon in the Icon-Theme.
- * 
+ *
  * You can use this Class to identify a specific Icon.
- * 
+ *
  * To load the Icon, please use Plugin.getPluginManager().getIconFromTheme(plugin, themeIcon, size)
  *
  * @since 2.2
@@ -41,7 +43,7 @@ public class ThemeIcon {
   private String mName;
   /** Size of the Icon */
   private int mSize;
-  
+
   /**
    * Create a ThemeIcon
    * @param category Category of the Icon (action, apps, devices etc)
@@ -53,9 +55,18 @@ public class ThemeIcon {
     mName = name;
     mSize = size;
   }
-  
+
   /**
-   * @return Category of the Icon 
+   * Create a ThemeIcon in default size
+   * @param category Category of the Icon (action, apps, devices etc)
+   * @param name Name of the Icon without Extension (go-down, mail-message-new etc)
+   */
+  public ThemeIcon(final String category, final String name) {
+    this(category, name, TVBrowserIcons.SIZE_SMALL);
+  }
+
+  /**
+   * @return Category of the Icon
    */
   public String getCategory() {
     return mCategory;
@@ -85,26 +96,34 @@ public class ThemeIcon {
   }
 
   public boolean equals(Object obj) {
-    if (this == obj)
+    if (this == obj) {
       return true;
-    if (obj == null)
+    }
+    if (obj == null) {
       return false;
-    if (getClass() != obj.getClass())
+    }
+    if (getClass() != obj.getClass()) {
       return false;
+    }
     final ThemeIcon other = (ThemeIcon) obj;
     if (mCategory == null) {
-      if (other.mCategory != null)
+      if (other.mCategory != null) {
         return false;
-    } else if (!mCategory.equals(other.mCategory))
+      }
+    } else if (!mCategory.equals(other.mCategory)) {
       return false;
+    }
     if (mName == null) {
-      if (other.mName != null)
+      if (other.mName != null) {
         return false;
-    } else if (!mName.equals(other.mName))
+      }
+    } else if (!mName.equals(other.mName)) {
       return false;
-    if (mSize != other.mSize)
+    }
+    if (mSize != other.mSize) {
       return false;
+    }
     return true;
   }
-     
+
 }

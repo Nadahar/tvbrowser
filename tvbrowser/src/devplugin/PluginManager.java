@@ -265,7 +265,7 @@ public interface PluginManager {
 
   /**
    * Returns an Icon from the Icon-Theme-System
-   *  
+   * 
    * If your Plugin has Icons that are not available as Icons within an Theme, you can add
    * your Icons into your Jar-File.
    * 
@@ -276,9 +276,9 @@ public interface PluginManager {
    * Please try to use the FreeDesktop-Icon Naming Conventions
    * http://cvs.freedesktop.org/[*]checkout[*]/icon-theme/default-icon-theme/spec/icon-naming-spec.xml
    * (please remove the [ ])
-   *  
+   * 
    * @param plugin Plugin that wants to load an Icon
-   * @param category Category of the Icon (Action, etc...) 
+   * @param category Category of the Icon (Action, etc...)
    * @param icon Icon-Name without File-Extension
    * @param size Size of the Icon
    * @return Icon if found, null if not
@@ -288,7 +288,7 @@ public interface PluginManager {
   
   /**
    * Returns an Icon from the Icon-Theme-System
-   *  
+   * 
    * If your Plugin has Icons that are not available as Icons within an Theme, you can add
    * your Icons into your Jar-File.
    * 
@@ -299,7 +299,7 @@ public interface PluginManager {
    * Please try to use the FreeDesktop-Icon Naming Conventions
    * http://cvs.freedesktop.org/[*]checkout[*]/icon-theme/default-icon-theme/spec/icon-naming-spec.xml
    * (please remove the [ ])
-   *  
+   * 
    * @param plugin Plugin that wants to load an Icon
    * @param icon Icon in the Icon-Theme
    * @return Icon if found, null if not
@@ -338,7 +338,7 @@ public interface PluginManager {
    * @return The ProgramReceiveIfs.
    * @since 2.5
    */
-  public ProgramReceiveIf[] getReceiveIfs();  
+  public ProgramReceiveIf[] getReceiveIfs();
   
   /**
    * Return all Plugins/Functions that are able to receive programs.

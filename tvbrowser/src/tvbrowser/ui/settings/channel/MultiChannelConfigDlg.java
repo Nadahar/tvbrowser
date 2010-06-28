@@ -66,7 +66,7 @@ public class MultiChannelConfigDlg extends JDialog implements ActionListener, Wi
   private JComboBox mCorrectionCB;
 
   /**
-   * Create the Dialog 
+   * Create the Dialog
    * @param parent Parent
    * @param channel Channel to show
    */
@@ -158,8 +158,8 @@ public class MultiChannelConfigDlg extends JDialog implements ActionListener, Wi
     Object o = e.getSource();
     if (o == mOKBt) {
       int minutes = (mCorrectionCB.getSelectedIndex() - 4) * 15;
-      for (int i=0;i<mChannel.length;i++) {
-        mChannel[i].setTimeZoneCorrectionMinutes(minutes);
+      for (Channel element : mChannel) {
+        element.setTimeZoneCorrectionMinutes(minutes);
       }
       
       setVisible(false);

@@ -109,8 +109,9 @@ public class WizardHandler {
   }
   
   public void changeDoneBtnText() {
-    if(mWizardDialog != null)
+    if(mWizardDialog != null) {
       mWizardDialog.setDoneBtnText();
+    }
   }
   
   public WizardDlg getDialog() {

@@ -98,7 +98,7 @@ public class DirectoriesSettingsTab implements SettingsTab {
       newDir.mkdirs();
     }
     
-    if(!currentDir.equals(newDir)) {      
+    if(!currentDir.equals(newDir)) {
       
       Window parent = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
       mWaitingDlg = new CopyWaitingDlg(parent, CopyWaitingDlg.COPY_MSG);

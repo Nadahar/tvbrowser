@@ -35,7 +35,7 @@ import devplugin.ProgramFieldType;
 
 /**
  * The settings for the printing of the program info.
- *  
+ * 
  * @author René Mach
  *
  */
@@ -54,7 +54,7 @@ public class ProgramInfoPrintSettings {
     mPrintImage = true;
     mPrintPluginIcons = true;
     
-    mAllFields = mFieldTypes = ProgramTextCreator.getDefaultOrder();    
+    mAllFields = mFieldTypes = ProgramTextCreator.getDefaultOrder();
   }
   
   /**
@@ -63,8 +63,9 @@ public class ProgramInfoPrintSettings {
    * @return The instance of this class.
    */
   public static ProgramInfoPrintSettings getInstance() {
-    if(mInstance == null)
+    if(mInstance == null) {
       new ProgramInfoPrintSettings();
+    }
     return mInstance;
   }
   
@@ -91,8 +92,9 @@ public class ProgramInfoPrintSettings {
       for(int i = 0; i < n; i++) {
         mFieldTypes[i] = ProgramFieldType.getTypeForId(in.readInt());
         
-        if(((ProgramFieldType)mFieldTypes[i]).getTypeId() == ProgramFieldType.UNKNOWN_FORMAT)
+        if(((ProgramFieldType)mFieldTypes[i]).getTypeId() == ProgramFieldType.UNKNOWN_FORMAT) {
           mFieldTypes[i] = ProgramTextCreator.getDurationTypeString();
+        }
       }
       
       mPrintImage = in.readBoolean();
@@ -100,7 +102,7 @@ public class ProgramInfoPrintSettings {
       if(version == 2) {
         mPrintPluginIcons = in.readBoolean();
       }
-    }    
+    }
   }
   
   /**
@@ -114,11 +116,13 @@ public class ProgramInfoPrintSettings {
     out.writeObject(mFont);
     out.writeInt(mFieldTypes.length);
     
-    for(int i = 0; i < mFieldTypes.length; i++)
-      if(mFieldTypes[i] instanceof ProgramFieldType)
-        out.writeInt(((ProgramFieldType)mFieldTypes[i]).getTypeId());
-      else
+    for (Object mFieldType : mFieldTypes) {
+      if(mFieldType instanceof ProgramFieldType) {
+        out.writeInt(((ProgramFieldType)mFieldType).getTypeId());
+      } else {
         out.writeInt(ProgramFieldType.UNKNOWN_FORMAT);
+      }
+    }
     
     out.writeBoolean(mPrintImage);
     out.writeBoolean(mPrintPluginIcons);

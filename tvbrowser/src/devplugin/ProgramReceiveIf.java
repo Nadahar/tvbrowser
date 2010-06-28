@@ -40,7 +40,7 @@ public interface ProgramReceiveIf extends Comparable<ProgramReceiveIf> {
    * 
    * @see #receivePrograms(Program[],ProgramReceiveTarget)
    * @since 2.5
-   */  
+   */
   public boolean canReceiveProgramsWithTarget();
 
   /**
@@ -74,7 +74,7 @@ public interface ProgramReceiveIf extends Comparable<ProgramReceiveIf> {
    * 
    * @param values The value array passed from the other plugin.
    * @param receiveTarget The receive target of the programs.
-   * @return <code>True</code> if the value array was handled correct, 
+   * @return <code>True</code> if the value array was handled correct,
    * </code>false</code> otherwise.
    * 
    * @see #canReceiveProgramsWithTarget()

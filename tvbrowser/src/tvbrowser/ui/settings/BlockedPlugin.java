@@ -45,7 +45,7 @@ public final class BlockedPlugin {
    * @param blockEnd The version to which the block reach.
    * @param pluginId The id of the blocked plugin.
    */
-  protected BlockedPlugin(Version blockStart, Version blockEnd, String pluginId) {
+  BlockedPlugin(Version blockStart, Version blockEnd, String pluginId) {
     mBlockStart = blockStart;
     mBlockEnd = blockEnd;
     mPluginId = pluginId;
@@ -57,7 +57,7 @@ public final class BlockedPlugin {
    *
    * @param asString The String that contains the information about the blocked plugin.
    */
-  protected BlockedPlugin(String asString) {
+  BlockedPlugin(String asString) {
     String[] partA = asString.split(";");
 
     mPluginId = partA[0];
@@ -109,7 +109,7 @@ public final class BlockedPlugin {
             .compareTo(mBlockStart) >= 0)) || version.compareTo(new Version(0, 0, 0, true)) <= 0);
   }
 
-  protected String getPropertyString() {
+  String getPropertyString() {
     StringBuilder asString = new StringBuilder(mPluginId);
 
     asString.append(';');

@@ -673,7 +673,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
       mProgramImportance = getProgramImportance(mProgram);
       mHasChanged = false;
     }
-    
+
     /* Prevent accidentally set program importance to take effect */
     if(mSettings.isIgnoringProgramImportance() || mProgram.getProgramState() == Program.WAS_DELETED_STATE) {
       mProgramImportance = Program.MAX_PROGRAM_IMPORTANCE;
@@ -826,7 +826,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
 
       Stroke str = grp.getStroke();
       Color col = grp.getColor();
-      float dash[] = { 2.0f };
+      float[] dash = { 2.0f };
       int lineWidth = 1;
       BasicStroke dashed = new BasicStroke(lineWidth, BasicStroke.CAP_BUTT,
           BasicStroke.JOIN_MITER, 10.0f, dash, 0.0f);
@@ -1001,7 +1001,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
     addMouseListener(new MouseAdapter() {
       private Thread mLeftClickThread;
       private boolean mPerformingSingleClick = false;
-      
+
       private Thread mMiddleSingleClickThread;
       private boolean mPerformingMiddleSingleClick = false;
 
@@ -1261,12 +1261,12 @@ private static Font getDynamicFontSize(Font font, int offset) {
             for (Favorite favorite : FavoriteTreeModel.getInstance()
                 .getFavoritesContainingProgram(mProgram)) {
               if (favTitles.length() > 0) {
-                favTitles = favTitles + ", ";
+                favTitles += ", ";
               }
-              favTitles = favTitles + favorite.getName();
+              favTitles += favorite.getName();
             }
             if (favTitles.length() > 0) {
-              text = text + " (" + favTitles + ")";
+              text += " (" + favTitles + ')';
             }
           }
         }

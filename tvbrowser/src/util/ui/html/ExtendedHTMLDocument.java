@@ -105,7 +105,7 @@ public class ExtendedHTMLDocument extends HTMLDocument {
 
   protected void addComponent(Vector<ElementSpec> parseBuffer, Component comp) {
     SimpleAttributeSet sas = new SimpleAttributeSet();
-    sas.addAttribute(StyleConstants.CharacterConstants.ComponentAttribute, comp);
+    sas.addAttribute(StyleConstants.ComponentAttribute, comp);
     sas.addAttribute(StyleConstants.NameAttribute, StyleConstants.ComponentElementName);
 
     ElementSpec es = new ElementSpec(sas.copyAttributes(),

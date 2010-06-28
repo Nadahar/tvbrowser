@@ -54,8 +54,8 @@ import devplugin.ChannelGroup;
 import devplugin.ChannelGroupImpl;
 
 /**
- * 
- * 
+ *
+ *
  * @author Til Schneider, www.murfman.de
  */
 public class ChannelList {
@@ -67,7 +67,7 @@ public class ChannelList {
   private ArrayList<ChannelItem> mChannelList;
 
   private ChannelGroup mGroup;
-  
+
   public ChannelList(final String groupName) {
     mChannelList = new ArrayList<ChannelItem>();
     mGroup = new ChannelGroupImpl(groupName, groupName, "");
@@ -179,7 +179,6 @@ public class ChannelList {
     reader.close();
     if (iconLoader != null) {
       iconLoader.close();
-      iconLoader = null;
     }
   }
 

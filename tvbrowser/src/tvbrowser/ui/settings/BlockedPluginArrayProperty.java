@@ -195,7 +195,7 @@ public final class BlockedPluginArrayProperty extends Property {
   }
 
   private BlockedPlugin[] loadBlockedPlugins(String settingsValue) {
-    BlockedPlugin[] blockedPlugins = null;
+    BlockedPlugin[] blockedPlugins;
 
     if(settingsValue != null) {
       String[] parts = settingsValue.split("#_#");

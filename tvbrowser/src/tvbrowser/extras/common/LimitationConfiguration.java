@@ -26,13 +26,13 @@
 
 package tvbrowser.extras.common;
 
-import devplugin.Channel;
-
-import java.io.ObjectInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
+
+import devplugin.Channel;
 
 
 public class LimitationConfiguration {
@@ -75,8 +75,9 @@ public class LimitationConfiguration {
       for (int i=0; i<cnt; i++) {
         ChannelItem item = new ChannelItem(in, version);
         
-        if(item.isValid())
+        if(item.isValid()) {
           mChannelItemList.add(item);
+        }
 
         if (item.getChannel() != null) {
           list.add(item.getChannel());
@@ -105,8 +106,9 @@ public class LimitationConfiguration {
     out.writeBoolean(mIsLimitedByChannel);
     if (mIsLimitedByChannel) {
       out.writeInt(mChannelItemList.size());
-      for (int i=0; i<mChannelItemList.size(); i++)
+      for (int i=0; i<mChannelItemList.size(); i++) {
         (mChannelItemList.get(i)).saveItem(out);
+      }
     }
 
     out.writeInt(mDayLimit);
@@ -129,8 +131,8 @@ public class LimitationConfiguration {
   public void setChannels(Channel[] ch) {
     mChannelItemList.clear();
     
-    for(int i = 0; i < ch.length; i++) {
-      mChannelItemList.add(new ChannelItem(ch[i]));
+    for (Channel element : ch) {
+      mChannelItemList.add(new ChannelItem(element));
     }
     
     mChannelArr = ch;

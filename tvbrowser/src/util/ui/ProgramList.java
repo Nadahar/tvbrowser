@@ -291,7 +291,7 @@ public class ProgramList extends JList implements ChangeListener,
                 mPerformingSingleClick = false;
               } catch (InterruptedException e) {
                 // ignore
-              }              
+              }
             }
           };
           mLeftSingleClickThread.setPriority(Thread.MIN_PRIORITY);
@@ -319,7 +319,7 @@ public class ProgramList extends JList implements ChangeListener,
                 mPerformingSingleMiddleClick = false;
               } catch (InterruptedException e) {
                 // ignore
-              }              
+              }
             }
           };
           mMiddleSingleClickThread.setPriority(Thread.MIN_PRIORITY);

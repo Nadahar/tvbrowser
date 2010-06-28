@@ -60,8 +60,9 @@ public class GlobalPluginProgramFormatingManager {
       
       mAvailableProgramConfigurations = new GlobalPluginProgramFormating[in.readInt()];
       
-      for(int i = 0; i < mAvailableProgramConfigurations.length; i++)
+      for(int i = 0; i < mAvailableProgramConfigurations.length; i++) {
         mAvailableProgramConfigurations[i] = GlobalPluginProgramFormating.load(in);
+      }
       
     }catch(Exception e) {
       mAvailableProgramConfigurations = new GlobalPluginProgramFormating[2];
@@ -78,9 +79,9 @@ public class GlobalPluginProgramFormatingManager {
       }.start();
     } finally {
       if (in!=null) {
-        try { in.close(); } catch(IOException exc) {}      
+        try { in.close(); } catch(IOException exc) {}
       }
-    } 
+    }
   }
   
   /**
@@ -89,8 +90,9 @@ public class GlobalPluginProgramFormatingManager {
    * @return The instance of this class.
    */
   public static GlobalPluginProgramFormatingManager getInstance() {
-    if(mInstance == null)
+    if(mInstance == null) {
       new GlobalPluginProgramFormatingManager();
+    }
     
     return mInstance;
   }
@@ -99,7 +101,7 @@ public class GlobalPluginProgramFormatingManager {
    * Gets the available program configurations.
    * 
    * @return The available program configurations.
-   */  
+   */
   public GlobalPluginProgramFormating[] getAvailableGlobalPluginProgramFormatings() {
     return mAvailableProgramConfigurations;
   }
@@ -155,9 +157,11 @@ public class GlobalPluginProgramFormatingManager {
   }
   
   protected GlobalPluginProgramFormating getConfigurationForId(String id) {
-    for(GlobalPluginProgramFormating config : mAvailableProgramConfigurations)
-      if(config.hasId(id))
+    for(GlobalPluginProgramFormating config : mAvailableProgramConfigurations) {
+      if(config.hasId(id)) {
         return config;
+      }
+    }
     
     return null;
   }
@@ -169,9 +173,11 @@ public class GlobalPluginProgramFormatingManager {
    * @return The instance of the given formating.
    */
   public GlobalPluginProgramFormating getFormatingInstanceForInstance(GlobalPluginProgramFormating formating) {
-    for(GlobalPluginProgramFormating config : mAvailableProgramConfigurations)
-      if(config.equals(formating))
+    for(GlobalPluginProgramFormating config : mAvailableProgramConfigurations) {
+      if(config.equals(formating)) {
         return config;
+      }
+    }
     
     return null;
   }

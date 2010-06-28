@@ -472,7 +472,7 @@ public class Localizer {
    * @param string String with Locale
    * @return Locale
    */
-  private Locale getLocaleForString(final String string) {
+  private static Locale getLocaleForString(final String string) {
     String[] split = string.split("_");
 
     if (split.length >= 3) {

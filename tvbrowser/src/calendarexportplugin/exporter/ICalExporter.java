@@ -32,7 +32,7 @@ import devplugin.Program;
 
 /**
  * Exporter for iCal-Files
- *  
+ * 
  * @author bodum
  */
 public class ICalExporter extends CalExporter {

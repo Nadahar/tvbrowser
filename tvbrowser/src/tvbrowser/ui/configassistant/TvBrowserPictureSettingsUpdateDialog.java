@@ -30,6 +30,7 @@ import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
+import javax.swing.WindowConstants;
 
 import tvbrowser.core.Settings;
 import util.settings.ProgramPanelSettings;
@@ -99,7 +100,7 @@ public class TvBrowserPictureSettingsUpdateDialog extends JDialog implements Win
     setContentPane(content);
     getRootPane().setDefaultButton(mOkButton);
     
-    setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+    setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
     
     addWindowListener(new WindowAdapter() {
       public void windowClosing(WindowEvent e) {
@@ -117,12 +118,13 @@ public class TvBrowserPictureSettingsUpdateDialog extends JDialog implements Win
   }
   
   private void close(boolean cancel) {
-    if(!mConfigPanel.isActivated() || cancel) {      
+    if(!mConfigPanel.isActivated() || cancel) {
       String[] buttons = {mLocalizer.msg("accept","Yes, I don't want pictures"),mLocalizer.msg("back","Back to the settings")};
       
       if(JOptionPane.showOptionDialog(this, mLocalizer.msg("text","<html><span style=\"color:red\">ATTENTION: </span>The downloading of the pictures is disabled!<br><br>Are you sure that you don't want download pictures.</html>"), mLocalizer.msg("warning","Warning"),
-          JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, buttons, buttons[1]) != 0)
+          JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, buttons, buttons[1]) != 0) {
         return;
+      }
     }
     
     dispose();
@@ -138,7 +140,8 @@ public class TvBrowserPictureSettingsUpdateDialog extends JDialog implements Win
         Settings.propProgramTableIconPlugins.addItem(Settings.PICTURE_ID);
       }
     }
-    else if(e.getSource() == mCancelButton)
+    else if(e.getSource() == mCancelButton) {
       close();
+    }
   }
 }

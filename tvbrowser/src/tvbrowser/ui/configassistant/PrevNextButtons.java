@@ -32,6 +32,6 @@ interface PrevNextButtons {
   public void enablePrevButton();
   public void enableNextButton();
   public void disablePrevButton();
-  public void disableNextButton(); 
+  public void disableNextButton();
   
 }

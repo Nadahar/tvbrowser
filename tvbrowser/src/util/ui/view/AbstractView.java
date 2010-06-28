@@ -28,7 +28,7 @@ package util.ui.view;
 
 public abstract class AbstractView implements View {
   
-  private ViewProperty mProperty;  
+  private ViewProperty mProperty;
   
   public void setProperty(ViewProperty prop) {
     mProperty = prop;

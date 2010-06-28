@@ -80,7 +80,7 @@ public class ProgramTableChannelLabel extends ChannelLabel {
       
       public void mouseExited(MouseEvent e) {
         e.getComponent().setForeground(UIManager.getColor("List.selectionForeground"));
-      }        
+      }
     });
   }
   

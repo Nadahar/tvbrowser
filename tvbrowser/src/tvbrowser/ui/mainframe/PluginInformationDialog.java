@@ -59,7 +59,7 @@ import com.jgoodies.forms.layout.FormLayout;
  * @since 2.7
  */
 public class PluginInformationDialog extends JDialog implements WindowClosingIf {
-  private static final Localizer mLocalizer = Localizer.getLocalizerFor(PluginInformationDialog.class); 
+  private static final Localizer mLocalizer = Localizer.getLocalizerFor(PluginInformationDialog.class);
   
   /**
    * Creates an instance of this class.
@@ -120,8 +120,8 @@ public class PluginInformationDialog extends JDialog implements WindowClosingIf 
       }
     });
     
-    buttons[0].setFont(buttons[0].getFont().deriveFont(Font.BOLD,(float)13));
-    buttons[1].setFont(buttons[1].getFont().deriveFont(Font.BOLD,(float)13));
+    buttons[0].setFont(buttons[0].getFont().deriveFont(Font.BOLD,13));
+    buttons[1].setFont(buttons[1].getFont().deriveFont(Font.BOLD,13));
     
     getRootPane().setDefaultButton(buttons[0]);
     

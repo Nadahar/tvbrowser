@@ -26,8 +26,8 @@
 
 package tvbrowser.extras.common;
 
-import java.io.ObjectInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 public class ReminderConfiguration {
@@ -43,7 +43,7 @@ public class ReminderConfiguration {
     mServiceIDs = ids;
   }
   
-  public ReminderConfiguration() {    
+  public ReminderConfiguration() {
       mServiceIDs = new String[]{ REMINDER_DEFAULT };
   }
 
@@ -62,8 +62,8 @@ public class ReminderConfiguration {
     out.writeInt(1);
 
     out.writeInt(mServiceIDs.length);
-    for (int i=0; i<mServiceIDs.length; i++) {
-      out.writeObject(mServiceIDs[i]);
+    for (String mServiceID : mServiceIDs) {
+      out.writeObject(mServiceID);
     }
   }
 
@@ -76,8 +76,8 @@ public class ReminderConfiguration {
   }
 
   public boolean containsService(String service) {
-    for (int i=0; i<mServiceIDs.length; i++) {
-      if (service.equals(mServiceIDs[i])) {
+    for (String mServiceID : mServiceIDs) {
+      if (service.equals(mServiceID)) {
         return true;
       }
     }

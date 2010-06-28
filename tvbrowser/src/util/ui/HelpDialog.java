@@ -65,10 +65,10 @@ public class HelpDialog implements ActionListener, HyperlinkListener {
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(HelpDialog.class);
   
-  /** The minimum size of the help dialog. */  
+  /** The minimum size of the help dialog. */
   public static final Dimension MIN_HELP_DIALOG_SIZE = new Dimension(350, 400);
   
-  /** The maximum size of the help dialog. */  
+  /** The maximum size of the help dialog. */
   public static final Dimension MAX_HELP_DIALOG_SIZE = new Dimension(500, 10000);
 
   /**
@@ -78,10 +78,10 @@ public class HelpDialog implements ActionListener, HyperlinkListener {
    */
   private static HelpDialog mHelpDialogSingleton;
 
-  /** The dialog. */  
+  /** The dialog. */
   private JDialog mDialog;
 
-  /** The history. */  
+  /** The history. */
   private Stack<HistoryStackElement> mHistoryStack;
 
   /**
@@ -90,7 +90,7 @@ public class HelpDialog implements ActionListener, HyperlinkListener {
    */
   private String mSourcePath;
   
-  /** A class of the jar where the currently shown site is located. */  
+  /** A class of the jar where the currently shown site is located. */
   private Class mSourceClass;
 
   private JEditorPane mEditorPane;
@@ -112,7 +112,7 @@ public class HelpDialog implements ActionListener, HyperlinkListener {
    * Shows the specified site in the help dialog. If there is currently no help
    * dialog shown, one is created.
    *
-   * @param parent If there is currently no help dialog shown, this parent is 
+   * @param parent If there is currently no help dialog shown, this parent is
    *        used for creating a new one.
    * @param filename The name of the HTML file to show.
    * @param clazz A class in the jar where the HTML file is in.
@@ -211,7 +211,7 @@ public class HelpDialog implements ActionListener, HyperlinkListener {
    *
    * @param text The HTML text.
    * @param updateScrollBarTo The relative position to scroll to. (Between 0 and 1)
-   */  
+   */
   protected void setEditorText(String text, double updateScrollBarTo) {
     mEditorPane.setText(text);
 

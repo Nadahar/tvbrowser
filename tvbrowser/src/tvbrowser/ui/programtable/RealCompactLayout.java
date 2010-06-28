@@ -29,7 +29,7 @@ package tvbrowser.ui.programtable;
 import util.ui.ProgramPanel;
 
 /**
- * Each program panel is shown in preferred size and 
+ * Each program panel is shown in preferred size and
  * each column starts at the topmost point of the program table.
  * <p>
  * This layout has no additional space added anywhere.

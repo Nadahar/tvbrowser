@@ -31,7 +31,7 @@ import java.util.Calendar;
 import tvbrowser.core.Settings;
 
 /**
- * Formats a Time to a String. 
+ * Formats a Time to a String.
  * 
  * @author bodum
  */

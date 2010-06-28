@@ -72,11 +72,11 @@ public final class DreamboxDevice implements DeviceIf {
     /**
      * List of Recordings
      */
-    private ArrayList<ProgramTime> _programTimeList = new ArrayList<ProgramTime>();
+    private ArrayList<ProgramTime> mProgramTimeList = new ArrayList<ProgramTime>();
     /**
      * List of Recordings
      */
-    private ArrayList<Program> _programList = new ArrayList<Program>();
+    private ArrayList<Program> mProgramList = new ArrayList<Program>();
 
     /**
      * Creates this Device
@@ -161,7 +161,7 @@ public final class DreamboxDevice implements DeviceIf {
      * @see captureplugin.drivers.DeviceIf#isInList(devplugin.Program)
      */
     public boolean isInList(Program program) {
-        return _programList.contains(program);
+        return mProgramList.contains(program);
     }
 
     /**
@@ -230,7 +230,7 @@ public final class DreamboxDevice implements DeviceIf {
      * @see captureplugin.drivers.DeviceIf#remove(java.awt.Window,devplugin.Program)
      */
     public boolean remove(Window parent, Program program) {
-        for (ProgramTime time : _programTimeList) {
+        for (ProgramTime time : mProgramTimeList) {
             if (time.getProgram().equals(program)) {
                 ExternalChannelIf channel = mConfig.getExternalChannel(program.getChannel());
                 if (channel != null) {
@@ -250,15 +250,15 @@ public final class DreamboxDevice implements DeviceIf {
         DreamboxConnector con = new DreamboxConnector(mConfig);
         if (mConfig.hasValidAddress()) {
             ProgramTime[] times = con.getRecordings(mConfig);
-            _programTimeList = new ArrayList<ProgramTime>(Arrays.asList(times));
+            mProgramTimeList = new ArrayList<ProgramTime>(Arrays.asList(times));
 
-            _programList = new ArrayList<Program>();
+            mProgramList = new ArrayList<Program>();
 
             for (ProgramTime time : times) {
-                _programList.add(time.getProgram());
+                mProgramList.add(time.getProgram());
             }
 
-            return _programList.toArray(new Program[_programList.size()]);
+            return mProgramList.toArray(new Program[mProgramList.size()]);
         }
 
         return null;
@@ -355,7 +355,7 @@ public final class DreamboxDevice implements DeviceIf {
      * @see captureplugin.drivers.DeviceIf#removeProgramWithoutExecution(devplugin.Program)
      */
     public void removeProgramWithoutExecution(Program p) {
-        for (ProgramTime time : _programTimeList) {
+        for (ProgramTime time : mProgramTimeList) {
             if (time.getProgram().equals(p)) {
                 DreamboxChannel channel = (DreamboxChannel) mConfig.getExternalChannel(p.getChannel());
                 if (channel != null) {
@@ -368,7 +368,7 @@ public final class DreamboxDevice implements DeviceIf {
     
     @Override
     public Program getProgramForProgramInList(Program p) {
-      for(ProgramTime time : _programTimeList) {
+      for(ProgramTime time : mProgramTimeList) {
         for(Program prog : time.getAllPrograms()) {
           if(prog.equals(p)) {
             return time.getProgram();

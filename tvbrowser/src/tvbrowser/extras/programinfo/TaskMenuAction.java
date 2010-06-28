@@ -119,7 +119,7 @@ public class TaskMenuAction {
 
   // Adds the action to the TaskPaneGroup.
   private void addAction(final JTaskPaneGroup parent, final ActionMenu menu) {
-    final Action a = menu.getAction();    
+    final Action a = menu.getAction();
 
     mAction = new AbstractAction() {
       private static final long serialVersionUID = 1L;
@@ -131,7 +131,7 @@ public class TaskMenuAction {
             || !mAction.getValue(Action.ACTION_COMMAND_KEY).equals("action")) {
           mInfo.addPluginActions(true);
         }
-      }      
+      }
     };
     
     mAction.putValue(Action.NAME,"<html>" + a.getValue(Action.NAME)+ "</html>");

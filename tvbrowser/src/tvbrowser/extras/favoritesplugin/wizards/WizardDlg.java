@@ -29,13 +29,14 @@ package tvbrowser.extras.favoritesplugin.wizards;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
-import javax.swing.JRootPane;
 import javax.swing.KeyStroke;
 
 import util.ui.Localizer;
@@ -124,14 +125,14 @@ public class WizardDlg extends JDialog implements WindowClosingIf {
     builder.addFixed(mCancelBtn);
     panel.add(builder.getPanel(), cc.xy(4, 1));
     
-    for (int i = 0; i < btns.length; i++) {
-      if (btns[i] == WizardStep.BUTTON_DONE) {
+    for (int btn : btns) {
+      if (btn == WizardStep.BUTTON_DONE) {
         mDoneBtn.setEnabled(true);
-      } else if (btns[i] == WizardStep.BUTTON_BACK) {
+      } else if (btn == WizardStep.BUTTON_BACK) {
         mBackBtn.setEnabled(true);
-      } else if (btns[i] == WizardStep.BUTTON_NEXT) {
+      } else if (btn == WizardStep.BUTTON_NEXT) {
         mNextBtn.setEnabled(true);
-      } else if (btns[i] == WizardStep.BUTTON_CANCEL) {
+      } else if (btn == WizardStep.BUTTON_CANCEL) {
         mCancelBtn.setEnabled(true);
       }
     }
@@ -166,10 +167,11 @@ public class WizardDlg extends JDialog implements WindowClosingIf {
       }
     });
 
-    if(mNextBtn.isEnabled() && !mStep.isSingleStep())
+    if(mNextBtn.isEnabled() && !mStep.isSingleStep()) {
       getRootPane().setDefaultButton(mNextBtn);
-    else
+    } else {
       getRootPane().setDefaultButton(mDoneBtn);
+    }
     
     AbstractAction a = new AbstractAction() {
       public void actionPerformed(ActionEvent e) {
@@ -181,11 +183,11 @@ public class WizardDlg extends JDialog implements WindowClosingIf {
     };
     
     KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, 0);
-    getRootPane().getInputMap(JRootPane.WHEN_IN_FOCUSED_WINDOW).put(stroke,"BACK");
+    getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(stroke,"BACK");
     getRootPane().getActionMap().put("BACK", a);
     
-    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, KeyEvent.ALT_MASK);
-    getRootPane().getInputMap(JRootPane.WHEN_IN_FOCUSED_WINDOW).put(stroke,"BACK");
+    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, InputEvent.ALT_MASK);
+    getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(stroke,"BACK");
     getRootPane().getActionMap().put("BACK", a);
     
     return panel;
@@ -230,10 +232,11 @@ public class WizardDlg extends JDialog implements WindowClosingIf {
   public void allowNext(boolean allow) {
     mNextBtn.setEnabled(allow);
     
-    if(allow && !mStep.isSingleStep())
+    if(allow && !mStep.isSingleStep()) {
       getRootPane().setDefaultButton(mNextBtn);
-    else
+    } else {
       getRootPane().setDefaultButton(mDoneBtn);
+    }
   }
 
   public void allowFinish(boolean allow) {

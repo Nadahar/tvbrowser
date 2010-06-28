@@ -40,7 +40,7 @@ import devplugin.ProgramSearcher;
  * @author bodum
  */
 public class SearchFilter implements ProgramFilter {
-  /** The localizer of this class. */  
+  /** The localizer of this class. */
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(SearchFilter.class);
   /** Instance */
@@ -52,7 +52,7 @@ public class SearchFilter implements ProgramFilter {
   /** Fields to search in */
   private ProgramFieldType[] mFieldTypes;
 
-  /** 
+  /**
    * Private Constructor
    */
   private SearchFilter() {}

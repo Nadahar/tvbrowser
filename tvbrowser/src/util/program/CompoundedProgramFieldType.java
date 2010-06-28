@@ -45,11 +45,11 @@ public class CompoundedProgramFieldType {
   
   /**
    * Creates an instance of this extra type.
-   *  
+   * 
    * @param id The id of the compounded field type. (has to be a negative value!)
    * @param fieldTypes The field type that this type contains.
    * @param name The name for this field type, or <code>null</code> if
-   * the name of the first entry in the field type array should be used. 
+   * the name of the first entry in the field type array should be used.
    * @param formatString The String that contains the formating for the display
    * use {n} as replacement for the values of the n-th field type.
    */
@@ -63,11 +63,11 @@ public class CompoundedProgramFieldType {
   
   /**
    * Creates an instance of this extra type.
-   *  
+   * 
    * @param id The id of the compounded field type. (has to be a negative value!)
    * @param fieldTypes The field type that this type contains.
    * @param name The name for this field type, or <code>null</code> if
-   * the name of the first entry in the field type array should be used. 
+   * the name of the first entry in the field type array should be used.
    * @param partSeparators The separator string between the fields. If one field value
    * is empty the part separator isn't used between the empty field and the next one.
    */
@@ -87,7 +87,7 @@ public class CompoundedProgramFieldType {
    * @return The formatted value.
    */
   public String getFormattedValueForProgram(Program prog) {
-    if(mFormatString != null) { 
+    if(mFormatString != null) {
       String value = mFormatString;
       boolean found = false;
       

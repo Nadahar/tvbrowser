@@ -333,9 +333,9 @@ public class OnDemandDayProgramFile {
         int typeId = dataFile.readInt();
         ProgramFieldType type = ProgramFieldType.getTypeForId(typeId);
 
-        if (type.getFormat() == ProgramFieldType.UNKNOWN_FORMAT)
+        if (type.getFormat() == ProgramFieldType.UNKNOWN_FORMAT) {
           return null;
-        else if (type.getFormat() == ProgramFieldType.BINARY_FORMAT) {
+        } else if (type.getFormat() == ProgramFieldType.BINARY_FORMAT) {
           long position = dataFile.getFilePointer();
 
           int n = dataFile.readInt();

@@ -40,6 +40,7 @@ import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.text.BadLocationException;
 
 import util.ui.Localizer;
@@ -62,7 +63,7 @@ public class ParamInputField extends JPanel {
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(ParamInputField.class);
   
   /** Text-Area for the Parameters in the EMail-Body*/
-  private JTextArea mParamText;  
+  private JTextArea mParamText;
   
   /** The Library to use for Check/Help-Dialog */
   private ParamLibrary mParamLibrary;
@@ -82,7 +83,7 @@ public class ParamInputField extends JPanel {
    */
   public ParamInputField(String text, boolean singleLine) {
     this(new ParamLibrary(), text, singleLine);
-  }  
+  }
   
   /**
    * Create the InputField
@@ -105,14 +106,14 @@ public class ParamInputField extends JPanel {
       mParamLibrary = new ParamLibrary();
     }
     createGui(text, singleLine);
-  }  
+  }
   /**
-   * Create the GUI 
+   * Create the GUI
    * @param text Text to use in the InputField
    * @param singleLine set True, if Input-Field should be a Single-Line
    */
   private void createGui(String text, boolean singleLine) {
-    FormLayout layout = new FormLayout("fill:pref:grow, 3dlu, default, 3dlu, default, 3dlu, default", 
+    FormLayout layout = new FormLayout("fill:pref:grow, 3dlu, default, 3dlu, default, 3dlu, default",
                  "fill:pref:grow, 3dlu, default");
     setLayout(layout);
     
@@ -131,8 +132,8 @@ public class ParamInputField extends JPanel {
         }
       });
       
-      JScrollPane scroll = new JScrollPane(mParamText, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-          JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+      JScrollPane scroll = new JScrollPane(mParamText, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+          ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
       
       add(scroll, cc.xyw(1,1, layout.getColumnCount()));
     } else {

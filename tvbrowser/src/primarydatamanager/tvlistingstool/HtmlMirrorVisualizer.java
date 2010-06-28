@@ -48,7 +48,7 @@ public class HtmlMirrorVisualizer implements MirrorVisualizer {
   private static final Logger mLog
     = Logger.getLogger(HtmlMirrorVisualizer.class.getName());
     
-  private static final int DAY_COUNT = 25; 
+  private static final int DAY_COUNT = 25;
   private static Date TODAY = Date.getCurrentDate();
   
   private DataSource mSource;
@@ -57,7 +57,7 @@ public class HtmlMirrorVisualizer implements MirrorVisualizer {
   private PrintStream mOut;
   private ByteArrayOutputStream mBuf;
   
-  private static final String STYLE = 
+  private static final String STYLE =
         "p { font-size : 14pt;font-family : Verdana, Arial, Sans-serif; }" +
         ".header_date { font-size : 8pt;  font-family : Verdana, Arial, Sans-serif; white-space:nowrap;  width:100px; }" +
         ".header_channel { font-size : 8pt; font-family : Verdana, Arial, Sans-serif; white-space:nowrap;  background-color : #FFDDDD;  }" +
@@ -66,7 +66,7 @@ public class HtmlMirrorVisualizer implements MirrorVisualizer {
         ".group_summary { font-size : 8pt; font-family : Verdana, Arial, Sans-serif; white-space:nowrap; #background-color : #FF8080; }" +
         " .table_content { font-size : 8pt; font-family : Verdana, Arial, Sans-serif; white-space:nowrap; background-color : #80FF80; }" +
         " .table_empty { font-size : 8pt; font-family : Verdana, Arial, Sans-serif; white-space:nowrap; background-color : #FF8080; }" +
-        " .error { font-size : 12pt; font-family : Verdana, Arial, Sans-serif; font-weight: bold; color : #FF0000; white-space:nowrap; }";  
+        " .error { font-size : 12pt; font-family : Verdana, Arial, Sans-serif; font-weight: bold; color : #FF0000; white-space:nowrap; }";
   
   public HtmlMirrorVisualizer(DataSource source, DataTarget target, String[] groups) {
     mSource = source;
@@ -89,23 +89,23 @@ public class HtmlMirrorVisualizer implements MirrorVisualizer {
     
     header();
     
-    for (int i=0; i<mGroups.length; i++) {
+    for (String mGroup : mGroups) {
       byte[] data;
       SummaryFile summary=null;
       ChannelList channelList=null;
       String groupId=null;
-      String lastUpdateFileName=null;  
+      String lastUpdateFileName=null;
         
-      groupId = mGroups[i];
+      groupId = mGroup;
       
-      String groupFileName = mGroups[i]+"_info";     
+      String groupFileName = mGroup+"_info";
       try {
         data = mSource.loadFile(groupFileName);
       }catch(Exception e) {
         printError("Could not load group file '"+groupFileName+"' for group '"+groupId+"'");
       }
         
-      String summaryFileName = mGroups[i]+"_summary.gz";
+      String summaryFileName = mGroup+"_summary.gz";
       try {
         data = mSource.loadFile(summaryFileName);
         summary = new SummaryFile();
@@ -115,17 +115,17 @@ public class HtmlMirrorVisualizer implements MirrorVisualizer {
 
       }
       
-      String channelFileName = mGroups[i]+"_channellist.gz";
+      String channelFileName = mGroup+"_channellist.gz";
       try {
         data = mSource.loadFile(channelFileName);
-        channelList = new ChannelList(mGroups[i]);
+        channelList = new ChannelList(mGroup);
         channelList.readFromStream(new ByteArrayInputStream(data), null);
       } catch (Exception e) {
           printError("Could not load channel file '"+channelFileName+"' for group '"+groupId+"'");
       }
       
       try {
-        lastUpdateFileName = mGroups[i] + "_lastupdate";
+        lastUpdateFileName = mGroup + "_lastupdate";
         data = mSource.loadFile(lastUpdateFileName);
       } catch (Exception e) {
         //printError("Could not load lastupdate file '"+lastUpdateFileName+"' for group '"+groupId+"'");
@@ -134,7 +134,7 @@ public class HtmlMirrorVisualizer implements MirrorVisualizer {
       
       visualize(groupId,summary, channelList);
       
-    }    
+    }
     footer();
     
     try {
@@ -162,13 +162,13 @@ public class HtmlMirrorVisualizer implements MirrorVisualizer {
       Channel channel = channelList.getChannelAt(ch);
       mOut.print  ("<tr><th class=\"header_channel\" align=\"right\">" + channel + "</th>");
         
-      for (int i=0; i< DAY_COUNT; i++) {          
+      for (int i=0; i< DAY_COUNT; i++) {
         int version = summaryFile.getDayProgramVersion(TODAY.addDays(i), channel.getCountry(), channel.getId(), 0);
         if (version >= 0) {
-          mOut.print("<td class=\"table_content\"></td>");     
+          mOut.print("<td class=\"table_content\"></td>");
         }
         else {
-          mOut.print("<td class=\"table_empty\"></td>");   
+          mOut.print("<td class=\"table_empty\"></td>");
         }
       }
     
@@ -191,26 +191,28 @@ public class HtmlMirrorVisualizer implements MirrorVisualizer {
     mOut.println("The data provided here may only be used within TV-Browser. Any other use is illegal!</p>");
     
     mOut.println("<table width=\"1000\">");
-    mOut.print("<tr><th width=\"200\"></th>");  
+    mOut.print("<tr><th width=\"200\"></th>");
     for (int i=0; i < DAY_COUNT; i++) {
       String month = String.valueOf(TODAY.addDays(i).getMonth());
       String day = String.valueOf(TODAY.addDays(i).getDayOfMonth());
       
-      if(month.length() == 1)
+      if(month.length() == 1) {
         month = "0" + month;
-      if(day.length() == 1)
+      }
+      if(day.length() == 1) {
         day = "0" + day;
+      }
       
       mOut.print("<th class=\"header_date\">"+TODAY.addDays(i).getYear()+"-<br>"+month+"-"+day+"</th>");
-    }    
+    }
     mOut.println("</tr>");
     
   }
   
   protected void footer() {
-    mOut.println("</table>");    
+    mOut.println("</table>");
     mOut.println("</body>");
-    mOut.println("</html>");   
+    mOut.println("</html>");
   }
 
 

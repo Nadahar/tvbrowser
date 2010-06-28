@@ -53,7 +53,7 @@ public class DownloadManager {
     synchronized(mJobList) {
       mJobList.clear();
     }
-  }  
+  }
 
 
   public int getDownloadJobCount() {
@@ -71,7 +71,7 @@ public class DownloadManager {
     mWaitingThread = Thread.currentThread();
 
     // Set the max. connections
-    if (mConcurrentDownloads > 5) {    
+    if (mConcurrentDownloads > 5) {
       System.setProperty("http.maxConnections", Integer.toString(mConcurrentDownloads));
     } else {
       // This is the default
@@ -87,7 +87,7 @@ public class DownloadManager {
       downloadThread.start();
     }
 
-    // Wait until all jobs are processed    
+    // Wait until all jobs are processed
     boolean isFinished;
     do {
       try {
@@ -149,7 +149,7 @@ public class DownloadManager {
           }
           finally {
             if (stream != null) {
-              try { stream.close(); } catch (Throwable thr) {} 
+              try { stream.close(); } catch (Throwable thr) {}
             }
           }
         }

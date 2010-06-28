@@ -21,16 +21,17 @@
  */
 package simplemarkerplugin.table;
 
-import simplemarkerplugin.MarkList;
-import simplemarkerplugin.SimpleMarkerPlugin;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.FlowLayout;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.FlowLayout;
+
+import simplemarkerplugin.MarkList;
+import simplemarkerplugin.SimpleMarkerPlugin;
 
 /**
  * The renderer for the send to plugins column
@@ -74,7 +75,7 @@ public class MarkerSendToPluginRenderer extends DefaultTableCellRenderer {
     } else if(list.getPluginTargets().size() == 1) {
       return list.getPluginTargets().iterator().next().getTargetName();
     } else {
-      return SimpleMarkerPlugin.getLocalizer().msg("settings.sendToPlugins", "{0} Plugins", list.getPluginTargets().size());      
+      return SimpleMarkerPlugin.getLocalizer().msg("settings.sendToPlugins", "{0} Plugins", list.getPluginTargets().size());
     }
   }
 }

@@ -21,15 +21,16 @@
  */
 package simplemarkerplugin.table;
 
-import devplugin.ProgramReceiveTarget;
-import simplemarkerplugin.MarkList;
-import simplemarkerplugin.SimpleMarkerPlugin;
-
-import javax.swing.event.TableModelEvent;
-import javax.swing.table.DefaultTableModel;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+
+import javax.swing.event.TableModelEvent;
+import javax.swing.table.DefaultTableModel;
+
+import simplemarkerplugin.MarkList;
+import simplemarkerplugin.SimpleMarkerPlugin;
+import devplugin.ProgramReceiveTarget;
 
 /**
  * The table model for the mark list settings table.

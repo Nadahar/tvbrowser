@@ -14,7 +14,7 @@ public abstract class PluginStateAdapter implements PluginStateListener {
 
   public void pluginActivated(PluginProxy plugin) {}
   
-  public void pluginDeactivated(PluginProxy plugin) {} 
+  public void pluginDeactivated(PluginProxy plugin) {}
   
   public void pluginLoaded(PluginProxy plugin) {}
 

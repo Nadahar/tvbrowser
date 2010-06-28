@@ -1,7 +1,7 @@
 /**
  * This class was found in the Thread
  * http://forum.java.sun.com/thread.jspa?forumID=57&threadID=123183
- * 
+ *
  * I tried to contact the Author, without any luck. If you are the Author and
  * don't like the Usage of your Code in this Project or want to be named, please
  * mail us!
@@ -28,7 +28,6 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ActionMap;
 import javax.swing.Icon;
-import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -36,6 +35,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 import javax.swing.MenuElement;
 import javax.swing.MenuSelectionManager;
+import javax.swing.SwingConstants;
 import javax.swing.Timer;
 import javax.swing.UIManager;
 import javax.swing.event.PopupMenuEvent;
@@ -63,13 +63,13 @@ import javax.swing.plaf.basic.BasicPopupMenuUI;
  * "button" is on the <code>JMenuBar</code>, the menu is a top-level window.
  * If the "button" is another menu item, then the <code>JPopupMenu</code> is
  * "pull-right" menu.
- * 
+ *
  * If the menu contains more items than displayable on the screen the menu
  * becomes scrollable by hiding some of the items and adding an add and a down
  * arrow at both ends of the menu to scroll the menu with this arrows.
- * 
+ *
  * description: A popup window containing menu items displayed in a menu bar.
- * 
+ *
  * @see JPopupMenu
  */
 public class ScrollableMenu extends JMenu {
@@ -105,7 +105,7 @@ public class ScrollableMenu extends JMenu {
     Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
     maxItemsToDisplay = (dim.height / maxHeight) - 3;
   }
-  
+
   private static class SelectNextItemAction extends AbstractAction {
     private ScrollDirection direction;
 
@@ -119,7 +119,7 @@ public class ScrollableMenu extends JMenu {
     public void actionPerformed(ActionEvent e) {
 
       MenuSelectionManager msm = MenuSelectionManager.defaultManager();
-      MenuElement path[] = msm.getSelectedPath();
+      MenuElement[] path = msm.getSelectedPath();
       int len = path.length;
 
       if (len > 2 && path[len - 3] instanceof ScrollableMenu && path[len - 2] instanceof JPopupMenu) {
@@ -183,7 +183,7 @@ public class ScrollableMenu extends JMenu {
   private int beginIndex = 0;
 
   private int maxWidth = 10;
-  
+
   private int maxHeight = 1;
 
   /**
@@ -196,9 +196,9 @@ public class ScrollableMenu extends JMenu {
   /**
    * Constructs a new <code>JMenu</code> whose properties are taken from the
    * <code>Action</code> supplied.
-   * 
+   *
    * @param a an <code>Action</code>
-   * 
+   *
    * @since 1.3
    */
   public ScrollableMenu(Action a) {
@@ -209,7 +209,7 @@ public class ScrollableMenu extends JMenu {
   /**
    * Constructs a new <code>JMenu</code> with the supplied string as its text
    * and specified as a tear-off menu or not.
-   * 
+   *
    * @param s the text for the menu label
    * @param b can the menu be torn off (not yet implemented)
    */
@@ -219,7 +219,7 @@ public class ScrollableMenu extends JMenu {
 
   /**
    * Constructs a new <code>JMenu</code> with the supplied string as its text.
-   * 
+   *
    * @param menuTitle the text for the menu label
    */
   public ScrollableMenu(String menuTitle) {
@@ -244,7 +244,7 @@ public class ScrollableMenu extends JMenu {
 
   /**
    * Appends a menu item to the end of this menu. Returns the menu item added.
-   * 
+   *
    * @param menuItem the <code>JMenuitem</code> to be added
    * @return the <code>JMenuItem</code> added
    */
@@ -255,7 +255,7 @@ public class ScrollableMenu extends JMenu {
 
   /**
    * Appends a component to the end of this menu. Returns the component added.
-   * 
+   *
    * @param component the <code>Component</code> to add
    * @return the <code>Component</code> added
    */
@@ -267,7 +267,7 @@ public class ScrollableMenu extends JMenu {
   /**
    * Adds the specified component to this container at the given position. If
    * <code>index</code> equals -1, the component will be appended to the end.
-   * 
+   *
    * @param component the <code>Component</code> to add
    * @param index the position at which to insert the component
    * @return the <code>Component</code> added
@@ -290,7 +290,7 @@ public class ScrollableMenu extends JMenu {
 
   /**
    * Inserts the specified <code>JMenuitem</code> at a given position.
-   * 
+   *
    * @param menuItem the <code>JMenuitem</code> to add
    * @param pos an integer specifying the position at which to add the new
    *          <code>JMenuitem</code>
@@ -309,7 +309,7 @@ public class ScrollableMenu extends JMenu {
   /**
    * Inserts a new menu item attached to the specified <code>Action</code>
    * object at a given position.
-   * 
+   *
    * @param a the <code>Action</code> object for the menu item to add
    * @param pos an integer specifying the position at which to add the new menu
    *          item
@@ -321,8 +321,8 @@ public class ScrollableMenu extends JMenu {
     }
 
     JMenuItem menuItem = new JMenuItem((String) a.getValue(Action.NAME), (Icon) a.getValue(Action.SMALL_ICON));
-    menuItem.setHorizontalTextPosition(JButton.TRAILING);
-    menuItem.setVerticalTextPosition(JButton.CENTER);
+    menuItem.setHorizontalTextPosition(SwingConstants.TRAILING);
+    menuItem.setVerticalTextPosition(SwingConstants.CENTER);
     menuItem.setEnabled(a.isEnabled());
     menuItem.setAction(a);
     insert(menuItem, pos);
@@ -334,7 +334,7 @@ public class ScrollableMenu extends JMenu {
    * Returns the <code>JMenuItem</code> at the specified position. If the
    * component at <code>pos</code> is not a menu item, <code>null</code> is
    * returned. This method is included for AWT compatibility.
-   * 
+   *
    * @param pos an integer specifying the position
    * @exception IllegalArgumentException if the value of <code>pos</code> < 0
    * @return the menu item at the specified position; or <code>null</code> if
@@ -358,7 +358,7 @@ public class ScrollableMenu extends JMenu {
   /**
    * Returns the number of items on the menu, including separators. This method
    * is included for AWT compatibility.
-   * 
+   *
    * @return an integer equal to the number of items on the menu
    * @see #getMenuComponentCount
    */
@@ -369,7 +369,7 @@ public class ScrollableMenu extends JMenu {
   /**
    * Removes the specified menu item from this menu. If there is no popup menu,
    * this method will have no effect.
-   * 
+   *
    * @param menuItem the <code>JMenuItem</code> to be removed from the menu
    */
   public void remove(JMenuItem menuItem) {
@@ -378,7 +378,7 @@ public class ScrollableMenu extends JMenu {
 
   /**
    * Removes the menu item at the specified index from this menu.
-   * 
+   *
    * @param pos the position of the item to be removed
    * @exception IllegalArgumentException if the value of <code>pos</code> < 0,
    *              or if <code>pos</code> is greater than the number of menu
@@ -396,7 +396,7 @@ public class ScrollableMenu extends JMenu {
 
   /**
    * Removes the component <code>c</code> from this menu.
-   * 
+   *
    * @param component the component to be removed
    */
   public void remove(Component component) {
@@ -416,7 +416,7 @@ public class ScrollableMenu extends JMenu {
 
   /**
    * Returns the number of components on the menu.
-   * 
+   *
    * @return an integer containing the number of components on the menu
    */
   public int getMenuComponentCount() {
@@ -425,11 +425,11 @@ public class ScrollableMenu extends JMenu {
 
   /**
    * Returns the component at position <code>n</code>.
-   * 
+   *
    * @param n the position of the component to be returned
    * @return the component requested, or <code>null</code> if there is no
    *         popup menu
-   * 
+   *
    */
   public Component getMenuComponent(int n) {
     if (n >= 0 && n < scrollableItems.size()) {
@@ -442,7 +442,7 @@ public class ScrollableMenu extends JMenu {
    * Returns an array of <code>Component</code>s of the menu's subcomponents.
    * Note that this returns all <code>Component</code>s in the popup menu,
    * including separators.
-   * 
+   *
    * @return an array of <code>Component</code>s or an empty array if there
    *         is no popup menu
    */
@@ -458,7 +458,7 @@ public class ScrollableMenu extends JMenu {
 
   /**
    * Returns true if the specified component exists in the submenu hierarchy.
-   * 
+   *
    * @param component the <code>Component</code> to be tested
    * @return true if the <code>Component</code> exists, false otherwise
    */
@@ -475,7 +475,7 @@ public class ScrollableMenu extends JMenu {
 
   /**
    * Add the specified component to this scrollable menu
-   * 
+   *
    * @param component the <code>Component</code> to add
    * @param pos an integer specifying the position at which to add the new
    *          component
@@ -485,25 +485,25 @@ public class ScrollableMenu extends JMenu {
     if (pos < 0) {
       throw new IllegalArgumentException("index less than zero.");
     }
-    
+
     scrollableItems.insertElementAt(component, pos);
-    
+
     setPreferedSizeForMenuItems(component);
-    
+
     if (pos >= beginIndex && pos < beginIndex + maxItemsToDisplay) {
       super.add(component, pos - beginIndex + 2);
     }
-        
+
     while(super.getMenuComponentCount() > maxItemsToDisplay + 4) {
       super.remove(super.getMenuComponentCount() - 3);
     }
-    
+
     updateScrollingComponentsVisibility();
   }
 
   /**
    * Add the specified component at the end of this scrollable menu
-   * 
+   *
    * @param component the <code>Component</code> to add
    */
   protected void addScrollableComponent(Component component) {
@@ -512,7 +512,7 @@ public class ScrollableMenu extends JMenu {
 
   /**
    * Remove the specified component from this scrollable menu
-   * 
+   *
    * @param component the <code>Component</code> to remove
    */
   protected void removeScrollableComponent(Component component) {
@@ -544,8 +544,9 @@ public class ScrollableMenu extends JMenu {
     if (super.getMenuComponentCount() > 4) {
       for (int index = 2; index < super.getMenuComponentCount() - 2; index++) {
         Component component = super.getMenuComponent(index);
-        if (component instanceof MenuElement && component.isEnabled())
+        if (component instanceof MenuElement && component.isEnabled()) {
           return component;
+        }
       }
     }
     return null;
@@ -556,8 +557,9 @@ public class ScrollableMenu extends JMenu {
       for (int index = super.getMenuComponentCount() - 3; index > 1; index--) {
         Component component = super.getMenuComponent(index);
 
-        if (component instanceof MenuElement && component.isEnabled())
+        if (component instanceof MenuElement && component.isEnabled()) {
           return component;
+        }
       }
     }
     return null;
@@ -596,17 +598,18 @@ public class ScrollableMenu extends JMenu {
   private void setPreferedSizeForMenuItems(Component component) {
     if (component instanceof JComponent && !(component instanceof JPopupMenu.Separator)) {
       JComponent jcomp = (JComponent) component;
-      
+
       int width = jcomp.getPreferredSize().width;
       int height = jcomp.getPreferredSize().height;
-            
+
       if (jcomp.getBorder() != null) {
         Insets insets = jcomp.getBorder().getBorderInsets(component);
         width += insets.left + insets.right;
       }
       if (width > maxWidth || height > maxHeight) {
-        if (width > maxWidth)
+        if (width > maxWidth) {
           maxWidth = width;
+        }
         if (height > maxHeight) {
           maxHeight = height;
           setMaxItemToDisplay();
@@ -618,8 +621,9 @@ public class ScrollableMenu extends JMenu {
             jComponent.setPreferredSize(new Dimension(maxWidth, maxHeight));
           }
         }
-      } else
+      } else {
         jcomp.setPreferredSize(new Dimension(maxWidth, maxHeight));
+      }
     }
   }
 
@@ -647,17 +651,17 @@ public class ScrollableMenu extends JMenu {
     }
 
     super.remove(2);
-    
+
     super.add(scrollableItems.elementAt(beginIndex + maxItemsToDisplay), maxItemsToDisplay + 1);
     beginIndex++;
-    
+
     updateScrollingComponentsVisibility();
-    
+
     if (getFirstVisibleComponent() instanceof JSeparator) {
       scrollDownClicked();
     }
   }
-  
+
   private class ScrollUpOrDownButtonItem extends JMenuItem {
 
     private ScrollDirection mDirection = ScrollDirection.UP;
@@ -788,16 +792,16 @@ public class ScrollableMenu extends JMenu {
       }
     }
   }
-  
+
   public MenuElement[] getSubElements() {
     ArrayList<MenuElement> elements = new ArrayList<MenuElement>();
-    
+
     for(Component c : scrollableItems) {
       if(c instanceof MenuElement) {
         elements.add((MenuElement)c);
       }
     }
-    
+
     return elements.toArray(new MenuElement[elements.size()]);
   }
 }

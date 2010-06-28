@@ -9,16 +9,16 @@ public class TvDataLevel {
   
   public TvDataLevel(String id, String desc, boolean isRequired) {
     mId=id;
-    mDescription=desc;   
+    mDescription=desc;
     mIsRequired=isRequired;
   }
   
-  public TvDataLevel(String id, String desc) { 
+  public TvDataLevel(String id, String desc) {
      this(id,desc,false);
   }
   
   public String getId() {
-    return mId; 
+    return mId;
   }
   
   public String getDescription() {

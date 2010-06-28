@@ -31,10 +31,10 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.JLabel;
 import javax.swing.JList;
 
+import tvbrowser.core.ChannelList;
+import tvbrowser.core.DuplicateChannelNameCounter;
 import util.ui.ChannelLabel;
 import devplugin.Channel;
-import tvbrowser.core.DuplicateChannelNameCounter;
-import tvbrowser.core.ChannelList;
 
 /**
  * Creates a new Channellistrender.
@@ -81,7 +81,7 @@ public class FilteredChannelListCellRenderer extends DefaultListCellRenderer {
   }
   
   public Component getListComponent() {
-   return mChannel; 
+   return mChannel;
   }
   
   

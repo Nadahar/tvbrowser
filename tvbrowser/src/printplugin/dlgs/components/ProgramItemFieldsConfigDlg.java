@@ -92,17 +92,17 @@ public class ProgramItemFieldsConfigDlg extends JDialog implements WindowClosing
       public void actionPerformed(ActionEvent event) {
         mResult = OK;
         setVisible(false);
-      }      
+      }
       });
     
     cancelBt.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent event) {
         close();
-      }      
-    }); 
+      }
+    });
     mResult = CANCEL;
     
-    pack(); 
+    pack();
   }
   
   public int getResult() {

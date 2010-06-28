@@ -82,6 +82,7 @@ public class Channel implements Comparable<Channel> {
   /**
    * @deprecated
    */
+  @Deprecated
   private AbstractTvDataService mDataService;
 
   private String mName;
@@ -254,6 +255,7 @@ public class Channel implements Comparable<Channel> {
    * @param country The country of this channel.
    * @deprecated
    */
+  @Deprecated
   public Channel(AbstractTvDataService dataService, String name, String id,
      TimeZone timeZone, String country)
    {
@@ -517,6 +519,7 @@ public class Channel implements Comparable<Channel> {
    * @param hours The new day light saving time correction.
    * @deprecated since 3.0
    */
+  @Deprecated
   public void setDayLightSavingTimeCorrection(int hours) {
     setTimeZoneCorrectionMinutes(hours * 60);
   }
@@ -537,6 +540,7 @@ public class Channel implements Comparable<Channel> {
    * @return The day light saving time correction of this channel.
    * @deprecated since 3.0
    */
+  @Deprecated
   public int getDayLightSavingTimeCorrection() {
     return getTimeZoneCorrectionMinutes() / 60;
   }
@@ -557,6 +561,7 @@ public class Channel implements Comparable<Channel> {
    * @return The data service of this channel
    * @deprecated use getDataServiceProxy() instead
    */
+  @Deprecated
   public AbstractTvDataService getDataService() {
     return mDataService;
   }

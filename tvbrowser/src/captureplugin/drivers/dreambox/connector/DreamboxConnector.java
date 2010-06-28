@@ -555,7 +555,7 @@ public class DreamboxConnector {
     if (new File(mConfig.getMediaplayer()).exists()) {
       try {
         final URL url = new URL("http://" + mConfig.getDreamboxAddress() + "/web/stream.m3u?ref=" + URLEncoder.encode(channel.getReference(), "UTF8"));
-        String cmd[] = {mConfig.getMediaplayer(),  url.toString()};
+        String[] cmd = {mConfig.getMediaplayer(),  url.toString()};
         try {
           Runtime.getRuntime().exec(cmd);
           success = true;

@@ -53,8 +53,9 @@ public class DefaultProgramImportanceSelectionPanel extends JPanel {
     CellConstraints cc = new CellConstraints();
     PanelBuilder pb = new PanelBuilder(showTitle ? new FormLayout("5dlu,pref,5dlu,pref,0dlu:grow","pref,5dlu,pref,fill:0dlu:grow,10dlu,pref") : new FormLayout("5dlu,pref,5dlu,pref,0dlu:grow","pref,fill:0dlu:grow,10dlu,pref"),this);
     
-    if(withDefaultDialogBorder)
+    if(withDefaultDialogBorder) {
       pb.setDefaultDialogBorder();
+    }
     
     mProgramImportanceSelection = new JComboBox(getProgramImportanceNames(true));
     mProgramImportanceSelection.setSelectedIndex(getIndexForImportance(importance));

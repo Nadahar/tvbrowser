@@ -62,7 +62,7 @@ public class FontsSettingsTab implements devplugin.SettingsTab {
   private JLabel mTitleFontLabel;
 
   public JPanel createSettingsPanel() {
-    PanelBuilder mainPanel = new PanelBuilder(new FormLayout("5dlu, 10dlu, pref, 3dlu, pref, fill:3dlu:grow", 
+    PanelBuilder mainPanel = new PanelBuilder(new FormLayout("5dlu, 10dlu, pref, 3dlu, pref, fill:3dlu:grow",
         "pref, 5dlu, pref, 10dlu, pref, 5dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref"));
     mainPanel.setBorder(Borders.DIALOG_BORDER);
     

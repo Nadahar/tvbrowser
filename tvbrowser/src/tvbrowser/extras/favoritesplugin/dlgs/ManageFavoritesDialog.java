@@ -67,6 +67,7 @@ import javax.swing.JSplitPane;
 import javax.swing.JToolBar;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
+import javax.swing.WindowConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TreeSelectionEvent;
@@ -486,7 +487,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
     buttonPn.add(mCloseBt, BorderLayout.EAST);
     getRootPane().setDefaultButton(mCloseBt);
 
-    setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+    setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
     addWindowListener(new WindowAdapter() {
       public void windowClosing(WindowEvent e) {
         close();

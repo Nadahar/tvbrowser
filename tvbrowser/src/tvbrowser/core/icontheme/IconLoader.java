@@ -36,19 +36,20 @@ import tvbrowser.core.Settings;
 import util.misc.OperatingSystem;
 import util.misc.SoftReferenceCache;
 import util.ui.ImageUtilities;
+import util.ui.TVBrowserIcons;
 import devplugin.Plugin;
 import devplugin.ThemeIcon;
 
 /**
  * The IconLoader manages the IconThemes and loads an Icon.
- * 
+ *
  * If the Icon was not found the the current Icon-Theme it tries to
  * load the Icon in the Default-IconTheme.
- * 
+ *
  * IconThemes are Directories that are based on the Icon-Theme Specifications
- * 
+ *
  * http://standards.freedesktop.org/icon-theme-spec/icon-theme-spec-latest.html
- * 
+ *
  * The Icon-Names are based on the Freedesktop Icon Naming Spec:
  * http://cvs.freedesktop.org/[*]checkout[*]/icon-theme/default-icon-theme/spec/icon-naming-spec.xml
  * (please remove the [ ])
@@ -56,11 +57,11 @@ import devplugin.ThemeIcon;
 public class IconLoader {
 
   /**
-   * problems logger 
+   * problems logger
    */
   private static final Logger mLog = java.util.logging.Logger
     .getLogger(IconLoader.class.getName());
-  
+
   /** Singelton */
   private static IconLoader mInstance;
   /** Icon Themes to Load Icons from*/
@@ -74,7 +75,7 @@ public class IconLoader {
 
   /**
    * Private Constructor
-   * 
+   *
    * It creates the IconThemes
    */
   private IconLoader() {
@@ -142,14 +143,14 @@ public class IconLoader {
    */
   public IconTheme[] getAvailableThemes() {
     ArrayList<IconTheme> list = new ArrayList<IconTheme>();
-    
+
     list.addAll(getThemesInDirectory(new File("icons")));
     list.addAll(getThemesInDirectory(new File(Settings.getUserDirectoryName(), "icons")));
 
     if (OperatingSystem.isMacOs()) {
       list.addAll(getThemesInDirectory(new File(Settings.getOSLibraryDirectoryName() + "icons")));
     }
-    
+
     ArrayList<String> zipThemes = new ArrayList<String>(list.size());
     for (IconTheme iconTheme : list) {
     	if (iconTheme instanceof ZipIconTheme) {
@@ -184,7 +185,7 @@ public class IconLoader {
 
   /**
    * Load the IconTheme from a Directory
-   *  
+   *
    * @param iconset Directory with IconTheme
    */
   private void loadIconTheme(File iconset) {
@@ -194,7 +195,7 @@ public class IconLoader {
     if (!iconset.exists()) {
       iconset = mDefaultIconDir;
     }
-    
+
     if (!mDefaultIconDir.getPath().equals(iconset.getPath())) {
       mIconTheme = getIconTheme(iconset);
       if (!mIconTheme.loadTheme()) {
@@ -207,7 +208,7 @@ public class IconLoader {
 
   /**
    * Creates the IconTheme
-   * 
+   *
    * @param icon Theme-Location
    * @return IconTheme
    */
@@ -216,17 +217,17 @@ public class IconLoader {
       // Return Default Implementation if something goes wrong
       return new DirectoryIconTheme(icon);
     }
-    
+
     if (icon.isDirectory()) {
       return new DirectoryIconTheme(icon);
     } else if (icon.getName().toLowerCase().endsWith(".zip")) {
       return new ZipIconTheme(icon);
     }
-    
+
     // Return Default Implementation if something goes wrong
     return new DirectoryIconTheme(icon);
   }
-  
+
   /**
    * Get an Instance of the IconLoader
    * @return Instance
@@ -235,13 +236,13 @@ public class IconLoader {
     if (mInstance == null) {
       mInstance = new IconLoader();
     }
-    
+
     return mInstance;
   }
 
   /**
    * Load a specific Icon
-   * 
+   *
    * @param plugin Plugin that wants to use the Icon
    * @param category Category of the Icon
    * @param icon Name of the Icon without File-Extension
@@ -250,11 +251,11 @@ public class IconLoader {
    */
   public ImageIcon getIconFromTheme(Plugin plugin, String category, String icon, int size) {
     return getIconFromTheme(plugin, new ThemeIcon(category, icon, size));
-  }  
- 
+  }
+
   /**
    * Load a specific Icon
-   * 
+   *
    * @param category Category of the Icon
    * @param icon Name of the Icon without File-Extension
    * @param size Size in Pixel
@@ -266,7 +267,7 @@ public class IconLoader {
 
   /**
    * Load a specific Icon in default size (16 pixels)
-   * 
+   *
    * @param category
    *          Category of the Icon
    * @param icon
@@ -274,12 +275,12 @@ public class IconLoader {
    * @return Icon if found, null if no Icon was found
    */
   public ImageIcon getIconFromTheme(String category, String icon) {
-    return getIconFromTheme(null, new ThemeIcon(category, icon, 16));
+    return getIconFromTheme(null, new ThemeIcon(category, icon, TVBrowserIcons.SIZE_SMALL));
   }
 
   /**
    * Load a specific Icon
-   * 
+   *
    * @param plugin
    *          Plugin that wants to use the Icon
    * @param icon
@@ -292,25 +293,25 @@ public class IconLoader {
     if (imageIcon != null) {
       return imageIcon;
     }
-    
+
     // First Try: Current Icon Theme
     imageIcon = mIconTheme.getIcon(icon);
-    
+
     if (imageIcon != null) {
       mIconCache.put(icon, imageIcon);
       return imageIcon;
     }
-    
+
     // Second Try: Default Icon Theme
     if (mIconTheme != mDefaultIconTheme) {
       imageIcon = mDefaultIconTheme.getIcon(icon);
-      
+
       if (imageIcon != null) {
         mIconCache.put(icon, imageIcon);
         return imageIcon;
       }
     }
- 
+
     if (plugin != null) {
       // Third Try: Plugin Icon Cache
       SoftReferenceCache<ThemeIcon, ImageIcon> pluginCache = mPluginIconCache
@@ -322,18 +323,18 @@ public class IconLoader {
           return imageIcon;
         }
       }
-      
+
       // Forth Try: Icon in Plugin-Jar
       StringBuilder buffer = new StringBuilder("/").append(
           plugin.getClass().getPackage().getName()).append("/icons/").append(
           icon.getSize()).append("x").append(icon.getSize()).append("/")
           .append(icon.getCategory()).append("/").append(icon.getName())
           .append(".png");
-            
+
       if (plugin.getClass().getResourceAsStream(buffer.toString()) != null) {
         try {
-          imageIcon = ImageUtilities.createImageIconFromJar(buffer.toString(), plugin.getClass()); 
-          
+          imageIcon = ImageUtilities.createImageIconFromJar(buffer.toString(), plugin.getClass());
+
           if (imageIcon != null){
             if (pluginCache == null) {
               pluginCache = new SoftReferenceCache<ThemeIcon, ImageIcon>();
@@ -346,15 +347,15 @@ public class IconLoader {
         }
       }
     }
-    
+
     // Last Try: Icon in tvbrowser.jar
     StringBuilder buffer = new StringBuilder("/icons/").append(icon.getSize())
         .append("x").append(icon.getSize()).append("/").append(
             icon.getCategory()).append("/").append(icon.getName()).append(
             ".png");
-     
+
     if (getClass().getResourceAsStream(buffer.toString()) != null) {
-      imageIcon = ImageUtilities.createImageIconFromJar(buffer.toString(), getClass()); 
+      imageIcon = ImageUtilities.createImageIconFromJar(buffer.toString(), getClass());
       return imageIcon;
     }
 

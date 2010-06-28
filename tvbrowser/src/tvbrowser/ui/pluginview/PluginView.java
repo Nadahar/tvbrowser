@@ -253,12 +253,12 @@ public class PluginView extends JPanel implements MouseListener, KeyListener {
         boolean sel,
         boolean expanded,
         boolean leaf, int row,
-        boolean hasFocus) {
-      JLabel label = (JLabel)super.getTreeCellRendererComponent(tree,value,sel,expanded,leaf,row,hasFocus);
+        boolean cellHasFocus) {
+      JLabel label = (JLabel)super.getTreeCellRendererComponent(tree,value,sel,expanded,leaf,row,cellHasFocus);
 
       if (label != null) {
         label.setBackground(tree.getBackground());
-        label.setOpaque(!sel && !hasFocus);
+        label.setOpaque(!sel && !cellHasFocus);
 
         if (leaf && value instanceof Node) {
           Node node = (Node)value;

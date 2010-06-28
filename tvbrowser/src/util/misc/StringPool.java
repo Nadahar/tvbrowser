@@ -37,18 +37,19 @@ public class StringPool {
 //  private static int lastOutput = 0;
 
   public static String getString(String input) {
-    if (input == null)
+    if (input == null) {
       return null;
+    }
 
     String cached = stringMap.get(input);
     if (cached != null) {
       savedBytes += stringBytes(input);
-/*      
+/*
       if (savedBytes >= lastOutput + 2000) {
         lastOutput = savedBytes;
         System.out.println("saved " + savedBytes + " bytes using String pool with " + stringMap.size() + " elements");
       }
-*/      
+*/
       return cached;
     }
     else {

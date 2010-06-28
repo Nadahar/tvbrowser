@@ -43,14 +43,14 @@ public class TVRaterFilter extends PluginsFilterComponent {
     private static final Localizer mLocalizer = Localizer.getLocalizerFor(TVRaterFilter.class);
     
     /** Accept-Value*/
-    private int _value = 3;
+    private int mValue = 3;
     /** Show programs that are better or worse than the <code>_value</code>*/
-    private boolean _best = true;
+    private boolean mBest = true;
 
     /** Settings: show only good or bad programs*/
-    private JComboBox _betterCombo;
+    private JComboBox mBetterCombo;
     /** Settings: show only ratings that are better/worse than or equal this value*/
-    private RatingComboBox _ratingBox;
+    private RatingComboBox mRatingBox;
 
     /**
      * @return Name of the Filter
@@ -75,12 +75,13 @@ public class TVRaterFilter extends PluginsFilterComponent {
     public boolean accept(Program program) {
         Rating rating = TVRaterPlugin.getInstance().getRating(program);
 
-        if (rating == null)
-            return false;
+        if (rating == null) {
+          return false;
+        }
 
-        if (_best && (rating.getOverallRating() >= _value)) {
+        if (mBest && (rating.getOverallRating() >= mValue)) {
             return true;
-        } else if (!_best && (rating.getOverallRating() <= _value)) {
+        } else if (!mBest && (rating.getOverallRating() <= mValue)) {
             return true;
         }
 
@@ -96,8 +97,8 @@ public class TVRaterFilter extends PluginsFilterComponent {
      */
     public void read(ObjectInputStream in, int version) throws IOException, ClassNotFoundException {
         if (version >= 1) {
-            _value = in.readInt();
-            _best = in.readBoolean();
+            mValue = in.readInt();
+            mBest = in.readBoolean();
         }
     }
 
@@ -107,8 +108,8 @@ public class TVRaterFilter extends PluginsFilterComponent {
      * @throws IOException Exception while storing the data
      */
     public void write(ObjectOutputStream out) throws IOException {
-        out.writeInt(_value);
-        out.writeBoolean(_best);
+        out.writeInt(mValue);
+        out.writeBoolean(mBest);
     }
 
     @Override
@@ -118,31 +119,32 @@ public class TVRaterFilter extends PluginsFilterComponent {
         CellConstraints cc = new CellConstraints();
 
         panel.add(new JLabel(mLocalizer.msg("programsThatAre", "Programs that are")), cc.xy(1,1));
-        _betterCombo = new JComboBox(new String[] {
+        mBetterCombo = new JComboBox(new String[] {
             mLocalizer.msg("betterOrEqual", "better than or equal to"),
             mLocalizer.msg("worseOrEqual", "inferior or equal to")
         });
 
-        if (_best)
-            _betterCombo.setSelectedIndex(0);
-        else
-            _betterCombo.setSelectedIndex(1);
+        if (mBest) {
+          mBetterCombo.setSelectedIndex(0);
+        } else {
+          mBetterCombo.setSelectedIndex(1);
+        }
 
-        panel.add(_betterCombo, cc.xy(3,1));
+        panel.add(mBetterCombo, cc.xy(3,1));
 
         panel.add(new JLabel(mLocalizer.msg("thisRating", "this rating") + ":"), cc.xy(1,3));
 
         Rating rating = new Rating("");
-        rating.setOverallRating(_value);
-        _ratingBox = new RatingComboBox(rating, Rating.OVERALL_RATING_KEY);
-        panel.add(_ratingBox, cc.xy(3,3));
+        rating.setOverallRating(mValue);
+        mRatingBox = new RatingComboBox(rating, Rating.OVERALL_RATING_KEY);
+        panel.add(mRatingBox, cc.xy(3,3));
 
         return panel;
     }
 
     @Override
     public void saveSettings() {
-        _best = _betterCombo.getSelectedIndex() < 1;
-        _value = _ratingBox.getSelectedIndex();
+        mBest = mBetterCombo.getSelectedIndex() < 1;
+        mValue = mRatingBox.getSelectedIndex();
     }
 }

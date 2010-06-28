@@ -80,7 +80,7 @@ public class HttpDataSource implements DataSource {
         nested = nested.getCause();
       }
 
-      // There is no FileNotFoundException -> This is a real error      
+      // There is no FileNotFoundException -> This is a real error
       throw new UpdateException("Checking file existence failed: "
         + mBaseUrl + fileName, exc);
     }

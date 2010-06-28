@@ -59,7 +59,7 @@ public class LicenseBox extends JDialog implements ActionListener,WindowClosingI
   private boolean mMustAgree;
   
   private static final util.ui.Localizer mLocalizer
-      = util.ui.Localizer.getLocalizerFor(LicenseBox.class); 
+      = util.ui.Localizer.getLocalizerFor(LicenseBox.class);
   
   public LicenseBox(JFrame parent, String licenseTxt, boolean mustAgree) {
     
@@ -123,7 +123,7 @@ public class LicenseBox extends JDialog implements ActionListener,WindowClosingI
       btnPanel.add(mDisagreeBt);
       btnPanel.add(mAgreeBt);
       
-      mRemainingSecs=5;    
+      mRemainingSecs=5;
       mTimer = new Timer(1000, new ActionListener() {
         public void actionPerformed(ActionEvent evt) {
           mRemainingSecs--;
@@ -137,7 +137,7 @@ public class LicenseBox extends JDialog implements ActionListener,WindowClosingI
             }
           }
         });
-      mTimer.start();      
+      mTimer.start();
     }
     else {
       btnPanel.add(mCloseBt);
@@ -173,13 +173,14 @@ public class LicenseBox extends JDialog implements ActionListener,WindowClosingI
   }
   
   public boolean agreed() {
-    return mAgreed;    
+    return mAgreed;
   }
 
 
   public void close() {
-   if(!mMustAgree || agreed() )
-     dispose();
+   if(!mMustAgree || agreed() ) {
+    dispose();
+  }
   }
   
 }

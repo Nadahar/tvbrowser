@@ -44,7 +44,7 @@ public class ProgramListDialog extends JDialog implements WindowClosingIf {
     setModal(true);
         setTitle(mLocalizer.msg("ListDialogTitle", "Programs with \"{0}\"", title));
 
-        _title = title;
+        mTitle = title;
 
         generateList();
         createGUI();
@@ -54,22 +54,22 @@ public class ProgramListDialog extends JDialog implements WindowClosingIf {
      * Genereates the List of Programs
      */
     private void generateList() {
-        if (_title == null) {
+        if (mTitle == null) {
             return;
         }
         
-        _programList = new Vector<Program>();
+        mProgramVector = new Vector<Program>();
 
         Channel[] channels = Plugin.getPluginManager().getSubscribedChannels();
 
         Date date = new Date();
         for (int d = 0; d < 31; d++) {
 
-            for (int i = 0; i < channels.length; i++) {
-              for (Iterator<Program> it = Plugin.getPluginManager().getChannelDayProgram(date, channels[i]); it.hasNext();) {
+            for (Channel channel : channels) {
+              for (Iterator<Program> it = Plugin.getPluginManager().getChannelDayProgram(date, channel); it.hasNext();) {
                   Program program = it.next();
-                  if ((program != null) && (program.getTitle() != null) && (program.getTitle().equalsIgnoreCase(_title))) {
-                      _programList.add(program);
+                  if ((program != null) && (program.getTitle() != null) && (program.getTitle().equalsIgnoreCase(mTitle))) {
+                      mProgramVector.add(program);
                   }
               }
             }
@@ -87,17 +87,17 @@ public class ProgramListDialog extends JDialog implements WindowClosingIf {
         JPanel content = (JPanel) this.getContentPane();
         content.setLayout(new BorderLayout());
 
-        Program[] prg = new Program[_programList.size()];
+        Program[] prg = new Program[mProgramVector.size()];
         
-        for (int i = 0; i < _programList.size(); i++) {
-            prg[i] = _programList.get(i);
+        for (int i = 0; i < mProgramVector.size(); i++) {
+            prg[i] = mProgramVector.get(i);
         }
         
-        _programJList = new ProgramList(prg);
+        mProgramList = new ProgramList(prg);
 
-        _programJList.addMouseListeners(TVRaterPlugin.getInstance());
+        mProgramList.addMouseListeners(TVRaterPlugin.getInstance());
         
-        JScrollPane scroll = new JScrollPane(_programJList);
+        JScrollPane scroll = new JScrollPane(mProgramList);
 
         content.add(scroll, BorderLayout.CENTER);
 
@@ -119,11 +119,11 @@ public class ProgramListDialog extends JDialog implements WindowClosingIf {
 
 
     
-    private String _title;
+    private String mTitle;
 
-    private ProgramList _programJList;
+    private ProgramList mProgramList;
 
-    private Vector<Program> _programList;
+    private Vector<Program> mProgramVector;
 
     private static final Localizer mLocalizer = Localizer.getLocalizerFor(ProgramListDialog.class);
 

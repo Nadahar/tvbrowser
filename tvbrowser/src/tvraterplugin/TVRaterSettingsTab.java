@@ -51,22 +51,22 @@ import devplugin.SettingsTab;
 public class TVRaterSettingsTab implements SettingsTab {
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(TVRaterSettingsTab.class);
 
-  private TVRaterSettings _settings;
+  private TVRaterSettings mSettings;
 
-  private JTextField _name;
+  private JTextField mName;
 
-  private JPasswordField _password;
+  private JPasswordField mPassword;
 
   // private JCheckBox _includeFav;
-  private JCheckBox _ownRating;
+  private JCheckBox mOwnRating;
 
-  private JComboBox _updateTime;
+  private JComboBox mUpdateTime;
 
   /**
    * @param settings
    */
   public TVRaterSettingsTab(TVRaterSettings settings) {
-    _settings = settings;
+    mSettings = settings;
   }
 
   public JPanel createSettingsPanel() {
@@ -77,49 +77,49 @@ public class TVRaterSettingsTab implements SettingsTab {
     PanelBuilder pb = new PanelBuilder(layout);
     CellConstraints cc = new CellConstraints();
     
-    _ownRating = new JCheckBox(mLocalizer.msg("ownRating", "Use own rating if available"), _settings.getPreferOwnRating());
+    mOwnRating = new JCheckBox(mLocalizer.msg("ownRating", "Use own rating if available"), mSettings.getPreferOwnRating());
 
     String[] updateStrings = { mLocalizer.msg("update", "only when updating TV listings"),
         mLocalizer.msg("everyTime", "every Time a rating is made"),
         mLocalizer.msg("eachStart", "at each start of TV-Browser"), mLocalizer.msg("manual", "manual Update"), };
     
-    _updateTime = new JComboBox(updateStrings);
-    switch (_settings.getUpdateInterval()) {
+    mUpdateTime = new JComboBox(updateStrings);
+    switch (mSettings.getUpdateInterval()) {
     case OnDataUpdate: {
-      _updateTime.setSelectedIndex(0);
+      mUpdateTime.setSelectedIndex(0);
       break;
     }
     case OnRating: {
-      _updateTime.setSelectedIndex(1);
+      mUpdateTime.setSelectedIndex(1);
       break;
     }
     case OnStart: {
-      _updateTime.setSelectedIndex(2);
+      mUpdateTime.setSelectedIndex(2);
       break;
     }
     case Manually: {
-      _updateTime.setSelectedIndex(3);
+      mUpdateTime.setSelectedIndex(3);
       break;
     }
     default: {
-      _updateTime.setSelectedIndex(0);
+      mUpdateTime.setSelectedIndex(0);
     }
     }
     
-    _name = new JTextField(_settings.getName());    
-    _password = new JPasswordField(IOUtilities.xorEncode(_settings.getPassword(), 21));
+    mName = new JTextField(mSettings.getName());
+    mPassword = new JPasswordField(IOUtilities.xorEncode(mSettings.getPassword(), 21));
     
     JButton newAccount = new JButton(mLocalizer.msg("newAccount", "Create new Account"));
     JButton lostPassword = new JButton(mLocalizer.msg("lostPassword", "Lost Password?"));
     
-    pb.add(_ownRating, cc.xyw(2,2,6));
+    pb.add(mOwnRating, cc.xyw(2,2,6));
     pb.addLabel(mLocalizer.msg("transmit", "Transmit data") + ":", cc.xy(2,4));
-    pb.add(_updateTime, cc.xyw(4,4,4));
+    pb.add(mUpdateTime, cc.xyw(4,4,4));
     pb.addSeparator(mLocalizer.msg("accountsetting", "Account settings"), cc.xyw(1,6,8));
     pb.addLabel(mLocalizer.msg("name", "Name") + ":", cc.xy(2,8));
-    pb.add(_name, cc.xyw(4,8,4));
+    pb.add(mName, cc.xyw(4,8,4));
     pb.addLabel(mLocalizer.msg("password", "Password") + ":", cc.xy(2,10));
-    pb.add(_password, cc.xyw(4,10,4));
+    pb.add(mPassword, cc.xyw(4,10,4));
     pb.add(newAccount, cc.xy(5,12));
     pb.add(lostPassword, cc.xy(7,12));
     
@@ -147,28 +147,28 @@ public class TVRaterSettingsTab implements SettingsTab {
   }
 
   public void saveSettings() {
-    _settings.setName(_name.getText());
-    _settings.setPassword(IOUtilities.xorEncode(new String(_password.getPassword()), 21));
-    _settings.setPreferOwnRating(_ownRating.isSelected());
-    switch (_updateTime.getSelectedIndex()) {
+    mSettings.setName(mName.getText());
+    mSettings.setPassword(IOUtilities.xorEncode(new String(mPassword.getPassword()), 21));
+    mSettings.setPreferOwnRating(mOwnRating.isSelected());
+    switch (mUpdateTime.getSelectedIndex()) {
     case 0: {
-      _settings.setUpdateInterval(UpdateInterval.OnDataUpdate);
+      mSettings.setUpdateInterval(UpdateInterval.OnDataUpdate);
       break;
     }
     case 1: {
-      _settings.setUpdateInterval(UpdateInterval.OnRating);
+      mSettings.setUpdateInterval(UpdateInterval.OnRating);
       break;
     }
     case 2: {
-      _settings.setUpdateInterval(UpdateInterval.OnStart);
+      mSettings.setUpdateInterval(UpdateInterval.OnStart);
       break;
     }
     case 3: {
-      _settings.setUpdateInterval(UpdateInterval.Manually);
+      mSettings.setUpdateInterval(UpdateInterval.Manually);
       break;
     }
     default: {
-      _settings.setUpdateInterval(UpdateInterval.OnDataUpdate);
+      mSettings.setUpdateInterval(UpdateInterval.OnDataUpdate);
     }
     }
   }

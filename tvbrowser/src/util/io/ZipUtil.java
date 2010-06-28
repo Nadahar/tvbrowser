@@ -75,17 +75,17 @@ public class ZipUtil {
     System.out.println(">" + directory.getAbsolutePath());
     // Compress the files
     if (files != null) {
-      for (int i = 0; i < files.length; i++) {
-        if (files[i].isDirectory()) {
-          zipDirFiles(out, files[i], parentlength);
+      for (File file : files) {
+        if (file.isDirectory()) {
+          zipDirFiles(out, file, parentlength);
         } else {
-          System.out.println(">" + files[i].getAbsolutePath());
+          System.out.println(">" + file.getAbsolutePath());
           byte[] buf = new byte[1024];
   
-          FileInputStream in = new FileInputStream(files[i]);
+          FileInputStream in = new FileInputStream(file);
   
           // Add ZIP entry to output stream.
-          out.putNextEntry(new ZipEntry(files[i].getAbsolutePath().substring(parentlength)));
+          out.putNextEntry(new ZipEntry(file.getAbsolutePath().substring(parentlength)));
   
           // Transfer bytes from the file to the ZIP file
           int len;

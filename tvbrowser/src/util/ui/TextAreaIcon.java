@@ -124,7 +124,7 @@ public class TextAreaIcon implements Icon {
   /**
    * Set the Text of this Icon
    * @param textReader Text in this Icon
-   * @throws IOException 
+   * @throws IOException
    */
   public void setText(Reader textReader) throws IOException {
     if (textReader == null) {
@@ -150,7 +150,7 @@ public class TextAreaIcon implements Icon {
     } else {
       return (mFont.getSize() + mLineSpace) * mTextLineArr.length + 2 * mLineSpace;
     }
-  }  
+  }
   
   
   

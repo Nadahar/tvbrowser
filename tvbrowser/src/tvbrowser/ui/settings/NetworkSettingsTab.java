@@ -39,19 +39,19 @@ public class NetworkSettingsTab implements SettingsTab {
     EnhancedPanelBuilder pb = new EnhancedPanelBuilder("5dlu, pref, 3dlu, 0dlu:grow");
     pb.setDefaultDialogBorder();
     
-    CellConstraints cc = new CellConstraints(); 
+    CellConstraints cc = new CellConstraints();
     
     pb.addParagraph(mLocalizer.msg("connectionTestTitle","Internet connection test"));
     
     pb.addRow();
-    pb.add(mConnectionTest = new JCheckBox(mLocalizer.msg("connectionTestText","Internet connection test activated"), Settings.propInternetConnectionCheck.getBoolean()), cc.xyw(2, pb.getRowCount(), 3));    
+    pb.add(mConnectionTest = new JCheckBox(mLocalizer.msg("connectionTestText","Internet connection test activated"), Settings.propInternetConnectionCheck.getBoolean()), cc.xyw(2, pb.getRowCount(), 3));
 
     pb.addRow();
     pb.add(mNetworkCheckTimeout = new JSpinner(new SpinnerNumberModel(Settings.propNetworkCheckTimeout.getInt()/1000,10,90,5)), cc.xy(2, pb.getRowCount()));
     final JLabel label = pb.addLabel(mLocalizer.msg("waitTime","Seconds maximum waiting time for connection test"), cc.xy(4, pb.getRowCount()));
     
     pb.addRow();
-    pb.add(new JLabel(mLocalizer.msg("sites", "Websites used for checking")), cc.xyw(2, pb.getRowCount(), 3));    
+    pb.add(new JLabel(mLocalizer.msg("sites", "Websites used for checking")), cc.xyw(2, pb.getRowCount(), 3));
     
     pb.addRow();
     final JList urlList = new JList(NetworkUtilities.getConnectionCheckUrls());

@@ -41,7 +41,7 @@ class GenreSettings extends PropertyBasedSettings {
   }
 
   public void setDays(int days) {
-    set(SETTINGS_DAYS, days);    
+    set(SETTINGS_DAYS, days);
   }
   
   public void setHiddenGenres(final Object[] hidden) {

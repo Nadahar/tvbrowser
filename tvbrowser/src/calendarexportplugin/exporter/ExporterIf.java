@@ -27,14 +27,14 @@ import calendarexportplugin.CalendarExportSettings;
 import devplugin.Program;
 
 /**
- * This interface must be implemented for all export-methods 
+ * This interface must be implemented for all export-methods
  * 
  * @author bodum
  */
 public interface ExporterIf {
 
   /**
-   * Export programs 
+   * Export programs
    * 
    * @param programs this programs
    * @param settings the settings
@@ -49,7 +49,7 @@ public interface ExporterIf {
   
   /**
    * Show settings-dialog
-   * @param settings Show Dialog with this settings 
+   * @param settings Show Dialog with this settings
    */
   public void showSettingsDialog(CalendarExportSettings settings);
   
@@ -61,5 +61,5 @@ public interface ExporterIf {
   /**
    * @return name of the icon to display for this exporter
    */
-  public String getIconName();  
+  public String getIconName();
 }

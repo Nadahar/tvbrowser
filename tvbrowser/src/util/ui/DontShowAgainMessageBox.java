@@ -22,10 +22,10 @@
  */
 package util.ui;
 
-import devplugin.Plugin;
-import tvbrowser.core.Settings;
-
 import java.awt.Component;
+
+import tvbrowser.core.Settings;
+import devplugin.Plugin;
 
 /**
  * This class offers a messagebox that shows a dialog with a checkbox to disable the dialog
@@ -111,5 +111,9 @@ public class DontShowAgainMessageBox {
     } else {
       Settings.propHiddenMessageBoxes.addItem(plugin.getId() + "."+ messageBoxId);
     }
+  }
+
+  private DontShowAgainMessageBox() {
+    // create this message box via static functions only
   }
 }

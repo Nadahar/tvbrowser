@@ -35,7 +35,7 @@ public class Node {
   private Node mParent;
   private Component mLeafComponent;
   private Component mContent;
-  private ArrayList<Node> mNodes;  
+  private ArrayList<Node> mNodes;
   private ViewProperty mProperty;
   private View mView;
   private boolean mIsValid;
@@ -83,7 +83,7 @@ public class Node {
       ViewProperty prop = getProperty();
       mView.setProperty(prop);
       mContent = mView.getContent();
-    }    
+    }
     mIsValid = true;
     return mContent;
   }
@@ -133,8 +133,8 @@ public class Node {
       mView.storeProperties();
     }
     Node[] nodes = getNodes();
-    for (int i=0; i<nodes.length; i++) {
-      nodes[i].storeProperties();
+    for (Node node : nodes) {
+      node.storeProperties();
     }
   }
   
@@ -143,9 +143,9 @@ public class Node {
           mView.update();
         }
         Node[] nodes = getNodes();
-        for (int i=0; i<nodes.length; i++) {
-          nodes[i].update();
-        } 
+        for (Node node : nodes) {
+          node.update();
+        }
   }
   
   public boolean hasComponent() {

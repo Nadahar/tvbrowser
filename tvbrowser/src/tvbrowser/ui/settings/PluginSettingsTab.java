@@ -158,7 +158,7 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
       
     };
     mTableModel.setColumnCount(2);
-    mTableModel.setColumnIdentifiers(new String[] {mLocalizer.msg("active","Active"),mLocalizer.msg("plugin","Plugin")});    
+    mTableModel.setColumnIdentifiers(new String[] {mLocalizer.msg("active","Active"),mLocalizer.msg("plugin","Plugin")});
 
     mTable = new JTable(mTableModel);
     mTable.getTableHeader().setReorderingAllowed(false);
@@ -510,8 +510,8 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
     
     Arrays.sort(pluginList, new PluginProxy.Comparator());
 
-    for (int i = 0; i < pluginList.length; i++) {
-      mTableModel.addRow(new Object[]{Boolean.valueOf(pluginList[i].isActivated()),pluginList[i]});
+    for (PluginProxy element : pluginList) {
+      mTableModel.addRow(new Object[]{Boolean.valueOf(element.isActivated()),element});
     }
 
   }

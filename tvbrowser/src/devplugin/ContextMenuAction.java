@@ -51,7 +51,7 @@ public class ContextMenuAction extends AbstractAction {
     }
 
     public ContextMenuAction() {
-    }  
+    }
 
     public void setText(String text) {
       putValue(Action.NAME, text);

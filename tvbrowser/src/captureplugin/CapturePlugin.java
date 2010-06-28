@@ -479,7 +479,7 @@ public class CapturePlugin extends devplugin.Plugin {
                     return true;
                 } else if (command.equals(RECORD)) {
                     ArrayList<Program> successfullPrograms = new ArrayList<Program>(programArr.length);
-                  
+
                     for (Program program:programArr) {
                         if(device.add(getParentFrame(), program)) {
                           successfullPrograms.add(program);
@@ -575,7 +575,7 @@ public class CapturePlugin extends devplugin.Plugin {
           }
         });
 
-        int columnWidth[] = new int[5];
+        int[] columnWidth = new int[5];
 
         for(int i = 0; i < columnWidth.length; i++) {
           columnWidth[i] =  UiUtilities.getStringWidth(table.getFont(),model.getColumnName(i)) + 10;

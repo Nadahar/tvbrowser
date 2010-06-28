@@ -32,12 +32,13 @@ import java.awt.Frame;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 
-import com.jgoodies.forms.factories.Borders;
-
 import printplugin.dlgs.components.ChannelSelectionPanel;
 import printplugin.dlgs.components.DateRangePanel;
 import printplugin.dlgs.components.FilterSelectionPanel;
 import printplugin.dlgs.components.TimeRangePanel;
+
+import com.jgoodies.forms.factories.Borders;
+
 import devplugin.Channel;
 import devplugin.Date;
 import devplugin.ProgramFilter;

@@ -28,7 +28,7 @@ package tvbrowser.core.plugin;
 public interface PluginStateListener {
   
   public void pluginActivated(PluginProxy plugin);
-  public void pluginDeactivated(PluginProxy plugin); 
+  public void pluginDeactivated(PluginProxy plugin);
   public void pluginLoaded(PluginProxy plugin);
   public void pluginUnloaded(PluginProxy plugin);
   

@@ -87,7 +87,8 @@ public class ParamCheckDialog extends JDialog implements WindowClosingIf {
    *          Check this String
    * @deprecated since 3.0
    */
-	public ParamCheckDialog(JDialog dialog, String check) {
+	@Deprecated
+  public ParamCheckDialog(JDialog dialog, String check) {
 	  this((Window) dialog, check);
 	}
 
@@ -122,6 +123,7 @@ public class ParamCheckDialog extends JDialog implements WindowClosingIf {
    *          Check this String
    * @deprecated since 3.0
    */
+  @Deprecated
   public ParamCheckDialog(JDialog dialog, ParamLibrary lib, String check) {
     this((Window) dialog, lib, check);
 	}
@@ -135,7 +137,8 @@ public class ParamCheckDialog extends JDialog implements WindowClosingIf {
    *          Check this String
    * @deprecated since 3.0
    */
-	public ParamCheckDialog(JFrame frame, String check) {
+	@Deprecated
+  public ParamCheckDialog(JFrame frame, String check) {
 	  this((Window) frame, check);
 	}
 
@@ -150,7 +153,8 @@ public class ParamCheckDialog extends JDialog implements WindowClosingIf {
    *          Check this String
    * @deprecated since 3.0
    */
-	public ParamCheckDialog(JFrame frame, ParamLibrary lib, String check) {
+	@Deprecated
+  public ParamCheckDialog(JFrame frame, ParamLibrary lib, String check) {
 	  this((Window) frame, lib, check);
 	}
 	
@@ -176,7 +180,7 @@ public class ParamCheckDialog extends JDialog implements WindowClosingIf {
 		 
     area.setText(analyseString());
     
-    final JScrollPane spane = new JScrollPane(area); 
+    final JScrollPane spane = new JScrollPane(area);
 		panel.add(spane, cc.xyw(1,3, 3));
 		
     SwingUtilities.invokeLater(new Runnable() {

@@ -49,7 +49,7 @@ public class JavaVersion {
   public static final int VERSION_1_7 = 8;
 
   /**
-   * Returns the Version of Java. 
+   * Returns the Version of Java.
    * @return VERSION_ - Value acording to the Java-Version
    */
   public static int getVersion() {

@@ -122,7 +122,7 @@ public class PropertiesConfiguration implements Configuration {
      }
      else {
        mChannelgroups=s.split(":");
-     }  
+     }
     
   }
 
@@ -191,7 +191,7 @@ public class PropertiesConfiguration implements Configuration {
   }
 
   public String[] getChannelgroups() {
-    return mChannelgroups; 
+    return mChannelgroups;
   }
 
 }

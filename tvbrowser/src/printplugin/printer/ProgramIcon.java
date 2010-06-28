@@ -150,15 +150,15 @@ public class ProgramIcon implements Icon {
     ArrayList<Icon> list = new ArrayList<Icon>();
 
     String[] iconPluginArr = mSettings.getProgramTableIconPlugins();
-    for (int i = 0; i < iconPluginArr.length; i++) {
+    for (String element : iconPluginArr) {
       // Add the icons of this plugin
       PluginManager mng = Plugin.getPluginManager();
-      PluginAccess plugin = mng.getActivatedPluginForId(iconPluginArr[i]);
+      PluginAccess plugin = mng.getActivatedPluginForId(element);
       if (plugin != null) {
         Icon[] iconArr = plugin.getProgramTableIcons(program);
         if (iconArr != null) {
-          for (int j = 0; j < iconArr.length; j++) {
-            list.add(iconArr[j]);
+          for (Icon element2 : iconArr) {
+            list.add(element2);
           }
         }
       }
@@ -320,8 +320,8 @@ public class ProgramIcon implements Icon {
         y = Math.min(y, height - 1);
 
         if (mSettings.getPaintPluginMarks()) {
-          for (int i = 0; i < markedByPluginArr.length; i++) {
-            Icon[] icons = markedByPluginArr[i].getMarkIcons(mProgram);
+          for (Marker element : markedByPluginArr) {
+            Icon[] icons = element.getMarkIcons(mProgram);
             if (icons != null) {
               for(Icon icon : icons) {
                 x -= icon.getIconWidth();
@@ -335,10 +335,10 @@ public class ProgramIcon implements Icon {
         if (mIconArr != null) {
           x = 2;
           y = mSettings.getTimeFont().getSize() + 3;
-          for (int i = 0; i < mIconArr.length; i++) {
-            int iconHeight = mIconArr[i].getIconHeight();
+          for (Icon element : mIconArr) {
+            int iconHeight = element.getIconHeight();
             if ((y + iconHeight) < mHeight) {
-              mIconArr[i].paintIcon(component, grp, x, y);
+              element.paintIcon(component, grp, x, y);
               y += iconHeight + 2;
             }
           }

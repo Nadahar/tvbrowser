@@ -200,10 +200,11 @@ public final class ProgramReceiveTarget implements Comparable<ProgramReceiveTarg
   }
 
   public boolean equals(Object o) {
-    if(o == null)
+    if(o == null) {
       return false;
-    else if(o instanceof ProgramReceiveTarget)
+    } else if(o instanceof ProgramReceiveTarget) {
       return ((ProgramReceiveTarget)o).mReceiveIfId.compareTo(mReceiveIfId) == 0 && ((ProgramReceiveTarget)o).mTargetId.compareTo(mTargetId) == 0;
+    }
 
     return false;
   }
@@ -230,8 +231,9 @@ public final class ProgramReceiveTarget implements Comparable<ProgramReceiveTarg
    * @return True if the receiveTarget is the default ProgramReceiveTarget for the ProgramReceiveIf.
    */
   public static boolean isDefaultProgramReceiveTargetForProgramReceiveIf(ProgramReceiveIf receiveIf, ProgramReceiveTarget receiveTarget) {
-    if(receiveIf == null || receiveTarget == null)
+    if(receiveIf == null || receiveTarget == null) {
       return false;
+    }
 
     return receiveIf.getId().compareTo(receiveTarget.mReceiveIfId) == 0 && receiveTarget.mTargetId.compareTo("NULL") == 0;
   }
@@ -245,8 +247,9 @@ public final class ProgramReceiveTarget implements Comparable<ProgramReceiveTarg
    * @return True if this instance is using the id and contains to the given ProgramReceiveIf.
    */
   public boolean isReceiveTargetWithIdOfProgramReceiveIf(ProgramReceiveIf receiveIf, String id) {
-    if(receiveIf == null || id == null)
+    if(receiveIf == null || id == null) {
       return false;
+    }
 
     return receiveIf.getId().compareTo(mReceiveIfId) == 0 && id.compareTo(mTargetId) == 0;
   }

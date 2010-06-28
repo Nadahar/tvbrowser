@@ -77,7 +77,7 @@ public class UpdateDlg extends JDialog implements ActionListener, WindowClosingI
   private TvDataServiceCheckBox[] mDataServiceCbArr;
   private TvDataServiceProxy[] mSelectedTvDataServiceArr;
   
-  private JCheckBox mAutoUpdate;  
+  private JCheckBox mAutoUpdate;
   
   private JRadioButton mStartUpdate;
   private JRadioButton mRecurrentUpdate;
@@ -231,8 +231,8 @@ public class UpdateDlg extends JDialog implements ActionListener, WindowClosingI
     if (serviceNames == null) {
       return true;
     }
-    for (int i = 0; i < serviceNames.length; i++) {
-      if (service.getId().compareTo(serviceNames[i]) == 0) {
+    for (String serviceName : serviceNames) {
+      if (service.getId().compareTo(serviceName) == 0) {
         return true;
       }
     }
@@ -265,9 +265,9 @@ public class UpdateDlg extends JDialog implements ActionListener, WindowClosingI
         mSelectedTvDataServiceArr = getActiveDataServices();
       } else {
         ArrayList<TvDataServiceProxy> dataServiceList = new ArrayList<TvDataServiceProxy>();
-        for (int i = 0; i < mDataServiceCbArr.length; i++) {
-          if (mDataServiceCbArr[i].isSelected()) {
-            dataServiceList.add(mDataServiceCbArr[i].getTvDataService());
+        for (TvDataServiceCheckBox element : mDataServiceCbArr) {
+          if (element.isSelected()) {
+            dataServiceList.add(element.getTvDataService());
           }
         }
         mSelectedTvDataServiceArr = new TvDataServiceProxy[dataServiceList

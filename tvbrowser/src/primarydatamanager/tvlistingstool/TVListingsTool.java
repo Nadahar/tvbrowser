@@ -56,7 +56,7 @@ public class TVListingsTool {
           System.out.println("option '-url' without mirror url");
           System.exit(1);
         } else {
-          mirrorUrlName = args[i+1];       
+          mirrorUrlName = args[i+1];
         }
       }
       else if (args[i].equalsIgnoreCase("-groups")) {

@@ -46,7 +46,7 @@ public class ChannelPanel extends JPanel {
   private int mColumnWidth;
   private ProgramTableChannelLabel[] mLabelArr;
   /** Height of Panel, if an Icon is > 15, it get adjusted to it's needs */
-  private int mColumnHeight = 15;  
+  private int mColumnHeight = 15;
   
   public ChannelPanel(int columnWidth, Channel[] channelArr) {
     setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
@@ -68,10 +68,10 @@ public class ChannelPanel extends JPanel {
     mLabelArr = new ProgramTableChannelLabel[channelArr.length];
     
     for (int i = 0; i < mLabelArr.length; i++) {
-      mLabelArr[i]=new ProgramTableChannelLabel(channelArr[i]);  
+      mLabelArr[i]=new ProgramTableChannelLabel(channelArr[i]);
       add(mLabelArr[i]);
    
-      if ((mLabelArr[i] != null) && (mLabelArr[i].getIcon() != null) && 
+      if ((mLabelArr[i] != null) && (mLabelArr[i].getIcon() != null) &&
               (mLabelArr[i].getIcon().getIconHeight() > mColumnHeight)) {
           mColumnHeight = mLabelArr[i].getIcon().getIconHeight();
       }
@@ -86,18 +86,20 @@ public class ChannelPanel extends JPanel {
   public void setColumnWidth(int columnWidth) {
     mColumnWidth = columnWidth;
     
-    for (int i = 0; i < mLabelArr.length; i++) {
-      mLabelArr[i].setPreferredSize(new Dimension(mColumnWidth, mColumnHeight));
+    for (ProgramTableChannelLabel element : mLabelArr) {
+      element.setPreferredSize(new Dimension(mColumnWidth, mColumnHeight));
     }
-  }  
+  }
 
   protected void updateChannelLabelForChannel(Channel ch) {
-    if(ch == null)
+    if(ch == null) {
       return;
-    for (int i = 0; i < mLabelArr.length; i++)
-      if(mLabelArr[i].getChannel().equals(ch)) {
-        mLabelArr[i].setChannel(ch);
+    }
+    for (ProgramTableChannelLabel element : mLabelArr) {
+      if(element.getChannel().equals(ch)) {
+        element.setChannel(ch);
         break;
       }
+    }
   }
 }

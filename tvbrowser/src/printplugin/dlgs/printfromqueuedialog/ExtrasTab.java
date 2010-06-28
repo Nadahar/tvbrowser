@@ -34,12 +34,12 @@ import java.awt.event.ActionListener;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 
+import printplugin.dlgs.components.ProgramPreviewPanel;
+import printplugin.settings.ProgramIconSettings;
+
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
-
-import printplugin.dlgs.components.ProgramPreviewPanel;
-import printplugin.settings.ProgramIconSettings;
 
 public class ExtrasTab extends JPanel {
 

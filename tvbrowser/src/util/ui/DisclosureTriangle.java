@@ -33,6 +33,7 @@ import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.RootPaneContainer;
+import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 
 /**
@@ -88,7 +89,7 @@ public final class DisclosureTriangle extends JPanel {
     collapsed = true;
     collapseIcon = UIManager.getIcon("Tree.expandedIcon");
     expandIcon = UIManager.getIcon("Tree.collapsedIcon");
-    label = new JLabel(DEFAULT_LABEL_TEXT, expandIcon, JLabel.LEADING);
+    label = new JLabel(DEFAULT_LABEL_TEXT, expandIcon, SwingConstants.LEADING);
 
     label.addMouseListener(new MouseAdapter() {
       /** {@inheritDoc} */

@@ -50,14 +50,14 @@ public class PictureConfigPanel extends JPanel {
 
   /**
    * Creates this panel.
-   *  
+   * 
    * @param update If this panel is for an update of TV-Browser.
    */
   public PictureConfigPanel(boolean update) {
     CellConstraints cc = new CellConstraints();
     PanelBuilder pb = new PanelBuilder(new FormLayout(
         "fill:pref:grow, 10dlu, fill:300dlu:grow, fill:pref:grow",
-        "fill:0dlu:grow, pref, 15dlu, pref, pref, pref, pref, 15dlu, pref, fill:0dlu:grow"), this);    
+        "fill:0dlu:grow, pref, 15dlu, pref, pref, pref, pref, 15dlu, pref, fill:0dlu:grow"), this);
     
     mDownloadAll = new JRadioButton(mLocalizer.msg("allPictures","Download pictures for all programs"));
     mDownloadNoPictures = new JRadioButton(mLocalizer.msg("noPictures","Don't download pictures"));
@@ -102,17 +102,18 @@ public class PictureConfigPanel extends JPanel {
    * Saves the picture settings for TvBrowserDataService.
    */
   public void saveSettings() {
-    if(mTvBrowserDataServiceSettingsPanel instanceof PictureSettingsIf) {      
+    if(mTvBrowserDataServiceSettingsPanel instanceof PictureSettingsIf) {
       PictureSettingsIf pictureIf = ((PictureSettingsIf)mTvBrowserDataServiceSettingsPanel);
       
-      if(mDownloadNoPictures.isSelected())
+      if(mDownloadNoPictures.isSelected()) {
         pictureIf.setPictureState(PictureSettingsIf.NO_PICTURES);
-      else if(mDownloadMorning.isSelected())
+      } else if(mDownloadMorning.isSelected()) {
         pictureIf.setPictureState(PictureSettingsIf.MORNING_PICTURES);
-      else if(mDownloadEvening.isSelected())
+      } else if(mDownloadEvening.isSelected()) {
         pictureIf.setPictureState(PictureSettingsIf.EVENING_PICTURES);
-      else if(mDownloadAll.isSelected())
+      } else if(mDownloadAll.isSelected()) {
         pictureIf.setPictureState(PictureSettingsIf.ALL_PICTURES);
+      }
 
       mTvBrowserDataServiceSettingsPanel.ok();
     }

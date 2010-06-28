@@ -65,7 +65,7 @@ public class SplashScreen extends JWindow implements Splash {
 
   protected String mImgFileName;
 
-  public SplashScreen(final String imgFileName, final int msgX, int msgY, 
+  public SplashScreen(final String imgFileName, final int msgX, int msgY,
       final Color foreground) {
     super();
     mImgFileName = imgFileName;
@@ -93,8 +93,9 @@ public class SplashScreen extends JWindow implements Splash {
           int x = mDraggingPoint.x - xP;
           int y = mDraggingPoint.y - yP;
 
-          if (x != 0 || y != 0)
+          if (x != 0 || y != 0) {
             setLocation(getX() - x, getY() - y);
+          }
         }
       }
 

@@ -50,6 +50,7 @@ import util.ui.Localizer;
 import util.ui.ProgramList;
 import util.ui.ProgramRangeSelectionPanel;
 import captureplugin.CapturePlugin;
+
 import com.jgoodies.forms.builder.ButtonBarBuilder2;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -155,7 +156,7 @@ public class ProgramTimeDialog extends JDialog {
       
       panel.addRow();
       panel.add(new JLabel(mLocalizer.msg("EndTime","End time")), cc.xy(2, panel.getRow()));
-      mEnd =  new TimeDateSpinner(mPrgTime.getEnd());        
+      mEnd =  new TimeDateSpinner(mPrgTime.getEnd());
       panel.add(mEnd, cc.xy(4, panel.getRow()));
       
       if (mPrgTime.getProgram().getLength() <= 0) {
@@ -175,7 +176,7 @@ public class ProgramTimeDialog extends JDialog {
       panel.add(programSelection, cc.xyw(2, panel.getRow(), panel.getColumnCount() - 1));
 
       programSelection.addListSelectionListener(new ListSelectionListener() {
-        public void valueChanged(ListSelectionEvent e) {           
+        public void valueChanged(ListSelectionEvent e) {
           if(!e.getValueIsAdjusting()) {
             /* prevent concurrent changing of end date */
             if(!mEndDateChanging) {

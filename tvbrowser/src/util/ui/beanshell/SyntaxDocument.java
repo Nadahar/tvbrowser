@@ -155,10 +155,11 @@ class SyntaxDocument extends DefaultStyledDocument
 
     //  Resolve highlighting to the next end multi line delimiter
 
-    if (isMultiLineComment())
+    if (isMultiLineComment()) {
       commentLinesAfter(content, endLine);
-    else
+    } else {
       highlightLinesAfter(content, endLine);
+    }
   }
 
   /*
@@ -173,15 +174,17 @@ class SyntaxDocument extends DefaultStyledDocument
 
     int startDelimiter = lastIndexOf( content, getStartDelimiter(), offset - 2 );
 
-    if (startDelimiter < 0)
+    if (startDelimiter < 0) {
       return false;
+    }
 
     //  Matching start/end of comment found, nothing to do
 
     int endDelimiter = indexOf( content, getEndDelimiter(), startDelimiter );
 
-    if (endDelimiter < offset && endDelimiter != -1)
+    if (endDelimiter < offset && endDelimiter != -1) {
       return false;
+    }
 
     //  End of comment not found, highlight the lines
 
@@ -200,8 +203,9 @@ class SyntaxDocument extends DefaultStyledDocument
 
     int endDelimiter = indexOf( content, getEndDelimiter(), offset );
 
-    if (endDelimiter < 0)
+    if (endDelimiter < 0) {
       return;
+    }
 
     //  Matching start/end of comment found, comment the lines
 
@@ -226,16 +230,19 @@ class SyntaxDocument extends DefaultStyledDocument
     int startDelimiter = indexOf( content, getStartDelimiter(), offset );
     int endDelimiter = indexOf( content, getEndDelimiter(), offset );
 
-    if (startDelimiter < 0)
+    if (startDelimiter < 0) {
       startDelimiter = content.length();
+    }
 
-    if (endDelimiter < 0)
+    if (endDelimiter < 0) {
       endDelimiter = content.length();
+    }
 
     int delimiter = Math.min(startDelimiter, endDelimiter);
 
-    if (delimiter < offset)
+    if (delimiter < offset) {
       return;
+    }
 
     //  Start/End delimiter found, reapply highlighting
 
@@ -247,8 +254,9 @@ class SyntaxDocument extends DefaultStyledDocument
       Element leaf = doc.getCharacterElement( branch.getStartOffset() );
       AttributeSet as = leaf.getAttributes();
 
-      if ( as.isEqual(comment) )
+      if ( as.isEqual(comment) ) {
         applyHighlighting(content, i);
+      }
     }
   }
 
@@ -264,8 +272,9 @@ class SyntaxDocument extends DefaultStyledDocument
     int lineLength = endOffset - startOffset;
     int contentLength = content.length();
 
-    if (endOffset >= contentLength)
+    if (endOffset >= contentLength) {
       endOffset = contentLength - 1;
+    }
 
     //  check for multi line comments
     //  (always set the comment attribute for the entire line)
@@ -305,9 +314,9 @@ class SyntaxDocument extends DefaultStyledDocument
   {
     int index = indexOf( content, getStartDelimiter(), startOffset );
 
-    if ( (index < 0) || (index > endOffset) )
+    if ( (index < 0) || (index > endOffset) ) {
       return false;
-    else
+    } else
     {
       setMultiLineComment( true );
       return true;
@@ -322,9 +331,9 @@ class SyntaxDocument extends DefaultStyledDocument
   {
     int index = indexOf( content, getEndDelimiter(), startOffset );
 
-    if ( (index < 0) || (index > endOffset) )
+    if ( (index < 0) || (index > endOffset) ) {
       return false;
-    else
+    } else
     {
       setMultiLineComment( false );
       return true;
@@ -356,18 +365,20 @@ class SyntaxDocument extends DefaultStyledDocument
 
       while ( isDelimiter( content.substring(startOffset, startOffset + 1) ) )
       {
-        if (startOffset < endOffset)
+        if (startOffset < endOffset) {
           startOffset++;
-        else
+        } else {
           return;
+        }
       }
 
       //  Extract and process the entire token
 
-      if ( isQuoteDelimiter( content.substring(startOffset, startOffset + 1) ) )
+      if ( isQuoteDelimiter( content.substring(startOffset, startOffset + 1) ) ) {
         startOffset = getQuoteToken(content, startOffset, endOffset);
-      else
+      } else {
         startOffset = getOtherToken(content, startOffset, endOffset);
+      }
     }
   }
 
@@ -396,10 +407,11 @@ class SyntaxDocument extends DefaultStyledDocument
 
     index = content.indexOf(quoteDelimiter, endOfQuote + 1);
 
-    if ( (index < 0) || (index > endOffset) )
+    if ( (index < 0) || (index > endOffset) ) {
       endOfQuote = endOffset;
-    else
+    } else {
       endOfQuote = index;
+    }
 
     doc.setCharacterAttributes(startOffset, endOfQuote - startOffset + 1, quote, false);
 
@@ -415,8 +427,9 @@ class SyntaxDocument extends DefaultStyledDocument
 
     while ( endOfToken <= endOffset )
     {
-      if ( isDelimiter( content.substring(endOfToken, endOfToken + 1) ) )
+      if ( isDelimiter( content.substring(endOfToken, endOfToken + 1) ) ) {
         break;
+      }
 
       endOfToken++;
     }
@@ -442,10 +455,11 @@ class SyntaxDocument extends DefaultStyledDocument
     {
       String text = getLine( content, index ).trim();
 
-      if (text.startsWith(needle) || text.endsWith(needle))
+      if (text.startsWith(needle) || text.endsWith(needle)) {
         break;
-      else
+      } else {
         offset = index + 1;
+      }
     }
 
     return index;
@@ -462,10 +476,11 @@ class SyntaxDocument extends DefaultStyledDocument
     {
       String text = getLine( content, index ).trim();
 
-      if (text.startsWith(needle) || text.endsWith(needle))
+      if (text.startsWith(needle) || text.endsWith(needle)) {
         break;
-      else
+      } else {
         offset = index - 1;
+      }
     }
 
     return index;
@@ -488,10 +503,11 @@ class SyntaxDocument extends DefaultStyledDocument
     String operands = ";:{}()[]+-/%<=>!&|^~*";
 
     if (Character.isWhitespace( character.charAt(0) ) ||
-      operands.indexOf(character) != -1 )
+      operands.indexOf(character) != -1 ) {
       return true;
-    else
+    } else {
       return false;
+    }
   }
 
   /*
@@ -501,10 +517,11 @@ class SyntaxDocument extends DefaultStyledDocument
   {
     String quoteDelimiters = "\"'";
 
-    if (quoteDelimiters.indexOf(character) < 0)
+    if (quoteDelimiters.indexOf(character) < 0) {
       return false;
-    else
+    } else {
       return true;
+    }
   }
 
   /*

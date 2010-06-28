@@ -26,6 +26,7 @@ package util.ui;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JToolTip;
@@ -71,7 +72,7 @@ public class ToolTipWithIcon extends JToolTip {
       String tipText = ((JToolTip) c).getTipText();
       // avoid painting by returning empty dimension for no text and no icon
       if (icon == null && (tipText == null || tipText.length() == 0)) {
-        return new Dimension(0, 0); 
+        return new Dimension(0, 0);
       }
       FontMetrics metrics = c.getFontMetrics(c.getFont());
       if (tipText == null) {

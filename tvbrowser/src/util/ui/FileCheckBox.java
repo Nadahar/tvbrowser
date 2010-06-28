@@ -78,8 +78,9 @@ public class FileCheckBox extends JComponent {
     add(mCheckbox,BorderLayout.WEST);
     add(mTextfield,BorderLayout.CENTER);
     
-    if(addButton)
+    if(addButton) {
       add(mChoosebtn,BorderLayout.EAST);
+    }
 
     mCheckbox.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent event) {
@@ -99,8 +100,9 @@ public class FileCheckBox extends JComponent {
           if (f!=null) {
             mTextfield.setText(f.getAbsolutePath());
             
-            if(mTextfield.getKeyListeners().length == 1)
+            if(mTextfield.getKeyListeners().length == 1) {
               mTextfield.getKeyListeners()[0].keyReleased(null);
+            }
           }
         }
       }
@@ -112,8 +114,9 @@ public class FileCheckBox extends JComponent {
     mFileChooser=chooser;
     String temp = mTextfield.getText();
     
-    if(temp.indexOf(File.separator) != -1)
+    if(temp.indexOf(File.separator) != -1) {
       mFileChooser.setCurrentDirectory(new File(temp.substring(0,temp.lastIndexOf(File.separator)+1)));
+    }
   }
 
 

@@ -26,7 +26,7 @@
 
 package tvbrowser.extras.favoritesplugin;
 
-import javax.swing.*;
+import javax.swing.JPanel;
 
 
 public interface FavoriteConfigurator {

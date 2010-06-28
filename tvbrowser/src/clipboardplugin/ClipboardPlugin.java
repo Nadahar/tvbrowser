@@ -100,8 +100,7 @@ public class ClipboardPlugin extends Plugin {
 
       ArrayList<AbstractAction> list = new ArrayList<AbstractAction>();
 
-      for (int i = 0; i < mConfigs.length; i++) {
-        final AbstractPluginProgramFormating config = mConfigs[i];
+      for (final AbstractPluginProgramFormating config : mConfigs) {
         if (config != null && config.isValid()) {
           final Program[] programs = { program };
           AbstractAction copyAction = new AbstractAction(config.getName()) {
@@ -158,12 +157,15 @@ public class ClipboardPlugin extends Plugin {
   public ProgramReceiveTarget[] getProgramReceiveTargets() {
     ArrayList<ProgramReceiveTarget> list = new ArrayList<ProgramReceiveTarget>();
 
-    for(AbstractPluginProgramFormating config : mConfigs)
-      if(config != null && config.isValid())
+    for(AbstractPluginProgramFormating config : mConfigs) {
+      if(config != null && config.isValid()) {
         list.add(new ProgramReceiveTarget(this, config.getName(), config.getId()));
+      }
+    }
 
-    if(list.isEmpty())
+    if(list.isEmpty()) {
       list.add(new ProgramReceiveTarget(this, DEFAULT_CONFIG.getName(), DEFAULT_CONFIG.getId()));
+    }
 
     return list.toArray(new ProgramReceiveTarget[list.size()]);
   }
@@ -171,17 +173,20 @@ public class ClipboardPlugin extends Plugin {
   public boolean receivePrograms(Program[] programArr, ProgramReceiveTarget target) {
     AbstractPluginProgramFormating formating = null;
 
-    if(target == null)
+    if(target == null) {
       return false;
+    }
 
-    if(target.isReceiveTargetWithIdOfProgramReceiveIf(this,DEFAULT_CONFIG.getId()))
+    if(target.isReceiveTargetWithIdOfProgramReceiveIf(this,DEFAULT_CONFIG.getId())) {
       formating = DEFAULT_CONFIG;
-    else
-      for(AbstractPluginProgramFormating config : mConfigs)
+    } else {
+      for(AbstractPluginProgramFormating config : mConfigs) {
         if(target.isReceiveTargetWithIdOfProgramReceiveIf(this,config.getId())) {
           formating = config;
           break;
         }
+      }
+    }
 
     if(formating != null) {
       copyProgramsToSystem(programArr, formating);
@@ -265,29 +270,35 @@ public class ClipboardPlugin extends Plugin {
     if(mConfigs != null) {
       ArrayList<AbstractPluginProgramFormating> list = new ArrayList<AbstractPluginProgramFormating>();
 
-      for(AbstractPluginProgramFormating config : mConfigs)
-        if(config != null)
+      for(AbstractPluginProgramFormating config : mConfigs) {
+        if(config != null) {
           list.add(config);
+        }
+      }
 
       out.writeInt(list.size());
 
-      for(AbstractPluginProgramFormating config : list)
+      for(AbstractPluginProgramFormating config : list) {
         config.writeData(out);
-    }
-    else
+      }
+    } else {
       out.writeInt(0);
+    }
 
     if(mLocalFormatings != null) {
       ArrayList<AbstractPluginProgramFormating> list = new ArrayList<AbstractPluginProgramFormating>();
 
-      for(AbstractPluginProgramFormating config : mLocalFormatings)
-        if(config != null)
+      for(AbstractPluginProgramFormating config : mLocalFormatings) {
+        if(config != null) {
           list.add(config);
+        }
+      }
 
       out.writeInt(list.size());
 
-      for(AbstractPluginProgramFormating config : list)
+      for(AbstractPluginProgramFormating config : list) {
         config.writeData(out);
+      }
     }
 
   }
@@ -304,8 +315,9 @@ public class ClipboardPlugin extends Plugin {
         AbstractPluginProgramFormating value = AbstractPluginProgramFormating.readData(in);
 
         if(value != null) {
-          if(value.equals(DEFAULT_CONFIG))
+          if(value.equals(DEFAULT_CONFIG)) {
             DEFAULT_CONFIG = (LocalPluginProgramFormating)value;
+          }
 
           list.add(value);
         }
@@ -316,7 +328,7 @@ public class ClipboardPlugin extends Plugin {
       mLocalFormatings = new LocalPluginProgramFormating[in.readInt()];
 
       for(int i = 0; i < mLocalFormatings.length; i++) {
-        LocalPluginProgramFormating value = (LocalPluginProgramFormating)LocalPluginProgramFormating.readData(in);
+        LocalPluginProgramFormating value = (LocalPluginProgramFormating)AbstractPluginProgramFormating.readData(in);
         LocalPluginProgramFormating loadedInstance = getInstanceOfFormatingFromSelected(value);
 
         mLocalFormatings[i] = loadedInstance == null ? value : loadedInstance;
@@ -325,9 +337,11 @@ public class ClipboardPlugin extends Plugin {
   }
 
   private LocalPluginProgramFormating getInstanceOfFormatingFromSelected(LocalPluginProgramFormating value) {
-    for(AbstractPluginProgramFormating config : mConfigs)
-      if(config.equals(value))
+    for(AbstractPluginProgramFormating config : mConfigs) {
+      if(config.equals(value)) {
         return (LocalPluginProgramFormating)config;
+      }
+    }
 
     return null;
   }
@@ -341,10 +355,11 @@ public class ClipboardPlugin extends Plugin {
   }
 
   protected void setAvailableLocalPluginProgramFormatings(LocalPluginProgramFormating[] value) {
-    if(value == null || value.length < 1)
+    if(value == null || value.length < 1) {
       createDefaultAvailable();
-    else
+    } else {
       mLocalFormatings = value;
+    }
   }
 
   protected AbstractPluginProgramFormating[] getSelectedPluginProgramFormatings() {
@@ -352,9 +367,10 @@ public class ClipboardPlugin extends Plugin {
   }
 
   protected void setSelectedPluginProgramFormatings(AbstractPluginProgramFormating[] value) {
-    if(value == null || value.length < 1)
+    if(value == null || value.length < 1) {
       createDefaultConfig();
-    else
+    } else {
       mConfigs = value;
+    }
   }
 }

@@ -142,7 +142,7 @@ public class ListViewPlugin extends Plugin {
             showDialog();
           }
         });
-      }      
+      }
     }
         
     /**
@@ -167,7 +167,7 @@ public class ListViewPlugin extends Plugin {
         }
         
         return 0;
-    }    
+    }
     
     public SettingsTab getSettingsTab() {
       return new ListViewSettings(mSettings);

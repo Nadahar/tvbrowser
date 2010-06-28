@@ -80,7 +80,7 @@ public class PluginAutoUpdater {
     File file = new File(new File(Settings.getUserSettingsDirName()),
         PLUGIN_UPDATES_FILENAME.substring(0, PLUGIN_UPDATES_FILENAME
             .indexOf('.'))
-            + "_" + Mirror.MIRROR_LIST_FILE_NAME);    
+            + "_" + Mirror.MIRROR_LIST_FILE_NAME);
     
     try {
       return Mirror.chooseUpToDateMirror(Mirror.readMirrorListFromFile(file),null,PLUGIN_UPDATES_FILENAME, "plugins", PluginAutoUpdater.class, mLocalizer.msg("error.additional"," Please inform the TV-Browser team."));
@@ -89,13 +89,14 @@ public class PluginAutoUpdater {
         if(DEFAULT_PLUGINS_UPDATE_MIRRORS.length > 0) {
           Mirror[] mirr = new Mirror[DEFAULT_PLUGINS_UPDATE_MIRRORS.length];
           
-          for(int i = 0; i < DEFAULT_PLUGINS_UPDATE_MIRRORS.length; i++)
+          for(int i = 0; i < DEFAULT_PLUGINS_UPDATE_MIRRORS.length; i++) {
             mirr[i] = new Mirror(DEFAULT_PLUGINS_UPDATE_MIRRORS[i]);
+          }
           
           return Mirror.chooseUpToDateMirror(mirr,null,PLUGIN_UPDATES_FILENAME, "plugins", PluginAutoUpdater.class, mLocalizer.msg("error.additional"," Please inform the TV-Browser team."));
-        }
-        else
+        } else {
           throw exc;
+        }
       }catch (Exception exc2) {
         return new Mirror(DEFAULT_PLUGINS_DOWNLOAD_URL);
       }

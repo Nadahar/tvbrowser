@@ -134,7 +134,7 @@ public class SearchHelper {
    * @param comp Parent-Component
    * @param pictureSettings Settings for the pictures
    * @param settings Settings for the Search.
-   * @param showDialog Show the search results instantly when found something. 
+   * @param showDialog Show the search results instantly when found something.
    * @since 2.7
    */
   public static void search(Component comp, PluginPictureSettings pictureSettings, SearchFormSettings settings, boolean showDialog) {
@@ -226,7 +226,7 @@ public class SearchHelper {
                         mProgramListScrollPane.getVerticalScrollBar().setValue(0);
                         mProgramListScrollPane.getHorizontalScrollBar().setValue(0);
                         
-                        if(scrollIndex != -1) {            
+                        if(scrollIndex != -1) {
                           Rectangle cellBounds = mProgramList.getCellBounds(scrollIndex,scrollIndex);
                           cellBounds.setLocation(cellBounds.x, cellBounds.y - mProgramListScrollPane.getBorder().getBorderInsets(mProgramListScrollPane).top - mProgramListScrollPane.getInsets().top + mProgramListScrollPane.getHeight() - cellBounds.height);
                           
