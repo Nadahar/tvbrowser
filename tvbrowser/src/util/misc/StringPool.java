@@ -28,7 +28,7 @@ public class StringPool {
 
   private static HashMap<String, String> stringMap = new HashMap<String, String>(
       100);
-  
+
   /**
    * an estimation of the savings for duplicate strings.
    * the additionally needed size of the hashmap is not included in this calculation
@@ -41,21 +41,23 @@ public class StringPool {
       return null;
     }
 
-    String cached = stringMap.get(input);
-    if (cached != null) {
-      savedBytes += stringBytes(input);
-/*
-      if (savedBytes >= lastOutput + 2000) {
-        lastOutput = savedBytes;
-        System.out.println("saved " + savedBytes + " bytes using String pool with " + stringMap.size() + " elements");
+    synchronized(stringMap) {
+      String cached = stringMap.get(input);
+      if (cached != null) {
+        savedBytes += stringBytes(input);
+  /*
+        if (savedBytes >= lastOutput + 2000) {
+          lastOutput = savedBytes;
+          System.out.println("saved " + savedBytes + " bytes using String pool with " + stringMap.size() + " elements");
+        }
+  */
+        return cached;
       }
-*/
-      return cached;
-    }
-    else {
-      savedBytes -= stringBytes(input);
-      stringMap.put(input, input);
-      return input;
+      else {
+        savedBytes -= stringBytes(input);
+        stringMap.put(input, input);
+        return input;
+      }
     }
   }
 
