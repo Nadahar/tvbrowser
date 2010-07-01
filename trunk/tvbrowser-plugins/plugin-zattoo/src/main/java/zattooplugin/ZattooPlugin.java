@@ -147,6 +147,7 @@ public final class ZattooPlugin extends Plugin {
     if (executionHandler != null) {
       try {
         executionHandler.execute(false);
+        // TODO: use getOutput() after 3.0
       } catch (IOException e) {
         e.printStackTrace();
         ErrorHandler.handle(mLocalizer.msg("error.zatto", "Could not start zattoo"), e);
