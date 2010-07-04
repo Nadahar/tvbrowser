@@ -464,10 +464,12 @@ public final class ImdbDatabase {
       return;
     }
     for (Document document : movies) {
-      mCandidates.add(document);
-      String year = document.getField(MOVIE_YEAR).stringValue();
-      if (year.equals(mCandidatesYear)) {
-        mCandidatesExactMatch = document.getField(MOVIE_ID).stringValue();
+      if (document != null) {
+        mCandidates.add(document);
+        String year = document.getField(MOVIE_YEAR).stringValue();
+        if (year.equals(mCandidatesYear)) {
+          mCandidatesExactMatch = document.getField(MOVIE_ID).stringValue();
+        }
       }
     }
   }
@@ -508,7 +510,10 @@ public final class ImdbDatabase {
       if (topDocs.totalHits > 0) {
         Document[] documents = new Document[topDocs.scoreDocs.length];
         for (int i = 0; i < topDocs.scoreDocs.length; i++) {
-          documents[i] = mSearcher.doc(topDocs.scoreDocs[i].doc);
+          ScoreDoc scoreDoc = topDocs.scoreDocs[i];
+          if (scoreDoc != null) {
+            documents[i] = mSearcher.doc(scoreDoc.doc);
+          }
         }
         return documents;
       }
