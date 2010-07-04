@@ -16,6 +16,7 @@ package imdbplugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.UUID;
 
 import org.apache.lucene.analysis.SimpleAnalyzer;
@@ -56,6 +57,9 @@ public final class ImdbDatabase {
 
   private IndexSearcher mSearcher = null;
   private IndexWriter mWriter = null;
+  private ArrayList<Document> mCandidates = null;
+  private String mCandidatesYear;
+  private String mCandidatesExactMatch;
 
   public ImdbDatabase(final File imdbDatabase) {
     mCurrentPath = imdbDatabase;
@@ -371,7 +375,7 @@ public final class ImdbDatabase {
     return null;
   }
 
-  String getMovieId(final String title, final String episode, String originalTitle, String originalEpisode, final int year) {
+  String getMovieId(String title, final String episode, String originalTitle, String originalEpisode, int year) {
     if (mSearcher == null) {
       return null;
     }
@@ -379,30 +383,32 @@ public final class ImdbDatabase {
     final String normalizedTitle = normalise(title);
     final String normalizedEpisode = normalise(episode);
 
+    resetCandidates(year);
+
     // first search title
-    String movieId = getMovieIdFromTitle(normalizedTitle, normalizedEpisode, year, TYPE_MOVIE);
-    if (movieId != null) {
-      return movieId;
+    addCandidates(getMoviesFromTitle(normalizedTitle, normalizedEpisode, year, TYPE_MOVIE));
+    if (mCandidatesExactMatch != null) {
+      return mCandidatesExactMatch;
     }
 
     // next search title in A.K.A. list
-    movieId = getMovieIdFromTitle(normalizedTitle, normalizedEpisode, year, TYPE_AKA);
-    if (movieId != null) {
-      return movieId;
+    addCandidates(getMoviesFromTitle(normalizedTitle, normalizedEpisode, year, TYPE_AKA));
+    if (mCandidatesExactMatch != null) {
+      return mCandidatesExactMatch;
     }
 
     // next search only original title
     if (originalTitle != null) {
       String normalisedOriginal = normalise(originalTitle);
       String normalisedOrigEpisode = normalise(originalEpisode);
-      movieId = getMovieIdFromTitle(normalisedOriginal, normalisedOrigEpisode, year, TYPE_MOVIE);
-      if (movieId != null) {
-        return movieId;
+      addCandidates(getMoviesFromTitle(normalisedOriginal, normalisedOrigEpisode, year, TYPE_MOVIE));
+      if (mCandidatesExactMatch != null) {
+        return mCandidatesExactMatch;
       }
       // original title in A.K.A. list (may happen with spelling alternatives)
-      movieId = getMovieIdFromTitle(normalisedOriginal, normalisedOrigEpisode, year, TYPE_AKA);
-      if (movieId != null) {
-        return movieId;
+      addCandidates(getMoviesFromTitle(normalisedOriginal, normalisedOrigEpisode, year, TYPE_AKA));
+      if (mCandidatesExactMatch != null) {
+        return mCandidatesExactMatch;
       }
     }
 
@@ -446,7 +452,30 @@ public final class ImdbDatabase {
       }
     }
 
+    if (!mCandidates.isEmpty()) {
+      return mCandidates.get(0).getField(MOVIE_ID).stringValue();
+    }
+
     return null;
+  }
+
+  private void addCandidates(final Document[] movies) {
+    if (movies == null) {
+      return;
+    }
+    for (Document document : movies) {
+      mCandidates.add(document);
+      String year = document.getField(MOVIE_YEAR).stringValue();
+      if (year.equals(mCandidatesYear)) {
+        mCandidatesExactMatch = document.getField(MOVIE_ID).stringValue();
+      }
+    }
+  }
+
+  private void resetCandidates(final int year) {
+    mCandidatesExactMatch = null;
+    mCandidatesYear = String.valueOf(year);
+    mCandidates  = new ArrayList<Document>();
   }
 
   private String removeSuffix(final String field, final String suffix) {
@@ -457,7 +486,7 @@ public final class ImdbDatabase {
     return result;
   }
 
-  private String getMovieIdFromTitle(final String title, final String episode, final int year, String itemType) {
+  private Document[] getMoviesFromTitle(final String title, final String episode, final int year, String itemType) {
     if (!isInitialised()) {
       return null;
     }
@@ -475,14 +504,13 @@ public final class ImdbDatabase {
       bQuery.add(new TermQuery(new Term(MOVIE_YEAR, Integer.toString(year + 1))), BooleanClause.Occur.SHOULD);
     }
     try {
-      TopDocs topDocs = mSearcher.search(bQuery, null, 1);
-
+      TopDocs topDocs = mSearcher.search(bQuery, null, 10);
       if (topDocs.totalHits > 0) {
-        final Document document = mSearcher.doc(topDocs.scoreDocs[0].doc);
-
-        printDocument(document);
-
-        return document.getField(MOVIE_ID).stringValue();
+        Document[] documents = new Document[topDocs.scoreDocs.length];
+        for (int i = 0; i < topDocs.scoreDocs.length; i++) {
+          documents[i] = mSearcher.doc(topDocs.scoreDocs[i].doc);
+        }
+        return documents;
       }
     } catch (IOException e1) {
       e1.printStackTrace();
