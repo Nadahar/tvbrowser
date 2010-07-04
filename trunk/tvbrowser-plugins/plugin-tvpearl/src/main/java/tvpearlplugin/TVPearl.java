@@ -20,6 +20,7 @@ package tvpearlplugin;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -30,6 +31,8 @@ import java.util.Vector;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.swing.SwingUtilities;
 
 import tvbrowser.TVBrowser;
 import devplugin.Channel;
@@ -57,7 +60,8 @@ public class TVPearl {
   private List<TVPProgram> mProgramList;
   private Calendar mLastUpdate;
   private boolean mReindexAll = true;
-  private static final TVPProgram EXAMPLE_PEARL = new TVPProgram("Me", "http://hilfe.tvbrowser.org", Calendar.getInstance(), "Example", "Channel", Calendar.getInstance(), "Info", "ID");
+  private static final TVPProgram EXAMPLE_PEARL = new TVPProgram("Me", "http://hilfe.tvbrowser.org", Calendar
+      .getInstance(), "Example", "Channel", Calendar.getInstance(), "Info", "ID");
 
   public TVPearl() {
     mProgramList = new ArrayList<TVPProgram>();
@@ -83,27 +87,47 @@ public class TVPearl {
 
   public void update() {
     if (canUpdate()) {
-      mLastUpdate = Calendar.getInstance();
+      Thread pearlThread = new Thread("TV pearl update") {
+        @Override
+        public void run() {
+          mLastUpdate = Calendar.getInstance();
 
-      final TVPGrabber grabber = new TVPGrabber();
-      final List<TVPProgram> programList = grabber.parse(mUrl);
-      mUrl = grabber.getLastUrl();
+          final TVPGrabber grabber = new TVPGrabber();
+          final List<TVPProgram> programList = grabber.parse(mUrl);
+          mUrl = grabber.getLastUrl();
 
-      for (TVPProgram program : programList) {
-        addProgram(program);
-      }
-      final Calendar limit = getViewLimit();
-      int i = 0;
-      while (i < mProgramList.size()) {
-        final TVPProgram p = mProgramList.get(i);
-        if (p.getStart().compareTo(limit) < 0) {
-          mProgramList.remove(i);
-          i--;
+          for (TVPProgram program : programList) {
+            addProgram(program);
+          }
+          final Calendar limit = getViewLimit();
+          int i = 0;
+          while (i < mProgramList.size()) {
+            final TVPProgram p = mProgramList.get(i);
+            if (p.getStart().compareTo(limit) < 0) {
+              mProgramList.remove(i);
+              i--;
+            }
+            i++;
+          }
+          Collections.sort(mProgramList);
+          // TODO: change to UIThreadRunner after 3.0
+          try {
+            SwingUtilities.invokeAndWait(new Runnable() {
+              public void run() {
+                updateTVB();
+              }
+            });
+          } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+          } catch (InvocationTargetException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+          }
         }
-        i++;
-      }
-      Collections.sort(mProgramList);
-      updateTVB();
+      };
+      pearlThread.setPriority(Thread.MIN_PRIORITY);
+      pearlThread.start();
     }
   }
 
