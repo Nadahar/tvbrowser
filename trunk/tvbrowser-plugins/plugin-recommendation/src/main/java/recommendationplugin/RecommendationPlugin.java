@@ -53,8 +53,8 @@ import devplugin.SettingsTab;
 import devplugin.Version;
 
 public final class RecommendationPlugin extends Plugin {
-  private static final boolean PLUGIN_IS_STABLE = false;
-  private static final Version PLUGIN_VERSION = new Version(0, 2, PLUGIN_IS_STABLE);
+  private static final boolean PLUGIN_IS_STABLE = true;
+  private static final Version PLUGIN_VERSION = new Version(0, 3, PLUGIN_IS_STABLE);
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(RecommendationPlugin.class);
   private static RecommendationPlugin mInstance;
   private Icon mIcon;
