@@ -182,5 +182,24 @@ public class Html2TxtConverter extends FilterReader {
       tag=reader.next();
     }
   }
+	
+  static final public String replaceUnsupportedChars(String text) {
+    String result = text;
+   
+    result = result.replace((char) 45, '-');
+    result = result.replace((char) 128, (char) 8364); // Euro-Zeichen
+    result = result.replace((char) 130, ',');
+    result = result.replace((char) 132, (char) 8222); // doppeltes low-9-Zeichen rechts
+    result = result.replace(String.valueOf((char) 133), "...");
+    result = result.replace((char) 145, (char) 8216); //einfaches Anführungszeichen links
+    result = result.replace((char) 146, (char) 8217); //einfaches Anführungszeichen rechts
+    result = result.replace((char) 147, (char) 8220); // doppeltes Anführungszeichen links
+    result = result.replace((char) 148, (char) 8221); // doppeltes Anführungszeichen rechts
+    result = result.replace((char) 150, '-');
+    result = result.replace((char) 153, (char) 8482); //TM-Zeichen   
+    result = result.replace((char) 8211, '-');
+   
+    return result;   
+  } 
 }
 
