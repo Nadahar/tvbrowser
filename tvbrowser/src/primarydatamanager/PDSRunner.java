@@ -6,6 +6,7 @@ import java.io.PrintStream;
 import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.Properties;
 
 import primarydatamanager.primarydataservice.PrimaryDataService;
 
@@ -16,6 +17,7 @@ public class PDSRunner {
   private int mActiveThreadCount;
   private Thread mWaitingThread;
   private File mLogDir, mRawDir;
+  private static Properties mProperties;
   
   private static final int CONCURRENT_DOWNLOADS=5;
   
@@ -27,6 +29,7 @@ public class PDSRunner {
     mPDSList=new LinkedList<PrimaryDataService>();
     mRawDir=new File(baseDir,"raw");
     mLogDir=new File(baseDir,"pdslog");
+    mProperties=new Properties();
   }
   
   public void addPDS(PrimaryDataService pds) {
@@ -113,7 +116,10 @@ public class PDSRunner {
         try {
           FileOutputStream out=new FileOutputStream(logFile);
           PrintStream errOut=new PrintStream(out);
-          boolean thereWereErrors = pds.execute(dir, errOut);
+          if (mProperties != null) {
+            pds.setParameters(mProperties);
+          }
+          boolean thereWereErrors = pds.execute(dir, errOut);          
           if (thereWereErrors) {
             mLog.warning("There were errors during the execution of primary "
                 + "data service " + pds.getClass().getName() + ". See log file: "
@@ -141,7 +147,7 @@ public class PDSRunner {
     PDSRunner pdsRunner=new PDSRunner(new File("."));
     
     if (args.length==0) {
-      System.out.println("usage: PDSRunner [-raw directory] [-log directory] pds ...");
+      System.out.println("usage: PDSRunner [-raw directory] [-log directory] [-PDSparameterX valueX] [...] pds ...");
       System.exit(1);
     }
     
@@ -164,6 +170,16 @@ public class PDSRunner {
         else {
           i++;
           pdsRunner.setLogDir(new File(args[i]));
+        }
+      }
+      else if (args[i].startsWith("-")) {
+        if ((i + 1) >= args.length) {
+          System.out.println("You have to specify a value for the parameter "+args[i]);
+          System.exit(1);
+        }
+        else {
+          mProperties.setProperty(args[i].substring(1), args[i+1]);
+          i++;
         }
       }
       else {
