@@ -28,6 +28,7 @@ package primarydatamanager;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Properties;
 import java.util.TimeZone;
 
 import junit.framework.TestCase;
@@ -154,6 +155,10 @@ public class PrimaryDataManagerTest extends TestCase {
 
     public int getReadBytesCount() {
       return 0;
+    }
+    
+    public void setParameters(Properties parameters) {
+      
     }
 
   }

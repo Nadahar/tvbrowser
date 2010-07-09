@@ -27,6 +27,7 @@
 package primarydatamanager.primarydataservice;
 
 import java.io.PrintStream;
+import java.util.Properties;
 
 /**
  * Gets the raw TV data for one or more TV channels.
@@ -43,6 +44,13 @@ public interface PrimaryDataService {
    * @return Whether there were errors.
    */
   public boolean execute(String dir, PrintStream err);
+  
+  /**
+   * Sets parameters that might be read by the PDS.
+   * 
+   * @param parameters
+   */
+  public void setParameters(Properties parameters);
 
   /**
    * Gets the number of bytes read (= downloaded) by this data service.
@@ -50,5 +58,6 @@ public interface PrimaryDataService {
    * @return The number of bytes read.
    */
   public int getReadBytesCount();
+
 
 }

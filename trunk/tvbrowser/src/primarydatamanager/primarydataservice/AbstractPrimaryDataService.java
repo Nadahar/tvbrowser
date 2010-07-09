@@ -2,6 +2,7 @@ package primarydatamanager.primarydataservice;
 
 import java.io.PrintStream;
 import java.util.Calendar;
+import java.util.Properties;
 
 /**
  * An abstract implementation of PrimaryDataService that makes developing
@@ -16,6 +17,8 @@ abstract public class AbstractPrimaryDataService implements PrimaryDataService {
   
   /** Is true, if there were errors. */
   private boolean mThereWhereErrors;
+  
+  private Properties mParameters;
   
   /**
    * The TV-Browser channel group 'main'.
@@ -84,6 +87,7 @@ abstract public class AbstractPrimaryDataService implements PrimaryDataService {
     execute(dir);
     return mThereWhereErrors;
   }
+  
 
 
   /**
@@ -92,7 +96,6 @@ abstract public class AbstractPrimaryDataService implements PrimaryDataService {
    * @param dir The directory to write the raw TV data to.
    */
   abstract protected void execute(String dir);
-
 
   /**
    * Logs an exception.
@@ -116,6 +119,24 @@ abstract public class AbstractPrimaryDataService implements PrimaryDataService {
   public final void logMessage(String msg) {
     mErr.println(msg);
     mThereWhereErrors=true;
+  }
+  
+  /**
+   * Sets parameters that might be read by the PDS.
+   * 
+   * @param parameters
+   */
+  public final void setParameters(Properties parameters) {
+    mParameters=parameters;
+  }
+  
+  /**
+   * Gets the parameters if any have been set.
+   * 
+   * @return The paramaters
+   */
+  public Properties getParameters() {
+    return mParameters;
   }
 
   
