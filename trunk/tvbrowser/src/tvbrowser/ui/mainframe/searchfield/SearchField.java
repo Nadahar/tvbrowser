@@ -113,6 +113,10 @@ public class SearchField extends JPanel {
     try {
       String home = Plugin.getPluginManager().getTvBrowserSettings().getTvBrowserUserHome();
       File settingsFile = new File(home,SETTINGS_FILE);
+      if (!settingsFile.canRead()) {
+        createDefaultSearchFormSettings();
+        return;
+      }
       StreamUtilities.objectInputStream(settingsFile,
           new ObjectInputStreamProcessor() {
             @Override
