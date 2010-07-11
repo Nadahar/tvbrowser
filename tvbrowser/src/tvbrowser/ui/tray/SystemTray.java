@@ -498,7 +498,7 @@ public class SystemTray {
   private JComponent addToImportantMenu(JComponent menu, ArrayList<ProgramMenuItem> normalProgramItems) {
     Program[] marked = MarkedProgramsList.getInstance().getTimeSortedProgramsForTray(
         MainFrame.getInstance().getProgramFilter(), Settings.propTrayImportantProgramsPriority.getInt(),
-        Settings.propTrayImportantProgramsSize.getInt(), true);
+        Settings.propTrayImportantProgramsSize.getInt(), true, true);
 
     ArrayList<Program> normalPrograms = new ArrayList<Program>(normalProgramItems.size());
     for (ProgramMenuItem programMenuItem : normalProgramItems) {
@@ -768,7 +768,9 @@ public class SystemTray {
    */
   private void addToNext(Program program, ArrayList<ProgramMenuItem> nextPrograms,
       ArrayList<ProgramMenuItem> nextAdditionalPrograms) {
-    if (!program.isExpired() && !program.isOnAir() && MainFrame.getInstance().getProgramFilter().accept(program)) {
+    if (!program.isExpired() && !program.isOnAir() && (Settings.propTrayFilterNot.getBoolean() ||
+        (Settings.propTrayFilterNotMarked.getBoolean() && program.getMarkerArr().length > 0) ||
+        MainFrame.getInstance().getProgramFilter().accept(program))) {
       addToListInternal(program, nextPrograms, nextAdditionalPrograms, ProgramMenuItem.SOON_TYPE);
     }
   }
@@ -797,7 +799,9 @@ public class SystemTray {
    */
   private void addToNowRunning(Program program, ArrayList<ProgramMenuItem> listStandard,
       ArrayList<ProgramMenuItem> listAdditional) {
-    if (program.isOnAir() && MainFrame.getInstance().getProgramFilter().accept(program)) {
+    if (program.isOnAir() && (Settings.propTrayFilterNot.getBoolean() ||
+        (Settings.propTrayFilterNotMarked.getBoolean() && program.getMarkerArr().length > 0) ||
+        MainFrame.getInstance().getProgramFilter().accept(program))) {
       addToListInternal(program, listStandard, listAdditional, ProgramMenuItem.NOW_TYPE);
     }
   }

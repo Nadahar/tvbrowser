@@ -885,6 +885,13 @@ public class Settings {
 
   public static final BooleanProperty propNowOnRestore = new BooleanProperty(
   		mProp, "jumpNowOnRestore",true);
+    
+  public static final BooleanProperty propTrayFilterNotMarked = new BooleanProperty(
+      mProp, "trayFilterNotMarked",false);  
+
+  public static final BooleanProperty propTrayFilterNot = new BooleanProperty(
+      mProp, "trayFilterAll",false);  
+
   /*
    * Channel settings for the tray.
    */
