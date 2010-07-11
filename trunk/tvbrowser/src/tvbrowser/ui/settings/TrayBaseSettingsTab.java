@@ -28,10 +28,12 @@ package tvbrowser.ui.settings;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.ButtonGroup;
 import javax.swing.Icon;
 import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 
 import tvbrowser.TVBrowser;
 import tvbrowser.core.Settings;
@@ -59,12 +61,13 @@ public class TrayBaseSettingsTab implements SettingsTab {
   private JCheckBox mTrayIsEnabled, mMinimizeToTrayChb, mNowOnRestore, mTrayIsAnialiasing;
   private boolean mOldState;
   private static boolean mIsEnabled = Settings.propTrayIsEnabled.getBoolean();
+  private JRadioButton mFilterAll,mNoMarkedFiltering,mNoFiltering;
 
   public JPanel createSettingsPanel() {
 
     final PanelBuilder builder = new PanelBuilder(new FormLayout(
         "5dlu, pref:grow, 5dlu",
-        "pref, 5dlu, pref, pref, pref, pref, pref"));
+        "pref, 5dlu, pref, pref, pref, pref, pref, 10dlu, pref, 5dlu, pref, pref, pref"));
     builder.setDefaultDialogBorder();
     CellConstraints cc = new CellConstraints();
 
@@ -84,7 +87,7 @@ public class TrayBaseSettingsTab implements SettingsTab {
     msg = mLocalizer.msg("trayAntialiasing", "Antialiasing enabled");
     checked = Settings.propTrayIsAntialiasing.getBoolean();
     mTrayIsAnialiasing = new JCheckBox(msg, checked);
-
+    
     if(System.getProperty("os.name").toLowerCase().startsWith("linux") && (JavaVersion.getVersion() < JavaVersion.VERSION_1_6 || OperatingSystem.isKDE())) {
       mMinimizeToTrayChb.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
@@ -94,12 +97,40 @@ public class TrayBaseSettingsTab implements SettingsTab {
         }
     });
     }
+    
+    //filter settings
+    ButtonGroup filter = new ButtonGroup();
+    
+    msg = mLocalizer.msg("trayFilterAll", "Filter all programs");
+    mFilterAll = new JRadioButton(msg);
 
+    msg = mLocalizer.msg("trayFilterNotMarked", "Filter programs, if not marked");
+    checked = Settings.propTrayFilterNotMarked.getBoolean();
+    mNoMarkedFiltering = new JRadioButton(msg, checked);
+
+    msg = mLocalizer.msg("trayFilterNot", "Don't filter programs");
+    checked = Settings.propTrayFilterNot.getBoolean();
+    mNoFiltering = new JRadioButton(msg, checked);
+    
+    if(!mNoFiltering.isSelected() && !mNoMarkedFiltering.isSelected()) {
+      mFilterAll.setSelected(true);
+    }
+    
+    filter.add(mFilterAll);
+    filter.add(mNoMarkedFiltering);
+    filter.add(mNoFiltering);
+
+    //create panel
     builder.addSeparator(mLocalizer.msg("basics", "Basic settings"), cc.xyw(1,1,3));
     builder.add(mTrayIsEnabled, cc.xy(2,3));
     builder.add(mTrayIsAnialiasing, cc.xy(2,4));
     builder.add(mMinimizeToTrayChb, cc.xy(2,5));
     builder.add(mNowOnRestore, cc.xy(2,6));
+    
+    builder.addSeparator(mLocalizer.msg("filter", "Filter settings"), cc.xyw(1,9,3));
+    builder.add(mFilterAll, cc.xy(2,11));
+    builder.add(mNoMarkedFiltering, cc.xy(2,12));
+    builder.add(mNoFiltering, cc.xy(2,13));
 
     mTrayIsEnabled.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -112,6 +143,9 @@ public class TrayBaseSettingsTab implements SettingsTab {
         mMinimizeToTrayChb.setEnabled(mTrayIsEnabled.isSelected());
         mNowOnRestore.setEnabled(mTrayIsEnabled.isSelected());
         mTrayIsAnialiasing.setEnabled(mTrayIsEnabled.isSelected());
+        mFilterAll.setEnabled(mTrayIsEnabled.isSelected());
+        mNoMarkedFiltering.setEnabled(mTrayIsEnabled.isSelected());
+        mNoFiltering.setEnabled(mTrayIsEnabled.isSelected());
       }
     });
 
@@ -133,6 +167,8 @@ public class TrayBaseSettingsTab implements SettingsTab {
     }
     Settings.propNowOnRestore.setBoolean(mNowOnRestore.isSelected());
     Settings.propTrayIsAntialiasing.setBoolean(mTrayIsAnialiasing.isSelected());
+    Settings.propTrayFilterNotMarked.setBoolean(mNoMarkedFiltering.isSelected());
+    Settings.propTrayFilterNot.setBoolean(mNoFiltering.isSelected());
   }
 
   public Icon getIcon() {
