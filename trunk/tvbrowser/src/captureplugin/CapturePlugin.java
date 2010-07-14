@@ -313,6 +313,7 @@ public class CapturePlugin extends devplugin.Plugin {
         mMarkedPrograms = list;
 
         updateTreeNode();
+        super.saveMe();
     }
 
     /**
