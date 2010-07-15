@@ -30,6 +30,7 @@ import java.io.RandomAccessFile;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.logging.Logger;
 
 import util.ui.Localizer;
@@ -369,12 +370,27 @@ public class Date implements Comparable<Date>
 
   /**
    * Returns the week number within the current year.
+   * Should not be used since value depends on default locale
+   * and thus changes from machine to machine. 
+   * Since 3.0 better use getWeekOfYear(Locale locale) instead.
    * @return The week number.
    *
    * @since 2.5.1
    */
   public int getWeekOfYear() {
     Calendar cal = getCalendar();
+    return cal.get(Calendar.WEEK_OF_YEAR);
+  }
+  
+  /**
+   * Returns the week number within the current year.
+   * @param locale The locale to be used
+   * @return The week number.
+   *
+   * @since 3.0
+   */
+  public int getWeekOfYear(Locale locale) {
+    Calendar cal = getCalendar(locale);
     return cal.get(Calendar.WEEK_OF_YEAR);
   }
 
@@ -522,6 +538,20 @@ public class Date implements Comparable<Date>
 
     return cal;
   }
+  
+  /**
+   * @param locale 
+   * @return the corresponding calendar for this date
+   * @since 3.0
+   */
+  public java.util.Calendar getCalendar(Locale locale) {
+    Calendar cal = Calendar.getInstance(locale);
+    cal.set(Calendar.MONTH, mMonth - 1);
+    cal.set(Calendar.YEAR, mYear);
+    cal.set(Calendar.DAY_OF_MONTH, mDay);
+
+    return cal;
+  }
 
   @Override
   public String toString() {
@@ -576,12 +606,24 @@ public class Date implements Comparable<Date>
 
   /**
    * is this a Monday?
-   * @return <code>true</code>, if this is the first day of the week
+   * @return <code>true</code>, if this is a Monday
    * @since 2.6
    */
   public boolean isFirstDayOfWeek() {
     return getDayOfWeek() == Calendar.MONDAY;
   }
+  
+  /**
+   * is this the first day of the week?
+   * @param locale The locale to be used 
+   * @return <code>true</code>, if this is the first day of the week
+   * @since 3.0
+   */
+  public boolean isFirstDayOfWeek(Locale locale) {
+    Calendar cal = getCalendar(locale);
+    return cal.get(Calendar.DAY_OF_WEEK) == cal.getFirstDayOfWeek();
+  }
+
 
 
 
