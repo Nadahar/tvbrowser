@@ -29,80 +29,86 @@ import java.util.ArrayList;
 import util.misc.OperatingSystem;
 import captureplugin.drivers.defaultdriver.DefaultDriver;
 import captureplugin.drivers.dreambox.DreamboxDriver;
+import captureplugin.drivers.topfield.TopfieldDriver;
 
 /**
- * This Factory returns all availabe Drivers and
- * creates a Device
+ * This Factory returns all availabe Drivers and creates a Device
  * 
  * @author bodum
  */
 public class DriverFactory {
-    /** Singleton */
-    private static DriverFactory mFactory;
-    
-    /** Private */
-    private DriverFactory() { }
-    
-    /**
-     * Returns the DriverFactory
-     * @return DriverFactory
-     */
-    public static DriverFactory getInstance() {
-        
-        if (mFactory == null) {
-            mFactory = new DriverFactory();
-        }
-        
-        return mFactory;
+  /** Singleton */
+  private static DriverFactory mFactory;
+
+  /** Private */
+  private DriverFactory() {
+  }
+
+  /**
+   * Returns the DriverFactory
+   * 
+   * @return DriverFactory
+   */
+  public static DriverFactory getInstance() {
+
+    if (mFactory == null) {
+      mFactory = new DriverFactory();
     }
-    
-    
-    /**
-     * Returns all available Drivers
-     * @return All available Drivers
-     */
-    public DriverIf[] getDrivers() {
-        ArrayList<DriverIf> drivers = new ArrayList<DriverIf>();
 
-        drivers.add(new DefaultDriver());
-        drivers.add(new DreamboxDriver());
+    return mFactory;
+  }
 
-        if (OperatingSystem.isMacOs()) {
-            try {
-                DriverIf driver = (DriverIf) this.getClass().getClassLoader().loadClass("captureplugin.drivers.elgatodriver.ElgatoDriver").newInstance();
-                if (driver != null) {
-                  drivers.add(driver);
-                }
+  /**
+   * Returns all available Drivers
+   * 
+   * @return All available Drivers
+   */
+  public DriverIf[] getDrivers() {
+    ArrayList<DriverIf> drivers = new ArrayList<DriverIf>();
 
-                driver = (DriverIf) this.getClass().getClassLoader().loadClass("captureplugin.drivers.thetubedriver.TheTubeDriver").newInstance();
-                if (driver != null) {
-                  drivers.add(driver);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+    drivers.add(new DefaultDriver());
+    drivers.add(new DreamboxDriver());
+    drivers.add(new TopfieldDriver());
+
+    if (OperatingSystem.isMacOs()) {
+      try {
+        DriverIf driver = (DriverIf) this.getClass().getClassLoader().loadClass(
+            "captureplugin.drivers.elgatodriver.ElgatoDriver").newInstance();
+        if (driver != null) {
+          drivers.add(driver);
         }
 
-        return drivers.toArray(new DriverIf[drivers.size()]);
-    }
-    
-    /**
-     * Creates a Device
-     * @param classname Classname of Driver
-     * @param devname Name of Device
-     * @return created Device
-     */
-    public DeviceIf createDevice(String classname, String devname) {
-        
-        DriverIf[] drivers = getDrivers();
-
-        for (DriverIf driver : drivers) {
-            if (driver.getClass().getName().equals(classname)) {
-                return driver.createDevice(devname);
-            }
+        driver = (DriverIf) this.getClass().getClassLoader().loadClass(
+            "captureplugin.drivers.thetubedriver.TheTubeDriver").newInstance();
+        if (driver != null) {
+          drivers.add(driver);
         }
-
-        return null;
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
     }
-    
+
+    return drivers.toArray(new DriverIf[drivers.size()]);
+  }
+
+  /**
+   * Creates a Device
+   * 
+   * @param classname Classname of Driver
+   * @param devname Name of Device
+   * @return created Device
+   */
+  public DeviceIf createDevice(String classname, String devname) {
+
+    DriverIf[] drivers = getDrivers();
+
+    for (DriverIf driver : drivers) {
+      if (driver.getClass().getName().equals(classname)) {
+        return driver.createDevice(devname);
+      }
+    }
+
+    return null;
+  }
+
 }
