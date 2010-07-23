@@ -248,12 +248,14 @@ final public class MovieAwardPlugin extends Plugin {
 			if (length > 0 && length < 5) {
 			  return false;
 			}
-			// did we already check this program ?
-			if (mAwardCache.containsKey(program)) {
-			  return mAwardCache.get(program);
-			}
 
 			synchronized(mMovieAwards) {
+
+			  // did we already check this program ?
+			  if (mAwardCache.containsKey(program)) {
+			    return mAwardCache.get(program);
+			  }
+
 			  for (MovieAward award : mMovieAwards) {
 			    if (award.containsAwardFor(program)) {
 			      mAwardCache.put(program, true);
@@ -261,9 +263,9 @@ final public class MovieAwardPlugin extends Plugin {
 			      return true;
 			    }
 			  }
+	      mAwardCache.put(program, false);
 			}
 
-			mAwardCache.put(program, false);
 		} catch (Exception e) {
 			// catch any exception and just don't show an award
 			e.printStackTrace();
@@ -393,7 +395,7 @@ final public class MovieAwardPlugin extends Plugin {
     }
   }
 
-  private void updateRootNode() {
+  private synchronized void updateRootNode() {
     // do nothing if the tree is not visible or the main program still has work
     // to do
     if (!mStartFinished) {
@@ -485,7 +487,7 @@ final public class MovieAwardPlugin extends Plugin {
   }
 
   @Override
-  public void handleTvDataDeleted(final ChannelDayProgram oldProg) {
+  synchronized public void handleTvDataDeleted(final ChannelDayProgram oldProg) {
     // handle deletion independent of updateFinished as this may be called
     // outside data update
     if (oldProg == null) {
