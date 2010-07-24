@@ -24,12 +24,17 @@
 package tvbrowser.ui.update;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 import javax.swing.JLabel;
 
+import tvbrowser.core.PluginLoader;
 import tvbrowser.core.Settings;
+import tvbrowser.core.plugin.PluginBaseInfo;
 import tvbrowser.ui.mainframe.MainFrame;
+import tvbrowser.ui.mainframe.SoftwareUpdater;
 import util.io.IOUtilities;
 import util.io.Mirror;
 import util.ui.Localizer;
@@ -49,9 +54,35 @@ public class PluginAutoUpdater {
   /** Contains the mirror urls useable for receiving the groups.txt from. */
   private static final String[] DEFAULT_PLUGINS_UPDATE_MIRRORS = {
     "http://tvbrowser.dyndns.tv",
+    "http://daten.wannawork.de",
+    "http://www.gfx-software.de/tvbrowserorg",
+    "http://tvbrowser1.sam-schwedler.de",
+    "http://tvbrowser.nicht-langweilig.de/data"
+    /*"http://tvbrowser.dyndns.tv",
     "http://hdtv-online.org/TVB",
-    "http://www.tvbrowserserver.de/"
+    "http://www.tvbrowserserver.de/"*/
   };
+  
+  /**
+   * Gets the the update items for plugins on TV-Browser version change.
+   * @return The update items.
+   * @throws IOException
+   */
+  public static SoftwareUpdateItem[] getUpdateItemsForVersionChange() throws IOException {
+    String baseUrl = getPluginUpdatesMirror().getUrl();
+    
+    try {
+      String name = PLUGIN_UPDATES_FILENAME.substring(0,
+          PLUGIN_UPDATES_FILENAME.indexOf('.'))
+          + "_" + Mirror.MIRROR_LIST_FILE_NAME;
+      IOUtilities.download(new URL(baseUrl + (baseUrl.endsWith("/") ? "" : "/") + name), new File(Settings.getUserSettingsDirName(), name));
+    } catch(Exception ee) {}
+    
+    java.net.URL url = new java.net.URL(baseUrl + "/" + PluginAutoUpdater.PLUGIN_UPDATES_FILENAME);
+    SoftwareUpdater softwareUpdater = new SoftwareUpdater(url,PluginLoader.getInstance().getInfoOfAvailablePlugins());
+    
+    return softwareUpdater.getAvailableSoftwareUpdateItems();
+  }
   
   /**
    * Search for plugin updates. (And only updates)

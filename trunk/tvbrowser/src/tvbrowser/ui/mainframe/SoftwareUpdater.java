@@ -38,6 +38,7 @@ import java.util.regex.Pattern;
 
 import tvbrowser.TVBrowser;
 import tvbrowser.core.Settings;
+import tvbrowser.core.plugin.PluginBaseInfo;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
@@ -58,6 +59,21 @@ public final class SoftwareUpdater {
 	private String mBlockRequestingPluginId;
 	private boolean mIsRequestingBlockArrayClear;
 
+	 /**
+   * Creates an instance of this class.
+   *
+   * @param url The url to download the informations from.
+   * @param baseInfos The base infos for all available plugins.
+   * @throws IOException
+   */
+  public SoftwareUpdater(URL url, PluginBaseInfo[] baseInfos) throws IOException {
+    BufferedReader reader = new BufferedReader(new InputStreamReader(IOUtilities.getStream(url, 300000),"ISO-8859-1"));
+
+    mSoftwareUpdateItems=readSoftwareUpdateItems(reader,true,false,baseInfos);
+
+    reader.close();
+  }
+	
 	/**
 	 * Creates an instance of this class.
 	 *
@@ -69,12 +85,12 @@ public final class SoftwareUpdater {
 	SoftwareUpdater(URL url, boolean onlyUpdates, boolean dragNdrop) throws IOException {
 		BufferedReader reader = new BufferedReader(new InputStreamReader(IOUtilities.getStream(url, 300000),"ISO-8859-1"));
 
-		mSoftwareUpdateItems=readSoftwareUpdateItems(reader,onlyUpdates, dragNdrop);
+		mSoftwareUpdateItems=readSoftwareUpdateItems(reader,onlyUpdates,dragNdrop,null);
 
 		reader.close();
 	}
 
-  private SoftwareUpdateItem[] readSoftwareUpdateItems(BufferedReader reader, boolean onlyUpdates, boolean dragNdrop) throws IOException {
+  private SoftwareUpdateItem[] readSoftwareUpdateItems(BufferedReader reader, boolean onlyUpdates, boolean dragNdrop, PluginBaseInfo[] baseInfos) throws IOException {
     Pattern pluginTypePattern = Pattern.compile("\\[(.*):(.*)\\]");
     Pattern keyValuePattern = Pattern.compile("(.+?)=(.*)");
     Matcher matcher;
@@ -166,40 +182,57 @@ public final class SoftwareUpdater {
 
         // remove already installed plugins
         String pluginId = "java." + className.toLowerCase() + "." + className;
-        PluginProxy installedPlugin = PluginProxyManager.getInstance().getPluginForId(pluginId);
-
-        if(onlyUpdates) {
-          // remove all not installed plugins
-          if (installedPlugin == null) {
-            TvDataServiceProxy service = TvDataServiceProxyManager.getInstance().findDataServiceById(className.toLowerCase()+"."+className);
-
-            if(service == null) {
-              it.remove();
-              continue;
+        
+        if(baseInfos == null) {
+          PluginProxy installedPlugin = PluginProxyManager.getInstance().getPluginForId(pluginId);
+  
+          if(onlyUpdates) {
+            // remove all not installed plugins
+            if (installedPlugin == null) {
+              TvDataServiceProxy service = TvDataServiceProxyManager.getInstance().findDataServiceById(className.toLowerCase()+"."+className);
+  
+              if(service == null) {
+                it.remove();
+                continue;
+              }
             }
           }
+  
+          if (installedPlugin!=null && ((installedPlugin.getInfo().getVersion().compareTo(item.getVersion())>0 ||
+              (installedPlugin.getInfo().getVersion().compareTo(item.getVersion())==0 && (!dragNdrop || item.getVersion().isStable()))))) {
+            it.remove();
+            continue;
+          }
+  
+          // remove already installed dataservices
+          TvDataServiceProxy service= TvDataServiceProxyManager.getInstance().findDataServiceById(className.toLowerCase()+"."+className);
+          if (service!=null && ((service.getInfo().getVersion().compareTo(item.getVersion())>0) ||
+              (service.getInfo().getVersion().compareTo(item.getVersion())==0 && (!dragNdrop || item.getVersion().isStable())))) {
+            it.remove();
+            continue;
+          }
+  
+          if(item.isOnlyUpdate() && installedPlugin == null && service == null) {
+            it.remove();
+          }
+          
+          PluginProxyManager.getInstance().firePluginBlockListRenewed();
         }
-
-        if (installedPlugin!=null && ((installedPlugin.getInfo().getVersion().compareTo(item.getVersion())>0 ||
-            (installedPlugin.getInfo().getVersion().compareTo(item.getVersion())==0 && (!dragNdrop || item.getVersion().isStable()))))) {
-          it.remove();
-          continue;
-        }
-
-        // remove already installed dataservices
-        TvDataServiceProxy service= TvDataServiceProxyManager.getInstance().findDataServiceById(className.toLowerCase()+"."+className);
-        if (service!=null && ((service.getInfo().getVersion().compareTo(item.getVersion())>0) ||
-            (service.getInfo().getVersion().compareTo(item.getVersion())==0 && (!dragNdrop || item.getVersion().isStable())))) {
-          it.remove();
-          continue;
-        }
-
-        if(item.isOnlyUpdate() && installedPlugin == null && service == null) {
-          it.remove();
+        else {
+          PluginBaseInfo baseInfo = getBaseInfoFor(pluginId,baseInfos);
+          
+          if(baseInfo == null) {
+            it.remove();
+            continue;
+          }
+          else if(baseInfo.getVersion().compareTo(item.getVersion()) >= 0) {
+            it.remove();
+            continue;
+          }
         }
       }
 
-      PluginProxyManager.getInstance().firePluginBlockListRenewed();
+      
     } catch (RuntimeException e) {
       e.printStackTrace();
     }
@@ -232,4 +265,14 @@ public final class SoftwareUpdater {
 	public boolean isRequestingBlockArrayClear() {
 	  return mIsRequestingBlockArrayClear;
 	}
+	
+	private PluginBaseInfo getBaseInfoFor(String className, PluginBaseInfo[] availablePlugins) {
+	  for(PluginBaseInfo baseInfo : availablePlugins) {
+	    if(baseInfo.getPluginId().equals(className)) {
+	      return baseInfo;
+	    }
+	  }
+	  
+	  return null;
+	}	
 }

@@ -1585,6 +1585,13 @@ public class Settings {
    */
   public static final BooleanProperty propChannelsWereConfigured = new BooleanProperty(
       mProp, "channelsWereConfigured", false);
+  
+  /**
+   * Stores if beta warining is enabled for plugin update.
+   * @since 3.0
+   */
+  public static final BooleanProperty propPluginBetaWarning = new BooleanProperty(
+      mProp, "pluginBetaWarning", true);
 
   /**
    * Sets the window position and size for the given window with the values of

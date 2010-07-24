@@ -50,7 +50,7 @@ public class PluginsSoftwareUpdateItem extends SoftwareUpdateItem {
   }
 
   protected boolean downloadFrom(final String url) throws TvBrowserException {
-    if(!isStable()) {
+    if(!isStable() && Settings.propPluginBetaWarning.getBoolean()) {
       JOptionPane pane = new JOptionPane();
       
       String ok = mLocalizer.msg("betawarning.oktext","Install beta version");
