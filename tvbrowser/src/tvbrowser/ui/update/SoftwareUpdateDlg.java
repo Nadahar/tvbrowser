@@ -110,7 +110,26 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
   private int mLastIndex;
 
   private JButton mHelpBtn;
+  
+  private boolean mIsVersionChange;
 
+  /**
+   * Creates an instance of this class.
+   * <p>
+   * @param parent The parent dialog.
+   * @param downloadUrl The url to download the data from.
+   * @param onlyUpdate If this dialog should only show updates.
+   * @param itemArr The array with the available update items.
+   * @param isVersionChange If this dialog is shown for a TV-Browser version change.
+   */
+  public SoftwareUpdateDlg(Window parent, String downloadUrl,
+      boolean onlyUpdate, SoftwareUpdateItem[] itemArr, boolean isVersionChange) {
+    super(parent);
+    setModal(true);
+    mIsVersionChange = isVersionChange;
+    createGui(downloadUrl, onlyUpdate, itemArr);
+  }
+  
   /**
    * Creates an instance of this class.
    * <p>
@@ -121,9 +140,7 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
    */
   public SoftwareUpdateDlg(Window parent, String downloadUrl,
       boolean onlyUpdate, SoftwareUpdateItem[] itemArr) {
-    super(parent);
-    setModal(true);
-    createGui(downloadUrl, onlyUpdate, itemArr);
+    this(parent,downloadUrl,onlyUpdate,itemArr,false);
   }
 
   /**
@@ -136,6 +153,19 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
   public SoftwareUpdateDlg(Window parent,
       boolean onlyUpdate, SoftwareUpdateItem[] itemArr) {
     this(parent, null, onlyUpdate, itemArr);
+  }
+  
+  /**
+   * Creates an instance of this class for drag-n-drop instead of normal plugin downloads.
+   * <p>
+   * @param parent The parent dialog.
+   * @param onlyUpdate If this dialog should only show updates.
+   * @param itemArr The array with the available update items.
+   * @param isVersionChange If this dialog is shown for a TV-Browser version change.
+   */
+  public SoftwareUpdateDlg(Window parent,
+      boolean onlyUpdate, SoftwareUpdateItem[] itemArr, boolean isVersionChange) {
+    this(parent, null, onlyUpdate, itemArr, isVersionChange);
     mSoftwareUpdateItemList.selectAll();
     mDownloadBtn.setEnabled(mSoftwareUpdateItemList.getItemCount() > 0);
   }
@@ -144,11 +174,16 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
     mDownloadUrl = downloadUrl;
     setTitle(mLocalizer.msg("title", "Download plugins"));
 
+    if(mIsVersionChange) {
+      setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+    }
+    
     JPanel contentPane = (JPanel) getContentPane();
     contentPane.setLayout(new BorderLayout(0, 10));
     contentPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 11, 11));
     mCloseBtn = new JButton(Localizer.getLocalization(Localizer.I18N_CLOSE));
     mCloseBtn.addActionListener(this);
+    mCloseBtn.setEnabled(!mIsVersionChange);
 
     mDownloadBtn = new JButton(mLocalizer.msg("download", "Download selected items"));
     mDownloadBtn.addActionListener(this);
@@ -159,7 +194,7 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
 
     ButtonBarBuilder2 builder = new ButtonBarBuilder2();
 
-    if(onlyUpdate) {
+    if(onlyUpdate && !mIsVersionChange) {
       mAutoUpdates = new JCheckBox(mLocalizer.msg("autoUpdates","Find plugin updates automatically"), Settings.propAutoUpdatePlugins.getBoolean());
       mAutoUpdates.addItemListener(new ItemListener() {
         public void itemStateChanged(ItemEvent e) {
@@ -174,8 +209,10 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
 
     builder.addGlue();
     builder.addFixed(mDownloadBtn);
+    
     builder.addRelatedGap();
     builder.addFixed(mCloseBtn);
+    
 
     final CellConstraints cc = new CellConstraints();
 
@@ -392,7 +429,9 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
     addWindowListener(new WindowAdapter() {
       @Override
       public void windowClosing(WindowEvent e) {
-        close();
+        if(!mIsVersionChange || mSoftwareUpdateItemList.getSelection().length == 0) {
+          close();
+        }
       }
     });
 
@@ -422,8 +461,11 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
         mDownloadBtn.setEnabled(true);
         setCursor(cursor);
       }
-      if (successfullyDownloadedItems > 0) {
+      if (successfullyDownloadedItems > 0 && !mIsVersionChange) {
         JOptionPane.showMessageDialog(null, mLocalizer.msg("restartprogram", "please restart tvbrowser before..."));
+        close();
+      }
+      else if(mIsVersionChange) {
         close();
       }
     }
@@ -437,6 +479,10 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
 
   public void valueChanged(ListSelectionEvent event) {
     mDownloadBtn.setEnabled(mSoftwareUpdateItemList.getSelection().length > 0);
+    
+    if(mIsVersionChange) {
+      mCloseBtn.setEnabled(mSoftwareUpdateItemList.getSelection().length == 0);
+    }
 
     if(event.getSource() instanceof JList) {
       if(!event.getValueIsAdjusting()) {

@@ -87,6 +87,7 @@ import tvbrowser.ui.splashscreen.DummySplash;
 import tvbrowser.ui.splashscreen.Splash;
 import tvbrowser.ui.splashscreen.SplashScreen;
 import tvbrowser.ui.tray.SystemTray;
+import tvbrowser.ui.update.TvBrowserVersionChangeDlg;
 import tvdataservice.MarkedProgramsList;
 import util.browserlauncher.Launch;
 import util.exc.ErrorHandler;
@@ -319,6 +320,12 @@ public class TVBrowser {
       if (TVBrowser.isStable()) {
         mainLogger.setLevel(Level.WARNING);
       }
+    }
+    
+    //Update plugin on version change
+    if(VERSION.compareTo(Settings.propTVBrowserVersion.getVersion()) > 0 && Settings.propTVBrowserVersion.getVersion() != null) {
+      updateLookAndFeel();
+      updatePluginsOnVersionChange();
     }
 
     // Capture unhandled exceptions
@@ -1306,6 +1313,21 @@ public class TVBrowser {
       mAutoDownloadWaitingTimer.stop();
       mainFrame.getStatusBarLabel().setText("");
       mAutoDownloadWaitingTimer = null;
+    }
+  }
+  
+  private static void updatePluginsOnVersionChange() {
+    boolean oldBetaWarning = Settings.propPluginBetaWarning.getBoolean();
+    
+    TvBrowserVersionChangeDlg versionChange = new TvBrowserVersionChangeDlg(Settings.propTVBrowserVersion.getVersion());
+    versionChange.pack();
+    versionChange.setLocationRelativeTo(null);
+    versionChange.setVisible(true);
+    
+    Settings.propPluginBetaWarning.setBoolean(oldBetaWarning);
+    
+    if(versionChange.getIsToCloseTvBrowser()) {
+      System.exit(0);
     }
   }
 }

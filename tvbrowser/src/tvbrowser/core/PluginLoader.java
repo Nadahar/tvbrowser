@@ -53,6 +53,7 @@ import org.apache.commons.lang.StringUtils;
 import tvbrowser.core.plugin.AbstractPluginProxy;
 import tvbrowser.core.plugin.BeanShellPluginProxy;
 import tvbrowser.core.plugin.JavaPluginProxy;
+import tvbrowser.core.plugin.PluginBaseInfo;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.tvdataservice.DefaultTvDataServiceProxy;
@@ -666,6 +667,77 @@ public class PluginLoader {
       for (File proxyFile : proxyFiles) {
         Settings.propDeleteFilesAtStart.addItem(proxyFile.toString());
       }
+    }
+  }
+  
+  /**
+   * Gets the base infos for all available plugins.
+   * <p>
+   * @return The array with the base info for all available plugins.
+   */
+  public PluginBaseInfo[] getInfoOfAvailablePlugins() {
+    ArrayList<PluginBaseInfo> availablePlugins = new ArrayList<PluginBaseInfo>();
+    
+    /* 1) get base info for plugins in user dir */
+    getBaseInfoOfPluginsInDirectory(new File(Settings.propPluginsDirectory.getString()),availablePlugins);
+    
+    /* 2) get base info for plugins in the plugins folder */
+    getBaseInfoOfPluginsInDirectory(new File(PluginProxyManager.PLUGIN_DIRECTORY),availablePlugins);
+
+    /* 3) get base info for in the tvdataservice folder */
+    getBaseInfoOfPluginsInDirectory(new File(TvDataServiceProxyManager.PLUGIN_DIRECTORY),availablePlugins);
+    
+    return availablePlugins.toArray(new PluginBaseInfo[availablePlugins.size()]);
+  }
+  
+  private void getBaseInfoOfPluginsInDirectory(File directory, ArrayList<PluginBaseInfo> availablePlugins) {
+    if (directory.exists()) {
+      File[] pluginFiles = directory.listFiles(new FilenameFilter() {
+        public boolean accept(File dir, String name) {
+          for (String ignored : IGNORED_PLUGINS) {
+            if (name.equalsIgnoreCase(ignored)) {
+              return false;
+            }
+          }
+          
+          return name.toLowerCase().endsWith(".jar");
+        }
+      });
+      
+      getBaseInfoOfPlugins(pluginFiles,availablePlugins);
+    }
+  }
+  
+  private void getBaseInfoOfPlugins(File[] plugins, ArrayList<PluginBaseInfo> availablePlugins) {
+    for(File plugin : plugins) {
+      URL[] urls;
+      try {
+        urls = new URL[] { plugin.toURI().toURL() };
+        ClassLoader classLoader = URLClassLoader.newInstance(urls, ClassLoader.getSystemClassLoader());
+        
+        // Get the plugin name
+        String pluginName = plugin.getName();
+        pluginName = pluginName.substring(0, pluginName.length() - 4);
+                
+        Class pluginClass = classLoader.loadClass(pluginName.toLowerCase() + "." + pluginName);
+        Method getVersion = pluginClass.getMethod("getVersion",new Class[0]);
+        
+        try {
+          Version version = (Version)getVersion.invoke(pluginClass, new Object[0]);
+          
+          PluginBaseInfo baseInfo = new PluginBaseInfo("java." + pluginClass.getName(),version);
+          
+          if(!availablePlugins.contains(baseInfo)) {
+            availablePlugins.add(baseInfo);
+          }
+        } catch (Exception e) {
+        }
+        
+        
+      } catch (Exception e) {
+        mLog.info("Could not load plugin file '" + plugin.getAbsolutePath() + "'");
+      }
+      
     }
   }
 
