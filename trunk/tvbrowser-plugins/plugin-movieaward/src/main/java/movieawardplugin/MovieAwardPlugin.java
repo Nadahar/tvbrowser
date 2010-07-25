@@ -120,6 +120,11 @@ final public class MovieAwardPlugin extends Plugin {
   private boolean mUpdateRootEnabled;
 
   private MovieAwardSettings mSettings;
+  
+  /**
+   * object to synchronize different threads
+   */
+  private Object mSynchronizationLock = new Object();
 
   public MovieAwardPlugin() {
     mInstance = this;
@@ -143,34 +148,36 @@ final public class MovieAwardPlugin extends Plugin {
     return mVersion;
   }
 
-  synchronized public void initDatabase() {
+  public void initDatabase() {
     // might be called multiple times
-    if (mMovieAwards == null) {
-      MovieDataFactory.loadMovieDatabase(mMovieDatabase, getClass()
-          .getResourceAsStream("data/moviedatabase.xml"));
-      mMovieAwards = new ArrayList<MovieAward>();
+    synchronized (mSynchronizationLock ) {
+      if (mMovieAwards == null) {
+        MovieDataFactory.loadMovieDatabase(mMovieDatabase, getClass()
+            .getResourceAsStream("data/moviedatabase.xml"));
+        mMovieAwards = new ArrayList<MovieAward>();
 
-      for (String awardName : KNOWN_AWARDS) {
-        MovieAward award = MovieDataFactory.loadMovieDataFromStream(getClass()
-		    .getResourceAsStream("data/" + awardName + ".xml"),
-		    mMovieDatabase);
+        for (String awardName : KNOWN_AWARDS) {
+          MovieAward award = MovieDataFactory.loadMovieDataFromStream(getClass()
+              .getResourceAsStream("data/" + awardName + ".xml"),
+              mMovieDatabase);
 
-        if (award != null) {
-        	mMovieAwards.add(award);
+          if (award != null) {
+            mMovieAwards.add(award);
+          }
+          else {
+            mLog.warning("Could not load award " + awardName);
+          }
         }
-        else {
-        	mLog.warning("Could not load award " + awardName);
-        }
-      }
-      for (String awardName : KNOWN_MOVIE_AWARDS) {
-        MovieAward award = MovieDataFactory.loadMovieDataFromStream(getClass()
-            .getResourceAsStream("data/" + awardName + ".xml"),
-            new MovieAwardForMovies(mMovieDatabase));
-        if (award != null) {
-        	mMovieAwards.add(award);
-        }
-        else {
-        	mLog.warning("Could not load award " + awardName);
+        for (String awardName : KNOWN_MOVIE_AWARDS) {
+          MovieAward award = MovieDataFactory.loadMovieDataFromStream(getClass()
+              .getResourceAsStream("data/" + awardName + ".xml"),
+              new MovieAwardForMovies(mMovieDatabase));
+          if (award != null) {
+            mMovieAwards.add(award);
+          }
+          else {
+            mLog.warning("Could not load award " + awardName);
+          }
         }
       }
     }
@@ -249,7 +256,7 @@ final public class MovieAwardPlugin extends Plugin {
 			  return false;
 			}
 
-			synchronized(mMovieAwards) {
+			synchronized(mSynchronizationLock) {
 
 			  // did we already check this program ?
 			  if (mAwardCache.containsKey(program)) {
@@ -395,7 +402,7 @@ final public class MovieAwardPlugin extends Plugin {
     }
   }
 
-  private synchronized void updateRootNode() {
+  private void updateRootNode() {
     // do nothing if the tree is not visible or the main program still has work
     // to do
     if (!mStartFinished) {
