@@ -247,6 +247,8 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
 
   private boolean mIsAskingUpdate = false;
 
+  private Timer mTimer;
+
   private MainFrame() {
     super(TVBrowser.MAINWINDOW_TITLE);
     mIsVisible = false;
@@ -391,12 +393,12 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
 
     addKeyboardAction();
 
-    Timer timer = new Timer(10000, new ActionListener() {
+    mTimer = new Timer(10000, new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
         handleTimerEvent();
       }
     });
-    timer.start();
+    mTimer.start();
 
     setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
@@ -1094,6 +1096,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
   }
 
   public void quit(boolean log) {
+    mTimer.stop(); // disable the update timer to avoid new update events
     if (log && downloadingThread != null && downloadingThread.isAlive()) {
       final JDialog info = new JDialog(UiUtilities.getLastModalChildOf(this));
       info.setModal(true);
