@@ -20,7 +20,7 @@ import javax.swing.table.TableCellEditor;
  * @author Wolfgang Reh
  */
 public class TopfieldRollTableCellEditor extends AbstractCellEditor implements TableCellEditor, ActionListener {
-  private JSpinner timeSpinner;
+  private JSpinner timeSpinner = null;
 
   /*
    * (non-Javadoc)

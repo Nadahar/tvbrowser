@@ -492,8 +492,9 @@ public final class TopfieldConfiguration implements ConfigIf, Cloneable {
    */
   public Channel getChannelForService(int number, boolean isTV) {
     for (TopfieldServiceInfo service : deviceChannelMap.keySet()) {
-      if ((service.isTV() == isTV) && (service.getChannelNumber() == number))
+      if ((service.isTV() == isTV) && (service.getChannelNumber() == number)) {
         return deviceChannelMap.get(service);
+      }
     }
 
     return null;

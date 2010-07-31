@@ -596,8 +596,9 @@ public class TopfieldConnector {
       // request.
       InputStream contentStream = connection.getInputStream();
       BufferedReader in = new BufferedReader(new InputStreamReader(contentStream));
-      while (in.readLine() != null)
+      while (in.readLine() != null) {
         ;
+      }
       in.close();
       getTimerList();
       boolean deleteOK = true;
