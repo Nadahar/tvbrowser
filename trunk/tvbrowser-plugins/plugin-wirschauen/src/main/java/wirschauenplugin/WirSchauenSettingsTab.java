@@ -44,6 +44,8 @@ public class WirSchauenSettingsTab implements SettingsTab
    */
   private WirSchauenSettings mSettings;
 
+  private JCheckBox mSpellCheck;
+
 
   /**
    * @param settings the underlying settings for this tab.
@@ -64,7 +66,7 @@ public class WirSchauenSettingsTab implements SettingsTab
 //    mLinkedProgramColorChooser.setEnabled(mMarkerCheckbox.isSelected());
 
     CellConstraints cc = new CellConstraints();
-    PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu, default:grow", "5dlu, pref, 5dlu, pref"));
+    PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu, default:grow", "5dlu, pref, 5dlu, pref, 10dlu, pref"));
 
     pb.add(mMarkerCheckbox, cc.xy(2, 2));
     pb.add(mMarkingColorChooser, cc.xy(2, 4));
@@ -74,6 +76,8 @@ public class WirSchauenSettingsTab implements SettingsTab
 //        mLinkedProgramColorChooser.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
 //      }
 //    });
+    mSpellCheck = new JCheckBox(WirSchauenPlugin.LOCALIZER.msg("Settings.SpellCheck", "Activate spell checker"), mSettings.getSpellChecking());
+    pb.add(mSpellCheck, cc.xy(2,6));
 
     return pb.getPanel();
   }
@@ -111,5 +115,6 @@ public class WirSchauenSettingsTab implements SettingsTab
     mSettings.setMarkPrograms(mMarkerCheckbox.isSelected());
     mSettings.setMarkPriorityForOmdbLink(mMarkingColorChooser.getSelectedPriority(0));
     mSettings.setMarkPriorityForOwnOmdbLink(mMarkingColorChooser.getSelectedPriority(1));
+    mSettings.setSpellChecking(mSpellCheck.isSelected());
   }
 }

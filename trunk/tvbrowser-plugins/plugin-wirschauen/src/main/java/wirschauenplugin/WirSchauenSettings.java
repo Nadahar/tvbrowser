@@ -46,6 +46,8 @@ public class WirSchauenSettings extends PropertyBasedSettings {
    */
   private static final String OPTION_KEY_MY_OMDB_MARK_PRIORITY = "myOmdbMarkPriority";
 
+  private static final String OPTION_KEY_SPELL_CHECKING = "spellCheck";
+
 
 
 
@@ -118,5 +120,15 @@ public class WirSchauenSettings extends PropertyBasedSettings {
    */
   public int getMarkPriorityForOwnOmdbLink() {
     return get(OPTION_KEY_MY_OMDB_MARK_PRIORITY, Program.LOWER_MEDIUM_MARK_PRIORITY);
+  }
+
+
+  public boolean getSpellChecking() {
+    return get(OPTION_KEY_SPELL_CHECKING, true);
+  }
+
+
+  public void setSpellChecking(final boolean check) {
+    set(OPTION_KEY_SPELL_CHECKING, check);
   }
 }
