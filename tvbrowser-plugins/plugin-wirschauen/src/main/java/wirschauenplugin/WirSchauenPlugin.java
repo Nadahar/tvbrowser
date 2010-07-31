@@ -71,7 +71,7 @@ public final class WirSchauenPlugin extends Plugin
   /**
    * the version of this plugin.
    */
-  private static final Version VERSION = new Version(0, 16, 2, IS_STABLE);
+  private static final Version VERSION = new Version(0, 20, 0, IS_STABLE);
 
   /**
    * this class is a singleton. kind of. the constructor is not restricted so
@@ -615,7 +615,7 @@ public final class WirSchauenPlugin extends Plugin
    * @param program the program to be checked
    * @return true, if the program is allowed to be processed by wirschauen
    */
-  private boolean isProgramAllowed(final Program program)
+  private static boolean isProgramAllowed(final Program program)
   {
     if (getPluginManager().getExampleProgram().equals(program)) {
       return true;
@@ -627,7 +627,7 @@ public final class WirSchauenPlugin extends Plugin
       name = program.getChannel().getDataServiceProxy().getId() + ':';
     }
 
-    name = name + program.getChannel().getId();
+    name += program.getChannel().getId();
 
     return mAllowedChannels.contains(name);
   }
@@ -718,7 +718,7 @@ public final class WirSchauenPlugin extends Plugin
    * call this method, if the mark prio (i.e. color) for linked
    * programs changes.
    */
-  protected void updateMarkingOfLinkedPrograms()
+  void updateMarkingOfLinkedPrograms()
   {
     for (ProgramId programId : mLinkedPrograms)
     {
@@ -736,12 +736,16 @@ public final class WirSchauenPlugin extends Plugin
    * call this method, if the mark prio (i.e. color) for linked
    * programs (linked by the user himself) changes.
    */
-  protected void updateMarkingOfProgramsInTree()
+  void updateMarkingOfProgramsInTree()
   {
     for (Program program : getRootNode().getPrograms())
     {
       program.validateMarking();
     }
+  }
+
+  WirSchauenSettings getSettings() {
+    return mSettings;
   }
 }
 

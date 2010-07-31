@@ -14,6 +14,8 @@
  */
 package wirschauenplugin;
 
+import java.net.URL;
+
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -21,6 +23,7 @@ import javax.swing.JTextArea;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import com.inet.jortho.SpellChecker;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
@@ -84,6 +87,14 @@ public class DescriptionInputField extends JPanel implements DocumentListener
       initialValue = value.trim();
     }
     mTextArea.insert(initialValue, 0);
+
+    if (WirSchauenPlugin.getInstance().getSettings().getSpellChecking()) {
+      URL dictUrl = getClass().getResource("dictionaries/");
+      if (dictUrl != null) {
+        SpellChecker.registerDictionaries(dictUrl, "de" );
+        SpellChecker.register(mTextArea);
+      }
+    }
   }
 
 
