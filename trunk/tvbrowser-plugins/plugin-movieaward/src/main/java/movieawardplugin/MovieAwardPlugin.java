@@ -78,7 +78,7 @@ final public class MovieAwardPlugin extends Plugin {
    */
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(MovieAwardPlugin.class);
   private static final Logger mLog = Logger.getLogger(MovieAwardPlugin.class.getName());
-  private static final Version mVersion = new Version(0, 11, 0);
+  private static final Version mVersion = new Version(0, 12, 0);
 
   private PluginInfo mPluginInfo;
   private ArrayList<MovieAward> mMovieAwards;
@@ -120,7 +120,7 @@ final public class MovieAwardPlugin extends Plugin {
   private boolean mUpdateRootEnabled;
 
   private MovieAwardSettings mSettings;
-  
+
   /**
    * object to synchronize different threads
    */
