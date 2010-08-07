@@ -274,7 +274,12 @@ public class TextLineBreakerStringWidth {
           int breakPos = findBreakPos(mNextWord, maxWidth - lineWidth, lineWidth == 0);
 
           if (breakPos <= 0) {
-            return mCurrLineBuffer.toString();
+            if (mCurrLineBuffer.length() > 0) {  // avoid returning empty lines, leading to endless loops
+              return mCurrLineBuffer.toString();
+            }
+            else {
+              breakPos = Math.min(2, mNextWordWidth);
+            }
           }
           String firstPart = mNextWord.substring(0, breakPos);
           if (lineLength > 0 && (mCurrLineBuffer.charAt(lineLength - 1) != '-' || (lineLength > 1 && mCurrLineBuffer.charAt(lineLength - 2) == ' '))) {
