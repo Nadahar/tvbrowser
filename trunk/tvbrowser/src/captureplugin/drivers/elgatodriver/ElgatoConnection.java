@@ -49,6 +49,8 @@ import devplugin.Program;
  * @author bodum
  */
 public class ElgatoConnection implements SimpleConnectionIf {
+    private static final String SEPARATOR = "-TRENNER-";
+
     /**
      * Logger
      */
@@ -58,20 +60,20 @@ public class ElgatoConnection implements SimpleConnectionIf {
     private final AppleScriptRunner mAppleScript = new AppleScriptRunner();
 
     /** Script to get the Channelllist */
-    private static final String CHANNELLIST = "set chList to {}\n"
+    private static final String CHANNEL_LIST = "set chList to {}\n"
             + "tell application \"EyeTV\"\n" + "  repeat with ch in channels\n"
             + "    set end of chList to channel number of contents of ch\n"
             + "    set end of chList to name of contents of ch\n"
             + "  end repeat\n" + "end tell\n"
-            + "set text item delimiters to \"-TRENNER-\"\n"
+            + "set text item delimiters to \"" + SEPARATOR + "\"\n"
             + "set outString to chList as text\n" + "outString";
 
     /** Script for switching of Channels */
-    private static final String SWITCHCHANNEL = "tell application \"EyeTV\"\n"
+    private static final String SWITCH_CHANNEL = "tell application \"EyeTV\"\n"
             + "set current channel to \"{0}\"\n" + "end tell";
 
     /** Script for creation of recordings */
-    private static final String CREATERECORDING = "on stringToList from theString for myDelimiters\n"
+    private static final String CREATE_RECORDING = "on stringToList from theString for myDelimiters\n"
             + "  tell AppleScript\n"
             + "    set theSavedDelimiters to AppleScript's text item delimiters\n"
             + "    set text item delimiters to myDelimiters\n"
@@ -111,11 +113,11 @@ public class ElgatoConnection implements SimpleConnectionIf {
             + "set dateob to getdateForISOdate(\"{0}\", \"{1}\")\n"
             + "\n"
             + "tell application \"EyeTV\"\n"
-            + "  make new program with properties {start time:dateob, duration:{2}, title:\"{3}\", channel number:{4}, description : \"{5}\"}\n"
+            + "  make new program with properties {start time:dateob, duration:{2}, title:\"{3}\", channel number:{4}, description: \"{5}\"}\n"
             + "end tell";
 
     /** List all Recordings */
-    private final static String LISTRECORDINGS = "set recList to {}\n"
+    private final static String LIST_RECORDINGS = "set recList to {}\n"
             + "\n"
             + "script x\n"
             + "  on getIsoDate(dateObj)\n"
@@ -136,11 +138,11 @@ public class ElgatoConnection implements SimpleConnectionIf {
             + "    set end of recList to duration of prog\n"
             + "    set end of recList to unique ID of prog\n"
             + "    set end of recList to title of prog\n" + "  end repeat\n"
-            + "end tell\n" + "\n" + "set text item delimiters to \"-TRENNER-\"\n"
+            + "end tell\n" + "\n" + "set text item delimiters to \"" + SEPARATOR + "\"\n"
             + "set outString to reclist as text\n" + "outString";
 
     /** Remove a specific Recording */
-    private final static String REMOVERECORDING = "tell application \"EyeTV\"\n"
+    private final static String REMOVE_RECORDING = "tell application \"EyeTV\"\n"
             + "  repeat with transmission in programs\n"
             + "    if unique ID of transmission is {0} then\n"
             + "      delete transmission\n" + "    end if\n" + "  end repeat\n"
@@ -159,7 +161,7 @@ public class ElgatoConnection implements SimpleConnectionIf {
 
         String res = null;
         try {
-            res = mAppleScript.executeScript(CHANNELLIST);
+            res = mAppleScript.executeScript(CHANNEL_LIST);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -168,7 +170,7 @@ public class ElgatoConnection implements SimpleConnectionIf {
             return new SimpleChannel[0];
         }
 
-        String[] result = res.split("-TRENNER-");
+        String[] result = res.split(SEPARATOR);
 
         for (int i = 0; i < result.length; i += 2) {
             try {
@@ -195,7 +197,7 @@ public class ElgatoConnection implements SimpleConnectionIf {
 
         String res = null;
         try {
-            res = mAppleScript.executeScript(LISTRECORDINGS);
+            res = mAppleScript.executeScript(LIST_RECORDINGS);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -204,7 +206,7 @@ public class ElgatoConnection implements SimpleConnectionIf {
             return new Program[0];
         }
 
-        String[] result = res.split("-TRENNER-");
+        String[] result = res.split(SEPARATOR);
 
         for (int i = 0; i < result.length; i += 6) {
             try {
@@ -246,29 +248,39 @@ public class ElgatoConnection implements SimpleConnectionIf {
         return programs.toArray(new Program[programs.size()]);
     }
 
+    private String replaceParams(final String command, String ... arguments) {
+      String result = command;
+      int count = 0;
+      for (String argument : arguments) {
+        result = result.replaceAll("\\{" + String.valueOf(count) + "\\}", mAppleScript.formatTextAsParam(argument));
+        count++;
+      }
+      return result;
+    }
+
     /**
      * Record Program
      *
      * @param conf Config
      * @param prg Program to record
-     * @return true if successfull
+     * @return true if successful
      */
     public boolean addToRecording(SimpleConfig conf, ProgramTime prg) {
         String date = new SimpleDateFormat("yyyy-MM-dd").format(prg.getStart());
         String time = new SimpleDateFormat("kk:mm").format(prg.getStart());
-
-        String call = CREATERECORDING.replaceAll("\\{0\\}", date);
-        call = call.replaceAll("\\{1\\}", time);
-        call = call.replaceAll("\\{2\\}", Integer.toString(prg.getLength()*60));
-        call = call.replaceAll("\\{3\\}", prg.getTitle());
-        call = call.replaceAll("\\{4\\}", Integer.toString(((SimpleChannel)conf
-                .getExternalChannel(prg.getProgram().getChannel())).getNumber()));
-
+        String text = "";
         if (prg.getProgram().getShortInfo() != null) {
-            call = call.replaceAll("\\{5\\}", mAppleScript.formatTextAsParam(prg.getProgram().getShortInfo()));
-        } else {
-            call = call.replaceAll("\\{5\\}", "");
+          text = prg.getProgram().getShortInfo();
         }
+
+        String call = replaceParams(CREATE_RECORDING,
+            date,
+            time,
+            String.valueOf(prg.getLength()*60),
+            prg.getTitle(),
+            String.valueOf(((SimpleChannel)conf
+                .getExternalChannel(prg.getProgram().getChannel())).getNumber()),
+            text);
 
         String res = null;
         try {
@@ -289,8 +301,7 @@ public class ElgatoConnection implements SimpleConnectionIf {
     public void removeRecording(SimpleConfig conf, Program prg) {
         String id = mProgramMapping.get(prg);
         try {
-            mAppleScript.executeScript(REMOVERECORDING
-                    .replaceAll("\\{0\\}", id));
+            mAppleScript.executeScript(replaceParams(REMOVE_RECORDING, id));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -304,8 +315,8 @@ public class ElgatoConnection implements SimpleConnectionIf {
      */
     public void switchToChannel(SimpleConfig conf, Channel channel) {
         try {
-            mAppleScript.executeScript(SWITCHCHANNEL.replaceAll("\\{0\\}",
-                    Integer.toString(((SimpleChannel)conf.getExternalChannel(channel))
+            mAppleScript.executeScript(replaceParams(SWITCH_CHANNEL,
+                    String.valueOf(((SimpleChannel)conf.getExternalChannel(channel))
                             .getNumber())));
         } catch (IOException e) {
             e.printStackTrace();
