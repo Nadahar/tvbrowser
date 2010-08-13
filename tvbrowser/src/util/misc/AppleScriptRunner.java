@@ -155,6 +155,6 @@ public class AppleScriptRunner {
    * @return string with escaped characters
    */
   public String formatTextAsParam(String string) {
-    return string.replaceAll("\"", "\\\\\"").replace('\n', ' ');
+    return string.replaceAll("\"", "\\\"").replace('\n', ' ');
   }
 }
