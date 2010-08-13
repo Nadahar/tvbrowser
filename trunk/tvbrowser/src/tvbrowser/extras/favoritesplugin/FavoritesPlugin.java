@@ -866,7 +866,7 @@ public class FavoritesPlugin {
     saveFavorites();
   }
 
-  protected void saveFavorites() {
+  protected synchronized void saveFavorites() {
     Thread thread = new Thread("Save favorites") {
       public void run() {
         store();
