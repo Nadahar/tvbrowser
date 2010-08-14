@@ -171,7 +171,7 @@ public class FavoritesPlugin {
       public void dayProgramTouched(final ChannelDayProgram removedDayProgram,
           final ChannelDayProgram addedDayProgram) {
         if(mThreadPool == null) {
-          mThreadPool = Executors.newFixedThreadPool(4);
+          mThreadPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         }
 
         Runnable update = new Runnable() {
