@@ -31,6 +31,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.RandomAccessFile;
+import java.nio.channels.FileLock;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.StringTokenizer;
@@ -71,6 +73,10 @@ public class PrimaryDataManager {
   private String[] mGroupNameArr;
 
   private RawDataProcessor mRawDataProcessor;
+  
+  private static RandomAccessFile mLockFile;
+
+  private static FileLock mLock;
 
 
 
@@ -406,6 +412,60 @@ public class PrimaryDataManager {
   private boolean doesPreparedExist() {
      return mPreparedDir.exists() && mPreparedDir.isDirectory();
   }
+  
+  /**
+   * Create the .lock file in the config directory
+   * @return false, if the .lock file exist and is locked or cannot be locked.
+   */
+  private boolean createLockFile() {
+
+
+    File lockFile = new File(mConfigDir, ".lock");
+
+    if(lockFile.exists()) {
+      try {
+        mLockFile = new RandomAccessFile(lockFile.toString(),"rw");
+        mLock = mLockFile.getChannel().tryLock();
+
+        if(mLock == null) {
+          return false;
+        }
+      }catch(Exception e) {
+        return false;
+      }
+    }
+    else {
+      try {
+        lockFile.createNewFile();
+        mLockFile = new RandomAccessFile(lockFile.toString(),"rw");
+        mLock = mLockFile.getChannel().tryLock();
+      }catch(Exception e){
+        if(e instanceof IOException) {
+          mLog.log(Level.WARNING, e.getLocalizedMessage(), e);
+        }
+      }
+    }
+
+    return true;
+  }
+
+  private void deleteLockFile() {
+    File lockFile = new File(mConfigDir, ".lock");
+
+    try {
+      mLock.release();
+    }catch(Exception e) {
+      // ignore
+    }
+
+    try {
+      mLockFile.close();
+    }catch(Exception e) {
+      // ignore
+    }
+
+    lockFile.delete();
+  }
 
   public static void main(String[] args) {
     // setup logging
@@ -466,12 +526,19 @@ public class PrimaryDataManager {
               "be deleted, because this leeds to massiv problems.");
           System.exit(-1);
         }
+        
+        if (!manager.createLockFile()) {
+          System.out.println("The PrimaryDataManager is already running.");
+          System.exit(-1);
+        }
 
         String[] groupNamesArr = new String[groupNames.size()];
 				groupNames.toArray(groupNamesArr);
         manager.setGroupNames(groupNamesArr);
 
         manager.updateRawDataDir();
+
+        manager.deleteLockFile();
 
         // Exit with error code 2 if some day programs were put into quarantine
         if (manager.mRawDataProcessor.getQuarantineCount() != 0) {
