@@ -267,7 +267,7 @@ public final class SoftwareUpdater {
 	}
 	
 	private PluginBaseInfo getBaseInfoFor(String className, PluginBaseInfo[] availablePlugins) {
-	  for(PluginBaseInfo baseInfo : availablePlugins) {
+	  for(PluginBaseInfo baseInfo : availablePlugins) {	    
 	    if(baseInfo.getPluginId().equals(className)) {
 	      return baseInfo;
 	    }

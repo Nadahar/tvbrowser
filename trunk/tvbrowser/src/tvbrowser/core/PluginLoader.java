@@ -711,14 +711,15 @@ public class PluginLoader {
   private void getBaseInfoOfPlugins(File[] plugins, ArrayList<PluginBaseInfo> availablePlugins) {
     for(File plugin : plugins) {
       URL[] urls;
+      
+      // Get the plugin name
+      String pluginName = plugin.getName();
+      pluginName = pluginName.substring(0, pluginName.length() - 4);
+
       try {
         urls = new URL[] { plugin.toURI().toURL() };
         ClassLoader classLoader = URLClassLoader.newInstance(urls, ClassLoader.getSystemClassLoader());
-        
-        // Get the plugin name
-        String pluginName = plugin.getName();
-        pluginName = pluginName.substring(0, pluginName.length() - 4);
-                
+                        
         Class pluginClass = classLoader.loadClass(pluginName.toLowerCase() + "." + pluginName);
         Method getVersion = pluginClass.getMethod("getVersion",new Class[0]);
         
@@ -734,10 +735,15 @@ public class PluginLoader {
         }
         
         
-      } catch (Exception e) {
-        mLog.info("Could not load plugin file '" + plugin.getAbsolutePath() + "'");
+      } catch (Throwable t) {
+        PluginBaseInfo baseInfo = new PluginBaseInfo("java." + pluginName.toLowerCase() + "." + pluginName, new Version(0,0));
+        
+        if(!availablePlugins.contains(baseInfo)) {
+          availablePlugins.add(baseInfo);
+        }
+        
+        mLog.info("Could not load base info for plugin file '" + plugin.getAbsolutePath() + "'. Use default version instead.");
       }
-      
     }
   }
 
