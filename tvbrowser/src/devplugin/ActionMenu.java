@@ -29,6 +29,7 @@ package devplugin;
 import java.util.ArrayList;
 
 import javax.swing.Action;
+import javax.swing.Icon;
 
 
 /**
@@ -41,13 +42,14 @@ public class ActionMenu {
   private boolean mIsSelected;
 
   /**
-   * Creates a menu item having sub menu items. Theses items can have
+   * Creates a menu item having sub menu items. These items can have
    * further sub menu items.
    *
    * @see ContextMenuAction
    *
    * @param action
    * @param subItems
+   * @deprecated since 3.0, use {@link #ActionMenu(String, Icon, ActionMenu[])} instead
    */
   public ActionMenu(Action action, ActionMenu[] subItems) {
     mAction = action;
@@ -55,9 +57,37 @@ public class ActionMenu {
   }
 
   /**
+   * Creates a menu item having sub menu items. These items can have
+   * further sub menu items.
+   *
+   * @see ContextMenuAction
+   *
+   * @param menuTitle title of the sub menu
+   * @param menuIcon icon of the sub menu
+   * @param subItems sub menu items
+   */
+  public ActionMenu(final String menuTitle, final Icon menuIcon, final ActionMenu[] subItems) {
+    this(new ContextMenuAction(menuTitle, menuIcon), subItems);
+  }
+
+  /**
+   * Creates a menu item having sub menu items. These items can have
+   * further sub menu items.
+   *
+   * @see ContextMenuAction
+   *
+   * @param menuTitle title of the sub menu
+   * @param subItems sub menu items
+   */
+  public ActionMenu(final String menuTitle, final ActionMenu[] subItems) {
+    this(menuTitle, null, subItems);
+  }
+
+  /**
    * Creates a menu item having sub menu items.
    * @param action
    * @param subItems
+   * @deprecated since 3.0, use {@link #ActionMenu(String, Icon, Action[])} instead
    */
   public ActionMenu(Action action, Action[] subItems) {
     mAction = action;
@@ -69,8 +99,28 @@ public class ActionMenu {
 
   /**
    * Creates a menu item having sub menu items.
+   * @param menuTitle title of the sub menu
+   * @param menuIcon icon of the sub menu
+   * @param subItems
+   */
+  public ActionMenu(final String menuTitle, final Icon menuIcon, Action[] subItems) {
+    this (new ContextMenuAction(menuTitle, menuIcon), subItems);
+  }
+
+  /**
+   * Creates a menu item having sub menu items.
+   * @param menuTitle title of the sub menu
+   * @param subItems
+   */
+  public ActionMenu(final String menuTitle, Action[] subItems) {
+    this (menuTitle, null, subItems);
+  }
+
+  /**
+   * Creates a menu item having sub menu items.
    * @param action
    * @param subItems sub menu items, can be Actions or ActionMenus in mixed order
+   * @deprecated since 3.0, use {@link #ActionMenu(String, Icon, Object[])} instead
    */
   public ActionMenu(Action action, Object[] subItems) {
     mAction = action;
@@ -85,6 +135,25 @@ public class ActionMenu {
     }
     mSubItems = new ActionMenu[subMenus.size()];
     subMenus.toArray(mSubItems);
+  }
+
+  /**
+   * Creates a menu item having sub menu items.
+   * @param menuTitle title of the sub menu
+   * @param menuIcon icon of the sub menu
+   * @param subItems sub menu items, can be Actions or ActionMenus in mixed order
+   */
+  public ActionMenu(final String menuTitle, final Icon menuIcon, final Object[] subItems) {
+    this (new ContextMenuAction(menuTitle, menuIcon), subItems);
+  }
+
+  /**
+   * Creates a menu item having sub menu items.
+   * @param menuTitle title of the sub menu
+   * @param subItems sub menu items, can be Actions or ActionMenus in mixed order
+   */
+  public ActionMenu(final String menuTitle, final Object[] subItems) {
+    this (menuTitle, null, subItems);
   }
 
   /**
