@@ -67,7 +67,7 @@ public class ClipboardPlugin extends Plugin {
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(ClipboardPlugin.class);
 
   /** The Default-Parameters */
-  private static LocalPluginProgramFormating DEFAULT_CONFIG = new LocalPluginProgramFormating("clipDefault", mLocalizer.msg("defaultName","CliboardPlugin - Default"),"{title}","{channel_name} - {title}\n{leadingZero(start_day,\"2\")}.{leadingZero(start_month,\"2\")}.{start_year} {leadingZero(start_hour,\"2\")}:{leadingZero(start_minute,\"2\")}-{leadingZero(end_hour,\"2\")}:{leadingZero(end_minute,\"2\")}\n\n{splitAt(short_info,\"78\")}\n\n","UTF-8");
+  private static LocalPluginProgramFormating DEFAULT_CONFIG = new LocalPluginProgramFormating("clipDefault", mLocalizer.msg("defaultName","Clipboard plugin - Default"),"{title}","{channel_name} - {title}\n{leadingZero(start_day,\"2\")}.{leadingZero(start_month,\"2\")}.{start_year} {leadingZero(start_hour,\"2\")}:{leadingZero(start_minute,\"2\")}-{leadingZero(end_hour,\"2\")}:{leadingZero(end_minute,\"2\")}\n\n{splitAt(short_info,\"78\")}\n\n","UTF-8");
 
   private AbstractPluginProgramFormating[] mConfigs = null;
   private LocalPluginProgramFormating[] mLocalFormatings = null;
@@ -96,7 +96,7 @@ public class ClipboardPlugin extends Plugin {
     ImageIcon img = createImageIcon("actions", "edit-paste", 16);
 
     if(mConfigs.length > 1) {
-      ContextMenuAction copyToSystem = new ContextMenuAction(mLocalizer.ellipsisMsg("copyToSystem", "Copy to System-Clipboard"));
+      ContextMenuAction copyToSystem = new ContextMenuAction(mLocalizer.ellipsisMsg("copyToSystem", "Copy to system clipboard"));
 
       ArrayList<AbstractAction> list = new ArrayList<AbstractAction>();
 
@@ -119,7 +119,7 @@ public class ClipboardPlugin extends Plugin {
       return new ActionMenu(copyToSystem, list.toArray(new AbstractAction[list.size()]));
     }
     else {
-      AbstractAction copyToSystem = new AbstractAction(mLocalizer.msg("copyToSystem", "Copy to System-Clipboard")) {
+      AbstractAction copyToSystem = new AbstractAction(mLocalizer.msg("copyToSystem", "Copy to system clipboard")) {
         public void actionPerformed(ActionEvent evt) {
           Program[] list = { program };
           copyProgramsToSystem(list,mConfigs.length != 1 ? DEFAULT_CONFIG : mConfigs[0]);
@@ -307,11 +307,11 @@ public class ClipboardPlugin extends Plugin {
     try {
       in.readInt();
 
-      int n = in.readInt();
+      int count = in.readInt();
 
       ArrayList<AbstractPluginProgramFormating> list = new ArrayList<AbstractPluginProgramFormating>();
 
-      for(int i = 0; i < n; i++) {
+      for(int i = 0; i < count; i++) {
         AbstractPluginProgramFormating value = AbstractPluginProgramFormating.readData(in);
 
         if(value != null) {
@@ -325,15 +325,26 @@ public class ClipboardPlugin extends Plugin {
 
       mConfigs = list.toArray(new AbstractPluginProgramFormating[list.size()]);
 
-      mLocalFormatings = new LocalPluginProgramFormating[in.readInt()];
+      count = in.readInt();
+      ArrayList<LocalPluginProgramFormating> listLocal = new ArrayList<LocalPluginProgramFormating>();
 
-      for(int i = 0; i < mLocalFormatings.length; i++) {
-        LocalPluginProgramFormating value = (LocalPluginProgramFormating)AbstractPluginProgramFormating.readData(in);
-        LocalPluginProgramFormating loadedInstance = getInstanceOfFormatingFromSelected(value);
-
-        mLocalFormatings[i] = loadedInstance == null ? value : loadedInstance;
+      for(int i = 0; i < count; i++) {
+        LocalPluginProgramFormating value = (LocalPluginProgramFormating) AbstractPluginProgramFormating.readData(in);
+        if(value != null) {
+          LocalPluginProgramFormating loadedInstance = getInstanceOfFormatingFromSelected(value);
+          if (loadedInstance != null) {
+            listLocal.add(loadedInstance);
+          }
+          else {
+            listLocal.add(value);
+          }
+        }
       }
-    }catch(Exception e) {}
+      mLocalFormatings= listLocal.toArray(new LocalPluginProgramFormating[list.size()]);
+
+    }catch(Exception e) {
+      int i = 1;
+    }
   }
 
   private LocalPluginProgramFormating getInstanceOfFormatingFromSelected(LocalPluginProgramFormating value) {
