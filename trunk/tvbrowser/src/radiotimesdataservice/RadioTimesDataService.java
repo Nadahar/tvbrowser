@@ -34,6 +34,8 @@ import java.util.Properties;
 import java.util.TimeZone;
 import java.util.logging.Logger;
 
+import org.apache.commons.lang.StringUtils;
+
 import tvdataservice.SettingsPanel;
 import tvdataservice.TvDataUpdateManager;
 import util.exc.TvBrowserException;
@@ -109,10 +111,14 @@ public class RadioTimesDataService extends AbstractTvDataService {
         // format of a line in this file:
         // 92|BBC1
         if (channel.length == 2) {
-          String channelId = channel[0];
-          String channelName = channel[1];
+          String channelId = channel[0].trim();
+          String channelName = channel[1].trim();
+          int categories = Channel.CATEGORY_NONE;
+          if (StringUtils.containsIgnoreCase(channelName, "TV") || StringUtils.containsIgnoreCase(channelName, "HD")) {
+            categories = Channel.CATEGORY_TV;
+          }
           Channel ch = new Channel(this, channelName, RADIOTIMES + channelId, TimeZone.getTimeZone("GMT+0:00"), "gb",
-              "(c) Radio Times", "http://www.radiotimes.co.uk", mRadioTimesChannelGroup);
+              "(c) Radio Times", "http://www.radiotimes.co.uk", mRadioTimesChannelGroup, null, categories);
           channels.add(ch);
           mLog.fine("Channel : " + ch.getName() + "{" + ch.getId() + "}");
         }
