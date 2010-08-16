@@ -128,7 +128,7 @@ public class PluginProgramConfigurationPanel extends JPanel implements ActionLis
       }
     });
     
-    mHelpLabel = UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("help","This list contains formatings that are provided by the plugin itself and formating available for all plugins. You can configure formatings, that are provided by the plugin itself, direct here. The formatings that are available for all plugins can be configured in <a href=\"#link\">{0}</a>.",GlobalPluginProgramFormatingSettings.mLocalizer.msg("title","Plugin program formating")), new HyperlinkListener() {
+    mHelpLabel = UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("help","This list contains formattings that are provided by the plugin itself and formating available for all plugins. You can configure formatings, that are provided by the plugin itself, direct here. The formatings that are available for all plugins can be configured in <a href=\"#link\">{0}</a>.",GlobalPluginProgramFormatingSettings.mLocalizer.msg("title","Plugin program formating")), new HyperlinkListener() {
       public void hyperlinkUpdate(HyperlinkEvent e) {
         if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
           SettingsDialog.getInstance().showSettingsTab(SettingsItem.PLUGINPROGRAMFORMAT);
