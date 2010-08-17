@@ -207,8 +207,12 @@ public abstract class AbstractXmlTvDataHandler extends DefaultHandler {
         if (text.length() < 4) {
           logMessage("WARNING: The date value must have at least 4 chars: '" + text + '\'');
         } else {
-          int year = Integer.parseInt(text.substring(0, 4));
-          addField(ProgramFieldType.PRODUCTION_YEAR_TYPE, year);
+          try {
+            int year = Integer.parseInt(text.substring(0, 4));
+            addField(ProgramFieldType.PRODUCTION_YEAR_TYPE, year);
+          } catch (NumberFormatException e) {
+            logMessage("WARNING: The date value doesn't start with a year: '" + text + '\'');
+          }
         }
       } else if ("rating".equalsIgnoreCase(qName)) {
         try {
@@ -297,10 +301,12 @@ public abstract class AbstractXmlTvDataHandler extends DefaultHandler {
           logMessage("WARNING: value of colour tag must be 'yes' or 'no'," + " but it is '" + text + '\'');
         }
       } else if ("quality".equalsIgnoreCase(qName)) {
-        if (text.equals("HDTV")) {
+        if (text.equals("HDTV") || text.equals("HD")) {
           setInfoBit(Program.INFO_VISION_HD);
+        } else if (text.equals("SD")) {
+          //do nothing
         } else {
-          logMessage("WARNING: value of quality tag must be 'HDTV' but it is '" + text + '\'');
+          logMessage("WARNING: unsupported value of quality tag: '" + text + '\'');
         }
       } else if ("aspect".equalsIgnoreCase(qName)) {
         if (text.equals("4:3")) {
@@ -384,36 +390,40 @@ public abstract class AbstractXmlTvDataHandler extends DefaultHandler {
           // format is
           // season/totalseasons.episodenum/totalepisode.part/totalparts
           // where current numbers start at 0, while total numbers start at 1
-          if (text.length() > 0) {
-            String[] ep = text.split("\\.");
-            if (ep.length > 0 && ep[0].length() > 0) {
-              String[] seasons = ep[0].trim().split("/");
-              if (seasons.length > 0 && seasons[0].trim().length() > 0) {
-                int season = Integer.parseInt(seasons[0].trim()) + 1;
-                if (season > 0) {
-                  addField(ProgramFieldType.SEASON_NUMBER_TYPE, season);
-                }
-              }
-            }
-            if (ep.length > 1 && ep[1].length() > 0) {
-              String[] parts = ep[1].trim().split("/");
-              if (parts.length == 2) {
-                String currentString = parts[0].trim();
-                if (currentString.length() > 0) {
-                  int current = Integer.parseInt(currentString) + 1;
-                  if (current > 0) {
-                    addField(ProgramFieldType.EPISODE_NUMBER_TYPE, current);
-                  }
-                }
-                String totalString = parts[1].trim();
-                if (totalString.length() > 0) {
-                  int total = Integer.parseInt(totalString);
-                  if (total > 0) {
-                    addField(ProgramFieldType.EPISODE_TOTAL_NUMBER_TYPE, total);
+          try {
+            if (text.length() > 0) {
+              String[] ep = text.split("\\.");
+              if (ep.length > 0 && ep[0].length() > 0) {
+                String[] seasons = ep[0].trim().split("/");
+                if (seasons.length > 0 && seasons[0].trim().length() > 0) {
+                  int season = Integer.parseInt(seasons[0].trim()) + 1;
+                  if (season > 0) {
+                    addField(ProgramFieldType.SEASON_NUMBER_TYPE, season);
                   }
                 }
               }
+              if (ep.length > 1 && ep[1].length() > 0) {
+                String[] parts = ep[1].trim().split("/");
+                if (parts.length == 2) {
+                  String currentString = parts[0].trim();
+                  if (currentString.length() > 0) {
+                    int current = Integer.parseInt(currentString) + 1;
+                    if (current > 0) {
+                      addField(ProgramFieldType.EPISODE_NUMBER_TYPE, current);
+                    }
+                  }
+                  String totalString = parts[1].trim();
+                  if (totalString.length() > 0) {
+                    int total = Integer.parseInt(totalString);
+                    if (total > 0) {
+                      addField(ProgramFieldType.EPISODE_TOTAL_NUMBER_TYPE, total);
+                    }
+                  }
+                }
+              }
             }
+          } catch (NumberFormatException e) {
+            logMessage("WARNING: the value of xmltv_ns doesn't meet the specifications: '" + text + '\'');
           }
         }
 
