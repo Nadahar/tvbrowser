@@ -1,0 +1,1 @@
+This is a dummy file for all not correct working packer programs.

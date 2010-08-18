@@ -531,6 +531,9 @@
 	<echo message="deployment dir is ${deployment.dir}, win is ${win.dir}" />
 	<mkdir dir="${tvbrowser-transportable.runtime.dir}"/>
   	<mkdir dir="${tvbrowser-transportable.runtime.dir}/settings"/>
+    <copy todir="${tvbrowser-transportable.runtime.dir}/settings">
+      <fileset dir="${deployment.dir}" includes="packer.txt"/>
+    </copy>
 	<copy todir="${tvbrowser-transportable.runtime.dir}">
   	  <fileset dir="${tvbrowser-default.runtime.dir}"/>
       <fileset dir="${win.dir}/jRegistryKey" includes="jRegistryKey.dll" />
