@@ -44,6 +44,7 @@ import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
 
+import tvbrowser.TVBrowser;
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataBase;
@@ -99,12 +100,15 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 			mDownloadMI, mConfigAssistantMI, mKeyboardShortcutsMI,
 			mEditTimeButtonsMenuItem, mToolbarCustomizeMI,
 			mFullscreenMI,
-			mPluginInfoDlgMI;
+			mPluginInfoDlgMI,
+			mCopySettingsToSystem;
 
 	private JMenu mFiltersMenu, mLicenseMenu, mGoMenu, mViewMenu, mToolbarMenu,
 			mPluginHelpMenu, mGotoDateMenu, mGotoChannelMenu, mGotoTimeMenu, mFontSizeMenu,
 			mColumnWidthMenu, mChannelGroupMenu;
 
+	private boolean mCopySettingsRequested = false;
+	
 	/**
 	 * status bar label for menu help
 	 */
@@ -322,7 +326,15 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 		mConfigAssistantMI.addActionListener(this);
 		new MenuHelpTextAdapter(mConfigAssistantMI, mLocalizer.msg(
 				"menuinfo.configAssistant", ""), mLabel);
-
+		
+		if(TVBrowser.isTransportable()) {
+  		mCopySettingsToSystem = createMenuItem("menuitem.copySettings","Copy settings to system", 
+  		    IconLoader.getInstance().getIconFromTheme("actions","edit-copy", 16));
+  		mCopySettingsToSystem.addActionListener(this);
+      new MenuHelpTextAdapter(mCopySettingsToSystem, mLocalizer.msg(
+          "menuinfo.copySettings", "Copy settings of transportable version to the system"), mLabel);
+		}
+    
 		mPluginInfoDlgMI = createMenuItem("menuitem.pluginInfoDlg",
 				"What are Plugins?", urlHelpImg);
 		mPluginInfoDlgMI.addActionListener(this);
@@ -918,7 +930,11 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 			Launch.openURL(mLocalizer.msg("website.donors", "http://tvbrowser.org/donors.html"));
 		} else if (source == mConfigAssistantMI) {
 			mMainFrame.runSetupAssistant();
-		} else if (source == mPluginInfoDlgMI) {
+		} else if (source == mCopySettingsToSystem) {
+		  mCopySettingsRequested = true;
+      mMainFrame.copySettingsToSystem();
+      mCopySettingsRequested = false;
+    } else if (source == mPluginInfoDlgMI) {
 			mMainFrame.showPluginInfoDlg();
 		} else if (source == mAboutMI) {
 			mMainFrame.showAboutBox();
@@ -955,6 +971,11 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
     mHelpMenu = createMenu("menu.help", "&Help");
     add(mHelpMenu);
     mHelpMenu.add(mConfigAssistantMI);
+    
+    if(TVBrowser.isTransportable()) {
+      mHelpMenu.add(mCopySettingsToSystem);
+    }
+    
     mHelpMenu.addSeparator();
     mHelpMenu.add(mHandbookMI);
     mHelpMenu.add(mKeyboardShortcutsMI);
@@ -974,6 +995,10 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
     mChannellistMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F6, 0));
 
     mFullscreenMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F11, 0));
+  }
+  
+  public boolean getUserRequestedCopyToSystem() {
+    return mCopySettingsRequested;
   }
 
 }

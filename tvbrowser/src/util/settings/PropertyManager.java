@@ -67,10 +67,7 @@ public class PropertyManager {
 
   public void writeToFile(File settingsFile) throws IOException {
     if(TVBrowser.isTransportable()) {
-      if(!mProperties.getProperty("dir.tvdata","").startsWith(".")) {
-        mProperties.setProperty("dir.tvdata","./settings/tvdata");
-      }
-      
+      mProperties.remove("dir.tvdata");
       mProperties.remove("dir.plugins");
     }
     

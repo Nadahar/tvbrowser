@@ -1096,6 +1096,10 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
   }
 
   public void quit(boolean log) {
+    quit(log,false);
+  }
+  
+  private void quit(boolean log, boolean export) {
     mTimer.stop(); // disable the update timer to avoid new update events
     if (log && downloadingThread != null && downloadingThread.isAlive()) {
       final JDialog info = new JDialog(UiUtilities.getLastModalChildOf(this));
@@ -1167,6 +1171,11 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       }
     }
 
+    if(export) {
+      Settings.propTVDataDirectory.resetToDefault();
+      Settings.copyToSystem();
+    }
+    
     if (log) {
       mLog.info("Quitting");
       System.exit(0);
@@ -1526,6 +1535,19 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
 
     if (!dataAvailable) {
       askForDataUpdateNoDataAvailable();
+    }
+  }
+  
+  public void copySettingsToSystem() {
+    if(TVBrowser.isTransportable()) {
+      String[] options = {mLocalizer.msg("copy","Copy"),
+                          mLocalizer.msg("dontCopy","Don't copy")};
+      String title = mLocalizer.msg("copyToSystemTitle","Copy settings and data to system");
+      String msg = mLocalizer.msg("copyToSystemMsg","Should the settings and TV data be copied to the system?\nTV-Browser will therefor will be quit automatically.");
+      
+      if(JOptionPane.showOptionDialog(this,msg,title,JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE,null,options,options[1]) == JOptionPane.YES_OPTION) {
+        quit(true,true);
+      }
     }
   }
 
@@ -2513,5 +2535,9 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
 
   public void updateChannelGroupMenu(JMenu channelGroupMenu) {
     mMenuBar.updateChannelGroupMenu(channelGroupMenu);
+  }
+  
+  public boolean getUserRequestCopyToSystem() {
+    return mMenuBar.getUserRequestedCopyToSystem();
   }
 }
