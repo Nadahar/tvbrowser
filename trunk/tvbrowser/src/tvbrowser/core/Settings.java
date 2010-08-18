@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
@@ -144,6 +145,8 @@ public class Settings {
   private static boolean mShowSettingsCopyWaiting;
 
   private static HashMap<String,WindowSetting> mWindowSettings;
+  
+  private static boolean mCopyToSystem = false;
 
  /**
    * Returns the Default-Settings. These Settings are stored in the mac, windows
@@ -156,12 +159,109 @@ public class Settings {
   }
 
   /**
+   * Enables the export
+   */
+  public static void copyToSystem() {
+    final File currentSettingsDir = new File(getUserSettingsDirName());
+    final File currentTvDataDir = new File(getDefaultTvDataDir());
+    
+    mCopyToSystem = MainFrame.getInstance().getUserRequestCopyToSystem();
+    
+    if(mCopyToSystem) {
+      File tempProp = new File("default.properties");
+      
+      try {
+        RandomAccessFile temp = new RandomAccessFile(tempProp,"rw");
+        
+        if(OperatingSystem.isMacOs()) {
+          temp.writeBytes("userdir=${user.home}/Library/Preferences/TV-Browser\n");
+          temp.writeBytes("tvdatadir=${user.home}/Library/Application Support/TV-Browser/tvdata\n");
+          temp.writeBytes("pluginsdir=${user.home}/Library/Application Support/TV-Browser/plugins\n");
+        }
+        else if(OperatingSystem.isLinux()) {
+          temp.writeBytes("userdir=${user.home}/.tvbrowser\n");
+          temp.writeBytes("tvdatadir=${user.home}/.tvbrowser/tvdata\n"); 
+        }
+        else if(OperatingSystem.isWindows()) {
+          temp.writeBytes("userdir=${user.appdata}/TV-Browser\r\n");
+          temp.writeBytes("tvdatadir=${user.appdata}/TV-Browser/tvdata\r\n"); 
+        }
+        
+        temp.close();
+        
+        mDefaultSettings = new DefaultSettings();
+      } catch(Exception e) {
+        mCopyToSystem = false;
+      }
+   
+      final File targetSettingsDir = new File(getUserSettingsDirName());
+      final File targetTvDataDir = new File(getDefaultTvDataDir());
+      
+      //TODO
+      if(new File(getUserSettingsDirName(),SETTINGS_FILE).isFile()) {
+        String[] options = {MainFrame.mLocalizer.msg("continue","Continue"),
+                            MainFrame.mLocalizer.msg("stop","Cancel copying now")};
+        String title = MainFrame.mLocalizer.msg("copyToSystemTitleWarning","Settings already exists");
+        String msg = MainFrame.mLocalizer.msg("copyToSystemWarningMsg","Settings already exist in the system settings directory!\nIf you continue the current settings will be overwritten!");
+
+        mCopyToSystem = JOptionPane.showOptionDialog(MainFrame.getInstance(),msg,title,JOptionPane.YES_NO_OPTION,JOptionPane.WARNING_MESSAGE,null,options,options[1]) == JOptionPane.YES_OPTION;
+      }
+      else if(!targetSettingsDir.isDirectory()){
+        mCopyToSystem = targetSettingsDir.mkdirs();
+      }
+      
+      if(!targetTvDataDir.isDirectory()) {
+        mCopyToSystem = targetTvDataDir.mkdirs();
+      }
+      
+      if(mCopyToSystem) {
+        try {
+          final CopyWaitingDlg waiting = new CopyWaitingDlg(new JFrame(), CopyWaitingDlg.EXPORT_SETTINGS_MSG);
+          
+          mLog.info("Copy settings and TV data from TV-Browser transportable to system");
+
+          mShowWaiting = true;
+
+          Thread copyDataThread = new Thread("Copy TV data directory") {
+            public void run() {
+              try {
+                IOUtilities.copy(currentSettingsDir.listFiles(new FilenameFilter() {
+                  public boolean accept(File dir, String name) {
+                    return !name.equalsIgnoreCase("tvdata")
+                        && !name.equals(targetSettingsDir.getName())
+                        && !name.equalsIgnoreCase("backup")
+                        && !name.equalsIgnoreCase("lang")
+                        && !name.equals(".lock");
+                  }
+                }), targetSettingsDir);
+                sleep(5000);
+                IOUtilities.copy(currentTvDataDir.listFiles(), targetTvDataDir, true);
+              }catch(Exception e) {}
+
+              mShowWaiting = false;
+              waiting.setVisible(false);
+            }
+          };
+          copyDataThread.start();
+
+          waiting.setVisible(mShowWaiting);
+        }catch(Exception e) {
+          mCopyToSystem = false;
+        }
+      }
+      
+      
+      tempProp.deleteOnExit();
+    }
+  }
+  
+  /**
    * Returns the user directory. (e.g.: ~/.tvbrowser/)
    */
   public static String getUserDirectoryName() {
     String dir = new StringBuilder(System.getProperty("user.home")).append(
         File.separator).append(DEFAULT_USER_DIR).toString();
-    return TVBrowser.isTransportable() ? new File("settings").getAbsolutePath() : mDefaultSettings.getProperty("userdir", dir);
+    return (TVBrowser.isTransportable() && !mCopyToSystem) ? new File("settings").getAbsolutePath() : mDefaultSettings.getProperty("userdir", dir);
   }
 
   public static String getOSLibraryDirectoryName() {
@@ -252,6 +352,40 @@ public class Settings {
           }
         });
   }
+  
+  private static void startImportWaitingDlg() {
+    mShowSettingsCopyWaiting = true;
+
+    new Thread("settings import info thread") {
+      public void run() {
+        try {
+          sleep(INFO_DIALOG_WAITING_TIME);
+
+          if(mShowSettingsCopyWaiting) {
+            final CopyWaitingDlg waiting = new CopyWaitingDlg(new JFrame(),CopyWaitingDlg.IMPORT_SETTINGS_MSG);
+
+            new Thread("settings import waiting thread") {
+              public void run() {
+                while(mShowSettingsCopyWaiting) {
+                  try {
+                    sleep(200);
+                  } catch (InterruptedException e1) {
+                    e1.printStackTrace();
+                  }
+                }
+
+                waiting.setVisible(false);
+              }
+            }.start();
+
+            waiting.setVisible(mShowSettingsCopyWaiting);
+          }
+        } catch (InterruptedException e) {
+          // ignore
+        }
+      }
+    }.start();
+  }
 
   /**
    * Reads the settings from settings file. If there is no settings file,
@@ -327,38 +461,8 @@ public class Settings {
      * by a previous version of TV-Browser
      */
     else if (!oldDirectoryName.equals(newDirectoryName)) {
-      mShowSettingsCopyWaiting = true;
-
-      new Thread("settings import info thread") {
-        public void run() {
-          try {
-            sleep(INFO_DIALOG_WAITING_TIME);
-
-            if(mShowSettingsCopyWaiting) {
-              final CopyWaitingDlg waiting = new CopyWaitingDlg(new JFrame(),CopyWaitingDlg.IMPORT_SETTINGS_MSG);
-
-              new Thread("settings import waiting thread") {
-                public void run() {
-                  while(mShowSettingsCopyWaiting) {
-                    try {
-                      sleep(200);
-                    } catch (InterruptedException e1) {
-                      e1.printStackTrace();
-                    }
-                  }
-
-                  waiting.setVisible(false);
-                }
-              }.start();
-
-              waiting.setVisible(mShowSettingsCopyWaiting);
-            }
-          } catch (InterruptedException e) {
-            // ignore
-          }
-        }
-      }.start();
-
+      startImportWaitingDlg();
+      
       mLog.info("Try to load settings from a previous version of TV-Browser");
 
       File oldDir = null;
@@ -781,7 +885,7 @@ public class Settings {
       mProp, "enableantialiasing", true);
 
   private static String getDefaultTvDataDir() {
-    return TVBrowser.isTransportable() ? "./settings/tvdata" : getUserDirectoryName() + File.separator + "tvdata";
+    return (TVBrowser.isTransportable() && !mCopyToSystem) ? "./settings/tvdata" : getUserDirectoryName() + File.separator + "tvdata";
   }
 
   private static String getDefaultPluginsDir() {
