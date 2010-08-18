@@ -324,7 +324,7 @@ public class TVBrowser {
     }
     
     //Update plugin on version change
-    if(VERSION.compareTo(Settings.propTVBrowserVersion.getVersion()) > 0 && Settings.propTVBrowserVersion.getVersion() != null) {
+    if(Settings.propTVBrowserVersion.getVersion() != null && VERSION.compareTo(Settings.propTVBrowserVersion.getVersion()) > 0) {
       updateLookAndFeel();
       updatePluginsOnVersionChange();
     }

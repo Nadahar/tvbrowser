@@ -34,6 +34,7 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import tvbrowser.TVBrowser;
 import util.io.stream.InputStreamProcessor;
 import util.io.stream.StreamUtilities;
 
@@ -47,10 +48,14 @@ public class DefaultSettings {
 
   private Properties mProperties;
 
+  public DefaultSettings(Properties prop) {
+    mProperties = prop;
+  }
+  
   public DefaultSettings() {
     mProperties = new Properties();
     File settingsFile = new File(FILENAME);
-    if (settingsFile.canRead()) {
+    if (settingsFile.canRead() && !TVBrowser.isTransportable()) {
       StreamUtilities.inputStreamIgnoringExceptions(settingsFile,
           new InputStreamProcessor() {
 

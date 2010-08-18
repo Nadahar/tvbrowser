@@ -87,7 +87,7 @@ public class PropertyManager {
       
       if(TVBrowser.isTransportable()) {
         if(!mProperties.getProperty("dir.tvdata","./settings/tvdata").startsWith("./settings/tvdata")) {
-          mProperties.remove("dir.tvdata");
+          mProperties.setProperty("dir.tvdata","./settings/tvdata");
         }
         mProperties.remove("dir.plugins");
       }
