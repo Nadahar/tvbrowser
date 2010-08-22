@@ -198,7 +198,7 @@ public class ChannelList {
    */
   public static void initSubscribedChannels() {
     Channel[] channelArr = Settings.propSubscribedChannels.getChannelArray();
-    if (channelArr.length == 0) {
+    if (channelArr.length == 0 && mSubscribedChannels.isEmpty()) {
       channelArr = getDefaultChannels(Settings.propSelectedChannelCountry.getString());
     }
 
