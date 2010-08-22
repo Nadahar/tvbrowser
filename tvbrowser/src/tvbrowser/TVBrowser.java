@@ -793,7 +793,7 @@ public class TVBrowser {
 
     Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
 
-    if (windowX + windowWidth < 0 || windowX > screen.width + 10 || windowY + windowHeight < 0 || windowY > screen.height + 10 || windowWidth < 200 || windowHeight < 200) {
+    if ((windowX == -1 && windowY == -1) || windowX + windowWidth < 0 || windowX > screen.width + 10 || windowY + windowHeight < 0 || windowY > screen.height + 10 || windowWidth < 200 || windowHeight < 200) {
       UiUtilities.centerAndShow(mainFrame);
     } else {
       mainFrame.setLocation(windowX, windowY);
