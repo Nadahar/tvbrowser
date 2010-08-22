@@ -45,7 +45,9 @@ import java.util.logging.Logger;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -502,7 +504,7 @@ public class Settings {
       
       if (oldDir != null && oldDir.isDirectory() && oldDir.exists() && TVBrowser.isTransportable() && !oldDir.getAbsolutePath().startsWith(new File("settings").getAbsolutePath())) {
         try {
-          UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+          UIManager.setLookAndFeel(getDefaultLookAndFeelClassName());
         }catch(Exception e) { /*ignore*/}
         
         String[] options = {MainFrame.mLocalizer.msg("import","Import settings"),
@@ -1149,7 +1151,22 @@ public class Settings {
 
   public static final StringProperty propLookAndFeel = new StringProperty(
       mProp, "lookandfeel1_1", mDefaultSettings.getProperty("lookandfeel",
-          UIManager.getSystemLookAndFeelClassName()));
+          getDefaultLookAndFeelClassName()));
+
+  private static String getDefaultLookAndFeelClassName() {
+    String lnf = UIManager.getSystemLookAndFeelClassName();
+    if (StringUtils.containsIgnoreCase(lnf, "metal")) {
+      LookAndFeelInfo[] lnfs = UIManager.getInstalledLookAndFeels();
+      if (lnfs != null) {
+        for (LookAndFeelInfo lookAndFeel : lnfs) {
+          if (StringUtils.containsIgnoreCase(lookAndFeel.getName(),"Nimbus")) {
+            lnf = lookAndFeel.getClassName();
+          }
+        }
+      }
+    }
+    return lnf;
+  }
 
   public static final IntProperty propColumnWidth = new IntProperty(mProp,
       "columnwidth", 200);
