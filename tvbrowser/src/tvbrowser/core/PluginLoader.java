@@ -289,7 +289,7 @@ public class PluginLoader {
       // now get icon
       String iconFileName = getProxyIconFileName(proxyFile);
       return new JavaPluginProxy(info, lcFileName, pluginId, iconFileName);
-    } catch (Exception e) {e.printStackTrace();
+    } catch (Exception e) {
       if(in != null) {
         try {
           in.close();
@@ -715,12 +715,13 @@ public class PluginLoader {
       // Get the plugin name
       String pluginName = plugin.getName();
       pluginName = pluginName.substring(0, pluginName.length() - 4);
-
+      Class pluginClass = null;
+      
       try {
         urls = new URL[] { plugin.toURI().toURL() };
         ClassLoader classLoader = URLClassLoader.newInstance(urls, ClassLoader.getSystemClassLoader());
                         
-        Class pluginClass = classLoader.loadClass(pluginName.toLowerCase() + "." + pluginName);
+        pluginClass = classLoader.loadClass(pluginName.toLowerCase() + "." + pluginName);
         Method getVersion = pluginClass.getMethod("getVersion",new Class[0]);
         
         try {
@@ -736,6 +737,10 @@ public class PluginLoader {
         
         
       } catch (Throwable t) {
+        urls = null;
+        pluginClass = null;
+        System.gc();
+        
         PluginBaseInfo baseInfo = new PluginBaseInfo("java." + pluginName.toLowerCase() + "." + pluginName, new Version(0,0));
         
         if(!availablePlugins.contains(baseInfo)) {
