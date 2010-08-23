@@ -76,7 +76,6 @@ import javax.swing.tree.TreePath;
 
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
-import tvbrowser.extras.favoritesplugin.FavoritesPluginProxy;
 import tvbrowser.extras.favoritesplugin.core.AdvancedFavorite;
 import tvbrowser.extras.favoritesplugin.core.Favorite;
 import tvbrowser.extras.favoritesplugin.wizards.TypeWizardStep;
@@ -435,7 +434,7 @@ public class ManageFavoritesDialog extends JDialog implements ListDropAction, Wi
 
     mProgramListModel = new DefaultListModel();
     mProgramList = new ProgramList(mProgramListModel, new ProgramPanelSettings(new PluginPictureSettings(PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE), false, ProgramPanelSettings.X_AXIS));
-    mProgramList.addMouseListeners(FavoritesPluginProxy.getInstance());
+    mProgramList.addMouseListeners(null);
 
     mProgramList.addKeyListener(new KeyAdapter() {
         public void keyPressed(KeyEvent e) {
