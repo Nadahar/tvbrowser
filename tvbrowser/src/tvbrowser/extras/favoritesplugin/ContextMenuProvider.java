@@ -34,6 +34,7 @@ import javax.swing.ImageIcon;
 
 import tvbrowser.extras.favoritesplugin.core.Favorite;
 import tvbrowser.extras.favoritesplugin.dlgs.FavoriteTreeModel;
+import tvbrowser.extras.favoritesplugin.dlgs.ManageFavoritesDialog;
 import tvbrowser.extras.programinfo.ProgramInfo;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.ui.TVBrowserIcons;
@@ -56,7 +57,6 @@ public class ContextMenuProvider {
   }
 
   public ActionMenu getContextMenuActions(Program program) {
-
       ArrayList<Favorite> favorites = new ArrayList<Favorite>();
       for (Favorite favorite : mFavoriteArr) {
         Program[] programs = favorite.getPrograms();
@@ -69,35 +69,51 @@ public class ContextMenuProvider {
       }
 
       Favorite[] favArr = favorites.toArray(new Favorite[favorites.size()]);
-      ContextMenuAction menu = new ContextMenuAction();
-      menu.setText(mLocalizer.msg("favorites", "Favorites"));
-      menu.setSmallIcon(FavoritesPlugin.getFavoritesIcon(16));
 
-      if (favorites.isEmpty()) {
-        return new ActionMenu(menu, new ActionMenu[] {
-          createAddToFavoritesActionMenu(program),
-            createGlobalExclusionMenu(program)
-            });
+      if(ManageFavoritesDialog.getInstance() != null && ManageFavoritesDialog.getInstance().isVisible()) {
+        if(!favorites.isEmpty()) {         
+          ActionMenu blackListAction = createBlackListFavoriteMenuAction(favArr, program);
+          
+          ArrayList<Object> subItems = new ArrayList<Object>(2);
+          subItems.add(createExcludeFromFavoritesMenuAction(favArr, program));
+          
+          if(blackListAction != null) {
+            subItems.add(0,blackListAction);
+          }
+          
+          return new ActionMenu(mLocalizer.msg("favorites", "Favorites"),FavoritesPlugin.getFavoritesIcon(16),subItems.toArray());
+        }
+        else {
+          return null;
+        }
       }
       else {
-        ActionMenu blackListAction = createBlackListFavoriteMenuAction(favArr, program);
-        ActionMenu repetitions = FavoritesPlugin.getInstance().isShowingRepetitions() ? createRepetitionsMenuAction(favArr, program) : null;
-
-        ArrayList<Object> subItems = new ArrayList<Object>(8);
-        subItems.add(createManageFavoriteMenuAction(favArr));
-        subItems.add(createEditFavoriteMenuAction(favArr));
-        subItems.add(createExcludeFromFavoritesMenuAction(favArr, program));
-        subItems.add(createDeleteFavoriteMenuAction(favArr));
-        subItems.add(ContextMenuSeparatorAction.getInstance());
-        subItems.add(createGlobalExclusionMenu(program));
-        subItems.add(createAddToFavoritesActionMenu(program));
-        if (repetitions != null) {
-          subItems.add(3, repetitions);
+        if (favorites.isEmpty()) {
+          return new ActionMenu(mLocalizer.msg("favorites", "Favorites"), FavoritesPlugin.getFavoritesIcon(16), new ActionMenu[] {
+            createAddToFavoritesActionMenu(program),
+              createGlobalExclusionMenu(program)
+              });
         }
-        if(blackListAction != null) {
-          subItems.add(1, blackListAction);
+        else {
+          ActionMenu blackListAction = createBlackListFavoriteMenuAction(favArr, program);
+          ActionMenu repetitions = FavoritesPlugin.getInstance().isShowingRepetitions() ? createRepetitionsMenuAction(favArr, program) : null;
+  
+          ArrayList<Object> subItems = new ArrayList<Object>(8);
+          subItems.add(createManageFavoriteMenuAction(favArr));
+          subItems.add(createEditFavoriteMenuAction(favArr));
+          subItems.add(createExcludeFromFavoritesMenuAction(favArr, program));
+          subItems.add(createDeleteFavoriteMenuAction(favArr));
+          subItems.add(ContextMenuSeparatorAction.getInstance());
+          subItems.add(createGlobalExclusionMenu(program));
+          subItems.add(createAddToFavoritesActionMenu(program));
+          if (repetitions != null) {
+            subItems.add(3, repetitions);
+          }
+          if(blackListAction != null) {
+            subItems.add(1, blackListAction);
+          }
+          return new ActionMenu(mLocalizer.msg("favorites", "Favorites"), FavoritesPlugin.getFavoritesIcon(16), subItems.toArray());
         }
-        return new ActionMenu(menu, subItems.toArray());
       }
     }
 
