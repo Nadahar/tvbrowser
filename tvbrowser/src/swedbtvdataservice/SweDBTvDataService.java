@@ -243,6 +243,9 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
    * group.
    */
   public Channel[] getAvailableChannels(ChannelGroup group) {
+    if (mChannels == null) {
+      return new Channel[0];
+    }
     ArrayList<Channel> tempList = new ArrayList<Channel>();
     for (Channel channel : mChannels) {
       if (channel.getGroup().getId().equalsIgnoreCase(group.getId())) {
