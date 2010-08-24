@@ -195,6 +195,10 @@ public final class ImdbDatabase {
         builder.append(character);
       }
     }
+    // remove dots at the end
+    while (builder.charAt(builder.length() - 1) == '.') {
+      builder.setLength(builder.length() - 1);
+    }
     String result = builder.toString();
     // remove blank before the final ? or !
     if (result.length() > 2 && (result.endsWith("!") || result.endsWith("?"))
