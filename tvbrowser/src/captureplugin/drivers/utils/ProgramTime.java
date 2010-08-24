@@ -185,7 +185,7 @@ public final class ProgramTime implements Cloneable {
      */
     public void setEnd(Date end) {
         mEnd = Calendar.getInstance();
-        mEnd.setTime(end);
+        mEnd.setTimeInMillis(end.getTime());
         findAddionalProgramForEnd();
     }
     
@@ -410,6 +410,6 @@ public final class ProgramTime implements Cloneable {
      */
     public int getLength() {
         long diff = mEnd.getTimeInMillis() - mStart.getTimeInMillis();
-        return (int)(diff / (1000L*60L));
+        return Math.round((float)diff / (60000));
     }
 }

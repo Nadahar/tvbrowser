@@ -516,11 +516,11 @@ public class Settings {
           oldDir = null;
         }
       }
-      
-      startImportWaitingDlg();
-      mLog.info("Try to load settings from a previous version of TV-Browser");
 
       if (oldDir != null && oldDir.isDirectory() && oldDir.exists()) {
+        startImportWaitingDlg();
+        mLog.info("Try to load settings from a previous version of TV-Browser: " + oldDir);
+        
         final File newDir = new File(getUserSettingsDirName());
 
         File oldTvDataDir = null;
