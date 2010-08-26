@@ -182,9 +182,9 @@ public class CaptureParamLibrary extends ParamLibrary {
     } else if (key.equals("end_minute")) {
       return String.valueOf(mEndTime.get(Calendar.MINUTE));
     } else if (key.equalsIgnoreCase("start_unix")) {
-      return Long.toString(Math.round(mStartTime.getTimeInMillis()/(float)1000));
+      return Long.toString(mStartTime.getTimeInMillis()/1000);
     } else if (key.equalsIgnoreCase("end_unix")) {
-      return Long.toString(Math.round(mEndTime.getTimeInMillis()/(float)1000));
+      return Long.toString(mEndTime.getTimeInMillis()/1000);
     } else if (key.equalsIgnoreCase("length_minutes")) {
       return String.valueOf(mPrgTime.getLength());
     } else if (key.equalsIgnoreCase("length_sec")) {
