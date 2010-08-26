@@ -361,7 +361,7 @@
     </jar>
 
     <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/CalendarExportPlugin.jar"
-         compress="false">
+         compress="true">
         <fileset dir="${classes.dir}" includes="calendarexportplugin/**"/>
         <fileset dir="${unpacked.dir}/${lib.gdata.calendar.name}.jar" includes="**" />
         <fileset dir="${unpacked.dir}/${lib.gdata.client.name}.jar" includes="**" />
