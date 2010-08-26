@@ -271,8 +271,13 @@ public class ProgramTable extends JPanel
 
   public void updateBackground() {
     BackgroundPainter oldPainter = mBackgroundPainter;
-
+    
     String background = Settings.propTableBackgroundStyle.getString();
+    
+    if(oldPainter instanceof SingleColorBackPainter && !background.equals("singleColor")) {
+      resetBackground();
+    }
+    
     if (background.equals("timeOfDay")) {
       mBackgroundPainter = new TimeOfDayBackPainter();
     } else if (background.equals("singleColor")) {
@@ -287,6 +292,14 @@ public class ProgramTable extends JPanel
     firePropertyChange("backgroundpainter", oldPainter, mBackgroundPainter);
 
     repaint();
+  }
+  
+  private void resetBackground() {
+    Color temp = Settings.propProgramTableBackgroundSingleColor.getColor();
+    
+    Settings.propProgramTableBackgroundSingleColor.setColor(Color.white);
+    repaint();
+    Settings.propProgramTableBackgroundSingleColor.setColor(temp);
   }
 
 
