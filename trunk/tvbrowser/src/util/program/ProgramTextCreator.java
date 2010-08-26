@@ -349,7 +349,7 @@ public class ProgramTextCreator {
       }
     }
 
-    Color foreground = Settings.propProgramPanelForegroundColor.getColor();
+    Color foreground = Color.black;//Settings.propProgramPanelForegroundColor.getColor();
 
     if(settings.isShowingPictureEver() ||
       (settings.isShowingPictureInTimeRange() && !ProgramUtilities.isNotInTimeRange(settings.getPictureTimeRangeStart(),settings.getPictureTimeRangeEnd(), prog)) ||
@@ -811,7 +811,7 @@ public class ProgramTextCreator {
   }
 
   private static String addSearchLink(String topic, String displayText) {
-    Color foreground = Settings.propProgramPanelForegroundColor.getColor();
+    Color foreground = Color.black;//Settings.propProgramPanelForegroundColor.getColor();
 
     String style = " style=\"color:rgb("+ foreground.getRed() + "," + foreground.getGreen() + "," + foreground.getBlue() + "); border-bottom: 1px dashed;\"";
       StringBuilder buffer = new StringBuilder(32);
@@ -1085,7 +1085,7 @@ public class ProgramTextCreator {
   }
 
   private static void startInfoSection(StringBuilder buffer, String section) {
-    Color foreground = Settings.propProgramPanelForegroundColor.getColor();
+    Color foreground = Color.black;//Settings.propProgramPanelForegroundColor.getColor();
 
     buffer.append("<tr><td valign=\"top\" style=\"color:#808080; font-size:");
     buffer.append(mBodyFontSize);
