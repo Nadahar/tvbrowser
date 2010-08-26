@@ -76,6 +76,9 @@ public final class DreamboxConfig implements ConfigIf, Cloneable {
 
     /** The targets for the program export */
     private ProgramReceiveTarget[] mReceiveTargets = new ProgramReceiveTarget[0];
+    
+    /** The version of the box software is at least 1.6 */
+    private boolean mIsAtLeastVersion_1_6 = true;
 
     /**
      * Constructor
@@ -102,6 +105,7 @@ public final class DreamboxConfig implements ConfigIf, Cloneable {
         mPassword = dreamboxConfig.getPassword();
         mMediaplayer = dreamboxConfig.getMediaplayer();
         mReceiveTargets = dreamboxConfig.getProgramReceiveTargets();
+        mIsAtLeastVersion_1_6 = dreamboxConfig.getIsVersionAtLeast_1_6();
     }
 
     /**
@@ -134,7 +138,7 @@ public final class DreamboxConfig implements ConfigIf, Cloneable {
      * @throws IOException io errors
      */
     public void writeData(ObjectOutputStream stream) throws IOException {
-        stream.writeInt(5);
+        stream.writeInt(6);
         stream.writeUTF(getId());
 
         stream.writeUTF(mDreamboxAddress);
@@ -179,6 +183,8 @@ public final class DreamboxConfig implements ConfigIf, Cloneable {
         for(ProgramReceiveTarget receiveTarget : mReceiveTargets) {
           receiveTarget.writeData(stream);
         }
+        
+        stream.writeBoolean(mIsAtLeastVersion_1_6);
     }
 
     /**
@@ -240,6 +246,10 @@ public final class DreamboxConfig implements ConfigIf, Cloneable {
           for(int i = 0; i < mReceiveTargets.length; i++) {
             mReceiveTargets[i] = new ProgramReceiveTarget(stream);
           }
+        }
+        
+        if(version > 5) {
+          mIsAtLeastVersion_1_6 = stream.readBoolean();
         }
     }
 
@@ -462,5 +472,21 @@ public final class DreamboxConfig implements ConfigIf, Cloneable {
      */
     public ProgramReceiveTarget[] getProgramReceiveTargets() {
       return mReceiveTargets;
+    }
+    
+    /**
+     * Gets if the software version of the box is at least 1.6.
+     * @return <code>true</code> if the version is at least 1.6, <code>false</code> otherwise.
+     */
+    public boolean getIsVersionAtLeast_1_6() {
+      return mIsAtLeastVersion_1_6;
+    }
+    
+    /**
+     * Sets if the software version of the box is at least 1.6.
+     * @param value The new value.
+     */
+    public void setIsVersionAtLeast_1_6(boolean value) {
+      mIsAtLeastVersion_1_6 = value;
     }
 }

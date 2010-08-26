@@ -88,6 +88,8 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
     private DreamboxDevice mDevice;
     /** Was ok pressed ? */
     private boolean mOkPressed;
+    /** The software version on the box */    
+    private JComboBox mSoftwareSelection;
     /** IP-Address of the dreambox */
     private JTextField mDreamboxAddress;
     /** Device Name of the dreambox */
@@ -148,6 +150,17 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
         mDeviceName = new JTextField(mDevice.getName());
         basicPanel.add(mDeviceName, cc.xy(4, basicPanel.getRow()));
 
+        basicPanel.addRow();
+        basicPanel.add(new JLabel(mLocalizer.msg("softwareVersion","SoftwareVersion:")), cc.xy(2,basicPanel.getRow()));
+        
+        String[] values = {mLocalizer.msg("lowerVersion","lower than 1.6 (< 1.6)"),
+                           mLocalizer.msg("higherVersion","at least 1.6 (>= 1.6)")};
+        
+        mSoftwareSelection = new JComboBox(values);
+        mSoftwareSelection.setSelectedIndex(mConfig.getIsVersionAtLeast_1_6() ? 1 : 0);
+        
+        basicPanel.add(mSoftwareSelection, cc.xy(4, basicPanel.getRow()));
+        
         basicPanel.addRow();
         basicPanel.add(new JLabel(mLocalizer.msg("ipaddress", "IP address")), cc.xy(2, basicPanel.getRow()));
         mDreamboxAddress = new JTextField(mConfig.getDreamboxAddress());
@@ -457,6 +470,8 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
         
         mConfig.setMediaplayer(mMediaplayer.getText());
         mConfig.setProgramReceiveTargets(mProgramReceiveTargetSelection.getCurrentSelection());
+        
+        mConfig.setIsVersionAtLeast_1_6(mSoftwareSelection.getSelectedIndex() == 1);
         
         setVisible(false);
     }

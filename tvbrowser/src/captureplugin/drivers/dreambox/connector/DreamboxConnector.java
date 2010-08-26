@@ -517,7 +517,7 @@ public class DreamboxConnector {
     }
 
   public boolean testDreamboxVersion() throws IOException {
-    URL url = new URL("http://" + mConfig.getDreamboxAddress() + "/ipkg?command=info&package=enigma2-plugin-extensions-webinterface");
+    URL url = new URL("http://" + mConfig.getDreamboxAddress() + (mConfig.getIsVersionAtLeast_1_6() ? "/opkg" : "/ipkg") + "?command=info&package=enigma2-plugin-extensions-webinterface");
 
     URLConnection connection = url.openConnection();
 
