@@ -62,10 +62,12 @@ import javax.swing.tree.TreeSelectionModel;
 
 import tvbrowser.TVBrowser;
 import tvbrowser.core.ChannelList;
+import tvbrowser.core.PluginAndDataServiceComparator;
 import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
+import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import tvbrowser.extras.common.InternalPluginProxyIf;
 import tvbrowser.extras.common.InternalPluginProxyList;
 import tvbrowser.ui.mainframe.MainFrame;
@@ -85,6 +87,7 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.CancelableSettingsTab;
+import devplugin.InfoIf;
 import devplugin.PluginAccess;
 import devplugin.PluginInfo;
 import devplugin.SettingsItem;
@@ -399,18 +402,6 @@ public class SettingsDialog implements WindowClosingIf {
     
     createPluginTreeItems(false);
 
-    // TVDataServices
-    node = new SettingNode(new DataServiceSettingsTab(this),
-        SettingsItem.TVDATASERVICES);
-    root.add(node);
-    
-    TvDataServiceProxy[] services = tvbrowser.core.tvdataservice.TvDataServiceProxyManager
-        .getInstance().getDataServices();
-    Arrays.sort(services, new TvDataServiceProxy.Comparator());
-    for (TvDataServiceProxy dataService : services) {
-      node.add(new SettingNode(new ConfigDataServiceSettingsTab(dataService), dataService.getId()));
-    }
-
     return root;
   }
 
@@ -434,13 +425,30 @@ public class SettingsDialog implements WindowClosingIf {
       }
     }
     
-    PluginProxy[] pluginArr = PluginProxyManager.getInstance().getAllPlugins();
+    PluginProxy[] pluginList = PluginProxyManager.getInstance().getAllPlugins();
+    TvDataServiceProxy[] services = TvDataServiceProxyManager.getInstance().getDataServices();
+    
+    InfoIf[] infoArr = new InfoIf[pluginList.length + services.length];
+    
+    System.arraycopy(pluginList,0,infoArr,0,pluginList.length);
+    System.arraycopy(services,0,infoArr,pluginList.length, services.length);
+
+    Arrays.sort(infoArr, new PluginAndDataServiceComparator());
+
+    
+//    PluginProxy[] pluginArr = PluginProxyManager.getInstance().getAllPlugins();
+    
 
     ArrayList<SettingNode> nodeList = new ArrayList<SettingNode>();
     
-    for (PluginProxy plugin : pluginArr) {
-      ConfigPluginSettingsTab tab = new ConfigPluginSettingsTab(plugin);
-      nodeList.add(new SettingNode(tab, plugin.getId()));
+    for (InfoIf plugin : infoArr) {
+      if(plugin instanceof PluginProxy) {
+        ConfigPluginSettingsTab tab = new ConfigPluginSettingsTab((PluginProxy)plugin);
+        nodeList.add(new SettingNode(tab, ((PluginProxy)plugin).getId()));
+      }
+      else if(plugin instanceof TvDataServiceProxy) {
+        nodeList.add(new SettingNode(new ConfigDataServiceSettingsTab((TvDataServiceProxy)plugin), ((TvDataServiceProxy)plugin).getId()));
+      }
     }
     SettingNode[] nodes = new SettingNode[nodeList.size()];
     nodeList.toArray(nodes);

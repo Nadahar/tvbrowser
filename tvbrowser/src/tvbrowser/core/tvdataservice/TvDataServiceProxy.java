@@ -38,11 +38,12 @@ import devplugin.Channel;
 import devplugin.ChannelGroup;
 import devplugin.ContextMenuIf;
 import devplugin.Date;
+import devplugin.InfoIf;
 import devplugin.PluginInfo;
 import devplugin.ProgressMonitor;
 
 
-public interface TvDataServiceProxy extends ContextMenuIf, ButtonActionIf {
+public interface TvDataServiceProxy extends ContextMenuIf, ButtonActionIf, InfoIf {
 
 
   /**

@@ -1,5 +1,6 @@
 package tvbrowser.ui.settings;
 
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URL;
@@ -17,6 +18,7 @@ import javax.swing.event.HyperlinkListener;
 
 import org.apache.commons.lang.StringUtils;
 
+import tvbrowser.core.Settings;
 import util.browserlauncher.Launch;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
@@ -117,7 +119,7 @@ public class PluginInfoDialog extends JDialog implements WindowClosingIf {
 
     panel.add(ok, cc.xy(2,3));
 
-    setSize(500, 350);
+    Settings.layoutWindow("pluginInfoDialog",this,new Dimension(700,500));
 
     UiUtilities.registerForClosing(this);
   }

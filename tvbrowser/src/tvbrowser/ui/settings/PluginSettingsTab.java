@@ -57,11 +57,15 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 
+import tvbrowser.core.ChannelList;
+import tvbrowser.core.PluginAndDataServiceComparator;
 import tvbrowser.core.PluginLoader;
 import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
+import tvbrowser.core.tvdataservice.TvDataServiceProxy;
+import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import tvbrowser.extras.common.InternalPluginProxyIf;
 import tvbrowser.extras.common.InternalPluginProxyList;
 import tvbrowser.ui.mainframe.MainFrame;
@@ -78,6 +82,8 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.ActionMenu;
+import devplugin.Channel;
+import devplugin.InfoIf;
 import devplugin.PluginInfo;
 
 /**
@@ -142,7 +148,11 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
       public boolean isCellEditable(int row, int column) {
         if (column == 0) {
           if (row >= InternalPluginProxyList.getInstance().getAvailableProxys().length) {
-            return !Settings.propBlockedPluginArray.isBlocked(((PluginProxy)getValueAt(row,1)));
+            Object value = getValueAt(row,1);
+            
+            if(value instanceof PluginProxy) {
+              return !Settings.propBlockedPluginArray.isBlocked(((PluginProxy)value));
+            }
           }
         }
         return false;
@@ -185,8 +195,8 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
             Object plugin = mTable.getModel().getValueAt(rowIndex, 1);
             JPopupMenu menu;
             
-            if(plugin instanceof PluginProxy) {
-              menu = createContextMenu((PluginProxy)plugin);
+            if(plugin instanceof InfoIf) {
+              menu = createContextMenu((InfoIf)plugin);
             }
             else {
               menu = createContextMenu((InternalPluginProxyIf)plugin);
@@ -205,8 +215,8 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
             Object plugin = mTable.getModel().getValueAt(rowIndex, 1);
             JPopupMenu menu;
             
-            if(plugin instanceof PluginProxy) {
-              menu = createContextMenu((PluginProxy)plugin);
+            if(plugin instanceof InfoIf) {
+              menu = createContextMenu((InfoIf)plugin);
             }
             else {
               menu = createContextMenu((InternalPluginProxyIf)plugin);
@@ -225,8 +235,11 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
              if (proxy instanceof PluginProxy) {
                showInfoDialog((PluginProxy) proxy);
              }
-             else {
+             else if (proxy instanceof InternalPluginProxyIf) {
                showInfoDialog((InternalPluginProxyIf)proxy);
+             }
+             else if (proxy instanceof TvDataServiceProxy) {
+               showInformation((TvDataServiceProxy)proxy);
              }
            }
         }
@@ -250,8 +263,11 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
         if(selection instanceof PluginProxy) {
           showInfoDialog((PluginProxy)selection);
         }
-        else {
+        else if (selection instanceof InternalPluginProxyIf) {
           showInfoDialog((InternalPluginProxyIf)selection);
+        }
+        else if (selection instanceof TvDataServiceProxy) {
+          showInformation((TvDataServiceProxy)selection);
         }
       }
     });
@@ -265,9 +281,12 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
         if(selection instanceof PluginProxy) {
           configurePlugin((PluginProxy)selection);
         }
-        else {
+        else if (selection instanceof InternalPluginProxyIf) {
           mSettingsDialog.showSettingsTab(((InternalPluginProxyIf) selection)
               .getSettingsId());
+        }
+        else if (selection instanceof TvDataServiceProxy) {
+          configureService((TvDataServiceProxy)selection);
         }
       }
     });
@@ -282,7 +301,12 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
     mRemove = new JButton(Localizer.getLocalization(Localizer.I18N_DELETE),TVBrowserIcons.delete(TVBrowserIcons.SIZE_SMALL));
     mRemove.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        removePlugin((PluginProxy)getSelection());
+        if(getSelection() instanceof PluginProxy) {
+          removePlugin((PluginProxy)getSelection());
+        }
+        else {
+          removeService((TvDataServiceProxy)getSelection());
+        }
       }
     });
     
@@ -337,7 +361,7 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
     return menu;
   }
 
-  private JPopupMenu createContextMenu(final PluginProxy plugin) {
+  private JPopupMenu createContextMenu(final InfoIf plugin) {
     JPopupMenu menu = new JPopupMenu();
     
     //info
@@ -345,7 +369,12 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
     infoMI.setFont(infoMI.getFont().deriveFont(Font.BOLD));
     infoMI.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e) {
-        showInfoDialog(plugin);
+        if(plugin instanceof PluginProxy) {
+          showInfoDialog((PluginProxy)plugin);
+        }
+        else if(plugin instanceof TvDataServiceProxy) {
+          showInformation((TvDataServiceProxy)plugin);
+        }
       }
     });
     menu.add(infoMI);
@@ -355,39 +384,51 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
    	configureMI = new JMenuItem(mLocalizer.msg("configure", ""),TVBrowserIcons.preferences(TVBrowserIcons.SIZE_SMALL));
    	configureMI.addActionListener(new ActionListener(){
         public void actionPerformed(ActionEvent e) {
-          configurePlugin(plugin);
+          if(plugin instanceof PluginProxy) {
+            configurePlugin((PluginProxy)plugin);
+          }
+          else if(plugin instanceof TvDataServiceProxy) {
+            configureService((TvDataServiceProxy)plugin);
+          }
         }
       });
     menu.add(configureMI);
 
-    //activate
-    JMenuItem enableMI;
-    if (plugin.isActivated()) {
-      enableMI = new JMenuItem(mLocalizer.msg("deactivate", ""),IconLoader.getInstance().getIconFromTheme("actions", "process-stop", 16));
-    }
-    else {
-      enableMI = new JMenuItem(mLocalizer.msg("activate", ""), TVBrowserIcons.refresh(TVBrowserIcons.SIZE_SMALL));
-      enableMI.setEnabled(!Settings.propBlockedPluginArray.isBlocked(plugin));
-    }
-    enableMI.addActionListener(new ActionListener(){
+    if(plugin instanceof PluginProxy) {
+      //activate
+      JMenuItem enableMI;
+      if (((PluginProxy)plugin).isActivated()) {
+        enableMI = new JMenuItem(mLocalizer.msg("deactivate", ""),IconLoader.getInstance().getIconFromTheme("actions", "process-stop", 16));
+      }
+      else {
+        enableMI = new JMenuItem(mLocalizer.msg("activate", ""), TVBrowserIcons.refresh(TVBrowserIcons.SIZE_SMALL));
+        enableMI.setEnabled(!Settings.propBlockedPluginArray.isBlocked((PluginProxy)plugin));
+      }
+      enableMI.addActionListener(new ActionListener(){
+          public void actionPerformed(ActionEvent e) {
+            int row = mTable.getSelectedRow();
+            if (row >= 0) {
+              mTableModel.setValueAt(!(Boolean)mTableModel.getValueAt(row, 0), row, 0);
+            }
+          }
+        });
+      menu.add(enableMI);
+
+      //delete
+      JMenuItem deleteMI = new JMenuItem(mLocalizer.msg("remove","Remove"),  TVBrowserIcons.delete(TVBrowserIcons.SIZE_SMALL));
+      deleteMI.addActionListener(new ActionListener(){
         public void actionPerformed(ActionEvent e) {
-          int row = mTable.getSelectedRow();
-          if (row >= 0) {
-            mTableModel.setValueAt(!(Boolean)mTableModel.getValueAt(row, 0), row, 0);
+          if(plugin instanceof PluginProxy) {
+            removePlugin((PluginProxy)plugin);
+          }
+          else {
+            removeService((TvDataServiceProxy)plugin);
           }
         }
       });
-    menu.add(enableMI);
-
-    //delete
-    JMenuItem deleteMI = new JMenuItem(mLocalizer.msg("remove","Remove"),  TVBrowserIcons.delete(TVBrowserIcons.SIZE_SMALL));
-    deleteMI.addActionListener(new ActionListener(){
-      public void actionPerformed(ActionEvent e) {
-        removePlugin(plugin);
-      }
-    });
-    deleteMI.setEnabled(PluginLoader.getInstance().isPluginDeletable(plugin));
-    menu.add(deleteMI);
+      deleteMI.setEnabled(PluginLoader.getInstance().isPluginDeletable((PluginProxy)plugin));
+      menu.add(deleteMI);
+    }
     
     //help
       JMenuItem helpMI = new JMenuItem(mLocalizer.msg("pluginHelp","Online help"), IconLoader.getInstance().getIconFromTheme("apps", "help-browser", 16));
@@ -435,6 +476,40 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
       mTable.setRowSelectionInterval(0, 0);
     }
   }
+  
+  private void removeService(TvDataServiceProxy service) {
+    if (service == null) {
+      return;
+    }
+    
+    // count the removed channels
+    int channelCount = 0;
+    Channel[] subscribed = ChannelList.getSubscribedChannels();
+    for (Channel element : subscribed) {
+      if (element.getDataServiceProxy().equals(service)) {
+        channelCount++;
+      }
+    }
+    
+    // show message depending on whether channels will be removed
+    String text = mLocalizer.msg("deleteService","Really delete the data service \"{0}\"?",service.getInfo().getName());
+    if (channelCount > 0) {
+      text = mLocalizer.msg("deleteServiceCount","Really delete the data service \"{0}\"?\nThis will remove {1} of your subscribed channels.",service.getInfo().getName(), channelCount);
+    }
+    int result = JOptionPane.showConfirmDialog(mSettingsDialog.getDialog(), text, Localizer.getLocalization(Localizer.I18N_DELETE)+"?", JOptionPane.YES_NO_OPTION);
+      
+    if (result == JOptionPane.YES_OPTION) {
+      if (PluginLoader.getInstance().deleteDataService(service)) {
+        JOptionPane.showMessageDialog(mSettingsDialog.getDialog(), mLocalizer.msg("dataservice.successfully","Deletion was succesfully"));
+      } else {
+        JOptionPane.showMessageDialog(mSettingsDialog.getDialog(), mLocalizer.msg("failed","Deletion failed"));
+      }
+        
+      populatePluginList();
+//      mSettingsDialog.createPluginTreeItems();
+      mTable.setRowSelectionInterval(0, 0);
+    }
+  }
 
   /**
    * Show the info dialog
@@ -478,6 +553,15 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
         .msg("internalPluginTitle", "Internal plugin"),
         JOptionPane.INFORMATION_MESSAGE);
   }
+  
+  private void showInformation(TvDataServiceProxy service) {
+    if (service == null) {
+      return;
+    }
+    // show the dialog
+    PluginInfoDialog dialog = new PluginInfoDialog(mSettingsDialog.getDialog(), null, service.getInfo());
+    UiUtilities.centerAndShow(dialog);
+  }
 
   /**
    * configure the selected plugin (by switching to respective node in dialog)
@@ -490,17 +574,24 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
     mSettingsDialog.showSettingsTab(plugin.getId());
   }
   
+  private void configureService(TvDataServiceProxy service) {
+    if (service == null) {
+      return;
+    }
+    // show the configuration panel
+    mSettingsDialog.showSettingsTab(service.getId());
+  }
+  
   /**
    * Populate the Plugin-List
    */
-  private void populatePluginList() {
-    PluginProxy[] pluginList = PluginProxyManager.getInstance().getAllPlugins();
-
+  private void populatePluginList() {   
     while (mTableModel.getRowCount() > 0) {
       mTableModel.removeRow(0);
     }
     
     /* Add base plugins */
+    
     InternalPluginProxyIf[] internalPluginProxies = InternalPluginProxyList.getInstance().getAvailableProxys();
     Arrays.sort(internalPluginProxies, new InternalPluginProxyIf.Comparator());
     
@@ -508,11 +599,30 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
       mTableModel.addRow(new Object[]{true, internalPluginProxy});
     }
     
+    /* Add plugins and data services */
+    PluginProxy[] pluginList = PluginProxyManager.getInstance().getAllPlugins();
+    TvDataServiceProxy[] services = TvDataServiceProxyManager.getInstance().getDataServices();
+    
+    InfoIf[] infoArr = new InfoIf[pluginList.length + services.length];
+    
+    System.arraycopy(pluginList,0,infoArr,0,pluginList.length);
+    System.arraycopy(services,0,infoArr,pluginList.length, services.length);
+
+    Arrays.sort(infoArr, new PluginAndDataServiceComparator());
+    
+    for (InfoIf info : infoArr) {
+      mTableModel.addRow(new Object[]{true, info});
+    }
+    
+  /*  for (TvDataServiceProxy service : services) {
+      mTableModel.addRow(new Object[]{true, service});
+    }
+    
     Arrays.sort(pluginList, new PluginProxy.Comparator());
 
     for (PluginProxy element : pluginList) {
       mTableModel.addRow(new Object[]{Boolean.valueOf(element.isActivated()),element});
-    }
+    }*/
 
   }
 
@@ -527,8 +637,9 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
       plugin = mTable.getValueAt(rowIndex, 1);
     }
 
-    mInfo.setEnabled(plugin != null && plugin instanceof PluginProxy);
-    mRemove.setEnabled(plugin != null && plugin instanceof PluginProxy && PluginLoader.getInstance().isPluginDeletable((PluginProxy)plugin));
+    mInfo.setEnabled(plugin != null && (plugin instanceof PluginProxy || plugin instanceof TvDataServiceProxy));
+    mRemove.setEnabled(plugin != null && ((plugin instanceof PluginProxy && PluginLoader.getInstance().isPluginDeletable((PluginProxy)plugin)) ||
+        (plugin instanceof TvDataServiceProxy && PluginLoader.getInstance().isDataServiceDeletable((TvDataServiceProxy)plugin))));
     mConfigure.setEnabled(plugin != null);
   }
 
