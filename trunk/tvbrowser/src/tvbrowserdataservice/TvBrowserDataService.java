@@ -782,7 +782,7 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
    */
   public PluginInfo getInfo() {
     return new devplugin.PluginInfo(TvBrowserDataService.class,
-            "TV-Browser",
+            mLocalizer.msg("name","TV-Browser data"),
             mLocalizer.msg("description", "Die eigenen TV-Daten des TV-Browser-Projektes"),
             "Til Schneider, www.murfman.de",
             mLocalizer.msg("license","Terms of Use:\n=============\nAll TV/Radio listings provided by TV-Browser (http://www.tvbrowser.org) are protected by copyright laws and may only be used within TV-Browser or other name like applications authorizied by the manufacturer of TV-Browser (http://www.tvbrowser.org) for information about the upcoming program of the available channels.\nEvery other manner of using, reproducing or redistributing of the TV/Radio listings is illegal and may be prosecuted on civil or criminal law.\n\nOn downloading the TV/Radio listings you declare your agreement to these terms.\n\nIf you have any questions concerning these terms please contact dev@tvbrowser.org"));

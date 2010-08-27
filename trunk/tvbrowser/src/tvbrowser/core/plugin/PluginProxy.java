@@ -32,6 +32,7 @@ import devplugin.ActionMenu;
 import devplugin.Channel;
 import devplugin.ChannelDayProgram;
 import devplugin.ImportanceValue;
+import devplugin.InfoIf;
 import devplugin.PluginAccess;
 import devplugin.PluginTreeNode;
 import devplugin.PluginsProgramFilter;
@@ -47,7 +48,7 @@ import devplugin.ProgramRatingIf;
  *
  * @author Til Schneider, www.murfman.de
  */
-public interface PluginProxy extends PluginAccess {
+public interface PluginProxy extends PluginAccess, InfoIf {
   
   /**
    * Gets whether the plugin is currently activated.
