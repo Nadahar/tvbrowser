@@ -611,7 +611,7 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
     Arrays.sort(infoArr, new PluginAndDataServiceComparator());
     
     for (InfoIf info : infoArr) {
-      mTableModel.addRow(new Object[]{true, info});
+      mTableModel.addRow(new Object[]{(info instanceof PluginProxy) ? ((PluginProxy)info).isActivated() : true, info});
     }
     
   /*  for (TvDataServiceProxy service : services) {
