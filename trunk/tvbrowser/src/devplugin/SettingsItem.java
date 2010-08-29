@@ -56,7 +56,9 @@ public class SettingsItem {
   public static final String PROGRAMPANELMARKING = "#programpanelmarking";
   public static final String PROGRAMTABLELOOK = "#programtablelook";
   
-  public static final String TVDATASERVICES = "#tvdataservice";
+  /**@deprecated since 3.0 use {@link #PLUGINS} instead*/
+  public static final String TVDATASERVICES = PLUGINS;
+  
   public static final String PICTURES = "#pictures";
   public static final String TRAYONTIMEPROGRAMS = "#trayOnTime";
 
