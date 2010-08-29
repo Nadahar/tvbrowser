@@ -1277,6 +1277,11 @@
 			<param name="lib" value="gdata.core"/>
 		</antcall>
 
+		<!-- guava -->
+		<antcall target="download-zipped-lib">
+			<param name="lib" value="guava"/>
+		</antcall>
+
 		<!-- htmlparser -->
 		<antcall target="download-zipped-lib">
 			<param name="lib" value="htmlparser"/>
