@@ -45,6 +45,7 @@ import util.io.ExecutionHandler;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
+import bsh.StringUtil;
 
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -76,6 +77,25 @@ public class Launch {
    * @param url Url to open
    */
   public static void openURL(String url) {
+    if (url == null) {
+      return;
+    }
+    // recognize a command line with multiple URLs separated by whitespace
+    String[] urls = StringUtil.split(url, " ");
+    if (urls.length > 1) {
+      boolean multiUrls = true;
+      for (String partUrl : urls) {
+        if (!partUrl.trim().startsWith("http")) {
+          multiUrls = false;
+        }
+      }
+      if (multiUrls) {
+        for (String partUrl : urls) {
+          openURL(partUrl.trim());
+        }
+        return;
+      }
+    }
     String browserExecutable = Settings.propUserDefinedWebbrowser.getString();
     try {
       if (browserExecutable != null) {
