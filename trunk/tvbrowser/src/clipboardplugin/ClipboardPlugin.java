@@ -275,7 +275,7 @@ public class ClipboardPlugin extends Plugin {
           list.add(config);
         }
       }
-
+      
       out.writeInt(list.size());
 
       for(AbstractPluginProgramFormating config : list) {
@@ -293,7 +293,7 @@ public class ClipboardPlugin extends Plugin {
           list.add(config);
         }
       }
-
+      
       out.writeInt(list.size());
 
       for(AbstractPluginProgramFormating config : list) {
@@ -309,11 +309,11 @@ public class ClipboardPlugin extends Plugin {
 
       int count = in.readInt();
 
-      ArrayList<AbstractPluginProgramFormating> list = new ArrayList<AbstractPluginProgramFormating>();
+      ArrayList<AbstractPluginProgramFormating> list = new ArrayList<AbstractPluginProgramFormating>(count);
 
       for(int i = 0; i < count; i++) {
         AbstractPluginProgramFormating value = AbstractPluginProgramFormating.readData(in);
-
+        
         if(value != null) {
           if(value.equals(DEFAULT_CONFIG)) {
             DEFAULT_CONFIG = (LocalPluginProgramFormating)value;
@@ -323,13 +323,14 @@ public class ClipboardPlugin extends Plugin {
         }
       }
 
-      mConfigs = list.toArray(new AbstractPluginProgramFormating[list.size()]);
-
+      mConfigs = list.toArray(new AbstractPluginProgramFormating[Math.min(count,list.size())]);
+      
       count = in.readInt();
-      ArrayList<LocalPluginProgramFormating> listLocal = new ArrayList<LocalPluginProgramFormating>();
+      ArrayList<LocalPluginProgramFormating> listLocal = new ArrayList<LocalPluginProgramFormating>(count);
 
       for(int i = 0; i < count; i++) {
         LocalPluginProgramFormating value = (LocalPluginProgramFormating) AbstractPluginProgramFormating.readData(in);
+        
         if(value != null) {
           LocalPluginProgramFormating loadedInstance = getInstanceOfFormatingFromSelected(value);
           if (loadedInstance != null) {
@@ -340,8 +341,7 @@ public class ClipboardPlugin extends Plugin {
           }
         }
       }
-      mLocalFormatings= listLocal.toArray(new LocalPluginProgramFormating[list.size()]);
-
+      mLocalFormatings= listLocal.toArray(new LocalPluginProgramFormating[Math.min(count,list.size())]);
     }catch(Exception e) {
       int i = 1;
     }
