@@ -802,7 +802,7 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
     for (Channel channel : channels) {
       int pos = ChannelList.getPos(channel);
 
-      if (pos != -1) {
+      if (pos != -1 && pos < subscribedChannelArr.length) {
         subscribedChannelArr[pos] = channel;
       }
     }

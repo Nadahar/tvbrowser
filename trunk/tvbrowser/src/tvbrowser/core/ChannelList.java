@@ -310,15 +310,17 @@ public class ChannelList {
    * @param channel
    */
   public static void subscribeChannel(Channel channel) {
-    mSubscribedChannels.add(channel);
-    calculateChannelPositions();
+    if(!mSubscribedChannels.contains(channel)) {
+      mSubscribedChannels.add(channel);
+      calculateChannelPositions();
+    }
   }
 
   private static void calculateChannelPositions() {
     mSubscribedChannelPosition = new HashMap<String, Integer>();
     for (int i = 0; i < mSubscribedChannels.size(); i++) {
       Channel ch = mSubscribedChannels.get(i);
-
+      
       if (ch != null) {
         mSubscribedChannelPosition.put(ch.getUniqueId(), i);
       }
