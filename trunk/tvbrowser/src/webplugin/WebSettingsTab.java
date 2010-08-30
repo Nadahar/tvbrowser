@@ -52,6 +52,7 @@ import javax.swing.event.ListSelectionListener;
 
 import util.ui.DragAndDropMouseListener;
 import util.ui.EnhancedPanelBuilder;
+import util.ui.LinkButton;
 import util.ui.ListDragAndDropHandler;
 import util.ui.ListDropAction;
 import util.ui.Localizer;
@@ -61,6 +62,7 @@ import util.ui.UiUtilities;
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.CellConstraints;
 
+import devplugin.PluginInfo;
 import devplugin.SettingsTab;
 
 /**
@@ -91,7 +93,7 @@ public class WebSettingsTab implements SettingsTab,  ListDropAction {
   private JButton mUp;
 
   private JButton mDown;
-  
+
   private JButton mResetIcons;
 
   /** Start-Icon */
@@ -114,7 +116,7 @@ public class WebSettingsTab implements SettingsTab,  ListDropAction {
 
   /**
    * Create the Tab
-   * 
+   *
    * @param frame Parent-Frame
    * @param addresses List of Addresses
    */
@@ -138,17 +140,17 @@ public class WebSettingsTab implements SettingsTab,  ListDropAction {
 
     mRbShowDetails = new JRadioButton(mLocalizer.msg("showDetails","Show search menu for title, actors, and other fields"), webPlugin.getShowDetailMenus());
     mRbShowTitle = new JRadioButton(mLocalizer.msg("showTitle","Show title search only"), !webPlugin.getShowDetailMenus());
-    
+
     ButtonGroup bg = new ButtonGroup();
     bg.add(mRbShowDetails);
     bg.add(mRbShowTitle);
 
     pb.addRow();
     pb.add(mRbShowDetails, cc.xy(2, pb.getRow()));
-    
+
     pb.addRow();
     pb.add(mRbShowTitle, cc.xy(2, pb.getRow()));
-    
+
     mAddressList = new JList(mListModel);
     // Register DnD on the List.
     ListDragAndDropHandler dnDHandler = new ListDragAndDropHandler(mAddressList,mAddressList,this);
@@ -199,7 +201,7 @@ public class WebSettingsTab implements SettingsTab,  ListDropAction {
     panel.add(mEdit, c);
     panel.add(mDelete, c);
     panel.add(mResetIcons, c);
-    
+
     GridBagConstraints filler = new GridBagConstraints();
 
     filler.weightx = 1.0;
@@ -219,6 +221,11 @@ public class WebSettingsTab implements SettingsTab,  ListDropAction {
     pb.addParagraph(mLocalizer.msg("WebPages", "Web Pages"));
     pb.addGrowingRow();
     pb.add(panel, cc.xy(2, pb.getRow()));
+
+    WebPlugin.getInstance().getInfo();
+    LinkButton link = new LinkButton(mLocalizer.msg("examples", "More search engine examples"), PluginInfo.getHelpUrl(WebPlugin.getInstance().getId()));
+    pb.addRow();
+    pb.add(link, cc.xy(2, pb.getRow()));
 
     return pb.getPanel();
   }
@@ -288,7 +295,7 @@ public class WebSettingsTab implements SettingsTab,  ListDropAction {
       }
 
     });
-    
+
     mResetIcons = new JButton(WebPlugin.getInstance().createImageIcon("apps", "system-software-update", 16));
     mResetIcons.setToolTipText(mLocalizer.msg("Reload", "Reload Icons on next Update"));
 
@@ -305,7 +312,7 @@ public class WebSettingsTab implements SettingsTab,  ListDropAction {
    */
   protected void resetIcons() {
     int max = mAddressList.getModel().getSize();
-    
+
     for (int i=0;i<max;i++) {
       WebAddress adr = (WebAddress) mAddressList.getModel().getElementAt(i);
       File f = new File(adr.getIconFile());
@@ -357,7 +364,7 @@ public class WebSettingsTab implements SettingsTab,  ListDropAction {
 
   /**
    * Move a selected Item #rows
-   * 
+   *
    * @param rows Rows to move the selected Item
    */
   private void moveSelectedItem(int rows) {
@@ -438,7 +445,7 @@ public class WebSettingsTab implements SettingsTab,  ListDropAction {
 
   public void saveSettings() {
     mOriginal.clear();
-    
+
     for (Object o : mListModel.toArray()) {
       mOriginal.add((WebAddress) o);
     }
