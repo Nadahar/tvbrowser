@@ -71,17 +71,21 @@ public class PluginProgramConfigurationPanel extends JPanel implements ActionLis
       availableLocalFormatings[0] = mDefaultLocalFormating;
     }
     
-    AbstractPluginProgramFormating[] allArr = new AbstractPluginProgramFormating[availableLocalFormatings.length + availableGlobalFormatings.length];
-    
-    int i = 0;
+    ArrayList<AbstractPluginProgramFormating> formatingsList = new ArrayList<AbstractPluginProgramFormating>();
     
     for(AbstractPluginProgramFormating config : availableGlobalFormatings) {
-      allArr[i++] = config;
+      if(config != null) {
+        formatingsList.add(config);
+      }
     }
       
     for(LocalPluginProgramFormating config : availableLocalFormatings) {
-      allArr[i++] = config;
+      if(config != null) {
+        formatingsList.add(config);
+      }
     }
+    
+    AbstractPluginProgramFormating[] allArr = formatingsList.toArray(new AbstractPluginProgramFormating[formatingsList.size()]);
     
     FormLayout layout = new FormLayout("default,5dlu,default,5dlu,default","pref");
     layout.setColumnGroups(new int[][] {{1,3,5}});

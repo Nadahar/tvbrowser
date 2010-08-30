@@ -37,7 +37,16 @@ import util.program.AbstractPluginProgramFormating;
  * @since 2.5.1
  */
 public class GlobalPluginProgramFormating extends AbstractPluginProgramFormating {
-
+  /**
+   * Creates an empty instance of this class.
+   * Don't remove!
+   * This is really needed for loading GlobalPluginProgramFormating
+   * from ObjectInputStream!
+   */
+  public GlobalPluginProgramFormating() {
+    super(null,null,null,null,null);
+  }
+  
   protected GlobalPluginProgramFormating(String id, String name, String titleValue, String contentValue, String encodingValue) {
     super(id, name, titleValue, contentValue, encodingValue);
   }
