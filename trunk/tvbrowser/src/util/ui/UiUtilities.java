@@ -664,6 +664,9 @@ public class UiUtilities {
    * @return The scaled Icon.
    */
   public static Icon scaleIcon(Icon icon, int newWidth) {
+    if (icon == null) {
+      return null;
+    }
     return scaleIcon(icon, newWidth, (int) ((newWidth / (float) icon
         .getIconWidth()) * icon.getIconHeight()));
   }
@@ -680,6 +683,9 @@ public class UiUtilities {
    * @return Scaled Icon
    */
   public static Icon scaleIcon(Icon icon, int width, int height) {
+    if (icon == null) {
+      return null;
+    }
     int currentWidth = icon.getIconWidth();
     int currentHeight = icon.getIconHeight();
     if ((currentWidth == width) && (currentHeight == height)) {
