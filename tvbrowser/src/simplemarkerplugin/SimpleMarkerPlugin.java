@@ -189,14 +189,11 @@ public class SimpleMarkerPlugin extends Plugin {
       return new ActionMenu(mMarkListVector.getListAt(0).getContextMenuAction(program, true));
     } else {
       Object[] submenu = new Object[mMarkListVector.size()];
-      ContextMenuAction menu = new ContextMenuAction();
-      menu.setText(mLocalizer.msg("mark", "Mark"));
-      menu.setSmallIcon(createImageIcon("status", "mail-attachment", 16));
-
+      
       for (int i = 0; i < mMarkListVector.size(); i++) {
         submenu[i] = mMarkListVector.getListAt(i).getContextMenuAction(program, false);
       }
-      return new ActionMenu(menu, submenu);
+      return new ActionMenu(mLocalizer.msg("mark", "Mark"), createImageIcon("status", "mail-attachment", 16), submenu);
     }
 
   }
@@ -437,8 +434,8 @@ public class SimpleMarkerPlugin extends Plugin {
     }, mSettings.isGroupingByDate());
     ActionMenu[] groupActions = new ActionMenu[] { displayBoth, displayTitle,
         displayDate };
-    node.addActionMenu(new ActionMenu(new ContextMenuAction(mLocalizer
-        .msg("grouping.grouping", "Grouping")), groupActions));
+    node.addActionMenu(new ActionMenu(mLocalizer
+        .msg("grouping.grouping", "Grouping"), groupActions));
   }
 
   /**
