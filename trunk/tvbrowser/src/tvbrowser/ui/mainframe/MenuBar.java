@@ -211,7 +211,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 		new MenuHelpTextAdapter(mViewFilterBarMI, mLocalizer.msg(
 				"menuinfo.filterbar", ""), mLabel);
 
-		mFiltersMenu = createMenu("menuitem.filters", "Filter");
+		mFiltersMenu = createScrollableMenu("menuitem.filters", "Filter");
 		mFiltersMenu.setIcon(TVBrowserIcons.filter(TVBrowserIcons.SIZE_SMALL));
 		updateFiltersMenu();
 
@@ -415,6 +415,13 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 		return createMenuItem(localizerKey, defaultLabel, icon, false);
 	}
 
+	protected JMenu createScrollableMenu(final String localizerKey,
+	     final String defaultLabel) {
+	  ScrollableMenu menu = new ScrollableMenu();
+	   setLabelAndAccessKeys(localizerKey, defaultLabel, menu, false);
+	   return menu;
+	}
+	
 	protected JMenu createMenu(final String localizerKey,
 			final String defaultLabel) {
 		JMenu menu = new JMenu();
