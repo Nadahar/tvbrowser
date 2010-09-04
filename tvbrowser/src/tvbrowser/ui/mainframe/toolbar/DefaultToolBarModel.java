@@ -601,7 +601,8 @@ public class DefaultToolBarModel implements ToolBarModel, DateListener {
     JPopupMenu popup = null;
 
     if (item == mFilterAction) {
-      popup = new SelectFilterPopup(MainFrame.getInstance());
+      ScrollableMenu menu = new SelectFilterPopup(MainFrame.getInstance());
+      popup = menu.getPopupMenu();
     } else if (item == mGoToDateAction) {
       popup = new JPopupMenu();
 

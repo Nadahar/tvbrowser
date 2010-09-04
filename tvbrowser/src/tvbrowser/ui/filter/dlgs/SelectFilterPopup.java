@@ -27,15 +27,15 @@
 package tvbrowser.ui.filter.dlgs;
 
 import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
 
 import tvbrowser.ui.mainframe.MainFrame;
+import util.ui.ScrollableMenu;
 
 
 /**
  * Creates a Popup for Filtering
  */
-public class SelectFilterPopup extends JPopupMenu{
+public class SelectFilterPopup extends ScrollableMenu{
     
     /** MainFrame */
     private MainFrame mMainFrame;
