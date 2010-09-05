@@ -356,7 +356,7 @@
     <!-- Pack the plugin jars -->
 
     <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/BlogThisPlugin.jar"
-         compress="false">
+         compress="true">
       <fileset dir="${classes.dir}" includes="blogthisplugin/**"/>
     </jar>
 
@@ -371,67 +371,68 @@
     </jar>
 
   	<jar jarfile="${tvbrowser-default.runtime.dir}/plugins/CapturePlugin.jar"
-         compress="false">
+         compress="true">
       <fileset dir="${classes.dir}" includes="captureplugin/**"/>
     </jar>
 
   	<jar jarfile="${tvbrowser-default.runtime.dir}/plugins/ClipboardPlugin.jar"
-         compress="false">
+         compress="true">
       <fileset dir="${classes.dir}" includes="clipboardplugin/**"/>
     </jar>
 
     <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/EMailPlugin.jar"
-         compress="false">
+         compress="true">
       <fileset dir="${classes.dir}" includes="emailplugin/**"/>
     </jar>
 
     <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/GenrePlugin.jar"
-         compress="false">
+         compress="true">
       <fileset dir="${classes.dir}" includes="genreplugin/**"/>
     </jar>
 
     <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/GrowlPlugin.jar"
-         compress="false">
+         compress="true">
       <fileset dir="${classes.dir}" includes="growlplugin/**"/>
       <fileset dir="${unpacked.dir}/${lib.libgrowl.name}.jar" includes="**" />
     </jar>
 
     <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/ProgramListPlugin.jar"
-         compress="false">
+         compress="true">
       <fileset dir="${classes.dir}" includes="programlistplugin/**"/>
     </jar>
 
     <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/I18NPlugin.jar"
-         compress="false">
+         compress="true">
       <fileset dir="${classes.dir}" includes="i18nplugin/**"/>
     </jar>
 
     <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/ListViewPlugin.jar"
-         compress="false">
+         compress="true">
       <fileset dir="${classes.dir}" includes="listviewplugin/**"/>
     </jar>
 
     <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/NewsPlugin.jar"
-         compress="false">
+         compress="true">
       <fileset dir="${classes.dir}" includes="newsplugin/**"/>
     </jar>
 
   	<jar jarfile="${tvbrowser-default.runtime.dir}/plugins/PrintPlugin.jar"
-         compress="false">
+         compress="true">
       <fileset dir="${classes.dir}" includes="printplugin/**"/>
     </jar>
 
-    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/SimpleMarkerPlugin.jar" compress="false">
+    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/SimpleMarkerPlugin.jar"
+    		compress="true">
       <fileset dir="${classes.dir}" includes="simplemarkerplugin/**" />
     </jar>
 
   	<jar jarfile="${tvbrowser-default.runtime.dir}/plugins/TVRaterPlugin.jar"
-         compress="false">
+         compress="true">
       <fileset dir="${classes.dir}" includes="tvraterplugin/**"/>
     </jar>
 
     <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/WebPlugin.jar"
-         compress="false">
+         compress="true">
       <fileset dir="${classes.dir}" includes="webplugin/**"/>
       <fileset dir="${unpacked.dir}/${lib.aclibico.name}.jar" includes="**" />
       <fileset dir="${unpacked.dir}/${lib.log4j.name}.jar" includes="**" />
@@ -439,27 +440,27 @@
 
     <!-- Pack the TV data service jars -->
     <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/TvBrowserDataService.jar"
-         compress="false">
+         compress="true">
       <fileset dir="${classes.dir}" includes="tvbrowserdataservice/**"/>
     </jar>
 
     <!-- Pack Swedb data service -->
-    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/SweDBTvDataService.jar" compress="false">
+    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/SweDBTvDataService.jar" compress="true">
             <fileset dir="${classes.dir}" includes="swedbtvdataservice/**" />
     </jar>
 
     <!-- Pack BBC data service -->
-    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/BbcBackstageDataService.jar" compress="false">
+    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/BbcBackstageDataService.jar" compress="true">
             <fileset dir="${classes.dir}" includes="bbcbackstagedataservice/**" />
             <fileset dir="${unpacked.dir}/${lib.tvanytime.name}.jar" includes="bbc/**" />
             <fileset dir="${unpacked.dir}/${lib.commons.compress.name}.jar" includes="**" />
     </jar>
     <!-- Pack RadioTimes data service -->
-    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/RadioTimesDataService.jar" compress="false">
+    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/RadioTimesDataService.jar" compress="true">
             <fileset dir="${classes.dir}" includes="radiotimesdataservice/**" />
     </jar>
       <!-- Pack Dreambox data service -->
-      <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/DreamboxDataService.jar" compress="false">
+      <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/DreamboxDataService.jar" compress="true">
               <fileset dir="${classes.dir}" includes="dreamboxdataservice/**" />
       </jar>
 
@@ -468,7 +469,7 @@
     <unjar src="${lib.dir}/${lib.stax.api.name}-${lib.stax.api.version}.jar" dest="${unpacked.dir}/${lib.stax.api.name}.jar" />
     <unjar src="${lib.dir}/${lib.xtvd.name}-${lib.xtvd.version}.jar" dest="${unpacked.dir}/${lib.xtvd.name}.jar" />
     <!-- Pack SchedulesDirect data service -->
-    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/SchedulesDirectDataService.jar" compress="false">
+    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/SchedulesDirectDataService.jar" compress="true">
         <fileset dir="${classes.dir}" includes="schedulesdirectdataservice/**" />
         <fileset dir="${unpacked.dir}/${lib.stax.name}.jar" includes="com/**"/>
         <fileset dir="${unpacked.dir}/${lib.stax.api.name}.jar" includes="javax/**"/>
@@ -645,7 +646,7 @@
    	<chmod perm="u+x" file="${tvbrowser-linux.runtime.dir}/tvbrowser.sh"/>
 
   	<jar jarfile="${tvbrowser-linux.runtime.dir}/plugins/KNotifyPlugin.jar"
-         compress="false">
+         compress="true">
       <fileset dir="${classes.dir}" includes="knotifyplugin/**"/>
     </jar>
 
