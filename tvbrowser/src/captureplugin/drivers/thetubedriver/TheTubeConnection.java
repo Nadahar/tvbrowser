@@ -109,11 +109,12 @@ public class TheTubeConnection implements SimpleConnectionIf {
           "\tset theISOTime to (stringToList from (theISOTime) for \":\")\n" +
           "\t\n" +
           "\tset myDate to current date\n" +
+          "\tset month of myDate to 1\n" +
           "\t\n" +
           "\ttell theISODate\n" +
           "\t\tset year of myDate to item 1\n" +
-          "\t\tset month of myDate to item (item 2) of monthConstants\n" +
           "\t\tset day of myDate to item 3\n" +
+          "\t\tset month of myDate to item (item 2) of monthConstants\n" +
           "\tend tell\n" +
           "\ttell theISOTime\n" +
           "\t\tset hours of myDate to item 1\n" +

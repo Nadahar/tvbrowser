@@ -36,7 +36,7 @@ import devplugin.Program;
 
 /**
  * Export for Apple iCal
- * 
+ *
  * @author bodum
  */
 public class AppleiCalExporter extends AbstractExporter {
@@ -49,7 +49,7 @@ public class AppleiCalExporter extends AbstractExporter {
         AppleScriptRunner runner = new AppleScriptRunner();
 
         StringBuilder script = new StringBuilder();
-        
+
         SimpleDateFormat formatDay = new SimpleDateFormat("yyyy-MM-dd");
         SimpleDateFormat formatHour = new SimpleDateFormat("HH:mm");
 
@@ -77,11 +77,12 @@ public class AppleiCalExporter extends AbstractExporter {
           "\tset theISOTime to (stringToList from (theISOTime) for \":\")\n" +
           "\t\n" +
           "\tset myDate to current date\n" +
+          "\tset month of myDate to 1\n" +
           "\t\n" +
           "\ttell theISODate\n" +
           "\t\tset year of myDate to item 1\n" +
-          "\t\tset month of myDate to item (item 2) of monthConstants\n" +
           "\t\tset day of myDate to item 3\n" +
+          "\t\tset month of myDate to item (item 2) of monthConstants\n" +
           "\tend tell\n" +
           "\ttell theISOTime\n" +
           "\t\tset hours of myDate to item 1\n" +
@@ -101,7 +102,7 @@ public class AppleiCalExporter extends AbstractExporter {
         script.append("    set TVBrowserCalendar to make new calendar with properties {title:myTVCalendar}\n");
         script.append("  end if\n");
         script.append("\n");
-        
+
         for (Program program : programs) {
             final Calendar start = CalendarToolbox.getStartAsCalendar(program);
             final Calendar end   = CalendarToolbox.getEndAsCalendar(program);
@@ -110,37 +111,37 @@ public class AppleiCalExporter extends AbstractExporter {
             script.append("  set endDate to my getDateForISOdate(\"").append(formatDay.format(end.getTime())).append("\", \"").append(formatHour.format(end.getTime())).append("\")\n");
             script.append("\n");
             script.append("  set props to {start date:startDate, end date:endDate, summary:\"");
-            
+
             ParamParser parser = new ParamParser();
-            
+
             String title = parser.analyse(formatting.getTitleValue(), program);
             script.append(title);
-               
+
             script.append("\", description:\"");
-            
+
             String desc = parser.analyse(formatting.getContentValue(), program);
             script.append(desc.replaceAll("\"", "\\\\\"").replace('\n', ' '));
-            
+
             script.append("\"}\n");
             script.append("  set theEvent to make new event at end of (events of TVBrowserCalendar) with properties props\n");
-            
+
             if (settings.getUseAlarm()) {
                 script.append("  make new display alarm at beginning of theEvent with properties {trigger interval:-");
                 script.append(settings.getAlarmMinutes());
                 script.append("}\n");
             }
-            
+
         }
-        
+
         script.append("end tell\n");
-        
+
         try {
             runner.executeScript(script.toString());
         } catch (IOException e) {
             e.printStackTrace();
             ErrorHandler.handle("Error while execution of the applescript", e);
         }
-    
+
         return true;
     }
 
