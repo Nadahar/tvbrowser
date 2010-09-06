@@ -37,7 +37,7 @@ import devplugin.Version;
  *
  */
 public final class TeleTextPlugin extends Plugin {
-  private static final Version mVersion = new Version(2, 70, 11);
+  private static final Version mVersion = new Version(2, 70, 12);
 
   /**
    * created lazily on first access
