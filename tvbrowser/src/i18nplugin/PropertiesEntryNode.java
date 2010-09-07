@@ -43,6 +43,10 @@ import util.i18n.WritingConversion;
  */
 public class PropertiesEntryNode extends DefaultMutableTreeNode implements LanguageNodeIf, FilterNodeIf {
 
+  private static final Pattern PATTERN_ARGUMENTS = Pattern.compile(".*?(['\"]\\{\\d\\}['\"]|\\{\\d\\}).*");
+
+  private static final Pattern PATTERN_ENDINGS = Pattern.compile(".*[\\w\\sﬂ](\\W*)",Pattern.DOTALL);
+
   private String filter;
 
   private boolean matches;
@@ -105,11 +109,10 @@ public class PropertiesEntryNode extends DefaultMutableTreeNode implements Langu
     original = WritingConversion.reduceToASCIILetters(original, false);
     translated = WritingConversion.reduceToASCIILetters(translated, false);
     // check that the strings have the same non alphanumeric ends, e.g. "..." in menu items
-    Pattern lastChars = Pattern.compile(".*[\\w\\sﬂ](\\W*)",Pattern.DOTALL);
-    Matcher matcher = lastChars.matcher(original);
+    Matcher matcher = PATTERN_ENDINGS.matcher(original);
     if (matcher.matches()) {
       String endOriginal = matcher.group(1);
-      matcher = lastChars.matcher(translated);
+      matcher = PATTERN_ENDINGS.matcher(translated);
       if (matcher.matches()) {
         String endTranslated = matcher.group(1);
         if (!endOriginal.equals(endTranslated)) {
@@ -122,14 +125,13 @@ public class PropertiesEntryNode extends DefaultMutableTreeNode implements Langu
 
   private List<String> getArgumentList(String input) {
     List<String> args = new ArrayList<String>();
-    Pattern argumentPattern = Pattern.compile(".*?(['\"]\\{\\d\\}['\"]|\\{\\d\\}).*");
-    Matcher argumentMatcher = argumentPattern.matcher(input);
+    Matcher argumentMatcher = PATTERN_ARGUMENTS.matcher(input);
     int index = 0;
     while (argumentMatcher.matches()) {
       String argument = argumentMatcher.group(1);
       index+= argumentMatcher.end(1);
       args.add(argument);
-      argumentMatcher = argumentPattern.matcher(input.substring(index));
+      argumentMatcher = PATTERN_ARGUMENTS.matcher(input.substring(index));
     }
     Collections.sort(args);
     return args;
