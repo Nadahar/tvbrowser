@@ -268,7 +268,7 @@ public class TheTubeConnection implements SimpleConnectionIf {
 
   public boolean addToRecording(SimpleConfig conf, ProgramTime prg) {
       SimpleDateFormat dateformater = new SimpleDateFormat("yyyy-MM-dd");
-      SimpleDateFormat timeformater = new SimpleDateFormat("kk:mm");
+      SimpleDateFormat timeformater = new SimpleDateFormat("HH:mm");
 
       String call = CREATERECORDING.replaceAll("\\{1\\}", dateformater.format(prg.getStart()));
       call = call.replaceAll("\\{2\\}", timeformater.format(prg.getStart()));
