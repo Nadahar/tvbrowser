@@ -1115,28 +1115,29 @@ public final class NextViewDataService extends AbstractTvDataService {
     setMixedIntField(currentProgram, altProg, ProgramFieldType.AGE_LIMIT_TYPE, mixFlags[10]);
     setMixedTextField(currentProgram, altProg, ProgramFieldType.URL_TYPE, mixFlags[11]);
     setMixedTextField(currentProgram, altProg, ProgramFieldType.GENRE_TYPE, mixFlags[12], ", ");
-    setMixedIntField(currentProgram, altProg, ProgramFieldType.NET_PLAYING_TIME_TYPE, mixFlags[13]);
-    setTimeField(currentProgram, altProg, ProgramFieldType.VPS_TYPE, mixFlags[14]);
-    setMixedTextField(currentProgram, altProg, ProgramFieldType.SCRIPT_TYPE, mixFlags[15]);
-    setMixedTextField(currentProgram, altProg, ProgramFieldType.REPETITION_OF_TYPE, mixFlags[16]);
-    setMixedTextField(currentProgram, altProg, ProgramFieldType.MUSIC_TYPE, mixFlags[17]);
-    setMixedTextField(currentProgram, altProg, ProgramFieldType.MODERATION_TYPE, mixFlags[18]);
-    setMixedIntField(currentProgram, altProg, ProgramFieldType.PRODUCTION_YEAR_TYPE, mixFlags[19]);
-    setMixedTextField(currentProgram, altProg, ProgramFieldType.REPETITION_ON_TYPE, mixFlags[20]);
-    setMixedBinaryField(currentProgram, altProg, ProgramFieldType.PICTURE_TYPE, mixFlags[21]);
-    setMixedTextField(currentProgram, altProg, ProgramFieldType.PICTURE_COPYRIGHT_TYPE, mixFlags[21]);
-    setMixedTextField(currentProgram, altProg, ProgramFieldType.PICTURE_DESCRIPTION_TYPE, mixFlags[21]);
-    setMixedIntField(currentProgram, altProg, ProgramFieldType.EPISODE_NUMBER_TYPE, mixFlags[22]);
-    setMixedIntField(currentProgram, altProg, ProgramFieldType.EPISODE_TOTAL_NUMBER_TYPE, mixFlags[22]);
-    setMixedIntField(currentProgram, altProg, ProgramFieldType.SEASON_NUMBER_TYPE, mixFlags[22]);
-    setMixedTextField(currentProgram, altProg, ProgramFieldType.PRODUCER_TYPE, mixFlags[23]);
-    setMixedTextField(currentProgram, altProg, ProgramFieldType.CAMERA_TYPE, mixFlags[24]);
-    setMixedTextField(currentProgram, altProg, ProgramFieldType.CUTTER_TYPE, mixFlags[25]);
-    setMixedTextField(currentProgram, altProg, ProgramFieldType.ADDITIONAL_PERSONS_TYPE, mixFlags[26]);
-    setMixedIntField(currentProgram, altProg, ProgramFieldType.RATING_TYPE, mixFlags[27]);
+    setMixedTextField(currentProgram, altProg, ProgramFieldType.ORIGIN_TYPE, mixFlags[13], ", ");
+    setMixedIntField(currentProgram, altProg, ProgramFieldType.NET_PLAYING_TIME_TYPE, mixFlags[14]);
+    setTimeField(currentProgram, altProg, ProgramFieldType.VPS_TYPE, mixFlags[15]);
+    setMixedTextField(currentProgram, altProg, ProgramFieldType.SCRIPT_TYPE, mixFlags[16]);
+    setMixedTextField(currentProgram, altProg, ProgramFieldType.REPETITION_OF_TYPE, mixFlags[17]);
+    setMixedTextField(currentProgram, altProg, ProgramFieldType.MUSIC_TYPE, mixFlags[18]);
+    setMixedTextField(currentProgram, altProg, ProgramFieldType.MODERATION_TYPE, mixFlags[19]);
+    setMixedIntField(currentProgram, altProg, ProgramFieldType.PRODUCTION_YEAR_TYPE, mixFlags[20]);
+    setMixedTextField(currentProgram, altProg, ProgramFieldType.REPETITION_ON_TYPE, mixFlags[21]);
+    setMixedBinaryField(currentProgram, altProg, ProgramFieldType.PICTURE_TYPE, mixFlags[22]);
+    setMixedTextField(currentProgram, altProg, ProgramFieldType.PICTURE_COPYRIGHT_TYPE, mixFlags[22]);
+    setMixedTextField(currentProgram, altProg, ProgramFieldType.PICTURE_DESCRIPTION_TYPE, mixFlags[22]);
+    setMixedIntField(currentProgram, altProg, ProgramFieldType.EPISODE_NUMBER_TYPE, mixFlags[23]);
+    setMixedIntField(currentProgram, altProg, ProgramFieldType.EPISODE_TOTAL_NUMBER_TYPE, mixFlags[23]);
+    setMixedIntField(currentProgram, altProg, ProgramFieldType.SEASON_NUMBER_TYPE, mixFlags[23]);
+    setMixedTextField(currentProgram, altProg, ProgramFieldType.PRODUCER_TYPE, mixFlags[24]);
+    setMixedTextField(currentProgram, altProg, ProgramFieldType.CAMERA_TYPE, mixFlags[25]);
+    setMixedTextField(currentProgram, altProg, ProgramFieldType.CUTTER_TYPE, mixFlags[26]);
+    setMixedTextField(currentProgram, altProg, ProgramFieldType.ADDITIONAL_PERSONS_TYPE, mixFlags[27]);
+    setMixedIntField(currentProgram, altProg, ProgramFieldType.RATING_TYPE, mixFlags[28]);
     if (version >= 300) {
       setMixedTextField(currentProgram, altProg, ProgramFieldType.CUSTOM_TYPE, mixFlags[8], System.getProperty("line.separator") +  System.getProperty("line.separator"));
-      setMixedTextField(currentProgram, altProg, ProgramFieldType.PRODUCTION_COMPANY_TYPE, mixFlags[28]);
+      setMixedTextField(currentProgram, altProg, ProgramFieldType.PRODUCTION_COMPANY_TYPE, mixFlags[29]);
     }
   }
 

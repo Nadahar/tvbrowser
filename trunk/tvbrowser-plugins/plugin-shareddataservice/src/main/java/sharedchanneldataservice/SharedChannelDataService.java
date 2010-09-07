@@ -56,7 +56,7 @@ public class SharedChannelDataService extends AbstractTvDataService{
 
   public static SharedChannelDataService getInstance(){
     if (mInstance == null) {
-      throw new RuntimeException("no instance of DataMixerPlugin class available");
+      throw new RuntimeException("no instance of SharedChannelPlugin class available");
     }
     return mInstance;
   }
@@ -634,6 +634,7 @@ public class SharedChannelDataService extends AbstractTvDataService{
       setIntField(newProgram, alienProg, ProgramFieldType.AGE_LIMIT_TYPE);
       setTextField(newProgram, alienProg, ProgramFieldType.URL_TYPE);
       setTextField(newProgram, alienProg, ProgramFieldType.GENRE_TYPE);
+      setTextField(newProgram, alienProg, ProgramFieldType.ORIGIN_TYPE);
       setIntField(newProgram, alienProg, ProgramFieldType.NET_PLAYING_TIME_TYPE);
       setTimeField(newProgram, alienProg, ProgramFieldType.VPS_TYPE);
       setTextField(newProgram, alienProg, ProgramFieldType.SCRIPT_TYPE);

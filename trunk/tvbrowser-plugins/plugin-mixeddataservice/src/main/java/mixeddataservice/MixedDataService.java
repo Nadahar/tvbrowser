@@ -690,28 +690,29 @@ public class MixedDataService extends AbstractTvDataService{
     setMixedIntField(currentProgram, prog1, prog2, ProgramFieldType.AGE_LIMIT_TYPE, mixFlags[10]);
     setMixedTextField(currentProgram, prog1, prog2, ProgramFieldType.URL_TYPE, mixFlags[11]);
     setMixedTextField(currentProgram, prog1, prog2, ProgramFieldType.GENRE_TYPE, mixFlags[12], ", ");
-    setMixedIntField(currentProgram, prog1, prog2, ProgramFieldType.NET_PLAYING_TIME_TYPE, mixFlags[13]);
-    setMixedTimeField(currentProgram, prog1, prog2, ProgramFieldType.VPS_TYPE, mixFlags[14]);
-    setMixedTextField(currentProgram, prog1, prog2, ProgramFieldType.SCRIPT_TYPE, mixFlags[15]);
-    setMixedTextField(currentProgram, prog1, prog2, ProgramFieldType.REPETITION_OF_TYPE, mixFlags[16]);
-    setMixedTextField(currentProgram, prog1, prog2, ProgramFieldType.MUSIC_TYPE, mixFlags[17]);
-    setMixedTextField(currentProgram, prog1, prog2, ProgramFieldType.MODERATION_TYPE, mixFlags[18]);
-    setMixedIntField(currentProgram, prog1, prog2, ProgramFieldType.PRODUCTION_YEAR_TYPE, mixFlags[19]);
-    setMixedTextField(currentProgram, prog1, prog2, ProgramFieldType.REPETITION_ON_TYPE, mixFlags[20]);
-    setMixedBinaryField(currentProgram, prog1, prog2, ProgramFieldType.PICTURE_TYPE, mixFlags[21]);
-    setMixedTextField(currentProgram, prog1, prog2, ProgramFieldType.PICTURE_COPYRIGHT_TYPE, mixFlags[21]);
-    setMixedTextField(currentProgram, prog1, prog2, ProgramFieldType.PICTURE_DESCRIPTION_TYPE, mixFlags[21]);
-    setMixedIntField(currentProgram, prog1, prog2, ProgramFieldType.EPISODE_NUMBER_TYPE, mixFlags[22]);
-    setMixedIntField(currentProgram, prog1, prog2, ProgramFieldType.EPISODE_TOTAL_NUMBER_TYPE, mixFlags[22]);
-    setMixedIntField(currentProgram, prog1, prog2, ProgramFieldType.SEASON_NUMBER_TYPE, mixFlags[22]);
-    setMixedTextField(currentProgram, prog1, prog2, ProgramFieldType.PRODUCER_TYPE, mixFlags[23]);
-    setMixedTextField(currentProgram, prog1, prog2, ProgramFieldType.CAMERA_TYPE, mixFlags[24]);
-    setMixedTextField(currentProgram, prog1, prog2, ProgramFieldType.CUTTER_TYPE, mixFlags[25]);
-    setMixedTextField(currentProgram, prog1, prog2, ProgramFieldType.ADDITIONAL_PERSONS_TYPE, mixFlags[26]);
-    setMixedIntField(currentProgram, prog1, prog2, ProgramFieldType.RATING_TYPE, mixFlags[27]);
+    setMixedTextField(currentProgram, prog1, prog2, ProgramFieldType.ORIGIN_TYPE, mixFlags[13]);
+    setMixedIntField(currentProgram, prog1, prog2, ProgramFieldType.NET_PLAYING_TIME_TYPE, mixFlags[14]);
+    setMixedTimeField(currentProgram, prog1, prog2, ProgramFieldType.VPS_TYPE, mixFlags[15]);
+    setMixedTextField(currentProgram, prog1, prog2, ProgramFieldType.SCRIPT_TYPE, mixFlags[16]);
+    setMixedTextField(currentProgram, prog1, prog2, ProgramFieldType.REPETITION_OF_TYPE, mixFlags[17]);
+    setMixedTextField(currentProgram, prog1, prog2, ProgramFieldType.MUSIC_TYPE, mixFlags[18]);
+    setMixedTextField(currentProgram, prog1, prog2, ProgramFieldType.MODERATION_TYPE, mixFlags[19]);
+    setMixedIntField(currentProgram, prog1, prog2, ProgramFieldType.PRODUCTION_YEAR_TYPE, mixFlags[20]);
+    setMixedTextField(currentProgram, prog1, prog2, ProgramFieldType.REPETITION_ON_TYPE, mixFlags[21]);
+    setMixedBinaryField(currentProgram, prog1, prog2, ProgramFieldType.PICTURE_TYPE, mixFlags[22]);
+    setMixedTextField(currentProgram, prog1, prog2, ProgramFieldType.PICTURE_COPYRIGHT_TYPE, mixFlags[22]);
+    setMixedTextField(currentProgram, prog1, prog2, ProgramFieldType.PICTURE_DESCRIPTION_TYPE, mixFlags[22]);
+    setMixedIntField(currentProgram, prog1, prog2, ProgramFieldType.EPISODE_NUMBER_TYPE, mixFlags[23]);
+    setMixedIntField(currentProgram, prog1, prog2, ProgramFieldType.EPISODE_TOTAL_NUMBER_TYPE, mixFlags[23]);
+    setMixedIntField(currentProgram, prog1, prog2, ProgramFieldType.SEASON_NUMBER_TYPE, mixFlags[23]);
+    setMixedTextField(currentProgram, prog1, prog2, ProgramFieldType.PRODUCER_TYPE, mixFlags[24]);
+    setMixedTextField(currentProgram, prog1, prog2, ProgramFieldType.CAMERA_TYPE, mixFlags[25]);
+    setMixedTextField(currentProgram, prog1, prog2, ProgramFieldType.CUTTER_TYPE, mixFlags[26]);
+    setMixedTextField(currentProgram, prog1, prog2, ProgramFieldType.ADDITIONAL_PERSONS_TYPE, mixFlags[27]);
+    setMixedIntField(currentProgram, prog1, prog2, ProgramFieldType.RATING_TYPE, mixFlags[28]);
     if (version >= 300) {
     	setMixedTextField(currentProgram, prog1, prog2, ProgramFieldType.CUSTOM_TYPE, mixFlags[8], System.getProperty("line.separator") +  System.getProperty("line.separator"));
-    	setMixedTextField(currentProgram, prog1, prog2, ProgramFieldType.PRODUCTION_COMPANY_TYPE, mixFlags[28]);
+    	setMixedTextField(currentProgram, prog1, prog2, ProgramFieldType.PRODUCTION_COMPANY_TYPE, mixFlags[29]);
     }
   }
 
@@ -909,143 +910,143 @@ public class MixedDataService extends AbstractTvDataService{
    */
   private boolean compareTitle(final String title1, final String title2){
 
-    String test1 = title1.toLowerCase();
-    String test2 = title2.toLowerCase();
-    if (test1.equals(test2) || test1.indexOf(title2) >= 0 || test2.indexOf(test1) >= 0){
-      return true;
-    }
+	    String test1 = title1.toLowerCase();
+	    String test2 = title2.toLowerCase();
+	    if (test1.equals(test2) || test1.indexOf(title2) >= 0 || test2.indexOf(test1) >= 0){
+	      return true;
+	    }
 
-    int count1 = 0;
-    int count2 = 0;
-    int max1 = test1.length()-1;
-    int max2 = test2.length()-1;
+	    int count1 = 0;
+	    int count2 = 0;
+	    int max1 = test1.length()-1;
+	    int max2 = test2.length()-1;
 
-    while (count1<=max1 && count2<=max2){
-      char char1 = test1.charAt(count1);
-      while (count1 <= max1 && (char1 ==' '||char1 =='!'||char1 =='\"'||char1 =='#'||char1 =='$'||char1 =='%'||char1 =='&'||char1 =='\''||char1 =='('||char1 ==')'||char1 =='*'||char1 =='+'||char1 ==','||char1 =='-'||char1 =='.'||char1 =='/'||char1 ==':'||char1 ==';'||char1 =='<'||char1 =='='||char1 =='>'||char1 =='?'||char1 =='['||char1 =='\\'||char1 ==']'||char1 =='_'||char1 =='Â’')){
-        count1++;
-        if (count1 <= max1){
-          char1 = test1.charAt(count1);
-        }
-      }
-      char char2 = test2.charAt(count2);
-      while (count2 <= max2 && (char2 ==' '||char2 =='!'||char2 =='\"'||char2 =='#'||char2 =='$'||char2 =='%'||char2 =='&'||char2 =='\''||char2 =='('||char2 ==')'||char2 =='*'||char2 =='+'||char2 ==','||char2 =='-'||char2 =='.'||char2 =='/'||char2 ==':'||char2 ==';'||char2 =='<'||char2 =='='||char2 =='>'||char2 =='?'||char2 =='['||char2 =='\\'||char2 ==']'||char2 =='_'||char2 =='Â’')){
-        count2++;
-        if (count2 <= max2){
-          char2 = test2.charAt(count2);
-        }     }
+	    while (count1<=max1 && count2<=max2){
+	      char char1 = test1.charAt(count1);
+	      while (count1 <= max1 && (char1 ==' '||char1 =='!'||char1 =='\"'||char1 =='#'||char1 =='$'||char1 =='%'||char1 =='&'||char1 =='\''||char1 =='('||char1 ==')'||char1 =='*'||char1 =='+'||char1 ==','||char1 =='-'||char1 =='.'||char1 =='/'||char1 ==':'||char1 ==';'||char1 =='<'||char1 =='='||char1 =='>'||char1 =='?'||char1 =='['||char1 =='\\'||char1 ==']'||char1 =='_'||char1 =='?')){
+	        count1++;
+	        if (count1 <= max1){
+	          char1 = test1.charAt(count1);
+	        }
+	      }
+	      char char2 = test2.charAt(count2);
+	      while (count2 <= max2 && (char2 ==' '||char2 =='!'||char2 =='\"'||char2 =='#'||char2 =='$'||char2 =='%'||char2 =='&'||char2 =='\''||char2 =='('||char2 ==')'||char2 =='*'||char2 =='+'||char2 ==','||char2 =='-'||char2 =='.'||char2 =='/'||char2 ==':'||char2 ==';'||char2 =='<'||char2 =='='||char2 =='>'||char2 =='?'||char2 =='['||char2 =='\\'||char2 ==']'||char2 =='_'||char2 =='?')){
+	        count2++;
+	        if (count2 <= max2){
+	          char2 = test2.charAt(count2);
+	        }     }
 
-      if (count1>max1&& count2>max2){
-        return true;
-      }
-      if (char1==char2){
-        count1++;
-        count2++;
-        if (count2>max2){
-          while (count1 <= max1 && (char1 ==' '||char1 =='!'||char1 =='\"'||char1 =='#'||char1 =='$'||char1 =='%'||char1 =='&'||char1 =='\''||char1 =='('||char1 ==')'||char1 =='*'||char1 =='+'||char1 ==','||char1 =='-'||char1 =='.'||char1 =='/'||char1 ==':'||char1 ==';'||char1 =='<'||char1 =='='||char1 =='>'||char1 =='?'||char1 =='['||char1 =='\\'||char1 ==']'||char1 =='_'||char1 =='Â’')){
-            count1++;
-            if (count1 <= max1){
-              char1 = test1.charAt(count1);
-            }
-          }
-          if (count1 <= max1){
-            return false;
-          }
-        }
-        if (count1>max1){
-          while (count2 <= max2 && (char2 ==' '||char2 =='!'||char2 =='\"'||char2 =='#'||char2 =='$'||char2 =='%'||char2 =='&'||char2 =='\''||char2 =='('||char2 ==')'||char2 =='*'||char2 =='+'||char2 ==','||char2 =='-'||char2 =='.'||char2 =='/'||char2 ==':'||char2 ==';'||char2 =='<'||char2 =='='||char2 =='>'||char2 =='?'||char2 =='['||char2 =='\\'||char2 ==']'||char2 =='_'||char2 =='Â’')){
-            count2++;
-            if (count2 <= max2){
-              char2 = test2.charAt(count2);
-            }
-          }
-          if (count2 <= max2){
-            return false;
-          }
-        }
-      } else{
-        if (char1=='Ã¡' || char1=='Ã ' || char1=='Ã¢'){
-          char1 = 'a';
-        } else{
-          if (char1=='Ã©' || char1=='Ã¨' || char1=='Ãª'){
-            char1 = 'e';
-          }else{
-            if (char1=='Ã­' || char1=='Ã¬' || char1=='Ã®'){
-              char1 = 'i';
-            }else{
-              if (char1=='Ã³' || char1=='Ã²' || char1=='Ã´'){
-                char1 = 'o';
-              }else{
-                if (char1=='Ãº' || char1=='Ã¹' || char1=='Ã»'){
-                  char1 = 'u';
-                }else{
-                  if (char1=='Ã§'){
-                    char1 = 'c';
-                  }else{
-                    if (char1=='Ã±'){
-                      char1 = 'n';
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-        if (char2=='Ã©' || char2=='Ã¨' || char2=='Ãª'){
-          char2 = 'e';
-        }else{
-          if (char2=='Ã­' || char2=='Ã¬' || char2=='Ã®'){
-            char2 = 'i';
-          }else{
-            if (char2=='Ã³' || char2=='Ã²' || char2=='Ã´'){
-              char2 = 'o';
-            }else{
-              if (char2=='Ãº' || char2=='Ã¹' || char2=='Ã»'){
-                char2 = 'u';
-              }else{
-                if (char2=='Ã§'){
-                  char2 = 'c';
-                }else{
-                  if (char2=='Ã±'){
-                    char2 = 'n';
-                  }
-                }
-              }
-            }
-          }
-        }
-        if (char1==char2){
-          count1++;
-          count2++;
-          if (count2>max2){
-            while (count1 <= max1 && (char1 ==' '||char1 =='!'||char1 =='\"'||char1 =='#'||char1 =='$'||char1 =='%'||char1 =='&'||char1 =='\''||char1 =='('||char1 ==')'||char1 =='*'||char1 =='+'||char1 ==','||char1 =='-'||char1 =='.'||char1 =='/'||char1 ==':'||char1 ==';'||char1 =='<'||char1 =='='||char1 =='>'||char1 =='?'||char1 =='['||char1 =='\\'||char1 ==']'||char1 =='_'||char1 =='Â’')){
-              count1++;
-              if (count1 <= max1){
-                char1 = test1.charAt(count1);
-              }
-            }
-            if (count1 <= max1){
-              return false;
-            }
-          }
-          if (count1>max1){
-            while (count2 <= max2 && (char2 ==' '||char2 =='!'||char2 =='\"'||char2 =='#'||char2 =='$'||char2 =='%'||char2 =='&'||char2 =='\''||char2 =='('||char2 ==')'||char2 =='*'||char2 =='+'||char2 ==','||char2 =='-'||char2 =='.'||char2 =='/'||char2 ==':'||char2 ==';'||char2 =='<'||char2 =='='||char2 =='>'||char2 =='?'||char2 =='['||char2 =='\\'||char2 ==']'||char2 =='_'||char2 =='Â’')){
-              count2++;
-              if (count2 <= max2){
-                char2 = test2.charAt(count2);
-              }
-            }
-            if (count2 <= max2){
-              return false;
-            }
-          }        } else{
-            return false;
-          }
-      }
+	      if (count1>max1&& count2>max2){
+	        return true;
+	      }
+	      if (char1==char2){
+	        count1++;
+	        count2++;
+	        if (count2>max2){
+	          while (count1 <= max1 && (char1 ==' '||char1 =='!'||char1 =='\"'||char1 =='#'||char1 =='$'||char1 =='%'||char1 =='&'||char1 =='\''||char1 =='('||char1 ==')'||char1 =='*'||char1 =='+'||char1 ==','||char1 =='-'||char1 =='.'||char1 =='/'||char1 ==':'||char1 ==';'||char1 =='<'||char1 =='='||char1 =='>'||char1 =='?'||char1 =='['||char1 =='\\'||char1 ==']'||char1 =='_'||char1 =='?')){
+	            count1++;
+	            if (count1 <= max1){
+	              char1 = test1.charAt(count1);
+	            }
+	          }
+	          if (count1 <= max1){
+	            return false;
+	          }
+	        }
+	        if (count1>max1){
+	          while (count2 <= max2 && (char2 ==' '||char2 =='!'||char2 =='\"'||char2 =='#'||char2 =='$'||char2 =='%'||char2 =='&'||char2 =='\''||char2 =='('||char2 ==')'||char2 =='*'||char2 =='+'||char2 ==','||char2 =='-'||char2 =='.'||char2 =='/'||char2 ==':'||char2 ==';'||char2 =='<'||char2 =='='||char2 =='>'||char2 =='?'||char2 =='['||char2 =='\\'||char2 ==']'||char2 =='_'||char2 =='?')){
+	            count2++;
+	            if (count2 <= max2){
+	              char2 = test2.charAt(count2);
+	            }
+	          }
+	          if (count2 <= max2){
+	            return false;
+	          }
+	        }
+	      } else{
+	        if (char1=='á' || char1=='à' || char1=='â'){
+	          char1 = 'a';
+	        } else{
+	          if (char1=='é' || char1=='è' || char1=='ê'){
+	            char1 = 'e';
+	          }else{
+	            if (char1=='í' || char1=='ì' || char1=='î'){
+	              char1 = 'i';
+	            }else{
+	              if (char1=='ó' || char1=='ò' || char1=='ô'){
+	                char1 = 'o';
+	              }else{
+	                if (char1=='ú' || char1=='ù' || char1=='û'){
+	                  char1 = 'u';
+	                }else{
+	                  if (char1=='ç'){
+	                    char1 = 'c';
+	                  }else{
+	                    if (char1=='ñ'){
+	                      char1 = 'n';
+	                    }
+	                  }
+	                }
+	              }
+	            }
+	          }
+	        }
+	        if (char2=='é' || char2=='è' || char2=='ê'){
+	          char2 = 'e';
+	        }else{
+	          if (char2=='í' || char2=='ì' || char2=='î'){
+	            char2 = 'i';
+	          }else{
+	            if (char2=='ó' || char2=='ò' || char2=='ô'){
+	              char2 = 'o';
+	            }else{
+	              if (char2=='ú' || char2=='ù' || char2=='û'){
+	                char2 = 'u';
+	              }else{
+	                if (char2=='ç'){
+	                  char2 = 'c';
+	                }else{
+	                  if (char2=='ñ'){
+	                    char2 = 'n';
+	                  }
+	                }
+	              }
+	            }
+	          }
+	        }
+	        if (char1==char2){
+	          count1++;
+	          count2++;
+	          if (count2>max2){
+	            while (count1 <= max1 && (char1 ==' '||char1 =='!'||char1 =='\"'||char1 =='#'||char1 =='$'||char1 =='%'||char1 =='&'||char1 =='\''||char1 =='('||char1 ==')'||char1 =='*'||char1 =='+'||char1 ==','||char1 =='-'||char1 =='.'||char1 =='/'||char1 ==':'||char1 ==';'||char1 =='<'||char1 =='='||char1 =='>'||char1 =='?'||char1 =='['||char1 =='\\'||char1 ==']'||char1 =='_'||char1 =='?')){
+	              count1++;
+	              if (count1 <= max1){
+	                char1 = test1.charAt(count1);
+	              }
+	            }
+	            if (count1 <= max1){
+	              return false;
+	            }
+	          }
+	          if (count1>max1){
+	            while (count2 <= max2 && (char2 ==' '||char2 =='!'||char2 =='\"'||char2 =='#'||char2 =='$'||char2 =='%'||char2 =='&'||char2 =='\''||char2 =='('||char2 ==')'||char2 =='*'||char2 =='+'||char2 ==','||char2 =='-'||char2 =='.'||char2 =='/'||char2 ==':'||char2 ==';'||char2 =='<'||char2 =='='||char2 =='>'||char2 =='?'||char2 =='['||char2 =='\\'||char2 ==']'||char2 =='_'||char2 =='?')){
+	              count2++;
+	              if (count2 <= max2){
+	                char2 = test2.charAt(count2);
+	              }
+	            }
+	            if (count2 <= max2){
+	              return false;
+	            }
+	          }        } else{
+	            return false;
+	          }
+	      }
 
-    }
-    return true;
-  }
+	    }
+	    return true;
+	  }
 
 
 
