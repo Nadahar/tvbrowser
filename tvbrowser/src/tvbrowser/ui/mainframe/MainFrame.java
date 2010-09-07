@@ -53,7 +53,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.RandomAccessFile;
+import java.io.StringWriter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
@@ -278,6 +280,11 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
           mLog.info("Using default menu bar (instead of MacOSXMenuBar) for transportable version.");
         }
         mLog.warning("Could not instantiate MacOSXMenuBar\n" + e.toString());
+        if (e.getCause() != null) {
+          StringWriter sw = new StringWriter();
+          e.getCause().printStackTrace(new PrintWriter(sw));
+          mLog.warning(sw.toString());
+        }
         mMenuBar = new DefaultMenuBar(this, mStatusBar.getLabel());
         mLog.info("Using default menu bar");
       }
@@ -1098,7 +1105,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
   public void quit(boolean log) {
     quit(log,false);
   }
-  
+
   private void quit(boolean log, boolean export) {
     mTimer.stop(); // disable the update timer to avoid new update events
     if (log && downloadingThread != null && downloadingThread.isAlive()) {
@@ -1175,7 +1182,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       Settings.propTVDataDirectory.resetToDefault();
       Settings.copyToSystem();
     }
-    
+
     if (log) {
       mLog.info("Quitting");
       System.exit(0);
@@ -1537,14 +1544,14 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       askForDataUpdateNoDataAvailable();
     }
   }
-  
+
   public void copySettingsToSystem() {
     if(TVBrowser.isTransportable()) {
       String[] options = {mLocalizer.msg("copy","Copy"),
                           mLocalizer.msg("dontCopy","Don't copy")};
       String title = mLocalizer.msg("copyToSystemTitle","Copy settings and data to system");
       String msg = mLocalizer.msg("copyToSystemMsg","Should the settings and TV data be copied to the system?\nTV-Browser will therefor will be quit automatically.");
-      
+
       if(JOptionPane.showOptionDialog(this,msg,title,JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE,null,options,options[1]) == JOptionPane.YES_OPTION) {
         quit(true,true);
       }
@@ -2536,7 +2543,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
   public void updateChannelGroupMenu(JMenu channelGroupMenu) {
     mMenuBar.updateChannelGroupMenu(channelGroupMenu);
   }
-  
+
   public boolean getUserRequestCopyToSystem() {
     return mMenuBar.getUserRequestedCopyToSystem();
   }
