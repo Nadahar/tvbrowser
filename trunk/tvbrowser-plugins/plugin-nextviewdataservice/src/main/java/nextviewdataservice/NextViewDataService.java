@@ -1115,7 +1115,7 @@ public final class NextViewDataService extends AbstractTvDataService {
     setMixedIntField(currentProgram, altProg, ProgramFieldType.AGE_LIMIT_TYPE, mixFlags[10]);
     setMixedTextField(currentProgram, altProg, ProgramFieldType.URL_TYPE, mixFlags[11]);
     setMixedTextField(currentProgram, altProg, ProgramFieldType.GENRE_TYPE, mixFlags[12], ", ");
-    setMixedTextField(currentProgram, altProg, ProgramFieldType.ORIGIN_TYPE, mixFlags[13], ", ");
+    setMixedTextField(currentProgram, altProg, ProgramFieldType.ORIGIN_TYPE, mixFlags[13]);
     setMixedIntField(currentProgram, altProg, ProgramFieldType.NET_PLAYING_TIME_TYPE, mixFlags[14]);
     setTimeField(currentProgram, altProg, ProgramFieldType.VPS_TYPE, mixFlags[15]);
     setMixedTextField(currentProgram, altProg, ProgramFieldType.SCRIPT_TYPE, mixFlags[16]);
