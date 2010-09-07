@@ -47,7 +47,7 @@ public abstract class AbstractXmlTvDataHandler extends DefaultHandler {
    * RegEx-Pattern for the Actor
    */
   private static final Pattern ACTOR_PATTERN = Pattern.compile("(.*)\\((.*)\\)");
-  private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMddkkmmss ZZZZ");
+  private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMddHHmmss ZZZZ");
   /**
    * Holds the text of the current tag.
    */

@@ -268,7 +268,7 @@ public class ElgatoConnection implements SimpleConnectionIf {
      */
     public boolean addToRecording(SimpleConfig conf, ProgramTime prg) {
         String date = new SimpleDateFormat("yyyy-MM-dd").format(prg.getStart());
-        String time = new SimpleDateFormat("kk:mm").format(prg.getStart());
+        String time = new SimpleDateFormat("HH:mm").format(prg.getStart());
         String text = "";
         if (prg.getProgram().getShortInfo() != null) {
           text = prg.getProgram().getShortInfo();
