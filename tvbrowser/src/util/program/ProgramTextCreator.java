@@ -43,7 +43,6 @@ import javax.swing.JLabel;
 
 import org.apache.commons.lang.StringUtils;
 
-import tvbrowser.core.Settings;
 import tvbrowser.extras.common.InternalPluginProxyIf;
 import tvbrowser.extras.common.InternalPluginProxyList;
 import tvbrowser.extras.favoritesplugin.FavoritesPluginProxy;
@@ -845,208 +844,221 @@ public class ProgramTextCreator {
       Program prog, ProgramFieldType fieldType, boolean createLinks,
       boolean showHelpLinks, boolean showPersonLinks) {
 
-    String text = null;
-    String name = fieldType.getLocalizedName();
-    int blank = name.indexOf(' ', 16);
-    if (blank > 0) {
-      name = name.substring(0, blank) + "<br>" + name.substring(blank +1);
-    }
-    if (fieldType.getFormat() == ProgramFieldType.TEXT_FORMAT) {
-      text = prog.getTextField(fieldType);
-      if (ProgramFieldType.SHORT_DESCRIPTION_TYPE == fieldType) {
-        text = checkDescription(text);
+    try {
+      String text = null;
+      String name = fieldType.getLocalizedName();
+      int blank = name.indexOf(' ', 16);
+      if (blank > 0) {
+        name = name.substring(0, blank) + "<br>" + name.substring(blank +1);
       }
-
-      // Lazily add short description, but only if it differs from description
-      if (fieldType == ProgramFieldType.DESCRIPTION_TYPE) {
-        String description = checkDescription(prog.getDescription());
-        text = description;
-
-        if (prog.getShortInfo() != null) {
-          StringBuilder shortInfo = new StringBuilder(checkDescription(prog.getShortInfo())
-              .trim());
-
-          // delete "..." at the end, but only for duplication check, not for display
-          while (shortInfo.toString().endsWith(".")) {
-            shortInfo.deleteCharAt(shortInfo.length() - 1);
-          }
-
-          if (!description.trim().startsWith(shortInfo.toString())) {
-            addEntry(doc, buffer, prog,
-                ProgramFieldType.SHORT_DESCRIPTION_TYPE, true, showHelpLinks);
-          }
+      if (fieldType.getFormat() == ProgramFieldType.TEXT_FORMAT) {
+        text = prog.getTextField(fieldType);
+        if (ProgramFieldType.SHORT_DESCRIPTION_TYPE == fieldType) {
+          text = checkDescription(text);
         }
-        text = text.replace("\\-", ""); // replace conditional dashes
-        text = removeArtificialLineBreaks(text);
-        text = HTMLTextHelper.convertTextToHtml(text, createLinks);
-        // scan for moderation in beginning of description
-        String[] lines = text.split("<br>");
-        String[] tags = { "von und mit", "präsentiert von", "mit", "film von",
-            "moderation", "zu gast" };
-        for (int i = 0; i < 2; i++) {
-          if (lines.length > i && lines[i].length() < 60) {
-            String line = lines[i];
-            for (String tag : tags) {
-              if (line.toLowerCase().startsWith(tag)
-                  || line.toLowerCase().startsWith(tag + ':')) {
-                String personsString = line.substring(tag.length(), line.length())
-                    .trim();
-                if (personsString.startsWith(":")) {
-                  personsString = personsString.substring(1).trim();
-                }
-                if (personsString.endsWith(".")) {
-                  personsString = personsString.substring(0, personsString.length() - 1).trim();
-                }
-                String[] persons = personsString.split(" und ");
-                boolean doLink = true;
-                for (String person : persons) {
-                  if (person.isEmpty() || Character.isLowerCase(person.charAt(0))) {
-                    doLink = false;
+
+        // Lazily add short description, but only if it differs from description
+        if (fieldType == ProgramFieldType.DESCRIPTION_TYPE) {
+          String description = checkDescription(prog.getDescription());
+          text = description;
+
+          if (prog.getShortInfo() != null) {
+            StringBuilder shortInfo = new StringBuilder(checkDescription(prog.getShortInfo())
+                .trim());
+
+            // delete "..." at the end, but only for duplication check, not for display
+            while (shortInfo.toString().endsWith(".")) {
+              shortInfo.deleteCharAt(shortInfo.length() - 1);
+            }
+
+            if (!description.trim().startsWith(shortInfo.toString())) {
+              addEntry(doc, buffer, prog,
+                  ProgramFieldType.SHORT_DESCRIPTION_TYPE, true, showHelpLinks);
+            }
+          }
+          text = text.replace("\\-", ""); // replace conditional dashes
+          text = removeArtificialLineBreaks(text);
+          text = HTMLTextHelper.convertTextToHtml(text, createLinks);
+          // scan for moderation in beginning of description
+          String[] lines = text.split("<br>");
+          String[] tags = { "von und mit", "präsentiert von", "mit", "film von",
+              "moderation", "zu gast" };
+          for (int i = 0; i < 2; i++) {
+            if (lines.length > i && lines[i].length() < 60) {
+              String line = lines[i];
+              for (String tag : tags) {
+                if (line.toLowerCase().startsWith(tag)
+                    || line.toLowerCase().startsWith(tag + ':')) {
+                  String personsString = line.substring(tag.length(), line.length())
+                      .trim();
+                  if (personsString.startsWith(":")) {
+                    personsString = personsString.substring(1).trim();
+                  }
+                  if (personsString.endsWith(".")) {
+                    personsString = personsString.substring(0, personsString.length() - 1).trim();
+                  }
+                  String[] persons = personsString.split(" und ");
+                  boolean doLink = true;
+                  for (String person : persons) {
+                    if (person.isEmpty() || !Character.isLetter(person.charAt(0)) || Character.isLowerCase(person.charAt(0))) {
+                      doLink = false;
+                      break;
+                    }
+                  }
+                  if (doLink) {
+                    for (String person : persons) {
+                      String[] names = person.split(" ");
+                      int partCount = names.length;
+                      if (partCount >= 2 && partCount < 4) {
+                        for (String n : names) {
+                          if (!StringUtils.isAlpha(n)) {
+                            doLink = false;
+                          }
+                        }
+                        if (doLink) {
+                          text = StringUtils.replaceOnce(text, person, addSearchLink(person));
+                        }
+                      }
+                    }
                     break;
                   }
                 }
-                if (doLink) {
-                  for (String person : persons) {
-                    int partCount = person.split(" ").length;
-                    if (partCount >= 2 && partCount < 4) {
-                      text = text.replaceFirst(person, addSearchLink(person));
-                    }
-                  }
+              }
+            }
+          }
+        }
+
+      } else if (fieldType.getFormat() == ProgramFieldType.TIME_FORMAT) {
+        text = prog.getTimeFieldAsString(fieldType);
+      } else if (fieldType.getFormat() == ProgramFieldType.INT_FORMAT) {
+        if (fieldType == ProgramFieldType.RATING_TYPE) {
+          int value = prog.getIntField(fieldType);
+          if (value > -1) {
+            text = new DecimalFormat("##.#").format((double)prog.getIntField(fieldType) / 10) + "/10";
+          }
+        } else {
+          text = prog.getIntFieldAsString(fieldType);
+          if (text == null && fieldType == ProgramFieldType.AGE_LIMIT_TYPE) {
+            final String ageRating = prog.getTextField(ProgramFieldType.AGE_RATING_TYPE);
+            if (ageRating != null && !ageRating.isEmpty()) {
+              int age = ProgramUtilities.getAgeLimit(ageRating);
+              if (age >= 0) {
+                text = Integer.toString(age);
+              }
+            }
+          }
+        }
+      }
+
+      if (fieldType == ProgramFieldType.ORIGIN_TYPE) {
+        String temp = prog
+            .getIntFieldAsString(ProgramFieldType.PRODUCTION_YEAR_TYPE);
+        if (temp != null && temp.trim().length() > 0) {
+          if (text == null || text.trim().length() < 1) {
+            name = ProgramFieldType.PRODUCTION_YEAR_TYPE.getLocalizedName();
+            text = temp;
+          } else {
+            name += "/<br>"
+                + ProgramFieldType.PRODUCTION_YEAR_TYPE.getLocalizedName();
+            text += " " + temp;
+          }
+        }
+        temp = prog
+        .getIntFieldAsString(ProgramFieldType.LAST_PRODUCTION_YEAR_TYPE);
+        if (temp != null && temp.trim().length() > 0) {
+          if (text == null || text.trim().length() < 1) {
+            name = ProgramFieldType.LAST_PRODUCTION_YEAR_TYPE.getLocalizedName();
+            text = temp;
+          } else {
+
+            text += " - " + temp;
+          }
+        }
+      }
+
+      if (text == null || text.trim().length() < 1) {
+        if (ProgramFieldType.CUSTOM_TYPE == fieldType) {
+          text = mLocalizer.msg("noCustom", "No custom information ");
+        } else {
+          return;
+        }
+      }
+
+      startInfoSection(buffer, name);
+
+      // add person links
+      if (ProgramFieldType.DIRECTOR_TYPE == fieldType
+          || ProgramFieldType.SCRIPT_TYPE == fieldType
+          || ProgramFieldType.CAMERA_TYPE == fieldType
+          || ProgramFieldType.CUTTER_TYPE == fieldType
+          || ProgramFieldType.MUSIC_TYPE == fieldType
+          || ProgramFieldType.MODERATION_TYPE == fieldType
+          || ProgramFieldType.ADDITIONAL_PERSONS_TYPE == fieldType
+          || ProgramFieldType.PRODUCER_TYPE == fieldType) {
+        if (showPersonLinks && text.length() < 200) {
+          // if field is longer, this is probably not a list of names
+          if (text.endsWith(".")) {
+            text = text.substring(0, text.length() - 1);
+          }
+          String[] persons = splitPersons(text);
+          for (int i = 0; i < persons.length; i++) {
+            // remove duplicate entries
+            boolean duplicate = false;
+            if (i < persons.length - 1) {
+              for (int j = i + 1; j < persons.length; j++) {
+                if (persons[i].equalsIgnoreCase(persons[j])) {
+                  duplicate = true;
                   break;
                 }
               }
             }
-          }
-        }
-      }
-
-    } else if (fieldType.getFormat() == ProgramFieldType.TIME_FORMAT) {
-      text = prog.getTimeFieldAsString(fieldType);
-    } else if (fieldType.getFormat() == ProgramFieldType.INT_FORMAT) {
-      if (fieldType == ProgramFieldType.RATING_TYPE) {
-        int value = prog.getIntField(fieldType);
-        if (value > -1) {
-          text = new DecimalFormat("##.#").format((double)prog.getIntField(fieldType) / 10) + "/10";
-        }
-      } else {
-        text = prog.getIntFieldAsString(fieldType);
-        if (text == null && fieldType == ProgramFieldType.AGE_LIMIT_TYPE) {
-          final String ageRating = prog.getTextField(ProgramFieldType.AGE_RATING_TYPE);
-          if (ageRating != null && !ageRating.isEmpty()) {
-            int age = ProgramUtilities.getAgeLimit(ageRating);
-            if (age >= 0) {
-              text = Integer.toString(age);
-            }
-          }
-        }
-      }
-    }
-
-    if (fieldType == ProgramFieldType.ORIGIN_TYPE) {
-      String temp = prog
-          .getIntFieldAsString(ProgramFieldType.PRODUCTION_YEAR_TYPE);
-      if (temp != null && temp.trim().length() > 0) {
-        if (text == null || text.trim().length() < 1) {
-          name = ProgramFieldType.PRODUCTION_YEAR_TYPE.getLocalizedName();
-          text = temp;
-        } else {
-          name += "/<br>"
-              + ProgramFieldType.PRODUCTION_YEAR_TYPE.getLocalizedName();
-          text += " " + temp;
-        }
-      }
-      temp = prog
-      .getIntFieldAsString(ProgramFieldType.LAST_PRODUCTION_YEAR_TYPE);
-      if (temp != null && temp.trim().length() > 0) {
-        if (text == null || text.trim().length() < 1) {
-          name = ProgramFieldType.LAST_PRODUCTION_YEAR_TYPE.getLocalizedName();
-          text = temp;
-        } else {
-
-          text += " - " + temp;
-        }
-      }
-    }
-
-    if (text == null || text.trim().length() < 1) {
-      if (ProgramFieldType.CUSTOM_TYPE == fieldType) {
-        text = mLocalizer.msg("noCustom", "No custom information ");
-      } else {
-        return;
-      }
-    }
-
-    startInfoSection(buffer, name);
-
-    // add person links
-    if (ProgramFieldType.DIRECTOR_TYPE == fieldType
-        || ProgramFieldType.SCRIPT_TYPE == fieldType
-        || ProgramFieldType.CAMERA_TYPE == fieldType
-        || ProgramFieldType.CUTTER_TYPE == fieldType
-        || ProgramFieldType.MUSIC_TYPE == fieldType
-        || ProgramFieldType.MODERATION_TYPE == fieldType
-        || ProgramFieldType.ADDITIONAL_PERSONS_TYPE == fieldType
-        || ProgramFieldType.PRODUCER_TYPE == fieldType) {
-      if (showPersonLinks && text.length() < 200) {
-        // if field is longer, this is probably not a list of names
-        if (text.endsWith(".")) {
-          text = text.substring(0, text.length() - 1);
-        }
-        String[] persons = splitPersons(text);
-        for (int i = 0; i < persons.length; i++) {
-          // remove duplicate entries
-          boolean duplicate = false;
-          if (i < persons.length - 1) {
-            for (int j = i + 1; j < persons.length; j++) {
-              if (persons[i].equalsIgnoreCase(persons[j])) {
-                duplicate = true;
-                break;
+            if (duplicate) {
+              text = text.replaceFirst(Pattern.quote(persons[i]), "").trim();
+              if (text.startsWith(",")) {
+                text = text.substring(1).trim();
               }
+              text = text.replaceAll(",\\s*,", ",");
+              continue;
             }
-          }
-          if (duplicate) {
-            text = text.replaceFirst(Pattern.quote(persons[i]), "").trim();
-            if (text.startsWith(",")) {
-              text = text.substring(1).trim();
+            // a name shall not have more name parts
+            if (persons[i].trim().split(" ").length <= 3) {
+              String link;
+              if (persons[i].contains("(")) {
+                int index = persons[i].indexOf('(');
+                String topic = persons[i].substring(0, index).trim();
+                link = addSearchLink(topic) + " " + persons[i].substring(index).trim();
+              } else {
+                link = addSearchLink(persons[i]);
+              }
+              text = text.replace(persons[i], link);
             }
-            text = text.replaceAll(",\\s*,", ",");
-            continue;
-          }
-          // a name shall not have more name parts
-          if (persons[i].trim().split(" ").length <= 3) {
-            String link;
-            if (persons[i].contains("(")) {
-              int index = persons[i].indexOf('(');
-              String topic = persons[i].substring(0, index).trim();
-              link = addSearchLink(topic) + " " + persons[i].substring(index).trim();
-            } else {
-              link = addSearchLink(persons[i]);
-            }
-            text = text.replace(persons[i], link);
           }
         }
+        buffer.append(text);
       }
-      buffer.append(text);
-    }
-    else if (ProgramFieldType.DESCRIPTION_TYPE == fieldType) {
-      buffer.append(text);
-    } else {
-      buffer.append(HTMLTextHelper.convertTextToHtml(text, createLinks));
-    }
+      else if (ProgramFieldType.DESCRIPTION_TYPE == fieldType) {
+        buffer.append(text);
+      } else {
+        buffer.append(HTMLTextHelper.convertTextToHtml(text, createLinks));
+      }
 
-    if ((ProgramFieldType.CUSTOM_TYPE == fieldType) && (showHelpLinks)) {
-      buffer.append(" (<a href=\"").append(
-          mLocalizer.msg("customInfo",
-              "http://enwiki.tvbrowser.org/index.php/CustomInformation")).append(
-          "\">?</a>)");
-    }
-    if ((ProgramFieldType.AGE_RATING_TYPE == fieldType) && (showHelpLinks)) {
-      addHelpLink(buffer, mLocalizer.msg("ratingInfo", "http://en.wikipedia.org/wiki/Motion_picture_rating_system"));
-    }
+      if ((ProgramFieldType.CUSTOM_TYPE == fieldType) && (showHelpLinks)) {
+        buffer.append(" (<a href=\"").append(
+            mLocalizer.msg("customInfo",
+                "http://enwiki.tvbrowser.org/index.php/CustomInformation")).append(
+            "\">?</a>)");
+      }
+      if ((ProgramFieldType.AGE_RATING_TYPE == fieldType) && (showHelpLinks)) {
+        addHelpLink(buffer, mLocalizer.msg("ratingInfo", "http://en.wikipedia.org/wiki/Motion_picture_rating_system"));
+      }
 
-    buffer.append("</td></tr>");
+      buffer.append("</td></tr>");
 
-    addSeparator(doc, buffer);
+      addSeparator(doc, buffer);
+    } catch (Exception e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
   }
 
   private static void addHelpLink(final StringBuilder buffer, final String url) {
