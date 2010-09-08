@@ -288,6 +288,7 @@ public class GenrePlugin extends Plugin {
   }
 
   protected void getFilterFromSettings() {
+    hiddenGenres = new ArrayList<String>();
     for (String genre : mSettings.getHiddenGenres()) {
       hideGenre(genre);
     }
