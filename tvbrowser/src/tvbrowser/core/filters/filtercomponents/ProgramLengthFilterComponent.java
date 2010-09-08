@@ -135,6 +135,9 @@ public class ProgramLengthFilterComponent extends AbstractFilterComponent {
    */
   public JPanel getSettingsPanel() {
     final JPanel panel = new JPanel();
+    
+    mMin = Math.min(1000,Math.max(0,mMin));
+    mMax = Math.min(1000,Math.max(1,mMax));
 
     mMinSpinner = new JSpinner(new SpinnerNumberModel(mMin, 0, 1000, 1));
     mMaxSpinner = new JSpinner(new SpinnerNumberModel(mMax, 1, 1000, 1));
