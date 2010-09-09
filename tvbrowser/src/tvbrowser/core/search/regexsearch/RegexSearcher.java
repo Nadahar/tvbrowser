@@ -125,7 +125,7 @@ public class RegexSearcher extends AbstractSearcher {
     }
     catch (PatternSyntaxException exc) {
       throw new TvBrowserException(RegexSearcher.class, "error.1",
-        "Syntax error in the regualar expression of the search pattern!", exc);
+        "Syntax error in the regular expression of the search pattern!", exc);
     }
 
     return pattern;
