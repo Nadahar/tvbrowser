@@ -638,6 +638,7 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
       mFavorite.updatePrograms(false);
     } catch (TvBrowserException exc) {
       ErrorHandler.handle(mLocalizer.msg("error.updateFavoriteFailed", "Could not update favorite"), exc);
+      return; // do not save a favorite with a parse error
     }
 
     for (ProgramReceiveTarget target : mPassProgramPlugins) {
