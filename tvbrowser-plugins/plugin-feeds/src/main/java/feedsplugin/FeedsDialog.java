@@ -43,6 +43,7 @@ import util.ui.html.ExtendedHTMLEditorKit;
 import util.ui.html.HorizontalLine;
 
 import com.sun.syndication.feed.synd.SyndEntry;
+import com.sun.syndication.feed.synd.SyndEntryImpl;
 
 import devplugin.Program;
 
@@ -55,16 +56,24 @@ public final class FeedsDialog extends JDialog implements WindowClosingIf {
   private JEditorPane mInfoPane;
   private JButton mCloseBn;
 
-  private Program mProgram;
+  protected String mTooltip;
+
+  private ArrayList<SyndEntry> mEntries;
 
   public FeedsDialog(final Frame parent, final Program program) {
     super(parent, true);
-
-    mProgram = program;
-    createGUI();
+    createGUI(FeedsPlugin.getInstance().getMatchingEntries(program));
   }
 
-  private void createGUI() {
+  public FeedsDialog(final Frame parentFrame, final SyndEntryImpl entry) {
+    super(parentFrame, true);
+    ArrayList<SyndEntry> entries = new ArrayList<SyndEntry>(1);
+    entries.add(entry);
+    createGUI(entries);
+  }
+
+  private void createGUI(ArrayList<SyndEntry> entries) {
+    mEntries = entries;
     setTitle(mLocalizer.msg("title", "Newsfeed"));
     UiUtilities.registerForClosing(this);
 
@@ -78,6 +87,13 @@ public final class FeedsDialog extends JDialog implements WindowClosingIf {
     mInfoPane.setEditable(false);
     mInfoPane.addHyperlinkListener(new HyperlinkListener() {
       public void hyperlinkUpdate(final HyperlinkEvent evt) {
+        if (evt.getEventType() == HyperlinkEvent.EventType.ENTERED) {
+          mTooltip = mInfoPane.getToolTipText();
+          mInfoPane.setToolTipText(getLinkTooltip(evt));
+        }
+        if (evt.getEventType() == HyperlinkEvent.EventType.EXITED) {
+          mInfoPane.setToolTipText(mTooltip);
+        }
         if (evt.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
           final URL url = evt.getURL();
           if (url != null) {
@@ -103,19 +119,22 @@ public final class FeedsDialog extends JDialog implements WindowClosingIf {
 
     pack();
 
-    if (mProgram != null) {
-      final ExtendedHTMLDocument doc = (ExtendedHTMLDocument) mInfoPane.getDocument();
-      mInfoPane.setText(createHtmlText(doc, mProgram));
-      mScrollPane.getVerticalScrollBar().setValue(0);
-    }
+    final ExtendedHTMLDocument doc = (ExtendedHTMLDocument) mInfoPane.getDocument();
+    mInfoPane.setText(createHtmlText(doc, entries));
+    mScrollPane.getVerticalScrollBar().setValue(0);
+
     toFront();
+  }
+
+  private String getLinkTooltip(HyperlinkEvent evt) {
+    return evt.getURL().toExternalForm();
   }
 
   public void close() {
     dispose();
   }
 
-  private String createHtmlText(final ExtendedHTMLDocument doc, final Program program) {
+  private String createHtmlText(final ExtendedHTMLDocument doc, final ArrayList<SyndEntry> entries) {
     final Font bFont = new Font("Verdana", Font.PLAIN, 11);
     final StringBuilder buffer = new StringBuilder(1024);
     buffer.append("<html><body>");
@@ -123,7 +142,6 @@ public final class FeedsDialog extends JDialog implements WindowClosingIf {
     buffer.append(bFont.getFamily());
     buffer.append(";\">");
 
-    ArrayList<SyndEntry> entries = FeedsPlugin.getInstance().getMatchingEntries(mProgram);
     for (int i = entries.size() - 1; i >= 0; i--) {
       String link = entries.get(i).getLink();
       if (link != null && !link.isEmpty()) {

@@ -25,8 +25,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Properties;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 import javax.swing.AbstractAction;
 import javax.swing.Icon;
@@ -38,6 +40,7 @@ import tvdataservice.MutableProgram;
 import util.ui.UiUtilities;
 
 import com.sun.syndication.feed.synd.SyndEntry;
+import com.sun.syndication.feed.synd.SyndEntryImpl;
 import com.sun.syndication.feed.synd.SyndFeed;
 import com.sun.syndication.fetcher.FeedFetcher;
 import com.sun.syndication.fetcher.FetcherException;
@@ -48,6 +51,7 @@ import com.sun.syndication.io.FeedException;
 
 import devplugin.ActionMenu;
 import devplugin.Channel;
+import devplugin.ContextMenuAction;
 import devplugin.Date;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
@@ -151,6 +155,19 @@ public final class FeedsPlugin extends Plugin {
       getRootNode().clear();
       for (SyndFeed feed : mFeeds) {
         PluginTreeNode node = mRootNode.addNode(feed.getTitle());
+        List<SyndEntryImpl> entries = feed.getEntries();
+        AbstractAction[] subActions = new AbstractAction[entries.size()];
+        for (int i = 0; i < subActions.length; i++) {
+          final SyndEntryImpl entry = entries.get(i);
+          subActions[i] = new AbstractAction(entry.getTitle()) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+              showFeedsDialog(new FeedsDialog(getParentFrame(), entry));
+            }
+          };
+        }
+        ActionMenu menu = new ActionMenu(new ContextMenuAction(mLocalizer.msg("readEntry", "Read entry")), subActions );
+        node.addActionMenu(menu );
         nodes.put(feed, node);
       }
 
@@ -184,26 +201,51 @@ public final class FeedsPlugin extends Plugin {
     }
     AbstractAction action = new AbstractAction(mLocalizer.msg("name", "Feeds"), getPluginIcon()) {
       public void actionPerformed(final ActionEvent e) {
-        FeedsDialog dialog = new FeedsDialog(getParentFrame(), program);
-        dialog.pack();
-        UiUtilities.setSize(dialog, 600, 400);
-        UiUtilities.centerAndShow(dialog);
+        showFeedsDialog(new FeedsDialog(getParentFrame(), program));
       }
     };
     return new ActionMenu(action);
   }
 
+  protected void showFeedsDialog(final FeedsDialog dialog) {
+    dialog.pack();
+    UiUtilities.setSize(dialog, 600, 400);
+    UiUtilities.centerAndShow(dialog);
+  }
+
   private ArrayList<SyndEntry> getMatchingEntries(final Program program, final SyndFeed feed) {
+    String programTitle = program.getTitle();
     ArrayList<SyndEntry> matches = new ArrayList<SyndEntry>();
     final Iterator<?> iterator = feed.getEntries().iterator();
     while (iterator.hasNext()) {
       final SyndEntry entry = (SyndEntry) iterator.next();
-      String title = entry.getTitle();
-      if (StringUtils.containsIgnoreCase(title, program.getTitle())) {
+      String feedTitle = entry.getTitle();
+      if (matchesTitle(feedTitle, programTitle)) {
         matches.add(entry);
       }
     }
     return matches;
+  }
+
+  private boolean matchesTitle(String feedTitle, String programTitle) {
+    if (StringUtils.containsIgnoreCase(feedTitle, programTitle)) {
+      return true;
+    }
+    else if (programTitle.contains(" - ")) {
+      String[] parts = programTitle.split(Pattern.quote(" - "));
+      for (String part : parts) {
+        if (StringUtils.containsIgnoreCase(feedTitle, part)) {
+          return true;
+        }
+      }
+    }
+    else if (programTitle.endsWith(")")) {
+      int index = programTitle.lastIndexOf("(");
+      if (index > 0) {
+        return matchesTitle(feedTitle, programTitle.substring(0, index).trim());
+      }
+    }
+    return false;
   }
 
   ArrayList<SyndEntry> getMatchingEntries(final Program program) {
