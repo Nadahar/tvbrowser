@@ -1094,7 +1094,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
 
     if(DontShowAgainOptionBox.showOptionDialog("MainFrame.askForExitConfirm",this.isActive() ? this : null,
         mLocalizer.msg("exitConirmText","Do you really want to quit TV-Browser?"), options[0], JOptionPane.QUESTION_MESSAGE,
-        JOptionPane.YES_NO_OPTION, options, options[1], null) != JOptionPane.YES_OPTION) {
+        JOptionPane.YES_NO_OPTION, options, options[0], null) != JOptionPane.YES_OPTION) {
       return;
     }
 
