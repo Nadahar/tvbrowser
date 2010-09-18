@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -606,37 +607,49 @@ public final class CalendarExportPlugin extends Plugin {
 
         if (version >= 4) {
           int treeNodeCount = in.readInt();
-          ArrayList<PluginTreeNode> nodes = new ArrayList<PluginTreeNode>();
+          
+          HashMap<ExporterIf,ArrayList<Program>> exporterMap = new HashMap<ExporterIf,ArrayList<Program>>(treeNodeCount);
           for (int i = 0; i < treeNodeCount; i++) {
             final ExporterIf exporter = findExporter((String) in.readObject());
-            PluginTreeNode node = null;
-            if (exporter != null) {
-              node = new PluginTreeNode(exporter.getName());
-              node.getMutableTreeNode().setIcon(getExporterIcon(exporter));
-
-              createNodeActionForNode(node);
-              nodes.add(node);
-              mTreeNodes.put(exporter, node);
-            }
-
+            
             int progCount = in.readInt();
+            ArrayList<Program> programs = null;
+            
+            if (exporter != null) {
+              programs = new ArrayList<Program>(progCount);
+              exporterMap.put(exporter,programs);
+            }
+            
             for (int v = 0; v < progCount; v++) {
               Date programDate = Date.readData(in);
               String progId = (String) in.readObject();
-              if (node != null) {
+              if (programs != null) {
                 Program program = Plugin.getPluginManager().getProgram(programDate, progId);
-                node.addProgram(program);
+                programs.add(program);
               }
             }
           }
-          Collections.sort(nodes, new Comparator<PluginTreeNode>() {
-            public int compare(final PluginTreeNode o1, final PluginTreeNode o2) {
-              return ((String) o1.getUserObject())
-                  .compareToIgnoreCase((String) o2.getUserObject());
+          
+          ExporterIf[] keys = exporterMap.keySet().toArray(new ExporterIf[exporterMap.size()]);
+          
+          Arrays.sort(keys, new Comparator<ExporterIf>() {
+            public int compare(final ExporterIf o1, final ExporterIf o2) {
+              return o1.getName().compareToIgnoreCase(o2.getName());
             }
           });
-          for (PluginTreeNode pluginTreeNode : nodes) {
-            getRootNode().add(pluginTreeNode);
+          
+          for (ExporterIf exporter : keys) {
+            PluginTreeNode node = getRootNode().addNode(exporter.getName());
+            node.getMutableTreeNode().setIcon(getExporterIcon(exporter));
+
+            createNodeActionForNode(node);
+            mTreeNodes.put(exporter, node);
+            
+            ArrayList<Program> progs = exporterMap.get(exporter);
+            
+            for(Program p : progs) {
+              node.addProgram(p);
+            }
           }
         }
 
