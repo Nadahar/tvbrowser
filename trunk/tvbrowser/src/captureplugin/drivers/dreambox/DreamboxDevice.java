@@ -210,7 +210,8 @@ public final class DreamboxDevice implements DeviceIf {
             JComboBox box = new JComboBox(new String[] {
                     mLocalizer.msg("afterEventNothing", "Nothing"),
                     mLocalizer.msg("afterEventStandby", "Standby"),
-                    mLocalizer.msg("afterEventDeepstandby", "Deepstandby")});
+                    mLocalizer.msg("afterEventDeepstandby", "Deepstandby"),
+                    mLocalizer.msg("afterEventAuto", "Auto")});
 
             dialog = new ProgramTimeDialog(parent, time, false, mLocalizer.msg(
           "afterEventTitle", "After recording"), box);
