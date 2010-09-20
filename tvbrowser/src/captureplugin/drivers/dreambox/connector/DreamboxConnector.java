@@ -347,7 +347,7 @@ public class DreamboxConnector {
      * Add a recording to the Dreambox
      * @param dreamboxChannel the DreamboxChannel for the Program
      * @param prgTime add this ProgramTime @return true, if successful
-     * @param afterEvent 0=nothing, 1=standby, 2=deepstandby
+     * @param afterEvent 0=nothing, 1=standby, 2=deepstandby, 3=auto
      * @param timezone TimeZone to use for recording
      * @return True, if successful
      */
