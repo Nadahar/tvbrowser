@@ -35,7 +35,7 @@ import org.apache.commons.lang.StringUtils;
 
 
 /**
- * this reader reads tokens (tags and text) from an underlying reader.
+ * this reader reads html tokens (tags and text) from an underlying reader.
  */
 public class TagReader {
 
