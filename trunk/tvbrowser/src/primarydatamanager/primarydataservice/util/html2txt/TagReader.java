@@ -34,68 +34,104 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 
 
+/**
+ * this reader reads tokens (tags and text) from an underlying reader.
+ */
 public class TagReader {
 
+  /**
+   * the underlying reader to read from.
+   */
   private Reader mIn;
+
+  /**
+   * the encoding of the underlying reader.
+   */
   private String mEncoding;
 
-  private boolean mExpectTag;
-  private int mChar;
+  /**
+   * the char that was last read on the last call to next().
+   */
+  private int mLastReadChar = -1;
 
-  public TagReader(Reader in) throws IOException {
-    mIn=in;
-    mChar=in.read();
 
-    mExpectTag=true;
+  /**
+   * creates a new TagReader with the given input.
+   *
+   * @param in the reader to read from
+   */
+  public TagReader(final Reader in) {
+    mIn = in;
   }
 
-  public void setEncoding(String encoding) throws UnsupportedEncodingException {
-     new String("".getBytes(), encoding); // create a string to test the encoding
-     mEncoding=encoding;
+
+  /**
+   * @param encoding the encoding of the input reader
+   * @throws UnsupportedEncodingException if the encoding is not supported by the jvm
+   */
+  public void setEncoding(final String encoding) throws UnsupportedEncodingException {
+    new String("".getBytes(), encoding); // create a string to test the encoding
+    mEncoding = encoding;
   }
 
+
+  /**
+   * @return the next element (tag or text) or null if no more elements are available
+   */
   public Tag next() {
-    HTMLTag tag;
     try {
-      if (mExpectTag) {
-        tag=new HTMLTag(true);
-        while (mChar!=-1 && mChar!='<') {
-          mChar=mIn.read();
+      //if next was never called before, mLastReadChar is -1. in that case
+      //we have to read the first char from the stream. mLastReadChar may
+      //also be -1 if the end of stream was reached during the last call to
+      //next. then the next call to read will return -1 as well.
+      //if mLastReadChar != -1 this method was called before and we have to
+      //deal with the last read char (which is not in the mIn-reader anymore).
+      int nextChar = mLastReadChar == -1 ? mIn.read() : mLastReadChar;
+
+      //if the stream ended, return
+      if (nextChar == -1) {
+        return null;
+      }
+
+      //check, whether we have to deal with a tag or with text
+      HTMLTag tag;
+      if (nextChar == '<') {
+        tag = new HTMLTag(true);
+
+        //ignore the < so jump to the next char
+        nextChar = mIn.read();
+        //read all chars until '>'
+        while (nextChar != -1 && nextChar != '>') {
+          tag.append((char) nextChar);
+          nextChar = mIn.read();
         }
-      mChar=mIn.read();
 
-      while (mChar!=-1 && mChar!='>') {
-        tag.append((char)mChar);
-        mChar=mIn.read();
+        //the > belongs to the tag but we want to ignore it so jump to the next char
+        nextChar = mIn.read();
+      } else {
+        tag = new HTMLTag(false, mEncoding);
+
+        //read all chars until '<'
+        while (nextChar != -1 && nextChar != '<') {
+          tag.append((char) nextChar);
+          nextChar = mIn.read();
+        }
       }
-      mChar=mIn.read();
 
-    }
-    else {
-      tag=new HTMLTag(false, mEncoding);
-      while (mChar!=-1 && mChar!='<') {
-        tag.append((char)mChar);
-        mChar=mIn.read();
+      //remember the last read char which is not in the input reader anymore!
+      mLastReadChar = nextChar;
+
+      //ignore whitespace
+      if (StringUtils.isBlank(tag.getName())) {
+        return next();
+      } else {
+        return tag;
       }
-    }
 
-    mExpectTag=!mExpectTag;
-
-    if (mChar==-1) {
+    } catch (final IOException e) {
       return null;
-    }
-
-    }catch(IOException e) {
-      return null;
-    }
-
-    if (StringUtils.isBlank(tag.getName())) {
-      return next();
-    }else{
-      return tag;
     }
   }
-
 }
 
 
@@ -185,11 +221,11 @@ class HTMLTag implements Tag {
      StringBuffer result=null;
      if (mEncoding!=null) {
        try {
-				 result=new StringBuffer(new String(line.toString().getBytes(mEncoding)));
+         result=new StringBuffer(new String(line.toString().getBytes(mEncoding)));
        } catch (UnsupportedEncodingException e) {
-      	 // ignore
-				 result = new StringBuffer();
-			 }
+         // ignore
+         result = new StringBuffer();
+       }
      }
      else {
        result=new StringBuffer(line.toString());
@@ -199,6 +235,7 @@ class HTMLTag implements Tag {
     }
 
 
+  @Override
   public String toString() {
     return getName();
   }

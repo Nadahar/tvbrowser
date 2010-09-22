@@ -53,7 +53,7 @@ public class Html2TxtConverter extends FilterReader {
   public Html2TxtConverter(int mode, Reader in, String encoding) throws IOException {
     super(in);
 
-    in.read(); // unused
+//    in.read(); // unused
 
     StringWriter out=new StringWriter();
     convert(mode, in,out,encoding);
@@ -68,6 +68,7 @@ public class Html2TxtConverter extends FilterReader {
 
 
 
+  @Override
   public int read(char[] cbuf, int off, int len) throws IOException {
 
     int character=read();
@@ -85,6 +86,7 @@ public class Html2TxtConverter extends FilterReader {
     return len;
   }
 
+  @Override
   public int read() throws IOException {
     int result=mBuf.read();
     if (result==160) {
@@ -182,10 +184,10 @@ public class Html2TxtConverter extends FilterReader {
       tag=reader.next();
     }
   }
-	
+
   static final public String replaceUnsupportedChars(String text) {
     String result = text;
-   
+
     result = result.replace((char) 45, '-');
     result = result.replace((char) 128, (char) 8364); // Euro-Zeichen
     result = result.replace((char) 130, ',');
@@ -196,10 +198,10 @@ public class Html2TxtConverter extends FilterReader {
     result = result.replace((char) 147, (char) 8220); // doppeltes Anführungszeichen links
     result = result.replace((char) 148, (char) 8221); // doppeltes Anführungszeichen rechts
     result = result.replace((char) 150, '-');
-    result = result.replace((char) 153, (char) 8482); //TM-Zeichen   
+    result = result.replace((char) 153, (char) 8482); //TM-Zeichen
     result = result.replace((char) 8211, '-');
-   
-    return result;   
-  } 
+
+    return result;
+  }
 }
 
