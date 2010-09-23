@@ -36,6 +36,10 @@ import org.apache.commons.lang.StringUtils;
 
 /**
  * this reader reads html tokens (tags and text) from an underlying reader.
+ * it can be used as a very basic and limited parser for markup (html, xml...).
+ * everything between &lt; and &gt; is considered a tag and everything between
+ * &gt; and &lt; is considered a 'text-tag'. to step sequentially through the
+ * input use the next-method.
  */
 public class TagReader {
 
@@ -135,30 +139,68 @@ public class TagReader {
 }
 
 
+/**
+ * a tag for markup or a text node.
+ */
 class HTMLTag implements Tag {
 
+  /**
+   * buffer holding the tag or the text node.
+   */
   private StringBuffer mBuf;
+
+  /**
+   * true for tags, false for text nodes.
+   */
   private boolean mIsTag;
+
+  /**
+   * the last appended char to this tag (see append(char ch)).
+   */
   private char mPrevChar;
-  private boolean mIsConverted;
+
+  /**
+   * true, if the html is unescaped. false otherwise.
+   */
+  private boolean mIsHtmlUnescaped;
+
+  /**
+   * the encoding for text nodes.
+   */
   private String mEncoding;
 
-  public HTMLTag(boolean isTag) {
+
+  /**
+   * @param isTag true for tags, false for text nodes
+   */
+  public HTMLTag(final boolean isTag) {
     mBuf = new StringBuffer();
     mIsTag = isTag;
     mPrevChar = 0;
-    mIsConverted = true;
+    mIsHtmlUnescaped = true;
   }
 
-  public HTMLTag(boolean isTag, String encoding) {
+  /**
+   * @param isTag true for tags, false for text nodes
+   * @param encoding the encoding for text nodes
+   */
+  public HTMLTag(final boolean isTag, final String encoding) {
     this(isTag);
     mEncoding = encoding;
   }
 
+  /**
+   * {@inheritDoc}
+   * @see primarydatamanager.primarydataservice.util.html2txt.Tag#isTextTag()
+   */
   public boolean isTextTag() {
     return !mIsTag;
   }
 
+  /**
+   * {@inheritDoc}
+   * @see primarydatamanager.primarydataservice.util.html2txt.Tag#getTagName()
+   */
   public String getTagName() {
     if (mIsTag) {
       String res = mBuf.toString().toLowerCase();
@@ -171,16 +213,28 @@ class HTMLTag implements Tag {
     return "";
   }
 
+  /**
+   * {@inheritDoc}
+   * @see primarydatamanager.primarydataservice.util.html2txt.Tag#getName()
+   */
   public String getName() {
-    if (!mIsConverted && !mIsTag) {
-      mBuf = convert(mBuf);
-      mIsConverted = true;
+    if (!mIsHtmlUnescaped && !mIsTag) {
+      mBuf = unescapeHtml(mBuf);
+      mIsHtmlUnescaped = true;
     }
     return mBuf.toString();
   }
 
 
-  public String getAttribute(String attributeName) {
+  /**
+   * this is a very basic implementation for getting an attribute value from
+   * this tag. it will fail on ' and " and attribute values with spaces. dont
+   * use this method for 'real world' html!
+   *
+   * {@inheritDoc}
+   * @see primarydatamanager.primarydataservice.util.html2txt.Tag#getAttribute(java.lang.String)
+   */
+  public String getAttribute(final String attributeName) {
 
     if (mIsTag) {
       String[] attributes = mBuf.toString().split(" ");
@@ -200,8 +254,16 @@ class HTMLTag implements Tag {
     return null;
   }
 
-  public void append(char ch) {
-    mIsConverted = false;
+
+  /**
+   * appends a char to the internal buffer representing the tags
+   * content. multiple whitespaces will be written as one space
+   * char.
+   *
+   * @param ch the char to append
+   */
+  public void append(final char ch) {
+    mIsHtmlUnescaped = false;
     if (Character.isWhitespace(ch)) {
       if (mPrevChar != ' ') {
         mBuf.append(' ');
@@ -215,7 +277,14 @@ class HTMLTag implements Tag {
   }
 
 
-  private StringBuffer convert(StringBuffer line) {
+  /**
+   * Unescapes a string containing entity escapes to a string containing the
+   * actual Unicode characters corresponding to the escapes.
+   *
+   * @param line the input to unescape
+   * @return the unescaped char sequence
+   */
+  private StringBuffer unescapeHtml(final StringBuffer line) {
     StringBuffer result = null;
     if (mEncoding != null) {
       try {

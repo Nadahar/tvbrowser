@@ -27,11 +27,29 @@
 
 package primarydatamanager.primarydataservice.util.html2txt;
 
+/**
+ * a tag (e.g. html tag) or text node.
+ */
 public interface Tag {
-  
-  public boolean isTextTag();
-  public String getName();
-  public String getTagName();
-  public String getAttribute(String attributeName);
-  
+
+  /**
+   * @return true, if it is a tag - false, if it is a text node
+   */
+  boolean isTextTag();
+
+  /**
+   * @return the contents of a tag (i.e. everything between &lt; and &gt;) or a text node. the contents will be unescaped.
+   */
+  String getName();
+
+  /**
+   * @return the name of the tag (lowercase, without attributes) or "" for text nodes
+   */
+  String getTagName();
+
+  /**
+   * @param attributeName the name of the attribute to get
+   * @return the attribute value or null, if no attribute with this name was found
+   */
+  String getAttribute(String attributeName);
 }
