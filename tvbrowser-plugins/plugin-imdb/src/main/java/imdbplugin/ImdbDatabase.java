@@ -24,8 +24,8 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.index.Term;
 import org.apache.lucene.index.IndexWriter.MaxFieldLength;
+import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.IndexSearcher;
@@ -196,7 +196,7 @@ public final class ImdbDatabase {
       }
     }
     // remove dots at the end
-    while (builder.charAt(builder.length() - 1) == '.') {
+    while (builder.length() > 0 && builder.charAt(builder.length() - 1) == '.') {
       builder.setLength(builder.length() - 1);
     }
     String result = builder.toString();
@@ -204,6 +204,9 @@ public final class ImdbDatabase {
     if (result.length() > 2 && (result.endsWith("!") || result.endsWith("?"))
         && result.charAt(result.length() - 2) == ' ') {
       result = result.substring(0, result.length() - 2) + result.charAt(result.length() - 1);
+    }
+    if (result.length() == 0) {
+      return str;
     }
     return result;
   }
