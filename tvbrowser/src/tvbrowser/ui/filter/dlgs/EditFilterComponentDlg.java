@@ -72,6 +72,7 @@ import tvbrowser.core.filters.filtercomponents.ProgramMarkingPriorityFilterCompo
 import tvbrowser.core.filters.filtercomponents.ProgramRunningFilterComponent;
 import tvbrowser.core.filters.filtercomponents.ProgramTypeFilterComponent;
 import tvbrowser.core.filters.filtercomponents.ReminderFilterComponent;
+import tvbrowser.core.filters.filtercomponents.SingleTitleFilterComponent;
 import tvbrowser.core.filters.filtercomponents.TimeFilterComponent;
 import tvbrowser.core.plugin.PluginManagerImpl;
 import util.ui.Localizer;
@@ -109,7 +110,7 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
 
   public EditFilterComponentDlg(JFrame parent, FilterComponent comp, Class<? extends FilterComponent> filterComponentClass) {
     super(parent, true);
-    
+
     UiUtilities.registerForClosing(this);
 
     mContentPane = (JPanel) getContentPane();
@@ -146,10 +147,10 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
     mRuleCb = new JComboBox();
     mRuleCb.addActionListener(this);
     mRuleCb.addItem(mLocalizer.msg("hint", "must choose one"));
-    
+
     // The TreeSet sorts the Entries
     TreeSet<FilterComponent> set = new TreeSet<FilterComponent>(new FilterComponent.TypeComparator());
-    
+
     if (filterComponentClass == null) {
       set.add(new AgeLimitFilterComponent());
       set.add(new BeanShellFilterComponent());
@@ -167,13 +168,14 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
       set.add(new ProgramRunningFilterComponent());
       set.add(new ProgramTypeFilterComponent());
       set.add(new ReminderFilterComponent());
+      set.add(new SingleTitleFilterComponent());
       set.add(new TimeFilterComponent());
-  
+
       PluginAccess[] plugins = PluginManagerImpl.getInstance().getActivatedPlugins();
-      
+
       for(PluginAccess plugin : plugins) {
         Class<? extends PluginsFilterComponent>[] clazzes = plugin.getAvailableFilterComponentClasses();
-        
+
         if(clazzes != null) {
           for(Class<? extends PluginsFilterComponent> clazz : clazzes) {
             try {
@@ -200,13 +202,13 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
         e.printStackTrace();
       }
     }
-    
+
     Iterator<FilterComponent> it = set.iterator();
-    
+
     while (it.hasNext()) {
       mRuleCb.addItem(it.next());
     }
-    
+
     typePanel.add(mRuleCb, BorderLayout.EAST);
 
     northPanel.add(namePanel);
