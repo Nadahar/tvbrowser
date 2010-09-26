@@ -446,9 +446,12 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 
 	private void closeInfoDialog()
 	{
+    if (mInfoDialog == null) {
+      return;
+    }
 		try
 		{
-			mInfoDialog.dispose();
+		  mInfoDialog.dispose();
 		}
 		catch (Exception e)
 		{}
