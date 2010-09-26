@@ -320,7 +320,7 @@ public class UserFilter implements devplugin.ProgramFilter {
       result.addNode(condTerm());
     }
 
-    return result;
+    return result.optimize();
   }
 
   private static Node condTerm() throws ParserException {
@@ -448,6 +448,10 @@ abstract class Node {
     mNodes = new HashSet<Node>();
   }
 
+  public Node optimize() {
+    return this;
+  }
+
   public void addNode(Node n) {
     mNodes.add(n);
   }
@@ -481,6 +485,14 @@ class OrNode extends Node {
     }
     return false;
   }
+
+  @Override
+  public Node optimize() {
+    if (mNodes.size() == 1) {
+      return mNodes.iterator().next();
+    }
+    return super.optimize();
+  }
 }
 
 class AndNode extends Node {
@@ -497,6 +509,14 @@ class AndNode extends Node {
       }
     }
     return true;
+  }
+
+  @Override
+  public Node optimize() {
+    if (mNodes.size() == 1) {
+      return mNodes.iterator().next();
+    }
+    return super.optimize();
   }
 }
 
