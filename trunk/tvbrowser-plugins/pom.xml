@@ -52,6 +52,7 @@
     <module>plugin-dvbviewerdataservice</module>
     <module>plugin-feeds</module>
     <module>plugin-filterview</module>
+    <module>plugin-freetuxtv</module>
     <module>plugin-golem</module>
     <module>plugin-idontwant2see</module>
     <module>plugin-imdb</module>
@@ -109,12 +110,12 @@
   </dependencyManagement>
   <repositories>
     <repository>
-      <id>wannawork-maven-repository</id>
-      <url>http://stuff.wannawork.de/maven2</url>
-    </repository>
-    <repository>
         <id>java-net-maven-repository</id>
         <url>http://download.java.net/maven/2</url>
+    </repository>
+    <repository>
+    	<id>tvbrowser-maven-repository</id>
+    	<url>http://maven.tvbrowser.org</url>
     </repository>
   </repositories>
 </project>
