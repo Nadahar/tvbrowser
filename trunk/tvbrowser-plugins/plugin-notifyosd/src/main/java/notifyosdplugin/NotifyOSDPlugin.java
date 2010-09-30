@@ -42,6 +42,7 @@ import devplugin.SettingsTab;
 import devplugin.Version;
 
 public class NotifyOSDPlugin extends Plugin {
+  private static final String COMMAND_NOTIFY_SEND = "notify-send";
   private static final boolean IS_STABLE = false;
   private static final Version mVersion = new Version(2, 70, 0, IS_STABLE);
 
@@ -167,7 +168,7 @@ public class NotifyOSDPlugin extends Plugin {
       }
     }
     ArrayList<String> command = new ArrayList<String>();
-    command.add("notify-send");
+    command.add(COMMAND_NOTIFY_SEND);
     if (fileName != null) {
       String iconPath = "--icon=" + fileName;
       command.add(iconPath);
@@ -205,7 +206,7 @@ public class NotifyOSDPlugin extends Plugin {
   }
 
   private boolean notifyAvailable() {
-    final ExecutionHandler executionHandler = new ExecutionHandler("notify-send", "which");
+    final ExecutionHandler executionHandler = new ExecutionHandler(COMMAND_NOTIFY_SEND, "which");
     try {
       executionHandler.execute(true);
       try {
@@ -222,7 +223,7 @@ public class NotifyOSDPlugin extends Plugin {
         }
       }
       else {
-        mLog.warning("'notify-send' command not found");
+        mLog.warning("'" + COMMAND_NOTIFY_SEND + "' command not found");
       }
     } catch (IOException e) {
       e.printStackTrace();
