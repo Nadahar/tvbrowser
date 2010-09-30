@@ -28,7 +28,6 @@ import java.util.Properties;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.Timer;
 
 import recommendationplugin.weighting.FavoriteWeighting;
@@ -57,7 +56,7 @@ public final class RecommendationPlugin extends Plugin {
   private static final Version PLUGIN_VERSION = new Version(0, 3, PLUGIN_IS_STABLE);
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(RecommendationPlugin.class);
   private static RecommendationPlugin mInstance;
-  private Icon mIcon;
+  private Icon mSmallIcon, mLargeIcon;
   private List<RecommendationWeighting> mWeightings = new ArrayList<RecommendationWeighting>();
 
   private PluginTreeNode mRootNode = new PluginTreeNode(this, false);
@@ -130,8 +129,8 @@ public final class RecommendationPlugin extends Plugin {
       }
     };
     action.putValue(Action.NAME, mLocalizer.msg("pluginName", "Recommendation Plugin"));
-    action.putValue(Action.SMALL_ICON, getPluginIcon());
-    action.putValue(BIG_ICON, getPluginIcon());
+    action.putValue(Action.SMALL_ICON, getPluginIcon(16));
+    action.putValue(BIG_ICON, getPluginIcon(22));
     return new ActionMenu(action);
   }
 
@@ -141,11 +140,15 @@ public final class RecommendationPlugin extends Plugin {
         "Bodo Tasche, Michael Keppler", "GPL 3");
   }
 
-  public Icon getPluginIcon() {
-    if (mIcon == null) {
-      mIcon = new ImageIcon(getClass().getResource("recommendation.png"));
+  public Icon getPluginIcon(final int size) {
+    if (mSmallIcon == null) {
+      mSmallIcon = createImageIcon("actions", "recommendation", 16);
+      mLargeIcon = createImageIcon("actions", "recommendation", 22);
     }
-    return mIcon;
+    if (size == 22) {
+      return mLargeIcon;
+    }
+    return mSmallIcon;
   }
 
   public static RecommendationPlugin getInstance() {
