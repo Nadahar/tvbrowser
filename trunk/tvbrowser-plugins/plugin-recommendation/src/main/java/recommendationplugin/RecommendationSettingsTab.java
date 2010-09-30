@@ -52,7 +52,7 @@ public class RecommendationSettingsTab implements SettingsTab {
   }
 
   public Icon getIcon() {
-    return mPlugin.getPluginIcon();
+    return mPlugin.getPluginIcon(16);
   }
 
   public String getTitle() {
