@@ -37,10 +37,12 @@ import java.awt.event.WindowFocusListener;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -153,6 +155,8 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
 
   private FormLayout mLayout;
 
+  private Hashtable<ReminderListItem, List<JComponent>> mComponents = new Hashtable<ReminderListItem, List<JComponent>>();
+
   /**
    * Creates a new instance of ReminderFrame.
    *
@@ -232,10 +236,14 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
       mHeader.setText(msg);
       remainingMinutesMax = Math.max(remainingMinutesMax, remainingMinutes);
 
+      List<JComponent> componentList = new ArrayList<JComponent>();
+      mComponents.put(reminder, componentList);
+
       final ProgramPanel panel = new ProgramPanel(program,
           new ProgramPanelSettings(new PluginPictureSettings(
               PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE), false,
               ProgramPanelSettings.X_AXIS));
+      componentList.add(panel);
       panels.add(panel);
       panel.setMinimumSize(new Dimension(300,50));
       panel.setWidth(300);
@@ -245,6 +253,7 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
           .getInstance());
 
       final JPanel channelPanel = new JPanel(new BorderLayout());
+      componentList.add(channelPanel);
       if (program.getLength() > 0) {
         final JLabel endTime = new JLabel(mLocalizer.msg("endTime",
             "until {0}", program.getEndTimeString()));
@@ -271,7 +280,9 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
         mLayout.appendRow(RowSpec.decode("2dlu"));
         mLayout.appendRow(RowSpec.decode("pref"));
         mLayout.appendRow(RowSpec.decode("2dlu"));
-        programsPanel.add(new JLabel(comment), cc.xyw(1, programsPanel.getRow() + 1, 3));
+        JLabel commentLabel = new JLabel(comment);
+        componentList.add(commentLabel);
+        programsPanel.add(commentLabel, cc.xyw(1, programsPanel.getRow() + 1, 3));
         programsPanel.nextRow(3);
       }
       int layoutEndRow = programsPanel.getRowCount();
@@ -378,9 +389,17 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
       }
       else {
         if (r.getProgram().isExpired()) {
+          // hide expired programs, first set their layout rows to zero height
           Integer[] range = mPanelRange.get(r);
           for (int i = range[0]; i < range[1]; i++) {
             mLayout.setRowSpec(i, RowSpec.decode("0"));
+          }
+          // then make the components invisible
+          List<JComponent> componentList = mComponents.get(r);
+          if (componentList != null) {
+            for (JComponent component : componentList) {
+              component.setVisible(false);
+            }
           }
         }
       }
