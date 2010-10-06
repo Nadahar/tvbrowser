@@ -44,6 +44,7 @@
   </build>
   <modules>
     <module>plugin-balloon</module>
+    <module>plugin-bbcdataservice</module>
     <module>plugin-checker</module>
     <module>plugin-countrycode</module>
     <module>plugin-clock</module>
