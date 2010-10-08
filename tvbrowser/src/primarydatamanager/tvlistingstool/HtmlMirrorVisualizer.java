@@ -30,6 +30,7 @@ package primarydatamanager.tvlistingstool;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
 import java.util.logging.Logger;
 
 import primarydatamanager.mirrorupdater.UpdateException;
@@ -73,7 +74,12 @@ public class HtmlMirrorVisualizer implements MirrorVisualizer {
     mTarget = target;
     mGroups = groups;
     mBuf = new ByteArrayOutputStream();
-    mOut = new PrintStream(mBuf);
+    try {
+      mOut = new PrintStream(mBuf,false,"ISO-8859-1");
+    } catch (UnsupportedEncodingException e) {
+      // can't happen
+      e.printStackTrace();
+    }
   }
   
   private String formatDate(Date date) {
