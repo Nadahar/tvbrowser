@@ -24,7 +24,8 @@ import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URL;
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -43,9 +44,6 @@ import util.ui.html.ExtendedHTMLEditorKit;
 import util.ui.html.HorizontalLine;
 
 import com.sun.syndication.feed.synd.SyndEntry;
-import com.sun.syndication.feed.synd.SyndEntryImpl;
-
-import devplugin.Program;
 
 public final class FeedsDialog extends JDialog implements WindowClosingIf {
   static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(FeedsDialog.class);
@@ -58,21 +56,18 @@ public final class FeedsDialog extends JDialog implements WindowClosingIf {
 
   protected String mTooltip;
 
-  private ArrayList<SyndEntry> mEntries;
+  private List<SyndEntry> mEntries;
 
-  public FeedsDialog(final Frame parent, final Program program) {
-    super(parent, true);
-    createGUI(FeedsPlugin.getInstance().getMatchingEntries(program));
-  }
-
-  public FeedsDialog(final Frame parentFrame, final SyndEntryImpl entry) {
+  public FeedsDialog(Frame parentFrame, List<SyndEntry> matches) {
     super(parentFrame, true);
-    ArrayList<SyndEntry> entries = new ArrayList<SyndEntry>(1);
-    entries.add(entry);
-    createGUI(entries);
+    createGUI(matches);
   }
 
-  private void createGUI(ArrayList<SyndEntry> entries) {
+  public FeedsDialog(final Frame parentFrame, final SyndEntry entry) {
+    this(parentFrame, Arrays.asList(new SyndEntry[] {entry}));
+  }
+
+  private void createGUI(List<SyndEntry> entries) {
     mEntries = entries;
     setTitle(mLocalizer.msg("title", "Newsfeed"));
     UiUtilities.registerForClosing(this);
@@ -134,7 +129,7 @@ public final class FeedsDialog extends JDialog implements WindowClosingIf {
     dispose();
   }
 
-  private String createHtmlText(final ExtendedHTMLDocument doc, final ArrayList<SyndEntry> entries) {
+  private String createHtmlText(final ExtendedHTMLDocument doc, final List<SyndEntry> entries) {
     final Font bFont = new Font("Verdana", Font.PLAIN, 11);
     final StringBuilder buffer = new StringBuilder(1024);
     buffer.append("<html><body>");
