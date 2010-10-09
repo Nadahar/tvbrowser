@@ -180,7 +180,7 @@ public final class FeedsPlugin extends Plugin {
               .hasNext();) {
             final Program prog = iter.next();
             for (SyndFeed feed : mFeeds) {
-              if (!getMatchingEntries(prog, feed).isEmpty()) {
+              if (!getMatchingEntries(prog.getTitle(), feed).isEmpty()) {
                 nodes.get(feed).addProgramWithoutCheck(prog);
               }
             }
@@ -194,17 +194,24 @@ public final class FeedsPlugin extends Plugin {
 
   @Override
   public ActionMenu getContextMenuActions(final Program program) {
-    // find matches
-    ArrayList<SyndEntry> matches = getMatchingEntries(program);
+    return getContextMenuAction(getMatchingEntries(program.getTitle()));
+  }
+
+  private ActionMenu getContextMenuAction(final ArrayList<SyndEntry> matches) {
     if (matches.isEmpty()) {
       return null;
     }
-    AbstractAction action = new AbstractAction(mLocalizer.msg("name", "Feeds"), getPluginIcon()) {
+    AbstractAction action = new AbstractAction(mLocalizer.msg("contextMenu", "Feeds {0}", matches.size()), getPluginIcon()) {
       public void actionPerformed(final ActionEvent e) {
-        showFeedsDialog(new FeedsDialog(getParentFrame(), program));
+        showFeedsDialog(new FeedsDialog(getParentFrame(), matches));
       }
     };
     return new ActionMenu(action);
+  }
+
+  @Override
+  public ActionMenu getContextMenuActions(Channel channel) {
+    return getContextMenuAction(getMatchingEntries(channel.getName()));
   }
 
   protected void showFeedsDialog(final FeedsDialog dialog) {
@@ -213,14 +220,13 @@ public final class FeedsPlugin extends Plugin {
     UiUtilities.centerAndShow(dialog);
   }
 
-  private ArrayList<SyndEntry> getMatchingEntries(final Program program, final SyndFeed feed) {
-    String programTitle = program.getTitle();
+  private ArrayList<SyndEntry> getMatchingEntries(final String searchString, final SyndFeed feed) {
     ArrayList<SyndEntry> matches = new ArrayList<SyndEntry>();
     final Iterator<?> iterator = feed.getEntries().iterator();
     while (iterator.hasNext()) {
       final SyndEntry entry = (SyndEntry) iterator.next();
       String feedTitle = entry.getTitle();
-      if (matchesTitle(feedTitle, programTitle)) {
+      if (matchesTitle(feedTitle, searchString)) {
         matches.add(entry);
       }
     }
@@ -248,10 +254,10 @@ public final class FeedsPlugin extends Plugin {
     return false;
   }
 
-  ArrayList<SyndEntry> getMatchingEntries(final Program program) {
+  ArrayList<SyndEntry> getMatchingEntries(final String searchString) {
     ArrayList<SyndEntry> result = new ArrayList<SyndEntry>();
     for (SyndFeed feed : mFeeds) {
-      result.addAll(getMatchingEntries(program, feed));
+      result.addAll(getMatchingEntries(searchString, feed));
     }
     return result;
   }
