@@ -20,10 +20,12 @@ import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.HashMap;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.apache.commons.lang.StringUtils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -37,7 +39,7 @@ import devplugin.ProgramFieldType;
 
 public class BBCProgrammesParser extends DefaultHandler {
 
-  private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ"); //2010-10-03T01:10:00+01:00
+  private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ"); // 2010-10-03T01:10:00+01:00
 
   private static final int PROGRAMME_TYPE_EPISODE = 1;
 
@@ -58,24 +60,24 @@ public class BBCProgrammesParser extends DefaultHandler {
 
   private Date mDate;
 
-  private MutableChannelDayProgram mChannelDayProgram;
-
   private TvDataUpdateManager mUpdateManager;
 
-  public BBCProgrammesParser(TvDataUpdateManager updateManager, Channel channel, Date date) {
+  private HashMap<Date, MutableChannelDayProgram> mDayPrograms;
+
+  public BBCProgrammesParser(HashMap<Date, MutableChannelDayProgram> dayPrograms, Channel channel, Date date) {
     mChannel = channel;
     mDate = date;
-    mChannelDayProgram = new MutableChannelDayProgram(date, mChannel);
-    mUpdateManager = updateManager;
+    mDayPrograms = dayPrograms;
     mText = new StringBuilder();
   }
 
-  protected static boolean parse(TvDataUpdateManager updateManager, File file, Channel channel, Date date) throws Exception {
+  protected static boolean parse(HashMap<Date,MutableChannelDayProgram> dayPrograms, File file, Channel channel, Date date)
+      throws Exception {
     mHasNextDay = false;
     SAXParserFactory fac = SAXParserFactory.newInstance();
     fac.setValidating(false);
     SAXParser sax = fac.newSAXParser();
-    sax.parse(file, new BBCProgrammesParser(updateManager, channel, date));
+    sax.parse(file, new BBCProgrammesParser(dayPrograms, channel, date));
     return mHasNextDay;
   }
 
@@ -86,80 +88,95 @@ public class BBCProgrammesParser extends DefaultHandler {
 
   @Override
   public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-    mText.setLength(0);
-    if ("programme".equalsIgnoreCase(qName)) {
-      String programType = attributes.getValue("type");
-      if ("episode".equalsIgnoreCase(programType)) {
-        mProgramType = PROGRAMME_TYPE_EPISODE;
+    try {
+      mText.setLength(0);
+      if ("programme".equalsIgnoreCase(qName)) {
+        String programType = attributes.getValue("type");
+        if ("episode".equalsIgnoreCase(programType)) {
+          mProgramType = PROGRAMME_TYPE_EPISODE;
+        } else if ("series".equalsIgnoreCase(programType)) {
+          mProgramType = PROGRAMME_TYPE_SERIES;
+        } else if ("brand".equalsIgnoreCase(programType)) {
+          mProgramType = PROGRAMME_TYPE_BRAND;
+        }
+      } else if ("ownership".equalsIgnoreCase(qName) || "display_titles".equalsIgnoreCase(qName)) {
+        mIgnoreElements = true;
+      } else if ("day".equalsIgnoreCase(qName)) {
+        mHasNextDay = attributes.getValue("has_next").equals("1");
       }
-      else if ("series".equalsIgnoreCase(programType)) {
-        mProgramType = PROGRAMME_TYPE_SERIES;
-      }
-      else if ("brand".equalsIgnoreCase(programType)) {
-        mProgramType = PROGRAMME_TYPE_BRAND;
-      }
-    }
-    else if ("ownership".equalsIgnoreCase(qName) || "display_titles".equalsIgnoreCase(qName)) {
-      mIgnoreElements = true;
-    }
-    else if ("day".equalsIgnoreCase(qName)) {
-      mHasNextDay = attributes.getValue("has_next").equals("1");
+    } catch (Exception e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
     }
   }
 
   @Override
   public void endElement(String uri, String localName, String qName) throws SAXException {
+    if ("ownership".equalsIgnoreCase(qName) || "display_titles".equalsIgnoreCase(qName)) {
+      mIgnoreElements = false;
+    }
     if (mIgnoreElements) {
       return;
     }
-    String text = mText.toString().trim();
-    if ("start".equalsIgnoreCase(qName)) {
-      Date startDate = extractDate(text);
-      int startTime = extractTime(text);
-      mProgram = new MutableProgram(mChannel, startDate, startTime /60, startTime % 60, true);
-      mProgramType = 0;
-    }
-    else if ("end".equalsIgnoreCase(qName)) {
-      mProgram.setTimeField(ProgramFieldType.END_TIME_TYPE, extractTime(text));
-    }
-    else if ("duration".equalsIgnoreCase(qName)) {
-      mProgram.setLength(Integer.valueOf(text) / 60);
-    }
-    else if ("title".equalsIgnoreCase(qName)) {
-      if (mProgramType == PROGRAMME_TYPE_EPISODE) {
-        mProgram.setTextField(ProgramFieldType.EPISODE_TYPE, text);
+    try {
+      String text = mText.toString().trim();
+      if ("start".equalsIgnoreCase(qName)) {
+        Date startDate = extractDate(text);
+        int startTime = extractTime(text);
+        mProgram = new MutableProgram(mChannel, startDate, startTime / 60, startTime % 60, true);
+        mProgramType = 0;
+      } else if ("end".equalsIgnoreCase(qName)) {
+        mProgram.setTimeField(ProgramFieldType.END_TIME_TYPE, extractTime(text));
+      } else if ("duration".equalsIgnoreCase(qName)) {
+        if (text.length() > 0) {
+          mProgram.setLength(Integer.valueOf(text) / 60);
+        }
+      } else if ("title".equalsIgnoreCase(qName)) {
+        if (mProgramType == PROGRAMME_TYPE_EPISODE) {
+          mProgram.setTextField(ProgramFieldType.EPISODE_TYPE, text);
+          // some episodes don't list their series, so use the episode title as program title
+          if (StringUtils.isEmpty(mProgram.getTitle())) {
+            mProgram.setTitle(text);
+          }
+        } else if (mProgramType == PROGRAMME_TYPE_SERIES || mProgramType == PROGRAMME_TYPE_BRAND) {
+          mProgram.setTitle(text);
+        }
+      } else if ("position".equalsIgnoreCase(qName) && text.length() > 0) {
+        if (mProgramType == PROGRAMME_TYPE_EPISODE) {
+          mProgram.setIntField(ProgramFieldType.EPISODE_NUMBER_TYPE, Integer.valueOf(text));
+        } else if (mProgramType == PROGRAMME_TYPE_SERIES) {
+          mProgram.setIntField(ProgramFieldType.SEASON_NUMBER_TYPE, Integer.valueOf(text));
+        }
+      } else if ("expected_child_count".equalsIgnoreCase(qName)) {
+        if (text.length() > 0) {
+          if (mProgramType == PROGRAMME_TYPE_SERIES) {
+            mProgram.setIntField(ProgramFieldType.EPISODE_TOTAL_NUMBER_TYPE, Integer.valueOf(text));
+          }
+        }
+      } else if ("short_synopsis".equalsIgnoreCase(qName)) {
+        mProgram.setShortInfo(text);
+      } else if ("pid".equalsIgnoreCase(qName)) {
+        if (text.length() > 0) {
+          String url = "http://www.bbc.co.uk/programmes/" + text;
+          String oldUrl = mProgram.getTextField(ProgramFieldType.URL_TYPE);
+          if (StringUtils.isEmpty(oldUrl)) {
+            mProgram.setTextField(ProgramFieldType.URL_TYPE, url);
+          }
+        }
+      } else if ("broadcast".equalsIgnoreCase(qName)) {
+        // finish the program itself
+        mProgram.setProgramLoadingIsComplete();
+        Date date = mProgram.getDate();
+        MutableChannelDayProgram dayProgram = mDayPrograms.get(date);
+        if (dayProgram == null) {
+          dayProgram = new MutableChannelDayProgram(date, mChannel);
+          mDayPrograms.put(date, dayProgram);
+        }
+        dayProgram.addProgram(mProgram);
       }
-      else if (mProgramType == PROGRAMME_TYPE_SERIES || mProgramType == PROGRAMME_TYPE_BRAND) {
-        mProgram.setTitle(text);
-      }
-    }
-    else if ("position".equalsIgnoreCase(qName)) {
-      if (mProgramType == PROGRAMME_TYPE_EPISODE) {
-        mProgram.setIntField(ProgramFieldType.EPISODE_NUMBER_TYPE, Integer.valueOf(text));
-      }
-      else if (mProgramType == PROGRAMME_TYPE_SERIES && text.length() > 0) {
-        mProgram.setIntField(ProgramFieldType.SEASON_NUMBER_TYPE, Integer.valueOf(text));
-      }
-    }
-    else if ("expected_child_count".equalsIgnoreCase(qName)) {
-      if (mProgramType == PROGRAMME_TYPE_SERIES) {
-        mProgram.setIntField(ProgramFieldType.EPISODE_TOTAL_NUMBER_TYPE, Integer.valueOf(text));
-      }
-    }
-    else if ("short_synopsis".equalsIgnoreCase(qName)) {
-      mProgram.setShortInfo(text);
-    }
-    else if ("ownership".equalsIgnoreCase(qName) || "display_titles".equalsIgnoreCase(qName)) {
-      mIgnoreElements = false;
-    }
-    else if ("broadcast".equalsIgnoreCase(qName)) {
-      // finish the program itself
-      mProgram.setProgramLoadingIsComplete();
-      mChannelDayProgram.addProgram(mProgram);
-    }
-    else if ("schedule".equalsIgnoreCase(qName)) {
-      // finish the file
-      mUpdateManager.updateDayProgram(mChannelDayProgram);
+    } catch (Exception e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
     }
   }
 
@@ -190,12 +207,13 @@ public class BBCProgrammesParser extends DefaultHandler {
 
   private synchronized Calendar parseDateTime(final String time) {
     try {
+      String withoutSeparator = time.substring(0, 22) + time.substring(23);
       Calendar calendar = Calendar.getInstance();
-      calendar.setTime(DATE_FORMAT.parse(time.substring(0, 20)));
+      calendar.setTime(DATE_FORMAT.parse(withoutSeparator));
       calendar.setTimeInMillis(calendar.getTimeInMillis() - calendar.getTimeZone().getRawOffset());
       return calendar;
     } catch (ParseException e) {
-//      logMessage("invalid time format: " + time);
+      // logMessage("invalid time format: " + time);
       return null;
     }
   }

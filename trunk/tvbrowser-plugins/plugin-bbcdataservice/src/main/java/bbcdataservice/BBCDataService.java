@@ -20,9 +20,11 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Properties;
 import java.util.TimeZone;
 
+import tvdataservice.MutableChannelDayProgram;
 import tvdataservice.SettingsPanel;
 import tvdataservice.TvDataUpdateManager;
 import util.exc.TvBrowserException;
@@ -65,7 +67,7 @@ public final class BBCDataService extends AbstractTvDataService {
     if (mPluginInfo == null) {
       final String name = mLocalizer.msg("name", "BBC Data Service");
       final String desc = mLocalizer.msg("description", "Loads BBC program data.");
-      mPluginInfo = new PluginInfo(BBCDataService.class, name, desc, "Michael Keppler", "GPL 3");
+      mPluginInfo = new PluginInfo(BBCDataService.class, name, desc, "Michael Keppler");
     }
 
     return mPluginInfo;
@@ -128,6 +130,7 @@ public final class BBCDataService extends AbstractTvDataService {
     monitor.setMaximum(channels.length);
     int progress = 0;
     for (Channel channel : channels) {
+      HashMap<Date, MutableChannelDayProgram> dayPrograms = new HashMap<Date, MutableChannelDayProgram>();
       monitor.setValue(progress++);
       for (int i = 0; i < days; i++) {
         Date date = startDate.addDays(i);
@@ -148,7 +151,7 @@ public final class BBCDataService extends AbstractTvDataService {
         }
         boolean continueWithNextDay = false;
         try {
-          continueWithNextDay = BBCProgrammesParser.parse(updateManager, file, channel, date);
+          continueWithNextDay = BBCProgrammesParser.parse(dayPrograms, file, channel, date);
         } catch (Exception e) {
           // TODO Auto-generated catch block
           e.printStackTrace();
@@ -157,6 +160,10 @@ public final class BBCDataService extends AbstractTvDataService {
         if (!continueWithNextDay) {
           break;
         }
+      }
+      // store the received programs
+      for (MutableChannelDayProgram dayProgram : dayPrograms.values()) {
+        updateManager.updateDayProgram(dayProgram);
       }
     }
   }
