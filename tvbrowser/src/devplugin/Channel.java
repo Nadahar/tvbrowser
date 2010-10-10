@@ -277,6 +277,18 @@ public class Channel implements Comparable<Channel> {
   /**
    * Creates an instance of this class.
    * <p>
+   * @param name The name of this channel.
+   * @param id The id of this channel.
+   * @param country The country of this channel.
+   */
+  public Channel(String name, String id, String country)
+   {
+      this(null,name,id,TimeZone.getDefault(),country,"(no copyright notice)",null);
+   }
+  
+  /**
+   * Creates an instance of this class.
+   * <p>
    * @param id The id of this channel.
    * @param country The country of this channel.
    */
