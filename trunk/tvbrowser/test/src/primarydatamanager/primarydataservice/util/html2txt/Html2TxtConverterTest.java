@@ -9,7 +9,6 @@ import org.junit.Test;
  * test case for primarydatamanager.primarydataservice.util.html2txt.Html2TxtConverterTest.
  *
  * @author uzi
- * @date 11.10.2010
  */
 public class Html2TxtConverterTest {
 
