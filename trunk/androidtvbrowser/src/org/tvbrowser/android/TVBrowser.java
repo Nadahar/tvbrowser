@@ -198,7 +198,7 @@ public class TVBrowser extends Activity implements TimePickerDialog.OnTimeSetLis
 
   private Dialog createNoDataDialog() {
     AlertDialog.Builder builder = new AlertDialog.Builder(this);
-    builder.setMessage("There is no data available. Please export data with TV-Browser on your PC first.")
+    builder.setMessage("There is no data available. Please export data with TV-Browser on your PC first. Afterwards copy the generated *.tvd file into the \"TV-Browser\" direcotory on your SD card.")
         .setCancelable(false).setPositiveButton("OK", new DialogInterface.OnClickListener() {
           public void onClick(DialogInterface dialog, int id) {
             dialog.cancel();
