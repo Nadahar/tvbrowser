@@ -1,6 +1,7 @@
 package org.tvbrowser.android.data;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -10,16 +11,14 @@ import org.tvbrowser.android.Utility;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Environment;
 import android.util.Log;
 
 public class DataLoader {
 
-  private static final String TVBROWSER_DATADIRECTORY = File.separator + "sdcard" + File.separator + "TVBrowser";
+  private static final String TVBROWSER_DATADIRECTORY = Environment.getExternalStorageDirectory() + File.separator + "TV-Browser";
 
   private static final String DOT_TVBFILESUFFIX = ".tvd";
-
-  private static final String TVBROWSER_DATABASEFILENAME = TVBROWSER_DATADIRECTORY + File.separator + "data"
-      + DOT_TVBFILESUFFIX;
 
   private static final String INTERNALDATABASE = "tvbrowser.db";
   private static final String TABLENAME_REMINDER = "reminder";
@@ -73,11 +72,43 @@ public class DataLoader {
   private static SQLiteDatabase database;
   private static SQLiteDatabase internalDatabase;
 
+  private static boolean isMediaAvailable() {
+    String state = Environment.getExternalStorageState();
+
+    if (Environment.MEDIA_MOUNTED.equals(state)) {
+      return true;
+    } else if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
+      return true;
+    }
+    return false;
+  }
+
   private static SQLiteDatabase openDatabase() {
+//    if (isMediaAvailable()) {
+//      return null;
+//    }
     if (database == null) {
-      File file = new File(TVBROWSER_DATABASEFILENAME);
-      if (file.exists()) {
-        database = SQLiteDatabase.openDatabase(TVBROWSER_DATABASEFILENAME, null, SQLiteDatabase.OPEN_READWRITE);
+      File dir = new File(TVBROWSER_DATADIRECTORY);
+      if (!dir.exists()) {
+        dir.mkdirs();
+      }
+      if (dir.exists()) {
+        File[] dataFiles = dir.listFiles(new FilenameFilter() {
+
+          @Override
+          public boolean accept(File dir, String filename) {
+            return filename.toLowerCase().endsWith(DOT_TVBFILESUFFIX);
+          }
+        });
+        if (dataFiles != null && dataFiles.length > 0) {
+          try {
+            database = SQLiteDatabase.openDatabase(dataFiles[0].getAbsolutePath(), null, SQLiteDatabase.OPEN_READWRITE | SQLiteDatabase.NO_LOCALIZED_COLLATORS);
+          } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            database = SQLiteDatabase.openDatabase(dataFiles[0].getAbsolutePath(), null, SQLiteDatabase.OPEN_READONLY | SQLiteDatabase.NO_LOCALIZED_COLLATORS);
+          }
+        }
       }
     }
     return database;
