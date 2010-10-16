@@ -791,29 +791,6 @@ public class PluginTree extends JTree implements DragGestureListener,
 
           boolean cleaned = false;
 
-          /*if(program.getMarkerArr().length > 0 && program.getMarkPriority() >= Program.MIN_MARK_PRIORITY) {
-            cleaned = true;
-
-            if(!program.isExpired()) {
-              g.setColor(Color.white);
-              g.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
-            }
-
-            switch(program.getMarkPriority()) {
-              case Program.MIN_MARK_PRIORITY: g.setColor(Settings.propProgramPanelMarkedMinPriorityColor.getColor());break;
-              case Program.LOWER_MEDIUM_MARK_PRIORITY: g.setColor(Settings.propProgramPanelMarkedLowerMediumPriorityColor.getColor());break;
-              case Program.MEDIUM_MARK_PRIORITY: g.setColor(Settings.propProgramPanelMarkedMediumPriorityColor.getColor());break;
-              case Program.HIGHER_MEDIUM_MARK_PRIORITY: g.setColor(Settings.propProgramPanelMarkedHigherMediumPriorityColor.getColor());break;
-              case Program.MAX_MARK_PRIORITY: g.setColor(Settings.propProgramPanelMarkedMaxPriorityColor.getColor());break;
-            }
-
-            if(program.isExpired()) {
-              g.setColor(new Color(g.getColor().getRed(), g.getColor().getGreen(), g.getColor().getBlue(), (int)(g.getColor().getAlpha()*6/10.)));
-            }
-
-            g.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
-          }*/
-
           if(program.isOnAir()) {
             if(!cleaned) {
               g.setColor(Color.white);
@@ -851,8 +828,9 @@ public class PluginTree extends JTree implements DragGestureListener,
 
           mProgramLabel.setFont(tree.getFont());
           mProgramLabel.setForeground(g.getColor());
+          mProgramLabel.setBackground(UIManager.getColor("Tree.background"));
           mProgramLabel.setText(text);
-          mProgramLabel.setOpaque(false);
+          mProgramLabel.setOpaque(true);
           mProgramLabel.setBounds(0, 0, bounds.width, bounds.height);
           mProgramLabel.paint(lg);
 
