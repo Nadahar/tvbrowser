@@ -61,7 +61,7 @@ import devplugin.Version;
 public final class TaggingPlugin extends Plugin {
   private static final int DAYS_TO_CHECK = 30;
 
-  private static final Version mVersion = new Version(2, 70, 0);
+  private static final Version mVersion = new Version(2, 70, 1);
 
   private static TaggingPlugin mInstance;
 
@@ -263,7 +263,7 @@ public final class TaggingPlugin extends Plugin {
 
   private Icon getPluginIcon() {
 		if (mIcon == null) {
-			mIcon = new ImageIcon(getClass().getResource("tag.png"));
+		  mIcon = createImageIcon("actions", "tag", 16);
 		}
 		return mIcon;
 	}

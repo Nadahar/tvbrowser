@@ -23,6 +23,22 @@
  */
 package golemplugin;
 
+import java.awt.event.ActionEvent;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.Collection;
+import java.util.concurrent.atomic.AtomicReference;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.SwingUtilities;
+
+import tvbrowser.ui.mainframe.MainFrame;
+import util.ui.Localizer;
+import util.ui.UiUtilities;
 import devplugin.ActionMenu;
 import devplugin.PluginInfo;
 import devplugin.PluginTreeNode;
@@ -30,24 +46,10 @@ import devplugin.Program;
 import devplugin.ProgramRatingIf;
 import devplugin.SettingsTab;
 import devplugin.Version;
-import java.awt.event.ActionEvent;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.Collection;
-import java.util.concurrent.atomic.AtomicReference;
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.SwingUtilities;
-import tvbrowser.ui.mainframe.MainFrame;
-import util.ui.Localizer;
-import util.ui.UiUtilities;
 
 public class GolemPlugin extends devplugin.Plugin {
   private static final boolean PLUGIN_IS_STABLE = true;
-  private static final Version PLUGIN_VERSION = new Version(0, 3, 0, PLUGIN_IS_STABLE);
+  private static final Version PLUGIN_VERSION = new Version(0, 3, 1, PLUGIN_IS_STABLE);
 
   static final Localizer mLocalizer = Localizer.getLocalizerFor(GolemPlugin.class);
 
@@ -93,7 +95,7 @@ public class GolemPlugin extends devplugin.Plugin {
 
   public Icon getPluginIcon() {
     if (icon == null) {
-      icon = new ImageIcon(getClass().getResource("golem.png"));
+      icon = createImageIcon("actions", "golem", 16);
     }
     return icon;
   }
