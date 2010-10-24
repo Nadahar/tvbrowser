@@ -40,8 +40,10 @@ public class TextComponentPopupEventQueue extends EventQueue {
     try {
       if (event instanceof MouseEvent) {
         MouseEvent me = (MouseEvent) event;
-        if (me.getButton() != MouseEvent.NOBUTTON) {
-          MainFrame.getInstance().getProgramTableScrollPane().getProgramTable().stopAutoScroll();
+        if (me.getButton() != MouseEvent.NOBUTTON && me.getID() == MouseEvent.MOUSE_CLICKED) {
+          if (MainFrame.getInstance().getProgramTableScrollPane().getProgramTable().stopAutoScroll()) {
+            return;
+          }
         }
       }
     } catch (Exception e1) {
