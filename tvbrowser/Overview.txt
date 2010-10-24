@@ -3,7 +3,7 @@ The build script:
 
 build.xml:
   The build script.
-  To use it, you need Ant. Ant could be downloaded from the Ant homepage:
+  To use it, you need Ant. Ant can be downloaded from the Ant homepage:
   http://ant.apache.org
 
 build.properties:

@@ -908,8 +908,14 @@
 
   <!-- Creates the release binaries (.exe installer) for windows platforms -->
   <target name="public-win" depends="exe" description="Creates binaries for the Microsoft Windows Platforms (requires Windows)">
-    <mkdir dir="${public.dir}"/>
-    <exec executable="${installer.dir}/makensis.exe" failonerror="true">
+    <delete dir="${env.TEMP}/nsis"></delete>
+    <get dest="${env.TEMP}/nsis.zip" src="http://sourceforge.net/projects/nsis/files/NSIS%202/${nsis.version}/nsis-${nsis.version}.zip/download"/>
+  	<unzip dest="${env.TEMP}/nsis" src="${env.TEMP}/nsis.zip"/>
+  	<copyfile dest="${env.TEMP}/nsis/nsis-${nsis.version}/plugins/LockedList.dll" src="${deployment.dir}/win/installer/Plugins/LockedList.dll"/>
+    <copyfile dest="${env.TEMP}/nsis/nsis-${nsis.version}/plugins/nsisFirewall.dll" src="${deployment.dir}/win/installer/Plugins/nsisFirewall.dll"/>
+    <copyfile dest="${env.TEMP}/nsis/nsis-${nsis.version}/plugins/nsisFirewallW.dll" src="${deployment.dir}/win/installer/Plugins/nsisFirewallW.dll"/>
+  	<mkdir dir="${public.dir}"/>
+    <exec executable="${env.TEMP}/nsis/nsis-${nsis.version}/makensis.exe" failonerror="true">
       <arg value="/NOCD"/>
       <arg value="/DVERSION=${tvbrowser.version}"/>
       <arg value="/DVERSION_FILE=${tvbrowser.version.file}"/>
@@ -920,21 +926,7 @@
       <arg value="/DPUBLIC_DIR=${public.dir}"/>
       <arg value="${installer.dir}\tvbrowser.nsi"/>
     </exec>
-  </target>
-
-  <target name="installer">
-    <mkdir dir="${public.dir}"/>
-    <exec executable="${installer.dir}/makensis.exe" failonerror="true">
-      <arg value="/NOCD"/>
-      <arg value="/DVERSION=${tvbrowser.version}"/>
-      <arg value="/DVERSION_FILE=${tvbrowser.version.file}"/>
-      <arg value="/DPROG_NAME=${programname}"/>
-      <arg value="/DPROG_NAME_FILE=${programname.file}"/>
-      <arg value="/DRUNTIME_DIR=${tvbrowser-win.runtime.dir}"/>
-      <arg value="/DINSTALLER_DIR=${installer.dir}"/>
-      <arg value="/DPUBLIC_DIR=${public.dir}"/>
-      <arg value="${installer.dir}\tvbrowser.nsi"/>
-    </exec>
+  	<delete dir="${env.TEMP}/nsis"></delete>
   </target>
 
    <!-- Creates the release binaries (.dmg) for mac os x -->
