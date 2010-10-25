@@ -359,6 +359,8 @@ Section "$(STD_SECTION_NAME)" SEC_STANDARD
 
   # Register uninstaller at Windows (Add/Remove programs)
   !define UPDATE_INFO_URL "http://tvbrowser.sourceforge.net"
+  !define SUPPORT_URL "http://tvbrowser.org/forum.html"
+  !define ABOUT_URL "http://tvbrowser.org"
   !define REGISTER_ICON "$INSTDIR\tvbrowser.exe,0"
 
   StrCmp $8 "HKCU" user admin
@@ -398,8 +400,38 @@ Section "$(STD_SECTION_NAME)" SEC_STANDARD
     WriteRegStr \
       HKCU \
       "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PROG_NAME_FILE}" \
+      "Publisher" \
+      "TV-Browser Team"
+    ; get update infos directly on sourceforge
+    WriteRegStr \
+      HKCU \
+      "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PROG_NAME_FILE}" \
       "URLUpdateInfo" \
       ${UPDATE_INFO_URL}
+    ; link about to homepage
+    WriteRegStr \
+      HKCU \
+      "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PROG_NAME_FILE}" \
+      "URLInfoAbout" \
+      ${ABOUT_URL}
+    ; support via forum
+    WriteRegStr \
+      HKCU \
+      "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PROG_NAME_FILE}" \
+      "HelpLink" \
+      ${SUPPORT_URL}
+    ; no modify option
+    WriteRegDWORD \
+      HKCU \
+      "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PROG_NAME_FILE}" \
+      "NoModify" \
+      1
+    ; no repair option
+    WriteRegDWORD \
+      HKCU \
+      "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PROG_NAME_FILE}" \
+      "NoRepair" \
+      1
     goto end
     
   admin:
@@ -440,8 +472,37 @@ Section "$(STD_SECTION_NAME)" SEC_STANDARD
     WriteRegStr \
       HKLM \
       "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PROG_NAME_FILE}" \
+      "Publisher" \
+      "TV-Browser Team"
+    WriteRegStr \
+      HKLM \
+      "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PROG_NAME_FILE}" \
       "URLUpdateInfo" \
       ${UPDATE_INFO_URL}
+    ; link about to homepage
+    WriteRegStr \
+      HKLM \
+      "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PROG_NAME_FILE}" \
+      "URLInfoAbout" \
+      ${ABOUT_URL}
+    ; support via forum
+    WriteRegStr \
+      HKLM \
+      "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PROG_NAME_FILE}" \
+      "HelpLink" \
+      ${SUPPORT_URL}
+    ; no modify option
+    WriteRegDWORD \
+      HKLM \
+      "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PROG_NAME_FILE}" \
+      "NoModify" \
+      1
+    ; no repair option
+    WriteRegDWORD \
+      HKLM \
+      "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PROG_NAME_FILE}" \
+      "NoRepair" \
+      1
   end:
   # Create start menu entry if wanted by the user
   !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
