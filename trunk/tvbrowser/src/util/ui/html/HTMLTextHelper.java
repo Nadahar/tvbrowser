@@ -53,7 +53,7 @@ public class HTMLTextHelper {
     // Create links for URLs
     if (createLinks) {
 
-      Matcher matcher = Pattern.compile("(http(s)://|www\\.)[^\\s<\"']*").matcher(text);
+      Matcher matcher = Pattern.compile("(http[s]?://|www\\.)[^\\s<\"']*").matcher(text);
 
       StringBuilder result = new StringBuilder();
 
