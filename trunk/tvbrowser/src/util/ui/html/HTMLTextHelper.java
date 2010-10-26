@@ -53,7 +53,7 @@ public class HTMLTextHelper {
     // Create links for URLs
     if (createLinks) {
 
-      Matcher matcher = Pattern.compile("(http://|www\\.)[^\\s<\"']*").matcher(text);
+      Matcher matcher = Pattern.compile("(http(s)://|www\\.)[^\\s<\"']*").matcher(text);
 
       StringBuilder result = new StringBuilder();
 
@@ -78,17 +78,20 @@ public class HTMLTextHelper {
         }
 
         result.append("<a href=\"");
-        if (!linkText.startsWith("http://")) {
+        if (!linkText.toLowerCase().startsWith("http://") && !linkText.toLowerCase().startsWith("https://")) {
           result.append("http://");
         }
 
         result.append(linkText);
         result.append("\">");
         if (linkText.startsWith("http://")) {
-          linkText = linkText.substring(7); // remove http:// from shown link text
+          linkText = linkText.substring("http://".length()); // remove http:// from shown link text
+        }
+        if (linkText.startsWith("https://")) {
+          linkText = linkText.substring("https://".length()); // remove https:// from shown link text
         }
         if (linkText.endsWith("/")) { // remove trailing slash from display
-          linkText = linkText.substring(0, linkText.length() - 1);
+          linkText = linkText.substring(0, linkText.length() - "/".length());
         }
         result.append(linkText.length() > 40 ? linkText.substring(0,40) + "..." : linkText);
         result.append("</a>");
