@@ -113,16 +113,15 @@ public class PluginTreeNode implements Comparable<PluginTreeNode> {
 
   /**
    * creates a plugin root node WITHOUT marker
-   * 
+   *
    * @since 3.0
    * @param plugin
-   * 
+   *
    */
   public PluginTreeNode(final Plugin plugin) {
-    this(Node.PLUGIN_ROOT, plugin);
-    addRemovedProgramsListener();
+    this(true, plugin);
   }
-  
+
   /**
    * Creates a new root PluginTreeNode
    * @param plugin
@@ -137,7 +136,7 @@ public class PluginTreeNode implements Comparable<PluginTreeNode> {
       addRemovedProgramsListener();
     }
   }
-  
+
   /**
    * Creates a new root PluginTreeNode
    * @param marker
@@ -215,11 +214,11 @@ public class PluginTreeNode implements Comparable<PluginTreeNode> {
     for (int i=mChildNodes.size()-1; i>=0; i--) {
       final PluginTreeNode node = mChildNodes.get(i);
       node.mMarker = mMarker;
-      
+
       if (node.isLeaf()) {
         final ProgramItem progItemInTree = (ProgramItem) node.getUserObject();
         final Program progInTree = progItemInTree.getProgram();
-        
+
         if (progInTree == null) {
           node.removeProgram(progItemInTree);
         }
@@ -292,13 +291,13 @@ public class PluginTreeNode implements Comparable<PluginTreeNode> {
   public void setGroupingByDateEnabled(boolean enable) {
     mGroupingByDate = enable;
   }
-  
+
   /**
    * Enables/Disables 'grouping by week' for nodes showing
    * programs by date. Only evaluated if "grouping by date"
    * is enabled.
    * Default is 'disabled'
-   * 
+   *
    * @see #setGroupingByDateEnabled(boolean)
    *
    * @param enable
@@ -334,7 +333,7 @@ public class PluginTreeNode implements Comparable<PluginTreeNode> {
         if (n.mNodeType == Node.PROGRAM) {
           ProgramItem progItem = (ProgramItem)n.getUserObject();
           Node node = n.getMutableTreeNode();
-          
+
           if (currentDate == null) {
             currentDate = Date.getCurrentDate();
           }
@@ -375,19 +374,19 @@ public class PluginTreeNode implements Comparable<PluginTreeNode> {
       }
       else {
       	Date date = ((ProgramItem) n.getUserObject()).getDate();
-                
+
         if(date.compareTo(mNodeYesterday) >= 0) {
           ArrayList<PluginTreeNode> list = dateMap.get(date);
           if (list == null) {
             list = new ArrayList<PluginTreeNode>();
             dateMap.put(date, list);
           }
-        
+
           list.add(n);
         }
       }
     }
-    
+
     // Create the new nodes
     Set<Date> keySet = dateMap.keySet();
     Date[] dates = new Date[keySet.size()];
@@ -402,7 +401,7 @@ public class PluginTreeNode implements Comparable<PluginTreeNode> {
     // show week nodes if there are less than 2 programs per day on average
     boolean createWeekNodes = mGroupWeekly && (numPrograms <= dates.length * 2);
     boolean isShowingWeekNodes = createWeekNodes;
-    
+
     for (Date date : dates) {
       String dateStr;
       if (mNodeYesterday.equals(date)) {
@@ -445,7 +444,7 @@ public class PluginTreeNode implements Comparable<PluginTreeNode> {
         newNode.setNodeFormatter(element.getNodeFormatter(createWeekNodes && isShowingWeekNodes));
         node.add(newNode);
       }
-      
+
       isShowingWeekNodes = createWeekNodes;
     }
   }
@@ -515,7 +514,7 @@ public class PluginTreeNode implements Comparable<PluginTreeNode> {
    * If the programs are already contained in this sub tree, it is not added again.
    * <br>
    * After you have finished adding all programs, you need to call {@link #update()} to refresh the UI.
-   * 
+   *
    * @param listNew list of new programs
    */
   public synchronized void addPrograms(final List<Program> listNew) {
@@ -531,7 +530,7 @@ public class PluginTreeNode implements Comparable<PluginTreeNode> {
       Collections.sort(listCurrent, comp);
       Collections.sort(listNew, comp);
       Iterator<Program> currentIt = listCurrent.iterator();
-      
+
       // iterate both lists in parallel and add only new programs
       if (currentIt.hasNext() && newIt.hasNext()) {
         Program newProg = newIt.next();
@@ -594,7 +593,7 @@ public class PluginTreeNode implements Comparable<PluginTreeNode> {
    * If the program is already contained in this sub tree, it is not added again.
    * <br>
    * After you have finished adding all programs, you need to call {@link #update()} to refresh the UI.
-   * 
+   *
    * @param program
    * @return the tree node containing the program
    */
@@ -623,7 +622,7 @@ public class PluginTreeNode implements Comparable<PluginTreeNode> {
    * so you may only use this method with newly created tree nodes!
    * <br>
    * After you have finished adding all programs, you need to call {@link #update()} to refresh the UI.
-   * 
+   *
    * @param program
    * @return the tree node containing the program
    */
@@ -693,7 +692,7 @@ public class PluginTreeNode implements Comparable<PluginTreeNode> {
     if (mChildNodes == null) {
       return new ProgramItem[0];
     }
-    
+
     // we have child nodes
     ArrayList<Object> list = new ArrayList<Object>();
     addProgramItemsTo(list);
@@ -724,7 +723,7 @@ public class PluginTreeNode implements Comparable<PluginTreeNode> {
     if (mChildNodes == null) {
       return new Program[0];
     }
-    
+
     // we have child nodes
     ArrayList<Program> list = new ArrayList<Program>();
     addProgramsTo(list);
@@ -816,7 +815,7 @@ public class PluginTreeNode implements Comparable<PluginTreeNode> {
 
   /**
    * Get the number of child nodes.
-   * 
+   *
    * @return number of child nodes
    */
   public int size() {
@@ -841,7 +840,7 @@ public class PluginTreeNode implements Comparable<PluginTreeNode> {
   public boolean isLeaf() {
     return (mDefaultNode.getType() == Node.PROGRAM);
   }
-  
+
   @Override
   public String toString() {
     switch (mNodeType) {

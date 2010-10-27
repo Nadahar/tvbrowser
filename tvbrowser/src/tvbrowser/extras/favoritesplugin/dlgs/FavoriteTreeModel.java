@@ -355,7 +355,7 @@ public class FavoriteTreeModel extends DefaultTreeModel {
     ((FavoriteNode)getRoot()).store(out);
   }
 
-  public void updatePluginTree(final PluginTreeNode node, final PluginTreeNode dateNode, FavoriteNode parentFavorite) {
+  public void updatePluginTree(final PluginTreeNode node, final ArrayList<Program> allPrograms, FavoriteNode parentFavorite) {
     if(parentFavorite == null) {
       parentFavorite = (FavoriteNode) getRoot();
     }
@@ -367,19 +367,20 @@ public class FavoriteTreeModel extends DefaultTreeModel {
       while(e.hasMoreElements()) {
         final FavoriteNode child = e.nextElement();
 
-        PluginTreeNode newNode = new PluginTreeNode(child.toString());
-        newNode.setGroupingByWeekEnabled(true);
-
         if(child.isDirectoryNode()) {
-          updatePluginTree(newNode, dateNode,child);
+          PluginTreeNode newNode = new PluginTreeNode(child.toString());
+          newNode.setGroupingByWeekEnabled(true);
+
+          updatePluginTree(newNode, allPrograms, child);
           if (!newNode.isEmpty()) {
             node.add(newNode);
           }
         } else {
-          newNode.getMutableTreeNode().setIcon(FavoritesPlugin.getFavoritesIcon(16));
-
           Program[] progArr = child.getFavorite().getWhiteListPrograms();
           if (progArr.length > 0) {
+            PluginTreeNode newNode = new PluginTreeNode(child.toString());
+            newNode.setGroupingByWeekEnabled(true);
+            newNode.getMutableTreeNode().setIcon(FavoritesPlugin.getFavoritesIcon(16));
             node.add(newNode);
             Action editFavorite = new AbstractAction() {
               public void actionPerformed(ActionEvent e) {
@@ -417,7 +418,7 @@ public class FavoriteTreeModel extends DefaultTreeModel {
 
             for (Program program : progArr) {
               PluginTreeNode pNode = newNode.addProgramWithoutCheck(program);
-              dateNode.addProgram(program);
+              allPrograms.add(program);
               if (episodeOnly || progArr.length <= 10) {
                 pNode.setNodeFormatter(new NodeFormatter() {
                   public String format(ProgramItem pitem) {
@@ -447,7 +448,7 @@ public class FavoriteTreeModel extends DefaultTreeModel {
       Program[] whiteListPrograms = node.getFavorite().getWhiteListPrograms();
       count[0] = whiteListPrograms.length;
       for(Program p : whiteListPrograms) {
-        if(p.getDate().equals(currentDate)) {
+        if(p.getDate().equals(currentDate) && !p.isExpired()) {
           count[1]++;
         }
       }
@@ -460,7 +461,7 @@ public class FavoriteTreeModel extends DefaultTreeModel {
         count[0] += whiteListPrograms.length;
 
         for(Program p : whiteListPrograms) {
-          if(p.getDate().equals(currentDate)) {
+          if(p.getDate().equals(currentDate) && !p.isExpired()) {
             count[1]++;
           }
         }
@@ -541,8 +542,8 @@ public class FavoriteTreeModel extends DefaultTreeModel {
     return receiveFavorites.toArray(new Favorite[receiveFavorites.size()]);
   }
 
-  public void updatePluginTree(final PluginTreeNode topicNode, final PluginTreeNode dateNode) {
-    updatePluginTree(topicNode, dateNode, null);
+  public void updatePluginTree(final PluginTreeNode topicNode, final ArrayList<Program> allPrograms) {
+    updatePluginTree(topicNode, allPrograms, null);
   }
 
   /**
