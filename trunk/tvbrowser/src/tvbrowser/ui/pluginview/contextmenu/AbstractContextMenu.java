@@ -39,9 +39,12 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.tree.TreePath;
 
-import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
+import tvbrowser.extras.common.InternalPluginProxyIf;
+import tvbrowser.extras.common.InternalPluginProxyList;
+import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
+import tvbrowser.extras.favoritesplugin.FavoritesPluginProxy;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import tvbrowser.extras.reminderplugin.ReminderPluginProxy;
 import tvbrowser.ui.mainframe.MainFrame;
@@ -54,6 +57,7 @@ import devplugin.Plugin;
 import devplugin.Program;
 import devplugin.ProgramFilter;
 import devplugin.ProgramItem;
+import devplugin.ProgramReceiveIf;
 import devplugin.ProgramReceiveTarget;
 
 
@@ -153,22 +157,25 @@ public abstract class AbstractContextMenu implements ContextMenu {
       currentPlugin = (Plugin)o;
     }
 
-    if(o != ReminderPlugin.getRootNode().getMutableTreeNode()) {
-      final ProgramReceiveTarget reminderTarget = ReminderPluginProxy
-          .getInstance().getProgramReceiveTargets()[0];
-      JMenuItem item = new JMenuItem(reminderTarget.getTargetName());
-      item.setFont(MenuUtil.CONTEXT_MENU_PLAINFONT);
-      item.setIcon(IconLoader.getInstance().getIconFromTheme("apps","appointment",16));
-      menu.add(item);
-      item.addActionListener(new ActionListener(){
-        public void actionPerformed(ActionEvent e) {
-          Program[] programs = collectProgramsFromNode(node);
-          if ((programs != null) &&(programs.length > 0)) {
-            ReminderPluginProxy.getInstance().receivePrograms(programs,
-                reminderTarget);
-          }
+    for (InternalPluginProxyIf internalProxy : InternalPluginProxyList.getInstance().getAvailableProxys()) {
+      if (internalProxy instanceof ProgramReceiveIf) {
+        final ProgramReceiveIf receiveProxy = (ProgramReceiveIf) internalProxy;
+        if(receiveProxy.canReceiveProgramsWithTarget() && o != internalProxy) {
+          final ProgramReceiveTarget target = receiveProxy.getProgramReceiveTargets()[0];
+          JMenuItem item = new JMenuItem(target.getTargetName());
+          item.setFont(MenuUtil.CONTEXT_MENU_PLAINFONT);
+          item.setIcon(internalProxy.getIcon());
+          menu.add(item);
+          item.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e) {
+              Program[] programs = collectProgramsFromNode(node);
+              if ((programs != null) &&(programs.length > 0)) {
+                receiveProxy.receivePrograms(programs, target);
+              }
+            }
+          });
         }
-      });
+      }
     }
 
     PluginProxy[] plugins = PluginProxyManager.getInstance().getActivatedPlugins();
@@ -311,7 +318,7 @@ public abstract class AbstractContextMenu implements ContextMenu {
 
     Node parent = node;
 
-    while (parent != null && parent.getType() != Node.PLUGIN_ROOT && parent != ReminderPlugin.getRootNode().getMutableTreeNode() && parent.getProgramReceiveTarget() == null) {
+    while (parent != null && parent.getType() != Node.PLUGIN_ROOT && parent != ReminderPlugin.getRootNode().getMutableTreeNode() && parent != FavoritesPlugin.getRootNode().getMutableTreeNode() && parent.getProgramReceiveTarget() == null) {
       parent = (Node) parent.getParent();
     }
 
@@ -325,6 +332,12 @@ public abstract class AbstractContextMenu implements ContextMenu {
       if(o instanceof Plugin) {
         return o;
       } else {
+        if (o instanceof String && o.equals(ReminderPlugin.getRootNode().getMutableTreeNode().getUserObject())) {
+          return ReminderPluginProxy.getInstance();
+        }
+        if (o instanceof String && o.equals(FavoritesPlugin.getRootNode().getMutableTreeNode().getUserObject())) {
+          return FavoritesPluginProxy.getInstance();
+        }
         return parent;
       }
     }

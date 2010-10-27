@@ -40,6 +40,7 @@ import devplugin.ActionMenu;
 import devplugin.ContextMenuIf;
 import devplugin.Marker;
 import devplugin.Program;
+import devplugin.ProgramReceiveTarget;
 import devplugin.SettingsItem;
 import devplugin.SettingsTab;
 
@@ -50,6 +51,7 @@ import devplugin.SettingsTab;
  */
 public class FavoritesPluginProxy extends AbstractInternalPluginProxy implements ButtonActionIf, ContextMenuIf, Marker {
 
+  private static final String PROGRAM_TARGET_TITLE_FAVORITE = "target_favorite_title";
   private static FavoritesPluginProxy mInstance;
   private Icon mMarkIcon;
   private Icon[] mMarkIconArr;
@@ -175,4 +177,20 @@ public class FavoritesPluginProxy extends AbstractInternalPluginProxy implements
     return FavoritesPlugin.getInstance();
   }
 
+  @Override
+  public boolean canReceiveProgramsWithTarget() {
+    return true;
+  }
+
+  @Override
+  public boolean receivePrograms(Program[] programArr, ProgramReceiveTarget receiveTarget) {
+    getFavoritesInstance().addTitleFavorites(programArr);
+    return true;
+  }
+
+  @Override
+  public ProgramReceiveTarget[] getProgramReceiveTargets() {
+    return new ProgramReceiveTarget[] { new ProgramReceiveTarget(this,
+        FavoritesPlugin.mLocalizer.msg("programTarget", "Create favorite from title"), PROGRAM_TARGET_TITLE_FAVORITE) };
+  }
 }

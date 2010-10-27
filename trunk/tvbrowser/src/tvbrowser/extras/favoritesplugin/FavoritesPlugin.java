@@ -37,6 +37,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Properties;
@@ -957,7 +958,12 @@ public class FavoritesPlugin {
     PluginTreeNode dateNode = mRootNode.addNode(mLocalizer.msg("days", "Days"));
     dateNode.setGroupingByDateEnabled(true);
 
-    FavoriteTreeModel.getInstance().updatePluginTree(topicNode, dateNode);
+    ArrayList<Program> allPrograms = new ArrayList<Program>(1000);
+    FavoriteTreeModel.getInstance().updatePluginTree(topicNode, allPrograms);
+    HashSet<Program> allProgramsSet = new HashSet<Program>(allPrograms);
+    for (Program program : allProgramsSet) {
+      dateNode.addProgramWithoutCheck(program);
+    }
 
     mRootNode.update();
     ReminderPlugin.getInstance().updateRootNode(mHasRightToSave);
@@ -1200,6 +1206,44 @@ public class FavoritesPlugin {
 
   public void showInfoDialog() {
     mShowInfoDialog = true;
+  }
+
+  public void addTitleFavorites(Program[] programArr) {
+    // filter duplicates in exported programs
+    ArrayList<String> allTitles = new ArrayList<String>(programArr.length);
+    for (Program program : programArr) {
+      allTitles.add(program.getTitle());
+    }
+    HashSet<String> uniqueTitles = new HashSet<String>(allTitles);
+    Favorite[] allFavorites = FavoriteTreeModel.getInstance().getFavoriteArr();
+    for (String newTitle : uniqueTitles) {
+      // avoid duplicates by checking the titles of existing favorites
+      boolean found = false;
+      for (Favorite oldFavorite : allFavorites) {
+        if (oldFavorite.getName().equalsIgnoreCase(newTitle)) {
+          found = true;
+          break;
+        }
+      }
+      if (found) {
+        continue;
+      }
+      TitleFavorite favorite = new TitleFavorite(newTitle);
+      if (favorite != null) {
+        try {
+          favorite.updatePrograms();
+          FavoriteTreeModel.getInstance().addFavorite(favorite);
+
+          if(ManageFavoritesDialog.getInstance() != null) {
+            ManageFavoritesDialog.getInstance().addFavorite(favorite, null);
+          }
+        } catch (TvBrowserException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
+      }
+    }
+    saveFavorites();
   }
 
 }
