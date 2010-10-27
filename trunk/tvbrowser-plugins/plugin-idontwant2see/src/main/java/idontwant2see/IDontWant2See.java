@@ -107,6 +107,9 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
       + "(Teil \\d+)" + "|"
       + "(Teil \\d+/\\d+)" + "|"
       + "(Teil \\d+ von \\d+)" + "|"
+      + "(Folge \\d+)" + "|"
+      + "(Folge \\d+/\\d+)" + "|"
+      + "(Folge \\d+ von \\d+)" + "|"
       + "(\\d+/\\d+)" + ")\\)?" + ")|(" // or
       + "\\((" // mandatory brackets
       + "(Fortsetzung)" + "|" + "(\\d+)" + ")\\)" + "))" + "$"); // at the end
