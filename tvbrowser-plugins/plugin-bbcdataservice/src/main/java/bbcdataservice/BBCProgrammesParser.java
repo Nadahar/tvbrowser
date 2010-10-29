@@ -21,6 +21,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.TimeZone;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -40,6 +41,7 @@ import devplugin.ProgramFieldType;
 public class BBCProgrammesParser extends DefaultHandler {
 
   private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ"); // 2010-10-03T01:10:00+01:00
+  private static final SimpleDateFormat DATE_FORMAT_ZULU = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
   private static final int PROGRAMME_TYPE_EPISODE = 1;
 
@@ -121,10 +123,13 @@ public class BBCProgrammesParser extends DefaultHandler {
     try {
       String text = mText.toString().trim();
       if ("start".equalsIgnoreCase(qName)) {
+        mProgram = null;
         Date startDate = extractDate(text);
         int startTime = extractTime(text);
-        mProgram = new MutableProgram(mChannel, startDate, startTime / 60, startTime % 60, true);
-        mProgramType = 0;
+        if (startDate != null && startTime >= 0) {
+          mProgram = new MutableProgram(mChannel, startDate, startTime / 60, startTime % 60, true);
+          mProgramType = 0;
+        }
       } else if ("end".equalsIgnoreCase(qName)) {
         mProgram.setTimeField(ProgramFieldType.END_TIME_TYPE, extractTime(text));
       } else if ("duration".equalsIgnoreCase(qName)) {
@@ -207,6 +212,11 @@ public class BBCProgrammesParser extends DefaultHandler {
 
   private synchronized Calendar parseDateTime(final String time) {
     try {
+      if (time.endsWith("Z")) {
+        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+        calendar.setTime(DATE_FORMAT_ZULU.parse(time.substring(0, time.indexOf("Z"))));
+        return calendar;
+      }
       String withoutSeparator = time.substring(0, 22) + time.substring(23);
       Calendar calendar = Calendar.getInstance();
       calendar.setTime(DATE_FORMAT.parse(withoutSeparator));
