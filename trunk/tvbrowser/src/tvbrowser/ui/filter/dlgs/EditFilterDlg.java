@@ -28,7 +28,6 @@ package tvbrowser.ui.filter.dlgs;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -75,6 +74,7 @@ import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
+import com.jgoodies.forms.builder.ButtonBarBuilder2;
 import com.jgoodies.forms.factories.DefaultComponentFactory;
 
 public class EditFilterDlg extends JDialog implements ActionListener, DocumentListener, CaretListener, WindowClosingIf {
@@ -232,20 +232,20 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
     filterComponentsPanel.add(btnPanel, BorderLayout.EAST);
     filterComponentsPanel.add(ruleListBoxPanel, BorderLayout.CENTER);
 
-    JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.TRAILING));
+    ButtonBarBuilder2 bottomBar = Utilities.createFilterButtonBar();
 
     mOkBtn = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
-    buttonPanel.add(mOkBtn);
     mOkBtn.addActionListener(this);
     getRootPane().setDefaultButton(mOkBtn);
 
     mCancelBtn = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
     mCancelBtn.addActionListener(this);
-    buttonPanel.add(mCancelBtn);
+
+    bottomBar.addButton(new JButton[] {mOkBtn, mCancelBtn});
 
     contentPane.add(northPanel, BorderLayout.NORTH);
     contentPane.add(filterComponentsPanel, BorderLayout.CENTER);
-    contentPane.add(buttonPanel, BorderLayout.SOUTH);
+    contentPane.add(bottomBar.getPanel(), BorderLayout.SOUTH);
 
     if (mFilter != null) {
       mFilterNameTF.setText(mFilter.toString());
