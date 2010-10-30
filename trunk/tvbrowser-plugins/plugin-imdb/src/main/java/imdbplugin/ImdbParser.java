@@ -28,6 +28,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 
+import org.apache.commons.lang.StringUtils;
+
 import util.io.IOUtilities;
 import util.ui.Localizer;
 import util.ui.progress.ProgressInputStream;
@@ -263,7 +265,9 @@ public class ImdbParser {
 
           mDatabase.addRating(mDatabase.getOrCreateMovieId(movieTitle, episode, year), rating, votes, distribution);
 
-          histogram.addRating(rating, votes);
+          if (StringUtils.isEmpty(episode)) {
+            histogram.addRating(rating, votes);
+          }
           if (++count % STEPS_TO_REPORT_PROGRESS == 0 || count == 1) {
             monitor.setMessage(mLocalizer.msg("ratings", "Rating {0}", count));
           }
