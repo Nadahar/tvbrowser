@@ -28,7 +28,6 @@ package tvbrowser.ui.filter.dlgs;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Iterator;
@@ -79,6 +78,7 @@ import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
+import com.jgoodies.forms.builder.ButtonBarBuilder2;
 import com.jgoodies.forms.factories.DefaultComponentFactory;
 
 import devplugin.PluginAccess;
@@ -215,17 +215,16 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
     northPanel.add(descPanel);
     northPanel.add(typePanel);
 
-    JPanel buttonPn = new JPanel(new FlowLayout(FlowLayout.TRAILING));
+    ButtonBarBuilder2 bottomBar = Utilities.createFilterButtonBar();
 
     mOkBtn = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
     mOkBtn.addActionListener(this);
-    buttonPn.add(mOkBtn);
 
     getRootPane().setDefaultButton(mOkBtn);
 
     mCancelBtn = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
     mCancelBtn.addActionListener(this);
-    buttonPn.add(mCancelBtn);
+    bottomBar.addButton(new JButton[] {mOkBtn, mCancelBtn});
 
     JPanel panel = new JPanel(new BorderLayout());
     panel.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("componentSettings", "Component settings:")), BorderLayout.NORTH);
@@ -234,7 +233,7 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
     panel.add(mCenterPanel, BorderLayout.CENTER);
 
     mContentPane.add(northPanel, BorderLayout.NORTH);
-    mContentPane.add(buttonPn, BorderLayout.SOUTH);
+    mContentPane.add(bottomBar.getPanel(), BorderLayout.SOUTH);
     mContentPane.add(panel, BorderLayout.CENTER);
 
     if (comp != null) {
