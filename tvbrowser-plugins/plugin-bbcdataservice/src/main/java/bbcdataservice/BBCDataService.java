@@ -61,7 +61,7 @@ public final class BBCDataService extends AbstractTvDataService {
   private static final String NUMBER_OF_CHANNELS = "NumberOfChannels";
   private static final String PROGRAMMES_URL = "http://www.bbc.co.uk";
   private static final boolean IS_STABLE = false;
-  private static final Version mVersion = new Version(2, 70, 0, IS_STABLE);
+  private static final Version mVersion = new Version(3, 0, 0, IS_STABLE);
 
   /**
    * created lazily on first access
