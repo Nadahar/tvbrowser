@@ -38,10 +38,13 @@ import tvdataservice.SettingsPanel;
 
 import com.jgoodies.forms.factories.Borders;
 
-public class ConfigDataServiceSettingsTab implements devplugin.CancelableSettingsTab {
+public class ConfigDataServiceSettingsTab extends AbstractSettingsTab implements devplugin.CancelableSettingsTab {
 
   private TvDataServiceProxy mDataService;
   private SettingsPanel mSettingsPanel;
+
+  private static final util.ui.Localizer mLocalizer
+  = util.ui.Localizer.getLocalizerFor(ConfigDataServiceSettingsTab.class);
 
   public ConfigDataServiceSettingsTab(TvDataServiceProxy dataService) {
     mDataService=dataService;
@@ -59,6 +62,11 @@ public class ConfigDataServiceSettingsTab implements devplugin.CancelableSetting
 
     if (mSettingsPanel!=null) {
       mainPn.add(mSettingsPanel,BorderLayout.CENTER);
+    }
+    else {
+      JPanel centerPn=new JPanel(new BorderLayout());
+      centerPn.add(createEmptyPanel(mLocalizer.msg("noSettings", "No settings"), mLocalizer.msg("noSettings.text", "This plugin has no settings.")), BorderLayout.NORTH);
+      mainPn.add(centerPn, BorderLayout.CENTER);
     }
     return mainPn;
   }
