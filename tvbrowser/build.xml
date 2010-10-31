@@ -311,8 +311,6 @@
     <unjar src="${lib.dir}/${lib.looks.name}-${lib.looks.version}.jar" dest="${unpacked.dir}/${lib.looks.name}.jar"/>
     <unjar src="${lib.dir}/${lib.tasks.name}-${lib.tasks.version}.jar" dest="${unpacked.dir}/${lib.tasks.name}.jar"/>
     <unjar src="${lib.dir}/${lib.jregistrykey.name}-${lib.jregistrykey.version}.jar" dest="${unpacked.dir}/${lib.jregistrykey.name}.jar" />
-    <unjar src="${lib.dir}/${lib.tvanytime.name}-${lib.tvanytime.version}.jar" dest="${unpacked.dir}/${lib.tvanytime.name}.jar" />
-    <unjar src="${lib.dir}/${lib.commons.compress.name}-${lib.commons.compress.version}.jar" dest="${unpacked.dir}/${lib.commons.compress.name}.jar" />
     <unjar src="${lib.dir}/${lib.commons.codec.name}-${lib.commons.codec.version}.jar" dest="${unpacked.dir}/${lib.commons.codec.name}.jar" />
     <unjar src="${lib.dir}/${lib.commons.lang.name}-${lib.commons.lang.version}.jar" dest="${unpacked.dir}/${lib.commons.lang.name}.jar" />
     <unjar src="${lib.dir}/${lib.gdata.calendar.name}-${lib.gdata.calendar.version}.jar" dest="${unpacked.dir}/${lib.gdata.calendar.name}.jar" />
@@ -449,12 +447,6 @@
             <fileset dir="${classes.dir}" includes="swedbtvdataservice/**" />
     </jar>
 
-    <!-- Pack BBC data service -->
-    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/BbcBackstageDataService.jar" compress="true">
-            <fileset dir="${classes.dir}" includes="bbcbackstagedataservice/**" />
-            <fileset dir="${unpacked.dir}/${lib.tvanytime.name}.jar" includes="bbc/**" />
-            <fileset dir="${unpacked.dir}/${lib.commons.compress.name}.jar" includes="**" />
-    </jar>
     <!-- Pack RadioTimes data service -->
     <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/RadioTimesDataService.jar" compress="true">
             <fileset dir="${classes.dir}" includes="radiotimesdataservice/**" />
@@ -1229,11 +1221,6 @@
 			<param name="lib" value="commons.codec"/>
 		</antcall>
 
-		<!-- commons compress -->
-		<antcall target="download-zipped-lib">
-			<param name="lib" value="commons.compress"/>
-		</antcall>
-
 		<!-- commons lang -->
 		<antcall target="download-zipped-lib">
 			<param name="lib" value="commons.lang"/>
@@ -1326,11 +1313,6 @@
 		<!-- texhyphj -->
 		<antcall target="download-zipped-lib">
 			<param name="lib" value="texhyphj"/>
-		</antcall>
-
-		<!-- TVAnytime -->
-		<antcall target="download-zipped-lib">
-			<param name="lib" value="tvanytime"/>
 		</antcall>
 
 		<!-- xtvd -->
