@@ -50,17 +50,17 @@ import com.jgoodies.forms.layout.CellConstraints;
 
 import devplugin.CancelableSettingsTab;
 
-public class ConfigPluginSettingsTab implements CancelableSettingsTab {
- 
+public class ConfigPluginSettingsTab extends AbstractSettingsTab implements CancelableSettingsTab {
+
   private static final util.ui.Localizer mLocalizer
      = util.ui.Localizer.getLocalizerFor(ConfigPluginSettingsTab.class);
 
- 
+
   private PluginProxy mPlugin;
-  
+
   private SettingsTabProxy mSettingsTab;
   private JPanel mContentPanel;
-  
+
   /**
    * Specifies whether the plugin was activated last time the content panel was
    * created.
@@ -76,20 +76,20 @@ public class ConfigPluginSettingsTab implements CancelableSettingsTab {
     } else {
       mSettingsTab = null;
     }
-    
+
   }
-  
-  
+
+
   public JPanel createSettingsPanel() {
     mContentPanel=new JPanel(new BorderLayout());
     mContentPanel.setBorder(Borders.DIALOG_BORDER);
     PluginInfoPanel pluginInfoPanel=new PluginInfoPanel(mPlugin.getInfo(), mSettingsTab != null);
     pluginInfoPanel.setDefaultBorder(true);
     mContentPanel.add(pluginInfoPanel,BorderLayout.NORTH);
-    
+
     updatePluginPanel();
     mContentPanel.add(mPluginPanel,BorderLayout.CENTER);
-    
+
     return mContentPanel;
   }
 
@@ -118,22 +118,20 @@ public class ConfigPluginSettingsTab implements CancelableSettingsTab {
       }
       // active plugin with no settings
       else {
-        EnhancedPanelBuilder panel = new EnhancedPanelBuilder(FormFactory.RELATED_GAP_COLSPEC.encode() + ",pref:grow");
-        panel.addParagraph(mLocalizer.msg("noSettings", "No settings"));
-        panel.addRow();
-        panel.add(new JLabel(mLocalizer.msg("noSettings.text", "This plugin has no settings.")), new CellConstraints().xy(2, panel.getRow()));
-        mPluginPanel.add(panel.getPanel(), BorderLayout.NORTH);
+        mPluginPanel.add(createEmptyPanel(mLocalizer.msg("noSettings", "No settings"), mLocalizer.msg("noSettings.text", "This plugin has no settings.")), BorderLayout.NORTH);
       }
-    } else if (!Settings.propBlockedPluginArray.isBlocked(mPlugin)) {
+    } else if (Settings.propBlockedPluginArray.isBlocked(mPlugin)) {
+      mPluginPanel.add(createEmptyPanel(mLocalizer.msg("blocked", "Blocked"), mLocalizer.msg("blocked.text", "This plugin is blocked and cannot be activated.")), BorderLayout.NORTH);
+    } else {
       // The plugin is not activated -> Tell it the user
       EnhancedPanelBuilder panelActivate = new EnhancedPanelBuilder(FormFactory.RELATED_GAP_COLSPEC.encode() + "," + FormFactory.PREF_COLSPEC.encode() + "," + FormFactory.RELATED_GAP_COLSPEC.encode() + "," + FormFactory.PREF_COLSPEC.encode() + ",default:grow");
       CellConstraints cc = new CellConstraints();
 
       panelActivate.addParagraph(mLocalizer.msg("activation", "Activation"));
-      
+
       panelActivate.addRow();
       panelActivate.add(new JLabel(mLocalizer.msg("notactivated", "This Plugin is currently not activated.")), cc.xy(2, panelActivate.getRow()));
-      
+
       final JButton btnActivate = new JButton(mLocalizer.msg("activate", "Activate"));
       btnActivate.addActionListener(new ActionListener() {
 
@@ -154,24 +152,17 @@ public class ConfigPluginSettingsTab implements CancelableSettingsTab {
             e1.printStackTrace();
           }
         }});
-      
+
       panelActivate.add(btnActivate, cc.xy(4, panelActivate.getRow()));
       mPluginPanel.add(panelActivate.getPanel(), BorderLayout.NORTH);
     }
-    else {
-      EnhancedPanelBuilder panel = new EnhancedPanelBuilder(FormFactory.RELATED_GAP_COLSPEC.encode() + ",pref:grow");
-      panel.addParagraph(mLocalizer.msg("blocked", "Blocked"));
-      panel.addRow();
-      panel.add(new JLabel(mLocalizer.msg("blocked.text", "This plugin is blocked and cannot be activated.")), new CellConstraints().xy(2, panel.getRow()));
-      mPluginPanel.add(panel.getPanel(), BorderLayout.NORTH);
-    }
-    
+
     mPluginWasActivatedLastTime = mPlugin.isActivated();
 
     mContentPanel.repaint();
   }
 
-  
+
   /**
    * Called by the host-application, if the user wants to save the settings.
    */
@@ -206,7 +197,7 @@ public class ConfigPluginSettingsTab implements CancelableSettingsTab {
   public String getTitle() {
     return mPlugin.getInfo().getName();
   }
-  
+
 
   public void cancel() {
     if (mSettingsTab != null) {
