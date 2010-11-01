@@ -1,16 +1,16 @@
 /*
  * Copyright Michael Keppler
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -53,6 +53,16 @@ public class PersonsCheck extends AbstractCheck {
           if (person.contains("und andere")) {
           	addError(mLocalizer.msg("name.andothers", "Actor list contains 'and others'"));
           }
+          boolean alpha = false;
+          for (int i = 0; i < person.length(); i++) {
+            if (Character.isLetter(person.charAt(i))) {
+              alpha = true;
+              break;
+            }
+          }
+          if (!alpha) {
+            addError(mLocalizer.msg("name.noLetters", "Person name without letters in {0}", fieldType.getLocalizedName()));
+          }
         }
         HashSet<String> set = new HashSet<String>(Arrays.asList(persons));
         if (set.size() != persons.length) {
@@ -64,7 +74,7 @@ public class PersonsCheck extends AbstractCheck {
 
   /**
    * extract a list of person names out of the given string
-   * 
+   *
    * @param field
    * @return list of person names
    */
