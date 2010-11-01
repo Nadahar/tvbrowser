@@ -53,6 +53,16 @@ public final class TVBrowserActions {
     }
   };
 
+  public final static TVBrowserAction fontSizeLargerNumPad = new TVBrowserAction("fontSizeLargerNumPad", TVBrowserIcons
+      .zoomIn(TVBrowserIcons.SIZE_SMALL), TVBrowserIcons.zoomIn(TVBrowserIcons.SIZE_LARGE), KeyEvent.VK_ADD, Toolkit
+      .getDefaultToolkit().getMenuShortcutKeyMask(), ToolBar.BUTTON_ACTION) {
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      fontSizeLarger.actionPerformed(e);
+    }
+  };
+
   /**
    * decrease program table font size
    */
@@ -67,6 +77,19 @@ public final class TVBrowserActions {
   };
 
   /**
+   * decrease program table font size
+   */
+  public final static TVBrowserAction fontSizeSmallerNumPad = new TVBrowserAction("fontSizeSmallerNumPad", TVBrowserIcons
+      .zoomOut(TVBrowserIcons.SIZE_SMALL), TVBrowserIcons.zoomOut(TVBrowserIcons.SIZE_LARGE), KeyEvent.VK_SUBTRACT,
+      Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), ToolBar.BUTTON_ACTION) {
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      fontSizeSmaller.actionPerformed(e);
+    }
+  };
+
+  /**
    * set program table font size to default
    */
   public final static TVBrowserAction fontSizeDefault = new TVBrowserAction("fontSizeDefault", KeyEvent.VK_0, Toolkit
@@ -75,6 +98,18 @@ public final class TVBrowserActions {
     @Override
     public void actionPerformed(ActionEvent e) {
       MainFrame.getInstance().changeFontSize(0);
+    }
+  };
+
+  /**
+   * set program table font size to default
+   */
+  public final static TVBrowserAction fontSizeDefaultNumPad = new TVBrowserAction("fontSizeDefaultNumPad", KeyEvent.VK_NUMPAD0, Toolkit
+      .getDefaultToolkit().getMenuShortcutKeyMask()) {
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      fontSizeDefault.actionPerformed(e);
     }
   };
 
@@ -92,6 +127,19 @@ public final class TVBrowserActions {
   };
 
   /**
+   * increase program table column width
+   */
+  public final static TVBrowserAction columnWidthLargerNumPad = new TVBrowserAction("columnWidthLargerNumPad", TVBrowserIcons
+      .zoomIn(TVBrowserIcons.SIZE_SMALL), TVBrowserIcons.zoomIn(TVBrowserIcons.SIZE_LARGE), KeyEvent.VK_ADD,
+      InputEvent.ALT_MASK, ToolBar.BUTTON_ACTION) {
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      columnWidthLarger.actionPerformed(e);
+    }
+  };
+
+  /**
    * decrease program table column width
    */
   public final static TVBrowserAction columnWidthSmaller = new TVBrowserAction("columnWidthSmaller", TVBrowserIcons
@@ -105,6 +153,19 @@ public final class TVBrowserActions {
   };
 
   /**
+   * decrease program table column width
+   */
+  public final static TVBrowserAction columnWidthSmallerNumPad = new TVBrowserAction("columnWidthSmallerNumPad", TVBrowserIcons
+      .zoomOut(TVBrowserIcons.SIZE_SMALL), TVBrowserIcons.zoomOut(TVBrowserIcons.SIZE_LARGE), KeyEvent.VK_SUBTRACT,
+      InputEvent.ALT_MASK, ToolBar.BUTTON_ACTION) {
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      columnWidthSmaller.actionPerformed(e);
+    }
+  };
+
+  /**
    * set column width to default size
    */
   public final static TVBrowserAction columnWidthDefault = new TVBrowserAction("columnWidthDefault", KeyEvent.VK_0,
@@ -113,6 +174,18 @@ public final class TVBrowserActions {
     @Override
     public void actionPerformed(ActionEvent e) {
       MainFrame.getInstance().changeColumnWidth(0);
+    }
+  };
+
+  /**
+   * set column width to default size
+   */
+  public final static TVBrowserAction columnWidthDefaultNumPad = new TVBrowserAction("columnWidthDefaultNumPad", KeyEvent.VK_NUMPAD0,
+      InputEvent.ALT_MASK) {
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      columnWidthDefault.actionPerformed(e);
     }
   };
 
