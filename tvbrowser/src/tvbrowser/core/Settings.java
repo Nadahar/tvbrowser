@@ -943,16 +943,16 @@ public class Settings {
       "tablebackground.timeBlock.size", 2);
 
   public static final StringProperty propTimeBlockBackground1 = new StringProperty(
-      mProp, "tablebackground.timeBlock.image1", "imgs/time_block_white.jpg");//imgs/columns_evening.jpg
+      mProp, "tablebackground.timeBlock.image1", "imgs/time_block_white.png");
 
   public static final StringProperty propTimeBlockBackground2 = new StringProperty(
-      mProp, "tablebackground.timeBlock.image2", "imgs/time_block_gray.jpg");//imgs/columns_afternoon.jpg
+      mProp, "tablebackground.timeBlock.image2", "imgs/time_block_gray.png");
 
   public static final StringProperty propTimeBlockWestImage1 = new StringProperty(
-      mProp, "tablebackground.timeBlock.west1", "imgs/time_block_white.jpg");//imgs/columns_evening.jpg
+      mProp, "tablebackground.timeBlock.west1", "imgs/time_block_white.png");
 
   public static final StringProperty propTimeBlockWestImage2 = new StringProperty(
-      mProp, "tablebackground.timeBlock.west2", "imgs/time_block_gray.jpg");//imgs/columns_afternoon.jpg
+      mProp, "tablebackground.timeBlock.west2", "imgs/time_block_gray.png");
 
   public static final BooleanProperty propTimeBlockShowWest = new BooleanProperty(
       mProp, "tablebackground.timeBlock.showWest", true);

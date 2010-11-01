@@ -36,8 +36,8 @@ import tvbrowser.ui.programtable.ProgramTableLayout;
 import tvbrowser.ui.programtable.ProgramTableModel;
 
 /**
- * 
- * 
+ *
+ *
  * @author Til Schneider, www.murfman.de
  */
 public abstract class AbstractBackPainter implements BackgroundPainter {
@@ -61,22 +61,19 @@ public abstract class AbstractBackPainter implements BackgroundPainter {
         // Nothing to do
         return;
       }
-      
+
       int imgWidth = img.getWidth(null);
       int imgHeight = img.getHeight(null);
       if ((imgWidth < 1) || (imgHeight < 1)) {
         // Illegal image size
         return;
       }
-      
+
       int minY = Math.max(y, clipBounds.y - ((clipBounds.y - y) % imgHeight));
       int maxY = Math.min(y + height, clipBounds.y + clipBounds.height);
-//      for (int px = x; px < x + width; px += imgWidth) {
-      int px = x;
-        for (int py = minY; py < maxY; py += imgHeight) {
-          grp.drawImage(img, px, py, null);
-        }
-//      }
+      for (int py = minY; py < maxY; py += imgHeight) {
+        grp.drawImage(img, x, py, null);
+      }
     }
   }
 
@@ -84,7 +81,7 @@ public abstract class AbstractBackPainter implements BackgroundPainter {
    * Gets the component that should be shown in the west of the table.
    * <p>
    * If nothing should be shown in the west, null is returned.
-   * 
+   *
    * @return The table west.
    */
   public JComponent getTableWest() {
