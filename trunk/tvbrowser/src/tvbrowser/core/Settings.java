@@ -45,7 +45,6 @@ import java.util.logging.Logger;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 
@@ -146,7 +145,7 @@ public class Settings {
   private static boolean mShowSettingsCopyWaiting;
 
   private static HashMap<String,WindowSetting> mWindowSettings;
-  
+
   private static boolean mCopyToSystem = false;
 
  /**
@@ -165,12 +164,12 @@ public class Settings {
   public static void copyToSystem() {
     final File currentSettingsDir = new File(getUserSettingsDirName());
     final File currentTvDataDir = new File(getDefaultTvDataDir());
-    
+
     mCopyToSystem = MainFrame.getInstance().getUserRequestCopyToSystem();
-    
-    if(mCopyToSystem) {      
+
+    if(mCopyToSystem) {
       Properties prop = new Properties();
-      
+
       if(OperatingSystem.isMacOs()) {
         prop.setProperty("userdir","${user.home}/Library/Preferences/TV-Browser");
         prop.setProperty("tvdatadir","${user.home}/Library/Application Support/TV-Browser/tvdata");
@@ -184,12 +183,12 @@ public class Settings {
         prop.setProperty("userdir","${user.appdata}/TV-Browser");
         prop.setProperty("tvdatadir","${user.appdata}/TV-Browser/tvdata");
       }
-      
+
       mDefaultSettings = new DefaultSettings(prop);
 
       final File targetSettingsDir = new File(getUserSettingsDirName());
       final File targetTvDataDir = new File(getDefaultTvDataDir());
-      
+
       if(new File(getUserSettingsDirName(),SETTINGS_FILE).isFile()) {
         String[] options = {MainFrame.mLocalizer.msg("continue","Continue"),
                             MainFrame.mLocalizer.msg("stop","Cancel copying now")};
@@ -201,15 +200,15 @@ public class Settings {
       else if(!targetSettingsDir.isDirectory()){
         mCopyToSystem = targetSettingsDir.mkdirs();
       }
-      
+
       if(!targetTvDataDir.isDirectory()) {
         mCopyToSystem = targetTvDataDir.mkdirs();
       }
-      
+
       if(mCopyToSystem) {
         try {
           final CopyWaitingDlg waiting = new CopyWaitingDlg(new JFrame(), CopyWaitingDlg.EXPORT_SETTINGS_MSG);
-          
+
           mLog.info("Copy settings and TV data from TV-Browser transportable to system");
 
           mShowWaiting = true;
@@ -243,7 +242,7 @@ public class Settings {
       }
     }
   }
-  
+
   /**
    * Returns the user directory. (e.g.: ~/.tvbrowser/)
    */
@@ -341,7 +340,7 @@ public class Settings {
           }
         });
   }
-  
+
   private static void startImportWaitingDlg() {
     mShowSettingsCopyWaiting = true;
 
@@ -436,6 +435,7 @@ public class Settings {
               mLog.info("Could not read settings - using default user settings");
             } else {
               try {
+                loadWindowSettings();
                 storeSettings(true);
               }catch(Exception e) {}
             }
@@ -456,27 +456,27 @@ public class Settings {
       int countValue = 1;
 
       String firstDir = System.getProperty("user.home") + "/TV-Browser";
-      
+
       if(Launch.isOsWindowsNtBranch()) {
         countValue = 3;
       }
-      
+
       if(OperatingSystem.isWindows()) {
         File test = new File(System.getenv("appdata"),"TV-Browser");
-        
+
         if(test.isDirectory()) {
           firstDir = test.getAbsolutePath();
         }
       }
-           
+
       String[] directories = {getUserDirectoryName(),firstDir,System.getProperty("user.home") + "/TV-Browser",System.getProperty("user.home") + "/Library/Preferences/TV-Browser", System.getProperty("user.home") + "/.tvbrowser"};
-      
+
       for(int j = 0; j < (TVBrowser.isTransportable() ? directories.length : countValue); j++) {
         String[] allVersions = TVBrowser.getAllVersionStrings();
         for (int i = (j == 0 ? 1 : 0); i < allVersions.length; i++) {
           testFile = new File(directories[j] + File.separator +
               allVersions[i], SETTINGS_FILE);
-          
+
           if(testFile.isFile()) {
             oldDir = new File(directories[j], allVersions[i]);
             break;
@@ -501,12 +501,12 @@ public class Settings {
           break;
         }
       }
-      
+
       if (oldDir != null && oldDir.isDirectory() && oldDir.exists() && TVBrowser.isTransportable() && !oldDir.getAbsolutePath().startsWith(new File("settings").getAbsolutePath())) {
         try {
           UIManager.setLookAndFeel(getDefaultLookAndFeelClassName());
         }catch(Exception e) { /*ignore*/}
-        
+
         String[] options = {MainFrame.mLocalizer.msg("import","Import settings"),
             MainFrame.mLocalizer.msg("configureNew","Create new configuration")};
         String title = MainFrame.mLocalizer.msg("importInfoTitle","Import settings?");
@@ -520,7 +520,7 @@ public class Settings {
       if (oldDir != null && oldDir.isDirectory() && oldDir.exists()) {
         startImportWaitingDlg();
         mLog.info("Try to load settings from a previous version of TV-Browser: " + oldDir);
-        
+
         final File newDir = new File(getUserSettingsDirName());
 
         File oldTvDataDir = null;
@@ -1003,12 +1003,12 @@ public class Settings {
 
   public static final BooleanProperty propNowOnRestore = new BooleanProperty(
   		mProp, "jumpNowOnRestore",true);
-    
+
   public static final BooleanProperty propTrayFilterNotMarked = new BooleanProperty(
-      mProp, "trayFilterNotMarked",false);  
+      mProp, "trayFilterNotMarked",false);
 
   public static final BooleanProperty propTrayFilterNot = new BooleanProperty(
-      mProp, "trayFilterAll",false);  
+      mProp, "trayFilterAll",false);
 
   /*
    * Channel settings for the tray.
@@ -1718,7 +1718,7 @@ public class Settings {
    */
   public static final BooleanProperty propChannelsWereConfigured = new BooleanProperty(
       mProp, "channelsWereConfigured", false);
-  
+
   /**
    * Stores if beta warining is enabled for plugin update.
    * @since 3.0
