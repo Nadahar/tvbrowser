@@ -61,7 +61,8 @@ import devplugin.Channel;
 public class ChannelList {
 
   private static final String[] DEFAULT_CHANNELS_DE = new String[] {
-      "tvbrowserdataservice.TvBrowserDataService_main_de_ard", "tvbrowserdataservice.TvBrowserDataService_main_de_zdf",
+      "tvbrowserdataservice.TvBrowserDataService_main_de_ard", 
+      "tvbrowserdataservice.TvBrowserDataService_main_de_zdf",
       "tvbrowserdataservice.TvBrowserDataService_main_de_rtl",
       "tvbrowserdataservice.TvBrowserDataService_main_de_sat1",
       "tvbrowserdataservice.TvBrowserDataService_main_de_pro7",
@@ -79,10 +80,11 @@ public class ChannelList {
     "tvbrowserdataservice.TvBrowserDataService_main_de_rtl",
     "tvbrowserdataservice.TvBrowserDataService_main_de_sat1",
     "tvbrowserdataservice.TvBrowserDataService_main_de_pro7",
+    "tvbrowserdataservice.TvBrowserDataService_main_de_vox",
+    "tvbrowserdataservice.TvBrowserDataService_austria_at_atvplus",
+    "tvbrowserdataservice.TvBrowserDataService_austria_at_puls4",
     "tvbrowserdataservice.TvBrowserDataService_main_de_kabel1",
     "tvbrowserdataservice.TvBrowserDataService_main_de_rtl2",
-    "tvbrowserdataservice.TvBrowserDataService_main_de_vox",
-    "tvbrowserdataservice.TvBrowserDataService_main_de_superrtl",
     "tvbrowserdataservice.TvBrowserDataService_others_at_3sat" };
 
   private static final String[] DEFAULT_CHANNELS_CH = new String[] {
@@ -94,11 +96,66 @@ public class ChannelList {
     "tvbrowserdataservice.TvBrowserDataService_main_de_rtl",
     "tvbrowserdataservice.TvBrowserDataService_main_de_sat1",
     "tvbrowserdataservice.TvBrowserDataService_main_de_pro7",
+    "tvbrowserdataservice.TvBrowserDataService_austria_at_orf1",
+    "tvbrowserdataservice.TvBrowserDataService_bronkotv_ch_3plus",
+    "tvbrowserdataservice.TvBrowserDataService_main_de_vox",
     "tvbrowserdataservice.TvBrowserDataService_main_de_kabel1",
     "tvbrowserdataservice.TvBrowserDataService_main_de_rtl2",
-    "tvbrowserdataservice.TvBrowserDataService_main_de_vox",
     "tvbrowserdataservice.TvBrowserDataService_main_de_superrtl",
     "tvbrowserdataservice.TvBrowserDataService_others_at_3sat" };
+  
+  private static final String[] DEFAULT_CHANNELS_SE = new String[] {
+    "swedbtvdataservice.SweDBTvDataService_SweDB_se_svt1.svt.se",
+    "swedbtvdataservice.SweDBTvDataService_SweDB_se_svt2.svt.se",
+    "swedbtvdataservice.SweDBTvDataService_SweDB_se_tv3.viasat.se",
+    "swedbtvdataservice.SweDBTvDataService_SweDB_se_tv4.se",
+    "swedbtvdataservice.SweDBTvDataService_SweDB_se_kanal5.se",
+    "swedbtvdataservice.SweDBTvDataService_SweDB_se_tv6.viasat.se",
+    "swedbtvdataservice.SweDBTvDataService_SweDB_se_plus.tv4.se",
+    "swedbtvdataservice.SweDBTvDataService_SweDB_se_tv8.se",
+    "swedbtvdataservice.SweDBTvDataService_SweDB_se_kanal9.se",
+    "swedbtvdataservice.SweDBTvDataService_SweDB_se_svtb-svt24.svt.se" };
+  
+  private static final String[] DEFAULT_CHANNELS_GB = new String[] {
+    "radiotimesdataservice.RadioTimesDataService_radiotimes_gb_RADIOTIMES92", //BBC1
+    "radiotimesdataservice.RadioTimesDataService_radiotimes_gb_RADIOTIMES105", //BBC2
+    "radiotimesdataservice.RadioTimesDataService_radiotimes_gb_RADIOTIMES26", //ITV1 Ld
+    "radiotimesdataservice.RadioTimesDataService_radiotimes_gb_RADIOTIMES132", //Ch4
+    "radiotimesdataservice.RadioTimesDataService_radiotimes_gb_RADIOTIMES134", //Five
+    "radiotimesdataservice.RadioTimesDataService_radiotimes_gb_RADIOTIMES45", //BBC3
+    "radiotimesdataservice.RadioTimesDataService_radiotimes_gb_RADIOTIMES47", //BBC4
+    "radiotimesdataservice.RadioTimesDataService_radiotimes_gb_RADIOTIMES185", //ITV2
+    "radiotimesdataservice.RadioTimesDataService_radiotimes_gb_RADIOTIMES1859", //ITV3
+    "radiotimesdataservice.RadioTimesDataService_radiotimes_gb_RADIOTIMES1961", //ITV4
+    "radiotimesdataservice.RadioTimesDataService_radiotimes_gb_RADIOTIMES158", //E4    
+  };
+  
+  private static final String[] DEFAULT_CHANNELS_NO = new String[] {
+    "tvbrowserdataservice.TvBrowserDataService_norge_no_NRK1",
+    "tvbrowserdataservice.TvBrowserDataService_norge_no_TV2",
+    "tvbrowserdataservice.TvBrowserDataService_norge_no_TV3",
+    "swedbtvdataservice.SweDBTvDataService_MSPC_no_tvnorge.no",
+    "tvbrowserdataservice.TvBrowserDataService_norge_no_NRK2",
+    "tvbrowserdataservice.TvBrowserDataService_norge_no_NRK3",
+    "tvbrowserdataservice.TvBrowserDataService_norge_no_Viasat-4",
+    "swedbtvdataservice.SweDBTvDataService_MSPC_no_femtv.no",
+    "tvbrowserdataservice.TvBrowserDataService_norge_no_TV2Zebra",
+    "tvbrowserdataservice.TvBrowserDataService_norge_no_NRK-Super-TV",
+    "swedbtvdataservice.SweDBTvDataService_SweDB_se_svt1.svt.se" };
+  
+  private static final String[] DEFAULT_CHANNELS_DK = new String[] {
+    "tvbrowserdataservice.TvBrowserDataService_Euro-TV_dk_DR1",
+    "tvbrowserdataservice.TvBrowserDataService_Euro-TV_dk_TV-2",
+    "tvbrowserdataservice.TvBrowserDataService_Euro-TV_dk_TV3",
+    "tvbrowserdataservice.TvBrowserDataService_Euro-TV_dk_DR2",
+    "tvbrowserdataservice.TvBrowserDataService_Euro-TV_dk_TV-2.Charlie",
+    "tvbrowserdataservice.TvBrowserDataService_Euro-TV_dk_TV-2.Zulu",
+    "tvbrowserdataservice.TvBrowserDataService_Euro-TV_dk_TV3+",
+    "tvbrowserdataservice.TvBrowserDataService_Euro-TV_dk_Kanal4",
+    "tvbrowserdataservice.TvBrowserDataService_Euro-TV_dk_Kanal5",
+    "tvbrowserdataservice.TvBrowserDataService_Euro-TV_dk_SBSNET",
+    "tvbrowserdataservice.TvBrowserDataService_Euro-TV_dk_DR.K",
+    "tvbrowserdataservice.TvBrowserDataService_Euro-TV_dk_DR.Ramasjang" };
 
   private static final String FILENAME_DAYLIGHT_CORRECTION = "daylight_correction.txt";
 
@@ -956,6 +1013,18 @@ public class ChannelList {
     }
     else if (country.equalsIgnoreCase("ch")) {
       addChannels(list, DEFAULT_CHANNELS_CH);
+    }
+    else if (country.equalsIgnoreCase("gb")) {
+      addChannels(list, DEFAULT_CHANNELS_GB);
+    }
+    else if (country.equalsIgnoreCase("se")) {
+      addChannels(list, DEFAULT_CHANNELS_SE);
+    }
+    else if (country.equalsIgnoreCase("no")) {
+      addChannels(list, DEFAULT_CHANNELS_NO);
+    }
+    else if (country.equalsIgnoreCase("dk")) {
+      addChannels(list, DEFAULT_CHANNELS_DK);
     }
     return list.toArray(new Channel[list.size()]);
   }
