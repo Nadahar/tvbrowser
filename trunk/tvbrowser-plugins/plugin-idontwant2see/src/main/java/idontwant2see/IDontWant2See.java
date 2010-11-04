@@ -34,6 +34,7 @@ import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -44,15 +45,17 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRootPane;
-import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
+
+import org.apache.commons.lang.StringUtils;
 
 import util.ui.Localizer;
 import util.ui.UiUtilities;
@@ -101,19 +104,32 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
   private HashMap<Program, Boolean> mMatchCache = new HashMap<Program, Boolean>(
 			1000);
 
-  private static final Pattern PATTERN_TITLE_PART = Pattern.compile("(.*)"
-      + "((" // one of two alternatives
-      + "\\(?(" // optional brackets
+  private static final Pattern PATTERN_TITLE_PART = Pattern.compile(
+      "(?i)" // case insensitive matching
+      + "(.*)" // ignore everything at the beginning
+      + "((" // have two alternatives: optional and mandatory brackets
+      + "\\(?(" // optional brackets begin
       + "(Teil \\d+)" + "|"
       + "(Teil \\d+/\\d+)" + "|"
       + "(Teil \\d+ von \\d+)" + "|"
       + "(Folge \\d+)" + "|"
       + "(Folge \\d+/\\d+)" + "|"
       + "(Folge \\d+ von \\d+)" + "|"
-      + "(\\d+/\\d+)" + ")\\)?" + ")|(" // or
-      + "\\((" // mandatory brackets
-      + "(Fortsetzung)" + "|" + "(\\d+)" + ")\\)" + "))" + "$"); // at the end
-                                                                 // only
+      + "(Best of)" + "|"
+      + "(\\d+/\\d+)" + "|"
+      + "(\\sI)" + "|" // 1
+      + "(\\sII)" + "|" // 2
+      + "(\\sIII)" + "|" // 3
+      + "(\\sIV)" + "|" // 4
+      + "(\\sV)" // 5
+      + ")\\)?" // optional brackets end
+      + ")|(" // 2. alternative: mandatory brackets
+      + "\\((" // mandatory brackets begin
+      + "(Fortsetzung)" + "|"
+      + "(\\d+)"
+      + ")\\)" // mandatory brackets end
+      + "))"
+      + "$"); // at the end only
 
   public static Version getVersion() {
     return PLUGIN_VERSION;
@@ -329,7 +345,7 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
       if (mSettings.isSimpleMenu() && !mCtrlPressed) {
         final Matcher matcher = PATTERN_TITLE_PART.matcher(p.getTitle());
         if (matcher.matches()) {
-          actionDontWant = getActionInputTitle(p);
+          actionDontWant = getActionInputTitle(p, matcher.group(2));
         }
         actionDontWant.putValue(Action.NAME,mLocalizer.msg("name","I don't want to see!"));
         actionDontWant.putValue(Action.SMALL_ICON,createImageIcon("apps","idontwant2see",16));
@@ -337,7 +353,7 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
         return new ActionMenu(actionDontWant);
       }
       else {
-        final AbstractAction actionInput = getActionInputTitle(p);
+        final AbstractAction actionInput = getActionInputTitle(p, null);
         final ContextMenuAction baseAction = new ContextMenuAction(mLocalizer
             .msg("name", "I don't want to see!"),
             createImageIcon("apps","idontwant2see",16));
@@ -363,14 +379,28 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
     };
   }
 
-  private AbstractAction getActionInputTitle(final Program p) {
+  private AbstractAction getActionInputTitle(final Program p, final String part) {
     return new AbstractAction(mLocalizer.msg("menu.userEntered",
         "User entered value")) {
       public void actionPerformed(final ActionEvent e) {
         final JCheckBox caseSensitive = new JCheckBox(mLocalizer.msg(
             "caseSensitive",
             "case sensitive"));
-        final JTextField input = new JTextField(p.getTitle());
+        String title = p.getTitle();
+        ArrayList<String> items = new ArrayList<String>();
+        if (!StringUtils.isEmpty(part)) {
+          String shortTitle = title.trim().substring(0, title.length() - part.length()).trim();
+          shortTitle = StringUtils.removeEnd(shortTitle, "-").trim();
+          shortTitle = StringUtils.removeEnd(shortTitle, "(").trim();
+          items.add(shortTitle + "*");
+        }
+        int index = title.indexOf(" - ");
+        if (index > 0) {
+          items.add(title.substring(0, index).trim()+"*");
+        }
+        items.add(title);
+        final JComboBox input = new JComboBox(items.toArray(new String[items.size()]));
+        input.setEditable(true);
 
         input.addAncestorListener(new AncestorListener() {
           public void ancestorAdded(final AncestorEvent event) {
@@ -392,13 +422,14 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
             "Exclusion value entering"), JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
           String test = "";
 
-          if (input.getText() != null) {
-            test = input.getText().replaceAll("\\*+", "\\*").trim();
+          String result = (String) input.getSelectedItem();
+          if (result != null) {
+            test = result.replaceAll("\\*+", "\\*").trim();
 
             if (test.length() >= 0 && !test.equals("*")) {
-              mSettings.getSearchList().add(new IDontWant2SeeListEntry(input.getText(),
+              mSettings.getSearchList().add(new IDontWant2SeeListEntry(result,
                   caseSensitive.isSelected()));
-              mSettings.setLastEnteredExclusionString(input.getText());
+              mSettings.setLastEnteredExclusionString(result);
               updateFilter(!mSettings.isSwitchToMyFilter());
             }
           }
