@@ -98,7 +98,7 @@ public class ParamLibrary {
     String[] str = { "title", "original_title", "start_day", "start_month", "start_year", "start_hour", "start_minute",
         "end_month", "end_year", "end_day", "end_hour", "end_minute", "length_minutes", "length_sec", "short_info",
         "description", "episode", "original_episode", "episode_number", "channel_name", "url", "start_day_of_week", "start_month_name",
-        "genre", "start_unix", "end_unix"};
+        "genre", "start_unix", "end_unix", "custom"};
     return str;
   }
 
@@ -203,6 +203,8 @@ public class ParamLibrary {
       return Long.toString(createStartTime(program).getTimeInMillis() / 1000);
     } else if (key.equalsIgnoreCase("end_unix")) {
       return Long.toString(createEndTime(program).getTimeInMillis() / 1000);
+    } else if (key.equalsIgnoreCase("custom")) {
+      return removeNull(program.getTextField(ProgramFieldType.CUSTOM_TYPE));
     } else if (key.equalsIgnoreCase("genre")) {
       return removeNull(program.getTextField(ProgramFieldType.GENRE_TYPE));
     } else if (key.equalsIgnoreCase("episode_number")) {
