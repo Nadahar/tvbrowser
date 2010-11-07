@@ -1,0 +1,143 @@
+3sat Mediathek
+3\s?sat.*
+http://www.3sat.de/mediathek/
+
+ARD Mediathek
+ard|(das\s?erste.*)|(eins\s?plus)|(eins\\?extra)|(eins\s?festival)
+http://www.ardmediathek.de/
+
+arte videos
+arte
+http://videos.arte.tv/
+
+BR Mediathek Video
+br|(br\s.*)|(bayerisches\sfernsehen)
+http://www.br-online.de/mediathek
+
+Comedy Central Video
+comedy\s?central.*
+http://www.comedycentral.de/video/
+
+Das Erste Mediathek
+ard|(das\s?erste.*)
+http://mediathek.daserste.de
+
+Deutsche Welle Podcasts
+dw|dw\s.*|deutsche\s?welle.*
+http://www.dw-world.de/dw/0,,9540,00.html
+
+DMAX Videotheke
+dmax
+http://www.dmax.de/video/
+
+HR Mediathek
+(hr.*)|(hessischer\s?rundfunk.*)
+http://www.hr-online.de/website/radio/home/index.jsp?rubrik=15736
+
+KI.KA Plus
+ki.?ka.*
+http://www.kikaplus.net/clients/kika/kikaplus/
+
+MDR Mediathek
+mdr|mdr\s.*|mitteldeutscher\s?rundfunk.*
+http://www.mdr.de/mediathek/
+
+MTV Videos
+mtv($|\s.*)
+http://www.mtv.de/videos
+
+N24 Mediencenter
+N24.*
+http://mediencenter.n24.de/
+
+NDR Mediathek
+ndr|ndr\s.*|norddeutscher\s?rundfunk.*
+http://www.ndr.de/flash/mediathek/index.html
+
+NRK Nett-TV
+nrk
+http://www1.nrk.no/nett-tv
+
+n-tv Mediathek
+n-tv.*
+http://www.n-tv.de/mediathek/
+
+ORF TVthek
+orf($|\s.*)
+http://tvthek.orf.at/
+
+Kabeleins Mediathek
+kabel\s?(1|eins).*
+http://www.kabeleins.de/videos/
+
+Phoenix Bibliothek
+ph(oe|ö)nix.*
+http://www.phoenix.de/content//78905
+
+ProSieben Video
+pro\s?(7|sieben).*
+http://www.prosieben.de/video/
+
+Radio Bremen Mediathek
+rb|radio\s?bremen.*
+http://www.radiobremen.de/mediathek/index.html
+
+RBB Podcasts
+rbb|rbb\s.*|rundfunk berlin.*brandenburg.*
+http://www.rbb-online.de/radio/podcast_audios/die_lieblingssendung.html
+
+RTL now
+rtl($|\s.*)
+http://rtl-now.rtl.de/
+
+RTL2
+rtl\s?2|(rtl\s?2\s.*)
+http://www.rtl2.de/38479.html
+
+SAT.1 Videocenter
+sat.?(1|eins).*
+http://www.sat1.de/videocenter/
+
+Servus.tv Mediathek
+servus.*
+http://www.servustv.com/cs/Satellite/VOD-Mediathek/001259088496198?p=1259088496182
+
+SF Videoportal
+sf($|\s.*)
+http://www.videoportal.sf.tv/
+
+Sixx Online-TV
+sixx($|\s.*)
+http://www.sixx.de/online-tv/
+
+Sky Mediathek
+sky.*
+http://www.sky.de/web/cms/de/sport-mediathek.jsp
+
+SR-Mediathek
+sr|sr\s.*|saarl(ä|ae)ndischer\srundfunk
+http://sr-mediathek.sr-online.de/
+
+SUPER RTL now
+super\s?rtl.*
+http://www.superrtlnow.de/
+
+SWR Mediathek
+swr|swr\s.*|s(ü|ue)dwestrundfunk
+http://swrmediathek.de/
+
+Viva Videos
+viva.*
+http://www.viva.tv/vivavideos/
+
+VOX now
+vox($|\s.*)
+http://www.voxnow.de/
+
+WDR Mediathek
+wdr|wdr\s.*|westdeutscher\srundfunk
+http://www.wdr.de/mediathek/html/home/index.xml
+
+ZDFmediathek
+zdf.*
+http://www.zdf.de/ZDFmediathek/content/9602?inPopup=true
