@@ -74,6 +74,8 @@ import javax.swing.border.Border;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
+import org.apache.commons.lang.StringUtils;
+
 import tvbrowser.ui.mainframe.MainFrame;
 import util.browserlauncher.Launch;
 import util.misc.OperatingSystem;
@@ -424,8 +426,7 @@ public class UiUtilities {
     // Quick "hack". Remove HTML-Code and replace it with Code that includes the
     // correct Font
     if (html.indexOf("<html>") >= 0) {
-      html = html
-          .substring(html.indexOf("<html>") + 6, html.indexOf("</html>"));
+      html = StringUtils.substringBetween(html, "<html>", "</html>");
     }
     Font font = new JLabel().getFont();
 
