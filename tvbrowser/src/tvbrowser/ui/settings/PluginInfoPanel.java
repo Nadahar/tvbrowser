@@ -26,8 +26,6 @@
 
 package tvbrowser.ui.settings;
 
-import java.awt.Font;
-
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -38,11 +36,9 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 /**
- * Creates the info panel for an plugin.
+ * Creates the info panel for a plugin.
  */
 class PluginInfoPanel extends JPanel {
-
-  private static final Font PLAIN = new Font("Dialog", Font.PLAIN, 12);
 
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer
       .getLocalizerFor(PluginInfoPanel.class);
@@ -62,7 +58,7 @@ class PluginInfoPanel extends JPanel {
   /**
    * Creates the default instance of this panel.
    * <p>
-   * 
+   *
    * @param showSettingsSeparator
    */
   public PluginInfoPanel(boolean showSettingsSeparator) {
@@ -72,7 +68,7 @@ class PluginInfoPanel extends JPanel {
   /**
    * Creates an instance of this panel.
    * <p>
-   * 
+   *
    * @param info
    *          The info of the plugin.
    * @param showSettingsSeparator
@@ -85,23 +81,19 @@ class PluginInfoPanel extends JPanel {
         "pref,5dlu,top:pref,top:pref,top:pref,top:pref,10dlu,pref"));
     CellConstraints cc = new CellConstraints();
 
-    add(new PluginLabel(mLocalizer.msg("name", "Name")), cc.xy(2, mYCount));
+    add(new JLabel(mLocalizer.msg("name", "Name")), cc.xy(2, mYCount));
     add(mNameLabel = new JLabel("-"), cc.xy(4, mYCount++));
-    mNameLabel.setFont(PLAIN);
 
-    add(new PluginLabel(mLocalizer.msg("version", "Version")), cc
+    add(new JLabel(mLocalizer.msg("version", "Version")), cc
         .xy(2, mYCount));
     add(mVersionLabel = new JLabel("-"), cc.xy(4, mYCount++));
-    mVersionLabel.setFont(PLAIN);
 
-    add(new PluginLabel(mLocalizer.msg("author", "Author")), cc.xy(2, mYCount));
+    add(new JLabel(mLocalizer.msg("author", "Author")), cc.xy(2, mYCount));
     add(mAuthorLabel = new JLabel("-"), cc.xy(4, mYCount++));
-    mAuthorLabel.setFont(PLAIN);
 
-    add(new PluginLabel(mLocalizer.msg("description", "Description")), cc.xy(2,
+    add(new JLabel(mLocalizer.msg("description", "Description")), cc.xy(2,
         mYCount));
     add(mDescriptionLabel = new JLabel(), cc.xy(4, mYCount++));
-    mDescriptionLabel.setFont(PLAIN);
 
     if (info != null) {
       setPluginInfo(info);
@@ -111,7 +103,7 @@ class PluginInfoPanel extends JPanel {
   public void setDefaultBorder(boolean plugin) {
     CellConstraints cc = new CellConstraints();
     String message;
-    
+
     if (plugin) {
       message = mLocalizer.msg("about", "About this Plugin");
     } else {
@@ -139,10 +131,4 @@ class PluginInfoPanel extends JPanel {
     mDescriptionLabel.setText("<html>" + info.getDescription() + "</html>");
   }
 
-  private static class PluginLabel extends JLabel {
-    public PluginLabel(String name) {
-      super(name);
-      setFont(PLAIN);
-    }
-  }
 }
