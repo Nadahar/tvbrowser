@@ -194,8 +194,16 @@ public class Database {
     if (programsMap == null) {
       return result;
     }
-    long key = getKey(program.getTitle());
-    ArrayList<Integer> programs = programsMap.get(key);
+    String title = program.getTitle();
+    ArrayList<Integer> programs = programsMap.get(getKey(title));
+    if (programs == null && title.endsWith(")") && title.contains("(")) {
+      String newTitle = StringUtils.substringBeforeLast(title, "(").trim();
+      programs = programsMap.get(getKey(newTitle));
+    }
+    if (programs == null && title.endsWith("...")) {
+      String newTitle = title.substring(0, title.length() - 3).trim();
+      programs = programsMap.get(getKey(newTitle));
+    }
     if (programs == null) {
       return result;
     }
@@ -207,9 +215,9 @@ public class Database {
         String line = new String(lineEncoded.getBytes(), "UTF-8");
         Matcher itemMatcher = ITEM_PATTERN.matcher(line);
         if (itemMatcher.find()) {
-          String title = itemMatcher.group(3).trim();
-          String url = itemMatcher.group(4).trim();
-          result.add(new MediathekProgramItem(title, url, null));
+          String itemTitle = itemMatcher.group(3).trim();
+          String itemUrl = itemMatcher.group(4).trim();
+          result.add(new MediathekProgramItem(itemTitle, itemUrl, null));
         }
       }
     } catch (FileNotFoundException e) {

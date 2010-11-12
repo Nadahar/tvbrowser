@@ -16,11 +16,8 @@
  */
 package mediathekplugin;
 
-import java.awt.Dimension;
 import java.awt.Frame;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
-import java.awt.event.ComponentEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,11 +32,11 @@ import javax.swing.Icon;
 
 import util.browserlauncher.Launch;
 import util.io.IOUtilities;
-import util.ui.UiUtilities;
 import util.ui.html.HTMLTextHelper;
 import devplugin.ActionMenu;
 import devplugin.Channel;
 import devplugin.ContextMenuAction;
+import devplugin.ContextMenuSeparatorAction;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.PluginTreeNode;
@@ -62,12 +59,6 @@ public class MediathekPlugin extends Plugin {
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(MediathekPlugin.class);
 
   private Icon markIcon, contextIcon, pluginIconSmall, pluginIconLarge, mIconWeb;
-
-  /** location of the dialog */
-  private Point mLocation = null;
-
-  /** size of Dialog */
-  private Dimension mSize = null;
 
   private MediathekSettings mSettings;
 
@@ -175,62 +166,36 @@ public class MediathekPlugin extends Plugin {
     // return EMPTY_ICON_LIST;
   }
 
-  // if (mediathekProgram == null && title.endsWith(")") && title.contains("("))
-  // {
-  // title = title.substring(0, title.lastIndexOf('(') - 1);
-  // mediathekProgram = findProgram(channel, title);
-  // }
-  // if (mediathekProgram == null && title.endsWith("...")) {
-  // title = title.substring(0, title.length() - 3).trim();
-  // mediathekProgram = findProgram(channel, title);
-  // }
-  // // now check also for partial title matches. partial titles are constructed
-  // // by adding each word of the title until a match is found or 3 words are
-  // // reached
-  // if (mediathekProgram == null && title.indexOf(' ') >= 0) {
-  // final String[] parts = title.split(" ");
-  // final StringBuilder builder = new StringBuilder();
-  // for (int i = 0; i <= Math.min(parts.length - 1, 2); i++) {
-  // if (i > 0) {
-  // builder.append(' ');
-  // }
-  // builder.append(parts[i]);
-  // if (builder.length() > 5) {
-  // final String partTitle = builder.toString();
-  // mediathekProgram = findProgram(channel, partTitle);
-  // if (mediathekProgram != null) {
-  // return mediathekProgram;
-  // }
-  // }
-  // }
-  // }
-
   @Override
   public ActionMenu getButtonAction() {
     final ContextMenuAction menuAction = new ContextMenuAction("Mediathek", pluginIconSmall);
-    final ArrayList<Action> actionList = new ArrayList<Action>(4);
+    final ArrayList<Object> subscribedList = new ArrayList<Object>(50);
+    final ArrayList<Action> remainingList = new ArrayList<Action>(50);
 
     for (WebMediathek mediathek : getMediatheks()) {
-      actionList.add(mediathek.getAction(true));
+      boolean subscribed = false;
+      for (Channel channel : getPluginManager().getSubscribedChannels()) {
+        if (mediathek.acceptsChannel(channel)) {
+          subscribedList.add(setActionDescription(mediathek.getAction(true)));
+          subscribed = true;
+          break;
+        }
+      }
+      if (!subscribed) {
+        remainingList.add(setActionDescription(mediathek.getAction(true)));
+      }
     }
-
-//    actionList.add(ContextMenuSeparatorAction.getInstance());
-//    final Action dialogAction = new AbstractAction("Mediathek", pluginIconSmall) {
-//
-//      public void actionPerformed(final ActionEvent e) {
-//        showDialog();
-//      }
-//    };
-//    dialogAction.putValue(Plugin.BIG_ICON, pluginIconLarge);
-//    actionList.add(dialogAction);
-
-    // set tooltip similar to name
-    for (Action action : actionList) {
-      action.putValue(Action.SHORT_DESCRIPTION, action.getValue(Action.NAME));
-      action.putValue(Action.LONG_DESCRIPTION, action.getValue(Action.NAME));
+    if (!remainingList.isEmpty()) {
+      subscribedList.add(ContextMenuSeparatorAction.getInstance());
+      subscribedList.add(new ActionMenu(new ContextMenuAction(mLocalizer.msg("notSubscribed", "Not subscribed channels")),remainingList.toArray()));
     }
+    return new ActionMenu(menuAction, subscribedList.toArray());
+  }
 
-    return new ActionMenu(menuAction, actionList.toArray());
+  private Action setActionDescription(AbstractAction action) {
+    action.putValue(Action.SHORT_DESCRIPTION, action.getValue(Action.NAME));
+    action.putValue(Action.LONG_DESCRIPTION, action.getValue(Action.NAME));
+    return action;
   }
 
   private ArrayList<WebMediathek> getMediatheks() {
@@ -254,33 +219,6 @@ public class MediathekPlugin extends Plugin {
       }
     }
     return mMediatheks;
-  }
-
-  private void showDialog() {
-    final ProgramsDialog dlg = new ProgramsDialog(getParentFrame());
-
-    dlg.pack();
-    dlg.addComponentListener(new java.awt.event.ComponentAdapter() {
-
-      public void componentResized(final ComponentEvent e) {
-        mSize = e.getComponent().getSize();
-      }
-
-      public void componentMoved(final ComponentEvent e) {
-        e.getComponent().getLocation(mLocation);
-      }
-    });
-
-    if ((mLocation != null) && (mSize != null)) {
-      dlg.setLocation(mLocation);
-      dlg.setSize(mSize);
-      dlg.setVisible(true);
-    } else {
-      dlg.setSize(600, 600);
-      UiUtilities.centerAndShow(dlg);
-      mLocation = dlg.getLocation();
-      mSize = dlg.getSize();
-    }
   }
 
   public static MediathekPlugin getInstance() {
@@ -363,7 +301,7 @@ public class MediathekPlugin extends Plugin {
 
   @Override
   public boolean canUseProgramTree() {
-    return true;
+    return false;
   }
 
   @Override
