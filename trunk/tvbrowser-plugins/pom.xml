@@ -43,6 +43,7 @@
     </plugins>
   </build>
   <modules>
+    <module>plugin-alldataperchannel</module>
     <module>plugin-balloon</module>
     <module>plugin-bbcdataservice</module>
     <module>plugin-checker</module>
