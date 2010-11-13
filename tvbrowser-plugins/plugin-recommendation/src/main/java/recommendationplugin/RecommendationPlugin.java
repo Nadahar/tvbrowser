@@ -83,7 +83,6 @@ public final class RecommendationPlugin extends Plugin {
     // update the recommendations regularly (to remove expired programs)
     Timer updateTimer = new Timer(10 * 60 * 1000, new ActionListener() {
 
-      @Override
       public void actionPerformed(ActionEvent e) {
         updateRecommendations();
       }

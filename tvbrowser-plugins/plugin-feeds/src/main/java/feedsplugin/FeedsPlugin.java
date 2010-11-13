@@ -160,7 +160,6 @@ public final class FeedsPlugin extends Plugin {
         for (int i = 0; i < subActions.length; i++) {
           final SyndEntryImpl entry = entries.get(i);
           subActions[i] = new AbstractAction(entry.getTitle()) {
-            @Override
             public void actionPerformed(ActionEvent e) {
               showFeedsDialog(new FeedsDialog(getParentFrame(), entry));
             }
