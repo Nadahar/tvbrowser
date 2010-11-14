@@ -734,12 +734,18 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 
 	private JMenuItem createMenuItem(ActionMenu menu) {
 		JMenuItem result;
-		if (menu.hasSubItems()) {
+		Icon icon = (Icon) menu.getAction().getValue(Action.SMALL_ICON);
+		if (icon != null) {
+		  // resize any icon that is not a channel icon
+		  if (icon.getIconWidth() != 42 || icon.getIconHeight() != 22) {
+		    icon = new FixedSizeIcon(16, 16, icon);
+		  }
+		}
+    if (menu.hasSubItems()) {
 			result = new ScrollableMenu(menu.getTitle());
 
-			if (menu.getAction().getValue(Action.SMALL_ICON) != null) {
-				result.setIcon(new FixedSizeIcon(16, 16, (Icon) menu.getAction()
-						.getValue(Action.SMALL_ICON)));
+			if (icon != null) {
+				result.setIcon(icon);
 			}
 
 			ActionMenu[] subItems = menu.getSubItems();
@@ -756,9 +762,8 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 				return null;
 			}
 			result = new JMenuItem(menu.getAction());
-			if (menu.getAction().getValue(Action.SMALL_ICON) != null) {
-				result.setIcon(new FixedSizeIcon(16, 16, (Icon) menu.getAction()
-						.getValue(Action.SMALL_ICON)));
+			if (icon != null) {
+				result.setIcon(icon);
 			}
 		}
 
