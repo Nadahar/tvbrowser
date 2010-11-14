@@ -42,7 +42,6 @@ import devplugin.PluginInfo;
 import devplugin.PluginTreeNode;
 import devplugin.Program;
 import devplugin.SettingsTab;
-import devplugin.ThemeIcon;
 import devplugin.Version;
 
 /**
@@ -137,33 +136,6 @@ public class MediathekPlugin extends Plugin {
 
   protected Icon getContextMenuIcon() {
     return contextIcon;
-  }
-
-  @Override
-  public ThemeIcon getMarkIconFromTheme() {
-    return new ThemeIcon("apps", "internet-web-browser", 16);
-  }
-
-  @Override
-  public String getProgramTableIconText() {
-    return mLocalizer.msg("programTableIconText", "Mediathek");
-  }
-
-  @Override
-  public Icon[] getProgramTableIcons(final Program program) {
-    return null;
-    // if (mPrograms.isEmpty()) {
-    // return EMPTY_ICON_LIST;
-    // }
-    // if (!isSupportedChannel(program.getChannel())) {
-    // return EMPTY_ICON_LIST;
-    // }
-    // final MediathekProgram mediaProgram = findProgram(program);
-    // if (mediaProgram != null) {
-    // mediaProgram.readEpisodes();
-    // return new Icon[] { markIcon };
-    // }
-    // return EMPTY_ICON_LIST;
   }
 
   @Override
