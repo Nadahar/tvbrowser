@@ -108,7 +108,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 			mColumnWidthMenu, mChannelGroupMenu;
 
 	private boolean mCopySettingsRequested = false;
-	
+
 	/**
 	 * status bar label for menu help
 	 */
@@ -326,15 +326,15 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 		mConfigAssistantMI.addActionListener(this);
 		new MenuHelpTextAdapter(mConfigAssistantMI, mLocalizer.msg(
 				"menuinfo.configAssistant", ""), mLabel);
-		
+
 		if(TVBrowser.isTransportable()) {
-  		mCopySettingsToSystem = createMenuItem("menuitem.copySettings","Copy settings to system", 
+  		mCopySettingsToSystem = createMenuItem("menuitem.copySettings","Copy settings to system",
   		    IconLoader.getInstance().getIconFromTheme("actions","edit-copy", 16));
   		mCopySettingsToSystem.addActionListener(this);
       new MenuHelpTextAdapter(mCopySettingsToSystem, mLocalizer.msg(
           "menuinfo.copySettings", "Copy settings of transportable version to the system"), mLabel);
 		}
-    
+
 		mPluginInfoDlgMI = createMenuItem("menuitem.pluginInfoDlg",
 				"What are Plugins?", urlHelpImg);
 		mPluginInfoDlgMI.addActionListener(this);
@@ -421,7 +421,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 	   setLabelAndAccessKeys(localizerKey, defaultLabel, menu, false);
 	   return menu;
 	}
-	
+
 	protected JMenu createMenu(final String localizerKey,
 			final String defaultLabel) {
 		JMenu menu = new JMenu();
@@ -735,7 +735,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 	private JMenuItem createMenuItem(ActionMenu menu) {
 		JMenuItem result;
 		if (menu.hasSubItems()) {
-			result = new JMenu(menu.getTitle());
+			result = new ScrollableMenu(menu.getTitle());
 
 			if (menu.getAction().getValue(Action.SMALL_ICON) != null) {
 				result.setIcon(new FixedSizeIcon(16, 16, (Icon) menu.getAction()
@@ -978,11 +978,11 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
     mHelpMenu = createMenu("menu.help", "&Help");
     add(mHelpMenu);
     mHelpMenu.add(mConfigAssistantMI);
-    
+
     if(TVBrowser.isTransportable()) {
       mHelpMenu.add(mCopySettingsToSystem);
     }
-    
+
     mHelpMenu.addSeparator();
     mHelpMenu.add(mHandbookMI);
     mHelpMenu.add(mKeyboardShortcutsMI);
@@ -1003,7 +1003,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 
     mFullscreenMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F11, 0));
   }
-  
+
   public boolean getUserRequestedCopyToSystem() {
     return mCopySettingsRequested;
   }
