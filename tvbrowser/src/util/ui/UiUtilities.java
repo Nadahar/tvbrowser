@@ -428,9 +428,9 @@ public class UiUtilities {
     if (html.indexOf("<html>") >= 0) {
       html = StringUtils.substringBetween(html, "<html>", "</html>");
     }
-    Font font = new JLabel().getFont();
-
-    html = "<html><div style=\"color:#000000;font-family:" + font.getName()
+    JLabel label = new JLabel();
+    Font font = label.getFont();
+    html = "<html><div style=\"color:" + UiUtilities.getHTMLColorCode(label.getForeground())+";font-family:" + font.getName()
         + "; font-size:" + font.getSize() +";background-color:rgb(" + background.getRed() + "," + background.getGreen() + "," + background.getBlue() + ");\">" + html + "</div></html>";
 
     final JEditorPane pane = new JEditorPane("text/html", html);
@@ -444,6 +444,17 @@ public class UiUtilities {
       pane.addHyperlinkListener(listener);
     }
     return pane;
+  }
+
+  /**
+   * returns a color code as used in HTML, e.g. #FF0000 for pure red
+   * @param color
+   * @return HTML color code
+   */
+  public static String getHTMLColorCode(Color color) {
+    return '#' + StringUtils.leftPad(Integer.toString(color.getRed(), 16), 2, '0')
+        + StringUtils.leftPad(Integer.toString(color.getGreen(), 16), 2, '0')
+        + StringUtils.leftPad(Integer.toString(color.getBlue(), 16), 2, '0');
   }
 
   /**

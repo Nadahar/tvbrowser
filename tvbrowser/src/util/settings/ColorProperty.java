@@ -27,6 +27,10 @@ package util.settings;
 
 import java.awt.Color;
 
+import org.apache.commons.lang.StringUtils;
+
+import util.ui.UiUtilities;
+
 /**
  * This Property stores a Color
  */
@@ -59,13 +63,13 @@ public final class ColorProperty extends Property {
     public Color getDefaultColor() {
       return mDefaultColor;
     }
-    
+
     /**
      * Returns the Color in this Property
      * @return Color
      */
     public Color getColor() {
-        
+
         if (!mIsCacheFilled) {
             String asString = getProperty();
             if (asString == null) {
@@ -78,7 +82,7 @@ public final class ColorProperty extends Property {
                         int green = Integer.parseInt(asString.substring(3,5),16);
                         int blue = Integer.parseInt(asString.substring(5,7),16);
                         int alpha = Integer.parseInt(asString.substring(7,9),16);
-                        
+
                         Color c = new Color(red, green, blue, alpha);
                         mCachedValue = c;
                     } else {
@@ -106,25 +110,11 @@ public final class ColorProperty extends Property {
             setProperty(null);
         } else {
             mCachedValue = color;
-            
-            String value = "#";
-
-            value += addZero(Integer.toString(color.getRed(), 16),2);
-            value += addZero(Integer.toString(color.getGreen(), 16),2);
-            value += addZero(Integer.toString(color.getBlue(), 16),2);
-            value += addZero(Integer.toString(color.getAlpha(), 16),2);
-
+            String value = UiUtilities.getHTMLColorCode(color) + StringUtils.leftPad(Integer.toString(color.getAlpha(), 16),2, '0');
             setProperty(value);
         }
     }
 
-    private String addZero(String str, int len) {
-        while (str.length() < len) {
-            str = "0" + str;
-        }
-        return str;
-    }
-    
     protected void clearCache() {
         mIsCacheFilled = false;
     }
