@@ -918,6 +918,7 @@ public class FavoritesPlugin {
   }
 
   public void updateRootNode(boolean save) {
+    FavoriteTreeModel.getInstance().resetMultiplesCounter();
     mRootNode.removeAllActions();
     mRootNode.getMutableTreeNode().setIcon(getFavoritesIcon(16));
 
