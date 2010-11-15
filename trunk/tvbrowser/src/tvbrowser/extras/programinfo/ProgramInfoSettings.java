@@ -1,16 +1,16 @@
 /*
  * Copyright Michael Keppler
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -19,6 +19,7 @@ package tvbrowser.extras.programinfo;
 import java.awt.Color;
 import java.awt.Font;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Properties;
 
 import tvbrowser.extras.common.ConfigurationHandler;
@@ -228,7 +229,7 @@ class ProgramInfoSettings {
   protected boolean getSetupwasdone() {
     return getProperty(KEY_SETUPWASDONE, false);
   }
-  
+
   protected void setShowSearch(final boolean show) {
     setProperty(KEY_SHOW_SEARCH, show);
   }
@@ -263,7 +264,7 @@ class ProgramInfoSettings {
   protected void setLook(final String name) {
     setProperty(KEY_LOOK, name);
   }
-  
+
   protected Object[] getFieldOrder() {
     if (!getSetupwasdone()) {
       return ProgramTextCreator.getDefaultOrder();
@@ -273,19 +274,21 @@ class ProgramInfoSettings {
       defaultOrder.append(field.toString()).append(";");
     }
     final String[] id = getProperty(KEY_FIELD_ORDER, defaultOrder.toString()).trim().split(";");
-    final Object[] result = new Object[id.length];
+    ArrayList<Object> result = new ArrayList<Object>(id.length);
     for (int i = 0; i < id.length; i++) {
       final int parsedId = Integer.parseInt(id[i]);
       if (parsedId == ProgramFieldType.UNKNOWN_FORMAT) {
-        result[i] = ProgramTextCreator.getDurationTypeString();
+        if (!result.contains(ProgramTextCreator.getDurationTypeString())) {
+          result.add(ProgramTextCreator.getDurationTypeString());
+        }
       } else if (parsedId >= 0) {
-        result[i] = ProgramFieldType.getTypeForId(parsedId);
+        result.add(ProgramFieldType.getTypeForId(parsedId));
       } else {
-        result[i] = CompoundedProgramFieldType
-            .getCompoundedProgramFieldTypeForId(parsedId);
+        result.add(CompoundedProgramFieldType
+            .getCompoundedProgramFieldTypeForId(parsedId));
       }
     }
-    return result;
+    return result.toArray(new Object[result.size()]);
   }
 
   protected void setFieldOrder(final Object[] order) {
@@ -302,7 +305,7 @@ class ProgramInfoSettings {
     }
     setProperty(KEY_FIELD_ORDER, temp.toString());
   }
-  
+
   protected void setHighlightColor(final Color color) {
     setProperty(KEY_HIGHLIGHT_COLOR, color.getRGB());
   }
