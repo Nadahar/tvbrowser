@@ -32,6 +32,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map.Entry;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -71,6 +73,12 @@ public class FavoriteTreeModel extends DefaultTreeModel {
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(FavoriteTreeModel.class);
 
   private static FavoriteTreeModel mInstance;
+
+  /**
+   * holds all programs which are contained in multiple favorites<br>
+   * initialized lazyly
+   */
+  private ArrayList<Program> mMultiples = null;
 
   /**
    * Creates an instance of this class.
@@ -567,18 +575,34 @@ public class FavoriteTreeModel extends DefaultTreeModel {
   }
 
   public boolean isInMultipleFavorites(final Program program) {
-    int found = 0;
-    for (Favorite favorite : getFavoriteArr()) {
-      for (Program favProgram : favorite.getPrograms()) {
-        if (favProgram.equals(program)) {
-          found++;
-          break;
+    if (mMultiples == null) {
+      HashMap<Program, Integer> map = new HashMap<Program, Integer>(2000);
+      for (Favorite favorite : getFavoriteArr()) {
+        for (Program favProgram : favorite.getPrograms()) {
+          Integer count = map.get(favProgram);
+          if (count == null) {
+            count = 0;
+          }
+          count++;
+          map.put(favProgram, count);
         }
       }
-      if (found >= 2) {
+      mMultiples = new ArrayList<Program>();
+      for (Entry<Program, Integer> entry : map.entrySet()) {
+        if (entry.getValue().intValue() > 1) {
+          mMultiples.add(entry.getKey());
+        }
+      }
+    }
+    for (Program dupProgram : mMultiples) {
+      if (dupProgram.equals(program)) {
         return true;
       }
     }
     return false;
+  }
+
+  public void resetMultiplesCounter() {
+    mMultiples = null;
   }
 }
