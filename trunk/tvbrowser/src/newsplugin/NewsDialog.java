@@ -67,35 +67,35 @@ public class NewsDialog implements WindowClosingIf {
   /** The localizer used by this class. */
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(NewsDialog.class);
-  
+
   /** The icon to use for marking new news. */
   private static Icon mNewIcon;
-  
+
   /** The actual dialog. */
   private JDialog mDialog;
-  
+
   /** Show only the new news? */
   private JCheckBox mOnlyNewChB;
-  
+
   /** The scroll pane. */
   private JScrollPane mScrollPane;
-  
+
   /** The news pane that shows the news */
   private JEditorPane mNewsPane;
-  
+
   /** The close button */
   private JButton mCloseBn;
-  
+
   /** The news to show */
   private ArrayList<News> mNewsList;
-  
+
   /** The number of news that should be marked as new */
   private int mNewNewsCount;
-  
-  
+
+
   /**
    * Creates a new instance of NewsDialog.
-   * 
+   *
    * @param parent A component in the parent window tree.
    * @param newsList The news to show.
    * @param newNewsCount The number of news that should be marked as new.
@@ -104,15 +104,15 @@ public class NewsDialog implements WindowClosingIf {
     mDialog = UiUtilities.createDialog(parent, false);
     mNewsList = newsList;
     mNewNewsCount = newNewsCount;
-    
+
     mDialog.setTitle(mLocalizer.msg("title", "News"));
     UiUtilities.registerForClosing(this);
-    
+
     JPanel main = new JPanel(new BorderLayout());
     main.setBorder(UiUtilities.DIALOG_BORDER);
     main.setPreferredSize(new Dimension(500, 350));
     mDialog.setContentPane(main);
-    
+
     if (mNewNewsCount > 0) {
       String msg = mLocalizer.msg("onlyNew", "Show only new news");
       mOnlyNewChB = new JCheckBox(msg, true);
@@ -123,7 +123,7 @@ public class NewsDialog implements WindowClosingIf {
       });
       main.add(mOnlyNewChB, BorderLayout.NORTH);
     }
-    
+
     mNewsPane = new JEditorPane();
     mNewsPane.setEditorKit(new ExtendedHTMLEditorKit());
     mNewsPane.setEditable(false);
@@ -139,11 +139,11 @@ public class NewsDialog implements WindowClosingIf {
     });
     mScrollPane = new JScrollPane(mNewsPane);
     main.add(mScrollPane, BorderLayout.CENTER);
-    
+
     // buttons
     JPanel buttonPn = new JPanel(new FlowLayout(FlowLayout.TRAILING));
     main.add(buttonPn, BorderLayout.SOUTH);
-    
+
     mCloseBn = new JButton(Localizer.getLocalization(Localizer.I18N_CLOSE));
     mCloseBn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
@@ -152,28 +152,29 @@ public class NewsDialog implements WindowClosingIf {
     });
     buttonPn.add(mCloseBn);
     mDialog.getRootPane().setDefaultButton(mCloseBn);
-    
+    mCloseBn.requestFocusInWindow();
+
     NewsPlugin.getInstance().layoutWindow("newsDlg",mDialog);
 
     updateNewsPane();
   }
 
-  
+
   /**
    * Updates the news pane.
    */
   private void updateNewsPane() {
     ExtendedHTMLDocument doc = (ExtendedHTMLDocument) mNewsPane.getDocument();
     mNewsPane.setText(createHtmlText(doc));
-    
+
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         mScrollPane.getVerticalScrollBar().setValue(0);
       }
     });
   }
-  
-  
+
+
   /**
    * Centers the dialog to its parent and shows it.
    */
@@ -184,13 +185,13 @@ public class NewsDialog implements WindowClosingIf {
 
   /**
    * Gets the html text.
-   * 
+   *
    * @param doc The document to create the text for.
    * @return The html text.
    */
   private String createHtmlText(ExtendedHTMLDocument doc) {
     DateFormat dateFormat = DateFormat.getDateInstance();
-    
+
     StringBuilder buf = new StringBuilder("<html><head>"
       + "<style type=\"text/css\" media=\"screen\"><!--"
       + "body { font-family: Dialog; }"
@@ -208,25 +209,25 @@ public class NewsDialog implements WindowClosingIf {
       if (mNewIcon == null) {
         mNewIcon = TVBrowserIcons.newIcon(TVBrowserIcons.SIZE_LARGE);
       }
-      
+
       // Show the news - backwards (newest first)
       int newsCount = mNewsList.size();
       for (int i = 0; i < newsCount; i++) {
-        
-        
+
+
         if ((mOnlyNewChB != null) && mOnlyNewChB.isSelected()
           && (i >= mNewNewsCount))
         {
           // Show only the new ones
           break;
         }
-        
+
         if (i != 0) {
           buf.append("<hr>");
         }
-        
+
         News news = mNewsList.get(i);
-        
+
         buf.append("<table width=\"100%\">");
         buf.append("<tr>");
         if (i < mNewNewsCount) {
@@ -251,7 +252,7 @@ public class NewsDialog implements WindowClosingIf {
       }
     }
     buf.append("</body></html>");
-    
+
     return buf.toString();
   }
 
@@ -259,7 +260,7 @@ public class NewsDialog implements WindowClosingIf {
   public void close() {
     mDialog.dispose();
   }
-  
+
   /**
    * @return If this dialog is visible.
    */
