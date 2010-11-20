@@ -14,6 +14,7 @@ import java.net.MalformedURLException;
 import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashSet;
@@ -121,6 +122,7 @@ public class TopfieldConnector {
   private static final Pattern TIMER_ENTRY_PATTERN = Pattern
       .compile("new\\s*CreateTimerEntry\\((\\d+),\\s*(\\d+),\\s*(\\d+),\\s*\\\"([^\\\"]*)\\\",\\s*\\\"((\\d+)\\.\\s*([^\\\"]*))\\\",\\s*(\\d+),\\s*(\\d+),\\s*(\\d+),\\s*(\\d+),\\s*(\\d+),\\s*(\\d+),\\s*(\\d+),\\s*(\\d+),\\s*\\\"([^\\\"]*)\\\"\\);");
   private static final Pattern RECEIVER_ADD_TIME_PATTERN = Pattern.compile("\\(-(\\d+)/\\+(\\d)\\)");
+  private static final String ENCODING_UTF8 = "UTF-8";
 
   private final TopfieldConfiguration configuration;
   private final ArrayList<TopfieldServiceInfo> channels = new ArrayList<TopfieldServiceInfo>();
@@ -317,21 +319,22 @@ public class TopfieldConnector {
       if (tuner == null) {
         throw new TopfieldTunerException();
       }
-      String request;
-      if (record) {
-        request = String.format(RECORD_FORMAT, (service.isTV() ? 0 : 1), service.getSatelliteNumber(), service
-            .getChannelNumber(), tuner, repeat.toNumber(), recordStart.get(Calendar.DAY_OF_MONTH), recordStart
-            .get(Calendar.MONTH) + 1, recordStart.get(Calendar.YEAR), recordStart.get(Calendar.HOUR_OF_DAY),
-            recordStart.get(Calendar.MINUTE), recordTime.getLength() / 60, recordTime.getLength() % 60, recordTime
-                .getTitle());
-      } else {
-        request = String.format(SWITCH_FORMAT, (service.isTV() ? 0 : 1), service.getSatelliteNumber(), service
-            .getChannelNumber(), tuner, repeat.toNumber(), recordStart.get(Calendar.DAY_OF_MONTH), recordStart
-            .get(Calendar.MONTH) + 1, recordStart.get(Calendar.YEAR), recordStart.get(Calendar.HOUR_OF_DAY),
-            recordStart.get(Calendar.MINUTE), recordTime.getLength() / 60, recordTime.getLength() % 60);
-      }
 
+      String request;
       try {
+        if (record) {
+          request = String.format(RECORD_FORMAT, (service.isTV() ? 0 : 1), service.getSatelliteNumber(), service
+              .getChannelNumber(), tuner, repeat.toNumber(), recordStart.get(Calendar.DAY_OF_MONTH), recordStart
+              .get(Calendar.MONTH) + 1, recordStart.get(Calendar.YEAR), recordStart.get(Calendar.HOUR_OF_DAY),
+              recordStart.get(Calendar.MINUTE), recordTime.getLength() / 60, recordTime.getLength() % 60, URLEncoder
+                  .encode(recordTime.getTitle(), ENCODING_UTF8));
+        } else {
+          request = String.format(SWITCH_FORMAT, (service.isTV() ? 0 : 1), service.getSatelliteNumber(), service
+              .getChannelNumber(), tuner, repeat.toNumber(), recordStart.get(Calendar.DAY_OF_MONTH), recordStart
+              .get(Calendar.MONTH) + 1, recordStart.get(Calendar.YEAR), recordStart.get(Calendar.HOUR_OF_DAY),
+              recordStart.get(Calendar.MINUTE), recordTime.getLength() / 60, recordTime.getLength() % 60);
+        }
+
         URL deviceURL = new URL(HTTP_PROTOCOL + configuration.getDeviceAddress() + INSERT_TIMER_PAGE);
         URLConnection connection = deviceURL.openConnection();
         connection.setConnectTimeout(configuration.getConnectionTimeout());
