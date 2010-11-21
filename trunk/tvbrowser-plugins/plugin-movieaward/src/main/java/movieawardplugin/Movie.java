@@ -52,7 +52,7 @@ public class Movie {
     if (original) {
       mOriginalTitle = title;
     }
-    mTitles.put(lang, title);
+    mTitles.put(MovieAwardPlugin.poolString(lang), title);
   }
 
   public void setProductionYear(final int year) {

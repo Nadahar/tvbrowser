@@ -37,7 +37,7 @@ public class Award {
 
   public Award(final String category, final String status, final String movieId, final int awardYear,
       final String recipient, final String additionalInfo) {
-    mCategory = category;
+    mCategory = MovieAwardPlugin.poolString(category);
     if (status.equalsIgnoreCase("winner")) {
       mStatus = Status.WINNER;
     } else if (status.equalsIgnoreCase("nominated")) {
@@ -68,7 +68,7 @@ public class Award {
   }
 
   public void setCategorie(final String category) {
-    mCategory = category;
+    mCategory = MovieAwardPlugin.poolString(category);
   }
 
   public Status getStatus() {

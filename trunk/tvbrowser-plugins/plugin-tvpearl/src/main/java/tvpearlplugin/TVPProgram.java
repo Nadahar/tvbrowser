@@ -40,10 +40,10 @@ public class TVPProgram implements Comparable<TVPProgram>
   public TVPProgram(final String author, final String contentUrl,
       final Calendar cal, final String title, final String channel,
       final Calendar start, final String info, final String programID) {
-    this.mAuthor = author;
+    this.mAuthor = TVPearlPlugin.poolString(author);
     this.mContentUrl = contentUrl;
     this.mCreateDate = cal;
-    this.mTitle = title;
+    this.mTitle = TVPearlPlugin.poolString(title);
     this.mChannel = channel;
     this.mStart = start;
     this.mInfo = info.trim();

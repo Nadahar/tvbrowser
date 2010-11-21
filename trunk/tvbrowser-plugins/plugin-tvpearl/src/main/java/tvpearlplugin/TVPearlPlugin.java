@@ -44,6 +44,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 
+import util.misc.StringPool;
 import util.paramhandler.ParamParser;
 import util.program.LocalPluginProgramFormating;
 import util.ui.Localizer;
@@ -634,5 +635,9 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 	 */
 	private synchronized TVPProgram getPearl(final Program program) {
 		return mTVPearls.getPearl(program);
+	}
+
+	public static String poolString(String input) {
+		return StringPool.getString(input);
 	}
 }
