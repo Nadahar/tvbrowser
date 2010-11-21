@@ -26,39 +26,43 @@ import java.util.HashMap;
 
 public class StringPool {
 
-  private static HashMap<String, String> stringMap = new HashMap<String, String>(
-      100);
+  private static final StringPool DEFAULT_POOL = new StringPool();
+
+  private HashMap<String, String> mStringMap = new HashMap<String, String>(100);
 
   /**
-   * an estimation of the savings for duplicate strings.
-   * the additionally needed size of the hashmap is not included in this calculation
+   * an estimation of the savings for duplicate strings. the additionally needed
+   * size of the hashmap is not included in this calculation
    */
   private static int savedBytes = 0;
-//  private static int lastOutput = 0;
 
-  public static String getString(String input) {
+  // private static int lastOutput = 0;
+
+  public String get(String input) {
     if (input == null) {
       return null;
     }
 
-    synchronized(stringMap) {
-      String cached = stringMap.get(input);
+    synchronized (mStringMap) {
+      String cached = mStringMap.get(input);
       if (cached != null) {
         savedBytes += stringBytes(input);
-  /*
-        if (savedBytes >= lastOutput + 2000) {
-          lastOutput = savedBytes;
-          System.out.println("saved " + savedBytes + " bytes using String pool with " + stringMap.size() + " elements");
-        }
-  */
+        /*
+         * if (savedBytes >= lastOutput + 2000) { lastOutput = savedBytes;
+         * System.out.println("saved " + savedBytes +
+         * " bytes using String pool with " + stringMap.size() + " elements"); }
+         */
         return cached;
-      }
-      else {
+      } else {
         savedBytes -= stringBytes(input);
-        stringMap.put(input, input);
+        mStringMap.put(input, input);
         return input;
       }
     }
+  }
+  
+  public static String getString(String input) {
+    return DEFAULT_POOL.get(input);
   }
 
   private static int stringBytes(String input) {
