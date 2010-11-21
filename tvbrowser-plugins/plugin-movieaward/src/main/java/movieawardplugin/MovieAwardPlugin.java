@@ -46,6 +46,7 @@ import javax.swing.SwingUtilities;
 
 import tvdataservice.MutableChannelDayProgram;
 import util.misc.SoftReferenceCache;
+import util.misc.StringPool;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import devplugin.ActionMenu;
@@ -125,7 +126,7 @@ final public class MovieAwardPlugin extends Plugin {
    * object to synchronize different threads
    */
   private Object mSynchronizationLock = new Object();
-
+  
   public MovieAwardPlugin() {
     mInstance = this;
   }
@@ -540,6 +541,11 @@ final public class MovieAwardPlugin extends Plugin {
   public Properties storeSettings() {
     return mSettings.storeSettings();
   }
+
+	public static String poolString(String input) {
+		//TODO: after 3.0 release use an own string pool
+		return StringPool.getString(input);
+	}
 
 
 }

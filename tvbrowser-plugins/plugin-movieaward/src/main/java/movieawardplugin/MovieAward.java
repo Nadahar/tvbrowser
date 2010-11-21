@@ -55,7 +55,7 @@ public class MovieAward implements Comparable<MovieAward> {
   public void addName(String language, String name) {
     language = language.trim();
     name = name.trim();
-    mNames.put(language.toLowerCase(), name);
+    mNames.put(MovieAwardPlugin.poolString(language.toLowerCase()), name);
   }
 
   /**
