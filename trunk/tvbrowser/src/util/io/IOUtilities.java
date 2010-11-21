@@ -523,37 +523,32 @@ public class IOUtilities {
    *
    * @throws IOException Wenn ein Fehler beim Laden der Datei auftrat.
    */
-  public static byte[] loadFileFromJar(String fileName, Class srcClass)
-    throws IOException
-  {
+  public static byte[] loadFileFromJar(String fileName, Class srcClass) throws IOException {
     if (fileName == null) {
       throw new IllegalArgumentException("fileName == null");
     }
     if (StringUtils.isEmpty(fileName)) {
       throw new IllegalArgumentException("fileName is empty");
-//	if (srcClass == null) srcClass = IOUtilities.class;
+      // if (srcClass == null) srcClass = IOUtilities.class;
     }
 
     // Der Dateiname muss mit einem '/' anfangen, sonst wird er nicht gefunden.
 
     InputStream in;
 
-    if (srcClass==null) {
-    	in=new java.io.FileInputStream(fileName);
-    }
-    else {
-		if ((fileName.charAt(0) != '/') && (fileName.charAt(0) != '\\')) {
-			fileName = "/" + fileName;
-		}
+    if (srcClass == null) {
+      in = new java.io.FileInputStream(fileName);
+    } else {
+      if ((fileName.charAt(0) != '/') && (fileName.charAt(0) != '\\')) {
+        fileName = "/" + fileName;
+      }
 
-		in = srcClass.getResourceAsStream(fileName);
-
+      in = srcClass.getResourceAsStream(fileName);
 
     }
-	if (in == null) {
-		throw new IOException("Resource not found: '" + fileName + "'");
-	}
-
+    if (in == null) {
+      throw new IOException("Resource not found: '" + fileName + "'");
+    }
 
     byte[] buffer = new byte[10240];
     byte[] data = new byte[0];
@@ -567,10 +562,10 @@ public class IOUtilities {
       // Gerade gelesene Daten anh�ngen
       System.arraycopy(buffer, 0, data, oldData.length, len);
     }
+    in.close();
 
     return data;
   }
-
 
 
   /**

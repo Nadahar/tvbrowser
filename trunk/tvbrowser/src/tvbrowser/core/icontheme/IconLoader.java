@@ -26,6 +26,8 @@
 package tvbrowser.core.icontheme;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Logger;
@@ -331,7 +333,14 @@ public class IconLoader {
           .append(icon.getCategory()).append("/").append(icon.getName())
           .append(".png");
 
-      if (plugin.getClass().getResourceAsStream(buffer.toString()) != null) {
+      InputStream stream = plugin.getClass().getResourceAsStream(buffer.toString());
+      if (stream != null) {
+        try {
+          stream.close();
+        } catch (IOException e1) {
+          // TODO Auto-generated catch block
+          e1.printStackTrace();
+        }
         try {
           imageIcon = ImageUtilities.createImageIconFromJar(buffer.toString(), plugin.getClass());
 
@@ -354,7 +363,14 @@ public class IconLoader {
             icon.getCategory()).append("/").append(icon.getName()).append(
             ".png");
 
-    if (getClass().getResourceAsStream(buffer.toString()) != null) {
+    InputStream stream = getClass().getResourceAsStream(buffer.toString());
+    if (stream != null) {
+      try {
+        stream.close();
+      } catch (IOException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
       imageIcon = ImageUtilities.createImageIconFromJar(buffer.toString(), getClass());
       return imageIcon;
     }
