@@ -32,19 +32,23 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.Action;
+import javax.swing.ImageIcon;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.tree.TreePath;
 
+import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.pluginview.PluginTree;
+import util.browserlauncher.Launch;
 import util.exc.TvBrowserException;
 import util.ui.Localizer;
 import util.ui.TVBrowserIcons;
 import util.ui.menu.MenuUtil;
 import devplugin.ActionMenu;
+import devplugin.PluginInfo;
 
 /**
  * Created by: Martin Oberhauser (martin@tvbrowser.org)
@@ -127,8 +131,26 @@ public abstract class PluginContextMenu extends AbstractContextMenu {
       }
     });
     menu.add(menuItem);
-    
-
+    ImageIcon icon = IconLoader.getInstance().getIconFromTheme("apps",
+        "help-browser", 16);
+    menuItem = MenuUtil.createMenuItem(Localizer.getLocalization(Localizer.I18N_HELP));
+    menuItem.setIcon(icon);
+    menuItem.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        final PluginProxy plugin = PluginProxyManager.getInstance()
+            .getPluginForId(getPluginId());
+        if (plugin != null) {
+          String helpUrl = plugin.getInfo().getHelpUrl();
+          if (helpUrl == null) {
+            helpUrl = PluginInfo.getHelpUrl(plugin.getId());
+          }
+          if (helpUrl != null) {
+            Launch.openURL(helpUrl);
+          }
+        }
+      }
+    });
+    menu.add(menuItem);
     return menu;
   }
 
