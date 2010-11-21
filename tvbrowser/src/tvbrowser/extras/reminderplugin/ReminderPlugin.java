@@ -67,6 +67,7 @@ import tvbrowser.extras.common.ConfigurationHandler;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.exc.ErrorHandler;
 import util.io.IOUtilities;
+import util.io.stream.ObjectInputStreamProcessor;
 import util.io.stream.ObjectOutputStreamProcessor;
 import util.io.stream.StreamUtilities;
 import util.ui.Localizer;
@@ -216,21 +217,26 @@ public class ReminderPlugin {
   private void loadReminderData() {
     try {
 
-
       File newFile = new File(Settings.getUserSettingsDirName(), DATAFILE_NAME);
 
       if (newFile.exists()) {
-        readData(getObjectInputStream(newFile));
-      }
-      else {
+        StreamUtilities.objectInputStream(newFile, 0x4000, new ObjectInputStreamProcessor() {
+
+          @Override
+          public void process(ObjectInputStream inputStream) throws IOException {
+            try {
+              readData(inputStream);
+            } catch (ClassNotFoundException e) {
+              ErrorHandler.handle("Could not load reminder data", e);
+            }
+          }
+        });
+      } else {
         tryToReadDataFromPreviousVersions();
       }
-    mReminderList.removeExpiredItems();
-    mReminderList.setReminderTimerListener(new ReminderTimerListener(
-        mSettings, mReminderList));
+      mReminderList.removeExpiredItems();
+      mReminderList.setReminderTimerListener(new ReminderTimerListener(mSettings, mReminderList));
 
-    } catch (ClassNotFoundException e) {
-      ErrorHandler.handle("Could not load reminder data", e);
     } catch (IOException e) {
       ErrorHandler.handle("Could not load reminder data", e);
     }
@@ -241,22 +247,39 @@ public class ReminderPlugin {
     boolean oldDataRead = false;
     try {
       File nodeFile = new File(Settings.getUserSettingsDirName(), "java.reminderplugin.ReminderPlugin.node");
-
       if (nodeFile.exists()) {
-        readReminderFromTVBrowser21and20(getObjectInputStream(nodeFile));
+        StreamUtilities.objectInputStream(nodeFile, 0x4000, new ObjectInputStreamProcessor() {
+
+          @Override
+          public void process(ObjectInputStream inputStream) throws IOException {
+            try {
+              readReminderFromTVBrowser21and20(inputStream);
+            } catch (ClassNotFoundException e) {
+              mLog.log(Level.WARNING, "Could not read data from previous version", e);
+            }
+          }
+        });
         oldDataRead = true;
         nodeFile.delete();
       }
       File datFile = new File(Settings.getUserSettingsDirName(), "java.reminderplugin.ReminderPlugin.dat");
       if (datFile.exists()) {
         if (!oldDataRead) {
-          readReminderFromBeforeTVBrowser20(getObjectInputStream(datFile));
+          StreamUtilities.objectInputStream(datFile, 0x4000, new ObjectInputStreamProcessor() {
+            
+            @Override
+            public void process(ObjectInputStream inputStream) throws IOException {
+              try {
+                readReminderFromBeforeTVBrowser20(inputStream);
+              } catch (ClassNotFoundException e) {
+                mLog.log(Level.WARNING, "Could not read data from previous version", e);
+              }
+            }
+          });
         }
         datFile.delete();
       }
-    }catch(IOException e) {
-      mLog.log(Level.WARNING, "Could not read data from previous version", e);
-    }catch(ClassNotFoundException e) {
+    } catch (IOException e) {
       mLog.log(Level.WARNING, "Could not read data from previous version", e);
     }
   }
