@@ -23,27 +23,31 @@
  */
 package golemplugin;
 
-import com.jgoodies.forms.builder.ButtonBarBuilder;
-import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.RowSpec;
-import com.jgoodies.forms.layout.Sizes;
-import devplugin.Program;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collection;
+
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+
 import util.ui.Localizer;
 import util.ui.ProgramList;
 import util.ui.SendToPluginDialog;
 import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
+
+import com.jgoodies.forms.builder.ButtonBarBuilder2;
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.RowSpec;
+import com.jgoodies.forms.layout.Sizes;
+
+import devplugin.Program;
 
 public class GolemDialog extends JDialog implements WindowClosingIf {
 
@@ -83,7 +87,7 @@ public class GolemDialog extends JDialog implements WindowClosingIf {
 
     panel.add(new JScrollPane(list), cc.xy(1, line));
 
-    final ButtonBarBuilder builderButton = ButtonBarBuilder.createLeftToRightBuilder();
+    final ButtonBarBuilder2 builderButton = ButtonBarBuilder2.createLeftToRightBuilder();
 
     JButton sendBtn = new JButton(TVBrowserIcons.copy(TVBrowserIcons.SIZE_SMALL));
     sendBtn.setToolTipText(mLocalizer.msg("send", "Send to other Plugins"));

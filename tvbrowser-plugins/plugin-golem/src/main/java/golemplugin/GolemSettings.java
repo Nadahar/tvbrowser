@@ -30,16 +30,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
+import util.program.ProgramUtilities;
 import devplugin.Date;
 import devplugin.Plugin;
 import devplugin.Program;
 import devplugin.ProgramReceiveTarget;
+import edu.emory.mathcs.backport.java.util.Collections;
 
 public class GolemSettings {
-  private ArrayList<Program> programList = new ArrayList<Program>();
-  private boolean markEnabled = true;
-  private int markPriority = Program.MAX_MARK_PRIORITY;
-  private ArrayList<ProgramReceiveTarget> receiveTargets = new ArrayList<ProgramReceiveTarget>();
+  private ArrayList<Program> mProgramList = new ArrayList<Program>();
+  private boolean mMarkEnabled = true;
+  private int mMarkPriority = Program.MAX_MARK_PRIORITY;
+  private ArrayList<ProgramReceiveTarget> mReceiveTargets = new ArrayList<ProgramReceiveTarget>();
 
   public GolemSettings() {
 
@@ -49,29 +51,30 @@ public class GolemSettings {
     readData(in);
   }
 
-  public void addProgram(Program p) {
-    if (!programList.contains(p)) {
-      programList.add(p);
-      GolemPlugin.getInstance().getRootNode().addProgram(p);
+  public void addProgram(Program program) {
+    if (!mProgramList.contains(program)) {
+      mProgramList.add(program);
+      GolemPlugin.getInstance().getRootNode().addProgram(program);
       if (isMarkEnabled()) {
-        p.mark(GolemPlugin.getInstance());
+        program.mark(GolemPlugin.getInstance());
       }
 
-      for (ProgramReceiveTarget t : receiveTargets) {
-        t.receivePrograms(new Program[]{p});
+      for (ProgramReceiveTarget receiveTarget : mReceiveTargets) {
+        receiveTarget.receivePrograms(new Program[]{program});
       }
     }
   }
 
   public Collection<Program> getProgramList() {
-    return programList;
+    Collections.sort(mProgramList, ProgramUtilities.getProgramComparator());
+    return mProgramList;
   }
 
   private void readData(ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.readInt(); // version, currently unused
 
-    markEnabled = in.readBoolean();
-    markPriority = in.readInt();
+    mMarkEnabled = in.readBoolean();
+    mMarkPriority = in.readInt();
 
     int size = in.readInt();
 
@@ -86,52 +89,56 @@ public class GolemSettings {
 
     size = in.readInt();
     for (int i = 0; i < size; i++) {
-      ProgramReceiveTarget r = new ProgramReceiveTarget(in);
-      receiveTargets.add(r);
+      ProgramReceiveTarget receiveTarget = new ProgramReceiveTarget(in);
+      mReceiveTargets.add(receiveTarget);
     }
   }
 
   public void writeData(ObjectOutputStream out) throws IOException {
     out.writeInt(1); // version
 
-    out.writeBoolean(markEnabled);
-    out.writeInt(markPriority);
+    out.writeBoolean(mMarkEnabled);
+    out.writeInt(mMarkPriority);
 
-    out.writeInt(programList.size());
+    out.writeInt(mProgramList.size());
 
-    for (Program p : programList) {
-      p.getDate().writeData((java.io.DataOutput) out);
-      out.writeObject(p.getID());
+    for (Program program : mProgramList) {
+      program.getDate().writeData((java.io.DataOutput) out);
+      out.writeObject(program.getID());
     }
 
-    out.writeInt(receiveTargets.size());
+    out.writeInt(mReceiveTargets.size());
 
-    for (ProgramReceiveTarget t : receiveTargets) {
-      t.writeData(out);
+    for (ProgramReceiveTarget receiveTarget : mReceiveTargets) {
+      receiveTarget.writeData(out);
     }
   }
 
   public boolean isMarkEnabled() {
-    return markEnabled;
+    return mMarkEnabled;
   }
 
   public void setMarkEnabled(boolean mark) {
-    markEnabled = mark;
+    mMarkEnabled = mark;
   }
 
   public int getMarkPriority() {
-    return markPriority;
+    return mMarkPriority;
   }
 
   public void setMarkPriority(int prio) {
-    markPriority = prio;
+    mMarkPriority = prio;
   }
 
   public ProgramReceiveTarget[] getReceiveTargets() {
-    return receiveTargets.toArray(new ProgramReceiveTarget[receiveTargets.size()]);
+    return mReceiveTargets.toArray(new ProgramReceiveTarget[mReceiveTargets.size()]);
   }
 
   public void setReceiveTargets(ProgramReceiveTarget[] targets) {
-    receiveTargets = new ArrayList<ProgramReceiveTarget>(Arrays.asList(targets));
+    mReceiveTargets = new ArrayList<ProgramReceiveTarget>(Arrays.asList(targets));
+  }
+
+  public void resetPrograms() {
+    mProgramList = new ArrayList<Program>();
   }
 }
