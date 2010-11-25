@@ -38,6 +38,8 @@ import devplugin.Date;
 import devplugin.Program;
 
 public class GolemUpdater {
+  private static final String GOLEM_ICS_URL = "http://www.golem.de/guckt/GoGu.ics";
+
   private static final Logger logger = Logger.getLogger(GolemUpdater.class.getName());
 
   private static GolemUpdater instance;
@@ -50,6 +52,8 @@ public class GolemUpdater {
     channelMap = new HashMap<String, String>();
     channelMap.put("RTL II", "RTL2");
     channelMap.put("RTL 2", "RTL2");
+    channelMap.put("Dradio Kultur", "Deutschlandradio Kultur");
+    channelMap.put("DLF", "Deutschlandfunk");
   }
 
   public static GolemUpdater getInstance() {
@@ -69,7 +73,8 @@ public class GolemUpdater {
     }
 
     try {
-      URL ical = new URL("http://www.golem.de/guckt/GoGu.ics");
+      GolemPlugin.getInstance().getSettings().resetPrograms();
+      URL ical = new URL(GOLEM_ICS_URL);
 
       CalendarBuilder builder = new CalendarBuilder();
       Calendar calendar = builder.build(ical.openStream());
