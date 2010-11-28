@@ -35,8 +35,6 @@ import javax.swing.Icon;
 
 import org.apache.commons.lang.StringUtils;
 
-import tvdataservice.MutableChannelDayProgram;
-import tvdataservice.MutableProgram;
 import util.ui.UiUtilities;
 
 import com.sun.syndication.feed.synd.SyndEntry;
@@ -65,9 +63,11 @@ import devplugin.Version;
  *
  */
 public final class FeedsPlugin extends Plugin {
+  private static final int MIN_MATCH_LENGTH = 3;
+
   private static final boolean IS_STABLE = false;
 
-  private static final Version mVersion = new Version(2, 70, 0, IS_STABLE);
+  private static final Version mVersion = new Version(2, 70, 1, IS_STABLE);
 
   private static Icon mIcon;
 
@@ -83,6 +83,8 @@ public final class FeedsPlugin extends Plugin {
   private PluginTreeNode mRootNode;
 
   private FeedsPluginSettings mSettings;
+
+  private boolean mStartFinished;
 
   private static FeedsPlugin mInstance;
 
@@ -105,18 +107,16 @@ public final class FeedsPlugin extends Plugin {
   }
 
   @Override
-  public void handleTvDataAdded(final MutableChannelDayProgram newProg) {
-    final Iterator<Program> iterator = newProg.getPrograms();
-    if (iterator != null) {
-      while (iterator.hasNext()) {
-        final MutableProgram program = (MutableProgram) iterator.next();
-      }
-    }
+  public void handleTvBrowserStartFinished() {
+    mStartFinished = true;
+    updateFeeds();
   }
 
   @Override
-  public void handleTvBrowserStartFinished() {
-    updateFeeds();
+  public void handleTvDataUpdateFinished() {
+    if (mStartFinished) {
+      updateFeeds();
+    }
   }
 
   private void updateFeeds() {
@@ -153,9 +153,11 @@ public final class FeedsPlugin extends Plugin {
 
       });
       getRootNode().clear();
+      ArrayList<String> titles = new ArrayList<String>(mFeeds.size());
       for (SyndFeed feed : mFeeds) {
         PluginTreeNode node = mRootNode.addNode(feed.getTitle());
         List<SyndEntryImpl> entries = feed.getEntries();
+        titles.add(feed.getTitle());
         AbstractAction[] subActions = new AbstractAction[entries.size()];
         for (int i = 0; i < subActions.length; i++) {
           final SyndEntryImpl entry = entries.get(i);
@@ -169,6 +171,7 @@ public final class FeedsPlugin extends Plugin {
         node.addActionMenu(menu );
         nodes.put(feed, node);
       }
+      mSettings.setCachedFeedTitles(titles);
 
       final Channel[] channels = devplugin.Plugin.getPluginManager().getSubscribedChannels();
       Date date = Date.getCurrentDate();
@@ -234,19 +237,24 @@ public final class FeedsPlugin extends Plugin {
 
   private boolean matchesTitle(String feedTitle, String programTitle) {
     if (StringUtils.containsIgnoreCase(feedTitle, programTitle)) {
-      return true;
+      if (feedTitle.matches(".*\\b" + Pattern.quote(programTitle) + "\\b.*")) {
+        return true;
+      }
     }
     else if (programTitle.contains(" - ")) {
       String[] parts = programTitle.split(Pattern.quote(" - "));
       for (String part : parts) {
-        if (StringUtils.containsIgnoreCase(feedTitle, part)) {
-          return true;
+        if (part.length() >= MIN_MATCH_LENGTH && StringUtils.containsIgnoreCase(feedTitle, part)) {
+          if (feedTitle.matches(".*\\b" + Pattern.quote(part) + "\\b.*")) {
+            return true;
+          }
         }
       }
     }
     else if (programTitle.endsWith(")")) {
       int index = programTitle.lastIndexOf("(");
       if (index > 0) {
+        // try without the suffix in brackets, which might be a part number or the like
         return matchesTitle(feedTitle, programTitle.substring(0, index).trim());
       }
     }
@@ -299,5 +307,52 @@ public final class FeedsPlugin extends Plugin {
   @Override
   public void loadSettings(Properties properties) {
     mSettings = new FeedsPluginSettings(properties);
+  }
+
+  @Override
+  public Icon[] getProgramTableIcons(final Program program) {
+    if (program == getPluginManager().getExampleProgram()) {
+      return new Icon[] {getPluginIcon()};
+    }
+    if (getMatchingEntries(program.getTitle()).isEmpty()) {
+      return null;
+    }
+    return new Icon[] {getPluginIcon()};
+  }
+
+  @Override
+  public String getProgramTableIconText() {
+    return mLocalizer.msg("name", "Feeds");
+  }
+
+  @Override
+  public ActionMenu getButtonAction() {
+    ArrayList<String> feedTitles = mSettings.getCachedFeedTitles();
+    if (feedTitles.isEmpty()) {
+      return null;
+    }
+    ContextMenuAction mainAction = new ContextMenuAction(mLocalizer.msg("name", "Feeds"), getPluginIcon());
+    ArrayList<AbstractAction> list = new ArrayList<AbstractAction>(feedTitles.size());
+    for (int i = 0; i < feedTitles.size(); i++) {
+      final String title = feedTitles.get(i);
+      final int feedIndex = i;
+      list.add(new AbstractAction(title) {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          SyndFeed selectedFeed = mFeeds.get(feedIndex);
+          if (selectedFeed != null) {
+            showFeedsDialog(new FeedsDialog(getParentFrame(), selectedFeed.getEntries()));
+          }
+       }});
+    }
+    Collections.sort(list, new Comparator<AbstractAction>() {
+
+      @Override
+      public int compare(AbstractAction o1, AbstractAction o2) {
+        return ((String) o1.getValue(AbstractAction.NAME)).compareTo((String) o2.getValue(AbstractAction.NAME));
+      }
+    });
+    return new ActionMenu(mainAction, list.toArray(new AbstractAction[list.size()]));
   }
 }
