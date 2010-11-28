@@ -25,6 +25,7 @@ class FeedsPluginSettings extends PropertyBasedSettings {
 
   private static final String KEY_COUNT_FEEDS = "countFeeds";
   private static final String KEY_FEED_URL = "feedUrl";
+  private static final String KEY_FEED_TITLE = "feedTitle";
 
   public FeedsPluginSettings(final Properties properties) {
     super(properties);
@@ -46,5 +47,20 @@ class FeedsPluginSettings extends PropertyBasedSettings {
     }
   }
 
+  public ArrayList<String> getCachedFeedTitles() {
+    ArrayList<String> urls = getFeeds();
+    int count = urls.size();
+    ArrayList<String> list = new ArrayList<String>();
+    for (int i = 0; i < count; i++) {
+      list.add(get(KEY_FEED_TITLE + String.valueOf(i), urls.get(i)));
+    }
+    return list;
+  }
+
+  public void setCachedFeedTitles(final ArrayList<String> titles) {
+    for (int i = 0; i < titles.size(); i++) {
+      set(KEY_FEED_TITLE + String.valueOf(i), titles.get(i));
+    }
+  }
 
 }
