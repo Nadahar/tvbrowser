@@ -116,7 +116,8 @@ public class ImdbRatingPanel extends JPanel {
 
       JTextArea akaLabel = new JTextArea(akaString.toString());
       akaLabel.setEditable(false);
-      akaLabel.setForeground(Color.black);
+      akaLabel.setBackground(Color.WHITE);
+      akaLabel.setForeground(Color.BLACK);
       akaLabel.setFont(alternativeHead.getFont().deriveFont(12f).deriveFont(Font.PLAIN));
 
       add(akaLabel, cc.xy(1,layout.getRowCount()));
