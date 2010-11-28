@@ -72,7 +72,7 @@ public class ImdbRatingsDialog extends JDialog implements WindowClosingIf {
 		else {
 			mainComponent = createEditor(rating);
 		}
-    
+
     layout.appendRow(RowSpec.decode("fill:min:grow"));
     panel.add(mainComponent, cc.xy(1,panel.getRowCount()));
 
@@ -82,7 +82,7 @@ public class ImdbRatingsDialog extends JDialog implements WindowClosingIf {
     JButton okButton = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
     okButton.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e) {
-        close();  
+        close();
       }
     });
 
@@ -95,6 +95,7 @@ public class ImdbRatingsDialog extends JDialog implements WindowClosingIf {
     getRootPane().setDefaultButton(okButton);
     pack();
     UiUtilities.setSize(this, 500, 450);
+    okButton.requestFocusInWindow();
   }
 
 	private JComponent createEditor(final ImdbRating rating) {
