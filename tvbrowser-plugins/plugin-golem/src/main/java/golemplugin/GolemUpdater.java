@@ -24,6 +24,8 @@
 package golemplugin;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.logging.Level;
@@ -36,6 +38,7 @@ import net.fortuna.ical4j.model.component.VEvent;
 import devplugin.Channel;
 import devplugin.Date;
 import devplugin.Program;
+import edu.emory.mathcs.backport.java.util.Collections;
 
 public class GolemUpdater {
   private static final String GOLEM_ICS_URL = "http://www.golem.de/guckt/GoGu.ics";
@@ -86,35 +89,58 @@ public class GolemUpdater {
 
         java.util.Calendar start = java.util.Calendar.getInstance();
         start.setTime(event.getStartDate().getDate());
+        final int startTime = start.get(java.util.Calendar.HOUR_OF_DAY) * 60 + start.get(java.util.Calendar.MINUTE);
 
-        // String summary = event.getSummary().getValue(); Not used atm
+        String summary = event.getSummary().getValue();
         String[] desc = event.getDescription().getValue().split("\n");
 
         if (desc.length > 2) {
+          Date date = new Date(start);
           String chname = desc[1];
           Channel ch = findChannel(channels, chname);
 
           if (ch != null) {
-            Iterator<Program> pit = GolemPlugin.getPluginManager().getChannelDayProgram(new Date(start), ch);
-            while (null != pit && pit.hasNext()) {
-              Program p = pit.next();
-              int starttime = start.get(java.util.Calendar.HOUR_OF_DAY) * 60 + start.get(java.util.Calendar.MINUTE);
+            Iterator<Program> iterator = GolemPlugin.getPluginManager().getChannelDayProgram(date, ch);
+            ArrayList<Program> programs = new ArrayList<Program>();
+            if (null != iterator) {
+              boolean found = false;
+              while (iterator.hasNext() && !found) {
+                Program p = iterator.next();
+                programs.add(p);
+                if (p.getStartTime() == startTime) {
+                  GolemPlugin.getInstance().getSettings().addProgram(p);
+                  found = true;
+                }
+              }
+              if (!found) {
+                Collections.sort(programs, new Comparator<Program>() {
 
-              if (p.getStartTime() == starttime) {
-                GolemPlugin.getInstance().getSettings().addProgram(p);
+                  @Override
+                  public int compare(Program first, Program second) {
+                    int firstDelta = Math.abs(first.getStartTime() - startTime);
+                    int secondDelta = Math.abs(second.getStartTime() - startTime);
+                    return firstDelta - secondDelta;
+                  }
+                });
+                for (Program program : programs) {
+                  if (program.getTitle().equalsIgnoreCase(summary)) {
+                    GolemPlugin.getInstance().getSettings().addProgram(program);
+                    break;
+                  }
+                }
               }
             }
 
-            GolemPlugin.getInstance().getRootNode().update();
           } else {
-            logger.fine("Missed Channelname : " + chname);
+            logger.fine("Missed channel name: " + chname);
           }
         }
 
       }
     } catch (Exception e) {
-      logger.log(Level.SEVERE, "Problems during data download...", e);
+      logger.log(Level.SEVERE, "Problems during data download: ", e);
     }
+    GolemPlugin.getInstance().getRootNode().update();
 
     synchronized (this) {
       updateRunning = false;
