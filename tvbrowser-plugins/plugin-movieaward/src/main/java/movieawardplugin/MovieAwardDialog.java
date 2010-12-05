@@ -70,9 +70,7 @@ public class MovieAwardDialog extends JDialog implements WindowClosingIf {
         + "td { margin-right:5 px;margin-top:0 px;margin-bottom:0 px;vertical-align:top;padding-right:0 px;padding-top:0 px;padding-bottom:0 px;padding-left:0 px;}"
         + "</style></head>";
 
-    text.append("<html>"+ stylesheetDef + "<body style=\"margin-left:0 px;\"><div class=\"headlineSmall\">&nbsp;")
-        .append(mLocalizer.msg("movieAwardFor", "Movie Awards for"))
-        .append(" </div><div class=\"headlineFilm\">&nbsp;").append(
+    text.append("<html>"+ stylesheetDef + "<body style=\"margin-left:0 px;\"><div class=\"headlineFilm\">").append(
             program.getTitle()).append("</div>");
     text.append("<table>");
 
@@ -80,10 +78,10 @@ public class MovieAwardDialog extends JDialog implements WindowClosingIf {
       final StringBuilder winnerText = new StringBuilder();
       final StringBuilder nomineeText = new StringBuilder();
       final StringBuilder honoredText = new StringBuilder();
-      
+
       for (Award award : movieAward.getAwardsFor(program)) {
         final StringBuilder tmpText;
-        
+
         switch (award.getStatus()) {
         case NOMINATED:
           tmpText = nomineeText;
@@ -98,7 +96,7 @@ public class MovieAwardDialog extends JDialog implements WindowClosingIf {
           mLog.severe("Missing implementation for award status");
           tmpText = text;
         }
-        
+
         tmpText.append("<tr  class=\"uTRow\"><td style=\"margin-left:10 px;\" valign=\"top\">&#x25CF;</td><td class=\"category\">");
 
         String url = movieAward.getUrl();
@@ -160,7 +158,7 @@ public class MovieAwardDialog extends JDialog implements WindowClosingIf {
         }
 
         if (award.getAdditionalInfo() != null) {
-          tmpText.append("</td></tr><tr class=\"reciepient\"><td></td><td>"+award.getAdditionalInfo());
+          tmpText.append("</td></tr><tr class=\"recipient\"><td></td><td>"+award.getAdditionalInfo());
         }
         tmpText.append("</td></tr>");
       }
