@@ -117,6 +117,7 @@ public final class FeedsDialog extends JDialog implements WindowClosingIf {
     final ExtendedHTMLDocument doc = (ExtendedHTMLDocument) mInfoPane.getDocument();
     mInfoPane.setText(createHtmlText(doc, entries));
     mScrollPane.getVerticalScrollBar().setValue(0);
+    mInfoPane.setCaretPosition(0);
 
     toFront();
   }
