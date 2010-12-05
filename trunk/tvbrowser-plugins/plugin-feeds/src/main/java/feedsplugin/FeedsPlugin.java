@@ -120,7 +120,9 @@ public final class FeedsPlugin extends Plugin {
   }
 
   private void updateFeeds() {
-    mFeeds = new ArrayList<SyndFeed>();
+    synchronized (mFeeds) {
+      mFeeds = new ArrayList<SyndFeed>();
+    }
     Hashtable<SyndFeed, PluginTreeNode> nodes = new Hashtable<SyndFeed, PluginTreeNode>();
     ArrayList<String> feedUrls = mSettings.getFeeds();
     if (!feedUrls.isEmpty()) {
@@ -130,7 +132,9 @@ public final class FeedsPlugin extends Plugin {
       for (String feedUrl : feedUrls) {
         try {
           final SyndFeed feed = feedFetcher.retrieveFeed(new URL(feedUrl));
-          mFeeds.add(feed);
+          synchronized (mFeeds) {
+            mFeeds.add(feed);
+          }
           mLog.info("Loaded " + feed.getEntries().size() + " feed entries from " + feedUrl);
         } catch (IllegalArgumentException e) {
           e.printStackTrace();
@@ -146,49 +150,50 @@ public final class FeedsPlugin extends Plugin {
       }
     }
     if (!mFeeds.isEmpty()) {
-      Collections.sort(mFeeds, new Comparator<SyndFeed>() {
-        public int compare(SyndFeed o1, SyndFeed o2) {
-          return o1.getTitle().compareToIgnoreCase(o2.getTitle());
-        }
-
-      });
       getRootNode().clear();
       ArrayList<String> titles = new ArrayList<String>(mFeeds.size());
-      for (SyndFeed feed : mFeeds) {
-        PluginTreeNode node = mRootNode.addNode(feed.getTitle());
-        List<SyndEntryImpl> entries = feed.getEntries();
-        titles.add(feed.getTitle());
-        AbstractAction[] subActions = new AbstractAction[entries.size()];
-        for (int i = 0; i < subActions.length; i++) {
-          final SyndEntryImpl entry = entries.get(i);
-          subActions[i] = new AbstractAction(entry.getTitle()) {
-            public void actionPerformed(ActionEvent e) {
-              showFeedsDialog(new FeedsDialog(getParentFrame(), entry));
-            }
-          };
-        }
-        ActionMenu menu = new ActionMenu(new ContextMenuAction(mLocalizer.msg("readEntry", "Read entry")), subActions );
-        node.addActionMenu(menu );
-        nodes.put(feed, node);
-      }
-      mSettings.setCachedFeedTitles(titles);
-
       final Channel[] channels = devplugin.Plugin.getPluginManager().getSubscribedChannels();
       Date date = Date.getCurrentDate();
       final int maxDays = 7;
-      for (int days = 0; days < maxDays; days++) {
-        for (Channel channel : channels) {
-          for (Iterator<Program> iter = devplugin.Plugin.getPluginManager().getChannelDayProgram(date, channel); iter
-              .hasNext();) {
-            final Program prog = iter.next();
-            for (SyndFeed feed : mFeeds) {
-              if (!getMatchingEntries(prog.getTitle(), feed).isEmpty()) {
-                nodes.get(feed).addProgramWithoutCheck(prog);
+      synchronized (mFeeds) {
+        Collections.sort(mFeeds, new Comparator<SyndFeed>() {
+          public int compare(SyndFeed o1, SyndFeed o2) {
+            return o1.getTitle().compareToIgnoreCase(o2.getTitle());
+          }
+        });
+        for (SyndFeed feed : mFeeds) {
+          PluginTreeNode node = mRootNode.addNode(feed.getTitle());
+          List<SyndEntryImpl> entries = feed.getEntries();
+          titles.add(feed.getTitle());
+          AbstractAction[] subActions = new AbstractAction[entries.size()];
+          for (int i = 0; i < subActions.length; i++) {
+            final SyndEntryImpl entry = entries.get(i);
+            subActions[i] = new AbstractAction(entry.getTitle()) {
+              public void actionPerformed(ActionEvent e) {
+                showFeedsDialog(new FeedsDialog(getParentFrame(), entry));
+              }
+            };
+          }
+          ActionMenu menu = new ActionMenu(new ContextMenuAction(mLocalizer.msg("readEntry", "Read entry")), subActions );
+          node.addActionMenu(menu );
+          nodes.put(feed, node);
+        }
+        mSettings.setCachedFeedTitles(titles);
+        for (int days = 0; days < maxDays; days++) {
+          for (Channel channel : channels) {
+            for (Iterator<Program> iter = devplugin.Plugin.getPluginManager().getChannelDayProgram(date, channel); iter
+                .hasNext();) {
+              final Program prog = iter.next();
+              for (SyndFeed feed : mFeeds) {
+                if (!getMatchingEntries(prog.getTitle(), feed).isEmpty()) {
+                  nodes.get(feed).addProgramWithoutCheck(prog);
+                  prog.validateMarking();
+                }
               }
             }
           }
+          date = date.addDays(1);
         }
-        date = date.addDays(1);
       }
       mRootNode.update();
     }
@@ -228,6 +233,10 @@ public final class FeedsPlugin extends Plugin {
     while (iterator.hasNext()) {
       final SyndEntry entry = (SyndEntry) iterator.next();
       String feedTitle = entry.getTitle();
+      // extract program name from feed title (often enclosed in "...")
+      if (StringUtils.countMatches(feedTitle, "\"") == 2) {
+        feedTitle = StringUtils.substringBetween(feedTitle, "\"", "\"");
+      }
       if (matchesTitle(feedTitle, searchString)) {
         matches.add(entry);
       }
@@ -261,10 +270,12 @@ public final class FeedsPlugin extends Plugin {
     return false;
   }
 
-  ArrayList<SyndEntry> getMatchingEntries(final String searchString) {
+  private ArrayList<SyndEntry> getMatchingEntries(final String searchString) {
     ArrayList<SyndEntry> result = new ArrayList<SyndEntry>();
-    for (SyndFeed feed : mFeeds) {
-      result.addAll(getMatchingEntries(searchString, feed));
+    synchronized (mFeeds) {
+      for (SyndFeed feed : mFeeds) {
+        result.addAll(getMatchingEntries(searchString, feed));
+      }
     }
     return result;
   }
@@ -342,7 +353,8 @@ public final class FeedsPlugin extends Plugin {
         public void actionPerformed(ActionEvent e) {
           SyndFeed selectedFeed = mFeeds.get(feedIndex);
           if (selectedFeed != null) {
-            showFeedsDialog(new FeedsDialog(getParentFrame(), selectedFeed.getEntries()));
+            List entries = selectedFeed.getEntries();
+            showFeedsDialog(new FeedsDialog(getParentFrame(), entries));
           }
        }});
     }
