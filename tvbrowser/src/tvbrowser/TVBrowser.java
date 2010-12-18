@@ -40,6 +40,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.RandomAccessFile;
 import java.io.StringWriter;
+import java.lang.reflect.InvocationTargetException;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 import java.nio.channels.FileLock;
@@ -54,7 +55,6 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
-import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -95,6 +95,7 @@ import util.exc.TvBrowserException;
 import util.misc.OperatingSystem;
 import util.ui.ImageUtilities;
 import util.ui.Localizer;
+import util.ui.UIThreadRunner;
 import util.ui.UiUtilities;
 import util.ui.textcomponentpopup.TextComponentPopupEventQueue;
 import ca.beq.util.win32.registry.RegistryKey;
@@ -323,7 +324,7 @@ public class TVBrowser {
         mainLogger.setLevel(Level.WARNING);
       }
     }
-    
+
     //Update plugin on version change
     if(Settings.propTVBrowserVersion.getVersion() != null && VERSION.compareTo(Settings.propTVBrowserVersion.getVersion()) > 0) {
       updateLookAndFeel();
@@ -747,18 +748,26 @@ public class TVBrowser {
 
 
   private static void showTVBrowserIsAlreadyRunningMessageBox() {
-
-    Object[] options = {Localizer.getLocalization(Localizer.I18N_CLOSE),
-                    mLocalizer.msg("startAnyway","start anyway")};
-    if (JOptionPane.showOptionDialog(null,
-    mLocalizer.msg("alreadyRunning","TV-Browser is already running"),
-    mLocalizer.msg("alreadyRunning","TV-Browser is already running"),
-    JOptionPane.DEFAULT_OPTION,
-    JOptionPane.WARNING_MESSAGE,
-    null, options, options[0])!=1) {
-      System.exit(-1);
+    try {
+      UIThreadRunner.invokeAndWait(new Runnable() {
+        @Override
+        public void run() {
+          Object[] options = { Localizer.getLocalization(Localizer.I18N_CLOSE),
+              mLocalizer.msg("startAnyway", "start anyway") };
+          if (JOptionPane.showOptionDialog(null, mLocalizer.msg("alreadyRunning", "TV-Browser is already running"),
+              mLocalizer.msg("alreadyRunning", "TV-Browser is already running"), JOptionPane.DEFAULT_OPTION,
+              JOptionPane.WARNING_MESSAGE, null, options, options[0]) != 1) {
+            System.exit(-1);
+          }
+        }
+      });
+    } catch (InterruptedException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } catch (InvocationTargetException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
     }
-
   }
 
   private static void initUi(Splash splash, boolean startMinimized) {
@@ -998,7 +1007,7 @@ public class TVBrowser {
       return true;
     }
 
-    if(Settings.propAutoDownloadWaitingTime.getShort() > 0) {
+    if(Settings.propAutoDownloadWaitingEnabled.getBoolean() && Settings.propAutoDownloadWaitingTime.getShort() > 0) {
       final long timerStart = Calendar.getInstance().getTimeInMillis();
       if(mAutoDownloadWaitingTimer == null) {
         mAutoDownloadWaitingTimer = new Timer(1000,
@@ -1081,13 +1090,27 @@ public class TVBrowser {
 
 
   private static void updateLookAndFeel() {
-    if (OperatingSystem.isWindows()) {
-      UIManager.installLookAndFeel("Extended Windows Look And Feel",  "com.jgoodies.looks.windows.WindowsLookAndFeel");
+    try {
+      if (OperatingSystem.isWindows()) {
+        UIManager.installLookAndFeel("Extended Windows",  "com.jgoodies.looks.windows.WindowsLookAndFeel");
+      }
+      UIManager.installLookAndFeel("Plastic",           "com.jgoodies.looks.plastic.PlasticLookAndFeel");
+      UIManager.installLookAndFeel("Plastic 3D",        "com.jgoodies.looks.plastic.Plastic3DLookAndFeel");
+      UIManager.installLookAndFeel("Plastic XP",        "com.jgoodies.looks.plastic.PlasticXPLookAndFeel");
+      UIManager.installLookAndFeel("Skin",              "com.l2fprod.gui.plaf.skin.SkinLookAndFeel");
+/*
+      Map<String, SkinInfo> substanceSkins = SubstanceLookAndFeel.getAllSkins();
+      if (substanceSkins != null) {
+        for (SkinInfo skin : substanceSkins.values()) {
+          String className = skin.getClassName();
+          UIManager.installLookAndFeel("Substance " + skin.getDisplayName(), StringUtils.replace(StringUtils.replace(className, "Skin", "LookAndFeel"), "skin.", "skin.Substance"));
+        }
+      }
+*/
+    } catch (Exception e1) {
+      // ignore any exception for optional skins
+      e1.printStackTrace();
     }
-    UIManager.installLookAndFeel("Plastic Look And Feel",           "com.jgoodies.looks.plastic.PlasticLookAndFeel");
-    UIManager.installLookAndFeel("Plastic 3D Look And Feel",        "com.jgoodies.looks.plastic.Plastic3DLookAndFeel");
-    UIManager.installLookAndFeel("Plastic XP Look And Feel",        "com.jgoodies.looks.plastic.PlasticXPLookAndFeel");
-    UIManager.installLookAndFeel("Skin Look And Feel",              "com.l2fprod.gui.plaf.skin.SkinLookAndFeel");
 
     if (Settings.propLookAndFeel.getString().equals(
         "com.l2fprod.gui.plaf.skin.SkinLookAndFeel")) {
@@ -1144,8 +1167,19 @@ public class TVBrowser {
           }
         }
         if (foundCurrent) {
-          UIManager.setLookAndFeel(curLookAndFeel);
-          mLog.info("setting look and feel to " + curLookAndFeel);
+          UIThreadRunner.invokeAndWait(new Runnable() {
+
+            @Override
+            public void run() {
+              try {
+                UIManager.setLookAndFeel(curLookAndFeel);
+              } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+              }
+              mLog.info("setting look and feel to " + curLookAndFeel);
+            }
+          });
         }
       } catch (Exception exc) {
         String msg =
@@ -1155,7 +1189,7 @@ public class TVBrowser {
     }
 
     // set colors for action pane at UIManager
-    UIManager.put("TaskPane.foreGround",(new JButton()).getForeground());
+    UIManager.put("TaskPane.foreGround",UIManager.get("Button.foreground"));
 
     if(UIManager.getColor("List.selectionBackground") == null) {
       UIManager.put("List.selectionBackground",UIManager.getColor("Tree.selectionBackground"));
@@ -1317,17 +1351,17 @@ public class TVBrowser {
       mAutoDownloadWaitingTimer = null;
     }
   }
-  
+
   private static void updatePluginsOnVersionChange() {
     boolean oldBetaWarning = Settings.propPluginBetaWarning.getBoolean();
-    
+
     TvBrowserVersionChangeDlg versionChange = new TvBrowserVersionChangeDlg(Settings.propTVBrowserVersion.getVersion());
     versionChange.pack();
     versionChange.setLocationRelativeTo(null);
     versionChange.setVisible(true);
-    
+
     Settings.propPluginBetaWarning.setBoolean(oldBetaWarning);
-    
+
     if(versionChange.getIsToCloseTvBrowser()) {
       System.exit(0);
     }

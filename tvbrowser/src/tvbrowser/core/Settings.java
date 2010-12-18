@@ -1666,6 +1666,9 @@ public class Settings {
   public static final ShortProperty propAutoDownloadWaitingTime = new ShortProperty(
       mProp, "autoDownloadWaitingTime", (short) 5);
 
+  public static final BooleanProperty propAutoDownloadWaitingEnabled = new BooleanProperty(
+      mProp, "autoDownloadWaitingEnabled", true);
+
   /**
    * if a long program title is to be shown in the program table, shall it be
    * cut?
