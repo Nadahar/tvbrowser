@@ -23,9 +23,12 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -63,6 +66,9 @@ import devplugin.Version;
  *
  */
 public final class FeedsPlugin extends Plugin {
+  private static final String[][] TITLE_DELIMITERS = new String[][] { { "\"", "\"" }, { "«", "»" }, { "»", "«" },
+      { "„", "“" }, {"&#8222;", "&#8220;"} };
+
   private static final int MIN_MATCH_LENGTH = 3;
 
   private static final boolean IS_STABLE = false;
@@ -85,6 +91,8 @@ public final class FeedsPlugin extends Plugin {
   private FeedsPluginSettings mSettings;
 
   private boolean mStartFinished;
+
+  private HashMap<String, ArrayList<SyndEntryWithParent>> mKeywords = new HashMap<String, ArrayList<SyndEntryWithParent>>();
 
   private static FeedsPlugin mInstance;
 
@@ -149,7 +157,11 @@ public final class FeedsPlugin extends Plugin {
         }
       }
     }
+    mKeywords = new HashMap<String, ArrayList<SyndEntryWithParent>>();
     if (!mFeeds.isEmpty()) {
+      for (SyndFeed feed : mFeeds) {
+        addFeedKeywords(feed);
+      }
       getRootNode().clear();
       ArrayList<String> titles = new ArrayList<String>(mFeeds.size());
       final Channel[] channels = devplugin.Plugin.getPluginManager().getSubscribedChannels();
@@ -174,8 +186,8 @@ public final class FeedsPlugin extends Plugin {
               }
             };
           }
-          ActionMenu menu = new ActionMenu(new ContextMenuAction(mLocalizer.msg("readEntry", "Read entry")), subActions );
-          node.addActionMenu(menu );
+          ActionMenu menu = new ActionMenu(new ContextMenuAction(mLocalizer.msg("readEntry", "Read entry")), subActions);
+          node.addActionMenu(menu);
           nodes.put(feed, node);
         }
         mSettings.setCachedFeedTitles(titles);
@@ -184,12 +196,17 @@ public final class FeedsPlugin extends Plugin {
             for (Iterator<Program> iter = devplugin.Plugin.getPluginManager().getChannelDayProgram(date, channel); iter
                 .hasNext();) {
               final Program prog = iter.next();
-              for (SyndFeed feed : mFeeds) {
-                if (!getMatchingEntries(prog.getTitle(), feed).isEmpty()) {
-                  nodes.get(feed).addProgramWithoutCheck(prog);
-                  prog.validateMarking();
+                ArrayList<SyndEntryWithParent> matchingEntries = getMatchingEntries(prog.getTitle());
+                if (!matchingEntries.isEmpty()) {
+                  HashSet<SyndFeed> feeds = new HashSet<SyndFeed>();
+                  for (SyndEntryWithParent entry : matchingEntries) {
+                    feeds.add(entry.getFeed());
+                  }
+                  for (SyndFeed syndFeed : feeds) {
+                    nodes.get(syndFeed).addProgramWithoutCheck(prog);
+                    prog.validateMarking();
+                  }
                 }
-              }
             }
           }
           date = date.addDays(1);
@@ -199,18 +216,66 @@ public final class FeedsPlugin extends Plugin {
     }
   }
 
+  private void addFeedKeywords(final SyndFeed feed) {
+    final Iterator<?> iterator = feed.getEntries().iterator();
+    while (iterator.hasNext()) {
+      final SyndEntry entry = (SyndEntry) iterator.next();
+      String feedTitle = entry.getTitle();
+      // index title or parts
+      for (String[] delimiter : TITLE_DELIMITERS) {
+        String titlePart = StringUtils.substringBetween(feedTitle, delimiter[0], delimiter[1]);
+        if (titlePart != null && !titlePart.isEmpty()) {
+          feedTitle = titlePart;
+          break;
+        }
+      }
+      addFeedKey(feedTitle, entry, feed);
+      // index description parts
+      String desc = entry.getDescription().getValue();
+      if (desc != null) {
+        for (String[] delimiter : TITLE_DELIMITERS) {
+          if (desc.contains(delimiter[0])) {
+            String[] descParts = StringUtils.substringsBetween(desc, delimiter[0], delimiter[1]);
+            if (descParts != null) {
+              for (String descPart : descParts) {
+                if (!descPart.isEmpty()) {
+                  addFeedKey(descPart, entry, feed);
+                }
+              }
+              break;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  private void addFeedKey(final String keyWord, final SyndEntry feedEntry, final SyndFeed feed) {
+    ArrayList<SyndEntryWithParent> list = mKeywords.get(keyWord);
+    if (list == null) {
+      list = new ArrayList<SyndEntryWithParent>(1);
+      mKeywords.put(keyWord, list);
+    }
+    list.add(new SyndEntryWithParent(feedEntry, feed));
+  }
+
   @Override
   public ActionMenu getContextMenuActions(final Program program) {
     return getContextMenuAction(getMatchingEntries(program.getTitle()));
   }
 
-  private ActionMenu getContextMenuAction(final ArrayList<SyndEntry> matches) {
+  private ActionMenu getContextMenuAction(final ArrayList<SyndEntryWithParent> matches) {
     if (matches.isEmpty()) {
       return null;
     }
-    AbstractAction action = new AbstractAction(mLocalizer.msg("contextMenu", "Feeds {0}", matches.size()), getPluginIcon()) {
+    final ArrayList<SyndEntry> entries = new ArrayList<SyndEntry>(matches.size());
+    for (SyndEntryWithParent match : matches) {
+      entries.add(match.getEntry());
+    }
+    AbstractAction action = new AbstractAction(mLocalizer.msg("contextMenu", "Feeds {0}", matches.size()),
+        getPluginIcon()) {
       public void actionPerformed(final ActionEvent e) {
-        showFeedsDialog(new FeedsDialog(getParentFrame(), matches));
+        showFeedsDialog(new FeedsDialog(getParentFrame(), entries));
       }
     };
     return new ActionMenu(action);
@@ -227,57 +292,71 @@ public final class FeedsPlugin extends Plugin {
     UiUtilities.centerAndShow(dialog);
   }
 
-  private ArrayList<SyndEntry> getMatchingEntries(final String searchString, final SyndFeed feed) {
-    ArrayList<SyndEntry> matches = new ArrayList<SyndEntry>();
-    final Iterator<?> iterator = feed.getEntries().iterator();
-    while (iterator.hasNext()) {
-      final SyndEntry entry = (SyndEntry) iterator.next();
-      String feedTitle = entry.getTitle();
-      // extract program name from feed title (often enclosed in "...")
-      if (StringUtils.countMatches(feedTitle, "\"") == 2) {
-        feedTitle = StringUtils.substringBetween(feedTitle, "\"", "\"");
-      }
-      if (matchesTitle(feedTitle, searchString)) {
-        matches.add(entry);
+  private ArrayList<SyndEntryWithParent> getMatchingEntries(final String searchString) {
+    ArrayList<SyndEntryWithParent> matches = new ArrayList<SyndEntryWithParent>();
+    String quotedString = quoteTitle(searchString);
+    for (Entry<String, ArrayList<SyndEntryWithParent>> entry : mKeywords.entrySet()) {
+      if (matchesTitle(entry.getKey(), searchString, quotedString )) {
+        matches.addAll(entry.getValue());
       }
     }
     return matches;
   }
 
-  private boolean matchesTitle(String feedTitle, String programTitle) {
-    if (StringUtils.containsIgnoreCase(feedTitle, programTitle)) {
-      if (feedTitle.matches(".*\\b" + Pattern.quote(programTitle) + "\\b.*")) {
+  private boolean hasMatchingEntries(final String searchString) {
+    String quotedString = quoteTitle(searchString);
+    for (Entry<String, ArrayList<SyndEntryWithParent>> entry : mKeywords.entrySet()) {
+      if (matchesTitle(entry.getKey(), searchString, quotedString)) {
         return true;
-      }
-    }
-    else if (programTitle.contains(" - ")) {
-      String[] parts = programTitle.split(Pattern.quote(" - "));
-      for (String part : parts) {
-        if (part.length() >= MIN_MATCH_LENGTH && StringUtils.containsIgnoreCase(feedTitle, part)) {
-          if (feedTitle.matches(".*\\b" + Pattern.quote(part) + "\\b.*")) {
-            return true;
-          }
-        }
-      }
-    }
-    else if (programTitle.endsWith(")")) {
-      int index = programTitle.lastIndexOf("(");
-      if (index > 0) {
-        // try without the suffix in brackets, which might be a part number or the like
-        return matchesTitle(feedTitle, programTitle.substring(0, index).trim());
       }
     }
     return false;
   }
 
-  private ArrayList<SyndEntry> getMatchingEntries(final String searchString) {
-    ArrayList<SyndEntry> result = new ArrayList<SyndEntry>();
-    synchronized (mFeeds) {
-      for (SyndFeed feed : mFeeds) {
-        result.addAll(getMatchingEntries(searchString, feed));
+  private boolean matchesTitle(final String feedTitle, final String programTitle, String quotedTitle) {
+    if (programTitle.isEmpty()) {
+      return false;
+    }
+    if (feedTitle.equalsIgnoreCase(programTitle)) {
+      return true;
+    }
+    if (StringUtils.containsIgnoreCase(feedTitle, programTitle)) {
+      if (quotedTitle == null) {
+        quotedTitle = quoteTitle(programTitle);
+      }
+      if (feedTitle.matches(quotedTitle)) {
+        return true;
       }
     }
-    return result;
+    if (programTitle.contains(" - ")) {
+      String[] parts = StringUtils.splitByWholeSeparator(programTitle, " - ");
+      if (parts[0].length() >= MIN_MATCH_LENGTH) {
+        return matchesTitle(feedTitle, parts[0], null);
+      }
+    } else if (programTitle.endsWith(")")) {
+      int index = programTitle.lastIndexOf("(");
+      if (index > 0) {
+        // try without the suffix in brackets, which might be a part number or
+        // the like
+        return matchesTitle(feedTitle, programTitle.substring(0, index).trim(), null);
+      }
+    } else if (!Character.isLetterOrDigit(programTitle.charAt(programTitle.length() - 1))) {
+      String shortProgramTitle = removePunctuation(programTitle);
+      String shortFeedTitle = removePunctuation(feedTitle);
+      return matchesTitle(shortFeedTitle, shortProgramTitle, null);
+    }
+    return false;
+  }
+
+  private String quoteTitle(final String programTitle) {
+    return ".*\\b" + Pattern.quote(programTitle) + "\\b.*";
+  }
+
+  private String removePunctuation(String title) {
+    while (title.length() > 0 && !Character.isLetterOrDigit(title.charAt(title.length() - 1))) {
+      title = title.substring(0, title.length() - 1);
+    }
+    return title;
   }
 
   @Override
@@ -323,12 +402,12 @@ public final class FeedsPlugin extends Plugin {
   @Override
   public Icon[] getProgramTableIcons(final Program program) {
     if (program == getPluginManager().getExampleProgram()) {
-      return new Icon[] {getPluginIcon()};
+      return new Icon[] { getPluginIcon() };
     }
-    if (getMatchingEntries(program.getTitle()).isEmpty()) {
-      return null;
+    if (hasMatchingEntries(program.getTitle())) {
+      return new Icon[] { getPluginIcon() };
     }
-    return new Icon[] {getPluginIcon()};
+    return null;
   }
 
   @Override
@@ -356,7 +435,8 @@ public final class FeedsPlugin extends Plugin {
             List entries = selectedFeed.getEntries();
             showFeedsDialog(new FeedsDialog(getParentFrame(), entries));
           }
-       }});
+        }
+      });
     }
     Collections.sort(list, new Comparator<AbstractAction>() {
 
