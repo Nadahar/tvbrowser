@@ -116,6 +116,8 @@ import devplugin.Version;
  */
 public class TVBrowser {
 
+  private static final String SUN_JAVA_WARNING = "TV-Browser was developed for Sun Java and may not run correctly with your Java implementation.";
+
   private static final Logger mLog
     = Logger.getLogger(TVBrowser.class.getName());
 
@@ -228,6 +230,8 @@ public class TVBrowser {
 
   private static Timer mAutoDownloadWaitingTimer;
 
+  private static boolean mIgnoreJVM = false;
+
   /**
    * Entry point of the application
    * @param args The arguments given in the command line.
@@ -323,6 +327,11 @@ public class TVBrowser {
       if (TVBrowser.isStable()) {
         mainLogger.setLevel(Level.WARNING);
       }
+    }
+
+    // log warning for OpenJDK users
+    if (!isJavaImplementationSupported()) {
+      mainLogger.warning(SUN_JAVA_WARNING);
     }
 
     //Update plugin on version change
@@ -620,6 +629,21 @@ public class TVBrowser {
      });
   }
 
+  private static boolean isJavaImplementationSupported() {
+    if (mIgnoreJVM) {
+      return true;
+    }
+    String vendor = System.getProperty("java.vendor");
+    if (!StringUtils.containsIgnoreCase(vendor, "sun") && !StringUtils.containsIgnoreCase(vendor, "oracle")) {
+      return false;
+    }
+    String implementation = System.getProperty("java.vm.name");
+    if (StringUtils.containsIgnoreCase(implementation, "openjdk")) {
+      return false;
+    }
+    return true;
+  }
+
   private static void startPeriodicSaveSettings() {
     // Every 5 minutes we store all the settings so they are stored in case of
     // an unexpected failure
@@ -644,20 +668,25 @@ public class TVBrowser {
     saveThread.start();
   }
 
-  private static void showUsage() {
-    String vendor = System.getProperty("java.vendor").toLowerCase();
-    if (!(vendor.contains("sun") || vendor.contains("openjdk"))) {
-      System.out.println("TV-Browser was developed for Sun Java and OpenJDK and may not run with your version of Java.");
+  private static void showUsage(String[] args) {
+    for (String argument : args) {
+      if (StringUtils.containsIgnoreCase(argument, "ignorejvm") || argument.equalsIgnoreCase("-i")) {
+        mIgnoreJVM = true;
+      }
+    }
+    if (!isJavaImplementationSupported()) {
+      System.out.println(SUN_JAVA_WARNING);
     }
     System.out.println("command line options:");
     System.out.println("    -minimized    The main window will be minimized after start up");
     System.out.println("    -nosplash     No splash screen during start up");
     System.out.println("    -fullscreen   Start in fullscreen-mode");
+    System.out.println("    -ignorejvm    Don't check for Sun Java");
     System.out.println();
   }
 
   private static void parseCommandline(String[] args) {
-    showUsage();
+    showUsage(args);
     for (String argument : args) {
       if (argument.equalsIgnoreCase("-help") || argument.equalsIgnoreCase("-h")) {
         System.exit(0);
