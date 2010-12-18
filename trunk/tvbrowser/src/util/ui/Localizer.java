@@ -37,9 +37,9 @@ import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map.Entry;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-import java.util.Map.Entry;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.logging.Logger;
@@ -621,6 +621,10 @@ public class Localizer {
    * @since 3.0
    */
   public boolean hasMessage(final String key) {
+    loadResourceBundle();
+    if (mResource == null) {
+      return false;
+    }
   	return mResource.containsKey(key);
   }
 
