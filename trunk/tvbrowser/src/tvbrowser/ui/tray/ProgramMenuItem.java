@@ -103,6 +103,7 @@ public class ProgramMenuItem extends JMenuItem {
    * @param n A value represents the position of this MenuItem.
    */
   public ProgramMenuItem(Program p, int type, int time, int n) {
+    super(p.getTitle());
     mProgram = p;
     mBackground = getBackground();
     boolean showIcon = true;
@@ -384,5 +385,11 @@ public class ProgramMenuItem extends JMenuItem {
 
   public Program getProgram() {
     return mProgram;
+  }
+  
+  @Override
+  public String getText() {
+    String text = super.getText();
+    return text;
   }
 }
