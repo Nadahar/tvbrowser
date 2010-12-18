@@ -67,7 +67,7 @@ public abstract class AbstractCalFile {
       final PrintStreamProcessor processor = new PrintStreamProcessor() {
         public void process(PrintStream out) throws IOException {
           out.println("BEGIN:VCALENDAR");
-          out.println("PRODID:-//TV-Browser//Calendar Exporter");
+          out.println("PRODID:-//TV-Browser//Calendar Export Plugin");
           printVersion(out);
 
           for (int i = 0; i < list.length; i++) {
@@ -145,7 +145,7 @@ public abstract class AbstractCalFile {
 
     } catch (Exception e) {
       ErrorHandler.handle(mLocalizer.msg("saveError",
-          "An error occured while saving the Calendar-File"), e);
+          "An error occured while saving the calendar file"), e);
       e.printStackTrace();
     }
   }

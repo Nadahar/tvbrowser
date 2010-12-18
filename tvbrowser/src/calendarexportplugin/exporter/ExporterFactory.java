@@ -31,7 +31,7 @@ import util.misc.OperatingSystem;
 
 /**
  * Factory for the ExporterIf
- * 
+ *
  * @author bodum
  */
 public class ExporterFactory {
@@ -48,6 +48,7 @@ public class ExporterFactory {
     if (OperatingSystem.isMacOs()) {
       mExporterList.add(new AppleiCalExporter());
     }
+    mExporterList.add(new AppleiCalExporter());
     mExporterList.add(new GoogleExporter());
     mExporterList.add(new ICalExporter());
     mExporterList.add(new VCalExporter());
@@ -101,7 +102,7 @@ public class ExporterFactory {
     if (mActiveExporter.size() == 0) {
       return "";
     }
-    
+
     StringBuilder classes = new StringBuilder();
 
     for (ExporterIf exporter : mActiveExporter) {

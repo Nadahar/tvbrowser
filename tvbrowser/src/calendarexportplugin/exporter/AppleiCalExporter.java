@@ -22,14 +22,18 @@
  */
 package calendarexportplugin.exporter;
 
+import java.awt.Window;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+
+import org.apache.commons.lang.StringUtils;
 
 import util.exc.ErrorHandler;
 import util.misc.AppleScriptRunner;
 import util.paramhandler.ParamParser;
 import util.program.AbstractPluginProgramFormating;
+import calendarexportplugin.CalendarExportPlugin;
 import calendarexportplugin.CalendarExportSettings;
 import calendarexportplugin.utils.CalendarToolbox;
 import devplugin.Program;
@@ -40,6 +44,8 @@ import devplugin.Program;
  * @author bodum
  */
 public class AppleiCalExporter extends AbstractExporter {
+
+    static final String PROPERTY_CALENDAR_NAME = "calendar name";
 
     public String getName() {
         return "Apple iCal";
@@ -53,7 +59,11 @@ public class AppleiCalExporter extends AbstractExporter {
         SimpleDateFormat formatDay = new SimpleDateFormat("yyyy-MM-dd");
         SimpleDateFormat formatHour = new SimpleDateFormat("HH:mm");
 
-        script.append("property myTVCalendar : \"TV-Browser\"\n");
+        String calTitle = settings.getExporterProperty(AppleiCalExporter.PROPERTY_CALENDAR_NAME);
+        if (StringUtils.isBlank(calTitle)) {
+          calTitle = "TV-Browser";
+        }
+        script.append("property myTVCalendar : \"" + calTitle + "\"\n");
 
         script.append("on stringToList from theString for myDelimiters\n" +
           "\ttell AppleScript\n" +
@@ -139,7 +149,7 @@ public class AppleiCalExporter extends AbstractExporter {
             runner.executeScript(script.toString());
         } catch (IOException e) {
             e.printStackTrace();
-            ErrorHandler.handle("Error while execution of the applescript", e);
+            ErrorHandler.handle("Error during execution of the applescript", e);
         }
 
         return true;
@@ -147,6 +157,18 @@ public class AppleiCalExporter extends AbstractExporter {
 
   public String getIconName() {
     return "apple_ical.png";
+  }
+
+  @Override
+  public boolean hasSettingsDialog() {
+    return true;
+  }
+
+  @Override
+  public void showSettingsDialog(CalendarExportSettings settings) {
+    Window wnd = CalendarExportPlugin.getInstance().getBestParentFrame();
+    AppleSettingsDialog settingsDialog = new AppleSettingsDialog(wnd, settings);
+    settingsDialog.showDialog();
   }
 
 }
