@@ -74,6 +74,7 @@ import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.waiting.dlgs.SettingsWaitingDialog;
 import util.browserlauncher.Launch;
 import util.exc.ErrorHandler;
+import util.misc.OperatingSystem;
 import util.ui.ChannelLabel;
 import util.ui.Localizer;
 import util.ui.SingleAndDoubleClickTreeUI;
@@ -94,7 +95,7 @@ import devplugin.SettingsItem;
 import devplugin.SettingsTab;
 
 /**
- * 
+ *
  * @author Til Schneider, www.murfman.de
  */
 public class SettingsDialog implements WindowClosingIf {
@@ -124,7 +125,15 @@ public class SettingsDialog implements WindowClosingIf {
   public SettingsDialog(Window parent, String selectedTabId) {
     mInstance = this;
     mDialog = UiUtilities.createDialog(parent, true);
-    mDialog.setTitle(Localizer.getLocalization(Localizer.I18N_SETTINGS));
+    String title = Localizer.getLocalization(Localizer.I18N_SETTINGS);
+    // have the title explicitly specified for windows
+    if (OperatingSystem.isWindows()) {
+      title = mLocalizer.msg("title_options", "");
+    }
+    if (title.isEmpty()) {
+      title = Localizer.getLocalization(Localizer.I18N_SETTINGS);
+    }
+    mDialog.setTitle(title);
 
     UiUtilities.registerForClosing(this);
 
@@ -140,7 +149,7 @@ public class SettingsDialog implements WindowClosingIf {
     main.add(splitPane, cc.xy(1, 1));
 
     final SingleAndDoubleClickTreeUI treeUI = new SingleAndDoubleClickTreeUI(SingleAndDoubleClickTreeUI.AUTO_COLLAPSE_EXPAND, null);
-    
+
     mRootNode = createSelectionTree();
     mSelectionTree = new JTree(mRootNode) {
       public void updateUI() {
@@ -148,7 +157,7 @@ public class SettingsDialog implements WindowClosingIf {
         invalidate();
       }
     };
-    
+
     mSelectionTree.setRootVisible(false);
     mSelectionTree.setShowsRootHandles(true);
     mSelectionTree.getSelectionModel().setSelectionMode(
@@ -344,7 +353,7 @@ public class SettingsDialog implements WindowClosingIf {
     SettingNode graphicalSettings = new SettingNode(new LookAndFeelSettingsTab(),
         SettingsItem.LOOKANDFEEL);
     root.add(graphicalSettings);
-    
+
     SettingNode technicalSettings = new SettingNode(new DefaultSettingsTab(
         mLocalizer.msg("technical", "Technical"), null));
     root.add(technicalSettings);
@@ -361,7 +370,7 @@ public class SettingsDialog implements WindowClosingIf {
           SettingsItem.TRAYONTIMEPROGRAMS));
       traySettings.add(new SettingNode(new TrayProgramsChannelsSettingsTab()));
     }
-    
+
     generalSettings.add(new SettingNode(new ChannelsSettingsTab(),
         SettingsItem.CHANNELS));
     generalSettings.add(new SettingNode(new LocaleSettingsTab()));
@@ -373,7 +382,7 @@ public class SettingsDialog implements WindowClosingIf {
         SettingsItem.PLUGINPROGRAMFORMAT));
     generalSettings.add(new SettingNode(new ButtonsSettingsTab(),
         SettingsItem.TIMEBUTTONS));
-    
+
     graphicalSettings.add(new SettingNode(new PictureSettingsTab(),
         SettingsItem.PICTURES));
     graphicalSettings.add(new SettingNode(new ProgramTableSettingsTab(),
@@ -394,12 +403,12 @@ public class SettingsDialog implements WindowClosingIf {
 
     technicalSettings.add(new SettingNode(new WebbrowserSettingsTab(),
         SettingsItem.WEBBROWSER));
-    
+
     // Plugins
     mPluginSettingsNode = new SettingNode(new PluginSettingsTab(this),
         SettingsItem.PLUGINS);
     root.add(mPluginSettingsNode);
-    
+
     createPluginTreeItems(false);
 
     return root;
@@ -407,7 +416,7 @@ public class SettingsDialog implements WindowClosingIf {
 
   /**
    * Removes all Items from the PluginSettingsNode and recreates the Child Nodes
-   * 
+   *
    * @param refresh
    *          If true, the Tree will be refreshed
    */
@@ -417,30 +426,30 @@ public class SettingsDialog implements WindowClosingIf {
     /* Add base plugins */
     InternalPluginProxyIf[] internalPluginProxies = InternalPluginProxyList.getInstance().getAvailableProxys();
     Arrays.sort(internalPluginProxies, new InternalPluginProxyIf.Comparator());
-    
+
     for(InternalPluginProxyIf internalPluginProxy : internalPluginProxies) {
       if(internalPluginProxy.getSettingsTab() != null) {
         mPluginSettingsNode.add(new SettingNode(internalPluginProxy.getSettingsTab(),
             internalPluginProxy.getSettingsId()));
       }
     }
-    
+
     PluginProxy[] pluginList = PluginProxyManager.getInstance().getAllPlugins();
     TvDataServiceProxy[] services = TvDataServiceProxyManager.getInstance().getDataServices();
-    
+
     InfoIf[] infoArr = new InfoIf[pluginList.length + services.length];
-    
+
     System.arraycopy(pluginList,0,infoArr,0,pluginList.length);
     System.arraycopy(services,0,infoArr,pluginList.length, services.length);
 
     Arrays.sort(infoArr, new PluginAndDataServiceComparator());
 
-    
+
 //    PluginProxy[] pluginArr = PluginProxyManager.getInstance().getAllPlugins();
-    
+
 
     ArrayList<SettingNode> nodeList = new ArrayList<SettingNode>();
-    
+
     for (InfoIf plugin : infoArr) {
       if(plugin instanceof PluginProxy) {
         ConfigPluginSettingsTab tab = new ConfigPluginSettingsTab((PluginProxy)plugin);
@@ -471,7 +480,7 @@ public class SettingsDialog implements WindowClosingIf {
 
   /**
    * Returns the current Dialog
-   * 
+   *
    * @return Dialog
    */
   public JDialog getDialog() {
@@ -661,7 +670,7 @@ public class SettingsDialog implements WindowClosingIf {
         mSettingsTab.saveSettings();
       }
     }
-  
+
     public void cancelSettings() {
       if (isLoaded() && mSettingsTab instanceof CancelableSettingsTab) {
         ((CancelableSettingsTab)mSettingsTab).cancel();
@@ -709,7 +718,7 @@ public class SettingsDialog implements WindowClosingIf {
 
       return url;
     }
-    
+
     public static class Comparator implements java.util.Comparator<SettingNode> {
 
       public int compare(SettingNode o1, SettingNode o2) {
@@ -739,7 +748,7 @@ public class SettingsDialog implements WindowClosingIf {
           label.setOpaque(!sel && !hasFocus);
         }
       }
-      
+
       if (value instanceof SettingNode) {
         SettingNode node = (SettingNode) value;
         Icon icon = node.getIcon();
@@ -748,7 +757,7 @@ public class SettingsDialog implements WindowClosingIf {
           label.setIcon(icon);
         }
       }
-      
+
       if(UIManager.getLookAndFeel().getClass().getCanonicalName().equals("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel")) {
         if(sel) {
           label.setOpaque(true);
@@ -775,7 +784,7 @@ public class SettingsDialog implements WindowClosingIf {
 
   /**
    * Show SettingsTab with specific ID
-   * 
+   *
    * @param id
    *          ID to show (see devplugin.SettingsItem)
    */
