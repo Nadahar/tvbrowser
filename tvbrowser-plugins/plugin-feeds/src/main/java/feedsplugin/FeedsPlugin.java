@@ -73,7 +73,7 @@ public final class FeedsPlugin extends Plugin {
 
   private static final boolean IS_STABLE = false;
 
-  private static final Version mVersion = new Version(2, 70, 1, IS_STABLE);
+  private static final Version mVersion = new Version(2, 71, 0, IS_STABLE);
 
   private static Icon mIcon;
 
