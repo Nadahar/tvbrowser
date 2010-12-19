@@ -61,14 +61,14 @@ public final class BBCDataService extends AbstractTvDataService {
   private static final String NUMBER_OF_CHANNELS = "NumberOfChannels";
   private static final String PROGRAMMES_URL = "http://www.bbc.co.uk";
   private static final boolean IS_STABLE = false;
-  private static final Version mVersion = new Version(3, 0, 0, IS_STABLE);
+  private static final Version mVersion = new Version(3, 0, 1, IS_STABLE);
 
   /**
    * created lazily on first access
    */
   private PluginInfo mPluginInfo = null;
   private File mWorkingDir;
-  private ArrayList<Channel> mChannels;
+  private ArrayList<Channel> mChannels = new ArrayList<Channel>();
   /** The localizer for this class. */
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(BBCDataService.class);
 
