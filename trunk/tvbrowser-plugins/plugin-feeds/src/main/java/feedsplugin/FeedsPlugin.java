@@ -17,8 +17,6 @@
 package feedsplugin;
 
 import java.awt.event.ActionEvent;
-import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -44,11 +42,9 @@ import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndEntryImpl;
 import com.sun.syndication.feed.synd.SyndFeed;
 import com.sun.syndication.fetcher.FeedFetcher;
-import com.sun.syndication.fetcher.FetcherException;
 import com.sun.syndication.fetcher.impl.FeedFetcherCache;
 import com.sun.syndication.fetcher.impl.HashMapFeedInfoCache;
 import com.sun.syndication.fetcher.impl.HttpURLFeedFetcher;
-import com.sun.syndication.io.FeedException;
 
 import devplugin.ActionMenu;
 import devplugin.Channel;
@@ -73,7 +69,7 @@ public final class FeedsPlugin extends Plugin {
 
   private static final boolean IS_STABLE = false;
 
-  private static final Version mVersion = new Version(2, 71, 0, IS_STABLE);
+  private static final Version mVersion = new Version(2, 72, 0, IS_STABLE);
 
   private static Icon mIcon;
 
@@ -127,93 +123,15 @@ public final class FeedsPlugin extends Plugin {
     }
   }
 
-  private void updateFeeds() {
-    synchronized (mFeeds) {
-      mFeeds = new ArrayList<SyndFeed>();
-    }
-    Hashtable<SyndFeed, PluginTreeNode> nodes = new Hashtable<SyndFeed, PluginTreeNode>();
-    ArrayList<String> feedUrls = mSettings.getFeeds();
-    if (!feedUrls.isEmpty()) {
-      final FeedFetcherCache feedInfoCache = HashMapFeedInfoCache.getInstance();
-      final FeedFetcher feedFetcher = new HttpURLFeedFetcher(feedInfoCache);
-      feedFetcher.setUserAgent("TV-Browser Feeds Plugin " + FeedsPlugin.getVersion().toString());
-      for (String feedUrl : feedUrls) {
-        try {
-          final SyndFeed feed = feedFetcher.retrieveFeed(new URL(feedUrl));
-          synchronized (mFeeds) {
-            mFeeds.add(feed);
-          }
-          mLog.info("Loaded " + feed.getEntries().size() + " feed entries from " + feedUrl);
-        } catch (IllegalArgumentException e) {
-          e.printStackTrace();
-        } catch (MalformedURLException e) {
-          e.printStackTrace();
-        } catch (IOException e) {
-          e.printStackTrace();
-        } catch (FeedException e) {
-          e.printStackTrace();
-        } catch (FetcherException e) {
-          e.printStackTrace();
-        }
+  void updateFeeds() {
+    Thread thread = new Thread("Update feeds") {
+      @Override
+      public void run() {
+        updateFeedsInternal();
       }
-    }
-    mKeywords = new HashMap<String, ArrayList<SyndEntryWithParent>>();
-    if (!mFeeds.isEmpty()) {
-      for (SyndFeed feed : mFeeds) {
-        addFeedKeywords(feed);
-      }
-      getRootNode().clear();
-      ArrayList<String> titles = new ArrayList<String>(mFeeds.size());
-      final Channel[] channels = devplugin.Plugin.getPluginManager().getSubscribedChannels();
-      Date date = Date.getCurrentDate();
-      final int maxDays = 7;
-      synchronized (mFeeds) {
-        Collections.sort(mFeeds, new Comparator<SyndFeed>() {
-          public int compare(SyndFeed o1, SyndFeed o2) {
-            return o1.getTitle().compareToIgnoreCase(o2.getTitle());
-          }
-        });
-        for (SyndFeed feed : mFeeds) {
-          PluginTreeNode node = mRootNode.addNode(feed.getTitle());
-          List<SyndEntryImpl> entries = feed.getEntries();
-          titles.add(feed.getTitle());
-          AbstractAction[] subActions = new AbstractAction[entries.size()];
-          for (int i = 0; i < subActions.length; i++) {
-            final SyndEntryImpl entry = entries.get(i);
-            subActions[i] = new AbstractAction(entry.getTitle()) {
-              public void actionPerformed(ActionEvent e) {
-                showFeedsDialog(new FeedsDialog(getParentFrame(), entry));
-              }
-            };
-          }
-          ActionMenu menu = new ActionMenu(new ContextMenuAction(mLocalizer.msg("readEntry", "Read entry")), subActions);
-          node.addActionMenu(menu);
-          nodes.put(feed, node);
-        }
-        mSettings.setCachedFeedTitles(titles);
-        for (int days = 0; days < maxDays; days++) {
-          for (Channel channel : channels) {
-            for (Iterator<Program> iter = devplugin.Plugin.getPluginManager().getChannelDayProgram(date, channel); iter
-                .hasNext();) {
-              final Program prog = iter.next();
-                ArrayList<SyndEntryWithParent> matchingEntries = getMatchingEntries(prog.getTitle());
-                if (!matchingEntries.isEmpty()) {
-                  HashSet<SyndFeed> feeds = new HashSet<SyndFeed>();
-                  for (SyndEntryWithParent entry : matchingEntries) {
-                    feeds.add(entry.getFeed());
-                  }
-                  for (SyndFeed syndFeed : feeds) {
-                    nodes.get(syndFeed).addProgramWithoutCheck(prog);
-                    prog.validateMarking();
-                  }
-                }
-            }
-          }
-          date = date.addDays(1);
-        }
-      }
-      mRootNode.update();
-    }
+    };
+    thread.setPriority(Thread.MIN_PRIORITY);
+    thread.start();
   }
 
   private void addFeedKeywords(final SyndFeed feed) {
@@ -417,6 +335,9 @@ public final class FeedsPlugin extends Plugin {
 
   @Override
   public ActionMenu getButtonAction() {
+    if (mSettings == null) {
+      return null;
+    }
     ArrayList<String> feedTitles = mSettings.getCachedFeedTitles();
     if (feedTitles.isEmpty()) {
       return null;
@@ -446,5 +367,86 @@ public final class FeedsPlugin extends Plugin {
       }
     });
     return new ActionMenu(mainAction, list.toArray(new AbstractAction[list.size()]));
+  }
+
+  private void updateFeedsInternal() {
+    synchronized (mFeeds) {
+      mFeeds = new ArrayList<SyndFeed>();
+    }
+    Hashtable<SyndFeed, PluginTreeNode> nodes = new Hashtable<SyndFeed, PluginTreeNode>();
+    ArrayList<String> feedUrls = mSettings.getFeeds();
+    if (!feedUrls.isEmpty()) {
+      final FeedFetcherCache feedInfoCache = HashMapFeedInfoCache.getInstance();
+      final FeedFetcher feedFetcher = new HttpURLFeedFetcher(feedInfoCache);
+      feedFetcher.setUserAgent("TV-Browser Feeds Plugin " + FeedsPlugin.getVersion().toString());
+      for (String feedUrl : feedUrls) {
+        try {
+          final SyndFeed feed = feedFetcher.retrieveFeed(new URL(feedUrl));
+          synchronized (mFeeds) {
+            mFeeds.add(feed);
+          }
+          mLog.info("Loaded " + feed.getEntries().size() + " feed entries from " + feedUrl);
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+      }
+    }
+    mKeywords = new HashMap<String, ArrayList<SyndEntryWithParent>>();
+    if (!mFeeds.isEmpty()) {
+      for (SyndFeed feed : mFeeds) {
+        addFeedKeywords(feed);
+      }
+      getRootNode().clear();
+      ArrayList<String> titles = new ArrayList<String>(mFeeds.size());
+      final Channel[] channels = devplugin.Plugin.getPluginManager().getSubscribedChannels();
+      Date date = Date.getCurrentDate();
+      final int maxDays = 7;
+      synchronized (mFeeds) {
+        Collections.sort(mFeeds, new Comparator<SyndFeed>() {
+          public int compare(SyndFeed o1, SyndFeed o2) {
+            return o1.getTitle().compareToIgnoreCase(o2.getTitle());
+          }
+        });
+        for (SyndFeed feed : mFeeds) {
+          PluginTreeNode node = mRootNode.addNode(feed.getTitle());
+          List<SyndEntryImpl> entries = feed.getEntries();
+          titles.add(feed.getTitle());
+          AbstractAction[] subActions = new AbstractAction[entries.size()];
+          for (int i = 0; i < subActions.length; i++) {
+            final SyndEntryImpl entry = entries.get(i);
+            subActions[i] = new AbstractAction(entry.getTitle()) {
+              public void actionPerformed(ActionEvent e) {
+                showFeedsDialog(new FeedsDialog(getParentFrame(), entry));
+              }
+            };
+          }
+          ActionMenu menu = new ActionMenu(new ContextMenuAction(mLocalizer.msg("readEntry", "Read entry")), subActions);
+          node.addActionMenu(menu);
+          nodes.put(feed, node);
+        }
+        mSettings.setCachedFeedTitles(titles);
+        for (int days = 0; days < maxDays; days++) {
+          for (Channel channel : channels) {
+            for (Iterator<Program> iter = devplugin.Plugin.getPluginManager().getChannelDayProgram(date, channel); iter
+                .hasNext();) {
+              final Program prog = iter.next();
+                ArrayList<SyndEntryWithParent> matchingEntries = getMatchingEntries(prog.getTitle());
+                if (!matchingEntries.isEmpty()) {
+                  HashSet<SyndFeed> feeds = new HashSet<SyndFeed>();
+                  for (SyndEntryWithParent entry : matchingEntries) {
+                    feeds.add(entry.getFeed());
+                  }
+                  for (SyndFeed syndFeed : feeds) {
+                    nodes.get(syndFeed).addProgramWithoutCheck(prog);
+                    prog.validateMarking();
+                  }
+                }
+            }
+          }
+          date = date.addDays(1);
+        }
+      }
+      mRootNode.update();
+    }
   }
 }

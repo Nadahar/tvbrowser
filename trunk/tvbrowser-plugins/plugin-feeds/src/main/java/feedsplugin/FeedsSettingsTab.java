@@ -133,6 +133,7 @@ public class FeedsSettingsTab implements SettingsTab {
       feeds.add((String) mListModel.get(i));
     }
     mSettings.setFeeds(feeds);
+    FeedsPlugin.getInstance().updateFeeds();
   }
 
 }
