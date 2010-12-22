@@ -408,7 +408,7 @@ public final class FeedsPlugin extends Plugin {
           }
         });
         for (SyndFeed feed : mFeeds) {
-          PluginTreeNode node = mRootNode.addNode(feed.getTitle());
+          PluginTreeNode node = getRootNode().addNode(feed.getTitle());
           List<SyndEntryImpl> entries = feed.getEntries();
           titles.add(feed.getTitle());
           AbstractAction[] subActions = new AbstractAction[entries.size()];
