@@ -399,6 +399,10 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
           items.add(title.substring(0, index).trim()+"*");
         }
         items.add(title);
+        index = title.lastIndexOf(':');
+        if (index > 0) {
+          items.add(title.substring(0, index).trim()+"*");
+        }
         final JComboBox input = new JComboBox(items.toArray(new String[items.size()]));
         input.setEditable(true);
 
