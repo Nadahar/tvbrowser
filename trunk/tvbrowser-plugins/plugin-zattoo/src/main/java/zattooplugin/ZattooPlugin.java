@@ -1,7 +1,9 @@
 package zattooplugin;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -11,24 +13,31 @@ import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 
 import util.browserlauncher.Launch;
 import util.exc.ErrorHandler;
 import util.io.ExecutionHandler;
+import util.io.IOUtilities;
 import util.misc.OperatingSystem;
 import util.ui.Localizer;
 import devplugin.ActionMenu;
 import devplugin.Channel;
+import devplugin.Date;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
+import devplugin.PluginTreeNode;
 import devplugin.PluginsFilterComponent;
 import devplugin.PluginsProgramFilter;
 import devplugin.Program;
 import devplugin.SettingsTab;
+import devplugin.ThemeIcon;
 import devplugin.Version;
 
 public final class ZattooPlugin extends Plugin {
 
+  private static final String ICON_NAME = "zattoo";
+  private static final String ICON_CATEGORY = "apps";
   private static final boolean PLUGIN_IS_STABLE = true;
   private static final Version PLUGIN_VERSION = new Version(1, 0, 0, PLUGIN_IS_STABLE);
 
@@ -40,6 +49,10 @@ public final class ZattooPlugin extends Plugin {
   private ZattooSettings mSettings;
   private PluginsProgramFilter mFilters;
   private ZattooChannelProperties mChannelIds;
+  private HashSet<Program> mSwitchPrograms = new HashSet<Program>();
+  private PluginTreeNode mRootNode;
+  private ThemeIcon mThemeIcon;
+  private Timer mTimer;
 
   /**
    * Creates an instance of this plugin.
@@ -85,16 +98,37 @@ public final class ZattooPlugin extends Plugin {
 
   public Icon getPluginIcon() {
     if (mIcon == null) {
-      mIcon = new ImageIcon(getClass().getResource("zattoo.png"));
+      mIcon = createImageIcon(ICON_CATEGORY, ICON_NAME, 16);
     }
     return mIcon;
   }
 
   public ActionMenu getContextMenuActions(final Program program) {
     if (getPluginManager().getExampleProgram().equals(program) || isChannelSupported(program.getChannel())) {
+      if (!program.isExpired() && !program.isOnAir()) {
+        return getRememberActionMenu(program);
+      }
       return getSwitchActionMenu(program.getChannel());
     }
     return null;
+  }
+
+  private ActionMenu getRememberActionMenu(final Program program) {
+    final AbstractAction action = new AbstractAction() {
+      public void actionPerformed(final ActionEvent evt) {
+        SwingUtilities.invokeLater(new Runnable() {
+
+          public void run() {
+            mSwitchPrograms.add(program);
+            program.mark(ZattooPlugin.this);
+            updateRootNode();
+          }
+        });
+      }
+    };
+    action.putValue(Action.NAME, mLocalizer.msg("contextMenuRemember", "Switch channel when program starts"));
+    action.putValue(Action.SMALL_ICON, getPluginIcon());
+    return new ActionMenu(action);
   }
 
   public ActionMenu getContextMenuActions(final Channel channel) {
@@ -114,7 +148,7 @@ public final class ZattooPlugin extends Plugin {
         });
       }
     };
-    action.putValue(Action.NAME, mLocalizer.msg("contextMenuZattoo", "Switch Channel"));
+    action.putValue(Action.NAME, mLocalizer.msg("contextMenuSwitch", "Switch channel"));
     action.putValue(Action.SMALL_ICON, getPluginIcon());
     return new ActionMenu(action);
   }
@@ -129,11 +163,9 @@ public final class ZattooPlugin extends Plugin {
     ExecutionHandler executionHandler = null;
     if (mSettings.getUseWebPlayer()) {
       Launch.openURL(url);
-    }
-    else if (mSettings.getUsePrismPlayer()) {
+    } else if (mSettings.getUsePrismPlayer()) {
       executionHandler = new ExecutionHandler("-uri " + url + " -name tvbrowser-zattoo", "prism");
-    }
-    else {
+    } else {
       final String zattooURI = "zattoo://channel/" + id;
       if (OperatingSystem.isLinux()) {
         executionHandler = new ExecutionHandler(zattooURI, "zattoo-uri-handler");
@@ -207,4 +239,62 @@ public final class ZattooPlugin extends Plugin {
     return OperatingSystem.isMacOs() || OperatingSystem.isWindows();
   }
 
+  @Override
+  public boolean canUseProgramTree() {
+    return true;
+  }
+
+  @Override
+  public PluginTreeNode getRootNode() {
+    if (mRootNode == null) {
+      mRootNode = new PluginTreeNode(this);
+      mRootNode.getMutableTreeNode().setIcon(getPluginIcon());
+    }
+    return mRootNode;
+  }
+
+  private void updateRootNode() {
+    getRootNode().clear();
+    for (Program program : mSwitchPrograms) {
+      mRootNode.addProgramWithoutCheck(program);
+    }
+    mRootNode.update();
+  }
+
+  @Override
+  public ThemeIcon getMarkIconFromTheme() {
+    if (mThemeIcon == null) {
+      mThemeIcon = new ThemeIcon(ICON_CATEGORY, ICON_NAME, 16);
+    }
+    return mThemeIcon;
+  }
+
+  @Override
+  public void handleTvBrowserStartFinished() {
+    mTimer = new Timer(60 * 1000, new ActionListener() {
+
+      public void actionPerformed(ActionEvent e) {
+        Date today = new Date();
+        int now = IOUtilities.getMinutesAfterMidnight();
+        int delay = 2;
+        Program startProgram = null;
+        synchronized (mSwitchPrograms) {
+          for (Program program : mSwitchPrograms) {
+            if (program.getDate().compareTo(today) == 0) {
+              int startTime = program.getStartTime();
+              if (startTime - delay >= now) {
+                startProgram = program;
+                break;
+              }
+            }
+          }
+          if (startProgram != null) {
+            mSwitchPrograms.remove(startProgram);
+            startProgram.unmark(ZattooPlugin.this);
+            updateRootNode();
+          }
+        }
+      }
+    });
+  }
 }
