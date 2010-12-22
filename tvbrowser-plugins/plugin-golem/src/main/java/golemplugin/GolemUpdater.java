@@ -57,6 +57,8 @@ public class GolemUpdater {
     channelMap.put("RTL 2", "RTL2");
     channelMap.put("Dradio Kultur", "Deutschlandradio Kultur");
     channelMap.put("DLF", "Deutschlandfunk");
+    channelMap.put("Pro7", "ProSieben");
+    channelMap.put("RBB", "RBB Berlin");
   }
 
   public static GolemUpdater getInstance() {
@@ -96,8 +98,13 @@ public class GolemUpdater {
 
         if (desc.length > 2) {
           Date date = new Date(start);
-          String chname = desc[1];
+          String chname = desc[1].trim();
           Channel ch = findChannel(channels, chname);
+
+          // sometimes the genre and channel name are mixed up
+          if (ch == null) {
+            ch = findChannel(channels, desc[0].trim());
+          }
 
           if (ch != null) {
             Iterator<Program> iterator = GolemPlugin.getPluginManager().getChannelDayProgram(date, ch);
