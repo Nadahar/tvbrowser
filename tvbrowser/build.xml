@@ -903,9 +903,9 @@
     <delete dir="${env.TEMP}/nsis"></delete>
     <get dest="${env.TEMP}/nsis.zip" src="http://sourceforge.net/projects/nsis/files/NSIS%202/${nsis.version}/nsis-${nsis.version}.zip/download"/>
   	<unzip dest="${env.TEMP}/nsis" src="${env.TEMP}/nsis.zip"/>
-  	<copyfile dest="${env.TEMP}/nsis/nsis-${nsis.version}/plugins/LockedList.dll" src="${deployment.dir}/win/installer/Plugins/LockedList.dll"/>
-    <copyfile dest="${env.TEMP}/nsis/nsis-${nsis.version}/plugins/nsisFirewall.dll" src="${deployment.dir}/win/installer/Plugins/nsisFirewall.dll"/>
-    <copyfile dest="${env.TEMP}/nsis/nsis-${nsis.version}/plugins/nsisFirewallW.dll" src="${deployment.dir}/win/installer/Plugins/nsisFirewallW.dll"/>
+  	<copy todir="${env.TEMP}/nsis/nsis-${nsis.version}/plugins" file="${deployment.dir}/win/installer/Plugins/LockedList.dll"/>
+    <copy todir="${env.TEMP}/nsis/nsis-${nsis.version}/plugins" file="${deployment.dir}/win/installer/Plugins/nsisFirewall.dll"/>
+    <copy todir="${env.TEMP}/nsis/nsis-${nsis.version}/plugins" file="${deployment.dir}/win/installer/Plugins/nsisFirewallW.dll"/>
   	<mkdir dir="${public.dir}"/>
     <exec executable="${env.TEMP}/nsis/nsis-${nsis.version}/makensis.exe" failonerror="true">
       <arg value="/NOCD"/>
