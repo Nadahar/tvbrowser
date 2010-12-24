@@ -1138,6 +1138,7 @@
         <include name="${lib.name}-?.?.jar"/>
         <include name="${lib.name}-?.?.?.jar"/>
         <include name="${lib.name}-?.?.??.jar"/>
+        <include name="${lib.name}-r*.jar"/>
       </fileset>
     	<mapper>
     		<mergemapper to="${lib.name}-${lib.version}.jar"/>
@@ -1241,11 +1242,6 @@
 			<param name="lib" value="jcom"/>
 		</antcall>
 
-		<!-- jgoodies forms -->
-		<antcall target="download-zipped-lib">
-			<param name="lib" value="forms"/>
-		</antcall>
-
 		<!-- gdata calendar -->
 		<antcall target="download-zipped-lib">
 			<param name="lib" value="gdata.calendar"/>
@@ -1267,6 +1263,21 @@
 			<param name="lib" value="htmlparser"/>
 		</antcall>
 
+		<!-- jgoodies common -->
+		<antcall target="download-zipped-lib">
+			<param name="lib" value="jgoodies-common"/>
+		</antcall>
+
+		<!-- jgoodies forms -->
+		<antcall target="download-zipped-lib">
+			<param name="lib" value="jgoodies-forms"/>
+		</antcall>
+
+		<!-- jgoodies looks -->
+		<antcall target="download-zipped-lib">
+			<param name="lib" value="jgoodies-looks"/>
+		</antcall>
+
 		<!-- jRegistryKey -->
 		<antcall target="download-zipped-lib">
 			<param name="lib" value="jregistrykey"/>
@@ -1285,11 +1296,6 @@
 		<!-- libgrowl -->
 		<antcall target="download-lib">
 			<param name="lib" value="libgrowl"/>
-		</antcall>
-
-		<!-- jgoodies looks -->
-		<antcall target="download-zipped-lib">
-			<param name="lib" value="looks"/>
 		</antcall>
 
 		<!-- opencsv -->
