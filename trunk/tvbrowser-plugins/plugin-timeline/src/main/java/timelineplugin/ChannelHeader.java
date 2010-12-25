@@ -31,28 +31,33 @@ import java.util.Map;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
+import javax.swing.ToolTipManager;
 
 import util.browserlauncher.Launch;
+import util.ui.ChannelContextMenu;
 import util.ui.UiUtilities;
 import devplugin.Channel;
 import devplugin.Plugin;
 
-public class ChannelHeader extends JComponent
-{
+public class ChannelHeader extends JComponent {
 	private static final int MINIMUM_CHANNEL_HEIGHT = 20;
 
-  private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-	private static final Cursor linkCursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
-	private static final Cursor normalCursor = Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
-	private static final Cursor resizeRowCursor = Cursor.getPredefinedCursor(Cursor.S_RESIZE_CURSOR);
-	private static final Cursor resizeColumnCursor = Cursor.getPredefinedCursor(Cursor.E_RESIZE_CURSOR);
+	private static final Cursor linkCursor = Cursor
+			.getPredefinedCursor(Cursor.HAND_CURSOR);
+	private static final Cursor normalCursor = Cursor
+			.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
+	private static final Cursor resizeRowCursor = Cursor
+			.getPredefinedCursor(Cursor.S_RESIZE_CURSOR);
+	private static final Cursor resizeColumnCursor = Cursor
+			.getPredefinedCursor(Cursor.E_RESIZE_CURSOR);
 
 	private int mChannelCount;
 	private transient Channel[] mChannels;
 	private int mChannelHeight;
 	private boolean mShowName;
-  private boolean mShowIcon;
+	private boolean mShowIcon;
 
 	private Map<Channel, ImageIcon> mIcons;
 
@@ -64,8 +69,7 @@ public class ChannelHeader extends JComponent
 	private boolean mColumnResizing = false;
 	private int mResizeX;
 
-	public ChannelHeader(final int channelHeight)
-	{
+	public ChannelHeader(final int channelHeight) {
 		mIcons = new HashMap<Channel, ImageIcon>();
 
 		mChannelHeight = channelHeight;
@@ -73,112 +77,93 @@ public class ChannelHeader extends JComponent
 		mChannelCount = mChannels.length;
 
 		mShowName = TimelinePlugin.getSettings().showChannelName();
-    mShowIcon = TimelinePlugin.getSettings().showChannelIcon();
+		mShowIcon = TimelinePlugin.getSettings().showChannelIcon();
 
 		this.setOpaque(true);
 
-		addMouseMotionListener(new MouseMotionListener()
-		{
-			public void mouseDragged(final MouseEvent e)
-			{
-				if (mRowResizing)
-				{
+		addMouseMotionListener(new MouseMotionListener() {
+			public void mouseDragged(final MouseEvent e) {
+				if (mRowResizing) {
 					mResizeY = e.getPoint().y;
 					repaint();
-				}
-				else if (mColumnResizing)
-				{
+				} else if (mColumnResizing) {
 					mResizeX = e.getPoint().x;
 					repaint();
 				}
 			}
 
-			public void mouseMoved(final MouseEvent e)
-			{
+			public void mouseMoved(final MouseEvent e) {
 
-				if (isMouseOverRowMargin(e.getPoint()))
-				{
+				if (isMouseOverRowMargin(e.getPoint())) {
 					setCursor(resizeRowCursor);
-				}
-				else if (isMouseOverColumnMargin(e.getPoint()))
-				{
+				} else if (isMouseOverColumnMargin(e.getPoint())) {
 					setCursor(resizeColumnCursor);
 					mResizeY = e.getPoint().y;
-				}
-				else if (isMouseOverIcon(e.getPoint()))
-				{
+				} else if (isMouseOverIcon(e.getPoint())) {
 					setCursor(linkCursor);
-				}
-				else
-				{
+				} else {
 					setCursor(normalCursor);
 				}
 			}
 		});
 
-		addMouseListener(new MouseAdapter()
-		{
-			public void mouseClicked(final MouseEvent e)
-			{
-				if (getCursor() == linkCursor && SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 1)
-				{
-				  final int index = (int) ((double) e.getY() / mChannelHeight);
+		addMouseListener(new MouseAdapter() {
+			public void mouseClicked(final MouseEvent e) {
+				if (getCursor() == linkCursor && SwingUtilities.isLeftMouseButton(e)
+						&& e.getClickCount() == 1) {
+					final int index = (int) ((double) e.getY() / mChannelHeight);
 					Launch.openURL(mChannels[index].getWebpage());
+				}
+				if (SwingUtilities.isRightMouseButton(e) && e.getClickCount() == 1) {
+					final int index = (int) ((double) e.getY() / mChannelHeight);
+					new ChannelContextMenu(e, mChannels[index], this);
 				}
 			}
 
-			public void mousePressed(final MouseEvent e)
-			{
-				if (isMouseOverRowMargin(e.getPoint()))
-				{
+			public void mousePressed(final MouseEvent e) {
+				if (isMouseOverRowMargin(e.getPoint())) {
 					mResizeStartY = e.getPoint().y;
 					mRowResizing = true;
 					mReferenceY = mResizeStartY - mChannelHeight;
-				}
-				else if (isMouseOverColumnMargin(e.getPoint()))
-				{
+				} else if (isMouseOverColumnMargin(e.getPoint())) {
 					mColumnResizing = true;
 				}
 			}
 
-			public void mouseReleased(final MouseEvent e)
-			{
-				if (mRowResizing)
-				{
+			public void mouseReleased(final MouseEvent e) {
+				if (mRowResizing) {
 					mRowResizing = false;
 					TimelinePlugin.getSettings().setChannelHeight(
-              Math.abs(mReferenceY - e.getPoint().y));
+							Math.abs(mReferenceY - e.getPoint().y));
 					TimelinePlugin.getInstance().resize();
 				}
-				if (mColumnResizing)
-				{
+				if (mColumnResizing) {
 					mColumnResizing = false;
 					TimelinePlugin.getInstance().setChannelWidth(mResizeX);
 					TimelinePlugin.getInstance().resize();
 				}
 			}
 		});
+		ToolTipManager.sharedInstance().registerComponent(this);
 	}
 
-	public void setPreferredHeight(final int ph)
-	{
-		setPreferredSize(new Dimension(TimelinePlugin.getInstance().getChannelWidth(), ph));
+	public void setPreferredHeight(final int ph) {
+		setPreferredSize(new Dimension(TimelinePlugin.getInstance()
+				.getChannelWidth(), ph));
 		setSize(new Dimension(TimelinePlugin.getInstance().getChannelWidth(), ph));
 	}
 
-	public void paintComponent(final Graphics g)
-	{
+	public void paintComponent(final Graphics g) {
 		super.paintComponent(g);
 
 		final Color c = g.getColor();
-    final Color cr = new Color(240, 240, 240);
-    g.setFont(TimelinePlugin.getFont());
+		final Color cr = new Color(240, 240, 240);
+		g.setFont(TimelinePlugin.getFont());
 		g.setColor(c);
 
 		int delta = 0;
 		int h = g.getFontMetrics().getHeight();
-		if (mChannelHeight > MINIMUM_CHANNEL_HEIGHT)
-		{
+		if (mChannelHeight > MINIMUM_CHANNEL_HEIGHT) {
 			h += (mChannelHeight - h) / 2;
 			delta = (mChannelHeight - MINIMUM_CHANNEL_HEIGHT) / 2;
 		}
@@ -186,46 +171,41 @@ public class ChannelHeader extends JComponent
 		g.setColor(Color.WHITE);
 		g.fillRect(1, 0, w - 1, this.getSize().height);
 		final int textBegin = mShowIcon ? 45 : 5;
-		for (int i = 0; i < mChannelCount; i++)
-		{
-		  final int y = mChannelHeight * i;
+		for (int i = 0; i < mChannelCount; i++) {
+			final int y = mChannelHeight * i;
 			g.setColor(i % 2 == 0 ? Color.WHITE : cr);
 			g.fillRect(0, y, w, mChannelHeight);
 			g.setColor((!mRowResizing && !mColumnResizing) ? c : Color.LIGHT_GRAY);
-			if (mShowName)
-			{
+			if (mShowName) {
 				g.drawString(mChannels[i].getName(), textBegin, y + h);
 			}
-			if (mShowIcon)
-			{
+			if (mShowIcon) {
 				getIcon(mChannels[i]).paintIcon(this, g, 0, y + delta);
 			}
 		}
 
-		if (mRowResizing)
-		{
+		if (mRowResizing) {
 			g.setColor(Color.RED);
 			final int diff = mResizeY - mReferenceY;
-      final String text = Integer.toString(Math.abs(diff));
-      final int x = getWidth() / 2;
-      final int end = mReferenceY + (diff + g.getFont().getSize()) / 2;
-      final int begin = end - g.getFont().getSize();
-			g.drawString(text, (getWidth() - g.getFontMetrics().stringWidth(text)) / 2, end);
+			final String text = Integer.toString(Math.abs(diff));
+			final int x = getWidth() / 2;
+			final int end = mReferenceY + (diff + g.getFont().getSize()) / 2;
+			final int begin = end - g.getFont().getSize();
+			g.drawString(text,
+					(getWidth() - g.getFontMetrics().stringWidth(text)) / 2, end);
 			g.drawLine(0, mReferenceY, getSize().width, mReferenceY);
 			g.drawLine(x, mReferenceY, x, begin - 2);
 			g.drawLine(x, mResizeY, x, end + 2);
 			g.drawLine(0, mResizeY, getSize().width, mResizeY);
-		}
-		else if (mColumnResizing)
-		{
-		  final String text = Integer.toString(mResizeX);
-      final int textWidth = g.getFontMetrics().stringWidth(text);
-      final int x = (mResizeX - textWidth) / 2;
+		} else if (mColumnResizing) {
+			final String text = Integer.toString(mResizeX);
+			final int textWidth = g.getFontMetrics().stringWidth(text);
+			final int x = (mResizeX - textWidth) / 2;
 			g.setColor(Color.WHITE);
 			g.fillRect(x - 1, mResizeY - 6, textWidth + 2, g.getFont().getSize() + 2);
 			g.setColor(Color.RED);
 			final int begin = x - 2;
-      final int end = begin + textWidth + 2;
+			final int end = begin + textWidth + 2;
 			g.drawLine(0, mResizeY, begin, mResizeY);
 			g.drawLine(end, mResizeY, mResizeX, mResizeY);
 			g.drawString(text, x, mResizeY + 5);
@@ -234,10 +214,8 @@ public class ChannelHeader extends JComponent
 		g.setColor(c);
 	}
 
-	private ImageIcon getIcon(final Channel channel)
-	{
-		if (mIcons.containsKey(channel))
-		{
+	private ImageIcon getIcon(final Channel channel) {
+		if (mIcons.containsKey(channel)) {
 			return mIcons.get(channel);
 		}
 		final ImageIcon icon = UiUtilities.createChannelIcon(channel.getIcon());
@@ -245,43 +223,47 @@ public class ChannelHeader extends JComponent
 		return icon;
 	}
 
-	private boolean isMouseOverIcon(final Point p)
-	{
-	  final int logoBegin = ((int) (p.getY() / mChannelHeight))
-        * mChannelHeight
-        + (mChannelHeight > 20 ? (mChannelHeight - 20) / 2 : 0);
-    final int maxHeight = mChannelCount * mChannelHeight;
+	private boolean isMouseOverIcon(final Point p) {
+		final int logoBegin = ((int) (p.getY() / mChannelHeight)) * mChannelHeight
+				+ (mChannelHeight > 20 ? (mChannelHeight - 20) / 2 : 0);
+		final int maxHeight = mChannelCount * mChannelHeight;
 
-		if (p.getY() < maxHeight && p.getX() <= 42 && p.getY() > logoBegin && p.getY() < logoBegin + 22)
-		{
+		if (p.getY() < maxHeight && p.getX() <= 42 && p.getY() > logoBegin
+				&& p.getY() < logoBegin + 22) {
 			return true;
 		}
 		return false;
 	}
 
-	private boolean isMouseOverRowMargin(final Point p)
-	{
-		if (!TimelinePlugin.getSettings().resizeWithMouse())
-		{
+	private boolean isMouseOverRowMargin(final Point p) {
+		if (!TimelinePlugin.getSettings().resizeWithMouse()) {
 			return false;
 		}
-		if ((p.y % mChannelHeight == 0) && (p.y > 0))
-		{
+		if ((p.y % mChannelHeight == 0) && (p.y > 0)) {
 			return true;
 		}
 		return false;
 	}
 
-	private boolean isMouseOverColumnMargin(final Point p)
-	{
-		if (!TimelinePlugin.getSettings().resizeWithMouse())
-		{
+	private boolean isMouseOverColumnMargin(final Point p) {
+		if (!TimelinePlugin.getSettings().resizeWithMouse()) {
 			return false;
 		}
-		if ((p.x == getSize().width - 1))
-		{
+		if ((p.x == getSize().width - 1)) {
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public String getToolTipText(MouseEvent event) {
+		int channelIndex = event.getY() / mChannelHeight;
+		if (channelIndex < mChannels.length) {
+			Channel channel = mChannels[channelIndex];
+			if (event.getX() < getIcon(channel).getIconWidth()) {
+				return channel.getName();
+			}
+		}
+		return null;
 	}
 }

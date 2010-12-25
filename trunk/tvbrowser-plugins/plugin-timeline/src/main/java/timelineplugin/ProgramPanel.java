@@ -37,8 +37,7 @@ import javax.swing.JViewport;
 import devplugin.Date;
 import devplugin.Plugin;
 
-public class ProgramPanel extends JPanel
-{
+public class ProgramPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 
 	private int mOffset;
@@ -51,15 +50,14 @@ public class ProgramPanel extends JPanel
 	private Point mDraggingPoint = null;
 
 	private static Stroke hourStroke = new BasicStroke(1.0f,
-      BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER, 15.0f, new float[] { 5.0f,
-          5.0f }, 5.0f);
-  private static Stroke halfHourStroke = new BasicStroke(1.0f,
-      BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER, 15.0f, new float[] { 1.0f,
-          2.0f }, 5.0f);
-  private static Stroke nowStroke = new BasicStroke(3);
+			BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER, 15.0f, new float[] { 5.0f,
+					5.0f }, 5.0f);
+	private static Stroke halfHourStroke = new BasicStroke(1.0f,
+			BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER, 15.0f, new float[] { 1.0f,
+					2.0f }, 5.0f);
+	private static Stroke nowStroke = new BasicStroke(3);
 
-	public ProgramPanel()
-	{
+	public ProgramPanel() {
 		super(new BorderLayout());
 
 		mChannelCount = Plugin.getPluginManager().getSubscribedChannels().length;
@@ -68,64 +66,54 @@ public class ProgramPanel extends JPanel
 
 		this.setBackground(Color.WHITE);
 
-		addMouseMotionListener(new MouseMotionAdapter()
-		{
-			public void mouseDragged(final MouseEvent evt)
-			{
-				if (mDraggingPoint != null && !evt.isShiftDown())
-				{
-				  final int deltaX = mDraggingPoint.x - evt.getX();
-          final int deltaY = mDraggingPoint.y - evt.getY();
+		addMouseMotionListener(new MouseMotionAdapter() {
+			public void mouseDragged(final MouseEvent evt) {
+				if (mDraggingPoint != null && !evt.isShiftDown()) {
+					final int deltaX = mDraggingPoint.x - evt.getX();
+					final int deltaY = mDraggingPoint.y - evt.getY();
 					scrollBy(deltaX, deltaY);
 				}
 			}
 		});
 
-		addMouseListener(new MouseAdapter()
-		{
-			public void mousePressed(final MouseEvent evt)
-			{
+		addMouseListener(new MouseAdapter() {
+			public void mousePressed(final MouseEvent evt) {
 				mDraggingPoint = evt.getPoint();
 			}
 
-			public void mouseReleased(final MouseEvent evt)
-			{
+			public void mouseReleased(final MouseEvent evt) {
 				mDraggingPoint = null;
 			}
 		});
 	}
 
-	public void resize()
-	{
+	public void resize() {
 		mSizeHour = TimelinePlugin.getSettings().getHourWidth();
-    mSizeChannel = TimelinePlugin.getSettings().getChannelHeight();
+		mSizeChannel = TimelinePlugin.getSettings().getChannelHeight();
 		mOffset = TimelinePlugin.getInstance().getOffset();
 		mClientWidth = mSizeHour * 24;
 		mClientHeigh = mChannelCount * mSizeChannel;
 
 		mStartX = mOffset - (((mOffset / mSizeHour) + 1) * mSizeHour);
 
-		this.setPreferredSize(new Dimension(mClientWidth + 2 * mOffset, mClientHeigh + 1));
+		this.setPreferredSize(new Dimension(mClientWidth + 2 * mOffset,
+				mClientHeigh + 1));
 		this.setSize(new Dimension(mClientWidth + 2 * mOffset, mClientHeigh + 1));
 	}
 
-	public void scrollBy(final int deltaX, final int deltaY)
-	{
-		if (getParent() instanceof JViewport)
-		{
-		  final JViewport viewport = (JViewport) getParent();
+	public void scrollBy(final int deltaX, final int deltaY) {
+		if (getParent() instanceof JViewport) {
+			final JViewport viewport = (JViewport) getParent();
 			Point viewPos = viewport.getViewPosition();
 
-			if (deltaX != 0)
-			{
+			if (deltaX != 0) {
 				viewPos.x += deltaX;
 				final int maxX = getWidth() - viewport.getWidth();
 
 				viewPos.x = Math.min(viewPos.x, maxX);
 				viewPos.x = Math.max(viewPos.x, 0);
 			}
-			if (deltaY != 0)
-			{
+			if (deltaY != 0) {
 				viewPos.y += deltaY;
 				final int maxY = getHeight() - viewport.getHeight();
 
@@ -136,26 +124,23 @@ public class ProgramPanel extends JPanel
 		}
 	}
 
-	public void paintComponent(final Graphics g)
-	{
+	public void paintComponent(final Graphics g) {
 		super.paintComponent(g);
 		final Rectangle drawHere = g.getClipBounds();
 
-    g.setFont(TimelinePlugin.getFont());
+		g.setFont(TimelinePlugin.getFont());
 
 		final Graphics2D g2 = (Graphics2D) g;
 
 		final int top = 0;
-    final int bottom = drawHere.height;
+		final int bottom = drawHere.height;
 
-    final Color oriColor = g.getColor();
+		final Color oriColor = g.getColor();
 
 		g.setColor(new Color(240, 240, 240));
-		for (int i = 0; i < mChannelCount; i++)
-		{
-			if (i % 2 != 0)
-			{
-			  final int y = mSizeChannel * i;
+		for (int i = 0; i < mChannelCount; i++) {
+			if (i % 2 != 0) {
+				final int y = mSizeChannel * i;
 				g.fillRect(0, y, this.getSize().width, mSizeChannel);
 			}
 		}
@@ -166,22 +151,19 @@ public class ProgramPanel extends JPanel
 		final int halfHourSize = mSizeHour / 2;
 		int x = mStartX;
 
-		while (x < this.getSize().width)
-		{
-		  final int xh = x + halfHourSize;
-		  final Line2D l = new Line2D.Double(x, top, x, bottom);
-      final Line2D l2 = new Line2D.Double(xh, top, xh, bottom);
+		while (x < this.getSize().width) {
+			final int xh = x + halfHourSize;
+			final Line2D l = new Line2D.Double(x, top, x, bottom);
+			final Line2D l2 = new Line2D.Double(xh, top, xh, bottom);
 			g2.setStroke(hourStroke);
 			g2.draw(l);
 			g2.setStroke(halfHourStroke);
 			g2.draw(l2);
 			x += mSizeHour;
 		}
-		if (TimelinePlugin.getSettings().showBar())
-		{
-		  final Date d = Date.getCurrentDate();
-			if (d.equals(new Date(TimelinePlugin.getInstance().getChoosenDate())))
-			{
+		if (TimelinePlugin.getSettings().showBar()) {
+			final Date d = Date.getCurrentDate();
+			if (d.equals(new Date(TimelinePlugin.getInstance().getChoosenDate()))) {
 				g2.setStroke(nowStroke);
 				g.setColor(new Color(255, 0, 0, 50));
 				x = TimelinePlugin.getInstance().getNowPosition();
