@@ -42,10 +42,9 @@ import devplugin.ProgramFilter;
 import devplugin.SettingsTab;
 import devplugin.Version;
 
-public final class TimelinePlugin extends devplugin.Plugin
-{
+public final class TimelinePlugin extends devplugin.Plugin {
 	static final util.ui.Localizer mLocalizer = util.ui.Localizer
-      .getLocalizerFor(TimelinePlugin.class);
+			.getLocalizerFor(TimelinePlugin.class);
 
 	private static TimelinePlugin mInstance;
 
@@ -59,69 +58,58 @@ public final class TimelinePlugin extends devplugin.Plugin
 	private int mChannelWidth = -1;
 	private int mOffset;
 
-  private TimelineSettings mSettings;
+	private TimelineSettings mSettings;
 
-  private String mTitleFormat;
+	private String mTitleFormat;
 
-	public TimelinePlugin()
-	{
+	public TimelinePlugin() {
 		mInstance = this;
 	}
 
-	public static TimelinePlugin getInstance()
-	{
+	public static TimelinePlugin getInstance() {
 		return mInstance;
 	}
 
-	public PluginInfo getInfo()
-	{
-	  final String name = mLocalizer.msg("name", "Timeline");
-    final String desc = mLocalizer.msg("description",
-        "Timeline view of the program data.");
-    final String author = "Reinhard Lehrbaum";
+	public PluginInfo getInfo() {
+		final String name = mLocalizer.msg("name", "Timeline");
+		final String desc = mLocalizer.msg("description",
+				"Timeline view of the program data.");
+		final String author = "Reinhard Lehrbaum";
 
 		return new PluginInfo(TimelinePlugin.class, name, desc, author);
 	}
 
-	public static Version getVersion()
-	{
+	public static Version getVersion() {
 		return new Version(0, 6);
 	}
 
-	public SettingsTab getSettingsTab()
-	{
+	public SettingsTab getSettingsTab() {
 		return (new TimelinePluginSettingsTab());
 	}
 
-	public void onDeactivation()
-	{
-		if (mDialog != null && mDialog.isVisible())
-		{
+	public void onDeactivation() {
+		if (mDialog != null && mDialog.isVisible()) {
 			mDialog.dispose();
 		}
 	}
 
-	public ActionMenu getButtonAction()
-	{
-		final AbstractAction action = new AbstractAction()
-		{
-			public void actionPerformed(final ActionEvent evt)
-			{
+	public ActionMenu getButtonAction() {
+		final AbstractAction action = new AbstractAction() {
+			public void actionPerformed(final ActionEvent evt) {
 				showTimeline();
 			}
 		};
 
 		action.putValue(Action.NAME, mLocalizer.msg("name", "Timeline"));
-		action.putValue(Action.SMALL_ICON, createImageIcon("actions", "timeline", 16));
+		action.putValue(Action.SMALL_ICON,
+				createImageIcon("actions", "timeline", 16));
 		action.putValue(BIG_ICON, createImageIcon("actions", "timeline", 22));
 
 		return new ActionMenu(action);
 	}
 
-	void showTimeline()
-	{
-		if (mDialog != null && mDialog.isVisible())
-		{
+	void showTimeline() {
+		if (mDialog != null && mDialog.isVisible()) {
 			mDialog.dispose();
 		}
 
@@ -137,47 +125,36 @@ public final class TimelinePlugin extends devplugin.Plugin
 		mDialog.pack();
 
 		final Rectangle rect = mSettings.getPosition();
-    mDialog.setBounds(rect);
+		mDialog.setBounds(rect);
 		mDialog.setVisible(true);
 		savePosition();
 	}
 
-	public void handleTvBrowserStartFinished()
-	{
-		if (mSettings.showAtStartUp())
-		{
-			SwingUtilities.invokeLater(new Runnable()
-			{
-				public void run()
-				{
+	public void handleTvBrowserStartFinished() {
+		if (mSettings.showAtStartUp()) {
+			SwingUtilities.invokeLater(new Runnable() {
+				public void run() {
 					showTimeline();
 				}
 			});
 		}
 	}
 
-
-
-	double getSizePerMinute()
-	{
+	double getSizePerMinute() {
 		return mSettings.getHourWidth() / 60.0;
 	}
 
-	int getChannelWidth()
-	{
-		if (mChannelWidth < 0)
-		{
-		  final JLabel l = new JLabel();
-      final FontMetrics fm = l.getFontMetrics(getFont());
+	int getChannelWidth() {
+		if (mChannelWidth < 0) {
+			final JLabel l = new JLabel();
+			final FontMetrics fm = l.getFontMetrics(getFont());
 			int neededWidth = 0;
-			if (mSettings.showChannelName())
-			{
-			  final Channel[] mChannels = Plugin.getPluginManager()
-            .getSubscribedChannels();
+			if (mSettings.showChannelName()) {
+				final Channel[] mChannels = Plugin.getPluginManager()
+						.getSubscribedChannels();
 				for (Channel mChannel : mChannels) {
-				  final int width = fm.stringWidth(mChannel.getName());
-					if (neededWidth < width)
-					{
+					final int width = fm.stringWidth(mChannel.getName());
+					if (neededWidth < width) {
 						neededWidth = width;
 					}
 				}
@@ -188,109 +165,90 @@ public final class TimelinePlugin extends devplugin.Plugin
 		return mChannelWidth;
 	}
 
-	void setChannelWidth(final int value)
-	{
+	void setChannelWidth(final int value) {
 		mChannelWidth = value;
 	}
 
-	int getOffset()
-	{
+	int getOffset() {
 		return mOffset;
 	}
 
-	void setOffset(final int offset)
-	{
+	void setOffset(final int offset) {
 		mOffset = offset;
 	}
 
-	void resetChannelWidth()
-	{
+	void resetChannelWidth() {
 		mChannelWidth = -1;
 	}
 
-	static Font getFont()
-	{
+	static Font getFont() {
 		return DEFAULT_FONT;
 	}
 
-	Date getChoosenDate()
-	{
+	Date getChoosenDate() {
 		return mChoosenDate;
 	}
 
-	void setChoosenDate(final Date d)
-	{
+	void setChoosenDate(final Date d) {
 		mChoosenDate = d;
 	}
 
-	static int getNowMinute()
-	{
-	  final Calendar now = Calendar.getInstance();
+	static int getNowMinute() {
+		final Calendar now = Calendar.getInstance();
 		return now.get(Calendar.HOUR_OF_DAY) * 60 + now.get(Calendar.MINUTE);
 	}
 
-	int getNowPosition()
-	{
+	int getNowPosition() {
 		return getOffset() + (int) Math.round(getSizePerMinute() * getNowMinute());
 	}
 
-	void setFilter(final ProgramFilter filter)
-	{
+	void setFilter(final ProgramFilter filter) {
 		mFilter = filter;
 	}
 
-	ProgramFilter getFilter()
-	{
+	ProgramFilter getFilter() {
 		return mFilter;
 	}
 
-	TextFormatter getFormatter()
-	{
+	TextFormatter getFormatter() {
 		return mFormatter;
 	}
 
-	void resize()
-	{
+	void resize() {
 		mDialog.resize();
 	}
 
-	private void savePosition()
-	{
-	  mSettings.savePosition(mDialog.getX(), mDialog.getY(), mDialog.getWidth(),
-        mDialog.getHeight());
+	private void savePosition() {
+		mSettings.savePosition(mDialog.getX(), mDialog.getY(), mDialog.getWidth(),
+				mDialog.getHeight());
 	}
 
-	public void loadSettings(final Properties prop)
-	{
-	  mSettings = new TimelineSettings(prop);
-    mSettings.setTitleFormat(mTitleFormat);
+	public void loadSettings(final Properties prop) {
+		mSettings = new TimelineSettings(prop);
+		mSettings.setTitleFormat(mTitleFormat);
 		mChannelWidth = mSettings.getChannelWidth();
 	}
 
-	public Properties storeSettings()
-	{
+	public Properties storeSettings() {
 		return mSettings.storeSettings();
 	}
 
 	public void readData(final ObjectInputStream in) throws IOException,
-      ClassNotFoundException
-	{
-	  final int version = in.readInt();
+			ClassNotFoundException {
+		final int version = in.readInt();
 
-		if (version == 1)
-		{
+		if (version == 1) {
 			mTitleFormat = (String) in.readObject();
 		}
 	}
 
-	public void writeData(final ObjectOutputStream out) throws IOException
-	{
+	public void writeData(final ObjectOutputStream out) throws IOException {
 		out.writeInt(1); // version
-    out.writeObject(mSettings.getTitleFormat());
+		out.writeObject(mSettings.getTitleFormat());
 	}
 
-  public static TimelineSettings getSettings() {
-    return getInstance().mSettings;
-  }
+	public static TimelineSettings getSettings() {
+		return getInstance().mSettings;
+	}
 
 }

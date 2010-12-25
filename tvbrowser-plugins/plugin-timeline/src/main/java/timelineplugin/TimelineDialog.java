@@ -55,12 +55,11 @@ import devplugin.Date;
 import devplugin.Plugin;
 import devplugin.ProgramFilter;
 
-public final class TimelineDialog extends JDialog implements WindowClosingIf
-{
+public final class TimelineDialog extends JDialog implements WindowClosingIf {
 	private static final long serialVersionUID = 1L;
 
 	static final util.ui.Localizer mLocalizer = util.ui.Localizer
-      .getLocalizerFor(TimelinePlugin.class);
+			.getLocalizerFor(TimelinePlugin.class);
 
 	private ProgramScrollPanel mMainPane;
 	private JComboBox mDateList;
@@ -73,8 +72,7 @@ public final class TimelineDialog extends JDialog implements WindowClosingIf
 	private boolean mIgnoreReset = false;
 	private double mRelation;
 
-	public TimelineDialog(final Frame frame, final boolean startWithNow)
-	{
+	public TimelineDialog(final Frame frame, final boolean startWithNow) {
 		super(frame, true);
 		setTitle(mLocalizer.msg("name", "Timeline"));
 		mStartWithNow = startWithNow;
@@ -82,26 +80,18 @@ public final class TimelineDialog extends JDialog implements WindowClosingIf
 		createGUI();
 
 		mTimer = new Timer();
-		mTimer.scheduleAtFixedRate(new TimerTask()
-		{
-			public void run()
-			{
-				if (mLockNow)
-				{
-					try
-					{
+		mTimer.scheduleAtFixedRate(new TimerTask() {
+			public void run() {
+				if (mLockNow) {
+					try {
 						mIgnoreReset = true;
 
 						gotoNow();
 						mMainPane.repaint();
-					}
-					finally
-					{
+					} finally {
 						mIgnoreReset = false;
 					}
-				}
-				else
-				{
+				} else {
 					mMainPane.update();
 				}
 			}
@@ -109,13 +99,10 @@ public final class TimelineDialog extends JDialog implements WindowClosingIf
 
 		UiUtilities.registerForClosing(this);
 
-		SwingUtilities.invokeLater(new Runnable()
-		{
-			public void run()
-			{
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
 				gotoNow();
-				if (mStartWithNow)
-				{
+				if (mStartWithNow) {
 					mLockNow = true;
 					mTimeList.setSelectedIndex(1);
 				}
@@ -123,16 +110,16 @@ public final class TimelineDialog extends JDialog implements WindowClosingIf
 		});
 	}
 
-	private void createGUI()
-	{
-	  final JPanel content = (JPanel) this.getContentPane();
+	private void createGUI() {
+		final JPanel content = (JPanel) this.getContentPane();
 		content.setLayout(new BorderLayout());
 		content.setBorder(UiUtilities.DIALOG_BORDER);
 
 		content.add(getInfoPanel(), BorderLayout.NORTH);
 
 		mMainPane = new ProgramScrollPanel();
-		mMainPane.getHorizontalScrollBar().addAdjustmentListener(getHorizontalScrollBarListener());
+		mMainPane.getHorizontalScrollBar().addAdjustmentListener(
+				getHorizontalScrollBarListener());
 
 		content.add(mMainPane, BorderLayout.CENTER);
 		content.add(getFooterPanel(), BorderLayout.SOUTH);
@@ -140,89 +127,81 @@ public final class TimelineDialog extends JDialog implements WindowClosingIf
 		addKeyboardAction();
 	}
 
-	private AdjustmentListener getHorizontalScrollBarListener()
-	{
-		return new AdjustmentListener()
-		{
-			public void adjustmentValueChanged(final AdjustmentEvent e)
-			{
+	private AdjustmentListener getHorizontalScrollBarListener() {
+		return new AdjustmentListener() {
+			public void adjustmentValueChanged(final AdjustmentEvent e) {
 				resetGoto();
 				final int dayLimit = getDayLimit();
-        final int value = e.getValue();
+				final int value = e.getValue();
 
-				if (value < dayLimit)
-				{
-				  final int index = mDateList.getSelectedIndex();
-					if (index > 0)
-					{
+				if (value < dayLimit) {
+					final int index = mDateList.getSelectedIndex();
+					if (index > 0) {
 						mDateList.setSelectedIndex(index - 1);
 						gotoTime(24 * 60, value - dayLimit);
 					}
-				}
-				else if (value + mMainPane.getHorizontalScrollBar().getVisibleAmount() >= mMainPane.getHorizontalScrollBar().getMaximum() - dayLimit)
-				{
-				  final int index = mDateList.getSelectedIndex();
-					if (index < mDateList.getItemCount() - 1)
-					{
+				} else if (value
+						+ mMainPane.getHorizontalScrollBar().getVisibleAmount() >= mMainPane
+						.getHorizontalScrollBar().getMaximum() - dayLimit) {
+					final int index = mDateList.getSelectedIndex();
+					if (index < mDateList.getItemCount() - 1) {
 						mDateList.setSelectedIndex(mDateList.getSelectedIndex() + 1);
-						gotoTime(0, (value + mMainPane.getHorizontalScrollBar().getVisibleAmount()) - (mMainPane.getHorizontalScrollBar().getMaximum() - dayLimit));
+						gotoTime(0, (value + mMainPane.getHorizontalScrollBar()
+								.getVisibleAmount())
+								- (mMainPane.getHorizontalScrollBar().getMaximum() - dayLimit));
 					}
 				}
 			}
 		};
 	}
 
-	private JPanel getInfoPanel()
-	{
-	  final FormLayout layout = new FormLayout(
-        "pref, 3dlu, pref, 15dlu, pref, 3dlu, pref, 15dlu, pref, 3dlu, pref",
-        "pref, 5dlu");
+	private JPanel getInfoPanel() {
+		final FormLayout layout = new FormLayout(
+				"pref, 3dlu, pref, 15dlu, pref, 3dlu, pref, 15dlu, pref, 3dlu, pref",
+				"pref, 5dlu");
 
-	  final PanelBuilder builder = new PanelBuilder(layout);
+		final PanelBuilder builder = new PanelBuilder(layout);
 		builder.setBorder(null);
 		final CellConstraints cc = new CellConstraints();
 
 		mDateList = new JComboBox(getDateList());
 		mDateList.setSelectedIndex(1);
-		mDateList.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(final ActionEvent e)
-			{
+		mDateList.addActionListener(new ActionListener() {
+			public void actionPerformed(final ActionEvent e) {
 				resetGoto();
-				TimelinePlugin.getInstance().setChoosenDate((Date) mDateList.getSelectedItem());
+				TimelinePlugin.getInstance().setChoosenDate(
+						(Date) mDateList.getSelectedItem());
 				mMainPane.updateProgram();
 			}
 		});
 		mTimeList = new JComboBox(getTimeList());
-		mTimeList.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(final ActionEvent e)
-			{
-			  final int index = mTimeList.getSelectedIndex();
-				switch (index)
-				{
-					case 0:
-						break;
-					case 1:
-						gotoNow();
-						mLockNow = true;
-						break;
-					default:
-						gotoTime(mTimes[mTimeList.getSelectedIndex() - 2]);
-						break;
+		mTimeList.addActionListener(new ActionListener() {
+			public void actionPerformed(final ActionEvent e) {
+				final int index = mTimeList.getSelectedIndex();
+				switch (index) {
+				case 0:
+					break;
+				case 1:
+					gotoNow();
+					mLockNow = true;
+					break;
+				default:
+					gotoTime(mTimes[mTimeList.getSelectedIndex() - 2]);
+					break;
 				}
 				mTimeList.setSelectedIndex(index);
 			}
 		});
 
-		mFilterList = new JComboBox(Plugin.getPluginManager().getFilterManager().getAvailableFilters());
-		TimelinePlugin.getInstance().setFilter(Plugin.getPluginManager().getFilterManager().getCurrentFilter());
+		mFilterList = new JComboBox(Plugin.getPluginManager().getFilterManager()
+				.getAvailableFilters());
+		TimelinePlugin.getInstance().setFilter(
+				Plugin.getPluginManager().getFilterManager().getCurrentFilter());
 		mFilterList.setSelectedItem(TimelinePlugin.getInstance().getFilter());
-		mFilterList.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(final ActionEvent e)
-			{
-				TimelinePlugin.getInstance().setFilter((ProgramFilter)mFilterList.getSelectedItem());
+		mFilterList.addActionListener(new ActionListener() {
+			public void actionPerformed(final ActionEvent e) {
+				TimelinePlugin.getInstance().setFilter(
+						(ProgramFilter) mFilterList.getSelectedItem());
 				mMainPane.updateProgram();
 			}
 		});
@@ -236,30 +215,25 @@ public final class TimelineDialog extends JDialog implements WindowClosingIf
 		return builder.getPanel();
 	}
 
-	private JPanel getFooterPanel()
-	{
-	  final JPanel fp = new JPanel(new BorderLayout());
+	private JPanel getFooterPanel() {
+		final JPanel fp = new JPanel(new BorderLayout());
 		fp.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
 
 		final JButton settingsBtn = new JButton(TimelinePlugin.getInstance()
-        .createImageIcon("categories", "preferences-system", 16));
+				.createImageIcon("categories", "preferences-system", 16));
 		settingsBtn.setToolTipText(mLocalizer.msg("settings", "Open settings"));
-		settingsBtn.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(final ActionEvent e)
-			{
+		settingsBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(final ActionEvent e) {
 				close();
 				Plugin.getPluginManager().showSettings(TimelinePlugin.getInstance());
 			}
 		});
 		fp.add(settingsBtn, BorderLayout.WEST);
 
-		final JButton closeBtn = new JButton(Localizer
-        .getLocalization(Localizer.I18N_CLOSE));
-		closeBtn.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(final ActionEvent evt)
-			{
+		final JButton closeBtn = new JButton(
+				Localizer.getLocalization(Localizer.I18N_CLOSE));
+		closeBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(final ActionEvent evt) {
 				dispose();
 			}
 		});
@@ -269,160 +243,161 @@ public final class TimelineDialog extends JDialog implements WindowClosingIf
 		return fp;
 	}
 
-	public void addKeyboardAction()
-	{
+	public void addKeyboardAction() {
 		// Debug Info
-		rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_F12, 0), "debugInfo");
-		rootPane.getActionMap().put("debugInfo", new AbstractAction()
-		{
+		rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+				KeyStroke.getKeyStroke(KeyEvent.VK_F12, 0), "debugInfo");
+		rootPane.getActionMap().put("debugInfo", new AbstractAction() {
 			private static final long serialVersionUID = 1L;
 
-			private String formatDim(final Dimension d)
-			{
+			private String formatDim(final Dimension d) {
 				return "width=" + d.width + ", height=" + d.height;
 			}
 
-			public void actionPerformed(final ActionEvent e)
-			{
-				String info = "Viewport: " + formatDim(mMainPane.getViewport().getSize()) + "\n";
-				info += "RowHeader: " + formatDim(mMainPane.getRowHeader().getSize()) + "\n";
-				info += "ColumnHeader: " + formatDim(mMainPane.getColumnHeader().getSize()) + "\n";
+			public void actionPerformed(final ActionEvent e) {
+				String info = "Viewport: "
+						+ formatDim(mMainPane.getViewport().getSize()) + "\n";
+				info += "RowHeader: " + formatDim(mMainPane.getRowHeader().getSize())
+						+ "\n";
+				info += "ColumnHeader: "
+						+ formatDim(mMainPane.getColumnHeader().getSize()) + "\n";
 				info += "Offset: " + TimelinePlugin.getInstance().getOffset() + "\n";
-				info += "HorizontalScrollBar: " + mMainPane.getHorizontalScrollBar().getMaximum() + "\n";
-				info += "View: " + formatDim(mMainPane.getViewport().getView().getSize()) + "\n";
+				info += "HorizontalScrollBar: "
+						+ mMainPane.getHorizontalScrollBar().getMaximum() + "\n";
+				info += "View: "
+						+ formatDim(mMainPane.getViewport().getView().getSize()) + "\n";
 
 				JOptionPane.showMessageDialog(null, info);
 			}
 		});
 
 		// goto Now
-		rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_F9, 0), "gotoNow");
-		rootPane.getActionMap().put("gotoNow", new AbstractAction()
-		{
+		rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+				KeyStroke.getKeyStroke(KeyEvent.VK_F9, 0), "gotoNow");
+		rootPane.getActionMap().put("gotoNow", new AbstractAction() {
 			private static final long serialVersionUID = 1L;
 
-			public void actionPerformed(final ActionEvent e)
-			{
+			public void actionPerformed(final ActionEvent e) {
 				resetGoto();
 				gotoNow();
 			}
 		});
 
 		// goto Now (lock)
-		rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_F9, InputEvent.CTRL_MASK), "gotoNowLock");
-		rootPane.getActionMap().put("gotoNowLock", new AbstractAction()
-		{
+		rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+				KeyStroke.getKeyStroke(KeyEvent.VK_F9, InputEvent.CTRL_MASK),
+				"gotoNowLock");
+		rootPane.getActionMap().put("gotoNowLock", new AbstractAction() {
 			private static final long serialVersionUID = 1L;
 
-			public void actionPerformed(final ActionEvent e)
-			{
+			public void actionPerformed(final ActionEvent e) {
 				mTimeList.setSelectedIndex(1);
 			}
 		});
 
 		// goto Next Day
-		rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_MASK), "nextDay");
-		rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_DOWN, InputEvent.CTRL_MASK), "nextDay");
-		rootPane.getActionMap().put("nextDay", new AbstractAction()
-		{
+		rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+				KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_MASK), "nextDay");
+		rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+				KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_DOWN, InputEvent.CTRL_MASK),
+				"nextDay");
+		rootPane.getActionMap().put("nextDay", new AbstractAction() {
 			private static final long serialVersionUID = 1L;
 
-			public void actionPerformed(final ActionEvent e)
-			{
-			  final int index = mDateList.getSelectedIndex();
-				if (index < mDateList.getItemCount() - 1)
-				{
+			public void actionPerformed(final ActionEvent e) {
+				final int index = mDateList.getSelectedIndex();
+				if (index < mDateList.getItemCount() - 1) {
 					mDateList.setSelectedIndex(mDateList.getSelectedIndex() + 1);
 				}
 			}
 		});
 
 		// goto Previous Day
-		rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_MASK), "previousDay");
-		rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_UP, InputEvent.CTRL_MASK), "previousDay");
-		rootPane.getActionMap().put("previousDay", new AbstractAction()
-		{
+		rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+				KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_MASK),
+				"previousDay");
+		rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+				KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_UP, InputEvent.CTRL_MASK),
+				"previousDay");
+		rootPane.getActionMap().put("previousDay", new AbstractAction() {
 			private static final long serialVersionUID = 1L;
 
-			public void actionPerformed(final ActionEvent e)
-			{
-			  final int index = mDateList.getSelectedIndex();
-				if (index > 0)
-				{
+			public void actionPerformed(final ActionEvent e) {
+				final int index = mDateList.getSelectedIndex();
+				if (index > 0) {
 					mDateList.setSelectedIndex(index - 1);
 				}
 			}
 		});
 
 		// goto 00:00
-		rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_HOME, InputEvent.CTRL_MASK), "gotoBegin");
-		rootPane.getActionMap().put("gotoBegin", new AbstractAction()
-		{
+		rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+				KeyStroke.getKeyStroke(KeyEvent.VK_HOME, InputEvent.CTRL_MASK),
+				"gotoBegin");
+		rootPane.getActionMap().put("gotoBegin", new AbstractAction() {
 			private static final long serialVersionUID = 1L;
 
-			public void actionPerformed(final ActionEvent e)
-			{
+			public void actionPerformed(final ActionEvent e) {
 				gotoTime(0);
 			}
 		});
 
 		// goto 23:59
-		rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_END, InputEvent.CTRL_MASK), "gotoEnd");
-		rootPane.getActionMap().put("gotoEnd", new AbstractAction()
-		{
+		rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+				KeyStroke.getKeyStroke(KeyEvent.VK_END, InputEvent.CTRL_MASK),
+				"gotoEnd");
+		rootPane.getActionMap().put("gotoEnd", new AbstractAction() {
 			private static final long serialVersionUID = 1L;
 
-			public void actionPerformed(final ActionEvent e)
-			{
+			public void actionPerformed(final ActionEvent e) {
 				gotoTime(23 * 60 + 59);
 			}
 		});
 
 		// goto Next Hour
-		rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, InputEvent.CTRL_MASK), "nextHour");
-		rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_KP_RIGHT, InputEvent.CTRL_MASK), "nextHour");
-		rootPane.getActionMap().put("nextHour", new AbstractAction()
-		{
+		rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+				KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, InputEvent.CTRL_MASK),
+				"nextHour");
+		rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+				KeyStroke.getKeyStroke(KeyEvent.VK_KP_RIGHT, InputEvent.CTRL_MASK),
+				"nextHour");
+		rootPane.getActionMap().put("nextHour", new AbstractAction() {
 			private static final long serialVersionUID = 1L;
 
-			public void actionPerformed(final ActionEvent e)
-			{
-				if (mMainPane.getHorizontalScrollBar().getValue() + mMainPane.getHorizontalScrollBar().getVisibleAmount() >= mMainPane.getHorizontalScrollBar().getMaximum())
-				{
-				  final int index = mDateList.getSelectedIndex();
-					if (index < mDateList.getItemCount() - 1)
-					{
+			public void actionPerformed(final ActionEvent e) {
+				if (mMainPane.getHorizontalScrollBar().getValue()
+						+ mMainPane.getHorizontalScrollBar().getVisibleAmount() >= mMainPane
+						.getHorizontalScrollBar().getMaximum()) {
+					final int index = mDateList.getSelectedIndex();
+					if (index < mDateList.getItemCount() - 1) {
 						mDateList.setSelectedIndex(mDateList.getSelectedIndex() + 1);
 						gotoTime(0);
 					}
-				}
-				else
-				{
+				} else {
 					mMainPane.addTime(60);
 				}
 			}
 		});
 
 		// goto Previous Hour
-		rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, InputEvent.CTRL_MASK), "previousHour");
-		rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_KP_LEFT, InputEvent.CTRL_MASK), "previousHour");
-		rootPane.getActionMap().put("previousHour", new AbstractAction()
-		{
+		rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+				KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, InputEvent.CTRL_MASK),
+				"previousHour");
+		rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+				KeyStroke.getKeyStroke(KeyEvent.VK_KP_LEFT, InputEvent.CTRL_MASK),
+				"previousHour");
+		rootPane.getActionMap().put("previousHour", new AbstractAction() {
 			private static final long serialVersionUID = 1L;
 
-			public void actionPerformed(final ActionEvent e)
-			{
-				if (mMainPane.getHorizontalScrollBar().getValue() <= mMainPane.getHorizontalScrollBar().getMinimum())
-				{
-				  final int index = mDateList.getSelectedIndex();
-					if (index > 0)
-					{
+			public void actionPerformed(final ActionEvent e) {
+				if (mMainPane.getHorizontalScrollBar().getValue() <= mMainPane
+						.getHorizontalScrollBar().getMinimum()) {
+					final int index = mDateList.getSelectedIndex();
+					if (index > 0) {
 						mDateList.setSelectedIndex(index - 1);
 						gotoTime(24 * 60 - 1);
 					}
-				}
-				else
-				{
+				} else {
 					mMainPane.addTime(-60);
 				}
 			}
@@ -431,68 +406,57 @@ public final class TimelineDialog extends JDialog implements WindowClosingIf
 		this.setRootPane(rootPane);
 	}
 
-	private void resetGoto()
-	{
-		if (!mIgnoreReset)
-		{
+	private void resetGoto() {
+		if (!mIgnoreReset) {
 			mTimeList.setSelectedIndex(0);
 			mLockNow = false;
 		}
 	}
 
-	private void gotoTime(final int minute)
-	{
+	private void gotoTime(final int minute) {
 		mMainPane.gotoTime(minute);
 	}
 
-	private void gotoTime(final int minute, final int delta)
-	{
+	private void gotoTime(final int minute, final int delta) {
 		mMainPane.gotoTime(minute, delta);
 	}
 
-	private static Vector<Date> getDateList()
-	{
-	  final Vector<Date> list = new Vector<Date>();
-    final Date today = Date.getCurrentDate();
-		for (int i = -1; i < 28; i++)
-		{
+	private static Vector<Date> getDateList() {
+		final Vector<Date> list = new Vector<Date>();
+		final Date today = Date.getCurrentDate();
+		for (int i = -1; i < 28; i++) {
 			list.add(today.addDays(i));
 		}
 		return list;
 	}
 
-	private Vector<String> getTimeList()
-	{
-	  final Vector<String> list = new Vector<String>();
+	private Vector<String> getTimeList() {
+		final Vector<String> list = new Vector<String>();
 		list.add(mLocalizer.msg("goto", "Goto..."));
 		list.add(mLocalizer.msg("now", "Now"));
 
-		mTimes = Plugin.getPluginManager().getTvBrowserSettings().getTimeButtonTimes();
+		mTimes = Plugin.getPluginManager().getTvBrowserSettings()
+				.getTimeButtonTimes();
 		final TimeFormatter formatter = new TimeFormatter();
 
 		for (int mTime : mTimes) {
-		  final int h = mTime / 60;
-      final int m = mTime % 60;
+			final int h = mTime / 60;
+			final int m = mTime % 60;
 			list.add(formatter.formatTime(h, m));
 		}
 		return list;
 	}
 
-	public void close()
-	{
+	public void close() {
 		dispose();
 	}
 
-	public void gotoNow()
-	{
-	  final Date now = Date.getCurrentDate();
-		if (!((Date) mDateList.getSelectedItem()).equals(now))
-		{
-			for (int i = 0; i < mDateList.getItemCount(); i++)
-			{
-			  final Date d = (Date) mDateList.getItemAt(i);
-				if (d.equals(now))
-				{
+	public void gotoNow() {
+		final Date now = Date.getCurrentDate();
+		if (!((Date) mDateList.getSelectedItem()).equals(now)) {
+			for (int i = 0; i < mDateList.getItemCount(); i++) {
+				final Date d = (Date) mDateList.getItemAt(i);
+				if (d.equals(now)) {
 					mDateList.setSelectedIndex(i);
 					break;
 				}
@@ -501,21 +465,18 @@ public final class TimelineDialog extends JDialog implements WindowClosingIf
 		gotoTime(TimelinePlugin.getNowMinute());
 	}
 
-	private int getDayLimit()
-	{
-		return TimelinePlugin.getInstance().getOffset() - mMainPane.getHorizontalScrollBar().getSize().width / 2;
+	private int getDayLimit() {
+		return TimelinePlugin.getInstance().getOffset()
+				- mMainPane.getHorizontalScrollBar().getSize().width / 2;
 	}
 
-	public void resize()
-	{
-	  final JScrollBar sb = mMainPane.getHorizontalScrollBar();
+	public void resize() {
+		final JScrollBar sb = mMainPane.getHorizontalScrollBar();
 		mRelation = (double) sb.getValue() / (double) sb.getMaximum();
 		mMainPane.resize();
 
-		SwingUtilities.invokeLater(new Runnable()
-		{
-			public void run()
-			{
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
 				sb.setValue((int) (sb.getMaximum() * mRelation));
 			}
 		});

@@ -33,15 +33,14 @@ import devplugin.Plugin;
 import devplugin.Program;
 import devplugin.ProgramFilter;
 
-public class ProgramScrollPanel extends JScrollPane implements MouseWheelListener
-{
+public class ProgramScrollPanel extends JScrollPane implements
+		MouseWheelListener {
 	private static final long serialVersionUID = 1L;
 
 	private ProgramPanel mProgramPanel;
 	private int mOffset;
 
-	public ProgramScrollPanel()
-	{
+	public ProgramScrollPanel() {
 		super();
 
 		mOffset = TimelinePlugin.getInstance().getOffset();
@@ -53,8 +52,7 @@ public class ProgramScrollPanel extends JScrollPane implements MouseWheelListene
 		addMouseWheelListener(this);
 	}
 
-	private void initPanel()
-	{
+	private void initPanel() {
 		mProgramPanel = new ProgramPanel();
 		addProgramList();
 		setViewportView(mProgramPanel);
@@ -64,50 +62,46 @@ public class ProgramScrollPanel extends JScrollPane implements MouseWheelListene
 		setColumnHeaderView(th);
 
 		final ChannelHeader ch = new ChannelHeader(TimelinePlugin.getSettings()
-        .getChannelHeight());
+				.getChannelHeight());
 		ch.setPreferredHeight(mProgramPanel.getPreferredSize().height);
 		setRowHeaderView(ch);
 
 		getVerticalScrollBar().setUnitIncrement(
-        TimelinePlugin.getSettings().getChannelHeight());
-    getHorizontalScrollBar().setUnitIncrement(
-        TimelinePlugin.getSettings().getHourWidth() / 4);
+				TimelinePlugin.getSettings().getChannelHeight());
+		getHorizontalScrollBar().setUnitIncrement(
+				TimelinePlugin.getSettings().getHourWidth() / 4);
 	}
 
-	private void addProgramList()
-	{
+	private void addProgramList() {
 		mProgramPanel.removeAll();
 
 		int channelTop = 0;
 		final Channel[] channels = Plugin.getPluginManager()
-        .getSubscribedChannels();
-    final Date choosenDay = TimelinePlugin.getInstance().getChoosenDate();
-    final int delta = 24 * TimelinePlugin.getSettings().getHourWidth();
-    final double deltaHours = mOffset
-        / TimelinePlugin.getInstance().getSizePerMinute() / 60;
-    final int deltaDay = (int) Math.round(deltaHours / 24) + 1;
+				.getSubscribedChannels();
+		final Date choosenDay = TimelinePlugin.getInstance().getChoosenDate();
+		final int delta = 24 * TimelinePlugin.getSettings().getHourWidth();
+		final double deltaHours = mOffset
+				/ TimelinePlugin.getInstance().getSizePerMinute() / 60;
+		final int deltaDay = (int) Math.round(deltaHours / 24) + 1;
 
-    final ProgramFilter filter = TimelinePlugin.getInstance().getFilter();
+		final ProgramFilter filter = TimelinePlugin.getInstance().getFilter();
 
-		for (int i = 0; i < channels.length; i++)
-		{
+		for (int i = 0; i < channels.length; i++) {
 			channelTop = i * TimelinePlugin.getSettings().getChannelHeight();
 
-			for (int j = deltaDay * -1; j <= deltaDay; j++)
-			{
-			  final Date dayToShow = choosenDay.addDays(j);
-        final Iterator<Program> it = Plugin.getPluginManager()
-            .getChannelDayProgram(dayToShow, channels[i]);
-        if (it != null) {
-  				while (it.hasNext())
-  				{
-  				  final Program p = it.next();
-  					if (filter.accept(p))
-  					{
-  						addProgram(p, channelTop, delta * (j + p.getDate().compareTo(dayToShow)));
-  					}
-  				}
-        }
+			for (int j = deltaDay * -1; j <= deltaDay; j++) {
+				final Date dayToShow = choosenDay.addDays(j);
+				final Iterator<Program> it = Plugin.getPluginManager()
+						.getChannelDayProgram(dayToShow, channels[i]);
+				if (it != null) {
+					while (it.hasNext()) {
+						final Program p = it.next();
+						if (filter.accept(p)) {
+							addProgram(p, channelTop,
+									delta * (j + p.getDate().compareTo(dayToShow)));
+						}
+					}
+				}
 			}
 		}
 		final JLabel dummy = new JLabel("");
@@ -116,92 +110,88 @@ public class ProgramScrollPanel extends JScrollPane implements MouseWheelListene
 		mProgramPanel.repaint();
 	}
 
-	private void addProgram(final Program p, final int channelTop, final int delta)
-	{
-	  final int x = mOffset
-        + (int) Math.round(p.getStartTime()
-            * TimelinePlugin.getInstance().getSizePerMinute());
-		int w = mOffset + (int) Math.round((p.getStartTime() + p.getLength()) * TimelinePlugin.getInstance().getSizePerMinute());
+	private void addProgram(final Program p, final int channelTop, final int delta) {
+		final int x = mOffset
+				+ (int) Math.round(p.getStartTime()
+						* TimelinePlugin.getInstance().getSizePerMinute());
+		int w = mOffset
+				+ (int) Math.round((p.getStartTime() + p.getLength())
+						* TimelinePlugin.getInstance().getSizePerMinute());
 		w = Math.abs(w - x);
 
 		final ProgramLabel lbl = new ProgramLabel();
 		lbl.setBounds(x + delta, channelTop, w + 1, TimelinePlugin.getSettings()
-        .getChannelHeight() + 1);
+				.getChannelHeight() + 1);
 		lbl.setProgram(p);
 		mProgramPanel.add(lbl);
 	}
 
-	public void mouseWheelMoved(final MouseWheelEvent e)
-	{
-		if (e.getScrollType() == MouseWheelEvent.WHEEL_UNIT_SCROLL)
-		{
-			if ((e.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) == 0)
-			{
-			  final int amount = e.getUnitsToScroll()
-            * getHorizontalScrollBar().getUnitIncrement();
-				getHorizontalScrollBar().setValue(getHorizontalScrollBar().getValue() + amount);
-			}
-			else
-			{
-			  final int amount = e.getUnitsToScroll()
-            * getVerticalScrollBar().getUnitIncrement();
-				getVerticalScrollBar().setValue(getVerticalScrollBar().getValue() + amount);
+	public void mouseWheelMoved(final MouseWheelEvent e) {
+		if (e.getScrollType() == MouseWheelEvent.WHEEL_UNIT_SCROLL) {
+			if ((e.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) == 0) {
+				final int amount = e.getUnitsToScroll()
+						* getHorizontalScrollBar().getUnitIncrement();
+				getHorizontalScrollBar().setValue(
+						getHorizontalScrollBar().getValue() + amount);
+			} else {
+				final int amount = e.getUnitsToScroll()
+						* getVerticalScrollBar().getUnitIncrement();
+				getVerticalScrollBar().setValue(
+						getVerticalScrollBar().getValue() + amount);
 			}
 		}
 	}
 
-	public void updateProgram()
-	{
+	public void updateProgram() {
 		addProgramList();
 	}
 
-	public void gotoTime(final int minute)
-	{
+	public void gotoTime(final int minute) {
 		gotoTime(minute, 0);
 	}
 
-	public void gotoTime(final int minute, final int delta)
-	{
-	  final JScrollBar sb = getHorizontalScrollBar();
+	public void gotoTime(final int minute, final int delta) {
+		final JScrollBar sb = getHorizontalScrollBar();
 
-	  final int value = (int) Math.round((sb.getMaximum() - 2 * mOffset) * minute
-        / (24.0 * 60.0))
-        + mOffset - (sb.getSize().width / 2);
-    sb.setValue(value + delta);
+		final int value = (int) Math.round((sb.getMaximum() - 2 * mOffset) * minute
+				/ (24.0 * 60.0))
+				+ mOffset - (sb.getSize().width / 2);
+		sb.setValue(value + delta);
 	}
 
-	public void addTime(final int minute)
-	{
-	  final JScrollBar sb = getHorizontalScrollBar();
+	public void addTime(final int minute) {
+		final JScrollBar sb = getHorizontalScrollBar();
 
-	  final int value = (int) Math.round((sb.getMaximum() - 2 * mOffset) * minute
-        / (24.0 * 60.0));
+		final int value = (int) Math.round((sb.getMaximum() - 2 * mOffset) * minute
+				/ (24.0 * 60.0));
 		sb.setValue(sb.getValue() + value);
 	}
 
-	//	public int getMinutes()
-	//	{
-	//		JScrollBar sb = getHorizontalScrollBar();
+	// public int getMinutes()
+	// {
+	// JScrollBar sb = getHorizontalScrollBar();
 	//
-	//		//return (int) Math.round(24 * 60 * ((double) (sb.getValue() - mOffset) / (double) (sb.getMaximum() - 2 * mOffset)));
-	//		//return (int) Math.round((double) ((sb.getValue() - mOffset + (sb.getSize().width / 2)) * 24 * 60) / (double) (sb.getMaximum() - 2 + mOffset));
-	//		return (int) Math.round(((double) (sb.getValue() - mOffset + (sb.getSize().width / 2)) / (double) mSizeHour) * 60);
-	//	}
+	// //return (int) Math.round(24 * 60 * ((double) (sb.getValue() - mOffset) /
+	// (double) (sb.getMaximum() - 2 * mOffset)));
+	// //return (int) Math.round((double) ((sb.getValue() - mOffset +
+	// (sb.getSize().width / 2)) * 24 * 60) / (double) (sb.getMaximum() - 2 +
+	// mOffset));
+	// return (int) Math.round(((double) (sb.getValue() - mOffset +
+	// (sb.getSize().width / 2)) / (double) mSizeHour) * 60);
+	// }
 
-	public void update()
-	{
+	public void update() {
 		mProgramPanel.repaint();
 	}
 
-	public void resize()
-	{
+	public void resize() {
 		mOffset = TimelinePlugin.getInstance().getOffset();
 		mProgramPanel.resize();
 		final TimeHeader th = new TimeHeader();
 		th.setPreferredWidth(mProgramPanel.getPreferredSize().width);
 		setColumnHeaderView(th);
 		final ChannelHeader ch = new ChannelHeader(TimelinePlugin.getSettings()
-        .getChannelHeight());
+				.getChannelHeight());
 		ch.setPreferredHeight(mProgramPanel.getPreferredSize().height);
 		setRowHeaderView(ch);
 		addProgramList();

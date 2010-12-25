@@ -25,36 +25,38 @@ import javax.swing.JComponent;
 import javax.swing.JToolTip;
 import javax.swing.plaf.ComponentUI;
 
+import util.settings.PluginPictureSettings;
+import util.settings.ProgramPanelSettings;
 import util.ui.ProgramPanel;
 import devplugin.Program;
 
-public class ProgramToolTip extends JToolTip
-{
+public class ProgramToolTip extends JToolTip {
 	private static final long serialVersionUID = 1L;
 
-	public ProgramToolTip(final Program p)
-	{
+	public ProgramToolTip(final Program p) {
 		setUI(new ProgramToolTipUI(p));
 	}
 
-	private static class ProgramToolTipUI extends ComponentUI
-	{
+	private static class ProgramToolTipUI extends ComponentUI {
 		private ProgramPanel mProgramPanel;
 
-		ProgramToolTipUI(final Program p)
-		{
-			mProgramPanel = new ProgramPanel(p);
+		ProgramToolTipUI(final Program p) {
+
+			ProgramPanelSettings settings = new ProgramPanelSettings(
+					new PluginPictureSettings(
+							PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE), false);
+			mProgramPanel = new ProgramPanel(p, settings);
+			mProgramPanel.setSize(new Dimension(200, 300));
+			mProgramPanel.setHeight(300);
 			mProgramPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		}
 
-		public void paint(final Graphics g, final JComponent c)
-		{
+		public void paint(final Graphics g, final JComponent c) {
 			mProgramPanel.paintComponent(g);
 			g.drawRect(0, 0, c.getSize().width - 1, c.getSize().height - 1);
 		}
 
-		public Dimension getPreferredSize(final JComponent c)
-		{
+		public Dimension getPreferredSize(final JComponent c) {
 			return new Dimension(200, mProgramPanel.getPreferredHeight());
 		}
 	}
