@@ -799,6 +799,9 @@ public class SettingsDialog implements WindowClosingIf {
       mSettingsPn.revalidate();
       mSettingsPn.repaint();
     }
+    if (!mDialog.isVisible()) {
+    	mDialog.setVisible(true);
+    }
   }
 
   /**
