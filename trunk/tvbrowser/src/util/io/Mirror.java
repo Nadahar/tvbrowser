@@ -370,41 +370,43 @@ public class Mirror {
       totalWeight += mirror.getWeight();
     }
 
-    // Choose a weight
-    int chosenWeight = RandomUtils.nextInt(totalWeight);
-
-    // Find the chosen mirror
-    int currWeight = 0;
-    for (Mirror mirror : mirrorArr) {
-      currWeight += mirror.getWeight();
-      if (currWeight > chosenWeight) {
-        // Check whether this is the old mirror or Mirror is Blocked
-        if (((mirror == oldMirror) || BLOCKEDSERVERS.contains(getServerBase(mirror.getUrl()))) && (mirrorArr.length > 1)) {
-          // We chose the old mirror -> chose another one
-          ArrayList<Mirror> oldList = new ArrayList<Mirror>(oldMirrorArr.length);
-          for (Mirror m : oldMirrorArr) {
-            oldList.add(m);
-          }
-          ArrayList<Mirror> currentList = new ArrayList<Mirror>(mirrorArr.length);
-          for (Mirror m : mirrorArr) {
-            currentList.add(m);
-          }
-          Comparator<Mirror> comp = new Comparator<Mirror>() {
-
-            @Override
-            public int compare(Mirror m1, Mirror m2) {
-              return m1.getUrl().compareTo(m2.getUrl());
+    if(totalWeight >= 0) {
+      // Choose a weight
+      int chosenWeight = RandomUtils.nextInt(totalWeight);
+  
+      // Find the chosen mirror
+      int currWeight = 0;
+      for (Mirror mirror : mirrorArr) {
+        currWeight += mirror.getWeight();
+        if (currWeight > chosenWeight) {
+          // Check whether this is the old mirror or Mirror is Blocked
+          if (((mirror == oldMirror) || BLOCKEDSERVERS.contains(getServerBase(mirror.getUrl()))) && (mirrorArr.length > 1)) {
+            // We chose the old mirror -> chose another one
+            ArrayList<Mirror> oldList = new ArrayList<Mirror>(oldMirrorArr.length);
+            for (Mirror m : oldMirrorArr) {
+              oldList.add(m);
             }
-          };
-          Collections.sort(oldList, comp );
-          Collections.sort(currentList, comp);
-          if (oldList.equals(currentList)) {
-            // avoid stack overflow
+            ArrayList<Mirror> currentList = new ArrayList<Mirror>(mirrorArr.length);
+            for (Mirror m : mirrorArr) {
+              currentList.add(m);
+            }
+            Comparator<Mirror> comp = new Comparator<Mirror>() {
+  
+              @Override
+              public int compare(Mirror m1, Mirror m2) {
+                return m1.getUrl().compareTo(m2.getUrl());
+              }
+            };
+            Collections.sort(oldList, comp );
+            Collections.sort(currentList, comp);
+            if (oldList.equals(currentList)) {
+              // avoid stack overflow
+              return mirror;
+            }
+            return chooseMirror(mirrorArr, oldMirror, name, caller);
+          } else {
             return mirror;
           }
-          return chooseMirror(mirrorArr, oldMirror, name, caller);
-        } else {
-          return mirror;
         }
       }
     }

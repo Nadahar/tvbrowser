@@ -325,7 +325,9 @@ public class TvDataBase {
     Channel channel = prog.getChannel();
     String key = getDayProgramKey(date, channel);
 
-    prog.setLastProgramHadEndOnUpdate(prog.getProgramAt(prog.getProgramCount() - 1).getLength() > 0);
+    if(prog.getProgramCount() > 0) {
+      prog.setLastProgramHadEndOnUpdate(prog.getProgramAt(prog.getProgramCount() - 1).getLength() > 0);
+    }
 
     // Create a backup (Rename the old file if it exists)
     File file = getDayProgramFile(date, channel);
