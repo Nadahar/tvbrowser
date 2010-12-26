@@ -152,6 +152,9 @@ final class TimelineSettings {
 	}
 
 	public int getChannelWidth() {
+		if (!showChannelName()) {
+			return -1;
+		}
 		return getProperty(KEY_CHANNEL_WIDTH, -1);
 	}
 
