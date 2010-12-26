@@ -47,18 +47,17 @@ public class Database {
   /**
    * pattern for a single line
    */
-  private static final Pattern ITEM_PATTERN = Pattern.compile("(?s)" // match
-                                                                     // also the
-                                                                     // line
-                                                                     // terminator
-                                                                     // of each
-                                                                     // line
+  private static final Pattern ITEM_PATTERN = 
+  	Pattern.compile("(?s)" // match also the line terminator
       + ".*" // skip beginning
-      + Pattern.quote("<Sender>") + STRING_PATTERN + Pattern.quote("</Sender><Thema>")
-      + STRING_PATTERN
-      + Pattern.quote("</Thema><Titel>") + STRING_PATTERN + Pattern.quote("</Titel><Url>")
-      + STRING_PATTERN
-      + Pattern.quote("</Url>") + ".*"); // skip end
+      + matchField("Sender")
+      + ".*" 
+      + matchField("Thema")
+      + ".*" 
+      + matchField("Titel")
+      + ".*" 
+      + matchField("Url")
+      + ".*"); // skip end
   /**
    * association of programs and file lines for each channel group
    */
@@ -80,7 +79,11 @@ public class Database {
     readFile();
   }
 
-  private void readFile() {
+  private static String matchField(String name) {
+		return Pattern.quote("<" +name +">") + STRING_PATTERN + Pattern.quote("</" + name + ">");
+	}
+
+	private void readFile() {
     int programCount = 0;
     int byteCount = 0;
     if (StringUtils.isEmpty(mFileName)) {
@@ -132,6 +135,12 @@ public class Database {
   private String unifyChannelName(String channelName) {
     if (channelName.equalsIgnoreCase("Ard.Podcast")) {
       channelName = "Ard";
+    }
+    if (channelName.equalsIgnoreCase("Arte.DE")) {
+      channelName = "Arte";
+    }
+    if (channelName.equalsIgnoreCase("Arte.FR")) {
+      channelName = "Arte";
     }
     String result = channelName.toLowerCase();
     return result;
