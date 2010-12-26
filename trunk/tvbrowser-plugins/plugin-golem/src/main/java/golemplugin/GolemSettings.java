@@ -29,13 +29,13 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 
 import util.program.ProgramUtilities;
 import devplugin.Date;
 import devplugin.Plugin;
 import devplugin.Program;
 import devplugin.ProgramReceiveTarget;
-import edu.emory.mathcs.backport.java.util.Collections;
 
 public class GolemSettings {
   private ArrayList<Program> mProgramList = new ArrayList<Program>();
