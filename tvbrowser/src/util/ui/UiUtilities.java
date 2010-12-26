@@ -26,6 +26,7 @@
 
 package util.ui;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
@@ -53,6 +54,7 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.net.URL;
+import java.util.ArrayList;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -61,6 +63,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
@@ -68,8 +71,10 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
+import javax.swing.ListCellRenderer;
 import javax.swing.border.Border;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
@@ -852,7 +857,7 @@ public class UiUtilities {
    * @since 2.1
    */
   public static ImageIcon createChannelIcon(Icon ic) {
-    BufferedImage img = new BufferedImage(42, 22, BufferedImage.TYPE_INT_RGB);
+    BufferedImage img = new BufferedImage(getChannelIconWidth(), getChannelIconHeight(), BufferedImage.TYPE_INT_RGB);
 
     if (ic == null) {
       ic = new ImageIcon("./imgs/tvbrowser16.png");
@@ -887,6 +892,14 @@ public class UiUtilities {
 
     return new ImageIcon(img);
   }
+
+	public static int getChannelIconHeight() {
+		return 22;
+	}
+
+	public static int getChannelIconWidth() {
+		return 42;
+	}
 
   /**
    * Registers the escape key as close key for a component.
@@ -950,4 +963,51 @@ public class UiUtilities {
     }
     dialog.setSize(size);
   }
+  
+	public static void addSeparatorsAfterIndexes(final JComboBox combo,
+			int[] indexes) {
+		combo.setRenderer(new ComboSeparatorsRenderer(combo.getRenderer(), indexes));
+	}
+
+	public static void addSeparatorsAfterIndexes(final JComboBox combo,
+			Integer[] indexes) {
+		int[] primitives = new int[indexes.length];
+		for (int i = 0; i < primitives.length; i++) {
+			primitives[i] = indexes[i];
+		}
+		combo.setRenderer(new ComboSeparatorsRenderer(combo.getRenderer(), primitives));
+	}
+
+	private static class ComboSeparatorsRenderer implements ListCellRenderer {
+		private ListCellRenderer mOldRenderer;
+		private JPanel mSeparatorPanel = new JPanel(new BorderLayout());
+		private JSeparator mSeparator = new JSeparator();
+		private ArrayList<Integer> mIndexes;
+
+		public ComboSeparatorsRenderer(ListCellRenderer delegate,
+				final int[] indexes) {
+			mOldRenderer = delegate;
+			mIndexes = new ArrayList<Integer>(indexes.length);
+			for (int index : indexes) {
+				mIndexes.add(index);
+			}
+		}
+
+		public Component getListCellRendererComponent(JList list, Object value,
+				int index, boolean isSelected, boolean cellHasFocus) {
+			Component comp = mOldRenderer.getListCellRendererComponent(list, value,
+					index, isSelected, cellHasFocus);
+			if (index != -1 && mIndexes.contains(index + 1)) { // index==1 if renderer is
+																											// used to paint current
+																											// value in combo
+				mSeparatorPanel.removeAll();
+				mSeparatorPanel.add(comp, BorderLayout.CENTER);
+				mSeparatorPanel.add(mSeparator, BorderLayout.SOUTH);
+				return mSeparatorPanel;
+			} else {
+				return comp;
+			}
+		}
+	}
+
 }

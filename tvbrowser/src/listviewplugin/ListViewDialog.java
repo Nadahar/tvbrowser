@@ -36,6 +36,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
 import java.util.Properties;
@@ -70,6 +71,7 @@ import tvbrowser.core.filters.filtercomponents.ChannelFilterComponent;
 import tvbrowser.ui.filter.dlgs.EditFilterComponentDlg;
 import util.io.IOUtilities;
 import util.ui.CaretPositionCorrector;
+import util.ui.ChannelLabel;
 import util.ui.Localizer;
 import util.ui.TVBrowserIcons;
 import util.ui.TimeFormatter;
@@ -145,6 +147,8 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
 
   private JComboBox mFilterBox;
   private ProgramFilter mCurrentFilter;
+
+	protected int mTimeSelectionIndex;
   
   /**
    * Creates the Dialog
@@ -340,7 +344,7 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
       return time + 15;
     } else if (selectedIndex == 2) {
       return time + 30;
-    } else if (selectedIndex > 2) {
+    } else if (selectedIndex > 2 && selectedIndex < (mBox.getItemCount() - 1)) {
       return mTimes[selectedIndex - 3];
     }
 
@@ -357,9 +361,11 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
 
     Vector<String> data = new Vector<String>();
 
-    data.add(TIMETEXT[0]);
-    data.add(TIMETEXT[1]);
-    data.add(TIMETEXT[2]);
+    for (int i = 0; i < TIMETEXT.length; i++) {
+      data.add(TIMETEXT[i]);
+		}
+    ArrayList<Integer> separators = new ArrayList<Integer>();
+    separators.add(data.size());
 
     TimeFormatter formatter = new TimeFormatter();
 
@@ -372,20 +378,21 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
       builder.append(formatter.formatTime(h, m));
       data.add(builder.toString());
     }
+    separators.add(data.size());
 
-    data.add(mLocalizer.msg("configureTimes","Configure Times"));
+    data.add(mLocalizer.ellipsisMsg("configureTimes","Configure Times"));
 
     mBox = new JComboBox(data);
+    UiUtilities.addSeparatorsAfterIndexes(mBox, separators.toArray(new Integer[separators.size()]));
 
     mBox.addActionListener(new ActionListener() {
 
-      private int lastSelected = 0;
       public void actionPerformed(ActionEvent e) {
         if (mBox.getSelectedIndex() == mBox.getItemCount()-1) {
-          mBox.setSelectedIndex(lastSelected);
+          mBox.setSelectedIndex(mTimeSelectionIndex);
           Plugin.getPluginManager().showSettings(SettingsItem.TIMEBUTTONS);
         } else {
-          lastSelected = mDate.getSelectedIndex();
+          mTimeSelectionIndex = mBox.getSelectedIndex();
           int time = calcTimeForSelection(mBox.getSelectedIndex());
           generateList(new Date(), time);
         }
@@ -619,6 +626,18 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
       column.setCellRenderer(renderer);
       if (i > 0) {
         column.setMinWidth(width);
+      }
+      else {
+      	Channel[] channels = mModel.getChannels();
+      	width = UiUtilities.getChannelIconWidth();
+      	for (Channel channel : channels) {
+					ChannelLabel label = new ChannelLabel(channel);
+					label.validate();
+					width = Math.max(width, (int)label.getPreferredSize().getWidth());
+				}
+      	column.setPreferredWidth(width);
+      	column.setMaxWidth(250);
+      	column.setMinWidth(UiUtilities.getChannelIconWidth());
       }
     }
   }
