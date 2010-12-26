@@ -262,4 +262,12 @@ public class ListTableModel extends AbstractTableModel {
     }
   }
 
+	public Channel[] getChannels() {
+		Channel[] result = new Channel[mData.size()];
+		for (int i = 0; i < result.length; i++) {
+			result[i] = mData.get(i).mChannel;
+		}
+		return result;
+	}
+
 }
