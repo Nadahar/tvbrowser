@@ -307,8 +307,9 @@
     <!-- Extract the libraries for the tvbrowser.jar into the temp.dir -->
     <unjar src="${lib.dir}/${lib.skinlf.name}-${lib.skinlf.version}.jar" dest="${unpacked.dir}/${lib.skinlf.name}.jar"/>
     <unjar src="${lib.dir}/${lib.bsh.name}-${lib.bsh.version}.jar" dest="${unpacked.dir}/${lib.bsh.name}.jar"/>
-    <unjar src="${lib.dir}/${lib.forms.name}-${lib.forms.version}.jar" dest="${unpacked.dir}/${lib.forms.name}.jar"/>
-    <unjar src="${lib.dir}/${lib.looks.name}-${lib.looks.version}.jar" dest="${unpacked.dir}/${lib.looks.name}.jar"/>
+    <unjar src="${lib.dir}/${lib.jgoodies-common.name}-${lib.jgoodies-common.version}.jar" dest="${unpacked.dir}/${lib.jgoodies-common.name}.jar"/>
+    <unjar src="${lib.dir}/${lib.jgoodies-forms.name}-${lib.jgoodies-forms.version}.jar" dest="${unpacked.dir}/${lib.jgoodies-forms.name}.jar"/>
+    <unjar src="${lib.dir}/${lib.jgoodies-looks.name}-${lib.jgoodies-looks.version}.jar" dest="${unpacked.dir}/${lib.jgoodies-looks.name}.jar"/>
     <unjar src="${lib.dir}/${lib.tasks.name}-${lib.tasks.version}.jar" dest="${unpacked.dir}/${lib.tasks.name}.jar"/>
     <unjar src="${lib.dir}/${lib.jregistrykey.name}-${lib.jregistrykey.version}.jar" dest="${unpacked.dir}/${lib.jregistrykey.name}.jar" />
     <unjar src="${lib.dir}/${lib.commons.codec.name}-${lib.commons.codec.version}.jar" dest="${unpacked.dir}/${lib.commons.codec.name}.jar" />
@@ -340,8 +341,9 @@
       <fileset dir="${unpacked.dir}/${lib.skinlf.name}.jar" includes="com/**"/>
    	  <fileset dir="${unpacked.dir}/${lib.skinlf.name}.jar" includes="org/**"/>
       <fileset dir="${unpacked.dir}/${lib.bsh.name}.jar" includes="bsh/**"/>
-      <fileset dir="${unpacked.dir}/${lib.forms.name}.jar" includes="com/**"/>
-      <fileset dir="${unpacked.dir}/${lib.looks.name}.jar" includes="com/**"/>
+      <fileset dir="${unpacked.dir}/${lib.jgoodies-common.name}.jar" includes="com/**"/>
+      <fileset dir="${unpacked.dir}/${lib.jgoodies-forms.name}.jar" includes="com/**"/>
+      <fileset dir="${unpacked.dir}/${lib.jgoodies-looks.name}.jar" includes="com/**"/>
       <fileset dir="${unpacked.dir}/${lib.tasks.name}.jar" includes="com/**"/>
       <fileset dir="${unpacked.dir}/${lib.jregistrykey.name}.jar" includes="ca/**" />
       <fileset dir="${unpacked.dir}/${lib.commons.codec.name}.jar" includes="org/**" />
@@ -654,9 +656,10 @@
     <!-- Extract the libraries for the jars into the temp.dir -->
     <unjar src="${lib.dir}/${lib.commons.net.name}-${lib.commons.net.version}.jar" dest="${unpacked.dir}/${lib.commons.net.name}.jar"/>
     <unjar src="${lib.dir}/${lib.commons.lang.name}-${lib.commons.lang.version}.jar" dest="${unpacked.dir}/${lib.commons.lang.name}.jar"/>
-    <unjar src="${lib.dir}/${lib.looks.name}-${lib.looks.version}.jar" dest="${unpacked.dir}/${lib.looks.name}.jar"/>
+    <unjar src="${lib.dir}/${lib.jgoodies-common.name}-${lib.jgoodies-common.version}.jar" dest="${unpacked.dir}/${lib.jgoodies-common.name}.jar"/>
+    <unjar src="${lib.dir}/${lib.jgoodies-looks.name}-${lib.jgoodies-looks.version}.jar" dest="${unpacked.dir}/${lib.jgoodies-looks.name}.jar"/>
     <unjar src="${lib.dir}/${lib.oro.name}-${lib.oro.version}.jar" dest="${unpacked.dir}/${lib.oro.name}.jar"/>
-		<unjar src="${lib.dir}/${lib.opencsv.name}-${lib.opencsv.version}.jar" dest="${unpacked.dir}/${lib.opencsv.name}.jar" />
+	<unjar src="${lib.dir}/${lib.opencsv.name}-${lib.opencsv.version}.jar" dest="${unpacked.dir}/${lib.opencsv.name}.jar" />
     <unjar src="${lib.dir}/${lib.htmlparser.name}-${lib.htmlparser.version}.jar" dest="${unpacked.dir}/${lib.htmlparser.name}.jar" />
 
     <!-- Pack the MirrorUpdater.jar -->
@@ -679,7 +682,8 @@
       <fileset dir="${classes.dir}" includes="tvbrowser/**"/>
       <fileset dir="${unpacked.dir}/${lib.commons.net.name}.jar" includes="org/**"/>
       <fileset dir="${unpacked.dir}/${lib.commons.lang.name}.jar" includes="org/**"/>
-      <fileset dir="${unpacked.dir}/${lib.looks.name}.jar" includes="com/**"/>
+      <fileset dir="${unpacked.dir}/${lib.jgoodies-common.name}.jar" includes="com/**"/>
+      <fileset dir="${unpacked.dir}/${lib.jgoodies-looks.name}.jar" includes="com/**"/>
       <fileset dir="${unpacked.dir}/${lib.oro.name}.jar" includes="org/**"/>
       <fileset dir="${unpacked.dir}/${lib.opencsv.name}.jar" includes="au/**"/>
       <fileset dir="${unpacked.dir}/${lib.htmlparser.name}.jar" includes="org/**"/>
@@ -700,7 +704,8 @@
       <fileset dir="${classes.dir}" includes="devplugin/**"/>
       <fileset dir="${classes.dir}" includes="util/**"/>
       <fileset dir="${classes.dir}" includes="tvbrowser/**"/>
-      <fileset dir="${unpacked.dir}/${lib.looks.name}.jar" includes="com/**"/>
+      <fileset dir="${unpacked.dir}/${lib.jgoodies-common.name}.jar" includes="com/**"/>
+      <fileset dir="${unpacked.dir}/${lib.jgoodies-looks.name}.jar" includes="com/**"/>
       <fileset dir="${unpacked.dir}/${lib.opencsv.name}.jar" includes="au/**"/>
       <fileset dir="${unpacked.dir}/${lib.commons.lang.name}.jar" includes="org/**"/>
       <fileset dir="${unpacked.dir}/${lib.htmlparser.name}.jar" includes="org/**"/>
@@ -721,7 +726,8 @@
       <fileset dir="${classes.dir}" includes="devplugin/**"/>
       <fileset dir="${classes.dir}" includes="util/**"/>
       <fileset dir="${classes.dir}" includes="tvbrowser/**"/>
-      <fileset dir="${unpacked.dir}/${lib.looks.name}.jar" includes="com/**"/>
+      <fileset dir="${unpacked.dir}/${lib.jgoodies-common.name}.jar" includes="com/**"/>
+      <fileset dir="${unpacked.dir}/${lib.jgoodies-looks.name}.jar" includes="com/**"/>
       <fileset dir="${unpacked.dir}/${lib.opencsv.name}.jar" includes="au/**"/>
       <fileset dir="${unpacked.dir}/${lib.commons.lang.name}.jar" includes="org/**"/>
       <fileset dir="${unpacked.dir}/${lib.htmlparser.name}.jar" includes="org/**"/>
