@@ -71,7 +71,7 @@ public final class WirSchauenPlugin extends Plugin
   /**
    * the version of this plugin.
    */
-  private static final Version VERSION = new Version(0, 20, 0, IS_STABLE);
+  private static final Version VERSION = new Version(0, 20, 1, IS_STABLE);
 
   /**
    * this class is a singleton. kind of. the constructor is not restricted so
@@ -699,7 +699,7 @@ public final class WirSchauenPlugin extends Plugin
     for (int i = mLinkedPrograms.size() - 1; i >= 0; i--)
     {
       ProgramId programId = mLinkedPrograms.get(i);
-      if (getPluginManager().getProgram(programId.getDate(), programId.getId()) == null)
+      if (programId == null || getPluginManager().getProgram(programId.getDate(), programId.getId()) == null)
       {
         mLinkedPrograms.remove(i);
       }
