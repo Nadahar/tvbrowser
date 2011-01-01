@@ -290,8 +290,6 @@ public final class TimelinePluginSettingsTab implements SettingsTab {
 			mFunctionList.addItem(function);
 		}
 		mFunctionList.setRenderer(new BasicComboBoxRenderer() {
-			private static final long serialVersionUID = 1L;
-
 			public JComponent getListCellRendererComponent(final JList list,
 					final Object value, final int index, final boolean isSelected,
 					final boolean cellHasFocus) {
@@ -337,8 +335,7 @@ public final class TimelinePluginSettingsTab implements SettingsTab {
 		mPreview.setBackground(Color.WHITE);
 		mPreview.setPreferredSize(new Dimension(pw + 5, ph + 10));
 		mPreviewError = new JLabel(mLocalizer.msg("previewError", "Error"));
-		mPreviewProgram = new ProgramLabel();
-		mPreviewProgram.setProgram(Plugin.getPluginManager().getExampleProgram());
+		mPreviewProgram = new ProgramLabel(Plugin.getPluginManager().getExampleProgram());
 		mPreviewProgram.setPreferredSize(new Dimension(pw, ph));
 		mPreview.add(mPreviewProgram);
 		final JButton takeChangesBtn = new JButton(mLocalizer.msg("preview",

@@ -157,7 +157,6 @@ public class ChannelHeader extends JComponent {
 		super.paintComponent(g);
 
 		final Color c = g.getColor();
-		final Color cr = new Color(240, 240, 240);
 		g.setFont(TimelinePlugin.getFont());
 		g.setColor(c);
 
@@ -173,7 +172,7 @@ public class ChannelHeader extends JComponent {
 		final int textBegin = mShowIcon ? 45 : 5;
 		for (int i = 0; i < mChannelCount; i++) {
 			final int y = mChannelHeight * i;
-			g.setColor(i % 2 == 0 ? Color.WHITE : cr);
+			g.setColor(i % 2 == 0 ? Color.WHITE : ProgramPanel.secondRowColor());
 			g.fillRect(0, y, w, mChannelHeight);
 			g.setColor((!mRowResizing && !mColumnResizing) ? c : Color.LIGHT_GRAY);
 			if (mShowName) {

@@ -45,7 +45,15 @@ public class ProgramLabel extends JComponent implements ChangeListener,
 	private transient Program mProgram;
 	private transient TextFormatter mTextFormatter = null;
 
-	public ProgramLabel() {
+	private static Color programPanelOnAirLightColor = Plugin.getPluginManager().getTvBrowserSettings()
+			.getProgramPanelOnAirLightColor();
+
+	private static Color programPanelOnAirDarkColor = Plugin.getPluginManager().getTvBrowserSettings()
+			.getProgramPanelOnAirDarkColor();
+
+	private Color mBackColor;
+
+	public ProgramLabel(final Program program) {
 		addMouseListener(this);
 
 		setBorder(BorderFactory.createCompoundBorder(
@@ -53,21 +61,14 @@ public class ProgramLabel extends JComponent implements ChangeListener,
 				BorderFactory.createEmptyBorder(1, 5, 1, 5)));
 
 		setCursor(new Cursor(Cursor.HAND_CURSOR));
+		setToolTipText(" ");
+		setProgram(program);
 	}
 
-	public void setProgram(final Program p) {
-		mProgram = p;
-
-		final StringBuilder sb = new StringBuilder();
-		sb.append("<html>");
-		sb.append(mProgram.getDateString()).append(" � ");
-		sb.append(mProgram.getTimeString()).append(" � ");
-		sb.append(mProgram.getChannel().getName()).append("<br>");
-		sb.append("<b>").append(mProgram.getTitle()).append("</b><br>");
-		final String shortInfo = mProgram.getShortInfo();
-		sb.append(shortInfo == null ? "" : shortInfo);
-		sb.append("</html>");
-		setToolTipText(sb.toString());
+	private void setProgram(final Program program) {
+		mProgram = program;
+		mBackColor = Plugin.getPluginManager().getTvBrowserSettings()
+		.getColorForMarkingPriority(mProgram.getMarkPriority());
 	}
 
 	public JToolTip createToolTip() {
@@ -141,21 +142,17 @@ public class ProgramLabel extends JComponent implements ChangeListener,
 		final Rectangle rb = this.getBounds();
 
 		final Color oriColor = g.getColor();
-		final Color bc = Plugin.getPluginManager().getTvBrowserSettings()
-				.getColorForMarkingPriority(mProgram.getMarkPriority());
-		if (bc != null) {
-			g.setColor(bc);
+		if (mBackColor != null) {
+			g.setColor(mBackColor);
 			g.fillRect(r.x, r.y, r.width, r.height);
 			g.setColor(oriColor);
 		}
 		if (TimelinePlugin.getSettings().showProgress() && mProgram.isOnAir()) {
-			g.setColor(Plugin.getPluginManager().getTvBrowserSettings()
-					.getProgramPanelOnAirDarkColor());
+			g.setColor(programPanelOnAirDarkColor);
 			final int positionX = Math.abs(TimelinePlugin.getInstance()
 					.getNowPosition() - rb.x);
 			g.fillRect(0, 0, positionX, rb.height);
-			g.setColor(Plugin.getPluginManager().getTvBrowserSettings()
-					.getProgramPanelOnAirLightColor());
+			g.setColor(programPanelOnAirLightColor);
 			g.fillRect(positionX, 0, rb.width - positionX, rb.height);
 			g.setColor(oriColor);
 		}
@@ -164,15 +161,7 @@ public class ProgramLabel extends JComponent implements ChangeListener,
 					.getColor().getBlue(), (int) (g.getColor().getAlpha() * 6 / 10.)));
 		}
 		g.setFont(TimelinePlugin.getFont());
-		// if (this.getLocation().x >= 0)
-		// {
 		getFormatter().paint(mProgram, g, rb.width, rb.height);
-		// }
-		// else
-		// {
-		// int x = Math.abs(this.getLocation().x);
-		// getFormatter().paint(mProgram, g, x, rb.width, rb.height);
-		// }
 	}
 
 	public void stateChanged(final ChangeEvent evt) {

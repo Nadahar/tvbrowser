@@ -29,8 +29,6 @@ import java.awt.Stroke;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
-import java.awt.geom.Line2D;
-
 import javax.swing.JPanel;
 import javax.swing.JViewport;
 
@@ -38,16 +36,22 @@ import devplugin.Date;
 import devplugin.Plugin;
 
 public class ProgramPanel extends JPanel {
+	private static final Color SECOND_ROW_COLOR = new Color(240, 240, 240);
+
 	private static final long serialVersionUID = 1L;
 
-	private int mOffset;
-	private int mSizeHour;
-	private int mSizeChannel;
+	private int mOffsetX;
+	private int mHourWidth;
+	private int mChannelHeight;
 	private int mChannelCount;
 	private int mClientWidth;
-	private int mClientHeigh;
+	private int mClientHeight;
 	private int mStartX;
 	private Point mDraggingPoint = null;
+
+	int mStartOfDay;
+
+	int mEndOfDay;
 
 	private static Stroke hourStroke = new BasicStroke(1.0f,
 			BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER, 15.0f, new float[] { 5.0f,
@@ -59,12 +63,11 @@ public class ProgramPanel extends JPanel {
 
 	public ProgramPanel() {
 		super(new BorderLayout());
+		setOpaque(true);
+		this.setBackground(Color.WHITE);
 
 		mChannelCount = Plugin.getPluginManager().getSubscribedChannels().length;
-
 		resize();
-
-		this.setBackground(Color.WHITE);
 
 		addMouseMotionListener(new MouseMotionAdapter() {
 			public void mouseDragged(final MouseEvent evt) {
@@ -88,17 +91,23 @@ public class ProgramPanel extends JPanel {
 	}
 
 	public void resize() {
-		mSizeHour = TimelinePlugin.getSettings().getHourWidth();
-		mSizeChannel = TimelinePlugin.getSettings().getChannelHeight();
-		mOffset = TimelinePlugin.getInstance().getOffset();
-		mClientWidth = mSizeHour * 24;
-		mClientHeigh = mChannelCount * mSizeChannel;
+		mStartOfDay = (Plugin.getPluginManager().getTvBrowserSettings()
+				.getProgramTableStartOfDay() / 60) * 60;
+		mEndOfDay = (Plugin.getPluginManager().getTvBrowserSettings()
+				.getProgramTableEndOfDay() / 60) * 60;
+		mHourWidth = TimelinePlugin.getSettings().getHourWidth();
+		mChannelHeight = TimelinePlugin.getSettings().getChannelHeight();
+		mOffsetX = TimelinePlugin.getInstance().getOffset();
+		int numHours = (mEndOfDay - mStartOfDay) / 60 + 24;
+		mClientWidth = mHourWidth * numHours;
+		mClientHeight = mChannelCount * mChannelHeight;
 
-		mStartX = mOffset - (((mOffset / mSizeHour) + 1) * mSizeHour);
+		mStartX = mOffsetX - (((mOffsetX / mHourWidth) + 1) * mHourWidth);
 
-		this.setPreferredSize(new Dimension(mClientWidth + 2 * mOffset,
-				mClientHeigh + 1));
-		this.setSize(new Dimension(mClientWidth + 2 * mOffset, mClientHeigh + 1));
+		Dimension size = new Dimension(mClientWidth + 2 * mOffsetX,
+				mClientHeight + 1);
+		this.setPreferredSize(size);
+		this.setSize(size);
 	}
 
 	public void scrollBy(final int deltaX, final int deltaY) {
@@ -125,52 +134,66 @@ public class ProgramPanel extends JPanel {
 	}
 
 	public void paintComponent(final Graphics g) {
+		paintProgramPanel(g);
+	}
+
+	public void paintProgramPanel(final Graphics g) {
 		super.paintComponent(g);
-		final Rectangle drawHere = g.getClipBounds();
+		final Rectangle clipBounds = g.getClipBounds();
 
 		g.setFont(TimelinePlugin.getFont());
 
 		final Graphics2D g2 = (Graphics2D) g;
 
-		final int top = 0;
-		final int bottom = drawHere.height;
+		final int top = clipBounds.y;
+		final int bottom = top + clipBounds.height;
+		final int left = clipBounds.x;
+		final int right = left + clipBounds.width;
 
 		final Color oriColor = g.getColor();
 
-		g.setColor(new Color(240, 240, 240));
-		for (int i = 0; i < mChannelCount; i++) {
-			if (i % 2 != 0) {
-				final int y = mSizeChannel * i;
-				g.fillRect(0, y, this.getSize().width, mSizeChannel);
+		g.setColor(secondRowColor());
+		for (int i = 1; i < mChannelCount; i += 2) {
+			final int y = mChannelHeight * i;
+			if (y < bottom && y + mChannelHeight >= top) {
+				g.fillRect(left, y, clipBounds.width, mChannelHeight);
 			}
 		}
 
 		g.setColor(Color.LIGHT_GRAY);
 		final Stroke oriStroke = g2.getStroke();
 
-		final int halfHourSize = mSizeHour / 2;
-		int x = mStartX;
+		final int halfHourSize = mHourWidth / 2;
+		int xFullHour = mStartX;
 
-		while (x < this.getSize().width) {
-			final int xh = x + halfHourSize;
-			final Line2D l = new Line2D.Double(x, top, x, bottom);
-			final Line2D l2 = new Line2D.Double(xh, top, xh, bottom);
-			g2.setStroke(hourStroke);
-			g2.draw(l);
-			g2.setStroke(halfHourStroke);
-			g2.draw(l2);
-			x += mSizeHour;
+		while (xFullHour < right) {
+			if (xFullHour >= left) {
+				g2.setStroke(hourStroke);
+				g2.drawLine(xFullHour, top, xFullHour, bottom);
+			}
+			final int xHalfHour = xFullHour + halfHourSize;
+			if (xHalfHour > left) {
+				g2.setStroke(halfHourStroke);
+				g2.drawLine(xHalfHour, top, xHalfHour, bottom);
+			}
+			xFullHour += mHourWidth;
 		}
 		if (TimelinePlugin.getSettings().showBar()) {
-			final Date d = Date.getCurrentDate();
-			if (d.equals(new Date(TimelinePlugin.getInstance().getChoosenDate()))) {
-				g2.setStroke(nowStroke);
-				g.setColor(new Color(255, 0, 0, 50));
-				x = TimelinePlugin.getInstance().getNowPosition();
-				g.drawLine(x, 0, x, this.getSize().height);
+			if (Date.getCurrentDate().equals(
+					TimelinePlugin.getInstance().getChoosenDate())) {
+				int xNow = TimelinePlugin.getInstance().getNowPosition();
+				if (xNow >= left - 5 && xNow < right + 5) {
+					g2.setStroke(nowStroke);
+					g.setColor(new Color(255, 0, 0, 50));
+					g.drawLine(xNow, top, xNow, bottom);
+				}
 			}
 		}
 		g2.setStroke(oriStroke);
 		g.setColor(oriColor);
+	}
+
+	public static Color secondRowColor() {
+		return SECOND_ROW_COLOR;
 	}
 }
