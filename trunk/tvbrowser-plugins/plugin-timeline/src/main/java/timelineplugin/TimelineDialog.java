@@ -79,6 +79,7 @@ public final class TimelineDialog extends JDialog implements WindowClosingIf {
 
 		createGUI();
 
+		int seconds = ((int) (System.currentTimeMillis() / 1000.0)) % 30;
 		mTimer = new Timer();
 		mTimer.scheduleAtFixedRate(new TimerTask() {
 			public void run() {
@@ -95,7 +96,7 @@ public final class TimelineDialog extends JDialog implements WindowClosingIf {
 					mMainPane.update();
 				}
 			}
-		}, 2000, 2000);
+		}, (30 - seconds + 1) * 1000L, 30 * 1000); // update after 1 and 31 seconds each minute
 
 		UiUtilities.registerForClosing(this);
 
@@ -131,24 +132,19 @@ public final class TimelineDialog extends JDialog implements WindowClosingIf {
 		return new AdjustmentListener() {
 			public void adjustmentValueChanged(final AdjustmentEvent e) {
 				resetGoto();
-				final int dayLimit = getDayLimit();
 				final int value = e.getValue();
 
-				if (value < dayLimit) {
+				if (value < TimelinePlugin.getInstance().getOffset() / 2) {
 					final int index = mDateList.getSelectedIndex();
 					if (index > 0) {
 						mDateList.setSelectedIndex(index - 1);
-						gotoTime(24 * 60, value - dayLimit);
+						gotoTime(mMainPane.getShownHours() * 60);
 					}
-				} else if (value
-						+ mMainPane.getHorizontalScrollBar().getVisibleAmount() >= mMainPane
-						.getHorizontalScrollBar().getMaximum() - dayLimit) {
+				} else if (value + mMainPane.getHorizontalScrollBar().getVisibleAmount()> mMainPane.getHorizontalScrollBar().getMaximum() - TimelinePlugin.getInstance().getOffset() / 2) {
 					final int index = mDateList.getSelectedIndex();
 					if (index < mDateList.getItemCount() - 1) {
 						mDateList.setSelectedIndex(mDateList.getSelectedIndex() + 1);
-						gotoTime(0, (value + mMainPane.getHorizontalScrollBar()
-								.getVisibleAmount())
-								- (mMainPane.getHorizontalScrollBar().getMaximum() - dayLimit));
+						gotoTime(Plugin.getPluginManager().getTvBrowserSettings().getProgramTableStartOfDay());
 					}
 				}
 			}
@@ -186,7 +182,7 @@ public final class TimelineDialog extends JDialog implements WindowClosingIf {
 					mLockNow = true;
 					break;
 				default:
-					gotoTime(mTimes[mTimeList.getSelectedIndex() - 2]);
+					gotoTimeMiddle(mTimes[mTimeList.getSelectedIndex() - 2]);
 					break;
 				}
 				mTimeList.setSelectedIndex(index);
@@ -417,8 +413,11 @@ public final class TimelineDialog extends JDialog implements WindowClosingIf {
 		mMainPane.gotoTime(minute);
 	}
 
-	private void gotoTime(final int minute, final int delta) {
-		mMainPane.gotoTime(minute, delta);
+	private void gotoTimeMiddle(int minute) {
+		int shownMinutes = (int) (mMainPane.getWidth() / TimelinePlugin.getInstance().getSizePerMinute());
+		minute -= shownMinutes / 2;
+		minute = (int) (Math.ceil(minute / 60.0) * 60);
+		gotoTime(minute);
 	}
 
 	private static Vector<Date> getDateList() {
@@ -462,12 +461,7 @@ public final class TimelineDialog extends JDialog implements WindowClosingIf {
 				}
 			}
 		}
-		gotoTime(TimelinePlugin.getNowMinute());
-	}
-
-	private int getDayLimit() {
-		return TimelinePlugin.getInstance().getOffset()
-				- mMainPane.getHorizontalScrollBar().getSize().width / 2;
+		gotoTimeMiddle(TimelinePlugin.getNowMinute());
 	}
 
 	public void resize() {

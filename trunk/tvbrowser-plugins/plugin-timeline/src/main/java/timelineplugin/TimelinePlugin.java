@@ -56,7 +56,6 @@ public final class TimelinePlugin extends devplugin.Plugin {
 	private ProgramFilter mFilter;
 
 	private int mChannelWidth = -1;
-	private int mOffset;
 
 	private TimelineSettings mSettings;
 
@@ -120,7 +119,6 @@ public final class TimelinePlugin extends devplugin.Plugin {
 
 		setChoosenDate(Date.getCurrentDate());
 
-		setOffset(mSettings.getOffset() / 2);
 		mDialog = new TimelineDialog(getParentFrame(), mSettings.startWithNow());
 		mDialog.pack();
 
@@ -170,11 +168,7 @@ public final class TimelinePlugin extends devplugin.Plugin {
 	}
 
 	int getOffset() {
-		return mOffset;
-	}
-
-	void setOffset(final int offset) {
-		mOffset = offset;
+		return mSettings.getHourWidth();
 	}
 
 	void resetChannelWidth() {

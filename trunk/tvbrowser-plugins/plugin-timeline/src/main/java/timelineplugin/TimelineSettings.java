@@ -191,13 +191,8 @@ final class TimelineSettings {
 	public Rectangle getPosition() {
 		final int x = getProperty("xpos", 0);
 		final int y = getProperty("ypos", 0);
-		final int width = getOffset();
+		final int width = getProperty("width", 620);
 		final int height = getProperty("height", 390);
 		return new Rectangle(x, y, width, height);
 	}
-
-	public int getOffset() {
-		return getProperty("width", 620);
-	}
-
 }
