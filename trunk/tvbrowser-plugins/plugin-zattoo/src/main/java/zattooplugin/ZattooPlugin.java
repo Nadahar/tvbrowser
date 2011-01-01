@@ -30,6 +30,7 @@ import devplugin.PluginTreeNode;
 import devplugin.PluginsFilterComponent;
 import devplugin.PluginsProgramFilter;
 import devplugin.Program;
+import devplugin.ProgramReceiveTarget;
 import devplugin.SettingsTab;
 import devplugin.ThemeIcon;
 import devplugin.Version;
@@ -53,6 +54,7 @@ public final class ZattooPlugin extends Plugin {
   private PluginTreeNode mRootNode;
   private ThemeIcon mThemeIcon;
   private Timer mTimer;
+	private ProgramReceiveTarget mProgramReceiveTarget = new ProgramReceiveTarget(this, mLocalizer.msg("receiveTarget", "Show on Zattoo"), "ZATTOO_TARGET");
 
   /**
    * Creates an instance of this plugin.
@@ -104,11 +106,11 @@ public final class ZattooPlugin extends Plugin {
   }
 
   public ActionMenu getContextMenuActions(final Program program) {
-    if (getPluginManager().getExampleProgram().equals(program) || isChannelSupported(program.getChannel())) {
-      if (!program.isExpired() && !program.isOnAir()) {
-        return getRememberActionMenu(program);
-      }
-      return getSwitchActionMenu(program.getChannel());
+    if (getPluginManager().getExampleProgram().equals(program)) {
+    	return getRememberActionMenu(program);
+    }	
+    if (isProgramSupported(program)) {
+      return getRememberActionMenu(program);
     }
     return null;
   }
@@ -219,7 +221,7 @@ public final class ZattooPlugin extends Plugin {
         }
 
         public boolean accept(final Program program) {
-          return isChannelSupported(program.getChannel());
+          return isProgramSupported(program);
         }
       };
     }
@@ -288,6 +290,7 @@ public final class ZattooPlugin extends Plugin {
               }
             }
           }
+          // starts only 1 program per invocation. multiple calls to zattoo not supported
           if (startProgram != null) {
             mSwitchPrograms.remove(startProgram);
             startProgram.unmark(ZattooPlugin.this);
@@ -297,4 +300,31 @@ public final class ZattooPlugin extends Plugin {
       }
     });
   }
+  
+  @Override
+  public boolean canReceiveProgramsWithTarget() {
+  	return true;
+  }
+  
+  @Override
+  public ProgramReceiveTarget[] getProgramReceiveTargets() {
+  	return new ProgramReceiveTarget[] {mProgramReceiveTarget };
+  }
+  
+  @Override
+  public boolean receivePrograms(Program[] programArr,
+  		ProgramReceiveTarget receiveTarget) {
+  	for (Program program : programArr) {
+			if (isProgramSupported(program)) {
+        mSwitchPrograms.add(program);
+        program.mark(ZattooPlugin.this);
+			}
+		}
+    updateRootNode();
+    return true;
+  }
+
+	private boolean isProgramSupported(Program program) {
+		return isChannelSupported(program.getChannel()) && !program.isExpired() && !program.isOnAir();
+	}
 }
