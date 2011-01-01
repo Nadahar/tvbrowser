@@ -61,6 +61,18 @@
       </plugin>
     </plugins>
   </build>
+  
+<repositories>
+	<repository>
+		<snapshots>
+			<enabled>false</enabled>
+		</snapshots>
+		<id>jfrog-third-party-releases</id>
+		<name>jfrog third-party-releases</name>
+		<url>http://repo.jfrog.org/artifactory/third-party-releases</url>
+	</repository>
+</repositories>  
+  
   <dependencies>
     <dependency>
       <groupId>org.tvbrowser</groupId>
@@ -70,6 +82,13 @@
     	<groupId>org.apache.httpcomponents</groupId>
     	<artifactId>httpclient</artifactId>
     	<version>4.0</version>
+    </dependency>
+    <dependency>
+    	<groupId>com.inet</groupId>
+    	<artifactId>jortho</artifactId>
+    	<version>0.4</version>
+    	<type>jar</type>
+    	<scope>compile</scope>
     </dependency>
   </dependencies>
 </project>
