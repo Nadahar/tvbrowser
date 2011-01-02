@@ -506,9 +506,7 @@ public class PluginManagerImpl implements PluginManager {
       return;
     }
     
-    ContextMenuIf leftSingleClickIf =
-      ContextMenuManager.getInstance().getLeftSingleClickIf();
-    
+    ContextMenuIf leftSingleClickIf = ContextMenuManager.getInstance().getLeftSingleClickIf();
     if (leftSingleClickIf == null) {
       return;
     }
@@ -518,6 +516,23 @@ public class PluginManagerImpl implements PluginManager {
     }
 
     handleAction(program, leftSingleClickIf.getContextMenuActions(program));
+  }
+
+  public void handleProgramSingleCtrlClick(Program program, ContextMenuIf caller) {
+    if (program == null) {
+      return;
+    }
+    
+    ContextMenuIf clickInterface = ContextMenuManager.getInstance().getLeftSingleCtrlClickIf();
+    if (clickInterface == null) {
+      return;
+    }
+
+    if ((caller != null)  && (clickInterface.getId().equals(caller.getId()))) {
+      return;
+    }
+
+    handleAction(program, clickInterface.getContextMenuActions(program));
   }
 
   /**

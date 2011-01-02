@@ -177,6 +177,19 @@ public interface PluginManager {
   public void handleProgramSingleClick(Program program, ContextMenuIf caller);
   
   /**
+   * Handles a single left click on a program with Ctrl being held.
+   * <p>
+   * Executes the default context menu plugin.
+   *
+   * @param program The program to pass to the default context menu function.
+   * @param caller The ContextMenuIf that calls this. Prevents the ContextMenuIf
+   *        to be activated twice
+   *
+   * @since 3.0
+   */
+  public void handleProgramSingleCtrlClick(Program program, ContextMenuIf caller);
+  
+  /**
    * Handles a double click on a program.
    * <p>
    * Executes the default context menu plugin. Plugins should use
