@@ -213,7 +213,7 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
         "René Mach", "GPL");
   }
 
-  private int getSearchTextIndexForProgram(final Program program) {
+  int getSearchTextIndexForProgram(final Program program) {
     if (program != null) {
       // calculate lower case title only once, not for each entry again
       final String title = program.getTitle();
@@ -371,9 +371,7 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
         .msg("menu.reshow", "I want to see!"), createImageIcon("actions",
         "edit-paste", 16)) {
       public void actionPerformed(final ActionEvent e) {
-        final int index = getSearchTextIndexForProgram(p);
-        mSettings.getSearchList().remove(index);
-
+      	mSettings.showAgain(p);
         updateFilter(!mSettings.isSwitchToMyFilter());
       }
     };
