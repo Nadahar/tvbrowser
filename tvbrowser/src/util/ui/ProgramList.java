@@ -29,6 +29,7 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.InputEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Vector;
@@ -260,11 +261,6 @@ public class ProgramList extends JList implements ChangeListener,
       private boolean mPerformingSingleClick = false;
       private boolean mPerformingSingleMiddleClick = false;
       
-      private static final byte LEFT_SINGLE_CLICK = 1;
-      private static final byte LEFT_DOUBLE_CLICK = 2;
-      private static final byte MIDDLE_CLICK = 3;
-      private static final byte MIDDLE_DOUBLE_CLICK = 4;
-      
       public void mousePressed(MouseEvent e) {
         if (e.isPopupTrigger()) {
           showPopup(e, caller);
@@ -278,21 +274,27 @@ public class ProgramList extends JList implements ChangeListener,
       }
 
       public void mouseClicked(final MouseEvent e) {
-        if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 1) && e.getModifiersEx() == 0) {
+        if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 1) && (e.getModifiersEx() == 0 || e.getModifiersEx() == InputEvent.CTRL_DOWN_MASK)) {
           mLeftSingleClickThread = new Thread("Single left click") {
+          	int modifiers = e.getModifiersEx();
             public void run() {
               try {
                 mPerformingSingleClick = false;
                 Thread.sleep(Plugin.SINGLE_CLICK_WAITING_TIME);
                 mPerformingSingleClick = true;
                 
-                handleClick(LEFT_SINGLE_CLICK, e);
-                
+                if (modifiers == 0) {
+                	Plugin.getPluginManager().handleProgramSingleClick(getProgramFromEvent(e), caller);
+                }
+                else if (modifiers == InputEvent.CTRL_DOWN_MASK) {
+                	Plugin.getPluginManager().handleProgramSingleCtrlClick(getProgramFromEvent(e), caller);
+                }
                 mPerformingSingleClick = false;
               } catch (InterruptedException e) {
                 // ignore
               }
             }
+
           };
           mLeftSingleClickThread.setPriority(Thread.MIN_PRIORITY);
           mLeftSingleClickThread.start();
@@ -303,7 +305,7 @@ public class ProgramList extends JList implements ChangeListener,
           }
           
           if(!mPerformingSingleClick) {
-            handleClick(LEFT_DOUBLE_CLICK, e);
+            Plugin.getPluginManager().handleProgramDoubleClick(getProgramFromEvent(e), caller);
           }
         }
         else if (SwingUtilities.isMiddleMouseButton(e) && (e.getClickCount() == 1)) {
@@ -314,7 +316,7 @@ public class ProgramList extends JList implements ChangeListener,
                 Thread.sleep(Plugin.SINGLE_CLICK_WAITING_TIME);
                 mPerformingSingleMiddleClick = true;
                 
-                handleClick(MIDDLE_CLICK, e);
+                Plugin.getPluginManager().handleProgramMiddleClick(getProgramFromEvent(e), caller);
                 
                 mPerformingSingleMiddleClick = false;
               } catch (InterruptedException e) {
@@ -331,33 +333,23 @@ public class ProgramList extends JList implements ChangeListener,
           }
           
           if(!mPerformingSingleMiddleClick) {
-            handleClick(MIDDLE_DOUBLE_CLICK, e);
+            Plugin.getPluginManager().handleProgramMiddleDoubleClick(getProgramFromEvent(e), caller);
           }
         }
       }
       
-      private void handleClick(byte type, MouseEvent e) {
+			private Program getProgramFromEvent(MouseEvent e) {
         final int inx = locationToIndex(e.getPoint());
         if (inx >= 0) {
-          final Object prog = ProgramList.this.getModel()
+          final Object element = ProgramList.this.getModel()
           .getElementAt(inx);
 
-          if(prog instanceof Program) {
-            if(type == LEFT_SINGLE_CLICK) {
-              Plugin.getPluginManager().handleProgramSingleClick((Program)prog, caller);
-            }
-            else if(type == LEFT_DOUBLE_CLICK) {
-              Plugin.getPluginManager().handleProgramDoubleClick((Program)prog, caller);
-            }
-            else if(type == MIDDLE_CLICK) {
-              Plugin.getPluginManager().handleProgramMiddleClick((Program)prog, caller);
-            }
-            else if(type == MIDDLE_DOUBLE_CLICK) {
-              Plugin.getPluginManager().handleProgramMiddleDoubleClick((Program)prog, caller);
-            }
+          if(element instanceof Program) {
+          	return (Program) element;
           }
         }
-      }
+        return null;
+			}
     });
   }
 

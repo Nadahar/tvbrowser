@@ -44,6 +44,7 @@ import java.awt.dnd.DragSourceDragEvent;
 import java.awt.dnd.DragSourceDropEvent;
 import java.awt.dnd.DragSourceEvent;
 import java.awt.dnd.DragSourceListener;
+import java.awt.event.InputEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
@@ -597,7 +598,7 @@ public class ProgramTable extends JPanel
 
 
 
-  private void handleMouseClicked(MouseEvent evt) {
+  private void handleMouseClicked(final MouseEvent evt) {
     // disable normal click handling if we only want to stop auto scrolling
     if (stopAutoScroll()) {
       return;
@@ -611,8 +612,9 @@ public class ProgramTable extends JPanel
     repaint();
     final Program program = getProgramAt(evt.getX(), evt.getY());
 
-    if (SwingUtilities.isLeftMouseButton(evt) && (evt.getClickCount() == 1) && evt.getModifiersEx() == 0) {
+    if (SwingUtilities.isLeftMouseButton(evt) && (evt.getClickCount() == 1) && (evt.getModifiersEx() == 0 || evt.getModifiersEx() == InputEvent.CTRL_DOWN_MASK)) {
       mLeftClickThread = new Thread("Program table single click thread") {
+      	int modifiers = evt.getModifiersEx();
         public void run() {
           try {
             mPerformingSingleClick = false;
@@ -621,7 +623,12 @@ public class ProgramTable extends JPanel
 
             if(program != null) {
               deSelectItem();
-              Plugin.getPluginManager().handleProgramSingleClick(program);
+              if (modifiers == 0) {
+              	Plugin.getPluginManager().handleProgramSingleClick(program);
+              }
+              else if (modifiers == InputEvent.CTRL_DOWN_MASK) {
+              	Plugin.getPluginManager().handleProgramSingleCtrlClick(program, null);
+              }
             }
 
             if(mClickThread != null && mClickThread.isAlive()) {

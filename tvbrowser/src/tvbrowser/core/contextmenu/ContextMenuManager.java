@@ -45,6 +45,7 @@ import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import tvbrowser.extras.common.InternalPluginProxyIf;
 import tvbrowser.extras.common.InternalPluginProxyList;
 import tvbrowser.ui.mainframe.MainFrame;
+import util.settings.StringProperty;
 import util.ui.TVBrowserIcons;
 import util.ui.menu.MenuUtil;
 import devplugin.ActionMenu;
@@ -88,58 +89,38 @@ public class ContextMenuManager {
    */
   private ContextMenuIf mDefaultMiddleDoubleClickIf;
   
+  /**
+   * The context menu interface that should be executed by default when
+   * ctrl-left-clicking a program in the program table.
+   */
+  private ContextMenuIf mCtrlLeftClickIf;
+  
   private ContextMenuManager() {
     mInstance = this;
     init();
   }
   
-  private void init() {
-    // Get the left single click context menu action
-    String id = Settings.propLeftSingleClickIf.getString();
-    ContextMenuIf menuIf = getContextMenuIfForId(id);
-    if (menuIf == null) {
-      menuIf = getContextMenuIfForId(Settings.propLeftSingleClickIf.getDefault());
-      if (menuIf != null) {
-        Settings.propLeftSingleClickIf.setString(menuIf.getId());
-      }
-    }
-    setLeftSingleClickIf(menuIf);
-    
-    // Get the default context menu action
-    id = Settings.propDoubleClickIf.getString();
-    menuIf = getContextMenuIfForId(id);
-    if (menuIf == null) {
-      menuIf = getContextMenuIfForId(Settings.propDoubleClickIf.getDefault());
-      if (menuIf != null) {
-        Settings.propDoubleClickIf.setString(menuIf.getId());
-      }
-    }
-    setDefaultContextMenuIf(menuIf);
-
-    // Get the middle click context menu action
-    id = Settings.propMiddleClickIf.getString();
-    menuIf = getContextMenuIfForId(id);
-    if (menuIf == null) {
-      menuIf = getContextMenuIfForId(Settings.propMiddleClickIf.getDefault());
-      if (menuIf != null) {
-        Settings.propMiddleClickIf.setString(menuIf.getId());
-      }
-    }
-    setMiddleClickIf(menuIf);
-    
-    // Get the middle double click context menu action
-    id = Settings.propMiddleDoubleClickIf.getString();
-    menuIf = getContextMenuIfForId(id);
-    if (menuIf == null) {
-      menuIf = getContextMenuIfForId(Settings.propMiddleDoubleClickIf.getDefault());
-      if (menuIf != null) {
-        Settings.propMiddleDoubleClickIf.setString(menuIf.getId());
-      }
-    }
-    setMiddleDoubleClickIf(menuIf);
+  public void init() {
+    setLeftSingleClickIf(getMenuIf(Settings.propLeftSingleClickIf));
+    setDefaultContextMenuIf(getMenuIf(Settings.propDoubleClickIf));
+    setMiddleClickIf(getMenuIf(Settings.propMiddleClickIf));
+    setMiddleDoubleClickIf(getMenuIf(Settings.propMiddleDoubleClickIf));
+    setLeftSingleCtrlClickIf(getMenuIf(Settings.propLeftSingleCtrlClickIf));
   }
   
-  /**
+  private ContextMenuIf getMenuIf(final StringProperty prop) {
+    String id = prop.getString();
+    ContextMenuIf menuIf = getContextMenuIfForId(id);
+    if (menuIf == null) {
+      menuIf = getContextMenuIfForId(prop.getDefault());
+      if (menuIf != null) {
+        prop.setString(menuIf.getId());
+      }
+    }
+    return menuIf;
+	}
+
+	/**
    * Returns the instance of this class.
    * If the instance is null a new
    * will be created.
@@ -160,6 +141,9 @@ public class ContextMenuManager {
    * @return The ContextMenuIf for the id or null if id wasn't found.
    */
   public ContextMenuIf getContextMenuIfForId(String id) {
+  	if (id == null) {
+  		return null;
+  	}
     PluginProxy plugin = PluginProxyManager.getInstance().getActivatedPluginForId(id);
     if(plugin != null) {
       return plugin;
@@ -197,6 +181,20 @@ public class ContextMenuManager {
    */
   public ContextMenuIf getLeftSingleClickIf() {
     return mDefaultLeftSingleClickMenuIf;
+  }
+  
+  /**
+   * Gets the left single ctrl click context menu interface.
+   * <p>
+   * This is context menu that should be executed by default when left clicking
+   * a program in the program table with the Ctrl key pressed.
+   *
+   * @return The default context menu action or <code>null</code> if there is no
+   *         default context menu interface.
+   * @since 3.0
+   */
+  public ContextMenuIf getLeftSingleCtrlClickIf() {
+    return mCtrlLeftClickIf;
   }
   
   /**
@@ -248,6 +246,16 @@ public class ContextMenuManager {
    */
   public void setLeftSingleClickIf(ContextMenuIf value) {
     mDefaultLeftSingleClickMenuIf = value;
+  }
+  
+  /**
+   * Sets the left single ctrl click context menu interface.
+   *
+   * @param value The ContextMenuIf to set as left single click context menu interface.
+   * @since 3.0
+   */
+  public void setLeftSingleCtrlClickIf(ContextMenuIf value) {
+    mCtrlLeftClickIf = value;
   }
   
   /**

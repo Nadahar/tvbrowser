@@ -27,6 +27,7 @@
 package tvbrowser.ui.settings;
 
 import java.awt.Component;
+import java.util.ArrayList;
 
 import javax.swing.Action;
 import javax.swing.DefaultListCellRenderer;
@@ -44,6 +45,7 @@ import tvbrowser.core.contextmenu.LeaveFullScreenMenuItem;
 import tvbrowser.core.contextmenu.SeparatorMenuItem;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginProxy;
+import util.settings.StringProperty;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.Borders;
@@ -57,197 +59,172 @@ import devplugin.Program;
 
 public class MausSettingsTab implements devplugin.SettingsTab {
 
-  private ContextMenuIf mLeftSingleClickIf, mDoubleClickIf, mMiddleClickIf, mMiddleDoubleClickIf;
+	private static final util.ui.Localizer mLocalizer = util.ui.Localizer
+			.getLocalizerFor(MausSettingsTab.class);
 
-  private static final util.ui.Localizer mLocalizer = util.ui.Localizer
-      .getLocalizerFor(MausSettingsTab.class);
+	private ArrayList<MouseClickSetting> mSettings = new ArrayList<MausSettingsTab.MouseClickSetting>();
 
-  private JComboBox mLeftSingleClickBox;
+	public JPanel createSettingsPanel() {
+		PanelBuilder contentPanel = new PanelBuilder(
+				new FormLayout("5dlu, pref, 3dlu, pref, fill:pref:grow, 3dlu",
+						"pref, 5dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref"));
+		contentPanel.setBorder(Borders.DIALOG_BORDER);
 
-  private JComboBox mDoubleClickBox;
+		CellConstraints cc = new CellConstraints();
+		contentPanel
+				.addSeparator(mLocalizer.msg("title", "Title"), cc.xyw(1, 1, 6));
 
-  private JComboBox mMiddleClickBox;
+		contentPanel.add(
+				new JLabel(mLocalizer.msg("MouseButtons", "Mouse Buttons:")),
+				cc.xyw(2, 3, 4));
 
-  private JComboBox mMiddleDoubleClickBox;
+		int row = 5;
+		for (MouseClickSetting clickSetting : mSettings) {
+			contentPanel.add(new JLabel(clickSetting.mLabel), cc.xy(2, row));
+			contentPanel.add(clickSetting.createComboxBox(), cc.xy(4, row));
+			row += 2;
+		}
+		return contentPanel.getPanel();
+	}
 
-  public JPanel createSettingsPanel() {
-    mLeftSingleClickIf = ContextMenuManager.getInstance().getLeftSingleClickIf();
-    mDoubleClickIf = ContextMenuManager.getInstance().getDefaultContextMenuIf();
-    mMiddleClickIf = ContextMenuManager.getInstance().getMiddleClickIf();
-    mMiddleDoubleClickIf = ContextMenuManager.getInstance().getMiddleDoubleClickIf();
+	public void saveSettings() {
+		for (MouseClickSetting clickSetting : mSettings) {
+			clickSetting.saveSetting();
+		}
+		ContextMenuManager.getInstance().init();
+	}
 
-    PanelBuilder contentPanel = new PanelBuilder(new FormLayout("5dlu, pref, 3dlu, pref, fill:pref:grow, 3dlu",
-        "pref, 5dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref"));
-    contentPanel.setBorder(Borders.DIALOG_BORDER);
+	public Icon getIcon() {
+		return IconLoader.getInstance().getIconFromTheme("devices", "input-mouse",
+				16);
+	}
 
-    CellConstraints cc = new CellConstraints();
-    contentPanel.addSeparator(mLocalizer.msg("title", "Title"), cc.xyw(1,
-        1, 6));
+	public String getTitle() {
+		return mLocalizer.msg("title", "context menu");
+	}
 
-    contentPanel.add(new JLabel(mLocalizer.msg("MouseButtons", "Mouse Buttons:")), cc.xyw(2, 3, 4));
+	private static class ContextMenuCellRenderer extends DefaultListCellRenderer {
+		private JLabel mItemLabel;
 
-    contentPanel.add(new JLabel(mLocalizer.msg("leftSingleClickLabel", "Left single click:")), cc.xy(2, 5));
+		public ContextMenuCellRenderer() {
+			mItemLabel = new JLabel();
+		}
 
-    mLeftSingleClickBox = new JComboBox();
-    mLeftSingleClickBox.setSelectedItem(mLeftSingleClickIf);
-    mLeftSingleClickBox.setMaximumRowCount(15);
+		public Component getListCellRendererComponent(JList list, Object value,
+				int index, boolean isSelected, boolean cellHasFocus) {
 
-    mLeftSingleClickBox.setRenderer(new ContextMenuCellRenderer());
-    contentPanel.add(mLeftSingleClickBox, cc.xy(4, 5));
+			JLabel label = (JLabel) super.getListCellRendererComponent(list, value,
+					index, isSelected, cellHasFocus);
 
-    contentPanel.add(new JLabel(mLocalizer.msg("doubleClickLabel", "Double click:")), cc.xy(2, 7));
+			if (value instanceof ContextMenuIf) {
+				ContextMenuIf menuIf = (ContextMenuIf) value;
+				Program exampleProgram = Plugin.getPluginManager().getExampleProgram();
 
-    mDoubleClickBox = new JComboBox();
-    mDoubleClickBox.setSelectedItem(mDoubleClickIf);
-    mDoubleClickBox.setMaximumRowCount(15);
+				// Get the context menu item text
+				StringBuilder text = new StringBuilder();
+				Icon icon = null;
+				ActionMenu actionMenu = menuIf.getContextMenuActions(exampleProgram);
+				if (actionMenu != null) {
+					Action action = actionMenu.getAction();
+					if (action != null) {
+						text.append((String) action.getValue(Action.NAME));
+						icon = (Icon) action.getValue(Action.SMALL_ICON);
+					} else if (menuIf instanceof PluginProxy) {
+						text.append(((PluginProxy) menuIf).getInfo().getName());
+						icon = ((PluginProxy) menuIf).getMarkIcon();
+					} else {
+						text.append("unknown");
+						icon = null;
+					}
+				}
 
-    mDoubleClickBox.setRenderer(new ContextMenuCellRenderer());
-    contentPanel.add(mDoubleClickBox, cc.xy(4, 7));
+				mItemLabel.setIcon(icon);
+				mItemLabel.setForeground(label.getForeground());
+				mItemLabel.setBackground(label.getBackground());
+				mItemLabel.setText(text.toString());
+				mItemLabel.setOpaque(label.isOpaque());
 
-    contentPanel.add(new JLabel(mLocalizer.msg("middleClickLabel", "Middle single click:")), cc.xy(2, 9));
-    mMiddleClickBox = new JComboBox();
-    mMiddleClickBox.setSelectedItem(mMiddleClickIf);
-    mMiddleClickBox.setMaximumRowCount(15);
+				return mItemLabel;
+			}
 
-    mMiddleClickBox.setRenderer(new ContextMenuCellRenderer());
-    contentPanel.add(mMiddleClickBox, cc.xy(4, 9));
+			return label;
+		}
 
-    contentPanel.add(new JLabel(mLocalizer.msg("middleDoubleClickLabel", "Middle double click:")), cc.xy(2, 11));
-    mMiddleDoubleClickBox = new JComboBox();
-    mMiddleDoubleClickBox.setSelectedItem(mMiddleDoubleClickIf);
-    mMiddleDoubleClickBox.setMaximumRowCount(15);
+	}
 
-    mMiddleDoubleClickBox.setRenderer(new ContextMenuCellRenderer());
-    contentPanel.add(mMiddleDoubleClickBox, cc.xy(4, 11));
+	public MausSettingsTab() {
+		mSettings.add(new MouseClickSetting(ContextMenuManager.getInstance()
+				.getLeftSingleClickIf(), Settings.propLeftSingleClickIf, mLocalizer
+				.msg("leftSingleClickLabel", "Left single click")));
+		mSettings.add(new MouseClickSetting(ContextMenuManager.getInstance()
+				.getDefaultContextMenuIf(), Settings.propDoubleClickIf, mLocalizer.msg(
+				"doubleClickLabel", "Double click")));
+		mSettings.add(new MouseClickSetting(ContextMenuManager.getInstance()
+				.getMiddleClickIf(), Settings.propMiddleClickIf, mLocalizer.msg(
+				"middleClickLabel", "Middle single click")));
+		mSettings.add(new MouseClickSetting(ContextMenuManager.getInstance()
+				.getMiddleDoubleClickIf(), Settings.propMiddleDoubleClickIf, mLocalizer
+				.msg("middleDoubleClickLabel", "Middle double click")));
+		mSettings.add(new MouseClickSetting(ContextMenuManager.getInstance()
+				.getLeftSingleCtrlClickIf(), Settings.propLeftSingleCtrlClickIf,
+				mLocalizer.msg("leftCtrlClickLabel", "Ctrl left click")));
+	}
 
-    fillListbox();
+	private static class MouseClickSetting {
+		private String mLabel;
+		private ContextMenuIf mClickInterface;
+		private StringProperty mSettingsProperty;
+		private JComboBox mComboBox;
 
-    return contentPanel.getPanel();
-  }
+		public MouseClickSetting(ContextMenuIf clickIf,
+				StringProperty settingsProperty, final String label) {
+			mClickInterface = clickIf;
+			mLabel = label;
+			mSettingsProperty = settingsProperty;
+		}
 
-  private void fillListbox() {
-    mLeftSingleClickBox.removeAllItems();
-    mDoubleClickBox.removeAllItems();
-    mMiddleClickBox.removeAllItems();
-    mMiddleDoubleClickBox.removeAllItems();
+		public void saveSetting() {
+			ContextMenuIf selectedIf = (ContextMenuIf) mComboBox.getSelectedItem();
+			if (selectedIf != null) {
+				mSettingsProperty.setString(selectedIf.getId());
+			} else {
+				mSettingsProperty.setString(null);
+			}
+		}
 
-    mLeftSingleClickBox.addItem(DoNothingContextMenuItem.getInstance());
-    mDoubleClickBox.addItem(DoNothingContextMenuItem.getInstance());
-    mMiddleClickBox.addItem(DoNothingContextMenuItem.getInstance());
-    mMiddleDoubleClickBox.addItem(DoNothingContextMenuItem.getInstance());
+		public JComboBox createComboxBox() {
+			mComboBox = new JComboBox();
+			mComboBox.setSelectedItem(mClickInterface);
+			mComboBox.setMaximumRowCount(15);
+			mComboBox.setRenderer(new ContextMenuCellRenderer());
+			mComboBox.removeAllItems();
+			DoNothingContextMenuItem doNothing = DoNothingContextMenuItem
+					.getInstance();
+			mComboBox.addItem(doNothing);
+			fillListBox();
+			if (mClickInterface != null) {
+				mComboBox.setSelectedItem(mClickInterface);
+			} else {
+				mComboBox.setSelectedItem(doNothing);
+			}
+			return mComboBox;
+		}
 
-    ContextMenuIf[] menuIfList = ContextMenuManager.getInstance().getAvailableContextMenuIfs(true, false);
-    Program exampleProgram = Plugin.getPluginManager().getExampleProgram();
-    for (ContextMenuIf element : menuIfList) {
-      if (element instanceof SeparatorMenuItem) {
-      } else if (element instanceof ConfigMenuItem || element instanceof LeaveFullScreenMenuItem) {
-      } else {
-        ActionMenu actionMenu = element.getContextMenuActions(exampleProgram);
-        if (actionMenu != null) {
-          mLeftSingleClickBox.addItem(element);
-          mDoubleClickBox.addItem(element);
-          mMiddleClickBox.addItem(element);
-          mMiddleDoubleClickBox.addItem(element);
-        }
-      }
-    }
-
-    mLeftSingleClickBox.setSelectedItem(mLeftSingleClickIf);
-    mDoubleClickBox.setSelectedItem(mDoubleClickIf);
-    mMiddleClickBox.setSelectedItem(mMiddleClickIf);
-    mMiddleDoubleClickBox.setSelectedItem(mMiddleDoubleClickIf);
-  }
-
-  public void saveSettings() {
-    mLeftSingleClickIf = (ContextMenuIf) mLeftSingleClickBox.getSelectedItem();
-    mDoubleClickIf = (ContextMenuIf) mDoubleClickBox.getSelectedItem();
-    mMiddleClickIf = (ContextMenuIf) mMiddleClickBox.getSelectedItem();
-    mMiddleDoubleClickIf = (ContextMenuIf) mMiddleDoubleClickBox.getSelectedItem();
-
-    ContextMenuManager.getInstance().setLeftSingleClickIf(mLeftSingleClickIf);
-    if (mLeftSingleClickIf != null) {
-      Settings.propLeftSingleClickIf.setString(mLeftSingleClickIf.getId());
-    } else {
-      Settings.propLeftSingleClickIf.setString(null);
-    }
-
-    ContextMenuManager.getInstance().setDefaultContextMenuIf(mDoubleClickIf);
-    if (mDoubleClickIf != null) {
-      Settings.propDoubleClickIf.setString(mDoubleClickIf.getId());
-    } else {
-      Settings.propDoubleClickIf.setString(null);
-    }
-
-    ContextMenuManager.getInstance().setMiddleClickIf(mMiddleClickIf);
-    if (mMiddleClickIf != null) {
-      Settings.propMiddleClickIf.setString(mMiddleClickIf.getId());
-    } else {
-      Settings.propMiddleClickIf.setString(null);
-    }
-
-    ContextMenuManager.getInstance().setMiddleDoubleClickIf(mMiddleDoubleClickIf);
-    if (mMiddleDoubleClickIf != null) {
-      Settings.propMiddleDoubleClickIf.setString(mMiddleDoubleClickIf.getId());
-    } else {
-      Settings.propMiddleDoubleClickIf.setString(null);
-    }
-  }
-
-  public Icon getIcon() {
-    return IconLoader.getInstance().getIconFromTheme("devices", "input-mouse", 16);
-  }
-
-  public String getTitle() {
-    return mLocalizer.msg("title", "context menu");
-  }
-
-  private static class ContextMenuCellRenderer extends DefaultListCellRenderer {
-    private JLabel mItemLabel;
-
-    public ContextMenuCellRenderer() {
-      mItemLabel = new JLabel();
-    }
-
-    public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
-        boolean cellHasFocus) {
-
-      JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-
-      if (value instanceof ContextMenuIf) {
-        ContextMenuIf menuIf = (ContextMenuIf) value;
-        Program exampleProgram = Plugin.getPluginManager().getExampleProgram();
-
-        // Get the context menu item text
-        StringBuilder text = new StringBuilder();
-        Icon icon = null;
-        // Action[] actionArr = plugin.getContextMenuActions(exampleProgram);
-        ActionMenu actionMenu = menuIf.getContextMenuActions(exampleProgram);
-        if (actionMenu != null) {
-          Action action = actionMenu.getAction();
-          if (action != null) {
-            text.append((String) action.getValue(Action.NAME));
-            icon = (Icon) action.getValue(Action.SMALL_ICON);
-          } else if (menuIf instanceof PluginProxy) {
-            text.append(((PluginProxy) menuIf).getInfo().getName());
-            icon = ((PluginProxy) menuIf).getMarkIcon();
-          } else {
-            text.append("unknown");
-            icon = null;
-          }
-        }
-
-        mItemLabel.setIcon(icon);
-        mItemLabel.setForeground(label.getForeground());
-        mItemLabel.setBackground(label.getBackground());
-        mItemLabel.setText(text.toString());
-        mItemLabel.setOpaque(label.isOpaque());
-
-        return mItemLabel;
-      }
-
-      return label;
-    }
-
-  }
-
+		private void fillListBox() {
+			ContextMenuIf[] menuIfList = ContextMenuManager.getInstance()
+					.getAvailableContextMenuIfs(true, false);
+			Program exampleProgram = Plugin.getPluginManager().getExampleProgram();
+			for (ContextMenuIf element : menuIfList) {
+				if (element instanceof SeparatorMenuItem) {
+				} else if (element instanceof ConfigMenuItem
+						|| element instanceof LeaveFullScreenMenuItem) {
+				} else {
+					ActionMenu actionMenu = element.getContextMenuActions(exampleProgram);
+					if (actionMenu != null) {
+						mComboBox.addItem(element);
+					}
+				}
+			}
+		}
+	}
 }

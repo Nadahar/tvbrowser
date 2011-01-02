@@ -37,6 +37,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
+import java.awt.event.InputEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
@@ -1018,15 +1019,22 @@ private static Font getDynamicFontSize(Font font, int offset) {
       }
 
       public void mouseClicked(final MouseEvent evt) {
-        if (SwingUtilities.isLeftMouseButton(evt) && (evt.getClickCount() == 1) && evt.getModifiersEx() == 0) {
+        if (SwingUtilities.isLeftMouseButton(evt) && (evt.getClickCount() == 1) && (evt.getModifiersEx() == 0 || evt.getModifiersEx() == InputEvent.CTRL_DOWN_MASK)) {
           mLeftClickThread = new Thread("Single click") {
-            public void run() {
-              try {
+            private int modifiers;
+
+						public void run() {
+            	modifiers = evt.getModifiersEx();
+            	try {
                 mPerformingSingleClick = false;
                 sleep(Plugin.SINGLE_CLICK_WAITING_TIME);
                 mPerformingSingleClick = true;
-
-                Plugin.getPluginManager().handleProgramSingleClick(mProgram, caller);
+                if (modifiers == 0) {
+                	Plugin.getPluginManager().handleProgramSingleClick(mProgram, caller);
+                }
+                else if (modifiers == InputEvent.CTRL_DOWN_MASK) {
+                  Plugin.getPluginManager().handleProgramSingleCtrlClick(mProgram, caller);
+                }
                 mPerformingSingleClick = false;
               } catch (InterruptedException e) { // ignore
               }

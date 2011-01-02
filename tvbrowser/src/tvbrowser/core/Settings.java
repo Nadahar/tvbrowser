@@ -1197,6 +1197,9 @@ public class Settings {
   public static final StringProperty propMiddleDoubleClickIf = new StringProperty(
       mProp, "middledoubleclickplugin", FavoritesPlugin.getFavoritesPluginId());
 
+  public static final StringProperty propLeftSingleCtrlClickIf = new StringProperty(
+      mProp, "leftSingleCtrlClickIf", null);
+
   /**
    * the last active program filter
    */
