@@ -3,6 +3,7 @@ package idontwant2see;
 import java.util.ArrayList;
 
 import devplugin.Date;
+import devplugin.Program;
 
 /**
  * @author Bananeweizen
@@ -71,4 +72,11 @@ public class IDontWant2SeeSettings {
   public void setProgramImportance(final byte programImportance) {
     mProgramImportance = programImportance;
   }
+
+	public void showAgain(Program program) {
+    final int index = IDontWant2See.getInstance().getSearchTextIndexForProgram(program);
+    if (index >= 0) {
+    	getSearchList().remove(index);
+    }
+	}
 }
