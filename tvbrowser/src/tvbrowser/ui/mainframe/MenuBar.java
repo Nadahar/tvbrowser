@@ -27,6 +27,7 @@ package tvbrowser.ui.mainframe;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -73,6 +74,7 @@ import util.ui.FixedSizeIcon;
 import util.ui.Localizer;
 import util.ui.ScrollableMenu;
 import util.ui.TVBrowserIcons;
+import util.ui.UIThreadRunner;
 import util.ui.UiUtilities;
 import devplugin.ActionMenu;
 import devplugin.Channel;
@@ -475,7 +477,21 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 	}
 
   void updateChannelGroupMenu() {
-    updateChannelGroupMenu(mChannelGroupMenu);
+    try {
+      UIThreadRunner.invokeAndWait(new Runnable() {
+
+        @Override
+        public void run() {
+          updateChannelGroupMenu(mChannelGroupMenu);
+        }
+      });
+    } catch (InterruptedException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } catch (InvocationTargetException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
   }
 
 	public void updateChannelGroupMenu(JMenu menu) {
