@@ -59,6 +59,9 @@ public class GolemUpdater {
     channelMap.put("DLF", "Deutschlandfunk");
     channelMap.put("Pro7", "ProSieben");
     channelMap.put("RBB", "RBB Berlin");
+    channelMap.put("Eins Festival", "einsfestival");
+    channelMap.put("SuperRTL", "Super RTL");
+    channelMap.put("Tele5", "Tele 5");
   }
 
   public static GolemUpdater getInstance() {
@@ -155,13 +158,20 @@ public class GolemUpdater {
   }
 
   private Channel findChannel(Channel[] channels, String chname) {
-    if (channelMap.containsKey(chname)) {
-      chname = channelMap.get(chname);
-    }
-
+    // first try original channel name
     for (Channel ch : channels) {
       if (ch.getName().equalsIgnoreCase(chname)) {
         return ch;
+      }
+    }
+
+    // now try alternate version
+    if (channelMap.containsKey(chname)) {
+      chname = channelMap.get(chname);
+      for (Channel ch : channels) {
+        if (ch.getName().equalsIgnoreCase(chname)) {
+          return ch;
+        }
       }
     }
 
