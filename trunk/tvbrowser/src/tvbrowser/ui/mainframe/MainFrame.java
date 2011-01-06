@@ -57,6 +57,7 @@ import java.io.PrintWriter;
 import java.io.RandomAccessFile;
 import java.io.StringWriter;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -141,6 +142,7 @@ import util.exc.ErrorHandler;
 import util.io.IOUtilities;
 import util.misc.OperatingSystem;
 import util.ui.Localizer;
+import util.ui.UIThreadRunner;
 import util.ui.UiUtilities;
 import util.ui.progress.Progress;
 import util.ui.progress.ProgressWindow;
@@ -1202,6 +1204,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
    */
   public void handleTvBrowserStartFinished() {
     mStarting = false;
+    mMenuBar.updateChannelGroupMenu();
   }
 
   private void runAutoUpdate() {
@@ -1516,8 +1519,22 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     final JFrame parent = this;
     progWin.run(new Progress() {
       public void run() {
-        mConfigAssistantDialog = new tvbrowser.ui.configassistant.ConfigAssistant(
-            parent);
+        try {
+          UIThreadRunner.invokeAndWait(new Runnable() {
+
+            @Override
+            public void run() {
+              mConfigAssistantDialog = new tvbrowser.ui.configassistant.ConfigAssistant(
+                  parent);
+            }
+          });
+        } catch (InterruptedException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        } catch (InvocationTargetException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
       }
     });
 
@@ -1911,36 +1928,44 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       return;
     }
 
-    new Thread(new Runnable() {
-      public void run() {
-        mSettingsWillBeOpened = true;
+    try {
+      UIThreadRunner.invokeAndWait(new Runnable() {
+        public void run() {
+          mSettingsWillBeOpened = true;
 
-        // show busy cursor
-        Window comp = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
-        ProgramTable programTable = MainFrame.getInstance().getProgramTableScrollPane().getProgramTable();
-        Cursor oldWindowCursor = comp.getCursor();
-        Cursor oldTableCursor = programTable.getCursor();
-        comp.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        programTable.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+          // show busy cursor
+          Window comp = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
+          ProgramTable programTable = MainFrame.getInstance().getProgramTableScrollPane().getProgramTable();
+          Cursor oldWindowCursor = comp.getCursor();
+          Cursor oldTableCursor = programTable.getCursor();
+          comp.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+          programTable.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
-        SettingsDialog dlg = new SettingsDialog(MainFrame.this, visibleTabId);
-        dlg.centerAndShow();
+          SettingsDialog dlg = new SettingsDialog(MainFrame.this, visibleTabId);
+          dlg.centerAndShow();
 
-        // restore cursors
-        programTable.setCursor(oldTableCursor);
-        comp.setCursor(oldWindowCursor);
+          // restore cursors
+          programTable.setCursor(oldTableCursor);
+          comp.setCursor(oldWindowCursor);
 
-        SwingUtilities.invokeLater(new Runnable() {
-          public void run() {
-            Settings.handleChangedSettings();
-            if (mPluginView != null) {
-              mPluginView.refreshTree();
+          SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+              Settings.handleChangedSettings();
+              if (mPluginView != null) {
+                mPluginView.refreshTree();
+              }
             }
-          }
-        });
-        mSettingsWillBeOpened = false;
-      }
-    }, "Show settings dialog").start();
+          });
+          mSettingsWillBeOpened = false;
+        }
+      });
+    } catch (InterruptedException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } catch (InvocationTargetException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
   }
 
   /*****************************************************************************
@@ -2013,14 +2038,28 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
             JOptionPane.showMessageDialog(UiUtilities.getLastModalChildOf(MainFrame.getInstance()), mLocalizer.msg("error.2",
                 "No new items available"));
           } else if(mSoftwareUpdateItems != null && mSoftwareUpdateItems.length > 0) {
-            Window parent = UiUtilities.getLastModalChildOf(MainFrame
+            final Window parent = UiUtilities.getLastModalChildOf(MainFrame
                 .getInstance());
-            SoftwareUpdateDlg dlg = new SoftwareUpdateDlg(parent, baseUrl,
-                showOnlyUpdates, mSoftwareUpdateItems);
+            try {
+              UIThreadRunner.invokeAndWait(new Runnable() {
 
-            //dlg.setSoftwareUpdateItems(mSoftwareUpdateItems);
-            dlg.setLocationRelativeTo(parent);
-            dlg.setVisible(true);
+                @Override
+                public void run() {
+                  SoftwareUpdateDlg dlg = new SoftwareUpdateDlg(parent, baseUrl,
+                      showOnlyUpdates, mSoftwareUpdateItems);
+                  //dlg.setSoftwareUpdateItems(mSoftwareUpdateItems);
+                  dlg.setLocationRelativeTo(parent);
+                  dlg.setVisible(true);
+                }
+              });
+            } catch (InterruptedException e) {
+              // TODO Auto-generated catch block
+              e.printStackTrace();
+            } catch (InvocationTargetException e) {
+              // TODO Auto-generated catch block
+              e.printStackTrace();
+            }
+
           }
         }
 
