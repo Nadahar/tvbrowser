@@ -42,6 +42,7 @@ import com.sun.syndication.feed.synd.SyndContent;
 import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndEntryImpl;
 import com.sun.syndication.feed.synd.SyndFeed;
+import com.sun.syndication.feed.synd.SyndFeedImpl;
 import com.sun.syndication.fetcher.FeedFetcher;
 import com.sun.syndication.fetcher.impl.FeedFetcherCache;
 import com.sun.syndication.fetcher.impl.HashMapFeedInfoCache;
@@ -381,6 +382,10 @@ public final class FeedsPlugin extends Plugin {
     Hashtable<SyndFeed, PluginTreeNode> nodes = new Hashtable<SyndFeed, PluginTreeNode>();
     ArrayList<String> feedUrls = mSettings.getFeeds();
     if (!feedUrls.isEmpty()) {
+      System.out.println("Current class loader: " + Thread.currentThread().getContextClassLoader().toString());
+      ClassLoader cl = SyndFeedImpl.class.getClassLoader();
+      System.out.println("ROME class loader:" + cl.toString());
+      Thread.currentThread().setContextClassLoader(cl);
       final FeedFetcherCache feedInfoCache = HashMapFeedInfoCache.getInstance();
       final FeedFetcher feedFetcher = new HttpURLFeedFetcher(feedInfoCache);
       feedFetcher.setUserAgent("TV-Browser Feeds Plugin " + FeedsPlugin.getVersion().toString());
@@ -398,8 +403,10 @@ public final class FeedsPlugin extends Plugin {
     }
     mKeywords = new HashMap<String, ArrayList<SyndEntryWithParent>>();
     if (!mFeeds.isEmpty()) {
-      for (SyndFeed feed : mFeeds) {
-        addFeedKeywords(feed);
+      synchronized (mFeeds) {
+        for (SyndFeed feed : mFeeds) {
+          addFeedKeywords(feed);
+        }
       }
       getRootNode().clear();
       ArrayList<String> titles = new ArrayList<String>(mFeeds.size());
