@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import javax.swing.DefaultListModel;
 import javax.swing.Icon;
 import javax.swing.JButton;
+import javax.swing.JEditorPane;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -31,13 +32,17 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import org.apache.commons.lang.StringUtils;
+
 import util.ui.EnhancedPanelBuilder;
 import util.ui.Localizer;
+import util.ui.UiUtilities;
 
 import com.jgoodies.forms.builder.ButtonBarBuilder2;
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.CellConstraints;
 
+import devplugin.PluginInfo;
 import devplugin.SettingsTab;
 
 public class FeedsSettingsTab implements SettingsTab {
@@ -107,6 +112,11 @@ public class FeedsSettingsTab implements SettingsTab {
       public void valueChanged(final ListSelectionEvent e) {
         mRemove.setEnabled(mFeeds.getSelectedIndex() >= 0);
       }});
+
+    panelBuilder.addParagraph(mLocalizer.msg("moreFeeds", "Get more feeds"));
+    panelBuilder.addRow();
+    JEditorPane help = UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("help", "You can find more news feeds on the <a href=\"{0}\">plugin help page</a>. If you know more interesting feeds, feel free to add them on that page.", StringUtils.replace(PluginInfo.getHelpUrl(FeedsPlugin.getInstance().getId()), "&", "&amp;")));
+    panelBuilder.add(help, cc.xyw(2, panelBuilder.getRow(), panelBuilder.getColumnCount() - 1));
 
     // force update of enabled states
     listSelectionChanged();
