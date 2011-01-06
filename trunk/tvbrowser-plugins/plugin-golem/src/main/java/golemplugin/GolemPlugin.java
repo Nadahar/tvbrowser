@@ -49,7 +49,7 @@ import devplugin.Version;
 
 public class GolemPlugin extends devplugin.Plugin {
   private static final boolean PLUGIN_IS_STABLE = true;
-  private static final Version PLUGIN_VERSION = new Version(0, 3, 1, PLUGIN_IS_STABLE);
+  private static final Version PLUGIN_VERSION = new Version(0, 3, 2, PLUGIN_IS_STABLE);
 
   static final Localizer mLocalizer = Localizer.getLocalizerFor(GolemPlugin.class);
 
