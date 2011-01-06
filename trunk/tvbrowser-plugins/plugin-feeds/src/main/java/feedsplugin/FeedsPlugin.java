@@ -38,6 +38,7 @@ import org.apache.commons.lang.StringUtils;
 
 import util.ui.UiUtilities;
 
+import com.sun.syndication.feed.synd.SyndContent;
 import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndEntryImpl;
 import com.sun.syndication.feed.synd.SyndFeed;
@@ -69,7 +70,7 @@ public final class FeedsPlugin extends Plugin {
 
   private static final boolean IS_STABLE = false;
 
-  private static final Version mVersion = new Version(2, 72, 0, IS_STABLE);
+  private static final Version mVersion = new Version(2, 73, 0, IS_STABLE);
 
   private static Icon mIcon;
 
@@ -149,7 +150,11 @@ public final class FeedsPlugin extends Plugin {
       }
       addFeedKey(feedTitle, entry, feed);
       // index description parts
-      String desc = entry.getDescription().getValue();
+      SyndContent cont = entry.getDescription();
+      String desc = null;
+      if (cont != null) {
+        desc = cont.getValue();
+      }
       if (desc != null) {
         for (String[] delimiter : TITLE_DELIMITERS) {
           if (desc.contains(delimiter[0])) {
