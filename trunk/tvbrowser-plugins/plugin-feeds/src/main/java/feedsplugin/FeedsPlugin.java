@@ -71,7 +71,7 @@ public final class FeedsPlugin extends Plugin {
 
   private static final boolean IS_STABLE = false;
 
-  private static final Version mVersion = new Version(2, 73, 0, IS_STABLE);
+  private static final Version mVersion = new Version(2, 74, 0, IS_STABLE);
 
   private static Icon mIcon;
 
@@ -382,10 +382,13 @@ public final class FeedsPlugin extends Plugin {
     Hashtable<SyndFeed, PluginTreeNode> nodes = new Hashtable<SyndFeed, PluginTreeNode>();
     ArrayList<String> feedUrls = mSettings.getFeeds();
     if (!feedUrls.isEmpty()) {
-      System.out.println("Current class loader: " + Thread.currentThread().getContextClassLoader().toString());
+
+      /* the class loader of the current thread must be manipulated because ROME searches its
+       * properties files via Thread.currentThread.getContextClassLoader(). But that is not the
+       * classloader used for ROME classes, so we fake it. */
       ClassLoader cl = SyndFeedImpl.class.getClassLoader();
-      System.out.println("ROME class loader:" + cl.toString());
       Thread.currentThread().setContextClassLoader(cl);
+
       final FeedFetcherCache feedInfoCache = HashMapFeedInfoCache.getInstance();
       final FeedFetcher feedFetcher = new HttpURLFeedFetcher(feedInfoCache);
       feedFetcher.setUserAgent("TV-Browser Feeds Plugin " + FeedsPlugin.getVersion().toString());
