@@ -435,19 +435,34 @@ public class ToolBar extends JToolBar {
     item.addActionListener(new ActionListener() {
 
       public void actionPerformed(ActionEvent e) {
-        String[] ids = Settings.propToolbarButtons.getStringArray();
-        ArrayList<String> list = new ArrayList<String>();
-        for (String buttonId : ids) {
-          if (buttonId.compareTo(buttonName) != 0) {
-            list.add(buttonId);
+        Action[] actions = mModel.getActions();
+        ArrayList<String> idList = new ArrayList<String>();
+        
+        for(Action a : actions) {
+          String key = (String)a.getValue(ACTION_ID_KEY);
+          String test = key;
+          
+          if (test.equals("searchplugin.SearchPlugin") && buttonName.equals("#search")) {
+            test = "#search";
+          } else if (test.equals("reminderplugin.ReminderPlugin") && buttonName.equals("#reminder")) {
+            test = "#reminder";
+          } else if (test.equals("favoritesplugin.FavoritesPlugin") && buttonName.equals("#favorite")) {
+            test = "#favorite";
+          }
+          
+          if (test.compareTo(buttonName) != 0) {
+            idList.add(key);
           }
         }
-        ids = new String[list.size()];
-        list.toArray(ids);
+
+        String[] ids = new String[idList.size()];
+        idList.toArray(ids);
         DefaultToolBarModel.getInstance().setButtonIds(ids);
         MainFrame.getInstance().updateToolbar();
         Settings.propToolbarButtons.setStringArray(ids);
-      }});
+      }
+    });
+    
     menu.add(item);
     menu.add(ContextMenu.getSubMenu());
 
