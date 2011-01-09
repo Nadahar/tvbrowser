@@ -5,12 +5,12 @@
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  *
@@ -29,6 +29,7 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Properties;
@@ -50,6 +51,7 @@ import util.settings.ProgramPanelSettings;
 import util.ui.Localizer;
 import util.ui.ProgramList;
 import util.ui.TVBrowserIcons;
+import util.ui.UIThreadRunner;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
@@ -189,7 +191,7 @@ public class SimpleMarkerPlugin extends Plugin {
       return new ActionMenu(mMarkListVector.getListAt(0).getContextMenuAction(program, true));
     } else {
       Object[] submenu = new Object[mMarkListVector.size()];
-      
+
       for (int i = 0; i < mMarkListVector.size(); i++) {
         submenu[i] = mMarkListVector.getListAt(i).getContextMenuAction(program, false);
       }
@@ -232,16 +234,16 @@ public class SimpleMarkerPlugin extends Plugin {
 
       short importance = 0;
       byte count = 0;
-      
+
       for(String list : lists) {
         byte test = mMarkListVector.getListForName(list).getProgramImportance();
-        
+
         if(test > Program.DEFAULT_PROGRAM_IMPORTANCE) {
           count++;
           importance += test;
         }
       }
-      
+
       if(count > 0) {
         return new ImportanceValue(count,importance);
       }
@@ -249,7 +251,7 @@ public class SimpleMarkerPlugin extends Plugin {
 
     return new ImportanceValue((byte)1,Program.DEFAULT_PROGRAM_IMPORTANCE);
   }
-  
+
   public int getMarkPriorityForProgram(Program p) {
     int priority = Program.NO_MARK_PRIORITY;
 
@@ -270,66 +272,79 @@ public class SimpleMarkerPlugin extends Plugin {
 
   public void handleTvDataUpdateFinished() {
     mHasToUpdate = true;
-    
+
     if (mHasRightToUpdate) {
       mHasToUpdate = false;
 
-      ArrayList<Program> deletedPrograms = new ArrayList<Program>();
+      final ArrayList<Program> deletedPrograms = new ArrayList<Program>();
 
       for (MarkList list : mMarkListVector) {
         list.revalidateContainingPrograms(deletedPrograms);
       }
 
       if (!deletedPrograms.isEmpty() && mSettings.showDeletedPrograms()) {
-        ProgramList deletedProgramList = new ProgramList(deletedPrograms.toArray(new Program[deletedPrograms.size()]), new ProgramPanelSettings(new PluginPictureSettings(PluginPictureSettings.NO_PICTURE_TYPE),true,true));
+        final Window parent = UiUtilities.getLastModalChildOf(getParentFrame());
 
-        Window parent = UiUtilities.getLastModalChildOf(getParentFrame());
-        JDialog deletedListDialog = new JDialog(parent);
+        try {
+          UIThreadRunner.invokeAndWait(new Runnable() {
+            final JDialog deletedListDialog = new JDialog(parent);
 
-        deletedListDialog.setModal(false);
-        deletedListDialog.getContentPane().setLayout(new FormLayout("default:grow","default,5dlu,fill:default:grow,5dlu,default"));
-        deletedListDialog.setTitle(getInfo().getName() + " - " + mLocalizer.msg("deletedPrograms","Deleted programs"));
-        ((JPanel)deletedListDialog.getContentPane()).setBorder(Borders.DIALOG_BORDER);
+            @Override
+            public void run() {
+              ProgramList deletedProgramList = new ProgramList(deletedPrograms.toArray(new Program[deletedPrograms.size()]), new ProgramPanelSettings(new PluginPictureSettings(PluginPictureSettings.NO_PICTURE_TYPE),true,true));
 
-        CellConstraints cc = new CellConstraints();
+              deletedListDialog.setModal(false);
+              deletedListDialog.getContentPane().setLayout(new FormLayout("default:grow","default,5dlu,fill:default:grow,5dlu,default"));
+              deletedListDialog.setTitle(getInfo().getName() + " - " + mLocalizer.msg("deletedPrograms","Deleted programs"));
+              ((JPanel)deletedListDialog.getContentPane()).setBorder(Borders.DIALOG_BORDER);
 
-        deletedListDialog.getContentPane().add(new JLabel(mLocalizer.msg("deletedProgramsMsg","During the data update the following programs were deleted:")),cc.xy(1,1));
-        deletedListDialog.getContentPane().add(new JScrollPane(deletedProgramList), cc.xy(1,3));
+              CellConstraints cc = new CellConstraints();
 
-        final JDialog dlg = deletedListDialog;
+              deletedListDialog.getContentPane().add(new JLabel(mLocalizer.msg("deletedProgramsMsg","During the data update the following programs were deleted:")),cc.xy(1,1));
+              deletedListDialog.getContentPane().add(new JScrollPane(deletedProgramList), cc.xy(1,3));
 
-        JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_CLOSE));
-        ok.addActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-            dlg.dispose();
-          }
-        });
 
-        deletedListDialog.getContentPane().add(ok, cc.xy(1,5));
+              JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_CLOSE));
+              ok.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                  deletedListDialog.dispose();
+                }
+              });
 
-        UiUtilities.registerForClosing(new WindowClosingIf() {
-          public void close() {
-            dlg.dispose();
-          }
+              deletedListDialog.getContentPane().add(ok, cc.xy(1,5));
 
-          public JRootPane getRootPane() {
-            return dlg.getRootPane();
-          }
-        });
+              UiUtilities.registerForClosing(new WindowClosingIf() {
+                public void close() {
+                  deletedListDialog.dispose();
+                }
 
-        layoutWindow("deletedListDialog", deletedListDialog, new Dimension(400,300));
+                public JRootPane getRootPane() {
+                  return deletedListDialog.getRootPane();
+                }
+              });
 
-        new Thread("simpleMarkerShowDeletedListDlg") {
-          public void run() {
-            while(UiUtilities.containsModalDialogChild(getParentFrame())) {
-              try {
-                Thread.sleep(500);
-              } catch (InterruptedException e) {}
+              layoutWindow("deletedListDialog", deletedListDialog, new Dimension(400,300));
+
+              new Thread("simpleMarkerShowDeletedListDlg") {
+                public void run() {
+                  while(UiUtilities.containsModalDialogChild(getParentFrame())) {
+                    try {
+                      Thread.sleep(500);
+                    } catch (InterruptedException e) {}
+                  }
+
+                  deletedListDialog.setVisible(true);
+                }
+              }.start();
             }
-
-            dlg.setVisible(true);
-          }
-        }.start();
+          });
+        } catch (InterruptedException e1) {
+          // TODO Auto-generated catch block
+          e1.printStackTrace();
+        } catch (InvocationTargetException e1) {
+          // TODO Auto-generated catch block
+          e1.printStackTrace();
+        }
       }
     }
   }

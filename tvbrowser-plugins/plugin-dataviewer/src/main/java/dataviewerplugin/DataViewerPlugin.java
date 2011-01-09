@@ -3,6 +3,7 @@ package dataviewerplugin;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -13,6 +14,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -72,11 +74,13 @@ public final class DataViewerPlugin extends Plugin implements Runnable {
   private JProgressBar mProgress;
   private Date mToday = Date.getCurrentDate();
   private boolean mReactOnDataUpdate = false;
-  private int mMinChannelWidth = 0;
+  private int mMinChannelWidth = 20;
 
   private static final Version mVersion = new Version(1,10);
 
   private static DataViewerPlugin mInstance;
+
+  private Font mTableFont;
 
   /**
    * Creates an instance of this class.
@@ -401,10 +405,25 @@ public final class DataViewerPlugin extends Plugin implements Runnable {
     Channel[] temp = getPluginManager().getSubscribedChannels();
     ArrayList<Channel> ch = new ArrayList<Channel>();
 
+    // get font in UI thread
+    try {
+      SwingUtilities.invokeAndWait(new Runnable() {
+
+        public void run() {
+          mTableFont = new JTable().getFont();
+        }
+      });
+    } catch (InterruptedException e1) {
+      // TODO Auto-generated catch block
+      e1.printStackTrace();
+    } catch (InvocationTargetException e1) {
+      // TODO Auto-generated catch block
+      e1.printStackTrace();
+    }
     for (Channel element : temp) {
       if((element.getCategories() & (Channel.CATEGORY_CINEMA | Channel.CATEGORY_EVENTS)) == 0) {
         ch.add(element);
-        mMinChannelWidth = Math.max(mMinChannelWidth,UiUtilities.getStringWidth(new JTable().getFont(),element.getName()));
+        mMinChannelWidth = Math.max(mMinChannelWidth,UiUtilities.getStringWidth(mTableFont,element.getName()));
       }
     }
 
@@ -541,7 +560,12 @@ public final class DataViewerPlugin extends Plugin implements Runnable {
     if (mProgress != null) {
       mProgress.setIndeterminate(false);
       if (mDialog != null && mDialog.isVisible()) {
-        showTable();
+        SwingUtilities.invokeLater(new Runnable() {
+
+          public void run() {
+            showTable();
+          }
+        });
       }
     }
   }

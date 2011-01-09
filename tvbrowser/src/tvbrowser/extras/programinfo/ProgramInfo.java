@@ -32,6 +32,7 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
 import tvbrowser.core.icontheme.IconLoader;
@@ -41,6 +42,7 @@ import tvbrowser.ui.programtable.ProgramTable;
 import util.exc.ErrorHandler;
 import util.settings.PluginPictureSettings;
 import util.ui.Localizer;
+import util.ui.UIThreadRunner;
 import util.ui.UiUtilities;
 
 import com.l2fprod.common.swing.plaf.LookAndFeelAddons;
@@ -92,7 +94,21 @@ public class ProgramInfo {
   public void handleTvBrowserStartFinished() {
     mInitThread = new Thread("Program Info init thread") {
       public void run() {
-        ProgramInfoDialog.getInstance(Plugin.getPluginManager().getExampleProgram(), mLeftSplit, true);
+        try {
+          UIThreadRunner.invokeAndWait(new Runnable() {
+
+            @Override
+            public void run() {
+              ProgramInfoDialog.getInstance(Plugin.getPluginManager().getExampleProgram(), mLeftSplit, true);
+            }
+          });
+        } catch (InterruptedException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        } catch (InvocationTargetException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
       }
     };
     mInitThread.setPriority(Thread.NORM_PRIORITY);
@@ -106,8 +122,22 @@ public class ProgramInfo {
         "edit-find", 16));
     action.setActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent event) {
-        setLook();
-        showProgramInformation(program, true);
+        try {
+          UIThreadRunner.invokeAndWait(new Runnable() {
+
+            @Override
+            public void run() {
+              setLook();
+              showProgramInformation(program, true);
+            }
+          });
+        } catch (InterruptedException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        } catch (InvocationTargetException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
       }
     });
 

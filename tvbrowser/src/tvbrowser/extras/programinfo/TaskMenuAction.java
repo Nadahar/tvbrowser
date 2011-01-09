@@ -39,6 +39,7 @@ import javax.swing.Icon;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
 
+import util.ui.UIThreadRunner;
 import util.ui.findasyoutype.TextComponentFindAction;
 
 import com.l2fprod.common.swing.JLinkButton;
@@ -51,16 +52,16 @@ import devplugin.Program;
 
 /**
  * A class that holds a ContextMenuAction of a Plugin.
- * 
+ *
  * @author René Mach
- * 
+ *
  */
 public class TaskMenuAction {
 
   private Action mAction;
   private ProgramInfoDialog mInfo;
   private TextComponentFindAction mFind;
-  
+
   /**
    * @param parent
    *          The parent JTaskPaneGroup
@@ -80,7 +81,7 @@ public class TaskMenuAction {
       final TextComponentFindAction comp) {
     mInfo = info;
     mFind = comp;
-    
+
     if(menu.getAction() == null || menu.getAction().getValue(Plugin.DISABLED_ON_TASK_MENU) == null || !((Boolean)menu.getAction().getValue(Plugin.DISABLED_ON_TASK_MENU))) {
       if (!menu.hasSubItems()) {
         addAction(parent, menu);
@@ -126,20 +127,20 @@ public class TaskMenuAction {
 
       public void actionPerformed(final ActionEvent e) {
         a.actionPerformed(e);
-        
+
         if (mAction.getValue(Action.ACTION_COMMAND_KEY) == null
             || !mAction.getValue(Action.ACTION_COMMAND_KEY).equals("action")) {
           mInfo.addPluginActions(true);
         }
       }
     };
-    
+
     mAction.putValue(Action.NAME,"<html>" + a.getValue(Action.NAME)+ "</html>");
     mAction.putValue(Action.ACTION_COMMAND_KEY,a.getValue(Action.ACTION_COMMAND_KEY));
     mAction.putValue(Action.SMALL_ICON,a.getValue(Action.SMALL_ICON));
-    
+
     Component c;
-    
+
     if(ContextMenuSeparatorAction.getInstance().equals(menu.getAction())) {
       parent.add(Box.createRigidArea(new Dimension(0,2)));
       c = parent.add(new JSeparator());
@@ -148,9 +149,9 @@ public class TaskMenuAction {
     else {
       c = parent.add(mAction);
     }
-    
+
     mFind.installKeyListener(c);
-    
+
     if(c instanceof JLinkButton) {
       ((JLinkButton)c).setVerticalTextPosition(SwingConstants.TOP);
       ((JLinkButton)c).setBorder(BorderFactory.createEmptyBorder(1,1,1,1));
@@ -176,7 +177,7 @@ public class TaskMenuAction {
     group.setExpanded(expanded);
     group.setEnabled(true);
     mFind.installKeyListener(group);
-    
+
     /*
      * Listener to get expand state changes and store the state in the
      * Properties for the Plugins menu.
@@ -200,22 +201,21 @@ public class TaskMenuAction {
       }
     }
     else {
-      final Thread thread = new Thread("Lazy task menus") {
+      UIThreadRunner.invokeLater(new Runnable() {
+
         @Override
         public void run() {
           for (ActionMenu subMenu : subs) {
             new TaskMenuAction(group, program, subMenu, info, id, mFind);
           }
         }
-      };
-      thread.setPriority(Thread.MIN_PRIORITY);
-      thread.start();
+      });
     }
     parent.add(Box.createRigidArea(new Dimension(0, 10)));
     parent.add(group);
     parent.add(Box.createRigidArea(new Dimension(0, 5)));
   }
-  
+
   protected void setText(final String value) {
     mAction.putValue(Action.NAME, "<html>" + value + "</html>");
   }

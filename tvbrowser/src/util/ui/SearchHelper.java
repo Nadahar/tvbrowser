@@ -68,7 +68,7 @@ import devplugin.ProgressMonitor;
 
 /**
  * This Class helps to search for a Program.
- * 
+ *
  * It creates a new Thread, searches with a SearchFormSettings and Displays the Result
  * @author bodum
  * @since 2.2
@@ -80,17 +80,17 @@ public class SearchHelper {
   private static SearchHelper mInstance;
 
   private DefaultListModel mListModel;
-  
+
   private ProgressMonitor mProgressMonitor;
-  
+
   private JProgressBar mProgressBar;
-  
+
   private ProgramList mProgramList;
-  
+
   private JDialog mDialog = null;
-  
+
   private JScrollPane mProgramListScrollPane;
-  
+
   /** Private Constructor */
   private SearchHelper() {
     mListModel = null;
@@ -99,7 +99,7 @@ public class SearchHelper {
   /**
    * Search for Programs and Display a Result-Dialog.
    * This function creates a new Thread.
-   * 
+   *
    * @param comp Parent-Component
    * @param settings Settings for the Search.
    * @param pictureSettings Settings for the pictures
@@ -107,11 +107,11 @@ public class SearchHelper {
   public static void search(Component comp, SearchFormSettings settings, ProgramPanelSettings pictureSettings) {
     search(comp,settings,pictureSettings,false);
   }
-  
+
   /**
    * Search for Programs and Display a Result-Dialog.
    * This function creates a new Thread.
-   * 
+   *
    * @param comp Parent-Component
    * @param settings Settings for the Search.
    * @param pictureSettings Settings for the pictures
@@ -126,11 +126,11 @@ public class SearchHelper {
     }
     mInstance.doSearch(comp, settings, pictureSettings, showDialog);
   }
-  
+
   /**
    * Search for Programs and Display a Result-Dialog.
    * This function creates a new Thread.
-   * 
+   *
    * @param comp Parent-Component
    * @param pictureSettings Settings for the pictures
    * @param settings Settings for the Search.
@@ -140,11 +140,11 @@ public class SearchHelper {
   public static void search(Component comp, PluginPictureSettings pictureSettings, SearchFormSettings settings, boolean showDialog) {
     search(comp,settings,new ProgramPanelSettings(pictureSettings,false),showDialog);
   }
-  
+
   /**
    * Search for Programs and Display a Result-Dialog.
    * This function creates a new Thread.
-   * 
+   *
    * @param comp Parent-Component
    * @param pictureSettings Settings for the pictures
    * @param settings Settings for the Search.
@@ -157,7 +157,7 @@ public class SearchHelper {
   /**
    * Search for Programs and Display a Result-Dialog.
    * This function creates a new Thread.
-   * 
+   *
    * @param comp Parent-Component
    * @param settings Settings for the Search.
    */
@@ -175,7 +175,7 @@ public class SearchHelper {
     if(showDialog) {
       mDialog = createHitsDialog(comp, new Program[0], mLocalizer.msg("search","Search"), searcherSettings, pictureSettings);
     }
-    
+
     new Thread(new Runnable() {
       public void run() {
         devplugin.Date startDate = new devplugin.Date();
@@ -189,47 +189,58 @@ public class SearchHelper {
             progressMonitor = MainFrame.getInstance().getStatusBar().createProgressMonitor();
             progressMonitor.setMessage(mLocalizer.msg("searching","Searching"));
           }
-          
+
           Program[] programArr = searcher.search(searcherSettings.getFieldTypes(), startDate, searcherSettings
               .getNrDays(), searcherSettings.getChannels(), true, mProgressMonitor != null ? mProgressMonitor : progressMonitor, mListModel);
 
           comp.setCursor(cursor);
           if (programArr.length == 0) {
-            String msg = mLocalizer
-                .msg("nothingFound", "No programs found with {0}!", searcherSettings.getSearchText());
-            JOptionPane.showMessageDialog(MainFrame.getInstance(), msg);
-            
-            if(mDialog != null) {
-              mDialog.setVisible(false);
-              mDialog = null;
-            }
+            UIThreadRunner.invokeLater(new Runnable() {
+
+              @Override
+              public void run() {
+                String msg = mLocalizer.msg("nothingFound", "No programs found with {0}!",
+                    searcherSettings.getSearchText());
+                JOptionPane.showMessageDialog(MainFrame.getInstance(), msg);
+
+                if (mDialog != null) {
+                  mDialog.setVisible(false);
+                  mDialog = null;
+                }
+              }
+            });
           } else {
             if(!showDialog) {
               String title = mLocalizer.msg("hitsTitle", "Programs with {0}", searcherSettings.getSearchText());
-              
+
               UiUtilities.centerAndShow(createHitsDialog(comp, programArr, title, searcherSettings, pictureSettings));
               mDialog = null;
             }
             else if(mProgressBar != null) {
               mProgressBar.setVisible(false);
-              mProgramList.updateUI();
-              
+              UIThreadRunner.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                  mProgramList.updateUI();
+                }
+              });
+
               if(mProgramList.getSelectedIndex() == -1 && mProgramListScrollPane.getVerticalScrollBar().getValue() == 0) {
                 for(int i = 0; i < mProgramList.getModel().getSize(); i++) {
                   Object value = mProgramList.getModel().getElementAt(i);
-                  
+
                   if(value instanceof Program && !((Program)value).isExpired()) {
                     final int scrollIndex = i;
-                    
+
                     SwingUtilities.invokeLater(new Runnable() {
                       public void run() {
                         mProgramListScrollPane.getVerticalScrollBar().setValue(0);
                         mProgramListScrollPane.getHorizontalScrollBar().setValue(0);
-                        
+
                         if(scrollIndex != -1) {
                           Rectangle cellBounds = mProgramList.getCellBounds(scrollIndex,scrollIndex);
                           cellBounds.setLocation(cellBounds.x, cellBounds.y - mProgramListScrollPane.getBorder().getBorderInsets(mProgramListScrollPane).top - mProgramListScrollPane.getInsets().top + mProgramListScrollPane.getHeight() - cellBounds.height);
-                          
+
                           mProgramList.scrollRectToVisible(cellBounds);
                         }
                       }
@@ -247,7 +258,7 @@ public class SearchHelper {
         }
       }
     }, "Search programs").start();
-    
+
     if(mDialog != null) {
       UiUtilities.centerAndShow(mDialog);
       mDialog = null;
@@ -256,7 +267,7 @@ public class SearchHelper {
 
   /**
    * Shows a dialog containing the hits of the search.
-   * 
+   *
    * @param comp Parent Component
    * @param programArr The hits.
    * @param title The dialog's title.
@@ -265,9 +276,9 @@ public class SearchHelper {
    */
   private JDialog createHitsDialog(Component comp, final Program[] programArr, String title, final SearchFormSettings searchSettings, ProgramPanelSettings pictureSettings) {
     final JDialog dlg;
-    
+
     final Window parentWindow = UiUtilities.getBestDialogParent(comp);
-    
+
     if (parentWindow instanceof Frame) {
       dlg = new JDialog((Frame)parentWindow, title, true);
     } else {
@@ -303,38 +314,48 @@ public class SearchHelper {
     }
 
     mListModel = new DefaultListModel();
-    
+
     for (Program program : programArr) {
       mListModel.addElement(program);
     }
-    
+
     if (programArr.length == 0) {
       mProgressBar = new JProgressBar();
-      
+
       mProgressMonitor = new ProgressMonitor() {
 
-        public void setMaximum(int maximum) {
-          mProgressBar.setMaximum(maximum);
+        public void setMaximum(final int maximum) {
+          UIThreadRunner.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+              mProgressBar.setMaximum(maximum);
+            }
+          });
         }
 
         public void setMessage(String msg) {
-          
+
         }
 
-        public void setValue(int value) {
-          mProgressBar.setValue(value);
+        public void setValue(final int value) {
+          UIThreadRunner.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+              mProgressBar.setValue(value);
+            }
+          });
         }
       };
-      
+
       main.add(mProgressBar, BorderLayout.NORTH);
     }
-    
+
     mProgramList = new ProgramList(mListModel, pictureSettings);
-    
+
     mProgramList.addMouseListeners(null);
 
     mProgramListScrollPane = new JScrollPane(mProgramList);
-    
+
     main.add(mProgramListScrollPane, BorderLayout.CENTER);
     if (curPos >= 0) {
       mProgramList.setSelectedValue(programArr[curPos], true);
@@ -365,7 +386,7 @@ public class SearchHelper {
       }
     });
     builder.addFixed(sendBt);
-    
+
     mListModel.addListDataListener(new ListDataListener() {
 
       public void contentsChanged(ListDataEvent e) {
@@ -405,15 +426,15 @@ public class SearchHelper {
         dlg.dispose();
       }
     });
-    
+
     builder.addGlue();
     builder.addFixed(closeBt);
     main.add(builder.getPanel(), BorderLayout.SOUTH);
 
     dlg.getRootPane().setDefaultButton(closeBt);
-    
+
     Settings.layoutWindow("searchDlg", dlg, new Dimension(400, 400));
-    
+
     return dlg;
   }
 

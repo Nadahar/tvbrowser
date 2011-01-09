@@ -35,6 +35,7 @@ import java.awt.event.ComponentEvent;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -90,6 +91,7 @@ import util.ui.Localizer;
 import util.ui.NullProgressMonitor;
 import util.ui.ScrollableJPanel;
 import util.ui.TVBrowserIcons;
+import util.ui.UIThreadRunner;
 import util.ui.UiUtilities;
 import devplugin.ActionMenu;
 import devplugin.ButtonAction;
@@ -1200,7 +1202,21 @@ public class FavoritesPlugin {
 
     protected void showDialog() {
       synchronized (mFavorites) {
-        showManageFavoritesDialog(true, mFavorites, null);
+        try {
+          UIThreadRunner.invokeAndWait(new Runnable() {
+
+            @Override
+            public void run() {
+              showManageFavoritesDialog(true, mFavorites, null);
+            }
+          });
+        } catch (InterruptedException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        } catch (InvocationTargetException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
       }
     }
   }
