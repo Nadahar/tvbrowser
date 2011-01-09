@@ -53,8 +53,10 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -165,11 +167,27 @@ public class UiUtilities {
    *          Should the new dialog be modal?
    * @return A new JDialog.
    */
-  public static JDialog createDialog(Component parent, boolean modal) {
-    Window parentWin = getBestDialogParent(parent);
-    final JDialog result = new JDialog(parentWin);
-    result.setModal(modal);
-    return result;
+  public static JDialog createDialog(Component parent, final boolean modal) {
+    final AtomicReference<JDialog> result = new AtomicReference<JDialog>();
+    final Window parentWin = getBestDialogParent(parent);
+    try {
+      UIThreadRunner.invokeAndWait(new Runnable() {
+
+        @Override
+        public void run() {
+          JDialog dialog = new JDialog(parentWin);
+          dialog.setModal(modal);
+          result.set(dialog);
+        }
+      });
+    } catch (InterruptedException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } catch (InvocationTargetException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    return result.get();
   }
 
   /**
@@ -963,7 +981,7 @@ public class UiUtilities {
     }
     dialog.setSize(size);
   }
-  
+
 	public static void addSeparatorsAfterIndexes(final JComboBox combo,
 			int[] indexes) {
 		combo.setRenderer(new ComboSeparatorsRenderer(combo.getRenderer(), indexes));

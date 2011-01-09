@@ -68,6 +68,7 @@ import tvbrowser.ui.mainframe.actions.TVBrowserAction;
 import tvbrowser.ui.mainframe.actions.TVBrowserActions;
 import util.ui.Localizer;
 import util.ui.ScrollableMenu;
+import util.ui.UIThreadRunner;
 import util.ui.UiUtilities;
 import devplugin.ActionMenu;
 import devplugin.Channel;
@@ -766,10 +767,16 @@ public class DefaultToolBarModel implements ToolBarModel, DateListener {
     return item;
   }
 
-  public void dateChanged(Date date, ProgressMonitor monitor, Runnable callback) {
-    mGoToPreviousDayAction.setEnabled(TvDataBase.getInstance().dataAvailable(date.addDays(-1)));
-    mGoToNextDayAction.setEnabled(TvDataBase.getInstance().dataAvailable(date.addDays(1)));
-    mGoToPreviousWeekAction.setEnabled(TvDataBase.getInstance().dataAvailable(date.addDays(-7)));
-    mGoToNextWeekAction.setEnabled(TvDataBase.getInstance().dataAvailable(date.addDays(7)));
+  public void dateChanged(final Date date, ProgressMonitor monitor, Runnable callback) {
+    UIThreadRunner.invokeLater(new Runnable() {
+
+      @Override
+      public void run() {
+        mGoToPreviousDayAction.setEnabled(TvDataBase.getInstance().dataAvailable(date.addDays(-1)));
+        mGoToNextDayAction.setEnabled(TvDataBase.getInstance().dataAvailable(date.addDays(1)));
+        mGoToPreviousWeekAction.setEnabled(TvDataBase.getInstance().dataAvailable(date.addDays(-7)));
+        mGoToNextWeekAction.setEnabled(TvDataBase.getInstance().dataAvailable(date.addDays(7)));
+      }
+    });
   }
 }

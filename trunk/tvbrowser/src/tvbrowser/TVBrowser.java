@@ -48,6 +48,7 @@ import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
+import java.util.Map;
 import java.util.TimeZone;
 import java.util.logging.Formatter;
 import java.util.logging.Handler;
@@ -67,6 +68,8 @@ import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 
 import org.apache.commons.lang.StringUtils;
+import org.pushingpixels.substance.api.SubstanceLookAndFeel;
+import org.pushingpixels.substance.api.skin.SkinInfo;
 
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.PluginLoader;
@@ -1127,15 +1130,18 @@ public class TVBrowser {
       UIManager.installLookAndFeel("Plastic 3D",        "com.jgoodies.looks.plastic.Plastic3DLookAndFeel");
       UIManager.installLookAndFeel("Plastic XP",        "com.jgoodies.looks.plastic.PlasticXPLookAndFeel");
       UIManager.installLookAndFeel("Skin",              "com.l2fprod.gui.plaf.skin.SkinLookAndFeel");
-/*
-      Map<String, SkinInfo> substanceSkins = SubstanceLookAndFeel.getAllSkins();
-      if (substanceSkins != null) {
-        for (SkinInfo skin : substanceSkins.values()) {
-          String className = skin.getClassName();
-          UIManager.installLookAndFeel("Substance " + skin.getDisplayName(), StringUtils.replace(StringUtils.replace(className, "Skin", "LookAndFeel"), "skin.", "skin.Substance"));
+
+      String classPath = System.getProperty("java.class.path","");
+      if (StringUtils.containsIgnoreCase(classPath, "eclipse")) {
+        Map<String, SkinInfo> substanceSkins = SubstanceLookAndFeel.getAllSkins();
+        if (substanceSkins != null) {
+          for (SkinInfo skin : substanceSkins.values()) {
+            String className = skin.getClassName();
+            UIManager.installLookAndFeel("Substance " + skin.getDisplayName(),
+                StringUtils.replace(StringUtils.replace(className, "Skin", "LookAndFeel"), "skin.", "skin.Substance"));
+          }
         }
       }
-*/
     } catch (Exception e1) {
       // ignore any exception for optional skins
       e1.printStackTrace();

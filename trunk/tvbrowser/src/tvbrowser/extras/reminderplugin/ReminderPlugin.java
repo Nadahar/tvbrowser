@@ -39,6 +39,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -72,6 +73,7 @@ import util.io.stream.ObjectOutputStreamProcessor;
 import util.io.stream.StreamUtilities;
 import util.ui.Localizer;
 import util.ui.TVBrowserIcons;
+import util.ui.UIThreadRunner;
 import util.ui.UiUtilities;
 import devplugin.ActionMenu;
 import devplugin.ContextMenuAction;
@@ -524,24 +526,38 @@ public class ReminderPlugin {
           "appointment-new", 16));
       action.setActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent event) {
-          Window w = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
-          ReminderDialog dlg = new ReminderDialog(w, program, mSettings);
-          Settings.layoutWindow("extras.remiderContext", dlg);
+          final Window w = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
+          try {
+            UIThreadRunner.invokeAndWait(new Runnable() {
 
-          if(mSettings.getProperty("showTimeSelectionDialog","true").compareTo("true") == 0) {
-            UiUtilities.centerAndShow(dlg);
+              @Override
+              public void run() {
+                ReminderDialog dlg = new ReminderDialog(w, program, mSettings);
+                Settings.layoutWindow("extras.remiderContext", dlg);
 
-            if (dlg.getOkPressed()) {
-              mReminderList.add(program, dlg.getReminderContent());
-              mReminderList.unblockProgram(program);
-              updateRootNode(true);
-            }
-            dlg.dispose();
-          }
-          else {
-            mReminderList.add(program, dlg.getReminderContent());
-            mReminderList.unblockProgram(program);
-            updateRootNode(true);
+                if(mSettings.getProperty("showTimeSelectionDialog","true").compareTo("true") == 0) {
+                  UiUtilities.centerAndShow(dlg);
+
+                  if (dlg.getOkPressed()) {
+                    mReminderList.add(program, dlg.getReminderContent());
+                    mReminderList.unblockProgram(program);
+                    updateRootNode(true);
+                  }
+                  dlg.dispose();
+                }
+                else {
+                  mReminderList.add(program, dlg.getReminderContent());
+                  mReminderList.unblockProgram(program);
+                  updateRootNode(true);
+                }
+              }
+            });
+          } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+          } catch (InvocationTargetException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
           }
         }
       });

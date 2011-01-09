@@ -25,12 +25,15 @@
  */
 package util.exc;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.Icon;
 import javax.swing.JFrame;
 import javax.swing.UIManager;
+
+import util.ui.UIThreadRunner;
 
 
 /**
@@ -42,7 +45,7 @@ import javax.swing.UIManager;
  * @author  Til Schneider, www.murfman.de
  */
 public class ErrorHandler {
-  
+
   /** Show only a OK-Button */
   public static final int SHOW_OK = 0;
 
@@ -57,7 +60,7 @@ public class ErrorHandler {
 
   /** No was pressed */
   public static final int NO_PRESSED = 3;
-  
+
   /** The logger for this class. */
   private static final Logger mLog
     = Logger.getLogger(ErrorHandler.class.getName());
@@ -68,11 +71,11 @@ public class ErrorHandler {
 
   /** The icon to use for error messages. */
   static final Icon ERROR_ICON = UIManager.getIcon("OptionPane.errorIcon");
-  
+
   /** The parent frame to use for error messages. */
   static JFrame mParent;
-  
-  
+
+
 
   /**
    * Sets the parent frame to use for error messages.
@@ -82,9 +85,9 @@ public class ErrorHandler {
   public static void setFrame(JFrame parentFrame) {
     mParent = parentFrame;
   }
-  
-  
-  
+
+
+
   /**
    * Handles a TvBrowserException (Shows and logs it).
    *
@@ -93,21 +96,35 @@ public class ErrorHandler {
   public static void handle(TvBrowserException tvExc) {
     handle(tvExc.getLocalizedMessage(), tvExc);
   }
-  
-  
-  
+
+
+
   /**
    * Handles a Throwable (Shows and logs it).
    *
    * @param msg The localized error message to show to the user.
-   * @param thr The exception to handle.
+   * @param throwable The exception to handle.
    */
-  public static void handle(String msg, Throwable thr) {
-    mLog.log(Level.SEVERE, msg, thr);
-    
-    new ErrorWindow(mParent, msg, thr).centerAndShow();
+  public static void handle(final String msg, final Throwable throwable) {
+    mLog.log(Level.SEVERE, msg, throwable);
+    try {
+      UIThreadRunner.invokeAndWait(new Runnable() {
+
+        @Override
+        public void run() {
+          ErrorWindow errorWindow = new ErrorWindow(mParent, msg, throwable);
+          errorWindow.centerAndShow();
+        }
+      });
+    } catch (InterruptedException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } catch (InvocationTargetException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
   }
-  
+
 
   /**
    * Handles a Throwable (Shows and logs it).
@@ -116,15 +133,15 @@ public class ErrorHandler {
    * @param thr The exception to handle.
    * @param messageType The type of Window to Display:OK
    * @return Value of Button that was pressed: ErrorHandler.YES_PRESSED, ErrorHandler.NO_PRESSED, ErrorHandler.OK_PRESSED
-   * 
+   *
    * @since 2.1
    */
   public static int handle(String msg, Throwable thr, int messageType) {
     mLog.log(Level.SEVERE, msg, thr);
-    
+
     ErrorWindow errwin = new ErrorWindow(mParent, msg, thr, messageType);
     errwin.centerAndShow();
     return errwin.getReturnValue();
   }
-  
+
 }
