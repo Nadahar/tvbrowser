@@ -33,9 +33,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.TimeZone;
-import java.util.Map.Entry;
 import java.util.logging.Logger;
 
 import net.sf.xtvdclient.xtvd.DataDirectException;
@@ -310,7 +310,9 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
                 }
                 else {
                   appendPersonWithRole(additional, member);
-                  mLog.warning("Unknown crew member role: " + role);
+                  if (!role.equalsIgnoreCase("judge")) {
+                    mLog.warning("Unknown crew member role: " + role);
+                  }
                 }
               }
               if (actors.length() > 0) {
