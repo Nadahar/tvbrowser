@@ -1,21 +1,21 @@
 /*
  * TV-Browser Copyright (C) 04-2003 Martin Oberhauser
  * (darras@users.sourceforge.net)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  * Place - Suite 330, Boston, MA 02111-1307, USA.
- * 
+ *
  * CVS information: $RCSfile$ $Source:
  * /cvsroot/tvbrowser/tvbrowser/src/tvbrowser/core/filters/filtercomponents/TimeFilterComponent.java,v $
  * $Date$ $Author$ $Revision$
@@ -46,7 +46,7 @@ import devplugin.ProgramSearcher;
 
 /**
  * This FilterComponent allows Filtering of large Search-Array
- * 
+ *
  * @author bodum
  */
 public class MassFilterComponent extends AbstractFilterComponent {
@@ -74,7 +74,7 @@ public class MassFilterComponent extends AbstractFilterComponent {
 
   /**
    * Create the Filter
-   * 
+   *
    * @param name
    * @param description
    */
@@ -91,15 +91,15 @@ public class MassFilterComponent extends AbstractFilterComponent {
     if (mSearcher == null) {
       ArrayList<ProgramSearcher> list = new ArrayList<ProgramSearcher>();
       String[] keys = mText.split("\\n");
-  
+
       for (String key : keys) {
         try {
-          list.add(mSearchFormSettings.createSearcher(key));
+          list.add(mSearchFormSettings.createSearcher(key.trim()));
         } catch (TvBrowserException ex) {
           ex.printStackTrace();
         }
       }
-  
+
       mSearcher = list.toArray(new ProgramSearcher[list.size()]);
     }
     return mSearcher;
