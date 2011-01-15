@@ -18,7 +18,6 @@ package freetuxtvplugin;
 
 import java.awt.event.ActionEvent;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
@@ -43,7 +42,7 @@ import devplugin.Version;
 public final class FreetuxTVPlugin extends Plugin {
   private static final boolean IS_STABLE = false;
 
-  private static final Version mVersion = new Version(2, 70, 0, IS_STABLE);
+  private static final Version mVersion = new Version(2, 70, 1, IS_STABLE);
 
   private static final String TARGET = "FREETUXTV_TARGET";
 
@@ -150,10 +149,8 @@ public final class FreetuxTVPlugin extends Plugin {
     if (!freetuxtvAvailable()) {
       return;
     }
-    ArrayList<String> command = new ArrayList<String>();
-    command.add(COMMAND);
-    command.add("--open-channel \"" + channel.getName() + "\"");
-    final ExecutionHandler executer = new ExecutionHandler(command.toArray(new String[command.size()]));
+    String params = "--open-channel " + channel.getName();
+    final ExecutionHandler executer = new ExecutionHandler(params, COMMAND);
     try {
       executer.execute();
     } catch (IOException e) {
