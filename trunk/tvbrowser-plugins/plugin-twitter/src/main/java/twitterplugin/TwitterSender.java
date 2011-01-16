@@ -3,12 +3,12 @@
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -20,6 +20,7 @@ import javax.swing.JOptionPane;
 
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
+import twitter4j.TwitterFactory;
 import twitter4j.http.AccessToken;
 import util.exc.ErrorHandler;
 import util.io.IOUtilities;
@@ -48,18 +49,18 @@ public class TwitterSender {
         }
       }
       final Twitter twitter;
+      TwitterFactory factory = new TwitterFactory();
       if (settings.getUseOAuth()) {
-        twitter = new Twitter();
+        twitter = factory.getInstance();
         twitter.setOAuthConsumer(settings.getConsumerKey(), settings.getConsumerSecret());
         AccessToken accessToken = settings.getAccessToken();
         twitter.setOAuthAccessToken(accessToken);
       } else {
         String username = settings.getUsername();
         String password = IOUtilities.xorDecode(settings.getPassword(), 54673578);
-        twitter = new Twitter(username, password);
+        twitter = factory.getInstance(username, password);
       }
       try {
-        twitter.setSource("tvbrowserorg");
         twitter.updateStatus(dialog.getMessage());
         JOptionPane.showMessageDialog(parentWindow, mLocalizer.msg("tweetSend", "The tweet was sent."));
       } catch (TwitterException e) {

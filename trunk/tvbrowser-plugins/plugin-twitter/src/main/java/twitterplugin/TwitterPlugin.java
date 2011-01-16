@@ -3,12 +3,12 @@
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -35,9 +35,9 @@ import devplugin.SettingsTab;
 import devplugin.Version;
 
 public final class TwitterPlugin extends Plugin {
-  private static final boolean PLUGIN_IS_STABLE = false;
-	private static final Version PLUGIN_VERSION = new Version(0, 5, 1, PLUGIN_IS_STABLE);
-	
+  private static final boolean PLUGIN_IS_STABLE = true;
+	private static final Version PLUGIN_VERSION = new Version(1, 0, 0, PLUGIN_IS_STABLE);
+
 	private static final Localizer mLocalizer = Localizer.getLocalizerFor(TwitterPlugin.class);
   private static final String TWITTER_TARGET = "TWITTER_TARGET";
   /**
@@ -104,12 +104,12 @@ public final class TwitterPlugin extends Plugin {
   public static TwitterPlugin getInstance() {
     return mInstance;
   }
-  
+
   @Override
   public boolean canReceiveProgramsWithTarget() {
     return true;
   }
-  
+
   @Override
   public ProgramReceiveTarget[] getProgramReceiveTargets() {
     return new ProgramReceiveTarget[] {getTwitterTarget()};
@@ -118,7 +118,7 @@ public final class TwitterPlugin extends Plugin {
   private ProgramReceiveTarget getTwitterTarget() {
     return new ProgramReceiveTarget(this, mLocalizer.msg("targetTwitter", "Twitter"), TWITTER_TARGET);
   }
-  
+
   @Override
   public boolean receivePrograms(final Program[] programArr, final ProgramReceiveTarget receiveTarget) {
     // if lots of programs are sent, this would lead to showing many dialogs and sending many tweets, so set an upper limit
