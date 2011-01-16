@@ -70,7 +70,7 @@ public abstract class Favorite {
   private HashMap<String,Integer> mRemovedPrograms;
   private ArrayList<Program> mRemovedBlacklistPrograms;
   private boolean mNewProgramsWasRequested;
-  
+
   /**
    * unsorted list of blacklisted (non-favorite) programs
    */
@@ -86,7 +86,7 @@ public abstract class Favorite {
     mExclusionList = null; // defer initialisation until needed, save memory
     mBlackList = null; // defer initialization until needed
     mNewProgramsWasRequested = false;
-    
+
     mForwardPluginArr = new ProgramReceiveTarget[0];
     handleNewGlobalReceiveTargets(new ProgramReceiveTarget[0]);
   }
@@ -255,13 +255,13 @@ public abstract class Favorite {
 
   public Program[] getNewPrograms() {
     mNewProgramsWasRequested = true;
-    
+
     for(int i = mNewPrograms.size()-1; i >= 0; i--) {
       Program test = mNewPrograms.get(i);
-      
+
       if(test != null) {
         Program newProg = Plugin.getPluginManager().getProgram(mNewPrograms.get(i).getUniqueID());
-        
+
         if(newProg != null && newProg.getProgramState() == Program.IS_VALID_STATE) {
           mNewPrograms.set(i,newProg);
         }
@@ -273,7 +273,7 @@ public abstract class Favorite {
         mNewPrograms.remove(i);
       }
     }
-    
+
     Program[] programs = mNewPrograms.toArray(new Program[mNewPrograms.size()]);
     if (programs.length > 0) {
       Arrays.sort(programs, ProgramUtilities.getProgramComparator());
@@ -295,7 +295,7 @@ public abstract class Favorite {
    * @param out the stream to write to
    * @throws IOException if something went wrong writing to the stream
    */
-  public void writeData(final ObjectOutputStream out) throws IOException {
+  public synchronized void writeData(final ObjectOutputStream out) throws IOException {
     out.writeInt(4);  // version
     out.writeObject(mName);
     mReminderConfiguration.store(out);
