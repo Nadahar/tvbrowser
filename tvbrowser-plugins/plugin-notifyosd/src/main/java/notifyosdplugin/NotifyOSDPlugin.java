@@ -43,8 +43,8 @@ import devplugin.Version;
 
 public class NotifyOSDPlugin extends Plugin {
   private static final String COMMAND_NOTIFY_SEND = "notify-send";
-  private static final boolean IS_STABLE = false;
-  private static final Version mVersion = new Version(2, 70, 0, IS_STABLE);
+  private static final boolean IS_STABLE = true;
+  private static final Version mVersion = new Version(2, 70, 1, IS_STABLE);
 
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(NotifyOSDPlugin.class);
 
