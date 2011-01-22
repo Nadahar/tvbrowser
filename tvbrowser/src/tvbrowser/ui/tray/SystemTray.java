@@ -496,24 +496,21 @@ public class SystemTray {
    * @return The filled menu menu.
    */
   private JComponent addToImportantMenu(JComponent menu, ArrayList<ProgramMenuItem> normalProgramItems) {
-    Program[] marked = MarkedProgramsList.getInstance().getTimeSortedProgramsForTray(
-        MainFrame.getInstance().getProgramFilter(), Settings.propTrayImportantProgramsPriority.getInt(),
-        Settings.propTrayImportantProgramsSize.getInt(), true, true);
-
     ArrayList<Program> normalPrograms = new ArrayList<Program>(normalProgramItems.size());
     for (ProgramMenuItem programMenuItem : normalProgramItems) {
       normalPrograms.add(programMenuItem.getProgram());
     }
 
-    ArrayList<Program> importantPrograms = new ArrayList<Program>(Arrays.asList(marked));
-    importantPrograms.removeAll(normalPrograms);
+    Program[] importantPrograms = MarkedProgramsList.getInstance().getTimeSortedProgramsForTray(
+        MainFrame.getInstance().getProgramFilter(), Settings.propTrayImportantProgramsPriority.getInt(),
+        Settings.propTrayImportantProgramsSize.getInt(), true, true, normalPrograms);
 
     int index = 0;
     for (Program program : importantPrograms) {
       menu.add(new ProgramMenuItem(program, ProgramMenuItem.IMPORTANT_TYPE, -1, index++));
     }
 
-    if (importantPrograms.isEmpty()) {
+    if (importantPrograms.length == 0) {
       JMenuItem item = new JMenuItem(mLocalizer.msg("menu.noImportantPrograms", "No important programs found."));
 
       item.setEnabled(false);

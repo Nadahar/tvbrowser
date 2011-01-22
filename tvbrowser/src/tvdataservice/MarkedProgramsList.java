@@ -167,18 +167,19 @@ public class MarkedProgramsList {
    * @return The time sorted programs for the tray.
    */
   public Program[] getTimeSortedProgramsForTray(ProgramFilter filter, int markPriority, int numberOfPrograms, boolean includeOnAirPrograms) {
-    return getTimeSortedProgramsForTray(filter, markPriority, numberOfPrograms, includeOnAirPrograms, false);
+    return getTimeSortedProgramsForTray(filter, markPriority, numberOfPrograms, includeOnAirPrograms, false, null);
   }
-  
+
   /**
    * @param filter The filter to use for program filtering
    * @param markPriority The minimum mark priority of programs to find.
    * @param numberOfPrograms The number of programs to show. Use a value of 0 or below for all important programs.
    * @param includeOnAirPrograms If the marked programs array should contain running programs.If the tray filter settings should be used for filtering.
    * @param useTrayFilterSettings If the tray filter settings should be used for filtering.
+   * @param excludePrograms
    * @return The time sorted programs for the tray.
    */
-  public Program[] getTimeSortedProgramsForTray(ProgramFilter filter, int markPriority, int numberOfPrograms, boolean includeOnAirPrograms, boolean useTrayFilterSettings) {
+  public Program[] getTimeSortedProgramsForTray(ProgramFilter filter, int markPriority, int numberOfPrograms, boolean includeOnAirPrograms, boolean useTrayFilterSettings, ArrayList<Program> excludePrograms) {
 
     synchronized(mMarkedPrograms) {
       List<Program> programs = new ArrayList<Program>();
@@ -187,15 +188,19 @@ public class MarkedProgramsList {
       while (it.hasNext()) {
         MutableProgram p = it.next();
         boolean dontAccept = !filter.accept(p);
-        
+
         if(dontAccept && useTrayFilterSettings) {
           dontAccept = !(Settings.propTrayFilterNot.getBoolean() || (Settings.propTrayFilterNotMarked.getBoolean() && p.getMarkerArr().length > 0));
         }
-        
+
         if((p.isOnAir() && !includeOnAirPrograms) || p.isExpired() || dontAccept || p.getMarkPriority() < markPriority) {
           continue;
         }
         programs.add(p);
+      }
+
+      if (excludePrograms != null) {
+        programs.removeAll(excludePrograms);
       }
 
       Collections.sort(programs, ProgramUtilities.getProgramComparator());
