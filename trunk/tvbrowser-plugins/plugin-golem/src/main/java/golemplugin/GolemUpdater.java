@@ -99,7 +99,7 @@ public class GolemUpdater {
         String summary = event.getSummary().getValue();
         String[] desc = event.getDescription().getValue().split("\n");
 
-        if (desc.length > 2) {
+        if (desc.length >= 2) {
           Date date = new Date(start);
           String chname = desc[1].trim();
           Channel ch = findChannel(channels, chname);
