@@ -253,6 +253,8 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
 
   private Timer mTimer;
 
+  private UserAwayDetector mAwayDetector = new UserAwayDetector();
+
   private MainFrame() {
     super(TVBrowser.MAINWINDOW_TITLE);
     mIsVisible = false;
@@ -1241,6 +1243,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
   }
 
   private void handleTimerEvent() {
+    checkAutomaticGotoNow();
     Date date = Date.getCurrentDate();
 
     if(mLastTimerMinutesAfterMidnight == -1) {
@@ -1388,6 +1391,12 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     }
     if (mPluginView != null) {
       mPluginView.update();
+    }
+  }
+
+  private void checkAutomaticGotoNow() {
+    if (mAwayDetector.isAway()) {
+      scrollToNow();
     }
   }
 
