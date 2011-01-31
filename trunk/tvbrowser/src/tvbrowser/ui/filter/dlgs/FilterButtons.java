@@ -87,6 +87,23 @@ public class FilterButtons implements ActionListener {
         
         JMenuItem[] result = new JMenuItem[size];
         
+        mCreateFilterMI = new JMenuItem(mLocalizer.ellipsisMsg("createFilter", "Create filter"));
+        mCreateFilterMI.addActionListener(this);
+        
+        int count = 2;
+
+        if ((curFilter != null) && !(curFilter instanceof ShowAllFilter)){
+            mSendFilterMI = new JMenuItem(mLocalizer.msg("sendPrograms", "Send visible Programs to another Plugin"));
+            mSendFilterMI.addActionListener(this);
+            result[1] = mSendFilterMI;
+            result[2] = null;
+            count++;
+        }
+        else {
+          result[1] = null;
+        }
+        
+        result[0] = mCreateFilterMI;
         
         for (int i = 0; i < filterArr.length; i++) {
           
@@ -94,14 +111,14 @@ public class FilterButtons implements ActionListener {
               final ProgramFilter filter = filterArr[i];
               
               if (filter instanceof SeparatorFilter) {
-                result[i] = null;
+                result[i+count] = null;
               } else {
                 final JRadioButtonMenuItem item = new JRadioButtonMenuItem(filter.toString());
                 
-                result[i] = item;
+                result[i+count] = item;
                 
                 group.add(item);
-                result[i].addActionListener(new ActionListener() {
+                result[i+count].addActionListener(new ActionListener() {
 
                     public void actionPerformed(ActionEvent event) {
                         mMainFrame.setProgramFilter(filter);
@@ -111,9 +128,9 @@ public class FilterButtons implements ActionListener {
 
                 if (curFilter != null
               && (curFilter.getName().equals(filter.getName()))) {
-                    result[i].setSelected(true);
+                    result[i+count].setSelected(true);
                 } else if ((curFilter == null) && (filter instanceof ShowAllFilter)) {
-                    result[i].setSelected(true);
+                    result[i+count].setSelected(true);
                 }
                 
                 String id = filter.getClass().getName();
@@ -121,27 +138,14 @@ public class FilterButtons implements ActionListener {
                 
                 if((Settings.propDefaultFilter.getString().equals(id + "###" + name)) ||
                     (Settings.propDefaultFilter.getString().trim().length() < 1 && filter instanceof ShowAllFilter)) {
-                  result[i].setFont(result[i].getFont().deriveFont(Font.BOLD));
+                  result[i+count].setFont(result[i+count].getFont().deriveFont(Font.BOLD));
                 }
               }
               
             } else {
-              result[i] = null;
+              result[i+count] = null;
             }
         }
-
-        mCreateFilterMI = new JMenuItem(mLocalizer.ellipsisMsg("createFilter", "Create filter"));
-        mCreateFilterMI.addActionListener(this);
-
-        result[filterArr.length] = null;
-
-        if ((curFilter != null) && !(curFilter instanceof ShowAllFilter)){
-            mSendFilterMI = new JMenuItem(mLocalizer.msg("sendPrograms", "Send visible Programs to another Plugin"));
-            mSendFilterMI.addActionListener(this);
-            result[filterArr.length + 1] = mSendFilterMI;
-        }
-        
-        result[size - 1] = mCreateFilterMI;
         
         return result;
     }
