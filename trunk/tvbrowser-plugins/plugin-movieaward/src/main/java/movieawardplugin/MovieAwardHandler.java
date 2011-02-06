@@ -40,7 +40,7 @@ public class MovieAwardHandler extends DefaultHandler {
 
   private static final String MOVIES = "movies";
 
-  private static final String AWARD_DATA = "awarddata";
+  protected static final String AWARD_DATA = "awarddata";
 
   private static final String PROVIDED_BY = "provided_by";
 
@@ -48,13 +48,13 @@ public class MovieAwardHandler extends DefaultHandler {
 
   private static final String ORIGINAL = "original";
 
-  private static final String NAME = "name";
+  protected static final String NAME = "name";
 
   private static final String TITLE = "title";
 
-  private static final String LANGUAGE = "lang";
+  protected static final String LANGUAGE = "lang";
 
-  private static final String URL = "url";
+  protected static final String URL = "url";
 
   private static final String AWARD = "award";
 
@@ -79,8 +79,8 @@ public class MovieAwardHandler extends DefaultHandler {
   /**
    * Holds the text of the current tag.
    */
-  private StringBuilder mText;
-  private Properties mAttributes;
+  protected StringBuilder mText;
+  protected Properties mAttributes;
 
   /**
    * Name of the Parent-Node

@@ -16,6 +16,7 @@
  */
 package movieawardplugin;
 
+import java.util.ArrayList;
 import java.util.Properties;
 
 public class MovieAwardSettings {
@@ -77,4 +78,24 @@ public class MovieAwardSettings {
   public Properties storeSettings() {
     return mProperties;
   }
+
+	public boolean isAwardEnabled(final String awardName) {
+		return !Boolean.valueOf(mProperties.getProperty("disable"+awardName, Boolean.FALSE.toString()));
+	}
+
+	public void enableAward(final String awardName, Boolean enable) {
+		mProperties.setProperty("disable"+awardName, String.valueOf(!enable));
+	}
+
+	public String[] getActiveAwards() {
+		MovieAwardPlugin.getInstance();
+		String[] allAwards = MovieAwardPlugin.getAvailableAwards();
+		ArrayList<String> result = new ArrayList<String>();
+		for (String award : allAwards) {
+			if (isAwardEnabled(award)) {
+				result.add(award);
+			}
+		}
+		return result.toArray(new String[result.size()]);
+	}
 }
