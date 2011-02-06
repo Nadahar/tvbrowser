@@ -33,6 +33,8 @@ public class MovieDataFactory {
     try {
       final SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
       parser.parse(new InputSource(stream), handler);
+    } catch (StopParserException e) {
+    	// do nothing
     } catch (SAXNotRecognizedException e) {
       mLog.log(Level.SEVERE, "Could not parse Movie Award", e);
     } catch (SAXNotSupportedException e) {
@@ -55,5 +57,11 @@ public class MovieDataFactory {
   public static void loadMovieDatabase(final MovieDatabase movieDatabase, final InputStream stream) {
     movieDatabase.clear();
     parse(stream, new MovieDatabaseHandler(movieDatabase));
+  }
+
+  public static String getAwardName(final InputStream stream, String awardName) {
+    AwardNameHandler handler = new AwardNameHandler(awardName);
+		parse(stream, handler);
+		return handler.getAwardName();
   }
 }

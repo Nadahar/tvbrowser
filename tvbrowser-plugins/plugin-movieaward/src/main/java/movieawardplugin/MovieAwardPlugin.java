@@ -26,6 +26,7 @@ package movieawardplugin;
 import java.awt.Dimension;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -158,31 +159,37 @@ final public class MovieAwardPlugin extends Plugin {
         mMovieAwards = new ArrayList<MovieAward>();
 
         for (String awardName : KNOWN_AWARDS) {
-          MovieAward award = MovieDataFactory.loadMovieDataFromStream(getClass()
-              .getResourceAsStream("data/" + awardName + ".xml"),
-              mMovieDatabase);
+        	if (mSettings.isAwardEnabled(awardName)) {
+						MovieAward award = MovieDataFactory.loadMovieDataFromStream(
+								getStream(awardName),
+								mMovieDatabase);
 
-          if (award != null) {
-            mMovieAwards.add(award);
-          }
-          else {
-            mLog.warning("Could not load award " + awardName);
-          }
+						if (award != null) {
+							mMovieAwards.add(award);
+						} else {
+							mLog.warning("Could not load award " + awardName);
+						}
+        	}
         }
         for (String awardName : KNOWN_MOVIE_AWARDS) {
-          MovieAward award = MovieDataFactory.loadMovieDataFromStream(getClass()
-              .getResourceAsStream("data/" + awardName + ".xml"),
-              new MovieAwardForMovies(mMovieDatabase));
-          if (award != null) {
-            mMovieAwards.add(award);
-          }
-          else {
-            mLog.warning("Could not load award " + awardName);
-          }
+        	if (mSettings.isAwardEnabled(awardName)) {
+	          MovieAward award = MovieDataFactory.loadMovieDataFromStream(getStream(awardName),
+	              new MovieAwardForMovies(mMovieDatabase));
+	          if (award != null) {
+	            mMovieAwards.add(award);
+	          }
+	          else {
+	            mLog.warning("Could not load award " + awardName);
+	          }
+        	}
         }
       }
     }
   }
+
+	private InputStream getStream(String awardName) {
+		return getClass().getResourceAsStream("data/" + awardName + ".xml");
+	}
 
   @Override
   public void onActivation() {
@@ -191,10 +198,14 @@ final public class MovieAwardPlugin extends Plugin {
     }
     // initialize sub nodes to be able to store entries
     // but do not initialize root node, to avoid updates
-    mDateNode = new PluginTreeNode(mLocalizer.msg("dateNode", "Datum"));
+    initializeSubNodes();
+  }
+
+	private void initializeSubNodes() {
+		mDateNode = new PluginTreeNode(mLocalizer.msg("dateNode", "Datum"));
     mAwardNode = new PluginTreeNode(mLocalizer.msg("awardNode", "Award"));
     mAwardNode.setGroupingByDateEnabled(false);
-  }
+	}
 
   @Override
   public Icon[] getProgramTableIcons(final Program program) {
@@ -398,6 +409,7 @@ final public class MovieAwardPlugin extends Plugin {
       if (iter != null) {
         while (iter.hasNext()) {
           final Program program = iter.next();
+          program.validateMarking();
         }
       }
     }
@@ -456,7 +468,7 @@ final public class MovieAwardPlugin extends Plugin {
 
   @Override
   public SettingsTab getSettingsTab() {
-    return new MovieAwardSettingsTab(this);
+    return new MovieAwardSettingsTab(this, mSettings);
   }
 
   public List<MovieAward> getMovieAwards() {
@@ -547,5 +559,29 @@ final public class MovieAwardPlugin extends Plugin {
 		return StringPool.getString(input);
 	}
 
+	public static String[] getAvailableAwards() {
+		ArrayList<String> list = new ArrayList<String>();
+		list.addAll(Arrays.asList(KNOWN_AWARDS));
+		list.addAll(Arrays.asList(KNOWN_MOVIE_AWARDS));
+		return list.toArray(new String[list.size()]);
+	}
+
+	public static String getNameOfAward(String award) {
+		return MovieDataFactory.getAwardName(MovieAwardPlugin.getInstance().getStream(award), award);
+	}
+
+	public MovieAwardSettings getSettings() {
+		return mSettings;
+	}
+
+	public void reloadAwards() {
+		mMovieAwards = null;
+		if (mRootNode != null) {
+			mRootNode.clear();
+		}
+		mAwardCache.clear();
+		initializeSubNodes();
+		handleTvBrowserStartFinished();
+	}
 
 }
