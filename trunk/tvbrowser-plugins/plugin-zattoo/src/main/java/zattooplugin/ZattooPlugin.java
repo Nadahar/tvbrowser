@@ -108,7 +108,7 @@ public final class ZattooPlugin extends Plugin {
   public ActionMenu getContextMenuActions(final Program program) {
     if (getPluginManager().getExampleProgram().equals(program)) {
     	return getRememberActionMenu(program);
-    }	
+    }
     if (isProgramSupported(program)) {
       return getRememberActionMenu(program);
     }
@@ -284,7 +284,7 @@ public final class ZattooPlugin extends Plugin {
           for (Program program : mSwitchPrograms) {
             if (program.getDate().compareTo(today) == 0) {
               int startTime = program.getStartTime();
-              if (startTime - delay >= now) {
+              if (now >= startTime - delay) {
                 startProgram = program;
                 break;
               }
@@ -295,22 +295,24 @@ public final class ZattooPlugin extends Plugin {
             mSwitchPrograms.remove(startProgram);
             startProgram.unmark(ZattooPlugin.this);
             updateRootNode();
+            openChannel(startProgram.getChannel());
           }
         }
       }
     });
+    mTimer.start();
   }
-  
+
   @Override
   public boolean canReceiveProgramsWithTarget() {
   	return true;
   }
-  
+
   @Override
   public ProgramReceiveTarget[] getProgramReceiveTargets() {
   	return new ProgramReceiveTarget[] {mProgramReceiveTarget };
   }
-  
+
   @Override
   public boolean receivePrograms(Program[] programArr,
   		ProgramReceiveTarget receiveTarget) {
