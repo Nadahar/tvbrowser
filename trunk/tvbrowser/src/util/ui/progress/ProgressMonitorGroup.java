@@ -25,24 +25,28 @@
  */
 package util.ui.progress;
 
+import java.util.logging.Logger;
+
 import javax.swing.JLabel;
 import javax.swing.JProgressBar;
 
 import devplugin.ProgressMonitor;
 
 /**
- * 
- * 
+ *
+ *
  * @author Til Schneider, www.murfman.de
  */
 public class ProgressMonitorGroup {
-  
+
+  private static final Logger mLog = Logger.getLogger(ProgressMonitorGroup.class.getName());
+
   private int MAXIMUM = 1000;
-  
+
   private ProgressMonitor mDelegate;
   private int mTotalWeight;
   private int mUsedWeight;
-  
+
   private int mCurrentMonitorWeight;
   private int mCurrentMonitorMaximum;
 
@@ -50,7 +54,7 @@ public class ProgressMonitorGroup {
   public ProgressMonitorGroup(ProgressMonitor delegate, int totalWeight) {
     mDelegate = delegate;
     mTotalWeight = totalWeight;
-    
+
     mDelegate.setMaximum(MAXIMUM);
   }
 
@@ -58,15 +62,15 @@ public class ProgressMonitorGroup {
   public ProgressMonitorGroup(JProgressBar progressBar, JLabel label, int totalWeight) {
     this (new ProgressBarProgressMonitor(progressBar, label), totalWeight);
   }
-  
-  
+
+
   public ProgressMonitor getNextProgressMonitor(int weight) {
     // Add the weight of the last monitor
     mUsedWeight += mCurrentMonitorWeight;
-    
+
     // Remember the weight of the current monitor
     mCurrentMonitorWeight = weight;
-    
+
     return new ProgressMonitor() {
       public void setMaximum(int maximum) {
         mCurrentMonitorMaximum = maximum;
@@ -75,7 +79,7 @@ public class ProgressMonitorGroup {
       public void setValue(int value) {
         setCurrentMonitorValue(value);
       }
-      
+
       public void setMessage(String msg) {
         mDelegate.setMessage(msg);
       }
@@ -86,15 +90,19 @@ public class ProgressMonitorGroup {
   private void setCurrentMonitorValue(int value) {
     // Ensure that the value is in the range
     if ((value < 0) || (value > mCurrentMonitorMaximum)) {
-      throw new IllegalArgumentException("Progress value " + value
+      mLog.severe("Progress value " + value
         + " is out of range [0.." + mCurrentMonitorMaximum + "]");
+      return;
     }
-    
+
     int groupStartValue = MAXIMUM * mUsedWeight / mTotalWeight;
     int groupValue = MAXIMUM * mCurrentMonitorWeight
                    * value / mCurrentMonitorMaximum / mTotalWeight;
-    
-    mDelegate.setValue(groupStartValue + groupValue);
+
+    int result = groupStartValue + groupValue;
+    if (result >= 0) {
+      mDelegate.setValue(result);
+    }
   }
 
 }
