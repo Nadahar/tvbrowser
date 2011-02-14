@@ -71,9 +71,29 @@
   <movie id="Vögelköpfe" year="1997">
     <title lang="de">Vögelköpfe</title>
   </movie>
+  <movie id="Iran Elections 2009" year="2009">
+    <title lang="de">Iran Elections 2009</title>
+  </movie>
+  <movie id="Talleres Clandestinos" year="2009">
+    <title lang="de">Talleres Clandestinos</title>
+  </movie>
+  <movie id="Reise ohne Rückkehr" year="2009">
+    <title lang="de">Reise ohne Rückkehr</title>
+  </movie>
+  <movie id="Wegschauen und vertuschen" year="2009">
+    <title lang="de">Wegschauen und vertuschen?</title>
+  </movie>
+  <movie id="Rückkehr ins Elend" year="2009">
+    <title lang="de">Rückkehr ins Elend</title>
+  </movie>
 </movies>
 
 <awards>
+  <award category="profi" status="winner" movie="Iran Elections 2009" year="2010" />
+  <award category="highschool" status="winner" movie="Talleres Clandestinos" year="2010"></award>
+  <award category="amateur" status="winner" movie="Reise ohne Rückkehr" year="2010"></award>
+  <award category="short" status="winner" movie="Wegschauen und vertuschen" year="2010"></award>
+  <award category="education" status="winner" movie="Rückkehr ins Elend" year="2010"></award>
   <award category="profi" status="winner" movie="Im Schatten des Bösen" year="2008" />
   <award category="highschool" status="winner" movie="comme tout autre humain" year="2008"></award>
   <award category="amateur" status="winner" movie="Oury Jalloh" year="2008"></award>
