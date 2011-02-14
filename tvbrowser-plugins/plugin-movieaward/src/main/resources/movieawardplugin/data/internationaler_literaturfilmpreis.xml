@@ -86,6 +86,8 @@
 		<award category="preis" status="winner" movie="2007" year="2007" />
 		<award category="preis" status="winner" movie="2008" year="2008" />
     <award category="preis" status="winner" movie="2009" year="2009" />
+    <award category="preis" status="winner" movie="movie_db_4307" year="2010" />
+    <award category="preis" status="winner" movie="movie_db_4308" year="2010" />
 	</awards>
 
 </awarddata>
