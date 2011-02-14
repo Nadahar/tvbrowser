@@ -341,6 +341,36 @@
   <movie id="movie_103" year="1998" director="Daniele Nocke">
     <title lang="de" original="yes">Der Peitschenmeister</title>
   </movie>
+  <movie id="movie_104" year="2008" director="Dominik Graf">
+    <title lang="de" original="yes">Kommissar Süden und der Luftgitarrist</title>
+  </movie>
+  <movie id="movie_105" year="2009" director="Connie Walther">
+    <title lang="de" original="yes">Frau Böhm sagt nein</title>
+  </movie>
+  <movie id="movie_106" year="2009" director="Nikolaus Leytner">
+    <title lang="de" original="yes">Ein halbes Leben</title>
+  </movie>
+  <movie id="movie_107" year="2009" director="Markus Imboden">
+    <title lang="de" original="yes">Mörder auf Amrum</title>
+  </movie>
+  <movie id="movie_108" year="2009" director="Friedemann Fromm">
+    <title lang="de" original="yes">Die Wölfe</title>
+  </movie>
+  <movie id="movie_109" year="2009" director="Shaheen Dill-Riaz">
+    <title lang="de" original="yes">Eisenfresser</title>
+  </movie>
+  <movie id="movie_110" year="2009" director="Klaus Stern">
+    <title lang="de" original="yes">Henners Traum</title>
+  </movie>
+  <movie id="movie_111" year="2009" director="Thomas Weidenbach, Ming Shi">
+    <title lang="de" original="yes">Tiananmen</title>
+  </movie>
+  <movie id="movie_112" year="2009" director="Bernhard Albrecht, Karsten Scheuren">
+    <title lang="de" original="yes">Galileo Spezial – Karawane der Hoffnung</title>
+  </movie>
+  <movie id="movie_113" year="2009" director="Aljoscha Pause">
+    <title lang="de" original="yes">Tabubruch</title>
+  </movie>
 </movies>
 
 <awards>
@@ -398,6 +428,11 @@
   <award category="fiktion_film" status="winner" movie="movie_101" year="1999" />
   <award category="fiktion_film" status="winner" movie="movie_102" year="1999" />
   <award category="fiktion_film" status="winner" movie="movie_103" year="1999" />
+  <award category="fiktion_film" status="winner" movie="movie_104" year="2010" />
+  <award category="fiktion_film" status="winner" movie="movie_105" year="2010" />
+  <award category="fiktion_film" status="winner" movie="movie_106" year="2010" />
+  <award category="fiktion_film" status="winner" movie="movie_107" year="2010" />
+  <award category="fiktion_film" status="winner" movie="movie_108" year="2010" />
   <award category="information_gold" status="winner" movie="movie_44" year="2001" />
   <award category="information_gold" status="winner" movie="movie_45" year="2001" />
   <award category="information_gold" status="winner" movie="movie_46" year="2002" />
@@ -447,6 +482,11 @@
   <award category="information" status="winner" movie="movie_95" year="1999" />
   <award category="information" status="winner" movie="movie_96" year="1999" />
   <award category="information" status="winner" movie="movie_97" year="1999" />
+  <award category="information" status="winner" movie="movie_109" year="2010" />
+  <award category="information" status="winner" movie="movie_110" year="2010" />
+  <award category="information" status="winner" movie="movie_111" year="2010" />
+  <award category="information" status="winner" movie="movie_112" year="2010" />
+  <award category="information" status="winner" movie="movie_113" year="2010" />
 
 </awards>
 
