@@ -16055,7 +16055,7 @@
 
 <movie id="movie_db_3359" year="1975">
 <title lang="de">Szenen einer Ehe</title>
-<title lang="en" original="yes">Scener ur ett äktenskap</title>
+<title lang="sv" original="yes">Scener ur ett äktenskap</title>
 </movie>
 
 <movie id="movie_db_3360" year="1947">
@@ -20431,5 +20431,19 @@
 <movie id="movie_db_4303" year="2009"> <title lang="de">Which Way Home</title> <title lang="en" original="yes">Which Way Home</title></movie>
 <movie id="movie_db_4304" year="2009"> <title lang="de">Wolkig mit Aussicht auf Fleischbällchen</title> <title lang="en" original="yes">Cloudy with a Chance of Meatballs</title></movie>
 <movie id="movie_db_4305" year="2009"> <title lang="de">Zerrissene Umarmungen</title> <title lang="es" original="yes">Los abrazos rotos</title></movie>
+
+<movie id="movie_db_4306" year="2010">
+ <title lang="de">Uncle Boonmee erinnert sich an seine früheren Leben</title>
+ <title lang="en">Uncle Boonmee Who Can Recall His Past Lives</title>
+ <title lang="th" original="yes">ลุงบุญมีระลึกชาติ</title>
+ <alternativetitle lang="th" original="yes">Loong Boonmee raleuk chat</alternativetitle>
+</movie>
+<movie id="movie_db_4307" year="2010">
+ <title lang="de" original="yes">Das letzte Schweigen</title>
+</movie>
+<movie id="movie_db_4308" year="2009">
+ <title lang="de">Pippa Lee</title>
+ <title lang="en" original="yes">The Private Lives of Pippa Lee</title>
+</movie>
 
 </movies>
