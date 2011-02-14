@@ -356,6 +356,8 @@
   <award category="best_movie" status="winner" movie="movie_19" year="2006" />
   <award category="best_movie" status="winner" movie="movie_db_32" year="2007" />
   <award category="best_movie" status="winner" movie="movie_db_796" year="2008" />
+  <award category="best_movie" status="winner" movie="movie_db_4231" year="2009" />
+  <award category="best_movie" status="winner" movie="movie_db_4309" year="2010" />  
   <award category="best_director" status="winner" movie="movie_21" year="1988" />
   <award category="best_director" status="winner" movie="movie_22" year="1989" />
   <award category="best_director" status="winner" movie="movie_14" year="2001" />
@@ -366,6 +368,8 @@
   <award category="best_director" status="winner" movie="movie_25" year="2006" />
   <award category="best_director" status="winner" movie="movie_db_32" year="2007" />
   <award category="best_director" status="winner" movie="movie_db_796" year="2008" />
+  <award category="best_director" status="winner" movie="movie_db_4231" year="2009" />
+  <award category="best_director" status="winner" movie="movie_db_4309" year="2010" />
   <award category="best_actor" recipient="Max von Sydow" status="winner" movie="movie_26" year="1988" />
   <award category="best_actor" recipient="Philippe Noiret" status="winner" movie="movie_27" year="1989" />
   <award category="best_actor" recipient="Kenneth Branagh" status="winner" movie="movie_28" year="1990" />
@@ -387,6 +391,8 @@
   <award category="best_actor" recipient="Sasson Gabai" status="winner" movie="movie_39" year="2007" />
   <award category="best_actor" recipient="Toni Servillo" status="winner" movie="movie_db_796" year="2008" />
   <award category="best_actor" recipient="Toni Servillo" status="winner" movie="movie_db_798" year="2008" />
+  <award category="best_actor" recipient="Tahar Rahim" status="winner" movie="movie_db_4259" year="2009" />
+  <award category="best_actor" recipient="Ewan McGregor" status="winner" movie="movie_db_4309" year="2010" />
   <award category="best_actress" recipient="Carmen Maura" status="winner" movie="movie_40" year="1988" />
   <award category="best_actress" recipient="Ruth Sheen" status="winner" movie="movie_41" year="1989" />
   <award category="best_actress" recipient="Carmen Maura" status="winner" movie="movie_42" year="1990" />
@@ -406,6 +412,8 @@
   <award category="best_actress" recipient="Penelope Cruz" status="winner" movie="movie_25" year="2006" />
   <award category="best_actress" recipient="Helen Mirren" status="winner" movie="movie_53" year="2007" />
   <award category="best_actress" recipient="Kristin Scott Thomas" status="winner" movie="movie_db_797" year="2008" />
+  <award category="best_actress" recipient="Kate Winslet" status="winner" movie="movie_db_993" year="2009" />
+  <award category="best_actress" recipient="Sylvie Testud" status="winner" movie="movie_db_4310" year="2010" />
   <award category="best_screenwriter" recipient="Louis Malle" status="winner" movie="movie_54" year="1988" />
   <award category="best_screenwriter" recipient="Maria Khmelik" status="winner" movie="movie_55" year="1989" />
   <award category="best_screenwriter" recipient="Vitali Kanewski" status="winner" movie="movie_56" year="1990" />
@@ -424,6 +432,8 @@
   <award category="best_screenwriter" recipient="Florian Henckel von Donnersmarck" status="winner" movie="movie_19" year="2006" />
   <award category="best_screenwriter" recipient="Fatih Akın" status="winner" movie="movie_65" year="2007" />
   <award category="best_screenwriter" recipient="Maurizio Braucci, Ugo Chiti, Gianni di Gregorio, Matteo Garrone, Massimo Gaudioso &amp; Roberto Saviano" status="winner" movie="movie_db_796" year="2008" />
+  <award category="best_screenwriter" recipient="Michael Haneke" status="winner" movie="movie_db_4231" year="2009" />
+  <award category="best_screenwriter" recipient="Robert Harris, Roman Polanski" status="winner" movie="movie_db_4309" year="2010" />
 
 </awards>
 

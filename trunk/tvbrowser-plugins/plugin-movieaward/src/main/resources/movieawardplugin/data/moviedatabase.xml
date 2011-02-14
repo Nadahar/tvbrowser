@@ -20430,7 +20430,7 @@
 <movie id="movie_db_4302" year="2009"> <title lang="de">Wenn Liebe so einfach wäre</title> <title lang="en" original="yes">It’s Complicated</title></movie>
 <movie id="movie_db_4303" year="2009"> <title lang="de">Which Way Home</title> <title lang="en" original="yes">Which Way Home</title></movie>
 <movie id="movie_db_4304" year="2009"> <title lang="de">Wolkig mit Aussicht auf Fleischbällchen</title> <title lang="en" original="yes">Cloudy with a Chance of Meatballs</title></movie>
-<movie id="movie_db_4305" year="2009"> <title lang="de">Zerrissene Umarmungen</title> <title lang="es" original="yes">Los abrazos rotos</title></movie>
+<movie id="movie_db_4305" year="2009"> <title lang="de">Zerrissene Umarmungen</title> <title lang="es" original="yes">Los abrazos rotos</title><title lang="en">Broken Embraces</title></movie>
 
 <movie id="movie_db_4306" year="2010">
  <title lang="de">Uncle Boonmee erinnert sich an seine früheren Leben</title>
@@ -20444,6 +20444,14 @@
 <movie id="movie_db_4308" year="2009">
  <title lang="de">Pippa Lee</title>
  <title lang="en" original="yes">The Private Lives of Pippa Lee</title>
+</movie>
+<movie id="movie_db_4309" year="2010">
+ <title lang="de">Der Ghostwriter</title>
+ <title lang="en" original="yes">The Ghost Writer</title>
+</movie>
+<movie id="movie_db_4310" year="2009">
+ <title lang="de">Lourdes</title>
+ <title lang="en" original="yes">Lourdes</title>
 </movie>
 
 </movies>
