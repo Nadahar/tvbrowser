@@ -22,12 +22,8 @@ import twitter4j.http.AccessToken;
 
 final public class TwitterSettings extends PropertyBasedSettings {
 
-  private static final String STORE_PASSWORD = "STOREPASSWORD";
-  private static final String USERNAME = "USERNAME";
-  private static final String PASSWORD = "PASSWORD";
   private static final String FORMAT = "paramForProgram";
   private static final String DEFAULT_FORMAT = "{leadingZero(start_day,\"2\")}.{leadingZero(start_month,\"2\")}. {leadingZero(start_hour,\"2\")}:{leadingZero(start_minute,\"2\")} {channel_name} - {title}";
-  private static final String USE_OAUTH = "useOAuth";
   private static final String ACCESS_TOKEN = "ACCESS_TOKEN";
   private static final String ACCESS_TOKEN_SECRET = "ACCESS_TOKEN_SECRET";
 
@@ -41,34 +37,6 @@ final public class TwitterSettings extends PropertyBasedSettings {
 
   public String getFormat() {
     return get(TwitterSettings.FORMAT, TwitterSettings.DEFAULT_FORMAT);
-  }
-
-  public String getUsername() {
-    return get(TwitterSettings.USERNAME, "");
-  }
-
-  public boolean getStorePassword() {
-    return get(TwitterSettings.STORE_PASSWORD, false);
-  }
-
-  public void setUsername(final String username) {
-    set(TwitterSettings.USERNAME, username);
-  }
-
-  public String getPassword() {
-    return get(TwitterSettings.PASSWORD, "");
-  }
-
-  public void setPassword(final String password) {
-    set(TwitterSettings.PASSWORD, password);
-  }
-
-  public void setStorePassword(final boolean store) {
-    set(TwitterSettings.STORE_PASSWORD, store);
-  }
-
-  public boolean getUseOAuth() {
-    return get(USE_OAUTH, true);
   }
 
   public String getConsumerKey() {
@@ -95,13 +63,7 @@ final public class TwitterSettings extends PropertyBasedSettings {
     return new AccessToken(token, secret);
   }
 
-  public void setUseOAuth(final boolean use) {
-    set(USE_OAUTH, use);
-  }
-
   public void clearAuthentication() {
-    setStorePassword(false);
-    setPassword("");
     set(ACCESS_TOKEN, "");
     set(ACCESS_TOKEN_SECRET, "");
   }
