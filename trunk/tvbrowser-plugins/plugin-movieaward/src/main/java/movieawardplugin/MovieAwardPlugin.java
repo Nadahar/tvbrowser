@@ -127,7 +127,7 @@ final public class MovieAwardPlugin extends Plugin {
    * object to synchronize different threads
    */
   private Object mSynchronizationLock = new Object();
-  
+
   public MovieAwardPlugin() {
     mInstance = this;
   }
@@ -275,14 +275,17 @@ final public class MovieAwardPlugin extends Plugin {
 			    return mAwardCache.get(program);
 			  }
 
+        boolean hasAward = false;
 			  for (MovieAward award : mMovieAwards) {
 			    if (award.containsAwardFor(program)) {
-			      mAwardCache.put(program, true);
 			      addToPluginTree(program, award);
-			      return true;
+			      hasAward = true;
 			    }
 			  }
-	      mAwardCache.put(program, false);
+        mAwardCache.put(program, hasAward);
+			  if (hasAward) {
+			    return true;
+			  }
 			}
 
 		} catch (Exception e) {
