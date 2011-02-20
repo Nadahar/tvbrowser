@@ -31,16 +31,23 @@
 	</license>
   </licenses>
   <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <source>1.5</source>
-          <target>1.5</target>
-          <encoding>UTF-8</encoding>
-        </configuration>
-      </plugin>
-    </plugins>
+	  <pluginManagement>
+	    <plugins>
+	      <plugin>
+	        <artifactId>maven-compiler-plugin</artifactId>
+	        <version>2.3.2</version>
+	        <configuration>
+	          <source>1.5</source>
+	          <target>1.5</target>
+	          <encoding>UTF-8</encoding>
+	        </configuration>
+	      </plugin>
+	      <plugin>
+	      	<artifactId>maven-jar-plugin</artifactId>
+					<version>2.3.1</version>
+	      </plugin>
+	    </plugins>
+	  </pluginManagement>
   </build>
   <modules>
     <module>plugin-alldataperchannel</module>
@@ -110,6 +117,12 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
+  <dependencies>
+    <dependency>
+      <groupId>org.tvbrowser</groupId>
+      <artifactId>tvbrowser</artifactId>
+    </dependency>
+  </dependencies>
   <repositories>
     <repository>
         <id>java-net-maven-repository</id>
