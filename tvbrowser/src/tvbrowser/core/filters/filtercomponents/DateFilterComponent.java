@@ -1,16 +1,16 @@
 /*
  * Copyright Michael Keppler
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -39,9 +39,9 @@ import devplugin.Program;
 /**
  * filter component to filter for a relative date range (e.g. from current date
  * to current date + 7 days)
- * 
+ *
  * @author Bananeweizen
- * 
+ *
  */
 public class DateFilterComponent extends AbstractFilterComponent {
 
@@ -92,7 +92,7 @@ public class DateFilterComponent extends AbstractFilterComponent {
     content.add(new JLabel(mLocalizer.msg("from.1", "From today plus")), cc.xy(
         1, currentRow += 2));
     mFromSpinner = new JSpinner(new SpinnerNumberModel(0, 0, 28, 1));
-    mFromSpinner.setValue(0);
+    mFromSpinner.setValue(mStartDays);
     content.add(mFromSpinner, cc.xy(3, currentRow));
     content.add(new JLabel(mLocalizer.msg("from.2", "days")), cc.xy(5,
         currentRow));
@@ -102,7 +102,7 @@ public class DateFilterComponent extends AbstractFilterComponent {
     content.add(new JLabel(mLocalizer.msg("to.1", "Until today plus")), cc.xy(
         1, currentRow += 2));
     mToSpinner = new JSpinner(new SpinnerNumberModel(7, 0, 28, 1));
-    mToSpinner.setValue(7);
+    mToSpinner.setValue(mEndDays);
     content.add(mToSpinner, cc.xy(3, currentRow));
     content.add(new JLabel(mLocalizer.msg("to.2", "days")), cc
         .xy(5, currentRow));
