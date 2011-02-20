@@ -287,10 +287,10 @@ public class SimpleMarkerPlugin extends Plugin {
 
         try {
           UIThreadRunner.invokeAndWait(new Runnable() {
-            final JDialog deletedListDialog = new JDialog(parent);
 
             @Override
             public void run() {
+              final JDialog deletedListDialog = new JDialog(parent);
               ProgramList deletedProgramList = new ProgramList(deletedPrograms.toArray(new Program[deletedPrograms.size()]), new ProgramPanelSettings(new PluginPictureSettings(PluginPictureSettings.NO_PICTURE_TYPE),true,true));
 
               deletedListDialog.setModal(false);
@@ -333,7 +333,13 @@ public class SimpleMarkerPlugin extends Plugin {
                     } catch (InterruptedException e) {}
                   }
 
-                  deletedListDialog.setVisible(true);
+                  UIThreadRunner.invokeLater(new Runnable() {
+
+                    @Override
+                    public void run() {
+                      deletedListDialog.setVisible(true);
+                    }
+                  });
                 }
               }.start();
             }
