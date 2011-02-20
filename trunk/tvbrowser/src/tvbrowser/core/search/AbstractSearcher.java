@@ -100,14 +100,20 @@ public abstract class AbstractSearcher implements ProgramSearcher {
       return false;
     }
 
-    /* Concatenate all fields into one string and do the match */
-    String allFields = getProgramFieldsText(prog, fieldArr);
+    try {
+      /* Concatenate all fields into one string and do the match */
+      String allFields = getProgramFieldsText(prog, fieldArr);
 
-    if(StringUtils.isEmpty(allFields)) {
-      return false;
-    } else {
-      return matches(allFields);
+      if(StringUtils.isEmpty(allFields)) {
+        return false;
+      } else {
+        return matches(allFields);
+      }
+    } catch (Exception e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
     }
+    return false;
   }
 
   /**
