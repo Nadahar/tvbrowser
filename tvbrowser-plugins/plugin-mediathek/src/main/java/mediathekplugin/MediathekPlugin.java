@@ -30,7 +30,6 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Icon;
 
-import util.browserlauncher.Launch;
 import util.io.IOUtilities;
 import util.ui.html.HTMLTextHelper;
 import devplugin.ActionMenu;
@@ -127,7 +126,7 @@ public class MediathekPlugin extends Plugin {
       actionList.add(new AbstractAction(episode.getTitle(), episode.getIcon()) {
 
         public void actionPerformed(final ActionEvent e) {
-          Launch.openURL(episode.getUrl());
+          episode.show();
         }
       });
     }
@@ -175,16 +174,18 @@ public class MediathekPlugin extends Plugin {
       mMediatheks = new ArrayList<WebMediathek>();
       try {
         final InputStream stream = getClass().getResourceAsStream("urls.txt");
-        BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
-        String separator = "";
-        while (separator != null) {
-          String title = reader.readLine();
-          String regex = reader.readLine();
-          String url = reader.readLine();
-          separator = reader.readLine();
-          mMediatheks.add(new WebMediathek(title, regex, url));
+        if (stream != null) {
+          BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+          String separator = "";
+          while (separator != null) {
+            String title = reader.readLine();
+            String regex = reader.readLine();
+            String url = reader.readLine();
+            separator = reader.readLine();
+            mMediatheks.add(new WebMediathek(title, regex, url));
+          }
+          reader.close();
         }
-        reader.close();
       } catch (IOException e) {
         // TODO Auto-generated catch block
         e.printStackTrace();
