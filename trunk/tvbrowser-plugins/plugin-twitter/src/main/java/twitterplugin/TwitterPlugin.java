@@ -36,7 +36,7 @@ import devplugin.Version;
 
 public final class TwitterPlugin extends Plugin {
   private static final boolean PLUGIN_IS_STABLE = true;
-	private static final Version PLUGIN_VERSION = new Version(1, 0, 0, PLUGIN_IS_STABLE);
+	private static final Version PLUGIN_VERSION = new Version(1, 1, 0, PLUGIN_IS_STABLE);
 
 	private static final Localizer mLocalizer = Localizer.getLocalizerFor(TwitterPlugin.class);
   private static final String TWITTER_TARGET = "TWITTER_TARGET";

@@ -23,7 +23,6 @@ import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.http.AccessToken;
 import util.exc.ErrorHandler;
-import util.io.IOUtilities;
 import util.ui.Localizer;
 import devplugin.Program;
 
@@ -40,8 +39,7 @@ public class TwitterSender {
 
     if (dialog.wasOkPressed()) {
 
-      if ((settings.getUseOAuth() && settings.getAccessToken() == null)
-          || (!settings.getUseOAuth() && !settings.getStorePassword())) {
+      if (settings.getAccessToken() == null) {
         final TwitterLoginDialog login = new TwitterLoginDialog(parentWindow, settings);
 
         if (!(login.askLogin() == JOptionPane.OK_OPTION)) {
@@ -50,16 +48,10 @@ public class TwitterSender {
       }
       final Twitter twitter;
       TwitterFactory factory = new TwitterFactory();
-      if (settings.getUseOAuth()) {
-        twitter = factory.getInstance();
-        twitter.setOAuthConsumer(settings.getConsumerKey(), settings.getConsumerSecret());
-        AccessToken accessToken = settings.getAccessToken();
-        twitter.setOAuthAccessToken(accessToken);
-      } else {
-        String username = settings.getUsername();
-        String password = IOUtilities.xorDecode(settings.getPassword(), 54673578);
-        twitter = factory.getInstance(username, password);
-      }
+      twitter = factory.getInstance();
+      twitter.setOAuthConsumer(settings.getConsumerKey(), settings.getConsumerSecret());
+      AccessToken accessToken = settings.getAccessToken();
+      twitter.setOAuthAccessToken(accessToken);
       try {
         twitter.updateStatus(dialog.getMessage());
         JOptionPane.showMessageDialog(parentWindow, mLocalizer.msg("tweetSend", "The tweet was sent."));

@@ -18,14 +18,10 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.ButtonGroup;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPasswordField;
-import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
 import twitter4j.Twitter;
@@ -33,7 +29,6 @@ import twitter4j.TwitterException;
 import twitter4j.http.AccessToken;
 import twitter4j.http.RequestToken;
 import util.browserlauncher.Launch;
-import util.io.IOUtilities;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
@@ -52,14 +47,6 @@ public final class TwitterLoginDialog extends JDialog implements WindowClosingIf
   /** Which Button was pressed ? */
   private int mReturnValue = JOptionPane.CANCEL_OPTION;
 
-  private JTextField mNameField;
-  private JPasswordField mPasswordField;
-  private JCheckBox mStorePassword;
-
-  private JRadioButton mUserLogin;
-
-  private JRadioButton mOAuth;
-
   private JTextField mPIN;
 
   private TwitterSettings mSettings;
@@ -73,10 +60,6 @@ public final class TwitterLoginDialog extends JDialog implements WindowClosingIf
   private JLabel mLabelPin;
 
   private JLabel mLabelBrowser;
-
-  private JLabel mLabelUser;
-
-  private JLabel mLabelPassword;
 
   /**
    * Create Dialog
@@ -110,17 +93,6 @@ public final class TwitterLoginDialog extends JDialog implements WindowClosingIf
 
     CellConstraints cc = new CellConstraints();
 
-    content.appendRow("pref");
-    mOAuth = new JRadioButton(mLocalizer.msg("oauthLogin", "Login using OAuth"), mSettings.getUseOAuth());
-    content.add(mOAuth, cc.xyw(1, content.getRowCount(), content.getColumnCount()));
-
-    mOAuth.addActionListener(new ActionListener() {
-
-      public void actionPerformed(ActionEvent e) {
-        updateEnableStates();
-      }
-    });
-
     final Twitter twitter = new Twitter();
     twitter.setOAuthConsumer(mSettings.getConsumerKey(), mSettings.getConsumerSecret());
     try {
@@ -152,46 +124,6 @@ public final class TwitterLoginDialog extends JDialog implements WindowClosingIf
     mPIN = new JTextField();
     content.add(mPIN, cc.xy(4, content.getRowCount()));
 
-    content.appendRow("3dlu");
-    content.appendRow("pref");
-    mUserLogin = new JRadioButton(mLocalizer.msg("userLogin", "Login with user name and password"), !mSettings
-        .getUseOAuth());
-    content.add(mUserLogin, cc.xyw(1, content.getRowCount(), content.getColumnCount()));
-
-    mUserLogin.addActionListener(new ActionListener() {
-
-      public void actionPerformed(ActionEvent e) {
-        updateEnableStates();
-      }
-    });
-
-    content.appendRow("3dlu");
-    content.appendRow("pref");
-    mLabelUser = new JLabel(mLocalizer.msg("user", "Username"));
-    content.add(mLabelUser, cc.xy(2, content.getRowCount()));
-
-    mNameField = new JTextField();
-    content.add(mNameField, cc.xy(4, content.getRowCount()));
-
-    mNameField.setText(mSettings.getUsername());
-
-    content.appendRow("3dlu");
-    content.appendRow("pref");
-    mLabelPassword = new JLabel(mLocalizer.msg("password", "Password"));
-    content.add(mLabelPassword, cc.xy(2, content.getRowCount()));
-
-    mPasswordField = new JPasswordField();
-    content.add(mPasswordField, cc.xy(4, content.getRowCount()));
-
-    mPasswordField.setText(mSettings.getPassword());
-
-    content.appendRow("3dlu");
-    content.appendRow("pref");
-    mStorePassword = new JCheckBox(mLocalizer.msg("storePassword", "Store Password"));
-    content.add(mStorePassword, cc.xy(4, content.getRowCount()));
-
-    mStorePassword.setSelected(mSettings.getStorePassword());
-
     ButtonBarBuilder builder = new ButtonBarBuilder();
     builder.addGlue();
 
@@ -200,38 +132,27 @@ public final class TwitterLoginDialog extends JDialog implements WindowClosingIf
     ok.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         mReturnValue = JOptionPane.OK_OPTION;
-        if (mUserLogin.isSelected()) {
-          mSettings.setUseOAuth(false);
-          mSettings.setUsername(mNameField.getText().trim());
-          if (mStorePassword.isSelected()) {
-            mSettings.setPassword(IOUtilities.xorEncode(new String(mPasswordField.getPassword()), 54673578));
-            mSettings.setStorePassword(true);
+        AccessToken accessToken = null;
+        try {
+          String pin = mPIN.getText().trim();
+          if (pin.length() > 0) {
+            accessToken = twitter.getOAuthAccessToken(mRequestToken, pin);
+          } else {
+            accessToken = mRequestToken.getAccessToken();
+          }
+        } catch (TwitterException te) {
+          if (401 == te.getStatusCode()) {
+            System.out.println("Unable to get the access token.");
+          } else {
+            te.printStackTrace();
           }
         }
-        if (mOAuth.isSelected()) {
-          mSettings.setUseOAuth(true);
-          AccessToken accessToken = null;
-          try {
-            String pin = mPIN.getText().trim();
-            if (pin.length() > 0) {
-              accessToken = twitter.getOAuthAccessToken(mRequestToken, pin);
-            } else {
-              accessToken = mRequestToken.getAccessToken();
-            }
-          } catch (TwitterException te) {
-            if (401 == te.getStatusCode()) {
-              System.out.println("Unable to get the access token.");
-            } else {
-              te.printStackTrace();
-            }
-          }
-          try {
-            twitter.verifyCredentials().getId();
-            mSettings.setAccessToken(accessToken);
-          } catch (TwitterException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
-          }
+        try {
+          twitter.verifyCredentials().getId();
+          mSettings.setAccessToken(accessToken);
+        } catch (TwitterException e1) {
+          // TODO Auto-generated catch block
+          e1.printStackTrace();
         }
         setVisible(false);
       }
@@ -258,25 +179,6 @@ public final class TwitterLoginDialog extends JDialog implements WindowClosingIf
     getContentPane().add(content.getPanel());
 
     UiUtilities.setSize(this, Sizes.dialogUnitXAsPixel(200, this), Sizes.dialogUnitYAsPixel(140, this));
-
-    ButtonGroup buttonGroup = new ButtonGroup();
-    buttonGroup.add(mOAuth);
-    buttonGroup.add(mUserLogin);
-    updateEnableStates();
-  }
-
-  void updateEnableStates() {
-    // oauth controls
-    mPIN.setEnabled(mOAuth.isSelected());
-    mUrlButton.setEnabled(mOAuth.isSelected());
-    mLabelBrowser.setEnabled(mOAuth.isSelected());
-    mLabelPin.setEnabled(mOAuth.isSelected());
-    // password controls
-    mLabelUser.setEnabled(mUserLogin.isSelected());
-    mNameField.setEnabled(mUserLogin.isSelected());
-    mLabelPassword.setEnabled(mUserLogin.isSelected());
-    mPasswordField.setEnabled(mUserLogin.isSelected());
-    mStorePassword.setEnabled(mUserLogin.isSelected());
   }
 
   /**

@@ -3,12 +3,12 @@
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with
  * this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -36,13 +36,12 @@ import devplugin.ThemeIcon;
 
 public final class TwitterSettingsTab implements SettingsTab {
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(TwitterSettingsTab.class);
-  private boolean mUserStored = false;
   private ParamInputField mFormat;
   private TwitterSettings mSettings;
+  private boolean mUserStored = false;
 
   public TwitterSettingsTab(final TwitterSettings settings) {
     mSettings = settings;
-    mUserStored = mSettings.getStorePassword();
   }
 
   public JPanel createSettingsPanel() {
@@ -56,17 +55,10 @@ public final class TwitterSettingsTab implements SettingsTab {
 
     String auth = mLocalizer.msg("auth.notDefined", "Not stored");
     boolean enableDelete = false;
-    if (mSettings.getUseOAuth()) {
-      if (mSettings.getAccessToken() != null) {
-        auth = mLocalizer.msg("auth.oauth", "OAuth access token stored");
-        enableDelete = true;
-      }
-    }
-    else {
-      if (mUserStored) {
-        auth = mLocalizer.msg("auth.user", "Password stored for user {0}", mSettings.getUsername());
-        enableDelete = true;
-      }
+    if (mSettings.getAccessToken() != null) {
+      auth = mLocalizer.msg("auth.oauth", "OAuth access token stored");
+      enableDelete = true;
+      mUserStored  = true;
     }
 
     final JLabel user = new JLabel(mLocalizer.msg("auth", "Authentication") + ": " + auth);
