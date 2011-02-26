@@ -43,7 +43,6 @@ import util.program.LocalPluginProgramFormating;
 import util.ui.Localizer;
 import util.ui.TVBrowserIcons;
 import devplugin.ActionMenu;
-import devplugin.ContextMenuAction;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.Program;
@@ -114,12 +113,9 @@ public class BlogThisPlugin extends Plugin {
   }
 
   public ActionMenu getContextMenuActions(final Program program) {
-    ImageIcon img = createImageIcon("apps", "internet-web-browser", TVBrowserIcons.SIZE_SMALL);
+    ImageIcon icon = createImageIcon("apps", "internet-web-browser", TVBrowserIcons.SIZE_SMALL);
 
     if (mConfigs.length > 1) {
-      ContextMenuAction blog = new ContextMenuAction(mLocalizer.ellipsisMsg("contextMenuText",
-          "Create a new Blog-Entry"));
-
       ArrayList<AbstractAction> list = new ArrayList<AbstractAction>();
 
       for (final AbstractPluginProgramFormating config : mConfigs) {
@@ -132,9 +128,8 @@ public class BlogThisPlugin extends Plugin {
         }
       }
 
-      blog.putValue(Action.SMALL_ICON, img);
-
-      return new ActionMenu(blog, list.toArray(new AbstractAction[list.size()]));
+      return new ActionMenu(mLocalizer.ellipsisMsg("contextMenuText", "Create a new Blog-Entry"), icon,
+          list.toArray(new AbstractAction[list.size()]));
     } else {
       AbstractAction blog = new AbstractAction(mLocalizer.msg("contextMenuText", "Create a new Blog-Entry")) {
         public void actionPerformed(ActionEvent evt) {
@@ -142,7 +137,7 @@ public class BlogThisPlugin extends Plugin {
         }
       };
 
-      blog.putValue(Action.SMALL_ICON, img);
+      blog.putValue(Action.SMALL_ICON, icon);
 
       return new ActionMenu(blog);
     }

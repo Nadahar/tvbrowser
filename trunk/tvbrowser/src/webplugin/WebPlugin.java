@@ -67,7 +67,7 @@ public class WebPlugin extends Plugin {
 
   private static final Logger mLog = java.util.logging.Logger
   .getLogger(WebPlugin.class.getName());
-  
+
   private static final String CHANNEL_SITE = "channelSite";
   private static final String PROGRAM_SITE = "programSite";
 
@@ -97,21 +97,21 @@ public class WebPlugin extends Plugin {
   private ArrayList<WebAddress> mAddresses;
 
   private boolean mHasRightToDownload = false;
-  
+
   private static WebPlugin INSTANCE;
-  
+
   /** list of items to be searched if any searchable item shall be put into the context menu */
   private ArrayList<String> listActors = null;
   private ArrayList<String> listScripts = null;
   private ArrayList<String> listDirectors = null;
 
   private PluginInfo mPluginInfo;
-  
+
   /**
    * show all available search items in menu, not only title search
    */
   private boolean mShowDetails = true;
-  
+
   /**
    * Creates the Plugin
    */
@@ -126,15 +126,15 @@ public class WebPlugin extends Plugin {
   public static WebPlugin getInstance() {
     return INSTANCE;
   }
-  
+
   public ThemeIcon getMarkIconFromTheme() {
     return new ThemeIcon("actions", "web-search", 16);
   }
-  
+
   public static Version getVersion() {
     return mVersion;
   }
-  
+
   /**
    * Returns the Plugin-Info
    */
@@ -144,7 +144,7 @@ public class WebPlugin extends Plugin {
           mLocalizer.msg("desc","Searches on the Web for a Program"),
           "Bodo Tasche");
     }
-    
+
     return mPluginInfo;
   }
 
@@ -161,7 +161,7 @@ public class WebPlugin extends Plugin {
 
     final ArrayList<WebAddress> defaults = new ArrayList<WebAddress>(Arrays
         .asList(DEFAULT_ADRESSES));
-    
+
     for (int i = 0; i < size;i++) {
       WebAddress newone = new WebAddress(in);
 
@@ -185,7 +185,7 @@ public class WebPlugin extends Plugin {
     for (int i = 0; i < defaults.size();i++) {
       mAddresses.add(defaults.get(i));
     }
-    
+
     if (version >= 2) {
       mShowDetails = in.readBoolean();
     }
@@ -293,11 +293,8 @@ public class WebPlugin extends Plugin {
             if (categoryList.size() == 2) {
               categoryList.remove(1);
             }
-            
-            final ContextMenuAction action = new ContextMenuAction(actionName,
-                address.getIcon());
-            final ActionMenu searchMenu = new ActionMenu(action, categoryList
-                .toArray());
+
+            final ActionMenu searchMenu = new ActionMenu(actionName, address.getIcon(), categoryList.toArray());
             actionList.add(searchMenu);
           }
           // create only a single menu item for this search
@@ -314,7 +311,7 @@ public class WebPlugin extends Plugin {
         e.printStackTrace();
       }
     }
-    
+
     if (actionList.size() == 1) {
       final Object action = actionList.get(0);
       if (action instanceof ActionMenu) {
@@ -324,7 +321,7 @@ public class WebPlugin extends Plugin {
         return new ActionMenu((Action)action);
       }
     }
-    
+
     final Object[] actions = new Object[actionList.size()];
     actionList.toArray(actions);
     return new ActionMenu(getMainContextMenuAction(), actions);
@@ -364,7 +361,7 @@ public class WebPlugin extends Plugin {
       final WebAddress address, final String actionName) {
     final WebAddress adr = address;
     final AbstractAction action = new AbstractAction() {
- 
+
       public void actionPerformed(final ActionEvent evt) {
         openUrl(program, adr);
       }
@@ -427,59 +424,59 @@ public class WebPlugin extends Plugin {
   public boolean canReceiveProgramsWithTarget() {
     return true;
   }
-  
+
   public ProgramReceiveTarget[] getProgramReceiveTargets() {
     final ArrayList<ProgramReceiveTarget> list = new ArrayList<ProgramReceiveTarget>();
-    
+
     for (int i = 0; i < mAddresses.size(); i++) {
       final WebAddress adr = mAddresses.get(i);
-      
+
       if (adr.isActive()) {
         list.add(new ProgramReceiveTarget(this,mLocalizer.msg("SearchOn", "Search on ") + " " + adr.getName(),adr.getName() + "." + adr.getUrl()));
       }
     }
-    
+
     return list.toArray(new ProgramReceiveTarget[list.size()]);
   }
-  
+
   public boolean receiveValues(final String[] values,
       final ProgramReceiveTarget target) {
     for (int i = 0; i < mAddresses.size(); i++) {
       final WebAddress adr = mAddresses.get(i);
-      
+
       if (adr.isActive() && target.isReceiveTargetWithIdOfProgramReceiveIf(this,adr.getName() + "." + adr.getUrl())) {
         for(String value : values) {
           try {
             final String url = adr.getUrl().replaceAll("[{].*[}]",
                 URLEncoder.encode(value, "UTF-8").replace("+", "%20"));
-            
+
             if(url.startsWith("http://")) {
               Launch.openURL(url);
             }
           } catch (UnsupportedEncodingException e) {}
         }
-        
+
         return true;
       }
     }
-    
+
     return false;
   }
-  
+
   public boolean receivePrograms(final Program[] programArr,
       final ProgramReceiveTarget target) {
     for (int i = 0; i < mAddresses.size(); i++) {
       final WebAddress adr = mAddresses.get(i);
-      
+
       if (adr.isActive() && target.isReceiveTargetWithIdOfProgramReceiveIf(this,adr.getName() + "." + adr.getUrl())) {
         for(Program p : programArr) {
           openUrl(p, adr);
         }
-        
+
         return true;
       }
     }
-    
+
     return false;
   }
 
@@ -492,7 +489,7 @@ public class WebPlugin extends Plugin {
     try {
       final ParamParser parser = new ParamParser();
       final String result = parser.analyse(address.getUrl(), program);
-      
+
       if (parser.hasErrors()) {
         final String errorString = parser.getErrorString();
         mLog.warning("URL parse error " + errorString+ " in " + address.getUrl());
@@ -500,21 +497,21 @@ public class WebPlugin extends Plugin {
       } else {
         Launch.openURL(result);
       }
-      
+
     } catch (Exception e) {
       e.printStackTrace();
     }
   }
-  
+
   public void handleTvBrowserStartFinished() {
     mHasRightToDownload = true;
   }
-  
+
   @Override
   public void handleTvDataUpdateFinished() {
     if(mHasRightToDownload) {
       final FavIconFetcher fetcher = new FavIconFetcher();
-    
+
       if (mAddresses != null) {
         for (WebAddress address : mAddresses) {
           if ((address.getIconFile() == null) && ! address.getUrl().equals(CHANNEL_SITE) && ! address.getUrl().equals(PROGRAM_SITE)) {
@@ -527,7 +524,7 @@ public class WebPlugin extends Plugin {
           }
         }
       }
-      
+
     }
   }
 

@@ -42,6 +42,7 @@ import java.util.Vector;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
@@ -61,7 +62,6 @@ import util.ui.UIThreadRunner;
 import util.ui.UiUtilities;
 import captureplugin.drivers.DeviceIf;
 import devplugin.ActionMenu;
-import devplugin.ContextMenuAction;
 import devplugin.PluginInfo;
 import devplugin.PluginTreeNode;
 import devplugin.Program;
@@ -202,16 +202,12 @@ public class CapturePlugin extends devplugin.Plugin {
 
         final Window parent = UiUtilities.getLastModalChildOf(getParentFrame());
 
-        Action mainaction = new devplugin.ContextMenuAction();
-        mainaction.putValue(Action.NAME, mLocalizer.msg("record", "record Program"));
-        mainaction.putValue(Action.SMALL_ICON, createImageIcon("mimetypes", "video-x-generic", 16));
+        String menuText = mLocalizer.msg("record", "record Program");
+        ImageIcon menuIcon = createImageIcon("mimetypes", "video-x-generic", 16);
 
         ArrayList<ActionMenu> actionList = new ArrayList<ActionMenu>();
 
         for (final DeviceIf dev : devices) {
-            Action action = new ContextMenuAction();
-            action.putValue(Action.NAME, dev.getName());
-
             ArrayList<AbstractAction> commandList = new ArrayList<AbstractAction>();
 
             if (dev.isAbleToAddAndRemovePrograms()) {
@@ -260,7 +256,7 @@ public class CapturePlugin extends devplugin.Plugin {
             }
 
             if (!commandList.isEmpty()) {
-              actionList.add(new ActionMenu(action, commandList.toArray(new Action[commandList.size()])));
+              actionList.add(new ActionMenu(dev.getName(), commandList.toArray(new Action[commandList.size()])));
             }
         }
 
@@ -273,11 +269,10 @@ public class CapturePlugin extends devplugin.Plugin {
 
             if (menu.getSubItems().length == 1) {
                 Action action = menu.getSubItems()[0].getAction();
-                action.putValue(Action.SMALL_ICON, createImageIcon("mimetypes", "video-x-generic", 16));
+                action.putValue(Action.SMALL_ICON, menuIcon);
                 return new ActionMenu(action);
             } else {
-                mainaction.putValue(Action.NAME, menu.getTitle());
-                return new ActionMenu(mainaction, menu.getSubItems());
+                return new ActionMenu(menu.getTitle(), menuIcon, menu.getSubItems());
             }
 
         }
@@ -289,7 +284,7 @@ public class CapturePlugin extends devplugin.Plugin {
             return null;
         }
 
-        return new ActionMenu(mainaction, actions);
+        return new ActionMenu(menuText, menuIcon, actions);
     }
 
     /**

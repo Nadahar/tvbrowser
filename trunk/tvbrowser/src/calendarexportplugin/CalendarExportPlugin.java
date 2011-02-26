@@ -30,7 +30,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
@@ -204,9 +203,8 @@ public final class CalendarExportPlugin extends Plugin {
       return null;
     }
 
-    Action mainaction = new devplugin.ContextMenuAction();
-    mainaction.putValue(Action.NAME, mLocalizer.msg("contextMenuText", "Export to Calendar-File"));
-    mainaction.putValue(Action.SMALL_ICON, createImageIcon("apps", "office-calendar"));
+    String menuLabel = mLocalizer.msg("contextMenuText", "Export to Calendar-File");
+    ImageIcon menuIcon = createImageIcon("apps", "office-calendar");
 
     if (mConfigs == null || mConfigs.length <= 1) {
       if (mConfigs == null || mConfigs.length == 0) {
@@ -273,7 +271,7 @@ public final class CalendarExportPlugin extends Plugin {
         return new ActionMenu(actions[0]);
       }
 
-      return new ActionMenu(mainaction, actions);
+      return new ActionMenu(menuLabel, menuIcon, actions);
     } else {
       ActionMenu[] exporters = new ActionMenu[activeExporter.length];
 
@@ -319,13 +317,10 @@ public final class CalendarExportPlugin extends Plugin {
           }
         }
 
-        ContextMenuAction context = new ContextMenuAction(activeExporter[i].getName());
-        context.putValue(Action.SMALL_ICON, createImageIcon("apps", "office-calendar"));
-
-        exporters[i] = new ActionMenu(context, actions);
+        exporters[i] = new ActionMenu(activeExporter[i].getName(), menuIcon, actions);
       }
 
-      return new ActionMenu(mainaction, exporters);
+      return new ActionMenu(menuLabel, menuIcon, exporters);
     }
   }
 
@@ -607,19 +602,19 @@ public final class CalendarExportPlugin extends Plugin {
 
         if (version >= 4) {
           int treeNodeCount = in.readInt();
-          
+
           HashMap<ExporterIf,ArrayList<Program>> exporterMap = new HashMap<ExporterIf,ArrayList<Program>>(treeNodeCount);
           for (int i = 0; i < treeNodeCount; i++) {
             final ExporterIf exporter = findExporter((String) in.readObject());
-            
+
             int progCount = in.readInt();
             ArrayList<Program> programs = null;
-            
+
             if (exporter != null) {
               programs = new ArrayList<Program>(progCount);
               exporterMap.put(exporter,programs);
             }
-            
+
             for (int v = 0; v < progCount; v++) {
               Date programDate = Date.readData(in);
               String progId = (String) in.readObject();
@@ -629,24 +624,24 @@ public final class CalendarExportPlugin extends Plugin {
               }
             }
           }
-          
+
           ExporterIf[] keys = exporterMap.keySet().toArray(new ExporterIf[exporterMap.size()]);
-          
+
           Arrays.sort(keys, new Comparator<ExporterIf>() {
             public int compare(final ExporterIf o1, final ExporterIf o2) {
               return o1.getName().compareToIgnoreCase(o2.getName());
             }
           });
-          
+
           for (ExporterIf exporter : keys) {
             PluginTreeNode node = getRootNode().addNode(exporter.getName());
             node.getMutableTreeNode().setIcon(getExporterIcon(exporter));
 
             createNodeActionForNode(node);
             mTreeNodes.put(exporter, node);
-            
+
             ArrayList<Program> progs = exporterMap.get(exporter);
-            
+
             for(Program p : progs) {
               node.addProgram(p);
             }
