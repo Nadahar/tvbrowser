@@ -22,6 +22,7 @@ import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
+import util.ui.DontShowAgainMessageBox;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import devplugin.Date;
@@ -327,7 +328,7 @@ public class DialogController
                 @Override
                 public void run()
                 {
-                  JOptionPane.showMessageDialog(mParent, WirSchauenPlugin.LOCALIZER.msg("Thanks", "Thanks"), WirSchauenPlugin.LOCALIZER.msg("Thanks", "Thanks"), JOptionPane.INFORMATION_MESSAGE);
+                  DontShowAgainMessageBox.dontShowAgainMessageBox(WirSchauenPlugin.getInstance(), "saved", mParent, WirSchauenPlugin.LOCALIZER.msg("Thanks", "Thanks"));
                 }
               });
             }

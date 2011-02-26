@@ -26,8 +26,9 @@ import javax.swing.JTextField;
 
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
-import twitter4j.http.AccessToken;
-import twitter4j.http.RequestToken;
+import twitter4j.TwitterFactory;
+import twitter4j.auth.AccessToken;
+import twitter4j.auth.RequestToken;
 import util.browserlauncher.Launch;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
@@ -93,7 +94,7 @@ public final class TwitterLoginDialog extends JDialog implements WindowClosingIf
 
     CellConstraints cc = new CellConstraints();
 
-    final Twitter twitter = new Twitter();
+    final Twitter twitter = new TwitterFactory().getInstance();
     twitter.setOAuthConsumer(mSettings.getConsumerKey(), mSettings.getConsumerSecret());
     try {
       mRequestToken = twitter.getOAuthRequestToken();
@@ -138,7 +139,7 @@ public final class TwitterLoginDialog extends JDialog implements WindowClosingIf
           if (pin.length() > 0) {
             accessToken = twitter.getOAuthAccessToken(mRequestToken, pin);
           } else {
-            accessToken = mRequestToken.getAccessToken();
+            accessToken = twitter.getOAuthAccessToken();
           }
         } catch (TwitterException te) {
           if (401 == te.getStatusCode()) {
