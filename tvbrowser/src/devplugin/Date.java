@@ -32,6 +32,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 import util.ui.Localizer;
 
@@ -259,7 +260,7 @@ public class Date implements Comparable<Date>
     {
       return null;
     }
-    String[] s = date.split(separator);
+    String[] s = date.split(Pattern.quote(separator));
     if (s.length != 3)
     {
       return null;
@@ -269,6 +270,8 @@ public class Date implements Comparable<Date>
       byte month = Byte.parseByte(s[1]);
       byte day = Byte.parseByte(s[2]);
       return new Date(year, month, day);
+    } catch(NumberFormatException e){
+      // do nothing
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -289,7 +292,7 @@ public class Date implements Comparable<Date>
     {
       return null;
     }
-    String[] s = date.split(separator);
+    String[] s = date.split(Pattern.quote(separator));
     if (s.length != 3)
     {
       return null;
@@ -299,6 +302,8 @@ public class Date implements Comparable<Date>
       byte month = Byte.parseByte(s[1]);
       byte day = Byte.parseByte(s[0]);
       return new Date(year, month, day);
+    } catch(NumberFormatException e){
+      // do nothing
     } catch(Exception e){
       e.printStackTrace();
     }
@@ -371,7 +376,7 @@ public class Date implements Comparable<Date>
   /**
    * Returns the week number within the current year.
    * Should not be used since value depends on default locale
-   * and thus changes from machine to machine. 
+   * and thus changes from machine to machine.
    * Since 3.0 better use getWeekOfYear(Locale locale) instead.
    * @return The week number.
    *
@@ -381,7 +386,7 @@ public class Date implements Comparable<Date>
     Calendar cal = getCalendar();
     return cal.get(Calendar.WEEK_OF_YEAR);
   }
-  
+
   /**
    * Returns the week number within the current year.
    * @param locale The locale to be used
@@ -538,9 +543,9 @@ public class Date implements Comparable<Date>
 
     return cal;
   }
-  
+
   /**
-   * @param locale 
+   * @param locale
    * @return the corresponding calendar for this date
    * @since 3.0
    */
@@ -612,10 +617,10 @@ public class Date implements Comparable<Date>
   public boolean isFirstDayOfWeek() {
     return getDayOfWeek() == Calendar.MONDAY;
   }
-  
+
   /**
    * is this the first day of the week?
-   * @param locale The locale to be used 
+   * @param locale The locale to be used
    * @return <code>true</code>, if this is the first day of the week
    * @since 3.0
    */
