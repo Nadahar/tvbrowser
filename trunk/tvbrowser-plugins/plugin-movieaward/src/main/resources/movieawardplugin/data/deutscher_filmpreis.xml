@@ -484,10 +484,6 @@
     <name lang="de">Sonstige Kurzfilme</name>
     <name lang="en">Sonstige Kurzfilme</name>
   </category>
-  <category id="c_159">
-    <name lang="de">Bester Spielfilm</name>
-    <name lang="en">Bester Spielfilm</name>
-  </category>
   <category id="c_125">
     <name lang="de">Visuelle Gestaltung</name>
     <name lang="en">Visuelle Gestaltung</name>
@@ -704,1963 +700,1960 @@
 
 <movies>
   <movie id="m_1">
-      <title lang="de">1 + 1 = 3</title>
+      <title lang="de" original="yes">1 + 1 = 3</title>
   </movie>
   <movie id="m_2">
-      <title lang="de">14 Tage lebenslänglich</title>
+      <title lang="de" original="yes">14 Tage lebenslänglich</title>
   </movie>
   <movie id="m_3">
-      <title lang="de">Der 20. Juli</title>
+      <title lang="de" original="yes">Der 20. Juli</title>
   </movie>
   <movie id="m_4">
-      <title lang="de">23</title>
+      <title lang="de" original="yes">23</title>
   </movie>
   <movie id="m_5">
-      <title lang="de">40 m2 Deutschland</title>
+      <title lang="de" original="yes">40 m2 Deutschland</title>
   </movie>
   <movie id="m_6">
-      <title lang="de">Paradies</title>
+      <title lang="de" original="yes">Paradies</title>
   </movie>
   <movie id="m_7">
-      <title lang="de">Das Schweigen des Dichters</title>
+      <title lang="de" original="yes">Das Schweigen des Dichters</title>
   </movie>
   <movie id="m_8">
-      <title lang="de">A</title>
+      <title lang="de" original="yes">A</title>
   </movie>
   <movie id="m_9">
-      <title lang="de">Die Abfahrer</title>
+      <title lang="de" original="yes">Die Abfahrer</title>
   </movie>
   <movie id="m_10">
-      <title lang="de">Abgeschminkt</title>
+      <title lang="de" original="yes">Abgeschminkt</title>
   </movie>
   <movie id="m_11">
-      <title lang="de">Abschied vom falschen Paradies</title>
+      <title lang="de" original="yes">Abschied vom falschen Paradies</title>
   </movie>
   <movie id="m_12">
-      <title lang="de">Abschied von Agnes</title>
+      <title lang="de" original="yes">Abschied von Agnes</title>
   </movie>
   <movie id="m_13">
-      <title lang="de">Abschied von gestern</title>
+      <title lang="de" original="yes">Abschied von gestern</title>
   </movie>
   <movie id="m_14">
-      <title lang="de">Absolute Giganten</title>
+      <title lang="de" original="yes">Absolute Giganten</title>
   </movie>
   <movie id="m_15">
-      <title lang="de">Abstrakte Oper Nr. 1</title>
+      <title lang="de" original="yes">Abstrakte Oper Nr. 1</title>
   </movie>
   <movie id="m_16">
-      <title lang="de">ABSURDISTAN</title>
+      <title lang="de" original="yes">ABSURDISTAN</title>
   </movie>
   <movie id="m_17">
-      <title lang="de">Abwärts</title>
+      <title lang="de" original="yes">Abwärts</title>
   </movie>
   <movie id="m_18">
-      <title lang="de">Achtung, Synkope</title>
+      <title lang="de" original="yes">Achtung, Synkope</title>
   </movie>
   <movie id="m_19">
-      <title lang="de">Adam 2</title>
+      <title lang="de" original="yes">Adam 2</title>
   </movie>
   <movie id="m_20">
-      <title lang="de">Adolf, der Weber</title>
+      <title lang="de" original="yes">Adolf, der Weber</title>
   </movie>
   <movie id="m_21">
-      <title lang="de">Agnes und seine Brüder</title>
+      <title lang="de" original="yes">Agnes und seine Brüder</title>
   </movie>
   <movie id="m_22">
-      <title lang="de">Aguirre, der Zorn Gottes</title>
-  </movie>
-  <movie id="m_23">
-      <title lang="de">Aimée und Jaguar</title>
+      <title lang="de" original="yes">Aguirre, der Zorn Gottes</title>
   </movie>
   <movie id="m_24">
-      <title lang="de">Meschugge</title>
+      <title lang="de" original="yes">Meschugge</title>
   </movie>
   <movie id="m_25">
-      <title lang="de">alaska.de</title>
+      <title lang="de" original="yes">alaska.de</title>
   </movie>
   <movie id="m_26">
-      <title lang="de">Albert - warum?</title>
+      <title lang="de" original="yes">Albert - warum?</title>
   </movie>
   <movie id="m_27">
-      <title lang="de">Alibi</title>
+      <title lang="de" original="yes">Alibi</title>
   </movie>
   <movie id="m_28">
-      <title lang="de">Alle Jahre wieder</title>
+      <title lang="de" original="yes">Alle Jahre wieder</title>
   </movie>
   <movie id="m_29">
-      <title lang="de">Alle Menschen werden Brüder</title>
+      <title lang="de" original="yes">Alle Menschen werden Brüder</title>
   </movie>
   <movie id="m_30">
-      <title lang="de">Alles auf Anfang</title>
+      <title lang="de" original="yes">Alles auf Anfang</title>
   </movie>
   <movie id="m_31">
-      <title lang="de">Tafelspitz</title>
+      <title lang="de" original="yes">Tafelspitz</title>
   </movie>
   <movie id="m_32">
-      <title lang="de">Alles auf Zucker</title>
+      <title lang="de" original="yes">Alles auf Zucker</title>
   </movie>
   <movie id="m_33">
-      <title lang="de">Alles aus Zucker</title>
+      <title lang="de" original="yes">Alles aus Zucker</title>
   </movie>
   <movie id="m_34">
-      <title lang="de">Alles über meine Mutter</title>
+      <title lang="de" original="yes">Alles über meine Mutter</title>
   </movie>
   <movie id="m_35">
-      <title lang="de">Als die Igel größer wurden</title>
+      <title lang="de" original="yes">Als die Igel größer wurden</title>
   </movie>
   <movie id="m_36">
-      <title lang="de">Als wär´s von Beckett</title>
+      <title lang="de" original="yes">Als wär´s von Beckett</title>
   </movie>
   <movie id="m_37">
-      <title lang="de">Alvorado - Aufbruch in Brasilien</title>
+      <title lang="de" original="yes">Alvorado - Aufbruch in Brasilien</title>
   </movie>
   <movie id="m_38">
-      <title lang="de">Am Ende der Gewalt</title>
+      <title lang="de" original="yes">Am Ende der Gewalt</title>
   </movie>
   <movie id="m_39">
-      <title lang="de">Am Wegerand</title>
+      <title lang="de" original="yes">Am Wegerand</title>
   </movie>
   <movie id="m_40">
-      <title lang="de">American Beauty Ltd.</title>
+      <title lang="de" original="yes">American Beauty Ltd.</title>
   </movie>
   <movie id="m_41">
-      <title lang="de">Der amerikanische Freund</title>
+      <title lang="de" original="yes">Der amerikanische Freund</title>
   </movie>
   <movie id="m_42">
-      <title lang="de">Die gläserne Zelle</title>
+      <title lang="de" original="yes">Die gläserne Zelle</title>
   </movie>
   <movie id="m_43">
-      <title lang="de">Die linkshändige Frau</title>
+      <title lang="de" original="yes">Die linkshändige Frau</title>
   </movie>
   <movie id="m_44">
-      <title lang="de">Anastasia, die letzte Zarentochter</title>
+      <title lang="de" original="yes">Anastasia, die letzte Zarentochter</title>
   </movie>
   <movie id="m_45">
-      <title lang="de">Anatomie</title>
+      <title lang="de" original="yes">Anatomie</title>
   </movie>
   <movie id="m_46">
-      <title lang="de">Andalusische Wallfahrt</title>
+      <title lang="de" original="yes">Andalusische Wallfahrt</title>
   </movie>
   <movie id="m_47">
-      <title lang="de">Der Angriff der Gegenwart auf die übrige Zeit</title>
+      <title lang="de" original="yes">Der Angriff der Gegenwart auf die übrige Zeit</title>
   </movie>
   <movie id="m_48">
-      <title lang="de">Angst essen Seele auf</title>
+      <title lang="de" original="yes">Angst essen Seele auf</title>
   </movie>
   <movie id="m_49">
-      <title lang="de">Die Apothekerin</title>
+      <title lang="de" original="yes">Die Apothekerin</title>
   </movie>
   <movie id="m_50">
-      <title lang="de">Bandits</title>
+      <title lang="de" original="yes">Bandits</title>
   </movie>
   <movie id="m_51">
-      <title lang="de">Armer kleiner Zirkus</title>
+      <title lang="de" original="yes">Armer kleiner Zirkus</title>
   </movie>
   <movie id="m_52">
-      <title lang="de">Die Artisten in der Zirkuskuppel: ratlos</title>
+      <title lang="de" original="yes">Die Artisten in der Zirkuskuppel: ratlos</title>
   </movie>
   <movie id="m_53">
-      <title lang="de">Auer Dult</title>
+      <title lang="de" original="yes">Auer Dult</title>
   </movie>
   <movie id="m_54">
-      <title lang="de">AUF DER ANDEREN SEITE</title>
+      <title lang="de" original="yes">AUF DER ANDEREN SEITE</title>
   </movie>
   <movie id="m_55">
-      <title lang="de">Auf geht´s</title>
+      <title lang="de" original="yes">Auf geht´s</title>
   </movie>
   <movie id="m_56">
-      <title lang="de">Auf Wiedersehen, Amerika</title>
+      <title lang="de" original="yes">Auf Wiedersehen, Amerika</title>
   </movie>
   <movie id="m_57">
-      <title lang="de">Aufdermauer</title>
+      <title lang="de" original="yes">Aufdermauer</title>
   </movie>
   <movie id="m_58">
-      <title lang="de">Der Aufstand</title>
+      <title lang="de" original="yes">Der Aufstand</title>
   </movie>
   <movie id="m_59">
-      <title lang="de">Augusta Treverorum</title>
+      <title lang="de" original="yes">Augusta Treverorum</title>
   </movie>
   <movie id="m_60">
-      <title lang="de">Aus der Geschichte der Menschheit</title>
+      <title lang="de" original="yes">Aus der Geschichte der Menschheit</title>
   </movie>
   <movie id="m_61">
-      <title lang="de">Aus einem deutschen Leben</title>
+      <title lang="de" original="yes">Aus einem deutschen Leben</title>
   </movie>
   <movie id="m_62">
-      <title lang="de">Die Aussicht</title>
+      <title lang="de" original="yes">Die Aussicht</title>
   </movie>
   <movie id="m_63">
-      <title lang="de">Auto, Auto</title>
+      <title lang="de" original="yes">Auto, Auto</title>
   </movie>
   <movie id="m_64">
-      <title lang="de">Das Autogramm</title>
+      <title lang="de" original="yes">Das Autogramm</title>
   </movie>
   <movie id="m_65">
-      <title lang="de">Bagnolo - Dorf zwischen schwarz und rot</title>
+      <title lang="de" original="yes">Bagnolo - Dorf zwischen schwarz und rot</title>
   </movie>
   <movie id="m_66">
-      <title lang="de">Balagan</title>
+      <title lang="de" original="yes">Balagan</title>
   </movie>
   <movie id="m_67">
-      <title lang="de">Balance</title>
+      <title lang="de" original="yes">Balance</title>
   </movie>
   <movie id="m_68">
-      <title lang="de">Bauhütte 63</title>
+      <title lang="de" original="yes">Bauhütte 63</title>
   </movie>
   <movie id="m_69">
-      <title lang="de">Beim nächsten Kuß knall’ ich ihn nieder</title>
+      <title lang="de" original="yes">Beim nächsten Kuß knall’ ich ihn nieder</title>
       <alternativetitle lang="de">Beim nächsten Kuss knall’ ich ihn nieder</alternativetitle>
   </movie>
   <movie id="m_70">
-      <title lang="de">Bekenntnisse des Hochstaplers Felix Krull</title>
+      <title lang="de" original="yes">Bekenntnisse des Hochstaplers Felix Krull</title>
   </movie>
   <movie id="m_71">
-      <title lang="de">Bella Martha</title>
+      <title lang="de" original="yes">Bella Martha</title>
   </movie>
   <movie id="m_72">
-      <title lang="de">Berlin - Schicksal einer Stadt</title>
+      <title lang="de" original="yes">Berlin - Schicksal einer Stadt</title>
   </movie>
   <movie id="m_73">
-      <title lang="de">Berliner Stadtbahnbilder</title>
+      <title lang="de" original="yes">Berliner Stadtbahnbilder</title>
   </movie>
   <movie id="m_74">
-      <title lang="de">Der bewegte Mann</title>
+      <title lang="de" original="yes">Der bewegte Mann</title>
   </movie>
   <movie id="m_75">
-      <title lang="de">Bibi Blocksberg</title>
+      <title lang="de" original="yes">Bibi Blocksberg</title>
   </movie>
   <movie id="m_76">
-      <title lang="de">Bin ich schön?</title>
+      <title lang="de" original="yes">Bin ich schön?</title>
   </movie>
   <movie id="m_77">
-      <title lang="de">Lola rennt</title>
+      <title lang="de" original="yes">Lola rennt</title>
   </movie>
   <movie id="m_78">
-      <title lang="de">Bitte stehen Sie auf</title>
+      <title lang="de" original="yes">Bitte stehen Sie auf</title>
   </movie>
   <movie id="m_79">
-      <title lang="de">Die bitteren Tränen der Petra von Kant</title>
+      <title lang="de" original="yes">Die bitteren Tränen der Petra von Kant</title>
   </movie>
   <movie id="m_80">
-      <title lang="de">Wildwechsel</title>
+      <title lang="de" original="yes">Wildwechsel</title>
   </movie>
   <movie id="m_81">
-      <title lang="de">Black Box BRD</title>
+      <title lang="de" original="yes">Black Box BRD</title>
   </movie>
   <movie id="m_82">
-      <title lang="de">Die Blechtrommel</title>
+      <title lang="de" original="yes">Die Blechtrommel</title>
   </movie>
   <movie id="m_83">
-      <title lang="de">Die bleierne Zeit</title>
+      <title lang="de" original="yes">Die bleierne Zeit</title>
   </movie>
   <movie id="m_84">
-      <title lang="de">Lola</title>
+      <title lang="de" original="yes">Lola</title>
   </movie>
   <movie id="m_85">
-      <title lang="de">Die Blindgänger</title>
+      <title lang="de" original="yes">Die Blindgänger</title>
   </movie>
   <movie id="m_86">
-      <title lang="de">Der Bockerer</title>
+      <title lang="de" original="yes">Der Bockerer</title>
   </movie>
   <movie id="m_87">
-      <title lang="de">Das Boot</title>
+      <title lang="de" original="yes">Das Boot</title>
   </movie>
   <movie id="m_88">
-      <title lang="de">Brassed off - mit Pauken und Trompeten</title>
+      <title lang="de" original="yes">Brassed off - mit Pauken und Trompeten</title>
   </movie>
   <movie id="m_89">
-      <title lang="de">Das Brot der frühen Jahre</title>
+      <title lang="de" original="yes">Das Brot der frühen Jahre</title>
   </movie>
   <movie id="m_90">
-      <title lang="de">Das Brot des Bäckers</title>
+      <title lang="de" original="yes">Das Brot des Bäckers</title>
   </movie>
   <movie id="m_91">
-      <title lang="de">Die Brücke</title>
+      <title lang="de" original="yes">Die Brücke</title>
   </movie>
   <movie id="m_92">
-      <title lang="de">Die Buddenbrooks</title>
+      <title lang="de" original="yes">Die Buddenbrooks</title>
   </movie>
   <movie id="m_93">
-      <title lang="de">Bübchen</title>
+      <title lang="de" original="yes">Bübchen</title>
   </movie>
   <movie id="m_94">
-      <title lang="de">Buena Vista Social Club</title>
+      <title lang="de" original="yes">Buena Vista Social Club</title>
   </movie>
   <movie id="m_95">
-      <title lang="de">Burning Life</title>
+      <title lang="de" original="yes">Burning Life</title>
   </movie>
   <movie id="m_96">
-      <title lang="de">Einer meiner ältesten Freunde</title>
+      <title lang="de" original="yes">Einer meiner ältesten Freunde</title>
   </movie>
   <movie id="m_97">
-      <title lang="de">Keiner liebt mich</title>
+      <title lang="de" original="yes">Keiner liebt mich</title>
   </movie>
   <movie id="m_98">
-      <title lang="de">Bustelli, ein Spiel in Porzellan</title>
+      <title lang="de" original="yes">Bustelli, ein Spiel in Porzellan</title>
   </movie>
   <movie id="m_99">
-      <title lang="de">Buster’s Bedroom</title>
+      <title lang="de" original="yes">Buster’s Bedroom</title>
   </movie>
   <movie id="m_100">
-      <title lang="de">C 12 H 22 O 11 - Auf den Spuren des Lebens</title>
+      <title lang="de" original="yes">C 12 H 22 O 11 - Auf den Spuren des Lebens</title>
   </movie>
   <movie id="m_101">
-      <title lang="de">Canaris</title>
+      <title lang="de" original="yes">Canaris</title>
   </movie>
   <movie id="m_102">
-      <title lang="de">Caspar David Friedrich - Grenzen der Zeit</title>
+      <title lang="de" original="yes">Caspar David Friedrich - Grenzen der Zeit</title>
   </movie>
   <movie id="m_103">
-      <title lang="de">Charly May</title>
+      <title lang="de" original="yes">Charly May</title>
   </movie>
   <movie id="m_104">
-      <title lang="de">Close Up</title>
+      <title lang="de" original="yes">Close Up</title>
   </movie>
   <movie id="m_105">
-      <title lang="de">Comedian Harmonists</title>
+      <title lang="de" original="yes">Comedian Harmonists</title>
   </movie>
   <movie id="m_106">
-      <title lang="de">Crazy</title>
+      <title lang="de" original="yes">Crazy</title>
   </movie>
   <movie id="m_107">
-      <title lang="de">C’est la vie Rose</title>
+      <title lang="de" original="yes">C’est la vie Rose</title>
   </movie>
   <movie id="m_108">
-      <title lang="de">David</title>
+      <title lang="de" original="yes">David</title>
   </movie>
   <movie id="m_109">
-      <title lang="de">Deadlock</title>
+      <title lang="de" original="yes">Deadlock</title>
   </movie>
   <movie id="m_110">
-      <title lang="de">Dear Mister Wonderful</title>
+      <title lang="de" original="yes">Dear Mister Wonderful</title>
   </movie>
   <movie id="m_111">
-      <title lang="de">Derby Fever USA</title>
+      <title lang="de" original="yes">Derby Fever USA</title>
   </movie>
   <movie id="m_112">
-      <title lang="de">Des Anderen Last</title>
+      <title lang="de" original="yes">Des Anderen Last</title>
   </movie>
   <movie id="m_113">
-      <title lang="de">Des Teufels General</title>
+      <title lang="de" original="yes">Des Teufels General</title>
   </movie>
   <movie id="m_114">
-      <title lang="de">Deutschland im Herbst</title>
+      <title lang="de" original="yes">Deutschland im Herbst</title>
   </movie>
   <movie id="m_115">
-      <title lang="de">Dialog oder Ariadnes Klage</title>
+      <title lang="de" original="yes">Dialog oder Ariadnes Klage</title>
   </movie>
   <movie id="m_116">
-      <title lang="de">Dies rigorose Leben</title>
+      <title lang="de" original="yes">Dies rigorose Leben</title>
   </movie>
   <movie id="m_117">
-      <title lang="de">Der Stand der Dinge</title>
+      <title lang="de" original="yes">Der Stand der Dinge</title>
   </movie>
   <movie id="m_118">
-      <title lang="de">Don Camillo und Peppone</title>
+      <title lang="de" original="yes">Don Camillo und Peppone</title>
   </movie>
   <movie id="m_119">
-      <title lang="de">Das doppelte Lottchen</title>
+      <title lang="de" original="yes">Das doppelte Lottchen</title>
   </movie>
   <movie id="m_120">
-      <title lang="de">Drei Chinesen mit dem Kontrabass</title>
+      <title lang="de" original="yes">Drei Chinesen mit dem Kontrabass</title>
   </movie>
   <movie id="m_121">
-      <title lang="de">Drei Meister schneiden Holz</title>
+      <title lang="de" original="yes">Drei Meister schneiden Holz</title>
   </movie>
   <movie id="m_122">
-      <title lang="de">Dresden 1964 - Im Zwinger</title>
+      <title lang="de" original="yes">Dresden 1964 - Im Zwinger</title>
   </movie>
   <movie id="m_123">
-      <title lang="de">Düsseldorfer Karussell</title>
+      <title lang="de" original="yes">Düsseldorfer Karussell</title>
   </movie>
   <movie id="m_124">
-      <title lang="de">Der Durchdreher</title>
+      <title lang="de" original="yes">Der Durchdreher</title>
   </movie>
   <movie id="m_125">
-      <title lang="de">Erbsen auf halb 6</title>
+      <title lang="de" original="yes">Erbsen auf halb 6</title>
   </movie>
   <movie id="m_126">
-      <title lang="de">Ein großer graublauer Vogel</title>
+      <title lang="de" original="yes">Ein großer graublauer Vogel</title>
   </movie>
   <movie id="m_127">
-      <title lang="de">Götter der Pest</title>
+      <title lang="de" original="yes">Götter der Pest</title>
   </movie>
   <movie id="m_128">
-      <title lang="de">Katzelmacher</title>
+      <title lang="de" original="yes">Katzelmacher</title>
   </movie>
   <movie id="m_129">
-      <title lang="de">Liebe ist kälter als der Tod</title>
+      <title lang="de" original="yes">Liebe ist kälter als der Tod</title>
   </movie>
   <movie id="m_130">
-      <title lang="de">Ein Mädchen aus Flandern</title>
+      <title lang="de" original="yes">Ein Mädchen aus Flandern</title>
   </movie>
   <movie id="m_131">
-      <title lang="de">Eine Kohlemine in Südwales</title>
+      <title lang="de" original="yes">Eine Kohlemine in Südwales</title>
   </movie>
   <movie id="m_132">
-      <title lang="de">Eine Liebesgeschichte</title>
+      <title lang="de" original="yes">Eine Liebesgeschichte</title>
   </movie>
   <movie id="m_133">
-      <title lang="de">Eine Melodie - vier Maler</title>
+      <title lang="de" original="yes">Eine Melodie - vier Maler</title>
   </movie>
   <movie id="m_134">
-      <title lang="de">Eine Reise ins Licht (Despair)</title>
+      <title lang="de" original="yes">Eine Reise ins Licht (Despair)</title>
   </movie>
   <movie id="m_135">
-      <title lang="de">Eine schöne Maske</title>
+      <title lang="de" original="yes">Eine schöne Maske</title>
   </movie>
   <movie id="m_136">
-      <title lang="de">Eine Stadt feiert Geburtstag</title>
+      <title lang="de" original="yes">Eine Stadt feiert Geburtstag</title>
   </movie>
   <movie id="m_137">
-      <title lang="de">Einer von uns beiden</title>
+      <title lang="de" original="yes">Einer von uns beiden</title>
   </movie>
   <movie id="m_138">
-      <title lang="de">Gott schützt die Liebenden</title>
+      <title lang="de" original="yes">Gott schützt die Liebenden</title>
   </movie>
   <movie id="m_139">
-      <title lang="de">Einmal Kudamm und zurück</title>
+      <title lang="de" original="yes">Einmal Kudamm und zurück</title>
   </movie>
   <movie id="m_140">
-      <title lang="de">EinMann im schönsten Alter</title>
+      <title lang="de" original="yes">EinMann im schönsten Alter</title>
   </movie>
   <movie id="m_141">
-      <title lang="de">Eins</title>
+      <title lang="de" original="yes">Eins</title>
   </movie>
   <movie id="m_142">
-      <title lang="de">Eisenhans</title>
+      <title lang="de" original="yes">Eisenhans</title>
   </movie>
   <movie id="m_143">
-      <title lang="de">Elefantenherz</title>
+      <title lang="de" original="yes">Elefantenherz</title>
   </movie>
   <movie id="m_144">
-      <title lang="de">Good Bye, Lenin!</title>
+      <title lang="de" original="yes">Good Bye, Lenin!</title>
   </movie>
   <movie id="m_145">
-      <title lang="de">Ellis Island</title>
+      <title lang="de" original="yes">Ellis Island</title>
   </movie>
   <movie id="m_146">
-      <title lang="de">Empor</title>
+      <title lang="de" original="yes">Empor</title>
   </movie>
   <movie id="m_147">
-      <title lang="de">Das Ende des Regenbogens</title>
+      <title lang="de" original="yes">Das Ende des Regenbogens</title>
   </movie>
   <movie id="m_148">
-      <title lang="de">Die endlose Nacht</title>
+      <title lang="de" original="yes">Die endlose Nacht</title>
   </movie>
   <movie id="m_149">
-      <title lang="de">Endstation</title>
+      <title lang="de" original="yes">Endstation</title>
   </movie>
   <movie id="m_150">
-      <title lang="de">Endstation Freiheit</title>
+      <title lang="de" original="yes">Endstation Freiheit</title>
   </movie>
   <movie id="m_151">
-      <title lang="de">Energie aus Materie</title>
+      <title lang="de" original="yes">Energie aus Materie</title>
   </movie>
   <movie id="m_152">
-      <title lang="de">Engel aus Eisen</title>
+      <title lang="de" original="yes">Engel aus Eisen</title>
   </movie>
   <movie id="m_153">
-      <title lang="de">Engelchen oder die Jungfrau von Bamberg</title>
+      <title lang="de" original="yes">Engelchen oder die Jungfrau von Bamberg</title>
   </movie>
   <movie id="m_154">
-      <title lang="de">Ernst Barlach Teil 1</title>
+      <title lang="de" original="yes">Ernst Barlach Teil 1</title>
   </movie>
   <movie id="m_155">
-      <title lang="de">Die Eroberung der Zitadelle</title>
+      <title lang="de" original="yes">Die Eroberung der Zitadelle</title>
   </movie>
   <movie id="m_156">
-      <title lang="de">Der Fangschuß</title>
+      <title lang="de" original="yes">Der Fangschuß</title>
       <alternativetitle lang="de">Der Fangschuss</alternativetitle>
   </movie>
   <movie id="m_157">
-      <title lang="de">Erste Liebe</title>
+      <title lang="de" original="yes">Erste Liebe</title>
   </movie>
   <movie id="m_158">
-      <title lang="de">Es</title>
+      <title lang="de" original="yes">Es</title>
   </movie>
   <movie id="m_159">
-      <title lang="de">Es herrscht Ruhe im Land</title>
+      <title lang="de" original="yes">Es herrscht Ruhe im Land</title>
   </movie>
   <movie id="m_160">
-      <title lang="de">Execution - a study of Mary</title>
+      <title lang="de" original="yes">Execution - a study of Mary</title>
   </movie>
   <movie id="m_161">
-      <title lang="de">Das Experiment</title>
+      <title lang="de" original="yes">Das Experiment</title>
   </movie>
   <movie id="m_162">
-      <title lang="de">Im Juli</title>
+      <title lang="de" original="yes">Im Juli</title>
   </movie>
   <movie id="m_163">
-      <title lang="de">Fabian</title>
+      <title lang="de" original="yes">Fabian</title>
   </movie>
   <movie id="m_164">
-      <title lang="de">Die Fälschung</title>
+      <title lang="de" original="yes">Die Fälschung</title>
   </movie>
   <movie id="m_165">
-      <title lang="de">Der Fall Bachmeier</title>
+      <title lang="de" original="yes">Der Fall Bachmeier</title>
   </movie>
   <movie id="m_166">
-      <title lang="de">Falsche Bewegung</title>
+      <title lang="de" original="yes">Falsche Bewegung</title>
   </movie>
   <movie id="m_167">
-      <title lang="de">Das falsche Gewicht</title>
+      <title lang="de" original="yes">Das falsche Gewicht</title>
   </movie>
   <movie id="m_168">
-      <title lang="de">Trotta</title>
+      <title lang="de" original="yes">Trotta</title>
   </movie>
   <movie id="m_169">
-      <title lang="de">Der Fangschuß</title>
+      <title lang="de" original="yes">Der Fangschuß</title>
   </movie>
   <movie id="m_170">
-      <title lang="de">Faust</title>
+      <title lang="de" original="yes">Faust</title>
   </movie>
   <movie id="m_171">
-      <title lang="de">Der Felsen</title>
+      <title lang="de" original="yes">Der Felsen</title>
   </movie>
   <movie id="m_172">
-      <title lang="de">Die Fetten Jahre sind vorbei</title>
+      <title lang="de" original="yes">Die Fetten Jahre sind vorbei</title>
   </movie>
   <movie id="m_173">
-      <title lang="de">Das Feuerschiff</title>
+      <title lang="de" original="yes">Das Feuerschiff</title>
   </movie>
   <movie id="m_174">
-      <title lang="de">Feurige Hochzeit</title>
+      <title lang="de" original="yes">Feurige Hochzeit</title>
   </movie>
   <movie id="m_175">
-      <title lang="de">Fickende Fische</title>
+      <title lang="de" original="yes">Fickende Fische</title>
   </movie>
   <movie id="m_176">
-      <title lang="de">Fitzcarraldo</title>
+      <title lang="de" original="yes">Fitzcarraldo</title>
   </movie>
   <movie id="m_177">
-      <title lang="de">Flammende Herzen</title>
+      <title lang="de" original="yes">Flammende Herzen</title>
   </movie>
   <movie id="m_178">
-      <title lang="de">Hitler - ein Film aus Deutschland</title>
+      <title lang="de" original="yes">Hitler - ein Film aus Deutschland</title>
   </movie>
   <movie id="m_179">
-      <title lang="de">Das fliegende Klassenzimmer</title>
+      <title lang="de" original="yes">Das fliegende Klassenzimmer</title>
   </movie>
   <movie id="m_180">
-      <title lang="de">Flucht nach Berlin</title>
+      <title lang="de" original="yes">Flucht nach Berlin</title>
   </movie>
   <movie id="m_181">
-      <title lang="de">Flucht nach vorne</title>
+      <title lang="de" original="yes">Flucht nach vorne</title>
   </movie>
   <movie id="m_182">
-      <title lang="de">Frage Sieben</title>
+      <title lang="de" original="yes">Frage Sieben</title>
   </movie>
   <movie id="m_183">
-      <title lang="de">Francesca</title>
+      <title lang="de" original="yes">Francesca</title>
   </movie>
   <movie id="m_184">
-      <title lang="de">Frau2 sucht HappyEnd</title>
+      <title lang="de" original="yes">Frau2 sucht HappyEnd</title>
   </movie>
   <movie id="m_185">
-      <title lang="de">FREI NACH PLAN</title>
+      <title lang="de" original="yes">FREI NACH PLAN</title>
   </movie>
   <movie id="m_186">
-      <title lang="de">Das Freudenhaus</title>
+      <title lang="de" original="yes">Das Freudenhaus</title>
   </movie>
   <movie id="m_187">
-      <title lang="de">Fritz Kortner spricht Monologe</title>
+      <title lang="de" original="yes">Fritz Kortner spricht Monologe</title>
   </movie>
   <movie id="m_188">
-      <title lang="de">Frühlingssinfonie</title>
+      <title lang="de" original="yes">Frühlingssinfonie</title>
   </movie>
   <movie id="m_189">
-      <title lang="de">Fünf letzte Tage</title>
+      <title lang="de" original="yes">Fünf letzte Tage</title>
   </movie>
   <movie id="m_190">
-      <title lang="de">Die weiße Rose</title>
+      <title lang="de" original="yes">Die weiße Rose</title>
   </movie>
   <movie id="m_191">
-      <title lang="de">Fußball ist unser Leben</title>
+      <title lang="de" original="yes">Fußball ist unser Leben</title>
   </movie>
   <movie id="m_192">
-      <title lang="de">Der Fußgänger</title>
+      <title lang="de" original="yes">Der Fußgänger</title>
   </movie>
   <movie id="m_193">
-      <title lang="de">Die Fälscher</title>
+      <title lang="de" original="yes">Die Fälscher</title>
   </movie>
   <movie id="m_194">
-      <title lang="de">Galapagos - Trauminsel im Pazifik</title>
+      <title lang="de" original="yes">Galapagos - Trauminsel im Pazifik</title>
   </movie>
   <movie id="m_195">
-      <title lang="de">Ganz oder gar nicht</title>
+      <title lang="de" original="yes">Ganz oder gar nicht</title>
   </movie>
   <movie id="m_196">
-      <title lang="de">Der Garten Eden</title>
+      <title lang="de" original="yes">Der Garten Eden</title>
   </movie>
   <movie id="m_197">
-      <title lang="de">Die Gartenzwerge</title>
+      <title lang="de" original="yes">Die Gartenzwerge</title>
   </movie>
   <movie id="m_198">
-      <title lang="de">Gegen die Wand</title>
+      <title lang="de" original="yes">Gegen die Wand</title>
   </movie>
   <movie id="m_199">
-      <title lang="de">Die Geige</title>
+      <title lang="de" original="yes">Die Geige</title>
   </movie>
   <movie id="m_200">
-      <title lang="de">Das Geisterhaus</title>
+      <title lang="de" original="yes">Das Geisterhaus</title>
   </movie>
   <movie id="m_201">
-      <title lang="de">Geliebtes Leben</title>
+      <title lang="de" original="yes">Geliebtes Leben</title>
   </movie>
   <movie id="m_202">
-      <title lang="de">Generalprobe</title>
+      <title lang="de" original="yes">Generalprobe</title>
   </movie>
   <movie id="m_203">
-      <title lang="de">Georg Elser - Einer aus Deutschland</title>
+      <title lang="de" original="yes">Georg Elser - Einer aus Deutschland</title>
   </movie>
   <movie id="m_204">
-      <title lang="de">Das Spinnennetz</title>
+      <title lang="de" original="yes">Das Spinnennetz</title>
   </movie>
   <movie id="m_205">
-      <title lang="de">Die Geschichte eines Konzerts</title>
+      <title lang="de" original="yes">Die Geschichte eines Konzerts</title>
   </movie>
   <movie id="m_206">
-      <title lang="de">Geschichten aus dem Wienerwald</title>
+      <title lang="de" original="yes">Geschichten aus dem Wienerwald</title>
   </movie>
   <movie id="m_207">
-      <title lang="de">Geschwindigkeit</title>
+      <title lang="de" original="yes">Geschwindigkeit</title>
   </movie>
   <movie id="m_208">
-      <title lang="de">Geteiltes Land</title>
+      <title lang="de" original="yes">Geteiltes Land</title>
   </movie>
   <movie id="m_209">
-      <title lang="de">Die gläserne Zelle</title>
+      <title lang="de" original="yes">Die gläserne Zelle</title>
   </movie>
   <movie id="m_210">
-      <title lang="de">Das Glas Wasser</title>
+      <title lang="de" original="yes">Das Glas Wasser</title>
   </movie>
   <movie id="m_211">
-      <title lang="de">Die glücklichen Jahre der Thorwalds</title>
+      <title lang="de" original="yes">Die glücklichen Jahre der Thorwalds</title>
   </movie>
   <movie id="m_212">
-      <title lang="de">Götter der Pest</title>
+      <title lang="de" original="yes">Götter der Pest</title>
   </movie>
   <movie id="m_213">
-      <title lang="de">Katzelmacher</title>
+      <title lang="de" original="yes">Katzelmacher</title>
   </movie>
   <movie id="m_214">
-      <title lang="de">Liebe ist kälter als der Tod</title>
+      <title lang="de" original="yes">Liebe ist kälter als der Tod</title>
   </movie>
   <movie id="m_215">
-      <title lang="de">Good Bye, Lenin!</title>
+      <title lang="de" original="yes">Good Bye, Lenin!</title>
   </movie>
   <movie id="m_216">
-      <title lang="de">Gran Paradiso</title>
+      <title lang="de" original="yes">Gran Paradiso</title>
   </movie>
   <movie id="m_217">
-      <title lang="de">Grete Minde</title>
+      <title lang="de" original="yes">Grete Minde</title>
   </movie>
   <movie id="m_218">
-      <title lang="de">Das große Liebesspiel</title>
+      <title lang="de" original="yes">Das große Liebesspiel</title>
   </movie>
   <movie id="m_219">
-      <title lang="de">Die große Versuchung</title>
+      <title lang="de" original="yes">Die große Versuchung</title>
   </movie>
   <movie id="m_220">
-      <title lang="de">Die Grünstein-Variante</title>
+      <title lang="de" original="yes">Die Grünstein-Variante</title>
   </movie>
   <movie id="m_221">
-      <title lang="de">Grüße von Rosita aus Peru</title>
+      <title lang="de" original="yes">Grüße von Rosita aus Peru</title>
   </movie>
   <movie id="m_222">
-      <title lang="de">Gruppenbild mit Dame</title>
+      <title lang="de" original="yes">Gruppenbild mit Dame</title>
   </movie>
   <movie id="m_223">
-      <title lang="de">Gustav Messmer - Der Flieger</title>
+      <title lang="de" original="yes">Gustav Messmer - Der Flieger</title>
   </movie>
   <movie id="m_224">
-      <title lang="de">Gute Nacht</title>
+      <title lang="de" original="yes">Gute Nacht</title>
   </movie>
   <movie id="m_225">
-      <title lang="de">Der Händler der vier Jahreszeiten</title>
+      <title lang="de" original="yes">Der Händler der vier Jahreszeiten</title>
   </movie>
   <movie id="m_226">
-      <title lang="de">Halbe Treppe</title>
+      <title lang="de" original="yes">Halbe Treppe</title>
   </movie>
   <movie id="m_227">
-      <title lang="de">Die Halbstarken</title>
+      <title lang="de" original="yes">Die Halbstarken</title>
   </movie>
   <movie id="m_228">
-      <title lang="de">Die Hallo-Sisters</title>
+      <title lang="de" original="yes">Die Hallo-Sisters</title>
   </movie>
   <movie id="m_229">
-      <title lang="de">Hands up Mr. Rasnichi</title>
+      <title lang="de" original="yes">Hands up Mr. Rasnichi</title>
   </movie>
   <movie id="m_230">
-      <title lang="de">Hans Warns - Mein 20. Jahrhundert</title>
+      <title lang="de" original="yes">Hans Warns - Mein 20. Jahrhundert</title>
   </movie>
   <movie id="m_231">
-      <title lang="de">Harlis</title>
+      <title lang="de" original="yes">Harlis</title>
   </movie>
   <movie id="m_232">
-      <title lang="de">Der Hauptmann von Köpenick</title>
+      <title lang="de" original="yes">Der Hauptmann von Köpenick</title>
   </movie>
   <movie id="m_233">
-      <title lang="de">Das Haus in der Karpfengasse</title>
+      <title lang="de" original="yes">Das Haus in der Karpfengasse</title>
   </movie>
   <movie id="m_234">
-      <title lang="de">Havanna, mi amor</title>
+      <title lang="de" original="yes">Havanna, mi amor</title>
   </movie>
   <movie id="m_235">
-      <title lang="de">Die Heartbreakers</title>
+      <title lang="de" original="yes">Die Heartbreakers</title>
   </movie>
   <movie id="m_236">
-      <title lang="de">Heaven</title>
+      <title lang="de" original="yes">Heaven</title>
   </movie>
   <movie id="m_237">
-      <title lang="de">Heidelberger Romanze</title>
+      <title lang="de" original="yes">Heidelberger Romanze</title>
   </movie>
   <movie id="m_238">
-      <title lang="de">Heidenlöcher</title>
+      <title lang="de" original="yes">Heidenlöcher</title>
   </movie>
   <movie id="m_239">
-      <title lang="de">Heidi M.</title>
+      <title lang="de" original="yes">Heidi M.</title>
   </movie>
   <movie id="m_240">
-      <title lang="de">Heimspiel</title>
+      <title lang="de" original="yes">Heimspiel</title>
   </movie>
   <movie id="m_241">
-      <title lang="de">Heinrich</title>
+      <title lang="de" original="yes">Heinrich</title>
   </movie>
   <movie id="m_242">
-      <title lang="de">Helden</title>
+      <title lang="de" original="yes">Helden</title>
   </movie>
   <movie id="m_243">
-      <title lang="de">Herbstgedanken</title>
+      <title lang="de" original="yes">Herbstgedanken</title>
   </movie>
   <movie id="m_244">
-      <title lang="de">Herbstmilch</title>
+      <title lang="de" original="yes">Herbstmilch</title>
   </movie>
   <movie id="m_245">
-      <title lang="de">Herr Kekulé, ich kenne Sie nicht</title>
+      <title lang="de" original="yes">Herr Kekulé, ich kenne Sie nicht</title>
   </movie>
   <movie id="m_246">
-      <title lang="de">Herr Lehmann</title>
+      <title lang="de" original="yes">Herr Lehmann</title>
   </movie>
   <movie id="m_247">
-      <title lang="de">Herr über Leben und Tod</title>
+      <title lang="de" original="yes">Herr über Leben und Tod</title>
   </movie>
   <movie id="m_248">
-      <title lang="de">Die Ratten</title>
+      <title lang="de" original="yes">Die Ratten</title>
   </movie>
   <movie id="m_249">
-      <title lang="de">Herrenpartie</title>
+      <title lang="de" original="yes">Herrenpartie</title>
   </movie>
   <movie id="m_250">
-      <title lang="de">Herz aus Glas</title>
+      <title lang="de" original="yes">Herz aus Glas</title>
   </movie>
   <movie id="m_251">
-      <title lang="de">Herz der Welt</title>
+      <title lang="de" original="yes">Herz der Welt</title>
   </movie>
   <movie id="m_252">
-      <title lang="de">Himmel ohne Sterne</title>
+      <title lang="de" original="yes">Himmel ohne Sterne</title>
   </movie>
   <movie id="m_253">
-      <title lang="de">Der Himmel über Berlin</title>
+      <title lang="de" original="yes">Der Himmel über Berlin</title>
   </movie>
   <movie id="m_254">
-      <title lang="de">Das höchste Gut einer Frau ist ihr Schweigen</title>
+      <title lang="de" original="yes">Das höchste Gut einer Frau ist ihr Schweigen</title>
   </movie>
   <movie id="m_255">
-      <title lang="de">Hokuspokus</title>
+      <title lang="de" original="yes">Hokuspokus</title>
   </movie>
   <movie id="m_256">
-      <title lang="de">Hollywood in Deblatschka Pescara</title>
+      <title lang="de" original="yes">Hollywood in Deblatschka Pescara</title>
   </movie>
   <movie id="m_257">
-      <title lang="de">Homo Faber</title>
+      <title lang="de" original="yes">Homo Faber</title>
   </movie>
   <movie id="m_258">
-      <title lang="de">Hongkong - Insel im Roten Meer</title>
+      <title lang="de" original="yes">Hongkong - Insel im Roten Meer</title>
   </movie>
   <movie id="m_259">
-      <title lang="de">HUGO</title>
+      <title lang="de" original="yes">HUGO</title>
   </movie>
   <movie id="m_260">
-      <title lang="de">Hunde, wollt ihr ewig leben</title>
+      <title lang="de" original="yes">Hunde, wollt ihr ewig leben</title>
   </movie>
   <movie id="m_261">
-      <title lang="de">Hundertwassers Regentag</title>
+      <title lang="de" original="yes">Hundertwassers Regentag</title>
   </movie>
   <movie id="m_262">
-      <title lang="de">Der Hut oder Mondo Novo</title>
+      <title lang="de" original="yes">Der Hut oder Mondo Novo</title>
   </movie>
   <movie id="m_263">
-      <title lang="de">Hynningen</title>
+      <title lang="de" original="yes">Hynningen</title>
   </movie>
   <movie id="m_264">
-      <title lang="de">Hände weg von Mississippi</title>
+      <title lang="de" original="yes">Hände weg von Mississippi</title>
   </movie>
   <movie id="m_265">
-      <title lang="de">Die Höhle des gelben Hundes</title>
+      <title lang="de" original="yes">Die Höhle des gelben Hundes</title>
   </movie>
   <movie id="m_266">
-      <title lang="de">Ich bin ein Elefant, Madame</title>
+      <title lang="de" original="yes">Ich bin ein Elefant, Madame</title>
   </movie>
   <movie id="m_267">
-      <title lang="de">Ich denke oft an Hawaii</title>
+      <title lang="de" original="yes">Ich denke oft an Hawaii</title>
   </movie>
   <movie id="m_268">
-      <title lang="de">Ich denke oft an Piroschka</title>
+      <title lang="de" original="yes">Ich denke oft an Piroschka</title>
   </movie>
   <movie id="m_269">
-      <title lang="de">Ich deutsche Behörde</title>
+      <title lang="de" original="yes">Ich deutsche Behörde</title>
   </movie>
   <movie id="m_270">
-      <title lang="de">Die Iltiskoppel</title>
+      <title lang="de" original="yes">Die Iltiskoppel</title>
   </movie>
   <movie id="m_271">
-      <title lang="de">Im Angesicht der Ewigkeit</title>
+      <title lang="de" original="yes">Im Angesicht der Ewigkeit</title>
   </movie>
   <movie id="m_272">
-      <title lang="de">Im Jahr der Schildkröte</title>
+      <title lang="de" original="yes">Im Jahr der Schildkröte</title>
   </movie>
   <movie id="m_273">
-      <title lang="de">Im Kreise der Lieben</title>
+      <title lang="de" original="yes">Im Kreise der Lieben</title>
   </movie>
   <movie id="m_274">
-      <title lang="de">Im Namen des Volkes</title>
+      <title lang="de" original="yes">Im Namen des Volkes</title>
   </movie>
   <movie id="m_275">
-      <title lang="de">Im Schatten des Karakorum</title>
+      <title lang="de" original="yes">Im Schatten des Karakorum</title>
   </movie>
   <movie id="m_276">
-      <title lang="de">Im Zauber der Kordilleren</title>
+      <title lang="de" original="yes">Im Zauber der Kordilleren</title>
   </movie>
   <movie id="m_277">
-      <title lang="de">Impuls unserer Zeit</title>
+      <title lang="de" original="yes">Impuls unserer Zeit</title>
   </movie>
   <movie id="m_278">
-      <title lang="de">In Gefahr und größter Not bringt der Mittelweg den Tod</title>
+      <title lang="de" original="yes">In Gefahr und größter Not bringt der Mittelweg den Tod</title>
   </movie>
   <movie id="m_279">
-      <title lang="de">Jeder für sich und Gott gegen alle</title>
+      <title lang="de" original="yes">Jeder für sich und Gott gegen alle</title>
   </movie>
   <movie id="m_280">
-      <title lang="de">in side out</title>
+      <title lang="de" original="yes">in side out</title>
   </movie>
   <movie id="m_281">
-      <title lang="de">In the Mood for Love</title>
+      <title lang="de" original="yes">In the Mood for Love</title>
   </movie>
   <movie id="m_282">
-      <title lang="de">In weiter Ferne, so nah</title>
+      <title lang="de" original="yes">In weiter Ferne, so nah</title>
   </movie>
   <movie id="m_283">
-      <title lang="de">Der Indianer</title>
+      <title lang="de" original="yes">Der Indianer</title>
   </movie>
   <movie id="m_284">
-      <title lang="de">Das innere Auge</title>
+      <title lang="de" original="yes">Das innere Auge</title>
   </movie>
   <movie id="m_285">
-      <title lang="de">Die innere Sicherheit</title>
+      <title lang="de" original="yes">Die innere Sicherheit</title>
   </movie>
   <movie id="m_286">
-      <title lang="de">Interview</title>
+      <title lang="de" original="yes">Interview</title>
   </movie>
   <movie id="m_287">
-      <title lang="de">Jacqueline</title>
+      <title lang="de" original="yes">Jacqueline</title>
   </movie>
   <movie id="m_288">
-      <title lang="de">Jagdszenen aus Niederbayern</title>
+      <title lang="de" original="yes">Jagdszenen aus Niederbayern</title>
   </movie>
   <movie id="m_289">
-      <title lang="de">Jaider - der einsame Jäger</title>
+      <title lang="de" original="yes">Jaider - der einsame Jäger</title>
   </movie>
   <movie id="m_290">
-      <title lang="de">Jazz - Rhytmus der Zeit</title>
+      <title lang="de" original="yes">Jazz - Rhytmus der Zeit</title>
   </movie>
   <movie id="m_291">
-      <title lang="de">Jede Menge Kohle</title>
+      <title lang="de" original="yes">Jede Menge Kohle</title>
   </movie>
   <movie id="m_292">
-      <title lang="de">Jeder für sich und Gott gegen alle</title>
+      <title lang="de" original="yes">Jeder für sich und Gott gegen alle</title>
   </movie>
   <movie id="m_293">
-      <title lang="de">Jenseits der Stille</title>
+      <title lang="de" original="yes">Jenseits der Stille</title>
   </movie>
   <movie id="m_294">
-      <title lang="de">Johanna d'Arc of Mongolia</title>
+      <title lang="de" original="yes">Johanna d'Arc of Mongolia</title>
   </movie>
   <movie id="m_295">
-      <title lang="de">John Glückstadt</title>
+      <title lang="de" original="yes">John Glückstadt</title>
   </movie>
   <movie id="m_296">
-      <title lang="de">Johnny West</title>
+      <title lang="de" original="yes">Johnny West</title>
   </movie>
   <movie id="m_297">
-      <title lang="de">Jonas</title>
+      <title lang="de" original="yes">Jonas</title>
   </movie>
   <movie id="m_298">
-      <title lang="de">Jonathan</title>
+      <title lang="de" original="yes">Jonathan</title>
   </movie>
   <movie id="m_299">
-      <title lang="de">jüm - jüm</title>
+      <title lang="de" original="yes">jüm - jüm</title>
   </movie>
   <movie id="m_300">
-      <title lang="de">Jugend sieht Deutschland</title>
+      <title lang="de" original="yes">Jugend sieht Deutschland</title>
   </movie>
   <movie id="m_301">
-      <title lang="de">Der junge Törless</title>
+      <title lang="de" original="yes">Der junge Törless</title>
   </movie>
   <movie id="m_302">
-      <title lang="de">Käpt’n Blaubär</title>
+      <title lang="de" original="yes">Käpt’n Blaubär</title>
   </movie>
   <movie id="m_303">
-      <title lang="de">Kalte Heimat</title>
+      <title lang="de" original="yes">Kalte Heimat</title>
   </movie>
   <movie id="m_304">
-      <title lang="de">Kaltes Fieber</title>
+      <title lang="de" original="yes">Kaltes Fieber</title>
   </movie>
   <movie id="m_305">
-      <title lang="de">Kanakerbraut</title>
+      <title lang="de" original="yes">Kanakerbraut</title>
   </movie>
   <movie id="m_306">
-      <title lang="de">Kandinsky</title>
+      <title lang="de" original="yes">Kandinsky</title>
   </movie>
   <movie id="m_307">
-      <title lang="de">Karl May</title>
+      <title lang="de" original="yes">Karl May</title>
   </movie>
   <movie id="m_308">
-      <title lang="de">Karl-Heinz</title>
+      <title lang="de" original="yes">Karl-Heinz</title>
   </movie>
   <movie id="m_309">
-      <title lang="de">Kaspar Hauser</title>
+      <title lang="de" original="yes">Kaspar Hauser</title>
   </movie>
   <movie id="m_310">
-      <title lang="de">Die Katze</title>
+      <title lang="de" original="yes">Die Katze</title>
   </movie>
   <movie id="m_311">
-      <title lang="de">Katzelmacher</title>
+      <title lang="de" original="yes">Katzelmacher</title>
   </movie>
   <movie id="m_312">
-      <title lang="de">Kehraus</title>
+      <title lang="de" original="yes">Kehraus</title>
   </movie>
   <movie id="m_313">
-      <title lang="de">Kein Platz für wilde Tiere</title>
+      <title lang="de" original="yes">Kein Platz für wilde Tiere</title>
   </movie>
   <movie id="m_314">
-      <title lang="de">Keiner liebt mich</title>
+      <title lang="de" original="yes">Keiner liebt mich</title>
   </movie>
   <movie id="m_315">
-      <title lang="de">Kennwort: Reiher</title>
+      <title lang="de" original="yes">Kennwort: Reiher</title>
   </movie>
   <movie id="m_316">
-      <title lang="de">Kennzeichen Luftballon</title>
+      <title lang="de" original="yes">Kennzeichen Luftballon</title>
   </movie>
   <movie id="m_317">
-      <title lang="de">Kepler und sein Werk</title>
+      <title lang="de" original="yes">Kepler und sein Werk</title>
   </movie>
   <movie id="m_318">
-      <title lang="de">Die Kinder aus Nr. 67</title>
+      <title lang="de" original="yes">Die Kinder aus Nr. 67</title>
   </movie>
   <movie id="m_319">
-      <title lang="de">Die letzten Jahre der Kindheit</title>
+      <title lang="de" original="yes">Die letzten Jahre der Kindheit</title>
   </movie>
   <movie id="m_320">
-      <title lang="de">Die Kinder sind tot</title>
+      <title lang="de" original="yes">Die Kinder sind tot</title>
   </movie>
   <movie id="m_321">
-      <title lang="de">Kinder, Mütter und ein General</title>
+      <title lang="de" original="yes">Kinder, Mütter und ein General</title>
   </movie>
   <movie id="m_322">
-      <title lang="de">KIRSCHBLÜTEN</title>
+      <title lang="de" original="yes">KIRSCHBLÜTEN</title>
   </movie>
   <movie id="m_323">
-      <title lang="de">Klassenfeind</title>
+      <title lang="de" original="yes">Klassenfeind</title>
   </movie>
   <movie id="m_324">
-      <title lang="de">Die Klavierspielerin</title>
+      <title lang="de" original="yes">Die Klavierspielerin</title>
   </movie>
   <movie id="m_325">
-      <title lang="de">Kleine Haie</title>
+      <title lang="de" original="yes">Kleine Haie</title>
   </movie>
   <movie id="m_326">
-      <title lang="de">Krücke</title>
+      <title lang="de" original="yes">Krücke</title>
   </movie>
   <movie id="m_327">
-      <title lang="de">Meine Tochter gehört mir</title>
+      <title lang="de" original="yes">Meine Tochter gehört mir</title>
   </movie>
   <movie id="m_328">
-      <title lang="de">Kleine Laus - ganz groß</title>
+      <title lang="de" original="yes">Kleine Laus - ganz groß</title>
   </movie>
   <movie id="m_329">
-      <title lang="de">Kleine Nachtgespenster</title>
+      <title lang="de" original="yes">Kleine Nachtgespenster</title>
   </movie>
   <movie id="m_330">
-      <title lang="de">Der kleine Vampir</title>
+      <title lang="de" original="yes">Der kleine Vampir</title>
   </movie>
   <movie id="m_331">
-      <title lang="de">Knallhart</title>
+      <title lang="de" original="yes">Knallhart</title>
   </movie>
   <movie id="m_332">
-      <title lang="de">Knockin` on Heaven`s Door</title>
+      <title lang="de" original="yes">Knockin` on Heaven`s Door</title>
   </movie>
   <movie id="m_333">
-      <title lang="de">Königliche Hoheit</title>
+      <title lang="de" original="yes">Königliche Hoheit</title>
   </movie>
   <movie id="m_334">
-      <title lang="de">Konzert am Tümpel</title>
+      <title lang="de" original="yes">Konzert am Tümpel</title>
   </movie>
   <movie id="m_335">
-      <title lang="de">Korczak</title>
+      <title lang="de" original="yes">Korczak</title>
   </movie>
   <movie id="m_336">
-      <title lang="de">Der Krieger und die Kaiserin</title>
+      <title lang="de" original="yes">Der Krieger und die Kaiserin</title>
   </movie>
   <movie id="m_337">
-      <title lang="de">Kroko</title>
+      <title lang="de" original="yes">Kroko</title>
   </movie>
   <movie id="m_338">
-      <title lang="de">Krücke</title>
+      <title lang="de" original="yes">Krücke</title>
   </movie>
   <movie id="m_339">
-      <title lang="de">La soufrière</title>
+      <title lang="de" original="yes">La soufrière</title>
   </movie>
   <movie id="m_340">
-      <title lang="de">Labyrinth der Leidenschaften</title>
+      <title lang="de" original="yes">Labyrinth der Leidenschaften</title>
   </movie>
   <movie id="m_341">
-      <title lang="de">Das Land hinter dem Regenbogen</title>
+      <title lang="de" original="yes">Das Land hinter dem Regenbogen</title>
   </movie>
   <movie id="m_342">
-      <title lang="de">Die Landarbeiter</title>
+      <title lang="de" original="yes">Die Landarbeiter</title>
   </movie>
   <movie id="m_343">
-      <title lang="de">Der lange Jammer</title>
+      <title lang="de" original="yes">Der lange Jammer</title>
   </movie>
   <movie id="m_344">
-      <title lang="de">Lauras Stern</title>
+      <title lang="de" original="yes">Lauras Stern</title>
   </movie>
   <movie id="m_345">
-      <title lang="de">Laßt uns auch leben</title>
+      <title lang="de" original="yes">Laßt uns auch leben</title>
       <alternativetitle lang="de">Lasst uns auch leben</alternativetitle>
   </movie>
   <movie id="m_346">
-      <title lang="de">Le Manège de Petit Pierre</title>
+      <title lang="de" original="yes">Le Manège de Petit Pierre</title>
   </movie>
   <movie id="m_347">
-      <title lang="de">Das Leben der Anderen</title>
+      <title lang="de" original="yes">Das Leben der Anderen</title>
   </movie>
   <movie id="m_348">
-      <title lang="de">Das Leben ist eine Baustelle</title>
+      <title lang="de" original="yes">Das Leben ist eine Baustelle</title>
   </movie>
   <movie id="m_349">
-      <title lang="de">Rossini</title>
+      <title lang="de" original="yes">Rossini</title>
   </movie>
   <movie id="m_350">
-      <title lang="de">Das Leben ist Schön</title>
+      <title lang="de" original="yes">Das Leben ist Schön</title>
   </movie>
   <movie id="m_351">
-      <title lang="de">Lebenzeichen</title>
+      <title lang="de" original="yes">Lebenzeichen</title>
   </movie>
   <movie id="m_352">
-      <title lang="de">Leise Schatten</title>
+      <title lang="de" original="yes">Leise Schatten</title>
   </movie>
   <movie id="m_353">
-      <title lang="de">Wildfeuer</title>
+      <title lang="de" original="yes">Wildfeuer</title>
   </movie>
   <movie id="m_354">
-      <title lang="de">Lena Rais</title>
+      <title lang="de" original="yes">Lena Rais</title>
   </movie>
   <movie id="m_355">
-      <title lang="de">Lenz</title>
+      <title lang="de" original="yes">Lenz</title>
   </movie>
   <movie id="m_356">
-      <title lang="de">LEROY</title>
+      <title lang="de" original="yes">LEROY</title>
   </movie>
   <movie id="m_357">
-      <title lang="de">Letzte Ausfahrt Brooklyn</title>
+      <title lang="de" original="yes">Letzte Ausfahrt Brooklyn</title>
   </movie>
   <movie id="m_358">
-      <title lang="de">Die letzte Brücke</title>
+      <title lang="de" original="yes">Die letzte Brücke</title>
   </movie>
   <movie id="m_359">
-      <title lang="de">Der letzte Dreck</title>
+      <title lang="de" original="yes">Der letzte Dreck</title>
   </movie>
   <movie id="m_360">
-      <title lang="de">Das letzte Loch</title>
+      <title lang="de" original="yes">Das letzte Loch</title>
   </movie>
   <movie id="m_361">
-      <title lang="de">Der letzte Zeuge</title>
+      <title lang="de" original="yes">Der letzte Zeuge</title>
   </movie>
   <movie id="m_362">
-      <title lang="de">Die letzten Jahre der Kindheit</title>
+      <title lang="de" original="yes">Die letzten Jahre der Kindheit</title>
   </movie>
   <movie id="m_363">
-      <title lang="de">Lichter</title>
+      <title lang="de" original="yes">Lichter</title>
   </movie>
   <movie id="m_364">
-      <title lang="de">Liebe ist nur ein Wort</title>
+      <title lang="de" original="yes">Liebe ist nur ein Wort</title>
   </movie>
   <movie id="m_365">
-      <title lang="de">Lieber Karl</title>
+      <title lang="de" original="yes">Lieber Karl</title>
   </movie>
   <movie id="m_366">
-      <title lang="de">LIEBESLEBEN</title>
+      <title lang="de" original="yes">LIEBESLEBEN</title>
   </movie>
   <movie id="m_367">
-      <title lang="de">Liegen Lernen</title>
+      <title lang="de" original="yes">Liegen Lernen</title>
   </movie>
   <movie id="m_368">
-      <title lang="de">Lina Braake - Die Interessen der Bank können nicht die Interessen sein, die Lina Braake hat</title>
+      <title lang="de" original="yes">Lina Braake - Die Interessen der Bank können nicht die Interessen sein, die Lina Braake hat</title>
   </movie>
   <movie id="m_369">
-      <title lang="de">Lola</title>
+      <title lang="de" original="yes">Lola</title>
   </movie>
   <movie id="m_370">
-      <title lang="de">Lola rennt</title>
+      <title lang="de" original="yes">Lola rennt</title>
   </movie>
   <movie id="m_371">
-      <title lang="de">Looping</title>
+      <title lang="de" original="yes">Looping</title>
   </movie>
   <movie id="m_372">
-      <title lang="de">Der Lord von Barmbeck</title>
+      <title lang="de" original="yes">Der Lord von Barmbeck</title>
   </movie>
   <movie id="m_373">
-      <title lang="de">Lost Children</title>
+      <title lang="de" original="yes">Lost Children</title>
   </movie>
   <movie id="m_374">
-      <title lang="de">Lost in Translation</title>
+      <title lang="de" original="yes">Lost in Translation</title>
   </movie>
   <movie id="m_375">
-      <title lang="de">Ludwig - Requiem für einen jungfräulichen König</title>
+      <title lang="de" original="yes">Ludwig - Requiem für einen jungfräulichen König</title>
   </movie>
   <movie id="m_376">
-      <title lang="de">Ludwig II.</title>
+      <title lang="de" original="yes">Ludwig II.</title>
   </movie>
   <movie id="m_377">
-      <title lang="de">Mädchen ... nur mit Gewalt</title>
+      <title lang="de" original="yes">Mädchen ... nur mit Gewalt</title>
   </movie>
   <movie id="m_378">
-      <title lang="de">Mädchen, Mädchen</title>
+      <title lang="de" original="yes">Mädchen, Mädchen</title>
   </movie>
   <movie id="m_379">
-      <title lang="de">Der Mädchenkrieg</title>
+      <title lang="de" original="yes">Der Mädchenkrieg</title>
   </movie>
   <movie id="m_380">
-      <title lang="de">Männer</title>
+      <title lang="de" original="yes">Männer</title>
   </movie>
   <movie id="m_381">
-      <title lang="de">Das magische Band</title>
+      <title lang="de" original="yes">Das magische Band</title>
   </movie>
   <movie id="m_382">
-      <title lang="de">Malatesta</title>
+      <title lang="de" original="yes">Malatesta</title>
   </movie>
   <movie id="m_383">
-      <title lang="de">Malina</title>
+      <title lang="de" original="yes">Malina</title>
   </movie>
   <movie id="m_384">
-      <title lang="de">Der Mann, der sich verkaufte</title>
+      <title lang="de" original="yes">Der Mann, der sich verkaufte</title>
   </movie>
   <movie id="m_385">
-      <title lang="de">Maries Lied</title>
+      <title lang="de" original="yes">Maries Lied</title>
   </movie>
   <movie id="m_386">
-      <title lang="de">Marionetten</title>
+      <title lang="de" original="yes">Marionetten</title>
   </movie>
   <movie id="m_387">
-      <title lang="de">Marlene</title>
+      <title lang="de" original="yes">Marlene</title>
   </movie>
   <movie id="m_388">
-      <title lang="de">Die Marquise von O...</title>
+      <title lang="de" original="yes">Die Marquise von O...</title>
   </movie>
   <movie id="m_389">
-      <title lang="de">Martha Jellneck</title>
+      <title lang="de" original="yes">Martha Jellneck</title>
   </movie>
   <movie id="m_390">
-      <title lang="de">Maschine</title>
+      <title lang="de" original="yes">Maschine</title>
   </movie>
   <movie id="m_391">
-      <title lang="de">Mathias Kneißl</title>
+      <title lang="de" original="yes">Mathias Kneißl</title>
   </movie>
   <movie id="m_392">
-      <title lang="de">o.k.</title>
+      <title lang="de" original="yes">o.k.</title>
   </movie>
   <movie id="m_393">
-      <title lang="de">Mathias Kneißl</title>
+      <title lang="de" original="yes">Mathias Kneißl</title>
   </movie>
   <movie id="m_394">
-      <title lang="de">Whity</title>
+      <title lang="de" original="yes">Whity</title>
   </movie>
   <movie id="m_395">
-      <title lang="de">Max Ernst - Entdeckungsfahrten ins Unbewußte</title>
+      <title lang="de" original="yes">Max Ernst - Entdeckungsfahrten ins Unbewußte</title>
       <alternativetitle lang="de">Max Ernst - Entdeckungsfahrten ins Unbewusste</alternativetitle>
   </movie>
   <movie id="m_396">
-      <title lang="de">Mein letzter Film</title>
+      <title lang="de" original="yes">Mein letzter Film</title>
   </movie>
   <movie id="m_397">
-      <title lang="de">Meine Tochter gehört mir</title>
+      <title lang="de" original="yes">Meine Tochter gehört mir</title>
   </movie>
   <movie id="m_398">
-      <title lang="de">Meines Vaters Pferde</title>
+      <title lang="de" original="yes">Meines Vaters Pferde</title>
   </movie>
   <movie id="m_399">
-      <title lang="de">Mensch und Kunstfigur, Oskar Schlemmer und die Bauhausbühne</title>
+      <title lang="de" original="yes">Mensch und Kunstfigur, Oskar Schlemmer und die Bauhausbühne</title>
   </movie>
   <movie id="m_400">
-      <title lang="de">Menschen wie aus Glas</title>
+      <title lang="de" original="yes">Menschen wie aus Glas</title>
   </movie>
   <movie id="m_401">
-      <title lang="de">Meschugge</title>
+      <title lang="de" original="yes">Meschugge</title>
   </movie>
   <movie id="m_402">
-      <title lang="de">Pünktchen und Anton</title>
+      <title lang="de" original="yes">Pünktchen und Anton</title>
   </movie>
   <movie id="m_403">
-      <title lang="de">Messer im Kopf</title>
+      <title lang="de" original="yes">Messer im Kopf</title>
   </movie>
   <movie id="m_404">
-      <title lang="de">Das Mikroskop</title>
+      <title lang="de" original="yes">Das Mikroskop</title>
   </movie>
   <movie id="m_405">
-      <title lang="de">Mit starrem Blick aufs Geld</title>
+      <title lang="de" original="yes">Mit starrem Blick aufs Geld</title>
   </movie>
   <movie id="m_406">
-      <title lang="de">Der Mittagsschlaf</title>
+      <title lang="de" original="yes">Der Mittagsschlaf</title>
   </movie>
   <movie id="m_407">
-      <title lang="de">Modebummel</title>
+      <title lang="de" original="yes">Modebummel</title>
   </movie>
   <movie id="m_408">
-      <title lang="de">Monarch</title>
+      <title lang="de" original="yes">Monarch</title>
   </movie>
   <movie id="m_409">
-      <title lang="de">Der Mond ist nur a nackerte Kugel</title>
+      <title lang="de" original="yes">Der Mond ist nur a nackerte Kugel</title>
   </movie>
   <movie id="m_410">
-      <title lang="de">Mord und Totschlag</title>
+      <title lang="de" original="yes">Mord und Totschlag</title>
   </movie>
   <movie id="m_411">
-      <title lang="de">Morgen in Alabama</title>
+      <title lang="de" original="yes">Morgen in Alabama</title>
   </movie>
   <movie id="m_412">
-      <title lang="de">Mozart - Aufzeichnungen einer Jugend</title>
+      <title lang="de" original="yes">Mozart - Aufzeichnungen einer Jugend</title>
   </movie>
   <movie id="m_413">
-      <title lang="de">Mutters Courage</title>
+      <title lang="de" original="yes">Mutters Courage</title>
   </movie>
   <movie id="m_414">
-      <title lang="de">Muxmäuschenstill</title>
+      <title lang="de" original="yes">Muxmäuschenstill</title>
   </movie>
   <movie id="m_415">
-      <title lang="de">Die Nacht</title>
+      <title lang="de" original="yes">Die Nacht</title>
   </movie>
   <movie id="m_416">
-      <title lang="de">Die Nacht des Marders</title>
+      <title lang="de" original="yes">Die Nacht des Marders</title>
   </movie>
   <movie id="m_417">
-      <title lang="de">Die Nacht des Schicksals</title>
+      <title lang="de" original="yes">Die Nacht des Schicksals</title>
   </movie>
   <movie id="m_418">
-      <title lang="de">Nachtgestalten</title>
+      <title lang="de" original="yes">Nachtgestalten</title>
   </movie>
   <movie id="m_419">
-      <title lang="de">Nachts auf den Straßen</title>
+      <title lang="de" original="yes">Nachts auf den Straßen</title>
   </movie>
   <movie id="m_420">
-      <title lang="de">Nachts, wenn der Teufel kam</title>
+      <title lang="de" original="yes">Nachts, wenn der Teufel kam</title>
   </movie>
   <movie id="m_421">
-      <title lang="de">Nackt</title>
+      <title lang="de" original="yes">Nackt</title>
   </movie>
   <movie id="m_422">
-      <title lang="de">Der Name der Rose</title>
+      <title lang="de" original="yes">Der Name der Rose</title>
   </movie>
   <movie id="m_423">
-      <title lang="de">Nanga Parbat 1953</title>
+      <title lang="de" original="yes">Nanga Parbat 1953</title>
   </movie>
   <movie id="m_424">
-      <title lang="de">Napola</title>
+      <title lang="de" original="yes">Napola</title>
   </movie>
   <movie id="m_425">
-      <title lang="de">Nasser Asphalt</title>
+      <title lang="de" original="yes">Nasser Asphalt</title>
   </movie>
   <movie id="m_426">
-      <title lang="de">Neapolitanische Geschwister</title>
+      <title lang="de" original="yes">Neapolitanische Geschwister</title>
   </movie>
   <movie id="m_427">
-      <title lang="de">Neue Kunst - neues Sehen</title>
+      <title lang="de" original="yes">Neue Kunst - neues Sehen</title>
   </movie>
   <movie id="m_428">
-      <title lang="de">Neuner</title>
+      <title lang="de" original="yes">Neuner</title>
   </movie>
   <movie id="m_429">
-      <title lang="de">Der neunte Tag</title>
+      <title lang="de" original="yes">Der neunte Tag</title>
   </movie>
   <movie id="m_430">
-      <title lang="de">Nichts bereuen</title>
+      <title lang="de" original="yes">Nichts bereuen</title>
   </movie>
   <movie id="m_431">
-      <title lang="de">Vaya con Dios</title>
+      <title lang="de" original="yes">Vaya con Dios</title>
   </movie>
   <movie id="m_432">
-      <title lang="de">Das weiße Rauschen</title>
+      <title lang="de" original="yes">Das weiße Rauschen</title>
   </movie>
   <movie id="m_433">
-      <title lang="de">Nick´s Film/Lightning over Water</title>
+      <title lang="de" original="yes">Nick´s Film/Lightning over Water</title>
   </movie>
   <movie id="m_434">
-      <title lang="de">Nirgendwo in Afrika</title>
+      <title lang="de" original="yes">Nirgendwo in Afrika</title>
   </movie>
   <movie id="m_435">
-      <title lang="de">Nisshin Geppo - Großes Sportland Japan</title>
+      <title lang="de" original="yes">Nisshin Geppo - Großes Sportland Japan</title>
   </movie>
   <movie id="m_436">
-      <title lang="de">Noblesse Oblige</title>
+      <title lang="de" original="yes">Noblesse Oblige</title>
   </movie>
   <movie id="m_437">
-      <title lang="de">Nordkurve</title>
+      <title lang="de" original="yes">Nordkurve</title>
   </movie>
   <movie id="m_438">
-      <title lang="de">Nosferatu - Phantom der Nacht</title>
+      <title lang="de" original="yes">Nosferatu - Phantom der Nacht</title>
   </movie>
   <movie id="m_439">
-      <title lang="de">Notabene Mezzogiorno</title>
+      <title lang="de" original="yes">Notabene Mezzogiorno</title>
   </movie>
   <movie id="m_440">
-      <title lang="de">Novemberkatzen</title>
+      <title lang="de" original="yes">Novemberkatzen</title>
   </movie>
   <movie id="m_441">
-      <title lang="de">Nr. 1 - Aus Berichten der Wach- und Patrouillendienste</title>
+      <title lang="de" original="yes">Nr. 1 - Aus Berichten der Wach- und Patrouillendienste</title>
   </movie>
   <movie id="m_442">
-      <title lang="de">Nur über meine Leiche</title>
+      <title lang="de" original="yes">Nur über meine Leiche</title>
   </movie>
   <movie id="m_443">
-      <title lang="de">Stadtgespräch</title>
+      <title lang="de" original="yes">Stadtgespräch</title>
   </movie>
   <movie id="m_444">
-      <title lang="de">o.k.</title>
+      <title lang="de" original="yes">o.k.</title>
   </movie>
   <movie id="m_445">
-      <title lang="de">Oberst Redl</title>
+      <title lang="de" original="yes">Oberst Redl</title>
   </movie>
   <movie id="m_446">
-      <title lang="de">Ödipussi</title>
+      <title lang="de" original="yes">Ödipussi</title>
   </movie>
   <movie id="m_447">
-      <title lang="de">Olümpia</title>
+      <title lang="de" original="yes">Olümpia</title>
   </movie>
   <movie id="m_448">
-      <title lang="de">Der olympische Sommer</title>
+      <title lang="de" original="yes">Der olympische Sommer</title>
   </movie>
   <movie id="m_449">
-      <title lang="de">Onkel Toms Hütte</title>
+      <title lang="de" original="yes">Onkel Toms Hütte</title>
   </movie>
   <movie id="m_450">
-      <title lang="de">Ortsfremd ... wohnhaft vormals Mainzerlandstraße</title>
+      <title lang="de" original="yes">Ortsfremd ... wohnhaft vormals Mainzerlandstraße</title>
   </movie>
   <movie id="m_451">
-      <title lang="de">Die Ortsliebschen Frauen</title>
+      <title lang="de" original="yes">Die Ortsliebschen Frauen</title>
   </movie>
   <movie id="m_452">
-      <title lang="de">Die Reinheit des Herzens</title>
+      <title lang="de" original="yes">Die Reinheit des Herzens</title>
   </movie>
   <movie id="m_453">
-      <title lang="de">Die Ortsliebschen Frauen</title>
+      <title lang="de" original="yes">Die Ortsliebschen Frauen</title>
   </movie>
   <movie id="m_454">
-      <title lang="de">Out of Rosenheim</title>
+      <title lang="de" original="yes">Out of Rosenheim</title>
   </movie>
   <movie id="m_455">
-      <title lang="de">Paarungen</title>
+      <title lang="de" original="yes">Paarungen</title>
   </movie>
   <movie id="m_456">
-      <title lang="de">Panter Neuss Neonstadt</title>
+      <title lang="de" original="yes">Panter Neuss Neonstadt</title>
   </movie>
   <movie id="m_457">
-      <title lang="de">Paradies</title>
+      <title lang="de" original="yes">Paradies</title>
   </movie>
   <movie id="m_458">
-      <title lang="de">Paradies und Feuerofen</title>
+      <title lang="de" original="yes">Paradies und Feuerofen</title>
   </movie>
   <movie id="m_459">
-      <title lang="de">Das Parfum</title>
+      <title lang="de" original="yes">Das Parfum</title>
   </movie>
   <movie id="m_460">
-      <title lang="de">Paris, Texas</title>
+      <title lang="de" original="yes">Paris, Texas</title>
   </movie>
   <movie id="m_461">
-      <title lang="de">Die Patriotin</title>
+      <title lang="de" original="yes">Die Patriotin</title>
   </movie>
   <movie id="m_462">
-      <title lang="de">Peng! Du bist tot!</title>
+      <title lang="de" original="yes">Peng! Du bist tot!</title>
   </movie>
   <movie id="m_463">
-      <title lang="de">Der Persönlichkeitstest</title>
+      <title lang="de" original="yes">Der Persönlichkeitstest</title>
   </movie>
   <movie id="m_464">
-      <title lang="de">Die Pistole</title>
+      <title lang="de" original="yes">Die Pistole</title>
   </movie>
   <movie id="m_465">
-      <title lang="de">Pizza Colonia</title>
+      <title lang="de" original="yes">Pizza Colonia</title>
   </movie>
   <movie id="m_466">
-      <title lang="de">playback</title>
+      <title lang="de" original="yes">playback</title>
   </movie>
   <movie id="m_467">
-      <title lang="de">Der plötzliche Reichtum der armen Leute von Kombach</title>
+      <title lang="de" original="yes">Der plötzliche Reichtum der armen Leute von Kombach</title>
   </movie>
   <movie id="m_468">
-      <title lang="de">Polizeirevier Davidswache</title>
+      <title lang="de" original="yes">Polizeirevier Davidswache</title>
   </movie>
   <movie id="m_469">
-      <title lang="de">Portugal - unbekanntes Land am Meer</title>
+      <title lang="de" original="yes">Portugal - unbekanntes Land am Meer</title>
   </movie>
   <movie id="m_470">
-      <title lang="de">Postlagernd Turteltaube</title>
+      <title lang="de" original="yes">Postlagernd Turteltaube</title>
   </movie>
   <movie id="m_471">
-      <title lang="de">Die Spur führt nach Berlin</title>
+      <title lang="de" original="yes">Die Spur führt nach Berlin</title>
   </movie>
   <movie id="m_472">
-      <title lang="de">Premiere</title>
+      <title lang="de" original="yes">Premiere</title>
   </movie>
   <movie id="m_473">
-      <title lang="de">Prinzessinnen sind wir nie gewesen</title>
+      <title lang="de" original="yes">Prinzessinnen sind wir nie gewesen</title>
   </movie>
   <movie id="m_474">
-      <title lang="de">PRINZESSINNENBAD</title>
+      <title lang="de" original="yes">PRINZESSINNENBAD</title>
   </movie>
   <movie id="m_475">
-      <title lang="de">Problem Nr. 1</title>
+      <title lang="de" original="yes">Problem Nr. 1</title>
   </movie>
   <movie id="m_476">
-      <title lang="de">Die Purpurlinie</title>
+      <title lang="de" original="yes">Die Purpurlinie</title>
   </movie>
   <movie id="m_477">
-      <title lang="de">Quai de Valmy</title>
+      <title lang="de" original="yes">Quai de Valmy</title>
   </movie>
   <movie id="m_478">
-      <title lang="de">Quick - das Eichhörnchen</title>
+      <title lang="de" original="yes">Quick - das Eichhörnchen</title>
   </movie>
   <movie id="m_479">
-      <title lang="de">Quo vadis, Adam?</title>
+      <title lang="de" original="yes">Quo vadis, Adam?</title>
   </movie>
   <movie id="m_480">
-      <title lang="de">Rausch einer Nacht</title>
+      <title lang="de" original="yes">Rausch einer Nacht</title>
   </movie>
   <movie id="m_481">
-      <title lang="de">Requiem</title>
+      <title lang="de" original="yes">Requiem</title>
   </movie>
   <movie id="m_482">
-      <title lang="de">Rheingold</title>
+      <title lang="de" original="yes">Rheingold</title>
   </movie>
   <movie id="m_483">
-      <title lang="de">Rhythm is it</title>
+      <title lang="de" original="yes">Rhythm is it</title>
   </movie>
   <movie id="m_484">
-      <title lang="de">Der Richter und sein Henker</title>
+      <title lang="de" original="yes">Der Richter und sein Henker</title>
   </movie>
   <movie id="m_485">
-      <title lang="de">Rivers and Tides</title>
+      <title lang="de" original="yes">Rivers and Tides</title>
   </movie>
   <movie id="m_486">
-      <title lang="de">Das Rokoko der Markgräfin Wilhelmine</title>
+      <title lang="de" original="yes">Das Rokoko der Markgräfin Wilhelmine</title>
   </movie>
   <movie id="m_487">
-      <title lang="de">Rosa Luxemburg</title>
+      <title lang="de" original="yes">Rosa Luxemburg</title>
   </movie>
   <movie id="m_488">
-      <title lang="de">Rose Bernd</title>
+      <title lang="de" original="yes">Rose Bernd</title>
   </movie>
   <movie id="m_489">
-      <title lang="de">Rosen für den Staatsanwalt</title>
+      <title lang="de" original="yes">Rosen für den Staatsanwalt</title>
   </movie>
   <movie id="m_490">
-      <title lang="de">Rossini</title>
+      <title lang="de" original="yes">Rossini</title>
   </movie>
   <movie id="m_491">
-      <title lang="de">Echte Kerle</title>
+      <title lang="de" original="yes">Echte Kerle</title>
   </movie>
   <movie id="m_492">
-      <title lang="de">Rückkehr der Schleiereule?</title>
+      <title lang="de" original="yes">Rückkehr der Schleiereule?</title>
   </movie>
   <movie id="m_493">
-      <title lang="de">Rückwärts</title>
+      <title lang="de" original="yes">Rückwärts</title>
   </movie>
   <movie id="m_494">
-      <title lang="de">Die Sachverständigen</title>
+      <title lang="de" original="yes">Die Sachverständigen</title>
   </movie>
   <movie id="m_495">
-      <title lang="de">Das Sams</title>
+      <title lang="de" original="yes">Das Sams</title>
   </movie>
   <movie id="m_496">
-      <title lang="de">San Domingo</title>
+      <title lang="de" original="yes">San Domingo</title>
   </movie>
   <movie id="m_497">
-      <title lang="de">Scarabea - Wieviel Erde braucht der Mensch</title>
+      <title lang="de" original="yes">Scarabea - Wieviel Erde braucht der Mensch</title>
   </movie>
   <movie id="m_498">
-      <title lang="de">Scarabea - Wieviel Erde braucht der Mensch?</title>
+      <title lang="de" original="yes">Scarabea - Wieviel Erde braucht der Mensch?</title>
   </movie>
   <movie id="m_499">
-      <title lang="de">Die Schatten werden länger</title>
+      <title lang="de" original="yes">Die Schatten werden länger</title>
   </movie>
   <movie id="m_500">
-      <title lang="de">Zwei unter Millionen</title>
+      <title lang="de" original="yes">Zwei unter Millionen</title>
   </movie>
   <movie id="m_501">
-      <title lang="de">Schaut her und seht die Anmut meiner Hände</title>
+      <title lang="de" original="yes">Schaut her und seht die Anmut meiner Hände</title>
   </movie>
   <movie id="m_502">
-      <title lang="de">Schicksal und Vermächtnis</title>
+      <title lang="de" original="yes">Schicksal und Vermächtnis</title>
   </movie>
   <movie id="m_503">
-      <title lang="de">Schlaf der Vernunft</title>
+      <title lang="de" original="yes">Schlaf der Vernunft</title>
   </movie>
   <movie id="m_504">
-      <title lang="de">Schlafes Bruder</title>
+      <title lang="de" original="yes">Schlafes Bruder</title>
   </movie>
   <movie id="m_505">
-      <title lang="de">Wia die Zeit vergeht</title>
+      <title lang="de" original="yes">Wia die Zeit vergeht</title>
   </movie>
   <movie id="m_506">
-      <title lang="de">Das Schloß</title>
+      <title lang="de" original="yes">Das Schloß</title>
       <alternativetitle lang="de">Das Schloss</alternativetitle>
   </movie>
   <movie id="m_507">
-      <title lang="de">Schneeland</title>
+      <title lang="de" original="yes">Schneeland</title>
   </movie>
   <movie id="m_508">
-      <title lang="de">Schöpfung ohne Ende</title>
+      <title lang="de" original="yes">Schöpfung ohne Ende</title>
   </movie>
   <movie id="m_509">
-      <title lang="de">Schonzeit für Füchse</title>
+      <title lang="de" original="yes">Schonzeit für Füchse</title>
   </movie>
   <movie id="m_510">
-      <title lang="de">Das schreckliche Mädchen</title>
+      <title lang="de" original="yes">Das schreckliche Mädchen</title>
   </movie>
   <movie id="m_511">
-      <title lang="de">Schtonk</title>
+      <title lang="de" original="yes">Schtonk</title>
   </movie>
   <movie id="m_512">
-      <title lang="de">Der Schüler Gerber</title>
+      <title lang="de" original="yes">Der Schüler Gerber</title>
   </movie>
   <movie id="m_513">
-      <title lang="de">Der Schuh des Manitu</title>
+      <title lang="de" original="yes">Der Schuh des Manitu</title>
   </movie>
   <movie id="m_514">
-      <title lang="de">Die Schuld des Dr. Homma</title>
+      <title lang="de" original="yes">Die Schuld des Dr. Homma</title>
   </movie>
   <movie id="m_515">
-      <title lang="de">Schultze gets the blues</title>
+      <title lang="de" original="yes">Schultze gets the blues</title>
   </movie>
   <movie id="m_516">
-      <title lang="de">Das schwarz-weiß-rote Himmelbett</title>
+      <title lang="de" original="yes">Das schwarz-weiß-rote Himmelbett</title>
   </movie>
   <movie id="m_517">
-      <title lang="de">Schwarze Gesellen</title>
+      <title lang="de" original="yes">Schwarze Gesellen</title>
   </movie>
   <movie id="m_518">
-      <title lang="de">Das schwarze Schaf</title>
+      <title lang="de" original="yes">Das schwarze Schaf</title>
   </movie>
   <movie id="m_519">
-      <title lang="de">Das Schweigen des Dichters</title>
+      <title lang="de" original="yes">Das Schweigen des Dichters</title>
   </movie>
   <movie id="m_520">
-      <title lang="de">Die Schwestern oder die Balance des Glücks</title>
+      <title lang="de" original="yes">Die Schwestern oder die Balance des Glücks</title>
   </movie>
   <movie id="m_521">
-      <title lang="de">Seiltänzer</title>
+      <title lang="de" original="yes">Seiltänzer</title>
   </movie>
   <movie id="m_522">
-      <title lang="de">Sense and Sensibility</title>
+      <title lang="de" original="yes">Sense and Sensibility</title>
   </movie>
   <movie id="m_523">
-      <title lang="de">Septemberweizen</title>
+      <title lang="de" original="yes">Septemberweizen</title>
   </movie>
   <movie id="m_524">
-      <title lang="de">Serengeti darf nicht sterben</title>
+      <title lang="de" original="yes">Serengeti darf nicht sterben</title>
   </movie>
   <movie id="m_525">
-      <title lang="de">Sex-Business - made in Pasing</title>
+      <title lang="de" original="yes">Sex-Business - made in Pasing</title>
   </movie>
   <movie id="m_526">
-      <title lang="de">Shibam - Stadt in Südarabien</title>
+      <title lang="de" original="yes">Shibam - Stadt in Südarabien</title>
   </movie>
   <movie id="m_527">
-      <title lang="de">Sie heirateten in Gretna Green</title>
+      <title lang="de" original="yes">Sie heirateten in Gretna Green</title>
   </movie>
   <movie id="m_528">
-      <title lang="de">Sieben einfache Phänomene</title>
+      <title lang="de" original="yes">Sieben einfache Phänomene</title>
   </movie>
   <movie id="m_529">
-      <title lang="de">Signale</title>
+      <title lang="de" original="yes">Signale</title>
   </movie>
   <movie id="m_530">
-      <title lang="de">Simon</title>
+      <title lang="de" original="yes">Simon</title>
   </movie>
   <movie id="m_531">
-      <title lang="de">Skizzen zum Film Der lautlose Makubra</title>
+      <title lang="de" original="yes">Skizzen zum Film Der lautlose Makubra</title>
   </movie>
   <movie id="m_532">
-      <title lang="de">Smoke</title>
+      <title lang="de" original="yes">Smoke</title>
   </movie>
   <movie id="m_533">
-      <title lang="de">Solange du da bist</title>
+      <title lang="de" original="yes">Solange du da bist</title>
   </movie>
   <movie id="m_534">
-      <title lang="de">Sonnenallee</title>
+      <title lang="de" original="yes">Sonnenallee</title>
   </movie>
   <movie id="m_535">
-      <title lang="de">Sophie Scholl</title>
+      <title lang="de" original="yes">Sophie Scholl</title>
   </movie>
   <movie id="m_536">
-      <title lang="de">Spätvorstellung</title>
+      <title lang="de" original="yes">Spätvorstellung</title>
   </movie>
   <movie id="m_537">
-      <title lang="de">Spezialist</title>
+      <title lang="de" original="yes">Spezialist</title>
   </movie>
   <movie id="m_538">
-      <title lang="de">Der Spezialist</title>
+      <title lang="de" original="yes">Der Spezialist</title>
   </movie>
   <movie id="m_539">
-      <title lang="de">Wilder Reiter GmbH</title>
+      <title lang="de" original="yes">Wilder Reiter GmbH</title>
   </movie>
   <movie id="m_540">
-      <title lang="de">Spiel der Spiralen</title>
+      <title lang="de" original="yes">Spiel der Spiralen</title>
   </movie>
   <movie id="m_541">
-      <title lang="de">Das Spinnennetz</title>
+      <title lang="de" original="yes">Das Spinnennetz</title>
   </movie>
   <movie id="m_542">
-      <title lang="de">Spur eines Mädchens</title>
+      <title lang="de" original="yes">Spur eines Mädchens</title>
   </movie>
   <movie id="m_543">
-      <title lang="de">Stählerne Adern</title>
+      <title lang="de" original="yes">Stählerne Adern</title>
   </movie>
   <movie id="m_544">
-      <title lang="de">Stahl - Thema mit Variationen</title>
+      <title lang="de" original="yes">Stahl - Thema mit Variationen</title>
   </movie>
   <movie id="m_545">
-      <title lang="de">Der Stand der Dinge</title>
+      <title lang="de" original="yes">Der Stand der Dinge</title>
   </movie>
   <movie id="m_546">
-      <title lang="de">Stern von Bethlehem</title>
+      <title lang="de" original="yes">Stern von Bethlehem</title>
   </movie>
   <movie id="m_547">
-      <title lang="de">Sternsteinhof</title>
+      <title lang="de" original="yes">Sternsteinhof</title>
   </movie>
   <movie id="m_548">
-      <title lang="de">Der Stoff, aus dem die Träume sind</title>
+      <title lang="de" original="yes">Der Stoff, aus dem die Träume sind</title>
   </movie>
   <movie id="m_549">
-      <title lang="de">Straßenbekanntschaft</title>
+      <title lang="de" original="yes">Straßenbekanntschaft</title>
   </movie>
   <movie id="m_550">
-      <title lang="de">Stresemann</title>
+      <title lang="de" original="yes">Stresemann</title>
   </movie>
   <movie id="m_551">
-      <title lang="de">Der Strom führt Eis</title>
+      <title lang="de" original="yes">Der Strom führt Eis</title>
   </movie>
   <movie id="m_552">
-      <title lang="de">Stunde Null</title>
+      <title lang="de" original="yes">Stunde Null</title>
   </movie>
   <movie id="m_553">
-      <title lang="de">Sündige Grenze</title>
+      <title lang="de" original="yes">Sündige Grenze</title>
   </movie>
   <movie id="m_554">
-      <title lang="de">Supermarkt</title>
+      <title lang="de" original="yes">Supermarkt</title>
   </movie>
   <movie id="m_555">
-      <title lang="de">Sydney an der Wupper - Dreamtime</title>
+      <title lang="de" original="yes">Sydney an der Wupper - Dreamtime</title>
   </movie>
   <movie id="m_556">
-      <title lang="de">Tänzer im Wassertropfen</title>
+      <title lang="de" original="yes">Tänzer im Wassertropfen</title>
   </movie>
   <movie id="m_557">
-      <title lang="de">Tätowierung</title>
+      <title lang="de" original="yes">Tätowierung</title>
   </movie>
   <movie id="m_558">
-      <title lang="de">Tafelspitz</title>
+      <title lang="de" original="yes">Tafelspitz</title>
   </movie>
   <movie id="m_559">
-      <title lang="de">Tag der Idioten</title>
+      <title lang="de" original="yes">Tag der Idioten</title>
   </movie>
   <movie id="m_560">
-      <title lang="de">Tally Brown New York</title>
+      <title lang="de" original="yes">Tally Brown New York</title>
   </movie>
   <movie id="m_561">
-      <title lang="de">Der Tangospieler</title>
+      <title lang="de" original="yes">Der Tangospieler</title>
   </movie>
   <movie id="m_562">
-      <title lang="de">Tanzende Hände</title>
+      <title lang="de" original="yes">Tanzende Hände</title>
   </movie>
   <movie id="m_563">
-      <title lang="de">Taugenichts</title>
+      <title lang="de" original="yes">Taugenichts</title>
   </movie>
   <movie id="m_564">
-      <title lang="de">Tausend kleine Zeichen</title>
+      <title lang="de" original="yes">Tausend kleine Zeichen</title>
   </movie>
   <movie id="m_565">
-      <title lang="de">Teufel in Seide</title>
+      <title lang="de" original="yes">Teufel in Seide</title>
   </movie>
   <movie id="m_566">
-      <title lang="de">Die Teutonen kommen</title>
+      <title lang="de" original="yes">Die Teutonen kommen</title>
   </movie>
   <movie id="m_567">
-      <title lang="de">The far side of the sea</title>
+      <title lang="de" original="yes">The far side of the sea</title>
   </movie>
   <movie id="m_568">
-      <title lang="de">The Hours</title>
+      <title lang="de" original="yes">The Hours</title>
   </movie>
   <movie id="m_569">
-      <title lang="de">Theodor Heuss</title>
+      <title lang="de" original="yes">Theodor Heuss</title>
   </movie>
   <movie id="m_570">
-      <title lang="de">Theodor Hirneis oder: Wie man ehem. Hofkoch wird</title>
+      <title lang="de" original="yes">Theodor Hirneis oder: Wie man ehem. Hofkoch wird</title>
   </movie>
   <movie id="m_571">
-      <title lang="de">Der Totmacher</title>
+      <title lang="de" original="yes">Der Totmacher</title>
   </movie>
   <movie id="m_572">
-      <title lang="de">Touch the sound</title>
+      <title lang="de" original="yes">Touch the sound</title>
   </movie>
   <movie id="m_573">
-      <title lang="de">TRADE</title>
+      <title lang="de" original="yes">TRADE</title>
   </movie>
   <movie id="m_574">
-      <title lang="de">Traum in Tusche</title>
+      <title lang="de" original="yes">Traum in Tusche</title>
   </movie>
   <movie id="m_575">
-      <title lang="de">Traumoiden</title>
+      <title lang="de" original="yes">Traumoiden</title>
   </movie>
   <movie id="m_576">
-      <title lang="de">Trotta</title>
+      <title lang="de" original="yes">Trotta</title>
   </movie>
   <movie id="m_577">
-      <title lang="de">Umbra</title>
+      <title lang="de" original="yes">Umbra</title>
   </movie>
   <movie id="m_578">
-      <title lang="de">Die Unberührbare</title>
+      <title lang="de" original="yes">Die Unberührbare</title>
   </movie>
   <movie id="m_579">
-      <title lang="de">Die unendliche Geschichte</title>
+      <title lang="de" original="yes">Die unendliche Geschichte</title>
   </movie>
   <movie id="m_580">
-      <title lang="de">Unter dem Pflaster ist der Strand</title>
+      <title lang="de" original="yes">Unter dem Pflaster ist der Strand</title>
   </movie>
   <movie id="m_581">
-      <title lang="de">Unter Palmen</title>
+      <title lang="de" original="yes">Unter Palmen</title>
   </movie>
   <movie id="m_582">
-      <title lang="de">Valse Triste</title>
+      <title lang="de" original="yes">Valse Triste</title>
   </movie>
   <movie id="m_583">
-      <title lang="de">Vaterland, magst ruhig sein</title>
+      <title lang="de" original="yes">Vaterland, magst ruhig sein</title>
   </movie>
   <movie id="m_584">
-      <title lang="de">Die verlorene Ehre der Katharina Blum</title>
+      <title lang="de" original="yes">Die verlorene Ehre der Katharina Blum</title>
   </movie>
   <movie id="m_585">
-      <title lang="de">Verdammt zur Sünde</title>
+      <title lang="de" original="yes">Verdammt zur Sünde</title>
   </movie>
   <movie id="m_586">
-      <title lang="de">Vergiß die Liebe nicht</title>
+      <title lang="de" original="yes">Vergiß die Liebe nicht</title>
       <alternativetitle lang="de">Vergiss die Liebe nicht</alternativetitle>
   </movie>
   <movie id="m_587">
-      <title lang="de">Verhängnis</title>
+      <title lang="de" original="yes">Verhängnis</title>
   </movie>
   <movie id="m_588">
-      <title lang="de">Der Verlorene</title>
+      <title lang="de" original="yes">Der Verlorene</title>
   </movie>
   <movie id="m_589">
-      <title lang="de">Die verlorene Ehre der Katharina Blum</title>
+      <title lang="de" original="yes">Die verlorene Ehre der Katharina Blum</title>
   </movie>
   <movie id="m_590">
-      <title lang="de">Verlorenes Leben</title>
+      <title lang="de" original="yes">Verlorenes Leben</title>
   </movie>
   <movie id="m_591">
-      <title lang="de">Das verräterische Herz</title>
+      <title lang="de" original="yes">Das verräterische Herz</title>
   </movie>
   <movie id="m_592">
-      <title lang="de">Verriegelte Zeit</title>
+      <title lang="de" original="yes">Verriegelte Zeit</title>
   </movie>
   <movie id="m_593">
-      <title lang="de">Verspätung in Marienborn</title>
+      <title lang="de" original="yes">Verspätung in Marienborn</title>
   </movie>
   <movie id="m_594">
-      <title lang="de">Der Versuch zu leben</title>
+      <title lang="de" original="yes">Der Versuch zu leben</title>
   </movie>
   <movie id="m_595">
-      <title lang="de">Viele kamen vorbei</title>
+      <title lang="de" original="yes">Viele kamen vorbei</title>
   </movie>
   <movie id="m_596">
-      <title lang="de">Vier Minuten</title>
+      <title lang="de" original="yes">Vier Minuten</title>
   </movie>
   <movie id="m_597">
-      <title lang="de">Violin Concerto</title>
+      <title lang="de" original="yes">Violin Concerto</title>
   </movie>
   <movie id="m_598">
-      <title lang="de">Von Richtern und anderen Sympathisanten</title>
+      <title lang="de" original="yes">Von Richtern und anderen Sympathisanten</title>
   </movie>
   <movie id="m_599">
-      <title lang="de">Von wegen „Schicksal“</title>
+      <title lang="de" original="yes">Von wegen „Schicksal“</title>
   </movie>
   <movie id="m_600">
-      <title lang="de">Vor dem Feind</title>
+      <title lang="de" original="yes">Vor dem Feind</title>
   </movie>
   <movie id="m_601">
-      <title lang="de">Der vorletzte Akt</title>
+      <title lang="de" original="yes">Der vorletzte Akt</title>
   </movie>
   <movie id="m_602">
-      <title lang="de">Wälsungenblut</title>
+      <title lang="de" original="yes">Wälsungenblut</title>
   </movie>
   <movie id="m_603">
-      <title lang="de">Das wahre Leben</title>
+      <title lang="de" original="yes">Das wahre Leben</title>
   </movie>
   <movie id="m_604">
-      <title lang="de">Wallers letzter Gang</title>
+      <title lang="de" original="yes">Wallers letzter Gang</title>
   </movie>
   <movie id="m_605">
-      <title lang="de">Warum läuft Herr R. Amok?</title>
+      <title lang="de" original="yes">Warum läuft Herr R. Amok?</title>
   </movie>
   <movie id="m_606">
-      <title lang="de">Warum sind sie gegen uns?</title>
+      <title lang="de" original="yes">Warum sind sie gegen uns?</title>
   </movie>
   <movie id="m_607">
-      <title lang="de">Was denken Sie von mir?</title>
+      <title lang="de" original="yes">Was denken Sie von mir?</title>
   </movie>
   <movie id="m_608">
-      <title lang="de">Weg der Hoffnung</title>
+      <title lang="de" original="yes">Weg der Hoffnung</title>
   </movie>
   <movie id="m_609">
-      <title lang="de">Weg in die Freiheit</title>
+      <title lang="de" original="yes">Weg in die Freiheit</title>
   </movie>
   <movie id="m_610">
-      <title lang="de">Weg ohne Umkehr</title>
+      <title lang="de" original="yes">Weg ohne Umkehr</title>
   </movie>
   <movie id="m_611">
-      <title lang="de">Wege in die Nacht</title>
+      <title lang="de" original="yes">Wege in die Nacht</title>
   </movie>
   <movie id="m_612">
-      <title lang="de">Das weite Land</title>
+      <title lang="de" original="yes">Das weite Land</title>
   </movie>
   <movie id="m_613">
-      <title lang="de">Die weiße Rose</title>
+      <title lang="de" original="yes">Die weiße Rose</title>
   </movie>
   <movie id="m_614">
-      <title lang="de">DIE WELLE</title>
+      <title lang="de" original="yes">DIE WELLE</title>
   </movie>
   <movie id="m_615">
-      <title lang="de">Die Weltenuhr</title>
+      <title lang="de" original="yes">Die Weltenuhr</title>
   </movie>
   <movie id="m_616">
-      <title lang="de">Wenn ich mich fürchte</title>
+      <title lang="de" original="yes">Wenn ich mich fürchte</title>
   </movie>
   <movie id="m_617">
-      <title lang="de">Wer früher stirbt ist länger tot</title>
+      <title lang="de" original="yes">Wer früher stirbt ist länger tot</title>
   </movie>
   <movie id="m_618">
-      <title lang="de">Wer will krank sein auf der Welt</title>
+      <title lang="de" original="yes">Wer will krank sein auf der Welt</title>
   </movie>
   <movie id="m_619">
-      <title lang="de">Der Westen leuchtet</title>
+      <title lang="de" original="yes">Der Westen leuchtet</title>
   </movie>
   <movie id="m_620">
-      <title lang="de">White Star</title>
+      <title lang="de" original="yes">White Star</title>
   </movie>
   <movie id="m_621">
-      <title lang="de">Whity</title>
+      <title lang="de" original="yes">Whity</title>
   </movie>
   <movie id="m_622">
-      <title lang="de">Die widerrechtliche Ausübung der Astronomie</title>
+      <title lang="de" original="yes">Die widerrechtliche Ausübung der Astronomie</title>
   </movie>
   <movie id="m_623">
-      <title lang="de">Wie im Traum</title>
+      <title lang="de" original="yes">Wie im Traum</title>
   </movie>
   <movie id="m_624">
-      <title lang="de">Wildfeuer</title>
+      <title lang="de" original="yes">Wildfeuer</title>
   </movie>
   <movie id="m_625">
-      <title lang="de">Willi Baumeister</title>
+      <title lang="de" original="yes">Willi Baumeister</title>
   </movie>
   <movie id="m_626">
-      <title lang="de">Winterreise</title>
+      <title lang="de" original="yes">Winterreise</title>
   </movie>
   <movie id="m_627">
-      <title lang="de">Winterschläfer</title>
+      <title lang="de" original="yes">Winterschläfer</title>
   </movie>
   <movie id="m_628">
-      <title lang="de">Zugvögel... einmal nach Inari</title>
+      <title lang="de" original="yes">Zugvögel... einmal nach Inari</title>
   </movie>
   <movie id="m_629">
-      <title lang="de">Wir können auch anders</title>
+      <title lang="de" original="yes">Wir können auch anders</title>
   </movie>
   <movie id="m_630">
-      <title lang="de">Wir Wunderkinder</title>
+      <title lang="de" original="yes">Wir Wunderkinder</title>
   </movie>
   <movie id="m_631">
-      <title lang="de">Das Wirtshaus im Spessart</title>
+      <title lang="de" original="yes">Das Wirtshaus im Spessart</title>
   </movie>
   <movie id="m_632">
-      <title lang="de">Wo die grünen Ameisen träumen</title>
+      <title lang="de" original="yes">Wo die grünen Ameisen träumen</title>
   </movie>
   <movie id="m_633">
-      <title lang="de">Workingman's Death</title>
+      <title lang="de" original="yes">Workingman's Death</title>
   </movie>
   <movie id="m_634">
-      <title lang="de">Das Wunder der Malachias</title>
+      <title lang="de" original="yes">Das Wunder der Malachias</title>
   </movie>
   <movie id="m_635">
-      <title lang="de">Das Wunder von Bern</title>
+      <title lang="de" original="yes">Das Wunder von Bern</title>
   </movie>
   <movie id="m_636">
-      <title lang="de">Das Wunder von Mailand</title>
+      <title lang="de" original="yes">Das Wunder von Mailand</title>
   </movie>
   <movie id="m_637">
-      <title lang="de">Das Wunderfenster</title>
+      <title lang="de" original="yes">Das Wunderfenster</title>
   </movie>
   <movie id="m_638">
-      <title lang="de">Yasemin</title>
+      <title lang="de" original="yes">Yasemin</title>
   </movie>
   <movie id="m_639">
-      <title lang="de">YELLA</title>
+      <title lang="de" original="yes">YELLA</title>
   </movie>
   <movie id="m_640">
-      <title lang="de">Der Zauberberg</title>
+      <title lang="de" original="yes">Der Zauberberg</title>
   </movie>
   <movie id="m_641">
-      <title lang="de">Zeichen der Zeit</title>
+      <title lang="de" original="yes">Zeichen der Zeit</title>
   </movie>
   <movie id="m_642">
-      <title lang="de">Die Zelle</title>
+      <title lang="de" original="yes">Die Zelle</title>
   </movie>
   <movie id="m_643">
-      <title lang="de">Zimmerleute des Waldes</title>
+      <title lang="de" original="yes">Zimmerleute des Waldes</title>
   </movie>
   <movie id="m_644">
-      <title lang="de">Zoff</title>
+      <title lang="de" original="yes">Zoff</title>
   </movie>
   <movie id="m_645">
-      <title lang="de">Zoologisches</title>
+      <title lang="de" original="yes">Zoologisches</title>
   </movie>
   <movie id="m_646">
-      <title lang="de">Zündhölzer</title>
+      <title lang="de" original="yes">Zündhölzer</title>
   </movie>
   <movie id="m_647">
-      <title lang="de">Zugvögel...einmal nach Inari</title>
+      <title lang="de" original="yes">Zugvögel...einmal nach Inari</title>
   </movie>
   <movie id="m_648">
-      <title lang="de">Zum Beispiel Bresson</title>
+      <title lang="de" original="yes">Zum Beispiel Bresson</title>
   </movie>
   <movie id="m_649">
-      <title lang="de">Zur Sache Schätzchen</title>
+      <title lang="de" original="yes">Zur Sache Schätzchen</title>
   </movie>
   <movie id="m_650">
-      <title lang="de">Zwei unter Millionen</title>
+      <title lang="de" original="yes">Zwei unter Millionen</title>
   </movie>
   <movie id="m_651">
-      <title lang="de">Das zweite Erwachen der Christa Klages</title>
+      <title lang="de" original="yes">Das zweite Erwachen der Christa Klages</title>
   </movie>
   <movie id="m_652">
       <title lang="de" original="yes">John Rabe</title>
@@ -2718,8 +2711,8 @@
   <award category="c_16" status="winner" movie="m_20" year="1979" recipient="Fritz Illing"/>
   <award category="c_21" status="winner" movie="m_21" year="2005" recipient="Katja Riemann"/>
   <award category="c_18" status="winner" movie="m_22" year="1973" recipient="Thomas Mauch"/>
-  <award category="c_13" status="winner" movie="m_23" year="1999" recipient="Juliane Köhler"/>
-  <award category="c_13" status="winner" movie="m_23" year="1999" recipient="Maria Schrader"/>
+  <award category="c_13" status="winner" movie="movie_db_106" year="1999" recipient="Juliane Köhler"/>
+  <award category="c_13" status="winner" movie="movie_db_106" year="1999" recipient="Maria Schrader"/>
   <award category="c_13" status="winner" movie="m_24" year="1999" recipient="Maria Schrader"/>
   <award category="c_22" status="winner" movie="m_25" year="2001" recipient="Esther Gronenborn"/>
   <award category="c_23" status="winner" movie="m_25" year="2001" recipient="Christian Lonk"/>
@@ -3485,7 +3478,7 @@
   <award category="c_31" status="winner" movie="m_532" year="1996" recipient="Miramax International"/>
   <award category="c_68" status="winner" movie="m_533" year="1954" recipient="Jochen Huth"/>
   <award category="c_86" status="winner" movie="m_534" year="2000" recipient="Lothar Holler"/>
-  <award category="c_159" status="winner" movie="m_534" year="2000" recipient="Boje Buck Produktion"/>
+  <award category="c_7" status="winner" movie="m_534" year="2000" recipient="Boje Buck Produktion"/>
   <award category="c_7" status="winner" movie="m_535" year="2005" recipient="Christoph Müller und Sven Burgemeister, Fred Breinersdorfer und Marc Rothemund"/>
   <award category="c_150" status="winner" movie="m_535" year="2005" recipient="Julia Jentsch"/>
   <award category="c_32" status="winner" movie="m_536" year="1983" recipient="Kobra Filmproduktion"/>
