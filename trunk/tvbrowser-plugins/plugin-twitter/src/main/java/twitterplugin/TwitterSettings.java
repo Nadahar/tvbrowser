@@ -18,7 +18,7 @@ package twitterplugin;
 
 import java.util.Properties;
 
-import twitter4j.http.AccessToken;
+import twitter4j.auth.AccessToken;
 
 final public class TwitterSettings extends PropertyBasedSettings {
 

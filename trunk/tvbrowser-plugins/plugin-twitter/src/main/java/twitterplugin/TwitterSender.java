@@ -21,8 +21,10 @@ import javax.swing.JOptionPane;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
-import twitter4j.http.AccessToken;
+import twitter4j.auth.AccessToken;
+import twitter4j.conf.ConfigurationBuilder;
 import util.exc.ErrorHandler;
+import util.ui.DontShowAgainMessageBox;
 import util.ui.Localizer;
 import devplugin.Program;
 
@@ -46,15 +48,17 @@ public class TwitterSender {
           return;
         }
       }
-      final Twitter twitter;
-      TwitterFactory factory = new TwitterFactory();
-      twitter = factory.getInstance();
-      twitter.setOAuthConsumer(settings.getConsumerKey(), settings.getConsumerSecret());
+
+      ConfigurationBuilder cb = new ConfigurationBuilder();
+      cb.setDebugEnabled(true)
+        .setOAuthConsumerKey(settings.getConsumerKey())
+        .setOAuthConsumerSecret(settings.getConsumerSecret());
+      TwitterFactory factory = new TwitterFactory(cb.build());
       AccessToken accessToken = settings.getAccessToken();
-      twitter.setOAuthAccessToken(accessToken);
+      Twitter twitter = factory.getInstance(accessToken);
       try {
         twitter.updateStatus(dialog.getMessage());
-        JOptionPane.showMessageDialog(parentWindow, mLocalizer.msg("tweetSend", "The tweet was sent."));
+        DontShowAgainMessageBox.dontShowAgainMessageBox(TwitterPlugin.getInstance(), "tweetSent", parentWindow, mLocalizer.msg("tweetSend", "The tweet was sent."));
       } catch (TwitterException e) {
         e.printStackTrace();
         ErrorHandler.handle(mLocalizer.msg("error", "Could not send tweet..."), e);
