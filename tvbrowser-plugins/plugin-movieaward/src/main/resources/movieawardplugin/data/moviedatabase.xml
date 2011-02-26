@@ -149,9 +149,9 @@
 
 <movie id="movie_db_32" year="2007" director="Cristian Mungiu">
     <title lang="ro" original="yes">4 luni, 3 săptămâni şi 2 zile</title>
-    <alternativetitle lang="ro" original="yes">4 luni, 3 saptamani si 2 zile</alternativetitle>
     <title lang="en">4 Months, 3 Weeks and 2 Days</title>
     <title lang="de">4 Monate, 3 Wochen und 2 Tage</title>
+    <alternativetitle lang="ro" original="yes">4 luni, 3 saptamani si 2 zile</alternativetitle>    
 </movie>
 
 <movie id="movie_db_33" year="1942">
@@ -519,7 +519,7 @@
 <title lang="en" original="yes">Agnes of God</title>
 </movie>
 
-<movie id="movie_db_106" year="2000">
+<movie id="movie_db_106" year="1999">
 <title lang="de" original="yes">Aimée und Jaguar</title>
 <title lang="en">Aimée &amp; Jaguar</title>
 <alternativetitle lang="de">Aimée &amp; Jaguar</alternativetitle>
@@ -1249,7 +1249,7 @@
 <title lang="en" original="yes">Babes on Broadway</title>
 </movie>
 
-<movie id="movie_db_254" year="1988" director="Gabriel Axel">
+<movie id="movie_db_254" year="1987" director="Gabriel Axel">
 <title lang="de">Babettes Fest</title>
 <title lang="en">Babettes Gaestebud</title>
 <title lang="dk" original="yes">Babettes gæstebud</title>

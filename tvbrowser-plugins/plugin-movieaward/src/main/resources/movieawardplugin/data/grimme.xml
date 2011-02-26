@@ -16,6 +16,9 @@
   <category id="information">
     <name lang="de">Adolf-Grimme-Preis im Wettbewerb "Information &amp; Kultur" (ab 1999, beschränkt auf Filme und Mehrteiler)</name>
   </category>
+    <category id="publikumspreis">
+    <name lang="de">Publikumspreis der Marler Gruppe (ab 1999)</name>
+  </category>
 </categories>
 
 <movies>
