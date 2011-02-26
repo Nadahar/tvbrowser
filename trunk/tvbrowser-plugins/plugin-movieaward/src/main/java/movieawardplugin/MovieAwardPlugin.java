@@ -68,13 +68,13 @@ final public class MovieAwardPlugin extends Plugin {
   /**
    * all known awards (for movies, documentaries and so on)
    */
-  private static final String[] KNOWN_AWARDS = { "cannes", "deutscher_comedypreis", "grimme",
-            "max_ophuels", "menschenrechtsfilmpreis", "oscars", "golden_globe" };
+  private static final String[] KNOWN_AWARDS = {"deutscher_comedypreis", "grimme",
+            "max_ophuels", "menschenrechtsfilmpreis", "golden_globe" };
   /**
    * all known awards (for movies ONLY)
    */
-  private static final String[] KNOWN_MOVIE_AWARDS = { "deutscher_filmpreis",
-            "europeanmovieawards", "internationaler_literaturfilmpreis" };
+  private static final String[] KNOWN_MOVIE_AWARDS = { "europeanmovieawards", "cannes",
+            "oscars", "deutscher_filmpreis", "internationaler_literaturfilmpreis" };
   /**
    * Translator
    */
@@ -173,7 +173,7 @@ final public class MovieAwardPlugin extends Plugin {
         }
         for (String awardName : KNOWN_MOVIE_AWARDS) {
         	if (mSettings.isAwardEnabled(awardName)) {
-	          MovieAward award = MovieDataFactory.loadMovieDataFromStream(getStream(awardName),
+        	  MovieAward award = MovieDataFactory.loadMovieDataFromStream(getStream(awardName),
 	              new MovieAwardForMovies(mMovieDatabase));
 	          if (award != null) {
 	            mMovieAwards.add(award);

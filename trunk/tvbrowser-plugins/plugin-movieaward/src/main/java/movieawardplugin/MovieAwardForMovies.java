@@ -1,8 +1,12 @@
 package movieawardplugin;
 
+import java.util.logging.Logger;
+
 import devplugin.Program;
+import devplugin.Channel;
 
 public class MovieAwardForMovies extends MovieAward {
+  private static final Logger mLog = Logger.getLogger(MovieAwardPlugin.class.getName());
 
   public MovieAwardForMovies(final MovieDatabase database) {
     super(database);
@@ -19,6 +23,9 @@ public class MovieAwardForMovies extends MovieAward {
   }
 
   private boolean isValid(final Program program) {
+    if (bitSet(program.getChannel().getCategories(), Channel.CATEGORY_RADIO)) {
+      return false;
+    }
     final int info = program.getInfo();
     if (info > 0) {
       if (bitSet(info, Program.INFO_CATEGORIE_MOVIE)) {
@@ -29,12 +36,14 @@ public class MovieAwardForMovies extends MovieAward {
           || bitSet(info, Program.INFO_CATEGORIE_SERIES)
           || bitSet(info, Program.INFO_CATEGORIE_SHOW)
           || bitSet(info, Program.INFO_CATEGORIE_SPORTS)) {
+        //mLog.info("INVALID cat: "+program.getTitle());
         return false;
       }
     }
     final String description = program.getDescription();
     if (description != null && description.length() > 0
-        && description.contains("serie")) {
+        && description.substring(0,Math.min(100, description.length())).contains("serie")) {
+      //mLog.info("INVALID serie: "+program.getTitle());
       return false;
     }
     // if we cannot find any other criteria, assume this program is valid for
