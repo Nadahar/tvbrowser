@@ -89,7 +89,7 @@ public class Movie {
     // avoid String comparison by filtering for year first
     final int year = program.getIntField(ProgramFieldType.PRODUCTION_YEAR_TYPE);
     if (year > 0 && mYear > 0) {
-      if (!(year >= mYear - 1 && year <= mYear + 1)) {
+      if (!(year >= mYear - 2 && year <= mYear + 2)) {
         return false;
       }
     }
@@ -118,24 +118,16 @@ public class Movie {
       }
     }
 
-    // No title for a specific country was found, now try to find a title that matches that includes the director
-    if (mDirector != null) {
-      final String director = program
-          .getTextField(ProgramFieldType.DIRECTOR_TYPE);
-
-      if (director != null && director.equalsIgnoreCase(mDirector)) {
-        // Okay, the director fits, try to find a title
-        for (final String title : mTitles.values()) {
-          if (title.equalsIgnoreCase(programTitle)) {
-            return true;
-          }
-        }
-        for (final ArrayList<String> alternatives : mAlternativeTitles.values()) {
-          for (final String title : alternatives) {
-            if (title.equalsIgnoreCase(programTitle)) {
-              return true;
-            }
-          }
+    //try all titles
+    for (final String title : mTitles.values()) {
+      if (title.equalsIgnoreCase(programTitle)) {
+        return true;
+      }
+    }
+    for (final ArrayList<String> alternatives : mAlternativeTitles.values()) {
+      for (final String title : alternatives) {
+        if (title.equalsIgnoreCase(programTitle)) {
+          return true;
         }
       }
     }
