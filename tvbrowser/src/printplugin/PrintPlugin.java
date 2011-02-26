@@ -63,7 +63,6 @@ import util.io.stream.ObjectOutputStreamProcessor;
 import util.io.stream.StreamUtilities;
 import util.ui.UiUtilities;
 import devplugin.ActionMenu;
-import devplugin.ContextMenuAction;
 import devplugin.ContextMenuSeparatorAction;
 import devplugin.Date;
 import devplugin.Plugin;
@@ -92,9 +91,9 @@ public class PrintPlugin extends Plugin {
   /** Global Settings for the PrintPlugin */
   private Properties mSettings;
   private int mMarkPriority = -2;
-  
+
   private PluginInfo mPluginInfo;
-  
+
   public PrintPlugin() {
     mInstance = this;
   }
@@ -106,20 +105,20 @@ public class PrintPlugin extends Plugin {
   public ThemeIcon getMarkIconFromTheme() {
     return new ThemeIcon("devices", "printer", 16);
   }
-  
+
   public static Version getVersion() {
     return mVersion;
   }
-  
+
   public PluginInfo getInfo() {
     if(mPluginInfo == null) {
       String name = mLocalizer.msg("printProgram" ,"Print program");
       String desc = mLocalizer.msg("printdescription" ,"Allows printing programs.");
       String author = "Martin Oberhauser (martin@tvbrowser.org)";
-        
+
       mPluginInfo = new PluginInfo(PrintPlugin.class, name, desc, author);
     }
-    
+
     return mPluginInfo;
   }
 
@@ -132,10 +131,10 @@ public class PrintPlugin extends Plugin {
     root.update();
     root.addAction(new EmptyQueueAction());
   }
-  
+
   public void handleTvBrowserStartFinished() {
     Program[] programs = getRootNode().getPrograms();
-    
+
     for(Program program : programs) {
       program.validateMarking();
     }
@@ -143,12 +142,10 @@ public class PrintPlugin extends Plugin {
 
   public ActionMenu getContextMenuActions(final Program program) {
     final Plugin thisPlugin = this;
-    ContextMenuAction menu = new ContextMenuAction();
-    menu.setSmallIcon(createImageIcon("devices", "printer", 16));
-    menu.setText(mLocalizer.msg("printProgram","Print"));
-    
+    ImageIcon icon = createImageIcon("devices", "printer", 16);
+
     ArrayList<AbstractAction> actions = new ArrayList<AbstractAction>();
-    
+
     if (getRootNode().contains(program)) {
       AbstractAction action = new AbstractAction() {
         public void actionPerformed(ActionEvent e) {
@@ -158,7 +155,7 @@ public class PrintPlugin extends Plugin {
         }
       };
       action.putValue(Action.NAME,mLocalizer.msg("removeFromPrinterQueue","Aus der Druckerwarteschlange loeschen"));
-      action.putValue(Action.SMALL_ICON, createImageIcon("devices", "printer", 16));
+      action.putValue(Action.SMALL_ICON, icon);
       actions.add(action);
     }
     else {
@@ -170,7 +167,7 @@ public class PrintPlugin extends Plugin {
         }
       };
       action.putValue(Action.NAME,mLocalizer.msg("addToPrinterQueue","Zur Druckerwarteschlange hinzufuegen"));
-      action.putValue(Action.SMALL_ICON, createImageIcon("devices", "printer", 16));
+      action.putValue(Action.SMALL_ICON, icon);
       actions.add(action);
     }
     AbstractAction action = new AbstractAction() {
@@ -180,24 +177,23 @@ public class PrintPlugin extends Plugin {
       }
     };
     action.putValue(Action.NAME, mLocalizer.msg("printProgramInfo","Print program info"));
-    action.putValue(Action.SMALL_ICON, createImageIcon("devices", "printer", 16));
+    action.putValue(Action.SMALL_ICON, icon);
     actions.add(action);
-    
+
     if (canPrintQueue()) {
       actions.add(ContextMenuSeparatorAction.getInstance());
       actions.add(new AbstractAction(mLocalizer
-          .msg("printQueue", "Print queue"), createImageIcon("devices",
-          "printer", 16)) {
+          .msg("printQueue", "Print queue"), icon) {
         public void actionPerformed(ActionEvent e) {
           printQueue();
         }
       });
     }
-    
+
     AbstractAction[] actionArray = new AbstractAction[actions.size()];
     actions.toArray(actionArray);
-    
-    return new ActionMenu(menu,actionArray);
+
+    return new ActionMenu(mLocalizer.msg("printProgram","Print"), icon,actionArray);
   }
 
   public boolean canPrintQueue() {
@@ -209,13 +205,13 @@ public class PrintPlugin extends Plugin {
       public void actionPerformed(ActionEvent evt) {
         if(getPluginManager().getFilterManager() != null) {
           MainPrintDialog mainDialog = new MainPrintDialog(getParentFrame());
-          
+
           layoutWindow("mainDlg", mainDialog, new Dimension(300,150));
-          
+
           mainDialog.setVisible(true);
-          
+
           int result = mainDialog.getResult();
-  
+
           if (result == MainPrintDialog.PRINT_DAYPROGRAMS) {
             SettingsDialog dlg = showPrintDialog(new PrintDayProgramsDialogContent(getParentFrame()), loadDayProgramSchemes());
             storeDayProgramSchemes(dlg.getSchemes());
@@ -421,7 +417,7 @@ public class PrintPlugin extends Plugin {
   public Properties storeSettings() {
     return mSettings;
   }
-  
+
   public void readData(ObjectInputStream in) throws IOException,
   ClassNotFoundException {
     ProgramInfoPrintSettings.getInstance().readData(in);
@@ -435,11 +431,11 @@ public class PrintPlugin extends Plugin {
   public Properties getSettings() {
     return mSettings;
   }
-  
+
   public SettingsTab getSettingsTab() {
     return new PrintPluginSettingsTab();
   }
-  
+
   public int getMarkPriorityForProgram(Program p) {
     if(mMarkPriority == - 2 && mSettings != null) {
       mMarkPriority = Integer.parseInt(mSettings.getProperty("markPriority",String.valueOf(Program.MIN_MARK_PRIORITY)));
@@ -448,11 +444,11 @@ public class PrintPlugin extends Plugin {
       return mMarkPriority;
     }
   }
-  
+
   protected void setMarkPriority(int priority) {
     mMarkPriority = priority;
     mSettings.setProperty("markPriority",String.valueOf(priority));
-    
+
     handleTvBrowserStartFinished();
   }
 

@@ -46,7 +46,6 @@ import util.program.LocalPluginProgramFormating;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import devplugin.ActionMenu;
-import devplugin.ContextMenuAction;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.Program;
@@ -93,11 +92,9 @@ public class ClipboardPlugin extends Plugin {
   }
 
   public ActionMenu getContextMenuActions(final Program program) {
-    ImageIcon img = createImageIcon("actions", "edit-paste", 16);
+    ImageIcon icon = createImageIcon("actions", "edit-paste", 16);
 
     if(mConfigs.length > 1) {
-      ContextMenuAction copyToSystem = new ContextMenuAction(mLocalizer.ellipsisMsg("copyToSystem", "Copy to system clipboard"));
-
       ArrayList<AbstractAction> list = new ArrayList<AbstractAction>();
 
       for (final AbstractPluginProgramFormating config : mConfigs) {
@@ -114,9 +111,7 @@ public class ClipboardPlugin extends Plugin {
         }
       }
 
-      copyToSystem.putValue(Action.SMALL_ICON, img);
-
-      return new ActionMenu(copyToSystem, list.toArray(new AbstractAction[list.size()]));
+      return new ActionMenu(mLocalizer.ellipsisMsg("copyToSystem", "Copy to system clipboard"), icon, list.toArray(new AbstractAction[list.size()]));
     }
     else {
       AbstractAction copyToSystem = new AbstractAction(mLocalizer.msg("copyToSystem", "Copy to system clipboard")) {
@@ -126,7 +121,7 @@ public class ClipboardPlugin extends Plugin {
         }
       };
 
-      copyToSystem.putValue(Action.SMALL_ICON, img);
+      copyToSystem.putValue(Action.SMALL_ICON, icon);
 
       return new ActionMenu(copyToSystem);
     }
@@ -275,7 +270,7 @@ public class ClipboardPlugin extends Plugin {
           list.add(config);
         }
       }
-      
+
       out.writeInt(list.size());
 
       for(AbstractPluginProgramFormating config : list) {
@@ -293,7 +288,7 @@ public class ClipboardPlugin extends Plugin {
           list.add(config);
         }
       }
-      
+
       out.writeInt(list.size());
 
       for(AbstractPluginProgramFormating config : list) {
@@ -313,7 +308,7 @@ public class ClipboardPlugin extends Plugin {
 
       for(int i = 0; i < count; i++) {
         AbstractPluginProgramFormating value = AbstractPluginProgramFormating.readData(in);
-        
+
         if(value != null) {
           if(value.equals(DEFAULT_CONFIG)) {
             DEFAULT_CONFIG = (LocalPluginProgramFormating)value;
@@ -324,13 +319,13 @@ public class ClipboardPlugin extends Plugin {
       }
 
       mConfigs = list.toArray(new AbstractPluginProgramFormating[Math.min(count,list.size())]);
-      
+
       count = in.readInt();
       ArrayList<LocalPluginProgramFormating> listLocal = new ArrayList<LocalPluginProgramFormating>(count);
 
       for(int i = 0; i < count; i++) {
         LocalPluginProgramFormating value = (LocalPluginProgramFormating) AbstractPluginProgramFormating.readData(in);
-        
+
         if(value != null) {
           LocalPluginProgramFormating loadedInstance = getInstanceOfFormatingFromSelected(value);
           if (loadedInstance != null) {

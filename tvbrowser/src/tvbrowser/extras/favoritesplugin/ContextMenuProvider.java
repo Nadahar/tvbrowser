@@ -71,16 +71,16 @@ public class ContextMenuProvider {
       Favorite[] favArr = favorites.toArray(new Favorite[favorites.size()]);
 
       if(ManageFavoritesDialog.getInstance() != null && ManageFavoritesDialog.getInstance().isVisible()) {
-        if(!favorites.isEmpty()) {         
+        if(!favorites.isEmpty()) {
           ActionMenu blackListAction = createBlackListFavoriteMenuAction(favArr, program);
-          
+
           ArrayList<Object> subItems = new ArrayList<Object>(2);
           subItems.add(createExcludeFromFavoritesMenuAction(favArr, program));
-          
+
           if(blackListAction != null) {
             subItems.add(0,blackListAction);
           }
-          
+
           return new ActionMenu(mLocalizer.msg("favorites", "Favorites"),FavoritesPlugin.getFavoritesIcon(16),subItems.toArray());
         }
         else {
@@ -97,7 +97,7 @@ public class ContextMenuProvider {
         else {
           ActionMenu blackListAction = createBlackListFavoriteMenuAction(favArr, program);
           ActionMenu repetitions = FavoritesPlugin.getInstance().isShowingRepetitions() ? createRepetitionsMenuAction(favArr, program) : null;
-  
+
           ArrayList<Object> subItems = new ArrayList<Object>(8);
           subItems.add(createManageFavoriteMenuAction(favArr));
           subItems.add(createEditFavoriteMenuAction(favArr));
@@ -160,9 +160,6 @@ public class ContextMenuProvider {
       return new ActionMenu(action);
     }
     else {
-      ContextMenuAction menu = new ContextMenuAction();
-      menu.setText(mLocalizer.msg("excludeFrom","Exclude from"));
-      menu.setSmallIcon(TVBrowserIcons.filter(TVBrowserIcons.SIZE_SMALL));
       ContextMenuAction[] subItems = new ContextMenuAction[favArr.length];
       for (int i=0; i<subItems.length; i++) {
         final Favorite fav = favArr[i];
@@ -175,7 +172,7 @@ public class ContextMenuProvider {
         });
       }
 
-      return new ActionMenu(menu, subItems);
+      return new ActionMenu(mLocalizer.msg("excludeFrom","Exclude from"), TVBrowserIcons.filter(TVBrowserIcons.SIZE_SMALL), subItems);
     }
   }
 
@@ -192,9 +189,6 @@ public class ContextMenuProvider {
       return new ActionMenu(action);
     }
     else {
-      ContextMenuAction menu = new ContextMenuAction();
-      menu.setSmallIcon(FavoritesPlugin.getFavoritesIcon(16));
-      menu.setText(mLocalizer.msg("manage","Manage Favorite"));
       ContextMenuAction[] subItems = new ContextMenuAction[favArr.length];
       for (int i=0; i<subItems.length; i++) {
         final Favorite fav = favArr[i];
@@ -207,7 +201,7 @@ public class ContextMenuProvider {
         });
       }
 
-      return new ActionMenu(menu, subItems);
+      return new ActionMenu(mLocalizer.msg("manage","Manage Favorite"), FavoritesPlugin.getFavoritesIcon(16), subItems);
     }
   }
 
@@ -224,9 +218,6 @@ public class ContextMenuProvider {
       return new ActionMenu(action);
     }
     else {
-      ContextMenuAction menu = new ContextMenuAction();
-      menu.setSmallIcon(TVBrowserIcons.edit(TVBrowserIcons.SIZE_SMALL));
-      menu.setText(mLocalizer.msg("edit","Edit Favorite"));
       ContextMenuAction[] subItems = new ContextMenuAction[favArr.length];
       for (int i=0; i<subItems.length; i++) {
         final Favorite fav = favArr[i];
@@ -239,7 +230,7 @@ public class ContextMenuProvider {
         });
       }
 
-      return new ActionMenu(menu, subItems);
+      return new ActionMenu(mLocalizer.msg("edit","Edit Favorite"), TVBrowserIcons.edit(TVBrowserIcons.SIZE_SMALL), subItems);
     }
   }
 
@@ -316,9 +307,6 @@ public class ContextMenuProvider {
         return new ActionMenu(action);
       }
       else {
-        ContextMenuAction menu = new ContextMenuAction();
-        menu.setText(mLocalizer.msg("delete","Delete Favorite"));
-        menu.setSmallIcon(TVBrowserIcons.delete(TVBrowserIcons.SIZE_SMALL));
         ContextMenuAction[] subItems = new ContextMenuAction[favArr.length];
         for (int i=0; i<subItems.length; i++) {
           final Favorite fav = favArr[i];
@@ -331,7 +319,7 @@ public class ContextMenuProvider {
           });
         }
 
-        return new ActionMenu(menu, subItems);
+        return new ActionMenu(mLocalizer.msg("delete","Delete Favorite"), TVBrowserIcons.delete(TVBrowserIcons.SIZE_SMALL), subItems);
       }
     }
 
@@ -363,10 +351,6 @@ public class ContextMenuProvider {
         }
       }
 
-      ContextMenuAction reactivate = new ContextMenuAction(mLocalizer.ellipsisMsg("removeFromBlackList",
-          "Put this program back into"));
-      reactivate.setSmallIcon(TVBrowserIcons.refresh(TVBrowserIcons.SIZE_SMALL));
-
       ContextMenuAction[] reactivateAction = new ContextMenuAction[fromList.size()];
 
       for(int i = 0; i < fromList.size(); i++) {
@@ -381,7 +365,8 @@ public class ContextMenuProvider {
       }
 
       if(!fromList.isEmpty()) {
-        return new ActionMenu(reactivate,reactivateAction);
+        return new ActionMenu(mLocalizer.ellipsisMsg("removeFromBlackList", "Put this program back into"),
+            TVBrowserIcons.refresh(TVBrowserIcons.SIZE_SMALL), reactivateAction);
       } else {
         return null;
       }
