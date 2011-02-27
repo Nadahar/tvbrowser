@@ -21,9 +21,14 @@
 # Author: Til Schneider, www.murfman.de
 
 
-# The following Variables are set from the build script:
-#   VERSION, VERSION_FILE, PROG_NAME, PROG_NAME_FILE,
-#   RUNTIME_DIR, INSTALLER_DIR and PUBLIC_DIR
+# The following Variables are set from the ANT build script:
+#   VERSION,
+#   VERSION_FILE
+#   PROG_NAME
+#   PROG_NAME_FILE
+#   RUNTIME_DIR
+#   INSTALLER_DIR
+#   PUBLIC_DIR
 
 
 #--------------------------------
@@ -68,7 +73,6 @@ SetCompressor /SOLID lzma
 #--------------------------------
 
 Var STARTMENU_FOLDER
-#Var INI_VALUE
 
 
 #--------------------------------
@@ -97,7 +101,6 @@ Page Custom LockedListShow
 
 !insertmacro MUI_UNPAGE_WELCOME
 !insertmacro MUI_UNPAGE_CONFIRM
-# UninstPage custom un.UninstallTvDataPage
 #UninstPage custom un.UninstallSettingsPage
 !insertmacro MUI_UNPAGE_INSTFILES
 !insertmacro MUI_UNPAGE_FINISH
@@ -114,7 +117,6 @@ Page Custom LockedListShow
 
 #--------------------------------
 # reserve files for faster extraction
-#ReserveFile "${NSISDIR}\UninstallTvData.ini"
 #ReserveFile "${NSISDIR}\UninstallSettings.ini"
 !insertmacro MUI_RESERVEFILE_INSTALLOPTIONS
 !insertmacro MUI_RESERVEFILE_LANGDLL
@@ -184,7 +186,6 @@ FunctionEnd
 
 Function un.onInit
   # Extract InstallOptions INI files
-  # !insertmacro MUI_INSTALLOPTIONS_EXTRACT_AS "${NSISDIR}\UninstallTvData.ini"   "UninstallTvData.ini"
  # !insertmacro MUI_INSTALLOPTIONS_EXTRACT_AS "${NSISDIR}\UninstallSettings.ini" "UninstallSettings.ini"
     !insertmacro MUI_UNGETLANGUAGE
 FunctionEnd
@@ -197,15 +198,13 @@ Function LockedListShow
   LockedList::Dialog /heading "$(LOCKED_LIST_HEADING)" /caption "$(LOCKED_LIST_CAPTION)" /searching "$(LOCKED_LIST_SEARCHING)" /noprograms "$(LOCKED_LIST_NOPROGRAMS)" /colheadings "$(LOCKED_LIST_APPLICATION)" "$(LOCKED_LIST_PROCESS)" /ignore "$(LOCKED_LIST_IGNORE)"
 FunctionEnd
 
-# Function un.UninstallTvDataPage
-#  !insertmacro MUI_HEADER_TEXT "TV-Daten l�schen" "Bestimmen Sie, ob bereits heruntergeladene TV-Daten gel�scht werden sollen"
-#  !insertmacro MUI_INSTALLOPTIONS_DISPLAY "UninstallTvData.ini"
-# FunctionEnd
-
 #Function un.UninstallSettingsPage
 #  !insertmacro MUI_HEADER_TEXT "Einstellungen l�schen" "Bestimmen Sie, ob Ihre Einstellungen gel�scht werden sollen"
 #  !insertmacro MUI_INSTALLOPTIONS_DISPLAY "UninstallSettings.ini"
 #FunctionEnd
+
+!define MIN_JAVA_VERSION_STRING "1.6"
+!define MIN_JAVA_VERSION 16
 
 Var JAVA_HOME
 Var JAVA_VER
@@ -221,7 +220,7 @@ Function LocateJVM
     StrCmp "" "$JAVA_VER" JavaNotPresent CheckJavaVer
 
     JavaNotPresent:
-        StrCpy $JAVA_INSTALLATION_MSG "Java Runtime Environment is not installed on your computer. You need version 1.4 or newer to run this program."
+        StrCpy $JAVA_INSTALLATION_MSG "Java Runtime Environment is not installed on your computer. You need version ${MIN_JAVA_VERSION_STRING} or newer to run this program."
         Goto Done
 
     CheckJavaVer:
@@ -230,7 +229,7 @@ Function LocateJVM
         StrCpy $0 $JAVA_VER 1 0
         StrCpy $1 $JAVA_VER 1 2
         StrCpy $JAVA_VER "$0$1"
-        IntCmp 16 $JAVA_VER FoundCorrectJavaVer FoundCorrectJavaVer JavaVerNotCorrect
+        IntCmp ${MIN_JAVA_VERSION} $JAVA_VER FoundCorrectJavaVer FoundCorrectJavaVer JavaVerNotCorrect
 
     FoundCorrectJavaVer:
         IfFileExists "$JAVA_HOME\bin\javaw.exe" 0 JavaNotPresent
@@ -238,7 +237,7 @@ Function LocateJVM
         Goto Done
 
     JavaVerNotCorrect:
-        StrCpy $JAVA_INSTALLATION_MSG "The version of Java Runtime Environment installed on your computer is $JAVA_VER. Version 1.6 or newer is required to run this program."
+        StrCpy $JAVA_INSTALLATION_MSG "The version of Java Runtime Environment installed on your computer is $JAVA_VER. Version ${MIN_JAVA_VERSION_STRING} or newer is required to run this program."
 
     Done:
         Pop $1
@@ -288,7 +287,6 @@ Section "$(STD_SECTION_NAME)" SEC_STANDARD
   SetOutPath "$INSTDIR"
   File "${RUNTIME_DIR}\COPYRIGHT.txt"
   File "${RUNTIME_DIR}\LICENSE.txt"
-  # the license is already copied by the license page: No it's not
   File "${RUNTIME_DIR}\tvbrowser.exe"
   File "${RUNTIME_DIR}\tvbrowser_noDD.exe"
   File "${RUNTIME_DIR}\tvbrowser_noDD.txt"
@@ -296,47 +294,6 @@ Section "$(STD_SECTION_NAME)" SEC_STANDARD
   File "${RUNTIME_DIR}\windows.properties"
   File "${RUNTIME_DIR}\jRegistryKey.dll"
   File "${RUNTIME_DIR}\jcom.dll"
-
-
-#  #set up the path to the user data in the windows.properties
-#  ReadEnvStr $1 "APPDATA"
-#  IfErrors error
-#  ReadEnvStr $2 "USERPROFILE"
-#  IfErrors error
-#
-#  #length of the USERPROFILE String to $3
-#  StrLen $3 "$2"
-#
-#  #check if APPDATE has the USERPROFILE as a parent directory
-#  StrCpy $6 $1 $3
-#  StrCmp $2 $6 weiter error
-#  weiter:
-#  #if APPDATA is in the USERPROFILE copy the sub-directory string to $4
-#  IntOp $3 $3 + 1
-#  StrCpy $4 $1 "" "$3"
-#  StrCpy $4 "/$4"
-#  IfFileExists "$2\TV-Browser" move goon
-#  move:
-#  Rename "$2\TV-Browser" "$1\TV-Browser"
-#  goto goon
-#  error:
-#  #if some error happened copy an empty string in $4 (fallback mode)
-#  StrCpy $4 ""
-#  goon:
-#  #complete the windows.properties
-#  FileOpen $5 "$INSTDIR\windows.properties" "a"
-#  FileSeek $5 0 END
-#
-#  FileWrite $5 "# In this folder TV-Browser stores the settings$\r$\n"
-#  FileWrite $5 "userdir=${user.home}$4/TV-Browser$\r$\n$\r$\n"
-#
-#  FileWrite $5 "# In this folder TV-Browser stores the TV listings$\r$\n"
-#  FileWrite $5 "tvdatadir=${user.home}$4/TV-Browser/tvdata$\r$\n$\r$\n"
-#
-#  FileWrite $5 "# The folder for logging$\r$\n"
-#  FileWrite $5 "#logdirectory=${user.home}$4/TV-Browser$\r$\n"
-#
-#  FileClose $5
 
   WriteUninstaller "Uninstall.exe"
 
@@ -354,8 +311,6 @@ Section "$(STD_SECTION_NAME)" SEC_STANDARD
 
   SetOutPath "$INSTDIR\plugins"
   File "${RUNTIME_DIR}\plugins\*.*"
-
-
 
   # Register uninstaller at Windows (Add/Remove programs)
   !define UPDATE_INFO_URL "http://tvbrowser.sourceforge.net"
@@ -651,27 +606,25 @@ Section "Uninstall"
   RMDir "$INSTDIR"
 
   ClearErrors
+  ReadEnvStr $1 "APPDATA"
+  IfErrors noDelete
+  IfFileExists "$1\TV-Browser" askDelete
+
+  ClearErrors
   ReadEnvStr $1 "WINDIR"
-  IfErrors no
-  IfFileExists "$1\TV-Browser" noerror
+  IfErrors noDelete
+  IfFileExists "$1\TV-Browser" askDelete
+
   ClearErrors
   ReadEnvStr $1 "USERPROFILE"
-  IfErrors no
-  IfFileExists "$1\TV-Browser" noerror no
-  noerror:
-  MessageBox MB_YESNO $(un.QUESTION_DELETE_CONFIG) IDNO no
-  MessageBox MB_YESNO $(un.CONFIRM) IDNO no
-    RMDir /r "$1\TV-Browser"
-  no:
-  # Test the new settings directory
-  ReadEnvStr $1 "APPDATA"
-  IfErrors no1
-  IfFileExists "$1\TV-Browser" noerror1 no1
-  noerror1:
-  MessageBox MB_YESNO $(un.QUESTION_DELETE_CONFIG) IDNO no1
-  MessageBox MB_YESNO $(un.CONFIRM) IDNO no1
-    RMDir /r "$1\TV-Browser"
-  no1:
+  IfErrors noDelete
+  IfFileExists "$1\TV-Browser" askDelete
+
+  askDelete:
+  MessageBox MB_YESNO "$(un.QUESTION_DELETE_CONFIG)$\r$\n($1\TV-Browser)" IDNO noDelete
+  MessageBox MB_YESNO "$(un.CONFIRM)" IDNO noDelete
+  RMDir /r "$1\TV-Browser"
+  noDelete:
 
   # Unregister uninstaller at Windows (Add/Remove programs)
   push $8
