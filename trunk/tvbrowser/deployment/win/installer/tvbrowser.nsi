@@ -133,7 +133,7 @@ Function CheckMultipleInstance
 FunctionEnd
 
 Function .onInit
-    call CheckMultipleInstance 
+    call CheckMultipleInstance
     # have language selection for the user
     !insertmacro MUI_LANGDLL_DISPLAY
   push $0
@@ -186,7 +186,7 @@ Function un.onInit
   # Extract InstallOptions INI files
   # !insertmacro MUI_INSTALLOPTIONS_EXTRACT_AS "${NSISDIR}\UninstallTvData.ini"   "UninstallTvData.ini"
  # !insertmacro MUI_INSTALLOPTIONS_EXTRACT_AS "${NSISDIR}\UninstallSettings.ini" "UninstallSettings.ini"
-    !insertmacro MUI_UNGETLANGUAGE 
+    !insertmacro MUI_UNGETLANGUAGE
 FunctionEnd
 
 Function LockedListShow
@@ -216,14 +216,14 @@ Function LocateJVM
     Push $0
     Push $1
     StrCpy $JAVA_VER "0"
- 
+
     ReadRegStr $JAVA_VER HKLM "SOFTWARE\JavaSoft\Java Runtime Environment" CurrentVersion
     StrCmp "" "$JAVA_VER" JavaNotPresent CheckJavaVer
- 
+
     JavaNotPresent:
         StrCpy $JAVA_INSTALLATION_MSG "Java Runtime Environment is not installed on your computer. You need version 1.4 or newer to run this program."
         Goto Done
- 
+
     CheckJavaVer:
         ReadRegStr $0 HKLM "SOFTWARE\JavaSoft\Java Runtime Environment\$JAVA_VER" JavaHome
         GetFullPathName /SHORT $JAVA_HOME "$0"
@@ -231,15 +231,15 @@ Function LocateJVM
         StrCpy $1 $JAVA_VER 1 2
         StrCpy $JAVA_VER "$0$1"
         IntCmp 16 $JAVA_VER FoundCorrectJavaVer FoundCorrectJavaVer JavaVerNotCorrect
- 
+
     FoundCorrectJavaVer:
         IfFileExists "$JAVA_HOME\bin\javaw.exe" 0 JavaNotPresent
         ;MessageBox MB_OK "Found Java: $JAVA_VER at $JAVA_HOME"
         Goto Done
- 
+
     JavaVerNotCorrect:
         StrCpy $JAVA_INSTALLATION_MSG "The version of Java Runtime Environment installed on your computer is $JAVA_VER. Version 1.6 or newer is required to run this program."
- 
+
     Done:
         Pop $1
         Pop $0
@@ -433,7 +433,7 @@ Section "$(STD_SECTION_NAME)" SEC_STANDARD
       "NoRepair" \
       1
     goto end
-    
+
   admin:
     # Sets the context of $SMPROGRAMS and other shell folders. If set to 'all', the 'all users' shell folder is used.
     SetShellVarContext all
@@ -531,7 +531,7 @@ Section "$(STD_SECTION_NAME)" SEC_STANDARD
     !insertmacro CreateInternetShortcut \
         "$SMPROGRAMS\$STARTMENU_FOLDER\$(MISC_DIR)\Website" \
         "http://tvbrowser.sourceforge.net/"
-  
+
     !insertmacro CreateInternetShortcut \
         "$SMPROGRAMS\$STARTMENU_FOLDER\$(MISC_DIR)\Forum" \
         "http://hilfe.tvbrowser.org/index.php"
@@ -552,7 +552,7 @@ Section "$(STD_SECTION_NAME)" SEC_STANDARD
       0
 
   !insertmacro MUI_STARTMENU_WRITE_END
-  
+
   !insertmacro registerFirewall "$INSTDIR\tvbrowser.exe" "${PROG_NAME}"
   !insertmacro registerFirewall "$INSTDIR\tvbrowser_noDD.exe" "$(WITHOUT_DIRECTX)"
   Call LocateJVM
@@ -601,24 +601,11 @@ SectionEnd # link section
 
 # special uninstall section.
 Section "Uninstall"
-  # Read whether "Remove TV data" was seleted in the "UninstallTvData.ini"
-  #!insertmacro MUI_INSTALLOPTIONS_READ $INI_VALUE "UninstallTvData.ini" "Field 2" "State"
-
-  # Remove TV data if "Remove TV data" was seleted in the "UninstallTvData.ini"
- # StrCmp $INI_VALUE "1" "" +2
- #   RMDir /r "$INSTDIR\tvdata"
-
-  # Read whether "Remove settings" was seleted in the "UninstallSettings.ini"
-  #!insertmacro MUI_INSTALLOPTIONS_READ $INI_VALUE "UninstallSettings.ini" "Field 2" "State"
-
-  # Remove settings if "Remove settings" was seleted in the "UninstallSettings.ini"
- # StrCmp $INI_VALUE "1" "" +2
- #   RMDir /r "$PROFILE\TV-Browser"
-
   !insertmacro removeFirewall "$INSTDIR\tvbrowser.exe" "${PROG_NAME}"
   !insertmacro removeFirewall "$INSTDIR\tvbrowser_noDD.exe" "$(WITHOUT_DIRECTX)"
   # no removeFirewall for Java because other applications may need that
 
+  ; remove known files in installation directory
   Delete "$INSTDIR\COPYRIGHT.txt"
   Delete "$INSTDIR\enwiki"
   Delete "$INSTDIR\forum"
@@ -629,43 +616,38 @@ Section "Uninstall"
   Delete "$INSTDIR\tvbrowser.jar"
   Delete "$INSTDIR\tvbrowser_noDD.exe"
   Delete "$INSTDIR\tvbrowser_noDD.txt"
+  Delete "$INSTDIR\uninstall.exe"
   Delete "$INSTDIR\website"
   Delete "$INSTDIR\wiki"
   Delete "$INSTDIR\windows.properties"
-  
-  RMDir /r "$INSTDIR\icons\CrystalClear"
-  RMDir /r "$INSTDIR\icons\tango"
-  RMDir "$INSTDIR\icons"
-  
-  IfFileExists "$INSTDIR\imgs\tvbrowser128.png" +1 nodelimgs
-  RMDir /r "$INSTDIR\imgs"
-  nodelimgs:  
 
-  Delete "$INSTDIR\plugins\BbcBackstageDataService.jar"
-  Delete "$INSTDIR\plugins\BlogThisPlugin.jar"
-  Delete "$INSTDIR\plugins\CalendarExportPlugin.jar"
-  Delete "$INSTDIR\plugins\CapturePlugin.jar"
-  Delete "$INSTDIR\plugins\ClipboardPlugin.jar"
-  Delete "$INSTDIR\plugins\DreamboxDataService.jar"
-  Delete "$INSTDIR\plugins\EMailPlugin.jar"
-  Delete "$INSTDIR\plugins\GenrePlugin.jar"
-  Delete "$INSTDIR\plugins\I18NPlugin.jar"
-  Delete "$INSTDIR\plugins\ListViewPlugin.jar"
-  Delete "$INSTDIR\plugins\NewsPlugin.jar"
-  Delete "$INSTDIR\plugins\PrintPlugin.jar"
-  Delete "$INSTDIR\plugins\ProgramListPlugin.jar"
-  Delete "$INSTDIR\plugins\RadioTimesDataService.jar"
-  Delete "$INSTDIR\plugins\SchedulesDirectDataService.jar"
-  Delete "$INSTDIR\plugins\SimpleMarkerPlugin.jar"
-  Delete "$INSTDIR\plugins\SweDBTvDataService.jar"  
-  Delete "$INSTDIR\plugins\TvBrowserDataService.jar"
-  Delete "$INSTDIR\plugins\TVRaterPlugin.jar"
-  Delete "$INSTDIR\plugins\WebPlugin.jar"
-  RMDir "$INSTDIR\plugins"
-  
-  Delete "$INSTDIR\themepacks\themepack.zip"
-  RMDir "$INSTDIR\themepacks"
-   
+  ; remove sub directories recursively (with ALL files in those directories, so also downloaded skins and plugins are deleted)
+  IfFileExists "$INSTDIR\hyphen\dehyphx.tex" deleteHyphenDir noDeleteHyphenDir
+  deleteHyphenDir:
+  RMDir /r "$INSTDIR\hyphen"
+  noDeleteHyphenDir:
+
+  IfFileExists "$INSTDIR\imgs\tvbrowser128.png" deleteImageDir noDeleteImageDir
+  deleteImageDir:
+  RMDir /r "$INSTDIR\imgs"
+  noDeleteImageDir:
+
+  IfFileExists "$INSTDIR\icons\Tango.zip" deleteIconsDir noDeleteIconsDir
+  deleteIconsDir:
+  RMDir /r "$INSTDIR\icons"
+  noDeleteIconsDir:
+
+  IfFileExists "$INSTDIR\plugins\TvBrowserDataService.jar" deletePluginsDir noDeletePluginsDir
+  deletePluginsDir:
+  RMDir /r "$INSTDIR\plugins"
+  noDeletePluginsDir:
+
+  IfFileExists "$INSTDIR\themepacks\themepack.zip" deleteThemesDir noDeleteThemesDir
+  deleteThemesDir:
+  RMDir /r "$INSTDIR\themepacks"
+  noDeleteThemesDir:
+
+  ; finally remove the installation dir (without recursion, so it is not deleted, if any files are still inside)
   RMDir "$INSTDIR"
 
   ClearErrors
@@ -677,7 +659,7 @@ Section "Uninstall"
   IfErrors no
   IfFileExists "$1\TV-Browser" noerror no
   noerror:
-  MessageBox MB_YESNO $(un.QUESTION) IDNO no
+  MessageBox MB_YESNO $(un.QUESTION_DELETE_CONFIG) IDNO no
   MessageBox MB_YESNO $(un.CONFIRM) IDNO no
     RMDir /r "$1\TV-Browser"
   no:
@@ -686,11 +668,11 @@ Section "Uninstall"
   IfErrors no1
   IfFileExists "$1\TV-Browser" noerror1 no1
   noerror1:
-  MessageBox MB_YESNO $(un.QUESTION) IDNO no
-  MessageBox MB_YESNO $(un.CONFIRM) IDNO no
+  MessageBox MB_YESNO $(un.QUESTION_DELETE_CONFIG) IDNO no1
+  MessageBox MB_YESNO $(un.CONFIRM) IDNO no1
     RMDir /r "$1\TV-Browser"
   no1:
-  
+
   # Unregister uninstaller at Windows (Add/Remove programs)
   push $8
   UserInfo::GetAccountType

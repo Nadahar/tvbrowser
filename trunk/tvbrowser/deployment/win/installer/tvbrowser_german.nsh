@@ -24,5 +24,5 @@ LangString DESC_SEC_DESKTOP ${LANG_GERMAN} "Eine Verknüpfung zum TV-Browser auf 
 LangString DESC_SEC_QUICKLAUNCH ${LANG_GERMAN} "Eine Verknüpfung zum TV-Browser auf der Schnellstartleiste anlegen."
 
 # uninstaller
-LangString un.QUESTION ${LANG_GERMAN} "Sollen die Konfigurationsdateien und TV-Daten gelöscht werden?"
+LangString un.QUESTION_DELETE_CONFIG ${LANG_GERMAN} "Sollen die Konfigurationsdateien und TV-Daten gelöscht werden?"
 LangString un.CONFIRM ${LANG_GERMAN} "Sind Sie sicher?"
