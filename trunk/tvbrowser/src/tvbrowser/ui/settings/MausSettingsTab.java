@@ -190,6 +190,7 @@ public class MausSettingsTab implements devplugin.SettingsTab {
 			} else {
 				mSettingsProperty.setString(null);
 			}
+			mClickInterface = selectedIf;
 		}
 
 		public JComboBox createComboxBox() {
