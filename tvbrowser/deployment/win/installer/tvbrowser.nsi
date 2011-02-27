@@ -36,6 +36,7 @@
 #--------------------------------
 !AddIncludeDir "${INSTALLER_DIR}"
 !include MUI.nsh
+!include LogicLib.nsh
 
 #--------------------------------
 # Configuration
@@ -635,7 +636,7 @@ Section "Uninstall"
   StrCmp $1 "Power" isadmin isnotpower
   isadmin:
     ReadRegStr $8 HKLM "Software\${PROG_NAME}${VERSION}" "Start Menu Folder"
-    IfErrors donothing
+    IfErrors noDeleteStartMenu
     DeleteRegKey \
     HKLM \
     "Software\${PROG_NAME}${VERSION}"
@@ -646,7 +647,7 @@ Section "Uninstall"
     goto end
   isnotpower:
     ReadRegStr $8 HKCU "Software\${PROG_NAME}${VERSION}" "Start Menu Folder"
-    IfErrors donothing
+    IfErrors noDeleteStartMenu
     DeleteRegKey \
     HKCU \
     "Software\${PROG_NAME}${VERSION}"
@@ -655,9 +656,13 @@ Section "Uninstall"
     "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PROG_NAME_FILE}"
     SetShellVarContext current
   end:
-    # Remove start menu shortcuts
-  RMDir /r "$SMPROGRAMS\$8"
-  donothing:
+
+  # Remove start menu shortcuts, but only if we successfully read the registry
+  ${If} "$8" != ""
+    RMDir /r "$SMPROGRAMS\$8"
+  ${EndIf}
+
+  noDeleteStartMenu:
   pop $8
 
   # remove desktop shortcut
