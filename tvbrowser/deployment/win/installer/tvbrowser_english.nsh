@@ -24,5 +24,5 @@ LangString DESC_SEC_DESKTOP ${LANG_ENGLISH} "Create a shortcut on your desktop t
 LangString DESC_SEC_QUICKLAUNCH ${LANG_ENGLISH} "Create a shortcut in the quicklaunch area to run TV-Browser."
 
 # uninstaller
-LangString un.QUESTION ${LANG_ENGLISH} "Do you want to delete the settings and TV data files?"
+LangString un.QUESTION_DELETE_CONFIG ${LANG_ENGLISH} "Do you want to delete the settings and TV data files?"
 LangString un.CONFIRM ${LANG_ENGLISH} "Are you sure?"
