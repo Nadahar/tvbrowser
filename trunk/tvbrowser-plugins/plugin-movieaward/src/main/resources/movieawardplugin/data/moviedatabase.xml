@@ -5004,13 +5004,7 @@
 
 <movie id="movie_db_1036" year="1971">
 <title lang="de">Die Auswanderer</title>
-<title lang="en">Utvandrarna</title>
-<title lang="sv" original="yes">Utvandrarna</title>
-</movie>
-
-<movie id="movie_db_1037" year="1973">
-<title lang="de">Die Auswanderer</title>
-<title lang="en">Utvandrarna</title>
+<title lang="en">The Emigrants</title>
 <title lang="sv" original="yes">Utvandrarna</title>
 </movie>
 
@@ -5063,7 +5057,7 @@
 
 <movie id="movie_db_1048" year="1979" director="Volker Schlöndorff">
 <title lang="de" original="yes">Die Blechtrommel</title>
-<title lang="en">Die Blechtrommel</title>
+<title lang="en">The Tin Drum</title>
 </movie>
 
 <movie id="movie_db_1049" year="1969">
@@ -5073,7 +5067,7 @@
 
 <movie id="movie_db_1050" year="1959">
 <title lang="de" original="yes">Die Brücke</title>
-<title lang="en">Die Brücke</title>
+<title lang="en">The Bridge</title>
 </movie>
 
 <movie id="movie_db_1051" year="1957" director="David Lean">
@@ -5111,16 +5105,6 @@
 </movie>
 
 <movie id="movie_db_1058" year="1954">
-<title lang="de">Die Caine war ihr Schicksal</title>
-<title lang="en" original="yes">The Caine Mutiny</title>
-</movie>
-
-<movie id="movie_db_1059" year="1956">
-<title lang="de">Die Caine war ihr Schicksal</title>
-<title lang="en" original="yes">The Caine Mutiny</title>
-</movie>
-
-<movie id="movie_db_1060" year="1958">
 <title lang="de">Die Caine war ihr Schicksal</title>
 <title lang="en" original="yes">The Caine Mutiny</title>
 </movie>
@@ -5173,8 +5157,8 @@
 </movie>
 
 <movie id="movie_db_1071" year="1980">
-<title lang="de">Die Ehe der Maria Braun</title>
-<title lang="en" original="yes">Die Ehe der Maria Braun</title>
+<title lang="de" original="yes">Die Ehe der Maria Braun</title>
+<title lang="en">The Marriage of Maria Braun</title>
 </movie>
 
 <movie id="movie_db_1072" year="1985" director="John Huston">
@@ -5219,12 +5203,13 @@
 
 <movie id="movie_db_1080" year="2009">
 <title lang="de">Die ewigen Augenblicke der Maria Larsson</title>
-<title lang="en">Maria Larssons eviga ögonblick</title>
+<title lang="sv" original="yes">Maria Larssons eviga ögonblick</title>
+<title lang="en">Everlasting Moments</title>
 </movie>
 
 <movie id="movie_db_1081" year="2001">
 <title lang="de">Die fabelhafte Welt der Amélie</title>
-<title lang="en">Le fabuleux destin d'Amélie Poulain</title>
+<title lang="en">Amélie</title>
 <title lang="fr" original="yes">Le Fabuleux destin d'Amélie Poulain</title>
 </movie>
 
@@ -5235,7 +5220,7 @@
 
 <movie id="movie_db_1083" year="2007" director="Stefan Ruzowitzky">
 <title lang="de" original="yes">Die Fälscher</title>
-<title lang="en">Die Fälscher</title>
+<title lang="en">The Counterfeiters</title>
 </movie>
 
 <movie id="movie_db_1084" year="1987">
@@ -5244,7 +5229,7 @@
 </movie>
 
 <movie id="movie_db_1085" year="2006">
-<title lang="de">Die Familie StoneVerloben verboten!</title>
+<title lang="de">Die Familie Stone - Verloben verboten!</title>
 <title lang="en" original="yes">The Family Stone</title>
 </movie>
 
@@ -5268,8 +5253,9 @@
 <title lang="en" original="yes">On The Waterfront</title>
 </movie>
 
-<movie id="movie_db_1090" year="1955">
+<movie id="movie_db_1090" year="1954">
 <title lang="de">Die Ferien des Monsieur Hulot</title>
+<title lang="fr" original="yes">Les vacances de Monsieur Hulot</title>
 </movie>
 
 <movie id="movie_db_1091" year="1954">
@@ -5584,7 +5570,7 @@
 
 <movie id="movie_db_1156" year="2004">
 <title lang="de">Die Kinder des Monsieur Mathieu</title>
-<title lang="en">Les Choristes</title>
+<title lang="en">The Chorus</title>
 <title lang="fr" original="yes">Les Choristes</title>
 </movie>
 
@@ -5630,7 +5616,7 @@
 <movie id="movie_db_1165" year="1980">
 <title lang="de">Die letzte Metro</title>
 <title lang="en">Le dernier métro</title>
-<title lang="fr" original="yes">Le Dernier métro</title>
+<title lang="fr" original="yes">Le dernier métro</title>
 </movie>
 
 <movie id="movie_db_1166" year="1959">
@@ -5847,11 +5833,6 @@
 <title lang="en">The Umbrellas of Cherbourg</title>
 </movie>
 
-<movie id="movie_db_1210" year="1966">
-<title lang="de">Die Regenschirme von Cherbourg</title>
-<title lang="en" original="yes">Les parapluies de Cherbourg</title>
-</movie>
-
 <movie id="movie_db_1211" year="1967" director="Mike Nichols">
 <title lang="de">Die Reifeprüfung</title>
 <title lang="en" original="yes">The Graduate</title>
@@ -5865,7 +5846,7 @@
 <movie id="movie_db_1213" year="2004" director="Walter Salles">
 <title lang="de">Die Reise des jungen Che</title>
 <title lang="es" original="yes">Diarios de motocicleta</title>
-<title lang="en">Diarios de motocicleta</title>
+<title lang="en">The Motorcycle Diaries</title>
 </movie>
 
 <movie id="movie_db_1214" year="1987" director="Joe Dante">
@@ -6175,7 +6156,7 @@
 
 <movie id="movie_db_1279" year="2002">
 <title lang="de">Die Versuchung des Padre Amaro</title>
-<title lang="en">El Crimen del padre Amaro</title>
+<title lang="en">The Crime of Father Amaro</title>
 <title lang="es" original="yes">El Crimen del padre Amaro</title>
 </movie>
 
@@ -6264,7 +6245,8 @@
 
 <movie id="movie_db_1297" year="1975">
 <title lang="de">Die Zauberflöte</title>
-<title lang="en" original="yes">Trollflöjten</title>
+<title lang="sv" original="yes">Trollflöjten</title>
+<title lang="en">The Magic Flute</title>
 </movie>
 
 <movie id="movie_db_1298" year="1956" director="Cecil B. DeMille">
@@ -6299,7 +6281,7 @@
 
 <movie id="movie_db_1304" year="1992">
 <title lang="de">Die zwei Leben der Veronika</title>
-<title lang="en" original="yes">La double vie de Véronique</title>
+<title lang="fr" original="yes">La double vie de Véronique</title>
 </movie>
 
 <movie id="movie_db_1305" year="1985">
@@ -6333,7 +6315,7 @@
 
 <movie id="movie_db_1311" year="1977">
 <title lang="de">Dieses obskure Objekt der Begierde</title>
-<title lang="en">Cet obscur objet du désir</title>
+<title lang="en">That Obscure Object of Desire</title>
 <title lang="es" original="yes">Cet obscur objet du désir</title>
 </movie>
 
@@ -6506,13 +6488,13 @@
 
 <movie id="movie_db_1349" year="1994">
 <title lang="de">Drei Farben: Blau</title>
-<title lang="en">Trois couleurs: Bleu</title>
+<title lang="en">Three Colors: Blue</title>
 <title lang="fr" original="yes">Trois couleurs: Bleu</title>
 </movie>
 
 <movie id="movie_db_1350" year="1994">
 <title lang="de">Drei Farben: Rot</title>
-<title lang="en">Trois couleurs: Rouge</title>
+<title lang="en">Three Colors: Red</title>
 <title lang="fr" original="yes">Trois couleurs: Rouge</title>
 </movie>
 
@@ -6637,6 +6619,7 @@
 
 <movie id="movie_db_1376" year="1994">
 <title lang="de">Eat Drink Man Woman</title>
+<title lang="en">Eat Drink Man Woman</title>
 </movie>
 
 <movie id="movie_db_1377" year="1994" director="Tim Burton">
@@ -6706,8 +6689,8 @@
 
 <movie id="movie_db_1391" year="1977">
 <title lang="de">Ein besonderer Tag</title>
-<title lang="en">Una giornata particolare</title>
-<title lang="it" original="yes">Una Giornata particolare</title>
+<title lang="en">A Special Day</title>
+<title lang="it" original="yes">Una giornata particolare</title>
 </movie>
 
 <movie id="movie_db_1392" year="1949" director="Joseph L. Mankiewicz">
@@ -7006,11 +6989,6 @@
 <title lang="en" original="yes">Gazon maudit</title>
 </movie>
 
-<movie id="movie_db_1452" year="1974">
-<title lang="de">Eine Frau unter Einfluss</title>
-<title lang="en" original="yes">A Woman Under the Influence</title>
-</movie>
-
 <movie id="movie_db_1453" year="1975">
 <title lang="de">Eine Frau unter Einfluß</title>
 <alternativetitle lang="de">Eine Frau unter Einfluss</alternativetitle>
@@ -7132,12 +7110,13 @@
 
 <movie id="movie_db_1477" year="1998">
 <title lang="de">El Abuelo</title>
-<title lang="es" original="yes">El Abuelo</title>
+<title lang="en">The Grandfather</title>
+<title lang="es" original="yes">El abuelo</title>
 </movie>
 
 <movie id="movie_db_1478" year="1967">
 <title lang="de">El Amor Brujo</title>
-<title lang="es" original="yes">El Amor Brujo</title>
+<title lang="es" original="yes">El amor brujo</title>
 </movie>
 
 <movie id="movie_db_1479" year="1961">
@@ -7180,6 +7159,7 @@
 
 <movie id="movie_db_1487" year="2001">
 <title lang="de">Elling</title>
+<title lang="en">Me, My Friend and I</title>
 <title lang="no" original="yes">Elling</title>
 </movie>
 
@@ -7258,6 +7238,8 @@
 
 <movie id="movie_db_1504" year="2006">
 <title lang="de">Éramos pocos</title>
+<title lang="es">Éramos pocos</title>
+<title lang="en">One Too Many</title>
 </movie>
 
 <movie id="movie_db_1505" year="1996">
@@ -7276,6 +7258,7 @@
 
 <movie id="movie_db_1508" year="1994">
 <title lang="de">Erdbeer und Schokolade</title>
+<title lang="en">Strawberry and Chocolate</title>
 <title lang="pt" original="yes">Fresa y chocolate</title>
 </movie>
 
@@ -7432,6 +7415,7 @@
 
 <movie id="movie_db_1541" year="1949">
 <title lang="de">Fahrraddiebe</title>
+<title lang="en">Bicycle Thieves</title>
 <title lang="it" original="yes">Ladri di biciclette</title>
 </movie>
 
@@ -7820,7 +7804,7 @@
 
 <movie id="movie_db_1620" year="1988" director="Bertrand Blier">
 <title lang="de">Frauen am Rande des Nervenzusammenbruchs</title>
-<title lang="en">Mujeres al borde de un ataque de nervios</title>
+<title lang="en">Women on the Verge of a Nervous Breakdown</title>
 <title lang="es" original="yes">Mujeres al borde de un ataque de nervios</title>
 </movie>
 
@@ -7877,7 +7861,7 @@
 </movie>
 
 <movie id="movie_db_1632" year="1972">
-<title lang="de">Fresen und gefressen werden</title>
+<title lang="de">Fressen und gefressen werden</title>
 <title lang="nl" original="yes">Bij de beesten af</title>
 </movie>
 
@@ -8029,6 +8013,7 @@
 
 <movie id="movie_db_1664" year="1982">
 <title lang="de">Garp und wie er die Welt sah</title>
+<title lang="en" original="yes">The World According to Garp</title>
 </movie>
 
 <movie id="movie_db_1665" year="1997">
@@ -8056,7 +8041,8 @@
 
 <movie id="movie_db_1670" year="2008">
 <title lang="de">Gefahr und Begierde</title>
-<title lang="en" original="yes">Gefahr und Begierde</title>
+<title lang="en">Lust, Caution</title>
+<title lang="zh" original="yes">Se, jie</title>
 </movie>
 
 <movie id="movie_db_1671" year="1987">
@@ -8275,7 +8261,8 @@
 
 <movie id="movie_db_1715" year="1987">
 <title lang="de">Ginger und Fred</title>
-<title lang="en" original="yes">Ginger e Fred</title>
+<title lang="en">Ginger &amp; Fred</title>
+<title lang="it" original="yes">Ginger e Fred</title>
 </movie>
 
 <movie id="movie_db_1716" year="1965">
@@ -8450,11 +8437,6 @@
 <title lang="en" original="yes">Good Night, and Good Luck.</title>
 </movie>
 
-<movie id="movie_db_1752" year="2005">
-<title lang="de">Good Night, and Good Luck.</title>
-<title lang="en" original="yes">Good Night, and Good Luck.</title>
-</movie>
-
 <movie id="movie_db_1753" year="1997" director="Gus van Sant">
 <title lang="de">Good Will Hunting</title>
 <title lang="en" original="yes">Good Will Hunting</title>
@@ -8571,7 +8553,8 @@
 
 <movie id="movie_db_1777" year="2008">
 <title lang="de">Grisen</title>
-<title lang="en" original="yes">The Pig</title>
+<title lang="da" original="yes">Grisen</title>
+<title lang="en">The Pig</title>
 </movie>
 
 <movie id="movie_db_1778" year="1969">
@@ -8800,11 +8783,12 @@
 <movie id="movie_db_1826" year="1989">
 <title lang="de">Harry und Sally</title>
 <title lang="en" original="yes">When Harry Met Sally…</title>
+<alternativetitle lang="en">When Harry Met Sally</alternativetitle>
 </movie>
 
 <movie id="movie_db_1827" year="1961">
 <title lang="de">Harry und sein Kammerdiener</title>
-<title lang="dk" original="yes">Harry og kammertjeneren</title>
+<title lang="da" original="yes">Harry og kammertjeneren</title>
 </movie>
 
 <movie id="movie_db_1828" year="1974" director="Paul Mazursky">
@@ -8894,7 +8878,7 @@
 </movie>
 
 <movie id="movie_db_1847" year="2002">
-<title lang="de">Hedwig and the Angry Inch</title>
+<title lang="de">Hedwig</title>
 <title lang="en" original="yes">Hedwig and the Angry Inch</title>
 </movie>
 
@@ -8999,7 +8983,8 @@
 
 <movie id="movie_db_1870" year="1978">
 <title lang="de">Herbstsonate</title>
-<title lang="en" original="yes">Höstsonaten</title>
+<title lang="en">Autumn Sonata</title>
+<title lang="sv" original="yes">Höstsonaten</title>
 </movie>
 
 <movie id="movie_db_1871" year="1997">
@@ -9084,8 +9069,9 @@
 </movie>
 
 <movie id="movie_db_1889" year="1992">
-<title lang="de">High Heels</title>
-<title lang="en" original="yes">Tacones lejanos</title>
+<title lang="de">High Heels - Die Waffen einer Frau</title>
+<title lang="en">High Heels</title>
+<title lang="es" original="yes">Tacones lejanos</title>
 </movie>
 
 <movie id="movie_db_1890" year="1960">
@@ -9192,7 +9178,7 @@
 
 <movie id="movie_db_1911" year="1991">
 <title lang="de">Hitlerjunge Salomon</title>
-<title lang="en" original="yes">Hitlerjunge Salomon</title>
+<title lang="en" original="yes">Europa Europa</title>
 </movie>
 
 <movie id="movie_db_1912" year="1937">
@@ -9265,7 +9251,7 @@
 </movie>
 
 <movie id="movie_db_1927" year="1982">
-<title lang="de">Hollywoods letzter HeulerS.O.B.</title>
+<title lang="de">Hollywoods letzter Heuler S.O.B.</title>
 <title lang="en" original="yes">S.O.B.</title>
 </movie>
 
@@ -9428,8 +9414,8 @@
 </movie>
 
 <movie id="movie_db_1961" year="1978">
-<title lang="de">I Nuovi mostri</title>
-<title lang="it" original="yes">I Nuovi mostri</title>
+<title lang="de">I nuovi mostri</title>
+<title lang="it" original="yes">I nuovi mostri</title>
 </movie>
 
 <movie id="movie_db_1962" year="1951">
@@ -9508,7 +9494,7 @@
 </movie>
 
 <movie id="movie_db_1977" year="1979">
-<title lang="de">Ich liebe dichI love youJe t’aime</title>
+<title lang="de">Ich liebe dich I love you Je t’aime</title>
 <alternativetitle lang="de">Ich liebe dich - I love you - Je t’aime</alternativetitle>
 <title lang="en" original="yes">A Little Romance</title>
 </movie>
@@ -9567,7 +9553,7 @@
 <movie id="movie_db_1988" year="2007">
 <title lang="de">Il Supplente</title>
 <title lang="en">Il Supplente</title>
-<title lang="it" original="yes">Il Supplente</title>
+<title lang="it" original="yes">Il supplente</title>
 </movie>
 
 <movie id="movie_db_1989" year="2004">
@@ -9918,6 +9904,7 @@
 <movie id="movie_db_2061" year="1946">
 <title lang="de">Ist das Leben nicht schön?</title>
 <title lang="en" original="yes">It’s a Wonderful Life</title>
+<alternativetitle lang="en">It's a Wonderful Life</alternativetitle>
 </movie>
 
 <movie id="movie_db_2062" year="1947">
@@ -10169,6 +10156,7 @@
 
 <movie id="movie_db_2113" year="1998">
 <title lang="de">John Grisham’s: Der Regenmacher</title>
+<alternativetitle lang="de">Der Regenmacher</alternativetitle>
 <title lang="en" original="yes">The Rainmaker</title>
 </movie>
 
@@ -10345,6 +10333,7 @@
 
 <movie id="movie_db_2150" year="1960">
 <title lang="de">Kapò</title>
+<alternativetitle lang="de">Kapo</alternativetitle>
 <title lang="it" original="yes">Kapò</title>
 </movie>
 
@@ -10861,7 +10850,7 @@
 <title lang="de">La vie en rose</title>
 <title lang="en">La Môme</title>
 <title lang="fr" original="yes">La Môme</title>
-<alternativetitle lang="fr" original="yes">La Mome</alternativetitle>
+<alternativetitle lang="fr">La Mome</alternativetitle>
 </movie>
 
 <movie id="movie_db_2259" year="1997">
@@ -11091,6 +11080,7 @@
 
 <movie id="movie_db_2304" year="1973">
 <title lang="de">Leben und sterben lassen</title>
+<title lang="en" original="yes">Live and Let Die</title>
 </movie>
 
 <movie id="movie_db_2305" year="1995">
@@ -11175,7 +11165,7 @@
 
 <movie id="movie_db_2322" year="1970" director="Michael Lindsay-Hogg">
 <title lang="de">Let It Be</title>
-<title lang="en" original="yes">Let It Be </title>
+<title lang="en" original="yes">Let It Be</title>
 </movie>
 
 <movie id="movie_db_2323" year="1988">
@@ -11200,6 +11190,8 @@
 
 <movie id="movie_db_2327" year="1962">
 <title lang="de">Letztes Jahr in Marienbad</title>
+<title lang="en">Last Year at Marienbad</title>
+<title lang="fr" original="yes">L'année dernière à Marienbad</title>
 </movie>
 
 <movie id="movie_db_2328" year="1959">
@@ -11528,6 +11520,7 @@
 <movie id="movie_db_2396" year="1974">
 <title lang="de">Macskajáték</title>
 <title lang="hu" original="yes">Macskajáték</title>
+<alternativetitle lang="hu">Macskajatek</alternativetitle>
 </movie>
 
 <movie id="movie_db_2397" year="1938">
@@ -11958,7 +11951,7 @@
 
 <movie id="movie_db_2487" year="1958" director="Jacques Tati">
 <title lang="de">Mein Onkel</title>
-<title lang="en">Mon oncle</title>
+<title lang="en">Mon Oncle</title>
 <title lang="fr" original="yes">Mon oncle</title>
 </movie>
 
@@ -12038,10 +12031,13 @@
 
 <movie id="movie_db_2504" year="2007">
 <title lang="de">Même les Pigeons vont au Paradis</title>
+<title lang="fr">Même les Pigeons vont au Paradis</title>
+<title lang="en">Even Pigeons Go to Heaven</title>
 </movie>
 
 <movie id="movie_db_2505" year="2001">
 <title lang="de">Memento</title>
+<title lang="en" original="yes">Memento</title>
 </movie>
 
 <movie id="movie_db_2506" year="1955">
@@ -12310,8 +12306,10 @@
 <title lang="it" original="yes">La ragazza con la pistola</title>
 </movie>
 
-<movie id="movie_db_2563" year="1987">
-<title lang="de">Mitt liv som hund</title>
+<movie id="movie_db_2563" year="1985">
+<title lang="sv" original="yes">Mitt liv som hund</title>
+<title lang="de">Mein Leben als Hund</title>
+<title lang="en">My Life as a Dog</title>
 </movie>
 
 <movie id="movie_db_2564" year="1960">
@@ -12340,7 +12338,7 @@
 </movie>
 
 <movie id="movie_db_2569" year="2007">
-<title lang="de">Moja ljubow</title>
+<title lang="de" original="yes">Moja ljubow</title>
 </movie>
 
 <movie id="movie_db_2570" year="1986">
@@ -12378,6 +12376,7 @@
 
 <movie id="movie_db_2577" year="2004">
 <title lang="de">Monsieur Ibrahim und die Blumen des Koran</title>
+<title lang="en">Monsieur Ibrahim</title>
 <title lang="fr" original="yes">Monsieur Ibrahim et les fleurs du Coran</title>
 </movie>
 
@@ -12769,7 +12768,8 @@
 
 <movie id="movie_db_2659" year="2006">
 <title lang="de">Nach der Hochzeit</title>
-<title lang="dk" original="yes">Efter brylluppet</title>
+<title lang="en">After the Wedding</title>
+<title lang="da" original="yes">Efter brylluppet</title>
 </movie>
 
 <movie id="movie_db_2660" year="1987">
@@ -12817,6 +12817,7 @@
 <title lang="da" original="yes">Når livet går sin vej</title>
 <alternativetitle lang="da" original="yes">Nar livet gar sin vej</alternativetitle>
 <title lang="de">Når livet går sin vej</title>
+<title lang="en">When Life Departs</title>
 </movie>
 
 <movie id="movie_db_2670" year="1975" director="Robert Altman">
@@ -12883,7 +12884,8 @@
 </movie>
 
 <movie id="movie_db_2683" year="1957">
-<title lang="de">Ni liv</title>
+<title lang="de">Soweit die Kräfte reichen</title>
+<title lang="en">Nine Lives</title>
 <title lang="no" original="yes">Ni liv</title>
 </movie>
 
@@ -12988,7 +12990,7 @@
 
 <movie id="movie_db_2704" year="2001">
 <title lang="de">No Man’s Land</title>
-<title lang="en">No Man’s Land</title>
+<title lang="en" original="yes">No Man’s Land</title>
 </movie>
 
 <movie id="movie_db_2705" year="1950">
@@ -13072,12 +13074,12 @@
 
 <movie id="movie_db_2721" year="1961">
 <title lang="de">Nur Himmel und Dreck</title>
-<title lang="en">Le ciel et la boue</title>
+<title lang="fr" original="yes">Le ciel et la boue</title>
 </movie>
 
 <movie id="movie_db_2722" year="1969" director="Sydney Pollack">
 <title lang="de">Nur Pferden gibt man den Gnadenschuß</title>
-<alternativetitle lang="de">Nur Pferden gibt man den Gnadenschuß</alternativetitle>
+<alternativetitle lang="de">Nur Pferden gibt man den Gnadenschuss</alternativetitle>
 <title lang="en" original="yes">They Shoot Horses, Don't They?</title>
 </movie>
 
@@ -13503,7 +13505,7 @@
 
 <movie id="movie_db_2810" year="1967">
 <title lang="de">Pas question le samedi</title>
-<title lang="en" original="yes">Pas question le samedi</title>
+<title lang="fr" original="yes">Pas question le samedi</title>
 </movie>
 
 <movie id="movie_db_2811" year="1992">
@@ -14281,7 +14283,7 @@
 
 <movie id="movie_db_2976" year="1996">
 <title lang="de">Ridicule - Von der Lächerlichkeit des Scheins</title>
-<title lang="en">Ridicule - Von der Lächerlichkeit des Scheins</title>
+<title lang="en">Ridicule</title>
 <title lang="fr" original="yes">Ridicule</title>
 </movie>
 
@@ -14399,7 +14401,9 @@
 </movie>
 
 <movie id="movie_db_3002" year="1946">
-<title lang="de">Roma, città aperta</title>
+<title lang="it" original="yes">Roma, città aperta</title>
+<title lang="en">Rome, Open City</title>
+<title lang="de">Rom, offene Stadt</title>
 </movie>
 
 <movie id="movie_db_3003" year="1952">
@@ -14703,7 +14707,7 @@
 
 <movie id="movie_db_3067" year="1962" director="Pietro Germi">
 <title lang="de">Scheidung auf italienisch</title>
-<title lang="en" original="yes">Divorzio all'italiana</title>
+<title lang="it" original="yes">Divorzio all'italiana</title>
 </movie>
 
 <movie id="movie_db_3068" year="1952" director="Clarence Brown">
@@ -14784,7 +14788,8 @@
 
 <movie id="movie_db_3084" year="2007">
 <title lang="de">Schmetterling und Taucherglocke</title>
-<title lang="en" original="yes">Le scaphandre et le papillon</title>
+<title lang="en">The Diving Bell and the Butterfly</title>
+<title lang="fr" original="yes">Le scaphandre et le papillon</title>
 </movie>
 
 <movie id="movie_db_3085" year="1972" director="Milton Katselas">
@@ -14840,7 +14845,7 @@
 
 <movie id="movie_db_3096" year="1973" director="Ingmar Bergman">
 <title lang="de">Schreie und Flüstern</title>
-<title lang="en" original="yes">Viskningar och rop</title>
+<title lang="sv" original="yes">Viskningar och rop</title>
 </movie>
 
 <movie id="movie_db_3097" year="1992">
@@ -15261,11 +15266,6 @@
 <title lang="sh" original="yes">Skupljaci perja</title>
 </movie>
 
-<movie id="movie_db_3186" year="1969">
-<title lang="de">Skupljaci perja</title>
-<title lang="en">Skupljaci perja</title>
-</movie>
-
 <movie id="movie_db_3187" year="1941">
 <title lang="de">Skylark</title>
 </movie>
@@ -15383,7 +15383,7 @@
 
 <movie id="movie_db_3211" year="2009">
 <title lang="de">So viele Jahre liebe ich dich</title>
-<title lang="en" original="yes">Il y a longtemps que je t'aime</title>
+<title lang="fr" original="yes">Il y a longtemps que je t'aime</title>
 </movie>
 
 <movie id="movie_db_3212" year="1973">
@@ -15957,6 +15957,7 @@
 
 <movie id="movie_db_3337" year="2004">
 <title lang="de">Super Size Me</title>
+<title lang="en" original="yes">Super Size Me</title>
 </movie>
 
 <movie id="movie_db_3338" year="1941">
@@ -15977,6 +15978,7 @@
 
 <movie id="movie_db_3342" year="1986">
 <title lang="de">Susan… verzweifelt gesucht</title>
+<alternativetitle lang="de">Susan... verzweifelt gesucht</alternativetitle>
 <title lang="en" original="yes">Desperately Seeking Susan</title>
 </movie>
 
@@ -16160,7 +16162,7 @@
 
 <movie id="movie_db_3381" year="1989">
 <title lang="de">Tanzen mit Regitze</title>
-<title lang="dk" original="yes">Dansen med Regitze</title>
+<title lang="da" original="yes">Dansen med Regitze</title>
 </movie>
 
 <movie id="movie_db_3382" year="1938">
@@ -16183,7 +16185,7 @@
 
 <movie id="movie_db_3386" year="1977">
 <title lang="de">Taschengeld</title>
-<title lang="en" original="yes">L'argent de poche</title>
+<title lang="fr" original="yes">L'argent de poche</title>
 </movie>
 
 <movie id="movie_db_3387" year="2004">
@@ -19257,13 +19259,14 @@
 
 <movie id="movie_db_4012" year="2006">
 <title lang="de">Volver - Zurückkehren</title>
-<title lang="en" original="yes">Volver</title>
+<title lang="en">Volver</title>
+<title lang="es" original="yes">Volver</title>
 </movie>
 
 <movie id="movie_db_4013" year="1982" director="Jose Luis Garci">
 <title lang="de">Volver A Empezar</title>
 <title lang="en">Volver a empezar</title>
-<title lang="es" original="yes">Volver A Empezar</title>
+<title lang="es" original="yes">Volver a empezar</title>
 </movie>
 
 <movie id="movie_db_4014" year="1939" director="Victor Fleming">
@@ -19851,7 +19854,7 @@
 
 <movie id="movie_db_4134" year="1959">
 <title lang="de">Wilde Erdbeeren</title>
-<title lang="en" original="yes">Smultronstället</title>
+<title lang="sv" original="yes">Smultronstället</title>
 </movie>
 
 <movie id="movie_db_4135" year="1996">
@@ -20362,75 +20365,354 @@
 <title lang="en" original="yes">Scarecrow</title>
 <title lang="de">Asphalt-Blüten</title>
 </movie>
-<movie id="movie_db_4237" year="2009"> <title lang="de">(500) Days of Summer</title> <title lang="en" original="yes">(500) Days of Summer</title></movie>
-<movie id="movie_db_4238" year="2009"> <title lang="de">A Serious Man</title> <title lang="en" original="yes">A Serious Man</title></movie>
-<movie id="movie_db_4239" year="2009"> <title lang="de">A Single Man</title> <title lang="en" original="yes">A Single Man</title></movie>
-<movie id="movie_db_4240" year="2009"> <title lang="de">Ajami</title> <title lang="ar" original="yes">‏محمد العربي بن مهيدي‎ /</title> <title lang="he">עג'מי‎</title></movie>
-<movie id="movie_db_4241" year="2009"> <title lang="de">An Education</title> <title lang="en" original="yes">An Education</title></movie>
-<movie id="movie_db_4242" year="2009"> <title lang="de">Avatar - Aufbruch nach Pandora</title> <title lang="en" original="yes">Avatar</title></movie>
-<movie id="movie_db_4243" year="2009"> <title lang="de">Baarìa</title> <title lang="it" original="yes">Baarìa</title></movie>
-<movie id="movie_db_4244" year="2009"> <title lang="de">Blind Side - Die große Chance</title> <title lang="en" original="yes">The Blind Side</title></movie>
-<movie id="movie_db_4245" year="2009"> <title lang="de">Bright Star</title> <title lang="en" original="yes">Bright Star</title></movie>
-<movie id="movie_db_4246" year="2009"> <title lang="de">Brothers</title> <title lang="en" original="yes">Brothers</title></movie>
-<movie id="movie_db_4247" year="2009"> <title lang="de">Burma VJ</title> <title lang="en" original="yes">Burma VJ: Reporting from a Closed Country </title></movie>
-<movie id="movie_db_4248" year="2009"> <title lang="de">China’s Unnatural Disaster: The Tears of Sichuan Province</title> <title lang="en" original="yes"></title></movie>
-<movie id="movie_db_4249" year="2009"> <title lang="de">Coco Chanel - Der Beginn einer Leidenschaft</title> <title lang="fr" original="yes">Coco avant Chanel</title> <title lang="en">Coco Before Chanel </title></movie>
-<movie id="movie_db_4250" year="2009"> <title lang="de">Coraline</title> <title lang="en" original="yes">Coraline</title></movie>
-<movie id="movie_db_4251" year="2009"> <title lang="de">Crazy Heart</title> <title lang="en" original="yes">Crazy Heart</title></movie>
-<movie id="movie_db_4252" year="2009"> <title lang="de">Das Kabinett des Dr. Parnassus</title> <title lang="en" original="yes">The Imaginarium of Doctor Parnassus</title></movie>
-<movie id="movie_db_4253" year="2009"> <title lang="de">Das weiße Band</title> <title lang="de" original="yes">Das weiße Band</title> <title lang="en">The White Ribbon </title></movie>
-<movie id="movie_db_4254" year="2009"> <title lang="de">Der fantastische Mr. Fox</title> <title lang="en" original="yes">Fantastic Mr. Fox</title></movie>
-<movie id="movie_db_4255" year="2009"> <title lang="de">Der Informant!</title> <title lang="en" original="yes">The Informant!</title></movie>
-<movie id="movie_db_4256" year="2009"> <title lang="de">Die Bucht</title> <title lang="en" original="yes">The Cove</title></movie>
-<movie id="movie_db_4257" year="2009"> <title lang="de">District 9</title> <title lang="en" original="yes">District 9</title></movie>
-<movie id="movie_db_4258" year="2009"> <title lang="de">Duplicity - Gemeinsame Geheimsache</title> <title lang="en" original="yes">Duplicity</title></movie>
-<movie id="movie_db_4259" year="2009"> <title lang="de">Ein Prophet</title> <title lang="fr" original="yes">Un prophète</title> <title lang="en">A Prophet </title></movie>
-<movie id="movie_db_4260" year="2009"> <title lang="de">Ein russischer Sommer</title> <title lang="en" original="yes">The Last Station</title></movie>
-<movie id="movie_db_4261" year="2009"> <title lang="de">Eine Perle Ewigkeit</title> <title lang="es" original="yes">La teta asustada</title> <title lang="en">The Milk of Sorrow </title></movie>
-<movie id="movie_db_4262" year="2009"> <title lang="de">Food, Inc.</title> <title lang="en" original="yes">Food, Inc.</title></movie>
-<movie id="movie_db_4263" year="2009"> <title lang="de">French Roast</title> <title lang="en" original="yes">French Roast</title></movie>
-<movie id="movie_db_4264" year="2009"> <title lang="de">Granny O'Grimm's Sleeping Beauty</title> <title lang="en" original="yes">Granny O'Grimm's Sleeping Beauty</title></movie>
-<movie id="movie_db_4265" year="2009"> <title lang="de">Hangover</title> <title lang="en" original="yes">The Hangover</title></movie>
-<movie id="movie_db_4266" year="2009"> <title lang="de">Harry Potter und der Halbblutprinz</title> <title lang="en" original="yes">Harry Potter and the Half-Blood Prince</title></movie>
-<movie id="movie_db_4267" year="2009"> <title lang="de">Il Divo</title> <title lang="it" original="yes">Il divo: La straordinaria vita di Giulio Andreotti </title> <title lang="en">Il Divo</title></movie>
-<movie id="movie_db_4268" year="2009"> <title lang="de">In meinem Himmel</title> <title lang="en" original="yes">The Lovely Bones</title></movie>
-<movie id="movie_db_4269" year="2009"> <title lang="de">In the Loop</title> <title lang="en" original="yes">In the Loop</title></movie>
-<movie id="movie_db_4270" year="2009"> <title lang="de">Inglourious Basterds</title> <title lang="en" original="yes">Inglourious Basterds</title></movie>
-<movie id="movie_db_4271" year="2009"> <title lang="de">Instead of Abracadabra</title> <title lang="en" original="yes">Instead of Abracadabra</title></movie>
-<movie id="movie_db_4272" year="2009"> <title lang="de">Invictus - Unbezwungen</title> <title lang="en" original="yes">Invictus</title></movie>
-<movie id="movie_db_4273" year="2009"> <title lang="de">Julie &amp; Julia</title> <title lang="en" original="yes">Julie &amp; Julia</title></movie>
-<movie id="movie_db_4274" year="2009"> <title lang="de">Kavi</title> <title lang="en" original="yes">Kavi</title></movie>
-<movie id="movie_db_4275" year="2009"> <title lang="de">Küss den Frosch</title> <title lang="en" original="yes">The Princess and the Frog</title></movie>
-<movie id="movie_db_4276" year="2009"> <title lang="de">La Dama y la Muerte</title> <title lang="en" original="yes">La Dama y la Muerte</title></movie>
-<movie id="movie_db_4277" year="2009"> <title lang="de">La nana</title> <title lang="es" original="yes">La nana</title></movie>
-<movie id="movie_db_4278" year="2009"> <title lang="de">Logorama</title> <title lang="en" original="yes">Logorama</title></movie>
-<movie id="movie_db_4279" year="2009"> <title lang="de">Mauerhase</title> <title lang="pl" original="yes">Królik po Berlińsku</title> <title lang="fr">Rabbit à la Berlin</title></movie>
-<movie id="movie_db_4280" year="2009"> <title lang="de">Miracle Fish</title> <title lang="en" original="yes">Miracle Fish</title></movie>
-<movie id="movie_db_4281" year="2009"> <title lang="de">Music by Prudence</title> <title lang="en" original="yes">Music by Prudence</title></movie>
-<movie id="movie_db_4282" year="2009"> <title lang="de">Nine</title> <title lang="en" original="yes">Nine</title></movie>
-<movie id="movie_db_4283" year="2009"> <title lang="de">Oben</title> <title lang="en" original="yes">Up</title></movie>
-<movie id="movie_db_4284" year="2009"> <title lang="de">Paris, Paris - Monsieur Pigoil auf dem Weg zum Glück</title> <title lang="de" original="yes">Paris, Paris - Monsieur Pigoil auf dem Weg zum Glück</title></movie>
-<movie id="movie_db_4285" year="2009"> <title lang="de">Precious - Das Leben ist kostbar</title> <title lang="en" original="yes">Precious: Based on the Novel Push by Sapphire</title></movie>
-<movie id="movie_db_4286" year="2009"> <title lang="de">Selbst ist die Braut</title> <title lang="en" original="yes">The Proposal</title></movie>
-<movie id="movie_db_4287" year="2009"> <title lang="de">Sherlock Holmes</title> <title lang="en" original="yes">Sherlock Holmes</title></movie>
-<movie id="movie_db_4288" year="2009"> <title lang="de">Star Trek</title> <title lang="en" original="yes">Star Trek</title></movie>
-<movie id="movie_db_4289" year="2009"> <title lang="de">The Door</title> <title lang="en" original="yes">The Door</title></movie>
-<movie id="movie_db_4290" year="2009"> <title lang="de">The Last Campaign of Governor Booth Gardner</title> <title lang="en" original="yes">The Last Campaign of Governor Booth Gardner</title></movie>
-<movie id="movie_db_4291" year="2009"> <title lang="de">The Last Truck: Closing of a GM Plant</title> <title lang="en" original="yes">The Last Truck: Closing of a GM Plant</title></movie>
-<movie id="movie_db_4292" year="2009"> <title lang="de">The Messenger</title> <title lang="en" original="yes">The Messenger</title></movie>
-<movie id="movie_db_4293" year="2009"> <title lang="de">The Most Dangerous Man in America: Daniel Ellsberg and the Pentagon Papers</title> <title lang="en" original="yes">The Most Dangerous Man in America: Daniel Ellsberg and the Pentagon Papers</title></movie>
-<movie id="movie_db_4294" year="2009"> <title lang="de">The New Tenants</title> <title lang="en" original="yes">The New Tenants</title></movie>
-<movie id="movie_db_4295" year="2009"> <title lang="de">The Secret in Their Eyes </title> <title lang="es" original="yes">El secreto de sus ojos</title> <title lang="en">The Secret in Their Eyes </title></movie>
-<movie id="movie_db_4296" year="2009"> <title lang="de">The Secret of Kells</title> <title lang="en" original="yes">The Secret of Kells</title></movie>
-<movie id="movie_db_4297" year="2009"> <title lang="de">The Young Victoria</title> <title lang="en" original="yes">The Young Victoria</title></movie>
-<movie id="movie_db_4298" year="2009"> <title lang="de">Tödliches Kommando - The Hurt Locker</title> <title lang="en" original="yes">The Hurt Locker</title></movie>
-<movie id="movie_db_4299" year="2009"> <title lang="de">Transformers - Die Rache</title> <title lang="en" original="yes">Transformers: Revenge of the Fallen</title></movie>
-<movie id="movie_db_4300" year="2009"> <title lang="de">Up in the Air</title> <title lang="en" original="yes">Up in the Air</title></movie>
-<movie id="movie_db_4301" year="2009"> <title lang="de">Wallace &amp; Gromit: Auf Leben und Brot</title> <title lang="en" original="yes">A Matter of Loaf and Death</title></movie>
-<movie id="movie_db_4302" year="2009"> <title lang="de">Wenn Liebe so einfach wäre</title> <title lang="en" original="yes">It’s Complicated</title></movie>
-<movie id="movie_db_4303" year="2009"> <title lang="de">Which Way Home</title> <title lang="en" original="yes">Which Way Home</title></movie>
-<movie id="movie_db_4304" year="2009"> <title lang="de">Wolkig mit Aussicht auf Fleischbällchen</title> <title lang="en" original="yes">Cloudy with a Chance of Meatballs</title></movie>
-<movie id="movie_db_4305" year="2009"> <title lang="de">Zerrissene Umarmungen</title> <title lang="es" original="yes">Los abrazos rotos</title><title lang="en">Broken Embraces</title></movie>
+
+<movie id="movie_db_4237" year="2009"> 
+<title lang="de">(500) Days of Summer</title> 
+<title lang="en" original="yes">(500) Days of Summer</title>
+</movie>
+
+<movie id="movie_db_4238" year="2009"> 
+<title lang="de">A Serious Man</title> 
+<title lang="en" original="yes">A Serious Man</title>
+</movie>
+
+<movie id="movie_db_4239" year="2009"> 
+<title lang="de">A Single Man</title> 
+<title lang="en" original="yes">A Single Man</title>
+</movie>
+
+<movie id="movie_db_4240" year="2009"> 
+<title lang="de">Ajami</title> 
+<title lang="ar" original="yes">‏محمد العربي بن مهيدي‎ /</title> 
+<title lang="he">עג'מי‎</title>
+</movie>
+
+<movie id="movie_db_4241" year="2009"> 
+<title lang="de">An Education</title> 
+<title lang="en" original="yes">An Education</title>
+</movie>
+
+<movie id="movie_db_4242" year="2009"> 
+<title lang="de">Avatar - Aufbruch nach Pandora</title> 
+<title lang="en" original="yes">Avatar</title>
+</movie>
+
+<movie id="movie_db_4243" year="2009"> 
+<title lang="de">Baarìa</title> 
+<title lang="it" original="yes">Baarìa</title>
+</movie>
+
+<movie id="movie_db_4244" year="2009"> 
+<title lang="de">Blind Side - Die große Chance</title> 
+<title lang="en" original="yes">The Blind Side</title>
+</movie>
+
+<movie id="movie_db_4245" year="2009"> 
+<title lang="de">Bright Star</title> 
+<title lang="en" original="yes">Bright Star</title>
+</movie>
+ 
+<movie id="movie_db_4246" year="2009"> 
+<title lang="de">Brothers</title> 
+<title lang="en" original="yes">Brothers</title>
+</movie>
+ 
+<movie id="movie_db_4247" year="2009"> 
+<title lang="de">Burma VJ</title> 
+<title lang="en" original="yes">Burma VJ: Reporting from a Closed Country </title>
+</movie>
+ 
+<movie id="movie_db_4248" year="2009"> 
+<title lang="de">China’s Unnatural Disaster: The Tears of Sichuan Province</title> 
+<title lang="en" original="yes"></title>
+</movie>
+ 
+<movie id="movie_db_4249" year="2009"> 
+<title lang="de">Coco Chanel - Der Beginn einer Leidenschaft</title> 
+<title lang="fr" original="yes">Coco avant Chanel</title> 
+<title lang="en">Coco Before Chanel </title>
+</movie>
+ 
+<movie id="movie_db_4250" year="2009"> 
+<title lang="de">Coraline</title> 
+<title lang="en" original="yes">Coraline</title>
+</movie>
+ 
+<movie id="movie_db_4251" year="2009"> 
+<title lang="de">Crazy Heart</title> 
+<title lang="en" original="yes">Crazy Heart</title>
+</movie>
+ 
+<movie id="movie_db_4252" year="2009"> 
+<title lang="de">Das Kabinett des Dr. Parnassus</title> 
+<title lang="en" original="yes">The Imaginarium of Doctor Parnassus</title>
+</movie>
+ 
+<movie id="movie_db_4254" year="2009"> 
+<title lang="de">Der fantastische Mr. Fox</title> 
+<title lang="en" original="yes">Fantastic Mr. Fox</title>
+</movie>
+ 
+<movie id="movie_db_4255" year="2009"> 
+<title lang="de">Der Informant!</title> 
+<title lang="en" original="yes">The Informant!</title>
+</movie>
+ 
+<movie id="movie_db_4256" year="2009"> 
+<title lang="de">Die Bucht</title> 
+<title lang="en" original="yes">The Cove</title>
+</movie>
+ 
+<movie id="movie_db_4257" year="2009"> 
+<title lang="de">District 9</title> 
+<title lang="en" original="yes">District 9</title>
+</movie>
+ 
+<movie id="movie_db_4258" year="2009"> 
+<title lang="de">Duplicity - Gemeinsame Geheimsache</title> 
+<title lang="en" original="yes">Duplicity</title>
+</movie>
+ 
+<movie id="movie_db_4259" year="2009"> 
+<title lang="de">Ein Prophet</title> 
+<title lang="fr" original="yes">Un prophète</title> 
+<title lang="en">A Prophet </title>
+</movie>
+ 
+<movie id="movie_db_4260" year="2009"> 
+<title lang="de">Ein russischer Sommer</title> 
+<title lang="en" original="yes">The Last Station</title>
+</movie>
+ 
+<movie id="movie_db_4261" year="2009"> 
+<title lang="de">Eine Perle Ewigkeit</title> 
+<title lang="es" original="yes">La teta asustada</title> 
+<title lang="en">The Milk of Sorrow </title>
+</movie>
+ 
+<movie id="movie_db_4262" year="2009"> 
+<title lang="de">Food, Inc.</title> 
+<title lang="en" original="yes">Food, Inc.</title>
+</movie>
+ 
+<movie id="movie_db_4263" year="2009"> 
+<title lang="de">French Roast</title> 
+<title lang="en" original="yes">French Roast</title>
+</movie>
+ 
+<movie id="movie_db_4264" year="2009"> 
+<title lang="de">Granny O'Grimm's Sleeping Beauty</title> 
+<title lang="en" original="yes">Granny O'Grimm's Sleeping Beauty</title>
+</movie>
+ 
+<movie id="movie_db_4265" year="2009"> 
+<title lang="de">Hangover</title> 
+<title lang="en" original="yes">The Hangover</title>
+</movie>
+ 
+<movie id="movie_db_4266" year="2009"> 
+<title lang="de">Harry Potter und der Halbblutprinz</title> 
+<title lang="en" original="yes">Harry Potter and the Half-Blood Prince</title>
+</movie>
+ 
+<movie id="movie_db_4267" year="2009"> 
+<title lang="de">Il Divo</title> 
+<title lang="it" original="yes">Il divo: La straordinaria vita di Giulio Andreotti </title> 
+<title lang="en">Il Divo</title>
+</movie>
+ 
+<movie id="movie_db_4268" year="2009"> 
+<title lang="de">In meinem Himmel</title> 
+<title lang="en" original="yes">The Lovely Bones</title>
+</movie>
+ 
+<movie id="movie_db_4269" year="2009"> 
+<title lang="de">In the Loop</title> 
+<title lang="en" original="yes">In the Loop</title>
+</movie>
+ 
+<movie id="movie_db_4270" year="2009"> 
+<title lang="de">Inglourious Basterds</title> 
+<title lang="en" original="yes">Inglourious Basterds</title>
+</movie>
+ 
+<movie id="movie_db_4271" year="2009"> 
+<title lang="de">Instead of Abracadabra</title> 
+<title lang="en" original="yes">Instead of Abracadabra</title>
+</movie>
+ 
+<movie id="movie_db_4272" year="2009"> 
+<title lang="de">Invictus - Unbezwungen</title> 
+<title lang="en" original="yes">Invictus</title>
+</movie>
+ 
+<movie id="movie_db_4273" year="2009"> 
+<title lang="de">Julie &amp; Julia</title> 
+<title lang="en" original="yes">Julie &amp; Julia</title>
+</movie>
+ 
+<movie id="movie_db_4274" year="2009"> 
+<title lang="de">Kavi</title> 
+<title lang="en" original="yes">Kavi</title>
+</movie>
+ 
+<movie id="movie_db_4275" year="2009"> 
+<title lang="de">Küss den Frosch</title> 
+<title lang="en" original="yes">The Princess and the Frog</title>
+</movie>
+ 
+<movie id="movie_db_4276" year="2009"> 
+<title lang="de">La Dama y la Muerte</title> 
+<title lang="en" original="yes">La Dama y la Muerte</title>
+</movie>
+ 
+<movie id="movie_db_4277" year="2009"> 
+<title lang="de">La nana</title> 
+<title lang="es" original="yes">La nana</title>
+</movie>
+ 
+<movie id="movie_db_4278" year="2009"> 
+<title lang="de">Logorama</title> 
+<title lang="en" original="yes">Logorama</title>
+</movie>
+ 
+<movie id="movie_db_4279" year="2009"> 
+<title lang="de">Mauerhase</title> 
+<title lang="pl" original="yes">Królik po Berlińsku</title> 
+<title lang="fr">Rabbit à la Berlin</title>
+</movie>
+ 
+<movie id="movie_db_4280" year="2009"> 
+<title lang="de">Miracle Fish</title> 
+<title lang="en" original="yes">Miracle Fish</title>
+</movie>
+ 
+<movie id="movie_db_4281" year="2009"> 
+<title lang="de">Music by Prudence</title> 
+<title lang="en" original="yes">Music by Prudence</title>
+</movie>
+ 
+<movie id="movie_db_4282" year="2009"> 
+<title lang="de">Nine</title> 
+<title lang="en" original="yes">Nine</title>
+</movie>
+ 
+<movie id="movie_db_4283" year="2009"> 
+<title lang="de">Oben</title> 
+<title lang="en" original="yes">Up</title>
+</movie>
+ 
+<movie id="movie_db_4284" year="2009"> 
+<title lang="de">Paris, Paris - Monsieur Pigoil auf dem Weg zum Glück</title> 
+<title lang="de" original="yes">Paris, Paris - Monsieur Pigoil auf dem Weg zum Glück</title>
+</movie>
+ 
+<movie id="movie_db_4285" year="2009"> 
+<title lang="de">Precious - Das Leben ist kostbar</title> 
+<title lang="en" original="yes">Precious: Based on the Novel Push by Sapphire</title>
+</movie>
+ 
+<movie id="movie_db_4286" year="2009"> 
+<title lang="de">Selbst ist die Braut</title> 
+<title lang="en" original="yes">The Proposal</title>
+</movie>
+ 
+<movie id="movie_db_4287" year="2009"> 
+<title lang="de">Sherlock Holmes</title> 
+<title lang="en" original="yes">Sherlock Holmes</title>
+</movie>
+ 
+<movie id="movie_db_4288" year="2009"> 
+<title lang="de">Star Trek</title> 
+<title lang="en" original="yes">Star Trek</title>
+</movie>
+ 
+<movie id="movie_db_4289" year="2009"> 
+<title lang="de">The Door</title> 
+<title lang="en" original="yes">The Door</title>
+</movie>
+ 
+<movie id="movie_db_4290" year="2009"> 
+<title lang="de">The Last Campaign of Governor Booth Gardner</title> 
+<title lang="en" original="yes">The Last Campaign of Governor Booth Gardner</title>
+</movie>
+ 
+<movie id="movie_db_4291" year="2009"> 
+<title lang="de">The Last Truck: Closing of a GM Plant</title> 
+<title lang="en" original="yes">The Last Truck: Closing of a GM Plant</title>
+</movie>
+ 
+<movie id="movie_db_4292" year="2009"> 
+<title lang="de">The Messenger</title> 
+<title lang="en" original="yes">The Messenger</title>
+</movie>
+ 
+<movie id="movie_db_4293" year="2009"> 
+<title lang="de">The Most Dangerous Man in America: Daniel Ellsberg and the Pentagon Papers</title> 
+<title lang="en" original="yes">The Most Dangerous Man in America: Daniel Ellsberg and the Pentagon Papers</title>
+</movie>
+ 
+<movie id="movie_db_4294" year="2009"> 
+<title lang="de">The New Tenants</title> 
+<title lang="en" original="yes">The New Tenants</title>
+</movie>
+ 
+<movie id="movie_db_4295" year="2009"> 
+<title lang="de">The Secret in Their Eyes </title> 
+<title lang="es" original="yes">El secreto de sus ojos</title> 
+<title lang="en">The Secret in Their Eyes </title>
+</movie>
+ 
+<movie id="movie_db_4296" year="2009"> 
+<title lang="de">The Secret of Kells</title> 
+<title lang="en" original="yes">The Secret of Kells</title>
+</movie>
+ 
+<movie id="movie_db_4297" year="2009"> 
+<title lang="de">The Young Victoria</title> 
+<title lang="en" original="yes">The Young Victoria</title>
+</movie>
+ 
+<movie id="movie_db_4298" year="2009"> 
+<title lang="de">Tödliches Kommando - The Hurt Locker</title> 
+<title lang="en" original="yes">The Hurt Locker</title>
+</movie>
+ 
+<movie id="movie_db_4299" year="2009"> 
+<title lang="de">Transformers - Die Rache</title> 
+<title lang="en" original="yes">Transformers: Revenge of the Fallen</title>
+</movie>
+ 
+<movie id="movie_db_4300" year="2009"> 
+<title lang="de">Up in the Air</title> 
+<title lang="en" original="yes">Up in the Air</title>
+</movie>
+ 
+<movie id="movie_db_4301" year="2009"> 
+<title lang="de">Wallace &amp; Gromit: Auf Leben und Brot</title> 
+<title lang="en" original="yes">A Matter of Loaf and Death</title>
+</movie>
+ 
+<movie id="movie_db_4302" year="2009"> 
+<title lang="de">Wenn Liebe so einfach wäre</title> 
+<title lang="en" original="yes">It’s Complicated</title>
+</movie>
+ 
+<movie id="movie_db_4303" year="2009"> 
+<title lang="de">Which Way Home</title> 
+<title lang="en" original="yes">Which Way Home</title>
+</movie>
+ 
+<movie id="movie_db_4304" year="2009"> 
+<title lang="de">Wolkig mit Aussicht auf Fleischbällchen</title> 
+<title lang="en" original="yes">Cloudy with a Chance of Meatballs</title>
+</movie>
+ 
+<movie id="movie_db_4305" year="2009"> 
+<title lang="de">Zerrissene Umarmungen</title> 
+<title lang="es" original="yes">Los abrazos rotos</title>
+<title lang="en">Broken Embraces</title>
+</movie>
 
 <movie id="movie_db_4306" year="2010">
  <title lang="de">Uncle Boonmee erinnert sich an seine früheren Leben</title>

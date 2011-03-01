@@ -2140,7 +2140,7 @@
   <movie id="m_480">
       <title lang="de" original="yes">Rausch einer Nacht</title>
   </movie>
-  <movie id="m_481">
+  <movie id="m_481" year="2004">
       <title lang="de" original="yes">Requiem</title>
   </movie>
   <movie id="m_482">
@@ -2672,9 +2672,6 @@
   </movie>
   <movie id="m_657">
       <title lang="de" original="yes">Chiko</title>
-  </movie>
-  <movie id="">
-      <title lang="de" original="yes"></title>
   </movie>
 
 

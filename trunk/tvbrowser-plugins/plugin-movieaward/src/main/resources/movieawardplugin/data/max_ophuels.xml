@@ -166,7 +166,7 @@
       <title lang="de">In your shoes</title>
   </movie>
   <movie id="m_35">
-      <title lang="de">12 Bilder für Konrad, Katharina Werner; Die Hochzeit</title>
+      <title lang="de">12 Bilder für Konrad</title>
   </movie>
   <movie id="m_36">
       <title lang="de">Fake!</title>
@@ -225,7 +225,7 @@
   <movie id="m_54">
       <title lang="de">Frankie, Jonnie und die anderen</title>
   </movie>
-  <movie id="m_55">
+  <movie id="m_55" year="1993">
       <title lang="de">Indien</title>
   </movie>
   <movie id="m_56">
@@ -275,11 +275,12 @@
   </movie>
   <movie id="m_71">
       <title lang="de">Manana al mar</title>
+      <alternativetitle lang="de">Mañana al mar</alternativetitle>
   </movie>
   <movie id="m_72">
       <title lang="de">Exile family movie</title>
   </movie>
-  <movie id="m_73">
+  <movie id="m_73" year="2009">
       <title lang="de">Alias</title>
   </movie>
   <movie id="m_74">
@@ -364,10 +365,10 @@
       <title lang="de">Ikarus</title>
   </movie>
   <movie id="m_101">
-      <title lang="de">Struggle, Ruth Mader, Martin Leidenfrost, Barbara Albert; Muxmäuschenstill</title>
+      <title lang="de">Struggle</title>
   </movie>
   <movie id="m_102">
-      <title lang="de">Reine Geschmacksache, Tom Streuber</title>
+      <title lang="de">Reine Geschmacksache</title>
   </movie>
   <movie id="m_103">
       <title lang="de">Mein Freund aus Faro</title>
@@ -486,6 +487,12 @@
   <movie id="m_141">
       <title lang="de">Der Albaner</title>
   </movie>
+    <movie id="m_142" year="1997">
+      <title lang="de">Die Hochzeit</title>
+  </movie>
+    <movie id="m_143">
+      <title lang="de">Muxmäuschenstill</title>
+  </movie>
 
 </movies>
 <awards>
@@ -526,7 +533,8 @@
   <award category="c_2" status="winner" movie="m_135" year="2010" recipient="Marvin Kren"/>
   <award category="c_3" status="winner" movie="m_33" year="1995" recipient="Oliver Paulus"/>
   <award category="c_3" status="winner" movie="m_34" year="1996" recipient="Christoph Röhl"/>
-  <award category="c_3" status="winner" movie="m_35" year="1997" recipient="Husam Chhadat"/>
+  <award category="c_3" status="winner" movie="m_35" year="1997" recipient="Katharina Werner"/>
+  <award category="c_3" status="winner" movie="m_142" year="1997" recipient="Husam Chhadat"/>
   <award category="c_3" status="winner" movie="m_36" year="1998" recipient="Sebastian Peterson"/>
   <award category="c_3" status="winner" movie="m_37" year="1999" recipient="Ruth Mader"/>
   <award category="c_3" status="winner" movie="m_38" year="2000" recipient="Florian Henckel von Donnersmarck"/>
@@ -605,9 +613,10 @@
   <award category="c_9" status="winner" movie="m_81" year="2001" recipient="Stefan Jäger"/>
   <award category="c_9" status="winner" movie="m_99" year="2002" recipient="Stefan Haupt"/>
   <award category="c_9" status="winner" movie="m_100" year="2003" recipient="Bernhard Weirather"/>
-  <award category="c_9" status="winner" movie="m_101" year="2004" recipient="Jan Stahlberg"/>
+  <award category="c_9" status="winner" movie="m_101" year="2004" recipient="Ruth Mader, Martin Leidenfrost, Barbara Albert"/>
+  <award category="c_9" status="winner" movie="m_143" year="2004" recipient="Jan Stahlberg"/>
   <award category="c_9" status="winner" movie="m_27" year="2006" recipient="Benjamin Heisenberg"/>
-  <award category="c_9" status="winner" movie="m_102" year="2007" recipient="Ingo Rasper"/>
+  <award category="c_9" status="winner" movie="m_102" year="2007" recipient="Ingo Rasper, Tom Streuber"/>
   <award category="c_9" status="winner" movie="m_103" year="2008" recipient="Nana Neul"/>
   <award category="c_9" status="winner" movie="m_104" year="2009" recipient="Ina Weisse und Daphne Charizani"/>
   <award category="c_9" status="winner" movie="m_105" year="2009" recipient="Christoph Röhl"/>
