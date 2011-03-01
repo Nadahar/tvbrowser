@@ -2346,9 +2346,9 @@
 <award category="best_movie" status="nominated" movie="movie_db_1058" year="1954" recipient="Stanley Kramer"/>
 <award category="best_sound_mixing" status="nominated" movie="movie_db_1058" year="1954" recipient="John P. Livadary"/>
 <award category="best_writing_adapted_screenplay" status="nominated" movie="movie_db_1058" year="1955" recipient="Stanley Roberts"/>
-<award category="best_music_drama_comedy" status="nominated" movie="movie_db_1059" year="1956" recipient="Max Steiner"/>
-<award category="best_cut" status="nominated" movie="movie_db_1059" year="1957" recipient="William A. Lyon und Henry Batista"/>
-<award category="best_actor_in_a_supporting_role" status="nominated" movie="movie_db_1060" year="1958" recipient="Tom Tully"/>
+<award category="best_music_drama_comedy" status="nominated" movie="movie_db_1058" year="1956" recipient="Max Steiner"/>
+<award category="best_cut" status="nominated" movie="movie_db_1058" year="1957" recipient="William A. Lyon und Henry Batista"/>
+<award category="best_actor_in_a_supporting_role" status="nominated" movie="movie_db_1058" year="1958" recipient="Tom Tully"/>
 <award category="best_makeup" status="winner" movie="movie_db_1061" year="2005" recipient="Howard Berger und Tami Lane"/>
 <award category="best_sound_mixing" status="nominated" movie="movie_db_1061" year="2005" recipient="Terry Porter, Dean A. Zupancic und Tony Johnson"/>
 <award category="best_specialeffect" status="nominated" movie="movie_db_1061" year="2005" recipient="Dean Wright, Bill Westenhofer, Jim Berney und Scott Farrar"/>
@@ -3162,8 +3162,8 @@
 <award category="best_movie" status="nominated" movie="movie_db_1450" year="1992" recipient="David Brown und Rob Reiner und Andrew Scheinman"/>
 <award category="best_actor_in_a_supporting_role" status="nominated" movie="movie_db_1450" year="1992" recipient="Jack Nicholson"/>
 <award category="best_cut" status="nominated" movie="movie_db_1450" year="1992" recipient="Robert Leighton"/>
-<award category="best_actress_in_a_leading_role" status="nominated" movie="movie_db_1452" year="1974" recipient="Gena Rowlands"/>
-<award category="best_director" status="nominated" movie="movie_db_1452" year="1974" recipient="John Cassavetes"/>
+<award category="best_actress_in_a_leading_role" status="nominated" movie="movie_db_1453" year="1974" recipient="Gena Rowlands"/>
+<award category="best_director" status="nominated" movie="movie_db_1453" year="1974" recipient="John Cassavetes"/>
 <award category="best_song" status="nominated" movie="movie_db_1455" year="1978" recipient="Charles Fox und Norman Gimbel"/>
 <award category="best_writing_adapted_screenplay" status="winner" movie="movie_db_1456" year="1980" recipient="Alvin Sargent"/>
 <award category="best_actress_in_a_leading_role" status="nominated" movie="movie_db_1456" year="1980" recipient="Mary Tyler Moore"/>
@@ -3777,11 +3777,11 @@
 <award category="best_actor_in_a_leading_role" status="nominated" movie="movie_db_1749" year="1987" recipient="Robin Williams"/>
 <award category="best_song" status="nominated" movie="movie_db_1750" year="1947" recipient="Ralph Blane, Hugh Martin und Roger Edens"/>
 <award category="best_movie" status="nominated" movie="movie_db_1751" year="2005" recipient="Grant Heslov"/>
-<award category="best_art_direction" status="nominated" movie="movie_db_1752" year="2005" recipient="James D. Bissell und Jan Pascale"/>
-<award category="best_camera" status="nominated" movie="movie_db_1752" year="2005" recipient="Robert Elswit"/>
-<award category="best_actor_in_a_leading_role" status="nominated" movie="movie_db_1752" year="2005" recipient="David Strathairn"/>
-<award category="best_writing_original_screenplay" status="nominated" movie="movie_db_1752" year="2005" recipient="George Clooney und Grant Heslov"/>
-<award category="best_director" status="nominated" movie="movie_db_1752" year="2005" recipient="George Clooney"/>
+<award category="best_art_direction" status="nominated" movie="movie_db_1751" year="2005" recipient="James D. Bissell und Jan Pascale"/>
+<award category="best_camera" status="nominated" movie="movie_db_1751" year="2005" recipient="Robert Elswit"/>
+<award category="best_actor_in_a_leading_role" status="nominated" movie="movie_db_1751" year="2005" recipient="David Strathairn"/>
+<award category="best_writing_original_screenplay" status="nominated" movie="movie_db_1751" year="2005" recipient="George Clooney und Grant Heslov"/>
+<award category="best_director" status="nominated" movie="movie_db_1751" year="2005" recipient="George Clooney"/>
 <award category="best_actor_in_a_leading_role" status="nominated" movie="movie_db_1753" year="1997" recipient="Matt Damon"/>
 <award category="best_music_drama" status="nominated" movie="movie_db_1753" year="1997" recipient="Danny Elfman"/>
 <award category="best_writing_original_screenplay" status="winner" movie="movie_db_1753" year="1997" recipient="Ben Affleck und Matt Damon"/>
@@ -8141,8 +8141,8 @@
 <award category="best_actress_in_a_supporting_role" status="nominated" movie="movie_db_4251" year="2009" recipient="Maggie Gyllenhaal"/>
 <award category="best_costume_design" status="nominated" movie="movie_db_4252" year="2009" recipient="Monique Prudhomme"/>
 <award category="best_art_direction" status="nominated" movie="movie_db_4252" year="2009" recipient="Dave Warren, Anastasia Masaro, Carline Smith"/>
-<award category="best_camera" status="nominated" movie="movie_db_4253" year="2009" recipient="Christian Berger"/>
-<award category="best_foreign_language_film" status="nominated" movie="movie_db_4253" year="2009" recipient=""/>
+<award category="best_camera" status="nominated" movie="movie_db_4231" year="2009" recipient="Christian Berger"/>
+<award category="best_foreign_language_film" status="nominated" movie="movie_db_4231" year="2009" recipient=""/>
 <award category="best_animated_feature" status="nominated" movie="movie_db_4254" year="2009" recipient="Wes Anderson"/>
 <award category="best_music" status="nominated" movie="movie_db_4254" year="2009" recipient="Alexandre Desplat"/>
 <award category="best_documentary" status="winner" movie="movie_db_4256" year="2009" recipient="Louie Psihoyos, Fisher Stevens"/>

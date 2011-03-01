@@ -919,8 +919,8 @@
 <award category="best_director" status="nominated" movie="movie_db_1031" year="1991" recipient="Barbet Schroeder"/>
 <award category="best_foreign_language_film" status="nominated" movie="movie_db_1034" year="1974" recipient="François Truffaut"/>
 <award category="best_actress_in_a_supporting_role" status="nominated" movie="movie_db_1034" year="1974" recipient="Valentina Cortese"/>
-<award category="best_foreign_language_film" status="nominated" movie="movie_db_1037" year="1973" recipient="Jan Troell"/>
-<award category="best_actress_in_a_leading_role_drama" status="winner" movie="movie_db_1037" year="1973" recipient="Liv Ullmann"/>
+<award category="best_foreign_language_film" status="nominated" movie="movie_db_1036" year="1973" recipient="Jan Troell"/>
+<award category="best_actress_in_a_leading_role_drama" status="winner" movie="movie_db_1036" year="1973" recipient="Liv Ullmann"/>
 <award category="best_actor_in_a_supporting_role" status="winner" movie="movie_db_1039" year="1955" recipient="Edmond O’Brien"/>
 <award category="best_foreign_language_film" status="nominated" movie="movie_db_1040" year="1995" recipient="Patrice Chéreau"/>
 <award category="best_movie_drama" status="nominated" movie="movie_db_1041" year="1970" recipient="Ronald Neame"/>
@@ -1067,7 +1067,7 @@
 <award category="best_director" status="nominated" movie="movie_db_1207" year="2007" recipient="Stephen Frears"/>
 <award category="best_movie_drama" status="nominated" movie="movie_db_1207" year="2007" recipient="Stephen Frears"/>
 <award category="best_actress_in_a_leading_role_drama" status="winner" movie="movie_db_1207" year="2007" recipient="Helen Mirren"/>
-<award category="best_foreign_language_film" status="nominated" movie="movie_db_1210" year="1966" recipient="Jacques Demy"/>
+<award category="best_foreign_language_film" status="nominated" movie="movie_db_1209" year="1966" recipient="Jacques Demy"/>
 <award category="best_actress_in_a_leading_role_musical_comedy" status="winner" movie="movie_db_1211" year="1968" recipient="Anne Bancroft"/>
 <award category="best_director" status="winner" movie="movie_db_1211" year="1968" recipient="Mike Nichols"/>
 <award category="best_actor_in_a_leading_role_musical_comedy" status="nominated" movie="movie_db_1211" year="1968" recipient="Dustin Hoffman"/>
@@ -2536,7 +2536,7 @@
 <award category="best_actor_in_a_leading_role_musical_comedy" status="nominated" movie="movie_db_3180" year="1958" recipient="Tony Randall"/>
 <award category="best_actress_in_a_leading_role_musical_comedy" status="nominated" movie="movie_db_3181" year="1993" recipient="Whoopi Goldberg"/>
 <award category="best_movie_musical_comedy" status="nominated" movie="movie_db_3181" year="1993" recipient="Emile Ardolino"/>
-<award category="best_foreign_language_film" status="nominated" movie="movie_db_3186" year="1969" recipient="Aleksandar Petrovi?"/>
+<award category="best_foreign_language_film" status="nominated" movie="movie_db_3185" year="1969" recipient="Aleksandar Petrovi?"/>
 <award category="best_movie_drama" status="winner" movie="movie_db_3193" year="2009" recipient="Danny Boyle"/>
 <award category="best_director" status="winner" movie="movie_db_3193" year="2009" recipient="Danny Boyle"/>
 <award category="best_english_language_foreign_film" status="nominated" movie="movie_db_3198" year="1968" recipient="Desmond Davis"/>
