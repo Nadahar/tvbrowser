@@ -61,7 +61,7 @@ import devplugin.ProgramFieldType;
 
 /**
  * A search form for searching TV listings.
- * 
+ *
  * @author Til Schneider, www.murfman.de
  */
 public class SearchForm extends JPanel {
@@ -69,7 +69,7 @@ public class SearchForm extends JPanel {
   /** The localizer of this class. */
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(SearchForm.class);
-  
+
   /** The messages for the time combo box. */
   private static final String[] TIME_STRING_ARR = new String[] {
     Localizer.getLocalization(Localizer.I18N_TODAY),
@@ -86,18 +86,18 @@ public class SearchForm extends JPanel {
   };
 
   /** The maximum length of the history */
-  private static final int MAX_HISTORY_LENGTH = 15;
+  private static final int MAX_HISTORY_LENGTH = 50;
 
   public static final int LAYOUT_HORIZONTAL = 1;
   public static final int LAYOUT_VERTICAL = 2;
 
-  
+
   /**
    * The fields that can be used for searching. Is null until the first call of
    * {@link #getSearchableFieldTypes()}.
    */
   private static ProgramFieldType[] mSearchableFieldTypes;
-  
+
   private JTextField mPatternTF;
   private JComboBox mPatternCB;
   private DefaultComboBoxModel mPatternCBModel;
@@ -109,15 +109,15 @@ public class SearchForm extends JPanel {
   private JRadioButton mSearcherTypeRegexRB;
   private JRadioButton mSearcherTypeBooleanRB;
   private JCheckBox mCaseSensitiveChB;
-  
+
   private ProgramFieldType[] mUserDefinedFieldTypeArr;
-  
+
   private FieldSelectionDialog mFieldSelectionDlg;
   private JDialog mParent;
 
   /**
    * Creates a new search form.
-   * 
+   *
    * @param showHistory Should there be a history?
    * @param showTimeSelection Should the search time (number of days) be selectable?
    *        See {@link devplugin.PluginManager#search(String, boolean, ProgramFieldType[], devplugin.Date, int, devplugin.Channel[], boolean)}.
@@ -132,7 +132,7 @@ public class SearchForm extends JPanel {
 
   /**
    * Creates a new search form.
-   * 
+   *
    * @param showInputfield Should there be a Input-Field?
    * @param showHistory Should there be a history?
    * @param showTimeSelection Should the search time (number of days) be selectable?
@@ -154,9 +154,9 @@ public class SearchForm extends JPanel {
 
     CellConstraints cc = new CellConstraints();
 
-    
+
     ButtonGroup bg;
-    
+
     if (showInputfield) {
       if (showHistory) {
         mPatternCBModel = new DefaultComboBoxModel();
@@ -184,11 +184,11 @@ public class SearchForm extends JPanel {
       mTimeCB = new JComboBox(TIME_STRING_ARR);
       topBuilder.append(mLocalizer.msg("period", "Period"), mTimeCB);
     }
-    
+
     // Search in
     bg = new ButtonGroup();
     String msg;
-    
+
     searchInPanel.addSeparator(mLocalizer.msg("searchIn", "Search in"), cc.xyw(1,1,2));
 
     ActionListener updateEnabledListener = new ActionListener() {
@@ -202,7 +202,7 @@ public class SearchForm extends JPanel {
     mSearchTitleRB.addActionListener(updateEnabledListener);
     bg.add(mSearchTitleRB);
     searchInPanel.add(mSearchTitleRB, cc.xy(2,3));
-    
+
     msg = mLocalizer.msg("allFields", "All fields");
     mSearchAllRB = new JRadioButton(msg);
     mSearchAllRB.addActionListener(updateEnabledListener);
@@ -234,12 +234,12 @@ public class SearchForm extends JPanel {
     mSearcherTypeExactlyRB = new JRadioButton(mLocalizer.msg("matchExactly", "Match exactly"));
     bg.add(mSearcherTypeExactlyRB);
     optionsPanel.add(mSearcherTypeExactlyRB, cc.xy(2,4));
-    
+
     mSearcherTypeKeywordRB = new JRadioButton(mLocalizer.msg("matchSubstring", "Term is a keyword"));
     mSearcherTypeKeywordRB.setSelected(true);
     bg.add(mSearcherTypeKeywordRB);
     optionsPanel.add(mSearcherTypeKeywordRB, cc.xy(2,5));
-    
+
     mSearcherTypeBooleanRB = new JRadioButton(mLocalizer.msg("matchBoolean", "Term is a boolean (with AND, OR, a.s.o.)"));
     bg.add(mSearcherTypeBooleanRB);
     optionsPanel.add(mSearcherTypeBooleanRB, cc.xy(2,6));
@@ -247,17 +247,17 @@ public class SearchForm extends JPanel {
     mSearcherTypeRegexRB = new JRadioButton(mLocalizer.msg("matchRegex", "Term is a regular expression"));
     bg.add(mSearcherTypeRegexRB);
     optionsPanel.add(mSearcherTypeRegexRB, cc.xy(2,7));
-    
+
     LinkButton b = new LinkButton(
             "("+mLocalizer.msg("regExHelp","Help for regular expressions")+")",
             mLocalizer.msg("regExUrl","http://wiki.tvbrowser.org/index.php/Regul%C3%A4re_Ausdr%C3%BCcke"));
     b.setHorizontalAlignment(SwingConstants.CENTER);
     optionsPanel.add(b, cc.xy(2,9));
 
-    
+
     // Set the default settings
     setSearchFormSettings(new SearchFormSettings(""));
-    
+
     updateEnabled();
 
     if (layout == LAYOUT_HORIZONTAL) {
@@ -277,15 +277,15 @@ public class SearchForm extends JPanel {
     }
 
   }
-  
+
   public void setParentDialog(JDialog parent) {
     mParent = parent;
   }
-  
+
   /**
    * Adds an ActionListener that will be called, when the user presses Enter
    * in the pattern text field.
-   * 
+   *
    * @param listener The ActionListener to add
    */
   public void addPatternActionListener(final ActionListener listener) {
@@ -304,17 +304,17 @@ public class SearchForm extends JPanel {
           });
         }
       };
-      
+
       mPatternCB.getEditor().addActionListener(invokeLaterListener);
     } else {
       mPatternTF.addActionListener(listener);
     }
   }
-  
+
   /**
    * Adds a DocumentListener that will be called, when the user types text in
    * the pattern text field.
-   * 
+   *
    * @param listener
    *          The DocumentListener to add
    * @since 3.0
@@ -327,7 +327,7 @@ public class SearchForm extends JPanel {
       mPatternTF.getDocument().addDocumentListener(listener);
     }
   }
-  
+
   @Override
   public boolean hasFocus() {
     if(mPatternCB != null) {
@@ -344,12 +344,12 @@ public class SearchForm extends JPanel {
   /**
    * Sets the settings. These settings will be assigned to the corresponding
    * UI components.
-   * 
+   *
    * @param settings The settings to set.
    */
   public void setSearchFormSettings(SearchFormSettings settings) {
     setPattern(settings.getSearchText());
-    
+
     switch (settings.getSearchIn()) {
       case SearchFormSettings.SEARCH_IN_TITLE:
         mSearchTitleRB.setSelected(true); break;
@@ -362,7 +362,7 @@ public class SearchForm extends JPanel {
     }
 
     mUserDefinedFieldTypeArr = settings.getUserDefinedFieldTypes();
-    
+
     switch (settings.getSearcherType()) {
       case PluginManager.SEARCHER_TYPE_EXACTLY:
         mSearcherTypeExactlyRB.setSelected(true); break;
@@ -375,19 +375,19 @@ public class SearchForm extends JPanel {
     }
 
     mCaseSensitiveChB.setSelected(settings.getCaseSensitive());
-    
+
     setNrDays(settings.getNrDays());
   }
-  
-  
+
+
   /**
    * Gets the settings from the corresponding UI components.
-   * 
+   *
    * @return The settings the user made.
    */
   public SearchFormSettings getSearchFormSettings() {
     SearchFormSettings settings = new SearchFormSettings(getPattern());
-    
+
     int searchIn;
     if (mSearchTitleRB.isSelected()) {
       searchIn = SearchFormSettings.SEARCH_IN_TITLE;
@@ -398,7 +398,7 @@ public class SearchForm extends JPanel {
       settings.setUserDefinedFieldTypes(mUserDefinedFieldTypeArr);
     }
     settings.setSearchIn(searchIn);
-    
+
     int searcherType;
     if (mSearcherTypeExactlyRB.isSelected()) {
       searcherType = PluginManager.SEARCHER_TYPE_EXACTLY;
@@ -412,17 +412,17 @@ public class SearchForm extends JPanel {
     settings.setSearcherType(searcherType);
 
     settings.setCaseSensitive(mCaseSensitiveChB.isSelected());
-    
+
     settings.setNrDays(getNrDays());
-    
+
     return settings;
   }
-  
-  
+
+
   /**
    * Sets the history. The first item of the history will automatically be
    * assigned
-   * 
+   *
    * @param history
    */
   public void setHistory(SearchFormSettings[] history) {
@@ -433,23 +433,23 @@ public class SearchForm extends JPanel {
           mPatternCBModel.addElement(element);
         }
       }
-      
+
       mPatternCB.getEditor().selectAll();
-      
+
       updateEnabled();
     }
   }
-  
-  
+
+
   /**
    * Gets the history. The returned history will already contain the current
    * settings.
-   * 
+   *
    * @return The history.
    */
   public SearchFormSettings[] getHistory() {
     ArrayList<SearchFormSettings> list = new ArrayList<SearchFormSettings>(mPatternCBModel.getSize());
-    
+
     // Get the old history
     for (int i = 0; i < mPatternCBModel.getSize(); i++) {
       Object item = mPatternCBModel.getElementAt(i);
@@ -460,7 +460,7 @@ public class SearchForm extends JPanel {
 
     // Get the current settings
     SearchFormSettings settings = getSearchFormSettings();
-    
+
     // Remove the current pattern from history if it already exists
     Iterator<SearchFormSettings> iter = list.iterator();
     while (iter.hasNext()) {
@@ -469,29 +469,29 @@ public class SearchForm extends JPanel {
         iter.remove();
       }
     }
-    
+
     // Add the current settings to the history
     list.add(0, settings);
-    
+
     // Ensure that the history is not longer that MAX_HISTORY_LENGTH
     while (list.size() > MAX_HISTORY_LENGTH) {
       list.remove(list.size() - 1);
     }
-    
+
     // Convert the list into an array
     SearchFormSettings[] history = new SearchFormSettings[list.size()];
     list.toArray(history);
-    
+
     // Set this history for the case the form reused after a search
     setHistory(history);
-    
+
     return history;
   }
-  
-  
+
+
   /**
    * Gets the selected number of days to use for searching.
-   * 
+   *
    * @return The selected number of days
    */
   public int getNrDays() {
@@ -505,7 +505,7 @@ public class SearchForm extends JPanel {
 
   /**
    * Sets the number of days to use for searching.
-   * 
+   *
    * @param nrDays The number of days
    */
   public void setNrDays(int nrDays) {
@@ -523,8 +523,8 @@ public class SearchForm extends JPanel {
   private void updateEnabled() {
     mChangeSearchFieldsBt.setEnabled(mSearchUserDefinedRB.isSelected());
   }
-  
-  
+
+
   private String getPattern() {
     if (mPatternCB != null) {
       return mPatternCB.getSelectedItem().toString();
@@ -533,8 +533,8 @@ public class SearchForm extends JPanel {
     }
     return "";
   }
-  
-  
+
+
   public void setPattern(String pattern) {
     if (mPatternCB != null) {
       mPatternCB.setSelectedItem(pattern);
@@ -546,7 +546,7 @@ public class SearchForm extends JPanel {
   /**
    * Gets all the fields that can be used for searching. These are all fields,
    * except binaries.
-   * 
+   *
    * @return All searchable fields.
    */
   public static final ProgramFieldType[] getSearchableFieldTypes() {
@@ -563,11 +563,11 @@ public class SearchForm extends JPanel {
           list.add(type);
         }
       }
-      
+
       // convert to an array
       mSearchableFieldTypes = list.toArray(new ProgramFieldType[list.size()]);
     }
-    
+
     // return a copy to not have clients manipulate the field
     return mSearchableFieldTypes.clone();
   }
@@ -576,45 +576,45 @@ public class SearchForm extends JPanel {
   private void showSelectSearchFieldsDialog() {
     mFieldSelectionDlg = new FieldSelectionDialog(this, mUserDefinedFieldTypeArr);
     mFieldSelectionDlg.centerAndShow(mParent);
-    
+
     if(mParent != null) {
       mParent.requestFocus();
     }
-    
+
     mUserDefinedFieldTypeArr = mFieldSelectionDlg.getSelectedTypes();
   }
-  
+
   /**
-   * 
+   *
    * @return If the SearchFields selection dialog is visible
    */
   public boolean isSearchFieldsSelectionDialogVisible() {
     return mFieldSelectionDlg != null && mFieldSelectionDlg.isVisible();
   }
-  
+
   private static class FieldSelectionDialog {
-    
+
     private JDialog mDlg;
-    
+
     private ProgramFieldType[] mSelectedTypeArr;
-    
+
     private SelectableItemList mSelectableItemList;
-    
+
     public FieldSelectionDialog(Component parent,
       ProgramFieldType[] selectedTypeArr)
     {
       if(selectedTypeArr == null) {
         selectedTypeArr = new ProgramFieldType[0];
       }
-      
+
       mSelectedTypeArr = selectedTypeArr;
-      
+
       String msg;
-      
+
       mDlg = UiUtilities.createDialog(parent, true);
       msg = mLocalizer.msg("chooseSearchFields", "Choose search fields");
       mDlg.setTitle(msg);
-      
+
       UiUtilities.registerForClosing(new WindowClosingIf() {
 
         public void close() {
@@ -624,7 +624,7 @@ public class SearchForm extends JPanel {
         public JRootPane getRootPane() {
           return mDlg.getRootPane();
         }
-        
+
       });
 
       JPanel main = new JPanel(new BorderLayout());
@@ -634,13 +634,13 @@ public class SearchForm extends JPanel {
       msg = mLocalizer.msg("chooseSearchFieldHelp",
         "Please select the fields to search for");
       main.add(UiUtilities.createHelpTextArea(msg + "\n"), BorderLayout.NORTH);
-      
+
       mSelectableItemList = new SelectableItemList(selectedTypeArr,getSearchableFieldTypes());
       main.add(mSelectableItemList, BorderLayout.CENTER);
-      
+
       JPanel buttonPn = new JPanel(new FlowLayout(FlowLayout.TRAILING));
       main.add(buttonPn, BorderLayout.SOUTH);
-      
+
       JButton okBt = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
       okBt.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent evt) {
@@ -649,7 +649,7 @@ public class SearchForm extends JPanel {
       });
       mDlg.getRootPane().setDefaultButton(okBt);
       buttonPn.add(okBt);
-      
+
       JButton cancelBt = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
       cancelBt.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent evt) {
@@ -657,7 +657,7 @@ public class SearchForm extends JPanel {
         }
       });
       buttonPn.add(cancelBt);
-      
+
       mDlg.setSize(250, 300);
     }
 
@@ -667,14 +667,14 @@ public class SearchForm extends JPanel {
       for (int i=0;i<o.length;i++) {
         mSelectedTypeArr[i]=(ProgramFieldType)o[i];
       }
-      
+
       mDlg.dispose();
     }
-    
+
     public boolean isVisible() {
       return mDlg.isVisible();
     }
-    
+
     public void centerAndShow(JDialog parent) {
       if(parent != null) {
         mDlg.setLocationRelativeTo(parent);
@@ -683,15 +683,15 @@ public class SearchForm extends JPanel {
         centerAndShow();
       }
     }
-    
+
     public void centerAndShow() {
       UiUtilities.centerAndShow(mDlg);
     }
-    
+
     public ProgramFieldType[] getSelectedTypes() {
       return mSelectedTypeArr;
     }
-    
+
   } // inner class FieldSelectionDialog
 
   public void focusSearchFieldButton() {
