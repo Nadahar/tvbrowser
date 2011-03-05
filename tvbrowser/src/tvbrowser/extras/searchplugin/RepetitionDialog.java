@@ -170,7 +170,7 @@ class RepetitionDialog extends JDialog implements WindowClosingIf {
     stdSearch.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         close();
-        SearchPlugin.getInstance().openSearchDialog(mText.getText());
+        SearchPlugin.getInstance().openSearchDialog(mText.getText(), getSearchSettings());
       }
     });
 
@@ -210,8 +210,30 @@ class RepetitionDialog extends JDialog implements WindowClosingIf {
   private void search() {
     setVisible(false);
 
-    SearchFormSettings settings = new SearchFormSettings(mText.getText());
+    SearchPlugin.getInstance().setRepetitionTimeSelection(
+        mTimeChooser.getSelectedIndex());
 
+    SearchFormSettings settings = getSearchSettings();
+
+    SearchHelper.search(getParent(), new PluginPictureSettings(
+        PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE), settings, true);
+  }
+
+  private SearchFormSettings getSearchSettings() {
+    int days = getDays();
+    SearchFormSettings settings = new SearchFormSettings(mText.getText());
+    settings.setNrDays(days);
+    settings.setSearchIn(SearchFormSettings.SEARCH_IN_TITLE);
+    settings.setSearcherType(PluginManager.SEARCHER_TYPE_EXACTLY);
+    settings.setCaseSensitive(false);
+    if (mChannelChooser.getSelectedIndex() > 0) {
+      settings.setChannels(new Channel[] { (Channel) mChannelChooser
+          .getSelectedItem() });
+    }
+    return settings;
+  }
+
+  private int getDays() {
     int days = 1;
 
     switch (mTimeChooser.getSelectedIndex()) {
@@ -233,22 +255,7 @@ class RepetitionDialog extends JDialog implements WindowClosingIf {
     default:
       days = -1;
     }
-
-    SearchPlugin.getInstance().setRepetitionTimeSelection(
-        mTimeChooser.getSelectedIndex());
-
-    settings.setNrDays(days);
-    settings.setSearchIn(SearchFormSettings.SEARCH_IN_TITLE);
-    settings.setSearcherType(PluginManager.SEARCHER_TYPE_EXACTLY);
-    settings.setCaseSensitive(false);
-
-    if (mChannelChooser.getSelectedIndex() > 0) {
-      settings.setChannels(new Channel[] { (Channel) mChannelChooser
-          .getSelectedItem() });
-    }
-
-    SearchHelper.search(getParent(), new PluginPictureSettings(
-        PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE), settings, true);
+    return days;
   }
 
   /**
