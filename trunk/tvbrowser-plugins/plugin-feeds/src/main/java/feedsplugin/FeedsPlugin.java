@@ -175,10 +175,13 @@ public final class FeedsPlugin extends Plugin {
   }
 
   private void addFeedKey(final String keyWord, final SyndEntry feedEntry, final SyndFeed feed) {
-    ArrayList<SyndEntryWithParent> list = mKeywords.get(keyWord);
-    if (list == null) {
-      list = new ArrayList<SyndEntryWithParent>(1);
-      mKeywords.put(keyWord, list);
+    ArrayList<SyndEntryWithParent> list;
+    synchronized (mKeywords) {
+      list = mKeywords.get(keyWord);
+      if (list == null) {
+        list = new ArrayList<SyndEntryWithParent>(1);
+        mKeywords.put(keyWord, list);
+      }
     }
     list.add(new SyndEntryWithParent(feedEntry, feed));
   }
@@ -219,9 +222,11 @@ public final class FeedsPlugin extends Plugin {
   private ArrayList<SyndEntryWithParent> getMatchingEntries(final String searchString) {
     ArrayList<SyndEntryWithParent> matches = new ArrayList<SyndEntryWithParent>();
     String quotedString = quoteTitle(searchString);
-    for (Entry<String, ArrayList<SyndEntryWithParent>> entry : mKeywords.entrySet()) {
-      if (matchesTitle(entry.getKey(), searchString, quotedString )) {
-        matches.addAll(entry.getValue());
+    synchronized (mKeywords) {
+      for (Entry<String, ArrayList<SyndEntryWithParent>> entry : mKeywords.entrySet()) {
+        if (matchesTitle(entry.getKey(), searchString, quotedString )) {
+          matches.addAll(entry.getValue());
+        }
       }
     }
     return matches;
@@ -229,9 +234,11 @@ public final class FeedsPlugin extends Plugin {
 
   private boolean hasMatchingEntries(final String searchString) {
     String quotedString = quoteTitle(searchString);
-    for (Entry<String, ArrayList<SyndEntryWithParent>> entry : mKeywords.entrySet()) {
-      if (matchesTitle(entry.getKey(), searchString, quotedString)) {
-        return true;
+    synchronized (mKeywords) {
+      for (Entry<String, ArrayList<SyndEntryWithParent>> entry : mKeywords.entrySet()) {
+        if (matchesTitle(entry.getKey(), searchString, quotedString)) {
+          return true;
+        }
       }
     }
     return false;
