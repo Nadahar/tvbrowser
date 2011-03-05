@@ -281,11 +281,18 @@ public class SearchPlugin {
     mRepetitionTimeSelect = selectedIndex;
   }
 
-  protected void openSearchDialog(String text) {
+  protected void openSearchDialog(String text, final SearchFormSettings settings) {
     Window parent = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
     SearchDialog dlg = new SearchDialog(parent);
     dlg.setSearchText(text);
+    if (settings != null) {
+      dlg.setSearchSettings(settings);
+    }
     UiUtilities.centerAndShow(dlg);
+  }
+
+  protected void openSearchDialog(String text) {
+    openSearchDialog(text, null);
   }
 
   private static void searchRepetitions(final Program program) {
