@@ -61,7 +61,7 @@ import devplugin.Channel;
 public class ChannelList {
 
   private static final String[] DEFAULT_CHANNELS_DE = new String[] {
-      "tvbrowserdataservice.TvBrowserDataService_main_de_ard", 
+      "tvbrowserdataservice.TvBrowserDataService_main_de_ard",
       "tvbrowserdataservice.TvBrowserDataService_main_de_zdf",
       "tvbrowserdataservice.TvBrowserDataService_main_de_rtl",
       "tvbrowserdataservice.TvBrowserDataService_main_de_sat1",
@@ -103,7 +103,7 @@ public class ChannelList {
     "tvbrowserdataservice.TvBrowserDataService_main_de_rtl2",
     "tvbrowserdataservice.TvBrowserDataService_main_de_superrtl",
     "tvbrowserdataservice.TvBrowserDataService_others_at_3sat" };
-  
+
   private static final String[] DEFAULT_CHANNELS_SE = new String[] {
     "swedbtvdataservice.SweDBTvDataService_SweDB_se_svt1.svt.se",
     "swedbtvdataservice.SweDBTvDataService_SweDB_se_svt2.svt.se",
@@ -115,7 +115,7 @@ public class ChannelList {
     "swedbtvdataservice.SweDBTvDataService_SweDB_se_tv8.se",
     "swedbtvdataservice.SweDBTvDataService_SweDB_se_kanal9.se",
     "swedbtvdataservice.SweDBTvDataService_SweDB_se_svtb-svt24.svt.se" };
-  
+
   private static final String[] DEFAULT_CHANNELS_GB = new String[] {
     "radiotimesdataservice.RadioTimesDataService_radiotimes_gb_RADIOTIMES92", //BBC1
     "radiotimesdataservice.RadioTimesDataService_radiotimes_gb_RADIOTIMES105", //BBC2
@@ -127,9 +127,9 @@ public class ChannelList {
     "radiotimesdataservice.RadioTimesDataService_radiotimes_gb_RADIOTIMES185", //ITV2
     "radiotimesdataservice.RadioTimesDataService_radiotimes_gb_RADIOTIMES1859", //ITV3
     "radiotimesdataservice.RadioTimesDataService_radiotimes_gb_RADIOTIMES1961", //ITV4
-    "radiotimesdataservice.RadioTimesDataService_radiotimes_gb_RADIOTIMES158", //E4    
+    "radiotimesdataservice.RadioTimesDataService_radiotimes_gb_RADIOTIMES158", //E4
   };
-  
+
   private static final String[] DEFAULT_CHANNELS_NO = new String[] {
     "tvbrowserdataservice.TvBrowserDataService_norge_no_NRK1",
     "tvbrowserdataservice.TvBrowserDataService_norge_no_TV2",
@@ -142,7 +142,7 @@ public class ChannelList {
     "tvbrowserdataservice.TvBrowserDataService_norge_no_TV2Zebra",
     "tvbrowserdataservice.TvBrowserDataService_norge_no_NRK-Super-TV",
     "swedbtvdataservice.SweDBTvDataService_SweDB_se_svt1.svt.se" };
-  
+
   private static final String[] DEFAULT_CHANNELS_DK = new String[] {
     "tvbrowserdataservice.TvBrowserDataService_Euro-TV_dk_DR1",
     "tvbrowserdataservice.TvBrowserDataService_Euro-TV_dk_TV-2",
@@ -377,7 +377,7 @@ public class ChannelList {
     mSubscribedChannelPosition = new HashMap<String, Integer>();
     for (int i = 0; i < mSubscribedChannels.size(); i++) {
       Channel ch = mSubscribedChannels.get(i);
-      
+
       if (ch != null) {
         mSubscribedChannelPosition.put(ch.getUniqueId(), i);
       }
@@ -734,7 +734,7 @@ public class ChannelList {
       out = new PrintWriter(fw);
       for (Channel channel : getSubscribedChannels()) {
         String userChannelName = channel.getUserChannelName();
-        if ((userChannelName != null) && (userChannelName.trim().length() > 0) && (channel.getDefaultName() == null || !channel.getDefaultName().equalsIgnoreCase(userChannelName))) {
+        if ((userChannelName != null) && (userChannelName.trim().length() > 0) && (channel.getDefaultName() == null || !channel.getDefaultName().equals(userChannelName))) {
           out
               .println(createPropertyForChannel(channel, userChannelName.trim()));
         }
