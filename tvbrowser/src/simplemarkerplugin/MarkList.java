@@ -32,8 +32,8 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.LinkedList;
-import java.util.Vector;
 import java.util.Map.Entry;
+import java.util.Vector;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -399,15 +399,15 @@ public class MarkList extends Vector<Program> {
           dateRoot.addAction(getUnmarkAction(dateRoot));
           programRoot.addAction(getUnmarkAction(programRoot));
         }
-  
+
         root.removeAllActions();
         root.addAction(getUnmarkAction(root));
-  
+
         final Date currentDate = Date.getCurrentDate();
         for (Entry<String, LinkedList<Program>> entry : sortedPrograms.entrySet()) {
           String name = entry.getKey();
           LinkedList<Program> sameTitlePrograms = entry.getValue();
-  
+
           PluginTreeNode titleNode = null;
           if (settings.isGroupingByBoth()) {
             titleNode = programRoot.addNode(name);
@@ -418,7 +418,7 @@ public class MarkList extends Vector<Program> {
             titleNode.addAction(getUnmarkAction(titleNode));
             titleNode.setGroupingByDateEnabled(false);
           }
-  
+
           for (Program program : sameTitlePrograms) {
             if (titleNode != null) {
               PluginTreeNode prog = titleNode.addProgram(program);
@@ -427,7 +427,7 @@ public class MarkList extends Vector<Program> {
                   Program p = pitem.getProgram();
                   Date progDate = p.getDate();
                   String progDateText;
-  
+
                   if (progDate.equals(currentDate.addDays(-1))) {
                     progDateText = Localizer
                         .getLocalization(Localizer.I18N_YESTERDAY);
@@ -438,7 +438,7 @@ public class MarkList extends Vector<Program> {
                   } else {
                     progDateText = p.getDateString();
                   }
-  
+
                   return (progDateText + "  " + p.getTimeString() + "  " + p
                       .getChannel());
                 }
@@ -455,7 +455,7 @@ public class MarkList extends Vector<Program> {
           root.add(programRoot);
           root.add(dateRoot);
         }
-  
+
         if (update) {
           root.update();
         }
@@ -479,18 +479,25 @@ public class MarkList extends Vector<Program> {
 
   protected void revalidateContainingPrograms(ArrayList<Program> deletedPrograms) {
     for (int i = size() - 1; i >= 0; i--) {
-      Program containingProgram = remove(i);
-
-      if (containingProgram.getProgramState() == Program.WAS_UPDATED_STATE) {
-        Program updatedProg = Plugin.getPluginManager().getProgram(
-            containingProgram.getDate(), containingProgram.getID());
+      Program markedProgram = remove(i);
+      switch (markedProgram.getProgramState()) {
+      case Program.WAS_UPDATED_STATE:
+        Program updatedProg = Plugin.getPluginManager().getProgram(markedProgram.getDate(), markedProgram.getID());
         addElement(updatedProg);
-      } else if (containingProgram.getProgramState() == Program.IS_VALID_STATE) {
-        addElement(containingProgram);
-      } else if (containingProgram.getDate().compareTo(Date.getCurrentDate()) >= 0
-          && containingProgram.getProgramState() == Program.WAS_DELETED_STATE
-          && !deletedPrograms.contains(containingProgram)) {
-        deletedPrograms.add(containingProgram);
+        break;
+      case Program.IS_VALID_STATE:
+        addElement(markedProgram);
+        break;
+      case Program.WAS_DELETED_STATE:
+        // show dialog only for programs after todays program table start time
+        if (markedProgram.getDate().compareTo(Date.getCurrentDate()) >= 0
+            && markedProgram.getStartTime() >= Plugin.getPluginManager().getTvBrowserSettings()
+                .getProgramTableStartOfDay() && !deletedPrograms.contains(markedProgram)) {
+          deletedPrograms.add(markedProgram);
+        }
+        break;
+      default:
+        break;
       }
     }
     updateNode();
