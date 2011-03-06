@@ -261,7 +261,7 @@ public class Channel implements Comparable<Channel> {
    {
       this(dataService,name,id,timeZone,country,"(no copyright notice)",null);
    }
-  
+
   /**
    * Creates an instance of this class.
    * <p>
@@ -273,7 +273,7 @@ public class Channel implements Comparable<Channel> {
    {
       this(null,id,id,timeZone,country,"(no copyright notice)",null);
    }
-  
+
   /**
    * Creates an instance of this class.
    * <p>
@@ -285,7 +285,7 @@ public class Channel implements Comparable<Channel> {
    {
       this(null,name,id,TimeZone.getDefault(),country,"(no copyright notice)",null);
    }
-  
+
   /**
    * Creates an instance of this class.
    * <p>
@@ -873,7 +873,7 @@ public class Channel implements Comparable<Channel> {
   }
 
   public int compareTo(Channel other) {
-    return getName().toLowerCase().compareTo(other.getName().toLowerCase());
+    return getName().compareToIgnoreCase(other.getName());
   }
 
   /**
