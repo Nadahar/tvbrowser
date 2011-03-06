@@ -39,6 +39,7 @@ import javax.swing.JProgressBar;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
+import util.ui.UIThreadRunner;
 import util.ui.UiUtilities;
 
 public class ProgressWindow implements devplugin.ProgressMonitor {
@@ -48,7 +49,7 @@ public class ProgressWindow implements devplugin.ProgressMonitor {
   private JDialog mDialog;
 
   private JProgressBar mBar;
-  
+
   public ProgressWindow(Component parent, String msg) {
     mDialog = UiUtilities.createDialog(parent, true);
 
@@ -58,12 +59,12 @@ public class ProgressWindow implements devplugin.ProgressMonitor {
     mLabel = new JLabel(msg);
     mLabel.setHorizontalAlignment(SwingConstants.CENTER);
     content.add(mLabel, BorderLayout.CENTER);
-    
+
     mBar = new JProgressBar();
     mBar.setVisible(false);
-    
+
     content.add(mBar, BorderLayout.SOUTH);
-    
+
     mDialog.setSize(500, 70);
     mDialog.setUndecorated(true);
     mDialog.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
@@ -87,18 +88,29 @@ public class ProgressWindow implements devplugin.ProgressMonitor {
     UiUtilities.centerAndShow(mDialog);
   }
 
-  public void setMaximum(int maximum) {
-    if(maximum == -1) {
-      mBar.setVisible(false);
-    } else {
-      mBar.setMaximum(maximum);
-      mBar.setVisible(true);
-      mBar.setStringPainted(true);
-    }
+  public void setMaximum(final int maximum) {
+    UIThreadRunner.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        if(maximum == -1) {
+          mBar.setVisible(false);
+        } else {
+          mBar.setMaximum(maximum);
+          mBar.setVisible(true);
+          mBar.setStringPainted(true);
+        }
+      }
+    });
   }
 
-  public void setValue(int value) {
-    mBar.setValue(value);
+  public void setValue(final int value) {
+    UIThreadRunner.invokeLater(new Runnable() {
+
+      @Override
+      public void run() {
+        mBar.setValue(value);
+      }
+    });
   }
 
   public void setMessage(final String msg) {
