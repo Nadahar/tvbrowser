@@ -40,9 +40,9 @@ import javax.swing.filechooser.FileFilter;
 public class ExtensionFileFilter extends FileFilter implements FilenameFilter {
 
   /** The file extensions this filter should let pass. */
-  String[] mExtenstionList;
+  private String[] mExtensionList;
   /** The localized name for this filter. */
-  String mName;
+  private String mName;
 
 
 
@@ -71,8 +71,8 @@ public class ExtensionFileFilter extends FileFilter implements FilenameFilter {
     for (int i = 0; i < extenstionList.length; i++) {
       extenstionList[i] = extenstionList[i].toLowerCase();
     }
-    
-    mExtenstionList = extenstionList;
+
+    mExtensionList = extenstionList;
     mName = name;
   }
 
@@ -106,7 +106,7 @@ public class ExtensionFileFilter extends FileFilter implements FilenameFilter {
     String name = file.getName().toLowerCase();
 
     // check whether the name ends with one of the extensions
-    for (String element : mExtenstionList) {
+    for (String element : mExtensionList) {
       if (name.endsWith(element)) {
         return true;
       }
@@ -139,6 +139,12 @@ public class ExtensionFileFilter extends FileFilter implements FilenameFilter {
    */
   public boolean accept(File dir, String name) {
     return accept(new File(dir.getPath() + File.separator + name));
+  }
+
+
+
+  public String getExtension() {
+    return mExtensionList[0];
   }
 
 }

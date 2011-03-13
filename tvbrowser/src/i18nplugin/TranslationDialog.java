@@ -67,6 +67,7 @@ import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import util.exc.ErrorHandler;
 import util.io.ZipUtil;
+import util.ui.ExtensionFileFilter;
 import util.ui.LinkButton;
 import util.ui.Localizer;
 import util.ui.SingleAndDoubleClickTreeUI;
@@ -104,7 +105,7 @@ final public class TranslationDialog extends JDialog implements WindowClosingIf 
 
   private TranslatorEditor mEditor;
 
-  private PathNode mRoot;
+  private UnsortedPathNode mRoot;
 
   private Vector<Locale> mCurrentLocales;
 
@@ -377,13 +378,16 @@ final public class TranslationDialog extends JDialog implements WindowClosingIf 
    */
   private void export() {
     JFileChooser fileChooser=new JFileChooser();
-    fileChooser.setFileFilter(new util.ui.ExtensionFileFilter(".zip","Zip (*.zip)"));
+    ExtensionFileFilter filter = new ExtensionFileFilter(".zip","Zip (*.zip)");
+    fileChooser.setFileFilter(filter);
     int retVal = fileChooser.showSaveDialog(this);
 
     if (retVal == JFileChooser.APPROVE_OPTION) {
       File f=fileChooser.getSelectedFile();
       if (f!=null) {
-
+        if (f.getName().indexOf('.') == -1) {
+          f = new File(f.getAbsolutePath() + filter.getExtension());
+        }
         ZipUtil zip = new ZipUtil();
 
         StringBuilder dir = new StringBuilder(Settings.getUserSettingsDirName())
@@ -414,7 +418,7 @@ final public class TranslationDialog extends JDialog implements WindowClosingIf 
    * @return new RootNOde
    */
   private DefaultMutableTreeNode createRootNode() {
-    mRoot = new PathNode(mLocalizer.msg("translations", "Translations"));
+    mRoot = new UnsortedPathNode(mLocalizer.msg("translations", "Translations"));
     File jar = new File("tvbrowser.jar");
 
     if (!jar.exists()) {
@@ -468,9 +472,9 @@ final public class TranslationDialog extends JDialog implements WindowClosingIf 
   }
 
   /**
-   * @return Location of the Devider
+   * @return Location of the Divider
    */
-  public int getDeviderLocation() {
+  public int getDividerLocation() {
     return mSplitpane.getDividerLocation();
   }
 

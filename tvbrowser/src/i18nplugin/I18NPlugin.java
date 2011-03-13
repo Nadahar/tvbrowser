@@ -113,7 +113,7 @@ public class I18NPlugin extends Plugin {
     layoutWindow("i18nDlg", dialog, new Dimension(800,750));
     
     dialog.setVisible(true);
-    mSettings.setDivider(dialog.getDeviderLocation());
+    mSettings.setDivider(dialog.getDividerLocation());
   }
 
   @Override
