@@ -17,16 +17,14 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  * SVN information:
- *     $Date$
- *   $Author$
- * $Revision$
+ *     $Date: 2009-09-27 22:30:36 +0200 (So, 27 Sep 2009) $
+ *   $Author: bananeweizen $
+ * $Revision: 5980 $
  */
 package i18nplugin;
 
-import java.util.Collections;
-import java.util.Comparator;
+import java.io.IOException;
 
-import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeNode;
 
 /**
@@ -34,34 +32,34 @@ import javax.swing.tree.TreeNode;
  *
  * @author bodum
  */
-public class PathNode extends UnsortedPathNode implements FilterNodeIf {
+public class UnsortedPathNode extends AbstractHierarchicalNode implements FilterNodeIf {
 
   /**
    * Create Path-Entry
    * @param string Path-Entry
    */
-  public PathNode(String string) {
+  public UnsortedPathNode(String string) {
     super(string);
   }
 
-  @SuppressWarnings("unchecked")
-  @Override
-  public void insert(MutableTreeNode newChild, int childIndex) {
-    super.insert(newChild, childIndex);
-
-    Collections.sort(children, new Comparator<TreeNode>() {
-      public int compare(TreeNode o1, TreeNode o2) {
-
-        if ((o1 instanceof PropertiesNode) && !(o2 instanceof PropertiesNode)) {
-          return 1;
-        }
-
-        if ((o2 instanceof PropertiesNode) && !(o1 instanceof PropertiesNode)) {
-          return -1;
-        }
-
-        return o1.toString().compareTo(o2.toString());
-      }
-    });
+  public void save() throws IOException{
+    int max = getChildCount();
+    for (int i=0;i<max;i++) {
+      ((LanguageNodeIf)getChildAt(i)).save();
+    }
   }
+
+  public int getMatchCount() {
+    if (filter == null) {
+      return 0;
+    }
+    int count = 0;
+    for (TreeNode node : filteredChildren) {
+      if (node instanceof FilterNodeIf) {
+        count += ((FilterNodeIf) node).getMatchCount();
+      }
+    }
+    return count;
+  }
+
 }

@@ -187,7 +187,7 @@ public class TranslatorEditor extends JPanel {
       text = mLocalizer.msg("state.wrongPunctuation", "Different punctuation at the end");
     }
     else if (state == LanguageNodeIf.STATE_OK) {
-      text = mLocalizer.msg("state.ok", "OK");
+      text = Localizer.getLocalization(Localizer.I18N_OK);
     }
 
     mState.setText(text);
