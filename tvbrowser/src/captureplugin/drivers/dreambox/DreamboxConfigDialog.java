@@ -151,13 +151,13 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
         basicPanel.add(mDeviceName, cc.xy(4, basicPanel.getRow()));
 
         basicPanel.addRow();
-        basicPanel.add(new JLabel(mLocalizer.msg("softwareVersion","Software version:")), cc.xy(2,basicPanel.getRow()));
+        basicPanel.add(new JLabel(mLocalizer.msg("webIf","Webif:")), cc.xy(2,basicPanel.getRow()));
 
-        String[] values = {mLocalizer.msg("lowerVersion","lower than 1.6 (< 1.6)"),
-                           mLocalizer.msg("higherVersion","at least 1.6 (>= 1.6)")};
+        String[] values = {"ipkg",
+                           "opkg"};
 
         mSoftwareSelection = new JComboBox(values);
-        mSoftwareSelection.setSelectedIndex(mConfig.getIsVersionAtLeast_1_6() ? 1 : 0);
+        mSoftwareSelection.setSelectedIndex(mConfig.isOpkg() ? 1 : 0);
 
         basicPanel.add(mSoftwareSelection, cc.xy(4, basicPanel.getRow()));
 
@@ -471,7 +471,7 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
         mConfig.setMediaplayer(mMediaplayer.getText());
         mConfig.setProgramReceiveTargets(mProgramReceiveTargetSelection.getCurrentSelection());
 
-        mConfig.setIsVersionAtLeast_1_6(mSoftwareSelection.getSelectedIndex() == 1);
+        mConfig.setIsOpkg(mSoftwareSelection.getSelectedIndex() == 1);
 
         setVisible(false);
     }
