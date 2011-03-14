@@ -78,7 +78,7 @@ public final class DreamboxConfig implements ConfigIf, Cloneable {
     private ProgramReceiveTarget[] mReceiveTargets = new ProgramReceiveTarget[0];
     
     /** The version of the box software is at least 1.6 */
-    private boolean mIsAtLeastVersion_1_6 = true;
+    private boolean mIsOpkg = true;
 
     /**
      * Constructor
@@ -105,7 +105,7 @@ public final class DreamboxConfig implements ConfigIf, Cloneable {
         mPassword = dreamboxConfig.getPassword();
         mMediaplayer = dreamboxConfig.getMediaplayer();
         mReceiveTargets = dreamboxConfig.getProgramReceiveTargets();
-        mIsAtLeastVersion_1_6 = dreamboxConfig.getIsVersionAtLeast_1_6();
+        mIsOpkg = dreamboxConfig.isOpkg();
     }
 
     /**
@@ -184,7 +184,7 @@ public final class DreamboxConfig implements ConfigIf, Cloneable {
           receiveTarget.writeData(stream);
         }
         
-        stream.writeBoolean(mIsAtLeastVersion_1_6);
+        stream.writeBoolean(mIsOpkg);
     }
 
     /**
@@ -249,7 +249,7 @@ public final class DreamboxConfig implements ConfigIf, Cloneable {
         }
         
         if(version > 5) {
-          mIsAtLeastVersion_1_6 = stream.readBoolean();
+          mIsOpkg = stream.readBoolean();
         }
     }
 
@@ -475,18 +475,18 @@ public final class DreamboxConfig implements ConfigIf, Cloneable {
     }
     
     /**
-     * Gets if the software version of the box is at least 1.6.
-     * @return <code>true</code> if the version is at least 1.6, <code>false</code> otherwise.
+     * Gets if the opkg webif is used.
+     * @return <code>true</code> opkg webif is used, <code>false</code> otherwise.
      */
-    public boolean getIsVersionAtLeast_1_6() {
-      return mIsAtLeastVersion_1_6;
+    public boolean isOpkg() {
+      return mIsOpkg;
     }
     
     /**
-     * Sets if the software version of the box is at least 1.6.
+     * Sets he opkg webif is used.
      * @param value The new value.
      */
-    public void setIsVersionAtLeast_1_6(boolean value) {
-      mIsAtLeastVersion_1_6 = value;
+    public void setIsOpkg(boolean value) {
+      mIsOpkg = value;
     }
 }

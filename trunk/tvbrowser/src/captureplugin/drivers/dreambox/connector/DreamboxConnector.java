@@ -457,7 +457,7 @@ public class DreamboxConnector {
   }
 
   public boolean testDreamboxVersion() throws IOException {
-    InputStream stream = openStreamForLocalUrl((mConfig.getIsVersionAtLeast_1_6() ? "/opkg" : "/ipkg")
+    InputStream stream = openStreamForLocalUrl((mConfig.isOpkg() ? "/opkg" : "/ipkg")
         + "?command=info&package=enigma2-plugin-extensions-webinterface");
     ByteArrayOutputStream bytes = new ByteArrayOutputStream();
 
@@ -465,7 +465,7 @@ public class DreamboxConnector {
 
     String version = bytes.toString();
 
-    Pattern p = Pattern.compile("Version:.*cvs(\\d{8}).*");
+    Pattern p = Pattern.compile("Version:.*git(\\d{8}).*");
     Matcher match = p.matcher(version);
 
     if (match.find()) {
