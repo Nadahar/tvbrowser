@@ -25,7 +25,7 @@ import devplugin.ProgramReceiveTarget;
  * @author Wolfgang Reh
  */
 public final class TopfieldConfiguration implements ConfigIf, Cloneable {
-  private static final int CONFIGURATION_VERSION = 1;
+  private static final int CONFIGURATION_VERSION = 2;
   private static final String USER_NAME_PROPERTY = "user.name";
 
   private String configurationID;
@@ -40,6 +40,7 @@ public final class TopfieldConfiguration implements ConfigIf, Cloneable {
   private boolean recordingsLocal = true;
   private transient boolean deviceUnreachable = false;
   private int connectionTimeout = 3000;
+  private TopfieldChannelSortKey channelSortKey = TopfieldChannelSortKey.CHANNEL_NAME;
   private HashMap<String, TopfieldServiceInfo> deviceChannels = new HashMap<String, TopfieldServiceInfo>();
   private HashMap<TopfieldServiceInfo, Channel> deviceChannelMap = new HashMap<TopfieldServiceInfo, Channel>();
   private HashMap<Channel, TopfieldServiceInfo> browserChannelMap = new HashMap<Channel, TopfieldServiceInfo>();
@@ -71,6 +72,7 @@ public final class TopfieldConfiguration implements ConfigIf, Cloneable {
     recordingsLocal = configuration.recordingsLocal;
     deviceUnreachable = configuration.deviceUnreachable;
     connectionTimeout = configuration.connectionTimeout;
+    channelSortKey = configuration.channelSortKey;
     deviceChannels = new HashMap<String, TopfieldServiceInfo>(configuration.deviceChannels);
     deviceChannelMap = new HashMap<TopfieldServiceInfo, Channel>(configuration.deviceChannelMap);
     browserChannelMap = new HashMap<Channel, TopfieldServiceInfo>(configuration.browserChannelMap);
@@ -110,12 +112,26 @@ public final class TopfieldConfiguration implements ConfigIf, Cloneable {
   @Override
   public ExternalChannelIf[] getExternalChannels() {
     ExternalChannelIf[] channelArray = deviceChannels.values().toArray(new ExternalChannelIf[1]);
-    Arrays.sort(channelArray, new Comparator<ExternalChannelIf>() {
-      @Override
-      public int compare(ExternalChannelIf channel1, ExternalChannelIf channel2) {
-        return channel1.getName().compareToIgnoreCase(channel2.getName());
-      }
-    });
+    switch (channelSortKey) {
+    case CHANNEL_NAME:
+      Arrays.sort(channelArray, new Comparator<ExternalChannelIf>() {
+        @Override
+        public int compare(ExternalChannelIf channel1, ExternalChannelIf channel2) {
+          return channel1.getName().compareToIgnoreCase(channel2.getName());
+        }
+      });
+      break;
+    case CHANNEL_NUMBER:
+      Arrays.sort(channelArray, new Comparator<ExternalChannelIf>() {
+        @Override
+        public int compare(ExternalChannelIf channel1, ExternalChannelIf channel2) {
+          Integer channel1Number = ((TopfieldServiceInfo) channel1).getChannelNumber();
+          Integer channel2Number = ((TopfieldServiceInfo) channel2).getChannelNumber();
+          return channel1Number.compareTo(channel2Number);
+        }
+      });
+      break;
+    }
     return channelArray;
   }
 
@@ -158,7 +174,6 @@ public final class TopfieldConfiguration implements ConfigIf, Cloneable {
     browserChannelMap.clear();
     timerEntries.clear();
 
-    @SuppressWarnings("unused")
     int version = stream.readInt();
     configurationID = stream.readUTF();
 
@@ -192,6 +207,10 @@ public final class TopfieldConfiguration implements ConfigIf, Cloneable {
 
     for (int timers = stream.readInt(); timers > 0; timers--) {
       timerEntries.add(new TopfieldTimerEntry(stream));
+    }
+
+    if (version > 1) {
+      channelSortKey = (TopfieldChannelSortKey) stream.readObject();
     }
   }
 
@@ -248,6 +267,8 @@ public final class TopfieldConfiguration implements ConfigIf, Cloneable {
     for (TopfieldTimerEntry entry : timerEntries) {
       entry.writeToStream(stream);
     }
+
+    stream.writeObject(channelSortKey);
   }
 
   /**
@@ -464,6 +485,21 @@ public final class TopfieldConfiguration implements ConfigIf, Cloneable {
    */
   public void setDeviceUnreachable(boolean deviceUnreachable) {
     this.deviceUnreachable = deviceUnreachable;
+  }
+
+  /**
+   * @return the channelSortKey
+   */
+  public TopfieldChannelSortKey getChannelSortKey() {
+    return (channelSortKey);
+  }
+
+  /**
+   * @param channelSortKey
+   *          the channelSortKey to set
+   */
+  public void setChannelSortKey(TopfieldChannelSortKey channelSortKey) {
+    this.channelSortKey = channelSortKey;
   }
 
   /**
