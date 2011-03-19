@@ -29,6 +29,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingConstants;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
@@ -56,6 +57,8 @@ public class TopfieldConfigurationDialog extends JDialog implements WindowClosin
   private static final Localizer localizer = Localizer.getLocalizerFor(TopfieldConfigurationDialog.class); // @jve:decl-index=0:
   private static final Font BORDER_FONT = new Font("SansSerif", Font.BOLD, 12);
   private static final Color BORDER_COLOR = new Color(59, 59, 59);
+  private static final String DRIVER_VERSION = "1.1";
+  private static final String DRIVER_AUTHOR = "Wolfgang Reh";
 
   private static final String DIALOG_TITLE = "title"; // @jve:decl-index=0:
   private static final String DEFAULT_TITLE = "Configure Topfield";
@@ -83,6 +86,8 @@ public class TopfieldConfigurationDialog extends JDialog implements WindowClosin
   private static final String DEFAULT_BASIC_PANEL_LABEL = "Basic"; // @jve:decl-index=0:
   private static final String EXTENDED_PANEL_LABEL = "extendedPanel"; // @jve:decl-index=0:
   private static final String DEFAULT_EXTENDED_PANEL_LABEL = "Extended"; // @jve:decl-index=0:
+  private static final String ABOUT_PANEL_LABEL = "aboutPanel"; // @jve:decl-index=0:
+  private static final String DEFAULT_ABOUT_PANEL_LABEL = "About"; // @jve:decl-index=0:
   private static final String SEND_TO_TITLE = "sendToTitle"; // @jve:decl-index=0:
   private static final String DEFAULT_SEND_TO_TITLE = "Send scheduled programs to:"; // @jve:decl-index=0:
   private static final String RECORDING_LIST_TITLE = "recordingListTitle"; // @jve:decl-index=0:
@@ -97,6 +102,18 @@ public class TopfieldConfigurationDialog extends JDialog implements WindowClosin
   private static final String DEFAULT_CONNECTION_TO_LABEL = "Connection timeout (ms):"; // @jve:decl-index=0:
   private static final String CORRECT_TIME_CHECK = "correctTime"; // @jve:decl-index=0:
   private static final String DEFAULT_CORRECT_TIME_CHECK = "Account for time addition on receiver"; // @jve:decl-index=0:
+  private static final String ABOUT_VERSION_LABEL = "versionLabel";
+  private static final String DEFAULT_ABOUT_VERSION_LABEL = "Version:";
+  private static final String AUTHOR_LABEL = "authorLabel";
+  private static final String DEFAULT_AUTHOR_LABEL = "Author:";
+  private static final String SORT_LABEL = "sortLabel";
+  private static final String DEFAULT_SORT_LABEL = "Topfield channels sorted by";
+  private static final String SORT_BY_NAME = "sortByName";
+  private static final String DEFAULT_SORT_BY_NAME = "channel name";
+  private static final String SORT_BY_NUMBER = "sortByNumber";
+  private static final String DEFAULT_SORT_BY_NUMBER = "channel number";
+  private static final String WAIT_FOR_CHANNELS = "waitForChannels"; // @jve:decl-index=0:
+  private static final String DEFAULT_WAIT_FOR_CHANNELS = "Retrieving channel list ..."; // @jve:decl-index=0:
 
   private boolean configurationOK = false;
   private final TopfieldDevice device;
@@ -106,6 +123,7 @@ public class TopfieldConfigurationDialog extends JDialog implements WindowClosin
   private TopfieldChannelTableModel channelTableModel;
 
   private final ButtonGroup recordingsRadios = new ButtonGroup(); // @jve:decl-index=0:
+  private final ButtonGroup channelSortRadios = new ButtonGroup();
   private JPanel configurationPane = null;
   private JPanel closingPanel = null;
   private JButton okButton = null;
@@ -141,6 +159,18 @@ public class TopfieldConfigurationDialog extends JDialog implements WindowClosin
   private JLabel connectionTimeoutLabel = null;
   private JSpinner connectionTimoutSpinner = null;
   private JCheckBox correctTimeCheck = null;
+  private JPanel aboutPanel = null;
+  private JLabel versionLabel = null;
+  private JLabel versionDisplay = null;
+  private JPanel aboutSpacerPanel = null;
+  private JLabel authorLabel = null;
+  private JLabel authorDisplay = null;
+  private JPanel channelActionPanel = null;
+  private JPanel channelSortPanel = null;
+  private JRadioButton sortNameRadio = null;
+  private JRadioButton sortNumberRadio = null;
+  private JLabel sortChannelLabel = null;
+  private JPanel sortSpacerPanel = null;
 
   /**
    * Configure a Topfield device.
@@ -177,19 +207,32 @@ public class TopfieldConfigurationDialog extends JDialog implements WindowClosin
     tvBrowserRadio.setSelected(configuration.isRecordingsLocalUnchecked());
     deviceRadio.setSelected(!configuration.isRecordingsLocalUnchecked());
     connectionTimoutSpinner.setValue(configuration.getConnectionTimeout());
+    switch (configuration.getChannelSortKey()) {
+    case CHANNEL_NAME:
+      sortNameRadio.setSelected(true);
+      break;
+    case CHANNEL_NUMBER:
+      sortNumberRadio.setSelected(true);
+    }
   }
 
   /**
    * Retrieve the channels from the device.
    */
   private void getDeviceChannels() {
+    TopfieldWaitWindow waitWindow = new TopfieldWaitWindow(this);
+    waitWindow.setWaitText(localizer.msg(WAIT_FOR_CHANNELS, DEFAULT_WAIT_FOR_CHANNELS));
+    waitWindow.setVisible(true);
+    this.setEnabled(false);
     String deviceAddress = deviceAddressEditor.getText().trim();
     String username = usernameEditor.getText().trim();
     char[] password = passwordEditor.getPassword();
 
     if ((deviceAddress == null) || (username == null)) {
-      JOptionPane.showMessageDialog(this, localizer.msg(MISSING_ACCESS_DATA, DEFAULT_MISSING_ACCESS_DATA), localizer
-          .msg(DIALOG_TITLE, DEFAULT_TITLE), JOptionPane.ERROR_MESSAGE);
+      waitWindow.setVisible(false);
+      this.setEnabled(true);
+      JOptionPane.showMessageDialog(this, localizer.msg(MISSING_ACCESS_DATA, DEFAULT_MISSING_ACCESS_DATA),
+          localizer.msg(DIALOG_TITLE, DEFAULT_TITLE), JOptionPane.ERROR_MESSAGE);
       return;
     }
 
@@ -204,9 +247,13 @@ public class TopfieldConfigurationDialog extends JDialog implements WindowClosin
     try {
       deviceChannels = connector.getDeviceChannels();
       configuration.setDeviceChannels(deviceChannels);
+      waitWindow.setVisible(false);
+      this.setEnabled(true);
     } catch (TopfieldConnectionException e) {
-      JOptionPane.showMessageDialog(this, localizer.msg(INVALID_ADDRESS, DEFAULT_INVALID_ADDRESS), localizer.msg(
-          DIALOG_TITLE, DEFAULT_TITLE), JOptionPane.ERROR_MESSAGE);
+      waitWindow.setVisible(false);
+      this.setEnabled(true);
+      JOptionPane.showMessageDialog(this, localizer.msg(INVALID_ADDRESS, DEFAULT_INVALID_ADDRESS),
+          localizer.msg(DIALOG_TITLE, DEFAULT_TITLE), JOptionPane.ERROR_MESSAGE);
     }
   }
 
@@ -491,7 +538,12 @@ public class TopfieldConfigurationDialog extends JDialog implements WindowClosin
       getDeviceChannelsButton.setIcon(TVBrowserIcons.refresh(TVBrowserIcons.SIZE_SMALL));
       getDeviceChannelsButton.addActionListener(new java.awt.event.ActionListener() {
         public void actionPerformed(java.awt.event.ActionEvent e) {
-          getDeviceChannels();
+          new Thread(new Runnable() {
+            @Override
+            public void run() {
+              getDeviceChannels();
+            }
+          }).start();
         }
       });
     }
@@ -531,8 +583,8 @@ public class TopfieldConfigurationDialog extends JDialog implements WindowClosin
 
       // Set column width for pre and post roll columns
       TableCellRenderer cellRenderer = channelTable.getTableHeader().getDefaultRenderer();
-      Component rendererComponent = cellRenderer.getTableCellRendererComponent(channelTable, channelTableModel
-          .getColumnName(2), false, false, -1, 2);
+      Component rendererComponent = cellRenderer.getTableCellRendererComponent(channelTable,
+          channelTableModel.getColumnName(2), false, false, -1, 2);
       columnModel.getColumn(2).setMaxWidth(rendererComponent.getPreferredSize().width);
       rendererComponent = cellRenderer.getTableCellRendererComponent(channelTable, channelTableModel.getColumnName(3),
           false, false, -1, 3);
@@ -603,6 +655,8 @@ public class TopfieldConfigurationDialog extends JDialog implements WindowClosin
           null);
       settingsTabbedPane.addTab(localizer.msg(EXTENDED_PANEL_LABEL, DEFAULT_EXTENDED_PANEL_LABEL), null,
           getExtendedPanel(), null);
+      settingsTabbedPane.addTab(localizer.msg(ABOUT_PANEL_LABEL, DEFAULT_ABOUT_PANEL_LABEL), null, getAboutPanel(),
+          null);
     }
     return settingsTabbedPane;
   }
@@ -614,10 +668,12 @@ public class TopfieldConfigurationDialog extends JDialog implements WindowClosin
    */
   private JPanel getBasicPanel() {
     if (basicPanel == null) {
-      GridBagConstraints gridBagConstraints18 = new GridBagConstraints();
-      gridBagConstraints18.anchor = GridBagConstraints.EAST;
-      gridBagConstraints18.gridy = 6;
-      gridBagConstraints18.gridx = 1;
+      GridBagConstraints gridBagConstraints36 = new GridBagConstraints();
+      gridBagConstraints36.gridx = 0;
+      gridBagConstraints36.gridwidth = 2;
+      gridBagConstraints36.fill = GridBagConstraints.HORIZONTAL;
+      gridBagConstraints36.weightx = 1.0;
+      gridBagConstraints36.gridy = 6;
       GridBagConstraints gridBagConstraints13 = new GridBagConstraints();
       gridBagConstraints13.fill = GridBagConstraints.BOTH;
       gridBagConstraints13.gridx = 0;
@@ -680,7 +736,7 @@ public class TopfieldConfigurationDialog extends JDialog implements WindowClosin
       basicPanel.add(getTimeExtensionPanel(), gridBagConstraints20);
       basicPanel.add(getGetDeviceChannelsButton(), gridBagConstraints12);
       basicPanel.add(getChannelScrollPane(), gridBagConstraints13);
-      basicPanel.add(getAutomaticAssignButton(), gridBagConstraints18);
+      basicPanel.add(getChannelActionPanel(), gridBagConstraints36);
     }
     return basicPanel;
   }
@@ -817,9 +873,10 @@ public class TopfieldConfigurationDialog extends JDialog implements WindowClosin
    */
   private JPanel getRecordingListPanel() {
     if (recordingListPanel == null) {
-      TitledBorder titledBorder = BorderFactory.createTitledBorder(BorderFactory.createMatteBorder(1, 0, 0, 0,
-          Color.black), localizer.msg(RECORDING_LIST_TITLE, DEFAULT_RECORDING_LIST_TITLE),
-          TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.TOP, BORDER_FONT, BORDER_COLOR);
+      TitledBorder titledBorder = BorderFactory.createTitledBorder(
+          BorderFactory.createMatteBorder(1, 0, 0, 0, Color.black),
+          localizer.msg(RECORDING_LIST_TITLE, DEFAULT_RECORDING_LIST_TITLE), TitledBorder.DEFAULT_JUSTIFICATION,
+          TitledBorder.TOP, BORDER_FONT, BORDER_COLOR);
       titledBorder.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.lightGray));
       GridBagConstraints gridBagConstraints25 = new GridBagConstraints();
       gridBagConstraints25.gridx = 0;
@@ -897,9 +954,10 @@ public class TopfieldConfigurationDialog extends JDialog implements WindowClosin
     if (passOnPanel == null) {
       passOnPanel = new JPanel();
       passOnPanel.setLayout(new GridBagLayout());
-      passOnPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createMatteBorder(1, 0, 0, 0,
-          Color.lightGray), localizer.msg(SEND_TO_TITLE, DEFAULT_SEND_TO_TITLE), TitledBorder.DEFAULT_JUSTIFICATION,
-          TitledBorder.TOP, BORDER_FONT, BORDER_COLOR));
+      passOnPanel.setBorder(BorderFactory.createTitledBorder(
+          BorderFactory.createMatteBorder(1, 0, 0, 0, Color.lightGray),
+          localizer.msg(SEND_TO_TITLE, DEFAULT_SEND_TO_TITLE), TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.TOP,
+          BORDER_FONT, BORDER_COLOR));
       GridBagConstraints gridBagConstraints22 = new GridBagConstraints();
       gridBagConstraints22.gridx = 0;
       gridBagConstraints22.ipadx = 0;
@@ -952,5 +1010,194 @@ public class TopfieldConfigurationDialog extends JDialog implements WindowClosin
       correctTimeCheck.setText(localizer.msg(CORRECT_TIME_CHECK, DEFAULT_CORRECT_TIME_CHECK));
     }
     return correctTimeCheck;
+  }
+
+  /**
+   * This method initializes aboutPanel
+   * 
+   * @return javax.swing.JPanel
+   */
+  private JPanel getAboutPanel() {
+    if (aboutPanel == null) {
+      GridBagConstraints gridBagConstraints35 = new GridBagConstraints();
+      gridBagConstraints35.gridx = 1;
+      gridBagConstraints35.anchor = GridBagConstraints.WEST;
+      gridBagConstraints35.insets = new Insets(3, 3, 0, 0);
+      gridBagConstraints35.gridy = 1;
+      authorDisplay = new JLabel();
+      authorDisplay.setText(DRIVER_AUTHOR);
+      GridBagConstraints gridBagConstraints34 = new GridBagConstraints();
+      gridBagConstraints34.gridx = 0;
+      gridBagConstraints34.anchor = GridBagConstraints.WEST;
+      gridBagConstraints34.insets = new Insets(3, 0, 0, 0);
+      gridBagConstraints34.gridy = 1;
+      authorLabel = new JLabel();
+      authorLabel.setText(localizer.msg(AUTHOR_LABEL, DEFAULT_AUTHOR_LABEL));
+      GridBagConstraints gridBagConstraints33 = new GridBagConstraints();
+      gridBagConstraints33.gridx = 0;
+      gridBagConstraints33.weightx = 1.0;
+      gridBagConstraints33.weighty = 1.0;
+      gridBagConstraints33.fill = GridBagConstraints.BOTH;
+      gridBagConstraints33.gridwidth = 2;
+      gridBagConstraints33.gridy = 3;
+      GridBagConstraints gridBagConstraints32 = new GridBagConstraints();
+      gridBagConstraints32.gridx = 1;
+      gridBagConstraints32.anchor = GridBagConstraints.WEST;
+      gridBagConstraints32.insets = new Insets(3, 3, 0, 0);
+      gridBagConstraints32.gridy = 0;
+      versionDisplay = new JLabel();
+      versionDisplay.setText(DRIVER_VERSION);
+      GridBagConstraints gridBagConstraints31 = new GridBagConstraints();
+      gridBagConstraints31.gridx = 0;
+      gridBagConstraints31.anchor = GridBagConstraints.WEST;
+      gridBagConstraints31.insets = new Insets(3, 0, 0, 0);
+      gridBagConstraints31.gridy = 0;
+      versionLabel = new JLabel();
+      versionLabel.setText(localizer.msg(ABOUT_VERSION_LABEL, DEFAULT_ABOUT_VERSION_LABEL));
+      aboutPanel = new JPanel();
+      aboutPanel.setLayout(new GridBagLayout());
+      aboutPanel.add(versionLabel, gridBagConstraints31);
+      aboutPanel.add(versionDisplay, gridBagConstraints32);
+      aboutPanel.add(getAboutSpacerPanel(), gridBagConstraints33);
+      aboutPanel.add(authorLabel, gridBagConstraints34);
+      aboutPanel.add(authorDisplay, gridBagConstraints35);
+    }
+    return aboutPanel;
+  }
+
+  /**
+   * This method initializes aboutSpacerPanel
+   * 
+   * @return javax.swing.JPanel
+   */
+  private JPanel getAboutSpacerPanel() {
+    if (aboutSpacerPanel == null) {
+      aboutSpacerPanel = new JPanel();
+      aboutSpacerPanel.setLayout(new GridBagLayout());
+    }
+    return aboutSpacerPanel;
+  }
+
+  /**
+   * This method initializes channelActionPanel
+   * 
+   * @return javax.swing.JPanel
+   */
+  private JPanel getChannelActionPanel() {
+    if (channelActionPanel == null) {
+      GridBagConstraints gridBagConstraints37 = new GridBagConstraints();
+      gridBagConstraints37.gridx = 0;
+      gridBagConstraints37.fill = GridBagConstraints.HORIZONTAL;
+      gridBagConstraints37.weightx = 1.0;
+      gridBagConstraints37.gridy = 0;
+      GridBagConstraints gridBagConstraints18 = new GridBagConstraints();
+      gridBagConstraints18.anchor = GridBagConstraints.EAST;
+      gridBagConstraints18.gridy = -1;
+      gridBagConstraints18.gridx = 1;
+      channelActionPanel = new JPanel();
+      channelActionPanel.setLayout(new GridBagLayout());
+      channelActionPanel.add(getAutomaticAssignButton(), gridBagConstraints18);
+      channelActionPanel.add(getChannelSortPanel(), gridBagConstraints37);
+    }
+    return channelActionPanel;
+  }
+
+  /**
+   * This method initializes channelSortPanel
+   * 
+   * @return javax.swing.JPanel
+   */
+  private JPanel getChannelSortPanel() {
+    if (channelSortPanel == null) {
+      GridBagConstraints gridBagConstraints41 = new GridBagConstraints();
+      gridBagConstraints41.gridx = 2;
+      gridBagConstraints41.fill = GridBagConstraints.HORIZONTAL;
+      gridBagConstraints41.weightx = 1.0;
+      gridBagConstraints41.gridy = 1;
+      GridBagConstraints gridBagConstraints40 = new GridBagConstraints();
+      gridBagConstraints40.gridx = 0;
+      gridBagConstraints40.anchor = GridBagConstraints.WEST;
+      gridBagConstraints40.gridwidth = 3;
+      gridBagConstraints40.fill = GridBagConstraints.NONE;
+      gridBagConstraints40.gridy = 0;
+      sortChannelLabel = new JLabel();
+      sortChannelLabel.setText(localizer.msg(SORT_LABEL, DEFAULT_SORT_LABEL));
+      GridBagConstraints gridBagConstraints39 = new GridBagConstraints();
+      gridBagConstraints39.anchor = GridBagConstraints.WEST;
+      gridBagConstraints39.insets = new Insets(0, 0, 0, 3);
+      gridBagConstraints39.gridy = 1;
+      GridBagConstraints gridBagConstraints38 = new GridBagConstraints();
+      gridBagConstraints38.gridx = 1;
+      gridBagConstraints38.anchor = GridBagConstraints.WEST;
+      gridBagConstraints38.insets = new Insets(0, 3, 0, 0);
+      gridBagConstraints38.gridy = 1;
+      channelSortPanel = new JPanel();
+      channelSortPanel.setLayout(new GridBagLayout());
+      channelSortPanel.add(getSortNameRadio(), gridBagConstraints39);
+      channelSortPanel.add(getSortNumberRadio(), gridBagConstraints38);
+      channelSortPanel.add(sortChannelLabel, gridBagConstraints40);
+      channelSortPanel.add(getSortSpacerPanel(), gridBagConstraints41);
+    }
+    return channelSortPanel;
+  }
+
+  /**
+   * This method initializes sortNameRadio
+   * 
+   * @return javax.swing.JRadioButton
+   */
+  private JRadioButton getSortNameRadio() {
+    if (sortNameRadio == null) {
+      sortNameRadio = new JRadioButton();
+      sortNameRadio.setText(localizer.msg(SORT_BY_NAME, DEFAULT_SORT_BY_NAME));
+      sortNameRadio.setHorizontalTextPosition(SwingConstants.LEADING);
+      sortNameRadio.addItemListener(new java.awt.event.ItemListener() {
+        public void itemStateChanged(java.awt.event.ItemEvent e) {
+          changeChannelSorting();
+        }
+      });
+    }
+    channelSortRadios.add(sortNameRadio);
+    return sortNameRadio;
+  }
+
+  /**
+   * Change the sort order for the device channels.
+   */
+  private void changeChannelSorting() {
+    configuration.setChannelSortKey(sortNameRadio.isSelected() ? TopfieldChannelSortKey.CHANNEL_NAME
+        : TopfieldChannelSortKey.CHANNEL_NUMBER);
+  }
+
+  /**
+   * This method initializes sortNumberRadio
+   * 
+   * @return javax.swing.JRadioButton
+   */
+  private JRadioButton getSortNumberRadio() {
+    if (sortNumberRadio == null) {
+      sortNumberRadio = new JRadioButton();
+      sortNumberRadio.setText(localizer.msg(SORT_BY_NUMBER, DEFAULT_SORT_BY_NUMBER));
+      sortNumberRadio.addItemListener(new java.awt.event.ItemListener() {
+        public void itemStateChanged(java.awt.event.ItemEvent e) {
+          changeChannelSorting();
+        }
+      });
+    }
+    channelSortRadios.add(sortNumberRadio);
+    return sortNumberRadio;
+  }
+
+  /**
+   * This method initializes sortSpacerPanel
+   * 
+   * @return javax.swing.JPanel
+   */
+  private JPanel getSortSpacerPanel() {
+    if (sortSpacerPanel == null) {
+      sortSpacerPanel = new JPanel();
+      sortSpacerPanel.setLayout(new GridBagLayout());
+    }
+    return sortSpacerPanel;
   }
 } // @jve:decl-index=0:visual-constraint="10,10"
