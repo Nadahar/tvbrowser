@@ -6,6 +6,8 @@ package captureplugin.drivers.topfield;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -27,6 +29,7 @@ import devplugin.ProgramReceiveTarget;
 public final class TopfieldConfiguration implements ConfigIf, Cloneable {
   private static final int CONFIGURATION_VERSION = 2;
   private static final String USER_NAME_PROPERTY = "user.name";
+  private static final String HTTP_PROTOCOL = "http://";
 
   private String configurationID;
   private long saveTimestamp;
@@ -569,5 +572,13 @@ public final class TopfieldConfiguration implements ConfigIf, Cloneable {
    */
   public void setTimerEntries(List<TopfieldTimerEntry> entries) {
     timerEntries = new ArrayList<TopfieldTimerEntry>(entries);
+  }
+
+  public URL getDeviceURL(String page) throws MalformedURLException {
+    String urlString = getDeviceAddress() + page;
+    if (!urlString.toLowerCase().startsWith(HTTP_PROTOCOL.toLowerCase())) {
+      urlString = HTTP_PROTOCOL + urlString;
+    }
+    return new URL(urlString);
   }
 }

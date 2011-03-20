@@ -11,6 +11,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
@@ -33,6 +35,8 @@ import javax.swing.SwingConstants;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
+
+import org.apache.commons.lang.StringUtils;
 
 import util.ui.ChannelTableCellRenderer;
 import util.ui.Localizer;
@@ -228,7 +232,7 @@ public class TopfieldConfigurationDialog extends JDialog implements WindowClosin
     String username = usernameEditor.getText().trim();
     char[] password = passwordEditor.getPassword();
 
-    if ((deviceAddress == null) || (username == null)) {
+    if (StringUtils.isEmpty(deviceAddress) || StringUtils.isEmpty(username)) {
       waitWindow.setVisible(false);
       this.setEnabled(true);
       JOptionPane.showMessageDialog(this, localizer.msg(MISSING_ACCESS_DATA, DEFAULT_MISSING_ACCESS_DATA),

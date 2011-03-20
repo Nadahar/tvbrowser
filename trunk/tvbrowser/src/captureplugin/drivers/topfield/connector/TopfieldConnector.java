@@ -108,7 +108,6 @@ public class TopfieldConnector {
   private static final String INSERT_TIMER_PAGE = "/InsertTimerSchedule.cgi";
   private static final String DELETE_TIMER_PAGE = "/DeleteTimerSchedule.cgi";
   private static final String TIMER_LIST_PAGE = "/TimerSettings.htm";
-  private static final String HTTP_PROTOCOL = "http://";
   private static final String INFO_CREATE_FORMAT = "satelliteInfo%s\\[(\\d+)\\]\\s*=\\s*new CreateServiceInfo\\((\\d+),\\s*(\\d+),\\s*\"([^\"]*)\"\\);";
   private static final String INFO_CHANNEL_FORMAT = "satelliteInfo%s\\[%d\\]\\.optionsValue\\[(\\d+)\\]\\s*=\\s*(\\d+);";
   private static final String INFO_SERVICE_FORMAT = "satelliteInfo%s\\[%d\\]\\.options\\[%d\\]\\s*=\\s*\"([^\"]*)\";";
@@ -149,7 +148,7 @@ public class TopfieldConnector {
    */
   private StringBuffer readDeviceData(String page) throws TopfieldConnectionException {
     try {
-      URL deviceURL = new URL(HTTP_PROTOCOL + configuration.getDeviceAddress() + page);
+      URL deviceURL = configuration.getDeviceURL(page);
       URLConnection connection = deviceURL.openConnection();
       connection.setConnectTimeout(configuration.getConnectionTimeout());
       InputStream contentStream = (InputStream) connection.getContent();
@@ -335,7 +334,7 @@ public class TopfieldConnector {
               recordStart.get(Calendar.MINUTE), recordTime.getLength() / 60, recordTime.getLength() % 60);
         }
 
-        URL deviceURL = new URL(HTTP_PROTOCOL + configuration.getDeviceAddress() + INSERT_TIMER_PAGE);
+        URL deviceURL = configuration.getDeviceURL(INSERT_TIMER_PAGE);
         URLConnection connection = deviceURL.openConnection();
         connection.setConnectTimeout(configuration.getConnectionTimeout());
         connection.setDoOutput(true);
@@ -587,7 +586,7 @@ public class TopfieldConnector {
   public boolean deleteRecording(Window parent, TopfieldTimerEntry entry) throws TopfieldConnectionException {
     String request = String.format(DELETE_FORMAT, entry.getEntryNumber());
     try {
-      URL deviceURL = new URL(HTTP_PROTOCOL + configuration.getDeviceAddress() + DELETE_TIMER_PAGE);
+      URL deviceURL = configuration.getDeviceURL(DELETE_TIMER_PAGE);
       URLConnection connection = deviceURL.openConnection();
       connection.setConnectTimeout(configuration.getConnectionTimeout());
       connection.setDoOutput(true);
