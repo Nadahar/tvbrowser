@@ -71,12 +71,6 @@
   <movie id="Vögelköpfe" year="1997">
     <title lang="de">Vögelköpfe</title>
   </movie>
-  <movie id="Iran Elections 2009" year="2009">
-    <title lang="de">Iran Elections 2009</title>
-    <alternativetitle lang="de">Iran: Elections 2009</alternativetitle>
-    <alternativetitle lang="de">The Green Wave</alternativetitle>
-    <alternativetitle lang="de">Irans grüner Sommer</alternativetitle>
-  </movie>
   <movie id="Talleres Clandestinos" year="2009">
     <title lang="de">Talleres Clandestinos</title>
   </movie>
@@ -92,7 +86,7 @@
 </movies>
 
 <awards>
-  <award category="profi" status="winner" movie="Iran Elections 2009" year="2010" />
+  <award category="profi" status="winner" movie="movie_db_4311" year="2010" />
   <award category="highschool" status="winner" movie="Talleres Clandestinos" year="2010"></award>
   <award category="amateur" status="winner" movie="Reise ohne Rückkehr" year="2010"></award>
   <award category="short" status="winner" movie="Wegschauen und vertuschen" year="2010"></award>

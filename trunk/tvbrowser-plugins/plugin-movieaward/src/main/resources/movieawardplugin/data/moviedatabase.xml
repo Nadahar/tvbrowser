@@ -20658,9 +20658,9 @@
 </movie>
  
 <movie id="movie_db_4295" year="2009"> 
-<title lang="de">The Secret in Their Eyes </title> 
+<title lang="de">The Secret in Their Eyes</title> 
 <title lang="es" original="yes">El secreto de sus ojos</title> 
-<title lang="en">The Secret in Their Eyes </title>
+<title lang="en">The Secret in Their Eyes</title>
 </movie>
  
 <movie id="movie_db_4296" year="2009"> 
@@ -20735,5 +20735,11 @@
  <title lang="de">Lourdes</title>
  <title lang="en" original="yes">Lourdes</title>
 </movie>
+  <movie id="movie_db_4311" year="2009">
+    <title lang="de">Iran Elections 2009</title>
+    <alternativetitle lang="de">Iran: Elections 2009</alternativetitle>
+    <alternativetitle lang="de">The Green Wave</alternativetitle>
+    <alternativetitle lang="de">Irans grüner Sommer</alternativetitle>
+  </movie>
 
 </movies>
