@@ -374,6 +374,35 @@
   <movie id="movie_113" year="2009" director="Aljoscha Pause">
     <title lang="de" original="yes">Tabubruch</title>
   </movie>
+  <movie id="movie_114" year="2010" director="Dominik Graf">
+    <title lang="de" original="yes">Im Angesicht des Verbrechens</title>
+  </movie>
+  <movie id="movie_115" year="2010" director="Christian Zübert">
+    <title lang="de" original="yes">Tatort: Nie wieder frei sein</title>
+    <alternativetitle lang="de">Tatort - Nie wieder frei sein</alternativetitle>
+  </movie>
+  <movie id="movie_116" year="2010" director="Hermine Huntgeburth">
+    <title lang="de" original="yes">Neue Vahr Süd</title>
+  </movie>
+  <movie id="movie_117" year="2010" director="Rainer Kaufmann">
+    <title lang="de" original="yes">In aller Stille</title>
+  </movie>
+  <movie id="movie_118" year="2010" director="Aelrun Goette">
+    <title lang="de" original="yes">Keine Angst</title>
+  </movie>
+  <movie id="movie_119" year="2010" director="Eric Friedler">
+    <title lang="de" original="yes">Aghet - Ein Völkermord</title>
+  </movie>
+  <movie id="movie_120" year="2010" director="Birgit Schulz">
+    <title lang="de" original="yes">Die Anwälte - Eine deutsche Geschichte</title>
+  </movie>
+  <movie id="movie_121" year="2010" director="Lutz Pehnert">
+    <title lang="de" original="yes">DDR Ahoi!</title>
+  </movie>
+  <movie id="movie_122" year="2010">
+    <title lang="de" original="yes">20 x Brandenburg</title>
+  </movie>
+  
 </movies>
 
 <awards>
@@ -436,6 +465,11 @@
   <award category="fiktion_film" status="winner" movie="movie_106" year="2010" />
   <award category="fiktion_film" status="winner" movie="movie_107" year="2010" />
   <award category="fiktion_film" status="winner" movie="movie_108" year="2010" />
+  <award category="fiktion_film" status="winner" movie="movie_114" year="2011" />
+  <award category="fiktion_film" status="winner" movie="movie_115" year="2011" />
+  <award category="fiktion_film" status="winner" movie="movie_116" year="2011" />
+  <award category="fiktion_film" status="winner" movie="movie_117" year="2011" />
+  <award category="fiktion_film" status="winner" movie="movie_118" year="2011" />
   <award category="information_gold" status="winner" movie="movie_44" year="2001" />
   <award category="information_gold" status="winner" movie="movie_45" year="2001" />
   <award category="information_gold" status="winner" movie="movie_46" year="2002" />
@@ -490,6 +524,12 @@
   <award category="information" status="winner" movie="movie_111" year="2010" />
   <award category="information" status="winner" movie="movie_112" year="2010" />
   <award category="information" status="winner" movie="movie_113" year="2010" />
+  <award category="information" status="winner" movie="movie_119" year="2011" />
+  <award category="information" status="winner" movie="movie_120" year="2011" />
+  <award category="information" status="winner" movie="movie_121" year="2011" />
+  <award category="information" status="winner" movie="movie_122" year="2011" />
+  <award category="information" status="winner" movie="movie_db_4311" year="2011" />
+  
 
 </awards>
 
