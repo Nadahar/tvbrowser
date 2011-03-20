@@ -99,7 +99,7 @@ public final class WirSchauenPlugin extends Plugin
    * the plugin is restricted to specific channels, ie vg media. this might be
    * removed in future versions.
    */
-  private static ArrayList<String> mAllowedChannels = new ArrayList<String>(20);
+  private static ArrayList<String> mAllowedChannels = new ArrayList<String>(21);
   static
   {
     mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:rtl");
@@ -120,6 +120,7 @@ public final class WirSchauenPlugin extends Plugin
     mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:RTLPASSION");
     mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:RTLLIVING");
     mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:RTLCRIME");
+    mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:sixx");
   }
 
   /**
