@@ -100,17 +100,17 @@ public class Movie {
     if (programTitle.equalsIgnoreCase(localizedTitle)) {
       return true;
     }
-    final String originalTitle = 
+    final String originalTitle =
       program.getTextField(ProgramFieldType.ORIGINAL_TITLE_TYPE);
     String movieOriginalTitle = mOriginalTitle;
     if (movieOriginalTitle == null && mTitles.size() == 1) {
       //only 1 title given, assume it's also the original
-      movieOriginalTitle = ((List<String>)mTitles.values()).get(0);
+      movieOriginalTitle = mTitles.entrySet().iterator().next().getValue();
     }
-      
-    if ((movieOriginalTitle != null 
-        && (programTitle.equalsIgnoreCase(movieOriginalTitle) 
-            || (originalTitle != null 
+
+    if ((movieOriginalTitle != null
+        && (programTitle.equalsIgnoreCase(movieOriginalTitle)
+            || (originalTitle != null
                 && originalTitle.equalsIgnoreCase(movieOriginalTitle))))) {
       return true;
     }
