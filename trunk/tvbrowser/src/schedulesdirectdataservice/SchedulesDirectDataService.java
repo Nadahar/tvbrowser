@@ -168,7 +168,7 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
               if (code.contains("black") || code.contains("bw")) {
                 info |= Program.INFO_VISION_BLACK_AND_WHITE;
               }
-              else {
+              else if (!code.equalsIgnoreCase("Color and B & W")) {
                 mLog.warning("Unknown color code: " + xtvdProgram.getColorCode());
               }
             }
