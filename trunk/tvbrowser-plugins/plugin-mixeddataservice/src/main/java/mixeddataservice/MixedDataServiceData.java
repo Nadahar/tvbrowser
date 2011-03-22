@@ -1,5 +1,8 @@
 package mixeddataservice;
 
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -7,17 +10,13 @@ import java.util.Iterator;
 import java.util.Properties;
 import java.util.TimeZone;
 
-import javax.swing.ImageIcon;
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 
 import devplugin.Channel;
 
-import java.net.URL;
-import java.net.MalformedURLException;
-import java.io.File;
-
 /**
- * Handles channel and program data 
+ * Handles channel and program data
  * @author jb
  */
 public class MixedDataServiceData {
@@ -61,19 +60,17 @@ public class MixedDataServiceData {
    * Set Copyright notice of a given channel ID
    * @param ID
    * @param notice
-   * @return the channel name as String
    */
   public void setChannelCRN(String ID, String notice) {
     Channel c = (Channel) channels.get(ID);
     c.setChannelCopyrightNotice(notice);
-  } 
+  }
 
 
 
   /**
    * Add channel with given ID and name
    * @param channelId
-   * @param channelName
    */
   public void addChannel(String channelId, String [] channelDescriptor) {
 
@@ -85,20 +82,20 @@ public class MixedDataServiceData {
     if ("primary".equals(channelDescriptor[4]) && alienChannel1!=null){
       categoryIndex = alienChannel1.getCategories();
     } else{
-      if ("additional".equals(channelDescriptor[4]) && alienChannel2!=null){     
+      if ("additional".equals(channelDescriptor[4]) && alienChannel2!=null){
         categoryIndex = alienChannel2.getCategories();
       } else{
         categoryIndex = 0;
       }
     }
 
- 
+
 
     String webPage;
     if ("primary".equals(channelDescriptor[5]) && alienChannel1!=null){
       webPage = alienChannel1.getWebpage();
     } else{
-      if ("additional".equals(channelDescriptor[5]) && alienChannel2!=null){     
+      if ("additional".equals(channelDescriptor[5]) && alienChannel2!=null){
         webPage = alienChannel2.getWebpage();
       } else{
         webPage = null;
@@ -133,7 +130,7 @@ public class MixedDataServiceData {
     if (prevChannel == null || !(channelDescriptor[0].trim().equals(prevChannel.getDefaultName())&& copyright.equals(prevChannel.getCopyrightNotice())&& webPage.equals(prevChannel.getDefaultWebPage())&& categoryIndex==prevChannel.getCategories())){
       channels.put(channelId, new Channel(mService, channelDescriptor[0].trim(), channelId, TimeZone.getDefault(), channelDescriptor[6], copyright, webPage, mService.mMixedDataChannelGroup, getChannelIcon (channelId), categoryIndex));
     } else{
-      prevChannel.setDefaultIcon(getChannelIcon (channelId)); 
+      prevChannel.setDefaultIcon(getChannelIcon (channelId));
     }
 
   }

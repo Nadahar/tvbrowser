@@ -324,7 +324,7 @@ public final class WirSchauenPlugin extends Plugin
 
   /**
    * {@inheritDoc}
-   * @see devplugin.Plugin#handleTvDataAdded(tvdataservice.ChannelDayProgram)
+   * @see devplugin.Plugin#handleTvDataAdded(ChannelDayProgram)
    */
   @Override
   public void handleTvDataAdded(final ChannelDayProgram newProg)

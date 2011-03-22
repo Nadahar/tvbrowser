@@ -31,19 +31,19 @@ import org.apache.commons.lang.StringUtils;
 
 
 /**
- * An for the additional Param-List
+ * A parameter for the additional parameter list
  */
 public class ParamEntry {
 
     /** The name */
     private String mName;
-    /** The Param */
+    /** parameter string for the device itself */
     private String mParam;
-    /** Is the Param enabled ? */
+    /** Is the parameter enabled ? */
     private boolean mEnabled;
 
     /**
-     * Createa a empty Param
+     * Create an empty parameter
      */
     public ParamEntry() {
         mName = "";
@@ -52,10 +52,10 @@ public class ParamEntry {
     }
 
     /**
-     * Creates a Param
+     * Creates a Parameter
      * @param name Name
-     * @param param Param
-     * @param enabled True if Param is enabled
+     * @param param Parameter
+     * @param enabled True if Parameter is enabled
      */
     public ParamEntry(String name, String param, boolean enabled) {
         mName = name;
@@ -91,7 +91,7 @@ public class ParamEntry {
 
     /**
      * Get Name
-     * @return Name of this paramentry
+     * @return Name of this parameter
      */
     public String getName() {
         return mName;
@@ -99,14 +99,14 @@ public class ParamEntry {
 
     /**
      * Set Name
-     * @param name new name of this paramentry
+     * @param name new name of this parameter
      */
     public void setName(String name) {
         this.mName = name;
     }
 
     /**
-     * Get Param
+     * Get device parameter
      * @return Parameter
      */
     public String getParam() {
@@ -114,7 +114,7 @@ public class ParamEntry {
     }
 
     /**
-     * Set Param
+     * Set device parameter
      * @param param new parameter
      */
     public void setParam(String param) {

@@ -58,26 +58,24 @@ public class SharedChannelDataServiceData {
    * Set Copyright notice of a given channel ID
    * @param ID
    * @param notice
-   * @return the channel name as String
    */
   public void setChannelCRN(String ID, String notice) {
     Channel c = (Channel) channels.get(ID);
     c.setChannelCopyrightNotice(notice);
-  } 
+  }
 
 
 
   /**
    * Add channel with given ID and name
    * @param channelId
-   * @param channelName
    */
   public void addChannel(String channelId, String [] channelDescriptor) {
 
     Channel [] subscribedChannels = SharedChannelDataService.getPluginManager().getSubscribedChannels();
 
     int categoryIndex = Integer.parseInt((String)channelDescriptor[2]);;
-    
+
     Channel alienChannel;
     String webPage = null;
     int webpageIndex=Integer.parseInt((String)channelDescriptor[3]);
@@ -111,7 +109,7 @@ public class SharedChannelDataServiceData {
     if (prevChannel == null || !(channelDescriptor[0].trim().equals(prevChannel.getDefaultName())&& copyright.equals(prevChannel.getCopyrightNotice())&& webPage.equals(prevChannel.getDefaultWebPage())&& categoryIndex==prevChannel.getCategories())){
       channels.put(channelId, new Channel(mService, channelDescriptor[0].trim(), channelId, TimeZone.getDefault(), channelDescriptor[4], copyright, webPage, mService.mSharedChannelDataChannelGroup, getChannelIcon (channelId), categoryIndex));
     } else{
-      prevChannel.setDefaultIcon(getChannelIcon (channelId)); 
+      prevChannel.setDefaultIcon(getChannelIcon (channelId));
     }
 
   }

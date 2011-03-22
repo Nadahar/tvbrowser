@@ -171,6 +171,7 @@ public final class SimpleConfig implements ConfigIf, Cloneable {
     }
 
     /**
+     * @param con
      * @return get all available external Channels
      */
     public ExternalChannelIf[] getAllExternalChannels(SimpleConnectionIf con) {
