@@ -28,31 +28,32 @@ import devplugin.Program;
 
 /**
  * This interface must be implemented for all export-methods
- * 
+ *
  * @author bodum
  */
 public interface ExporterIf {
 
   /**
    * Export programs
-   * 
+   *
    * @param programs this programs
    * @param settings the settings
+   * @param formatting
    * @return true, if successfully
    */
   public boolean exportPrograms(Program[] programs, CalendarExportSettings settings, AbstractPluginProgramFormating formatting);
-  
+
   /**
    * @return true, if this exporter has a settings-dialog
    */
   public boolean hasSettingsDialog();
-  
+
   /**
    * Show settings-dialog
    * @param settings Show Dialog with this settings
    */
   public void showSettingsDialog(CalendarExportSettings settings);
-  
+
   /**
    * @return Name of Exporter
    */

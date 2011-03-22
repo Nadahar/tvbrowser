@@ -84,7 +84,7 @@ public final class DvbViewerSetup {
    * Where X is one of the keys in the <code>items</code> map
    *
    * @param path the path where the timers.xml is located
-   * @return Map containing the name and value as String of the above entries from setup.xml
+   * @param items Map containing the name and value as String of the above entries from setup.xml
    */
   public static void getEntries(String path, Map<String, String> items) {
     BufferedReader buffer = null;

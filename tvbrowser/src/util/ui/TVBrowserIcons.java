@@ -6,7 +6,7 @@ import tvbrowser.core.icontheme.IconLoader;
 
 /**
  * common icons in TV-Browser
- * 
+ *
  * @author Bananeweizen
  *
  */
@@ -19,20 +19,20 @@ public class TVBrowserIcons {
    * size of small icons
    */
   public static final int SIZE_SMALL = 16;
-  
+
   /**
    * icon for plugins
    * @param size
-   * @return
+   * @return icon for plugins
    */
   public static final ImageIcon plugin(int size) {
     return icon("actions", "view-plugins", size);
   }
-  
+
   /**
    * icon for web browsing related actions
    * @param size
-   * @return
+   * @return icon for web browsing related actions
    */
   public static final ImageIcon webBrowser(int size) {
     return icon("apps", "internet-web-browser", size);
@@ -45,7 +45,7 @@ public class TVBrowserIcons {
   /**
    * icon for preferences
    * @param size
-   * @return
+   * @return icon for preferences
    */
   public static ImageIcon preferences(int size) {
     return icon("categories", "preferences-system", size);
@@ -54,7 +54,7 @@ public class TVBrowserIcons {
   /**
    * refresh icon
    * @param size
-   * @return
+   * @return refresh icon
    */
   public static ImageIcon refresh(int size) {
     return icon("actions", "view-refresh", size);
@@ -63,7 +63,7 @@ public class TVBrowserIcons {
   /**
    * go up icon
    * @param size
-   * @return
+   * @return go up icon
    */
   public static ImageIcon up(int size) {
     return icon("actions", "go-up", size);
@@ -72,7 +72,7 @@ public class TVBrowserIcons {
   /**
    * go down icon
    * @param size
-   * @return
+   * @return go down icon
    */
   public static ImageIcon down(int size) {
     return icon("actions", "go-down", size);
@@ -81,7 +81,7 @@ public class TVBrowserIcons {
   /**
    * go to top icon
    * @param size
-   * @return
+   * @return go to top icon
    */
   public static ImageIcon top(int size) {
     return icon("actions", "go-top", size);
@@ -90,7 +90,7 @@ public class TVBrowserIcons {
   /**
    * go to bottom icon
    * @param size
-   * @return
+   * @return go to bottom icon
    */
   public static ImageIcon bottom(int size) {
     return icon("actions", "go-bottom", size);
@@ -99,7 +99,7 @@ public class TVBrowserIcons {
   /**
    * delete icon
    * @param size
-   * @return
+   * @return delete icon
    */
   public static ImageIcon delete(int size) {
     return icon("actions", "edit-delete", size);
@@ -108,7 +108,7 @@ public class TVBrowserIcons {
   /**
    * edit icon
    * @param size
-   * @return
+   * @return edit icon
    */
   public static ImageIcon edit(int size) {
     return icon("actions","document-edit", size);
@@ -117,7 +117,7 @@ public class TVBrowserIcons {
   /**
    * new icon
    * @param size
-   * @return
+   * @return new icon
    */
   public static ImageIcon newIcon(int size) {
     return icon("actions","document-new", size);
@@ -126,7 +126,7 @@ public class TVBrowserIcons {
   /**
    * filter icon
    * @param size
-   * @return
+   * @return filter icon
    */
   public static ImageIcon filter(int size) {
     return icon("actions", "view-filter", size);
@@ -135,7 +135,7 @@ public class TVBrowserIcons {
   /**
    * left icon
    * @param size
-   * @return
+   * @return left icon
    */
   public static ImageIcon left(int size) {
     return icon("action", "go-previous", size);
@@ -144,7 +144,7 @@ public class TVBrowserIcons {
   /**
    * right icon
    * @param size
-   * @return
+   * @return right icon
    */
   public static ImageIcon right(int size) {
     return icon("action", "go-next", size);
@@ -153,7 +153,7 @@ public class TVBrowserIcons {
   /**
    * search icon
    * @param size
-   * @return
+   * @return search icon
    */
   public static ImageIcon search(int size) {
     return icon("actions", "system-search", size);
@@ -162,7 +162,7 @@ public class TVBrowserIcons {
   /**
    * copy icon
    * @param size
-   * @return
+   * @return copy icon
    */
   public static ImageIcon copy(int size) {
     return icon("actions", "edit-copy", size);
@@ -171,7 +171,7 @@ public class TVBrowserIcons {
   /**
    * zoom in icon
    * @param size
-   * @return
+   * @return zoom in icon
    */
   public static ImageIcon zoomIn(int size) {
     return icon("action", "zoom-in", size);
@@ -180,7 +180,7 @@ public class TVBrowserIcons {
   /**
    * zoom out icon
    * @param size
-   * @return
+   * @return zoom out icon
    */
   public static ImageIcon zoomOut(int size) {
     return icon("action", "zoom-out", size);
@@ -189,7 +189,7 @@ public class TVBrowserIcons {
   /**
    * next week icon
    * @param size
-   * @return
+   * @return next week icon
    */
   public static ImageIcon nextWeek(int size) {
     return icon("actions", "go-to-next-week", size);
@@ -198,7 +198,7 @@ public class TVBrowserIcons {
   /**
    * previous week icon
    * @param size
-   * @return
+   * @return previous week icon
    */
   public static ImageIcon previousWeek(int size) {
     return icon("actions", "go-to-previous-week", size);
@@ -207,7 +207,7 @@ public class TVBrowserIcons {
   /**
    * quit icon
    * @param size
-   * @return
+   * @return quit icon
    */
   public static ImageIcon quit(int size) {
     return icon("actions", "system-log-out", size);
@@ -216,7 +216,7 @@ public class TVBrowserIcons {
   /**
    * full screen icon
    * @param size
-   * @return
+   * @return full screen icon
    */
   public static ImageIcon fullScreen(int size) {
     return icon("actions", "view-fullscreen", size);
@@ -225,7 +225,7 @@ public class TVBrowserIcons {
   /**
    * warning icon
    * @param size
-   * @return
+   * @return warning icon
    */
   public static ImageIcon warning(int size) {
     return icon("status", "dialog-warning", size);
@@ -234,7 +234,7 @@ public class TVBrowserIcons {
   /**
    * update data icon
    * @param size
-   * @return
+   * @return update data icon
    */
   public static ImageIcon update(final int size) {
     return icon("apps", "system-software-update", size);
@@ -243,7 +243,7 @@ public class TVBrowserIcons {
   /**
    * show plugin tree icon
    * @param size
-   * @return
+   * @return show plugin tree icon
    */
   public static ImageIcon viewTree(final int size) {
     return icon("actions", "view-tree", size);
@@ -252,7 +252,7 @@ public class TVBrowserIcons {
   /**
    * scroll to now icon
    * @param size
-   * @return
+   * @return scroll to now icon
    */
   public static ImageIcon scrollToNow(final int size) {
     return icon("actions", "scroll-to-now", size);
@@ -261,7 +261,7 @@ public class TVBrowserIcons {
   /**
    * go to date icon
    * @param size
-   * @return
+   * @return go to date icon
    */
   public static ImageIcon goToDate(final int size) {
     return icon("actions", "go-to-date-list", size);
@@ -270,7 +270,7 @@ public class TVBrowserIcons {
   /**
    * scroll to channel icon
    * @param size
-   * @return
+   * @return scroll to channel icon
    */
   public static ImageIcon scrollToChannel(final int size) {
     return icon("actions", "scroll-to-channel-list", size);
@@ -279,7 +279,7 @@ public class TVBrowserIcons {
   /**
    * scroll to time icon
    * @param size
-   * @return
+   * @return scroll to time icon
    */
   public static ImageIcon scrollToTime(int size) {
     return icon("actions", "scroll-to-time-list", size);

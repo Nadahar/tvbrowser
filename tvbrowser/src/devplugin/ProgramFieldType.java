@@ -47,15 +47,30 @@ public class ProgramFieldType {
   private static final ArrayList<ProgramFieldType> mKnownTypeList = new ArrayList<ProgramFieldType>();
   private static ProgramFieldType[] mKnownTypeArray;
 
+  /**
+   * unknown field format, should not occur
+   */
   public static final int UNKNOWN_FORMAT = 1;
   /**
-   * @deprecated since 3.0, use {@link UNKNOWN_FORMAT} instead
+   * @deprecated since 3.0, use {@link #UNKNOWN_FORMAT} instead
    */
   @Deprecated
   public static final int UNKOWN_FORMAT = UNKNOWN_FORMAT;
+  /**
+   * program field format for binary fields (like pictures)
+   */
   public static final int BINARY_FORMAT = 2;
+  /**
+   * program field format for strings
+   */
   public static final int TEXT_FORMAT = 3;
+  /**
+   * program field format for numbers
+   */
   public static final int INT_FORMAT = 4;
+  /**
+   * program field format for times (in numbers after midnight)
+   */
   public static final int TIME_FORMAT = 5;
 
   /**
@@ -247,7 +262,7 @@ public class ProgramFieldType {
    * Producer, <b>this is not the producing company</b>
    *
    * @since 2.6/2.2.4
-   * @see devplugin.ProgramFieldType.PRODUCTION_COMPANY_TYPE
+   * @see #PRODUCTION_COMPANY_TYPE
    */
   public static final ProgramFieldType PRODUCER_TYPE
        = new ProgramFieldType(32, TEXT_FORMAT, true, "producer",
@@ -298,7 +313,7 @@ public class ProgramFieldType {
    * Production Company, <b>this is not the producer name</b>
    *
    * @since 2.7
-   * @see PRODUCER_TYPE
+   * @see #PRODUCER_TYPE
    */
   public static final ProgramFieldType PRODUCTION_COMPANY_TYPE
        = new ProgramFieldType(37, TEXT_FORMAT, true, "production company",
@@ -309,7 +324,7 @@ public class ProgramFieldType {
    * contain the age in years.
    *
    * @since 3.0
-   * @see AGE_LIMIT_TYPE
+   * @see #AGE_LIMIT_TYPE
    */
   public static final ProgramFieldType AGE_RATING_TYPE
   = new ProgramFieldType(38, TEXT_FORMAT, true, "age rating",
@@ -320,7 +335,7 @@ public class ProgramFieldType {
    * First production year has then to be added to PRODUCTION_YEAR_TYPE.
    *
    * @since 3.0
-   * @see PRODUCTION_YEAR_TYPE
+   * @see #PRODUCTION_YEAR_TYPE
    */
   public static final ProgramFieldType LAST_PRODUCTION_YEAR_TYPE
   = new ProgramFieldType(39, INT_FORMAT, true, "last production year",

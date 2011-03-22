@@ -215,6 +215,11 @@ public abstract class AbstractTvDataService {
 
   /**
    * Updates the TV listings provided by this data service.
+   * @param updateManager
+   * @param channelArr
+   * @param startDate
+   * @param dateCount
+   * @param monitor
    *
    * @throws util.exc.TvBrowserException
    */
@@ -225,12 +230,14 @@ public abstract class AbstractTvDataService {
   /**
    * Called by the host-application during start-up. Implement this method to
    * load your data service settings from the file system.
+   * @param settings
    */
   public abstract void loadSettings(Properties settings);
 
   /**
    * Called by the host-application during shut-down. Implements this method to
    * store your data service settings to the file system.
+   * @return properties that will afterwards be stored by the host application
    */
   public abstract Properties storeSettings();
 

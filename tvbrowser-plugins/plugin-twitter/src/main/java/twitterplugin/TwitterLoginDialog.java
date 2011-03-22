@@ -67,12 +67,6 @@ public final class TwitterLoginDialog extends JDialog implements WindowClosingIf
    *
    * @param owner
    *          Parent-Frame
-   * @param username
-   *          Username
-   * @param mLabelPassword
-   *          Password
-   * @param storePassword
-   *          store password ?
    */
   public TwitterLoginDialog(final Window owner, final TwitterSettings settings) {
     super(owner);

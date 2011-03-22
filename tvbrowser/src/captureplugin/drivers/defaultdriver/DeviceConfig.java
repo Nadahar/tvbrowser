@@ -80,7 +80,7 @@ public final class DeviceConfig implements Cloneable {
     /** Time to stop later */
     private int mPostTime = 0;
 
-    /** Username */
+    /** user name */
     private String mUserName = "";
 
     /** Password */
@@ -124,7 +124,7 @@ public final class DeviceConfig implements Cloneable {
     private ProgramReceiveTarget[] mReceiveTargets = new ProgramReceiveTarget[0];
 
     /**
-     * Create a empty Config
+     * Create an empty Config
      */
     public DeviceConfig() {
     }
@@ -169,7 +169,7 @@ public final class DeviceConfig implements Cloneable {
     }
 
     /**
-     * @return
+     * @return list of additionally used parameters for this device
      */
     public Collection<ParamEntry> getParamList() {
         return mParamEntries;
@@ -200,7 +200,7 @@ public final class DeviceConfig implements Cloneable {
     }
 
     /**
-     * @return
+     * @return whether only programs from the future are allowed for recording
      */
     public boolean getOnlyFuturePrograms() {
         return mOnlyFuture;
@@ -214,14 +214,14 @@ public final class DeviceConfig implements Cloneable {
     }
 
     /**
-     * @return
+     * @return whether a dialog shall only be shown if an action caused an error.
      */
     public boolean getDialogOnlyOnError() {
         return mResultDialogOnlyOnError;
     }
 
     /**
-     * @return
+     * @return number of minutes to start recording before the program starts
      */
     public int getPreTime() {
         return mPreTime;
@@ -236,7 +236,7 @@ public final class DeviceConfig implements Cloneable {
     }
 
     /**
-     * @return
+     * @return number of minutes to record after the program finished
      */
     public int getPostTime() {
         return mPostTime;
@@ -252,7 +252,7 @@ public final class DeviceConfig implements Cloneable {
 
 
     /**
-     * @return
+     * @return program path if this device uses the local application mode
      */
     public String getProgramPath() {
         return mProgramPath;
@@ -266,7 +266,7 @@ public final class DeviceConfig implements Cloneable {
     }
 
     /**
-     * @return
+     * @return if device is in web URL mode
      */
     public boolean getUseWebUrl() {
         return mUseWeb;
@@ -281,7 +281,7 @@ public final class DeviceConfig implements Cloneable {
 
 
     /**
-     * @return
+     * @return web URL, if device is to be used with URL
      */
     public String getWebUrl() {
         return mWebURL;
@@ -297,21 +297,21 @@ public final class DeviceConfig implements Cloneable {
 
 
     /**
-     * @param markedPrograms The markedPrograms to set.
+     * @param markedPrograms The programs to mark for this device
      */
     public void setMarkedPrograms(ProgramTimeList markedPrograms) {
         this.mMarkedPrograms = markedPrograms;
     }
 
     /**
-     * @return
+     * @return list of programs marked by this device
      */
     public ProgramTimeList getMarkedPrograms() {
         return mMarkedPrograms;
     }
 
     /**
-     * @return
+     * @return password
      */
     public String getPassword() {
         return mPassword;
@@ -326,7 +326,7 @@ public final class DeviceConfig implements Cloneable {
     }
 
     /**
-     * @return
+     * @return user name
      */
     public String getUsername() {
         return mUserName;
@@ -341,7 +341,7 @@ public final class DeviceConfig implements Cloneable {
     }
 
     /**
-     * @return
+     * @return parameter format for adding a recording
      */
     public String getParameterFormatAdd() {
         return mParameterFormatAdd;
@@ -355,7 +355,7 @@ public final class DeviceConfig implements Cloneable {
     }
 
     /**
-     * @return
+     * @return parameter format for removing a recording
      */
     public String getParameterFormatRem() {
         return mParameterFormatRem;
@@ -376,7 +376,7 @@ public final class DeviceConfig implements Cloneable {
    }
 
     /**
-     * @return
+     * @return channels
      */
     public TreeMap<Channel, String> getChannels() {
         return mChannels;
@@ -396,7 +396,7 @@ public final class DeviceConfig implements Cloneable {
 
 
     /**
-     * return
+     * @return name of the device
      */
     public String getName() {
         return mName;
@@ -420,8 +420,8 @@ public final class DeviceConfig implements Cloneable {
 
 
     /**
-     * Gets the maximum simultanious recordings for this device
-     * @return max simultanious recordings
+     * Gets the maximum simultaneous recordings for this device
+     * @return max simultaneous recordings
      */
     public int getMaxSimultanious() {
         return mMaxSimultanious;
@@ -761,7 +761,7 @@ public final class DeviceConfig implements Cloneable {
      * @param receiveTargets The receive targets for this device.
      */
     public void setProgramReceiveTargets(ProgramReceiveTarget[] receiveTargets) {
-      mReceiveTargets = receiveTargets;
+      mReceiveTargets = receiveTargets.clone();
     }
 
     /**

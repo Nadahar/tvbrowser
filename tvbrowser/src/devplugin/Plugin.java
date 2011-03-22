@@ -600,7 +600,7 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
    * @see #handleTvBrowserStartFinished()
    * @see #handleTvDataAdded(ChannelDayProgram)
    * @see #handleTvDataDeleted(ChannelDayProgram)
-   * @see devplugin.Plugin#handleTvDataChanged()
+   * @see #handleTvDataTouched(ChannelDayProgram, ChannelDayProgram)
    */
   public void handleTvDataUpdateFinished() {
     // do nothing
@@ -619,7 +619,7 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
    * @param newProg
    *          The new ChannelDayProgram.
    * @see #handleTvDataDeleted(ChannelDayProgram)
-   * @see #handleTvDataChanged()
+   * @see #handleTvDataTouched(ChannelDayProgram, ChannelDayProgram)
    */
   public void handleTvDataAdded(MutableChannelDayProgram newProg) {
 
@@ -639,7 +639,7 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
    * @param newProg
    *          The new ChannelDayProgram.
    * @see #handleTvDataDeleted(ChannelDayProgram)
-   * @see #handleTvDataChanged()
+   * @see #handleTvDataTouched(ChannelDayProgram, ChannelDayProgram)
    */
   public void handleTvDataAdded(ChannelDayProgram newProg) {
     // do nothing
@@ -655,7 +655,7 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
    *
    * @param oldProg The old ChannelDayProgram which was deleted.
    * @see #handleTvDataAdded(ChannelDayProgram)
-   * @see #handleTvDataChanged()
+   * @see #handleTvDataTouched(ChannelDayProgram, ChannelDayProgram)
    */
   public void handleTvDataDeleted(ChannelDayProgram oldProg) {
   }

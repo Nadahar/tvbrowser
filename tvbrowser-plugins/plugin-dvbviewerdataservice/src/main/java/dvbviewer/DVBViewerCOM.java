@@ -489,7 +489,7 @@ public class DVBViewerCOM {
    * Tries to find entries in the DVBViewer setup whose name is a key in the <code>items</code> Map
    * and stores the corresponding value into the Map
    *
-   * @return Map containing the name and value as String of the above entries from setup.xml
+   * @param items Map containing the name and value as String of the above entries from setup.xml
    */
   public void getSetupEntries(Map<String, String> items) {
 
