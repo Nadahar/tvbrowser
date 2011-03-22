@@ -541,39 +541,81 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
                   if(p.y <= 10) {
                     if(mToolBarPanel != null && mToolBar.getToolbarLocation().compareTo(BorderLayout.NORTH) == 0) {
                       if(!mToolBarPanel.isVisible()) {
-                        mToolBarPanel.setVisible(Settings.propIsToolbarVisible.getBoolean());
+                        UIThreadRunner.invokeLater(new Runnable() {
+
+                          @Override
+                          public void run() {
+                            mToolBarPanel.setVisible(Settings.propIsToolbarVisible.getBoolean());
+                          }
+                        });
                       }
                     }
 
                     if (p.y <= 0) {
-                      mMenuBar.setVisible(true);
+                      UIThreadRunner.invokeLater(new Runnable() {
+
+                        @Override
+                        public void run() {
+                          mMenuBar.setVisible(true);
+                        }
+                      });
                     }
                   }
                   else if(p.y > (mMenuBar != null && mMenuBar.isVisible() ? mMenuBar.getHeight() : 0) + (Settings.propIsToolbarVisible.getBoolean() ? mToolBarPanel.getHeight() : 0)) {
                     if(mMenuBar.isVisible()) {
-                      mMenuBar.setVisible(!isFullScreenMode());
+                      UIThreadRunner.invokeLater(new Runnable() {
+
+                        @Override
+                        public void run() {
+                          mMenuBar.setVisible(!isFullScreenMode());
+                        }
+                      });
                     }
 
                     if(mToolBarPanel != null && mToolBarPanel.isVisible() && mToolBar.getToolbarLocation().compareTo(BorderLayout.NORTH) == 0) {
-                      mToolBarPanel.setVisible(!isFullScreenMode());
+                      UIThreadRunner.invokeLater(new Runnable() {
+
+                        @Override
+                        public void run() {
+                          mToolBarPanel.setVisible(!isFullScreenMode());
+                        }
+                      });
                     }
                   }
 
                   // mouse pointer is at the bottom
                   if(p.y >= screen.height - 1 ) {
                     if(mStatusBar != null && !mStatusBar.isVisible()) {
-                      mStatusBar.setVisible(Settings.propIsStatusbarVisible.getBoolean());
+                      UIThreadRunner.invokeLater(new Runnable() {
+
+                        @Override
+                        public void run() {
+                          mStatusBar.setVisible(Settings.propIsStatusbarVisible.getBoolean());
+                        }
+                      });
                     }
                   }
                   else if(mStatusBar != null && mStatusBar.isVisible() && p.y < screen.height - mStatusBar.getHeight()) {
-                    mStatusBar.setVisible(!isFullScreenMode());
+                    UIThreadRunner.invokeLater(new Runnable() {
+
+                      @Override
+                      public void run() {
+                        mStatusBar.setVisible(!isFullScreenMode());
+                      }
+                    });
                   }
 
                   // mouse pointer is on the left side
                   if(p.x <= 5) {
                     if(p.x == 0 && mToolBarPanel != null && mToolBar.getToolbarLocation().compareTo(BorderLayout.WEST) == 0) {
                       if(!mToolBarPanel.isVisible()) {
-                        mToolBarPanel.setVisible(Settings.propIsToolbarVisible.getBoolean());
+                        UIThreadRunner.invokeLater(new Runnable() {
+
+                          @Override
+                          public void run() {
+                            mToolBarPanel.setVisible(Settings.propIsToolbarVisible.getBoolean());
+                          }
+                        });
                       }
                     }
 
@@ -594,7 +636,13 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
                     int toolBarWidth = (mToolBarPanel != null && mToolBarPanel.isVisible() && mToolBar.getToolbarLocation().compareTo(BorderLayout.WEST) == 0) ? mToolBarPanel.getWidth() : 0;
 
                     if(p.x > toolBarWidth && toolBarWidth != 0) {
-                      mToolBarPanel.setVisible(!isFullScreenMode());
+                      UIThreadRunner.invokeLater(new Runnable() {
+
+                        @Override
+                        public void run() {
+                          mToolBarPanel.setVisible(!isFullScreenMode());
+                        }
+                      });
                     }
 
                     if(Settings.propPluginViewIsLeft.getBoolean()) {
