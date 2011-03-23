@@ -268,7 +268,7 @@ public class ReminderPlugin {
       if (datFile.exists()) {
         if (!oldDataRead) {
           StreamUtilities.objectInputStream(datFile, 0x4000, new ObjectInputStreamProcessor() {
-            
+
             @Override
             public void process(ObjectInputStream inputStream) throws IOException {
               try {
@@ -468,11 +468,6 @@ public class ReminderPlugin {
   protected ActionMenu getContextMenuActions(final Frame parentFrame,
                                           final Program program) {
     if (mReminderList.contains(program)) {
-      ContextMenuAction action = new ContextMenuAction();
-      action.setText(getName());
-      action.setSmallIcon(IconLoader.getInstance().getIconFromTheme("apps",
-          "appointment", 16));
-
       int remainingMinutes = getTimeToProgramStart(program);
       if (remainingMinutes < 0) {
         remainingMinutes = 1;
@@ -514,7 +509,8 @@ public class ReminderPlugin {
         }
       }));
 
-      return new ActionMenu(action, actions.toArray(new ActionMenu[actions
+      return new ActionMenu(getName(), IconLoader.getInstance().getIconFromTheme("apps",
+          "appointment", 16), actions.toArray(new ActionMenu[actions
           .size()]));
     } else if ((program.isExpired() || program.isOnAir())
         && (!program.equals(Plugin.getPluginManager().getExampleProgram()))) {

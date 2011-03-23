@@ -38,6 +38,7 @@ import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.Icon;
 import javax.swing.JFrame;
 
 import util.browserlauncher.Launch;
@@ -240,8 +241,9 @@ public class WebPlugin extends Plugin {
     if (mAddresses == null) {
       createDefaultSettings();
     }
+    Action mainAction = getMainContextMenuAction();
     if (program == getPluginManager().getExampleProgram()) {
-    	return new ActionMenu(getMainContextMenuAction());
+    	return new ActionMenu(mainAction);
     }
 
     final ArrayList<Object> actionList = new ArrayList<Object>();
@@ -324,7 +326,7 @@ public class WebPlugin extends Plugin {
 
     final Object[] actions = new Object[actionList.size()];
     actionList.toArray(actions);
-    return new ActionMenu(getMainContextMenuAction(), actions);
+    return new ActionMenu((String)mainAction.getValue(Action.SMALL_ICON), (Icon)mainAction.getValue(Action.NAME), actions);
   }
 
 	private Action getMainContextMenuAction() {
@@ -346,7 +348,7 @@ public class WebPlugin extends Plugin {
       }
       if (subItems.size() > 1) {
         final ContextMenuAction menuAction = new ContextMenuAction(label);
-        final ActionMenu menu = new ActionMenu(menuAction, subActions);
+        final ActionMenu menu = new ActionMenu((String)menuAction.getValue(Action.NAME), (Icon)menuAction.getValue(Action.SMALL_ICON), subActions);
         menuAction.putValue(Plugin.DISABLED_ON_TASK_MENU, true);
         categoryList.add(menu);
       }
