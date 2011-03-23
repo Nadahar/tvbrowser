@@ -52,7 +52,7 @@ public class RawDataProcessor {
   private static final Logger mLog = Logger.getLogger(RawDataProcessor.class.getName());
 
   /**
-   * @Deprecated use #{tvdataservice.MutableProgram#MAX_SHORT_INFO_LENGTH}
+   * @deprecated use #{tvdataservice.MutableProgram#MAX_SHORT_INFO_LENGTH}
    */
   final public static int MAX_SHORT_DESCRIPTION_LENGTH = MutableProgram.MAX_SHORT_INFO_LENGTH;
 

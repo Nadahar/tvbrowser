@@ -118,7 +118,7 @@ public class IniFileReader {
 
   /**
    * Gets all available Sections in the loaded Ini-File
-   * @return
+   * @return array of sections
    */
   public String[] getAllSections() {
     ArrayList<String> list = new ArrayList<String>(mSections.keySet());

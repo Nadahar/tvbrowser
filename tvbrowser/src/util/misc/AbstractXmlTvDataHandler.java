@@ -476,7 +476,7 @@ public abstract class AbstractXmlTvDataHandler extends DefaultHandler {
   /**
    * whether or not the currently parsed program is valid
    *
-   * @return
+   * @return true if the program is valid
    */
   protected boolean isValid() {
     return mIsValid;
@@ -562,7 +562,7 @@ public abstract class AbstractXmlTvDataHandler extends DefaultHandler {
   /**
    * XMLTV channel id of currently parsed program
    *
-   * @return
+   * @return channel id
    */
   protected final String getChannelId() {
     return mChannelId;

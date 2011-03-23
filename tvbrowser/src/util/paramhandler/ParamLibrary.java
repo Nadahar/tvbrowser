@@ -75,6 +75,7 @@ public class ParamLibrary {
 
   /**
    * Returns the Error, empty if none occurred
+   * @return error message
    */
   public String getErrorString() {
     return mErrorString;
@@ -104,6 +105,7 @@ public class ParamLibrary {
 
   /**
    * Get the description for one Key
+   * @param key
    *
    * @return description for one key
    */
@@ -127,8 +129,9 @@ public class ParamLibrary {
 
   /**
    * Get the description for a specific Function
+   * @param function parameter function
    *
-   * @return
+   * @return localized description string
    */
   public String getDescriptionForFunctions(String function) {
 

@@ -304,7 +304,7 @@ public class ProgramInfo {
 
   /**
    * return whether the program info is currently shown or is to be shown immediately
-   * @return
+   * @return true if the program info is currently shown or is to be shown immediately
    */
   public static boolean isShowing() {
     return ProgramInfoDialog.isShowing() || mIsShowing;

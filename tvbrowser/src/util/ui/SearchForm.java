@@ -120,7 +120,6 @@ public class SearchForm extends JPanel {
    *
    * @param showHistory Should there be a history?
    * @param showTimeSelection Should the search time (number of days) be selectable?
-   *        See {@link devplugin.PluginManager#search(String, boolean, ProgramFieldType[], devplugin.Date, int, devplugin.Channel[], boolean)}.
    */
   public SearchForm(boolean showHistory, boolean showTimeSelection) {
     this(true, showHistory, showTimeSelection);
@@ -136,8 +135,7 @@ public class SearchForm extends JPanel {
    * @param showInputfield Should there be a Input-Field?
    * @param showHistory Should there be a history?
    * @param showTimeSelection Should the search time (number of days) be selectable?
-   *        See {@link devplugin.PluginManager#search(String, boolean, ProgramFieldType[], devplugin.Date, int, devplugin.Channel[], boolean)}.
-   * @param layout selection whether the form shall be layed out horizontally or vertically
+   * @param layout selection whether the form shall be laid out horizontally or vertically
    */
   public SearchForm(boolean showInputfield, boolean showHistory, boolean showTimeSelection, int layout) {
     super();

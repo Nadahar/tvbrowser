@@ -38,8 +38,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -77,7 +75,7 @@ import devplugin.AbstractTvDataService;
 
 /**
  * A class that implements the SettingsPanel for the TvBrowserDataService.
- * 
+ *
  */
 public class TvBrowserDataServiceSettingsPanel extends SettingsPanel implements ActionListener, PictureSettingsIf {
 
@@ -113,7 +111,7 @@ public class TvBrowserDataServiceSettingsPanel extends SettingsPanel implements 
     CellConstraints cc = new CellConstraints();
     EnhancedPanelBuilder levelList = new EnhancedPanelBuilder("5dlu,default:grow");
     levelList.setDefaultDialogBorder();
-    
+
     levelList.addRow();
     levelList.addSeparator(mLocalizer.msg("downloadLevel", "Download this data"), cc.xyw(1,levelList.getRow(),2));
 
@@ -144,7 +142,7 @@ public class TvBrowserDataServiceSettingsPanel extends SettingsPanel implements 
     groupListPanel.setDefaultDialogBorder();
 
     JTextArea ta = UiUtilities.createHelpTextArea(mLocalizer.msg("channelgroup.description","description"));
-    
+
     groupListPanel.addRow();
     groupListPanel.add(ta, cc.xyw(1,groupListPanel.getRow(),2));
 
@@ -241,10 +239,9 @@ public class TvBrowserDataServiceSettingsPanel extends SettingsPanel implements 
 
   /**
    * Get the settings panel of the TvBrowserDataService.
-   * 
+   *
    * @param settings
    *          The properties of the TvBrowserDataService.
-   * @param dataService
    * @return The settings panel for TvBrowserDataService.
    */
   public static SettingsPanel getInstance(TvBrowserDataServiceSettings settings) {
@@ -373,14 +370,14 @@ public class TvBrowserDataServiceSettingsPanel extends SettingsPanel implements 
 
   public int getPictureState() {
     int i = PictureSettingsIf.NO_PICTURES;
-    
+
     if(mLevelCheckboxes[mLevelCheckboxes.length-2].isSelected()) {
       i = PictureSettingsIf.MORNING_PICTURES;
     }
     if(mLevelCheckboxes[mLevelCheckboxes.length-1].isSelected()) {
       i += PictureSettingsIf.EVENING_PICTURES;
     }
-    
+
     return i;
   }
 

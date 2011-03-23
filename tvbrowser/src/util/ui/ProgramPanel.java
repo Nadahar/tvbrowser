@@ -1219,7 +1219,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
    *
    * @param x
    * @param y
-   * @return
+   * @return tooltip text or null, if there is nothing "special" at the coordinates
    */
   public String getToolTipText(int x, int y) {
     // tooltip for info icon area (on the left)
@@ -1334,7 +1334,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
   /**
    * get the X offset of the title in pixels
    *
-   * @return
+   * @return X offset of the title in pixels
    */
   public int getTitleX() {
     return WIDTH_LEFT;

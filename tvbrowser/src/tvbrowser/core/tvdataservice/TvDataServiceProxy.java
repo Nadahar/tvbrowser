@@ -101,11 +101,11 @@ public interface TvDataServiceProxy extends ContextMenuIf, ButtonActionIf, InfoI
   public Channel[] getAvailableChannels();
 
   /**
-   * Some TvDataServices may need to connect to the internet to know their
-   * channels. If supportsDanymicChannelList() returns true, this method is
+   * Some TvDataServices may need to connect to the Internet to know their
+   * channels. If {@link #supportsDynamicChannelList()} returns true, this method is
    * called to check for available channels.
    * @param monitor
-   * @return
+   * @return the list of available channels
    * @throws TvBrowserException
    */
   public Channel[] checkForAvailableChannels(ProgressMonitor monitor) throws TvBrowserException;
@@ -189,7 +189,7 @@ public interface TvDataServiceProxy extends ContextMenuIf, ButtonActionIf, InfoI
 
 
   /**
-   * @return
+   * @return package name of data service
    * @since 3.0
    */
   public String getDataServicePackageName();

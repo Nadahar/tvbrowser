@@ -27,31 +27,31 @@ import java.util.Locale;
 
 /**
  * A Node implementing this interface should be able to filter it's children.
- * 
+ *
  * @author Torsten Keil
  *
  */
 public interface FilterNodeIf {
-  
+
   /**
    * Sets a new filter.
-   * 
+   *
    * @param locale - the local to check.
    * @param filter - the filter value to check for.
    */
   void setFilter(Locale locale, String filter);
-  
+
   /**
    * Returns true if the node (or any sub node) matches the filter.
-   * 
-   * @return
+   *
+   * @return if filter matches
    */
   boolean matches();
-  
+
   /**
    * Returns the total number of matches in all sub nodes.
-   * 
-   * @return
+   *
+   * @return number of matches in sub nodes
    */
   int getMatchCount();
 

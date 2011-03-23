@@ -537,7 +537,7 @@ public class MutableProgram implements Program {
   /**
    * access method to object field values. this allows ondemand programs to reimplement the access
    * @param type
-   * @return
+   * @return object stored in the field
    */
   protected Object getObjectValueField(final ProgramFieldType type) {
     return mObjectValues[type.getStorageIndex()];
@@ -720,7 +720,7 @@ public class MutableProgram implements Program {
    * Set a text field.
    *
    * @param type The type of the field.
-   * @param value The text value to set.
+   * @param inValue The text value to set.
    */
   public void setTextField(final ProgramFieldType type, String inValue) {
     checkFormat(type, ProgramFieldType.TEXT_FORMAT);

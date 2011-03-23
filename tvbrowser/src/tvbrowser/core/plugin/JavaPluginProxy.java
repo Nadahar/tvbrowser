@@ -75,25 +75,25 @@ public class JavaPluginProxy extends AbstractPluginProxy {
   /** The logger for this class */
   private static final Logger mLog
     = Logger.getLogger(JavaPluginProxy.class.getName());
-  
+
   /** The plugin itself. */
   private Plugin mPlugin;
-  
+
   /** The ID of this plugin. */
   private String mId;
-  
+
   private PluginInfo mPluginInfo;
-  
+
   private String mPluginFileName;
-  
+
   /** plugin icon, only used if the plugin is not active */
   private Icon mPluginIcon;
-  
+
   /**
    * file name of the icon of this plugin proxy, used for lazy loading
    */
   private String mIconFileName;
-  
+
 
   public JavaPluginProxy(Plugin plugin, String pluginFileName) {
     mPlugin = plugin;
@@ -116,7 +116,7 @@ public class JavaPluginProxy extends AbstractPluginProxy {
 
   /**
    * Gets the ID of the given Java plugin.
-   * 
+   *
    * @param javaPlugin The Java plugin to get the ID for.
    * @return The ID of the given Java plugin.
    */
@@ -127,7 +127,7 @@ public class JavaPluginProxy extends AbstractPluginProxy {
 
   /**
    * Gets the ID of this plugin.
-   * 
+   *
    * @return The ID of this plugin.
    */
   public String getId() {
@@ -137,10 +137,10 @@ public class JavaPluginProxy extends AbstractPluginProxy {
     return mId;
   }
 
-  
+
   /**
    * Sets the parent frame to the plugin.
-   * 
+   *
    * @param parent The parent frame to set.
    */
   void setParentFrame(Frame parent) {
@@ -148,11 +148,11 @@ public class JavaPluginProxy extends AbstractPluginProxy {
       mPlugin.setParent(parent);
     }
   }
-  
+
 
   /**
    * Really loads the settings for this plugin.
-   * 
+   *
    * @param userDirectory The directory where the user data is stored.
    * @throws TvBrowserException If loading failed.
    */
@@ -164,11 +164,11 @@ public class JavaPluginProxy extends AbstractPluginProxy {
     File oldPropFile = new File(userDirectory, pluginClassName + ".prop");
     File datFile = new File(userDirectory, getId() + ".dat");
     File propFile = new File(userDirectory, getId() + ".prop");
-    
+
     // Rename the old data and settings file if they still exist
     oldDatFile.renameTo(datFile);
     oldPropFile.renameTo(propFile);
-    
+
     // load plugin data
     if (datFile.exists()) {
       ObjectInputStream in = null;
@@ -189,7 +189,7 @@ public class JavaPluginProxy extends AbstractPluginProxy {
         }
       }
     }
-    
+
     // load plugin settings
     BufferedInputStream in = null;
     try {
@@ -220,7 +220,7 @@ public class JavaPluginProxy extends AbstractPluginProxy {
 
   /**
    * Really saves the settings for this plugin.
-   * 
+   *
    * @param userDirectory The directory where the user data is stored.
    * @throws TvBrowserException If saving failed.
    */
@@ -250,7 +250,7 @@ public class JavaPluginProxy extends AbstractPluginProxy {
           "Saving data for plugin {0} failed.\n({1})",
           getInfo().getName(), tmpDatFile.getAbsolutePath(), thr);
     }
-    
+
     // save the plugin settings in a temp file
     FileOutputStream fOut = null;
     File tmpPropFile = new File(userDirectory, getId() + ".prop.temp");
@@ -280,20 +280,20 @@ public class JavaPluginProxy extends AbstractPluginProxy {
       }
     }
   }
-  
+
 
   /**
    * Really gets the meta information about the plugin.
-   * 
+   *
    * @return The meta information about the plugin.
    */
   protected PluginInfo doGetInfo() {
     if (mPluginInfo != null) {
       return mPluginInfo;
     }
-    
+
     PluginInfo info = null;
-    
+
     try {
       info = mPlugin.getInfo();
     }catch(java.lang.NoSuchMethodError e) {
@@ -303,14 +303,14 @@ public class JavaPluginProxy extends AbstractPluginProxy {
 
       return new PluginInfo(devplugin.Plugin.class,name, desc, author);
     }
-    
+
     return info;
   }
 
 
   /**
    * Really gets the SettingsTab object, which is added to the settings-window.
-   * 
+   *
    * @return the SettingsTab object or <code>null</code> if the plugin does not
    *         provide this feature.
    */
@@ -322,10 +322,10 @@ public class JavaPluginProxy extends AbstractPluginProxy {
     return new SettingsTabProxy(tab);
   }
 
-  
+
   /**
    * Gets the actions for the context menu of a program.
-   * 
+   *
    * @param program The program the context menu will be shown for.
    * @return the actions this plugin provides for the given program or
    *         <code>null</code> if the plugin does not provide this feature.
@@ -334,18 +334,18 @@ public class JavaPluginProxy extends AbstractPluginProxy {
     return mPlugin.getContextMenuActions(program);
   }
 
-  
+
   /**
    * Gets the actions for the context menu of a channel.
-   * 
-   * @param program The channel the context menu will be shown for.
+   *
+   * @param channel The channel the context menu will be shown for.
    * @return the actions this plugin provides for the given channel or
    *         <code>null</code> if the plugin does not provide this feature.
    */
   protected ActionMenu doGetContextMenuActions(final Channel channel) {
     return mPlugin.getContextMenuActions(channel);
   }
-  
+
   /**
    * Really gets the action to use for the main menu and the toolbar.
    *
@@ -375,10 +375,10 @@ public class JavaPluginProxy extends AbstractPluginProxy {
     return null;
   }
 
-  
+
   /**
    * Really gets the icons to use for marking programs in the program table.
-   * 
+   *
    * @return the icons to use for marking programs in the program table.
    */
   protected Icon[] doGetMarkIcons(Program p) {
@@ -388,13 +388,13 @@ public class JavaPluginProxy extends AbstractPluginProxy {
     return null;
   }
 
-  
+
   /**
    * Gets the description text for the program table icons provided by this
    * Plugin.
    * <p>
    * Return <code>null</code> if your plugin does not provide this feature.
-   * 
+   *
    * @return The description text for the program table icons or
    *         <code>null</code> if the plugin does not provide this feature.
    *
@@ -410,7 +410,7 @@ public class JavaPluginProxy extends AbstractPluginProxy {
    * icons will be shown in the program table under the start time.
    * <p>
    * Return <code>null</code> if your plugin does not provide this feature.
-   * 
+   *
    * @param program The programs to get the icons for.
    * @return The icons for the given program or <code>null</code>.
    *
@@ -423,7 +423,7 @@ public class JavaPluginProxy extends AbstractPluginProxy {
 
   /**
    * This method is automatically called, when the TV data update is finished.
-   * 
+   *
    * @see #handleTvDataAdded(ChannelDayProgram)
    * @see #handleTvDataDeleted(ChannelDayProgram)
    */
@@ -438,7 +438,7 @@ public class JavaPluginProxy extends AbstractPluginProxy {
    * <p>
    * The TV data may be modified by the plugin! So this method must be called
    * before new TV data is saved.
-   * 
+   *
    * @param newProg The new ChannelDayProgram.
    * @see #handleTvDataDeleted(ChannelDayProgram)
    * @see #handleTvDataUpdateFinished()
@@ -451,7 +451,7 @@ public class JavaPluginProxy extends AbstractPluginProxy {
   /**
    * This method is automatically called, when TV data was deleted.
    * (E.g. after an update).
-   * 
+   *
    * @param oldProg The old ChannelDayProgram which was deleted.
    * @see #handleTvDataAdded(ChannelDayProgram)
    * @see #handleTvDataUpdateFinished()
@@ -459,7 +459,7 @@ public class JavaPluginProxy extends AbstractPluginProxy {
   protected void doHandleTvDataDeleted(ChannelDayProgram oldProg) {
     mPlugin.handleTvDataDeleted(oldProg);
   }
-  
+
   /**
    * This method is automatically called, when the TV-Browser start is complete.
    */
@@ -485,15 +485,15 @@ public class JavaPluginProxy extends AbstractPluginProxy {
   public boolean doCanUseProgramTree() {
     return mPlugin.canUseProgramTree();
   }
-  
+
   public PluginTreeNode getRootNode() {
     return mPlugin.getRootNode();
   }
-  
+
   /**
    * Really gets whether the plugin supports receiving programs from other
    * plugins with target.
-   * 
+   *
    * @return Whether the plugin supports receiving programs from other plugins with target.
    * @see #receivePrograms(Program[],ProgramReceiveTarget)
    * @since 2.5
@@ -504,7 +504,7 @@ public class JavaPluginProxy extends AbstractPluginProxy {
 
   /**
    * Really receives a list of programs from another plugin with target.
-   * 
+   *
    * @param programArr The programs passed from the other plugin with target.
    * @param receiveTarget The target of the programs.
    * @see #canReceiveProgramsWithTarget()
@@ -512,17 +512,17 @@ public class JavaPluginProxy extends AbstractPluginProxy {
    */
   protected boolean doReceivePrograms(Program[] programArr, ProgramReceiveTarget receiveTarget) {
     boolean value = mPlugin.receivePrograms(programArr, receiveTarget);
-    
+
     if(!value) {
       JOptionPane.showMessageDialog(UiUtilities.getLastModalChildOf(MainFrame.getInstance()),mLocalizer.msg("error.noTarget","The programs for the target \"{0}\" couldn't be processed by \"{1}\".",receiveTarget,mPlugin.getInfo().getName()),Localizer.getLocalization(Localizer.I18N_ERROR),JOptionPane.ERROR_MESSAGE);
     }
-    
+
     return value;
   }
 
   /**
    * Really return an array of receive target or <code>null</code> if there is no target
-   * 
+   *
    * @return The supported receive targets.
    * @see #canReceiveProgramsWithTarget()
    * @see #receivePrograms(Program[],ProgramReceiveTarget)
@@ -530,13 +530,13 @@ public class JavaPluginProxy extends AbstractPluginProxy {
    */
   protected ProgramReceiveTarget[] doGetProgramReceiveTargets() {
     ProgramReceiveTarget[] targets = mPlugin.getProgramReceiveTargets();
-    
+
     return targets != null ? targets : ProgramReceiveTarget.createDefaultTargetArrayForProgramReceiveIf(mPlugin);
   }
 
   /**
    * Really returns the available program filters that the plugin supports.
-   * 
+   *
    * @return The available program filters that the plugin supports or <code>null</code> if it supports no filter.
    * @since 2.5
    */
@@ -546,7 +546,7 @@ public class JavaPluginProxy extends AbstractPluginProxy {
 
   /**
    * Really return if a program filter can be deleted.
-   * 
+   *
    * @param programFilter The program filter to delete.
    * @return True if the program filter component can be deleted.
    * @since 2.5
@@ -554,10 +554,10 @@ public class JavaPluginProxy extends AbstractPluginProxy {
   protected boolean doIsAllowedToDeleteProgramFilter(PluginsProgramFilter programFilter) {
     return mPlugin.isAllowedToDeleteProgramFilter(programFilter);
   }
-  
+
   /**
    * Really gets the available filter component classes.
-   * 
+   *
    * @return The available plugins filter components classes or <code>null</code> if no plugins filter components are supported.
    * @since 2.5
    */
@@ -578,7 +578,7 @@ public class JavaPluginProxy extends AbstractPluginProxy {
   public String getPluginFileName() {
     return mPluginFileName;
   }
-  
+
   /**
    * connect a lazy loaded plugin to its proxy
    * @param plugin

@@ -50,7 +50,7 @@ public class CompositeIcon implements Icon {
 	
 	/**
 	 * Gets the Height
-	 * @retun Height
+	 * @return Height
 	 */
 	public int getIconHeight() {
 		return Math.max(icon1.getIconHeight(), icon2.getIconHeight());

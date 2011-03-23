@@ -617,7 +617,7 @@ public class Localizer {
   /**
    * check if a given message key exists
    * @param key
-   * @return
+   * @return true if the given key exists
    * @since 3.0
    */
   public boolean hasMessage(final String key) {
