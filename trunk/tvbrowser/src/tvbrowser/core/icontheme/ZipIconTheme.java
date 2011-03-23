@@ -39,7 +39,7 @@ import javax.swing.ImageIcon;
 
 /**
  * This Class implements the IconTheme for a Zip-File.
- * 
+ *
  * @author bodum
  */
 public class ZipIconTheme extends IconTheme {
@@ -48,7 +48,7 @@ public class ZipIconTheme extends IconTheme {
 
   /**
    * Create the Zip Icon Theme
-   * 
+   *
    * @param iconZip Zip with Theme
    */
   public ZipIconTheme(File iconZip) {
@@ -79,8 +79,8 @@ public class ZipIconTheme extends IconTheme {
 
   /**
    * Get an InputStream from the Icon-Theme.
-   * 
-   * @param string File/Entry to load
+   *
+   * @param entry File/Entry to load
    * @return InputStream of specific Entry
    */
   protected InputStream getInputStream(String entry) {
@@ -95,7 +95,7 @@ public class ZipIconTheme extends IconTheme {
 
   /**
    * Tests if an Entry exists in the Icon-Theme
-   * 
+   *
    * @param entry check for this Entry
    * @return True, if the Entry exists
    */
@@ -105,7 +105,7 @@ public class ZipIconTheme extends IconTheme {
 
   /**
    * Get an Image from the Icon-Theme
-   * 
+   *
    * @param image get this Image
    * @return Image
    */
@@ -128,7 +128,7 @@ public class ZipIconTheme extends IconTheme {
       if (offset < bytes.length) {
           throw new IOException("Could not completely read file "+image);
       }
-      
+
       return new ImageIcon(Toolkit.getDefaultToolkit().createImage(bytes));
     } catch (Exception e) {
     }

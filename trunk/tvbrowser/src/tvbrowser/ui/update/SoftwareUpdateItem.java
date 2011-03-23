@@ -39,33 +39,33 @@ import devplugin.Version;
  * Contains informations about a software update.
  */
 public abstract class SoftwareUpdateItem {
-	
+
   private HashMap<String, String> mPropertyMap;
   private String mClassName;
-  
+
   /**
    * Creates an instances of this class.
-   * 
+   *
    * @param className The class name of the software to update.
    */
   public SoftwareUpdateItem(String className) {
     mClassName = className;
     mPropertyMap = new HashMap<String, String>();
   }
-  
+
   /**
    * Adds a property to this item.
-   * 
+   *
    * @param key The key of the property.
    * @param value The value for the key.
    */
   public void addProperty(String key, String value) {
     mPropertyMap.put(key, value);
   }
-  
+
   /**
    * Gets a property for the given key.
-   * 
+   *
    * @param key The key to get the property for.
    * @return The property for the key, or <code>null</code>
    * if the key was not found.
@@ -73,10 +73,10 @@ public abstract class SoftwareUpdateItem {
   public String getProperty(String key) {
     return mPropertyMap.get(key);
   }
-  
+
   /**
    * Gets the version of this update item
-   * 
+   *
    * @return The version of this update item.
    */
   public Version getVersion() {
@@ -88,13 +88,13 @@ public abstract class SoftwareUpdateItem {
     if (s.length<2) {
       return null;
     }
-    
+
     int major, minor, subMinor = 0;
     boolean stable;
     try {
       major = Integer.parseInt(s[0]);
       minor = Integer.parseInt(s[1]);
-      
+
       if(s.length == 3) {
         subMinor = Integer.parseInt(s[2]);
       }
@@ -104,37 +104,37 @@ public abstract class SoftwareUpdateItem {
     stable = "true".equalsIgnoreCase(getProperty("stable"));
     return new Version(major, minor, subMinor, stable, getProperty("version.name"));
   }
-  
+
   /**
    * Gets if this update item is a stable version.
-   * 
+   *
    * @return <code>True</code> if this update item is a stable version,
    * <code>false</code> otherwise.
    */
   public boolean isStable() {
     return "true".equalsIgnoreCase(getProperty("stable"));
   }
-  
+
   /**
    * Gets if this is an only update item.
-   * 
+   *
    * @return <code>True</code> if this is an
    * only update item, <code>false</code> otherwise.
    */
   public boolean isOnlyUpdate() {
     return "true".equalsIgnoreCase(getProperty("onlyUpdate"));
   }
-  
+
   /**
    * Gets if the plugin supports the current OS.
-   * 
+   *
    * @return <code>True</code> if the current OS
    * is supported by the plugin, <code>false</code> otherwise.
    * @since 2.2.4/2.6
    */
   public boolean isSupportingCurrentOs() {
     String prop = getProperty("os.name");
-    
+
     if(prop == null) {
       return true;
     }
@@ -150,26 +150,26 @@ public abstract class SoftwareUpdateItem {
     else if (prop.indexOf('o') != -1 && OperatingSystem.isOther()) {
       return true;
     }
-    
+
     return false;
   }
-  
+
   private Version getVersion(String value) {
     if (value==null) {
       return null;
     }
-    
+
     String[] s = value.split("\\.");
-    
+
     if (s.length<2) {
       return null;
     }
-    
+
     int major, minor, subMinor = 0;
     try {
       major = Integer.parseInt(s[0]);
       minor = Integer.parseInt(s[1]);
-      
+
       if(s.length == 3) {
         subMinor = Integer.parseInt(s[2]);
       }
@@ -178,76 +178,76 @@ public abstract class SoftwareUpdateItem {
     }
     return new Version(major, minor, subMinor);
   }
-  
+
   /**
    * Gets the TV-Browser version that is required
    * to support this update item.
-   * 
+   *
    * @return The required TV-Browser version.
    */
   public Version getRequiredVersion() {
     return getVersion(getProperty("requires"));
   }
-  
+
   /**
    * Gets the maximum supported TV-Browser version.
-   * 
+   *
    * @return The maximum supported TV-Browser version.
    */
   public Version getMaximumVersion() {
     return getVersion(getProperty("maximalVersion"));
   }
-  
+
   /**
    * Gets the name of this update item.
-   * 
+   *
    * @return The name of this update item.
    */
   public String getName() {
     String n = getProperty("name_de");
-    
+
     if(!isLocaleGerman()) {
       n = getProperty("name_en");
     }
-    
+
     if(n != null) {
       return n;
     } else {
       return getClassName();
     }
   }
-  
+
   /**
    * Gets the description of this update item.
-   * 
+   *
    * @return The description of this update item.
    */
   public String getDescription() {
     String d = getProperty("description");
-    
+
     if(!isLocaleGerman()) {
       d = getProperty("description_en");
     }
-    
+
     if(d != null) {
       return d;
     } else {
       return "";
     }
   }
-  
+
   /**
    * Gets the website of this update item.
-   * 
+   *
    * @return The website of this update item.
    */
   public String getWebsite() {
     String w = getProperty("website");
-    
+
     if(!isLocaleGerman()) {
       w = getProperty("website_en");
     }
-    
+
     return w;
   }
 
@@ -260,19 +260,19 @@ public abstract class SoftwareUpdateItem {
 
   /**
    * Gets the class name of this update item.
-   * 
+   *
    * @return The class name of this update item.
    */
 	public String getClassName() {
     return mClassName;
   }
-	
+
 	/**
 	 * Downloads the file for this software update item.
-	 * 
+	 *
 	 * @param downloadUrl A donwload URL to use, or <code>null</code>
 	 * if the default url should be used.
-	 * 
+	 *
 	 * @return <code>True</code> if the download was successfull,
    *         <code>false</code> otherwise.
 	 * @throws TvBrowserException
@@ -281,18 +281,18 @@ public abstract class SoftwareUpdateItem {
     String url = getProperty("downloadtype") == null
         || !getProperty("downloadtype").equalsIgnoreCase("mirrors") ? getProperty("download")
         : downloadUrl + "/" + getProperty("filename");
-    
+
     if (url == null) {
       throw new TvBrowserException(SoftwareUpdateItem.class, "error.2", "No Url");
     }
     return downloadFrom(url);
   }
-    
+
   protected abstract boolean downloadFrom(String url) throws TvBrowserException;
-	
+
   /**
    * Gets the currently installed version of this software.
-   * 
+   *
    * @return The installed version of this software or
    * <code>null</code> if the software represented by this
    * update item is not installed.
@@ -310,15 +310,15 @@ public abstract class SoftwareUpdateItem {
     }
     return null;
   }
-	
+
 	/**
 	 * check whether this item is already installed or not
-	 * @return
+	 * @return true if item is already installed
 	 */
 	public boolean isAlreadyInstalled() {
 		return getInstalledVersion() != null;
 	}
-	
+
 	/**
 	 * Gets the category of this update item.
 	 * <p>

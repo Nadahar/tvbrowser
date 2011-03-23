@@ -61,7 +61,7 @@ import devplugin.ProgramReceiveTarget;
  * <li>An error message will be shown, if an operation is called on an inactive
  * plugin that is only allowed with active plugins.</li>
  * </ul>
- * 
+ *
  * @author Til Schneider, www.murfman.de
  */
 public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf {
@@ -77,7 +77,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
    * <p>
    * The {@link PluginProxyManager} holds the real state of each plugin. This
    * variable is only for speeding up the activated test.
-   * 
+   *
    * @see #assertActivatedState()
    */
   private boolean mIsActivated = false;
@@ -91,7 +91,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
 
   /**
    * Gets whether the plugin is currently activated.
-   * 
+   *
    * @return whether the plugin is currently activated.
    * @see #setActivated(boolean)
    * @see #assertActivatedState()
@@ -105,7 +105,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
    * <p>
    * This method may only be called by the {@link PluginProxyManager} (that's
    * why it is package private).
-   * 
+   *
    * @param activated Whether the plugin is currently activated.
    * @see #isActivated()
    * @see #assertActivatedState()
@@ -116,14 +116,14 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
 
   /**
    * Sets the parent frame to the plugin.
-   * 
+   *
    * @param parent The parent frame to set.
    */
   abstract void setParentFrame(Frame parent);
 
   /**
    * Loads the settings for this plugin.
-   * 
+   *
    * @param userDirectory The directory where the user data is stored.
    * @throws TvBrowserException If loading failed.
    */
@@ -140,7 +140,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
 
   /**
    * Really loads the settings for this plugin.
-   * 
+   *
    * @param userDirectory The directory where the user data is stored.
    * @throws TvBrowserException If loading failed.
    */
@@ -148,7 +148,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
 
   /**
    * Saves the settings for this plugin.
-   * 
+   *
    * @param userDirectory The directory where the user data is stored.
    * @throws TvBrowserException If saving failed.
    */
@@ -170,7 +170,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
 
   /**
    * Really saves the settings for this plugin.
-   * 
+   *
    * @param userDirectory The directory where the user data is stored.
    * @throws TvBrowserException If saving failed.
    */
@@ -178,7 +178,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
 
   /**
    * Gets the meta information about the plugin.
-   * 
+   *
    * @return The meta information about the plugin.
    */
   public final PluginInfo getInfo() {
@@ -198,14 +198,14 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
 
   /**
    * Really gets the meta information about the plugin.
-   * 
+   *
    * @return The meta information about the plugin.
    */
   protected abstract PluginInfo doGetInfo();
 
   /**
    * Gets the SettingsTab object, which is added to the settings-window.
-   * 
+   *
    * @return the SettingsTab object or <code>null</code> if the plugin does
    *         not provide this feature.
    */
@@ -221,7 +221,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
 
   /**
    * Rally gets the SettingsTab object, which is added to the settings-window.
-   * 
+   *
    * @return the SettingsTab object or <code>null</code> if the plugin does
    *         not provide this feature.
    */
@@ -229,7 +229,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
 
   /**
    * Gets the actions for the context menu of a program.
-   * 
+   *
    * @param program The program the context menu will be shown for.
    * @return the actions this plugin provides for the given program or
    *         <code>null</code> if the plugin does not provide this feature.
@@ -251,18 +251,18 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
 
   /**
    * Really gets the actions for the context menu of a program.
-   * 
+   *
    * @param program The program the context menu will be shown for.
    * @return the actions this plugin provides for the given program or
    *         <code>null</code> if the plugin does not provide this feature.
-   * 
+   *
    * @see #getContextMenuActions(Program)
    */
   protected abstract ActionMenu doGetContextMenuActions(Program program);
 
   /**
    * Gets the actions for the context menu of a channel.
-   * 
+   *
    * @param channel The channel the context menu will be shown for.
    * @return the actions this plugin provides for the given channel or
    *         <code>null</code> if the plugin does not provide this feature.
@@ -283,19 +283,19 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
   }
 
   /**
-   * Really gets the actions for the context menu of a program.
-   * 
-   * @param program The program the context menu will be shown for.
-   * @return the actions this plugin provides for the given program or
+   * Really gets the actions for the context menu of a channel.
+   *
+   * @param channel The channel the context menu will be shown for.
+   * @return the actions this plugin provides for the given channel or
    *         <code>null</code> if the plugin does not provide this feature.
-   * 
+   *
    * @see #getContextMenuActions(Program)
    */
   protected abstract ActionMenu doGetContextMenuActions(final Channel channel);
 
   /**
    * Gets the action to use for the main menu and the toolbar.
-   * 
+   *
    * @return the action to use for the menu and the toolbar or <code>null</code>
    *         if the plugin does not provide this feature.
    */
@@ -316,10 +316,10 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
 
   /**
    * Really gets the action to use for the main menu and the toolbar.
-   * 
+   *
    * @return the action to use for the menu and the toolbar or <code>null</code>
    *         if the plugin does not provide this feature.
-   * 
+   *
    * @see #getButtonAction()
    */
   protected abstract ActionMenu doGetButtonAction();
@@ -338,7 +338,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
 
   /**
    * Gets the icon to use for marking programs in the program table.
-   * 
+   *
    * @return the icon to use for marking programs in the program table.
    */
   public Icon getMarkIcon() {
@@ -353,7 +353,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
 
   /**
    * Really gets the icon to use for marking programs in the program table.
-   * 
+   *
    * @return the icon to use for marking programs in the program table.
    */
   protected abstract Icon[] doGetMarkIcons(Program p);
@@ -363,10 +363,10 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
    * Plugin.
    * <p>
    * Return <code>null</code> if your plugin does not provide this feature.
-   * 
+   *
    * @return The description text for the program table icons or
    *         <code>null</code> if the plugin does not provide this feature.
-   * 
+   *
    * @see #getProgramTableIcons(Program)
    */
   public final String getProgramTableIconText() {
@@ -383,10 +383,10 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
    * Plugin.
    * <p>
    * Return <code>null</code> if your plugin does not provide this feature.
-   * 
+   *
    * @return The description text for the program table icons or
    *         <code>null</code> if the plugin does not provide this feature.
-   * 
+   *
    * @see #getProgramTableIcons(Program)
    */
   protected abstract String doGetProgramTableIconText();
@@ -396,10 +396,10 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
    * be shown in the program table under the start time.
    * <p>
    * Return <code>null</code> if your plugin does not provide this feature.
-   * 
+   *
    * @param program The programs to get the icons for.
    * @return The icons for the given program or <code>null</code>.
-   * 
+   *
    * @see #getProgramTableIconText()
    */
   public final Icon[] getProgramTableIcons(Program program) {
@@ -417,17 +417,17 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
    * icons will be shown in the program table under the start time.
    * <p>
    * Return <code>null</code> if your plugin does not provide this feature.
-   * 
+   *
    * @param program The programs to get the icons for.
    * @return The icons for the given program or <code>null</code>.
-   * 
+   *
    * @see #getProgramTableIconText()
    */
   protected abstract Icon[] doGetProgramTableIcons(Program program);
 
   /**
    * This method is automatically called, when the TV data update is finished.
-   * 
+   *
    * @see #handleTvDataAdded(ChannelDayProgram)
    * @see #handleTvDataDeleted(ChannelDayProgram)
    */
@@ -442,7 +442,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
 
   /**
    * This method is automatically called, when the TV data update is finished.
-   * 
+   *
    * @see #handleTvDataAdded(ChannelDayProgram)
    * @see #handleTvDataDeleted(ChannelDayProgram)
    */
@@ -456,11 +456,11 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
    * <p>
    * Override this method if you want to change/add data.
    * Don't do other things than changing/adding data,
-   * use {@link #handleTvDataAdded(ChannelDayProgram)} istead.
-   * 
+   * use {@link #handleTvDataAdded(ChannelDayProgram)} instead.
+   *
    * @param newProg The new ChannelDayProgram.
    * @see #handleTvDataDeleted(ChannelDayProgram)
-   * @see #handleTvDataChanged()
+   * @see #handleTvDataTouched(ChannelDayProgram, ChannelDayProgram)
    */
   public void handleTvDataAdded(MutableChannelDayProgram newProg) {
     try {
@@ -470,7 +470,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
       handlePluginException(t);
     }
   }
-  
+
   /**
    * This method is automatically called, when TV data was added.
    * (E.g. after an update).
@@ -479,22 +479,22 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
    * <p>
    * Override this method if you want to change/add data.
    * Don't do other things than changing/adding data,
-   * use {@link #handleTvDataAdded(ChannelDayProgram)} istead.
-   * 
+   * use {@link #handleTvDataAdded(ChannelDayProgram)} instead.
+   *
    * @param newProg The new ChannelDayProgram.
    * @see #handleTvDataDeleted(ChannelDayProgram)
-   * @see #handleTvDataChanged()
+   * @see #handleTvDataTouched(ChannelDayProgram, ChannelDayProgram)
    */
   protected abstract void doHandleTvDataAdded(MutableChannelDayProgram newProg);
 
-  
+
   /**
    * This method is automatically called, when TV data was added. (E.g. after an
    * update).
    * <p>
    * The TV data may be modified by the plugin! So this method must be called
    * before new TV data is saved.
-   * 
+   *
    * @param newProg The new ChannelDayProgram.
    * @see #handleTvDataDeleted(ChannelDayProgram)
    * @see #handleTvDataUpdateFinished()
@@ -514,17 +514,17 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
    * <p>
    * The TV data may be modified by the plugin! So this method must be called
    * before new TV data is saved.
-   * 
+   *
    * @param newProg The new ChannelDayProgram.
    * @see #handleTvDataDeleted(ChannelDayProgram)
    * @see #handleTvDataUpdateFinished()
    */
   protected abstract void doHandleTvDataAdded(ChannelDayProgram newProg);
-  
+
   /**
    * This method is automatically called, when TV data was deleted. (E.g. after
    * an update).
-   * 
+   *
    * @param oldProg The old ChannelDayProgram which was deleted.
    * @see #handleTvDataAdded(ChannelDayProgram)
    * @see #handleTvDataUpdateFinished()
@@ -541,7 +541,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
   /**
    * This method is automatically called, when TV data was deleted. (E.g. after
    * an update).
-   * 
+   *
    * @param oldProg The old ChannelDayProgram which was deleted.
    * @see #handleTvDataAdded(ChannelDayProgram)
    * @see #handleTvDataUpdateFinished()
@@ -568,21 +568,22 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
   }
 
   /**
-   * This method is automatically called, when TV data was added. (E.g. after an
-   * update).
+   * This method is automatically called, when TV data was touched. (E.g. after an
+   * update of already existing TV data).
    * <p>
    * The TV data may be modified by the plugin! So this method must be called
    * before new TV data is saved.
-   * 
-   * @param newProg The new ChannelDayProgram.
+   *
+   * @param removedDayProgram The previous ChannelDayProgram.
+   * @param addedDayProgram The new ChannelDayProgram.
    * @see #handleTvDataAdded(ChannelDayProgram)
    * @see #handleTvDataDeleted(ChannelDayProgram)
    * @see #handleTvDataUpdateFinished()
    */
   protected abstract void doHandleTvDataTouched(ChannelDayProgram removedDayProgram, ChannelDayProgram addedDayProgram);
-  
-  
-  
+
+
+
   public void onActivation() {
     try {
       doOnActivation();
@@ -637,7 +638,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
    * Gets the name of the plugin.
    * <p>
    * This way Plugin objects may be used directly in GUI components like JLists.
-   * 
+   *
    * @return the name of the plugin.
    */
   @Override
@@ -647,7 +648,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
 
   /**
    * Handles a runtime exception that was caused by the plugin.
-   * 
+   *
    * @param t The exception to handle
    */
   public void handlePluginException(final Throwable t) {
@@ -674,7 +675,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
 
   /**
    * Gets whether the plugin supports receiving programs from other plugins with target.
-   * 
+   *
    * @return Whether the plugin supports receiving programs from other plugins with target.
    * @see #receivePrograms(Program[],ProgramReceiveTarget)
    * @since 2.5
@@ -691,7 +692,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
   /**
    * Really gets whether the plugin supports receiving programs from other
    * plugins with target.
-   * 
+   *
    * @return Whether the plugin supports receiving programs from other plugins with target.
    * @see #receivePrograms(Program[],ProgramReceiveTarget)
    * @since 2.5
@@ -700,7 +701,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
 
   /**
    * Receives a list of programs from another plugin with a target.
-   * 
+   *
    * @param programArr The programs passed from the other plugin.
    * @param receiveTarget The target of the programs.
    * @see #canReceiveProgramsWithTarget()
@@ -719,7 +720,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
 
   /**
    * Really receives a list of programs from another plugin with target.
-   * 
+   *
    * @param programArr The programs passed from the other plugin with target.
    * @param receiveTarget The target of the programs.
    * @see #canReceiveProgramsWithTarget()
@@ -729,12 +730,12 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
 
   /**
    * Receives a list of Strings from another plugin with a target.
-   * 
+   *
    * @param values The value array passed from the other plugin.
-   * @param target The receive target of the programs.
-   * @return <code>True</code> if the value array was handled correct,
+   * @param receiveTarget The receive target of the programs.
+   * @return <code>true</code> if the value array was handled correct,
    * </code>false</code> otherwise.
-   * 
+   *
    * @see #canReceiveProgramsWithTarget()
    * @since 2.7
    */
@@ -748,23 +749,23 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
 
     return false;
   }
-  
+
   /**
    * Really receives a list of Strings from another plugin with a target.
-   * 
+   *
    * @param values The value array passed from the other plugin.
-   * @param target The receive target of the programs.
-   * @return <code>True</code> if the value array was handled correct,
+   * @param receiveTarget The receive target of the programs.
+   * @return <code>true</code> if the value array was handled correct,
    * </code>false</code> otherwise.
-   * 
+   *
    * @see #canReceiveProgramsWithTarget()
    * @since 2.7
    */
   protected abstract boolean doReceiveValues(String[] values, ProgramReceiveTarget receiveTarget);
-  
+
   /**
    * Returns an array of receive target or <code>null</code> if there is no target
-   * 
+   *
    * @return The supported receive targets.
    * @see #canReceiveProgramsWithTarget()
    * @see #receivePrograms(Program[],ProgramReceiveTarget)
@@ -783,7 +784,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
 
   /**
    * Really return an array of receive target or <code>null</code> if there is no target
-   * 
+   *
    * @return The supported receive targets.
    * @see #canReceiveProgramsWithTarget()
    * @see #receivePrograms(Program[],ProgramReceiveTarget)
@@ -793,7 +794,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
 
   /**
    * Returns the available program filters that the plugin supports.
-   * 
+   *
    * @return The available program filters that the plugin supports or <code>null</code> if it supports no filter.
    * @since 2.5
    */
@@ -810,7 +811,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
 
   /**
    * Really returns the available program filters that the plugin supports.
-   * 
+   *
    * @return The available program filters that the plugin supports or <code>null</code> if it supports no filter.
    * @since 2.5
    */
@@ -819,7 +820,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
   /**
    * Is used to track if a program filter be deleted.
    * Should be make sure only the plugin itself can delete program filters.
-   * 
+   *
    * @param programFilter The program filter to delete.
    * @return True if the program filter component can be deleted.
    * @since 2.5
@@ -837,7 +838,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
 
   /**
    * Really return if a program filter can be deleted.
-   * 
+   *
    * @param programFilter The program filter to delete.
    * @return True if the program filter component can be deleted.
    * @since 2.5
@@ -849,7 +850,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
    * <br>
    * ATTENTON: Use return <code>(Class<? extends PluginsFilterComponent>[]) new Class[] {MyFilterComponent1.class,MyFilterComponent2.class};</code>
    * because the creation of a class array with generic type didn't work.
-   * 
+   *
    * @return The available plugins filter components classes or <code>null</code> if no plugins filter components are supported.
    * @since 2.5
    */
@@ -866,7 +867,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
 
   /**
    * Really gets the available filter component classes.
-   * 
+   *
    * @return The available plugins filter components classes or <code>null</code> if no plugins filter components are supported.
    * @since 2.5
    */
@@ -905,7 +906,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
   /**
    * Checks whether the plugin is activated. If it is not an error message is
    * shown.
-   * 
+   *
    * @throws TvBrowserException If the plugin is not activated
    */
   protected void assertActivatedState() throws TvBrowserException {
@@ -925,18 +926,18 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
     if (icon == null) {
       icon = getMarkIcon();
     }
-    
+
     // and then the context menu
     if (icon == null && isActivated()) {
       actionMenu = getContextMenuActions(PluginManagerImpl.getInstance()
           .getExampleProgram());
       icon = getMenuIcon(actionMenu);
     }
-    
+
     if (icon != null) {
       return icon;
     }
-    
+
     return new ImageIcon(DEFAULT_PLUGIN_ICON_NAME);
   }
 
@@ -968,12 +969,12 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
   final public void removeArtificialPluginTree() {
     mArtificialRootNode = null;
   }
-  
+
   @Override
   public int compareTo(ProgramReceiveIf other) {
     return getInfo().getName().compareTo(other.toString());
   }
-  
+
   /**
    * Gets the importance value of a program.The importance of all active plugins is used to determinate
    * the opacity of the used colors of a program, therefor a mean value of all values is used.
@@ -998,7 +999,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
     } catch (Throwable exc) {
       handlePluginException(exc);
     }
-    
+
     return new ImportanceValue((byte)1,Program.MAX_PROGRAM_IMPORTANCE);
   }
 

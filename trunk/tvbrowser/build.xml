@@ -1069,7 +1069,8 @@
              header="${doc.header}"
              bottom="${doc.bottom}"
              access="package"
-             failonerror="true">
+             failonerror="true"
+    				 encoding="ISO-8859-1">
       <link offline="true"
             href="${java-api-location}"
             packagelistLoc="${package-lists.dir}/jdk/"/>

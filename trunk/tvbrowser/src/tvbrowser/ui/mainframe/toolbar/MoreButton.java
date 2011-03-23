@@ -29,7 +29,7 @@ import javax.swing.event.PopupMenuListener;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.ui.Localizer;
- 
+
 /**
  * MySwing: Advanced Swing Utilites
  * Copyright (C) 2005  Santhosh Kumar T
@@ -44,16 +44,15 @@ import util.ui.Localizer;
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  */
- 
+
 /**
  * to use this feature replace:
  *   frame.getContentPane().add(toolbar, BorderLayout.NORTH);
  * with
  *   frame.getContentPane().add(MoreButton.wrapToolBar(toolBar), BorderLayout.NORTH);
- * 
- * @author Santhosh Kumar T
- * @email  santhosh@in.fiorano.com
- * 
+ *
+ * @author Santhosh Kumar T (santhosh@in.fiorano.com)
+ *
  * Changed for support of the TV-Browser ToolBar.
  */
 
@@ -61,14 +60,14 @@ public class MoreButton extends JToggleButton implements ActionListener{
     private JToolBar toolbar;
     private JPopupMenu mPopupMenu;
     private static final Localizer mLocalizer = Localizer.getLocalizerFor(MoreButton.class);
-    
+
     private MoreButton(final JToolBar toolbar, MainFrame mainFrame){
         if((((ToolBar)toolbar).getStyle() == (ToolBar.STYLE_TEXT | ToolBar.STYLE_ICON)) || ((ToolBar)toolbar).getStyle() == ToolBar.STYLE_TEXT ) {
           setText(mLocalizer.msg("more","more"));
         }
-        
+
         setToolTipText(mLocalizer.msg("moreTooltip","Opens a menu with the Toolbar Buttons that aren't visible"));
-        
+
         if(((ToolBar)toolbar).getStyle() != ToolBar.STYLE_TEXT) {
           if(((ToolBar)toolbar).useBigIcons()) {
             setIcon(IconLoader.getInstance().getIconFromTheme("emblems", "emblem-symbolic-link", 22));
@@ -76,7 +75,7 @@ public class MoreButton extends JToggleButton implements ActionListener{
             setIcon(IconLoader.getInstance().getIconFromTheme("emblems", "emblem-symbolic-link", 16));
           }
         }
-        
+
         this.toolbar = toolbar;
         addActionListener(this);
         setHorizontalTextPosition(SwingConstants.CENTER);
@@ -84,14 +83,14 @@ public class MoreButton extends JToggleButton implements ActionListener{
         setFont(ToolBar.TEXT_FONT);
         addMouseAdapter(this);
         setFocusPainted(false);
-        
+
         // hide & seek
         toolbar.addComponentListener(new ComponentAdapter(){
             public void componentResized(ComponentEvent e){
               setVisible(toolbar.getComponentCount() > 1 && !isVisible(toolbar.getComponent(toolbar.getComponentCount()-1), null));
             }
         });
-        
+
         mainFrame.addWindowFocusListener(new WindowFocusListener() {
           public void windowGainedFocus(WindowEvent e) {
           }
@@ -103,7 +102,7 @@ public class MoreButton extends JToggleButton implements ActionListener{
           }
         });
     }
- 
+
     // check visibility
     // partially visible is treated as not visible
     private boolean isVisible(Component comp, Rectangle rect){
@@ -111,14 +110,14 @@ public class MoreButton extends JToggleButton implements ActionListener{
           rect = toolbar.getVisibleRect();
         }
         String location = ((ToolBar)toolbar).getToolbarLocation();
-        
+
         if(location.compareTo(BorderLayout.NORTH) == 0) {
           return comp.getLocation().x+comp.getWidth() <=rect.getWidth();
         } else {
           return comp.getLocation().y+comp.getHeight() <=rect.getHeight();
         }
     }
- 
+
     private static void addMouseAdapter(final JComponent c) {
       c.addMouseListener(new MouseAdapter() {
         public void mousePressed(MouseEvent e) {
@@ -134,14 +133,14 @@ public class MoreButton extends JToggleButton implements ActionListener{
             menu.show(e.getX(), e.getY());
           }
         }
-        
+
       });
     }
-    
+
     public void actionPerformed(ActionEvent e){
         Component[] comp = toolbar.getComponents();
         Action[] actions = DefaultToolBarModel.getInstance().getActions();
-        
+
         Rectangle visibleRect = toolbar.getVisibleRect();
         for(int i = 0; i<comp.length; i++){
             if(!isVisible(comp[i], visibleRect)){
@@ -155,7 +154,7 @@ public class MoreButton extends JToggleButton implements ActionListener{
                       mPopupMenu.addSeparator();
                     }
                 }
-                
+
                 //on popup close make more-button unselected
                 mPopupMenu.addPopupMenuListener(new PopupMenuListener(){
                     public void popupMenuWillBecomeInvisible(PopupMenuEvent e){
@@ -168,7 +167,7 @@ public class MoreButton extends JToggleButton implements ActionListener{
             }
         }
     }
- 
+
     public static Component wrapToolBar(ToolBar toolbar, MainFrame mainFrame) {
       JToolBar moreToolbar = new JToolBar();
       moreToolbar.setOpaque(false);
@@ -177,11 +176,11 @@ public class MoreButton extends JToggleButton implements ActionListener{
       moreToolbar.setFloatable(false);
       moreToolbar.add(new MoreButton(toolbar,mainFrame));
       addMouseAdapter(moreToolbar);
-      
+
         JPanel panel = new JPanel(new BorderLayout(0,0));
-        
+
         panel.add(toolbar, BorderLayout.CENTER);
-        
+
         if (toolbar.getToolbarLocation().compareTo(BorderLayout.NORTH) == 0) {
           moreToolbar.setBorder(BorderFactory.createEmptyBorder(0,0,0,5));
           panel.add(moreToolbar, BorderLayout.EAST);
@@ -190,7 +189,7 @@ public class MoreButton extends JToggleButton implements ActionListener{
           moreToolbar.setBorder(BorderFactory.createEmptyBorder(0,0,5,0));
           panel.add(moreToolbar, BorderLayout.SOUTH);
         }
- 
+
         return panel;
     }
 }

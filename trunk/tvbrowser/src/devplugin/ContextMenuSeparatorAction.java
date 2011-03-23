@@ -52,8 +52,7 @@ public final class ContextMenuSeparatorAction extends AbstractAction {
    * Gets an instance of this class.
    * The instance is also shown in task menu of the ProgramInfoDialog.
    *
-   * @see {@link #getDisabledOnTaskMenuInstance()} to get an instance that
-   * isn't shown in the task menu of the ProgramInfoDialog.
+   * @see #getDisabledOnTaskMenuInstance()
    *
    * @return The instance of this class, that is shown in the task
    * menu of the ProgramInfoDialog.
@@ -70,8 +69,7 @@ public final class ContextMenuSeparatorAction extends AbstractAction {
    * Gets an instance of this class.
    * The instance is <b>not</b> shown in task menu of the ProgramInfoDialog.
    *
-   * @see {@link #getInstance()} to get an instance that
-   * is shown in the task menu of the ProgramInfoDialog.
+   * @see #getInstance()
    *
    * @return The instance of this class, that is <b>not</b> shown in the task
    * menu of the ProgramInfoDialog.
