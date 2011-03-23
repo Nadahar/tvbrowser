@@ -30,6 +30,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
 import tvbrowser.extras.favoritesplugin.core.Favorite;
@@ -235,30 +236,28 @@ public class ContextMenuProvider {
   }
 
   private ActionMenu createRepetitionsMenuAction(final Favorite[] favorites, Program p) {
-    ContextMenuAction topMenu = new ContextMenuAction();
-    topMenu.setSmallIcon(TVBrowserIcons.search(TVBrowserIcons.SIZE_SMALL));
-    topMenu.setText(mLocalizer.msg("repetitions", "More programs"));
+    ImageIcon icon = TVBrowserIcons.search(TVBrowserIcons.SIZE_SMALL);
+    String actionText = mLocalizer.msg("repetitions", "More programs");
 
     if (favorites.length==1) {
-      return createFavoriteRepetitionMenu(topMenu,favorites[0], p);
+      return createFavoriteRepetitionMenu(actionText, icon, favorites[0], p);
     }
     else {
       ArrayList<ActionMenu> menus = new ArrayList<ActionMenu>();
 
       for (Favorite favorite : favorites) {
-        ContextMenuAction subItem = new ContextMenuAction(favorite.getName());
-        ActionMenu menu = createFavoriteRepetitionMenu(subItem,favorite, p);
+        ActionMenu menu = createFavoriteRepetitionMenu(favorite.getName(), null,favorite, p);
 
         if(menu != null) {
           menus.add(menu);
         }
       }
 
-      return menus.isEmpty() ? null : new ActionMenu(topMenu, menus.toArray(new ActionMenu[menus.size()]));
+      return menus.isEmpty() ? null : new ActionMenu(actionText, icon, menus.toArray(new ActionMenu[menus.size()]));
     }
   }
 
-  private ActionMenu createFavoriteRepetitionMenu(ContextMenuAction parent, Favorite favorite, Program p) {
+  private ActionMenu createFavoriteRepetitionMenu(String title, Icon icon, Favorite favorite, Program p) {
     Program[] programs = favorite.getPrograms();
 
     if(programs == null || (programs.length == 1 && programs[0].equals(p))) {
@@ -291,7 +290,7 @@ public class ContextMenuProvider {
       return null;
     }
 
-    return new ActionMenu(parent, subItems.toArray(new ContextMenuAction[subItems.size()]));
+    return new ActionMenu(title, icon, subItems.toArray(new ContextMenuAction[subItems.size()]));
   }
 
   private ActionMenu createDeleteFavoriteMenuAction(final Favorite[] favArr) {
