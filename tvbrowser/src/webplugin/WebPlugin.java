@@ -326,7 +326,7 @@ public class WebPlugin extends Plugin {
 
     final Object[] actions = new Object[actionList.size()];
     actionList.toArray(actions);
-    return new ActionMenu((String)mainAction.getValue(Action.SMALL_ICON), (Icon)mainAction.getValue(Action.NAME), actions);
+    return new ActionMenu((String)mainAction.getValue(Action.NAME), (Icon)mainAction.getValue(Action.SMALL_ICON), actions);
   }
 
 	private Action getMainContextMenuAction() {
