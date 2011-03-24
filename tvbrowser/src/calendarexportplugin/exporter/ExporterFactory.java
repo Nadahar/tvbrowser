@@ -48,7 +48,6 @@ public class ExporterFactory {
     if (OperatingSystem.isMacOs()) {
       mExporterList.add(new AppleiCalExporter());
     }
-    mExporterList.add(new AppleiCalExporter());
     mExporterList.add(new GoogleExporter());
     mExporterList.add(new ICalExporter());
     mExporterList.add(new VCalExporter());
