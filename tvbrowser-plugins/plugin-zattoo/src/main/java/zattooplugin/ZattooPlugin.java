@@ -112,6 +112,9 @@ public final class ZattooPlugin extends Plugin {
     if (isProgramSupported(program)) {
       return getRememberActionMenu(program);
     }
+    else if (program.isOnAir() && isChannelSupported(program.getChannel())) {
+      return getSwitchActionMenu(program.getChannel());
+    }
     return null;
   }
 
