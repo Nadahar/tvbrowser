@@ -92,10 +92,6 @@ import util.misc.OperatingSystem;
  *
  * @author Til Schneider, www.murfman.de
  */
-/**
- * @author MadMan
- *
- */
 public class UiUtilities {
 
   /** The helper label. */
@@ -253,8 +249,8 @@ public class UiUtilities {
   }
 
   /**
-   * Gibt einen Button mit Icon und Schrift zur�ck, der so initialisiert ist,
-   * da� man ihn gut f�r Symbolleisten nutzen kann (Rahmen nur bei Rollover
+   * Gibt einen Button mit Icon und Schrift zurï¿½ck, der so initialisiert ist,
+   * daï¿½ man ihn gut fï¿½r Symbolleisten nutzen kann (Rahmen nur bei Rollover
    * sichtbar usw.).
    * <P>
    * Wenn text und iconDateiname angegeben sind, dann wird text als TooltipText
