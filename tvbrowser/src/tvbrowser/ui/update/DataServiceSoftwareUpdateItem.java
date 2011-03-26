@@ -27,7 +27,7 @@ package tvbrowser.ui.update;
 /**
  * Contains the update information for a devplugin.AbstractTvDataService
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  */
 public class DataServiceSoftwareUpdateItem extends PluginsSoftwareUpdateItem {
   

@@ -42,7 +42,7 @@ import devplugin.Program;
 /**
  * A filter component for tracking programs that have a selected mark priority.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  * @since 2.5.1
  */
 public class ProgramMarkingPriorityFilterComponent extends

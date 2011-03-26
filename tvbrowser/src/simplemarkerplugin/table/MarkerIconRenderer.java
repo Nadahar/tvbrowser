@@ -1,5 +1,5 @@
 /*
- * SimpleMarkerPlugin by René Mach
+ * SimpleMarkerPlugin by RenÃ© Mach
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -34,7 +34,7 @@ import simplemarkerplugin.MarkList;
 /**
  * The renderer for the mark icon column
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  */
 public class MarkerIconRenderer extends DefaultTableCellRenderer {
   private JPanel mPanel;

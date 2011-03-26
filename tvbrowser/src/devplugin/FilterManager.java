@@ -22,7 +22,7 @@ package devplugin;
  * The filter manager enables plugins to
  * use the filter system of TV-Browser.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  * @since 2.5
  */
 public interface FilterManager {

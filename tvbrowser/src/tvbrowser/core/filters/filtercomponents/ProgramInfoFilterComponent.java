@@ -95,7 +95,7 @@ public class ProgramInfoFilterComponent extends AbstractFilterComponent {
   }
 
   /**
-   * Liest die Einstellungen f�r dieses Plugin aus dem Stream
+   * Liest die Einstellungen für dieses Plugin aus dem Stream
    * 
    * @see tvbrowser.core.filters.FilterComponent#read(java.io.ObjectInputStream,
    *      int)

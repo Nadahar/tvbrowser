@@ -32,7 +32,7 @@ import devplugin.SettingsTab;
  * Have to be implemented by all internal
  * plugins to support common methods.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  * @since 2.6
  */
 public interface InternalPluginProxyIf {

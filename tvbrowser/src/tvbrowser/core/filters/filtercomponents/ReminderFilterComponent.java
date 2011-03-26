@@ -15,7 +15,7 @@ import devplugin.Program;
 /**
  * This filter filters all programs that are marked by the Reminder
  *
- * @author René Mach
+ * @author RenÃ© Mach
  *
  */
 public class ReminderFilterComponent extends AbstractFilterComponent {

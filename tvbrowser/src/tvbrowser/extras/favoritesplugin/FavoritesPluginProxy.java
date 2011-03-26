@@ -47,7 +47,7 @@ import devplugin.SettingsTab;
 /**
  * Encapsulates the FavoritesPlugin and manages the access to it.
  *
- * @author René Mach
+ * @author RenÃ© Mach
  */
 public class FavoritesPluginProxy extends AbstractInternalPluginProxy implements ButtonActionIf, ContextMenuIf, Marker {
 

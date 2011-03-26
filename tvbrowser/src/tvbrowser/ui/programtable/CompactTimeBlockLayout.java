@@ -26,7 +26,7 @@ package tvbrowser.ui.programtable;
 /**
  * A class for layout the program table in compact time blocks.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  * @since 2.7
  */
 public class CompactTimeBlockLayout extends TimeBlockLayout {

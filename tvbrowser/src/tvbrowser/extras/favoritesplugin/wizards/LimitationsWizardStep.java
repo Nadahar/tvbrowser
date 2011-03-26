@@ -129,12 +129,12 @@ public class LimitationsWizardStep extends AbstractWizardStep {
     PanelBuilder panelBuilder = new PanelBuilder(new FormLayout("pref, default:grow, pref", "pref, 5dlu, pref, 5dlu, pref, 5dlu, pref, 5dlu, pref"));
 
     panelBuilder.setBorder(Borders.DLU4_BORDER);
-    panelBuilder.add(new JLabel(mLocalizer.msg("mainQuestion", "Gibt es weitere Einschränkungen?")), cc.xy(1, 1));
+    panelBuilder.add(new JLabel(mLocalizer.msg("mainQuestion", "Are there any limitations?")), cc.xy(1, 1));
     panelBuilder.add(mChannelCb = new JCheckBox(mLocalizer.msg("limitByChannel",
-        "Ich möchte die Sendung nur auf bestimmten Sendern sehen")), cc.xy(1, 3));
-    panelBuilder.add(mDayOfWeekCb = new JCheckBox(mLocalizer.msg("limitByDayOfWeek","Ich möchte die Sendung an bestimmten Tagen sehen")), cc.xy(1,5));
+        "Certain channels only:")), cc.xy(1, 3));
+    panelBuilder.add(mDayOfWeekCb = new JCheckBox(mLocalizer.msg("limitByDayOfWeek","Certain day of week only:")), cc.xy(1,5));
     panelBuilder.add(mTimeCb = new JCheckBox(mLocalizer.msg("limitByTime",
-        "Ich möchte die Sendung nur zu bestimmten Zeiten sehen")), cc.xy(1, 7));
+        "Certain start times only:")), cc.xy(1, 7));
 
     panelBuilder.add(mChooseChannelsBtn = new JButton(mLocalizer.msg("selectChannels","Select channels")), cc.xy(3,3));
     panelBuilder.add(mDayOfWeekCombo, cc.xy(3,5));

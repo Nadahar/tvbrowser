@@ -26,7 +26,7 @@ package devplugin;
 /**
  * A class with a weighted importance value to calculate the program opacity.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  * @since 3.0
  */
 public class ImportanceValue {

@@ -137,7 +137,7 @@ public class TvDataBase {
       channelIdArr[i] = getChannelKey(channelArr[i]);
     }
 
-    // Inventory prüfen
+    // Inventory prÃ¼fen
     boolean somethingChanged = false;
 
     File tvDataDir = new File(Settings.propTVDataDirectory.getString());

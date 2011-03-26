@@ -70,7 +70,7 @@ import devplugin.ProgramFieldType;
  * A class that creates a dialog for setting up the
  * printing of the Program infos.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  *
  */
 public class ProgramInfoPrintDialog implements WindowClosingIf{

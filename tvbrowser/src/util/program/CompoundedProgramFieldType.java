@@ -29,7 +29,7 @@ import devplugin.ProgramFieldType;
 /**
  * The program field type for special compounded types.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  */
 public class CompoundedProgramFieldType {
   /** The compounded field type for the episode formating */

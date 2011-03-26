@@ -115,7 +115,7 @@ public class MonitoringErrorStream extends OutputStream {
           };
           pollThread.start();
   
-          // Warten, bis der PollThread l‰uft
+          // Warten, bis der PollThread l√§uft
           while (! mCaptureThreadIsRunning) {
             try {
               Thread.sleep(10);

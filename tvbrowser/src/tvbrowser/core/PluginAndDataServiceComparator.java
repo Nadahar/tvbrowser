@@ -31,7 +31,7 @@ import devplugin.InfoIf;
 /**
  * A Comparator for sorting plugins and data services (sorting alphabetically by name)
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  */
 public class PluginAndDataServiceComparator implements Comparator<InfoIf> {
 

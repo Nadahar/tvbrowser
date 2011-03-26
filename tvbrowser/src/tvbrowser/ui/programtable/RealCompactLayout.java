@@ -34,7 +34,7 @@ import util.ui.ProgramPanel;
  * <p>
  * This layout has no additional space added anywhere.
  *
- * @author René Mach
+ * @author RenÃ© Mach
  */
 public class RealCompactLayout extends AbstractProgramTableLayout {
   

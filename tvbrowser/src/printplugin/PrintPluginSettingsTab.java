@@ -37,7 +37,7 @@ import devplugin.SettingsTab;
 /**
  * The settings tab for the print plugin.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
 
  */
 public class PrintPluginSettingsTab implements SettingsTab {

@@ -45,7 +45,7 @@ public class PropertiesEntryNode extends DefaultMutableTreeNode implements Langu
 
   private static final Pattern PATTERN_ARGUMENTS = Pattern.compile(".*?(['\"]\\{\\d\\}['\"]|\\{\\d\\}).*");
 
-  private static final Pattern PATTERN_ENDINGS = Pattern.compile(".*[\\w\\sﬂ](\\W*)",Pattern.DOTALL);
+  private static final Pattern PATTERN_ENDINGS = Pattern.compile(".*[\\w\\s√ü](\\W*)",Pattern.DOTALL);
 
   private String filter;
 

@@ -30,7 +30,7 @@ import java.util.Vector;
 import java.util.regex.Pattern;
 
 /**
- * Erkennt Wörter mit " "-Zeichen.
+ * Erkennt WÃ¶rter mit " "-Zeichen.
  *
  * @author Gilson Laurent, pumpkin@gmx.de
  */
@@ -40,7 +40,7 @@ public class StringMatcherRegEx implements IMatcher {
 
   private Pattern mPattern;
 
-  /** Wird nur während des Baumaufbaus benutzt und danach entsorgt. */
+  /** Wird nur wÃ¤hrend des Baumaufbaus benutzt und danach entsorgt. */
   private Vector<String> vtemp = new Vector<String>();
 
   private boolean mCaseSensitive;
@@ -77,7 +77,7 @@ public class StringMatcherRegEx implements IMatcher {
     regex.append(").*");
     mPattern = Pattern.compile(regex.toString(), flags);
 
-    // mal kucken ob sich der mPretest optimierten lässt:
+    // mal kucken ob sich der mPretest optimierten lÃ¤sst:
     mPretest = mPretest.optimize();
 
     vtemp = null;
@@ -85,7 +85,7 @@ public class StringMatcherRegEx implements IMatcher {
   }
 
   /**
-   * Zuerst wird schnell über AND-verknüpfte StringMatcher getestet ob alle
+   * Zuerst wird schnell Ã¼ber AND-verknÃ¼pfte StringMatcher getestet ob alle
    * Elemente vorhanden sind. Danach kommt ein Regex zum Einsatz.
    */
   public boolean matches(String s) {

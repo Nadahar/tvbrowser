@@ -12,7 +12,7 @@ import tvbrowser.core.plugin.programformating.GlobalPluginProgramFormatingManage
  * This is the super class of global and local
  * program configurations.
  *
- * @author René Mach
+ * @author RenÃ© Mach
  * @since 2.5.1
  */
 public abstract class AbstractPluginProgramFormating {

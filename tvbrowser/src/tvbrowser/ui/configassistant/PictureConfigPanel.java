@@ -37,7 +37,7 @@ import com.jgoodies.forms.layout.FormLayout;
  * A panel with the settings for the picture
  * download of the TvBrowserDataService.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  * @since 2.2.2
  */
 public class PictureConfigPanel extends JPanel {

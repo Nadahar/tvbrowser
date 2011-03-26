@@ -259,25 +259,25 @@ public class ProgramTextCreator {
     Date programDate = prog.getDate();
     if(programDate.equals(currentDate.addDays(-1))) {
       buffer.append(Localizer.getLocalization(Localizer.I18N_YESTERDAY));
-      buffer.append(" · ");
+      buffer.append(" Â· ");
     }
     else if(programDate.equals(currentDate)){
       buffer.append(Localizer.getLocalization(Localizer.I18N_TODAY));
-      buffer.append(" · ");
+      buffer.append(" Â· ");
     }
     else if(programDate.equals(currentDate.addDays(1))){
       buffer.append(Localizer.getLocalization(Localizer.I18N_TOMORROW));
-      buffer.append(" · ");
+      buffer.append(" Â· ");
     }
     buffer.append(prog.getDateString());
 
-    buffer.append(" · ");
+    buffer.append(" Â· ");
     buffer.append(prog.getTimeString());
     if (prog.getLength() > 0) {
       buffer.append('-');
       buffer.append(prog.getEndTimeString());
     }
-    buffer.append(" · ");
+    buffer.append(" Â· ");
     buffer.append(prog.getChannel());
 
     buffer.append("</b></div><div style=\"color:#003366; font-size:");
@@ -881,7 +881,7 @@ public class ProgramTextCreator {
           text = HTMLTextHelper.convertTextToHtml(text, createLinks);
           // scan for moderation in beginning of description
           String[] lines = text.split("<br>");
-          String[] tags = { "von und mit", "präsentiert von", "mit", "film von",
+          String[] tags = { "von und mit", "prÃ¤sentiert von", "mit", "film von",
               "moderation", "zu gast" };
           for (int i = 0; i < 2; i++) {
             if (lines.length > i && lines[i].length() < 60) {

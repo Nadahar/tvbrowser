@@ -35,7 +35,7 @@ import javax.swing.JEditorPane;
 /**
  * A JEditorPane with support for antialiasing.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  * 
  */
 public class ProgramEditorPane extends JEditorPane{

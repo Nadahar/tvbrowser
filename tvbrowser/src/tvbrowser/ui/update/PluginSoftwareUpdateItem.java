@@ -26,7 +26,7 @@ package tvbrowser.ui.update;
 /**
  * Contains the update information for a devplugin.Plugin
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  */
 public class PluginSoftwareUpdateItem extends PluginsSoftwareUpdateItem {
 

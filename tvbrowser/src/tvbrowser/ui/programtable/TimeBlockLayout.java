@@ -35,7 +35,7 @@ import devplugin.Date;
  * (so the borders of these time blocks are time synchronous).
  * The height of a certain block is calculated by the channel with the most programs in that block.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  * @since 2.7
  */
 public class TimeBlockLayout extends AbstractProgramTableLayout {

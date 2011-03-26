@@ -8,7 +8,7 @@ import javax.swing.SwingUtilities;
 /**
  * A class for keyboard selection of programs in the ProgramTable.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  * 
  */
 public class KeyboardAction implements ActionListener {

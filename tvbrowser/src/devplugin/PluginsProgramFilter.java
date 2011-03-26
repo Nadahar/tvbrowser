@@ -21,7 +21,7 @@ package devplugin;
 /**
  * Overwrite this class to support filters for your plugin.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  */
 public abstract class PluginsProgramFilter implements ProgramFilter {
   private String mPluginId;

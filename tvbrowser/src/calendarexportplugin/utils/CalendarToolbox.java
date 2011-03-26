@@ -72,12 +72,12 @@ public class CalendarToolbox {
   /**
    * Remove special Chars from Filename
    *
-   * @param fileName Filename to celan
+   * @param fileName Filename to clean
    * @return cleaned Filename
    * @since 2.62
    *
    */
   public static String cleanFilename(String fileName) {
-    return fileName.replaceAll("[^A-z0-9ŠšŸ\\s]*", "");
+    return fileName.replaceAll("[^A-z0-9Ã¤Ã¶Ã¼\\s]*", "");
   }
 }

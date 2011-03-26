@@ -43,8 +43,7 @@ import javax.swing.SpinnerNumberModel;
 import devplugin.Program;
 
 /**
- * Dieser Filter akzeptiert Sendungen mit selbst definiertbaren min und max
- * L�ngen
+ * This filter accepts programs where the duration is in a given time range.
  * 
  * @author bodo
  */
@@ -71,7 +70,7 @@ public class ProgramLengthFilterComponent extends AbstractFilterComponent {
   }
 
   /**
-   * Gibt die Version zur�ck
+   * returns the version of the filter component
    * 
    * @see tvbrowser.core.filters.FilterComponent#getVersion()
    */
@@ -80,7 +79,7 @@ public class ProgramLengthFilterComponent extends AbstractFilterComponent {
   }
 
   /**
-   * Aktzeptiert nur Sendungen einer bestimmten L�nge
+   * accepts only programs with a certain program length
    * 
    * @see tvbrowser.core.filters.FilterComponent#accept(devplugin.Program)
    */
@@ -201,7 +200,7 @@ public class ProgramLengthFilterComponent extends AbstractFilterComponent {
   }
 
   /**
-   * Gibt den Namen des Filters zur�ck
+   * return the filter name
    */
   @Override
   public String toString() {
@@ -214,16 +213,16 @@ public class ProgramLengthFilterComponent extends AbstractFilterComponent {
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer
       .getLocalizerFor(ProgramLengthFilterComponent.class);
 
-  /** Minimal-L�nge */
+  /** minimum length in minutes */
   private int mMin = 5;
-  /** Maximal-L�nge */
+  /** maximum length in minutes */
   private int mMax = 90;
-  /** Minimum benutzen? */
+  /** use minimum */
   private boolean mUseMin = true;
-  /** Maximum benutzen */
+  /** use maximum */
   private boolean mUseMax = true;
 
-  /** GUI-Komponenten f�r das Panel */
+  /** GUI components */
   private JSpinner mMinSpinner;
   private JSpinner mMaxSpinner;
   private JCheckBox mMinCheck;

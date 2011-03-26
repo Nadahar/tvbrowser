@@ -36,7 +36,7 @@ import devplugin.ProgramFieldType;
 /**
  * Provides utilities for program stuff.
  *
- * @author René Mach
+ * @author RenÃ© Mach
  *
  */
 public class ProgramUtilities {

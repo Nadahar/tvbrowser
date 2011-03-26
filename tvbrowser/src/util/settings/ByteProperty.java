@@ -26,7 +26,7 @@ package util.settings;
 /**
  * A property for byte values.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  */
 public class ByteProperty extends Property {
   

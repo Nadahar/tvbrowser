@@ -21,7 +21,7 @@ import com.jgoodies.forms.layout.FormLayout;
  * This dialog is shown when something is copied or imported.
  * It blocks all other dialogs.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  * @since 2.2.2/2.5.1
  */
 public class CopyWaitingDlg extends JDialog {

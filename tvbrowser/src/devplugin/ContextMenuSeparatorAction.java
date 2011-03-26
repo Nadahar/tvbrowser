@@ -36,7 +36,7 @@ import javax.swing.Action;
  * it will be replaced with a separator so the user will
  * see a separator in the context menu.
  *
- * @author René Mach
+ * @author RenÃ© Mach
  */
 public final class ContextMenuSeparatorAction extends AbstractAction {
   private static ContextMenuSeparatorAction mInstance;

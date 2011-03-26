@@ -33,7 +33,7 @@ import util.program.AbstractPluginProgramFormating;
 /**
  * A class for global program configuration settings.
  *
- * @author René Mach
+ * @author RenÃ© Mach
  * @since 2.5.1
  */
 public class GlobalPluginProgramFormating extends AbstractPluginProgramFormating {

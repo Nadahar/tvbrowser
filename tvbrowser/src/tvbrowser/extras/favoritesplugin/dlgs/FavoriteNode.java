@@ -39,7 +39,7 @@ import devplugin.Program;
 /**
  * A node for the favorite tree.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  * @since 2.6
  */
 public class FavoriteNode extends DefaultMutableTreeNode implements Comparable<FavoriteNode> {

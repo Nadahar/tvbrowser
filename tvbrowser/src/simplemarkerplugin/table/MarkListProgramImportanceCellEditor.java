@@ -1,5 +1,5 @@
 /*
- * SimpleMarkerPlugin by René Mach
+ * SimpleMarkerPlugin by RenÃ© Mach
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -37,7 +37,7 @@ import devplugin.Program;
 /**
  * The cell editor for the program importance column
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  */
 public class MarkListProgramImportanceCellEditor extends AbstractCellEditor implements
     TableCellEditor {

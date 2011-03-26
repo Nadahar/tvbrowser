@@ -488,7 +488,7 @@ public class ParamLibrary {
   }
 
   /**
-   * Clean a String. Replace every non non Char/Digit into "_". ÄÖÜ and
+   * Clean a String. Replace every non non Char/Digit into "_". Ã„Ã–Ãœ and
    * other Locale Letters will remain.
    *
    * @param clean String to clean

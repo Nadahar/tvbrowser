@@ -56,7 +56,7 @@ import com.jgoodies.forms.layout.FormLayout;
 /**
  * A class that provides a list that contains selectable items.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  * 
  */
 public class SelectableItemList extends JPanel {

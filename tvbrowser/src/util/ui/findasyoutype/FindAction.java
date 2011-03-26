@@ -27,7 +27,7 @@ import util.ui.TVBrowserIcons;
  * 
  * @author Santhosh
  * 
- * Changed for support of a search bar instead of a search popup by René Mach:
+ * Changed for support of a search bar instead of a search popup by RenÃ© Mach:
  *   - added automatically closing Thread
  *   - removed Popup because the search field will be in a search bar
  *   - removed up and down key for finding matches because of the buttons in the search bar

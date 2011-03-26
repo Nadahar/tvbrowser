@@ -35,7 +35,7 @@ import util.misc.HashCodeUtilities;
  * using for creating configuration used only by the
  * plugin which creates the instance of this class.
  *
- * @author René Mach
+ * @author RenÃ© Mach
  * @since 2.5.1
  */
 public class LocalPluginProgramFormating extends AbstractPluginProgramFormating {

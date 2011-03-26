@@ -49,7 +49,7 @@ import devplugin.Program;
 /**
  * A class that paint the ProgramMenuItem.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  * 
  */
 public class ProgramMenuItemUI extends BasicMenuItemUI {

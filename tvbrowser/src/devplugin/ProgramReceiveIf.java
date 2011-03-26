@@ -28,7 +28,7 @@ package devplugin;
 /**
  * A interface for an object that supports receiving programs.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  *
  */
 public interface ProgramReceiveIf extends Comparable<ProgramReceiveIf> {

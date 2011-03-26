@@ -38,7 +38,7 @@ import util.ui.Localizer;
 /**
  * Handles the global program configurations.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  * @since 2.5.1
  */
 public class GlobalPluginProgramFormatingManager {

@@ -35,7 +35,7 @@ import devplugin.Channel;
 public class ChannelFilter {
   private static final String[] NORMALIZE_REPLACE = new String[] {"o", "a", "u", "s", "o", "a", "u", "s"};
 
-  private static final String[] NORMALIZE_SEARCH = new String[] {"ö", "ä", "ü", "ß", "oe", "ae", "ue", "ss"};
+  private static final String[] NORMALIZE_SEARCH = new String[] {"Ã¶", "Ã¤", "Ã¼", "ÃŸ", "oe", "ae", "ue", "ss"};
 
   private String mCountry;
 

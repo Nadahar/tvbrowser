@@ -40,7 +40,7 @@ import com.jgoodies.forms.layout.FormLayout;
  * 
  * @author Santhosh
  * 
- * Changed for support of a search bar instead of a search popup by René Mach:
+ * Changed for support of a search bar instead of a search popup by RenÃ© Mach:
  *   - added the needed components for the search bar
  *   - added ComponentListener to initialize the search when the
  *     search bar becomes visible

@@ -59,7 +59,7 @@ import util.ui.WindowClosingIf;
  * A dialog that is shown on each version change
  * to ask the user for Plugin update.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  */
 public class TvBrowserVersionChangeDlg extends JDialog implements WindowClosingIf {
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(TvBrowserVersionChangeDlg.class);

@@ -66,7 +66,7 @@ import devplugin.ProgramReceiveTarget;
 /**
  * The model for the favorite tree.
  *
- * @author René Mach
+ * @author RenÃ© Mach
  * @since 2.6
  */
 public class FavoriteTreeModel extends DefaultTreeModel {

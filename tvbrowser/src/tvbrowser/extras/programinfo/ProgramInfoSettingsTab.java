@@ -55,7 +55,7 @@ import devplugin.SettingsTab;
 /**
  * The order settings for the ProgramInfo.
  *
- * @author René Mach
+ * @author RenÃ© Mach
  *
  */
 public class ProgramInfoSettingsTab implements SettingsTab {

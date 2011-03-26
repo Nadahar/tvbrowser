@@ -28,7 +28,7 @@ import java.util.ArrayList;
 /**
  * A class with the news in a backward time sorted list.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  */
 public class NewsList {
   private ArrayList<News> mList = new ArrayList<News>();

@@ -34,7 +34,7 @@ import devplugin.Program;
  * This means that equi distant time spans in the program table result
  * in equi distant heights in the program table.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  * 
  */
 public class RealTimeSynchronousLayout extends AbstractProgramTableLayout {

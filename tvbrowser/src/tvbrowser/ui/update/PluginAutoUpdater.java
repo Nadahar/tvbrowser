@@ -42,7 +42,7 @@ import util.ui.Localizer;
 /**
  * A class that searchs for updates of the installed plugins.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  */
 public class PluginAutoUpdater {
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(PluginAutoUpdater.class);
