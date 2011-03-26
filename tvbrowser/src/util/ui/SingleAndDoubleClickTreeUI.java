@@ -35,7 +35,7 @@ import javax.swing.tree.TreePath;
  * but collapse paths only if current path is selected for
  * single click or always for double click.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  * @since 2.6
  */
 public class SingleAndDoubleClickTreeUI extends javax.swing.plaf.basic.BasicTreeUI implements MouseListener {

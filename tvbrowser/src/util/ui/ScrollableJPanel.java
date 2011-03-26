@@ -33,7 +33,7 @@ import javax.swing.Scrollable;
 /**
  * A JPanel that can be scrolled vertcal if contained in a JScrollPane.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  * @since 2.5.1
  */
 public class ScrollableJPanel extends JPanel implements Scrollable {

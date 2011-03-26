@@ -5,7 +5,7 @@ import javax.swing.JList;
 /**
  * A interface for the drop action of JLists.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  *
  */
 public interface ListDropAction {

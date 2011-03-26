@@ -85,12 +85,12 @@ public class ImageUtilities {
   }
   
   /**
-   * Lädt ein ImageIcon aus einem Jar-File und gibt es zurück.
+   * LÃ¤dt ein ImageIcon aus einem Jar-File und gibt es zurÃ¼ck.
    * <P>
    * Ist kein ImageIcon mit diesem Namen im Jar-File, so wird versucht, es vom
    * Dateisystem zu laden.
    * <P>
-   * Wird die ImageIcon-Datei nicht gefunden, so wird <CODE>null</CODE> zurück gegeben.
+   * Wird die ImageIcon-Datei nicht gefunden, so wird <CODE>null</CODE> zurÃ¼ck gegeben.
    *
    * @param fileName Der Name der ImageIcon-Datei.
    * @param srcClass Eine Klasse, aus deren Jar-File das ImageIcon geladen werden soll.
@@ -108,12 +108,12 @@ public class ImageUtilities {
   
   
   /**
-   * Lädt ein Image aus einem Jar-File und gibt es zurück.
+   * LÃ¤dt ein Image aus einem Jar-File und gibt es zurÃ¼ck.
    * <P>
    * Ist kein Image mit diesem Namen im Jar-File, so wird versucht, es vom
    * Dateisystem zu laden.
    * <P>
-   * Wird die Image-Datei nicht gefunden, so wird <CODE>null</CODE> zurück gegeben.
+   * Wird die Image-Datei nicht gefunden, so wird <code>null</code> zurÃ¼ck gegeben.
    *
    * @param fileName Der Name der Image-Datei.
    * @param srcClass Eine Klasse, aus deren Jar-File das Image geladen werden soll.

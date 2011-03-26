@@ -169,12 +169,12 @@ public class HelpDialog implements ActionListener, HyperlinkListener {
     Point hilfeLocation = new Point(vaterLocation.x + vaterSize.width, vaterLocation.y);
     Dimension hilfeSize = new Dimension(screenSize.width - hilfeLocation.x, vaterSize.height);
 
-    // Prüfen, ob die Größe OK ist
+    // check if size is OK
     if (hilfeSize.width < MIN_HELP_DIALOG_SIZE.width) {
       hilfeSize.width = MIN_HELP_DIALOG_SIZE.width;
       hilfeLocation.x = screenSize.width - hilfeSize.width;
 
-      // Passt nicht daneben -> Vaterfenster noch ein Bißchen nach links schieben
+      // does not fit beside -> move parent window to the left
       vaterLocation.x = screenSize.width - MIN_HELP_DIALOG_SIZE.width - vaterSize.width;
       if (vaterLocation.x < 10) {
         vaterLocation.x = 10;
@@ -220,9 +220,9 @@ public class HelpDialog implements ActionListener, HyperlinkListener {
 
 
   /**
-   * Hilfsmethode für {@link #hyperlinkUpdate(HyperlinkEvent) hyperlinkUpdate}.
+   * helper method for {@link #hyperlinkUpdate(HyperlinkEvent) hyperlinkUpdate}.
    * <p>
-   * Fügt die aktuelle Seite zum mHistoryStack hinzu.
+   * adds the current page to the mHistoryStack.
    */
   protected void addThisSiteToHistory() {
     // Neues HistoryStackElement erstellen
@@ -234,19 +234,17 @@ public class HelpDialog implements ActionListener, HyperlinkListener {
     JScrollBar scrollBar = mScrollPane.getVerticalScrollBar();
     newSite.mVerticalScrollBarRelValue = ((double) scrollBar.getValue()) / ((double) scrollBar.getMaximum());
 
-    // Neues HistoryStackElement auf Stack werfen
     mHistoryStack.push(newSite);
 
-    // zurück-Button sichtbar machen
     mBackButton.setEnabled(true);
   }
 
 
 
   /**
-   * Hilfsmethode für {@link #actionPerformed(ActionEvent)}.
+   * helper method for {@link #actionPerformed(ActionEvent)}.
    * <P>
-   * Ruft die oberste Seite des mHistoryStack wieder auf.
+   * return most current page of mHistoryStack.
    */
   protected void popFromHistory() {
     HistoryStackElement lastSite = mHistoryStack.pop();
@@ -266,7 +264,7 @@ public class HelpDialog implements ActionListener, HyperlinkListener {
 
 
   /**
-   * Lädt eine HTML-Seite und gibt deren Inhalt als String zurück.
+   * return content of a HTML page as string.
    * <p>
    * Die Seite kann auch in der Jar-Datei sein, in dem diese Klasse ist.
    *
@@ -296,7 +294,7 @@ public class HelpDialog implements ActionListener, HyperlinkListener {
 
   /**
    * Extrahiert aus einem gegebenen Dateinamen den Pfad. Ist kein Pfad
-   * vorhanden, so wird null zurückgegeben.
+   * vorhanden, so wird null zurÃ¼ckgegeben.
    *
    * @param dateiname Der Dateiname.
    */

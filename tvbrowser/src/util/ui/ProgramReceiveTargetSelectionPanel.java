@@ -45,7 +45,7 @@ import devplugin.ProgramReceiveTarget;
  * A default panel component to select the receive
  * targets for sending programs to plugins.
  * <p>
- * @author René Mach
+ * @author RenÃ© Mach
  * @since 3.0
  */
 public class ProgramReceiveTargetSelectionPanel extends JPanel {

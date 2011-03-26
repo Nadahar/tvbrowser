@@ -55,7 +55,7 @@ import devplugin.SettingsTab;
 /**
  * The settings for the global program configurations.
  *
- * @author René Mach
+ * @author RenÃ© Mach
  */
 public class GlobalPluginProgramFormatingSettings implements SettingsTab, ActionListener {
   /** The localizer for this class */

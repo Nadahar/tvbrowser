@@ -9,7 +9,7 @@ import devplugin.Program;
 
 /**
  * A class for Drag'n'Drop of Programs.
- * @author René Mach
+ * @author RenÃ© Mach
  */
 public class TransferProgram implements Transferable {
   private Program mProgram;

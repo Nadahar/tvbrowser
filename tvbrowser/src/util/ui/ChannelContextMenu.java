@@ -33,7 +33,7 @@ import devplugin.Channel;
 /**
  * A class that builds a PopupMenu for a Channel.
  *
- * @author René Mach
+ * @author RenÃ© Mach
  *
  */
 public class ChannelContextMenu implements ActionListener {

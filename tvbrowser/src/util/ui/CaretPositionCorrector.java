@@ -16,7 +16,7 @@ import javax.swing.event.CaretListener;
 /**
  * A class for correction of the caret position of a JFormattedTextField.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  * 
  */
 public class CaretPositionCorrector {

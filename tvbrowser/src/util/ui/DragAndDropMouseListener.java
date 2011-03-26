@@ -42,7 +42,7 @@ import javax.swing.ToolTipManager;
 /**
  * This class implements a MouseListener for DnD in JLists.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  * 
  */
 public class DragAndDropMouseListener extends MouseAdapter {

@@ -20,7 +20,7 @@ import javax.swing.JList;
 /**
  * A class for DnD in JLists and between two of them.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  *
  */
 public class ListDragAndDropHandler implements DropTargetListener,

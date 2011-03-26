@@ -62,7 +62,7 @@
   </target>
 
   <target name="compile">
-    <javac destdir="classes" deprecation="true" encoding="iso-8859-15" target="1.5" source="1.5">
+    <javac destdir="classes" deprecation="true" encoding="UTF-8" target="1.5" source="1.5">
       <src>
         <path refid="sourcepath"/>
       </src>
@@ -72,7 +72,7 @@
     </javac>
   </target>
 
-  <target name="pdsrunner" depends="compile">    
+  <target name="pdsrunner" depends="compile">
     <java classname="primarydatamanager.PDSRunner" maxmemory="256m" fork="true">
       <jvmarg value="-Djava.awt.headless=true"/>
       <classpath>

@@ -118,8 +118,8 @@ public class LineNumberHeader extends JComponent {
   }
   
   /**
-   * Setzt lokal die max. Zeilenzahl. FÃ¼hrt falls nÃ¶tig revalidate() und
-   * repaint() aus.
+   * Setzt lokal die max. Zeilenzahl.
+   * does revalidate() and repaint(), if necessary
    */
   private void setLines() {
     int newLines;
@@ -144,11 +144,11 @@ public class LineNumberHeader extends JComponent {
     // Breite des Gesamtstrings ermitteln
     // Also: Maximale-Zeilenzahl als String, dessen Stringbreite
     final int w = metrics.stringWidth(Integer.toString(maxLines));
-    // Höhe einer einzelnen Textzeile
+    // hight of a text line
     final int h = metrics.getHeight();
 
     // Breite: 2 * Randbreite + max. Stringbreite
-    // Höhe: max. Zeilenzahl * Höhe einer Zeile (Stringhöhe)
+    // height: max line number * hight of a row
     return new Dimension(w + 2 * this.borderWidth, maxLines * h + this.textComponent.getMargin().top
         + this.textComponent.getMargin().bottom);
   }
@@ -166,7 +166,7 @@ public class LineNumberHeader extends JComponent {
 
     // Maximale Stringbreite (wie in getPrefSize()
     final int w = metrics.stringWidth(Integer.toString(maxLines));
-    // Schrifthöhe (wie in getPrefSize()
+    // font height (wie in getPrefSize()
     final int h = metrics.getHeight();
 
     // Verschiebung nach links um Gesamtbreite (String) + ein Rand

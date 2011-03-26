@@ -24,7 +24,7 @@ import devplugin.SettingsTab;
 /**
  * Settings for network stuff.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  * @since 2.5.1
  */
 public class NetworkSettingsTab implements SettingsTab {

@@ -33,7 +33,7 @@ import devplugin.SettingsItem;
  * A class that provides a panel for configuration of the
  * supported program formatings of a plugin.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  * @since 2.5.1
  */
 public class PluginProgramConfigurationPanel extends JPanel implements ActionListener {

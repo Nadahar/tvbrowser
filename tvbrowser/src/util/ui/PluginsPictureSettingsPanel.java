@@ -41,7 +41,7 @@ import devplugin.SettingsItem;
 /**
  * A settings panel for the setup of the plugins picture settings.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  * @since 2.6
  */
 public class PluginsPictureSettingsPanel extends JPanel {

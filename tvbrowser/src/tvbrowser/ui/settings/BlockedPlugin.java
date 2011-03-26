@@ -31,7 +31,7 @@ import devplugin.Version;
 /**
  * A class that contains information about a blocked plugin.
  *
- * @author René Mach
+ * @author RenÃ© Mach
  */
 public final class BlockedPlugin {
   private Version mBlockStart;

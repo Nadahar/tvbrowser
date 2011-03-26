@@ -39,7 +39,7 @@ import devplugin.Plugin;
 /**
  * A renderer class for the mark priority selection combo box.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  * @since 2.6
  */
 public class MarkPriorityComboBoxRenderer extends DefaultListCellRenderer {

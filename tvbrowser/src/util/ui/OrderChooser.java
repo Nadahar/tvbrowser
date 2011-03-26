@@ -124,7 +124,7 @@ public class OrderChooser extends JPanel implements ListDropAction{
     ListDragAndDropHandler dnDHandler = new ListDragAndDropHandler(mList,mList,this);
     new DragAndDropMouseListener(mList,mList,this,dnDHandler);
     
-    // MouseListener hinzufügen, der das Selektieren/Deselektieren übernimmt
+    // MouseListener hinzufÃ¼gen, der das Selektieren/Deselektieren Ã¼bernimmt
     mList.addMouseListener(new MouseAdapter() {
       public void mouseReleased(MouseEvent evt) {
         if (evt.getX() < mItemRenderer.getSelectionWidth() && mIsEnabled) {
@@ -310,7 +310,7 @@ public class OrderChooser extends JPanel implements ListDropAction{
       mListModel.removeElementAt(selection[i]);
     }
 
-    // Zeilen wieder einfï¿½gen
+    // Zeilen wieder einfÃ¼gen
     for (int i = 0; i < selectedRows.length; i++) {
       mListModel.insertElementAt(selectedRows[i], insertPos + i);
     }
