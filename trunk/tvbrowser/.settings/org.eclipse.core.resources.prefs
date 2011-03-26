@@ -1,4 +1,6 @@
-#Sun Nov 14 16:57:38 CET 2010
+#Sat Mar 26 18:56:34 CET 2011
 eclipse.preferences.version=1
-encoding/<project>=ISO-8859-1
-encoding/src=ISO-8859-1
+encoding//test/src=UTF-8
+encoding/<project>=UTF-8
+encoding/deployment=ISO-8859-1
+encoding/src=UTF-8
