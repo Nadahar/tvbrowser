@@ -28,7 +28,7 @@ package tvbrowser.core.search.booleansearch;
 import java.util.Hashtable;
 
 /**
- * Erkennt Wörter ohne Leerzeichen
+ * Erkennt WÃ¶rter ohne Leerzeichen
  * 
  * @author Gilson Laurent, pumpkin@gmx.de
  */

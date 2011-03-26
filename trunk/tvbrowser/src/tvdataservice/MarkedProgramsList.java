@@ -45,7 +45,7 @@ import devplugin.ProgramFilter;
 /**
  * A class that contains all marked programs.
  *
- * @author René Mach
+ * @author RenÃ© Mach
  * @since 2.2
  */
 public class MarkedProgramsList {

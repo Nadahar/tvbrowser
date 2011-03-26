@@ -140,13 +140,13 @@ public class ExcludeWizardStep extends AbstractWizardStep {
 
     if (mode == MODE_CREATE_EXCLUSION || mode == MODE_EDIT_EXCLUSION) {
       mMainQuestion = mLocalizer.msg("mainQuestion.edit",
-          "Welche Sendungen wollen Sie ausschließen?");
-      mChannelQuestion = mLocalizer.msg("channelQuestion.edit", "Sendungen auf diesem Sender:");
-      mTopicQuestion = mLocalizer.msg("topicQuestion.edit", "Sendungen mit diesem Stichwort:");
-      mTimeQuestion = mLocalizer.msg("timeQuestion.edit", "Sendungen in diesem Zeitraum:");
-      mTitleQuestion = mLocalizer.msg("titleQuestion.edit", "Sendungen mit diesem Titel:");
-      mDayQuestion = mLocalizer.msg("dayOfWeekQuestion.edit","Sendungen an diesem Tag:");
-      mFilterQuestion = mLocalizer.msg("filterQuestion.edit","Sendungen des Filters:");
+          "What programs do you want to exclude?");
+      mChannelQuestion = mLocalizer.msg("channelQuestion.edit", "Programs aired on this channel:");
+      mTopicQuestion = mLocalizer.msg("topicQuestion.edit", "Programs containing this term:");
+      mTimeQuestion = mLocalizer.msg("timeQuestion.edit", "Programs that start during this period:");
+      mTitleQuestion = mLocalizer.msg("titleQuestion.edit", "Programs with this title:");
+      mDayQuestion = mLocalizer.msg("dayOfWeekQuestion.edit","Programs on this day of week:");
+      mFilterQuestion = mLocalizer.msg("filterQuestion.edit","Programs of the filter:");
     } else {
       if(mFavorite != null) {
         mMainQuestion = mLocalizer.msg("mainQuestion.create",

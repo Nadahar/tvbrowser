@@ -30,7 +30,7 @@ import devplugin.ActionMenu;
  * Is an interface for showing support of button
  * action for toolbar of internal plugin.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  * @since 2.7
  */
 public interface ButtonActionIf {

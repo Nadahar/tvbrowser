@@ -15,7 +15,7 @@ import devplugin.Program;
 /**
  * This filter filters all programs that are marked as Favorites.
  *
- * @author René Mach
+ * @author RenÃ© Mach
  *
  */
 public class FavoritesFilterComponent extends AbstractFilterComponent {

@@ -81,7 +81,7 @@ import devplugin.Version;
 /**
  * Shows all important programs in a time sorted list.
  *
- * @author René Mach
+ * @author RenÃ© Mach
  * @since 2.7
  */
 public class ProgramListPlugin extends Plugin {
@@ -124,7 +124,7 @@ public class ProgramListPlugin extends Plugin {
 
   public PluginInfo getInfo() {
     return new PluginInfo(ProgramListPlugin.class, mLocalizer.msg("name", "Program list"), mLocalizer.msg(
-        "description", "Shows programs in a list."), "René Mach");
+        "description", "Shows programs in a list."), "RenÃ© Mach");
   }
 
   /**

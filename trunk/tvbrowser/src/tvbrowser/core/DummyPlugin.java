@@ -30,7 +30,7 @@ import devplugin.Version;
  * A dummy plugin class used to load
  * version for deactivated plugins.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  * @since 3.0
  */
 public final class DummyPlugin extends Plugin {

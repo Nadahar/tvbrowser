@@ -36,7 +36,7 @@ import tvbrowser.extras.searchplugin.SearchPluginProxy;
  * A class that contains all available internal plugin proxys.
  * Add all internal plugin proxys to this list.
  *
- * @author René Mach
+ * @author RenÃ© Mach
  * @since 2.6
  */
 public class InternalPluginProxyList {

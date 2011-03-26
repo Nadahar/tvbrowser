@@ -44,7 +44,7 @@ import devplugin.Channel;
 /**
  * A ListCellRenderer for SelectableItems.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  */
 public class SelectableItemRenderer implements ListCellRenderer {
   private int mSelectionWidth;

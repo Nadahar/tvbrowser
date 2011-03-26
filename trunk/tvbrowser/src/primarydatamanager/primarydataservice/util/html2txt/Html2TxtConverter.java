@@ -253,10 +253,10 @@ public class Html2TxtConverter extends FilterReader {
     result = result.replace((char) 130, ',');
     result = result.replace((char) 132, (char) 8222); // doppeltes low-9-Zeichen rechts
     result = result.replace(String.valueOf((char) 133), "...");
-    result = result.replace((char) 145, (char) 8216); //einfaches Anführungszeichen links
-    result = result.replace((char) 146, (char) 8217); //einfaches Anführungszeichen rechts
-    result = result.replace((char) 147, (char) 8220); // doppeltes Anführungszeichen links
-    result = result.replace((char) 148, (char) 8221); // doppeltes Anführungszeichen rechts
+    result = result.replace((char) 145, (char) 8216); //einfaches AnfÃ¼hrungszeichen links
+    result = result.replace((char) 146, (char) 8217); //einfaches AnfÃ¼hrungszeichen rechts
+    result = result.replace((char) 147, (char) 8220); // doppeltes AnfÃ¼hrungszeichen links
+    result = result.replace((char) 148, (char) 8221); // doppeltes AnfÃ¼hrungszeichen rechts
     result = result.replace((char) 150, '-');
     result = result.replace((char) 153, (char) 8482); //TM-Zeichen
     result = result.replace((char) 8211, '-');

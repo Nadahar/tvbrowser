@@ -1,5 +1,5 @@
 /*
- * SimpleMarkerPlugin by René Mach
+ * SimpleMarkerPlugin by RenÃ© Mach
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -43,7 +43,7 @@ import devplugin.Program;
 /**
  * The filter component for the SimpleMarkerPlugin.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  */
 public class MarkListFilterComponent extends PluginsFilterComponent {
   private String mListId = null;

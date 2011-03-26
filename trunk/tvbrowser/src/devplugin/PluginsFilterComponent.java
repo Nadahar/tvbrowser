@@ -28,7 +28,7 @@ import tvbrowser.core.filters.FilterComponent;
  * components for your plugin.<br>
  * Implementation note: Your class must be public, so it can be constructed by reflection.
  *
- * @author René Mach
+ * @author RenÃ© Mach
  */
 public abstract class PluginsFilterComponent implements FilterComponent {
   private String mName;

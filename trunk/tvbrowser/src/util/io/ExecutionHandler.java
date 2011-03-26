@@ -30,7 +30,7 @@ import java.util.ArrayList;
 /**
  * Handles the execution of external processes.
  *
- * @author René Mach
+ * @author RenÃ© Mach
  * @since 2.6.1/2.2.5
  */
 public class ExecutionHandler {

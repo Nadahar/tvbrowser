@@ -61,7 +61,7 @@ import devplugin.Program;
 /**
  * A class that contains a program in a JMenuItem.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  * 
  */
 public class ProgramMenuItem extends JMenuItem {

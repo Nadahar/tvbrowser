@@ -36,7 +36,7 @@ import devplugin.ProgramFieldType;
 /**
  * The settings for the printing of the program info.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  *
  */
 public class ProgramInfoPrintSettings {

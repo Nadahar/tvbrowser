@@ -30,7 +30,7 @@ import devplugin.Version;
  * A class that contains basic informations
  * like ID and version about a Plugin.
  * <p>
- * @author René Mach
+ * @author RenÃ© Mach
  */
 public class PluginBaseInfo implements Comparable {
   private String mPluginId;

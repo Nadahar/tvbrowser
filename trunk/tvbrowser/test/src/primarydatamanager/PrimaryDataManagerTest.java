@@ -82,7 +82,7 @@ public class PrimaryDataManagerTest extends TestCase {
     prepProg1.setVersion(1);
     prepProg1.addProgramFrame(createProgramFrame(1, 20, 30, "Otto 1"));
     prepProg1.addProgramFrame(createProgramFrame(2, 31, 50, "Karlson vom Dach"));
-    prepProg1.addProgramFrame(createProgramFrame(3, 51, 80, "Nixf�rungut"));
+    prepProg1.addProgramFrame(createProgramFrame(3, 51, 80, "Nixfürungut"));
     prepProg1.writeToFile(new File(prepDir, "2010-01-01_de_test_base_full.prog.gz"));
 
     DayProgramFile prepProg3 = new DayProgramFile();
@@ -118,7 +118,7 @@ public class PrimaryDataManagerTest extends TestCase {
       try {
         // An unchanged day program except for the program order
         DayProgramFile rawProg1 = new DayProgramFile();
-        rawProg1.addProgramFrame(createProgramFrame(10, 51, 80, "Nixf�rungut"));
+        rawProg1.addProgramFrame(createProgramFrame(10, 51, 80, "Nixfürungut"));
         rawProg1.addProgramFrame(createProgramFrame(11, 20, 30, "Otto 1"));
         rawProg1.addProgramFrame(createProgramFrame(12, 31, 50, "Karlson vom Dach"));
         rawProg1.writeToFile(new File(targetDir, "2010-01-01_de_test_raw_full.gz"));

@@ -55,7 +55,7 @@ import com.jgoodies.forms.layout.FormLayout;
  * A class with a dialog that informs the user
  * about the plugin functions of TV-Browser.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  * @since 2.7
  */
 public class PluginInformationDialog extends JDialog implements WindowClosingIf {

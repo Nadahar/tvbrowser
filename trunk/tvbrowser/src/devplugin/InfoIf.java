@@ -26,7 +26,7 @@ package devplugin;
  * An interface for all classes that supports the getId()
  * and getInfo() methods.
  * <p>
- * @author René Mach
+ * @author RenÃ© Mach
  * @since 3.0
  */
 public interface InfoIf {

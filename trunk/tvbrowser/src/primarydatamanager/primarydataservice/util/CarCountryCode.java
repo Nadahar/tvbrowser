@@ -16,7 +16,7 @@ public class CarCountryCode {
     mCarCountryCodeHash = new HashMap<String, String>();
     
     // Quelle: http://www.schlaufuchs.at/list/l_akinte.htm
-    mCarCountryCodeHash.put("A",   "Österreich");
+    mCarCountryCodeHash.put("A",   "Ã–sterreich");
     mCarCountryCodeHash.put("AFG", "Afghanistan");
     mCarCountryCodeHash.put("AL",  "Albanien");
     mCarCountryCodeHash.put("AND", "Andorra");
@@ -36,13 +36,13 @@ public class CarCountryCode {
     mCarCountryCodeHash.put("BRN", "Bahrain");
     mCarCountryCodeHash.put("BRU", "Brunei");
     mCarCountryCodeHash.put("BS",  "Bahamas");
-    mCarCountryCodeHash.put("BY",  "Belarus (Weißrußland)");
+    mCarCountryCodeHash.put("BY",  "Belarus (WeiÃŸrussland)");
     mCarCountryCodeHash.put("C",   "Kuba");
     mCarCountryCodeHash.put("CAM", "Kamerun");
     mCarCountryCodeHash.put("CD",  "Kongo"); // (ehem. ZR - Zaire)
     mCarCountryCodeHash.put("CDN", "Kanada");
     mCarCountryCodeHash.put("CH",  "Schweiz");
-    mCarCountryCodeHash.put("CI",  "Elfenbeinküste");
+    mCarCountryCodeHash.put("CI",  "ElfenbeinkÃ¼ste");
     mCarCountryCodeHash.put("CL",  "Sri Lanka");
     mCarCountryCodeHash.put("CO",  "Kolumbien");
     mCarCountryCodeHash.put("COM", "Komoren");
@@ -51,7 +51,7 @@ public class CarCountryCode {
     mCarCountryCodeHash.put("CY",  "Zypern");
     mCarCountryCodeHash.put("CZ",  "Tschechische Republik");
     mCarCountryCodeHash.put("D",   "Deutschland");
-    mCarCountryCodeHash.put("DK",  "Dänemark");
+    mCarCountryCodeHash.put("DK",  "DÃ¤nemark");
     mCarCountryCodeHash.put("DOM", "Dominikanische Republik");
     mCarCountryCodeHash.put("DY",  "Benin");
     mCarCountryCodeHash.put("DZ",  "Algerien");
@@ -63,16 +63,16 @@ public class CarCountryCode {
     mCarCountryCodeHash.put("ER",  "Eritrea");
     mCarCountryCodeHash.put("ES",  "El Salvador");
     mCarCountryCodeHash.put("EST", "Estland");
-    mCarCountryCodeHash.put("ET",  "Ägypten");
-    mCarCountryCodeHash.put("ETH", "Äthiopien");
+    mCarCountryCodeHash.put("ET",  "Ã„gypten");
+    mCarCountryCodeHash.put("ETH", "Ã„thiopien");
     mCarCountryCodeHash.put("F",   "Frankreich");
     mCarCountryCodeHash.put("FIN", "Finnland");
     mCarCountryCodeHash.put("FJI", "Fidschi");
     mCarCountryCodeHash.put("FL",  "Liechtenstein");
-    mCarCountryCodeHash.put("FR",  "Färöer");
+    mCarCountryCodeHash.put("FR",  "FÃ¤rÃ¶er");
     mCarCountryCodeHash.put("FSM", "Mikronesien");
     mCarCountryCodeHash.put("G",   "Gabun");
-    mCarCountryCodeHash.put("GB",  "Großbritannien"); // Vereinigtes Königreich
+    mCarCountryCodeHash.put("GB",  "GroÃŸbritannien"); // Vereinigtes KÃ¶nigreich
     mCarCountryCodeHash.put("GBA", "Alderney");
     mCarCountryCodeHash.put("GBG", "Guernsey");
     mCarCountryCodeHash.put("GBJ", "Jersey");
@@ -82,7 +82,7 @@ public class CarCountryCode {
     mCarCountryCodeHash.put("GE",  "Georgien");
     mCarCountryCodeHash.put("GH",  "Ghana");
     mCarCountryCodeHash.put("GN",  "Guinea-Bissau");
-    mCarCountryCodeHash.put("GQ",  "Äquatorialguinea");
+    mCarCountryCodeHash.put("GQ",  "Ã„quatorialguinea");
     mCarCountryCodeHash.put("GR",  "Griechenland");
     mCarCountryCodeHash.put("GUY", "Guyana");
     mCarCountryCodeHash.put("H",   "Ungarn");
@@ -127,7 +127,7 @@ public class CarCountryCode {
     mCarCountryCodeHash.put("MW",  "Malawi");
     mCarCountryCodeHash.put("MYA", "Myanmar");
     mCarCountryCodeHash.put("N",   "Norwegen");
-    mCarCountryCodeHash.put("NA",  "Niederländische Antillen");
+    mCarCountryCodeHash.put("NA",  "NiederlÃ¤ndische Antillen");
     mCarCountryCodeHash.put("NAM", "Namibia");
     mCarCountryCodeHash.put("NAU", "Nauru");
     mCarCountryCodeHash.put("NEP", "Nepal");
@@ -157,14 +157,14 @@ public class CarCountryCode {
     mCarCountryCodeHash.put("RM",  "Madagaskar");
     mCarCountryCodeHash.put("RMM", "Mali");
     mCarCountryCodeHash.put("RN",  "Niger");
-    mCarCountryCodeHash.put("RO",  "Rumänien");
-    mCarCountryCodeHash.put("ROK", "Süd-Korea");
+    mCarCountryCodeHash.put("RO",  "RumÃ¤nien");
+    mCarCountryCodeHash.put("ROK", "SÃ¼d-Korea");
     mCarCountryCodeHash.put("ROU", "Uruguay");
     mCarCountryCodeHash.put("RP",  "Philippinen");
     mCarCountryCodeHash.put("RSM", "San Marino");
     mCarCountryCodeHash.put("RT",  "Togo");
     mCarCountryCodeHash.put("RU",  "Burundi");
-    mCarCountryCodeHash.put("RUS", "Russische Föderation");
+    mCarCountryCodeHash.put("RUS", "Russische FÃ¶deration");
     mCarCountryCodeHash.put("RWA", "Ruanda");
     mCarCountryCodeHash.put("S",   "Schweden");
     mCarCountryCodeHash.put("SD",  "Swasiland");
@@ -186,7 +186,7 @@ public class CarCountryCode {
     mCarCountryCodeHash.put("TM",  "Turkmenistan");
     mCarCountryCodeHash.put("TN",  "Tunesien");
     mCarCountryCodeHash.put("TO",  "Tonga");
-    mCarCountryCodeHash.put("TR",  "Türkei");
+    mCarCountryCodeHash.put("TR",  "TÃ¼rkei");
     mCarCountryCodeHash.put("TT",  "Trinidad und Tobago");
     mCarCountryCodeHash.put("TUV", "Tuvalu");
     mCarCountryCodeHash.put("UA",  "Ukraine");
@@ -207,7 +207,7 @@ public class CarCountryCode {
     mCarCountryCodeHash.put("YAR", "Jemen");
     mCarCountryCodeHash.put("YU",  "Jugoslawien");
     mCarCountryCodeHash.put("YV",  "Venezuela Z Sambia");
-    mCarCountryCodeHash.put("ZA",  "Südafrika");
+    mCarCountryCodeHash.put("ZA",  "SÃ¼dafrika");
     mCarCountryCodeHash.put("ZR",  "Zaire"); // (jetzt CD - Dem. Republik Kongo)
     mCarCountryCodeHash.put("ZW",  "Simbabwe");
   }

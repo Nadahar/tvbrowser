@@ -56,7 +56,7 @@ import devplugin.SettingsItem;
 /**
  * A class that handles the program context menu.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  *
  */
 public class ContextMenuManager {

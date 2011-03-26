@@ -38,7 +38,7 @@ import devplugin.SettingsTab;
 /**
  * Encapsulates the ProgramInfo and manages the access to it.
  *
- * @author René Mach
+ * @author RenÃ© Mach
  */
 public class ProgramInfoProxy extends AbstractInternalPluginProxy implements ContextMenuIf {
 

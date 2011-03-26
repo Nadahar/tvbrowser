@@ -9,7 +9,7 @@ import java.text.Normalizer;
 public class WritingConversion {
 
   /**
-   * Remove any diacritical marks (accents like ç, ñ, é, etc) from the given string.
+   * Remove any diacritical marks (accents like Ã§, Ã±, Ã©, etc) from the given string.
    *
    * from http://balusc.blogspot.com/2006/10/stringutil.html
    * no copyright since it's too simple ;-)
@@ -74,7 +74,7 @@ public class WritingConversion {
   }
 
   /**
-   * Replace punctuation (!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~¿¡
+   * Replace punctuation (!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~Â¿Â¡
    * dashes and quotation marks) with a given string
    * @param string The string to replace punctuation from.
    * @param replaceString The string to replace the punctuation with

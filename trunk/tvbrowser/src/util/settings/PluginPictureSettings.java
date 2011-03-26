@@ -32,7 +32,7 @@ import tvbrowser.core.Settings;
 /**
  * Contains the settings of the picture settings of a plugin.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  * @since 2.6
  */
 public class PluginPictureSettings {

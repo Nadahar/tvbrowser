@@ -1,5 +1,5 @@
 /*
- * SimpleMarkerPlugin by René Mach
+ * SimpleMarkerPlugin by RenÃ© Mach
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -79,7 +79,7 @@ import devplugin.Version;
  *
  * License: GNU General Public License (GPL)
  *
- * @author René Mach
+ * @author RenÃ© Mach
  */
 public class SimpleMarkerPlugin extends Plugin {
   private static final Version mVersion = new Version(3,0);
@@ -141,7 +141,7 @@ public class SimpleMarkerPlugin extends Plugin {
       String name = mLocalizer.msg("name","Marker plugin");
       String description = mLocalizer.msg("description", "A simple marker plugin (formerly Just_Mark)");
 
-      mPluginInfo = new PluginInfo(SimpleMarkerPlugin.class, name, description, "René Mach", "GPL");
+      mPluginInfo = new PluginInfo(SimpleMarkerPlugin.class, name, description, "RenÃ© Mach", "GPL");
     }
 
     return mPluginInfo;

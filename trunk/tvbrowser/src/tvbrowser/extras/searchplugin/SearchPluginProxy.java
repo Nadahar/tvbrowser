@@ -37,7 +37,7 @@ import devplugin.SettingsTab;
 /**
  * Encapsulates the SearchPlugin and manages the access to it.
  *
- * @author René Mach
+ * @author RenÃ© Mach
  */
 public class SearchPluginProxy extends AbstractInternalPluginProxy implements ButtonActionIf, ContextMenuIf {
 

@@ -30,7 +30,7 @@ import javax.swing.JScrollPane;
 /**
  * An interface that supports to create an own center component as Renderer for the SelectableItemList.
  * <p>
- * @author René Mach
+ * @author RenÃ© Mach
  * @since 2.7
  */
 public interface SelectableItemRendererCenterComponentIf {

@@ -512,7 +512,7 @@ public class IOUtilities {
 
 
   /**
-   * L�dt eine Datei aus einem Jar-File und gibt sie zur�ck.
+   * Lädt eine Datei aus einem Jar-File und gibt sie zurück.
    * <P>
    * Ist keine Datei mit diesem Namen im Jar-File, so wird versucht, sie vom
    * Dateisystem zu laden.
@@ -554,12 +554,12 @@ public class IOUtilities {
     byte[] data = new byte[0];
     int len;
     while ((len = in.read(buffer)) != -1) {
-      // data Array vergr��ern
+      // data Array vergrößern
       byte[] oldData = data;
       data = new byte[oldData.length + len];
       System.arraycopy(oldData, 0, data, 0, oldData.length);
 
-      // Gerade gelesene Daten anh�ngen
+      // Gerade gelesene Daten anhängen
       System.arraycopy(buffer, 0, data, oldData.length, len);
     }
     in.close();

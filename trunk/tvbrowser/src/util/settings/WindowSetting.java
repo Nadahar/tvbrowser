@@ -35,7 +35,7 @@ import java.io.ObjectOutputStream;
 /**
  * A class with the position and size settings for a window.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  * @since 2.7
  */
 public final class WindowSetting {

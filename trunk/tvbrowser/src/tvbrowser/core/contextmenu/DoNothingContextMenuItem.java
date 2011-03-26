@@ -33,7 +33,7 @@ import devplugin.Program;
 /**
  * An item for the mouse actions that does nothing.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  */
 public class DoNothingContextMenuItem implements ContextMenuIf  {
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(DoNothingContextMenuItem.class);

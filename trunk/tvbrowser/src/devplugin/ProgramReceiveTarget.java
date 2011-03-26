@@ -85,7 +85,7 @@ import util.ui.Localizer;
  * plugins and handle it in the specified manner. <br>
  * <br>
  *
- * @author René Mach
+ * @author RenÃ© Mach
  * @since 2.5
  */
 public final class ProgramReceiveTarget implements Comparable<ProgramReceiveTarget> {

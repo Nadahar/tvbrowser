@@ -23,7 +23,7 @@ package tvdataservice;
  * TvBrowserDataService, to let the picture
  * settings be customizable in the setup assistant.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  */
 public interface PictureSettingsIf {
   

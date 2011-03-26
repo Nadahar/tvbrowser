@@ -26,8 +26,8 @@
 package tvbrowser.core.search.booleansearch;
 
 /**
- * Interface um unabhängig von matcher oder matcher_reuse die Länge eines
- * Suchstrings abschätzen zu können.
+ * Interface um unabhÃ¤ngig von matcherÂ oder matcher_reuse die LÃ¤nge eines
+ * Suchstrings abschÃ¤tzen zu kÃ¶nnen.
  * 
  * @author Gilson Laurent, pumpkin@gmx.de
  */

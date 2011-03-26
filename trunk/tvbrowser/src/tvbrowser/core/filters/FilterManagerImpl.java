@@ -29,7 +29,7 @@ import devplugin.ProgramFilter;
 /**
  * Is the implementation of the FilterManager.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  * @since 2.5
  */
 public class FilterManagerImpl implements FilterManager {

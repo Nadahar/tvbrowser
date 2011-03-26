@@ -46,7 +46,7 @@ import com.jgoodies.forms.layout.FormLayout;
  * Is been loaded after an update of TV-Browser if old version
  * didn't support the picture showing.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  * @since 2.2.2
  */
 public class TvBrowserPictureSettingsUpdateDialog extends JDialog implements WindowClosingIf, ActionListener {

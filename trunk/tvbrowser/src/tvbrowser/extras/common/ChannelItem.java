@@ -34,7 +34,7 @@ import devplugin.Channel;
  * Used to keep channel values even if channel is
  * currently not available.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  */
 public class ChannelItem {
   private String mChannelDataServiceId;

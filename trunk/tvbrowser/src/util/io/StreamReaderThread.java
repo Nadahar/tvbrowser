@@ -34,7 +34,7 @@ import java.io.InputStreamReader;
 /**
  * A class that reads from InputStreams in a Thread.
  *
- * @author René Mach
+ * @author RenÃ© Mach
  *
  */
 public class StreamReaderThread extends Thread {

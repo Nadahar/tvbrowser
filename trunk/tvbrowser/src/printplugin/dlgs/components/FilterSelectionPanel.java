@@ -34,7 +34,7 @@ import devplugin.ProgramFilter;
  * A panel with the settings of the
  * program filter for the printing.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  * @since 2.5
  */
 public class FilterSelectionPanel extends JPanel {

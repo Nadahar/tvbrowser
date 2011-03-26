@@ -1,5 +1,5 @@
 /*
- * SimpleMarkerPlugin by René Mach
+ * SimpleMarkerPlugin by RenÃ© Mach
  * 
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -34,7 +34,7 @@ import devplugin.PluginTreeNode;
  * 
  * Unmark all marked programs of a PluginTreeNode.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  * 
  */
 public class GroupUnmarkAction extends ContextMenuAction {

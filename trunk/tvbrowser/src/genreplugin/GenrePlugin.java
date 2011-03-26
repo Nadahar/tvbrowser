@@ -223,8 +223,8 @@ public class GenrePlugin extends Plugin {
         final String genreWithBlanks = genre.replace("-", " ");
         mergeTwoGenres(genre, genreWithBlanks, genreNodes);
       }
-      final String umlauts = genre.replace("oe", "ö").replace("ae", "ä")
-          .replace("ue", "ü");
+      final String umlauts = genre.replace("oe", "Ã¶").replace("ae", "Ã¤")
+          .replace("ue", "Ã¼");
       mergeTwoGenres(umlauts, genre, genreNodes);
     }
   }

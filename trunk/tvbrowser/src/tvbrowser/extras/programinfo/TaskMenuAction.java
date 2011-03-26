@@ -53,7 +53,7 @@ import devplugin.Program;
 /**
  * A class that holds a ContextMenuAction of a Plugin.
  *
- * @author René Mach
+ * @author RenÃ© Mach
  *
  */
 public class TaskMenuAction {

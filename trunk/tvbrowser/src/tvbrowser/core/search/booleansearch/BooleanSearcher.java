@@ -34,22 +34,22 @@ import org.apache.commons.lang.StringUtils;
 import tvbrowser.core.search.AbstractSearcher;
 
 /**
- * Zentrale Kontrollklasse f�r boolsche Suchen.
+ * Zentrale Kontrollklasse für boolsche Suchen.
  *
  * Muster: WOrt AND WOrt OR NOT (WOrt AND WOrt). Jedes Wort kann alle
  * Zeichenfolgen inklusive " " enthalten.
  *
  * Ausnahmen (casesensitive): "AND", "OR", "&&", "||", "NOT", "(", ")" und
- * regex-Ausdr�cke. " "-Zeichen werden durch den regex-Ausdr�ck "\s"
+ * regex-Ausdrücke. " "-Zeichen werden durch den regex-Ausdruck "\s"
  * ersetzt.
  *
- * regex-Ausdr�ck in den W�rtern f�hren zu unvOrhersagbarem Verhalten
+ * regex-Ausdruck in den Wörtern führen zu unvOrhersagbarem Verhalten
  *
- * PriOrit�tsreihenfolge: NOT, AND, OR. Beispiele: WOrt AND WOrt OR WOrt =>
+ * PriOritätsreihenfolge: NOT, AND, OR. Beispiele: WOrt AND WOrt OR WOrt =>
  * (WOrt AND WOrt) OR WOrt WOrt AND NOT WOrt OR WOrt => (WOrt AND (NOT WOrt)) OR
  * WOrt
  *
- * Klammern m�ssen nicht geschlossen werden.
+ * Klammern müssen nicht geschlossen werden.
  *
  * Die Klammerung kann beliebig verschaltet werden. (was aber schwer auf die
  * Performance der Kompilierung schlagen kann)

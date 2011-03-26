@@ -41,7 +41,7 @@ import devplugin.SettingsTab;
 /**
  * Encapsulates the Reminder and manages the access to it.
  *
- * @author René Mach
+ * @author RenÃ© Mach
  * @since 2.5
  */
 public class ReminderPluginProxy extends AbstractInternalPluginProxy implements ButtonActionIf, ContextMenuIf, Marker {

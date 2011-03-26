@@ -4,7 +4,7 @@ package util.ui.customizableitems;
  * A filter interface that is to be used
  * to support filtering in SelectableItemLists.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  * @since 2.7
  */
 public interface ItemFilter {

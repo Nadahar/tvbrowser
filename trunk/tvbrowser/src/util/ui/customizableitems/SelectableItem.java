@@ -29,7 +29,7 @@ package util.ui.customizableitems;
 /**
  * A class for a selectable Item.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  */
 public class SelectableItem {
   private Object mItem;

@@ -26,7 +26,7 @@ package util.settings;
 /**
  * A property for short values.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  */
 public class ShortProperty extends Property {
   

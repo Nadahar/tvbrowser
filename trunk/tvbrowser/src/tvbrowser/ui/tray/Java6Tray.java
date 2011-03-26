@@ -52,7 +52,7 @@ import util.ui.UiUtilities;
  * Tray for TV-Browser on systems
  * with Java 6 and tray support.
  *
- * @author René Mach
+ * @author RenÃ© Mach
  */
 public class Java6Tray {
   /** Logger */
