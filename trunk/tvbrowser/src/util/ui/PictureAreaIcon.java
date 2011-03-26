@@ -39,7 +39,7 @@ import devplugin.ProgramFieldType;
 /**
  * A class for painting a picture with copyright and description info.
  *
- * @author René Mach
+ * @author RenÃ© Mach
  * @since 2.2.2
  */
 public class PictureAreaIcon implements Icon {

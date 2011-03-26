@@ -75,7 +75,7 @@ import devplugin.Plugin;
 /**
  * A class to support Drag'n'Drop in the toolbar.
  *
- * @author René Mach
+ * @author RenÃ© Mach
  */
 public class ToolBarDragAndDropSettings extends JDialog implements
     WindowListener, DragGestureListener, DropTargetListener, ActionListener,
@@ -355,7 +355,7 @@ public class ToolBarDragAndDropSettings extends JDialog implements
   /**
    * The class to save the action in that is transfered with Drag'n'Drop.
    *
-   * @author René Mach
+   * @author RenÃ© Mach
    */
   private static class TransferAction implements Transferable {
     /** The Action.NAME */

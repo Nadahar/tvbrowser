@@ -41,7 +41,7 @@ import devplugin.SettingsItem;
 /**
  * A class that is a panel that allows selection of the program importance.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  * @since 3.0
  */
 public class DefaultProgramImportanceSelectionPanel extends JPanel {

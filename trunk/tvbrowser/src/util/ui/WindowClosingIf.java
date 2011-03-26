@@ -31,7 +31,7 @@ import javax.swing.JRootPane;
 /**
  * The Interface for easy closing Windows with Escape key.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  *
  */
 public interface WindowClosingIf {

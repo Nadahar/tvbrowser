@@ -50,7 +50,7 @@ import devplugin.SettingsTab;
 /**
  * The base settings for the tray.
  *
- * @author René Mach
+ * @author RenÃ© Mach
  *
  */
 public class TrayBaseSettingsTab implements SettingsTab {

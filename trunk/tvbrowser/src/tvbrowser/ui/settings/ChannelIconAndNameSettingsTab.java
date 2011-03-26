@@ -44,7 +44,7 @@ import devplugin.SettingsTab;
  * Settings for the icon and name values in
  * program table and channel list.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  */
 public class ChannelIconAndNameSettingsTab implements SettingsTab {
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(ChannelIconAndNameSettingsTab.class);

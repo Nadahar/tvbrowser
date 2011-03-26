@@ -9,7 +9,7 @@ import javax.swing.JList;
 
 /**
  * The TransferEntries for JList Drag'n'Drop.
- * @author René Mach
+ * @author RenÃ© Mach
  *
  */
 public class TransferEntries implements Transferable {

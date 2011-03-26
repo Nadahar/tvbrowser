@@ -37,7 +37,7 @@ import devplugin.Version;
 /**
  * A array with the blocked plugins.
  *
- * @author René Mach
+ * @author RenÃ© Mach
  */
 public final class BlockedPluginArrayProperty extends Property {
   /** The array with the blocked plugins */

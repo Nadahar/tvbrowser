@@ -34,7 +34,7 @@ import devplugin.SettingsItem;
 /**
  * A class that is a panel that allows selection of the mark priority for programs.
  *
- * @author René Mach
+ * @author RenÃ© Mach
  * @since 2.5.3
  */
 public final class DefaultMarkingPrioritySelectionPanel extends JPanel {

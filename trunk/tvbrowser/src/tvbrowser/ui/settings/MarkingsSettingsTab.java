@@ -51,7 +51,7 @@ import devplugin.SettingsTab;
 /**
  * A settings tab for the marking colors
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  * @since 2.5.1
  */
 public class MarkingsSettingsTab implements SettingsTab {

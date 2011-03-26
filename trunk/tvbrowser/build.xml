@@ -242,7 +242,7 @@
   <target name="make-default" depends="copy-resources">
     <echo message="Compiling the source code ... "/>
     <mkdir dir="${classes.dir}"/>
-    <javac destdir="${classes.dir}" debug="${debug}" deprecation="true" encoding="iso-8859-15" target="1.5" source="1.5">
+    <javac destdir="${classes.dir}" debug="${debug}" deprecation="true" encoding="UTF-8" target="1.5" source="1.5">
       <src>
         <path refid="sourcepath"/>
       </src>
@@ -276,7 +276,7 @@
   <target name="make-mac" depends="copy-resources">
     <echo message="Compiling the source code ..."/>
     <mkdir dir="${classes.dir}"/>
-    <javac destdir="${classes.dir}" debug="${debug}" deprecation="true" encoding="iso-8859-15" target="1.5" source="1.5">
+    <javac destdir="${classes.dir}" debug="${debug}" deprecation="true" encoding="UTF-8" target="1.5" source="1.5">
       <src>
         <path refid="sourcepath"/>
       </src>
@@ -761,7 +761,7 @@
            debug="${debug}"
            deprecation="true"
            srcdir="tvdatakit/java"
-    	     encoding="iso-8859-15"
+    	     encoding="UTF-8"
            target="1.5"
            source="1.5">
       <classpath>
@@ -1015,7 +1015,7 @@
   <target name="test" depends="make-default">
 
     <mkdir dir="${test.classes.dir}"/>
-    <javac destdir="${test.classes.dir}" debug="${debug}" deprecation="true" encoding="iso-8859-15" target="1.5" source="1.5">
+    <javac destdir="${test.classes.dir}" debug="${debug}" deprecation="true" encoding="UTF-8" target="1.5" source="1.5">
       <src>
         <path path="${test.src.dir}"/>
       </src>
@@ -1070,7 +1070,7 @@
              bottom="${doc.bottom}"
              access="package"
              failonerror="true"
-    				 encoding="ISO-8859-1">
+    				 encoding="UTF-8">
       <link offline="true"
             href="${java-api-location}"
             packagelistLoc="${package-lists.dir}/jdk/"/>

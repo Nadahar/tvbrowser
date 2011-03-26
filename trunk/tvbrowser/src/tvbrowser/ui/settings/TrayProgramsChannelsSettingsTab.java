@@ -60,7 +60,7 @@ import devplugin.SettingsTab;
 /**
  * Channel settings for the program showing in tray.
  * 
- * @author Ren� Mach
+ * @author René Mach
  *
  */
 public class TrayProgramsChannelsSettingsTab implements SettingsTab {

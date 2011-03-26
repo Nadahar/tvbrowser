@@ -31,7 +31,7 @@ import devplugin.SettingsTab;
 /**
  * The settings tab for the IMPORTANT_TYPE of the ProgramMenuItem.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  *
  */
 public class TrayImportantSettingsTab implements SettingsTab {

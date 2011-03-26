@@ -69,7 +69,7 @@ import devplugin.SettingsItem;
 /**
  * The settings tab for the program panel picture settings.
  *
- * @author René Mach
+ * @author RenÃ© Mach
  * @since 2.2.2
  */
 public class PictureSettingsTab extends AbstractSettingsTab {

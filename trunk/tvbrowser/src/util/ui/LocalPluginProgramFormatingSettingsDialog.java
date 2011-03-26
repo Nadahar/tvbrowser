@@ -59,7 +59,7 @@ import devplugin.Plugin;
 /**
  * A settings dialog for the program configuration.
  *
- * @author René Mach
+ * @author RenÃ© Mach
  * @since 2.5.1
  */
 public class LocalPluginProgramFormatingSettingsDialog extends JDialog implements WindowClosingIf, ActionListener {

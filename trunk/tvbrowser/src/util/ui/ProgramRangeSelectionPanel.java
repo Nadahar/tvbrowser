@@ -45,7 +45,7 @@ import devplugin.Program;
 /**
  * A class for selection of a program range.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  * @since 3.0
  */
 public class ProgramRangeSelectionPanel extends JPanel {

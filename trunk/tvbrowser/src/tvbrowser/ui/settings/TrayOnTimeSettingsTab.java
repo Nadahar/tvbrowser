@@ -29,7 +29,7 @@ import devplugin.SettingsTab;
 /**
  * The settings tab for the ON_TIME_TYPE of the ProgramMenuItem.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  *
  */
 public class TrayOnTimeSettingsTab implements SettingsTab {

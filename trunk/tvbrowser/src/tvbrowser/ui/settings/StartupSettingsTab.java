@@ -463,7 +463,7 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
   /**
    * Used to create autostart link for Windows.
    *
-   * @author René Mach
+   * @author RenÃ© Mach
    */
   private static class LinkFile {
     private String mTarget;
