@@ -345,9 +345,9 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
         mLocalizer
             .msg(
                 "addMoreChannels",
-                "Ihnen fehlt Ihr Lieblings-Sender? Clicken Sie hier f�r eine Liste weiterer Sender."),
+                "You want to add your own channels? Click here!"),
         mLocalizer.msg("addMoreChannelsUrl",
-            "http://wiki.tvbrowser.org/index.php/Senderliste"));
+            "http://enwiki.tvbrowser.org/index.php/Available_stations"));
 
     JPanel buttonsPanel = new JPanel(new BorderLayout());
 
