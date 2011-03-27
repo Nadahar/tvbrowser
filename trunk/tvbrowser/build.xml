@@ -1035,13 +1035,13 @@
     </copy>
 
 
-    <junit haltonfailure="yes" fork="no">
+    <junit haltonfailure="yes" fork="no" >
       <classpath>
         <path refid="classpath"/>
         <path path="${test.classes.dir}"/>
       </classpath>
 
-      <formatter type="plain" usefile="false"/>
+      <formatter type="brief" usefile="false"/>
 
       <batchtest>
         <fileset dir="${test.src.dir}">
