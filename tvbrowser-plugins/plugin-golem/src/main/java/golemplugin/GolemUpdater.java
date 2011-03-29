@@ -62,6 +62,7 @@ public class GolemUpdater {
     channelMap.put("Eins Festival", "einsfestival");
     channelMap.put("SuperRTL", "Super RTL");
     channelMap.put("Tele5", "Tele 5");
+    channelMap.put("NDR", "NDR Niedersachsen");
   }
 
   public static GolemUpdater getInstance() {
@@ -160,7 +161,7 @@ public class GolemUpdater {
   private Channel findChannel(Channel[] channels, String chname) {
     // first try original channel name
     for (Channel ch : channels) {
-      if (ch.getName().equalsIgnoreCase(chname)) {
+      if (ch.getName().equalsIgnoreCase(chname) || ch.getDefaultName().equalsIgnoreCase(chname)) {
         return ch;
       }
     }
@@ -169,7 +170,7 @@ public class GolemUpdater {
     if (channelMap.containsKey(chname)) {
       chname = channelMap.get(chname);
       for (Channel ch : channels) {
-        if (ch.getName().equalsIgnoreCase(chname)) {
+        if (ch.getName().equalsIgnoreCase(chname) || ch.getDefaultName().equalsIgnoreCase(chname)) {
           return ch;
         }
       }
