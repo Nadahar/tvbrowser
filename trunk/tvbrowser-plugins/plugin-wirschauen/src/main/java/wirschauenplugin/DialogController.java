@@ -17,6 +17,7 @@ package wirschauenplugin;
 import java.awt.Dimension;
 import java.awt.Window;
 import java.io.IOException;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
@@ -347,7 +348,7 @@ public class DialogController
 
   private void handleConnectionError(final IOException e, final String website) {
     //connection failed.
-    mLog.warning(website + " connection failed: " + e.getMessage());
+    mLog.log(Level.WARNING, website + " connection failed: " + e.getMessage(), e);
     //switch back to event dispatching thread (swing)
     SwingUtilities.invokeLater(new Runnable()
     {
