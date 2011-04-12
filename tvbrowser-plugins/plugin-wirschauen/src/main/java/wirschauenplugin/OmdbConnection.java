@@ -15,17 +15,20 @@
 package wirschauenplugin;
 
 import java.io.IOException;
+import java.net.ProxySelector;
 import java.net.URLEncoder;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.ProxySelectorRoutePlanner;
 import org.apache.http.util.EntityUtils;
 
 import util.ui.html.HTMLTextHelper;
@@ -92,13 +95,20 @@ public class OmdbConnection
    * movie url.
    */
   private static final Pattern ID_PATTERN = Pattern.compile(".*/(\\d*).*");
+  
+  
+  
+  /**
+   * logging for this class
+   */
+  private static final Logger mLog = Logger.getLogger(OmdbConnection.class.getName());
 
 
 
   /**
    * the http client holds the http session und simplifies the communication.
    */
-  private HttpClient mHttpClient = new DefaultHttpClient();
+  private DefaultHttpClient mHttpClient;
 
   /**
    * current language. default is en. is used to remember the selected language
@@ -106,6 +116,20 @@ public class OmdbConnection
    * omdb each time. saves some slow http-request-response-cycles.
    */
   private byte mCurrentLanguage = EN;
+
+
+
+  /**
+   * Creates a new OmdbConnection with the Proxy Settings from the System Properties.
+   */
+  public OmdbConnection() {
+    super();
+    mHttpClient = new DefaultHttpClient();
+    //the proxy settings for the tvbrowser are saved in the system properties. see tvbrowser.TVBrowser.updateProxySettings().
+    //the ProxySelectorRoutePlanner will take these into account.
+    ProxySelectorRoutePlanner routePlanner = new ProxySelectorRoutePlanner(mHttpClient.getConnectionManager().getSchemeRegistry(), ProxySelector.getDefault());
+    mHttpClient.setRoutePlanner(routePlanner);
+  }
 
 
 
@@ -222,30 +246,32 @@ public class OmdbConnection
   {
     HttpGet getMethod = new HttpGet(String.format(OmdbConnection.GET_ABSTRACT_URL, movieId));
     HttpResponse response = mHttpClient.execute(getMethod);
+    String content = null;
     if (response.getStatusLine().getStatusCode() == 200)
     {
       HttpEntity entity = response.getEntity();
       if (entity != null) {
-        String content = EntityUtils.toString(entity);
-        // response is utf-8 encoded but response header is not set. hence http
-        // client uses the
-        // default encoding iso-8859-1 for getResponseBodyAsString(), which is
-        // wrong.
+        content = EntityUtils.toString(entity);
+        // response is utf-8 encoded but response header is not set. hence http client uses the
+        // default encoding iso-8859-1 for getResponseBodyAsString(), which is wrong.
         content = new String(content.getBytes("ISO8859-1"), "UTF-8");
         Matcher matcher = ABSTRACT_PATTERN.matcher(content);
         if (matcher.matches()) {
           String movieAbstract = matcher.group(1);
           if ("".equals(movieAbstract) || "no abstract defined".equals(movieAbstract)
               || "Es wurde noch keine Kurzbeschreibung eingegeben".equals(movieAbstract)) {
-            return  null;
+            return null;
           } else {
             return HTMLTextHelper.convertHtmlToText(movieAbstract.trim());
           }
         }
       }
     }
+    if (content != null) {
+        mLog.log(Level.WARNING, "content: " + content);
+    }
     getMethod.abort();
-    throw new IOException(response.getStatusLine().getReasonPhrase());
+    throw new IOException(response.getStatusLine().getReasonPhrase() + ", response code: " + response.getStatusLine().getStatusCode());
   }
 
 
