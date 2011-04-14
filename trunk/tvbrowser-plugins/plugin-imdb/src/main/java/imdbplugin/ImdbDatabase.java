@@ -90,14 +90,9 @@ public final class ImdbDatabase {
   }
 
   public boolean isInitialised() {
-    try {
-      if ((mSearcher != null) && (mSearcher.maxDoc() > 1)) {
-        return true;
-      }
-    } catch (IOException e) {
-      return false;
+    if ((mSearcher != null) && (mSearcher.maxDoc() > 1)) {
+      return true;
     }
-
     return false;
   }
 
