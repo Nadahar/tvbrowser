@@ -50,6 +50,7 @@ import java.util.Calendar;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Formatter;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -139,7 +140,7 @@ public class TVBrowser {
   /** The string array with the names of the earlier versions. */
   private static final String[] ALL_VERSIONS = new String[]{
           "3.0.1",
-          "3.0",      
+          "3.0",
           "3.0 RC3",
           "3.0 RC2",
           "3.0 RC1",
@@ -392,19 +393,25 @@ public class TVBrowser {
     Settings.propTVBrowserVersion.setVersion(VERSION);
     Settings.propTVBrowserVersionIsStable.setBoolean(VERSION.isStable());
 
-    final Splash splash;
+    final AtomicReference<Splash> splashRef = new AtomicReference<Splash>();
 
     if (mShowSplashScreen && Settings.propSplashShow.getBoolean()) {
-      splash = new SplashScreen(
-          Settings.propSplashImage.getString(),
-          Settings.propSplashTextPosX.getInt(),
-          Settings.propSplashTextPosY.getInt(),
-          Settings.propSplashForegroundColor.getColor());
+      UIThreadRunner.invokeLater(new Runnable() {
+
+        @Override
+        public void run() {
+          splashRef.set(new SplashScreen(
+              Settings.propSplashImage.getString(),
+              Settings.propSplashTextPosX.getInt(),
+              Settings.propSplashTextPosY.getInt(),
+              Settings.propSplashForegroundColor.getColor()));
+          splashRef.get().showSplash();
+        }
+      });
     }
     else {
-      splash = new DummySplash();
+      splashRef.set(new DummySplash());
     }
-    splash.showSplash();
 
     /* Initialize the MarkedProgramsList */
     MarkedProgramsList.getInstance();
@@ -415,7 +422,7 @@ public class TVBrowser {
     PluginLoader.getInstance().loadAllPlugins();
 
     mLog.info("Loading TV listings service...");
-    splash.setMessage(mLocalizer.msg("splash.dataService", "Loading TV listings service..."));
+    splashRef.get().setMessage(mLocalizer.msg("splash.dataService", "Loading TV listings service..."));
     TvDataServiceProxyManager.getInstance().init();
     ChannelList.createForTvBrowserStart();
 
@@ -423,26 +430,26 @@ public class TVBrowser {
 
     if (!lookAndFeelInitialized) {
       mLog.info("Loading Look&Feel...");
-      splash.setMessage(mLocalizer.msg("splash.laf", "Loading look and feel..."));
+      splashRef.get().setMessage(mLocalizer.msg("splash.laf", "Loading look and feel..."));
 
       updateLookAndFeel();
     }
 
     mLog.info("Loading plugins...");
-    splash.setMessage(mLocalizer.msg("splash.plugins", "Loading plugins..."));
+    splashRef.get().setMessage(mLocalizer.msg("splash.plugins", "Loading plugins..."));
     try {
       PluginProxyManager.getInstance().init();
     } catch(TvBrowserException exc) {
       ErrorHandler.handle(exc);
     }
 
-    splash.setMessage(mLocalizer.msg("splash.tvData", "Checking TV database..."));
+    splashRef.get().setMessage(mLocalizer.msg("splash.tvData", "Checking TV database..."));
 
     mLog.info("Checking TV listings inventory...");
     TvDataBase.getInstance().checkTvDataInventory();
 
     mLog.info("Starting up...");
-    splash.setMessage(mLocalizer.msg("splash.ui", "Starting up..."));
+    splashRef.get().setMessage(mLocalizer.msg("splash.ui", "Starting up..."));
 
     Toolkit.getDefaultToolkit().getSystemEventQueue().push(new TextComponentPopupEventQueue());
 
@@ -450,7 +457,7 @@ public class TVBrowser {
     final boolean fStartMinimized = Settings.propMinimizeAfterStartup.getBoolean() || mMinimized;
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
-        initUi(splash, fStartMinimized);
+        initUi(splashRef.get(), fStartMinimized);
 
         new Thread("Start finished callbacks") {
           public void run() {
@@ -1392,17 +1399,30 @@ public class TVBrowser {
   }
 
   private static void updatePluginsOnVersionChange() {
-    boolean oldBetaWarning = Settings.propPluginBetaWarning.getBoolean();
+    final boolean oldBetaWarning = Settings.propPluginBetaWarning.getBoolean();
+    try {
+      UIThreadRunner.invokeAndWait(new Runnable() {
 
-    TvBrowserVersionChangeDlg versionChange = new TvBrowserVersionChangeDlg(Settings.propTVBrowserVersion.getVersion());
-    versionChange.pack();
-    versionChange.setLocationRelativeTo(null);
-    versionChange.setVisible(true);
+        @Override
+        public void run() {
+          TvBrowserVersionChangeDlg versionChange = new TvBrowserVersionChangeDlg(Settings.propTVBrowserVersion.getVersion());
+          versionChange.pack();
+          versionChange.setLocationRelativeTo(null);
+          versionChange.setVisible(true);
 
-    Settings.propPluginBetaWarning.setBoolean(oldBetaWarning);
+          Settings.propPluginBetaWarning.setBoolean(oldBetaWarning);
 
-    if(versionChange.getIsToCloseTvBrowser()) {
-      System.exit(0);
+          if(versionChange.getIsToCloseTvBrowser()) {
+            System.exit(0);
+          }
+        }
+      });
+    } catch (InterruptedException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } catch (InvocationTargetException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
     }
   }
 }
