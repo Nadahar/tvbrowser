@@ -34,12 +34,14 @@ import java.awt.RenderingHints;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
+import java.lang.reflect.InvocationTargetException;
 
 import javax.swing.JWindow;
 import javax.swing.SwingUtilities;
 
 import tvbrowser.TVBrowser;
 import util.ui.ImageUtilities;
+import util.ui.UIThreadRunner;
 import util.ui.UiUtilities;
 
 public class SplashScreen extends JWindow implements Splash {
@@ -149,7 +151,21 @@ public class SplashScreen extends JWindow implements Splash {
     Thread thread = new Thread("Splash screen creation") {
       @Override
       public void run() {
-        mImage = ImageUtilities.createImage(mImgFileName);
+        try {
+          UIThreadRunner.invokeAndWait(new Runnable() {
+
+            @Override
+            public void run() {
+              mImage = ImageUtilities.createImage(mImgFileName);
+            }
+          });
+        } catch (InterruptedException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        } catch (InvocationTargetException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
         if (mImage != null) {
           ImageUtilities.waitForImageData(mImage, null);
           setSize(mImage.getWidth(null), mImage.getHeight(null));
