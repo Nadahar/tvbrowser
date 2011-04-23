@@ -1409,6 +1409,8 @@ public class TVBrowser {
           versionChange.pack();
           versionChange.setLocationRelativeTo(null);
           versionChange.setVisible(true);
+          versionChange.toFront();
+          versionChange.requestFocus();
 
           Settings.propPluginBetaWarning.setBoolean(oldBetaWarning);
 
