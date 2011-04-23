@@ -36,6 +36,7 @@ import javax.swing.Action;
 import javax.swing.ButtonGroup;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.InputMap;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -44,6 +45,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
+import javax.swing.UIManager;
 
 import tvbrowser.TVBrowser;
 import tvbrowser.core.ChannelList;
@@ -1016,6 +1018,14 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
     mHelpMenu.add(mForumMI);
     mHelpMenu.add(mDownloadMI);
     mHelpMenu.add(mDonorMI);
+
+    // the split panes reserve F6 and F8, so our accelerator keys don't work on split panes
+    // therefore remove those bindings
+    InputMap map = (InputMap) UIManager.get("SplitPane.ancestorInputMap");
+    KeyStroke keyStrokeF6 = KeyStroke.getKeyStroke(KeyEvent.VK_F6, 0);
+    KeyStroke keyStrokeF8 = KeyStroke.getKeyStroke(KeyEvent.VK_F8, 0);
+    map.remove(keyStrokeF6);
+    map.remove(keyStrokeF8);
 
     mPluginOverviewMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0));
     mTimeBtnsMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F3, 0));
