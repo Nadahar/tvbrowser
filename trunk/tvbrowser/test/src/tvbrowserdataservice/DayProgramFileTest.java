@@ -76,6 +76,16 @@ public class DayProgramFileTest extends TestCase {
   }
 
 
+  public void testTrimTextField() {
+    ProgramField field = new ProgramField();
+    String testString = " Test with blanks ";
+    field.setTextData(testString);
+    String readString = field.getTextData();
+    assertNotNull(readString);
+    assertFalse(readString.startsWith(" "));
+    assertFalse(testString.equalsIgnoreCase(readString));
+  }
+
 
   public void testIntField() {
     ProgramField field = new ProgramField();
