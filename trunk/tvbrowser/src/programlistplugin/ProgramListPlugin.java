@@ -54,6 +54,8 @@ import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
+import org.apache.commons.lang.ArrayUtils;
+
 import util.program.ProgramUtilities;
 import util.settings.PluginPictureSettings;
 import util.settings.ProgramPanelSettings;
@@ -105,7 +107,7 @@ public class ProgramListPlugin extends Plugin {
   private JCheckBox mShowDescription;
   private JComboBox mFilterBox;
 
-  private ProgramFilter mRecieveFilter;
+  private ProgramFilter mReceiveFilter;
 
   private static ProgramListPlugin mInstance;
 
@@ -151,7 +153,7 @@ public class ProgramListPlugin extends Plugin {
   public ActionMenu getButtonAction() {
     AbstractAction action = new AbstractAction() {
       public void actionPerformed(ActionEvent e) {
-        mRecieveFilter = null;
+        mReceiveFilter = null;
         showProgramList();
       }
     };
@@ -172,8 +174,8 @@ public class ProgramListPlugin extends Plugin {
     for (ProgramFilter filter : Plugin.getPluginManager().getFilterManager().getAvailableFilters()) {
       filters.add(filter);
     }
-    if (mRecieveFilter != null) {
-      filters.add(mRecieveFilter);
+    if (mReceiveFilter != null) {
+      filters.add(mReceiveFilter);
     }
 
     for (ProgramFilter filter : filters) {
@@ -189,8 +191,8 @@ public class ProgramListPlugin extends Plugin {
       if (!found) {
         mFilterBox.addItem(filter);
 
-        if ((mRecieveFilter == null && filter.getName().equals(mSettings.getFilterName()))
-            || (mRecieveFilter != null && filter.getName().equals(mRecieveFilter.getName()))) {
+        if ((mReceiveFilter == null && filter.getName().equals(mSettings.getFilterName()))
+            || (mReceiveFilter != null && filter.getName().equals(mReceiveFilter.getName()))) {
           mFilter = filter;
           mFilterBox.setSelectedItem(filter);
         }
@@ -319,7 +321,7 @@ public class ProgramListPlugin extends Plugin {
   @Override
   public boolean receivePrograms(Program[] programArr, ProgramReceiveTarget receiveTarget) {
     final List<Program> programs = Arrays.asList(programArr);
-    mRecieveFilter = new ProgramFilter() {
+    mReceiveFilter = new ProgramFilter() {
       @Override
       public boolean accept(Program prog) {
         return programs.contains(prog);
@@ -340,6 +342,10 @@ public class ProgramListPlugin extends Plugin {
   }
 
   private void showProgramList() {
+    showProgramList(null);
+  }
+
+  private void showProgramList(final Channel selectedChannel) {
     try {
       if (mDialog == null) {
         mDialog = new JDialog(getParentFrame());
@@ -366,10 +372,14 @@ public class ProgramListPlugin extends Plugin {
 
         mList.addMouseListeners(null);
 
-        mBox = new JComboBox(Plugin.getPluginManager().getSubscribedChannels());
+        Channel[] subscribedChannels = Plugin.getPluginManager().getSubscribedChannels();
+        mBox = new JComboBox(subscribedChannels);
         mBox.insertItemAt(mLocalizer.msg("allChannels", "All channels"), 0);
         mBox.setRenderer(new ChannelListCellRenderer());
         mBox.setSelectedIndex(mSettings.getIndex());
+        if (selectedChannel != null) {
+          mBox.setSelectedItem(selectedChannel);
+        }
 
         mFilterBox = new JComboBox();
 
@@ -382,7 +392,7 @@ public class ProgramListPlugin extends Plugin {
         mFilterBox.addItemListener(new ItemListener() {
           public void itemStateChanged(ItemEvent e) {
             mFilter = (ProgramFilter) mFilterBox.getSelectedItem();
-            if (mFilter != mRecieveFilter) {
+            if (mFilter != mReceiveFilter) {
               mSettings.setFilterName(mFilter.getName());
             }
             mBox.getItemListeners()[0].itemStateChanged(null);
@@ -478,4 +488,14 @@ public class ProgramListPlugin extends Plugin {
     saveMe();
   }
 
+  @Override
+  public ActionMenu getContextMenuActions(final Channel channel) {
+    return new ActionMenu(new AbstractAction(mLocalizer.msg("showChannel", "Show programs of channel in program list")) {
+      
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        showProgramList(channel);
+      }
+    });
+  }
 }
