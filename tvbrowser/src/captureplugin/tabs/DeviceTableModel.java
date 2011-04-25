@@ -69,18 +69,18 @@ public class DeviceTableModel extends AbstractTableModel {
     }
     
     /**
-     * Remove a Column
-     * @param column Column to remove
+     * Remove a row
+     * @param row row to remove
      */
-    public void removeColumn(int column) {
-        if (column > mDevices.size()) {
+    public void removeRow(int row) {
+        if (row > mDevices.size()) {
             return;
         }
         
-        mDevices.remove(column);
-        mPrograms.remove(column);
+        mDevices.remove(row);
+        mPrograms.remove(row);
         
-        fireTableRowsDeleted(column, column);
+        fireTableRowsDeleted(row, row);
     }
     
 
