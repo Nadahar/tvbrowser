@@ -108,7 +108,8 @@ public class ProgramListPanel extends JPanel {
     /**
      * Creates the GUI
      */
-    private void createPanel() {
+    void createPanel() {
+      removeAll();
         setLayout(new BorderLayout());
 
         mProgramTable = new JTable(mProgramTableModel);
@@ -116,6 +117,10 @@ public class ProgramListPanel extends JPanel {
         mProgramTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         mProgramTable.getColumnModel().getColumn(0).setCellRenderer(new DeviceTableCellRenderer());
         mProgramTable.getColumnModel().getColumn(1).setCellRenderer(new ProgramTableCellRenderer(new PluginPictureSettings(PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE)));
+        
+        if (CapturePlugin.getInstance().getCapturePluginData().getDevices().size() < 2) {
+          mProgramTable.getColumnModel().removeColumn(mProgramTable.getColumnModel().getColumn(0));
+        }
 
         mProgramTable.addMouseListener(new MouseAdapter() {
             private Thread mLeftSingleClickThread;
@@ -270,7 +275,7 @@ public class ProgramListPanel extends JPanel {
        if (ret == JOptionPane.YES_OPTION) {
            dev.remove(UiUtilities.getLastModalChildOf(mParent), prg);
 
-           mProgramTableModel.removeColumn(row);
+           mProgramTableModel.removeRow(row);
 
            createListData();
        }

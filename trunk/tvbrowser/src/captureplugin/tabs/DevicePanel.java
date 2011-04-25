@@ -76,15 +76,18 @@ public class DevicePanel extends JPanel {
 
 
     private JButton mAddDevice, mRemoveDevice, mExportDevice, mImportDevice, mConfigDevice;
+    private ProgramListPanel mProgramListPanel;
 
     /**
      * Creates the Panel
      * @param owner ParentFrame
      * @param data Settings
+     * @param programListPanel panel with all recordings
      */
-    public DevicePanel(final Window owner, CapturePluginData data) {
+    public DevicePanel(final Window owner, CapturePluginData data, ProgramListPanel programListPanel) {
         mData = data;
         mOwner = owner;
+        mProgramListPanel = programListPanel;
         createGui();
     }
     
@@ -224,6 +227,7 @@ public class DevicePanel extends JPanel {
             mData.getDevices().add(device);
             device.configDevice(UiUtilities.getLastModalChildOf(mOwner));
             mDeviceList.setListData(new Vector<DeviceIf>(mData.getDevices()));
+            mProgramListPanel.createPanel();
         }
     }
 
@@ -255,6 +259,7 @@ public class DevicePanel extends JPanel {
                 mData.getDevices().remove(device);
                 mDeviceList.setListData(new Vector<DeviceIf>(mData.getDevices()));
             }
+            mProgramListPanel.createPanel();
         }
     }
     
@@ -280,6 +285,7 @@ public class DevicePanel extends JPanel {
         }
 
         mDeviceList.setListData(new Vector<DeviceIf>(mData.getDevices()));
+        mProgramListPanel.createPanel();
       }
     }
 
