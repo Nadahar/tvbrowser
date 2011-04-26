@@ -966,7 +966,7 @@
         <fileset file="${tvbrowser-mac.runtime.dir}/readme.rtf"/>
       </copy>
 
-      <!-- Ejecte .sparseimage -->
+      <!-- Eject .sparseimage -->
       <exec executable="hdiutil" os="Mac OS X">
            <arg value="eject"/>
            <arg value="/Volumes/TV-Browser/"/>
@@ -1218,6 +1218,18 @@
 	<target name="download-libs" description="downloads all necessary library files">
 		<mkdir dir="${lib.dir}"/>
 
+		<!-- quaqua -->
+	  	<get dest="${lib.dir}/download.zip" src="${lib.quaqua.url}"/>
+	  	<unzip src="${lib.dir}/download.zip" dest="${lib.dir}/download"/>
+	  	<unzip src="${lib.dir}/download/${lib.quaqua.name}-${lib.quaqua.version}.zip" dest="${lib.dir}/download/"/>
+	    <copy todir="${lib.dir}" verbose="true" overwrite="true">
+	      <fileset dir="${lib.dir}/download/${lib.quaqua.name}/dist">
+	        <include name="*.jnilib"/>
+	      </fileset>
+	    </copy>
+		<copy file="${lib.dir}/download/${lib.quaqua.name}/dist/${lib.quaqua.name}.jar" tofile="${lib.dir}/${lib.quaqua.name}-${lib.quaqua.version}.jar"></copy>
+ 		<delete dir="${lib.dir}/download"/>
+		
 		<!--  aclibico  -->
 		<antcall target="download-zipped-lib">
 			<param name="lib" value="aclibico"/>
