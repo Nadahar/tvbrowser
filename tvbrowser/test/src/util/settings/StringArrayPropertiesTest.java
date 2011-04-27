@@ -18,7 +18,7 @@ public class StringArrayPropertiesTest extends TestCase {
     StringArrayProperty thirdProp = new StringArrayProperty(manager, "thirdtest", start);
     
     try {
-      manager.readFromFile(new File(this.getClass().getResource("StringArrayProperties.properties").getFile()));
+      manager.readFromStream(this.getClass().getResourceAsStream("StringArrayProperties.properties"));
     } catch (IOException e) {
       e.printStackTrace();
       assertTrue("Probleme beim Lesen der Datei", false);

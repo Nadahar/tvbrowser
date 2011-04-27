@@ -29,6 +29,7 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -83,8 +84,20 @@ public class PropertyManager {
     BufferedInputStream in = null;
     try {
       in = new BufferedInputStream(new FileInputStream(settingsFile), 0x4000);
-      mProperties.load(in);
-      
+      readFromStream(in);
+    }
+    finally {
+      if (in != null) {
+        in.close();
+      }
+    }
+  }
+
+
+  public void readFromStream(final InputStream in) throws IOException {
+    mProperties.load(in);
+    
+    try {
       if(TVBrowser.isTransportable()) {
         if(!mProperties.getProperty("dir.tvdata","./settings/tvdata").startsWith("./settings/tvdata")) {
           mProperties.setProperty("dir.tvdata","./settings/tvdata");
@@ -95,14 +108,11 @@ public class PropertyManager {
       clearCaches();
       removeUnknownEntries();
     }
+
     finally {
-      if (in != null) {
-        in.close();
+      if(mProperties.isEmpty()) {
+        throw new IOException("Settings file is empty!");
       }
-    }
-    
-    if(mProperties.isEmpty()) {
-      throw new IOException("Settings file is empty!");
     }
   }
   
