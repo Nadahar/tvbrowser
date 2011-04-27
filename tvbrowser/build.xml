@@ -662,7 +662,6 @@
     <unjar src="${lib.dir}/${lib.commons.lang.name}-${lib.commons.lang.version}.jar" dest="${unpacked.dir}/${lib.commons.lang.name}.jar"/>
     <unjar src="${lib.dir}/${lib.jgoodies-common.name}-${lib.jgoodies-common.version}.jar" dest="${unpacked.dir}/${lib.jgoodies-common.name}.jar"/>
     <unjar src="${lib.dir}/${lib.jgoodies-looks.name}-${lib.jgoodies-looks.version}.jar" dest="${unpacked.dir}/${lib.jgoodies-looks.name}.jar"/>
-    <unjar src="${lib.dir}/${lib.oro.name}-${lib.oro.version}.jar" dest="${unpacked.dir}/${lib.oro.name}.jar"/>
 	<unjar src="${lib.dir}/${lib.opencsv.name}-${lib.opencsv.version}.jar" dest="${unpacked.dir}/${lib.opencsv.name}.jar" />
     <unjar src="${lib.dir}/${lib.htmlparser.name}-${lib.htmlparser.version}.jar" dest="${unpacked.dir}/${lib.htmlparser.name}.jar" />
 
@@ -688,7 +687,6 @@
       <fileset dir="${unpacked.dir}/${lib.commons.lang.name}.jar" includes="org/**"/>
       <fileset dir="${unpacked.dir}/${lib.jgoodies-common.name}.jar" includes="com/**"/>
       <fileset dir="${unpacked.dir}/${lib.jgoodies-looks.name}.jar" includes="com/**"/>
-      <fileset dir="${unpacked.dir}/${lib.oro.name}.jar" includes="org/**"/>
       <fileset dir="${unpacked.dir}/${lib.opencsv.name}.jar" includes="au/**"/>
       <fileset dir="${unpacked.dir}/${lib.htmlparser.name}.jar" includes="org/**"/>
     </jar>
@@ -1013,8 +1011,8 @@
     | in your ANT_HOME/lib directory. (ANT_HOME/lib is on my machine "/usr/share/ant/lib")
     +-->
   <target name="test" depends="make-default">
-
-    <mkdir dir="${test.classes.dir}"/>
+	<echo>${ant.version}. JUnit4 tests will only work with Ant>=1.7</echo>
+  	<mkdir dir="${test.classes.dir}"/>
     <javac destdir="${test.classes.dir}" debug="${debug}" deprecation="true" encoding="UTF-8" target="1.5" source="1.5">
       <src>
         <path path="${test.src.dir}"/>
@@ -1253,11 +1251,6 @@
 		<!-- commons net -->
 		<antcall target="download-zipped-lib">
 			<param name="lib" value="commons.net"/>
-		</antcall>
-
-		<!-- jakarta oro -->
-		<antcall target="download-zipped-lib">
-			<param name="lib" value="oro"/>
 		</antcall>
 
 		<!-- jcom -->
