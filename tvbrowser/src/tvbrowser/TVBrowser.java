@@ -1152,6 +1152,7 @@ public class TVBrowser {
                 StringUtils.replace(StringUtils.replace(className, "Skin", "LookAndFeel"), "skin.", "skin.Substance"));
           }
         }
+        UIManager.installLookAndFeel("Quaqua","ch.randelshofer.quaqua.QuaquaLookAndFeel");
       }
     } catch (Exception e1) {
       // ignore any exception for optional skins
