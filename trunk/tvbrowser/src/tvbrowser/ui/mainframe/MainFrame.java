@@ -71,7 +71,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.TooManyListenersException;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.BorderFactory;
@@ -1193,9 +1192,6 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       FavoritesPlugin.getInstance().handleTvBrowserIsShuttingDown();
     }
 
-    if (log) {
-      mLog.info("Finishing plugins");
-    }
     PluginProxyManager.getInstance().shutdownAllPlugins(log);
 
     if (log) {
@@ -1208,17 +1204,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
 
     TVBrowser.shutdown(log);
 
-    if (log) {
-      mLog.info("Closing TV data base");
-    }
-
-    try {
-      TvDataBase.getInstance().close();
-    } catch (Exception exc) {
-      if (log) {
-        mLog.log(Level.WARNING, "Closing database failed", exc);
-      }
-    }
+    TvDataBase.getInstance().close(log);
 
     if(export) {
       Settings.propTVDataDirectory.resetToDefault();
