@@ -348,9 +348,6 @@ public class TVBrowser {
       updatePluginsOnVersionChange();
     }
 
-    // Capture unhandled exceptions
-    //System.setErr(new PrintStream(new MonitoringErrorStream()));
-
     String timezone = Settings.propTimezone.getString();
     if (timezone != null) {
       TimeZone.setDefault(TimeZone.getTimeZone(timezone));
