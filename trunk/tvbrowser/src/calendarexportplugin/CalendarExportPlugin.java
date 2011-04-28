@@ -33,12 +33,15 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
+
+import org.apache.commons.lang.ArrayUtils;
 
 import util.program.AbstractPluginProgramFormating;
 import util.program.LocalPluginProgramFormating;
@@ -634,12 +637,7 @@ public final class CalendarExportPlugin extends Plugin {
           });
 
           for (ExporterIf exporter : keys) {
-            PluginTreeNode node = getRootNode().addNode(exporter.getName());
-            node.getMutableTreeNode().setIcon(getExporterIcon(exporter));
-
-            createNodeActionForNode(node);
-            mTreeNodes.put(exporter, node);
-
+            PluginTreeNode node = getNodeForExporter(exporter);
             ArrayList<Program> progs = exporterMap.get(exporter);
 
             for(Program p : progs) {
@@ -700,5 +698,20 @@ public final class CalendarExportPlugin extends Plugin {
     } else {
       mConfigs = value;
     }
+  }
+
+  public void refreshTree() {
+    ExporterIf[] exporters = mTreeNodes.keySet().toArray(new ExporterIf[mTreeNodes.size()]);
+    for (ExporterIf exporter : exporters) {
+      if (!mExporterFactory.isActiveExporter(exporter)) {
+        mTreeNodes.remove(exporter);
+      }
+    }
+    PluginTreeNode rootNode = getRootNode();
+    rootNode.removeAllChildren();
+    for (ExporterIf exporter : mExporterFactory.getActiveExporters()) {
+      rootNode.add(getNodeForExporter(exporter));
+    }
+    rootNode.update();
   }
 }

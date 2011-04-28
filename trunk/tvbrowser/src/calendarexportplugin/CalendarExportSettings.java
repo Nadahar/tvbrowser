@@ -74,6 +74,7 @@ final public class CalendarExportSettings extends PropertyBasedSettings {
 
   public void setActiveExporters(final String list) {
     set(CalendarExportPlugin.PROP_ACTIVE_EXPORTER, list);
+    CalendarExportPlugin.getInstance().refreshTree();
   }
 
   public String getActiveExporters() {

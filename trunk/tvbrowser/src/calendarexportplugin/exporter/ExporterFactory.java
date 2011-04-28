@@ -140,4 +140,8 @@ public class ExporterFactory {
     sortList(mActiveExporter);
   }
 
+  public boolean isActiveExporter(ExporterIf exporter) {
+    return mActiveExporter.contains(exporter);
+  }
+
 }
