@@ -69,6 +69,7 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -80,6 +81,7 @@ import javax.swing.ListCellRenderer;
 import javax.swing.border.Border;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
+import javax.swing.filechooser.FileFilter;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -1023,5 +1025,36 @@ public class UiUtilities {
 			}
 		}
 	}
+
+  /**
+   * creates a new file chooser. It is guaranteed that this happens in the UI thread.
+   * @param fileFilter file filter or <code>null</code>
+   * @return file chooser
+   */
+  public static JFileChooser createNewFileChooser(final FileFilter fileFilter) {
+    final AtomicReference<JFileChooser> fileChooser = new AtomicReference<JFileChooser>();
+    try {
+      UIThreadRunner.invokeAndWait(new Runnable() {
+        
+        @Override
+        public void run() {
+          // TODO Auto-generated method stub
+          JFileChooser select = new JFileChooser();
+          fileChooser.set(select);
+          if (fileFilter != null) {
+            select.addChoosableFileFilter(fileFilter);
+          }
+        }
+      });
+    } catch (InterruptedException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } catch (InvocationTargetException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    // TODO Auto-generated method stub
+    return fileChooser.get();
+  }
 
 }

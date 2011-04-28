@@ -21,6 +21,8 @@
 package calendarexportplugin.exporter;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -30,6 +32,8 @@ import org.apache.commons.lang.StringUtils;
 import util.program.AbstractPluginProgramFormating;
 import util.ui.ExtensionFileFilter;
 import util.ui.Localizer;
+import util.ui.UIThreadRunner;
+import util.ui.UiUtilities;
 import calendarexportplugin.CalendarExportPlugin;
 import calendarexportplugin.CalendarExportSettings;
 import calendarexportplugin.utils.CalendarToolbox;
@@ -89,11 +93,10 @@ public abstract class CalExporter extends AbstractExporter {
    *          programs that are exported
    */
   private File chooseFile(Program[] programs) {
-    JFileChooser select = new JFileChooser();
-
     ExtensionFileFilter vCal = new ExtensionFileFilter(mExtension,
         mExtensionFilter);
-    select.addChoosableFileFilter(vCal);
+    final JFileChooser select = UiUtilities.createNewFileChooser(vCal);
+
     String ext = "." + mExtension;
 
     if (mSavePath != null) {
@@ -119,8 +122,24 @@ public abstract class CalExporter extends AbstractExporter {
           + File.separator + fileName + ext));
     }
 
-    if (select.showSaveDialog(CalendarExportPlugin.getInstance()
-        .getBestParentFrame()) == JFileChooser.APPROVE_OPTION) {
+    final AtomicReference<Integer> dialogResult = new AtomicReference<Integer>();
+    try {
+      UIThreadRunner.invokeAndWait(new Runnable() {
+        
+        @Override
+        public void run() {
+          dialogResult.set(select.showSaveDialog(CalendarExportPlugin.getInstance()
+          .getBestParentFrame()));
+        }
+      });
+    } catch (InterruptedException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } catch (InvocationTargetException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    if (dialogResult.get() == JFileChooser.APPROVE_OPTION) {
 
       String filename = select.getSelectedFile().getAbsolutePath();
 
