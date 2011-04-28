@@ -60,7 +60,7 @@ public class OutlookExporter extends AbstractExporter {
   private static int olConfidential = 3;
 
   public String getName() {
-    return mLocalizer.msg("name", "MS Outlook Calendar");
+    return mLocalizer.msg("name", "MS Outlook Calendar")+" ("+mLocalizer.msg("java32", "32 bit Java only")+")";
   }
 
   /*
