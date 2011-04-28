@@ -257,9 +257,18 @@ public class TvDataBase {
     }
   }
 
-  public void close() throws IOException {
-    File file = new File(Settings.getUserSettingsDirName(), INVENTORY_FILE);
-    mTvDataInventory.writeData(file);
+  public void close(boolean log) {
+    if (log) {
+      mLog.info("Closing TV data base");
+    }
+    try {
+      File file = new File(Settings.getUserSettingsDirName(), INVENTORY_FILE);
+      mTvDataInventory.writeData(file);
+    } catch (Exception exc) {
+      if (log) {
+        mLog.log(Level.WARNING, "Closing database failed", exc);
+      }
+    }
   }
 
   public void addTvDataListener(TvDataBaseListener listener) {
