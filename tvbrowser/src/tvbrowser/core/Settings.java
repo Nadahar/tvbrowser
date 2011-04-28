@@ -308,16 +308,17 @@ public class Settings {
           exc);
     }
 
-    if(log) {
-      mLog.info("Storing window settings");
-    }
-    storeWindowSettings();
+    storeWindowSettings(log);
   }
 
   /**
    * Stores the window settings for this plugin
+   * @param log 
    */
-  private static void storeWindowSettings() {
+  private static void storeWindowSettings(boolean log) {
+    if(log) {
+      mLog.info("Storing window settings");
+    }
     File windowSettingsFile = new File(Settings.getUserSettingsDirName(),
         WINDOW_SETTINGS_FILE);
     StreamUtilities.objectOutputStreamIgnoringExceptions(windowSettingsFile,

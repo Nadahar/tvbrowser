@@ -808,6 +808,9 @@ public class PluginProxyManager {
    * @param log If the logging is activated.
    */
   public void shutdownAllPlugins(boolean log) {
+    if (log) {
+      mLog.info("Finishing plugins");
+    }
     synchronized (mPluginList) {
       // Deactivate all active plugins
       for (PluginListItem item : mPluginList) {
