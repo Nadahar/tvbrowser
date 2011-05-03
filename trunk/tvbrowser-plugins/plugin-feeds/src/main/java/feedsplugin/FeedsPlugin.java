@@ -407,6 +407,7 @@ public final class FeedsPlugin extends Plugin {
           }
           mLog.info("Loaded " + feed.getEntries().size() + " feed entries from " + feedUrl);
         } catch (Exception e) {
+          mLog.severe("Problems loading feed " + feedUrl);
           e.printStackTrace();
         }
       }
