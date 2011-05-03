@@ -60,6 +60,8 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JOptionPane;
 
+import org.apache.commons.lang.StringUtils;
+
 import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataUpdateListener;
 import tvbrowser.core.TvDataUpdater;
@@ -740,7 +742,7 @@ public class ReminderPlugin {
         .getIconFromTheme("apps", "appointment", 16));
     action.putValue(Plugin.BIG_ICON, IconLoader.getInstance().getIconFromTheme("apps", "appointment", 22));
     action.putValue(Action.SHORT_DESCRIPTION, mLocalizer.msg("description",
-        "Eine einfache Implementierung einer Erinnerungsfunktion."));
+        "Reminds you of programs to not miss them."));
 
     return new ActionMenu(action);
   }
@@ -754,7 +756,7 @@ public class ReminderPlugin {
    */
   public static Object playSound(final String fileName) {
     try {
-      if (fileName.toLowerCase().endsWith(".mid")) {
+      if (StringUtils.endsWithIgnoreCase(fileName,".mid")) {
         final Sequencer sequencer = MidiSystem.getSequencer();
         sequencer.open();
 
