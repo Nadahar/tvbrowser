@@ -446,6 +446,27 @@ public class UiUtilities {
       HyperlinkListener listener, Color background) {
     // Quick "hack". Remove HTML-Code and replace it with Code that includes the
     // correct Font
+    final JEditorPane pane = new JEditorPane("text/html", "");
+    pane.setBorder(BorderFactory.createEmptyBorder());
+    pane.setEditable(false);
+    pane.setOpaque(false);
+    pane.setFocusable(false);
+
+    if (listener != null) {
+      pane.addHyperlinkListener(listener);
+    }
+
+    updateHtmlHelpTextArea(pane, html, background);
+    return pane;
+  }
+
+  /**
+   * @param helpTextArea
+   * @param html
+   * @param background
+   * @since 3.0.2
+   */
+  public static void updateHtmlHelpTextArea(final JEditorPane helpTextArea, String html, Color background) {
     if (html.indexOf("<html>") >= 0) {
       html = StringUtils.substringBetween(html, "<html>", "</html>");
     }
@@ -454,18 +475,15 @@ public class UiUtilities {
     html = "<html><div style=\"color:" + UiUtilities.getHTMLColorCode(label.getForeground())+";font-family:" + font.getName()
         + "; font-size:" + font.getSize() +";background-color:rgb(" + background.getRed() + "," + background.getGreen() + "," + background.getBlue() + ");\">" + html + "</div></html>";
 
-    final JEditorPane pane = new JEditorPane("text/html", html);
-    pane.setBorder(BorderFactory.createEmptyBorder());
-    pane.setEditable(false);
-    pane.setFont(font);
-    pane.setOpaque(false);
-    pane.setFocusable(false);
-
-    if (listener != null) {
-      pane.addHyperlinkListener(listener);
-    }
-    return pane;
+    helpTextArea.setFont(font);
+    helpTextArea.setText(html);
   }
+
+  public static void updateHtmlHelpTextArea(final JEditorPane helpTextArea, String description) {
+    updateHtmlHelpTextArea(helpTextArea, description, new JPanel().getBackground());
+  }
+
+
 
   /**
    * returns a color code as used in HTML, e.g. #FF0000 for pure red
@@ -1035,7 +1053,7 @@ public class UiUtilities {
     final AtomicReference<JFileChooser> fileChooser = new AtomicReference<JFileChooser>();
     try {
       UIThreadRunner.invokeAndWait(new Runnable() {
-        
+
         @Override
         public void run() {
           // TODO Auto-generated method stub
