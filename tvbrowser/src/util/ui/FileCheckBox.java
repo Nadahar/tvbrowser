@@ -48,15 +48,15 @@ public class FileCheckBox extends JComponent {
 
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(FileCheckBox.class);
-  
+
   protected String mTitle;
   protected JCheckBox mCheckbox;
   protected JTextField mTextfield;
   protected JButton mChoosebtn;
   protected JFileChooser mFileChooser;
 
-  
-  
+
+
   public FileCheckBox(String title, File file, int tab, boolean addButton) {
     mTitle=title;
     setLayout(new BorderLayout(5,0));
@@ -73,11 +73,11 @@ public class FileCheckBox extends JComponent {
       mCheckbox.setPreferredSize(new Dimension(tab,(int)dim.getHeight()));
     }
 
-    mChoosebtn=new JButton(mLocalizer.msg("change", "Change"));
+    mChoosebtn=new JButton(mLocalizer.ellipsisMsg("change", "Change"));
 
     add(mCheckbox,BorderLayout.WEST);
     add(mTextfield,BorderLayout.CENTER);
-    
+
     if(addButton) {
       add(mChoosebtn,BorderLayout.EAST);
     }
@@ -99,7 +99,7 @@ public class FileCheckBox extends JComponent {
           File f=mFileChooser.getSelectedFile();
           if (f!=null) {
             mTextfield.setText(f.getAbsolutePath());
-            
+
             if(mTextfield.getKeyListeners().length == 1) {
               mTextfield.getKeyListeners()[0].keyReleased(null);
             }
@@ -113,7 +113,7 @@ public class FileCheckBox extends JComponent {
   public void setFileChooser(JFileChooser chooser) {
     mFileChooser=chooser;
     String temp = mTextfield.getText();
-    
+
     if(temp.indexOf(File.separator) != -1) {
       mFileChooser.setCurrentDirectory(new File(temp.substring(0,temp.lastIndexOf(File.separator)+1)));
     }
@@ -129,7 +129,7 @@ public class FileCheckBox extends JComponent {
   public boolean isSelected() {
     return mCheckbox.isSelected();
   }
-  
+
   public void setFile(File f) {
     if (f!=null) {
       mTextfield.setText(f.getAbsolutePath());
@@ -137,7 +137,7 @@ public class FileCheckBox extends JComponent {
       mTextfield.setText("");
     }
   }
-  
+
   public File getFile() {
     return new File(mTextfield.getText());
   }
@@ -163,7 +163,7 @@ public class FileCheckBox extends JComponent {
   public JButton getButton() {
     return mChoosebtn;
   }
-  
+
   public JButton removeButton() {
     remove(mChoosebtn);
     return mChoosebtn;

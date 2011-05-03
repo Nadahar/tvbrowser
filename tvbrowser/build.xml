@@ -161,7 +161,7 @@
     <echo message="  runtime-mac           Creates a runtime directory for Mac OS X" />
     <echo message="  runtime-win           Creates a runtime directory for MS Windows" />
     <echo message="  runtime-tvdatakit     Creates a runtime directory for the TV-Browser TV data kit" />
-    <echo message="  test                  Does the JUnit tests."/>
+    <echo message="  test                  Runs the JUnit tests."/>
   </target>
 
 
@@ -601,8 +601,8 @@
         icon="imgs/tvbrowser128.png"
         exec="tvbrowser.sh"
   		tryExec="tvbrowser.sh"
-        categories="Video;AudioVideo;TV;"
-    	type="Application"
+        categories="Video;AudioVideo;TV"
+    	  type="Application"
     >
     	<name lang="de" value="${programname}"/>
     	<genericName value="Digital TV Guide"/>
@@ -619,8 +619,9 @@
         name="${programname}"
         icon="/usr/share/tvbrowser/imgs/tvbrowser128.png"
         exec="tvbrowser"
-        categories="Video;AudioVideo;TV;"
-    	type="Application"
+        categories="Video;AudioVideo;TV"
+    	  type="Application"
+  			comment="Easy to use TV Guide - written in Java"
     >
     	<name lang="de" value="${programname}"/>
     	<genericName value="Digital TV Guide"/>
@@ -819,7 +820,7 @@
         package="tvbrowser"
         section="utils"
         depends="sun-java6-jre | openjdk-6-jre | sun-java7-jre | openjdk-7-jre | default-jre"
-  		recommends="sun-java6-jre">
+  	    recommends="sun-java6-jre">
 
         <version upstream="${tvbrowser.version}"/>
         <maintainer name="TV-Browser team" email="dev@tvbrowser.org"/>
@@ -881,10 +882,6 @@
 
   <!-- Creates the windows exe file -->
   <target name="exe" depends="runtime-win">
-<!--
-    <jsmoothgen project="${jsmooth.dir}/tvbrowser.jsmooth" skeletonroot="${jsmooth.dir}/skeletons"/>
-    <jsmoothgen project="${jsmooth.dir}/tvbrowser_noDD.jsmooth" skeletonroot="${jsmooth.dir}/skeletons"/>
--->
   	<launch4j configFile="${deployment.dir}/win/launch4j/tvbrowser.xml"
   		fileversion="${tvbrowser.version.file}"
   		productversion="${tvbrowser.version.file}"
