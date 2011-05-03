@@ -54,13 +54,13 @@ import com.jgoodies.forms.layout.FormLayout;
 /**
  * A class with a dialog that informs the user
  * about the plugin functions of TV-Browser.
- * 
+ *
  * @author René Mach
  * @since 2.7
  */
 public class PluginInformationDialog extends JDialog implements WindowClosingIf {
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(PluginInformationDialog.class);
-  
+
   /**
    * Creates an instance of this class.
    * <p>
@@ -74,21 +74,21 @@ public class PluginInformationDialog extends JDialog implements WindowClosingIf 
 
   private void init() {
     setTitle(mLocalizer.msg("title","TV-Browser is able to do much more"));
-    
+
     UiUtilities.registerForClosing(this);
-    
+
     CellConstraints cc = new CellConstraints();
     PanelBuilder pb = new PanelBuilder(
         new FormLayout("default:grow,default,default:grow",
             "default,fill:default:grow,default"),
         (JPanel)getContentPane());
-    
-    JLabel l = pb.addLabel(mLocalizer.msg("header","Important informations about TV-Browser functionality!"), cc.xy(2,1));
+
+    JLabel l = pb.addLabel(mLocalizer.msg("header","Important information about TV-Browser functionality!"), cc.xy(2,1));
     l.setForeground(new Color(200,0,0));
     l.setFont(l.getFont().deriveFont(Font.BOLD,20));
     l.setBorder(Borders.createEmptyBorder("10dlu,0dlu,5dlu,0dlu"));
-    
-    JEditorPane pane = UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("text","<div style=\"font-size:medium;text-align:justify\"><p>TV-Browser can be extended with additional functions (Plugins), for instance to control hardware, other data sources, to load ratings from ImdB and much more.</p><p>You also can find more Plugins <a href=\"http://www.tvbrowser.org/downloads-mainmenu-5/plugins-mainmenu-24.html\">on our website</a>, that are currently not available to download from TV-Browser, but are mostly already usable.</p><p>Do you want to see the list with the Plugins available through download from TV-Browser?<br>(You also can always open that list over the Plugins menu.)</p></div>"),
+
+    JEditorPane pane = UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("text","<div style=\"font-size:medium;text-align:justify\"><p>TV-Browser can be extended with additional functions (plugins), for instance to control hardware, to load other data sources, to load ratings from IMDb and much more.</p><p>You also can find more plugins <a href=\"http://www.tvbrowser.org/downloads-mainmenu-5/plugins-mainmenu-24.html\">on our website</a>, that are currently not available for download from within TV-Browser, but are mostly already usable.</p><p>Do you want to see the list with the Plugins available through download from TV-Browser?<br>(You also can always open that list over the Plugins menu.)</p></div>"),
         new HyperlinkListener() {
           public void hyperlinkUpdate(HyperlinkEvent e) {
             if(e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
@@ -96,45 +96,45 @@ public class PluginInformationDialog extends JDialog implements WindowClosingIf 
             }
           }
         },Color.white);
-    
+
     pane.setPreferredSize(new Dimension(400,300));
-    
+
     pane.setBackground(Color.white);
     pane.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createMatteBorder(0,0,1,0,Color.darkGray),Borders.createEmptyBorder("0dlu,10dlu,0dlu,10dlu")));
-    
+
     pb.add(pane, cc.xyw(1,2,3));
-    
+
     JButton[] buttons = {new JButton(mLocalizer.msg("showList","Show the list with the Plugins now")),
         new JButton(mLocalizer.msg("closeDialog","Close this dialog"))};
-    
+
     buttons[0].addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         MainFrame.getInstance().showUpdatePluginsDlg(true);
         close();
       }
     });
-    
+
     buttons[1].addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         close();
       }
     });
-    
+
     buttons[0].setFont(buttons[0].getFont().deriveFont(Font.BOLD,13));
     buttons[1].setFont(buttons[1].getFont().deriveFont(Font.BOLD,13));
-    
+
     getRootPane().setDefaultButton(buttons[0]);
-    
+
     ButtonBarBuilder2 bb = new ButtonBarBuilder2();
     bb.addGlue();
     bb.addButton(buttons);
     bb.addGlue();
     bb.setBorder(Borders.createEmptyBorder("6dlu,6dlu,6dlu,6dlu"));
-    
+
     pb.add(bb.getPanel(), cc.xyw(1,3,3));
     pb.getPanel().setBackground(Color.white);
   }
-  
+
   public void close() {
     dispose();
   }
