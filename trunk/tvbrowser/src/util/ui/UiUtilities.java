@@ -39,12 +39,10 @@ import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
-import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
-import java.awt.Transparency;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
@@ -755,7 +753,7 @@ public class UiUtilities {
       g2.setTransform(z);
       icon.paintIcon(null, g2, 0, 0);
       g2.dispose();
-      BufferedImage scaled = scaleDown(iconImage, width, height);
+      BufferedImage scaled = scaleIconToBufferedImage(iconImage, width, height);
       // Return new Icon
       return new ImageIcon(scaled);
     } catch (Exception ex) {
@@ -807,9 +805,9 @@ public class UiUtilities {
    *
    * @param img
    *          Scale this image
-   * @param width
+   * @param targetWidth
    *          new width
-   * @param height
+   * @param targetHeight
    *          new height
    * @param type The type of the image.
    * @return Scaled BufferedImage
@@ -817,47 +815,22 @@ public class UiUtilities {
    * @since 3.0
    */
   public static BufferedImage scaleIconToBufferedImage(BufferedImage img,
-      int width, int height, int type, Color backgroundColor) {
-    // Scale Image
-    Image image = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
-
-    BufferedImage im = new BufferedImage(width, height, type);
-
-    Graphics2D g2 = im.createGraphics();
-    if (backgroundColor != null) {
-      g2.setColor(backgroundColor);
-      g2.fillRect(0, 0 , width, height);
-    }
-
-    g2.drawImage(image, null, null);
-    g2.dispose();
-
-    im.flush();
-    return im;
-
-  }
-
-  /**
-   * Convenience method that returns a scaled instance of the
-   * provided {@code BufferedImage}.
-   *
-   * @param img the original image to be scaled
-   * @param targetWidth the desired width of the scaled instance,
-   *    in pixels
-   * @param targetHeight the desired height of the scaled instance,
-   *    in pixels
-   * @return a scaled version of the original {@code BufferedImage}
-   */
-  public static BufferedImage scaleDown(final BufferedImage img, final int targetWidth, final int targetHeight) {
-    if (targetWidth > img.getWidth() || targetHeight > img.getHeight()) {
-      return scaleIconToBufferedImage(img, targetWidth, targetHeight);
-    }
-
-    int type = (img.getTransparency() == Transparency.OPAQUE) ? BufferedImage.TYPE_INT_RGB
-        : BufferedImage.TYPE_INT_ARGB;
+      int targetWidth, int targetHeight, int type, Color backgroundColor) {
     BufferedImage result = img;
-    int w = img.getWidth();
-    int h = img.getHeight();
+
+    int w, h;
+    if (img.getWidth() > targetWidth && img.getHeight() > targetHeight) {
+      // Use multi-step technique: start with original size, then
+      // scale down in multiple passes with drawImage()
+      // until the target size is reached
+      w = img.getWidth();
+      h = img.getHeight();
+    } else {
+      // Use one-step technique: scale directly from original
+      // size to target size with a single drawImage() call
+      w = targetWidth;
+      h = targetHeight;
+    }
 
     do {
       w /= 2;
@@ -871,6 +844,10 @@ public class UiUtilities {
 
       BufferedImage tmp = new BufferedImage(w, h, type);
       Graphics2D g2 = tmp.createGraphics();
+      if (backgroundColor != null) {
+        g2.setColor(backgroundColor);
+        g2.fillRect(0, 0 , w, h);
+      }
       g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
       g2.drawImage(result, 0, 0, w, h, null);
       g2.dispose();
