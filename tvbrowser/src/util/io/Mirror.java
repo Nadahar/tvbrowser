@@ -370,7 +370,7 @@ public class Mirror {
       totalWeight += mirror.getWeight();
     }
 
-    if(totalWeight >= 0) {
+    if(totalWeight > 0) {
       // Choose a weight
       int chosenWeight = RandomUtils.nextInt(totalWeight);
   
