@@ -1,11 +1,8 @@
 package util.settings;
 
-import java.io.File;
 import java.io.IOException;
 
 import junit.framework.TestCase;
-import util.settings.PropertyManager;
-import util.settings.StringArrayProperty;
 
 public class StringArrayPropertiesTest extends TestCase {
 
