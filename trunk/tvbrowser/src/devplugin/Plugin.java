@@ -612,8 +612,8 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
    * <p>
    * The TV data can be modified by the plugin!
    * <p>
-   * Override this method if you want to change/add data. Don't do other things
-   * than changing/adding data, use
+   * Override this method if you want to change/add data fields of the programs.
+   * If you only want to access the programs without changing any fields, please use
    * {@link #handleTvDataAdded(ChannelDayProgram)} instead.
    *
    * @param newProg
