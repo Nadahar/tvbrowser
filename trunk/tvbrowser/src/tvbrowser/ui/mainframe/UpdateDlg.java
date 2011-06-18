@@ -61,7 +61,7 @@ import devplugin.Channel;
 
 /**
  * TV-Browser
- * 
+ *
  * @author Martin Oberhauser
  */
 public class UpdateDlg extends JDialog implements ActionListener, WindowClosingIf {
@@ -76,9 +76,9 @@ public class UpdateDlg extends JDialog implements ActionListener, WindowClosingI
   private JComboBox mComboBox;
   private TvDataServiceCheckBox[] mDataServiceCbArr;
   private TvDataServiceProxy[] mSelectedTvDataServiceArr;
-  
+
   private JCheckBox mAutoUpdate;
-  
+
   private JRadioButton mStartUpdate;
   private JRadioButton mRecurrentUpdate;
 
@@ -86,7 +86,7 @@ public class UpdateDlg extends JDialog implements ActionListener, WindowClosingI
     super(parent, modal);
 
     UiUtilities.registerForClosing(this);
-    
+
     String msg;
 
     mResult = CANCEL;
@@ -112,7 +112,7 @@ public class UpdateDlg extends JDialog implements ActionListener, WindowClosingI
 
     JPanel northPanel = new JPanel();
     northPanel.setLayout(new BoxLayout(northPanel, BoxLayout.Y_AXIS));
-    
+
     // first show reason of update
     if (reason != null && !reason.isEmpty()) {
       String question = mLocalizer.msg("question", "Do you want to update now?");
@@ -175,40 +175,41 @@ public class UpdateDlg extends JDialog implements ActionListener, WindowClosingI
       p = new JPanel(new BorderLayout());
       p.setBorder(BorderFactory.createTitledBorder(mLocalizer
           .msg("autoUpdateTitle", "Automatic update")));
-      
+
       JPanel boxPanel = new JPanel(new FormLayout("10dlu,pref:grow","default,2dlu,default,default"));
       CellConstraints cc = new CellConstraints();
-      
+
       mAutoUpdate = new JCheckBox(mLocalizer.msg("autoUpdateMessage", "Update data automatically"));
-      
+
       mStartUpdate = new JRadioButton(mLocalizer.msg("onStartUp", "Only on TV-Browser startup"), false);
       mRecurrentUpdate = new JRadioButton(mLocalizer.msg("recurrent", "Recurrent"), true);
-      
+
       mStartUpdate.setEnabled(false);
       mRecurrentUpdate.setEnabled(false);
-      
+
       boxPanel.add(mAutoUpdate, cc.xyw(1,1,2));
       boxPanel.add(mStartUpdate, cc.xy(2,3));
       boxPanel.add(mRecurrentUpdate, cc.xy(2,4));
-      
+
       p.add(boxPanel, BorderLayout.CENTER);
-      
+
       ButtonGroup bg = new ButtonGroup();
-      
+
       bg.add(mStartUpdate);
       bg.add(mRecurrentUpdate);
-      
+
       mAutoUpdate.addItemListener(new ItemListener() {
         public void itemStateChanged(ItemEvent e) {
           mRecurrentUpdate.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
           mStartUpdate.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
         }
       });
-      
+
       northPanel.add(p);
     }
 
     contentPane.add(northPanel, BorderLayout.NORTH);
+    mUpdateBtn.requestFocusInWindow();
   }
 
   /**
@@ -216,13 +217,13 @@ public class UpdateDlg extends JDialog implements ActionListener, WindowClosingI
    */
   private TvDataServiceProxy[] getActiveDataServices() {
     ArrayList<TvDataServiceProxy> services = new ArrayList<TvDataServiceProxy>();
-    
+
     for (Channel channel : ChannelList.getSubscribedChannels()) {
       if (!services.contains(channel.getDataServiceProxy())) {
         services.add(channel.getDataServiceProxy());
       }
     }
-    
+
     return services.toArray(new TvDataServiceProxy[services.size()]);
   }
 
@@ -282,7 +283,7 @@ public class UpdateDlg extends JDialog implements ActionListener, WindowClosingI
         dataServiceArr[i] = mSelectedTvDataServiceArr[i].getId();
       }
       Settings.propDataServicesForUpdate.setStringArray(dataServiceArr);
-      
+
       if (mStartUpdate != null) {
         if (mAutoUpdate.isSelected()) {
           Settings.propAutoDownloadType.setString("daily");
