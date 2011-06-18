@@ -26,6 +26,7 @@
 package tvbrowser.core;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -48,6 +49,7 @@ import tvdataservice.TvDataUpdateManager;
 import util.exc.ErrorHandler;
 import util.io.NetworkUtilities;
 import util.ui.Localizer;
+import util.ui.UIThreadRunner;
 import util.ui.progress.ProgressMonitorGroup;
 import devplugin.Channel;
 import devplugin.ChannelDayProgram;
@@ -176,10 +178,24 @@ public class TvDataUpdater {
         boolean result = NetworkUtilities.checkConnection();
         if (!result && !mMessageShown ) {
           mMessageShown = true;
-          JOptionPane.showMessageDialog(null,
-              mLocalizer.msg("noConnectionMessage", "No connection!"),
-              mLocalizer.msg("noConnectionTitle", "No connection!"),
-              JOptionPane.ERROR_MESSAGE);
+          try {
+            UIThreadRunner.invokeAndWait(new Runnable() {
+
+              @Override
+              public void run() {
+                JOptionPane.showMessageDialog(null,
+                    mLocalizer.msg("noConnectionMessage", "No connection!"),
+                    mLocalizer.msg("noConnectionTitle", "No connection!"),
+                    JOptionPane.ERROR_MESSAGE);
+              }
+            });
+          } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+          } catch (InvocationTargetException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+          }
         }
         return result;
       }
