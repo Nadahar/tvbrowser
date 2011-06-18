@@ -308,6 +308,9 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
                 else if ("Narrator".equalsIgnoreCase(role)) {
                   appendPersonWithRole(additional, member);
                 }
+                else if ("Correspondent".equalsIgnoreCase(role)) {
+                  appendPersonWithRole(additional, member);
+                }
                 else {
                   appendPersonWithRole(additional, member);
                   if (!role.equalsIgnoreCase("judge")) {
