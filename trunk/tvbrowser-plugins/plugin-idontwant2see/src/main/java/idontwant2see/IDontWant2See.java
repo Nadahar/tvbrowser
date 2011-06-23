@@ -287,7 +287,7 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
 
         final FormLayout layout = new FormLayout(
             "0dlu:grow,default,3dlu,default",
-            "fill:default:grow,2dlu,default,5dlu,default");
+            "fill:500px:grow,2dlu,default,5dlu,default");
         layout.setColumnGroups(new int[][] {{2,4}});
 
         final CellConstraints cc = new CellConstraints();
