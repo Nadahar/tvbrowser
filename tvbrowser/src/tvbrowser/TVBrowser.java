@@ -1140,7 +1140,7 @@ public class TVBrowser {
       UIManager.installLookAndFeel("Skin",              "com.l2fprod.gui.plaf.skin.SkinLookAndFeel");
 
       String classPath = System.getProperty("java.class.path","");
-      if (StringUtils.containsIgnoreCase(classPath, "eclipse")) {
+      if (StringUtils.containsIgnoreCase(classPath, "eclipse") || StringUtils.containsIgnoreCase(classPath, "workspace")) {
         Map<String, SkinInfo> substanceSkins = SubstanceLookAndFeel.getAllSkins();
         if (substanceSkins != null) {
           for (SkinInfo skin : substanceSkins.values()) {
