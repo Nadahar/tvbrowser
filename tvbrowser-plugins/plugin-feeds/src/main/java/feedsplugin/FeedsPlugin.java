@@ -362,7 +362,6 @@ public final class FeedsPlugin extends Plugin {
       final int feedIndex = i;
       list.add(new AbstractAction(title) {
 
-        @Override
         public void actionPerformed(ActionEvent e) {
           SyndFeed selectedFeed = mFeeds.get(feedIndex);
           if (selectedFeed != null) {
@@ -374,7 +373,6 @@ public final class FeedsPlugin extends Plugin {
     }
     Collections.sort(list, new Comparator<AbstractAction>() {
 
-      @Override
       public int compare(AbstractAction o1, AbstractAction o2) {
         return ((String) o1.getValue(AbstractAction.NAME)).compareTo((String) o2.getValue(AbstractAction.NAME));
       }
