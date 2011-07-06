@@ -61,9 +61,18 @@ public class VersionProperty extends Property {
       if (asString != null) {
         try {
           int asInt = Integer.parseInt(asString);
-          int major = asInt / 100;
-          int minor = asInt % 100;
-          mCachedValue = new devplugin.Version(major,minor);
+          int major = asInt / 10000;
+          int minor = asInt % 10000 / 100;
+          int subMinor = asInt % 100;
+          
+          if(asString.length() == 3) {
+            major = asInt / 100;
+            minor = asInt % 100;            
+            subMinor = 0;
+          }
+     
+          mCachedValue = new devplugin.Version(major,minor,subMinor);
+          System.out.println(mCachedValue);
         }
         catch(NumberFormatException exc) {
           // We use the default value
@@ -87,7 +96,7 @@ public class VersionProperty extends Property {
     if (value.equals(mDefaultValue)) {
       setProperty(null);
     } else {
-      int asInt = value.getMajor() * 100 + value.getMinor();
+      int asInt = value.getMajor() * 10000 + value.getMinor() * 100 + value.getSubMinor();
       setProperty(Integer.toString(asInt));
     }
     
