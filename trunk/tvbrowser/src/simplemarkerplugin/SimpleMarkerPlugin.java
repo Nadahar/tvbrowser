@@ -605,5 +605,10 @@ public class SimpleMarkerPlugin extends Plugin {
   protected void save() {
     saveMe();
   }
+  
+  public String getPluginCategory() {
+    return Plugin.OTHER_CATEGORY;
+  }
+
 
 }

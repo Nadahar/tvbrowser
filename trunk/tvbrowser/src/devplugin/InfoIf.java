@@ -43,4 +43,6 @@ public interface InfoIf {
    * @return The Id.
    */
   public String getId();
+  
+  public String getPluginCategory();
 }

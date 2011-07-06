@@ -325,5 +325,9 @@ public class GenrePlugin extends Plugin {
       formatGenreNode(maxDays, child);
     }
   }
+  
+  public String getPluginCategory() {
+    return Plugin.OTHER_CATEGORY;
+  }
 
 }

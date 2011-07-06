@@ -68,6 +68,13 @@ import util.ui.TVBrowserIcons;
  * @author Til Schneider, www.murfman.de
  */
 abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf {
+  public static final String ALL_CATEGORY = "all";
+  public static final String REMOTE_CONTROL_SOFTWARE_CATEGORY = "remote_soft";
+  public static final String REMOTE_CONTROL_HARDWARE_CATEGORY = "remote_hard";
+  public static final String ADDITONAL_DATA_SERVICE_SOFTWARE_CATEGORY = "datasources_soft";
+  public static final String ADDITONAL_DATA_SERVICE_HARDWARE_CATEGORY = "datasources_hard";
+  public static final String RATINGS_CATEGORY = "ratings";
+  public static final String OTHER_CATEGORY = "misc";
 
   /**
    * logger for this class.
@@ -951,5 +958,27 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
    */
   public ImportanceValue getImportanceValueForProgram(Program p) {
     return new ImportanceValue((byte)1,Program.DEFAULT_PROGRAM_IMPORTANCE);
+  }
+  
+  /**
+   * Gets the category of this plugin.
+   * <p>
+   * The category can be one of this values.
+   * Note: Don't use the NO_CATEGORY it's only for backward compatibility.
+   * <ul>
+   * <li>{@link #ALL_CATEGORY}</li>
+   * <li>{@link #REMOTE_CONTROL_SOFTWARE_CATEGORY}</li>
+   * <li>{@link #REMOTE_CONTROL_HARDWARE_CATEGORY}</li>
+   * <li>{@link #ADDITONAL_DATA_SERVICE_SOFTWARE_CATEGORY}</li>
+   * <li>{@link #ADDITONAL_DATA_SERVICE_HARDWARE_CATEGORY}</li>
+   * <li>{@link #RATINGS_CATEGORY}</li>
+   * <li>{@link #OTHER_CATEGORY}</li>
+   * </ul>
+   * <p>
+   * @return The category of this plugin.
+   * @since 3.0.2
+   */
+  public String getPluginCategory() {
+    return ALL_CATEGORY;
   }
 }

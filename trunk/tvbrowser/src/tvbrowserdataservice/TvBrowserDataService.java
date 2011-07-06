@@ -54,6 +54,7 @@ import util.io.IOUtilities;
 import util.io.Mirror;
 import devplugin.Channel;
 import devplugin.Date;
+import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.ProgressMonitor;
 import devplugin.Version;
@@ -796,5 +797,8 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
   public boolean hasRightToDownloadIcons() {
     return mHasRightToDownloadIcons;
   }
-
+  
+  public String getPluginCategory() {
+    return Plugin.ADDITONAL_DATA_SERVICE_SOFTWARE_CATEGORY;
+  }
 }

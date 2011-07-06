@@ -369,4 +369,8 @@ public class BlogThisPlugin extends Plugin {
       mConfigs = formattings;
     }
   }
+  
+  public String getPluginCategory() {
+    return Plugin.OTHER_CATEGORY;
+  }
 }

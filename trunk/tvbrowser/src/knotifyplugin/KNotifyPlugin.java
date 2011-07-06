@@ -173,5 +173,8 @@ public void sendToKNotify(final Program program) {
   public Properties storeSettings() {
     return mSettings.storeSettings();
   }
-
+  
+  public String getPluginCategory() {
+    return Plugin.REMOTE_CONTROL_SOFTWARE_CATEGORY;
+  }
 }

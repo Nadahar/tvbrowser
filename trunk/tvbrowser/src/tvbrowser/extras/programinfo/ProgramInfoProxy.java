@@ -31,6 +31,7 @@ import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.extras.common.AbstractInternalPluginProxy;
 import devplugin.ActionMenu;
 import devplugin.ContextMenuIf;
+import devplugin.Plugin;
 import devplugin.Program;
 import devplugin.SettingsItem;
 import devplugin.SettingsTab;
@@ -94,5 +95,10 @@ public class ProgramInfoProxy extends AbstractInternalPluginProxy implements Con
   @Override
   public void handleTvDataUpdateFinished() {
     // nothing to do
+  }
+
+  @Override
+  public String getPluginCategory() {
+    return Plugin.OTHER_CATEGORY;
   }
 }

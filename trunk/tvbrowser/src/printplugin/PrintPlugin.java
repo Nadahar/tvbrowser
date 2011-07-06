@@ -456,4 +456,8 @@ public class PrintPlugin extends Plugin {
     SettingsDialog dlg = showPrintDialog(new PrintFromQueueDialogContent(getRootNode(), getParentFrame()), loadQueueSchemes());
     storeQueueSchemes(dlg.getSchemes());
   }
+  
+  public String getPluginCategory() {
+    return Plugin.OTHER_CATEGORY;
+  }
 }

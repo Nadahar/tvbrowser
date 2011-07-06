@@ -67,6 +67,7 @@ import devplugin.Channel;
 import devplugin.ChannelGroup;
 import devplugin.ChannelGroupImpl;
 import devplugin.Date;
+import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
@@ -201,12 +202,18 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
               Calendar aircal = Calendar.getInstance();
               java.util.Date date = xtvdProgram.getOriginalAirDate().getDate();
               aircal.setTime(date);
-              prog.setIntField(ProgramFieldType.PRODUCTION_YEAR_TYPE, aircal.get(Calendar.YEAR));
-              String repetition = new SimpleDateFormat().format(date);
-              if (repetition.endsWith("00:00")) {
-                repetition = repetition.substring(0, repetition.length() - "00:00".length()).trim();
+              
+              Calendar test = Calendar.getInstance();
+              test.setTime(schedule.getTime().getLocalDate());
+              
+              if(!(aircal.get(Calendar.YEAR) == test.get(Calendar.YEAR) && aircal.get(Calendar.MONTH) == test.get(Calendar.MONTH) && aircal.get(Calendar.DAY_OF_MONTH) == test.get(Calendar.DAY_OF_MONTH))) {              
+                prog.setIntField(ProgramFieldType.PRODUCTION_YEAR_TYPE, aircal.get(Calendar.YEAR));
+                String repetition = new SimpleDateFormat().format(date);
+                if (repetition.endsWith("00:00")) {
+                  repetition = repetition.substring(0, repetition.length() - "00:00".length()).trim();
+                }
+                prog.setTextField(ProgramFieldType.REPETITION_OF_TYPE, repetition);
               }
-              prog.setTextField(ProgramFieldType.REPETITION_OF_TYPE, repetition);
             }
 
             StringBuilder desc = new StringBuilder();
@@ -576,4 +583,7 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
     return allChannels;
   }
 
+  public String getPluginCategory() {
+    return Plugin.ADDITONAL_DATA_SERVICE_SOFTWARE_CATEGORY;
+  }
 }

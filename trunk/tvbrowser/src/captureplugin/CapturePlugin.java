@@ -62,6 +62,7 @@ import util.ui.UIThreadRunner;
 import util.ui.UiUtilities;
 import captureplugin.drivers.DeviceIf;
 import devplugin.ActionMenu;
+import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.PluginTreeNode;
 import devplugin.Program;
@@ -711,5 +712,9 @@ public class CapturePlugin extends devplugin.Plugin {
 
     public int getMarkPriorityForProgram(Program p) {
       return mConfig.getMarkPriority();
+    }
+    
+    public String getPluginCategory() {
+      return Plugin.REMOTE_CONTROL_SOFTWARE_CATEGORY;
     }
 }

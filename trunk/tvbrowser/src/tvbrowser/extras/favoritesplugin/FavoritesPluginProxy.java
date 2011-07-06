@@ -39,6 +39,7 @@ import tvbrowser.extras.favoritesplugin.dlgs.FavoriteTreeModel;
 import devplugin.ActionMenu;
 import devplugin.ContextMenuIf;
 import devplugin.Marker;
+import devplugin.Plugin;
 import devplugin.Program;
 import devplugin.ProgramReceiveTarget;
 import devplugin.SettingsItem;
@@ -192,5 +193,10 @@ public class FavoritesPluginProxy extends AbstractInternalPluginProxy implements
   public ProgramReceiveTarget[] getProgramReceiveTargets() {
     return new ProgramReceiveTarget[] { new ProgramReceiveTarget(this,
         FavoritesPlugin.mLocalizer.msg("programTarget", "Create favorite from title"), PROGRAM_TARGET_TITLE_FAVORITE) };
+  }
+
+  @Override
+  public String getPluginCategory() {
+    return Plugin.OTHER_CATEGORY;
   }
 }

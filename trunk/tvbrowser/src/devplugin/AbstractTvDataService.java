@@ -293,4 +293,26 @@ public abstract class AbstractTvDataService {
   public boolean hasRightToDownloadIcons() {
     return false;
   }
+  
+  /**
+   * Gets the category of this plugin.
+   * <p>
+   * The category can be one of this values.
+   * Note: Don't use the NO_CATEGORY it's only for backward compatibility.
+   * <ul>
+   * <li>{@link #ALL_CATEGORY}</li>
+   * <li>{@link #REMOTE_CONTROL_SOFTWARE_CATEGORY}</li>
+   * <li>{@link #REMOTE_CONTROL_HARDWARE_CATEGORY}</li>
+   * <li>{@link #ADDITONAL_DATA_SERVICE_SOFTWARE_CATEGORY}</li>
+   * <li>{@link #ADDITONAL_DATA_SERVICE_HARDWARE_CATEGORY}</li>
+   * <li>{@link #RATINGS_CATEGORY}</li>
+   * <li>{@link #OTHER_CATEGORY}</li>
+   * </ul>
+   * <p>
+   * @return The category of this plugin.
+   * @since 3.0.2
+   */
+  public String getPluginCategory() {
+    return Plugin.ALL_CATEGORY;
+  }
 }

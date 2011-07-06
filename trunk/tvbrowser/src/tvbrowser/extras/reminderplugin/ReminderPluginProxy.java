@@ -33,6 +33,7 @@ import tvbrowser.extras.common.AbstractInternalPluginProxy;
 import devplugin.ActionMenu;
 import devplugin.ContextMenuIf;
 import devplugin.Marker;
+import devplugin.Plugin;
 import devplugin.Program;
 import devplugin.ProgramReceiveTarget;
 import devplugin.SettingsItem;
@@ -147,5 +148,9 @@ public class ReminderPluginProxy extends AbstractInternalPluginProxy implements 
 
   private static ReminderPlugin getReminderInstance() {
     return ReminderPlugin.getInstance();
+  }
+  
+  public String getPluginCategory() {
+    return Plugin.OTHER_CATEGORY;
   }
 }

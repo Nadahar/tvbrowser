@@ -379,4 +379,8 @@ public class ClipboardPlugin extends Plugin {
       mConfigs = value;
     }
   }
+  
+  public String getPluginCategory() {
+    return Plugin.OTHER_CATEGORY;
+  }
 }

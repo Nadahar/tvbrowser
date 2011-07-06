@@ -56,6 +56,7 @@ import devplugin.Channel;
 import devplugin.ChannelGroup;
 import devplugin.ChannelGroupImpl;
 import devplugin.Date;
+import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.ProgressMonitor;
 import devplugin.Version;
@@ -328,5 +329,8 @@ public class DreamboxDataService extends AbstractTvDataService {
         }
     }
 
+    public String getPluginCategory() {
+      return Plugin.ADDITONAL_DATA_SERVICE_HARDWARE_CATEGORY;
+    }
 
 }

@@ -180,4 +180,8 @@ public class ListViewPlugin extends Plugin {
     protected PluginPictureSettings getPictureSettings() {
       return new PluginPictureSettings(Integer.parseInt(mSettings.getProperty("pictureSettings",String.valueOf(PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE))));
     }
+    
+    public String getPluginCategory() {
+      return Plugin.OTHER_CATEGORY;
+    }
 }

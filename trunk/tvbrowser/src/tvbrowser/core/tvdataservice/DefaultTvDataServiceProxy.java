@@ -290,4 +290,9 @@ public class DefaultTvDataServiceProxy extends AbstractTvDataServiceProxy {
   public String getDataServicePackageName() {
     return mTvDataService.getClass().getPackage().getName();
   }
+
+  @Override
+  public String getPluginCategory() {
+    return mTvDataService.getPluginCategory();
+  }
 }

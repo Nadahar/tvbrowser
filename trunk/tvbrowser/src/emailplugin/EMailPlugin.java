@@ -318,4 +318,8 @@ public class EMailPlugin extends Plugin {
 
     return null;
   }
+  
+  public String getPluginCategory() {
+    return Plugin.REMOTE_CONTROL_SOFTWARE_CATEGORY;
+  }
 }

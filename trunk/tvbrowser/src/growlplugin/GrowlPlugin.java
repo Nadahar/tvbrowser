@@ -144,5 +144,8 @@ public class GrowlPlugin extends Plugin {
     mContainer = null;
   }
   
-  
+  public String getPluginCategory() {
+    return Plugin.REMOTE_CONTROL_SOFTWARE_CATEGORY;
+  }
+
 }

@@ -34,6 +34,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -43,6 +44,8 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -62,6 +65,7 @@ import tvbrowser.core.PluginAndDataServiceComparator;
 import tvbrowser.core.PluginLoader;
 import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
+
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
@@ -69,6 +73,9 @@ import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import tvbrowser.extras.common.InternalPluginProxyIf;
 import tvbrowser.extras.common.InternalPluginProxyList;
 import tvbrowser.ui.mainframe.MainFrame;
+import tvbrowser.ui.update.SoftwareUpdateDlg;
+import tvbrowser.ui.update.SoftwareUpdateDlg.FilterItem;
+
 import util.browserlauncher.Launch;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
@@ -84,6 +91,7 @@ import com.jgoodies.forms.layout.FormLayout;
 import devplugin.ActionMenu;
 import devplugin.Channel;
 import devplugin.InfoIf;
+
 import devplugin.PluginInfo;
 
 /**
@@ -108,6 +116,9 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
   /** The auto update check box */
   private JCheckBox mAutoUpdates;
   private JButton mConfigure;
+  private JComboBox mFilterBox;
+  
+  private ArrayList<Object> mPluginList;
 
   /**
    * Creates an instance of this class.
@@ -120,7 +131,7 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
 
   public JPanel createSettingsPanel() {
 
-    JPanel contentPanel = new JPanel(new FormLayout("default:grow, default", "default, 3dlu, fill:default:grow, 3dlu, default"));
+    JPanel contentPanel = new JPanel(new FormLayout("default:grow, default", "default, 2dlu, default, 3dlu, fill:default:grow, 3dlu, default"));
     contentPanel.setBorder(Borders.DLU4_BORDER);
     
     CellConstraints cc = new CellConstraints();
@@ -143,6 +154,21 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
     });
 
     contentPanel.add(mAutoUpdates, cc.xy(1,1));
+    
+    JPanel categorySelection = new JPanel(new FormLayout("default,3dlu,default:grow","default"));
+    
+    JLabel filterLabel = new JLabel(SoftwareUpdateDlg.mLocalizer.msg("filterLabel","Show only Plugins with the following category:"));
+    mFilterBox = new JComboBox();
+    mFilterBox.addItemListener(new ItemListener() {
+      public void itemStateChanged(ItemEvent e) {
+        populatePluginList();
+      }
+    });
+
+    categorySelection.add(filterLabel, cc.xy(1,1));
+    categorySelection.add(mFilterBox, cc.xy(3,1));
+    
+    contentPanel.add(categorySelection,cc.xyw(1,3,2));
     
     mTableModel = new DefaultTableModel() {
       public boolean isCellEditable(int row, int column) {
@@ -251,7 +277,7 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
     JScrollPane pane = new JScrollPane(mTable);
     pane.getViewport().setBackground(mTable.getBackground());
     
-    contentPanel.add(pane, cc.xyw(1,3,2));
+    contentPanel.add(pane, cc.xyw(1,5,2));
     
     ButtonBarBuilder2 builder = new ButtonBarBuilder2();
 
@@ -590,13 +616,47 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
       mTableModel.removeRow(0);
     }
     
+    Object test = mFilterBox.getSelectedItem();
+    FilterItem filterItem = null;
+    
+    if(test == null) {
+      filterItem = new FilterItem("all");
+    }
+    else {
+      filterItem = (FilterItem)test;
+    }
+    
+    ArrayList<FilterItem> filterItemList = new ArrayList<FilterItem>();
+    
     /* Add base plugins */
     
     InternalPluginProxyIf[] internalPluginProxies = InternalPluginProxyList.getInstance().getAvailableProxys();
     Arrays.sort(internalPluginProxies, new InternalPluginProxyIf.Comparator());
     
     for (InternalPluginProxyIf internalPluginProxy : internalPluginProxies) {
-      mTableModel.addRow(new Object[]{true, internalPluginProxy});
+      if(filterItem.accept(internalPluginProxy)) {
+        mTableModel.addRow(new Object[]{true, internalPluginProxy});
+        
+        if(mFilterBox.getItemCount() < 1) {
+          int index = 0;
+    
+          for(int i = 0; i < filterItemList.size(); i++) {
+            int compareValue = filterItemList.get(i).compareTo(internalPluginProxy.getPluginCategory());
+    
+            if(compareValue == 0) {
+              index = -1;
+              break;
+            }
+            else if(compareValue < 0) {
+              index = i+1;
+            }
+          }
+    
+          if(index != -1) {
+            filterItemList.add(index,new FilterItem(internalPluginProxy.getPluginCategory()));
+          }
+        }
+      }
     }
     
     /* Add plugins and data services */
@@ -611,7 +671,59 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
     Arrays.sort(infoArr, new PluginAndDataServiceComparator());
     
     for (InfoIf info : infoArr) {
-      mTableModel.addRow(new Object[]{(info instanceof PluginProxy) ? ((PluginProxy)info).isActivated() : true, info});
+      if(filterItem.accept(info)) {
+        mTableModel.addRow(new Object[]{(info instanceof PluginProxy) ? ((PluginProxy)info).isActivated() : true, info});
+        
+        if(mFilterBox.getItemCount() < 1) {
+          int index = 0;
+    
+          for(int i = 0; i < filterItemList.size(); i++) {
+            int compareValue = filterItemList.get(i).compareTo(info.getPluginCategory());
+    
+            if(compareValue == 0) {
+              index = -1;
+              break;
+            }
+            else if(compareValue < 0) {
+              index = i+1;
+            }
+          }
+    
+          if(index != -1) {
+            filterItemList.add(index,new FilterItem(info.getPluginCategory()));
+          }
+        }
+      }
+    }
+    
+    /*for(SoftwareUpdateItem item : itemArr) {
+      int index = 0;
+
+      for(int i = 0; i < filterList.size(); i++) {
+        int compareValue = filterList.get(i).compareTo(item.getCategory());
+
+        if(compareValue == 0) {
+          index = -1;
+          break;
+        }
+        else if(compareValue < 0) {
+          index = i+1;
+        }
+      }
+
+      if(index != -1) {
+        filterList.add(index,new FilterItem(item.getCategory()));
+      }
+    }*/
+
+    if(mFilterBox.getItemCount() < 1) {
+      if(!filterItemList.contains(new FilterItem("all"))) { 
+        filterItemList.add(0, new FilterItem("all"));
+      }
+      
+      for(FilterItem item : filterItemList) {
+        mFilterBox.addItem(item);
+      }
     }
     
   /*  for (TvDataServiceProxy service : services) {
@@ -703,5 +815,17 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
       mTable.setCursor(oldCursor);
     }
   }
+  
+ /* private class FilterItem {
+    private String mCategory;
+    
+    public FilterItem(String category) {
+      mCategory = category;
+    }
+    
+    public String toString() {
+      return SoftwareUpdateDlg.mLocalizer.msg(mCategory,mCategory);
+    }
+  }*/
 
 }
