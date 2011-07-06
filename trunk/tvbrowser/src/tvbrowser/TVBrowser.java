@@ -130,7 +130,7 @@ public class TVBrowser {
 
   private static String curLookAndFeel;
 
-  private static final boolean mIsStable = true;
+  private static final boolean mIsStable = false;
   private static final int mMajorVersion = 3;
   private static final int mMinorVersion = 1;
   private static final int mSubMinorVersion = 99;
