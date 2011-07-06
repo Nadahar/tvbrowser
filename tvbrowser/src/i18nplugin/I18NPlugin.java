@@ -143,5 +143,8 @@ public class I18NPlugin extends Plugin {
     }
     
   }
-
+  
+  public String getPluginCategory() {
+    return Plugin.OTHER_CATEGORY;
+  }
 }

@@ -537,4 +537,8 @@ public class WebPlugin extends Plugin {
   protected void setShowDetailMenus(final boolean showDetails) {
     mShowDetails = showDetails;
   }
+  
+  public String getPluginCategory() {
+    return Plugin.REMOTE_CONTROL_SOFTWARE_CATEGORY;
+  }
 }

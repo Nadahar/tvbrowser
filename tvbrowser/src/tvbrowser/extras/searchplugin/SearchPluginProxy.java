@@ -30,6 +30,7 @@ import tvbrowser.extras.common.AbstractInternalPluginProxy;
 import util.ui.TVBrowserIcons;
 import devplugin.ActionMenu;
 import devplugin.ContextMenuIf;
+import devplugin.Plugin;
 import devplugin.Program;
 import devplugin.SettingsItem;
 import devplugin.SettingsTab;
@@ -99,4 +100,8 @@ public class SearchPluginProxy extends AbstractInternalPluginProxy implements Bu
     // nothing to do
   }
 
+  @Override
+  public String getPluginCategory() {
+    return Plugin.OTHER_CATEGORY;
+  }
 }

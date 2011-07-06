@@ -81,4 +81,10 @@ public interface InternalPluginProxyIf {
    * @since 3.0
    */
   public void handleTvDataUpdateFinished();
+  
+  /**
+   * @since 3.0.2
+   * @return The plugin category of this internal plugin.
+   */
+  public String getPluginCategory();
 }

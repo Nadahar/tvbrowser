@@ -67,6 +67,7 @@ import javax.swing.event.ListSelectionListener;
 
 import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
+import tvbrowser.extras.common.InternalPluginProxyIf;
 import util.browserlauncher.Launch;
 import util.exc.TvBrowserException;
 import util.ui.EnhancedPanelBuilder;
@@ -88,6 +89,7 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.layout.Sizes;
 
+import devplugin.InfoIf;
 import devplugin.Version;
 
 /**
@@ -97,7 +99,7 @@ import devplugin.Version;
 public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSelectionListener, WindowClosingIf {
 
   /** The localizer for this class. */
-  private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(SoftwareUpdateDlg.class);
+  public static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(SoftwareUpdateDlg.class);
 
   private JButton mCloseBtn, mDownloadBtn;
 
@@ -564,10 +566,10 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
     }
   }
 
-  private static class FilterItem implements ItemFilter {
+  public static class FilterItem implements ItemFilter {
     private String mType;
 
-    protected FilterItem(String type) {
+    public FilterItem(String type) {
       mType = type;
     }
 
@@ -620,6 +622,20 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
         }
 
         return equals(((SoftwareUpdateItem)o).getCategory());
+      }
+      if(o instanceof InternalPluginProxyIf) {
+        if(mType.equals("all")) {
+          return true;
+        }
+
+        return equals(((InternalPluginProxyIf)o).getPluginCategory());        
+      }
+      if(o instanceof InfoIf) {
+        if(mType.equals("all")) {
+          return true;
+        }
+
+        return equals(((InfoIf)o).getPluginCategory());        
       }
 
       return false;

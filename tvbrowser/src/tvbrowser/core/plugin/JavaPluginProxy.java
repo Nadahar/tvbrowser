@@ -634,4 +634,13 @@ public class JavaPluginProxy extends AbstractPluginProxy {
   protected ImportanceValue doGetImportanceValueForProgram(Program p) {
     return mPlugin.getImportanceValueForProgram(p);
   }
+
+  @Override
+  public String getPluginCategory() {
+    if(mPlugin != null) {
+      return mPlugin.getPluginCategory();
+    }
+    
+    return Plugin.ALL_CATEGORY;
+  }
 }

@@ -498,4 +498,9 @@ public class ProgramListPlugin extends Plugin {
       }
     });
   }
+  
+  public String getPluginCategory() {
+    return Plugin.OTHER_CATEGORY;
+  }
+
 }

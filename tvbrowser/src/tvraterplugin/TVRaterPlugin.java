@@ -703,4 +703,8 @@ public class TVRaterPlugin extends devplugin.Plugin {
   protected UpdateInterval getUpdateInterval() {
     return mSettings.getUpdateInterval();
   }
+  
+  public String getPluginCategory() {
+    return Plugin.RATINGS_CATEGORY;
+  }
 }

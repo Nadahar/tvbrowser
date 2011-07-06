@@ -714,4 +714,8 @@ public final class CalendarExportPlugin extends Plugin {
     }
     rootNode.update();
   }
+  
+  public String getPluginCategory() {
+    return Plugin.REMOTE_CONTROL_SOFTWARE_CATEGORY;
+  }
 }

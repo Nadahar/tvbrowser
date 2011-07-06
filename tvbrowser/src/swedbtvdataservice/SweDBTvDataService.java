@@ -487,5 +487,10 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
   public boolean getShowRegisterText() {
     return mSettings.getShowRegisterText();
   }
+  
+  public String getPluginCategory() {
+    return Plugin.ADDITONAL_DATA_SERVICE_SOFTWARE_CATEGORY;
+  }
+
 
 }

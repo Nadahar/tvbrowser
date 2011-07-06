@@ -46,6 +46,7 @@ import devplugin.Channel;
 import devplugin.ChannelGroup;
 import devplugin.ChannelGroupImpl;
 import devplugin.Date;
+import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.ProgressMonitor;
 import devplugin.Version;
@@ -246,4 +247,7 @@ public class RadioTimesDataService extends AbstractTvDataService {
     monitor.setMessage("");
   }
 
+  public String getPluginCategory() {
+    return Plugin.ADDITONAL_DATA_SERVICE_SOFTWARE_CATEGORY;
+  }
 }
