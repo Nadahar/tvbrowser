@@ -276,6 +276,7 @@ public class PluginLoader {
       String pluginId = in.readUTF();
       in.readLong(); // file size is unused
       String lcFileName = in.readUTF();
+      String category = in.readUTF();
       in.close();
       // check existence of plugin file
       File pluginFile = new File(lcFileName);
@@ -283,12 +284,12 @@ public class PluginLoader {
         deletePluginProxy(proxyFile);
         return null;
       }
-
+      
       // everything seems fine, create plugin proxy and plugin info
       PluginInfo info = new PluginInfo(DummyPlugin.class, name, description, author, license);
       // now get icon
       String iconFileName = getProxyIconFileName(proxyFile);
-      return new JavaPluginProxy(info, lcFileName, pluginId, iconFileName);
+      return new JavaPluginProxy(info, lcFileName, pluginId, iconFileName,category);
     } catch (Exception e) {
       if(in != null) {
         try {
@@ -336,6 +337,7 @@ public class PluginLoader {
       out.writeUTF(proxy.getId());
       out.writeLong(pluginFile.length());
       out.writeUTF(proxy.getPluginFileName());
+      out.writeUTF(proxy.getPluginCategory());
       out.close();
       // also store the plugin icon, if it is not yet available
       String iconFileName = getProxyIconFileName(pluginFile);

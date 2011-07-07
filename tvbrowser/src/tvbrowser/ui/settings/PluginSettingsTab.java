@@ -173,14 +173,13 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
     mTableModel = new DefaultTableModel() {
       public boolean isCellEditable(int row, int column) {
         if (column == 0) {
-          if (row >= InternalPluginProxyList.getInstance().getAvailableProxys().length) {
-            Object value = getValueAt(row,1);
-            
-            if(value instanceof PluginProxy) {
-              return !Settings.propBlockedPluginArray.isBlocked(((PluginProxy)value));
-            }
+          Object value = getValueAt(row,1);
+          
+          if(value instanceof PluginProxy) {
+            return !Settings.propBlockedPluginArray.isBlocked(((PluginProxy)value));
           }
         }
+        
         return false;
       }
 
