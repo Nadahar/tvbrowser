@@ -337,7 +337,7 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
     
     builder.addButton(mRemove);
     
-    contentPanel.add(builder.getPanel(), cc.xyw(1,5,2));
+    contentPanel.add(builder.getPanel(), cc.xyw(1,7,2));
     
     mTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
       public void valueChanged(ListSelectionEvent evt) {
