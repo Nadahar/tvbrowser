@@ -374,6 +374,38 @@
       <fileset dir="${unpacked.dir}/${lib.aclibico.name}.jar" includes="**" />
       <fileset dir="${unpacked.dir}/${lib.log4j.name}.jar" includes="**" />
     </jar>
+  	
+    <!-- Pack the TV data service jars -->
+    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/TvBrowserDataService.jar"
+         compress="true">
+      <fileset dir="${classes.dir}" includes="tvbrowserdataservice/**"/>
+    </jar>
+
+    <!-- Pack Swedb data service -->
+    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/SweDBTvDataService.jar" compress="true">
+            <fileset dir="${classes.dir}" includes="swedbtvdataservice/**" />
+    </jar>
+
+    <!-- Pack RadioTimes data service -->
+    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/RadioTimesDataService.jar" compress="true">
+            <fileset dir="${classes.dir}" includes="radiotimesdataservice/**" />
+    </jar>
+      <!-- Pack Dreambox data service -->
+      <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/DreamboxDataService.jar" compress="true">
+              <fileset dir="${classes.dir}" includes="dreamboxdataservice/**" />
+      </jar>
+
+
+    <unjar src="${lib.dir}/${lib.stax.name}-${lib.stax.version}.jar" dest="${unpacked.dir}/${lib.stax.name}.jar" />
+    <unjar src="${lib.dir}/${lib.stax.api.name}-${lib.stax.api.version}.jar" dest="${unpacked.dir}/${lib.stax.api.name}.jar" />
+    <unjar src="${lib.dir}/${lib.xtvd.name}-${lib.xtvd.version}.jar" dest="${unpacked.dir}/${lib.xtvd.name}.jar" />
+    <!-- Pack SchedulesDirect data service -->
+    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/SchedulesDirectDataService.jar" compress="true">
+        <fileset dir="${classes.dir}" includes="schedulesdirectdataservice/**" />
+        <fileset dir="${unpacked.dir}/${lib.stax.name}.jar" includes="com/**"/>
+        <fileset dir="${unpacked.dir}/${lib.stax.api.name}.jar" includes="javax/**"/>
+        <fileset dir="${unpacked.dir}/${lib.xtvd.name}.jar" includes="net/**"/>
+    </jar>
   </target>
 	
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -443,39 +475,6 @@
       <fileset dir="${unpacked.dir}/${lib.substance.name}.jar" includes="org/**"/>
       <fileset dir="${unpacked.dir}/${lib.trident.name}.jar" includes="org/**"/>
     </jar>
-
-    <!-- Pack the TV data service jars -->
-    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/TvBrowserDataService.jar"
-         compress="true">
-      <fileset dir="${classes.dir}" includes="tvbrowserdataservice/**"/>
-    </jar>
-
-    <!-- Pack Swedb data service -->
-    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/SweDBTvDataService.jar" compress="true">
-            <fileset dir="${classes.dir}" includes="swedbtvdataservice/**" />
-    </jar>
-
-    <!-- Pack RadioTimes data service -->
-    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/RadioTimesDataService.jar" compress="true">
-            <fileset dir="${classes.dir}" includes="radiotimesdataservice/**" />
-    </jar>
-      <!-- Pack Dreambox data service -->
-      <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/DreamboxDataService.jar" compress="true">
-              <fileset dir="${classes.dir}" includes="dreamboxdataservice/**" />
-      </jar>
-
-
-    <unjar src="${lib.dir}/${lib.stax.name}-${lib.stax.version}.jar" dest="${unpacked.dir}/${lib.stax.name}.jar" />
-    <unjar src="${lib.dir}/${lib.stax.api.name}-${lib.stax.api.version}.jar" dest="${unpacked.dir}/${lib.stax.api.name}.jar" />
-    <unjar src="${lib.dir}/${lib.xtvd.name}-${lib.xtvd.version}.jar" dest="${unpacked.dir}/${lib.xtvd.name}.jar" />
-    <!-- Pack SchedulesDirect data service -->
-    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/SchedulesDirectDataService.jar" compress="true">
-        <fileset dir="${classes.dir}" includes="schedulesdirectdataservice/**" />
-        <fileset dir="${unpacked.dir}/${lib.stax.name}.jar" includes="com/**"/>
-        <fileset dir="${unpacked.dir}/${lib.stax.api.name}.jar" includes="javax/**"/>
-        <fileset dir="${unpacked.dir}/${lib.xtvd.name}.jar" includes="net/**"/>
-    </jar>
-
 
     <!-- Copy the other stuff -->
     <echo message="Copying the images and all the other stuff ..."/>
@@ -932,13 +931,7 @@
   	<mkdir dir="${public.dir}"/>
 
     <zip destfile="${public.dir}/tvbrowser_${tvbrowser.version}_plugins.zip">
-    <zipfileset dir="${tvbrowser-default.runtime.dir}/plugins">
-    	<exclude name="**/TvBrowserDataService.jar"/>
-    	<exclude name="**/SweDBTvDataService.jar"/>
-        <exclude name="**/RadioTimesDataService.jar"/>
-    	<exclude name="**/DreamboxDataService.jar"/>
-    	<exclude name="**/SchedulesDirectDataService.jar"/>
-    </zipfileset>
+    <zipfileset dir="${tvbrowser-default.runtime.dir}/plugins"/>
     </zip>
   </target>
 

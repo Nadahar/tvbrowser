@@ -50,6 +50,7 @@ import devplugin.Version;
 
 import tvbrowser.TVBrowser;
 import tvbrowser.core.Settings;
+import tvbrowser.ui.mainframe.SoftwareUpdater;
 import util.browserlauncher.Launch;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
@@ -120,7 +121,7 @@ public class TvBrowserVersionChangeDlg extends JDialog implements WindowClosingI
           
           if(updateItems.length > 0) {
             Settings.propPluginBetaWarning.setBoolean(false);
-            SoftwareUpdateDlg updateDlg = new SoftwareUpdateDlg(null,true,updateItems,true);
+            SoftwareUpdateDlg updateDlg = new SoftwareUpdateDlg(null,SoftwareUpdater.ONLY_UPDATE_TYPE,updateItems,true);
             updateDlg.setLocationRelativeTo(null);
             updateDlg.setVisible(true);
           }

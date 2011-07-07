@@ -49,12 +49,17 @@ import tvbrowser.ui.update.PluginsSoftwareUpdateItem;
 import tvbrowser.ui.update.SoftwareUpdateItem;
 import tvbrowser.ui.update.TvbrowserSoftwareUpdateItem;
 import util.io.IOUtilities;
+import devplugin.Plugin;
 import devplugin.Version;
 
 /**
  * Loads software update information.
  */
 public final class SoftwareUpdater {
+  public static final int ALL_TYPE = 0;
+  public static final int ONLY_UPDATE_TYPE = 1;
+  public static final int ONLY_DATA_SERVICE_TYPE = 2;
+  
 	private SoftwareUpdateItem[] mSoftwareUpdateItems;
 	private String mBlockRequestingPluginId;
 	private boolean mIsRequestingBlockArrayClear;
@@ -69,8 +74,24 @@ public final class SoftwareUpdater {
   public SoftwareUpdater(URL url, PluginBaseInfo[] baseInfos) throws IOException {
     BufferedReader reader = new BufferedReader(new InputStreamReader(IOUtilities.getStream(url, 300000),"ISO-8859-1"));
 
-    mSoftwareUpdateItems=readSoftwareUpdateItems(reader,true,false,baseInfos);
+    mSoftwareUpdateItems=readSoftwareUpdateItems(reader,ONLY_UPDATE_TYPE,false,baseInfos);
 
+    reader.close();
+  }
+  
+  /**
+   * Creates an instance of this class.
+   *
+   * @param url The url to download the informations from.
+   * @param dialogType The type of this update dialog.
+   * @param baseInfos The base infos for all available plugins.
+   * @throws IOException
+   */
+  public SoftwareUpdater(URL url, int dialogType, PluginBaseInfo[] baseInfos) throws IOException {
+    BufferedReader reader = new BufferedReader(new InputStreamReader(IOUtilities.getStream(url, 300000),"ISO-8859-1"));
+
+    mSoftwareUpdateItems=readSoftwareUpdateItems(reader,dialogType,false,baseInfos);
+    
     reader.close();
   }
 	
@@ -78,19 +99,19 @@ public final class SoftwareUpdater {
 	 * Creates an instance of this class.
 	 *
 	 * @param url The url to download the informations from.
-	 * @param onlyUpdates If only updates and not new items should be accepted.
+	 * @param dialogType The type of this update dialog.
 	 * @param dragNdrop If the plugin was dropped.
 	 * @throws IOException
 	 */
-	SoftwareUpdater(URL url, boolean onlyUpdates, boolean dragNdrop) throws IOException {
+	SoftwareUpdater(URL url, int dialogType, boolean dragNdrop) throws IOException {
 		BufferedReader reader = new BufferedReader(new InputStreamReader(IOUtilities.getStream(url, 300000),"ISO-8859-1"));
 
-		mSoftwareUpdateItems=readSoftwareUpdateItems(reader,onlyUpdates,dragNdrop,null);
+		mSoftwareUpdateItems=readSoftwareUpdateItems(reader,dialogType,dragNdrop,null);
 
 		reader.close();
 	}
 
-  private SoftwareUpdateItem[] readSoftwareUpdateItems(BufferedReader reader, boolean onlyUpdates, boolean dragNdrop, PluginBaseInfo[] baseInfos) throws IOException {
+  private SoftwareUpdateItem[] readSoftwareUpdateItems(BufferedReader reader, int dialogType, boolean dragNdrop, PluginBaseInfo[] baseInfos) throws IOException {
     Pattern pluginTypePattern = Pattern.compile("\\[(.*):(.*)\\]");
     Pattern keyValuePattern = Pattern.compile("(.+?)=(.*)");
     Matcher matcher;
@@ -186,7 +207,7 @@ public final class SoftwareUpdater {
         if(baseInfos == null) {
           PluginProxy installedPlugin = PluginProxyManager.getInstance().getPluginForId(pluginId);
   
-          if(onlyUpdates) {
+          if(dialogType == ONLY_UPDATE_TYPE) {
             // remove all not installed plugins
             if (installedPlugin == null) {
               TvDataServiceProxy service = TvDataServiceProxyManager.getInstance().findDataServiceById(className.toLowerCase()+"."+className);
@@ -195,6 +216,12 @@ public final class SoftwareUpdater {
                 it.remove();
                 continue;
               }
+            }
+          }
+          else if(dialogType == ONLY_DATA_SERVICE_TYPE) {
+            if(!item.getCategory().equals(Plugin.ADDITONAL_DATA_SERVICE_SOFTWARE_CATEGORY) && !item.getCategory().equals(Plugin.ADDITONAL_DATA_SERVICE_HARDWARE_CATEGORY)) {
+              it.remove();
+              continue;
             }
           }
   

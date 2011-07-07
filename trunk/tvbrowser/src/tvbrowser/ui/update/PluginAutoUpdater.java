@@ -25,14 +25,12 @@ package tvbrowser.ui.update;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import javax.swing.JLabel;
 
 import tvbrowser.core.PluginLoader;
 import tvbrowser.core.Settings;
-import tvbrowser.core.plugin.PluginBaseInfo;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.mainframe.SoftwareUpdater;
 import util.io.IOUtilities;
@@ -85,6 +83,27 @@ public class PluginAutoUpdater {
   }
   
   /**
+   * Gets the the update items for plugins on TV-Browser version change.
+   * @return The update items.
+   * @throws IOException
+   */
+  public static SoftwareUpdateItem[] getDataServicesForFirstStartup() throws IOException {
+    String baseUrl = getPluginUpdatesMirror().getUrl();
+    
+    try {
+      String name = PLUGIN_UPDATES_FILENAME.substring(0,
+          PLUGIN_UPDATES_FILENAME.indexOf('.'))
+          + "_" + Mirror.MIRROR_LIST_FILE_NAME;
+      IOUtilities.download(new URL(baseUrl + (baseUrl.endsWith("/") ? "" : "/") + name), new File(Settings.getUserSettingsDirName(), name));
+    } catch(Exception ee) {}
+    
+    java.net.URL url = new java.net.URL(baseUrl + "/" + PluginAutoUpdater.PLUGIN_UPDATES_FILENAME);
+    SoftwareUpdater softwareUpdater = new SoftwareUpdater(url,SoftwareUpdater.ONLY_DATA_SERVICE_TYPE,null);
+    
+    return softwareUpdater.getAvailableSoftwareUpdateItems();
+  }
+  
+  /**
    * Search for plugin updates. (And only updates)
    * @param infoLabel The label to show the info in.
    */
@@ -101,7 +120,7 @@ public class PluginAutoUpdater {
           IOUtilities.download(new URL(url + (url.endsWith("/") ? "" : "/") + name), new File(Settings.getUserSettingsDirName(), name));
         } catch(Exception ee) {}
         
-        MainFrame.getInstance().updatePlugins(url, true, infoLabel, Settings.propAutoUpdatePlugins.getBoolean());
+        MainFrame.getInstance().updatePlugins(url, SoftwareUpdater.ONLY_UPDATE_TYPE, infoLabel, Settings.propAutoUpdatePlugins.getBoolean());
       }
     }.start();
   }
