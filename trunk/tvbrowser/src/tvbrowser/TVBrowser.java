@@ -395,18 +395,18 @@ public class TVBrowser {
     final AtomicReference<Splash> splashRef = new AtomicReference<Splash>();
 
     if (mShowSplashScreen && Settings.propSplashShow.getBoolean()) {
-      UIThreadRunner.invokeLater(new Runnable() {
+      /*UIThreadRunner.invokeLater(new Runnable() {
 
         @Override
-        public void run() {
+        public void run() {*/
           splashRef.set(new SplashScreen(
               Settings.propSplashImage.getString(),
               Settings.propSplashTextPosX.getInt(),
               Settings.propSplashTextPosY.getInt(),
               Settings.propSplashForegroundColor.getColor()));
           splashRef.get().showSplash();
-        }
-      });
+        /*}
+      });*/
     }
     else {
       splashRef.set(new DummySplash());
@@ -418,10 +418,12 @@ public class TVBrowser {
     /*Maybe there are tvdataservices to install (.jar.inst files)*/
     PluginLoader.getInstance().installPendingPlugins();
 
+    PluginProxyManager.getInstance();
     PluginLoader.getInstance().loadAllPlugins();
 
     mLog.info("Loading TV listings service...");
     splashRef.get().setMessage(mLocalizer.msg("splash.dataService", "Loading TV listings service..."));
+    
     TvDataServiceProxyManager.getInstance().init();
     ChannelList.createForTvBrowserStart();
 
@@ -430,18 +432,18 @@ public class TVBrowser {
     if (!lookAndFeelInitialized) {
       mLog.info("Loading Look&Feel...");
       splashRef.get().setMessage(mLocalizer.msg("splash.laf", "Loading look and feel..."));
-
       updateLookAndFeel();
     }
 
     mLog.info("Loading plugins...");
     splashRef.get().setMessage(mLocalizer.msg("splash.plugins", "Loading plugins..."));
+    
     try {
       PluginProxyManager.getInstance().init();
     } catch(TvBrowserException exc) {
       ErrorHandler.handle(exc);
     }
-
+    
     splashRef.get().setMessage(mLocalizer.msg("splash.tvData", "Checking TV database..."));
 
     mLog.info("Checking TV listings inventory...");
@@ -449,7 +451,7 @@ public class TVBrowser {
 
     mLog.info("Starting up...");
     splashRef.get().setMessage(mLocalizer.msg("splash.ui", "Starting up..."));
-
+    
     Toolkit.getDefaultToolkit().getSystemEventQueue().push(new TextComponentPopupEventQueue());
 
     // Init the UI

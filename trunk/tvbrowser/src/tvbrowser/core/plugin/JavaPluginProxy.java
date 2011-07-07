@@ -93,6 +93,8 @@ public class JavaPluginProxy extends AbstractPluginProxy {
    * file name of the icon of this plugin proxy, used for lazy loading
    */
   private String mIconFileName;
+  
+  private String mPluginCategory;
 
 
   public JavaPluginProxy(Plugin plugin, String pluginFileName) {
@@ -100,18 +102,20 @@ public class JavaPluginProxy extends AbstractPluginProxy {
     mPluginFileName = pluginFileName;
   }
 
-  public JavaPluginProxy(PluginInfo info, String pluginFileName, String pluginId, Icon pluginIcon) {
+  public JavaPluginProxy(PluginInfo info, String pluginFileName, String pluginId, Icon pluginIcon, String category) {
     mPluginInfo = info;
     mPluginFileName = pluginFileName;
     mId = pluginId;
     mPluginIcon = pluginIcon;
+    mPluginCategory = category;
   }
 
-  public JavaPluginProxy(PluginInfo info, String pluginFileName, String pluginId, String iconFileName) {
+  public JavaPluginProxy(PluginInfo info, String pluginFileName, String pluginId, String iconFileName, String category) {
     mPluginInfo = info;
     mPluginFileName = pluginFileName;
     mId = pluginId;
     mIconFileName = iconFileName;
+    mPluginCategory = category;
   }
 
   /**
@@ -641,6 +645,6 @@ public class JavaPluginProxy extends AbstractPluginProxy {
       return mPlugin.getPluginCategory();
     }
     
-    return Plugin.ALL_CATEGORY;
+    return mPluginCategory;
   }
 }

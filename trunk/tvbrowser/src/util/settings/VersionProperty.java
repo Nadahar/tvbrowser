@@ -72,7 +72,6 @@ public class VersionProperty extends Property {
           }
      
           mCachedValue = new devplugin.Version(major,minor,subMinor);
-          System.out.println(mCachedValue);
         }
         catch(NumberFormatException exc) {
           // We use the default value
