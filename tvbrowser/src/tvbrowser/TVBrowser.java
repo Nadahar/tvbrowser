@@ -87,10 +87,14 @@ import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import tvbrowser.extras.searchplugin.SearchPlugin;
 import tvbrowser.ui.configassistant.TvBrowserPictureSettingsUpdateDialog;
 import tvbrowser.ui.mainframe.MainFrame;
+import tvbrowser.ui.mainframe.SoftwareUpdater;
 import tvbrowser.ui.splashscreen.DummySplash;
 import tvbrowser.ui.splashscreen.Splash;
 import tvbrowser.ui.splashscreen.SplashScreen;
 import tvbrowser.ui.tray.SystemTray;
+import tvbrowser.ui.update.PluginAutoUpdater;
+import tvbrowser.ui.update.SoftwareUpdateDlg;
+import tvbrowser.ui.update.SoftwareUpdateItem;
 import tvbrowser.ui.update.TvBrowserVersionChangeDlg;
 import tvdataservice.MarkedProgramsList;
 import util.browserlauncher.Launch;
@@ -425,6 +429,12 @@ public class TVBrowser {
     splashRef.get().setMessage(mLocalizer.msg("splash.dataService", "Loading TV listings service..."));
     
     TvDataServiceProxyManager.getInstance().init();
+    
+    if(TvDataServiceProxyManager.getInstance().getDataServices().length < 1) {
+      updateLookAndFeel();
+      loadDataServicesAtStartup();
+    }
+    
     ChannelList.createForTvBrowserStart();
 
     ChannelList.initSubscribedChannels();
@@ -1397,6 +1407,25 @@ public class TVBrowser {
       mAutoDownloadWaitingTimer.stop();
       mainFrame.getStatusBarLabel().setText("");
       mAutoDownloadWaitingTimer = null;
+    }
+  }
+  
+  private static void loadDataServicesAtStartup() {
+    try {
+      SoftwareUpdateItem[] updateItems = PluginAutoUpdater.getDataServicesForFirstStartup();
+      
+      if(updateItems.length > 0) {
+        Settings.propPluginBetaWarning.setBoolean(false);
+        SoftwareUpdateDlg updateDlg = new SoftwareUpdateDlg(null,SoftwareUpdater.ONLY_DATA_SERVICE_TYPE,updateItems,true);
+        updateDlg.setLocationRelativeTo(null);
+        updateDlg.setVisible(true);
+        
+        Settings.propPluginBetaWarning.setBoolean(true);
+        PluginLoader.getInstance().installPendingPlugins();
+        PluginLoader.getInstance().loadAllPlugins();
+        TvDataServiceProxyManager.getInstance().init();
+      }
+    } catch (IOException e1) {
     }
   }
 

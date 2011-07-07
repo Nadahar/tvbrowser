@@ -68,6 +68,7 @@ import javax.swing.event.ListSelectionListener;
 import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.extras.common.InternalPluginProxyIf;
+import tvbrowser.ui.mainframe.SoftwareUpdater;
 import util.browserlauncher.Launch;
 import util.exc.TvBrowserException;
 import util.ui.EnhancedPanelBuilder;
@@ -120,16 +121,16 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
    * <p>
    * @param parent The parent dialog.
    * @param downloadUrl The url to download the data from.
-   * @param onlyUpdate If this dialog should only show updates.
+   * @param dialogType The type of the dialog.
    * @param itemArr The array with the available update items.
    * @param isVersionChange If this dialog is shown for a TV-Browser version change.
    */
   public SoftwareUpdateDlg(Window parent, String downloadUrl,
-      boolean onlyUpdate, SoftwareUpdateItem[] itemArr, boolean isVersionChange) {
+      int dialogType, SoftwareUpdateItem[] itemArr, boolean isVersionChange) {
     super(parent);
     setModal(true);
     mIsVersionChange = isVersionChange;
-    createGui(downloadUrl, onlyUpdate, itemArr);
+    createGui(downloadUrl, dialogType, itemArr);
   }
   
   /**
@@ -137,42 +138,46 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
    * <p>
    * @param parent The parent dialog.
    * @param downloadUrl The url to download the data from.
-   * @param onlyUpdate If this dialog should only show updates.
+   * @param dialogType The type of the dialog.
    * @param itemArr The array with the available update items.
    */
   public SoftwareUpdateDlg(Window parent, String downloadUrl,
-      boolean onlyUpdate, SoftwareUpdateItem[] itemArr) {
-    this(parent,downloadUrl,onlyUpdate,itemArr,false);
+      int dialogType, SoftwareUpdateItem[] itemArr) {
+    this(parent,downloadUrl,dialogType,itemArr,false);
   }
 
   /**
    * Creates an instance of this class for drag-n-drop instead of normal plugin downloads.
    * <p>
    * @param parent The parent dialog.
-   * @param onlyUpdate If this dialog should only show updates.
+   * @param dialogType The type of the dialog.
    * @param itemArr The array with the available update items.
    */
   public SoftwareUpdateDlg(Window parent,
-      boolean onlyUpdate, SoftwareUpdateItem[] itemArr) {
-    this(parent, null, onlyUpdate, itemArr);
+      int dialogType, SoftwareUpdateItem[] itemArr) {
+    this(parent, null, dialogType, itemArr);
   }
   
   /**
    * Creates an instance of this class for drag-n-drop instead of normal plugin downloads.
    * <p>
    * @param parent The parent dialog.
-   * @param onlyUpdate If this dialog should only show updates.
+   * @param dialogType The type of the dialog.
    * @param itemArr The array with the available update items.
    * @param isVersionChange If this dialog is shown for a TV-Browser version change.
    */
   public SoftwareUpdateDlg(Window parent,
-      boolean onlyUpdate, SoftwareUpdateItem[] itemArr, boolean isVersionChange) {
-    this(parent, null, onlyUpdate, itemArr, isVersionChange);
-    mSoftwareUpdateItemList.selectAll();
+      int dialogType, SoftwareUpdateItem[] itemArr, boolean isVersionChange) {
+    this(parent, null, dialogType, itemArr, isVersionChange);
+    
+    if(dialogType == SoftwareUpdater.ONLY_UPDATE_TYPE) {
+      mSoftwareUpdateItemList.selectAll();
+    }
+    
     mDownloadBtn.setEnabled(mSoftwareUpdateItemList.getItemCount() > 0);
   }
 
-  private void createGui(String downloadUrl, boolean onlyUpdate, SoftwareUpdateItem[] itemArr) {
+  private void createGui(String downloadUrl, int dialogType, SoftwareUpdateItem[] itemArr) {
     mDownloadUrl = downloadUrl;
     setTitle(mLocalizer.msg("title", "Download plugins"));
 
@@ -196,7 +201,7 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
 
     ButtonBarBuilder2 builder = new ButtonBarBuilder2();
 
-    if(onlyUpdate && !mIsVersionChange) {
+    if(dialogType == SoftwareUpdater.ONLY_UPDATE_TYPE && !mIsVersionChange) {
       mAutoUpdates = new JCheckBox(mLocalizer.msg("autoUpdates","Find plugin updates automatically"), Settings.propAutoUpdatePlugins.getBoolean());
       mAutoUpdates.addItemListener(new ItemListener() {
         public void itemStateChanged(ItemEvent e) {
@@ -221,8 +226,18 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
     FormLayout layout = new FormLayout("default,5dlu,0dlu:grow","default");
 
     JPanel northPn = new JPanel(layout);
-    northPn.add(new JLabel(onlyUpdate ?mLocalizer.msg("updateHeader","Updates for installed plugins were found.") :
-      mLocalizer.msg("header","Here you can download new plugins and updates for it.")), cc.xyw(1,1,3));
+    
+    JLabel info = new JLabel(mLocalizer.msg("header","Here you can download new plugins and updates for it."));
+    
+    if(dialogType == SoftwareUpdater.ONLY_UPDATE_TYPE) {
+      info.setText(mLocalizer.msg("updateHeader","Updates for installed plugins were found."));
+    }
+    else if(dialogType == SoftwareUpdater.ONLY_DATA_SERVICE_TYPE) {
+      info.setText(mLocalizer.msg("dataServiceHeader","TV-Browser is based on Plugins. You will need at least one of the listed data Plugins."));
+      info.setFont(info.getFont().deriveFont(Font.BOLD).deriveFont((float)14));
+    }
+    
+    northPn.add(info, cc.xyw(1,1,3));
 
     JPanel southPn = new JPanel(new BorderLayout());
 
@@ -230,7 +245,9 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
 
     ArrayList<SoftwareUpdateItem> selectedItems = new ArrayList<SoftwareUpdateItem>();
     for (SoftwareUpdateItem item : itemArr) {
-			if (item.isAlreadyInstalled() && item.getInstalledVersion().compareTo(item.getVersion()) < 0) {
+			if ((item.isAlreadyInstalled() && item.getInstalledVersion().compareTo(item.getVersion()) < 0) ||
+			    (dialogType == SoftwareUpdater.ONLY_DATA_SERVICE_TYPE && 
+			        (item.getClassName().equals("TvBrowserDataService") || item.getClassName().equals("SchedulesDirectDataService")) )) {
 				selectedItems.add(item);
 			}
 		}
@@ -381,7 +398,7 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
       }
     });
 
-    if(!onlyUpdate) {
+    if(dialogType != SoftwareUpdater.ONLY_UPDATE_TYPE && dialogType != SoftwareUpdater.ONLY_DATA_SERVICE_TYPE) {
       layout.appendRow(RowSpec.decode("5dlu"));
       layout.appendRow(RowSpec.decode("default"));
 

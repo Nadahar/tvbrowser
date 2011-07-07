@@ -310,9 +310,6 @@ Section "$(STD_SECTION_NAME)" SEC_STANDARD
   SetOutPath "$INSTDIR\themepacks"
   File "${RUNTIME_DIR}\themepacks\*.*"
 
-  SetOutPath "$INSTDIR\plugins"
-  File "${RUNTIME_DIR}\plugins\*.*"
-
   # Register uninstaller at Windows (Add/Remove programs)
   !define UPDATE_INFO_URL "http://tvbrowser.sourceforge.net"
   !define SUPPORT_URL "http://tvbrowser.org/forum.html"

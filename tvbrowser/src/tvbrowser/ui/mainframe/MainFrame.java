@@ -2045,7 +2045,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     }
 
     if (answer == JOptionPane.YES_OPTION) {
-      updatePlugins(PluginAutoUpdater.DEFAULT_PLUGINS_DOWNLOAD_URL, false, mStatusBar.getLabel(),false);
+      updatePlugins(PluginAutoUpdater.DEFAULT_PLUGINS_DOWNLOAD_URL, SoftwareUpdater.ALL_TYPE, mStatusBar.getLabel(),false);
     }
   }
 
@@ -2053,31 +2053,30 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
    * Search for updates of plugins.
    *
    * @param baseUrl The url string to load the plugin updates from.
-   * @param showOnlyUpdates If the dialog is only to show when updates of
-   *                        installed plugins are found.
+   * @param dialogType Type of the software update dialog.
    * @param infoLabel The label to use to show infos.
    * @param dontShowUpdateDlg If the dialog should not be shown even if updates
    *                          are available. (User has disabled automatically plugin updates.)
    */
-  public void updatePlugins(final String baseUrl, final boolean showOnlyUpdates, final JLabel infoLabel, final boolean dontShowUpdateDlg) {
+  public void updatePlugins(final String baseUrl, final int dialogType, final JLabel infoLabel, final boolean dontShowUpdateDlg) {
     new Thread("Plugin Update Thread") {
       public void run() {
         try {
           infoLabel.setText(mLocalizer.msg("searchForPluginUpdates","Search for plugin updates..."));
           java.net.URL url = new java.net.URL(baseUrl + "/" + PluginAutoUpdater.PLUGIN_UPDATES_FILENAME);
-          SoftwareUpdater softwareUpdater = new SoftwareUpdater(url,showOnlyUpdates,false);
+          SoftwareUpdater softwareUpdater = new SoftwareUpdater(url,dialogType,false);
           mSoftwareUpdateItems = softwareUpdater
               .getAvailableSoftwareUpdateItems();
           infoLabel.setText("");
         } catch (java.io.IOException e) {
           e.printStackTrace();
         }
-
+        
         if(!dontShowUpdateDlg) {
-          if (mSoftwareUpdateItems == null && !showOnlyUpdates) {
+          if (mSoftwareUpdateItems == null && dialogType != SoftwareUpdater.ONLY_UPDATE_TYPE) {
             JOptionPane.showMessageDialog(UiUtilities.getLastModalChildOf(MainFrame.getInstance()), mLocalizer.msg("error.1",
                 "software check failed."));
-          } else if (mSoftwareUpdateItems != null && mSoftwareUpdateItems.length == 0 && !showOnlyUpdates) {
+          } else if (mSoftwareUpdateItems != null && mSoftwareUpdateItems.length == 0 && dialogType != SoftwareUpdater.ONLY_UPDATE_TYPE) {
             JOptionPane.showMessageDialog(UiUtilities.getLastModalChildOf(MainFrame.getInstance()), mLocalizer.msg("error.2",
                 "No new items available"));
           } else if(mSoftwareUpdateItems != null && mSoftwareUpdateItems.length > 0) {
@@ -2089,7 +2088,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
                 @Override
                 public void run() {
                   SoftwareUpdateDlg dlg = new SoftwareUpdateDlg(parent, baseUrl,
-                      showOnlyUpdates, mSoftwareUpdateItems);
+                      dialogType, mSoftwareUpdateItems);
                   //dlg.setSoftwareUpdateItems(mSoftwareUpdateItems);
                   dlg.setLocationRelativeTo(parent);
                   dlg.setVisible(true);
@@ -2569,11 +2568,11 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
 
       if (tmpFile.length() > 0) {
         java.net.URL url = tmpFile.toURI().toURL();
-        SoftwareUpdater softwareUpdater = new SoftwareUpdater(url, false, true);
+        SoftwareUpdater softwareUpdater = new SoftwareUpdater(url, SoftwareUpdater.ALL_TYPE, true);
         mSoftwareUpdateItems = softwareUpdater.getAvailableSoftwareUpdateItems();
         dtde.dropComplete(true);
 
-        SoftwareUpdateDlg updateDlg = new SoftwareUpdateDlg(this, false, mSoftwareUpdateItems);
+        SoftwareUpdateDlg updateDlg = new SoftwareUpdateDlg(this, SoftwareUpdater.ALL_TYPE, mSoftwareUpdateItems);
         updateDlg.setVisible(true);
       } else {
         dtde.rejectDrop();
