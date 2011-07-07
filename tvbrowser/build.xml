@@ -145,6 +145,7 @@
     <echo message="  public-src            Creates a .zip file containing the full source code of TV-Browser"/>
     <echo message="  public-tvdatakit      Creates a .zip file containing the TV-Browser TV data kit" />
     <echo message="  public-doc            Generates the JavaDoc documentation."/>
+  	<echo message="  public-plugins        Generates the additional plugins package."/>
     <echo message=""/>
     <echo message="further targets:"/>
     <echo message="================"/>
@@ -288,75 +289,7 @@
 
   </target>
 
-
-  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-   |
-   |  Runtime tasks: create runtime folders for the specified platform
-   |
-    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-
-  <!-- Creates the platform independent runtime folder -->
-  <target name="runtime" depends="clean-default, make-default">
-    <echo message="Creating the jars ..."/>
-
-    <!-- Make the TV-Browser runtime -->
-    <delete dir="${tvbrowser-default.runtime.dir}"/>
-    <mkdir dir="${tvbrowser-default.runtime.dir}"/>
-		<mkdir dir="${tvbrowser-default.runtime.dir}/plugins"/>
-
-    <!-- Extract the libraries for the tvbrowser.jar into the temp.dir -->
-    <unjar src="${lib.dir}/${lib.skinlf.name}-${lib.skinlf.version}.jar" dest="${unpacked.dir}/${lib.skinlf.name}.jar"/>
-    <unjar src="${lib.dir}/${lib.bsh.name}-${lib.bsh.version}.jar" dest="${unpacked.dir}/${lib.bsh.name}.jar"/>
-    <unjar src="${lib.dir}/${lib.jgoodies-common.name}-${lib.jgoodies-common.version}.jar" dest="${unpacked.dir}/${lib.jgoodies-common.name}.jar"/>
-    <unjar src="${lib.dir}/${lib.jgoodies-forms.name}-${lib.jgoodies-forms.version}.jar" dest="${unpacked.dir}/${lib.jgoodies-forms.name}.jar"/>
-    <unjar src="${lib.dir}/${lib.jgoodies-looks.name}-${lib.jgoodies-looks.version}.jar" dest="${unpacked.dir}/${lib.jgoodies-looks.name}.jar"/>
-    <unjar src="${lib.dir}/${lib.tasks.name}-${lib.tasks.version}.jar" dest="${unpacked.dir}/${lib.tasks.name}.jar"/>
-    <unjar src="${lib.dir}/${lib.jregistrykey.name}-${lib.jregistrykey.version}.jar" dest="${unpacked.dir}/${lib.jregistrykey.name}.jar" />
-    <unjar src="${lib.dir}/${lib.commons.codec.name}-${lib.commons.codec.version}.jar" dest="${unpacked.dir}/${lib.commons.codec.name}.jar" />
-    <unjar src="${lib.dir}/${lib.commons.lang.name}-${lib.commons.lang.version}.jar" dest="${unpacked.dir}/${lib.commons.lang.name}.jar" />
-    <unjar src="${lib.dir}/${lib.gdata.calendar.name}-${lib.gdata.calendar.version}.jar" dest="${unpacked.dir}/${lib.gdata.calendar.name}.jar" />
-    <unjar src="${lib.dir}/${lib.gdata.client.name}-${lib.gdata.client.version}.jar" dest="${unpacked.dir}/${lib.gdata.client.name}.jar" />
-    <unjar src="${lib.dir}/${lib.gdata.core.name}-${lib.gdata.core.version}.jar" dest="${unpacked.dir}/${lib.gdata.core.name}.jar" />
-  	<unjar src="${lib.dir}/${lib.guava.name}-${lib.guava.version}.jar" dest="${unpacked.dir}/${lib.guava.name}.jar" />
-    <unjar src="${lib.dir}/${lib.jcom.name}-${lib.jcom.version}.jar" dest="${unpacked.dir}/${lib.jcom.name}.jar" />
-    <unjar src="${lib.dir}/${lib.opencsv.name}-${lib.opencsv.version}.jar" dest="${unpacked.dir}/${lib.opencsv.name}.jar" />
-    <unjar src="${lib.dir}/${lib.htmlparser.name}-${lib.htmlparser.version}.jar" dest="${unpacked.dir}/${lib.htmlparser.name}.jar" />
-    <unjar src="${lib.dir}/${lib.aclibico.name}-${lib.aclibico.version}.jar" dest="${unpacked.dir}/${lib.aclibico.name}.jar" />
-    <unjar src="${lib.dir}/${lib.log4j.name}-${lib.log4j.version}.jar" dest="${unpacked.dir}/${lib.log4j.name}.jar" />
-    <unjar src="${lib.dir}/${lib.libgrowl.name}-${lib.libgrowl.version}.jar" dest="${unpacked.dir}/${lib.libgrowl.name}.jar" />
-    <unjar src="${lib.dir}/${lib.texhyphj.name}-${lib.texhyphj.version}.jar" dest="${unpacked.dir}/${lib.texhyphj.name}.jar" />
-    <unjar src="${lib.dir}/${lib.substance.name}-${lib.substance.version}.jar" dest="${unpacked.dir}/${lib.substance.name}.jar" />
-    <unjar src="${lib.dir}/${lib.trident.name}-${lib.trident.version}.jar" dest="${unpacked.dir}/${lib.trident.name}.jar" />
-
-    <!-- Pack the tvbrowser.jar -->
-    <jar jarfile="${tvbrowser-default.runtime.dir}/tvbrowser.jar"
-         compress="false"
-         index="true">
-      <manifest>
-        <attribute name="Main-Class" value="tvbrowser.TVBrowser"/>
-      </manifest>
-      <fileset dir="${classes.dir}" includes="tvbrowser/**"/>
-      <fileset dir="${classes.dir}" includes="devplugin/**"/>
-      <fileset dir="${classes.dir}" includes="tvdataservice/**"/>
-      <fileset dir="${classes.dir}" includes="util/**"/>
-      <fileset dir="${classes.dir}" includes="com/**"/>
-      <fileset dir="${unpacked.dir}/${lib.skinlf.name}.jar" includes="com/**"/>
-   	  <fileset dir="${unpacked.dir}/${lib.skinlf.name}.jar" includes="org/**"/>
-      <fileset dir="${unpacked.dir}/${lib.bsh.name}.jar" includes="bsh/**"/>
-      <fileset dir="${unpacked.dir}/${lib.jgoodies-common.name}.jar" includes="com/**"/>
-      <fileset dir="${unpacked.dir}/${lib.jgoodies-forms.name}.jar" includes="com/**"/>
-      <fileset dir="${unpacked.dir}/${lib.jgoodies-looks.name}.jar" includes="com/**"/>
-      <fileset dir="${unpacked.dir}/${lib.tasks.name}.jar" includes="com/**"/>
-      <fileset dir="${unpacked.dir}/${lib.jregistrykey.name}.jar" includes="ca/**" />
-      <fileset dir="${unpacked.dir}/${lib.commons.codec.name}.jar" includes="org/**" />
-      <fileset dir="${unpacked.dir}/${lib.commons.lang.name}.jar" includes="org/**" />
-      <fileset dir="${unpacked.dir}/${lib.opencsv.name}.jar" includes="au/**"/>
-      <fileset dir="${unpacked.dir}/${lib.htmlparser.name}.jar" includes="org/**"/>
-      <fileset dir="${unpacked.dir}/${lib.texhyphj.name}.jar" includes="net/**"/>
-      <fileset dir="${unpacked.dir}/${lib.substance.name}.jar" includes="org/**"/>
-      <fileset dir="${unpacked.dir}/${lib.trident.name}.jar" includes="org/**"/>
-    </jar>
-
+  <target name="runtime-plugins" depends="runtime-default">
     <!-- Pack the plugin jars -->
 
     <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/BlogThisPlugin.jar"
@@ -440,6 +373,75 @@
       <fileset dir="${classes.dir}" includes="webplugin/**"/>
       <fileset dir="${unpacked.dir}/${lib.aclibico.name}.jar" includes="**" />
       <fileset dir="${unpacked.dir}/${lib.log4j.name}.jar" includes="**" />
+    </jar>
+  </target>
+	
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+   |
+   |  Runtime tasks: create runtime folders for the specified platform
+   |
+    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+
+  <!-- Creates the platform independent runtime folder -->
+  <target name="runtime" depends="clean-default, make-default">
+    <echo message="Creating the jars ..."/>
+
+    <!-- Make the TV-Browser runtime -->
+    <delete dir="${tvbrowser-default.runtime.dir}"/>
+    <mkdir dir="${tvbrowser-default.runtime.dir}"/>
+		<mkdir dir="${tvbrowser-default.runtime.dir}/plugins"/>
+
+    <!-- Extract the libraries for the tvbrowser.jar into the temp.dir -->
+    <unjar src="${lib.dir}/${lib.skinlf.name}-${lib.skinlf.version}.jar" dest="${unpacked.dir}/${lib.skinlf.name}.jar"/>
+    <unjar src="${lib.dir}/${lib.bsh.name}-${lib.bsh.version}.jar" dest="${unpacked.dir}/${lib.bsh.name}.jar"/>
+    <unjar src="${lib.dir}/${lib.jgoodies-common.name}-${lib.jgoodies-common.version}.jar" dest="${unpacked.dir}/${lib.jgoodies-common.name}.jar"/>
+    <unjar src="${lib.dir}/${lib.jgoodies-forms.name}-${lib.jgoodies-forms.version}.jar" dest="${unpacked.dir}/${lib.jgoodies-forms.name}.jar"/>
+    <unjar src="${lib.dir}/${lib.jgoodies-looks.name}-${lib.jgoodies-looks.version}.jar" dest="${unpacked.dir}/${lib.jgoodies-looks.name}.jar"/>
+    <unjar src="${lib.dir}/${lib.tasks.name}-${lib.tasks.version}.jar" dest="${unpacked.dir}/${lib.tasks.name}.jar"/>
+    <unjar src="${lib.dir}/${lib.jregistrykey.name}-${lib.jregistrykey.version}.jar" dest="${unpacked.dir}/${lib.jregistrykey.name}.jar" />
+    <unjar src="${lib.dir}/${lib.commons.codec.name}-${lib.commons.codec.version}.jar" dest="${unpacked.dir}/${lib.commons.codec.name}.jar" />
+    <unjar src="${lib.dir}/${lib.commons.lang.name}-${lib.commons.lang.version}.jar" dest="${unpacked.dir}/${lib.commons.lang.name}.jar" />
+    <unjar src="${lib.dir}/${lib.gdata.calendar.name}-${lib.gdata.calendar.version}.jar" dest="${unpacked.dir}/${lib.gdata.calendar.name}.jar" />
+    <unjar src="${lib.dir}/${lib.gdata.client.name}-${lib.gdata.client.version}.jar" dest="${unpacked.dir}/${lib.gdata.client.name}.jar" />
+    <unjar src="${lib.dir}/${lib.gdata.core.name}-${lib.gdata.core.version}.jar" dest="${unpacked.dir}/${lib.gdata.core.name}.jar" />
+  	<unjar src="${lib.dir}/${lib.guava.name}-${lib.guava.version}.jar" dest="${unpacked.dir}/${lib.guava.name}.jar" />
+    <unjar src="${lib.dir}/${lib.jcom.name}-${lib.jcom.version}.jar" dest="${unpacked.dir}/${lib.jcom.name}.jar" />
+    <unjar src="${lib.dir}/${lib.opencsv.name}-${lib.opencsv.version}.jar" dest="${unpacked.dir}/${lib.opencsv.name}.jar" />
+    <unjar src="${lib.dir}/${lib.htmlparser.name}-${lib.htmlparser.version}.jar" dest="${unpacked.dir}/${lib.htmlparser.name}.jar" />
+    <unjar src="${lib.dir}/${lib.aclibico.name}-${lib.aclibico.version}.jar" dest="${unpacked.dir}/${lib.aclibico.name}.jar" />
+    <unjar src="${lib.dir}/${lib.log4j.name}-${lib.log4j.version}.jar" dest="${unpacked.dir}/${lib.log4j.name}.jar" />
+    <unjar src="${lib.dir}/${lib.libgrowl.name}-${lib.libgrowl.version}.jar" dest="${unpacked.dir}/${lib.libgrowl.name}.jar" />
+    <unjar src="${lib.dir}/${lib.texhyphj.name}-${lib.texhyphj.version}.jar" dest="${unpacked.dir}/${lib.texhyphj.name}.jar" />
+    <unjar src="${lib.dir}/${lib.substance.name}-${lib.substance.version}.jar" dest="${unpacked.dir}/${lib.substance.name}.jar" />
+    <unjar src="${lib.dir}/${lib.trident.name}-${lib.trident.version}.jar" dest="${unpacked.dir}/${lib.trident.name}.jar" />
+
+    <!-- Pack the tvbrowser.jar -->
+    <jar jarfile="${tvbrowser-default.runtime.dir}/tvbrowser.jar"
+         compress="false"
+         index="true">
+      <manifest>
+        <attribute name="Main-Class" value="tvbrowser.TVBrowser"/>
+      </manifest>
+      <fileset dir="${classes.dir}" includes="tvbrowser/**"/>
+      <fileset dir="${classes.dir}" includes="devplugin/**"/>
+      <fileset dir="${classes.dir}" includes="tvdataservice/**"/>
+      <fileset dir="${classes.dir}" includes="util/**"/>
+      <fileset dir="${classes.dir}" includes="com/**"/>
+      <fileset dir="${unpacked.dir}/${lib.skinlf.name}.jar" includes="com/**"/>
+   	  <fileset dir="${unpacked.dir}/${lib.skinlf.name}.jar" includes="org/**"/>
+      <fileset dir="${unpacked.dir}/${lib.bsh.name}.jar" includes="bsh/**"/>
+      <fileset dir="${unpacked.dir}/${lib.jgoodies-common.name}.jar" includes="com/**"/>
+      <fileset dir="${unpacked.dir}/${lib.jgoodies-forms.name}.jar" includes="com/**"/>
+      <fileset dir="${unpacked.dir}/${lib.jgoodies-looks.name}.jar" includes="com/**"/>
+      <fileset dir="${unpacked.dir}/${lib.tasks.name}.jar" includes="com/**"/>
+      <fileset dir="${unpacked.dir}/${lib.jregistrykey.name}.jar" includes="ca/**" />
+      <fileset dir="${unpacked.dir}/${lib.commons.codec.name}.jar" includes="org/**" />
+      <fileset dir="${unpacked.dir}/${lib.commons.lang.name}.jar" includes="org/**" />
+      <fileset dir="${unpacked.dir}/${lib.opencsv.name}.jar" includes="au/**"/>
+      <fileset dir="${unpacked.dir}/${lib.htmlparser.name}.jar" includes="org/**"/>
+      <fileset dir="${unpacked.dir}/${lib.texhyphj.name}.jar" includes="net/**"/>
+      <fileset dir="${unpacked.dir}/${lib.substance.name}.jar" includes="org/**"/>
+      <fileset dir="${unpacked.dir}/${lib.trident.name}.jar" includes="org/**"/>
     </jar>
 
     <!-- Pack the TV data service jars -->
@@ -924,6 +926,20 @@
       <arg value="${installer.dir}\tvbrowser.nsi"/>
     </exec>
   	<delete dir="${env.TEMP}/nsis"></delete>
+  </target>
+	
+  <target name="public-plugins" depends="runtime-plugins" description="Creates the plugin package zip">
+  	<mkdir dir="${public.dir}"/>
+
+    <zip destfile="${public.dir}/tvbrowser_${tvbrowser.version}_plugins.zip">
+    <zipfileset dir="${tvbrowser-default.runtime.dir}/plugins">
+    	<exclude name="**/TvBrowserDataService.jar"/>
+    	<exclude name="**/SweDBTvDataService.jar"/>
+        <exclude name="**/RadioTimesDataService.jar"/>
+    	<exclude name="**/DreamboxDataService.jar"/>
+    	<exclude name="**/SchedulesDirectDataService.jar"/>
+    </zipfileset>
+    </zip>
   </target>
 
    <!-- Creates the release binaries (.dmg) for mac os x -->
