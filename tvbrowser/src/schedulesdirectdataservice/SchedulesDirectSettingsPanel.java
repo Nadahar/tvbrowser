@@ -36,10 +36,13 @@ import javax.swing.event.DocumentListener;
 import tvdataservice.SettingsPanel;
 import util.io.IOUtilities;
 import util.ui.Localizer;
+import util.ui.UiUtilities;
 
+import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.RowSpec;
 
 public class SchedulesDirectSettingsPanel extends SettingsPanel {
     /**
@@ -56,21 +59,33 @@ public class SchedulesDirectSettingsPanel extends SettingsPanel {
     private String mOldUserName;
 
 
-    public SchedulesDirectSettingsPanel(Properties properties) {
+    public SchedulesDirectSettingsPanel(Properties properties,boolean showSeparator) {
         mProperties = properties;
 
         mOldUserName = mProperties.getProperty("username", "");
         mOldPassword = mProperties.getProperty("password", "");
 
-        createGui();
+        createGui(showSeparator);
     }
 
-    private void createGui() {
-        setLayout(new FormLayout("pref, 3dlu, fill:pref:grow", "pref, 3dlu, pref, 3dlu, pref"));
-        setBorder(Borders.DLU4_BORDER);
-        CellConstraints cc = new CellConstraints();
-
-        add(new JLabel(mLocalizer.msg("user", "Username") + ":"), cc.xy(1, 3));
+    private void createGui(boolean showSeparator) {
+      FormLayout layout = new FormLayout("5dlu, default, 3dlu, fill:default:grow, 5dlu", "5dlu, default");
+      PanelBuilder pb = new PanelBuilder(layout,this);
+        
+      CellConstraints cc = new CellConstraints();
+      
+      pb.add(UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("info","<a href=\"http://www.schedulesdirect.org/\">SchedulesDirect</a> allows access to TV data of North America and some other regions with a small annual fee.<br>You need to register to <a href=\"http://www.schedulesdirect.org/\">SchedulesDirect</a> to be allowed to download the TV data.<br><br><b>The TV channels of <a href=\"http://www.schedulesdirect.org/\">SchedulesDirect</a> can only be found after you have entered the Authentication data</b>.")),cc.xyw(2,2,3));
+      
+      if(showSeparator) {
+        layout.appendRow(RowSpec.decode("10dlu"));
+        layout.appendRow(RowSpec.decode("default"));
+        pb.addSeparator(mLocalizer.msg("authentication", "Authentication data"), cc.xyw(1,layout.getRowCount(),5));
+      }
+      
+      layout.appendRow(RowSpec.decode("10dlu"));
+      layout.appendRow(RowSpec.decode("default"));
+      pb.addLabel(mLocalizer.msg("user", "Username") + ":",cc.xy(2,layout.getRowCount()));
+        
         mUsername = new JTextField();
         mUsername.setText(mOldUserName);
         mUsername.getDocument().addDocumentListener(new DocumentListener() {
@@ -90,9 +105,11 @@ public class SchedulesDirectSettingsPanel extends SettingsPanel {
                 mProperties.setProperty("username", mUsername.getText());
             }
         });
-        add(mUsername, cc.xy(3, 3));
+        pb.add(mUsername, cc.xy(4, layout.getRowCount()));
 
-        add(new JLabel(mLocalizer.msg("password", "Password") + ":"), cc.xy(1, 5));
+        layout.appendRow(RowSpec.decode("5dlu"));
+        layout.appendRow(RowSpec.decode("default"));
+        pb.addLabel(mLocalizer.msg("password", "Password") + ":", cc.xy(2, layout.getRowCount()));
         mPassword = new JPasswordField();
         mPassword.setText(IOUtilities.xorDecode(mOldPassword, PASSWORDSEED));
         mPassword.getDocument().addDocumentListener(new DocumentListener() {
@@ -112,7 +129,7 @@ public class SchedulesDirectSettingsPanel extends SettingsPanel {
                 mProperties.setProperty("password", IOUtilities.xorEncode(new String(mPassword.getPassword()), PASSWORDSEED));
             }
         });
-        add(mPassword, cc.xy(3, 5));
+        pb.add(mPassword, cc.xy(4, layout.getRowCount()));
     }
 
     public void ok() {

@@ -102,7 +102,8 @@ public class ConfigAssistant extends JDialog implements ActionListener, PrevNext
 
     CardPanel welcomePanel = new WelcomeCardPanel(this);
     CardPanel networkPanel = new NetworkCardPanel(this);
-    CardPanel networkSuccessPanel = new NetworkSuccessPanel(this);
+    AuthenticationChannelCardPanel authenticationChannelCardPanel = new AuthenticationChannelCardPanel(this);
+    CardPanel networkSuccessPanel = new NetworkSuccessPanel(this,!authenticationChannelCardPanel.isNeeded());    
 
     CardPanel subscribeChannelPanel = new SubscribeChannelCardPanel(this);
 
@@ -112,6 +113,8 @@ public class ConfigAssistant extends JDialog implements ActionListener, PrevNext
     mCardPn.add(networkPanel.getPanel(), networkPanel.toString());
     mCardPn.add(networkSuccessPanel.getPanel(), networkSuccessPanel.toString());
     mCardPn.add(mFinishedPanel.getPanel(), mFinishedPanel.toString());
+   
+    mCardPn.add(authenticationChannelCardPanel.getPanel(), authenticationChannelCardPanel.toString());
     mCardPn.add(subscribeChannelPanel.getPanel(), subscribeChannelPanel.toString());
 
     boolean dynamicChannelList = isDynamicChannelListSupported();
@@ -119,13 +122,29 @@ public class ConfigAssistant extends JDialog implements ActionListener, PrevNext
     welcomePanel.setNext(networkPanel);
     if (dynamicChannelList) {
       networkPanel.setNext(networkSuccessPanel);
-      networkSuccessPanel.setNext(subscribeChannelPanel);
+      
+      if(authenticationChannelCardPanel.isNeeded()) {
+        networkSuccessPanel.setNext(authenticationChannelCardPanel);
+        authenticationChannelCardPanel.setNext(subscribeChannelPanel);
+      }
+      else {
+        networkSuccessPanel.setNext(subscribeChannelPanel);
+      }
+      
       subscribeChannelPanel.setPrev(networkSuccessPanel);
       subscribeChannelPanel.setNext(mFinishedPanel);
       mFinishedPanel.setPrev(subscribeChannelPanel);
     } else {
       networkPanel.setNext(networkSuccessPanel);
-      networkSuccessPanel.setNext(subscribeChannelPanel);
+      
+      if(authenticationChannelCardPanel.isNeeded()) {
+        networkSuccessPanel.setNext(authenticationChannelCardPanel);
+        authenticationChannelCardPanel.setNext(subscribeChannelPanel);
+      }
+      else {
+        networkSuccessPanel.setNext(subscribeChannelPanel);
+      }
+      
       subscribeChannelPanel.setNext(mFinishedPanel);
       mFinishedPanel.setPrev(subscribeChannelPanel);
     }

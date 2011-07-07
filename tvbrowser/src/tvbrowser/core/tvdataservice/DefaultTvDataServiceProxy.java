@@ -295,4 +295,11 @@ public class DefaultTvDataServiceProxy extends AbstractTvDataServiceProxy {
   public String getPluginCategory() {
     return mTvDataService.getPluginCategory();
   }
+
+  @Override
+  public SettingsPanel getAuthenticationPanel() {
+    return mTvDataService.getAuthenticationPanel();
+  }
+  
+  
 }

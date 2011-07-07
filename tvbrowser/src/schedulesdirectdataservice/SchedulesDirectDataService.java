@@ -508,7 +508,7 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
   }
 
   public SettingsPanel getSettingsPanel() {
-    return new SchedulesDirectSettingsPanel(mProperties);
+    return new SchedulesDirectSettingsPanel(mProperties,true);
   }
 
   public Channel[] getAvailableChannels(ChannelGroup group) {
@@ -585,5 +585,9 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
 
   public String getPluginCategory() {
     return Plugin.ADDITONAL_DATA_SERVICE_SOFTWARE_CATEGORY;
+  }
+  
+  public SettingsPanel getAuthenticationPanel() {
+    return new SchedulesDirectSettingsPanel(mProperties,false);
   }
 }
