@@ -44,9 +44,11 @@ class NetworkSuccessPanel extends AbstractCardPanel {
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(NetworkSuccessPanel.class);
 
   private JPanel mContent;
+  private boolean mDownload;
   
-  public NetworkSuccessPanel(PrevNextButtons btns) {
+  public NetworkSuccessPanel(PrevNextButtons btns,boolean download) {
     super(btns);
+    mDownload = download;
   }
 
   public JPanel getPanel() {
@@ -67,16 +69,18 @@ class NetworkSuccessPanel extends AbstractCardPanel {
   }
 
   public boolean onNext() {
-    final ProgressWindow win=new ProgressWindow(MainFrame.getInstance());
-
-    win.run(new Progress(){
-      public void run() {
-        ChannelGroupManager.getInstance().checkForAvailableGroupsAndChannels(win);
-      }
-    });
-    
-    ChannelList.reload();
-    ChannelList.initSubscribedChannels();
+    if(mDownload) {
+      final ProgressWindow win=new ProgressWindow(MainFrame.getInstance());  
+      
+      win.run(new Progress(){
+        public void run() {
+          ChannelGroupManager.getInstance().checkForAvailableGroupsAndChannels(win);
+        }
+      });
+      
+      ChannelList.reload();
+      ChannelList.initSubscribedChannels();
+    }
     return true;
   }
   

@@ -193,4 +193,14 @@ public interface TvDataServiceProxy extends ContextMenuIf, ButtonActionIf, InfoI
    * @since 3.0
    */
   public String getDataServicePackageName();
+  
+  /**
+   * If the download of the TV data needs authentication create
+   * a panel that contains information about the authentification
+   * and the authentication form.
+   * <p>
+   * @return The panel with the authentication settings.
+   * @since 3.0.2
+   */
+  public SettingsPanel getAuthenticationPanel();
 }
