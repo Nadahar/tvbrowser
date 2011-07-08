@@ -377,6 +377,7 @@ class ProgramInfoDialog {
                 true);
         subMenu.setText(Localizer.getLocalization(Localizer.I18N_PROGRAM));
         popupMenu.add(subMenu);
+        TextComponentPopupEventQueue.addStandardContextMenu(mInfoEP, popupMenu);
         return popupMenu;
       }
 
@@ -436,8 +437,6 @@ class ProgramInfoDialog {
           } else if (popupEvent){
             String selection = getSelection(pos, editor);
             JPopupMenu popupMenu = getPopupMenu(selection, false);
-            TextComponentPopupEventQueue.addStandardContextMenu(mInfoEP,
-                popupMenu);
             popupMenu.show(e.getComponent(), e.getX(), e.getY());
           }
         }
