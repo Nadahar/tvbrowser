@@ -33,7 +33,6 @@ import java.util.ArrayList;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.text.JTextComponent;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.CC;
@@ -61,7 +60,9 @@ class AuthenticationChannelCardPanel extends AbstractCardPanel {
 
   public AuthenticationChannelCardPanel(PrevNextButtons btns) {
     super(btns);
-    
+  }
+  
+  public void createPanel() {
     mSettingsPanelList = new ArrayList<SettingsPanel>(0);
     
     FormLayout layout = new FormLayout("5dlu,default:grow,5dlu");

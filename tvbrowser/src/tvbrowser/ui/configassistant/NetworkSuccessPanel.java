@@ -45,12 +45,15 @@ import com.jgoodies.forms.layout.FormLayout;
 class NetworkSuccessPanel extends AbstractCardPanel {
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(NetworkSuccessPanel.class);
 
-  private JPanel mContent;
-  private boolean mDownload;
+  private JPanel mContent,mCardPanel;
+  private AuthenticationChannelCardPanel mAuthentication;
+  private CardPanel mSubscribeChannelPanel;
   
-  public NetworkSuccessPanel(PrevNextButtons btns,boolean download) {
+  public NetworkSuccessPanel(PrevNextButtons btns,JPanel cardPanel,AuthenticationChannelCardPanel authentication, CardPanel subscribeChannelPanel) {
     super(btns);
-    mDownload = download;
+    mAuthentication = authentication;
+    mSubscribeChannelPanel = subscribeChannelPanel;
+    mCardPanel = cardPanel;
   }
 
   public JPanel getPanel() {
@@ -75,7 +78,9 @@ class NetworkSuccessPanel extends AbstractCardPanel {
       TVBrowser.loadDataServicesAtStartup();
     }
     
-    if(mDownload) {
+    mAuthentication.createPanel();
+    
+    if(!mAuthentication.isNeeded()) {
       final ProgressWindow win=new ProgressWindow(MainFrame.getInstance());  
       
       win.run(new Progress(){
@@ -87,6 +92,12 @@ class NetworkSuccessPanel extends AbstractCardPanel {
       ChannelList.reload();
       ChannelList.initSubscribedChannels();
     }
+    else {
+      mCardPanel.add(mAuthentication.getPanel(), mAuthentication.toString());
+      setNext(mAuthentication);
+      mAuthentication.setNext(mSubscribeChannelPanel);
+    }
+    
     return true;
   }
   
