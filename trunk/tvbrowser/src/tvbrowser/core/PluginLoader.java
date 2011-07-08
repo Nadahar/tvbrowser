@@ -714,13 +714,35 @@ public class PluginLoader {
     for(File plugin : plugins) {
       URL[] urls;
       
+      /* Start of
+       * Ugly workaround to prevent file lock of class loader on original plugin file */
+      File temp = new File(System.getProperty("java.io.tmpdir"),"tvbTestPlugins");
+      
+      if(!temp.isDirectory()) {
+        temp.mkdirs();
+      }
+      
+      File pluginCopy = new File(temp,plugin.getName());
+      
+      try {
+        if(pluginCopy.isFile()) {
+          pluginCopy.delete();
+        }
+        
+        IOUtilities.copy(plugin,pluginCopy);
+        pluginCopy.deleteOnExit();
+      } catch (IOException e1) {
+        pluginCopy = plugin;
+      }
+      /* End of workaround */
+      
       // Get the plugin name
-      String pluginName = plugin.getName();
+      String pluginName = pluginCopy.getName();
       pluginName = pluginName.substring(0, pluginName.length() - 4);
       Class pluginClass = null;
       
       try {
-        urls = new URL[] { plugin.toURI().toURL() };
+        urls = new URL[] { pluginCopy.toURI().toURL() };
         ClassLoader classLoader = URLClassLoader.newInstance(urls, ClassLoader.getSystemClassLoader());
                         
         pluginClass = classLoader.loadClass(pluginName.toLowerCase() + "." + pluginName);
