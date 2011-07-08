@@ -430,7 +430,7 @@ public class TVBrowser {
     
     TvDataServiceProxyManager.getInstance().init();
     
-    if(TvDataServiceProxyManager.getInstance().getDataServices().length < 1) {
+    if(!Settings.propShowAssistant.getBoolean() && TvDataServiceProxyManager.getInstance().getDataServices().length < 1) {
       splashRef.get().hideSplash();
       updateLookAndFeel();
       loadDataServicesAtStartup();
@@ -1411,7 +1411,7 @@ public class TVBrowser {
     }
   }
   
-  private static void loadDataServicesAtStartup() {
+  public static void loadDataServicesAtStartup() {
     try {
       SoftwareUpdateItem[] updateItems = PluginAutoUpdater.getDataServicesForFirstStartup();
       

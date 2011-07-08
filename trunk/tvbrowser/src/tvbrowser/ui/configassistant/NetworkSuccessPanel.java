@@ -29,8 +29,10 @@ import java.awt.BorderLayout;
 
 import javax.swing.JPanel;
 
+import tvbrowser.TVBrowser;
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.tvdataservice.ChannelGroupManager;
+import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.ui.UiUtilities;
 import util.ui.progress.Progress;
@@ -69,6 +71,10 @@ class NetworkSuccessPanel extends AbstractCardPanel {
   }
 
   public boolean onNext() {
+    if(TvDataServiceProxyManager.getInstance().getDataServices().length < 1) {
+      TVBrowser.loadDataServicesAtStartup();
+    }
+    
     if(mDownload) {
       final ProgressWindow win=new ProgressWindow(MainFrame.getInstance());  
       
