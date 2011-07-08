@@ -96,14 +96,16 @@ class AuthenticationChannelCardPanel extends AbstractCardPanel {
       }
     }
     
-    mContent = new JPanel(new FormLayout("15dlu,default:grow,15dlu","default,15dlu,default,5dlu,fill:0dlu:grow,15dlu"));
+    mContent = new JPanel(new FormLayout("15dlu,default:grow,15dlu","default,15dlu,default,5dlu,fill:0dlu:grow,5dlu,default,15dlu"));
     mContent.add(new StatusPanel(StatusPanel.CHANNELS), CC.xyw(1,1,3));
-    mContent.add(UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("info","<div style=\"font-size:large;\">Some TV data sources need authentication. You need to enter the authentication data if you want to get TV data for the channels of the shown TV data sources. If you don't want to use the channels of the shown TV data sources you can skip this step.</div>")),CC.xy(2,3));
+    mContent.add(UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("info1","<div style=\"font-weight:bold;\">Some TV data sources need authentication. You need to enter the authentication data if you want to get TV data for the channels of the shown TV data sources.</div>")),CC.xy(2,3));
     
     mScrollPane = new JScrollPane(pb.getPanel());
     mScrollPane.setBorder(null);
     
     mContent.add(mScrollPane,CC.xy(2,5));
+    
+    mContent.add(UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("info2","<div style=\"color:green;font-weight:bold;font-size:medium;\">If you don't need the channels of the listed TV data sources you can skip to the next step.</div>")),CC.xy(2,7));    
   }
 
   public JPanel getPanel() {

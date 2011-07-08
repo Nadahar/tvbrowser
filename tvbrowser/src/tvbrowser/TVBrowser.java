@@ -431,6 +431,7 @@ public class TVBrowser {
     TvDataServiceProxyManager.getInstance().init();
     
     if(TvDataServiceProxyManager.getInstance().getDataServices().length < 1) {
+      splashRef.get().hideSplash();
       updateLookAndFeel();
       loadDataServicesAtStartup();
     }
