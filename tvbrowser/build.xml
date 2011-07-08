@@ -348,11 +348,6 @@
       <fileset dir="${classes.dir}" includes="listviewplugin/**"/>
     </jar>
 
-    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/NewsPlugin.jar"
-         compress="true">
-      <fileset dir="${classes.dir}" includes="newsplugin/**"/>
-    </jar>
-
   	<jar jarfile="${tvbrowser-default.runtime.dir}/plugins/PrintPlugin.jar"
          compress="true">
       <fileset dir="${classes.dir}" includes="printplugin/**"/>
@@ -499,6 +494,11 @@
       <!--    <fileset dir="${txt.dir}" includes="windows.properties"/>   -->
       <!--    <fileset dir="${txt.dir}" includes="tvbrowser.sh"/>         -->
     </copy>
+  	
+    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/NewsPlugin.jar"
+         compress="true">
+      <fileset dir="${classes.dir}" includes="newsplugin/**"/>
+    </jar>
 
     <!-- Themepacks -->
     <mkdir dir="${tvbrowser-default.runtime.dir}/themepacks"/>
