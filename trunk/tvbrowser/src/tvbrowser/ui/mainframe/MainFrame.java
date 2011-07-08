@@ -51,7 +51,10 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.RandomAccessFile;
@@ -67,11 +70,15 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.TooManyListenersException;
 import java.util.logging.Logger;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
+import java.util.zip.ZipFile;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
@@ -2416,7 +2423,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     for(DataFlavor flavor : dataFlavors) {
       try {
         Object data = transferable.getTransferData(flavor);
-
+        
         if(data instanceof List) {
           for(Object o : ((List)data)) {
             if(o instanceof File) {
@@ -2457,8 +2464,51 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
   }
 
   private void addPluginFile(final File file, final HashSet<File> files) {
-    if (file.isFile() && file.getName().toLowerCase().endsWith(".jar") && file.canRead()) {
-      files.add(file);
+    if (file.isFile() && file.canRead()) {
+      if(file.getName().toLowerCase().endsWith(".jar")) {
+        files.add(file);
+      }
+      else if(file.getName().toLowerCase().endsWith(".zip")) {
+        try {
+          ZipFile test = new ZipFile(file);
+          Enumeration<? extends ZipEntry> entries = test.entries();
+          
+          File tempDir = new File(System.getProperty("java.io.tmpdir"),"tvbinstplugin");
+          tempDir.mkdirs();
+          
+          while(entries.hasMoreElements()) {
+            ZipEntry entry = entries.nextElement();
+            
+            if(entry.getName().toLowerCase().endsWith(".jar")) {
+              BufferedInputStream bis = new BufferedInputStream(test.getInputStream(entry));
+            
+              int size;
+              byte[] buffer = new byte[2048];
+              
+              File out = new File(tempDir.getAbsolutePath(),entry.getName());
+              
+              if(out.isFile()) {
+                out.delete();
+              }
+              
+              BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(out), buffer.length);
+            
+              while ((size = bis.read(buffer, 0, buffer.length)) != -1) 
+              {
+                  bos.write(buffer, 0, size);
+              }
+              bos.flush();
+              bos.close();
+              bis.close();
+              
+              if(out.isFile() && out.canRead()) {
+                files.add(out);
+              }
+            }
+          }
+          
+        } catch (Exception e) {}
+      }
     }
   }
 
