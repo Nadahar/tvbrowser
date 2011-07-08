@@ -435,10 +435,11 @@ public class TVBrowser {
       updateLookAndFeel();
       loadDataServicesAtStartup();
     }
+    else {
+      ChannelList.createForTvBrowserStart();
+      ChannelList.initSubscribedChannels();
+    }
     
-    ChannelList.createForTvBrowserStart();
-
-    ChannelList.initSubscribedChannels();
 
     if (!lookAndFeelInitialized) {
       mLog.info("Loading Look&Feel...");
@@ -1425,6 +1426,9 @@ public class TVBrowser {
         PluginLoader.getInstance().installPendingPlugins();
         PluginLoader.getInstance().loadAllPlugins();
         TvDataServiceProxyManager.getInstance().init();
+        
+        ChannelList.createForTvBrowserStart();
+        ChannelList.initSubscribedChannels();
       }
     } catch (IOException e1) {
     }
