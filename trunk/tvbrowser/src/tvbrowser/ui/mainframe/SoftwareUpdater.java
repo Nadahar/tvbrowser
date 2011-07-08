@@ -59,6 +59,7 @@ public final class SoftwareUpdater {
   public static final int ALL_TYPE = 0;
   public static final int ONLY_UPDATE_TYPE = 1;
   public static final int ONLY_DATA_SERVICE_TYPE = 2;
+  public static final int DRAG_AND_DROP_TYPE = 3;
   
 	private SoftwareUpdateItem[] mSoftwareUpdateItems;
 	private String mBlockRequestingPluginId;

@@ -83,8 +83,8 @@ public class PluginAutoUpdater {
   }
   
   /**
-   * Gets the the update items for plugins on TV-Browser version change.
-   * @return The update items.
+   * Gets the the data services on first TV-Browser start.
+   * @return The data services.
    * @throws IOException
    */
   public static SoftwareUpdateItem[] getDataServicesForFirstStartup() throws IOException {

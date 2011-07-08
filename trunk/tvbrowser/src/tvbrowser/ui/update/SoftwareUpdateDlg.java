@@ -42,6 +42,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -131,6 +132,10 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
     setModal(true);
     mIsVersionChange = isVersionChange;
     createGui(downloadUrl, dialogType, itemArr);
+    
+    if(dialogType == SoftwareUpdater.DRAG_AND_DROP_TYPE || dialogType == SoftwareUpdater.ONLY_UPDATE_TYPE) {
+      mSoftwareUpdateItemList.selectAll();
+    }
   }
   
   /**
@@ -169,11 +174,6 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
   public SoftwareUpdateDlg(Window parent,
       int dialogType, SoftwareUpdateItem[] itemArr, boolean isVersionChange) {
     this(parent, null, dialogType, itemArr, isVersionChange);
-    
-    if(dialogType == SoftwareUpdater.ONLY_UPDATE_TYPE) {
-      mSoftwareUpdateItemList.selectAll();
-    }
-    
     mDownloadBtn.setEnabled(mSoftwareUpdateItemList.getItemCount() > 0);
   }
 
@@ -242,12 +242,45 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
     JPanel southPn = new JPanel(new BorderLayout());
 
     southPn.add(builder.getPanel(), BorderLayout.SOUTH);
-
+    
     ArrayList<SoftwareUpdateItem> selectedItems = new ArrayList<SoftwareUpdateItem>();
+
+    ArrayList<String> selectedDataServices = new ArrayList<String>(0);
+    
+    if(dialogType == SoftwareUpdater.ONLY_DATA_SERVICE_TYPE) {
+      String country = Locale.getDefault().getCountry();
+      
+      if(country.equals(Locale.GERMANY.getCountry()) || country.equals("ES") || country.equals("IT") || country.equals("FR") || country.equals("DK") || country.equals("CH") || country.equals("AT") || Locale.getDefault().getLanguage().equals("de")) {
+        selectedDataServices.add("TvBrowserDataService");
+      }
+      else if(country.equals(Locale.CANADA.getCountry()) || country.equals(Locale.US.getCountry())) {
+        selectedDataServices.add("SchedulesDirectDataService");
+        selectedDataServices.add("TvBrowserDataService");
+      }
+      else if(country.equals(Locale.UK.getCountry())) {
+        selectedDataServices.add("BBCDataService");
+        selectedDataServices.add("RadioTimesDataService");
+        selectedDataServices.add("TvBrowserDataService");
+      }
+      else if(country.equals("NO")) {
+        selectedDataServices.add("TvBrowserDataService");
+        selectedDataServices.add("SweDBTvDataService");
+      }
+      else if(country.equals("SE") || country.equals("AU")) {
+        selectedDataServices.add("SweDBTvDataService");
+      }
+      else {
+        selectedDataServices.add("TvBrowserDataService");
+        selectedDataServices.add("SchedulesDirectDataService");
+        selectedDataServices.add("BBCDataService");
+        selectedDataServices.add("RadioTimesDataService");
+        selectedDataServices.add("SweDBTvDataService");
+      }
+    }
+    
     for (SoftwareUpdateItem item : itemArr) {
 			if ((item.isAlreadyInstalled() && item.getInstalledVersion().compareTo(item.getVersion()) < 0) ||
-			    (dialogType == SoftwareUpdater.ONLY_DATA_SERVICE_TYPE && 
-			        (item.getClassName().equals("TvBrowserDataService") || item.getClassName().equals("SchedulesDirectDataService")) )) {
+			    (selectedDataServices.contains(item.getClassName()))) {
 				selectedItems.add(item);
 			}
 		}
