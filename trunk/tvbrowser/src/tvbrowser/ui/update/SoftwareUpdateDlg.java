@@ -562,7 +562,6 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
 
   public void close() {
     setVisible(false);
-    dispose();
   }
 
   private static class MyListUI extends javax.swing.plaf.basic.BasicListUI {
