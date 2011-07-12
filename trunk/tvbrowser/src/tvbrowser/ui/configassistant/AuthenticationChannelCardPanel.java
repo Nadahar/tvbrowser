@@ -26,10 +26,12 @@
 
 package tvbrowser.ui.configassistant;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 
+import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -103,6 +105,8 @@ class AuthenticationChannelCardPanel extends AbstractCardPanel {
     
     mScrollPane = new JScrollPane(pb.getPanel());
     mScrollPane.setBorder(null);
+    mScrollPane.setViewportBorder(null);
+    mScrollPane.getViewport().setOpaque(false);
     
     mContent.add(mScrollPane,CC.xy(2,5));
     
