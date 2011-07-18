@@ -186,6 +186,19 @@ public class MutableProgram implements Program {
     // These attributes are not mutable, because they build the ID.
     mChannel = channel;
     mLocalDate = localDate;
+    
+    if  (mChannel.getDataServiceProxy() != null) {
+      String dataServiceId = mChannel.getDataServiceProxy().getId();
+      String groupId = mChannel.getGroup().getId();
+      String channelId = mChannel.getId();
+      String country = mChannel.getCountry();
+
+      mId = (new StringBuilder(dataServiceId).append('_').append(groupId)
+          .append('_').append(country).append('_').append(channelId).append(
+              '_').append(getHours()).append(':').append(getMinutes())
+          .append(':').append(TimeZone.getDefault().getRawOffset() / 60000))
+          .toString();
+    }
 
     // The title is not-null.
     setTextField(ProgramFieldType.TITLE_TYPE, "");
@@ -210,6 +223,20 @@ public class MutableProgram implements Program {
     else if (mNormalizedStartTime < 0) {
       mNormalizedStartTime += (24 * 60);
       mNormalizedDate = mNormalizedDate.addDays(-1);
+    }
+    
+    if  (mChannel.getDataServiceProxy() != null) {
+      String dataServiceId = mChannel.getDataServiceProxy().getId();
+      String groupId = mChannel.getGroup().getId();
+      String channelId = mChannel.getId();
+      String country = mChannel.getCountry();
+      String date = new SimpleDateFormat(ID_DATE_FORMAT).format(getDate().getCalendar().getTime());
+
+      mUniqueId = (new StringBuilder(dataServiceId).append('_').append(
+          groupId).append('_').append(country).append('_').append(channelId)
+          .append('_').append(date).append('_').append(getHours())
+          .append(':').append(getMinutes()).append(':').append(TimeZone
+          .getDefault().getRawOffset() / 60000)).toString();
     }
   }
 
@@ -469,8 +496,8 @@ public class MutableProgram implements Program {
    *
    * @return The ID of this program.
    */
-  public synchronized String getID() {
-    if (mId == null) {
+  public /*synchronized*/ String getID() {
+   /* if (mId == null) {
       if  (mChannel.getDataServiceProxy() != null) {
         String dataServiceId = mChannel.getDataServiceProxy().getId();
         String groupId = mChannel.getGroup().getId();
@@ -483,7 +510,7 @@ public class MutableProgram implements Program {
             .append(':').append(TimeZone.getDefault().getRawOffset() / 60000))
             .toString();
       }
-    }
+    }*/
     return mId;
   }
 
@@ -491,22 +518,7 @@ public class MutableProgram implements Program {
    * {@inheritDoc}
    */
   @Override
-  public synchronized String getUniqueID() {
-    if (mUniqueId == null) {
-      if  (mChannel.getDataServiceProxy() != null) {
-        String dataServiceId = mChannel.getDataServiceProxy().getId();
-        String groupId = mChannel.getGroup().getId();
-        String channelId = mChannel.getId();
-        String country = mChannel.getCountry();
-        String date = new SimpleDateFormat(ID_DATE_FORMAT).format(getDate().getCalendar().getTime());
-
-        mUniqueId = (new StringBuilder(dataServiceId).append('_').append(
-            groupId).append('_').append(country).append('_').append(channelId)
-            .append('_').append(date).append('_').append(getHours())
-            .append(':').append(getMinutes()).append(':').append(TimeZone
-            .getDefault().getRawOffset() / 60000)).toString();
-      }
-    }
+  public /*synchronized*/ String getUniqueID() {
     return mUniqueId;
   }
 
