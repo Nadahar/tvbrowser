@@ -140,7 +140,6 @@ public class UpdateDlg extends JDialog implements ActionListener, WindowClosingI
     // channel selection
     TvDataServiceProxy[] serviceArr = getActiveDataServices();
     if (serviceArr.length > 1) {
-      panel1.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
       FormLayout layout = new FormLayout("default");
       JPanel dataServicePanel = new JPanel(layout);
       
