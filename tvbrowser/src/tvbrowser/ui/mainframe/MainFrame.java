@@ -77,7 +77,6 @@ import java.util.Locale;
 import java.util.TooManyListenersException;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 import javax.swing.BorderFactory;
