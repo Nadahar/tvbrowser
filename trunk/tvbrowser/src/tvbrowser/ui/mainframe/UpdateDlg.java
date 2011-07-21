@@ -32,6 +32,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
@@ -49,13 +51,15 @@ import javax.swing.JRadioButton;
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.Settings;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
-import util.ui.DisclosureTriangle;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.factories.CC;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.RowSpec;
 
 import devplugin.Channel;
 
@@ -124,21 +128,24 @@ public class UpdateDlg extends JDialog implements ActionListener, WindowClosingI
     }
 
     // then time selection
-    JPanel panel1 = new JPanel(new BorderLayout(7, 0));
-    msg = mLocalizer.msg("period", "Update program for");
-    panel1.add(new JLabel(msg), BorderLayout.WEST);
+    PanelBuilder panel1 = new PanelBuilder(new FormLayout("10dlu,default,5dlu:grow","default,5dlu,default"));
+    panel1.addSeparator(mLocalizer.msg("period", "Update program for"), CC.xyw(1,1,3));
+    
     mComboBox = new JComboBox(PeriodItem.getPeriodItems());
-    panel1.add(mComboBox, BorderLayout.EAST);
-    northPanel.add(panel1);
+    
+    panel1.add(mComboBox, CC.xy(2,3));
+    
+    northPanel.add(panel1.getPanel());
 
     // channel selection
     TvDataServiceProxy[] serviceArr = getActiveDataServices();
     if (serviceArr.length > 1) {
       panel1.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
-      JPanel dataServicePanel = new JPanel();
+      FormLayout layout = new FormLayout("default");
+      JPanel dataServicePanel = new JPanel(layout);
+      
       dataServicePanel.setLayout(new BoxLayout(dataServicePanel,
           BoxLayout.Y_AXIS));
-      dataServicePanel.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 0));
       mDataServiceCbArr = new TvDataServiceCheckBox[serviceArr.length];
 
       String[] checkedServiceNames = Settings.propDataServicesForUpdate
@@ -153,60 +160,68 @@ public class UpdateDlg extends JDialog implements ActionListener, WindowClosingI
         if (!isSelected) {
           expand = true;
         }
-        dataServicePanel.add(mDataServiceCbArr[i]);
+        layout.appendRow(RowSpec.decode("default"));
+        dataServicePanel.add(mDataServiceCbArr[i], CC.xy(1,layout.getRowCount()));
       }
-      DisclosureTriangle disclosureButton = new DisclosureTriangle(dataServicePanel);
-      disclosureButton.setLabelText(mLocalizer.msg("dataSources", "Data sources"));
-      if (expand) {
-        disclosureButton.expand();
-      }
-      northPanel.add(disclosureButton);
+      
+      PanelBuilder ds = new PanelBuilder(new FormLayout("10dlu,default:grow,5dlu,default","10dlu,default,5dlu,default"));
+      ds.add(dataServicePanel, CC.xyw(2,4,3));
+      
+      ds.addSeparator(mLocalizer.msg("dataSources", "Data sources"), CC.xyw(1,2,2));
+      
+      dataServicePanel.setVisible(expand);
+      
+      PanelButton open = new PanelButton(dataServicePanel,this);
+      
+      ds.add(open, CC.xy(4,2));
+            
+      northPanel.add(ds.getPanel());
     }
 
     int period = Settings.propDownloadPeriod.getInt();
     PeriodItem pi = new PeriodItem(period);
     mComboBox.setSelectedItem(pi);
 
-    // auto update options
-    if (Settings.propAutoDownloadType.getString().equals("never")) {
-      JPanel p = new JPanel(new BorderLayout());
-      p.setBorder(BorderFactory.createEmptyBorder(10,0,0,0));
-      northPanel.add(p);
-      p = new JPanel(new BorderLayout());
-      p.setBorder(BorderFactory.createTitledBorder(mLocalizer
-          .msg("autoUpdateTitle", "Automatic update")));
+    PanelBuilder pb = new PanelBuilder(new FormLayout("10dlu,default:grow,5dlu,default","10dlu,default,5dlu,default"));
+    
+    pb.addSeparator(mLocalizer.msg("autoUpdateTitle", "Automatic update"), CC.xyw(1,2,2));
 
-      JPanel boxPanel = new JPanel(new FormLayout("10dlu,pref:grow","default,2dlu,default,default"));
-      CellConstraints cc = new CellConstraints();
+    final JPanel boxPanel = new JPanel(new FormLayout("10dlu,default:grow","default,2dlu,default,default"));
+    CellConstraints cc = new CellConstraints();
+    
 
-      mAutoUpdate = new JCheckBox(mLocalizer.msg("autoUpdateMessage", "Update data automatically"));
+    mAutoUpdate = new JCheckBox(mLocalizer.msg("autoUpdateMessage", "Update data automatically"), !Settings.propAutoDownloadType.getString().equals("never"));
+    boxPanel.setVisible(!mAutoUpdate.isSelected());
+    
+    mStartUpdate = new JRadioButton(mLocalizer.msg("onStartUp", "Only on TV-Browser startup"), false);
+    mRecurrentUpdate = new JRadioButton(mLocalizer.msg("recurrent", "Recurrent"), true);
 
-      mStartUpdate = new JRadioButton(mLocalizer.msg("onStartUp", "Only on TV-Browser startup"), false);
-      mRecurrentUpdate = new JRadioButton(mLocalizer.msg("recurrent", "Recurrent"), true);
+    mStartUpdate.setEnabled(mAutoUpdate.isSelected());
+    mRecurrentUpdate.setEnabled(mAutoUpdate.isSelected());
 
-      mStartUpdate.setEnabled(false);
-      mRecurrentUpdate.setEnabled(false);
+    boxPanel.add(mAutoUpdate, cc.xyw(1,1,2));
+    boxPanel.add(mStartUpdate, cc.xy(2,3));
+    boxPanel.add(mRecurrentUpdate, cc.xy(2,4));
 
-      boxPanel.add(mAutoUpdate, cc.xyw(1,1,2));
-      boxPanel.add(mStartUpdate, cc.xy(2,3));
-      boxPanel.add(mRecurrentUpdate, cc.xy(2,4));
+    pb.add(boxPanel, CC.xyw(2,4,2));
 
-      p.add(boxPanel, BorderLayout.CENTER);
+    ButtonGroup bg = new ButtonGroup();
 
-      ButtonGroup bg = new ButtonGroup();
+    bg.add(mStartUpdate);
+    bg.add(mRecurrentUpdate);
+    
+    PanelButton open = new PanelButton(boxPanel,this);
+    
+    pb.add(open, CC.xy(4,2));
 
-      bg.add(mStartUpdate);
-      bg.add(mRecurrentUpdate);
+    mAutoUpdate.addItemListener(new ItemListener() {
+      public void itemStateChanged(ItemEvent e) {
+        mRecurrentUpdate.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
+        mStartUpdate.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
+      }
+    });
 
-      mAutoUpdate.addItemListener(new ItemListener() {
-        public void itemStateChanged(ItemEvent e) {
-          mRecurrentUpdate.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
-          mStartUpdate.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
-        }
-      });
-
-      northPanel.add(p);
-    }
+    northPanel.add(pb.getPanel());
 
     contentPane.add(northPanel, BorderLayout.NORTH);
     mUpdateBtn.requestFocusInWindow();
@@ -284,13 +299,19 @@ public class UpdateDlg extends JDialog implements ActionListener, WindowClosingI
       }
       Settings.propDataServicesForUpdate.setStringArray(dataServiceArr);
 
-      if (mStartUpdate != null) {
+      //if (mStartUpdate != null) {
         if (mAutoUpdate.isSelected()) {
           Settings.propAutoDownloadType.setString("daily");
           Settings.propAutoDownloadPeriod.setInt(mResult);
-          Settings.propAutoDataDownloadEnabled.setBoolean(mRecurrentUpdate.isSelected());
         }
-      }
+        else {
+          Settings.propAutoDownloadType.setString("never");
+        }
+        
+        Settings.propAutoDataDownloadEnabled.setBoolean(mAutoUpdate.isSelected() && mRecurrentUpdate.isSelected());
+        
+        
+      //}
       setVisible(false);
     }
   }
@@ -321,5 +342,65 @@ class TvDataServiceCheckBox extends JCheckBox {
 
   public TvDataServiceProxy getTvDataService() {
     return mService;
+  }
+}
+
+class PanelButton extends JButton { 
+  public PanelButton(final JPanel panel, final JDialog dialog) {
+    super(panel.isVisible() ? "<<" : ">>");
+    setContentAreaFilled(false);
+    setBorder(BorderFactory.createEtchedBorder());
+    addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        panel.setVisible(!panel.isVisible());
+        if(panel.isVisible()) {
+          setText("<<");
+        }
+        else {
+          setText(">>");
+        }
+        dialog.pack();
+      }
+    });
+    
+    addMouseListener(new MouseAdapter() {
+      private Thread mWaiting;
+      
+      public void mousePressed(MouseEvent e) {
+        if(mWaiting != null && mWaiting.isAlive()) {
+          mWaiting.interrupt();
+        }
+      }
+      
+      public void mouseExited(MouseEvent e) {
+        if(mWaiting != null && mWaiting.isAlive()) {
+          mWaiting.interrupt();
+        }
+      }
+      
+      public void mouseEntered(MouseEvent e) {
+        if(mWaiting == null || !mWaiting.isAlive()) {
+          mWaiting = new Thread() {
+            public void run() {
+              try {
+                Thread.sleep(750);
+                
+                panel.setVisible(!panel.isVisible());
+                if(panel.isVisible()) {
+                  setText("<<");
+                }
+                else {
+                  setText(">>");
+                }
+                dialog.pack();
+              } catch (InterruptedException e) {
+                // ignore
+              }
+            }
+          };
+          mWaiting.start();
+        }
+      }
+    });
   }
 }

@@ -1265,7 +1265,7 @@ public class Settings {
       "downloadperiod", 1);
 
   public static final ChoiceProperty propAutoDownloadType = new ChoiceProperty(
-      mProp, "autodownload", "never", new String[] { "startup", "daily",
+      mProp, "autodownload", "daily", new String[] { "startup", "daily",
           "every3days", "weekly", "never" });
 
   public static final IntProperty propAutoDownloadPeriod = new IntProperty(
