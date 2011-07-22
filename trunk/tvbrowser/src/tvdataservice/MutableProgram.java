@@ -187,19 +187,6 @@ public class MutableProgram implements Program {
     mChannel = channel;
     mLocalDate = localDate;
     
-    if  (mChannel.getDataServiceProxy() != null) {
-      String dataServiceId = mChannel.getDataServiceProxy().getId();
-      String groupId = mChannel.getGroup().getId();
-      String channelId = mChannel.getId();
-      String country = mChannel.getCountry();
-
-      mId = (new StringBuilder(dataServiceId).append('_').append(groupId)
-          .append('_').append(country).append('_').append(channelId).append(
-              '_').append(getHours()).append(':').append(getMinutes())
-          .append(':').append(TimeZone.getDefault().getRawOffset() / 60000))
-          .toString();
-    }
-
     // The title is not-null.
     setTextField(ProgramFieldType.TITLE_TYPE, "");
 
@@ -231,6 +218,12 @@ public class MutableProgram implements Program {
       String channelId = mChannel.getId();
       String country = mChannel.getCountry();
       String date = new SimpleDateFormat(ID_DATE_FORMAT).format(getDate().getCalendar().getTime());
+
+      mId = (new StringBuilder(dataServiceId).append('_').append(groupId)
+          .append('_').append(country).append('_').append(channelId).append(
+              '_').append(getHours()).append(':').append(getMinutes())
+          .append(':').append(TimeZone.getDefault().getRawOffset() / 60000))
+          .toString();      
 
       mUniqueId = (new StringBuilder(dataServiceId).append('_').append(
           groupId).append('_').append(country).append('_').append(channelId)
