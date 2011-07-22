@@ -89,6 +89,7 @@ public class ProgramMenuItem extends JMenuItem {
   protected static final int SOON_TYPE = 1;
   protected static final int ON_TIME_TYPE = 2;
   protected static final int IMPORTANT_TYPE = 3;
+  protected static final int AFTER_TYPE = 4;
   
   private boolean mShowToolTip = true;
   private String mToolTipTextBuffer;
@@ -139,6 +140,21 @@ public class ProgramMenuItem extends JMenuItem {
       mShowName = Settings.propTrayImportantProgramsContainsName.getBoolean();
       showIcon = Settings.propTrayImportantProgramsContainsIcon.getBoolean();
       mShowToolTip = Settings.propTrayImportantProgramsContainsToolTip.getBoolean();
+    }
+    else if(type == SOON_TYPE) {
+      mShowStartTime = true;
+      mShowDate = false;
+      mShowName = Settings.propTraySoonProgramsContainsName.getBoolean();
+      showIcon = Settings.propTraySoonProgramsContainsIcon.getBoolean();
+      mShowToolTip = Settings.propTraySoonProgramsContainsToolTip.getBoolean();
+    }
+    else if (type == AFTER_TYPE) {
+      mShowStartTime = true;
+      mShowDate = false;
+      mShowName = Settings.propTrayImportantProgramsContainsName.getBoolean();
+      showIcon = Settings.propTrayImportantProgramsContainsIcon.getBoolean();
+      mShowToolTip = Settings.propTrayImportantProgramsContainsToolTip.getBoolean();
+      time = -1;
     }
     else {
       mShowStartTime = true;
