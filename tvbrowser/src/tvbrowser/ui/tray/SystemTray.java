@@ -780,7 +780,7 @@ public class SystemTray {
       Component comp = menu.getMenuComponent(i);
       if (comp instanceof ProgramMenuItem) {
         ProgramMenuItem oldItem = (ProgramMenuItem) comp;
-        if (oldItem.getProgram().equals(pItem.getProgram())) {
+        if (oldItem != null && pItem != null && oldItem.getProgram().equals(pItem.getProgram())) {
           return true;
         }
       }
@@ -792,7 +792,7 @@ public class SystemTray {
     int maxCount = getMaxItemCount();
     int itemCount = 0;
     for (ProgramMenuItem item : programs) {
-      if (acceptedChannel(item)) {
+      if (item != null && acceptedChannel(item)) {
         subMenu.add(item);
         itemCount++;
         if (itemCount >= maxCount) {
