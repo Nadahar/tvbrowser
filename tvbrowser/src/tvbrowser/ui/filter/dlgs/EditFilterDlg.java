@@ -50,6 +50,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.event.CaretListener;
@@ -217,6 +218,7 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
         updateBtns();
       }
     });
+    mFilterComponentList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     
     mFilterComponentListModel.addElement(new FilterItem(AND_KEY,0));
     mFilterComponentListModel.addElement(new FilterItem(OR_KEY,0));
@@ -226,6 +228,7 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
     
     mFilterConstructionListModel = new DefaultListModel();
     mFilterConstruction = new JList(mFilterConstructionListModel);
+    mFilterConstruction.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     mFilterConstruction.setCellRenderer(new DefaultListCellRenderer() {
       public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
         JLabel label = (JLabel) super.getListCellRendererComponent(list,value,index,isSelected,cellHasFocus);
