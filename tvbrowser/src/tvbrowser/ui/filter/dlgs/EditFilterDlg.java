@@ -140,7 +140,8 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
     mFilterList = filterList;
     mParent = parent;
     mFilter = filter;
-    mFilterName = filter.getName();
+    
+    
     
     mFilterNameTF = new JTextField(new PlainDocument() {
       public void insertString(int offset, String str, AttributeSet a) throws BadLocationException {
@@ -267,6 +268,7 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
     });
     
     if (mFilter != null) {
+      mFilterName = filter.getName();
       mFilterNameTF.setText(mFilter.toString());
       mFilterRuleTF.setText(mFilter.getRule());
       fillFilterConstruction();
