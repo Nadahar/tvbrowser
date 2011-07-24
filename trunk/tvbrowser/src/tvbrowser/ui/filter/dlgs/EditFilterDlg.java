@@ -720,7 +720,7 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
         }
       }
     }
-    else {
+    else if(source.equals(mFilterConstruction)){
       ((DefaultListModel)source.getModel()).remove(source.getSelectedIndex());
       
       
@@ -754,6 +754,13 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
     }
     
     mFilterRuleTF.setText(build.toString());
+    
+    if(source != null) {
+      source.repaint();
+    }
+    if(target != null) {
+      target.repaint();
+    }
     
     //target.add(source.getSelectedValue(),row)
     
