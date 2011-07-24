@@ -262,9 +262,31 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
           else {
             panel.add(label,CC.xy(item.getLevel()+1,1));
           }
-          
+
+          if(index > 0) {
+            FilterItem test = (FilterItem)list.getModel().getElementAt(index-1);
+            FilterItem test2 = null;
+            
+            if(index < list.getModel().getSize() - 2) {
+              test2 = (FilterItem)list.getModel().getElementAt(index+1);
+            }
+            
+            if(test.isCloseBracketItem() && !item.isAndItem() && !item.isOrItem() && !item.isCloseBracketItem()) {
+              label.setForeground(Color.red);
+            }
+            else if(item.isNotItem() && ((!test.isAndItem() && !test.isOrItem()) || test.isNotItem()) && (test2 == null || test2.getComponent() == null)) {
+              label.setForeground(Color.red);
+            }
+
+              
+            if(test2 != null && test2.isOpenBracketItem() && !item.isAndItem() && !item.isOrItem() && !item.isNotItem() && !item.isOpenBracketItem()) {
+              label.setForeground(Color.red);
+            }
+          }
+
           return panel;
         }
+        
         
         return label;
       }
