@@ -33,6 +33,7 @@ import devplugin.ProgramFilter;
  * Original with Subtitle or sign language
  */
 public class SubtitleFilter implements ProgramFilter {
+  public static final String KEY = "[SUBTITLE_FILTER]";
   /**
    * Localizer
    */

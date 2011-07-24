@@ -29,6 +29,19 @@ import com.jgoodies.forms.builder.ButtonBarBuilder2;
 public class Utilities {
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(Utilities.class);
 
+  static JButton createHelpButton() {
+    JButton helpButton = new JButton(Localizer.getLocalization(Localizer.I18N_HELP));
+    helpButton.addActionListener(new ActionListener() {
+
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        Launch.openURL(mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/Filters"));
+      }
+    });
+    
+    return helpButton;
+  }
+  
   static ButtonBarBuilder2 createFilterButtonBar() {
     ButtonBarBuilder2 bottomBar = new ButtonBarBuilder2();
 

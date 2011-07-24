@@ -26,30 +26,24 @@
 
 package tvbrowser.ui.filter.dlgs;
 
-import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-
-import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
-import javax.swing.DefaultListModel;
+
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.SwingUtilities;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+import javax.swing.JToolBar;
+import javax.swing.tree.TreePath;
 
 import tvbrowser.core.Settings;
 import tvbrowser.core.filters.AudioDescriptionFilter;
@@ -60,16 +54,17 @@ import tvbrowser.core.filters.SeparatorFilter;
 import tvbrowser.core.filters.ShowAllFilter;
 import tvbrowser.core.filters.SubtitleFilter;
 import tvbrowser.core.filters.UserFilter;
-import tvbrowser.ui.mainframe.searchfield.SearchFilter;
-import util.ui.DragAndDropMouseListener;
-import util.ui.ListDragAndDropHandler;
+import tvbrowser.core.icontheme.IconLoader;
+import tvbrowser.ui.mainframe.MainFrame;
 import util.ui.ListDropAction;
 import util.ui.Localizer;
 import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
-import com.jgoodies.forms.builder.ButtonBarBuilder2;
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.factories.CC;
+import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.PluginsProgramFilter;
 import devplugin.ProgramFilter;
@@ -78,165 +73,137 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
 
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(SelectFilterDlg.class);
 
-  private JList mFilterListBox;
+  private static SelectFilterDlg mInstance;
 
-  private JFrame mParent;
+  private JButton mHelpBtn, mNewFolder, mEditBtn, mRemoveBtn, mNewBtn, mCancelBtn, mOkBtn, mUpBtn, mDownBtn, mSeperator, mDefaultFilterBtn;
 
-  private JButton mEditBtn, mRemoveBtn, mNewBtn, mCancelBtn, mOkBtn, mUpBtn, mDownBtn, mSeperator, mDefaultFilterBtn;
-
-  private DefaultListModel mFilterListModel;
 
   private FilterList mFilterList;
 
   private String mDefaultFilterId;
-
-  public SelectFilterDlg(JFrame parent) {
-
-    super(parent, true);
-
+  FilterTree mFilterTree;
+  
+  public static SelectFilterDlg create(JFrame parent) {
+    if(mInstance == null) {
+      new SelectFilterDlg(parent);
+    }
+    
+    return mInstance;
+  }
+  
+  static SelectFilterDlg getInstance() {
+    return mInstance;
+  }
+  
+  private SelectFilterDlg(JFrame parent) {
+    super(parent, mLocalizer.msg("title", "Edit Filters"), true);
+    mInstance = this;
+    
     UiUtilities.registerForClosing(this);
 
     mFilterList = FilterList.getInstance();
     ProgramFilter defaultFilter = FilterManagerImpl.getInstance().getDefaultFilter();
     mDefaultFilterId = defaultFilter.getClass().getName() + "###" + defaultFilter.getName();
 
-
-    mParent = parent;
-    JPanel contentPane = (JPanel) getContentPane();
-    contentPane.setLayout(new BorderLayout(7, 13));
-    contentPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-    setTitle(mLocalizer.msg("title", "Edit Filters"));
-
-    mFilterListModel = new DefaultListModel();
-
-    ProgramFilter[] filterArr = mFilterList.getFilterArr();
-    for (int i = 0; i < filterArr.length; i++) {
-      if (!(filterArr[i] instanceof SearchFilter)) {
-        mFilterListModel.addElement(filterArr[i]);
-      }
-    }
-
-    mFilterListBox = new JList(mFilterListModel);
-    mFilterListBox.setCellRenderer(new FilterListCellRenderer());
-
-    // Register DnD on the List.
-    ListDragAndDropHandler dnDHandler = new ListDragAndDropHandler(mFilterListBox,mFilterListBox,this);
-    new DragAndDropMouseListener(mFilterListBox,mFilterListBox,this,dnDHandler);
-
-    mFilterListBox.setVisibleRowCount(5);
-
-    mFilterListBox.addListSelectionListener(new ListSelectionListener() {
-      public void valueChanged(ListSelectionEvent e) {
-        updateBtns();
-      }
-    });
-
-    mFilterListBox.addMouseListener(new MouseAdapter() {
-      public void mouseClicked(MouseEvent e) {
-        if(SwingUtilities.isLeftMouseButton(e) && e.getClickCount() >= 2) {
-          if(mFilterListBox.getSelectedIndex() != -1 && mEditBtn.isEnabled()) {
-            actionPerformed(new ActionEvent(mEditBtn,ActionEvent.ACTION_PERFORMED, mEditBtn.getActionCommand()));
-          }
-        }
-      }
-    });
-
-    JPanel btnPanel = new JPanel(new BorderLayout());
-    JPanel panel1 = new JPanel(new GridLayout(0, 1, 0, 7));
-    mNewBtn = new JButton(mLocalizer.msg("newButton", "new"));
-    mEditBtn = new JButton(Localizer.getEllipsisLocalization(Localizer.I18N_EDIT));
-    mRemoveBtn = new JButton(Localizer.getLocalization(Localizer.I18N_DELETE));
-    mSeperator = new JButton(mLocalizer.msg("seperatorButton", "seperator"));
-    mDefaultFilterBtn = new JButton(Localizer.getLocalization(Localizer.I18N_STANDARD));
-    mDefaultFilterBtn.setEnabled(false);
+    FormLayout layout = new FormLayout("default,default:grow,default","default,4dlu,fill:default:grow,5dlu,default");
+    
+    PanelBuilder pb = new PanelBuilder(layout, (JPanel)getContentPane());
+    pb.setDefaultDialogBorder();
+    
+    mFilterTree = new FilterTree();
+    
+    mNewBtn = UiUtilities.createToolBarButton(FilterTree.mLocalizer.msg("newFilter", "New Filter"),TVBrowserIcons.newIcon(TVBrowserIcons.SIZE_LARGE));
+    mNewFolder = UiUtilities.createToolBarButton(FilterTree.mLocalizer.msg("newFolder", "New folder"),IconLoader.getInstance().getIconFromTheme("actions", "folder-new", 22));
+    mEditBtn = UiUtilities.createToolBarButton(Localizer.getEllipsisLocalization(Localizer.I18N_EDIT),TVBrowserIcons.edit(TVBrowserIcons.SIZE_LARGE));
+    mRemoveBtn = UiUtilities.createToolBarButton(Localizer.getLocalization(Localizer.I18N_DELETE),TVBrowserIcons.delete(TVBrowserIcons.SIZE_LARGE));
+    mSeperator = UiUtilities.createToolBarButton(FilterTree.mLocalizer.msg("newSeparator", "Add separator"),IconLoader.getInstance().getIconFromTheme("emblems", "separator", 22));
+    mDefaultFilterBtn = UiUtilities.createToolBarButton(Localizer.getLocalization(Localizer.I18N_STANDARD),IconLoader.getInstance().getIconFromTheme("actions", "view-filter", 22));
+    mUpBtn = UiUtilities.createToolBarButton(mLocalizer.msg("up","Move selected value up"),TVBrowserIcons.up(TVBrowserIcons.SIZE_LARGE));
+    mDownBtn = UiUtilities.createToolBarButton(mLocalizer.msg("down","Move selected value down"),TVBrowserIcons.down(TVBrowserIcons.SIZE_LARGE));
+    
+    JToolBar toolbarPn = new JToolBar();
+    toolbarPn.setFloatable(false);
+    
+    toolbarPn.add(mNewFolder);
+    addToolbarSeperator(toolbarPn);
+    toolbarPn.add(mNewBtn);
+    toolbarPn.add(mEditBtn);
+    toolbarPn.add(mSeperator);
+    toolbarPn.add(mRemoveBtn);
+    addToolbarSeperator(toolbarPn);
+    toolbarPn.add(mDefaultFilterBtn);
+    addToolbarSeperator(toolbarPn);
+    toolbarPn.add(mUpBtn);
+    toolbarPn.add(mDownBtn);
 
     mNewBtn.addActionListener(this);
     mEditBtn.addActionListener(this);
     mRemoveBtn.addActionListener(this);
     mSeperator.addActionListener(this);
     mDefaultFilterBtn.addActionListener(this);
-
-    panel1.add(mNewBtn);
-    panel1.add(mDefaultFilterBtn);
-    panel1.add(mEditBtn);
-    panel1.add(mRemoveBtn);
-    panel1.add(mSeperator);
-    btnPanel.add(panel1, BorderLayout.NORTH);
-
-    JPanel panel2 = new JPanel(new GridLayout(0, 1, 0, 7));
-    mUpBtn = new JButton(TVBrowserIcons.up(TVBrowserIcons.SIZE_SMALL));
-    mDownBtn = new JButton(TVBrowserIcons.down(TVBrowserIcons.SIZE_SMALL));
     mUpBtn.addActionListener(this);
     mDownBtn.addActionListener(this);
-    panel2.add(mUpBtn);
-    panel2.add(mDownBtn);
-
-    btnPanel.add(panel2, BorderLayout.SOUTH);
-
-    ButtonBarBuilder2 bottomBar = Utilities.createFilterButtonBar();
-
-    mOkBtn = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
-    mOkBtn.addActionListener(new ActionListener() {
-
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        Object[] o = mFilterListModel.toArray();
-        ProgramFilter[] filters = new ProgramFilter[o.length];
-        for (int i = 0; i < o.length; i++) {
-          filters[i] = (ProgramFilter) o[i];
-        }
-        mFilterList.setProgramFilterArr(filters);
-
-        mFilterList.store();
-
-        Settings.propDefaultFilter.setString(mDefaultFilterId);
-        FilterManagerImpl.getInstance().setCurrentFilter(FilterManagerImpl.getInstance().getCurrentFilter());
-
-        setVisible(false);
-      }
-    });
+    
+    mHelpBtn = Utilities.createHelpButton();
+    mOkBtn = new JButton(Localizer.getLocalization(Localizer.I18N_CLOSE));
+    mOkBtn.addActionListener(this);
     getRootPane().setDefaultButton(mOkBtn);
+    layout.setColumnGroups(new int[][] {{1,3}});
 
-    mCancelBtn = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
-    mCancelBtn.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        close();
-      }
-    });
-    bottomBar.addButton(new JButton[] {mOkBtn, mCancelBtn});
-
-    JTextArea ta = UiUtilities.createHelpTextArea(mLocalizer.msg("hint", "Choose a filter to edit or create a new one."));
-
-    contentPane.add(new JScrollPane(mFilterListBox), BorderLayout.CENTER);
-    contentPane.add(btnPanel, BorderLayout.EAST);
-    contentPane.add(bottomBar.getPanel(), BorderLayout.SOUTH);
-    contentPane.add(ta, BorderLayout.NORTH);
-
+    JScrollPane scrollPane = new JScrollPane(mFilterTree);
+    pb.add(scrollPane, CC.xyw(1,3,3));
+    pb.add(mHelpBtn, CC.xy(1,5));
+    pb.add(mOkBtn, CC.xy(3,5));
+    pb.add(toolbarPn, CC.xyw(1,1,3)); 
+    
     updateBtns();
-    Settings.layoutWindow("selectFilterDlg", this, new Dimension(600,400));
+    Settings.layoutWindow("selectFilterDlg", this, new Dimension(500,400));
   }
 
+  private void addToolbarSeperator(JToolBar toolbarPn) {
+    JPanel p = new JPanel();
+    p.setSize(10,10);
+    p.setMaximumSize(new Dimension(10,10));
+    toolbarPn.add(p);
+    toolbarPn.addSeparator();
+
+    p = new JPanel();
+    p.setSize(4,10);
+    p.setMaximumSize(new Dimension(4,10));
+    toolbarPn.add(p);
+  }
+  
   public void updateBtns() {
-
-    Object item = mFilterListBox.getSelectedValue();
-
-    mEditBtn
-        .setEnabled(item != null
-            && !(item instanceof ShowAllFilter || item instanceof PluginFilter || item instanceof SubtitleFilter || item instanceof SeparatorFilter
-                || item instanceof PluginsProgramFilter || item instanceof AudioDescriptionFilter));
-    mRemoveBtn.setEnabled(item != null
-        && !(item instanceof ShowAllFilter || item instanceof PluginFilter || item instanceof SubtitleFilter ||
-            item instanceof PluginsProgramFilter || item instanceof AudioDescriptionFilter));
-
-    int inx = mFilterListBox.getSelectedIndex();
-    mUpBtn.setEnabled(inx > 0);
-    mDownBtn.setEnabled(inx >= 0 && inx < mFilterListModel.getSize() - 1);
-
-    Object filter = mFilterListBox.getSelectedValue();
-
-    if(filter != null) {
-      mDefaultFilterBtn.setEnabled(!(mFilterListBox.getSelectedValue() instanceof SeparatorFilter) && ((!mDefaultFilterId.equals(filter.getClass().getName() + "###" + ((ProgramFilter)filter).getName())) || mDefaultFilterId.trim().length() < 1 && filter instanceof ShowAllFilter));
+    if(mFilterTree.getSelectionCount() > 0) {
+      FilterNode node = (FilterNode)mFilterTree.getSelectionPath().getLastPathComponent();
+      
+      int row = mFilterTree.getRowForPath(mFilterTree.getSelectionPath());
+      
+      mUpBtn.setEnabled(row > 1);
+      mDownBtn.setEnabled(row > 0 && row != mFilterTree.getRowCount()-1);
+      
+      if(node.containsFilter()) {
+        String id = node.getFilter().getClass().getName();
+        String name = node.getFilter().getName();
+        
+        mDefaultFilterBtn.setEnabled(!((Settings.propDefaultFilter.getString().equals(id + "###" + name)) ||
+            (Settings.propDefaultFilter.getString().trim().length() < 1 && node.getFilter() instanceof ShowAllFilter)));
+        
+        mEditBtn.setEnabled(!(node.getFilter() instanceof ShowAllFilter || node.getFilter() instanceof PluginFilter || node.getFilter() instanceof SubtitleFilter || node.getFilter() instanceof AudioDescriptionFilter || node.getFilter() instanceof PluginsProgramFilter));
+      }
+      else {
+        mEditBtn.setEnabled(row > 0 && node.isDirectoryNode());
+        mDefaultFilterBtn.setEnabled(false);
+      }
+      
+      mRemoveBtn.setEnabled(row > 0 && node.isDeletingAllowed());
+      
+    }
+    else {
+      mUpBtn.setEnabled(false);
+      mDownBtn.setEnabled(false);
+      mDefaultFilterBtn.setEnabled(false);
+      mRemoveBtn.setEnabled(false);
     }
   }
 
@@ -244,40 +211,53 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
     return mFilterList;
   }
 
-  public void actionPerformed(ActionEvent e) {
-    if (e.getSource() == mNewBtn) {
-      EditFilterDlg dlg = new EditFilterDlg(mParent, mFilterList, null);
-      UserFilter filter = dlg.getUserFilter();
-      if (filter != null) {
-        mFilterListModel.addElement(filter);
-      }
-    } else if (e.getSource() == mEditBtn) {
-      ProgramFilter filter = (ProgramFilter) mFilterListBox.getSelectedValue();
-      if (filter instanceof UserFilter) {
-        new EditFilterDlg(mParent, mFilterList, (UserFilter) filter);
-      }
-    } else if (e.getSource() == mRemoveBtn) {
-      mFilterListModel.removeElement(mFilterListBox.getSelectedValue());
-      mFilterList.remove((ProgramFilter) mFilterListBox.getSelectedValue());
-      updateBtns();
-    } else if (e.getSource() == mUpBtn) {
-      UiUtilities.moveSelectedItems(mFilterListBox,mFilterListBox.getSelectedIndex()-1,true);
-    } else if (e.getSource() == mDownBtn) {
-      UiUtilities.moveSelectedItems(mFilterListBox,mFilterListBox.getSelectedIndex()+ mFilterListBox.getSelectedIndices().length + 1,true);
-    } else if (e.getSource() == mSeperator) {
-      mFilterListModel.addElement(new SeparatorFilter());
-    } else if (e.getSource() == mDefaultFilterBtn) {
-      ProgramFilter filter = ((ProgramFilter)mFilterListBox.getSelectedValue());
-      mDefaultFilterId = filter.getClass().getName() + "###" + filter.getName();
-      mFilterListBox.repaint();
-      updateBtns();
+  public void actionPerformed(ActionEvent e) {try{
+    if(e.getSource() == mOkBtn) {
+      close();
     }
-
+    else {
+      TreePath path1 = null;
+      int[] selectionRows = mFilterTree.getSelectionRows();
+      if (selectionRows != null && selectionRows.length > 0) {
+        path1 = mFilterTree.getPathForRow(selectionRows[0]);
+      }
+  
+      if(path1 == null) {
+        path1 = new TreePath(mFilterTree.getRoot());
+      }
+  
+      final TreePath path = path1;
+      final FilterNode last = (FilterNode)path.getLastPathComponent();
+  
+      mFilterTree.setSelectionPath(path);
+      
+      if (e.getSource() == mNewBtn) {
+        createNewFilter(last);
+      } else if (e.getSource() == mEditBtn) {
+        editSelectedFilter(last);
+      } else if (e.getSource() == mRemoveBtn) {
+        deleteSelectedItem(last);
+      } else if (e.getSource() == mUpBtn) {
+        mFilterTree.moveSelectedFilter(-1);
+        updateBtns();
+      } else if (e.getSource() == mDownBtn) {
+        mFilterTree.moveSelectedFilter(1);
+        updateBtns();
+      } else if (e.getSource() == mSeperator) {
+        addSeparator(last);
+      } else if (e.getSource() == mDefaultFilterBtn) {
+        setDefaultFilter(last);
+      }
+    }
+    }catch(Throwable t) {t.printStackTrace();}
+  
   }
 
   public void close() {
-    mFilterList.create();
+    mFilterList.store();
+    FilterManagerImpl.getInstance().setCurrentFilter(FilterManagerImpl.getInstance().getCurrentFilter());
     setVisible(false);
+    mInstance = null;
   }
 
   public void drop(JList source, JList target, int rows, boolean move) {
@@ -300,5 +280,107 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
 
       return tc;
     }
+  }
+  
+  void editSelectedFilter(FilterNode node) {
+    new EditFilterDlg(this, FilterList.getInstance(), (UserFilter)node.getFilter());
+    mFilterTree.updateUI();
+    updateBtns();
+  }
+  
+  void deleteSelectedItem(FilterNode node) {
+    if(JOptionPane.showConfirmDialog(this,mLocalizer.msg("delete","Do you really want to delete the selected value?"),
+        mLocalizer.msg("deleteTitle", "Delete selected value..."),JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+      int[] rows = mFilterTree.getSelectionRows();
+      
+      if(node.isDirectoryNode() && node.getChildCount() < 1) {
+        FilterNode parent = (FilterNode)node.getParent();
+        parent.remove(node);
+        mFilterTree.getModel().reload(parent);
+      }
+      else if((node.containsFilter() || node.containsSeparator()) && node.isDeletingAllowed()) {
+        String id = node.getFilter().getClass().getName();
+        String name = node.getFilter().getName();
+        
+        if((Settings.propDefaultFilter.getString().equals(id + "###" + name)) ||
+            (Settings.propDefaultFilter.getString().trim().length() < 1 && node.getFilter() instanceof ShowAllFilter)) {
+          Settings.propDefaultFilter.resetToDefault();
+          MainFrame.getInstance().setProgramFilter(FilterManagerImpl.getInstance().getAllFilter());
+        }
+        
+        mFilterTree.getModel().removeNodeFromParent(node);
+        mFilterTree.updateUI();
+        //TODO
+      }
+      
+      if(rows[0] > mFilterTree.getRowCount() - 1) {
+        rows[0] = mFilterTree.getRowCount() -1;
+      }
+      
+      mFilterTree.setSelectionRows(rows);
+      updateBtns();
+    }
+  }
+  
+  void createNewFilter(FilterNode parent) {
+    EditFilterDlg dlg = new EditFilterDlg(this, FilterList.getInstance(), null);
+    UserFilter filter = dlg.getUserFilter();
+    if (filter != null) {
+      FilterNode node = new FilterNode(filter);
+      int rows[] = mFilterTree.getSelectionRows();
+      
+      if(parent.equals(mFilterTree.getRoot()) || parent.isDirectoryNode()) {
+        parent.add(node);
+        mFilterTree.expandPath(new TreePath(parent.getPath()));
+      } else {
+        ((FilterNode)parent.getParent()).insert(node,parent.getParent().getIndex(parent));
+      }
+      
+      mFilterTree.reload((FilterNode)node.getParent());
+      mFilterTree.setSelectionRows(rows);
+    }
+    
+    updateBtns();
+  }
+  
+  void createNewFolder(FilterNode parent) {
+    String value = JOptionPane.showInputDialog(UiUtilities.getLastModalChildOf(MainFrame.getInstance()), FilterTree.mLocalizer.msg("folderName","Folder name:"), FilterTree.mLocalizer.msg("newFolder","New folder"));
+
+    if(value != null && value.length() > 0) {
+      FilterNode node = new FilterNode(value);
+
+      if(parent.equals(mFilterTree.getRoot()) || parent.isDirectoryNode()) {
+        parent.add(node);
+        mFilterTree.expandPath(new TreePath(parent.getPath()));
+      } else {
+        ((FilterNode)parent.getParent()).insert(node,parent.getParent().getIndex(parent));
+      }
+
+      mFilterTree.reload((FilterNode)node.getParent());
+    }
+    updateBtns();
+  }
+  
+  void addSeparator(FilterNode parent) {
+    FilterNode node = new FilterNode(new SeparatorFilter());
+    int rows[] = mFilterTree.getSelectionRows();
+    
+    if(parent.equals(mFilterTree.getRoot()) || parent.isDirectoryNode()) {
+      parent.add(node);
+      mFilterTree.expandPath(new TreePath(parent.getPath()));
+    } else {
+      ((FilterNode)parent.getParent()).insert(node,parent.getParent().getIndex(parent));
+    }
+    
+    mFilterTree.reload((FilterNode)node.getParent());
+    mFilterTree.setSelectionRows(rows);
+    
+    updateBtns();
+  }
+  
+  void setDefaultFilter(FilterNode node) {
+    String defaultFilterId = node.getFilter().getClass().getName() + "###" + node.getFilter().getName();
+    Settings.propDefaultFilter.setString(defaultFilterId);
+    mFilterTree.updateUI();
   }
 }

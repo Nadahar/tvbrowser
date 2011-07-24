@@ -30,7 +30,7 @@ import devplugin.Marker;
 import devplugin.ProgramFilter;
 
 public class PluginFilter implements ProgramFilter {
-
+  public static final String KEY = "[SHOW_MARKED_PROGRAMS]";
 
   private static final util.ui.Localizer mLocalizer
           = util.ui.Localizer.getLocalizerFor(PluginFilter.class);

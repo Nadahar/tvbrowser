@@ -388,16 +388,16 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
 
     // set program filter
     FilterList filterList = FilterList.getInstance();
-
+    
     ProgramFilter filter = filterList
         .getFilterByName(Settings.propLastUsedFilter.getString());
-
+    
     if (filter == null) {
       filter = FilterManagerImpl.getInstance().getDefaultFilter();
     }
-
+    
     setProgramFilter(filter);
-
+    
     // set channel group filter
     String channelGroupName = Settings.propLastUsedChannelGroup.getString();
     if (channelGroupName != null) {
@@ -2184,7 +2184,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
   }
 
   public void showFilterDialog() {
-    SelectFilterDlg dlg = new SelectFilterDlg(this);
+    SelectFilterDlg dlg = SelectFilterDlg.create(this);
     util.ui.UiUtilities.centerAndShow(dlg);
     mMenuBar.updateFiltersMenu();
   }

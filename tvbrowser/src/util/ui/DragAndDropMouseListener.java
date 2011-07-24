@@ -50,6 +50,7 @@ public class DragAndDropMouseListener extends MouseAdapter {
   private JList mSource, mTarget;
   private ListDropAction mAction;
   private DragGestureListener mListener;
+  private boolean mMoveWithDoubleClick;
 
   /**
    * 
@@ -64,11 +65,30 @@ public class DragAndDropMouseListener extends MouseAdapter {
    */
   public DragAndDropMouseListener(JList source, JList target,
       ListDropAction action, DragGestureListener listener) {
+    this(source,target,action,listener,true);
+  }
+  
+  /**
+   * 
+   * @param source
+   *          The source list of DnD.
+   * @param target
+   *          The target list of DnD.
+   * @param action
+   *          The action of DnD.
+   * @param listener
+   *          The GestureListener of DnD.
+   * @param moveWithDoubleClick
+   *          If the items should be moved on double click.           
+   */
+  public DragAndDropMouseListener(JList source, JList target,
+      ListDropAction action, DragGestureListener listener, boolean moveWithDoubleClick) {
     mSource = source;
     mTarget = target;
     mAction = action;
     mListener = listener;
-
+    mMoveWithDoubleClick = moveWithDoubleClick;
+    
     restore();
   }
 
@@ -102,7 +122,7 @@ public class DragAndDropMouseListener extends MouseAdapter {
     }
     
     if (mSource.isEnabled() && SwingUtilities.isLeftMouseButton(e)
-        && e.getClickCount() == 2 && mSource != mTarget) {
+        && e.getClickCount() == 2 && mSource != mTarget && mMoveWithDoubleClick) {
       int index = mSource.locationToIndex(e.getPoint());
       mSource.setSelectedIndex(index);
       mAction.drop(mSource, mTarget, 0, true);

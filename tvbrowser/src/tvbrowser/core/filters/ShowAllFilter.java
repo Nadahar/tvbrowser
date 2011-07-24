@@ -29,7 +29,7 @@ package tvbrowser.core.filters;
 import devplugin.ProgramFilter;
 
 public class ShowAllFilter implements devplugin.ProgramFilter {
-    
+  public static final String KEY = "[SHOW_ALL_FITLER]";
   private static final util.ui.Localizer mLocalizer
          = util.ui.Localizer.getLocalizerFor(ShowAllFilter.class);
   

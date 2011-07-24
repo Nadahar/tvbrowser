@@ -50,6 +50,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -467,7 +468,7 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
       public void actionPerformed(ActionEvent e) {
         // user defined selection
         if (mChannels.getSelectedIndex() == mChannels.getItemCount()-1) {
-          EditFilterComponentDlg dlg = new EditFilterComponentDlg(null, null, ChannelFilterComponent.class);
+          EditFilterComponentDlg dlg = new EditFilterComponentDlg((JFrame)null, null, ChannelFilterComponent.class);
           FilterComponent rule = dlg.getFilterComponent();
           if (rule == null) {
             return;

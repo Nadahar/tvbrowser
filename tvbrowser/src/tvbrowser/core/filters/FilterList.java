@@ -27,37 +27,43 @@
 package tvbrowser.core.filters;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
+
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Logger;
 
+import javax.swing.JMenu;
+
 import org.apache.commons.lang.StringUtils;
 
 import tvbrowser.core.Settings;
-import tvbrowser.core.plugin.PluginManagerImpl;
+import tvbrowser.ui.filter.dlgs.FilterTreeModel;
 import tvbrowser.ui.mainframe.searchfield.SearchFilter;
 import util.io.stream.BufferedReaderProcessor;
-import util.io.stream.BufferedWriterProcessor;
 import util.io.stream.StreamUtilities;
 import devplugin.PluginAccess;
 import devplugin.PluginsProgramFilter;
 import devplugin.ProgramFilter;
 
 public class FilterList {
-
   private static FilterList mInstance;
-  private File mFilterDirectory;
-  private ProgramFilter[] mFilterArr;
+  private static File mFilterDirectory;
+  private File mFilterDat;
   private final static String FILTER_INDEX = "filter.index";
   protected static final String FILTER_DIRECTORY = Settings
       .getUserSettingsDirName()
       + "/filters";
 
+  private FilterTreeModel mFilterTreeModel;
+  private final static String FILTER_TREE_DAT = "filters.dat";
 
   private static final Logger mLog
           = Logger.getLogger(FilterList.class.getName());
@@ -65,13 +71,18 @@ public class FilterList {
   private FilterList() {
     create();
   }
+  
+  public static File getFilterDirectory() {
+    return mFilterDirectory;
+  }
 
   public void create() {
     mFilterDirectory = new File(tvbrowser.core.filters.FilterList.FILTER_DIRECTORY);
+    mFilterDat = new File(mFilterDirectory,FILTER_TREE_DAT);
     if (!mFilterDirectory.exists()) {
       mFilterDirectory.mkdirs();
     }
-    mFilterArr = createFilterList();
+    createFilterList();
   }
 
   public static FilterList getInstance() {
@@ -81,11 +92,23 @@ public class FilterList {
     return mInstance;
   }
 
-  private ProgramFilter[] createFilterList() {
+  private void createFilterList() {try {
+    if(mFilterDat.isFile()) {
+      try {
+        ObjectInputStream in = new ObjectInputStream(new FileInputStream(mFilterDat));
+        
+        mFilterTreeModel = FilterTreeModel.initInstance(in);
+        
+        in.close();
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
+    else {
+      mFilterTreeModel = FilterTreeModel.initInstance(new ProgramFilter[0]);
     final HashMap<String, ProgramFilter> filterList = new HashMap<String, ProgramFilter>();
 
     /* Add default filters. The user may not remove them. */
-
     ProgramFilter showAll = new ShowAllFilter();
     filterList.put(showAll.getName(), showAll);
     ProgramFilter pluginFilter = new PluginFilter();
@@ -94,6 +117,7 @@ public class FilterList {
     filterList.put(subtitleFilter.getName(), subtitleFilter);
     ProgramFilter audioDescriptionFilter = new AudioDescriptionFilter();
     filterList.put(audioDescriptionFilter.getName(), audioDescriptionFilter);
+    
 
     /* Read the available filters from the file system and add them to the array */
     if (mFilterDirectory == null) {
@@ -118,18 +142,6 @@ public class FilterList {
       }
     }
 
-    PluginAccess[] plugins = PluginManagerImpl.getInstance().getActivatedPlugins();
-
-    for (PluginAccess plugin : plugins) {
-      PluginsProgramFilter[] filters = plugin.getAvailableFilter();
-
-      if (filters != null) {
-        for (PluginsProgramFilter filter : filters) {
-          filterList.put(filter.getName(), filter);
-        }
-      }
-    }
-
     final ArrayList<ProgramFilter> filterArr = new ArrayList<ProgramFilter>();
 
     /* Sort the list*/
@@ -142,12 +154,12 @@ public class FilterList {
               String curFilterName = inxIn.readLine();
               while (curFilterName != null) {
                 if (curFilterName.equals("[SEPARATOR]")) {
-                  filterArr.add(new SeparatorFilter());
+                  mFilterTreeModel.addFilter(new SeparatorFilter());
                 } else {
                   ProgramFilter filter = filterList.get(curFilterName);
 
                   if (filter != null) {
-                    filterArr.add(filter);
+                    mFilterTreeModel.addFilter(filter);
                     filterList.remove(curFilterName);
                   }
                 }
@@ -166,11 +178,13 @@ public class FilterList {
 
     if (filterList.size() > 0) {
       for (ProgramFilter programFilter : filterList.values()) {
-        filterArr.add(programFilter);
+        mFilterTreeModel.addFilter(programFilter);
       }
     }
-
-    return filterArr.toArray(new ProgramFilter[filterArr.size()]);
+    
+    }}catch(Throwable t) {t.printStackTrace();}
+    
+    mFilterTreeModel.addPluginsProgramFilters();
   }
 
   private File[] getFilterFiles() {
@@ -180,8 +194,14 @@ public class FilterList {
       }
     });
   }
+  
+  public void createFilterMenu(JMenu filterMenu, ProgramFilter curFilter) {
+    mFilterTreeModel.createMenu(filterMenu,curFilter);
+  }
 
   public ProgramFilter[] getFilterArr() {
+    ProgramFilter[] mFilterArr = mFilterTreeModel.getAllFilters();
+    
     if (SearchFilter.getInstance().isActive()) {
       ProgramFilter[] filter = new ProgramFilter[mFilterArr.length + 1];
       System.arraycopy(mFilterArr, 0, filter, 0, mFilterArr.length);
@@ -194,7 +214,7 @@ public class FilterList {
   public PluginsProgramFilter[] getPluginsProgramFiltersForPlugin(PluginAccess plugin) {
     ArrayList<PluginsProgramFilter> list = new ArrayList<PluginsProgramFilter>();
 
-    for (ProgramFilter filter : mFilterArr) {
+    for (ProgramFilter filter : mFilterTreeModel.getAllFilters()) {
       if (filter instanceof PluginsProgramFilter) {
         if (((PluginsProgramFilter) filter).getPluginAccessOfFilter().equals(plugin)) {
           list.add((PluginsProgramFilter) filter);
@@ -207,7 +227,7 @@ public class FilterList {
 
   public UserFilter[] getUserFilterArr() {
     ArrayList<UserFilter> filterList = new ArrayList<UserFilter>();
-    for (ProgramFilter filter : mFilterArr) {
+    for (ProgramFilter filter : mFilterTreeModel.getAllFilters()) {
       if (filter instanceof UserFilter) {
         filterList.add((UserFilter) filter);
       }
@@ -218,7 +238,7 @@ public class FilterList {
 
 
   public boolean containsFilter(String filterName) {
-    for (ProgramFilter filter : mFilterArr) {
+    for (ProgramFilter filter : mFilterTreeModel.getAllFilters()) {
       if (filter.getName().equalsIgnoreCase(filterName)) {
         return true;
       }
@@ -227,10 +247,12 @@ public class FilterList {
   }
 
   public void setProgramFilterArr(ProgramFilter[] filterArr) {
-    mFilterArr = filterArr;
+    //TODO
+    //mFilterArr = filterArr;
   }
 
   public void addProgramFilter(ProgramFilter filter) {
+    ProgramFilter[] mFilterArr = mFilterTreeModel.getAllFilters();
     ProgramFilter[] newFilterArr = new ProgramFilter[mFilterArr.length + 1];
 
     System.arraycopy(mFilterArr, 0, newFilterArr, 0, mFilterArr.length);
@@ -241,17 +263,26 @@ public class FilterList {
   }
 
   public void remove(ProgramFilter filter) {
-    ArrayList<ProgramFilter> filterList = new ArrayList<ProgramFilter>();
-    for (ProgramFilter programFilter : mFilterArr) {
-      if (!programFilter.equals(filter)) {
-        filterList.add(programFilter);
-      }
-    }
-    mFilterArr = filterList.toArray(new ProgramFilter[filterList.size()]);
+    mFilterTreeModel.deleteFilter(filter);
     store();
   }
 
   public void store() {
+    try {
+      ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(mFilterDat));
+      
+      mFilterTreeModel.storeData(out);
+      
+      out.flush();
+      out.close();
+    } catch (FileNotFoundException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    
     /* delete all filters*/
     File[] fileList = getFilterFiles();
     if (fileList != null) {
@@ -260,22 +291,11 @@ public class FilterList {
       }
     }
 
-    for (ProgramFilter filter : mFilterArr) {
+    for (ProgramFilter filter : mFilterTreeModel.getAllFilters()) {
       if (filter instanceof UserFilter) {
         ((UserFilter) filter).store();
       }
     }
-
-    File inxFile = new File(mFilterDirectory, FILTER_INDEX);
-    StreamUtilities.bufferedWriterIgnoringExceptions(inxFile,
-        new BufferedWriterProcessor() {
-          public void process(BufferedWriter writer) throws IOException {
-            for (ProgramFilter filter : mFilterArr) {
-              writer.write(filter.getName() + "\n");
-            }
-            writer.close();
-          }
-        });
   }
 
   /**
@@ -289,7 +309,7 @@ public class FilterList {
       return null;
     }
 
-    for (ProgramFilter filter : mFilterArr) {
+    for (ProgramFilter filter : mFilterTreeModel.getAllFilters()) {
       if (filter.getName().equals(name)) {
         return filter;
       }
@@ -305,7 +325,7 @@ public class FilterList {
    * @since 2.6
    */
   protected ProgramFilter getAllFilter() {
-    for (ProgramFilter filter : mFilterArr) {
+    for (ProgramFilter filter : mFilterTreeModel.getAllFilters()) {
       if (filter.getClass().getName().equals("tvbrowser.core.filters.ShowAllFilter")) {
         return filter;
       }
@@ -320,6 +340,7 @@ public class FilterList {
    * @return the Default-Filter
    */
   protected ProgramFilter getDefaultFilter() {
+    try {
     ProgramFilter allFilter = null;
 
     String filterId = Settings.propDefaultFilter.getString();
@@ -331,7 +352,7 @@ public class FilterList {
       filterName = filterValues[1];
     }
 
-    for (ProgramFilter filter : mFilterArr) {
+    for (ProgramFilter filter : mFilterTreeModel.getAllFilters()) {
       if (filter.getClass().getName().equals("tvbrowser.core.filters.ShowAllFilter")) {
         allFilter = filter;
       } else
@@ -343,7 +364,7 @@ public class FilterList {
     if (allFilter != null) {
       return allFilter;
     }
-
+    }catch(Throwable t) {t.printStackTrace();}
     return new ShowAllFilter();
   }
 
@@ -353,5 +374,9 @@ public class FilterList {
       return className.substring(0, index);
     }
     return className;
+  }
+  
+  public FilterTreeModel getFilterTreeModel() {
+    return mFilterTreeModel;
   }
 }
