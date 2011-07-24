@@ -32,12 +32,13 @@ import devplugin.ProgramFilter;
  * is used to mark seperators
  */
 public class SeparatorFilter implements ProgramFilter {
-
+  public final static String KEY = "[SEPARATOR]";
+  
     public boolean accept(devplugin.Program prog) {
       return false;
     }
     public String getName() {
-        return "[SEPARATOR]";
+        return KEY;
     }
 
     /**

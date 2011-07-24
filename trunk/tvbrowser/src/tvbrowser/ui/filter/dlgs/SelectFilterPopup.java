@@ -35,28 +35,17 @@ import util.ui.ScrollableMenu;
 /**
  * Creates a Popup for Filtering
  */
-public class SelectFilterPopup extends ScrollableMenu{
-    
-    /** MainFrame */
-    private MainFrame mMainFrame;
+public class SelectFilterPopup extends ScrollableMenu {
+   
     
     /**
      * Creates the Popup
      * @param mainFrame MainFrame
      */
     public SelectFilterPopup(MainFrame mainFrame) {
-        mMainFrame = mainFrame;
-        FilterButtons filterButtons = new FilterButtons(mMainFrame);
+      super();
         
-        JMenuItem[] filterMenuItems = filterButtons.createFilterMenuItems();
-        for (JMenuItem filterMenuItem : filterMenuItems) {
-          if (filterMenuItem != null) {
-              add(filterMenuItem);
-          } else {
-              addSeparator();
-          }
-        }
-
+        FilterButtons.createFilterButtons(this,mainFrame);
     }
 
 }

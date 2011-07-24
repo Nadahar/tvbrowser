@@ -26,19 +26,16 @@
 
 package tvbrowser.ui.filter.dlgs;
 
-import java.awt.Font;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
-import javax.swing.ButtonGroup;
+import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-import javax.swing.JRadioButtonMenuItem;
 
-import tvbrowser.core.Settings;
+
 import tvbrowser.core.filters.FilterList;
-import tvbrowser.core.filters.SeparatorFilter;
 import tvbrowser.core.filters.ShowAllFilter;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.programtable.ProgramTableModel;
@@ -54,56 +51,67 @@ public class FilterButtons implements ActionListener {
     /** The localizer for this class. */
     public static final util.ui.Localizer mLocalizer
       = util.ui.Localizer.getLocalizerFor(FilterButtons.class);
-    
-    /** Mainframe */
-    private MainFrame mMainFrame;
 
     /** Menu-Items */
     private JMenuItem mCreateFilterMI, mSendFilterMI;
 
+    
     /**
      * Constructor
      * @param mainFrame MainFrame
      */
-    public FilterButtons(MainFrame mainFrame) {
-        mMainFrame = mainFrame;
+    private FilterButtons(JMenu filterMenu, MainFrame mainFrame) {
+      createFilterMenuItems(filterMenu,mainFrame);
+    }
+    
+    public static void createFilterButtons(JMenu filterMenu, MainFrame mainFrame) {
+      new FilterButtons(filterMenu,mainFrame);
     }
 
     /**
      * Returns the Menus for Filtering
      * @return Menus for Filtering
      */
-    public JMenuItem[] createFilterMenuItems() {
-        ButtonGroup group = new ButtonGroup();
-        FilterList filterList = FilterList.getInstance();
-        ProgramFilter[] filterArr = filterList.getFilterArr();
-        ProgramFilter curFilter = mMainFrame.getProgramFilter();
+    private void createFilterMenuItems(JMenu filterMenu, MainFrame mainFrame) {
+       // ButtonGroup group = new ButtonGroup();
+     //   FilterList filterList = FilterList.getInstance();
+        //ProgramFilter[] filterArr = filterList.getFilterArr();
+        ProgramFilter curFilter = mainFrame.getProgramFilter();
         
-        int size = filterArr.length + 2;
+      //  int size = filterArr.length + 2;
         
-        if ((curFilter != null) && !(curFilter instanceof ShowAllFilter)) {
+       /* if ((curFilter != null) && !(curFilter instanceof ShowAllFilter)) {
             size++;
-        }
+        }*/
         
-        JMenuItem[] result = new JMenuItem[size];
+      //  JMenuItem[] result = new JMenuItem[size];
         
         mCreateFilterMI = new JMenuItem(mLocalizer.ellipsisMsg("createFilter", "Create filter"));
         mCreateFilterMI.addActionListener(this);
         
-        int count = 2;
+        filterMenu.add(mCreateFilterMI);
+        
+        
+   //     int count = 2;
 
         if ((curFilter != null) && !(curFilter instanceof ShowAllFilter)){
             mSendFilterMI = new JMenuItem(mLocalizer.msg("sendPrograms", "Send visible Programs to another Plugin"));
             mSendFilterMI.addActionListener(this);
-            result[1] = mSendFilterMI;
-            result[2] = null;
-            count++;
+            filterMenu.add(mSendFilterMI);
+          //  result[1] = mSendFilterMI;
+         //   result[2] = null;
+      //      count++;
         }
-        else {
+     /*   else {
           result[1] = null;
-        }
+        }*/
         
-        result[0] = mCreateFilterMI;
+        filterMenu.addSeparator();
+        
+        FilterList.getInstance().createFilterMenu(filterMenu,curFilter);
+        
+      /*  result[0] = mCreateFilterMI;
+        result[0] = new JMenu();
         
         for (int i = 0; i < filterArr.length; i++) {
           
@@ -147,12 +155,12 @@ public class FilterButtons implements ActionListener {
             }
         }
         
-        return result;
+        return result;*/
     }
 
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == mCreateFilterMI) {
-            mMainFrame.showFilterDialog();
+            MainFrame.getInstance().showFilterDialog();
         } else if (e.getSource() == mSendFilterMI) {
             sendPrograms();
         }
@@ -165,7 +173,7 @@ public class FilterButtons implements ActionListener {
         
         Program[] prgs = collectPrograms();
         
-        SendToPluginDialog sendTo = new SendToPluginDialog(null, (Window)mMainFrame, prgs);
+        SendToPluginDialog sendTo = new SendToPluginDialog(null, (Window)MainFrame.getInstance(), prgs);
         sendTo.setVisible(true);
     }
 
@@ -176,7 +184,7 @@ public class FilterButtons implements ActionListener {
     private Program[] collectPrograms() {
         ArrayList<Program> array = new ArrayList<Program>();
         
-        ProgramTableModel model = mMainFrame.getProgramTableModel();
+        ProgramTableModel model = MainFrame.getInstance().getProgramTableModel();
         
         int columnCount = model.getColumnCount();
 		for (int col = 0; col < columnCount; col++) {

@@ -28,6 +28,7 @@ package tvbrowser.ui.filter.dlgs;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Iterator;
@@ -36,15 +37,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -79,7 +79,9 @@ import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
 import com.jgoodies.forms.builder.ButtonBarBuilder2;
-import com.jgoodies.forms.factories.DefaultComponentFactory;
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.factories.CC;
+import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.PluginAccess;
 import devplugin.PluginsFilterComponent;
@@ -100,6 +102,20 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
 
   private JTextField mDescTF, mNameTF;
 
+  public EditFilterComponentDlg(JDialog parent) {
+    this(parent, null);
+  }
+
+  public EditFilterComponentDlg(JDialog parent, FilterComponent comp) {
+    this(parent, comp, null);
+  }
+
+  public EditFilterComponentDlg(JDialog parent, FilterComponent comp, Class<? extends FilterComponent> filterComponentClass) {
+    super(parent, true);
+    init(parent,comp,filterComponentClass);
+  }
+
+  
   public EditFilterComponentDlg(JFrame parent) {
     this(parent, null);
   }
@@ -110,43 +126,45 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
 
   public EditFilterComponentDlg(JFrame parent, FilterComponent comp, Class<? extends FilterComponent> filterComponentClass) {
     super(parent, true);
-
+    init(parent,comp,filterComponentClass);
+  }
+  
+  private void init(Window parent, FilterComponent comp, Class<? extends FilterComponent> filterComponentClass) {
+    try {
     UiUtilities.registerForClosing(this);
-
-    mContentPane = (JPanel) getContentPane();
-    mContentPane.setLayout(new BorderLayout(7, 7));
-    mContentPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
     setTitle(mLocalizer.msg("title", "Edit filter component"));
-
-    JPanel northPanel = new JPanel();
-    northPanel.setLayout(new BoxLayout(northPanel, BoxLayout.Y_AXIS));
-
-    JPanel namePanel = new JPanel(new BorderLayout());
-    namePanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 7, 0));
-    JPanel descPanel = new JPanel(new BorderLayout());
-    descPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 7, 0));
-
-    JPanel typePanel = new JPanel(new BorderLayout());
-
-    namePanel.add(new JLabel(mLocalizer.msg("componentName", "Component name:")), BorderLayout.WEST);
+    mContentPane = (JPanel)getContentPane();
+    
     mNameTF = new JTextField(new PlainDocument() {
-
       public void insertString(int offset, String str, AttributeSet a) throws BadLocationException {
         str = str.replaceAll(REGEX_INVALID_CHARACTERS, "_");
         super.insertString(offset, str, a);
       }
     }, "", 20);
     mNameTF.getDocument().addDocumentListener(this);
-
-    namePanel.add(mNameTF, BorderLayout.EAST);
+    
     mDescTF = new JTextField(20);
-    descPanel.add(new JLabel(mLocalizer.msg("componentDescription", "Description:")), BorderLayout.WEST);
-    descPanel.add(mDescTF, BorderLayout.EAST);
-    typePanel.add(new JLabel(mLocalizer.msg("componentType", "Type:")), BorderLayout.WEST);
-
+    
     mRuleCb = new JComboBox();
     mRuleCb.addActionListener(this);
     mRuleCb.addItem(mLocalizer.msg("hint", "must choose one"));
+    
+    mCenterPanel = new JPanel(new BorderLayout());
+    
+    PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,default,5dlu,default:grow,5dlu,",
+        "default,5dlu,default,2dlu,default,2dlu,default,10dlu,default,5dlu,fill:default:grow,5dlu,default,5dlu,default"),mContentPane);
+    pb.setDefaultDialogBorder();
+    
+    pb.addSeparator(mLocalizer.msg("component", "Component"), CC.xyw(1,1,5));
+    pb.addLabel(mLocalizer.msg("name","Name:"), CC.xy(2,3));
+    pb.add(mNameTF, CC.xy(4,3));
+    pb.addLabel(mLocalizer.msg("description", "Description:"), CC.xy(2,5));
+    pb.add(mDescTF, CC.xy(4,5));
+    pb.addLabel(mLocalizer.msg("type", "Type:"), CC.xy(2,7));
+    pb.add(mRuleCb, CC.xy(4,7));
+    pb.addSeparator(mLocalizer.msg("componentSettings", "Component settings:"), CC.xyw(1,9,5));
+    pb.add(mCenterPanel, CC.xyw(2,11,3));
+    pb.add(new JSeparator(JSeparator.HORIZONTAL), CC.xyw(1,13,5));
 
     // The TreeSet sorts the Entries
     TreeSet<FilterComponent> set = new TreeSet<FilterComponent>(new FilterComponent.TypeComparator());
@@ -209,12 +227,6 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
       mRuleCb.addItem(it.next());
     }
 
-    typePanel.add(mRuleCb, BorderLayout.EAST);
-
-    northPanel.add(namePanel);
-    northPanel.add(descPanel);
-    northPanel.add(typePanel);
-
     ButtonBarBuilder2 bottomBar = Utilities.createFilterButtonBar();
 
     mOkBtn = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
@@ -226,16 +238,6 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
     mCancelBtn.addActionListener(this);
     bottomBar.addButton(new JButton[] {mOkBtn, mCancelBtn});
 
-    JPanel panel = new JPanel(new BorderLayout());
-    panel.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("componentSettings", "Component settings:")), BorderLayout.NORTH);
-
-    mCenterPanel = new JPanel(new BorderLayout());
-    panel.add(mCenterPanel, BorderLayout.CENTER);
-
-    mContentPane.add(northPanel, BorderLayout.NORTH);
-    mContentPane.add(bottomBar.getPanel(), BorderLayout.SOUTH);
-    mContentPane.add(panel, BorderLayout.CENTER);
-
     if (comp != null) {
       this.setFilterComponent(comp);
     }
@@ -243,9 +245,13 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
       mRuleCb.setSelectedIndex(1);
     }
 
+    pb.add(bottomBar.getPanel(), CC.xyw(1,15,5));
+    
     updateOkBtn();
-    Settings.layoutWindow("editFilterComponentDlg", this, new Dimension(500,500));
+    Settings.layoutWindow("editFilterComponentDlg", this, new Dimension(500,550));
+    setLocationRelativeTo(parent);
     setVisible(true);
+    }catch(Throwable t) {t.printStackTrace();}
   }
 
   private void setFilterComponent(FilterComponent comp) {

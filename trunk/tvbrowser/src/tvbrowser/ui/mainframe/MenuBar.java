@@ -38,6 +38,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.InputMap;
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -535,7 +536,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 		menuItemAdd.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
-				EditFilterComponentDlg dlg = new EditFilterComponentDlg(null, null,
+				EditFilterComponentDlg dlg = new EditFilterComponentDlg((JFrame)null, null,
 						ChannelFilterComponent.class);
 				FilterComponent rule = dlg.getFilterComponent();
 				if ((rule != null) && (rule instanceof ChannelFilterComponent)) {
@@ -557,7 +558,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
         if (rule != null) {
           // rule must be removed before editing it, otherwise the dialog doesn't save it
           FilterComponentList.getInstance().remove(rule.getName());
-          EditFilterComponentDlg dlg = new EditFilterComponentDlg(null, rule);
+          EditFilterComponentDlg dlg = new EditFilterComponentDlg((JFrame)null, rule);
           FilterComponent newRule = dlg.getFilterComponent();
           if (newRule == null) { // restore original rule
             newRule = rule;
@@ -716,16 +717,19 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 	}
 
 	public void updateFiltersMenu() {
+	  try {
 		mFiltersMenu.removeAll();
-		FilterButtons filterButtons = new FilterButtons(mMainFrame);
-		JMenuItem[] filterMenuItems = filterButtons.createFilterMenuItems();
+		FilterButtons.createFilterButtons(mFiltersMenu,mMainFrame);
+	  }catch(Throwable t) {t.printStackTrace();}
+		//FilterButtons filterButtons = new FilterButtons(mFiltersMenu);
+		/*JMenuItem[] filterMenuItems = filterButtons.createFilterMenuItems();
 		for (JMenuItem menuItem : filterMenuItems) {
 			if (menuItem != null) {
 				mFiltersMenu.add(menuItem);
 			} else {
 				mFiltersMenu.addSeparator();
 			}
-		}
+		}*/
 		mViewFilterBarMI.setEnabled(!mMainFrame.isDefaultFilterActivated());
 	}
 

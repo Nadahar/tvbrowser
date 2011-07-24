@@ -7,6 +7,7 @@ import devplugin.ProgramFilter;
  * This Filter filters Movies that have audio description for Handicaped Persons
  */
 public class AudioDescriptionFilter implements ProgramFilter {
+  public static final String KEY = "[AUDIO_DESCRIPTION_FILTER]";
   /**
    * Localizer
    */
