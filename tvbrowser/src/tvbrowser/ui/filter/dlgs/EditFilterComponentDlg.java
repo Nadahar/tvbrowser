@@ -130,7 +130,6 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
   }
   
   private void init(Window parent, FilterComponent comp, Class<? extends FilterComponent> filterComponentClass) {
-    try {
     UiUtilities.registerForClosing(this);
     setTitle(mLocalizer.msg("title", "Edit filter component"));
     mContentPane = (JPanel)getContentPane();
@@ -152,7 +151,7 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
     mCenterPanel = new JPanel(new BorderLayout());
     
     PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,default,5dlu,default:grow,5dlu,",
-        "default,5dlu,default,2dlu,default,2dlu,default,10dlu,default,5dlu,fill:default:grow,5dlu,default,5dlu,default"),mContentPane);
+        "default,5dlu,default,2dlu,default,2dlu,default,10dlu,default,5dlu,fill:200dlu:grow,5dlu,default,5dlu,default"),mContentPane);
     pb.setDefaultDialogBorder();
     
     pb.addSeparator(mLocalizer.msg("component", "Component"), CC.xyw(1,1,5));
@@ -251,7 +250,6 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
     Settings.layoutWindow("editFilterComponentDlg", this, new Dimension(500,550));
     setLocationRelativeTo(parent);
     setVisible(true);
-    }catch(Throwable t) {t.printStackTrace();}
   }
 
   private void setFilterComponent(FilterComponent comp) {

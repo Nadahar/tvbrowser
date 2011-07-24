@@ -157,7 +157,7 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
     pb.add(toolbarPn, CC.xyw(1,1,3)); 
     
     updateBtns();
-    Settings.layoutWindow("selectFilterDlg", this, new Dimension(500,400));
+    Settings.layoutWindow("selectFilterDlg", this, new Dimension(500,500));
   }
 
   private void addToolbarSeperator(JToolBar toolbarPn) {
