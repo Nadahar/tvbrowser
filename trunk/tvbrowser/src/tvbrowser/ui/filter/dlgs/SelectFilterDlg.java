@@ -143,6 +143,7 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
     mDefaultFilterBtn.addActionListener(this);
     mUpBtn.addActionListener(this);
     mDownBtn.addActionListener(this);
+    mNewFolder.addActionListener(this);
     
     mHelpBtn = Utilities.createHelpButton();
     mOkBtn = new JButton(Localizer.getLocalization(Localizer.I18N_CLOSE));
@@ -247,6 +248,8 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
         addSeparator(last);
       } else if (e.getSource() == mDefaultFilterBtn) {
         setDefaultFilter(last);
+      } else if (e.getSource() == mNewFolder) {
+        createNewFolder(last);
       }
     }
     }catch(Throwable t) {t.printStackTrace();}
