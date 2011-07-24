@@ -679,11 +679,19 @@ public class SystemTray {
               additional.add(new ProgramMenuItem(p, ProgramMenuItem.ON_TIME_TYPE, time, -1));
               
               if(it.hasNext()) {
-                additionalNext.add(new ProgramMenuItem(it.next(), ProgramMenuItem.AFTER_TYPE, time, -1));
+                Program test = it.next();
+                
+                if(test.getMarkerArr().length > 0 && test.getMarkPriority() >= Settings.propTrayImportantProgramsPriority.getInt()) {
+                  additionalNext.add(new ProgramMenuItem(test, ProgramMenuItem.AFTER_TYPE, time, -1));
+                }
               }
               else {
                 try {
-                  additionalNext.add(new ProgramMenuItem(TvDataBase.getInstance().getDayProgram(currentDate.addDays(day+1),ch).getProgramAt(0), ProgramMenuItem.AFTER_TYPE, time, -1));
+                  Program test = TvDataBase.getInstance().getDayProgram(currentDate.addDays(day+1),ch).getProgramAt(0);
+                  
+                  if(test.getMarkerArr().length > 0 && test.getMarkPriority() >= Settings.propTrayImportantProgramsPriority.getInt()) {
+                    additionalNext.add(new ProgramMenuItem(test, ProgramMenuItem.AFTER_TYPE, time, -1));
+                  }
                 }catch(Exception ee) {}
               }
             }
@@ -715,11 +723,19 @@ public class SystemTray {
                   additional.add(new ProgramMenuItem(p, ProgramMenuItem.ON_TIME_TYPE, time, -1));
                   
                   if(it.hasNext()) {
-                    additionalNext.add(new ProgramMenuItem(it.next(), ProgramMenuItem.AFTER_TYPE, time, -1));
+                    Program test = it.next();
+                    
+                    if(test.getMarkerArr().length > 0 && test.getMarkPriority() >= Settings.propTrayImportantProgramsPriority.getInt()) {
+                      additionalNext.add(new ProgramMenuItem(test, ProgramMenuItem.AFTER_TYPE, time, -1));
+                    }
                   }
                   else {
                     try {
-                      additionalNext.add(new ProgramMenuItem(TvDataBase.getInstance().getDayProgram(currentDate.addDays(day+1),ch).getProgramAt(0), ProgramMenuItem.AFTER_TYPE, time, -1));
+                      Program test = TvDataBase.getInstance().getDayProgram(currentDate.addDays(day+1),ch).getProgramAt(0);
+                      
+                      if(test.getMarkerArr().length > 0 && test.getMarkPriority() >= Settings.propTrayImportantProgramsPriority.getInt()) {
+                        additionalNext.add(new ProgramMenuItem(test, ProgramMenuItem.AFTER_TYPE, time, -1));
+                      }
                     }catch(Exception ee) {}
                   }
                 }
