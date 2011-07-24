@@ -209,6 +209,9 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
           if(item.isAndItem() || item.isNotItem() || item.isOrItem() || item.isOpenBracketItem() || item.isCloseBracketItem()) {
             label.setFont(label.getFont().deriveFont(Font.BOLD));
           }
+          else if(item.getComponent().getDescription().length() > 0) {
+            label.setText(label.getText() + " [" + item.getComponent().getDescription() + "]");
+          }
         }
         
         return label;
