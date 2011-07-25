@@ -307,7 +307,7 @@ public class FilterNode extends DefaultMutableTreeNode {
   
   public boolean isDeletingAllowed() {
     return !(userObject instanceof ShowAllFilter || userObject instanceof PluginFilter || userObject instanceof SubtitleFilter ||
-        userObject instanceof AudioDescriptionFilter || userObject instanceof PluginsProgramFilter);
+        userObject instanceof AudioDescriptionFilter || userObject instanceof PluginsProgramFilter || getChildCount() > 0);
   }
   
   public boolean testAndSetToPluginsProgramFilter(PluginsProgramFilter filter) {
