@@ -338,7 +338,7 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
     listPanel.add(new JScrollPane(mFilterConstruction), CC.xy(2,3));
     
     filterCreation.add(listPanel.getPanel(), CC.xyw(1,12,4));
-    filterCreation.add(UiUtilities.createHelpTextArea(mLocalizer.msg("help","To create or edit a filter you can enter the rules in the text field or drag and drop the rules to the left side.")), CC.xyw(2,14,2));
+    filterCreation.add(UiUtilities.createHelpTextArea(mLocalizer.msg("help","To create or edit a filter you can enter the rules in the text field or drag and drop the rules to the left side.")), CC.xyw(2,14,4));
     filterCreation.add(new JSeparator(JSeparator.HORIZONTAL), CC.xyw(1,16,4));
     filterCreation.add(bottomBar.getPanel(), CC.xyw(1,18,4));
     
