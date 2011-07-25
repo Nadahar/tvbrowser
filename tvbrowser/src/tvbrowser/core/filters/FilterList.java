@@ -124,9 +124,7 @@ public class FilterList {
       throw new NullPointerException("directory is null");
     }
 
-
     File[] fileList = getFilterFiles();
-
 
     if (fileList != null) {
       for (File file : fileList) {
@@ -141,8 +139,6 @@ public class FilterList {
         }
       }
     }
-
-    final ArrayList<ProgramFilter> filterArr = new ArrayList<ProgramFilter>();
 
     /* Sort the list*/
     try {
@@ -251,14 +247,9 @@ public class FilterList {
     //mFilterArr = filterArr;
   }
 
-  public void addProgramFilter(ProgramFilter filter) {
-    ProgramFilter[] mFilterArr = mFilterTreeModel.getAllFilters();
-    ProgramFilter[] newFilterArr = new ProgramFilter[mFilterArr.length + 1];
+  public void addProgramFilter(ProgramFilter filter) {    
+    mFilterTreeModel.addFilter(filter);
 
-    System.arraycopy(mFilterArr, 0, newFilterArr, 0, mFilterArr.length);
-    newFilterArr[newFilterArr.length - 1] = filter;
-
-    mFilterArr = newFilterArr;
     store();
   }
 

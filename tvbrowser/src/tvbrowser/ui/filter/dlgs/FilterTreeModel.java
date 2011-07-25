@@ -125,7 +125,7 @@ public class FilterTreeModel extends DefaultTreeModel {
         if(child.isDirectoryNode()) {
           deleteFilter(child, filter);
         } else if(child.containsFilter() || child.containsSeparator()) {
-          if(child.equals(filter) && child.isDeletingAllowed()) {
+          if(child.contains(filter) && child.isDeletingAllowed()) {
             node.remove(child);
           }
         }

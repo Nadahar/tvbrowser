@@ -255,14 +255,14 @@ public abstract class AbstractContextMenu implements ContextMenu {
 
   protected JMenuItem getFilterMenuItem(final TreePath treePath) {
     final Node node = (Node) treePath.getLastPathComponent();
-    String pathName = "";
+    StringBuilder pathName = new StringBuilder();
     for (int i = 1; i < treePath.getPathCount(); i++) {
       if (i > 1) {
-        pathName = pathName + "/";
+        pathName.append("/");
       }
-      pathName = pathName + treePath.getPathComponent(i);
+      pathName.append(treePath.getPathComponent(i));
     }
-    final String filterName = mLocalizer.msg("pluginFilter.name", "Plugin filter ({0})", pathName);
+    final String filterName = mLocalizer.msg("pluginFilter.name", "Plugin filter ({0})", pathName.toString());
 
     Action action = new AbstractAction(){
       public void actionPerformed(ActionEvent e) {
