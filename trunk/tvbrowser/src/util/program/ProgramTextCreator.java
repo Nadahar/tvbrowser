@@ -427,15 +427,15 @@ public class ProgramTextCreator {
                 iconLabel.setToolTipText(internalPlugin.getName());
                 if (internalPlugin.equals(FavoritesPluginProxy.getInstance())) {
                   // if this is a favorite, add the names of the favorite
-                  String favTitles = "";
+                  StringBuilder favTitles = new StringBuilder();
                   for (Favorite favorite : FavoriteTreeModel.getInstance().getFavoritesContainingProgram(prog)) {
                     if (favTitles.length() > 0) {
-                      favTitles = favTitles + ", ";
+                      favTitles.append(", ");
                     }
-                    favTitles = favTitles + favorite.getName();
+                    favTitles.append(favorite.getName());
                   }
                   if (favTitles.length() > 0) {
-                    iconLabel.setToolTipText(iconLabel.getToolTipText() + " (" + favTitles + ")");
+                    iconLabel.setToolTipText(iconLabel.getToolTipText() + " (" + favTitles.toString() + ")");
                   }
                 }
               }

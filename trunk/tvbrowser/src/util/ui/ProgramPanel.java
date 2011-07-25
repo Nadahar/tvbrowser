@@ -1265,16 +1265,16 @@ private static Font getDynamicFontSize(Font font, int offset) {
           text = internalPlugin.getName();
           if (internalPlugin.equals(FavoritesPluginProxy.getInstance())) {
             // if this is a favorite, add the names of the favorite
-            String favTitles = "";
+            StringBuilder favTitles = new StringBuilder();
             for (Favorite favorite : FavoriteTreeModel.getInstance()
                 .getFavoritesContainingProgram(mProgram)) {
               if (favTitles.length() > 0) {
-                favTitles += ", ";
+                favTitles.append(", ");
               }
-              favTitles += favorite.getName();
+              favTitles.append(favorite.getName());
             }
             if (favTitles.length() > 0) {
-              text += " (" + favTitles + ')';
+              text += " (" + favTitles.toString() + ')';
             }
           }
         }

@@ -263,11 +263,22 @@ public class FilterNode extends DefaultMutableTreeNode {
     return null;
   }
   
-  public boolean equals(Object o) {
-    if(o instanceof ProgramFilter) {
-      return containsFilter() && userObject == o;
-    } else if(o instanceof SeparatorFilter) {
+  public boolean contains(Object o) {
+    if(o instanceof SeparatorFilter) {
       return containsSeparator() && userObject == o;
+    }
+    else if(o instanceof ProgramFilter) {
+      return containsFilter() && userObject == o;
+    }
+    
+    return false;
+  }
+  
+  public boolean equals(Object o) {
+    if(o instanceof SeparatorFilter) {
+      return containsSeparator() && userObject == o;
+    } else if(o instanceof ProgramFilter) {
+      return containsFilter() && userObject == o;
     } else {
       return this == o;
     }

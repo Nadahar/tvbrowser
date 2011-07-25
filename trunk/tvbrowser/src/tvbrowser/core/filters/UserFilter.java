@@ -284,27 +284,27 @@ public class UserFilter implements devplugin.ProgramFilter {
       }
     }
 
-    String msg = "";
+    StringBuilder msg = new StringBuilder();
     for (int i = 0; i < expectedTypes.length; i++) {
       if (expectedTypes[i] == Token.AND) {
-        msg += "'" + mLocalizer.msg("and", "and") + "'";
+        msg.append("'").append(mLocalizer.msg("and", "and")).append("'");
       } else if (expectedTypes[i] == Token.ITEM) {
-        msg += mLocalizer.msg("componentName", "component name");
+        msg.append(mLocalizer.msg("componentName", "component name"));
       } else if (expectedTypes[i] == Token.LEFT_BRACKET) {
-        msg += "'('";
+        msg.append("'('");
       } else if (expectedTypes[i] == Token.RIGHT_BRACKET) {
-        msg += "')'";
+        msg.append("')'");
       } else if (expectedTypes[i] == Token.NOT) {
-        msg += "'" + mLocalizer.msg("not", "not") + "'";
+        msg.append("'").append(mLocalizer.msg("not", "not")).append("'");
       } else if (expectedTypes[i] == Token.OR) {
-        msg += "'" + mLocalizer.msg("or", "or") + "'";
+        msg.append("'").append(mLocalizer.msg("or", "or")).append("'");
       }
       if (i < expectedTypes.length - 1) {
-        msg += ", ";
+        msg.append(", ");
       }
     }
-    msg += mLocalizer.msg("expected", "expected");
-    throw new ParserException(foundToken.pos, msg);
+    msg.append(mLocalizer.msg("expected", "expected"));
+    throw new ParserException(foundToken.pos, msg.toString());
   }
 
   private static Node rule() throws ParserException {

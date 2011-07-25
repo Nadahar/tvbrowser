@@ -285,11 +285,11 @@ public class SettingsDialog implements WindowClosingIf {
     protected void saveSettingsTab() {
     TreePath selection = mSelectionTree.getSelectionPath();
     if (selection != null) {
-      String path = "";
+      StringBuilder path = new StringBuilder();
       for (int i = 0; i < selection.getPathCount(); i++) {
-        path = path + selection.getPathComponent(i);
+        path.append(selection.getPathComponent(i));
       }
-      Settings.propLastUsedSettingsPath.setString(path);
+      Settings.propLastUsedSettingsPath.setString(path.toString());
     }
   }
 
@@ -314,12 +314,12 @@ public class SettingsDialog implements WindowClosingIf {
   }
 
   private SettingNode findSettingNodeByPath(SettingNode root, String searchPath) {
-    String pathString = "";
+    StringBuilder pathString = new StringBuilder();
     TreeNode[] rootPath = root.getPath();
     for (TreeNode treeNode : rootPath) {
-      pathString = pathString + ((SettingNode) treeNode).toString();
+      pathString.append(((SettingNode) treeNode).toString());
     }
-    if (searchPath.equals(pathString)) {
+    if (searchPath.equals(pathString.toString())) {
       return root;
     }
     int cnt = root.getChildCount();
