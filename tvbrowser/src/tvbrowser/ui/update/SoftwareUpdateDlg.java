@@ -161,6 +161,7 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
   public SoftwareUpdateDlg(Window parent,
       int dialogType, SoftwareUpdateItem[] itemArr) {
     this(parent, null, dialogType, itemArr);
+    mDownloadBtn.setEnabled(itemArr.length > 0);
   }
   
   /**
