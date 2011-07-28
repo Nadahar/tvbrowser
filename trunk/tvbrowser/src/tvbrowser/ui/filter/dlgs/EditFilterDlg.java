@@ -236,7 +236,7 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
     mFilterConstruction.setCellRenderer(new DefaultListCellRenderer() {
       public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
         JLabel label = (JLabel) super.getListCellRendererComponent(list,value,index,isSelected,cellHasFocus);
-        
+        try {
         if(value instanceof FilterItem) {
           FilterItem item = (FilterItem)value;
           
@@ -296,7 +296,7 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
 
           return panel;
         }
-        
+        }catch(Throwable t) {t.printStackTrace();}
         
         return label;
       }
@@ -315,7 +315,11 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
     new DragAndDropMouseListener(mFilterConstruction,mFilterComponentList,this,dnDHandler);
     
     mFilterComponentList.addMouseListener(new MouseAdapter() {
+      public void mousePressed(MouseEvent e) {
+        mFilterComponentList.requestFocus();
+      }
       public void mouseClicked(MouseEvent e) {
+        
         if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2) {
           int index = mFilterComponentList.locationToIndex(e.getPoint());
           mFilterComponentList.setSelectedIndex(index);
@@ -705,11 +709,13 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
 
   @Override
   public void drop(JList source, JList target, int row, boolean move) {try {
-    // TODO Auto-generated method stub
+    mFilterNameTF.requestFocus();
+    
     if(target.equals(mFilterConstruction)) {
       if(source.equals(mFilterComponentList)) {
         FilterItem value = (FilterItem)source.getSelectedValue();
         ((DefaultListModel)target.getModel()).add(row,value.clone(0));
+        
         int level = 0;
         
         for(int i = 0; i < target.getModel().getSize(); i++) {
