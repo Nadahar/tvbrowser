@@ -376,7 +376,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
     File file = new File(mWorkingDirectory , "main_" + Mirror.MIRROR_LIST_FILE_NAME);
 
     try {
-      return Mirror.chooseUpToDateMirror(Mirror.readMirrorListFromFile(file),null,"DataHydra", "main", SweDBTvDataService.class, mLocalizer.msg("error.additional"," Please inform the TV-Browser team."));
+      return Mirror.chooseUpToDateMirror(Mirror.readMirrorListFromFile(file),null,"DataHydra", "main", SweDBTvDataService.class, mLocalizer.msg("error.additional"," Please inform the maintainer of the DataHydra data plugin."));
     } catch (Exception exc) {
       try {
         String[] defaultMirrors = getDefaultMirrors();
@@ -387,7 +387,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
             mirr[i] = new Mirror(defaultMirrors[i]);
           }
 
-          return Mirror.chooseUpToDateMirror(mirr,null,"DataHydra", "main", SweDBTvDataService.class, mLocalizer.msg("error.additional"," Please inform the TV-Browser team."));
+          return Mirror.chooseUpToDateMirror(mirr,null,"DataHydra", "main", SweDBTvDataService.class, mLocalizer.msg("error.additional"," Please inform the maintainer of the DataHydra data plugin."));
         } else {
           throw exc;
         }

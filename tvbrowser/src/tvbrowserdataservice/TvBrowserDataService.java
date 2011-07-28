@@ -74,7 +74,7 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
   public static final util.ui.Localizer mLocalizer
           = util.ui.Localizer.getLocalizerFor(TvBrowserDataService.class);
 
-  private static final Version VERSION = new Version(3,0);
+  private static final Version VERSION = new Version(3,1);
 
   protected static final String CHANNEL_GROUPS_FILENAME = "groups.txt";
   private static final String DEFAULT_CHANNEL_GROUPS_URL = "http://tvbrowser.org/listings";
@@ -659,7 +659,7 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
 
     if(file.isFile()) {
       try {
-        return Mirror.chooseUpToDateMirror(Mirror.readMirrorListFromFile(file),null,"Groups.txt", "groups", TvBrowserDataService.class, "  Please inform the TV-Browser team.");
+        return Mirror.chooseUpToDateMirror(Mirror.readMirrorListFromFile(file),null,"Groups.txt", "groups", TvBrowserDataService.class, "  Please inform the maintainer of the EPGfree data plugin.");
       } catch (Exception exc) {}
     }
 
@@ -676,7 +676,7 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
           mirr[i] = new Mirror(defaultMirrors[i]);
         }
 
-        Mirror choosenMirror = Mirror.chooseUpToDateMirror(mirr,null,"Groups.txt", "groups",TvBrowserDataService.class, " Please inform the TV-Browser team.");
+        Mirror choosenMirror = Mirror.chooseUpToDateMirror(mirr,null,"Groups.txt", "groups",TvBrowserDataService.class, " Please inform the maintainer of the EPGfree data plugin.");
 
         if(choosenMirror != null) {
           return choosenMirror;
@@ -783,8 +783,8 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
    */
   public PluginInfo getInfo() {
     return new devplugin.PluginInfo(TvBrowserDataService.class,
-            mLocalizer.msg("name","TV-Browser data"),
-            mLocalizer.msg("description", "Die eigenen TV-Daten des TV-Browser-Projektes"),
+            mLocalizer.msg("name","EPGfree data"),
+            mLocalizer.msg("description", "Data that is available for free with mostly German, Swiss, Austrian and Danish channels."),
             "Til Schneider, www.murfman.de",
             mLocalizer.msg("license","Terms of Use:\n=============\nAll TV/Radio listings provided by TV-Browser (http://www.tvbrowser.org) are protected by copyright laws and may only be used within TV-Browser or other name like applications authorizied by the manufacturer of TV-Browser (http://www.tvbrowser.org) for information about the upcoming program of the available channels.\nEvery other manner of using, reproducing or redistributing of the TV/Radio listings is illegal and may be prosecuted on civil or criminal law.\n\nOn downloading the TV/Radio listings you declare your agreement to these terms.\n\nIf you have any questions concerning these terms please contact dev@tvbrowser.org"));
   }
