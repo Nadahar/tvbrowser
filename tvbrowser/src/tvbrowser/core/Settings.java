@@ -1318,7 +1318,7 @@ public class Settings {
       );
   /** Used to enable border on marked programs */
   public static final BooleanProperty propProgramPanelWithMarkingsShowingBoder = new BooleanProperty(
-      mProp, "programpanel.markingsShowingBorder", true);
+      mProp, "programpanel.markingsShowingBorder", false);
   /** Used default mark priority for markings of plugins. */
   public static final IntProperty propProgramPanelUsedDefaultMarkPriority = new IntProperty(
       mProp, "programpanel.defaultMarkPriority", 0);
