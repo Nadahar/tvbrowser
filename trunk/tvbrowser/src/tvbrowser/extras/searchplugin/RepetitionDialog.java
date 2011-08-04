@@ -220,16 +220,29 @@ class RepetitionDialog extends JDialog implements WindowClosingIf {
   }
 
   private SearchFormSettings getSearchSettings() {
+    SearchFormSettings[] history = SearchPlugin.getSearchHistory();
+    
     int days = getDays();
+    
     SearchFormSettings settings = new SearchFormSettings(mText.getText());
+    
+    if(history != null && history.length > 0) {
+      settings = history[0];
+      settings.setSearchText(mText.getText());
+    }
+    else {
+      settings.setSearchIn(SearchFormSettings.SEARCH_IN_TITLE);
+      settings.setSearcherType(PluginManager.SEARCHER_TYPE_EXACTLY);
+      settings.setCaseSensitive(false);
+    }
+
     settings.setNrDays(days);
-    settings.setSearchIn(SearchFormSettings.SEARCH_IN_TITLE);
-    settings.setSearcherType(PluginManager.SEARCHER_TYPE_EXACTLY);
-    settings.setCaseSensitive(false);
+    
     if (mChannelChooser.getSelectedIndex() > 0) {
       settings.setChannels(new Channel[] { (Channel) mChannelChooser
           .getSelectedItem() });
     }
+    
     return settings;
   }
 
