@@ -141,7 +141,7 @@ public class SimpleMarkerPlugin extends Plugin {
       String name = mLocalizer.msg("name","Marker plugin");
       String description = mLocalizer.msg("description", "A simple marker plugin (formerly Just_Mark)");
 
-      mPluginInfo = new PluginInfo(SimpleMarkerPlugin.class, name, description, "René Mach", "GPL");
+      mPluginInfo = new PluginInfo(SimpleMarkerPlugin.class, name, description, "Ren\u00e9 Mach", "GPL");
     }
 
     return mPluginInfo;

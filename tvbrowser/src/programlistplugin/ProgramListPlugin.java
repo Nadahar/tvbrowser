@@ -54,8 +54,6 @@ import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
-import org.apache.commons.lang.ArrayUtils;
-
 import util.program.ProgramUtilities;
 import util.settings.PluginPictureSettings;
 import util.settings.ProgramPanelSettings;
