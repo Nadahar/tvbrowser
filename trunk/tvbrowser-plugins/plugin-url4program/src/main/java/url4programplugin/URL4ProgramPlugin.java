@@ -90,12 +90,12 @@ public class URL4ProgramPlugin extends Plugin {
   private JTable mUrlProgramTable;
 
   public static Version getVersion() {
-    return new Version(0, 10, true);
+    return new Version(0, 10, 1, true);
   }
 
   /** @return The Plugin Info. */
   public PluginInfo getInfo() {
-    return (new PluginInfo(URL4ProgramPlugin.class,"URL4ProgramPlugin", mLocalizer.msg("description","Set an URL for a program title"), "René Mach", "GPL"));
+    return (new PluginInfo(URL4ProgramPlugin.class,"URL4ProgramPlugin", mLocalizer.msg("description","Set an URL for a program title"), "Ren\u00e9 Mach", "GPL"));
   }
 
   public void loadSettings(Properties prop) {

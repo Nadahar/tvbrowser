@@ -76,7 +76,7 @@ public final class DataViewerPlugin extends Plugin implements Runnable {
   private boolean mReactOnDataUpdate = false;
   private int mMinChannelWidth = 20;
 
-  private static final Version mVersion = new Version(1,10);
+  private static final Version mVersion = new Version(1,10,1);
 
   private static DataViewerPlugin mInstance;
 
@@ -106,7 +106,7 @@ public final class DataViewerPlugin extends Plugin implements Runnable {
   @Override
   public PluginInfo getInfo() {
     return new PluginInfo(DataViewerPlugin.class,mLocalizer.msg("data","DataViewerPlugin"),mLocalizer.msg("info",
-    "Lists the available program data."), "René Mach", "GPL");
+    "Lists the available program data."), "Ren\u00e9 Mach", "GPL");
   }
 
   @Override
@@ -648,5 +648,10 @@ public final class DataViewerPlugin extends Plugin implements Runnable {
   @Override
   public SettingsTab getSettingsTab() {
     return new DataViewerPluginSettingsTab();
+  }
+  
+  public String getPluginCategory() {
+    //Plugin.OTHER_CATEGORY
+    return "misc";
   }
 }

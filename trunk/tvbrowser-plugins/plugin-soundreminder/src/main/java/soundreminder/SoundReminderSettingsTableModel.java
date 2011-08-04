@@ -21,7 +21,7 @@
  *   $Author: ds10 $
  * $Revision: 5521 $
  */
-package soundreminderplugin;
+package soundreminder;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -78,9 +78,9 @@ public class SoundReminderSettingsTableModel extends AbstractTableModel {
   
   public String getColumnName(final int column) {
     switch(column) {
-      case 0: return SoundReminderPlugin.mLocalizer.msg("searchText","Search text");
-      case 1: return SoundReminderPlugin.mLocalizer.msg("settings.caseSensitive","case-sensitive");
-      case 2: return SoundReminderPlugin.mLocalizer.msg("settings.soundFile","Sound file");
+      case 0: return SoundReminder.mLocalizer.msg("searchText","Search text");
+      case 1: return SoundReminder.mLocalizer.msg("settings.caseSensitive","case-sensitive");
+      case 2: return SoundReminder.mLocalizer.msg("settings.soundFile","Sound file");
     }
     
     return "";

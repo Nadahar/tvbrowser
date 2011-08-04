@@ -12,7 +12,7 @@
   <developers>
     <developer>
       <id>ds10</id>
-      <email>ds10@tvbrowser.org</email>
+      <email>rene@tvbrowser.org</email>
     </developer>
   </developers>
   <licenses>
@@ -36,7 +36,7 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
         <configuration>
-          <finalName>SoundReminderPlugin</finalName>
+          <finalName>SoundReminder</finalName>
         </configuration>
       </plugin>
 

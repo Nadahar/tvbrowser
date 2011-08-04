@@ -21,7 +21,7 @@
  *   $Author: ds10 $
  * $Revision: 5521 $
  */
-package soundreminderplugin;
+package soundreminder;
 
 import java.applet.Applet;
 import java.applet.AudioClip;
@@ -283,9 +283,9 @@ public class SoundEntry {
         }
       }
       else {
-        final String msg = SoundReminderPlugin.mLocalizer.msg("playError",
+        final String msg = SoundReminder.mLocalizer.msg("playError",
           "Error loading sound reminder file!\n({0})" , fileName);
-        JOptionPane.showMessageDialog(UiUtilities.getBestDialogParent(SoundReminderPlugin.getInstance().getSuperFrame()),msg,Localizer.getLocalization(Localizer.I18N_ERROR),JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(UiUtilities.getBestDialogParent(SoundReminder.getInstance().getSuperFrame()),msg,Localizer.getLocalization(Localizer.I18N_ERROR),JOptionPane.ERROR_MESSAGE);
       }
     }
 

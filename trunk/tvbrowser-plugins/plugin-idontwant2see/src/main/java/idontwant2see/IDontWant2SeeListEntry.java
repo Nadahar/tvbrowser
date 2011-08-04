@@ -23,6 +23,7 @@
  */
 package idontwant2see;
 
+import java.io.DataOutput;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -66,7 +67,7 @@ public class IDontWant2SeeListEntry {
     }
     
     if(version >= 6) {
-      mLastMatchedDate = new Date(in);
+      mLastMatchedDate = Date.readData(in);
     }
     else {
       mLastMatchedDate = IDontWant2See.getCurrentDate();
@@ -94,7 +95,7 @@ public class IDontWant2SeeListEntry {
     // update the "last found" date
     if (!mDateWasSet && matches) {
       mLastMatchedDate = IDontWant2See.getCurrentDate();
-      mDateWasSet = false;
+      mDateWasSet = true;
     }
     
     return matches;
@@ -188,7 +189,7 @@ public class IDontWant2SeeListEntry {
       out.writeUTF(mPreSearchPart);
     }
     
-    mLastMatchedDate.writeData(out);
+    mLastMatchedDate.writeData((DataOutput)out);
   }
   
   protected Date getLastMatchedDate() {

@@ -31,6 +31,7 @@ import java.awt.event.AWTEventListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.io.DataOutput;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -68,6 +69,7 @@ import com.jgoodies.forms.layout.FormLayout;
 import devplugin.ActionMenu;
 import devplugin.ContextMenuAction;
 import devplugin.Date;
+import devplugin.ImportanceValue;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.PluginsFilterComponent;
@@ -86,7 +88,7 @@ import devplugin.Version;
 public final class IDontWant2See extends Plugin implements AWTEventListener {
 
   private static final boolean PLUGIN_IS_STABLE = true;
-  private static final Version PLUGIN_VERSION = new Version(0, 11, 1, PLUGIN_IS_STABLE);
+  private static final Version PLUGIN_VERSION = new Version(0, 12, 1, PLUGIN_IS_STABLE);
 
   private static final String RECEIVE_TARGET_EXCLUDE_EXACT = "target_exclude_exact";
 
@@ -165,16 +167,15 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
   private static void setCurrentDate() {
     mCurrentDate = Date.getCurrentDate();
   }
-
-  public byte getImportanceForProgram(Program p) {
+  
+  public ImportanceValue getImportanceValueForProgram(Program p) {
     if(!acceptInternal(p)) {
-      return mSettings.getProgramImportance();
+      return new ImportanceValue((byte)1,mSettings.getProgramImportance());
     }
-
-  //TODO After 3.0 release user values from Program class
-    return /*Program.DEFAULT_PROGRAM_IMPORTANCE*/ -1;
+    
+    return new ImportanceValue((byte)1,Program.DEFAULT_PROGRAM_IMPORTANCE);
   }
-
+  
   boolean acceptInternal(final Program program) {
     if(!mDateWasSet) {
       mSettings.setLastUsedDate(getCurrentDate());
@@ -210,7 +211,7 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
             .msg(
                 "desc",
                 "Removes all programs with an entered search text in the title from the program table."),
-        "René Mach", "GPL");
+        "Ren\u00e9 Mach", "GPL");
   }
 
   int getSearchTextIndexForProgram(final Program program) {
@@ -533,15 +534,13 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
         mSettings.setLastEnteredExclusionString(in.readUTF());
       }
       if(version >= 6) {
-        mSettings.setLastUsedDate(new Date(in));
+        mSettings.setLastUsedDate(Date.readData(in));
       }
       if(version >= 7) {
         mSettings.setProgramImportance(in.readByte());
       }
       else {
-        //TODO After 3.0 release user values from Program class
-        mSettings.setProgramImportance((byte)3);
-        //mSettings.setProgramImportance(Program.DEFAULT_PROGRAM_IMPORTANCE);
+        mSettings.setProgramImportance(Program.DEFAULT_PROGRAM_IMPORTANCE);
       }
     }
   }
@@ -567,7 +566,7 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
 
     out.writeUTF(mSettings.getLastEnteredExclusionString());
 
-    mSettings.getLastUsedDate().writeData(out);
+    mSettings.getLastUsedDate().writeData((DataOutput)out);
 
     out.writeByte(mSettings.getProgramImportance());
   }
@@ -643,6 +642,11 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
       mCtrlPressed = keyEvent.isControlDown();
       // System.out.println("Ctrl " + mCtrlPressed);
     }
+  }
+  
+  public String getPluginCategory() {
+    //Plugin.OTHER_CATEGORY
+    return "misc";
   }
 
 }

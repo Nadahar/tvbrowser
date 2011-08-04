@@ -36,7 +36,7 @@ public class ClockPlugin extends Plugin {
   private Point mLocation;
   private Dimension mParentSize;
 
-  private static final Version mVersion = new Version(1, 76, 1, true);
+  private static final Version mVersion = new Version(1, 76, 2, true);
 
   /** The localizer for this class. */
   public static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(ClockPlugin.class);
@@ -53,7 +53,7 @@ public class ClockPlugin extends Plugin {
       Constructor<?> constructor = pluginInfo.getConstructor(new Class[] {Class.class,String.class,String.class,String.class,String.class});
 
       return (PluginInfo)constructor.newInstance(new Object[] {ClockPlugin.class,"ClockPlugin",mLocalizer.msg("desc",
-      "Clock for TV-Browser"),"René Mach","GPL"});
+      "Clock for TV-Browser"),"Ren\u00e9 Mach","GPL"});
     } catch (Exception e) {
       try {
         Constructor<?> constructor = pluginInfo.getConstructor(new Class[] {String.class,String.class,String.class,Version.class,String.class});
@@ -437,5 +437,10 @@ public class ClockPlugin extends Plugin {
    */
   public Frame getSuperFrame() {
     return getParentFrame();
+  }
+  
+  public String getPluginCategory() {
+    //Plugin.OTHER_CATEGORY
+    return "misc";
   }
 }

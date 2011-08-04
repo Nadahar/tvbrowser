@@ -1,6 +1,28 @@
+/*
+ * IDontWant2See - Plugin for TV-Browser
+ * Copyright (C) 2008 René Mach
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * SVN information:
+ *     $Date$
+ *   $Author$
+ * $Revision$
+ */
 package idontwant2see;
 
-import java.lang.reflect.Method;
 
 import javax.swing.ButtonGroup;
 import javax.swing.Icon;
@@ -9,7 +31,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 
-//import util.ui.DefaultProgramImportanceSelectionPanel;
+import util.ui.DefaultProgramImportanceSelectionPanel;
 import util.ui.Localizer;
 import util.ui.ScrollableJPanel;
 
@@ -19,17 +41,25 @@ import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.SettingsTab;
 
+/**
+ * Settings tab for I don't want to see plugin.
+ * 
+ * @author René Mach
+ */
 public class IDontWant2SeeSettingsTab implements SettingsTab {
   private JCheckBox mAutoSwitchToMyFilter;
   private JRadioButton mSimpleContextMenu;
   private JRadioButton mCascadedContextMenu;
   private ExclusionTablePanel mExclusionPanel;
   private Localizer mLocalizer = IDontWant2See.mLocalizer;
-  //TODO After 3.0 release enable settings for program importance
-  //private DefaultProgramImportanceSelectionPanel mProgramImportancePanel;
-  private JPanel mProgramImportancePanel;
+  private DefaultProgramImportanceSelectionPanel mProgramImportancePanel;
   private IDontWant2SeeSettings mSettings;
   
+  /**
+   * Create an instance of this class.
+   * 
+   * @param settings The current settings for the I don't want to see plugin.
+   */
   public IDontWant2SeeSettingsTab(IDontWant2SeeSettings settings) {
     mSettings = settings;
   }
@@ -86,19 +116,10 @@ public class IDontWant2SeeSettingsTab implements SettingsTab {
         .xyw(1, 7, 5));
     pb.add(mExclusionPanel = new ExclusionTablePanel(mSettings), cc.xyw(2, 9, 3));
 
-  //TODO After 3.0 release enable settings for program importance
-    /*mProgramImportancePanel = DefaultProgramImportanceSelectionPanel.createPanel(mSettings.getProgramImportance(),true,false);*/
-   try { 
-    Class importanceSettings = Class.forName("util.ui.DefaultProgramImportanceSelectionPanel");
-    Method createPanel = importanceSettings.getMethod("createPanel", new Class[] {byte.class, boolean.class, boolean.class});
-    mProgramImportancePanel  = (JPanel)createPanel.invoke(importanceSettings, new Object[] {mSettings.getProgramImportance(),true,false});
+    mProgramImportancePanel = DefaultProgramImportanceSelectionPanel.createPanel(mSettings.getProgramImportance(),true,false);
+
+    pb.add(mProgramImportancePanel, cc.xyw(2,11,3));
     
-    pb.add(mProgramImportancePanel, cc.xyw(2, 11, 4));
-    
-   }catch(Exception e) {
-     e.printStackTrace();
-     //ignore
-   }
     final JPanel p = new JPanel(new FormLayout("0dlu,0dlu:grow",
         "5dlu,fill:default:grow"));
     
@@ -122,14 +143,7 @@ public class IDontWant2SeeSettingsTab implements SettingsTab {
   public void saveSettings() {
     mSettings.setSimpleMenu(mSimpleContextMenu.isSelected());
     mSettings.setSwitchToMyFilter(mAutoSwitchToMyFilter.isSelected());
-  //TODO After 3.0 release enable settings for program importance
-    //mSettings.setProgramImportance(mProgramImportancePanel.getSelectedImportance());
-
-    try {
-      mSettings.setProgramImportance((Byte)mProgramImportancePanel.getClass().getMethod("getSelectedImportance", new Class[0]).invoke(mProgramImportancePanel, new Object[0]));
-    } catch (Exception e) {
-      // ignore
-    }
+    mSettings.setProgramImportance(mProgramImportancePanel.getSelectedImportance());
     
     mExclusionPanel.saveSettings(mSettings);
   }

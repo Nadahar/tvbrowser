@@ -21,7 +21,7 @@
  *   $Author: ds10 $
  * $Revision: 5521 $
  */
-package soundreminderplugin;
+package soundreminder;
 
 import java.awt.Dimension;
 import java.awt.Frame;
@@ -82,28 +82,28 @@ import devplugin.Version;
  * <p>
  * @author René Mach
  */
-public class SoundReminderPlugin extends Plugin {
+public class SoundReminder extends Plugin {
   protected static final Localizer mLocalizer = Localizer
-      .getLocalizerFor(SoundReminderPlugin.class);
+      .getLocalizerFor(SoundReminder.class);
   private static final String PLAY_TARGET = "####PLAY####MUSIC#####";
   
-  private static SoundReminderPlugin mInstance;
+  private static SoundReminder mInstance;
   private ArrayList<SoundEntry> mSoundEntryList;
   
   /** Creates an instance of this class. */
-  public SoundReminderPlugin() {
+  public SoundReminder() {
     mInstance = this;
     mSoundEntryList = new ArrayList<SoundEntry>(0);
   }
   
   public static Version getVersion() {
-    return new Version(0,3,false);
+    return new Version(0,4,false);
   }
   
   public PluginInfo getInfo() {
-    return new PluginInfo(SoundReminderPlugin.class, mLocalizer.msg("title",
+    return new PluginInfo(SoundReminder.class, mLocalizer.msg("title",
         "Sound reminder"), mLocalizer.msg("description",
-        "Playes a sound for title of programs"), "René Mach", "GPL 3");
+        "Playes a sound for title of programs"), "Ren\u00e9 Mach", "GPL 3");
   }
   
   public ThemeIcon getMarkIconFromTheme() {
@@ -232,7 +232,7 @@ public class SoundReminderPlugin extends Plugin {
     };
   }
   
-  protected static SoundReminderPlugin getInstance() {
+  protected static SoundReminder getInstance() {
     return mInstance;
   }
   
@@ -480,5 +480,10 @@ public class SoundReminderPlugin extends Plugin {
       
       mSoundEntryList = mTableModel.getChangedList();
     }
+  }
+  
+  public String getPluginCategory() {
+    //Plugin.OTHER
+    return "misc";
   }
 }
