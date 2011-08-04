@@ -22,7 +22,7 @@
  * $Revision: 5521 $
  */
 
-package soundreminderplugin;
+package soundreminder;
 
 import java.awt.Color;
 import java.awt.Component;

@@ -344,7 +344,7 @@ public class CalendarPane extends MicrobaComponent implements
 	 *            <code>false</code> to hide
 	 */
 	public void setShowTodayButton(boolean visible) {
-		Boolean old = new Boolean(this.showTodayButton);
+		Boolean old = Boolean.valueOf(this.showTodayButton);
 		this.showTodayButton = visible;
 		firePropertyChange(PROPERTY_NAME_SHOW_TODAY_BTN, old, new Boolean(
 				visible));
@@ -374,7 +374,7 @@ public class CalendarPane extends MicrobaComponent implements
 	 *            to hide
 	 */
 	public void setShowNoneButton(boolean visible) {
-		Boolean old = new Boolean(this.showNoneButton);
+		Boolean old = Boolean.valueOf(this.showNoneButton);
 		this.showNoneButton = visible;
 		firePropertyChange(PROPERTY_NAME_SHOW_NONE_BTN, old, new Boolean(
 				visible));

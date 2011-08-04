@@ -41,7 +41,7 @@ public final class ToolTipControlPlugin extends Plugin {
   private static ToolTipControlPlugin mInstance;
 
   public static Version getVersion() {
-    return new Version(0, 21, true);
+    return new Version(0, 21,1, true);
   }
 
   /**
@@ -54,7 +54,7 @@ public final class ToolTipControlPlugin extends Plugin {
   public PluginInfo getInfo() {
     return new PluginInfo(ToolTipControlPlugin.class, mLocalizer.msg(
         "pluginName", "Tooltip control"), mLocalizer.msg("description",
-        "Controls the function of all tooltips."), "René Mach", "GPL");
+        "Controls the function of all tooltips."), "Ren\u00e9 Mach", "GPL");
   }
 
   public SettingsTab getSettingsTab() {
@@ -92,5 +92,10 @@ public final class ToolTipControlPlugin extends Plugin {
       m.invoke(mInstance, new Object[0]);
     } catch (Throwable t) { // Ignore
       }
+  }
+  
+  public String getPluginCategory() {
+    //Plugin.OTHER
+    return "misc";
   }
 }

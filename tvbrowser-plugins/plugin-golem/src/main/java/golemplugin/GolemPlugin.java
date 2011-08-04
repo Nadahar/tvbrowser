@@ -128,7 +128,7 @@ public class GolemPlugin extends devplugin.Plugin {
       return settings.getMarkPriority();
     }
 
-    return Program.DEFAULT_PROGRAM_IMPORTANCE;
+    return super.getMarkPriorityForProgram(p);
   }
 
   @Override

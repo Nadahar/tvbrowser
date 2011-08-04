@@ -52,6 +52,7 @@ public class GolemUpdater {
   private HashMap<String, String> channelMap;
 
   private GolemUpdater() {
+    instance = this;
     channelMap = new HashMap<String, String>();
     channelMap.put("RTL II", "RTL2");
     channelMap.put("RTL 2", "RTL2");
@@ -67,7 +68,7 @@ public class GolemUpdater {
 
   public static GolemUpdater getInstance() {
     if (instance == null) {
-      instance = new GolemUpdater();
+      new GolemUpdater();
     }
 
     return instance;
