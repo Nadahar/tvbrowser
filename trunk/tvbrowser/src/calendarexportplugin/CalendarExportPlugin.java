@@ -68,7 +68,7 @@ import devplugin.Version;
  * @author bodo
  */
 public final class CalendarExportPlugin extends Plugin {
-  private static final Version mVersion = new Version(3,0);
+  private static final Version mVersion = new Version(3,02);
 
   /**
    * Translator

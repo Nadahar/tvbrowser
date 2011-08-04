@@ -94,7 +94,7 @@ public class ProgramListPlugin extends Plugin {
 
   protected static final Localizer mLocalizer = Localizer.getLocalizerFor(ProgramListPlugin.class);
 
-  private static Version mVersion = new Version(3, 0);
+  private static Version mVersion = new Version(3, 02);
 
   private JDialog mDialog;
   private JComboBox mBox;

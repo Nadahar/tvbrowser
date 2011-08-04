@@ -78,7 +78,7 @@ public class RadioTimesDataService extends AbstractTvDataService {
   private static final Logger mLog = Logger.getLogger(RadioTimesDataService.class
       .getName());
 
-  private static final Version VERSION = new Version(3,0);
+  private static final Version VERSION = new Version(3,02);
 
   /**
    * Channelgroup

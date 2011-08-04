@@ -50,7 +50,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
 
   private static final Logger mLog = Logger.getLogger(SweDBTvDataService.class.getName());
 
-  private static final Version VERSION = new Version(3,0);
+  private static final Version VERSION = new Version(3,02);
 
   private File mWorkingDirectory;
 

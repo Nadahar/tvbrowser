@@ -85,7 +85,7 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
   private static final Logger mLog
     = Logger.getLogger(SchedulesDirectDataService.class.getName());
 
-  private static final Version VERSION = new Version(3,0);
+  private static final Version VERSION = new Version(3,02);
 
   private ChannelGroup mChannelGroup = new ChannelGroupImpl("SchedulesDirect", "SchedulesDirect", "SchedulesDirect", "SchedulesDirect");
 
