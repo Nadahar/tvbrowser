@@ -1161,7 +1161,8 @@ public class ProgramTextCreator {
       if (type.getFormat() == ProgramFieldType.BINARY_FORMAT) {
         continue;
       }
-      if (!list.contains(type)) {
+      if (!list.contains(type) && !type.equals(ProgramFieldType.SHORT_DESCRIPTION_TYPE)
+          && !type.equals(ProgramFieldType.PICTURE_COPYRIGHT_TYPE) && !type.equals(ProgramFieldType.PICTURE_DESCRIPTION_TYPE)) {
         list.add(type);
       }
     }
