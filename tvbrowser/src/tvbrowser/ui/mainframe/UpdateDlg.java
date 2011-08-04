@@ -128,12 +128,12 @@ public class UpdateDlg extends JDialog implements ActionListener, WindowClosingI
     }
 
     // then time selection
-    PanelBuilder panel1 = new PanelBuilder(new FormLayout("10dlu,default,5dlu:grow","default,5dlu,default"));
-    panel1.addSeparator(mLocalizer.msg("period", "Update program for"), CC.xyw(1,1,3));
+    PanelBuilder panel1 = new PanelBuilder(new FormLayout("10dlu,default,5dlu:grow,5dlu","default,5dlu,default"));
+    panel1.addSeparator(mLocalizer.msg("period", "Update program for"), CC.xyw(1,1,4));
     
     mComboBox = new JComboBox(PeriodItem.getPeriodItems());
     
-    panel1.add(mComboBox, CC.xy(2,3));
+    panel1.add(mComboBox, CC.xyw(2,3,2));
     
     northPanel.add(panel1.getPanel());
 
