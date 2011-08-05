@@ -18,7 +18,7 @@ package recommendationplugin;
 
 import devplugin.PluginTreeNode;
 
-public class RecommendationNode extends PluginTreeNode implements Comparable<RecommendationNode> {
+public class RecommendationNode extends PluginTreeNode/* implements Comparable<RecommendationNode>*/ {
 
   private ProgramWeight mProgramWeight;
 
