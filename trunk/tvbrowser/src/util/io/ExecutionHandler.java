@@ -284,4 +284,20 @@ public class ExecutionHandler {
     }
     return thread.getOutputString();
   }
+  
+  /**
+   * Get error output of the execution handler after execution 
+   * @return The errors
+   * @since 3.0.2
+   */
+  public String getErrors() {
+    StreamReaderThread thread = getErrorStreamReaderThread();
+    try {
+      thread.join(2000);
+    } catch (InterruptedException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    return thread.getOutputString();
+  }
 }
