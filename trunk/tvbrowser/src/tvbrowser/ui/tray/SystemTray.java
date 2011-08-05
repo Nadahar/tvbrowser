@@ -453,7 +453,7 @@ public class SystemTray {
       for (ProgramMenuItem addItem : additional) {
         boolean equal = false;
         for (ProgramMenuItem item : programs) {
-          if (item.getProgram().equals(addItem.getProgram())) {
+          if (item != null && item.getProgram().equals(addItem.getProgram())) {
             equal = true;
             break;
           }
