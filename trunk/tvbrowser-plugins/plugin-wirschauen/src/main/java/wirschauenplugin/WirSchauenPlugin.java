@@ -447,10 +447,10 @@ public final class WirSchauenPlugin extends Plugin
     {
       util.exc.ErrorHandler.handle(LOCALIZER.msg("error.couldNotReadFile", "Reading file '{0}' failed.", file.getAbsolutePath()), e);
     }
-    catch (final ClassNotFoundException e)
+  /*  catch (final ClassNotFoundException e)
     {
       util.exc.ErrorHandler.handle(LOCALIZER.msg("error.couldNotReadFile", "Reading file '{0}' failed.", file.getAbsolutePath()), e);
-    }
+    }*/
   }
 
 
