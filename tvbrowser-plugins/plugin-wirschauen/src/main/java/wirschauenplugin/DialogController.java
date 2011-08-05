@@ -94,7 +94,7 @@ public class DialogController
           //switch back to the event dispatching thread (swing)
           SwingUtilities.invokeLater(new Runnable()
           {
-            //@Override
+            @Override
             public void run()
             {
               wirSchauenDataLoaded(wirSchauenEvent, loadingInfoDialog);
@@ -167,7 +167,7 @@ public class DialogController
                   //be polite but switch back to event dispatching thread (swing)
                   SwingUtilities.invokeLater(new Runnable()
                   {
-                   // @Override
+                    @Override
                     public void run()
                     {
                       JOptionPane.showMessageDialog(mParent, WirSchauenPlugin.LOCALIZER.msg("Thanks", "Thanks"), WirSchauenPlugin.LOCALIZER.msg("Thanks", "Thanks"), JOptionPane.INFORMATION_MESSAGE);
@@ -207,7 +207,7 @@ public class DialogController
                   //be polite but switch back to event dispatching thread (swing)
                   SwingUtilities.invokeLater(new Runnable()
                   {
-                   // @Override
+                    @Override
                     public void run()
                     {
                       JOptionPane.showMessageDialog(mParent, WirSchauenPlugin.LOCALIZER.msg("Thanks", "Thanks"), WirSchauenPlugin.LOCALIZER.msg("Thanks", "Thanks"), JOptionPane.INFORMATION_MESSAGE);
@@ -221,7 +221,7 @@ public class DialogController
                   //switch back to event dispatching thread (swing)
                   SwingUtilities.invokeLater(new Runnable()
                   {
-                    //@Override
+                    @Override
                     public void run()
                     {
                       JOptionPane.showMessageDialog(mParent, WirSchauenPlugin.LOCALIZER.msg("ConnectionFailed", "Connection failed", e.getMessage()), Localizer.getLocalization(Localizer.I18N_ERROR), JOptionPane.ERROR_MESSAGE);
@@ -253,7 +253,7 @@ public class DialogController
               //switch back to event dispatching thread (swing)
               SwingUtilities.invokeLater(new Runnable()
               {
-               // @Override
+                @Override
                 public void run()
                 {
                   omdbDataLoaded(omdbAbstract, loadingOmdbDataDialog, wirSchauenEvent);
@@ -265,7 +265,7 @@ public class DialogController
               handleConnectionError(e, "omdb");
               SwingUtilities.invokeLater(new Runnable()
               {
-                //@Override
+                @Override
                 public void run()
                 {
                   loadingOmdbDataDialog.setVisible(false);
@@ -326,7 +326,7 @@ public class DialogController
               //be polite but switch back to event dispatching thread (swing)
               SwingUtilities.invokeLater(new Runnable()
               {
-              //  @Override
+                @Override
                 public void run()
                 {
                   DontShowAgainMessageBox.dontShowAgainMessageBox(WirSchauenPlugin.getInstance(), "saved", mParent, WirSchauenPlugin.LOCALIZER.msg("Thanks", "Thanks"));
@@ -352,7 +352,7 @@ public class DialogController
     //switch back to event dispatching thread (swing)
     SwingUtilities.invokeLater(new Runnable()
     {
-      //@Override
+      @Override
       public void run()
       {
         JOptionPane.showMessageDialog(mParent, WirSchauenPlugin.LOCALIZER.msg("ConnectionFailed", "Connection failed", e.getMessage()), Localizer.getLocalization(Localizer.I18N_ERROR), JOptionPane.ERROR_MESSAGE);
