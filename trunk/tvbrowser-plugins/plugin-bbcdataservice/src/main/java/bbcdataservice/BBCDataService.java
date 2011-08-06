@@ -61,7 +61,7 @@ public final class BBCDataService extends AbstractTvDataService {
   private static final String NUMBER_OF_CHANNELS = "NumberOfChannels";
   private static final String PROGRAMMES_URL = "http://www.bbc.co.uk";
   private static final boolean IS_STABLE = false;
-  private static final Version mVersion = new Version(3, 0, 1, IS_STABLE);
+  private static final Version mVersion = new Version(3, 0, 2, IS_STABLE);
 
   /**
    * created lazily on first access
@@ -253,52 +253,57 @@ public final class BBCDataService extends AbstractTvDataService {
   }
 
   private ArrayList<Channel> getRegionChannels(final String channelId, final String channelName, final String webSite,
-      final int category, final ProgressMonitor progress) throws IOException, MalformedURLException {
+      final int category, final ProgressMonitor progress) {
     final ArrayList<Channel> channels = new ArrayList<Channel>();
-    File regionsFile = new File(mWorkingDir, "regions");
-    IOUtilities.download(new URL(PROGRAMMES_URL + webSite), regionsFile);
-    StreamUtilities.bufferedReader(regionsFile, new BufferedReaderProcessor() {
+    try {
+      File regionsFile = new File(mWorkingDir, "regions");
+      IOUtilities.download(new URL(PROGRAMMES_URL + webSite), regionsFile);
+      StreamUtilities.bufferedReader(regionsFile, new BufferedReaderProcessor() {
 
-      public void process(BufferedReader reader) throws IOException {
-        String line;
-        while ((line = reader.readLine()) != null) {
-          if (line.contains(webSite)) {
-            line = StringUtils.substringAfter(line, "a href");
-            String regionId = StringUtils.substringBetween(line, "schedules/", "\"");
-            if ("today".equalsIgnoreCase(regionId) || "tomorrow".equalsIgnoreCase(regionId)
-                || "yesterday".equalsIgnoreCase(regionId)) {
-              continue;
-            }
-            if (StringUtils.isNotEmpty(regionId) && !regionId.contains("/")) {
-              String regionName = StringUtils.substringBetween(line, ">", "</a");
-              regionName = HTMLTextHelper.convertHtmlToText(regionName);
-              if ("Schedule".equalsIgnoreCase(regionName)) {
+        public void process(BufferedReader reader) throws IOException {
+          String line;
+          while ((line = reader.readLine()) != null) {
+            if (line.contains(webSite)) {
+              line = StringUtils.substringAfter(line, "a href");
+              String regionId = StringUtils.substringBetween(line, "schedules/", "\"");
+              if ("today".equalsIgnoreCase(regionId) || "tomorrow".equalsIgnoreCase(regionId)
+                  || "yesterday".equalsIgnoreCase(regionId)) {
                 continue;
               }
-              String webSite = StringUtils.substringBetween(line, "=\"", "\"");
-              boolean found = false;
-              for (Channel channel : channels) {
-                if (channel.getWebpage().equalsIgnoreCase(PROGRAMMES_URL + webSite)) {
-                  found = true;
-                  break;
+              if (StringUtils.isNotEmpty(regionId) && !regionId.contains("/")) {
+                String regionName = StringUtils.substringBetween(line, ">", "</a");
+                regionName = HTMLTextHelper.convertHtmlToText(regionName);
+                if ("Schedule".equalsIgnoreCase(regionName) || "View full schedule".equalsIgnoreCase(regionName)) {
+                  continue;
                 }
-              }
-              if (!found) {
-                String localName = channelName + " (" + regionName + ")";
-                String localId = channelId + "_" + regionId;
-                if (StringUtils.isNotEmpty(localName) && StringUtils.isNotEmpty(localId)) {
-                  progress.setMessage(mLocalizer.msg("search.channel", "Found channel: {0}", localName));
-                  Channel channel = new Channel(BBCDataService.this, localName, localId, TIME_ZONE, COUNTRY, COPYRIGHT,
-                      PROGRAMMES_URL + webSite, CHANNEL_GROUP, null, category);
-                  channels.add(channel);
+                String webSite = StringUtils.substringBetween(line, "=\"", "\"");
+                boolean found = false;
+                for (Channel channel : channels) {
+                  if (channel.getWebpage().equalsIgnoreCase(PROGRAMMES_URL + webSite)) {
+                    found = true;
+                    break;
+                  }
+                }
+                if (!found) {
+                  String localName = channelName + " (" + regionName + ")";
+                  String localId = channelId + "_" + regionId;
+                  if (StringUtils.isNotEmpty(localName) && StringUtils.isNotEmpty(localId)) {
+                    progress.setMessage(mLocalizer.msg("search.channel", "Found channel: {0}", localName));
+                    Channel channel = new Channel(BBCDataService.this, localName, localId, TIME_ZONE, COUNTRY, COPYRIGHT,
+                        PROGRAMMES_URL + webSite, CHANNEL_GROUP, null, category);
+                    channels.add(channel);
+                  }
                 }
               }
             }
           }
         }
-      }
-    });
-    regionsFile.delete();
+      });
+      regionsFile.delete();
+    } catch (Exception e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } 
     return channels;
   }
 
