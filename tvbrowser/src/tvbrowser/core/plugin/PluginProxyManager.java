@@ -68,7 +68,7 @@ import devplugin.Program;
  */
 public class PluginProxyManager {
 
-  private class TvDataAddedMutableThreadPoolMethod extends ThreadPoolMethod {
+  /*private class TvDataAddedMutableThreadPoolMethod extends ThreadPoolMethod {
 
     private MutableChannelDayProgram mDayProgram;
 
@@ -86,12 +86,12 @@ public class PluginProxyManager {
             plugin.handleTvDataAdded(mDayProgram);
           }catch(Throwable t) {
             /* Catch all possible not catched errors that occur in the plugin method*/
-            mLog.log(Level.WARNING, "A not catched error occured in 'handleTvDataAdded(MutableChannelDayProgram)' of Plugin '" + plugin +"'.", t);
+     /*       mLog.log(Level.WARNING, "A not catched error occured in 'handleTvDataAdded(MutableChannelDayProgram)' of Plugin '" + plugin +"'.", t);
           }
         }
       };
     }
-  }
+  }*/
 
   private class TvBrowserStartFinishedThreadPoolMethod extends ThreadPoolMethod {
 
@@ -1166,8 +1166,27 @@ public class PluginProxyManager {
    * @see PluginProxy#handleTvDataAdded(ChannelDayProgram)
    */
   private void fireTvDataAdded(final MutableChannelDayProgram newProg) {
-    runWithThreadPool(new TvDataAddedMutableThreadPoolMethod(newProg));
+    /* We have to run it as blocking method to let plugins change the program before the progam is saved */
+    for (PluginListItem item : getPluginListCopy()) {
+      if (item.getPlugin().isActivated()) {
+        final AbstractPluginProxy plugin = item.getPlugin();
+        try {
+          Thread t = new Thread("handle tv data added") {
+            public void run() {
+              plugin.handleTvDataAdded(newProg);
+            }
+          };
+          t.start();
+          /* Wait maximal 10 seconds for plugin to react. */
+          t.join(10000);
+        }catch(Throwable t) {
+          /* Catch all possible not catched errors that occur in the plugin method*/
+          mLog.log(Level.WARNING, "A not catched error occured in 'handleTvDataAdded(MutableChannelDayProgram)' of Plugin '" + plugin +"'.", t);
+        }
+      }
     }
+    //runWithThreadPool(new TvDataAddedMutableThreadPoolMethod(newProg));
+  }
 
   /**
    * Calls for every active plugin the handleTvDataAdded(...) method, so the
@@ -1253,7 +1272,7 @@ public class PluginProxyManager {
     }
   }
   
-  private void terminateThreadPool() {
+ /* private void terminateThreadPool() {
     try {
       mThreadPool.shutdown();
       if(!mThreadPool.awaitTermination(MAX_THREAD_POOL_WAIT_SECONDS,TimeUnit.SECONDS)) {
@@ -1266,7 +1285,7 @@ public class PluginProxyManager {
       e.printStackTrace();
     }
 
-  }
+  }*/
 
   private ArrayList<PluginListItem> getPluginListCopy() {
     final ArrayList<PluginListItem> localList;
