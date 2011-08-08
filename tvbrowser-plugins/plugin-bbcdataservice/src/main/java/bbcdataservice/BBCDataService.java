@@ -72,7 +72,7 @@ public final class BBCDataService extends AbstractTvDataService {
   /** The localizer for this class. */
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(BBCDataService.class);
 
-  private static ChannelGroup CHANNEL_GROUP = new ChannelGroupImpl("bbc programmes", mLocalizer.msg("group.name",
+  private static ChannelGroup CHANNEL_GROUP = new ChannelGroupImpl("bbcprogrammes", mLocalizer.msg("group.name",
       "BBC programmes"), mLocalizer.msg("group.description", "BBC programmes data"), mLocalizer.msg("group.provider",
       "BBC programmes"));
 
@@ -286,7 +286,7 @@ public final class BBCDataService extends AbstractTvDataService {
                 }
                 if (!found) {
                   String localName = channelName + " (" + regionName + ")";
-                  String localId = channelId + "_" + regionId;
+                  String localId = channelId + "." + regionId;
                   if (StringUtils.isNotEmpty(localName) && StringUtils.isNotEmpty(localId)) {
                     progress.setMessage(mLocalizer.msg("search.channel", "Found channel: {0}", localName));
                     Channel channel = new Channel(BBCDataService.this, localName, localId, TIME_ZONE, COUNTRY, COPYRIGHT,
