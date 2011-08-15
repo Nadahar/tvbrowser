@@ -170,7 +170,14 @@ class RepetitionDialog extends JDialog implements WindowClosingIf {
     stdSearch.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         close();
-        SearchPlugin.getInstance().openSearchDialog(mText.getText(), getSearchSettings());
+        SearchFormSettings[] history = SearchPlugin.getSearchHistory();
+        
+        if(history != null && history.length > 0) {
+          SearchPlugin.getInstance().openSearchDialog(mText.getText());
+        }
+        else {
+          SearchPlugin.getInstance().openSearchDialog(mText.getText(),getSearchSettings());
+        }
       }
     });
 
@@ -219,22 +226,13 @@ class RepetitionDialog extends JDialog implements WindowClosingIf {
         PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE), settings, true);
   }
 
-  private SearchFormSettings getSearchSettings() {
-    SearchFormSettings[] history = SearchPlugin.getSearchHistory();
-    
+  private SearchFormSettings getSearchSettings() {    
     int days = getDays();
     
     SearchFormSettings settings = new SearchFormSettings(mText.getText());
-    
-    if(history != null && history.length > 0) {
-      settings = history[0];
-      settings.setSearchText(mText.getText());
-    }
-    else {
-      settings.setSearchIn(SearchFormSettings.SEARCH_IN_TITLE);
-      settings.setSearcherType(PluginManager.SEARCHER_TYPE_EXACTLY);
-      settings.setCaseSensitive(false);
-    }
+    settings.setSearchIn(SearchFormSettings.SEARCH_IN_TITLE);
+    settings.setSearcherType(PluginManager.SEARCHER_TYPE_EXACTLY);
+    settings.setCaseSensitive(false);
 
     settings.setNrDays(days);
     
