@@ -230,8 +230,8 @@ public class ProgramInfo {
         }
       }
     }
-
-    if (mIsShowing || ProgramInfoDialog.isShowing()) {
+    
+    if ((mIsShowing || ProgramInfoDialog.isShowing()) && showSettings) {
       if (!ProgramInfoDialog.closeDialog()) {
         return;
       }
