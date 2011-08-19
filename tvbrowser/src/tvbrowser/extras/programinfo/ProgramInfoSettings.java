@@ -276,16 +276,20 @@ class ProgramInfoSettings {
     final String[] id = getProperty(KEY_FIELD_ORDER, defaultOrder.toString()).trim().split(";");
     ArrayList<Object> result = new ArrayList<Object>(id.length);
     for (int i = 0; i < id.length; i++) {
-      final int parsedId = Integer.parseInt(id[i]);
-      if (parsedId == ProgramFieldType.UNKNOWN_FORMAT) {
-        if (!result.contains(ProgramTextCreator.getDurationTypeString())) {
-          result.add(ProgramTextCreator.getDurationTypeString());
+      try {
+        final int parsedId = Integer.parseInt(id[i]);
+        if (parsedId == ProgramFieldType.UNKNOWN_FORMAT) {
+          if (!result.contains(ProgramTextCreator.getDurationTypeString())) {
+            result.add(ProgramTextCreator.getDurationTypeString());
+          }
+        } else if (parsedId >= 0) {
+          result.add(ProgramFieldType.getTypeForId(parsedId));
+        } else {
+          result.add(CompoundedProgramFieldType
+              .getCompoundedProgramFieldTypeForId(parsedId));
         }
-      } else if (parsedId >= 0) {
-        result.add(ProgramFieldType.getTypeForId(parsedId));
-      } else {
-        result.add(CompoundedProgramFieldType
-            .getCompoundedProgramFieldTypeForId(parsedId));
+      }catch(NumberFormatException e) {
+        return ProgramTextCreator.getDefaultOrder();
       }
     }
     return result.toArray(new Object[result.size()]);
