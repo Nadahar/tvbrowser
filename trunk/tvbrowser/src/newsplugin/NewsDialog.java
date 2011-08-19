@@ -147,7 +147,7 @@ public class NewsDialog implements WindowClosingIf {
     mCloseBn = new JButton(Localizer.getLocalization(Localizer.I18N_CLOSE));
     mCloseBn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
-        mDialog.dispose();
+        close();
       }
     });
     buttonPn.add(mCloseBn);
@@ -258,6 +258,7 @@ public class NewsDialog implements WindowClosingIf {
 
 
   public void close() {
+    NewsPlugin.getInstance().saveMeInternal();
     mDialog.dispose();
   }
 

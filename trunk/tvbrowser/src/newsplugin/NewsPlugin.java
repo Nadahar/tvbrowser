@@ -56,7 +56,7 @@ import devplugin.Version;
  * @author Til Schneider, www.murfman.de
  */
 public class NewsPlugin extends Plugin {
-  private static final Version mVersion = new Version(3,0);
+  private static final Version mVersion = new Version(3,2);
 
   /** The localizer used by this class. */
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer
@@ -95,7 +95,7 @@ public class NewsPlugin extends Plugin {
    * 
    * @return Instance
    */
-  public static Plugin getInstance() {
+  public static NewsPlugin getInstance() {
     return mInstance;
   }
 
@@ -362,5 +362,13 @@ public class NewsPlugin extends Plugin {
       mLastNewsFileModified = in.readLong();
     }
   }
-
+  
+  /**
+   * Saves the settings of the NewsPlugin.
+   * <p>
+   * @return If the settings could be saved.
+   */
+  public boolean saveMeInternal() {
+    return super.saveMe();
+  }
 }
