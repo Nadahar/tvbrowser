@@ -60,7 +60,7 @@ public class RawDataProcessor {
    * The percentage of the number of frames that must stay in the version
    * of a program to come into quarantine.
    */
-  private static double MAX_DELETED_FRAMES = 0.25;
+  private double mMaxDeletedFrames = 0.25;
 
   /**
    * The deadline day. All data files that contain TV data for days before that
@@ -89,6 +89,26 @@ public class RawDataProcessor {
 
   public int getQuarantineCount() {
     return mQuarantineCount;
+  }
+  
+  /**
+   * Sets the percentage of the number of frames that must stay in the version
+   * of a program to come into quarantine.
+   * @param value 
+   */
+  public void setMaxDeletedFrames(double value) {
+    if (value >= 0.0 && value <= 1.0) {
+      mMaxDeletedFrames = value;
+    }
+  }
+  
+  /**
+   * Gets the percentage of the number of frames that must stay in the version
+   * of a program to come into quarantine.
+   * @return MaxDeletedFrames
+   */
+  public double getMaxDeletedFrames() {
+    return mMaxDeletedFrames;
   }
 
 
@@ -797,7 +817,7 @@ public class RawDataProcessor {
 
   private boolean checkForQuarantine(DayProgramFile oldProg, DayProgramFile newProg) {
     int oldFrameCount = oldProg.getProgramFrameCount();
-
+    
     // Count the number of frames that will be deleted
     int deletedCount = 0;
     for (int i = 0; i < oldFrameCount; i++) {
@@ -810,7 +830,7 @@ public class RawDataProcessor {
       }
     }
 
-    int maxDeletedFrames = (int) (oldFrameCount * MAX_DELETED_FRAMES);
+    int maxDeletedFrames = Math.max( 3, (int) (oldFrameCount * mMaxDeletedFrames));
     return (deletedCount > maxDeletedFrames);
   }
 

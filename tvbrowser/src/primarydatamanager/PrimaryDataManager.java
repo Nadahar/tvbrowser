@@ -77,7 +77,7 @@ public class PrimaryDataManager {
   private static RandomAccessFile mLockFile;
 
   private static FileLock mLock;
-
+  
 
 
   public PrimaryDataManager(File baseDir) throws PreparationException {
@@ -98,6 +98,10 @@ public class PrimaryDataManager {
 
   public void forceCompleteUpdateFor(String channel) {
     mRawDataProcessor.forceCompleteUpdateFor(channel);
+  }
+  
+  public void setMaxDeletedFrames(double value) {
+    mRawDataProcessor.setMaxDeletedFrames(value);
   }
 
 
@@ -491,14 +495,33 @@ public class PrimaryDataManager {
 
     // Start the update
     if (args.length == 0) {
-      System.out.println("USAGE: PrimaryDataManager [-forceCompleteUpdate [channel{;channel}]] groups...");
+      System.out.println("USAGE: PrimaryDataManager [-maxDeletedFrames value] [-forceCompleteUpdate [channel{;channel}]] groups...");
       System.exit(1);
     } else {
       try {
         PrimaryDataManager manager = new PrimaryDataManager(new File("."));
         ArrayList<String> groupNames = new ArrayList<String>();
         for (int i = 0; i < args.length; i++) {
-          if (args[i].equalsIgnoreCase("-forceCompleteUpdate")) {
+          if (args[i].equalsIgnoreCase("-maxDeletedFrames")) {
+            if ((i + 1) >= args.length) {
+              System.out.println("maxDeletedFrames needs a double between 0.0 and 1.0");
+              System.exit(1);
+            } else {
+              try {
+                double value = Double.parseDouble(args[i+1]);
+                if (value < 0.0 || value > 1.0) {
+                  throw new NumberFormatException();
+                }
+                //Everythings fine
+                manager.setMaxDeletedFrames(value);
+                i=i+2;
+              } catch (NumberFormatException e) {
+                System.out.println("Value has to be a double between 0.0 and 1.0");
+                System.exit(1);
+              }
+            }
+          }
+          else if (args[i].equalsIgnoreCase("-forceCompleteUpdate")) {
             if ((i + 1) >= args.length) {
               System.out.println("You have to specify a colon separated " +
                 "list of channels after -forceCompleteUpdate");
@@ -510,7 +533,8 @@ public class PrimaryDataManager {
                 manager.forceCompleteUpdateFor(tokenizer.nextToken());
               }
             }
-          } else {
+          }   
+          else {
             final String[] groups = args[i].split(",");
             groupNames.addAll(Arrays.asList(groups));
           }
