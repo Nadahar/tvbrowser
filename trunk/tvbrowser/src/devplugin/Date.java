@@ -489,6 +489,35 @@ public class Date implements Comparable<Date>
     return LOCALIZER.msg("datePattern", "{0}, {1} {2}", day.format(javaDate), month.format(javaDate), Integer
         .toString(dayOfMonth));
   }
+  
+  /**
+   * Returns a string of the date according to SimpleDateFormat 
+   * @param pattern the pattern describing the date and time format
+   * @return the formatted date string.
+   * 
+   * @since 3.0.2
+   */
+  public String getFormattedString(String pattern) {
+    
+    SimpleDateFormat  sdf = new SimpleDateFormat(pattern);
+    java.util.Date javaDate = new java.util.Date(getCalendar().getTimeInMillis());
+    return sdf.format(javaDate);    
+  }
+  
+  /**
+   * Returns a string of the date according to SimpleDateFormat 
+   * @param pattern the pattern describing the date and time format
+   * @param locale the locale whose date format symbols should be used
+   * @return the formatted date string.
+   * 
+   * @since 3.0.2
+   */
+  public String getFormattedString(String pattern, Locale locale) {
+    
+    SimpleDateFormat sdf = new SimpleDateFormat(pattern, locale);
+    java.util.Date javaDate = new java.util.Date(getCalendar(locale).getTimeInMillis());
+    return sdf.format(javaDate);   
+  }
 
   /**
    * return the textual representation of this date with full day of week
