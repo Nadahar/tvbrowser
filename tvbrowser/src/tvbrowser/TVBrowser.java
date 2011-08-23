@@ -144,6 +144,7 @@ public class TVBrowser {
   */
   /** The string array with the names of the earlier versions. */
   private static final String[] ALL_VERSIONS = new String[]{
+          "3.0.2 RC1",
           "3.0.2beta1",
           "3.0.1.99 SVN",
           "3.0.1",
