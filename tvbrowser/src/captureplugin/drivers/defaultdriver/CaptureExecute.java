@@ -185,6 +185,13 @@ class CaptureExecute {
       if (!mData.useReturnValue()) {
         mError = false;
       }
+      
+      if (mError && mExitValue == 248) {
+        if(JOptionPane.showConfirmDialog(mParent,new String[] {mLocalizer.msg("info.message","The application has returned the following message:"),output,mLocalizer.msg("info.list","Should the program be added to the list of the recordings?")},Localizer.getLocalization(Localizer.I18N_WARNING),JOptionPane.YES_NO_OPTION,JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION) {
+          mExitValue = 0;
+          mError = false;
+        }
+      }
 
       if (mError && mExitValue != 249) {
         ResultDialog dialog = new ResultDialog(mParent, params, output, true);
@@ -293,7 +300,7 @@ class CaptureExecute {
     // read STDERR output and add to return value if necessary - FSCHAECK -
     // 2008-06-13
     if (!executionHandler.getErrorStreamReaderThread().isAlive()) {
-      errors = executionHandler.getOutput();
+      errors = executionHandler.getErrors();
       if (errors.length() > 0) {
         if (output.length() > 0) {
           output = output + "\n\n" + errors;
