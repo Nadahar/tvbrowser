@@ -349,7 +349,7 @@ public class WebPlugin extends Plugin {
       if (subItems.size() > 1) {
         final ContextMenuAction menuAction = new ContextMenuAction(label);
         final ActionMenu menu = new ActionMenu((String)menuAction.getValue(Action.NAME), (Icon)menuAction.getValue(Action.SMALL_ICON), subActions);
-        menuAction.putValue(Plugin.DISABLED_ON_TASK_MENU, true);
+        menu.getAction().putValue(Plugin.DISABLED_ON_TASK_MENU, true);
         categoryList.add(menu);
       }
       else {
