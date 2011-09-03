@@ -271,7 +271,11 @@ public class RawDataProcessor {
     DayProgramFile[] newLevelProgArr
       = new DayProgramFile[DayProgramFile.getLevels().length];
     for (int i = 0; i < newLevelProgArr.length; i++) {
-      newLevelProgArr[i] = extractLevel(rawProg, i);
+      if (date.getYear() == 2011 && date.getMonth() < 10) {
+        newLevelProgArr[i] = extractLevelOLD(rawProg, i);
+      } else {
+        newLevelProgArr[i] = extractLevel(rawProg, i);
+      }
     }
 
     // Write the files into the work dir
@@ -447,6 +451,108 @@ public class RawDataProcessor {
       }
     }
   }
+  
+  
+  private DayProgramFile extractLevelOLD(DayProgramFile prog, int levelIdx)
+  throws PreparationException
+{
+  DayProgramFile levelProg = new DayProgramFile();
+
+  for (int i = 0; i < prog.getProgramFrameCount(); i++) {
+    ProgramFrame frame = prog.getProgramFrameAt(i);
+    ProgramFrame levelFrame = null;
+
+    if (levelIdx == 0) {
+      // base: All information but description and the image
+      levelFrame = (ProgramFrame) frame.clone();
+      levelFrame.removeProgramFieldOfType(ProgramFieldType.DESCRIPTION_TYPE);
+      levelFrame.removeProgramFieldOfType(ProgramFieldType.ACTOR_LIST_TYPE);
+      levelFrame.removeProgramFieldOfType(ProgramFieldType.ADDITIONAL_INFORMATION_TYPE);
+     // levelFrame.removeProgramFieldOfType(ProgramFieldType.IMAGE_TYPE);
+      levelFrame.removeProgramFieldOfType(ProgramFieldType.PICTURE_TYPE);
+      levelFrame.removeProgramFieldOfType(ProgramFieldType.PICTURE_DESCRIPTION_TYPE);
+      levelFrame.removeProgramFieldOfType(ProgramFieldType.PICTURE_COPYRIGHT_TYPE);
+
+    } else {
+      ProgramField levelField1 = null;
+      ProgramField levelField2 = null;
+      ProgramField levelField3 = null;
+
+      switch (levelIdx) {
+        case 1:
+          // more00-16: Only the descriptions and the actor list
+          //            between midnight and 16 pm
+          if (PrimaryDataUtilities.getProgramStartTime(frame) < (16 * 60)) {
+            levelField1 = frame.getProgramFieldOfType(ProgramFieldType.DESCRIPTION_TYPE);
+            levelField2 = frame.getProgramFieldOfType(ProgramFieldType.ACTOR_LIST_TYPE);
+            levelField3 = frame.getProgramFieldOfType(ProgramFieldType.ADDITIONAL_INFORMATION_TYPE);
+          }
+          break;
+        case 2:
+          // more16-00: Only the descriptions and the actor list
+          //            between 16 pm and midnight
+          if (PrimaryDataUtilities.getProgramStartTime(frame) >= (16 * 60)) {
+            levelField1 = frame.getProgramFieldOfType(ProgramFieldType.DESCRIPTION_TYPE);
+            levelField2 = frame.getProgramFieldOfType(ProgramFieldType.ACTOR_LIST_TYPE);
+            levelField3 = frame.getProgramFieldOfType(ProgramFieldType.ADDITIONAL_INFORMATION_TYPE);
+          }
+          break;
+       /* case 3:
+          // image00-16: Only the image between midnight and 16 pm
+          if (PrimaryDataUtilities.getProgramStartTime(frame) < (16 * 60)) {
+            levelField1 = frame.getProgramFieldOfType(ProgramFieldType.IMAGE_TYPE);
+          }
+          break;
+        case 4:
+          // image16-00: Only the image between 16 pm and midnight
+          if (PrimaryDataUtilities.getProgramStartTime(frame) >= (16 * 60)) {
+            levelField1 = frame.getProgramFieldOfType(ProgramFieldType.IMAGE_TYPE);
+          }
+          break;*/
+
+        case 3:
+          // picture00-16: Only the picture between midnight and 16 pm
+          if (PrimaryDataUtilities.getProgramStartTime(frame) < (16 * 60)) {
+            levelField1 = frame.getProgramFieldOfType(ProgramFieldType.PICTURE_TYPE);
+            levelField2 = frame.getProgramFieldOfType(ProgramFieldType.PICTURE_DESCRIPTION_TYPE);
+            levelField3 = frame.getProgramFieldOfType(ProgramFieldType.PICTURE_COPYRIGHT_TYPE);
+          }
+          break;
+
+        case 4:
+          // picture16-00: Only the picture between 16 pm and midnight
+          if (PrimaryDataUtilities.getProgramStartTime(frame) >= (16 * 60)) {
+            levelField1 = frame.getProgramFieldOfType(ProgramFieldType.PICTURE_TYPE);
+            levelField2 = frame.getProgramFieldOfType(ProgramFieldType.PICTURE_DESCRIPTION_TYPE);
+            levelField3 = frame.getProgramFieldOfType(ProgramFieldType.PICTURE_COPYRIGHT_TYPE);
+          }
+          break;
+
+
+      }
+
+      if ((levelField1 != null) || (levelField2 != null) || (levelField3 != null)) {
+        levelFrame = new ProgramFrame(frame.getId());
+        if (levelField1 != null) {
+          levelFrame.addProgramField(levelField1);
+        }
+        if (levelField2 != null) {
+          levelFrame.addProgramField(levelField2);
+        }
+        if (levelField3 != null) {
+          levelFrame.addProgramField(levelField3);
+        }
+      }
+    }
+
+    if (levelFrame != null) {
+      levelProg.addProgramFrame(levelFrame);
+    }
+  }
+
+  return levelProg;
+}
+
 
 
   private DayProgramFile extractLevel(DayProgramFile prog, int levelIdx)
@@ -475,7 +581,7 @@ public class RawDataProcessor {
         ProgramField levelField3 = null;
 
         switch (levelIdx) {
-          case 1:
+        /*  case 1:
             // more00-16: Only the descriptions and the actor list
             //            between midnight and 16 pm
             if (PrimaryDataUtilities.getProgramStartTime(frame) < (16 * 60)) {
@@ -483,15 +589,15 @@ public class RawDataProcessor {
               levelField2 = frame.getProgramFieldOfType(ProgramFieldType.ACTOR_LIST_TYPE);
               levelField3 = frame.getProgramFieldOfType(ProgramFieldType.ADDITIONAL_INFORMATION_TYPE);
             }
-            break;
+            break;*/
           case 2:
             // more16-00: Only the descriptions and the actor list
             //            between 16 pm and midnight
-            if (PrimaryDataUtilities.getProgramStartTime(frame) >= (16 * 60)) {
+            //if (PrimaryDataUtilities.getProgramStartTime(frame) >= (16 * 60)) {
               levelField1 = frame.getProgramFieldOfType(ProgramFieldType.DESCRIPTION_TYPE);
               levelField2 = frame.getProgramFieldOfType(ProgramFieldType.ACTOR_LIST_TYPE);
               levelField3 = frame.getProgramFieldOfType(ProgramFieldType.ADDITIONAL_INFORMATION_TYPE);
-            }
+            //}
             break;
          /* case 3:
             // image00-16: Only the image between midnight and 16 pm
