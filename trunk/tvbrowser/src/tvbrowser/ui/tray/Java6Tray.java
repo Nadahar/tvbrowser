@@ -117,7 +117,7 @@ public class Java6Tray {
    * @return true, if successfull
    */
   public boolean init(JFrame parent, String tooltip) {
-    if(JavaVersion.getVersion() >= JavaVersion.VERSION_1_6 && !OperatingSystem.isMacOs()) {
+    if(JavaVersion.getVersion() >= JavaVersion.VERSION_1_6) {
       try {
         mSystemTray = java.awt.SystemTray.getSystemTray();
         boolean isSupported = java.awt.SystemTray.isSupported();
