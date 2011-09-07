@@ -134,7 +134,7 @@ public class TVBrowser {
 
   private static String curLookAndFeel;
 
-  private static final boolean mIsStable = false;
+  private static final boolean mIsStable = true;
   private static final int mMajorVersion = 3;
   private static final int mMinorVersion = 2;
   private static final int mSubMinorVersion = 0;
@@ -144,6 +144,8 @@ public class TVBrowser {
   */
   /** The string array with the names of the earlier versions. */
   private static final String[] ALL_VERSIONS = new String[]{
+          "3.0.2",
+          "3.0.2 RC2",
           "3.0.2 RC1",
           "3.0.2beta1",
           "3.0.1.99 SVN",
