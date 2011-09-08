@@ -33,6 +33,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.DefaultListCellRenderer;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -122,6 +123,7 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
     mDownBtn = UiUtilities.createToolBarButton(mLocalizer.msg("down","Move selected value down"),TVBrowserIcons.down(TVBrowserIcons.SIZE_LARGE));
     
     JToolBar toolbarPn = new JToolBar();
+    toolbarPn.setBorder(BorderFactory.createEmptyBorder());
     toolbarPn.setFloatable(false);
     
     toolbarPn.add(mNewFolder);
