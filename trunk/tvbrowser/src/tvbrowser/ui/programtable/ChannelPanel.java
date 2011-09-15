@@ -29,10 +29,15 @@ package tvbrowser.ui.programtable;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Graphics;
 import java.awt.event.KeyListener;
 
 import javax.swing.JPanel;
 import javax.swing.UIManager;
+
+import net.sf.xtvdclient.xtvd.datatypes.MpaaRatings;
+
+import util.ui.persona.Persona;
 
 import devplugin.Channel;
 
@@ -51,9 +56,8 @@ public class ChannelPanel extends JPanel {
   
   public ChannelPanel(int columnWidth, Channel[] channelArr,KeyListener keyListener) {
     setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
-    setOpaque(true);
     
-    Color c = UIManager.getColor("List.selectionBackground");
+    Color c = Persona.getInstance().getAccentColor() == null ? UIManager.getColor("List.selectionBackground") : Persona.getInstance().getAccentColor().darker();
     setBackground(new Color(c.getRed(),c.getGreen(),c.getBlue(),c.getAlpha()));
     
     setShownChannels(channelArr,keyListener);
@@ -103,5 +107,30 @@ public class ChannelPanel extends JPanel {
         break;
       }
     }
+  }
+  
+ /* protected void paintComponent(Graphics g) {
+    if(Persona.getInstance().getAccentColor() != null && Persona.getInstance().getHeaderImage() != null) {
+      Color c = Persona.getInstance().getAccentColor().darker().darker().darker();
+
+      g.setColor(new Color(c.getRed(),c.getGreen(),c.getBlue(),110));
+      g.fillRect(0,0,getWidth(),getHeight());
+      
+
+    }
+    else {
+      super.paintComponent(g);
+    }
+  }*/
+  
+  /**
+   * Updates Persona after change.
+   */
+  public void updatePersona() {
+    for(ProgramTableChannelLabel label : mLabelArr) {
+      label.updatePersona();
+    }
+    Color c = Persona.getInstance().getAccentColor() == null ? UIManager.getColor("List.selectionBackground") : Persona.getInstance().getAccentColor().darker();
+    setBackground(new Color(c.getRed(),c.getGreen(),c.getBlue(),c.getAlpha()));
   }
 }

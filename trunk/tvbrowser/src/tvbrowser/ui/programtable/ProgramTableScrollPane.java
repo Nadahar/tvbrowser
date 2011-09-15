@@ -415,4 +415,11 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
     }
     scrollBar.setValue(pos);
   }
+  
+  /**
+   * Updates Persona after change.
+   */
+  public void updatePersona() {
+    mChannelPanel.updatePersona();
+  }
 }
