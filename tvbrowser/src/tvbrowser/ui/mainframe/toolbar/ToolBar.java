@@ -71,6 +71,7 @@ import javax.swing.JSeparator;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.plaf.ButtonUI;
 import javax.swing.plaf.basic.BasicButtonUI;
@@ -311,6 +312,16 @@ public class ToolBar extends JToolBar {
     final JToggleButton button = new JToggleButton() {
       protected void paintComponent(Graphics g) {
         if(Persona.getInstance().getHeaderImage() != null && Persona.getInstance().getTextColor() != null && Persona.getInstance().getShadowColor() != null) {
+          if(UIManager.getLookAndFeel().getClass().getCanonicalName().equals("com.sun.java.swing.plaf.gtk.GTKLookAndFeel")) {
+            if(isBorderPainted()) {
+              g.setColor(UIManager.getColor("List.selectionBackground"));
+              g.fillRect(0, 0, getWidth(), getHeight());
+            }
+            if(isSelected()) {
+              g.draw3DRect(0,0,getWidth(),getHeight(),false);
+            }
+          }
+          
           if(Settings.propToolbarButtonStyle.getString().equals("text&icon")) {
             getIcon().paintIcon(this,g,getWidth()/2-getIcon().getIconWidth()/2,getInsets().top);
           }
@@ -383,6 +394,11 @@ public class ToolBar extends JToolBar {
     final JButton button = new PopupButton() {
       protected void paintComponent(Graphics g) {
         if(Persona.getInstance().getHeaderImage() != null && Persona.getInstance().getTextColor() != null && Persona.getInstance().getShadowColor() != null) {
+          if(isBorderPainted() && UIManager.getLookAndFeel().getClass().getCanonicalName().equals("com.sun.java.swing.plaf.gtk.GTKLookAndFeel")) {
+            g.setColor(UIManager.getColor("List.selectionBackground"));
+            g.fillRect(0, 0, getWidth(), getHeight());
+          }
+          
           if(Settings.propToolbarButtonStyle.getString().equals("text&icon")) {
             getIcon().paintIcon(this,g,getWidth()/2-getIcon().getIconWidth()/2,getInsets().top);
           }
@@ -785,6 +801,12 @@ public class ToolBar extends JToolBar {
     }
     else {
       setOpaque(true);
+    }
+  }
+  
+  protected void paintComponent(Graphics g) {
+    if(!UIManager.getLookAndFeel().getClass().getCanonicalName().equals("com.sun.java.swing.plaf.gtk.GTKLookAndFeel") || Persona.getInstance().getHeaderImage() == null) {
+      super.paintComponent(g);
     }
   }
 }

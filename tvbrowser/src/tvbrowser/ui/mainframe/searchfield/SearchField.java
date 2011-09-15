@@ -168,60 +168,41 @@ public class SearchField extends JPanel {
    * Create the GUI
    */
   private void createGui() {
-    
-    
-    //parent.add(panel,BorderLayout.CENTER);
-   
-    
     parent.setOpaque(true);
 
     panel.setBorder(BorderFactory.createCompoundBorder(UIManager.getBorder("TextField.border"),BorderFactory.createEmptyBorder(2,2,1,2)));
     mText = new SearchTextField(15);
 
     mPersonaFocusListener = new FocusListener() {
-      
       @Override
       public void focusLost(FocusEvent e) {
-        // TODO Auto-generated method stub
         parent.setBackground(new Color(255,255,255,210));
         parent.setOpaque(false);
         SwingUtilities.invokeLater(new Runnable() {
           
           @Override
           public void run() {
-            // TODO Auto-generated method stub
-          //  parent.setBackground(new Color(255,255,255,200));
             parent.setOpaque(true);
-            panel.repaint();
-            
+            panel.repaint();            
           }
         });
       }
       
       @Override
       public void focusGained(FocusEvent e) {
-        //panel.getRootPane().getGlassPane().setBackground(Color.white);
-        // TODO Auto-generated method stub
         parent.setBackground(Color.white);
-        //parent.setOpaque(true);
-      //  panel.setBackground(Color.white);
       }
     };
     
     if(UIManager.getLookAndFeel().getClass().getCanonicalName().equals("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel")) {
-  //    mText.setBackground(Color.white);
-//      mText.setBorder(BorderFactory.createLineBorder(mText.getBackground(), 2));
       mText.setBorder(BorderFactory.createEmptyBorder(2,2,2,2));
       panel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEtchedBorder(),BorderFactory.createEmptyBorder(2,2,1,2)));
     }
     if(UIManager.getLookAndFeel().getClass().getCanonicalName().equals("com.sun.java.swing.plaf.gtk.GTKLookAndFeel")) {
-      //mText.setBackground(Color.white);
-      //mText.setBorder(BorderFactory.createLineBorder(mText.getBackground(), 3));
       mText.setBorder(BorderFactory.createEmptyBorder(3,3,3,3));
     }
     else {
       mText.setBorder(BorderFactory.createEmptyBorder(1,1,1,1));
-      //mText.setBorder(BorderFactory.createLineBorder(mText.getBackground()));
     }
 
     mText.addFocusListener(new FocusAdapter() {
@@ -258,22 +239,10 @@ public class SearchField extends JPanel {
       }
     });
 
- //   panel.setBackground(mText.getBackground());
-
     mSearchButton = new JLabel(TVBrowserIcons.search(TVBrowserIcons.SIZE_SMALL));
     mSearchButton.setBorder(BorderFactory.createEmptyBorder());
-   /* mSearchButton.setContentAreaFilled(false);
-    mSearchButton.setMargin(new Insets(0, 0, 0, 0));
-    mSearchButton.setFocusPainted(false);
-    mSearchButton.setBorderPainted(false);*/
     mSearchButton.setFocusable(false);
     mSearchButton.setRequestFocusEnabled(false);
-  //  mSearchButton.setRolloverEnabled(false);
-   /* mSearchButton.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        showConfigureDialog(mText);
-      };
-    });*/
     
     mSearchButton.addMouseListener(new MouseAdapter() {
 
@@ -286,9 +255,6 @@ public class SearchField extends JPanel {
 
     mGoOrCancelButton = new JLabel(IconLoader.getInstance().getIconFromTheme("action", "media-playback-start", 16));
     mGoOrCancelButton.setBorder(BorderFactory.createEmptyBorder());
-  /*  mGoOrCancelButton.setContentAreaFilled(false);
-    mGoOrCancelButton.setMargin(new Insets(0, 0, 0, 0));
-    mGoOrCancelButton.setFocusPainted(false);*/
     mGoOrCancelButton.setVisible(false);
     mGoOrCancelButton.addMouseListener(new MouseAdapter() {
       public void mousePressed(MouseEvent e) {
@@ -305,7 +271,7 @@ public class SearchField extends JPanel {
     mText.setOpaque(false);
     panel.setOpaque(false);
     updatePersona();
-//panel.setBackground(new Color(255,255,255,200));
+    
     panel.add(mSearchButton, BorderLayout.WEST);
     panel.add(mText, BorderLayout.CENTER);
     panel.add(mGoOrCancelButton, BorderLayout.EAST);

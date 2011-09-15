@@ -25,6 +25,7 @@ import javax.swing.JSeparator;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
@@ -82,10 +83,24 @@ public class MoreButton extends JToggleButton implements ActionListener {
 
         this.toolbar = toolbar;
         addActionListener(this);
+        setBorderPainted(false);
         setHorizontalTextPosition(SwingConstants.CENTER);
         setVerticalTextPosition(SwingConstants.BOTTOM);
         setFont(ToolBar.TEXT_FONT);
         addMouseAdapter(this);
+        addMouseListener(new MouseAdapter() {
+          public void mouseEntered(MouseEvent e) {
+            if (!isSelected()) {
+              setBorderPainted(true);
+            }
+          }
+
+          public void mouseExited(MouseEvent e) {
+            if (!isSelected()) {
+              setBorderPainted(false);
+            }
+          }
+        });
         setFocusPainted(false);
         setOpaque(false);
 
@@ -124,6 +139,8 @@ public class MoreButton extends JToggleButton implements ActionListener {
     }
 
     private static void addMouseAdapter(final JComponent c) {
+      
+      
       c.addMouseListener(new MouseAdapter() {
         public void mousePressed(MouseEvent e) {
           if(e.isPopupTrigger()) {
@@ -142,7 +159,7 @@ public class MoreButton extends JToggleButton implements ActionListener {
       });
     }
 
-    public void actionPerformed(ActionEvent e){
+    public void actionPerformed(ActionEvent e) {
         Component[] comp = toolbar.getComponents();
         Action[] actions = DefaultToolBarModel.getInstance().getActions();
 
@@ -164,6 +181,7 @@ public class MoreButton extends JToggleButton implements ActionListener {
                 mPopupMenu.addPopupMenuListener(new PopupMenuListener(){
                     public void popupMenuWillBecomeInvisible(PopupMenuEvent e){
                         setSelected(false);
+                        setBorderPainted(false);
                     }
                     public void popupMenuCanceled(PopupMenuEvent e){}
                     public void popupMenuWillBecomeVisible(PopupMenuEvent e){}
@@ -174,7 +192,13 @@ public class MoreButton extends JToggleButton implements ActionListener {
     }
 
     public static Component wrapToolBar(ToolBar toolbar, MainFrame mainFrame) {
-      JToolBar moreToolbar = new JToolBar();
+      JToolBar moreToolbar = new JToolBar() {
+        protected void paintComponent(Graphics g) {
+          if(!UIManager.getLookAndFeel().getClass().getCanonicalName().equals("com.sun.java.swing.plaf.gtk.GTKLookAndFeel") || Persona.getInstance().getHeaderImage() == null) {
+            super.paintComponent(g);
+          }
+        }
+      };
       moreToolbar.setOpaque(false);
       moreToolbar.setLayout(new GridLayout());
       moreToolbar.setRollover(true);
@@ -201,6 +225,16 @@ public class MoreButton extends JToggleButton implements ActionListener {
     
     protected void paintComponent(Graphics g) {
       if(Persona.getInstance().getHeaderImage() != null && Persona.getInstance().getTextColor() != null && Persona.getInstance().getShadowColor() != null) {
+        if(UIManager.getLookAndFeel().getClass().getCanonicalName().equals("com.sun.java.swing.plaf.gtk.GTKLookAndFeel")) {
+          if(isBorderPainted()) {
+            g.setColor(UIManager.getColor("List.selectionBackground"));
+            g.fillRect(0, 0, getWidth(), getHeight());
+          }
+          if(isSelected()) {
+            g.draw3DRect(0,0,getWidth(),getHeight(),false);
+          }
+        }
+        
         if(Settings.propToolbarButtonStyle.getString().equals("text&icon")) {
           getIcon().paintIcon(this,g,getWidth()/2-getIcon().getIconWidth()/2,getInsets().top);
         }
