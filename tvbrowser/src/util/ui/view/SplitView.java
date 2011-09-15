@@ -62,19 +62,19 @@ public class SplitView extends AbstractView {
   							int oldValue = ((Integer) evt.getOldValue()).intValue();
   							int dividerLocation = ((Integer) evt.getNewValue()).intValue();
   							SplitViewProperty prop = (SplitViewProperty) getProperty();
-  							int fixedWidth = dividerLocation;
+  							int fixedWidth;
   							if (prop.getLeftComponentFixed()) {
-                  if ((oldValue >= 0) && (fixedWidth >= 0)
-                      && (prop.getFixedComponentWidth() != fixedWidth)) {
-                    prop.setFixedComponentWidth(fixedWidth);
-                    update();
-                  }
+  								fixedWidth = dividerLocation;
   							} else {
-                  if ((oldValue >= 0) && (fixedWidth >= 0)
-                      && (prop.getDividerLocation() != dividerLocation)) {
-                    prop.setDividerLocation(dividerLocation);
-                    update();
-                  }  							  
+  								int width = mComponent.getWidth();
+  								int height = mComponent.getHeight();
+  								fixedWidth = (prop.getVerticalSplit() ? height : width)
+  										- dividerLocation;
+  							}
+  							if ((oldValue >= 0) && (fixedWidth >= 0)
+  									&& (prop.getFixedComponentWidth() != fixedWidth)) {
+  								prop.setFixedComponentWidth(fixedWidth);
+  								update();
   							}
               }
 						}
@@ -111,15 +111,10 @@ public class SplitView extends AbstractView {
         splitPane.setDividerLocation(abs);
       }
       else {
-        if(prop.getDividerLocation() == -1) {
-          int width = mComponent.getWidth();
-          int height = mComponent.getHeight();
-          int dividerLocation = (prop.getVerticalSplit()?height:width) - abs;
-          splitPane.setDividerLocation(dividerLocation);
-        }
-        else {
-          splitPane.setDividerLocation(prop.getDividerLocation());
-        }
+        int width = mComponent.getWidth();
+        int height = mComponent.getHeight();
+        int dividerLocation = (prop.getVerticalSplit()?height:width) - abs;
+        splitPane.setDividerLocation(dividerLocation);
       }
     }
   }
@@ -149,7 +144,7 @@ public class SplitView extends AbstractView {
           if(prop.getLeftComponentFixed()) {
             prop.setFixedComponentWidth(comp.getWidth());
           } else {
-            prop.setDividerLocation(splitPane.getDividerLocation());
+            prop.setFixedComponentWidth(comp.getWidth() + splitPane.getDividerSize());
           }
         }
       }
