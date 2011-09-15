@@ -28,11 +28,16 @@ package tvbrowser.ui.mainframe;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.event.KeyListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
+import javax.swing.UIManager;
+
+import util.ui.persona.Persona;
 
 import devplugin.ProgressMonitor;
 
@@ -48,19 +53,49 @@ public class StatusBar extends JPanel {
 
   /**
    * Create the Statusbar
+   * @param keyListener The key listener for FAYT.
    */
-  public StatusBar() {
+  public StatusBar(KeyListener keyListener) {
     setOpaque(false);
-    setLayout(new BorderLayout(2, 0));
-    setBorder(BorderFactory.createEmptyBorder(2,0,0,0));
-    setPreferredSize(new Dimension(0, 18));
+    setLayout(new BorderLayout(1, 0));
+    
+    if(!UIManager.getLookAndFeel().getClass().getCanonicalName().equals("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel") &&
+        !UIManager.getLookAndFeel().getClass().getCanonicalName().equals("com.sun.java.swing.plaf.gtk.GTKLookAndFeel")) {
+      setBorder(BorderFactory.createEmptyBorder(2,0,0,0));          
+    }
 
-    mInfoLabel = new JLabel();
-    mInfoLabel.setBorder(BorderFactory.createEtchedBorder());
-
+    setPreferredSize(new Dimension(0, 22));
+    
+    mInfoLabel = new JLabel() {
+      protected void paintComponent(Graphics g) {
+        if(Persona.getInstance().getHeaderImage() != null && Persona.getInstance().getTextColor() != null && Persona.getInstance().getShadowColor() != null) {
+          int baseLine = getBaseline(0,getHeight());          
+        
+          if(!Persona.getInstance().getShadowColor().equals(Persona.getInstance().getTextColor())) { 
+            g.setColor(Persona.getInstance().getShadowColor());
+            g.drawString(getText(),getIconTextGap()+1,baseLine+1);
+            g.drawString(getText(),getIconTextGap()+2,baseLine+2);
+          }
+          
+          g.setColor(Persona.getInstance().getTextColor());
+          g.drawString(getText(),getIconTextGap(),baseLine);
+        }
+        else {
+          super.paintComponent(g);
+        }
+      }
+    };
+    
+    mInfoLabel.addKeyListener(keyListener);
+    
     mProgressBar = new JProgressBar();
-    mProgressBar.setPreferredSize(new Dimension(200, 10));
-    mProgressBar.setBorder(BorderFactory.createEtchedBorder());
+    mProgressBar.setVisible(false);
+    mProgressBar.addKeyListener(keyListener);
+    mProgressBar.setPreferredSize(new Dimension(150, 10));
+    
+updatePersona();
+    
+    
 
     add(mInfoLabel, BorderLayout.CENTER);
     add(mProgressBar, BorderLayout.EAST);
@@ -97,5 +132,18 @@ public class StatusBar extends JPanel {
       }
     };
   }
-
+  
+  /**
+   * Updates the search field on Persona change.
+   */
+  public void updatePersona() {
+    if(Persona.getInstance().getHeaderImage() == null) {
+      mInfoLabel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createCompoundBorder(BorderFactory.createMatteBorder(1,1,0,0,mProgressBar.getBackground().darker().darker()),BorderFactory.createMatteBorder(0,0,1,1,mProgressBar.getBackground().brighter())),BorderFactory.createEmptyBorder(0,3,0,0)));
+      mProgressBar.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createCompoundBorder(BorderFactory.createMatteBorder(1,1,0,0,mProgressBar.getBackground().darker().darker()),BorderFactory.createMatteBorder(0,0,1,1,mProgressBar.getBackground().brighter())),BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(2,2,2,2),BorderFactory.createCompoundBorder(BorderFactory.createMatteBorder(1,1,0,0,mProgressBar.getBackground().darker().darker()),BorderFactory.createMatteBorder(0,0,1,1,mProgressBar.getBackground().brighter().brighter())))));  
+    }
+    else {
+      mInfoLabel.setBorder(BorderFactory.createEmptyBorder(0,2,0,0));
+      mProgressBar.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(2,2,2,2),BorderFactory.createCompoundBorder(BorderFactory.createMatteBorder(1,1,0,0,mProgressBar.getBackground().darker().darker()),BorderFactory.createMatteBorder(0,0,1,1,mProgressBar.getBackground().brighter().brighter()))));
+    }
+  }
 }

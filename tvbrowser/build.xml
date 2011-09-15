@@ -65,6 +65,7 @@
   <property name="tvdatatools.runtime.dir" value="${runtime.dir}/tvdatatools"/>
   <property name="tvdatakit.runtime.dir" value="${runtime.dir}/tvdatakit"/>
   <property name="themepacks.dir" value="themepacks"/>
+  <property name="personas.dir" value="personas"/>
 
   <property name="deployment.dir" value="deployment" />
   <property name="win.dir" value="${deployment.dir}/win"/>
@@ -321,7 +322,7 @@
          compress="true">
       <fileset dir="${classes.dir}" includes="emailplugin/**"/>
     </jar>
-
+  	
     <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/GenrePlugin.jar"
          compress="true">
       <fileset dir="${classes.dir}" includes="genreplugin/**"/>
@@ -341,6 +342,11 @@
     <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/I18NPlugin.jar"
          compress="true">
       <fileset dir="${classes.dir}" includes="i18nplugin/**"/>
+    </jar>
+  	
+  	<jar jarfile="${tvbrowser-linux.runtime.dir}/plugins/KNotifyPlugin.jar"
+         compress="true">
+      <fileset dir="${classes.dir}" includes="knotifyplugin/**"/>
     </jar>
 
     <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/ListViewPlugin.jar"
@@ -483,7 +489,11 @@
 		    <include name="*.ico"/>
 	    </fileset>
     </copy>
-
+  	
+  	<mkdir dir="${tvbrowser-default.runtime.dir}/personas"/>
+    <copy todir="${tvbrowser-default.runtime.dir}/personas">
+	    <fileset dir="./personas"/>
+	</copy>
     <copy todir="${tvbrowser-default.runtime.dir}">
       <fileset dir="${txt.dir}" includes="LICENSE.txt"/>
       <fileset dir="${txt.dir}" includes="COPYRIGHT.txt"/>
@@ -644,12 +654,6 @@
      <!-- <fileset dir="${linux.dir}" includes="tvbrowser.desktop"/>-->
     </copy>
    	<chmod perm="u+x" file="${tvbrowser-linux.runtime.dir}/tvbrowser.sh"/>
-
-  	<jar jarfile="${tvbrowser-linux.runtime.dir}/plugins/KNotifyPlugin.jar"
-         compress="true">
-      <fileset dir="${classes.dir}" includes="knotifyplugin/**"/>
-    </jar>
-
   </target>
 
 
@@ -832,6 +836,7 @@
   	    <tarfileset dir="${tvbrowser-linux.runtime.dir}" prefix="usr/share/tvbrowser">
   	    	<include name="imgs/**"/>
   	    	<include name="plugins/**"/>
+  	    	<include name="personas/**"/>
   	    	<include name="themepacks/**"/>
   	    	<exclude name="tvbrowser.sh"/>
   	    	<exclude name="tvbrowser.desktop"/>

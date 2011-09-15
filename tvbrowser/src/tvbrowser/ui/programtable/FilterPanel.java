@@ -6,6 +6,7 @@ import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -39,19 +40,21 @@ public class FilterPanel extends JPanel {
 
   /**
    * Create the Filter-Panel
+   * @param keyListener The key listener for FAYT.
    */
-  public FilterPanel() {
+  public FilterPanel(KeyListener keyListener) {
     setLayout(new BorderLayout());
     setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
     setBackground(Color.WHITE);
 
     mFilterLabel = new JLabel();
-
+    mFilterLabel.addKeyListener(keyListener);
+    
     mFilterLabel.setHorizontalAlignment(SwingConstants.LEFT);
     add(mFilterLabel, BorderLayout.CENTER);
 
     JButton deactivate = new JButton(mLocalizer.msg("deactivate", "Deactivate"));
-
+    deactivate.addKeyListener(keyListener);
     deactivate.addActionListener(new ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent e) {
         MainFrame.getInstance().setProgramFilter(FilterManagerImpl.getInstance().getDefaultFilter());

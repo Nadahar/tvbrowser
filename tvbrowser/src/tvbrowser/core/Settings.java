@@ -94,6 +94,7 @@ import util.settings.StringProperty;
 import util.settings.VersionProperty;
 import util.settings.WindowSetting;
 import util.ui.Localizer;
+import util.ui.persona.Persona;
 import util.ui.view.SplitViewProperty;
 import devplugin.Channel;
 import devplugin.Date;
@@ -826,6 +827,10 @@ public class Settings {
       DefaultProgramTableModel model = mainFrame.getProgramTableModel();
       model.setChannels(ChannelList.getSubscribedChannels());
       mainFrame.updateChannellist();
+    }
+    
+    if(mProp.hasChanged(propSelectedPersona)) {
+      Persona.getInstance().applyPersona();
     }
 
     propArr = new Property[] { propProgramTableStartOfDay,
@@ -1733,6 +1738,10 @@ public class Settings {
   public static final BooleanProperty propPluginBetaWarning = new BooleanProperty(
       mProp, "pluginBetaWarning", true);
 
+  
+  public static final StringProperty propSelectedPersona = new StringProperty(
+      mProp, "persona", "ecb70d5c-f606-4052-9059-5c501842d6c3");
+  
   /**
    * Sets the window position and size for the given window with the values of
    * the given id.

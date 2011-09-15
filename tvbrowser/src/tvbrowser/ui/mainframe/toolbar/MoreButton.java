@@ -2,6 +2,8 @@ package tvbrowser.ui.mainframe.toolbar;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -26,9 +28,11 @@ import javax.swing.SwingConstants;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
+import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.ui.Localizer;
+import util.ui.persona.Persona;
 
 /**
  * MySwing: Advanced Swing Utilites
@@ -56,7 +60,7 @@ import util.ui.Localizer;
  * Changed for support of the TV-Browser ToolBar.
  */
 
-public class MoreButton extends JToggleButton implements ActionListener{
+public class MoreButton extends JToggleButton implements ActionListener {
     private JToolBar toolbar;
     private JPopupMenu mPopupMenu;
     private static final Localizer mLocalizer = Localizer.getLocalizerFor(MoreButton.class);
@@ -83,6 +87,7 @@ public class MoreButton extends JToggleButton implements ActionListener{
         setFont(ToolBar.TEXT_FONT);
         addMouseAdapter(this);
         setFocusPainted(false);
+        setOpaque(false);
 
         // hide & seek
         toolbar.addComponentListener(new ComponentAdapter(){
@@ -178,6 +183,7 @@ public class MoreButton extends JToggleButton implements ActionListener{
       addMouseAdapter(moreToolbar);
 
         JPanel panel = new JPanel(new BorderLayout(0,0));
+        panel.setOpaque(false);
 
         panel.add(toolbar, BorderLayout.CENTER);
 
@@ -191,5 +197,34 @@ public class MoreButton extends JToggleButton implements ActionListener{
         }
 
         return panel;
+    }
+    
+    protected void paintComponent(Graphics g) {
+      if(Persona.getInstance().getHeaderImage() != null && Persona.getInstance().getTextColor() != null && Persona.getInstance().getShadowColor() != null) {
+        if(Settings.propToolbarButtonStyle.getString().equals("text&icon")) {
+          getIcon().paintIcon(this,g,getWidth()/2-getIcon().getIconWidth()/2,getInsets().top);
+        }
+        
+        if(Settings.propToolbarButtonStyle.getString().contains("text")) {
+          FontMetrics metrics = g.getFontMetrics(getFont());
+          int textWidth = metrics.stringWidth(getText());
+        
+          if(!Persona.getInstance().getShadowColor().equals(Persona.getInstance().getTextColor())) {
+            g.setColor(Persona.getInstance().getShadowColor());
+            
+            g.drawString(getText(),getWidth()/2-textWidth/2+1,getHeight()-getInsets().bottom-getInsets().top+1);
+            g.drawString(getText(),getWidth()/2-textWidth/2+2,getHeight()-getInsets().bottom-getInsets().top+2);
+          }
+          
+          g.setColor(Persona.getInstance().getTextColor());
+          g.drawString(getText(),getWidth()/2-textWidth/2,getHeight()-getInsets().bottom-getInsets().top);
+        }
+        else {
+          super.paintComponent(g);
+        }
+      }
+      else {
+        super.paintComponent(g);
+      }
     }
 }

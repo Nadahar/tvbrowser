@@ -49,6 +49,7 @@ public class SplitView extends AbstractView {
 			mComponent = components[0];
 		} else if (components.length == 2) {
 			final JSplitPane splitPane = new JSplitPane();
+			splitPane.setOpaque(false);
 			splitPane.setContinuousLayout(true);
 			splitPane.setOneTouchExpandable(true);
 			splitPane.setLeftComponent(components[0]);

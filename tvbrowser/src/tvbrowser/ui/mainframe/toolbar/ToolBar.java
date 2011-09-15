@@ -27,31 +27,43 @@
 package tvbrowser.ui.mainframe.toolbar;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Insets;
 import java.awt.LayoutManager;
+import java.awt.Rectangle;
 import java.awt.dnd.DnDConstants;
 import java.awt.dnd.DragSource;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ContainerEvent;
 import java.awt.event.ContainerListener;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
+import javax.imageio.ImageIO;
 import javax.swing.AbstractButton;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -60,6 +72,9 @@ import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
+import javax.swing.plaf.ButtonUI;
+import javax.swing.plaf.basic.BasicButtonUI;
+import javax.swing.plaf.basic.BasicToggleButtonUI;
 
 import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginProxy;
@@ -73,6 +88,7 @@ import util.ui.ChannelContextMenu;
 import util.ui.PopupButton;
 import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
+import util.ui.persona.Persona;
 
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
@@ -210,6 +226,11 @@ public class ToolBar extends JToolBar {
     }
 
     updateUI();
+    
+    if(Persona.getInstance().getHeaderImage() != null) {
+      setOpaque(false);
+    }
+    
     disabled = false;
   }
 
@@ -287,7 +308,37 @@ public class ToolBar extends JToolBar {
   }
 
   private void addToggleButton(final Action action) {
-    final JToggleButton button = new JToggleButton();
+    final JToggleButton button = new JToggleButton() {
+      protected void paintComponent(Graphics g) {
+        if(Persona.getInstance().getHeaderImage() != null && Persona.getInstance().getTextColor() != null && Persona.getInstance().getShadowColor() != null) {
+          if(Settings.propToolbarButtonStyle.getString().equals("text&icon")) {
+            getIcon().paintIcon(this,g,getWidth()/2-getIcon().getIconWidth()/2,getInsets().top);
+          }
+          
+          if(Settings.propToolbarButtonStyle.getString().contains("text")) {
+            FontMetrics metrics = g.getFontMetrics(getFont());
+            int textWidth = metrics.stringWidth(getText());
+          
+            if(!Persona.getInstance().getShadowColor().equals(Persona.getInstance().getTextColor())) {
+              g.setColor(Persona.getInstance().getShadowColor());
+              
+              g.drawString(getText(),getWidth()/2-textWidth/2+1,getHeight()-getInsets().bottom-getInsets().top+1);
+              g.drawString(getText(),getWidth()/2-textWidth/2+2,getHeight()-getInsets().bottom-getInsets().top+2);
+            }
+            
+            g.setColor(Persona.getInstance().getTextColor());
+            g.drawString(getText(),getWidth()/2-textWidth/2,getHeight()-getInsets().bottom-getInsets().top);
+          }
+          else {
+            super.paintComponent(g);
+          }
+        }
+        else {
+          super.paintComponent(g);
+        }
+      }
+    };
+    button.setOpaque(false);
     button.setAlignmentX(Component.CENTER_ALIGNMENT);
 
     action.putValue(ACTION_VALUE, button);
@@ -314,6 +365,7 @@ public class ToolBar extends JToolBar {
         if (e.isPopupTrigger() && !disabled) {
           showPopupMenu(e);
         }
+        
       }
 
       public void mouseReleased(MouseEvent e) {
@@ -322,12 +374,43 @@ public class ToolBar extends JToolBar {
         }
       }
     });
-
+   // button.setUI(new ToogleButtonUI());
+   // System.out.println(button.getUI());
     add(button);
   }
 
   private void addButton(final Action action) {
-    final JButton button = new PopupButton();
+    final JButton button = new PopupButton() {
+      protected void paintComponent(Graphics g) {
+        if(Persona.getInstance().getHeaderImage() != null && Persona.getInstance().getTextColor() != null && Persona.getInstance().getShadowColor() != null) {
+          if(Settings.propToolbarButtonStyle.getString().equals("text&icon")) {
+            getIcon().paintIcon(this,g,getWidth()/2-getIcon().getIconWidth()/2,getInsets().top);
+          }
+          
+          if(Settings.propToolbarButtonStyle.getString().contains("text")) {
+            FontMetrics metrics = g.getFontMetrics(getFont());
+            int textWidth = metrics.stringWidth(getText());
+          
+            if(!Persona.getInstance().getShadowColor().equals(Persona.getInstance().getTextColor())) {
+              g.setColor(Persona.getInstance().getShadowColor());
+              
+              g.drawString(getText(),getWidth()/2-textWidth/2+1,getHeight()-getInsets().bottom-getInsets().top+1);
+              g.drawString(getText(),getWidth()/2-textWidth/2+2,getHeight()-getInsets().bottom-getInsets().top+2);
+            }
+            
+            g.setColor(Persona.getInstance().getTextColor());
+            g.drawString(getText(),getWidth()/2-textWidth/2,getHeight()-getInsets().bottom-getInsets().top);
+          }
+          else {
+            super.paintComponent(g);
+          }
+        }
+        else {
+          super.paintComponent(g);
+        }
+      }
+    };
+    
     addButtonProperties(button, action);
     button.setBorderPainted(false);
     button.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -335,6 +418,7 @@ public class ToolBar extends JToolBar {
 
     if(action.equals(((DefaultToolBarModel)mModel).getUpdateAction())) {
       mUpdateButton = button;
+      mUpdateButton.setOpaque(false);
     }
 
     button.addMouseListener(new MouseAdapter() {
@@ -474,14 +558,17 @@ public class ToolBar extends JToolBar {
     String tooltip = (String) action.getValue(Action.SHORT_DESCRIPTION);
     Icon icon = getIcon(action);
     String title = getTitle(action);
-
+    
+    if(Persona.getInstance().getHeaderImage() != null) {
+      button.setOpaque(false);
+    }
+    
     button.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         action.actionPerformed(new ActionEvent(action,ActionEvent.ACTION_PERFORMED,""));
         final AbstractButton btn = (AbstractButton) action.getValue(ToolBar.ACTION_VALUE);
-        if (!(btn instanceof JToggleButton)) {
-          MainFrame.getInstance().getProgramTableScrollPane().requestFocusInWindow();
-        }
+
+        MainFrame.getInstance().getProgramTableScrollPane().requestFocusInWindow();
       }
     });
 
@@ -687,8 +774,17 @@ public class ToolBar extends JToolBar {
       }
     }
   }
-
+  
   public void showPopupMenu(TVBrowserAction tvBrowserAction) {
     ((DefaultToolBarModel)mModel).showPopupMenu(tvBrowserAction);
+  }
+  
+  public void updatePersona() {
+    if(Persona.getInstance().getHeaderImage() != null) {
+      setOpaque(false);
+    }
+    else {
+      setOpaque(true);
+    }
   }
 }

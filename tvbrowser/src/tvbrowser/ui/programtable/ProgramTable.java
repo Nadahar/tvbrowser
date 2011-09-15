@@ -45,6 +45,7 @@ import java.awt.dnd.DragSourceDropEvent;
 import java.awt.dnd.DragSourceEvent;
 import java.awt.dnd.DragSourceListener;
 import java.awt.event.InputEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
@@ -132,11 +133,13 @@ public class ProgramTable extends JPanel
   /**
    * Creates a new instance of ProgramTable.
    * @param model program table model to use in the program table
+   * @param keyListener The key listener for FAYT.
    */
-  public ProgramTable(ProgramTableModel model) {
+  public ProgramTable(ProgramTableModel model,KeyListener keyListener) {
     setToolTipText("");
     setProgramTableLayout(null);
-
+    addKeyListener(keyListener);
+    
     mCurrentCol = -1;
     mCurrentRow = -1;
     mCurrentY = 0;

@@ -30,6 +30,8 @@ package tvbrowser.ui.mainframe;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -44,6 +46,7 @@ import javax.swing.event.ChangeListener;
 import tvbrowser.core.Settings;
 import util.ui.GridFlowLayout;
 import util.ui.TimeFormatter;
+import util.ui.persona.Persona;
 import devplugin.SettingsItem;
 
 
@@ -57,28 +60,44 @@ public class TimeChooserPanel extends JPanel implements ChangeListener, MouseLis
     private MainFrame mParent;
     
     private JPanel mGridPn;
+    private KeyListener mKeyListener;
     
-    public TimeChooserPanel(MainFrame parent) {
-      setOpaque(false);
+    public TimeChooserPanel(MainFrame parent,KeyListener keyListener) {
+      addKeyListener(keyListener);
       mParent=parent;
       setLayout(new BorderLayout(0,2));
       setBorder(BorderFactory.createEmptyBorder(5,3,5,3));
       
       mGridPn = new JPanel(new GridFlowLayout(5,5,GridFlowLayout.TOP, GridFlowLayout.CENTER));
+      updatePersona();
+      mGridPn.addKeyListener(keyListener);
+      mGridPn.addMouseListener(new MouseAdapter() {
+        public void mouseClicked(MouseEvent e) {
+          mGridPn.requestFocus();
+        }
+      });
+      addMouseListener(new MouseAdapter() {
+        public void mouseClicked(MouseEvent e) {
+          requestFocus();
+        }
+      });
+      
       add(mGridPn,BorderLayout.CENTER);
+      
+      mKeyListener = keyListener;
       
       createContent();
       
       String msg;
       msg = mLocalizer.msg("button.now", "Now");
       JButton nowBt=new JButton(msg);
+      nowBt.addKeyListener(keyListener);
       nowBt.addActionListener(new ActionListener(){
         public void actionPerformed(ActionEvent arg0) {
             mParent.scrollToNow();
         }});
       add(nowBt, BorderLayout.SOUTH);
       nowBt.addMouseListener(this);
-      
       addMouseListener(this);
     }
     
@@ -102,6 +121,7 @@ public class TimeChooserPanel extends JPanel implements ChangeListener, MouseLis
         int h = time/60;
         int m = time%60;
         JButton btn = new JButton(formatter.formatTime(h, m));
+        btn.addKeyListener(mKeyListener);
         mGridPn.add(btn);
         btn.addActionListener(new ActionListener(){
           public void actionPerformed(ActionEvent arg0) {
@@ -150,5 +170,18 @@ public class TimeChooserPanel extends JPanel implements ChangeListener, MouseLis
       
       menu.show(this, x, y);
     }
-
+    
+    /**
+     * Updates the search field on Persona change.
+     */
+    public void updatePersona() {
+      if(Persona.getInstance().getHeaderImage() != null) {
+        setOpaque(false);
+        mGridPn.setOpaque(false);
+      }
+      else {
+        setOpaque(true);
+        mGridPn.setOpaque(true);
+      }
+    }
 }

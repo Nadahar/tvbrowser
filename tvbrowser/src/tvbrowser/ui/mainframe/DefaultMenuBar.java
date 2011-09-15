@@ -42,7 +42,7 @@ public class DefaultMenuBar extends MenuBar {
   public DefaultMenuBar(final MainFrame mainFrame, final JLabel label) {
     super(mainFrame, label);
 
-    JMenu fileMenu = createMenu("menu.main", "&File");
+    JMenu fileMenu = createMenu("menu.main", "&File", true);
     add(fileMenu);
     fileMenu.add(mQuitMI);
 

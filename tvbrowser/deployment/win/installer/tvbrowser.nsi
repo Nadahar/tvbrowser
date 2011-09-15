@@ -304,6 +304,9 @@ Section "$(STD_SECTION_NAME)" SEC_STANDARD
   SetOutPath "$INSTDIR\imgs"
   File "${RUNTIME_DIR}\imgs\*.*"
 
+  SetOutPath "$INSTDIR\personas"
+  File /r "${RUNTIME_DIR}\personas\*.*"
+
   SetOutPath "$INSTDIR\icons"
   File /r "${RUNTIME_DIR}\icons\*.*"
 
@@ -594,6 +597,8 @@ Section "Uninstall"
   deletePluginsDir:
   RMDir /r "$INSTDIR\plugins"
   noDeletePluginsDir:
+  
+  RMDir /r "$INSTDIR\personas"
 
   IfFileExists "$INSTDIR\themepacks\themepack.zip" deleteThemesDir noDeleteThemesDir
   deleteThemesDir:

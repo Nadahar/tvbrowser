@@ -31,6 +31,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.MouseInfo;
@@ -48,9 +49,12 @@ import java.awt.dnd.DropTargetListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -149,6 +153,7 @@ import util.misc.OperatingSystem;
 import util.ui.Localizer;
 import util.ui.UIThreadRunner;
 import util.ui.UiUtilities;
+import util.ui.persona.Persona;
 import util.ui.progress.Progress;
 import util.ui.progress.ProgressWindow;
 import util.ui.view.Node;
@@ -259,9 +264,37 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
   private Timer mTimer;
 
   private UserAwayDetector mAwayDetector = new UserAwayDetector();
+  
+  private KeyListener mGlobalFindAsYouTypeKeyListener;
 
+  private FaytPanel mFindAsYouType;
+ 
   private MainFrame() {
     super(TVBrowser.MAINWINDOW_TITLE);
+    
+    setContentPane(new BackgroundPanel()); 
+    mFindAsYouType = new FaytPanel();
+    
+     mGlobalFindAsYouTypeKeyListener = new KeyAdapter() {      
+      @Override
+      public void keyPressed(KeyEvent e) {
+        if((e.getModifiersEx() & KeyEvent.ALT_DOWN_MASK) != KeyEvent.ALT_DOWN_MASK) {
+          if((e.getKeyCode() >= KeyEvent.VK_A && e.getKeyCode() <= KeyEvent.VK_Z) ||
+              (e.getKeyCode() >= KeyEvent.VK_0 && e.getKeyCode() <= KeyEvent.VK_9)) {
+            mFindAsYouType.setText(String.valueOf(e.getKeyChar()));
+          }
+          else if(mFindAsYouType.isVisible()) {
+            if(e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
+              mFindAsYouType.deleteLastChar();
+            }
+            else if(e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+              mFindAsYouType.closeFayt();
+            }
+          }
+        }
+      }
+    };
+    
     mIsVisible = false;
     mSettingsWillBeOpened = false;
 
@@ -271,7 +304,9 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
 
     mChannelDateArr = null;
     mOnAirRowProgramsArr = null;
-    mStatusBar = new StatusBar();
+    mStatusBar = new StatusBar(mGlobalFindAsYouTypeKeyListener);
+    mStatusBar.setOpaque(false);
+    mStatusBar.getProgressBar().setOpaque(false);
 
     if (OperatingSystem.isMacOs()) {
       /* create the menu bar for MacOS X */
@@ -301,22 +336,27 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     } else {
       mMenuBar = new DefaultMenuBar(this, mStatusBar.getLabel());
     }
-
+   // mMenuBar.setOpaque(false);
+    
     // create content
     jcontentPane = (JPanel) getContentPane();
     jcontentPane.setLayout(new BorderLayout());
 
     JPanel skinPanel = new JPanel();
+    skinPanel.addKeyListener(mGlobalFindAsYouTypeKeyListener);
+    skinPanel.setOpaque(false);
     skinPanel.setLayout(new BorderLayout());
 
     JPanel centerPanel = new JPanel(new BorderLayout());
+    centerPanel.addKeyListener(mGlobalFindAsYouTypeKeyListener);
     centerPanel.setOpaque(false);
     centerPanel.setBorder(BorderFactory.createEmptyBorder());
 
-    mFilterPanel = new FilterPanel();
+    mFilterPanel = new FilterPanel(mGlobalFindAsYouTypeKeyListener);
     mFilterPanel.setVisible(false);
-
-    mTimeChooserPanel = new TimeChooserPanel(this);
+    
+    addKeyListener(mGlobalFindAsYouTypeKeyListener);
+    mTimeChooserPanel = new TimeChooserPanel(this,mGlobalFindAsYouTypeKeyListener);
 
     centerPanel.add(mFilterPanel, BorderLayout.NORTH);
 
@@ -325,14 +365,17 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     int endOfDay = Settings.propProgramTableEndOfDay.getInt();
     mProgramTableModel = new DefaultProgramTableModel(channelArr, startOfDay,
         endOfDay);
-    mProgramTableScrollPane = new ProgramTableScrollPane(mProgramTableModel);
+    mProgramTableScrollPane = new ProgramTableScrollPane(mProgramTableModel,mGlobalFindAsYouTypeKeyListener);
+
     centerPanel.add(mProgramTableScrollPane);
+    mProgramTableScrollPane.setOpaque(false);
 
     createDateSelector();
 
     skinPanel.add(centerPanel, BorderLayout.CENTER);
 
-    mChannelChooser = new ChannelChooserPanel(this);
+    mChannelChooser = new ChannelChooserPanel(this,mGlobalFindAsYouTypeKeyListener);
+    mChannelChooser.setOpaque(false);
 
     /* create structure */
     mRootNode = new Node(null);
@@ -378,10 +421,17 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     if (mCenterComponent != null) {
       jcontentPane.add(mCenterComponent, BorderLayout.CENTER);
     }
-
+    
+    JPanel southPanel = new JPanel(new BorderLayout());
+    southPanel.setOpaque(false);
+    southPanel.add(mFindAsYouType,BorderLayout.NORTH);
+    mFindAsYouType.setVisible(false);
+    
     if (Settings.propIsStatusbarVisible.getBoolean()) {
-      jcontentPane.add(mStatusBar, BorderLayout.SOUTH);
+      southPanel.add(mStatusBar, BorderLayout.SOUTH);
     }
+    
+    jcontentPane.add(southPanel,BorderLayout.SOUTH);
 
     setJMenuBar(mMenuBar);
     addContextMenuMouseListener(mMenuBar);
@@ -434,9 +484,9 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
    */
   public void createDateSelector() {
     switch (Settings.propViewDateLayout.getInt()) {
-    case 1: mFinderPanel = new CalendarTablePanel();break;
-    case 2: mFinderPanel = new CalendarPanel();break;
-    default: mFinderPanel = new FinderPanel();
+    case 1: mFinderPanel = new CalendarTablePanel(mGlobalFindAsYouTypeKeyListener);break;
+    case 2: mFinderPanel = new CalendarPanel(mGlobalFindAsYouTypeKeyListener);break;
+    default: mFinderPanel = new FinderPanel(mGlobalFindAsYouTypeKeyListener);
     }
     mFinderPanel.setDateListener(this);
   }
@@ -859,6 +909,25 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     rootPane.registerKeyboardAction(new ActionListener() {
 
       public void actionPerformed(ActionEvent e) {
+        boolean menuCanceled = false;
+        
+        for(int i = 0; i < mMenuBar.getMenuCount(); i++) {
+          JMenu test = mMenuBar.getMenu(i);
+          if(test.isSelected()) {
+            test.setSelected(false);
+            menuCanceled = true;
+          }
+          if(test.getPopupMenu().isShowing()) {
+            test.getPopupMenu().setVisible(false);
+            menuCanceled = true;
+          }
+          
+          if(menuCanceled) {
+            return;
+          }
+        }
+        
+        
         if (isFullScreenMode()) {
           TVBrowserActions.fullScreen.actionPerformed(null);
         }
@@ -942,7 +1011,6 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
 
     mToolBarModel = DefaultToolBarModel.getInstance();
     mToolBar = new ToolBar(mToolBarModel);
-    mToolBar.setOpaque(false);
 
     String location = mToolBar.getToolbarLocation();
 
@@ -951,11 +1019,29 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
         mToolBarPanel = new JPanel(new BorderLayout()) {
           public void updateUI() {
             super.updateUI();
-            setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, getBackground().darker()));
+            
+            if(Persona.getInstance().getHeaderImage() == null) {
+              setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, getBackground().darker()));
+            }
+            else {
+              setBorder(BorderFactory.createEmptyBorder());
+            }
           }
         };
+                
         addContextMenuMouseListener(mToolBarPanel);
         mSearchField = new SearchField();
+        
+        if(Persona.getInstance().getHeaderImage() != null) {
+          mToolBarPanel.setOpaque(false);
+          mSearchField.setOpaque(false);
+        }
+        else {
+          mToolBarPanel.setOpaque(true);
+          mSearchField.setOpaque(true);      
+        }
+        
+        mToolBarPanel.addKeyListener(mGlobalFindAsYouTypeKeyListener);
       } else {
         mToolBarPanel.removeAll();
       }
@@ -971,7 +1057,6 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
           mToolBarPanel.add(mSearchField, BorderLayout.SOUTH);
         }
       }
-
       contentPane.add(mToolBarPanel, location);
     }
 
@@ -1052,6 +1137,9 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
 
     if (mProgramTableModel.getProgramFilter() instanceof SearchFilter && !(filter instanceof SearchFilter)) {
       mSearchField.deactivateSearch();
+    }
+    else if(mProgramTableModel.getProgramFilter() instanceof FaytFilter && !(filter instanceof FaytFilter)) {
+      mFindAsYouType.closeFayt();
     }
 
     mProgramTableScrollPane.deSelectItem();
@@ -1677,6 +1765,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     TVBrowserActions.update.setUpdating(false);
     TvDataUpdater.getInstance().stopDownload();
     mStatusBar.getProgressBar().setValue(0);
+    mStatusBar.getProgressBar().setVisible(false);
 
     mToolBar.updateUpdateButton(false);
     mMenuBar.showUpdateMenuItem();
@@ -1826,6 +1915,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
         && getProgramTableModel().getDate().compareTo(Date.getCurrentDate()) == 0;
 
         JProgressBar progressBar = mStatusBar.getProgressBar();
+        progressBar.setVisible(true);
         try {
           TvDataUpdater.getInstance().downloadTvData(daysToDownload, services,
               progressBar, mStatusBar.getLabel());
@@ -2666,5 +2756,43 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
 
   public boolean getUserRequestCopyToSystem() {
     return mMenuBar.getUserRequestedCopyToSystem();
+  }
+  
+  private class BackgroundPanel extends JPanel {
+    protected void paintComponent(Graphics g) {
+      super.paintComponent(g);
+      BufferedImage headerImage = Persona.getInstance().getHeaderImage();
+      BufferedImage footerImage = Persona.getInstance().getFooterImage();
+      
+      if(headerImage != null) {
+        g.drawImage(headerImage,0,0,jcontentPane.getWidth(),headerImage.getHeight()-mMenuBar.getHeight(),headerImage.getWidth()-jcontentPane.getWidth(),mMenuBar.getHeight(),headerImage.getWidth(),headerImage.getHeight(),null);//.drawImage(mImage,0,0,null);
+      }
+      if(footerImage != null) {
+        g.drawImage(footerImage,0,jcontentPane.getHeight()-footerImage.getHeight(),footerImage.getWidth(),jcontentPane.getHeight(),0,0,footerImage.getWidth(),footerImage.getHeight(),null);//.drawImage(mImage,0,0,null);
+      }
+    }
+  }
+  
+  /**
+   * Updates the search field on Persona change.
+   */
+  public void updatePersona() {
+    repaint();
+    
+    if(Persona.getInstance().getHeaderImage() != null) {
+      mToolBarPanel.setOpaque(false);
+      mSearchField.setOpaque(false);
+    }
+    else {
+      mToolBarPanel.setOpaque(true);
+      mSearchField.setOpaque(true);      
+    }
+    mToolBarPanel.updateUI();
+    
+    mMenuBar.updatePersona();
+    mToolBar.updatePersona();
+    mSearchField.updatePersona();
+    mTimeChooserPanel.updatePersona();
+    mStatusBar.updatePersona();
   }
 }

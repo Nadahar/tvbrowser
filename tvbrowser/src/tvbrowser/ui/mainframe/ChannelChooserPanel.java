@@ -29,6 +29,7 @@ package tvbrowser.ui.mainframe;
 import java.awt.BorderLayout;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
@@ -64,19 +65,25 @@ public class ChannelChooserPanel extends JPanel implements ListDropAction {
   private MainFrame mParent;
   private boolean disableSync = false;
   private ChannelFilterComponent mChannelFilter;
-
+  
   /**
    * @param frame
+   * @param keyListener The key listener for FAYT.
    */
-  public ChannelChooserPanel(MainFrame frame) {
+  public ChannelChooserPanel(MainFrame frame,KeyListener keyListener) {
     mParent = frame;
-
     mChannelChooserModel = new DefaultListModel();
 
     mList = new JList(mChannelChooserModel);
+    mList.addKeyListener(keyListener);
     updateChannelChooser();
     setLayout(new BorderLayout());
-    add(new JScrollPane(mList));
+    JScrollPane scrollPane = new JScrollPane(mList);
+    scrollPane.addKeyListener(keyListener);
+    scrollPane.getViewport().addKeyListener(keyListener);
+    scrollPane.getVerticalScrollBar().addKeyListener(keyListener);
+    scrollPane.getHorizontalScrollBar().addKeyListener(keyListener);
+    add(scrollPane);
 
     ListDragAndDropHandler dnDHandler = new ListDragAndDropHandler(mList,
         mList, this);
