@@ -58,7 +58,7 @@ public class SplitViewProperty extends ViewProperty {
     }
     
     private String createPropertyString(Property prop) {
-      return prop.isVerticalSplit()+";"+prop.isLeftComponentFix()+";"+prop.getFixComponentWidth()+";"+prop.getDividerLocation();
+      return prop.isVerticalSplit()+";"+prop.isLeftComponentFix()+";"+prop.getFixComponentWidth();
     }
     
     private Property getPropertyFromString(String str) {
@@ -66,17 +66,12 @@ public class SplitViewProperty extends ViewProperty {
         return mDefaultValue;
       }
       String[] s = str.split(";");
-      if (s.length == 3 || s.length == 4) {
+      if (s.length ==3) {
         try {
           boolean verticalSplit = "true".equals(s[0]);
           boolean leftComponent = "true".equals(s[1]);
           int width = Integer.parseInt(s[2]);
-          int deviderLocation = -1;
-          
-          if(s.length == 4) {
-            deviderLocation = Integer.parseInt(s[3]);
-          }
-          return new Property(verticalSplit, leftComponent, width, deviderLocation);
+          return new Property(verticalSplit, leftComponent, width);
         }catch(NumberFormatException e) {
           return mDefaultValue;
         }
@@ -107,14 +102,6 @@ public class SplitViewProperty extends ViewProperty {
       mCachedValue.setFixComponentWidth(width);
       setProperty(createPropertyString(mCachedValue));
     }
-
-    public void setDividerLocation(int deviderLocation) {
-      if (mCachedValue == null) {
-        mCachedValue = new Property(mDefaultValue);
-      }
-      mCachedValue.setDividerLocation(deviderLocation);
-      setProperty(createPropertyString(mCachedValue));
-    }
     
     public boolean getVerticalSplit() {
       if (mCachedValue == null) {
@@ -138,15 +125,6 @@ public class SplitViewProperty extends ViewProperty {
       return mCachedValue.getFixComponentWidth();
     }
     
-    
-    
-    public int getDividerLocation() {
-      if (mCachedValue == null) {
-        mCachedValue = getPropertyFromString(getProperty());
-      }
-      return mCachedValue.getDividerLocation();      
-    }
-    
     protected void clearCache() {
       mCachedValue = null;
         
@@ -163,21 +141,15 @@ public class SplitViewProperty extends ViewProperty {
       private boolean mVerticalSplit;
       private boolean mLeftComponentIsFixed;
       private int mFixedComponentWidth;
-      private int mDeviderLocation;
       
       public Property(boolean verticalSplit, boolean leftComponentIsFixed, int width) {
-        this(verticalSplit,leftComponentIsFixed,width,-1);
-      }
-
-      public Property(boolean verticalSplit, boolean leftComponentIsFixed, int width, int deviderLocation) {
         mVerticalSplit = verticalSplit;
         mLeftComponentIsFixed = leftComponentIsFixed;
         mFixedComponentWidth = width;
-        mDeviderLocation = deviderLocation;
       }
-
+      
       public Property(Property prop) {
-        this(prop.mVerticalSplit, prop.mLeftComponentIsFixed, prop.mFixedComponentWidth, prop.mDeviderLocation);
+        this(prop.mVerticalSplit, prop.mLeftComponentIsFixed, prop.mFixedComponentWidth);
       }
       
       public void setVerticalSplit(boolean v) {
@@ -202,14 +174,6 @@ public class SplitViewProperty extends ViewProperty {
       
       public int getFixComponentWidth() {
         return mFixedComponentWidth;
-      }
-      
-      public void setDividerLocation(int value) {
-        mDeviderLocation = value;
-      }
-      
-      public int getDividerLocation() {
-        return mDeviderLocation;
       }
     }
     
