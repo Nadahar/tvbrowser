@@ -58,6 +58,7 @@ public class Persona {
   private BufferedImage mFooterImage;
   private Color mTextColor;
   private Color mShadowColor;
+  private Color mAccentColor;
   
   /** The name key for the Persona properties */
   public final static String NAME_KEY = "name";
@@ -68,9 +69,11 @@ public class Persona {
   /** The footer image key for the Persona properties */
   public final static String FOOTER_IMAGE_KEY = "footerImage";
   /** The text color key for the Persona properties */
-  public final static String TEXT_COLOR_KEY = "textcolor";
+  public final static String TEXT_COLOR_KEY = "textColor";
   /** The shadow color key for the Persona properties */
   public final static String SHADOW_COLOR_KEY = "shadowColor";
+  /** The accent color key for the Persona properties */
+  public final static String ACCENT_COLOR_KEY = "accentColor";
   
   /** The key for the space holder for images in the user Persona directory */
   public final static String USER_PERSONA = "{user.persona}";
@@ -103,6 +106,7 @@ public class Persona {
       mFooterImage = personaInfo.getFooterImage();
       mTextColor = personaInfo.getTextColor();
       mShadowColor = personaInfo.getShadowColor();
+      mAccentColor = personaInfo.getAccentColor();
     }
     else {
       mName = "Standard";
@@ -111,6 +115,7 @@ public class Persona {
       mFooterImage = null;
       mTextColor = null;
       mShadowColor = null;
+      mAccentColor = null;
     }
     
     MainFrame.getInstance().updatePersona();
@@ -120,7 +125,7 @@ public class Persona {
   /**
    * Loads all available Personas.
    */
-  public void loadPersonas() {
+  public void loadPersonas() {try {
     mPersonaMap.clear();
     
     PersonaInfo defaultInfo = new PersonaInfo();
@@ -129,7 +134,7 @@ public class Persona {
     // load personas in TV-Browser directory
     checkDir(new File(PERSONA_DIR));
     // load personas in user settings directory
-    checkDir(new File(Settings.getUserSettingsDirName(),PERSONA_DIR));
+    checkDir(new File(Settings.getUserSettingsDirName(),PERSONA_DIR));}catch(Throwable t) {t.printStackTrace();}
   }
   
   private void checkDir(File parentDir) {
@@ -201,6 +206,15 @@ public class Persona {
    */
   public Color getShadowColor() {
     return mShadowColor;
+  }
+  
+  /**
+   * Gets the accent color.
+   * <p>
+   * @return The color for the text shadow.
+   */
+  public Color getAccentColor() {
+    return mAccentColor;
   }
   
   /**

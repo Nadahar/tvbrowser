@@ -802,6 +802,8 @@ public class ToolBar extends JToolBar {
     else {
       setOpaque(true);
     }
+    
+    update();
   }
   
   protected void paintComponent(Graphics g) {

@@ -26,6 +26,7 @@
 
 package util.ui.view;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -35,7 +36,6 @@ import javax.swing.JSplitPane;
 
 import tvbrowser.ui.mainframe.MainFrame;
 import util.settings.Property;
-
 
 public class SplitView extends AbstractView {
 
@@ -49,6 +49,11 @@ public class SplitView extends AbstractView {
 			mComponent = components[0];
 		} else if (components.length == 2) {
 			final JSplitPane splitPane = new JSplitPane();
+			
+			for(int i = 0; i < splitPane.getComponentCount(); i++) {
+			  (splitPane.getComponent(i)).setBackground(new Color(0,0,0,0));
+			}
+			
 			splitPane.setOpaque(false);
 			splitPane.setContinuousLayout(true);
 			splitPane.setOneTouchExpandable(true);

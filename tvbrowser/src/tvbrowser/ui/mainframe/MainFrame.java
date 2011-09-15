@@ -2760,7 +2760,14 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
   
   private class BackgroundPanel extends JPanel {
     protected void paintComponent(Graphics g) {
-      super.paintComponent(g);
+      if(Persona.getInstance().getAccentColor() != null) {
+        g.setColor(Persona.getInstance().getAccentColor());
+        g.fillRect(0,0,getWidth(),getHeight());
+      }
+      else {
+        super.paintComponent(g);
+      }
+      
       BufferedImage headerImage = Persona.getInstance().getHeaderImage();
       BufferedImage footerImage = Persona.getInstance().getFooterImage();
       
