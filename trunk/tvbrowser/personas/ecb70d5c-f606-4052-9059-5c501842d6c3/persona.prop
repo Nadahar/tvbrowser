@@ -4,5 +4,6 @@ description = Old TV-Browser
 description.de = TV-Browser in alt
 headerImage = {tvb.persona}/header.jpg
 footerImage = {tvb.persona}/footer.jpg
-textcolor = 255,255,255
+textColor = 255,255,255
 shadowColor = 100,50,0
+accentColor = 218,188,162

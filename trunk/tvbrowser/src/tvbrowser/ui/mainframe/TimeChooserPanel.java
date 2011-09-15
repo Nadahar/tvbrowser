@@ -102,16 +102,17 @@ public class TimeChooserPanel extends JPanel implements ChangeListener, MouseLis
             g.fillRect(0,0,getWidth(),getHeight());
             FontMetrics metrics = g.getFontMetrics(getFont());
             int textWidth = metrics.stringWidth(getText());
+            int baseLine =  getHeight()/2+ metrics.getMaxDescent()+1;
             
             if(!Persona.getInstance().getShadowColor().equals(Persona.getInstance().getTextColor())) {
               g.setColor(Persona.getInstance().getShadowColor());
               
-              g.drawString(getText(),getWidth()/2-textWidth/2+1,getHeight()-getInsets().bottom-getInsets().top+1);
-              g.drawString(getText(),getWidth()/2-textWidth/2+2,getHeight()-getInsets().bottom-getInsets().top+2);
+              g.drawString(getText(),getWidth()/2-textWidth/2+1,baseLine+1);
+              g.drawString(getText(),getWidth()/2-textWidth/2+2,baseLine+2);
             }
             
             g.setColor(Persona.getInstance().getTextColor());
-            g.drawString(getText(),getWidth()/2-textWidth/2,getHeight()-getInsets().bottom-getInsets().top);
+            g.drawString(getText(),getWidth()/2-textWidth/2,baseLine);
           }
           else {
             super.paintComponent(g);
@@ -156,16 +157,17 @@ public class TimeChooserPanel extends JPanel implements ChangeListener, MouseLis
               g.fillRect(0,0,getWidth(),getHeight());
               FontMetrics metrics = g.getFontMetrics(getFont());
               int textWidth = metrics.stringWidth(getText());
+              int baseLine =  getHeight()/2+ metrics.getMaxDescent()+1;
               
               if(!Persona.getInstance().getShadowColor().equals(Persona.getInstance().getTextColor())) {
                 g.setColor(Persona.getInstance().getShadowColor());
                 
-                g.drawString(getText(),getWidth()/2-textWidth/2+1,getHeight()-getInsets().bottom-getInsets().top+1);
-                g.drawString(getText(),getWidth()/2-textWidth/2+2,getHeight()-getInsets().bottom-getInsets().top+2);
+                g.drawString(getText(),getWidth()/2-textWidth/2+1,baseLine+1);
+                g.drawString(getText(),getWidth()/2-textWidth/2+2,baseLine+2);
               }
               
               g.setColor(Persona.getInstance().getTextColor());
-              g.drawString(getText(),getWidth()/2-textWidth/2,getHeight()-getInsets().bottom-getInsets().top);
+              g.drawString(getText(),getWidth()/2-textWidth/2,baseLine);
             }
             else {
               super.paintComponent(g);
