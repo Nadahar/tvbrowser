@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.FontMetrics;
+import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
@@ -11,6 +12,7 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JPanel;
 import javax.swing.JToolTip;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
@@ -21,6 +23,7 @@ import util.browserlauncher.Launch;
 import util.ui.ChannelContextMenu;
 import util.ui.ChannelLabel;
 import util.ui.ToolTipWithIcon;
+import util.ui.persona.Persona;
 import devplugin.Channel;
 
 public class ProgramTableChannelLabel extends ChannelLabel {
@@ -35,9 +38,8 @@ public class ProgramTableChannelLabel extends ChannelLabel {
     mChannel = ch;
     
     addKeyListener(keyListener);
+    updatePersona();
     
-    setForeground(UIManager.getColor("List.selectionForeground"));
-
     setChannel(mChannel);
     setToolTipText("");
     
@@ -77,12 +79,18 @@ public class ProgramTableChannelLabel extends ChannelLabel {
         int r = (getForeground().getRed()   + getBackground().getRed())   >> 1;
         int g = (getForeground().getGreen() + getBackground().getGreen()) >> 1;
         int b = (getForeground().getBlue()  + getBackground().getBlue())  >> 1;
-        
+          
         e.getComponent().setForeground(new Color(r,g,b));
       }
       
       public void mouseExited(MouseEvent e) {
-        e.getComponent().setForeground(UIManager.getColor("List.selectionForeground"));
+        if(Persona.getInstance().getTextColor() == null) {
+          e.getComponent().setForeground(UIManager.getColor("List.selectionForeground"));
+        }
+        else {
+          e.getComponent().setForeground(Persona.getInstance().getTextColor());
+        }
+        
       }
     });
   }
@@ -159,5 +167,17 @@ public class ProgramTableChannelLabel extends ChannelLabel {
     }
     int y = (this.getHeight() - iconHeight - 2) / 2;
     return new Point(x, y);
+  }
+  
+  /**
+   * Updates Persona after change.
+   */
+  public void updatePersona() {
+    if(Persona.getInstance().getHeaderImage() != null && Persona.getInstance().getTextColor() != null) {
+      setForeground(Persona.getInstance().getTextColor());
+    }
+    else {
+      setForeground(UIManager.getColor("List.selectionForeground"));
+    }
   }
 }

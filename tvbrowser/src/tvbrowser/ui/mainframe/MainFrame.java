@@ -2801,5 +2801,6 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     mSearchField.updatePersona();
     mTimeChooserPanel.updatePersona();
     mStatusBar.updatePersona();
+    mProgramTableScrollPane.updatePersona();
   }
 }
