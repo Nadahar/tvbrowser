@@ -24,6 +24,7 @@
 
 package tvbrowser.ui.mainframe;
 
+import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -33,6 +34,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 import javax.swing.Action;
+import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -47,6 +49,7 @@ import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
+import javax.swing.border.Border;
 
 import tvbrowser.TVBrowser;
 import tvbrowser.core.ChannelList;
@@ -79,6 +82,7 @@ import util.ui.ScrollableMenu;
 import util.ui.TVBrowserIcons;
 import util.ui.UIThreadRunner;
 import util.ui.UiUtilities;
+import util.ui.persona.Persona;
 import devplugin.ActionMenu;
 import devplugin.Channel;
 import devplugin.ContextMenuSeparatorAction;
@@ -118,11 +122,14 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 	 * status bar label for menu help
 	 */
 	private JLabel mLabel;
-
+	private Border mDefaultBorder;
+	
 	protected MenuBar(MainFrame mainFrame, JLabel label) {
+	  mDefaultBorder = getBorder();
 		mMainFrame = mainFrame;
 		mLabel = label;
 		createMenuItems();
+		updatePersona();
 	}
 
 	protected MainFrame getMainFrame() {
@@ -223,8 +230,8 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 		mChannelGroupMenu = createMenu("menuitem.channelgroup", "Channel group");
 		updateChannelGroupMenu(mChannelGroupMenu);
 
-		mGoMenu = createMenu("menu.go", "Go");
-
+		mGoMenu = createMenu("menu.go", "Go", true);
+		
 		mGotoDateMenu = createMenu("menuitem.date", "date");
 		mGotoDateMenu.setIcon(IconLoader.getInstance().getIconFromTheme("apps",
 				"office-calendar", 16));
@@ -248,8 +255,8 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 		mGoMenu.addSeparator();
     mGoMenu.add(createMenuItem(TVBrowserActions.scrollToNow));
 
-		mViewMenu = createMenu("menu.view", "View");
-
+		mViewMenu = createMenu("menu.view", "View", true);
+		
 		mFullscreenMI = createCheckBoxItem("menuitem.fullscreen", "Fullscreen");
 		mFullscreenMI.setIcon(TVBrowserIcons.fullScreen(TVBrowserIcons.SIZE_SMALL));
 		mFullscreenMI.addActionListener(this);
@@ -426,11 +433,22 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 	   setLabelAndAccessKeys(localizerKey, defaultLabel, menu, false);
 	   return menu;
 	}
+	
+	protected JMenu createMenu(final String localizerKey,
+      final String defaultLabel) {
+	  return createMenu(localizerKey,defaultLabel,false);
+	}
 
 	protected JMenu createMenu(final String localizerKey,
-			final String defaultLabel) {
+			final String defaultLabel, boolean paintForPersona) {
 		JMenu menu = new JMenu();
+		
+		if(paintForPersona) {
+		  menu = Persona.getInstance().createPersonaMenu();
+		}
+
 		setLabelAndAccessKeys(localizerKey, defaultLabel, menu, false);
+		
 		return menu;
 	}
 
@@ -458,7 +476,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 		int index = label.indexOf('&');
 		String mnemonic = "";
 		if (index >= 0) {
-			mnemonic = label.substring(index, index);
+			mnemonic = label.substring(index+1, index+2);
 			label = label.substring(0, index) + label.substring(index + 1);
 		} else {
 			String mnemonicKey = localizerKey + ".mnemonic";
@@ -991,18 +1009,21 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 
     add(mGoMenu);
 
-    JMenu tvListingsMenu = createMenu("menu.tvData", "TV &data");
+    JMenu tvListingsMenu = createMenu("menu.tvData", "TV &data", true);
+    
     add(tvListingsMenu);
     tvListingsMenu.add(createMenuItem(TVBrowserActions.update));
     tvListingsMenu.add(createMenuItem(TVBrowserActions.configureChannels));
     tvListingsMenu.addSeparator();
     tvListingsMenu.add(mLicenseMenu);
 
-    mPluginsMenu = createMenu("menu.plugins", "&Tools");
+    mPluginsMenu = createMenu("menu.plugins", "&Tools", true);
+    
     add(mPluginsMenu);
     updatePluginsMenu();
-
-    mHelpMenu = createMenu("menu.help", "&Help");
+    
+    mHelpMenu = createMenu("menu.help", "&Help", true);
+    
     add(mHelpMenu);
     mHelpMenu.add(mConfigAssistantMI);
 
@@ -1042,5 +1063,29 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
   public boolean getUserRequestedCopyToSystem() {
     return mCopySettingsRequested;
   }
-
+  
+  protected void paintComponent(Graphics g) {
+    super.paintComponent(g);
+  
+    if(Persona.getInstance().getHeaderImage() != null) {
+      try {
+        g.drawImage(Persona.getInstance().getHeaderImage(),0,0,getWidth(),Persona.getInstance().getHeaderImage().getHeight(),Persona.getInstance().getHeaderImage().getWidth()-getWidth(),0,Persona.getInstance().getHeaderImage().getWidth(),Persona.getInstance().getHeaderImage().getHeight(),null);
+      }catch(Exception e) {}
+    }
+  }
+  
+  /**
+   * Updates the search field on Persona change.
+   */
+  public void updatePersona() {
+    if(Persona.getInstance().getHeaderImage() != null) {
+      setOpaque(false);
+      setBorder(BorderFactory.createEmptyBorder());
+    }
+    else {
+      setOpaque(true);
+      setBorder(mDefaultBorder);
+    }
+    repaint();
+  }
 }

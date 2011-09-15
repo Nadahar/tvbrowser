@@ -106,21 +106,27 @@ public class FinderPanel extends AbstractDateSelector implements DateSelector,
   private int mCurMouseItemInx = -1;
 
   private JScrollPane mScrollPane;
+  
 
-  public FinderPanel() {
-
+  public FinderPanel(KeyListener keyListener) {
     mScrollPane = new JScrollPane();
+    mScrollPane.addKeyListener(keyListener);
+    mScrollPane.getVerticalScrollBar().addKeyListener(keyListener);
+    mScrollPane.getHorizontalScrollBar().addKeyListener(keyListener);
+    
     setLayout(new BorderLayout());
     add(mScrollPane, BorderLayout.CENTER);
     mScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
     mModel = new DefaultListModel();
     mList = new JList(mModel);
     mList.setOpaque(false);
+    mList.addKeyListener(keyListener);
 
     mRenderer = new FinderItemRenderer();
     mList.setCellRenderer(mRenderer);
 
     mScrollPane.setViewportView(mList);
+    mScrollPane.getViewport().addKeyListener(keyListener);
     updateContent();
     mList.addMouseMotionListener(this);
     mList.addMouseListener(this);

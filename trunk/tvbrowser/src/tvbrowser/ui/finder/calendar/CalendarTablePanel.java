@@ -19,6 +19,7 @@ package tvbrowser.ui.finder.calendar;
 import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.Point;
+import java.awt.event.KeyListener;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -42,10 +43,11 @@ public class CalendarTablePanel extends AbstractCalendarPanel implements ListSel
 
   private boolean mAllowEvents = true;
 
-  public CalendarTablePanel() {
+  public CalendarTablePanel(KeyListener keyListener) {
     setLayout(new BorderLayout());
     mTableModel = new CalendarTableModel(getFirstDate());
     mTable = new JTable(mTableModel);
+    mTable.addKeyListener(keyListener);
     CalendarTableCellRenderer renderer = new CalendarTableCellRenderer();
     mTable.setDefaultRenderer(Date.class, renderer);
     mTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -62,6 +64,9 @@ public class CalendarTablePanel extends AbstractCalendarPanel implements ListSel
     mTable.getTableHeader().setReorderingAllowed(false);
     mTable.getTableHeader().setFont(new Font(mTable.getTableHeader().getFont().getFontName(), Font.PLAIN, mTable.getTableHeader().getFont().getSize() - 2));
     JScrollPane pane = new JScrollPane(mTable);
+    pane.getViewport().addKeyListener(keyListener);
+    pane.getVerticalScrollBar().addKeyListener(keyListener);
+    pane.getHorizontalScrollBar().addKeyListener(keyListener);
     pane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
     pane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
     add(pane, BorderLayout.CENTER);

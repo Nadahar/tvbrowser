@@ -29,6 +29,7 @@ package tvbrowser.ui.programtable;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.event.KeyListener;
 
 import javax.swing.JPanel;
 import javax.swing.UIManager;
@@ -48,27 +49,28 @@ public class ChannelPanel extends JPanel {
   /** Height of Panel, if an Icon is > 15, it get adjusted to it's needs */
   private int mColumnHeight = 15;
   
-  public ChannelPanel(int columnWidth, Channel[] channelArr) {
+  public ChannelPanel(int columnWidth, Channel[] channelArr,KeyListener keyListener) {
     setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
     setOpaque(true);
     
     Color c = UIManager.getColor("List.selectionBackground");
     setBackground(new Color(c.getRed(),c.getGreen(),c.getBlue(),c.getAlpha()));
     
-    setShownChannels(channelArr);
+    setShownChannels(channelArr,keyListener);
     setColumnWidth(columnWidth);
+    addKeyListener(keyListener);
   }
 
   public static void fontChanged() {
     ProgramTableChannelLabel.fontChanged();
   }
   
-  public void setShownChannels(Channel[] channelArr) {
+  public void setShownChannels(Channel[] channelArr, KeyListener keyListener) {
     removeAll();
     mLabelArr = new ProgramTableChannelLabel[channelArr.length];
     
     for (int i = 0; i < mLabelArr.length; i++) {
-      mLabelArr[i]=new ProgramTableChannelLabel(channelArr[i]);
+      mLabelArr[i]=new ProgramTableChannelLabel(channelArr[i],keyListener);
       add(mLabelArr[i]);
    
       if ((mLabelArr[i] != null) && (mLabelArr[i].getIcon() != null) &&

@@ -50,6 +50,8 @@ import tvbrowser.ui.settings.looksSettings.SkinLNFSettings;
 import util.ui.LinkButton;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
+import util.ui.persona.Persona;
+import util.ui.persona.PersonaInfo;
 
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.factories.DefaultComponentFactory;
@@ -74,6 +76,8 @@ public final class LookAndFeelSettingsTab implements SettingsTab {
   private JComboBox mPluginViewPosition;
 
   private JComboBox mDateLayout;
+  
+  private JComboBox mPersonaSelection;
 
   private JTextArea mRestartMessage;
 
@@ -204,11 +208,39 @@ public final class LookAndFeelSettingsTab implements SettingsTab {
     });
 
     mSettingsPn.add(mConfigBtn, cc.xy(6, 7));
-
+    
+    layout.appendRow(RowSpec.decode("3dlu"));
+    layout.appendRow(RowSpec.decode("pref"));
+    
+    mSettingsPn.add(new JLabel(mLocalizer.msg("persona", "Persona") + ":"), cc.xy(2, 9));
+    
+    PersonaInfo[] installedPersonas = Persona.getInstance().getInstalledPersonas();
+    
+    mPersonaSelection = new JComboBox(installedPersonas);
+    
+    for(PersonaInfo info : installedPersonas) {
+      if(Settings.propSelectedPersona.getString().equals(info.getId())) {
+        mPersonaSelection.setSelectedItem(info);
+      }
+    }
+    
+    mPersonaSelection.setRenderer(new DefaultListCellRenderer() {
+      public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+        JLabel label = (JLabel)super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+        if (value != null) {
+          label.setText(((PersonaInfo)value).getName());
+          label.setToolTipText(((PersonaInfo)value).getDescription());
+        }
+        return label;
+      }
+    });
+    
+    mSettingsPn.add(mPersonaSelection, cc.xy(4,9));
+    
     layout.appendRow(RowSpec.decode("3dlu"));
     layout.appendRow(RowSpec.decode("pref"));
 
-    mSettingsPn.add(new JLabel(mLocalizer.msg("icons", "Icons") + ":"), cc.xy(2, 9));
+    mSettingsPn.add(new JLabel(mLocalizer.msg("icons", "Icons") + ":"), cc.xy(2, 11));
 
     mIconThemes = new JComboBox(IconLoader.getInstance().getAvailableThemes());
     mIconThemes.setRenderer(new DefaultListCellRenderer() {
@@ -234,13 +266,13 @@ public final class LookAndFeelSettingsTab implements SettingsTab {
       mIconThemes.setSelectedItem(IconLoader.getInstance().getDefaultTheme());
     }
 
-    mSettingsPn.add(mIconThemes, cc.xy(4, 9));
+    mSettingsPn.add(mIconThemes, cc.xy(4, 11));
 
     layout.appendRow(RowSpec.decode("3dlu"));
     layout.appendRow(RowSpec.decode("pref"));
 
     mSettingsPn.add(new LinkButton(mLocalizer.msg("findMoreIcons","You can find more Icons on our Web-Page."),
-        "http://www.tvbrowser.org/iconthemes.php"), cc.xy(4, 11));
+        "http://www.tvbrowser.org/iconthemes.php"), cc.xy(4, 13));
 
     layout.appendRow(RowSpec.decode("fill:3dlu:grow"));
     layout.appendRow(RowSpec.decode("pref"));
@@ -249,7 +281,7 @@ public final class LookAndFeelSettingsTab implements SettingsTab {
     mRestartMessage.setForeground(Color.RED);
     mRestartMessage.setVisible(mSomethingChanged);
 
-    mSettingsPn.add(mRestartMessage, cc.xyw(1, 13, 6));
+    mSettingsPn.add(mRestartMessage, cc.xyw(1, 15, 6));
 
     if(!mSomethingChanged) {
       mStartLookAndIndex = mLfComboBox.getSelectedIndex();
@@ -318,6 +350,7 @@ public final class LookAndFeelSettingsTab implements SettingsTab {
 
     Settings.propPluginViewIsLeft.setBoolean(mPluginViewPosition.getSelectedIndex() == 1);
     Settings.propViewDateLayout.setInt(mDateLayout.getSelectedIndex());
+    Settings.propSelectedPersona.setString(((PersonaInfo)mPersonaSelection.getSelectedItem()).getId());
   }
 
   public Icon getIcon() {

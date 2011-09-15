@@ -5,6 +5,7 @@ import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Point;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -29,9 +30,11 @@ public class ProgramTableChannelLabel extends ChannelLabel {
 
   private Channel mChannel;
   
-  public ProgramTableChannelLabel(Channel ch) {
+  public ProgramTableChannelLabel(Channel ch,KeyListener keyListener) {
     super(Settings.propShowChannelIconsInProgramTable.getBoolean(),Settings.propShowChannelNamesInProgramTable.getBoolean());
     mChannel = ch;
+    
+    addKeyListener(keyListener);
     
     setForeground(UIManager.getColor("List.selectionForeground"));
 

@@ -31,6 +31,9 @@ import java.awt.event.AdjustmentListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.InputEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.beans.PropertyChangeEvent;
@@ -63,16 +66,24 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
   private boolean initialScrollingDone = false;
 
   private int mScrolledTime = -1;
+  
+  private KeyListener mKeyListener;
 
   /**
    * Creates a new instance of ProgramTableScrollPane.
+   * 
    */
-  public ProgramTableScrollPane(ProgramTableModel model) {
+  public ProgramTableScrollPane(ProgramTableModel model,KeyListener keyListener) {
     setFocusable(true);
 
-    mProgramTable = new ProgramTable(model);
+    mKeyListener = keyListener;
+    mProgramTable = new ProgramTable(model,keyListener);
     setViewportView(mProgramTable);
+    
+    getViewport().addKeyListener(keyListener);
+    addKeyListener(keyListener);
 
+    
     setWheelScrollingEnabled(false);
     addMouseWheelListener(this);
 
@@ -82,9 +93,10 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
     getHorizontalScrollBar().setFocusable(false);
     getVerticalScrollBar().setFocusable(false);
 
-    mChannelPanel = new ChannelPanel(mProgramTable.getColumnWidth(), model.getShownChannels());
+    mChannelPanel = new ChannelPanel(mProgramTable.getColumnWidth(), model.getShownChannels(), keyListener);
+    
     setColumnHeaderView(mChannelPanel);
-
+    getViewport().setOpaque(false);
     setOpaque(false);
     // setBorder(mDefaultBorder);
 
@@ -127,6 +139,17 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
         resetScrolledTime();
       }
     });
+    
+    getVerticalScrollBar().addMouseListener(new MouseAdapter() {
+      public void mouseClicked(MouseEvent e) {
+        requestFocus();
+      }
+    });
+    getHorizontalScrollBar().addMouseListener(new MouseAdapter() {
+      public void mouseClicked(MouseEvent e) {
+        requestFocus();
+      }
+    });
   }
 
   public ProgramTable getProgramTable() {
@@ -154,7 +177,7 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
    * completely refresh the channel labels at the top of the program table
    */
   public void updateChannelPanel() {
-    mChannelPanel = new ChannelPanel(mProgramTable.getColumnWidth(), mProgramTable.getModel().getShownChannels());
+    mChannelPanel = new ChannelPanel(mProgramTable.getColumnWidth(), mProgramTable.getModel().getShownChannels(),mKeyListener);
     setColumnHeaderView(mChannelPanel);
     this.repaint();
   }
@@ -217,7 +240,7 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
   // implements ProgramTableModelListener
 
   public void tableDataChanged(Runnable callback) {
-    mChannelPanel.setShownChannels(mProgramTable.getModel().getShownChannels());
+    mChannelPanel.setShownChannels(mProgramTable.getModel().getShownChannels(),mKeyListener);
     if (Settings.propTableBackgroundStyle.getString().equals("timeBlock") && Settings.propTimeBlockShowWest.getBoolean()) {
       getRowHeader().getView().repaint();
     }

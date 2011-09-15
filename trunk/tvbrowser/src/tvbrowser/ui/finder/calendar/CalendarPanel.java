@@ -20,6 +20,7 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyListener;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -37,9 +38,13 @@ public class CalendarPanel extends AbstractCalendarPanel {
 
   private JComponent[][] components = new JComponent[COLUMNS][ROWS];
 
-  public CalendarPanel() {
+  private KeyListener mKeyListener;
+  
+  public CalendarPanel(KeyListener keyListener) {
+    mKeyListener = keyListener;
     rebuildControls();
     addMouseListener(this);
+    addKeyListener(keyListener);
   }
 
   protected void rebuildControls() {
@@ -53,12 +58,14 @@ public class CalendarPanel extends AbstractCalendarPanel {
     for (int i = 0; i < COLUMNS; i++) {
       components[i][0] = new JLabel(new SimpleDateFormat("E").format(weekday
           .getCalendar().getTime()));
+      components[i][0].addKeyListener(mKeyListener);
       add(components[i][0]);
       weekday = weekday.addDays(1);
     }
     for (int y = 1; y < ROWS; y++) {
       for (int x = 0; x < COLUMNS; x++) {
         ExtendedButton currentButton = new ExtendedButton();
+        currentButton.addKeyListener(mKeyListener);
         components[x][y] = currentButton;
         currentButton.setSelectedDate(date);
         currentButton.setEnabled(isValidDate(date));

@@ -629,7 +629,7 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
    * @see #handleTvDataTouched(ChannelDayProgram, ChannelDayProgram)
    */
   public void handleTvDataAdded(MutableChannelDayProgram newProg) {
-
+    return;
   }
 
   /**
