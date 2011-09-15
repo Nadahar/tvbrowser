@@ -28,6 +28,9 @@
 package tvbrowser.ui.mainframe;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyListener;
@@ -36,6 +39,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 import javax.swing.BorderFactory;
+import javax.swing.ButtonModel;
 import javax.swing.JButton;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -90,8 +94,32 @@ public class TimeChooserPanel extends JPanel implements ChangeListener, MouseLis
       
       String msg;
       msg = mLocalizer.msg("button.now", "Now");
-      JButton nowBt=new JButton(msg);
+      JButton nowBt=new JButton(msg) {
+        protected void paintComponent(Graphics g) {
+          if(Persona.getInstance().getHeaderImage() != null && Persona.getInstance().getTextColor() != null && Persona.getInstance().getShadowColor() != null) {
+            Color c = Persona.getInstance().getAccentColor().darker().darker().darker();
+            g.setColor(new Color(c.getRed(),c.getGreen(),c.getBlue(),100));
+            g.fillRect(0,0,getWidth(),getHeight());
+            FontMetrics metrics = g.getFontMetrics(getFont());
+            int textWidth = metrics.stringWidth(getText());
+            
+            if(!Persona.getInstance().getShadowColor().equals(Persona.getInstance().getTextColor())) {
+              g.setColor(Persona.getInstance().getShadowColor());
+              
+              g.drawString(getText(),getWidth()/2-textWidth/2+1,getHeight()-getInsets().bottom-getInsets().top+1);
+              g.drawString(getText(),getWidth()/2-textWidth/2+2,getHeight()-getInsets().bottom-getInsets().top+2);
+            }
+            
+            g.setColor(Persona.getInstance().getTextColor());
+            g.drawString(getText(),getWidth()/2-textWidth/2,getHeight()-getInsets().bottom-getInsets().top);
+          }
+          else {
+            super.paintComponent(g);
+          }
+        }
+      };
       nowBt.addKeyListener(keyListener);
+      nowBt.setOpaque(false);
       nowBt.addActionListener(new ActionListener(){
         public void actionPerformed(ActionEvent arg0) {
             mParent.scrollToNow();
@@ -120,7 +148,31 @@ public class TimeChooserPanel extends JPanel implements ChangeListener, MouseLis
       for (final int time : times) {
         int h = time/60;
         int m = time%60;
-        JButton btn = new JButton(formatter.formatTime(h, m));
+        JButton btn = new JButton(formatter.formatTime(h, m)) {
+          protected void paintComponent(Graphics g) {
+            if(Persona.getInstance().getHeaderImage() != null && Persona.getInstance().getTextColor() != null && Persona.getInstance().getShadowColor() != null) {
+              Color c = Persona.getInstance().getAccentColor().darker().darker().darker();
+              g.setColor(new Color(c.getRed(),c.getGreen(),c.getBlue(),100));
+              g.fillRect(0,0,getWidth(),getHeight());
+              FontMetrics metrics = g.getFontMetrics(getFont());
+              int textWidth = metrics.stringWidth(getText());
+              
+              if(!Persona.getInstance().getShadowColor().equals(Persona.getInstance().getTextColor())) {
+                g.setColor(Persona.getInstance().getShadowColor());
+                
+                g.drawString(getText(),getWidth()/2-textWidth/2+1,getHeight()-getInsets().bottom-getInsets().top+1);
+                g.drawString(getText(),getWidth()/2-textWidth/2+2,getHeight()-getInsets().bottom-getInsets().top+2);
+              }
+              
+              g.setColor(Persona.getInstance().getTextColor());
+              g.drawString(getText(),getWidth()/2-textWidth/2,getHeight()-getInsets().bottom-getInsets().top);
+            }
+            else {
+              super.paintComponent(g);
+            }
+          }
+        };
+        btn.setOpaque(false);
         btn.addKeyListener(mKeyListener);
         mGridPn.add(btn);
         btn.addActionListener(new ActionListener(){

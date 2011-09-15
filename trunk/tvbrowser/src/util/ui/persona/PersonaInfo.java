@@ -53,8 +53,10 @@ public class PersonaInfo {
   private File mFooterFile;
   private Color mTextColor;
   private Color mShadowColor;
+  private Color mAccentColor;
   private BufferedImage mCachedHeaderImage;
   private BufferedImage mCachedFooterImage;
+  
   private String mId;
   
   PersonaInfo() {
@@ -87,9 +89,12 @@ public class PersonaInfo {
     
     String[] textColor = prop.getProperty(Persona.TEXT_COLOR_KEY).trim().split(",");
     String[] shadowColor = prop.getProperty(Persona.SHADOW_COLOR_KEY).trim().split(",");
+    String[] accentColor = prop.getProperty(Persona.ACCENT_COLOR_KEY).trim().split(",");
     
     mTextColor = new Color(Integer.parseInt(textColor[0]),Integer.parseInt(textColor[1]),Integer.parseInt(textColor[2]));
     mShadowColor = new Color(Integer.parseInt(shadowColor[0]),Integer.parseInt(shadowColor[1]),Integer.parseInt(shadowColor[2]));
+    
+    mAccentColor = new Color(Integer.parseInt(accentColor[0]),Integer.parseInt(accentColor[1]),Integer.parseInt(accentColor[2]));
     
     mCachedHeaderImage = null;
     mCachedFooterImage = null;
@@ -141,8 +146,17 @@ public class PersonaInfo {
    * @return The shadow color of this Persona.
    */
   public Color getShadowColor() {
-    return mShadowColor;
+    return mShadowColor == null ? mTextColor : mShadowColor;
   }
+  
+  /**
+   * Gets the accent color of this Persona.
+   * <p>
+   * @return The accent color of this Persona.
+   */
+  public Color getAccentColor() {
+    return mAccentColor;
+  } 
   
   /**
    * Gets the header image of this Persona.
