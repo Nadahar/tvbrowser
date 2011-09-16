@@ -30,6 +30,7 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
+import java.util.Comparator;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.Icon;
@@ -215,6 +216,12 @@ public final class LookAndFeelSettingsTab implements SettingsTab {
     mSettingsPn.add(new JLabel(mLocalizer.msg("persona", "Persona") + ":"), cc.xy(2, 9));
     
     PersonaInfo[] installedPersonas = Persona.getInstance().getInstalledPersonas();
+    Arrays.sort(installedPersonas,new Comparator<PersonaInfo>() {
+      @Override
+      public int compare(PersonaInfo o1, PersonaInfo o2) {
+        return o1.getName().compareTo(o2.getName());
+      }
+    });
     
     mPersonaSelection = new JComboBox(installedPersonas);
     
