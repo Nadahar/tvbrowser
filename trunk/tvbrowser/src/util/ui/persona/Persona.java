@@ -32,6 +32,8 @@ import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileFilter;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 
 import javax.swing.ButtonModel;
@@ -52,6 +54,8 @@ public class Persona {
   private HashMap<String,PersonaInfo> mPersonaMap;
   private final static String PERSONA_DIR = "personas";
   
+  private String mDetailURL;
+  private String mId;
   private String mName;
   private String mDescription;
   private BufferedImage mHeaderImage;
@@ -74,6 +78,8 @@ public class Persona {
   public final static String SHADOW_COLOR_KEY = "shadowColor";
   /** The accent color key for the Persona properties */
   public final static String ACCENT_COLOR_KEY = "accentColor";
+  /** The detail url key for the Persona properties */
+  public final static String DETAIL_URL_KEY = "detailURL";
   
   /** The key for the space holder for images in the user Persona directory */
   public final static String USER_PERSONA = "{user.persona}";
@@ -100,6 +106,7 @@ public class Persona {
     }
     
     if(personaInfo != null) {
+      mId = personaInfo.getId();
       mName = personaInfo.getName();
       mDescription = personaInfo.getDescription();
       mHeaderImage = personaInfo.getHeaderImage();
@@ -107,8 +114,10 @@ public class Persona {
       mTextColor = personaInfo.getTextColor();
       mShadowColor = personaInfo.getShadowColor();
       mAccentColor = personaInfo.getAccentColor();
+      mDetailURL = personaInfo.getDetailURL();
     }
     else {
+      mId = "DUMMY";
       mName = "Standard";
       mDescription = "Standard";
       mHeaderImage = null;
@@ -116,6 +125,7 @@ public class Persona {
       mTextColor = null;
       mShadowColor = null;
       mAccentColor = null;
+      mDetailURL = "http://www.tvbrowser.org";
     }
     
     MainFrame.getInstance().updatePersona();
@@ -236,6 +246,15 @@ public class Persona {
   }
   
   /**
+   * Get the detail url of the current Persona.
+   * <p>
+   * @return The detail url of the current Persona.
+   */
+  public String getDetailURL() {
+    return mDetailURL;
+  }
+  
+  /**
    * Create a menu that uses the Persona for painting.
    * <p>
    * @return A menu that uses the Persona for painting.
@@ -275,7 +294,7 @@ public class Persona {
           int mnemonicWidth = metrics.stringWidth(KeyEvent.getKeyText(getMnemonic()));
           int start = metrics.stringWidth(test) - mnemonicWidth;
           
-          if(!mShadowColor.equals(mTextColor)) {
+          if(!mShadowColor.equals(mTextColor) && !isOpaque()) {
             g.setColor(mShadowColor);
             g.drawString(getText(),x+1,y+1);
             g.drawString(getText(),x+2,y+2);
@@ -284,7 +303,12 @@ public class Persona {
             g.drawLine(x + start + 1,y+3,x+start+mnemonicWidth,y+3);
           }
           
-          g.setColor(mTextColor);
+          if(!isOpaque()) {
+            g.setColor(mTextColor);
+          }
+          else {
+            g.setColor(UIManager.getColor("List.selectionForeground"));
+          }
           g.drawString(getText(),x,y);
           g.drawLine(x + start,y+1,x+start+mnemonicWidth-1,y+1);
         }
@@ -305,6 +329,74 @@ public class Persona {
    * @return All installed Personas.
    */
   public PersonaInfo[] getInstalledPersonas() {
-    return mPersonaMap.values().toArray(new PersonaInfo[mPersonaMap.size()]);
+     PersonaInfo[] installedPersonas = mPersonaMap.values().toArray(new PersonaInfo[mPersonaMap.size()]);
+     
+     Arrays.sort(installedPersonas,new Comparator<PersonaInfo>() {
+       @Override
+       public int compare(PersonaInfo o1, PersonaInfo o2) {
+         return o1.getName().compareToIgnoreCase(o2.getName());
+       }
+     });
+     
+     return installedPersonas;
+  }
+  
+  /**
+   * Update the persona 
+   * @param id
+   */
+  public void updatePersona(String id) {
+    if(id != null) {
+      PersonaInfo info = mPersonaMap.get(id);
+      
+      if(info != null && info.isEditable()){
+        info.load();
+        
+        if(id.equals(mId)) {
+          applyPersona();
+        }
+      }
+    }
+  }
+  
+  /**
+   * @return The directory for the user personas.
+   */
+  public static File getUserPersonaDir() {
+    return new File(Settings.getUserSettingsDirName(),PERSONA_DIR);
+  }
+  
+  /**
+   * @param id The id of the Persona to get.
+   * @return The PersonaInfo for the given id.
+   */
+  public PersonaInfo getPersonaInfo(String id) {
+    return mPersonaMap.get(id);
+  }
+  
+  /**
+   * Activates the given Persona. 
+   * <p>
+   * @param info The Persona to activate.
+   */
+  public void activatePersona(PersonaInfo info) {
+    if(info != null && mPersonaMap.get(info.getId()) != null) {
+      Settings.propSelectedPersona.setString(info.getId());
+      applyPersona();
+    }
+  }
+  
+  /**
+   * Removes the given Persona form the list.
+   * <p>
+   * @param info The Persona to remove.
+   * @return <code>true</code> if the Persona could be removed.
+   */
+  public boolean removePersona(PersonaInfo info) {
+    if(info != null && !info.isSelectedPersona()) {
+      return mPersonaMap.remove(info.getId()) != null;
+    }
+    
+    return false;
   }
 }

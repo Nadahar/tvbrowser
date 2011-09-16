@@ -69,7 +69,7 @@ public class StatusBar extends JPanel {
     mInfoLabel = new JLabel() {
       protected void paintComponent(Graphics g) {
         if(Persona.getInstance().getHeaderImage() != null && Persona.getInstance().getTextColor() != null && Persona.getInstance().getShadowColor() != null) {
-          int baseLine = getBaseline(0,getHeight());          
+          int baseLine = getBaseline(0,getHeight())-1;          
         
           if(!Persona.getInstance().getShadowColor().equals(Persona.getInstance().getTextColor())) { 
             g.setColor(Persona.getInstance().getShadowColor());
