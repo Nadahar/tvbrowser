@@ -1526,4 +1526,8 @@ public class ProgramTable extends JPanel
       mAutoScrollThread.start();
     }
   }
+  
+  public boolean isSelected() {
+    return mCurrentRow != -1 && mCurrentCol != -1;
+  }
 }
