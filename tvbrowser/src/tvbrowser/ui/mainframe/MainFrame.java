@@ -278,17 +278,20 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
      mGlobalFindAsYouTypeKeyListener = new KeyAdapter() {      
       @Override
       public void keyPressed(KeyEvent e) {
-        if((e.getModifiersEx() & KeyEvent.ALT_DOWN_MASK) != KeyEvent.ALT_DOWN_MASK) {
-          if((e.getKeyCode() >= KeyEvent.VK_A && e.getKeyCode() <= KeyEvent.VK_Z) ||
-              (e.getKeyCode() >= KeyEvent.VK_0 && e.getKeyCode() <= KeyEvent.VK_9)) {
-            mFindAsYouType.setText(String.valueOf(e.getKeyChar()));
-          }
-          else if(mFindAsYouType.isVisible()) {
-            if(e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
-              mFindAsYouType.deleteLastChar();
+        if(mProgramTableScrollPane != null && !mProgramTableScrollPane.getProgramTable().isSelected()) {
+          if(((e.getModifiersEx() & KeyEvent.ALT_DOWN_MASK) != KeyEvent.ALT_DOWN_MASK) &&
+              ((e.getModifiersEx() & KeyEvent.CTRL_DOWN_MASK) != KeyEvent.CTRL_DOWN_MASK)) {
+            if((e.getKeyCode() >= KeyEvent.VK_A && e.getKeyCode() <= KeyEvent.VK_Z) ||
+                (e.getKeyCode() >= KeyEvent.VK_0 && e.getKeyCode() <= KeyEvent.VK_9)) {
+              mFindAsYouType.setText(String.valueOf(e.getKeyChar()));
             }
-            else if(e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-              mFindAsYouType.closeFayt();
+            else if(mFindAsYouType.isVisible()) {
+              if(e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
+                mFindAsYouType.deleteLastChar();
+              }
+              else if(e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                mFindAsYouType.closeFayt();
+              }
             }
           }
         }
