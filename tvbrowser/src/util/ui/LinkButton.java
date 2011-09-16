@@ -120,6 +120,7 @@ public class LinkButton extends JButton implements ActionListener {
    */
   public void setUrl(String url) {
     mUrl = url;
+    setToolTipText(mUrl);
   }
 
   public void actionPerformed(ActionEvent e) {

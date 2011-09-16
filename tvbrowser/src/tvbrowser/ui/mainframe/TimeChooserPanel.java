@@ -39,7 +39,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 import javax.swing.BorderFactory;
-import javax.swing.ButtonModel;
 import javax.swing.JButton;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -97,8 +96,32 @@ public class TimeChooserPanel extends JPanel implements ChangeListener, MouseLis
       JButton nowBt=new JButton(msg) {
         protected void paintComponent(Graphics g) {
           if(Persona.getInstance().getHeaderImage() != null && Persona.getInstance().getTextColor() != null && Persona.getInstance().getShadowColor() != null) {
-            Color c = Persona.getInstance().getAccentColor().darker().darker().darker();
-            g.setColor(new Color(c.getRed(),c.getGreen(),c.getBlue(),100));
+            Color c = Persona.getInstance().getAccentColor();
+            
+            double test = (0.2126 * Persona.getInstance().getTextColor().getRed()) + (0.7152 * Persona.getInstance().getTextColor().getGreen()) + (0.0722 * Persona.getInstance().getTextColor().getBlue());
+            int alpha = 100;
+            
+            if(test <= 50) {
+              c = c.brighter().brighter();
+              alpha = 200;
+            }
+            else if(test <= 100) {
+              c = c.brighter();
+              alpha = 180;
+            }
+            else if(test <= 155) {
+              alpha = 160;
+            }
+            else if(test <= 205) {
+              c = c.darker();
+              alpha = 120;
+            }
+            else {
+              c = c.darker().darker();
+              alpha = 100;
+            }
+            
+            g.setColor(new Color(c.getRed(),c.getGreen(),c.getBlue(),alpha));
             g.fillRect(0,0,getWidth(),getHeight());
             FontMetrics metrics = g.getFontMetrics(getFont());
             int textWidth = metrics.stringWidth(getText());
@@ -108,7 +131,7 @@ public class TimeChooserPanel extends JPanel implements ChangeListener, MouseLis
               g.setColor(Persona.getInstance().getShadowColor());
               
               g.drawString(getText(),getWidth()/2-textWidth/2+1,baseLine+1);
-              g.drawString(getText(),getWidth()/2-textWidth/2+2,baseLine+2);
+             // g.drawString(getText(),getWidth()/2-textWidth/2+2,baseLine+2);
             }
             
             g.setColor(Persona.getInstance().getTextColor());
@@ -152,8 +175,32 @@ public class TimeChooserPanel extends JPanel implements ChangeListener, MouseLis
         JButton btn = new JButton(formatter.formatTime(h, m)) {
           protected void paintComponent(Graphics g) {
             if(Persona.getInstance().getHeaderImage() != null && Persona.getInstance().getTextColor() != null && Persona.getInstance().getShadowColor() != null) {
-              Color c = Persona.getInstance().getAccentColor().darker().darker().darker();
-              g.setColor(new Color(c.getRed(),c.getGreen(),c.getBlue(),100));
+              Color c = Persona.getInstance().getAccentColor();
+              
+              double test = (0.2126 * Persona.getInstance().getTextColor().getRed()) + (0.7152 * Persona.getInstance().getTextColor().getGreen()) + (0.0722 * Persona.getInstance().getTextColor().getBlue());
+              int alpha = 100;
+              
+              if(test <= 50) {
+                c = c.brighter().brighter();
+                alpha = 200;
+              }
+              else if(test <= 100) {
+                c = c.brighter();
+                alpha = 180;
+              }
+              else if(test <= 155) {
+                alpha = 160;
+              }
+              else if(test <= 205) {
+                c = c.darker();
+                alpha = 120;
+              }
+              else {
+                c = c.darker().darker();
+                alpha = 100;
+              }
+              
+              g.setColor(new Color(c.getRed(),c.getGreen(),c.getBlue(),alpha));
               g.fillRect(0,0,getWidth(),getHeight());
               FontMetrics metrics = g.getFontMetrics(getFont());
               int textWidth = metrics.stringWidth(getText());
@@ -163,7 +210,7 @@ public class TimeChooserPanel extends JPanel implements ChangeListener, MouseLis
                 g.setColor(Persona.getInstance().getShadowColor());
                 
                 g.drawString(getText(),getWidth()/2-textWidth/2+1,baseLine+1);
-                g.drawString(getText(),getWidth()/2-textWidth/2+2,baseLine+2);
+               // g.drawString(getText(),getWidth()/2-textWidth/2+2,baseLine+2);
               }
               
               g.setColor(Persona.getInstance().getTextColor());

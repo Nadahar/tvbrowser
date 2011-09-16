@@ -34,8 +34,13 @@ import java.util.Locale;
 import java.util.Properties;
 
 import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 
+import tvbrowser.core.Settings;
+import tvbrowser.core.icontheme.IconLoader;
+import util.io.IOUtilities;
 import util.ui.Localizer;
+import util.ui.UiUtilities;
 
 /**
  * A class that contains infos about a Persona.
@@ -56,14 +61,18 @@ public class PersonaInfo {
   private Color mAccentColor;
   private BufferedImage mCachedHeaderImage;
   private BufferedImage mCachedFooterImage;
+  private String mDetailURL;
   
   private String mId;
+  private ImageIcon mIcon;
   
   PersonaInfo() {
     mName = mLocalizer.msg("noPersona","No Persona");
     mDescription = mLocalizer.msg("noPersonaDesc","No Persona selected");
     mId = "51b73c81-7d61-4626-b230-89627c9f5ce7";
-  }
+    //TODO Change this to wiki page
+    mDetailURL = "http://www.tvbrowser.org";
+  }  
   
   /**
    * Create a new persona info from the given settings file.
@@ -73,19 +82,24 @@ public class PersonaInfo {
    */
   public PersonaInfo(File settings) throws IndexOutOfBoundsException {
     mSettings = settings;
-    
+    load();
+  }
+  
+  void load() throws IndexOutOfBoundsException {
     Properties prop = new Properties();
     
     try {
-      FileInputStream in = new FileInputStream(settings);
+      FileInputStream in = new FileInputStream(mSettings);
       prop.load(in);
       in.close();
     }catch(Exception e) {}
     
     mName = prop.getProperty(Persona.NAME_KEY+"."+Locale.getDefault().getLanguage(),prop.getProperty(Persona.NAME_KEY));
     mDescription = prop.getProperty(Persona.DESCRIPTION_KEY+"."+Locale.getDefault().getLanguage(),prop.getProperty(Persona.DESCRIPTION_KEY));
-    mHeaderFile = getImageFile(Persona.HEADER_IMAGE_KEY,prop,settings);
-    mFooterFile = getImageFile(Persona.FOOTER_IMAGE_KEY,prop,settings);
+    mHeaderFile = getImageFile(Persona.HEADER_IMAGE_KEY,prop,mSettings);
+    mFooterFile = getImageFile(Persona.FOOTER_IMAGE_KEY,prop,mSettings);
+    //TODO change this to wiki page
+    mDetailURL = prop.getProperty(Persona.DETAIL_URL_KEY,"http://wwww.tvbrowser.org");
     
     String[] textColor = prop.getProperty(Persona.TEXT_COLOR_KEY).trim().split(",");
     String[] shadowColor = prop.getProperty(Persona.SHADOW_COLOR_KEY).trim().split(",");
@@ -129,6 +143,15 @@ public class PersonaInfo {
    */
   public String getDescription() {
     return mDescription;
+  }
+  
+  /**
+   * Gets the detail url for this Persona.
+   * <p>
+   * @return The detail url for this Persona.
+   */
+  public String getDetailURL() {
+    return mDetailURL;
   }
   
   /**
@@ -195,6 +218,47 @@ public class PersonaInfo {
    */
   public String getId() {
     return mId == null ? mSettings.getParentFile().getName() : mId;
+  }
+  
+  /**
+   * Gets if this persoan can be edited.
+   * @return If his persona can be edited.
+   */
+  public boolean isEditable() {
+    return mSettings != null && mSettings.getAbsolutePath().startsWith(Settings.getUserSettingsDirName());
+  }
+  
+  public ImageIcon getIcon() {
+    if(mIcon == null) {
+      try {
+        if(mSettings != null) {
+          File test = new File(mSettings.getParentFile(),"icon");
+          
+          if(test.isFile()) {
+            mIcon = new ImageIcon(ImageIO.read(test));
+          }
+          else {
+            mIcon = IconLoader.getInstance().getIconFromTheme("apps", "preferences-desktop-theme", 22);
+          }
+        }
+        else {
+          mIcon = IconLoader.getInstance().getIconFromTheme("apps", "preferences-desktop-theme", 22);
+        }
+      } catch (IOException e) {
+        mIcon = IconLoader.getInstance().getIconFromTheme("apps", "preferences-desktop-theme", 22);
+      }
+    }
+    
+    return mIcon;
+  }
+  
+  /**
+   * Gets if this persona is currently activated.
+   * <p>
+   * @return If this persona is currently activated.
+   */
+  public boolean isSelectedPersona() {
+    return getId().equals(Settings.propSelectedPersona.getString());
   }
 }
 

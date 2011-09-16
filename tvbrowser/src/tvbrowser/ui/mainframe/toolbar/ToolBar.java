@@ -27,43 +27,33 @@
 package tvbrowser.ui.mainframe.toolbar;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.Insets;
 import java.awt.LayoutManager;
-import java.awt.Rectangle;
 import java.awt.dnd.DnDConstants;
 import java.awt.dnd.DragSource;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ContainerEvent;
 import java.awt.event.ContainerListener;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
-import javax.imageio.ImageIO;
 import javax.swing.AbstractButton;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -73,9 +63,6 @@ import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
-import javax.swing.plaf.ButtonUI;
-import javax.swing.plaf.basic.BasicButtonUI;
-import javax.swing.plaf.basic.BasicToggleButtonUI;
 
 import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginProxy;
@@ -385,8 +372,7 @@ public class ToolBar extends JToolBar {
         }
       }
     });
-   // button.setUI(new ToogleButtonUI());
-   // System.out.println(button.getUI());
+    
     add(button);
   }
 
