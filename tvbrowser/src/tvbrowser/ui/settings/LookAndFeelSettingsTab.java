@@ -32,8 +32,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.Arrays;
-import java.util.Comparator;
-
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.Icon;
 import javax.swing.JButton;
@@ -225,7 +223,14 @@ public final class LookAndFeelSettingsTab implements SettingsTab {
     "http://www.tvbrowser.org/");
     
     for(PersonaInfo info : installedPersonas) {
-      if(Settings.propSelectedPersona.getString().equals(info.getId())) {
+      if(Settings.propRandomPersona.getBoolean()) {
+        if(PersonaInfo.isRandomPersona(info)) {
+          mPersonaSelection.setSelectedItem(info);
+          personaDetails.setUrl(info.getDetailURL());
+          break;          
+        }
+      }
+      else if(Settings.propSelectedPersona.getString().equals(info.getId())) {
         mPersonaSelection.setSelectedItem(info);
         personaDetails.setUrl(info.getDetailURL());
         break;
@@ -366,7 +371,14 @@ public final class LookAndFeelSettingsTab implements SettingsTab {
 
     Settings.propPluginViewIsLeft.setBoolean(mPluginViewPosition.getSelectedIndex() == 1);
     Settings.propViewDateLayout.setInt(mDateLayout.getSelectedIndex());
-    Settings.propSelectedPersona.setString(((PersonaInfo)mPersonaSelection.getSelectedItem()).getId());
+    
+    if(PersonaInfo.isRandomPersona(((PersonaInfo)mPersonaSelection.getSelectedItem()))) {
+      Settings.propRandomPersona.setBoolean(true);
+    }
+    else {
+      Settings.propRandomPersona.setBoolean(false);
+      Settings.propSelectedPersona.setString(((PersonaInfo)mPersonaSelection.getSelectedItem()).getId());
+    }
   }
 
   public Icon getIcon() {

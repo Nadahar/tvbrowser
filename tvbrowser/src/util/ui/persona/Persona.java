@@ -89,7 +89,7 @@ public class Persona {
   private Persona() {
     mInstance = this;
     mPersonaMap = new HashMap<String,PersonaInfo>(1);
-    loadPersonas();
+    loadPersonas();    
     applyPersona();
   }
   
@@ -97,6 +97,18 @@ public class Persona {
    * Applies the current selected Persona.
    */
   public void applyPersona() {
+    if(Settings.propRandomPersona.getBoolean() && mPersonaMap.size() > 2) {
+      PersonaInfo[] installedPersonas = getInstalledPersonas();
+      
+      int index = 0;
+      
+      do {
+        index = (int)(Math.random()*installedPersonas.length);
+      }while(installedPersonas[index].getId().equals(PersonaInfo.DEFAULT_ID) || installedPersonas[index].getId().equals(PersonaInfo.RANDOM_ID));
+      
+      Settings.propSelectedPersona.setString(installedPersonas[index].getId());
+    }
+    
     try {
     PersonaInfo personaInfo = mPersonaMap.get(Settings.propSelectedPersona.getString());
     
@@ -139,6 +151,8 @@ public class Persona {
     mPersonaMap.clear();
     
     PersonaInfo defaultInfo = new PersonaInfo();
+    mPersonaMap.put(defaultInfo.getId(),defaultInfo);
+    defaultInfo = new PersonaInfo(true);
     mPersonaMap.put(defaultInfo.getId(),defaultInfo);
     
     // load personas in TV-Browser directory
@@ -381,7 +395,14 @@ public class Persona {
    */
   public void activatePersona(PersonaInfo info) {
     if(info != null && mPersonaMap.get(info.getId()) != null) {
-      Settings.propSelectedPersona.setString(info.getId());
+      if(!info.getId().equals(PersonaInfo.RANDOM_ID)) {
+        Settings.propSelectedPersona.setString(info.getId());
+        Settings.propRandomPersona.setBoolean(false);
+      }
+      else {
+        Settings.propRandomPersona.setBoolean(true);
+      }
+      
       applyPersona();
     }
   }
@@ -393,7 +414,7 @@ public class Persona {
    * @return <code>true</code> if the Persona could be removed.
    */
   public boolean removePersona(PersonaInfo info) {
-    if(info != null && !info.isSelectedPersona()) {
+    if(info != null && !info.isSelectedPersona() && !info.getId().equals(PersonaInfo.DEFAULT_ID) && !info.getId().equals(PersonaInfo.RANDOM_ID)) {
       return mPersonaMap.remove(info.getId()) != null;
     }
     
