@@ -35,8 +35,6 @@ import java.awt.event.KeyListener;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 
-import net.sf.xtvdclient.xtvd.datatypes.MpaaRatings;
-
 import util.ui.persona.Persona;
 
 import devplugin.Channel;
@@ -63,6 +61,8 @@ public class ChannelPanel extends JPanel {
     setShownChannels(channelArr,keyListener);
     setColumnWidth(columnWidth);
     addKeyListener(keyListener);
+    
+    setOpaque(Persona.getInstance().getAccentColor() == null);
   }
 
   public static void fontChanged() {
@@ -109,19 +109,17 @@ public class ChannelPanel extends JPanel {
     }
   }
   
- /* protected void paintComponent(Graphics g) {
+  protected void paintComponent(Graphics g) {
     if(Persona.getInstance().getAccentColor() != null && Persona.getInstance().getHeaderImage() != null) {
       Color c = Persona.getInstance().getAccentColor().darker().darker().darker();
 
       g.setColor(new Color(c.getRed(),c.getGreen(),c.getBlue(),110));
       g.fillRect(0,0,getWidth(),getHeight());
-      
-
     }
     else {
       super.paintComponent(g);
     }
-  }*/
+  }
   
   /**
    * Updates Persona after change.
@@ -130,7 +128,11 @@ public class ChannelPanel extends JPanel {
     for(ProgramTableChannelLabel label : mLabelArr) {
       label.updatePersona();
     }
-    Color c = Persona.getInstance().getAccentColor() == null ? UIManager.getColor("List.selectionBackground") : Persona.getInstance().getAccentColor().darker();
-    setBackground(new Color(c.getRed(),c.getGreen(),c.getBlue(),c.getAlpha()));
+    
+    setOpaque(Persona.getInstance().getAccentColor() == null);
+    
+    if(Persona.getInstance().getAccentColor() == null) {
+      setBackground(UIManager.getColor("List.selectionBackground"));
+    }
   }
 }
