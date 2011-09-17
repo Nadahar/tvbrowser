@@ -33,15 +33,12 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
-
-import org.apache.commons.lang.ArrayUtils;
 
 import util.program.AbstractPluginProgramFormating;
 import util.program.LocalPluginProgramFormating;
@@ -68,7 +65,7 @@ import devplugin.Version;
  * @author bodo
  */
 public final class CalendarExportPlugin extends Plugin {
-  private static final Version mVersion = new Version(3,02);
+  private static final Version mVersion = new Version(3,02,1);
 
   /**
    * Translator

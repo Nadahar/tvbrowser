@@ -115,8 +115,10 @@ public abstract class AbstractCalFile {
             }
             out.println("DESCRIPTION:" + CalendarToolbox.noBreaks(desc));
 
+            Calendar end = CalendarToolbox.getStartAsCalendar(p);
+            
             if (!nulltime) {
-              c = CalendarToolbox.getEndAsCalendar(p);
+              end = CalendarToolbox.getEndAsCalendar(p);
             }
 
             if (settings.isShowBusy()) {
@@ -126,8 +128,8 @@ public abstract class AbstractCalFile {
               out.println("TRANSP:" + transparent());
             }
 
-            out.println("DTEND:" + mDate.format(c.getTime()) + "T"
-                + mTime.format(c.getTime()) + "Z");
+            out.println("DTEND:" + mDate.format(end.getTime()) + "T"
+                + mTime.format(end.getTime()) + "Z");
 
             if (settings.getUseAlarm()) {
               printAlarm(settings.getAlarmMinutes(), out, c);
