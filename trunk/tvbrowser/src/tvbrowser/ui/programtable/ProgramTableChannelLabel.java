@@ -241,7 +241,7 @@ public class ProgramTableChannelLabel extends ChannelLabel {
       }
       
       g.setColor(new Color(c.getRed(),c.getGreen(),c.getBlue(),alpha));
-      g.fillRect(0,0,getWidth()-1,getHeight()-1);
+      g.fillRect(1,1,getWidth(),getHeight()-2);
       
       Icon icon = getIcon();      
       
