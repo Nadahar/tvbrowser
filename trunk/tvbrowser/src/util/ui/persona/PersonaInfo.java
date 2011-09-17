@@ -38,9 +38,7 @@ import javax.swing.ImageIcon;
 
 import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
-import util.io.IOUtilities;
 import util.ui.Localizer;
-import util.ui.UiUtilities;
 
 /**
  * A class that contains infos about a Persona.
@@ -50,6 +48,8 @@ import util.ui.UiUtilities;
  */
 public class PersonaInfo {
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(PersonaInfo.class);
+  static final String DEFAULT_ID = "51b73c81-7d61-4626-b230-89627c9f5ce7";
+  static final String RANDOM_ID = "eb365437-e702-4c05-98c2-db5834bb4fa3";
   
   private File mSettings;
   private String mName;
@@ -66,10 +66,18 @@ public class PersonaInfo {
   private String mId;
   private ImageIcon mIcon;
   
+  PersonaInfo(boolean dummy) {
+    mName = mLocalizer.msg("randomPersona","Random Persona");
+    mDescription = mLocalizer.msg("randomPersonaDesc","Select random Persona each start");
+    mId = RANDOM_ID;
+    //TODO Change this to wiki page
+    mDetailURL = "http://www.tvbrowser.org";
+  }
+  
   PersonaInfo() {
     mName = mLocalizer.msg("noPersona","No Persona");
     mDescription = mLocalizer.msg("noPersonaDesc","No Persona selected");
-    mId = "51b73c81-7d61-4626-b230-89627c9f5ce7";
+    mId = DEFAULT_ID;
     //TODO Change this to wiki page
     mDetailURL = "http://www.tvbrowser.org";
   }  
@@ -228,6 +236,11 @@ public class PersonaInfo {
     return mSettings != null && mSettings.getAbsolutePath().replace("\\","/").startsWith(Settings.getUserSettingsDirName().replace("\\","/"));
   }
   
+  /**
+   * Gets the icon for this Persona.
+   * <p>
+   * @return The icon for this Persona if there is any or the default icon.
+   */
   public ImageIcon getIcon() {
     if(mIcon == null) {
       try {
@@ -258,7 +271,17 @@ public class PersonaInfo {
    * @return If this persona is currently activated.
    */
   public boolean isSelectedPersona() {
-    return getId().equals(Settings.propSelectedPersona.getString());
+    return Settings.propRandomPersona.getBoolean() ? getId().equals(RANDOM_ID) : getId().equals(Settings.propSelectedPersona.getString());
+  }
+  
+  /**
+   * Gets if the given Persona is the random persona dummy.
+   * <p>
+   * @param info The persona to check.
+   * @return <code>true</code> if the given Persona is the random dummy.
+   */
+  public static boolean isRandomPersona(PersonaInfo info) {
+    return info != null && info.getId().equals(RANDOM_ID);
   }
 }
 

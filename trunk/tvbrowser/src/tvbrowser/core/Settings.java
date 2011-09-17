@@ -829,6 +829,10 @@ public class Settings {
       mainFrame.updateChannellist();
     }
     
+    if(mProp.hasChanged(propRandomPersona) && !mProp.hasChanged(propSelectedPersona)) {
+      Persona.getInstance().applyPersona();
+    }
+    
     if(mProp.hasChanged(propSelectedPersona)) {
       Persona.getInstance().applyPersona();
     }
@@ -1738,9 +1742,19 @@ public class Settings {
   public static final BooleanProperty propPluginBetaWarning = new BooleanProperty(
       mProp, "pluginBetaWarning", true);
 
-  
+  /**
+   * Stores the id of the selected Persona.
+   * @since 3.0.3
+   */
   public static final StringProperty propSelectedPersona = new StringProperty(
       mProp, "persona", "ecb70d5c-f606-4052-9059-5c501842d6c3");
+
+  /**
+   * Stores id the Persona should be selected randomly at start.
+   * @since 3.0.3
+   */
+  public static final BooleanProperty propRandomPersona = new BooleanProperty(
+      mProp, "randomPersona", true);
   
   /**
    * Sets the window position and size for the given window with the values of
