@@ -19,6 +19,7 @@ import javax.swing.AbstractButton;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
@@ -29,9 +30,12 @@ import javax.swing.UIManager;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
+import com.sun.org.apache.bcel.internal.generic.GETSTATIC;
+
 import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.ui.mainframe.MainFrame;
+import tvbrowser.ui.mainframe.MenuHelpTextAdapter;
 import util.ui.Localizer;
 import util.ui.persona.Persona;
 
@@ -65,8 +69,11 @@ public class MoreButton extends JToggleButton implements ActionListener {
     private JToolBar toolbar;
     private JPopupMenu mPopupMenu;
     private static final Localizer mLocalizer = Localizer.getLocalizerFor(MoreButton.class);
-
-    private MoreButton(final JToolBar toolbar, MainFrame mainFrame){
+    private JLabel mLabel;
+    
+    private MoreButton(final JToolBar toolbar, MainFrame mainFrame, final JLabel statusLabel){
+      mLabel = statusLabel;
+      
         if((((ToolBar)toolbar).getStyle() == (ToolBar.STYLE_TEXT | ToolBar.STYLE_ICON)) || ((ToolBar)toolbar).getStyle() == ToolBar.STYLE_TEXT ) {
           setText(mLocalizer.msg("more","more"));
         }
@@ -93,11 +100,19 @@ public class MoreButton extends JToggleButton implements ActionListener {
             if (!isSelected()) {
               setBorderPainted(true);
             }
+            
+            if(getToolTipText() != null && getToolTipText().trim().length() > 0) {
+              statusLabel.setText(getToolTipText());
+            }
           }
 
           public void mouseExited(MouseEvent e) {
             if (!isSelected()) {
               setBorderPainted(false);
+            }
+            
+            if(getToolTipText() != null && getToolTipText().equals(statusLabel.getText())) {
+              statusLabel.setText("");
             }
           }
         });
@@ -169,8 +184,9 @@ public class MoreButton extends JToggleButton implements ActionListener {
                 mPopupMenu = new JPopupMenu();
                 for(; i<comp.length; i++){
                     if(comp[i] instanceof AbstractButton) {
-                      if(actions[i] != null) {
-                        mPopupMenu.add(actions[i]);
+                      if(actions[i] != null) {                        
+                        new MenuHelpTextAdapter(mPopupMenu.add(actions[i]),
+                            actions[i].getValue(Action.SHORT_DESCRIPTION).toString(), mLabel);
                       }
                     } else if(comp[i] instanceof JSeparator) {
                       mPopupMenu.addSeparator();
@@ -191,7 +207,7 @@ public class MoreButton extends JToggleButton implements ActionListener {
         }
     }
 
-    public static Component wrapToolBar(ToolBar toolbar, MainFrame mainFrame) {
+    public static Component wrapToolBar(ToolBar toolbar, MainFrame mainFrame, JLabel statusLabel) {
       JToolBar moreToolbar = new JToolBar() {
         protected void paintComponent(Graphics g) {
           if(!UIManager.getLookAndFeel().getClass().getCanonicalName().equals("com.sun.java.swing.plaf.gtk.GTKLookAndFeel") || Persona.getInstance().getHeaderImage() == null) {
@@ -203,7 +219,7 @@ public class MoreButton extends JToggleButton implements ActionListener {
       moreToolbar.setLayout(new GridLayout());
       moreToolbar.setRollover(true);
       moreToolbar.setFloatable(false);
-      moreToolbar.add(new MoreButton(toolbar,mainFrame));
+      moreToolbar.add(new MoreButton(toolbar,mainFrame,statusLabel));
       addMouseAdapter(moreToolbar);
 
         JPanel panel = new JPanel(new BorderLayout(0,0));

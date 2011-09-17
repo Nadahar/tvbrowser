@@ -54,6 +54,7 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.Icon;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -125,16 +126,17 @@ public class ToolBar extends JToolBar {
   private boolean disabled = false;
 
   private JButton mUpdateButton = null;
+  private JLabel mStatusLabel;
 
-  public ToolBar(ToolBarModel model) {
+  public ToolBar(ToolBarModel model, JLabel statusLabel) {
     super();
+    mStatusLabel = statusLabel;
     mModel = model;
     loadSettings();
     mContextMenu = new ContextMenu(this);
     setFloatable(false);
     update();
     addMouseListener(new MouseAdapter() {
-
       public void mousePressed(MouseEvent e) {
         if (e.isPopupTrigger()) {
           mContextMenu.show(e.getX(), e.getY());
@@ -351,11 +353,17 @@ public class ToolBar extends JToolBar {
         if (!button.isSelected()) {
           button.setBorderPainted(true);
         }
+        if(button.getToolTipText() != null && button.getToolTipText().trim().length() > 0) {
+          mStatusLabel.setText(button.getToolTipText());
+        }
       }
 
       public void mouseExited(MouseEvent e) {
         if (!button.isSelected()) {
           button.setBorderPainted(false);
+        }
+        if(button.getToolTipText() != null && button.getToolTipText().equals(mStatusLabel.getText())) {
+          mStatusLabel.setText("");
         }
       }
 
@@ -426,10 +434,18 @@ public class ToolBar extends JToolBar {
     button.addMouseListener(new MouseAdapter() {
       public void mouseEntered(MouseEvent e) {
         button.setBorderPainted(true);
+        
+        if(button.getToolTipText() != null && button.getToolTipText().trim().length() > 0) {
+          mStatusLabel.setText(button.getToolTipText());
+        }
       }
 
       public void mouseExited(MouseEvent e) {
         button.setBorderPainted(false);
+        
+        if(button.getToolTipText() != null && button.getToolTipText().equals(mStatusLabel.getText())) {
+          mStatusLabel.setText("");
+        }
       }
 
       public void mousePressed(MouseEvent e) {
