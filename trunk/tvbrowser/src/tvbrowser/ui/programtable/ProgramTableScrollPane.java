@@ -96,9 +96,9 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
     mChannelPanel = new ChannelPanel(mProgramTable.getColumnWidth(), model.getShownChannels(), keyListener);
     
     setColumnHeaderView(mChannelPanel);
+    getColumnHeader().setOpaque(false);
     getViewport().setOpaque(false);
     setOpaque(false);
-    // setBorder(mDefaultBorder);
 
     // NOTE: To avoid NullPointerExceptions the registration as listener must
     // happen after all member have been initialized.
