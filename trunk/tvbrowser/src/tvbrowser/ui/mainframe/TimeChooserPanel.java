@@ -101,23 +101,43 @@ public class TimeChooserPanel extends JPanel implements ChangeListener, MouseLis
             double test = (0.2126 * Persona.getInstance().getTextColor().getRed()) + (0.7152 * Persona.getInstance().getTextColor().getGreen()) + (0.0722 * Persona.getInstance().getTextColor().getBlue());
             int alpha = 100;
             
-            if(test <= 50) {
-              c = c.brighter().brighter();
+            if(test <= 30) {
+              c = Color.white;
               alpha = 200;
             }
-            else if(test <= 100) {
-              c = c.brighter();
-              alpha = 180;
+            else if(test <= 40) {
+              c = c.brighter().brighter().brighter().brighter().brighter().brighter();
+              alpha = 200;
             }
-            else if(test <= 155) {
+            else if(test <= 60) {
+              c = c.brighter().brighter().brighter();
               alpha = 160;
             }
-            else if(test <= 205) {
+            else if(test <= 100) {
+              c = c.brighter().brighter();
+              alpha = 140;
+            }
+            else if(test <= 145) {
+              alpha = 120;
+            }
+            else if(test <= 170) {
               c = c.darker();
               alpha = 120;
             }
-            else {
+            else if(test <= 205) {
               c = c.darker().darker();
+              alpha = 120;
+            }
+            else if(test <= 220){
+              c = c.darker().darker().darker();
+              alpha = 100;
+            }
+            else if(test <= 235){
+              c = c.darker().darker().darker().darker();
+              alpha = 100;
+            }
+            else {
+              c = Color.black;
               alpha = 100;
             }
             
@@ -180,23 +200,43 @@ public class TimeChooserPanel extends JPanel implements ChangeListener, MouseLis
               double test = (0.2126 * Persona.getInstance().getTextColor().getRed()) + (0.7152 * Persona.getInstance().getTextColor().getGreen()) + (0.0722 * Persona.getInstance().getTextColor().getBlue());
               int alpha = 100;
               
-              if(test <= 50) {
-                c = c.brighter().brighter();
+              if(test <= 30) {
+                c = Color.white;
                 alpha = 200;
               }
-              else if(test <= 100) {
-                c = c.brighter();
-                alpha = 180;
+              else if(test <= 40) {
+                c = c.brighter().brighter().brighter().brighter().brighter().brighter();
+                alpha = 200;
               }
-              else if(test <= 155) {
+              else if(test <= 60) {
+                c = c.brighter().brighter().brighter();
                 alpha = 160;
               }
-              else if(test <= 205) {
+              else if(test <= 100) {
+                c = c.brighter().brighter();
+                alpha = 140;
+              }
+              else if(test <= 145) {
+                alpha = 120;
+              }
+              else if(test <= 170) {
                 c = c.darker();
                 alpha = 120;
               }
-              else {
+              else if(test <= 205) {
                 c = c.darker().darker();
+                alpha = 120;
+              }
+              else if(test <= 220){
+                c = c.darker().darker().darker();
+                alpha = 100;
+              }
+              else if(test <= 235){
+                c = c.darker().darker().darker().darker();
+                alpha = 100;
+              }
+              else {
+                c = Color.black;
                 alpha = 100;
               }
               
