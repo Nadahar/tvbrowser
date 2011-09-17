@@ -225,7 +225,7 @@ public class PersonaInfo {
    * @return If his persona can be edited.
    */
   public boolean isEditable() {
-    return mSettings != null && mSettings.getAbsolutePath().startsWith(Settings.getUserSettingsDirName());
+    return mSettings != null && mSettings.getAbsolutePath().replace("\\","/").startsWith(Settings.getUserSettingsDirName().replace("\\","/"));
   }
   
   public ImageIcon getIcon() {
