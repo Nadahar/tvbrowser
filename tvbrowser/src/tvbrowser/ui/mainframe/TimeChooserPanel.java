@@ -39,10 +39,14 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 import javax.swing.BorderFactory;
+import javax.swing.ButtonModel;
 import javax.swing.JButton;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.UIManager;
+import javax.swing.border.Border;
+import javax.swing.border.EtchedBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -64,6 +68,11 @@ public class TimeChooserPanel extends JPanel implements ChangeListener, MouseLis
     
     private JPanel mGridPn;
     private KeyListener mKeyListener;
+    private JButton mNowBt;
+    private Border mDefaultButtonBorder;
+    private final static int mBorderWidth = 9;
+    private final static int mBorderHeight = 4;
+    private boolean mRollOverEnabled;
     
     public TimeChooserPanel(MainFrame parent,KeyListener keyListener) {
       addKeyListener(keyListener);
@@ -89,11 +98,9 @@ public class TimeChooserPanel extends JPanel implements ChangeListener, MouseLis
       
       mKeyListener = keyListener;
       
-      createContent();
-      
       String msg;
       msg = mLocalizer.msg("button.now", "Now");
-      JButton nowBt=new JButton(msg) {
+      mNowBt=new JButton(msg) {
         protected void paintComponent(Graphics g) {
           if(Persona.getInstance().getHeaderImage() != null && Persona.getInstance().getTextColor() != null && Persona.getInstance().getShadowColor() != null) {
             Color c = Persona.getInstance().getAccentColor();
@@ -141,8 +148,22 @@ public class TimeChooserPanel extends JPanel implements ChangeListener, MouseLis
               alpha = 100;
             }
             
+            if(getModel().isArmed() || getModel().isRollover() || isFocusOwner()) {
+              c = UIManager.getColor("List.selectionBackground"); 
+            }
+            
+            if(getModel().isPressed()) {
+              alpha -= 50;
+            }
+            else if(isFocusOwner()) {
+              alpha -= 100;
+            }
+            
+            g.setColor(Persona.getInstance().getTextColor());
+            g.draw3DRect(0,0,getWidth()-1,getHeight()-1,!getModel().isPressed());
             g.setColor(new Color(c.getRed(),c.getGreen(),c.getBlue(),alpha));
-            g.fillRect(0,0,getWidth(),getHeight());
+            g.fillRect(1,1,getWidth()-2,getHeight()-2);
+            
             FontMetrics metrics = g.getFontMetrics(getFont());
             int textWidth = metrics.stringWidth(getText());
             int baseLine =  getHeight()/2+ metrics.getMaxDescent()+1;
@@ -162,14 +183,26 @@ public class TimeChooserPanel extends JPanel implements ChangeListener, MouseLis
           }
         }
       };
-      nowBt.addKeyListener(keyListener);
-      nowBt.setOpaque(false);
-      nowBt.addActionListener(new ActionListener(){
+      
+      mDefaultButtonBorder = mNowBt.getBorder();
+      mRollOverEnabled = mNowBt.isRolloverEnabled();
+      
+      if(mNowBt != null && Persona.getInstance().getHeaderImage() != null) {
+        mNowBt.setBorder(BorderFactory.createEmptyBorder(mBorderHeight,mBorderWidth,mBorderHeight,mBorderWidth));
+        mNowBt.setRolloverEnabled(true);
+      }
+      
+      mNowBt.addKeyListener(keyListener);
+      mNowBt.setOpaque(false);
+      mNowBt.addActionListener(new ActionListener(){
         public void actionPerformed(ActionEvent arg0) {
             mParent.scrollToNow();
         }});
-      add(nowBt, BorderLayout.SOUTH);
-      nowBt.addMouseListener(this);
+      add(mNowBt, BorderLayout.SOUTH);
+      mNowBt.addMouseListener(this);
+      
+      createContent();
+      
       addMouseListener(this);
     }
     
@@ -240,8 +273,22 @@ public class TimeChooserPanel extends JPanel implements ChangeListener, MouseLis
                 alpha = 100;
               }
               
+              if(getModel().isArmed() || getModel().isRollover() || isFocusOwner()) {
+                c = UIManager.getColor("List.selectionBackground"); 
+              }
+              
+              if(getModel().isPressed()) {
+                alpha -= 50;
+              }
+              else if(isFocusOwner()) {
+                alpha -= 100;
+              }
+
+              g.setColor(Persona.getInstance().getTextColor());
+              g.draw3DRect(0,0,getWidth()-1,getHeight()-1,!getModel().isPressed());
               g.setColor(new Color(c.getRed(),c.getGreen(),c.getBlue(),alpha));
-              g.fillRect(0,0,getWidth(),getHeight());
+              g.fillRect(1,1,getWidth()-2,getHeight()-2);
+              
               FontMetrics metrics = g.getFontMetrics(getFont());
               int textWidth = metrics.stringWidth(getText());
               int baseLine =  getHeight()/2+ metrics.getMaxDescent()+1;
@@ -263,6 +310,16 @@ public class TimeChooserPanel extends JPanel implements ChangeListener, MouseLis
         };
         btn.setOpaque(false);
         btn.addKeyListener(mKeyListener);
+        
+        if(Persona.getInstance().getHeaderImage() != null) {
+          btn.setBorder(BorderFactory.createEmptyBorder(mBorderHeight,mBorderWidth,mBorderHeight,mBorderWidth));
+          btn.setRolloverEnabled(true);
+        }
+        else {
+          btn.setBorder(mDefaultButtonBorder);
+          btn.setRolloverEnabled(mRollOverEnabled);
+        }
+        
         mGridPn.add(btn);
         btn.addActionListener(new ActionListener(){
           public void actionPerformed(ActionEvent arg0) {
@@ -319,10 +376,22 @@ public class TimeChooserPanel extends JPanel implements ChangeListener, MouseLis
       if(Persona.getInstance().getHeaderImage() != null) {
         setOpaque(false);
         mGridPn.setOpaque(false);
+        
+        if(mNowBt != null) {
+          mNowBt.setBorder(BorderFactory.createEmptyBorder(mBorderHeight,mBorderWidth,mBorderHeight,mBorderWidth));
+          mNowBt.setRolloverEnabled(true);
+          updateButtons();
+        }
       }
       else {
         setOpaque(true);
         mGridPn.setOpaque(true);
+        
+        if(mNowBt != null) {
+          mNowBt.setRolloverEnabled(mRollOverEnabled);
+          mNowBt.setBorder(mDefaultButtonBorder);
+          updateButtons();
+        }
       }
     }
 }
