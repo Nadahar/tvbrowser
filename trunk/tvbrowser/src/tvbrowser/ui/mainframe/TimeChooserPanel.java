@@ -162,7 +162,7 @@ public class TimeChooserPanel extends JPanel implements ChangeListener, MouseLis
             if(getModel().isPressed()) {
               alpha -= 50;
             }
-            else if(isFocusOwner()) {
+            else if(isFocusOwner() && !getModel().isRollover()) {
               alpha -= 100;
             }
             
@@ -296,7 +296,7 @@ public class TimeChooserPanel extends JPanel implements ChangeListener, MouseLis
               if(getModel().isPressed()) {
                 alpha -= 50;
               }
-              else if(isFocusOwner()) {
+              else if(isFocusOwner() && !getModel().isRollover()) {
                 alpha -= 100;
               }
               
