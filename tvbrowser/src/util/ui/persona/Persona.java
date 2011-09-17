@@ -97,6 +97,8 @@ public class Persona {
    * Applies the current selected Persona.
    */
   public void applyPersona() {
+    String id = Settings.propSelectedPersona.getString();
+    
     if(Settings.propRandomPersona.getBoolean() && mPersonaMap.size() > 2) {
       PersonaInfo[] installedPersonas = getInstalledPersonas();
       
@@ -106,11 +108,11 @@ public class Persona {
         index = (int)(Math.random()*installedPersonas.length);
       }while(installedPersonas[index].getId().equals(PersonaInfo.DEFAULT_ID) || installedPersonas[index].getId().equals(PersonaInfo.RANDOM_ID));
       
-      Settings.propSelectedPersona.setString(installedPersonas[index].getId());
+      id = installedPersonas[index].getId();
     }
     
     try {
-    PersonaInfo personaInfo = mPersonaMap.get(Settings.propSelectedPersona.getString());
+    PersonaInfo personaInfo = mPersonaMap.get(id);
     
     if(personaInfo == null) {
       Settings.propSelectedPersona.setString(new PersonaInfo().getId());
