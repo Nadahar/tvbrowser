@@ -1182,6 +1182,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       }
     }
 
+    mStatusBar.getLabel().setText("");
     mCurrentFilterName = filter.getName();
     mProgramTableScrollPane.requestFocusInWindow();
   }
