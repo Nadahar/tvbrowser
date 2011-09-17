@@ -59,8 +59,6 @@ public class PersonaInfo {
   private Color mTextColor;
   private Color mShadowColor;
   private Color mAccentColor;
-  private BufferedImage mCachedHeaderImage;
-  private BufferedImage mCachedFooterImage;
   private String mDetailURL;
   
   private String mId;
@@ -117,9 +115,6 @@ public class PersonaInfo {
     mShadowColor = new Color(Integer.parseInt(shadowColor[0]),Integer.parseInt(shadowColor[1]),Integer.parseInt(shadowColor[2]));
     
     mAccentColor = new Color(Integer.parseInt(accentColor[0]),Integer.parseInt(accentColor[1]),Integer.parseInt(accentColor[2]));
-    
-    mCachedHeaderImage = null;
-    mCachedFooterImage = null;
   }
   
   private File getImageFile(String key, Properties prop, File file) {
@@ -195,13 +190,13 @@ public class PersonaInfo {
    * @return The header image of this Persona.
    */
   public BufferedImage getHeaderImage() {
-    if(mCachedHeaderImage == null && mHeaderFile != null && mHeaderFile.isFile()) {
-      try {
-        mCachedHeaderImage = ImageIO.read(mHeaderFile);
-      } catch (IOException e) {}
-    }
+    try {
+      if(mHeaderFile != null) {
+        return ImageIO.read(mHeaderFile);
+      }
+    } catch (IOException e) {}
     
-    return mCachedHeaderImage;
+    return null;
   }
   
   /**
@@ -210,13 +205,13 @@ public class PersonaInfo {
    * @return The footer image of this Persona.
    */
   public BufferedImage getFooterImage() {
-    if(mCachedFooterImage == null && mFooterFile != null && mFooterFile.isFile()) {
-      try {
-        mCachedFooterImage = ImageIO.read(mFooterFile);
-      } catch (IOException e) {}
-    }
+    try {
+      if(mFooterFile != null) {
+        return ImageIO.read(mFooterFile);
+      }
+    } catch (IOException e) {}
     
-    return mCachedFooterImage;
+    return null;
   }
   
   /**

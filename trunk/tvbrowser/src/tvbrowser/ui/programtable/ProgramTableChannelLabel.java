@@ -241,14 +241,13 @@ public class ProgramTableChannelLabel extends ChannelLabel {
       }
       
       g.setColor(new Color(c.getRed(),c.getGreen(),c.getBlue(),alpha));
-      g.fillRect(1,1,getWidth(),getHeight()-2);
-      
+      g.fillRect(0,0,getWidth(),getHeight());
+            
       Icon icon = getIcon();      
       
       FontMetrics metrics = g.getFontMetrics(getFont());
       int textWidth = metrics.stringWidth(getText());
       int baseLine =  getHeight()/2+ metrics.getMaxDescent()+1;
-      
       
       int iconTextLength = icon.getIconWidth() + getIconTextGap() + textWidth;
       
