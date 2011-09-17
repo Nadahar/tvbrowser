@@ -1013,7 +1013,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     }
 
     mToolBarModel = DefaultToolBarModel.getInstance();
-    mToolBar = new ToolBar(mToolBarModel);
+    mToolBar = new ToolBar(mToolBarModel, mStatusBar.getLabel());
 
     String location = mToolBar.getToolbarLocation();
 
@@ -1050,12 +1050,12 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       }
 
       if (location.compareTo(BorderLayout.NORTH) == 0) {
-        mToolBarPanel.add(MoreButton.wrapToolBar(mToolBar,this), BorderLayout.CENTER);
+        mToolBarPanel.add(MoreButton.wrapToolBar(mToolBar,this,mStatusBar.getLabel()), BorderLayout.CENTER);
         if(Settings.propIsSearchFieldVisible.getBoolean()) {
           mToolBarPanel.add(mSearchField, BorderLayout.EAST);
         }
       } else {
-        mToolBarPanel.add(MoreButton.wrapToolBar(mToolBar,this), BorderLayout.WEST);
+        mToolBarPanel.add(MoreButton.wrapToolBar(mToolBar,this,mStatusBar.getLabel()), BorderLayout.WEST);
         if(Settings.propIsSearchFieldVisible.getBoolean()) {
           mToolBarPanel.add(mSearchField, BorderLayout.SOUTH);
         }
