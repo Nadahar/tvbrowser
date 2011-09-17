@@ -64,6 +64,8 @@ import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginProxy;
@@ -348,6 +350,16 @@ public class ToolBar extends JToolBar {
       button.setSelected(isSelected.booleanValue());
     }
     button.setBorderPainted(isSelected != null && isSelected.booleanValue());
+    
+    button.addChangeListener(new ChangeListener() {      
+      @Override
+      public void stateChanged(ChangeEvent e) {
+        if(!button.isFocusOwner() && button.getToolTipText() != null && button.getToolTipText().equals(mStatusLabel.getText())) {
+          mStatusLabel.setText("");
+        }
+      }
+    });
+    
     button.addMouseListener(new MouseAdapter() {
       public void mouseEntered(MouseEvent e) {
         if (!button.isSelected()) {
@@ -431,6 +443,15 @@ public class ToolBar extends JToolBar {
       mUpdateButton.setOpaque(false);
     }
 
+    button.addChangeListener(new ChangeListener() {      
+      @Override
+      public void stateChanged(ChangeEvent e) {
+        if(!button.isFocusOwner() && button.getToolTipText() != null && button.getToolTipText().equals(mStatusLabel.getText())) {
+          mStatusLabel.setText("");
+        }
+      }
+    });
+    
     button.addMouseListener(new MouseAdapter() {
       public void mouseEntered(MouseEvent e) {
         button.setBorderPainted(true);
