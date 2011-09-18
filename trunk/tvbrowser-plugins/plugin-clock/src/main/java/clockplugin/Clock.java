@@ -1,13 +1,21 @@
 package clockplugin;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.Toolkit;
+import java.awt.Window;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.lang.reflect.Method;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -84,7 +92,59 @@ public class Clock extends JDialog implements Runnable, MouseListener, MouseMoti
     mTimePanel.addMouseMotionListener(this);
     mTimePanel.setLayout(new GridLayout());
     
-    mTime = new JLabel();
+    mTime = new JLabel() {
+      private Object mPersonaObj = new String();
+      protected void paintComponent(Graphics g) {
+        if(ClockPlugin.getInstance().isUsingPersonaColors()) {
+          if(mPersonaObj != null && mPersonaObj instanceof String) {
+            try {
+              Class persona = Class.forName("util.ui.persona.Persona");
+              
+              Method m = persona.getMethod("getInstance", new Class<?> [0]);
+              mPersonaObj = m.invoke(persona,new Object[0]);
+            } catch (Exception e) {
+              mPersonaObj = null;
+            }
+          }
+          
+          Color textColor = null;
+          Color shadowColor = null;
+          
+          if(mPersonaObj != null) {
+            Method m;
+            try {
+              m = mPersonaObj.getClass().getMethod("getTextColor", new Class<?>[0]);
+              textColor = (Color) m.invoke(mPersonaObj,new Object[0]);
+                           
+              m = mPersonaObj.getClass().getMethod("getShadowColor", new Class<?>[0]);
+              shadowColor = (Color) m.invoke(mPersonaObj,new Object[0]);
+            } catch (Exception e) {e.printStackTrace();}
+          }
+          
+          FontMetrics metrics = g.getFontMetrics(getFont());
+          int textWidth = metrics.stringWidth(getText());
+          int baseLine = metrics.getAscent();
+        
+          if(textColor != null && shadowColor != null && !textColor.equals(shadowColor)) {
+            g.setColor(shadowColor);
+            
+            g.drawString(getText(),getWidth()/2-textWidth/2+1,baseLine+1);
+            g.drawString(getText(),getWidth()/2-textWidth/2+2,baseLine+2);
+          }
+          
+          if(textColor != null) {
+            g.setColor(textColor);
+            g.drawString(getText(),getWidth()/2-textWidth/2,baseLine);
+          }
+          else {
+            super.paintComponent(g);
+          }
+        }
+        else {
+          super.paintComponent(g);
+        }
+      }
+    };
     mTime.setFont(f);
     mTime.addMouseListener(this);
     mTimeFormat = DateFormat.getTimeInstance(DateFormat.MEDIUM,Locale.getDefault());
@@ -104,6 +164,7 @@ public class Clock extends JDialog implements Runnable, MouseListener, MouseMoti
     this.setUndecorated(true);
     this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
     mTime.setText(mTimeFormat.format(new Date(System.currentTimeMillis())));
+    ((JPanel)getContentPane()).setOpaque(false);
     
     if (width < 15 || height < 5 || fontsize != oldFontSize) {
       this.pack();
@@ -225,4 +286,37 @@ public class Clock extends JDialog implements Runnable, MouseListener, MouseMoti
   }
 
   public void mouseMoved(MouseEvent e) {}
+  
+  /**
+   * Sets the if the clock background should be transparent.
+   * <p>
+   * @param value <code>true</code> if the clock background should be transparent.
+   */
+  public void setTransparentBackground(boolean value) {
+    GraphicsDevice[] devices = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
+    GraphicsConfiguration config = devices[0].getDefaultConfiguration();
+    
+    try {
+      Class<?> awtUtilities = Class.forName("com.sun.awt.AWTUtilities");
+      Method m = awtUtilities.getMethod("isTranslucencyCapable",new Class<?>[] {GraphicsConfiguration.class});
+      
+      if((Boolean)m.invoke(awtUtilities, new Object[] {config})) {
+        m = awtUtilities.getMethod("setWindowOpaque",new Class<?>[] {Window.class,boolean.class});
+        m.invoke(awtUtilities, new Object[] {this,!value});
+        mTimePanel.setOpaque(!value);
+      }
+    } catch (Exception e) {e.printStackTrace();
+      
+      
+      try {
+        Method m = config.getClass().getMethod("isTranslucencyCapable()",new Class<?>[] {GraphicsConfiguration.class});
+        
+        if((Boolean)m.invoke(config,new Object[0])) {
+          m = this.getClass().getMethod("setOpacity",new Class<?>[] {float.class});
+          m.invoke(this,new Object[] {(float)(value ? 0 : 1)});
+          mTimePanel.setOpaque(!value);
+        }
+      } catch (Exception e1) {}
+    }    
+  }
 }
