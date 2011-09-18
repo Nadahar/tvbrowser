@@ -106,6 +106,7 @@ public class PersonaInfo {
     mFooterFile = getImageFile(Persona.FOOTER_IMAGE_KEY,prop,mSettings);
     //TODO change this to wiki page
     mDetailURL = prop.getProperty(Persona.DETAIL_URL_KEY,"http://wwww.tvbrowser.org");
+    mIcon = null;
     
     String[] textColor = prop.getProperty(Persona.TEXT_COLOR_KEY).trim().split(",");
     String[] shadowColor = prop.getProperty(Persona.SHADOW_COLOR_KEY).trim().split(",");
@@ -113,7 +114,6 @@ public class PersonaInfo {
     
     mTextColor = new Color(Integer.parseInt(textColor[0]),Integer.parseInt(textColor[1]),Integer.parseInt(textColor[2]));
     mShadowColor = new Color(Integer.parseInt(shadowColor[0]),Integer.parseInt(shadowColor[1]),Integer.parseInt(shadowColor[2]));
-    
     mAccentColor = new Color(Integer.parseInt(accentColor[0]),Integer.parseInt(accentColor[1]),Integer.parseInt(accentColor[2]));
   }
   
