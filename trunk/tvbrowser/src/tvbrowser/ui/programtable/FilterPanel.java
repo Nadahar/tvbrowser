@@ -37,7 +37,9 @@ public class FilterPanel extends JPanel {
    * remember current filter name to avoid repeated UI updates
    */
   private String mCurrentName;
-
+  private JButton mDeactivate;
+  private boolean mDefaultRolloverEnabledState;
+  
   private static final util.ui.Localizer mLocalizer
   = util.ui.Localizer.getLocalizerFor(FilterPanel.class);
 
@@ -93,16 +95,30 @@ public class FilterPanel extends JPanel {
     
     mFilterLabel.setHorizontalAlignment(SwingConstants.LEFT);
     add(mFilterLabel, BorderLayout.CENTER);
-
-    JButton deactivate = new JButton(mLocalizer.msg("deactivate", "Deactivate"));
-    deactivate.addKeyListener(keyListener);
-    deactivate.addActionListener(new ActionListener() {
+    mDeactivate = new JButton(mLocalizer.msg("deactivate", "Deactivate")) {
+      protected void paintComponent(Graphics g) {
+        if(Persona.getInstance().getHeaderImage() != null && Persona.getInstance().getTextColor() != null && Persona.getInstance().getShadowColor() != null) {
+          Persona.paintButton(g,this);
+        }
+        else {
+          super.paintComponent(g);
+        }
+      }
+    };
+    mDeactivate.addKeyListener(keyListener);
+    mDefaultRolloverEnabledState = mDeactivate.isRolloverEnabled();
+    mDeactivate.addActionListener(new ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent e) {
         MainFrame.getInstance().setProgramFilter(FilterManagerImpl.getInstance().getDefaultFilter());
       };
     });
-
-    add(deactivate, BorderLayout.EAST);
+    
+    if(Persona.getInstance().getHeaderImage() != null) {
+      mDeactivate.setRolloverEnabled(true);
+      mDeactivate.setOpaque(false);
+    }
+    
+    add(mDeactivate, BorderLayout.EAST);
   }
 
   /**
@@ -142,61 +158,32 @@ public class FilterPanel extends JPanel {
     Color c = Persona.getInstance().getAccentColor() != null ? Persona.getInstance().getAccentColor() : getBackground();
     
     if(Persona.getInstance().getHeaderImage() != null) {
-      double test = (0.2126 * Persona.getInstance().getTextColor().getRed()) + (0.7152 * Persona.getInstance().getTextColor().getGreen()) + (0.0722 * Persona.getInstance().getTextColor().getBlue());
-      int alpha = 100;
-      
-      if(test <= 30) {
-        c = Color.white;
-        alpha = 200;
-      }
-      else if(test <= 40) {
-        c = c.brighter().brighter().brighter().brighter().brighter().brighter();
-        alpha = 200;
-      }
-      else if(test <= 60) {
-        c = c.brighter().brighter().brighter();
-        alpha = 160;
-      }
-      else if(test <= 100) {
-        c = c.brighter().brighter();
-        alpha = 140;
-      }
-      else if(test <= 145) {
-        alpha = 120;
-      }
-      else if(test <= 170) {
-        c = c.darker();
-        alpha = 120;
-      }
-      else if(test <= 205) {
-        c = c.darker().darker();
-        alpha = 120;
-      }
-      else if(test <= 220){
-        c = c.darker().darker().darker();
-        alpha = 100;
-      }
-      else if(test <= 235){
-        c = c.darker().darker().darker().darker();
-        alpha = 100;
-      }
-      else {
-        c = Color.black;
-        alpha = 100;
-      }
-      
-      
-      
-      c = new Color(c.getRed(),c.getGreen(),c.getBlue(),alpha);
+      c = Persona.testPersonaForegroundAgainst(c);
       c2 = new Color(c2.getRed(),c2.getGreen(),c2.getBlue(),200);
     }
     
     // Create the gradient paint
-    GradientPaint paint =
-        new GradientPaint((float)width / 3, 0, c, width, height, c2, false);
+    GradientPaint paint = new GradientPaint((float)width / 3, 0, c, width, height, c2, false);
 
     g2d.setPaint(paint);
     g2d.fillRect(0, 0, width, height);
   }
+  
+  /**
+   * Updates the filter panel on Persona change.
+   */
+  public void updatePersona() {
+    if(mDeactivate != null) {
+      if(Persona.getInstance().getHeaderImage() != null) {
+        mDeactivate.setRolloverEnabled(true);
+        mDeactivate.setOpaque(false);
+      }
+      else {
+        mDeactivate.setRolloverEnabled(mDefaultRolloverEnabledState);
+        mDeactivate.setOpaque(true);
+      }
+    }
+  }
+  
 
 }

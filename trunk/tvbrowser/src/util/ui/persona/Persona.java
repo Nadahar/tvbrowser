@@ -37,6 +37,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 
 import javax.swing.ButtonModel;
+import javax.swing.JButton;
 import javax.swing.JMenu;
 import javax.swing.UIManager;
 
@@ -421,5 +422,102 @@ public final class Persona {
     }
     
     return false;
+  }
+  
+  /**
+   * Paints the given button on the given Graphics with persona settings.
+   * <p>
+   * @param g The graphics to paint on.
+   * @param b The button to paint.
+   */
+  public static void paintButton(Graphics g, JButton b) {
+    Color c = testPersonaForegroundAgainst(Persona.getInstance().getAccentColor());
+    Color textColor = Persona.getInstance().getTextColor();
+    int alpha = c.getAlpha();
+    
+    if(b.getModel().isArmed() || b.getModel().isRollover() || b.isFocusOwner()) {
+      c = UIManager.getColor("List.selectionBackground");
+      
+      double test1 = (0.2126 * c.getRed()) + (0.7152 * c.getGreen()) + (0.0722 * c.getBlue());
+      double test2 = (0.2126 * textColor.getRed()) + (0.7152 * textColor.getGreen()) + (0.0722 * textColor.getBlue());
+      
+      if(Math.abs(test2-test1) <= 40) {
+        textColor = UIManager.getColor("List.selectionForeground");
+      }
+    }
+    
+    if(b.getModel().isPressed()) {
+      alpha -= 50;
+    }
+    else if(b.isFocusOwner() && !b.getModel().isRollover()) {
+      alpha -= 100;
+    }
+    
+    g.setColor(Persona.getInstance().getTextColor());
+    g.draw3DRect(0,0,b.getWidth()-1,b.getHeight()-1,!b.getModel().isPressed());
+    g.setColor(new Color(c.getRed(),c.getGreen(),c.getBlue(),alpha));
+    g.fillRect(1,1,b.getWidth()-2,b.getHeight()-2);
+    
+    FontMetrics metrics = g.getFontMetrics(b.getFont());
+    int textWidth = metrics.stringWidth(b.getText());
+    int baseLine =  b.getHeight()/2+ metrics.getMaxDescent()+1;
+    
+    if(!Persona.getInstance().getShadowColor().equals(textColor) && Persona.getInstance().getTextColor().equals(textColor)) {
+      g.setColor(Persona.getInstance().getShadowColor());
+      
+      g.drawString(b.getText(),b.getWidth()/2-textWidth/2+1,baseLine+1);
+    }
+    
+    g.setColor(textColor);
+    g.drawString(b.getText(),b.getWidth()/2-textWidth/2,baseLine);
+  }
+  
+  public static Color testPersonaForegroundAgainst(Color c) {
+    double test = (0.2126 * Persona.getInstance().getTextColor().getRed()) + (0.7152 * Persona.getInstance().getTextColor().getGreen()) + (0.0722 * Persona.getInstance().getTextColor().getBlue());
+    int alpha = 100;
+    
+    if(test <= 30) {
+      c = Color.white;
+      alpha = 200;
+    }
+    else if(test <= 40) {
+      c = c.brighter().brighter().brighter().brighter().brighter().brighter();
+      alpha = 200;
+    }
+    else if(test <= 60) {
+      c = c.brighter().brighter().brighter();
+      alpha = 160;
+    }
+    else if(test <= 100) {
+      c = c.brighter().brighter();
+      alpha = 140;
+    }
+    else if(test <= 145) {
+      alpha = 120;
+    }
+    else if(test <= 170) {
+      c = c.darker();
+      alpha = 120;
+    }
+    else if(test <= 205) {
+      c = c.darker().darker();
+      alpha = 120;
+    }
+    else if(test <= 220){
+      c = c.darker().darker().darker();
+      alpha = 100;
+    }
+    else if(test <= 235){
+      c = c.darker().darker().darker().darker();
+      alpha = 100;
+    }
+    else {
+      c = Color.black;
+      alpha = 100;
+    }
+    
+    c = new Color(c.getRed(),c.getGreen(),c.getBlue(),alpha);
+    
+    return c;
   }
 }
