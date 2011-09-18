@@ -28,8 +28,6 @@
 package tvbrowser.ui.mainframe;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -43,7 +41,6 @@ import javax.swing.JButton;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -101,89 +98,7 @@ public class TimeChooserPanel extends JPanel implements ChangeListener, MouseLis
       mNowBt=new JButton(msg) {
         protected void paintComponent(Graphics g) {
           if(Persona.getInstance().getHeaderImage() != null && Persona.getInstance().getTextColor() != null && Persona.getInstance().getShadowColor() != null) {
-            Color c = Persona.getInstance().getAccentColor();
-            
-            double test = (0.2126 * Persona.getInstance().getTextColor().getRed()) + (0.7152 * Persona.getInstance().getTextColor().getGreen()) + (0.0722 * Persona.getInstance().getTextColor().getBlue());
-            int alpha = 100;
-            
-            if(test <= 30) {
-              c = Color.white;
-              alpha = 200;
-            }
-            else if(test <= 40) {
-              c = c.brighter().brighter().brighter().brighter().brighter().brighter();
-              alpha = 200;
-            }
-            else if(test <= 60) {
-              c = c.brighter().brighter().brighter();
-              alpha = 160;
-            }
-            else if(test <= 100) {
-              c = c.brighter().brighter();
-              alpha = 140;
-            }
-            else if(test <= 145) {
-              alpha = 120;
-            }
-            else if(test <= 170) {
-              c = c.darker();
-              alpha = 120;
-            }
-            else if(test <= 205) {
-              c = c.darker().darker();
-              alpha = 120;
-            }
-            else if(test <= 220){
-              c = c.darker().darker().darker();
-              alpha = 100;
-            }
-            else if(test <= 235){
-              c = c.darker().darker().darker().darker();
-              alpha = 100;
-            }
-            else {
-              c = Color.black;
-              alpha = 100;
-            }
-            
-            Color textColor = Persona.getInstance().getTextColor();
-            
-            if(getModel().isArmed() || getModel().isRollover() || isFocusOwner()) {
-              c = UIManager.getColor("List.selectionBackground");
-              
-              double test1 = (0.2126 * c.getRed()) + (0.7152 * c.getGreen()) + (0.0722 * c.getBlue());
-              double test2 = (0.2126 * textColor.getRed()) + (0.7152 * textColor.getGreen()) + (0.0722 * textColor.getBlue());
-              
-              if(Math.abs(test2-test1) <= 40) {
-                textColor = UIManager.getColor("List.selectionForeground");
-              }
-            }
-            
-            if(getModel().isPressed()) {
-              alpha -= 50;
-            }
-            else if(isFocusOwner() && !getModel().isRollover()) {
-              alpha -= 100;
-            }
-            
-            g.setColor(Persona.getInstance().getTextColor());
-            g.draw3DRect(0,0,getWidth()-1,getHeight()-1,!getModel().isPressed());
-            g.setColor(new Color(c.getRed(),c.getGreen(),c.getBlue(),alpha));
-            g.fillRect(1,1,getWidth()-2,getHeight()-2);
-            
-            FontMetrics metrics = g.getFontMetrics(getFont());
-            int textWidth = metrics.stringWidth(getText());
-            int baseLine =  getHeight()/2+ metrics.getMaxDescent()+1;
-            
-            if(!Persona.getInstance().getShadowColor().equals(textColor) && Persona.getInstance().getTextColor().equals(textColor)) {
-              g.setColor(Persona.getInstance().getShadowColor());
-              
-              g.drawString(getText(),getWidth()/2-textWidth/2+1,baseLine+1);
-             // g.drawString(getText(),getWidth()/2-textWidth/2+2,baseLine+2);
-            }
-            
-            g.setColor(textColor);
-            g.drawString(getText(),getWidth()/2-textWidth/2,baseLine);
+            Persona.paintButton(g,this);
           }
           else {
             super.paintComponent(g);
@@ -235,89 +150,7 @@ public class TimeChooserPanel extends JPanel implements ChangeListener, MouseLis
         JButton btn = new JButton(formatter.formatTime(h, m)) {
           protected void paintComponent(Graphics g) {
             if(Persona.getInstance().getHeaderImage() != null && Persona.getInstance().getTextColor() != null && Persona.getInstance().getShadowColor() != null) {
-              Color c = Persona.getInstance().getAccentColor();
-              
-              double test = (0.2126 * Persona.getInstance().getTextColor().getRed()) + (0.7152 * Persona.getInstance().getTextColor().getGreen()) + (0.0722 * Persona.getInstance().getTextColor().getBlue());
-              int alpha = 100;
-              
-              if(test <= 30) {
-                c = Color.white;
-                alpha = 200;
-              }
-              else if(test <= 40) {
-                c = c.brighter().brighter().brighter().brighter().brighter().brighter();
-                alpha = 200;
-              }
-              else if(test <= 60) {
-                c = c.brighter().brighter().brighter();
-                alpha = 160;
-              }
-              else if(test <= 100) {
-                c = c.brighter().brighter();
-                alpha = 140;
-              }
-              else if(test <= 145) {
-                alpha = 120;
-              }
-              else if(test <= 170) {
-                c = c.darker();
-                alpha = 120;
-              }
-              else if(test <= 205) {
-                c = c.darker().darker();
-                alpha = 120;
-              }
-              else if(test <= 220){
-                c = c.darker().darker().darker();
-                alpha = 100;
-              }
-              else if(test <= 235){
-                c = c.darker().darker().darker().darker();
-                alpha = 100;
-              }
-              else {
-                c = Color.black;
-                alpha = 100;
-              }
-              
-              Color textColor = Persona.getInstance().getTextColor();
-              
-              if(getModel().isArmed() || getModel().isRollover() || isFocusOwner()) {
-                c = UIManager.getColor("List.selectionBackground");
-                
-                double test1 = (0.2126 * c.getRed()) + (0.7152 * c.getGreen()) + (0.0722 * c.getBlue());
-                double test2 = (0.2126 * textColor.getRed()) + (0.7152 * textColor.getGreen()) + (0.0722 * textColor.getBlue());
-                
-                if(Math.abs(test2-test1) <= 40) {
-                  textColor = UIManager.getColor("List.selectionForeground");
-                }
-              }
-              
-              if(getModel().isPressed()) {
-                alpha -= 50;
-              }
-              else if(isFocusOwner() && !getModel().isRollover()) {
-                alpha -= 100;
-              }
-              
-              g.setColor(Persona.getInstance().getTextColor());
-              g.draw3DRect(0,0,getWidth()-1,getHeight()-1,!getModel().isPressed());
-              g.setColor(new Color(c.getRed(),c.getGreen(),c.getBlue(),alpha));
-              g.fillRect(1,1,getWidth()-2,getHeight()-2);
-              
-              FontMetrics metrics = g.getFontMetrics(getFont());
-              int textWidth = metrics.stringWidth(getText());
-              int baseLine =  getHeight()/2+ metrics.getMaxDescent()+1;
-              
-              if(!Persona.getInstance().getShadowColor().equals(textColor) && Persona.getInstance().getTextColor().equals(textColor)) {
-                g.setColor(Persona.getInstance().getShadowColor());
-                
-                g.drawString(getText(),getWidth()/2-textWidth/2+1,baseLine+1);
-               // g.drawString(getText(),getWidth()/2-textWidth/2+2,baseLine+2);
-              }
-              
-              g.setColor(textColor);
-              g.drawString(getText(),getWidth()/2-textWidth/2,baseLine);
+              Persona.paintButton(g,this);
             }
             else {
               super.paintComponent(g);
@@ -410,4 +243,5 @@ public class TimeChooserPanel extends JPanel implements ChangeListener, MouseLis
         }
       }
     }
+    
 }
