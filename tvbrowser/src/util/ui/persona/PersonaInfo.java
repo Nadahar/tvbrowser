@@ -68,16 +68,14 @@ public final class PersonaInfo {
     mName = mLocalizer.msg("randomPersona","Random Persona");
     mDescription = mLocalizer.msg("randomPersonaDesc","Select random Persona each start");
     mId = RANDOM_ID;
-    //TODO Change this to wiki page
-    mDetailURL = "http://www.tvbrowser.org";
+    mDetailURL = mLocalizer.msg("wikiPage","http://wiki.tvbrowser.org/index.php/Oberfl%C3%A4che#Personas");
   }
   
   PersonaInfo() {
     mName = mLocalizer.msg("noPersona","No Persona");
     mDescription = mLocalizer.msg("noPersonaDesc","No Persona selected");
     mId = DEFAULT_ID;
-    //TODO Change this to wiki page
-    mDetailURL = "http://www.tvbrowser.org";
+    mDetailURL = mLocalizer.msg("wikiPage","http://wiki.tvbrowser.org/index.php/Oberfl%C3%A4che#Personas");
   }  
   
   /**
@@ -104,8 +102,7 @@ public final class PersonaInfo {
     mDescription = prop.getProperty(Persona.DESCRIPTION_KEY+"."+Locale.getDefault().getLanguage(),prop.getProperty(Persona.DESCRIPTION_KEY));
     mHeaderFile = getImageFile(Persona.HEADER_IMAGE_KEY,prop,mSettings);
     mFooterFile = getImageFile(Persona.FOOTER_IMAGE_KEY,prop,mSettings);
-    //TODO change this to wiki page
-    mDetailURL = prop.getProperty(Persona.DETAIL_URL_KEY,"http://wwww.tvbrowser.org");
+    mDetailURL = prop.getProperty(Persona.DETAIL_URL_KEY, mLocalizer.msg("wikiPage","http://wiki.tvbrowser.org/index.php/Oberfl%C3%A4che#Personas"));
     mIcon = null;
     
     String[] textColor = prop.getProperty(Persona.TEXT_COLOR_KEY).trim().split(",");
