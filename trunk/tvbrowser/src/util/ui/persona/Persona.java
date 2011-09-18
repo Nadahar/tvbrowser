@@ -49,7 +49,7 @@ import tvbrowser.ui.mainframe.MainFrame;
  * @author René Mach
  * @since 3.0.3
  */
-public class Persona {
+public final class Persona {
   private static Persona mInstance;
   private HashMap<String,PersonaInfo> mPersonaMap;
   private final static String PERSONA_DIR = "personas";

@@ -46,7 +46,7 @@ import util.ui.Localizer;
  * @author René Mach
  * @since 3.0.3
  */
-public class PersonaInfo {
+public final class PersonaInfo {
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(PersonaInfo.class);
   static final String DEFAULT_ID = "51b73c81-7d61-4626-b230-89627c9f5ce7";
   static final String RANDOM_ID = "eb365437-e702-4c05-98c2-db5834bb4fa3";
