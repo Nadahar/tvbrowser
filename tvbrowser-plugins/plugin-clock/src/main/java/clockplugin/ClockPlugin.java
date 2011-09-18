@@ -31,12 +31,12 @@ public class ClockPlugin extends Plugin {
   private Properties mProperties;
   private Clock mClock;
   private int mShowTime;
-  private boolean mMoveOnScreen, mShowForever;
+  private boolean mMoveOnScreen, mShowForever, mUsePersonaColors, mTransparentBackground;
   private TitleBarClock mTitleBarClock;
   private Point mLocation;
   private Dimension mParentSize;
 
-  private static final Version mVersion = new Version(1, 76, 2, true);
+  private static final Version mVersion = new Version(1, 80, 0, true);
 
   /** The localizer for this class. */
   public static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(ClockPlugin.class);
@@ -48,7 +48,7 @@ public class ClockPlugin extends Plugin {
   /** Plugin info */
   public PluginInfo getInfo() {
     Class<?> pluginInfo = PluginInfo.class;
-
+    
     try {
       Constructor<?> constructor = pluginInfo.getConstructor(new Class[] {Class.class,String.class,String.class,String.class,String.class});
 
@@ -70,6 +70,10 @@ public class ClockPlugin extends Plugin {
    */
   public ClockPlugin() {
     mInstance = this;
+    mMoveOnScreen = false;
+    mShowForever = false;
+    mUsePersonaColors = false;
+    mTransparentBackground = false;
   }
 
   /**
@@ -118,22 +122,17 @@ public class ClockPlugin extends Plugin {
       }
     }
 
-    if (mProperties.getProperty("titleBarClock") != null
-        && mProperties.getProperty("titleBarClock").equals("true")) {
+    if (mProperties.getProperty("titleBarClock","false").equals("true")) {
       mTitleBarClock = new TitleBarClock();
     }
-    if (mProperties.getProperty("moveOnScreen") != null
-        && mProperties.getProperty("moveOnScreen").equals("true")) {
-      mMoveOnScreen = true;
-    } else {
-      mMoveOnScreen = false;
-    }
+    
+    mMoveOnScreen = mProperties.getProperty("moveOnScreen","false").equals("true");
+    mShowForever = mProperties.getProperty("showForever","false").equals("true");
+    mUsePersonaColors = mProperties.getProperty("usePersonaColors","false").equals("true");
+    mTransparentBackground = mProperties.getProperty("transparentBackground","false").equals("true");
+    
     if (mProperties.getProperty("showBorder") == null) {
       mProperties.setProperty("showBorder", "true");
-    }
-    if (mProperties.getProperty("showForever") != null
-        && mProperties.getProperty("showForever").equals("true")) {
-      mShowForever = true;
     }
   }
 
@@ -259,7 +258,42 @@ public class ClockPlugin extends Plugin {
       mClock.setBorder(value);
     }
   }
+  
+  /**
+   * Sets the new value for transparent background.
+   * <p>
+   * @param value <code>true</code> if the background should be transparent.
+   */
+  public void setTransparentBackground(boolean value) {
+    mProperties.setProperty("transparentBackground", String.valueOf(value));
+    mTransparentBackground = value;
+    mClock.setTransparentBackground(value);
+  }
+  
+  /**
+   * @return <code>true</code> if the background of the clock should be transparent.
+   */
+  public boolean isUsingTransparentBackground() {
+    return mTransparentBackground;
+  }
 
+  /**
+   * Sets the new value for is using of persona colors.
+   * <p>
+   * @param value <code>true</code> if persona colors should be used.
+   */
+  public void setIsUsingPersonaColors(boolean value) {
+    mProperties.setProperty("usePersonaColors", String.valueOf(value));
+    mUsePersonaColors = value;
+  }
+  
+  /**
+   * @return If the clock should use the persona colors.
+   */
+  public boolean isUsingPersonaColors() {
+    return mUsePersonaColors;
+  }
+  
   /**
    *
    * @return Clock has Border.
@@ -318,6 +352,7 @@ public class ClockPlugin extends Plugin {
 
     if ((mClock == null || !mClock.isVisible()) && getParentFrame().isVisible()) {
       mClock = new Clock(mShowTime, mProperties);
+      mClock.setTransparentBackground(mTransparentBackground);
       Thread t = new Thread() {
         public void run() {
           try {
