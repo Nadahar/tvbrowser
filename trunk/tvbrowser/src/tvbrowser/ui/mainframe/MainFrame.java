@@ -862,13 +862,15 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       }
     }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
     
-    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_F7, 0);
-    rootPane.registerKeyboardAction(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        setShowMenubar(!mMenuBar.isVisible());
-      }
-    }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+    if(!OperatingSystem.isMacOs() || TVBrowser.isTransportable()) {
+      stroke = KeyStroke.getKeyStroke(KeyEvent.VK_F7, 0);
+      rootPane.registerKeyboardAction(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          setShowMenubar(!mMenuBar.isVisible());
+        }
+      }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+    }
     
     stroke = KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.CTRL_MASK);
     rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,
