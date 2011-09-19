@@ -114,4 +114,8 @@ public abstract class TVBrowserAction extends AbstractAction {
   public boolean useEllipsis() {
     return false;
   }
+  
+  public boolean isSelected() {
+    return false;
+  }
 }

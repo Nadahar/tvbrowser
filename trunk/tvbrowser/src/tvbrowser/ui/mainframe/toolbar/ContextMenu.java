@@ -35,9 +35,12 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
+import tvbrowser.TVBrowser;
 import tvbrowser.core.Settings;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.settings.ToolBarDragAndDropSettings;
+import util.misc.OperatingSystem;
+import util.ui.persona.Persona;
 
 public class ContextMenu {
 
@@ -65,8 +68,17 @@ public class ContextMenu {
 
   protected static JMenu getSubMenu() {
     JMenu menu = new JMenu(mLocalizer.msg("toolbar", "Toolbar"));
+    
+    if(!OperatingSystem.isMacOs() || TVBrowser.isTransportable()) {
+      menu.add(createViewMenuBarMenu());
+    }
+    
     menu.add(createViewMenu());
+    
     if(Settings.propIsToolbarVisible.getBoolean()) {
+      if(Persona.getInstance().getHeaderImage() != null) {
+        menu.add(createMoreBorderMenu());
+      }
       menu.add(createViewSearchMenu());
     }
     menu.addSeparator();
@@ -77,8 +89,14 @@ public class ContextMenu {
 
   private void update() {
     mMenu.removeAll();
+    if(!OperatingSystem.isMacOs() || TVBrowser.isTransportable()) {
+      mMenu.add(createViewMenuBarMenu());
+    }
     mMenu.add(createViewMenu());
     if(Settings.propIsToolbarVisible.getBoolean()) {
+      if(Persona.getInstance().getHeaderImage() != null) {
+        mMenu.add(createMoreBorderMenu());
+      }
       mMenu.add(createViewSearchMenu());
     }
     mMenu.addSeparator();
@@ -99,6 +117,32 @@ public class ContextMenu {
     });
     
     return showSearch;
+  }
+  
+  private static JCheckBoxMenuItem createMoreBorderMenu() {
+    final JCheckBoxMenuItem show = new JCheckBoxMenuItem(
+        mLocalizer.msg("moreBorder", "Surround toolbar with more space"));
+    show.setSelected(Settings.propIsToolbarSurroundedWithSpace.getBoolean());
+    show.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        MainFrame.getInstance().setIsToolbarSurroundedWithSpace(show.isSelected());
+      }
+    });
+    
+    return show;
+  }
+  
+  private static JCheckBoxMenuItem createViewMenuBarMenu() {
+    final JCheckBoxMenuItem show = new JCheckBoxMenuItem(
+        mLocalizer.msg("showMenubar", "Show menubar"));
+    show.setSelected(Settings.propIsMenubarVisible.getBoolean());
+    show.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        MainFrame.getInstance().setShowMenubar(show.isSelected());
+      }
+    });
+    
+    return show;
   }
   
   private static JCheckBoxMenuItem createViewMenu() {

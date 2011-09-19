@@ -110,7 +110,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 			mEditTimeButtonsMenuItem, mToolbarCustomizeMI,
 			mFullscreenMI,
 			mPluginInfoDlgMI,
-			mCopySettingsToSystem;
+			mCopySettingsToSystem, mMenubarMI;
 
 	private JMenu mFiltersMenu, mLicenseMenu, mGoMenu, mViewMenu, mToolbarMenu,
 			mPluginHelpMenu, mGotoDateMenu, mGotoChannelMenu, mGotoTimeMenu, mFontSizeMenu,
@@ -173,12 +173,19 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 		new MenuHelpTextAdapter(mToolbarMI, mLocalizer.msg("menuinfo.toolbar", ""),
 				mLabel);
 
+    mMenubarMI = new JCheckBoxMenuItem(ContextMenu.mLocalizer.msg("showMenubar", "Show menubar"));
+    mMenubarMI.setSelected(Settings.propIsMenubarVisible.getBoolean());
+    mMenubarMI.addActionListener(this);
+    new MenuHelpTextAdapter(mMenubarMI, mLocalizer.msg("menuinfo.menuBar", ""),
+        mLabel);
+
 		mToolbarCustomizeMI = new JMenuItem(ContextMenu.mLocalizer.ellipsisMsg(
 				"configure", "Configure"));
 		mToolbarCustomizeMI.addActionListener(this);
 		new MenuHelpTextAdapter(mToolbarCustomizeMI, mLocalizer.msg(
 				"menuinfo.customizeToolbar", ""), mLabel);
 
+		mToolbarMenu.add(mMenubarMI);
 		mToolbarMenu.add(mToolbarMI);
 		mToolbarMenu.addSeparator();
 		mToolbarMenu.add(mToolbarCustomizeMI);
@@ -706,6 +713,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 
 	public void updateViewToolbarItem() {
 		mToolbarMI.setSelected(Settings.propIsToolbarVisible.getBoolean());
+		mMenubarMI.setSelected(Settings.propIsMenubarVisible.getBoolean());
 	}
 
 	public void updateChannelItems() {
@@ -937,6 +945,18 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 	public void setFullscreenItemChecked(boolean selected) {
 		mFullscreenMI.setSelected(selected);
 	}
+	
+	public void setTimeCooserItemChecked(boolean selected) {
+	  mTimeBtnsMI.setSelected(selected);
+	}
+	
+	public void setDateListItemChecked(boolean selected) {
+	  mDatelistMI.setSelected(selected);
+	}
+	
+	public void setChannelListItemChecked(boolean selected) {
+	  mChannellistMI.setSelected(selected);
+	}
 
 	public void actionPerformed(ActionEvent event) {
 		Object source = event.getSource();
@@ -946,7 +966,9 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 			mMainFrame.quit();
 		} else if (source == mToolbarMI) {
 			mMainFrame.setShowToolbar(mToolbarMI.isSelected());
-		} else if (source == mStatusbarMI) {
+		} else if (source == mMenubarMI) {
+      mMainFrame.setShowMenubar(mMenubarMI.isSelected());
+    } else if (source == mStatusbarMI) {
 			mMainFrame.setShowStatusbar(mStatusbarMI.isSelected());
 		} else if (source == mViewFilterBarMI) {
 			mMainFrame.updateFilterPanel();
@@ -1056,7 +1078,8 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
     mTimeBtnsMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F3, 0));
     mDatelistMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, 0));
     mChannellistMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F6, 0));
-
+    mMenubarMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F7, 0));
+    
     mFullscreenMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F11, 0));
   }
 
