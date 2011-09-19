@@ -1066,7 +1066,10 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
               setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, getBackground().darker()));
             }
             else {
-              setBorder(BorderFactory.createEmptyBorder((Settings.propIsMenubarVisible.getBoolean() ? 0 : 3) + (Settings.propIsToolbarAdditonalTopSpace.getBoolean() ? 25 : 0), 0, Settings.propIsToolbarAdditonalBottomSpace.getBoolean() ? 25 : 0, 0));
+              int topBorder = Settings.propIsToolbarAdditonalTopSpace.getBoolean() && Settings.propIsToolbarAdditonalBottomSpace.getBoolean() ? 25 : Settings.propIsToolbarAdditonalTopSpace.getBoolean() ? 50 : 0;
+              int bottomBorder = Settings.propIsToolbarAdditonalTopSpace.getBoolean() && Settings.propIsToolbarAdditonalBottomSpace.getBoolean() ? 25 : Settings.propIsToolbarAdditonalBottomSpace.getBoolean() ? 50 : 0;
+              
+              setBorder(BorderFactory.createEmptyBorder((Settings.propIsMenubarVisible.getBoolean() ? 0 : 3) + topBorder, 0, bottomBorder, 0));
             }
           }
         };
