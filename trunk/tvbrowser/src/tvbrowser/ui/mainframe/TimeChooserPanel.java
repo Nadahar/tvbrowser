@@ -28,7 +28,6 @@
 package tvbrowser.ui.mainframe;
 
 import java.awt.BorderLayout;
-import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyListener;
@@ -65,8 +64,6 @@ public class TimeChooserPanel extends JPanel implements ChangeListener, MouseLis
     private KeyListener mKeyListener;
     private JButton mNowBt;
     private Border mDefaultButtonBorder;
-    private final static int mBorderWidth = 9;
-    private final static int mBorderHeight = 4;
     private boolean mRollOverEnabled;
     
     public TimeChooserPanel(MainFrame parent,KeyListener keyListener) {
@@ -95,27 +92,11 @@ public class TimeChooserPanel extends JPanel implements ChangeListener, MouseLis
       
       String msg;
       msg = mLocalizer.msg("button.now", "Now");
-      mNowBt=new JButton(msg) {
-        protected void paintComponent(Graphics g) {
-          if(Persona.getInstance().getHeaderImage() != null && Persona.getInstance().getTextColor() != null && Persona.getInstance().getShadowColor() != null) {
-            Persona.paintButton(g,this);
-          }
-          else {
-            super.paintComponent(g);
-          }
-        }
-      };
-      
+      mNowBt=Persona.createPersonaButton(msg);
       mDefaultButtonBorder = mNowBt.getBorder();
       mRollOverEnabled = mNowBt.isRolloverEnabled();
       
-      if(mNowBt != null && Persona.getInstance().getHeaderImage() != null) {
-        mNowBt.setBorder(BorderFactory.createEmptyBorder(mBorderHeight,mBorderWidth,mBorderHeight,mBorderWidth));
-        mNowBt.setRolloverEnabled(true);
-      }
-      
       mNowBt.addKeyListener(keyListener);
-      mNowBt.setOpaque(false);
       mNowBt.addActionListener(new ActionListener(){
         public void actionPerformed(ActionEvent arg0) {
             mParent.scrollToNow();
@@ -147,27 +128,8 @@ public class TimeChooserPanel extends JPanel implements ChangeListener, MouseLis
       for (final int time : times) {
         int h = time/60;
         int m = time%60;
-        JButton btn = new JButton(formatter.formatTime(h, m)) {
-          protected void paintComponent(Graphics g) {
-            if(Persona.getInstance().getHeaderImage() != null && Persona.getInstance().getTextColor() != null && Persona.getInstance().getShadowColor() != null) {
-              Persona.paintButton(g,this);
-            }
-            else {
-              super.paintComponent(g);
-            }
-          }
-        };
-        btn.setOpaque(false);
+        JButton btn = Persona.createPersonaButton(formatter.formatTime(h, m));
         btn.addKeyListener(mKeyListener);
-        
-        if(Persona.getInstance().getHeaderImage() != null) {
-          btn.setBorder(BorderFactory.createEmptyBorder(mBorderHeight,mBorderWidth,mBorderHeight,mBorderWidth));
-          btn.setRolloverEnabled(true);
-        }
-        else {
-          btn.setBorder(mDefaultButtonBorder);
-          btn.setRolloverEnabled(mRollOverEnabled);
-        }
         
         mGridPn.add(btn);
         btn.addActionListener(new ActionListener(){
@@ -227,7 +189,7 @@ public class TimeChooserPanel extends JPanel implements ChangeListener, MouseLis
         mGridPn.setOpaque(false);
         
         if(mNowBt != null) {
-          mNowBt.setBorder(BorderFactory.createEmptyBorder(mBorderHeight,mBorderWidth,mBorderHeight,mBorderWidth));
+          mNowBt.setBorder(Persona.getPersonaButtonBorder());
           mNowBt.setRolloverEnabled(true);
           updateButtons();
         }

@@ -37,11 +37,14 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 
+import javax.swing.BorderFactory;
 import javax.swing.ButtonModel;
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JMenu;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
+import javax.swing.border.Border;
 
 import tvbrowser.core.Settings;
 
@@ -55,6 +58,9 @@ public final class Persona {
   private static Persona mInstance;
   private HashMap<String,PersonaInfo> mPersonaMap;
   private final static String PERSONA_DIR = "personas";
+  
+  private final static int mBorderWidth = 9;
+  private final static int mBorderHeight = 4;
   
   private String mDetailURL;
   private String mId;
@@ -483,18 +489,34 @@ public final class Persona {
     g.setColor(new Color(c.getRed(),c.getGreen(),c.getBlue(),alpha));
     g.fillRect(1,1,b.getWidth()-2,b.getHeight()-2);
     
+    Icon icon = b.isEnabled() ? b.getIcon() : b.getDisabledIcon();      
+    
     FontMetrics metrics = g.getFontMetrics(b.getFont());
     int textWidth = metrics.stringWidth(b.getText());
     int baseLine =  b.getHeight()/2+ metrics.getMaxDescent()+1;
     
+    int iconTextLength = (icon != null ? (icon.getIconWidth() + b.getIconTextGap()) : 0) + textWidth;
+    int iconX = (b.getWidth()/2) - (iconTextLength/2);
+    
+    if(icon != null) {
+      int iconY = (b.getHeight()/2) - (icon.getIconHeight()/2);
+      
+      icon.paintIcon(b,g,iconX,iconY);
+      iconX = iconX + icon.getIconWidth()+b.getIconTextGap();
+    }
+    
+    if(!b.isEnabled()) {
+      textColor = Color.lightGray;
+    }
+    
     if(!Persona.getInstance().getShadowColor().equals(textColor) && Persona.getInstance().getTextColor().equals(textColor)) {
       g.setColor(Persona.getInstance().getShadowColor());
       
-      g.drawString(b.getText(),b.getWidth()/2-textWidth/2+1,baseLine+1);
+      g.drawString(b.getText(),iconX+1,baseLine+1);
     }
     
     g.setColor(textColor);
-    g.drawString(b.getText(),b.getWidth()/2-textWidth/2,baseLine);
+    g.drawString(b.getText(),iconX,baseLine);
   }
   
   public static Color testPersonaForegroundAgainst(Color c) {
@@ -549,7 +571,36 @@ public final class Persona {
   /**
    * @return A JPanel with the Persona as Background.
    */
-  public JPanel createPersonaBackgroundPanel() {
+  public static JPanel createPersonaBackgroundPanel() {
     return new PersonaBackgroundPanel();
+  }
+  
+  public static JButton createPersonaButton(String text) {
+    return createPersonaButton(text,null);
+  }
+  
+  public static JButton createPersonaButton(String text, Icon icon) {
+    JButton button=new JButton(text,icon) {
+      protected void paintComponent(Graphics g) {
+        if(Persona.getInstance().getHeaderImage() != null && Persona.getInstance().getTextColor() != null && Persona.getInstance().getShadowColor() != null) {
+          Persona.paintButton(g,this);
+        }
+        else {
+          super.paintComponent(g);
+        }
+      }
+    };
+    
+    if(button != null && Persona.getInstance().getHeaderImage() != null) {
+      button.setBorder(BorderFactory.createEmptyBorder(mBorderHeight,mBorderWidth,mBorderHeight,mBorderWidth));
+      button.setRolloverEnabled(true);
+      button.setOpaque(false);
+    }
+    
+    return button;
+  }
+  
+  public static Border getPersonaButtonBorder() {
+    return BorderFactory.createEmptyBorder(mBorderHeight,mBorderWidth,mBorderHeight,mBorderWidth);
   }
 }
