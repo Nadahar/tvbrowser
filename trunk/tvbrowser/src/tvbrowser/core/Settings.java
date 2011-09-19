@@ -1154,11 +1154,17 @@ public class Settings {
       mProp, "isMenubarVisible", true);
   
   /**
-   * Property to store visibility state of menu bar.
+   * Property to store if additonal space should be inserted above toolbar.
    */
-  public static final BooleanProperty propIsToolbarSurroundedWithSpace = new BooleanProperty(
-      mProp, "isToolbarSurroundedWithSpace", false);
+  public static final BooleanProperty propIsToolbarAdditonalTopSpace = new BooleanProperty(
+      mProp, "isToolbarAdditonalTopSpace", false);
 
+  /**
+  * Property to store if additonal space should be inserted below toolbar.
+  */
+ public static final BooleanProperty propIsToolbarAdditonalBottomSpace = new BooleanProperty(
+     mProp, "isToolbarAddtionalBottomSpace", false);
+  
   public static final BooleanProperty propIsStatusbarVisible = new BooleanProperty(
       mProp, "isStatusbarVisible", true);
 
