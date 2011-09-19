@@ -519,6 +519,13 @@ public final class Persona {
     g.drawString(b.getText(),iconX,baseLine);
   }
   
+  /**
+   * Test the given color against the Persona foreground color
+   * and returns a color that is readable on the given color.
+   * <p>
+   * @param c The color to test.
+   * @return The readable Color.
+   */
   public static Color testPersonaForegroundAgainst(Color c) {
     double test = (0.2126 * Persona.getInstance().getTextColor().getRed()) + (0.7152 * Persona.getInstance().getTextColor().getGreen()) + (0.0722 * Persona.getInstance().getTextColor().getBlue());
     int alpha = 100;
@@ -575,10 +582,23 @@ public final class Persona {
     return new PersonaBackgroundPanel();
   }
   
+  /**
+   * Creates a button that uses the Pesona colors.
+   * <p>
+   * @param text Text of the button
+   * @return The created button.
+   */
   public static JButton createPersonaButton(String text) {
     return createPersonaButton(text,null);
   }
-  
+
+  /**
+   * Creates a button that uses the Pesona colors.
+   * <p>
+   * @param text Text of the button
+   * @param icon The icon for the button
+   * @return The created button.
+   */
   public static JButton createPersonaButton(String text, Icon icon) {
     JButton button=new JButton(text,icon) {
       protected void paintComponent(Graphics g) {
@@ -600,6 +620,11 @@ public final class Persona {
     return button;
   }
   
+  /**
+   * Gets the border for a Persona button
+   * <p>
+   * @return The border for a Persona button.
+   */
   public static Border getPersonaButtonBorder() {
     return BorderFactory.createEmptyBorder(mBorderHeight,mBorderWidth,mBorderHeight,mBorderWidth);
   }
