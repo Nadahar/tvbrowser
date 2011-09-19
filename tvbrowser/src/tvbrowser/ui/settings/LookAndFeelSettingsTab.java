@@ -243,6 +243,10 @@ public final class LookAndFeelSettingsTab implements SettingsTab {
         if (value != null) {
           label.setText(((PersonaInfo)value).getName());
           label.setToolTipText(((PersonaInfo)value).getDescription());
+          
+          if(((PersonaInfo)value).isSelectedPersona() && PersonaInfo.isRandomPersona((PersonaInfo)value)) {
+            label.setText(label.getText() + ": " + Persona.getInstance().getPersonaInfo(Persona.getInstance().getId()).getName());
+          }
         }
         return label;
       }
