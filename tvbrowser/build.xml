@@ -835,8 +835,8 @@
 
   	    <tarfileset dir="${tvbrowser-linux.runtime.dir}" prefix="usr/share/tvbrowser">
   	    	<include name="imgs/**"/>
-  	    	<include name="plugins/**"/>
   	    	<include name="personas/**"/>
+  	    	<include name="plugins/**"/>
   	    	<include name="themepacks/**"/>
   	    	<exclude name="tvbrowser.sh"/>
   	    	<exclude name="tvbrowser.desktop"/>
