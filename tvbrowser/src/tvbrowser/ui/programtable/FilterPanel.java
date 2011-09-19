@@ -38,7 +38,6 @@ public class FilterPanel extends JPanel {
    */
   private String mCurrentName;
   private JButton mDeactivate;
-  private boolean mDefaultRolloverEnabledState;
   
   private static final util.ui.Localizer mLocalizer
   = util.ui.Localizer.getLocalizerFor(FilterPanel.class);
@@ -95,18 +94,8 @@ public class FilterPanel extends JPanel {
     
     mFilterLabel.setHorizontalAlignment(SwingConstants.LEFT);
     add(mFilterLabel, BorderLayout.CENTER);
-    mDeactivate = new JButton(mLocalizer.msg("deactivate", "Deactivate")) {
-      protected void paintComponent(Graphics g) {
-        if(Persona.getInstance().getHeaderImage() != null && Persona.getInstance().getTextColor() != null && Persona.getInstance().getShadowColor() != null) {
-          Persona.paintButton(g,this);
-        }
-        else {
-          super.paintComponent(g);
-        }
-      }
-    };
+    mDeactivate = Persona.createPersonaButton(mLocalizer.msg("deactivate", "Deactivate"));
     mDeactivate.addKeyListener(keyListener);
-    mDefaultRolloverEnabledState = mDeactivate.isRolloverEnabled();
     mDeactivate.addActionListener(new ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent e) {
         MainFrame.getInstance().setProgramFilter(FilterManagerImpl.getInstance().getDefaultFilter());
@@ -175,11 +164,13 @@ public class FilterPanel extends JPanel {
   public void updatePersona() {
     if(mDeactivate != null) {
       if(Persona.getInstance().getHeaderImage() != null) {
+        mDeactivate.setBorder(Persona.getPersonaButtonBorder());
         mDeactivate.setRolloverEnabled(true);
         mDeactivate.setOpaque(false);
       }
       else {
-        mDeactivate.setRolloverEnabled(mDefaultRolloverEnabledState);
+        mDeactivate.setBorder(UIManager.getBorder("Button.border"));
+        mDeactivate.setRolloverEnabled(UIManager.getBoolean("Button.rollover"));
         mDeactivate.setOpaque(true);
       }
     }

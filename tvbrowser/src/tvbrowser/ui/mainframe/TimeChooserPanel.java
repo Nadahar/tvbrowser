@@ -40,6 +40,7 @@ import javax.swing.JButton;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -63,8 +64,6 @@ public class TimeChooserPanel extends JPanel implements ChangeListener, MouseLis
     private JPanel mGridPn;
     private KeyListener mKeyListener;
     private JButton mNowBt;
-    private Border mDefaultButtonBorder;
-    private boolean mRollOverEnabled;
     
     public TimeChooserPanel(MainFrame parent,KeyListener keyListener) {
       addKeyListener(keyListener);
@@ -93,8 +92,6 @@ public class TimeChooserPanel extends JPanel implements ChangeListener, MouseLis
       String msg;
       msg = mLocalizer.msg("button.now", "Now");
       mNowBt=Persona.createPersonaButton(msg);
-      mDefaultButtonBorder = mNowBt.getBorder();
-      mRollOverEnabled = mNowBt.isRolloverEnabled();
       
       mNowBt.addKeyListener(keyListener);
       mNowBt.addActionListener(new ActionListener(){
@@ -199,8 +196,8 @@ public class TimeChooserPanel extends JPanel implements ChangeListener, MouseLis
         mGridPn.setOpaque(true);
         
         if(mNowBt != null) {
-          mNowBt.setRolloverEnabled(mRollOverEnabled);
-          mNowBt.setBorder(mDefaultButtonBorder);
+          mNowBt.setRolloverEnabled(UIManager.getBoolean("Button.rollover"));
+          mNowBt.setBorder(UIManager.getBorder("Button.border"));
           updateButtons();
         }
       }
