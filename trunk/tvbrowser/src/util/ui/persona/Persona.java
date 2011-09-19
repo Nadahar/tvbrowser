@@ -408,6 +408,15 @@ public final class Persona {
   }
   
   /**
+   * Gets the id of the currently viewed persona
+   * <p>
+   * @return The id of the currently viewed persona.
+   */
+  public String getId() {
+    return mId;
+  }
+  
+  /**
    * @return The directory for the user personas.
    */
   public static File getUserPersonaDir() {
