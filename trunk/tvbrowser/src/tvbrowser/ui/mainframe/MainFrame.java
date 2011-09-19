@@ -154,6 +154,7 @@ import util.ui.Localizer;
 import util.ui.UIThreadRunner;
 import util.ui.UiUtilities;
 import util.ui.persona.Persona;
+import util.ui.persona.PersonaListener;
 import util.ui.progress.Progress;
 import util.ui.progress.ProgressWindow;
 import util.ui.view.Node;
@@ -177,7 +178,7 @@ import devplugin.Version;
  *
  * @author Martin Oberhauser
  */
-public class MainFrame extends JFrame implements DateListener,DropTargetListener {
+public class MainFrame extends JFrame implements DateListener,DropTargetListener,PersonaListener {
 
   private static final Logger mLog = java.util.logging.Logger
       .getLogger(tvbrowser.TVBrowser.class.getName());
@@ -272,7 +273,10 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
   private MainFrame() {
     super(TVBrowser.MAINWINDOW_TITLE);
     
-    setContentPane(new BackgroundPanel()); 
+    setContentPane(new BackgroundPanel());
+    
+    Persona.getInstance().registerPersonaListener(this);
+    
     mFindAsYouType = new FaytPanel();
     
      mGlobalFindAsYouTypeKeyListener = new KeyAdapter() {      
@@ -2831,10 +2835,10 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       BufferedImage footerImage = Persona.getInstance().getFooterImage();
       
       if(headerImage != null) {
-        g.drawImage(headerImage,0,0,jcontentPane.getWidth(),headerImage.getHeight()-(mMenuBar.isVisible() ? mMenuBar.getHeight() : 0),headerImage.getWidth()-jcontentPane.getWidth(),mMenuBar.isVisible() ? mMenuBar.getHeight() : 0,headerImage.getWidth(),headerImage.getHeight(),null);//.drawImage(mImage,0,0,null);
+        g.drawImage(headerImage,0,0,jcontentPane.getWidth(),headerImage.getHeight()-(mMenuBar.isVisible() ? mMenuBar.getHeight() : 0),headerImage.getWidth()-jcontentPane.getWidth(),mMenuBar.isVisible() ? mMenuBar.getHeight() : 0,headerImage.getWidth(),headerImage.getHeight(),null);
       }
       if(footerImage != null) {
-        g.drawImage(footerImage,0,jcontentPane.getHeight()-footerImage.getHeight(),footerImage.getWidth(),jcontentPane.getHeight(),0,0,footerImage.getWidth(),footerImage.getHeight(),null);//.drawImage(mImage,0,0,null);
+        g.drawImage(footerImage,0,jcontentPane.getHeight()-footerImage.getHeight(),footerImage.getWidth(),jcontentPane.getHeight(),0,0,footerImage.getWidth(),footerImage.getHeight(),null);
       }
     }
   }

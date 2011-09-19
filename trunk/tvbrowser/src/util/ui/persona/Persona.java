@@ -32,6 +32,7 @@ import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileFilter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -39,10 +40,10 @@ import java.util.HashMap;
 import javax.swing.ButtonModel;
 import javax.swing.JButton;
 import javax.swing.JMenu;
+import javax.swing.JPanel;
 import javax.swing.UIManager;
 
 import tvbrowser.core.Settings;
-import tvbrowser.ui.mainframe.MainFrame;
 
 /**
  * A class to handle Personas for TV-Browser.
@@ -87,11 +88,32 @@ public final class Persona {
   /** The key for the space holder for images in the global TV-Browser Persona directory */
   public final static String TVB_PERSONA = "{tvb.persona}";
   
+  private ArrayList<PersonaListener> mPersonaListenerList;
+  
   private Persona() {
     mInstance = this;
     mPersonaMap = new HashMap<String,PersonaInfo>(1);
+    mPersonaListenerList = new ArrayList<PersonaListener>();
     loadPersonas();    
     applyPersona();
+  }
+  
+  /**
+   * Register the PersonaListener to listen to Persona changes.
+   * <p>
+   * @param listener The listener to register. 
+   */
+  public void registerPersonaListener(PersonaListener listener) {
+    mPersonaListenerList.add(listener);
+  }
+  
+  /**
+   * Remove the given listener.
+   * <p>
+   * @param listener The listener to remove.
+   */
+  public void removePersonaListerner(PersonaListener listener) {
+    mPersonaListenerList.remove(listener);
   }
   
   /**
@@ -143,7 +165,10 @@ public final class Persona {
       mDetailURL = "http://www.tvbrowser.org";
     }
     
-    MainFrame.getInstance().updatePersona();
+    for(PersonaListener listener : mPersonaListenerList) {
+      listener.updatePersona();
+    }
+    
     }catch(Throwable t) {t.printStackTrace();}
   }
   
@@ -519,5 +544,12 @@ public final class Persona {
     c = new Color(c.getRed(),c.getGreen(),c.getBlue(),alpha);
     
     return c;
+  }
+  
+  /**
+   * @return A JPanel with the Persona as Background.
+   */
+  public JPanel createPersonaBackgroundPanel() {
+    return new PersonaBackgroundPanel();
   }
 }
