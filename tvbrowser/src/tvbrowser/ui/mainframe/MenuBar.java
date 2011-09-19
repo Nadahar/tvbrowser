@@ -185,7 +185,11 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 		new MenuHelpTextAdapter(mToolbarCustomizeMI, mLocalizer.msg(
 				"menuinfo.customizeToolbar", ""), mLabel);
 
-		mToolbarMenu.add(mMenubarMI);
+		if(!OperatingSystem.isMacOs() || TVBrowser.isTransportable()) {
+		  mToolbarMenu.add(mMenubarMI);
+		  mMenubarMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F7, 0));
+		}
+		
 		mToolbarMenu.add(mToolbarMI);
 		mToolbarMenu.addSeparator();
 		mToolbarMenu.add(mToolbarCustomizeMI);
@@ -1077,9 +1081,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
     mPluginOverviewMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0));
     mTimeBtnsMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F3, 0));
     mDatelistMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, 0));
-    mChannellistMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F6, 0));
-    mMenubarMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F7, 0));
-    
+    mChannellistMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F6, 0));    
     mFullscreenMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F11, 0));
   }
 
