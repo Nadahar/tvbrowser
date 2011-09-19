@@ -40,8 +40,10 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Calendar;
 
+import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
+import javax.swing.JViewport;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -94,6 +96,11 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
     getVerticalScrollBar().setFocusable(false);
 
     mChannelPanel = new ChannelPanel(mProgramTable.getColumnWidth(), model.getShownChannels(), keyListener);
+    
+    JPanel dummy = new JPanel();
+    dummy.setOpaque(false);
+    setRowHeaderView(dummy);
+    getRowHeader().setOpaque(false);
     
     setColumnHeaderView(mChannelPanel);
     getColumnHeader().setOpaque(false);
