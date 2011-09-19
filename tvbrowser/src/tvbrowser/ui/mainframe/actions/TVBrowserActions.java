@@ -23,6 +23,7 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataUpdater;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.mainframe.toolbar.ToolBar;
@@ -256,7 +257,7 @@ public final class TVBrowserActions {
    * show/hide plugin view action
    */
   public final static TVBrowserAction pluginView = new TVBrowserAction("pluginView", TVBrowserIcons
-      .viewTree(TVBrowserIcons.SIZE_SMALL), TVBrowserIcons.viewTree(TVBrowserIcons.SIZE_LARGE), 0, 0,
+      .viewTree(TVBrowserIcons.SIZE_SMALL), TVBrowserIcons.viewTree(TVBrowserIcons.SIZE_LARGE), KeyEvent.VK_F2, 0,
       ToolBar.TOOGLE_BUTTON_ACTION) {
 
     @Override
@@ -413,6 +414,8 @@ public final class TVBrowserActions {
       return true;
     };
   };
+  
+  //mPluginOverviewMI
 
   /**
    * register this action, so we can iterate over all actions later

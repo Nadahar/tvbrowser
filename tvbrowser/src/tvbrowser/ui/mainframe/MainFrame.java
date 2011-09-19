@@ -333,13 +333,14 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
           mLog.warning(sw.toString());
         }
         mMenuBar = new DefaultMenuBar(this, mStatusBar.getLabel());
+        mMenuBar.setVisible(Settings.propIsMenubarVisible.getBoolean());
         mLog.info("Using default menu bar");
       }
 
     } else {
       mMenuBar = new DefaultMenuBar(this, mStatusBar.getLabel());
+      mMenuBar.setVisible(Settings.propIsMenubarVisible.getBoolean());
     }
-   // mMenuBar.setOpaque(false);
     
     // create content
     jcontentPane = (JPanel) getContentPane();
@@ -614,7 +615,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
 
                         @Override
                         public void run() {
-                          mMenuBar.setVisible(true);
+                          mMenuBar.setVisible(true && Settings.propIsMenubarVisible.getBoolean());
                         }
                       });
                     }
@@ -625,7 +626,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
 
                         @Override
                         public void run() {
-                          mMenuBar.setVisible(!isFullScreenMode());
+                          mMenuBar.setVisible(!isFullScreenMode()&& Settings.propIsMenubarVisible.getBoolean());
                         }
                       });
                     }
@@ -832,8 +833,40 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
         }, keyStroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
       }
     }
-
-    KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.CTRL_MASK);
+    
+    KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_F3, 0);
+    rootPane.registerKeyboardAction(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        setShowTimeButtons(!mTimeChooserPanel.isVisible());
+      }
+    }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+    
+    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_F4, 0);
+    rootPane.registerKeyboardAction(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        setShowDatelist(!mFinderPanel.getComponent().isVisible());
+      }
+    }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+    
+    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_F6, 0);
+    rootPane.registerKeyboardAction(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        setShowChannellist(!mChannelChooser.isVisible());
+      }
+    }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+    
+    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_F7, 0);
+    rootPane.registerKeyboardAction(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        setShowMenubar(!mMenuBar.isVisible());
+      }
+    }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+    
+    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.CTRL_MASK);
     rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,
         KeyboardAction.KEY_UP), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
 
@@ -1027,11 +1060,10 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
               setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, getBackground().darker()));
             }
             else {
-              setBorder(BorderFactory.createEmptyBorder());
+              setBorder(BorderFactory.createEmptyBorder((Settings.propIsMenubarVisible.getBoolean() ? 0 : 3) + (Settings.propIsToolbarSurroundedWithSpace.getBoolean() ? 20 : 0), 0, Settings.propIsToolbarSurroundedWithSpace.getBoolean() ? 20 : 0, 0));
             }
           }
         };
-                
         addContextMenuMouseListener(mToolBarPanel);
         mSearchField = new SearchField();
         
@@ -1060,6 +1092,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
           mToolBarPanel.add(mSearchField, BorderLayout.SOUTH);
         }
       }
+      
       contentPane.add(mToolBarPanel, location);
     }
 
@@ -2309,7 +2342,26 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       ((TimeChooserPanel) mTimebuttonsNode.getLeaf()).updateButtons();
     }
   }
+  
+  public void setIsToolbarSurroundedWithSpace(boolean value) {
+    Settings.propIsToolbarSurroundedWithSpace.setBoolean(value);
+    
+    if(mToolBarPanel != null) {
+      mToolBarPanel.updateUI();
+    }
+  }
 
+  
+  public void setShowMenubar(boolean visible) {
+    Settings.propIsMenubarVisible.setBoolean(visible);
+    mMenuBar.setVisible(visible);
+    mMenuBar.updateViewToolbarItem();
+    
+    if(mToolBarPanel != null) {
+      mToolBarPanel.updateUI();
+    }
+  }
+  
   public void setShowToolbar(boolean visible) {
     Settings.propIsToolbarVisible.setBoolean(visible);
     mMenuBar.updateViewToolbarItem();
@@ -2346,7 +2398,8 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     }
 
     mTimeChooserPanel.setVisible(visible);
-
+    mMenuBar.setTimeCooserItemChecked(visible);
+    
     if(save) {
       Settings.propShowTimeButtons.setBoolean(visible);
     }
@@ -2366,6 +2419,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     }
 
     mFinderPanel.getComponent().setVisible(visible);
+    mMenuBar.setDateListItemChecked(visible);
 
     if(save) {
       Settings.propShowDatelist.setBoolean(visible);
@@ -2386,6 +2440,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     }
 
     mChannelChooser.setVisible(visible);
+    mMenuBar.setChannelListItemChecked(visible);
 
     if(save) {
       Settings.propShowChannels.setBoolean(visible);
@@ -2776,7 +2831,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       BufferedImage footerImage = Persona.getInstance().getFooterImage();
       
       if(headerImage != null) {
-        g.drawImage(headerImage,0,0,jcontentPane.getWidth(),headerImage.getHeight()-mMenuBar.getHeight(),headerImage.getWidth()-jcontentPane.getWidth(),mMenuBar.getHeight(),headerImage.getWidth(),headerImage.getHeight(),null);//.drawImage(mImage,0,0,null);
+        g.drawImage(headerImage,0,0,jcontentPane.getWidth(),headerImage.getHeight()-(mMenuBar.isVisible() ? mMenuBar.getHeight() : 0),headerImage.getWidth()-jcontentPane.getWidth(),mMenuBar.isVisible() ? mMenuBar.getHeight() : 0,headerImage.getWidth(),headerImage.getHeight(),null);//.drawImage(mImage,0,0,null);
       }
       if(footerImage != null) {
         g.drawImage(footerImage,0,jcontentPane.getHeight()-footerImage.getHeight(),footerImage.getWidth(),jcontentPane.getHeight(),0,0,footerImage.getWidth(),footerImage.getHeight(),null);//.drawImage(mImage,0,0,null);

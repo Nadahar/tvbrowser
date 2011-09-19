@@ -1146,6 +1146,18 @@ public class Settings {
 
   public static final BooleanProperty propIsToolbarVisible = new BooleanProperty(
       mProp, "isToolbarVisible", true);
+  
+  /**
+   * Property to store visibility state of menu bar.
+   */
+  public static final BooleanProperty propIsMenubarVisible = new BooleanProperty(
+      mProp, "isMenubarVisible", true);
+  
+  /**
+   * Property to store visibility state of menu bar.
+   */
+  public static final BooleanProperty propIsToolbarSurroundedWithSpace = new BooleanProperty(
+      mProp, "isToolbarSurroundedWithSpace", false);
 
   public static final BooleanProperty propIsStatusbarVisible = new BooleanProperty(
       mProp, "isStatusbarVisible", true);
