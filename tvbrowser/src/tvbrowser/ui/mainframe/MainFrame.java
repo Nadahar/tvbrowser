@@ -1066,7 +1066,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
               setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, getBackground().darker()));
             }
             else {
-              setBorder(BorderFactory.createEmptyBorder((Settings.propIsMenubarVisible.getBoolean() ? 0 : 3) + (Settings.propIsToolbarSurroundedWithSpace.getBoolean() ? 25 : 0), 0, Settings.propIsToolbarSurroundedWithSpace.getBoolean() ? 25 : 0, 0));
+              setBorder(BorderFactory.createEmptyBorder((Settings.propIsMenubarVisible.getBoolean() ? 0 : 3) + (Settings.propIsToolbarAdditonalTopSpace.getBoolean() ? 25 : 0), 0, Settings.propIsToolbarAdditonalBottomSpace.getBoolean() ? 25 : 0, 0));
             }
           }
         };
@@ -2349,14 +2349,21 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     }
   }
   
-  public void setIsToolbarSurroundedWithSpace(boolean value) {
-    Settings.propIsToolbarSurroundedWithSpace.setBoolean(value);
+  public void setIsToolbarAdditonalTopSpace(boolean value) {
+    Settings.propIsToolbarAdditonalTopSpace.setBoolean(value);
     
     if(mToolBarPanel != null) {
       mToolBarPanel.updateUI();
     }
   }
 
+  public void setIsToolbarAdditonalBottomSpace(boolean value) {
+    Settings.propIsToolbarAdditonalBottomSpace.setBoolean(value);
+    
+    if(mToolBarPanel != null) {
+      mToolBarPanel.updateUI();
+    }
+  }
   
   public void setShowMenubar(boolean visible) {
     Settings.propIsMenubarVisible.setBoolean(visible);

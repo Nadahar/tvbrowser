@@ -79,7 +79,8 @@ public class ContextMenu {
     
     if(Settings.propIsToolbarVisible.getBoolean()) {
       if(Persona.getInstance().getHeaderImage() != null) {
-        menu.add(createMoreBorderMenu());
+        menu.add(createMoreBorderTopMenu());
+        menu.add(createMoreBorderBottomMenu());
       }
       menu.add(createViewSearchMenu());
     }
@@ -97,7 +98,8 @@ public class ContextMenu {
     mMenu.add(createViewMenu());
     if(Settings.propIsToolbarVisible.getBoolean()) {
       if(Persona.getInstance().getHeaderImage() != null) {
-        mMenu.add(createMoreBorderMenu());
+        mMenu.add(createMoreBorderTopMenu());
+        mMenu.add(createMoreBorderBottomMenu());
       }
       mMenu.add(createViewSearchMenu());
     }
@@ -121,18 +123,32 @@ public class ContextMenu {
     return showSearch;
   }
   
-  private static JCheckBoxMenuItem createMoreBorderMenu() {
+  private static JCheckBoxMenuItem createMoreBorderTopMenu() {
     final JCheckBoxMenuItem show = new JCheckBoxMenuItem(
-        mLocalizer.msg("moreBorder", "Surround toolbar with more space"));
-    show.setSelected(Settings.propIsToolbarSurroundedWithSpace.getBoolean());
+        mLocalizer.msg("moreBorderTop", "Addtional free space above toolbar"));
+    show.setSelected(Settings.propIsToolbarAdditonalTopSpace.getBoolean());
     show.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        MainFrame.getInstance().setIsToolbarSurroundedWithSpace(show.isSelected());
+        MainFrame.getInstance().setIsToolbarAdditonalTopSpace(show.isSelected());
       }
     });
     
     return show;
   }
+  
+  private static JCheckBoxMenuItem createMoreBorderBottomMenu() {
+    final JCheckBoxMenuItem show = new JCheckBoxMenuItem(
+        mLocalizer.msg("moreBorderBottom", "Add free spcace below toolbar"));
+    show.setSelected(Settings.propIsToolbarAdditonalBottomSpace.getBoolean());
+    show.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        MainFrame.getInstance().setIsToolbarAdditonalBottomSpace(show.isSelected());
+      }
+    });
+    
+    return show;
+  }
+
   
   private static JCheckBoxMenuItem createViewMenuBarMenu() {
     final JCheckBoxMenuItem show = new JCheckBoxMenuItem(
