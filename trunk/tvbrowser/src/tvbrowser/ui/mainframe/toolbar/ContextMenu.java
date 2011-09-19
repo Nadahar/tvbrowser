@@ -28,12 +28,14 @@ package tvbrowser.ui.mainframe.toolbar;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.KeyStroke;
 
 import tvbrowser.TVBrowser;
 import tvbrowser.core.Settings;
@@ -136,6 +138,7 @@ public class ContextMenu {
     final JCheckBoxMenuItem show = new JCheckBoxMenuItem(
         mLocalizer.msg("showMenubar", "Show menubar"));
     show.setSelected(Settings.propIsMenubarVisible.getBoolean());
+    show.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F7, 0));
     show.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         MainFrame.getInstance().setShowMenubar(show.isSelected());
