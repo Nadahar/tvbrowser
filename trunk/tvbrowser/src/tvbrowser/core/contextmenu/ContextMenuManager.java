@@ -163,6 +163,8 @@ public class ContextMenuManager {
         return LeaveFullScreenMenuItem.getInstance();
       } else if(id.compareTo(DoNothingContextMenuItem.DONOTHING) == 0) {
         return DoNothingContextMenuItem.getInstance();
+      } else if(id.compareTo(SelectProgramContextMenuItem.SELECTPROGRAM) == 0) {
+        return SelectProgramContextMenuItem.getInstance();
       }
     }
     
