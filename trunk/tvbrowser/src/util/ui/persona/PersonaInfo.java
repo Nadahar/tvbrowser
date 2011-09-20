@@ -44,7 +44,7 @@ import util.ui.Localizer;
  * A class that contains infos about a Persona.
  * <p>
  * @author René Mach
- * @since 3.0.3
+ * @since 3.1
  */
 public final class PersonaInfo {
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(PersonaInfo.class);

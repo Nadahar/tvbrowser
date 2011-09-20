@@ -52,7 +52,7 @@ import tvbrowser.core.Settings;
  * A class to handle Personas for TV-Browser.
  * <p>
  * @author René Mach
- * @since 3.0.3
+ * @since 3.1
  */
 public final class Persona {
   private static Persona mInstance;
