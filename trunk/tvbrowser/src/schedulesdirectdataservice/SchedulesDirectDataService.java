@@ -85,7 +85,7 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
   private static final Logger mLog
     = Logger.getLogger(SchedulesDirectDataService.class.getName());
 
-  private static final Version VERSION = new Version(3,02);
+  private static final Version VERSION = new Version(3,02,1);
 
   private ChannelGroup mChannelGroup = new ChannelGroupImpl("SchedulesDirect", "SchedulesDirect", "SchedulesDirect", "SchedulesDirect");
 
@@ -121,7 +121,7 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
       try {
         SOAPRequest soapRequest = new SOAPRequest(
                 userName,
-                IOUtilities.xorDecode(mProperties.getProperty("password", ""), SchedulesDirectSettingsPanel.PASSWORDSEED).trim(),
+                IOUtilities.xorDecode(mProperties.getProperty("password", ""), SchedulesDirectSettingsPanel.PASSWORDSEED),
                 SCHEDULESDIRECT_SERVICE);
         Calendar start = startDate.getCalendar();
         Calendar end = (Calendar) startDate.getCalendar().clone();

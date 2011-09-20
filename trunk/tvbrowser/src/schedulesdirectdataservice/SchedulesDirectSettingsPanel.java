@@ -27,7 +27,6 @@ package schedulesdirectdataservice;
 
 import java.util.Properties;
 
-import javax.swing.JLabel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
@@ -39,7 +38,6 @@ import util.ui.Localizer;
 import util.ui.UiUtilities;
 
 import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
