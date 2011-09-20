@@ -42,6 +42,7 @@ import tvbrowser.core.contextmenu.ConfigMenuItem;
 import tvbrowser.core.contextmenu.ContextMenuManager;
 import tvbrowser.core.contextmenu.DoNothingContextMenuItem;
 import tvbrowser.core.contextmenu.LeaveFullScreenMenuItem;
+import tvbrowser.core.contextmenu.SelectProgramContextMenuItem;
 import tvbrowser.core.contextmenu.SeparatorMenuItem;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginProxy;
@@ -202,6 +203,7 @@ public class MausSettingsTab implements devplugin.SettingsTab {
 			DoNothingContextMenuItem doNothing = DoNothingContextMenuItem
 					.getInstance();
 			mComboBox.addItem(doNothing);
+			mComboBox.addItem(SelectProgramContextMenuItem.getInstance());
 			fillListBox();
 			if (mClickInterface != null) {
 				mComboBox.setSelectedItem(mClickInterface);
