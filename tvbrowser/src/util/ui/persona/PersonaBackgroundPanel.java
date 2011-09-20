@@ -34,7 +34,7 @@ import javax.swing.JPanel;
  * A JPanel that contains the header and footer images of the Persona.
  * <p>
  * @author René Mach
- * @since 3.0.3
+ * @since 3.1
  */
 public class PersonaBackgroundPanel extends JPanel {
   protected void paintComponent(Graphics g) {

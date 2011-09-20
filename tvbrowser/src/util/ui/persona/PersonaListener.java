@@ -30,7 +30,7 @@ package util.ui.persona;
  * You must register this listener to the Persona class.
  * <p>
  * @author René Mach
- * @since 3.0.3
+ * @since 3.1
  */
 public interface PersonaListener {
   /** Called when Persona was changed */
