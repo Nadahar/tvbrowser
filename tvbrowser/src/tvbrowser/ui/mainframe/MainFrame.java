@@ -210,6 +210,8 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
   private SearchField mSearchField;
 
   private StatusBar mStatusBar;
+  
+  private JPanel mSouthPanel;
 
   private DateSelector mFinderPanel;
 
@@ -430,16 +432,16 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       jcontentPane.add(mCenterComponent, BorderLayout.CENTER);
     }
     
-    JPanel southPanel = new JPanel(new BorderLayout());
-    southPanel.setOpaque(false);
-    southPanel.add(mFindAsYouType,BorderLayout.NORTH);
+    mSouthPanel = new JPanel(new BorderLayout());
+    mSouthPanel.setOpaque(false);
+    mSouthPanel.add(mFindAsYouType,BorderLayout.NORTH);
     mFindAsYouType.setVisible(false);
     
     if (Settings.propIsStatusbarVisible.getBoolean()) {
-      southPanel.add(mStatusBar, BorderLayout.SOUTH);
+      mSouthPanel.add(mStatusBar, BorderLayout.SOUTH);
     }
     
-    jcontentPane.add(southPanel,BorderLayout.SOUTH);
+    jcontentPane.add(mSouthPanel,BorderLayout.SOUTH);
 
     setJMenuBar(mMenuBar);
     addContextMenuMouseListener(mMenuBar);
@@ -2513,9 +2515,10 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     Settings.propIsStatusbarVisible.setBoolean(visible);
 
     if (visible && !contentPane.isAncestorOf(mStatusBar)) {
-      jcontentPane.add(mStatusBar, BorderLayout.SOUTH);
+      mSouthPanel.add(mStatusBar, BorderLayout.SOUTH);
     } else if (contentPane.isAncestorOf(mStatusBar)) {
-      jcontentPane.remove(mStatusBar);
+      mSouthPanel.remove(mStatusBar);
+      System.out.println("hier");
     }
 
     contentPane.invalidate();
