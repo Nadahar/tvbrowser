@@ -1090,7 +1090,13 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
   }
   
   protected void paintComponent(Graphics g) {
-    super.paintComponent(g);
+    if(Persona.getInstance().getAccentColor() != null) {
+      g.setColor(Persona.getInstance().getAccentColor());
+      g.fillRect(0,0,getWidth(),getHeight());
+    }
+    else {
+      super.paintComponent(g);
+    }
   
     if(Persona.getInstance().getHeaderImage() != null) {
       try {
