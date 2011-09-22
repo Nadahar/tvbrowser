@@ -99,7 +99,7 @@ public class ParamLibrary {
     String[] str = { "title", "original_title", "start_day", "start_month", "start_year", "start_hour", "start_minute",
         "end_month", "end_year", "end_day", "end_hour", "end_minute", "length_minutes", "length_sec", "short_info",
         "description", "episode", "original_episode", "episode_number", "channel_name", "url", "start_day_of_week", "start_month_name",
-        "genre", "start_unix", "end_unix", "custom"};
+        "genre", "start_unix", "end_unix", "custom", "production_year", "actors"};
     return str;
   }
 
@@ -216,6 +216,14 @@ public class ParamLibrary {
         return "";
       }
       return Integer.toString(epNum);
+    } else if (key.equalsIgnoreCase("production_year")) {
+      int productionYear = program.getIntField(ProgramFieldType.PRODUCTION_YEAR_TYPE);
+      if (productionYear < 1800) {
+        return "";
+      }
+      return Integer.toString(productionYear);
+    } else if (key.equalsIgnoreCase("actors")) {
+      return removeNull(program.getTextField(ProgramFieldType.ACTOR_LIST_TYPE));
     }
 
     mError = true;
