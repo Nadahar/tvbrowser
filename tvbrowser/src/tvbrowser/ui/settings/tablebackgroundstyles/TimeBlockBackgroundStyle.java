@@ -23,7 +23,7 @@ import util.ui.TabLayout;
  */
 public class TimeBlockBackgroundStyle implements TableBackgroundStyle {
 
-   private static final util.ui.Localizer mLocalizer
+   public static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(TimeBlockBackgroundStyle.class);
 
 

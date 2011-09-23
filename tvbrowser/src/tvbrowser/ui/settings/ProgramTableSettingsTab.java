@@ -42,6 +42,7 @@ import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
@@ -58,6 +59,8 @@ import tvbrowser.ui.settings.tablebackgroundstyles.SingleColorBackgroundStyle;
 import tvbrowser.ui.settings.tablebackgroundstyles.SingleImageBackgroundStyle;
 import tvbrowser.ui.settings.tablebackgroundstyles.TableBackgroundStyle;
 import tvbrowser.ui.settings.tablebackgroundstyles.TimeBlockBackgroundStyle;
+import tvbrowser.ui.settings.tablebackgroundstyles.UiColorBackgroundStyle;
+import tvbrowser.ui.settings.tablebackgroundstyles.UiTimeBlockBackgroundStyle;
 import tvbrowser.ui.settings.util.ColorButton;
 import tvbrowser.ui.settings.util.ColorLabel;
 import util.ui.CaretPositionCorrector;
@@ -115,6 +118,12 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
   private JSpinner mShortProgramsMinutes;
 
   private JLabel mShortProgramsLabel;
+  
+  private ColorButton mProgramPanelForegroundColorChangeBtn;
+  
+  private JComponent mForegroundSeparator;
+  
+  private JLabel mForegroundLabel;
 
   public void actionPerformed(ActionEvent event) {
     Object source = event.getSource();
@@ -321,10 +330,9 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     layout.appendRow(RowSpec.decode("5dlu"));
     layout.appendRow(RowSpec.decode("pref"));
     layout.appendRow(RowSpec.decode("10dlu"));
-
+    
     mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(
-        mLocalizer.msg("tableBackground", "Table background")), cc.xyw(1,
-        (currentRow += 2), 8));
+        mLocalizer.msg("tableBackground", "Table background")), cc.xyw(1,(currentRow += 2), 8));
 
     mSettingsPn.add(new JLabel(mLocalizer.msg("tableBackgroundStyle",
         "Table background style")), cc.xy(2, (currentRow += 2)));
@@ -368,17 +376,19 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
 
     mForegroundColorLb = new ColorLabel(Settings.propProgramPanelForegroundColor.getColor());
     mForegroundColorLb.setStandardColor(Settings.propProgramPanelForegroundColor.getDefaultColor());
-    ColorButton programPanelForegroundColorChangeBtn = new ColorButton(mForegroundColorLb);
+    mProgramPanelForegroundColorChangeBtn = new ColorButton(mForegroundColorLb);
 
-    mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(
-        mLocalizer.msg("foreground", "Foreground")), cc.xyw(1,
-        (currentRow += 2), 8));
+    mForegroundSeparator = DefaultComponentFactory.getInstance().createSeparator(
+        mLocalizer.msg("foreground", "Foreground")); 
+    mForegroundLabel = new JLabel(mLocalizer.msg("fontColor", "Font color"));
     
-    mSettingsPn.add(new JLabel(mLocalizer.msg("fontColor", "Font color")), cc
+    mSettingsPn.add(mForegroundSeparator, cc.xyw(1,(currentRow += 2), 8));
+    
+    mSettingsPn.add(mForegroundLabel, cc
         .xy(2,
         (currentRow += 2)));
     mSettingsPn.add(mForegroundColorLb, cc.xy(4, currentRow));
-    mSettingsPn.add(programPanelForegroundColorChangeBtn, cc.xy(6, currentRow));
+    mSettingsPn.add(mProgramPanelForegroundColorChangeBtn, cc.xy(6, currentRow));
     
     // Miscellaneous *********************************************
     layout.appendRow(RowSpec.decode("pref"));
@@ -424,6 +434,12 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
   
   private void updateBackgroundStyleConfigureButton() {
     TableBackgroundStyle style = (TableBackgroundStyle) mBackgroundStyleCB.getSelectedItem();
+    
+    mForegroundColorLb.setEnabled(!style.getSettingsString().equals("uiTimeBlock") && !style.getSettingsString().equals("uiColor"));
+    mProgramPanelForegroundColorChangeBtn.setEnabled(mForegroundColorLb.isEnabled());
+    mForegroundLabel.setEnabled(mForegroundColorLb.isEnabled());
+    mForegroundSeparator.getComponent(0).setEnabled(mForegroundColorLb.isEnabled());
+    
     mConfigBackgroundStyleBt.setEnabled(style.hasContent());
   }
 
@@ -488,7 +504,7 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
   /**
    * Called by the host-application, if the user wants to save the settings.
    */
-  public void saveSettings() {
+  public void saveSettings() {try {
     String backgroundStyle = ((TableBackgroundStyle) mBackgroundStyleCB.getSelectedItem()).getSettingsString();
 
     Settings.propTableBackgroundStyle.setString(backgroundStyle);
@@ -541,7 +557,7 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     Settings.propProgramPanelShortDurationActive.setBoolean(mShortProgramsCB
         .isSelected());
     Settings.propProgramPanelShortDurationMinutes
-        .setInt((Integer) mShortProgramsMinutes.getValue());
+        .setInt((Integer) mShortProgramsMinutes.getValue());}catch(Throwable t) {t.printStackTrace();}
   }
 
   /**
@@ -560,8 +576,9 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
 
   private TableBackgroundStyle[] getTableBackgroundStyles() {
 
-    return new TableBackgroundStyle[] { new SingleColorBackgroundStyle(), new SingleImageBackgroundStyle(),
-        new TimeBlockBackgroundStyle(), new DayTimeBackgroundStyle() };
+    return new TableBackgroundStyle[] { new SingleColorBackgroundStyle(), new UiColorBackgroundStyle(), 
+        new SingleImageBackgroundStyle(), new TimeBlockBackgroundStyle(), new UiTimeBlockBackgroundStyle(),
+        new DayTimeBackgroundStyle() };
 
   }
 

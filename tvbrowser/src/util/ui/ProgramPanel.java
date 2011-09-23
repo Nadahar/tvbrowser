@@ -111,7 +111,7 @@ public class ProgramPanel extends JComponent implements ChangeListener, PluginSt
   private static int columnWidthOffset = 0;
 
   /** The width of the left part (the time). */
-  private static int WIDTH_LEFT = -1;
+  public static int WIDTH_LEFT = -1;
   /** The width of the right part (the title and short info). */
   private static int WIDTH_RIGHT = Settings.propColumnWidth.getInt() - WIDTH_LEFT;
   /** The total width. */
@@ -154,7 +154,7 @@ public class ProgramPanel extends JComponent implements ChangeListener, PluginSt
   private Program mProgram;
 
   /** Color of the Text */
-  private Color mTextColor = Settings.propProgramPanelForegroundColor.getColor();
+  private Color mTextColor = (!Settings.propTableBackgroundStyle.getString().equals("uiColor") && !Settings.propTableBackgroundStyle.getString().equals("uiTimeBlock")) ? Settings.propProgramPanelForegroundColor.getColor() : UIManager.getColor("List.foreground");
 
   /** Panel under a Mouse ? */
   private boolean mMouseOver = false;

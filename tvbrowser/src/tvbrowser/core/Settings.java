@@ -943,8 +943,8 @@ public class Settings {
           LAYOUT_TIME_BLOCK, LAYOUT_COMPACT_TIME_BLOCK, LAYOUT_OPTIMIZED_COMPACT_TIME_BLOCK});
 
   public static final ChoiceProperty propTableBackgroundStyle = new ChoiceProperty(
-      mProp, "tablebackground.style", LAYOUT_TIME_BLOCK, new String[] { "singleColor",
-          "oneImage", LAYOUT_TIME_BLOCK, "timeOfDay" });
+      mProp, "tablebackground.style", "uiTimeBlock", new String[] { "singleColor",
+          "oneImage", LAYOUT_TIME_BLOCK, "timeOfDay", "uiColor" , "uiTimeBlock" });
 
   public static final StringProperty propOneImageBackground = new StringProperty(
       mProp, "tablebackground.oneImage.image", "imgs/columns_evening.jpg");
