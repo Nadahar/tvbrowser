@@ -68,6 +68,8 @@ import tvbrowser.ui.programtable.background.OneImageBackPainter;
 import tvbrowser.ui.programtable.background.SingleColorBackPainter;
 import tvbrowser.ui.programtable.background.TimeBlockBackPainter;
 import tvbrowser.ui.programtable.background.TimeOfDayBackPainter;
+import tvbrowser.ui.programtable.background.UiColorBackPainter;
+import tvbrowser.ui.programtable.background.UiTimeBlockBackPainter;
 import util.settings.ProgramPanelSettings;
 import util.ui.ProgramPanel;
 import util.ui.TransferProgram;
@@ -288,6 +290,12 @@ public class ProgramTable extends JPanel
       mBackgroundPainter = new SingleColorBackPainter();
     } else if (background.equals("oneImage")) {
       mBackgroundPainter = new OneImageBackPainter();
+    } else if (background.equals("uiColor")) {
+      mBackgroundPainter = new UiColorBackPainter();
+    } else if (background.equals("uiTimeBlock")) {
+      try {
+      mBackgroundPainter = new UiTimeBlockBackPainter();
+      }catch(Throwable t) {t.printStackTrace();}
     } else { // timeBlock
       mBackgroundPainter = new TimeBlockBackPainter();
     }
@@ -403,7 +411,14 @@ public class ProgramTable extends JPanel
     grp.setClip(clipBounds);
 
     // Paint the copyright notices
-    grp.setColor(Settings.propProgramPanelForegroundColor.getColor());
+    
+    if(!Settings.propTableBackgroundStyle.getString().equals("uiColor") && !Settings.propTableBackgroundStyle.getString().equals("uiTimeBlock")) {
+      grp.setColor(Settings.propProgramPanelForegroundColor.getColor());
+    }
+    else {
+      grp.setColor(UIManager.getColor("List.foreground"));
+    }
+    
     Channel[] channelArr = mModel.getShownChannels();
     FontMetrics metric = grp.getFontMetrics();
     for (Channel channel : channelArr) {
@@ -475,7 +490,14 @@ public class ProgramTable extends JPanel
       int rowCount = mModel.getRowCount(col);
       for (int row = 0; row < rowCount; row++) {
         ProgramPanel panel = mModel.getProgramPanel(col, row);
-        panel.setTextColor(Settings.propProgramPanelForegroundColor.getColor());
+        
+        if(!Settings.propTableBackgroundStyle.getString().equals("uiColor") && !Settings.propTableBackgroundStyle.getString().equals("uiTimeBlock")) {
+          panel.setTextColor(Settings.propProgramPanelForegroundColor.getColor());
+        }
+        else {
+          panel.setTextColor(UIManager.getColor("List.foreground"));
+        }
+        
         panel.setProgramPanelSettings(new ProgramPanelSettings(Settings.propPictureType.getInt(), Settings.propPictureStartTime.getInt(), Settings.propPictureEndTime.getInt(), false, Settings.propIsPictureShowingDescription.getBoolean(), Settings.propPictureDuration.getInt(), Settings.propPicturePluginIds.getStringArray()));
         panel.forceRepaint();
       }

@@ -32,10 +32,12 @@ import java.awt.Insets;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
+import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableCellRenderer;
 
+import tvbrowser.core.Settings;
 import util.settings.PluginPictureSettings;
 import util.settings.ProgramPanelSettings;
 import devplugin.Date;
@@ -111,7 +113,14 @@ public class ProgramTableCellRenderer extends DefaultTableCellRenderer {
             });
             
             mProgramPanel.setPaintExpiredProgramsPale(!isSelected);
-            mProgramPanel.setTextColor(label.getForeground());
+            
+            if(!Settings.propTableBackgroundStyle.getString().equals("uiColor") && !Settings.propTableBackgroundStyle.getString().equals("uiTimeBlock")) {
+              mProgramPanel.setTextColor(Settings.propProgramPanelForegroundColor.getColor());
+            }
+            else {
+              mProgramPanel.setTextColor(UIManager.getColor("List.foreground"));
+            }
+            
             mProgramPanel.setBackground(label.getBackground());
             
             String dateString;

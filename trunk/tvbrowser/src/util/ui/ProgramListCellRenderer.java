@@ -39,6 +39,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
+import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListDataEvent;
@@ -90,8 +91,11 @@ public class ProgramListCellRenderer extends DefaultListCellRenderer {
     }
   }
 
-  private static final Color SECOND_ROW_COLOR = new Color(220, 220, 220, 150);
-  private static final Color SECOND_ROW_COLOR_EXPIRED = new Color(220, 220, 220, 55);
+  private static Color FIRST_ROW_COLOR = new Color(220, 220, 220, 150);
+  private static Color FIRST_ROW_COLOR_EXPIRED = new Color(220, 220, 220, 55);
+
+  private static Color SECOND_ROW_COLOR = new Color(220, 220, 220, 150);
+  private static Color SECOND_ROW_COLOR_EXPIRED = new Color(220, 220, 220, 55);
 
   private JPanel mMainPanel;
   private JLabel mHeaderLb;
@@ -101,7 +105,7 @@ public class ProgramListCellRenderer extends DefaultListCellRenderer {
   /**
    * Creates a new instance of ProgramListCellRenderer
    */
-  public ProgramListCellRenderer() {
+  public ProgramListCellRenderer() {    
     this(new ProgramPanelSettings(ProgramPanelSettings.SHOW_PICTURES_NEVER, -1, -1, false, true, 10));
   }
 
@@ -114,6 +118,18 @@ public class ProgramListCellRenderer extends DefaultListCellRenderer {
    * @since 2.2.2
    */
   public ProgramListCellRenderer(ProgramPanelSettings settings) {
+    SECOND_ROW_COLOR = UIManager.getColor("List.foreground");
+    SECOND_ROW_COLOR = new Color(SECOND_ROW_COLOR.getRed(),SECOND_ROW_COLOR.getGreen(),SECOND_ROW_COLOR.getBlue(),30);
+    
+    SECOND_ROW_COLOR_EXPIRED = UIManager.getColor("List.foreground");
+    SECOND_ROW_COLOR_EXPIRED = new Color(SECOND_ROW_COLOR_EXPIRED.getRed(),SECOND_ROW_COLOR_EXPIRED.getGreen(),SECOND_ROW_COLOR_EXPIRED.getBlue(),15);
+    
+    FIRST_ROW_COLOR = UIManager.getColor("List.background");
+    FIRST_ROW_COLOR = new Color(FIRST_ROW_COLOR.getRed(),FIRST_ROW_COLOR.getGreen(),FIRST_ROW_COLOR.getBlue(),30);
+
+    FIRST_ROW_COLOR_EXPIRED = UIManager.getColor("List.background");
+    FIRST_ROW_COLOR_EXPIRED = new Color(FIRST_ROW_COLOR_EXPIRED.getRed(),FIRST_ROW_COLOR_EXPIRED.getGreen(),FIRST_ROW_COLOR_EXPIRED.getBlue(),15);
+
     initializeSettings(settings);
   }
 
@@ -212,8 +228,13 @@ public class ProgramListCellRenderer extends DefaultListCellRenderer {
       mMainPanel.setEnabled(label.isEnabled());
       mMainPanel.setBorder(label.getBorder());
 
-      if (((index & 1) == 1) && (!isSelected) && program.getMarkPriority() < Program.MIN_MARK_PRIORITY) {
-        mMainPanel.setBackground(program.isExpired() ? SECOND_ROW_COLOR_EXPIRED : SECOND_ROW_COLOR);
+      if ((!isSelected) && program.getMarkPriority() < Program.MIN_MARK_PRIORITY) {
+        if(((index & 1) == 1)) {
+          mMainPanel.setBackground(program.isExpired() ? SECOND_ROW_COLOR_EXPIRED : SECOND_ROW_COLOR);
+        }
+        else {
+          mMainPanel.setBackground(program.isExpired() ? FIRST_ROW_COLOR_EXPIRED : FIRST_ROW_COLOR);
+        }
       }
 
       return mMainPanel;
