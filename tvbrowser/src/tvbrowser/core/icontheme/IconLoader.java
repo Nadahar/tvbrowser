@@ -163,6 +163,7 @@ public class IconLoader {
     	for (String zipName : zipThemes) {
 	    	if (list.get(i).getName().equalsIgnoreCase(zipName) && !(list.get(i) instanceof ZipIconTheme)) {
 	    		list.remove(i);
+	    		break;
 	    	}
 			}
     }
