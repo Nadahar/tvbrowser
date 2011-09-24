@@ -150,6 +150,7 @@ import util.browserlauncher.Launch;
 import util.exc.ErrorHandler;
 import util.io.IOUtilities;
 import util.misc.OperatingSystem;
+import util.ui.DontShowAgainMessageBox;
 import util.ui.Localizer;
 import util.ui.UIThreadRunner;
 import util.ui.UiUtilities;
@@ -2371,6 +2372,10 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
   }
   
   public void setShowMenubar(boolean visible) {
+    if(!visible) {
+      DontShowAgainOptionBox.showOptionDialog("mainFrame.menuBarDisabled",this,mLocalizer.msg("menuBarDisabled","You have disabled the menu bar.\nTo show it again press F7 on your keyboard."));
+    }
+    
     Settings.propIsMenubarVisible.setBoolean(visible);
     mMenuBar.setVisible(visible);
     mMenuBar.updateViewToolbarItem();
