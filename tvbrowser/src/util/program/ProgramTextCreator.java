@@ -766,7 +766,7 @@ public class ProgramTextCreator {
       buffer.append("</td></tr>");
     }
     buffer.append("</table></html>");
-System.out.println(buffer);
+    
     return buffer.toString();}catch(Exception e) {e.printStackTrace();}
     return "";
   }
