@@ -36,6 +36,7 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.MouseInfo;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.datatransfer.DataFlavor;
@@ -1507,6 +1508,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       if (onAirChanged) {
         if(Settings.propTableLayout.getString().equals(Settings.LAYOUT_OPTIMIZED_COMPACT_TIME_BLOCK)) {
           mProgramTableScrollPane.getProgramTable().updateLayout();
+          mProgramTableScrollPane.updateUI();
         }
 
         // update filtered view if the "on air" condition changed for any program
@@ -1656,6 +1658,18 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     devplugin.Date day = new devplugin.Date();
     scrollTo(day, hour * 60 + cal.get(Calendar.MINUTE));
     mProgramTableScrollPane.requestFocusInWindow();
+  }
+  
+  /** Very first scrollToNow should only be called from TVBrowser.java */
+  public void scrollToNowFirst() {
+    handleTimerEvent();
+    SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        scrollToNow();    
+      }
+    });
+    
   }
 
   private void scrollTo(Date day, int minute) {

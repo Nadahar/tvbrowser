@@ -921,7 +921,7 @@ public class TVBrowser {
           if (!automaticDownloadStarted && (! dataAvailable) && (ChannelList.getNumberOfSubscribedChannels() > 0)) {
             mainFrame.askForDataUpdateNoDataAvailable();
           } else {
-            mainFrame.scrollToNow();
+            mainFrame.scrollToNowFirst();
           }
         }
       });
