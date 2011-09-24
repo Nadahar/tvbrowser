@@ -41,6 +41,8 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 
 import tvbrowser.core.Settings;
+import tvbrowser.ui.BrownSugarDark;
+import tvbrowser.ui.DarkStarDark;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
@@ -81,7 +83,9 @@ public class JGoodiesLNFSettings extends JDialog implements WindowClosingIf {
    * Create the GUI
    */
   private void createGui() {
-    final List themesList = PlasticLookAndFeel.getInstalledThemes();
+    List themesList = PlasticLookAndFeel.getInstalledThemes();
+    themesList.add(2,new DarkStarDark(true));
+    themesList.add(1,new BrownSugarDark(true));
     PlasticTheme[] themes = (PlasticTheme[]) themesList
         .toArray(new PlasticTheme[themesList.size()]);
     

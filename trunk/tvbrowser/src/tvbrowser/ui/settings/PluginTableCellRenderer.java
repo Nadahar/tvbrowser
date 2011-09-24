@@ -175,21 +175,23 @@ public class PluginTableCellRenderer extends DefaultTableCellRenderer {
       mDesc = new JLabel(HTMLTextHelper.convertHtmlToText(descValue));
       mDesc.setMinimumSize(new Dimension(100, 10));
       mDesc.setOpaque(false);
-      mDesc.setEnabled(isActivated);
       mPanel.add(mDesc, mCC.xy(3, 3));
 
       mName.setOpaque(false);
       mName.setForeground(table.getForeground());
       mName.setText(nameValue);
-      mName.setEnabled(isActivated);
 
       mPanel.setOpaque(true);
 
       if (isSelected) {
+        mName.setEnabled(true);
+        mDesc.setEnabled(true);
         mName.setForeground(table.getSelectionForeground());
         mDesc.setForeground(table.getSelectionForeground());
         mPanel.setBackground(table.getSelectionBackground());
       } else {
+        mName.setEnabled(isActivated);
+        mDesc.setEnabled(isActivated);
         mName.setForeground(table.getForeground());
         mDesc.setForeground(table.getForeground());
         mPanel.setBackground(table.getBackground());
