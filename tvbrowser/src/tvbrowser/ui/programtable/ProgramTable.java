@@ -498,7 +498,7 @@ public class ProgramTable extends JPanel
           panel.setTextColor(UIManager.getColor("List.foreground"));
         }
         
-        panel.setProgramPanelSettings(new ProgramPanelSettings(Settings.propPictureType.getInt(), Settings.propPictureStartTime.getInt(), Settings.propPictureEndTime.getInt(), false, Settings.propIsPictureShowingDescription.getBoolean(), Settings.propPictureDuration.getInt(), Settings.propPicturePluginIds.getStringArray()));
+        panel.setProgramPanelSettings(new ProgramPanelSettings(Settings.propPictureType.getInt(), Settings.propPictureStartTime.getInt(), Settings.propPictureEndTime.getInt(), false, Settings.propIsPictureShowingDescription.getBoolean(), Settings.propPictureDuration.getInt(), Settings.propPicturePluginIds.getStringArray(), false, Settings.propShowProgramTablePictureBorder.getBoolean()));
         panel.forceRepaint();
       }
     }

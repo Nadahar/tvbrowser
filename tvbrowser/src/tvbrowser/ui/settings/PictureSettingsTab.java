@@ -80,6 +80,7 @@ public class PictureSettingsTab extends AbstractSettingsTab {
   private JSpinner mPictureStartTime, mPictureEndTime, mDuration;
   private JLabel mStartLabel, mEndLabel;
   private JCheckBox mShowDescription;
+  private JCheckBox mShowPictureBorderProgramTable;
 
   private JLabel mPluginLabel;
   private Marker[] mClientPlugins;
@@ -102,6 +103,8 @@ private JLabel mDescriptionLabel;
       mShowPicturesInTimeRange = new JCheckBox(mLocalizer.msg("showInTimeRange", "Show in time range:"), ProgramPanelSettings.typeContainsType(Settings.propPictureType.getInt(), ProgramPanelSettings.SHOW_PICTURES_IN_TIME_RANGE));
       mShowPicturesForDuration = new JCheckBox(mLocalizer.msg("showForDuration", "Show for duration more than or equals to:"), ProgramPanelSettings.typeContainsType(Settings.propPictureType.getInt(), ProgramPanelSettings.SHOW_PICTURES_FOR_DURATION));
 
+      mShowPictureBorderProgramTable = new JCheckBox(mLocalizer.msg("showPictureBorder","Show border around picture"), Settings.propShowProgramTablePictureBorder.getBoolean());
+      
       ButtonGroup bg = new ButtonGroup();
 
       bg.add(mShowPicturesEver);
@@ -130,7 +133,13 @@ private JLabel mDescriptionLabel;
       mPictureEndTime.setValue(cal.getTime());
 
       mShowDescription = new JCheckBox(mLocalizer.msg("showDescription", "Show description for pictures"), Settings.propIsPictureShowingDescription.getBoolean());
-
+      mShowDescription.addItemListener(new ItemListener() {
+        @Override
+        public void itemStateChanged(ItemEvent e) {
+          mShowPictureBorderProgramTable.setEnabled(e.getStateChange() == ItemEvent.DESELECTED);
+        }
+      });
+      
       JEditorPane helpLabel = UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("help", "These settings affect only the showing of the pictures. The pictures can only be shown if the download of pictures in enabled. To enable the picture download look at the <a href=\"#link\">settings of the TV dataservices</a>."), new HyperlinkListener() {
         public void hyperlinkUpdate(HyperlinkEvent e) {
           if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
@@ -144,7 +153,7 @@ private JLabel mDescriptionLabel;
       FormLayout layout = new FormLayout(
               "5dlu, 12dlu, 15dlu, pref, 5dlu, pref, 5dlu, pref:grow, 5dlu",
               "pref,5dlu,pref,pref,pref,2dlu,pref,pref,2dlu,pref" +
-                      ",2dlu,pref,pref,5dlu,pref,pref,10dlu,pref,5dlu,pref,10dlu,pref,5dlu");
+                      ",2dlu,pref,pref,5dlu,pref,pref,pref,10dlu,pref,5dlu,pref,10dlu,pref,5dlu");
 
       PanelBuilder pb = new PanelBuilder(layout, new ScrollableJPanel());
 
@@ -234,9 +243,12 @@ private JLabel mDescriptionLabel;
 
       mDescriptionLines = new JSpinner(new SpinnerNumberModel(Settings.propPictureDescriptionLines.getInt(), 1, 20, 1));
       pb.add(mDescriptionLines, cc.xyw(3, y+=1, 4));
+      pb.add(mShowPictureBorderProgramTable, cc.xyw(3,y+=1,7));
       mDescriptionLabel = new JLabel(mLocalizer.msg("lines", "lines"));
 	  pb.add(mDescriptionLabel, cc.xy(8, y));
 	  mDescriptionLabel.setEnabled(mShowDescription.isSelected());
+	  mDescriptionLines.setEnabled(mShowDescription.isSelected());
+	  mShowPictureBorderProgramTable.setEnabled(!mShowDescription.isSelected());
 	  mShowDescription.addActionListener(new ActionListener() {
 
 		@Override
@@ -268,6 +280,8 @@ private JLabel mDescriptionLabel;
       mShowPicturesNever.addItemListener(new ItemListener() {
         public void itemStateChanged(ItemEvent e) {
           mShowDescription.setEnabled(!mShowPicturesNever.isSelected());
+          mDescriptionLines.setEnabled(!mShowPicturesNever.isSelected());
+          mShowPictureBorderProgramTable.setEnabled(!mShowPicturesNever.isSelected() && !mShowDescription.isSelected());
         }
       });
 
@@ -281,7 +295,7 @@ private JLabel mDescriptionLabel;
           mPictureStartTime.setEnabled(mShowPicturesForSelection.isSelected() && mShowPicturesInTimeRange.isSelected());
           mPictureEndTime.setEnabled(mShowPicturesForSelection.isSelected() && mShowPicturesInTimeRange.isSelected());
           mDuration.setEnabled(mShowPicturesForSelection.isSelected() && mShowPicturesForDuration.isSelected());
-
+          
           if (mShowPicturesForPlugins != null) {
             mShowPicturesForPlugins.setEnabled(mShowPicturesForSelection.isSelected());
           }
@@ -331,6 +345,13 @@ private JLabel mDescriptionLabel;
     Settings.propPictureEndTime.setInt(getPictureTimeRangeEnd());
     Settings.propPictureDuration.setInt((Integer) mDuration.getValue());
     Settings.propIsPictureShowingDescription.setBoolean(mShowDescription.isSelected());
+    
+    if(!mShowDescription.isSelected()) {
+      Settings.propShowProgramTablePictureBorder.setBoolean(mShowPictureBorderProgramTable.isSelected());
+    }
+    else {
+      Settings.propShowProgramTablePictureBorder.setBoolean(true);
+    }
 
     if (ProgramPanelSettings.typeContainsType(getPictureShowingType(), ProgramPanelSettings.SHOW_PICTURES_FOR_PLUGINS)) {
       Settings.propPicturePluginIds.setStringArray(getClientPluginIds());

@@ -1256,7 +1256,7 @@ public class TVBrowser {
     }
 
     // set colors for action pane at UIManager
-    UIManager.put("TaskPane.foreGround",UIManager.get("Button.foreground"));
+    UIManager.put("TaskPane.foreground",UIManager.get("Button.foreground"));
 
     if(UIManager.getColor("List.selectionBackground") == null) {
       UIManager.put("List.selectionBackground",UIManager.getColor("Tree.selectionBackground"));
