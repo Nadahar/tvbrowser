@@ -79,15 +79,28 @@ public class FaytPanel extends JPanel {
         if(!mText.equals(mTextField.getText()) && mPreviousFilter != null) {
           mText = mTextField.getText();
      
-            FaytFilter.getInstance().setSearchString(mText);
-            MainFrame.getInstance().setProgramFilter(FaytFilter.getInstance());
+          FaytFilter.getInstance().setSearchString(mText);
+          MainFrame.getInstance().setProgramFilter(FaytFilter.getInstance());
 
           SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-              mTextField.requestFocus();    
+              mTextField.grabFocus();
+              
+              SwingUtilities.invokeLater(new Runnable() {
+                
+                @Override
+                public void run() {
+                  SwingUtilities.invokeLater(new Runnable() {
+                    
+                    @Override
+                    public void run() {
+                      mTextField.setSelectionStart(mText.length());
+                    }
+                  });            
+                }
+              });
             }
           });
-
         }
       }
     });
@@ -187,7 +200,7 @@ public class FaytPanel extends JPanel {
    * <p>
    * @param value The new text for the search box.
    */
-  public synchronized void setText(String value) {
+  public synchronized void setText(final String value) {
     if(isVisible()) {
       mTextField.setText(mTextField.getText() + value);
     }
@@ -201,8 +214,21 @@ public class FaytPanel extends JPanel {
       setVisible(true);
       SwingUtilities.invokeLater(new Runnable() {
         public void run() {
-          mTextField.requestFocus();
-          mTextField.setCaretPosition(1);
+          mTextField.setCaretPosition(mText.length());
+          mTextField.grabFocus();
+          SwingUtilities.invokeLater(new Runnable() {
+            
+            @Override
+            public void run() {
+              SwingUtilities.invokeLater(new Runnable() {
+                
+                @Override
+                public void run() {
+                  mTextField.setSelectionStart(mText.length());
+                }
+              });            
+            }
+          });
         }
       });
     }

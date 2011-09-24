@@ -504,7 +504,7 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
   /**
    * Called by the host-application, if the user wants to save the settings.
    */
-  public void saveSettings() {try {
+  public void saveSettings() {
     String backgroundStyle = ((TableBackgroundStyle) mBackgroundStyleCB.getSelectedItem()).getSettingsString();
 
     Settings.propTableBackgroundStyle.setString(backgroundStyle);
@@ -557,7 +557,7 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     Settings.propProgramPanelShortDurationActive.setBoolean(mShortProgramsCB
         .isSelected());
     Settings.propProgramPanelShortDurationMinutes
-        .setInt((Integer) mShortProgramsMinutes.getValue());}catch(Throwable t) {t.printStackTrace();}
+        .setInt((Integer) mShortProgramsMinutes.getValue());
   }
 
   /**

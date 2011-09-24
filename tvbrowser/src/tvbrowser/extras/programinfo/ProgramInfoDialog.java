@@ -26,6 +26,7 @@
 package tvbrowser.extras.programinfo;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -68,6 +69,7 @@ import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.text.AttributeSet;
@@ -259,7 +261,9 @@ class ProgramInfoDialog {
             ProgramInfo.getInstance().getPictureSettings(), false), true,
         ProgramInfo.getInstance().getSettings().getZoomEnabled() ? ProgramInfo
             .getInstance().getSettings().getZoomValue() : 100, true,
-        ProgramInfo.getInstance().getSettings().getEnableSearch()));
+        ProgramInfo.getInstance().getSettings().getEnableSearch(),
+        (Settings.propTableBackgroundStyle.getString().equals("uiTimeBlock") || 
+        Settings.propTableBackgroundStyle.getString().equals("uiColor"))));
     mHighlight.setSelected(ProgramInfo.getInstance().getSettings()
         .getHighlightFavorite());
     highlightFavorites();
@@ -270,6 +274,11 @@ class ProgramInfoDialog {
     mFunctionGroup = new JTaskPaneGroup();
     mFunctionGroup.setTitle(mLocalizer.msg("functions", "Functions"));
     mFunctionGroup.setDoubleBuffered(true);
+    
+    if(Settings.propTableBackgroundStyle.getString().equals("uiTimeBlock") || 
+        Settings.propTableBackgroundStyle.getString().equals("uiColor")) {
+      ((JComponent)((JComponent)((JComponent)mFunctionGroup.getComponent(0)).getComponent(0)).getComponent(0)).setBackground(UIManager.getColor("List.background"));
+    }
 
     mMainPanel = new JPanel(new BorderLayout());
     mMainPanel.setPreferredSize(new Dimension(750, 500));
@@ -757,7 +766,12 @@ class ProgramInfoDialog {
   protected void addPluginActions(boolean rebuild) {
     final Rectangle oldVisibleRect = mInfoEP.getVisibleRect();
     mFunctionGroup.removeAll();
-
+    
+    if(Settings.propTableBackgroundStyle.getString().equals("uiTimeBlock") || 
+        Settings.propTableBackgroundStyle.getString().equals("uiColor")) {
+      ((JComponent)((JComponent)((JComponent)mFunctionGroup.getComponent(0)).getComponent(0)).getComponent(0)).setBackground(UIManager.getColor("List.background"));
+    }
+    
     if (ProgramInfo.getInstance().getSettings().getShowSearchButton()) {
       mTextSearch = new TaskMenuAction(mFunctionGroup, mProgram, mSearchMenu,
           this, "id_sea", mFindAsYouType);

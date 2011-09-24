@@ -24,7 +24,6 @@
 
 package tvbrowser.extras.programinfo;
 
-
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -36,9 +35,12 @@ import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.Icon;
+import javax.swing.JComponent;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 
+import tvbrowser.core.Settings;
 import util.ui.UIThreadRunner;
 import util.ui.findasyoutype.TextComponentFindAction;
 
@@ -53,7 +55,7 @@ import devplugin.Program;
 /**
  * A class that holds a ContextMenuAction of a Plugin.
  *
- * @author RenÃ© Mach
+ * @author René Mach
  *
  */
 public class TaskMenuAction {
@@ -81,7 +83,7 @@ public class TaskMenuAction {
       final TextComponentFindAction comp) {
     mInfo = info;
     mFind = comp;
-
+    
     if(menu.getAction() == null || menu.getAction().getValue(Plugin.DISABLED_ON_TASK_MENU) == null || !((Boolean)menu.getAction().getValue(Plugin.DISABLED_ON_TASK_MENU))) {
       if (!menu.hasSubItems()) {
         addAction(parent, menu);
@@ -153,6 +155,7 @@ public class TaskMenuAction {
     mFind.installKeyListener(c);
 
     if(c instanceof JLinkButton) {
+      c.setForeground(UIManager.getColor("List.foreground"));
       ((JLinkButton)c).setVerticalTextPosition(SwingConstants.TOP);
       ((JLinkButton)c).setBorder(BorderFactory.createEmptyBorder(1,1,1,1));
     }
@@ -175,6 +178,12 @@ public class TaskMenuAction {
         .getExpanded(
         id + "_" + (String) menu.getAction().getValue(Action.NAME));
     group.setExpanded(expanded);
+    
+    if(Settings.propTableBackgroundStyle.getString().equals("uiTimeBlock") || 
+        Settings.propTableBackgroundStyle.getString().equals("uiColor")) {
+      ((JComponent)((JComponent)((JComponent)group.getComponent(0)).getComponent(0)).getComponent(0)).setBackground(UIManager.getColor("List.background"));
+    }
+    
     group.setEnabled(true);
     mFind.installKeyListener(group);
 

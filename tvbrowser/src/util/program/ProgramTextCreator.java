@@ -40,6 +40,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.UIManager;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -181,6 +182,36 @@ public class ProgramTextCreator {
   }
 
   /**
+  *
+  * @param prog
+  *          The Program to show
+  * @param doc
+  *          The HTMLDocument.
+  * @param fieldArr
+  *          The object array with the field types.
+  * @param tFont
+  *          The title Font.
+  * @param bFont
+  *          The body Font.
+  * @param settings
+  *          Settings of the ProgramPanel
+  * @param showHelpLinks
+  *          Show the Help-Links (Quality of Data, ShowView)
+  * @param zoom
+  *          The zoom value for the picture.
+  * @param showPluginIcons
+  *          If the plugin icons should be shown.
+  * @return The HTML String.
+  * @since 3.0
+  */
+ public static String createInfoText(Program prog, ExtendedHTMLDocument doc,
+     Object[] fieldArr, Font tFont, Font bFont, ProgramPanelSettings settings,
+     boolean showHelpLinks, int zoom, boolean showPluginIcons,
+     boolean showPersonLinks) {
+   return createInfoText(prog,doc,fieldArr,tFont,bFont,settings,showHelpLinks,zoom,showPluginIcons,showPersonLinks,false);
+ }
+  
+  /**
    *
    * @param prog
    *          The Program to show
@@ -201,12 +232,37 @@ public class ProgramTextCreator {
    * @param showPluginIcons
    *          If the plugin icons should be shown.
    * @return The HTML String.
-   * @since 3.0
+   * @since 3.1
    */
   public static String createInfoText(Program prog, ExtendedHTMLDocument doc,
       Object[] fieldArr, Font tFont, Font bFont, ProgramPanelSettings settings,
       boolean showHelpLinks, int zoom, boolean showPluginIcons,
-      boolean showPersonLinks) {
+      boolean showPersonLinks, boolean useThemeColors) {
+    Color foreground = Color.black;
+    Color background = Color.white;
+    Color infoColor = Color.gray;
+    
+    if(useThemeColors) {
+      foreground = UIManager.getColor("List.foreground");
+      background = UIManager.getColor("List.background");
+      
+      int r = (foreground.getRed()   + background.getRed()) >> 1;
+      int g = (foreground.getGreen() + background.getGreen()) >> 1;
+      int b = (foreground.getBlue()  + background.getBlue()) >> 1;
+      
+      infoColor = new Color(r,g,b);
+      
+      double test2 = (0.2126 * background.getRed()) + (0.7152 * background.getGreen()) + (0.0722 * background.getBlue());
+      double test1 = (0.2126 * infoColor.getRed()) + (0.7152 * infoColor.getGreen()) + (0.0722 * infoColor.getBlue());
+      
+      if(test2 - test1 > 90) {
+        infoColor = new Color(infoColor.getRed()+30,infoColor.getGreen()+30,infoColor.getBlue()+30);
+      }
+      else if(test2 - test1 < -90) {
+        infoColor = infoColor.darker();
+      }
+    }
+    
     String debugTables = "0"; //set to "1" for debugging, to "0" for no debugging
     try {
     // NOTE: All field types are included until type 25 (REPETITION_ON_TYPE)
@@ -240,7 +296,7 @@ public class ProgramTextCreator {
 
     buffer.append(bodyFont);
 
-    buffer.append(";").append(getCssStyle(bodyStyle)).append("\"><tr>");
+    buffer.append(";").append("background-color:").append(getCssRgbColorEntry(background)).append(";").append(getCssStyle(bodyStyle)).append("\"><tr>");
     buffer.append("<td width=\"60\">");
     buffer.append("<p \"align=center\">");
 
@@ -293,7 +349,7 @@ public class ProgramTextCreator {
     String episode = CompoundedProgramFieldType.EPISODE_COMPOSITION.getFormattedValueForProgram(prog);
 
     if (episode != null && episode.trim().length() > 0) {
-      buffer.append("<div style=\"color:#808080; font-size:");
+      buffer.append("<div style=\"color:").append(getCssRgbColorEntry(infoColor)).append("; font-size:");
 
       buffer.append(mBodyFontSize);
 
@@ -348,14 +404,12 @@ public class ProgramTextCreator {
       }
     }
 
-    Color foreground = Color.black;//Settings.propProgramPanelForegroundColor.getColor();
-
     if(settings.isShowingPictureEver() ||
       (settings.isShowingPictureInTimeRange() && !ProgramUtilities.isNotInTimeRange(settings.getPictureTimeRangeStart(),settings.getPictureTimeRangeEnd(), prog)) ||
       show || (settings.isShowingPictureForDuration() && settings.getDuration() <= prog.getLength())) {
       byte[] image = prog.getBinaryField(ProgramFieldType.PICTURE_TYPE);
       if (image != null) {
-        String line = "<tr><td></td><td valign=\"top\" style=\"color:rgb("+ foreground.getRed() + "," + foreground.getGreen() + "," + foreground.getBlue() + "); font-size:0\">";
+        String line = "<tr><td></td><td valign=\"top\" style=\"color:"+getCssRgbColorEntry(foreground)+"); font-size:0\">";
         buffer.append(line);
         try {
           ImageIcon imageIcon = new ImageIcon(image);
@@ -399,7 +453,7 @@ public class ProgramTextCreator {
     if (showPluginIcons && (pluginArr != null) && (pluginArr.length != 0)) {
       addSeparator(doc, buffer);
 
-      buffer.append("<tr><td valign=\"top\" style=\"color:#808080; font-size:");
+      buffer.append("<tr><td valign=\"top\" style=\"color:").append(getCssRgbColorEntry(infoColor)).append("; font-size:");
 
       buffer.append(mBodyFontSize);
 
@@ -471,7 +525,7 @@ public class ProgramTextCreator {
       addSeparator(doc, buffer);
 
       buffer
-          .append("<tr><td valign=\"middle\" style=\"color:#808080; font-size:");
+          .append("<tr><td valign=\"middle\" style=\"color:").append(getCssRgbColorEntry(infoColor)).append("; font-size:");
 
       buffer.append(mBodyFontSize);
 
@@ -512,14 +566,14 @@ public class ProgramTextCreator {
           if (length > 0 && ((String) id).trim().length() > 0) {
 
             buffer
-                .append("<tr><td valign=\"top\" style=\"color:gray; font-size:");
+                .append("<tr><td valign=\"top\" style=\"color:").append(getCssRgbColorEntry(infoColor)).append("; font-size:");
 
             buffer.append(mBodyFontSize);
 
             buffer.append("\"><b>");
             buffer.append(mLocalizer.msg("duration",
                 "Program duration/<br>-end"));
-            buffer.append("</b></td><td style=\"color:rgb("+ foreground.getRed() + "," + foreground.getGreen() + "," + foreground.getBlue() + "); font-size:");
+            buffer.append("</b></td><td style=\"color:").append(getCssRgbColorEntry(foreground)).append("; font-size:");
 
             buffer.append(mBodyFontSize);
 
@@ -550,7 +604,7 @@ public class ProgramTextCreator {
         String entry = value.getFormattedValueForProgram(prog);
 
         if(entry != null) {
-          startInfoSection(buffer, value.getName());
+          startInfoSection(buffer, value.getName(), infoColor, foreground);
           buffer.append(HTMLTextHelper.convertTextToHtml(entry, false));
 
           addSeparator(doc,buffer);
@@ -564,17 +618,17 @@ public class ProgramTextCreator {
           if (description != null
               && description.length() > 0) {
             addEntry(doc, buffer, prog, ProgramFieldType.DESCRIPTION_TYPE, true,
-                showHelpLinks, showPersonLinks);
+                showHelpLinks, showPersonLinks, infoColor, foreground);
           } else {
             addEntry(doc, buffer, prog, ProgramFieldType.SHORT_DESCRIPTION_TYPE,
                 true, showHelpLinks,
-                  showPersonLinks);
+                  showPersonLinks, infoColor, foreground);
           }
         } else if (type == ProgramFieldType.INFO_TYPE) {
           int info = prog.getInfo();
           if ((info != -1) && (info != 0)) {
             buffer
-                .append("<tr><td valign=\"top\" style=\"color:gray; font-size:");
+                .append("<tr><td valign=\"top\" style=\"color:").append(getCssRgbColorEntry(infoColor)).append("; font-size:");
 
             buffer.append(mBodyFontSize);
 
@@ -618,7 +672,7 @@ public class ProgramTextCreator {
           }
         } else if (type == ProgramFieldType.URL_TYPE) {
           addEntry(doc, buffer, prog, ProgramFieldType.URL_TYPE, true,
-              showHelpLinks, showPersonLinks);
+              showHelpLinks, showPersonLinks, infoColor, foreground);
         }
         else if (type == ProgramFieldType.ACTOR_LIST_TYPE) {
           ArrayList<String> knownNames = new ArrayList<String>();
@@ -633,7 +687,7 @@ public class ProgramTextCreator {
               lists = splitActorsSimple(prog);
             }
             if (lists != null && lists[0].size() > 0) {
-              startInfoSection(buffer, type.getLocalizedName());
+              startInfoSection(buffer, type.getLocalizedName(), infoColor, foreground);
               buffer.append("<table border=\"0\" cellpadding=\"0\" style=\"font-family:");
               buffer.append(bodyFont);
               buffer.append(";\">");
@@ -682,19 +736,19 @@ public class ProgramTextCreator {
             }
             else {
               addEntry(doc, buffer, prog, type, showHelpLinks,
-                    showPersonLinks);
+                    showPersonLinks, infoColor, foreground);
             }
           }
         }
         else {
-          addEntry(doc, buffer, prog, type, showHelpLinks, showPersonLinks);
+          addEntry(doc, buffer, prog, type, showHelpLinks, showPersonLinks, infoColor, foreground);
         }
       }
     }
 
     if (showHelpLinks) {
       buffer
-          .append("<tr><td colspan=\"2\" valign=\"top\" align=\"center\" style=\"color:#808080; font-size:");
+          .append("<tr><td colspan=\"2\" valign=\"top\" align=\"center\" style=\"color:").append(getCssRgbColorEntry(infoColor)).append("; font-size:");
       buffer.append(mBodyFontSize).append("\">");
       buffer.append("<a href=\"");
       buffer.append(
@@ -712,6 +766,19 @@ public class ProgramTextCreator {
     return "";
   }
 
+  private static String getCssRgbColorEntry(Color c) {
+    StringBuilder builder = new StringBuilder("rgb(");
+    
+    builder.append(c.getRed());
+    builder.append(",");
+    builder.append(c.getGreen());
+    builder.append(",");
+    builder.append(c.getBlue());
+    builder.append(")");
+    
+    return builder.toString();
+  }
+  
   private static String getCssStyle(final int style) {
     StringBuilder result = new StringBuilder();
     if ((style & Font.BOLD) == Font.BOLD) {
@@ -835,14 +902,14 @@ public class ProgramTextCreator {
 
   private static void addEntry(ExtendedHTMLDocument doc, StringBuilder buffer,
       Program prog, ProgramFieldType fieldType, boolean showHelpLinks,
-      boolean showPersonLinks) {
+      boolean showPersonLinks, Color infoColor, Color foreground) {
     addEntry(doc, buffer, prog, fieldType, false, showHelpLinks,
-        showPersonLinks);
+        showPersonLinks,infoColor,foreground);
   }
 
   private static void addEntry(ExtendedHTMLDocument doc, StringBuilder buffer,
       Program prog, ProgramFieldType fieldType, boolean createLinks,
-      boolean showHelpLinks, boolean showPersonLinks) {
+      boolean showHelpLinks, boolean showPersonLinks, Color infoColor, Color foreground) {
 
     try {
       String text = null;
@@ -873,7 +940,7 @@ public class ProgramTextCreator {
 
             if (!description.trim().startsWith(shortInfo.toString())) {
               addEntry(doc, buffer, prog,
-                  ProgramFieldType.SHORT_DESCRIPTION_TYPE, true, showHelpLinks);
+                  ProgramFieldType.SHORT_DESCRIPTION_TYPE, true, showHelpLinks, infoColor, foreground);
             }
           }
           text = text.replace("\\-", ""); // replace conditional dashes
@@ -881,7 +948,7 @@ public class ProgramTextCreator {
           text = HTMLTextHelper.convertTextToHtml(text, createLinks);
           // scan for moderation in beginning of description
           String[] lines = text.split("<br>");
-          String[] tags = { "von und mit", "präsentiert von", "mit", "film von",
+          String[] tags = { "von und mit", "pr\00E4entiert von", "mit", "film von",
               "moderation", "zu gast" };
           for (int i = 0; i < 2; i++) {
             if (lines.length > i && lines[i].length() < 60) {
@@ -984,7 +1051,7 @@ public class ProgramTextCreator {
         }
       }
 
-      startInfoSection(buffer, name);
+      startInfoSection(buffer, name, infoColor, foreground);
 
       // add person links
       if (ProgramFieldType.DIRECTOR_TYPE == fieldType
@@ -1053,7 +1120,7 @@ public class ProgramTextCreator {
       }
 
       buffer.append("</td></tr>");
-
+      
       addSeparator(doc, buffer);
     } catch (Exception e) {
       // TODO Auto-generated catch block
@@ -1096,14 +1163,12 @@ public class ProgramTextCreator {
     return text;
   }
 
-  private static void startInfoSection(StringBuilder buffer, String section) {
-    Color foreground = Color.black;//Settings.propProgramPanelForegroundColor.getColor();
-
-    buffer.append("<tr><td valign=\"top\" style=\"color:#808080; font-size:");
+  private static void startInfoSection(StringBuilder buffer, String section, Color infoForeground, Color foreground) {
+    buffer.append("<tr><td valign=\"top\" style=\"color:").append(getCssRgbColorEntry(infoForeground)).append("; font-size:");
     buffer.append(mBodyFontSize);
     buffer.append("\"><b>");
     buffer.append(section);
-    buffer.append("</b></td><td style=\"color:rgb("+ foreground.getRed() + "," + foreground.getGreen() + "," + foreground.getBlue() + "); font-size:");
+    buffer.append("</b></td><td style=\"color:").append(getCssRgbColorEntry(foreground)).append("; font-size:");
     buffer.append(mBodyFontSize);
     buffer.append("\">");
   }
