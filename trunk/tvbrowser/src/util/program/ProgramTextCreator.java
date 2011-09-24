@@ -53,7 +53,6 @@ import tvbrowser.extras.favoritesplugin.dlgs.FavoriteTreeModel;
 import tvbrowser.extras.programinfo.ProgramInfo;
 import util.settings.PluginPictureSettings;
 import util.settings.ProgramPanelSettings;
-import util.ui.ChannelLabel;
 import util.ui.Localizer;
 import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;

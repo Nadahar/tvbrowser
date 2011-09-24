@@ -765,7 +765,7 @@ public class Settings {
         propPictureDuration, propProgramTableCutTitle,
         propProgramTableCutTitleLines, propPictureDescriptionLines,
         propProgramPanelMaxLines, propProgramPanelShortDurationActive,
-        propProgramPanelShortDurationMinutes};
+        propProgramPanelShortDurationMinutes, propShowProgramTablePictureBorder};
 
     if(mProp.hasChanged(propArr)) {
       mainFrame.getProgramTableScrollPane().forceRepaintAll();
@@ -1762,17 +1762,24 @@ public class Settings {
 
   /**
    * Stores the id of the selected Persona.
-   * @since 3.0.3
+   * @since 3.1
    */
   public static final StringProperty propSelectedPersona = new StringProperty(
       mProp, "persona", "ecb70d5c-f606-4052-9059-5c501842d6c3");
 
   /**
-   * Stores id the Persona should be selected randomly at start.
-   * @since 3.0.3
+   * Stores if the Persona should be selected randomly at start.
+   * @since 3.1
    */
   public static final BooleanProperty propRandomPersona = new BooleanProperty(
       mProp, "randomPersona", true);
+  
+  /**
+   * Stores if the picture borders should be painted.
+   * @since 3.1
+   */
+  public static final BooleanProperty propShowProgramTablePictureBorder = new BooleanProperty(
+      mProp, "showPictureBorder", true);
   
   /**
    * Sets the window position and size for the given window with the values of

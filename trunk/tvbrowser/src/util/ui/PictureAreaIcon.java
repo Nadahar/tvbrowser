@@ -29,6 +29,7 @@ import java.awt.image.RGBImageFilter;
 import javax.swing.GrayFilter;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.UIManager;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -54,6 +55,7 @@ public class PictureAreaIcon implements Icon {
   private Program mProgram;
   private boolean mIsExpired;
   private boolean mIsGrayFilter;
+  private boolean mShowPictureBorder;
   private int mDescriptionLines;
 
   /**
@@ -73,8 +75,24 @@ public class PictureAreaIcon implements Icon {
    * @param zoom If the picture should be zoomed to width.
    */
   public PictureAreaIcon(Program p, Font f, int width, boolean showDescription, boolean grayFilter, boolean zoom) {
+    this(p,f,width,showDescription,grayFilter,zoom,true);
+  }
+  
+  /**
+   * Constructor for programs with picture.
+   *
+   * @param p The program with the picture.
+   * @param f The font for the description.
+   * @param width The width of this area.
+   * @param showDescription If description should be shown.
+   * @param grayFilter If the image should be filtered to gray if the program is expired.
+   * @param zoom If the picture should be zoomed to width.
+   * @param showPictureBorder 
+   */
+  public PictureAreaIcon(Program p, Font f, int width, boolean showDescription, boolean grayFilter, boolean zoom, boolean showPictureBorder) {
     mProgram = p;
     mIsExpired = false;
+    mShowPictureBorder = showPictureBorder;
     mIsGrayFilter = grayFilter;
     if (showDescription) {
       mDescriptionLines = Settings.propPictureDescriptionLines.getInt();
@@ -132,13 +150,20 @@ public class PictureAreaIcon implements Icon {
 
     Color color = g.getColor();
 
-    if(!colorsInEqualRange(c.getBackground(),c.getForeground()) && !mProgram.isExpired()) {
+    if(!Settings.propTableBackgroundStyle.getString().equals("uiColor") && !Settings.propTableBackgroundStyle.getString().equals("uiTimeBlock") && !colorsInEqualRange(c.getBackground(),c.getForeground()) && !mProgram.isExpired()) {
       g.setColor(c.getBackground());
       g.fillRect(x,y,getIconWidth(),getIconHeight()-2);
     }
-
+    else if(Settings.propTableBackgroundStyle.getString().equals("uiColor") || Settings.propTableBackgroundStyle.getString().equals("uiTimeBlock") && !mProgram.isExpired()) {
+      g.setColor(UIManager.getColor("List.background"));
+      g.fillRect(x,y,getIconWidth(),getIconHeight()-2);
+    }
+    
     g.setColor(color);
-    g.drawRect(x,y,getIconWidth()-1,getIconHeight()-3);
+    
+    if(mShowPictureBorder) {
+      g.drawRect(x,y,getIconWidth()-1,getIconHeight()-3);
+    }
 
     y += 3;
     x += 3;

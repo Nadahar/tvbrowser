@@ -188,7 +188,7 @@ public class ProgramPanel extends JComponent implements ChangeListener, PluginSt
    * Creates a new instance of ProgramPanel.
    */
   public ProgramPanel() {
-    this(new ProgramPanelSettings(Settings.propPictureType.getInt(), Settings.propPictureStartTime.getInt(), Settings.propPictureEndTime.getInt(), false, Settings.propIsPictureShowingDescription.getBoolean(), Settings.propPictureDuration.getInt(), Settings.propPicturePluginIds.getStringArray()));
+    this(new ProgramPanelSettings(Settings.propPictureType.getInt(), Settings.propPictureStartTime.getInt(), Settings.propPictureEndTime.getInt(), false, Settings.propIsPictureShowingDescription.getBoolean(), Settings.propPictureDuration.getInt(), Settings.propPicturePluginIds.getStringArray(), false, Settings.propShowProgramTablePictureBorder.getBoolean()));
   }
 
   /**
@@ -488,7 +488,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
          (mSettings
             .isShowingPictureForDuration() && mSettings.getDuration() <= length)
          )) {
-      mPictureAreaIcon = new PictureAreaIcon(program,mNormalFont, WIDTH_RIGHT - 4, mSettings.isShowingPictureDescription(), true, false);
+      mPictureAreaIcon = new PictureAreaIcon(program,mNormalFont, WIDTH_RIGHT - 4, mSettings.isShowingPictureDescription(), true, false, mSettings.isShowingPictureBorder());
     } else {
       mPictureAreaIcon = new PictureAreaIcon();
     }
