@@ -36,6 +36,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.regex.Pattern;
 
+import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -52,6 +53,7 @@ import tvbrowser.extras.favoritesplugin.dlgs.FavoriteTreeModel;
 import tvbrowser.extras.programinfo.ProgramInfo;
 import util.settings.PluginPictureSettings;
 import util.settings.ProgramPanelSettings;
+import util.ui.ChannelLabel;
 import util.ui.Localizer;
 import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
@@ -301,6 +303,9 @@ public class ProgramTextCreator {
     buffer.append("<p \"align=center\">");
 
     JLabel channelLogo = new JLabel(prog.getChannel().getIcon());
+    channelLogo.setBackground(Color.white);
+    channelLogo.setOpaque(true);
+    channelLogo.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
     channelLogo.setToolTipText(prog.getChannel().getName());
     buffer.append(doc.createCompTag(channelLogo));
 
@@ -409,7 +414,7 @@ public class ProgramTextCreator {
       show || (settings.isShowingPictureForDuration() && settings.getDuration() <= prog.getLength())) {
       byte[] image = prog.getBinaryField(ProgramFieldType.PICTURE_TYPE);
       if (image != null) {
-        String line = "<tr><td></td><td valign=\"top\" style=\"color:"+getCssRgbColorEntry(foreground)+"); font-size:0\">";
+        String line = "<tr><td></td><td valign=\"top\" style=\"color:"+getCssRgbColorEntry(foreground)+"; font-size:0\">";
         buffer.append(line);
         try {
           ImageIcon imageIcon = new ImageIcon(image);
@@ -701,9 +706,9 @@ public class ProgramTextCreator {
                 int actorIndex = 0;
                 if (showPersonLinks) {
                     if (knownNames.contains(parts[0])) {
-                      parts[0] = addPersonLink(parts[0]);
+                      parts[0] = addPersonLink(parts[0],foreground);
                     } else if (knownNames.contains(parts[1])) {
-                      parts[1] = addPersonLink(parts[1]);
+                      parts[1] = addPersonLink(parts[1],foreground);
                       actorIndex = 1;
                     }
                 }
@@ -721,7 +726,7 @@ public class ProgramTextCreator {
                     i++;
                     buffer.append("<td valign=\"top\">&#8226;&nbsp;</td><td valign=\"top\">");
                     if (showPersonLinks) {
-                        buffer.append(addSearchLink(lists[0].get(i)));
+                        buffer.append(addSearchLink(lists[0].get(i),foreground));
                       } else {
                         buffer.append(lists[0].get(i));
                       }
@@ -761,7 +766,7 @@ public class ProgramTextCreator {
       buffer.append("</td></tr>");
     }
     buffer.append("</table></html>");
-
+System.out.println(buffer);
     return buffer.toString();}catch(Exception e) {e.printStackTrace();}
     return "";
   }
@@ -820,11 +825,11 @@ public class ProgramTextCreator {
     return null;
   }
 
-  private static String addPersonLink(final String name) {
+  private static String addPersonLink(final String name, Color foreground) {
     if (name == null || name.isEmpty()) {
       return mLocalizer.msg("unknown", "(unknown)");
     }
-    return addSearchLink(name);
+    return addSearchLink(name, foreground);
   }
 
   private static ArrayList<String>[] splitActorsSimple(Program prog) {
@@ -876,10 +881,9 @@ public class ProgramTextCreator {
     return result;
   }
 
-  private static String addSearchLink(String topic, String displayText) {
-    Color foreground = Color.black;//Settings.propProgramPanelForegroundColor.getColor();
+  private static String addSearchLink(String topic, String displayText, Color foreground) {
 
-    String style = " style=\"color:rgb("+ foreground.getRed() + "," + foreground.getGreen() + "," + foreground.getBlue() + "); border-bottom: 1px dashed;\"";
+    String style = " style=\"color:"+getCssRgbColorEntry(foreground)+"; border-bottom: 1px dashed;\"";
       StringBuilder buffer = new StringBuilder(32);
       buffer.append("<a href=\"");
       buffer.append(TVBROWSER_URL_PROTOCOL);
@@ -893,11 +897,11 @@ public class ProgramTextCreator {
       return buffer.toString();
   }
 
-  private static String addSearchLink(String topic) {
+  private static String addSearchLink(String topic, Color foreground) {
     if (topic == null || topic.isEmpty()) {
       return "";
     }
-    return addSearchLink(topic, topic);
+    return addSearchLink(topic, topic, foreground);
   }
 
   private static void addEntry(ExtendedHTMLDocument doc, StringBuilder buffer,
@@ -983,7 +987,7 @@ public class ProgramTextCreator {
                           }
                         }
                         if (doLink) {
-                          text = StringUtils.replaceOnce(text, person, addSearchLink(person));
+                          text = StringUtils.replaceOnce(text, person, addSearchLink(person, foreground));
                         }
                       }
                     }
@@ -1093,9 +1097,9 @@ public class ProgramTextCreator {
               if (persons[i].contains("(")) {
                 int index = persons[i].indexOf('(');
                 String topic = persons[i].substring(0, index).trim();
-                link = addSearchLink(topic) + " " + persons[i].substring(index).trim();
+                link = addSearchLink(topic,foreground) + " " + persons[i].substring(index).trim();
               } else {
-                link = addSearchLink(persons[i]);
+                link = addSearchLink(persons[i],foreground);
               }
               text = text.replace(persons[i], link);
             }

@@ -26,7 +26,6 @@
 package tvbrowser.extras.programinfo;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -254,6 +253,9 @@ class ProgramInfoDialog {
     if (mDialog != null) {
       mDialog.setTitle(mProgram.getTitle());
     }
+    
+    
+    
     mInfoEP.setText(ProgramTextCreator.createInfoText(mProgram, mDoc,
         ProgramInfo.getInstance().getOrder(), ProgramInfo.getInstance()
             .getSettings().getUsedTitleFont(), ProgramInfo.getInstance()
@@ -274,18 +276,13 @@ class ProgramInfoDialog {
     mFunctionGroup = new JTaskPaneGroup();
     mFunctionGroup.setTitle(mLocalizer.msg("functions", "Functions"));
     mFunctionGroup.setDoubleBuffered(true);
-    
-    if(Settings.propTableBackgroundStyle.getString().equals("uiTimeBlock") || 
-        Settings.propTableBackgroundStyle.getString().equals("uiColor")) {
-      ((JComponent)((JComponent)((JComponent)mFunctionGroup.getComponent(0)).getComponent(0)).getComponent(0)).setBackground(UIManager.getColor("List.background"));
-    }
 
     mMainPanel = new JPanel(new BorderLayout());
     mMainPanel.setPreferredSize(new Dimension(750, 500));
     mMainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
     mInfoEP = new ProgramEditorPane();
-
+    
     final ExtendedHTMLEditorKit kit = new ExtendedHTMLEditorKit();
     kit.setLinkCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
@@ -570,7 +567,7 @@ class ProgramInfoDialog {
         }
       }
     });
-
+    
     mFindAsYouType = new TextComponentFindAction(mInfoEP, true);
 
     final JScrollPane scrollPane = new JScrollPane(mInfoEP);
@@ -741,6 +738,13 @@ class ProgramInfoDialog {
                 "Close search bar"));
           }
         });
+    
+    
+    
+    if(Settings.propTableBackgroundStyle.getString().equals("uiTimeBlock") || 
+        Settings.propTableBackgroundStyle.getString().equals("uiColor")) {
+      ((JComponent)((JComponent)((JComponent)mFunctionGroup.getComponent(0)).getComponent(0)).getComponent(0)).setBackground(UIManager.getColor("List.background"));
+    }
 
     // Scroll to the beginning
     Runnable runnable = new Runnable() {
