@@ -280,7 +280,7 @@ private JLabel mDescriptionLabel;
       mShowPicturesNever.addItemListener(new ItemListener() {
         public void itemStateChanged(ItemEvent e) {
           mShowDescription.setEnabled(!mShowPicturesNever.isSelected());
-          mDescriptionLines.setEnabled(!mShowPicturesNever.isSelected());
+          mDescriptionLines.setEnabled(!mShowPicturesNever.isSelected() && mShowDescription.isSelected());
           mShowPictureBorderProgramTable.setEnabled(!mShowPicturesNever.isSelected() && !mShowDescription.isSelected());
         }
       });
