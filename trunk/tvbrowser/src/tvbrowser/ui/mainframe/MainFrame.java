@@ -285,12 +285,11 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     
      mGlobalFindAsYouTypeKeyListener = new KeyAdapter() {      
       @Override
-      public void keyPressed(KeyEvent e) {
+      public void keyPressed(final KeyEvent e) {
         if(mProgramTableScrollPane != null && !mProgramTableScrollPane.getProgramTable().isSelected()) {
           if(((e.getModifiersEx() & KeyEvent.ALT_DOWN_MASK) != KeyEvent.ALT_DOWN_MASK) &&
               ((e.getModifiersEx() & KeyEvent.CTRL_DOWN_MASK) != KeyEvent.CTRL_DOWN_MASK)) {
-            if((e.getKeyCode() >= KeyEvent.VK_A && e.getKeyCode() <= KeyEvent.VK_Z) ||
-                (e.getKeyCode() >= KeyEvent.VK_0 && e.getKeyCode() <= KeyEvent.VK_9)) {
+            if(Character.isLetterOrDigit(e.getKeyChar())) {
               mFindAsYouType.setText(String.valueOf(e.getKeyChar()));
             }
             else if(mFindAsYouType.isVisible()) {
@@ -1178,6 +1177,10 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
   }
 
   public void setProgramFilter(ProgramFilter filter) {
+    setProgramFilter(filter,true);
+  }
+  
+  public void setProgramFilter(ProgramFilter filter,boolean focus) {
     boolean isDefaultFilter = filter.equals(FilterManagerImpl.getInstance().getDefaultFilter());
 
     if (!isDefaultFilter) { // Store Position
@@ -1230,7 +1233,10 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
 
     mStatusBar.getLabel().setText("");
     mCurrentFilterName = filter.getName();
-    mProgramTableScrollPane.requestFocusInWindow();
+    
+    if(focus) {
+      mProgramTableScrollPane.requestFocusInWindow();
+    }
   }
 
   /**
