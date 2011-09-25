@@ -1230,7 +1230,9 @@ public class ProgramTextCreator {
         continue;
       }
       if (!list.contains(type) && !type.equals(ProgramFieldType.SHORT_DESCRIPTION_TYPE)
-          && !type.equals(ProgramFieldType.PICTURE_COPYRIGHT_TYPE) && !type.equals(ProgramFieldType.PICTURE_DESCRIPTION_TYPE)) {
+          && !type.equals(ProgramFieldType.PICTURE_COPYRIGHT_TYPE) && !type.equals(ProgramFieldType.PICTURE_DESCRIPTION_TYPE)
+          && !type.equals(ProgramFieldType.TITLE_TYPE) && !type.equals(ProgramFieldType.EPISODE_NUMBER_TYPE) && !type.equals(ProgramFieldType.EPISODE_TOTAL_NUMBER_TYPE)
+          && !type.equals(ProgramFieldType.EPISODE_TYPE)) {
         list.add(type);
       }
     }
