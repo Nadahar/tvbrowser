@@ -73,32 +73,12 @@ public class FaytPanel extends JPanel {
     mTextField = new JTextField();
     
     mTextField.addCaretListener(new CaretListener() {
-      public void caretUpdate(CaretEvent e) {
+      public synchronized void caretUpdate(CaretEvent e) {
         if(!mText.equals(mTextField.getText()) && mPreviousFilter != null) {
           mText = mTextField.getText();
      
           FaytFilter.getInstance().setSearchString(mText);
-          MainFrame.getInstance().setProgramFilter(FaytFilter.getInstance());
-
-          SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-              mTextField.grabFocus();
-              
-              SwingUtilities.invokeLater(new Runnable() {
-                
-                @Override
-                public void run() {
-                  SwingUtilities.invokeLater(new Runnable() {
-                    
-                    @Override
-                    public void run() {
-                      mTextField.setSelectionStart(mText.length());
-                    }
-                  });            
-                }
-              });
-            }
-          });
+          MainFrame.getInstance().setProgramFilter(FaytFilter.getInstance(),false);
         }
       }
     });
@@ -203,32 +183,13 @@ public class FaytPanel extends JPanel {
       mTextField.setText(mTextField.getText() + value);
     }
     else {
+      setVisible(true);
       mPreviousFilter = MainFrame.getInstance().getProgramFilter();
       mText = value;
       mTextField.setText(value);
 
       FaytFilter.getInstance().setSearchString(mText);
-      MainFrame.getInstance().setProgramFilter(FaytFilter.getInstance());
-      setVisible(true);
-      SwingUtilities.invokeLater(new Runnable() {
-        public void run() {
-          mTextField.setCaretPosition(mText.length());
-          mTextField.grabFocus();
-          SwingUtilities.invokeLater(new Runnable() {
-            
-            @Override
-            public void run() {
-              SwingUtilities.invokeLater(new Runnable() {
-                
-                @Override
-                public void run() {
-                  mTextField.setSelectionStart(mText.length());
-                }
-              });            
-            }
-          });
-        }
-      });
+      MainFrame.getInstance().setProgramFilter(FaytFilter.getInstance(),false);
     }
   }
   
