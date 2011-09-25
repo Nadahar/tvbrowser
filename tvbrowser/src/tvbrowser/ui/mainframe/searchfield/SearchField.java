@@ -98,7 +98,7 @@ public class SearchField extends JPanel {
 
   private static final String SETTINGS_FILE = "searchfield.SearchField.dat";
   private boolean mGoButton;
-  JPanel parent = new JPanel(new BorderLayout());
+  private JPanel mSearchParent = new JPanel(new BorderLayout());
   final JPanel panel = new JPanel(new BorderLayout(3,0));
   
   private FocusListener mPersonaFocusListener;
@@ -168,7 +168,7 @@ public class SearchField extends JPanel {
    * Create the GUI
    */
   private void createGui() {
-    parent.setOpaque(true);
+    mSearchParent.setOpaque(true);
 
     panel.setBorder(BorderFactory.createCompoundBorder(UIManager.getBorder("TextField.border"),BorderFactory.createEmptyBorder(2,2,1,2)));
     mText = new SearchTextField(15);
@@ -176,13 +176,14 @@ public class SearchField extends JPanel {
     mPersonaFocusListener = new FocusListener() {
       @Override
       public void focusLost(FocusEvent e) {
-        parent.setBackground(new Color(255,255,255,210));
-        parent.setOpaque(false);
+        Color c = UIManager.getColor("List.background");
+        mSearchParent.setBackground(new Color(c.getRed(),c.getGreen(),c.getBlue(),180));
+        mSearchParent.setOpaque(false);
         SwingUtilities.invokeLater(new Runnable() {
           
           @Override
           public void run() {
-            parent.setOpaque(true);
+            mSearchParent.setOpaque(true);
             panel.repaint();            
           }
         });
@@ -190,7 +191,7 @@ public class SearchField extends JPanel {
       
       @Override
       public void focusGained(FocusEvent e) {
-        parent.setBackground(Color.white);
+        mSearchParent.setBackground(UIManager.getColor("TextField.background"));
       }
     };
     
@@ -275,9 +276,9 @@ public class SearchField extends JPanel {
     panel.add(mSearchButton, BorderLayout.WEST);
     panel.add(mText, BorderLayout.CENTER);
     panel.add(mGoOrCancelButton, BorderLayout.EAST);
-    parent.add(panel,BorderLayout.CENTER);
+    mSearchParent.add(panel,BorderLayout.CENTER);
     setLayout(new FormLayout("80dlu, 2dlu", "fill:pref:grow, pref, fill:pref:grow"));
-    add(parent, new CellConstraints().xy(1, 2));
+    add(mSearchParent, new CellConstraints().xy(1, 2));
   }
 
   /**
@@ -426,11 +427,12 @@ public class SearchField extends JPanel {
    */
   public void updatePersona() {
     if(Persona.getInstance().getHeaderImage() != null) {
-      parent.setBackground(new Color(255,255,255,210));
+      Color c = UIManager.getColor("List.background");
+      mSearchParent.setBackground(new Color(c.getRed(),c.getGreen(),c.getBlue(),180));
       mText.addFocusListener(mPersonaFocusListener);
     }
     else {
-      parent.setBackground(Color.white);
+      mSearchParent.setBackground(Color.white);
       mText.removeFocusListener(mPersonaFocusListener);
     }
   }
