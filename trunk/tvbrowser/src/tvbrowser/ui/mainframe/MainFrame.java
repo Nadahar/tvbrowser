@@ -36,7 +36,6 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.MouseInfo;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.datatransfer.DataFlavor;
@@ -151,7 +150,6 @@ import util.browserlauncher.Launch;
 import util.exc.ErrorHandler;
 import util.io.IOUtilities;
 import util.misc.OperatingSystem;
-import util.ui.DontShowAgainMessageBox;
 import util.ui.Localizer;
 import util.ui.UIThreadRunner;
 import util.ui.UiUtilities;
@@ -1175,12 +1173,8 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     ProgramFilter filter = mProgramTableModel.getProgramFilter();
     return (Settings.propDefaultFilter.getString().equals(filter.getClass().getName() + "###" + filter.getName()));
   }
-
-  public void setProgramFilter(ProgramFilter filter) {
-    setProgramFilter(filter,true);
-  }
   
-  public void setProgramFilter(ProgramFilter filter,boolean focus) {
+  public synchronized void setProgramFilter(ProgramFilter filter) {
     boolean isDefaultFilter = filter.equals(FilterManagerImpl.getInstance().getDefaultFilter());
 
     if (!isDefaultFilter) { // Store Position
@@ -1234,9 +1228,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     mStatusBar.getLabel().setText("");
     mCurrentFilterName = filter.getName();
     
-    if(focus) {
-      mProgramTableScrollPane.requestFocusInWindow();
-    }
+    mProgramTableScrollPane.requestFocusInWindow();
   }
 
   /**

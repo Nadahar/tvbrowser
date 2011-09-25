@@ -78,7 +78,7 @@ public class FaytPanel extends JPanel {
           mText = mTextField.getText();
      
           FaytFilter.getInstance().setSearchString(mText);
-          MainFrame.getInstance().setProgramFilter(FaytFilter.getInstance(),false);
+          MainFrame.getInstance().setProgramFilter(FaytFilter.getInstance());
         }
       }
     });
@@ -178,7 +178,7 @@ public class FaytPanel extends JPanel {
    * <p>
    * @param value The new text for the search box.
    */
-  public synchronized void setText(final String value) {
+  public void setText(final String value) {
     if(isVisible()) {
       mTextField.setText(mTextField.getText() + value);
     }
@@ -189,7 +189,16 @@ public class FaytPanel extends JPanel {
       mTextField.setText(value);
 
       FaytFilter.getInstance().setSearchString(mText);
-      MainFrame.getInstance().setProgramFilter(FaytFilter.getInstance(),false);
+      MainFrame.getInstance().setProgramFilter(FaytFilter.getInstance());
+      
+      SwingUtilities.invokeLater(new Runnable() {
+        
+        @Override
+        public void run() {
+          MainFrame.getInstance().getProgramTableScrollPane().requestFocusInWindow();
+          
+        }
+      });
     }
   }
   
