@@ -221,7 +221,7 @@ public final class PersonaInfo {
   }
   
   /**
-   * Gets if this persoan can be edited.
+   * Gets if this Persona can be edited.
    * @return If his persona can be edited.
    */
   public boolean isEditable() {
@@ -258,7 +258,7 @@ public final class PersonaInfo {
   }
   
   /**
-   * Gets if this persona is currently activated.
+   * Gets if this Persona is currently activated.
    * <p>
    * @return If this persona is currently activated.
    */
