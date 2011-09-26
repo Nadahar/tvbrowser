@@ -150,7 +150,7 @@ public class PictureAreaIcon implements Icon {
 
     Color color = g.getColor();
 
-    if(!Settings.propTableBackgroundStyle.getString().equals("uiColor") && !Settings.propTableBackgroundStyle.getString().equals("uiTimeBlock") && !colorsInEqualRange(c.getBackground(),c.getForeground()) && !mProgram.isExpired()) {
+    if(!Settings.propTableBackgroundStyle.getString().equals("uiColor") && !Settings.propTableBackgroundStyle.getString().equals("uiTimeBlock") && !UiUtilities.colorsInEqualRange(c.getBackground(),c.getForeground(),MAX_COLOR_DIFF) && !mProgram.isExpired()) {
       g.setColor(c.getBackground());
       g.fillRect(x,y,getIconWidth(),getIconHeight()-2);
     }
@@ -201,11 +201,5 @@ public class PictureAreaIcon implements Icon {
       mDescriptionText.paintIcon(null,g,x,y + mScaledIcon.getIconHeight() + mCopyrightText.getIconHeight() + 1);
     }
     g.setColor(color);
-  }
-
-  private boolean colorsInEqualRange(final Color c1, final Color c2) {
-    return Math.abs(c1.getRed() - c2.getRed()) <= MAX_COLOR_DIFF
-      && Math.abs(c1.getBlue() - c2.getBlue()) <= MAX_COLOR_DIFF
-      && Math.abs(c1.getGreen() - c2.getGreen()) <= MAX_COLOR_DIFF;
   }
 }

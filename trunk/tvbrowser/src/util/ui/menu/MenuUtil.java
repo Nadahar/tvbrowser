@@ -41,6 +41,7 @@ import javax.swing.plaf.basic.BasicMenuItemUI;
 import javax.swing.plaf.basic.BasicMenuUI;
 
 import util.ui.ScrollableMenu;
+import util.ui.UiUtilities;
 import devplugin.ActionMenu;
 import devplugin.ContextMenuSeparatorAction;
 import devplugin.Plugin;
@@ -131,9 +132,12 @@ public class MenuUtil {
               g.clearRect(0,0,menuItem.getWidth(),menuItem.getHeight());
               g.setColor(menuItem.getBackground());
               g.fillRect(0,0,menuItem.getWidth(),menuItem.getHeight());
-              g.setColor(Color.white);
               
-              g.fillRect(i.left,i.top,menuItem.getWidth()-i.left-i.right,menuItem.getHeight()-i.top-i.bottom);
+              if(!UiUtilities.colorsInEqualRange(menuItem.getForeground(),Color.white,20)) {
+                g.setColor(Color.white);
+                g.fillRect(i.left,i.top,menuItem.getWidth()-i.left-i.right,menuItem.getHeight()-i.top-i.bottom);
+              }
+              
               g.setColor(co);
               g.fillRect(i.left,i.top,menuItem.getWidth()-i.left-i.right,menuItem.getHeight()-i.top-i.bottom);
             }
@@ -162,9 +166,13 @@ public class MenuUtil {
               g.clearRect(0,0,menuItem.getWidth(),menuItem.getHeight());
               g.setColor(menuItem.getBackground());
               g.fillRect(0,0,menuItem.getWidth(),menuItem.getHeight());
-              g.setColor(Color.white);
               
-              g.fillRect(i.left,i.top,menuItem.getWidth()-i.left-i.right,menuItem.getHeight()-i.top-i.bottom);
+              
+              if(!UiUtilities.colorsInEqualRange(menuItem.getForeground(),Color.white,20)) {
+                g.setColor(Color.white);
+                g.fillRect(i.left,i.top,menuItem.getWidth()-i.left-i.right,menuItem.getHeight()-i.top-i.bottom);
+              }
+              
               g.setColor(co);
               g.fillRect(i.left,i.top,menuItem.getWidth()-i.left-i.right,menuItem.getHeight()-i.top-i.bottom);
             }
