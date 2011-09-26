@@ -42,6 +42,7 @@ import util.io.IOUtilities;
 import util.program.ProgramUtilities;
 import util.ui.Localizer;
 import util.ui.TextAreaIcon;
+import util.ui.UiUtilities;
 import devplugin.Date;
 import devplugin.Plugin;
 import devplugin.Program;
@@ -119,8 +120,10 @@ public class ProgramMenuItemUI extends BasicMenuItemUI {
     int bottom = height - i.bottom;
 
     if (!menuItem.isArmed() && (isMarked || isOnAir || mTime != -1)) {
-      g.setColor(Color.white);
-      g.fillRect(x, top, menuItem.getWidth(), bottom);
+      if(!UiUtilities.colorsInEqualRange(menuItem.getForeground(),Color.white,20)) {
+        g.setColor(Color.white);
+        g.fillRect(x, top, menuItem.getWidth(), bottom);
+      }
     }
 
     Color markedColor = Plugin.getPluginManager().getTvBrowserSettings().getColorForMarkingPriority(

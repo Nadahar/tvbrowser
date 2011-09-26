@@ -1052,4 +1052,17 @@ public class UiUtilities {
     return fileChooser.get();
   }
 
+  /**
+   * Tests if the given colors are equal in the given maximum difference.
+   * <p>
+   * @param c1 The first color.
+   * @param c2 The second color.
+   * @param maxDiff The maximum difference that counts as equal range.
+   * @return <code>true</code> if both colors are in the equal range.
+   */
+  public static boolean colorsInEqualRange(final Color c1, final Color c2, int maxDiff) {
+    return Math.abs(c1.getRed() - c2.getRed()) <= maxDiff
+      && Math.abs(c1.getBlue() - c2.getBlue()) <= maxDiff
+      && Math.abs(c1.getGreen() - c2.getGreen()) <= maxDiff;
+  }
 }
