@@ -8,7 +8,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.tvbrowser</groupId>
   <artifactId>tvbrowser-plugins-alldataperchannel</artifactId>
-  <name>Clock Plugin</name>
+  <name>All Data Per Channel Plugin</name>
   <developers>
     <developer>
       <id>ds10</id>
