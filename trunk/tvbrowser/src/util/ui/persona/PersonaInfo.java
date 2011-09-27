@@ -82,7 +82,7 @@ public final class PersonaInfo {
    * Create a new persona info from the given settings file.
    * <p>
    * @param settings The settings to read the info from.
-   * @throws IndexOutOfBoundsException Thrown if somethind was wrong in the settings file.
+   * @throws IndexOutOfBoundsException Thrown if something was wrong in the settings file.
    */
   public PersonaInfo(File settings) throws IndexOutOfBoundsException {
     mSettings = settings;
@@ -267,9 +267,9 @@ public final class PersonaInfo {
   }
   
   /**
-   * Gets if the given Persona is the random persona dummy.
+   * Gets if the given Persona is the random Persona dummy.
    * <p>
-   * @param info The persona to check.
+   * @param info The Persona to check.
    * @return <code>true</code> if the given Persona is the random dummy.
    */
   public static boolean isRandomPersona(PersonaInfo info) {
