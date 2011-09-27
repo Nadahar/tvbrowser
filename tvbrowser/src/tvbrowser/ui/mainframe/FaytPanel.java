@@ -57,7 +57,7 @@ import devplugin.ProgramFilter;
 /**
  * A Panel for FindAsYouType in program table.
  * <p>
- * @author René Mach
+ * @author RenÃ© Mach
  * @since 3.0.3
  */
 public class FaytPanel extends JPanel {

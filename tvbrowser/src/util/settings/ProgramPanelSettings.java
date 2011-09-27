@@ -21,7 +21,7 @@ package util.settings;
 /**
  * A class that contains setting values for the program panel.
  *
- * @author René Mach
+ * @author RenÃ© Mach
  * @since 2.2.2
  */
 public class ProgramPanelSettings {

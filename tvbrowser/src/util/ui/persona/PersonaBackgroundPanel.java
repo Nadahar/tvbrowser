@@ -33,7 +33,7 @@ import javax.swing.JPanel;
 /**
  * A JPanel that contains the header and footer images of the Persona.
  * <p>
- * @author René Mach
+ * @author RenÃ© Mach
  * @since 3.1
  */
 public class PersonaBackgroundPanel extends JPanel {

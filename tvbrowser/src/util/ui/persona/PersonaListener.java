@@ -29,7 +29,7 @@ package util.ui.persona;
  * A listener to be informed about change of Persona.
  * You must register this listener to the Persona class.
  * <p>
- * @author René Mach
+ * @author RenÃ© Mach
  * @since 3.1
  */
 public interface PersonaListener {

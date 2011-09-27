@@ -38,7 +38,7 @@ import tvbrowser.ui.programtable.ProgramTableModel;
 import util.ui.ProgramPanel;
 
 /**
- * @author René Mach
+ * @author RenÃ© Mach
  */
 public class UiColorBackPainter extends AbstractBackPainter {
 

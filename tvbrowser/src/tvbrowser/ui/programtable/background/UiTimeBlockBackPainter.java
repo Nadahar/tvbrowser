@@ -48,7 +48,7 @@ import devplugin.Date;
 import devplugin.Program;
 
 /**
- * @author René Mach
+ * @author RenÃ© Mach
  */
 public class UiTimeBlockBackPainter extends AbstractBackPainter {
   private static final Font TABLE_WEST_FONT = new Font("Dialog", Font.PLAIN, 14);

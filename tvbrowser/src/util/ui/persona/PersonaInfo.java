@@ -43,7 +43,7 @@ import util.ui.Localizer;
 /**
  * A class that contains infos about a Persona.
  * <p>
- * @author René Mach
+ * @author RenÃ© Mach
  * @since 3.1
  */
 public final class PersonaInfo {
