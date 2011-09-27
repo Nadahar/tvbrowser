@@ -53,7 +53,7 @@ import devplugin.ProgramFilter;
 /**
  * The node for the filter tree.
  * <p>
- * @author René Mach
+ * @author RenÃ© Mach
  * @since 3.0.2
  */
 public class FilterNode extends DefaultMutableTreeNode {

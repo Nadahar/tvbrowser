@@ -51,7 +51,7 @@ import tvbrowser.core.Settings;
 /**
  * A class to handle Personas for TV-Browser.
  * <p>
- * @author René Mach
+ * @author RenÃ© Mach
  * @since 3.1
  */
 public final class Persona {

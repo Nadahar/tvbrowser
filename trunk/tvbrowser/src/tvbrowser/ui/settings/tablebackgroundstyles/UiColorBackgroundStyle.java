@@ -29,7 +29,7 @@ package tvbrowser.ui.settings.tablebackgroundstyles;
 import javax.swing.JPanel;
 
 /**
- * @author René Mach
+ * @author RenÃ© Mach
  */
 public class UiColorBackgroundStyle implements TableBackgroundStyle {
 

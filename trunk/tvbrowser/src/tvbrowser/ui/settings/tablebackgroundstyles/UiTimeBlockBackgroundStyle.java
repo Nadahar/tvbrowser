@@ -37,7 +37,7 @@ import com.jgoodies.forms.layout.FormLayout;
 
 import tvbrowser.core.Settings;
 /**
- * @author René Mach
+ * @author RenÃ© Mach
  */
 public class UiTimeBlockBackgroundStyle implements TableBackgroundStyle {
 

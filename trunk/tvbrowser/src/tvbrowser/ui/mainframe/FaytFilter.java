@@ -31,7 +31,7 @@ import devplugin.ProgramFilter;
 /**
  * The filter used for FindAsYouType.
  * <p>
- * @author René Mach
+ * @author RenÃ© Mach
  * @since 3.0.3
  */
 public class FaytFilter implements ProgramFilter {
