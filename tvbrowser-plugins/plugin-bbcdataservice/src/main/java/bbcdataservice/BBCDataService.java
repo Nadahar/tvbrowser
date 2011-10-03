@@ -16,9 +16,12 @@
  */
 package bbcdataservice;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -26,6 +29,7 @@ import java.util.HashMap;
 import java.util.Properties;
 import java.util.TimeZone;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 
 import tvdataservice.MutableChannelDayProgram;
@@ -60,8 +64,9 @@ public final class BBCDataService extends AbstractTvDataService {
   private static final String CHANNEL_WEBPAGE = "ChannelWebPage-";
   private static final String NUMBER_OF_CHANNELS = "NumberOfChannels";
   private static final String PROGRAMMES_URL = "http://www.bbc.co.uk";
+  private static final String CHANNEL_LIST = "http://www.tvbrowser.org/mirrorlists/BBCDataService_channellist.gz";
   private static final boolean IS_STABLE = false;
-  private static final Version mVersion = new Version(3, 10, 0, IS_STABLE);
+  private static final Version mVersion = new Version(3, 11, 0, IS_STABLE);
 
   /**
    * created lazily on first access
@@ -96,50 +101,10 @@ public final class BBCDataService extends AbstractTvDataService {
 
   public Channel[] checkForAvailableChannels(ChannelGroup channelGroup, final ProgressMonitor progress)
       throws TvBrowserException {
-    final ArrayList<Channel> channels = new ArrayList<Channel>();
-    try {
-      progress.setMessage(mLocalizer.msg("search.index", "Reading BBC programmes index"));
-      File file = new File(mWorkingDir, "index");
-      IOUtilities.download(new URL(PROGRAMMES_URL + "/programmes"), file);
-      StreamUtilities.bufferedReader(file, new BufferedReaderProcessor() {
-        public void process(BufferedReader reader) throws IOException {
-          String line;
-          int category = Channel.CATEGORY_NONE;
-          while ((line = reader.readLine()) != null) {
-            if (line.contains("tv\"")) {
-              category = Channel.CATEGORY_TV;
-            } else if (line.contains("radio\"")) {
-              category = Channel.CATEGORY_RADIO;
-            }
-            if (line.contains("/programmes/schedules")) {
-              line = StringUtils.substringAfter(line, "a href");
-              String channelId = StringUtils.substringBetween(line, "=\"/", "/programmes");
-              String channelName = StringUtils.substringBetween(line, ">", "</a");
-              channelName = HTMLTextHelper.convertHtmlToText(channelName);
-              String webSite = StringUtils.substringBetween(line, "=\"", "\"");
-              if (StringUtils.isNotEmpty(channelId) && StringUtils.isNotEmpty(channelName)
-                  && StringUtils.isNotEmpty(webSite)) {
-                progress.setMessage(mLocalizer.msg("search.channel", "Found channel: {0}", channelName));
-                ArrayList<Channel> regionChannels = getRegionChannels(channelId, channelName, webSite, category,
-                    progress);
-                if (regionChannels.isEmpty()) {
-                  Channel channel = new Channel(BBCDataService.this, channelName, channelId, TIME_ZONE, COUNTRY,
-                      COPYRIGHT, PROGRAMMES_URL + webSite, CHANNEL_GROUP, null, category);
-                  channels.add(channel);
-                } else {
-                  channels.addAll(regionChannels);
-                }
-              }
-            }
-          }
-        }
-      });
-      file.delete();
-      mChannels = channels;
-    } catch (Exception e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
+    
+    progress.setMessage(mLocalizer.msg("search.index", "Reading BBC programmes index"));
+    mChannels.addAll(getChannelListFromFile(CHANNEL_LIST));
+
     return mChannels.toArray(new Channel[mChannels.size()]);
   }
 
@@ -250,6 +215,76 @@ public final class BBCDataService extends AbstractTvDataService {
         updateManager.updateDayProgram(dayProgram);
       }
     }
+  }
+  
+  private ArrayList<Channel> getChannelListFromFile(String url) {
+
+    final ArrayList<Channel> channels = new ArrayList<Channel>();
+
+    BufferedInputStream stream = null;
+    try {
+      URL sourceUrl = new URL(url);
+      stream = new BufferedInputStream(sourceUrl.openStream());
+
+      InputStream gIn = IOUtilities.openSaveGZipInputStream(stream);
+      BufferedReader reader = new BufferedReader(new InputStreamReader(gIn, "ISO-8859-15"));
+
+      int lineCount = 1;
+
+      String line = reader.readLine();
+      String[] tokens;
+      while (line != null) {
+        tokens = line.split(";");
+
+        String country = null, timezone = null, id = null, name = null, copyright = null, webpage = null, iconUrl = null, categoryStr = null, unescapedname = null;
+        try {
+          country = tokens[0];
+          timezone = tokens[1];
+          id = tokens[2];
+          name = tokens[3];
+          copyright = tokens[4];
+          webpage = tokens[5];
+          iconUrl = tokens[6];
+          categoryStr = tokens[7];
+          if (tokens.length > 8) {
+            unescapedname = name;
+            name = StringEscapeUtils.unescapeHtml(tokens[8]);
+          }
+
+        } catch (ArrayIndexOutOfBoundsException e) {
+          // ignore
+        }
+
+        int categories = Channel.CATEGORY_NONE;
+        if (categoryStr != null) {
+          try {
+            categories = Integer.parseInt(categoryStr);
+          } catch (NumberFormatException e) {
+            categories = Channel.CATEGORY_NONE;
+          }
+        }
+        Channel channel = new Channel(BBCDataService.this, name, id, TimeZone.getTimeZone(timezone), country, copyright,
+            webpage, CHANNEL_GROUP, null, categories, unescapedname);
+
+
+        channels.add(channel);
+        lineCount++;
+        line = reader.readLine();
+      } 
+
+      reader.close();
+    } catch (IOException e) {
+      e.printStackTrace();
+    } finally {
+      if (stream != null) {
+        try {
+          stream.close();
+        } catch (IOException exc) {
+        }
+      }
+    }
+    return channels;
+
   }
 
   private ArrayList<Channel> getRegionChannels(final String channelId, final String channelName, final String webSite,
