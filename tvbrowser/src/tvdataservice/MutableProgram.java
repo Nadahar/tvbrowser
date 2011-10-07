@@ -40,6 +40,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.EventListenerList;
 
 import tvbrowser.core.TvDataBase;
+import tvbrowser.core.TvDataUpdater;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import util.io.IOUtilities;
@@ -343,7 +344,7 @@ public class MutableProgram implements Program {
    * @param marker The plugin to mark the program for.
    */
   public final synchronized void mark(Marker marker) {
-    if(mState == Program.IS_VALID_STATE) {
+    if(mState == Program.IS_VALID_STATE || TvDataUpdater.getInstance().isUpdating()) {
       boolean alreadyMarked = getMarkedByPluginIndex(marker) != -1;
       int oldCount = mMarkerArr.length;
 
@@ -382,7 +383,7 @@ public class MutableProgram implements Program {
     else if(mState == Program.WAS_UPDATED_STATE) {
       Program p = Plugin.getPluginManager().getProgram(getDate(), getID());
 
-      if(p != null) {
+      if(p != null && p.getProgramState() == Program.IS_VALID_STATE) {
         p.mark(marker);
       }
     }
@@ -396,7 +397,7 @@ public class MutableProgram implements Program {
    * @param marker The plugin to remove the mark for.
    */
   public final synchronized void unmark(Marker marker) {
-    if(mState == Program.IS_VALID_STATE) {
+    if(mState == Program.IS_VALID_STATE || TvDataUpdater.getInstance().isUpdating()) {
       int idx = getMarkedByPluginIndex(marker);
       if (idx != -1) {
         if (mMarkerArr.length == 1) {
@@ -437,7 +438,7 @@ public class MutableProgram implements Program {
     else if(mState == Program.WAS_UPDATED_STATE) {
       Program p = Plugin.getPluginManager().getProgram(getDate(), getID());
 
-      if(p != null) {
+      if(p != null && p.getProgramState() == Program.IS_VALID_STATE) {
         p.unmark(marker);
       }
     }
@@ -1230,6 +1231,36 @@ public class MutableProgram implements Program {
         return mObjectValues[type.getStorageIndex()] != null;
       }
     }
+    return false;
+  }
+  
+  public boolean checkStateAgainst(Program prog) {
+    if(prog != null && prog.getID().equals(mId)) {
+      boolean titleWasChangedToMuch = false;
+
+      if(prog != null && prog.getTitle() != null && mTitle != null
+          && mTitle.toLowerCase().compareTo(prog.getTitle().toLowerCase()) != 0) {
+        String[] titleParts = mTitle.toLowerCase().replaceAll("\\p{Punct}"," ").replaceAll("\\s+"," ").split(" ");
+        String compareTitle = prog.getTitle().toLowerCase();
+
+        for(String titlePart : titleParts) {
+          if(compareTitle.indexOf(titlePart) == -1) {
+            titleWasChangedToMuch = true;
+            break;
+          }
+        }
+      }
+      
+      if(titleWasChangedToMuch || prog == this) {
+        setProgramState(WAS_DELETED_STATE);
+      }
+      else {
+        setProgramState(WAS_UPDATED_STATE);
+      }
+      
+      return true;
+    }
+    
     return false;
   }
 }

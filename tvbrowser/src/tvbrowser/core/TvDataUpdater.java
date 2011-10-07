@@ -76,7 +76,8 @@ public class TvDataUpdater {
   private static TvDataUpdater mSingleton;
 
   private boolean mIsDownloading;
-
+  private boolean mIsUpdating;
+  
   /** Set to true if Stop was forced */
   private boolean mStopDownloading = false;
 
@@ -142,7 +143,8 @@ public class TvDataUpdater {
     mIsDownloading = true;
     mStopDownloading = false;
     mTvDataWasChanged = false;
-
+    mIsUpdating = true;
+    
     // Inform the listeners
     fireTvDataUpdateStarted();
 
@@ -245,6 +247,9 @@ public class TvDataUpdater {
     monitor.setMessage(mLocalizer.msg("calculateEntries","Calculating new entries in the database"));
     TvDataBase.getInstance().reCalculateTvData(daysToDownload, monitor);
     TvDataBase.getInstance().updateTvDataBase();
+    
+    mIsUpdating = false;
+    
     MarkedProgramsList.getInstance().revalidatePrograms();
 
     // Inform the listeners
@@ -255,6 +260,10 @@ public class TvDataUpdater {
 
     // reset flag to avoid unnecessary favorite updates
     mTvDataWasChanged = false;
+  }
+  
+  public boolean isUpdating() {
+    return mIsUpdating;
   }
 
   private void checkLocalTime() {
