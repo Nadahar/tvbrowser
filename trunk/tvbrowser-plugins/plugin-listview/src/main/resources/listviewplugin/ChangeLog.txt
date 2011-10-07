@@ -1,0 +1,23 @@
+Changelog ListViewPlugin
+
+1.41:
+- Live-Refresh
+
+1.4:
+- Fixed Line-Height Calculation
+- Start if TV-Browser starts
+- Remember Size and Position
+
+1.3:
+- New Layout: A JTable instead of a JList. Now it displays the current and
+the following Program
+
+1.2:
+- Added selector for specific Date/Time
+- Fixes Bug when "in 30 Minutes" is next day
+
+1.1:
+- Added selector for "now/in 15 minutes..."
+
+1.0:
+- initial version

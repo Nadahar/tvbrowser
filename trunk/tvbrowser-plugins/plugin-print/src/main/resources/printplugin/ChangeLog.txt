@@ -1,0 +1,41 @@
+Version 2.1
+- show plugin markings
+
+
+Version 2.0 (required TV-Browser 2.0)
+- Redesign
+- remember Settings
+- printer queue
+    
+
+Version 1.0
+
+- Redesign
+
+
+Version 0.4
+
+1.) Bugfixes.
+
+Version 0.3
+
+1.) Bugfixes,
+2.) Erweiterung um die Möglichkeit auch Filter auszudrucken.
+
+
+Version 0.2
+
+1.) Gifs geändert. (Aus dem Java Look and Feel Graphics Repository
+    geholt.)
+2.) Einlesen der Drucker in loadSettings ausgelagert (Dialog wird schneller
+    geöffnet.)
+3.) Asyncrones Drucken über eigenen Thread (bring nicht wirklich was).
+4.) Querdruck (Landscape) eingebaut.
+5.) Anpassungen an TV-Browser 0.9.6
+6.) Diverse Fehlerabfragen eingebaut.
+7.) Fehlertexte erweitert.   
+
+Version 0.1
+
+1.) Init Version.
+

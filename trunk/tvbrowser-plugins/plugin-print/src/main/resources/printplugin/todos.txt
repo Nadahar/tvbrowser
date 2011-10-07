@@ -1,0 +1,3 @@
+- Filter beim Drucken verwenden
+- Markierung bei Sendungen darstellen (erinnerungen usw)
+- Tooltips bei den Knöpfen für die Vorlagen (speichern, löschen usw)
