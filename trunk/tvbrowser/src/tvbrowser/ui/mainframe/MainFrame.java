@@ -146,6 +146,7 @@ import tvbrowser.ui.settings.SettingsDialog;
 import tvbrowser.ui.update.PluginAutoUpdater;
 import tvbrowser.ui.update.SoftwareUpdateDlg;
 import tvbrowser.ui.update.SoftwareUpdateItem;
+import tvdataservice.MarkedProgramsList;
 import util.browserlauncher.Launch;
 import util.exc.ErrorHandler;
 import util.io.IOUtilities;
@@ -1986,6 +1987,9 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
         } finally {
           SwingUtilities.invokeLater(new Runnable() {
             public void run() {
+              // revalidate markings again
+              MarkedProgramsList.getInstance().revalidatePrograms();
+              
               onDownloadDone();
               newTvDataAvailable(scroll);
 
