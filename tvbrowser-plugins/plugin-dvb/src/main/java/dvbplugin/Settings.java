@@ -43,6 +43,8 @@ import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.swing.JFileChooser;
+
 import util.exc.ErrorHandler;
 import util.ui.Localizer;
 import dvbplugin.dvbviewer.DvbViewerSetup;
@@ -61,6 +63,8 @@ public final class Settings {
 
   /** property key of DVBViewer Path */
   private static final String PROPS_VIEWER_PATH = "viewerPath";
+  
+  private static final String PROPS_VIEWER_TIMERS_PATH = "viewerTimersPath";
 
   /** property key of DVBViewer executable name */
   private static final String PROPS_VIEWER_EXE_NAME = "viewerExeName";
@@ -289,6 +293,11 @@ public final class Settings {
       setRecordAfter(settings.getProperty("EndeOffset"));
     }
     oldRecAfter = getRecordAfter();
+    
+    temp = settings.getProperty(PROPS_VIEWER_TIMERS_PATH);
+    if (null != temp) {
+      setViewerTimersPath(temp);
+    }
 
     // try to get the viewerExeName
     temp = settings.getProperty(PROPS_VIEWER_EXE_NAME);
@@ -419,6 +428,9 @@ public final class Settings {
     props.setProperty(PROPS_LASTY_OF_RECORDINGS_PANEL, String.valueOf(lastYofRecordingsPanel));
     if (!EMPTYSTRING.equals(viewerPath)) {
       props.setProperty(PROPS_VIEWER_PATH, viewerPath);
+    }
+    if (!EMPTYSTRING.equals(viewerTimersPath)) {
+      props.setProperty(PROPS_VIEWER_TIMERS_PATH, viewerTimersPath);
     }
     if (!EMPTYSTRING.equals(viewerExeName)) {
       props.setProperty(PROPS_VIEWER_EXE_NAME, viewerExeName);
@@ -730,7 +742,17 @@ public final class Settings {
    * @param path New value for viewerTimersPath.
    */
   final void setViewerTimersPath(String path) {
-    if (null == path || 0 == path.length()) { return; }
+    if (null == path || 0 == path.length() || !(new File(path).exists())) { 
+      JFileChooser chooser = new JFileChooser();
+      chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+      chooser.setDialogTitle("Not found: "+path);
+      int returnVal = chooser.showOpenDialog(null);
+      if (returnVal == JFileChooser.APPROVE_OPTION) {
+
+        path = chooser.getCurrentDirectory() + System.getProperty("file.separator") + chooser.getSelectedFile().getName();
+      }
+      
+    }
 
     viewerTimersPath = path;
   }
@@ -821,8 +843,9 @@ public final class Settings {
                              " assuming {1} as the configuration data directory.",
                  new Object[] {f.getAbsolutePath(), viewerPath});
     }
-
-    switch (viewerMode) {
+    
+    if (viewerTimersPath == null || viewerTimersPath.length() == 0) {
+      switch (viewerMode) {
       case 0:
         setViewerTimersPath(viewerPath);
         break;
@@ -832,13 +855,13 @@ public final class Settings {
         temp.append(File.separatorChar);
         temp.append(viewerRoot);
         temp.append(File.separatorChar);
-        viewerTimersPath = temp.toString();
+        setViewerTimersPath(temp.toString());
         break;
       }
       case 2: {
         StringBuilder temp = new StringBuilder(260);
         String os = System.getProperty("os.name", "");
-        if (-1 != os.indexOf("Vista")) {
+        if (-1 != os.indexOf("Vista") || -1 != os.indexOf("Windows 7")) {
           temp.append(System.getenv("ALLUSERSPROFILE"));
         } else {
           String appdata = System.getenv("APPDATA");
@@ -847,12 +870,13 @@ public final class Settings {
         }
         temp.append(File.separatorChar);
         temp.append(viewerRoot);
-        viewerTimersPath = temp.toString();
+        setViewerTimersPath(temp.toString());
         break;
       }
       default:
         logger.log(Level.WARNING, "Do not know how to handle UserMode={0}", String.valueOf(viewerMode));
-      return;
+        return;
+      }
     }
 
     // check the type of DVBViewer
