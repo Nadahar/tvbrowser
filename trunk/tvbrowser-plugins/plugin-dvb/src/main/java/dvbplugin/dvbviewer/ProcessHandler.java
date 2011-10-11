@@ -122,12 +122,16 @@ public class ProcessHandler {
 
 
   public static final void runDvbViewer(Settings set, TvbDvbVChannel channel) {
+    
+    runDvbViewer(set,"\"-c"+channel.getDVBChannel().name+"\"");
+  }
+  
+  public static final void runDvbViewer(Settings set, String options) {
     StringBuilder cmdline = new StringBuilder(128);
     try {
       cmdline.append(set.getViewerExePath());
-      cmdline.append(" \"-c");
-      cmdline.append(channel.getDVBChannel().name);
-      cmdline.append("\"");
+      cmdline.append(" ");
+      cmdline.append(options);
 
       Runtime.getRuntime().exec(cmdline.toString());
     } catch (Exception e) {
