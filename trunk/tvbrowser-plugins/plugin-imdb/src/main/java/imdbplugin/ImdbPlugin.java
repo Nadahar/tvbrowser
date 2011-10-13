@@ -65,7 +65,7 @@ public final class ImdbPlugin extends Plugin {
 
   private static final boolean IS_STABLE = true;
 
-  private static final Version mVersion = new Version(1, 5, 1, IS_STABLE);
+  private static final Version mVersion = new Version(1, 5, 2, IS_STABLE);
 
   // Empty Rating for Cache
   private static final ImdbRating DUMMY_RATING = new ImdbRating(0, 0, "", "");
@@ -197,7 +197,7 @@ public final class ImdbPlugin extends Plugin {
         }
       };
       action.putValue(Action.NAME, mLocalizer.msg("contextMenuDetails",
-          "Details for the IMDb rating ({0})", rating.getRatingText()));
+          "Details for the IMDb rating [{0}]", rating.getRatingText()));
       action.putValue(Action.SMALL_ICON, new ImdbIcon(rating));
       return new ActionMenu(action);
     }
