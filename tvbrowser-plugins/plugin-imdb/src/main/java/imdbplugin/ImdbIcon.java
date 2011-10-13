@@ -25,10 +25,20 @@ public final class ImdbIcon implements Icon {
 
   private static Icon mEmptyImdbIcon;
   private int mLength = 0;
+  private Color mColor = Color.yellow;
   
   public ImdbIcon(final ImdbRating rating) {
-    mLength = (getIconWidth() - 1) * rating.getRating()
+    mLength = (getIconWidth()) * rating.getRating()
         / ImdbRating.MAX_RATING_NORMALIZATION;
+    /**
+    if (rating.getRating() < 40) {
+      mColor = new Color(255,153,0); //yellow-red
+    } else if (rating.getRating() < 70) {
+      mColor = new Color(255,255,0); //yellow
+    } else {
+      mColor = new Color(153,255,0); //yellow-green
+    }
+    **/
   }
 
   public int getIconWidth() {
@@ -46,8 +56,11 @@ public final class ImdbIcon implements Icon {
     }
     mEmptyImdbIcon.paintIcon(c, g, x, y);
     final Color oc = g.getColor();
-    g.setColor(Color.yellow);
-    g.fill3DRect(x, y+7, mLength, 5, true);
+    g.setColor(mColor);
+    g.fillRect(x, y+7, mLength, 5);
+    g.setColor(Color.black);
+    g.fillRect(x+(getIconWidth()/3), y+10, 1, 2);
+    g.fillRect(x+(2*getIconWidth()/3), y+10, 1, 2);
     g.setColor(oc);
   }
 }
