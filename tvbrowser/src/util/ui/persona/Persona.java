@@ -308,65 +308,8 @@ public final class Persona {
    * @return A menu that uses the Persona for painting.
    */
   public JMenu createPersonaMenu() {
-    JMenu menu = new JMenu() {
-      @Override protected void fireStateChanged() {
-          ButtonModel m = getModel();
-          if(m.isPressed() && m.isArmed()) {
-              setOpaque(true);
-          }else if(m.isSelected()) {
-              setOpaque(true);
-          }else if(isRolloverEnabled() && m.isRollover()) {
-              setOpaque(true);
-          }else{
-              setOpaque(false);
-          }
-          super.fireStateChanged();
-      };
-      
-      protected void paintComponent(Graphics g) {
-        if(mHeaderImage != null && mTextColor != null && mShadowColor != null) {
-          if(isOpaque()) {
-            g.setColor(UIManager.getColor("List.selectionBackground"));
-            g.fillRect(0,0,getWidth(),getHeight());
-          }
-          
-          FontMetrics metrics = g.getFontMetrics(getFont());
-          int textWidth = metrics.stringWidth(getText());
-          
-          int x = getWidth()/2-textWidth/2;
-          int y = getHeight()-metrics.getDescent()-getInsets().bottom;
-                    
-          int mnemonicIndex = getText().indexOf(KeyEvent.getKeyText(getMnemonic()));
-          String test = getText().substring(0,mnemonicIndex+1);
-          
-          int mnemonicWidth = metrics.stringWidth(KeyEvent.getKeyText(getMnemonic()));
-          int start = metrics.stringWidth(test) - mnemonicWidth;
-          
-          if(!mShadowColor.equals(mTextColor) && !isOpaque()) {
-            g.setColor(mShadowColor);
-            g.drawString(getText(),x+1,y+1);
-            g.drawString(getText(),x+2,y+2);
-            
-            g.drawLine(x + start + 1,y+2,x+start+mnemonicWidth,y+2);
-            g.drawLine(x + start + 1,y+3,x+start+mnemonicWidth,y+3);
-          }
-          
-          if(!isOpaque()) {
-            g.setColor(mTextColor);
-          }
-          else {
-            g.setColor(UIManager.getColor("List.selectionForeground"));
-          }
-          g.drawString(getText(),x,y);
-          g.drawLine(x + start,y+1,x+start+mnemonicWidth-1,y+1);
-        }
-        else {
-          super.paintComponent(g);
-        }
-      }
-    };
-    menu.setOpaque(false);
-    menu.setBackground(new Color(0,0,0,0));
+    PersonaMenu menu = new PersonaMenu();
+    menu.updatePersona();
   
     return menu;
   }
@@ -636,5 +579,89 @@ public final class Persona {
    */
   public static Border getPersonaButtonBorder() {
     return BorderFactory.createEmptyBorder(mBorderHeight,mBorderWidth,mBorderHeight,mBorderWidth);
+  }
+  
+  private static class PersonaMenu extends JMenu implements PersonaListener {
+    private static boolean mOriginalOpaqueState;
+    private static Color mOriginalBackgroundColor;
+    
+    public PersonaMenu() {
+      super();
+      Persona.getInstance().registerPersonaListener(this);
+      mOriginalOpaqueState = isOpaque();
+      mOriginalBackgroundColor = getBackground();
+    }
+    
+    @Override protected void fireStateChanged() {
+      if(Persona.getInstance().getHeaderImage() != null && Persona.getInstance().getTextColor() != null && Persona.getInstance().getShadowColor() != null) {
+        setBackground(new Color(0,0,0,0));
+        ButtonModel m = getModel();
+        if(m.isPressed() && m.isArmed()) {
+            setOpaque(true);
+        }else if(m.isSelected()) {
+            setOpaque(true);
+        }else if(isRolloverEnabled() && m.isRollover()) {
+            setOpaque(true);
+        }else{
+            setOpaque(false);
+        }
+      }
+      
+      super.fireStateChanged();
+    };
+    
+    protected void paintComponent(Graphics g) {
+      if(Persona.getInstance().getHeaderImage() != null && Persona.getInstance().getTextColor() != null && Persona.getInstance().getShadowColor() != null) {
+        if(isOpaque()) {
+          g.setColor(UIManager.getColor("List.selectionBackground"));
+          g.fillRect(0,0,getWidth(),getHeight());
+        }
+        
+        FontMetrics metrics = g.getFontMetrics(getFont());
+        int textWidth = metrics.stringWidth(getText());
+        
+        int x = getWidth()/2-textWidth/2;
+        int y = getHeight()-metrics.getDescent()-getInsets().bottom;
+                  
+        int mnemonicIndex = getText().indexOf(KeyEvent.getKeyText(getMnemonic()));
+        String test = getText().substring(0,mnemonicIndex+1);
+        
+        int mnemonicWidth = metrics.stringWidth(KeyEvent.getKeyText(getMnemonic()));
+        int start = metrics.stringWidth(test) - mnemonicWidth;
+        
+        if(!Persona.getInstance().getShadowColor().equals(Persona.getInstance().getTextColor()) && !isOpaque()) {
+          g.setColor(Persona.getInstance().getShadowColor());
+          g.drawString(getText(),x+1,y+1);
+          g.drawString(getText(),x+2,y+2);
+          
+          g.drawLine(x + start + 1,y+2,x+start+mnemonicWidth,y+2);
+          g.drawLine(x + start + 1,y+3,x+start+mnemonicWidth,y+3);
+        }
+        
+        if(!isOpaque()) {
+          g.setColor(Persona.getInstance().getTextColor());
+        }
+        else {
+          g.setColor(UIManager.getColor("List.selectionForeground"));
+        }
+        g.drawString(getText(),x,y);
+        g.drawLine(x + start,y+1,x+start+mnemonicWidth-1,y+1);
+      }
+      else {
+        super.paintComponent(g);
+      }
+    }
+    
+    @Override
+    public void updatePersona() {
+      if(Persona.getInstance().getHeaderImage() != null && Persona.getInstance().getTextColor() != null && Persona.getInstance().getShadowColor() != null) {
+        setBackground(new Color(0,0,0,0));
+        setOpaque(false);
+      }
+      else {
+        setBackground(mOriginalBackgroundColor);
+        setOpaque(mOriginalOpaqueState);
+      }
+    }
   }
 }
