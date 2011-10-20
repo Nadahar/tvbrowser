@@ -473,15 +473,8 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
   private void setBackgroundStyleForTimeBlockLayout() {
     if(!Settings.propTableLayout.getString().equals(Settings.LAYOUT_TIME_BLOCK) &&
         !Settings.propTableLayout.getString().equals(Settings.LAYOUT_COMPACT_TIME_BLOCK)) {
-      Settings.propTableBackgroundStyle.setString("timeBlock");
-      
-      Settings.propTimeBlockBackground1.setString(Settings.propTimeBlockBackground1.getDefault());
-      Settings.propTimeBlockBackground2.setString(Settings.propTimeBlockBackground2.getDefault());
-      
+      Settings.propTableBackgroundStyle.setString("uiTimeBlock");      
       Settings.propTimeBlockShowWest.setBoolean(true);
-      
-      Settings.propTimeBlockWestImage1.setString(Settings.propTimeBlockBackground1.getString());
-      Settings.propTimeBlockWestImage2.setString(Settings.propTimeBlockBackground2.getString());
     }
   }
   
@@ -489,15 +482,8 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     if(Settings.propTableLayout.getString().equals(Settings.LAYOUT_TIME_BLOCK) ||
         Settings.propTableLayout.getString().equals(Settings.LAYOUT_COMPACT_TIME_BLOCK) ||
         Settings.propTableLayout.getString().equals(Settings.LAYOUT_OPTIMIZED_COMPACT_TIME_BLOCK)) {
-      Settings.propTableBackgroundStyle.setString("timeBlock");
-      
-      Settings.propTimeBlockBackground1.setString("imgs/columns_evening.jpg");
-      Settings.propTimeBlockBackground2.setString("imgs/columns_afternoon.jpg");
-      
+      Settings.propTableBackgroundStyle.setString("uiColor");
       Settings.propTimeBlockShowWest.setBoolean(false);
-      
-      Settings.propTimeBlockWestImage1.setString(Settings.propTimeBlockBackground1.getString());
-      Settings.propTimeBlockWestImage2.setString(Settings.propTimeBlockBackground2.getString());
     }
   }
 
