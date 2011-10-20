@@ -69,7 +69,6 @@ import util.misc.StringPool;
 import util.program.ProgramUtilities;
 import util.settings.ProgramPanelSettings;
 import devplugin.ContextMenuIf;
-import devplugin.ImportanceValue;
 import devplugin.Marker;
 import devplugin.Plugin;
 import devplugin.PluginAccess;
@@ -635,32 +634,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
       return iconList.toArray(new Icon[iconList.size()]);
     }
   }
-
-  private byte getProgramImportance(final Program program) {
-    if (program.getProgramState() == Program.IS_VALID_STATE &&
-        Settings.propProgramPanelAllowTransparency.getBoolean() &&
-        !mSettings.isIgnoringProgramImportance()) {
-      int count = 0;
-      int addValue = 0;
-
-      PluginProxy[] plugins = PluginProxyManager.getInstance().getActivatedPlugins();
-
-      for(PluginProxy plugin : plugins) {
-        ImportanceValue value = plugin.getImportanceValueForProgram(program);
-
-        if(value.getWeight() > 0 && value.getTotalImportance() >= Program.MIN_MARK_PRIORITY) {
-          count += value.getWeight();
-          addValue += value.getTotalImportance();
-        }
-      }
-
-      if(count > 0) {
-        return (byte)Math.max(addValue/count, Program.MIN_MARK_PRIORITY);
-      }
-    }
-
-    return Program.MAX_PROGRAM_IMPORTANCE;
-  }
+  
   /**
    * Paints the component.
    *
@@ -671,7 +645,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
     // lazy update of plugin icons and layout
     if (mHasChanged) {
       mIconArr = getPluginIcons(mProgram);
-      mProgramImportance = getProgramImportance(mProgram);
+      mProgramImportance = !mSettings.isIgnoringProgramImportance() ? ProgramUtilities.getProgramImportance(mProgram) : Program.MAX_PROGRAM_IMPORTANCE;
       mHasChanged = false;
     }
 
