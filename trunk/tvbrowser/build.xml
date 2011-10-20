@@ -503,6 +503,7 @@
     	<comment value="Themeable and easy to use TV Guide - written in Java"/>
     	<comment lang="de" value="Anpassbare und einfach zu benutzende TV-Zeitschrift - geschrieben in Java"/>
    	</desktopEntry>
+  	<echo file="${tvbrowser-linux.runtime.dir}/tvbrowser.desktop" append="true">StartupWMClass=tvbrowser-TVBrowser</echo>
   </target>
 
   <!-- Creates the desktop entry file for Ubuntu platform -->
@@ -521,8 +522,8 @@
     	<genericName lang="de" value="Digitale TV-Zeitschrift"/>
     	<comment value="Themeable and easy to use TV Guide - written in Java"/>
     	<comment lang="de" value="Anpassbare und einfach zu benutzende TV-Zeitschrift - geschrieben in Java"/>
-
    	</desktopEntry>
+  	<echo file="${tvbrowser-linux.runtime.dir}/tvbrowser.desktop" append="true">StartupWMClass=tvbrowser-TVBrowser</echo>
   </target>
 
   <!-- Creates the runtime folder for linux platforms -->
