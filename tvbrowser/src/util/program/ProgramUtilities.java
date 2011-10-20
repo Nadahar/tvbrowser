@@ -18,6 +18,7 @@
  */
 package util.program;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -670,6 +671,29 @@ public class ProgramUtilities {
     return -1;
   }
 
+  /**
+   * Creates a color that uses the program importance for alpha value.
+   * <p>
+   * @param color The color to use for alpha value change.
+   * @param program The program to get the changed color for.
+   * @return The color that uses the program importance alpha value.
+   */
+  public static Color getColorForProgramImportance(Color color, Program program) {
+    byte importance = getProgramImportance(program);
+    return new Color(color.getRed(), color.getGreen(), color.getBlue(), (int)(color.getAlpha()*importance/10.));
+  }
+  
+  /**
+   * Creates a color that uses the program importance for alpha value.
+   * <p>
+   * @param color The color to use for alpha value change.
+   * @param importance The importance to get the changed color for.
+   * @return The color that uses the program importance alpha value.
+   */
+  public static Color getColorForProgramImportance(Color color, byte importance) {
+    return new Color(color.getRed(), color.getGreen(), color.getBlue(), (int)(color.getAlpha()*importance/10.));
+  }
+  
   /**
    * Gets the program importance of the given program.
    * <p>
