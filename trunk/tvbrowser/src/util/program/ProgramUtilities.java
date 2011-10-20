@@ -28,8 +28,12 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 
 import tvbrowser.core.ChannelList;
+import tvbrowser.core.Settings;
+import tvbrowser.core.plugin.PluginProxy;
+import tvbrowser.core.plugin.PluginProxyManager;
 import util.io.IOUtilities;
 import devplugin.Date;
+import devplugin.ImportanceValue;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
 
@@ -666,4 +670,34 @@ public class ProgramUtilities {
     return -1;
   }
 
+  /**
+   * Gets the program importance of the given program.
+   * <p>
+   * @param program The program to get the program importance for
+   * @return The program importance from 0 to 10 for the given program.
+   */
+  public static byte getProgramImportance(Program program) {
+    if (program.getProgramState() == Program.IS_VALID_STATE &&
+        Settings.propProgramPanelAllowTransparency.getBoolean()) {
+      int count = 0;
+      int addValue = 0;
+
+      PluginProxy[] plugins = PluginProxyManager.getInstance().getActivatedPlugins();
+
+      for(PluginProxy plugin : plugins) {
+        ImportanceValue value = plugin.getImportanceValueForProgram(program);
+
+        if(value.getWeight() > 0 && value.getTotalImportance() >= Program.MIN_MARK_PRIORITY) {
+          count += value.getWeight();
+          addValue += value.getTotalImportance();
+        }
+      }
+
+      if(count > 0) {
+        return (byte)Math.max(addValue/count, Program.MIN_MARK_PRIORITY);
+      }
+    }
+
+    return Program.MAX_PROGRAM_IMPORTANCE;
+  }
 }
