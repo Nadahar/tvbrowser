@@ -43,9 +43,11 @@ import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
+import javax.swing.text.html.HTML;
 
 import tvbrowser.TVBrowser;
 import util.ui.ImageUtilities;
@@ -54,6 +56,7 @@ import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 import util.ui.html.ExtendedHTMLDocument;
 import util.ui.html.ExtendedHTMLEditorKit;
+import util.ui.html.HTMLTextHelper;
 
 /**
  *
@@ -85,6 +88,7 @@ public class AboutBox extends JDialog implements WindowClosingIf{
     ExtendedHTMLDocument doc = (ExtendedHTMLDocument) infoEP.getDocument();
     String text = createAboutText(doc);
     infoEP.setText(text);
+    infoEP.setBackground(UIManager.getColor("List.background"));
     infoEP.setEditable(false);
 
     right.add(infoEP,BorderLayout.CENTER);
@@ -184,7 +188,7 @@ public class AboutBox extends JDialog implements WindowClosingIf{
                "#small { font-size:9px; font-family:Dialog; margin-bottom: 5px}" +
                "-->" +
                "  </head>" +
-               "  <body>" +
+               "  <body style=\"color:"+HTMLTextHelper.getCssRgbColorEntry(UIManager.getColor("List.foreground"))+"\">" +
                "    <div id=\"title\">"+mLocalizer.msg("version", "Version")+": " + TVBrowser.VERSION.toString() +"</div>" +
                "<p>" +
                "    <table width=\"100%\" border=\"0\">");
