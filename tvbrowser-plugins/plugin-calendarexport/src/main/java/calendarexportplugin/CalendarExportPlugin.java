@@ -22,9 +22,12 @@
  */
 package calendarexportplugin;
 
+import java.awt.Frame;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -40,6 +43,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
 
+import util.io.IOUtilities;
 import util.program.AbstractPluginProgramFormating;
 import util.program.LocalPluginProgramFormating;
 import util.ui.Localizer;
@@ -65,7 +69,7 @@ import devplugin.Version;
  * @author bodo
  */
 public final class CalendarExportPlugin extends Plugin {
-  private static final Version mVersion = new Version(3,02,2);
+  private static final Version mVersion = new Version(3,03);
 
   /**
    * Translator
@@ -160,6 +164,27 @@ public final class CalendarExportPlugin extends Plugin {
     createDefaultAvailable();
     mExporterFactory = new ExporterFactory();
     mInstance = this;
+    File dir = new File(getPluginManager().getTvBrowserSettings().getTvBrowserUserHome(),"CalendarExportPlugin");
+    
+    if(!dir.isDirectory()) {
+      dir.mkdirs();
+    }
+    
+    File dll = new File(dir,"jcom.dll");
+    
+    try {
+	  byte[] jcomDll = IOUtilities.loadFileFromJar("jcom.dll", getClass());
+	  FileOutputStream out = new FileOutputStream(dll);
+	  out.getChannel().truncate(0);
+	  out.write(jcomDll);
+	  out.close();
+	} catch (IOException e) {
+	  // ignore
+	}
+    
+    if(System.getProperty("os.arch").equals("x86")) {
+      System.load(dll.getAbsolutePath());
+    }
   }
 
   private void createDefaultConfig() {
@@ -505,6 +530,10 @@ public final class CalendarExportPlugin extends Plugin {
    */
   public Window getBestParentFrame() {
     return UiUtilities.getBestDialogParent(getParentFrame());
+  }
+  
+  public Frame getSuperFrame() {
+	return getParentFrame();
   }
 
   @Override

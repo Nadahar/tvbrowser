@@ -19,6 +19,7 @@ package calendarexportplugin.exporter;
 import java.util.Date;
 
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 import jp.ne.so_net.ga2.no_ji.jcom.IDispatch;
 import jp.ne.so_net.ga2.no_ji.jcom.ReleaseManager;
@@ -27,6 +28,7 @@ import util.misc.OperatingSystem;
 import util.paramhandler.ParamParser;
 import util.program.AbstractPluginProgramFormating;
 import util.ui.Localizer;
+import util.ui.UiUtilities;
 import calendarexportplugin.CalendarExportPlugin;
 import calendarexportplugin.CalendarExportSettings;
 import calendarexportplugin.utils.CalendarToolbox;
@@ -95,9 +97,15 @@ public class OutlookExporter extends AbstractExporter {
       try {
         outlook = new IDispatch(rm, "Outlook.Application");
       } catch (jp.ne.so_net.ga2.no_ji.jcom.JComException ex) {
-        JOptionPane.showMessageDialog(CalendarExportPlugin.getInstance().getBestParentFrame(), mLocalizer.msg(
-            "noOutlookFound", "MS Outlook is not installed."), Localizer.getLocalization(Localizer.I18N_ERROR),
-            JOptionPane.WARNING_MESSAGE);
+    	  SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+			  // TODO Auto-generated method stub
+		      JOptionPane.showMessageDialog(UiUtilities.getLastModalChildOf(CalendarExportPlugin.getInstance().getSuperFrame()), mLocalizer.msg(
+		              "noOutlookFound", "MS Outlook is not installed."), Localizer.getLocalization(Localizer.I18N_ERROR),
+		              JOptionPane.WARNING_MESSAGE);				
+			}
+		});
         return false;
       }
       item = (IDispatch) outlook.invoke("CreateItem", IDispatch.PROPERTYGET, new Integer[] { olAppointmentItem });
