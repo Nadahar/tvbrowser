@@ -297,7 +297,7 @@ public class ProgramTextCreator {
 
     buffer.append(bodyFont);
 
-    buffer.append(";").append("background-color:").append(getCssRgbColorEntry(background)).append(";").append(getCssStyle(bodyStyle)).append("\"><tr>");
+    buffer.append(";").append("background-color:").append(HTMLTextHelper.getCssRgbColorEntry(background)).append(";").append(getCssStyle(bodyStyle)).append("\"><tr>");
     buffer.append("<td width=\"60\">");
     buffer.append("<p \"align=center\">");
 
@@ -353,7 +353,7 @@ public class ProgramTextCreator {
     String episode = CompoundedProgramFieldType.EPISODE_COMPOSITION.getFormattedValueForProgram(prog);
 
     if (episode != null && episode.trim().length() > 0) {
-      buffer.append("<div style=\"color:").append(getCssRgbColorEntry(infoColor)).append("; font-size:");
+      buffer.append("<div style=\"color:").append(HTMLTextHelper.getCssRgbColorEntry(infoColor)).append("; font-size:");
 
       buffer.append(mBodyFontSize);
 
@@ -413,7 +413,7 @@ public class ProgramTextCreator {
       show || (settings.isShowingPictureForDuration() && settings.getDuration() <= prog.getLength())) {
       byte[] image = prog.getBinaryField(ProgramFieldType.PICTURE_TYPE);
       if (image != null) {
-        String line = "<tr><td></td><td valign=\"top\" style=\"color:"+getCssRgbColorEntry(foreground)+"; font-size:0\">";
+        String line = "<tr><td></td><td valign=\"top\" style=\"color:"+HTMLTextHelper.getCssRgbColorEntry(foreground)+"; font-size:0\">";
         buffer.append(line);
         try {
           ImageIcon imageIcon = new ImageIcon(image);
@@ -457,7 +457,7 @@ public class ProgramTextCreator {
     if (showPluginIcons && (pluginArr != null) && (pluginArr.length != 0)) {
       addSeparator(doc, buffer);
 
-      buffer.append("<tr><td valign=\"top\" style=\"color:").append(getCssRgbColorEntry(infoColor)).append("; font-size:");
+      buffer.append("<tr><td valign=\"top\" style=\"color:").append(HTMLTextHelper.getCssRgbColorEntry(infoColor)).append("; font-size:");
 
       buffer.append(mBodyFontSize);
 
@@ -529,7 +529,7 @@ public class ProgramTextCreator {
       addSeparator(doc, buffer);
 
       buffer
-          .append("<tr><td valign=\"middle\" style=\"color:").append(getCssRgbColorEntry(infoColor)).append("; font-size:");
+          .append("<tr><td valign=\"middle\" style=\"color:").append(HTMLTextHelper.getCssRgbColorEntry(infoColor)).append("; font-size:");
 
       buffer.append(mBodyFontSize);
 
@@ -570,14 +570,14 @@ public class ProgramTextCreator {
           if (length > 0 && ((String) id).trim().length() > 0) {
 
             buffer
-                .append("<tr><td valign=\"top\" style=\"color:").append(getCssRgbColorEntry(infoColor)).append("; font-size:");
+                .append("<tr><td valign=\"top\" style=\"color:").append(HTMLTextHelper.getCssRgbColorEntry(infoColor)).append("; font-size:");
 
             buffer.append(mBodyFontSize);
 
             buffer.append("\"><b>");
             buffer.append(mLocalizer.msg("duration",
                 "Program duration/<br>-end"));
-            buffer.append("</b></td><td style=\"color:").append(getCssRgbColorEntry(foreground)).append("; font-size:");
+            buffer.append("</b></td><td style=\"color:").append(HTMLTextHelper.getCssRgbColorEntry(foreground)).append("; font-size:");
 
             buffer.append(mBodyFontSize);
 
@@ -632,7 +632,7 @@ public class ProgramTextCreator {
           int info = prog.getInfo();
           if ((info != -1) && (info != 0)) {
             buffer
-                .append("<tr><td valign=\"top\" style=\"color:").append(getCssRgbColorEntry(infoColor)).append("; font-size:");
+                .append("<tr><td valign=\"top\" style=\"color:").append(HTMLTextHelper.getCssRgbColorEntry(infoColor)).append("; font-size:");
 
             buffer.append(mBodyFontSize);
 
@@ -752,7 +752,7 @@ public class ProgramTextCreator {
 
     if (showHelpLinks) {
       buffer
-          .append("<tr><td colspan=\"2\" valign=\"top\" align=\"center\" style=\"color:").append(getCssRgbColorEntry(infoColor)).append("; font-size:");
+          .append("<tr><td colspan=\"2\" valign=\"top\" align=\"center\" style=\"color:").append(HTMLTextHelper.getCssRgbColorEntry(infoColor)).append("; font-size:");
       buffer.append(mBodyFontSize).append("\">");
       buffer.append("<a href=\"");
       buffer.append(
@@ -768,19 +768,6 @@ public class ProgramTextCreator {
     
     return buffer.toString();}catch(Exception e) {e.printStackTrace();}
     return "";
-  }
-
-  private static String getCssRgbColorEntry(Color c) {
-    StringBuilder builder = new StringBuilder("rgb(");
-    
-    builder.append(c.getRed());
-    builder.append(",");
-    builder.append(c.getGreen());
-    builder.append(",");
-    builder.append(c.getBlue());
-    builder.append(")");
-    
-    return builder.toString();
   }
   
   private static String getCssStyle(final int style) {
@@ -882,7 +869,7 @@ public class ProgramTextCreator {
 
   private static String addSearchLink(String topic, String displayText, Color foreground) {
 
-    String style = " style=\"color:"+getCssRgbColorEntry(foreground)+"; border-bottom: 1px dashed;\"";
+    String style = " style=\"color:"+HTMLTextHelper.getCssRgbColorEntry(foreground)+"; border-bottom: 1px dashed;\"";
       StringBuilder buffer = new StringBuilder(32);
       buffer.append("<a href=\"");
       buffer.append(TVBROWSER_URL_PROTOCOL);
@@ -1167,11 +1154,11 @@ public class ProgramTextCreator {
   }
 
   private static void startInfoSection(StringBuilder buffer, String section, Color infoForeground, Color foreground) {
-    buffer.append("<tr><td valign=\"top\" style=\"color:").append(getCssRgbColorEntry(infoForeground)).append("; font-size:");
+    buffer.append("<tr><td valign=\"top\" style=\"color:").append(HTMLTextHelper.getCssRgbColorEntry(infoForeground)).append("; font-size:");
     buffer.append(mBodyFontSize);
     buffer.append("\"><b>");
     buffer.append(section);
-    buffer.append("</b></td><td style=\"color:").append(getCssRgbColorEntry(foreground)).append("; font-size:");
+    buffer.append("</b></td><td style=\"color:").append(HTMLTextHelper.getCssRgbColorEntry(foreground)).append("; font-size:");
     buffer.append(mBodyFontSize);
     buffer.append("\">");
   }

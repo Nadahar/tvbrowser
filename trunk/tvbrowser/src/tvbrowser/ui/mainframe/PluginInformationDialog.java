@@ -37,6 +37,7 @@ import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
@@ -95,11 +96,11 @@ public class PluginInformationDialog extends JDialog implements WindowClosingIf 
               Launch.openURL(e.getURL().toString());
             }
           }
-        },Color.white);
+        },UIManager.getColor("List.background"));
 
     pane.setPreferredSize(new Dimension(400,300));
-
-    pane.setBackground(Color.white);
+    
+    pane.setBackground(UIManager.getColor("List.background"));
     pane.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createMatteBorder(0,0,1,0,Color.darkGray),Borders.createEmptyBorder("0dlu,10dlu,0dlu,10dlu")));
 
     pb.add(pane, cc.xyw(1,2,3));
@@ -126,13 +127,14 @@ public class PluginInformationDialog extends JDialog implements WindowClosingIf 
     getRootPane().setDefaultButton(buttons[0]);
 
     ButtonBarBuilder2 bb = new ButtonBarBuilder2();
+    bb.getPanel().setOpaque(true);
     bb.addGlue();
     bb.addButton(buttons);
     bb.addGlue();
     bb.setBorder(Borders.createEmptyBorder("6dlu,6dlu,6dlu,6dlu"));
 
     pb.add(bb.getPanel(), cc.xyw(1,3,3));
-    pb.getPanel().setBackground(Color.white);
+    pb.getPanel().setBackground(UIManager.getColor("List.background"));
   }
 
   public void close() {

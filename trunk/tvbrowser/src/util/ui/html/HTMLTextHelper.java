@@ -1,6 +1,7 @@
 package util.ui.html;
 
 
+import java.awt.Color;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -122,5 +123,26 @@ public class HTMLTextHelper {
 
     return temp;
   }
+  
+  /**
+   * Creates a rgb color entry for css format.
+   * <p>
+   * @param c The color to get the css entry for
+   * @return The css entry color.
+   * @since 3.1
+   */
+  public static String getCssRgbColorEntry(Color c) {
+    StringBuilder builder = new StringBuilder("rgb(");
+    
+    builder.append(c.getRed());
+    builder.append(",");
+    builder.append(c.getGreen());
+    builder.append(",");
+    builder.append(c.getBlue());
+    builder.append(")");
+    
+    return builder.toString();
+  }
+  
 
 }
