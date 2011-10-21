@@ -31,6 +31,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.SwingUtilities;
 
@@ -51,12 +52,12 @@ import devplugin.ProgramFilter;
 public class MarkedProgramsList {
 
   private static MarkedProgramsList mInstance;
-  private HashSet<MutableProgram> mMarkedPrograms;
+  private Set<MutableProgram> mMarkedPrograms;
   private Thread mProgramTableRefreshThread;
   private int mProgramTableRefreshThreadWaitTime;
 
   private MarkedProgramsList() {
-    mMarkedPrograms = new HashSet<MutableProgram>();
+    mMarkedPrograms = Collections.synchronizedSet(new HashSet<MutableProgram>());
     mInstance = this;
   }
 
@@ -253,7 +254,7 @@ public class MarkedProgramsList {
 
     if(testProg == null || titleWasChangedToMuch) {
       programInList.setMarkerArr(MutableProgram.EMPTY_MARKER_ARR);
-      //programInList.setProgramState(Program.WAS_DELETED_STATE);
+      programInList.setProgramState(Program.WAS_DELETED_STATE);
     }
     else if(testProg != programInList) {
       Marker[] testMarkerArr = testProg.getMarkerArr();
@@ -288,7 +289,7 @@ public class MarkedProgramsList {
 
       programInList.setMarkerArr(MutableProgram.EMPTY_MARKER_ARR);
       programInList.setMarkPriority(-1);
-      //programInList.setProgramState(Program.WAS_UPDATED_STATE);
+      programInList.setProgramState(Program.WAS_UPDATED_STATE);
       return testProg;
     } else {
       return programInList;
