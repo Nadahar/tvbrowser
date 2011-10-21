@@ -677,10 +677,10 @@ public class ProgramUtilities {
    * @param color The color to use for alpha value change.
    * @param program The program to get the changed color for.
    * @return The color that uses the program importance alpha value.
+   * @since 3.1
    */
   public static Color getColorForProgramImportance(Color color, Program program) {
-    byte importance = getProgramImportance(program);
-    return new Color(color.getRed(), color.getGreen(), color.getBlue(), (int)(color.getAlpha()*importance/10.));
+    return getColorForProgramImportance(color, getProgramImportance(program));
   }
   
   /**
@@ -689,6 +689,7 @@ public class ProgramUtilities {
    * @param color The color to use for alpha value change.
    * @param importance The importance to get the changed color for.
    * @return The color that uses the program importance alpha value.
+   * @since 3.1
    */
   public static Color getColorForProgramImportance(Color color, byte importance) {
     return new Color(color.getRed(), color.getGreen(), color.getBlue(), (int)(color.getAlpha()*importance/10.));
@@ -699,6 +700,7 @@ public class ProgramUtilities {
    * <p>
    * @param program The program to get the program importance for
    * @return The program importance from 0 to 10 for the given program.
+   * @since 3.1
    */
   public static byte getProgramImportance(Program program) {
     if (program.getProgramState() == Program.IS_VALID_STATE &&
