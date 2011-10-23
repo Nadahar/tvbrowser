@@ -264,7 +264,7 @@ public class NewsDialog implements WindowClosingIf {
       }
     }
     buf.append("</body></html>");
-System.out.println(buf);
+    
     return buf.toString();
   }
 
