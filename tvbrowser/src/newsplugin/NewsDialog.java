@@ -47,6 +47,7 @@ import javax.swing.JPanel;
 import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
@@ -58,6 +59,7 @@ import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 import util.ui.html.ExtendedHTMLDocument;
 import util.ui.html.ExtendedHTMLEditorKit;
+import util.ui.html.HTMLTextHelper;
 
 /**
  * Shows the news.
@@ -145,6 +147,8 @@ public class NewsDialog implements WindowClosingIf {
         }
       }
     });
+    mNewsPane.setBackground(UIManager.getColor("List.background"));
+    
     mScrollPane = new JScrollPane(mNewsPane);
     main.add(mScrollPane, BorderLayout.CENTER);
 
@@ -208,7 +212,7 @@ public class NewsDialog implements WindowClosingIf {
       + "td.author { text-align: right; font-style: italic; }"
       + "td.spacer { border-bottom: 1px solid black; }"
       + "--></style>" +
-      "</head><body>");
+      "</head><body style=\"background:"+HTMLTextHelper.getCssRgbColorEntry(UIManager.getColor("List.background"))+";text-color:"+HTMLTextHelper.getCssRgbColorEntry(UIManager.getColor("List.foreground"))+"\">");
     if (mNewsList.size() == 0) {
       buf.append("<p align=\"center\">");
       buf.append(mLocalizer.msg("no.news", "There are no news..."));
