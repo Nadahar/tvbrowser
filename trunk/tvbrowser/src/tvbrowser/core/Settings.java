@@ -1415,7 +1415,7 @@ public class Settings {
       "window.width", 770);
 
   public static final IntProperty propWindowHeight = new IntProperty(mProp,
-      "window.height", 500);
+      "window.height", 550);
 
   public static final IntProperty propWindowX = new IntProperty(mProp,
       "window.x", -1);

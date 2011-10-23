@@ -334,7 +334,7 @@ public class SettingsDialog implements WindowClosingIf {
   }
 
   public void centerAndShow() {
-    Settings.layoutWindow("main.settingsDialog", mDialog, new Dimension(750,600));
+    Settings.layoutWindow("main.settingsDialog", mDialog, new Dimension(800,550));
     mDialog.setVisible(true);
   }
 

@@ -153,7 +153,7 @@ public class ConfigAssistant extends JDialog implements ActionListener, PrevNext
 
     contentPane.add(buttonPanel, cc.xy(1, 3));
 
-    setSize(700, 500);
+    setSize(700, 550);
 
   }
 
