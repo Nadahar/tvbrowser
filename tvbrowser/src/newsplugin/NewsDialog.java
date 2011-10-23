@@ -206,13 +206,13 @@ public class NewsDialog implements WindowClosingIf {
 
     StringBuilder buf = new StringBuilder("<html><head>"
       + "<style type=\"text/css\" media=\"screen\"><!--"
-      + "body { font-family: Dialog; }"
+      + "body { font-family: Dialog; color: "+ HTMLTextHelper.getCssRgbColorEntry(UIManager.getColor("List.foreground")) + "; }"
       + "td.time { font-size: small; font-style: italic; }"
       + "td.title { font-weight: bold; }"
       + "td.author { text-align: right; font-style: italic; }"
       + "td.spacer { border-bottom: 1px solid black; }"
       + "--></style>" +
-      "</head><body style=\"background:"+HTMLTextHelper.getCssRgbColorEntry(UIManager.getColor("List.background"))+";text-color:"+HTMLTextHelper.getCssRgbColorEntry(UIManager.getColor("List.foreground"))+"\">");
+      "</head><body style=\"background:"+HTMLTextHelper.getCssRgbColorEntry(UIManager.getColor("List.background"))+"\">");
     if (mNewsList.size() == 0) {
       buf.append("<p align=\"center\">");
       buf.append(mLocalizer.msg("no.news", "There are no news..."));
@@ -264,7 +264,7 @@ public class NewsDialog implements WindowClosingIf {
       }
     }
     buf.append("</body></html>");
-
+System.out.println(buf);
     return buf.toString();
   }
 
