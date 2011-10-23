@@ -623,7 +623,7 @@ public final class Persona {
         int x = getWidth()/2-textWidth/2;
         int y = getHeight()-metrics.getDescent()-getInsets().bottom;
                   
-        int mnemonicIndex = getText().indexOf(KeyEvent.getKeyText(getMnemonic()));
+        int mnemonicIndex = getText().toUpperCase().indexOf(KeyEvent.getKeyText(getMnemonic()));
         String test = getText().substring(0,mnemonicIndex+1);
         
         int mnemonicWidth = metrics.stringWidth(KeyEvent.getKeyText(getMnemonic()));
