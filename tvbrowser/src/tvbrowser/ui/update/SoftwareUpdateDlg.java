@@ -35,6 +35,8 @@ import java.awt.Insets;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
@@ -485,6 +487,13 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
         if(!mIsVersionChange || mSoftwareUpdateItemList.getSelection().length == 0) {
           close();
         }
+      }
+    });
+    
+    addComponentListener(new ComponentAdapter() {
+      @Override
+      public void componentResized(ComponentEvent e) {
+        mSoftwareUpdateItemList.setVerticalScrollBarBlockIncrement(mSoftwareUpdateItemList.getSize().height-5);
       }
     });
 
