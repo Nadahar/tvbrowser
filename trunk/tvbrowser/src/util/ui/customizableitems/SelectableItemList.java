@@ -534,4 +534,14 @@ public class SelectableItemList extends JPanel {
   public int getItemCount() {
     return mListModel.getSize();
   }
+  
+  /**
+   * Sets the vertical scroll bar block increment
+   * <p>
+   * @param value The scroll bar block increment
+   * @since 3.1
+   */
+  public void setVerticalScrollBarBlockIncrement(int value) {
+    mScrollPane.getVerticalScrollBar().setBlockIncrement(value);
+  }
 }
