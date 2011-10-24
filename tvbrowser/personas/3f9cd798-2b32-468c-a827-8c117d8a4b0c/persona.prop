@@ -1,0 +1,12 @@
+#
+#Tue Sep 20 02:13:13 CEST 2011
+name = Green TV-Browser
+name.de = Gr\u00FCner TV-Browser
+description = Green TV-Browser
+description.de = TV-Browser in gr\u00FCn
+footerImage={user.persona}/footer.jpg
+detailURL=http\://www.tvbrowser.org/
+headerImage={user.persona}/header.jpg
+textColor=0,0,0
+shadowColor=0,0,0
+accentColor=163,214,137
