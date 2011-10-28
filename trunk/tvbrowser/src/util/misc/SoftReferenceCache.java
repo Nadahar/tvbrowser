@@ -3,6 +3,7 @@ package util.misc;
 import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.SoftReference;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,11 +18,11 @@ public class SoftReferenceCache<T,K> {
   /**
    * A map with references to the objects
    */
-  private Map<T, SoftReference<K>> mCacheHashMap = new HashMap<T, SoftReference<K>>();
+  private Map<T, SoftReference<K>> mCacheHashMap = Collections.synchronizedMap(new HashMap<T, SoftReference<K>>());
   /**
    * This map is used for the garbage collection of all items
    */
-  private Map<SoftReference<K>, T> mRefHashMap = new HashMap<SoftReference<K>, T>();
+  private Map<SoftReference<K>, T> mRefHashMap = Collections.synchronizedMap(new HashMap<SoftReference<K>, T>());
 
   /**
    * This queue gets notified if an element gets removed by the garbage collector
