@@ -133,7 +133,7 @@ public class SharedChannelAutoUpdatePlugin extends devplugin.Plugin {
    * Since TV-Browser 0.9.7 getAPIVersion must return 1.0 
    */
   public static Version getVersion() {
-    return new Version(0, 0, 1, false, null);
+    return new Version(1, 0, 0, true, null);
   }
 
   public PluginInfo getInfo() {
