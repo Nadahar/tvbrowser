@@ -16,16 +16,21 @@
  */
 package tvbrowser.core.filters.filtercomponents;
 
+import java.awt.BorderLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.HashSet;
 
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import util.ui.Localizer;
 import devplugin.Program;
+import devplugin.ProgramFieldType;
 
 public class SingleTitleFilterComponent extends AbstractFilterComponent {
 
@@ -64,33 +69,125 @@ public class SingleTitleFilterComponent extends AbstractFilterComponent {
     if (now - mLastTime > 1000) {
       reset();
     }
-    boolean newElement = mTitles.add(program.getTitle());
+    String element = program.getTitle();
+    if (bitSet(mSelectedBits,EPISODEONLY)) {
+      String episode = program.getTextField(ProgramFieldType.EPISODE_TYPE);
+      if (episode != null && episode.length() > 0) {
+        element += "##" + episode;
+      }
+    }
+    if (bitSet(mSelectedBits,CHANNELONLY)) {
+      element += "##" + program.getChannel().getId();
+    }
+
+    boolean newElement = mTitles.add(element);
     mLastTime = now;
     return newElement;
   }
 
-  @Override
-  public void read(ObjectInputStream in, int version) throws IOException, ClassNotFoundException {
-    // no settings
+  /**
+   * read the settings
+   *
+   * @see tvbrowser.core.filters.FilterComponent#read(java.io.ObjectInputStream,
+   *      int)
+   */
+  public void read(ObjectInputStream in, int version) throws IOException,
+      ClassNotFoundException {
+    mSelectedBits = in.readInt();
   }
 
-  @Override
+  /**
+   * write the settings
+   *
+   * @see tvbrowser.core.filters.FilterComponent#write(java.io.ObjectOutputStream)
+   */
   public void write(ObjectOutputStream out) throws IOException {
-    // no settings
+    out.writeInt(mSelectedBits);
   }
 
   @Override
   public JPanel getSettingsPanel() {
     JPanel p1 = new JPanel();
+    p1.setLayout(new GridBagLayout());
+
+
+    GridBagConstraints c = new GridBagConstraints();
+    c.fill = GridBagConstraints.HORIZONTAL;
+    c.gridwidth = GridBagConstraints.REMAINDER;
+   
     p1.add(new JLabel(mLocalizer.msg("desc",
-        "Accepts only the first occurrence of several programs with similar titles.")));
-    return p1;
+    "Accepts only the first occurrence of several programs with similar titles.")), c); 
+
+    mCheckBox = new JCheckBox[2];
+
+    mCheckBox[0] = new JCheckBox(mLocalizer.msg("channelonly", "Same channel only"));
+    p1.add(mCheckBox[0], c);
+
+    if (bitSet(mSelectedBits, CHANNELONLY)) {
+      mCheckBox[0].setSelected(true);
+    }
+    mCheckBox[1] = new JCheckBox(mLocalizer.msg("episodeonly", "Same episode only"));
+    p1.add(mCheckBox[1], c);
+
+    if (bitSet(mSelectedBits, EPISODEONLY)) {
+      mCheckBox[1].setSelected(true);
+    }
+
+
+
+
+    JPanel centerPanel = new JPanel(new BorderLayout());
+    centerPanel.add(p1, BorderLayout.NORTH);
+    return centerPanel;
+  
+  }
+  
+  /**
+   * Check if a bit is set
+   * 
+   * @param num
+   *          test this int
+   * @param pattern
+   *          test for this pattern
+   * @return true, if pattern is set
+   */
+  private boolean bitSet(int num, int pattern) {
+    return (num & pattern) == pattern;
   }
 
-  @Override
+  
+  /**
+   * the current selected bits
+   */
+  private int mSelectedBits = 0;
+
+  /**
+   * checkbox for the settingspanel
+   */
+  private JCheckBox[] mCheckBox;
+
+  /**
+   * save the settings
+   * 
+   * @see tvbrowser.core.filters.FilterComponent#saveSettings()
+   */
   public void saveSettings() {
-    // TODO Auto-generated method stub
+    int selectedBits = 0;
 
+    if (mCheckBox[0].isSelected()) {
+      selectedBits = selectedBits |CHANNELONLY;
+    }
+    if (mCheckBox[1].isSelected()) {
+      selectedBits = selectedBits | EPISODEONLY;
+    }
+
+
+    mSelectedBits = selectedBits;
   }
+  
+  /** On Air */
+  private static int CHANNELONLY = 1;
+  /** Expired */
+  private static int EPISODEONLY = 2;
 
 }
