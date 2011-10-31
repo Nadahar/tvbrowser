@@ -1,0 +1,95 @@
+CHANGELOG
+
+Release 0.37 Beta
+-Added channel sets
+
+Release 0.36 Beta (not public)
+-Update PluginTree checkbox added
+
+Release 0.35 Beta
+-Channel list changed to TV-Browser look
+-PluginTree can be disabled
+-PluginTree is now persistant
+-Fixed some concurrency problems
+-Plugin opens with last selected channels
+-Debug Console is always on top
+
+Release 0.34 Beta
+-Speed optimization toggle of hide genres has no effect if no genres were found
+-(xx) is removed from PluginTree
+-Added NodeFormatter for PluginTree
+
+Release 0.33 Beta
+-Add context menue to Plugin tree
+-Performance optimisation.
+
+Release 0.32 Beta
+-Fix: Channels that have no date cause an exception
+-Rendering thread added (speed improvement)
+-Uses Plugin tree
+
+Release 0.31 Stable
+-Changed layout of settings panel
+-Changed icon scaling in channel list
+
+Release 0.30 Stable
+-Fix: Senddate node displays null if enddate was not set
+-Fix: Startday was reseted when channel change happened
+
+Release 0.28-Beta
+-Search function
+-Channel list navigates to preselected channel
+-Scaled channel list icons
+-Only number of days that have data
+
+Release 0.27-Beta
+-Marked senddate nodes are displayed bold
+-On Air marking
+-Next On Air marking
+-Formatted info nodes
+-Tooltip on nodes
+-JDialog instead of JFrame (no minimize/maximize buttons anymore
+-Selectable StartDate
+-Channel list contains icons
+
+Release 0.24-Beta
+-BugFix: channel name - defaultName missmatch
+-Font / font height configurable
+-Context menu configurable
+-Icon added
+
+Release 0.23-Beta
+-Debug console added
+-Limited days to 28
+-Typo Tooltip "Genres verbergen"
+-Typo Description
+-Changed output of senddate node
+-Added context menu
+
+Release 0.22-Beta
+-Memory optimizations
+-Fix: Search stops to early if no broadcast was found in current day due to
+hide features
+-TreeView gets focus again after click even
+-Optimization onlyOnAir
+
+Release 0.21-Beta
+-Fix: Context menu does not preselect channel
+
+Release 0.2-Beta
+-Supports Localization
+-Refresh button removed
+-New CheckBox actually on air (Fix!)
+-Highlight background of broadcasts that are currently on air
+-Change senddate description
+-Load and store properties
+-Never opens blank dialog; use first channel instead (test)
+-Stabilize: Added try/catch blocks and some more checks
+-Added Tooltips
+-Error handling dialog added
+-Title shows message while working
+-Out of Memory check
+-Fix: Version information
+
+Release 0.1-Beta
+-First working version
