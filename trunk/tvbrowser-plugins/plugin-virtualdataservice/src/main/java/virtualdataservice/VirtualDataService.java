@@ -126,7 +126,7 @@ public class VirtualDataService extends AbstractTvDataService
 
   public static Version getVersion()
   {
-    return new Version(0, 2, 1, false);
+    return new Version(0, 2, 2, false);
   }
 
   public PluginInfo getInfo()
