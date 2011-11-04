@@ -90,6 +90,7 @@
     <module>plugin-nextviewdataservice</module>
     <module>plugin-nextviewdataupdatewatcher</module>
     <module>plugin-personahandler</module>
+    <module>plugin-personatimeswitcher</module>
     <module>plugin-print</module>
     <module>plugin-programlist</module>
     <module>plugin-radiotimesdataservice</module>
@@ -118,6 +119,7 @@
     <module>plugin-wirschauen</module>
     <module>plugin-zattoo</module>
     <module>plugin-web</module>
+    <module>plugin-personatimeswitcher</module>
   </modules>
   <dependencyManagement>
     <dependencies>
