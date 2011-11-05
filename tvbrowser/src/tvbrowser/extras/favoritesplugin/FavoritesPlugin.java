@@ -76,6 +76,7 @@ import tvbrowser.extras.favoritesplugin.core.Favorite;
 import tvbrowser.extras.favoritesplugin.core.TitleFavorite;
 import tvbrowser.extras.favoritesplugin.core.TopicFavorite;
 import tvbrowser.extras.favoritesplugin.dlgs.EditFavoriteDialog;
+import tvbrowser.extras.favoritesplugin.dlgs.FavoriteTree;
 import tvbrowser.extras.favoritesplugin.dlgs.FavoriteTreeModel;
 import tvbrowser.extras.favoritesplugin.dlgs.ManageFavoritesDialog;
 import tvbrowser.extras.favoritesplugin.wizards.ExcludeWizardStep;
@@ -159,6 +160,8 @@ public class FavoritesPlugin {
   private boolean mShowInfoDialog = false;
   private ExecutorService mThreadPool;
 
+  private boolean mAutoColor;
+  
   /**
    * Creates a new instance of FavoritesPlugin.
    */
@@ -418,6 +421,13 @@ public class FavoritesPlugin {
           ClassNotFoundException {
     int version = in.readInt();
 
+    if(version >= 8) {
+      mAutoColor = in.readBoolean();
+    }
+    else {
+      mAutoColor = true;
+    }
+    
     Favorite[] newFavoriteArr;
 
     if(version < 6) {
@@ -653,8 +663,10 @@ public class FavoritesPlugin {
   }
 
   private void writeData(ObjectOutputStream out) throws IOException {
-    out.writeInt(7); // version
+    out.writeInt(8); // version
 
+    out.writeBoolean(mAutoColor);
+    
     FavoriteTreeModel.getInstance().storeData(out);
 
     out.writeInt(mClientPluginTargets.length);
@@ -865,7 +877,7 @@ public class FavoritesPlugin {
         }
       }
     }
-
+    
     saveFavorites();
   }
 
@@ -1041,8 +1053,8 @@ public class FavoritesPlugin {
   protected void setAutoSelectingReminder(boolean value) {
     mSettings.setProperty("autoSelectReminder", String.valueOf(value));
   }
-
-  protected int getMarkPriority() {
+  
+  protected int getDefaultMarkPriority() {
     if(mMarkPriority == - 2 && mSettings != null) {
       mMarkPriority = Integer.parseInt(mSettings.getProperty("markPriority",String.valueOf(Program.MIN_MARK_PRIORITY)));
       return mMarkPriority;
@@ -1051,7 +1063,38 @@ public class FavoritesPlugin {
     }
   }
 
-  protected void setMarkPriority(int priority) {
+  protected int getMarkPriorityForProgram(Program p) {
+    if(isAutoColor()) {
+      Favorite[] favs = FavoriteTreeModel.getInstance().getFavoritesContainingProgram(p);
+      
+      if(favs != null && favs.length > 0) {
+        switch(favs.length) {
+          case 1: return Program.MIN_MARK_PRIORITY;
+          case 2: return Program.LOWER_MEDIUM_MARK_PRIORITY;
+          case 3: return Program.MEDIUM_MARK_PRIORITY;
+          case 4: return Program.HIGHER_MEDIUM_MARK_PRIORITY;
+          
+          default : return Program.MAX_MARK_PRIORITY;
+        }
+      }
+      else {
+        return Program.NO_MARK_PRIORITY;
+      }
+    }
+    else {
+      return getDefaultMarkPriority();
+    }
+  }
+  
+  protected boolean isAutoColor() {
+    return mAutoColor;
+  }
+  
+  protected void setAutoColorEnabled(boolean value) {
+    mAutoColor = value;    
+  }
+
+  protected void setDefaultMarkPriority(int priority) {
     mMarkPriority = priority;
 
     Favorite[] favoriteArr = FavoriteTreeModel.getInstance().getFavoriteArr();

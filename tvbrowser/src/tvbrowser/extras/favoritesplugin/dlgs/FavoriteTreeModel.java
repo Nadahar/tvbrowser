@@ -216,7 +216,7 @@ public class FavoriteTreeModel extends DefaultTreeModel {
     for (Program program : delFavPrograms) {
       program.unmark(FavoritesPluginProxy.getInstance());
     }
-
+    
     deleteFavorite((FavoriteNode) getRoot(), favorite);
 
     String[] reminderServices = favorite.getReminderConfiguration().getReminderServices();
@@ -277,6 +277,12 @@ public class FavoriteTreeModel extends DefaultTreeModel {
         } else if(child.containsFavorite()) {
           if(child.equals(fav)) {
             node.remove(child);
+            
+            Program[] progs = fav.getPrograms();
+            
+            for(Program prog : progs) {
+              prog.validateMarking();
+            }
           }
           else {
             child.getFavorite().handleContainingPrograms(fav.getPrograms());
@@ -313,6 +319,13 @@ public class FavoriteTreeModel extends DefaultTreeModel {
     FavoriteNode newNode = parent.add(fav);
     reload(parent);
     FavoritesPlugin.getInstance().updateRootNode(true);
+    
+    Program[] progs = newNode.getAllPrograms(false);
+    
+    for(Program prog : progs) {
+      prog.validateMarking();
+    }
+    
     return newNode;
   }
 
@@ -564,7 +577,7 @@ public class FavoriteTreeModel extends DefaultTreeModel {
     ArrayList<Favorite> containing = new ArrayList<Favorite>();
 
     for (Favorite favorite : getFavoriteArr()) {
-      for (Program favProgram : favorite.getPrograms()) {
+      for (Program favProgram : favorite.getWhiteListPrograms()) {
         if (favProgram.equals(program)) {
           containing.add(favorite);
           break;
