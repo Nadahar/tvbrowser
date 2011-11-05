@@ -34,6 +34,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import tvdataservice.MutableChannelDayProgram;
 import tvdataservice.MutableProgram;
@@ -91,7 +93,10 @@ public class RadioTimesFileParser {
   private static final int RT_START_TIME = 20;
   private static final int RT_END_TIME = 21;
   private static final int RT_DURATION_MINUTES = 22;
-
+    
+  private static final Pattern episodePattern = 
+    Pattern.compile("^(?:(\\d+)|)(?:/(\\d+)|)(?:(?:|, )series (\\d+)|)$");
+  
   /**
    * @param ch Parse this Channel
    */
@@ -120,6 +125,7 @@ public class RadioTimesFileParser {
         int countProgram = 0;
         String line;
         String lastLine = "";
+        Matcher matcher;
         while ((line = reader.readLine()) != null) {
           if (lastLine.length() > 0) { // re-append updated descriptions.
             line = lastLine + " " + line;
@@ -140,6 +146,30 @@ public class RadioTimesFileParser {
 
               prog.setTitle(items[RT_TITLE]);
 
+              //get episode info from subtitle
+              if (!items[RT_SUBTITLE].isEmpty()) {
+                try {
+                  matcher = episodePattern.matcher(items[RT_SUBTITLE]);
+
+                  if (matcher.find()) {   
+                    if (matcher.group(1) != null) {
+                    prog.setIntField(ProgramFieldType.EPISODE_NUMBER_TYPE, 
+                        Integer.parseInt(matcher.group(1)));
+                    }
+                    if (matcher.group(2) != null) {
+                    prog.setIntField(ProgramFieldType.EPISODE_TOTAL_NUMBER_TYPE, 
+                        Integer.parseInt(matcher.group(2)));
+                    }
+                    if (matcher.group(3) != null) {
+                    prog.setIntField(ProgramFieldType.SEASON_NUMBER_TYPE, 
+                        Integer.parseInt(matcher.group(3)));
+                    }
+                  } 
+                  items[RT_SUBTITLE] = "";
+                } catch (Exception e) {
+                }
+              }
+              
               StringBuilder desc = new StringBuilder(items[RT_SUBTITLE].trim()).append("\n\n");
 
               if (items[RT_DESCRIPTION].indexOf(0x0D) > 0) {
@@ -365,7 +395,7 @@ public class RadioTimesFileParser {
    * @return Create Actor List from String
    */
   private static String createCast(String string) {
-    if (string.contains("|")) {
+    if (string.contains("|") || (string.contains("*") && string.length() < 40)) {
       StringBuilder actors = new StringBuilder();
 
       String[] actorlist = string.split("\\|");
