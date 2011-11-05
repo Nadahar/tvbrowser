@@ -3,12 +3,15 @@ package imdbplugin;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
+import util.ui.LinkButton;
 import util.ui.Localizer;
 
 import com.jgoodies.forms.layout.CellConstraints;
@@ -121,6 +124,19 @@ public class ImdbRatingPanel extends JPanel {
       akaLabel.setFont(alternativeHead.getFont().deriveFont(12f).deriveFont(Font.PLAIN));
 
       add(akaLabel, cc.xy(1,layout.getRowCount()));
+    }
+    try {
+      layout.appendRow(RowSpec.decode("pref"));
+      String link = "http://akas.imdb.com/find?s=tt&q="
+        +URLEncoder.encode(movie.getTitle() + " ("+movie.getYear()+")","ISO-8859-1");
+      if (movie.getEpisode() != null && movie.getEpisode().length() > 0) {
+        link = "http://akas.imdb.com/find?s=ep&q="
+          +URLEncoder.encode(movie.getEpisode(),"ISO-8859-1");
+      }
+      LinkButton imdbLink = new LinkButton(mLocalizer.msg("imdbEntry","IMDb entry"), link);
+      add(imdbLink, cc.xy(1,layout.getRowCount()));
+    } catch (UnsupportedEncodingException e) {
+      //ignore
     }
 
   }
