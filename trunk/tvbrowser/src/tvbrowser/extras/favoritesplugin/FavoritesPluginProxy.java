@@ -108,7 +108,7 @@ public class FavoritesPluginProxy extends AbstractInternalPluginProxy implements
   }
 
   public int getMarkPriorityForProgram(Program p) {
-    return getFavoritesInstance().getMarkPriority();
+    return getFavoritesInstance().getMarkPriorityForProgram(p);
   }
 
   public Icon getIcon() {

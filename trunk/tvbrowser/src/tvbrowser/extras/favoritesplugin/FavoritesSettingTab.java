@@ -29,14 +29,18 @@ package tvbrowser.extras.favoritesplugin;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import javax.swing.ButtonGroup;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 
 import tvbrowser.extras.favoritesplugin.core.Favorite;
 import tvbrowser.extras.favoritesplugin.dlgs.ExclusionPanel;
@@ -73,6 +77,8 @@ public class FavoritesSettingTab implements SettingsTab {
   private DefaultMarkingPrioritySelectionPanel mMarkingsPanel;
   private ExclusionPanel mExclusionPanel;
 
+  private JRadioButton mAutoColor, mFixedColor;
+  
   /**
    * Creates the settings panel for this tab.
    */
@@ -82,7 +88,7 @@ public class FavoritesSettingTab implements SettingsTab {
         "5dlu,min(150dlu;pref):grow,5dlu,pref,5dlu",
         "pref,5dlu,pref,10dlu,pref,5dlu,pref,10dlu,pref,5dlu," +
         "pref,10dlu,pref,5dlu,pref,10dlu,pref,5dlu,pref,10dlu," +
-        "pref,5dlu,pref"));
+        "pref,5dlu,default,default,default"));
     builder.setDefaultDialogBorder();
 
     mPluginLabel = new JLabel();
@@ -125,6 +131,14 @@ public class FavoritesSettingTab implements SettingsTab {
         handlePluginSelection();
       }
     });
+    
+    ButtonGroup colorSelection = new ButtonGroup();
+    
+    mAutoColor = new JRadioButton(mLocalizer.msg("autoColor", "Weighted highlighting color"),FavoritesPlugin.getInstance().isAutoColor());
+    mFixedColor = new JRadioButton(mLocalizer.msg("fixedColor", "Fixed highlighting color"),!FavoritesPlugin.getInstance().isAutoColor());
+    
+    colorSelection.add(mAutoColor);
+    colorSelection.add(mFixedColor);
 
     builder.addSeparator(mLocalizer.msg("passTo", "Pass favorite programs to"), cc.xyw(1,1,5));
     builder.add(mPluginLabel, cc.xy(2,3));
@@ -140,8 +154,21 @@ public class FavoritesSettingTab implements SettingsTab {
     builder.add(mExclusionPanel = new ExclusionPanel(FavoritesPlugin.getInstance().getGlobalExclusions(), UiUtilities.getLastModalChildOf(MainFrame.getInstance()), null), cc.xyw(2,19,3));
 
     builder.addSeparator(DefaultMarkingPrioritySelectionPanel.getTitle(), cc.xyw(1,21,4));
-    builder.add(mMarkingsPanel = DefaultMarkingPrioritySelectionPanel.createPanel(FavoritesPlugin.getInstance().getMarkPriority(),false,false), cc.xyw(2,23,3));
+    
+    builder.add(mAutoColor, cc.xyw(2, 23, 3));
+    builder.add(mFixedColor, cc.xyw(2, 24, 3));
+    
+    builder.add(mMarkingsPanel = DefaultMarkingPrioritySelectionPanel.createPanel(FavoritesPlugin.getInstance().getDefaultMarkPriority(),false,false), cc.xyw(2,25,3));
 
+    mFixedColor.addItemListener(new ItemListener() {
+      @Override
+      public void itemStateChanged(ItemEvent e) {
+        mMarkingsPanel.setEnabled(ItemEvent.SELECTED == e.getStateChange());
+      }
+    });
+    
+    mMarkingsPanel.setEnabled(mFixedColor.isSelected());
+    
     return builder.getPanel();
   }
 
@@ -192,11 +219,9 @@ public class FavoritesSettingTab implements SettingsTab {
     FavoritesPlugin.getInstance().setIsUsingExpertMode(mExpertMode.isSelected());
     FavoritesPlugin.getInstance().setShowRepetitions(mShowRepetitions.isSelected());
     FavoritesPlugin.getInstance().setAutoSelectingReminder(mAutoSelectRemider.isSelected());
-    FavoritesPlugin.getInstance().setMarkPriority(mMarkingsPanel.getSelectedPriority());
-
-    if(mExclusionPanel.wasChanged()) {
-      FavoritesPlugin.getInstance().setGlobalExclusions(mExclusionPanel.getExclusions(),mExclusionPanel.wasAdded() && !mExclusionPanel.wasEditedOrDeleted());
-    }
+    FavoritesPlugin.getInstance().setDefaultMarkPriority(mMarkingsPanel.getSelectedPriority());
+    FavoritesPlugin.getInstance().setAutoColorEnabled(mAutoColor.isSelected());
+    FavoritesPlugin.getInstance().setGlobalExclusions(mExclusionPanel.getExclusions(),mExclusionPanel.wasAdded() && !mExclusionPanel.wasEditedOrDeleted());
 
     FavoritesPlugin.getInstance().saveFavorites();
   }
