@@ -213,14 +213,14 @@ public class BBCProgrammesParser extends DefaultHandler {
   private synchronized Calendar parseDateTime(final String time) {
     try {
       if (time.endsWith("Z")) {
-        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+        Calendar calendar = Calendar.getInstance();
         calendar.setTime(DATE_FORMAT_ZULU.parse(time.substring(0, time.indexOf("Z"))));
         return calendar;
       }
       String withoutSeparator = time.substring(0, 22) + time.substring(23);
       Calendar calendar = Calendar.getInstance();
       calendar.setTime(DATE_FORMAT.parse(withoutSeparator));
-      calendar.setTimeInMillis(calendar.getTimeInMillis() - calendar.getTimeZone().getRawOffset());
+      //calendar.setTimeInMillis(calendar.getTimeInMillis() - calendar.getTimeZone().getRawOffset());
       return calendar;
     } catch (ParseException e) {
       // logMessage("invalid time format: " + time);
