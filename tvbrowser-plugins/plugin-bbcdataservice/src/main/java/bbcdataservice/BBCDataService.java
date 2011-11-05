@@ -57,7 +57,7 @@ public final class BBCDataService extends AbstractTvDataService {
 
   private static final String COPYRIGHT = "(c) BBC";
   private static final String COUNTRY = "gb";
-  private static final TimeZone TIME_ZONE = TimeZone.getTimeZone("GMT");
+  private static final TimeZone TIME_ZONE = TimeZone.getTimeZone("GMT+0:00");
   private static final String CHANNEL_CATEGORIES = "ChannelCategories-";
   private static final String CHANNEL_TITLE = "ChannelTitle-";
   private static final String CHANNEL_ID = "ChannelId-";
