@@ -66,7 +66,7 @@ public final class BBCDataService extends AbstractTvDataService {
   private static final String PROGRAMMES_URL = "http://www.bbc.co.uk";
   private static final String CHANNEL_LIST = "http://www.tvbrowser.org/mirrorlists/BBCDataService_channellist.gz";
   private static final boolean IS_STABLE = false;
-  private static final Version mVersion = new Version(3, 11, 0, IS_STABLE);
+  private static final Version mVersion = new Version(3, 12, 0, IS_STABLE);
 
   /**
    * created lazily on first access
