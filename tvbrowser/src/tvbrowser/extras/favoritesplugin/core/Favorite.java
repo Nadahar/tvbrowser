@@ -286,8 +286,6 @@ public abstract class Favorite {
       if (mPrograms.contains(p)) {
         p.mark(FavoritesPluginProxy.getInstance());
       }
-      
-      p.validateMarking();
     }
   }
 
@@ -607,10 +605,6 @@ public abstract class Favorite {
     }
 
     mPrograms = resultList;
-    
-    for(Program prog : progs) {
-      prog.validateMarking();
-    }
   }
 
 
@@ -623,7 +617,6 @@ public abstract class Favorite {
           ReminderPlugin.getInstance().addProgram(p,reminderMinutes);
         }
       }
-      p.validateMarking();
     }
   }
 
@@ -631,8 +624,6 @@ public abstract class Favorite {
     if(!FavoriteTreeModel.getInstance().isContainedByOtherFavorites(this,p)) {
       p.unmark(FavoritesPluginProxy.getInstance());
     }
-    
-    p.validateMarking();
 
     int reminderMinutes = -2;
 
