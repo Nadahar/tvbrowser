@@ -126,18 +126,7 @@ public class RadioTimesDataService extends AbstractTvDataService {
             }
           }
           if (ch == null) {
-            String country = "gb";
-            if (channelName.equals("RTE1") || channelName.equals("RTE2")
-                || channelName.equals("RTE One") || channelName.equals("RTE Two")
-                || channelName.equals("TV3") || channelName.equals("TG4")
-                || channelName.equals("3e")) {
-              country = "ie";
-            } else if (channelName.equals("Deutsche Welle")) {
-              country = "de";
-            } else if (channelName.equals("CNN")) {
-              country = "us";
-            }
-            ch = new Channel(this, channelName, fullChannelId, TimeZone.getTimeZone("GMT+0:00"), country,
+            ch = new Channel(this, channelName, fullChannelId, TimeZone.getTimeZone("GMT+0:00"), "gb",
                 "(c) Radio Times", "http://www.radiotimes.co.uk", mRadioTimesChannelGroup, null, categories);
           }
           channels.add(ch);
