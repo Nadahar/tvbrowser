@@ -613,6 +613,9 @@ public class TvDataBase {
       boolean somethingChanged = calculateMissingLengths(checkProg);
 
       Object oldProg = mNewDayProgramsAfterUpdate.remove(key);
+      
+      // fire day program added to give plugins a chance to change programs
+      fireDayProgramAdded(checkProg);
       /*if((oldProg = mNewDayProgramsAfterUpdate.remove(key)) != null) {
         // Inform the listeners about deleting the old program
         if (oldProg instanceof ChannelDayProgram) {
@@ -822,14 +825,14 @@ public class TvDataBase {
 
   }
 
- /* private void fireDayProgramAdded(MutableChannelDayProgram prog) {
+  private void fireDayProgramAdded(MutableChannelDayProgram prog) {
     synchronized (mListenerList) {
       for (int i = 0; i < mListenerList.size(); i++) {
         TvDataBaseListener lst = mListenerList.get(i);
         lst.dayProgramAdded(prog);
       }
     }
-  }*/
+  }
 
   private void fireDayProgramTouched(ChannelDayProgram removedDayProgram, ChannelDayProgram addedDayProgram) {
     synchronized (mListenerList) {
