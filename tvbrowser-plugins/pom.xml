@@ -78,6 +78,7 @@
     <module>plugin-i18n</module>
     <module>plugin-idontwant2see</module>
     <module>plugin-imdb</module>
+    <module>plugin-jumptoprogram</module>
     <module>plugin-knotify</module>
     <module>plugin-listview</module>
     <module>plugin-logging</module>
@@ -119,7 +120,6 @@
     <module>plugin-wirschauen</module>
     <module>plugin-zattoo</module>
     <module>plugin-web</module>
-    <module>plugin-personatimeswitcher</module>
   </modules>
   <dependencyManagement>
     <dependencies>
