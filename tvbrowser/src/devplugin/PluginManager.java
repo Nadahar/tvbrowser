@@ -383,6 +383,14 @@ public interface PluginManager {
   public void scrollToProgram(Program program);
   
   /**
+   * Selects the given program in the program table.
+   * <p>
+   * @param program The program to select.
+   * @since 3.1.1
+   */
+  public void selectProgram(Program program);
+  
+  /**
    * Let TVB scroll to the given time.
    * 
    * @param time The time to scroll to in minutes.

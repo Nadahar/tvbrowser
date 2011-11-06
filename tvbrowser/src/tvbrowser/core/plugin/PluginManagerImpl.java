@@ -58,6 +58,7 @@ import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import tvbrowser.extras.reminderplugin.ReminderPluginProxy;
 import tvbrowser.ui.mainframe.MainFrame;
+import tvbrowser.ui.programtable.ProgramTable;
 import tvbrowser.ui.settings.SettingsDialog;
 import tvdataservice.MarkedProgramsList;
 import tvdataservice.MutableProgram;
@@ -929,6 +930,17 @@ public class PluginManagerImpl implements PluginManager {
   public void scrollToProgram(Program program) {
     if(program != null) {
       MainFrame.getInstance().scrollToProgram(program);
+    }
+  }
+  
+  public void selectProgram(final Program program) {
+    if(program != null) {
+      MainFrame.getInstance().scrollToProgram(program, new Runnable() {
+        public void run() {
+          ProgramTable table = MainFrame.getInstance().getProgramTableScrollPane().getProgramTable();
+          table.deSelectItem();
+          table.selectProgram(program);
+        }});
     }
   }
   
