@@ -64,7 +64,7 @@ public class SingleTitleFilterComponent extends AbstractFilterComponent {
   }
 
   @Override
-  public boolean accept(final Program program) {
+  public synchronized boolean accept(final Program program) {
     long now = System.currentTimeMillis();
     if (now - mLastTime > 1000) {
       reset();
