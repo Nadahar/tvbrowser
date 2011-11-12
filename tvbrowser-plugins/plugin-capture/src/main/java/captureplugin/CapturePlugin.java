@@ -78,7 +78,7 @@ import devplugin.Version;
  * @author Andreas Hessel, Bodo Tasche
  */
 public class CapturePlugin extends devplugin.Plugin {
-  private static final Version mVersion = new Version(3,02);
+  private static final Version mVersion = new Version(3,10);
 
     /**
      * Translator
