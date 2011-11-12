@@ -22,6 +22,9 @@ import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.JOptionPane;
+
+import util.ui.Localizer;
 import captureplugin.drivers.topfield.TopfieldConfiguration;
 import captureplugin.drivers.topfield.TopfieldServiceInfo;
 import captureplugin.drivers.topfield.TopfieldTimerEntry;
@@ -38,6 +41,7 @@ import devplugin.Program;
  * @author Wolfgang Reh
  */
 public class TopfieldConnector {
+
   /**
    * Authenticator for HTTP access authentication.
    * 
@@ -117,11 +121,20 @@ public class TopfieldConnector {
   private static final String SWITCH_FORMAT = "RecordOnOff=0&Type=%d&Satellite=%d&Service=%d&Tuner=%d&Mode=%d&"
       + "DateDay=%d&DateMonth=%d&DateYear=%d&StartTimeHour=%d&StartTimeMinute=%d&DurationHour=%d&DurationMinute=%d";
   private static final String DELETE_FORMAT = "EntryNum=%d";
-  private static final String REPLY_ALERT = "alert(";
+  private static final Pattern ALERT_TEXT_PATTERN = Pattern.compile(".*alert\\(\\\"(.*)\\\".*");
   private static final Pattern TIMER_ENTRY_PATTERN = Pattern
       .compile("new\\s*CreateTimerEntry\\((\\d+),\\s*(\\d+),\\s*(\\d+),\\s*\\\"([^\\\"]*)\\\",\\s*\\\"((\\d+)\\.\\s*([^\\\"]*))\\\",\\s*(\\d+),\\s*(\\d+),\\s*(\\d+),\\s*(\\d+),\\s*(\\d+),\\s*(\\d+),\\s*(\\d+),\\s*(\\d+),\\s*\\\"([^\\\"]*)\\\"\\);");
   private static final Pattern RECEIVER_ADD_TIME_PATTERN = Pattern.compile("\\(-(\\d+)/\\+(\\d)\\)");
   private static final String ENCODING_UTF8 = "UTF-8";
+  private static final String ADD_FAILED_TITLE = "addTimerFailedTitle";
+  private static final String DEFAULT_ADD_FAILED_TITLE = "Setting timer failed";
+  private static final String TOPFIELD_ERROR_TEXT = "addTimerFailedMessage";
+  private static final String DEFAULT_TOPFIELD_ERROR_TEXT = "Receiver reported:";
+  private static final String NEW_LINE = "\n";
+  private static final String ALERT_NEW_LINE = "\\\\n";
+  private static final String PREFIX_SPACER = " - ";
+
+  private static final Localizer localizer = Localizer.getLocalizerFor(TopfieldConnector.class);
 
   private final TopfieldConfiguration configuration;
   private final ArrayList<TopfieldServiceInfo> channels = new ArrayList<TopfieldServiceInfo>();
@@ -231,6 +244,8 @@ public class TopfieldConnector {
    *          The time to record
    * @param repeat
    *          The repetition of the timer
+   * @param protectTimer
+   *          <code>true</code> to add protection prefix to file name
    * @return <code>true</code> if the timer could be set
    * @throws TopfieldConnectionException
    *           If the device could not be contacted
@@ -240,8 +255,9 @@ public class TopfieldConnector {
    *           If no tuner could be found for the recording
    */
   public boolean addRecording(Window parent, TopfieldServiceInfo service, ProgramTime recordTime,
-      TopfieldTimerMode repeat) throws TopfieldConnectionException, TopfieldServiceException, TopfieldTunerException {
-    return addTimer(parent, service, recordTime, true, repeat);
+      TopfieldTimerMode repeat, boolean protectTimer) throws TopfieldConnectionException, TopfieldServiceException,
+      TopfieldTunerException {
+    return addTimer(parent, service, recordTime, true, repeat, protectTimer);
   }
 
   /**
@@ -263,7 +279,7 @@ public class TopfieldConnector {
    */
   public boolean addPTimer(Window parent, TopfieldServiceInfo service, ProgramTime switchTime)
       throws TopfieldConnectionException, TopfieldServiceException, TopfieldTunerException {
-    return addTimer(parent, service, switchTime, false, TopfieldTimerMode.ONE_TIME);
+    return addTimer(parent, service, switchTime, false, TopfieldTimerMode.ONE_TIME, false);
   }
 
   /**
@@ -280,6 +296,8 @@ public class TopfieldConnector {
    *          P-timer
    * @param repeat
    *          The repetition of the timer
+   * @param protectTimer
+   *          <code>true</code> to add protection prefix to file name
    * @return <code>true</code> if the timer could be set
    * @throws TopfieldConnectionException
    *           If the device could not be contacted
@@ -289,7 +307,8 @@ public class TopfieldConnector {
    *           If no tuner could be found for the recording
    */
   private boolean addTimer(Window parent, TopfieldServiceInfo service, ProgramTime recordTime, boolean record,
-      TopfieldTimerMode repeat) throws TopfieldConnectionException, TopfieldServiceException, TopfieldTunerException {
+      TopfieldTimerMode repeat, boolean protectTimer) throws TopfieldConnectionException, TopfieldServiceException,
+      TopfieldTunerException {
 
     // RecordOnOff ...... 0 = Switch on only, 1 = Record
     // Type ............. 0 = TV, 1 = Radio
@@ -322,16 +341,21 @@ public class TopfieldConnector {
       String request;
       try {
         if (record) {
-          request = String.format(RECORD_FORMAT, (service.isTV() ? 0 : 1), service.getSatelliteNumber(), service
-              .getChannelNumber(), tuner, repeat.toNumber(), recordStart.get(Calendar.DAY_OF_MONTH), recordStart
-              .get(Calendar.MONTH) + 1, recordStart.get(Calendar.YEAR), recordStart.get(Calendar.HOUR_OF_DAY),
-              recordStart.get(Calendar.MINUTE), recordTime.getLength() / 60, recordTime.getLength() % 60, URLEncoder
-                  .encode(recordTime.getTitle(), ENCODING_UTF8));
+          String fileName = recordTime.getTitle();
+          if (protectTimer) {
+            fileName = configuration.getAxProtectionPrefix() + PREFIX_SPACER + fileName;
+          }
+          request = String.format(RECORD_FORMAT, (service.isTV() ? 0 : 1), service.getSatelliteNumber(),
+              service.getChannelNumber(), tuner, repeat.toNumber(), recordStart.get(Calendar.DAY_OF_MONTH),
+              recordStart.get(Calendar.MONTH) + 1, recordStart.get(Calendar.YEAR),
+              recordStart.get(Calendar.HOUR_OF_DAY), recordStart.get(Calendar.MINUTE), recordTime.getLength() / 60,
+              recordTime.getLength() % 60, URLEncoder.encode(fileName, ENCODING_UTF8));
         } else {
-          request = String.format(SWITCH_FORMAT, (service.isTV() ? 0 : 1), service.getSatelliteNumber(), service
-              .getChannelNumber(), tuner, repeat.toNumber(), recordStart.get(Calendar.DAY_OF_MONTH), recordStart
-              .get(Calendar.MONTH) + 1, recordStart.get(Calendar.YEAR), recordStart.get(Calendar.HOUR_OF_DAY),
-              recordStart.get(Calendar.MINUTE), recordTime.getLength() / 60, recordTime.getLength() % 60);
+          request = String.format(SWITCH_FORMAT, (service.isTV() ? 0 : 1), service.getSatelliteNumber(),
+              service.getChannelNumber(), tuner, repeat.toNumber(), recordStart.get(Calendar.DAY_OF_MONTH),
+              recordStart.get(Calendar.MONTH) + 1, recordStart.get(Calendar.YEAR),
+              recordStart.get(Calendar.HOUR_OF_DAY), recordStart.get(Calendar.MINUTE), recordTime.getLength() / 60,
+              recordTime.getLength() % 60);
         }
 
         URL deviceURL = configuration.getDeviceURL(INSERT_TIMER_PAGE);
@@ -345,8 +369,10 @@ public class TopfieldConnector {
         BufferedReader in = new BufferedReader(new InputStreamReader(contentStream));
         boolean insertOK = true;
         String line;
+        Matcher errorMatcher = null;
         while ((line = in.readLine()) != null) {
-          if (line.contains(REPLY_ALERT)) {
+          errorMatcher = ALERT_TEXT_PATTERN.matcher(line);
+          if (errorMatcher.matches()) {
             insertOK = false;
             break;
           }
@@ -354,6 +380,11 @@ public class TopfieldConnector {
         in.close();
         getTimerList();
         configuration.setDeviceUnreachable(false);
+        if (!insertOK) {
+          JOptionPane.showMessageDialog(parent, localizer.msg(TOPFIELD_ERROR_TEXT, DEFAULT_TOPFIELD_ERROR_TEXT)
+              + NEW_LINE + errorMatcher.group(1).replaceAll(ALERT_NEW_LINE, NEW_LINE),
+              localizer.msg(ADD_FAILED_TITLE, DEFAULT_ADD_FAILED_TITLE), JOptionPane.ERROR_MESSAGE);
+        }
         return insertOK;
       } catch (MalformedURLException e) {
         configuration.setDeviceUnreachable(true);
