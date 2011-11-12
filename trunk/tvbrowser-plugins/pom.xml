@@ -139,7 +139,7 @@
       	<groupId>org.tvbrowser</groupId>
       	<artifactId>tvbrowser</artifactId>
       	<scope>provided</scope>
-      	<version>3.1-RC1</version>
+      	<version>3.1</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
