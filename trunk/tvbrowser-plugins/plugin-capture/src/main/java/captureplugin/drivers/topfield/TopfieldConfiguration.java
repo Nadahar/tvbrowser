@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Logger;
 
 import util.io.IOUtilities;
 import captureplugin.drivers.utils.IDGenerator;
@@ -27,9 +28,10 @@ import devplugin.ProgramReceiveTarget;
  * @author Wolfgang Reh
  */
 public final class TopfieldConfiguration implements ConfigIf, Cloneable {
-  private static final int CONFIGURATION_VERSION = 2;
+  private static final int CONFIGURATION_VERSION = 3;
   private static final String USER_NAME_PROPERTY = "user.name";
   private static final String HTTP_PROTOCOL = "http://";
+  private static final String LOG_CHANNEL_MAP = "TV-Browser channel %s (hash = %d) mapped to Topfield service %s";
 
   private String configurationID;
   private long saveTimestamp;
@@ -43,12 +45,15 @@ public final class TopfieldConfiguration implements ConfigIf, Cloneable {
   private boolean recordingsLocal = true;
   private transient boolean deviceUnreachable = false;
   private int connectionTimeout = 3000;
+  private String axProtectionPrefix = "";
   private TopfieldChannelSortKey channelSortKey = TopfieldChannelSortKey.CHANNEL_NAME;
   private HashMap<String, TopfieldServiceInfo> deviceChannels = new HashMap<String, TopfieldServiceInfo>();
   private HashMap<TopfieldServiceInfo, Channel> deviceChannelMap = new HashMap<TopfieldServiceInfo, Channel>();
   private HashMap<Channel, TopfieldServiceInfo> browserChannelMap = new HashMap<Channel, TopfieldServiceInfo>();
   private ProgramReceiveTarget[] receiveTargets = new ProgramReceiveTarget[0];
   private ArrayList<TopfieldTimerEntry> timerEntries = new ArrayList<TopfieldTimerEntry>();
+
+  private static final Logger logger = Logger.getLogger(TopfieldConfiguration.class.getName());
 
   /**
    * Create an empty configuration.
@@ -76,6 +81,7 @@ public final class TopfieldConfiguration implements ConfigIf, Cloneable {
     deviceUnreachable = configuration.deviceUnreachable;
     connectionTimeout = configuration.connectionTimeout;
     channelSortKey = configuration.channelSortKey;
+    axProtectionPrefix = configuration.axProtectionPrefix;
     deviceChannels = new HashMap<String, TopfieldServiceInfo>(configuration.deviceChannels);
     deviceChannelMap = new HashMap<TopfieldServiceInfo, Channel>(configuration.deviceChannelMap);
     browserChannelMap = new HashMap<Channel, TopfieldServiceInfo>(configuration.browserChannelMap);
@@ -215,6 +221,10 @@ public final class TopfieldConfiguration implements ConfigIf, Cloneable {
     if (version > 1) {
       channelSortKey = (TopfieldChannelSortKey) stream.readObject();
     }
+
+    if (version > 2) {
+      axProtectionPrefix = stream.readUTF();
+    }
   }
 
   /**
@@ -272,6 +282,7 @@ public final class TopfieldConfiguration implements ConfigIf, Cloneable {
     }
 
     stream.writeObject(channelSortKey);
+    stream.writeUTF(axProtectionPrefix);
   }
 
   /**
@@ -282,8 +293,9 @@ public final class TopfieldConfiguration implements ConfigIf, Cloneable {
    * @return The preroll time
    */
   public Integer getChannelPreroll(Channel subscribedChannel) {
-    if (browserChannelMap.get(subscribedChannel) != null) {
-      Integer preroll = browserChannelMap.get(subscribedChannel).getPreroll();
+    TopfieldServiceInfo serviceInfo = getServiceInfo(subscribedChannel);
+    if (serviceInfo != null) {
+      Integer preroll = serviceInfo.getPreroll();
       return (preroll == null) ? defaultPreroll : preroll;
     } else {
       return null;
@@ -298,8 +310,9 @@ public final class TopfieldConfiguration implements ConfigIf, Cloneable {
    * @return The postroll time
    */
   public Integer getChannelPostroll(Channel subscribedChannel) {
-    if (browserChannelMap.get(subscribedChannel) != null) {
-      Integer postroll = browserChannelMap.get(subscribedChannel).getPostroll();
+    TopfieldServiceInfo serviceInfo = getServiceInfo(subscribedChannel);
+    if (serviceInfo != null) {
+      Integer postroll = serviceInfo.getPostroll();
       return (postroll == null) ? defaultPostroll : postroll;
     } else {
       return null;
@@ -506,6 +519,21 @@ public final class TopfieldConfiguration implements ConfigIf, Cloneable {
   }
 
   /**
+   * @return the axProtectionPrefix
+   */
+  public String getAxProtectionPrefix() {
+    return (axProtectionPrefix);
+  }
+
+  /**
+   * @param axProtectionPrefix
+   *          the axProtectionPrefix to set
+   */
+  public void setAxProtectionPrefix(String axProtectionPrefix) {
+    this.axProtectionPrefix = axProtectionPrefix;
+  }
+
+  /**
    * @param connectionTimeout
    *          the connectionTimeout to set
    */
@@ -574,11 +602,56 @@ public final class TopfieldConfiguration implements ConfigIf, Cloneable {
     timerEntries = new ArrayList<TopfieldTimerEntry>(entries);
   }
 
+  /**
+   * Get a properly formatted URL for device communication.
+   * 
+   * @param page
+   *          The page to get
+   * @return A properly formed URL
+   * @throws MalformedURLException
+   *           If no properly formed URL could be created
+   */
   public URL getDeviceURL(String page) throws MalformedURLException {
     String urlString = getDeviceAddress() + page;
     if (!urlString.toLowerCase().startsWith(HTTP_PROTOCOL.toLowerCase())) {
       urlString = HTTP_PROTOCOL + urlString;
     }
     return new URL(urlString);
+  }
+
+  /**
+   * Log the channel map for debugging purposes.
+   */
+  public void logChannelMap() {
+    for (Channel browserChannel : browserChannelMap.keySet()) {
+      logger.info(String.format(LOG_CHANNEL_MAP, browserChannel.toString(), browserChannel.hashCode(),
+          browserChannelMap.get(browserChannel).toString()));
+    }
+  }
+
+  /**
+   * Get the device service information.<br>
+   * If the map doesn't yield a result try by looping over all map entries and
+   * checking the TV-Browser channel attributes
+   * 
+   * @param browserChannel
+   *          The TV-Browser channel
+   * @return The Topfield service information
+   */
+  public TopfieldServiceInfo getServiceInfo(Channel browserChannel) {
+    TopfieldServiceInfo serviceInfo = browserChannelMap.get(browserChannel);
+    if (serviceInfo == null) {
+      /*
+       * Second chance. For some reason sometimes after an TV program update the
+       * channel retrieved from a program does not match the channel after
+       * application start.
+       */
+      for (Channel channel : browserChannelMap.keySet()) {
+        if (browserChannel.equals(channel)) {
+          return browserChannelMap.get(channel);
+        }
+      }
+    }
+    return serviceInfo;
   }
 }

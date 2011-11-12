@@ -11,8 +11,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
@@ -61,7 +59,7 @@ public class TopfieldConfigurationDialog extends JDialog implements WindowClosin
   private static final Localizer localizer = Localizer.getLocalizerFor(TopfieldConfigurationDialog.class); // @jve:decl-index=0:
   private static final Font BORDER_FONT = new Font("SansSerif", Font.BOLD, 12);
   private static final Color BORDER_COLOR = new Color(59, 59, 59);
-  private static final String DRIVER_VERSION = "1.1";
+  private static final String DRIVER_VERSION = "2.0";
   private static final String DRIVER_AUTHOR = "Wolfgang Reh";
 
   private static final String DIALOG_TITLE = "title"; // @jve:decl-index=0:
@@ -118,6 +116,10 @@ public class TopfieldConfigurationDialog extends JDialog implements WindowClosin
   private static final String DEFAULT_SORT_BY_NUMBER = "channel number";
   private static final String WAIT_FOR_CHANNELS = "waitForChannels"; // @jve:decl-index=0:
   private static final String DEFAULT_WAIT_FOR_CHANNELS = "Retrieving channel list ..."; // @jve:decl-index=0:
+  private static final String AUTOEXTENDER_TITLE = "autoExtenderTitle"; // @jve:decl-index=0:
+  private static final String DEFAULT_AUTOEXTENDER_TITLE = "AutoExtender"; // @jve:decl-index=0:
+  private static final String PROTECT_TIMER_LABEL = "prefixLabel"; // @jve:decl-index=0:
+  private static final String DEFAULT_PROTECT_TIMER_LABEL = "Protect timer prefix for AutoExtender:"; // @jve:decl-index=0:
 
   private boolean configurationOK = false;
   private final TopfieldDevice device;
@@ -175,6 +177,9 @@ public class TopfieldConfigurationDialog extends JDialog implements WindowClosin
   private JRadioButton sortNumberRadio = null;
   private JLabel sortChannelLabel = null;
   private JPanel sortSpacerPanel = null;
+  private JPanel axPanel = null;
+  private JLabel prefixLabel = null;
+  private JTextField protectTimerPrefix = null;
 
   /**
    * Configure a Topfield device.
@@ -218,6 +223,7 @@ public class TopfieldConfigurationDialog extends JDialog implements WindowClosin
     case CHANNEL_NUMBER:
       sortNumberRadio.setSelected(true);
     }
+    protectTimerPrefix.setText(configuration.getAxProtectionPrefix());
   }
 
   /**
@@ -344,6 +350,7 @@ public class TopfieldConfigurationDialog extends JDialog implements WindowClosin
       configuration.setUseTuner4(tuner4Check.isSelected());
       configuration.setCorrectTime(correctTimeCheck.isSelected());
       configuration.setReceiveTargets(passOnComponent.getCurrentSelection());
+      configuration.setAxProtectionPrefix(protectTimerPrefix.getText());
     }
     setVisible(!configurationOK);
   }
@@ -796,6 +803,13 @@ public class TopfieldConfigurationDialog extends JDialog implements WindowClosin
    */
   private JPanel getExtendedPanel() {
     if (extendedPanel == null) {
+      GridBagConstraints gridBagConstraints42 = new GridBagConstraints();
+      gridBagConstraints42.gridx = 0;
+      gridBagConstraints42.fill = GridBagConstraints.HORIZONTAL;
+      gridBagConstraints42.weightx = 1.0;
+      gridBagConstraints42.insets = new Insets(2, 0, 0, 0);
+      gridBagConstraints42.gridwidth = 2;
+      gridBagConstraints42.gridy = 4;
       GridBagConstraints gridBagConstraints30 = new GridBagConstraints();
       gridBagConstraints30.gridx = 0;
       gridBagConstraints30.fill = GridBagConstraints.HORIZONTAL;
@@ -826,7 +840,7 @@ public class TopfieldConfigurationDialog extends JDialog implements WindowClosin
       gridBagConstraints26.weighty = 1.0;
       gridBagConstraints26.anchor = GridBagConstraints.SOUTH;
       gridBagConstraints26.gridx = 0;
-      gridBagConstraints26.gridy = 4;
+      gridBagConstraints26.gridy = 5;
       gridBagConstraints26.gridwidth = 2;
       gridBagConstraints26.insets = new Insets(3, 0, 0, 0);
       gridBagConstraints26.weightx = 1.0;
@@ -852,6 +866,7 @@ public class TopfieldConfigurationDialog extends JDialog implements WindowClosin
       extendedPanel.add(connectionTimeoutLabel, gridBagConstraints28);
       extendedPanel.add(getConnectionTimoutSpinner(), gridBagConstraints29);
       extendedPanel.add(getCorrectTimeCheck(), gridBagConstraints30);
+      extendedPanel.add(getAxPanel(), gridBagConstraints42);
     }
     return extendedPanel;
   }
@@ -1203,5 +1218,50 @@ public class TopfieldConfigurationDialog extends JDialog implements WindowClosin
       sortSpacerPanel.setLayout(new GridBagLayout());
     }
     return sortSpacerPanel;
+  }
+
+  /**
+   * This method initializes axPanel
+   * 
+   * @return javax.swing.JPanel
+   */
+  private JPanel getAxPanel() {
+    if (axPanel == null) {
+      GridBagConstraints gridBagConstraints44 = new GridBagConstraints();
+      gridBagConstraints44.fill = GridBagConstraints.HORIZONTAL;
+      gridBagConstraints44.gridy = 0;
+      gridBagConstraints44.weightx = 1.0;
+      gridBagConstraints44.insets = new Insets(0, 3, 0, 0);
+      gridBagConstraints44.gridx = 1;
+      GridBagConstraints gridBagConstraints43 = new GridBagConstraints();
+      gridBagConstraints43.gridx = 0;
+      gridBagConstraints43.anchor = GridBagConstraints.WEST;
+      gridBagConstraints43.gridy = 0;
+      prefixLabel = new JLabel();
+      prefixLabel.setText(localizer.msg(PROTECT_TIMER_LABEL, DEFAULT_PROTECT_TIMER_LABEL));
+      axPanel = new JPanel();
+      axPanel.setLayout(new GridBagLayout());
+      TitledBorder titledBorder = BorderFactory.createTitledBorder(
+          BorderFactory.createMatteBorder(1, 0, 0, 0, Color.black),
+          localizer.msg(AUTOEXTENDER_TITLE, DEFAULT_AUTOEXTENDER_TITLE), TitledBorder.DEFAULT_JUSTIFICATION,
+          TitledBorder.TOP, BORDER_FONT, BORDER_COLOR);
+      titledBorder.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.lightGray));
+      axPanel.setBorder(titledBorder);
+      axPanel.add(prefixLabel, gridBagConstraints43);
+      axPanel.add(getProtectTimerPrefix(), gridBagConstraints44);
+    }
+    return axPanel;
+  }
+
+  /**
+   * This method initializes protectTimerPrefix
+   * 
+   * @return javax.swing.JTextField
+   */
+  private JTextField getProtectTimerPrefix() {
+    if (protectTimerPrefix == null) {
+      protectTimerPrefix = new JTextField();
+    }
+    return protectTimerPrefix;
   }
 } // @jve:decl-index=0:visual-constraint="10,10"
