@@ -1,0 +1,119 @@
+<?xml version="1.0"?>
+<!--
+ | Ant build script for the TV-Browser project.
+ |
+ | TV-Browser
+ | Copyright (C) 04-2003 Martin Oberhauser (martin@tvbrowser.org)
+ |
+ | This program is free software; you can redistribute it and/or
+ | modify it under the terms of the GNU General Public License
+ | as published by the Free Software Foundation; either version 2
+ | of the License, or (at your option) any later version.
+ |
+ | This program is distributed in the hope that it will be useful,
+ | but WITHOUT ANY WARRANTY; without even the implied warranty of
+ | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ | GNU General Public License for more details.
+ |
+ | You should have received a copy of the GNU General Public License
+ | along with this program; if not, write to the Free Software
+ | Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ |
+ | CVS information:
+ |  $RCSfile$
+ |   $Source$
+ |     $Date: 2008-05-24 11:40:51 +0200 (Sa, 24 Mai 2008) $
+ |   $Author: troggan $
+ | $Revision: 4713 $
+ +-->
+<project name="TV-Browser Datakit" default="targets" basedir=".">
+  <property name="src.dir" value="java"/>
+  <property name="classes.dir" value="classes"/>
+  <property name="lib.dir" value="lib"/>
+
+  <property name="args" value=""/>
+  <property name="raw" value="raw"/>
+  <property name="log" value="pdslog"/>
+  <property name="groups" value="myfirstgroup"/>
+  <property name="config" value="config/MirrorUpdater.ini"/>
+  <property name="pdsclasses" value="SimplePDS,XmlTvPDS"/>
+
+  <path id="classpath">
+    <pathelement location="classes"/>
+    <fileset dir="${lib.dir}">
+      <include name="*.jar"/>
+      <exclude name="ant.jar"/>
+    </fileset>
+  </path>
+
+  <path id="sourcepath">
+    <pathelement location="${src.dir}"/>
+  </path>
+
+  <target name="targets">
+    <echo message="usage: build [target]"/>
+    <echo message=""/>
+    <echo message="main targets:"/>
+    <echo message="============="/>
+    <echo message="  pdsrunner -Dpdsclasses=SimplePDS,XmlTvPDS      Run the conveter java classes"/>
+    <echo message="  dayprogramfiletranslator                    Convert the data to text files"/>
+    <echo message="  primarydatamanager -Dgroups=myfirstgroup    Create the data that is uploaded to the server"/>
+    <echo message="  mirrorupdater -Dgroups=myfirstgroup         Upload the groups to the ftp servers"/>
+  </target>
+
+  <target name="compile">
+    <javac destdir="classes" deprecation="true" encoding="UTF-8" target="1.5" source="1.5">
+      <src>
+        <path refid="sourcepath"/>
+      </src>
+      <classpath>
+        <path refid="classpath"/>
+      </classpath>
+    </javac>
+  </target>
+
+  <target name="pdsrunner" depends="compile">
+    <java classname="primarydatamanager.PDSRunner" maxmemory="256m" fork="true">
+      <jvmarg value="-Djava.awt.headless=true"/>
+      <classpath>
+        <path refid="classpath"/>
+      </classpath>
+      <arg value="${pdsclasses}"/>
+      <arg value="-raw"/>
+      <arg value="${raw}"/>
+      <arg value="-log"/>
+      <arg value="${log}"/>
+    </java>
+  </target>
+
+  <target name="dayprogramfiletranslator">
+    <java classname="primarydatamanager.DayProgramFileTranslator" maxmemory="256m" fork="true">
+      <jvmarg value="-Djava.awt.headless=true"/>
+      <classpath>
+        <path refid="classpath"/>
+      </classpath>
+      <arg value="${raw}"/>
+    </java>
+  </target>
+
+  <target name="primarydatamanager">
+    <java classname="primarydatamanager.PrimaryDataManager" maxmemory="256m" fork="true">
+      <jvmarg value="-Djava.awt.headless=true"/>
+      <classpath>
+        <path refid="classpath"/>
+      </classpath>
+      <arg value="${groups}"/>
+    </java>
+  </target>
+
+  <target name="mirrorupdater">
+    <java classname="primarydatamanager.mirrorupdater.MirrorUpdater" maxmemory="256m" fork="true">
+      <jvmarg value="-Djava.awt.headless=true"/>
+      <classpath>
+        <path refid="classpath"/>
+      </classpath>
+      <arg value="${config}"/>
+    </java>
+  </target>
+
+</project>

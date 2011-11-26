@@ -1,0 +1,2 @@
+http://www.murfman.de/tv/;50
+http://www.example.com/tv;50
