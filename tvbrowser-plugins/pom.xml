@@ -87,6 +87,7 @@
     <module>plugin-mixeddataservice</module>
     <module>plugin-mixedupdatelock</module>
     <module>plugin-movieaward</module>
+    <module>plugin-news</module>
     <module>plugin-notifyosd</module>
     <module>plugin-nextviewdataservice</module>
     <module>plugin-nextviewdataupdatewatcher</module>
@@ -109,6 +110,7 @@
     <module>plugin-timeline</module>
     <module>plugin-timelist</module>
     <module>plugin-tooltipcontrol</module>
+    <module>plugin-tvbrowserdataservice</module>
     <module>plugin-tvbrowsermini</module>
     <module>plugin-tvpearl</module>
     <module>plugin-tvrater</module>
