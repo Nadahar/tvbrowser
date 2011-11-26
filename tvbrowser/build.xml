@@ -62,8 +62,6 @@
   <property name="tvbrowser-transportable.runtime.dir" value="${runtime.dir}/tvbrowser_transportable"/>
   <property name="tvbrowser-nightly.runtime.dir" value="${runtime.dir}/tvbrowser_nightly"/>
   <property name="tvbrowser-mac.runtime.dir" value="${runtime.dir}/tvbrowser_mac"/>
-  <property name="tvdatatools.runtime.dir" value="${runtime.dir}/tvdatatools"/>
-  <property name="tvdatakit.runtime.dir" value="${runtime.dir}/tvdatakit"/>
   <property name="themepacks.dir" value="themepacks"/>
   <property name="personas.dir" value="personas"/>
 
@@ -145,7 +143,6 @@
   	<echo message="  public-transportable  Creates platform-independent binaries for transportable version of TV-Browser (requires Windows)"/>
   	<echo message="  public-nightly        Creates platform-independent binaries for nightly transportable version of TV-Browser (without platform dependent starters)"/>
     <echo message="  public-src            Creates a .zip file containing the full source code of TV-Browser"/>
-    <echo message="  public-tvdatakit      Creates a .zip file containing the TV-Browser TV data kit" />
     <echo message="  public-doc            Generates the JavaDoc documentation."/>
     <echo message=""/>
     <echo message="further targets:"/>
@@ -162,7 +159,6 @@
     <echo message="  runtime-linux         Creates a runtime directory for linux platforms" />
     <echo message="  runtime-mac           Creates a runtime directory for Mac OS X" />
     <echo message="  runtime-win           Creates a runtime directory for MS Windows" />
-    <echo message="  runtime-tvdatakit     Creates a runtime directory for the TV-Browser TV data kit" />
     <echo message="  test                  Runs the JUnit tests."/>
   </target>
 
@@ -207,17 +203,7 @@
     <delete dir="${tvbrowser-mac.runtime.dir}"/>
   </target>
 
-  <!-- Deletes the classes and the runtime directory. -->
-  <target name="clean-tools" depends="clean">
-    <delete dir="${tvdatatools.runtime.dir}"/>
-  </target>
-
-  <!-- Deletes the classes and the runtime directory. -->
-  <target name="clean-tvdatakit" depends="clean">
-    <delete dir="${tvdatakit.runtime.dir}"/>
-  </target>
-
-  <target name="clean-all" depends="clean-tvdatakit, clean-tools, clean-mac, clean-linux, clean-win, clean-default">
+  <target name="clean-all" depends="clean-mac, clean-linux, clean-win, clean-default">
     <delete dir="${public.dir}"/>
   </target>
 
@@ -526,141 +512,6 @@
   </target>
 
 
-  <target name="runtime-tools" depends="clean-tools, make-default, test">
-    <echo message="Creating the jars ..." />
-
-    <mkdir dir="${tvdatatools.runtime.dir}"/>
-    <mkdir dir="${tvdatatools.runtime.dir}/prepared"/>
-
-    <!-- Extract the libraries for the jars into the temp.dir -->
-    <unjar src="${lib.dir}/${lib.commons.net.name}-${lib.commons.net.version}.jar" dest="${unpacked.dir}/${lib.commons.net.name}.jar"/>
-    <unjar src="${lib.dir}/${lib.commons.lang.name}-${lib.commons.lang.version}.jar" dest="${unpacked.dir}/${lib.commons.lang.name}.jar"/>
-    <unjar src="${lib.dir}/${lib.jgoodies-common.name}-${lib.jgoodies-common.version}.jar" dest="${unpacked.dir}/${lib.jgoodies-common.name}.jar"/>
-    <unjar src="${lib.dir}/${lib.jgoodies-looks.name}-${lib.jgoodies-looks.version}.jar" dest="${unpacked.dir}/${lib.jgoodies-looks.name}.jar"/>
-	<unjar src="${lib.dir}/${lib.opencsv.name}-${lib.opencsv.version}.jar" dest="${unpacked.dir}/${lib.opencsv.name}.jar" />
-    <unjar src="${lib.dir}/${lib.htmlparser.name}-${lib.htmlparser.version}.jar" dest="${unpacked.dir}/${lib.htmlparser.name}.jar" />
-
-    <!-- Pack the MirrorUpdater.jar -->
-    <jar jarfile="${tvdatatools.runtime.dir}/MirrorUpdater.jar"
-         compress="false"
-         index="true">
-      <manifest>
-        <attribute name="Main-Class" value="primarydatamanager.mirrorupdater.MirrorUpdater"/>
-      </manifest>
-      <fileset dir="${classes.dir}" includes="primarydatamanager/mirrorupdater/**"/>
-      <fileset dir="${classes.dir}" includes="primarydatamanager/tvlistingstool/**"/>
-      <fileset dir="${classes.dir}" includes="tvbrowserdataservice/**"/>
-      <fileset dir="${classes.dir}" includes="tvdataservice/**"/>
-      <fileset dir="${classes.dir}" includes="devplugin/**"/>
-      <fileset dir="${classes.dir}" includes="util/**"/>
-<!--      <fileset dir="${classes.dir}" includes="tvbrowser/core/tvdataservice/**"/>
-      <fileset dir="${classes.dir}" includes="tvbrowser/core/ChannelUserSettings*"/>
-      <fileset dir="${classes.dir}" includes="tvbrowser/core/Settings*"/>
-      <fileset dir="${classes.dir}" includes="tvbrowser/core/plugin/DefaultSettings*"/>-->
-      <fileset dir="${classes.dir}" includes="tvbrowser/**"/>
-      <fileset dir="${unpacked.dir}/${lib.commons.net.name}.jar" includes="org/**"/>
-      <fileset dir="${unpacked.dir}/${lib.commons.lang.name}.jar" includes="org/**"/>
-      <fileset dir="${unpacked.dir}/${lib.jgoodies-common.name}.jar" includes="com/**"/>
-      <fileset dir="${unpacked.dir}/${lib.jgoodies-looks.name}.jar" includes="com/**"/>
-      <fileset dir="${unpacked.dir}/${lib.opencsv.name}.jar" includes="au/**"/>
-      <fileset dir="${unpacked.dir}/${lib.htmlparser.name}.jar" includes="org/**"/>
-    </jar>
-
-    <!-- Pack the PrimaryDataManager.jar -->
-    <jar jarfile="${tvdatatools.runtime.dir}/PrimaryDataManager.jar"
-         compress="false"
-         index="true">
-      <manifest>
-        <attribute name="Main-Class" value="primarydatamanager.PrimaryDataManager"/>
-      </manifest>
-      <fileset dir="${classes.dir}"
-               includes="primarydatamanager/**"
-               excludes="**/secret/**" />
-      <fileset dir="${classes.dir}" includes="tvbrowserdataservice/**"/>
-      <fileset dir="${classes.dir}" includes="tvdataservice/**"/>
-      <fileset dir="${classes.dir}" includes="devplugin/**"/>
-      <fileset dir="${classes.dir}" includes="util/**"/>
-      <fileset dir="${classes.dir}" includes="tvbrowser/**"/>
-      <fileset dir="${unpacked.dir}/${lib.jgoodies-common.name}.jar" includes="com/**"/>
-      <fileset dir="${unpacked.dir}/${lib.jgoodies-looks.name}.jar" includes="com/**"/>
-      <fileset dir="${unpacked.dir}/${lib.opencsv.name}.jar" includes="au/**"/>
-      <fileset dir="${unpacked.dir}/${lib.commons.lang.name}.jar" includes="org/**"/>
-      <fileset dir="${unpacked.dir}/${lib.htmlparser.name}.jar" includes="org/**"/>
-    </jar>
-
-    <!-- Pack the PDSRunner.jar -->
-    <jar jarfile="${tvdatatools.runtime.dir}/PDSRunner.jar"
-         compress="false"
-         index="true">
-      <manifest>
-        <attribute name="Main-Class" value="primarydatamanager.PDSRunner"/>
-      </manifest>
-      <fileset dir="${classes.dir}"
-               includes="primarydatamanager/**"
-               excludes="**/secret/**" />
-      <fileset dir="${classes.dir}" includes="tvbrowserdataservice/file/**"/>
-      <fileset dir="${classes.dir}" includes="tvdataservice/**"/>
-      <fileset dir="${classes.dir}" includes="devplugin/**"/>
-      <fileset dir="${classes.dir}" includes="util/**"/>
-      <fileset dir="${classes.dir}" includes="tvbrowser/**"/>
-      <fileset dir="${unpacked.dir}/${lib.jgoodies-common.name}.jar" includes="com/**"/>
-      <fileset dir="${unpacked.dir}/${lib.jgoodies-looks.name}.jar" includes="com/**"/>
-      <fileset dir="${unpacked.dir}/${lib.opencsv.name}.jar" includes="au/**"/>
-      <fileset dir="${unpacked.dir}/${lib.commons.lang.name}.jar" includes="org/**"/>
-      <fileset dir="${unpacked.dir}/${lib.htmlparser.name}.jar" includes="org/**"/>
-    </jar>
-
-    <!-- Copy the file(s) -->
-    <copy todir="${tvdatatools.runtime.dir}/prepared">
-      <fileset dir="${txt.dir}" includes="mirrorlist.txt"/>
-    </copy>
-
-    <copy todir="${tvdatatools.runtime.dir}">
-      <fileset dir="${txt.dir}" includes="MirrorUpdater.ini"/>
-    </copy>
-  </target>
-
-
-  <!--
-  | Creates the runtime for the TV data starter kit
-  +-->
-  <target name="runtime-tvdatakit" depends="clean-tvdatakit, runtime-tools, test">
-    <!-- Compile the example PDSs -->
-    <mkdir dir="${tvdatakit.runtime.dir}/java"/>
-    <mkdir dir="${tvdatakit.runtime.dir}/classes"/>
-    <mkdir dir="${tvdatakit.runtime.dir}/lib"/>
-    <mkdir dir="${tvdatakit.runtime.dir}/prepared"/>
-    <javac destdir="${tvdatakit.runtime.dir}/classes"
-           debug="${debug}"
-           deprecation="true"
-           srcdir="tvdatakit/java"
-    	     encoding="UTF-8"
-           target="1.5"
-           source="1.5">
-      <classpath>
-        <fileset dir="${tvdatatools.runtime.dir}">
-          <include name="PrimaryDataManager.jar"/>
-        </fileset>
-        <fileset dir="tvdatakit/lib">
-          <include name="*.jar"/>
-        </fileset>
-      </classpath>
-    </javac>
-
-    <!-- Copy the missing stuff -->
-    <copy todir="${tvdatakit.runtime.dir}">
-      <fileset dir="tvdatakit" excludes="**/CVS/**"/>
-    </copy>
-    <copy todir="${tvdatakit.runtime.dir}/lib">
-      <fileset dir="${tvdatatools.runtime.dir}" includes="*.jar"/>
-      <fileset dir="${txt.dir}" includes="LICENSE.txt"/>
-    </copy>
-
-  </target>
-
-
-
-
   <!-- Creates the release binaries (.zip) for the platform independent TV-Browser version -->
   <target name="public-default" depends="runtime-default" description="creates platform-independent binaries">
     <mkdir dir="${public.dir}"/>
@@ -860,23 +711,6 @@
       <!-- Delete Files -->
       <delete file="tvbrowser.sparseimage" />
     </target>
-
-  <!--
-    | Packs the TV data starter kit
-    |
-    | This target depends on clean-runtime to be sure that the runtime
-    | directory contains no stuff we don't want to be destributed.
-    +-->
-  <target name="public-tvdatakit" depends="runtime-tvdatakit" description="Creates a .zip file containing the TV-Browser TV data kit">
-
-    <!-- Pack the TvDataStarterKit zip -->
-    <mkdir dir="${public.dir}"/>
-
-    <zip destfile="${public.dir}/TvDataStarterKit-${tvdatakit.version}.zip">
-      <zipfileset prefix="TvDataStarterKit-${tvdatakit.version}" dir="${tvdatakit.runtime.dir}" excludes="**/*.sh"/>
-   	  <zipfileset prefix="TvDataStarterKit-${tvdatakit.version}" dir="${tvdatakit.runtime.dir}" includes="**/*.sh" filemode="755"/>
-    </zip>
-  </target>
 
   <!--
     | Does the JUnit tests.
