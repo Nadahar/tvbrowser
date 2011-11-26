@@ -1,4 +1,0 @@
-de;GMT+01:00;kanal12;Kanal12;[copyright notice]
-de;GMT+01:00;quizz44;Quiz 44;[copyright notice]
-de;GMT+01:00;einkauf;Einkauf 1-2-3;[copyright notice]
-de;GMT+01:00;Channel1;Channel One;[copyright notice]
