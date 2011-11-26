@@ -74,6 +74,7 @@
   <property name="installer.dir" value="${win.dir}/installer"/>
   <property name="package-lists.dir" value="${txt.dir}/package-lists"/>
   <property name="public.dir" value="public"/>
+  <property name="newsplugin.url" value="http://www.tvbrowser.org/components/com_tvbplugins/download.php?id=110"/>
 
   <path id="sourcepath">
     <pathelement location="${src.dir}"/>
@@ -146,7 +147,6 @@
     <echo message="  public-src            Creates a .zip file containing the full source code of TV-Browser"/>
     <echo message="  public-tvdatakit      Creates a .zip file containing the TV-Browser TV data kit" />
     <echo message="  public-doc            Generates the JavaDoc documentation."/>
-  	<echo message="  public-plugins        Generates the additional plugins package."/>
     <echo message=""/>
     <echo message="further targets:"/>
     <echo message="================"/>
@@ -289,16 +289,6 @@
     </javac>
 
   </target>
-
-  <target name="runtime-plugins" depends="runtime-default">
-    <!-- Pack the plugin jars -->
-  	
-    <!-- Pack the TV data service jars -->
-    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/TvBrowserDataService.jar"
-         compress="true">
-      <fileset dir="${classes.dir}" includes="tvbrowserdataservice/**"/>
-    </jar>
-  </target>
 	
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
    |
@@ -306,14 +296,16 @@
    |
     - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 
-  <!-- Creates the platform independent runtime folder -->
-  <target name="runtime" depends="clean-default, make-default">
-    <echo message="Creating the jars ..."/>
-
+  <target name="mkdirs">
     <!-- Make the TV-Browser runtime -->
     <delete dir="${tvbrowser-default.runtime.dir}"/>
     <mkdir dir="${tvbrowser-default.runtime.dir}"/>
-		<mkdir dir="${tvbrowser-default.runtime.dir}/plugins"/>
+		<mkdir dir="${tvbrowser-default.runtime.dir}/plugins"/>  	
+  </target>
+	
+  <!-- Creates the platform independent runtime folder -->
+  <target name="runtime" depends="clean-default, make-default, mkdirs, download-newsplugin">
+    <echo message="Creating the jars ..."/>
 
     <!-- Extract the libraries for the tvbrowser.jar into the temp.dir -->
     <unjar src="${lib.dir}/${lib.skinlf.name}-${lib.skinlf.version}.jar" dest="${unpacked.dir}/${lib.skinlf.name}.jar"/>
@@ -387,11 +379,6 @@
       <!--    <fileset dir="${txt.dir}" includes="windows.properties"/>   -->
       <!--    <fileset dir="${txt.dir}" includes="tvbrowser.sh"/>         -->
     </copy>
-  	
-    <jar jarfile="${tvbrowser-default.runtime.dir}/plugins/NewsPlugin.jar"
-         compress="true">
-      <fileset dir="${classes.dir}" includes="newsplugin/**"/>
-    </jar>
 
     <!-- Themepacks -->
     <mkdir dir="${tvbrowser-default.runtime.dir}/themepacks"/>
@@ -815,14 +802,6 @@
     </exec>
   	<delete dir="${env.TEMP}/nsis"></delete>
   </target>
-	
-  <target name="public-plugins" depends="runtime-plugins" description="Creates the plugin package zip">
-  	<mkdir dir="${public.dir}"/>
-
-    <zip destfile="${public.dir}/tvbrowser_${tvbrowser.version}_plugins.zip">
-    <zipfileset dir="${tvbrowser-default.runtime.dir}/plugins"/>
-    </zip>
-  </target>
 
    <!-- Creates the release binaries (.dmg) for mac os x -->
     <target name="public-mac" depends="runtime-mac" description="Creates binaries for the Mac OS X (requires Mac OS X)">
@@ -1213,6 +1192,10 @@
 		    <include name="*.tar"/>
 		  </patternset>
 		</delete>
+	</target>
+	
+	<target name="download-newsplugin">
+		<get dest="${tvbrowser-default.runtime.dir}/plugins/NewsPlugin.jar" src="${newsplugin.url}"/>
 	</target>
 
 </project>
