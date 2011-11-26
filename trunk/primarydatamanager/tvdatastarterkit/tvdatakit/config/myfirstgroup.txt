@@ -1,0 +1,5 @@
+de=Meine erste Gruppe
+default=My first group
+description_de=Eine Sendergruppe mit einer Handvoll nicht-existenter Sender.
+description_default= A group containing a sample of fictitious channels.
+provider=Max Mustermann
