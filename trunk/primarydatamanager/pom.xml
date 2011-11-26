@@ -49,18 +49,7 @@
   </build>
   <dependencyManagement>
     <dependencies>
-      <dependency>
-        <groupId>junit</groupId>
-        <artifactId>junit</artifactId>
-        <version>4.8.2</version>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-      	<groupId>org.tvbrowser</groupId>
-      	<artifactId>tvbrowser</artifactId>
-      	<scope>provided</scope>
-      	<version>3.1-RC1</version>
-      </dependency>
+
     </dependencies>
   </dependencyManagement>
   <repositories>
@@ -72,15 +61,13 @@
     	<id>tvbrowser-maven-repository</id>
     	<url>http://maven.tvbrowser.org</url>
     </repository>
-  </repositories>
+  </repositories>  
   <properties>
   	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
-  <dependencies>
-  	<dependency>
-  		<groupId>org.tvbrowser</groupId>
-  		<artifactId>tvbrowser</artifactId>
-  	</dependency>
-  </dependencies>
+
   <artifactId>primarydatamanager</artifactId>
+  <modules>
+  	<module>tvdatastarterkit</module>
+  </modules>
 </project>
