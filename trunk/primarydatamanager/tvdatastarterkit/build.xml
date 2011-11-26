@@ -1,0 +1,445 @@
+<?xml version="1.0"?>
+<!--
+ | Ant build script for the TV-Browser project.
+ |
+ | TV-Browser
+ | Copyright (C) 2011 TV-Browser team (dev@tvbrowser.org)
+ |
+ | This program is free software; you can redistribute it and/or
+ | modify it under the terms of the GNU General Public License
+ | as published by the Free Software Foundation; either version 2
+ | of the License, or (at your option) any later version.
+ |
+ | This program is distributed in the hope that it will be useful,
+ | but WITHOUT ANY WARRANTY; without even the implied warranty of
+ | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ | GNU General Public License for more details.
+ |
+ | You should have received a copy of the GNU General Public License
+ | along with this program; if not, write to the Free Software
+ | Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ |
+ | SVN information:
+ |     $Date: 2011-11-03 18:55:41 +0100 (Do, 03 Nov 2011) $
+ |   $Author: ds10 $
+ | $Revision: 7255 $
+ |
+ +-->
+<project name="TvDataStarterKit" default="targets" basedir="." xmlns:artifact="antlib:org.apache.maven.artifact.ant">
+
+  <path id="maven-ant-tasks.classpath" path="lib/maven-ant-tasks-2.1.3.jar" />
+  <typedef resource="org/apache/maven/artifact/ant/antlib.xml"
+	           uri="antlib:org.apache.maven.artifact.ant"
+	           classpathref="maven-ant-tasks.classpath" />
+
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  |
+  |  The properties and paths
+  |
+   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+
+  <property environment="env"/>
+  <property file="build.properties"/>
+  <property name="programname" value="TvDataStarterKit"/>
+  <property name="classes.dir" value="target/classes"/>
+  <property name="txt.dir" value="txt"/>
+  <property name="src.dir" value="src/main/java"/>
+  <property name="test.src.dir" value="src/test/java"/>
+  <property name="test.classes.dir" value="target/test-classes"/>
+  <property name="doc.dir" value="target/doc"/>
+  <property name="doc.header" value="${programname} ${tvdatakit.version} API"/>
+  <property name="doc.title" value="API documentation for ${programname} ${tvdatakit.version}"/>
+  <property name="doc.bottom" value="${programname} ${tvdatakit.version}, Copyright (C) 2004-2011 TV-Browser Team (dev@tvbrowser.org)"/>
+
+  <property name="unpacked.dir" value="target/unpacked"/>
+
+  <property name="runtime.dir" value="target/runtime"/>
+
+  <property name="tvdatatools.lib.dir" value="${runtime.dir}/lib"/>
+  <property name="tvdatatools.runtime.dir" value="${runtime.dir}/tvdatatools"/>
+  <property name="tvdatakit.runtime.dir" value="${runtime.dir}/tvdatakit"/>
+
+  <property name="public.dir" value="target/public"/>
+
+  <path id="sourcepath">
+    <pathelement location="${src.dir}"/>
+  </path>
+
+  <path id="classpath">
+    <pathelement location="${classes.dir}"/>
+    <fileset dir="${tvdatatools.lib.dir}">
+      <include name="*.jar"/>
+      <exclude name="ant.jar"/>
+    </fileset>
+  </path>
+
+  <path id="docpath">
+    <path refid="sourcepath"/>
+  </path>
+
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+|
+|  Task definitions
+|
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+|
+|  Display all targets
+|
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+
+
+  <target name="targets" description="lists all the available public targets">
+    <echo message="usage: build [target]"/>
+    <echo message=""/>
+    <echo message="main targets:"/>
+    <echo message="============="/>
+    <echo message="  targets               Shows this list of targets."/>
+    <echo message="  public-src            Creates a .zip file containing the full source code of TV-Browser"/>
+    <echo message="  public-tvdatakit      Creates a .zip file containing the TV-Browser TV data kit" />
+    <echo message="  public-doc            Generates the JavaDoc documentation."/>
+    <echo message=""/>
+    <echo message="further targets:"/>
+    <echo message="================"/>
+    <echo message="  clean                 Deletes all class files, runtime directories and temporary files."/>
+    <echo message="  runtime-tvdatakit     Creates a runtime directory for the TV-Browser TV data kit" />
+    <echo message="  test                  Runs the JUnit tests."/>
+  </target>
+
+
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+   |
+   |  Clean tasks: remove files
+   |
+    - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+
+  <target name="dependency">
+  	<artifact:remoteRepository id="remote.repository" url="http://maven.tvbrowser.org" />
+  	<artifact:dependencies filesetId="dependency.fileset" useScope="runtime">
+  	  <pom file="pom.xml"/>
+  	  <remoteRepository refid="remote.repository" />
+  	</artifact:dependencies>
+  	<copy todir="${tvdatatools.lib.dir}">
+  	  <fileset refid="dependency.fileset" />
+  	  <!-- This mapper strips off all leading directory information -->
+  	  <mapper type="flatten" />
+  	</copy>
+  </target>
+	
+
+  <!-- Deletes the runtime director -->
+  <target name="clean">
+    <delete dir="${classes.dir}"/>
+    <delete dir="${unpacked.dir}"/>
+    <delete dir="${test.classes.dir}"/>
+  </target>
+
+
+  <!-- Deletes the classes and the runtime directory. -->
+  <target name="clean-tools" depends="clean">
+    <delete dir="${tvdatatools.runtime.dir}"/>
+  </target>
+	
+  <!-- Deletes the classes and the runtime directory. -->
+  <target name="clean-tvdatakit" depends="clean">
+    <delete dir="${tvdatakit.runtime.dir}"/>
+  </target>
+
+
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+|
+|  Make tasks: compile the source code
+|
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+  <target name="copy-resources">
+    <copy todir="${classes.dir}">
+      <fileset dir="${src.dir}" includes="**/*.gif"/>
+      <fileset dir="${src.dir}" includes="**/*.jpg"/>
+      <fileset dir="${src.dir}" includes="**/*.png"/>
+      <fileset dir="${src.dir}" includes="**/*.dtd"/>
+      <fileset dir="${src.dir}" includes="**/*.properties"/>
+      <fileset dir="${src.dir}" includes="**/*.theme"/>
+      <fileset dir="${src.dir}" includes="**/*.csv"/>
+    </copy>
+  </target>
+
+  <!-- Compiles the platform independent source code -->
+  <target name="make-default" depends="copy-resources,dependency">
+    <echo message="Compiling the source code ... "/>
+    <mkdir dir="${classes.dir}"/>
+    <javac destdir="${classes.dir}" debug="${debug}" deprecation="true" encoding="UTF-8" target="1.6" source="1.6">
+      <src>
+        <path refid="sourcepath"/>
+      </src>
+      <classpath>
+        <path refid="classpath"/>
+      </classpath>
+      <exclude name="**/macosx/*"/>
+    </javac>
+
+
+  </target>
+
+  <target name="runtime-tools" depends="clean-tools, make-default, test">
+    <echo message="Creating the jars ..." />
+
+    <mkdir dir="${tvdatatools.runtime.dir}"/>
+    <mkdir dir="${tvdatatools.runtime.dir}/prepared"/>
+
+    <!-- Extract the libraries for the jars into the temp.dir -->
+  	<unjar dest="${unpacked.dir}">
+  	    <fileset dir="${tvdatatools.lib.dir}">
+  	        <include name="**/*.jar"/>
+  	    </fileset>
+  	</unjar>
+  	
+    <!--<unjar src="${lib.dir}/${lib.commons.lang.name}-${lib.commons.lang.version}.jar" dest="${unpacked.dir}/${lib.commons.lang.name}.jar"/>
+    <unjar src="${lib.dir}/${lib.jgoodies-common.name}-${lib.jgoodies-common.version}.jar" dest="${unpacked.dir}/${lib.jgoodies-common.name}.jar"/>
+    <unjar src="${lib.dir}/${lib.jgoodies-looks.name}-${lib.jgoodies-looks.version}.jar" dest="${unpacked.dir}/${lib.jgoodies-looks.name}.jar"/>
+	<unjar src="${lib.dir}/${lib.opencsv.name}-${lib.opencsv.version}.jar" dest="${unpacked.dir}/${lib.opencsv.name}.jar" />
+    <unjar src="${lib.dir}/${lib.htmlparser.name}-${lib.htmlparser.version}.jar" dest="${unpacked.dir}/${lib.htmlparser.name}.jar" />
+-->
+    <!-- Pack the MirrorUpdater.jar -->
+    <jar jarfile="${tvdatatools.runtime.dir}/MirrorUpdater.jar"
+         compress="false"
+         index="true">
+      <manifest>
+        <attribute name="Main-Class" value="primarydatamanager.mirrorupdater.MirrorUpdater"/>
+      </manifest>
+      <fileset dir="${classes.dir}" includes="primarydatamanager/mirrorupdater/**"/>
+      <fileset dir="${classes.dir}" includes="primarydatamanager/tvlistingstool/**"/>
+      <fileset dir="${unpacked.dir}" includes="tvbrowserdataservice/file/**"/>
+      <fileset dir="${unpacked.dir}" includes="tvdataservice/**"/>
+      <fileset dir="${unpacked.dir}" includes="devplugin/**"/>
+      <fileset dir="${unpacked.dir}" includes="util/io/**"/>
+      <fileset dir="${unpacked.dir}" includes="util/misc/**"/>
+<!--      <fileset dir="${classes.dir}" includes="tvbrowser/core/tvdataservice/**"/>
+      <fileset dir="${classes.dir}" includes="tvbrowser/core/ChannelUserSettings*"/>
+      <fileset dir="${classes.dir}" includes="tvbrowser/core/Settings*"/>
+      <fileset dir="${classes.dir}" includes="tvbrowser/core/plugin/DefaultSettings*"/>-->
+      <fileset dir="${unpacked.dir}" includes="org/apache/commons/net/**"/>
+      <fileset dir="${unpacked.dir}" includes="org/apache/commons/lang/**"/>
+      <fileset dir="${unpacked.dir}" includes="com/jgoodies/common/**"/>
+      <fileset dir="${unpacked.dir}" includes="com/jgoodies/looks/**"/>
+      <fileset dir="${unpacked.dir}" includes="au/**"/>
+      <fileset dir="${unpacked.dir}" includes="org/htmlparser/**"/>
+    </jar>
+
+    <!-- Pack the PrimaryDataManager.jar -->
+     <jar jarfile="${tvdatatools.runtime.dir}/PrimaryDataManager.jar"
+         compress="false"
+         index="true">
+      <manifest>
+        <attribute name="Main-Class" value="primarydatamanager.PrimaryDataManager"/>
+      </manifest>
+      <fileset dir="${classes.dir}"
+               includes="primarydatamanager/**"
+               excludes="**/secret/**" />
+      <fileset dir="${unpacked.dir}" includes="tvbrowserdataservice/file/**"/>
+      <fileset dir="${unpacked.dir}" includes="tvdataservice/**"/>
+      <fileset dir="${unpacked.dir}" includes="devplugin/**"/>
+      <fileset dir="${unpacked.dir}" includes="util/io/**"/>
+      <fileset dir="${unpacked.dir}" includes="util/misc/**"/>
+      <fileset dir="${unpacked.dir}" includes="org/apache/commons/net/**"/>
+      <fileset dir="${unpacked.dir}" includes="org/apache/commons/lang/**"/>
+      <fileset dir="${unpacked.dir}" includes="com/jgoodies/common/**"/>
+      <fileset dir="${unpacked.dir}" includes="com/jgoodies/looks/**"/>
+      <fileset dir="${unpacked.dir}" includes="au/**"/>
+      <fileset dir="${unpacked.dir}" includes="org/htmlparser/**"/>
+    </jar>
+
+    <!-- Pack the PDSRunner.jar -->
+    <jar jarfile="${tvdatatools.runtime.dir}/PDSRunner.jar"
+         compress="false"
+         index="true">
+      <manifest>
+        <attribute name="Main-Class" value="primarydatamanager.PDSRunner"/>
+      </manifest>
+      <fileset dir="${classes.dir}"
+               includes="primarydatamanager/**"
+               excludes="**/secret/**" />
+      <fileset dir="${unpacked.dir}" includes="tvbrowserdataservice/file/**"/>
+      <fileset dir="${unpacked.dir}" includes="tvdataservice/**"/>
+      <fileset dir="${unpacked.dir}" includes="devplugin/**"/>
+      <fileset dir="${unpacked.dir}" includes="util/io/**"/>
+      <fileset dir="${unpacked.dir}" includes="util/misc/**"/>
+    	
+      <fileset dir="${unpacked.dir}" includes="org/apache/commons/net/**"/>
+      <fileset dir="${unpacked.dir}" includes="org/apache/commons/lang/**"/>
+      <fileset dir="${unpacked.dir}" includes="com/jgoodies/common/**"/>
+      <fileset dir="${unpacked.dir}" includes="com/jgoodies/looks/**"/>
+      <fileset dir="${unpacked.dir}" includes="au/**"/>
+      <fileset dir="${unpacked.dir}" includes="org/htmlparser/**"/>
+    </jar>
+
+    <!-- Copy the file(s) -->
+    <copy todir="${tvdatatools.runtime.dir}/prepared">
+      <fileset dir="${txt.dir}" includes="mirrorlist.txt"/>
+    </copy>
+
+    <copy todir="${tvdatatools.runtime.dir}">
+      <fileset dir="${txt.dir}" includes="MirrorUpdater.ini"/>
+    </copy>
+  </target>
+
+
+  <!--
+  | Creates the runtime for the TV data starter kit
+  +-->
+  <target name="runtime-tvdatakit" depends="clean-tvdatakit, runtime-tools">
+    <!-- Compile the example PDSs -->
+    <mkdir dir="${tvdatakit.runtime.dir}/java"/>
+    <mkdir dir="${tvdatakit.runtime.dir}/classes"/>
+    <mkdir dir="${tvdatakit.runtime.dir}/lib"/>
+    <mkdir dir="${tvdatakit.runtime.dir}/prepared"/>
+    <javac destdir="${tvdatakit.runtime.dir}/classes"
+           debug="${debug}"
+           deprecation="true"
+           srcdir="tvdatakit/java"
+    	     encoding="UTF-8"
+           target="1.6"
+           source="1.6">
+      <classpath>
+        <fileset dir="${tvdatatools.runtime.dir}">
+          <include name="PrimaryDataManager.jar"/>
+        </fileset>
+        <fileset dir="tvdatakit/lib">
+          <include name="*.jar"/>
+        </fileset>
+      </classpath>
+    </javac>
+
+    <!-- Copy the missing stuff -->
+    <copy todir="${tvdatakit.runtime.dir}">
+      <fileset dir="tvdatakit" excludes="**/CVS/**"/>
+    </copy>
+    <copy todir="${tvdatakit.runtime.dir}/lib">
+      <fileset dir="${tvdatatools.runtime.dir}" includes="*.jar"/>
+      <fileset dir="${txt.dir}" includes="LICENSE.txt"/>
+    </copy>
+
+  </target>
+
+  <!--
+    | Packs the TV data starter kit
+    |
+    | This target depends on clean-runtime to be sure that the runtime
+    | directory contains no stuff we don't want to be destributed.
+    +-->
+  <target name="public-tvdatakit" depends="runtime-tvdatakit" description="Creates a .zip file containing the TV-Browser TV data kit">
+
+    <!-- Pack the TvDataStarterKit zip -->
+    <mkdir dir="${public.dir}"/>
+
+    <zip destfile="${public.dir}/TvDataStarterKit-${tvdatakit.version}.zip">
+      <zipfileset prefix="TvDataStarterKit-${tvdatakit.version}" dir="${tvdatakit.runtime.dir}" excludes="**/*.sh"/>
+   	  <zipfileset prefix="TvDataStarterKit-${tvdatakit.version}" dir="${tvdatakit.runtime.dir}" includes="**/*.sh" filemode="755"/>
+    </zip>
+  </target>
+
+  <!--
+    | Does the JUnit tests.
+    |
+    | If this target does not work, copy the file "junit.jar" from the directory "lib"
+    | in your ANT_HOME/lib directory. (ANT_HOME/lib is on my machine "/usr/share/ant/lib")
+    +-->
+  <target name="test" depends="make-default">
+	<echo>${ant.version}. JUnit4 tests will only work with Ant>=1.7</echo>
+  	<mkdir dir="${test.classes.dir}"/>
+    <javac destdir="${test.classes.dir}" debug="${debug}" deprecation="true" encoding="UTF-8" target="1.6" source="1.6">
+      <src>
+        <path path="${test.src.dir}"/>
+      </src>
+      <classpath>
+        <path refid="classpath"/>
+      </classpath>
+    </javac>
+
+    <copy todir="${test.classes.dir}">
+      <fileset dir="${test.src.dir}" includes="**/*.gif"/>
+      <fileset dir="${test.src.dir}" includes="**/*.jpg"/>
+      <fileset dir="${test.src.dir}" includes="**/*.png"/>
+      <fileset dir="${test.src.dir}" includes="**/*.dtd"/>
+      <fileset dir="${test.src.dir}" includes="**/*.properties"/>
+      <fileset dir="${test.src.dir}" includes="**/*.theme"/>
+      <fileset dir="${test.src.dir}" includes="**/*.txt"/>
+    </copy>
+
+
+    <junit haltonfailure="yes" fork="no" >
+      <classpath>
+        <path refid="classpath"/>
+        <path path="${test.classes.dir}"/>
+      </classpath>
+
+      <formatter type="brief" usefile="false"/>
+
+      <batchtest>
+        <fileset dir="${test.src.dir}">
+          <include name="**/*Test.java"/>
+        </fileset>
+      </batchtest>
+    </junit>
+  </target>
+
+
+  <!--
+  | Generates the JavaDoc documentation.
+  +-->
+  <target name="public-doc" description="Generates the JavaDoc documentation">
+    <echo message="Generating JavaDoc documentation ..." />
+    <delete dir="${doc.dir}"/>
+    <mkdir dir="${doc.dir}"/>
+    <javadoc packagenames="*"
+             sourcepathref="docpath"
+             classpathref="classpath"
+             destdir="${doc.dir}"
+             doctitle="${doc.title}"
+             windowtitle="${doc.title}"
+             additionalparam="-breakiterator"
+             header="${doc.header}"
+             bottom="${doc.bottom}"
+             access="package"
+             failonerror="true"
+    				 encoding="UTF-8">
+      <link offline="true"
+            href="${java-api-location}"
+            packagelistLoc="${package-lists.dir}/jdk/"/>
+    </javadoc>
+
+
+    <zip destfile="${public.dir}/tvdatakit_${tvdatakit.version}_doc.zip">
+      <zipfileset prefix="tvdatakit_v${tvdatakit.version}/doc"
+                  dir="${doc.dir}"/>
+    </zip>
+
+  </target>
+
+  <!--
+   | Dump some information.
+   +-->
+  <target name="dump-info">
+    <echo message="JAVA_HOME=${env.JAVA_HOME}" />
+    <echo message="java.vm.info=${java.vm.info}" />
+    <echo message="java.vm.name=${java.vm.name}" />
+    <echo message="java.vm.vendor=${java.vm.vendor}" />
+    <echo message="java.vm.version=${java.vm.version}" />
+    <echo message="os.arch=${os.arch}" />
+    <echo message="os.name=${os.name}" />
+    <echo message="os.version=${os.version}" />
+    <echo message="file.encoding=${file.encoding}" />
+    <echo message="user.language=${user.language}" />
+  </target>
+	
+  <target name="public-src" description="Creates a .zip file containing the full source code of TvDataStarterKit">
+    <mkdir dir="${public.dir}"/>
+    <zip destfile="${public.dir}/tvdatakit_${tvdatakit.version}_src.zip">
+      <zipfileset prefix="tvdatakit-${tvdatakit.version}" dir=".">
+      	<exclude name="target/**"/>
+      	<exclude name="lib/**"/>
+      </zipfileset>
+    </zip>
+  </target>
+	
+</project>
