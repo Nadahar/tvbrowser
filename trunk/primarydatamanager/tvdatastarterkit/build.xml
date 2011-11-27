@@ -209,11 +209,10 @@
       </manifest>
       <fileset dir="${classes.dir}" includes="primarydatamanager/mirrorupdater/**"/>
       <fileset dir="${classes.dir}" includes="primarydatamanager/tvlistingstool/**"/>
-      <fileset dir="${unpacked.dir}" includes="tvbrowserdataservice/file/**"/>
+      <fileset dir="${unpacked.dir}" includes="tvbrowserdataservice/**"/>
       <fileset dir="${unpacked.dir}" includes="tvdataservice/**"/>
       <fileset dir="${unpacked.dir}" includes="devplugin/**"/>
-      <fileset dir="${unpacked.dir}" includes="util/io/**"/>
-      <fileset dir="${unpacked.dir}" includes="util/misc/**"/>
+      <fileset dir="${unpacked.dir}" includes="util/**"/>
 <!--      <fileset dir="${classes.dir}" includes="tvbrowser/core/tvdataservice/**"/>
       <fileset dir="${classes.dir}" includes="tvbrowser/core/ChannelUserSettings*"/>
       <fileset dir="${classes.dir}" includes="tvbrowser/core/Settings*"/>
@@ -236,11 +235,11 @@
       <fileset dir="${classes.dir}"
                includes="primarydatamanager/**"
                excludes="**/secret/**" />
-      <fileset dir="${unpacked.dir}" includes="tvbrowserdataservice/file/**"/>
+      <fileset dir="${unpacked.dir}" includes="tvbrowserdataservice/**"/>
       <fileset dir="${unpacked.dir}" includes="tvdataservice/**"/>
       <fileset dir="${unpacked.dir}" includes="devplugin/**"/>
-      <fileset dir="${unpacked.dir}" includes="util/io/**"/>
-      <fileset dir="${unpacked.dir}" includes="util/misc/**"/>
+      <fileset dir="${unpacked.dir}" includes="util/**"/>
+      <fileset dir="${unpacked.dir}" includes="tvbrowser/**"/>
       <fileset dir="${unpacked.dir}" includes="org/apache/commons/net/**"/>
       <fileset dir="${unpacked.dir}" includes="org/apache/commons/lang/**"/>
       <fileset dir="${unpacked.dir}" includes="com/jgoodies/common/**"/>
@@ -259,12 +258,12 @@
       <fileset dir="${classes.dir}"
                includes="primarydatamanager/**"
                excludes="**/secret/**" />
+    
       <fileset dir="${unpacked.dir}" includes="tvbrowserdataservice/file/**"/>
       <fileset dir="${unpacked.dir}" includes="tvdataservice/**"/>
       <fileset dir="${unpacked.dir}" includes="devplugin/**"/>
-      <fileset dir="${unpacked.dir}" includes="util/io/**"/>
-      <fileset dir="${unpacked.dir}" includes="util/misc/**"/>
-    	
+      <fileset dir="${unpacked.dir}" includes="util/**"/>
+      <fileset dir="${unpacked.dir}" includes="tvbrowser/**"/>
       <fileset dir="${unpacked.dir}" includes="org/apache/commons/net/**"/>
       <fileset dir="${unpacked.dir}" includes="org/apache/commons/lang/**"/>
       <fileset dir="${unpacked.dir}" includes="com/jgoodies/common/**"/>
