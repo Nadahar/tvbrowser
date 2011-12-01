@@ -1031,5 +1031,7 @@
 	<target name="download-newsplugin">
 		<get dest="${tvbrowser-default.runtime.dir}/plugins/NewsPlugin.jar" src="${newsplugin.url}"/>
 	</target>
+	
+	<target name="public-tvdatakit"></target>
 
 </project>
