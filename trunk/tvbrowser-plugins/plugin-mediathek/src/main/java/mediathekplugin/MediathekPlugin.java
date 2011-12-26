@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Properties;
 import java.util.logging.Logger;
 
@@ -36,11 +37,13 @@ import devplugin.ActionMenu;
 import devplugin.Channel;
 import devplugin.ContextMenuAction;
 import devplugin.ContextMenuSeparatorAction;
+import devplugin.Date;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.PluginTreeNode;
 import devplugin.Program;
 import devplugin.SettingsTab;
+import devplugin.ThemeIcon;
 import devplugin.Version;
 
 /**
@@ -51,7 +54,7 @@ public class MediathekPlugin extends Plugin {
 
   private static final boolean IS_STABLE = false;
 
-  private static final Version PLUGIN_VERSION = new Version(2, 80, 1, IS_STABLE);
+  private static final Version PLUGIN_VERSION = new Version(2, 85, 0, IS_STABLE);
 
   /** The localizer used by this class. */
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(MediathekPlugin.class);
@@ -76,6 +79,8 @@ public class MediathekPlugin extends Plugin {
   private ArrayList<WebMediathek> mMediatheks;
 
   private Database mDatabase;
+  
+  private Thread mMarkThread;
 
   @Override
   public PluginInfo getInfo() {
@@ -113,6 +118,10 @@ public class MediathekPlugin extends Plugin {
       return getContextMenu(programs);
     }
     return null;
+  }
+  
+  public ThemeIcon getMarkIconFromTheme() {
+    return new ThemeIcon("actions", "web-search", 16);
   }
 
   private ActionMenu getContextMenu(ArrayList<MediathekProgramItem> programs) {
@@ -217,12 +226,17 @@ public class MediathekPlugin extends Plugin {
   public Properties storeSettings() {
     return mSettings.storeSettings();
   }
+  
+  @Override
+  public void handleTvDataUpdateFinished() {
+    updatePluginTree();
+  }
 
   void readMediathekContents() {
     final Thread contentThread = new Thread("Read Mediathek contents") {
       @Override
       public void run() {
-        mDatabase = new Database(mSettings.getMediathekPath());
+        mDatabase = new Database(mSettings.guessMediathekPath(true));
         updatePluginTree();
         // // update programs of current day to force their icons to show
         // final ArrayList<Program> validationPrograms = new
@@ -274,7 +288,7 @@ public class MediathekPlugin extends Plugin {
 
   @Override
   public boolean canUseProgramTree() {
-    return false;
+    return true;
   }
 
   @Override
@@ -286,14 +300,91 @@ public class MediathekPlugin extends Plugin {
    * Updates the plugin tree.
    */
   private void updatePluginTree() {
-    final PluginTreeNode node = getRootNode();
-    node.removeAllActions();
-    node.removeAllChildren();
-    node.getMutableTreeNode().setShowLeafCountEnabled(false);
+    if(mMarkThread == null || !mMarkThread.isAlive()) {
+      mMarkThread = new Thread("Mark mediathek programs") {
+        public void run() {
+          final PluginTreeNode node = getRootNode();
+          node.removeAllActions();
+          node.removeAllChildren();
+          node.getMutableTreeNode().setShowLeafCountEnabled(false);
+          node.setGroupingByDateEnabled(false);
+          node.setGroupingByWeekEnabled(false);
+          
+          ArrayList<Channel> channels = new ArrayList<Channel>();
+          
+          for (WebMediathek mediathek : getMediatheks()) {
+            for (Channel channel : getPluginManager().getSubscribedChannels()) {
+              if (mediathek.acceptsChannel(channel)) {
+                channels.add(channel);
+              }
+            }
+          }
+                    
+          boolean found = false;
+          int dateOffset = -1;
+          Date today = Date.getCurrentDate();
+          
+          do {
+            found = false;
+
+            Date currentDate = today.addDays(dateOffset);
+            
+            PluginTreeNode addNode = null;
+            
+            for(Channel ch : channels) {
+              Iterator<Program> channelDayProgram = getPluginManager().getChannelDayProgram(currentDate, ch);
+              
+              PluginTreeNode channelNode = null;
+              
+              if(channelDayProgram != null && channelDayProgram.hasNext()) {
+                found = true;
+                
+                while(channelDayProgram.hasNext()) {
+                  Program p = channelDayProgram.next();
+                  
+                  if(!mDatabase.getMediathekPrograms(p).isEmpty()) {
+                    if(addNode == null) {
+                      addNode = node.addNode(currentDate.getShortDayLongMonthString());
+                      addNode.setGroupingByDateEnabled(false);
+                      addNode.setGroupingByWeekEnabled(false);
+                    }
+                    if(channelNode == null) {
+                      channelNode = addNode.addNode(ch.getName());
+                      channelNode.setGroupingByDateEnabled(false);
+                      channelNode.setGroupingByWeekEnabled(false);
+                    }
+                    
+                    channelNode.addProgram(p);
+                    p.mark(MediathekPlugin.this);
+                  }
+                }
+              }
+            }
+            
+            dateOffset++;
+          }while(found);
+          
+          node.update();
+        }
+      };
+      mMarkThread.start();
+      
+    }
+    else {
+      if(mMarkThread.isAlive()) {
+        try {
+          mMarkThread.join();
+          updatePluginTree();
+        } catch (InterruptedException e) {
+          // ignore
+        }
+      }
+    }
+    
     // for (MediathekProgram program : getSortedPrograms()) {
     // program.updatePluginTree(false);
     // }
-    node.update();
+
   }
 
   public Logger getLogger() {
