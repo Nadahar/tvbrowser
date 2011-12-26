@@ -16,9 +16,16 @@
  */
 package mediathekplugin;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+
 import javax.swing.Icon;
+import javax.swing.JButton;
 import javax.swing.JEditorPane;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -39,11 +46,11 @@ public final class MediathekSettingsTab implements SettingsTab {
 
   public JPanel createSettingsPanel() {
     final CellConstraints cc = new CellConstraints();
-    EnhancedPanelBuilder panelBuilder = new EnhancedPanelBuilder("5dlu, pref, 3dlu, pref, fill:default:grow");
+    EnhancedPanelBuilder panelBuilder = new EnhancedPanelBuilder("5dlu, default, 3dlu, default, fill:default:grow, 3dlu, default");
 
     panelBuilder.addRow();
     JEditorPane help = UiUtilities.createHtmlHelpTextArea(localizer.msg("help", "The <a href=\"{0}\">Mediathek</a> application needs to be installed.", "http://zdfmediathk.sourceforge.net/"));
-    panelBuilder.add(help, cc.xyw(2, panelBuilder.getRowCount(), 4));
+    panelBuilder.add(help, cc.xyw(2, panelBuilder.getRowCount(), 6));
 
     panelBuilder.addRow();
     JLabel label = new JLabel(localizer.msg("path", "Mediathek installation path"));
@@ -51,6 +58,30 @@ public final class MediathekSettingsTab implements SettingsTab {
 
     mPath = new JTextField(mSettings.getMediathekPath());
     panelBuilder.add(mPath, cc.xyw(4, panelBuilder.getRowCount(), 2));
+    
+    JButton select = new JButton(Localizer.getLocalization(Localizer.I18N_SELECT));
+    select.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        String value = mSettings.guessMediathekPath(false);
+        
+        if(value.trim().length() == 0) {
+          JFileChooser choose = new JFileChooser(new File(System.getProperty("user.home")));
+          choose.setFileSelectionMode(JFileChooser.FILES_ONLY);
+          choose.showDialog(UiUtilities.getLastModalChildOf(MediathekPlugin.getInstance().getFrame()), Localizer.getLocalization(Localizer.I18N_SELECT));
+          
+          if(choose.getSelectedFile() != null && choose.getSelectedFile().getName().equals(".filme")) {
+            mPath.setText(choose.getSelectedFile().getAbsolutePath());
+          }
+        }
+        else {
+          mPath.setText(value);
+          JOptionPane.showMessageDialog(UiUtilities.getLastModalChildOf(MediathekPlugin.getInstance().getFrame()), localizer.msg("selectionOk", "File successfully located."));
+        }
+      }
+    });
+    
+    panelBuilder.add(select, cc.xy(7,panelBuilder.getRowCount()));
+    
     return panelBuilder.getPanel();
   }
 

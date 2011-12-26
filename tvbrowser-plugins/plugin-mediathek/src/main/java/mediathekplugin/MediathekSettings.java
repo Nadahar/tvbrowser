@@ -16,6 +16,7 @@
  */
 package mediathekplugin;
 
+import java.io.File;
 import java.util.Properties;
 
 import util.settings.PropertyBasedSettings;
@@ -28,11 +29,40 @@ public class MediathekSettings extends PropertyBasedSettings {
   }
 
   public String getMediathekPath() {
-    return get(KEY_MEDIATHEK_PATH, "");
+    String value = get(KEY_MEDIATHEK_PATH, "");
+    
+    if(value.trim().length() > 0) {
+      if(!new File(value).isFile()) {
+        value = "";
+      }
+    }
+    
+    return value;
   }
 
   public void setMediathekPath(final String path) {
     set(KEY_MEDIATHEK_PATH, path);
   }
-
+  
+  public String guessMediathekPath(boolean save) {
+    String value = getMediathekPath();
+    
+    if(value.trim().length() == 0) {
+      File test = new File(System.getProperty("user.home"),".mediathek");
+      
+      if(test.isDirectory()) {
+        test = new File(test,".filme");
+        
+        if(test.isFile()) {
+          value = test.getAbsolutePath();
+          
+          if(save) {
+            setMediathekPath(value);
+          }
+        }
+      }
+    }
+    
+    return value;
+  }
 }
