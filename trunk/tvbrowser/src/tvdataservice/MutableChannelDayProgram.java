@@ -193,11 +193,7 @@ public class MutableChannelDayProgram implements ChannelDayProgram {
         continue;
       }
 	  
-      if (cmpTime == time) {
-        // We already have this program
-        return;
-      }
-      if (cmpTime < time) {
+      if (cmpTime <= time) {
         break;
       }
     }
