@@ -85,7 +85,7 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
   private static final Logger mLog
     = Logger.getLogger(SchedulesDirectDataService.class.getName());
 
-  private static final Version VERSION = new Version(3,03,0);
+  private static final Version VERSION = new Version(3,03,1);
 
   private ChannelGroup mChannelGroup = new ChannelGroupImpl("SchedulesDirect", "SchedulesDirect", "SchedulesDirect", "SchedulesDirect");
 
@@ -299,29 +299,31 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
 
               for (CrewMember member : crew.getMember()) {
                 final String role = member.getRole();
-                if ("Actor".equalsIgnoreCase(role) || "Guest Star".equals(role)) {
-                  appendPerson(actors, member);
-                } else if ("Director".equalsIgnoreCase(role)) {
-                  appendPerson(director, member);
-                } else if ("Host".equalsIgnoreCase(role) || "Anchor".equalsIgnoreCase(role)) {
-                  appendPerson(host, member);
-                } else if (role.toLowerCase().contains("producer")) {
-                  appendPerson(producer, member);
-                } else if ("Writer".equalsIgnoreCase(role)) {
-                  appendPerson(writer, member);
-                } else if (role.toLowerCase().contains("guest")) {
-                  appendPerson(additional, member);
-                }
-                else if ("Narrator".equalsIgnoreCase(role)) {
-                  appendPersonWithRole(additional, member);
-                }
-                else if ("Correspondent".equalsIgnoreCase(role)) {
-                  appendPersonWithRole(additional, member);
-                }
-                else {
-                  appendPersonWithRole(additional, member);
-                  if (!role.equalsIgnoreCase("judge")) {
-                    mLog.warning("Unknown crew member role: " + role);
+                if (role != null) {
+                  if ("Actor".equalsIgnoreCase(role) || "Guest Star".equals(role)) {
+                    appendPerson(actors, member);
+                  } else if ("Director".equalsIgnoreCase(role)) {
+                    appendPerson(director, member);
+                  } else if ("Host".equalsIgnoreCase(role) || "Anchor".equalsIgnoreCase(role)) {
+                    appendPerson(host, member);
+                  } else if (role.toLowerCase().contains("producer")) {
+                    appendPerson(producer, member);
+                  } else if ("Writer".equalsIgnoreCase(role)) {
+                    appendPerson(writer, member);
+                  } else if (role.toLowerCase().contains("guest")) {
+                    appendPerson(additional, member);
+                  }
+                  else if ("Narrator".equalsIgnoreCase(role)) {
+                    appendPersonWithRole(additional, member);
+                  }
+                  else if ("Correspondent".equalsIgnoreCase(role)) {
+                    appendPersonWithRole(additional, member);
+                  }
+                  else {
+                    appendPersonWithRole(additional, member);
+                    if (!role.equalsIgnoreCase("judge")) {
+                      mLog.warning("Unknown crew member role: " + role);
+                    }
                   }
                 }
               }
