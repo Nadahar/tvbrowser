@@ -57,6 +57,9 @@ public class ChannelUtil {
       if ((category & Channel.CATEGORY_DIGITAL) > 0) {
         categories.add(mLocalizer.msg("categoryDigital", "Digitale"));
       }
+      if ((category & Channel.CATEGORY_PAY_TV) > 0) {
+        categories.add(mLocalizer.msg("categoryPayTv", "Pay-TV"));
+      }
 
       if ((category & Channel.CATEGORY_SPECIAL_MUSIC) > 0) {
         categories.add(mLocalizer.msg("categoryMusic", "Musik"));
