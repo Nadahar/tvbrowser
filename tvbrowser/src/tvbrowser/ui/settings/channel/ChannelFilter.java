@@ -38,6 +38,8 @@ public class ChannelFilter {
   private static final String[] NORMALIZE_SEARCH = new String[] {"ö", "ä", "ü", "ß", "oe", "ae", "ue", "ss"};
 
   private String mCountry;
+  
+  private String mPlugin;
 
   private int[] mCategories;
 
@@ -67,7 +69,11 @@ public class ChannelFilter {
    * @param name
    */
   public void setFilter(String country, int category, String name) {
-    setFilter(country, new int[] {category}, name);
+    setFilter(country, new int[] {category}, name, null);
+  }
+  
+  public void setFilter(String country, int category, String name, String plugin) {
+    setFilter(country, new int[] {category}, name, plugin);
   }
 
   /**
@@ -77,7 +83,12 @@ public class ChannelFilter {
    * @param name
    */
   public void setFilter(String country, int[] categories, String name) {
+    setFilter(country, categories, name, null);
+  }
+  
+  public void setFilter(String country, int[] categories, String name, String plugin) {
     mCountry = country;
+    mPlugin = plugin;
     mCategories = categories.clone();
     if ((mChannelName != null) && (StringUtils.isNotBlank(name))) {
       mChannelName = name.trim().split("\\s");
@@ -98,6 +109,17 @@ public class ChannelFilter {
       String country = channel.getCountry();
       if (country != null) {
         if (!country.equalsIgnoreCase(mCountry)) {
+          return false;
+        }
+      } else {
+        return false;
+      }
+    }
+    
+    if (mPlugin != null) {
+      String plugin = channel.getDataServiceProxy().getInfo().getName();
+      if (plugin != null) {
+        if (!plugin.equalsIgnoreCase(mPlugin)) {
           return false;
         }
       } else {

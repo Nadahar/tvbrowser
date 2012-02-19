@@ -143,7 +143,7 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
   /**
    * Comboboxes for filtering
    */
-  private JComboBox mCategoryCB, mCountryCB;
+  private JComboBox mCategoryCB, mCountryCB, mPluginCB;
 
   /**
    * Filter for channel name
@@ -427,7 +427,7 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
 
     JPanel filterPanel = new JPanel(new FormLayout(
         "pref, 3dlu, pref:grow, fill:60dlu, 3dlu, pref, 3dlu, pref:grow, pref",
-        "pref, 3dlu, pref"));
+        "pref, 3dlu, pref, pref"));
 
     mCountryCB = new JComboBox();
     filterPanel.add(new JLabel(mLocalizer.msg("country", "Country") + ":"), cc
@@ -451,6 +451,14 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
     namePanel.add(mChannelName, BorderLayout.CENTER);
 
     filterPanel.add(namePanel, cc.xyw(1, 3, 4));
+    
+    mPluginCB = new JComboBox();
+    mPluginCB.setMaximumRowCount(20);
+
+    filterPanel.add(new JLabel(mLocalizer.msg("plugin", "Plugin") + ":"),
+        cc.xy(6, 3));
+    filterPanel.add(mPluginCB, cc.xyw(8, 3, 2));
+    
     JButton reset = new JButton(mLocalizer.msg("reset", "Reset"));
 
     reset.addActionListener(new ActionListener() {
@@ -458,10 +466,11 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
         mChannelName.setText("");
         mCategoryCB.setSelectedIndex(1);
         mCountryCB.setSelectedIndex(0);
+        mPluginCB.setSelectedIndex(0);
       }
     });
 
-    filterPanel.add(reset, cc.xy(9, 3));
+    filterPanel.add(reset, cc.xy(9, 4));
 
     filter.add(filterPanel, cc.xy(1, 3));
 
@@ -483,6 +492,7 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
 
     mCountryCB.addItemListener(filterItemListener);
     mCategoryCB.addItemListener(filterItemListener);
+    mPluginCB.addItemListener(filterItemListener);
 
     mChannelName.getDocument().addDocumentListener(new DocumentListener() {
       public void changedUpdate(DocumentEvent e) {
@@ -585,11 +595,16 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
     }
 
     HashSet<String> countries = new HashSet<String>();
+    HashSet<String> plugins = new HashSet<String>();
 
     for (Channel allChannel : allChannels) {
       String country = allChannel.getCountry();
+      String plugin = allChannel.getDataServiceProxy().getInfo().getName();
       if (country != null) {
         countries.add(country.toLowerCase());
+      }
+      if (plugin != null) {
+        plugins.add(plugin);
       }
     }
 
@@ -615,6 +630,30 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
     // select "all countries" if nothing else matches
     if(mCountryCB.getSelectedIndex() == -1) {
       mCountryCB.setSelectedIndex(0);
+    }
+    
+    
+    mPluginCB.removeAllItems();
+    mPluginCB.addItem(new FilterItem(mLocalizer.msg("allPlugins",
+    "All Plugins"), null));
+    items = new ArrayList<FilterItem>(plugins.size());
+    for (String plugin : plugins) {
+      items.add(new FilterItem(plugin, plugin));
+    }
+    Collections.sort(items);
+
+    String defaultPlugin = Settings.propSelectedChannelPlugin.getString();
+    for (FilterItem item : items) {
+      mPluginCB.addItem(item);
+      // select last used plugin
+      if (!defaultPlugin.isEmpty() && defaultPlugin.equalsIgnoreCase(item.getValue().toString())) {
+        mPluginCB.setSelectedIndex(mPluginCB.getItemCount() - 1);
+      }
+    }
+
+    // select "all plugins" if nothing else matches
+    if(mPluginCB.getSelectedIndex() == -1) {
+      mPluginCB.setSelectedIndex(0);
     }
   }
 
@@ -831,11 +870,14 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
     Object oldSelectedChannel = mAllChannels.getSelectedValue();
     FilterItem selectedCountry = (FilterItem) mCountryCB.getSelectedItem();
     FilterItem selectedCategory = (FilterItem) mCategoryCB.getSelectedItem();
-    if (selectedCountry == null || selectedCategory == null) {
+    FilterItem selectedPlugin = (FilterItem) mPluginCB.getSelectedItem();
+    if (selectedCountry == null || selectedCategory == null 
+        || selectedPlugin == null) {
       return;
     }
 
     String country = (String) (selectedCountry).getValue();
+    String plugin = (String) (selectedPlugin).getValue();
 
     if ((selectedCategory).getValue() instanceof Integer[]) {
       Integer[] categoryInt = (Integer[]) (selectedCategory).getValue();
@@ -852,14 +894,14 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
         }
       }
 
-      mFilter.setFilter(country, categories, mChannelName.getText());
+      mFilter.setFilter(country, categories, mChannelName.getText(), plugin);
     } else {
       Integer categoryInt = (Integer) (selectedCategory).getValue();
       int categories = Integer.MAX_VALUE;
       if (categoryInt != null) {
         categories = categoryInt;
       }
-      mFilter.setFilter(country, categories, mChannelName.getText());
+      mFilter.setFilter(country, categories, mChannelName.getText(), plugin);
     }
 
     // Split the channels in subscribed and available
