@@ -71,6 +71,7 @@ import tvbrowser.core.ChannelList;
 import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.tvdataservice.ChannelGroupManager;
+import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import tvbrowser.ui.DontShowAgainOptionBox;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.settings.channel.ChannelConfigDlg;
@@ -175,6 +176,9 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
   private JButton mLeftButton;
 
   private JButton mRightButton;
+  
+  private boolean mShowPlugins = (TvDataServiceProxyManager
+  .getInstance().getDataServices().length > 1);
 
   /**
    * Create the SettingsTab
@@ -455,9 +459,11 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
     mPluginCB = new JComboBox();
     mPluginCB.setMaximumRowCount(20);
 
-    filterPanel.add(new JLabel(mLocalizer.msg("plugin", "Plugin") + ":"),
+    if (mShowPlugins) {
+      filterPanel.add(new JLabel(mLocalizer.msg("plugin", "Plugin") + ":"),
         cc.xy(6, 3));
-    filterPanel.add(mPluginCB, cc.xyw(8, 3, 2));
+      filterPanel.add(mPluginCB, cc.xyw(8, 3, 2));
+    }
     
     JButton reset = new JButton(mLocalizer.msg("reset", "Reset"));
 
@@ -470,7 +476,11 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
       }
     });
 
-    filterPanel.add(reset, cc.xy(9, 4));
+    if (mShowPlugins) {
+      filterPanel.add(reset, cc.xy(9, 4));
+    } else {
+      filterPanel.add(reset, cc.xy(9, 3));
+    }
 
     filter.add(filterPanel, cc.xy(1, 3));
 
@@ -652,9 +662,10 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
     }
 
     // select "all plugins" if nothing else matches
-    if(mPluginCB.getSelectedIndex() == -1) {
+    if(mPluginCB.getSelectedIndex() == -1 || !mShowPlugins) {
       mPluginCB.setSelectedIndex(0);
     }
+    
   }
 
   private void addCategoryFilter(final int category) {
