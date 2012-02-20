@@ -932,6 +932,13 @@ public class Settings {
       mProp, "selectedChannelCountry", Locale.getDefault().getCountry().toLowerCase());
 
   /**
+   * selected plugin filter in channel settings
+   * @since 3.1.1
+   */
+  public static final StringProperty propSelectedChannelPlugin = new StringProperty(
+      mProp, "selectedChannelPlugin", "");
+
+  /**
    * subscribed channels
    */
   public static final ChannelArrayProperty propSubscribedChannels = new ChannelArrayProperty(
