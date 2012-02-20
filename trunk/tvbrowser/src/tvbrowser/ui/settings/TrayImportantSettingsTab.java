@@ -36,6 +36,9 @@ import devplugin.SettingsTab;
  */
 public class TrayImportantSettingsTab implements SettingsTab {
   private static final Localizer mLocalizer = TrayBaseSettingsTab.mLocalizer;
+  private static final int mMaxSizeTray = 30;
+  private static final int mMaxSizeSubmenu = 40;
+  
   
   private JCheckBox mIsEnabled, mShowDate, mShowTime, mShowToolTip;
   private JRadioButton mShowInSubMenu, mShowInTray;
@@ -70,7 +73,7 @@ public class TrayImportantSettingsTab implements SettingsTab {
     bg.add(mShowInSubMenu);
     bg.add(mShowInTray);
     
-    int maxSizeValue = Settings.propTrayImportantProgramsInSubMenu.getBoolean() ? 30 : 15;
+    int maxSizeValue = Settings.propTrayImportantProgramsInSubMenu.getBoolean() ? mMaxSizeSubmenu : mMaxSizeTray;
     
     mSize = new JSpinner(new SpinnerNumberModel(Settings.propTrayImportantProgramsSize.getInt(), 1, maxSizeValue, 1));
     
@@ -139,16 +142,16 @@ public class TrayImportantSettingsTab implements SettingsTab {
     
     mShowInSubMenu.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        mSize.setModel(new SpinnerNumberModel(((Integer)mSize.getValue()).intValue(), 1, 30, 1));
-        mSizeInfo.setText(mLocalizer.msg("sizeInfo","(maximum: {0})",30));
+        mSize.setModel(new SpinnerNumberModel(((Integer)mSize.getValue()).intValue(), 1, mMaxSizeSubmenu, 1));
+        mSizeInfo.setText(mLocalizer.msg("sizeInfo","(maximum: {0})",mMaxSizeSubmenu));
       }
     });
 
     mShowInTray.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         int value = ((Integer)mSize.getValue()).intValue();
-        mSize.setModel(new SpinnerNumberModel(value > 15 ? 15 : value, 1, 15, 1));
-        mSizeInfo.setText(mLocalizer.msg("sizeInfo","(maximum: {0})",15));
+        mSize.setModel(new SpinnerNumberModel(value > mMaxSizeTray ? mMaxSizeTray : value, 1, mMaxSizeTray, 1));
+        mSizeInfo.setText(mLocalizer.msg("sizeInfo","(maximum: {0})",mMaxSizeTray));
       }
     });
     
