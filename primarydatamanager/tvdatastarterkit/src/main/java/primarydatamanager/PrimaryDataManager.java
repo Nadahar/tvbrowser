@@ -514,7 +514,7 @@ public class PrimaryDataManager {
                 }
                 //Everythings fine
                 manager.setMaxDeletedFrames(value);
-                i=i+2;
+                i++;
               } catch (NumberFormatException e) {
                 System.out.println("Value has to be a double between 0.0 and 1.0");
                 System.exit(1);
