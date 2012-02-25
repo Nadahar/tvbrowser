@@ -243,9 +243,9 @@ private JLabel mDescriptionLabel;
 
       mDescriptionLines = new JSpinner(new SpinnerNumberModel(Settings.propPictureDescriptionLines.getInt(), 1, 20, 1));
       pb.add(mDescriptionLines, cc.xyw(3, y+=1, 4));
-      pb.add(mShowPictureBorderProgramTable, cc.xyw(3,y+=1,7));
       mDescriptionLabel = new JLabel(mLocalizer.msg("lines", "lines"));
 	  pb.add(mDescriptionLabel, cc.xy(8, y));
+      pb.add(mShowPictureBorderProgramTable, cc.xyw(3,y+=1,7));
 	  mDescriptionLabel.setEnabled(mShowDescription.isSelected());
 	  mDescriptionLines.setEnabled(mShowDescription.isSelected());
 	  mShowPictureBorderProgramTable.setEnabled(!mShowDescription.isSelected());

@@ -1457,7 +1457,7 @@ public class Settings {
       mProp, "pictures.type", ProgramPanelSettings.SHOW_PICTURES_FOR_DURATION);
 
   public static final IntProperty propPictureDescriptionLines = new IntProperty(
-	  mProp, "pictures.lines", 8);
+	  mProp, "pictures.lines", 6);
 
   public static final StringArrayProperty propPicturePluginIds = new StringArrayProperty(
       mProp, "pictures.pluginIds", new String[0]);
