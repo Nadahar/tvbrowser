@@ -455,6 +455,9 @@ public final class Settings {
     items.put(DvbViewerSetup.DEF_REC_AVDISABLED, isDefAvDisabled() ? "1" : "0");
     DvbViewerSetup.setEntries(viewerTimersPath, items);
 */
+    props.setProperty(PROPS_RECORD_BEFORE, String.valueOf(getRecordBefore()));
+    props.setProperty(PROPS_RECORD_AFTER, String.valueOf(getRecordAfter()));
+
 
     return props;
   }

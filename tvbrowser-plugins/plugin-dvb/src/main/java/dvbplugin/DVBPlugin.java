@@ -63,7 +63,7 @@ public class DVBPlugin extends devplugin.Plugin {
   /** field <code>PROGRAMRECEIVE_ADD</code> */
   private static final String PROGRAMRECEIVE_ADD = "ADD";
 
-  private static final Version VERSION = new Version(2, 02, 3);
+  private static final Version VERSION = new Version(2, 02, 4);
 
   /** this plugin inherently only works on windows */
   private static final boolean isWindows = OperatingSystem.isWindows();
