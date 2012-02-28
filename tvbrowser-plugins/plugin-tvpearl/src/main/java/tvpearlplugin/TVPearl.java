@@ -222,15 +222,15 @@ public class TVPearl {
    */
   private List<Channel> getChannelsFromName(final String channelName) {
     final List<Channel> result = new ArrayList<Channel>();
-    final Pattern pattern = Pattern.compile("^(.*[ ()])?" + Pattern.quote(channelName.trim()) + "([ ()].*)?$");
+    final Pattern pattern = Pattern.compile("^(.*[ ()])?" + Pattern.quote(channelName.toLowerCase().trim()) + "([ ()].*)?$");
     for (Channel channel : Plugin.getPluginManager().getSubscribedChannels()) {
       // first search default name
-      Matcher matcher = pattern.matcher(channel.getDefaultName());
+      Matcher matcher = pattern.matcher(channel.getDefaultName().toLowerCase());
       if (matcher.find()) {
         result.add(channel);
       } else {
         // afterwards search user defined name
-        matcher = pattern.matcher(channel.getName());
+        matcher = pattern.matcher(channel.getName().toLowerCase());
         if (matcher.find()) {
           result.add(channel);
         }
