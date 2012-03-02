@@ -300,8 +300,8 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
 
 
   private void deleteOutdatedFiles() {
-    // Delete all day programs older than 3 days
-    Date deadlineDay = new Date().addDays(- 3);
+    // Delete all day programs older than 2 days
+    Date deadlineDay = new Date().addDays(- 2);
 
     File[] fileArr = mDataDir.listFiles();
     if (fileArr == null) {
