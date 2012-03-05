@@ -45,7 +45,7 @@ import util.ui.Localizer;
 public class PluginAutoUpdater {
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(PluginAutoUpdater.class);
   /** The name of the updates file. */
-  public static final String PLUGIN_UPDATES_FILENAME = "plugins.txt";
+  public static final String PLUGIN_UPDATES_FILENAME = "plugins.gz";
   /** The default plugins download url */
   public static final String DEFAULT_PLUGINS_DOWNLOAD_URL = "http://www.tvbrowser.org/plugins";
   

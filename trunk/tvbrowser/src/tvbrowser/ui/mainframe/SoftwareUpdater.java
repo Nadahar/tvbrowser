@@ -73,7 +73,8 @@ public final class SoftwareUpdater {
    * @throws IOException
    */
   public SoftwareUpdater(URL url, PluginBaseInfo[] baseInfos) throws IOException {
-    BufferedReader reader = new BufferedReader(new InputStreamReader(IOUtilities.getStream(url, 300000),"ISO-8859-1"));
+    BufferedReader reader = new BufferedReader(new InputStreamReader(
+    	IOUtilities.openSaveGZipInputStream(IOUtilities.getStream(url, 300000)),"ISO-8859-1"));
 
     mSoftwareUpdateItems=readSoftwareUpdateItems(reader,ONLY_UPDATE_TYPE,false,baseInfos);
 
@@ -89,7 +90,8 @@ public final class SoftwareUpdater {
    * @throws IOException
    */
   public SoftwareUpdater(URL url, int dialogType, PluginBaseInfo[] baseInfos) throws IOException {
-    BufferedReader reader = new BufferedReader(new InputStreamReader(IOUtilities.getStream(url, 300000),"ISO-8859-1"));
+    BufferedReader reader = new BufferedReader(new InputStreamReader(
+    	IOUtilities.openSaveGZipInputStream(IOUtilities.getStream(url, 300000)),"ISO-8859-1"));
 
     mSoftwareUpdateItems=readSoftwareUpdateItems(reader,dialogType,false,baseInfos);
     
@@ -105,7 +107,8 @@ public final class SoftwareUpdater {
 	 * @throws IOException
 	 */
 	SoftwareUpdater(URL url, int dialogType, boolean dragNdrop) throws IOException {
-		BufferedReader reader = new BufferedReader(new InputStreamReader(IOUtilities.getStream(url, 300000),"ISO-8859-1"));
+		BufferedReader reader = new BufferedReader(new InputStreamReader(
+			IOUtilities.openSaveGZipInputStream(IOUtilities.getStream(url, 300000)),"ISO-8859-1"));
 
 		mSoftwareUpdateItems=readSoftwareUpdateItems(reader,dialogType,dragNdrop,null);
 
