@@ -79,7 +79,7 @@ public final class TimelinePlugin extends devplugin.Plugin {
 	}
 
 	public static Version getVersion() {
-		return new Version(1, 0);
+		return new Version(1, 0, 1);
 	}
 
 	public SettingsTab getSettingsTab() {
@@ -219,7 +219,9 @@ public final class TimelinePlugin extends devplugin.Plugin {
 
 	public void loadSettings(final Properties prop) {
 		mSettings = new TimelineSettings(prop);
-		mSettings.setTitleFormat(mTitleFormat);
+		if (mTitleFormat != null) {
+		  mSettings.setTitleFormat(mTitleFormat);
+		}
 		mChannelWidth = mSettings.getChannelWidth();
 	}
 
