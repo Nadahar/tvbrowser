@@ -213,10 +213,26 @@
       <fileset dir="${unpacked.dir}" includes="tvdataservice/**"/>
       <fileset dir="${unpacked.dir}" includes="devplugin/**"/>
       <fileset dir="${unpacked.dir}" includes="util/**"/>
-<!--      <fileset dir="${classes.dir}" includes="tvbrowser/core/tvdataservice/**"/>
-      <fileset dir="${classes.dir}" includes="tvbrowser/core/ChannelUserSettings*"/>
-      <fileset dir="${classes.dir}" includes="tvbrowser/core/Settings*"/>
-      <fileset dir="${classes.dir}" includes="tvbrowser/core/plugin/DefaultSettings*"/>-->
+      <fileset dir="${unpacked.dir}" includes="tvbrowser/core/Settings*"/>
+      <fileset dir="${unpacked.dir}" includes="tvbrowser/core/settings/**"/>
+      <fileset dir="${unpacked.dir}" includes="tvbrowser/ui/mainframe/MainFrame*"/>
+      <fileset dir="${unpacked.dir}" includes="tvbrowser/core/DateListener*"/>
+      <fileset dir="${unpacked.dir}" includes="tvbrowser/core/plugin/DefaultSettings*"/>
+      <fileset dir="${unpacked.dir}" includes="tvbrowser/TVBrowser*"/>
+      <fileset dir="${unpacked.dir}" includes="tvbrowser/FileLoggingHandler*"/>
+      <fileset dir="${unpacked.dir}" includes="tvbrowser/extras/programinfo/ProgramInfo*"/>
+      <fileset dir="${unpacked.dir}" includes="tvbrowser/extras/reminderplugin/ReminderPlugin*"/>
+      <fileset dir="${unpacked.dir}" includes="tvbrowser/extras/reminderplugin/ReminderListDialog*"/>
+      <fileset dir="${unpacked.dir}" includes="tvbrowser/core/TvDataUpdateListener*"/>
+      <fileset dir="${unpacked.dir}" includes="tvbrowser/ui/pluginview/Node*"/>
+      <fileset dir="${unpacked.dir}" includes="tvbrowser/extras/common/DataSerializer*"/>
+      <fileset dir="${unpacked.dir}" includes="tvbrowser/extras/common/DataDeserializer*"/>
+      <fileset dir="${unpacked.dir}" includes="tvbrowser/core/TvDataBaseListener*"/>
+      <fileset dir="${unpacked.dir}" includes="tvbrowser/extras/favoritesplugin/**"/>
+      <fileset dir="${unpacked.dir}" includes="tvbrowser/ui/settings/BlockedPluginArrayProperty*"/>
+      <fileset dir="${unpacked.dir}" includes="tvbrowser/core/tvdataservice/**"/>
+      <fileset dir="${unpacked.dir}" includes="tvbrowser/core/plugin/ButtonActionIf*"/>
+      <fileset dir="${unpacked.dir}" includes="tvbrowser/core/ChannelUserSettings*"/>
       <fileset dir="${unpacked.dir}" includes="org/apache/commons/net/**"/>
       <fileset dir="${unpacked.dir}" includes="org/apache/commons/lang/**"/>
       <fileset dir="${unpacked.dir}" includes="com/jgoodies/common/**"/>
