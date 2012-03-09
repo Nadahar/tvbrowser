@@ -47,13 +47,12 @@ import javax.swing.JToolBar;
 import javax.swing.tree.TreePath;
 
 import tvbrowser.core.Settings;
-import tvbrowser.core.filters.AudioDescriptionFilter;
 import tvbrowser.core.filters.FilterList;
 import tvbrowser.core.filters.FilterManagerImpl;
+import tvbrowser.core.filters.InfoBitFilter;
 import tvbrowser.core.filters.PluginFilter;
 import tvbrowser.core.filters.SeparatorFilter;
 import tvbrowser.core.filters.ShowAllFilter;
-import tvbrowser.core.filters.SubtitleFilter;
 import tvbrowser.core.filters.UserFilter;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.ui.mainframe.MainFrame;
@@ -192,7 +191,7 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
         mDefaultFilterBtn.setEnabled(!((Settings.propDefaultFilter.getString().equals(id + "###" + name)) ||
             (Settings.propDefaultFilter.getString().trim().length() < 1 && node.getFilter() instanceof ShowAllFilter)));
         
-        mEditBtn.setEnabled(!(node.getFilter() instanceof ShowAllFilter || node.getFilter() instanceof PluginFilter || node.getFilter() instanceof SubtitleFilter || node.getFilter() instanceof AudioDescriptionFilter || node.getFilter() instanceof PluginsProgramFilter));
+        mEditBtn.setEnabled(!(node.getFilter() instanceof ShowAllFilter || node.getFilter() instanceof PluginFilter || node.getFilter() instanceof PluginsProgramFilter || node.getFilter() instanceof InfoBitFilter));
       }
       else {
         mEditBtn.setEnabled(row > 0 && node.isDirectoryNode());
