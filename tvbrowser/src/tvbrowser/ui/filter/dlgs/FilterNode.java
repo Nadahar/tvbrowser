@@ -37,13 +37,12 @@ import javax.swing.JRadioButtonMenuItem;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import tvbrowser.core.Settings;
-import tvbrowser.core.filters.AudioDescriptionFilter;
 import tvbrowser.core.filters.FilterList;
+import tvbrowser.core.filters.InfoBitFilter;
 import tvbrowser.core.filters.ParserException;
 import tvbrowser.core.filters.PluginFilter;
 import tvbrowser.core.filters.SeparatorFilter;
 import tvbrowser.core.filters.ShowAllFilter;
-import tvbrowser.core.filters.SubtitleFilter;
 import tvbrowser.core.filters.UserFilter;
 import tvbrowser.ui.mainframe.MainFrame;
 
@@ -58,6 +57,7 @@ import devplugin.ProgramFilter;
  */
 public class FilterNode extends DefaultMutableTreeNode {
   private static final String PLUGIN_FILTER_KEY = "PLUGIN_FILTER###";
+  private static final String INFOBIT_FILTER_KEY = "INFOBIT_FILTER###";
   private boolean mWasExpanded;
   
   /**
@@ -108,14 +108,18 @@ public class FilterNode extends DefaultMutableTreeNode {
       else if(name.equals(PluginFilter.KEY)) {
         userObject = new PluginFilter();
       }
-      else if(name.equals(SubtitleFilter.KEY)) {
-        userObject = new SubtitleFilter();
+      else if(name.equals("[SUBTITLE_FILTER]")) {
+    	 userObject = new InfoBitFilter("[SUBTITLE_FILTER]");
       }
-      else if(name.equals(AudioDescriptionFilter.KEY)) {
-        userObject = new AudioDescriptionFilter();
+      else if(name.equals("[AUDIO_DESCRIPTION_FILTER]")) {
+        userObject = new InfoBitFilter("[AUDIO_DESCRIPTION_FILTER]");
       }
       else if(name.equals(SeparatorFilter.KEY)) {
         userObject = new SeparatorFilter();
+      }
+      else if(name.startsWith(INFOBIT_FILTER_KEY)) {
+        String infobitKey = name.substring(INFOBIT_FILTER_KEY.length());
+        userObject = new InfoBitFilter(infobitKey);
       }
       else if(name.startsWith(PLUGIN_FILTER_KEY)) {
         String pluginKey = name.substring(PLUGIN_FILTER_KEY.length());
@@ -156,12 +160,6 @@ public class FilterNode extends DefaultMutableTreeNode {
       else if(userObject instanceof PluginFilter) {
         out.writeUTF(PluginFilter.KEY);
       }
-      else if(userObject instanceof SubtitleFilter) {
-        out.writeUTF(SubtitleFilter.KEY);
-      }
-      else if(userObject instanceof AudioDescriptionFilter) {
-        out.writeUTF(AudioDescriptionFilter.KEY);
-      }
       else if(userObject instanceof SeparatorFilter) {
         out.writeUTF(SeparatorFilter.KEY);
       }
@@ -173,6 +171,9 @@ public class FilterNode extends DefaultMutableTreeNode {
       }
       else if(userObject instanceof PluginsProgramFilter) {
         out.writeUTF(PLUGIN_FILTER_KEY + ((PluginsProgramFilter)userObject).getName());
+      }
+      else if(userObject instanceof InfoBitFilter) {
+        out.writeUTF(INFOBIT_FILTER_KEY + ((InfoBitFilter)userObject).getKey());
       }
     }
   }
@@ -317,8 +318,8 @@ public class FilterNode extends DefaultMutableTreeNode {
   }
   
   public boolean isDeletingAllowed() {
-    return !(userObject instanceof ShowAllFilter || userObject instanceof PluginFilter || userObject instanceof SubtitleFilter ||
-        userObject instanceof AudioDescriptionFilter || userObject instanceof PluginsProgramFilter || getChildCount() > 0);
+    return !(userObject instanceof ShowAllFilter || userObject instanceof PluginFilter ||
+        userObject instanceof PluginsProgramFilter || userObject instanceof InfoBitFilter || getChildCount() > 0);
   }
   
   public boolean testAndSetToPluginsProgramFilter(PluginsProgramFilter filter) {

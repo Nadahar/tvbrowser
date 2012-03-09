@@ -51,6 +51,7 @@ import util.io.stream.BufferedReaderProcessor;
 import util.io.stream.StreamUtilities;
 import devplugin.PluginAccess;
 import devplugin.PluginsProgramFilter;
+import devplugin.Program;
 import devplugin.ProgramFilter;
 
 public class FilterList {
@@ -113,11 +114,11 @@ public class FilterList {
     filterList.put(showAll.getName(), showAll);
     ProgramFilter pluginFilter = new PluginFilter();
     filterList.put(pluginFilter.getName(), pluginFilter);
-    ProgramFilter subtitleFilter = new SubtitleFilter();
+    ProgramFilter subtitleFilter = new InfoBitFilter("[SUBTITLE_FILTER]");
     filterList.put(subtitleFilter.getName(), subtitleFilter);
-    ProgramFilter audioDescriptionFilter = new AudioDescriptionFilter();
+    ProgramFilter audioDescriptionFilter = new InfoBitFilter("[AUDIO_DESCRIPTION_FILTER]");
     filterList.put(audioDescriptionFilter.getName(), audioDescriptionFilter);
-    
+   
 
     /* Read the available filters from the file system and add them to the array */
     if (mFilterDirectory == null) {
