@@ -64,7 +64,7 @@ import devplugin.Version;
  * A User can configure his favorite Search-Engines and search for the given Movie
  */
 public class WebPlugin extends Plugin {
-  private static final Version mVersion = new Version(3,02);
+  private static final Version mVersion = new Version(3,03);
 
   private static final Logger mLog = java.util.logging.Logger
   .getLogger(WebPlugin.class.getName());
@@ -288,6 +288,13 @@ public class WebPlugin extends Plugin {
             // title
             final WebAddress adrTitle = new WebAddress(address.getName(), address.getUrl().replace(WEBSEARCH_ALL, "\"" + program.getTitle() + "\""), null, false, true);
             categoryList.add(createSearchAction(program, adrTitle, program.getTitle()));
+            String orgTitle = program.getTextField(ProgramFieldType.ORIGINAL_TITLE_TYPE);
+            if (orgTitle != null && !orgTitle.equals(program.getTitle())) {
+              final WebAddress adrOrgTitle = new WebAddress(address.getName(), address.getUrl().replace(WEBSEARCH_ALL, "\"" + orgTitle + "\""), null, false, true);
+              AbstractAction orgTitleAction = createSearchAction(program, adrOrgTitle, "("+orgTitle+")");
+              orgTitleAction.putValue(Plugin.DISABLED_ON_TASK_MENU, true);
+              categoryList.add(orgTitleAction);
+            }
             categoryList.add(ContextMenuSeparatorAction.getDisabledOnTaskMenuInstance());
             createSubMenu(program, address, categoryList, mLocalizer.msg("actor", "Actor"), listActors);
             createSubMenu(program, address, categoryList, mLocalizer.msg("director","Director"), listDirectors);
