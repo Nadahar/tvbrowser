@@ -206,6 +206,20 @@ public class FilterTreeModel extends DefaultTreeModel {
     }
   }
   
+  public FilterNode getDirectoryNode(String name, FilterNode parent) {
+	FilterNode child;
+    if (parent == null) {
+      parent = (FilterNode) getRoot();
+    }
+	for (int i=0;i<root.getChildCount();i++) {	      
+	  child = (FilterNode)root.getChildAt(i);
+	  if (child.isDirectoryNode() && child.toString().equals(name)) {
+		return child;
+	  }
+	}
+	return null;
+  }
+  
   public void createMenu(JMenu menu, ProgramFilter curFilter) {
     ((FilterNode)getRoot()).createMenu(menu,curFilter);
   }

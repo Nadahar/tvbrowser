@@ -45,6 +45,7 @@ import javax.swing.JMenu;
 import org.apache.commons.lang.StringUtils;
 
 import tvbrowser.core.Settings;
+import tvbrowser.ui.filter.dlgs.FilterNode;
 import tvbrowser.ui.filter.dlgs.FilterTreeModel;
 import tvbrowser.ui.mainframe.searchfield.SearchFilter;
 import util.io.stream.BufferedReaderProcessor;
@@ -72,6 +73,12 @@ public class FilterList {
   private FilterList() {
     create();
   }
+  
+  /**
+   * Localizer
+   */
+  private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(FilterList.class);
+
   
   public static File getFilterDirectory() {
     return mFilterDirectory;
@@ -107,18 +114,9 @@ public class FilterList {
     }
     else {
       mFilterTreeModel = FilterTreeModel.initInstance(new ProgramFilter[0]);
+    }
     final HashMap<String, ProgramFilter> filterList = new HashMap<String, ProgramFilter>();
-
-    /* Add default filters. The user may not remove them. */
-    ProgramFilter showAll = new ShowAllFilter();
-    filterList.put(showAll.getName(), showAll);
-    ProgramFilter pluginFilter = new PluginFilter();
-    filterList.put(pluginFilter.getName(), pluginFilter);
-    ProgramFilter subtitleFilter = new InfoBitFilter("[SUBTITLE_FILTER]");
-    filterList.put(subtitleFilter.getName(), subtitleFilter);
-    ProgramFilter audioDescriptionFilter = new InfoBitFilter("[AUDIO_DESCRIPTION_FILTER]");
-    filterList.put(audioDescriptionFilter.getName(), audioDescriptionFilter);
-   
+ 
 
     /* Read the available filters from the file system and add them to the array */
     if (mFilterDirectory == null) {
@@ -156,7 +154,9 @@ public class FilterList {
                   ProgramFilter filter = filterList.get(curFilterName);
 
                   if (filter != null) {
-                    mFilterTreeModel.addFilter(filter);
+                	if (!containsFilter(curFilterName)) {
+                      mFilterTreeModel.addFilter(filter);
+                	}
                     filterList.remove(curFilterName);
                   }
                 }
@@ -179,9 +179,54 @@ public class FilterList {
       }
     }
     
-    }}catch(Throwable t) {t.printStackTrace();}
+    /* Add default filters. The user may not remove them. */
+    ProgramFilter showAll = new ShowAllFilter();
+	if (!containsFilter(showAll.getName())) {
+      mFilterTreeModel.addFilter(showAll);
+	}
+    ProgramFilter pluginFilter = new PluginFilter();
+	if (!containsFilter(pluginFilter.getName())) {
+      mFilterTreeModel.addFilter(pluginFilter);
+	}
+	
+	//add default attributes
+	String attributesDir = mLocalizer.msg("ProgramAttributes", "program attributes");
+	
+	addInfoBitFilter("[SUBTITLE_FILTER]", attributesDir);
+	addInfoBitFilter("[AUDIO_DESCRIPTION_FILTER]", attributesDir);
+	addInfoBitFilter("[HD_FILTER]", attributesDir);
+	
+	//add default categories
+	String categoriesDir = mLocalizer.msg("ProgramCategories", "program categories");
+	addInfoBitFilter("[MOVIE_FILTER]", categoriesDir);
+	addInfoBitFilter("[SERIES_FILTER]", categoriesDir);
+	addInfoBitFilter("[SHOW_FILTER]", categoriesDir);
+	addInfoBitFilter("[DOCUMENTARY_FILTER]", categoriesDir);
+	addInfoBitFilter("[MAGAZINE_FILTER]", categoriesDir);
+	addInfoBitFilter("[NEWS_FILTER]", categoriesDir);
+	addInfoBitFilter("[SPORTS_FILTER]", categoriesDir);
+	addInfoBitFilter("[ARTS_FILTER]", categoriesDir);
+	addInfoBitFilter("[CHILDRENS_FILTER]", categoriesDir);
+	addInfoBitFilter("[OTHERS_FILTER]", categoriesDir);
+	addInfoBitFilter("[UNCATEGORIZED_FILTER]", categoriesDir);
+
+	
+    }catch(Throwable t) {t.printStackTrace();}
     
     mFilterTreeModel.addPluginsProgramFilters();
+  }
+  
+  private void addInfoBitFilter(String name, String directoryName) {
+	FilterNode root = (FilterNode)mFilterTreeModel.getRoot();
+	FilterNode directoryNode = mFilterTreeModel.getDirectoryNode(directoryName, root);
+
+	ProgramFilter filter = new InfoBitFilter(name);
+	if (!containsFilter(filter.getName())) {
+	  if (directoryNode == null) {
+		directoryNode = mFilterTreeModel.addDirectory(directoryName, root);
+	  }
+	  directoryNode.addFilter(filter);
+	}
   }
 
   private File[] getFilterFiles() {
@@ -309,6 +354,7 @@ public class FilterList {
 
     return null;
   }
+  
 
   /**
    * Gets the "ShowAll" filter

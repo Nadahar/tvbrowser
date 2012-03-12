@@ -46,7 +46,7 @@ public class PluginFilter implements ProgramFilter {
   }
 
   public String toString() {
-    return mLocalizer.msg("pluginfFilterName","Highlighted programs");
+    return mLocalizer.msg("pluginfFilterName","Highlighted programs")+"*";
   }
 
 
