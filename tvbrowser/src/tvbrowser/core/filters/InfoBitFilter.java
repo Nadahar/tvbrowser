@@ -36,8 +36,12 @@ public class InfoBitFilter implements ProgramFilter {
   private int[] mInfoBits;
   private String mName;
   private String mKey;
+  private String mLocalized;
 
   public InfoBitFilter(String name) {
+	
+	util.ui.Localizer catLocalizer = util.ui.Localizer.getLocalizerFor(devplugin.ProgramInfoHelper.class);
+	
 	if (name.equals("[SUBTITLE_FILTER]")) {
 	  mName = "Subtitled";
 	  mKey = name;
@@ -53,6 +57,64 @@ public class InfoBitFilter implements ProgramFilter {
 	  mInfoBits = new int[] {
 		  Program.INFO_AUDIO_DESCRIPTION};
 	}
+	
+	else if (name.equals("[ARTS_FILTER]")) {
+	  mLocalized = catLocalizer.msg("categorie_arts", "Theater/Concert");
+	  mKey = name;
+	  mInfoBits = new int[] {Program.INFO_CATEGORIE_ARTS};
+	} else if (name.equals("[CHILDRENS_FILTER]")) {
+	  mLocalized = catLocalizer.msg("categorie_childrens", "Children's Programming");
+	  mKey = name;
+	  mInfoBits = new int[] {Program.INFO_CATEGORIE_CHILDRENS};
+	} else if (name.equals("[DOCUMENTARY_FILTER]")) {
+	  mLocalized = catLocalizer.msg("categorie_documentary", "Documentary/Reportage");
+	  mKey = name;
+	  mInfoBits = new int[] {Program.INFO_CATEGORIE_DOCUMENTARY};
+	} else if (name.equals("[MAGAZINE_FILTER]")) {
+	  mLocalized = catLocalizer.msg("categorie_magazine_infotainment", "Magazine/Infotainment");
+	  mKey = name;
+	  mInfoBits = new int[] {Program.INFO_CATEGORIE_MAGAZINE_INFOTAINMENT};
+	} else if (name.equals("[MOVIE_FILTER]")) {
+	  mLocalized = catLocalizer.msg("categorie_movie", "Movie");
+	  mKey = name;
+	  mInfoBits = new int[] {Program.INFO_CATEGORIE_MOVIE};
+	} else if (name.equals("[NEWS_FILTER]")) {
+	  mLocalized = catLocalizer.msg("categorie_news", "News");
+	  mKey = name;
+	  mInfoBits = new int[] {Program.INFO_CATEGORIE_NEWS};
+	} else if (name.equals("[OTHERS_FILTER]")) {
+	  mLocalized = catLocalizer.msg("categorie_others", "Other Program");
+	  mKey = name;
+	  mInfoBits = new int[] {Program.INFO_CATEGORIE_OTHERS};
+	} else if (name.equals("[SERIES_FILTER]")) {
+	  mLocalized = catLocalizer.msg("categorie_series", "Series");
+	  mKey = name;
+	  mInfoBits = new int[] {Program.INFO_CATEGORIE_SERIES};
+	} else if (name.equals("[SHOW_FILTER]")) {
+	  mLocalized = catLocalizer.msg("categorie_show", "Show/Entertainment");
+	  mKey = name;
+	  mInfoBits = new int[] {Program.INFO_CATEGORIE_SHOW};
+	} else if (name.equals("[SPORTS_FILTER]")) {
+	  mLocalized = catLocalizer.msg("categorie_sports", "Sports");
+	  mKey = name;
+	  mInfoBits = new int[] {Program.INFO_CATEGORIE_SPORTS};
+	} else if (name.equals("[UNCATEGORIZED_FILTER]")) {
+	  mName = "Uncategorized";
+	  mKey = name;
+	  mInfoBits = new int[] {
+		  0,
+		  -Program.INFO_CATEGORIE_ARTS, 
+		  -Program.INFO_CATEGORIE_CHILDRENS, 
+		  -Program.INFO_CATEGORIE_DOCUMENTARY,
+		  -Program.INFO_CATEGORIE_MAGAZINE_INFOTAINMENT,
+		  -Program.INFO_CATEGORIE_MOVIE,
+		  -Program.INFO_CATEGORIE_NEWS,
+		  -Program.INFO_CATEGORIE_OTHERS,
+		  -Program.INFO_CATEGORIE_SERIES,
+		  -Program.INFO_CATEGORIE_SHOW,
+		  -Program.INFO_CATEGORIE_SPORTS};
+	}
+	
 	else { 
 	  throw new IllegalArgumentException("Unknown filter: "+name);	  
 	}
@@ -81,13 +143,20 @@ public class InfoBitFilter implements ProgramFilter {
    */
   public boolean accept(devplugin.Program prog) {
     int info = prog.getInfo();
-    
-    if (info < 1) {
-      return false;
+    if (info < 0) {
+      info = 0;
     }
+    
+
     boolean accept = false;
     for (int bit: mInfoBits) {
-      accept = accept || bitSet(info, bit);
+      if (bit >= 0) {
+        accept = accept || bitSet(info, bit);
+      } else {
+    	if (bitSet(info, -bit)) {
+    	  return false;     	  
+    	}
+      }
     }
     return accept;
 
@@ -101,6 +170,9 @@ public class InfoBitFilter implements ProgramFilter {
    * @return Pattern set?
    */
   private boolean bitSet(int num, int pattern) {
+	if (num == 0) {
+	  return num == pattern;
+	}
     return (num & pattern) == pattern;
   }
   
@@ -118,7 +190,10 @@ public class InfoBitFilter implements ProgramFilter {
    * Name of Filter
    */
   public String toString() {
-    return mLocalizer.msg(mName, mName);
+	if (mLocalized != null) {
+	  return mLocalized+"*";
+	}
+    return mLocalizer.msg(mName, mName)+"*";
   }
 
   public boolean equals(Object o) {
