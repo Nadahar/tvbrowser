@@ -175,7 +175,9 @@ public class FilterList {
 
     if (filterList.size() > 0) {
       for (ProgramFilter programFilter : filterList.values()) {
-        mFilterTreeModel.addFilter(programFilter);
+    	if (!containsFilter(programFilter.getName())) {
+          mFilterTreeModel.addFilter(programFilter);
+    	}
       }
     }
     
