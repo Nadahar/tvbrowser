@@ -85,7 +85,7 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
   private static final Logger mLog
     = Logger.getLogger(SchedulesDirectDataService.class.getName());
 
-  private static final Version VERSION = new Version(3,03,1);
+  private static final Version VERSION = new Version(3,10,0);
 
   private ChannelGroup mChannelGroup = new ChannelGroupImpl("SchedulesDirect", "SchedulesDirect", "SchedulesDirect", "SchedulesDirect");
 
@@ -174,8 +174,6 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
               }
             }
 
-            prog.setInfo(info);
-
             prog.setTitle(xtvdProgram.getTitle());
 
             if (xtvdProgram.getSyndicatedEpisodeNumber() != null) {
@@ -194,7 +192,7 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
               try {
                 prog.setIntField(ProgramFieldType.PRODUCTION_YEAR_TYPE, Integer.parseInt(xtvdProgram.getYear()));
                 // year is only set for movies
-                setMovieType(prog);
+                info |= Program.INFO_CATEGORIE_MOVIE;
               } catch (NumberFormatException e) {
                 e.printStackTrace();
               }
@@ -225,7 +223,7 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
               if (rating >= 0) {
                 prog.setIntField(ProgramFieldType.RATING_TYPE, rating);
               }
-              setMovieType(prog);
+              info |= Program.INFO_CATEGORIE_MOVIE;
             }
             if (xtvdProgram.getMpaaRating() != null) {
               String rating = xtvdProgram.getMpaaRating().toString();
@@ -234,7 +232,7 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
               if (ageLimit >= 0) {
                 prog.setIntField(ProgramFieldType.AGE_LIMIT_TYPE, ageLimit);
               }
-              setMovieType(prog);
+              info |= Program.INFO_CATEGORIE_MOVIE;
             }
             if (schedule.getTvRating() != null) {
               String rating = schedule.getTvRating().toString();
@@ -306,6 +304,8 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
                     appendPerson(director, member);
                   } else if ("Host".equalsIgnoreCase(role) || "Anchor".equalsIgnoreCase(role)) {
                     appendPerson(host, member);
+                  } else if ("Contestant".equalsIgnoreCase(role)) {
+                    appendPersonWithRole(additional, member);
                   } else if (role.toLowerCase().contains("producer")) {
                     appendPerson(producer, member);
                   } else if ("Writer".equalsIgnoreCase(role)) {
@@ -354,7 +354,32 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
                 if (genreStr.length() > 0) {
                   genreStr.append(", ");
                 }
-                genreStr.append(genre.getClassValue());
+                String genreValue = genre.getClassValue();
+                genreStr.append(genreValue);
+
+                if (genreValue.equals("Children")) {
+                  info |= Program.INFO_CATEGORIE_CHILDRENS;
+                } else 
+                  if (!hasProgramCategory(info)) {
+                	if (genreValue.equals("News")) {
+                	  info |= Program.INFO_CATEGORIE_NEWS;
+                	} else if (genreValue.equals("Talk") || genreValue.equals("Reality") || genreValue.equals("Game show")) {
+                	  info |= Program.INFO_CATEGORIE_SHOW;
+                	} else if (genreValue.equals("Soap") || genreValue.equals("Sitcom") || genreValue.equals("Drama") || genreValue.equals("Crime drama")  || genreValue.equals("Comedy-drama")) {
+                	  info |= Program.INFO_CATEGORIE_SERIES;
+                	} else if (genreValue.equals("Newsmagazine") || genreValue.equals("Public affairs")) {
+                	  info |= Program.INFO_CATEGORIE_MAGAZINE_INFOTAINMENT;
+                	} else if (genreValue.equals("Music")) {
+                	  info |= Program.INFO_CATEGORIE_ARTS;
+                	} else if (genreValue.equals("Consumer") || genreValue.equals("Shopping")  || genreValue.equals("Religious")) {
+                	  info |= Program.INFO_CATEGORIE_OTHERS;
+                	} else if (genreValue.equals("Sports non-event")  || genreValue.equals("Sports event")) {
+                	  info |= Program.INFO_CATEGORIE_SPORTS;
+                	} else if (genreValue.equals("Documentary") || genreValue.equals("Nature") || genreValue.equals("Animals")) {
+                	  info |= Program.INFO_CATEGORIE_DOCUMENTARY;
+                	}
+                  }
+
               }
               prog.setTextField(ProgramFieldType.GENRE_TYPE, genreStr.toString());
             }
@@ -364,6 +389,8 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
               prog.setDescription(description);
               prog.setShortInfo(MutableProgram.generateShortInfoFromDescription(description));
             }
+            
+            prog.setInfo(info);
 
             chDayProgram.addProgram(prog);
           }
@@ -382,18 +409,30 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
   private void setMovieType(MutableProgram prog) {
     prog.setInfo(prog.getInfo() | Program.INFO_CATEGORIE_MOVIE);
   }
+  
+  private boolean hasProgramCategory(int input) {
+	return (input & Program.INFO_CATEGORIE_SERIES) != 0
+        || (input & Program.INFO_CATEGORIE_SHOW) != 0
+        || (input & Program.INFO_CATEGORIE_MAGAZINE_INFOTAINMENT) != 0
+        || (input & Program.INFO_CATEGORIE_NEWS) != 0
+        || (input & Program.INFO_CATEGORIE_MOVIE) != 0 
+        || (input & Program.INFO_CATEGORIE_DOCUMENTARY) != 0
+        || (input & Program.INFO_CATEGORIE_OTHERS) != 0
+        || (input & Program.INFO_CATEGORIE_SPORTS) != 0
+        || (input & Program.INFO_CATEGORIE_ARTS) != 0; 
+  }
 
   private void appendPersonWithRole(final StringBuilder personField, final CrewMember member) {
     if (personField.length() > 0) {
-      personField.append('\n');
+      personField.append(",\n");
     }
     personField.append(member.getGivenname()).append(' ').append(member.getSurname());
-    personField.append("\t\t-\t\t").append(member.getRole());
+    personField.append("\t(").append(member.getRole()).append(')');
   }
 
   private void appendPerson(final StringBuilder personField, final CrewMember member) {
     if (personField.length() > 0) {
-      personField.append('\n');
+      personField.append(", ");
     }
     personField.append(member.getGivenname()).append(' ').append(member.getSurname());
   }
