@@ -71,6 +71,7 @@ import tvbrowser.core.ChannelList;
 import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.tvdataservice.ChannelGroupManager;
+import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import tvbrowser.ui.DontShowAgainOptionBox;
 import tvbrowser.ui.mainframe.MainFrame;
@@ -605,16 +606,11 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
     }
 
     HashSet<String> countries = new HashSet<String>();
-    HashSet<String> plugins = new HashSet<String>();
 
     for (Channel allChannel : allChannels) {
       String country = allChannel.getCountry();
-      String plugin = allChannel.getDataServiceProxy().getInfo().getName();
       if (country != null) {
         countries.add(country.toLowerCase());
-      }
-      if (plugin != null) {
-        plugins.add(plugin);
       }
     }
 
@@ -644,11 +640,13 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
     
     
     mPluginCB.removeAllItems();
+        
     mPluginCB.addItem(new FilterItem(mLocalizer.msg("allPlugins",
     "All Plugins"), null));
-    items = new ArrayList<FilterItem>(plugins.size());
-    for (String plugin : plugins) {
-      items.add(new FilterItem(plugin, plugin));
+    items = new ArrayList<FilterItem>();
+    for(TvDataServiceProxy dataService : TvDataServiceProxyManager.getInstance().getDataServices()) {
+      String name =dataService.getInfo().getName();
+      items.add(new FilterItem(name,name));
     }
     Collections.sort(items);
 
