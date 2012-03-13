@@ -109,7 +109,7 @@ public class FilterNode extends DefaultMutableTreeNode {
         userObject = new PluginFilter();
       }
       else if(name.equals("[SUBTITLE_FILTER]")) {
-    	 userObject = new InfoBitFilter("[SUBTITLE_FILTER]");
+         userObject = new InfoBitFilter("[SUBTITLE_FILTER]");
       }
       else if(name.equals("[AUDIO_DESCRIPTION_FILTER]")) {
         userObject = new InfoBitFilter("[AUDIO_DESCRIPTION_FILTER]");

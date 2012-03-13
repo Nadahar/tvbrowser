@@ -143,7 +143,7 @@ public class FilterList {
     try {
       File filterFile = new File(mFilterDirectory, FILTER_INDEX);
       if (filterFile.canRead()) {
-      	StreamUtilities.bufferedReader(filterFile,
+          StreamUtilities.bufferedReader(filterFile,
           new BufferedReaderProcessor() {
             public void process(BufferedReader inxIn) throws IOException {
               String curFilterName = inxIn.readLine();
@@ -154,9 +154,9 @@ public class FilterList {
                   ProgramFilter filter = filterList.get(curFilterName);
 
                   if (filter != null) {
-                	if (!containsFilter(curFilterName)) {
+                    if (!containsFilter(curFilterName)) {
                       mFilterTreeModel.addFilter(filter);
-                	}
+                    }
                     filterList.remove(curFilterName);
                   }
                 }
@@ -175,60 +175,60 @@ public class FilterList {
 
     if (filterList.size() > 0) {
       for (ProgramFilter programFilter : filterList.values()) {
-    	if (!containsFilter(programFilter.getName())) {
+        if (!containsFilter(programFilter.getName())) {
           mFilterTreeModel.addFilter(programFilter);
-    	}
+        }
       }
     }
     
     /* Add default filters. The user may not remove them. */
     ProgramFilter showAll = new ShowAllFilter();
-	if (!containsFilter(showAll.getName())) {
+    if (!containsFilter(showAll.getName())) {
       mFilterTreeModel.addFilter(showAll);
-	}
+    }
     ProgramFilter pluginFilter = new PluginFilter();
-	if (!containsFilter(pluginFilter.getName())) {
+    if (!containsFilter(pluginFilter.getName())) {
       mFilterTreeModel.addFilter(pluginFilter);
-	}
-	
-	//add default attributes
-	String attributesDir = mLocalizer.msg("ProgramAttributes", "program attributes");
-	
-	addInfoBitFilter("[SUBTITLE_FILTER]", attributesDir);
-	addInfoBitFilter("[AUDIO_DESCRIPTION_FILTER]", attributesDir);
-	addInfoBitFilter("[HD_FILTER]", attributesDir);
-	
-	//add default categories
-	String categoriesDir = mLocalizer.msg("ProgramCategories", "program categories");
-	addInfoBitFilter("[MOVIE_FILTER]", categoriesDir);
-	addInfoBitFilter("[SERIES_FILTER]", categoriesDir);
-	addInfoBitFilter("[SHOW_FILTER]", categoriesDir);
-	addInfoBitFilter("[DOCUMENTARY_FILTER]", categoriesDir);
-	addInfoBitFilter("[MAGAZINE_FILTER]", categoriesDir);
-	addInfoBitFilter("[NEWS_FILTER]", categoriesDir);
-	addInfoBitFilter("[SPORTS_FILTER]", categoriesDir);
-	addInfoBitFilter("[ARTS_FILTER]", categoriesDir);
-	addInfoBitFilter("[CHILDRENS_FILTER]", categoriesDir);
-	addInfoBitFilter("[OTHERS_FILTER]", categoriesDir);
-	addInfoBitFilter("[UNCATEGORIZED_FILTER]", categoriesDir);
+    }
+    
+    //add default attributes
+    String attributesDir = mLocalizer.msg("ProgramAttributes", "program attributes");
+    
+    addInfoBitFilter("[SUBTITLE_FILTER]", attributesDir);
+    addInfoBitFilter("[AUDIO_DESCRIPTION_FILTER]", attributesDir);
+    addInfoBitFilter("[HD_FILTER]", attributesDir);
+    
+    //add default categories
+    String categoriesDir = mLocalizer.msg("ProgramCategories", "program categories");
+    addInfoBitFilter("[MOVIE_FILTER]", categoriesDir);
+    addInfoBitFilter("[SERIES_FILTER]", categoriesDir);
+    addInfoBitFilter("[SHOW_FILTER]", categoriesDir);
+    addInfoBitFilter("[DOCUMENTARY_FILTER]", categoriesDir);
+    addInfoBitFilter("[MAGAZINE_FILTER]", categoriesDir);
+    addInfoBitFilter("[NEWS_FILTER]", categoriesDir);
+    addInfoBitFilter("[SPORTS_FILTER]", categoriesDir);
+    addInfoBitFilter("[ARTS_FILTER]", categoriesDir);
+    addInfoBitFilter("[CHILDRENS_FILTER]", categoriesDir);
+    addInfoBitFilter("[OTHERS_FILTER]", categoriesDir);
+    addInfoBitFilter("[UNCATEGORIZED_FILTER]", categoriesDir);
 
-	
+    
     }catch(Throwable t) {t.printStackTrace();}
     
     mFilterTreeModel.addPluginsProgramFilters();
   }
   
   private void addInfoBitFilter(String name, String directoryName) {
-	FilterNode root = (FilterNode)mFilterTreeModel.getRoot();
-	FilterNode directoryNode = mFilterTreeModel.getDirectoryNode(directoryName, root);
+    FilterNode root = (FilterNode)mFilterTreeModel.getRoot();
+    FilterNode directoryNode = mFilterTreeModel.getDirectoryNode(directoryName, root);
 
-	ProgramFilter filter = new InfoBitFilter(name);
-	if (!containsFilter(filter.getName())) {
-	  if (directoryNode == null) {
-		directoryNode = mFilterTreeModel.addDirectory(directoryName, root);
-	  }
-	  directoryNode.addFilter(filter);
-	}
+    ProgramFilter filter = new InfoBitFilter(name);
+    if (!containsFilter(filter.getName())) {
+      if (directoryNode == null) {
+        directoryNode = mFilterTreeModel.addDirectory(directoryName, root);
+      }
+      directoryNode.addFilter(filter);
+    }
   }
 
   private File[] getFilterFiles() {
