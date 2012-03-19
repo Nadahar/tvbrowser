@@ -1772,14 +1772,14 @@ public class Settings {
    * @since 3.1
    */
   public static final StringProperty propSelectedPersona = new StringProperty(
-      mProp, "persona", "ecb70d5c-f606-4052-9059-5c501842d6c3");
+      mProp, "persona", "51b73c81-7d61-4626-b230-89627c9f5ce7");
 
   /**
    * Stores if the Persona should be selected randomly at start.
    * @since 3.1
    */
   public static final BooleanProperty propRandomPersona = new BooleanProperty(
-      mProp, "randomPersona", true);
+      mProp, "randomPersona", false);
   
   /**
    * Stores if the picture borders should be painted.
