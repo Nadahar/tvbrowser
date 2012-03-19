@@ -313,14 +313,7 @@ private JLabel mDescriptionLabel;
       mShowPicturesForSelection.getItemListeners()[0].itemStateChanged(null);
       mShowPicturesNever.getItemListeners()[0].itemStateChanged(null);
 
-      JScrollPane scrollPane = new JScrollPane(pb.getPanel());
-      scrollPane.getViewport().setBackground(pb.getPanel().getBackground());
-      scrollPane.setBorder(null);
-
-      JPanel scrollPanel = new JPanel(new BorderLayout());
-      scrollPanel.add(scrollPane, BorderLayout.CENTER);
-
-      return scrollPanel;
+      return pb.getPanel();
 
     } catch (Exception e) {
       e.printStackTrace();

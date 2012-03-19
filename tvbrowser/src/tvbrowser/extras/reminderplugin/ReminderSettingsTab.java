@@ -409,14 +409,7 @@ public class ReminderSettingsTab implements SettingsTab {
       }
     });
 
-    JScrollPane scrollPane = new JScrollPane(pb.getPanel());
-    scrollPane.setBorder(null);
-    scrollPane.setViewportBorder(null);
-
-    JPanel scrollPanel = new JPanel(new FormLayout("default:grow","default"));
-    scrollPanel.add(scrollPane,cc.xy(1,1));
-
-    return scrollPanel;
+    return pb.getPanel();
   }
 
   private void handlePluginSelection() {
