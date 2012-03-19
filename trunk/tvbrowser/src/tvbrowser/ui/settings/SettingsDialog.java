@@ -29,9 +29,12 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Rectangle;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
@@ -51,6 +54,8 @@ import javax.swing.JSplitPane;
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -77,6 +82,7 @@ import util.exc.ErrorHandler;
 import util.misc.OperatingSystem;
 import util.ui.ChannelLabel;
 import util.ui.Localizer;
+import util.ui.ScrollableJPanel;
 import util.ui.SingleAndDoubleClickTreeUI;
 import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
@@ -541,8 +547,34 @@ public class SettingsDialog implements WindowClosingIf {
         mHelpBt.setToolTipText(mLocalizer.msg("noHelp", "No help available"));
         mHelpBt.setEnabled(false);
       }
-
-      mSettingsPn.add(pn);
+      JPanel scroll = new JPanel(new FormLayout("min:grow","fill:default:grow"));
+      scroll.add(pn,new CellConstraints().xy(1, 1));
+      
+      final JScrollPane pane = new JScrollPane(scroll);
+      pane.getHorizontalScrollBar().setUnitIncrement(50);
+      pane.getVerticalScrollBar().setUnitIncrement(50);
+      
+      scroll.addAncestorListener(new AncestorListener() {
+        
+        @Override
+        public void ancestorRemoved(AncestorEvent event) {}
+        
+        @Override
+        public void ancestorMoved(AncestorEvent event) {}
+        
+        @Override
+        public void ancestorAdded(AncestorEvent event) {
+          SwingUtilities.invokeLater(new Runnable() {
+            
+            @Override
+            public void run() {
+              pane.getVerticalScrollBar().setValue(0);
+            }
+          });
+        }
+      });
+      
+      mSettingsPn.add(pane);
     } else {
       mHelpBt.setToolTipText(mLocalizer.msg("noHelp", "No help available"));
       mHelpBt.setEnabled(false);
