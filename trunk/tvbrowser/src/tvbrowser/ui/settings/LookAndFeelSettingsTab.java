@@ -355,7 +355,7 @@ public final class LookAndFeelSettingsTab implements SettingsTab {
   void lookChanged() {
     String classname = ((LookAndFeelObj)mLfComboBox.getSelectedItem()).getLFClassName();
 
-    if (classname.startsWith("com.jgoodies") || classname.startsWith("com.l2fprod")) {
+    if ((classname.startsWith("com.jgoodies") || classname.startsWith("com.l2fprod")) && !classname.startsWith("com.jgoodies.looks.windows.WindowsLookAndFeel")) {
       mConfigBtn.setEnabled(true);
     } else {
       mConfigBtn.setEnabled(false);

@@ -1208,7 +1208,7 @@ public class TVBrowser {
           exc);
         Settings.propLookAndFeel.setString(Settings.propLookAndFeel.getDefault());
       }
-    } else if (Settings.propLookAndFeel.getString().startsWith("com.jgoodies")) {
+    } else if (Settings.propLookAndFeel.getString().startsWith("com.jgoodies") && !Settings.propLookAndFeel.getString().startsWith("com.jgoodies.looks.windows.WindowsLookAndFeel")) {
       com.jgoodies.looks.Options.setPopupDropShadowEnabled(Settings.propJGoodiesShadow.getBoolean());
       UIManager.put("jgoodies.popupDropShadowEnabled", Boolean
           .valueOf(Settings.propJGoodiesShadow.getBoolean()));
