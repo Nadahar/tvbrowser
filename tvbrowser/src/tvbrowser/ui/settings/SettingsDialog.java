@@ -169,7 +169,7 @@ public class SettingsDialog implements WindowClosingIf {
         showSettingsPanelForSelectedNode();
       }
     });
-    mSelectionTree.setRowHeight(17);
+    
     JScrollPane scrollPane = new JScrollPane(mSelectionTree);
     scrollPane.setMinimumSize(new Dimension(150, 0));
     scrollPane.setBorder(null);
