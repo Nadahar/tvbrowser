@@ -52,6 +52,7 @@ public class CalendarTablePanel extends AbstractCalendarPanel implements ListSel
     mTable.setDefaultRenderer(Date.class, renderer);
     mTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     mTable.setRowSelectionAllowed(false);
+    mTable.setRowHeight(mTable.getFont().getSize()+4);
     mTable.setColumnSelectionAllowed(false);
     mTable.setCellSelectionEnabled(true);
     mTable.setFillsViewportHeight(true);
