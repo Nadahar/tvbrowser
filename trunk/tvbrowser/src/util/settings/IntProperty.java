@@ -33,7 +33,7 @@ package util.settings;
 public class IntProperty extends Property {
   
   private int mDefaultValue;
-  private boolean mIsCacheFilled;
+  protected boolean mIsCacheFilled;
   private int mCachedValue;
   
   
@@ -57,13 +57,13 @@ public class IntProperty extends Property {
     if (! mIsCacheFilled) {
       String asString = getProperty();
       if (asString == null) {
-        mCachedValue = mDefaultValue;
+        mCachedValue = getDefault();
       } else {
         try {
           mCachedValue = Integer.parseInt(asString);
         }
         catch (Exception exc) {
-          mCachedValue = mDefaultValue;
+          mCachedValue = getDefault();
         }
       }
 

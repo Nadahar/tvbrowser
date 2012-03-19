@@ -91,6 +91,7 @@ import util.settings.PropertyManager;
 import util.settings.ShortProperty;
 import util.settings.StringArrayProperty;
 import util.settings.StringProperty;
+import util.settings.VariableIntProperty;
 import util.settings.VersionProperty;
 import util.settings.WindowSetting;
 import util.ui.Localizer;
@@ -131,14 +132,14 @@ public class Settings {
   private static final String WINDOW_SETTINGS_FILE = "window.settings.dat";
 
   private static String DEFAULT_FONT_NAME = "Dialog";
-  private static Font DEFAULT_PROGRAMTITLEFONT = new Font(DEFAULT_FONT_NAME,
-      Font.BOLD, 11);
-  private static Font DEFAULT_PROGRAMINFOFONT = new Font(DEFAULT_FONT_NAME,
-      Font.PLAIN, 10);
-  private static final Font DEFAULT_CHANNELNAMEFONT = new Font(
-      DEFAULT_FONT_NAME, Font.BOLD, 11);
-  private static Font DEFAULT_PROGRAMTIMEFONT = new Font(DEFAULT_FONT_NAME,
-      Font.BOLD, 11);
+  private static Font DEFAULT_PROGRAMTITLEFONT = new VariableFontSizeFont(DEFAULT_FONT_NAME,
+      Font.BOLD, 0);
+  private static Font DEFAULT_PROGRAMINFOFONT = new VariableFontSizeFont(DEFAULT_FONT_NAME,
+      Font.PLAIN, -1);
+  private static final Font DEFAULT_CHANNELNAMEFONT = new VariableFontSizeFont(
+      DEFAULT_FONT_NAME, Font.BOLD, 0);
+  private static Font DEFAULT_PROGRAMTIMEFONT = new VariableFontSizeFont(DEFAULT_FONT_NAME,
+      Font.BOLD, 0);
 
   private static PropertyManager mProp = new PropertyManager();
 
@@ -701,6 +702,11 @@ public class Settings {
     }
 
     loadWindowSettings();
+    
+    ((DeferredFontProperty)propProgramTitleFont).resetDefault();
+    ((DeferredFontProperty)propProgramInfoFont).resetDefault();
+    ((DeferredFontProperty)propChannelNameFont).resetDefault();
+    ((DeferredFontProperty)propProgramTimeFont).resetDefault();
   }
 
   private static void loadWindowSettings() {
@@ -775,7 +781,7 @@ public class Settings {
       TextLineBreakerStringWidth.resetHyphenator();
       mainFrame.getProgramTableScrollPane().forceRepaintAll();
     }
-
+    
     if (mProp.hasChanged(propColumnWidth)) {
       util.ui.ProgramPanel.updateColumnWidth();
       ProgramTableScrollPane scrollPane = mainFrame.getProgramTableScrollPane();
@@ -1203,7 +1209,7 @@ public class Settings {
     return lnf;
   }
 
-  public static final IntProperty propColumnWidth = new IntProperty(mProp,
+  public static final IntProperty propColumnWidth = new VariableIntProperty(mProp,
       "columnwidth", 200);
 
   public static final IntArrayProperty propTimeButtons = new IntArrayProperty(
@@ -1822,5 +1828,22 @@ public class Settings {
     }
 
     setting.layout(window);
+  }
+  
+  private static final class VariableFontSizeFont extends Font {
+    private int mOffset;
+    
+    public VariableFontSizeFont(String name, int style, int offset) {
+      super(name, style, UIManager.getFont("MenuItem.font").getSize()+offset);
+      mOffset = offset;
+    }
+    
+    public int getSize() {
+      return UIManager.getFont("MenuItem.font").getSize() + mOffset;
+    }
+  }
+  
+  private static final class VariableIntDef {
+    
   }
 }

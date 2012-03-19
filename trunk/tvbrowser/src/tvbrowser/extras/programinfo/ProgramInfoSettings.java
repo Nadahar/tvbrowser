@@ -22,6 +22,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Properties;
 
+import javax.swing.UIManager;
+
 import tvbrowser.extras.common.ConfigurationHandler;
 import util.program.CompoundedProgramFieldType;
 import util.program.ProgramTextCreator;
@@ -37,8 +39,6 @@ class ProgramInfoSettings {
   private static final int DEFAULT_TITLE_STYLE = Font.BOLD;
   private static final String KEY_FIELD_ORDER = "order";
   private static final String KEY_LOOK = "look";
-  private static final int DEFAULT_BODY_FONT_SIZE = 11;
-  private static final int DEFAULT_TITLE_FONT_SIZE = 18;
   private static final String DEFAULT_BODY_FONT_NAME = "Verdana";
   private static final String DEFAULT_TITLE_FONT_NAME = "Verdana";
   private static final String KEY_LEFT_SPLIT_WIDTH = "LeftSplit.Width";
@@ -89,11 +89,11 @@ class ProgramInfoSettings {
   }
 
   protected int getTitleFontSize() {
-    return getProperty(KEY_TITLEFONT_SIZE, DEFAULT_TITLE_FONT_SIZE);
+    return getProperty(KEY_TITLEFONT_SIZE, UIManager.getFont("MenuItem.font").getSize()+7);
   }
 
   protected int getBodyFontSize() {
-    return getProperty(KEY_BODYFONT_SIZE, DEFAULT_BODY_FONT_SIZE);
+    return getProperty(KEY_BODYFONT_SIZE, UIManager.getFont("MenuItem.font").getSize());
   }
 
   protected String getTitleFontName() {
@@ -247,14 +247,14 @@ class ProgramInfoSettings {
     if (getUserFont()) {
       return new Font(getTitleFontName(), getTitleFontStyle(), getTitleFontSize());
     }
-    return new Font(DEFAULT_TITLE_FONT_NAME, DEFAULT_TITLE_STYLE, DEFAULT_TITLE_FONT_SIZE);
+    return new Font(DEFAULT_TITLE_FONT_NAME, DEFAULT_TITLE_STYLE, UIManager.getFont("MenuItem.font").getSize()+7);
   }
 
   protected Font getUsedBodyFont() {
     if (getUserFont()) {
       return new Font(getBodyFontName(), getBodyFontStyle(), getBodyFontSize());
     }
-    return new Font(DEFAULT_BODY_FONT_NAME, DEFAULT_BODY_STYLE, DEFAULT_BODY_FONT_SIZE);
+    return new Font(DEFAULT_BODY_FONT_NAME, DEFAULT_BODY_STYLE, UIManager.getFont("MenuItem.font").getSize());
   }
 
   protected String getLook() {
