@@ -115,7 +115,6 @@ public class PluginTree extends JTree implements DragGestureListener,
 
     setRootVisible(false);
     setShowsRootHandles(true);
-    setRowHeight(17);
 
     expandPath(new TreePath(model.getRoot()));
 
