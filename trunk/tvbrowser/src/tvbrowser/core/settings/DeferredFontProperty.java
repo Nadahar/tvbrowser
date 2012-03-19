@@ -45,6 +45,10 @@ public class DeferredFontProperty extends FontProperty {
     super(manager, key, defaultFont);
     mDefFont = defaultFont;
   }
+  
+  public void resetDefault() {
+    mCachedValue = null;
+  }
 
   public Font getDefault() {
     if (mCachedValue == null) {
