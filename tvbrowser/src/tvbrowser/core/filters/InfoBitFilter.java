@@ -47,15 +47,19 @@ public class InfoBitFilter implements ProgramFilter {
       mKey = name;
       mInfoBits = new int[] {
           Program.INFO_SUBTITLE_FOR_AURALLY_HANDICAPPED, Program.INFO_ORIGINAL_WITH_SUBTITLE, Program.INFO_SIGN_LANGUAGE};
-    } else if (name.equals("[HD_FILTER]")) {
-      mName = "HD";
-      mKey = name;
-      mInfoBits = new int[] { Program.INFO_VISION_HD };
     } else if (name.equals("[AUDIO_DESCRIPTION_FILTER]")) {
       mName = "Audiodescription";
       mKey = name;
       mInfoBits = new int[] {
           Program.INFO_AUDIO_DESCRIPTION};
+    } else if (name.equals("[HD_FILTER]")) {
+      mName = "HD";
+      mKey = name;
+      mInfoBits = new int[] { Program.INFO_VISION_HD };
+    } else if (name.equals("[ORIGINAL_AUDIO_FILTER]")) {
+      mName = "OriginalAudio";
+      mKey = name;
+      mInfoBits = new int[] { Program.INFO_ORIGINAL_WITH_SUBTITLE, Program.INFO_AUDIO_TWO_CHANNEL_TONE };
     }
     
     else if (name.equals("[ARTS_FILTER]")) {

@@ -196,6 +196,7 @@ public class FilterList {
     
     addInfoBitFilter("[SUBTITLE_FILTER]", attributesDir);
     addInfoBitFilter("[AUDIO_DESCRIPTION_FILTER]", attributesDir);
+    addInfoBitFilter("[ORIGINAL_AUDIO_FILTER]", attributesDir);
     addInfoBitFilter("[HD_FILTER]", attributesDir);
     
     //add default categories
