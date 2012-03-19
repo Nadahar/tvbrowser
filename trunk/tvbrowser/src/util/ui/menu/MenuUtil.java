@@ -54,10 +54,10 @@ import devplugin.Program;
  */
 public class MenuUtil {
 
-  public static final Font CONTEXT_MENU_PLAINFONT = new Font("Dialog", Font.PLAIN, 12);
-  public static final Font CONTEXT_MENU_BOLDFONT = new Font("Dialog", Font.BOLD, 12);
-  public static final Font CONTEXT_MENU_ITALICFONT = new Font("Dialog", Font.ITALIC, 12);
-  public static final Font CONTEXT_MENU_BOLDITALICFONT = new Font("Dialog", Font.BOLD + Font.ITALIC, 12);
+  public static final Font CONTEXT_MENU_PLAINFONT = UIManager.getFont("MenuItem.font").deriveFont(Font.PLAIN);
+  public static final Font CONTEXT_MENU_BOLDFONT = UIManager.getFont("MenuItem.font").deriveFont(Font.BOLD);
+  public static final Font CONTEXT_MENU_ITALICFONT = UIManager.getFont("MenuItem.font").deriveFont(Font.ITALIC);
+  public static final Font CONTEXT_MENU_BOLDITALICFONT = UIManager.getFont("MenuItem.font").deriveFont(Font.PLAIN + Font.ITALIC);
 
 
   public static JMenuItem createMenuItem(String title) {
