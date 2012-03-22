@@ -433,20 +433,31 @@ public class Mirror {
    * @throws TvBrowserException
    */
   public static Mirror chooseUpToDateMirror(Mirror[] mirrorArr, ProgressMonitor monitor, String name, String id, Class caller, String additionalErrorMsg) throws TvBrowserException {
-    boolean isUpToDate = false;
+
+    Mirror chosenMirror = null;
+    int chosenLastUpdate = Integer.MAX_VALUE;
+    
     // Choose a random Mirror
     Mirror mirror = chooseMirror(mirrorArr, null, name, caller);
+    
     if (monitor != null) {
       monitor.setMessage(mLocalizer.msg("info.3", "Try to connect to mirror {0}", mirror.getUrl()));
     }
     // Check whether the mirror is up to date and available
     for (int i = 0; i < MAX_UP_TO_DATE_CHECKS; i++) {
       try {
-        if (mirrorIsUpToDate(mirror, id)) {
-          isUpToDate = true;
+    	int maxDays = (int)(Math.random()*(MAX_LAST_UPDATE_DAYS+1));
+    	int currentLastUpdate = daysSinceMirrorLastUpdate(mirror, id);
+        if (currentLastUpdate <= maxDays) {
+          chosenMirror = mirror;
           break;
         } else {
-          // This one is not up to date -> choose another one
+          // This one is not up to date, remember old one if newest so far
+          if (currentLastUpdate < chosenLastUpdate) {
+        	chosenLastUpdate = currentLastUpdate;
+        	chosenMirror = mirror;
+          }          
+          // -> choose another one
           Mirror oldMirror = mirror;
           mirror = chooseMirror(mirrorArr, mirror, name, caller);
           mLog.info("Mirror " + oldMirror.getUrl() + " is out of date or down. Choosing " + mirror.getUrl() + " instead.");
@@ -461,7 +472,7 @@ public class Mirror {
         mLog.info("Server blocked : " + blockedServer);
 
         if(mirrorArr.length == 1 && mirrorArr[0].equals(mirror)) {
-          return null;
+          return chosenMirror;
         }
 
         // This one is not available -> choose another one
@@ -476,13 +487,11 @@ public class Mirror {
     }
 
     // Return the mirror
-    if (isUpToDate) {
-      return mirror;
-    }
-    return null;
+    return chosenMirror;
+
   }
 
-  private static boolean mirrorIsUpToDate(Mirror mirror, String id) throws TvBrowserException {
+  private static int daysSinceMirrorLastUpdate(Mirror mirror, String id) throws TvBrowserException {
     // Load the lastupdate file and parse it
     final String url = mirror.getUrl() + (mirror.getUrl().endsWith("/") ? "" : "/") + id + "_lastupdate";
     Date lastupdated;
@@ -495,7 +504,7 @@ public class Mirror {
     new Thread(new Runnable() {
       public void run() {
         try {
-          mMirrorDownloadData = IOUtilities.loadFileFromHttpServer(new URL(url), 60000);
+          mMirrorDownloadData = IOUtilities.loadFileFromHttpServer(new URL(url), 15000);
         } catch (Exception e) {
           mDownloadException = true;
         }
@@ -516,7 +525,7 @@ public class Mirror {
 
     if (mMirrorDownloadRunning || mMirrorDownloadData == null || mDownloadException) {
       mLog.info("Server " + url +" is down!");
-      return false;
+      return Integer.MAX_VALUE;
     }
 
     try {
@@ -530,14 +539,14 @@ public class Mirror {
         lastupdated = new Date(year, month, day);
 
         mLog.info("Done !");
-
-        return lastupdated.compareTo(new Date().addDays(-MAX_LAST_UPDATE_DAYS)) >= 0;
+        
+        return new Date().getNumberOfDaysSince(lastupdated);
       }
     }catch(NumberFormatException parseException) {
       mLog.info("The file on the server has the wrong format!");
     }
 
-    return false;
+    return Integer.MAX_VALUE;
   }
 
   /**
