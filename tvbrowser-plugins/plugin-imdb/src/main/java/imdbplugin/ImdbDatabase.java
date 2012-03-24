@@ -423,6 +423,10 @@ public final class ImdbDatabase {
         return getMovieId(title, episode, removeSuffix(originalTitle, suffix), originalEpisode, year);
       }
     }
+    
+    if (!mCandidates.isEmpty()) {
+      return mCandidates.get(0).getField(MOVIE_ID).stringValue();
+    }
 
     // nothing found yet, so try everything again without year
     if (year > 0) {
@@ -506,6 +510,7 @@ public final class ImdbDatabase {
       bQuery.add(new TermQuery(new Term(MOVIE_YEAR, Integer.toString(year - 1))), BooleanClause.Occur.SHOULD);
       bQuery.add(new TermQuery(new Term(MOVIE_YEAR, Integer.toString(year))), BooleanClause.Occur.SHOULD);
       bQuery.add(new TermQuery(new Term(MOVIE_YEAR, Integer.toString(year + 1))), BooleanClause.Occur.SHOULD);
+      bQuery.setMinimumNumberShouldMatch(1);
     }
     try {
       TopDocs topDocs = mSearcher.search(bQuery, null, 10);
