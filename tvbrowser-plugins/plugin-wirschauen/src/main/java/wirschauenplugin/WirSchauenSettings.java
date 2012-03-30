@@ -47,7 +47,12 @@ public class WirSchauenSettings extends PropertyBasedSettings {
   private static final String OPTION_KEY_MY_OMDB_MARK_PRIORITY = "myOmdbMarkPriority";
 
   private static final String OPTION_KEY_SPELL_CHECKING = "spellCheck";
+  
+  protected final static int PASSWORDSEED = 2161314;
 
+  private static final String OPTION_KEY_OMDB_USERNAME = "omdbUsername";
+
+  private static final String OPTION_KEY_OMDB_PASSWORD = "omdbPaswword";
 
 
 
@@ -130,5 +135,21 @@ public class WirSchauenSettings extends PropertyBasedSettings {
 
   public void setSpellChecking(final boolean check) {
     set(OPTION_KEY_SPELL_CHECKING, check);
+  }
+  
+  public String getOmdbUsername() {
+    return get(OPTION_KEY_OMDB_USERNAME, "");
+  }
+  
+  public void setOmdbUsername(String input) {
+    set(OPTION_KEY_OMDB_USERNAME, input);
+  }
+  
+  public String getOmdbPassword() {
+    return get(OPTION_KEY_OMDB_PASSWORD, "");
+  }
+  
+  public void setOmdbPassword(String input) {
+    set(OPTION_KEY_OMDB_PASSWORD, input);
   }
 }

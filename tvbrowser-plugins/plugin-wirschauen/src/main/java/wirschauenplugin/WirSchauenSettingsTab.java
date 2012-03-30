@@ -17,12 +17,17 @@ package wirschauenplugin;
 import javax.swing.Icon;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+
+import util.io.IOUtilities;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.SettingsTab;
+import util.ui.UiUtilities;
 
 /**
  * @author uzi
@@ -45,7 +50,9 @@ public class WirSchauenSettingsTab implements SettingsTab
   private WirSchauenSettings mSettings;
 
   private JCheckBox mSpellCheck;
-
+  
+  private JTextField mOmdbUsername;
+  private JPasswordField mOmdbPassword;
 
   /**
    * @param settings the underlying settings for this tab.
@@ -66,10 +73,10 @@ public class WirSchauenSettingsTab implements SettingsTab
 //    mLinkedProgramColorChooser.setEnabled(mMarkerCheckbox.isSelected());
 
     CellConstraints cc = new CellConstraints();
-    PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu, default:grow", "5dlu, pref, 5dlu, pref, 10dlu, pref"));
+    PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu, pref, 5dlu, default:grow", "5dlu, pref, 5dlu, pref, 5dlu, pref, 5dlu, pref, 5dlu, pref, 5dlu, pref, 5dlu, pref"));
 
-    pb.add(mMarkerCheckbox, cc.xy(2, 2));
-    pb.add(mMarkingColorChooser, cc.xy(2, 4));
+    pb.add(mMarkerCheckbox, cc.xyw(2, 2, 3));
+    pb.add(mMarkingColorChooser, cc.xyw(2, 4, 3));
 
 //    mMarkerCheckbox.addItemListener(new ItemListener() {
 //      public void itemStateChanged(final ItemEvent e) {
@@ -78,6 +85,21 @@ public class WirSchauenSettingsTab implements SettingsTab
 //    });
     mSpellCheck = new JCheckBox(WirSchauenPlugin.LOCALIZER.msg("Settings.SpellCheck", "Activate spell checker"), mSettings.getSpellChecking());
     pb.add(mSpellCheck, cc.xy(2,6));
+    
+    pb.addSeparator(WirSchauenPlugin.LOCALIZER.msg("Settings.OmdbAuthentification", "Omdb authentification"), cc.xyw(2,8,3));
+    
+    pb.add(UiUtilities.createHtmlHelpTextArea(WirSchauenPlugin.LOCALIZER.msg("Settings.OmdbAuthentificationInfo","Only needed to directly edit Omdb descriptions via the Wirschauen plugin.")),cc.xyw(2,10,3));
+
+    pb.addLabel(WirSchauenPlugin.LOCALIZER.msg("Settings.OmdbUsername", "Username") + ":",cc.xy(2,12));
+
+    mOmdbUsername = new JTextField(mSettings.getOmdbUsername());
+    pb.add(mOmdbUsername, cc.xy(4,12));
+    
+    pb.addLabel(WirSchauenPlugin.LOCALIZER.msg("Settings.OmdbPassword", "Password") + ":",cc.xy(2,14));
+   
+    mOmdbPassword = new JPasswordField(IOUtilities.xorDecode(mSettings.getOmdbPassword(),WirSchauenSettings.PASSWORDSEED));
+    pb.add(mOmdbPassword, cc.xy(4,14));
+
 
     return pb.getPanel();
   }
@@ -115,6 +137,8 @@ public class WirSchauenSettingsTab implements SettingsTab
     mSettings.setMarkPrograms(mMarkerCheckbox.isSelected());
     mSettings.setMarkPriorityForOmdbLink(mMarkingColorChooser.getSelectedPriority(0));
     mSettings.setMarkPriorityForOwnOmdbLink(mMarkingColorChooser.getSelectedPriority(1));
+    mSettings.setOmdbUsername(mOmdbUsername.getText());
+    mSettings.setOmdbPassword(IOUtilities.xorEncode(new String(mOmdbPassword.getPassword()), WirSchauenSettings.PASSWORDSEED));
     mSettings.setSpellChecking(mSpellCheck.isSelected());
   }
 }

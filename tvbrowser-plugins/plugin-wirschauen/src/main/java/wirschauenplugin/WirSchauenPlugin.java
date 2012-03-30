@@ -71,7 +71,7 @@ public final class WirSchauenPlugin extends Plugin
   /**
    * the version of this plugin.
    */
-  private static final Version VERSION = new Version(0, 20, 4, IS_STABLE);
+  private static final Version VERSION = new Version(0, 21, 0, IS_STABLE);
 
   /**
    * this class is a singleton. kind of. the constructor is not restricted so
