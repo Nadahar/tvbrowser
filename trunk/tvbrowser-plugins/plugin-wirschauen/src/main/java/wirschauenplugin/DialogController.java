@@ -321,18 +321,27 @@ public class DialogController
             {
               //TODO reuse the omdb connection (and the HttpClient in it) for more efficiency. problem: omdb sometimes
               //loses the session. the language is set to en in that case.
-              new OmdbConnection().saveAbstract(OmdbConnection.getIdFromUrl(wirSchauenEvent.getOmdbUrl()), createOmdbAbstractDialog.getOmdbAbstractInput(), OmdbConnection.DE);
-              //add the program to the plugin program tree
-              WirSchauenPlugin.getInstance().updateTreeAndMarks(mProgram);
-              //be polite but switch back to event dispatching thread (swing)
-              SwingUtilities.invokeLater(new Runnable()
-              {
-                @Override
-                public void run()
+              OmdbConnection con = new OmdbConnection();
+              WirSchauenPlugin plugin = WirSchauenPlugin.getInstance();
+              String user = plugin.getSettings().getOmdbUsername();
+              String password = plugin.getSettings().getOmdbPassword();
+              if (user.isEmpty() || password.isEmpty() || !con.login(user, password)) {
+                JOptionPane.showMessageDialog(null, WirSchauenPlugin.LOCALIZER.msg("NoOmdbLogin", "The login to Omdb didn't work. Please check your settings."),"WirSchauen",  JOptionPane.OK_OPTION);
+              } else {
+
+                con.saveAbstract(OmdbConnection.getIdFromUrl(wirSchauenEvent.getOmdbUrl()), createOmdbAbstractDialog.getOmdbAbstractInput(), OmdbConnection.DE);
+                //add the program to the plugin program tree
+                WirSchauenPlugin.getInstance().updateTreeAndMarks(mProgram);
+                //be polite but switch back to event dispatching thread (swing)
+                SwingUtilities.invokeLater(new Runnable()
                 {
-                  DontShowAgainMessageBox.dontShowAgainMessageBox(WirSchauenPlugin.getInstance(), "saved", mParent, WirSchauenPlugin.LOCALIZER.msg("Thanks", "Thanks"));
-                }
-              });
+                  @Override
+                  public void run()
+                  {
+                    DontShowAgainMessageBox.dontShowAgainMessageBox(WirSchauenPlugin.getInstance(), "saved", mParent, WirSchauenPlugin.LOCALIZER.msg("Thanks", "Thanks"));
+                  }
+                });
+              }
             }
             catch (final IOException e)
             {

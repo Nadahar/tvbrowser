@@ -33,6 +33,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.ProxySelectorRoutePlanner;
 import org.apache.http.util.EntityUtils;
 
+import util.io.IOUtilities;
+
 
 /**
  * this is the connection object to communicate with the omdb. it uses a
@@ -163,10 +165,12 @@ public class OmdbConnection
   public boolean login(final String login, final String password) throws IOException
   {
     HttpPost postMethod = new HttpPost(OmdbConnection.LOGIN_URL);
-    postMethod.setEntity(new StringEntity("login=" + URLEncoder.encode(login, "UTF-8") + "&password=" + URLEncoder.encode(password, "UTF-8") + "&commit=Login", "UTF-8"));
+    postMethod.setEntity(new StringEntity("login=" + URLEncoder.encode(login, "UTF-8") 
+        + "&password=" + URLEncoder.encode(IOUtilities.xorDecode(password, WirSchauenSettings.PASSWORDSEED), "UTF-8") 
+        + "&commit=Login", "UTF-8"));
 
     HttpResponse response = mHttpClient.execute(postMethod);
-    boolean result = response.getStatusLine().getStatusCode() == 200;
+    boolean result = response.getStatusLine().getStatusCode() == 302; //302: login correct, 200: login wrong
     postMethod.abort();
     return result;
   }
