@@ -23,6 +23,7 @@ import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
+import util.io.IOUtilities;
 import util.ui.DontShowAgainMessageBox;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
@@ -37,8 +38,13 @@ import devplugin.Program;
  *
  * @author uzi
  */
-public class DialogController
-{
+public class DialogController {
+  /**
+   * logging for this class.
+   */
+  private static final Logger LOG = Logger.getLogger(DialogController.class.getName());
+
+
   /**
    * the parent of the different dialogs.
    */
@@ -48,12 +54,6 @@ public class DialogController
    * the program to describe.
    */
   private Program mProgram;
-
-
-  /**
-   * logging for this class
-   */
-  private static final Logger mLog = Logger.getLogger(DialogController.class.getName());
 
   /**
    * @param parent the parent of the different dialogs that are opened during the processing
@@ -325,8 +325,8 @@ public class DialogController
               WirSchauenPlugin plugin = WirSchauenPlugin.getInstance();
               String user = plugin.getSettings().getOmdbUsername();
               String password = plugin.getSettings().getOmdbPassword();
-              if (user.isEmpty() || password.isEmpty() || !con.login(user, password)) {
-                JOptionPane.showMessageDialog(null, WirSchauenPlugin.LOCALIZER.msg("NoOmdbLogin", "The login to Omdb didn't work. Please check your settings."),"WirSchauen",  JOptionPane.OK_OPTION);
+              if (user.isEmpty() || password.isEmpty() || !con.login(user, IOUtilities.xorDecode(password, WirSchauenSettings.PASSWORDSEED))) {
+                JOptionPane.showMessageDialog(null, WirSchauenPlugin.LOCALIZER.msg("NoOmdbLogin", "The login to Omdb didn't work. Please check your settings."), "WirSchauen",  JOptionPane.OK_OPTION);
               } else {
 
                 con.saveAbstract(OmdbConnection.getIdFromUrl(wirSchauenEvent.getOmdbUrl()), createOmdbAbstractDialog.getOmdbAbstractInput(), OmdbConnection.DE);
@@ -356,9 +356,15 @@ public class DialogController
 
 
 
+  /**
+   * logs a connection-failed-error and shows an error message.
+   *
+   * @param e the exception to log
+   * @param website name of the website
+   */
   private void handleConnectionError(final IOException e, final String website) {
     //connection failed.
-    mLog.log(Level.WARNING, website + " connection failed: " + e.getMessage(), e);
+    LOG.log(Level.WARNING, website + " connection failed: " + e.getMessage(), e);
     //switch back to event dispatching thread (swing)
     SwingUtilities.invokeLater(new Runnable()
     {

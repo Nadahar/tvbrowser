@@ -33,8 +33,6 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.ProxySelectorRoutePlanner;
 import org.apache.http.util.EntityUtils;
 
-import util.io.IOUtilities;
-
 
 /**
  * this is the connection object to communicate with the omdb. it uses a
@@ -86,7 +84,7 @@ public class OmdbConnection
    * url to get the abstract. %d will be replaced by the movie id.
    */
   private static final String GET_ABSTRACT_URL = "http://www.omdb.org/movie/%d/embed_data";
-  
+
   /**
    * url to login into omdb.
    */
@@ -102,13 +100,13 @@ public class OmdbConnection
    * movie url.
    */
   private static final Pattern ID_PATTERN = Pattern.compile(".*/(\\d*).*");
-  
-  
-  
+
+
+
   /**
-   * logging for this class
+   * logging for this class.
    */
-  private static final Logger mLog = Logger.getLogger(OmdbConnection.class.getName());
+  private static final Logger LOG = Logger.getLogger(OmdbConnection.class.getName());
 
 
 
@@ -137,26 +135,26 @@ public class OmdbConnection
     ProxySelectorRoutePlanner routePlanner = new ProxySelectorRoutePlanner(mHttpClient.getConnectionManager().getSchemeRegistry(), ProxySelector.getDefault());
     mHttpClient.setRoutePlanner(routePlanner);
   }
-  
-  
+
+
   /**
    * Creates a new OmdbConnection with the given proxy.
-   * 
+   *
    * @param proxy proxy url
    * @param port proxy port
    */
-  public OmdbConnection(String proxy, int port) {
-      super();
-      mHttpClient = new DefaultHttpClient();
-      mHttpClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, new HttpHost(proxy, port));
+  public OmdbConnection(final String proxy, final int port) {
+    super();
+    mHttpClient = new DefaultHttpClient();
+    mHttpClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, new HttpHost(proxy, port));
   }
-  
-  
-  
+
+
+
   /**
-   * this method does a login to omdb. certain actions are only available while logged in (post an abstract for 
+   * this method does a login to omdb. certain actions are only available while logged in (post an abstract for
    * instance).
-   * 
+   *
    * @param login the login to be used
    * @param password the password to be used
    * @return true, if the response code was 200
@@ -165,12 +163,13 @@ public class OmdbConnection
   public boolean login(final String login, final String password) throws IOException
   {
     HttpPost postMethod = new HttpPost(OmdbConnection.LOGIN_URL);
-    postMethod.setEntity(new StringEntity("login=" + URLEncoder.encode(login, "UTF-8") 
-        + "&password=" + URLEncoder.encode(IOUtilities.xorDecode(password, WirSchauenSettings.PASSWORDSEED), "UTF-8") 
+    postMethod.setEntity(new StringEntity("login=" + URLEncoder.encode(login, "UTF-8")
+        + "&password=" + URLEncoder.encode(password, "UTF-8")
         + "&commit=Login", "UTF-8"));
 
     HttpResponse response = mHttpClient.execute(postMethod);
-    boolean result = response.getStatusLine().getStatusCode() == 302; //302: login correct, 200: login wrong
+    //302: login correct, 200: login wrong
+    boolean result = response.getStatusLine().getStatusCode() == 302;
     postMethod.abort();
     return result;
   }
@@ -310,7 +309,7 @@ public class OmdbConnection
       }
     }
     if (content != null) {
-        mLog.log(Level.WARNING, "content: " + content);
+      LOG.log(Level.WARNING, "content: " + content);
     }
     getMethod.abort();
     throw new IOException(response.getStatusLine().getReasonPhrase() + ", response code: " + response.getStatusLine().getStatusCode());
