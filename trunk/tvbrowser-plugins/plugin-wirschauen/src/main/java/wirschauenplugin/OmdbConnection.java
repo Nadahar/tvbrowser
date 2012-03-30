@@ -23,15 +23,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.params.ConnRoutePNames;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.ProxySelectorRoutePlanner;
 import org.apache.http.util.EntityUtils;
-
-import util.ui.html.HTMLTextHelper;
 
 
 /**
@@ -84,6 +84,11 @@ public class OmdbConnection
    * url to get the abstract. %d will be replaced by the movie id.
    */
   private static final String GET_ABSTRACT_URL = "http://www.omdb.org/movie/%d/embed_data";
+  
+  /**
+   * url to login into omdb.
+   */
+  private static final String LOGIN_URL = "http://www.omdb.org/account/login";
 
   /**
    * pattern to select the abstract (matching group 1).
@@ -130,8 +135,41 @@ public class OmdbConnection
     ProxySelectorRoutePlanner routePlanner = new ProxySelectorRoutePlanner(mHttpClient.getConnectionManager().getSchemeRegistry(), ProxySelector.getDefault());
     mHttpClient.setRoutePlanner(routePlanner);
   }
+  
+  
+  /**
+   * Creates a new OmdbConnection with the given proxy.
+   * 
+   * @param proxy proxy url
+   * @param port proxy port
+   */
+  public OmdbConnection(String proxy, int port) {
+      super();
+      mHttpClient = new DefaultHttpClient();
+      mHttpClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, new HttpHost(proxy, port));
+  }
+  
+  
+  
+  /**
+   * this method does a login to omdb. certain actions are only available while logged in (post an abstract for 
+   * instance).
+   * 
+   * @param login the login to be used
+   * @param password the password to be used
+   * @return true, if the response code was 200
+   * @throws IOException if something went wrong
+   */
+  public boolean login(final String login, final String password) throws IOException
+  {
+    HttpPost postMethod = new HttpPost(OmdbConnection.LOGIN_URL);
+    postMethod.setEntity(new StringEntity("login=" + URLEncoder.encode(login, "UTF-8") + "&password=" + URLEncoder.encode(password, "UTF-8") + "&commit=Login", "UTF-8"));
 
-
+    HttpResponse response = mHttpClient.execute(postMethod);
+    boolean result = response.getStatusLine().getStatusCode() == 200;
+    postMethod.abort();
+    return result;
+  }
 
 
 
@@ -262,7 +300,7 @@ public class OmdbConnection
               || "Es wurde noch keine Kurzbeschreibung eingegeben".equals(movieAbstract)) {
             return null;
           } else {
-            return HTMLTextHelper.convertHtmlToText(movieAbstract.trim());
+            return movieAbstract.trim();
           }
         }
       }

@@ -26,6 +26,7 @@ import javax.swing.SwingUtilities;
 import util.ui.DontShowAgainMessageBox;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
+import util.ui.html.HTMLTextHelper;
 import devplugin.Date;
 import devplugin.Program;
 
@@ -249,7 +250,7 @@ public class DialogController
             {
               //TODO reuse the omdb connection (and the HttpClient in it) for more efficiency. problem: omdb sometimes
               //loses the session. the language is set to en in that case.
-              final String omdbAbstract = new OmdbConnection().loadAbstract(OmdbConnection.getIdFromUrl(wirSchauenEvent.getOmdbUrl()), OmdbConnection.DE);
+              final String omdbAbstract = HTMLTextHelper.convertHtmlToText(new OmdbConnection().loadAbstract(OmdbConnection.getIdFromUrl(wirSchauenEvent.getOmdbUrl()), OmdbConnection.DE));
               //switch back to event dispatching thread (swing)
               SwingUtilities.invokeLater(new Runnable()
               {
