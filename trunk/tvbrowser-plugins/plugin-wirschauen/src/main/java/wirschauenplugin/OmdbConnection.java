@@ -157,7 +157,7 @@ public class OmdbConnection
    *
    * @param login the login to be used
    * @param password the password to be used
-   * @return true, if the response code was 200
+   * @return true, if the response code was 302 (yeah, i know - but omdb returns 302 for 'ok' and 200 for 'login faild'... wtf!?)
    * @throws IOException if something went wrong
    */
   public boolean login(final String login, final String password) throws IOException
