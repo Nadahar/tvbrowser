@@ -175,10 +175,6 @@ public class OmdbConnection
     HttpPost postMethod = new HttpPost(String.format(OmdbConnection.SET_VOTE_URL, movieId));
     postMethod.setEntity(new StringEntity("commit=speichern&vote%5Bvote%5D=" + rating, "UTF-8"));
 
-    // omdb need this headers, it wont work without them
-    postMethod.setHeader("X-Requested-With", "XMLHttpRequest");
-    postMethod.setHeader("X-Prototype-Version", "1.5.0");
-
     HttpResponse response = mHttpClient.execute(postMethod);
     boolean result = response.getStatusLine().getStatusCode() == 200;
     postMethod.abort();
