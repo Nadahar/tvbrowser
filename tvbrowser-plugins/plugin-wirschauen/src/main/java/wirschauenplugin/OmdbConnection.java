@@ -79,11 +79,16 @@ public class OmdbConnection
    * url to save the abstract. %d will be replaced by the movie id.
    */
   private static final String SET_ABSTRACT_URL = "http://www.omdb.org/movie/%d/set_abstract";
+  
+  /**
+   * url to save the rating/vote. %d will be replaced by the movie id.
+   */
+  private static final String SET_VOTE_URL = "http://www.omdb.org/vote/%d/register_vote?vote_for=movie";
 
   /**
-   * url to get the abstract. %d will be replaced by the movie id.
+   * url to get the abstract or other data. %d will be replaced by the movie id.
    */
-  private static final String GET_ABSTRACT_URL = "http://www.omdb.org/movie/%d/embed_data";
+  private static final String GET_MOVIA_DATA_URL = "http://www.omdb.org/movie/%d/embed_data";
 
   /**
    * url to login into omdb.
@@ -94,6 +99,11 @@ public class OmdbConnection
    * pattern to select the abstract (matching group 1).
    */
   private static final Pattern ABSTRACT_PATTERN = Pattern.compile("(?sm).*?<abstract>(.*?)</abstract>.*?");
+  
+  /**
+   * pattern to select the rating/vote (matching group 1).
+   */
+  private static final Pattern VOTE_PATTERN = Pattern.compile("(?sm).*?<vote>(.*?)</vote>.*?");
 
   /**
    * this pattern selects the id of the movie (matching group 1) from the omdb
@@ -147,6 +157,64 @@ public class OmdbConnection
     super();
     mHttpClient = new DefaultHttpClient();
     mHttpClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, new HttpHost(proxy, port));
+  }
+  
+  
+  /**
+   * saves a rating for a movie. the rating must be between 1 (crap) and 10 (great).
+   *
+   * the method is blocking, so it returns, as soon as omdb sends the http response but not before.
+   *
+   * @param movieId the omdb-id of the movie
+   * @param rating the rating to set
+   * @return true if the response code was 200 (ok), false otherwise
+   * @throws IOException if the communication with omdb failed
+   */
+  public boolean saveRating(final long movieId, final byte rating) throws IOException
+  {
+    HttpPost postMethod = new HttpPost(String.format(OmdbConnection.SET_VOTE_URL, movieId));
+    postMethod.setEntity(new StringEntity("commit=speichern&vote%5Bvote%5D=" + rating, "UTF-8"));
+
+    // omdb need this headers, it wont work without them
+    postMethod.setHeader("X-Requested-With", "XMLHttpRequest");
+    postMethod.setHeader("X-Prototype-Version", "1.5.0");
+
+    HttpResponse response = mHttpClient.execute(postMethod);
+    boolean result = response.getStatusLine().getStatusCode() == 200;
+    postMethod.abort();
+    return result;
+  }
+  
+  
+  /**
+   * returns the average community rating for the movie with the given id. it's 0.0 if not rated at all.
+   * 
+   * @param movieId the omdb id for the movie
+   * @return the rating
+   * @throws IOException if anything went wrong
+   */
+  public float loadRating(final long movieId) throws IOException {
+    HttpGet getMethod = new HttpGet(String.format(OmdbConnection.GET_MOVIA_DATA_URL, movieId));
+    HttpResponse response = mHttpClient.execute(getMethod);
+    String content = null;
+    if (response.getStatusLine().getStatusCode() == 200) {
+      HttpEntity entity = response.getEntity();
+      if (entity != null) {
+        content = EntityUtils.toString(entity);
+        // response is utf-8 encoded but response header is not set. hence http client uses the
+        // default encoding iso-8859-1 for getResponseBodyAsString(), which is wrong.
+        content = new String(content.getBytes("ISO8859-1"), "UTF-8");
+        Matcher matcher = VOTE_PATTERN.matcher(content);
+        if (matcher.matches()) {
+          return Float.parseFloat(matcher.group(1));
+        }
+      }
+    }
+    if (content != null) {
+      LOG.log(Level.WARNING, "content: " + content);
+    }
+    getMethod.abort();
+    throw new IOException(response.getStatusLine().getReasonPhrase() + ", response code: " + response.getStatusLine().getStatusCode());
   }
 
 
@@ -285,7 +353,7 @@ public class OmdbConnection
    */
   public String loadAbstract(final long movieId) throws IOException
   {
-    HttpGet getMethod = new HttpGet(String.format(OmdbConnection.GET_ABSTRACT_URL, movieId));
+    HttpGet getMethod = new HttpGet(String.format(OmdbConnection.GET_MOVIA_DATA_URL, movieId));
     HttpResponse response = mHttpClient.execute(getMethod);
     String content = null;
     if (response.getStatusLine().getStatusCode() == 200)
