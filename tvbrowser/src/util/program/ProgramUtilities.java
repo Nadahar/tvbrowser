@@ -518,7 +518,7 @@ public class ProgramUtilities {
         hourMinute[1] = String.valueOf(minute);
         hourMinute[2] = String.valueOf(currentTimeZoneOffset);
 
-        StringBuilder newId = new StringBuilder(progID.substring(index + 1));
+        StringBuilder newId = new StringBuilder(progID.substring(0, index + 1));
         newId.append(hourMinute[0]).append(":").append(hourMinute[1]).append(":").append(hourMinute[2]);
 
         return newId.toString();
@@ -526,7 +526,7 @@ public class ProgramUtilities {
     }
     else {
       String[] hourMinute = timeString.split(":");
-      StringBuilder newId = new StringBuilder(progID.substring(index + 1));
+      StringBuilder newId = new StringBuilder(progID.substring(0, index + 1));
       newId.append(hourMinute[0]).append(":").append(hourMinute[1]).append(":").append(TimeZone.getDefault().getRawOffset()/60000);
 
       return newId.toString();
