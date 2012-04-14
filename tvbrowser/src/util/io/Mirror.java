@@ -448,7 +448,7 @@ public class Mirror {
       try {
     	int maxDays = (int)(Math.random()*(MAX_LAST_UPDATE_DAYS+1));
     	int currentLastUpdate = daysSinceMirrorLastUpdate(mirror, id);
-        if (currentLastUpdate <= maxDays) {
+        if (currentLastUpdate <= maxDays || mirrorArr.length == 1) {
           chosenMirror = mirror;
           break;
         } else {
