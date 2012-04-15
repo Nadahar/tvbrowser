@@ -171,7 +171,7 @@ public class BBCProgrammesParser extends DefaultHandler {
       } else if ("broadcast".equalsIgnoreCase(qName)) {
         // finish the program itself
         mProgram.setProgramLoadingIsComplete();
-        Date date = mProgram.getDate();
+        Date date = mProgram.getLocalDate();
         MutableChannelDayProgram dayProgram = mDayPrograms.get(date);
         if (dayProgram == null) {
           dayProgram = new MutableChannelDayProgram(date, mChannel);
@@ -212,15 +212,14 @@ public class BBCProgrammesParser extends DefaultHandler {
 
   private synchronized Calendar parseDateTime(final String time) {
     try {
+      Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("WET"));
       if (time.endsWith("Z")) {
-        Calendar calendar = Calendar.getInstance();
+       
         calendar.setTime(DATE_FORMAT_ZULU.parse(time.substring(0, time.indexOf("Z"))));
         return calendar;
       }
       String withoutSeparator = time.substring(0, 22) + time.substring(23);
-      Calendar calendar = Calendar.getInstance();
       calendar.setTime(DATE_FORMAT.parse(withoutSeparator));
-      //calendar.setTimeInMillis(calendar.getTimeInMillis() - calendar.getTimeZone().getRawOffset());
       return calendar;
     } catch (ParseException e) {
       // logMessage("invalid time format: " + time);

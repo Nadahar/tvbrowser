@@ -57,7 +57,7 @@ public final class BBCDataService extends AbstractTvDataService {
 
   private static final String COPYRIGHT = "(c) BBC";
   private static final String COUNTRY = "gb";
-  private static final TimeZone TIME_ZONE = TimeZone.getTimeZone("GMT+0:00");
+  private static final TimeZone TIME_ZONE = TimeZone.getTimeZone("WET");
   private static final String CHANNEL_CATEGORIES = "ChannelCategories-";
   private static final String CHANNEL_TITLE = "ChannelTitle-";
   private static final String CHANNEL_ID = "ChannelId-";
@@ -66,7 +66,7 @@ public final class BBCDataService extends AbstractTvDataService {
   private static final String PROGRAMMES_URL = "http://www.bbc.co.uk";
   private static final String CHANNEL_LIST = "http://www.tvbrowser.org/mirrorlists/BBCDataService_channellist.gz";
   private static final boolean IS_STABLE = false;
-  private static final Version mVersion = new Version(3, 12, 0, IS_STABLE);
+  private static final Version mVersion = new Version(3, 13, 0, IS_STABLE);
 
   /**
    * created lazily on first access
@@ -239,7 +239,7 @@ public final class BBCDataService extends AbstractTvDataService {
         String country = null, timezone = null, id = null, name = null, copyright = null, webpage = null, iconUrl = null, categoryStr = null, unescapedname = null;
         try {
           country = tokens[0];
-          timezone = tokens[1];
+          timezone = "WET";
           id = tokens[2];
           name = tokens[3];
           copyright = tokens[4];
