@@ -218,57 +218,75 @@ public class RadioTimesFileParser {
               }
 
               int bitset = 0;
+              int category = 0;
 
               field = items[RT_GENRE];
               if ((field.length() > 0)&& (!field.equalsIgnoreCase("No Genre"))) {
                 prog.setTextField(ProgramFieldType.GENRE_TYPE, field);
 
                 if (field.equalsIgnoreCase("Business")) {
-                  bitset |= Program.INFO_CATEGORIE_MAGAZINE_INFOTAINMENT;
+                  category = Program.INFO_CATEGORIE_MAGAZINE_INFOTAINMENT;
                 } else if (field.equalsIgnoreCase("Children")) {
-                  bitset |= Program.INFO_CATEGORIE_CHILDRENS;
+                  category = Program.INFO_CATEGORIE_CHILDRENS;
+                } else if (field.equalsIgnoreCase("Childrens")) {
+                  category = Program.INFO_CATEGORIE_CHILDRENS;
                 } else if (field.equalsIgnoreCase("Comedy")) {
-                  bitset |= Program.INFO_CATEGORIE_SHOW;
+                  category = Program.INFO_CATEGORIE_SHOW;
                 } else if (field.equalsIgnoreCase("Consumer")) {
-                  bitset |= Program.INFO_CATEGORIE_MAGAZINE_INFOTAINMENT;
+                  category = Program.INFO_CATEGORIE_MAGAZINE_INFOTAINMENT;
                 } else if (field.equalsIgnoreCase("Cookery")) {
-                  bitset |= Program.INFO_CATEGORIE_MAGAZINE_INFOTAINMENT;
+                  category = Program.INFO_CATEGORIE_MAGAZINE_INFOTAINMENT;
                 } else if (field.equalsIgnoreCase("Current affairs")) {
-                  bitset |= Program.INFO_CATEGORIE_MAGAZINE_INFOTAINMENT;
+                  category = Program.INFO_CATEGORIE_MAGAZINE_INFOTAINMENT;
                 } else if (field.equalsIgnoreCase("Documentary")) {
-                  bitset |= Program.INFO_CATEGORIE_DOCUMENTARY;
+                  category = Program.INFO_CATEGORIE_DOCUMENTARY;
+                } else if (field.equalsIgnoreCase("Drama")) {
+                  if (prog.getTextField(ProgramFieldType.EPISODE_TYPE) != null 
+                      || prog.getIntField(ProgramFieldType.EPISODE_NUMBER_TYPE) > 4) {
+                    category = Program.INFO_CATEGORIE_SERIES;
+                  } else {
+                    category = Program.INFO_CATEGORIE_MOVIE;
+                  }
                 } else if (field.equalsIgnoreCase("Education")) {
-                  bitset |= Program.INFO_CATEGORIE_MAGAZINE_INFOTAINMENT;
+                  category = Program.INFO_CATEGORIE_MAGAZINE_INFOTAINMENT;
                 } else if (field.equalsIgnoreCase("Entertainment")) {
-                  bitset |= Program.INFO_CATEGORIE_SHOW;
+                  category = Program.INFO_CATEGORIE_SHOW;
                 } else if (field.equalsIgnoreCase("Film")) {
-                  bitset |= Program.INFO_CATEGORIE_MOVIE;
+                  category = Program.INFO_CATEGORIE_MOVIE;
                 } else if (field.equalsIgnoreCase("Game show")) {
-                  bitset |= Program.INFO_CATEGORIE_SHOW;
+                  category = Program.INFO_CATEGORIE_SHOW;
                 } else if (field.equalsIgnoreCase("Gardening")) {
-                  bitset |= Program.INFO_CATEGORIE_MAGAZINE_INFOTAINMENT;
+                  category = Program.INFO_CATEGORIE_MAGAZINE_INFOTAINMENT;
                 } else if (field.equalsIgnoreCase("Health")) {
-                  bitset |= Program.INFO_CATEGORIE_MAGAZINE_INFOTAINMENT;
+                  category = Program.INFO_CATEGORIE_MAGAZINE_INFOTAINMENT;
                 } else if (field.equalsIgnoreCase("Interests")) {
-                  bitset |= Program.INFO_CATEGORIE_MAGAZINE_INFOTAINMENT;
+                  category = Program.INFO_CATEGORIE_MAGAZINE_INFOTAINMENT;
+                } else if (field.equalsIgnoreCase("Lifestyle")) {
+                  category = Program.INFO_CATEGORIE_SHOW;
+                } else if (field.equalsIgnoreCase("Music")) {
+                  category = Program.INFO_CATEGORIE_SHOW;
                 } else if (field.equalsIgnoreCase("Music and Arts")) {
-                  bitset |= Program.INFO_CATEGORIE_ARTS;
+                  category = Program.INFO_CATEGORIE_ARTS;
+                } else if (field.equalsIgnoreCase("News")) {
+                  category = Program.INFO_CATEGORIE_NEWS;
                 } else if (field.equalsIgnoreCase("News and Current Affairs")) {
-                  bitset |= Program.INFO_CATEGORIE_NEWS;
+                  category = Program.INFO_CATEGORIE_NEWS;
+                //} else if (field.equalsIgnoreCase("Reality")) {
+                //  category = Program.INFO_CATEGORIE_SHOW;
                 } else if (field.equalsIgnoreCase("Science")) {
-                  bitset |= Program.INFO_CATEGORIE_MAGAZINE_INFOTAINMENT;
+                  category = Program.INFO_CATEGORIE_MAGAZINE_INFOTAINMENT;
                 } else if (field.equalsIgnoreCase("Sitcom")) {
-                  bitset |= Program.INFO_CATEGORIE_SERIES;
+                  category = Program.INFO_CATEGORIE_SERIES;
                 } else if (field.equalsIgnoreCase("Soap")) {
-                  bitset |= Program.INFO_CATEGORIE_SERIES;
+                  category = Program.INFO_CATEGORIE_SERIES;
                 } else if (field.equalsIgnoreCase("Sport")) {
-                  bitset |= Program.INFO_CATEGORIE_SPORTS;
+                  category = Program.INFO_CATEGORIE_SPORTS;
                 } else if (field.equalsIgnoreCase("Talk show")) {
-                  bitset |= Program.INFO_CATEGORIE_SHOW;
+                  category = Program.INFO_CATEGORIE_SHOW;
                 } else if (field.equalsIgnoreCase("Travel")) {
-                  bitset |= Program.INFO_CATEGORIE_DOCUMENTARY;
+                  category = Program.INFO_CATEGORIE_DOCUMENTARY;
                 } else if (field.equalsIgnoreCase("Environment")) {
-                  bitset |= Program.INFO_CATEGORIE_MAGAZINE_INFOTAINMENT;
+                  category = Program.INFO_CATEGORIE_MAGAZINE_INFOTAINMENT;
                 }
               }
 
@@ -289,7 +307,7 @@ public class RadioTimesFileParser {
               }
 
               if (Boolean.parseBoolean(items[RT_MOVIE])) {
-                bitset |= Program.INFO_CATEGORIE_MOVIE;
+                category = Program.INFO_CATEGORIE_MOVIE;
               }
 
               if (Boolean.parseBoolean(items[RT_MOVIE_PREMIERE])) {
@@ -298,10 +316,9 @@ public class RadioTimesFileParser {
 
               if (Boolean.parseBoolean(items[RT_NEW_SERIES])) {
                 bitset |= Program.INFO_NEW;
-                bitset |= Program.INFO_CATEGORIE_MOVIE;
               }
 
-              prog.setInfo(bitset);
+              prog.setInfo(bitset | category);
 
               try {
                 int age = Integer.parseInt(items[RT_AGE_LIMIT]);
