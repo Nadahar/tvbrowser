@@ -78,7 +78,7 @@ public class RadioTimesDataService extends AbstractTvDataService {
   private static final Logger mLog = Logger.getLogger(RadioTimesDataService.class
       .getName());
 
-  private static final Version VERSION = new Version(3,02);
+  private static final Version VERSION = new Version(3,03);
 
   /**
    * Channelgroup
@@ -126,7 +126,7 @@ public class RadioTimesDataService extends AbstractTvDataService {
             }
           }
           if (ch == null) {
-            ch = new Channel(this, channelName, fullChannelId, TimeZone.getTimeZone("GMT+0:00"), "gb",
+            ch = new Channel(this, channelName, fullChannelId, TimeZone.getTimeZone("WET"), "gb",
                 "(c) Radio Times", "http://www.radiotimes.co.uk", mRadioTimesChannelGroup, null, categories);
           }
           channels.add(ch);
@@ -179,7 +179,7 @@ public class RadioTimesDataService extends AbstractTvDataService {
 
     mChannels = new ArrayList<Channel>();
 
-    TimeZone timeZone = TimeZone.getTimeZone("GMT+0:00");
+    TimeZone timeZone = TimeZone.getTimeZone("WET");
     for (int i = 0; i < numChannels; i++) {
     	String channelName = settings.getProperty("ChannelTitle-" + i, "");
       String channelId = settings.getProperty("ChannelId-" + i, "");
