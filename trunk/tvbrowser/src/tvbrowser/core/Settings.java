@@ -1795,6 +1795,13 @@ public class Settings {
       mProp, "showPictureBorder", true);
   
   /**
+   * Type as you find in the program table enabled?
+   * @since 3.1.1
+   */
+  public static final BooleanProperty propTypeAsYouFindEnabled = new BooleanProperty(
+      mProp, "typeAsYouFindEnabled", true);
+  
+  /**
    * Sets the window position and size for the given window with the values of
    * the given id.
    *

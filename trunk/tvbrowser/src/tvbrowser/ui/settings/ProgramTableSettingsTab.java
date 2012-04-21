@@ -124,6 +124,8 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
   private JComponent mForegroundSeparator;
   
   private JLabel mForegroundLabel;
+  
+  private JCheckBox mTypeAsYouFind;
 
   public void actionPerformed(ActionEvent event) {
     Object source = event.getSource();
@@ -390,11 +392,18 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     mSettingsPn.add(mForegroundColorLb, cc.xy(4, currentRow));
     mSettingsPn.add(mProgramPanelForegroundColorChangeBtn, cc.xy(6, currentRow));
     
-    // Miscellaneous *********************************************
+    // Mouse *********************************************
     layout.appendRow(RowSpec.decode("pref"));
     layout.appendRow(RowSpec.decode("5dlu"));
     layout.appendRow(RowSpec.decode("pref"));
     layout.appendRow(RowSpec.decode("3dlu"));
+    layout.appendRow(RowSpec.decode("pref"));
+    
+    
+    // Miscellaneous *********************************************
+    layout.appendRow(RowSpec.decode("10dlu"));
+    layout.appendRow(RowSpec.decode("pref"));
+    layout.appendRow(RowSpec.decode("5dlu"));
     layout.appendRow(RowSpec.decode("pref"));
 
     mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(
@@ -416,6 +425,8 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
       }
     });
     mMouseOverCb.getActionListeners()[0].actionPerformed(null);
+    
+    mTypeAsYouFind = new JCheckBox(mLocalizer.msg("typeAsYouFind", "Type-As-You-Find enabled"),Settings.propTypeAsYouFindEnabled.getBoolean());
 
     mSettingsPn.add(mMouseOverColorLb, cc.xy(4, currentRow));
     mSettingsPn.add(mouseOverColorChangeBtn, cc.xy(6, currentRow));
@@ -426,6 +437,12 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     mAutoScrollCb.setSelected(Settings.propProgramTableMouseAutoScroll
         .getBoolean());
     mSettingsPn.add(mAutoScrollCb, cc.xyw(2, (currentRow += 2), 6));
+    
+    mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(
+        mLocalizer.msg("misc", "Misc")), cc.xyw(1,
+        (currentRow += 2), 8));
+    
+    mSettingsPn.add(mTypeAsYouFind, cc.xyw(2, (currentRow += 2), 6));
 
     updateBackgroundStyleConfigureButton();
 
@@ -544,6 +561,7 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
         .isSelected());
     Settings.propProgramPanelShortDurationMinutes
         .setInt((Integer) mShortProgramsMinutes.getValue());
+    Settings.propTypeAsYouFindEnabled.setBoolean(mTypeAsYouFind.isSelected());
   }
 
   /**
