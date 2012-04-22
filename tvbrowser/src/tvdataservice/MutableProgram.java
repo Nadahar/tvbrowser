@@ -1233,34 +1233,4 @@ public class MutableProgram implements Program {
     }
     return false;
   }
-  
-  public boolean checkStateAgainst(Program prog) {
-    if(prog != null && prog.getID().equals(mId)) {
-      boolean titleWasChangedToMuch = false;
-
-      if(prog != null && prog.getTitle() != null && mTitle != null
-          && mTitle.toLowerCase().compareTo(prog.getTitle().toLowerCase()) != 0) {
-        String[] titleParts = mTitle.toLowerCase().replaceAll("\\p{Punct}"," ").replaceAll("\\s+"," ").split(" ");
-        String compareTitle = prog.getTitle().toLowerCase();
-
-        for(String titlePart : titleParts) {
-          if(compareTitle.indexOf(titlePart) == -1) {
-            titleWasChangedToMuch = true;
-            break;
-          }
-        }
-      }
-      
-      if(titleWasChangedToMuch || prog == this) {
-        setProgramState(WAS_DELETED_STATE);
-      }
-      else {
-        setProgramState(WAS_UPDATED_STATE);
-      }
-      
-      return true;
-    }
-    
-    return false;
-  }
 }
