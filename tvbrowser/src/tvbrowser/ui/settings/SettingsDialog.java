@@ -29,12 +29,9 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Rectangle;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
@@ -82,7 +79,6 @@ import util.exc.ErrorHandler;
 import util.misc.OperatingSystem;
 import util.ui.ChannelLabel;
 import util.ui.Localizer;
-import util.ui.ScrollableJPanel;
 import util.ui.SingleAndDoubleClickTreeUI;
 import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
@@ -551,6 +547,7 @@ public class SettingsDialog implements WindowClosingIf {
       scroll.add(pn,new CellConstraints().xy(1, 1));
       
       final JScrollPane pane = new JScrollPane(scroll);
+      pane.setBorder(BorderFactory.createEmptyBorder());
       pane.getHorizontalScrollBar().setUnitIncrement(50);
       pane.getVerticalScrollBar().setUnitIncrement(50);
       
