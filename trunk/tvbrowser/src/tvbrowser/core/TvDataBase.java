@@ -30,17 +30,15 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import tvbrowser.core.data.OnDemandDayProgramFile;
-import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.ui.mainframe.MainFrame;
-import tvdataservice.MarkedProgramsList;
 import tvdataservice.MutableChannelDayProgram;
 import tvdataservice.MutableProgram;
 import util.misc.SoftReferenceCache;
@@ -78,6 +76,7 @@ public class TvDataBase {
 
   private TvDataInventory mTvDataInventory;
   private boolean mPendingPluginInformationAboutChangedData;
+  private Hashtable<ChannelDayKey, Object> mSendToTvDataListener;
 
   private TvDataBase() {
     mPendingPluginInformationAboutChangedData = false;
@@ -85,6 +84,7 @@ public class TvDataBase {
     mListenerList = new ArrayList<TvDataBaseListener>();
     mAvailableDateSet = new HashSet<Date>();
     mNewDayProgramsAfterUpdate = new Hashtable<String, Object>();
+    mSendToTvDataListener = new Hashtable<ChannelDayKey, Object>();
     updateAvailableDateSet();
 
 /* Uncommend testwise.
@@ -171,7 +171,7 @@ public class TvDataBase {
               + channel.getName());
           ChannelDayProgram dummyProg = new MutableChannelDayProgram(date,
               channel);
-          validateProgramState(dummyProg, null);
+          //validateProgramState(dummyProg, null);
           fireDayProgramTouched(dummyProg, null);
           fireDayProgramDeleted(dummyProg);
 
@@ -328,8 +328,6 @@ public class TvDataBase {
       }
     }
     mNewDayProgramsAfterUpdate.clear();
-
-    FavoritesPlugin.getInstance().waitForFinishingUpdateThreads();
   }
 
   public synchronized void setDayProgram(MutableChannelDayProgram prog) {
@@ -402,7 +400,7 @@ public class TvDataBase {
       mNewDayProgramsAfterUpdate.remove(key);
 
       // Inform the listeners about removing the new program
-      validateProgramState(prog,null);
+      //validateProgramState(prog,null);
       fireDayProgramTouched(prog, null);
       fireDayProgramDeleted(prog);
 
@@ -574,7 +572,7 @@ public class TvDataBase {
           if(informPlugins) {
             ChannelDayProgram dayProgram = getDayProgram(date, ch);
             if (dayProgram != null) {
-              validateProgramState(dayProgram, null);
+              //validateProgramState(dayProgram, null);
               fireDayProgramTouched(dayProgram, null);
               fireDayProgramDeleted(dayProgram);
             }
@@ -678,20 +676,15 @@ public class TvDataBase {
 
       // Inform the listeners about adding the new program
       if(oldProg != null || somethingChanged) {
-        OnDemandDayProgramFile dayProgramFile = getCacheEntry(date, channel, true, false);
-
-        ChannelDayProgram dayProgram = dayProgramFile.getDayProgram();
+        ChannelDayKey dayKey = new ChannelDayKey(channel, date);
+//        OnDemandDayProgramFile dayProgramFile = getCacheEntry(date, channel, true, false);
         
         if(oldProg instanceof ChannelDayProgram) {
-          validateProgramState((ChannelDayProgram)oldProg,dayProgram);
-          fireDayProgramTouched((ChannelDayProgram)oldProg,dayProgram);
-          fireDayProgramDeleted((ChannelDayProgram)oldProg);
+          mSendToTvDataListener.put(dayKey, oldProg);
         }
         else {
-          fireDayProgramTouched(null,dayProgram);
+          mSendToTvDataListener.put(dayKey, "dummy");
         }
-
-        fireDayProgramAdded(dayProgram);
       }
     } catch (Exception exc) {
       mLog.log(Level.WARNING, "Loading program for " + channel + " from "
@@ -873,7 +866,7 @@ public class TvDataBase {
 
         // Since we don't have the old day program we use a dummy program
         ChannelDayProgram dayProg = new MutableChannelDayProgram(date, channel);
-        validateProgramState(dayProg, null);
+        //validateProgramState(dayProg, null);
         fireDayProgramTouched(dayProg, null);
         fireDayProgramDeleted(dayProg);
       }
@@ -1030,7 +1023,7 @@ public class TvDataBase {
     return Date.getCurrentDate().addDays(28);
   }
   
-  private void validateProgramState(ChannelDayProgram oldChannelDayProg, ChannelDayProgram newChannelDayProg) {
+  /*private void validateProgramState(ChannelDayProgram oldChannelDayProg, ChannelDayProgram newChannelDayProg) {
     if(oldChannelDayProg != null) {
       Iterator<Program> programs = oldChannelDayProg.getPrograms();
       
@@ -1046,6 +1039,47 @@ public class TvDataBase {
           ((MutableProgram)oldProg).checkStateAgainst(oldProg);
         }
       }
+    }
+  }*/
+  
+  void sendNewProgramsToTvDataListener() {
+    Enumeration<ChannelDayKey> keys = mSendToTvDataListener.keys();
+    while(keys.hasMoreElements()) {
+      ChannelDayKey key = keys.nextElement();
+      Object oldProg = mSendToTvDataListener.remove(key);
+    
+      OnDemandDayProgramFile dayProgramFile = getCacheEntry(key.getDate(), key.getChannel(), true, false);
+    
+      ChannelDayProgram dayProgram = dayProgramFile.getDayProgram();
+      
+      if(oldProg instanceof ChannelDayProgram) {
+        //validateProgramState((ChannelDayProgram)oldProg,dayProgram);
+        fireDayProgramTouched((ChannelDayProgram)oldProg,dayProgram);
+        fireDayProgramDeleted((ChannelDayProgram)oldProg);
+      }
+      else {
+        fireDayProgramTouched(null,dayProgram);
+      }
+  
+      fireDayProgramAdded(dayProgram);
+    }
+  }
+  
+  private class ChannelDayKey {
+    private Channel mChannel;
+    private Date mDate;
+    
+    public ChannelDayKey(Channel channel, Date date) {
+      mChannel = channel;
+      mDate = date;
+    }
+    
+    public Channel getChannel() {
+      return mChannel;
+    }
+    
+    public Date getDate() {
+      return mDate;
     }
   }
 }

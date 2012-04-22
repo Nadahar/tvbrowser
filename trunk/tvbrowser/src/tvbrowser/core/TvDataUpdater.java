@@ -42,6 +42,7 @@ import org.apache.commons.lang.math.RandomUtils;
 
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
+import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.ui.DontShowAgainOptionBox;
 import tvdataservice.MarkedProgramsList;
 import tvdataservice.MutableChannelDayProgram;
@@ -252,6 +253,10 @@ public class TvDataUpdater {
     
     MarkedProgramsList.getInstance().revalidatePrograms();
 
+    TvDataBase.getInstance().sendNewProgramsToTvDataListener();
+    
+    FavoritesPlugin.getInstance().waitForFinishingUpdateThreads();
+    
     // Inform the listeners
     fireTvDataUpdateFinished();
     monitor.setMessage("");
