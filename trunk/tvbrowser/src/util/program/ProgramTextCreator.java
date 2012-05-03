@@ -674,6 +674,9 @@ public class ProgramTextCreator {
             buffer.append("</td></tr>");
             addSeparator(doc, buffer);
           }
+        } else if (type == ProgramFieldType.ADDITIONAL_INFORMATION_TYPE) {
+          addEntry(doc, buffer, prog, ProgramFieldType.ADDITIONAL_INFORMATION_TYPE, true,
+              showHelpLinks, showPersonLinks, infoColor, foreground);
         } else if (type == ProgramFieldType.URL_TYPE) {
           addEntry(doc, buffer, prog, ProgramFieldType.URL_TYPE, true,
               showHelpLinks, showPersonLinks, infoColor, foreground);
@@ -910,7 +913,7 @@ public class ProgramTextCreator {
       }
       if (fieldType.getFormat() == ProgramFieldType.TEXT_FORMAT) {
         text = prog.getTextField(fieldType);
-        if (ProgramFieldType.SHORT_DESCRIPTION_TYPE == fieldType) {
+        if (fieldType == ProgramFieldType.SHORT_DESCRIPTION_TYPE) {
           text = checkDescription(text);
         }
 
