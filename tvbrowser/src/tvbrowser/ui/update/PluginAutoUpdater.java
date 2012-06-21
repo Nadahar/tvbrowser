@@ -52,13 +52,9 @@ public class PluginAutoUpdater {
   /** Contains the mirror urls useable for receiving the groups.txt from. */
   private static final String[] DEFAULT_PLUGINS_UPDATE_MIRRORS = {
     "http://tvbrowser.dyndns.tv",
-    "http://daten.wannawork.de",
-    "http://www.gfx-software.de/tvbrowserorg",
+    "http://www.gamers-fusion.de/projects/tvbrowser.org/",
     "http://tvbrowser1.sam-schwedler.de",
     "http://tvbrowser.nicht-langweilig.de/data"
-    /*"http://tvbrowser.dyndns.tv",
-    "http://hdtv-online.org/TVB",
-    "http://www.tvbrowserserver.de/"*/
   };
   
   /**
