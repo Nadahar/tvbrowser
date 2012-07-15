@@ -9,12 +9,15 @@ import devplugin.ActionMenu;
 import devplugin.ContextMenuAction;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
+import devplugin.PluginManager;
 import devplugin.Program;
+import devplugin.ProgramReceiveTarget;
 import devplugin.Version;
 
 public class JumpToProgramPlugin extends Plugin {
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(JumpToProgramPlugin.class);
-  private static final Version mVersion = new Version(0,3,0,false);
+  private static final Version mVersion = new Version(0,4,0,false);
+  private final ProgramReceiveTarget[] mReceiveTargets = new ProgramReceiveTarget[] {ProgramReceiveTarget.createDefaultTargetForProgramReceiveIfId(getId())};
   
   public static Version getVersion() {
     return mVersion;
@@ -27,19 +30,41 @@ public class JumpToProgramPlugin extends Plugin {
   public ActionMenu getContextMenuActions(final Program program) {
     return new ActionMenu(new ContextMenuAction(mLocalizer.msg("menu", "Show program in program table")) {
       public void actionPerformed(ActionEvent e) {
-        
-        try {
-          Class pluginManager = getPluginManager().getClass();
-          Method selectProgram = pluginManager.getMethod("selectProgram", new Class<?>[] {Program.class});
-          selectProgram.invoke(getPluginManager(), new Object[] {program});
-        } catch (Exception e1) {
-          getPluginManager().scrollToProgram(program);
-        }
+        select(program);
       }
     });
   }
   
+  private boolean select(final Program program) {
+    try {
+      Class<? extends PluginManager> pluginManager = getPluginManager().getClass();
+      Method selectProgram = pluginManager.getMethod("selectProgram", new Class<?>[] {Program.class});
+      selectProgram.invoke(getPluginManager(), new Object[] {program});
+      return true;
+    } catch (Exception e1) {
+      getPluginManager().scrollToProgram(program);
+    }
+    
+    return false;
+  }
+  
   public String getPluginCategory() {
     return Plugin.OTHER_CATEGORY;
+  }
+  
+  public boolean canReceiveProgramsWithTarget() {
+    return true;
+  }
+  
+  public boolean receivePrograms(Program[] programArr, ProgramReceiveTarget receiveTarget) {
+    if(ProgramReceiveTarget.isDefaultProgramReceiveTargetForProgramReceiveIf(this, receiveTarget) && programArr.length == 1) {
+      return select(programArr[0]);
+    }
+    
+    return false;
+  }
+  
+  public ProgramReceiveTarget[] getProgramReceiveTargets() {
+    return mReceiveTargets;
   }
 }
