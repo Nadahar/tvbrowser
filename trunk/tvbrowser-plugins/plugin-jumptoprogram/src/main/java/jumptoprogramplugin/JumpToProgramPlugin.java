@@ -16,8 +16,9 @@ import devplugin.Version;
 
 public class JumpToProgramPlugin extends Plugin {
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(JumpToProgramPlugin.class);
-  private static final Version mVersion = new Version(0,4,0,true);
-  private final ProgramReceiveTarget[] mReceiveTargets = new ProgramReceiveTarget[] {ProgramReceiveTarget.createDefaultTargetForProgramReceiveIfId(getId())};
+  private static final Version mVersion = new Version(0,5,0,true);
+  private static final String RECEIVE_ID = "JUMP_TO_PROGRAM_###_JUMP_###";
+  private final ProgramReceiveTarget[] mReceiveTargets = new ProgramReceiveTarget[] {new ProgramReceiveTarget(this, mLocalizer.msg("name", "JumpToProgram"), RECEIVE_ID)};
   
   public static Version getVersion() {
     return mVersion;
@@ -40,12 +41,11 @@ public class JumpToProgramPlugin extends Plugin {
       Class<? extends PluginManager> pluginManager = getPluginManager().getClass();
       Method selectProgram = pluginManager.getMethod("selectProgram", new Class<?>[] {Program.class});
       selectProgram.invoke(getPluginManager(), new Object[] {program});
-      return true;
     } catch (Exception e1) {
       getPluginManager().scrollToProgram(program);
     }
     
-    return false;
+    return true;
   }
   
   public String getPluginCategory() {
@@ -57,7 +57,7 @@ public class JumpToProgramPlugin extends Plugin {
   }
   
   public boolean receivePrograms(Program[] programArr, ProgramReceiveTarget receiveTarget) {
-    if(programArr != null && programArr.length > 0 && ProgramReceiveTarget.isDefaultProgramReceiveTargetForProgramReceiveIf(this, receiveTarget)) {
+    if(programArr != null && programArr.length > 0 && receiveTarget.isReceiveTargetWithIdOfProgramReceiveIf(this, RECEIVE_ID)) {
       return select(programArr[0]);
     }
     
