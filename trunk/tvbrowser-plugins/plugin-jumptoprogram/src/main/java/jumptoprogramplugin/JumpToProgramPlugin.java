@@ -16,7 +16,7 @@ import devplugin.Version;
 
 public class JumpToProgramPlugin extends Plugin {
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(JumpToProgramPlugin.class);
-  private static final Version mVersion = new Version(0,4,0,false);
+  private static final Version mVersion = new Version(0,4,0,true);
   private final ProgramReceiveTarget[] mReceiveTargets = new ProgramReceiveTarget[] {ProgramReceiveTarget.createDefaultTargetForProgramReceiveIfId(getId())};
   
   public static Version getVersion() {
@@ -57,7 +57,7 @@ public class JumpToProgramPlugin extends Plugin {
   }
   
   public boolean receivePrograms(Program[] programArr, ProgramReceiveTarget receiveTarget) {
-    if(ProgramReceiveTarget.isDefaultProgramReceiveTargetForProgramReceiveIf(this, receiveTarget) && programArr.length == 1) {
+    if(programArr != null && programArr.length > 0 && ProgramReceiveTarget.isDefaultProgramReceiveTargetForProgramReceiveIf(this, receiveTarget)) {
       return select(programArr[0]);
     }
     
