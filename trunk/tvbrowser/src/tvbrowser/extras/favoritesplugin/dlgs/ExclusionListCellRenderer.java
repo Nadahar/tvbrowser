@@ -83,6 +83,7 @@ public class ExclusionListCellRenderer extends DefaultListCellRenderer {
 
       String title = excl.getTitle();
       String topic = excl.getTopic();
+      String episodeTitle = excl.getEpisodeTitle();
       ProgramFilter filter = excl.getFilter();
       Channel channel = excl.getChannel();
       String timeMsg = createTimeMessage(excl.getTimeLowerBound(), excl.getTimeUpperBound(), excl.getDayOfWeek());
@@ -93,24 +94,30 @@ public class ExclusionListCellRenderer extends DefaultListCellRenderer {
         textValue.append(mLocalizer.msg("exclude.title","Exclude all programs with title '")).append(title).append("'");
       }
       if(topic != null && title != null) {
-        textValue.append(" ").append(mLocalizer.msg("appendTopic","with topic '")).append(topic).append("'");
+        textValue.append(" ").append(mLocalizer.msg("exclude.appendTopic","with topic '")).append(topic).append("'");
       }
       else if (topic != null) {
         textValue.append(mLocalizer.msg("exclude.topic","Exclude all programs with topic '")).append(topic).append("'");
       }
-      if(filter != null && (title != null || topic != null)) {
-        textValue.append(" ").append(mLocalizer.msg("appendFilter","of the filter '")).append(filter.getName()).append("'");
+      if(episodeTitle != null && topic != null && title != null) {
+        textValue.append(" ").append(mLocalizer.msg("exclude.appendEpisodeTitle","Exclude all programs with episode '")).append(episodeTitle).append("'");
+      }
+      else if (episodeTitle != null) {
+        textValue.append(mLocalizer.msg("exclude.episodeTitle","Exclude all programs with topic '")).append(episodeTitle).append("'");
+      }      
+      if(filter != null && (title != null || topic != null || episodeTitle != null)) {
+        textValue.append(" ").append(mLocalizer.msg("exclude.appendFilter","of the filter '")).append(filter.getName()).append("'");
       }
       else if(filter != null) {
         textValue.append(mLocalizer.msg("exclude.filter","Exclude all programs of the filter '")).append(filter.getName()).append("'");
       }
-      if(channel != null && (title != null || topic != null || filter != null)) {
+      if(channel != null && (title != null || topic != null || episodeTitle != null || filter != null)) {
         textValue.append(" ").append(mLocalizer.msg("exclude.appendChannel","on channel '")).append(channel.getName()).append("'");
       }
       else if(channel != null) {
         textValue.append(mLocalizer.msg("exclude.channel","Exclude all programs on channel '")).append(channel.getName()).append("'");
       }
-      if(timeMsg != null && (title != null || topic != null || filter != null || channel != null)) {
+      if(timeMsg != null && (title != null || topic != null || episodeTitle != null || filter != null || channel != null)) {
         textValue.append(" ").append(timeMsg);
       }
       else if(timeMsg != null) {

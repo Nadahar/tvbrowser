@@ -78,9 +78,11 @@ public class ExcludeWizardStep extends AbstractWizardStep {
   private JCheckBox mChannelCb;
   private JCheckBox mTimeCb;
   private JCheckBox mDayCb;
+  private JCheckBox mEpisodeTitleCb;
 
   private JTextField mTitleTf;
   private JTextField mTopicTf;
+  private JTextField mEpisodeTitleTf;
 
   private JComboBox mFilterChooser;
   private JComboBox mChannelCB;
@@ -94,6 +96,7 @@ public class ExcludeWizardStep extends AbstractWizardStep {
   private String mFilterQuestion;
   private String mTimeQuestion;
   private String mTitleQuestion;
+  private String mEpisodeTitleQuestion;
   private String mDayQuestion;
   private String mDoneBtnText;
 
@@ -145,6 +148,7 @@ public class ExcludeWizardStep extends AbstractWizardStep {
       mTopicQuestion = mLocalizer.msg("topicQuestion.edit", "Programs containing this term:");
       mTimeQuestion = mLocalizer.msg("timeQuestion.edit", "Programs that start during this period:");
       mTitleQuestion = mLocalizer.msg("titleQuestion.edit", "Programs with this title:");
+      mEpisodeTitleQuestion = mLocalizer.msg("episodeTitleQuestion.edit", "Program with this episode title:");
       mDayQuestion = mLocalizer.msg("dayOfWeekQuestion.edit","Programs on this day of week:");
       mFilterQuestion = mLocalizer.msg("filterQuestion.edit","Programs of the filter:");
     } else {
@@ -159,7 +163,8 @@ public class ExcludeWizardStep extends AbstractWizardStep {
       mChannelQuestion = mLocalizer.msg("channelQuestion.create", "Falscher Sender:");
       mTopicQuestion = mLocalizer.msg("topicQuestion.create", "Falsches Stichwort:");
       mTimeQuestion = mLocalizer.msg("timeQuestion.create", "Falsche Beginnzeit:");
-      mTitleQuestion = mLocalizer.msg("titleQuestion.create", "Falscher Titel:");
+      mTitleQuestion = mLocalizer.msg("titleQuestion.create", "Wrong episode title:");
+      mEpisodeTitleQuestion = mLocalizer.msg("episodeTitleQuestion.create", "Falsche Episodenfolge:");
       mDayQuestion = mLocalizer.msg("dayOfWeekQuestion.create","Falscher Tag:");
     }
 
@@ -174,6 +179,7 @@ public class ExcludeWizardStep extends AbstractWizardStep {
     mTitleCb = new JCheckBox(mTitleQuestion);
     mTitleTf = new JTextField();
     mFilterCb = new JCheckBox(mFilterQuestion);
+    
     mFilterChooser = new JComboBox(FilterManagerImpl.getInstance().getAvailableFilters());
 
     mDayChooser = new JComboBox(new Object[] {
@@ -189,7 +195,7 @@ public class ExcludeWizardStep extends AbstractWizardStep {
     mDayChooser.setRenderer(new DayListCellRenderer());
     CellConstraints cc = new CellConstraints();
     FormLayout layout = new FormLayout("5dlu, pref, default:grow",
-    "pref, 5dlu, pref, 5dlu, pref, 5dlu, pref, 5dlu, pref, 5dlu, pref");
+    "pref, 5dlu, pref, 5dlu, pref, 5dlu, pref, 5dlu, pref, 5dlu, pref, 5dlu, pref");
     PanelBuilder panelBuilder = new PanelBuilder(layout);
 
     mChannelCB = new JComboBox(ChannelList.getSubscribedChannels());
@@ -203,9 +209,14 @@ public class ExcludeWizardStep extends AbstractWizardStep {
 
     panelBuilder.add(mTopicCb = new JCheckBox(mTopicQuestion), cc.xy(2, rowInx));
     panelBuilder.add(mTopicTf = new JTextField(), cc.xy(3, rowInx));
-
+    
     rowInx += 2;
-
+    
+    panelBuilder.add(mEpisodeTitleCb = new JCheckBox(mEpisodeTitleQuestion), cc.xy(2,rowInx));
+    panelBuilder.add(mEpisodeTitleTf = new JTextField(), cc.xy(3, rowInx));
+    
+    rowInx += 2;
+    
     int filterIndex = rowInx;
 
     panelBuilder.add(mChannelCb = new JCheckBox(mChannelQuestion), cc.xy(2, rowInx));
@@ -302,6 +313,13 @@ public class ExcludeWizardStep extends AbstractWizardStep {
       }
     });
 
+    mEpisodeTitleCb.addItemListener(new ItemListener() {
+      @Override
+      public void itemStateChanged(ItemEvent e) {
+        updateButtons(handler);
+      }
+    });
+    
     mFilterCb.addItemListener(new ItemListener() {
       public void itemStateChanged(ItemEvent e) {
         updateButtons(handler);
@@ -349,9 +367,14 @@ public class ExcludeWizardStep extends AbstractWizardStep {
     if (mDayCb.isSelected()) {
       allowNext = true;
     }
+    
+    if (mEpisodeTitleCb.isSelected()) {
+      allowNext = true;
+    }
 
     mChannelCB.setEnabled(mChannelCb.isSelected());
     mTopicTf.setEnabled(mTopicCb.isSelected());
+    mEpisodeTitleTf.setEnabled(mEpisodeTitleCb.isSelected());
     mFilterChooser.setEnabled(mFilterCb.isSelected());
     mTimePeriodChooser.setEnabled(mTimeCb.isSelected());
     mDayChooser.setEnabled(mDayCb.isSelected());
@@ -374,6 +397,7 @@ public class ExcludeWizardStep extends AbstractWizardStep {
   public Object createDataObject(Object obj) {
     String title = null;
     String topic = null;
+    String episodeTitle = null;
     String filterName = null;
     Channel channel = null;
     int timeFrom = -1;
@@ -386,6 +410,10 @@ public class ExcludeWizardStep extends AbstractWizardStep {
 
     if (mTopicCb.isSelected()) {
       topic = mTopicTf.getText();
+    }
+    
+    if(mEpisodeTitleCb.isSelected()) {
+      episodeTitle = mEpisodeTitleTf.getText();
     }
 
     if(mFilterCb.isSelected()) {
@@ -408,7 +436,7 @@ public class ExcludeWizardStep extends AbstractWizardStep {
     if (mDoneBtnText.compareTo(mLocalizer.msg("doneButton.toBlacklist","Remove this program now")) == 0) {
       return "blacklist";
     } else {
-      return new Exclusion(title, topic, channel, timeFrom, timeTo, weekOfDay, filterName);
+      return new Exclusion(title, topic, channel, timeFrom, timeTo, weekOfDay, filterName, episodeTitle);
     }
 
   }
