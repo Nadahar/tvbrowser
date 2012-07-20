@@ -19,23 +19,30 @@
  * CVS information:
  *  $RCSfile$
  *   $Source$
- *     $Date: 2011-08-04 02:44:48 +0200 (Do, 04 Aug 2011) $
- *   $Author: ds10 $
- * $Revision: 7079 $
+ *     $Date$
+ *   $Author$
+ * $Revision$
  */
 package listviewplugin;
 
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.util.Properties;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import util.settings.PluginPictureSettings;
 import devplugin.ActionMenu;
+import devplugin.Channel;
+import devplugin.Date;
 import devplugin.Plugin;
+import devplugin.PluginCenterPanel;
+import devplugin.PluginCenterPanelWrapper;
 import devplugin.PluginInfo;
+import devplugin.ProgramFilter;
 import devplugin.SettingsTab;
 import devplugin.Version;
 
@@ -45,7 +52,7 @@ import devplugin.Version;
  * @author bodo
  */
 public class ListViewPlugin extends Plugin {
-  private static final Version mVersion = new Version(3,02);
+  private static final Version mVersion = new Version(3,20,false);
 
     protected static final int PROGRAMTABLEWIDTH = 200;
   
@@ -62,11 +69,20 @@ public class ListViewPlugin extends Plugin {
     
     private PluginInfo mPluginInfo;
     
+    private PluginCenterPanelWrapper mCenterWrapper;
+    
+    private ListViewPanel mCenterPanel;
+    
+    private JPanel mCenterPanelWrapper;
+    
+    private boolean mTvBrowserStarted;
+    
     /**
      * Creates the Plugin
      */
     public ListViewPlugin() {
       mInstance = this;
+      mTvBrowserStarted = false;
     }
     
     /**
@@ -78,6 +94,79 @@ public class ListViewPlugin extends Plugin {
     
     public static Version getVersion() {
       return mVersion;
+    }
+
+    
+    public void onActivation() {
+      mCenterPanelWrapper = new JPanel(new BorderLayout());
+      mCenterWrapper = new PluginCenterPanelWrapper() {
+        
+        @Override
+        public PluginCenterPanel[] getCenterPanels() {
+          return new PluginCenterPanel[] {new PluginCenterPanelImpl()};
+        }
+        
+        @Override
+        public void scrolledToChannel(Channel channel) {
+          if(mCenterPanel != null) {
+            mCenterPanel.showChannel(channel);
+          }
+        }
+        
+        @Override
+        public void filterSelected(ProgramFilter filter) {
+          if(mCenterPanel != null) {
+            mCenterPanel.showForFilter(filter);
+          }
+        }
+        
+        @Override
+        public void scrolledToDate(Date date) {
+          if(mCenterPanel != null) {
+            mCenterPanel.showForDate(date, -1);
+          }
+        }
+        
+        public void scrolledTo(Date date,int minute) {
+          if(mCenterPanel != null) {
+            mCenterPanel.showForDate(date,minute);
+          }
+        }
+        
+        @Override
+        public void scrolledToNow() {
+          if(mCenterPanel != null) {
+            mCenterPanel.showForNow();
+          }
+        }
+        
+        @Override
+        public void scrolledToTime(int time) {
+          if(mCenterPanel != null) {
+            mCenterPanel.showForTimeButton(time);
+          }
+        }
+        
+        @Override
+        public void timeEvent() {
+          if(mCenterPanel != null) {
+            mCenterPanel.refreshView();
+          }
+        }
+      };
+      
+      if(mTvBrowserStarted) {
+        SwingUtilities.invokeLater(new Runnable() {
+          public void run() {
+            mCenterPanel = new ListViewPanel(ListViewPlugin.this);
+            mCenterPanelWrapper.add(mCenterPanel, BorderLayout.CENTER);
+          }
+        });
+      }
+    }
+    
+    public void onDeactivation() {
+      mCenterPanel = null;
     }
 
     /**
@@ -136,13 +225,18 @@ public class ListViewPlugin extends Plugin {
     }
     
     public void handleTvBrowserStartFinished() {
-      if (mShowAtStartup) {
-        SwingUtilities.invokeLater(new Runnable() {
-          public void run() {
+      SwingUtilities.invokeLater(new Runnable() {
+        public void run() {
+          mCenterPanel = new ListViewPanel(ListViewPlugin.this);
+          mCenterPanelWrapper.add(mCenterPanel, BorderLayout.CENTER);
+
+          if (mShowAtStartup) {
             showDialog();
           }
-        });
-      }
+        }
+      });
+      
+      mTvBrowserStarted = true;
     }
         
     /**
@@ -184,4 +278,24 @@ public class ListViewPlugin extends Plugin {
     public String getPluginCategory() {
       return Plugin.OTHER_CATEGORY;
     }
+    
+    public PluginCenterPanelWrapper getPluginCenterPanelWrapper() {
+      return mCenterWrapper;
+    }
+    
+    private class PluginCenterPanelImpl extends PluginCenterPanel {
+
+      @Override
+      public String getName() {
+        return mLocalizer.msg("pluginName", "Currently running programs");
+      }
+
+      @Override
+      public JPanel getPanel() {
+        return mCenterPanelWrapper;
+      }
+      
+    }
+    
+    
 }
