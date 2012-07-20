@@ -934,14 +934,7 @@ public class PluginManagerImpl implements PluginManager {
   }
   
   public void selectProgram(final Program program) {
-    if(program != null) {
-      MainFrame.getInstance().scrollToProgram(program, new Runnable() {
-        public void run() {
-          ProgramTable table = MainFrame.getInstance().getProgramTableScrollPane().getProgramTable();
-          table.deSelectItem();
-          table.selectProgram(program);
-        }});
-    }
+    MainFrame.getInstance().selectProgram(program);
   }
   
   /**

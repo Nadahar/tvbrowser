@@ -757,9 +757,11 @@ public class Settings {
         propProgramPanelMarkedLowerMediumPriorityColor, propProgramPanelMarkedMinPriorityColor,
         propProgramPanelMarkedMediumPriorityColor, propProgramPanelMarkedMaxPriorityColor,
         propProgramTableColorOnAirLight, propProgramTableColorOnAirDark, propProgramPanelForegroundColor,
-        propProgramTableBackgroundSingleColor, propProgramPanelAllowTransparency};
+        propProgramTableBackgroundSingleColor, propProgramPanelAllowTransparency, propAlwaysShowTabBarForCenterPanel,
+        propCenterPanelArr};
 
     if (mProp.hasChanged(propArr)) {
+      mainFrame.updateCenterPanels();
       util.ui.ProgramPanel.updateFonts();
       tvbrowser.ui.programtable.ChannelPanel.fontChanged();
       ProgramTableScrollPane scrollPane = mainFrame.getProgramTableScrollPane();
@@ -1802,6 +1804,26 @@ public class Settings {
       mProp, "typeAsYouFindEnabled", true);
   
   /**
+   * If the tab bar in the center of the TV-Browser window should always be shown.
+   * @since 3.2
+   */
+  public static final BooleanProperty propAlwaysShowTabBarForCenterPanel = new BooleanProperty(
+      mProp, "alwaysShowTabBarForCenterPanel", true);
+  
+  /**
+   * Array with the panel IDs shown in the center panel of TV-Browser main window.
+   * @since 3.2
+   */
+  public static final StringArrayProperty propCenterPanelArr = new StringArrayProperty(
+      mProp, "centerPanelArr", new String[] {"tvbrowser.ui.programtable.ProgramTableScrollPaneWrapper"});
+  
+  /**
+   * Array with the deselected IDs of the center panels.
+   */
+  public static final StringArrayProperty propDisabledCenterPanelArr = new StringArrayProperty(
+      mProp, "disabledCenterPanelArr", new String[0]);
+  
+  /**
    * Sets the window position and size for the given window with the values of
    * the given id.
    *
@@ -1848,9 +1870,5 @@ public class Settings {
     public int getSize() {
       return UIManager.getFont("MenuItem.font").getSize() + mOffset;
     }
-  }
-  
-  private static final class VariableIntDef {
-    
   }
 }

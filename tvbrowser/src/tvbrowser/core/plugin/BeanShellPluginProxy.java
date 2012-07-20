@@ -18,6 +18,7 @@ import devplugin.Channel;
 import devplugin.ChannelDayProgram;
 import devplugin.ImportanceValue;
 import devplugin.Plugin;
+import devplugin.PluginCenterPanelWrapper;
 import devplugin.PluginInfo;
 import devplugin.PluginTreeNode;
 import devplugin.PluginsFilterComponent;
@@ -292,5 +293,11 @@ public class BeanShellPluginProxy extends AbstractPluginProxy {
     @Override
     public String getPluginCategory() {
       return Plugin.ALL_CATEGORY;
+    }
+
+    @Override
+    public PluginCenterPanelWrapper getPluginCenterPanelWrapper() {
+      // TODO Auto-generated method stub
+      return null;
     }
  }
