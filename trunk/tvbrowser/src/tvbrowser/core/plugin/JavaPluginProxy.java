@@ -56,6 +56,7 @@ import devplugin.ChannelDayProgram;
 import devplugin.ContextMenuAction;
 import devplugin.ImportanceValue;
 import devplugin.Plugin;
+import devplugin.PluginCenterPanelWrapper;
 import devplugin.PluginInfo;
 import devplugin.PluginTreeNode;
 import devplugin.PluginsFilterComponent;
@@ -646,5 +647,10 @@ public class JavaPluginProxy extends AbstractPluginProxy {
     }
     
     return mPluginCategory;
+  }
+
+  @Override
+  public PluginCenterPanelWrapper getPluginCenterPanelWrapper() {
+    return mPlugin.getPluginCenterPanelWrapper();
   }
 }

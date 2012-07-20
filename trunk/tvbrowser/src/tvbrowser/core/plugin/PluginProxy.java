@@ -34,6 +34,7 @@ import devplugin.ChannelDayProgram;
 import devplugin.ImportanceValue;
 import devplugin.InfoIf;
 import devplugin.PluginAccess;
+import devplugin.PluginCenterPanelWrapper;
 import devplugin.PluginTreeNode;
 import devplugin.PluginsProgramFilter;
 import devplugin.Program;
@@ -233,4 +234,12 @@ public interface PluginProxy extends PluginAccess, InfoIf {
    * @since 3.0
    */
   public ImportanceValue getImportanceValueForProgram(Program p);
+
+  /**
+   * Gets the PluginCenterPanelWrapper for this plugin.
+   * <p>
+   * @return The {@link PluginCenterPanelWrapper} for this plugin or <code>null</code>.
+   * @since 3.2
+   */
+  public PluginCenterPanelWrapper getPluginCenterPanelWrapper();
 }

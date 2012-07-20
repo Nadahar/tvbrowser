@@ -34,6 +34,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.awt.Insets;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.Toolkit;
@@ -89,14 +90,18 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
+import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 
 import org.apache.commons.lang.math.RandomUtils;
@@ -115,6 +120,7 @@ import tvbrowser.core.filters.ShowAllFilter;
 import tvbrowser.core.filters.filtercomponents.ChannelFilterComponent;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
+import tvbrowser.core.plugin.PluginStateListener;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
@@ -141,6 +147,7 @@ import tvbrowser.ui.programtable.FilterPanel;
 import tvbrowser.ui.programtable.KeyboardAction;
 import tvbrowser.ui.programtable.ProgramTable;
 import tvbrowser.ui.programtable.ProgramTableScrollPane;
+import tvbrowser.ui.programtable.ProgramTableScrollPaneWrapper;
 import tvbrowser.ui.settings.BlockedPlugin;
 import tvbrowser.ui.settings.SettingsDialog;
 import tvbrowser.ui.update.PluginAutoUpdater;
@@ -168,6 +175,8 @@ import devplugin.Channel;
 import devplugin.ChannelDayProgram;
 import devplugin.Date;
 import devplugin.Plugin;
+import devplugin.PluginCenterPanel;
+import devplugin.PluginCenterPanelWrapper;
 import devplugin.Program;
 import devplugin.ProgramFilter;
 import devplugin.ProgressMonitor;
@@ -179,7 +188,7 @@ import devplugin.Version;
  *
  * @author Martin Oberhauser
  */
-public class MainFrame extends JFrame implements DateListener,DropTargetListener,PersonaListener {
+public class MainFrame extends JFrame implements DateListener,DropTargetListener,PersonaListener,PluginStateListener {
 
   private static final Logger mLog = java.util.logging.Logger
       .getLogger(tvbrowser.TVBrowser.class.getName());
@@ -272,6 +281,14 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
   private KeyListener mGlobalFindAsYouTypeKeyListener;
 
   private FaytPanel mFindAsYouType;
+  
+  private JTabbedPane mCenterTabPane;
+  
+  private JPanel mCenterPanel;
+  
+  private ArrayList<PluginCenterPanelWrapper> mCenterPanelWrapperList = new ArrayList<PluginCenterPanelWrapper>(0);
+  
+  private ProgramTableScrollPaneWrapper mScrollPaneWrapper;
  
   private MainFrame() {
     super(TVBrowser.MAINWINDOW_TITLE);
@@ -361,6 +378,12 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     centerPanel.addKeyListener(mGlobalFindAsYouTypeKeyListener);
     centerPanel.setOpaque(false);
     centerPanel.setBorder(BorderFactory.createEmptyBorder());
+    
+    mCenterPanel = new JPanel(new BorderLayout());
+    mCenterPanel.setOpaque(false);
+    mCenterPanel.setBorder(BorderFactory.createEmptyBorder());
+    
+    centerPanel.add(mCenterPanel, BorderLayout.CENTER);
 
     mFilterPanel = new FilterPanel(mGlobalFindAsYouTypeKeyListener);
     mFilterPanel.setVisible(false);
@@ -370,6 +393,9 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
 
     centerPanel.add(mFilterPanel, BorderLayout.NORTH);
 
+    UIManager.getDefaults().put("TabbedPane.contentBorderInsets", new Insets(0,0,0,0));
+    UIManager.getDefaults().put("TabbedPane.tabsOverlapBorder", true);
+    
     Channel[] channelArr = ChannelList.getSubscribedChannels();
     int startOfDay = Settings.propProgramTableStartOfDay.getInt();
     int endOfDay = Settings.propProgramTableEndOfDay.getInt();
@@ -377,7 +403,42 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
         endOfDay);
     mProgramTableScrollPane = new ProgramTableScrollPane(mProgramTableModel,mGlobalFindAsYouTypeKeyListener);
 
-    centerPanel.add(mProgramTableScrollPane);
+    mScrollPaneWrapper = new ProgramTableScrollPaneWrapper(mProgramTableScrollPane);
+    
+    mCenterTabPane = new JTabbedPane();
+    mCenterTabPane.setBorder(BorderFactory.createEmptyBorder());
+    mCenterTabPane.addMouseListener(new MouseAdapter() {
+      
+      @Override
+      public void mouseReleased(MouseEvent e) {
+        if(e.isPopupTrigger()) {
+          showContextMenu(e);
+        }
+      }
+      
+      @Override
+      public void mousePressed(MouseEvent e) {
+        if(e.isPopupTrigger()) {
+          showContextMenu(e);
+        }
+      }
+      
+      private void showContextMenu(MouseEvent e) {
+        JMenuItem settings = new JMenuItem(mLocalizer.msg("configTabs", "Configure tabs..."));
+        settings.addActionListener(new ActionListener() {
+          @Override
+          public void actionPerformed(ActionEvent e) {
+            showSettingsDialog(SettingsItem.CENTERPANELSETUP);
+          }
+        });
+        
+        JPopupMenu popup = new JPopupMenu();
+        popup.add(settings);
+        
+        popup.show(e.getComponent(), e.getPoint().x, e.getPoint().y);
+      }
+    });
+        
     mProgramTableScrollPane.setOpaque(false);
 
     createDateSelector();
@@ -487,6 +548,8 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     }
 
     this.setDropTarget(target);
+    
+    updateCenterPanels();
   }
 
   /**
@@ -1230,6 +1293,10 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     mCurrentFilterName = filter.getName();
     
     mProgramTableScrollPane.requestFocusInWindow();
+    
+    for(PluginCenterPanelWrapper wrapper : mCenterPanelWrapperList) {
+      wrapper.filterSelected(filter);
+    }
   }
 
   /**
@@ -1384,6 +1451,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
   public void handleTvBrowserStartFinished() {
     mStarting = false;
     mMenuBar.updateChannelGroupMenu();
+    PluginProxyManager.getInstance().addPluginStateListener(this);
   }
 
   private void runAutoUpdate() {
@@ -1501,6 +1569,10 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
               }
             }
           }
+        }
+        
+        for(PluginCenterPanelWrapper wrapper : mCenterPanelWrapperList) {
+          wrapper.timeEvent();
         }
       }
 
@@ -1642,12 +1714,36 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
         mProgramTableScrollPane.scrollToChannel(program.getChannel());
         scrollTo(program.getDate(), program.getStartTime(), callback);
       }});
+    
+    for(PluginCenterPanelWrapper wrapper : mCenterPanelWrapperList) {
+      wrapper.programScrolled(program);
+    }
+  }
+  
+  public void selectProgram(final Program program) {
+    if(program != null) {
+      scrollToProgram(program, new Runnable() {
+        public void run() {
+          ProgramTable table = MainFrame.getInstance().getProgramTableScrollPane().getProgramTable();
+          table.deSelectItem();
+          table.selectProgram(program);
+        }});
+    }
+    
+    for(PluginCenterPanelWrapper wrapper : mCenterPanelWrapperList) {
+      wrapper.programSelected(program);
+      wrapper.scrolledToChannel(program.getChannel());
+    }
   }
 
   public void scrollToTime(int time) {
     mProgramTableScrollPane.deSelectItem();
     mProgramTableScrollPane.scrollToTime(time);
     mProgramTableScrollPane.requestFocusInWindow();
+    
+    for(PluginCenterPanelWrapper wrapper : mCenterPanelWrapperList) {
+      wrapper.scrolledToTime(time);
+    }
   }
 
   public void scrollToNow() {
@@ -1657,6 +1753,10 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     devplugin.Date day = new devplugin.Date();
     scrollTo(day, hour * 60 + cal.get(Calendar.MINUTE));
     mProgramTableScrollPane.requestFocusInWindow();
+    
+    for(PluginCenterPanelWrapper wrapper : mCenterPanelWrapperList) {
+      wrapper.scrolledToNow();
+    }
   }
   
   /** Very first scrollToNow should only be called from TVBrowser.java */
@@ -1709,6 +1809,10 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
         }
       }
     });
+    
+    for(PluginCenterPanelWrapper wrapper : mCenterPanelWrapperList) {
+      wrapper.scrolledTo(day,minute);
+    }
   }
 
   public void runSetupAssistant() {
@@ -1866,6 +1970,10 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
 
   public void showChannel(Channel ch) {
     mProgramTableScrollPane.scrollToChannel(ch);
+    
+    for(PluginCenterPanelWrapper wrapper : mCenterPanelWrapperList) {
+      wrapper.scrolledToChannel(ch);
+    }
   }
 
   /**
@@ -1951,6 +2059,10 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
         });
       }
     });
+    
+    for(PluginCenterPanelWrapper wrapper : mCenterPanelWrapperList) {
+      wrapper.scrolledToDate(date);
+    }
   }
 
   /**
@@ -2888,10 +3000,14 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     if(Persona.getInstance().getHeaderImage() != null) {
       mToolBarPanel.setOpaque(false);
       mSearchField.setOpaque(false);
+      mCenterTabPane.setBackground(new Color(0,0,0,0));
+      mCenterTabPane.setForeground(Persona.getInstance().getTextColor());
     }
     else {
       mToolBarPanel.setOpaque(true);
-      mSearchField.setOpaque(true);      
+      mSearchField.setOpaque(true);
+      mCenterTabPane.setBackground(UIManager.getColor("Panel.background"));
+      mCenterTabPane.setForeground(UIManager.getColor("List.foreground"));
     }
     mToolBarPanel.updateUI();
     
@@ -2903,4 +3019,133 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     mProgramTableScrollPane.updatePersona();
     mFilterPanel.updatePersona();
   }
+  
+  public void updateCenterPanels() {
+    try {
+      mCenterPanelWrapperList.clear();
+      
+      PluginProxy[] plugins = PluginProxyManager.getInstance().getActivatedPlugins();
+      
+      ArrayList<PluginCenterPanel> centerPanelList = new ArrayList<PluginCenterPanel>(1);
+      
+      centerPanelList.add(mScrollPaneWrapper);
+      
+      for(PluginProxy plugin : plugins) {
+        PluginCenterPanelWrapper wrapper = plugin.getPluginCenterPanelWrapper();
+        
+        if(wrapper != null) {
+          mCenterPanelWrapperList.add(wrapper);
+          try {
+            PluginCenterPanel[] panels = wrapper.getCenterPanels();
+            
+            for(PluginCenterPanel panel : panels) {
+              if(panel != null && panel.getPanel() != null && panel.getName() != null && panel.getId() != null) {
+                centerPanelList.add(panel);
+              }
+            }
+            // Prevent Plugins from making problems.
+          }catch(Throwable e) {e.printStackTrace();}
+        }
+      }      
+      
+      ArrayList<PluginCenterPanel> usedCenterPanelList = new ArrayList<PluginCenterPanel>();
+      
+      ArrayList<String> enabledCenterPanels = new ArrayList<String>(Arrays.asList(Settings.propCenterPanelArr.getStringArray()));
+      
+      for(String enabledPanel : enabledCenterPanels) {
+        for(int i = 0; i < centerPanelList.size(); i++) {
+          if(enabledPanel.equals(centerPanelList.get(i).getId())) {
+            usedCenterPanelList.add(centerPanelList.remove(i));
+            break;
+          }
+        }
+      }
+      
+      for(String disabledPanel : Settings.propDisabledCenterPanelArr.getStringArray()) {
+        for(int i = 0; i < centerPanelList.size(); i++) {
+          if(disabledPanel.equals(centerPanelList.get(i).getId())) {
+            centerPanelList.remove(i);
+            break;
+          }
+        }
+      }
+      
+      boolean addNew = false;
+      
+      if(!centerPanelList.isEmpty()) {
+        for(PluginCenterPanel centerPanel : centerPanelList) {
+          usedCenterPanelList.add(centerPanel);
+        }
+        
+        addNew = true;
+      }
+      
+      mCenterPanel.removeAll();
+      mCenterTabPane.removeAll();
+      
+      if(usedCenterPanelList.isEmpty()) {
+        mCenterPanel.add(mProgramTableScrollPane, BorderLayout.CENTER);
+      }
+      else if(usedCenterPanelList.size() == 1 && !Settings.propAlwaysShowTabBarForCenterPanel.getBoolean()) {
+        mCenterPanel.add(usedCenterPanelList.get(0).getPanel(), BorderLayout.CENTER);
+      }
+      else {
+        mCenterPanel.add(mCenterTabPane, BorderLayout.CENTER);
+        ArrayList<String> usedIdList = null;
+        
+        if(addNew) {
+          usedIdList = new ArrayList<String>(usedCenterPanelList.size());
+        }
+        
+        for(PluginCenterPanel panel : usedCenterPanelList) {
+          mCenterTabPane.addTab(panel.getName(), panel.getPanel());
+          
+          if(addNew) {
+            usedIdList.add(panel.getId());
+          }
+        }
+        
+        if(usedIdList != null && !usedIdList.isEmpty()) {
+          Settings.propCenterPanelArr.setStringArray(usedIdList.toArray(new String[usedIdList.size()]));
+        }
+      }
+    }catch(Throwable t) {t.printStackTrace();
+      // if everything went wrong we use the program table scroll pane
+      mCenterPanel.add(mProgramTableScrollPane, BorderLayout.CENTER);
+    }
+  }
+  
+  public ProgramTableScrollPaneWrapper getProgramTableScrollPaneWrapper() {
+    return mScrollPaneWrapper;
+  }
+
+  @Override
+  public void pluginActivated(PluginProxy plugin) {   
+    SwingUtilities.invokeLater(new Runnable() {
+      
+      @Override
+      public void run() {
+        updateCenterPanels();    
+      }
+    });
+  }
+
+  @Override
+  public void pluginDeactivated(PluginProxy plugin) {
+    if(!isShuttingDown()) {
+      SwingUtilities.invokeLater(new Runnable() {
+        
+        @Override
+        public void run() {
+          updateCenterPanels();    
+        }
+      });
+    }
+  }
+
+  @Override
+  public void pluginLoaded(PluginProxy plugin) {}
+
+  @Override
+  public void pluginUnloaded(PluginProxy plugin) {}
 }
