@@ -583,7 +583,7 @@ public class ListViewPanel extends JPanel {
   /**
    * Refresh the List with current settings
    */
-  void refreshView() {
+  synchronized void refreshView() {
     try {
       mBox.setEnabled(mRuns.isSelected());
       mDate.setEnabled(mOn.isSelected());
