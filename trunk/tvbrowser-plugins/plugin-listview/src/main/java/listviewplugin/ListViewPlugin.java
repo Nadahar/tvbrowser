@@ -99,6 +99,9 @@ public class ListViewPlugin extends Plugin {
       return mVersion;
     }
 
+    public void handleTvDataUpdateFinished() {
+      updateCenterPanel();
+    }
     
     public void onActivation() {
       SwingUtilities.invokeLater(new Runnable() {
@@ -192,6 +195,17 @@ public class ListViewPlugin extends Plugin {
       }
       
       mCenterPanel = null;
+    }
+    
+    private void updateCenterPanel() {
+      if(mCenterPanel != null) {
+        Persona.getInstance().removePersonaListerner(mCenterPanel);
+      }
+      
+      mCenterPanel = new ListViewPanel(ListViewPlugin.this);
+      Persona.getInstance().registerPersonaListener(mCenterPanel);
+      mCenterPanel.updatePersona();
+      mCenterPanelWrapper.add(mCenterPanel, BorderLayout.CENTER);
     }
 
     /**
