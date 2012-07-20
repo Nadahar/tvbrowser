@@ -26,6 +26,8 @@
 package listviewplugin;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.util.Properties;
 
@@ -35,6 +37,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import util.settings.PluginPictureSettings;
+import util.ui.persona.Persona;
 import devplugin.ActionMenu;
 import devplugin.Channel;
 import devplugin.Date;
@@ -98,7 +101,23 @@ public class ListViewPlugin extends Plugin {
 
     
     public void onActivation() {
-      mCenterPanelWrapper = new JPanel(new BorderLayout());
+      mCenterPanelWrapper = new JPanel(new BorderLayout()) {
+        protected void paintComponent(Graphics g) {
+          if(Persona.getInstance().getAccentColor() != null && Persona.getInstance().getHeaderImage() != null) {
+           
+            Color c = Persona.testPersonaForegroundAgainst(Persona.getInstance().getAccentColor());
+            
+            int alpha = c.getAlpha();
+            
+            g.setColor(new Color(c.getRed(),c.getGreen(),c.getBlue(),alpha));
+            g.fillRect(0,0,getWidth(),getHeight());
+          }
+          else {
+            super.paintComponent(g);
+          }
+        }
+      };
+      mCenterPanelWrapper.setOpaque(false);
       mCenterWrapper = new PluginCenterPanelWrapper() {
         
         @Override
@@ -159,6 +178,8 @@ public class ListViewPlugin extends Plugin {
         SwingUtilities.invokeLater(new Runnable() {
           public void run() {
             mCenterPanel = new ListViewPanel(ListViewPlugin.this);
+            Persona.getInstance().registerPersonaListener(mCenterPanel);
+            mCenterPanel.updatePersona();
             mCenterPanelWrapper.add(mCenterPanel, BorderLayout.CENTER);
           }
         });
@@ -166,6 +187,10 @@ public class ListViewPlugin extends Plugin {
     }
     
     public void onDeactivation() {
+      if(mCenterPanel != null) {
+        Persona.getInstance().removePersonaListerner(mCenterPanel);
+      }
+      
       mCenterPanel = null;
     }
 
@@ -228,6 +253,8 @@ public class ListViewPlugin extends Plugin {
       SwingUtilities.invokeLater(new Runnable() {
         public void run() {
           mCenterPanel = new ListViewPanel(ListViewPlugin.this);
+          Persona.getInstance().registerPersonaListener(mCenterPanel);
+          mCenterPanel.updatePersona();
           mCenterPanelWrapper.add(mCenterPanel, BorderLayout.CENTER);
 
           if (mShowAtStartup) {
@@ -296,6 +323,4 @@ public class ListViewPlugin extends Plugin {
       }
       
     }
-    
-    
 }

@@ -53,6 +53,7 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.SpinnerDateModel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.table.TableColumn;
@@ -78,8 +79,10 @@ import util.ui.ChannelLabel;
 import util.ui.Localizer;
 import util.ui.TimeFormatter;
 import util.ui.UiUtilities;
+import util.ui.persona.Persona;
+import util.ui.persona.PersonaListener;
 
-public class ListViewPanel extends JPanel {
+public class ListViewPanel extends JPanel implements PersonaListener {
   private static final Localizer mLocalizer = ListViewDialog.mLocalizer;
   
 
@@ -129,6 +132,9 @@ public class ListViewPanel extends JPanel {
 
   private JComboBox mFilterBox;
   private ProgramFilter mCurrentFilter;
+  
+  private JLabel mFilterLabel;
+  private JLabel mAtLabel;
 
   protected int mTimeSelectionIndex;
   
@@ -194,6 +200,7 @@ public class ListViewPanel extends JPanel {
     group.add(mOn);
 
     JPanel datetimeselect = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+    datetimeselect.setOpaque(false);
 
     Vector<Date> dates = new Vector<Date>();
 
@@ -206,7 +213,7 @@ public class ListViewPanel extends JPanel {
 
     datetimeselect.add(mDate);
 
-    datetimeselect.add(new JLabel(" " + mLocalizer.msg("at", "at") + " "));
+    datetimeselect.add(mAtLabel = new JLabel(" " + mLocalizer.msg("at", "at") + " "));
 
     JSpinner.DateEditor dateEditor = new JSpinner.DateEditor(mTimeSpinner, Settings.getTimePattern());
 
@@ -296,8 +303,8 @@ public class ListViewPanel extends JPanel {
     mDate.setEnabled(false);
     mTimeSpinner.setEnabled(false);
 
-    JLabel filterLabel = new JLabel("Filter:");
-    filterLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+    mFilterLabel = new JLabel("Filter:");
+    mFilterLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 
     mFilterBox = new JComboBox(Plugin.getPluginManager().getFilterManager().getAvailableFilters());
     mFilterBox.setSelectedItem(Plugin.getPluginManager().getFilterManager().getCurrentFilter());
@@ -313,6 +320,7 @@ public class ListViewPanel extends JPanel {
     // Upper Panel
 
     JPanel topPanel = new JPanel(new FormLayout("pref, 3dlu, pref, 15dlu, pref, 3dlu, pref, 3dlu, pref", "pref, 1dlu, pref, 3dlu"));
+    topPanel.setOpaque(false);
 
     CellConstraints cc = new CellConstraints();
     
@@ -321,7 +329,7 @@ public class ListViewPanel extends JPanel {
     topPanel.add(mOn, cc.xy(5,1));
     topPanel.add(datetimeselect, cc.xy(7,1));
     
-    topPanel.add(filterLabel, cc.xy(1,3));
+    topPanel.add(mFilterLabel, cc.xy(1,3));
     topPanel.add(mFilterBox, cc.xyw(3,3,5));
 
     add(topPanel, BorderLayout.NORTH);
@@ -815,5 +823,27 @@ public class ListViewPanel extends JPanel {
         }
       }
     }catch(Throwable t) {t.printStackTrace();}
+  }
+  
+  @Override
+  public void updatePersona() {
+    if(Persona.getInstance().getHeaderImage() != null) {
+      setOpaque(false);
+      mOn.setOpaque(false);
+      mRuns.setOpaque(false);
+      mOn.setForeground(Persona.getInstance().getTextColor());
+      mRuns.setForeground(Persona.getInstance().getTextColor());
+      mFilterLabel.setForeground(Persona.getInstance().getTextColor());
+      mAtLabel.setForeground(Persona.getInstance().getTextColor());
+    }
+    else {
+      setOpaque(true);
+      mOn.setOpaque(true);
+      mRuns.setOpaque(true);
+      mOn.setForeground(UIManager.getColor("Label.foreground"));
+      mRuns.setForeground(UIManager.getColor("Label.foreground"));
+      mFilterLabel.setForeground(UIManager.getColor("Label.foreground"));
+      mAtLabel.setForeground(UIManager.getColor("Label.foreground"));
+    }
   }
 }
