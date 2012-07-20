@@ -50,6 +50,7 @@ public class Exclusion {
   private ChannelItem mChannel;
   private String mTopic;
   private String mTitle;
+  private String mEpisodeTitle;
   private int mTimeFrom;
   private int mTimeTo;
   private int mDayOfWeek;
@@ -64,8 +65,9 @@ public class Exclusion {
    * @param timeTo upper time limit (or -1, if no upper limit exists)
    * @param dayOfWeek The day of week to use.
    * @param filterName The name of the filter to use;
+   * @param episodeTitle null, if any episode title is allowed
    */
-  public Exclusion(String title, String topic, Channel channel, int timeFrom, int timeTo, int dayOfWeek, String filterName) {
+  public Exclusion(String title, String topic, Channel channel, int timeFrom, int timeTo, int dayOfWeek, String filterName, String episodeTitle) {
     mTitle = title;
     mTopic = topic;
     mChannel = new ChannelItem(channel);
@@ -73,6 +75,7 @@ public class Exclusion {
     mTimeTo = timeTo;
     mDayOfWeek = dayOfWeek;
     mFilterName = filterName;
+    mEpisodeTitle = episodeTitle;
   }
 
   public Exclusion(ObjectInputStream in) throws ClassNotFoundException, IOException {
@@ -125,11 +128,19 @@ public class Exclusion {
     if(mChannel == null) {
       mChannel = new ChannelItem(null);
     }
+    
+    if(version > 5) {
+      boolean hasEpisodeTitle = in.readBoolean();
+      
+      if(hasEpisodeTitle) {
+        mEpisodeTitle = in.readUTF();
+      }
+    }
   }
 
 
   public void writeData(ObjectOutputStream out) throws IOException {
-    out.writeInt(5);  // version
+    out.writeInt(6);  // version
     out.writeBoolean(mChannel != null);
     if (mChannel != null) {
       mChannel.saveItem(out);
@@ -153,6 +164,11 @@ public class Exclusion {
     out.writeInt(mTimeFrom);
     out.writeInt(mTimeTo);
     out.writeInt(mDayOfWeek);
+    
+    out.writeBoolean(mEpisodeTitle != null);
+    if(mEpisodeTitle != null) {
+      out.writeUTF(mEpisodeTitle);
+    }
   }
 
 
@@ -162,6 +178,10 @@ public class Exclusion {
 
   public String getTopic() {
     return mTopic;
+  }
+  
+  public String getEpisodeTitle() {
+    return mEpisodeTitle;
   }
   
   public ProgramFilter getFilter() {
@@ -200,6 +220,7 @@ public class Exclusion {
     boolean timeExcl = false;
     boolean dayExcl = false;
     boolean filterExclusion = false;
+    boolean episodeTitleExcl = false;
     
     if(isInvalid()) {
       return false;
@@ -303,7 +324,13 @@ public class Exclusion {
       dayExcl = true;
     }
     
-    return channelExcl && titleExcl && topicExcl && timeExcl && dayExcl && filterExclusion;
+    if(mEpisodeTitle != null) {
+      if(prog.getTextField(ProgramFieldType.EPISODE_TYPE).equalsIgnoreCase(mEpisodeTitle)) {
+        episodeTitleExcl = true;
+      }
+    }
+    
+    return channelExcl && titleExcl && topicExcl && timeExcl && dayExcl && filterExclusion && episodeTitleExcl;
   }
   
   /**
@@ -312,6 +339,6 @@ public class Exclusion {
    * @return <code>True</code> if this Exclusion is invalid, <code>false</code> otherwise.
    */
   public boolean isInvalid() {
-    return (mTitle == null && mTopic == null && !mChannel.isAvailableOrNullChannel() && mFilterName == null && mTimeFrom == -1 &&mTimeTo == -1 && mDayOfWeek == Exclusion.DAYLIMIT_DAILY) || !mChannel.isAvailableOrNullChannel();
+    return (mTitle == null && mTopic == null && mEpisodeTitle == null && !mChannel.isAvailableOrNullChannel() && mFilterName == null && mTimeFrom == -1 &&mTimeTo == -1 && mDayOfWeek == Exclusion.DAYLIMIT_DAILY) || !mChannel.isAvailableOrNullChannel();
   }
 }
