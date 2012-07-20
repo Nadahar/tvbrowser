@@ -101,89 +101,89 @@ public class ListViewPlugin extends Plugin {
 
     
     public void onActivation() {
-      mCenterPanelWrapper = new JPanel(new BorderLayout()) {
-        protected void paintComponent(Graphics g) {
-          if(Persona.getInstance().getAccentColor() != null && Persona.getInstance().getHeaderImage() != null) {
-           
-            Color c = Persona.testPersonaForegroundAgainst(Persona.getInstance().getAccentColor());
+      SwingUtilities.invokeLater(new Runnable() {
+        public void run() {
+          mCenterPanelWrapper = new JPanel(new BorderLayout()) {
+            protected void paintComponent(Graphics g) {
+              if(Persona.getInstance().getAccentColor() != null && Persona.getInstance().getHeaderImage() != null) {
+               
+                Color c = Persona.testPersonaForegroundAgainst(Persona.getInstance().getAccentColor());
+                
+                int alpha = c.getAlpha();
+                
+                g.setColor(new Color(c.getRed(),c.getGreen(),c.getBlue(),alpha));
+                g.fillRect(0,0,getWidth(),getHeight());
+              }
+              else {
+                super.paintComponent(g);
+              }
+            }
+          };
+          mCenterPanelWrapper.setOpaque(false);
+          mCenterWrapper = new PluginCenterPanelWrapper() {
             
-            int alpha = c.getAlpha();
+            @Override
+            public PluginCenterPanel[] getCenterPanels() {
+              return new PluginCenterPanel[] {new PluginCenterPanelImpl()};
+            }
             
-            g.setColor(new Color(c.getRed(),c.getGreen(),c.getBlue(),alpha));
-            g.fillRect(0,0,getWidth(),getHeight());
-          }
-          else {
-            super.paintComponent(g);
-          }
-        }
-      };
-      mCenterPanelWrapper.setOpaque(false);
-      mCenterWrapper = new PluginCenterPanelWrapper() {
-        
-        @Override
-        public PluginCenterPanel[] getCenterPanels() {
-          return new PluginCenterPanel[] {new PluginCenterPanelImpl()};
-        }
-        
-        @Override
-        public void scrolledToChannel(Channel channel) {
-          if(mCenterPanel != null) {
-            mCenterPanel.showChannel(channel);
-          }
-        }
-        
-        @Override
-        public void filterSelected(ProgramFilter filter) {
-          if(mCenterPanel != null) {
-            mCenterPanel.showForFilter(filter);
-          }
-        }
-        
-        @Override
-        public void scrolledToDate(Date date) {
-          if(mCenterPanel != null) {
-            mCenterPanel.showForDate(date, -1);
-          }
-        }
-        
-        public void scrolledTo(Date date,int minute) {
-          if(mCenterPanel != null) {
-            mCenterPanel.showForDate(date,minute);
-          }
-        }
-        
-        @Override
-        public void scrolledToNow() {
-          if(mCenterPanel != null) {
-            mCenterPanel.showForNow();
-          }
-        }
-        
-        @Override
-        public void scrolledToTime(int time) {
-          if(mCenterPanel != null) {
-            mCenterPanel.showForTimeButton(time);
-          }
-        }
-        
-        @Override
-        public void timeEvent() {
-          if(mCenterPanel != null) {
-            mCenterPanel.refreshView();
-          }
-        }
-      };
-      
-      if(mTvBrowserStarted) {
-        SwingUtilities.invokeLater(new Runnable() {
-          public void run() {
+            @Override
+            public void scrolledToChannel(Channel channel) {
+              if(mCenterPanel != null) {
+                mCenterPanel.showChannel(channel);
+              }
+            }
+            
+            @Override
+            public void filterSelected(ProgramFilter filter) {
+              if(mCenterPanel != null) {
+                mCenterPanel.showForFilter(filter);
+              }
+            }
+            
+            @Override
+            public void scrolledToDate(Date date) {
+              if(mCenterPanel != null) {
+                mCenterPanel.showForDate(date, -1);
+              }
+            }
+            
+            public void scrolledTo(Date date,int minute) {
+              if(mCenterPanel != null) {
+                mCenterPanel.showForDate(date,minute);
+              }
+            }
+            
+            @Override
+            public void scrolledToNow() {
+              if(mCenterPanel != null) {
+                mCenterPanel.showForNow();
+              }
+            }
+            
+            @Override
+            public void scrolledToTime(int time) {
+              if(mCenterPanel != null) {
+                mCenterPanel.showForTimeButton(time);
+              }
+            }
+            
+            @Override
+            public void timeEvent() {
+              if(mCenterPanel != null) {
+                mCenterPanel.refreshView();
+              }
+            }
+          };
+          
+          if(mTvBrowserStarted) {
             mCenterPanel = new ListViewPanel(ListViewPlugin.this);
             Persona.getInstance().registerPersonaListener(mCenterPanel);
             mCenterPanel.updatePersona();
             mCenterPanelWrapper.add(mCenterPanel, BorderLayout.CENTER);
           }
-        });
-      }
+        }
+      });
     }
     
     public void onDeactivation() {

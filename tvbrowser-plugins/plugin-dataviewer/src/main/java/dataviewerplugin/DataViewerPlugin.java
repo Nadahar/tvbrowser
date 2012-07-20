@@ -121,19 +121,23 @@ public final class DataViewerPlugin extends Plugin implements Runnable {
   }
   
   public void onActivation() {
-    mCenterPanelWrapper = new JPanel(new BorderLayout());
-    mWrapper = new PluginCenterPanelWrapper() {
-      
-      @Override
-      public PluginCenterPanel[] getCenterPanels() {
-        // TODO Auto-generated method stub
-        return new PluginCenterPanel[] {new DataViewerCenterPanel()};
+    SwingUtilities.invokeLater(new Runnable() {      
+      public void run() {
+        mCenterPanelWrapper = new JPanel(new BorderLayout());
+        mWrapper = new PluginCenterPanelWrapper() {
+          
+          @Override
+          public PluginCenterPanel[] getCenterPanels() {
+            // TODO Auto-generated method stub
+            return new PluginCenterPanel[] {new DataViewerCenterPanel()};
+          }
+        };
+        
+        if(mReactOnDataUpdate && (mThread == null || !mThread.isAlive())) {
+          addCenterPanel();
+        }
       }
-    };
-    
-    if(mReactOnDataUpdate && (mThread == null || !mThread.isAlive())) {
-      addCenterPanel();
-    }
+    });
   }
   
   private void startThread() {
