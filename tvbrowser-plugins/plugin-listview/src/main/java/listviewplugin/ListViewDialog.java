@@ -73,7 +73,7 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
    */
   public ListViewDialog(Frame frame, Plugin plugin, Properties settings) {
     super(frame, true);
-    setTitle(mLocalizer.msg("viewList1", "View List:"));
+    setTitle(mLocalizer.msg("viewList", "View List:"));
     mSettings = settings;
     mListViewPanel = new ListViewPanel(plugin);
     createGUI();
