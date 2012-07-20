@@ -45,6 +45,8 @@ import devplugin.ActionMenu;
 import devplugin.Channel;
 import devplugin.Date;
 import devplugin.Plugin;
+import devplugin.PluginCenterPanel;
+import devplugin.PluginCenterPanelWrapper;
 import devplugin.PluginInfo;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
@@ -76,12 +78,14 @@ public final class DataViewerPlugin extends Plugin implements Runnable {
   private boolean mReactOnDataUpdate = false;
   private int mMinChannelWidth = 20;
 
-  private static final Version mVersion = new Version(1,10,1);
+  private static final Version mVersion = new Version(1,20,false);
 
   private static DataViewerPlugin mInstance;
 
   private Font mTableFont;
-
+  
+  private PluginCenterPanelWrapper mWrapper;
+  private JPanel mCenterPanelWrapper;
   /**
    * Creates an instance of this class.
    */
@@ -115,20 +119,45 @@ public final class DataViewerPlugin extends Plugin implements Runnable {
       mDialog.dispose();
     }
   }
-
-  @Override
-  public void handleTvBrowserStartFinished() {
-    mReactOnDataUpdate = true;
+  
+  public void onActivation() {
+    mCenterPanelWrapper = new JPanel(new BorderLayout());
+    mWrapper = new PluginCenterPanelWrapper() {
+      
+      @Override
+      public PluginCenterPanel[] getCenterPanels() {
+        // TODO Auto-generated method stub
+        return new PluginCenterPanel[] {new DataViewerCenterPanel()};
+      }
+    };
+    
+    if(mReactOnDataUpdate && (mThread == null || !mThread.isAlive())) {
+      addCenterPanel();
+    }
+  }
+  
+  private void startThread() {
     mThread = new Thread(this);
     mThread.setPriority(Thread.MIN_PRIORITY);
     mThread.start();
   }
+  
+  private void addCenterPanel() {
+    SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        mCenterPanelWrapper.add(getMainPanel(),BorderLayout.CENTER);
+        mCenterPanelWrapper.updateUI();
+      }
+    });    
+  }
 
-  private void showTable() {
-    if (mDialog != null && mDialog.isVisible()) {
-      mDialog.dispose();
-    }
+  @Override
+  public void handleTvBrowserStartFinished() {
+    mReactOnDataUpdate = true;
+    startThread();
+  }
 
+  private JPanel getMainPanel() {
     final JTable table = new JTable(new DataTableModel(mDataTable, mDateString));
     table.setDefaultRenderer(Object.class, new DataTableCellRenderer());
     table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -221,23 +250,23 @@ public final class DataViewerPlugin extends Plugin implements Runnable {
     table.addMouseMotionListener(new MouseMotionAdapter() {
       @Override
       public void mouseMoved(MouseEvent e) {
-				StringBuilder toolTip = new StringBuilder();
-				toolTip.append("<html>").append(
-						mDates[table.columnAtPoint(e.getPoint())]).append(' ').append(
-						channels.getValueAt(table.rowAtPoint(e.getPoint()), 0));
+        StringBuilder toolTip = new StringBuilder();
+        toolTip.append("<html>").append(
+            mDates[table.columnAtPoint(e.getPoint())]).append(' ').append(
+            channels.getValueAt(table.rowAtPoint(e.getPoint()), 0));
 
-				ArrayList<Program> list = mErrData[table.rowAtPoint(e.getPoint())][table
-						.columnAtPoint(e.getPoint())];
+        ArrayList<Program> list = mErrData[table.rowAtPoint(e.getPoint())][table
+            .columnAtPoint(e.getPoint())];
 
-				if (list != null) {
-					for (int i = 0; i < list.size(); i++) {
-						Program p = list.get(i);
-						toolTip.append("<br>").append(p.getTimeString()).append(' ')
-								.append(p.getTitle());
-					}
-				}
+        if (list != null) {
+          for (int i = 0; i < list.size(); i++) {
+            Program p = list.get(i);
+            toolTip.append("<br>").append(p.getTimeString()).append(' ')
+                .append(p.getTitle());
+          }
+        }
 
-				toolTip.append("</html>");
+        toolTip.append("</html>");
 
         table.setToolTipText(toolTip.toString());
       }
@@ -272,14 +301,22 @@ public final class DataViewerPlugin extends Plugin implements Runnable {
     JPanel info = new JPanel(new BorderLayout());
     info.add(lastDownload, BorderLayout.NORTH);
     info.add(colors, BorderLayout.SOUTH);
-
+    
     JPanel l = new JPanel(new BorderLayout(0, 10));
     l.add(pane, BorderLayout.CENTER);
     l.add(info, BorderLayout.SOUTH);
+    
+    return l;
+  }
+  
+  private void showTable() {
+    if (mDialog != null && mDialog.isVisible()) {
+      mDialog.dispose();
+    }
 
     JOptionPane jp = new JOptionPane();
     jp.setMessageType(JOptionPane.PLAIN_MESSAGE);
-    jp.setMessage(l);
+    jp.setMessage(getMainPanel());
 
     mDialog = jp.createDialog(getParentFrame(), mLocalizer.msg("data",
     "Data viewer"));
@@ -348,7 +385,7 @@ public final class DataViewerPlugin extends Plugin implements Runnable {
           mDialog.setVisible(true);
 
           if(mThread == null || mToday.compareTo(Date.getCurrentDate()) != 0) {
-            handleTvBrowserStartFinished();
+            startThread();
           }
 
           return;
@@ -380,7 +417,7 @@ public final class DataViewerPlugin extends Plugin implements Runnable {
       mProperties.setProperty("last", DateFormat.getDateTimeInstance(
           DateFormat.FULL, DateFormat.SHORT).format(
               new java.util.Date(System.currentTimeMillis())));
-      handleTvBrowserStartFinished();
+      startThread();
     }
   }
 
@@ -556,7 +593,9 @@ public final class DataViewerPlugin extends Plugin implements Runnable {
         mDataTable[i][j] = channels[i].get(j);
       }
     }
-
+    mCenterPanelWrapper.removeAll();
+    addCenterPanel();
+    
     if (mProgress != null) {
       mProgress.setIndeterminate(false);
       if (mDialog != null && mDialog.isVisible()) {
@@ -613,7 +652,7 @@ public final class DataViewerPlugin extends Plugin implements Runnable {
 	            }catch(Exception e) {}
 	          }
 
-	          handleTvBrowserStartFinished();
+	          startThread();
 	        }
 	      }.start();
 
@@ -633,7 +672,7 @@ public final class DataViewerPlugin extends Plugin implements Runnable {
             }catch(Exception e) {}
           }
 
-          handleTvBrowserStartFinished();
+          startThread();
         }
       }.start();
 
@@ -651,7 +690,26 @@ public final class DataViewerPlugin extends Plugin implements Runnable {
   }
   
   public String getPluginCategory() {
-    //Plugin.OTHER_CATEGORY
-    return "misc";
+    return Plugin.OTHER_CATEGORY;
+  }
+  
+  public PluginCenterPanelWrapper getPluginCenterPanelWrapper() {
+    return mWrapper;
+  }
+  
+  private class DataViewerCenterPanel extends PluginCenterPanel {
+
+    @Override
+    public String getName() {
+      // TODO Auto-generated method stub
+      return mLocalizer.msg("data", "Data viewer");
+    }
+
+    @Override
+    public JPanel getPanel() {
+      // TODO Auto-generated method stub
+      return mCenterPanelWrapper;
+    }
+    
   }
 }
