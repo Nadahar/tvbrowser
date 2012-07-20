@@ -31,12 +31,15 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Insets;
 import java.awt.MouseInfo;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.datatransfer.DataFlavor;
@@ -103,6 +106,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
+import javax.swing.plaf.basic.BasicTabbedPaneUI;
 
 import org.apache.commons.lang.math.RandomUtils;
 
@@ -402,10 +406,24 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     mProgramTableModel = new DefaultProgramTableModel(channelArr, startOfDay,
         endOfDay);
     mProgramTableScrollPane = new ProgramTableScrollPane(mProgramTableModel,mGlobalFindAsYouTypeKeyListener);
-
+    
     mScrollPaneWrapper = new ProgramTableScrollPaneWrapper(mProgramTableScrollPane);
     
     mCenterTabPane = new JTabbedPane();
+    
+    mCenterTabPane.setUI(new BasicTabbedPaneUI() {
+      protected  void  paintText(Graphics g, int tabPlacement, Font font, FontMetrics metrics, int tabIndex, String title, Rectangle textRect, boolean isSelected) {
+        if(Persona.getInstance().getHeaderImage() != null && !Persona.getInstance().getShadowColor().equals(Persona.getInstance().getTextColor())) {
+          g.setColor(Persona.getInstance().getShadowColor());
+          
+          g.drawString(title,textRect.x+1, textRect.y+1 + metrics.getAscent());
+          g.drawString(title,textRect.x+2, textRect.y+2 + metrics.getAscent());
+        }
+        
+        super.paintText(g, tabPlacement, font, metrics, tabIndex, title, textRect, isSelected);
+      }
+    });
+    
     mCenterTabPane.setBorder(BorderFactory.createEmptyBorder());
     mCenterTabPane.addMouseListener(new MouseAdapter() {
       
@@ -3113,6 +3131,8 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       // if everything went wrong we use the program table scroll pane
       mCenterPanel.add(mProgramTableScrollPane, BorderLayout.CENTER);
     }
+    
+    updatePersona();
   }
   
   public ProgramTableScrollPaneWrapper getProgramTableScrollPaneWrapper() {
