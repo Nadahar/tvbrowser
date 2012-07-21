@@ -49,6 +49,7 @@ import javax.swing.JPanel;
 import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
@@ -498,9 +499,12 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
       }
     }
 
-    if (minutes != -1) {
-      ReminderPlugin.getInstance().updateRootNode(true);
-    }
+    SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        ReminderPlugin.getInstance().updateRootNode(true);
+      }
+    });
 
     if (mAutoCloseTimer != null) {
       mAutoCloseTimer.stop();
