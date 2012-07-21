@@ -740,7 +740,7 @@ public class ReminderPlugin {
     }
     
     if(mReminderListPanel != null) {
-      mReminderListPanel.updateTableEntries();
+      mReminderListPanel.installTableModel();
     }
   }
 
@@ -754,7 +754,6 @@ public class ReminderPlugin {
     thread.setPriority(Thread.MIN_PRIORITY);
     thread.start();
   }
-
 
   protected static ActionMenu getButtonAction() {
     AbstractAction action = new AbstractAction() {
