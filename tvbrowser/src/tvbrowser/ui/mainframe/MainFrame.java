@@ -127,6 +127,8 @@ import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.plugin.PluginStateListener;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
+import tvbrowser.extras.common.InternalPluginProxyIf;
+import tvbrowser.extras.common.InternalPluginProxyList;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import tvbrowser.ui.DontShowAgainOptionBox;
@@ -3088,6 +3090,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       mCenterPanelWrapperList.clear();
       
       PluginProxy[] plugins = PluginProxyManager.getInstance().getActivatedPlugins();
+      InternalPluginProxyIf[] internalPlugins = InternalPluginProxyList.getInstance().getAvailableProxys();
       
       ArrayList<PluginCenterPanel> centerPanelList = new ArrayList<PluginCenterPanel>(1);
       
@@ -3109,7 +3112,25 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
             // Prevent Plugins from making problems.
           }catch(Throwable e) {e.printStackTrace();}
         }
-      }      
+      }
+      
+      for(InternalPluginProxyIf internalPlugin : internalPlugins) {
+        PluginCenterPanelWrapper wrapper = internalPlugin.getPluginCenterPanelWrapper();
+        
+        if(wrapper != null) {
+          mCenterPanelWrapperList.add(wrapper);
+          try {
+            PluginCenterPanel[] panels = wrapper.getCenterPanels();
+            
+            for(PluginCenterPanel panel : panels) {
+              if(panel != null && panel.getPanel() != null && panel.getName() != null && panel.getId() != null) {
+                centerPanelList.add(panel);
+              }
+            }
+            // Prevent Plugins from making problems.
+          }catch(Throwable e) {e.printStackTrace();}
+        }
+      }
       
       ArrayList<PluginCenterPanel> usedCenterPanelList = new ArrayList<PluginCenterPanel>();
       

@@ -31,6 +31,7 @@ import util.ui.TVBrowserIcons;
 import devplugin.ActionMenu;
 import devplugin.ContextMenuIf;
 import devplugin.Plugin;
+import devplugin.PluginCenterPanelWrapper;
 import devplugin.Program;
 import devplugin.SettingsItem;
 import devplugin.SettingsTab;
@@ -103,5 +104,11 @@ public class SearchPluginProxy extends AbstractInternalPluginProxy implements Bu
   @Override
   public String getPluginCategory() {
     return Plugin.OTHER_CATEGORY;
+  }
+
+  @Override
+  public PluginCenterPanelWrapper getPluginCenterPanelWrapper() {
+    // TODO Auto-generated method stub
+    return null;
   }
 }

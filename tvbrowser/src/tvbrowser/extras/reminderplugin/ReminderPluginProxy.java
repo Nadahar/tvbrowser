@@ -34,6 +34,7 @@ import devplugin.ActionMenu;
 import devplugin.ContextMenuIf;
 import devplugin.Marker;
 import devplugin.Plugin;
+import devplugin.PluginCenterPanelWrapper;
 import devplugin.Program;
 import devplugin.ProgramReceiveTarget;
 import devplugin.SettingsItem;
@@ -152,5 +153,11 @@ public class ReminderPluginProxy extends AbstractInternalPluginProxy implements 
   
   public String getPluginCategory() {
     return Plugin.OTHER_CATEGORY;
+  }
+
+  @Override
+  public PluginCenterPanelWrapper getPluginCenterPanelWrapper() {
+    // TODO Auto-generated method stub
+    return null;
   }
 }
