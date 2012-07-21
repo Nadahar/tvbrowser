@@ -29,7 +29,9 @@ package tvbrowser.extras.reminderplugin;
 import java.applet.Applet;
 import java.applet.AudioClip;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Frame;
+import java.awt.Graphics;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -79,6 +81,7 @@ import util.ui.Localizer;
 import util.ui.TVBrowserIcons;
 import util.ui.UIThreadRunner;
 import util.ui.UiUtilities;
+import util.ui.persona.Persona;
 import devplugin.ActionMenu;
 import devplugin.ContextMenuAction;
 import devplugin.ContextMenuSeparatorAction;
@@ -141,7 +144,23 @@ public class ReminderPlugin {
       }
     };
     
-    mCenterPanel = new JPanel(new BorderLayout());
+    mCenterPanel = new JPanel(new BorderLayout()) {
+      protected void paintComponent(Graphics g) {
+        if(Persona.getInstance().getAccentColor() != null && Persona.getInstance().getHeaderImage() != null) {
+         
+          Color c = Persona.testPersonaForegroundAgainst(Persona.getInstance().getAccentColor());
+          
+          int alpha = c.getAlpha();
+          
+          g.setColor(new Color(c.getRed(),c.getGreen(),c.getBlue(),alpha));
+          g.fillRect(0,0,getWidth(),getHeight());
+        }
+        else {
+          super.paintComponent(g);
+        }
+      }
+    };
+    mCenterPanel.setOpaque(false);
     mClientPluginTargets = new ProgramReceiveTarget[0];
     mConfigurationHandler = new ConfigurationHandler(getReminderPluginId());
     loadSettings();
@@ -211,6 +230,7 @@ public class ReminderPlugin {
     mReminderListPanel = new ReminderListPanel(mReminderList, null);
     
     mCenterPanel.add(mReminderListPanel, BorderLayout.CENTER);
+    Persona.getInstance().registerPersonaListener(mReminderListPanel);
   }
 
   /**
