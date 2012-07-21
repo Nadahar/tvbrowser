@@ -211,8 +211,6 @@ public class ReminderListPanel extends JPanel implements PersonaListener {
     
     add(new JScrollPane(mTable), cc.xyw(1, 3, 3));
 
-
-
     ButtonBarBuilder2 builder = ButtonBarBuilder2.createLeftToRightBuilder();
 
     JButton config = new JButton(TVBrowserIcons.preferences(TVBrowserIcons.SIZE_SMALL));
@@ -225,8 +223,10 @@ public class ReminderListPanel extends JPanel implements PersonaListener {
       }
     });
 
-    builder.addFixed(config);
-    builder.addRelatedGap();
+    if(close != null) {
+      builder.addFixed(config);
+      builder.addRelatedGap();
+    }
     
     mSend = new JButton(TVBrowserIcons.copy(TVBrowserIcons.SIZE_SMALL));
     mSend.setToolTipText(mLocalizer.msg("send", "Send to other Plugins"));
