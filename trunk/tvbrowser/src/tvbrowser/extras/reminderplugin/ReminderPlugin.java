@@ -63,6 +63,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -228,9 +229,15 @@ public class ReminderPlugin {
     mReminderList.startTimer();
     
     mReminderListPanel = new ReminderListPanel(mReminderList, null);
-    
-    mCenterPanel.add(mReminderListPanel, BorderLayout.CENTER);
     Persona.getInstance().registerPersonaListener(mReminderListPanel);
+    
+    SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {        
+        mCenterPanel.add(mReminderListPanel, BorderLayout.CENTER);
+        mReminderListPanel.updatePersona();
+      }
+    });
   }
 
   /**
