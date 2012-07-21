@@ -355,7 +355,7 @@ public abstract class Favorite {
     mExclusionList.add(exclusion);
     try {
       refreshPrograms(ManageFavoritesDialog.getInstance() != null
-          && ManageFavoritesDialog.getInstance().isShowingNewFoundPrograms());
+          && FavoritesPlugin.getInstance().isShowingNewFoundPrograms());
       FavoritesPlugin.getInstance().updateRootNode(true);
     } catch (final TvBrowserException exc) {
       ErrorHandler.handle("Could not update favorites.", exc);

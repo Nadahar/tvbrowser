@@ -65,6 +65,7 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import tvbrowser.core.icontheme.IconLoader;
+import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.favoritesplugin.core.Favorite;
 import util.ui.Localizer;
 import util.ui.OverlayListener;
@@ -154,7 +155,7 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
             if(node.isDirectoryNode()) {
               renameFolder(node);
             } else {
-              ManageFavoritesDialog.getInstance().editSelectedFavorite();
+              FavoritesPlugin.getInstance().editSelectedFavorite();
             }
           }
         }
@@ -286,7 +287,7 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
 
       item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          ManageFavoritesDialog.getInstance().newFavorite(last.isDirectoryNode() ? last : (FavoriteNode)last.getParent());
+          FavoritesPlugin.getInstance().newFavorite(last.isDirectoryNode() ? last : (FavoriteNode)last.getParent());
         }
       });
       menu.add(item);
@@ -358,13 +359,13 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
         menu.add(item);
       }
 
-      if(!ManageFavoritesDialog.getInstance().programListIsEmpty()) {
+      if(!FavoritesPlugin.getInstance().programListIsEmpty()) {
         menu.addSeparator();
 
         item = new JMenuItem(ManageFavoritesDialog.mLocalizer.msg("send", "Send Programs to another Plugin"), TVBrowserIcons.copy(TVBrowserIcons.SIZE_SMALL));
         item.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent evt) {
-             ManageFavoritesDialog.getInstance().showSendDialog();
+             FavoritesPlugin.getInstance().showSendDialog();
           }
         });
 
@@ -381,7 +382,7 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
       getModel().reload(parent);
     }
     else if(node.containsFavorite()) {
-      ManageFavoritesDialog.getInstance().deleteSelectedFavorite();
+      FavoritesPlugin.getInstance().deleteSelectedFavorite();
     }
   }
 

@@ -26,7 +26,10 @@
 
 package tvbrowser.extras.favoritesplugin;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -55,7 +58,9 @@ import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
@@ -76,8 +81,10 @@ import tvbrowser.extras.favoritesplugin.core.Favorite;
 import tvbrowser.extras.favoritesplugin.core.TitleFavorite;
 import tvbrowser.extras.favoritesplugin.core.TopicFavorite;
 import tvbrowser.extras.favoritesplugin.dlgs.EditFavoriteDialog;
+import tvbrowser.extras.favoritesplugin.dlgs.FavoriteNode;
 import tvbrowser.extras.favoritesplugin.dlgs.FavoriteTreeModel;
 import tvbrowser.extras.favoritesplugin.dlgs.ManageFavoritesDialog;
+import tvbrowser.extras.favoritesplugin.dlgs.ManageFavoritesPanel;
 import tvbrowser.extras.favoritesplugin.wizards.ExcludeWizardStep;
 import tvbrowser.extras.favoritesplugin.wizards.TypeWizardStep;
 import tvbrowser.extras.favoritesplugin.wizards.WizardHandler;
@@ -93,9 +100,12 @@ import util.ui.ScrollableJPanel;
 import util.ui.TVBrowserIcons;
 import util.ui.UIThreadRunner;
 import util.ui.UiUtilities;
+import util.ui.persona.Persona;
 import devplugin.ActionMenu;
 import devplugin.ButtonAction;
 import devplugin.ChannelDayProgram;
+import devplugin.PluginCenterPanel;
+import devplugin.PluginCenterPanelWrapper;
 import devplugin.PluginTreeNode;
 import devplugin.Program;
 import devplugin.ProgramReceiveIf;
@@ -158,12 +168,43 @@ public class FavoritesPlugin {
 
   private boolean mShowInfoDialog = false;
   private ExecutorService mThreadPool;
+  private JPanel mCenterPanel;
+  
+  private PluginCenterPanelWrapper mWrapper;
+  
+  private ManageFavoritesPanel mMangePanel;
 
   /**
    * Creates a new instance of FavoritesPlugin.
    */
   private FavoritesPlugin() {
     mInstance = this;
+    
+    mWrapper = new PluginCenterPanelWrapper() {  
+      FavoritesCenterPanel centerPanel = new FavoritesCenterPanel();
+      @Override
+      public PluginCenterPanel[] getCenterPanels() {
+        return new PluginCenterPanel[] {centerPanel};
+      }
+    };
+    
+    mCenterPanel = new JPanel(new BorderLayout()) {
+      protected void paintComponent(Graphics g) {
+        if(Persona.getInstance().getAccentColor() != null && Persona.getInstance().getHeaderImage() != null) {
+         
+          Color c = Persona.testPersonaForegroundAgainst(Persona.getInstance().getAccentColor());
+          
+          int alpha = c.getAlpha();
+          
+          g.setColor(new Color(c.getRed(),c.getGreen(),c.getBlue(),alpha));
+          g.fillRect(0,0,getWidth(),getHeight());
+        }
+        else {
+          super.paintComponent(g);
+        }
+      }
+    };
+    mCenterPanel.setOpaque(false);
     mExclusions = new Exclusion[0];
     mPendingFavorites = new ArrayList<AdvancedFavorite>(0);
     mClientPluginTargets = new ProgramReceiveTarget[0];
@@ -371,6 +412,17 @@ public class FavoritesPlugin {
     if(mHasToUpdate) {
       handleTvDataUpdateFinished();
     }
+    int splitPanePosition = getIntegerSetting(mSettings, "splitpanePosition",200);
+    
+    mMangePanel = new ManageFavoritesPanel(null, splitPanePosition, false, null);
+    Persona.getInstance().registerPersonaListener(mMangePanel);
+    
+    SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        mCenterPanel.add(mMangePanel, BorderLayout.CENTER);
+      }
+    });
   }
 
   private void load() {
@@ -739,7 +791,7 @@ public class FavoritesPlugin {
     int splitPanePosition = getIntegerSetting(mSettings, "splitpanePosition",
             200);
     ManageFavoritesDialog dlg = new ManageFavoritesDialog(MainFrame.getInstance(), favoriteArr, splitPanePosition, showNew, initialSelection);
-    dlg.setModal(true);
+    //dlg.setModal(true);
 
     if(mShowInfoOnNewProgramsFound) {
       dlg.addComponentListener(new ComponentAdapter() {
@@ -910,7 +962,7 @@ public class FavoritesPlugin {
         .getLocalization(Localizer.I18N_DELETE),
               JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
       FavoriteTreeModel.getInstance().deleteFavorite(fav);
-
+      
       saveFavorites();
     }
   }
@@ -973,6 +1025,10 @@ public class FavoritesPlugin {
 
     if(save && mHasRightToSave) {
       saveFavorites();
+    }
+    
+    if(mMangePanel != null) {
+      mMangePanel.handleFavoriteEvent();
     }
   }
 
@@ -1262,5 +1318,80 @@ public class FavoritesPlugin {
     }
     saveFavorites();
   }
+  
+  public void editSelectedFavorite() {
+    if(ManageFavoritesDialog.getInstance() != null && ManageFavoritesDialog.getInstance().isVisible()) {
+      ManageFavoritesDialog.getInstance().editSelectedFavorite();
+      mMangePanel.handleFavoriteEvent();
+    }
+    else {
+      mMangePanel.editSelectedFavorite();
+    }
+  }
+  
+  public void newFavorite(FavoriteNode parent) {
+    if(ManageFavoritesDialog.getInstance() != null && ManageFavoritesDialog.getInstance().isVisible()) {
+      ManageFavoritesDialog.getInstance().newFavorite(parent);
+      mMangePanel.handleFavoriteEvent();
+    }
+    else {
+      mMangePanel.newFavorite(parent);
+    }
+  }
+  
+  public void showSendDialog() {
+    if(ManageFavoritesDialog.getInstance() != null && ManageFavoritesDialog.getInstance().isVisible()) {
+      ManageFavoritesDialog.getInstance().showSendDialog();
+      mMangePanel.handleFavoriteEvent();
+    }
+    else {
+      mMangePanel.showSendDialog();
+    }
+  }
+  
+  public void deleteSelectedFavorite() {
+    if(ManageFavoritesDialog.getInstance() != null && ManageFavoritesDialog.getInstance().isVisible()) {
+      ManageFavoritesDialog.getInstance().deleteSelectedFavorite();
+      mMangePanel.handleFavoriteEvent();
+    }
+    else {
+      mMangePanel.deleteSelectedFavorite();
+    }
+  }
+  
+  public boolean programListIsEmpty() {
+    if(ManageFavoritesDialog.getInstance() != null && ManageFavoritesDialog.getInstance().isVisible()) {
+      return ManageFavoritesDialog.getInstance().programListIsEmpty();
+    }
+    
+    return mMangePanel.programListIsEmpty();
+  }
+  
+  public boolean isShowingNewFoundPrograms() {
+    if(ManageFavoritesDialog.getInstance() != null && ManageFavoritesDialog.getInstance().isVisible()) {
+      return ManageFavoritesDialog.getInstance().isShowingNewFoundPrograms();
+    }
+    
+    return mMangePanel.isShowingNewFoundPrograms();
+  }
+  
+/*  public void handleFavoriteEvent() {
+    mMangePanel.handleFavoriteEvent();
+  }*/
+  
+  public PluginCenterPanelWrapper getPluginCenterPanelWrapper() {
+    return mWrapper;
+  }
+  
+  private class FavoritesCenterPanel extends PluginCenterPanel {
+    @Override
+    public String getName() {
+      return FavoritesPlugin.getName();
+    }
 
+    @Override
+    public JPanel getPanel() {
+      return mCenterPanel;
+    }
+  }
 }
