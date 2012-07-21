@@ -242,28 +242,42 @@ public class ProgramTableChannelLabel extends ChannelLabel {
       
       g.setColor(new Color(c.getRed(),c.getGreen(),c.getBlue(),alpha));
       g.fillRect(0,0,getWidth(),getHeight());
-            
-      Icon icon = getIcon();      
+      
+      int iconX = (getWidth()/2);
+      int iconY = (getHeight()/2);
+      int iconWidth = 0;
+      int iconTextGap = 0;
       
       FontMetrics metrics = g.getFontMetrics(getFont());
       int textWidth = metrics.stringWidth(getText());
       int baseLine =  getHeight()/2+ metrics.getMaxDescent()+1;
       
-      int iconTextLength = icon.getIconWidth() + getIconTextGap() + textWidth;
+      Icon icon = getIcon();
       
-      int iconX = (getWidth()/2) - (iconTextLength/2);
-      int iconY = (getHeight()/2) - (icon.getIconHeight()/2);
-      
-      icon.paintIcon(this,g,iconX,iconY);
+      if(icon != null) {
+        iconWidth = icon.getIconWidth();
+        iconTextGap = getIconTextGap();
+        
+        int iconTextLength = iconWidth + getIconTextGap() + textWidth;
+        
+        iconX -= (iconTextLength/2);
+        iconY -= (icon.getIconHeight()/2);
+        
+        icon.paintIcon(this,g,iconX,iconY);
+      }
+      else {
+        iconX -= textWidth/2;
+      }
       
       if(!Persona.getInstance().getShadowColor().equals(textColor) && Persona.getInstance().getTextColor().equals(textColor)) {
         g.setColor(Persona.getInstance().getShadowColor());
         
-        g.drawString(getText(),iconX+icon.getIconWidth()+getIconTextGap()+1,baseLine+1);
+        g.drawString(getText(),iconX+iconWidth+iconTextGap+1,baseLine+1);
       }
       
+      
       g.setColor(textColor);
-      g.drawString(getText(),iconX+icon.getIconWidth()+getIconTextGap(),baseLine);
+      g.drawString(getText(),iconX+iconWidth+iconTextGap,baseLine);
     }
     else {
       super.paintComponent(g);

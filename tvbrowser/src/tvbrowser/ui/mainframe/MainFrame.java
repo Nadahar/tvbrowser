@@ -88,7 +88,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import javax.swing.BorderFactory;
-import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -507,7 +506,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     else {
       mPluginsNode = new Node(mMainframeNode);
     }
-
+    
     mTimebuttonsNode = new Node(mNavigationNode);
     mDateChannelNode = new Node(mNavigationNode);
     mDateNode = new Node(mDateChannelNode);
@@ -543,7 +542,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     }
     
     jcontentPane.add(mSouthPanel,BorderLayout.SOUTH);
-
+    
     setJMenuBar(mMenuBar);
     addContextMenuMouseListener(mMenuBar);
 
@@ -1492,6 +1491,13 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     mStarting = false;
     mMenuBar.updateChannelGroupMenu();
     PluginProxyManager.getInstance().addPluginStateListener(this);
+    
+    SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        updatePersona();
+      }
+    });
   }
 
   private void runAutoUpdate() {
@@ -3037,24 +3043,38 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
   public void updatePersona() {
     repaint();
     if(Persona.getInstance().getHeaderImage() != null) {
-      mToolBarPanel.setOpaque(false);
-      mSearchField.setOpaque(false);
+      if(mToolBarPanel != null) {
+        mToolBarPanel.setOpaque(false);
+      }
+      if(mSearchField != null) {
+        mSearchField.setOpaque(false);
+      }
       mCenterTabPane.setOpaque(false);
       mCenterTabPane.setBackground(new Color(0,0,0,0));
       mCenterTabPane.setForeground(Persona.getInstance().getTextColor());
     }
     else {
-      mToolBarPanel.setOpaque(true);
-      mSearchField.setOpaque(true);
+      if(mToolBarPanel != null) {
+        mToolBarPanel.setOpaque(true);
+      }
+      if(mSearchField != null) {
+        mSearchField.setOpaque(true);
+      }
       mCenterTabPane.setOpaque(true);
       mCenterTabPane.setBackground(UIManager.getColor("Panel.background"));
       mCenterTabPane.setForeground(UIManager.getColor("List.foreground"));
     }
-    mToolBarPanel.updateUI();
+    if(mToolBarPanel != null) {
+      mToolBarPanel.updateUI();
+    }
     
     mMenuBar.updatePersona();
     mToolBar.updatePersona();
-    mSearchField.updatePersona();
+    
+    if(mSearchField != null) {
+      mSearchField.updatePersona();
+    }
+    
     mTimeChooserPanel.updatePersona();
     mStatusBar.updatePersona();
     mProgramTableScrollPane.updatePersona();
@@ -3154,8 +3174,6 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       // if everything went wrong we use the program table scroll pane
       mCenterPanel.add(mProgramTableScrollPane, BorderLayout.CENTER);
     }
-    
-    updatePersona();
   }
   
   public ProgramTableScrollPaneWrapper getProgramTableScrollPaneWrapper() {
