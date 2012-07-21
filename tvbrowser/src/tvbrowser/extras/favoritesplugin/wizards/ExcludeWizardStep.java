@@ -54,6 +54,7 @@ import com.jgoodies.forms.layout.RowSpec;
 
 import devplugin.Channel;
 import devplugin.Program;
+import devplugin.ProgramFieldType;
 import devplugin.ProgramFilter;
 
 public class ExcludeWizardStep extends AbstractWizardStep {
@@ -244,6 +245,13 @@ public class ExcludeWizardStep extends AbstractWizardStep {
       mDoneBtnText = mLocalizer.msg("doneButton.toBlacklist","Remove this program now");
 
       mTitleTf.setText(mProgram.getTitle());
+      
+      String episode = mProgram.getTextField(ProgramFieldType.EPISODE_TYPE);
+      
+      if(episode != null && episode.trim().length() > 0) {
+        mEpisodeTitleTf.setText(episode);
+      }
+      
       mChannelCB.setSelectedItem(mProgram.getChannel());
       int timeFrom = (mProgram.getHours() - 1) * 60;
       int timeTo = (mProgram.getHours() + 1) * 60;
