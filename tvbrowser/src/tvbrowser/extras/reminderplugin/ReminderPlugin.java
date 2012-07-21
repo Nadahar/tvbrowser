@@ -28,6 +28,7 @@ package tvbrowser.extras.reminderplugin;
 
 import java.applet.Applet;
 import java.applet.AudioClip;
+import java.awt.BorderLayout;
 import java.awt.Frame;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
@@ -59,6 +60,7 @@ import javax.sound.sampled.SourceDataLine;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -82,6 +84,8 @@ import devplugin.ContextMenuAction;
 import devplugin.ContextMenuSeparatorAction;
 import devplugin.Date;
 import devplugin.Plugin;
+import devplugin.PluginCenterPanel;
+import devplugin.PluginCenterPanelWrapper;
 import devplugin.PluginTreeNode;
 import devplugin.Program;
 import devplugin.ProgramItem;
@@ -121,9 +125,23 @@ public class ReminderPlugin {
   /** The IDs of the plugins that should receive the favorites. */
   private ProgramReceiveTarget[] mClientPluginTargets;
   private int mMarkPriority = -2;
+  
+  private PluginCenterPanelWrapper mWrapper;
+  private JPanel mCenterPanel;
+  private ReminderListPanel mReminderListPanel;
 
   private ReminderPlugin() {
     mInstance = this;
+    
+    mWrapper = new PluginCenterPanelWrapper() {  
+      ReminderCenterPanel centerPanel = new ReminderCenterPanel();
+      @Override
+      public PluginCenterPanel[] getCenterPanels() {
+        return new PluginCenterPanel[] {centerPanel};
+      }
+    };
+    
+    mCenterPanel = new JPanel(new BorderLayout());
     mClientPluginTargets = new ProgramReceiveTarget[0];
     mConfigurationHandler = new ConfigurationHandler(getReminderPluginId());
     loadSettings();
@@ -189,6 +207,10 @@ public class ReminderPlugin {
     mHasRightToStartTimer = true;
     mReminderList.removeExpiredItems();
     mReminderList.startTimer();
+    
+    mReminderListPanel = new ReminderListPanel(mReminderList, null);
+    
+    mCenterPanel.add(mReminderListPanel, BorderLayout.CENTER);
   }
 
   /**
@@ -716,6 +738,10 @@ public class ReminderPlugin {
     if(save && mHasRightToSave) {
       saveReminders();
     }
+    
+    if(mReminderListPanel != null) {
+      mReminderListPanel.updateTableEntries();
+    }
   }
 
   private void saveReminders() {
@@ -966,6 +992,20 @@ public class ReminderPlugin {
     mLocalizer = Localizer.getLocalizerFor(ReminderPlugin.class);
   }
 
+  public PluginCenterPanelWrapper getPluginCenterPanelWrapper() {
+    // TODO Auto-generated method stub
+    return mWrapper;
+  }
+  
+  private class ReminderCenterPanel extends PluginCenterPanel {
+    @Override
+    public String getName() {
+      return ReminderPlugin.getName();
+    }
 
-
+    @Override
+    public JPanel getPanel() {
+      return mCenterPanel;
+    }    
+  }
 }
