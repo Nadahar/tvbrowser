@@ -391,6 +391,10 @@ public class ReminderListPanel extends JPanel {
     }
   }
   
+  void installTableModel() {
+    installTableModel(new ReminderTableModel(mReminderList, mTitleSelection));
+  }
+  
   void updateTableEntries() {
     mModel.updateTableEntries();
   }

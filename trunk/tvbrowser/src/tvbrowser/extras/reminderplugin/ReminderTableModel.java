@@ -5,6 +5,7 @@ import java.awt.event.ItemListener;
 import java.util.ArrayList;
 
 import javax.swing.JComboBox;
+import javax.swing.event.TableModelEvent;
 import javax.swing.table.AbstractTableModel;
 
 import util.ui.Localizer;
@@ -150,7 +151,6 @@ public class ReminderTableModel extends AbstractTableModel {
   }
 
   public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-
     if (columnIndex == 1) {
       mProgramItems[rowIndex].setMinutes(((Integer) aValue).intValue());
     }
