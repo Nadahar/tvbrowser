@@ -88,6 +88,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import javax.swing.BorderFactory;
+import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -396,9 +397,6 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     mTimeChooserPanel = new TimeChooserPanel(this,mGlobalFindAsYouTypeKeyListener);
 
     centerPanel.add(mFilterPanel, BorderLayout.NORTH);
-
-    UIManager.getDefaults().put("TabbedPane.contentBorderInsets", new Insets(0,0,0,0));
-    UIManager.getDefaults().put("TabbedPane.tabsOverlapBorder", true);
     
     Channel[] channelArr = ChannelList.getSubscribedChannels();
     int startOfDay = Settings.propProgramTableStartOfDay.getInt();
@@ -410,7 +408,6 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     mScrollPaneWrapper = new ProgramTableScrollPaneWrapper(mProgramTableScrollPane);
     
     mCenterTabPane = new JTabbedPane();
-    
     mCenterTabPane.setUI(new BasicTabbedPaneUI() {
       protected  void  paintText(Graphics g, int tabPlacement, Font font, FontMetrics metrics, int tabIndex, String title, Rectangle textRect, boolean isSelected) {
         if(Persona.getInstance().getHeaderImage() != null && !Persona.getInstance().getShadowColor().equals(Persona.getInstance().getTextColor())) {
@@ -421,6 +418,31 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
         }
         
         super.paintText(g, tabPlacement, font, metrics, tabIndex, title, textRect, isSelected);
+      }
+      
+      protected Insets getContentBorderInsets(int tabPlacement) {
+        return new Insets(0, 0, 0, 0);
+      }
+      
+      protected void paintContentBorder(Graphics g, int tabPlacement, int selectedIndex) {}
+      
+      protected void paintTabBackground(Graphics g, int tabPlacement, int tabIndex, int x, int y, int w, int h, boolean isSelected) {
+        if(Persona.getInstance().getAccentColor() != null && Persona.getInstance().getHeaderImage() != null) {
+          Color c = Persona.testPersonaForegroundAgainst(Persona.getInstance().getAccentColor());
+          
+          int alpha = c.getAlpha();
+          
+          g.setColor(new Color(c.getRed(),c.getGreen(),c.getBlue(),alpha));
+          
+          if(isSelected) {
+            g.fillRect(x,y,w,h-2);
+          } else {
+            g.fillRect(x,y,w,h);
+          }
+        }
+        else {
+          super.paintTabBackground(g, tabPlacement, tabIndex, x, y, w, h, isSelected);
+        }
       }
     });
     
@@ -3014,16 +3036,17 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
    */
   public void updatePersona() {
     repaint();
-    
     if(Persona.getInstance().getHeaderImage() != null) {
       mToolBarPanel.setOpaque(false);
       mSearchField.setOpaque(false);
+      mCenterTabPane.setOpaque(false);
       mCenterTabPane.setBackground(new Color(0,0,0,0));
       mCenterTabPane.setForeground(Persona.getInstance().getTextColor());
     }
     else {
       mToolBarPanel.setOpaque(true);
       mSearchField.setOpaque(true);
+      mCenterTabPane.setOpaque(true);
       mCenterTabPane.setBackground(UIManager.getColor("Panel.background"));
       mCenterTabPane.setForeground(UIManager.getColor("List.foreground"));
     }
