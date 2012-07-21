@@ -18,6 +18,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginManagerImpl;
@@ -26,6 +27,8 @@ import util.settings.PluginPictureSettings;
 import util.ui.ProgramTableCellRenderer;
 import util.ui.SendToPluginDialog;
 import util.ui.TVBrowserIcons;
+import util.ui.persona.Persona;
+import util.ui.persona.PersonaListener;
 
 import com.jgoodies.forms.builder.ButtonBarBuilder2;
 import com.jgoodies.forms.factories.Borders;
@@ -36,7 +39,7 @@ import devplugin.Plugin;
 import devplugin.Program;
 import devplugin.SettingsItem;
 
-public class ReminderListPanel extends JPanel {
+public class ReminderListPanel extends JPanel implements PersonaListener {
   private static final util.ui.Localizer mLocalizer = ReminderListDialog.mLocalizer; 
   
   private JButton mUndo, mDelete, mSend;
@@ -47,6 +50,7 @@ public class ReminderListPanel extends JPanel {
   private ReminderListItem[] mDeletedItems;
   
   private JComboBox mTitleSelection;
+  private JLabel mFilterLabel;
   
   public ReminderListPanel(ReminderList list, JButton close) {
     mReminderList = list;
@@ -54,9 +58,8 @@ public class ReminderListPanel extends JPanel {
   }
   
   private void createGui(JButton close) {
-
     setLayout(new FormLayout("default,5dlu,50dlu:grow", "default,5dlu,fill:default:grow, 3dlu, default"));
-
+    setOpaque(false);
     setBorder(Borders.DLU4_BORDER);
 
     CellConstraints cc = new CellConstraints();
@@ -203,7 +206,7 @@ public class ReminderListPanel extends JPanel {
     mTable.getColumnModel().getColumn(1).setPreferredWidth(250);
     mTable.getColumnModel().getColumn(1).setMaxWidth(300);
 
-    add(new JLabel(mLocalizer.msg("titleFilterText","Show only programs with the following title:")), cc.xy(1,1));
+    add(mFilterLabel = new JLabel(mLocalizer.msg("titleFilterText","Show only programs with the following title:")), cc.xy(1,1));
     add(mTitleSelection, cc.xy(3,1));
     
     add(new JScrollPane(mTable), cc.xyw(1, 3, 3));
@@ -271,7 +274,7 @@ public class ReminderListPanel extends JPanel {
     if(close != null) { 
       builder.addFixed(close);
     }
-
+    builder.getPanel().setOpaque(false);
     add(builder.getPanel(), cc.xyw(1, 5, 3));
   }
   
@@ -397,5 +400,15 @@ public class ReminderListPanel extends JPanel {
   
   void updateTableEntries() {
     mModel.updateTableEntries();
+  }
+
+  @Override
+  public void updatePersona() {
+    if(Persona.getInstance().getHeaderImage() != null) {
+      mFilterLabel.setForeground(Persona.getInstance().getTextColor());
+    }
+    else {
+      mFilterLabel.setForeground(UIManager.getColor("Label.foreground"));
+    }
   }
 }

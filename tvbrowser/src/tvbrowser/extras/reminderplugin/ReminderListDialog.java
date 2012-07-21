@@ -49,9 +49,6 @@ import util.ui.WindowClosingIf;
 public class ReminderListDialog extends JDialog implements WindowClosingIf {
   static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(ReminderListDialog.class);
   
-
-  
-  
   private ReminderListPanel mReminderListPanel;
   
   private static ReminderListDialog mInstance;
