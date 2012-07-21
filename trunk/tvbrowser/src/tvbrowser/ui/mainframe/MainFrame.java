@@ -1495,7 +1495,9 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
-        updatePersona();
+        if(Persona.getInstance().getHeaderImage() != null) {
+          updatePersona();
+        }
       }
     });
   }
