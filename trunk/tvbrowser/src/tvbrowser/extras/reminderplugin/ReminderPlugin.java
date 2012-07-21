@@ -1019,7 +1019,6 @@ public class ReminderPlugin {
   }
 
   public PluginCenterPanelWrapper getPluginCenterPanelWrapper() {
-    // TODO Auto-generated method stub
     return mWrapper;
   }
   

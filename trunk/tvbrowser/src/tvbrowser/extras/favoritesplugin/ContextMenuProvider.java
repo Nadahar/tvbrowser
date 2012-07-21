@@ -71,7 +71,7 @@ public class ContextMenuProvider {
 
       Favorite[] favArr = favorites.toArray(new Favorite[favorites.size()]);
 
-      if(ManageFavoritesDialog.getInstance() != null && ManageFavoritesDialog.getInstance().isVisible()) {
+      if((ManageFavoritesDialog.getInstance() != null && ManageFavoritesDialog.getInstance().isVisible())) {
         if(!favorites.isEmpty()) {
           ActionMenu blackListAction = createBlackListFavoriteMenuAction(favArr, program);
 

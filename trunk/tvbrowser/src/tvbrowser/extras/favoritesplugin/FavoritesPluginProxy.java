@@ -203,7 +203,6 @@ public class FavoritesPluginProxy extends AbstractInternalPluginProxy implements
 
   @Override
   public PluginCenterPanelWrapper getPluginCenterPanelWrapper() {
-    // TODO Auto-generated method stub
-    return null;
+    return FavoritesPlugin.getInstance().getPluginCenterPanelWrapper();
   }
 }
