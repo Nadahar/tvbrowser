@@ -33,7 +33,9 @@ import util.ui.persona.PersonaListener;
 import com.jgoodies.forms.builder.ButtonBarBuilder2;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.RowSpec;
 
 import devplugin.Plugin;
 import devplugin.Program;
@@ -58,7 +60,8 @@ public class ReminderListPanel extends JPanel implements PersonaListener {
   }
   
   private void createGui(JButton close) {
-    setLayout(new FormLayout("default,5dlu,50dlu:grow", "default,5dlu,fill:default:grow, 3dlu, default"));
+    FormLayout layout = new FormLayout("default,5dlu,50dlu:grow", "default,5dlu,fill:default:grow");
+    setLayout(layout);
     setOpaque(false);
     setBorder(Borders.DLU4_BORDER);
 
@@ -208,8 +211,6 @@ public class ReminderListPanel extends JPanel implements PersonaListener {
 
     add(mFilterLabel = new JLabel(mLocalizer.msg("titleFilterText","Show only programs with the following title:")), cc.xy(1,1));
     add(mTitleSelection, cc.xy(3,1));
-    
-    add(new JScrollPane(mTable), cc.xyw(1, 3, 3));
 
     ButtonBarBuilder2 builder = ButtonBarBuilder2.createLeftToRightBuilder();
 
@@ -275,7 +276,21 @@ public class ReminderListPanel extends JPanel implements PersonaListener {
       builder.addFixed(close);
     }
     builder.getPanel().setOpaque(false);
-    add(builder.getPanel(), cc.xyw(1, 5, 3));
+    
+    if(close != null) {
+      layout.appendRow(RowSpec.decode("3dlu"));
+      layout.appendRow(RowSpec.decode("default"));
+
+      add(new JScrollPane(mTable), cc.xyw(1, 3, 3));
+      add(builder.getPanel(), cc.xyw(1, 5, 3));
+    }
+    else {
+      layout.appendColumn(ColumnSpec.decode("5dlu"));
+      layout.appendColumn(ColumnSpec.decode("default"));
+      
+      add(new JScrollPane(mTable), cc.xyw(1, 3, 5));
+      add(builder.getPanel(), cc.xy(5, 1));
+    }
   }
   
 
@@ -367,7 +382,7 @@ public class ReminderListPanel extends JPanel implements PersonaListener {
     }
 
     if (programArr.length > 0) {
-      SendToPluginDialog send = new SendToPluginDialog(ReminderPluginProxy.getInstance(),(Window)ReminderListDialog.getInstance(), programArr);
+      SendToPluginDialog send = new SendToPluginDialog(ReminderPluginProxy.getInstance(),ReminderListDialog.getInstance() != null ? (Window)ReminderListDialog.getInstance() : MainFrame.getInstance(), programArr);
       send.setVisible(true);
     }
   }
