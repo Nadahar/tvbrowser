@@ -36,8 +36,6 @@ import java.awt.event.WindowEvent;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 
-import devplugin.PluginCenterPanelWrapper;
-
 import tvbrowser.core.Settings;
 import util.ui.Localizer;
 import util.ui.UiUtilities;

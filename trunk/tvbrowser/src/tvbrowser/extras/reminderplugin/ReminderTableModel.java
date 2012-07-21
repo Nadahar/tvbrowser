@@ -5,7 +5,6 @@ import java.awt.event.ItemListener;
 import java.util.ArrayList;
 
 import javax.swing.JComboBox;
-import javax.swing.event.TableModelEvent;
 import javax.swing.table.AbstractTableModel;
 
 import util.ui.Localizer;
