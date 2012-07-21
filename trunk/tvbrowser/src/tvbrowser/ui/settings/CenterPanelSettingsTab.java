@@ -36,6 +36,8 @@ import com.jgoodies.forms.layout.FormLayout;
 import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
+import tvbrowser.extras.common.InternalPluginProxyIf;
+import tvbrowser.extras.common.InternalPluginProxyList;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.ui.Localizer;
 import util.ui.OrderChooser;
@@ -56,6 +58,7 @@ public class CenterPanelSettingsTab implements SettingsTab {
   @Override
   public JPanel createSettingsPanel() {
     PluginProxy[] plugins = PluginProxyManager.getInstance().getActivatedPlugins();
+    InternalPluginProxyIf[] internalPlugins = InternalPluginProxyList.getInstance().getAvailableProxys();
     
     mAllPanelList = new ArrayList<PluginCenterPanel>();
     ArrayList<PluginCenterPanel> currentOrderList = new ArrayList<PluginCenterPanel>(); 
@@ -65,6 +68,23 @@ public class CenterPanelSettingsTab implements SettingsTab {
     for(PluginProxy plugin : plugins) {
       try {
         PluginCenterPanelWrapper wrapper = plugin.getPluginCenterPanelWrapper();
+        
+        if(wrapper != null) {
+          PluginCenterPanel[] panels = wrapper.getCenterPanels();
+          
+          for(PluginCenterPanel panel : panels) {
+            if(panel != null && panel.getName() != null && panel.getPanel() != null && panel.getId() != null) {
+              mAllPanelList.add(panel);
+            }
+          }
+        }
+        // Prevent problems from Plugins
+      }catch(Throwable t) {}
+    }
+    
+    for(InternalPluginProxyIf internalPlugin : internalPlugins) {
+      try {
+        PluginCenterPanelWrapper wrapper = internalPlugin.getPluginCenterPanelWrapper();
         
         if(wrapper != null) {
           PluginCenterPanel[] panels = wrapper.getCenterPanels();

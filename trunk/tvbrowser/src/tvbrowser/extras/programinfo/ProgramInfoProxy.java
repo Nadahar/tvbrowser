@@ -32,6 +32,7 @@ import tvbrowser.extras.common.AbstractInternalPluginProxy;
 import devplugin.ActionMenu;
 import devplugin.ContextMenuIf;
 import devplugin.Plugin;
+import devplugin.PluginCenterPanelWrapper;
 import devplugin.Program;
 import devplugin.SettingsItem;
 import devplugin.SettingsTab;
@@ -100,5 +101,11 @@ public class ProgramInfoProxy extends AbstractInternalPluginProxy implements Con
   @Override
   public String getPluginCategory() {
     return Plugin.OTHER_CATEGORY;
+  }
+
+  @Override
+  public PluginCenterPanelWrapper getPluginCenterPanelWrapper() {
+    // TODO Auto-generated method stub
+    return null;
   }
 }

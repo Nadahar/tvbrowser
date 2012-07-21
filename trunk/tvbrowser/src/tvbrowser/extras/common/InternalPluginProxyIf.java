@@ -25,6 +25,7 @@ package tvbrowser.extras.common;
 
 import javax.swing.Icon;
 
+import devplugin.PluginCenterPanelWrapper;
 import devplugin.SettingsTab;
 
 
@@ -87,4 +88,12 @@ public interface InternalPluginProxyIf {
    * @return The plugin category of this internal plugin.
    */
   public String getPluginCategory();
+  
+  /**
+   * Gets the PluginCenterPanelWrapper for this internal plugin.
+   * <p>
+   * @return The {@link PluginCenterPanelWrapper} for this internal plugin or <code>null</code>.
+   * @since 3.2
+   */
+  public PluginCenterPanelWrapper getPluginCenterPanelWrapper();
 }
