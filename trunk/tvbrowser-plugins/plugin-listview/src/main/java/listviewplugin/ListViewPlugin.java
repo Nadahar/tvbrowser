@@ -199,6 +199,7 @@ public class ListViewPlugin extends Plugin {
     
     private void updateCenterPanel() {
       if(mCenterPanel != null) {
+        mCenterPanelWrapper.remove(mCenterPanel);
         Persona.getInstance().removePersonaListerner(mCenterPanel);
       }
       
