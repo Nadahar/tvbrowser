@@ -1073,7 +1073,7 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
     favoriteSelectionChanged(false);
   }
   
-  public void handleFavoriteEvent() {System.out.println("ier");
+  public void handleFavoriteEvent() {
     mFavoriteTree.updateUI();
     favoriteSelectionChanged();
   }
