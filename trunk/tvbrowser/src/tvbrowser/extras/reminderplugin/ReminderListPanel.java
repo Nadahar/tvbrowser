@@ -291,8 +291,6 @@ public class ReminderListPanel extends JPanel implements PersonaListener {
       add(new JScrollPane(mTable), cc.xyw(1, 3, 5));
       add(builder.getPanel(), cc.xy(5, 1));
     }
-    
-    System.out.println(mTable.getColumnModel().getColumn(1).getMaxWidth());
   }
   
 
