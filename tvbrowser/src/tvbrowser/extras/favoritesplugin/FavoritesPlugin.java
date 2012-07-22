@@ -925,6 +925,12 @@ public class FavoritesPlugin {
     Thread thread = new Thread("Save favorites") {
       public void run() {
         store();
+        SwingUtilities.invokeLater(new Runnable() {
+          @Override
+          public void run() {
+            mMangePanel.handleFavoriteEvent();
+          }
+        });
       }
     };
     thread.setPriority(Thread.MIN_PRIORITY);
