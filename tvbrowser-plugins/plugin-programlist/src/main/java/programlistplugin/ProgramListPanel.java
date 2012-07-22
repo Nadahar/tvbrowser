@@ -269,7 +269,7 @@ public class ProgramListPanel extends JPanel implements PersonaListener {
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         try {
-          ProgramListPlugin.getInstance().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+          setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
           mModel.clear();
           mPrograms.clear();
 
@@ -329,7 +329,7 @@ public class ProgramListPanel extends JPanel implements PersonaListener {
           }
           mList.ensureIndexIsVisible(forceScrollingIndex);
           mList.ensureIndexIsVisible(index);
-          ProgramListPlugin.getInstance().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+          setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         } catch (Exception e) {
           e.printStackTrace();
         }
