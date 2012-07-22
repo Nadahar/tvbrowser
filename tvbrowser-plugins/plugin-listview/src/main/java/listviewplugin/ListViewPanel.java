@@ -305,7 +305,7 @@ public class ListViewPanel extends JPanel implements PersonaListener {
 
     mFilterLabel = new JLabel("Filter:");
     mFilterLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-
+    
     mFilterBox = new JComboBox(Plugin.getPluginManager().getFilterManager().getAvailableFilters());
     mFilterBox.setSelectedItem(Plugin.getPluginManager().getFilterManager().getCurrentFilter());
     mFilterBox.addItemListener(new ItemListener() {
@@ -793,7 +793,39 @@ public class ListViewPanel extends JPanel implements PersonaListener {
    */
   void showForFilter(ProgramFilter filter) {
     try {
-      mFilterBox.setSelectedItem(filter);
+      ProgramFilter selected = (ProgramFilter)mFilterBox.getSelectedItem();
+      boolean foundSelected = false;
+      boolean foundFilter = false;
+      
+      ArrayList<ProgramFilter> availableList = new ArrayList<ProgramFilter>();
+      
+      for (ProgramFilter availableFilter : Plugin.getPluginManager().getFilterManager().getAvailableFilters()) {
+        if(availableFilter.equals(selected)) {
+          foundSelected = true;
+        }
+        else if(filter != null && filter.equals(selected)) {
+          foundFilter = true;
+        }
+        
+        availableList.add(availableFilter);
+      }
+      
+      for(int i = mFilterBox.getItemCount() - 1; i >= 0; i--) {
+        if(!availableList.remove(mFilterBox.getItemAt(i))) {
+          mFilterBox.removeItemAt(i);
+        }
+      }
+      
+      for(ProgramFilter availableFilter : availableList) {
+        mFilterBox.addItem(availableFilter);
+      }
+      
+      if(foundFilter && filter != null) {
+        mFilterBox.setSelectedItem(filter);
+      }
+      else if(!foundSelected) {
+        mFilterBox.setSelectedItem(ListViewPlugin.getPluginManager().getFilterManager().getAllFilter());
+      }
     }catch(Throwable t) {t.printStackTrace();}
   }
   
