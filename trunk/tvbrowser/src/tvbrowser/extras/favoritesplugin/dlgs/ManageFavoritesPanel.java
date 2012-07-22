@@ -143,7 +143,7 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
       if(favoriteArr == null) {
         JButton newFolder = UiUtilities.createToolBarButton(mLocalizer.msg("newFolder", "New folder"),
             IconLoader.getInstance().getIconFromTheme("actions", "folder-new", 22));
-
+        newFolder.setOpaque(false);
         newFolder.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
             TreePath path = mFavoriteTree.getSelectionPath();
@@ -164,6 +164,7 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
       msg = mLocalizer.ellipsisMsg("new", "Create a new favorite");
       icon = TVBrowserIcons.newIcon(TVBrowserIcons.SIZE_LARGE);
       mNewBt = UiUtilities.createToolBarButton(msg, icon);
+      mNewBt.setOpaque(false);
       mNewBt.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent evt) {
           TreePath path = mFavoriteTree.getSelectionPath();
@@ -184,6 +185,7 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
     msg = mLocalizer.ellipsisMsg("edit", "Edit the selected favorite");
     icon = TVBrowserIcons.edit(TVBrowserIcons.SIZE_LARGE);
     mEditBt = UiUtilities.createToolBarButton(msg, icon);
+    mEditBt.setOpaque(false);
     mEditBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
         if(mShowNew) {
@@ -204,6 +206,7 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
     msg = mLocalizer.ellipsisMsg("delete", "Delete selected favorite");
     icon = TVBrowserIcons.delete(TVBrowserIcons.SIZE_LARGE);
     mDeleteBt = UiUtilities.createToolBarButton(msg, icon);
+    mDeleteBt.setOpaque(false);
     mDeleteBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
         if(mShowNew) {
@@ -224,6 +227,7 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
     msg = mLocalizer.msg("up", "Move the selected favorite up");
     icon = TVBrowserIcons.up(TVBrowserIcons.SIZE_LARGE);
     mUpBt = UiUtilities.createToolBarButton(msg, icon);
+    mUpBt.setOpaque(false);
     mUpBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
         mFavoriteTree.moveSelectedFavorite(-1);
@@ -238,6 +242,7 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
     msg = mLocalizer.msg("down", "Move the selected favorite down");
     icon = TVBrowserIcons.down(TVBrowserIcons.SIZE_LARGE);
     mDownBt = UiUtilities.createToolBarButton(msg, icon);
+    mDownBt.setOpaque(false);
     mDownBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
         mFavoriteTree.moveSelectedFavorite(1);
@@ -252,6 +257,7 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
     icon = FavoritesPlugin.getIconFromTheme("actions", "sort-list", 22);
     final String titleAlpha = msg;
     mSortAlphaBt = UiUtilities.createToolBarButton(msg, icon);
+    mSortAlphaBt.setOpaque(false);
     mSortAlphaBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
         sortFavorites(FavoriteNodeComparator.getInstance(), titleAlpha);
@@ -262,6 +268,7 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
     icon = FavoritesPlugin.getIconFromTheme("actions", "sort-list-numerical", 22);
     final String titleCount = msg;
     mSortCountBt = UiUtilities.createToolBarButton(msg, icon);
+    mSortCountBt.setOpaque(false);
     mSortCountBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
         sortFavorites(FavoriteNodeCountComparator.getInstance(), titleCount);
@@ -276,6 +283,7 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
     msg = mLocalizer.msg("send", "Send Programs to another Plugin");
     icon = TVBrowserIcons.copy(TVBrowserIcons.SIZE_LARGE);
     mSendBt = UiUtilities.createToolBarButton(msg, icon);
+    mSendBt.setOpaque(false);
     mSendBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
          showSendDialog();
@@ -288,6 +296,7 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
     msg = mLocalizer.msg("import", "Import favorites from TVgenial");
     icon = FavoritesPlugin.getIconFromTheme("actions", "document-open", 22);
     mImportBt = UiUtilities.createToolBarButton(msg, icon);
+    mImportBt.setOpaque(false);
     mImportBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
         importFavorites();
