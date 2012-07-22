@@ -93,7 +93,15 @@ public class SingleTitleFilterComponent extends AbstractFilterComponent {
    */
   public void read(ObjectInputStream in, int version) throws IOException,
       ClassNotFoundException {
-    mSelectedBits = in.readInt();
+    int fileVersion = 0;
+    
+    try {
+      fileVersion = in.readInt();
+    }catch(IOException ioe) {}
+    
+    if(fileVersion > 0) {
+      mSelectedBits = in.readInt();
+    }
   }
 
   /**
@@ -102,6 +110,7 @@ public class SingleTitleFilterComponent extends AbstractFilterComponent {
    * @see tvbrowser.core.filters.FilterComponent#write(java.io.ObjectOutputStream)
    */
   public void write(ObjectOutputStream out) throws IOException {
+    out.writeInt(getVersion());
     out.writeInt(mSelectedBits);
   }
 
