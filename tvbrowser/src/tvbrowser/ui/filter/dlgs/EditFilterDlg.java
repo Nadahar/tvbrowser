@@ -155,7 +155,7 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
     mFilterRuleTF.getDocument().addDocumentListener(this);
     mFilterRuleTF.addCaretListener(this);  
     
-    FormLayout layout = new FormLayout("5dlu,fill:default:grow,5dlu,default,5dlu","default,5dlu,default,10dlu,default,5dlu,default,default,5dlu,default,5dlu,fill:default:grow,5dlu,fill:20dlu:grow,5dlu,default,5dlu,default");
+    FormLayout layout = new FormLayout("5dlu,fill:default:grow,5dlu,default,5dlu","default,5dlu,default,10dlu,default,5dlu,default,default,5dlu,default,5dlu,fill:default:grow,5dlu,default,5dlu,default,5dlu,default");
     PanelBuilder filterCreation = new PanelBuilder(layout,(JPanel)getContentPane());
     filterCreation.setDefaultDialogBorder();
     
