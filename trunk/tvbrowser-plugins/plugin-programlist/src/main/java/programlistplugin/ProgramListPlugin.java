@@ -321,11 +321,14 @@ public class ProgramListPlugin extends Plugin {
     return Plugin.OTHER_CATEGORY;
   }
   
-  void setCursor(Cursor cursor) {
+ /* void setCursor(Cursor cursor) {
     if(mDialog != null && mDialog.isVisible()) {
       mDialog.setCursor(cursor);
     }
-  }
+    else {
+      mCenterPanelEntry.setCursor(cursor);
+    }
+  }*/
   
   ProgramFilter getReceiveFilter() {
     return mReceiveFilter;
