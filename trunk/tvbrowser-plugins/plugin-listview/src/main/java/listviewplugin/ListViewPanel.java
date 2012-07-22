@@ -824,7 +824,7 @@ public class ListViewPanel extends JPanel implements PersonaListener {
         mFilterBox.setSelectedItem(filter);
       }
       else if(!foundSelected) {
-        mFilterBox.setSelectedItem(ListViewPlugin.getPluginManager().getFilterManager().getAllFilter());
+        mFilterBox.setSelectedItem(ListViewPlugin.getPluginManager().getFilterManager().getCurrentFilter());
       }
     }catch(Throwable t) {t.printStackTrace();}
   }
