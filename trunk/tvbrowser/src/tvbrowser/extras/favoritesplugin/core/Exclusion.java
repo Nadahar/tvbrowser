@@ -329,6 +329,9 @@ public class Exclusion {
         episodeTitleExcl = true;
       }
     }
+    else {
+      episodeTitleExcl = true;
+    }
     
     return channelExcl && titleExcl && topicExcl && timeExcl && dayExcl && filterExclusion && episodeTitleExcl;
   }

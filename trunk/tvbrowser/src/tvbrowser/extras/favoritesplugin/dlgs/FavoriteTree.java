@@ -265,7 +265,7 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
 
         item.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
-            ManageFavoritesDialog.getInstance().editSelectedFavorite();
+            FavoritesPlugin.getInstance().editSelectedFavorite();
           }
         });
         menu.add(item);
@@ -782,7 +782,7 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
           if(path != null && ((FavoriteNode)path.getLastPathComponent()).containsFavorite()) {
             mLastSelectionPath = path;
             if(e.getClickCount() >= 2) {
-              ManageFavoritesDialog.getInstance().editSelectedFavorite();
+              FavoritesPlugin.getInstance().editSelectedFavorite();
             }
           }
           else if(path != null && ((FavoriteNode)path.getLastPathComponent()).isDirectoryNode() && (e.getWhen() - mMousePressedTime) < CLICK_WAIT_TIME && getPathBounds(tree,path).contains(e.getPoint())) {
