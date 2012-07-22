@@ -123,6 +123,12 @@ public class ProgramListPlugin extends Plugin {
           mCenterPanelEntry.updateFilter(filter);
         }
       }
+      
+      public void timeEvent() {
+        if(mCenterPanelEntry != null) {
+          mCenterPanelEntry.timeEvent();
+        }
+      }
     };
   }
   

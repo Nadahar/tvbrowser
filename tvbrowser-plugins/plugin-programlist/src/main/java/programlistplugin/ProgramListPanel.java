@@ -79,6 +79,7 @@ public class ProgramListPanel extends JPanel implements PersonaListener {
    */
   private int mMaxListSize = 5000;
   private int mShotSleepTime = 0;
+  private int mUpdateCounter = 5;
   
   private JComboBox mChannelBox;
   private ProgramFilter mFilter;
@@ -90,6 +91,7 @@ public class ProgramListPanel extends JPanel implements PersonaListener {
   private JComboBox mFilterBox;
   private JLabel mChannelLabel, mFilterLabel;
   private Thread mListThread;
+  private Thread mUpdateThread;
 
   private JButton mSendBtn;
   
@@ -279,6 +281,12 @@ public class ProgramListPanel extends JPanel implements PersonaListener {
     if(mListThread == null || !mListThread.isAlive()) {
       mListThread = new Thread() {
         public void run() {
+          if(mUpdateThread != null && mUpdateThread.isAlive()) {
+            try {
+              mUpdateThread.join();
+            } catch (InterruptedException e) {}
+          }
+          
           DefaultListModel model = new DefaultListModel();
           mFilterBox.setEnabled(false);
           mChannelBox.setEnabled(false);
@@ -399,5 +407,25 @@ public class ProgramListPanel extends JPanel implements PersonaListener {
   
   void updateDescriptionSelection(boolean value) {
     mShowDescription.setSelected(value);
+  }
+  
+  void timeEvent() {
+    mUpdateCounter--;
+    if(mUpdateCounter < 0) {
+      mUpdateCounter = 5;
+      
+      if(mListThread == null || !mListThread.isAlive()) {
+        mUpdateThread = new Thread() {
+          public void run() {
+            for(int i = mModel.getSize() - 1; i >= 0; i--) {
+              if(((Program)mModel.get(i)).isExpired()) {
+                mModel.remove(i);
+              }
+            }
+          }
+        };
+        mUpdateThread.start();
+      }
+    }
   }
 }
