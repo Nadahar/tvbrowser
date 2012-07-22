@@ -311,6 +311,12 @@ public class ProgramListPlugin extends Plugin {
     return mDialog;
   }
   
+  void updateDescriptionSelection(boolean value) {
+    if(mCenterPanelEntry != null) {
+      mCenterPanelEntry.updateDescriptionSelection(value);
+    }
+  }
+  
   public PluginCenterPanelWrapper getPluginCenterPanelWrapper() {
     return mWrapper;
   }
