@@ -19,6 +19,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.table.DefaultTableColumnModel;
+import javax.swing.table.TableColumn;
 
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginManagerImpl;
@@ -206,9 +208,7 @@ public class ReminderListPanel extends JPanel implements PersonaListener {
     });
 
     installTableModel(mModel);
-    mTable.getColumnModel().getColumn(1).setPreferredWidth(250);
-    mTable.getColumnModel().getColumn(1).setMaxWidth(300);
-
+    
     add(mFilterLabel = new JLabel(mLocalizer.msg("titleFilterText","Show only programs with the following title:")), cc.xy(1,1));
     add(mTitleSelection, cc.xy(3,1));
 
@@ -291,10 +291,26 @@ public class ReminderListPanel extends JPanel implements PersonaListener {
       add(new JScrollPane(mTable), cc.xyw(1, 3, 5));
       add(builder.getPanel(), cc.xy(5, 1));
     }
+    
+    System.out.println(mTable.getColumnModel().getColumn(1).getMaxWidth());
   }
   
 
   private void installTableModel(ReminderTableModel model) {
+    DefaultTableColumnModel cModel = new DefaultTableColumnModel() {
+      public TableColumn getColumn(int n) {
+        TableColumn column = super.getColumn(n);
+        
+        if(n == 1) {
+          column.setMaxWidth(300);
+          column.setPreferredWidth(250);
+        }
+        
+        return column;
+      }
+    };
+    
+    mTable.setColumnModel(cModel);
     mTable.setModel(model);
     mTable.getColumnModel().getColumn(0).setCellRenderer(new ProgramTableCellRenderer(new PluginPictureSettings(PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE)));
     mTable.getColumnModel().getColumn(1).setCellEditor(new MinutesCellEditor());
