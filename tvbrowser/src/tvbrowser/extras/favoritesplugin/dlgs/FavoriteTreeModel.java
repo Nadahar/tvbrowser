@@ -512,7 +512,7 @@ public class FavoriteTreeModel extends DefaultTreeModel {
       sortNodeInternal(node, comp);
     }
 
-    ManageFavoritesDialog.getInstance().favoriteSelectionChanged();
+    FavoritesPlugin.getInstance().favoriteSelectionChanged();
   }
 
   /**

@@ -147,11 +147,11 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
         newFolder.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
             TreePath path = mFavoriteTree.getSelectionPath();
-
+            
             if(path != null) {
-              mFavoriteTree.newFolder((FavoriteNode)path.getLastPathComponent());
+              FavoritesPlugin.getInstance().newFolder((FavoriteNode)path.getLastPathComponent());
             } else {
-              mFavoriteTree.newFolder(mFavoriteTree.getRoot());
+              FavoritesPlugin.getInstance().newFolder(mFavoriteTree.getRoot());
             }
           }
         });
@@ -912,7 +912,7 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
     if(path == null) {
       path = new TreePath(mFavoriteTree.getRoot());
     }
-
+    
     if(((FavoriteNode)path.getLastPathComponent()).isDirectoryNode()) {
       FavoriteTreeModel.getInstance().sort((FavoriteNode)path.getLastPathComponent(), comp, title);
       mFavoriteTree.reload((FavoriteNode)path.getLastPathComponent());
@@ -1073,9 +1073,13 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
     favoriteSelectionChanged(false);
   }
   
-  public void handleFavoriteEvent() {
+  public void handleFavoriteEvent() {System.out.println("ier");
     mFavoriteTree.updateUI();
     favoriteSelectionChanged();
+  }
+  
+  public void newFolder(FavoriteNode parent, Window partenWindow) {
+    mFavoriteTree.newFolder(parent,partenWindow);
   }
 
   @Override

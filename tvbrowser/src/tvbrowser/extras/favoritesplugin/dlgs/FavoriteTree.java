@@ -29,6 +29,7 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Window;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
@@ -277,7 +278,7 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
 
       item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          newFolder(last);
+          FavoritesPlugin.getInstance().newFolder(last);
         }
       });
       menu.add(item);
@@ -698,8 +699,8 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
     }
   }
 
-  protected void newFolder(FavoriteNode parent) {
-    String value = JOptionPane.showInputDialog(UiUtilities.getLastModalChildOf(ManageFavoritesDialog.getInstance()), mLocalizer.msg("folderName","Folder name:"), mLocalizer.msg("newFolder","New folder"));
+  public void newFolder(FavoriteNode parent, Window partenWindow) {
+    String value = JOptionPane.showInputDialog(partenWindow, mLocalizer.msg("folderName","Folder name:"), mLocalizer.msg("newFolder","New folder"));
 
     if(value != null && value.length() > 0) {
       FavoriteNode node = new FavoriteNode(value);

@@ -1375,6 +1375,24 @@ public class FavoritesPlugin {
     return mMangePanel.isShowingNewFoundPrograms();
   }
   
+  public void newFolder(FavoriteNode parent) {
+    if(ManageFavoritesDialog.getInstance() != null && ManageFavoritesDialog.getInstance().isVisible()) {
+      ManageFavoritesDialog.getInstance().newFolder(parent,ManageFavoritesDialog.getInstance());
+    }
+    else {
+      mMangePanel.newFolder(parent, MainFrame.getInstance());
+    }
+  }
+  
+  public void favoriteSelectionChanged() {
+    if(ManageFavoritesDialog.getInstance() != null && ManageFavoritesDialog.getInstance().isVisible()) {
+      ManageFavoritesDialog.getInstance().favoriteSelectionChanged();
+    }
+    else {
+      mMangePanel.favoriteSelectionChanged();
+    }    
+  }
+  
 /*  public void handleFavoriteEvent() {
     mMangePanel.handleFavoriteEvent();
   }*/
