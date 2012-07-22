@@ -25,57 +25,28 @@ package programlistplugin;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
-import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Graphics;
-import java.awt.Window;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.DefaultListCellRenderer;
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JRootPane;
-import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
-import util.program.ProgramUtilities;
-import util.settings.PluginPictureSettings;
-import util.settings.ProgramPanelSettings;
 import util.ui.Localizer;
-import util.ui.ProgramList;
-import util.ui.SendToPluginDialog;
-import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 import util.ui.persona.Persona;
 
-import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-
 import devplugin.ActionMenu;
 import devplugin.Channel;
-import devplugin.Date;
 import devplugin.Plugin;
 import devplugin.PluginCenterPanel;
 import devplugin.PluginCenterPanelWrapper;
@@ -95,6 +66,9 @@ public class ProgramListPlugin extends Plugin {
   static final Localizer mLocalizer = Localizer.getLocalizerFor(ProgramListPlugin.class);
 
   private static Version mVersion = new Version(3, 20, false);
+  
+  private static final int MAX_DIALOG_LIST_SIZE = 5000;
+  static final int MAX_PANEL_LIST_SIZE = 2500;
 
   private JDialog mDialog;
   private ProgramListSettings mSettings;
@@ -153,7 +127,7 @@ public class ProgramListPlugin extends Plugin {
   }
   
   public void handleTvBrowserStartFinished() {
-    mCenterPanelEntry = new ProgramListPanel(null, false);
+    mCenterPanelEntry = new ProgramListPanel(null, false, MAX_PANEL_LIST_SIZE);
     Persona.getInstance().registerPersonaListener(mCenterPanelEntry);
     
     SwingUtilities.invokeLater(new Runnable() {
@@ -274,7 +248,7 @@ public class ProgramListPlugin extends Plugin {
           }
         });
 
-        mDialogPanel = new ProgramListPanel(selectedChannel,true);
+        mDialogPanel = new ProgramListPanel(selectedChannel,true,MAX_DIALOG_LIST_SIZE);
         
         mDialog.getContentPane().add(mDialogPanel, BorderLayout.CENTER);
 
@@ -320,15 +294,6 @@ public class ProgramListPlugin extends Plugin {
   public String getPluginCategory() {
     return Plugin.OTHER_CATEGORY;
   }
-  
- /* void setCursor(Cursor cursor) {
-    if(mDialog != null && mDialog.isVisible()) {
-      mDialog.setCursor(cursor);
-    }
-    else {
-      mCenterPanelEntry.setCursor(cursor);
-    }
-  }*/
   
   ProgramFilter getReceiveFilter() {
     return mReceiveFilter;

@@ -44,7 +44,6 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import com.jgoodies.forms.factories.Borders;
@@ -78,7 +77,8 @@ public class ProgramListPanel extends JPanel implements PersonaListener {
   /**
    * maximum number of programs to be shown in the list. If the filter has more results, only the first results are shown.
    */
-  private static final int MAX_PROGRAMS_SHOWN = 5000;
+  private int mMaxListSize = 5000;
+  private int mShotSleepTime = 0;
   
   private JComboBox mBox;
   private ProgramFilter mFilter;
@@ -92,7 +92,11 @@ public class ProgramListPanel extends JPanel implements PersonaListener {
 
   private JButton mSendBtn;
   
-  public ProgramListPanel(final Channel selectedChannel, boolean showClose) {
+  public ProgramListPanel(final Channel selectedChannel, boolean showClose, int maxListSize) {
+    mMaxListSize = maxListSize;
+    if(ProgramListPlugin.MAX_PANEL_LIST_SIZE == maxListSize) {
+      mShotSleepTime = 1;
+    }
     createGui(selectedChannel,showClose);
   }
   
@@ -266,9 +270,11 @@ public class ProgramListPanel extends JPanel implements PersonaListener {
   }
 
   void fillProgramList() {
-    SwingUtilities.invokeLater(new Runnable() {
+    new Thread() {
       public void run() {
+        DefaultListModel model = new DefaultListModel();
         try {
+          setPriority(MIN_PRIORITY);
           setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
           mModel.clear();
           mPrograms.clear();
@@ -301,6 +307,9 @@ public class ProgramListPanel extends JPanel implements PersonaListener {
                     } else {
                       mPrograms.add(program);
                     }
+                    try {
+                      sleep(mShotSleepTime);
+                    }catch(InterruptedException e1) {}
                   }
                 }
               }
@@ -315,18 +324,20 @@ public class ProgramListPanel extends JPanel implements PersonaListener {
           int index = -1;
 
           for (Program program : mPrograms) {
-            if (mModel.size() < MAX_PROGRAMS_SHOWN) {
-              mModel.addElement(program);
+            if (model.size() < mMaxListSize) {
+              model.addElement(program);
 
               if (!program.isExpired() && index == -1) {
-                index = mModel.getSize() - 1;
+                index = model.getSize() - 1;
               }
             }
           }
-          int forceScrollingIndex = mModel.size() - 1;
+          int forceScrollingIndex = model.size() - 1;
           if (forceScrollingIndex > 1000) {
             forceScrollingIndex = 1000;
           }
+          mList.setModel(model);
+          mModel = model;
           mList.ensureIndexIsVisible(forceScrollingIndex);
           mList.ensureIndexIsVisible(index);
           setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
@@ -334,7 +345,7 @@ public class ProgramListPanel extends JPanel implements PersonaListener {
           e.printStackTrace();
         }
       }
-    });
+    }.start();
   }
   
 
