@@ -173,6 +173,7 @@ public class ListViewPlugin extends Plugin {
             
             @Override
             public void timeEvent() {
+              
               if(mCenterPanel != null) {
                 mCenterPanel.refreshView();
               }
@@ -198,15 +199,20 @@ public class ListViewPlugin extends Plugin {
     }
     
     private void updateCenterPanel() {
-      if(mCenterPanel != null) {
-        mCenterPanelWrapper.remove(mCenterPanel);
-        Persona.getInstance().removePersonaListerner(mCenterPanel);
-      }
-      
-      mCenterPanel = new ListViewPanel(ListViewPlugin.this);
-      Persona.getInstance().registerPersonaListener(mCenterPanel);
-      mCenterPanel.updatePersona();
-      mCenterPanelWrapper.add(mCenterPanel, BorderLayout.CENTER);
+      SwingUtilities.invokeLater(new Runnable() {
+        @Override
+        public void run() {
+          if(mCenterPanel != null) {
+            mCenterPanelWrapper.remove(mCenterPanel);
+            Persona.getInstance().removePersonaListerner(mCenterPanel);
+          }
+          
+          mCenterPanel = new ListViewPanel(ListViewPlugin.this);
+          Persona.getInstance().registerPersonaListener(mCenterPanel);
+          mCenterPanel.updatePersona();
+          mCenterPanelWrapper.add(mCenterPanel, BorderLayout.CENTER);        
+        }
+      });
     }
 
     /**
