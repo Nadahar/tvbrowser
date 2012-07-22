@@ -115,8 +115,8 @@ public class UiUtilities {
     Dimension wD = win.getSize();
     Dimension frameD;
     Point framePos;
-    Frame frame = JOptionPane.getFrameForComponent(win);
-
+    Window frame = win != null && win.getParent() instanceof Window ? (Window)win.getParent() : null ;
+    
     // Should this window be centered to its parent frame?
     boolean centerToParentFrame = (frame != null) && (frame != win)
         && frame.isShowing();
