@@ -417,7 +417,7 @@ public class ProgramListPanel extends JPanel implements PersonaListener {
   void updateFilter(ProgramFilter filter) {
     if(mListThread == null || !mListThread.isAlive()) {
       fillFilterBox();
-      mFilterBox.setSelectedItem(filter);
+      mFilterBox.setSelectedItem(filter.getName());
     }
   }
   
