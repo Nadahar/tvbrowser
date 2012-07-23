@@ -138,10 +138,26 @@ public class ProgramListPanel extends JPanel implements PersonaListener {
 
     mFilterBox.addItemListener(new ItemListener() {
       public void itemStateChanged(ItemEvent e) {
-        mFilter = (ProgramFilter) mFilterBox.getSelectedItem();
-        if (mFilter != ProgramListPlugin.getInstance().getReceiveFilter()) {
-          mSettings.setFilterName(mFilter.getName());
+        ProgramFilter[] filterArr = ProgramListPlugin.getPluginManager().getFilterManager().getAvailableFilters();
+        
+        boolean found = false;
+        
+        for(ProgramFilter filter : filterArr) {
+          if(filter.getName().equals(mFilterBox.getSelectedItem())) {
+            mFilter = filter;
+            
+            if (mFilter != ProgramListPlugin.getInstance().getReceiveFilter()) {
+              mSettings.setFilterName(mFilter.getName());
+              found = true;
+              break;
+            }
+          }
         }
+        
+        if(!found) {
+          fillFilterBox();
+        }
+        
         mChannelBox.getItemListeners()[0].itemStateChanged(null);
       }
     });
@@ -243,19 +259,19 @@ public class ProgramListPanel extends JPanel implements PersonaListener {
       boolean found = false;
 
       for (int i = 0; i < mFilterBox.getItemCount(); i++) {
-        if (filter != null && filter.equals(mFilterBox.getItemAt(i))) {
+        if (filter != null && filter.getName().equals(mFilterBox.getItemAt(i))) {
           found = true;
           break;
         }
       }
 
       if (!found) {
-        mFilterBox.addItem(filter);
+        mFilterBox.addItem(filter.getName());
 
         if ((receiveFilter == null && filter.getName().equals(ProgramListPlugin.getInstance().getSettings().getFilterName()))
             || (receiveFilter != null && filter.getName().equals(receiveFilter.getName()))) {
           mFilter = filter;
-          mFilterBox.setSelectedItem(filter);
+          mFilterBox.setSelectedItem(filter.getName());
         }
       }
     }
@@ -264,7 +280,7 @@ public class ProgramListPanel extends JPanel implements PersonaListener {
       boolean found = false;
 
       for (ProgramFilter filter : filters) {
-        if (filter.equals(mFilterBox.getItemAt(i))) {
+        if (filter.getName().equals(mFilterBox.getItemAt(i))) {
           found = true;
           break;
         }
