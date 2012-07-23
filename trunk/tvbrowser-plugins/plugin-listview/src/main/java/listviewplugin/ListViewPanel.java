@@ -827,7 +827,7 @@ public class ListViewPanel extends JPanel implements PersonaListener {
         if(availableFilter.getName().equals(selected)) {
           foundSelected = true;
         }
-        else if(filter != null && filter.getName().equals(selected)) {
+        else if(filter != null && filter.getName().equals(availableFilter.getName())) {
           foundFilter = true;
         }
         
