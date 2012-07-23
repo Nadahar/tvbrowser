@@ -501,6 +501,8 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
 
     int n = in.readInt();
 
+    mSettings.getSearchList().clear();
+    
     if(version <= 2) {
       for(int i = 0; i < n; i++) {
         final StringBuilder value = new StringBuilder("*");

@@ -25,6 +25,7 @@ package idontwant2see;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Graphics;
 
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -62,22 +63,37 @@ public class IDontWant2SeeSettingsTableRenderer extends
       final int row, final int column) {
     if(column == 0) {
       final JPanel background = new JPanel(new FormLayout("fill:0dlu:grow",
-          "fill:default:grow"));
+          "fill:default:grow")) {
+        protected void paintComponent(Graphics g) {
+          if(getBackground().equals(NOT_VALID_COLOR) || getBackground().equals(LAST_CHANGED_COLOR) ||
+              getBackground().equals(LAST_USAGE_7_COLOR) || getBackground().equals(LAST_USAGE_30_COLOR)) {
+            g.setColor(Color.white);
+            g.fillRect(0, 0, getWidth(), getHeight());
+          }
+          
+          g.setColor(getBackground());
+          g.fillRect(0, 0, getWidth(), getHeight());
+        }
+      };
       background.setOpaque(true);
       
       final JLabel label = new JLabel((String) value);
       
       if(!((IDontWant2SeeSettingsTableModel)table.getModel()).rowIsValid(row) && !isSelected) {
         background.setBackground(NOT_VALID_COLOR);
+        label.setForeground(Color.black);
       }
       else if(((IDontWant2SeeSettingsTableModel)table.getModel()).isLastChangedRow(row) && !isSelected) {
         background.setBackground(LAST_CHANGED_COLOR);
+        label.setForeground(Color.black);
       }
       else if(((IDontWant2SeeSettingsTableModel)table.getModel()).isRowOutdated(row,mLastUsedDate,OUTDATED_30_DAY_COUNT) && !isSelected) {
         background.setBackground(LAST_USAGE_30_COLOR);
+        label.setForeground(Color.black);
       }
       else if(((IDontWant2SeeSettingsTableModel)table.getModel()).isRowOutdated(row,mLastUsedDate,OUTDATED_7_DAY_COUNT) && !isSelected) {
         background.setBackground(LAST_USAGE_7_COLOR);
+        label.setForeground(Color.black);
       }
       else if(!isSelected) {
         background.setBackground(table.getBackground());
@@ -94,7 +110,18 @@ public class IDontWant2SeeSettingsTableRenderer extends
     }
     else {
       final JPanel background = new JPanel(new FormLayout(
-          "0dlu:grow,default,0dlu:grow", "0dlu:grow,default,0dlu:grow"));
+          "0dlu:grow,default,0dlu:grow", "0dlu:grow,default,0dlu:grow")){
+        protected void paintComponent(Graphics g) {
+          if(getBackground().equals(NOT_VALID_COLOR) || getBackground().equals(LAST_CHANGED_COLOR) ||
+              getBackground().equals(LAST_USAGE_7_COLOR) || getBackground().equals(LAST_USAGE_30_COLOR)) {
+            g.setColor(Color.white);
+            g.fillRect(0, 0, getWidth(), getHeight());
+          }
+          
+          g.setColor(getBackground());
+          g.fillRect(0, 0, getWidth(), getHeight());
+        }
+      };
       background.setOpaque(true);
       
       if(!isSelected) {
