@@ -18,6 +18,8 @@
  */
 package devplugin;
 
+import tvbrowser.core.plugin.PluginProxyManager;
+
 /**
  * Overwrite this class to support filters for your plugin.
  * 
@@ -46,9 +48,9 @@ public abstract class PluginsProgramFilter implements ProgramFilter {
   public final String getName() {
     String subName = getSubName();
     if (subName != null && subName.length() > 0) {
-      return getPluginAccessOfFilter().getInfo().getName() + ": " + subName;
+      return getPluginAccessOfFilter() != null ? (getPluginAccessOfFilter().getInfo().getName() + ": " + subName) : "DeactivatedPluginFilter: " + mPluginId;
     } else {
-      return getPluginAccessOfFilter().getInfo().getName();
+      return getPluginAccessOfFilter() != null ? getPluginAccessOfFilter().getInfo().getName() : "DeactivatedPluginFilter: " + mPluginId;
     }
   }
   
