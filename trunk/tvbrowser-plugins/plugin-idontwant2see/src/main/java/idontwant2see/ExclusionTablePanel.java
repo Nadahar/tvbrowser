@@ -31,9 +31,13 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -59,9 +63,9 @@ import com.jgoodies.forms.layout.Sizes;
 public class ExclusionTablePanel extends JPanel {
   private JTable mTable;
   private IDontWant2SeeSettingsTableModel mTableModel;
+  private static final Localizer mLocalizer = IDontWant2See.mLocalizer;
   
   protected ExclusionTablePanel(final IDontWant2SeeSettings settings) {
-    Localizer mLocalizer = IDontWant2See.mLocalizer;
     mTableModel = new IDontWant2SeeSettingsTableModel(settings.getSearchList(),settings.getLastEnteredExclusionString());
     
     final IDontWant2SeeSettingsTableRenderer renderer = new IDontWant2SeeSettingsTableRenderer(settings.getLastUsedDate());        
@@ -136,6 +140,13 @@ public class ExclusionTablePanel extends JPanel {
       }
     });
     
+    final JButton removeDuplicateEntries = new JButton(mLocalizer.msg("settings.duplicates", "Remove duplicates"));
+    removeDuplicateEntries.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        removeDuplicateRows();
+      }
+    });
+    
     final JButton delete = new JButton(mLocalizer.msg("settings.delete",
         "Delete selected entries"),IDontWant2See.getInstance().createImageIcon("actions","edit-delete",16));
     delete.setEnabled(false);
@@ -153,14 +164,14 @@ public class ExclusionTablePanel extends JPanel {
       }
     });
     
-    final FormLayout layout = new FormLayout("default,0dlu:grow,default",
+    final FormLayout layout = new FormLayout("default,0dlu:grow,default,0dlu:grow,default",
         "fill:default:grow,1dlu,default,4dlu,default,5dlu,pref");
     final PanelBuilder pb = new PanelBuilder(layout, this);
     final CellConstraints cc = new CellConstraints();
     
     int y = 1;
     
-    pb.add(scrollPane, cc.xyw(1,y++,3));
+    pb.add(scrollPane, cc.xyw(1,y++,5));
     
     final PanelBuilder pb2 = new PanelBuilder(
         new FormLayout("default,3dlu:grow,default,3dlu:grow,default,3dlu:grow,default",
@@ -186,13 +197,66 @@ public class ExclusionTablePanel extends JPanel {
     redLabel.setText(mLocalizer.msg("invalid","Invalid"));
     pb2.add(redLabel, cc.xy(7,1));
     
-    pb.add(pb2.getPanel(), cc.xyw(1,++y,3));
+    pb.add(pb2.getPanel(), cc.xyw(1,++y,5));
     
     y++;
     pb.add(add, cc.xy(1,++y));
-    pb.add(delete, cc.xy(3,y++));
+    pb.add(removeDuplicateEntries, cc.xy(3, y));
+    pb.add(delete, cc.xy(5,y++));
     pb.add(UiUtilities.createHelpTextArea(mLocalizer.msg("settings.help",
-    "To edit a value double click a cell. You can use wildcard * to search for any text.")), cc.xyw(1,++y,3));
+    "To edit a value double click a cell. You can use wildcard * to search for any text.")), cc.xyw(1,++y,5));
+  }
+  
+  private void removeDuplicateRows() {
+    ArrayList<Integer> deleteEntries = new ArrayList<Integer>();
+    
+    for(int i = mTableModel.getRowCount()-1; i >= 0; i--) {
+      String testRowText = (String)mTableModel.getValueAt(i, 0);
+      boolean testRowCase = (Boolean)mTableModel.getValueAt(i, 1);
+
+      Pattern testPattern = IDontWant2SeeListEntry.createSearchPattern(testRowText, testRowCase);
+      
+      for(int j = i-1; j >= 0; j--) {
+        try {
+          String actualRowText = (String)mTableModel.getValueAt(j, 0);
+          boolean actualRowCase = (Boolean)mTableModel.getValueAt(j, 1);
+          
+          if(testRowCase == actualRowCase && testRowText.equals(actualRowText)) {
+            if(!deleteEntries.contains(j)) {
+              deleteEntries.add(j);
+            }
+          }
+          else {
+            if(testPattern.matcher(actualRowText).matches()) {
+              if(!deleteEntries.contains(j)) {
+                deleteEntries.add(j);
+              }
+            }
+            else {
+              if(IDontWant2SeeListEntry.createSearchPattern(actualRowText, actualRowCase).matcher(testRowText).matches()) {
+                if(!deleteEntries.contains(i)) {
+                  deleteEntries.add(i);
+                }
+              }
+            }
+          }
+        }catch(Throwable t) {t.printStackTrace();}
+      }
+    }
+    
+    Integer[] values = deleteEntries.toArray(new Integer[deleteEntries.size()]);
+    Arrays.sort(values);
+    
+    for(int i = values.length - 1; i >= 0; i--) {
+      mTableModel.deleteRow(values[i]);
+    }
+    
+    if(!deleteEntries.isEmpty()) {
+      JOptionPane.showMessageDialog(this, mLocalizer.msg("settings.infoMsg.1","{0} duplicate entries were removed.",deleteEntries.size()));
+    }
+    else {
+      JOptionPane.showMessageDialog(this, mLocalizer.msg("settings.infoMsg.2","No duplicate entries were found."));
+    }
   }
   
   private void deleteSelectedRows() {
@@ -213,6 +277,10 @@ public class ExclusionTablePanel extends JPanel {
       else {
         mTable.setRowSelectionInterval(mTable.getRowCount()-1,mTable.getRowCount()-1);
       }
+    }
+    
+    if(mTable.getSelectedRow() >= 0) {
+      mTable.scrollRectToVisible(mTable.getCellRect(mTable.getSelectedRow(), 0, true));
     }
   }
   

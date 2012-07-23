@@ -87,8 +87,8 @@ import devplugin.Version;
  */
 public final class IDontWant2See extends Plugin implements AWTEventListener {
 
-  private static final boolean PLUGIN_IS_STABLE = true;
-  private static final Version PLUGIN_VERSION = new Version(0, 12, 1, PLUGIN_IS_STABLE);
+  private static final boolean PLUGIN_IS_STABLE = false;
+  private static final Version PLUGIN_VERSION = new Version(0, 13, 0, PLUGIN_IS_STABLE);
 
   private static final String RECEIVE_TARGET_EXCLUDE_EXACT = "target_exclude_exact";
 
@@ -230,9 +230,7 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
   }
 
   public ActionMenu getButtonAction() {
-    final ContextMenuAction baseAction = new ContextMenuAction(mLocalizer.msg(
-        "name", "I don't want to see!"), createImageIcon("apps",
-        "idontwant2see", 16));
+    
 
     final ContextMenuAction openExclusionList = new ContextMenuAction(
         mLocalizer.msg("editExclusionList", "Edit exclusion list"),
@@ -329,7 +327,9 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
       }
     });
 
-    return new ActionMenu(baseAction,new Action[] {openExclusionList,undo});
+    return new ActionMenu(mLocalizer.msg(
+        "name", "I don't want to see!"), createImageIcon("apps",
+        "idontwant2see", 16),new Action[] {openExclusionList,undo});
   }
 
   public ActionMenu getContextMenuActions(final Program p) {
@@ -355,11 +355,10 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
       }
       else {
         final AbstractAction actionInput = getActionInputTitle(p, null);
-        final ContextMenuAction baseAction = new ContextMenuAction(mLocalizer
-            .msg("name", "I don't want to see!"),
-            createImageIcon("apps","idontwant2see",16));
 
-        return new ActionMenu(baseAction, new Action[] {actionDontWant,actionInput});
+        return new ActionMenu(mLocalizer
+            .msg("name", "I don't want to see!"),
+            createImageIcon("apps","idontwant2see",16), new Action[] {actionDontWant,actionInput});
       }
     }
 
