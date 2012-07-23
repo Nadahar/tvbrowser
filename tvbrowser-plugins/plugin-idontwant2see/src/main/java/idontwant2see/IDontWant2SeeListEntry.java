@@ -162,7 +162,7 @@ public class IDontWant2SeeListEntry {
     }
   }
   
-  private Pattern createSearchPattern(final String searchText,
+  public static Pattern createSearchPattern(final String searchText,
       final boolean caseSensitive) {
     int flags = Pattern.DOTALL;
     if (! caseSensitive) {
