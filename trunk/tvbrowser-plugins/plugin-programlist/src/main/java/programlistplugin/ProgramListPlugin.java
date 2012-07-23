@@ -132,6 +132,12 @@ public class ProgramListPlugin extends Plugin {
     };
   }
   
+  public void handleTvDataUpdateFinished() {
+    if(mCenterPanelEntry != null) {
+      mCenterPanelEntry.fillProgramList();
+    }
+  }
+  
   public void handleTvBrowserStartFinished() {
     mCenterPanelEntry = new ProgramListPanel(null, false, MAX_PANEL_LIST_SIZE);
     Persona.getInstance().registerPersonaListener(mCenterPanelEntry);
