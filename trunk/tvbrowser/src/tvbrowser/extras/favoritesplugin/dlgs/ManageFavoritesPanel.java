@@ -27,6 +27,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Window;
@@ -133,7 +134,13 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
     setBorder(Borders.DLU4_BORDER);
     setOpaque(false);
 
-    JToolBar toolbarPn = new JToolBar();
+    JToolBar toolbarPn = new JToolBar() {
+	  protected void paintComponent(Graphics g) {
+	    if(!UIManager.getLookAndFeel().getClass().getCanonicalName().equals("com.sun.java.swing.plaf.gtk.GTKLookAndFeel") || Persona.getInstance().getHeaderImage() == null) {
+	      super.paintComponent(g);
+	    }
+	  }
+    };
     toolbarPn.setFloatable(false);
     toolbarPn.setOpaque(false);
     toolbarPn.setBorder(BorderFactory.createEmptyBorder());
