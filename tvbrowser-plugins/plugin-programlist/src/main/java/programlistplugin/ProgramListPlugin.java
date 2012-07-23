@@ -141,6 +141,10 @@ public class ProgramListPlugin extends Plugin {
       public void run() {
         mCenterPanelWrapper.add(mCenterPanelEntry, BorderLayout.CENTER);
         mCenterPanelEntry.selectFirstEntry();
+        
+        if(Persona.getInstance().getHeaderImage() != null) {
+          mCenterPanelEntry.updatePersona();
+        }
       }
     });
   }
