@@ -306,13 +306,37 @@ public class ListViewPanel extends JPanel implements PersonaListener {
     mFilterLabel = new JLabel("Filter:");
     mFilterLabel.setHorizontalAlignment(SwingConstants.RIGHT);
     
-    mFilterBox = new JComboBox(Plugin.getPluginManager().getFilterManager().getAvailableFilters());
-    mFilterBox.setSelectedItem(Plugin.getPluginManager().getFilterManager().getCurrentFilter());
+    ProgramFilter[] availableFilters = Plugin.getPluginManager().getFilterManager().getAvailableFilters();
+    
+    String[] filterNames =  new String[availableFilters.length];
+    
+    for(int i = 0; i < availableFilters.length; i++) {
+      filterNames[i] = availableFilters[i].getName();
+    }
+    
+    mFilterBox = new JComboBox(filterNames);
+    mFilterBox.setSelectedItem(Plugin.getPluginManager().getFilterManager().getCurrentFilter().getName());
     mFilterBox.addItemListener(new ItemListener() {
       public void itemStateChanged(ItemEvent e) {
         if(e.getStateChange() == ItemEvent.SELECTED) {
-          mCurrentFilter = (ProgramFilter)e.getItem();
-          refreshView();
+          String name = (String)e.getItem();
+          
+          boolean found = false;
+          
+          for(ProgramFilter filter : Plugin.getPluginManager().getFilterManager().getAvailableFilters()) {
+            if(name.equals(filter.getName())) {
+              mCurrentFilter = filter;
+              found = true;
+              break;
+            }
+          }
+          
+          if(!found) {
+            showForFilter(Plugin.getPluginManager().getFilterManager().getCurrentFilter());
+          }
+          else {
+            refreshView();
+          }
         }
       }
     });
@@ -793,21 +817,21 @@ public class ListViewPanel extends JPanel implements PersonaListener {
    */
   void showForFilter(ProgramFilter filter) {
     try {
-      ProgramFilter selected = (ProgramFilter)mFilterBox.getSelectedItem();
+      String selected = (String)mFilterBox.getSelectedItem();
       boolean foundSelected = false;
       boolean foundFilter = false;
       
-      ArrayList<ProgramFilter> availableList = new ArrayList<ProgramFilter>();
+      ArrayList<String> availableList = new ArrayList<String>();
       
       for (ProgramFilter availableFilter : Plugin.getPluginManager().getFilterManager().getAvailableFilters()) {
-        if(availableFilter.equals(selected)) {
+        if(availableFilter.getName().equals(selected)) {
           foundSelected = true;
         }
-        else if(filter != null && filter.equals(selected)) {
+        else if(filter != null && filter.getName().equals(selected)) {
           foundFilter = true;
         }
         
-        availableList.add(availableFilter);
+        availableList.add(availableFilter.getName());
       }
       
       for(int i = mFilterBox.getItemCount() - 1; i >= 0; i--) {
@@ -816,15 +840,15 @@ public class ListViewPanel extends JPanel implements PersonaListener {
         }
       }
       
-      for(ProgramFilter availableFilter : availableList) {
+      for(String availableFilter : availableList) {
         mFilterBox.addItem(availableFilter);
       }
       
       if(foundFilter && filter != null) {
-        mFilterBox.setSelectedItem(filter);
+        mFilterBox.setSelectedItem(filter.getName());
       }
       else if(!foundSelected) {
-        mFilterBox.setSelectedItem(ListViewPlugin.getPluginManager().getFilterManager().getCurrentFilter());
+        mFilterBox.setSelectedItem(ListViewPlugin.getPluginManager().getFilterManager().getCurrentFilter().getName());
       }
     }catch(Throwable t) {t.printStackTrace();}
   }
