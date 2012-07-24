@@ -85,7 +85,7 @@ public class ProgramFrameDispatcher {
       file=new DayProgramFile(date,mChannel);
       mDayPrograms.put(date,file);
     }
-    file.addProgramFrame(frame);
+    file.addDistinctProgramFrame(frame);
     //dumpFrame(frame);
     
   }
@@ -141,19 +141,19 @@ public class ProgramFrameDispatcher {
       mCurFile=new DayProgramFile();
       mCurFilename=DayProgramFile.getProgramFileName(date,country,ch);
       frame.setId(mCurID);
-      mCurFile.addProgramFrame(frame);
+      mCurFile.addDistinctProgramFrame(frame);
     }
     else {
       frame.setId(mCurID);
       String fName=DayProgramFile.getProgramFileName(date,country,ch);
       if (fName.equals(mCurFilename)) {
-        mCurFile.addProgramFrame(frame);
+        mCurFile.addDistinctProgramFrame(frame);
       }
       else {
         flush();
         mCurFile=new DayProgramFile();
         mCurFilename=DayProgramFile.getProgramFileName(date,country,ch);
-        mCurFile.addProgramFrame(frame);
+        mCurFile.addDistinctProgramFrame(frame);
       }
       
       
