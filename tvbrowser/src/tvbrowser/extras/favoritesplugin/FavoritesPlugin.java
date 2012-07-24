@@ -361,6 +361,10 @@ public class FavoritesPlugin {
           for(Favorite fav : favorites) {
             fav.revalidatePrograms();
           }
+          
+          if(mMangePanel != null) {
+            mMangePanel.handleFavoriteEvent();
+          }
         }catch(Throwable t) {t.printStackTrace();}
         }
       };
