@@ -194,6 +194,14 @@ class ProgramInfoDialog {
     });
     mConfigBtn.setVisible(showSettings);
   }
+  
+  static Program getCurrentProgram() {
+    if(instance != null) {
+      return instance.mProgram;
+    }
+    
+    return null;
+  }
 
   protected void highlightFavorites() {
     Favorite[] favorites = FavoriteTreeModel.getInstance()
