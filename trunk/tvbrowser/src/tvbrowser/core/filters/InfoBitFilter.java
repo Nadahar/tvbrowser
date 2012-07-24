@@ -56,6 +56,10 @@ public class InfoBitFilter implements ProgramFilter {
       mName = "HD";
       mKey = name;
       mInfoBits = new int[] { Program.INFO_VISION_HD };
+    } else if (name.equals("[NEW_FILTER]")) {
+      mName = "New";
+      mKey = name;
+      mInfoBits = new int[] { Program.INFO_NEW };
     } else if (name.equals("[ORIGINAL_AUDIO_FILTER]")) {
       mName = "OriginalAudio";
       mKey = name;
