@@ -34,6 +34,7 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.extras.common.ConfigurationHandler;
@@ -80,7 +81,9 @@ public class ProgramInfo {
 
   private ArrayList<Program> mHistory = new ArrayList<Program>();
   private int mHistoryIndex = 0;
-
+  private Program mNextProgram;
+  private Program mPreviousProgram;
+  
   private ProgramInfo() {
     mInstance = this;
     mConfigurationHandler = new ConfigurationHandler(DATAFILE_PREFIX);
@@ -99,6 +102,8 @@ public class ProgramInfo {
 
             @Override
             public void run() {
+              mPreviousProgram = null;
+              mNextProgram = null;
               ProgramInfoDialog.getInstance(Plugin.getPluginManager().getExampleProgram(), mLeftSplit, true);
             }
           });
@@ -245,11 +250,55 @@ public class ProgramInfo {
       window.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
       programTable.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
       // open dialog
+      findPreviousAndNextProgram(program);
       ProgramInfoDialog.getInstance(program, mLeftSplit, showSettings).show();
       window.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
       programTable.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
       mIsShowing = false;
     }
+  }
+  
+  private void findPreviousAndNextProgram(Program prog) {
+    Iterator<Program> dayProgram = Plugin.getPluginManager().getChannelDayProgram(prog.getDate(), prog.getChannel());
+    
+    Program previous = null;
+    Program next = null;
+    
+    while(dayProgram.hasNext()) {
+      Program current = dayProgram.next();
+      
+      if(current.equals(prog)) {
+        if(dayProgram.hasNext()) {
+          next = dayProgram.next();
+        }
+        break;
+      }
+      
+      previous = current;
+    }
+    
+    if(previous == null) {
+      dayProgram = Plugin.getPluginManager().getChannelDayProgram(prog.getDate().addDays(-1), prog.getChannel());
+      
+      if(dayProgram != null) {
+        while(dayProgram.hasNext()) {
+          previous = dayProgram.next();
+        }
+      }
+    }
+    
+    if(next == null) {
+      dayProgram = Plugin.getPluginManager().getChannelDayProgram(prog.getDate().addDays(1), prog.getChannel());
+      
+      if(dayProgram != null) {
+        if(dayProgram.hasNext()) {
+          next = dayProgram.next();
+        }
+      }
+    }
+    
+    mNextProgram = next;
+    mPreviousProgram = previous;
   }
 
   protected void setSettings(Dimension d) {
@@ -337,12 +386,57 @@ public class ProgramInfo {
       mHistoryIndex = mHistory.size() - 1;
     }
     if (mHistoryIndex >= 0) {
+      findPreviousAndNextProgram(mHistory.get(mHistoryIndex));
       ProgramInfoDialog.getInstance(mHistory.get(mHistoryIndex), mLeftSplit, true);
     }
   }
 
   public void historyForward() {
     history(+1);
+  }
+  
+  public boolean hasNextProgram() {
+    return mNextProgram != null;
+  }
+  
+  public void nextProgram() {
+    if(mNextProgram != null) {
+      // remember program for history
+      if (mHistory.isEmpty() || !mHistory.get(mHistory.size() - 1).equals(mNextProgram)) {
+        mHistory.add(mNextProgram);
+        mHistoryIndex = mHistory.size() - 1;
+      }
+      
+      Program next = mNextProgram;
+      findPreviousAndNextProgram(next);
+      ProgramInfoDialog.getInstance(next, mLeftSplit, true);
+    }
+  }
+
+  public boolean hasPreviousProgram() {
+    return mPreviousProgram != null;
+  }
+  
+  public void previousProgram() {
+    if(mPreviousProgram != null) {
+      // remember program for history
+      if (mHistory.isEmpty() || !mHistory.get(mHistory.size() - 1).equals(mPreviousProgram)) {
+        mHistory.add(mPreviousProgram);
+        mHistoryIndex = mHistory.size() - 1;
+      }
+      
+      Program previous = mPreviousProgram;
+      findPreviousAndNextProgram(previous);
+      ProgramInfoDialog.getInstance(previous, mLeftSplit, true);
+    }
+  }
+
+  public String getNextToolTipText() {
+    return mNextProgram != null ? mNextProgram.getTitle() : null;
+  }
+
+  public String getPreviousToolTipText() {
+    return mPreviousProgram != null ? mPreviousProgram.getTitle() : null;
   }
 
   public boolean canNavigateBack() {

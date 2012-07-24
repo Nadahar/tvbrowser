@@ -363,6 +363,10 @@ public class ProgramTextCreator {
     }
 
     buffer.append("</td><td align=\"right\" valign=\"top\"><table border=\"" + debugTables +"\"><tr><td>");
+    
+    final JButton next = new JButton(TVBrowserIcons.up(TVBrowserIcons.SIZE_SMALL));
+    final JButton previous = new JButton(TVBrowserIcons.down(TVBrowserIcons.SIZE_SMALL));
+    
     JButton btn = new JButton(TVBrowserIcons.left(TVBrowserIcons.SIZE_SMALL));
     buffer.append(doc.createCompTag(btn));
     btn.addActionListener(new ActionListener() {
@@ -370,10 +374,36 @@ public class ProgramTextCreator {
       @Override
       public void actionPerformed(ActionEvent e) {
         ProgramInfo.getInstance().historyBack();
+    /*    previous.setEnabled(ProgramInfo.getInstance().hasPreviousProgram());
+        next.setEnabled(ProgramInfo.getInstance().hasNextProgram());*/
       }
     });
     btn.setEnabled(ProgramInfo.getInstance().canNavigateBack());
     btn.setToolTipText(ProgramInfo.getInstance().navigationBackwardText());
+    
+    buffer.append("</td><td>");
+    buffer.append(doc.createCompTag(previous));
+    
+    previous.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        ProgramInfo.getInstance().previousProgram();    
+      }
+    });
+    previous.setEnabled(ProgramInfo.getInstance().hasPreviousProgram());
+    previous.setToolTipText(ProgramInfo.getInstance().getPreviousToolTipText());
+    
+    buffer.append("</td><td>");
+    buffer.append(doc.createCompTag(next));
+    
+    next.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        ProgramInfo.getInstance().nextProgram();
+      }
+    });
+    next.setEnabled(ProgramInfo.getInstance().hasNextProgram());
+    next.setToolTipText(ProgramInfo.getInstance().getNextToolTipText());    
 
     buffer.append("</td><td>");
     btn = new JButton(TVBrowserIcons.right(TVBrowserIcons.SIZE_SMALL));
