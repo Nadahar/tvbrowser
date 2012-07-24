@@ -41,6 +41,7 @@ import util.io.DownloadJob;
 import util.io.FileFormatException;
 import util.io.IOUtilities;
 import devplugin.Date;
+import devplugin.ProgramFieldType;
 
 /**
  * @author Til Schneider, www.murfman.de
@@ -132,6 +133,22 @@ public class DayProgramFile extends AbstractFile {
 
 
   public void addProgramFrame(ProgramFrame frame) {
+    mProgramFrameList.add(frame);
+  }
+  
+  
+  /**
+   * Adds a frame only if there isn't already one with same content
+   * @param frame
+   */
+  public void addDistinctProgramFrame(ProgramFrame frame) {
+    if (frame != null && frame.getId() == -1) {
+      for (ProgramFrame oldFrame : mProgramFrameList) {
+        if (frame.equals(oldFrame)) {
+          return;
+        }
+      }
+    }
     mProgramFrameList.add(frame);
   }
 
