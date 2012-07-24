@@ -47,10 +47,12 @@ public abstract class PluginsProgramFilter implements ProgramFilter {
    */
   public final String getName() {
     String subName = getSubName();
+    String name = getPluginAccessOfFilter() != null ? getPluginAccessOfFilter().getInfo().getName() : "DeactivatedPluginFilter: " + PluginProxyManager.getInstance().getPluginForId(mPluginId).getInfo().getName();
+    
     if (subName != null && subName.length() > 0) {
-      return getPluginAccessOfFilter() != null ? (getPluginAccessOfFilter().getInfo().getName() + ": " + subName) : "DeactivatedPluginFilter: " + mPluginId;
+      return name + ": " + subName;
     } else {
-      return getPluginAccessOfFilter() != null ? getPluginAccessOfFilter().getInfo().getName() : "DeactivatedPluginFilter: " + mPluginId;
+      return name;
     }
   }
   

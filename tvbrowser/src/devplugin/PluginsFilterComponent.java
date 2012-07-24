@@ -88,7 +88,7 @@ public abstract class PluginsFilterComponent implements FilterComponent {
   /**
    * Returns the user presentable name of this class.
    * Don't return <code>null</code>, return always a
-   * clear name that discribes this filter component
+   * clear name that describes this filter component
    * for selection in the filter component dialog.
    *
    * @return The user presentable name of this class.
