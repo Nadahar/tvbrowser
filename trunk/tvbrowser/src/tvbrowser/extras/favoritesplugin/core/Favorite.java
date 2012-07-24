@@ -975,9 +975,13 @@ public abstract class Favorite {
 
         synchronized(mPrograms) {
           for(int i = mPrograms.size()-1; i >= 0; i--) {
-            if(mPrograms.get(i).getProgramState() == Program.WAS_UPDATED_STATE) {
-              Program prog = mPrograms.remove(i);
-              mPrograms.add(i,Plugin.getPluginManager().getProgram(prog.getDate(),prog.getID()));
+            try {
+              if(mPrograms.get(i).getProgramState() == Program.WAS_UPDATED_STATE) {
+                Program prog = mPrograms.remove(i);
+                mPrograms.add(i,Plugin.getPluginManager().getProgram(prog.getDate(),prog.getID()));
+              }
+            }catch(Exception e) {
+              mPrograms.remove(i);
             }
           }
         }
@@ -985,9 +989,13 @@ public abstract class Favorite {
         if(mBlackList != null) {
           synchronized(mBlackList) {
             for(int i = mBlackList.size()-1; i >= 0; i--) {
-              if(mBlackList.get(i).getProgramState() == Program.WAS_UPDATED_STATE) {
-                Program prog = mBlackList.remove(i);
-                mBlackList.add(i,Plugin.getPluginManager().getProgram(prog.getDate(),prog.getID()));
+              try {
+                if(mBlackList.get(i).getProgramState() == Program.WAS_UPDATED_STATE) {
+                  Program prog = mBlackList.remove(i);
+                  mBlackList.add(i,Plugin.getPluginManager().getProgram(prog.getDate(),prog.getID()));
+                }
+              }catch(Exception e) {
+                mBlackList.remove(i);
               }
             }
           }
