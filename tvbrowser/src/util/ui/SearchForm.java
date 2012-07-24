@@ -165,7 +165,7 @@ public class SearchForm extends JPanel {
             if (evt.getStateChange() == ItemEvent.SELECTED) {
               Object selection = mPatternCB.getSelectedItem();
               if (selection instanceof SearchFormSettings) {
-                setSearchFormSettings((SearchFormSettings) selection);
+                setSearchFormSettings((SearchFormSettings) selection,false);
               }
             }
           }
@@ -346,7 +346,20 @@ public class SearchForm extends JPanel {
    * @param settings The settings to set.
    */
   public void setSearchFormSettings(SearchFormSettings settings) {
-    setPattern(settings.getSearchText());
+    setSearchFormSettings(settings,true);
+  }
+  
+  /**
+   * Sets the settings. These settings will be assigned to the corresponding
+   * UI components.
+   *
+   * @param settings The settings to set.
+   * @param updatePattern If the pattern text field/combo box should be updated.
+   */
+  public void setSearchFormSettings(SearchFormSettings settings, boolean updatePattern) {
+    if(updatePattern) {
+      setPattern(settings.getSearchText());
+    }
 
     switch (settings.getSearchIn()) {
       case SearchFormSettings.SEARCH_IN_TITLE:
