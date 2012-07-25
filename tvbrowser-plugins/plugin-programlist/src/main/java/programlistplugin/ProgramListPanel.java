@@ -44,6 +44,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import com.jgoodies.forms.factories.Borders;
@@ -414,7 +415,7 @@ public class ProgramListPanel extends JPanel implements PersonaListener {
     mFilterLabel.setForeground(mShowDescription.getForeground());
   }
   
-  void updateFilter(ProgramFilter filter) {
+  synchronized void updateFilter(ProgramFilter filter) {
     if(mListThread == null || !mListThread.isAlive()) {
       fillFilterBox();
       mFilterBox.setSelectedItem(filter.getName());
@@ -425,23 +426,27 @@ public class ProgramListPanel extends JPanel implements PersonaListener {
     mShowDescription.setSelected(value);
   }
   
-  void timeEvent() {
-    mUpdateCounter--;
-    if(mUpdateCounter < 0) {
-      mUpdateCounter = 5;
-      
-      if(mListThread == null || !mListThread.isAlive()) {
-        mUpdateThread = new Thread() {
-          public void run() {
-            for(int i = mModel.getSize() - 1; i >= 0; i--) {
-              if(((Program)mModel.get(i)).isExpired()) {
-                mModel.remove(i);
+  synchronized void timeEvent() {
+    SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        mUpdateCounter--;
+        if(mUpdateCounter < 0) {
+          mUpdateCounter = 5;
+          
+          if(mListThread == null || !mListThread.isAlive()) {
+            mUpdateThread = new Thread() {
+              public void run() {
+                for(int i = mModel.getSize() - 1; i >= 0; i--) {
+                  if(((Program)mModel.get(i)).isExpired()) {
+                    mModel.remove(i);
+                  }
+                }
               }
-            }
+            };
+            mUpdateThread.start();
           }
-        };
-        mUpdateThread.start();
+        }        
       }
-    }
+    });
   }
 }
