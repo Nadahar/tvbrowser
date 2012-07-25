@@ -125,7 +125,7 @@ public class ProgramListPlugin extends Plugin {
       }
       
       public void timeEvent() {
-        if(mCenterPanelEntry != null) {
+        if(mCenterPanelEntry != null) {System.out.println("xxx");
           mCenterPanelEntry.timeEvent();
         }
       }
