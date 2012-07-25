@@ -426,6 +426,9 @@ public class TVBrowser {
     else {
       splashRef.set(new DummySplash());
     }
+    
+    mLog.info("Deleting expired TV listings...");
+    TvDataBase.getInstance().deleteExpiredFiles(1, false);
 
     /* Initialize the MarkedProgramsList */
     MarkedProgramsList.getInstance();
@@ -486,9 +489,6 @@ public class TVBrowser {
         new Thread("Start finished callbacks") {
           public void run() {
             setPriority(Thread.MIN_PRIORITY);
-
-            mLog.info("Deleting expired TV listings...");
-            TvDataBase.getInstance().deleteExpiredFiles(1, false);
 
             // first reset "starting" flag of mainframe
             mainFrame.handleTvBrowserStartFinished();
