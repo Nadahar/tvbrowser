@@ -135,6 +135,8 @@ public class ListViewPanel extends JPanel implements PersonaListener {
   
   private JLabel mFilterLabel;
   private JLabel mAtLabel;
+  
+  private Thread mDateThread;
 
   protected int mTimeSelectionIndex;
   
@@ -753,7 +755,7 @@ public class ListViewPanel extends JPanel implements PersonaListener {
    * <p>
    * @param time The time to select.
    */
-  void showForTimeButton(int time) {
+  synchronized void showForTimeButton(int time) {
     try {
       if(time != -1) {
         if(mRuns.isSelected()) {
@@ -778,7 +780,7 @@ public class ListViewPanel extends JPanel implements PersonaListener {
   /**
    * Select now.
    */
-  void showForNow() {
+  synchronized void showForNow() {
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         try {
@@ -795,19 +797,30 @@ public class ListViewPanel extends JPanel implements PersonaListener {
    * @param date The date to select.
    * @param minute The minute to select.
    */
-  void showForDate(Date date, int minute) {
-    try {
-      if(minute >= 1440) {
-        date = date.addDays(1);
-        minute -= 1440;
-      }
-      if(mRuns.isSelected()) {
-        mOn.setSelected(true);
-      }
-      mDate.setSelectedItem(date);
-      
-      showForTimeButton(minute);
-    }catch(Throwable t) {t.printStackTrace();}
+  synchronized void showForDate(final Date date, final int minute) {
+    if(mDateThread == null || !mDateThread.isAlive()) {
+      mDateThread = new Thread() {        
+        @Override
+        public void run() {
+          // TODO Auto-generated method stub
+          Date myDate = date;
+          int myMinutes = minute;
+          
+          if(minute >= 1440) {
+            myDate = date.addDays(1);
+            myMinutes -= 1440;
+          }
+          if(mRuns.isSelected()) {
+            mOn.setSelected(true);
+          }
+          mDate.setSelectedItem(myDate);
+          
+          showForTimeButton(myMinutes);
+          
+        }
+      };
+      mDateThread.start();
+    }
   }
   
   /**
@@ -815,7 +828,7 @@ public class ListViewPanel extends JPanel implements PersonaListener {
    * <p>
    * @param filter The filter to select.
    */
-  void showForFilter(ProgramFilter filter) {
+  synchronized void showForFilter(ProgramFilter filter) {
     try {
       String selected = (String)mFilterBox.getSelectedItem();
       boolean foundSelected = false;
@@ -858,7 +871,7 @@ public class ListViewPanel extends JPanel implements PersonaListener {
    * <p>
    * @param ch The channel to select.
    */
-  void showChannel(final Channel ch) {
+  synchronized void showChannel(final Channel ch) {
     try {
       for(int i = 0; i < mProgramTable.getRowCount(); i++) {
         if(mProgramTable.getValueAt(i, 0).equals(ch)) {
