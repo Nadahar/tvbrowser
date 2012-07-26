@@ -181,7 +181,7 @@ class XmlTvDataHandler extends AbstractXmlTvDataHandler {
   protected void startProgram(final Date date, final int startTime) {
     ProgramFrameDispatcher dispatcher = getProgramDispatcher(getChannelId());
     mChannelCountry = dispatcher.getChannel().getCountry();
-
+    mDate = date;
     mFrame = new ProgramFrame();
   }
 
