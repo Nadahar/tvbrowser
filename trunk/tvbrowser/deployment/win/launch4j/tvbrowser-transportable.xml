@@ -4,7 +4,7 @@
   <jar>..\launcher\bin\JarWinJavaExeLauncher.jar</jar>
   <outfile>..\..\..\runtime\tvbrowser_transportable\tvbrowser-transportable.exe</outfile>
   <errTitle></errTitle>
-  <cmdLine>/start tvbrowser.jar -Xmx256m</cmdLine>
+  <cmdLine>/start tvbrowser.jar -Xmx320m</cmdLine>
   <chdir>.</chdir>
   <priority>normal</priority>
   <downloadUrl>http://java.com/download</downloadUrl>
@@ -23,7 +23,7 @@
     <fileVersion>3.0.0.0</fileVersion>
     <txtFileVersion>3.0</txtFileVersion>
     <fileDescription>TV-Browser</fileDescription>
-    <copyright>Copyright (c) 04/2003 by Martin Oberhauser, Til Schneider, Bodo Tasche, Ren� Mach, Michael Keppler under GNU General Public License.</copyright>
+    <copyright>Copyright (c) 04/2003 by Martin Oberhauser, Til Schneider, Bodo Tasche, Rene Mach, Michael Keppler under GNU General Public License.</copyright>
     <productVersion>3.0.0.0</productVersion>
     <txtProductVersion>3.0</txtProductVersion>
     <productName>TV-Browser</productName>
