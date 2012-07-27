@@ -165,11 +165,11 @@ class ProgramInfoSettings {
   }
 
   protected boolean getZoomEnabled() {
-    return getProperty(KEY_ZOOM_ENABLED, false);
+    return getProperty(KEY_ZOOM_ENABLED, true);
   }
 
   protected int getZoomValue() {
-    return getProperty(KEY_ZOOM_VALUE, 100);
+    return getProperty(KEY_ZOOM_VALUE, 120);
   }
 
   protected boolean getEnableSearch() {
