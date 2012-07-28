@@ -55,7 +55,7 @@ public class ChannelFilter {
   /**
    * Creates the Filter
    * @param country Country to use or NULL
-   * @param categories Category to use, if &lt; 0 use exact category, if MAX_INT don't use category
+   * @param categories Category to use, if &lt; 0 don't use category, if MAX_INT don't use category
    * @param name Name to search for. This is an "and" Search. Search-Terms are separated by Whitespace
    */
   public ChannelFilter(String country, int categories, String name) {
@@ -140,14 +140,15 @@ public class ChannelFilter {
     int i = 0;
     int max = mCategories.length;
 
-    while (i < max && !categoryTest) {
+    while (i < max) {
       int category = mCategories[i];
 
       if (category != Integer.MAX_VALUE) {
         if ((category < 0)) {
           category *= -1;
-          if (channel.getCategories() == category) {
-            categoryTest = true;
+          if ((channel.getCategories() & category) != 0) {
+            categoryTest = false;
+            break;
           }
         } else if (category == 0) {
           if (channel.getCategories() == 0) {
