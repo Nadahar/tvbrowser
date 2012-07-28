@@ -233,6 +233,8 @@ public class TVBrowser {
    * 5 minutes the settings.
    */
   private static boolean mSaveThreadShouldStop;
+  
+  private static boolean mSaveThreadIsRunning;
 
   /**
    * Show the SplashScreen during startup
@@ -509,6 +511,20 @@ public class TVBrowser {
 
             // finally submit plugin caused updates to database
             TvDataBase.getInstance().handleTvBrowserStartFinished();
+            
+            mainFrame.addWindowListener(new java.awt.event.WindowAdapter() {
+              public void windowIconified(java.awt.event.WindowEvent e) {
+                mSaveThreadShouldStop = true;
+                flushSettings(true);
+              }
+              
+              public void windowDeiconified(java.awt.event.WindowEvent e) {
+                mSaveThreadShouldStop = false;
+                if (mSaveThreadIsRunning == false) {
+                  startPeriodicSaveSettings();   
+                }
+              }
+            });
 
             startPeriodicSaveSettings();
 
@@ -688,6 +704,7 @@ public class TVBrowser {
     // an unexpected failure
     Thread saveThread = new Thread("Store settings periodically") {
       public void run() {
+        mSaveThreadIsRunning = true;
         mSaveThreadShouldStop = false;
         while (! mSaveThreadShouldStop) {
           try {
@@ -701,6 +718,7 @@ public class TVBrowser {
             flushSettings(true);
           }
         }
+        mSaveThreadIsRunning = false;
       }
     };
     saveThread.setPriority(Thread.MIN_PRIORITY);
