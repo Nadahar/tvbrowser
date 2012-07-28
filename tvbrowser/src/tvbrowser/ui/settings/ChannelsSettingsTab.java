@@ -564,7 +564,9 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
 
       if (channelListContains(allChannels, Channel.CATEGORY_TV)) {
         mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryNotSpecial",
-            "TV"), Channel.CATEGORY_TV * -1));
+            "TV"), new Integer[] { Channel.CATEGORY_TV,
+          Channel.CATEGORY_SPECIAL_MUSIC * -1, Channel.CATEGORY_SPECIAL_SPORT * -1,
+          Channel.CATEGORY_SPECIAL_NEWS * -1, Channel.CATEGORY_SPECIAL_OTHER * -1 }));
       }
       if (channelListContains(allChannels, Channel.CATEGORY_DIGITAL)) {
         addCategoryFilter(Channel.CATEGORY_DIGITAL);
@@ -580,6 +582,10 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
       }
       if (channelListContains(allChannels, Channel.CATEGORY_SPECIAL_OTHER)) {
         addCategoryFilter(Channel.CATEGORY_SPECIAL_OTHER);
+      }
+      if (channelListContains(allChannels, Channel.CATEGORY_TV)) {
+        mCategoryCB.addItem(new FilterItem(mLocalizer.msg("categoryFreeTv",
+            "TV"), new Integer[] { Channel.CATEGORY_TV, Channel.CATEGORY_PAY_TV * -1}));
       }
       if (channelListContains(allChannels, Channel.CATEGORY_PAY_TV)) {
         addCategoryFilter(Channel.CATEGORY_PAY_TV);
