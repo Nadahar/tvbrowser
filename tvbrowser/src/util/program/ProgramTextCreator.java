@@ -362,13 +362,12 @@ public class ProgramTextCreator {
       buffer.append("</div>");
     }
 
-    buffer.append("</td><td align=\"right\" valign=\"top\"><table border=\"" + debugTables +"\"><tr><td>");
+    buffer.append("</td><td align=\"right\" valign=\"top\"><table border=\"" + debugTables +"\" style=\"font-size:0\"><tr><td valign=\"middle\">");
     
     final JButton next = new JButton(TVBrowserIcons.up(TVBrowserIcons.SIZE_SMALL));
     final JButton previous = new JButton(TVBrowserIcons.down(TVBrowserIcons.SIZE_SMALL));
     
     JButton btn = new JButton(TVBrowserIcons.left(TVBrowserIcons.SIZE_SMALL));
-    buffer.append(doc.createCompTag(btn));
     btn.addActionListener(new ActionListener() {
 
       @Override
@@ -381,9 +380,6 @@ public class ProgramTextCreator {
     btn.setEnabled(ProgramInfo.getInstance().canNavigateBack());
     btn.setToolTipText(ProgramInfo.getInstance().navigationBackwardText());
     
-    buffer.append("</td><td>");
-    buffer.append(doc.createCompTag(previous));
-    
     previous.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -393,8 +389,12 @@ public class ProgramTextCreator {
     previous.setEnabled(ProgramInfo.getInstance().hasPreviousProgram());
     previous.setToolTipText(ProgramInfo.getInstance().getPreviousToolTipText());
     
-    buffer.append("</td><td>");
+    buffer.append(doc.createCompTag(btn));
+    buffer.append("</td><td></td><td>");
+    
     buffer.append(doc.createCompTag(next));
+    buffer.append("<br>");
+    buffer.append(doc.createCompTag(previous));
     
     next.addActionListener(new ActionListener() {
       @Override
@@ -404,8 +404,8 @@ public class ProgramTextCreator {
     });
     next.setEnabled(ProgramInfo.getInstance().hasNextProgram());
     next.setToolTipText(ProgramInfo.getInstance().getNextToolTipText());    
-
-    buffer.append("</td><td>");
+    
+    buffer.append("</td><td valign=\"middle\">");
     btn = new JButton(TVBrowserIcons.right(TVBrowserIcons.SIZE_SMALL));
     buffer.append(doc.createCompTag(btn));
     btn.addActionListener(new ActionListener() {
