@@ -232,6 +232,7 @@
       <fileset dir="${unpacked.dir}" includes="tvbrowser/ui/settings/BlockedPluginArrayProperty*"/>
       <fileset dir="${unpacked.dir}" includes="tvbrowser/core/tvdataservice/**"/>
       <fileset dir="${unpacked.dir}" includes="tvbrowser/core/plugin/ButtonActionIf*"/>
+      <fileset dir="${unpacked.dir}" includes="tvbrowser/core/plugin/PluginStateListener*"/>
       <fileset dir="${unpacked.dir}" includes="tvbrowser/core/ChannelUserSettings*"/>
       <fileset dir="${unpacked.dir}" includes="org/apache/commons/net/**"/>
       <fileset dir="${unpacked.dir}" includes="org/apache/commons/lang/**"/>
