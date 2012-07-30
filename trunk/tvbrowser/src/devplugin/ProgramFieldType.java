@@ -76,7 +76,7 @@ public class ProgramFieldType {
   /**
    * number of Object fields (TEXT and BINARY format)
    */
-  private static final int OBJECT_FIELDS_COUNT = 27;
+  private static final int OBJECT_FIELDS_COUNT = 28;
 
   /**
    * number of int fields (INT and TIME format)
@@ -350,6 +350,15 @@ public class ProgramFieldType {
   public static final ProgramFieldType ADDITIONAL_INFORMATION_TYPE
   = new ProgramFieldType(40, TEXT_FORMAT, true, "additional information",
                          "additionalInformation", "Additional information", 26);
+  
+  /**
+   * Title of the series (German: Reihe), if the program belongs to one
+   *
+   * @since 3.2
+   */
+  public static final ProgramFieldType SERIES_TYPE
+  = new ProgramFieldType(41, TEXT_FORMAT, true, "series",
+                         "series", "Series", 27);
 
 
   private int mTypeId;

@@ -340,11 +340,23 @@ public class ProgramTextCreator {
     buffer.append(" · ");
     buffer.append(prog.getChannel());
 
-    buffer.append("</b></div><div style=\"color:#003366; font-size:");
+    buffer.append("</b></div>");
+    String seriesField = prog.getTextField(ProgramFieldType.SERIES_TYPE);
+    if (seriesField != null) {
+      buffer.append("<div style=\"color:#003366; margin-top:1em; font-size:");
+
+      buffer.append(mBodyFontSize);
+
+      buffer.append(";\"><b>");
+      buffer.append(seriesField);
+      buffer.append("</b></div>");
+      
+    }
+    buffer.append("<div style=\"color:#003366; font-size:");
 
     buffer.append(titleSize);
 
-    buffer.append("; line-height:2.5em; font-family:");
+    buffer.append("; margin-top:0.5em; margin-bottom:0.5em; font-family:");
     buffer.append(titleFont).append(";").append(getCssStyle(titleStyle));
     buffer.append("\">");
     buffer.append(prog.getTitle());
