@@ -1199,10 +1199,25 @@ public class ProgramTextCreator {
   }
 
   private static void startInfoSection(StringBuilder buffer, String section, Color infoForeground, Color foreground) {
+    
+    
     buffer.append("<tr><td valign=\"top\" style=\"color:").append(HTMLTextHelper.getCssRgbColorEntry(infoForeground)).append("; font-size:");
     buffer.append(mBodyFontSize);
     buffer.append("\"><b>");
-    buffer.append(section);
+    
+    if (section.length() > 21 && section.indexOf("<br") == -1) {
+      //try to split long names
+      int space = section.lastIndexOf(' ');
+      if (space > 1 && space < section.length()-2) {
+        //if (space != section.indexOf(' ')) {
+          //TODO      
+        //}
+        buffer.append(section.substring(0, space)).append("<br>").append(section.substring(space+1));
+      }      
+    } else {
+      buffer.append(section);
+    }
+    
     buffer.append("</b></td><td style=\"color:").append(HTMLTextHelper.getCssRgbColorEntry(foreground)).append("; font-size:");
     buffer.append(mBodyFontSize);
     buffer.append("\">");
