@@ -246,8 +246,10 @@ class ProgramInfoDialog {
                   - it.getStartOffset());
               Matcher matcher = pattern.matcher(fragment);
               while (matcher.find()) {
+                if (matcher.start() != matcher.end()) {
                 highlighter.addHighlight(it.getStartOffset() + matcher.start(),
                     it.getStartOffset() + matcher.end(), painter);
+                }
               }
             } catch (BadLocationException ex) {
             }
