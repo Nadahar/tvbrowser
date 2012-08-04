@@ -64,6 +64,8 @@ public class BooleanSearcher extends AbstractSearcher {
   private IMatcher mRootMatcher;
 
   private boolean mCaseSensitive;
+  
+  private String mPattern;
 
   /**
    * Checks whether a value matches to the criteria of this searcher.
@@ -93,6 +95,7 @@ public class BooleanSearcher extends AbstractSearcher {
   public BooleanSearcher(String pattern, boolean caseSensitive) throws ParserException {
     Hashtable<String, Object> matcherTab = new Hashtable<String, Object>();
     mCaseSensitive = caseSensitive;
+    mPattern = pattern;
     mReplaceSpCh = true;
 
     pattern = pattern.trim();
@@ -278,6 +281,24 @@ public class BooleanSearcher extends AbstractSearcher {
       }
     }
     throw new ParserException(mLocalizer.msg("parenthesisExpected", "'(' expected"));
+  }
+  
+  /**
+   * get the pattern used by this searcher
+   * @return the pattern as string
+   * @since 3.2
+   */
+  public String getPattern() {
+    return mPattern;
+  }
+  
+  /**
+   * is this searcher case sensitive
+   * @return true if case sensitive
+   * @since 3.2
+   */
+  public boolean isCaseSensitive() {
+    return mCaseSensitive;
   }
 
 }
