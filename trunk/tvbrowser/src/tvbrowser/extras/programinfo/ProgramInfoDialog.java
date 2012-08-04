@@ -88,6 +88,7 @@ import tvbrowser.core.contextmenu.SeparatorMenuItem;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginManagerImpl;
 import tvbrowser.core.plugin.PluginProxyManager;
+import tvbrowser.core.search.booleansearch.BooleanSearcher;
 import tvbrowser.core.search.regexsearch.RegexSearcher;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.favoritesplugin.core.Favorite;
@@ -228,31 +229,51 @@ class ProgramInfoDialog {
         // TODO Auto-generated catch block
         e.printStackTrace();
       }
+      Pattern pattern = null;
       if (searcher instanceof RegexSearcher) {
-        Pattern pattern = ((RegexSearcher) searcher).getPattern();
+        pattern = ((RegexSearcher) searcher).getPattern();
+
         if (pattern != null) {
-          if (pattern.pattern().startsWith(".*")) {
-            pattern = Pattern.compile(pattern.pattern().substring(2));
+          if (pattern.pattern().startsWith(".*?")) {
+            pattern = Pattern.compile(pattern.pattern().substring(3), pattern.flags());
+          }
+          else if (pattern.pattern().startsWith(".*")) {
+            pattern = Pattern.compile(pattern.pattern().substring(2), pattern.flags());
           }
           if (pattern.pattern().endsWith(".*")) {
             pattern = Pattern.compile(pattern.pattern().substring(0,
-                pattern.pattern().length() - 2));
+                pattern.pattern().length() - 2), pattern.flags());
           }
-          for (HTMLDocument.Iterator it = document
-              .getIterator(HTML.Tag.CONTENT); it.isValid(); it.next()) {
-            try {
-              String fragment = document.getText(it.getStartOffset(), it
-                  .getEndOffset()
-                  - it.getStartOffset());
-              Matcher matcher = pattern.matcher(fragment);
-              while (matcher.find()) {
-                if (matcher.start() != matcher.end()) {
+        }
+
+      } else  if (searcher instanceof BooleanSearcher) {
+        String patternString = ((BooleanSearcher) searcher).getPattern();
+        if (patternString.indexOf("NOT") == -1) {
+          //dont accept strings with NOT since it gets too complicated
+          patternString = patternString.replaceAll("(\\(|\\))", " ")
+              .replaceAll("\\s+(AND|OR|NOT|\\&\\&|\\|\\|)\\s+", "|").trim();
+          int flag = 0;
+          if (!((BooleanSearcher) searcher).isCaseSensitive()) {
+            flag = Pattern.CASE_INSENSITIVE;
+          }
+          pattern = Pattern.compile(patternString, flag);
+        }
+      }
+      if (pattern != null) {
+        for (HTMLDocument.Iterator it = document
+            .getIterator(HTML.Tag.CONTENT); it.isValid(); it.next()) {
+          try {
+            String fragment = document.getText(it.getStartOffset(), it
+                .getEndOffset()
+                - it.getStartOffset());
+            Matcher matcher = pattern.matcher(fragment);
+            while (matcher.find()) {
+              if (matcher.start() != matcher.end()) {
                 highlighter.addHighlight(it.getStartOffset() + matcher.start(),
                     it.getStartOffset() + matcher.end(), painter);
-                }
               }
-            } catch (BadLocationException ex) {
             }
+          } catch (BadLocationException ex) {
           }
         }
       }
