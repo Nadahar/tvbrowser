@@ -71,7 +71,7 @@ public class ProgramInfoToolBar extends JPanel implements ProgramSelectionListen
       
       @Override
       public void mouseEntered(MouseEvent e) {
-        if(e.getComponent() instanceof JButton) {
+        if(e.getComponent() instanceof JButton && e.getComponent().isEnabled()) {
           ((JButton)e.getComponent()).setContentAreaFilled(true);
         }
       }
@@ -212,11 +212,11 @@ public class ProgramInfoToolBar extends JPanel implements ProgramSelectionListen
     mHistPrevious.setToolTipText(ProgramInfo.getInstance().navigationBackwardText());
     mHistNext.setEnabled(ProgramInfo.getInstance().canNavigateForward());
     mHistNext.setToolTipText(ProgramInfo.getInstance().navigationForwardText());
-    mPreviousSelection.setEnabled(previous != null);
+    mPreviousSelection.setEnabled(previous != null && previous.length > 0);
     mPreviousSelection.setProgramArr(previous);
-    mPrevious.setEnabled(previous != null);
-    mNext.setEnabled(next != null);
-    mNextSelection.setEnabled(next != null);
+    mPrevious.setEnabled(previous != null && previous.length > 0);
+    mNext.setEnabled(next != null && next.length > 0);
+    mNextSelection.setEnabled(next != null && next.length > 0);
     mNextSelection.setProgramArr(next);
   }
 }
