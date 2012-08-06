@@ -190,6 +190,10 @@ public class ProgramInfoToolBar extends JPanel implements ProgramSelectionListen
         mPrevious.setForeground(UIManager.getColor("Label.foreground"));
       }
     }
+    else {
+      mPrevious.setText("");;
+    }
+    
     if(next != null && next.length > 0) {
       mNext.setText(next[0].getTitle());
       
@@ -199,6 +203,9 @@ public class ProgramInfoToolBar extends JPanel implements ProgramSelectionListen
       else {
         mNext.setForeground(UIManager.getColor("Label.foreground"));
       }
+    }
+    else {
+      mNext.setText("");
     }
     
     mHistPrevious.setEnabled(ProgramInfo.getInstance().canNavigateBack());
