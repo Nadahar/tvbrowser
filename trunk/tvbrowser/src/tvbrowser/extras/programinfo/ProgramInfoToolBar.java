@@ -123,7 +123,7 @@ public class ProgramInfoToolBar extends JPanel implements ProgramSelectionListen
     if(current != null) {
       mCurrent.setText(current.getTitle());
       
-      if(next[0].isExpired()) {
+      if(current.isExpired()) {
         mCurrent.setForeground(Color.lightGray);
       }
       else {
