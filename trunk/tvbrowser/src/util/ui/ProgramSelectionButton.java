@@ -51,6 +51,7 @@ import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
 import javax.swing.ListCellRenderer;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
 import tvbrowser.ui.mainframe.MainFrame;
 import util.misc.StringPool;
@@ -79,7 +80,11 @@ public class ProgramSelectionButton extends JButton implements ActionListener {
         
         if(value instanceof Program) {
           c.setText(StringPool.getString(((Program)value).getTimeString()) + " " + ((Program)value).getTitle());
-        }
+          
+          if(!isSelected && !cellHasFocus && ((Program)value).isExpired()) {
+            c.setForeground(Color.lightGray);
+          }
+        }        
         
         return c;
       }

@@ -157,7 +157,9 @@ class ProgramInfoDialog {
   private JButton mConfigBtn;
 
   private JCheckBox mHighlight;
-
+  
+  private ProgramInfoToolBar mToolBar;
+  
   private ProgramInfoDialog(Dimension pluginsSize, boolean showSettings) {
     init(pluginsSize, showSettings);
   }
@@ -184,6 +186,11 @@ class ProgramInfoDialog {
   private synchronized void setProgram(Program program, boolean showSettings) {
     mProgram = program;
     addPluginActions(false);
+    
+    if(mToolBar != null) {
+      mToolBar.update();
+    }
+    
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         setProgramText();
@@ -308,10 +315,13 @@ class ProgramInfoDialog {
     mFunctionGroup.setTitle(mLocalizer.msg("functions", "Functions"));
     mFunctionGroup.setDoubleBuffered(true);
 
+    mToolBar = new ProgramInfoToolBar();
+    
     mMainPanel = new JPanel(new BorderLayout());
     mMainPanel.setPreferredSize(new Dimension(750, 500));
-    mMainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
+    mMainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));    
+    mMainPanel.add(mToolBar, BorderLayout.NORTH);
+    
     mInfoEP = new ProgramEditorPane();
     
     final ExtendedHTMLEditorKit kit = new ExtendedHTMLEditorKit();

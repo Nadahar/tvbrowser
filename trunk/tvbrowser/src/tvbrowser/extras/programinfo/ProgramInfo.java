@@ -81,8 +81,8 @@ public class ProgramInfo {
 
   private ArrayList<Program> mHistory = new ArrayList<Program>();
   private int mHistoryIndex = 0;
-  private Program mNextProgram;
-  private Program mPreviousProgram;
+  private Program[] mNextPrograms;
+  private Program[] mPreviousPrograms;
   
   private ProgramInfo() {
     mInstance = this;
@@ -102,8 +102,8 @@ public class ProgramInfo {
 
             @Override
             public void run() {
-              mPreviousProgram = null;
-              mNextProgram = null;
+              mPreviousPrograms = new Program[0];
+              mNextPrograms = new Program[0];
               ProgramInfoDialog.getInstance(Plugin.getPluginManager().getExampleProgram(), mLeftSplit, true);
             }
           });
@@ -260,45 +260,67 @@ public class ProgramInfo {
   
   private void findPreviousAndNextProgram(Program prog) {
     Iterator<Program> dayProgram = Plugin.getPluginManager().getChannelDayProgram(prog.getDate(), prog.getChannel());
+        
+    ArrayList<Program> previousPrograms = new ArrayList<Program>();
+    ArrayList<Program> nextPrograms = new ArrayList<Program>();
     
-    Program previous = null;
-    Program next = null;
+    boolean currentFound = false;
     
     while(dayProgram.hasNext()) {
       Program current = dayProgram.next();
       
       if(current.equals(prog)) {
-        if(dayProgram.hasNext()) {
-          next = dayProgram.next();
-        }
-        break;
+        currentFound = true;
       }
-      
-      previous = current;
+      else if(currentFound) {
+        nextPrograms.add(current);
+      }
+      else {
+        previousPrograms.add(current);
+      }
     }
     
-    if(previous == null) {
+    if(previousPrograms.size() < 5) {
       dayProgram = Plugin.getPluginManager().getChannelDayProgram(prog.getDate().addDays(-1), prog.getChannel());
       
       if(dayProgram != null) {
+        int i = 0;
+        
         while(dayProgram.hasNext()) {
-          previous = dayProgram.next();
+          previousPrograms.add(i++, dayProgram.next());
         }
       }
     }
     
-    if(next == null) {
+    if(nextPrograms.size() < 5) {
       dayProgram = Plugin.getPluginManager().getChannelDayProgram(prog.getDate().addDays(1), prog.getChannel());
       
       if(dayProgram != null) {
-        if(dayProgram.hasNext()) {
-          next = dayProgram.next();
+        while(dayProgram.hasNext()) {
+          Program next = dayProgram.next();
+          
+          nextPrograms.add(next);
+          
+          if(nextPrograms.size() >= 5) {
+            break;
+          }
         }
       }
     }
     
-    mNextProgram = next;
-    mPreviousProgram = previous;
+    int pSize = previousPrograms.size() >= 5 ? 5 : previousPrograms.size();
+    int nSize = nextPrograms.size() >= 5 ? 5 : nextPrograms.size();
+    
+    mPreviousPrograms = new Program[pSize];
+    mNextPrograms = new Program[nSize];
+    
+    for(int i = 0; i < pSize; i++) {
+      mPreviousPrograms[i] = previousPrograms.get(previousPrograms.size() - i - 1);
+    }
+    
+    for(int i = 0; i < nSize; i++) {
+      mNextPrograms[i] = nextPrograms.get(i);
+    }
   }
 
   protected void setSettings(Dimension d) {
@@ -373,10 +395,10 @@ public class ProgramInfo {
     return DATAFILE_PREFIX;
   }
 
-  public void historyBack() {
+  void historyBack() {
     history(-1);
   }
-
+  
   private void history(final int delta) {
     mHistoryIndex += delta;
     if (mHistoryIndex < 0) {
@@ -391,70 +413,73 @@ public class ProgramInfo {
     }
   }
 
-  public void historyForward() {
+  void historyForward() {
     history(+1);
   }
   
-  public boolean hasNextProgram() {
-    return mNextProgram != null;
+  Program[] getNextPrograms() {
+    return mNextPrograms;
   }
   
-  public void nextProgram() {
-    if(mNextProgram != null) {
+  void nextProgram() {
+    if(mNextPrograms != null && mNextPrograms.length > 0) {
       // remember program for history
-      if (mHistory.isEmpty() || !mHistory.get(mHistory.size() - 1).equals(mNextProgram)) {
-        mHistory.add(mNextProgram);
+      if (mHistory.isEmpty() || !mHistory.get(mHistory.size() - 1).equals(mNextPrograms[0])) {
+        mHistory.add(mNextPrograms[0]);
         mHistoryIndex = mHistory.size() - 1;
       }
       
-      Program next = mNextProgram;
+      Program next = mNextPrograms[0];
       findPreviousAndNextProgram(next);
       ProgramInfoDialog.getInstance(next, mLeftSplit, true);
     }
   }
+  
+  void showProgram(Program p) {
+    // remember program for history
+    if (mHistory.isEmpty() || !mHistory.get(mHistory.size() - 1).equals(p)) {
+      mHistory.add(p);
+      mHistoryIndex = mHistory.size() - 1;
+    }
+    
+    findPreviousAndNextProgram(p);
+    ProgramInfoDialog.getInstance(p, mLeftSplit, true);    
+  }
 
-  public boolean hasPreviousProgram() {
-    return mPreviousProgram != null;
+  Program[] getPreviousPrograms() {
+    return mPreviousPrograms;
   }
   
-  public void previousProgram() {
-    if(mPreviousProgram != null) {
+  void previousProgram() {
+    if(mPreviousPrograms != null && mPreviousPrograms.length > 0) {
       // remember program for history
-      if (mHistory.isEmpty() || !mHistory.get(mHistory.size() - 1).equals(mPreviousProgram)) {
-        mHistory.add(mPreviousProgram);
+      if (mHistory.isEmpty() || !mHistory.get(mHistory.size() - 1).equals(mPreviousPrograms[0])) {
+        mHistory.add(mPreviousPrograms[0]);
         mHistoryIndex = mHistory.size() - 1;
       }
       
-      Program previous = mPreviousProgram;
+      Program previous = mPreviousPrograms[0];
       findPreviousAndNextProgram(previous);
       ProgramInfoDialog.getInstance(previous, mLeftSplit, true);
     }
   }
 
-  public String getNextToolTipText() {
-    return mNextProgram != null ? mNextProgram.getTitle() : null;
-  }
-
-  public String getPreviousToolTipText() {
-    return mPreviousProgram != null ? mPreviousProgram.getTitle() : null;
-  }
-
-  public boolean canNavigateBack() {
+  boolean canNavigateBack() {
     return mHistoryIndex > 0;
   }
 
-  public boolean canNavigateForward() {
+  boolean canNavigateForward() {
     return mHistoryIndex < mHistory.size() - 1;
   }
 
-  public String navigationBackwardText() {
+  String navigationBackwardText() {
     if (!canNavigateBack()) {
       return null;
     }
     return mHistory.get(mHistoryIndex - 1).getTitle();
   }
 
-  public String navigationForwardText() {
+  String navigationForwardText() {
     if (!canNavigateForward()) {
       return null;
     }
