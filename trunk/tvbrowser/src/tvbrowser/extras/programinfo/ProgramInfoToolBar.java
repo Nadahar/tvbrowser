@@ -3,9 +3,13 @@ package tvbrowser.extras.programinfo;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
@@ -31,6 +35,22 @@ public class ProgramInfoToolBar extends JPanel implements ProgramSelectionListen
   
   public ProgramInfoToolBar() {
     setLayout(new FormLayout("0dlu,default,3dlu,default,10dlu,default:grow,0dlu","default,3dlu"));
+    
+    MouseAdapter mouseAdapter = new MouseAdapter() {
+      @Override
+      public void mouseExited(MouseEvent e) {
+        if(e.getComponent() instanceof JButton) {
+          ((JButton)e.getComponent()).setContentAreaFilled(false);
+        }
+      }
+      
+      @Override
+      public void mouseEntered(MouseEvent e) {
+        if(e.getComponent() instanceof JButton) {
+          ((JButton)e.getComponent()).setContentAreaFilled(true);
+        }
+      }
+    };
     
     mCurrent = new JLabel();
     mCurrent.setHorizontalTextPosition(JLabel.CENTER);
@@ -61,6 +81,7 @@ public class ProgramInfoToolBar extends JPanel implements ProgramSelectionListen
     mPreviousSelection.setContentAreaFilled(false);
     mPreviousSelection.setBorder(BorderFactory.createEmptyBorder());
     mPreviousSelection.setOpaque(false);
+    mPreviousSelection.addMouseListener(mouseAdapter);
     
     mNextSelection = new ProgramSelectionButton(null, TVBrowserIcons.right(TVBrowserIcons.SIZE_SMALL));
     mNextSelection.addProgramSelectionListener(this);
@@ -68,12 +89,14 @@ public class ProgramInfoToolBar extends JPanel implements ProgramSelectionListen
     mNextSelection.setContentAreaFilled(false);
     mNextSelection.setBorder(BorderFactory.createEmptyBorder());
     mNextSelection.setOpaque(false);
+    mNextSelection.addMouseListener(mouseAdapter);
     
     mPrevious = new JButton();
     mPrevious.setForeground(UIManager.getColor("Label.foreground"));
     mPrevious.setContentAreaFilled(false);
     mPrevious.setBorder(BorderFactory.createEmptyBorder());
     mPrevious.setOpaque(false);
+    mPrevious.addMouseListener(mouseAdapter);
     mPrevious.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -86,6 +109,7 @@ public class ProgramInfoToolBar extends JPanel implements ProgramSelectionListen
     mNext.setContentAreaFilled(false);
     mNext.setBorder(BorderFactory.createEmptyBorder());
     mNext.setOpaque(false);
+    mNext.addMouseListener(mouseAdapter);
     mNext.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -97,7 +121,7 @@ public class ProgramInfoToolBar extends JPanel implements ProgramSelectionListen
     
     JPanel selection = new JPanel(new FormLayout("default,1dlu,100dlu,1dlu,100dlu:grow,1dlu,100dlu,1dlu,default","default"));
     selection.setBackground(UIManager.getColor("TextField.background"));
-    selection.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(UIManager.getColor("Label.foreground")), BorderFactory.createEmptyBorder(3,3,3,3)));
+    selection.setBorder(BorderFactory.createCompoundBorder(UIManager.getBorder("TextField.border"), BorderFactory.createEmptyBorder(3,3,3,3)));
     
     selection.add(mPreviousSelection, cc.xy(1, 1));
     selection.add(mPrevious, cc.xy(3, 1));
