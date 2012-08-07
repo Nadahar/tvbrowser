@@ -930,11 +930,15 @@ public class PluginManagerImpl implements PluginManager {
   public void scrollToProgram(Program program) {
     if(program != null) {
       MainFrame.getInstance().scrollToProgram(program);
+      MainFrame.getInstance().showProgramTableTabIfAvailable();
     }
   }
   
   public void selectProgram(final Program program) {
-    MainFrame.getInstance().selectProgram(program);
+    if(program != null) {
+      MainFrame.getInstance().selectProgram(program);
+      MainFrame.getInstance().showProgramTableTabIfAvailable();
+    }
   }
   
   /**
@@ -945,6 +949,7 @@ public class PluginManagerImpl implements PluginManager {
    */
   public void scrollToTime(int time) {
     MainFrame.getInstance().scrollToTime(time);
+    MainFrame.getInstance().showProgramTableTabIfAvailable();
   }
   
   /**
@@ -955,6 +960,7 @@ public class PluginManagerImpl implements PluginManager {
    */
   public void scrollToChannel(Channel channel) {
     MainFrame.getInstance().getProgramTableScrollPane().scrollToChannel(channel);
+    MainFrame.getInstance().showProgramTableTabIfAvailable();
   }
   
   /**
@@ -966,6 +972,7 @@ public class PluginManagerImpl implements PluginManager {
   public void goToDate(Date date) {
     if(TvDataBase.getInstance().dataAvailable(date)) {
       MainFrame.getInstance().goTo(date);
+      MainFrame.getInstance().showProgramTableTabIfAvailable();
     }
   }
 

@@ -3232,4 +3232,14 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
 
   @Override
   public void pluginUnloaded(PluginProxy plugin) {}
+  
+  public void showProgramTableTabIfAvailable() {
+    if(mCenterTabPane != null && mScrollPaneWrapper != null) {
+      int index = mCenterTabPane.indexOfComponent(mScrollPaneWrapper.getPanel());
+      
+      if(index >= 0) {
+        mCenterTabPane.setSelectedIndex(index);
+      }
+    }
+  }
 }
