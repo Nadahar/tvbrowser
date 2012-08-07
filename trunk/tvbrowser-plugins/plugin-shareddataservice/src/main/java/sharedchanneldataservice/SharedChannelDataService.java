@@ -541,9 +541,9 @@ public class SharedChannelDataService extends AbstractTvDataService{
     Channel alienChannel = HelperMethods.getChannelFromId(alienID, subScribedChannels);
     Iterator<Program> alienDayProgram;
     MutableChannelDayProgram  changedAlienDayProgram = sharedSourcesUpdate.get(alienID+date.getDateString());
-       if (changedAlienDayProgram!=null && changedAlienDayProgram.getProgramCount()>0) {
-         alienDayProgram = changedAlienDayProgram.getPrograms();
-       } else {
+    if (changedAlienDayProgram!=null && changedAlienDayProgram.getProgramCount()>0) {
+      alienDayProgram = changedAlienDayProgram.getPrograms();
+    } else {
       alienDayProgram = getPluginManager().getChannelDayProgram(date, alienChannel);
     }
     if (alienDayProgram == null || !alienDayProgram.hasNext()){
@@ -552,42 +552,46 @@ public class SharedChannelDataService extends AbstractTvDataService{
       boolean isFirst = true;
       Program alienProg = null;
       while (alienDayProgram.hasNext()) {
-    	  alienProg = alienDayProgram.next();
-    	  if (alienProg.getStartTime()+alienProg.getLength() > startTime && alienProg.getStartTime() < endTime) {
-    		  if (isFirst){
-    			  if (alienProg.getStartTime()>startTime && fillStartFlg){
-    				  	// check for yesterdays last program to fill the gap after midnight
-     					  Iterator<Program> alienYesterdayProgram;
-    					  Date yesterday = date.addDays(-1);
-    					  MutableChannelDayProgram  changedAlienYesterdayProgram = sharedSourcesUpdate.get(alienID+yesterday.getDateString());
-    					  if (changedAlienYesterdayProgram!=null && changedAlienYesterdayProgram.getProgramCount()>0) {
-    						  alienYesterdayProgram = changedAlienYesterdayProgram.getPrograms();
-    					  } else {
-    						  alienYesterdayProgram = getPluginManager().getChannelDayProgram(yesterday, alienChannel);
-    						  if (alienDayProgram == null || !alienDayProgram.hasNext()){
-    							  dayProgram.addProgram(dummyProgram(channel, date, startTime, endTime, alienChannel.getName()));
-    						  } else {
-    							  Program alienStartProg = null;
-    							  while (alienYesterdayProgram.hasNext()) {
-     								  alienStartProg = alienYesterdayProgram.next();
+        alienProg = alienDayProgram.next();
+        if (alienProg.getStartTime()+alienProg.getLength() > startTime && alienProg.getStartTime() < endTime) {
+          if (isFirst){
+            if (alienProg.getStartTime()>startTime && fillStartFlg){
+              if (startTime == 0){
+                // check for yesterdays last program to fill the gap after midnight
+                Iterator<Program> alienYesterdayProgram;
+                Date yesterday = date.addDays(-1);
+                MutableChannelDayProgram  changedAlienYesterdayProgram = sharedSourcesUpdate.get(alienID+yesterday.getDateString());
+                if (changedAlienYesterdayProgram!=null && changedAlienYesterdayProgram.getProgramCount()>0) {
+                  alienYesterdayProgram = changedAlienYesterdayProgram.getPrograms();
+                } else {
+                  alienYesterdayProgram = getPluginManager().getChannelDayProgram(yesterday, alienChannel);
+                  if (alienDayProgram == null || !alienDayProgram.hasNext()){
+                    dayProgram.addProgram(dummyProgram(channel, date, startTime, endTime, alienChannel.getName()));
+                  } else {
+                    Program alienStartProg = null;
+                    while (alienYesterdayProgram.hasNext()) {
+                      alienStartProg = alienYesterdayProgram.next();
 
-    							  }
-    							  if (alienStartProg==null){
-    								  dayProgram.addProgram(dummyProgram(channel, date, startTime, alienProg.getStartTime(), alienChannel.getName()));
+                    }
+                    if (alienStartProg==null){
+                      dayProgram.addProgram(dummyProgram(channel, date, startTime, alienProg.getStartTime(), alienChannel.getName()));
 
-    							  } else {
-    								  dayProgram.addProgram(copiedProgram(alienStartProg, channel, date, startTime, endTime, true));
-    							  }
-    						  }
-    					  }
-    			  }
-    			  isFirst= false;
-    		  }
-    		  dayProgram.addProgram(copiedProgram(alienProg, channel, date, startTime, endTime, false));
+                    } else {
+                      dayProgram.addProgram(copiedProgram(alienStartProg, channel, date, startTime, endTime, true));
+                    }
+                  }
+                }
+              }else{
+                dayProgram.addProgram(dummyProgram(channel, date, startTime, alienProg.getStartTime(), alienChannel.getName()));
+              }
+            }
+            isFirst= false;
+          }
+          dayProgram.addProgram(copiedProgram(alienProg, channel, date, startTime, endTime, false));
         }
       }
-      if (alienProg!= null && alienProg.getStartTime()+alienProg.getLength()<endTime){
-        dayProgram.addProgram(dummyProgram(channel, date, startTime, alienProg.getStartTime(), alienChannel.getName()));
+      if (alienProg!= null && alienProg.getStartTime()+alienProg.getLength()<endTime && endTime < 1440){
+        dayProgram.addProgram(dummyProgram(channel, date, alienProg.getStartTime()+alienProg.getLength(), endTime, alienChannel.getName()));
       }
     }
   }
@@ -667,8 +671,8 @@ public class SharedChannelDataService extends AbstractTvDataService{
       int cutInfo = Integer.parseInt((String)mProp.getProperty("cutInfoIndex"));
 
       if (midNightFlg){
-    	  maxEnd = maxEnd+1440;
-    	  minStart = minStart + 1440;
+        maxEnd = maxEnd+1440;
+        minStart = minStart + 1440;
       }
       switch (cutInfo) { 
       case 0: // Custom Information before
@@ -774,40 +778,40 @@ public class SharedChannelDataService extends AbstractTvDataService{
 
       case 4: // Custom Information after
         if (version >= 300) {
-			if (alienProg.getStartTime() < minStart) {
-				if (newProgram.getTextField(ProgramFieldType.CUSTOM_TYPE) == null) {
-					prevText = "";
-					infoText = mLocalizer.msg("missingStart", "Missing Start",
-							(minStart - alienProg.getStartTime()));
-				} else {
-					prevText = newProgram
-							.getTextField(ProgramFieldType.CUSTOM_TYPE);
-					infoText = System.getProperty("line.separator")
-							+ mLocalizer.msg("missingStart", "Missing Start",
-									(minStart - alienProg.getStartTime()));
-				}
-				newProgram.setTextField(ProgramFieldType.CUSTOM_TYPE, prevText
-						+ infoText);
-			}
-			if (alienProg.getStartTime() + alienProg.getLength() > maxEnd) {
-				if (newProgram.getTextField(ProgramFieldType.CUSTOM_TYPE) == null) {
-					prevText = "";
-					infoText = mLocalizer.msg("missingEnd", "Missing End",
-							alienProg.getStartTime() + alienProg.getLength()
-									- maxEnd);
-				} else {
-					prevText = newProgram
-							.getTextField(ProgramFieldType.CUSTOM_TYPE);
-					infoText = System.getProperty("line.separator")
-							+ mLocalizer.msg("missingEnd", "Missing End",
-									alienProg.getStartTime()
-											+ alienProg.getLength() - maxEnd);
-				}
-				newProgram.setTextField(ProgramFieldType.CUSTOM_TYPE, prevText
-						+ infoText);
-			}
-		}
-		break;
+          if (alienProg.getStartTime() < minStart) {
+            if (newProgram.getTextField(ProgramFieldType.CUSTOM_TYPE) == null) {
+              prevText = "";
+              infoText = mLocalizer.msg("missingStart", "Missing Start",
+                  (minStart - alienProg.getStartTime()));
+            } else {
+              prevText = newProgram
+              .getTextField(ProgramFieldType.CUSTOM_TYPE);
+              infoText = System.getProperty("line.separator")
+              + mLocalizer.msg("missingStart", "Missing Start",
+                  (minStart - alienProg.getStartTime()));
+            }
+            newProgram.setTextField(ProgramFieldType.CUSTOM_TYPE, prevText
+                + infoText);
+          }
+          if (alienProg.getStartTime() + alienProg.getLength() > maxEnd) {
+            if (newProgram.getTextField(ProgramFieldType.CUSTOM_TYPE) == null) {
+              prevText = "";
+              infoText = mLocalizer.msg("missingEnd", "Missing End",
+                  alienProg.getStartTime() + alienProg.getLength()
+                  - maxEnd);
+            } else {
+              prevText = newProgram
+              .getTextField(ProgramFieldType.CUSTOM_TYPE);
+              infoText = System.getProperty("line.separator")
+              + mLocalizer.msg("missingEnd", "Missing End",
+                  alienProg.getStartTime()
+                  + alienProg.getLength() - maxEnd);
+            }
+            newProgram.setTextField(ProgramFieldType.CUSTOM_TYPE, prevText
+                + infoText);
+          }
+        }
+        break;
 
       case 5: // Description Field after
         if (alienProg.getStartTime() < minStart) {
