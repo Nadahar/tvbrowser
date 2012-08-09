@@ -40,8 +40,8 @@ import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.Program;
 
-import util.ui.ProgramSelectionButton;
-import util.ui.ProgramSelectionListener;
+import util.ui.ObjectSelectionButton;
+import util.ui.ObjectSelectionListener;
 import util.ui.TVBrowserIcons;
 
 /**
@@ -49,14 +49,14 @@ import util.ui.TVBrowserIcons;
  * 
  * @author René Mach
  */
-public class ProgramInfoToolBar extends JPanel implements ProgramSelectionListener {
+public class ProgramInfoToolBar extends JPanel implements ObjectSelectionListener<Program> {
   private JButton mHistPrevious;
   private JButton mHistNext;
   private JButton mPrevious;
   private JButton mNext;
   private JLabel mCurrent;
-  private ProgramSelectionButton mPreviousSelection;
-  private ProgramSelectionButton mNextSelection;
+  private ObjectSelectionButton<Program> mPreviousSelection;
+  private ObjectSelectionButton<Program> mNextSelection;
   
   public ProgramInfoToolBar() {
     setLayout(new FormLayout("0dlu,default,3dlu,default,10dlu,default:grow,0dlu","default,3dlu"));
@@ -100,7 +100,7 @@ public class ProgramInfoToolBar extends JPanel implements ProgramSelectionListen
       }
     });
     
-    mPreviousSelection = new ProgramSelectionButton(null, TVBrowserIcons.left(TVBrowserIcons.SIZE_SMALL));
+    mPreviousSelection = new ObjectSelectionButton<Program>(null, TVBrowserIcons.left(TVBrowserIcons.SIZE_SMALL));
     mPreviousSelection.addProgramSelectionListener(this);
     mPreviousSelection.setEnabled(false);
     mPreviousSelection.setContentAreaFilled(false);
@@ -108,7 +108,7 @@ public class ProgramInfoToolBar extends JPanel implements ProgramSelectionListen
     mPreviousSelection.setOpaque(false);
     mPreviousSelection.addMouseListener(mouseAdapter);
     
-    mNextSelection = new ProgramSelectionButton(null, TVBrowserIcons.right(TVBrowserIcons.SIZE_SMALL));
+    mNextSelection = new ObjectSelectionButton<Program>(null, TVBrowserIcons.right(TVBrowserIcons.SIZE_SMALL));
     mNextSelection.addProgramSelectionListener(this);
     mNextSelection.setEnabled(false);
     mNextSelection.setContentAreaFilled(false);
@@ -160,7 +160,7 @@ public class ProgramInfoToolBar extends JPanel implements ProgramSelectionListen
   }
 
   @Override
-  public void programSeleted(Program prog) {
+  public void objectSeleted(Program prog) {
     ProgramInfo.getInstance().showProgram(prog);
   }
   
@@ -213,10 +213,10 @@ public class ProgramInfoToolBar extends JPanel implements ProgramSelectionListen
     mHistNext.setEnabled(ProgramInfo.getInstance().canNavigateForward());
     mHistNext.setToolTipText(ProgramInfo.getInstance().navigationForwardText());
     mPreviousSelection.setEnabled(previous != null && previous.length > 0);
-    mPreviousSelection.setProgramArr(previous);
+    mPreviousSelection.setObjectArr(previous);
     mPrevious.setEnabled(previous != null && previous.length > 0);
     mNext.setEnabled(next != null && next.length > 0);
     mNextSelection.setEnabled(next != null && next.length > 0);
-    mNextSelection.setProgramArr(next);
+    mNextSelection.setObjectArr(next);
   }
 }

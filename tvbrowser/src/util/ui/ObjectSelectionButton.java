@@ -51,7 +51,6 @@ import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
 import javax.swing.ListCellRenderer;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 
 import tvbrowser.ui.mainframe.MainFrame;
 import util.misc.StringPool;
@@ -60,19 +59,20 @@ import devplugin.Program;
 
 /**
  * A Button with an attached dialog to
- * select programs.
+ * select Objects.
  * 
  * @author René Mach
+ * @param <E> The class of the selection Object.
  * @since 3.2
  */
-public class ProgramSelectionButton extends JButton implements ActionListener {
-  private Program[] mProgramArr;
+public class ObjectSelectionButton<E> extends JButton implements ActionListener {
+  private E[] mObjectArr;
   private ListCellRenderer mListCellRenderer;
-  private ArrayList<ProgramSelectionListener> mListenerList;
+  private ArrayList<ObjectSelectionListener<E>> mListenerList;
   private long mLastClosedDialogTime;
   
-  public ProgramSelectionButton(Program[] programs, ImageIcon icon) {
-    mListenerList = new ArrayList<ProgramSelectionListener>();
+  public ObjectSelectionButton(E[] objects, ImageIcon icon) {
+    mListenerList = new ArrayList<ObjectSelectionListener<E>>();
     mLastClosedDialogTime = 0;
     mListCellRenderer = new DefaultListCellRenderer() {
       public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
@@ -107,7 +107,7 @@ public class ProgramSelectionButton extends JButton implements ActionListener {
       }
     });
     addActionListener(this);
-    mProgramArr = programs;
+    mObjectArr = objects;
     setHorizontalTextPosition(RIGHT);
   }
 
@@ -117,15 +117,15 @@ public class ProgramSelectionButton extends JButton implements ActionListener {
   }
   
   private void showDialog() {
-    if(mProgramArr != null && mLastClosedDialogTime + 500 < System.currentTimeMillis()) {
-      final JList list = new JList(mProgramArr);
+    if(mObjectArr != null && mLastClosedDialogTime + 800 < System.currentTimeMillis()) {
+      final JList list = new JList(mObjectArr);
       final JDialog dialog = new JDialog(UiUtilities.getLastModalChildOf(MainFrame.getInstance()));
       
       list.addMouseListener(new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent e) {
           if(SwingUtilities.isLeftMouseButton(e)) {
-            programSelected(list,dialog);
+            objectSelected(list,dialog);
           }
         }
       });
@@ -145,7 +145,7 @@ public class ProgramSelectionButton extends JButton implements ActionListener {
         @Override
         public void keyPressed(KeyEvent e) {
           if(e.getKeyCode() == KeyEvent.VK_ENTER || e.getKeyCode() == KeyEvent.VK_SPACE) {
-            programSelected(list,dialog);
+            objectSelected(list,dialog);
           }
         }
       });
@@ -215,30 +215,31 @@ public class ProgramSelectionButton extends JButton implements ActionListener {
     }    
   }
   
-  private void programSelected(JList list, JDialog dialog) {
+  private void objectSelected(JList list, JDialog dialog) {
     if(list.getSelectedIndex() >= 0) {
-      Program prog = (Program)list.getSelectedValue();
+      @SuppressWarnings("unchecked")
+      E prog = (E)list.getSelectedValue();
       
-      for(ProgramSelectionListener listener : mListenerList) {
-        listener.programSeleted(prog);
+      for(ObjectSelectionListener<E> listener : mListenerList) {
+        listener.objectSeleted(prog);
       }
     
       dialog.dispose();
     }
   }
   
-  public void setProgramArr(Program[] programArr) {
-    mProgramArr = programArr;
+  public void setObjectArr(E[] objectArr) {
+    mObjectArr = objectArr;
   }
   
   public void setListCellRenderer(ListCellRenderer renderer) {
     mListCellRenderer = renderer;
   }
   
-  public void addProgramSelectionListener(ProgramSelectionListener listener) {
+  public void addProgramSelectionListener(ObjectSelectionListener<E> listener) {
     mListenerList.add(listener);
   }
-  public void removeProgramSelectionListener(ProgramSelectionListener listener) {
+  public void removeProgramSelectionListener(ObjectSelectionListener<E> listener) {
     mListenerList.remove(listener);
   }
 }
