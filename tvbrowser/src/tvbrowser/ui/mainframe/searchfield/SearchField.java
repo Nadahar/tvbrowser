@@ -27,6 +27,8 @@ package tvbrowser.ui.mainframe.searchfield;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -45,6 +47,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -239,8 +242,25 @@ public class SearchField extends JPanel {
         }
       }
     });
+    
+    ImageIcon search = new ImageIcon(TVBrowserIcons.search(TVBrowserIcons.SIZE_SMALL).getImage()) {
+      public void paintIcon(Component c,Graphics g,int x,int y) {
+        super.paintIcon(c, g, x, y);
+        
+        int x1 = x+super.getIconWidth()+2;
+        int y1 = y+getIconHeight()/2-1;
+        int[] xPoints = {x1,x1+9,x1+4};
+        int[] yPoints = {y1,y1,y1+5};
+        g.setColor(Color.gray);
+        g.fillPolygon(xPoints, yPoints, 3);
+      }
+      
+      public int getIconWidth() {
+        return super.getIconWidth() + 11;
+      }
+    };
 
-    mSearchButton = new JLabel(TVBrowserIcons.search(TVBrowserIcons.SIZE_SMALL));
+    mSearchButton = new JLabel(search);
     mSearchButton.setBorder(BorderFactory.createEmptyBorder());
     mSearchButton.setFocusable(false);
     mSearchButton.setRequestFocusEnabled(false);
@@ -269,8 +289,8 @@ public class SearchField extends JPanel {
     });
     setSearchButton();
     mText.setEditable(true);
-    mText.setOpaque(false);
     panel.setOpaque(false);
+    mText.setOpaque(false);
     updatePersona();
     
     panel.add(mSearchButton, BorderLayout.WEST);
@@ -428,6 +448,7 @@ public class SearchField extends JPanel {
   public void updatePersona() {
     if(Persona.getInstance().getHeaderImage() != null) {
       Color c = UIManager.getColor("List.background");
+      
       mSearchParent.setBackground(new Color(c.getRed(),c.getGreen(),c.getBlue(),180));
       mText.addFocusListener(mPersonaFocusListener);
     }
