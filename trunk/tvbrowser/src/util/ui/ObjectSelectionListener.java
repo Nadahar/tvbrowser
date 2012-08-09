@@ -23,20 +23,18 @@
  */
 package util.ui;
 
-import devplugin.Program;
-
 /**
  * A listener that informs about
- * selection events of Programs.
+ * selection events of Objects.
  * 
  * @author René Mach
  * @since 3.2
  */
-public interface ProgramSelectionListener {
+public interface ObjectSelectionListener<E> {
   /**
-   * Informs about a selection of a program.
+   * Informs about a selection of an object.
    * <p>
-   * @param prog The selected program.
+   * @param object The selected object.
    */
-  public void programSeleted(Program prog);
+  public void objectSeleted(E object);
 }
