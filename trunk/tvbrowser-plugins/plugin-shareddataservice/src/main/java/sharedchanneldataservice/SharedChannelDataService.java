@@ -80,7 +80,7 @@ public class SharedChannelDataService extends AbstractTvDataService{
    * Since TV-Browser 0.9.7 getAPIVersion must return 1.0 
    */
   public static Version getVersion() {
-    return new Version(1, 0, 0, true, null);
+    return new Version(1, 1, 0, true, null);
   }
 
   /**
