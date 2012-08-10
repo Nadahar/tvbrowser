@@ -114,8 +114,8 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
   private static String OPEN_BRACKET_KEY = "open_bracket";
   private static String CLOSE_BRACKET_KEY = "close_bracket";
   
-  DefaultListModel mFilterComponentListModel;
-  DefaultListModel mFilterConstructionListModel;
+  private DefaultListModel mFilterComponentListModel;
+  private DefaultListModel mFilterConstructionListModel;
 
   public EditFilterDlg(JDialog parent, FilterList filterList, UserFilter filter) {
     super(parent,true);
@@ -155,7 +155,7 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
     mFilterRuleTF.getDocument().addDocumentListener(this);
     mFilterRuleTF.addCaretListener(this);  
     
-    FormLayout layout = new FormLayout("5dlu,fill:default:grow,5dlu,default,5dlu","default,5dlu,default,10dlu,default,5dlu,default,default,5dlu,default,5dlu,fill:default:grow,5dlu,default,5dlu,default,5dlu,default");
+    FormLayout layout = new FormLayout("5dlu,fill:min:grow,5dlu,default,5dlu","default,5dlu,default,10dlu,default,5dlu,default,default,5dlu,default,5dlu,fill:min:grow,5dlu,default,5dlu,default,5dlu,default");
     PanelBuilder filterCreation = new PanelBuilder(layout,(JPanel)getContentPane());
     filterCreation.setDefaultDialogBorder();
     
@@ -167,7 +167,7 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
     mFilterRuleErrorLb = filterCreation.addLabel(mLocalizer.msg("ruleExample",
     "example: component1 or (component2 and not component3)"), CC.xy(2,8));
     
-    FormLayout filterCompLayout = new FormLayout("default:grow,5dlu,default","default,5dlu,default,5dlu,default,fill:0dlu:grow");
+    FormLayout filterCompLayout = new FormLayout("default:grow,5dlu,default","default,5dlu,default,5dlu,default,fill:min:grow");
     PanelBuilder filterComponents = new PanelBuilder(filterCompLayout);
 
     mNewBtn = new JButton(TVBrowserIcons.newIcon(TVBrowserIcons.SIZE_SMALL));
@@ -338,7 +338,7 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
     
     filterComponents.add(new JScrollPane(mFilterComponentList), CC.xywh(1,1,1,6));
     
-    PanelBuilder listPanel = new PanelBuilder(new FormLayout("5dlu,default:grow,5dlu,10dlu,5dlu,default:grow,5dlu","default,5dlu,fill:default:grow"));
+    PanelBuilder listPanel = new PanelBuilder(new FormLayout("5dlu,min:grow,5dlu,10dlu,5dlu,min:grow,5dlu","default,5dlu,fill:min:grow"));
     listPanel.addSeparator(mLocalizer.msg("componentsTitle","Available filter components:"), CC.xyw(5,1,3));
     listPanel.add(filterComponents.getPanel(), CC.xy(6,3));
     listPanel.addSeparator(mLocalizer.msg("filterConstruction", "Filter construction"), CC.xyw(1,1,3));
@@ -351,7 +351,8 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
     
     updateBtns();
 
-    Settings.layoutWindow("editFilterDlg",this,new Dimension(600,580));
+    setMinimumSize(new Dimension(600,560));
+    Settings.layoutWindow("editFilterDlg",this,getMinimumSize());
     setLocationRelativeTo(mParent);
     setVisible(true);
   }

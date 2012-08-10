@@ -151,7 +151,7 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
     mCenterPanel = new JPanel(new BorderLayout());
     
     PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,default,5dlu,default:grow,5dlu,",
-        "default,5dlu,default,2dlu,default,2dlu,default,10dlu,default,5dlu,fill:200dlu:grow,5dlu,default,5dlu,default"),mContentPane);
+        "default,5dlu,default,2dlu,default,2dlu,default,10dlu,default,5dlu,fill:min:grow,5dlu,default,5dlu,default"),mContentPane);
     pb.setDefaultDialogBorder();
     
     pb.addSeparator(mLocalizer.msg("component", "Component"), CC.xyw(1,1,5));
@@ -247,7 +247,8 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
     pb.add(bottomBar.getPanel(), CC.xyw(1,15,5));
     
     updateOkBtn();
-    Settings.layoutWindow("editFilterComponentDlg", this, new Dimension(500,550));
+    setMinimumSize(new Dimension(500,550));
+    Settings.layoutWindow("editFilterComponentDlg", this, getMinimumSize());
     setLocationRelativeTo(parent);
     setVisible(true);
   }

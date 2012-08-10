@@ -108,33 +108,27 @@ public final class WindowSetting {
     int width = mWidth;
     int height = mHeight;
 
-    if(width < 20 || width > d.width + 10) {
+    if(width < 20 || width > d.width) {
       window.pack();
       width = window.getWidth();
     }
 
-    if(height < 20 || height > d.height + 10) {
+    if(height < 20 || height > d.height) {
       window.pack();
       height = window.getHeight();
     }
 
     // never make the dialog smaller than minimum size
     window.pack();
-    mMinSize = window.getMinimumSize();
-    if (width < mMinSize.width) {
-      width = mMinSize.width;
-    }
-    if (height < mMinSize.height) {
-      height = mMinSize.height;
-    }
+    mMinSize = window.getMinimumSize();    
+    mMinSize = new Dimension(Math.min(mMinSize.width, d.width),Math.min(mMinSize.height, d.height));
+    
+    width = Math.max(width, mMinSize.width);
+    height = Math.max(height, mMinSize.height);
 
     // assure that dialog is not larger than screen
-    if (width > d.width) {
-      width = d.width;
-    }
-    if (height > d.height) {
-      height = d.height;
-    }
+    width = Math.min(width, d.width);
+    height = Math.max(height, d.height);
 
     window.setSize(width, height);
 
