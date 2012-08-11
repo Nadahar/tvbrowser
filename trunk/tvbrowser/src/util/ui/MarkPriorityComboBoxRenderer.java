@@ -30,6 +30,7 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.ListCellRenderer;
 
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
@@ -42,9 +43,17 @@ import devplugin.Plugin;
  * @author René Mach
  * @since 2.6
  */
-public class MarkPriorityComboBoxRenderer extends DefaultListCellRenderer {
+public class MarkPriorityComboBoxRenderer extends CustomComboBoxRenderer {
+  public MarkPriorityComboBoxRenderer() {
+    this(null);
+  }
+  
+  public MarkPriorityComboBoxRenderer(ListCellRenderer backendRenderer) {
+    super(backendRenderer);
+  }
+
   public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-    Component c = super.getListCellRendererComponent(list,value,index,isSelected,cellHasFocus);
+    Component c = getBackendRenderer() == null ? getSuperListCellRendererComponent(list,value,index,isSelected,cellHasFocus) : getBackendRenderer().getListCellRendererComponent(list,value,index,isSelected,cellHasFocus);
     
     if(!isSelected) {
       JPanel colorPanel = new JPanel(new FormLayout("default:grow","fill:default:grow"));

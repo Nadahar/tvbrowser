@@ -48,6 +48,7 @@ import javax.swing.JTextArea;
 import tvbrowser.core.PluginLoader;
 import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
+import util.ui.CustomComboBoxRenderer;
 import util.ui.UiUtilities;
 
 import com.jgoodies.forms.factories.Borders;
@@ -103,10 +104,10 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
     ArrayList<Locale> localesList = new ArrayList<Locale>(Arrays.asList(allLocales));
     mSettingsPn.add(mLanguageCB = new JComboBox(allLocales), cc.xy(4,3));
 
-    mLanguageCB.setRenderer(new DefaultListCellRenderer() {
+    mLanguageCB.setRenderer(new CustomComboBoxRenderer(mLanguageCB.getRenderer()) {
       @Override
       public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-        return super.getListCellRendererComponent(list, ((Locale)value).getDisplayName(), index, isSelected, cellHasFocus);
+        return getBackendRenderer().getListCellRendererComponent(list, ((Locale)value).getDisplayName(), index, isSelected, cellHasFocus);
       }
     });
 

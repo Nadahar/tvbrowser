@@ -79,7 +79,7 @@ public class MarkingsSettingsTab implements SettingsTab {
     defaultMarkings.add(mDefaultColor = new JComboBox(colors), cc.xy(3,5));
     mDefaultColor.setSelectedIndex(Settings.propProgramPanelUsedDefaultMarkPriority.getInt()+1);
     
-    mDefaultColor.setRenderer(new MarkPriorityComboBoxRenderer());
+    mDefaultColor.setRenderer(new MarkPriorityComboBoxRenderer(mDefaultColor.getRenderer()));
     
     JPanel markings = new JPanel(new FormLayout("default, 5dlu, default, 5dlu, default",
         "default, 3dlu, default, 3dlu, default, 3dlu, default, 3dlu, default, 3dlu, default"));

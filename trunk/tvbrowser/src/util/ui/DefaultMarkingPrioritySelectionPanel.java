@@ -133,7 +133,7 @@ public final class DefaultMarkingPrioritySelectionPanel extends JPanel {
 
       mPrioritySelection[i] = new JComboBox(getMarkingColorNames(true));
       mPrioritySelection[i].setSelectedIndex(priority[i] + 1);
-      mPrioritySelection[i].setRenderer(new MarkPriorityComboBoxRenderer());
+      mPrioritySelection[i].setRenderer(new MarkPriorityComboBoxRenderer(mPrioritySelection[i].getRenderer()));
 
       pb.add(mPrioritySelection[i], cc.xy(4, pb.getRowCount()));
     }

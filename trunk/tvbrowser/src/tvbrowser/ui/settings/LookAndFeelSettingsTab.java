@@ -41,6 +41,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
+import javax.swing.ListCellRenderer;
 import javax.swing.UIManager;
 
 import tvbrowser.core.Settings;
@@ -48,6 +49,7 @@ import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.icontheme.IconTheme;
 import tvbrowser.ui.settings.looksSettings.JGoodiesLNFSettings;
 import tvbrowser.ui.settings.looksSettings.SkinLNFSettings;
+import util.ui.CustomComboBoxRenderer;
 import util.ui.LinkButton;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
@@ -237,9 +239,9 @@ public final class LookAndFeelSettingsTab implements SettingsTab {
       }
     }
     
-    mPersonaSelection.setRenderer(new DefaultListCellRenderer() {
+    mPersonaSelection.setRenderer(new CustomComboBoxRenderer(mPersonaSelection.getRenderer()) {
       public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-        JLabel label = (JLabel)super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+        JLabel label = (JLabel)getBackendRenderer().getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
         if (value != null) {
           label.setText(((PersonaInfo)value).getName());
           label.setToolTipText(((PersonaInfo)value).getDescription());
@@ -268,10 +270,10 @@ public final class LookAndFeelSettingsTab implements SettingsTab {
     mSettingsPn.add(new JLabel(mLocalizer.msg("icons", "Icons") + ":"), cc.xy(2, 11));
 
     mIconThemes = new JComboBox(IconLoader.getInstance().getAvailableThemes());
-    mIconThemes.setRenderer(new DefaultListCellRenderer() {
+    mIconThemes.setRenderer(new CustomComboBoxRenderer(mIconThemes.getRenderer()) {
       @Override
       public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-        JLabel label = (JLabel)super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+        JLabel label = (JLabel)getBackendRenderer().getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
         if (value != null) {
           label.setText(((IconTheme)value).getName());
           label.setToolTipText(((IconTheme)value).getComment());
@@ -392,5 +394,4 @@ public final class LookAndFeelSettingsTab implements SettingsTab {
   public String getTitle() {
     return mLocalizer.msg("graphical", "Graphical settings");
   }
-
 }

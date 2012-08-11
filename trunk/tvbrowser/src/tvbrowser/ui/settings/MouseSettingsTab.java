@@ -36,6 +36,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.ListCellRenderer;
 
 import tvbrowser.core.Settings;
 import tvbrowser.core.contextmenu.ConfigMenuItem;
@@ -47,6 +48,7 @@ import tvbrowser.core.contextmenu.SeparatorMenuItem;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginProxy;
 import util.settings.StringProperty;
+import util.ui.CustomComboBoxRenderer;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.Borders;
@@ -58,12 +60,12 @@ import devplugin.ContextMenuIf;
 import devplugin.Plugin;
 import devplugin.Program;
 
-public class MausSettingsTab implements devplugin.SettingsTab {
+public class MouseSettingsTab implements devplugin.SettingsTab {
 
 	private static final util.ui.Localizer mLocalizer = util.ui.Localizer
-			.getLocalizerFor(MausSettingsTab.class);
+			.getLocalizerFor(MouseSettingsTab.class);
 
-	private ArrayList<MouseClickSetting> mSettings = new ArrayList<MausSettingsTab.MouseClickSetting>();
+	private ArrayList<MouseClickSetting> mSettings = new ArrayList<MouseSettingsTab.MouseClickSetting>();
 
 	public JPanel createSettingsPanel() {
 		PanelBuilder contentPanel = new PanelBuilder(
@@ -104,17 +106,15 @@ public class MausSettingsTab implements devplugin.SettingsTab {
 		return mLocalizer.msg("title", "context menu");
 	}
 
-	private static class ContextMenuCellRenderer extends DefaultListCellRenderer {
-		private JLabel mItemLabel;
-
-		public ContextMenuCellRenderer() {
-			mItemLabel = new JLabel();
+	private static class ContextMenuCellRenderer extends CustomComboBoxRenderer {
+		public ContextMenuCellRenderer(ListCellRenderer backendRenderer) {
+		  super(backendRenderer);
 		}
 
 		public Component getListCellRendererComponent(JList list, Object value,
 				int index, boolean isSelected, boolean cellHasFocus) {
 
-			JLabel label = (JLabel) super.getListCellRendererComponent(list, value,
+			JLabel label = (JLabel) getBackendRenderer().getListCellRendererComponent(list, value,
 					index, isSelected, cellHasFocus);
 
 			if (value instanceof ContextMenuIf) {
@@ -138,14 +138,8 @@ public class MausSettingsTab implements devplugin.SettingsTab {
 						icon = null;
 					}
 				}
-
-				mItemLabel.setIcon(icon);
-				mItemLabel.setForeground(label.getForeground());
-				mItemLabel.setBackground(label.getBackground());
-				mItemLabel.setText(text.toString());
-				mItemLabel.setOpaque(label.isOpaque());
-
-				return mItemLabel;
+				label.setIcon(icon);
+        label.setText(text.toString());
 			}
 
 			return label;
@@ -153,7 +147,7 @@ public class MausSettingsTab implements devplugin.SettingsTab {
 
 	}
 
-	public MausSettingsTab() {
+	public MouseSettingsTab() {
 		mSettings.add(new MouseClickSetting(ContextMenuManager.getInstance()
 				.getLeftSingleClickIf(), Settings.propLeftSingleClickIf, mLocalizer
 				.msg("leftSingleClickLabel", "Left single click")));
@@ -198,7 +192,7 @@ public class MausSettingsTab implements devplugin.SettingsTab {
 			mComboBox = new JComboBox();
 			mComboBox.setSelectedItem(mClickInterface);
 			mComboBox.setMaximumRowCount(15);
-			mComboBox.setRenderer(new ContextMenuCellRenderer());
+			mComboBox.setRenderer(new ContextMenuCellRenderer(mComboBox.getRenderer()));
 			mComboBox.removeAllItems();
 			DoNothingContextMenuItem doNothing = DoNothingContextMenuItem
 					.getInstance();

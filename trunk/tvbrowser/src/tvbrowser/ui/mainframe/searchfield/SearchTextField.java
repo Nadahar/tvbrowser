@@ -36,6 +36,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.plaf.basic.BasicTextFieldUI;
 
 import org.apache.commons.lang.StringUtils;
 /**
@@ -56,7 +57,14 @@ public class SearchTextField extends JTextField implements FocusListener{
    */
   public SearchTextField(int len) {
     super(len);
-setBorder(BorderFactory.createLineBorder(Color.blue));
+    setUI(new BasicTextFieldUI() {
+      protected void paintBackground(Graphics g) {
+        if(!UIManager.getLookAndFeel().getClass().getCanonicalName().equals("com.sun.java.swing.plaf.gtk.GTKLookAndFeel") &&
+            !UIManager.getLookAndFeel().getClass().getCanonicalName().equals("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel")) {
+          super.paintBackground(g);
+        }
+      }
+    });
     addFocusListener(this);
     addMouseListener(new MouseAdapter() {
       public void mouseClicked(MouseEvent e) {
@@ -93,27 +101,4 @@ setBorder(BorderFactory.createLineBorder(Color.blue));
 
     repaint();
   }
-
-  protected void paintComponent(Graphics g) {
-    if(UIManager.getLookAndFeel().getClass().getCanonicalName().equals("com.sun.java.swing.plaf.gtk.GTKLookAndFeel") ||
-        UIManager.getLookAndFeel().getClass().getCanonicalName().equals("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel")) {
-      g.setColor(getForeground());
-      
-      if(hasFocus()) {
-        if(mBlink) {
-          int x = getFontMetrics(getFont()).stringWidth(getText())+1 + getInsets().left;
-          int y = getInsets().top+1;
-          int y2 = getHeight()-getInsets().bottom-1;
-          g.drawLine(x, y, x, y2);
-        }
-        
-        mBlink = !mBlink;
-      }
-      g.drawString(getText(),getFontMetrics(getFont()).getLeading()+getInsets().left,getFontMetrics(getFont()).getAscent()+getInsets().top);
-    }
-    else {
-      super.paintComponent(g);
-    }
-  }
-
 }
