@@ -109,7 +109,7 @@ public class TrayImportantSettingsTab implements SettingsTab {
     
     mPriority = new JComboBox(colors);
     mPriority.setSelectedIndex(Settings.propTrayImportantProgramsPriority.getInt());
-    mPriority.setRenderer(new MarkPriorityComboBoxRenderer());
+    mPriority.setRenderer(new MarkPriorityComboBoxRenderer(mPriority.getRenderer()));
 
     priority.add(mPriorityText, cc.xy(1,2));
     priority.add(mPriority, cc.xy(3,2));
