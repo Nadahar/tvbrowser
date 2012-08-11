@@ -347,7 +347,8 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
       programPanel.setMinimumSize(new Dimension(300,50));
     }
     mDialog.pack();
-
+    mDialog.setSize(mDialog.getWidth() + scrollPane.getVerticalScrollBar().getPreferredSize().width, mDialog.getHeight()+scrollPane.getHorizontalScrollBar().getPreferredSize().height);
+    
     mCloseBt.setText(mCloseBtText);
     mDialog.setAlwaysOnTop(ReminderPlugin.getInstance().getSettings().getProperty("alwaysOnTop","true").equalsIgnoreCase("true"));
 
