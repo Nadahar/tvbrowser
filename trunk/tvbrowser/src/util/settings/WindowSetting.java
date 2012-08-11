@@ -128,7 +128,7 @@ public final class WindowSetting {
 
     // assure that dialog is not larger than screen
     width = Math.min(width, d.width);
-    height = Math.max(height, d.height);
+    height = Math.min(height, d.height);
 
     window.setSize(width, height);
 

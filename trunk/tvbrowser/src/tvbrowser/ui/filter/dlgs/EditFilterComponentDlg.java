@@ -44,6 +44,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
@@ -149,6 +150,9 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
     mRuleCb.addItem(mLocalizer.msg("hint", "must choose one"));
     
     mCenterPanel = new JPanel(new BorderLayout());
+    JScrollPane scrollPane = new JScrollPane(mCenterPanel);
+    scrollPane.setBorder(BorderFactory.createEmptyBorder());
+    scrollPane.getViewport().setBorder(null);
     
     PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,default,5dlu,default:grow,5dlu,",
         "default,5dlu,default,2dlu,default,2dlu,default,10dlu,default,5dlu,fill:min:grow,5dlu,default,5dlu,default"),mContentPane);
@@ -162,7 +166,7 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
     pb.addLabel(mLocalizer.msg("type", "Type:"), CC.xy(2,7));
     pb.add(mRuleCb, CC.xy(4,7));
     pb.addSeparator(mLocalizer.msg("componentSettings", "Component settings:"), CC.xyw(1,9,5));
-    pb.add(mCenterPanel, CC.xyw(2,11,3));
+    pb.add(scrollPane, CC.xyw(2,11,3));
     pb.add(new JSeparator(JSeparator.HORIZONTAL), CC.xyw(1,13,5));
 
     // The TreeSet sorts the Entries
