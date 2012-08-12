@@ -32,7 +32,6 @@ import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import javax.swing.BorderFactory;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
@@ -49,7 +48,6 @@ public class SearchTextField extends JTextField implements FocusListener{
     = util.ui.Localizer.getLocalizerFor(SearchTextField.class);
   /** Color */
   private Color mTextColor, mNoTextColor;
-  private boolean mBlink;
 
   /**
    * Create the Search-Field

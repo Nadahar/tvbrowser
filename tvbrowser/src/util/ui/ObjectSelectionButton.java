@@ -28,7 +28,9 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -96,10 +98,14 @@ public class ObjectSelectionButton<E> extends JButton implements ActionListener 
         
         int x1 = x+super.getIconWidth()+2;
         int y1 = y+getIconHeight()/2-1;
-        int[] xPoints = {x1,x1+9,x1+4};
-        int[] yPoints = {y1,y1,y1+5};
+        int[] xPoints = {x1,x1+3,x1+6};
+        int[] yPoints = {y1,y1+4,y1};
+        
+        ((Graphics2D)g).setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
         g.setColor(Color.gray);
         g.fillPolygon(xPoints, yPoints, 3);
+        g.setColor(Color.gray);
+        g.drawPolygon(xPoints, yPoints, 3);
       }
       
       public int getIconWidth() {
