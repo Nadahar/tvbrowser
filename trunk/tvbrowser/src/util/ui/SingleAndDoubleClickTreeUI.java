@@ -23,11 +23,19 @@
  */
 package util.ui;
 
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+import javax.swing.JComponent;
+import javax.swing.JTree;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
 /**
@@ -142,6 +150,51 @@ public class SingleAndDoubleClickTreeUI extends javax.swing.plaf.basic.BasicTree
         }
       }
       e.consume();
+    }
+  }
+  
+  protected void paintHorizontalLine(Graphics g,JComponent c,int y,int left,int right) {
+    if(UIManager.getLookAndFeel().getClass().getCanonicalName().equals("com.sun.java.swing.plaf.gtk.GTKLookAndFeel")) {
+      int xPoints[] = {left,left,left+5};
+      int yPoints[] = {y-3,y+3,y};
+      
+      TreePath path = ((JTree)c).getClosestPathForLocation(left, y);
+      
+      boolean paint = true;
+      
+      if(path != null) {
+        if(path.getLastPathComponent() instanceof TreeNode) {
+          if(((JTree) c).isExpanded(path)) {
+            xPoints[0] = left;
+            xPoints[1] = left+3;
+            xPoints[2] = left+6;
+            
+            yPoints[0] = y-3;
+            yPoints[1] = y+2;
+            yPoints[2] = y-3;
+          }
+          if(((TreeNode)path.getLastPathComponent()).isLeaf() || ((TreeNode)path.getLastPathComponent()).getChildCount() == 0) {
+            paint = false;
+          }
+        }
+      }
+      
+      if(paint) {
+        ((Graphics2D)g).setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
+        g.setColor(Color.gray);
+        g.fillPolygon(xPoints, yPoints, 3);
+        g.setColor(Color.darkGray);
+        g.drawPolygon(xPoints, yPoints, 3);
+      }
+    }
+    else {
+      super.paintHorizontalLine(g, c, y, left, right);
+    }
+  }
+  
+  protected void paintVerticalLine(Graphics g,JComponent c,int x,int top,int bottom) {
+    if(!UIManager.getLookAndFeel().getClass().getCanonicalName().equals("com.sun.java.swing.plaf.gtk.GTKLookAndFeel")) {
+      super.paintVerticalLine(g, c, x, top, bottom);
     }
   }
 
