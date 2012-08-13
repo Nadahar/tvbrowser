@@ -24,22 +24,22 @@
 package util.ui;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+import javax.swing.Icon;
 import javax.swing.JComponent;
-import javax.swing.JTree;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
 /**
- * A tree ui that expands paths for single and double click,
+ * A tree UI that expands paths for single and double click,
  * but collapse paths only if current path is selected for
  * single click or always for double click.
  * 
@@ -60,6 +60,9 @@ public class SingleAndDoubleClickTreeUI extends javax.swing.plaf.basic.BasicTree
   
   private int mType;
   
+  private Icon mCollapsedIcon;
+  private Icon mExpandedIcon;
+  
   /**
    * Creates an instance of this plugin.
    * 
@@ -69,6 +72,56 @@ public class SingleAndDoubleClickTreeUI extends javax.swing.plaf.basic.BasicTree
   public SingleAndDoubleClickTreeUI(int type, TreePath selectedPath) {
     mType = type;
     mLastSelectionPath = selectedPath;
+    
+    if(UIManager.getLookAndFeel().getClass().getCanonicalName().equals("com.sun.java.swing.plaf.gtk.GTKLookAndFeel")) {
+      mCollapsedIcon = new Icon() {
+        @Override
+        public int getIconHeight() {
+          return 6;
+        }
+  
+        @Override
+        public int getIconWidth() {
+          return 6;
+        }
+  
+        @Override
+        public void paintIcon(Component c, Graphics g, int x, int y) {
+          int xPoints[] = {x+1,x+1,x+6};
+          int yPoints[] = {y,y+6,y+3};
+          
+          ((Graphics2D)g).setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
+          g.setColor(Color.gray);
+          g.fillPolygon(xPoints, yPoints, 3);
+          g.setColor(Color.darkGray);
+          g.drawPolygon(xPoints, yPoints, 3);
+        }        
+      };
+      
+      mExpandedIcon = new Icon() {
+        @Override
+        public int getIconHeight() {
+          return 5;
+        }
+  
+        @Override
+        public int getIconWidth() {
+          return 7;
+        }
+  
+        @Override
+        public void paintIcon(Component c, Graphics g, int x, int y) {
+          int xPoints[] = {x+1,x+4,x+7};
+          int yPoints[] = {y,y+5,y};
+          
+          ((Graphics2D)g).setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
+          g.setColor(Color.gray);
+          g.fillPolygon(xPoints, yPoints, 3);
+          g.setColor(Color.darkGray);
+          g.drawPolygon(xPoints, yPoints, 3);
+        }        
+      };
+    }
   }
   
   protected MouseListener createMouseListener() {
@@ -154,40 +207,7 @@ public class SingleAndDoubleClickTreeUI extends javax.swing.plaf.basic.BasicTree
   }
   
   protected void paintHorizontalLine(Graphics g,JComponent c,int y,int left,int right) {
-    if(UIManager.getLookAndFeel().getClass().getCanonicalName().equals("com.sun.java.swing.plaf.gtk.GTKLookAndFeel")) {
-      int xPoints[] = {left,left,left+5};
-      int yPoints[] = {y-3,y+3,y};
-      
-      TreePath path = ((JTree)c).getClosestPathForLocation(left, y);
-      
-      boolean paint = true;
-      
-      if(path != null) {
-        if(path.getLastPathComponent() instanceof TreeNode) {
-          if(((JTree) c).isExpanded(path)) {
-            xPoints[0] = left;
-            xPoints[1] = left+3;
-            xPoints[2] = left+6;
-            
-            yPoints[0] = y-3;
-            yPoints[1] = y+2;
-            yPoints[2] = y-3;
-          }
-          if(((TreeNode)path.getLastPathComponent()).isLeaf() || ((TreeNode)path.getLastPathComponent()).getChildCount() == 0) {
-            paint = false;
-          }
-        }
-      }
-      
-      if(paint) {
-        ((Graphics2D)g).setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
-        g.setColor(Color.gray);
-        g.fillPolygon(xPoints, yPoints, 3);
-        g.setColor(Color.darkGray);
-        g.drawPolygon(xPoints, yPoints, 3);
-      }
-    }
-    else {
+    if(!UIManager.getLookAndFeel().getClass().getCanonicalName().equals("com.sun.java.swing.plaf.gtk.GTKLookAndFeel")) {
       super.paintHorizontalLine(g, c, y, left, right);
     }
   }
@@ -196,6 +216,14 @@ public class SingleAndDoubleClickTreeUI extends javax.swing.plaf.basic.BasicTree
     if(!UIManager.getLookAndFeel().getClass().getCanonicalName().equals("com.sun.java.swing.plaf.gtk.GTKLookAndFeel")) {
       super.paintVerticalLine(g, c, x, top, bottom);
     }
+  }
+  
+  public Icon getCollapsedIcon() {
+    return mCollapsedIcon != null ? mCollapsedIcon : super.getCollapsedIcon();
+  }
+  
+  public Icon getExpandedIcon() {
+    return mExpandedIcon != null ? mExpandedIcon : super.getExpandedIcon();
   }
 
   public void mouseClicked(MouseEvent e) {}
