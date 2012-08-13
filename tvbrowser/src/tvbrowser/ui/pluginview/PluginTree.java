@@ -824,12 +824,11 @@ public class PluginTree extends JTree implements DragGestureListener,
           // use an image to be able to display HTML content on the node
           BufferedImage textImage = getImage(bounds);
           Graphics lg = textImage.getGraphics();
-
+          
           mProgramLabel.setFont(tree.getFont());
           mProgramLabel.setForeground(g.getColor());
-          mProgramLabel.setBackground(UIManager.getColor("Tree.background"));
           mProgramLabel.setText(text);
-          mProgramLabel.setOpaque(true);
+          mProgramLabel.setOpaque(false);
           mProgramLabel.setBounds(0, 0, bounds.width, bounds.height);
           mProgramLabel.paint(lg);
 
