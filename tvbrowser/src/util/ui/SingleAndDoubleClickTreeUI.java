@@ -148,9 +148,9 @@ public class SingleAndDoubleClickTreeUI extends javax.swing.plaf.basic.BasicTree
       if(path != null && getPathBounds(tree,path).contains(e.getPoint())) {
         tree.setSelectionPath(path);
       }
-      else {
-        tree.setSelectionPath(new TreePath(getModel().getRoot()));
-      }
+      /*else {
+       tree.setSelectionPath(new TreePath(getModel().getRoot()));
+      }*/
       
       mMousePressedTime = e.getWhen();
       

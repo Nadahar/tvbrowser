@@ -70,6 +70,7 @@ import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.favoritesplugin.core.Favorite;
 import util.ui.Localizer;
 import util.ui.OverlayListener;
+import util.ui.SingleAndDoubleClickTreeUI;
 import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 
@@ -102,7 +103,7 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
   }
 
   public void updateUI() {
-    setUI(new FavoriteTreeUI());
+    setUI(new FavoriteTreeUI(SingleAndDoubleClickTreeUI.EXPAND_AND_COLLAPSE,getSelectionPath()));
     invalidate();
   }
 
@@ -737,38 +738,23 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
     return text.toString();
   }
 
-  private class FavoriteTreeUI extends javax.swing.plaf.basic.BasicTreeUI implements MouseListener {
-    private static final int CLICK_WAIT_TIME = 150;
-    private Thread mClickedThread;
-    private TreePath mLastSelectionPath;
-    private long mMousePressedTime;
-    private boolean mWasExpanded;
-
+  private class FavoriteTreeUI extends SingleAndDoubleClickTreeUI implements MouseListener {
+    public FavoriteTreeUI(int type, TreePath selectedPath) {
+      super(type, selectedPath);
+    }
+    
     protected MouseListener createMouseListener() {
       return this;
     }
 
     public void mousePressed(MouseEvent e) {
       if(!e.isConsumed()) {
-        if(!tree.isFocusOwner()) {
-          tree.requestFocusInWindow();
-        }
-
-        TreePath path = getClosestPathForLocation(tree, e.getX(), e.getY());
-
-        if(path != null && getPathBounds(tree,path).contains(e.getPoint())) {
-          setSelectionPath(path);
-        }
-
         if(e.isPopupTrigger()) {
           showContextMenu(e.getPoint());
         }
-
-        mMousePressedTime = e.getWhen();
-
-        checkForClickInExpandControl(getClosestPathForLocation(tree, e.getX(), e.getY()),e.getX(),e.getY());
-        e.consume();
       }
+      
+      super.mousePressed(e);
     }
 
     public void mouseReleased(MouseEvent e) {
@@ -776,51 +762,12 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
         if(e.isPopupTrigger()) {
           showContextMenu(e.getPoint());
         }
-
-        if(SwingUtilities.isLeftMouseButton(e)) {
-          final TreePath path = getClosestPathForLocation(tree, e.getX(), e.getY());
-
-          if(path != null && ((FavoriteNode)path.getLastPathComponent()).containsFavorite()) {
-            mLastSelectionPath = path;
-            if(e.getClickCount() >= 2) {
-              FavoritesPlugin.getInstance().editSelectedFavorite();
-            }
-          }
-          else if(path != null && ((FavoriteNode)path.getLastPathComponent()).isDirectoryNode() && (e.getWhen() - mMousePressedTime) < CLICK_WAIT_TIME && getPathBounds(tree,path).contains(e.getPoint())) {
-            if(mClickedThread == null || !mClickedThread.isAlive()) {
-              mClickedThread = new Thread("Double click favorite") {
-                public void run() {
-                  if(!isExpanded(path)) {
-                    expandPath(path);
-                    mWasExpanded = true;
-                  }
-                  else if(mLastSelectionPath != null && tree.getSelectionPath().equals(mLastSelectionPath)){
-                    collapsePath(path);
-                    mWasExpanded = false;
-                  }
-                  setSelectionPath(path);
-                  mLastSelectionPath = path;
-
-                  try {
-                    Thread.sleep(CLICK_WAIT_TIME*2);
-                  }catch(Exception e) {
-                    e.printStackTrace();
-                  }
-
-                  mWasExpanded = false;
-                }
-              };
-              mClickedThread.start();
-            }
-            else if(!mWasExpanded && mLastSelectionPath != null && tree.getSelectionPath().equals(mLastSelectionPath)){
-              collapsePath(path);
-            }
-          }
-          else {
-            mLastSelectionPath = path;
-          }
+        
+        super.mouseReleased(e);
+        
+        if(SwingUtilities.isLeftMouseButton(e) && e.getClickCount() >= 2) {
+          FavoritesPlugin.getInstance().editSelectedFavorite();
         }
-        e.consume();
       }
     }
 
