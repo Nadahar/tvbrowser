@@ -73,6 +73,7 @@ import tvbrowser.core.TvDataUpdater;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.extras.common.ConfigurationHandler;
 import tvbrowser.ui.mainframe.MainFrame;
+import tvbrowser.ui.mainframe.toolbar.ToolBar;
 import util.exc.ErrorHandler;
 import util.io.IOUtilities;
 import util.io.stream.ObjectInputStreamProcessor;
@@ -125,6 +126,9 @@ public class ReminderPlugin {
   private boolean mHasRightToStartTimer = false;
 
   private boolean mHasRightToSave = true;
+  
+  private static final String TOGGLE_ACTION_ID = "reminderPauseAction";
+  public static final String REMINDER_LIST_ACTION_ID = "reminderListAction";
 
   /** The IDs of the plugins that should receive the favorites. */
   private ProgramReceiveTarget[] mClientPluginTargets;
@@ -133,9 +137,41 @@ public class ReminderPlugin {
   private PluginCenterPanelWrapper mWrapper;
   private JPanel mCenterPanel;
   private ReminderListPanel mReminderListPanel;
+  private AbstractAction toggleTimer;
 
   private ReminderPlugin() {
     mInstance = this;
+    
+    toggleTimer = new AbstractAction() {
+      @Override
+      public void actionPerformed(ActionEvent arg0) {
+        if(mReminderList != null) {
+          mReminderList.toggleTimer();
+          
+          if(mReminderList.isActive()) {
+            putValue(Action.NAME, mLocalizer.msg("stopTimer", "Pause Reminder"));
+            toggleTimer.putValue(Action.SHORT_DESCRIPTION, mLocalizer.msg("stopTimerDesc", "Pause Reminder until reactivation"));
+            putValue(ToolBar.ACTION_IS_SELECTED, Boolean.valueOf(false));
+          }
+          else {
+            putValue(Action.NAME, mLocalizer.msg("continueTimer", "Continue Reminder"));
+            toggleTimer.putValue(Action.SHORT_DESCRIPTION, mLocalizer.msg("continueTimer", "Continue Reminder"));
+            putValue(ToolBar.ACTION_IS_SELECTED, Boolean.valueOf(true));
+          }
+          
+          MainFrame.getInstance().updateToolbar();
+        }
+      }
+    };
+    
+    toggleTimer.putValue(Action.NAME, mLocalizer.msg("stopTimer", "Pause Reminder"));
+    toggleTimer.putValue(Plugin.ACTION_ID_KEY, TOGGLE_ACTION_ID);
+    toggleTimer.putValue(Action.SHORT_DESCRIPTION, mLocalizer.msg("stopTimerDesc", "Pause Reminder until reactivation"));
+    toggleTimer.putValue(Action.SMALL_ICON, IconLoader.getInstance().getIconFromTheme("actions", "reminder-stop", 16));
+    toggleTimer.putValue(Plugin.BIG_ICON, IconLoader.getInstance().getIconFromTheme("actions", "reminder-stop", 22));
+    toggleTimer.putValue(ToolBar.ACTION_TYPE_KEY, ToolBar.TOOGLE_BUTTON_ACTION);
+    toggleTimer.putValue(ToolBar.ACTION_IS_SELECTED, false);
+
     
     mWrapper = new PluginCenterPanelWrapper() {  
       ReminderCenterPanel centerPanel = new ReminderCenterPanel();
@@ -344,13 +380,6 @@ public class ReminderPlugin {
    */
   public Properties getSettings() {
     return mSettings;
-  }
-
-  /**
-   * Halt the reminder listener.
-   */
-  public void pauseReminder() {
-    mReminderList.stopTimer();
   }
 
   /**
@@ -782,21 +811,24 @@ public class ReminderPlugin {
     thread.start();
   }
 
-  protected static ActionMenu getButtonAction() {
+  protected ActionMenu getButtonAction() {try {
     AbstractAction action = new AbstractAction() {
       public void actionPerformed(ActionEvent evt) {
         getInstance().showManageRemindersDialog();
       }
     };
 
-    action.putValue(Action.NAME, getName());
+    action.putValue(Action.NAME, mLocalizer.msg("showReminderList", "Show Reminder list"));
     action.putValue(Action.SMALL_ICON, IconLoader.getInstance()
         .getIconFromTheme("apps", "appointment", 16));
     action.putValue(Plugin.BIG_ICON, IconLoader.getInstance().getIconFromTheme("apps", "appointment", 22));
     action.putValue(Action.SHORT_DESCRIPTION, mLocalizer.msg("description",
         "Reminds you of programs to not miss them."));
-
-    return new ActionMenu(action);
+    action.putValue(Plugin.ACTION_ID_KEY, REMINDER_LIST_ACTION_ID);
+    
+    return new ActionMenu(getName(),IconLoader.getInstance().getIconFromTheme("apps", "appointment", 16),new Action[] {action,toggleTimer});
+  }catch(Throwable t) {t.printStackTrace();}
+  return null;
   }
 
   /**

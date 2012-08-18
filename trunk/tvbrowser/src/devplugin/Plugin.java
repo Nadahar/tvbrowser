@@ -43,6 +43,7 @@ import javax.swing.ImageIcon;
 import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginProxyManager;
+import tvbrowser.ui.mainframe.toolbar.ToolBar;
 import tvdataservice.MutableChannelDayProgram;
 import util.io.stream.ObjectInputStreamProcessor;
 import util.io.stream.ObjectOutputStreamProcessor;
@@ -88,6 +89,11 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
    * @see #getButtonAction()
    */
   public static final String BIG_ICON = "BigIcon";
+  
+  /**
+   * A key for sub action menu entries unique ID.
+   */
+  public static final String ACTION_ID_KEY = ToolBar.ACTION_ID_KEY;
 
   /** The name to use for disabling a menu part for
    *  showing in ProgramInfo.

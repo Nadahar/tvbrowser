@@ -62,6 +62,7 @@ import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import tvbrowser.extras.common.InternalPluginProxyIf;
 import tvbrowser.extras.common.InternalPluginProxyList;
+import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import tvbrowser.ui.filter.dlgs.SelectFilterPopup;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.mainframe.actions.TVBrowserAction;
@@ -201,10 +202,15 @@ public class DefaultToolBarModel implements ToolBarModel, DateListener {
       } else {
         Action action = menu.getAction();
         if (!ContextMenuSeparatorAction.getInstance().equals(action)) {
-          action.putValue(ToolBar.ACTION_ID_KEY, plugin.getId() + "##"
-              + action.getValue(Action.NAME));
-          mAvailableActions.put(plugin.getId() + "##"
-              + action.getValue(Action.NAME), action);
+          try {
+          String key = plugin.getId() + "##"
+              + (action.getValue(ToolBar.ACTION_ID_KEY) != null ? action.getValue(ToolBar.ACTION_ID_KEY) :
+                  action.getValue(Action.NAME));
+          
+          action.putValue(ToolBar.ACTION_ID_KEY, key);
+          mAvailableActions.put(key, action);
+          }catch(Throwable t) {t.printStackTrace()
+            ;}
           String tooltip = (String) action.getValue(Action.SHORT_DESCRIPTION);
           if (tooltip == null) {
             if (subMenus.length == 1) {
@@ -323,8 +329,10 @@ public class DefaultToolBarModel implements ToolBarModel, DateListener {
         mVisibleActions.add(mSpaceAction);
       } else if (buttonName.equals("java.searchplugin.SearchPlugin") || buttonName.equals("#search")) {
         mVisibleActions.add(mAvailableActions.get("searchplugin.SearchPlugin"));
-      } else if (buttonName.equals("java.reminderplugin.ReminderPlugin") || buttonName.equals("#reminder")) {
-        mVisibleActions.add(mAvailableActions.get("reminderplugin.ReminderPlugin"));
+      } else if (buttonName.equals("java.reminderplugin.ReminderPlugin") || buttonName.equals("#reminder") || buttonName.equals("reminderplugin.ReminderPlugin")) {
+        try {
+        mVisibleActions.add(mAvailableActions.get("reminderplugin.ReminderPlugin##"+ReminderPlugin.REMINDER_LIST_ACTION_ID));
+        }catch(Throwable t){t.printStackTrace();}
       } else if (buttonName.equals("java.favoritesplugin.FavoritesPlugin") || buttonName.equals("#favorite")) {
         mVisibleActions.add(mAvailableActions.get("favoritesplugin.FavoritesPlugin"));
       } else { // if the buttonName is not valid, we try to add the
