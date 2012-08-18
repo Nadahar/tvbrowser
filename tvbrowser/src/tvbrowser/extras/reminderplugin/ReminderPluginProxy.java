@@ -134,7 +134,7 @@ public class ReminderPluginProxy extends AbstractInternalPluginProxy implements 
   }
 
   public ActionMenu getButtonAction() {
-    return ReminderPlugin.getButtonAction();
+    return ReminderPlugin.getInstance().getButtonAction();
   }
 
   public boolean receiveValues(String[] values,

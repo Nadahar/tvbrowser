@@ -428,12 +428,24 @@ public class ReminderList implements ActionListener {
       return mBlockedPrograms.contains(prg);
     }
   }
-
-  /**
-   * Stop the Timer
-   */
-  public void stopTimer() {
-    mTimer.stop();
+  
+  void toggleTimer() {
+    if(mTimer != null) {
+      if(mTimer.isRunning()) {
+        mTimer.stop();
+      }
+      else {
+        startTimer();
+      }
+    }
+  }
+  
+  boolean hasTimer() {
+    return mTimer != null;
+  }
+  
+  boolean isActive() {
+    return mTimer != null && mTimer.isRunning();
   }
 
 }

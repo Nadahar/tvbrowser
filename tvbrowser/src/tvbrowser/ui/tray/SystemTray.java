@@ -97,7 +97,7 @@ public class SystemTray {
 
   private Java6Tray mSystemTray;
 
-  private JMenuItem mOpenCloseMenuItem, mQuitMenuItem, mConfigure, mReminderItem;
+  private JMenuItem mOpenCloseMenuItem, mQuitMenuItem, mConfigure;
 
   private JPopupMenu mTrayMenu;
   private Thread mClickTimer;
@@ -172,14 +172,6 @@ public class SystemTray {
       mOpenCloseMenuItem.addActionListener(new java.awt.event.ActionListener() {
         public void actionPerformed(java.awt.event.ActionEvent e) {
           toggleShowHide();
-        }
-      });
-
-      mReminderItem = new JMenuItem(mLocalizer.msg("menu.pauseReminder", "Pause Reminder"));
-      mReminderItem.setIcon(IconLoader.getInstance().getIconFromTheme("apps", "appointment", 16));
-      mReminderItem.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          toggleReminderState(false);
         }
       });
 
@@ -309,7 +301,6 @@ public class SystemTray {
 
     mPluginsMenu = createPluginsMenu();
     mPluginsMenu.addSeparator();
-    mPluginsMenu.add(mReminderItem);
 
     mTrayMenu.add(mPluginsMenu);
     mTrayMenu.addSeparator();
@@ -922,7 +913,7 @@ public class SystemTray {
       SwingUtilities.invokeLater(new Runnable() {
         public void run() {
           MainFrame.getInstance().showFromTray(mState);
-          toggleReminderState(true);
+          //toggleReminderState(true);
 
           if (Settings.propNowOnRestore.getBoolean()) {
             MainFrame.getInstance().scrollToNow();
@@ -940,16 +931,6 @@ public class SystemTray {
       }
 
       toggleOpenCloseMenuItem(true);
-    }
-  }
-
-  private void toggleReminderState(boolean tvbShown) {
-    if (mReminderItem.getText().compareTo(mLocalizer.msg("menu.pauseReminder", "Pause Reminder")) == 0 && !tvbShown) {
-      mReminderItem.setText(mLocalizer.msg("menu.continueReminder", "Continue Reminder"));
-      ReminderPlugin.getInstance().pauseReminder();
-    } else {
-      mReminderItem.setText(mLocalizer.msg("menu.pauseReminder", "Pause Reminder"));
-      ReminderPlugin.getInstance().handleTvBrowserStartFinished();
     }
   }
 
