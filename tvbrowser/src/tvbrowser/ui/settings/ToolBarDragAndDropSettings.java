@@ -596,7 +596,6 @@ public class ToolBarDragAndDropSettings extends JDialog implements
     for (int i = 0; i < size; i++) {
       Action action = mCurrentActions.elementAt(i);
       ids[i] = (String) action.getValue(ToolBar.ACTION_ID_KEY);
-      System.out.println(ids[i]);
     }
     DefaultToolBarModel.getInstance().setButtonIds(ids);
     Settings.propToolbarButtons.setStringArray(ids);
