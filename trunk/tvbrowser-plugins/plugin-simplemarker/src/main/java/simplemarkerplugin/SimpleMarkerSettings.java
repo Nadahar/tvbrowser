@@ -15,9 +15,9 @@
  * this program. If not, see <http://www.gnu.org/licenses/>.
  *
  * SVN information:
- *     $Date: 2010-06-28 19:33:48 +0200 (Mo, 28 Jun 2010) $
- *   $Author: bananeweizen $
- * $Revision: 6662 $
+ *     $Date$
+ *   $Author$
+ * $Revision$
  */
 package simplemarkerplugin;
 

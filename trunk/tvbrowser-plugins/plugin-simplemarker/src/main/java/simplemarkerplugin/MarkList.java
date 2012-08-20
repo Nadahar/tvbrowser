@@ -15,9 +15,9 @@
  * this program. If not, see <http://www.gnu.org/licenses/>.
  *
  * SVN information:
- *     $Date: 2011-10-07 14:14:45 +0200 (Fr, 07 Okt 2011) $
- *   $Author: ds10 $
- * $Revision: 7201 $
+ *     $Date$
+ *   $Author$
+ * $Revision$
  */
 package simplemarkerplugin;
 
@@ -290,15 +290,13 @@ public class MarkList extends Vector<Program> {
                 addProgram(p);
               }
               createNodes(mRootNode, true);
-              SimpleMarkerPlugin.getInstance().refreshManagePanel(false);
+              SimpleMarkerPlugin.getInstance().refreshManageDialog(false);
               SimpleMarkerPlugin.getInstance().save();
             }
           });
         } catch (InterruptedException e1) {
-          // TODO Auto-generated catch block
           e1.printStackTrace();
         } catch (InvocationTargetException e1) {
-          // TODO Auto-generated catch block
           e1.printStackTrace();
         }
       }

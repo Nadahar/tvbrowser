@@ -15,20 +15,17 @@
  * this program. If not, see <http://www.gnu.org/licenses/>.
  *
  * SVN information:
- *     $Date: 2011-03-26 21:21:11 +0100 (Sa, 26 Mrz 2011) $
- *   $Author: bananeweizen $
- * $Revision: 6974 $
+ *     $Date$
+ *   $Author$
+ * $Revision$
  */
 package simplemarkerplugin;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Rectangle;
-import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -38,29 +35,29 @@ import javax.swing.ButtonGroup;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import util.settings.PluginPictureSettings;
 import util.settings.ProgramPanelSettings;
-import util.ui.Localizer;
 import util.ui.ProgramList;
 import util.ui.SendToPluginDialog;
 import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
-import util.ui.WindowClosingIf;
+import util.ui.persona.Persona;
+import util.ui.persona.PersonaListener;
 
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.Plugin;
@@ -76,7 +73,7 @@ import devplugin.Program;
  *
  * @author René Mach
  */
-public class ManagePanel {
+public class ManagePanel extends JPanel implements PersonaListener {
   private static final long serialVersionUID = 1L;
 
   private JList mMarkListsList;
@@ -93,8 +90,6 @@ public class ManagePanel {
 
   private JRadioButton mShowPrograms, mShowTitles;
 
-  private JDialog mParent;
-
   private Program[] mDeletedPrograms;
   private MarkList mLastDeletingList;
 
@@ -103,15 +98,18 @@ public class ManagePanel {
   /**
    * Creates an instance of this panel.
    *
-   * @param parent The parent dialog.
    * @param markListVector The MarkListsVector.
    */
-  public ManagePanel(JDialog parent, MarkListsVector markListVector) {
-    mParent = parent;
+  public ManagePanel(MarkListsVector markListVector, JButton close) {
     mMarkListVector = markListVector;
+    mClose = close;
+    
+    setOpaque(false);
 
     mShowPrograms = new JRadioButton(SimpleMarkerPlugin.getLocalizer().msg("list.programs","List programs"),true);
+    mShowPrograms.setOpaque(false);
     mShowTitles = new JRadioButton(SimpleMarkerPlugin.getLocalizer().msg("list.titles","List for program titles"));
+    mShowTitles.setOpaque(false);
 
     ButtonGroup bg = new ButtonGroup();
     bg.add(mShowPrograms);
@@ -130,19 +128,18 @@ public class ManagePanel {
     mProgramsScrollPane = new JScrollPane(mProgramsList);
     mMarkListsScrolPane.setBorder(null);
     mProgramsScrollPane.setBorder(null);
-
-    JPanel panel = (JPanel)mParent.getContentPane();
-    panel.setBorder(Borders.createEmptyBorder("6dlu,6dlu,5dlu,6dlu"));
+    
+    setBorder(Borders.createEmptyBorder("6dlu,6dlu,5dlu,6dlu"));
 
     FormLayout layout = new FormLayout("default:grow",
     "pref,pref,4dlu,fill:default:grow,4dlu,pref");
 
-    panel.setLayout(layout);
+    setLayout(layout);
 
     CellConstraints cc = new CellConstraints();
 
-    panel.add(mShowPrograms, cc.xy(1,1));
-    panel.add(mShowTitles, cc.xy(1,2));
+    add(mShowPrograms, cc.xy(1,1));
+    add(mShowTitles, cc.xy(1,2));
 
     if(markListVector.size() > 1) {
       mSplitPane = new JSplitPane();
@@ -151,7 +148,7 @@ public class ManagePanel {
 
       mSplitPane.setContinuousLayout(true);
 
-      panel.add(mSplitPane, cc.xy(1,4));
+      add(mSplitPane, cc.xy(1,4));
 
       int pos = SimpleMarkerPlugin.getInstance().getSettings()
           .getSplitPosition();
@@ -166,10 +163,10 @@ public class ManagePanel {
 
       innerPanel.add(mProgramsScrollPane, cc.xy(1,1));
 
-      panel.add(innerPanel, cc.xy(1,4));
+      add(innerPanel, cc.xy(1,4));
     }
 
-    panel.add(getButtonPanel(cc), cc.xy(1,6));
+    add(getButtonPanel(cc), cc.xy(1,6));
 
     mShowPrograms.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -197,25 +194,21 @@ public class ManagePanel {
       }
     });
 
-    mClose.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        closeDialog();
-      }
-    });
-
     mUndo.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         undo();
       }
     });
 
-    mSettings.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        closeDialog();
-        Plugin.getPluginManager()
-            .showSettings(SimpleMarkerPlugin.getInstance());
-      }
-    });
+    if(mClose != null) {
+      mSettings.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          mClose.getActionListeners()[0].actionPerformed(null);
+          Plugin.getPluginManager()
+              .showSettings(SimpleMarkerPlugin.getInstance());
+        }
+      });
+    }
 
     mMarkListsList.addListSelectionListener(new ListSelectionListener() {
       public void valueChanged(ListSelectionEvent e) {
@@ -233,35 +226,19 @@ public class ManagePanel {
 
     mMarkListsList.setSelectedIndex(0);
     selectPrograms(true);
-
-    mParent.getRootPane().setDefaultButton(mClose);
-
-    UiUtilities.registerForClosing(new WindowClosingIf() {
-      public void close() {
-        closeDialog();
-      }
-
-      public JRootPane getRootPane() {
-        return mParent.getRootPane();
-      }
-    });
-
-    mParent.addWindowListener(new WindowAdapter() {
-      public void windowClosing(WindowEvent e) {
-        closeDialog();
-      }
-    });
+  }
+  
+  JButton getDefaultButton() {
+    return mClose;
   }
 
-  private void closeDialog() {
-    mParent.dispose();
-
+  void saveSettings() {
     if(mSplitPane != null) {
       SimpleMarkerPlugin.getInstance().getSettings().setSplitPosition(
           mSplitPane.getDividerLocation());
     }
 
-    SimpleMarkerPlugin.getInstance().resetManagePanel();
+    SimpleMarkerPlugin.getInstance().resetManageDialog();
   }
 
   private void send() {
@@ -310,14 +287,14 @@ public class ManagePanel {
 
     if(programs != null) {
       SendToPluginDialog send = new SendToPluginDialog(SimpleMarkerPlugin
-          .getInstance(), list.getReceiveTarget(), (Window)mParent, programs);
+          .getInstance(), list.getReceiveTarget(), UiUtilities.getLastModalChildOf(SimpleMarkerPlugin.getInstance().getSuperFrame()), programs);
 
       send.setVisible(true);
     }
 
   }
 
-  protected void selectPrograms(boolean scroll) {
+  synchronized void selectPrograms(boolean scroll) {
     mProgramListModel.clear();
 
     MarkList list = (MarkList)mMarkListsList.getSelectedValue();
@@ -366,7 +343,7 @@ public class ManagePanel {
     mDelete.setEnabled(mProgramListModel.size() > 0);
     mUndo.setEnabled(mLastDeletingList != null && mDeletedPrograms != null && mDeletedPrograms.length > 0);
 
-    if (mParent.isVisible()) {
+    if (isVisible()) {
       mMarkListsList.repaint();
     }
   }
@@ -403,7 +380,7 @@ public class ManagePanel {
 
     SimpleMarkerPlugin.getInstance().revalidate(mDeletedPrograms);
     mLastDeletingList.updateNode();
-    SimpleMarkerPlugin.getInstance().refreshManagePanel(false);
+    SimpleMarkerPlugin.getInstance().refreshManageDialog(false);
   }
 
   private void undo() {
@@ -424,36 +401,51 @@ public class ManagePanel {
     mLastDeletingList = null;
     mDeletedPrograms = null;
 
-    SimpleMarkerPlugin.getInstance().refreshManagePanel(true);
+    SimpleMarkerPlugin.getInstance().refreshManageDialog(true);
   }
 
   private JPanel getButtonPanel(CellConstraints cc) {
-    JPanel p = new JPanel(new FormLayout("pref,5dlu,pref,5dlu,pref,5dlu,pref",
-        "pref"));
+    FormLayout layout = new FormLayout("pref,5dlu,pref,5dlu,pref",
+        "pref");
+    JPanel p = new JPanel();
+    p.setOpaque(false);
 
-    mSettings = new JButton(TVBrowserIcons.preferences(TVBrowserIcons.SIZE_SMALL));
+    if(mClose != null) {
+      layout.insertColumn(1, ColumnSpec.decode("5dlu"));
+      layout.insertColumn(1, ColumnSpec.decode("pref"));
+      
+      mSettings = new JButton(TVBrowserIcons.preferences(TVBrowserIcons.SIZE_SMALL));
+      mSettings.setToolTipText(SimpleMarkerPlugin.getLocalizer().msg("tooltip.settings","Open settings"));
+      p.add(mSettings, cc.xy(1, 1));
+    }
+    else {
+      layout.insertColumn(1, ColumnSpec.decode("0dlu"));
+      layout.insertColumn(1, ColumnSpec.decode("0dlu"));      
+    }
+    
     mSend = new JButton(TVBrowserIcons.copy(TVBrowserIcons.SIZE_SMALL));
+    mSend.setToolTipText(SimpleMarkerPlugin.getLocalizer().msg("tooltip.send","Send  programs to other plugins"));
+    
     mDelete = new JButton(TVBrowserIcons.delete(TVBrowserIcons.SIZE_SMALL));
+    mDelete.setToolTipText(SimpleMarkerPlugin.getLocalizer().msg("tooltip.deletePrograms","Delete all/selected progams"));
+    
     mUndo = new JButton(SimpleMarkerPlugin.getInstance().createImageIcon(
         "actions", "edit-undo", 16));
-
-    mSettings.setToolTipText(SimpleMarkerPlugin.getLocalizer().msg("tooltip.settings","Open settings"));
-    mSend.setToolTipText(SimpleMarkerPlugin.getLocalizer().msg("tooltip.send","Send  programs to other plugins"));
-    mDelete.setToolTipText(SimpleMarkerPlugin.getLocalizer().msg("tooltip.deletePrograms","Delete all/selected progams"));
     mUndo.setToolTipText(SimpleMarkerPlugin.getLocalizer().msg("tooltip.undo","Undo"));
     mUndo.setEnabled(false);
-
-    p.add(mSettings, cc.xy(1, 1));
+    
     p.add(mSend, cc.xy(3, 1));
     p.add(mDelete, cc.xy(5, 1));
     p.add(mUndo, cc.xy(7, 1));
 
-    mClose = new JButton(Localizer.getLocalization(Localizer.I18N_CLOSE));
-
     JPanel buttons = new JPanel(new BorderLayout());
+    buttons.setOpaque(false);
 
     buttons.add(p, BorderLayout.WEST);
-    buttons.add(mClose, BorderLayout.EAST);
+    
+    if(mClose != null) {
+      buttons.add(mClose, BorderLayout.EAST);
+    }
 
     return buttons;
   }
@@ -468,5 +460,16 @@ public class ManagePanel {
 
       return c;
     }
+  }
+
+  @Override
+  public void updatePersona() {
+    if(Persona.getInstance().getHeaderImage() != null) {
+      mShowPrograms.setForeground(Persona.getInstance().getTextColor());    }
+    else {
+      mShowPrograms.setForeground(UIManager.getColor("Label.foreground"));
+    }
+    
+    mShowTitles.setForeground(mShowPrograms.getForeground());
   }
 }

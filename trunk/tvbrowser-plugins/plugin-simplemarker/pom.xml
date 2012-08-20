@@ -53,11 +53,4 @@
     </plugins>
   </build>
   
-  <dependencies>
-  	<dependency>
-  		<groupId>org.tvbrowser</groupId>
-  		<artifactId>tvbrowser</artifactId>
-  		<scope>provided</scope>
-  	</dependency>
-  </dependencies>
 </project>
