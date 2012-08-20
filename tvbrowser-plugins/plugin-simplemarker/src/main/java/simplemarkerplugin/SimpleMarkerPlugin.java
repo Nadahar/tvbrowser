@@ -15,14 +15,17 @@
  * this program. If not, see <http://www.gnu.org/licenses/>.
  *
  * SVN information:
- *     $Date: 2011-10-07 14:14:45 +0200 (Fr, 07 Okt 2011) $
- *   $Author: ds10 $
- * $Revision: 7201 $
+ *     $Date$
+ *   $Author$
+ * $Revision$
  */
 package simplemarkerplugin;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Frame;
+import java.awt.Graphics;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -44,7 +47,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
-import javax.swing.WindowConstants;
+import javax.swing.SwingUtilities;
 
 import util.settings.PluginPictureSettings;
 import util.settings.ProgramPanelSettings;
@@ -54,6 +57,7 @@ import util.ui.TVBrowserIcons;
 import util.ui.UIThreadRunner;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
+import util.ui.persona.Persona;
 
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -63,6 +67,8 @@ import devplugin.ActionMenu;
 import devplugin.ContextMenuAction;
 import devplugin.ImportanceValue;
 import devplugin.Plugin;
+import devplugin.PluginCenterPanel;
+import devplugin.PluginCenterPanelWrapper;
 import devplugin.PluginInfo;
 import devplugin.PluginTreeNode;
 import devplugin.PluginsFilterComponent;
@@ -82,7 +88,7 @@ import devplugin.Version;
  * @author René Mach
  */
 public class SimpleMarkerPlugin extends Plugin {
-  private static final Version mVersion = new Version(3,02,1);
+  private static final Version mVersion = new Version(3,20,false);
 
   /** The localizer for this class. */
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(SimpleMarkerPlugin.class);
@@ -95,13 +101,19 @@ public class SimpleMarkerPlugin extends Plugin {
 
   private boolean mHasRightToUpdate = false, mHasToUpdate = false;
 
-  private ManagePanel mManagePanel = null;
+  private ManageDialog mManageDialog = null;
 
   private PluginInfo mPluginInfo;
 
   private boolean mStartFinished = false;
 
   private SimpleMarkerSettings mSettings;
+  
+  private PluginCenterPanelWrapper mWrapper;
+  
+  private JPanel mCenterPanelWrapper;
+  
+  private ManagePanel mMangePanel;
 
   /**
    * Standard constructor for this class.
@@ -122,6 +134,56 @@ public class SimpleMarkerPlugin extends Plugin {
   public void onActivation() {
     mMarkListVector = new MarkListsVector();
     updateTree();
+    
+    SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        mCenterPanelWrapper = new JPanel(new BorderLayout()){
+          protected void paintComponent(Graphics g) {
+            if(Persona.getInstance().getAccentColor() != null && Persona.getInstance().getHeaderImage() != null) {
+             
+              Color c = Persona.testPersonaForegroundAgainst(Persona.getInstance().getAccentColor());
+              
+              int alpha = c.getAlpha();
+              
+              g.setColor(new Color(c.getRed(),c.getGreen(),c.getBlue(),alpha));
+              g.fillRect(0,0,getWidth(),getHeight());
+            }
+            else {
+              super.paintComponent(g);
+            }
+          }
+        };
+        mCenterPanelWrapper.setOpaque(false);
+        
+        mWrapper = new PluginCenterPanelWrapper() {
+          @Override
+          public PluginCenterPanel[] getCenterPanels() {
+            return new PluginCenterPanel[] {new SimpleMarkerPanel()};
+          }
+        };
+        
+        addCenterPanel();
+      }
+    });
+  }
+  
+  private void addCenterPanel() {
+    SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        mMangePanel = new ManagePanel(mMarkListVector, null);
+        Persona.getInstance().registerPersonaListener(mMangePanel);
+        
+        mCenterPanelWrapper.add(mMangePanel,BorderLayout.CENTER);
+        mCenterPanelWrapper.updateUI();
+      }
+    });    
+  }
+  
+  public void onDeactivation() {
+    Persona.getInstance().registerPersonaListener(mMangePanel);
+    mCenterPanelWrapper.remove(mMangePanel);
+    mMangePanel = null;
   }
 
   public static Version getVersion() {
@@ -393,17 +455,12 @@ public class SimpleMarkerPlugin extends Plugin {
 
   }
 
-  private void showProgramsList() {
-    final JDialog dialog = UiUtilities.createDialog(getParentFrame(), true);
-    dialog.setTitle(mLocalizer.msg("name","Marker plugin"));
-    dialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+  private void showProgramsList() {try {
+    mManageDialog = new ManageDialog(mMarkListVector);
 
-    mManagePanel = new ManagePanel(dialog, mMarkListVector);
-
-    layoutWindow("manageDlg", dialog, new Dimension(434, 330));
-
-    dialog.setVisible(true);
-    updateTree();
+    layoutWindow("manageDlg", mManageDialog, new Dimension(434, 330));
+    mManageDialog.setVisible(true);
+    updateTree();}catch(Throwable t) {t.printStackTrace();}
   }
 
   public void readData(ObjectInputStream in) throws IOException,
@@ -493,6 +550,10 @@ public class SimpleMarkerPlugin extends Plugin {
     }
     addGroupingActions(root);
     root.update();
+    
+    if(mMangePanel != null) {
+      mMangePanel.selectPrograms(false);
+    }
   }
 
   protected ImageIcon createIconForTree(int i) {
@@ -579,14 +640,14 @@ public class SimpleMarkerPlugin extends Plugin {
     return getParentFrame();
   }
 
-  protected void refreshManagePanel(boolean scroll) {
-    if(mManagePanel != null) {
-      mManagePanel.selectPrograms(scroll);
+  protected void refreshManageDialog(boolean scroll) {
+    if(mManageDialog != null) {
+      mManageDialog.selectPrograms(scroll);
     }
   }
 
-  protected void resetManagePanel() {
-    mManagePanel = null;
+  protected void resetManageDialog() {
+    mManageDialog = null;
   }
 
   public Class<? extends PluginsFilterComponent>[] getAvailableFilterComponentClasses() {
@@ -603,6 +664,10 @@ public class SimpleMarkerPlugin extends Plugin {
   }
 
   protected void save() {
+    if(mMangePanel != null) {
+      mMangePanel.selectPrograms(false);
+    }
+    
     saveMe();
   }
   
@@ -610,5 +675,19 @@ public class SimpleMarkerPlugin extends Plugin {
     return Plugin.OTHER_CATEGORY;
   }
 
+  public PluginCenterPanelWrapper getPluginCenterPanelWrapper() {
+    return mWrapper;
+  }
 
+  private class SimpleMarkerPanel extends PluginCenterPanel {
+    @Override
+    public String getName() {
+      return getInfo().getName();
+    }
+
+    @Override
+    public JPanel getPanel() {
+      return mCenterPanelWrapper;
+    }
+  }
 }
