@@ -35,6 +35,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Frame;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
@@ -86,6 +87,7 @@ import org.apache.commons.lang.StringUtils;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.browserlauncher.Launch;
 import util.misc.OperatingSystem;
+import util.ui.persona.Persona;
 
 /**
  * Provides utilities for UI stuff.
@@ -1064,5 +1066,34 @@ public class UiUtilities {
     return Math.abs(c1.getRed() - c2.getRed()) <= maxDiff
       && Math.abs(c1.getBlue() - c2.getBlue()) <= maxDiff
       && Math.abs(c1.getGreen() - c2.getGreen()) <= maxDiff;
+  }
+  
+  /**
+   * Creates a panel that has a semi-transparent background
+   * created of Persona colors.
+   * <p>
+   * @return The created JPanel.
+   * @since 3.2
+   */
+  public static JPanel createPersonaBackgroundPanel() {
+    JPanel panel = new JPanel(new BorderLayout()){
+      protected void paintComponent(Graphics g) {
+        if(Persona.getInstance().getAccentColor() != null && Persona.getInstance().getHeaderImage() != null) {
+         
+          Color c = Persona.testPersonaForegroundAgainst(Persona.getInstance().getAccentColor());
+          
+          int alpha = c.getAlpha();
+          
+          g.setColor(new Color(c.getRed(),c.getGreen(),c.getBlue(),alpha));
+          g.fillRect(0,0,getWidth(),getHeight());
+        }
+        else {
+          super.paintComponent(g);
+        }
+      }
+    };
+    panel.setOpaque(false);
+    
+    return panel;
   }
 }
