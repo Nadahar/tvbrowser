@@ -138,23 +138,7 @@ public class SimpleMarkerPlugin extends Plugin {
     SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
-        mCenterPanelWrapper = new JPanel(new BorderLayout()){
-          protected void paintComponent(Graphics g) {
-            if(Persona.getInstance().getAccentColor() != null && Persona.getInstance().getHeaderImage() != null) {
-             
-              Color c = Persona.testPersonaForegroundAgainst(Persona.getInstance().getAccentColor());
-              
-              int alpha = c.getAlpha();
-              
-              g.setColor(new Color(c.getRed(),c.getGreen(),c.getBlue(),alpha));
-              g.fillRect(0,0,getWidth(),getHeight());
-            }
-            else {
-              super.paintComponent(g);
-            }
-          }
-        };
-        mCenterPanelWrapper.setOpaque(false);
+        mCenterPanelWrapper = UiUtilities.createPersonaBackgroundPanel();
         
         mWrapper = new PluginCenterPanelWrapper() {
           @Override
@@ -650,6 +634,7 @@ public class SimpleMarkerPlugin extends Plugin {
     mManageDialog = null;
   }
 
+  @SuppressWarnings("unchecked")
   public Class<? extends PluginsFilterComponent>[] getAvailableFilterComponentClasses() {
     if(mMarkListVector.size() > 1) {
       // Make sure the compiler not has to make unsafe class cast, therefore class is casted manually to needed type
