@@ -181,23 +181,7 @@ public class ReminderPlugin {
       }
     };
     
-    mCenterPanel = new JPanel(new BorderLayout()) {
-      protected void paintComponent(Graphics g) {
-        if(Persona.getInstance().getAccentColor() != null && Persona.getInstance().getHeaderImage() != null) {
-         
-          Color c = Persona.testPersonaForegroundAgainst(Persona.getInstance().getAccentColor());
-          
-          int alpha = c.getAlpha();
-          
-          g.setColor(new Color(c.getRed(),c.getGreen(),c.getBlue(),alpha));
-          g.fillRect(0,0,getWidth(),getHeight());
-        }
-        else {
-          super.paintComponent(g);
-        }
-      }
-    };
-    mCenterPanel.setOpaque(false);
+    mCenterPanel = UiUtilities.createPersonaBackgroundPanel();
     mClientPluginTargets = new ProgramReceiveTarget[0];
     mConfigurationHandler = new ConfigurationHandler(getReminderPluginId());
     loadSettings();
