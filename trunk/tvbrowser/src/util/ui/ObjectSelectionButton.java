@@ -54,7 +54,9 @@ import javax.swing.JScrollPane;
 import javax.swing.ListCellRenderer;
 import javax.swing.SwingUtilities;
 
+import tvbrowser.core.Settings;
 import tvbrowser.ui.mainframe.MainFrame;
+import util.io.IOUtilities;
 import util.misc.StringPool;
 
 import devplugin.Program;
@@ -77,14 +79,40 @@ public class ObjectSelectionButton<E> extends JButton implements ActionListener 
     mListenerList = new ArrayList<ObjectSelectionListener<E>>();
     mLastClosedDialogTime = 0;
     mListCellRenderer = new DefaultListCellRenderer() {
-      public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+      public Component getListCellRendererComponent(JList list,final Object value, int index, boolean isSelected, boolean cellHasFocus) {
         JLabel c = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
         
         if(value instanceof Program) {
           c.setText(StringPool.getString(((Program)value).getTimeString()) + " " + ((Program)value).getTitle());
           
-          if(!isSelected && !cellHasFocus && ((Program)value).isExpired()) {
-            c.setForeground(Color.lightGray);
+          if(!isSelected && !cellHasFocus) {
+            if(((Program)value).isExpired()) {
+              c.setForeground(Color.lightGray);
+            }
+            else if(((Program)value).isOnAir()) {
+              c = new JLabel(c.getText()) {
+                protected void paintComponent(Graphics g) {
+                  g.setColor(Color.white);
+                  g.fillRect(0, 1, getWidth(), getHeight()-2);
+                  
+
+                  int runTime = IOUtilities.getMinutesAfterMidnight() - ((Program)value).getStartTime();
+                  if (runTime < 0) {
+                    runTime += 24 * 60;
+                  }
+                  int progressX = (int)((getWidth())/(double)((Program)value).getLength() * runTime);
+
+                  g.setColor(Settings.propProgramTableColorOnAirDark.getColor());
+                  g.fillRect(0,1,progressX,getHeight()-2);
+
+                  g.setColor(Settings.propProgramTableColorOnAirLight.getColor());
+                  g.fillRect(0 + progressX,1,getWidth()-progressX,getHeight()-2);
+                  
+                  setForeground(Color.black);
+                  super.paintComponent(g);
+                }
+              };
+            }
           }
         }        
         

@@ -24,6 +24,7 @@
 package tvbrowser.extras.programinfo;
 
 import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -31,6 +32,7 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
@@ -40,6 +42,8 @@ import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.Program;
 
+import tvbrowser.core.Settings;
+import util.io.IOUtilities;
 import util.ui.ObjectSelectionButton;
 import util.ui.ObjectSelectionListener;
 import util.ui.TVBrowserIcons;
@@ -77,7 +81,12 @@ public class ProgramInfoToolBar extends JPanel implements ObjectSelectionListene
       }
     };
     
-    mCurrent = new JLabel();
+    mCurrent = new JLabel() {
+      public void paintComponent(Graphics g) {
+        paintProgress(ProgramInfoDialog.getCurrentProgram(), this, g);        
+        super.paintComponent(g);
+      }
+    };
     mCurrent.setHorizontalTextPosition(JLabel.CENTER);
     mCurrent.setHorizontalAlignment(JLabel.CENTER);
     mCurrent.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 1, UIManager.getColor("Label.foreground")));
@@ -116,12 +125,23 @@ public class ProgramInfoToolBar extends JPanel implements ObjectSelectionListene
     mNextSelection.setOpaque(false);
     mNextSelection.addMouseListener(mouseAdapter);
     
-    mPrevious = new JButton();
+    mPrevious = new JButton() {
+      public void paintComponent(Graphics g) {
+        Program[] previous = ProgramInfo.getInstance().getPreviousPrograms();
+
+        if(previous != null && previous.length > 0) {
+          paintProgress(previous[0], this, g);
+        }
+        
+        super.paintComponent(g);
+      }
+    };
     mPrevious.setForeground(UIManager.getColor("Label.foreground"));
     mPrevious.setContentAreaFilled(false);
     mPrevious.setBorder(BorderFactory.createEmptyBorder());
     mPrevious.setOpaque(false);
     mPrevious.addMouseListener(mouseAdapter);
+    
     mPrevious.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -129,7 +149,18 @@ public class ProgramInfoToolBar extends JPanel implements ObjectSelectionListene
       }
     });
     
-    mNext = new JButton();
+    mNext = new JButton() {
+      public void paintComponent(Graphics g) {
+        Program[] next = ProgramInfo.getInstance().getNextPrograms();
+
+        if(next != null && next.length > 0) {
+          paintProgress(next[0], this, g);
+        }
+        
+        super.paintComponent(g);
+      }
+    };
+    
     mNext.setForeground(UIManager.getColor("Label.foreground"));
     mNext.setContentAreaFilled(false);
     mNext.setBorder(BorderFactory.createEmptyBorder());
@@ -218,5 +249,29 @@ public class ProgramInfoToolBar extends JPanel implements ObjectSelectionListene
     mNext.setEnabled(next != null && next.length > 0);
     mNextSelection.setEnabled(next != null && next.length > 0);
     mNextSelection.setObjectArr(next);
+    
+    updateUI();
+  }
+  
+  private void paintProgress(Program program, JComponent component, Graphics g) {
+    if(program.isOnAir()) {
+      g.setColor(Color.white);
+      g.fillRect(0, 1, component.getWidth(), component.getHeight()-2);
+      
+
+      int runTime = IOUtilities.getMinutesAfterMidnight() - program.getStartTime();
+      if (runTime < 0) {
+        runTime += 24 * 60;
+      }
+      int progressX = (int)((component.getWidth())/(double)program.getLength() * runTime);
+
+      g.setColor(Settings.propProgramTableColorOnAirDark.getColor());
+      g.fillRect(0,1,progressX,component.getHeight()-2);
+
+      g.setColor(Settings.propProgramTableColorOnAirLight.getColor());
+      g.fillRect(0 + progressX,1,component.getWidth()-progressX,component.getHeight()-2);
+      
+      component.setForeground(Color.black);
+    }
   }
 }
