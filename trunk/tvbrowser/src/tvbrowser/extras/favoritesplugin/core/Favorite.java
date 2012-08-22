@@ -976,7 +976,10 @@ public abstract class Favorite {
         synchronized(mPrograms) {
           for(int i = mPrograms.size()-1; i >= 0; i--) {
             try {
-              if(mPrograms.get(i).getProgramState() == Program.WAS_UPDATED_STATE) {
+              if(mPrograms.get(i).getDate().addDays(-2).compareTo(Date.getCurrentDate()) <= 0) {
+                mPrograms.remove(i);
+              }
+              else if(mPrograms.get(i).getProgramState() == Program.WAS_UPDATED_STATE) {
                 Program prog = mPrograms.remove(i);
                 mPrograms.add(i,Plugin.getPluginManager().getProgram(prog.getDate(),prog.getID()));
               }
@@ -990,6 +993,9 @@ public abstract class Favorite {
           synchronized(mBlackList) {
             for(int i = mBlackList.size()-1; i >= 0; i--) {
               try {
+                if(mBlackList.get(i).getDate().addDays(-2).compareTo(Date.getCurrentDate()) <= 0) {
+                  mBlackList.remove(i);
+                }
                 if(mBlackList.get(i).getProgramState() == Program.WAS_UPDATED_STATE) {
                   Program prog = mBlackList.remove(i);
                   mBlackList.add(i,Plugin.getPluginManager().getProgram(prog.getDate(),prog.getID()));
