@@ -261,7 +261,7 @@ public class ReminderList implements ActionListener {
         .clone();
     for (Program program : programs) {
       for (ReminderListItem item : localItems) {
-        if (item.getProgram().equals(program)) {
+        if (program != null && item != null && (item.getProgram() == null || item.getProgram().equals(program))) {
           remove(item);
           break;
         }
