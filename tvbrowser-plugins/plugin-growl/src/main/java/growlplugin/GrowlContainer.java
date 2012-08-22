@@ -89,7 +89,7 @@ public class GrowlContainer {
     final String desc = mParser.analyse(settings.getDescription(), program);
     if (OperatingSystem.isMacOs()) {
       final AppleScriptRunner runner = new AppleScriptRunner();
-      final String script = "tell application \"GrowlHelperApp\"\n"
+      final String script = "tell application id \"com.Growl.GrowlHelperApp\"\n"
           + "   set the allNotificationsList to {\"TVBrowserSendProgram\"}\n"
           + "   register as application \"TV-Browser\" all notifications allNotificationsList default notifications allNotificationsList icon of application \"TV-Browser\"\n"
           + "   notify with name \"TVBrowserSendProgram\" title \""
