@@ -881,7 +881,7 @@ public class ReminderPlugin {
 
               line.addLineListener(new LineListener() {
                 public void update(LineEvent event) {
-                  if(line != null && !line.isRunning()) {
+                  if(event.getType() != javax.sound.sampled.LineEvent.Type.START && line != null && !line.isRunning()) {
                     stopped = true;
                     line.close();
                     try {

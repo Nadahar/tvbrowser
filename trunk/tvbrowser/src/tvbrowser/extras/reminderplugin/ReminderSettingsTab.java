@@ -315,7 +315,7 @@ public class ReminderSettingsTab implements SettingsTab {
             if(mTestSound instanceof SourceDataLine) {
               ((SourceDataLine)mTestSound).addLineListener(new LineListener() {
                 public void update(LineEvent event) {
-                  if(event.getType() == Type.CLOSE) {
+                  if(event.getType() == Type.CLOSE || event.getType() == Type.STOP) {
                     soundTestBt.setText(mLocalizer.msg("test", "Test"));
                   }
                 }
