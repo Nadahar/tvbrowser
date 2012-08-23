@@ -1,6 +1,6 @@
 /*
  * SoundReminder - Plugin for TV-Browser
- * Copyright (C) 2009 René Mach
+ * Copyright (C) 2009 Renï¿½ Mach
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -80,7 +80,7 @@ import devplugin.Version;
 /**
  * A plugin to remind with different sound per title.
  * <p>
- * @author René Mach
+ * @author Renï¿½ Mach
  */
 public class SoundReminder extends Plugin {
   protected static final Localizer mLocalizer = Localizer
@@ -97,7 +97,7 @@ public class SoundReminder extends Plugin {
   }
   
   public static Version getVersion() {
-    return new Version(0,4,false);
+    return new Version(0,5,true);
   }
   
   public PluginInfo getInfo() {
@@ -421,7 +421,7 @@ public class SoundReminder extends Plugin {
           if(mTestSound instanceof SourceDataLine) {
             ((SourceDataLine)mTestSound).addLineListener(new LineListener() {
               public void update(final LineEvent event) {
-                if(event.getType() == Type.CLOSE) {
+                if(event.getType() == Type.CLOSE || event.getType() == Type.STOP) {
                   ((JButton)e.getSource()).setText(mLocalizer.msg("settings.test", "Test"));
                 }
               }

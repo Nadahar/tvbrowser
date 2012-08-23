@@ -43,6 +43,7 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineEvent;
+import javax.sound.sampled.LineEvent.Type;
 import javax.sound.sampled.LineListener;
 import javax.sound.sampled.SourceDataLine;
 import javax.swing.JOptionPane;
@@ -235,7 +236,7 @@ public class SoundEntry {
 
               line.addLineListener(new LineListener() {
                 public void update(final LineEvent event) {
-                  if(line != null && !line.isRunning()) {
+                  if(event.getType() != Type.START && line != null && !line.isRunning()) {
                     stopped = true;
                     line.close();
                     try {
