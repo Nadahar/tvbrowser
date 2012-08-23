@@ -516,8 +516,18 @@ public class ToolBar extends JToolBar {
         label = ChannelContextMenu.mLocalizer.ellipsisMsg("addChannels", "Add/Remove channels");
       }
       else if (name.indexOf("##") != -1) {
-        PluginProxy plugin = PluginProxyManager.getInstance().getActivatedPluginForId(name.substring(0,name.indexOf("##")));
-        configItemEnabled = plugin != null && plugin.getSettingsTab() != null;
+    	String id = name.substring(0,name.indexOf("##"));
+        PluginProxy plugin = PluginProxyManager.getInstance().getActivatedPluginForId(id);
+        
+        if(plugin != null) {
+          configItemEnabled =  plugin.getSettingsTab() != null;
+        }
+        else {
+          if(InternalPluginProxyList.getInstance().getProxyForId(id) != null) {
+        	configItemEnabled = true;
+            name = InternalPluginProxyList.getInstance().getProxyForId(id).getSettingsId();        	  
+          }
+        }
       }
       else if (PluginProxyManager.getInstance().getActivatedPluginForId(name) != null) {
         configItemEnabled = PluginProxyManager.getInstance().getActivatedPluginForId(name).getSettingsTab() != null;
