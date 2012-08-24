@@ -53,6 +53,7 @@ import javax.swing.JPanel;
 import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -61,8 +62,8 @@ import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
+import com.jgoodies.forms.builder.ButtonBarBuilder2;
 import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.Sizes;
@@ -89,6 +90,8 @@ public class SoundReminder extends Plugin {
   
   private static SoundReminder mInstance;
   private ArrayList<SoundEntry> mSoundEntryList;
+  private SoundEntry mDefaultEntry;
+  private Object mTestSound;
   
   /** Creates an instance of this class. */
   public SoundReminder() {
@@ -97,7 +100,7 @@ public class SoundReminder extends Plugin {
   }
   
   public static Version getVersion() {
-    return new Version(0,5,true);
+    return new Version(0,10,true);
   }
   
   public PluginInfo getInfo() {
@@ -118,14 +121,26 @@ public class SoundReminder extends Plugin {
     for(int i = 0; i < n; i++) {
       mSoundEntryList.add(new SoundEntry(in, version));
     }
+    
+    if(version > 1) {
+      if(in.readBoolean()) {
+        mDefaultEntry = new SoundEntry(in, version);
+      }
+    }
   }
   
   public void writeData(final ObjectOutputStream out) throws IOException {
-    out.writeInt(1); // write version
+    out.writeInt(2); // write version
     out.writeInt(mSoundEntryList.size());
     
     for(SoundEntry entry : mSoundEntryList) {
       entry.writeData(out);
+    }
+    
+    out.writeBoolean(mDefaultEntry != null);
+    
+    if(mDefaultEntry != null) {
+      mDefaultEntry.writeData(out);
     }
   }
   
@@ -135,6 +150,8 @@ public class SoundReminder extends Plugin {
         "audio-volume-high", 16));
     openDialog.putValue(Plugin.BIG_ICON,createImageIcon("status","audio-volume-high",22));
     openDialog.setActionListener(new ActionListener() {
+      private SettingsTab mSettings;
+      
       public void actionPerformed(final ActionEvent e) {
         final Window w = UiUtilities.getLastModalChildOf(getParentFrame());
         
@@ -163,13 +180,16 @@ public class SoundReminder extends Plugin {
           }
         });
         
-        final SoundTablePanel soundPanel = new SoundTablePanel();
+        mSettings = getSettingsTab();
         
+        /*final SoundTablePanel soundPanel = new SoundTablePanel();
+        soundPanel.setMinimumSize(new Dimension(560,420));
+        */
         final JButton ok = new JButton(Localizer
             .getLocalization(Localizer.I18N_OK));
         ok.addActionListener(new ActionListener() {
           public void actionPerformed(final ActionEvent e) {
-            soundPanel.saveSettings();
+            mSettings.saveSettings();
             exclusionListDlg.dispose();
           }
         });
@@ -193,7 +213,10 @@ public class SoundReminder extends Plugin {
             .getContentPane());
         pb.setDefaultDialogBorder();
         
-        pb.add(soundPanel, cc.xyw(1,1,4));
+        JPanel settingsPanel = mSettings.createSettingsPanel();
+        settingsPanel.setMinimumSize(new Dimension(560,420));
+        
+        pb.add(settingsPanel, cc.xyw(1,1,4));
         pb.addSeparator("", cc.xyw(1,3,4));
         pb.add(ok, cc.xy(2,5));
         pb.add(cancel, cc.xy(4,5));
@@ -210,12 +233,63 @@ public class SoundReminder extends Plugin {
   public SettingsTab getSettingsTab() {
     return new SettingsTab() {
       private SoundTablePanel mSoundTablePanel;
+      private JTextField mDefaultFile;
       
       public JPanel createSettingsPanel() {
+      	PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,min,3dlu,min:grow,3dlu,min,3dlu,min,3dlu,min,5dlu","5dlu,default,10dlu,default,5dlu,fill:default:grow"));
         mSoundTablePanel = new SoundTablePanel();
-        mSoundTablePanel.setBorder(Borders.createEmptyBorder("5dlu,10dlu,0dlu,0dlu"));
-                
-        return mSoundTablePanel;
+        
+        mDefaultFile = new JTextField();
+        mDefaultFile.setEditable(false);
+        
+        if(mDefaultEntry != null) {
+          mDefaultFile.setText(mDefaultEntry.getPath());
+        }
+
+        final JButton play = new JButton(mLocalizer.msg("settings.test","Test"),createImageIcon("status","audio-volume-high",16));
+        play.setEnabled(mDefaultFile.getText() != null && new File(mDefaultFile.getText()).isFile());
+        play.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+            playSoundFile(e, mDefaultFile.getText());
+          }
+        });
+
+        final JButton delete = new JButton(createImageIcon("actions", "edit-delete", 16));
+        delete.setToolTipText(Localizer.getLocalization(Localizer.I18N_DELETE));
+        delete.setEnabled(mDefaultFile.getText() != null && mDefaultFile.getText().trim().length() > 0);
+        delete.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+            mDefaultFile.setText("");
+            play.setEnabled(false);
+            delete.setEnabled(false);
+          }
+        });
+        
+        JButton select = new JButton(Localizer.getEllipsisLocalization(Localizer.I18N_SELECT));
+        select.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {  				  
+  				  String newValue = selectAudioFile(mDefaultFile.getText());
+  				  
+  				  if(newValue != null) {
+  				    mDefaultFile.setText(newValue);
+  				  }
+  				  
+  				  play.setEnabled(mDefaultFile.getText() != null && new File(mDefaultFile.getText()).isFile());
+  				  delete.setEnabled(mDefaultFile.getText() != null && mDefaultFile.getText().trim().length() > 0);
+  			  }
+    		});
+        
+        CellConstraints cc = new CellConstraints();
+        
+        pb.addLabel(mLocalizer.msg("settings.default", "Default sound file:"), cc.xy(2, 2));
+        pb.add(mDefaultFile, cc.xy(4, 2));
+        pb.add(select, cc.xy(6, 2));
+        pb.add(delete, cc.xy(8, 2));
+        pb.add(play, cc.xy(10, 2));
+        pb.addSeparator(mLocalizer.msg("settings.search", "Search settings"), cc.xyw(1,4,11));
+        pb.add(mSoundTablePanel, cc.xyw(2, 6, 9));
+        
+        return pb.getPanel();
       }
 
       public Icon getIcon() {
@@ -228,6 +302,17 @@ public class SoundReminder extends Plugin {
 
       public void saveSettings() {
         mSoundTablePanel.saveSettings();
+        if(mDefaultFile.getText() != null && new File(mDefaultFile.getText()).isFile()) {
+          if(mDefaultEntry == null) {
+            mDefaultEntry = new SoundEntry("BLABLA", false, mDefaultFile.getText());
+          }
+          else {
+            mDefaultEntry.setValues("BLABLA", false, mDefaultFile.getText());
+          }
+        }
+        else {
+          mDefaultEntry = null;
+        }
       }
     };
   }
@@ -259,9 +344,19 @@ public class SoundReminder extends Plugin {
         }
         
         if(!soundPlayed) {
-          mSoundEntryList.get(0).playSound();
+          if(mDefaultEntry != null) {
+            mDefaultEntry.playSound();
+          }
+          else {
+            mSoundEntryList.get(0).playSound();
+          }
         }
       }
+      
+      return true;
+    }
+    else if(mDefaultEntry != null) {
+      mDefaultEntry.playSound();
       
       return true;
     }
@@ -276,7 +371,6 @@ public class SoundReminder extends Plugin {
   private class SoundTablePanel extends JPanel {
     private JTable mTable;
     private SoundReminderSettingsTableModel mTableModel;
-    private Object mTestSound;
     
     protected SoundTablePanel() {
       mTableModel = new SoundReminderSettingsTableModel(mSoundEntryList);
@@ -307,7 +401,7 @@ public class SoundReminder extends Plugin {
             mTable.repaint();
           }
           else if(column == 2 && e.getClickCount() == 2) {
-            selectAudioFile(mTable.rowAtPoint(e.getPoint()));
+            selectAudioFileInternal(mTable.rowAtPoint(e.getPoint()));
           }
         }
       });
@@ -327,7 +421,7 @@ public class SoundReminder extends Plugin {
               mTable.repaint();
             }
             else if(mTable.getSelectedColumn() == 2){
-              selectAudioFile(row);
+              selectAudioFileInternal(row);
             }
           }
         }
@@ -356,7 +450,7 @@ public class SoundReminder extends Plugin {
       play.setEnabled(false);
       play.addActionListener(new ActionListener() {
         public void actionPerformed(final ActionEvent e) {
-          playSelectedRow(e);
+          playSoundFile(e,(String)mTable.getValueAt(mTable.getSelectedRow(),2));
         }
       });
       
@@ -372,85 +466,37 @@ public class SoundReminder extends Plugin {
         }
       });
       
-      final FormLayout layout = new FormLayout("default,0dlu:grow,default",
-      "fill:default:grow,1dlu,default,4dlu,default,5dlu,pref");
+      final FormLayout layout = new FormLayout("default,min:grow,default",
+      "fill:min:grow,2dlu,default,5dlu,default");
       final PanelBuilder pb = new PanelBuilder(layout, this);
       final CellConstraints cc = new CellConstraints();
       
+      ButtonBarBuilder2 buttonPanel = new ButtonBarBuilder2();
+      buttonPanel.addButton(add);
+      buttonPanel.addRelatedGap();
+      buttonPanel.addButton(delete);
+      buttonPanel.addGlue();
+      buttonPanel.addButton(play);
+      
       int y = 1;
       
-      pb.add(scrollPane, cc.xyw(1,y++,3));
-      
-      pb.add(play, cc.xy(3,++y));
-      
+      pb.add(scrollPane, cc.xyw(1,y++,3));      
+      pb.add(buttonPanel.getPanel(), cc.xyw(1,++y,3));
       y++;
-      pb.add(add, cc.xy(1,++y));
-      pb.add(delete, cc.xy(3,y++));
       pb.add(UiUtilities.createHelpTextArea(mLocalizer.msg("settings.help",
       "To edit a value double click a cell. You can use wildcard * to search for any text.")), cc.xyw(1,++y,3));
     }
     
-    private void selectAudioFile(final int row) {
-      final String[] extArr = { ".wav", ".aif", ".rmf", ".au", ".mid" };
+    private void selectAudioFileInternal(int row) {
       final String soundFName = (String) mTable.getValueAt(row, 2);
-      final String msg = mLocalizer.msg("settings.soundFileFilter",
-          "Sound file ({0})",
-          "*.wav, *.aif, *.rmf, *.au, *.mid");
       
-      final JFileChooser fileChooser = new JFileChooser();
-      fileChooser.setFileFilter(new ExtensionFileFilter(extArr, msg));
-      fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-      fileChooser.setMultiSelectionEnabled(false);
+      String selectedValue = selectAudioFile(soundFName);
       
-      if(soundFName != null && new File(soundFName).isFile()) {
-        fileChooser.setSelectedFile(new File(soundFName));
-      }
-      
-      if(fileChooser.showOpenDialog(UiUtilities.getLastModalChildOf(getParentFrame())) == JFileChooser.APPROVE_OPTION) {
-        mTableModel.setValueAt(fileChooser.getSelectedFile().getAbsolutePath(),row,2);
+      if(selectedValue != null) {
+        mTableModel.setValueAt(selectedValue,row,2);
       }
     }
     
-    private void playSelectedRow(final ActionEvent e) {
-      if(e.getActionCommand().compareTo(mLocalizer.msg("settings.test", "Test")) == 0) {
-        mTestSound = SoundEntry.playSound((String)mTable.getValueAt(mTable.getSelectedRow(),2));
-        if(mTestSound != null) {
-          ((JButton)e.getSource()).setText(mLocalizer.msg("settings.stop", "Stop"));
-        }
-        if(mTestSound != null) {
-          if(mTestSound instanceof SourceDataLine) {
-            ((SourceDataLine)mTestSound).addLineListener(new LineListener() {
-              public void update(final LineEvent event) {
-                if(event.getType() == Type.CLOSE || event.getType() == Type.STOP) {
-                  ((JButton)e.getSource()).setText(mLocalizer.msg("settings.test", "Test"));
-                }
-              }
-            });
-          }
-          else if(mTestSound instanceof Sequencer) {
-            new Thread("Test MIDI sound") {
-              public void run() {
-                setPriority(Thread.MIN_PRIORITY);
-                while(((Sequencer)mTestSound).isRunning()) {
-                  try {
-                    Thread.sleep(100);
-                  }catch(Exception ee) {}
-                }
-                
-                ((JButton)e.getSource()).setText(mLocalizer.msg("settings.test", "Test"));
-              }
-            }.start();
-          }
-        }
-      }
-      else if(mTestSound != null) {
-        if(mTestSound instanceof SourceDataLine && ((SourceDataLine)mTestSound).isRunning()) {
-          ((SourceDataLine)mTestSound).stop();
-        } else if(mTestSound instanceof Sequencer && ((Sequencer)mTestSound).isRunning()) {
-          ((Sequencer)mTestSound).stop();
-        }
-      }
-    }
     
     private void deleteSelectedRows() {
       final int selectedIndex = mTable.getSelectedRow();
@@ -481,6 +527,69 @@ public class SoundReminder extends Plugin {
       mSoundEntryList = mTableModel.getChangedList();
     }
   }
+  
+  private String selectAudioFile(String soundFName) {
+	  final String[] extArr = { ".wav", ".aif", ".rmf", ".au", ".mid" };
+	  final String msg = mLocalizer.msg("settings.soundFileFilter",
+	      "Sound file ({0})",
+	      "*.wav, *.aif, *.rmf, *.au, *.mid");
+	  
+	  final JFileChooser fileChooser = new JFileChooser();
+	  fileChooser.setFileFilter(new ExtensionFileFilter(extArr, msg));
+	  fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+	  fileChooser.setMultiSelectionEnabled(false);
+	  
+	  if(soundFName != null && new File(soundFName).isFile()) {
+	    fileChooser.setSelectedFile(new File(soundFName));
+	  }
+	  
+	  if(fileChooser.showOpenDialog(UiUtilities.getLastModalChildOf(getParentFrame())) == JFileChooser.APPROVE_OPTION) {
+		  return fileChooser.getSelectedFile().getAbsolutePath();
+	  }
+	  
+	  return null;
+	}
+  private void playSoundFile(final ActionEvent e, String soundFName) {
+    if(e.getActionCommand().compareTo(mLocalizer.msg("settings.test", "Test")) == 0) {
+      mTestSound = SoundEntry.playSound(soundFName);
+      if(mTestSound != null) {
+        ((JButton)e.getSource()).setText(mLocalizer.msg("settings.stop", "Stop"));
+      }
+      if(mTestSound != null) {
+        if(mTestSound instanceof SourceDataLine) {
+          ((SourceDataLine)mTestSound).addLineListener(new LineListener() {
+            public void update(final LineEvent event) {
+              if(event.getType() == Type.CLOSE || event.getType() == Type.STOP) {
+                ((JButton)e.getSource()).setText(mLocalizer.msg("settings.test", "Test"));
+              }
+            }
+          });
+        }
+        else if(mTestSound instanceof Sequencer) {
+          new Thread("Test MIDI sound") {
+            public void run() {
+              setPriority(Thread.MIN_PRIORITY);
+              while(((Sequencer)mTestSound).isRunning()) {
+                try {
+                  Thread.sleep(100);
+                }catch(Exception ee) {}
+              }
+              
+              ((JButton)e.getSource()).setText(mLocalizer.msg("settings.test", "Test"));
+            }
+          }.start();
+        }
+      }
+    }
+    else if(mTestSound != null) {
+      if(mTestSound instanceof SourceDataLine && ((SourceDataLine)mTestSound).isRunning()) {
+        ((SourceDataLine)mTestSound).stop();
+      } else if(mTestSound instanceof Sequencer && ((Sequencer)mTestSound).isRunning()) {
+        ((Sequencer)mTestSound).stop();
+      }
+    }
+  }
+
   
   public String getPluginCategory() {
     //Plugin.OTHER
