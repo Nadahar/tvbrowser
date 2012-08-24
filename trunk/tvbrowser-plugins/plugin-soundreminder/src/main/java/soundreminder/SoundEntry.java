@@ -226,43 +226,52 @@ public class SoundEntry {
           new Thread("Reminder audio playing") {
             private boolean stopped;
             public void run() {
-              final byte[] myData = new byte[1024 * format.getFrameSize()];
-              final int numBytesToRead = myData.length;
-              int numBytesRead = 0;
-              int total = 0;
-              final int totalToRead = (int) (format.getFrameSize() * ais
-                  .getFrameLength());
-              stopped = false;
-
-              line.addLineListener(new LineListener() {
-                public void update(final LineEvent event) {
-                  if(event.getType() != Type.START && line != null && !line.isRunning()) {
-                    stopped = true;
-                    line.close();
-                    try {
-                      ais.close();
-                    }catch(Exception ee) {
-                      // ignore
+              try {
+                final byte[] myData = new byte[1024 * format.getFrameSize()];
+                final int numBytesToRead = myData.length;
+                int numBytesRead = 0;
+                int total = 0;
+                final int totalToRead = (int) (format.getFrameSize() * ais
+                    .getFrameLength());
+                stopped = false;
+  
+                line.addLineListener(new LineListener() {
+                  public void update(final LineEvent event) {
+                    if(event.getType() != Type.START && line != null && (!line.isRunning() || event.getType() == Type.STOP)) {
+                      stopped = true;
+                      
+                      try {
+                        ais.close();
+                      }catch(Exception ee) {
+                        // ignore
+                      }
                     }
                   }
-                }
-              });
-
-              try {
-                while (total < totalToRead && !stopped) {
-                  numBytesRead = ais.read(myData, 0, numBytesToRead);
-
-                  if (numBytesRead == -1) {
-                    break;
+                });
+  
+                try {
+                  while (total < totalToRead && !stopped) {
+                    numBytesRead = ais.read(myData, 0, numBytesToRead);
+  
+                    if (numBytesRead == -1) {
+                      break;
+                    }
+  
+                    total += numBytesRead;
+                    line.write(myData, 0, numBytesRead);
                   }
-
-                  total += numBytesRead;
-                  line.write(myData, 0, numBytesRead);
+                }catch(Exception e) {}
+               
+                if(line.isRunning()) {
+                  line.drain();
                 }
-              }catch(Exception e) {}
-
-              line.drain();
-              line.stop();
+                
+                line.stop();
+                
+                if(line != null) {
+                  line.close();
+                }
+              }catch(Exception ex) {}
             }
           }.start();
 
@@ -274,7 +283,7 @@ public class SoundEntry {
         }
       }
 
-    } catch (Exception e) {e.printStackTrace();
+    } catch (Exception e) {
       if((new File(fileName)).isFile()) {
         try {
           final URL url = new File(fileName).toURI().toURL();

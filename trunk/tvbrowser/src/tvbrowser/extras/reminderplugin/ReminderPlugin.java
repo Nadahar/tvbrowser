@@ -57,6 +57,7 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineEvent;
+import javax.sound.sampled.LineEvent.Type;
 import javax.sound.sampled.LineListener;
 import javax.sound.sampled.SourceDataLine;
 import javax.swing.AbstractAction;
@@ -872,42 +873,51 @@ public class ReminderPlugin {
             private boolean stopped;
             @Override
             public void run() {
-              byte[] myData = new byte[1024 * format.getFrameSize()];
-              int numBytesToRead = myData.length;
-              int numBytesRead = 0;
-              int total = 0;
-              int totalToRead = (int) (format.getFrameSize() * ais.getFrameLength());
-              stopped = false;
-
-              line.addLineListener(new LineListener() {
-                public void update(LineEvent event) {
-                  if(event.getType() != javax.sound.sampled.LineEvent.Type.START && line != null && !line.isRunning()) {
-                    stopped = true;
-                    line.close();
-                    try {
-                      ais.close();
-                    }catch(Exception ee) {
-                      // ignore
+              try {
+                byte[] myData = new byte[1024 * format.getFrameSize()];
+                int numBytesToRead = myData.length;
+                int numBytesRead = 0;
+                int total = 0;
+                int totalToRead = (int) (format.getFrameSize() * ais.getFrameLength());
+                stopped = false;
+  
+                line.addLineListener(new LineListener() {
+                  public void update(LineEvent event) {
+                    if(event.getType() != Type.START && line != null && (event.getType() == Type.STOP || !line.isRunning())) {
+                      stopped = true;
+                      
+                      try {
+                        ais.close();
+                      }catch(Exception ee) {
+                        // ignore
+                      }
                     }
                   }
-                }
-              });
-
-              try {
-                while (total < totalToRead && !stopped) {
-                  numBytesRead = ais.read(myData, 0, numBytesToRead);
-
-                  if (numBytesRead == -1) {
-                    break;
+                });
+  
+                try {
+                  while (total < totalToRead && !stopped) {
+                    numBytesRead = ais.read(myData, 0, numBytesToRead);
+  
+                    if (numBytesRead == -1) {
+                      break;
+                    }
+  
+                    total += numBytesRead;
+                    line.write(myData, 0, numBytesRead);
                   }
-
-                  total += numBytesRead;
-                  line.write(myData, 0, numBytesRead);
+                }catch(Exception e) {}
+  
+                if(line.isRunning()) {
+                  line.drain();
                 }
-              }catch(Exception e) {}
-
-              line.drain();
-              line.stop();
+                
+                line.stop();
+                
+                if(line != null) {
+                  line.close();
+                }
+              }catch(Exception ex) {}
             }
           }.start();
 
@@ -919,7 +929,7 @@ public class ReminderPlugin {
         }
       }
 
-    } catch (Exception e) {e.printStackTrace();
+    } catch (Exception e) {
       if((new File(fileName)).isFile()) {
         URL url;
         try {
