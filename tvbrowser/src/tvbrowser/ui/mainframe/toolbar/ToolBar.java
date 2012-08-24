@@ -564,7 +564,7 @@ public class ToolBar extends JToolBar {
     menu.addSeparator();
 
     item = new JMenuItem(mLocalizer.msg("removeButton", "Remove button"));
-    final String buttonName = name;
+    final String buttonName = ((AbstractButton) e.getSource()).getName();
     item.addActionListener(new ActionListener() {
 
       public void actionPerformed(ActionEvent e) {
