@@ -54,14 +54,11 @@ import tvbrowser.TVBrowser;
 import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataBase;
 import tvbrowser.core.filters.filtercomponents.ChannelFilterComponent;
-import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.ButtonActionIf;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.extras.common.InternalPluginProxyIf;
 import tvbrowser.extras.common.InternalPluginProxyList;
-import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
-import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvdataservice.MarkedProgramsList;
 import util.io.IOUtilities;
@@ -310,7 +307,8 @@ public class SystemTray {
       }
 
       public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
-        FavoritesPlugin.getInstance().showInfoDialog();
+        //TODO Maybe it could be useful to suppress the info dialog of Plugins until a user interaction 
+       //FavoritesPlugin.getInstance().showInfoDialog();
       }
 
       public void popupMenuWillBecomeVisible(PopupMenuEvent e) {

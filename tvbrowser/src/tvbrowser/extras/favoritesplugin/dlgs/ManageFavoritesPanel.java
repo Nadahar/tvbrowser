@@ -50,6 +50,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -105,7 +106,6 @@ import util.ui.persona.PersonaListener;
  */
 public class ManageFavoritesPanel extends JPanel implements ListDropAction, TreeSelectionListener, PersonaListener {
   private static final Localizer mLocalizer = ManageFavoritesDialog.mLocalizer;
-
   private DefaultListModel mFavoritesListModel, mProgramListModel;
   private JList mFavoritesList;
   private FavoriteTree mFavoriteTree;
@@ -123,7 +123,7 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
     init(favoriteArr, splitPanePosition, showNew, initialSelection);
   }
   
- private void init(Favorite[] favoriteArr, int splitPanePosition, boolean showNew, Favorite initialSelection) {try {
+  private void init(Favorite[] favoriteArr, int splitPanePosition, boolean showNew, Favorite initialSelection) {try {
     mShowNew = showNew;
 
     String msg;
@@ -144,7 +144,19 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
     toolbarPn.setFloatable(false);
     toolbarPn.setOpaque(false);
     toolbarPn.setBorder(BorderFactory.createEmptyBorder());
-    add(toolbarPn, BorderLayout.NORTH);
+    
+    if(mShowNew) {
+      JEditorPane info =  UiUtilities.createHtmlHelpTextArea(FavoritesPlugin.mLocalizer.msg("newPrograms.description","After updating TV listings, programs matching your favorites were found.\nSelect a favorite to view the new programs."));
+      
+      JPanel northPanel = new JPanel(new BorderLayout(0,5));
+      northPanel.add(info, BorderLayout.NORTH);
+      northPanel.add(toolbarPn, BorderLayout.SOUTH);
+      
+      add(northPanel, BorderLayout.NORTH);
+    }
+    else {
+      add(toolbarPn, BorderLayout.NORTH);
+    }
 
     if(!mShowNew) {
       if(favoriteArr == null) {

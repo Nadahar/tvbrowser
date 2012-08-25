@@ -31,6 +31,7 @@ import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.ButtonActionIf;
 import tvbrowser.extras.common.AbstractInternalPluginProxy;
 import devplugin.ActionMenu;
+import devplugin.AfterDataUpdateInfoPanel;
 import devplugin.ContextMenuIf;
 import devplugin.Marker;
 import devplugin.Plugin;
@@ -158,5 +159,10 @@ public class ReminderPluginProxy extends AbstractInternalPluginProxy implements 
   @Override
   public PluginCenterPanelWrapper getPluginCenterPanelWrapper() {
     return ReminderPlugin.getInstance().getPluginCenterPanelWrapper();
+  }
+
+  @Override
+  public AfterDataUpdateInfoPanel getAfterDataUpdateInfoPanel() {
+    return ReminderPlugin.getInstance().getAfterDataUpdateInfoPanel();
   }
 }

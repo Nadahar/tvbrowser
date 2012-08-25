@@ -26,9 +26,11 @@
 package tvbrowser.core.plugin;
 
 import javax.swing.Icon;
+import javax.swing.JPanel;
 
 import tvdataservice.MutableProgram;
 import devplugin.ActionMenu;
+import devplugin.AfterDataUpdateInfoPanel;
 import devplugin.Channel;
 import devplugin.ChannelDayProgram;
 import devplugin.ImportanceValue;
@@ -242,4 +244,13 @@ public interface PluginProxy extends PluginAccess, InfoIf {
    * @since 3.2
    */
   public PluginCenterPanelWrapper getPluginCenterPanelWrapper();
+  
+  /**
+   * Gets a panel that contains infos that should be
+   * shown for this Plugins  after a data update.
+   * <p>
+   * @return The panel with the infos.
+   * @since 3.2
+   */
+  public AfterDataUpdateInfoPanel getAfterDataUpdateInfoPanel();
 }

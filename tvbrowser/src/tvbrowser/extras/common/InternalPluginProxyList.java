@@ -50,8 +50,9 @@ public class InternalPluginProxyList {
 
     mList.add(ProgramInfoProxy.getInstance());
     mList.add(SearchPluginProxy.getInstance());
-    mList.add(ReminderPluginProxy.getInstance());
     mList.add(FavoritesPluginProxy.getInstance());
+    mList.add(ReminderPluginProxy.getInstance());
+    
     TvDataUpdater.getInstance().addTvDataUpdateListener(new TvDataUpdateListener() {
 
       @Override

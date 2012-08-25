@@ -32,11 +32,13 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JPanel;
 
 import tvbrowser.core.plugin.ButtonActionIf;
 import tvbrowser.extras.common.AbstractInternalPluginProxy;
 import tvbrowser.extras.favoritesplugin.dlgs.FavoriteTreeModel;
 import devplugin.ActionMenu;
+import devplugin.AfterDataUpdateInfoPanel;
 import devplugin.ContextMenuIf;
 import devplugin.Marker;
 import devplugin.Plugin;
@@ -204,5 +206,10 @@ public class FavoritesPluginProxy extends AbstractInternalPluginProxy implements
   @Override
   public PluginCenterPanelWrapper getPluginCenterPanelWrapper() {
     return FavoritesPlugin.getInstance().getPluginCenterPanelWrapper();
+  }
+
+  @Override
+  public AfterDataUpdateInfoPanel getAfterDataUpdateInfoPanel() {
+    return FavoritesPlugin.getInstance().getAfterDataUpdateInfoPanel();
   }
 }

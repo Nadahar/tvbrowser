@@ -25,6 +25,13 @@
  */
 package tvbrowser.core;
 
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.text.DateFormat;
@@ -34,24 +41,42 @@ import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JProgressBar;
+import javax.swing.JScrollPane;
 
 import org.apache.commons.lang.math.RandomUtils;
 
+import com.jgoodies.forms.builder.ButtonBarBuilder2;
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.layout.CellConstraints;
+
+import tvbrowser.core.plugin.PluginProxy;
+import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
+import tvbrowser.extras.common.InternalPluginProxyIf;
+import tvbrowser.extras.common.InternalPluginProxyList;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.ui.DontShowAgainOptionBox;
+import tvbrowser.ui.mainframe.MainFrame;
 import tvdataservice.MarkedProgramsList;
 import tvdataservice.MutableChannelDayProgram;
 import tvdataservice.TvDataUpdateManager;
 import util.exc.ErrorHandler;
 import util.io.NetworkUtilities;
+import util.ui.EnhancedPanelBuilder;
 import util.ui.Localizer;
 import util.ui.UIThreadRunner;
+import util.ui.UiUtilities;
 import util.ui.progress.ProgressMonitorGroup;
+import devplugin.AfterDataUpdateInfoPanel;
+import devplugin.AfterDataUpdateInfoPanel.AfterDataUpdateInfoPanelListener;
 import devplugin.Channel;
 import devplugin.ChannelDayProgram;
 import devplugin.Date;
@@ -265,6 +290,114 @@ public class TvDataUpdater {
 
     // reset flag to avoid unnecessary favorite updates
     mTvDataWasChanged = false;
+    showInfoDialog();
+  }
+  
+  private void showInfoDialog() {
+    new Thread("After update info showing") {
+      public void run() {
+        EnhancedPanelBuilder pb = new EnhancedPanelBuilder("5dlu,min:grow,5dlu");
+        final JPanel centerPanel = pb.getPanel();
+        
+        AfterDataUpdateInfoPanelListener infoPanelListener = new AfterDataUpdateInfoPanelListener() {
+          @Override
+          public void remove(AfterDataUpdateInfoPanel infoPanel) {
+            for(int i = centerPanel.getComponentCount()-1; i >= 0; i--) {
+              Component c = centerPanel.getComponent(i);
+              
+              if(c != null && c.equals(infoPanel)) {
+                centerPanel.remove(i);
+                centerPanel.remove(i-1);
+                break;
+              }
+            }
+            
+            infoPanel.closed();
+            centerPanel.updateUI();
+          }
+        };
+
+        CellConstraints cc = new CellConstraints();
+                
+        InternalPluginProxyIf[] internalPlugins = InternalPluginProxyList.getInstance().getAvailableProxys();
+        
+        boolean showDialog = false;
+        
+        for(InternalPluginProxyIf internalPlugin : internalPlugins) {
+          AfterDataUpdateInfoPanel test = internalPlugin.getAfterDataUpdateInfoPanel();
+          
+          if(test != null) {
+            test.setAfterDataUpdateInfoPanelListener(infoPanelListener);
+            pb.addParagraph(internalPlugin.getName());
+            pb.addGrowingRow();
+            pb.add(test, cc.xy(2, pb.getRowCount()));
+            showDialog = true;
+          }
+        }
+        
+        PluginProxy[] pluginProxys = PluginProxyManager.getInstance().getActivatedPlugins();
+        
+        for(PluginProxy pluginProxy : pluginProxys) {
+          AfterDataUpdateInfoPanel test = pluginProxy.getAfterDataUpdateInfoPanel();
+          
+          if(test != null) {
+            test.setAfterDataUpdateInfoPanelListener(infoPanelListener);
+            pb.addParagraph(pluginProxy.getInfo().getName());
+            pb.addGrowingRow();
+            pb.add(test, cc.xy(2, pb.getRowCount()));
+            showDialog = true;
+          }
+        }
+        
+        if(showDialog) {
+          final JDialog infoDialog = new JDialog(UiUtilities.getLastModalChildOf(MainFrame.getInstance()));
+          infoDialog.setTitle(mLocalizer.msg("afterUpdateInfo","Informations of data update"));
+          
+          JScrollPane scrollPane = new JScrollPane(centerPanel);
+          scrollPane.setBorder(BorderFactory.createEmptyBorder());
+          
+          JPanel center = new JPanel(new BorderLayout());
+          center.setBorder(Borders.DIALOG_BORDER);
+          center.add(scrollPane, BorderLayout.CENTER);
+          
+          JButton close = new JButton(Localizer.getLocalization(Localizer.I18N_CLOSE));
+          close.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+              infoDialog.dispose();
+            }
+          });
+          
+          ButtonBarBuilder2 buttons = new ButtonBarBuilder2();
+          buttons.addGlue();
+          buttons.addButton(close);
+          buttons.addGlue();
+          
+          pb.addRow("5dlu");
+          pb.addSeparator("", cc.xyw(1,pb.getRowCount(),3));
+          pb.addRow();
+          pb.add(buttons.getPanel(), cc.xyw(1,pb.getRowCount(),3));          
+          
+          infoDialog.setContentPane(center);
+          infoDialog.addWindowListener(new WindowAdapter() {            
+            @Override
+            public void windowClosing(WindowEvent e) {
+              for(int i = 0; i < centerPanel.getComponentCount(); i++) {
+                Component c = centerPanel.getComponent(i);
+                
+                if(c instanceof AfterDataUpdateInfoPanel) {
+                  ((AfterDataUpdateInfoPanel)c).closed();
+                }
+              }
+            }
+          });
+          
+          Settings.layoutWindow("AfterTvDataUpdateInfoDialog", infoDialog, new Dimension(900,500));
+          infoDialog.setModal(true);
+          infoDialog.setVisible(true);
+        }
+      }
+    }.start();
   }
   
   public boolean isUpdating() {

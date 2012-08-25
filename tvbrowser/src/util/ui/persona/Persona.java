@@ -110,7 +110,9 @@ public final class Persona {
    * @param listener The listener to register. 
    */
   public void registerPersonaListener(PersonaListener listener) {
-    mPersonaListenerList.add(listener);
+    synchronized (mPersonaListenerList) {
+      mPersonaListenerList.add(listener);
+    }
   }
   
   /**
@@ -119,7 +121,9 @@ public final class Persona {
    * @param listener The listener to remove.
    */
   public void removePersonaListerner(PersonaListener listener) {
-    mPersonaListenerList.remove(listener);
+    synchronized (mPersonaListenerList) {
+      mPersonaListenerList.remove(listener);
+    }
   }
   
   /**
@@ -141,40 +145,41 @@ public final class Persona {
     }
     
     try {
-    PersonaInfo personaInfo = mPersonaMap.get(id);
-    
-    if(personaInfo == null) {
-      Settings.propSelectedPersona.setString(new PersonaInfo().getId());
-      personaInfo = mPersonaMap.get(Settings.propSelectedPersona.getString());
-    }
-    
-    if(personaInfo != null) {
-      mId = personaInfo.getId();
-      mName = personaInfo.getName();
-      mDescription = personaInfo.getDescription();
-      mHeaderImage = personaInfo.getHeaderImage();
-      mFooterImage = personaInfo.getFooterImage();
-      mTextColor = personaInfo.getTextColor();
-      mShadowColor = personaInfo.getShadowColor();
-      mAccentColor = personaInfo.getAccentColor();
-      mDetailURL = personaInfo.getDetailURL();
-    }
-    else {
-      mId = "DUMMY";
-      mName = "Standard";
-      mDescription = "Standard";
-      mHeaderImage = null;
-      mFooterImage = null;
-      mTextColor = null;
-      mShadowColor = null;
-      mAccentColor = null;
-      mDetailURL = "http://www.tvbrowser.org";
-    }
-    
-    for(PersonaListener listener : mPersonaListenerList) {
-      listener.updatePersona();
-    }
-    
+      PersonaInfo personaInfo = mPersonaMap.get(id);
+      
+      if(personaInfo == null) {
+        Settings.propSelectedPersona.setString(new PersonaInfo().getId());
+        personaInfo = mPersonaMap.get(Settings.propSelectedPersona.getString());
+      }
+      
+      if(personaInfo != null) {
+        mId = personaInfo.getId();
+        mName = personaInfo.getName();
+        mDescription = personaInfo.getDescription();
+        mHeaderImage = personaInfo.getHeaderImage();
+        mFooterImage = personaInfo.getFooterImage();
+        mTextColor = personaInfo.getTextColor();
+        mShadowColor = personaInfo.getShadowColor();
+        mAccentColor = personaInfo.getAccentColor();
+        mDetailURL = personaInfo.getDetailURL();
+      }
+      else {
+        mId = "DUMMY";
+        mName = "Standard";
+        mDescription = "Standard";
+        mHeaderImage = null;
+        mFooterImage = null;
+        mTextColor = null;
+        mShadowColor = null;
+        mAccentColor = null;
+        mDetailURL = "http://www.tvbrowser.org";
+      }
+      
+      synchronized (mPersonaListenerList) {
+        for(PersonaListener listener : mPersonaListenerList) {
+          listener.updatePersona();
+        }      
+      }
     }catch(Throwable t) {t.printStackTrace();}
   }
   

@@ -231,7 +231,6 @@ public class Java6Tray {
   }
 
   private void showPopup(final Point p) {
-    FavoritesPlugin.getInstance().handleTrayRightClick();
     mTrayParent.setVisible(true);
     mTrayParent.toFront();
 
