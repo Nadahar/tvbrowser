@@ -39,6 +39,7 @@ import java.util.logging.Logger;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JPanel;
 
 import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
@@ -995,6 +996,17 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
    * @since 3.2
    */
   public PluginCenterPanelWrapper getPluginCenterPanelWrapper() {
+    return null;
+  }
+  
+  /**
+   * Gets a panel that contains infos that should be
+   * shown for this Plugins  after a data update.
+   * <p>
+   * @return The panel with the infos.
+   * @since 3.2
+   */
+  public AfterDataUpdateInfoPanel getAfterDataUpdateInfoPanel() {
     return null;
   }
 }

@@ -9,11 +9,13 @@ import java.io.File;
 import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JPanel;
 
 import tvdataservice.MutableChannelDayProgram;
 import util.exc.TvBrowserException;
 import bsh.Interpreter;
 import devplugin.ActionMenu;
+import devplugin.AfterDataUpdateInfoPanel;
 import devplugin.Channel;
 import devplugin.ChannelDayProgram;
 import devplugin.ImportanceValue;
@@ -297,6 +299,12 @@ public class BeanShellPluginProxy extends AbstractPluginProxy {
 
     @Override
     public PluginCenterPanelWrapper getPluginCenterPanelWrapper() {
+      // TODO Auto-generated method stub
+      return null;
+    }
+
+    @Override
+    public AfterDataUpdateInfoPanel getAfterDataUpdateInfoPanel() {
       // TODO Auto-generated method stub
       return null;
     }

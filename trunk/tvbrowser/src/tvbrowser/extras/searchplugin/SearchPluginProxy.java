@@ -24,11 +24,13 @@
 package tvbrowser.extras.searchplugin;
 
 import javax.swing.Icon;
+import javax.swing.JPanel;
 
 import tvbrowser.core.plugin.ButtonActionIf;
 import tvbrowser.extras.common.AbstractInternalPluginProxy;
 import util.ui.TVBrowserIcons;
 import devplugin.ActionMenu;
+import devplugin.AfterDataUpdateInfoPanel;
 import devplugin.ContextMenuIf;
 import devplugin.Plugin;
 import devplugin.PluginCenterPanelWrapper;
@@ -108,6 +110,12 @@ public class SearchPluginProxy extends AbstractInternalPluginProxy implements Bu
 
   @Override
   public PluginCenterPanelWrapper getPluginCenterPanelWrapper() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public AfterDataUpdateInfoPanel getAfterDataUpdateInfoPanel() {
     // TODO Auto-generated method stub
     return null;
   }

@@ -27,18 +27,13 @@
 package tvbrowser.extras.favoritesplugin;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Graphics;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -56,7 +51,6 @@ import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -89,7 +83,6 @@ import tvbrowser.extras.favoritesplugin.wizards.ExcludeWizardStep;
 import tvbrowser.extras.favoritesplugin.wizards.TypeWizardStep;
 import tvbrowser.extras.favoritesplugin.wizards.WizardHandler;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
-import tvbrowser.ui.DontShowAgainOptionBox;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvdataservice.MutableChannelDayProgram;
 import util.exc.ErrorHandler;
@@ -98,10 +91,10 @@ import util.ui.Localizer;
 import util.ui.NullProgressMonitor;
 import util.ui.ScrollableJPanel;
 import util.ui.TVBrowserIcons;
-import util.ui.UIThreadRunner;
 import util.ui.UiUtilities;
 import util.ui.persona.Persona;
 import devplugin.ActionMenu;
+import devplugin.AfterDataUpdateInfoPanel;
 import devplugin.ButtonAction;
 import devplugin.ChannelDayProgram;
 import devplugin.PluginCenterPanel;
@@ -144,8 +137,6 @@ public class FavoritesPlugin {
 
   private static final PluginTreeNode mRootNode = new PluginTreeNode(getName());
 
-  private boolean mShowInfoOnNewProgramsFound = true;
-
   private boolean mHasRightToUpdate = false;
 
   private boolean mHasToUpdate = false;
@@ -154,7 +145,6 @@ public class FavoritesPlugin {
    * do not save the favorite tree during TV data updates because it might not be consistent
    */
   private boolean mHasRightToSave = true;
-  private boolean mIsShuttingDown = false;
 
   private Hashtable<String,ReceiveTargetItem> mSendPluginsTable = new Hashtable<String,ReceiveTargetItem>();
   private ProgramReceiveTarget[] mClientPluginTargets;
@@ -165,8 +155,9 @@ public class FavoritesPlugin {
   private Exclusion[] mExclusions;
 
   private static UpdateInfoThread mUpdateInfoThread;
+  private Thread mUpdateThread;
+  private AfterDataUpdateInfoPanel mInfoPanel;
 
-  private boolean mShowInfoDialog = false;
   private ExecutorService mThreadPool;
   private JPanel mCenterPanel;
   
@@ -300,7 +291,7 @@ public class FavoritesPlugin {
     mHasToUpdate = true;
 
     if(mHasRightToUpdate) {
-      Thread update = new Thread("Favorites: handle update finished") {
+      mUpdateThread = new Thread("Favorites: handle update finished") {
         public void run() {try{
           mHasToUpdate = false;
 
@@ -352,28 +343,11 @@ public class FavoritesPlugin {
         }catch(Throwable t) {t.printStackTrace();}
         }
       };
-      update.start();
+      mUpdateThread.start();
 
       try {
-        update.join();
+        mUpdateThread.join();
       } catch (InterruptedException e) { /* ignore */ }
-    }
-  }
-
-
-  public void handleTvBrowserIsShuttingDown() {
-    mIsShuttingDown = true;
-    handleTrayRightClick();
-  }
-
-  public void handleTrayRightClick() {
-    try {
-      if(mUpdateInfoThread != null && mUpdateInfoThread.isAlive()) {
-        mUpdateInfoThread.interrupt();
-        mUpdateInfoThread.showDialog();
-      }
-    }catch(Throwable t) {
-      ErrorHandler.handle("Error during showing new Favorites on TV-Browser shutting down.",t);
     }
   }
 
@@ -550,8 +524,8 @@ public class FavoritesPlugin {
       updateAllFavorites();
     }
 
-    if(version >= 4) {
-      this.mShowInfoOnNewProgramsFound = in.readBoolean();
+    if(version >= 4 && version < 8) {
+      in.readBoolean();
     }
 
     if(version >= 7) {
@@ -693,7 +667,7 @@ public class FavoritesPlugin {
   }
 
   private void writeData(ObjectOutputStream out) throws IOException {
-    out.writeInt(7); // version
+    out.writeInt(8); // version
 
     FavoriteTreeModel.getInstance().storeData(out);
 
@@ -701,8 +675,6 @@ public class FavoritesPlugin {
     for (ProgramReceiveTarget target : mClientPluginTargets) {
       target.writeData(out);
     }
-
-    out.writeBoolean(mShowInfoOnNewProgramsFound);
 
     out.writeInt(mExclusions.length);
 
@@ -780,16 +752,6 @@ public class FavoritesPlugin {
             200);
     ManageFavoritesDialog dlg = new ManageFavoritesDialog(MainFrame.getInstance(), favoriteArr, splitPanePosition, showNew, initialSelection);
     //dlg.setModal(true);
-
-    if(mShowInfoOnNewProgramsFound) {
-      dlg.addComponentListener(new ComponentAdapter() {
-        public void componentShown(ComponentEvent e) {
-          if(showNew) {
-            DontShowAgainOptionBox.showOptionDialog("foundFavorites", e.getComponent(), mLocalizer.msg("newPrograms.description","Favorites that contains new programs will be shown in this dialog.\nWhen you click on a Favorite you can see the new programs in the right list."), mLocalizer.msg("newPrograms.title", "Found favorites"));
-          }
-        }
-      });
-    }
 
     Settings.layoutWindow("extras.manageFavoritesDlg",dlg,new Dimension(650,450));
     dlg.setVisible(true);
@@ -1234,45 +1196,22 @@ public class FavoritesPlugin {
     }
 
     public void run() {
-      while(Settings.propAutoDataDownloadEnabled.getBoolean() && (!MainFrame.getInstance().isVisible() || MainFrame.getInstance().getExtendedState() == JFrame.ICONIFIED) && !mIsShuttingDown && !mShowInfoDialog) {
-        try {
-          sleep(5000);
-        }catch(Exception e) {
-          if(mFavorites.length > 0) {
-            mShowInfoDialog = false;
-          }
-
-          return;
-        }
-      }
-
-      showDialog();
-      mShowInfoDialog = false;
-    }
-
-    protected void showDialog() {
-      synchronized (mFavorites) {
-        try {
-          UIThreadRunner.invokeAndWait(new Runnable() {
-
+      if(mFavorites.length > 0) {
+        synchronized (mFavorites) {
+          final ManageFavoritesPanel panel = new ManageFavoritesPanel(mFavorites, getIntegerSetting(mSettings, "splitpanePosition",200), true, null);
+        
+          mInfoPanel = new AfterDataUpdateInfoPanel() {
             @Override
-            public void run() {
-              showManageFavoritesDialog(true, mFavorites, null);
+            public void closed() {
+              panel.close();
             }
-          });
-        } catch (InterruptedException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
-        } catch (InvocationTargetException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
+          };
+          mInfoPanel.setLayout(new BorderLayout());
+          
+          mInfoPanel.add(panel, BorderLayout.CENTER);
         }
       }
     }
-  }
-
-  public void showInfoDialog() {
-    mShowInfoDialog = true;
   }
 
   public void addTitleFavorites(Program[] programArr) {
@@ -1387,10 +1326,6 @@ public class FavoritesPlugin {
     }    
   }
   
-/*  public void handleFavoriteEvent() {
-    mMangePanel.handleFavoriteEvent();
-  }*/
-  
   public PluginCenterPanelWrapper getPluginCenterPanelWrapper() {
     return mWrapper;
   }
@@ -1405,5 +1340,26 @@ public class FavoritesPlugin {
     public JPanel getPanel() {
       return mCenterPanel;
     }
+  }
+  
+  AfterDataUpdateInfoPanel getAfterDataUpdateInfoPanel() {
+    if(mUpdateThread != null && mUpdateThread.isAlive()) {
+      try {
+        mUpdateThread.join();
+      } catch (InterruptedException e) {}
+    }
+    if(mUpdateInfoThread != null) {
+      if(mUpdateInfoThread.isAlive()) {
+        try {
+          mUpdateInfoThread.join();
+        } catch (InterruptedException e) {}
+      }
+      
+      if(mInfoPanel != null) {
+        return mInfoPanel;
+      }
+    }
+    
+    return null;
   }
 }

@@ -39,6 +39,7 @@ import java.util.logging.Logger;
 import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 import tvbrowser.core.PluginLoader;
 import tvbrowser.ui.mainframe.MainFrame;
@@ -51,6 +52,7 @@ import util.ui.Localizer;
 import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 import devplugin.ActionMenu;
+import devplugin.AfterDataUpdateInfoPanel;
 import devplugin.Channel;
 import devplugin.ChannelDayProgram;
 import devplugin.ContextMenuAction;
@@ -652,5 +654,14 @@ public class JavaPluginProxy extends AbstractPluginProxy {
   @Override
   public PluginCenterPanelWrapper getPluginCenterPanelWrapper() {
     return mPlugin.getPluginCenterPanelWrapper();
+  }
+
+  @Override
+  public AfterDataUpdateInfoPanel getAfterDataUpdateInfoPanel() {
+    if(mPlugin != null) {
+      mPlugin.getAfterDataUpdateInfoPanel();
+    }
+    
+    return null;
   }
 }

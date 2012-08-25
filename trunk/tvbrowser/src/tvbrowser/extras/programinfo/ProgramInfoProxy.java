@@ -30,6 +30,7 @@ import javax.swing.Icon;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.extras.common.AbstractInternalPluginProxy;
 import devplugin.ActionMenu;
+import devplugin.AfterDataUpdateInfoPanel;
 import devplugin.ContextMenuIf;
 import devplugin.Plugin;
 import devplugin.PluginCenterPanelWrapper;
@@ -105,6 +106,12 @@ public class ProgramInfoProxy extends AbstractInternalPluginProxy implements Con
 
   @Override
   public PluginCenterPanelWrapper getPluginCenterPanelWrapper() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public AfterDataUpdateInfoPanel getAfterDataUpdateInfoPanel() {
     // TODO Auto-generated method stub
     return null;
   }

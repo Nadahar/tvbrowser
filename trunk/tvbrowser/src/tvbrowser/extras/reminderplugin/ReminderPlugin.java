@@ -29,9 +29,7 @@ package tvbrowser.extras.reminderplugin;
 import java.applet.Applet;
 import java.applet.AudioClip;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Frame;
-import java.awt.Graphics;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -86,6 +84,7 @@ import util.ui.UIThreadRunner;
 import util.ui.UiUtilities;
 import util.ui.persona.Persona;
 import devplugin.ActionMenu;
+import devplugin.AfterDataUpdateInfoPanel;
 import devplugin.ContextMenuAction;
 import devplugin.ContextMenuSeparatorAction;
 import devplugin.Date;
@@ -139,6 +138,9 @@ public class ReminderPlugin {
   private JPanel mCenterPanel;
   private ReminderListPanel mReminderListPanel;
   private AbstractAction toggleTimer;
+  
+  private Thread mInfoCreationThread;
+  private AfterDataUpdateInfoPanel mInfoPanel;
 
   private ReminderPlugin() {
     mInstance = this;
@@ -192,27 +194,46 @@ public class ReminderPlugin {
 
     TvDataUpdater.getInstance().addTvDataUpdateListener(
         new TvDataUpdateListener() {
+          private boolean mCanCreateInfoPanel;
+          
           public void tvDataUpdateStarted() {
+            mCanCreateInfoPanel = false;
             mHasRightToSave = false;
+            mInfoCreationThread = new Thread() {
+              public void run() {
+                while(!mCanCreateInfoPanel) {
+                  try {
+                    sleep(500);
+                  } catch (InterruptedException e) {
+                    // Ignore
+                  }
+                }
+                
+                if (mSettings.getProperty("showRemovedDialog","true").compareTo("true") == 0) {
+                  Program[] removedPrograms = mReminderList.updatePrograms();
+                  
+                  if (removedPrograms.length > 0) {
+                    mInfoPanel = new RemovedProgramsPanel(removedPrograms);
+                  }
+                  else {
+                    mInfoPanel = null;
+                  }
+                } else {
+                  mReminderList.updatePrograms();
+                  mInfoPanel = null;
+                }
+
+                mHasRightToSave = true;
+                saveReminders();
+
+                ReminderListDialog.updateReminderList();
+              }
+            };
+            mInfoCreationThread.start();
           }
 
           public void tvDataUpdateFinished() {
-        	  if (mSettings.getProperty("showRemovedDialog","true").compareTo("true") == 0) {
-	            Program[] removedPrograms = mReminderList.updatePrograms();
-	            if (removedPrograms.length > 0) {
-	              Window parent = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
-                RemovedProgramsDialog dlg = new RemovedProgramsDialog(parent,
-                    removedPrograms);
-	              util.ui.UiUtilities.centerAndShow(dlg);
-	            }
-        	  } else {
-        	    mReminderList.updatePrograms();
-        	  }
-
-            mHasRightToSave = true;
-            saveReminders();
-
-            ReminderListDialog.updateReminderList();
+            mCanCreateInfoPanel = true;
           }
         });
 
@@ -1058,5 +1079,17 @@ public class ReminderPlugin {
     public JPanel getPanel() {
       return mCenterPanel;
     }    
+  }
+  
+  AfterDataUpdateInfoPanel getAfterDataUpdateInfoPanel() {
+    if(mInfoCreationThread != null && mInfoCreationThread.isAlive()) {
+      try {
+        mInfoCreationThread.join();
+      } catch (InterruptedException e) {
+        // Ignore
+      }
+    }
+    
+    return mInfoPanel;
   }
 }
