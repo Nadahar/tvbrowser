@@ -313,6 +313,8 @@ public class ReminderListPanel extends JPanel implements PersonaListener {
     mTable.getColumnModel().getColumn(0).setCellRenderer(new ProgramTableCellRenderer(new PluginPictureSettings(PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE)));
     mTable.getColumnModel().getColumn(1).setCellEditor(new MinutesCellEditor());
     mTable.getColumnModel().getColumn(1).setCellRenderer(new MinutesCellRenderer());
+    updateButtons();
+    mTable.updateUI();
   }
   
 
@@ -353,9 +355,7 @@ public class ReminderListPanel extends JPanel implements PersonaListener {
       ReminderPlugin.getInstance().updateRootNode(true);
     }
     
-    mDelete.setEnabled(mTable.getRowCount() > 0);
-    mSend.setEnabled(mTable.getRowCount() > 0);
-    mUndo.setEnabled(mDeletedItems != null && mDeletedItems.length > 0);
+    updateButtons();
   }
   
   private void undo() {
@@ -370,8 +370,7 @@ public class ReminderListPanel extends JPanel implements PersonaListener {
     installTableModel(new ReminderTableModel(mReminderList, mTitleSelection));
     ReminderPlugin.getInstance().updateRootNode(true);
     
-    mDelete.setEnabled(mTable.getRowCount() > 0);
-    mSend.setEnabled(mTable.getRowCount() > 0);
+    updateButtons();
   }
 
   private void showSendDialog() {
@@ -429,6 +428,15 @@ public class ReminderListPanel extends JPanel implements PersonaListener {
   
   void updateTableEntries() {
     mModel.updateTableEntries();
+    updateButtons();
+  }
+  
+  private void updateButtons() {
+    if(mDelete != null) {
+      mDelete.setEnabled(mTable.getRowCount() > 0);
+      mSend.setEnabled(mTable.getRowCount() > 0);
+      mUndo.setEnabled(mDeletedItems != null && mDeletedItems.length > 0);
+    }
   }
 
   @Override
