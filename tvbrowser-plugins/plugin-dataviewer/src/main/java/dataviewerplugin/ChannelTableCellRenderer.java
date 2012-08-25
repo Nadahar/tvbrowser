@@ -26,8 +26,8 @@ public class ChannelTableCellRenderer extends DefaultTableCellRenderer {
         isSelected, hasFocus, row, column);
 
    
-      label.setForeground(Color.black);
-      label.setBackground(new Color(255, 221, 221));
+      //label.setForeground(Color.black);
+      //label.setBackground(new Color(255, 221, 221));
       label.setHorizontalAlignment(SwingConstants.RIGHT);
    return label;
   }

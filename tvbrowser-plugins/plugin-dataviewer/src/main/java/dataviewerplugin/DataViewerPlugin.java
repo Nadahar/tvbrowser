@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -41,6 +42,8 @@ import javax.swing.table.TableColumn;
 import util.io.IOUtilities;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
+import util.ui.persona.Persona;
+import util.ui.persona.PersonaListener;
 import devplugin.ActionMenu;
 import devplugin.Channel;
 import devplugin.Date;
@@ -123,7 +126,9 @@ public final class DataViewerPlugin extends Plugin implements Runnable {
   public void onActivation() {
     SwingUtilities.invokeLater(new Runnable() {      
       public void run() {
-        mCenterPanelWrapper = new JPanel(new BorderLayout());
+        mCenterPanelWrapper = UiUtilities.createPersonaBackgroundPanel();
+        mCenterPanelWrapper.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+        mCenterPanelWrapper.setLayout(new BorderLayout());
         mWrapper = new PluginCenterPanelWrapper() {
           
           @Override
@@ -149,7 +154,7 @@ public final class DataViewerPlugin extends Plugin implements Runnable {
   private void addCenterPanel() {
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
-        mCenterPanelWrapper.add(getMainPanel(),BorderLayout.CENTER);
+        mCenterPanelWrapper.add(getMainPanel(true),BorderLayout.CENTER);
         mCenterPanelWrapper.updateUI();
       }
     });    
@@ -161,16 +166,15 @@ public final class DataViewerPlugin extends Plugin implements Runnable {
     startThread();
   }
 
-  private JPanel getMainPanel() {
+  private JPanel getMainPanel(boolean addPersonaListener) {
     final JTable table = new JTable(new DataTableModel(mDataTable, mDateString));
     table.setDefaultRenderer(Object.class, new DataTableCellRenderer());
     table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
     table.setGridColor(Color.white);
     table.setIntercellSpacing(new Dimension(2, 2));
-
     table.getTableHeader().setReorderingAllowed(false);
     table.getTableHeader().setResizingAllowed(false);
-
+    
     for (int i = 0; i < table.getColumnCount(); i++) {
       TableColumn col = table.getColumnModel().getColumn(i);
       col.setPreferredWidth(35);
@@ -212,34 +216,42 @@ public final class DataViewerPlugin extends Plugin implements Runnable {
         new Dimension(mMinChannelWidth+5, pane.getPreferredSize().height));
     pane.getRowHeader().setMaximumSize(pane.getRowHeader().getPreferredSize());
     pane.getRowHeader().setSize(pane.getRowHeader().getPreferredSize());
-    pane.getRowHeader().setBackground(Color.WHITE);
-
+    pane.getRowHeader().setBackground(table.getBackground());
     pane.getViewport().setBackground(table.getBackground());
 
-    JLabel green = new JLabel(mLocalizer.msg("green", "Green: "));
-    JLabel orange = new JLabel(mLocalizer.msg("orange", "Orange: "));
-    JLabel red = new JLabel(mLocalizer.msg("red", "Red: "));
-    JLabel lastDownload = new JLabel(mLocalizer.msg("last",
+    JPanel dummy = new JPanel() ;
+    pane.setColumnHeaderView(dummy);
+    pane.getColumnHeader().setOpaque(true);
+    pane.getColumnHeader().setBackground(table.getBackground());
+    
+    JLabel green = new JLabel(" " + mLocalizer.msg("green", "Green: "));
+    JLabel orange = new JLabel(" " + mLocalizer.msg("orange", "Orange: "));
+    JLabel red = new JLabel(" " + mLocalizer.msg("red", "Red: "));
+    final JLabel lastDownload = new JLabel(mLocalizer.msg("last",
     "Last data download was: ")
     + mProperties.getProperty("last", mLocalizer.msg("noLast",
     "no date available")));
     lastDownload.setBorder(BorderFactory.createEmptyBorder(0, 2, 5, 0));
+    lastDownload.setOpaque(false);
 
     green.setOpaque(true);
     orange.setOpaque(true);
     red.setOpaque(true);
 
     green.setBackground(DataTableCellRenderer.COMPLETE);
+    green.setForeground(Color.black);
     orange.setBackground(DataTableCellRenderer.UNCOMPLETE);
+    orange.setForeground(Color.black);
     red.setBackground(DataTableCellRenderer.NODATA);
+    red.setForeground(Color.black);
 
-    JLabel green1 = new JLabel("  "
-        + mLocalizer.msg("green.1", "Data complete."));
-    JLabel orange1 = new JLabel("  "
-        + mLocalizer.msg("orange.1", "Uncomplete data."));
-    JLabel red1 = new JLabel("  " + mLocalizer.msg("red.1", "No data."));
+    final JLabel green1 = new JLabel("  " + mLocalizer.msg("green.1", "Data complete."));
+    final JLabel orange1 = new JLabel("  " + mLocalizer.msg("orange.1", "Uncomplete data."));
+    final JLabel red1 = new JLabel("  " + mLocalizer.msg("red.1", "No data."));
+    
 
     JPanel colors = new JPanel();
+    colors.setOpaque(false);
     colors.setLayout(new BoxLayout(colors, BoxLayout.X_AXIS));
     colors.add(Box.createRigidArea(new Dimension(2, 0)));
     colors.add(green);
@@ -305,10 +317,33 @@ public final class DataViewerPlugin extends Plugin implements Runnable {
     JPanel info = new JPanel(new BorderLayout());
     info.add(lastDownload, BorderLayout.NORTH);
     info.add(colors, BorderLayout.SOUTH);
+    info.setOpaque(false);
     
     JPanel l = new JPanel(new BorderLayout(0, 10));
+    l.setOpaque(false);
     l.add(pane, BorderLayout.CENTER);
     l.add(info, BorderLayout.SOUTH);
+    
+    if(addPersonaListener) {
+      pane.setCorner(JScrollPane.UPPER_RIGHT_CORNER, new JPanel());
+      pane.getCorner(JScrollPane.UPPER_RIGHT_CORNER).setBackground(table.getBackground());
+      pane.setBorder(BorderFactory.createEmptyBorder());
+      table.getTableHeader().setOpaque(false);
+      table.setOpaque(false);
+      pane.setOpaque(false);      
+      
+      PersonaListener listener = new PersonaListener() {
+        public void updatePersona() {
+          if(Persona.getInstance().getHeaderImage() != null) {
+            lastDownload.setForeground(Persona.getInstance().getTextColor());
+            green1.setForeground(Persona.getInstance().getTextColor());
+            orange1.setForeground(Persona.getInstance().getTextColor());
+            red1.setForeground(Persona.getInstance().getTextColor());
+          }
+        }
+      };
+      Persona.getInstance().registerPersonaListener(listener);
+    }
     
     return l;
   }
@@ -320,7 +355,7 @@ public final class DataViewerPlugin extends Plugin implements Runnable {
 
     JOptionPane jp = new JOptionPane();
     jp.setMessageType(JOptionPane.PLAIN_MESSAGE);
-    jp.setMessage(getMainPanel());
+    jp.setMessage(getMainPanel(false));
 
     mDialog = jp.createDialog(getParentFrame(), mLocalizer.msg("data",
     "Data viewer"));
