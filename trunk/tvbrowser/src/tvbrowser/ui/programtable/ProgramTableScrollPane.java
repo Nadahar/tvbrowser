@@ -25,6 +25,8 @@
  */
 package tvbrowser.ui.programtable;
 
+import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
@@ -40,16 +42,19 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Calendar;
 
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JViewport;
+import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import tvbrowser.core.Settings;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.programtable.background.BackgroundPainter;
+import util.ui.persona.Persona;
 import devplugin.Channel;
 
 /**
@@ -106,6 +111,31 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
     getColumnHeader().setOpaque(false);
     getViewport().setOpaque(false);
     setOpaque(false);
+    
+    JPanel leftUpper = new JPanel() {
+      protected void paintComponent(Graphics g) {
+        if(Persona.getInstance().getAccentColor() != null && Persona.getInstance().getHeaderImage() != null) {
+          paintComponentInternal(g);
+        }
+        else {
+          super.paintComponent(g);
+        }
+      }
+    };
+
+    JPanel rightUpper = new JPanel() {
+      protected void paintComponent(Graphics g) {
+        if(Persona.getInstance().getAccentColor() != null && Persona.getInstance().getHeaderImage() != null) {
+          paintComponentInternal(g);
+        }
+        else {
+          super.paintComponent(g);
+        }
+      }
+    };
+    
+    setCorner(UPPER_LEFT_CORNER, leftUpper);
+    setCorner(UPPER_RIGHT_CORNER, rightUpper);
 
     // NOTE: To avoid NullPointerExceptions the registration as listener must
     // happen after all member have been initialized.
@@ -157,6 +187,61 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
         requestFocus();
       }
     });
+  }
+  
+  private void paintComponentInternal(Graphics g) {
+    Color c = Persona.getInstance().getAccentColor().darker().darker().darker();
+
+    g.setColor(new Color(c.getRed(),c.getGreen(),c.getBlue(),110));
+    g.fillRect(0,0,getWidth(),getHeight());
+    
+    c = Persona.getInstance().getAccentColor();
+    
+    double test = (0.2126 * Persona.getInstance().getTextColor().getRed()) + (0.7152 * Persona.getInstance().getTextColor().getGreen()) + (0.0722 * Persona.getInstance().getTextColor().getBlue());
+    int alpha = 100;
+    
+    if(test <= 30) {
+      c = Color.white;
+      alpha = 200;
+    }
+    else if(test <= 40) {
+      c = c.brighter().brighter().brighter().brighter().brighter().brighter();
+      alpha = 200;
+    }
+    else if(test <= 60) {
+      c = c.brighter().brighter().brighter();
+      alpha = 160;
+    }
+    else if(test <= 100) {
+      c = c.brighter().brighter();
+      alpha = 140;
+    }
+    else if(test <= 145) {
+      alpha = 120;
+    }
+    else if(test <= 170) {
+      c = c.darker();
+      alpha = 120;
+    }
+    else if(test <= 205) {
+      c = c.darker().darker();
+      alpha = 120;
+    }
+    else if(test <= 220){
+      c = c.darker().darker().darker();
+      alpha = 100;
+    }
+    else if(test <= 235){
+      c = c.darker().darker().darker().darker();
+      alpha = 100;
+    }
+    else {
+      c = Color.black;
+      alpha = 100;
+    }
+    
+    g.setColor(new Color(c.getRed(),c.getGreen(),c.getBlue(),alpha));
+    g.fillRect(0,0,getWidth(),getHeight());
   }
 
   public ProgramTable getProgramTable() {
