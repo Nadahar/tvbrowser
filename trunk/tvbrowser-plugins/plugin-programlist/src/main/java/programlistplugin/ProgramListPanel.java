@@ -95,6 +95,7 @@ public class ProgramListPanel extends JPanel implements PersonaListener {
   private Thread mUpdateThread;
 
   private JButton mSendBtn;
+  private JButton mRefreshBtn;
   
   public ProgramListPanel(final Channel selectedChannel, boolean showClose, int maxListSize) {
     mMaxListSize = maxListSize;
@@ -194,6 +195,20 @@ public class ProgramListPanel extends JPanel implements PersonaListener {
         }
       }
     });
+    
+    mRefreshBtn = new JButton(TVBrowserIcons.refresh(TVBrowserIcons.SIZE_SMALL));
+    mRefreshBtn.setToolTipText(mLocalizer.msg("refreshList", "Refresh list"));
+    mRefreshBtn.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        new Thread("refresh program list panel") {
+          public void run() {
+            fillProgramList();
+            mChannelBox.getItemListeners()[0].itemStateChanged(null);            
+          }
+        }.start();
+      }
+    });
 
     mShowDescription = new JCheckBox(mLocalizer.msg("showProgramDescription", "Show program description"),
         showDescription);
@@ -222,10 +237,11 @@ public class ProgramListPanel extends JPanel implements PersonaListener {
       }
     });
 
-    JPanel southPanel = new JPanel(new FormLayout("default,5dlu,default,0dlu:grow,default", "default"));
+    JPanel southPanel = new JPanel(new FormLayout("default,5dlu,default,5dlu,default,0dlu:grow,default", "default"));
     southPanel.setOpaque(false);
     southPanel.add(mSendBtn, cc.xy(1, 1));
-    southPanel.add(mShowDescription, cc.xy(3, 1));
+    southPanel.add(mRefreshBtn, cc.xy(3, 1));
+    southPanel.add(mShowDescription, cc.xy(5, 1));
     
     if(showClose) {
       southPanel.add(close, cc.xy(5, 1));
@@ -307,6 +323,8 @@ public class ProgramListPanel extends JPanel implements PersonaListener {
           DefaultListModel model = new DefaultListModel();
           mFilterBox.setEnabled(false);
           mChannelBox.setEnabled(false);
+          mRefreshBtn.setEnabled(false);
+          mSendBtn.setEnabled(false);
           
           try {
             setPriority(MIN_PRIORITY);
@@ -382,6 +400,8 @@ public class ProgramListPanel extends JPanel implements PersonaListener {
           
           mFilterBox.setEnabled(true);
           mChannelBox.setEnabled(true);
+          mRefreshBtn.setEnabled(true);
+          mSendBtn.setEnabled(true);
         }
       };
       mListThread.start();
