@@ -230,7 +230,7 @@ public final class SoftwareUpdater {
           }
   
           if (installedPlugin!=null && ((installedPlugin.getInfo().getVersion().compareTo(item.getVersion())>0 ||
-              (installedPlugin.getInfo().getVersion().compareTo(item.getVersion())==0 && (!dragNdrop || item.getVersion().isStable()))))) {
+              (installedPlugin.getInfo().getVersion().compareTo(item.getVersion())==0 && ((!dragNdrop && TVBrowser.VERSION.isStable()) || item.getVersion().isStable()))))) {
             it.remove();
             continue;
           }
@@ -238,7 +238,7 @@ public final class SoftwareUpdater {
           // remove already installed dataservices
           TvDataServiceProxy service= TvDataServiceProxyManager.getInstance().findDataServiceById(className.toLowerCase()+"."+className);
           if (service!=null && ((service.getInfo().getVersion().compareTo(item.getVersion())>0) ||
-              (service.getInfo().getVersion().compareTo(item.getVersion())==0 && (!dragNdrop || item.getVersion().isStable())))) {
+              (service.getInfo().getVersion().compareTo(item.getVersion())==0 && ((!dragNdrop && TVBrowser.VERSION.isStable()) || item.getVersion().isStable())))) {
             it.remove();
             continue;
           }
