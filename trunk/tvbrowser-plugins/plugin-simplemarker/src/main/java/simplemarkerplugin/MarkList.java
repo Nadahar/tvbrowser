@@ -375,89 +375,91 @@ public class MarkList extends Vector<Program> {
    *          The tree is to update
    */
   protected synchronized void createNodes(PluginTreeNode root, boolean update) {
-    mRootNode = root;
-    root.removeAllChildren();
-
-    final SimpleMarkerSettings settings = SimpleMarkerPlugin.getInstance()
-        .getSettings();
-    PluginTreeNode programRoot = null;
-    PluginTreeNode dateRoot = null;
-    if (settings.isGroupingByBoth()) {
-      programRoot = new PluginTreeNode(Localizer
-          .getLocalization(Localizer.I18N_PROGRAMS));
-      programRoot.setGroupingByDateEnabled(false);
-      dateRoot = new PluginTreeNode(SimpleMarkerPlugin.getLocalizer().msg("days",
-          "Days"));
-    }
-
-    updateTable();
-    Hashtable<String, LinkedList<Program>> sortedPrograms = getSortedPrograms();
-
-    synchronized (sortedPrograms) {
-      if (!sortedPrograms.isEmpty()) {
-        if (settings.isGroupingByBoth()) {
-          dateRoot.addAction(getUnmarkAction(dateRoot));
-          programRoot.addAction(getUnmarkAction(programRoot));
-        }
-
-        root.removeAllActions();
-        root.addAction(getUnmarkAction(root));
-
-        final Date currentDate = Date.getCurrentDate();
-        for (Entry<String, LinkedList<Program>> entry : sortedPrograms.entrySet()) {
-          String name = entry.getKey();
-          LinkedList<Program> sameTitlePrograms = entry.getValue();
-
-          PluginTreeNode titleNode = null;
+    if(root != null) {
+      mRootNode = root;
+      root.removeAllChildren();
+  
+      final SimpleMarkerSettings settings = SimpleMarkerPlugin.getInstance()
+          .getSettings();
+      PluginTreeNode programRoot = null;
+      PluginTreeNode dateRoot = null;
+      if (settings.isGroupingByBoth()) {
+        programRoot = new PluginTreeNode(Localizer
+            .getLocalization(Localizer.I18N_PROGRAMS));
+        programRoot.setGroupingByDateEnabled(false);
+        dateRoot = new PluginTreeNode(SimpleMarkerPlugin.getLocalizer().msg("days",
+            "Days"));
+      }
+  
+      updateTable();
+      Hashtable<String, LinkedList<Program>> sortedPrograms = getSortedPrograms();
+  
+      synchronized (sortedPrograms) {
+        if (!sortedPrograms.isEmpty()) {
           if (settings.isGroupingByBoth()) {
-            titleNode = programRoot.addNode(name);
-          } else if (settings.isGroupingByTitle()) {
-            titleNode = root.addNode(name);
+            dateRoot.addAction(getUnmarkAction(dateRoot));
+            programRoot.addAction(getUnmarkAction(programRoot));
           }
-          if (titleNode != null) {
-            titleNode.addAction(getUnmarkAction(titleNode));
-            titleNode.setGroupingByDateEnabled(false);
-          }
-
-          for (Program program : sameTitlePrograms) {
-            if (titleNode != null) {
-              PluginTreeNode prog = titleNode.addProgram(program);
-              prog.setNodeFormatter(new NodeFormatter() {
-                public String format(ProgramItem pitem) {
-                  Program p = pitem.getProgram();
-                  Date progDate = p.getDate();
-                  String progDateText;
-
-                  if (progDate.equals(currentDate.addDays(-1))) {
-                    progDateText = Localizer
-                        .getLocalization(Localizer.I18N_YESTERDAY);
-                  } else if (progDate.equals(currentDate)) {
-                    progDateText = Localizer.getLocalization(Localizer.I18N_TODAY);
-                  } else if (progDate.equals(currentDate.addDays(1))) {
-                    progDateText = Localizer.getLocalization(Localizer.I18N_TOMORROW);
-                  } else {
-                    progDateText = p.getDateString();
-                  }
-
-                  return (progDateText + "  " + p.getTimeString() + "  " + p
-                      .getChannel());
-                }
-              });
-            }
+  
+          root.removeAllActions();
+          root.addAction(getUnmarkAction(root));
+  
+          final Date currentDate = Date.getCurrentDate();
+          for (Entry<String, LinkedList<Program>> entry : sortedPrograms.entrySet()) {
+            String name = entry.getKey();
+            LinkedList<Program> sameTitlePrograms = entry.getValue();
+  
+            PluginTreeNode titleNode = null;
             if (settings.isGroupingByBoth()) {
-              dateRoot.addProgram(program);
-            } else if (settings.isGroupingByDate()) {
-              root.addProgram(program);
+              titleNode = programRoot.addNode(name);
+            } else if (settings.isGroupingByTitle()) {
+              titleNode = root.addNode(name);
+            }
+            if (titleNode != null) {
+              titleNode.addAction(getUnmarkAction(titleNode));
+              titleNode.setGroupingByDateEnabled(false);
+            }
+  
+            for (Program program : sameTitlePrograms) {
+              if (titleNode != null) {
+                PluginTreeNode prog = titleNode.addProgram(program);
+                prog.setNodeFormatter(new NodeFormatter() {
+                  public String format(ProgramItem pitem) {
+                    Program p = pitem.getProgram();
+                    Date progDate = p.getDate();
+                    String progDateText;
+  
+                    if (progDate.equals(currentDate.addDays(-1))) {
+                      progDateText = Localizer
+                          .getLocalization(Localizer.I18N_YESTERDAY);
+                    } else if (progDate.equals(currentDate)) {
+                      progDateText = Localizer.getLocalization(Localizer.I18N_TODAY);
+                    } else if (progDate.equals(currentDate.addDays(1))) {
+                      progDateText = Localizer.getLocalization(Localizer.I18N_TOMORROW);
+                    } else {
+                      progDateText = p.getDateString();
+                    }
+  
+                    return (progDateText + "  " + p.getTimeString() + "  " + p
+                        .getChannel());
+                  }
+                });
+              }
+              if (settings.isGroupingByBoth()) {
+                dateRoot.addProgram(program);
+              } else if (settings.isGroupingByDate()) {
+                root.addProgram(program);
+              }
             }
           }
-        }
-        if (settings.isGroupingByBoth()) {
-          root.add(programRoot);
-          root.add(dateRoot);
-        }
-
-        if (update) {
-          root.update();
+          if (settings.isGroupingByBoth()) {
+            root.add(programRoot);
+            root.add(dateRoot);
+          }
+  
+          if (update) {
+            root.update();
+          }
         }
       }
     }
