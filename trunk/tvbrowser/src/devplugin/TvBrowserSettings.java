@@ -122,4 +122,21 @@ public interface TvBrowserSettings {
    * @since 2.7.1
    */
   public short getAutoDownloadWaitingTime();
+  
+  /**
+   * Gets the color of the mouse over function of the program table.
+   * <p>
+   * @return The color of the mouse over function of the program table
+   * or <code>null</code> if that function is deactivated.
+   * @since 3.2
+   */
+  public Color getProgramTableMouseOverColor();
+  
+  /**
+   * Gets the foreground color of the program table.
+   * <p>
+   * @return The foreground color of the program table.
+   * @since 3.2
+   */
+  public Color getProgramTableForegroundColor();
 }
