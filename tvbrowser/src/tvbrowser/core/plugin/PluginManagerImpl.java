@@ -42,6 +42,7 @@ import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JPopupMenu;
+import javax.swing.UIManager;
 
 import tvbrowser.TVBrowser;
 import tvbrowser.core.ChannelList;
@@ -770,6 +771,16 @@ public class PluginManagerImpl implements PluginManager {
 
       public short getAutoDownloadWaitingTime() {
         return Settings.propAutoDownloadWaitingTime.getShort();
+      }
+
+      @Override
+      public Color getProgramTableMouseOverColor() {
+        return Settings.propProgramTableMouseOver.getBoolean() ? Settings.propProgramTableMouseOverColor.getColor() : null;
+      }
+      
+      @Override
+      public Color getProgramTableForegroundColor() {
+        return Settings.propTableBackgroundStyle.getString().contains("ui") ? UIManager.getColor("List.foreground") : Settings.propProgramPanelForegroundColor.getColor();
       }
     };
   }
