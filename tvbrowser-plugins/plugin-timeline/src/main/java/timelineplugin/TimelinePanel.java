@@ -72,10 +72,10 @@ public class TimelinePanel extends JPanel implements PersonaListener {
   private JLabel mDateLabel;
   private JLabel mFilterLabel;
   
-  public TimelinePanel(final boolean startWithNow) {
+  public TimelinePanel(final boolean startWithNow, boolean addPanel) {
     mStartWithNow = startWithNow;
 
-    createGUI();
+    createGUI(addPanel);
 
     int seconds = ((int) (System.currentTimeMillis() / 1000.0)) % 30;
     mTimer = new Timer();
@@ -107,10 +107,16 @@ public class TimelinePanel extends JPanel implements PersonaListener {
     });
   }
 
-  private void createGUI() {
+  private void createGUI(boolean addPanel) {
     setOpaque(false);
     setLayout(new BorderLayout());
-        add(getInfoPanel(), BorderLayout.NORTH);
+    
+    if(addPanel) {
+      add(getInfoPanel(), BorderLayout.NORTH);
+    }
+    else {
+      getInfoPanel();
+    }
 
     mMainPane = new ProgramScrollPanel();
     mMainPane.getHorizontalScrollBar().addAdjustmentListener(

@@ -40,6 +40,7 @@ import javax.swing.JSlider;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.plaf.basic.BasicComboBoxRenderer;
@@ -66,6 +67,7 @@ public final class TimelinePluginSettingsTab implements SettingsTab {
 	private JCheckBox mAutoStart;
 	private JCheckBox mStartWithNow;
 	private JCheckBox mResizeWithMouse;
+	private JCheckBox mShowHeaderPanel;
 	private JFormattedTextField mHourWidth;
 	private JFormattedTextField mChannelHeight;
 	private JTextArea mFormat;
@@ -105,8 +107,8 @@ public final class TimelinePluginSettingsTab implements SettingsTab {
 
 	private JPanel getCommonSettings() {
 		final FormLayout layout = new FormLayout(
-				"5dlu, 5dlu, pref, 3dlu, fill:pref:grow, 3dlu, pref, 5dlu",
-				"5dlu, pref, 2dlu, pref, 10dlu, pref, 5dlu, pref, 2dlu, pref, 10dlu, pref, 5dlu, pref, 2dlu, pref, 2dlu, pref, 10dlu, pref, 5dlu, pref, 2dlu, pref, 2dlu, pref");
+				"5dlu, 5dlu, pref, 3dlu, fill:default:grow, 3dlu, pref, 5dlu",
+				"5dlu, pref, 2dlu, pref, 10dlu, pref, 5dlu, pref, 2dlu, pref, 2dlu, pref, 10dlu, pref, 5dlu, pref, 2dlu, pref, 2dlu, pref, 10dlu, pref, 5dlu, pref, 2dlu, pref, 2dlu, pref");
 
 		final PanelBuilder builder = new PanelBuilder(layout);
 		builder.setBorder(null);
@@ -133,7 +135,9 @@ public final class TimelinePluginSettingsTab implements SettingsTab {
 		mStartWithNow = new JCheckBox(mLocalizer.msg("startWithNow",
 				"Select Now at startup"));
 		mStartWithNow.setSelected(TimelinePlugin.getSettings().startWithNow());
-
+		mShowHeaderPanel = new JCheckBox(mLocalizer.msg("showHeaderPanel", "Show date, time and filter selection in main window tab"));
+		mShowHeaderPanel.setSelected(TimelinePlugin.getSettings().showHeaderPanel());
+		
 		mResizeWithMouse = new JCheckBox(mLocalizer.msg("resizeWithMouse",
 				"Resize with the mouse"));
 		mResizeWithMouse
@@ -197,6 +201,8 @@ public final class TimelinePluginSettingsTab implements SettingsTab {
 		builder.add(mAutoStart, cc.xyw(3, row, 5));
 		row += 2;
 		builder.add(mStartWithNow, cc.xyw(3, row, 5));
+		row += 2;
+		builder.add(mShowHeaderPanel, cc.xyw(3, row, 5));
 		row += 2;
 		builder.addSeparator(mLocalizer.msg("format", "Format"), cc.xyw(2, row, 6));
 		row += 2;
@@ -332,7 +338,7 @@ public final class TimelinePluginSettingsTab implements SettingsTab {
 		final int pw = Integer.parseInt(mHourWidth.getText());
 		final int ph = Integer.parseInt(mChannelHeight.getText());
 		mPreview = new JPanel();
-		mPreview.setBackground(Color.WHITE);
+		mPreview.setBackground(UIManager.getColor("List.background"));
 		mPreview.setPreferredSize(new Dimension(pw + 5, ph + 10));
 		mPreviewError = new JLabel(mLocalizer.msg("previewError", "Error"));
 		mPreviewProgram = new ProgramLabel(Plugin.getPluginManager().getExampleProgram());
@@ -434,6 +440,7 @@ public final class TimelinePluginSettingsTab implements SettingsTab {
 		TimelinePlugin.getSettings().setFocusDelta(mFocusDelta.getValue());
 		TimelinePlugin.getSettings().setShowAtStartup(mAutoStart.isSelected());
 		TimelinePlugin.getSettings().setStartWithNow(mStartWithNow.isSelected());
+		TimelinePlugin.getSettings().setShowHeaderPanel(mShowHeaderPanel.isSelected());
 		TimelinePlugin.getSettings().setResizeWithMouse(
 				mResizeWithMouse.isSelected());
 		TimelinePlugin.getSettings().setHourWidth(

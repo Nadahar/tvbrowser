@@ -17,12 +17,14 @@
  */
 package timelineplugin;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JToolTip;
+import javax.swing.UIManager;
 import javax.swing.plaf.ComponentUI;
 
 import util.settings.PluginPictureSettings;
@@ -41,7 +43,6 @@ public class ProgramToolTip extends JToolTip {
 		private ProgramPanel mProgramPanel;
 
 		ProgramToolTipUI(final Program p) {
-
 			ProgramPanelSettings settings = new ProgramPanelSettings(
 					new PluginPictureSettings(
 							PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE), false);
@@ -52,6 +53,8 @@ public class ProgramToolTip extends JToolTip {
 		}
 
 		public void paint(final Graphics g, final JComponent c) {
+		  g.setColor(UIManager.getColor("List.background"));
+		  g.fillRect(0, 0, c.getWidth(), c.getHeight());
 			mProgramPanel.paintComponent(g);
 			g.drawRect(0, 0, c.getSize().width - 1, c.getSize().height - 1);
 		}

@@ -44,7 +44,7 @@ public final class TimelineDialog extends JDialog implements WindowClosingIf {
 	
 	public TimelineDialog(final Frame frame, final boolean startWithNow) {
 		super(frame, true);
-		mTimelinePanel =  new TimelinePanel(startWithNow);
+		mTimelinePanel =  new TimelinePanel(startWithNow,true);
 		setTitle(mLocalizer.msg("name", "Timeline"));
 		
 		UiUtilities.registerForClosing(this);

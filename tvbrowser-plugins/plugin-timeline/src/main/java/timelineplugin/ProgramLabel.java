@@ -158,7 +158,7 @@ public class ProgramLabel extends JComponent implements ChangeListener,
 			g.setColor(oriColor);
 		}
 		
-    if (mProgram.isExpired()) {
+    if (mProgram.isExpired() && !Plugin.getPluginManager().getExampleProgram().equals(mProgram)) {
       Color c = new Color(Color.gray.getRed(), Color.gray.getGreen(), Color.gray.getBlue(), (int)(Color.gray.getAlpha()*mProgramImportance/10.));
 
       setForeground(c);
