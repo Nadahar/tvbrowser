@@ -48,13 +48,15 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
+import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 
 import org.apache.commons.lang.math.RandomUtils;
 
-import com.jgoodies.forms.builder.ButtonBarBuilder2;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
@@ -74,6 +76,7 @@ import util.ui.EnhancedPanelBuilder;
 import util.ui.Localizer;
 import util.ui.UIThreadRunner;
 import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 import util.ui.progress.ProgressMonitorGroup;
 import devplugin.AfterDataUpdateInfoPanel;
 import devplugin.AfterDataUpdateInfoPanel.AfterDataUpdateInfoPanelListener;
@@ -368,16 +371,12 @@ public class TvDataUpdater {
             }
           });
           
-          ButtonBarBuilder2 buttons = new ButtonBarBuilder2();
-          buttons.addGlue();
-          buttons.addButton(close);
-          buttons.addGlue();
+          JPanel buttons = new JPanel(new FormLayout("min:grow,default,min:grow","5dlu,default,5dlu,default"));
+          buttons.add(new JSeparator(JSeparator.HORIZONTAL), cc.xyw(1, 2, 3));
+          buttons.add(close, cc.xy(2, 4));
           
-          pb.addRow("5dlu");
-          pb.addSeparator("", cc.xyw(1,pb.getRowCount(),3));
-          pb.addRow();
-          pb.add(buttons.getPanel(), cc.xyw(1,pb.getRowCount(),3));          
-          
+          center.add(buttons, BorderLayout.SOUTH);
+                    
           infoDialog.setContentPane(center);
           infoDialog.addWindowListener(new WindowAdapter() {            
             @Override
@@ -391,10 +390,24 @@ public class TvDataUpdater {
               }
             }
           });
+
+          WindowClosingIf closing = new WindowClosingIf() {
+            @Override
+            public JRootPane getRootPane() {
+              return infoDialog.getRootPane();
+            }
+            
+            @Override
+            public void close() {
+              infoDialog.dispose();
+            }
+          };
           
+          UiUtilities.registerForClosing(closing);
+
           Settings.layoutWindow("AfterTvDataUpdateInfoDialog", infoDialog, new Dimension(900,500));
           infoDialog.setModal(true);
-          infoDialog.setVisible(true);
+          infoDialog.setVisible(true);          
         }
       }
     }.start();
