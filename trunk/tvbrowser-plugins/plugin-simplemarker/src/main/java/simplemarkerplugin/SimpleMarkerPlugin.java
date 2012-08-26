@@ -22,30 +22,24 @@
 package simplemarkerplugin;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Frame;
-import java.awt.Graphics;
-import java.awt.Window;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.LinkedList;
 import java.util.Properties;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
@@ -54,16 +48,14 @@ import util.settings.ProgramPanelSettings;
 import util.ui.Localizer;
 import util.ui.ProgramList;
 import util.ui.TVBrowserIcons;
-import util.ui.UIThreadRunner;
 import util.ui.UiUtilities;
-import util.ui.WindowClosingIf;
 import util.ui.persona.Persona;
 
-import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.ActionMenu;
+import devplugin.AfterDataUpdateInfoPanel;
 import devplugin.ContextMenuAction;
 import devplugin.ImportanceValue;
 import devplugin.Plugin;
@@ -101,6 +93,8 @@ public class SimpleMarkerPlugin extends Plugin {
 
   private boolean mHasRightToUpdate = false, mHasToUpdate = false;
 
+  private int mInfoCounter;
+  
   private ManageDialog mManageDialog = null;
 
   private PluginInfo mPluginInfo;
@@ -114,6 +108,10 @@ public class SimpleMarkerPlugin extends Plugin {
   private JPanel mCenterPanelWrapper;
   
   private ManagePanel mMangePanel;
+  
+  private SimpleMarkerUpdateInfoPanel mInfoPanel;
+  
+  private Thread mInfoShowingThread;
 
   /**
    * Standard constructor for this class.
@@ -132,6 +130,7 @@ public class SimpleMarkerPlugin extends Plugin {
   }
 
   public void onActivation() {
+    mInfoCounter = 1;
     mMarkListVector = new MarkListsVector();
     updateTree();
     
@@ -315,7 +314,7 @@ public class SimpleMarkerPlugin extends Plugin {
 
     return priority;
   }
-
+  
   public void handleTvDataUpdateFinished() {
     mHasToUpdate = true;
 
@@ -327,77 +326,16 @@ public class SimpleMarkerPlugin extends Plugin {
       for (MarkList list : mMarkListVector) {
         list.revalidateContainingPrograms(deletedPrograms);
       }
-
+      
       if (!deletedPrograms.isEmpty() && mSettings.showDeletedPrograms()) {
-        final Window parent = UiUtilities.getLastModalChildOf(getParentFrame());
-
-        try {
-          UIThreadRunner.invokeAndWait(new Runnable() {
-
-            @Override
-            public void run() {
-              final JDialog deletedListDialog = new JDialog(parent);
-              ProgramList deletedProgramList = new ProgramList(deletedPrograms.toArray(new Program[deletedPrograms.size()]), new ProgramPanelSettings(new PluginPictureSettings(PluginPictureSettings.NO_PICTURE_TYPE),true,true));
-
-              deletedListDialog.setModal(false);
-              deletedListDialog.getContentPane().setLayout(new FormLayout("default:grow","default,5dlu,fill:default:grow,5dlu,default"));
-              deletedListDialog.setTitle(getInfo().getName() + " - " + mLocalizer.msg("deletedPrograms","Deleted programs"));
-              ((JPanel)deletedListDialog.getContentPane()).setBorder(Borders.DIALOG_BORDER);
-
-              CellConstraints cc = new CellConstraints();
-
-              deletedListDialog.getContentPane().add(new JLabel(mLocalizer.msg("deletedProgramsMsg","During the data update the following programs were deleted:")),cc.xy(1,1));
-              deletedListDialog.getContentPane().add(new JScrollPane(deletedProgramList), cc.xy(1,3));
-
-
-              JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_CLOSE));
-              ok.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                  deletedListDialog.dispose();
-                }
-              });
-
-              deletedListDialog.getContentPane().add(ok, cc.xy(1,5));
-
-              UiUtilities.registerForClosing(new WindowClosingIf() {
-                public void close() {
-                  deletedListDialog.dispose();
-                }
-
-                public JRootPane getRootPane() {
-                  return deletedListDialog.getRootPane();
-                }
-              });
-
-              layoutWindow("deletedListDialog", deletedListDialog, new Dimension(400,300));
-
-              new Thread("simpleMarkerShowDeletedListDlg") {
-                public void run() {
-                  while(UiUtilities.containsModalDialogChild(getParentFrame())) {
-                    try {
-                      Thread.sleep(500);
-                    } catch (InterruptedException e) {}
-                  }
-
-                  UIThreadRunner.invokeLater(new Runnable() {
-
-                    @Override
-                    public void run() {
-                      deletedListDialog.setVisible(true);
-                    }
-                  });
-                }
-              }.start();
-            }
-          });
-        } catch (InterruptedException e1) {
-          // TODO Auto-generated catch block
-          e1.printStackTrace();
-        } catch (InvocationTargetException e1) {
-          // TODO Auto-generated catch block
-          e1.printStackTrace();
-        }
+        mInfoPanel = new SimpleMarkerUpdateInfoPanel(deletedPrograms.toArray(new Program[deletedPrograms.size()]));
       }
+    }
+    
+    mInfoCounter = 100;
+    
+    if(mInfoShowingThread != null && mInfoShowingThread.isAlive()) {
+      mInfoShowingThread.interrupt();
     }
   }
 
@@ -673,6 +611,63 @@ public class SimpleMarkerPlugin extends Plugin {
     @Override
     public JPanel getPanel() {
       return mCenterPanelWrapper;
+    }
+  }
+  
+  public AfterDataUpdateInfoPanel getAfterDataUpdateInfoPanel() {
+    mInfoShowingThread = new Thread() {
+      public void run() {
+        while(mInfoCounter++ < 100) {
+          try {
+            sleep(100);
+          } catch (InterruptedException e) {}
+        }
+      }
+    };
+    mInfoShowingThread.start();
+    
+    if(mInfoShowingThread.isAlive()) {
+      try {
+        mInfoShowingThread.join();
+      } catch (InterruptedException e) {}
+    }
+    
+    if(mInfoPanel != null) {
+      return mInfoPanel;
+    }
+    
+    return null;
+  }
+  
+  private class SimpleMarkerUpdateInfoPanel extends AfterDataUpdateInfoPanel {
+    public SimpleMarkerUpdateInfoPanel(Program[] progArr) {
+      ProgramList deletedProgramList = new ProgramList(progArr, new ProgramPanelSettings(new PluginPictureSettings(PluginPictureSettings.NO_PICTURE_TYPE),true,true));
+      
+      JScrollPane scroll = new JScrollPane(deletedProgramList);
+      scroll.setMaximumSize(new Dimension(2048,200));
+      
+      setLayout(new FormLayout("default:grow","default,5dlu,fill:default:grow,5dlu,default"));
+      CellConstraints cc = new CellConstraints();
+
+      add(new JLabel(mLocalizer.msg("deletedProgramsMsg","During the data update the following programs were deleted:")),cc.xy(1,1));
+      add(scroll, cc.xy(1,3));
+      
+      setPreferredSize(new Dimension(200,200));
+    }
+    
+    @Override
+    public void closed() {
+      new Thread() {
+        public void run() {
+          try {
+            sleep(2000);
+          } catch (InterruptedException e) {
+          }
+          System.out.println("nbnnn");
+          mInfoPanel = null;
+          mInfoCounter = 1;
+        }
+      };
     }
   }
 }
