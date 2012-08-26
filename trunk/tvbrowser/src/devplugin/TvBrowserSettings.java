@@ -139,4 +139,12 @@ public interface TvBrowserSettings {
    * @since 3.2
    */
   public Color getProgramTableForegroundColor();
+  
+  /**
+   * Gets the color for selection of a program panel.
+   * <p>
+   * @return The color for selection of a program panel.
+   * @since 3.2
+   */
+  public Color getProgramPanelSelectionColor();
 }

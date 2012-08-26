@@ -782,6 +782,11 @@ public class PluginManagerImpl implements PluginManager {
       public Color getProgramTableForegroundColor() {
         return Settings.propTableBackgroundStyle.getString().contains("ui") ? UIManager.getColor("List.foreground") : Settings.propProgramPanelForegroundColor.getColor();
       }
+
+      @Override
+      public Color getProgramPanelSelectionColor() {
+        return Settings.propKeyboardSelectedColor.getColor();
+      }
     };
   }
 
