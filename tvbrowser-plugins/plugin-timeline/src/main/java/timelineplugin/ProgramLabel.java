@@ -47,9 +47,9 @@ public class ProgramLabel extends JComponent implements ChangeListener,
 	private transient Program mProgram;
 	private transient TextFormatter mTextFormatter = null;
 
-	private Color mBackColor;
+	///private Color mBackColor;
 	
-	private byte mProgramImportance;
+	//private byte mProgramImportance;
 
 	public ProgramLabel(final Program program) {
 		addMouseListener(this);
@@ -63,10 +63,6 @@ public class ProgramLabel extends JComponent implements ChangeListener,
 
 	private void setProgram(final Program program) {
 		mProgram = program;
-		mProgramImportance = ProgramUtilities.getProgramImportance(program);
-		mBackColor = Plugin.getPluginManager().getTvBrowserSettings()
-		.getColorForMarkingPriority(mProgram.getMarkPriority());
-		mBackColor = new Color(mBackColor.getRed(), mBackColor.getGreen(), mBackColor.getBlue(), (int)(mBackColor.getAlpha()*mProgramImportance/10.));
 	}
 
 	public JToolTip createToolTip() {
@@ -143,29 +139,34 @@ public class ProgramLabel extends JComponent implements ChangeListener,
 		Color onAirLight = Plugin.getPluginManager().getTvBrowserSettings().getProgramPanelOnAirLightColor();
 		Color onAirDark = Plugin.getPluginManager().getTvBrowserSettings().getProgramPanelOnAirDarkColor();
 		
-		if (mBackColor != null) {
-			g.setColor(mBackColor);
+		byte programImportance = ProgramUtilities.getProgramImportance(mProgram);
+		
+    Color backColor = Plugin.getPluginManager().getTvBrowserSettings().getColorForMarkingPriority(mProgram.getMarkPriority());
+    backColor = new Color(backColor.getRed(), backColor.getGreen(), backColor.getBlue(), (int)(backColor.getAlpha()*programImportance/10.));
+		
+		if (backColor != null) {
+			g.setColor(backColor);
 			g.fillRect(r.x, r.y, r.width, r.height);
 			g.setColor(oriColor);
 		}
 		if (TimelinePlugin.getSettings().showProgress() && mProgram.isOnAir()) {
-			g.setColor(new Color(onAirDark.getRed(), onAirDark.getGreen(), onAirDark.getBlue(), (int)(onAirDark.getAlpha()*mProgramImportance/10.)));
+			g.setColor(new Color(onAirDark.getRed(), onAirDark.getGreen(), onAirDark.getBlue(), (int)(onAirDark.getAlpha()*programImportance/10.)));
 			final int positionX = Math.abs(TimelinePlugin.getInstance()
 					.getNowPosition() - rb.x);
 			g.fillRect(0, 0, positionX, rb.height);
-			g.setColor(new Color(onAirLight.getRed(), onAirLight.getGreen(), onAirLight.getBlue(), (int)(onAirLight.getAlpha()*mProgramImportance/10.)));
+			g.setColor(new Color(onAirLight.getRed(), onAirLight.getGreen(), onAirLight.getBlue(), (int)(onAirLight.getAlpha()*programImportance/10.)));
 			g.fillRect(positionX, 0, rb.width - positionX, rb.height);
 			g.setColor(oriColor);
 		}
 		
     if (mProgram.isExpired() && !Plugin.getPluginManager().getExampleProgram().equals(mProgram)) {
-      Color c = new Color(Color.gray.getRed(), Color.gray.getGreen(), Color.gray.getBlue(), (int)(Color.gray.getAlpha()*mProgramImportance/10.));
+      Color c = new Color(Color.gray.getRed(), Color.gray.getGreen(), Color.gray.getBlue(), (int)(Color.gray.getAlpha()*programImportance/10.));
 
       setForeground(c);
       g.setColor(c);
     } else {
       Color c = UIManager.getColor("List.foreground");
-      c = new Color(c.getRed(), c.getGreen(), c.getBlue(), (int)(c.getAlpha()*mProgramImportance/10.));
+      c = new Color(c.getRed(), c.getGreen(), c.getBlue(), (int)(c.getAlpha()*programImportance/10.));
 
       setForeground(c);
       g.setColor(c);
