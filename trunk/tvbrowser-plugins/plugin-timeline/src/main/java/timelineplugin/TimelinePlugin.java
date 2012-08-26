@@ -132,8 +132,6 @@ public final class TimelinePlugin extends devplugin.Plugin {
      * until here
      * */
     
-    mCenterPanelWrapper.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
-    
     mWrapper = new PluginCenterPanelWrapper() {
       @Override
       public PluginCenterPanel[] getCenterPanels() {
@@ -191,7 +189,11 @@ public final class TimelinePlugin extends devplugin.Plugin {
 
         setChoosenDate(Date.getCurrentDate());
         
-        mTimelinePanel = new TimelinePanel(mSettings.startWithNow());
+        if(mSettings.showHeaderPanel()) {
+          mCenterPanelWrapper.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
+        }
+        
+        mTimelinePanel = new TimelinePanel(mSettings.startWithNow(),mSettings.showHeaderPanel());
         mTimelinePanel.addKeyboardAction(((JFrame)getParentFrame()).getRootPane());
         
         Persona.getInstance().registerPersonaListener(mTimelinePanel);

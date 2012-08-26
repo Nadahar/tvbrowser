@@ -32,6 +32,7 @@ final class TimelineSettings {
 	private static final String KEY_SHOW_CHANNEL_ICON = "ShowChannelIcon";
 	private static final String KEY_SHOW_CHANNEL_NAME = "ShowChannelName";
 	private static final String KEY_HOUR_WIDTH = "HourWidth";
+	private static final String KEY_SHOW_HEADER_PANEL = "ShowHeaderPanel";
 	private static final String DEFAULT_TITLE_FORMAT = "{title}";
 	private Properties mProperties;
 	private String mTitleFormat = DEFAULT_TITLE_FORMAT;
@@ -82,6 +83,10 @@ final class TimelineSettings {
 
 	boolean showChannelIcon() {
 		return getProperty(KEY_SHOW_CHANNEL_ICON, true);
+	}
+	
+	boolean showHeaderPanel() {
+	  return getProperty(KEY_SHOW_HEADER_PANEL, false);
 	}
 
 	private boolean getProperty(final String key, final boolean defaultValue) {
@@ -149,6 +154,10 @@ final class TimelineSettings {
 
 	public void setProgressView(final int i) {
 		setProperty(KEY_PROGRESS_VIEW, i);
+	}
+	
+	public void setShowHeaderPanel(final boolean show) {
+	  setProperty(KEY_SHOW_HEADER_PANEL, show);
 	}
 
 	public int getChannelWidth() {
