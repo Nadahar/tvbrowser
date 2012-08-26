@@ -805,7 +805,14 @@ private static Font getDynamicFontSize(Font font, int offset) {
       int lineWidth = 1;
       BasicStroke dashed = new BasicStroke(lineWidth, BasicStroke.CAP_BUTT,
           BasicStroke.JOIN_MITER, 10.0f, dash, 0.0f);
-      grp.setColor(Color.BLACK);
+      
+      if(Settings.propTableBackgroundStyle.getString().contains("ui")) {
+        grp.setColor(UIManager.getColor("List.foreground"));
+      }
+      else {
+        grp.setColor(Settings.propProgramPanelForegroundColor.getColor());
+      }
+      
       grp.setStroke(dashed);
 
       grp.drawRect(lineWidth - 1, lineWidth - 1, width - lineWidth, height - lineWidth);
