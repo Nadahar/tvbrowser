@@ -55,6 +55,9 @@ public class ChannelPanel extends JPanel {
   public ChannelPanel(int columnWidth, Channel[] channelArr,KeyListener keyListener) {
     setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
     
+    Color c = Persona.getInstance().getAccentColor() == null ? UIManager.getColor("List.selectionBackground") : Persona.getInstance().getAccentColor().darker();
+    setBackground(new Color(c.getRed(),c.getGreen(),c.getBlue(),c.getAlpha()));
+    
     setShownChannels(channelArr,keyListener);
     setColumnWidth(columnWidth);
     addKeyListener(keyListener);
