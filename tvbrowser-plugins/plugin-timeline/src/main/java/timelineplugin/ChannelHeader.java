@@ -32,10 +32,12 @@ import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
+import javax.swing.UIManager;
 
 import util.browserlauncher.Launch;
 import util.ui.ChannelContextMenu;
 import util.ui.UiUtilities;
+import util.ui.persona.Persona;
 import devplugin.Channel;
 import devplugin.Plugin;
 
@@ -79,7 +81,7 @@ public class ChannelHeader extends JComponent {
 		mShowName = TimelinePlugin.getSettings().showChannelName();
 		mShowIcon = TimelinePlugin.getSettings().showChannelIcon();
 
-		this.setOpaque(true);
+		this.setOpaque(false);
 
 		addMouseMotionListener(new MouseMotionListener() {
 			public void mouseDragged(final MouseEvent e) {
@@ -154,12 +156,13 @@ public class ChannelHeader extends JComponent {
 	}
 
 	public void paintComponent(final Graphics g) {
-		super.paintComponent(g);
+   if(Persona.getInstance().getHeaderImage() != null) {
+      TimelinePlugin.paintComponentInternal(g,this);
+    }
 
-		final Color c = g.getColor();
 		g.setFont(TimelinePlugin.getFont());
-		g.setColor(c);
-
+    final Color c = Persona.getInstance().getHeaderImage() != null ? Persona.getInstance().getTextColor() : UIManager.getColor("List.foreground");
+		
 		int delta = 0;
 		int h = g.getFontMetrics().getHeight();
 		if (mChannelHeight > MINIMUM_CHANNEL_HEIGHT) {
@@ -167,13 +170,33 @@ public class ChannelHeader extends JComponent {
 			delta = (mChannelHeight - MINIMUM_CHANNEL_HEIGHT) / 2;
 		}
 		final int w = this.getSize().width;
-		g.setColor(Color.WHITE);
-		g.fillRect(1, 0, w - 1, this.getSize().height);
+		
+		int transparency = Persona.getInstance().getHeaderImage() != null ? 60 : 35;
+		
+    Color c1 = UIManager.getColor("List.background");
+    
+    if(transparency == 35) {
+      g.setColor(c1);
+      g.fillRect(0, 0, getWidth(), getHeight());
+    }
+    Color c2 = UIManager.getColor("List.foreground");
+
+    Color oddRowColor = new Color(c1.getRed(),c1.getGreen(),c1.getBlue(),transparency);
+    Color evenRowColor = new Color(c2.getRed(),c2.getGreen(),c2.getBlue(),transparency);
+    
+		
 		final int textBegin = mShowIcon ? 45 : 5;
 		for (int i = 0; i < mChannelCount; i++) {
+      if(i % 2 == 0) {
+        g.setColor(evenRowColor);
+      }
+      else {
+        g.setColor(oddRowColor);
+      }
+		  
 			final int y = mChannelHeight * i;
-			g.setColor(i % 2 == 0 ? Color.WHITE : ProgramPanel.secondRowColor());
-			g.fillRect(0, y, w, mChannelHeight);
+  		g.fillRect(0, y, w, mChannelHeight);
+  		
 			g.setColor((!mRowResizing && !mColumnResizing) ? c : Color.LIGHT_GRAY);
 			if (mShowName) {
 				g.drawString(mChannels[i].getName(), textBegin, y + h);
@@ -210,7 +233,6 @@ public class ChannelHeader extends JComponent {
 			g.drawString(text, x, mResizeY + 5);
 			g.drawLine(mResizeX, 0, mResizeX, getSize().height);
 		}
-		g.setColor(c);
 	}
 
 	private ImageIcon getIcon(final Channel channel) {
@@ -264,5 +286,13 @@ public class ChannelHeader extends JComponent {
 			}
 		}
 		return null;
+	}
+	
+	public Channel[] getChannels() {
+	  return mChannels;
+	}
+	
+	public int getRowHeight() {
+	  return mChannelHeight;
 	}
 }

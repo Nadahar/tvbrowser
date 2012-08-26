@@ -17,8 +17,11 @@
  */
 package timelineplugin;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
+import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
@@ -29,14 +32,21 @@ import java.util.Properties;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.BorderFactory;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import timelineplugin.format.TextFormatter;
+import util.ui.persona.Persona;
 import devplugin.ActionMenu;
 import devplugin.Channel;
 import devplugin.Date;
 import devplugin.Plugin;
+import devplugin.PluginCenterPanel;
+import devplugin.PluginCenterPanelWrapper;
 import devplugin.PluginInfo;
 import devplugin.ProgramFilter;
 import devplugin.SettingsTab;
@@ -60,9 +70,18 @@ public final class TimelinePlugin extends devplugin.Plugin {
 	private TimelineSettings mSettings;
 
 	private String mTitleFormat;
+	
+  private PluginCenterPanelWrapper mWrapper;
+  
+  private JPanel mCenterPanelWrapper;
+  
+  private TimelinePanel mTimelinePanel;
+  
+  private boolean mIsTvBrowserStarted;
 
 	public TimelinePlugin() {
 		mInstance = this;
+		mIsTvBrowserStarted = false;
 	}
 
 	public static TimelinePlugin getInstance() {
@@ -79,13 +98,119 @@ public final class TimelinePlugin extends devplugin.Plugin {
 	}
 
 	public static Version getVersion() {
-		return new Version(1, 0, 1);
+		return new Version(1, 10, 0, false);
 	}
 
 	public SettingsTab getSettingsTab() {
 		return (new TimelinePluginSettingsTab());
 	}
 
+  public void onActivation() {
+    /*mCenterPanelWrapper = UiUtilities.createPersonaBackgroundPanel();
+     * 
+     * replace this after release of 3.2beta2
+     * */
+    mCenterPanelWrapper = new JPanel(new BorderLayout()){
+      protected void paintComponent(Graphics g) {
+        if(Persona.getInstance().getAccentColor() != null && Persona.getInstance().getHeaderImage() != null) {
+         
+          Color c = Persona.testPersonaForegroundAgainst(Persona.getInstance().getAccentColor());
+          
+          int alpha = c.getAlpha();
+          
+          g.setColor(new Color(c.getRed(),c.getGreen(),c.getBlue(),alpha));
+          g.fillRect(0,0,getWidth(),getHeight());
+        }
+        else {
+          super.paintComponent(g);
+        }
+      }
+    };
+    mCenterPanelWrapper.setOpaque(false);
+    
+    /*
+     * until here
+     * */
+    
+    mCenterPanelWrapper.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
+    
+    mWrapper = new PluginCenterPanelWrapper() {
+      @Override
+      public PluginCenterPanel[] getCenterPanels() {
+        return new PluginCenterPanel[] {new TimelineCenterPanel()};
+      }
+      
+      public void scrolledToChannel(Channel channel) {
+        if(mTimelinePanel != null) {
+          mTimelinePanel.scrollToChannel(channel);
+        }
+      }
+      
+      public void filterSelected(ProgramFilter filter) {            
+        if(mTimelinePanel != null) {
+          mTimelinePanel.setFilter(filter);
+        }
+      }
+      
+      public void scrolledToNow() {
+        if(mTimelinePanel != null) {
+          mTimelinePanel.gotoNowLock();
+        }
+      }
+      
+      public void scrolledToDate(Date date) {
+        setChoosenDate(date);
+        
+        if(mTimelinePanel != null) {
+          mTimelinePanel.gotoDate(date);
+        }
+      }
+      
+      public void scrolledToTime(int time) {
+        if(mTimelinePanel != null) {
+          mTimelinePanel.scrollToTime(time);
+        }
+      }
+    };
+    
+    addCenterPanel();
+  }
+  
+  private void addCenterPanel() {
+    new Thread() {
+      public void run() {
+        while(!mIsTvBrowserStarted) {
+          try {
+            sleep(100);
+          } catch (InterruptedException e) {}
+        }
+        mFormatter = new TextFormatter();
+        mFormatter.setFont(getFont());
+        mFormatter.setInitialiseMaxLine(true);
+        mFormatter.setFormat(mSettings.getTitleFormat());
+
+        setChoosenDate(Date.getCurrentDate());
+        
+        mTimelinePanel = new TimelinePanel(mSettings.startWithNow());
+        mTimelinePanel.addKeyboardAction(((JFrame)getParentFrame()).getRootPane());
+        
+        Persona.getInstance().registerPersonaListener(mTimelinePanel);
+        
+        SwingUtilities.invokeLater(new Runnable() {
+          @Override
+          public void run() {
+            mTimelinePanel.updatePersona();
+            
+          }
+        });
+        
+        mCenterPanelWrapper.add(mTimelinePanel,BorderLayout.CENTER);
+        
+        mCenterPanelWrapper.updateUI();
+      }
+    }.start();
+  }
+	
 	public void onDeactivation() {
 		if (mDialog != null && mDialog.isVisible()) {
 			mDialog.dispose();
@@ -111,14 +236,7 @@ public final class TimelinePlugin extends devplugin.Plugin {
 		if (mDialog != null && mDialog.isVisible()) {
 			mDialog.dispose();
 		}
-
-		mFormatter = new TextFormatter();
-		mFormatter.setFont(getFont());
-		mFormatter.setInitialiseMaxLine(true);
-		mFormatter.setFormat(mSettings.getTitleFormat());
-
-		setChoosenDate(Date.getCurrentDate());
-
+		
 		mDialog = new TimelineDialog(getParentFrame(), mSettings.startWithNow());
 		mDialog.pack();
 
@@ -129,6 +247,7 @@ public final class TimelinePlugin extends devplugin.Plugin {
 	}
 
 	public void handleTvBrowserStartFinished() {
+	  mIsTvBrowserStarted = true;
 		if (mSettings.showAtStartUp()) {
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
@@ -209,7 +328,13 @@ public final class TimelinePlugin extends devplugin.Plugin {
 	}
 
 	void resize() {
-		mDialog.resize();
+	  if(mDialog != null && mDialog.isVisible()) {
+	    mDialog.resize();
+	  }
+	  
+	  if(mTimelinePanel != null) {
+	    mTimelinePanel.resize();
+	  }
 	}
 
 	private void savePosition() {
@@ -246,5 +371,80 @@ public final class TimelinePlugin extends devplugin.Plugin {
 	public static TimelineSettings getSettings() {
 		return getInstance().mSettings;
 	}
+	
+	public String getPluginCategory() {
+	  return Plugin.OTHER_CATEGORY;
+	}
 
+	public PluginCenterPanelWrapper getPluginCenterPanelWrapper() {
+	  return mWrapper;
+	}
+	
+	private class TimelineCenterPanel extends PluginCenterPanel {
+    @Override
+    public String getName() {
+      return getInfo().getName();
+    }
+
+    @Override
+    public JPanel getPanel() {
+      return mCenterPanelWrapper;
+    }
+
+	}
+	
+  public static void paintComponentInternal(Graphics g,JComponent component) {
+    Color c = Persona.getInstance().getAccentColor().darker().darker().darker();
+
+    g.setColor(new Color(c.getRed(),c.getGreen(),c.getBlue(),110));
+    g.fillRect(0,0,component.getWidth(),component.getHeight());
+    
+    c = Persona.getInstance().getAccentColor();
+    
+    double test = (0.2126 * Persona.getInstance().getTextColor().getRed()) + (0.7152 * Persona.getInstance().getTextColor().getGreen()) + (0.0722 * Persona.getInstance().getTextColor().getBlue());
+    int alpha = 100;
+    
+    if(test <= 30) {
+      c = Color.white;
+      alpha = 200;
+    }
+    else if(test <= 40) {
+      c = c.brighter().brighter().brighter().brighter().brighter().brighter();
+      alpha = 200;
+    }
+    else if(test <= 60) {
+      c = c.brighter().brighter().brighter();
+      alpha = 160;
+    }
+    else if(test <= 100) {
+      c = c.brighter().brighter();
+      alpha = 140;
+    }
+    else if(test <= 145) {
+      alpha = 120;
+    }
+    else if(test <= 170) {
+      c = c.darker();
+      alpha = 120;
+    }
+    else if(test <= 205) {
+      c = c.darker().darker();
+      alpha = 120;
+    }
+    else if(test <= 220){
+      c = c.darker().darker().darker();
+      alpha = 100;
+    }
+    else if(test <= 235){
+      c = c.darker().darker().darker().darker();
+      alpha = 100;
+    }
+    else {
+      c = Color.black;
+      alpha = 100;
+    }
+    
+    g.setColor(new Color(c.getRed(),c.getGreen(),c.getBlue(),alpha));
+    g.fillRect(0,0,component.getWidth(),component.getHeight());
+  }
 }

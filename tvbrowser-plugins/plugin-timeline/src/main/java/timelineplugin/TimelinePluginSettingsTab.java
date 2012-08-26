@@ -445,6 +445,7 @@ public final class TimelinePluginSettingsTab implements SettingsTab {
 		TimelinePlugin.getSettings().setShowChannelIcon(
 				mShowIconAndName.isSelected() || mShowIcon.isSelected());
 		TimelinePlugin.getSettings().setTitleFormat(mFormat.getText());
+		TimelinePlugin.getInstance().resize();
 	}
 
 	private String[] getProgressBarOption() {
