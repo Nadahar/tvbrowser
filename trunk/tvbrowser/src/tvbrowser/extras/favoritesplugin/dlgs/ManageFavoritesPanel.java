@@ -136,7 +136,7 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
 
     JToolBar toolbarPn = new JToolBar() {
 	  protected void paintComponent(Graphics g) {
-	    if(!UIManager.getLookAndFeel().getClass().getCanonicalName().equals("com.sun.java.swing.plaf.gtk.GTKLookAndFeel") || Persona.getInstance().getHeaderImage() == null) {
+	    if(!UiUtilities.isGTKLookAndFeel() || Persona.getInstance().getHeaderImage() == null) {
 	      super.paintComponent(g);
 	    }
 	  }

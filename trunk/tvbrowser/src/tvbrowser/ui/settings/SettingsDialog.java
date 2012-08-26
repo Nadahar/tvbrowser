@@ -774,7 +774,7 @@ public class SettingsDialog implements WindowClosingIf {
           sel, expanded, leaf, rowIndex, hasFocus);
 
       if(label != null) {
-        if(UIManager.getLookAndFeel().getClass().getCanonicalName().equals("com.sun.java.swing.plaf.gtk.GTKLookAndFeel")) {
+        if(UiUtilities.isGTKLookAndFeel()) {
           label.setBackground(tree.getBackground());
           label.setOpaque(!sel && !hasFocus);
         }
@@ -789,7 +789,7 @@ public class SettingsDialog implements WindowClosingIf {
         }
       }
 
-      if(UIManager.getLookAndFeel().getClass().getCanonicalName().equals("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel")) {
+      if(UiUtilities.isNimbusLookAndFeel()) {
         if(sel) {
           label.setOpaque(true);
           label.setBackground(UIManager.getColor("Tree.selectionBackground"));

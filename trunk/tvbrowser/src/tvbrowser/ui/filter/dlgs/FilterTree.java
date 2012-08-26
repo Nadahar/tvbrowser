@@ -733,7 +733,7 @@ public class FilterTree extends JTree implements DragGestureListener, DropTarget
       JLabel label = (JLabel)super.getTreeCellRendererComponent(tree,value,sel,expanded,leaf,row,cellHasFocus);
 
       if(label != null) {
-        if(UIManager.getLookAndFeel().getClass().getCanonicalName().equals("com.sun.java.swing.plaf.gtk.GTKLookAndFeel")) {
+        if(UiUtilities.isGTKLookAndFeel()) {
           label.setBackground(tree.getBackground());
           label.setOpaque(!sel && !cellHasFocus);
         }
@@ -788,7 +788,7 @@ public class FilterTree extends JTree implements DragGestureListener, DropTarget
         }
       }
 
-      if(UIManager.getLookAndFeel().getClass().getCanonicalName().equals("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel")) {
+      if(UiUtilities.isNimbusLookAndFeel()) {
         if(sel) {
           label.setOpaque(true);
           label.setBackground(UIManager.getColor("Tree.selectionBackground"));

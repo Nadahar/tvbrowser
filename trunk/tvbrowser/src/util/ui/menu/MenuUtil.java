@@ -114,7 +114,7 @@ public class MenuUtil {
     }
     Object o = action.getValue(Program.MARK_PRIORITY);
     
-    if(o != null && o instanceof Integer && !UIManager.getLookAndFeel().getClass().getCanonicalName().equals("com.sun.java.swing.plaf.gtk.GTKLookAndFeel")) {
+    if(o != null && o instanceof Integer && !UiUtilities.isGTKLookAndFeel()) {
       Color color = Plugin.getPluginManager().getTvBrowserSettings().getColorForMarkingPriority((Integer)o);
       
       if(color == null) {

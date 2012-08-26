@@ -200,11 +200,11 @@ public class SearchField extends JPanel {
       }
     };
     
-    if(UIManager.getLookAndFeel().getClass().getCanonicalName().equals("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel")) {
+    if(UiUtilities.isNimbusLookAndFeel()) {
       mText.setBorder(BorderFactory.createEmptyBorder(2,2,2,2));
       panel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEtchedBorder(),BorderFactory.createEmptyBorder(2,2,1,2)));
     }
-    if(UIManager.getLookAndFeel().getClass().getCanonicalName().equals("com.sun.java.swing.plaf.gtk.GTKLookAndFeel")) {
+    if(UiUtilities.isGTKLookAndFeel()) {
       mText.setBorder(BorderFactory.createEmptyBorder(3,3,3,3));
     }
     else {

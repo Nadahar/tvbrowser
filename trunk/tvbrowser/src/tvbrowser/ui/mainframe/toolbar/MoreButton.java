@@ -35,6 +35,7 @@ import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.mainframe.MenuHelpTextAdapter;
 import util.ui.Localizer;
+import util.ui.UiUtilities;
 import util.ui.persona.Persona;
 
 /**
@@ -208,7 +209,7 @@ public class MoreButton extends JToggleButton implements ActionListener {
     public static Component wrapToolBar(ToolBar toolbar, MainFrame mainFrame, JLabel statusLabel) {
       JToolBar moreToolbar = new JToolBar() {
         protected void paintComponent(Graphics g) {
-          if(!UIManager.getLookAndFeel().getClass().getCanonicalName().equals("com.sun.java.swing.plaf.gtk.GTKLookAndFeel") || Persona.getInstance().getHeaderImage() == null) {
+          if(!UiUtilities.isGTKLookAndFeel() || Persona.getInstance().getHeaderImage() == null) {
             super.paintComponent(g);
           }
         }
@@ -239,7 +240,7 @@ public class MoreButton extends JToggleButton implements ActionListener {
     
     protected void paintComponent(Graphics g) {
       if(Persona.getInstance().getHeaderImage() != null && Persona.getInstance().getTextColor() != null && Persona.getInstance().getShadowColor() != null) {
-        if(UIManager.getLookAndFeel().getClass().getCanonicalName().equals("com.sun.java.swing.plaf.gtk.GTKLookAndFeel")) {
+        if(UiUtilities.isGTKLookAndFeel()) {
           if(isBorderPainted()) {
             g.setColor(UIManager.getColor("List.selectionBackground"));
             g.fillRect(0, 0, getWidth(), getHeight());

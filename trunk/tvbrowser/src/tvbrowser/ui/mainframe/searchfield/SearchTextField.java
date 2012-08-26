@@ -34,10 +34,11 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 import javax.swing.plaf.basic.BasicTextFieldUI;
 
 import org.apache.commons.lang.StringUtils;
+
+import util.ui.UiUtilities;
 /**
  * The TextField for the Search in the Toolbar
  * @author bodum
@@ -57,8 +58,8 @@ public class SearchTextField extends JTextField implements FocusListener{
     super(len);
     setUI(new BasicTextFieldUI() {
       protected void paintBackground(Graphics g) {
-        if(!UIManager.getLookAndFeel().getClass().getCanonicalName().equals("com.sun.java.swing.plaf.gtk.GTKLookAndFeel") &&
-            !UIManager.getLookAndFeel().getClass().getCanonicalName().equals("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel")) {
+        if(!UiUtilities.isGTKLookAndFeel() &&
+            !UiUtilities.isNimbusLookAndFeel()) {
           super.paintBackground(g);
         }
       }
