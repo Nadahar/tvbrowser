@@ -659,7 +659,7 @@ public class JavaPluginProxy extends AbstractPluginProxy {
   @Override
   public AfterDataUpdateInfoPanel getAfterDataUpdateInfoPanel() {
     if(mPlugin != null) {
-      mPlugin.getAfterDataUpdateInfoPanel();
+      return mPlugin.getAfterDataUpdateInfoPanel();
     }
     
     return null;
