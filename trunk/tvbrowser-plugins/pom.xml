@@ -162,7 +162,7 @@
   	<dependency>
   		<groupId>org.tvbrowser</groupId>
   		<artifactId>tvbrowser</artifactId>
-  		<version>3.2beta1</version>
+  		<version>3.2beta1.1</version>
   	</dependency>
   </dependencies>
 </project>
