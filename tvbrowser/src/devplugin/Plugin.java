@@ -39,7 +39,6 @@ import java.util.logging.Logger;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.JPanel;
 
 import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;

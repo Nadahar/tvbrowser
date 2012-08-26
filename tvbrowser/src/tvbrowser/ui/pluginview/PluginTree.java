@@ -86,6 +86,7 @@ import util.io.IOUtilities;
 import util.ui.Localizer;
 import util.ui.OverlayListener;
 import util.ui.SingleAndDoubleClickTreeUI;
+import util.ui.UiUtilities;
 import devplugin.ActionMenu;
 import devplugin.Plugin;
 import devplugin.Program;
@@ -115,7 +116,9 @@ public class PluginTree extends JTree implements DragGestureListener,
 
     setRootVisible(false);
     setShowsRootHandles(true);
-
+    
+    //setBackground(UIManager.getColor("List.background"));
+    
     expandPath(new TreePath(model.getRoot()));
 
     mInstance = this;
@@ -784,7 +787,7 @@ public class PluginTree extends JTree implements DragGestureListener,
         if(node.getType() == Node.PROGRAM) {
           Program program = ((ProgramItem)node.getUserObject()).getProgram();
 
-          if(UIManager.getLookAndFeel().getClass().getCanonicalName().equals("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel")) {
+          if(UiUtilities.isNimbusLookAndFeel()) {
             bounds.setBounds(bounds.x,bounds.y+1,bounds.width,bounds.height);
           }
 

@@ -77,6 +77,7 @@ import javax.swing.JSeparator;
 import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 import javax.swing.ListCellRenderer;
+import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
@@ -1095,5 +1096,22 @@ public class UiUtilities {
     panel.setOpaque(false);
     
     return panel;
+  }
+  
+  /**
+   * @return If the current LookAndFeel is Nimbus.
+   * @since 3.2
+   */
+  public static boolean isNimbusLookAndFeel() {
+    return UIManager.getLookAndFeel().getClass().getCanonicalName().equals("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel") ||
+    UIManager.getLookAndFeel().getClass().getCanonicalName().equals("javax.swing.plaf.nimbus.NimbusLookAndFeel");
+  }
+  
+  /**
+   * @return If the current LookAndFeel is GTK+.
+   * @since 3.2
+   */
+  public static boolean isGTKLookAndFeel() {
+    return UIManager.getLookAndFeel().getClass().getCanonicalName().equals("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
   }
 }

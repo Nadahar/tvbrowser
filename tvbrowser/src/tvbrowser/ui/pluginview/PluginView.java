@@ -62,6 +62,7 @@ import tvbrowser.ui.pluginview.contextmenu.ProgramContextMenu;
 import tvbrowser.ui.pluginview.contextmenu.ProxyBasedPluginContextMenu;
 import tvbrowser.ui.pluginview.contextmenu.RootNodeContextMenu;
 import tvbrowser.ui.pluginview.contextmenu.StructureNodeContextMenu;
+import util.ui.UiUtilities;
 import devplugin.ContextMenuIf;
 import devplugin.Plugin;
 import devplugin.Program;
@@ -276,8 +277,8 @@ public class PluginView extends JPanel implements MouseListener, KeyListener {
           }
         }
       }
-
-      if(UIManager.getLookAndFeel().getClass().getCanonicalName().equals("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel")) {
+      
+      if(UiUtilities.isNimbusLookAndFeel()) {
         if(sel) {
           label.setOpaque(true);
           label.setBackground(UIManager.getColor("Tree.selectionBackground"));

@@ -34,7 +34,6 @@ import java.awt.event.MouseListener;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
@@ -73,7 +72,7 @@ public class SingleAndDoubleClickTreeUI extends javax.swing.plaf.basic.BasicTree
     mType = type;
     mLastSelectionPath = selectedPath;
     
-    if(UIManager.getLookAndFeel().getClass().getCanonicalName().equals("com.sun.java.swing.plaf.gtk.GTKLookAndFeel")) {
+    if(UiUtilities.isGTKLookAndFeel()) {
       mCollapsedIcon = new Icon() {
         @Override
         public int getIconHeight() {
@@ -207,13 +206,13 @@ public class SingleAndDoubleClickTreeUI extends javax.swing.plaf.basic.BasicTree
   }
   
   protected void paintHorizontalLine(Graphics g,JComponent c,int y,int left,int right) {
-    if(!UIManager.getLookAndFeel().getClass().getCanonicalName().equals("com.sun.java.swing.plaf.gtk.GTKLookAndFeel")) {
+    if(!UiUtilities.isGTKLookAndFeel()) {
       super.paintHorizontalLine(g, c, y, left, right);
     }
   }
   
   protected void paintVerticalLine(Graphics g,JComponent c,int x,int top,int bottom) {
-    if(!UIManager.getLookAndFeel().getClass().getCanonicalName().equals("com.sun.java.swing.plaf.gtk.GTKLookAndFeel")) {
+    if(!UiUtilities.isGTKLookAndFeel()) {
       super.paintVerticalLine(g, c, x, top, bottom);
     }
   }

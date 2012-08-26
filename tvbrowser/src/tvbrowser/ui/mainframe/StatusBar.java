@@ -35,8 +35,8 @@ import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
-import javax.swing.UIManager;
 
+import util.ui.UiUtilities;
 import util.ui.persona.Persona;
 
 import devplugin.ProgressMonitor;
@@ -59,8 +59,8 @@ public class StatusBar extends JPanel {
     setOpaque(false);
     setLayout(new BorderLayout(1, 0));
     
-    if(!UIManager.getLookAndFeel().getClass().getCanonicalName().equals("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel") &&
-        !UIManager.getLookAndFeel().getClass().getCanonicalName().equals("com.sun.java.swing.plaf.gtk.GTKLookAndFeel")) {
+    if(!UiUtilities.isNimbusLookAndFeel() &&
+        !UiUtilities.isGTKLookAndFeel()) {
       setBorder(BorderFactory.createEmptyBorder(2,0,0,0));          
     }
 
