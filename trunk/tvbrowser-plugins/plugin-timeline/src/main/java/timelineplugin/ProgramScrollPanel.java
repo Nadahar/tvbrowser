@@ -17,7 +17,7 @@
  */
 package timelineplugin;
 
-import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.InputEvent;
@@ -26,8 +26,11 @@ import java.awt.event.MouseWheelListener;
 import java.util.Iterator;
 
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
+
+import util.ui.persona.Persona;
 
 import devplugin.Channel;
 import devplugin.Date;
@@ -50,10 +53,10 @@ public class ProgramScrollPanel extends JScrollPane implements
 		mOffset = TimelinePlugin.getInstance().getOffset();
 
 		initPanel();
-
-		setBackground(Color.WHITE);
+		
 		setWheelScrollingEnabled(false);
 		addMouseWheelListener(this);
+		setOpaque(false);
 	}
 
 	private void initPanel() {
@@ -61,14 +64,41 @@ public class ProgramScrollPanel extends JScrollPane implements
 		addProgramList();
 		setViewportView(mProgramPanel);
 
+    JPanel leftUpper = new JPanel() {
+      protected void paintComponent(Graphics g) {
+        if(Persona.getInstance().getAccentColor() != null && Persona.getInstance().getHeaderImage() != null) {
+          TimelinePlugin.paintComponentInternal(g,this);
+        }
+        else {
+          super.paintComponent(g);
+        }
+      }
+    };
+
+    JPanel rightUpper = new JPanel() {
+      protected void paintComponent(Graphics g) {
+        if(Persona.getInstance().getAccentColor() != null && Persona.getInstance().getHeaderImage() != null) {
+          TimelinePlugin.paintComponentInternal(g,this);
+        }
+        else {
+          super.paintComponent(g);
+        }
+      }
+    };
+    
+    setCorner(UPPER_LEFT_CORNER, leftUpper);
+    setCorner(UPPER_RIGHT_CORNER, rightUpper);
+		
 		final TimeHeader th = new TimeHeader();
 		th.setPreferredWidth(mProgramPanel.getPreferredSize().width);
 		setColumnHeaderView(th);
+		getColumnHeader().setOpaque(false);
 
 		final ChannelHeader ch = new ChannelHeader(TimelinePlugin.getSettings()
 				.getChannelHeight());
 		ch.setPreferredHeight(mProgramPanel.getPreferredSize().height);
 		setRowHeaderView(ch);
+		getRowHeader().setOpaque(false);
 
 		getVerticalScrollBar().setUnitIncrement(
 				TimelinePlugin.getSettings().getChannelHeight());
@@ -88,7 +118,7 @@ public class ProgramScrollPanel extends JScrollPane implements
 
 		final ProgramFilter filter = TimelinePlugin.getInstance().getFilter();
 		int channelHeight = TimelinePlugin.getSettings().getChannelHeight();
-
+		
 		for (int channelIndex = 0; channelIndex < channels.length; channelIndex++) {
 			channelTop = channelIndex * channelHeight;
 
@@ -189,6 +219,7 @@ public class ProgramScrollPanel extends JScrollPane implements
 	}
 
 	public void resize() {
+	  mLabelHeight = TimelinePlugin.getSettings().getChannelHeight() + 1;
 		mOffset = TimelinePlugin.getInstance().getOffset();
 		mProgramPanel.resize();
 		final TimeHeader th = new TimeHeader();
@@ -203,5 +234,31 @@ public class ProgramScrollPanel extends JScrollPane implements
 
 	public int getShownHours() {
 		return (mProgramPanel.mEndOfDay-mProgramPanel.mStartOfDay) / 60 + 24;
+	}
+	
+	void scrollToChannel(Channel channel) {
+	  Channel[] shownChannelArr = ((ChannelHeader)getRowHeader().getComponent(0)).getChannels();
+	  int rowHeight = ((ChannelHeader)getRowHeader().getComponent(0)).getRowHeight();
+	  
+    for (int row = 0; row < shownChannelArr.length; row++) {
+      if (channel.equals(shownChannelArr[row])) {
+        Point scrollPos = getViewport().getViewPosition();
+        
+        if (scrollPos != null) {
+          int visibleRows = getViewport().getHeight() / rowHeight;
+          
+          scrollPos.y = (row - visibleRows/2) * rowHeight;
+          if (scrollPos.y < 0) {
+            scrollPos.y = 0;
+          }
+          int max = rowHeight * shownChannelArr.length;
+          
+          if (scrollPos.y > max) {
+            scrollPos.y = max;
+          }
+          getViewport().setViewPosition(scrollPos);
+        }
+      }
+    }
 	}
 }

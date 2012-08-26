@@ -31,6 +31,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import javax.swing.JPanel;
 import javax.swing.JViewport;
+import javax.swing.UIManager;
 
 import devplugin.Date;
 import devplugin.Plugin;
@@ -60,11 +61,32 @@ public class ProgramPanel extends JPanel {
 			BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER, 15.0f, new float[] { 1.0f,
 					2.0f }, 5.0f);
 	private static Stroke nowStroke = new BasicStroke(3);
+	
+	private Color mLineColor;
 
 	public ProgramPanel() {
 		super(new BorderLayout());
-		setOpaque(true);
-		this.setBackground(Color.WHITE);
+		
+    Color c = UIManager.getColor("List.foreground");
+    Color c1 = UIManager.getColor("List.background");
+    
+    int r = (c.getRed()   + c1.getRed()) >> 1;
+    int g = (c.getGreen() + c1.getGreen()) >> 1;
+    int b = (c.getBlue()  + c1.getBlue()) >> 1;
+    
+    mLineColor = new Color(r,g,b);
+    
+    double test2 = (0.2126 * c1.getRed()) + (0.7152 * c1.getGreen()) + (0.0722 * c1.getBlue());
+    double test1 = (0.2126 * mLineColor.getRed()) + (0.7152 * mLineColor.getGreen()) + (0.0722 * mLineColor.getBlue());
+    
+    if(test2 - test1 > 90) {
+      mLineColor = new Color(mLineColor.getRed()+30,mLineColor.getGreen()+30,mLineColor.getBlue()+30);
+    }
+    else if(test2 - test1 < -90) {
+      mLineColor = mLineColor.darker();
+    }
+		
+		setOpaque(false);
 
 		mChannelCount = Plugin.getPluginManager().getSubscribedChannels().length;
 		resize();
@@ -138,7 +160,6 @@ public class ProgramPanel extends JPanel {
 	}
 
 	public void paintProgramPanel(final Graphics g) {
-		super.paintComponent(g);
 		final Rectangle clipBounds = g.getClipBounds();
 
 		g.setFont(TimelinePlugin.getFont());
@@ -152,15 +173,30 @@ public class ProgramPanel extends JPanel {
 
 		final Color oriColor = g.getColor();
 
-		g.setColor(secondRowColor());
-		for (int i = 1; i < mChannelCount; i += 2) {
-			final int y = mChannelHeight * i;
-			if (y < bottom && y + mChannelHeight >= top) {
-				g.fillRect(left, y, clipBounds.width, mChannelHeight);
-			}
-		}
+		Color c1 = UIManager.getColor("List.background");
+		g.setColor(c1);
+		g.fillRect(0, 0, getWidth(), getHeight());
+		Color c2 = UIManager.getColor("List.foreground");
 
-		g.setColor(Color.LIGHT_GRAY);
+    Color oddRowColor = new Color(c1.getRed(),c1.getGreen(),c1.getBlue(),35);
+    Color evenRowColor = new Color(c2.getRed(),c2.getGreen(),c2.getBlue(),35);
+    
+    for (int i = 0; i < mChannelCount; i++) {
+      final int y = mChannelHeight * i;
+      
+      if(i % 2 == 0) {
+        g.setColor(evenRowColor);
+      }
+      else {
+        g.setColor(oddRowColor);
+      }
+      
+      if (y < bottom && y + mChannelHeight >= top) {
+        g.fillRect(left, y, clipBounds.width, mChannelHeight);
+      }
+    }
+    
+		g.setColor(mLineColor);
 		final Stroke oriStroke = g2.getStroke();
 
 		final int halfHourSize = mHourWidth / 2;
@@ -178,6 +214,7 @@ public class ProgramPanel extends JPanel {
 			}
 			xFullHour += mHourWidth;
 		}
+		
 		if (TimelinePlugin.getSettings().showBar()) {
 			if (Date.getCurrentDate().equals(
 					TimelinePlugin.getInstance().getChoosenDate())) {
@@ -189,6 +226,7 @@ public class ProgramPanel extends JPanel {
 				}
 			}
 		}
+		
 		g2.setStroke(oriStroke);
 		g.setColor(oriColor);
 	}
