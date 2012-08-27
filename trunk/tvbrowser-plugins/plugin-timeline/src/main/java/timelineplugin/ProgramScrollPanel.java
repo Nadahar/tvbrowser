@@ -291,7 +291,7 @@ public class ProgramScrollPanel extends JScrollPane implements
 	  }
 	  
 	  if(prog != null) {
-	    scrollToChannel(prog.getChannel());
+	    //scrollToChannel(prog.getChannel());
 	    
   	  for(int i = 0; i < mProgramPanel.getComponentCount(); i++) {
   	    if(mProgramPanel.getComponent(i) instanceof ProgramLabel) {
