@@ -26,8 +26,8 @@ public abstract class AbstractCalendarPanel extends AbstractDateSelector
     mDateChangedListener = dateChangedListener;
   }
 
-  public void markDate(final Date date) {
-    markDate(date, null);
+  public void markDate(final Date date, boolean informPluginPanels) {
+    markDate(date, null, informPluginPanels);
   }
 
   public void setMaximum(int maximum) {

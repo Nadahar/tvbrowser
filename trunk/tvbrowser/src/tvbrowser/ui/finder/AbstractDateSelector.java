@@ -44,7 +44,7 @@ public abstract class AbstractDateSelector extends JPanel implements
   private Date mCurChoosenDate = Date.getCurrentDate();
   protected Date mToday;
 
-  protected abstract void markDate(Date addDays);
+  protected abstract void markDate(Date addDays, boolean informPluginPanels);
 
   protected void setCurrentDate(final Date d) {
     mCurChoosenDate = d;
@@ -55,25 +55,25 @@ public abstract class AbstractDateSelector extends JPanel implements
   }
 
   public void markPreviousDate() {
-    markDate(mCurChoosenDate.addDays(-1));
+    markDate(mCurChoosenDate.addDays(-1),true);
   }
 
   public void markNextDate() {
-    markDate(mCurChoosenDate.addDays(1));
+    markDate(mCurChoosenDate.addDays(1),true);
   }
 
   /**
    * @since 2.7
    */
   public void markNextWeek() {
-    markDate(mCurChoosenDate.addDays(7));
+    markDate(mCurChoosenDate.addDays(7),true);
   }
 
   /**
    * @since 2.7
    */
   public void markPreviousWeek() {
-    markDate(mCurChoosenDate.addDays(-7));
+    markDate(mCurChoosenDate.addDays(-7),true);
 
   }
 

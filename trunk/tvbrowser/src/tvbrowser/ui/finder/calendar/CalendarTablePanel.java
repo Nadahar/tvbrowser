@@ -80,7 +80,7 @@ public class CalendarTablePanel extends AbstractCalendarPanel implements ListSel
   }
 
 
-  public void markDate(final Date date, final Runnable callback) {
+  public void markDate(final Date date, final Runnable callback, final boolean informPluginPanels) {
     if (!isValidDate(date)) {
       askForDataUpdate(date);
       return;
@@ -111,7 +111,7 @@ public class CalendarTablePanel extends AbstractCalendarPanel implements ListSel
 
     Thread thread = new Thread("Finder") {
       public void run() {
-        mDateChangedListener.dateChanged(date, CalendarTablePanel.this, callback);
+        mDateChangedListener.dateChanged(date, CalendarTablePanel.this, callback, informPluginPanels);
       }
     };
     thread.start();
@@ -137,7 +137,7 @@ public class CalendarTablePanel extends AbstractCalendarPanel implements ListSel
       if (date != model.getCurrentDate()) {
         // filter out the duplicate events caused by listening to row and column selection changes
         if (column != mLastColumn || row != mLastRow) {
-          markDate(date);
+          markDate(date,true);
           mLastColumn = column;
           mLastRow = row;
         }

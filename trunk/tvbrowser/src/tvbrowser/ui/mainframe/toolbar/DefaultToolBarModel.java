@@ -775,7 +775,7 @@ public class DefaultToolBarModel implements ToolBarModel, DateListener {
     return item;
   }
 
-  public void dateChanged(final Date date, ProgressMonitor monitor, Runnable callback) {
+  public void dateChanged(final Date date, ProgressMonitor monitor, Runnable callback, boolean informPluginPanels) {
     UIThreadRunner.invokeLater(new Runnable() {
 
       @Override
@@ -786,5 +786,10 @@ public class DefaultToolBarModel implements ToolBarModel, DateListener {
         mGoToNextWeekAction.setEnabled(TvDataBase.getInstance().dataAvailable(date.addDays(7)));
       }
     });
+  }
+
+  @Override
+  public void dateChanged(Date date, ProgressMonitor monitor, Runnable callback) {
+    dateChanged(date, monitor, callback,false);
   }
 }
