@@ -88,7 +88,7 @@ import devplugin.Version;
 public final class IDontWant2See extends Plugin implements AWTEventListener {
 
   private static final boolean PLUGIN_IS_STABLE = false;
-  private static final Version PLUGIN_VERSION = new Version(0, 13, 0, PLUGIN_IS_STABLE);
+  private static final Version PLUGIN_VERSION = new Version(0, 13, 1, PLUGIN_IS_STABLE);
 
   private static final String RECEIVE_TARGET_EXCLUDE_EXACT = "target_exclude_exact";
 
@@ -161,7 +161,9 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
   }
 
   void clearCache() {
-    mMatchCache = new HashMap<Program, Boolean>(1000);
+    synchronized (mMatchCache) {
+      mMatchCache = new HashMap<Program, Boolean>(1000);  
+    }
   }
 
   private static void setCurrentDate() {
@@ -177,29 +179,43 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
   }
   
   boolean acceptInternal(final Program program) {
-    if(!mDateWasSet) {
-      mSettings.setLastUsedDate(getCurrentDate());
-      mDateWasSet = true;
+    if(program == null) {
+      return false;
     }
-    final Boolean result = mMatchCache.get(program);
-		if (result != null) {
-			return result;
-		}
-
-    // calculate lower case title only once, not for each entry again
-    final String title = program.getTitle();
-    final String lowerCaseTitle = title.toLowerCase();
-    for(IDontWant2SeeListEntry entry : mSettings.getSearchList()) {
-      if (entry.matchesProgramTitle(title, lowerCaseTitle)) {
-        return putCache(program, false);
+    else {
+      if(!mDateWasSet) {
+        mSettings.setLastUsedDate(getCurrentDate());
+        mDateWasSet = true;
       }
+      
+      Boolean result = null;
+      
+      synchronized (mMatchCache) {
+        result = mMatchCache.get(program);;
+      }
+      
+  		if (result != null) {
+  			return result;
+  		}
+  
+      // calculate lower case title only once, not for each entry again
+      final String title = program.getTitle();
+      final String lowerCaseTitle = title.toLowerCase();
+      for(IDontWant2SeeListEntry entry : mSettings.getSearchList()) {
+        if (entry.matchesProgramTitle(title, lowerCaseTitle)) {
+          return putCache(program, false);
+        }
+      }
+  
+      return putCache(program, true);
     }
-
-    return putCache(program, true);
   }
 
   private boolean putCache(final Program program, final boolean matches) {
-		mMatchCache.put(program, matches);
+    synchronized (mMatchCache) {
+      mMatchCache.put(program, matches);
+    }
+		
 		return matches;
 	}
 
