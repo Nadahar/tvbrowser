@@ -17,14 +17,18 @@
  */
 package timelineplugin;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.text.SimpleDateFormat;
 import java.util.Iterator;
 
+import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
@@ -49,6 +53,9 @@ public class ProgramScrollPanel extends JScrollPane implements
 	private int mLabelHeight = TimelinePlugin.getSettings().getChannelHeight() + 1;
 	
 	private ProgramLabel mSelectedProgram;
+	
+	private JLabel mDayLabel;
+	private JLabel mDateLabel;
 
 	public ProgramScrollPanel() {
 		super();
@@ -68,7 +75,7 @@ public class ProgramScrollPanel extends JScrollPane implements
 		addProgramList();
 		setViewportView(mProgramPanel);
 
-    JPanel leftUpper = new JPanel() {
+    JPanel leftUpper = new JPanel(new BorderLayout()) {
       protected void paintComponent(Graphics g) {
         if(Persona.getInstance().getAccentColor() != null && Persona.getInstance().getHeaderImage() != null) {
           TimelinePlugin.paintComponentInternal(g,this);
@@ -78,6 +85,9 @@ public class ProgramScrollPanel extends JScrollPane implements
         }
       }
     };
+    leftUpper.setBorder(BorderFactory.createEmptyBorder(0,5,0,0));
+    leftUpper.add(mDayLabel = new JLabel(), BorderLayout.NORTH);
+    leftUpper.add(mDateLabel = new JLabel(), BorderLayout.SOUTH);
 
     JPanel rightUpper = new JPanel() {
       protected void paintComponent(Graphics g) {
@@ -294,5 +304,20 @@ public class ProgramScrollPanel extends JScrollPane implements
   	    }
   	  }
 	  }
+	}
+	
+	public void setDateLabelColor(Color c) {
+	  if(mDateLabel != null) {
+	    mDateLabel.setForeground(c);
+	    mDayLabel.setForeground(c);
+	  }
+	}
+	
+	public void setDateLabel(Date date) {
+	  SimpleDateFormat format = new SimpleDateFormat("E");
+	  mDayLabel.setText(format.format(new java.util.Date(date.getCalendar().getTimeInMillis())));
+	  
+	  format = new SimpleDateFormat("dd.MM.");
+	  mDateLabel.setText(format.format(new java.util.Date(date.getCalendar().getTimeInMillis())));
 	}
 }

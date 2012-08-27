@@ -104,6 +104,7 @@ public class TimelinePanel extends JPanel implements PersonaListener {
           mLockNow = true;
           mTimeList.setSelectedIndex(1);
         }
+        mMainPane.setDateLabel((Date)mDateList.getSelectedItem());
       }
     });
   }
@@ -167,6 +168,7 @@ public class TimelinePanel extends JPanel implements PersonaListener {
         TimelinePlugin.getInstance().setChoosenDate(
             (Date) mDateList.getSelectedItem());
         mMainPane.updateProgram();
+        mMainPane.setDateLabel((Date)mDateList.getSelectedItem());
       }
     });
     mTimeList = new JComboBox(getTimeList());
@@ -520,12 +522,14 @@ public class TimelinePanel extends JPanel implements PersonaListener {
       if(mDateLabel != null) {
         mDateLabel.setForeground(Persona.getInstance().getTextColor());
         mFilterLabel.setForeground(Persona.getInstance().getTextColor());
+        mMainPane.setDateLabelColor(Persona.getInstance().getTextColor());
       }
     }
     else {
       if(mDateLabel != null) {
         mDateLabel.setForeground(UIManager.getColor("Label.foreground"));
         mFilterLabel.setForeground(mDateLabel.getForeground());
+        mMainPane.setDateLabelColor(mDateLabel.getForeground());
       }
     }
   }
