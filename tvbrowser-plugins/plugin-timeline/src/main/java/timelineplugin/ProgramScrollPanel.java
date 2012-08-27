@@ -29,6 +29,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 
 import util.ui.persona.Persona;
 
@@ -46,11 +47,14 @@ public class ProgramScrollPanel extends JScrollPane implements
 	private int mOffset;
 
 	private int mLabelHeight = TimelinePlugin.getSettings().getChannelHeight() + 1;
+	
+	private ProgramLabel mSelectedProgram;
 
 	public ProgramScrollPanel() {
 		super();
 
 		mOffset = TimelinePlugin.getInstance().getOffset();
+		mSelectedProgram = null;
 
 		initPanel();
 		
@@ -170,10 +174,18 @@ public class ProgramScrollPanel extends JScrollPane implements
 		if (x + w < 0) {
 			return;
 		}
-
+		
 		final ProgramLabel lbl = new ProgramLabel(program);
 		lbl.setBounds(x, channelTop, w, mLabelHeight);
 		mProgramPanel.add(lbl);
+		
+    if(mSelectedProgram != null) {
+      if(mSelectedProgram.containsProgram(program)) {
+        mSelectedProgram = lbl;
+        lbl.setSelected(true);
+        getViewport().setViewPosition(lbl.getLocation());
+      }
+    }
 	}
 
 	public void mouseWheelMoved(final MouseWheelEvent e) {
@@ -260,5 +272,27 @@ public class ProgramScrollPanel extends JScrollPane implements
         }
       }
     }
+	}
+	
+	void selectProgram(Program prog) {
+	  if(mSelectedProgram != null) {
+	    mSelectedProgram.setSelected(false);
+	    mSelectedProgram.repaint();
+	  }
+	  
+	  if(prog != null) {
+	    scrollToChannel(prog.getChannel());
+	    
+  	  for(int i = 0; i < mProgramPanel.getComponentCount(); i++) {
+  	    if(mProgramPanel.getComponent(i) instanceof ProgramLabel) {
+  	      if(((ProgramLabel)mProgramPanel.getComponent(i)).containsProgram(prog)) {
+  	        mSelectedProgram = (ProgramLabel)mProgramPanel.getComponent(i);
+  	        mSelectedProgram.setSelected(true);
+  	        getViewport().setViewPosition(mSelectedProgram.getLocation());
+  	        break;
+  	      }
+  	    }
+  	  }
+	  }
 	}
 }

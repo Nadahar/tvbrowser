@@ -52,6 +52,7 @@ import com.jgoodies.forms.layout.FormLayout;
 import devplugin.Channel;
 import devplugin.Date;
 import devplugin.Plugin;
+import devplugin.Program;
 import devplugin.ProgramFilter;
 
 public class TimelinePanel extends JPanel implements PersonaListener {
@@ -210,6 +211,7 @@ public class TimelinePanel extends JPanel implements PersonaListener {
   }
   
   void setFilter(ProgramFilter filter) {
+    //mMainPane.selectProgram(null);
     for(int i = 0; i < mFilterList.getItemCount(); i++) {
       if(mFilterList.getItemAt(i).equals(filter)) {
         mFilterList.setSelectedIndex(i);
@@ -430,12 +432,16 @@ public class TimelinePanel extends JPanel implements PersonaListener {
     }
   }
   
-  void gotoTime(final int minute) {    
+  void gotoTime(final int minute) {
     mMainPane.gotoTime(minute);
   }
   
   void gotoDate(Date date) {
     if(mDateList != null) {
+      if(mDateList.getSelectedItem().equals(date)) {
+        return;
+      }
+      
       for(int i = 0; i < mDateList.getItemCount(); i++) {
         if(mDateList.getItemAt(i).equals(date)) {
           mDateList.setSelectedIndex(i);
@@ -526,5 +532,15 @@ public class TimelinePanel extends JPanel implements PersonaListener {
   
   void scrollToChannel(Channel channel) {
     mMainPane.scrollToChannel(channel);
+  }
+  
+  void scrollToProgram(final Program prog) {
+    if(prog != null) {
+      if(!mDateList.getSelectedItem().equals(prog.getDate())) {
+        gotoDate(prog.getDate());
+      }
+    }
+    
+    mMainPane.selectProgram(prog);
   }
 }

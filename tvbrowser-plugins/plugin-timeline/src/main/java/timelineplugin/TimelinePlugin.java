@@ -48,6 +48,7 @@ import devplugin.Plugin;
 import devplugin.PluginCenterPanel;
 import devplugin.PluginCenterPanelWrapper;
 import devplugin.PluginInfo;
+import devplugin.Program;
 import devplugin.ProgramFilter;
 import devplugin.SettingsTab;
 import devplugin.Version;
@@ -133,41 +134,56 @@ public final class TimelinePlugin extends devplugin.Plugin {
      * */
     
     mWrapper = new PluginCenterPanelWrapper() {
+      private long mLastCalledProgramScrolling = 0;
+      private static final int PROGRAM_SELECTION_WAIT_TIME = 2000;
+      
       @Override
       public PluginCenterPanel[] getCenterPanels() {
         return new PluginCenterPanel[] {new TimelineCenterPanel()};
       }
       
       public void scrolledToChannel(Channel channel) {
-        if(mTimelinePanel != null) {
+        if(canUseFunction()) {
           mTimelinePanel.scrollToChannel(channel);
         }
       }
       
       public void filterSelected(ProgramFilter filter) {            
-        if(mTimelinePanel != null) {
+        if(canUseFunction()) {
           mTimelinePanel.setFilter(filter);
         }
       }
       
       public void scrolledToNow() {
-        if(mTimelinePanel != null) {
+        if(canUseFunction()) {
           mTimelinePanel.gotoNowLock();
         }
       }
       
       public void scrolledToDate(Date date) {
-        setChoosenDate(date);
-        
-        if(mTimelinePanel != null) {
+        if(canUseFunction()) {
+          setChoosenDate(date);
           mTimelinePanel.gotoDate(date);
         }
       }
       
       public void scrolledToTime(int time) {
-        if(mTimelinePanel != null) {
+        if(canUseFunction()) {
           mTimelinePanel.scrollToTime(time);
         }
+      }
+      
+      public void programScrolled(Program prog) {
+        mLastCalledProgramScrolling = System.currentTimeMillis();
+        setChoosenDate(prog.getDate());
+        
+        if(mTimelinePanel != null) {
+          mTimelinePanel.scrollToProgram(prog);
+        }
+      }
+      
+      private boolean canUseFunction() {
+        return mLastCalledProgramScrolling + PROGRAM_SELECTION_WAIT_TIME < System.currentTimeMillis() && mTimelinePanel != null;
       }
     };
     
@@ -448,5 +464,11 @@ public final class TimelinePlugin extends devplugin.Plugin {
     
     g.setColor(new Color(c.getRed(),c.getGreen(),c.getBlue(),alpha));
     g.fillRect(0,0,component.getWidth(),component.getHeight());
+  }
+  
+  void deselectProgram() {
+    if(mTimelinePanel != null) {
+      mTimelinePanel.scrollToProgram(null);
+    }
   }
 }
