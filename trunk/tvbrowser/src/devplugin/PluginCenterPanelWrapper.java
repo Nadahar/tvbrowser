@@ -87,18 +87,6 @@ public abstract class PluginCenterPanelWrapper {
   
   /**
    * Informs this wrapper about a changing of the
-   * selected date and time of the TV-Browser program
-   * table.
-   * <p>
-   * @param date The new selected date.
-   * @param minute The minute of the date to scroll to.
-   */
-  public void scrolledTo(Date date, int minute) {
-    
-  }
-  
-  /**
-   * Informs this wrapper about a changing of the
    * selected date of the TV-Browser program
    * table.
    * <p>

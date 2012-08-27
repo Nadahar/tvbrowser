@@ -1758,7 +1758,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         mProgramTableScrollPane.scrollToChannel(program.getChannel());
-        scrollTo(program.getDate(), program.getStartTime(), callback, false);
+        scrollTo(program.getDate(), program.getStartTime(), callback);
       }});
     
     for(PluginCenterPanelWrapper wrapper : mCenterPanelWrapperList) {
@@ -1796,7 +1796,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     Calendar cal = Calendar.getInstance();
     int hour = cal.get(Calendar.HOUR_OF_DAY);
     devplugin.Date day = new devplugin.Date();
-    scrollTo(day, hour * 60 + cal.get(Calendar.MINUTE),false);
+    scrollTo(day, hour * 60 + cal.get(Calendar.MINUTE));
     mProgramTableScrollPane.requestFocusInWindow();
     
     for(PluginCenterPanelWrapper wrapper : mCenterPanelWrapperList) {
@@ -1816,11 +1816,11 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     
   }
 
-  private void scrollTo(Date day, int minute, boolean informPluginPanels) {
-    scrollTo(day, minute, null, informPluginPanels);
+  private void scrollTo(Date day, int minute) {
+    scrollTo(day, minute, null);
   }
 
-  private void scrollTo(Date day, int minute, final Runnable callback, boolean informPluginPanels) {
+  private void scrollTo(Date day, int minute, final Runnable callback) {
     mProgramTableScrollPane.deSelectItem();
     // Choose the day.
     // NOTE: If its early in the morning before the set "day start" we should
@@ -1853,13 +1853,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
           callback.run();
         }
       }
-    },informPluginPanels);
-    
-    if(informPluginPanels) {
-      for(PluginCenterPanelWrapper wrapper : mCenterPanelWrapperList) {
-        wrapper.scrolledTo(day,minute);
-      }
-    }
+    },false);
   }
 
   public void runSetupAssistant() {
