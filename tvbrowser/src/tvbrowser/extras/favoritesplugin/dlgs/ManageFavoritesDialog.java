@@ -35,6 +35,8 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 
+import com.jgoodies.forms.factories.Borders;
+
 import tvbrowser.extras.favoritesplugin.core.Favorite;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
@@ -67,6 +69,7 @@ public class ManageFavoritesDialog extends JDialog implements WindowClosingIf{
     
     mManagePanel = new ManageFavoritesPanel(favoriteArr, splitPanePosition, showNew, initialSelection);
     
+    ((JPanel)getContentPane()).setBorder(Borders.DIALOG_BORDER);
     ((JPanel)getContentPane()).setLayout(new BorderLayout());
     ((JPanel)getContentPane()).add(mManagePanel,BorderLayout.CENTER);
     

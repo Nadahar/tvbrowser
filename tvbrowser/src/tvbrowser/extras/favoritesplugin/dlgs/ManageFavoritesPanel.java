@@ -347,8 +347,15 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
     }
 
     mSplitPane = new JSplitPane();
+    
+    for(int i = 0; i < mSplitPane.getComponentCount(); i++) {
+      (mSplitPane.getComponent(i)).setBackground(new Color(0,0,0,0));
+    }
+    
+    mSplitPane.setBorder(BorderFactory.createEmptyBorder());
     mSplitPane.setDividerLocation(splitPanePosition);
     mSplitPane.setContinuousLayout(true);
+    mSplitPane.setOpaque(false);
 
     add(mSplitPane, BorderLayout.CENTER);
 
