@@ -22,6 +22,7 @@
 package simplemarkerplugin;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -31,6 +32,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
 
+import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
@@ -143,11 +145,17 @@ public class ManagePanel extends JPanel implements PersonaListener {
 
     if(markListVector.size() > 1) {
       mSplitPane = new JSplitPane();
+      
+      for(int i = 0; i < mSplitPane.getComponentCount(); i++) {
+        (mSplitPane.getComponent(i)).setBackground(new Color(0,0,0,0));
+      }
+      
       mSplitPane.setLeftComponent(mMarkListsScrolPane);
       mSplitPane.setRightComponent(mProgramsScrollPane);
-
+      mSplitPane.setOpaque(false);
       mSplitPane.setContinuousLayout(true);
-
+      mSplitPane.setBorder(BorderFactory.createEmptyBorder());
+      
       add(mSplitPane, cc.xy(1,4));
 
       int pos = SimpleMarkerPlugin.getInstance().getSettings()
