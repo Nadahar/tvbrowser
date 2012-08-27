@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -37,6 +36,7 @@ import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.table.TableColumn;
 
 import util.io.IOUtilities;
@@ -192,7 +192,7 @@ public final class DataViewerPlugin extends Plugin implements Runnable {
     final JTable channels = new JTable(new DataTableModel(mChannelTable, head));
     channels.setDefaultRenderer(Object.class, new ChannelTableCellRenderer());
     channels.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-    channels.setGridColor(Color.WHITE);
+    channels.setGridColor(UIManager.getColor("Table.foreground"));
     channels.setIntercellSpacing(new Dimension(0, 2));
 
     mMinChannelWidth = Math.max(channels.getPreferredSize().width-5, mMinChannelWidth);
