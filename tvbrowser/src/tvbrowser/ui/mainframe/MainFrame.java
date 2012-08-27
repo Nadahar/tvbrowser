@@ -527,7 +527,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     this.setShowChannellist(Settings.propShowChannels.getBoolean());
 
     updateToolbar();
-    dateChanged(new devplugin.Date(), null, null);
+    dateChanged(new devplugin.Date(), null, null, false);
 
     mCenterComponent = mRootNode.getComponent();
     if (mCenterComponent != null) {
@@ -1758,7 +1758,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         mProgramTableScrollPane.scrollToChannel(program.getChannel());
-        scrollTo(program.getDate(), program.getStartTime(), callback);
+        scrollTo(program.getDate(), program.getStartTime(), callback, false);
       }});
     
     for(PluginCenterPanelWrapper wrapper : mCenterPanelWrapperList) {
@@ -1778,7 +1778,6 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     
     for(PluginCenterPanelWrapper wrapper : mCenterPanelWrapperList) {
       wrapper.programSelected(program);
-      wrapper.scrolledToChannel(program.getChannel());
     }
   }
 
@@ -1797,7 +1796,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     Calendar cal = Calendar.getInstance();
     int hour = cal.get(Calendar.HOUR_OF_DAY);
     devplugin.Date day = new devplugin.Date();
-    scrollTo(day, hour * 60 + cal.get(Calendar.MINUTE));
+    scrollTo(day, hour * 60 + cal.get(Calendar.MINUTE),false);
     mProgramTableScrollPane.requestFocusInWindow();
     
     for(PluginCenterPanelWrapper wrapper : mCenterPanelWrapperList) {
@@ -1817,11 +1816,11 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     
   }
 
-  private void scrollTo(Date day, int minute) {
-    scrollTo(day, minute, null);
+  private void scrollTo(Date day, int minute, boolean informPluginPanels) {
+    scrollTo(day, minute, null, informPluginPanels);
   }
 
-  private void scrollTo(Date day, int minute, final Runnable callback) {
+  private void scrollTo(Date day, int minute, final Runnable callback, boolean informPluginPanels) {
     mProgramTableScrollPane.deSelectItem();
     // Choose the day.
     // NOTE: If its early in the morning before the set "day start" we should
@@ -1854,10 +1853,12 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
           callback.run();
         }
       }
-    });
+    },informPluginPanels);
     
-    for(PluginCenterPanelWrapper wrapper : mCenterPanelWrapperList) {
-      wrapper.scrolledTo(day,minute);
+    if(informPluginPanels) {
+      for(PluginCenterPanelWrapper wrapper : mCenterPanelWrapperList) {
+        wrapper.scrolledTo(day,minute);
+      }
     }
   }
 
@@ -2011,7 +2012,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
         scrollToNow();
         resetOnAirArrays();
       }
-    });
+    },false);
   }
 
   public void showChannel(Channel ch) {
@@ -2033,9 +2034,9 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
         public void run() {
           scrollToNow();
         }
-      });
+      },false);
     } else {
-      changeDate(mFinderPanel.getSelectedDate(), null, null);
+      changeDate(mFinderPanel.getSelectedDate(), null, null, true);
     }
 
     mMenuBar.updateDateItems();
@@ -2043,7 +2044,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
 
   public void goTo(Date date) {
     mProgramTableScrollPane.deSelectItem();
-    mFinderPanel.markDate(date);
+    mFinderPanel.markDate(date,true);
   }
 
   public void goToNextDay() {
@@ -2086,7 +2087,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
   }
 
   private void changeDate(final Date date, final ProgressMonitor monitor,
-      final Runnable callback) {
+      final Runnable callback, boolean informPluginPanels) {
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         final int currentTime = mProgramTableScrollPane.getScrolledTime();
@@ -2106,17 +2107,19 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       }
     });
     
-    for(PluginCenterPanelWrapper wrapper : mCenterPanelWrapperList) {
-      wrapper.scrolledToDate(date);
+    if(informPluginPanels) {
+      for(PluginCenterPanelWrapper wrapper : mCenterPanelWrapperList) {
+        wrapper.scrolledToDate(date);
+      }
     }
   }
 
-  /**
+  /** 
    * Implementation of Interface DateListener
    */
   public void dateChanged(final devplugin.Date date,
-      devplugin.ProgressMonitor monitor, Runnable callback) {
-    changeDate(date, monitor, callback);
+      devplugin.ProgressMonitor monitor, Runnable callback, boolean informPluginPanels) {
+    changeDate(date, monitor, callback, informPluginPanels);
     super.setTitle(TVBrowser.MAINWINDOW_TITLE + " - "
         + date.getLongDateString());
     if (mToolBar != null) {

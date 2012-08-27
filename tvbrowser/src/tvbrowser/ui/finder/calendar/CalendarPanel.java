@@ -77,7 +77,7 @@ public class CalendarPanel extends AbstractCalendarPanel {
     }
   }
 
-  public void markDate(final Date d, final Runnable callback) {
+  public void markDate(final Date d, final Runnable callback, final boolean informPluginPanels) {
     setCurrentDate(d);
     if (mDateChangedListener == null) {
       return;
@@ -93,7 +93,7 @@ public class CalendarPanel extends AbstractCalendarPanel {
 
     Thread thread = new Thread("Finder") {
       public void run() {
-        mDateChangedListener.dateChanged(d, CalendarPanel.this, callback);
+        mDateChangedListener.dateChanged(d, CalendarPanel.this, callback, informPluginPanels);
       }
     };
     thread.start();
@@ -139,8 +139,9 @@ public class CalendarPanel extends AbstractCalendarPanel {
     }
 
     public void actionPerformed(final ActionEvent e) {
-      markDate(mSelectedDate);
+      markDate(mSelectedDate,true);
     }
   }
+
 
 }

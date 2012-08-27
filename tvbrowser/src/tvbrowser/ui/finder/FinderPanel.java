@@ -132,7 +132,7 @@ public class FinderPanel extends AbstractDateSelector implements DateSelector,
     mList.addMouseListener(this);
     mList.addKeyListener(this);
 
-    markDate(mToday);
+    markDate(mToday,true);
 
   }
 
@@ -179,8 +179,8 @@ public class FinderPanel extends AbstractDateSelector implements DateSelector,
     return null;
   }
 
-  public void markDate(Date d) {
-    markDate(d, null);
+  public void markDate(Date d, boolean informPluginPanels) {
+    markDate(d, null, informPluginPanels);
   }
 
   /**
@@ -208,7 +208,7 @@ public class FinderPanel extends AbstractDateSelector implements DateSelector,
    * @param d
    * @param callback
    */
-  public void markDate(final Date d, Runnable callback) {
+  public void markDate(final Date d, Runnable callback, final boolean informPluginPanels) {
 
     if (d.equals(getSelectedDate())) {
       if (callback != null) {
@@ -225,7 +225,7 @@ public class FinderPanel extends AbstractDateSelector implements DateSelector,
           setCurrentDate(d);
           mRenderer.setSelectedItem(item);
           mList.setSelectedValue(item, true);
-          item.startProgress(mDateChangedListener, callback);
+          item.startProgress(mDateChangedListener, callback, informPluginPanels);
         } else {
           askForDataUpdate(d);
         }
@@ -245,7 +245,7 @@ public class FinderPanel extends AbstractDateSelector implements DateSelector,
     }
     else if (SwingUtilities.isLeftMouseButton(e)) {
       int index = mList.locationToIndex(e.getPoint());
-      markDate(((FinderItem) mModel.getElementAt(index)).getDate());
+      markDate(((FinderItem) mModel.getElementAt(index)).getDate(),true);
       MainFrame.getInstance().addKeyboardAction();
     }
   }
@@ -268,7 +268,7 @@ public class FinderPanel extends AbstractDateSelector implements DateSelector,
     if (event.getKeyCode() == KeyEvent.VK_SPACE) {
       FinderItem item = (FinderItem) mList.getSelectedValue();
       if (item != null) {
-        markDate(item.getDate());
+        markDate(item.getDate(),true);
       }
     }
   }

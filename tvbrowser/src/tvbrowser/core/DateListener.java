@@ -39,6 +39,7 @@ public interface DateListener {
    * @param date
    * @param monitor
    * @param callback
+   * @param informPluginPanels 
    */
-    void dateChanged(devplugin.Date date, devplugin.ProgressMonitor monitor, Runnable callback);
+    void dateChanged(devplugin.Date date, devplugin.ProgressMonitor monitor, Runnable callback, boolean informPluginPanels);
 }

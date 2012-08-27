@@ -11,7 +11,7 @@ public interface DateSelector {
 
   void updateContent();
 
-  void markDate(Date d);
+  void markDate(Date d, boolean informPluginPanels);
 
   void markPreviousDate();
 
@@ -21,7 +21,7 @@ public interface DateSelector {
 
   void markPreviousWeek();
 
-  void markDate(Date d, Runnable callback);
+  void markDate(Date d, Runnable callback, boolean informPluginPanels);
 
   void updateItems();
 
