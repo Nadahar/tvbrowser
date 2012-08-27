@@ -200,7 +200,9 @@ public class ProgramScrollPanel extends JScrollPane implements
 
 	public void mouseWheelMoved(final MouseWheelEvent e) {
 		if (e.getScrollType() == MouseWheelEvent.WHEEL_UNIT_SCROLL) {
-			if ((e.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) == 0) {
+			if ((e.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) == 0 && 
+			      (getComponentAt(e.getPoint()) == null || 
+			       (!getComponentAt(e.getPoint()).equals(getVerticalScrollBar())) && !getComponentAt(e.getPoint()).equals(getRowHeader()))) {
 				final int amount = e.getUnitsToScroll()
 						* getHorizontalScrollBar().getUnitIncrement();
 				getHorizontalScrollBar().setValue(
