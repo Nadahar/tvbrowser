@@ -160,10 +160,14 @@ public final class TimelinePlugin extends devplugin.Plugin {
         }
       }
       
-      public void scrolledToDate(Date date) {
+      public void scrolledToDate(final Date date) {
         if(canUseFunction()) {
-          setChoosenDate(date);
-          mTimelinePanel.gotoDate(date);
+          SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+              mTimelinePanel.gotoDate(date);              
+            }
+          });
         }
       }
       
@@ -218,7 +222,6 @@ public final class TimelinePlugin extends devplugin.Plugin {
           @Override
           public void run() {
             mTimelinePanel.updatePersona();
-            
           }
         });
         
