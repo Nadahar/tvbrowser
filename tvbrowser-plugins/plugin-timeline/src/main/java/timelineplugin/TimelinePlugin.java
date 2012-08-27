@@ -134,34 +134,31 @@ public final class TimelinePlugin extends devplugin.Plugin {
      * */
     
     mWrapper = new PluginCenterPanelWrapper() {
-      private long mLastCalledProgramScrolling = 0;
-      private static final int PROGRAM_SELECTION_WAIT_TIME = 2000;
-      
       @Override
       public PluginCenterPanel[] getCenterPanels() {
         return new PluginCenterPanel[] {new TimelineCenterPanel()};
       }
       
       public void scrolledToChannel(Channel channel) {
-        if(canUseFunction()) {
+        if(mTimelinePanel != null) {
           mTimelinePanel.scrollToChannel(channel);
         }
       }
       
-      public void filterSelected(ProgramFilter filter) {            
-        if(canUseFunction()) {
+      public void filterSelected(ProgramFilter filter) {
+        if(mTimelinePanel != null) {
           mTimelinePanel.setFilter(filter);
         }
       }
       
       public void scrolledToNow() {
-        if(canUseFunction()) {
+        if(mTimelinePanel != null) {
           mTimelinePanel.gotoNowLock();
         }
       }
       
       public void scrolledToDate(final Date date) {
-        if(canUseFunction()) {
+        if(mTimelinePanel != null) {
           SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -172,22 +169,15 @@ public final class TimelinePlugin extends devplugin.Plugin {
       }
       
       public void scrolledToTime(int time) {
-        if(canUseFunction()) {
+        if(mTimelinePanel != null) {
           mTimelinePanel.scrollToTime(time);
         }
       }
       
       public void programScrolled(Program prog) {
-        mLastCalledProgramScrolling = System.currentTimeMillis();
-        setChoosenDate(prog.getDate());
-        
         if(mTimelinePanel != null) {
           mTimelinePanel.scrollToProgram(prog);
         }
-      }
-      
-      private boolean canUseFunction() {
-        return mLastCalledProgramScrolling + PROGRAM_SELECTION_WAIT_TIME < System.currentTimeMillis() && mTimelinePanel != null;
       }
     };
     
