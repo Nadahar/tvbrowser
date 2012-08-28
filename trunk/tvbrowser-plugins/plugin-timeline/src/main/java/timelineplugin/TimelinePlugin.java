@@ -27,6 +27,7 @@ import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.lang.reflect.Method;
 import java.util.Calendar;
 import java.util.Properties;
 
@@ -38,6 +39,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
 import timelineplugin.format.TextFormatter;
 import util.ui.persona.Persona;
@@ -51,6 +53,7 @@ import devplugin.PluginInfo;
 import devplugin.Program;
 import devplugin.ProgramFilter;
 import devplugin.SettingsTab;
+import devplugin.TvBrowserSettings;
 import devplugin.Version;
 
 public final class TimelinePlugin extends devplugin.Plugin {
@@ -79,10 +82,19 @@ public final class TimelinePlugin extends devplugin.Plugin {
   private TimelinePanel mTimelinePanel;
   
   private boolean mIsTvBrowserStarted;
+  
+  static private Color mOnAirLight;
+  static private Color mOnAirDark;
+  static private Color mProgramTableMouseOverColor;
+  static private Color mProgramPanelSelectionColor;
+  static private Color mForegroundColor;
 
 	public TimelinePlugin() {
 		mInstance = this;
 		mIsTvBrowserStarted = false;
+	  mProgramTableMouseOverColor = null;
+	  mProgramPanelSelectionColor = null;
+	  mForegroundColor = null;
 	}
 
 	public static TimelinePlugin getInstance() {
@@ -107,6 +119,7 @@ public final class TimelinePlugin extends devplugin.Plugin {
 	}
 
   public void onActivation() {
+    handleTvBrowserSettingsChanged();
     /*mCenterPanelWrapper = UiUtilities.createPersonaBackgroundPanel();
      * 
      * replace this after release of 3.2beta2
@@ -470,7 +483,61 @@ public final class TimelinePlugin extends devplugin.Plugin {
     }
   }
   
+  static Color getOnAirLight() {
+    return mOnAirLight;
+  }
+  
+  static Color getOnAirDark() {
+    return mOnAirDark;
+  }
+  
+  static Color getProgramTableMouseOverColor() {
+    return mProgramTableMouseOverColor;
+  }
+  
+  static Color getProgramPanelSelectionColor() {
+    return mProgramPanelSelectionColor;
+  }
+  
+  static Color getForegroundColor() {
+    return mForegroundColor;
+  }
+  
   public void handleTvBrowserSettingsChanged() {
-    System.out.println("dgd");
+    mOnAirLight = Plugin.getPluginManager().getTvBrowserSettings().getProgramPanelOnAirLightColor();
+    mOnAirDark = Plugin.getPluginManager().getTvBrowserSettings().getProgramPanelOnAirDarkColor();
+    TvBrowserSettings tvbSet = Plugin.getPluginManager().getTvBrowserSettings();
+    
+    mProgramTableMouseOverColor = null;
+    mProgramPanelSelectionColor = null;
+    mForegroundColor = null;
+    
+    try {
+      Method colorMethod = TvBrowserSettings.class.getMethod("getProgramTableMouseOverColor", new Class[0]);
+      Object o = colorMethod.invoke(tvbSet, new Object[0]);
+      
+      if(o instanceof Color) {
+        mProgramTableMouseOverColor = (Color)o;
+      }
+      
+      colorMethod = TvBrowserSettings.class.getMethod("getProgramPanelSelectionColor", new Class[0]);
+      
+      o = colorMethod.invoke(tvbSet, new Object[0]);
+      
+      if(o instanceof Color) {
+        mProgramPanelSelectionColor = (Color)o;
+      }
+      
+      colorMethod = TvBrowserSettings.class.getMethod("getProgramTableForegroundColor", new Class[0]);
+      
+      o = colorMethod.invoke(tvbSet, new Object[0]);
+      
+      if(o instanceof Color) {
+        mForegroundColor = (Color)o;
+      }
+    } catch (Exception e) {
+      mForegroundColor = UIManager.getColor("List.foreground");
+      mProgramPanelSelectionColor = new Color(130, 255, 0, 120);
+    }
   }
 }
