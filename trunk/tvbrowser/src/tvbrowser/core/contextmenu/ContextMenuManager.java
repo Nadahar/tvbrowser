@@ -28,6 +28,7 @@
 package tvbrowser.core.contextmenu;
 
 import java.awt.Color;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +37,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.MenuElement;
+import javax.swing.SwingUtilities;
 
 import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginProxy;
@@ -44,8 +46,10 @@ import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import tvbrowser.extras.common.InternalPluginProxyIf;
 import tvbrowser.extras.common.InternalPluginProxyList;
+import tvbrowser.extras.searchplugin.SearchPluginProxy;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.settings.StringProperty;
+import util.ui.Localizer;
 import util.ui.TVBrowserIcons;
 import util.ui.menu.MenuUtil;
 import devplugin.ActionMenu;
@@ -60,7 +64,8 @@ import devplugin.SettingsItem;
  *
  */
 public class ContextMenuManager {
-
+  private static final Localizer mLocalizer = Localizer.getLocalizerFor(ContextMenuManager.class);
+  
   private static ContextMenuManager mInstance;
 
   /**
@@ -529,5 +534,31 @@ public class ContextMenuManager {
     }
     
     return getLastFirstMenuEntry(menu.getSubElements()[0]);
+  }
+  
+  public JPopupMenu createRemovedProgramContextMenu(final Program program) {
+    JPopupMenu menu = new JPopupMenu();
+    
+    ActionMenu repetitionSearch = SearchPluginProxy.getInstance().getContextMenuActions(program);
+    
+    if(repetitionSearch != null) {
+      menu.add(MenuUtil.createMenuItem(repetitionSearch));
+    }
+    
+    JMenuItem item = new JMenuItem(mLocalizer.msg("scrollToPlaceOfProgram","Scroll to last place of program in program table"));
+    item.setFont(MenuUtil.CONTEXT_MENU_PLAINFONT);
+    item.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        MainFrame.getInstance().goTo(program.getDate());
+        MainFrame.getInstance().showChannel(program.getChannel());
+        MainFrame.getInstance().scrollToTime(program.getStartTime());
+        MainFrame.getInstance().showProgramTableTabIfAvailable();
+      }
+    });
+    
+    menu.add(item);
+    
+    return menu;
   }
 }

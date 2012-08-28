@@ -1060,4 +1060,9 @@ public class PluginManagerImpl implements PluginManager {
   public Version getTVBrowserVersion() {
     return TVBrowser.VERSION;
   }
+
+  @Override
+  public JPopupMenu createRemovedProgramContextMenu(Program program) {
+    return ContextMenuManager.getInstance().createRemovedProgramContextMenu(program);
+  }
 }
