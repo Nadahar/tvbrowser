@@ -143,7 +143,7 @@ public class PluginProxyManager {
     public void run() {
       // TODO Auto-generated method stub
       try {
-        fireTvBrowserSettingsChanged(mPlugin);
+        mPlugin.handleTvBrowserSettingsChanged();
       }catch(Throwable t) {
         /* Catch all possible not catched errors that occur in the plugin method*/
         mLog.log(Level.WARNING, "A not catched error occured in 'fireTvBrowserSettingsChanged' of Plugin '" + mPlugin +"'.", t);
@@ -1347,14 +1347,6 @@ public class PluginProxyManager {
         runWithThreadPool(new TvBrowserSettingsChangedThreadPoolMethod(plugin));
       }
     }
-  }
-  
-  public void fireTvBrowserSettingsChanged(PluginProxy plugin) throws Throwable {
-    if (mStartFinishedPlugins.contains(plugin)) {
-      return;
-    }
-    mStartFinishedPlugins.add(plugin);
-    plugin.handleTvBrowserSettingsChanged();
   }
 
   /**
