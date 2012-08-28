@@ -27,7 +27,6 @@
 package util.ui;
 
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
 import java.awt.Font;
 
 import javax.swing.BorderFactory;
@@ -36,6 +35,10 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
+
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.FormLayout;
 
 public class FontChooserPanel extends JPanel {
 
@@ -71,20 +74,34 @@ public class FontChooserPanel extends JPanel {
       mTitle = new JLabel(title);
       add(mTitle, BorderLayout.NORTH);
     }
-    JPanel innerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
+    
+    FormLayout layout = new FormLayout("min:grow,2dlu,min","default");
+    
+    JPanel innerPanel = new JPanel(layout);
     innerPanel.setBorder(BorderFactory.createEmptyBorder());
 
+    CellConstraints cc = new CellConstraints();
+    
     mFontCB = new JComboBox(FONTNAMES);
     mStyleCB = new JComboBox(FONTSTYLES);
     mSizeSpinner = new JSpinner(new SpinnerNumberModel(FONTSIZE_MIN, FONTSIZE_MIN, FONTSIZE_MAX, 1));
 
-    innerPanel.add(mFontCB);
+    int column = 1;
+    
+    innerPanel.add(mFontCB, cc.xy(column, 1));
 
     if (style) {
-      innerPanel.add(mStyleCB);
+      column += 2;
+      
+      layout.appendColumn(ColumnSpec.decode("2dlu"));
+      layout.appendColumn(ColumnSpec.decode("min"));
+      
+      innerPanel.add(mStyleCB, cc.xy(column, 1));
     }
+    
+    column += 2;
 
-    innerPanel.add(mSizeSpinner);
+    innerPanel.add(mSizeSpinner, cc.xy(column, 1));
 
     add(innerPanel, BorderLayout.CENTER);
 
