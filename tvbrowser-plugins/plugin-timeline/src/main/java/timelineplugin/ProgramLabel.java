@@ -27,14 +27,13 @@ import java.awt.Rectangle;
 import java.awt.Stroke;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.lang.reflect.Method;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JPopupMenu;
 import javax.swing.JToolTip;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
+import javax.swing.border.AbstractBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -43,7 +42,6 @@ import util.program.ProgramUtilities;
 import devplugin.Plugin;
 import devplugin.PluginManager;
 import devplugin.Program;
-import devplugin.TvBrowserSettings;
 
 public class ProgramLabel extends JComponent implements ChangeListener,
 		MouseListener {
@@ -61,8 +59,16 @@ public class ProgramLabel extends JComponent implements ChangeListener,
 		setToolTipText(" ");
 		setProgram(program);
 		
-    setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(1,1,1,1),
-        BorderFactory.createEmptyBorder(1, 5, 1, 5)));
+		AbstractBorder lineBorder = new AbstractBorder() {
+	    public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
+        Color oldColor = g.getColor();
+        g.setColor(mProgram.isExpired() ? Color.gray : TimelinePlugin.getForegroundColor());
+        g.drawRect(x, y, width-1, height-1);
+        g.setColor(oldColor);
+    }
+		  
+		};
+    setBorder(BorderFactory.createCompoundBorder(lineBorder,BorderFactory.createEmptyBorder(1, 5, 1, 5)));
 	}
 	
 	public boolean containsProgram(Program prog) {
@@ -154,8 +160,12 @@ public class ProgramLabel extends JComponent implements ChangeListener,
 		final Rectangle rb = this.getBounds();
 
 		final Color oriColor = g.getColor();
-		Color onAirLight = Plugin.getPluginManager().getTvBrowserSettings().getProgramPanelOnAirLightColor();
-		Color onAirDark = Plugin.getPluginManager().getTvBrowserSettings().getProgramPanelOnAirDarkColor();
+		Color onAirLight = TimelinePlugin.getOnAirLight();
+		Color onAirDark = TimelinePlugin.getOnAirDark();
+    
+    Color programTableMouseOverColor = TimelinePlugin.getProgramTableMouseOverColor();
+    Color programPanelSelectionColor = TimelinePlugin.getProgramPanelSelectionColor();
+    Color foregroundColor = TimelinePlugin.getForegroundColor();
 		
 		byte programImportance = ProgramUtilities.getProgramImportance(mProgram);
 		
@@ -167,40 +177,6 @@ public class ProgramLabel extends JComponent implements ChangeListener,
 			g.fillRect(r.x, r.y, rb.width, r.height);
 			g.setColor(oriColor);
 		}
-		
-		TvBrowserSettings tvbSet = Plugin.getPluginManager().getTvBrowserSettings();
-		
-		Color programTableMouseOverColor = null;
-		Color programPanelSelectionColor = null;
-		Color foregroundColor = null;
-		
-		try {
-      Method colorMethod = TvBrowserSettings.class.getMethod("getProgramTableMouseOverColor", new Class[0]);
-      Object o = colorMethod.invoke(tvbSet, new Object[0]);
-      
-      if(o instanceof Color) {
-        programTableMouseOverColor = (Color)o;
-      }
-      
-      colorMethod = TvBrowserSettings.class.getMethod("getProgramPanelSelectionColor", new Class[0]);
-      
-      o = colorMethod.invoke(tvbSet, new Object[0]);
-      
-      if(o instanceof Color) {
-        programPanelSelectionColor = (Color)o;
-      }
-      
-      colorMethod = TvBrowserSettings.class.getMethod("getProgramTableForegroundColor", new Class[0]);
-      
-      o = colorMethod.invoke(tvbSet, new Object[0]);
-      
-      if(o instanceof Color) {
-        foregroundColor = (Color)o;
-      }
-    } catch (Exception e) {
-      foregroundColor = UIManager.getColor("List.foreground");
-      programPanelSelectionColor = new Color(130, 255, 0, 120);
-    }
     
     if (((programTableMouseOverColor != null && mMouseOver) || (programPanelSelectionColor != null && mIsSelected))
         && foregroundColor != null) {
@@ -227,9 +203,6 @@ public class ProgramLabel extends JComponent implements ChangeListener,
       grp.setStroke(str);
       grp.setColor(col);
     }
-    else {
-      g.drawRect(0, 0, getWidth()-1, getHeight()-1);
-    }
 		
 		if (TimelinePlugin.getSettings().showProgress() && mProgram.isOnAir()) {
 			g.setColor(new Color(onAirDark.getRed(), onAirDark.getGreen(), onAirDark.getBlue(), (int)(onAirDark.getAlpha()*programImportance/10.)));
@@ -255,6 +228,7 @@ public class ProgramLabel extends JComponent implements ChangeListener,
     
 		g.setFont(TimelinePlugin.getFont());
 		getFormatter().paint(mProgram, g, rb.width, rb.height);
+		g.setColor(oriColor);
 	}
 
 	public void stateChanged(final ChangeEvent evt) {
