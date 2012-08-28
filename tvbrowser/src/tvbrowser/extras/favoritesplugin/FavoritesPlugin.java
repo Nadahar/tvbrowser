@@ -376,7 +376,7 @@ public class FavoritesPlugin {
     }
     int splitPanePosition = getIntegerSetting(mSettings, "splitpanePosition",200);
     
-    mMangePanel = new ManageFavoritesPanel(null, splitPanePosition, false, null);
+    mMangePanel = new ManageFavoritesPanel(null, splitPanePosition, false, null, true);
     Persona.getInstance().registerPersonaListener(mMangePanel);
     
     SwingUtilities.invokeLater(new Runnable() {
@@ -1198,7 +1198,7 @@ public class FavoritesPlugin {
     public void run() {
       if(mFavorites.length > 0) {
         synchronized (mFavorites) {
-          final ManageFavoritesPanel panel = new ManageFavoritesPanel(mFavorites, getIntegerSetting(mSettings, "splitpanePosition",200), true, null);
+          final ManageFavoritesPanel panel = new ManageFavoritesPanel(mFavorites, getIntegerSetting(mSettings, "splitpanePosition",200), true, null, true);
         
           mInfoPanel = new AfterDataUpdateInfoPanel() {
             @Override

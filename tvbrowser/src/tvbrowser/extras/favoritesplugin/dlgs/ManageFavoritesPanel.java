@@ -119,11 +119,11 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
   private JCheckBox mBlackListChb;
   
   public ManageFavoritesPanel(Favorite[] favoriteArr,
-      int splitPanePosition, boolean showNew, Favorite initialSelection) {
-    init(favoriteArr, splitPanePosition, showNew, initialSelection);
+      int splitPanePosition, boolean showNew, Favorite initialSelection, boolean border) {
+    init(favoriteArr, splitPanePosition, showNew, initialSelection,border);
   }
   
-  private void init(Favorite[] favoriteArr, int splitPanePosition, boolean showNew, Favorite initialSelection) {try {
+  private void init(Favorite[] favoriteArr, int splitPanePosition, boolean showNew, Favorite initialSelection, boolean border) {try {
     mShowNew = showNew;
 
     String msg;
@@ -131,7 +131,11 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
 
 
     setLayout(new BorderLayout(5, 5));
-    setBorder(Borders.DLU4_BORDER);
+    
+    if(border) {
+      setBorder(Borders.DLU4_BORDER);
+    }
+    
     setOpaque(false);
 
     JToolBar toolbarPn = new JToolBar() {

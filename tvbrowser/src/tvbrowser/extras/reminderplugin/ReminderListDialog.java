@@ -35,6 +35,9 @@ import java.awt.event.WindowEvent;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JPanel;
+
+import com.jgoodies.forms.factories.Borders;
 
 import tvbrowser.core.Settings;
 import util.ui.Localizer;
@@ -84,7 +87,7 @@ public class ReminderListDialog extends JDialog implements WindowClosingIf {
     });
     
     add(mReminderListPanel, BorderLayout.CENTER);
-
+    ((JPanel)getContentPane()).setBorder(Borders.DIALOG_BORDER);
     getRootPane().setDefaultButton(ok);
     
     Settings.layoutWindow("extras.reminderListDlg", this, new Dimension(550,350));

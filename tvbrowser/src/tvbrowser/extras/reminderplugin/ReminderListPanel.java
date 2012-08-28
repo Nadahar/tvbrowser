@@ -65,7 +65,10 @@ public class ReminderListPanel extends JPanel implements PersonaListener {
     FormLayout layout = new FormLayout("default,5dlu,50dlu:grow", "default,5dlu,fill:default:grow");
     setLayout(layout);
     setOpaque(false);
-    setBorder(Borders.DLU4_BORDER);
+    
+    if(close == null) {
+      setBorder(Borders.DLU4_BORDER);
+    }
 
     CellConstraints cc = new CellConstraints();
     
