@@ -184,6 +184,13 @@ public final class TimelinePlugin extends devplugin.Plugin {
     addCenterPanel();
   }
   
+  void resetFormatter() {
+    mFormatter = new TextFormatter();
+    mFormatter.setFont(getFont());
+    mFormatter.setInitialiseMaxLine(true);
+    mFormatter.setFormat(mSettings.getTitleFormat());
+  }
+  
   private void addCenterPanel() {
     new Thread() {
       public void run() {
@@ -192,10 +199,8 @@ public final class TimelinePlugin extends devplugin.Plugin {
             sleep(100);
           } catch (InterruptedException e) {}
         }
-        mFormatter = new TextFormatter();
-        mFormatter.setFont(getFont());
-        mFormatter.setInitialiseMaxLine(true);
-        mFormatter.setFormat(mSettings.getTitleFormat());
+        
+        resetFormatter();
 
         setChoosenDate(Date.getCurrentDate());
         
