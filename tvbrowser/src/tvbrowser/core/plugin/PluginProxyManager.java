@@ -1198,7 +1198,9 @@ public class PluginProxyManager {
           };
           t.start();
           /* Wait maximal 10 seconds for plugin to react. */
-          t.join(10000);
+          if(t.isAlive()) {
+            t.join(10000);
+          }
         }catch(Throwable t) {
           /* Catch all possible not catched errors that occur in the plugin method*/
           mLog.log(Level.WARNING, "A not catched error occured in 'handleTvDataAdded(MutableChannelDayProgram)' of Plugin '" + plugin +"'.", t);

@@ -251,14 +251,14 @@ public class ObjectSelectionButton<E> extends JButton implements ActionListener 
   
   private void objectSelected(JList list, JDialog dialog) {
     if(list.getSelectedIndex() >= 0) {
+      dialog.dispose();
+      
       @SuppressWarnings("unchecked")
       E object = (E)list.getSelectedValue();
       
       for(ObjectSelectionListener<E> listener : mListenerList) {
         listener.objectSeleted(object);
       }
-    
-      dialog.dispose();
     }
   }
   
