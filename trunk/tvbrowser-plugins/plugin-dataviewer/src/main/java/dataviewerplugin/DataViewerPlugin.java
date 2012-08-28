@@ -197,8 +197,9 @@ public final class DataViewerPlugin extends Plugin implements Runnable {
 
     mMinChannelWidth = Math.max(channels.getPreferredSize().width-5, mMinChannelWidth);
 
-    channels.setPreferredSize(new Dimension(mMinChannelWidth+5,channels.getPreferredSize().height));
-    channels.setMaximumSize(channels.getPreferredSize());
+    //channels.setMinimumSize(new Dimension(mMinChannelWidth+5,channels.getPreferredSize().height));
+    channels.setPreferredSize(new Dimension(mMinChannelWidth+5,10000));
+   // channels.setMaximumSize(channels.getPreferredSize());
     channels.setFocusable(false);
 
     channels.addKeyListener(new KeyAdapter() {
@@ -207,10 +208,31 @@ public final class DataViewerPlugin extends Plugin implements Runnable {
         channels.getRootPane().dispatchEvent(e);
       }
     });
-
-    JScrollPane pane = new JScrollPane();
+    
+    final JScrollPane pane = new JScrollPane();
     pane.setViewportView(table);
     pane.setRowHeaderView(channels);
+    
+    if(addPersonaListener) {
+      final Dimension c = table.getPreferredScrollableViewportSize();
+      
+      pane.addComponentListener(new ComponentAdapter() {
+        public void componentResized(ComponentEvent e) {
+          if(pane.getViewport().getWidth() > c.width ) {
+            int columnWidth = pane.getViewport().getWidth() / table.getColumnCount();
+            
+            for(int i = 0; i < table.getColumnCount(); i++) {
+              table.getColumnModel().getColumn(i).setPreferredWidth(columnWidth);
+            }          
+          }
+          if(pane.getViewport().getHeight() > c.height) {
+            int rowHeight = pane.getViewport().getHeight() / table.getRowCount();
+            table.setRowHeight(rowHeight);
+            channels.setRowHeight(rowHeight);
+          }
+        }
+      });
+    }
 
     pane.getRowHeader().setPreferredSize(
         new Dimension(mMinChannelWidth+5, pane.getPreferredSize().height));
