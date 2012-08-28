@@ -100,7 +100,7 @@ public class SoundReminder extends Plugin {
   }
   
   public static Version getVersion() {
-    return new Version(0,10,true);
+    return new Version(0,10,1,true);
   }
   
   public PluginInfo getInfo() {
@@ -326,7 +326,7 @@ public class SoundReminder extends Plugin {
   }
   
   public boolean canReceiveProgramsWithTarget() {
-    return !mSoundEntryList.isEmpty();
+    return !mSoundEntryList.isEmpty() || mDefaultEntry != null;
   }
   
   public boolean receivePrograms(final Program[] programArr,
