@@ -30,11 +30,16 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 
+import tvbrowser.core.plugin.PluginManagerImpl;
 import util.settings.ProgramPanelSettings;
 import util.ui.ProgramList;
 import devplugin.AfterDataUpdateInfoPanel;
@@ -45,6 +50,7 @@ public class RemovedProgramsPanel extends AfterDataUpdateInfoPanel {
   private static final util.ui.Localizer mLocalizer
      = util.ui.Localizer.getLocalizerFor(RemovedProgramsPanel. class );
   private JCheckBox mDisable;
+  private ProgramList mProgramList;
 
   public RemovedProgramsPanel(Program[] programs) {
     init(programs);
@@ -63,10 +69,44 @@ public class RemovedProgramsPanel extends AfterDataUpdateInfoPanel {
     });
     
     add(lb, BorderLayout.NORTH);
-    add(new JScrollPane(new ProgramList(programs, new ProgramPanelSettings(ProgramPanelSettings.SHOW_PICTURES_NEVER, -1, -1, true, true, 10, true))), BorderLayout.CENTER);
+    
+    mProgramList = new ProgramList(programs, new ProgramPanelSettings(ProgramPanelSettings.SHOW_PICTURES_NEVER, -1, -1, true, true, 10, true));
+    mProgramList.addMouseListener(new MouseAdapter() {
+      @Override
+      public void mouseReleased(MouseEvent e) {
+        if(e.isPopupTrigger()) {
+          showPopup(e);
+        }
+      }
+      
+      @Override
+      public void mousePressed(MouseEvent e) {
+        if(e.isPopupTrigger()) {
+          showPopup(e);
+        }
+      }
+    });
+    
+    add(new JScrollPane(mProgramList), BorderLayout.CENTER);
     add(mDisable, BorderLayout.SOUTH);
 
     setPreferredSize(new Dimension(300,200));
+  }
+  
+  /**
+   * Shows the Popup
+   * 
+   * @param e Mouse-Event
+   */
+  private void showPopup(MouseEvent e) {
+    int row = mProgramList.locationToIndex(e.getPoint());
+
+    mProgramList.setSelectedIndex(row);
+
+    Program p = (Program) mProgramList.getSelectedValue();
+
+    JPopupMenu menu = PluginManagerImpl.getInstance().createRemovedProgramContextMenu(p);//PluginManagerImpl.getInstance().createPluginContextMenu(p, ReminderPluginProxy.getInstance());
+    menu.show(mProgramList, e.getX(), e.getY());
   }
 
   @Override

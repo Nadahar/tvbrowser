@@ -480,8 +480,19 @@ public interface PluginManager {
   public boolean showBalloonTip(String caption, String message, java.awt.TrayIcon.MessageType messageType);
 
   /**
-   * Get the Version of TV-Browser
+   * @return The Version of TV-Browser
    * @since 3.0
    */
   public Version getTVBrowserVersion();
+  
+  /**
+   * Creates a context menu for the given program.
+   * It can be used to provide search and scroll function
+   * to programs that were removed on data update.
+   * <p>
+   * @param program The removed program to create the context menu for
+   * @return A context menu for the given program.
+   * @since 3.2
+   */
+  public JPopupMenu createRemovedProgramContextMenu(Program program);
 }

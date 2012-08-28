@@ -614,7 +614,7 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
   /**
    * Refresh the program list.
    */
-  public void favoriteSelectionChanged(final boolean scrollToFirst) {
+  public synchronized void favoriteSelectionChanged(final boolean scrollToFirst) {
     if(mFavoritesList != null) {
       int selection = mFavoritesList.getSelectedIndex();
       int size = mFavoritesListModel.getSize();
