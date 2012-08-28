@@ -17,7 +17,6 @@
  */
 package timelineplugin;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -83,24 +82,28 @@ public final class TimelinePluginSettingsTab implements SettingsTab {
 	private JRadioButton mShowIconAndName;
 	private JRadioButton mShowName;
 	private JRadioButton mShowIcon;
+	private static int mSelectedTab = 0;
+	private JTabbedPane mTabPane; 
 
 	public JPanel createSettingsPanel() {
-		final JTabbedPane tab = new JTabbedPane();
-		tab.setBorder(null);
+		mTabPane = new JTabbedPane();
+		mTabPane.setBorder(null);
 		final JScrollPane scrollCommonSettings = new JScrollPane(
 				getCommonSettings());
 		scrollCommonSettings.setBorder(null);
-		tab.addTab(mLocalizer.msg("common", "Common"), scrollCommonSettings);
+		mTabPane.addTab(mLocalizer.msg("common", "Common"), scrollCommonSettings);
 		final JScrollPane scrollFormatSettings = new JScrollPane(
 				getFormatSettings());
 		scrollFormatSettings.setBorder(null);
-		tab.addTab(mLocalizer.msg("label", "Label"), scrollFormatSettings);
-
+		mTabPane.addTab(mLocalizer.msg("label", "Label"), scrollFormatSettings);
+		
+		mTabPane.setSelectedIndex(mSelectedTab);
+		
 		final CellConstraints cc = new CellConstraints();
 
 		final JPanel p = new JPanel(new FormLayout("default:grow",
 				"5dlu,fill:default:grow"));
-		p.add(tab, cc.xy(1, 2));
+		p.add(mTabPane, cc.xy(1, 2));
 
 		return p;
 	}
@@ -233,7 +236,7 @@ public final class TimelinePluginSettingsTab implements SettingsTab {
 	private JPanel getFormatSettings() {
 		final FormLayout layout = new FormLayout(
 				"5dlu, 5dlu, pref, 3dlu, fill:pref:grow, 3dlu, pref, 5dlu",
-				"5dlu, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref, 5dlu, pref, 10dlu, pref, 5dlu, pref, 2dlu, pref, 2dlu, pref");
+				"5dlu, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref, 5dlu, pref, 10dlu, pref, 5dlu, pref, 2dlu, pref, 2dlu, pref");
 
 		final PanelBuilder builder = new PanelBuilder(layout);
 		builder.setBorder(null);
@@ -368,8 +371,7 @@ public final class TimelinePluginSettingsTab implements SettingsTab {
 		builder.add(scrollFormat, cc.xyw(3, row, 5));
 		row += 2;
 		builder.addLabel(mLocalizer.msg("font", "Font"), cc.xy(3, row));
-		builder.add(mFontPanel, cc.xyw(5, row, 3));
-		row += 2;
+		builder.add(mFontPanel, cc.xy(5, row));
 		builder.add(addFontBtn, cc.xy(7, row));
 		row += 2;
 		builder.addLabel(mLocalizer.msg("key", "Key"), cc.xy(3, row));
@@ -428,6 +430,8 @@ public final class TimelinePluginSettingsTab implements SettingsTab {
 	}
 
 	public void saveSettings() {
+	  mSelectedTab = mTabPane.getSelectedIndex();
+	  
 		if ((mShowIconAndName.isSelected() || mShowName.isSelected() != TimelinePlugin
 				.getSettings().showChannelName())
 				|| (mShowIconAndName.isSelected() || mShowIcon.isSelected() != TimelinePlugin
@@ -452,6 +456,7 @@ public final class TimelinePluginSettingsTab implements SettingsTab {
 		TimelinePlugin.getSettings().setShowChannelIcon(
 				mShowIconAndName.isSelected() || mShowIcon.isSelected());
 		TimelinePlugin.getSettings().setTitleFormat(mFormat.getText());
+		TimelinePlugin.getInstance().resetFormatter();
 		TimelinePlugin.getInstance().resize();
 	}
 
