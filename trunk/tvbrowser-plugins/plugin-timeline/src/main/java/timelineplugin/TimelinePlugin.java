@@ -469,4 +469,8 @@ public final class TimelinePlugin extends devplugin.Plugin {
       mTimelinePanel.scrollToProgram(null);
     }
   }
+  
+  public void handleTvBrowserSettingsChanged() {
+    System.out.println("dgd");
+  }
 }
