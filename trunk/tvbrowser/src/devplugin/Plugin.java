@@ -1008,4 +1008,13 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
   public AfterDataUpdateInfoPanel getAfterDataUpdateInfoPanel() {
     return null;
   }
+  
+  /**
+   * Is called when settings of TV-Browser or Plugins
+   * were changed, so this Plugin can react on that change.
+   * @since 3.2
+   */
+  public void handleTvBrowserSettingsChanged() {
+    
+  }
 }
