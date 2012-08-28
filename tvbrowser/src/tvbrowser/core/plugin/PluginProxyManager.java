@@ -130,6 +130,26 @@ public class PluginProxyManager {
     }
 
   }
+  
+  private class TvBrowserSettingsChangedThreadPoolMethod extends ThreadPoolMethod {
+    private AbstractPluginProxy mPlugin;
+
+    public TvBrowserSettingsChangedThreadPoolMethod(final AbstractPluginProxy plugin) {
+      super("HandleSettingsChanged");
+      mPlugin = plugin;
+    }
+    
+    @Override
+    public void run() {
+      // TODO Auto-generated method stub
+      try {
+        fireTvBrowserSettingsChanged(mPlugin);
+      }catch(Throwable t) {
+        /* Catch all possible not catched errors that occur in the plugin method*/
+        mLog.log(Level.WARNING, "A not catched error occured in 'fireTvBrowserSettingsChanged' of Plugin '" + mPlugin +"'.", t);
+      }
+    }
+  }
 
   private abstract class ThreadPoolMethod {
     private String mName;
@@ -1317,6 +1337,24 @@ public class PluginProxyManager {
     }
     mStartFinishedPlugins.add(plugin);
     plugin.handleTvBrowserStartFinished();
+  }
+  
+  public void fireTvBrowserSettingsChanged() {
+    ((PluginManagerImpl)PluginManagerImpl.getInstance()).handleTvBrowserStartFinished();
+    for (PluginListItem item : getPluginListCopy()) {
+      final AbstractPluginProxy plugin = item.getPlugin();
+      if (plugin.isActivated()) {
+        runWithThreadPool(new TvBrowserSettingsChangedThreadPoolMethod(plugin));
+      }
+    }
+  }
+  
+  public void fireTvBrowserSettingsChanged(PluginProxy plugin) throws Throwable {
+    if (mStartFinishedPlugins.contains(plugin)) {
+      return;
+    }
+    mStartFinishedPlugins.add(plugin);
+    plugin.handleTvBrowserSettingsChanged();
   }
 
   /**

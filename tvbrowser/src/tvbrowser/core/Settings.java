@@ -53,6 +53,7 @@ import org.apache.commons.lang.StringUtils;
 import tvbrowser.TVBrowser;
 import tvbrowser.core.contextmenu.SeparatorMenuItem;
 import tvbrowser.core.plugin.DefaultSettings;
+import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.settings.DeferredFontProperty;
 import tvbrowser.core.settings.JGoodiesThemeProperty;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
@@ -891,6 +892,8 @@ public class Settings {
     try {
       storeSettings(true);
     }catch(Exception e) {}
+    
+    PluginProxyManager.getInstance().fireTvBrowserSettingsChanged();
   }
 
   /**

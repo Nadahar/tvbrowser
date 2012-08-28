@@ -308,4 +308,10 @@ public class BeanShellPluginProxy extends AbstractPluginProxy {
       // TODO Auto-generated method stub
       return null;
     }
+
+    @Override
+    public void handleTvBrowserSettingsChanged() {
+      // TODO Auto-generated method stub
+      
+    }
  }
