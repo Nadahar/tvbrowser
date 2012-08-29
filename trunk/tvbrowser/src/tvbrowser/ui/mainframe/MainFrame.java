@@ -106,6 +106,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
+import javax.swing.plaf.TabbedPaneUI;
 import javax.swing.plaf.basic.BasicTabbedPaneUI;
 
 import org.apache.commons.lang.math.RandomUtils;
@@ -295,6 +296,8 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
   private ArrayList<PluginCenterPanelWrapper> mCenterPanelWrapperList = new ArrayList<PluginCenterPanelWrapper>(0);
   
   private ProgramTableScrollPaneWrapper mScrollPaneWrapper;
+  
+  private TabbedPaneUI mPersonaUI, mDefaultUI;
  
   private MainFrame() {
     super(TVBrowser.MAINWINDOW_TITLE);
@@ -409,7 +412,8 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     mScrollPaneWrapper = new ProgramTableScrollPaneWrapper(mProgramTableScrollPane);
     
     mCenterTabPane = new JTabbedPane();
-    mCenterTabPane.setUI(new BasicTabbedPaneUI() {
+    mDefaultUI = mCenterTabPane.getUI();
+    mPersonaUI = new BasicTabbedPaneUI() {
       protected  void  paintText(Graphics g, int tabPlacement, Font font, FontMetrics metrics, int tabIndex, String title, Rectangle textRect, boolean isSelected) {
         if(Persona.getInstance().getHeaderImage() != null && !Persona.getInstance().getShadowColor().equals(Persona.getInstance().getTextColor())) {
           g.setColor(Persona.getInstance().getShadowColor());
@@ -445,7 +449,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
           super.paintTabBackground(g, tabPlacement, tabIndex, x, y, w, h, isSelected);
         }
       }
-    });
+    };
     
     mCenterTabPane.setBorder(BorderFactory.createEmptyBorder());
     mCenterTabPane.addMouseListener(new MouseAdapter() {
@@ -3040,6 +3044,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
   public void updatePersona() {
     repaint();
     if(Persona.getInstance().getHeaderImage() != null) {
+      mCenterTabPane.setUI(mPersonaUI);
       if(mToolBarPanel != null) {
         mToolBarPanel.setOpaque(false);
       }
@@ -3051,6 +3056,8 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       mCenterTabPane.setForeground(Persona.getInstance().getTextColor());
     }
     else {
+      mCenterTabPane.setUI(mDefaultUI);
+      
       if(mToolBarPanel != null) {
         mToolBarPanel.setOpaque(true);
       }
