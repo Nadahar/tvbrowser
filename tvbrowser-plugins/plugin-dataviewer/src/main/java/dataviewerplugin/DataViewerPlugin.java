@@ -89,6 +89,7 @@ public final class DataViewerPlugin extends Plugin implements Runnable {
   
   private PluginCenterPanelWrapper mWrapper;
   private JPanel mCenterPanelWrapper;
+  private PersonaListener mPersonaListener;
   /**
    * Creates an instance of this class.
    */
@@ -156,6 +157,7 @@ public final class DataViewerPlugin extends Plugin implements Runnable {
       public void run() {
         mCenterPanelWrapper.add(getMainPanel(true),BorderLayout.CENTER);
         mCenterPanelWrapper.updateUI();
+        mPersonaListener.updatePersona();
       }
     });    
   }
@@ -354,7 +356,7 @@ public final class DataViewerPlugin extends Plugin implements Runnable {
       table.setOpaque(false);
       pane.setOpaque(false);      
       
-      PersonaListener listener = new PersonaListener() {
+      mPersonaListener = new PersonaListener() {
         public void updatePersona() {
           if(Persona.getInstance().getHeaderImage() != null) {
             lastDownload.setForeground(Persona.getInstance().getTextColor());
@@ -364,7 +366,7 @@ public final class DataViewerPlugin extends Plugin implements Runnable {
           }
         }
       };
-      Persona.getInstance().registerPersonaListener(listener);
+      Persona.getInstance().registerPersonaListener(mPersonaListener);
     }
     
     return l;
