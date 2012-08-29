@@ -80,6 +80,8 @@ public final class DataViewerPlugin extends Plugin implements Runnable {
   private Date mToday = Date.getCurrentDate();
   private boolean mReactOnDataUpdate = false;
   private int mMinChannelWidth = 20;
+  private int mMinRowHeight = 10;
+  private int mMinColumnWidth = 20;
 
   private static final Version mVersion = new Version(1,20,false);
 
@@ -198,6 +200,10 @@ public final class DataViewerPlugin extends Plugin implements Runnable {
     channels.setIntercellSpacing(new Dimension(0, 2));
 
     mMinChannelWidth = Math.max(channels.getPreferredSize().width-5, mMinChannelWidth);
+    if(table.getColumnCount() > 0) {
+      mMinColumnWidth = Math.max(table.getColumnModel().getColumn(0).getPreferredWidth(),mMinColumnWidth);
+    }
+    mMinRowHeight = Math.max(table.getRowHeight(),mMinRowHeight);
 
     //channels.setMinimumSize(new Dimension(mMinChannelWidth+5,channels.getPreferredSize().height));
     channels.setPreferredSize(new Dimension(mMinChannelWidth+5,10000));
@@ -221,14 +227,14 @@ public final class DataViewerPlugin extends Plugin implements Runnable {
       pane.addComponentListener(new ComponentAdapter() {
         public void componentResized(ComponentEvent e) {
           if(pane.getViewport().getWidth() > c.width ) {
-            int columnWidth = pane.getViewport().getWidth() / table.getColumnCount();
+            int columnWidth = Math.max(mMinColumnWidth, pane.getViewport().getWidth() / table.getColumnCount());
             
             for(int i = 0; i < table.getColumnCount(); i++) {
               table.getColumnModel().getColumn(i).setPreferredWidth(columnWidth);
             }          
           }
           if(pane.getViewport().getHeight() > c.height) {
-            int rowHeight = pane.getViewport().getHeight() / table.getRowCount();
+            int rowHeight = Math.max(mMinRowHeight,pane.getViewport().getHeight() / table.getRowCount());
             table.setRowHeight(rowHeight);
             channels.setRowHeight(rowHeight);
           }
