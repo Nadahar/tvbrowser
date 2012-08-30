@@ -42,12 +42,9 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Calendar;
 
-import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
-import javax.swing.JViewport;
-import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -344,7 +341,8 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
   public void mouseWheelMoved(MouseWheelEvent e) {
 
     if (e.getScrollType() == MouseWheelEvent.WHEEL_UNIT_SCROLL) {
-      if ((e.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) != 0) {
+      if (((e.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) != 0) || getComponentAt(e.getPoint()).equals(getColumnHeader()) ||
+          getComponentAt(e.getPoint()).equals(getHorizontalScrollBar())) {
         int amount = e.getUnitsToScroll() * getHorizontalScrollBar().getUnitIncrement();
         getHorizontalScrollBar().setValue(getHorizontalScrollBar().getValue() + amount);
       } else {
