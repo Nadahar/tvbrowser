@@ -32,7 +32,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -163,6 +162,28 @@ public class PluginProxyManager {
     }
 
     public abstract void run();
+  }
+  
+  private class TvDataUpdateStartedThreadPoolMethod extends ThreadPoolMethod {
+
+    public TvDataUpdateStartedThreadPoolMethod() {
+      super("handleTvDataUpdateStarted");
+    }
+
+    @Override
+    public void run() {
+      for (PluginListItem item : getPluginListCopy()) {
+        if (item.getPlugin().isActivated()) {
+          final AbstractPluginProxy plugin = item.getPlugin();
+          try {
+            plugin.handleTvDataUpdateStarted();
+          }catch(Throwable t) {
+            /* Catch all possible not catched errors that occur in the plugin method*/
+            mLog.log(Level.WARNING, "A not catched error occured in 'handleTvDataUpdateStarted' of Plugin '" + plugin +"'.", t);
+          }
+        }
+      }
+    }
   }
 
   private class TvDataUpdateFinishedThreadPoolMethod extends ThreadPoolMethod {
@@ -358,6 +379,7 @@ public class PluginProxyManager {
 
     TvDataUpdater.getInstance().addTvDataUpdateListener(new TvDataUpdateListener() {
       public void tvDataUpdateStarted() {
+        fireTvDataUpdateStarted();
       }
 
       public void tvDataUpdateFinished() {
@@ -1253,6 +1275,16 @@ public class PluginProxyManager {
    */
   private void fireTvDataUpdateFinished() {
     runWithThreadPool(new TvDataUpdateFinishedThreadPoolMethod());
+  }
+  
+  /**
+   * Calls for every subscribed plugin the handleTvDataUpdateFinished() method,
+   * so the plugin can react on the new data.
+   *
+   * @see PluginProxy#handleTvDataUpdateFinished()
+   */
+  private void fireTvDataUpdateStarted() {
+    runWithThreadPool(new TvDataUpdateStartedThreadPoolMethod());
   }
 
   private void runWithThreadPool(final ThreadPoolMethod threadPoolMethod) {

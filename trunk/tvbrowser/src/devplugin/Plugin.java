@@ -1017,4 +1017,12 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
   public void handleTvBrowserSettingsChanged() {
     
   }
+  
+  /**
+   * Is called when a TV data update is started.
+   * @since 3.2
+   */
+  public void handleTvDataUpdateStarted() {
+    
+  }
 }

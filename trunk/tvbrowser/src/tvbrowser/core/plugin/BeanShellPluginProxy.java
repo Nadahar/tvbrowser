@@ -9,7 +9,6 @@ import java.io.File;
 import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.JPanel;
 
 import tvdataservice.MutableChannelDayProgram;
 import util.exc.TvBrowserException;
@@ -311,6 +310,12 @@ public class BeanShellPluginProxy extends AbstractPluginProxy {
 
     @Override
     public void handleTvBrowserSettingsChanged() {
+      // TODO Auto-generated method stub
+      
+    }
+
+    @Override
+    public void handleTvDataUpdateStarted() {
       // TODO Auto-generated method stub
       
     }
