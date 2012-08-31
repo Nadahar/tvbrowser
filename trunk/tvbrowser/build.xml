@@ -148,7 +148,7 @@
     <echo message="  public-mac            Creates binaries for the Mac OS X (requires Mac OS X)"/>
   	<echo message="  public-linux          Creates binaries for Linux platforms"/>
   	<echo message="  public-ubuntu         Creates binaries for Ubuntu platforms"/>
-  	<echo message="  public-redhat         Creates binaries for RedHat platforms"/>
+  	<echo message="  public-fedora         Creates binaries for Fedora platforms"/>
   	<echo message="  public-transportable  Creates platform-independent binaries for transportable version of TV-Browser (requires Windows)"/>
   	<echo message="  public-nightly        Creates platform-independent binaries for nightly transportable version of TV-Browser (without platform dependent starters)"/>
     <echo message="  public-src            Creates a .zip file containing the full source code of TV-Browser"/>
@@ -584,7 +584,7 @@
   	</deb>
   </target>
 
-  <target name="public-redhat" depends="runtime-linux, tvbrowser-desktop-entry-deb" description="Creates binaries for RedHat platforms">
+  <target name="public-fedora" depends="runtime-linux, tvbrowser-desktop-entry-deb" description="Creates binaries for RedHat platforms">
   	<mkdir dir="${public.dir}"/>
 
   	<rrpm
@@ -612,6 +612,7 @@
   	   	<zipfileset dir="${deployment.dir}/linux"
   	                 prefix="/usr/bin"
   	   	   filemode="755" includes="**/tvbrowser" />
+  		<depends name="java" version="1.6"/>
   	</rrpm>
   </target>
 	
