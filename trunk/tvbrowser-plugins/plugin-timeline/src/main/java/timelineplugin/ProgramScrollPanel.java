@@ -87,7 +87,9 @@ public class ProgramScrollPanel extends JScrollPane implements
     leftUpper.setBorder(BorderFactory.createEmptyBorder(0,5,0,0));
     leftUpper.add(mDayLabel = new JLabel(), BorderLayout.NORTH);
     leftUpper.add(mDateLabel = new JLabel(), BorderLayout.SOUTH);
-
+    mDayLabel.setFont(mDayLabel.getFont().deriveFont(11.0f));
+    mDateLabel.setFont(mDayLabel.getFont());
+    
     JPanel rightUpper = new JPanel() {
       protected void paintComponent(Graphics g) {
         if(Persona.getInstance().getAccentColor() != null && Persona.getInstance().getHeaderImage() != null) {
