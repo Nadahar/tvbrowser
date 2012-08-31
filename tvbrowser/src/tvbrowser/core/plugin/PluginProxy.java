@@ -259,5 +259,11 @@ public interface PluginProxy extends PluginAccess, InfoIf {
    * were changed, so this Plugin can react on that change.
    * @since 3.2
    */
-  public void handleTvBrowserSettingsChanged();
+  public void handleTvBrowserSettingsChanged();  
+  
+  /**
+   * Is called when a TV data update is started.
+   * @since 3.2
+   */
+  public void handleTvDataUpdateStarted();
 }

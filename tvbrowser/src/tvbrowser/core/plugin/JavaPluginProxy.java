@@ -671,4 +671,11 @@ public class JavaPluginProxy extends AbstractPluginProxy {
       mPlugin.handleTvBrowserSettingsChanged();
     }
   }
+
+  @Override
+  public void handleTvDataUpdateStarted() {
+    if(mPlugin != null) {
+      mPlugin.handleTvDataUpdateStarted();
+    }
+  }
 }
