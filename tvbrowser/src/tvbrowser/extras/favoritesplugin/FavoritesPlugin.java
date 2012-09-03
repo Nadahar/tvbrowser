@@ -1204,6 +1204,7 @@ public class FavoritesPlugin {
             @Override
             public void closed() {
               panel.close();
+              mInfoPanel = null;
             }
           };
           mInfoPanel.setLayout(new BorderLayout());

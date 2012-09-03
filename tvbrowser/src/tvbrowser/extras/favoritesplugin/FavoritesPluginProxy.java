@@ -32,7 +32,6 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.JPanel;
 
 import tvbrowser.core.plugin.ButtonActionIf;
 import tvbrowser.extras.common.AbstractInternalPluginProxy;
