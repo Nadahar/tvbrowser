@@ -313,7 +313,8 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       public void keyPressed(final KeyEvent e) {
         if(Settings.propTypeAsYouFindEnabled.getBoolean() && mProgramTableScrollPane != null && !mProgramTableScrollPane.getProgramTable().isSelected()) {
           if(((e.getModifiersEx() & KeyEvent.ALT_DOWN_MASK) != KeyEvent.ALT_DOWN_MASK) &&
-              ((e.getModifiersEx() & KeyEvent.CTRL_DOWN_MASK) != KeyEvent.CTRL_DOWN_MASK)) {
+              ((e.getModifiersEx() & Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) != 
+              Toolkit.getDefaultToolkit().getMenuShortcutKeyMask())) {
             if(Character.isLetterOrDigit(e.getKeyChar()) || e.getKeyCode() == KeyEvent.VK_SPACE) {
               mFindAsYouType.setText(String.valueOf(e.getKeyChar()));
             }
