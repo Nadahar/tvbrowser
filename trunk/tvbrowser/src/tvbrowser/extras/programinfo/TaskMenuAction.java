@@ -26,16 +26,21 @@ package tvbrowser.extras.programinfo;
 
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.lang.reflect.Method;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.Icon;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
@@ -142,7 +147,7 @@ public class TaskMenuAction {
     mAction.putValue(Action.SMALL_ICON,a.getValue(Action.SMALL_ICON));
 
     Component c;
-
+    
     if(ContextMenuSeparatorAction.getInstance().equals(menu.getAction())) {
       parent.add(Box.createRigidArea(new Dimension(0,2)));
       c = parent.add(new JSeparator());
@@ -151,7 +156,18 @@ public class TaskMenuAction {
     else {
       c = parent.add(mAction);
     }
-
+    
+    if(menu.isSelected()) {
+      try {
+        Method m = c.getClass().getMethod("getFont", new Class<?>[0]);
+        Font font = (Font)m.invoke(c, new Object[0]);
+        m = c.getClass().getMethod("setFont", new Class<?>[] {Font.class});
+        m.invoke(c, new Object[] {font.deriveFont(Font.ITALIC+Font.BOLD)});
+      } catch (Exception e1) {
+        //ignore
+      }
+    }
+    
     mFind.installKeyListener(c);
 
     if(c instanceof JLinkButton) {
