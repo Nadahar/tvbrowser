@@ -22,7 +22,7 @@ import devplugin.Version;
 
 public class PersonaTimeSwitcher extends Plugin {
   private final static Localizer mLocalizer = Localizer.getLocalizerFor(PersonaTimeSwitcher.class);
-  private static Version mVersion = new Version(0,2,0,true);
+  private static Version mVersion = new Version(0,3,0,true);
   private PluginInfo mPluginInfo;
   private int mTimeRange;
   private Thread mPersonaChangeThread;
@@ -74,6 +74,8 @@ public class PersonaTimeSwitcher extends Plugin {
                   sleep(100);
                 }
 
+                sleep(1000);
+                
                 Persona.getInstance().activatePersona(infoList.get(n));
               }
             }
