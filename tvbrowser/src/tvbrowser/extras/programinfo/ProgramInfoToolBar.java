@@ -89,7 +89,7 @@ public class ProgramInfoToolBar extends JPanel implements ObjectSelectionListene
     };
     mCurrent.setHorizontalTextPosition(JLabel.CENTER);
     mCurrent.setHorizontalAlignment(JLabel.CENTER);
-    mCurrent.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 1, UIManager.getColor("Label.foreground")));
+    mCurrent.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 1, UIManager.getColor("TextField.foreground")));
     
     mHistPrevious = new JButton(TVBrowserIcons.left(TVBrowserIcons.SIZE_SMALL));
     mHistPrevious.setEnabled(false);
@@ -136,7 +136,7 @@ public class ProgramInfoToolBar extends JPanel implements ObjectSelectionListene
         super.paintComponent(g);
       }
     };
-    mPrevious.setForeground(UIManager.getColor("Label.foreground"));
+    mPrevious.setForeground(UIManager.getColor("TextField.foreground"));
     mPrevious.setContentAreaFilled(false);
     mPrevious.setBorder(BorderFactory.createEmptyBorder());
     mPrevious.setOpaque(false);
@@ -161,7 +161,7 @@ public class ProgramInfoToolBar extends JPanel implements ObjectSelectionListene
       }
     };
     
-    mNext.setForeground(UIManager.getColor("Label.foreground"));
+    mNext.setForeground(UIManager.getColor("TextField.foreground"));
     mNext.setContentAreaFilled(false);
     mNext.setBorder(BorderFactory.createEmptyBorder());
     mNext.setOpaque(false);
@@ -207,7 +207,7 @@ public class ProgramInfoToolBar extends JPanel implements ObjectSelectionListene
         mCurrent.setForeground(Color.lightGray);
       }
       else {
-        mCurrent.setForeground(UIManager.getColor("Label.foreground"));
+        mCurrent.setForeground(UIManager.getColor("TextField.foreground"));
       }
     }
     
@@ -218,7 +218,7 @@ public class ProgramInfoToolBar extends JPanel implements ObjectSelectionListene
         mPrevious.setForeground(Color.lightGray);
       }
       else {
-        mPrevious.setForeground(UIManager.getColor("Label.foreground"));
+        mPrevious.setForeground(UIManager.getColor("TextField.foreground"));
       }
     }
     else {
@@ -232,7 +232,7 @@ public class ProgramInfoToolBar extends JPanel implements ObjectSelectionListene
         mNext.setForeground(Color.lightGray);
       }
       else {
-        mNext.setForeground(UIManager.getColor("Label.foreground"));
+        mNext.setForeground(UIManager.getColor("TextField.foreground"));
       }
     }
     else {
