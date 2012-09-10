@@ -758,11 +758,11 @@ public class Settings {
         propProgramPanelMarkedLowerMediumPriorityColor, propProgramPanelMarkedMinPriorityColor,
         propProgramPanelMarkedMediumPriorityColor, propProgramPanelMarkedMaxPriorityColor,
         propProgramTableColorOnAirLight, propProgramTableColorOnAirDark, propProgramPanelForegroundColor,
-        propProgramTableBackgroundSingleColor, propProgramPanelAllowTransparency, propAlwaysShowTabBarForCenterPanel,
-        propCenterPanelArr};
+        propProgramTableBackgroundSingleColor, propProgramPanelAllowTransparency, propAlwaysShowTabBarForCenterPanel};
 
+    mainFrame.updateCenterPanels();
+    
     if (mProp.hasChanged(propArr)) {
-      mainFrame.updateCenterPanels();
       util.ui.ProgramPanel.updateFonts();
       tvbrowser.ui.programtable.ChannelPanel.fontChanged();
       ProgramTableScrollPane scrollPane = mainFrame.getProgramTableScrollPane();
