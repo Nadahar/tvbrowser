@@ -28,6 +28,7 @@ public class ProgramListSettings extends PropertyBasedSettings {
   private static final String KEY_INDEX = "index";
   private static final String KEY_FILTER = "filter";
   private static final String KEY_SHOW_DESCRIPTION = "showDescription";
+  private static final String KEY_PROVIDE_TAB = "provideTab";
 
   public ProgramListSettings(final Properties properties) {
     super(properties);
@@ -56,5 +57,12 @@ public class ProgramListSettings extends PropertyBasedSettings {
   public void setFilterName(final String name) {
     set(KEY_FILTER, name);
   }
-
+  
+  public boolean provideTab() {
+    return get(KEY_PROVIDE_TAB, true);
+  }
+  
+  public void setProvideTab(final boolean value) {
+    set(KEY_PROVIDE_TAB, value);
+  }
 }

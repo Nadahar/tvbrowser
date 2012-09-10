@@ -394,6 +394,7 @@ public class ProgramListPanel extends JPanel implements PersonaListener {
             mList.ensureIndexIsVisible(forceScrollingIndex);
             mList.ensureIndexIsVisible(index);
             setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+            mList.updateUI();
           } catch (Exception e) {
             e.printStackTrace();
           }
