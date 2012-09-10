@@ -24,10 +24,8 @@
 package programlistplugin;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Frame;
-import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.util.Arrays;
 import java.util.List;
@@ -35,10 +33,15 @@ import java.util.Properties;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.Icon;
+import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JRootPane;
 import javax.swing.SwingUtilities;
+
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 
 import util.ui.Localizer;
 import util.ui.UiUtilities;
@@ -54,6 +57,7 @@ import devplugin.PluginInfo;
 import devplugin.Program;
 import devplugin.ProgramFilter;
 import devplugin.ProgramReceiveTarget;
+import devplugin.SettingsTab;
 import devplugin.Version;
 
 /**
@@ -84,11 +88,13 @@ public class ProgramListPlugin extends Plugin {
   private PluginCenterPanelWrapper mWrapper;
   private JPanel mCenterPanelWrapper;
 
+  private boolean mTvBrowserWasStarted;
   /**
    * Creates an instance of this class.
    */
   public ProgramListPlugin() {
     mInstance = this;
+    mTvBrowserWasStarted = false;
   }
   
   public void onActivation() {
@@ -113,6 +119,52 @@ public class ProgramListPlugin extends Plugin {
         }
       }
     };
+    
+    new Thread("wait for TV-Browser start finished") {
+      public void run() {
+        while(!mTvBrowserWasStarted) {
+          try {
+            sleep(100);
+          } catch (InterruptedException e) {
+            // ignore
+          }
+        }
+        
+        try {
+          sleep(1000);
+        } catch (InterruptedException e) {
+          // ignore
+        }
+        
+        addPanel();
+      }
+    }.start();
+  }
+  
+  
+  public void addPanel() {
+    if(getSettings().provideTab()) {
+      mCenterPanelEntry = new ProgramListPanel(null, false, MAX_PANEL_LIST_SIZE);
+      Persona.getInstance().registerPersonaListener(mCenterPanelEntry);
+      
+      SwingUtilities.invokeLater(new Runnable() {
+        @Override
+        public void run() {
+          mCenterPanelWrapper.add(mCenterPanelEntry, BorderLayout.CENTER);
+          mCenterPanelEntry.selectFirstEntry();
+          
+          if(Persona.getInstance().getHeaderImage() != null) {
+            mCenterPanelEntry.updatePersona();
+          }
+        }
+      });
+    } else {
+      if(mCenterPanelEntry != null) {
+        Persona.getInstance().removePersonaListerner(mCenterPanelEntry);
+      }
+      
+      mCenterPanelEntry = null;
+    }
   }
   
   public void handleTvDataUpdateFinished() {
@@ -122,20 +174,7 @@ public class ProgramListPlugin extends Plugin {
   }
   
   public void handleTvBrowserStartFinished() {
-    mCenterPanelEntry = new ProgramListPanel(null, false, MAX_PANEL_LIST_SIZE);
-    Persona.getInstance().registerPersonaListener(mCenterPanelEntry);
-    
-    SwingUtilities.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        mCenterPanelWrapper.add(mCenterPanelEntry, BorderLayout.CENTER);
-        mCenterPanelEntry.selectFirstEntry();
-        
-        if(Persona.getInstance().getHeaderImage() != null) {
-          mCenterPanelEntry.updatePersona();
-        }
-      }
-    });
+    mTvBrowserWasStarted = true;
   }
 
   public static Version getVersion() {
@@ -316,8 +355,40 @@ public class ProgramListPlugin extends Plugin {
     }
   }
   
+  public SettingsTab getSettingsTab() {
+    return new SettingsTab() {
+      private JCheckBox mProvideTab;
+      @Override
+      public JPanel createSettingsPanel() {
+        JPanel panel = new JPanel(new FormLayout("5dlu,min:grow","5dlu,default"));
+        
+        mProvideTab = new JCheckBox(mLocalizer.msg("provideTab", "Provide tab in TV-Browser main window"),getSettings().provideTab());
+        
+        panel.add(mProvideTab, new CellConstraints().xy(2, 2));
+        
+        return panel;
+      }
+      
+      @Override
+      public void saveSettings() {
+        getSettings().setProvideTab(mProvideTab.isSelected());
+        addPanel();
+      }
+      
+      @Override
+      public String getTitle() {
+        return getInfo().getName();
+      }
+      
+      @Override
+      public Icon getIcon() {
+        return null;
+      }      
+    };
+  }
+  
   public PluginCenterPanelWrapper getPluginCenterPanelWrapper() {
-    return mWrapper;
+    return getSettings().provideTab() ? mWrapper : null;
   }
   
   private class ProgramListCenterPanel extends PluginCenterPanel {
