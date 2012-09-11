@@ -83,7 +83,7 @@ public final class DataViewerPlugin extends Plugin implements Runnable {
   private int mMinRowHeight = 10;
   private int mMinColumnWidth = 20;
 
-  private static final Version mVersion = new Version(1,20,false);
+  private static final Version mVersion = new Version(1,20,true);
 
   private static DataViewerPlugin mInstance;
 
@@ -127,6 +127,8 @@ public final class DataViewerPlugin extends Plugin implements Runnable {
   }
   
   public void onActivation() {
+    mMinRowHeight = UIManager.getFont("Label.font").getSize()+4;
+    
     SwingUtilities.invokeLater(new Runnable() {      
       public void run() {
         mCenterPanelWrapper = UiUtilities.createPersonaBackgroundPanel();
@@ -136,7 +138,6 @@ public final class DataViewerPlugin extends Plugin implements Runnable {
           
           @Override
           public PluginCenterPanel[] getCenterPanels() {
-            // TODO Auto-generated method stub
             return new PluginCenterPanel[] {new DataViewerCenterPanel()};
           }
         };
@@ -199,15 +200,23 @@ public final class DataViewerPlugin extends Plugin implements Runnable {
     channels.setGridColor(UIManager.getColor("Table.foreground"));
     channels.setIntercellSpacing(new Dimension(0, 2));
 
+    mMinColumnWidth = table.getFontMetrics(table.getFont()).stringWidth("pict") + 8;
     mMinChannelWidth = Math.max(channels.getPreferredSize().width-5, mMinChannelWidth);
+    
     if(table.getColumnCount() > 0) {
       mMinColumnWidth = Math.max(table.getColumnModel().getColumn(0).getPreferredWidth(),mMinColumnWidth);
     }
+    
+    for(int i = 0; i < table.getColumnCount(); i++) {
+      table.getColumnModel().getColumn(i).setMinWidth(mMinColumnWidth);
+    }
+    
     mMinRowHeight = Math.max(table.getRowHeight(),mMinRowHeight);
-
-    //channels.setMinimumSize(new Dimension(mMinChannelWidth+5,channels.getPreferredSize().height));
+    
+    table.setRowHeight(mMinRowHeight);
+    channels.setRowHeight(mMinRowHeight);
+    
     channels.setPreferredSize(new Dimension(mMinChannelWidth+5,10000));
-   // channels.setMaximumSize(channels.getPreferredSize());
     channels.setFocusable(false);
 
     channels.addKeyListener(new KeyAdapter() {
