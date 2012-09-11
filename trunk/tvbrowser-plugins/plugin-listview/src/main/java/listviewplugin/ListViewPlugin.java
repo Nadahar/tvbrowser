@@ -26,8 +26,6 @@
 package listviewplugin;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.util.Properties;
 
@@ -56,7 +54,7 @@ import devplugin.Version;
  * @author bodo
  */
 public class ListViewPlugin extends Plugin {
-  private static final Version mVersion = new Version(3,20,false);
+  private static final Version mVersion = new Version(3,20,true);
 
     protected static final int PROGRAMTABLEWIDTH = 200;
   
