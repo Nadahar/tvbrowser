@@ -42,6 +42,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import timelineplugin.format.TextFormatter;
+import util.ui.UiUtilities;
 import util.ui.persona.Persona;
 import devplugin.ActionMenu;
 import devplugin.Channel;
@@ -120,31 +121,13 @@ public final class TimelinePlugin extends devplugin.Plugin {
 
   public void onActivation() {
     handleTvBrowserSettingsChanged();
-    /*mCenterPanelWrapper = UiUtilities.createPersonaBackgroundPanel();
-     * 
-     * replace this after release of 3.2beta2
-     * */
-    mCenterPanelWrapper = new JPanel(new BorderLayout()){
-      protected void paintComponent(Graphics g) {
-        if(Persona.getInstance().getAccentColor() != null && Persona.getInstance().getHeaderImage() != null) {
-         
-          Color c = Persona.testPersonaForegroundAgainst(Persona.getInstance().getAccentColor());
-          
-          int alpha = c.getAlpha();
-          
-          g.setColor(new Color(c.getRed(),c.getGreen(),c.getBlue(),alpha));
-          g.fillRect(0,0,getWidth(),getHeight());
-        }
-        else {
-          super.paintComponent(g);
-        }
-      }
-    };
-    mCenterPanelWrapper.setOpaque(false);
     
-    /*
-     * until here
-     * */
+    SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        mCenterPanelWrapper = UiUtilities.createPersonaBackgroundPanel();
+      }
+    });
     
     mWrapper = new PluginCenterPanelWrapper() {
       @Override
@@ -213,6 +196,13 @@ public final class TimelinePlugin extends devplugin.Plugin {
           } catch (InterruptedException e) {}
         }
         
+        try {
+          sleep(1000);
+        } catch (InterruptedException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
+        
         resetFormatter();
 
         setChoosenDate(Date.getCurrentDate());
@@ -220,22 +210,22 @@ public final class TimelinePlugin extends devplugin.Plugin {
         if(mSettings.showHeaderPanel()) {
           mCenterPanelWrapper.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
         }
-        
-        mTimelinePanel = new TimelinePanel(mSettings.startWithNow(),mSettings.showHeaderPanel());
-        mTimelinePanel.addKeyboardAction(((JFrame)getParentFrame()).getRootPane());
-        
-        Persona.getInstance().registerPersonaListener(mTimelinePanel);
-        
+                
         SwingUtilities.invokeLater(new Runnable() {
           @Override
           public void run() {
+            mTimelinePanel = new TimelinePanel(mSettings.startWithNow(),mSettings.showHeaderPanel());
+            mTimelinePanel.addKeyboardAction(((JFrame)getParentFrame()).getRootPane());
+            
+            Persona.getInstance().registerPersonaListener(mTimelinePanel);
+
+            mCenterPanelWrapper.add(mTimelinePanel,BorderLayout.CENTER);
+            
+            mCenterPanelWrapper.updateUI();
+            
             mTimelinePanel.updatePersona();
           }
         });
-        
-        mCenterPanelWrapper.add(mTimelinePanel,BorderLayout.CENTER);
-        
-        mCenterPanelWrapper.updateUI();
       }
     }.start();
   }
