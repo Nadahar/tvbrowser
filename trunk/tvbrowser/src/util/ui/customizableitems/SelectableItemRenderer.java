@@ -36,7 +36,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListCellRenderer;
 import javax.swing.SwingConstants;
-import javax.swing.UIManager;
 
 import tvbrowser.core.Settings;
 import util.ui.UiUtilities;
@@ -51,7 +50,7 @@ public class SelectableItemRenderer implements ListCellRenderer {
   private int mSelectionWidth;
   private boolean mIsEnabled = true;
   
-  private HashMap<Class,SelectableItemRendererCenterComponentIf> mCenterComponentMap = new HashMap<Class,SelectableItemRendererCenterComponentIf>();
+  private HashMap<Class<?>,SelectableItemRendererCenterComponentIf> mCenterComponentMap = new HashMap<Class<?>,SelectableItemRendererCenterComponentIf>();
   
   private JScrollPane mParentScrollPane;
   
