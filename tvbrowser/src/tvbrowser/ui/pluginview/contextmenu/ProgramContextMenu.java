@@ -73,6 +73,7 @@ public class ProgramContextMenu extends AbstractContextMenu {
         Node node = (Node) mPaths[0].getLastPathComponent();
         ProgramItem programItem = (ProgramItem) node.getUserObject();
         MainFrame.getInstance().selectProgram(programItem.getProgram());
+        MainFrame.getInstance().showProgramTableTabIfAvailable();
       }
     };
     mDefaultAction.putValue(Action.NAME, mLocalizer.msg("show", "show"));
