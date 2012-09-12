@@ -36,6 +36,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListCellRenderer;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 
 import tvbrowser.core.Settings;
 import util.ui.UiUtilities;
@@ -63,8 +64,6 @@ public class SelectableItemRenderer implements ListCellRenderer {
 
     JCheckBox cb = new JCheckBox("",selectableItem.isSelected());
     mSelectionWidth = cb.getPreferredSize().width;
-    
-    cb.setOpaque(false);
     
     p.add(cb, BorderLayout.WEST);
     
@@ -113,11 +112,12 @@ public class SelectableItemRenderer implements ListCellRenderer {
       p.setOpaque(true);
       p.setBackground(list.getSelectionBackground());
       cb.setForeground(list.getSelectionForeground());
-      
+      cb.setBackground(list.getSelectionBackground());
     } else {
       p.setOpaque(false);
       p.setForeground(list.getForeground());
       cb.setForeground(list.getForeground());
+      cb.setBackground(list.getBackground());
     }
     cb.setEnabled(list.isEnabled() && selectableItem.isSelectable());
     }catch(Throwable t){t.printStackTrace();}
