@@ -43,9 +43,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
-import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import util.misc.JavaVersion;
-import util.misc.OperatingSystem;
 import util.ui.UiUtilities;
 
 /**
