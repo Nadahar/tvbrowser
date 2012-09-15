@@ -1,5 +1,8 @@
 /*
- * CapturePlugin by Andreas Hessel (Vidrec@gmx.de), Bodo Tasche
+ * CapturePlugin by
+ *  Andreas Hessel (Vidrec@gmx.de),
+ *  Bodo Tasche,
+ *  Markus Ruderman
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,15 +27,16 @@
  */
 package captureplugin.drivers.dreambox.connector;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -41,9 +45,8 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.TimeZone;
 import java.util.TreeMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
+import javax.xml.bind.JAXB;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -52,9 +55,11 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.xml.sax.SAXException;
 
-import util.io.IOUtilities;
 import captureplugin.drivers.dreambox.DreamboxConfig;
+import captureplugin.drivers.dreambox.jaxb.e2abouts.generated.E2About;
+import captureplugin.drivers.dreambox.jaxb.e2abouts.generated.E2Abouts;
 import captureplugin.drivers.utils.ProgramTime;
+
 import devplugin.Channel;
 import devplugin.Date;
 import devplugin.Plugin;
@@ -64,12 +69,18 @@ import devplugin.Program;
  * Connector for the Dreambox
  */
 public class DreamboxConnector {
-  /** get list of bouquets */
+
+  /** Dreambox Web Interface Version Separator - e.g. "Major.Minor.Patch" */
+  private static final String WEBINTERFACE_VERSION_SEPARATOR = "\\.";
+
+  /** Minimum required version of the Dreambox Web Interface */
+  private static final String WEBINTERFACE_REQUIRED_MIN_VERSION = "1.6.0";
+
+  /** Get list of bouquets */
   private final static String BOUQUET_LIST = "1:7:1:0:0:0:0:0:0:0:(type == 1) || (type == 17) || (type == 195) || (type == 25)FROM BOUQUET \"bouquets.tv\" ORDER BY bouquet";
+
   /** Config of the Dreambox */
   private DreamboxConfig mConfig;
-
-  private static final int WEBIF_MINIMUM_VERSION = 20070701;
 
   /**
    * Constructor
@@ -91,7 +102,8 @@ public class DreamboxConnector {
       return null;
     }
     try {
-      InputStream stream = openStreamForLocalUrl("/web/getservices?bRef=" + service);
+      InputStream stream = openStreamForLocalUrl("/web/getservices?bRef="
+          + service);
       SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
       DreamboxHandler handler = new DreamboxHandler();
       saxParser.parse(stream, handler);
@@ -109,7 +121,8 @@ public class DreamboxConnector {
     return null;
   }
 
-  private InputStream openStreamForLocalUrl(final String localUrl) throws MalformedURLException, IOException {
+  private InputStream openStreamForLocalUrl(final String localUrl)
+      throws MalformedURLException, IOException {
     URL url = new URL("http://" + mConfig.getDreamboxAddress() + localUrl);
     URLConnection connection = url.openConnection();
 
@@ -134,7 +147,8 @@ public class DreamboxConnector {
       return null;
     }
     try {
-      InputStream stream = openStreamForLocalUrl("/web/getservices?sRef=" + service);
+      InputStream stream = openStreamForLocalUrl("/web/getservices?sRef="
+          + service);
       SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
       DreamboxHandler handler = new DreamboxHandler();
       saxParser.parse(stream, handler);
@@ -159,16 +173,19 @@ public class DreamboxConnector {
     try {
       ArrayList<DreamboxChannel> allChannels = new ArrayList<DreamboxChannel>();
 
-      TreeMap<String, String> bouquets = getServiceDataBouquets(URLEncoder.encode(BOUQUET_LIST, "UTF8"));
+      TreeMap<String, String> bouquets = getServiceDataBouquets(URLEncoder
+          .encode(BOUQUET_LIST, "UTF8"));
       for (Entry<String, String> entry : bouquets.entrySet()) {
         String key = entry.getKey();
         String bouqetName = entry.getValue();
 
-        TreeMap<String, String> map = getServiceData(URLEncoder.encode(key, "UTF8"));
+        TreeMap<String, String> map = getServiceData(URLEncoder.encode(key,
+            "UTF8"));
 
         for (Entry<String, String> mEntry : map.entrySet()) {
           String mkey = mEntry.getKey();
-          allChannels.add(new DreamboxChannel(mkey, mEntry.getValue(), bouqetName));
+          allChannels.add(new DreamboxChannel(mkey, mEntry.getValue(),
+              bouqetName));
         }
       }
 
@@ -188,7 +205,8 @@ public class DreamboxConnector {
    */
   public void switchToChannel(DreamboxChannel channel) {
     try {
-      InputStream stream = openStreamForLocalUrl("/web/zap?sRef=" + URLEncoder.encode(channel.getReference(), "UTF8"));
+      InputStream stream = openStreamForLocalUrl("/web/zap?sRef="
+          + URLEncoder.encode(channel.getReference(), "UTF8"));
       stream.close();
     } catch (MalformedURLException e) {
       e.printStackTrace();
@@ -241,43 +259,52 @@ public class DreamboxConnector {
 
     for (HashMap<String, String> timer : timers) {
 
-      DreamboxChannel channel = config.getDreamboxChannelForRef(timer.get("e2servicereference"));
+      DreamboxChannel channel = config.getDreamboxChannelForRef(timer
+          .get("e2servicereference"));
 
       if (channel != null) {
         Channel tvbchannel = config.getChannel(channel);
         if (tvbchannel != null) {
           Calendar begin = Calendar.getInstance();
           begin.setTimeInMillis(getLong(timer.get("e2timebegin")) * 1000);
-          int beginMinutes = begin.get(Calendar.HOUR_OF_DAY) * 60 + begin.get(Calendar.MINUTE);
+          int beginMinutes = begin.get(Calendar.HOUR_OF_DAY) * 60
+              + begin.get(Calendar.MINUTE);
 
           Calendar end = Calendar.getInstance();
           end.setTimeInMillis(getLong(timer.get("e2timeend")) * 1000);
 
-          int endMinutes = end.get(Calendar.HOUR_OF_DAY) * 60 + end.get(Calendar.MINUTE);
+          int endMinutes = end.get(Calendar.HOUR_OF_DAY) * 60
+              + end.get(Calendar.MINUTE);
           if (endMinutes < beginMinutes) {
             endMinutes += 24 * 60;
           }
 
           Calendar runner = (Calendar) begin.clone();
 
-          long days = end.get(Calendar.DAY_OF_YEAR) - begin.get(Calendar.DAY_OF_YEAR);
+          long days = end.get(Calendar.DAY_OF_YEAR)
+              - begin.get(Calendar.DAY_OF_YEAR);
           if (end.get(Calendar.YEAR) != begin.get(Calendar.YEAR)) {
             days = 1;
           }
 
           for (int i = 0; i <= days; i++) {
-            Iterator<Program> it = Plugin.getPluginManager().getChannelDayProgram(new Date(runner), tvbchannel);
+            Iterator<Program> it = Plugin.getPluginManager()
+                .getChannelDayProgram(new Date(runner), tvbchannel);
             boolean found = false;
 
             while (it.hasNext() && !found) {
               Program prog = it.next();
-              int progTime = prog.getHours() * 60 + prog.getMinutes() + (i * 24 * 60);
+              int progTime = prog.getHours() * 60 + prog.getMinutes()
+                  + (i * 24 * 60);
 
-              if (progTime >= beginMinutes - 15 && progTime <= endMinutes + 15
-                  && prog.getTitle().trim().equalsIgnoreCase(timer.get("e2name").trim())) {
+              if (progTime >= beginMinutes - 15
+                  && progTime <= endMinutes + 15
+                  && prog.getTitle().trim()
+                      .equalsIgnoreCase(timer.get("e2name").trim())) {
 
                 found = true;
-                programs.add(new ProgramTime(prog, begin.getTime(), end.getTime()));
+                programs.add(new ProgramTime(prog, begin.getTime(), end
+                    .getTime()));
               }
             }
 
@@ -325,7 +352,8 @@ public class DreamboxConnector {
    *          TimeZone to use for recording
    * @return True, if successful
    */
-  public boolean addRecording(DreamboxChannel dreamboxChannel, ProgramTime prgTime, int afterEvent, TimeZone timezone) {
+  public boolean addRecording(DreamboxChannel dreamboxChannel,
+      ProgramTime prgTime, int afterEvent, TimeZone timezone) {
     if (!mConfig.hasValidAddress()) {
       return false;
     }
@@ -341,20 +369,44 @@ public class DreamboxConnector {
         shortInfo = "";
       }
 
-      InputStream stream = openStreamForLocalUrl("/web/tvbrowser?&command=add&action=0" + "&syear="
-          + start.get(Calendar.YEAR) + "&smonth=" + (start.get(Calendar.MONTH) + 1) + "&sday="
-          + start.get(Calendar.DAY_OF_MONTH) + "&shour=" + start.get(Calendar.HOUR_OF_DAY) + "&smin="
-          + start.get(Calendar.MINUTE) +
+      InputStream stream = openStreamForLocalUrl("/web/tvbrowser?&command=add&action=0"
+          + "&syear="
+          + start.get(Calendar.YEAR)
+          + "&smonth="
+          + (start.get(Calendar.MONTH) + 1)
+          + "&sday="
+          + start.get(Calendar.DAY_OF_MONTH)
+          + "&shour="
+          + start.get(Calendar.HOUR_OF_DAY)
+          + "&smin="
+          + start.get(Calendar.MINUTE)
+          +
 
-          "&eyear=" + end.get(Calendar.YEAR) + "&emonth=" + (end.get(Calendar.MONTH) + 1) + "&eday="
-          + end.get(Calendar.DAY_OF_MONTH) + "&ehour=" + end.get(Calendar.HOUR_OF_DAY) + "&emin="
-          + end.get(Calendar.MINUTE) +
+          "&eyear="
+          + end.get(Calendar.YEAR)
+          + "&emonth="
+          + (end.get(Calendar.MONTH) + 1)
+          + "&eday="
+          + end.get(Calendar.DAY_OF_MONTH)
+          + "&ehour="
+          + end.get(Calendar.HOUR_OF_DAY)
+          + "&emin="
+          + end.get(Calendar.MINUTE)
+          +
 
-          "&sRef=" + URLEncoder.encode(dreamboxChannel.getName() + "|" + dreamboxChannel.getReference(), "UTF8")
-          + "&name=" + URLEncoder.encode(prgTime.getProgram().getTitle(), "UTF8") + "&description="
-          + URLEncoder.encode(shortInfo, "UTF8") +
+          "&sRef="
+          + URLEncoder.encode(
+              dreamboxChannel.getName() + "|" + dreamboxChannel.getReference(),
+              "UTF8")
+          + "&name="
+          + URLEncoder.encode(prgTime.getProgram().getTitle(), "UTF8")
+          + "&description="
+          + URLEncoder.encode(shortInfo, "UTF8")
+          +
 
-          "&afterevent=" + afterEvent + "&eit=&disabled=0&justplay=0&repeated=0");
+          "&afterevent="
+          + afterEvent
+          + "&eit=&disabled=0&justplay=0&repeated=0");
 
       SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
       DreamboxStateHandler handler = new DreamboxStateHandler();
@@ -386,7 +438,8 @@ public class DreamboxConnector {
    *          Timezone to use for recording
    * @return True, if successful
    */
-  public boolean removeRecording(DreamboxChannel dreamboxChannel, ProgramTime prgTime, TimeZone timezone) {
+  public boolean removeRecording(DreamboxChannel dreamboxChannel,
+      ProgramTime prgTime, TimeZone timezone) {
     if (!mConfig.hasValidAddress()) {
       return false;
     }
@@ -402,18 +455,38 @@ public class DreamboxConnector {
         shortInfo = "";
       }
 
-      InputStream stream = openStreamForLocalUrl("/web/tvbrowser?&command=del&action=0" + "&syear="
-          + start.get(Calendar.YEAR) + "&smonth=" + (start.get(Calendar.MONTH) + 1) + "&sday="
-          + start.get(Calendar.DAY_OF_MONTH) + "&shour=" + start.get(Calendar.HOUR_OF_DAY) + "&smin="
-          + start.get(Calendar.MINUTE) +
+      InputStream stream = openStreamForLocalUrl("/web/tvbrowser?&command=del&action=0"
+          + "&syear="
+          + start.get(Calendar.YEAR)
+          + "&smonth="
+          + (start.get(Calendar.MONTH) + 1)
+          + "&sday="
+          + start.get(Calendar.DAY_OF_MONTH)
+          + "&shour="
+          + start.get(Calendar.HOUR_OF_DAY)
+          + "&smin="
+          + start.get(Calendar.MINUTE)
+          +
 
-          "&eyear=" + end.get(Calendar.YEAR) + "&emonth=" + (end.get(Calendar.MONTH) + 1) + "&eday="
-          + end.get(Calendar.DAY_OF_MONTH) + "&ehour=" + end.get(Calendar.HOUR_OF_DAY) + "&emin="
-          + end.get(Calendar.MINUTE) +
+          "&eyear="
+          + end.get(Calendar.YEAR)
+          + "&emonth="
+          + (end.get(Calendar.MONTH) + 1)
+          + "&eday="
+          + end.get(Calendar.DAY_OF_MONTH)
+          + "&ehour="
+          + end.get(Calendar.HOUR_OF_DAY)
+          + "&emin="
+          + end.get(Calendar.MINUTE)
+          +
 
-          "&sRef=" + URLEncoder.encode(dreamboxChannel.getName() + "|" + dreamboxChannel.getReference(), "UTF8")
-          + "&name=" + URLEncoder.encode(prgTime.getProgram().getTitle(), "UTF8") + "&description="
-          + URLEncoder.encode(shortInfo, "UTF8") +
+          "&sRef="
+          + URLEncoder.encode(
+              dreamboxChannel.getName() + "|" + dreamboxChannel.getReference(),
+              "UTF8")
+          + "&name="
+          + URLEncoder.encode(prgTime.getProgram().getTitle(), "UTF8")
+          + "&description=" + URLEncoder.encode(shortInfo, "UTF8") +
 
           "&afterevent=0&eit=&disabled=0&justplay=0&repeated=0");
 
@@ -446,7 +519,8 @@ public class DreamboxConnector {
       return;
     }
     try {
-      InputStream stream = openStreamForLocalUrl("/web/message?type=2&timeout=" + mConfig.getTimeout() + "&text="
+      InputStream stream = openStreamForLocalUrl("/web/message?type=2&timeout="
+          + mConfig.getTimeout() + "&text="
           + URLEncoder.encode(message, "UTF8"));
       stream.close();
     } catch (MalformedURLException e) {
@@ -456,25 +530,140 @@ public class DreamboxConnector {
     }
   }
 
-  public boolean testDreamboxVersion() throws IOException {
-    InputStream stream = openStreamForLocalUrl((mConfig.isOpkg() ? "/opkg" : "/ipkg")
-        + "?command=info&package=enigma2-plugin-extensions-webinterface");
-    ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+  /**
+   * Get the minimum required web interface version number.
+   * 
+   * @return The minimum required web interface version number.
+   */
+  public String getMinRequiredWebIfVersion() {
+    return WEBINTERFACE_REQUIRED_MIN_VERSION;
+  }
 
-    IOUtilities.pipeStreams(stream, bytes);
+  /**
+   * Get the web interface information from http://<dreambox IP>/web/about which
+   * returns as result an XML answer in the format as described at
+   * http://e2devel.com/apidoc/webif/#about <br/>
+   * For parsing of the XML answer the implementation uses JAXB with generated
+   * sources out of the self designed e2abouts.xsd located in the project at
+   * /xsd/dreambox.
+   * 
+   * @return The current web interface version number.
+   * @throws IOException
+   *           if the answer can't be read
+   */
+  public String getWebIfVersion() throws IOException {
 
-    String version = bytes.toString();
+    InputStream xmlStream = openStreamForLocalUrl("/web/about");
 
-    Pattern p = Pattern.compile("Version:.*git(\\d{8}).*");
-    Matcher match = p.matcher(version);
+    E2Abouts e2abouts = JAXB.unmarshal(xmlStream, E2Abouts.class);
+    E2About e2about = null;
+    String webIfVersion = "";
 
-    if (match.find()) {
-      if (Integer.parseInt(match.group(1)) >= WEBIF_MINIMUM_VERSION) {
-        return true;
+    if (e2abouts != null) {
+      e2about = e2abouts.getE2About();
+    }
+
+    if (e2about != null) {
+      webIfVersion = e2about.getE2Webifversion();
+    }
+
+    return webIfVersion;
+  }
+
+  /**
+   * Checks if the specified web interface version number is valid for the usage
+   * of the plugin. Therefore the specified version number will be compared with
+   * minimum required version number which currently
+   * {@value #WEBINTERFACE_REQUIRED_MIN_VERSION}.
+   * 
+   * @param currentVersion
+   *          the web interface version number received from the Dreambox via
+   *          {@link #getWebIfVersion()}
+   * 
+   * @return {@code true} if the specified version number is valid for the
+   *         plugin usage, otherwise {@code false}.
+   * 
+   * @see #getWebIfVersion()
+   */
+  public boolean isValidWebIfVersion(String currentVersion) {
+
+    boolean result = false;
+
+    if ((currentVersion != null) && (!currentVersion.isEmpty())) {
+
+      int compareResult = compareVersions(currentVersion,
+          WEBINTERFACE_REQUIRED_MIN_VERSION);
+
+      if (compareResult >= 0) {
+        result = true;
+      } else {
+        result = false;
       }
     }
 
-    return false;
+    return result;
+
+  }
+
+  /**
+   * Compares this version string to another version string by dotted ordinals.
+   * 
+   * @param str1
+   *          first version string to compare
+   * @param str2
+   *          second version string to compare
+   * 
+   * @return 0 if equal, -1 if {@code str1} &lt; {@code str2} and 1 otherwise.
+   * 
+   * @see http
+   *      ://stackoverflow.com/questions/6701948/efficient-way-to-compare-version
+   *      -strings-in-java
+   */
+  public int compareVersions(String str1, String str2) {
+
+    // Short circuit when you shoot for efficiency
+    if (str1.equals(str2)) {
+      return 0;
+    }
+
+    String[] vals1 = str1.split(WEBINTERFACE_VERSION_SEPARATOR);
+    String[] vals2 = str2.split(WEBINTERFACE_VERSION_SEPARATOR);
+
+    int i = 0;
+
+    // Most efficient way to skip past equal version sub-parts
+    while ((i < vals1.length) && (i < vals2.length)
+        && (vals1[i].equals(vals2[i]))) {
+
+      i++;
+    }
+
+    // If we didn't reach the end,
+
+    if ((i < vals1.length) && (i < vals2.length)) {
+      // have to use integer comparison to avoid the "10"<"1" problem
+      return Integer.valueOf(vals1[i]).compareTo(Integer.valueOf(vals2[i]));
+    }
+
+    // end of str2, check if str1 is all 0's
+    if (i < vals1.length) {
+      boolean allZeros = true;
+      for (int j = i; allZeros & (j < vals1.length); j++) {
+        allZeros &= (Integer.parseInt(vals1[j]) == 0);
+      }
+      return (allZeros ? 0 : -1);
+    }
+
+    // end of str1, check if str2 is all 0's
+    if (i < vals2.length) {
+      boolean allZeros = true;
+      for (int j = i; allZeros & (j < vals2.length); j++) {
+        allZeros &= (Integer.parseInt(vals2[j]) == 0);
+      }
+      return (allZeros ? 0 : 1);
+    }
+
+    return 0;
   }
 
   public boolean streamChannel(final DreamboxChannel channel) {
@@ -487,7 +676,8 @@ public class DreamboxConnector {
 
     if (new File(mConfig.getMediaplayer()).exists()) {
       try {
-        final URL url = new URL("http://" + mConfig.getDreamboxAddress() + "/web/stream.m3u?ref="
+        final URL url = new URL("http://" + mConfig.getDreamboxAddress()
+            + "/web/stream.m3u?ref="
             + URLEncoder.encode(channel.getReference(), "UTF8"));
         String[] cmd = { mConfig.getMediaplayer(), url.toString() };
         try {
