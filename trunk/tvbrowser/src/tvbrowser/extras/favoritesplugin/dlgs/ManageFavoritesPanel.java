@@ -105,6 +105,7 @@ import util.ui.persona.PersonaListener;
  * @author René Mach
  */
 public class ManageFavoritesPanel extends JPanel implements ListDropAction, TreeSelectionListener, PersonaListener {
+  private static final int MAX_SHOWN_PROGRAMS = 4000;
   private static final Localizer mLocalizer = ManageFavoritesDialog.mLocalizer;
   private DefaultListModel mFavoritesListModel, mProgramListModel;
   private JList mFavoritesList;
@@ -748,7 +749,7 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
 
     int firstNotExpiredIndex = -1;
 
-    for (int i = 0; i < programArr.length; i++) {
+    for (int i = 0; i < Math.min(programArr.length,MAX_SHOWN_PROGRAMS); i++) {
       mProgramListModel.addElement(programArr[i]);
 
       if(firstNotExpiredIndex == -1 && !programArr[i].isExpired()) {
@@ -759,7 +760,7 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
     mSendBt.setEnabled(mProgramListModel.size() > 0);
 
     if(!mShowNew && mBlackListChb.isSelected()) {
-      for (int i = 0; i < blackListPrograms.length; i++) {
+      for (int i = 0; i < Math.min(blackListPrograms.length,MAX_SHOWN_PROGRAMS/10); i++) {
         mProgramListModel.addElement(blackListPrograms[i]);
 
         if(firstNotExpiredIndex == -1 && !blackListPrograms[i].isExpired()) {
