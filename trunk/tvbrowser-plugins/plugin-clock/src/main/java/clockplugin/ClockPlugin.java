@@ -36,7 +36,7 @@ public class ClockPlugin extends Plugin {
   private Point mLocation;
   private Dimension mParentSize;
 
-  private static final Version mVersion = new Version(1, 80, 0, true);
+  private static final Version mVersion = new Version(1, 80, 1, true);
 
   /** The localizer for this class. */
   public static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(ClockPlugin.class);
@@ -267,7 +267,10 @@ public class ClockPlugin extends Plugin {
   public void setTransparentBackground(boolean value) {
     mProperties.setProperty("transparentBackground", String.valueOf(value));
     mTransparentBackground = value;
-    mClock.setTransparentBackground(value);
+    
+    if(mClock != null) {
+      mClock.setTransparentBackground(value);
+    }
   }
   
   /**
