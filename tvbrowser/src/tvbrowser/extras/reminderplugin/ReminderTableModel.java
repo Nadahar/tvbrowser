@@ -63,35 +63,38 @@ public class ReminderTableModel extends AbstractTableModel {
   }
   
   private void insertAvailableTitles() {
-    mHandleBoxSelection = false;
-    mTitleFilterBox.removeAllItems();
-    ReminderListItem[] allItems = mList.getReminderItems();
-    
-    mTitleFilterBox.addItem(mLocalizer.msg("all","All"));
-    
-    for(ReminderListItem item : allItems) {
-      boolean found = false;
-      int index = 0;
+    synchronized (mList) {
+      mHandleBoxSelection = false;
+      mTitleFilterBox.removeAllItems();
+      ReminderListItem[] allItems = mList.getReminderItems();
       
-      for(int i = 0; i < mTitleFilterBox.getItemCount(); i++) {
-        if (mTitleFilterBox.getItemAt(i).toString().compareToIgnoreCase(item.getProgram().getTitle()) < 0) {
-          index = i;
+      mTitleFilterBox.addItem(mLocalizer.msg("all","All"));
+      
+      for(ReminderListItem item : allItems) {
+        boolean found = false;
+        int index = 0;
+        
+        for(int i = 0; i < mTitleFilterBox.getItemCount(); i++) {
+          if (mTitleFilterBox.getItemAt(i).toString().compareToIgnoreCase(item.getProgram().getTitle()) < 0) {
+            index = i;
+          }
+          
+          if(mTitleFilterBox.getItemAt(i) != null && item.getProgram() != null &&
+              mTitleFilterBox.getItemAt(i).equals(item.getProgram().getTitle())) {
+            found = true;
+            break;
+          }
         }
         
-        if(mTitleFilterBox.getItemAt(i).equals(item.getProgram().getTitle())) {
-          found = true;
-          break;
+        if(!found) {
+          mTitleFilterBox.insertItemAt(item.getProgram().getTitle(),index+1);
         }
       }
       
-      if(!found) {
-        mTitleFilterBox.insertItemAt(item.getProgram().getTitle(),index+1);
-      }
+      mHandleBoxSelection = true;
+      
+      mTitleFilterBox.setSelectedItem(mLastSelectedTitle);      
     }
-    
-    mHandleBoxSelection = true;
-    
-    mTitleFilterBox.setSelectedItem(mLastSelectedTitle);
   }
   
   private ReminderListItem[] getItemsForTitleSelection() {

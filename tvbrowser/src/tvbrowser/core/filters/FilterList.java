@@ -262,7 +262,8 @@ public class FilterList {
 
     for (ProgramFilter filter : mFilterTreeModel.getAllFilters()) {
       if (filter instanceof PluginsProgramFilter) {
-        if (((PluginsProgramFilter) filter).getPluginAccessOfFilter().equals(plugin)) {
+        if (((PluginsProgramFilter) filter).getPluginAccessOfFilter() != null && 
+            ((PluginsProgramFilter) filter).getPluginAccessOfFilter().equals(plugin)) {
           list.add((PluginsProgramFilter) filter);
         }
       }
