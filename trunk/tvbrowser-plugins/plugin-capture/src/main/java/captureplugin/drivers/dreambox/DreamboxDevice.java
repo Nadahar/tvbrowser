@@ -52,6 +52,7 @@ import devplugin.ProgramReceiveTarget;
  * The Dreambox-Device
  */
 public final class DreamboxDevice implements DeviceIf {
+
     /**
      * Translator
      */
@@ -111,6 +112,7 @@ public final class DreamboxDevice implements DeviceIf {
     /**
      * @return ID for this Device
      */
+    @Override
     public String getId() {
         return mConfig.getId();
     }
@@ -118,6 +120,7 @@ public final class DreamboxDevice implements DeviceIf {
     /**
      * @return Name for this Device
      */
+    @Override
     public String getName() {
         return mName;
     }
@@ -128,6 +131,7 @@ public final class DreamboxDevice implements DeviceIf {
      * @param name new Name
      * @return new Name
      */
+    @Override
     public String setName(String name) {
         mName = name;
         return mName;
@@ -136,6 +140,7 @@ public final class DreamboxDevice implements DeviceIf {
     /**
      * @return Driver for this Device
      */
+    @Override
     public DriverIf getDriver() {
         return mDriver;
     }
@@ -145,6 +150,7 @@ public final class DreamboxDevice implements DeviceIf {
      *
      * @param parent Parent for the dialog
      */
+    @Override
     public void configDevice(Window parent) {
         DreamboxConfigDialog dialog = new DreamboxConfigDialog(parent, this,
         mConfig);
@@ -160,6 +166,7 @@ public final class DreamboxDevice implements DeviceIf {
     /**
      * @see captureplugin.drivers.DeviceIf#isInList(devplugin.Program)
      */
+    @Override
     public boolean isInList(Program program) {
         return mProgramList.contains(program);
     }
@@ -167,6 +174,7 @@ public final class DreamboxDevice implements DeviceIf {
     /**
      * @see captureplugin.drivers.DeviceIf#isAbleToAddAndRemovePrograms()
      */
+    @Override
     public boolean isAbleToAddAndRemovePrograms() {
         return true;
     }
@@ -174,6 +182,7 @@ public final class DreamboxDevice implements DeviceIf {
     /**
      * @see captureplugin.drivers.DeviceIf#add(java.awt.Window,devplugin.Program)
      */
+    @Override
     public boolean add(Window parent, Program program) {
 
         if (program.isExpired()) {
@@ -220,23 +229,58 @@ public final class DreamboxDevice implements DeviceIf {
 
             if (dialog.getPrgTime() != null) {
                 DreamboxConnector connector = new DreamboxConnector(mConfig);
-                return connector.addRecording(channel, dialog.getPrgTime(), box.getSelectedIndex(), mConfig.getTimeZone());
+
+                // try to add a new timer to the timer list
+                boolean successful =
+                	connector.addRecording(channel, dialog.getPrgTime(),
+										   box.getSelectedIndex(), mConfig.getTimeZone());
+
+                if (!successful) {
+
+                	JOptionPane.showMessageDialog(parent,
+                		mLocalizer.msg("failedText", "Programming operation failed:\n{0}", connector.getLastStateText()),
+                		mLocalizer.msg("failedTitle", "Failed"),
+                		JOptionPane.INFORMATION_MESSAGE);
+
+                	return false;
+                }
+
+                return true;
             }
         }
-        
+
         return false;
     }
 
     /**
      * @see captureplugin.drivers.DeviceIf#remove(java.awt.Window,devplugin.Program)
      */
+    @Override
     public boolean remove(Window parent, Program program) {
+
         for (ProgramTime time : mProgramTimeList) {
+
             if (time.getProgram().equals(program)) {
+
                 ExternalChannelIf channel = mConfig.getExternalChannel(program.getChannel());
+
                 if (channel != null) {
                     DreamboxConnector connector = new DreamboxConnector(mConfig);
-                    return connector.removeRecording((DreamboxChannel) channel, time, mConfig.getTimeZone());
+
+                    // try to remove a new timer from the timer list
+                    boolean successful = connector.removeRecording((DreamboxChannel) channel, time, mConfig.getTimeZone());
+
+                    if (!successful) {
+
+                    	JOptionPane.showMessageDialog(parent,
+                    		mLocalizer.msg("failedText", "Programming operation failed:\n{0}", connector.getLastStateText()),
+                    		mLocalizer.msg("failedTitle", "Failed"),
+                    		JOptionPane.INFORMATION_MESSAGE);
+
+                    	return false;
+                    }
+
+                    return true;
                 }
             }
         }
@@ -247,6 +291,7 @@ public final class DreamboxDevice implements DeviceIf {
     /**
      * @see captureplugin.drivers.DeviceIf#getProgramList()
      */
+    @Override
     public Program[] getProgramList() {
         DreamboxConnector con = new DreamboxConnector(mConfig);
         if (mConfig.hasValidAddress()) {
@@ -268,6 +313,7 @@ public final class DreamboxDevice implements DeviceIf {
    /**
      * @see captureplugin.drivers.DeviceIf#getAdditionalCommands()
      */
+    @Override
     public String[] getAdditionalCommands() {
        return new String[]{mLocalizer.msg("switch", "Switch channel"), mLocalizer.msg("sendMessage", "Send as Message"), mLocalizer.msg("streamChannel", "Open channel with mediaplayer")};
     }
@@ -275,6 +321,7 @@ public final class DreamboxDevice implements DeviceIf {
     /**
      * @see captureplugin.drivers.DeviceIf#executeAdditionalCommand(java.awt.Window,int,devplugin.Program)
      */
+    @Override
     public boolean executeAdditionalCommand(Window parent, int num, Program program) {
         if (num == 0) {
             final DreamboxChannel channel = (DreamboxChannel) mConfig.getExternalChannel(program.getChannel());
@@ -304,7 +351,7 @@ public final class DreamboxDevice implements DeviceIf {
             connect.sendMessage(parser.analyse("{channel_name} - {leadingZero(start_hour,\"2\")}:{leadingZero(start_minute,\"2\")}-{leadingZero(end_hour,\"2\")}:{leadingZero(end_minute,\"2\")}\n{title}", program));
         } else if (num == 2) {
             final DreamboxChannel channel = (DreamboxChannel) mConfig.getExternalChannel(program.getChannel());
-          
+
             if (channel != null) {
                 DreamboxConnector connect = new DreamboxConnector(mConfig);
                 if (!connect.streamChannel(channel)) {
@@ -320,6 +367,10 @@ public final class DreamboxDevice implements DeviceIf {
         return false;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Object clone() {
         return new DreamboxDevice(this);
     }
@@ -327,6 +378,7 @@ public final class DreamboxDevice implements DeviceIf {
     /**
      * @see captureplugin.drivers.DeviceIf#writeData(java.io.ObjectOutputStream)
      */
+    @Override
     public void writeData(ObjectOutputStream stream) throws IOException {
         mConfig.writeData(stream);
     }
@@ -334,6 +386,7 @@ public final class DreamboxDevice implements DeviceIf {
     /**
      * @see captureplugin.drivers.DeviceIf#readData(java.io.ObjectInputStream, boolean)
      */
+    @Override
     public void readData(ObjectInputStream stream, boolean importDevice) throws IOException, ClassNotFoundException {
         mConfig = new DreamboxConfig(stream);
     }
@@ -348,6 +401,7 @@ public final class DreamboxDevice implements DeviceIf {
     /**
      * @see captureplugin.drivers.DeviceIf#getDeleteRemovedProgramsAutomatically()
      */
+    @Override
     public boolean getDeleteRemovedProgramsAutomatically() {
         return true;
     }
@@ -355,6 +409,7 @@ public final class DreamboxDevice implements DeviceIf {
     /**
      * @see captureplugin.drivers.DeviceIf#removeProgramWithoutExecution(devplugin.Program)
      */
+    @Override
     public void removeProgramWithoutExecution(Program p) {
         for (ProgramTime time : mProgramTimeList) {
             if (time.getProgram().equals(p)) {
@@ -366,7 +421,10 @@ public final class DreamboxDevice implements DeviceIf {
             }
         }
     }
-    
+
+    /**
+     * @see captureplugin.drivers.DeviceIf#getProgramForProgramInList(devplugin.Program)
+     */
     @Override
     public Program getProgramForProgramInList(Program p) {
       for(ProgramTime time : mProgramTimeList) {
@@ -376,14 +434,17 @@ public final class DreamboxDevice implements DeviceIf {
           }
         }
       }
-      
+
       return null;
     }
 
+    /**
+     * @see captureplugin.drivers.DeviceIf#sendProgramsToReceiveTargets(devplugin.Program[])
+     */
     @Override
     public void sendProgramsToReceiveTargets(Program[] progs) {
       ProgramReceiveTarget[] targets = mConfig.getProgramReceiveTargets();
-      
+
       for(ProgramReceiveTarget target : targets) {
         target.receivePrograms(progs);
       }

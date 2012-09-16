@@ -9,42 +9,40 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class DreamboxStateHandler extends DefaultHandler {
 
-  private StringBuilder mCharacters = new StringBuilder();
-  private String mState;
-  private String mStatetext;
+	private StringBuilder mCharacters = new StringBuilder();
+    private String mState;
+    private String mStatetext;
 
-  @Override
-  public void startElement(String uri, String localName, String qName,
-      Attributes attributes) throws SAXException {
-    mCharacters = new StringBuilder();
-  }
-
-  @Override
-  public void characters(char ch[], int start, int length) throws SAXException {
-    mCharacters.append(ch, start, length);
-  }
-
-  @Override
-  public void endElement(String uri, String localName, String qName)
-      throws SAXException {
-    if ("e2state".equals(qName)) {
-      mState = mCharacters.toString();
-    } else if ("e2statetext".equals(qName)) {
-      mStatetext = mCharacters.toString();
+    @Override
+    public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+        mCharacters = new StringBuilder();
     }
-  }
 
-  /**
-   * @return State
-   */
-  public String getState() {
-    return mState;
-  }
+    @Override
+    public void characters(char ch[], int start, int length) throws SAXException {
+        mCharacters.append(ch, start, length);
+    }
 
-  /**
-   * @return Statetext
-   */
-  public String getStatetext() {
-    return mStatetext;
-  }
+    @Override
+    public void endElement(String uri, String localName, String qName) throws SAXException {
+        if ("e2state".equals(qName)) {
+            mState = mCharacters.toString();
+        } else if ("e2statetext".equals(qName)) {
+            mStatetext = mCharacters.toString();
+        }
+    }
+
+    /**
+     * @return State
+     */
+    public String getState() {
+        return mState;
+    }
+
+    /**
+     * @return Statetext
+     */
+    public String getStatetext(){
+        return mStatetext;
+    }
 }
