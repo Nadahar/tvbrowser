@@ -55,6 +55,8 @@ import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.factories.DefaultComponentFactory;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Locale Settings
@@ -62,7 +64,8 @@ import com.jgoodies.forms.layout.FormLayout;
 public class LocaleSettingsTab implements devplugin.SettingsTab {
   /** The localizer for this class. */
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(LocaleSettingsTab.class);
-
+  private static final Logger mLog =  Logger.getLogger(LocaleSettingsTab.class.getName());
+  
   private JPanel mSettingsPn;
 
   private JComboBox mLanguageCB, mTimezoneCB;
@@ -136,10 +139,22 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
     String[] zoneIds = new String[0];
     try {
       zoneIds = TimeZone.getAvailableIDs();
+      
       Arrays.sort(zoneIds);
     } catch (Exception e) {
-      e.printStackTrace();
+        zoneIds = new String[24];
+        zoneIds[12] = "GMT+0";
+      for(int i=0; i < 12; i++) {
+        zoneIds[i] = "GMT-"+Math.abs(i-12);
+      }
+        
+      for(int i=1; i < 12; i++) {
+        zoneIds[i+12] = "GMT+"+i;
+      }
+      
+      mLog.log(Level.INFO, "TimeZone IDs not available, use default values", e);
     }
+    
     mTimezoneCB = new JComboBox(zoneIds);
     String zone = Settings.propTimezone.getString();
     if (zone == null) {
