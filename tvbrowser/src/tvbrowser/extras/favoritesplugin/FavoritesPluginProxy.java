@@ -84,7 +84,7 @@ public class FavoritesPluginProxy extends AbstractInternalPluginProxy implements
   }
 
   public String toString() {
-    return FavoritesPlugin.getName();
+    return FavoritesPlugin.getInstance().getName();
   }
 
   public Icon getMarkIcon() {
@@ -134,7 +134,7 @@ public class FavoritesPluginProxy extends AbstractInternalPluginProxy implements
   }
 
   public ActionMenu getButtonAction() {
-    return FavoritesPlugin.getButtonAction();
+    return FavoritesPlugin.getInstance().getButtonAction();
   }
 
   private Icon getDoubleIcon(final Icon icon, final int width) {

@@ -135,7 +135,7 @@ public class FavoritesPlugin {
 
   private ConfigurationHandler mConfigurationHandler;
 
-  private static final PluginTreeNode mRootNode = new PluginTreeNode(getName());
+  private PluginTreeNode mRootNode;
 
   private boolean mHasRightToUpdate = false;
 
@@ -170,7 +170,7 @@ public class FavoritesPlugin {
    */
   private FavoritesPlugin() {
     mInstance = this;
-    
+    mRootNode = new PluginTreeNode(getName());
     mWrapper = new PluginCenterPanelWrapper() {  
       FavoritesCenterPanel centerPanel = new FavoritesCenterPanel();
       @Override
@@ -705,7 +705,7 @@ public class FavoritesPlugin {
     return res;
   }
 
-  protected static ActionMenu getButtonAction() {
+  protected ActionMenu getButtonAction() {
     ButtonAction action = new ButtonAction();
     action.setActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -923,7 +923,7 @@ public class FavoritesPlugin {
     }
   }
 
-  public static PluginTreeNode getRootNode() {
+  public PluginTreeNode getRootNode() {
     return mRootNode;
   }
 
@@ -1085,7 +1085,7 @@ public class FavoritesPlugin {
     return getName();
   }
 
-  static String getName() {
+  String getName() {
     return mLocalizer.msg("manageFavorites","Favorites");
   }
 
@@ -1334,7 +1334,7 @@ public class FavoritesPlugin {
   private class FavoritesCenterPanel extends PluginCenterPanel {
     @Override
     public String getName() {
-      return FavoritesPlugin.getName();
+      return FavoritesPlugin.getInstance().getName();
     }
 
     @Override

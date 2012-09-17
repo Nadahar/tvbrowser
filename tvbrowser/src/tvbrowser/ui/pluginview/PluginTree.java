@@ -404,7 +404,7 @@ public class PluginTree extends JTree implements DragGestureListener,
               }
             } else if (flavors[0].getHumanPresentableName().equals("Program")) {
               if (targetPath.getPathCount() <= 2) {
-                if (FavoritesPlugin.getRootNode()
+                if (FavoritesPlugin.getInstance().getRootNode()
                     .getMutableTreeNode().equals(target)) {
                   e.acceptDrag(e.getDropAction());
                   rejected = false;
@@ -673,7 +673,7 @@ public class PluginTree extends JTree implements DragGestureListener,
               if (!found) {
                 Action action = null;
 
-                if (FavoritesPlugin.getRootNode()
+                if (FavoritesPlugin.getInstance().getRootNode()
                     .getMutableTreeNode().equals(target)) {
                   action = getAction(FavoritesPluginProxy.getInstance()
                       .getContextMenuActions(program));
