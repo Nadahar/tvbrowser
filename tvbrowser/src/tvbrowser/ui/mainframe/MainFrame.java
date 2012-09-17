@@ -3241,7 +3241,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       if(index >= 0) {
         mCenterTabPane.setSelectedIndex(index);
       }
-      else {
+      else if(mCenterTabPane.getTabCount() > 0){
         mCenterTabPane.setSelectedIndex(0);
       }
     }
