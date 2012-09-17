@@ -85,8 +85,8 @@ public class PluginTreeModel extends DefaultTreeModel {
           Plugin p = (Plugin) o;
           p.getRootNode().update();
         }
-        else if(n.equals(FavoritesPlugin.getRootNode().getMutableTreeNode())) {
-          FavoritesPlugin.getRootNode().update();
+        else if(n.equals(FavoritesPlugin.getInstance().getRootNode().getMutableTreeNode())) {
+          FavoritesPlugin.getInstance().getRootNode().update();
         } else if(n.equals(ReminderPlugin.getRootNode().getMutableTreeNode())) {
           ReminderPlugin.getRootNode().update();
         }
