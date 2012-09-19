@@ -374,21 +374,26 @@ public class FavoritesPlugin {
     if(mHasToUpdate) {
       handleTvDataUpdateFinished();
     }
+    
+    addPanel();
   }
   
   private void addPanel() {
     if(mSettings.getProperty("provideTab", "true").equals("true")) {
-      int splitPanePosition = getIntegerSetting(mSettings, "splitpanePosition",200);
-      
-      mMangePanel = new ManageFavoritesPanel(null, splitPanePosition, false, null, true);
-      Persona.getInstance().registerPersonaListener(mMangePanel);
-      
-      SwingUtilities.invokeLater(new Runnable() {
-        @Override
-        public void run() {
-          mCenterPanel.add(mMangePanel, BorderLayout.CENTER);
-        }
-      });
+      if(mMangePanel == null) {
+        int splitPanePosition = getIntegerSetting(mSettings, "splitpanePosition",200);
+        
+        mMangePanel = new ManageFavoritesPanel(null, splitPanePosition, false, null, true);
+        Persona.getInstance().registerPersonaListener(mMangePanel);
+        
+        SwingUtilities.invokeLater(new Runnable() {
+          @Override
+          public void run() {
+            mCenterPanel.add(mMangePanel, BorderLayout.CENTER);
+            mCenterPanel.repaint();
+          }
+        });
+      }
     }
     else {
       if(mMangePanel != null) {

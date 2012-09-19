@@ -52,7 +52,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
@@ -96,6 +95,7 @@ public class ReminderSettingsTab implements SettingsTab {
   private JCheckBox mShowTimeSelectionDlg;
   private JCheckBox mShowRemovedDlg;
   private JCheckBox mShowTimeCounter;
+  private JCheckBox mProvideTab;
   private JButton mExecFileDialogBtn;
   private JCheckBox mShowAlwaysOnTop;
   private JSpinner mAutoCloseReminderTimeSp;
@@ -125,7 +125,7 @@ public class ReminderSettingsTab implements SettingsTab {
     FormLayout layout = new FormLayout("5dlu,pref,5dlu,pref,pref:grow,3dlu,pref,3dlu,pref,5dlu",
         "pref,5dlu,pref,1dlu,pref,1dlu,pref,1dlu,pref,10dlu,pref,5dlu," +
         "pref,10dlu,pref,5dlu,pref,10dlu,pref,5dlu,pref,10dlu," +
-        "pref,5dlu,pref,3dlu,pref,10dlu,pref,5dlu,pref");
+        "pref,5dlu,pref,3dlu,pref,3dlu,default,10dlu,pref,5dlu,pref");
     layout.setColumnGroups(new int[][] {{7,9}});
     PanelBuilder pb = new PanelBuilder(layout, new ScrollableJPanel());
     pb.setDefaultDialogBorder();
@@ -257,6 +257,8 @@ public class ReminderSettingsTab implements SettingsTab {
     mShowTimeSelectionDlg.setSelected(mSettings.getProperty("showTimeSelectionDialog","true").compareTo("true") == 0);
     mShowRemovedDlg = new JCheckBox(mLocalizer.msg("showRemovedDialog","Show removed reminders after data update"));
     mShowRemovedDlg.setSelected(mSettings.getProperty("showRemovedDialog","true").compareTo("true") == 0);
+    mProvideTab = new JCheckBox(mLocalizer.msg("provideTab", "Provide tab in TV-Browser main window"));
+    mProvideTab.setSelected(mSettings.getProperty("provideTab","true").equals("true"));
 
     pb.addSeparator(mLocalizer.msg("remindBy", "Remind me by"), cc.xyw(1,1,10));
 
@@ -287,9 +289,12 @@ public class ReminderSettingsTab implements SettingsTab {
     pb.addSeparator(mLocalizer.msg("miscSettings","Misc settings"), cc.xyw(1,23,10));
     pb.add(mShowTimeSelectionDlg, cc.xyw(2,25,7));
     pb.add(mShowRemovedDlg, cc.xyw(2,27,7));
+    pb.add(mProvideTab, cc.xyw(2,29,7));
+    
+    //TODO
 
-    pb.addSeparator(DefaultMarkingPrioritySelectionPanel.getTitle(), cc.xyw(1,29,10));
-    pb.add(mMarkingsPanel = DefaultMarkingPrioritySelectionPanel.createPanel(ReminderPlugin.getInstance().getMarkPriority(),false,false),cc.xyw(2,31,9));
+    pb.addSeparator(DefaultMarkingPrioritySelectionPanel.getTitle(), cc.xyw(1,31,10));
+    pb.add(mMarkingsPanel = DefaultMarkingPrioritySelectionPanel.createPanel(ReminderPlugin.getInstance().getMarkPriority(),false,false),cc.xyw(2,33,9));
 
     mReminderWindowChB.addItemListener(new ItemListener() {
       public void itemStateChanged(ItemEvent e) {
@@ -490,9 +495,11 @@ public class ReminderSettingsTab implements SettingsTab {
 
     mSettings.setProperty("showTimeCounter", String.valueOf(!mCloseNever.isSelected() && mShowTimeCounter.isSelected()));
     mSettings.setProperty("alwaysOnTop", String.valueOf(mShowAlwaysOnTop.isSelected()));
+    mSettings.setProperty("provideTab", String.valueOf(mProvideTab.isSelected()));
 
     ReminderPlugin.getInstance().setMarkPriority(mMarkingsPanel.getSelectedPriority());
-
+    ReminderPlugin.getInstance().addPanel();
+    
     Thread saveThread = new Thread("Save reminders") {
       public void run() {
         ReminderPlugin.getInstance().store();
