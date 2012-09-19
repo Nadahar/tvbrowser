@@ -103,7 +103,8 @@ public class ReminderTableModel extends AbstractTableModel {
       ReminderListItem[] allItems = mList.getReminderItems();
       
       for(ReminderListItem item : allItems) {
-        if(mTitleFilterBox.getSelectedItem().equals(item.getProgram().getTitle())) {
+        if(mTitleFilterBox.getSelectedItem() != null && item != null && item.getProgram() != null && 
+            mTitleFilterBox.getSelectedItem().equals(item.getProgram().getTitle())) {
           filteredList.add(item);
         }
       }
