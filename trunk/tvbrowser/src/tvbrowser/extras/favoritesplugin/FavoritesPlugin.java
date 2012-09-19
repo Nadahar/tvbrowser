@@ -164,7 +164,7 @@ public class FavoritesPlugin {
   private PluginCenterPanelWrapper mWrapper;
   
   private ManageFavoritesPanel mMangePanel;
-
+  
   /**
    * Creates a new instance of FavoritesPlugin.
    */
@@ -374,17 +374,29 @@ public class FavoritesPlugin {
     if(mHasToUpdate) {
       handleTvDataUpdateFinished();
     }
-    int splitPanePosition = getIntegerSetting(mSettings, "splitpanePosition",200);
-    
-    mMangePanel = new ManageFavoritesPanel(null, splitPanePosition, false, null, true);
-    Persona.getInstance().registerPersonaListener(mMangePanel);
-    
-    SwingUtilities.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        mCenterPanel.add(mMangePanel, BorderLayout.CENTER);
+  }
+  
+  private void addPanel() {
+    if(mSettings.getProperty("provideTab", "true").equals("true")) {
+      int splitPanePosition = getIntegerSetting(mSettings, "splitpanePosition",200);
+      
+      mMangePanel = new ManageFavoritesPanel(null, splitPanePosition, false, null, true);
+      Persona.getInstance().registerPersonaListener(mMangePanel);
+      
+      SwingUtilities.invokeLater(new Runnable() {
+        @Override
+        public void run() {
+          mCenterPanel.add(mMangePanel, BorderLayout.CENTER);
+        }
+      });
+    }
+    else {
+      if(mMangePanel != null) {
+        Persona.getInstance().removePersonaListerner(mMangePanel);
       }
-    });
+      
+      mMangePanel = null;
+    }
   }
 
   private void load() {
@@ -1258,7 +1270,7 @@ public class FavoritesPlugin {
       ManageFavoritesDialog.getInstance().editSelectedFavorite();
       mMangePanel.handleFavoriteEvent();
     }
-    else {
+    else if(mMangePanel != null) {
       mMangePanel.editSelectedFavorite();
     }
   }
@@ -1268,7 +1280,7 @@ public class FavoritesPlugin {
       ManageFavoritesDialog.getInstance().newFavorite(parent);
       mMangePanel.handleFavoriteEvent();
     }
-    else {
+    else if(mMangePanel != null) {
       mMangePanel.newFavorite(parent);
     }
   }
@@ -1278,7 +1290,7 @@ public class FavoritesPlugin {
       ManageFavoritesDialog.getInstance().showSendDialog();
       mMangePanel.handleFavoriteEvent();
     }
-    else {
+    else if(mMangePanel != null) {
       mMangePanel.showSendDialog();
     }
   }
@@ -1288,7 +1300,7 @@ public class FavoritesPlugin {
       ManageFavoritesDialog.getInstance().deleteSelectedFavorite();
       mMangePanel.handleFavoriteEvent();
     }
-    else {
+    else if(mMangePanel != null) {
       mMangePanel.deleteSelectedFavorite();
     }
   }
@@ -1298,7 +1310,7 @@ public class FavoritesPlugin {
       return ManageFavoritesDialog.getInstance().programListIsEmpty();
     }
     
-    return mMangePanel.programListIsEmpty();
+    return mMangePanel != null ? mMangePanel.programListIsEmpty() : false;
   }
   
   public boolean isShowingNewFoundPrograms() {
@@ -1306,14 +1318,14 @@ public class FavoritesPlugin {
       return ManageFavoritesDialog.getInstance().isShowingNewFoundPrograms();
     }
     
-    return mMangePanel.isShowingNewFoundPrograms();
+    return mMangePanel != null ? mMangePanel.isShowingNewFoundPrograms() : false;
   }
   
   public void newFolder(FavoriteNode parent) {
     if(ManageFavoritesDialog.getInstance() != null && ManageFavoritesDialog.getInstance().isVisible()) {
       ManageFavoritesDialog.getInstance().newFolder(parent,ManageFavoritesDialog.getInstance());
     }
-    else {
+    else if(mMangePanel != null) {
       mMangePanel.newFolder(parent, MainFrame.getInstance());
     }
   }
@@ -1322,13 +1334,13 @@ public class FavoritesPlugin {
     if(ManageFavoritesDialog.getInstance() != null && ManageFavoritesDialog.getInstance().isVisible()) {
       ManageFavoritesDialog.getInstance().favoriteSelectionChanged();
     }
-    else {
+    else if(mMangePanel != null) {
       mMangePanel.favoriteSelectionChanged();
     }    
   }
   
   public PluginCenterPanelWrapper getPluginCenterPanelWrapper() {
-    return mWrapper;
+    return mSettings.getProperty("provideTab", "true").equals("true") ? mWrapper : null;
   }
   
   private class FavoritesCenterPanel extends PluginCenterPanel {
@@ -1362,5 +1374,14 @@ public class FavoritesPlugin {
     }
     
     return null;
+  }
+  
+  public boolean provideTab() {
+    return mSettings.getProperty("provideTab", "true").equals("true");
+  }
+  
+  public void setProvideTab(boolean value) {
+    mSettings.put("provideTab", String.valueOf(value));
+    addPanel();
   }
 }

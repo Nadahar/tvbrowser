@@ -44,6 +44,7 @@ import tvbrowser.extras.favoritesplugin.dlgs.FavoriteTreeModel;
 import tvbrowser.extras.reminderplugin.ReminderPluginProxy;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.ui.DefaultMarkingPrioritySelectionPanel;
+import util.ui.Localizer;
 import util.ui.PluginChooserDlg;
 import util.ui.UiUtilities;
 
@@ -68,7 +69,7 @@ public class FavoritesSettingTab implements SettingsTab {
 
   private ProgramReceiveTarget[] mClientPluginTargets, mCurrentClientPluginTargets;
   private JLabel mPluginLabel;
-  private JCheckBox mExpertMode, mShowRepetitions, mAutoSelectRemider;
+  private JCheckBox mExpertMode, mShowRepetitions, mAutoSelectRemider, mProvideTab;
 
   private DefaultMarkingPrioritySelectionPanel mMarkingsPanel;
   private ExclusionPanel mExclusionPanel;
@@ -82,7 +83,7 @@ public class FavoritesSettingTab implements SettingsTab {
         "5dlu,min(150dlu;pref):grow,5dlu,pref,5dlu",
         "pref,5dlu,pref,10dlu,pref,5dlu,pref,10dlu,pref,5dlu," +
         "pref,10dlu,pref,5dlu,pref,10dlu,pref,5dlu,pref,10dlu," +
-        "pref,5dlu,pref"));
+        "pref,5dlu,pref,10dlu,default,5dlu,default"));
     builder.setDefaultDialogBorder();
 
     mPluginLabel = new JLabel();
@@ -90,6 +91,7 @@ public class FavoritesSettingTab implements SettingsTab {
     mExpertMode = new JCheckBox(mLocalizer.msg("expertMode","Always show advanced favorite edit dialog"),FavoritesPlugin.getInstance().isUsingExpertMode());
     mShowRepetitions = new JCheckBox(mLocalizer.msg("showRepetitions","Show repetitions in context menu of a favorite program"),FavoritesPlugin.getInstance().isShowingRepetitions());
     mAutoSelectRemider = new JCheckBox(mLocalizer.msg("autoSelectReminder","Automatically remind of new favorite programs"),FavoritesPlugin.getInstance().isAutoSelectingReminder());
+    mProvideTab = new JCheckBox(mLocalizer.msg("provideTab","Provide tab in TV-Browser main window"),FavoritesPlugin.getInstance().provideTab());
 
     ProgramReceiveTarget[] targetsArr
     = FavoritesPlugin.getInstance().getClientPluginTargetIds();
@@ -141,6 +143,9 @@ public class FavoritesSettingTab implements SettingsTab {
 
     builder.addSeparator(DefaultMarkingPrioritySelectionPanel.getTitle(), cc.xyw(1,21,4));
     builder.add(mMarkingsPanel = DefaultMarkingPrioritySelectionPanel.createPanel(FavoritesPlugin.getInstance().getMarkPriority(),false,false), cc.xyw(2,23,3));
+    
+    builder.addSeparator(mLocalizer.msg("miscSettings","Miscellaneous"), cc.xyw(1,25,4));
+    builder.add(mProvideTab, cc.xyw(2,27,3));
 
     return builder.getPanel();
   }
@@ -193,6 +198,7 @@ public class FavoritesSettingTab implements SettingsTab {
     FavoritesPlugin.getInstance().setShowRepetitions(mShowRepetitions.isSelected());
     FavoritesPlugin.getInstance().setAutoSelectingReminder(mAutoSelectRemider.isSelected());
     FavoritesPlugin.getInstance().setMarkPriority(mMarkingsPanel.getSelectedPriority());
+    FavoritesPlugin.getInstance().setProvideTab(mProvideTab.isSelected());
 
     if(mExclusionPanel.wasChanged()) {
       FavoritesPlugin.getInstance().setGlobalExclusions(mExclusionPanel.getExclusions(),mExclusionPanel.wasAdded() && !mExclusionPanel.wasEditedOrDeleted());

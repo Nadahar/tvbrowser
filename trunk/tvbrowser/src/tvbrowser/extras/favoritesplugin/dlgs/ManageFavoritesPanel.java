@@ -115,6 +115,7 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
   private JButton mNewBt, mEditBt, mDeleteBt, mUpBt, mDownBt, mSortAlphaBt, mSortCountBt, mImportBt, mSendBt;
   private JButton mCloseBt;
   private JScrollPane mProgramScrollPane;
+  private JLabel mProgramInfoLabel;
 
   private boolean mShowNew = false;
   private JCheckBox mBlackListChb;
@@ -475,7 +476,14 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
 
     mProgramScrollPane = new JScrollPane(mProgramList);
     mProgramScrollPane.setBorder(null);
-    mSplitPane.setRightComponent(mProgramScrollPane);
+    
+    mProgramInfoLabel = new JLabel(mLocalizer.msg("numberOfPrograms", "Number of shown programs: {0}", 0));
+    
+    JPanel rightPanel = new JPanel(new BorderLayout(0,5));
+    rightPanel.add(mProgramInfoLabel, BorderLayout.NORTH);
+    rightPanel.add(mProgramScrollPane, BorderLayout.CENTER);
+    
+    mSplitPane.setRightComponent(rightPanel);
 
     msg = mLocalizer.msg("showBlack", "Show single removed programs");
     mBlackListChb = new JCheckBox(msg);
@@ -660,19 +668,27 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
 
             Arrays.sort(p,ProgramUtilities.getProgramComparator());
 
-            mProgramListModel.clear();
-            mProgramListModel.ensureCapacity(p.length);
-
-            for (int i = 0; i < p.length; i++) {
+            DefaultListModel newProgramListeModel = new DefaultListModel();
+            
+            newProgramListeModel.ensureCapacity(Math.min(p.length,MAX_SHOWN_PROGRAMS));
+            
+            for (int i = 0; i < Math.min(p.length,MAX_SHOWN_PROGRAMS); i++) {
               // don't list programs twice, if they are marked by different favorites
-              if (! mProgramListModel.contains(p[i])) {
-                mProgramListModel.addElement(p[i]);
+              if (! newProgramListeModel.contains(p[i])) {
+                newProgramListeModel.addElement(p[i]);
 
                 if(firstNotExpiredIndex == -1 && !p[i].isExpired()) {
-                  firstNotExpiredIndex = mProgramListModel.size()-1;
+                  firstNotExpiredIndex = newProgramListeModel.size()-1;
                 }
               }
             }
+            
+            mProgramListModel.clear();
+            mProgramListModel = newProgramListeModel;
+            mProgramList.setModel(mProgramListModel);
+            
+            mProgramList.updateUI();
+            
             if (scrollToFirst) {
               scrollInProgramListToIndex(firstNotExpiredIndex);
             }
@@ -703,6 +719,8 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
         }
       }
     }
+    
+    mProgramInfoLabel.setText(mLocalizer.msg("numberOfPrograms", "Number of shown programs: {0}", mProgramListModel.size()));
   }
 
   private void scrollInProgramListToIndex(final int index) {
@@ -768,7 +786,7 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
         }
       }
     }
-
+    
     scrollInProgramListToIndex(firstNotExpiredIndex);
   }
 
@@ -1114,8 +1132,13 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
   }
   
   public void handleFavoriteEvent() {
-    mFavoriteTree.updateUI();
-    favoriteSelectionChanged();
+    SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        mFavoriteTree.updateUI();
+        favoriteSelectionChanged();
+      }
+    });
   }
   
   public void newFolder(FavoriteNode parent, Window partenWindow) {
