@@ -270,16 +270,32 @@ public class ReminderPlugin {
     mReminderList.removeExpiredItems();
     mReminderList.startTimer();
     
-    mReminderListPanel = new ReminderListPanel(mReminderList, null);
-    Persona.getInstance().registerPersonaListener(mReminderListPanel);
-    
-    SwingUtilities.invokeLater(new Runnable() {
-      @Override
-      public void run() {        
-        mCenterPanel.add(mReminderListPanel, BorderLayout.CENTER);
-        mReminderListPanel.updatePersona();
+    addPanel();
+  }
+  
+  void addPanel() {
+    if(mSettings.getProperty("provideTab", "true").equals("true")) {
+      if(mReminderListPanel == null) {
+        mReminderListPanel = new ReminderListPanel(mReminderList, null);
+        Persona.getInstance().registerPersonaListener(mReminderListPanel);
+        
+        SwingUtilities.invokeLater(new Runnable() {
+          @Override
+          public void run() {        
+            mCenterPanel.add(mReminderListPanel, BorderLayout.CENTER);
+            mReminderListPanel.updatePersona();
+            mCenterPanel.repaint();
+          }
+        });
       }
-    });
+    }
+    else {
+      if(mReminderListPanel != null) {
+        Persona.getInstance().removePersonaListerner(mReminderListPanel);
+      }
+      
+      mReminderListPanel = null;
+    }
   }
 
   /**
@@ -1066,7 +1082,7 @@ public class ReminderPlugin {
   }
 
   public PluginCenterPanelWrapper getPluginCenterPanelWrapper() {
-    return mWrapper;
+    return mSettings.getProperty("provideTab", "true").equals("true") ? mWrapper : null;
   }
   
   private class ReminderCenterPanel extends PluginCenterPanel {

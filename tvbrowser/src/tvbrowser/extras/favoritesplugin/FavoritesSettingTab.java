@@ -141,12 +141,12 @@ public class FavoritesSettingTab implements SettingsTab {
     builder.addSeparator(mLocalizer.msg("exclusions","Global exclusion criterions"), cc.xyw(1,17,4));
     builder.add(mExclusionPanel = new ExclusionPanel(FavoritesPlugin.getInstance().getGlobalExclusions(), UiUtilities.getLastModalChildOf(MainFrame.getInstance()), null), cc.xyw(2,19,3));
 
-    builder.addSeparator(DefaultMarkingPrioritySelectionPanel.getTitle(), cc.xyw(1,21,4));
-    builder.add(mMarkingsPanel = DefaultMarkingPrioritySelectionPanel.createPanel(FavoritesPlugin.getInstance().getMarkPriority(),false,false), cc.xyw(2,23,3));
+    builder.addSeparator(mLocalizer.msg("miscSettings","Miscellaneous"), cc.xyw(1,21,4));
+    builder.add(mProvideTab, cc.xyw(2,23,3));
     
-    builder.addSeparator(mLocalizer.msg("miscSettings","Miscellaneous"), cc.xyw(1,25,4));
-    builder.add(mProvideTab, cc.xyw(2,27,3));
-
+    builder.addSeparator(DefaultMarkingPrioritySelectionPanel.getTitle(), cc.xyw(1,25,4));
+    builder.add(mMarkingsPanel = DefaultMarkingPrioritySelectionPanel.createPanel(FavoritesPlugin.getInstance().getMarkPriority(),false,false), cc.xyw(2,27,3));
+    
     return builder.getPanel();
   }
 
