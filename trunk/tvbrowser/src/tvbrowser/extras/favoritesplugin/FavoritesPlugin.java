@@ -391,6 +391,7 @@ public class FavoritesPlugin {
           public void run() {
             mCenterPanel.add(mMangePanel, BorderLayout.CENTER);
             mCenterPanel.repaint();
+            mMangePanel.updatePersona();
           }
         });
       }

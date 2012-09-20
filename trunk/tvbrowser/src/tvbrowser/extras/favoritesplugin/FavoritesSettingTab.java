@@ -44,7 +44,6 @@ import tvbrowser.extras.favoritesplugin.dlgs.FavoriteTreeModel;
 import tvbrowser.extras.reminderplugin.ReminderPluginProxy;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.ui.DefaultMarkingPrioritySelectionPanel;
-import util.ui.Localizer;
 import util.ui.PluginChooserDlg;
 import util.ui.UiUtilities;
 
