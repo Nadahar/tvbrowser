@@ -859,14 +859,17 @@ public class FavoritesPlugin {
       handler = new WizardHandler(parent, initialStep);
       favorite = (tvbrowser.extras.favoritesplugin.core.Favorite)handler.show();
     }
-
+    
     if (favorite != null) {
       try {
         favorite.updatePrograms();
         FavoriteTreeModel.getInstance().addFavorite(favorite);
-
+        
         if(ManageFavoritesDialog.getInstance() != null) {
           ManageFavoritesDialog.getInstance().addFavorite(favorite, null);
+        }
+        if(mMangePanel != null) {
+          mMangePanel.reload();
         }
 
       }catch (TvBrowserException exc) {
