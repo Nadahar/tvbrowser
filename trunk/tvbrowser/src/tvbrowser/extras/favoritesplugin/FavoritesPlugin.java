@@ -387,6 +387,7 @@ public class FavoritesPlugin {
         
         mMangePanel = new ManageFavoritesPanel(null, splitPanePosition, false, null, true);
         mMangePanel.addAncestorListener(new AncestorListener() {
+          private boolean mCheck = false;
           @Override
           public void ancestorRemoved(AncestorEvent event) {}
           
@@ -396,7 +397,9 @@ public class FavoritesPlugin {
           @Override
           public void ancestorAdded(AncestorEvent event) {
             if(mMangePanel != null) {
-              mMangePanel.scrollToFirstNotExpiredIndex();
+              mMangePanel.scrollToFirstNotExpiredIndex(mCheck);
+              
+              mCheck = true;
             }
           }
         });
@@ -409,7 +412,7 @@ public class FavoritesPlugin {
             mCenterPanel.add(mMangePanel, BorderLayout.CENTER);
             mCenterPanel.repaint();
             mMangePanel.updatePersona();
-            mMangePanel.scrollToFirstNotExpiredIndex();
+            mMangePanel.scrollToFirstNotExpiredIndex(false);
           }
         });
       }
