@@ -909,7 +909,15 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
   }
 
   public void addFavorite(Favorite fav, Object dummy) {
-    mFavoritesListModel.addElement(fav);
+    if(mFavoritesListModel != null) {
+      mFavoritesListModel.addElement(fav);
+    }
+  }
+  
+  public void reload() {
+    if(mFavoriteTree != null) {
+      mFavoriteTree.reload(mFavoriteTree.getRoot());
+    }
   }
 
   public void editSelectedFavorite() {
