@@ -130,7 +130,7 @@ public class SettingsDialog implements WindowClosingIf {
     String title = Localizer.getLocalization(Localizer.I18N_SETTINGS);
     // have the title explicitly specified for windows
     if (OperatingSystem.isWindows()) {
-      title = mLocalizer.msg("title", "");
+      title = Localizer.getLocalization(Localizer.I18N_OPTIONS);
     }
     if (title.isEmpty()) {
       title = Localizer.getLocalization(Localizer.I18N_SETTINGS);
