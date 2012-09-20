@@ -725,8 +725,19 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
     mProgramInfoLabel.setText(mLocalizer.msg("numberOfPrograms", "Number of shown programs: {0}", mProgramListModel.size()));
   }
 
-  public void scrollToFirstNotExpiredIndex() {
+  public void scrollToFirstNotExpiredIndex(boolean check) {
     synchronized (mProgramListModel) {
+      if(check) {
+        int firstVisibleIndex = mProgramList.locationToIndex(mProgramList.getVisibleRect().getLocation());
+        int lastVisibleIndex = mProgramList.locationToIndex(new Point(0,mProgramList.getVisibleRect().y + mProgramList.getVisibleRect().height));
+        
+        for(int i = firstVisibleIndex; i < lastVisibleIndex; i++) {
+          if(!((Program)mProgramListModel.get(i)).isExpired()) {
+            return;
+          }
+        }
+      }
+      
       for(int i = 0; i < mProgramListModel.size(); i++) {
         Program test = (Program)mProgramListModel.get(i);
         
