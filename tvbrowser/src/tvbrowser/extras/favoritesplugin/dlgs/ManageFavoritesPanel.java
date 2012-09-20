@@ -478,10 +478,12 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
     mProgramScrollPane.setBorder(null);
     
     mProgramInfoLabel = new JLabel(mLocalizer.msg("numberOfPrograms", "Number of shown programs: {0}", 0));
+    mProgramInfoLabel.setBorder(BorderFactory.createEmptyBorder(0, 5, 1, 0));
     
-    JPanel rightPanel = new JPanel(new BorderLayout(0,5));
+    JPanel rightPanel = new JPanel(new BorderLayout());
     rightPanel.add(mProgramInfoLabel, BorderLayout.NORTH);
     rightPanel.add(mProgramScrollPane, BorderLayout.CENTER);
+    rightPanel.setOpaque(false);
     
     mSplitPane.setRightComponent(rightPanel);
 
@@ -1149,9 +1151,11 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
   public void updatePersona() {
     if(Persona.getInstance().getHeaderImage() != null) {
       mBlackListChb.setForeground(Persona.getInstance().getTextColor());
+      mProgramInfoLabel.setForeground(Persona.getInstance().getTextColor());
     }
     else {
       mBlackListChb.setForeground(UIManager.getColor("Label.foreground"));
+      mProgramInfoLabel.setForeground(UIManager.getColor("Label.foreground"));
     }
   }
 }
