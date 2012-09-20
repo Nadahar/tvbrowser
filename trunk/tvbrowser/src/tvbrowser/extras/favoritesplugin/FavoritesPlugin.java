@@ -55,6 +55,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
@@ -384,6 +386,21 @@ public class FavoritesPlugin {
         int splitPanePosition = getIntegerSetting(mSettings, "splitpanePosition",200);
         
         mMangePanel = new ManageFavoritesPanel(null, splitPanePosition, false, null, true);
+        mMangePanel.addAncestorListener(new AncestorListener() {
+          @Override
+          public void ancestorRemoved(AncestorEvent event) {}
+          
+          @Override
+          public void ancestorMoved(AncestorEvent event) {}
+          
+          @Override
+          public void ancestorAdded(AncestorEvent event) {
+            if(mMangePanel != null) {
+              mMangePanel.scrollToFirstNotExpiredIndex();
+            }
+          }
+        });
+        
         Persona.getInstance().registerPersonaListener(mMangePanel);
         
         SwingUtilities.invokeLater(new Runnable() {
@@ -392,6 +409,7 @@ public class FavoritesPlugin {
             mCenterPanel.add(mMangePanel, BorderLayout.CENTER);
             mCenterPanel.repaint();
             mMangePanel.updatePersona();
+            mMangePanel.scrollToFirstNotExpiredIndex();
           }
         });
       }
