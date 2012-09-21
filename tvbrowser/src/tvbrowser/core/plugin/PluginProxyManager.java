@@ -1221,7 +1221,9 @@ public class PluginProxyManager {
           t.start();
           /* Wait maximal 10 seconds for plugin to react. */
           if(t.isAlive()) {
-            t.join(10000);
+            try {
+              t.join(10000);
+            }catch(InterruptedException ie) {}
           }
         }catch(Throwable t) {
           /* Catch all possible not catched errors that occur in the plugin method*/
