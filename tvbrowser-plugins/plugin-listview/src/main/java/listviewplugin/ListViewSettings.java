@@ -55,6 +55,8 @@ public class ListViewSettings implements SettingsTab {
   /** Picture settings */
   private PluginsPictureSettingsPanel mPictureSettings;
   
+  private JCheckBox mProvideTab;
+  
   /**
    * Create the SettingsTab
    * @param settings Settings
@@ -74,10 +76,15 @@ public class ListViewSettings implements SettingsTab {
     mShowAtStart = new JCheckBox(mLocalizer.msg("showAtStart", "Show at startup"));
     mShowAtStart.setSelected(mSettings.getProperty("showAtStartup", "false").equals("true"));
 
+    mProvideTab = new JCheckBox(mLocalizer.msg("provideTab", "Provide tab in TV-Browser main window"));
+    mProvideTab.setSelected(mSettings.getProperty("provideTab","true").equals("true"));
+    
     mPictureSettings = new PluginsPictureSettingsPanel(ListViewPlugin.getInstance().getPictureSettings(), false);
     
     panel.addRow();
     panel.add(mShowAtStart, cc.xy(2,panel.getRow()));
+    panel.addRow();
+    panel.add(mProvideTab, cc.xy(2,panel.getRow()));
     
     panel.addParagraph(PluginsPictureSettingsPanel.getTitle());
     
@@ -92,7 +99,9 @@ public class ListViewSettings implements SettingsTab {
    */
   public void saveSettings() {
     mSettings.setProperty("showAtStartup", String.valueOf(mShowAtStart.isSelected()));
+    mSettings.setProperty("provideTab", String.valueOf(mProvideTab.isSelected()));
     mSettings.setProperty("pictureSettings", String.valueOf(mPictureSettings.getSettings().getType()));
+    ListViewPlugin.getInstance().addPanel();
   }
 
   /**
@@ -108,5 +117,4 @@ public class ListViewSettings implements SettingsTab {
   public String getTitle() {
     return mLocalizer.msg("settingsTabName", "ListView Plugin");
   }
-
 }
