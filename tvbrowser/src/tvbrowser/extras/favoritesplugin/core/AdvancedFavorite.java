@@ -89,6 +89,7 @@ public class AdvancedFavorite extends Favorite {
   public AdvancedFavorite(String searchText) {
     super();
     mSearchFormSettings = new SearchFormSettings(searchText);
+    mSearchFormSettings.setUserDefaultFieldTypes(FavoritesPlugin.getInstance().getDefaultProgramFieldTypeSelection());
     if (searchText.contains(" OR ") || searchText.contains(" AND ")
         || searchText.contains(" NOT ")) {
       mSearchFormSettings.setSearcherType(PluginManager.SEARCHER_TYPE_BOOLEAN);
@@ -325,7 +326,7 @@ public class AdvancedFavorite extends Favorite {
     private JComboBox mFilterCombo;
 
     public JPanel createConfigurationPanel() {
-      mSearchForm = new SearchForm(true, false, false, SearchForm.LAYOUT_HORIZONTAL);
+      mSearchForm = new SearchForm(true, false, false, SearchForm.LAYOUT_HORIZONTAL, true);
       mSearchForm.setSearchFormSettings(mSearchFormSettings);
 
 
@@ -363,6 +364,8 @@ public class AdvancedFavorite extends Favorite {
       mSearchFormSettings.setSearchIn(settings.getSearchIn());
       mSearchFormSettings.setSearchText(settings.getSearchText());
       mSearchFormSettings.setUserDefinedFieldTypes(settings.getUserDefinedFieldTypes());
+      FavoritesPlugin.getInstance().setDefaultProgramFieldTypeSelection(settings.getUserDefaultFieldTypes());
+      
       if (mFilterCheckbox.isSelected()) {
         mFilter = (ProgramFilter)mFilterCombo.getSelectedItem();
         if (mFilter instanceof ShowAllFilter) {

@@ -864,7 +864,7 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
       favorite = new AdvancedFavorite("");
       EditFavoriteDialog dlg = new EditFavoriteDialog((ManageFavoritesDialog.getInstance() != null && ManageFavoritesDialog.getInstance().isVisible()) ? (Window)ManageFavoritesDialog.getInstance() : MainFrame.getInstance(), favorite);
       UiUtilities.centerAndShow(dlg);
-
+      
       if (!dlg.getOkWasPressed()) {
         favorite = null;
       }
@@ -896,7 +896,7 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
         ErrorHandler.handle("Creating favorites failed.", e);
       }
     }
-
+    
     if (newNode != null) {
       if (parent != null) {
         mFavoriteTree.reload(parent);

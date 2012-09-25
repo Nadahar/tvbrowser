@@ -27,6 +27,7 @@ package util.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -35,6 +36,7 @@ import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
@@ -49,10 +51,13 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentListener;
 
+import tvbrowser.core.Settings;
 import util.ui.customizableitems.SelectableItemList;
 
+import com.jgoodies.forms.builder.ButtonBarBuilder2;
 import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
@@ -111,6 +116,7 @@ public class SearchForm extends JPanel {
   private JCheckBox mCaseSensitiveChB;
 
   private ProgramFieldType[] mUserDefinedFieldTypeArr;
+  private ProgramFieldType[] mUserDefaultFieldTypeArr;
 
   private FieldSelectionDialog mFieldSelectionDlg;
   private JDialog mParent;
@@ -128,7 +134,7 @@ public class SearchForm extends JPanel {
   public SearchForm(boolean showInputfield, boolean showHistory, boolean showTimeSelection) {
     this(showInputfield, showHistory, showTimeSelection, LAYOUT_VERTICAL);
   }
-
+  
   /**
    * Creates a new search form.
    *
@@ -138,6 +144,20 @@ public class SearchForm extends JPanel {
    * @param layout selection whether the form shall be laid out horizontally or vertically
    */
   public SearchForm(boolean showInputfield, boolean showHistory, boolean showTimeSelection, int layout) {
+    this(showInputfield, showHistory, showTimeSelection, layout, false);
+  }
+
+  /**
+   * Creates a new search form.
+   *
+   * @param showInputfield Should there be a Input-Field?
+   * @param showHistory Should there be a history?
+   * @param showTimeSelection Should the search time (number of days) be selectable?
+   * @param layout selection whether the form shall be laid out horizontally or vertically
+   * @param showDefaultSelection Should the user be able to set a selected field type array as default?
+   * @since 3.2.1
+   */
+  public SearchForm(boolean showInputfield, boolean showHistory, boolean showTimeSelection, int layout, final boolean showDefaultSelection) {
     super();
 
     FormLayout layoutTop = new FormLayout("pref, 3dlu, fill:10dlu:grow", "");
@@ -214,7 +234,7 @@ public class SearchForm extends JPanel {
     mChangeSearchFieldsBt = new JButton(Localizer.getLocalization(Localizer.I18N_SELECT));
     mChangeSearchFieldsBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
-        showSelectSearchFieldsDialog();
+        showSelectSearchFieldsDialog(showDefaultSelection);
       }
     });
 
@@ -373,6 +393,7 @@ public class SearchForm extends JPanel {
     }
 
     mUserDefinedFieldTypeArr = settings.getUserDefinedFieldTypes();
+    mUserDefaultFieldTypeArr = settings.getUserDefaultFieldTypes();
 
     switch (settings.getSearcherType()) {
       case PluginManager.SEARCHER_TYPE_EXACTLY:
@@ -408,6 +429,7 @@ public class SearchForm extends JPanel {
       searchIn = SearchFormSettings.SEARCH_IN_USER_DEFINED;
       settings.setUserDefinedFieldTypes(mUserDefinedFieldTypeArr);
     }
+    settings.setUserDefaultFieldTypes(mUserDefaultFieldTypeArr);
     settings.setSearchIn(searchIn);
 
     int searcherType;
@@ -584,8 +606,8 @@ public class SearchForm extends JPanel {
   }
 
 
-  private void showSelectSearchFieldsDialog() {
-    mFieldSelectionDlg = new FieldSelectionDialog(this, mUserDefinedFieldTypeArr);
+  private void showSelectSearchFieldsDialog(boolean showDefaultSelection) {
+    mFieldSelectionDlg = new FieldSelectionDialog(this, mUserDefinedFieldTypeArr, mUserDefaultFieldTypeArr, showDefaultSelection);
     mFieldSelectionDlg.centerAndShow(mParent);
 
     if(mParent != null) {
@@ -593,6 +615,7 @@ public class SearchForm extends JPanel {
     }
 
     mUserDefinedFieldTypeArr = mFieldSelectionDlg.getSelectedTypes();
+    mUserDefaultFieldTypeArr = mFieldSelectionDlg.getDefaultTypes();
   }
 
   /**
@@ -608,17 +631,27 @@ public class SearchForm extends JPanel {
     private JDialog mDlg;
 
     private ProgramFieldType[] mSelectedTypeArr;
+    private ProgramFieldType[] mDefaultTypeArr;
 
-    private SelectableItemList mSelectableItemList;
+    private OrderChooser mSelectableItemList;
+    
+    private JCheckBox mDefaultSelection;
 
     public FieldSelectionDialog(Component parent,
-      ProgramFieldType[] selectedTypeArr)
+      ProgramFieldType[] selectedTypeArr, ProgramFieldType[] defaultTypeArr, 
+      boolean showDefaultSelection)
     {
       if(selectedTypeArr == null) {
-        selectedTypeArr = new ProgramFieldType[0];
+        if(defaultTypeArr == null) {
+          selectedTypeArr = new ProgramFieldType[0];
+        }
+        else {
+          selectedTypeArr = defaultTypeArr;
+        }
       }
 
       mSelectedTypeArr = selectedTypeArr;
+      mDefaultTypeArr = defaultTypeArr;
 
       String msg;
 
@@ -646,11 +679,21 @@ public class SearchForm extends JPanel {
         "Please select the fields to search for");
       main.add(UiUtilities.createHelpTextArea(msg + "\n"), BorderLayout.NORTH);
 
-      mSelectableItemList = new SelectableItemList(selectedTypeArr,getSearchableFieldTypes());
+      mSelectableItemList = new OrderChooser(selectedTypeArr,getSearchableFieldTypes(),false);
       main.add(mSelectableItemList, BorderLayout.CENTER);
 
-      JPanel buttonPn = new JPanel(new FlowLayout(FlowLayout.TRAILING));
-      main.add(buttonPn, BorderLayout.SOUTH);
+      
+      ButtonBarBuilder2 buttons = new ButtonBarBuilder2();
+      buttons.setBorder(BorderFactory.createEmptyBorder(5,0,5,0));
+      
+      if(showDefaultSelection) {
+        mDefaultSelection = new JCheckBox(mLocalizer.msg("showDefaultSelection", "Save selected as default"));
+        buttons.addButton(mDefaultSelection);
+      }
+      
+      buttons.addGlue();
+      
+      main.add(buttons.getPanel(), BorderLayout.SOUTH);
 
       JButton okBt = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
       okBt.addActionListener(new ActionListener() {
@@ -659,7 +702,8 @@ public class SearchForm extends JPanel {
         }
       });
       mDlg.getRootPane().setDefaultButton(okBt);
-      buttonPn.add(okBt);
+      buttons.addButton(okBt);
+      buttons.addRelatedGap();
 
       JButton cancelBt = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
       cancelBt.addActionListener(new ActionListener() {
@@ -667,16 +711,20 @@ public class SearchForm extends JPanel {
           mDlg.dispose();
         }
       });
-      buttonPn.add(cancelBt);
+      buttons.addButton(cancelBt);
 
-      mDlg.setSize(250, 300);
+      Settings.layoutWindow("searchFormFieldSelectionDlg", mDlg, new Dimension(380,320));
     }
 
     private void handleOk() {
-      Object[] o = mSelectableItemList.getSelection();
+      Object[] o = mSelectableItemList.getOrder()/*.getSelection()*/;
       mSelectedTypeArr = new ProgramFieldType[o.length];
       for (int i=0;i<o.length;i++) {
         mSelectedTypeArr[i]=(ProgramFieldType)o[i];
+      }
+      
+      if(mDefaultSelection.isSelected()) {
+        mDefaultTypeArr = mSelectedTypeArr;
       }
 
       mDlg.dispose();
@@ -701,6 +749,10 @@ public class SearchForm extends JPanel {
 
     public ProgramFieldType[] getSelectedTypes() {
       return mSelectedTypeArr;
+    }
+    
+    public ProgramFieldType[] getDefaultTypes() {
+      return mDefaultTypeArr;
     }
 
   } // inner class FieldSelectionDialog

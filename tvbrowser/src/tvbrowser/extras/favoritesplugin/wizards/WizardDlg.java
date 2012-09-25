@@ -224,6 +224,11 @@ public class WizardDlg extends JDialog implements WindowClosingIf {
     setVisible(false);
   }
 
+  public void finish() {
+    mDataObject = mStep.createDataObject(mDataObject);
+    close(FINISH);
+  }
+  
   public void close(int val) {
     mResult = val;
     close();
