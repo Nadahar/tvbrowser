@@ -103,6 +103,7 @@ import devplugin.PluginCenterPanel;
 import devplugin.PluginCenterPanelWrapper;
 import devplugin.PluginTreeNode;
 import devplugin.Program;
+import devplugin.ProgramFieldType;
 import devplugin.ProgramReceiveIf;
 import devplugin.ProgramReceiveTarget;
 import devplugin.ProgressMonitor;
@@ -167,11 +168,14 @@ public class FavoritesPlugin {
   
   private ManageFavoritesPanel mMangePanel;
   
+  private ProgramFieldType[] mDefaultProgramFieldTypeSelection;
+  
   /**
    * Creates a new instance of FavoritesPlugin.
    */
   private FavoritesPlugin() {
     mInstance = this;
+    mDefaultProgramFieldTypeSelection = null;
     mRootNode = new PluginTreeNode(getName());
     mWrapper = new PluginCenterPanelWrapper() {  
       FavoritesCenterPanel centerPanel = new FavoritesCenterPanel();
@@ -574,6 +578,23 @@ public class FavoritesPlugin {
         mExclusions[i] = new Exclusion(in);
       }
     }
+    
+    
+    if (version >= 9) {
+      int fieldTypeCount = in.readInt();
+      
+      if(fieldTypeCount > 0) {
+        mDefaultProgramFieldTypeSelection = new ProgramFieldType[fieldTypeCount];
+        
+        for(int i = 0; i < mDefaultProgramFieldTypeSelection.length; i++) {
+          int typeId = in.readInt();
+          mDefaultProgramFieldTypeSelection[i] = ProgramFieldType.getTypeForId(typeId);
+        }
+      }
+      else {
+        mDefaultProgramFieldTypeSelection = null;
+      }
+    }
   }
 
 
@@ -706,7 +727,7 @@ public class FavoritesPlugin {
   }
 
   private void writeData(ObjectOutputStream out) throws IOException {
-    out.writeInt(8); // version
+    out.writeInt(9); // version
 
     FavoriteTreeModel.getInstance().storeData(out);
 
@@ -719,6 +740,16 @@ public class FavoritesPlugin {
 
     for (Exclusion exclusion : mExclusions) {
       exclusion.writeData(out);
+    }
+    
+    if(mDefaultProgramFieldTypeSelection != null) {
+      out.writeInt(mDefaultProgramFieldTypeSelection.length);
+      for(ProgramFieldType fieldType : mDefaultProgramFieldTypeSelection) {
+        out.writeInt(fieldType.getTypeId());
+      }
+    }
+    else {
+      out.writeInt(0);
     }
   }
 
@@ -1413,5 +1444,13 @@ public class FavoritesPlugin {
   public void setProvideTab(boolean value) {
     mSettings.put("provideTab", String.valueOf(value));
     addPanel();
+  }
+  
+  public ProgramFieldType[] getDefaultProgramFieldTypeSelection() {
+    return mDefaultProgramFieldTypeSelection;
+  }
+  
+  public void setDefaultProgramFieldTypeSelection(ProgramFieldType[] defaultSelection) {
+    mDefaultProgramFieldTypeSelection = defaultSelection;
   }
 }

@@ -102,6 +102,12 @@ public class WizardHandler {
     }
   }
 
+  public void finishWithCurrentStep() {
+    if (mWizardDialog != null) {
+      mWizardDialog.finish();
+    }
+  }
+  
   public void closeCurrentStep() {
     if (mWizardDialog != null) {
       mWizardDialog.close();

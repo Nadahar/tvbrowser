@@ -64,6 +64,8 @@ public class SearchFormSettings {
   private int mSearchIn;
   /** The fields the user want to search in. */
   private ProgramFieldType[] mUserDefinedFieldTypes;
+  /** The fields that are initially selected */
+  private ProgramFieldType[] mUserDefaultFieldTypes;
   /**
    * Specifies the searcher type.
    *
@@ -117,6 +119,7 @@ public class SearchFormSettings {
     int fieldTypeCount = in.readInt();
     if (fieldTypeCount > 0) {
       mUserDefinedFieldTypes = new ProgramFieldType[fieldTypeCount];
+      
       for (int i = 0; i < mUserDefinedFieldTypes.length; i++) {
         int typeId = in.readInt();
         mUserDefinedFieldTypes[i] = ProgramFieldType.getTypeForId(typeId);
@@ -125,7 +128,7 @@ public class SearchFormSettings {
       mUserDefinedFieldTypes = null;
     }
     
-    if (version == 2) {
+    if (version >= 2) {
       mNrDays = in.readInt();
     }
   }
@@ -242,6 +245,16 @@ public class SearchFormSettings {
         }
     }
   }
+  
+  /**
+   * Gets the default field types for initially selection.
+   * <p>
+   * @return The default field types for initially selection.
+   * @since 3.2.1
+   */
+  public ProgramFieldType[] getUserDefaultFieldTypes() {
+    return mUserDefaultFieldTypes;
+  }
 
 
   /**
@@ -262,6 +275,18 @@ public class SearchFormSettings {
   public void setUserDefinedFieldTypes(ProgramFieldType[] typeArr) {
     mUserDefinedFieldTypes = typeArr;
     mSearcher = null;
+  }
+  
+  /**
+   * Sets the default selection field types.
+   * ATTENTION: The default selection is not stored in this settings,
+   * if you want to keep it you have to save it otherwise.
+   * <p>
+   * @param typeArr The default selection field types.
+   * @since 3.2.1
+   */
+  public void setUserDefaultFieldTypes(ProgramFieldType[] typeArr) {
+    mUserDefaultFieldTypes = typeArr;
   }
 
   /**
