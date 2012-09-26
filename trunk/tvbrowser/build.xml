@@ -533,7 +533,13 @@
     </zip>
   </target>
 
-  <target name="public-nightly" depends="runtime-transportable" description="Creates platform-independent binaries for nightly transportable version of TV-Browser (without platform dependent starters)">
+  <target name="clean-public">
+  	<delete>
+  		<fileset dir="${public.dir}" includes="**/*"/>
+  	</delete>
+  </target>
+	
+  <target name="public-nightly" depends="clean-public,runtime-transportable" description="Creates platform-independent binaries for nightly transportable version of TV-Browser (without platform dependent starters)">
   	<mkdir dir="${public.dir}"/>
 
     <tstamp>
