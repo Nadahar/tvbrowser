@@ -488,7 +488,7 @@ public class ChannelList {
           && ((dataServiceId != null && channel.getDataServiceProxy().getId()
               .compareTo(dataService.getId()) == 0) || dataServiceId == null)
           && ((groupId != null && channel.getGroup().getId().compareTo(groupId) == 0) || groupId == null)
-          && ((country != null && channel.getCountry().compareTo(country) == 0) || country == null)) {
+          && ((country != null && channel.getBaseCountry().compareTo(country) == 0) || country == null)) {
         return channel;
       }
     }
@@ -805,7 +805,7 @@ public class ChannelList {
   private static String createPropertyForChannel(Channel channel, String value) {
     return new StringBuilder(channel.getDataServiceProxy().getId()).append(":")
         .append(channel.getGroup().getId()).append(":").append(
-            channel.getCountry()).append(":").append(channel.getId()).append(
+            channel.getBaseCountry()).append(":").append(channel.getId()).append(
             "=").append(value).toString();
   }
 
@@ -813,7 +813,7 @@ public class ChannelList {
       HashMap<String, String> map) {
     String value = map.get(new StringBuilder(channel.getDataServiceProxy()
         .getId()).append(":").append(channel.getGroup().getId()).append(":")
-        .append(channel.getCountry()).append(":").append(channel.getId())
+        .append(channel.getBaseCountry()).append(":").append(channel.getId())
         .toString());
 
     if (value == null) {

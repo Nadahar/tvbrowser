@@ -55,7 +55,7 @@ public class ChannelItem {
       mChannelDataServiceId = channel.getDataServiceProxy().getId();
       mGroupId = channel.getGroup().getId();
       mCertainChannelId = channel.getId();
-      mCountry = channel.getCountry();
+      mCountry = channel.getBaseCountry();
       mChannel = channel;
       mNullChannel = false;
     }
@@ -86,7 +86,7 @@ public class ChannelItem {
       
       if(mChannel != null) {
         mGroupId = mChannel.getGroup().getId();
-        mCountry = mChannel.getCountry();
+        mCountry = mChannel.getBaseCountry();
       }
     }
     else {

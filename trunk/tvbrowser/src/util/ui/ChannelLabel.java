@@ -165,7 +165,7 @@ public class ChannelLabel extends JLabel {
         text.append(" (");
       }
       if (mShowCountry) {
-        text.append(channel.getCountry());
+        text.append(channel.getBaseCountry());
       }
       if (mShowService) {
         if (mShowCountry) {

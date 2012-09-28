@@ -89,7 +89,8 @@ public class Channel implements Comparable<Channel> {
   private String mUnescapedName;
   private String mId;
   private TimeZone mTimeZone;
-  private String mCountry;
+  private String mBaseCountry;
+  private String[] mAllCountries;
   private String mCopyrightNotice;
   private String mWebpage;
   private ChannelGroup mGroup;
@@ -110,21 +111,36 @@ public class Channel implements Comparable<Channel> {
    * @param name The name of this channel.
    * @param id The id of this channel.
    * @param timeZone The time zone of this channel.
-   * @param country The country of this channel.
+   * @param baseCountry The base country of this channel.
    * @param copyrightNotice The copyright notice for this channel.
    * @param webpage The webpage of this channel.
    * @param group The group of this channel.
    * @param icon The icon for this channel.
    * @param categories The categories for this channel.
    * @param unescapedName The unescaped name for this channel.
+   * @param allCountries All supported countries of this channel.
+   *        ATTENTION: Have to contain the base country too.
+   * @since 3.2.1
    */
   public Channel(AbstractTvDataService dataService, String name, String id,
-    TimeZone timeZone, String country, String copyrightNotice, String webpage, devplugin.ChannelGroup group, Icon icon, int categories, String unescapedName)
+    TimeZone timeZone, String baseCountry, String copyrightNotice, String webpage,
+    devplugin.ChannelGroup group, Icon icon, int categories, String unescapedName,
+    String[] allCountries)
   {
-    if (country.length() != 2) {
+    if(allCountries != null) {
+      for(String testCountry : allCountries) {
+        if (testCountry.length() != 2) {
+          throw new IllegalArgumentException("all contries must be a two character "
+            + "ISO country code (as used in top level domains, e.g. 'de' or 'us'): "
+            + "'" + testCountry + "'");
+        }        
+      }
+    }
+    
+    if (baseCountry.length() != 2) {
       throw new IllegalArgumentException("country must be a two character "
         + "ISO country code (as used in top level domains, e.g. 'de' or 'us'): "
-        + "'" + country + "'");
+        + "'" + baseCountry + "'");
     }
 
     mDataService = dataService;
@@ -132,7 +148,19 @@ public class Channel implements Comparable<Channel> {
     mId = id;
     mTimeZone = timeZone;
     // country, webpage and copyright will often be the same, so filter duplicates
-    mCountry = StringPool.getString(country);
+    mBaseCountry = StringPool.getString(baseCountry);
+    
+    if(allCountries != null) {
+      mAllCountries = new String[allCountries.length];
+      
+      for(int i = 0; i < mAllCountries.length; i++) {
+        mAllCountries[i] = StringPool.getString(allCountries[i]);
+      }
+    }
+    else {
+      mAllCountries = new String[] {mBaseCountry};
+    }
+    
     mCopyrightNotice = StringPool.getString(copyrightNotice);
     mWebpage = StringPool.getString(webpage);
     mGroup = group;
@@ -148,7 +176,28 @@ public class Channel implements Comparable<Channel> {
    * @param name The name of this channel.
    * @param id The id of this channel.
    * @param timeZone The time zone of this channel.
-   * @param country The country of this channel.
+   * @param country The base country of this channel.
+   * @param copyrightNotice The copyright notice for this channel.
+   * @param webpage The webpage of this channel.
+   * @param group The group of this channel.
+   * @param icon The icon for this channel.
+   * @param categories The categories for this channel.
+   * @param unescapedName The unescaped name for this channel.
+   */
+  public Channel(AbstractTvDataService dataService, String name, String id,
+    TimeZone timeZone, String country, String copyrightNotice, String webpage, devplugin.ChannelGroup group, Icon icon, int categories, String unescapedName)
+  {
+    this(dataService, name, id, timeZone, country, copyrightNotice, webpage, group, icon, categories, unescapedName, null);
+  }
+  
+  /**
+   * Creates an instance of this class.
+   * <p>
+   * @param dataService The data service of this channel.
+   * @param name The name of this channel.
+   * @param id The id of this channel.
+   * @param timeZone The time zone of this channel.
+   * @param country The base country of this channel.
    * @param copyrightNotice The copyright notice for this channel.
    * @param webpage The webpage of this channel.
    * @param group The group of this channel.
@@ -168,7 +217,7 @@ public class Channel implements Comparable<Channel> {
    * @param name The name of this channel.
    * @param id The id of this channel.
    * @param timeZone The time zone of this channel.
-   * @param country The country of this channel.
+   * @param country The base country of this channel.
    * @param copyrightNotice The copyright notice for this channel.
    * @param webpage The webpage of this channel.
    * @param group The group of this channel.
@@ -187,7 +236,7 @@ public class Channel implements Comparable<Channel> {
    * @param name The name of this channel.
    * @param id The id of this channel.
    * @param timeZone The time zone of this channel.
-   * @param country The country of this channel.
+   * @param country The base country of this channel.
    * @param copyrightNotice The copyright notice for this channel.
    * @param webpage The webpage of this channel.
    * @param group The group of this channel.
@@ -203,7 +252,7 @@ public class Channel implements Comparable<Channel> {
    * @param name The name of this channel.
    * @param id The id of this channel.
    * @param timeZone The time zone of this channel.
-   * @param country The country of this channel.
+   * @param country The base country of this channel.
    * @param copyrightNotice The copyright notice for this channel.
    * @param webpage The webpage of this channel.
    */
@@ -220,7 +269,7 @@ public class Channel implements Comparable<Channel> {
    * @param name The name of this channel.
    * @param id The id of this channel.
    * @param timeZone The time zone of this channel.
-   * @param country The country of this channel.
+   * @param country The base country of this channel.
    * @param copyrightNotice The copyright notice for this channel.
    */
   public Channel(AbstractTvDataService dataService, String name, String id,
@@ -235,7 +284,7 @@ public class Channel implements Comparable<Channel> {
    * @param dataService The data service of this channel.
    * @param name The name of this channel.
    * @param timeZone The time zone of this channel.
-   * @param country The country of this channel.
+   * @param country The base country of this channel.
    * @param copyrightNotice The copyright notice for this channel.
    */
   public Channel(AbstractTvDataService dataService, String name, TimeZone timeZone,
@@ -252,7 +301,7 @@ public class Channel implements Comparable<Channel> {
    * @param name The name of this channel.
    * @param id The id of this channel.
    * @param timeZone The time zone of this channel.
-   * @param country The country of this channel.
+   * @param country The base country of this channel.
    * @deprecated
    */
   @Deprecated
@@ -267,7 +316,7 @@ public class Channel implements Comparable<Channel> {
    * <p>
    * @param id The id of this channel.
    * @param timeZone The time zone of this channel.
-   * @param country The country of this channel.
+   * @param country The base country of this channel.
    */
   public Channel(String id, TimeZone timeZone, String country)
    {
@@ -279,7 +328,7 @@ public class Channel implements Comparable<Channel> {
    * <p>
    * @param name The name of this channel.
    * @param id The id of this channel.
-   * @param country The country of this channel.
+   * @param country The base country of this channel.
    */
   public Channel(String name, String id, String country)
    {
@@ -290,7 +339,7 @@ public class Channel implements Comparable<Channel> {
    * Creates an instance of this class.
    * <p>
    * @param id The id of this channel.
-   * @param country The country of this channel.
+   * @param country The base country of this channel.
    */
   public Channel(String id, String country)
    {
@@ -314,8 +363,9 @@ public class Channel implements Comparable<Channel> {
 
     String dataServiceId = null;
     String groupId = null;
-    String country = null;
+    String baseCountry = null;
     String channelId;
+    String[] allCountries = null;
 
     if (version==1) {
       dataServiceId = (String)in.readObject();
@@ -333,11 +383,22 @@ public class Channel implements Comparable<Channel> {
     else {
       dataServiceId = in.readUTF();
       groupId = in.readUTF();
-      country = in.readUTF();
+      baseCountry = in.readUTF();
       channelId = in.readUTF();
     }
+    
+    if(version > 5) {
+      allCountries = new String[in.readInt()];
+      
+      for(int i = 0; i < allCountries.length; i++) {
+        allCountries[i] = in.readUTF();
+      }
+    }
+    else {
+      allCountries = new String[] {baseCountry};
+    }
 
-    Channel channel = getChannel(dataServiceId, groupId, country, channelId);
+    Channel channel = getChannel(dataServiceId, groupId, baseCountry, channelId, allCountries);
     if ((channel == null) && (! allowNull)) {
       throw new IOException("Channel with id " + channelId + " of data service "
         + dataServiceId + " not found!");
@@ -365,8 +426,9 @@ public class Channel implements Comparable<Channel> {
 
     String dataServiceId = null;
     String groupId = null;
-    String country = null;
+    String baseCountry = null;
     String channelId = null;
+    String[] allCountries = null;
 
     if(version < 3) {
       throw new IOException();
@@ -393,11 +455,22 @@ public class Channel implements Comparable<Channel> {
     else {
       dataServiceId = in.readUTF();
       groupId = in.readUTF();
-      country = in.readUTF();
+      baseCountry = in.readUTF();
       channelId = in.readUTF();
     }
-
-    channel = getChannel(dataServiceId, groupId, country, channelId);
+    
+    if(version > 5) {
+      allCountries = new String[in.readInt()];
+      
+      for(int i = 0; i < allCountries.length; i++) {
+        allCountries[i] = in.readUTF();
+      }
+    }
+    else {
+      allCountries = new String[] {baseCountry};
+    }
+    
+    channel = getChannel(dataServiceId, groupId, baseCountry, channelId, allCountries);
 
     if ((channel == null) && (! allowNull)) {
       throw new IOException("Channel with id " + channelId + " of data service "
@@ -415,11 +488,17 @@ public class Channel implements Comparable<Channel> {
    * @since 2.2
    */
   public void writeToDataFile(RandomAccessFile out) throws IOException {
-    out.writeInt(5); // version
+    out.writeInt(6); // version
     out.writeUTF(getDataServiceProxy().getId());
     out.writeUTF(getGroup().getId());
-    out.writeUTF(getCountry());
+    out.writeUTF(getBaseCountry());
     out.writeUTF(mId);
+    
+    out.writeInt(getAllCountries().length);
+    
+    for(String country : getAllCountries()) {
+      out.writeUTF(country);
+    }
   }
 
   /**
@@ -428,11 +507,17 @@ public class Channel implements Comparable<Channel> {
    * @throws IOException
    */
   public void writeData(ObjectOutputStream out) throws IOException {
-    out.writeInt(5); // version
+    out.writeInt(6); // version
     out.writeUTF(getDataServiceProxy().getId());
     out.writeUTF(getGroup().getId());
-    out.writeUTF(getCountry());
+    out.writeUTF(getBaseCountry());
     out.writeUTF(mId);
+    
+    out.writeInt(getAllCountries().length);
+    
+    for(String country : getAllCountries()) {
+      out.writeUTF(country);
+    }
   }
 
   /**
@@ -479,10 +564,12 @@ public class Channel implements Comparable<Channel> {
    * @param groupId The group id of the channel to get.
    * @param country The country of the channel to get.
    * @param channelId The id of the channel to get.
+   * @param countries The ids of all supported countries.
    *
    * @return The channel with the given ids or <code>null</code> if no channel with the ids was found.
+   * @since 3.2.1
    */
-  public static Channel getChannel(String dataServiceId, String groupId, String country, String channelId) {
+  public static Channel getChannel(String dataServiceId, String groupId, String country, String channelId, String[] countries) {
     if (dataServiceId == null) {
       // Fast return
       return null;
@@ -493,8 +580,8 @@ public class Channel implements Comparable<Channel> {
       String chDataServiceId = channel.getDataServiceProxy().getId();
       String chGroupId = channel.getGroup().getId();
       String chChannelId = channel.getId();
-      String chCountry = channel.getCountry();
-
+      String chCountry = channel.getBaseCountry();
+      
       if (dataServiceId.compareTo(chDataServiceId) == 0 &&
           ((groupId != null && groupId.compareTo(chGroupId) == 0) || groupId == null) &&
           ((country != null && country.compareTo(chCountry) == 0) || country == null) &&
@@ -505,6 +592,18 @@ public class Channel implements Comparable<Channel> {
     }
 
     return null;
+  }
+  
+  /**
+   * @param dataServiceId The id of the data service of the channel to get.
+   * @param groupId The group id of the channel to get.
+   * @param country The country of the channel to get.
+   * @param channelId The id of the channel to get.
+   *
+   * @return The channel with the given ids or <code>null</code> if no channel with the ids was found.
+   */
+  public static Channel getChannel(String dataServiceId, String groupId, String country, String channelId) {
+    return getChannel(dataServiceId, groupId, country, channelId, null);
   }
 
   /**
@@ -520,9 +619,28 @@ public class Channel implements Comparable<Channel> {
    * Gets the country of this channel.
    * <p>
    * @return The country of this channel.
+   * @deprecated since 3.2.1 use {@link #getBaseCountry()} instead.
    */
   public String getCountry() {
-    return mCountry;
+    return getBaseCountry();
+  }
+  
+  /**
+   * Gets the base country of this channel.
+   * <p>
+   * @return The country of this channel.
+   * @since 3.2.1
+   */
+  public String getBaseCountry() {
+    return mBaseCountry;
+  }
+  
+  /**
+   * 
+   * @return
+   */
+  public String[] getAllCountries() {
+    return mAllCountries;
   }
 
   /**
@@ -805,8 +923,8 @@ public class Channel implements Comparable<Channel> {
           return false;
         }
 
-        String country = getCountry();
-        String cmpCountry = cmp.getCountry();
+        String country = getBaseCountry();
+        String cmpCountry = cmp.getBaseCountry();
 
         return country.compareTo(cmpCountry) == 0;
       }catch(Exception e) {
@@ -935,7 +1053,7 @@ public class Channel implements Comparable<Channel> {
    */
   public String getUniqueId() {
     if (mUniqueId == null) {
-      mUniqueId = new StringBuilder(getDataServiceProxy().getId()).append('_').append(getGroup().getId()).append('_').append(getCountry()).append('_').append(getId()).toString();
+      mUniqueId = new StringBuilder(getDataServiceProxy().getId()).append('_').append(getGroup().getId()).append('_').append(getBaseCountry()).append('_').append(getId()).toString();
     }
     return mUniqueId;
   }
@@ -981,5 +1099,25 @@ public class Channel implements Comparable<Channel> {
 
   public String getDataServicePackageName() {
     return getDataServiceProxy().getDataServicePackageName();
+  }
+  
+  /**
+   * Gets the countries String for this channel.
+   * <p>
+   * @return The countries String for this channel.
+   * @since 3.2.1
+   */
+  public String getCountriesString() {
+    StringBuilder builder = new StringBuilder();
+    
+    for(int i = 0; i < mAllCountries.length; i++) {
+      builder.append(mAllCountries[i]);
+      
+      if(i < mAllCountries.length-1) {
+        builder.append("$");
+      }
+    }
+    
+    return builder.toString();
   }
 }
