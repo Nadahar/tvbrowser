@@ -137,6 +137,7 @@ public class ChannelList {
       }
 
       String country = null, timezone = null, id = null, name = null, copyright = null, webpage = null, iconUrl = null, categoryStr = null, unescapedname = null;
+      String[] countries = null;
       try {
         country = tokens[0];
         timezone = tokens[1];
@@ -150,6 +151,13 @@ public class ChannelList {
         if (tokens.length > 8) {
           unescapedname = name;
           name = StringEscapeUtils.unescapeHtml(tokens[8]);
+        }
+        
+        if(tokens.length > 9) {
+          countries = tokens[9].split("\\$");
+        }
+        else {
+          countries = new String[] {country};
         }
 
       } catch (ArrayIndexOutOfBoundsException e) {
@@ -165,7 +173,7 @@ public class ChannelList {
         }
       }
       Channel channel = new Channel(dataService, name, id, TimeZone.getTimeZone(timezone), country, copyright,
-          webpage, mGroup, null, categories, unescapedname);
+          webpage, mGroup, null, categories, unescapedname, countries);
       if (iconLoader != null && iconUrl != null && iconUrl.length() > 0) {
         Icon icon = iconLoader.getIcon(id, iconUrl);
         if (icon != null) {
@@ -206,7 +214,7 @@ public class ChannelList {
       ChannelItem channelItem = mChannelList.get(i);
       Channel channel = channelItem.getChannel();
       StringBuilder line = new StringBuilder();
-      line.append(channel.getCountry()).append(';').append(
+      line.append(channel.getBaseCountry()).append(';').append(
           channel.getTimeZone().getID());
       line.append(';').append(channel.getId());
       line.append(';').append(channel.getUnescapedName());
@@ -219,6 +227,7 @@ public class ChannelList {
       line.append(';').append(channel.getCategories());
       line.append(";\"")
           .append(StringEscapeUtils.escapeHtml(channel.getName())).append('"');
+      line.append(";").append(channel.getCountriesString());
       writer.write(line.toString());
       writer.write('\n');
     }
