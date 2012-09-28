@@ -365,7 +365,6 @@ public class Channel implements Comparable<Channel> {
     String groupId = null;
     String baseCountry = null;
     String channelId;
-    String[] allCountries = null;
 
     if (version==1) {
       dataServiceId = (String)in.readObject();
@@ -386,19 +385,8 @@ public class Channel implements Comparable<Channel> {
       baseCountry = in.readUTF();
       channelId = in.readUTF();
     }
-    
-    if(version > 5) {
-      allCountries = new String[in.readInt()];
-      
-      for(int i = 0; i < allCountries.length; i++) {
-        allCountries[i] = in.readUTF();
-      }
-    }
-    else {
-      allCountries = new String[] {baseCountry};
-    }
 
-    Channel channel = getChannel(dataServiceId, groupId, baseCountry, channelId, allCountries);
+    Channel channel = getChannel(dataServiceId, groupId, baseCountry, channelId);
     if ((channel == null) && (! allowNull)) {
       throw new IOException("Channel with id " + channelId + " of data service "
         + dataServiceId + " not found!");
@@ -459,18 +447,7 @@ public class Channel implements Comparable<Channel> {
       channelId = in.readUTF();
     }
     
-    if(version > 5) {
-      allCountries = new String[in.readInt()];
-      
-      for(int i = 0; i < allCountries.length; i++) {
-        allCountries[i] = in.readUTF();
-      }
-    }
-    else {
-      allCountries = new String[] {baseCountry};
-    }
-    
-    channel = getChannel(dataServiceId, groupId, baseCountry, channelId, allCountries);
+    channel = getChannel(dataServiceId, groupId, baseCountry, channelId);
 
     if ((channel == null) && (! allowNull)) {
       throw new IOException("Channel with id " + channelId + " of data service "
@@ -488,17 +465,11 @@ public class Channel implements Comparable<Channel> {
    * @since 2.2
    */
   public void writeToDataFile(RandomAccessFile out) throws IOException {
-    out.writeInt(6); // version
+    out.writeInt(5); // version
     out.writeUTF(getDataServiceProxy().getId());
     out.writeUTF(getGroup().getId());
     out.writeUTF(getBaseCountry());
     out.writeUTF(mId);
-    
-    out.writeInt(getAllCountries().length);
-    
-    for(String country : getAllCountries()) {
-      out.writeUTF(country);
-    }
   }
 
   /**
@@ -507,17 +478,11 @@ public class Channel implements Comparable<Channel> {
    * @throws IOException
    */
   public void writeData(ObjectOutputStream out) throws IOException {
-    out.writeInt(6); // version
+    out.writeInt(5); // version
     out.writeUTF(getDataServiceProxy().getId());
     out.writeUTF(getGroup().getId());
     out.writeUTF(getBaseCountry());
     out.writeUTF(mId);
-    
-    out.writeInt(getAllCountries().length);
-    
-    for(String country : getAllCountries()) {
-      out.writeUTF(country);
-    }
   }
 
   /**
@@ -564,12 +529,10 @@ public class Channel implements Comparable<Channel> {
    * @param groupId The group id of the channel to get.
    * @param country The country of the channel to get.
    * @param channelId The id of the channel to get.
-   * @param countries The ids of all supported countries.
    *
    * @return The channel with the given ids or <code>null</code> if no channel with the ids was found.
-   * @since 3.2.1
    */
-  public static Channel getChannel(String dataServiceId, String groupId, String country, String channelId, String[] countries) {
+  public static Channel getChannel(String dataServiceId, String groupId, String country, String channelId) {
     if (dataServiceId == null) {
       // Fast return
       return null;
@@ -592,18 +555,6 @@ public class Channel implements Comparable<Channel> {
     }
 
     return null;
-  }
-  
-  /**
-   * @param dataServiceId The id of the data service of the channel to get.
-   * @param groupId The group id of the channel to get.
-   * @param country The country of the channel to get.
-   * @param channelId The id of the channel to get.
-   *
-   * @return The channel with the given ids or <code>null</code> if no channel with the ids was found.
-   */
-  public static Channel getChannel(String dataServiceId, String groupId, String country, String channelId) {
-    return getChannel(dataServiceId, groupId, country, channelId, null);
   }
 
   /**
@@ -636,8 +587,7 @@ public class Channel implements Comparable<Channel> {
   }
   
   /**
-   * 
-   * @return
+   * @return All countries of this channel.
    */
   public String[] getAllCountries() {
     return mAllCountries;
