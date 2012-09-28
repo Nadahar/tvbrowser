@@ -484,7 +484,7 @@ public class TvDataBase {
       throw new NullPointerException("channel is null");
     }
 
-    return new StringBuilder(channel.getCountry()).append('_').append(
+    return new StringBuilder(channel.getBaseCountry()).append('_').append(
         channel.getId()).append('_').append(channel.getDataServicePackageName()).toString();
   }
 

@@ -110,9 +110,19 @@ public class AvailableChannelsTableModel extends AbstractTableModel {
 
 
 
-         case 2 : String country = ch.getCountry();
-                  Locale locale = new Locale(Locale.getDefault().getLanguage(), country);
-                  return locale.getDisplayCountry();
+         case 2 : String[] countries = ch.getAllCountries();
+                  StringBuilder builder = new StringBuilder();
+                  
+                  for(int i = 0; i < countries.length; i++) {
+                    Locale locale = new Locale(Locale.getDefault().getLanguage(), countries[i]);
+                    builder.append(locale.getDisplayCountry());
+                    
+                    if(i < countries.length-1) {
+                      builder.append(", ");
+                    }
+                  }
+                  
+                  return builder.toString();
          case 3 : return ch.getTimeZone().getDisplayName();
          default: return ch;
        }

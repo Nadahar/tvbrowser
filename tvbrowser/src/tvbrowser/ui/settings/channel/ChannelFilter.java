@@ -106,14 +106,19 @@ public class ChannelFilter {
    */
   public boolean accept(Channel channel) {
     if (mCountry != null) {
-      String country = channel.getCountry();
-      if (country != null) {
-        if (!country.equalsIgnoreCase(mCountry)) {
-          return false;
+      String[] countries = channel.getAllCountries();
+      
+      boolean found = false;
+      
+      for(String country : countries) {
+        if (country != null) {
+          if (country.equalsIgnoreCase(mCountry)) {
+            found = true;
+          }
         }
-      } else {
-        return false;
       }
+      
+      return found;
     }
     
     if (mPlugin != null) {

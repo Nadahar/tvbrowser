@@ -217,7 +217,7 @@ public class MutableProgram implements Program {
       String dataServiceId = mChannel.getDataServiceProxy().getId();
       String groupId = mChannel.getGroup().getId();
       String channelId = mChannel.getId();
-      String country = mChannel.getCountry();
+      String country = mChannel.getBaseCountry();
       String date = new SimpleDateFormat(ID_DATE_FORMAT).format(getDate().getCalendar().getTime());
 
       mId = (new StringBuilder(dataServiceId).append('_').append(groupId)

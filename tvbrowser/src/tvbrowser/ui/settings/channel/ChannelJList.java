@@ -64,14 +64,28 @@ public class ChannelJList extends JList {
 
       StringBuilder buf = new StringBuilder();
 
-      Locale loc = new Locale(Locale.getDefault().getLanguage(), channel.getCountry());
+      
       buf.append("<html>");
       buf.append("<b>").append(Localizer.getLocalization(Localizer.I18N_CHANNEL)).append(" :</b> ").append(channel.getName()).append("<br>");
       if (!TVBrowser.isStable()) {
         buf.append("<b>ID (dev. only) :</b> ").append(channel.getUniqueId())
             .append("<br>");
       }
-      buf.append("<b>").append(mLocalizer.msg("country", "Country")).append(" :</b> ").append(loc.getDisplayCountry()).append("<br>");
+      
+      buf.append("<b>").append(mLocalizer.msg("countries", "Countries")).append(" :</b> ");
+      
+      String[] countries = channel.getAllCountries();
+      
+      for(int i = 0; i < countries.length; i++) {
+        Locale loc = new Locale(Locale.getDefault().getLanguage(), countries[i]);
+        buf.append(loc.getDisplayCountry());
+        
+        if(i < countries.length-1) {
+          buf.append(", ");
+        }
+      }
+      
+      buf.append("<br>");
       buf.append("<b>").append(mLocalizer.msg("timezone", "Timezone")).append(" :</b> ").append(channel.getTimeZone().getDisplayName()).append("<br>");
       buf.append("<b>").append(mLocalizer.msg("category", "Category")).append(" :</b> ").append(ChannelUtil.getNameForCategories(channel.getCategories())).append("<br><br>");
       buf.append(mLocalizer.msg("provided", "provided by")).append("<br><center>").append(ChannelUtil.getProviderName(channel)).append("</center>");

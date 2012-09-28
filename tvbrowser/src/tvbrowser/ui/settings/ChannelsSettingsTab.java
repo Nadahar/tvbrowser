@@ -614,9 +614,13 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
     HashSet<String> countries = new HashSet<String>();
 
     for (Channel allChannel : allChannels) {
-      String country = allChannel.getCountry();
-      if (country != null) {
-        countries.add(country.toLowerCase());
+      String[] allCountries = allChannel.getAllCountries();
+      if(allCountries != null) {
+        for(String country : allCountries) {
+          if (country != null) {
+            countries.add(country.toLowerCase());
+          }
+        }
       }
     }
 
