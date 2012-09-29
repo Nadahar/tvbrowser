@@ -77,6 +77,7 @@ public class ProgramUtilities {
 
   /**
    * comparator to sort programs by date, time and position in channel list
+   * @return The comparator for programs.
    */
   public static Comparator<Program> getProgramComparator() {
     return sProgramComparator;
