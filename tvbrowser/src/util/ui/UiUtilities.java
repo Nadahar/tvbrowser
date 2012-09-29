@@ -448,6 +448,7 @@ public class UiUtilities {
     // Quick "hack". Remove HTML-Code and replace it with Code that includes the
     // correct Font
     final JEditorPane pane = new JEditorPane("text/html", "");
+    pane.setBackground(background);
     pane.setBorder(BorderFactory.createEmptyBorder());
     pane.setEditable(false);
     pane.setOpaque(false);

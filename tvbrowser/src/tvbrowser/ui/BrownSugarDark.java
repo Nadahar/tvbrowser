@@ -22,10 +22,6 @@
  */
 package tvbrowser.ui;
 
-import java.awt.Color;
-
-import javax.swing.UIManager;
-
 import com.jgoodies.looks.plastic.theme.BrownSugar;
 
 public class BrownSugarDark extends BrownSugar {
