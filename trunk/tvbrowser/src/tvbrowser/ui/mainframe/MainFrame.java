@@ -149,6 +149,7 @@ import tvbrowser.ui.mainframe.toolbar.DefaultToolBarModel;
 import tvbrowser.ui.mainframe.toolbar.MoreButton;
 import tvbrowser.ui.mainframe.toolbar.ToolBar;
 import tvbrowser.ui.pluginview.PluginView;
+import tvbrowser.ui.pluginview.PluginViewWrapper;
 import tvbrowser.ui.programtable.DefaultProgramTableModel;
 import tvbrowser.ui.programtable.FilterPanel;
 import tvbrowser.ui.programtable.KeyboardAction;
@@ -298,6 +299,10 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
   private ProgramTableScrollPaneWrapper mScrollPaneWrapper;
   
   private TabbedPaneUI mPersonaUI, mDefaultUI;
+  
+  private PluginView mCenterPluginView;
+  
+  private PluginViewWrapper mPluginViewWrapper;
  
   private MainFrame() {
     super(TVBrowser.MAINWINDOW_TITLE);
@@ -409,8 +414,10 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     mProgramTableModel = new DefaultProgramTableModel(channelArr, startOfDay,
         endOfDay);
     mProgramTableScrollPane = new ProgramTableScrollPane(mProgramTableModel,mGlobalFindAsYouTypeKeyListener);
+    mCenterPluginView = new PluginView();
     
     mScrollPaneWrapper = new ProgramTableScrollPaneWrapper(mProgramTableScrollPane);
+    mPluginViewWrapper = new PluginViewWrapper(mCenterPluginView);
     
     mCenterTabPane = new JTabbedPane();
     mDefaultUI = mCenterTabPane.getUI();
@@ -1312,6 +1319,9 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     if(mPluginView != null) {
       mPluginView.repaint();
     }
+    if(mCenterPluginView != null) {
+      mCenterPluginView.repaint(); 
+    }
 
     if(mCurrentFilterName == null || !mCurrentFilterName.equals(filter.getName())) {
       if ((mStoredViewPosition != null) && (isDefaultFilter)) {
@@ -1643,6 +1653,9 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     if (mPluginView != null) {
       mPluginView.repaint();
     }
+    if(mCenterPluginView != null) {
+      mCenterPluginView.repaint();
+    }
 
     if ((mLastAutoUpdateRun + Settings.propDataServiceAutoUpdateTime.getInt() * 60000L) <= System.currentTimeMillis() && !TvDataUpdater.getInstance().isDownloading()) {
       runAutoUpdate();
@@ -1692,6 +1705,9 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     }
     if (mPluginView != null) {
       mPluginView.update();
+    }
+    if(mCenterPluginView != null) {
+      mCenterPluginView.update();
     }
   }
 
@@ -2318,6 +2334,9 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
               if (mPluginView != null) {
                 mPluginView.refreshTree();
               }
+              if(mCenterPluginView != null) {
+                mCenterPluginView.refreshTree();
+              }
             }
           });
           mSettingsWillBeOpened = false;
@@ -2758,6 +2777,9 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     if (mPluginView != null) {
       mPluginView.refreshTree();
     }
+    if(mCenterPluginView != null) {
+      mCenterPluginView.refreshTree();
+    }
   }
 
   /**
@@ -3096,6 +3118,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       ArrayList<PluginCenterPanel> centerPanelList = new ArrayList<PluginCenterPanel>(1);
       
       centerPanelList.add(mScrollPaneWrapper);
+      centerPanelList.add(mPluginViewWrapper);
       
       for(PluginProxy plugin : plugins) {
         PluginCenterPanelWrapper wrapper = plugin.getPluginCenterPanelWrapper();
@@ -3202,6 +3225,10 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
   
   public ProgramTableScrollPaneWrapper getProgramTableScrollPaneWrapper() {
     return mScrollPaneWrapper;
+  }
+  
+  public PluginViewWrapper getPluginViewWrapper() {
+    return mPluginViewWrapper;
   }
 
   @Override

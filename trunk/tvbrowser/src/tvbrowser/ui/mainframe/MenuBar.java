@@ -94,7 +94,7 @@ import devplugin.SettingsItem;
 public abstract class MenuBar extends JMenuBar implements ActionListener {
 
 	/** The localizer for this class. */
-	protected static final util.ui.Localizer mLocalizer = util.ui.Localizer
+	public static final util.ui.Localizer mLocalizer = util.ui.Localizer
 			.getLocalizerFor(MainFrame.class);
 
 	private MainFrame mMainFrame;
