@@ -65,6 +65,9 @@ public class DarkStarDark extends DarkStar {
     
     UIManager.put("FormattedTextField.background",Color.black);
     UIManager.put("FormattedTextField.foreground",Color.white);
+    
+    UIManager.put("EditorPane.background", Color.black);
+    UIManager.put("EditorPane.foreground", Color.white);
   }
   
   public String getName() {
