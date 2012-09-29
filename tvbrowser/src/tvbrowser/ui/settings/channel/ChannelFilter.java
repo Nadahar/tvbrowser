@@ -104,7 +104,7 @@ public class ChannelFilter {
    * @param channel Channel to check
    * @return True if Channel is accepted by this Filter
    */
-  public boolean accept(Channel channel) {
+  public boolean accept(Channel channel) {try {
     if (mCountry != null) {
       String[] countries = channel.getAllCountries();
       
@@ -114,11 +114,14 @@ public class ChannelFilter {
         if (country != null) {
           if (country.equalsIgnoreCase(mCountry)) {
             found = true;
+            break;
           }
         }
       }
       
-      return found;
+      if(!found) {
+        return false;
+      }
     }
     
     if (mPlugin != null) {
@@ -147,7 +150,7 @@ public class ChannelFilter {
 
     while (i < max) {
       int category = mCategories[i];
-
+      
       if (category != Integer.MAX_VALUE) {
         if ((category < 0)) {
           category *= -1;
@@ -172,7 +175,7 @@ public class ChannelFilter {
     if (!categoryTest) {
       return false;
     }
-
+  }catch(Throwable t) {t.printStackTrace();}
     return true;
   }
 
