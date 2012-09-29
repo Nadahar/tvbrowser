@@ -39,7 +39,7 @@
     <dependency>
     	<groupId>org.tvbrowser</groupId>
     	<artifactId>TvBrowserDataService</artifactId>
-    	<version>3.0.2.1</version>
+    	<version>3.0.3</version>
     </dependency>
           <dependency>
         <groupId>junit</groupId>
@@ -49,7 +49,7 @@
     <dependency>
       	<groupId>org.tvbrowser</groupId>
       	<artifactId>tvbrowser</artifactId>
-      	<version>3.1</version>
+      	<version>3.2.0.50.3</version>
     </dependency>
     <dependency>
     	<groupId>commons-net</groupId>
