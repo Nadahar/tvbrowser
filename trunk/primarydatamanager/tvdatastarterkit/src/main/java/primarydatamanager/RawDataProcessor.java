@@ -191,7 +191,7 @@ public class RawDataProcessor {
 
       for (int i=0; i<list.getChannelCount(); i++) {
         Channel ch = list.getChannelAt(i);
-        if (ch.getId().equals(channelId) && ch.getCountry().equals(country)) {
+        if (ch.getId().equals(channelId) && ch.getBaseCountry().equals(country)) {
           return true;
         }
       }

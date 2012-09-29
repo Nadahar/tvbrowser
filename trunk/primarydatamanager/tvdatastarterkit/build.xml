@@ -116,7 +116,7 @@
 
   <target name="dependency">
   	<artifact:remoteRepository id="remote.repository" url="http://maven.tvbrowser.org" />
-  	<artifact:dependencies filesetId="dependency.fileset" useScope="runtime">
+  	<artifact:dependencies filesetId="dependency.fileset" useScope="compile">
   	  <pom file="pom.xml"/>
   	  <remoteRepository refid="remote.repository" />
   	</artifact:dependencies>
