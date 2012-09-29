@@ -64,6 +64,7 @@ public class CenterPanelSettingsTab implements SettingsTab {
     ArrayList<PluginCenterPanel> currentOrderList = new ArrayList<PluginCenterPanel>(); 
     
     mAllPanelList.add(MainFrame.getInstance().getProgramTableScrollPaneWrapper());
+    mAllPanelList.add(MainFrame.getInstance().getPluginViewWrapper());
 
     for(PluginProxy plugin : plugins) {
       try {
