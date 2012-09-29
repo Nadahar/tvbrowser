@@ -149,17 +149,24 @@ public class ChannelList {
         categoryStr = tokens[7];
 
         if (tokens.length > 8) {
-          unescapedname = name;
-          name = StringEscapeUtils.unescapeHtml(tokens[8]);
-        }
-        
-        if(tokens.length > 9) {
-          countries = tokens[9].split("\\$");
+          if(tokens[8].indexOf("\"") != -1) {        
+            unescapedname = name;
+            name = StringEscapeUtils.unescapeHtml(tokens[8]);
+            
+            if(tokens.length > 9) {
+              countries = tokens[9].split("\\$");
+            }
+            else {
+              countries = new String[] {country};
+            }
+          }
+          else {
+            countries = tokens[8].split("\\$");
+          }
         }
         else {
           countries = new String[] {country};
         }
-
       } catch (ArrayIndexOutOfBoundsException e) {
         // ignore
       }
