@@ -416,7 +416,6 @@ public class Channel implements Comparable<Channel> {
     String groupId = null;
     String baseCountry = null;
     String channelId = null;
-    String[] allCountries = null;
 
     if(version < 3) {
       throw new IOException();
