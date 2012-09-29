@@ -169,7 +169,7 @@ public class HtmlMirrorVisualizer implements MirrorVisualizer {
       mOut.print  ("<tr><th class=\"header_channel\" align=\"right\">" + channel + "</th>");
         
       for (int i=0; i< DAY_COUNT; i++) {
-        int version = summaryFile.getDayProgramVersion(TODAY.addDays(i), channel.getCountry(), channel.getId(), 0);
+        int version = summaryFile.getDayProgramVersion(TODAY.addDays(i), channel.getBaseCountry(), channel.getId(), 0);
         if (version >= 0) {
           mOut.print("<td class=\"table_content\"></td>");
         }

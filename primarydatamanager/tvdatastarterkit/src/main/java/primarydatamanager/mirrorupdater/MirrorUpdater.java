@@ -199,7 +199,7 @@ public class MirrorUpdater {
     
     while (daysWithNoData < MAX_DAYS_WITHOUT_DATA) {
       String completeFileName = DayProgramFile.getProgramFileName(date,
-        channel.getCountry(), channel.getId(), level);
+        channel.getBaseCountry(), channel.getId(), level);
         
       // Check which version is on the source
       // version -1 means there is no version
@@ -209,7 +209,7 @@ public class MirrorUpdater {
         boolean finished = false;
         do {
           String updateFileName = DayProgramFile.getProgramFileName(date,
-            channel.getCountry(), channel.getId(), level, versionAtSource);
+            channel.getBaseCountry(), channel.getId(), level, versionAtSource);
           if (mDataSource.fileExists(updateFileName)) {
             // There is an update file for the current version
             // -> The version of the complete file must be at least one higher
@@ -233,7 +233,7 @@ public class MirrorUpdater {
           boolean finished = false;
           do {
             String updateFileName = DayProgramFile.getProgramFileName(date,
-              channel.getCountry(), channel.getId(), level, versionOnMirror);
+              channel.getBaseCountry(), channel.getId(), level, versionOnMirror);
             if (fileIsOnMirror(updateFileName)) {
               // There is an update file for the current version
               // -> The version of the complete file must be at least one higher
@@ -287,7 +287,7 @@ public class MirrorUpdater {
           
           for (int version = 0; version < versionAtSource; version++) {
             String updateFileName = DayProgramFile.getProgramFileName(date,
-              channel.getCountry(), channel.getId(), level, version);
+              channel.getBaseCountry(), channel.getId(), level, version);
 
             data = mDataSource.loadFile(updateFileName);
             mDataTarget.writeFile(updateFileName, data);
@@ -405,7 +405,7 @@ public class MirrorUpdater {
     buffer.append("<ul>");
     for (Channel element : channelArr) {
       buffer.append("<li><code>" + element.getName()
-        + "</code> from <code>" + element.getCountry() + "</code></li>");
+        + "</code> from <code>" + element.getBaseCountry() + "</code></li>");
     }
     buffer.append("</ul></p>");
 
