@@ -235,7 +235,7 @@ public class ChannelLabel extends JLabel {
   
   private void setChannelIcon(Channel channel, Icon icon) {
     Icon cached = null;
-    if (icon != null) { // no hash lookup, if no icon to set
+    if (icon != null && !mShowJointChanelInfo) { // no hash lookup, if no icon to set
       cached = ICONCACHE.get(channel);
     }
     if (cached != null) {
@@ -249,7 +249,11 @@ public class ChannelLabel extends JLabel {
       }
       else {
         Icon resizedIcon =UiUtilities.createChannelIcon(icon);
-        ICONCACHE.put(channel, resizedIcon);
+        
+        if(channel.getJointChannel() == null) {
+          ICONCACHE.put(channel, resizedIcon);
+        }
+        
         super.setIcon(resizedIcon);
       }
     }

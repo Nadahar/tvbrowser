@@ -94,10 +94,10 @@ public class ProgramTableChannelLabel extends ChannelLabel {
     });
   }
   
-  public void setChannel(Channel ch) {
+ /* public void setChannel(Channel ch) {
     super.clearIconCache();
     super.setChannel(ch);
-  }
+  }*/
     
   private void showPopUp(MouseEvent e) {
     new ChannelContextMenu(e,mChannel,this);
