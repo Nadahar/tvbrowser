@@ -205,6 +205,7 @@ public class ChannelList {
   public static void reload() {
     loadChannelMaps();
     create();
+    checkForJointChannels();
   }
 
   private static void create() {
@@ -375,9 +376,10 @@ public class ChannelList {
 
   private static void calculateChannelPositions() {
     mSubscribedChannelPosition = new HashMap<String, Integer>();
+    
     for (int i = 0; i < mSubscribedChannels.size(); i++) {
       Channel ch = mSubscribedChannels.get(i);
-
+      
       if (ch != null) {
         mSubscribedChannelPosition.put(ch.getUniqueId(), i);
       }
@@ -1037,5 +1039,21 @@ public class ChannelList {
       }
     }
   }
-
+  
+  public static void checkForJointChannels() {
+    Channel previousChannel = null;
+    
+    for(Channel ch :getSubscribedChannels()) {    
+      if(previousChannel != null && previousChannel.isTimeLimited() && ch.isTimeLimited() 
+          && (previousChannel.getStartTimeLimit() == ch.getEndTimeLimit())
+          && (previousChannel.getEndTimeLimit() == ch.getStartTimeLimit())) {
+        previousChannel.setJointChannel(ch);
+      }
+      else if(previousChannel != null) {
+        previousChannel.setJointChannel(null);
+      }
+      
+      previousChannel = ch;
+    }
+  }
 }

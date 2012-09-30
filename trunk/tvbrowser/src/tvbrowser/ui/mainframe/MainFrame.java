@@ -411,6 +411,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     Channel[] channelArr = ChannelList.getSubscribedChannels();
     int startOfDay = Settings.propProgramTableStartOfDay.getInt();
     int endOfDay = Settings.propProgramTableEndOfDay.getInt();
+    
     mProgramTableModel = new DefaultProgramTableModel(channelArr, startOfDay,
         endOfDay);
     mProgramTableScrollPane = new ProgramTableScrollPane(mProgramTableModel,mGlobalFindAsYouTypeKeyListener);
