@@ -94,6 +94,17 @@ public class ProgramTableChannelLabel extends ChannelLabel {
     });
   }
   
+  public void setChannel(Channel ch) {
+    super.setChannel(ch);
+    
+    if(ch.getJointChannelName() != null) {
+      String second = ch.getJointChannelName().substring(ch.getJointChannelName().indexOf("/"));
+      ch.setJointChannelName(ch.getName()+second);
+      
+      setText(ch.getJointChannelName());
+    }
+  }
+  
   private void showPopUp(MouseEvent e) {
     new ChannelContextMenu(e,mChannel,this);
   }

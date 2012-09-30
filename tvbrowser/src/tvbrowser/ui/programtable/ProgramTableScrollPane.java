@@ -48,6 +48,7 @@ import javax.swing.JScrollPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import tvbrowser.core.ChannelList;
 import tvbrowser.core.Settings;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.programtable.background.BackgroundPainter;
@@ -273,6 +274,7 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
 
   public void updateChannelLabelForChannel(Channel ch) {
     mChannelPanel.updateChannelLabelForChannel(ch);
+    ((DefaultProgramTableModel)mProgramTable.getModel()).setChannels(ChannelList.getSubscribedChannels());
   }
 
   public void setColumnWidth(int columnWidth) {
@@ -283,6 +285,7 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
   }
 
   public void scrollToChannel(Channel channel) {
+    channel = mProgramTable.getModel().getChannelForChannel(channel);
     Channel[] shownChannelArr = mProgramTable.getModel().getShownChannels();
     for (int col = 0; col < shownChannelArr.length; col++) {
       if (channel.equals(shownChannelArr[col])) {

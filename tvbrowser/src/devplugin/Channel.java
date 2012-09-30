@@ -103,6 +103,7 @@ public class Channel implements Comparable<Channel> {
   private AbstractTvDataServiceProxy mProxy;
   private String mUniqueId;
 
+  private String mJoinedChannelName;
 
   /**
    * Creates an instance of this class.
@@ -1068,5 +1069,23 @@ public class Channel implements Comparable<Channel> {
     }
     
     return builder.toString();
+  }
+  
+  /**
+   * Sets the joint channel name of this channel
+   * <p>
+   * @param name The new joint channel name;
+   */
+  public void setJointChannelName(String name) {
+    mJoinedChannelName = name;
+  }
+  
+  /**
+   * Gets the joint channel name of this channel
+   * <p>
+   * @return The joint channel name of this channel or <code>null</code> if there is no joint channel name.
+   */
+  public String getJointChannelName() {
+    return mJoinedChannelName;
   }
 }
