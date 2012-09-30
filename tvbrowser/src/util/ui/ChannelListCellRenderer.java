@@ -33,6 +33,7 @@ import javax.swing.JList;
 
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.DuplicateChannelNameCounter;
+import tvbrowser.ui.mainframe.MainFrame;
 import devplugin.Channel;
 
 /**
@@ -87,6 +88,7 @@ public class ChannelListCellRenderer extends DefaultListCellRenderer {
    *          show Default Channel Name?
    * @param showCountry
    *          show Country Information if channel name is a duplicate?
+   * @param channels 
    * @since 2.6
    */
   public ChannelListCellRenderer(boolean channelIconsVisible, boolean textVisible, boolean defaultValues, boolean showCountry, Channel[] channels) {
@@ -151,13 +153,15 @@ public class ChannelListCellRenderer extends DefaultListCellRenderer {
       boolean found = (mChannels == null);
       if (mChannels != null) {
         for (Channel mChannel2 : mChannels) {
-          if (mChannel2.equals(value)) {
+          Channel channel = MainFrame.getInstance().getProgramTableModel().getChannelForChannel(mChannel2);
+          if (channel.equals(value)) {
             found = true;
             break;
           }
         }
       }
       mChannel.setEnabled(found);
+      
       return mChannel;
     }
 

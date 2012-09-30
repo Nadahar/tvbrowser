@@ -617,7 +617,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 		if (Settings.propShowChannelIconsInChannellist.getBoolean()) {
 			icon = UiUtilities.createChannelIcon(channel.getIcon());
 		}
-		JMenuItem item = new JMenuItem(channel.getName(), icon);
+		JMenuItem item = new JMenuItem(channel.getJointChannelName() != null ? channel.getJointChannelName() : channel.getName(), icon);
 		item.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				mMainFrame.showChannel(channel);
@@ -723,9 +723,19 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 	public void updateChannelItems() {
 		mGotoChannelMenu.removeAll();
 		Channel[] channels = ChannelList.getSubscribedChannels();
-		for (Channel channel : channels) {
-			mGotoChannelMenu.add(createChannelMenuItem(channel));
-		}
+		
+    if(channels.length > 0) {
+      mGotoChannelMenu.add(createChannelMenuItem(channels[0]));
+    }
+    
+    for (int i = 1; i < channels.length; i++) {
+      if(!(channels[i-1].isTimeLimited() && channels[i].isTimeLimited() && 
+          (channels[i-1].getStartTimeLimit() == channels[i].getEndTimeLimit())
+          && (channels[i-1].getEndTimeLimit() == channels[i].getStartTimeLimit()))) {
+        mGotoChannelMenu.add(createChannelMenuItem(channels[i]));
+      }
+    }
+    
 		mGotoChannelMenu.setEnabled(channels.length > 0);
 	}
 

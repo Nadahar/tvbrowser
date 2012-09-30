@@ -60,6 +60,14 @@ public interface ProgramTableModel {
   public ProgramPanel getProgramPanel(int col, int row);
   
   /**
+   * Gets joint channel for the given channel.
+   * <p>
+   * @param ch The channel to get the joint channel for.
+   * @return The joint channel or <code>null</code> if there is not joined channel.
+   */
+  public Channel getJointChannelFor(Channel ch);
+  
+  /**
    * Gets the base channel for the given channel if joined or returns the channel.
    * <p>
    * @since 3.2.1

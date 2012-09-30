@@ -640,8 +640,13 @@ public class DefaultToolBarModel implements ToolBarModel, DateListener {
       popup = menu.getPopupMenu();
 
       Channel[] channels = Settings.propSubscribedChannels.getChannelArray();
-      for (Channel channel : channels) {
-        menu.add(createChannelMenuItem(channel, btn));
+      
+      for (int i = 0; i < channels.length; i++) {
+        menu.add(createChannelMenuItem(channels[i], btn));
+        
+        if(MainFrame.getInstance().getProgramTableModel().getJointChannelFor(channels[i]) != null) {
+          i++;
+        }
       }
     } else if (item == mScrollToTimeAction) {
       popup = new JPopupMenu();
@@ -732,7 +737,7 @@ public class DefaultToolBarModel implements ToolBarModel, DateListener {
     JMenuItem item = new JMenuItem();
 
     if (Settings.propShowChannelNamesInChannellist.getBoolean()) {
-      item.setText(ch.getName());
+      item.setText(ch.getJointChannelName() != null ? ch.getJointChannelName() : ch.getName());
     }
 
     if (Settings.propShowChannelIconsInChannellist.getBoolean()) {

@@ -285,22 +285,24 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
   }
 
   public void scrollToChannel(Channel channel) {
-    channel = mProgramTable.getModel().getChannelForChannel(channel);
-    Channel[] shownChannelArr = mProgramTable.getModel().getShownChannels();
-    for (int col = 0; col < shownChannelArr.length; col++) {
-      if (channel.equals(shownChannelArr[col])) {
-        Point scrollPos = getViewport().getViewPosition();
-        if (scrollPos != null) {
-          int visibleColumns = getViewport().getWidth() / mProgramTable.getColumnWidth();
-          scrollPos.x = (col - visibleColumns / 2) * mProgramTable.getColumnWidth();
-          if (scrollPos.x < 0) {
-            scrollPos.x = 0;
+    if(getHorizontalScrollBar().isVisible()) {
+      channel = mProgramTable.getModel().getChannelForChannel(channel);
+      Channel[] shownChannelArr = mProgramTable.getModel().getShownChannels();
+      for (int col = 0; col < shownChannelArr.length; col++) {
+        if (channel.equals(shownChannelArr[col])) {
+          Point scrollPos = getViewport().getViewPosition();
+          if (scrollPos != null) {
+            int visibleColumns = getViewport().getWidth() / mProgramTable.getColumnWidth();
+            scrollPos.x = (col - visibleColumns / 2) * mProgramTable.getColumnWidth();
+            if (scrollPos.x < 0) {
+              scrollPos.x = 0;
+            }
+            int max = mProgramTable.getWidth() - getViewport().getWidth();
+            if (scrollPos.x > max) {
+              scrollPos.x = max;
+            }
+            getViewport().setViewPosition(scrollPos);
           }
-          int max = mProgramTable.getWidth() - getViewport().getWidth();
-          if (scrollPos.x > max) {
-            scrollPos.x = max;
-          }
-          getViewport().setViewPosition(scrollPos);
         }
       }
     }
