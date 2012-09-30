@@ -1091,15 +1091,17 @@ public class Channel implements Comparable<Channel> {
     if(mJointChannel != null) {
       mJointChannel.mBaseChannel = this;
       mJointChannelIcon = new Icon() {
-  
         @Override
         public void paintIcon(Component c, Graphics g, int x, int y) {
-          getDefaultIcon().paintIcon(c, g, x, y);
+          int y1 = y + getIconHeight()/2 - getIcon().getIconHeight()/2;
+          getIcon().paintIcon(c, g, x, y1);
           g.setColor(Color.black);
-          g.drawLine(x+getIcon().getIconWidth()+3, 0, x+getIcon().getIconWidth()+3, getIconHeight());
-          g.drawLine(x+getIcon().getIconWidth()+4, 0, x+getIcon().getIconWidth()+4, getIconHeight());
+          g.drawLine(x+getIcon().getIconWidth()+3, y, x+getIcon().getIconWidth()+3, getIconHeight());
+          g.drawLine(x+getIcon().getIconWidth()+4, y, x+getIcon().getIconWidth()+4, getIconHeight());
           
-          mJointChannel.getIcon().paintIcon(c, g, x+7+getIcon().getIconWidth(), y);
+          y1 = y + getIconHeight()/2 - mJointChannel.getIcon().getIconHeight()/2;
+          
+          mJointChannel.getIcon().paintIcon(c, g, x+7+getIcon().getIconWidth(), y1);
         }
   
         @Override

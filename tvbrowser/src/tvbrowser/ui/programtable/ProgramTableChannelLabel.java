@@ -21,6 +21,7 @@ import tvbrowser.core.Settings;
 import util.browserlauncher.Launch;
 import util.ui.ChannelContextMenu;
 import util.ui.ChannelLabel;
+import util.ui.ImageUtilities;
 import util.ui.ToolTipWithIcon;
 import util.ui.persona.Persona;
 import devplugin.Channel;
@@ -121,7 +122,8 @@ public class ProgramTableChannelLabel extends ChannelLabel {
     boolean showIcon = false;
     boolean showText = false;
     JToolTip tip;
-    Icon channelIcon = mChannel.getIcon();
+        
+    Icon channelIcon = mChannel.getJointChannel() != null ? ImageUtilities.createImageIcon(mChannel.getJointChannelIcon(),Color.WHITE,4): mChannel.getIcon();
     if (channelIcon != null && channelIcon instanceof ImageIcon) {
       Icon shownIcon = this.getIcon();
       if (shownIcon != null && (channelIcon.getIconHeight() > shownIcon.getIconHeight() || channelIcon.getIconWidth() > shownIcon.getIconWidth())) {

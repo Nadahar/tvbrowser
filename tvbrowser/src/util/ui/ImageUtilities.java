@@ -26,13 +26,17 @@
 
 package util.ui;
 
+import java.awt.Color;
 import java.awt.Component;
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.MediaTracker;
 import java.awt.Toolkit;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.logging.Logger;
 
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
@@ -169,4 +173,22 @@ public class ImageUtilities {
   } // waitForImageData (Image, Component)
   
   
+  public static ImageIcon createImageIcon(Icon icon, Color background, int border) {
+    if(icon != null) {
+      BufferedImage img = new BufferedImage(icon.getIconWidth()+border, icon.getIconHeight()+border, BufferedImage.TYPE_INT_RGB);
+      
+      Graphics2D g = img.createGraphics();
+
+      if(background != null) {
+        g.setColor(background);
+        g.fillRect(1, 1, icon.getIconWidth()+border, icon.getIconHeight()+border);
+      }
+      
+      icon.paintIcon(null, g, border/2, border/2);
+      
+      return new ImageIcon(img);
+    }
+    
+    return null;
+  }
 }
