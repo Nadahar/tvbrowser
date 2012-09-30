@@ -1508,6 +1508,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
+        mMenuBar.updateChannelItems();
         if(Persona.getInstance().getHeaderImage() != null) {
           updatePersona();
         }
@@ -2189,6 +2190,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
 
   public void updateChannelChooser() {
     mChannelChooser.updateChannelChooser();
+    mMenuBar.updateChannelItems();
   }
 
   /**

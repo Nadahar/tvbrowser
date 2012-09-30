@@ -684,6 +684,10 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
 
   }
   
+  public Channel getJointChannelFor(Channel ch) {
+    return mJointChannels.get(ch);
+  }
+  
   @Override
   public Channel getChannelForChannel(Channel ch) {
     Set<Channel> keys = mJointChannels.keySet();

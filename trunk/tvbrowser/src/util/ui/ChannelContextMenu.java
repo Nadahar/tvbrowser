@@ -22,7 +22,6 @@ import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.ui.mainframe.ChannelChooserPanel;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.mainframe.actions.TVBrowserActions;
-import tvbrowser.ui.programtable.ProgramTableChannelLabel;
 import tvbrowser.ui.settings.ChannelsSettingsTab;
 import tvbrowser.ui.settings.channel.ChannelConfigDlg;
 import util.browserlauncher.Launch;
