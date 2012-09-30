@@ -76,8 +76,6 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
   
   private int[] mOnAirRows;
   
-  private HashMap<Channel, Channel> mJointChannels;
-  
   /**
    * the currently active channel group
    */
@@ -90,7 +88,7 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
     int todayEarliestTime, int tomorrowLatestTime)
   {
     mDateRangeForChannel = new HashMap<Channel, DateRange>();
-    mJointChannels = new HashMap<Channel, Channel>();
+    //mJointChannels = new HashMap<Channel, Channel>();
 
     mListenerList = new ArrayList<ProgramTableModelListener>();
     mTodayEarliestTime=todayEarliestTime;
@@ -178,25 +176,16 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
     checkThread();
 
     mChannelArr = channelArr;
-    mJointChannels.clear();
     
-    for(int i = 1; i < channelArr.length; i++) {
-      if(channelArr[i-1].isTimeLimited() && channelArr[i].isTimeLimited()) {
-        if((channelArr[i-1].getStartTimeLimit() == channelArr[i].getEndTimeLimit())
-          && (channelArr[i-1].getEndTimeLimit() == channelArr[i].getStartTimeLimit())) {
-          mJointChannels.put(channelArr[i-1], channelArr[i]);
-          channelArr[i-1].setJointChannel(channelArr[i]);
-        }
-        else {
-          channelArr[i-1].setJointChannel(null);
-        }
-      }
-      else {
-        channelArr[i-1].setJointChannel(null);
+    int joinedChannelCount = 0;
+    
+    for(Channel ch :mChannelArr) {
+      if(ch.getJointChannel() != null) {
+        joinedChannelCount++;
       }
     }
     
-    mProgramColumn=new ArrayList[mChannelArr.length-mJointChannels.size()];
+    mProgramColumn=new ArrayList[mChannelArr.length-joinedChannelCount];
     for (int i=0;i<mProgramColumn.length;i++) {
       mProgramColumn[i]=new ArrayList<ProgramPanel>();
     }
@@ -388,7 +377,7 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
       
       ChannelDayProgram[] jointChannelDayProgram = null;
       
-      Channel jointChannel = mJointChannels.get(mChannelArr[i]);
+      Channel jointChannel = mChannelArr[i].getJointChannel();
       
       if(jointChannel != null) {
         jointChannelCount++;
@@ -421,7 +410,7 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
         newShownColumns.add(mProgramColumn[i]);
         newShownChannels.add(mChannelArr[i+jointChannelCount]);
         
-        if(mJointChannels.get(mChannelArr[i+jointChannelCount]) != null) {
+        if(mChannelArr[i+jointChannelCount].getJointChannel() != null) {
           jointChannelCount++;
         }
       }
@@ -682,25 +671,4 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
     }
 
   }
-  
-/*  public Channel getJointChannelFor(Channel ch) {
-    return mJointChannels.get(ch);
-  }
-  
-  @Override
-  public Channel getChannelForChannel(Channel ch) {
-    Set<Channel> keys = mJointChannels.keySet();
-    
-    Channel joined = ch;
-    
-    for(Channel key : keys) {
-      if(mJointChannels.get(key).equals(ch)) {
-        joined = key;
-        break;
-      }
-    }
-    
-    return joined;
-  }*/
-
 }

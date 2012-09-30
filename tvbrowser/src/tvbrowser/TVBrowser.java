@@ -461,7 +461,8 @@ public class TVBrowser {
       ChannelList.initSubscribedChannels();
     }
     
-
+    ChannelList.checkForJointChannels();
+    
     if (!lookAndFeelInitialized) {
       mLog.info("Loading Look&Feel...");
       splashRef.get().setMessage(mLocalizer.msg("splash.laf", "Loading look and feel..."));
