@@ -26,6 +26,9 @@
 
 package devplugin;
 
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Graphics;
 import java.awt.Image;
 import java.io.DataInput;
 import java.io.IOException;
@@ -103,8 +106,10 @@ public class Channel implements Comparable<Channel> {
   private AbstractTvDataServiceProxy mProxy;
   private String mUniqueId;
 
-  private String mJoinedChannelName;
-
+  private Channel mJointChannel;
+  private Channel mBaseChannel;
+  private Icon mJointChannelIcon;
+  
   /**
    * Creates an instance of this class.
    * <p>
@@ -1072,20 +1077,104 @@ public class Channel implements Comparable<Channel> {
   }
   
   /**
-   * Sets the joint channel name of this channel
+   * Sets the joint channel of this channel.
    * <p>
-   * @param name The new joint channel name;
+   * @param ch The joint channel or <code>null</code> if there is no joint channel.
    */
-  public void setJointChannelName(String name) {
-    mJoinedChannelName = name;
+  public void setJointChannel(Channel ch) {
+    if(ch == null && mJointChannel != null) {
+      mJointChannel.mBaseChannel = null;
+    }
+    
+    mJointChannel = ch;
+    
+    if(mJointChannel != null) {
+      mJointChannel.mBaseChannel = this;
+      mJointChannelIcon = new Icon() {
+  
+        @Override
+        public void paintIcon(Component c, Graphics g, int x, int y) {
+          getDefaultIcon().paintIcon(c, g, x, y);
+          g.setColor(Color.black);
+          g.drawLine(x+getIcon().getIconWidth()+3, 0, x+getIcon().getIconWidth()+3, getIconHeight());
+          g.drawLine(x+getIcon().getIconWidth()+4, 0, x+getIcon().getIconWidth()+4, getIconHeight());
+          
+          mJointChannel.getIcon().paintIcon(c, g, x+7+getIcon().getIconWidth(), y);
+        }
+  
+        @Override
+        public int getIconWidth() {
+          return getIcon().getIconWidth() + mJointChannel.getIcon().getIconWidth() + 7;
+        }
+  
+        @Override
+        public int getIconHeight() {
+          return Math.max(getIcon().getIconHeight(), mJointChannel.getIcon().getIconHeight());
+        }
+        
+      };
+    }
+    else {
+      mJointChannelIcon = null;
+    }
   }
   
   /**
    * Gets the joint channel name of this channel
    * <p>
    * @return The joint channel name of this channel or <code>null</code> if there is no joint channel name.
+   * @since 3.2.1
    */
   public String getJointChannelName() {
-    return mJoinedChannelName;
+    if(mJointChannel != null) {
+      return getName() + "/" + mJointChannel.getName();
+    }
+    
+    return null;
+  }
+  
+  /**
+   * Gets the joint channel icon of this channel
+   * <p>
+   * @return The joint channel icon of this channel or <code>null</code> if there is no joint channel icon.
+   * @since 3.2.1
+   */
+  public Icon getJointChannelIcon() {
+    return mJointChannelIcon;
+  }
+  
+  /**
+   * Gets the joint channel of this channel.
+   * <p>
+   * @return The joint channel of this channel or <code>null</code> if there is no joint channel.
+   * @since 3.2.1
+   */
+  public Channel getJointChannel() {
+    return mJointChannel;
+  }
+  
+  /**
+   * Gets the base channel of this channel.
+   * <p>
+   * @return The base channel of this channel or <code>null</code> if there is no base channel.
+   * @since 3.2.1
+   */
+  public Channel getBaseChannel() {
+    return mBaseChannel;
+  }
+  
+  /**
+   * Gets the base channel for the given channel if joined or returns the channel.
+   * <p>
+   * @since 3.2.1
+   * @param ch The channel to check.
+   * @return The given channel if not joined or the base channel if joined.
+   */
+  public static Channel getChannelForChannel(Channel ch) {
+    if(ch.getBaseChannel() != null) {
+      return ch.getBaseChannel();
+    }
+    
+    return ch;
   }
 }

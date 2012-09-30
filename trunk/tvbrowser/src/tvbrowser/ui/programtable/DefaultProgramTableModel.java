@@ -32,7 +32,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Set;
 import java.util.TimeZone;
 
 import javax.swing.SwingUtilities;
@@ -186,14 +185,14 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
         if((channelArr[i-1].getStartTimeLimit() == channelArr[i].getEndTimeLimit())
           && (channelArr[i-1].getEndTimeLimit() == channelArr[i].getStartTimeLimit())) {
           mJointChannels.put(channelArr[i-1], channelArr[i]);
-          channelArr[i-1].setJointChannelName(channelArr[i-1].getName()+"/"+channelArr[i].getName());
+          channelArr[i-1].setJointChannel(channelArr[i]);
         }
         else {
-          channelArr[i-1].setJointChannelName(null);
+          channelArr[i-1].setJointChannel(null);
         }
       }
       else {
-        channelArr[i-1].setJointChannelName(null);
+        channelArr[i-1].setJointChannel(null);
       }
     }
     
@@ -684,7 +683,7 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
 
   }
   
-  public Channel getJointChannelFor(Channel ch) {
+/*  public Channel getJointChannelFor(Channel ch) {
     return mJointChannels.get(ch);
   }
   
@@ -702,6 +701,6 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
     }
     
     return joined;
-  }
+  }*/
 
 }

@@ -644,7 +644,7 @@ public class DefaultToolBarModel implements ToolBarModel, DateListener {
       for (int i = 0; i < channels.length; i++) {
         menu.add(createChannelMenuItem(channels[i], btn));
         
-        if(MainFrame.getInstance().getProgramTableModel().getJointChannelFor(channels[i]) != null) {
+        if(channels[i].getJointChannel() != null) {
           i++;
         }
       }
@@ -737,11 +737,11 @@ public class DefaultToolBarModel implements ToolBarModel, DateListener {
     JMenuItem item = new JMenuItem();
 
     if (Settings.propShowChannelNamesInChannellist.getBoolean()) {
-      item.setText(ch.getJointChannelName() != null ? ch.getJointChannelName() : ch.getName());
+      item.setText(ch.getJointChannel() != null ? ch.getJointChannelName() : ch.getName());
     }
 
     if (Settings.propShowChannelIconsInChannellist.getBoolean()) {
-      item.setIcon(UiUtilities.createChannelIcon(ch.getIcon()));
+      item.setIcon(UiUtilities.createChannelIcon(ch.getJointChannel() != null ? ch.getJointChannelIcon() : ch.getIcon()));
       item.setPreferredSize(new Dimension(item.getPreferredSize().width, item
           .getIcon().getIconHeight()));
     }

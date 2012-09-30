@@ -33,7 +33,6 @@ import javax.swing.JList;
 
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.DuplicateChannelNameCounter;
-import tvbrowser.ui.mainframe.MainFrame;
 import devplugin.Channel;
 
 /**
@@ -49,7 +48,7 @@ public class ChannelListCellRenderer extends DefaultListCellRenderer {
   private boolean mTextVisible;
   private boolean mDefaultValues;
   private boolean mShowCountry;
-  private boolean mShowJointChannelName;
+  private boolean mShowJointChannelInfo;
   private Channel[] mChannels;
 
   public ChannelListCellRenderer() {
@@ -107,17 +106,17 @@ public class ChannelListCellRenderer extends DefaultListCellRenderer {
    * @param showCountry
    *          show Country Information if channel name is a duplicate?
    * @param channels 
-   * @param showJointChannelName Show the joint channel name if there is one. 
+   * @param showJointChannelInfo Show the joint channel name and icon if there is joint channel. 
    *          
    * @since 3.2.1
    */
-  public ChannelListCellRenderer(boolean channelIconsVisible, boolean textVisible, boolean defaultValues, boolean showCountry, Channel[] channels, boolean showJointChannelName) {
+  public ChannelListCellRenderer(boolean channelIconsVisible, boolean textVisible, boolean defaultValues, boolean showCountry, Channel[] channels, boolean showJointChannelInfo) {
     mChannelIconsVisible = channelIconsVisible;
     mTextVisible = textVisible;
     mDefaultValues = defaultValues;
     mShowCountry = showCountry;
     mChannels = channels;
-    mShowJointChannelName = showJointChannelName;
+    mShowJointChannelInfo = showJointChannelInfo;
   }
 
   public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
@@ -125,7 +124,7 @@ public class ChannelListCellRenderer extends DefaultListCellRenderer {
     JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
     if (mChannel == null) {
-      mChannel = new ChannelLabel(mChannelIconsVisible, mTextVisible,mDefaultValues);
+      mChannel = new ChannelLabel(mChannelIconsVisible, mTextVisible,mDefaultValues, false, mShowJointChannelInfo);
     }
 
     if (mShowCountry) {
@@ -141,11 +140,6 @@ public class ChannelListCellRenderer extends DefaultListCellRenderer {
 
     if (value instanceof Channel) {
       mChannel.setChannel((Channel) value);
-      
-      if(mShowJointChannelName && mChannel.getChannel().getJointChannelName() != null) {
-        mChannel.setText(mChannel.getChannel().getJointChannelName());
-      }
-      
       mChannel.setOpaque(isSelected);
       mChannel.setBackground(label.getBackground());
       mChannel.setForeground(label.getForeground());
@@ -153,7 +147,7 @@ public class ChannelListCellRenderer extends DefaultListCellRenderer {
       boolean found = (mChannels == null);
       if (mChannels != null) {
         for (Channel mChannel2 : mChannels) {
-          Channel channel = MainFrame.getInstance().getProgramTableModel().getChannelForChannel(mChannel2);
+          Channel channel = Channel.getChannelForChannel(mChannel2);
           if (channel.equals(value)) {
             found = true;
             break;

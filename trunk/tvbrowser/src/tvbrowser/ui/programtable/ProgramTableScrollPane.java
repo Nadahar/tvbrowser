@@ -286,7 +286,7 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
 
   public void scrollToChannel(Channel channel) {
     if(getHorizontalScrollBar().isVisible()) {
-      channel = mProgramTable.getModel().getChannelForChannel(channel);
+      channel = Channel.getChannelForChannel(channel);
       Channel[] shownChannelArr = mProgramTable.getModel().getShownChannels();
       for (int col = 0; col < shownChannelArr.length; col++) {
         if (channel.equals(shownChannelArr[col])) {

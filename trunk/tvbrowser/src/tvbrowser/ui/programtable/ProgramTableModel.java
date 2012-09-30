@@ -65,7 +65,7 @@ public interface ProgramTableModel {
    * @param ch The channel to get the joint channel for.
    * @return The joint channel or <code>null</code> if there is not joined channel.
    */
-  public Channel getJointChannelFor(Channel ch);
+//  public Channel getJointChannelFor(Channel ch);
   
   /**
    * Gets the base channel for the given channel if joined or returns the channel.
@@ -74,6 +74,6 @@ public interface ProgramTableModel {
    * @param ch The channel to check.
    * @return The given channel if not joined or the base channel if joined.
    */
-  public Channel getChannelForChannel(Channel ch);
+//  public Channel getChannelForChannel(Channel ch);
 
 }
