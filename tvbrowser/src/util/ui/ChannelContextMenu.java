@@ -170,6 +170,8 @@ public class ChannelContextMenu implements ActionListener {
         ChannelConfigDlg dialog = new ChannelConfigDlg(parent, mChannel);
         dialog.centerAndShow();
 
+        ChannelList.checkForJointChannels();
+        
         // If from a ChannelLabel update it
       /*  if (mSource instanceof ProgramTableChannelLabel) {
           ((ProgramTableChannelLabel) mSource).setChannel(mChannel);

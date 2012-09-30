@@ -1045,6 +1045,7 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
       Window parent = UiUtilities.getBestDialogParent(mAllChannels);
       dialog = new ChannelConfigDlg(parent, channelList[0]);
       dialog.centerAndShow();
+      ChannelList.checkForJointChannels();
       MainFrame.getInstance().getProgramTableScrollPane()
           .updateChannelLabelForChannel(channelList[0]);
     } else if (channelList.length > 1) {
