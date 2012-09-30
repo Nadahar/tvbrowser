@@ -181,7 +181,7 @@ public class ImageUtilities {
 
       if(background != null) {
         g.setColor(background);
-        g.fillRect(1, 1, icon.getIconWidth()+border, icon.getIconHeight()+border);
+        g.fillRect(0, 0, icon.getIconWidth()+border, icon.getIconHeight()+border);
       }
       
       icon.paintIcon(null, g, border/2, border/2);
