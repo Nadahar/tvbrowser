@@ -172,15 +172,15 @@ public class ChannelContextMenu implements ActionListener {
         dialog.centerAndShow();
 
         // If from a ChannelLabel update it
-        if (mSource instanceof ProgramTableChannelLabel) {
+      /*  if (mSource instanceof ProgramTableChannelLabel) {
           ((ProgramTableChannelLabel) mSource).setChannel(mChannel);
-        }
+        }*/
       }
 
-      if (!(mSource instanceof ProgramTableChannelLabel)) {
+     // if (!(mSource instanceof ProgramTableChannelLabel)) {
         MainFrame.getInstance().getProgramTableScrollPane()
             .updateChannelLabelForChannel(mChannel);
-      }
+     // }
       MainFrame.getInstance().updateChannelChooser();
       ChannelList.storeAllSettings();
     } else if (e.getSource().equals(mChGoToURL)) {

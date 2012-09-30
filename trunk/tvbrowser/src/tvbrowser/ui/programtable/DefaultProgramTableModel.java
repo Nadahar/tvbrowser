@@ -29,8 +29,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.TimeZone;
 
 import javax.swing.SwingUtilities;
@@ -41,6 +43,7 @@ import javax.swing.event.ChangeListener;
 import tvbrowser.core.TvDataBase;
 import tvbrowser.core.filters.filtercomponents.ChannelFilterComponent;
 import util.io.IOUtilities;
+import util.program.ProgramUtilities;
 import util.ui.ProgramPanel;
 import devplugin.Channel;
 import devplugin.ChannelDayProgram;
@@ -74,6 +77,8 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
   
   private int[] mOnAirRows;
   
+  private HashMap<Channel, Channel> mJointChannels;
+  
   /**
    * the currently active channel group
    */
@@ -86,6 +91,7 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
     int todayEarliestTime, int tomorrowLatestTime)
   {
     mDateRangeForChannel = new HashMap<Channel, DateRange>();
+    mJointChannels = new HashMap<Channel, Channel>();
 
     mListenerList = new ArrayList<ProgramTableModelListener>();
     mTodayEarliestTime=todayEarliestTime;
@@ -173,14 +179,31 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
     checkThread();
 
     mChannelArr = channelArr;
+    mJointChannels.clear();
     
-    mProgramColumn=new ArrayList[mChannelArr.length];
+    for(int i = 1; i < channelArr.length; i++) {
+      if(channelArr[i-1].isTimeLimited() && channelArr[i].isTimeLimited()) {
+        if((channelArr[i-1].getStartTimeLimit() == channelArr[i].getEndTimeLimit())
+          && (channelArr[i-1].getEndTimeLimit() == channelArr[i].getStartTimeLimit())) {
+          mJointChannels.put(channelArr[i-1], channelArr[i]);
+          channelArr[i-1].setJointChannelName(channelArr[i-1].getName()+"/"+channelArr[i].getName());
+        }
+        else {
+          channelArr[i-1].setJointChannelName(null);
+        }
+      }
+      else {
+        channelArr[i-1].setJointChannelName(null);
+      }
+    }
+    
+    mProgramColumn=new ArrayList[mChannelArr.length-mJointChannels.size()];
     for (int i=0;i<mProgramColumn.length;i++) {
       mProgramColumn[i]=new ArrayList<ProgramPanel>();
     }
-
+    
     updateDateRange();
-
+    
     updateTableContent();
   }
   
@@ -229,18 +252,56 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
 
 
 
-  private void addChannelDayProgram(int col, ChannelDayProgram[] cdpArr, Date fromDate, int fromMinutes, Date toDate, int toMinutes)
+  private void addChannelDayProgram(int col, ChannelDayProgram[] cdpArr, ChannelDayProgram[] jointChannelProgArr, Date fromDate, int fromMinutes, Date toDate, int toMinutes)
   {
     if (cdpArr == null) {
       return;
     }
     checkThread();
-
-    for (ChannelDayProgram cdp : cdpArr) {
-      if (cdp==null) {
+    
+    ArrayList<Iterator<Program>> programIteratorArray = new ArrayList<Iterator<Program>>();
+    
+    if(jointChannelProgArr == null) {
+      jointChannelProgArr = new ChannelDayProgram[0];
+    }
+    
+    int minLength = Math.min(cdpArr.length, jointChannelProgArr.length);
+    
+    for(int i = 0; i < minLength; i++) {
+      ArrayList<Program> tempList = new ArrayList<Program>();
+      
+      if(cdpArr[i] != null) {
+        for(int progCount = 0; progCount < cdpArr[i].getProgramCount(); progCount++) {
+          tempList.add(cdpArr[i].getProgramAt(progCount));
+        }
+      }
+      if(jointChannelProgArr[i] != null) {
+        for(int progCount = 0; progCount < jointChannelProgArr[i].getProgramCount(); progCount++) {
+          tempList.add(jointChannelProgArr[i].getProgramAt(progCount));
+        }
+      }
+      
+      Collections.sort(tempList,ProgramUtilities.getProgramComparator());
+      programIteratorArray.add(tempList.iterator());
+    }
+    
+    ChannelDayProgram[] longerDayRange = cdpArr;
+    
+    if(jointChannelProgArr.length > cdpArr.length) {
+      longerDayRange = jointChannelProgArr;
+    }
+    
+    for(int i = minLength; i < longerDayRange.length; i++) {
+      if(longerDayRange[i] != null) {
+        programIteratorArray.add(longerDayRange[i].getPrograms());
+      }
+    }
+    
+    for (Iterator<Program> it : programIteratorArray) {
+      /*if (cdp==null) {
         break;
       }
-      Iterator<Program> it=cdp.getPrograms();
+      Iterator<Program> it=cdp.getPrograms();*/
       if (it!=null) {
         while (it.hasNext()) {
           Program prog=it.next();
@@ -306,24 +367,43 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
     checkThread();
     mOnAirRows = null;
     deregisterFromPrograms(mProgramColumn);
-
+    
     TvDataBase db = TvDataBase.getInstance();
 
     if (monitor != null) {
-      monitor.setMaximum(mChannelArr.length - 1);
+      monitor.setMaximum(mProgramColumn.length - 1);
       monitor.setValue(0);
     }
 
     Date nextDay = mMainDay.addDays(1);
+    int jointChannelCount = 0;
+    
     for (int i = 0; i < mChannelArr.length; i++) {
-      mProgramColumn[i].clear();
+      mProgramColumn[i-jointChannelCount].clear();
       DateRange dateRange = mDateRangeForChannel.get(mChannelArr[i]);
       ChannelDayProgram[] cdp = new ChannelDayProgram[dateRange.getCount()];
 
       for (int d = 0; d<cdp.length; d++) {
         cdp[d] = db.getDayProgram(mMainDay.addDays(dateRange.getBegin() + d), mChannelArr[i]);
       }
-      addChannelDayProgram(i, cdp, mMainDay, mTodayEarliestTime, nextDay, mTomorrowLatestTime);
+      
+      ChannelDayProgram[] jointChannelDayProgram = null;
+      
+      Channel jointChannel = mJointChannels.get(mChannelArr[i]);
+      
+      if(jointChannel != null) {
+        jointChannelCount++;
+        i++;
+        
+        dateRange = mDateRangeForChannel.get(jointChannel);
+        jointChannelDayProgram = new ChannelDayProgram[dateRange.getCount()];
+        
+        for (int d = 0; d < jointChannelDayProgram.length; d++) {
+          jointChannelDayProgram[d] = db.getDayProgram(mMainDay.addDays(dateRange.getBegin() + d), jointChannel);
+        }
+      }
+      
+      addChannelDayProgram(i-jointChannelCount, cdp, jointChannelDayProgram, mMainDay, mTodayEarliestTime, nextDay, mTomorrowLatestTime);
 
       if (monitor != null) {
         monitor.setValue(i);
@@ -334,10 +414,17 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
 
     ArrayList<ArrayList<ProgramPanel>> newShownColumns = new ArrayList<ArrayList<ProgramPanel>>();
     ArrayList<Channel> newShownChannels = new ArrayList<Channel>();
+    
+    jointChannelCount = 0;
+    
     for (int i = 0; i < mProgramColumn.length; i++) {
       if (showEmptyColumns || mProgramColumn[i].size() > 0) {
         newShownColumns.add(mProgramColumn[i]);
-        newShownChannels.add(mChannelArr[i]);
+        newShownChannels.add(mChannelArr[i+jointChannelCount]);
+        
+        if(mJointChannels.get(mChannelArr[i+jointChannelCount]) != null) {
+          jointChannelCount++;
+        }
       }
     }
     mShownProgramColumn = new ArrayList[newShownColumns.size()];
@@ -379,7 +466,7 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
 
   public int getColumnCount() {
     checkThread();
-    return mShownChannelArr.length;
+    return Math.min(mShownChannelArr.length, mProgramColumn.length);
   }
 
   public int getRowCount(int col) {
@@ -595,6 +682,22 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
       return mCnt;
     }
 
+  }
+  
+  @Override
+  public Channel getChannelForChannel(Channel ch) {
+    Set<Channel> keys = mJointChannels.keySet();
+    
+    Channel joined = ch;
+    
+    for(Channel key : keys) {
+      if(mJointChannels.get(key).equals(ch)) {
+        joined = key;
+        break;
+      }
+    }
+    
+    return joined;
   }
 
 }

@@ -34,6 +34,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
@@ -65,6 +67,7 @@ public class ChannelChooserPanel extends JPanel implements ListDropAction {
   private MainFrame mParent;
   private boolean disableSync = false;
   private ChannelFilterComponent mChannelFilter;
+  private HashMap<Channel,Channel> mJointChannels;
   
   /**
    * @param frame
@@ -73,6 +76,7 @@ public class ChannelChooserPanel extends JPanel implements ListDropAction {
   public ChannelChooserPanel(MainFrame frame,KeyListener keyListener) {
     mParent = frame;
     mChannelChooserModel = new DefaultListModel();
+    mJointChannels = new HashMap<Channel,Channel>();
 
     mList = new JList(mChannelChooserModel);
     mList.addKeyListener(keyListener);
@@ -154,24 +158,54 @@ public class ChannelChooserPanel extends JPanel implements ListDropAction {
 
   public void updateChannelChooser() {
     mList.setCellRenderer(new ChannelListCellRenderer(Settings.propShowChannelIconsInChannellist.getBoolean(),
-        Settings.propShowChannelNamesInChannellist.getBoolean()));
+        Settings.propShowChannelNamesInChannellist.getBoolean(),false,false,true));
     mChannelChooserModel.removeAllElements();
     Channel[] channelList = tvbrowser.core.ChannelList.getSubscribedChannels();
-    for (Channel channel : channelList) {
-      mChannelChooserModel.addElement(channel);
+    if(channelList.length > 0) {
+      mChannelChooserModel.addElement(channelList[0]);
+    }
+    
+    mJointChannels.clear();
+    
+    for (int i = 1; i < channelList.length; i++) {
+      if(!(channelList[i-1].isTimeLimited() && channelList[i].isTimeLimited() && 
+          (channelList[i-1].getStartTimeLimit() == channelList[i].getEndTimeLimit())
+          && (channelList[i-1].getEndTimeLimit() == channelList[i].getStartTimeLimit()))) {
+          mChannelChooserModel.addElement(channelList[i]);
+      }
+      else {
+        mJointChannels.put(channelList[i-1], channelList[i]);
+      }
     }
   }
 
   public void drop(JList source, JList target, int rows, boolean move) {
+    Channel selected = (Channel)source.getSelectedValue();
+    int pos = source.getSelectedIndex();
     UiUtilities.moveSelectedItems(target, rows, true);
 
+    Channel additional = mJointChannels.get(selected);
+    
     Object[] list = ((DefaultListModel) mList.getModel()).toArray();
 
     // Convert the list into a Channel[] and fill channels
-    Channel[] channelArr = new Channel[list.length];
+    //Channel[] channelArr = new Channel[list.length + (additional != null ? 1 : 0)];
+    ArrayList<Channel> tempList = new ArrayList<Channel>();
+    //int addCount = 0;
+    
     for (int i = 0; i < list.length; i++) {
-      channelArr[i] = (Channel) list[i];
+      if(i == pos) {
+        if(additional != null) {
+          tempList.add(additional);
+        }
+        tempList.add((Channel)list[i]);
+      }
+      else {
+        tempList.add((Channel)list[i]);
+      }
     }
+    
+    Channel[] channelArr = tempList.toArray(new Channel[tempList.size()]);
 
     ChannelList.setSubscribeChannels(channelArr);
     Settings.propSubscribedChannels.setChannelArray(channelArr);

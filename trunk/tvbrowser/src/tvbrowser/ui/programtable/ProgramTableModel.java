@@ -58,5 +58,14 @@ public interface ProgramTableModel {
   public void setChannelGroup(ChannelFilterComponent channelFilter);
 
   public ProgramPanel getProgramPanel(int col, int row);
+  
+  /**
+   * Gets the base channel for the given channel if joined or returns the channel.
+   * <p>
+   * @since 3.2.1
+   * @param ch The channel to check.
+   * @return The given channel if not joined or the base channel if joined.
+   */
+  public Channel getChannelForChannel(Channel ch);
 
 }

@@ -48,6 +48,7 @@ public class ChannelListCellRenderer extends DefaultListCellRenderer {
   private boolean mTextVisible;
   private boolean mDefaultValues;
   private boolean mShowCountry;
+  private boolean mShowJointChannelName;
   private Channel[] mChannels;
 
   public ChannelListCellRenderer() {
@@ -67,9 +68,14 @@ public class ChannelListCellRenderer extends DefaultListCellRenderer {
   }
 
   public ChannelListCellRenderer(boolean channelIconsVisible, boolean textVisible, boolean defaultValues, boolean showCountry) {
-    this(channelIconsVisible,textVisible,defaultValues, showCountry, null);
+    this(channelIconsVisible,textVisible,defaultValues, showCountry, false);
+  }
+  
+  public ChannelListCellRenderer(boolean channelIconsVisible, boolean textVisible, boolean defaultValues, boolean showCountry, boolean showJointChannelName) {
+    this(channelIconsVisible,textVisible,defaultValues, showCountry, null, showJointChannelName);
   }
 
+  
   /**
    * Create Renderer
    * 
@@ -84,11 +90,32 @@ public class ChannelListCellRenderer extends DefaultListCellRenderer {
    * @since 2.6
    */
   public ChannelListCellRenderer(boolean channelIconsVisible, boolean textVisible, boolean defaultValues, boolean showCountry, Channel[] channels) {
+    this(channelIconsVisible, textVisible, defaultValues, showCountry, channels, false);
+  }
+  
+  /**
+   * Create Renderer
+   * 
+   * @param channelIconsVisible
+   *          show Channel Icon?
+   * @param textVisible
+   *          show Channel Name?
+   * @param defaultValues
+   *          show Default Channel Name?
+   * @param showCountry
+   *          show Country Information if channel name is a duplicate?
+   * @param channels 
+   * @param showJointChannelName Show the joint channel name if there is one. 
+   *          
+   * @since 3.2.1
+   */
+  public ChannelListCellRenderer(boolean channelIconsVisible, boolean textVisible, boolean defaultValues, boolean showCountry, Channel[] channels, boolean showJointChannelName) {
     mChannelIconsVisible = channelIconsVisible;
     mTextVisible = textVisible;
     mDefaultValues = defaultValues;
     mShowCountry = showCountry;
     mChannels = channels;
+    mShowJointChannelName = showJointChannelName;
   }
 
   public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
@@ -112,6 +139,11 @@ public class ChannelListCellRenderer extends DefaultListCellRenderer {
 
     if (value instanceof Channel) {
       mChannel.setChannel((Channel) value);
+      
+      if(mShowJointChannelName && mChannel.getChannel().getJointChannelName() != null) {
+        mChannel.setText(mChannel.getChannel().getJointChannelName());
+      }
+      
       mChannel.setOpaque(isSelected);
       mChannel.setBackground(label.getBackground());
       mChannel.setForeground(label.getForeground());
