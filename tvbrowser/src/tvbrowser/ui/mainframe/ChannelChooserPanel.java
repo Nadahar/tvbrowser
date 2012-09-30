@@ -176,7 +176,7 @@ public class ChannelChooserPanel extends JPanel implements ListDropAction {
     int pos = source.getSelectedIndex();
     UiUtilities.moveSelectedItems(target, rows, true);
 
-    Channel additional = MainFrame.getInstance().getProgramTableModel().getJointChannelFor(selected);
+    Channel additional = selected.getJointChannel();
     
     Object[] list = ((DefaultListModel) mList.getModel()).toArray();
 
@@ -184,7 +184,7 @@ public class ChannelChooserPanel extends JPanel implements ListDropAction {
     ArrayList<Channel> tempList = new ArrayList<Channel>();
     
     for (int i = 0; i < list.length; i++) {
-      Channel joint = MainFrame.getInstance().getProgramTableModel().getJointChannelFor((Channel)list[i]);
+      Channel joint = ((Channel)list[i]).getJointChannel();
       
       if(additional != null && joint != null && additional.equals(joint)) {
         joint = null;
