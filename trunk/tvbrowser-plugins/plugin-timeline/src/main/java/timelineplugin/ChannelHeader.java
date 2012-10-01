@@ -25,6 +25,7 @@ import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -75,7 +76,16 @@ public class ChannelHeader extends JComponent {
 		mIcons = new HashMap<Channel, ImageIcon>();
 
 		mChannelHeight = channelHeight;
-		mChannels = Plugin.getPluginManager().getSubscribedChannels();
+		
+		ArrayList<Channel> channelList = new ArrayList<Channel>();
+		
+		for(Channel ch : Plugin.getPluginManager().getSubscribedChannels()) {
+		  if(ch.getBaseChannel() == null) {
+		    channelList.add(ch);
+		  }
+		}
+		
+		mChannels = channelList.toArray(new Channel[channelList.size()]);
 		mChannelCount = mChannels.length;
 
 		mShowName = TimelinePlugin.getSettings().showChannelName();
@@ -199,7 +209,7 @@ public class ChannelHeader extends JComponent {
   		
 			g.setColor((!mRowResizing && !mColumnResizing) ? c : Color.LIGHT_GRAY);
 			if (mShowName) {
-				g.drawString(mChannels[i].getName(), textBegin, y + h);
+				g.drawString(getName(mChannels[i]), textBegin, y + h);
 			}
 			if (mShowIcon) {
 				getIcon(mChannels[i]).paintIcon(this, g, 0, y + delta);
@@ -235,11 +245,21 @@ public class ChannelHeader extends JComponent {
 		}
 	}
 
+	private String getName(final Channel channel) {
+	  if(channel.getJointChannel() != null) {
+	    return channel.getJointChannelName();
+	  }
+	  
+	  return channel.getName();
+	}
+	
 	private ImageIcon getIcon(final Channel channel) {
 		if (mIcons.containsKey(channel)) {
 			return mIcons.get(channel);
 		}
-		final ImageIcon icon = UiUtilities.createChannelIcon(channel.getIcon());
+		
+		final ImageIcon icon = UiUtilities.createChannelIcon(channel.getJointChannel() != null ? channel.getJointChannelIcon() : channel.getIcon());
+		
 		mIcons.put(channel, icon);
 		return icon;
 	}
