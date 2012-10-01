@@ -406,13 +406,13 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
     jointChannelCount = 0;
     
     for (int i = 0; i < mProgramColumn.length; i++) {
-      if (showEmptyColumns || mProgramColumn[i].size() > 0) {
+      if ((showEmptyColumns || mProgramColumn[i].size() > 0) && mChannelArr[i+jointChannelCount].getBaseChannel() == null) {
         newShownColumns.add(mProgramColumn[i]);
         newShownChannels.add(mChannelArr[i+jointChannelCount]);
-        
-        if(mChannelArr[i+jointChannelCount].getJointChannel() != null) {
-          jointChannelCount++;
-        }
+      }
+      
+      if(mChannelArr[i+jointChannelCount].getJointChannel() != null) {
+        jointChannelCount++;
       }
     }
     mShownProgramColumn = new ArrayList[newShownColumns.size()];
