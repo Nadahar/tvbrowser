@@ -26,6 +26,8 @@ import java.awt.event.InputEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 
 import javax.swing.BorderFactory;
@@ -34,6 +36,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 
+import util.program.ProgramUtilities;
 import util.ui.persona.Persona;
 
 import devplugin.Channel;
@@ -123,10 +126,18 @@ public class ProgramScrollPanel extends JScrollPane implements
 
 	private void addProgramList() {
 		mProgramPanel.removeAll();
-
+		
 		int channelTop = 0;
-		final Channel[] channels = Plugin.getPluginManager()
-				.getSubscribedChannels();
+		
+		final ArrayList<Channel> channelList = new ArrayList<Channel>();
+		
+		for(Channel ch : Plugin.getPluginManager().getSubscribedChannels()) {
+		  if(ch.getBaseChannel() == null) {
+		    channelList.add(ch);
+		  }
+		}
+		
+	//	final Channel[] channels = channelList.toArray(new Channel[channelList.size()]);
 		final Date selectedDay = TimelinePlugin.getInstance().getChoosenDate();
 		final Date nextDay = selectedDay.addDays(1);
 		final int dayWidth = 24 * TimelinePlugin.getSettings().getHourWidth();
@@ -134,12 +145,14 @@ public class ProgramScrollPanel extends JScrollPane implements
 		final ProgramFilter filter = TimelinePlugin.getInstance().getFilter();
 		int channelHeight = TimelinePlugin.getSettings().getChannelHeight();
 		
-		for (int channelIndex = 0; channelIndex < channels.length; channelIndex++) {
+		for (int channelIndex = 0; channelIndex < channelList.size(); channelIndex++) {
 			channelTop = channelIndex * channelHeight;
 
+			//Channel channel = channelList.get(channelIndex);
+			
 			// today
-			Iterator<Program> it = Plugin.getPluginManager().getChannelDayProgram(
-					selectedDay, channels[channelIndex]);
+			Iterator<Program> it = getAllProgramIterator(channelList.get(channelIndex),selectedDay);
+			
 			if (it != null) {
 				while (it.hasNext()) {
 					final Program p = it.next();
@@ -153,8 +166,7 @@ public class ProgramScrollPanel extends JScrollPane implements
 			
 			// next day
 			if (mProgramPanel.mEndOfDay > 0) {
-				it = Plugin.getPluginManager().getChannelDayProgram(nextDay,
-						channels[channelIndex]);
+				it = getAllProgramIterator(channelList.get(channelIndex),nextDay);
 				if (it != null) {
 					while (it.hasNext()) {
 						final Program p = it.next();
@@ -171,6 +183,35 @@ public class ProgramScrollPanel extends JScrollPane implements
 		dummy.setBounds(0, 0, 1, 1);
 		mProgramPanel.add(dummy);
 		mProgramPanel.repaint();
+	}
+	
+	private Iterator<Program> getAllProgramIterator(Channel channel, Date selectedDay) {
+    Iterator<Program> it = Plugin.getPluginManager().getChannelDayProgram(
+        selectedDay, channel);
+    
+    if(channel.getJointChannel() != null) {
+      ArrayList<Program> jointProgramList = new ArrayList<Program>();
+      
+      if(it != null) {
+        while(it.hasNext()) {
+          jointProgramList.add(it.next());
+        }
+      }
+
+      it = Plugin.getPluginManager().getChannelDayProgram(selectedDay, channel.getJointChannel());
+    
+      if(it != null) {
+        while(it.hasNext()) {
+          jointProgramList.add(it.next());
+        }
+        
+        Collections.sort(jointProgramList, ProgramUtilities.getProgramComparator());
+      }
+      
+      return it = jointProgramList.iterator();
+    }
+    
+    return it;
 	}
 
 	private void addProgram(final Program program, final int channelTop,

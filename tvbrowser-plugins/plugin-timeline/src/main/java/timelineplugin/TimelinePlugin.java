@@ -112,7 +112,7 @@ public final class TimelinePlugin extends devplugin.Plugin {
 	}
 
 	public static Version getVersion() {
-		return new Version(1, 10, 0, false);
+		return new Version(1, 11, 0, false);
 	}
 
 	public SettingsTab getSettingsTab() {

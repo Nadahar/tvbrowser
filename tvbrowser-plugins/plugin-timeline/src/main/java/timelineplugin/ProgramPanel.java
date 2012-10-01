@@ -33,6 +33,7 @@ import javax.swing.JPanel;
 import javax.swing.JViewport;
 import javax.swing.UIManager;
 
+import devplugin.Channel;
 import devplugin.Date;
 import devplugin.Plugin;
 
@@ -88,7 +89,14 @@ public class ProgramPanel extends JPanel {
 		
 		setOpaque(false);
 
-		mChannelCount = Plugin.getPluginManager().getSubscribedChannels().length;
+		mChannelCount = 0;
+		
+		for(Channel ch : Plugin.getPluginManager().getSubscribedChannels()) {
+		  if(ch.getBaseChannel() == null) {
+		    mChannelCount++;
+		  }
+		}
+		
 		resize();
 
 		addMouseMotionListener(new MouseMotionAdapter() {
