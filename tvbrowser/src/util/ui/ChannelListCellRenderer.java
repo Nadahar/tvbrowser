@@ -124,7 +124,7 @@ public class ChannelListCellRenderer extends DefaultListCellRenderer {
     JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
     if (mChannel == null) {
-      mChannel = new ChannelLabel(mChannelIconsVisible, mTextVisible,mDefaultValues, false, mShowJointChannelInfo);
+      mChannel = new ChannelLabel(mChannelIconsVisible, mTextVisible,mDefaultValues, false, mShowJointChannelInfo, ((Channel)value).isTimeLimited());
     }
 
     if (mShowCountry) {

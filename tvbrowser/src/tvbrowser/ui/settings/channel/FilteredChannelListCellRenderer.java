@@ -66,6 +66,7 @@ public class FilteredChannelListCellRenderer extends DefaultListCellRenderer {
 
     mChannel.setShowCountry(mChannelCounter.isDuplicate((Channel)value));
     mChannel.setShowService(mChannelCounter.isDuplicateIncludingCountry((Channel)value));
+    mChannel.setShowTimeLimitation(((Channel)value).isTimeLimited());
 
     if (value instanceof Channel) {
       mChannel.setChannel((Channel) value);

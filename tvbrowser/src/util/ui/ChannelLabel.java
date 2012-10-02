@@ -53,8 +53,10 @@ public class ChannelLabel extends JLabel {
 
   private boolean mShowService;
   private boolean mShowJointChanelInfo;
+  private boolean mShowTimeLimitation;
 
   private Channel mChannel;
+  private static TimeFormatter mTimeFormatter;
   
   /**
    * Creates the ChannelLabel
@@ -108,7 +110,7 @@ public class ChannelLabel extends JLabel {
    * @since 2.6
    */
   public ChannelLabel(boolean channelIconsVisible, boolean textIsVisible, boolean showDefaultValues, boolean showCountry) {
-    this(channelIconsVisible, textIsVisible, showDefaultValues, showCountry, false);
+    this(channelIconsVisible, textIsVisible, showDefaultValues, showCountry, false, false);
   }
 
   /**
@@ -123,15 +125,17 @@ public class ChannelLabel extends JLabel {
    * @param showCountry
    *          Show information about the country
    * @param showJoinedChannelInfo If the joined channel name and icon should be shown.
+   * @param showTimeLimitation If the time limitations should be shown.
    * 
    * @since 3.2.1
    */
-  public ChannelLabel(boolean channelIconsVisible, boolean textIsVisible, boolean showDefaultValues, boolean showCountry, boolean showJoinedChannelInfo) {
+  public ChannelLabel(boolean channelIconsVisible, boolean textIsVisible, boolean showDefaultValues, boolean showCountry, boolean showJoinedChannelInfo, boolean showTimeLimitation) {
     mChannelIconsVisible = channelIconsVisible;
     mTextIsVisible = textIsVisible;
     mShowDefaultValues = showDefaultValues;
     mShowCountry = showCountry;
     mShowJointChanelInfo = showJoinedChannelInfo;
+    mShowTimeLimitation = showTimeLimitation;
   }
 
 
@@ -182,7 +186,7 @@ public class ChannelLabel extends JLabel {
     if (mTextIsVisible) {
       StringBuilder text = new StringBuilder((mShowJointChanelInfo && channel.getJointChannel() != null) ? channel.getJointChannelName() : (mShowDefaultValues ? channel.getDefaultName() : channel.getName()));
 
-      if (mShowCountry || mShowService) {
+      if (mShowCountry || mShowService || mShowTimeLimitation) {
         text.append(" (");
       }
       if (mShowCountry) {
@@ -194,7 +198,18 @@ public class ChannelLabel extends JLabel {
         }
         text.append(channel.getDataServiceProxy().getInfo().getName());
       }
-      if (mShowCountry || mShowService) {
+      if(mShowTimeLimitation) {
+        if (mShowService || mShowCountry) {
+          text.append(", ");
+        }
+        
+        if(mTimeFormatter == null) {
+          mTimeFormatter = new TimeFormatter(Settings.getTimePattern());
+        }
+        
+        text.append(mTimeFormatter.formatTime(channel.getStartTimeLimit() / 60, channel.getStartTimeLimit() % 60)).append("-").append(mTimeFormatter.formatTime(channel.getEndTimeLimit() / 60, channel.getEndTimeLimit() % 60));
+      }
+      if (mShowCountry || mShowService || mShowTimeLimitation) {
         text.append(")");
       }
 
@@ -283,6 +298,16 @@ public class ChannelLabel extends JLabel {
    */
   public void setShowService(boolean showService) {
     mShowService = showService;
+  }
+  
+  /**
+   * Should the time limitation info shown in label.
+   * <p>
+   * @param showTimeLimitation If the time limitation should be shown.
+   * @since 3.2.1
+   */
+  public void setShowTimeLimitation(boolean showTimeLimitation) {
+    mShowTimeLimitation = showTimeLimitation;
   }
   
   /**
