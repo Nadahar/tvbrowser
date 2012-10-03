@@ -143,7 +143,6 @@ public class ChannelListCellRenderer extends DefaultListCellRenderer {
       mChannel.setOpaque(isSelected);
       mChannel.setBackground(label.getBackground());
       mChannel.setForeground(label.getForeground());
-      mChannel.setShowTimeLimitation(((Channel)value).isTimeLimited());
 
       boolean found = (mChannels == null);
       if (mChannels != null) {
