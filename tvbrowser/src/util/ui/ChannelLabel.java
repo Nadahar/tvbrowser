@@ -110,8 +110,28 @@ public class ChannelLabel extends JLabel {
    * @since 2.6
    */
   public ChannelLabel(boolean channelIconsVisible, boolean textIsVisible, boolean showDefaultValues, boolean showCountry) {
-    this(channelIconsVisible, textIsVisible, showDefaultValues, showCountry, false, false);
+    this(channelIconsVisible, textIsVisible, showDefaultValues, showCountry, false);
   }
+  
+  /**
+   * Creates the ChanelLabel
+   * 
+   * @param channelIconsVisible
+   *          Should the Icon be visible
+   * @param textIsVisible
+   *          Should Text be visible ?
+   * @param showDefaultValues
+   *          Show the default channel icon and name.
+   * @param showCountry
+   *          Show information about the country
+   * @param showJoinedChannelInfo If the joined channel name and icon should be shown.
+   * 
+   * @since 3.2.1
+   */
+  public ChannelLabel(boolean channelIconsVisible, boolean textIsVisible, boolean showDefaultValues, boolean showCountry, boolean showJoinedChannelInfo) {
+    this(channelIconsVisible, textIsVisible, showDefaultValues, showCountry, showJoinedChannelInfo, false);
+  }
+      
 
   /**
    * Creates the ChanelLabel
