@@ -270,16 +270,17 @@ public class ListViewPanel extends JPanel implements PersonaListener {
       }
     });
 
-    mChannels.addItemListener(new ItemListener() {      
+    mChannels.addActionListener(new ActionListener() {
       @Override
-      public void itemStateChanged(ItemEvent e) {
-        if(e.getStateChange() == ItemEvent.SELECTED) {
-          // user defined selection
-          if (mChannels.getSelectedIndex() == mChannels.getItemCount()-1) {
-            String filterName = Plugin.getPluginManager().getFilterManager().addNewChannelFilterComponent();;
+      public void actionPerformed(ActionEvent e) {
+        // user defined selection
+        if (mChannels.getSelectedIndex() == mChannels.getItemCount()-1) {
+          String filterName = Plugin.getPluginManager().getFilterManager().addNewChannelFilterComponent();
+          
+          if(filterName != null) {
             mChannels.removeAllItems();
             mChannels.addItem(mLocalizer.msg("filterAll", "all channels"));
-            
+  
             for (String channel : Plugin.getPluginManager().getFilterManager().getChannelFilterComponentNames()) {
               mChannels.addItem(channel);
             }
@@ -287,9 +288,12 @@ public class ListViewPanel extends JPanel implements PersonaListener {
             mChannels.addItem(mLocalizer.ellipsisMsg("filterDefine", "define filter"));
             mChannels.setSelectedItem(filterName);
           }
-          mModel.removeAllRows();
-          refreshView();
+          else {
+            mChannels.setSelectedIndex(0);
+          }
         }
+        mModel.removeAllRows();
+        refreshView();
       }
     });
 
