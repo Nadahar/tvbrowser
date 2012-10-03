@@ -43,7 +43,6 @@ import java.util.Vector;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JComboBox;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -63,17 +62,13 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.Channel;
+import devplugin.ChannelFilter;
 import devplugin.Date;
 import devplugin.Plugin;
 import devplugin.Program;
 import devplugin.ProgramFilter;
 import devplugin.SettingsItem;
 
-import tvbrowser.core.Settings;
-import tvbrowser.core.filters.FilterComponent;
-import tvbrowser.core.filters.FilterComponentList;
-import tvbrowser.core.filters.filtercomponents.ChannelFilterComponent;
-import tvbrowser.ui.filter.dlgs.EditFilterComponentDlg;
 import util.io.IOUtilities;
 import util.program.ProgramUtilities;
 import util.ui.CaretPositionCorrector;
@@ -219,7 +214,7 @@ public class ListViewPanel extends JPanel implements PersonaListener {
 
     datetimeselect.add(mAtLabel = new JLabel(" " + mLocalizer.msg("at", "at") + " "));
 
-    JSpinner.DateEditor dateEditor = new JSpinner.DateEditor(mTimeSpinner, Settings.getTimePattern());
+    JSpinner.DateEditor dateEditor = new JSpinner.DateEditor(mTimeSpinner, Plugin.getPluginManager().getTvBrowserSettings().getTimePattern());
 
     mTimeSpinner.setEditor(dateEditor);
 
@@ -229,7 +224,7 @@ public class ListViewPanel extends JPanel implements PersonaListener {
 
     Vector<String> filters = new Vector<String>();
     filters.add(mLocalizer.msg("filterAll", "all channels"));
-    for (String filterName : FilterComponentList.getInstance().getChannelFilterNames()) {
+    for (String filterName : Plugin.getPluginManager().getFilterManager().getChannelFilterComponentNames()) {
       filters.add(filterName);
     }
     filters.add(mLocalizer.ellipsisMsg("filterDefine", "define filter"));
@@ -275,31 +270,26 @@ public class ListViewPanel extends JPanel implements PersonaListener {
       }
     });
 
-    mChannels.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        // user defined selection
-        if (mChannels.getSelectedIndex() == mChannels.getItemCount()-1) {
-          EditFilterComponentDlg dlg = new EditFilterComponentDlg((JFrame)null, null, ChannelFilterComponent.class);
-          FilterComponent rule = dlg.getFilterComponent();
-          if (rule == null) {
-            return;
+    mChannels.addItemListener(new ItemListener() {      
+      @Override
+      public void itemStateChanged(ItemEvent e) {
+        if(e.getStateChange() == ItemEvent.SELECTED) {
+          // user defined selection
+          if (mChannels.getSelectedIndex() == mChannels.getItemCount()-1) {
+            String filterName = Plugin.getPluginManager().getFilterManager().addNewChannelFilterComponent();;
+            mChannels.removeAllItems();
+            mChannels.addItem(mLocalizer.msg("filterAll", "all channels"));
+            
+            for (String channel : Plugin.getPluginManager().getFilterManager().getChannelFilterComponentNames()) {
+              mChannels.addItem(channel);
+            }
+            
+            mChannels.addItem(mLocalizer.ellipsisMsg("filterDefine", "define filter"));
+            mChannels.setSelectedItem(filterName);
           }
-          if (! (rule instanceof ChannelFilterComponent)) {
-            return;
-          }
-          FilterComponentList.getInstance().add(rule);
-          FilterComponentList.getInstance().store();
-          String filterName = rule.getName();
-          mChannels.removeAllItems();
-          mChannels.addItem(mLocalizer.msg("filterAll", "all channels"));
-          for (String channel : FilterComponentList.getInstance().getChannelFilterNames()) {
-            mChannels.addItem(channel);
-          }
-          mChannels.addItem(mLocalizer.ellipsisMsg("filterDefine", "define filter"));
-          mChannels.setSelectedItem(filterName);
+          mModel.removeAllRows();
+          refreshView();
         }
-        mModel.removeAllRows();
-        refreshView();
       }
     });
 
@@ -441,7 +431,7 @@ public class ListViewPanel extends JPanel implements PersonaListener {
   /**
    * Generates the List of Programs
    */
-  private void generateList(Date date, int time) {
+  private synchronized void generateList(Date date, int time) {
     // If Time > 24 try next Day
     if (time > 60 * 24) {
       date = date.addDays(1);
@@ -450,10 +440,11 @@ public class ListViewPanel extends JPanel implements PersonaListener {
 
     Channel[] channels = Plugin.getPluginManager().getSubscribedChannels();
     if ((mChannels != null) && (mChannels.getSelectedIndex() > 0)) {
-      FilterComponent component = FilterComponentList.getInstance().getFilterComponentByName(mChannels.getSelectedItem().toString());
-      if (component instanceof ChannelFilterComponent) {
-        channels = ((ChannelFilterComponent) component).getChannels();
+      try {
+        ChannelFilter channelFilter = ChannelFilter.createChannelFilterForName(mChannels.getSelectedItem().toString());
         
+        channels = channelFilter.getChannels();
+
         ArrayList<Channel> channelList = new ArrayList<Channel>();
         
         for(Channel ch : channels) {
@@ -465,8 +456,8 @@ public class ListViewPanel extends JPanel implements PersonaListener {
           }
         }
         
-        channels = channelList.toArray(new Channel[channelList.size()]);
-      }
+       channels = channelList.toArray(new Channel[channelList.size()]);
+      }catch(Exception e) {}
     }
 
     for (Channel channel : channels) {
@@ -827,7 +818,7 @@ public class ListViewPanel extends JPanel implements PersonaListener {
     if(mDateThread == null || !mDateThread.isAlive()) {
       mDateThread = new Thread() {        
         @Override
-        public void run() {
+        public void run() {try {
           // TODO Auto-generated method stub
           Date myDate = date;
           int myMinutes = minute;
@@ -842,7 +833,7 @@ public class ListViewPanel extends JPanel implements PersonaListener {
           mDate.setSelectedItem(myDate);
           
           showForTimeButton(myMinutes);
-          
+        }catch(Throwable t) {t.printStackTrace();}
         }
       };
       mDateThread.start();
@@ -909,10 +900,10 @@ public class ListViewPanel extends JPanel implements PersonaListener {
           
           SwingUtilities.invokeLater(new Runnable() {
             @Override
-            public void run() {
+            public void run() {try {
               if(row >= 0 && row < mProgramTable.getRowCount()) {
                 mProgramTable.scrollRectToVisible(mProgramTable.getCellRect(row, 0, true));
-              }
+              }}catch(Throwable t) {t.printStackTrace();}
             }
           });
         }
