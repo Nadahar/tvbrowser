@@ -124,7 +124,7 @@ public class ChannelListCellRenderer extends DefaultListCellRenderer {
     JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
     if (mChannel == null) {
-      mChannel = new ChannelLabel(mChannelIconsVisible, mTextVisible,mDefaultValues, false, mShowJointChannelInfo, ((Channel)value).isTimeLimited());
+      mChannel = new ChannelLabel(mChannelIconsVisible, mTextVisible,mDefaultValues, false, mShowJointChannelInfo, false);
     }
 
     if (mShowCountry) {
@@ -143,6 +143,7 @@ public class ChannelListCellRenderer extends DefaultListCellRenderer {
       mChannel.setOpaque(isSelected);
       mChannel.setBackground(label.getBackground());
       mChannel.setForeground(label.getForeground());
+      mChannel.setShowTimeLimitation(((Channel)value).isTimeLimited());
 
       boolean found = (mChannels == null);
       if (mChannels != null) {
