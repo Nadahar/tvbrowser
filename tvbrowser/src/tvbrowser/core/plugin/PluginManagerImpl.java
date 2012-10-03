@@ -787,6 +787,11 @@ public class PluginManagerImpl implements PluginManager {
       public Color getProgramPanelSelectionColor() {
         return Settings.propKeyboardSelectedColor.getColor();
       }
+
+      @Override
+      public String getTimePattern() {
+        return Settings.getTimePattern();
+      }
     };
   }
 

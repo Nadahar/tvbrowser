@@ -147,4 +147,12 @@ public interface TvBrowserSettings {
    * @since 3.2
    */
   public Color getProgramPanelSelectionColor();
+  
+  /**
+   * Gets the time pattern used to format times.
+   * <p>
+   * @return The time pattern used to format times.
+   * @since 3.2.1
+   */
+  public String getTimePattern();
 }
