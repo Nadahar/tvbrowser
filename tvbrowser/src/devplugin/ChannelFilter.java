@@ -47,12 +47,26 @@ public final class ChannelFilter implements ProgramFilter {
    * @throws ClassCastException Thrown if the found component is not a ChannelFilterComponent.
    * @throws TvBrowserException Thrown if the ChannelFilterComponent with the given name was not found.
    */
-  public ChannelFilter(String name) throws ClassCastException, TvBrowserException {
+  private ChannelFilter(String name) throws ClassCastException, TvBrowserException {
     mChannelFilterComponent = (ChannelFilterComponent)FilterComponentList.getInstance().getFilterComponentByName(name);
     
     if(mChannelFilterComponent == null) {
       throw new TvBrowserException(ChannelFilter.class, "filterComponentNotFound", "Filter component not found");
     }
+  }
+  
+  /**
+   * Creates a channel filter with the name of the
+   * component to create the filter from.
+   * <p>
+   * @param name The name of the filter component to create
+   * the channel filter from.
+   * @return The created channel filter.
+   * @throws ClassCastException Thrown if the found component is not a ChannelFilterComponent.
+   * @throws TvBrowserException Thrown if the ChannelFilterComponent with the given name was not found.
+   */
+  public static ChannelFilter createChannelFilterForName(String name) throws ClassCastException, TvBrowserException {
+    return new ChannelFilter(name);
   }
 
   @Override
