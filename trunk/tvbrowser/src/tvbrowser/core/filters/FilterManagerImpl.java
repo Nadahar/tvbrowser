@@ -20,7 +20,11 @@ package tvbrowser.core.filters;
 
 import java.util.ArrayList;
 
+import javax.swing.JFrame;
+
+import tvbrowser.core.filters.filtercomponents.ChannelFilterComponent;
 import tvbrowser.core.plugin.PluginProxyManager;
+import tvbrowser.ui.filter.dlgs.EditFilterComponentDlg;
 import tvbrowser.ui.mainframe.MainFrame;
 import devplugin.FilterManager;
 import devplugin.PluginsProgramFilter;
@@ -154,5 +158,26 @@ public class FilterManagerImpl implements FilterManager {
    */
   public boolean isPluginFilter(ProgramFilter filter) {
     return filter instanceof PluginFilter;
+  }
+
+  @Override
+  public String[] getChannelFilterComponentNames() {
+    return FilterComponentList.getInstance().getChannelFilterNames();
+  }
+
+  @Override
+  public String addNewChannelFilterComponent() {
+    EditFilterComponentDlg dlg = new EditFilterComponentDlg((JFrame)null, null, ChannelFilterComponent.class);
+    FilterComponent rule = dlg.getFilterComponent();
+    if (rule == null) {
+      return null;
+    }
+    if (! (rule instanceof ChannelFilterComponent)) {
+      return null;
+    }
+    FilterComponentList.getInstance().add(rule);
+    FilterComponentList.getInstance().store();
+    
+    return rule.getName();
   }
 }

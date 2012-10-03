@@ -83,4 +83,21 @@ public interface FilterManager {
    * @since 2.6
    */
   public boolean isPluginFilter(ProgramFilter filter);
+  
+  /**
+   * Gets the names of the channel filter components.
+   * <p>
+   * @return The names of the channel filter components.
+   * @since 3.2.1
+   */
+  public String[] getChannelFilterComponentNames();
+  
+  /**
+   * Opens a dialog to create new channel filter components.
+   * <p>
+   * @return The name of the created filter component, or <code>null</code>
+   * if no component was created. 
+   * @since 3.2.1
+   */
+  public String addNewChannelFilterComponent();
 }
