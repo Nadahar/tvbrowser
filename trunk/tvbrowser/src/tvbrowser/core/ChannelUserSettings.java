@@ -71,7 +71,7 @@ public class ChannelUserSettings {
 
 
   public ChannelUserSettings() {
-
+    mTimeZoneOffsetMinutes = 0;
   }
 
   public void setTimeZoneCorrectionMinutes(int offset) {
