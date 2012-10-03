@@ -35,6 +35,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -74,6 +75,7 @@ import tvbrowser.core.filters.FilterComponentList;
 import tvbrowser.core.filters.filtercomponents.ChannelFilterComponent;
 import tvbrowser.ui.filter.dlgs.EditFilterComponentDlg;
 import util.io.IOUtilities;
+import util.program.ProgramUtilities;
 import util.ui.CaretPositionCorrector;
 import util.ui.ChannelLabel;
 import util.ui.Localizer;
@@ -451,11 +453,27 @@ public class ListViewPanel extends JPanel implements PersonaListener {
       FilterComponent component = FilterComponentList.getInstance().getFilterComponentByName(mChannels.getSelectedItem().toString());
       if (component instanceof ChannelFilterComponent) {
         channels = ((ChannelFilterComponent) component).getChannels();
+        
+        ArrayList<Channel> channelList = new ArrayList<Channel>();
+        
+        for(Channel ch : channels) {
+          if(ch.getBaseChannel() != null) {
+            channelList.add(ch.getBaseChannel());
+          }
+          else {
+            channelList.add(ch);
+          }
+        }
+        
+        channels = channelList.toArray(new Channel[channelList.size()]);
       }
     }
 
     for (Channel channel : channels) {
-
+      if(channel.getBaseChannel() != null) {
+        continue;
+      }
+      
       Program prg = findProgram(date, time, channel, false);
       Program nprg = null;
 
@@ -466,7 +484,7 @@ public class ListViewPanel extends JPanel implements PersonaListener {
       if (prg != null) {
         nprg = findNextProgram(prg);
       } else {
-        Iterator<Program> it = Plugin.getPluginManager().getChannelDayProgram(date, channel);
+        Iterator<Program> it = getIteratorFor(date, channel);
 
         if (it.hasNext()) {
           Program p = it.next();
@@ -481,7 +499,7 @@ public class ListViewPanel extends JPanel implements PersonaListener {
         }
 
         if(nprg == null) {
-          it = Plugin.getPluginManager().getChannelDayProgram(date.addDays(1), channel);
+          it = getIteratorFor(date.addDays(1), channel);
           
           while(it.hasNext() && nprg == null) {
             Program p = it.next();
@@ -504,7 +522,7 @@ public class ListViewPanel extends JPanel implements PersonaListener {
    * @return following Program
    */
   private Program findNextProgram(Program prg) {
-    Iterator<Program> it = Plugin.getPluginManager().getChannelDayProgram(prg.getDate(), prg.getChannel());
+    Iterator<Program> it = getIteratorFor(prg.getDate(), prg.getChannel());
 
     Program nprg = null;
     boolean last = false;
@@ -528,7 +546,7 @@ public class ListViewPanel extends JPanel implements PersonaListener {
     }
 
     if (last) {
-      it = Plugin.getPluginManager().getChannelDayProgram(prg.getDate().addDays(1), prg.getChannel());
+      it = getIteratorFor(prg.getDate().addDays(1), prg.getChannel());
 
       while (it.hasNext()) {
         Program p = it.next();
@@ -552,16 +570,23 @@ public class ListViewPanel extends JPanel implements PersonaListener {
    * @return added a Program
    */
   private Program findProgram(Date date, int time, Channel channel, boolean next) {
-    for (Iterator<Program> it = Plugin.getPluginManager().getChannelDayProgram(date, channel); it.hasNext();) {
-      Program program = it.next();
-
-      int start = program.getStartTime();
-      int ende = program.getStartTime() + program.getLength();
+    if(channel.getBaseChannel() == null) {
+      Iterator<Program> it = getIteratorFor(date,channel);
       
-      if (((!next && (start <= time) && (ende > time)) || (next && start > IOUtilities.getMinutesAfterMidnight())) && mCurrentFilter.accept(program)) {
-        return program;
+      if(it != null) {
+        while (it.hasNext()) {
+          Program program = it.next();
+    
+          int start = program.getStartTime();
+          int ende = program.getStartTime() + program.getLength();
+          
+          if (((!next && (start <= time) && (ende > time)) || (next && start > IOUtilities.getMinutesAfterMidnight())) && mCurrentFilter.accept(program)) {
+            return program;
+          }
+        }
       }
     }
+    
     return null;
   }
 
@@ -603,9 +628,10 @@ public class ListViewPanel extends JPanel implements PersonaListener {
         Channel[] channels = mModel.getChannels();
         width = UiUtilities.getChannelIconWidth();
         for (Channel channel : channels) {
-          ChannelLabel label = new ChannelLabel(channel);
+          ChannelLabel label = new ChannelLabel(true,true,false,false,true);
+          label.setChannel(channel);
           label.validate();
-          width = Math.max(width, (int)label.getPreferredSize().getWidth());
+          width = Math.max(width, (int)label.getPreferredSize().getWidth()+5);
         }
         column.setPreferredWidth(width);
         column.setMaxWidth(250);
@@ -914,5 +940,33 @@ public class ListViewPanel extends JPanel implements PersonaListener {
       mFilterLabel.setForeground(UIManager.getColor("Label.foreground"));
       mAtLabel.setForeground(UIManager.getColor("Label.foreground"));
     }
+  }
+  
+  private Iterator<Program> getIteratorFor(Date date, Channel channel) {
+    Iterator<Program> it = Plugin.getPluginManager().getChannelDayProgram(date, channel);
+    
+    if(channel.getJointChannel() != null || channel.getBaseChannel() != null) {      
+      ArrayList<Program> progList = new ArrayList<Program>();
+      
+      if(it != null) {
+        while(it.hasNext()) {
+          progList.add(it.next());
+        }
+      }
+      
+      it = Plugin.getPluginManager().getChannelDayProgram(date, (channel.getJointChannel() != null ? channel.getJointChannel() : channel.getBaseChannel()));
+
+      if(it != null) {
+        while(it.hasNext()) {
+          progList.add(it.next());
+        }
+      }
+      
+      Collections.sort(progList, ProgramUtilities.getProgramComparator());
+      
+      it = progList.iterator();
+    }
+    
+    return it;
   }
 }

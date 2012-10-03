@@ -136,12 +136,13 @@ public class ListTableCellRenderer extends DefaultTableCellRenderer {
     if (value instanceof Channel) {
       Channel channel = (Channel) value;
 
-      ChannelLabel channelLabel = new ChannelLabel();
-
+      ChannelLabel channelLabel = new ChannelLabel(true,true,false,false,true);
+      
       channelLabel.setChannel(channel);
       channelLabel.setOpaque(label.isOpaque());
       channelLabel.setForeground(label.getForeground());
       channelLabel.setBackground(label.getBackground());
+      
 
       mCache[row][0] = channelLabel;
       updateHeight(table, row);

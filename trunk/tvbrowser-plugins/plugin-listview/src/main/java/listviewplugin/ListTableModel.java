@@ -72,7 +72,7 @@ public class ListTableModel extends AbstractTableModel {
    * @param second
    *          Second Program
    */
-  public void addRow(final Channel channel, final Program first,
+ /* public void addRow(final Channel channel, final Program first,
       final Program second) {
     final ListTableModelData data = new ListTableModelData();
     data.mChannel = channel;
@@ -81,7 +81,7 @@ public class ListTableModel extends AbstractTableModel {
 
     mData.add(data);
     fireTableRowsInserted(mData.indexOf(data), mData.indexOf(data));
-  }
+  }*/
 
   /**
    * Updates a Channel-Row in the Table. If the Row wasn't found, it will be
