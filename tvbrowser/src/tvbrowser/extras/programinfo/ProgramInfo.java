@@ -41,6 +41,7 @@ import tvbrowser.extras.common.ConfigurationHandler;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.programtable.ProgramTable;
 import util.exc.ErrorHandler;
+import util.program.ProgramUtilities;
 import util.settings.PluginPictureSettings;
 import util.ui.Localizer;
 import util.ui.UIThreadRunner;
@@ -259,8 +260,8 @@ public class ProgramInfo {
   }
   
   private void findPreviousAndNextProgram(Program prog) {
-    Iterator<Program> dayProgram = Plugin.getPluginManager().getChannelDayProgram(prog.getDate(), prog.getChannel());
-        
+    Iterator<Program> dayProgram = ProgramUtilities.getJointProgramIteratorFor(prog.getDate(), prog.getChannel());
+    
     ArrayList<Program> previousPrograms = new ArrayList<Program>();
     ArrayList<Program> nextPrograms = new ArrayList<Program>();
     
@@ -281,7 +282,7 @@ public class ProgramInfo {
     }
     
     if(previousPrograms.size() < 5) {
-      dayProgram = Plugin.getPluginManager().getChannelDayProgram(prog.getDate().addDays(-1), prog.getChannel());
+      dayProgram = ProgramUtilities.getJointProgramIteratorFor(prog.getDate().addDays(-1), prog.getChannel());
       
       if(dayProgram != null) {
         int i = 0;
@@ -293,7 +294,7 @@ public class ProgramInfo {
     }
     
     if(nextPrograms.size() < 5) {
-      dayProgram = Plugin.getPluginManager().getChannelDayProgram(prog.getDate().addDays(1), prog.getChannel());
+      dayProgram = ProgramUtilities.getJointProgramIteratorFor(prog.getDate().addDays(1), prog.getChannel());
       
       if(dayProgram != null) {
         while(dayProgram.hasNext()) {

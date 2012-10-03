@@ -20,8 +20,10 @@ package util.program;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -33,8 +35,10 @@ import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import util.io.IOUtilities;
+import devplugin.Channel;
 import devplugin.Date;
 import devplugin.ImportanceValue;
+import devplugin.Plugin;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
 
@@ -726,5 +730,42 @@ public class ProgramUtilities {
     }
 
     return Program.MAX_PROGRAM_IMPORTANCE;
+  }
+  
+  /** 
+   * Gets an iterator that contains all programs for the given date of the given
+   * channel and it's joint channel if there one or it's base channel if there one. 
+   * <p>
+   * @param date The date to get the iterator for.
+   * @param channel The channel to get the iterator for.
+   * @return An iterator of programs.
+   * @since 3.2.1
+   */
+  public static Iterator<Program> getJointProgramIteratorFor(Date date, Channel channel) {
+    Iterator<Program> it = Plugin.getPluginManager().getChannelDayProgram(date, channel);
+    
+    if(channel.getJointChannel() != null || channel.getBaseChannel() != null) {      
+      ArrayList<Program> progList = new ArrayList<Program>();
+      
+      if(it != null) {
+        while(it.hasNext()) {
+          progList.add(it.next());
+        }
+      }
+      
+      it = Plugin.getPluginManager().getChannelDayProgram(date, (channel.getJointChannel() != null ? channel.getJointChannel() : channel.getBaseChannel()));
+
+      if(it != null) {
+        while(it.hasNext()) {
+          progList.add(it.next());
+        }
+      }
+      
+      Collections.sort(progList, ProgramUtilities.getProgramComparator());
+      
+      it = progList.iterator();
+    }
+    
+    return it;
   }
 }
