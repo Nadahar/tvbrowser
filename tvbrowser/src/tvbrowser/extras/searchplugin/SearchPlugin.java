@@ -295,13 +295,13 @@ public class SearchPlugin {
     openSearchDialog(text, null);
   }
 
-  private static void searchRepetitions(final Program program) {
+  private static void searchRepetitions(final Program program) {try {
     Window parent = UiUtilities
         .getLastModalChildOf(MainFrame.getInstance());
     Channel channel = program.getChannel();
     RepetitionDialog dlg = new RepetitionDialog(parent, channel);
 
     dlg.setPatternText(program.getTitle());
-    UiUtilities.centerAndShow(dlg);
+    UiUtilities.centerAndShow(dlg);}catch(Throwable t) {t.printStackTrace();}
   }
 }
