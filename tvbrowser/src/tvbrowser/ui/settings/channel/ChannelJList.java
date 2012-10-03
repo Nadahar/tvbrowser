@@ -87,7 +87,53 @@ public class ChannelJList extends JList {
       
       buf.append("<br>");
       buf.append("<b>").append(mLocalizer.msg("timezone", "Timezone")).append(" :</b> ").append(channel.getTimeZone().getDisplayName()).append("<br>");
-      buf.append("<b>").append(mLocalizer.msg("category", "Category")).append(" :</b> ").append(ChannelUtil.getNameForCategories(channel.getCategories())).append("<br><br>");
+      buf.append("<b>").append(mLocalizer.msg("category", "Category")).append(" :</b> ").append(ChannelUtil.getNameForCategories(channel.getCategories())).append("<br>");
+      
+      if(channel.getUserChannelName() != null || channel.getUserIconFileName() != null || channel.getUserWebPage() != null || channel.isTimeLimited() || channel.getTimeZoneCorrectionMinutes() != 0) {
+        buf.append("<b>").append(mLocalizer.msg("userSettings", "User defined settings")).append(" :</b> ");
+      }
+      
+      if(channel.getUserChannelName() != null) {
+        buf.append(mLocalizer.msg("name", "Name"));
+      }
+      
+      if(channel.getUserIconFileName() != null) {
+        if(channel.getUserChannelName() != null) {
+          buf.append(", ");
+        }
+        
+        buf.append(mLocalizer.msg("logo", "Logo"));
+      }
+      
+      if(channel.getUserWebPage() != null) {
+        if(channel.getUserChannelName() != null || channel.getUserIconFileName() != null) {
+          buf.append(", ");
+        }
+        
+        buf.append(mLocalizer.msg("website", "Website"));
+      }
+      
+      if(channel.getTimeZoneCorrectionMinutes() != 0) {
+        if(channel.getUserWebPage() != null || channel.getUserChannelName() != null || channel.getUserIconFileName() != null) {
+          buf.append(", ");
+        }
+        
+        buf.append(mLocalizer.msg("timeCorrection", "Timezone offset"));
+      }
+      
+      if(channel.isTimeLimited()) {
+        if(channel.getTimeZoneCorrectionMinutes() != 0 && channel.getUserWebPage() != null || channel.getUserChannelName() != null || channel.getUserIconFileName() != null) {
+          buf.append(", ");
+        }
+        
+        buf.append(mLocalizer.msg("timeLimitation", "Time limitation"));
+      }
+      
+      if(channel.getUserChannelName() != null || channel.getUserIconFileName() != null || channel.getUserWebPage() != null || channel.isTimeLimited() || channel.getTimeZoneCorrectionMinutes() != 0) {
+        buf.append("<br>");
+      }
+      
+      buf.append("<br>");
       buf.append(mLocalizer.msg("provided", "provided by")).append("<br><center>").append(ChannelUtil.getProviderName(channel)).append("</center>");
       buf.append("</html>");
       return buf.toString();
