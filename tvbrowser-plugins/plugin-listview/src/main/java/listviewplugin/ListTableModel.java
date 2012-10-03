@@ -129,9 +129,11 @@ public class ListTableModel extends AbstractTableModel {
   }
 
   public void removeAllRows() {
-    final int size = mData.size();
-    mData.removeAllElements();
-    fireTableRowsDeleted(0, size - 1);
+    if(getRowCount() > 0) {
+      final int size = mData.size();
+      mData.removeAllElements();
+      fireTableRowsDeleted(0, size - 1);
+    }
   }
 
   /**
