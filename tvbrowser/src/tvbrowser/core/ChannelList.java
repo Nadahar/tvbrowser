@@ -1043,13 +1043,15 @@ public class ChannelList {
   public static void checkForJointChannels() {
     Channel previousChannel = null;
     
-    for(Channel ch :getSubscribedChannels()) {    
+    for(Channel ch :getSubscribedChannels()) {
       if(previousChannel != null && ((previousChannel.isTimeLimited() && ch.isTimeLimited() 
           && (previousChannel.getStartTimeLimit() == ch.getEndTimeLimit())
           && (previousChannel.getEndTimeLimit() == ch.getStartTimeLimit())) || 
           (previousChannel.getSharedChannelId() != null && ch.getSharedChannelId() != null && 
-          previousChannel.getSharedChannelId().equals(ch.getId()) && 
-          previousChannel.getDataServicePackageName().equals(ch.getDataServicePackageName()))
+          previousChannel.getGroup() != null && ch.getGroup() != null &&
+          previousChannel.getSharedChannelId().equals(ch.getId()) &&
+          previousChannel.getDataServicePackageName().equals(ch.getDataServicePackageName())
+          && previousChannel.getGroup().equals(ch.getGroup()))
           )) {
         previousChannel.setJointChannel(ch);
       }
