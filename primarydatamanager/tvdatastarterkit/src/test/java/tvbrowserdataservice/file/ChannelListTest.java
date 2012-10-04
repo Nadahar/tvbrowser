@@ -65,7 +65,7 @@ public class ChannelListTest {
     assertEquals("de;GMT+01:00;DMAX;DMAX;(c) by DMAX;http://www.dmaxtv.de/;http://sender.wannawork.de/logos/DMAX.png;257;\"DMAX\";de\n" +
         "de;GMT+01:00;EUROSPORT;Eurosport;(c) by Eurosport;;;0;\"Eurosport\";de\n" +
         "de;GMT+01:00;AXN;AXN;(c) by AXN;http://www.axntv.de;;273;\"AXN\";de\n" +
-        "de;GMT+01:00;DMAXPUNNY;DMAX PUNNY;(c) by DMAX;http://www.dmaxtv.de/;http://sender.wannawork.de/logos/DMAX.png;257;\"W&ouml;hnungss&uuml;che\";de\n" +
+        "de;GMT+01:00;DMAXPUNNY;DMAX PUNNY;(c) by DMAX;http://www.dmaxtv.de/;http://sender.wannawork.de/logos/DMAX.png;257;\"W&ouml;hnungss&uuml;che\";de;DMAX\n" +
         "de;GMT+01:00;EUROSPORTPUNNY;Eurosport PUNNY;(c) by Eurosport;;;0;\"K&uuml;chendi&szlig;teln\";de\n" +
         "de;GMT+01:00;AXNPUNNY;AXN PUNNY;(c) by AXN;http://www.axntv.de;;273;\"&Auml;lbert &#29536;\";de",
         toString(new GZIPInputStream(new ByteArrayInputStream(stream.toByteArray()))));
