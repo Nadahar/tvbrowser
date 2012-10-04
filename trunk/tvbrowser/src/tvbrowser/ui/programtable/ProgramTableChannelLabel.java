@@ -124,6 +124,9 @@ public class ProgramTableChannelLabel extends ChannelLabel {
     JToolTip tip;
         
     Icon channelIcon = mChannel.getJointChannel() != null ? ImageUtilities.createImageIcon(mChannel.getJointChannelIcon(),Color.WHITE,4): mChannel.getIcon();
+    
+    
+    
     if (channelIcon != null && channelIcon instanceof ImageIcon) {
       Icon shownIcon = this.getIcon();
       if (shownIcon != null && (channelIcon.getIconHeight() > shownIcon.getIconHeight() || channelIcon.getIconWidth() > shownIcon.getIconWidth())) {
@@ -152,16 +155,17 @@ public class ProgramTableChannelLabel extends ChannelLabel {
     FontMetrics metrics = this.getFontMetrics(this.getFont());
     int stringWidth = SwingUtilities.computeStringWidth(metrics, this.getText());
     int x = 0;
-    Icon icon = this.getIcon();
+    Icon icon = mChannel.getJointChannel() != null ? mChannel.getJointChannelIcon() : this.getIcon();
+    Icon channelIcon = mChannel.getJointChannel() != null ? mChannel.getJointChannelIcon() : mChannel.getIcon();
 
-    int iconWidth = getIcon().getIconWidth();
-    if (mChannel.getIcon() != null) {
-      iconWidth = mChannel.getIcon().getIconWidth();
+    int iconWidth = icon.getIconWidth();
+    if (channelIcon != null) {
+      iconWidth = channelIcon.getIconWidth();
     }
 
-    int iconHeight = getIcon().getIconHeight();
-    if (mChannel.getIcon() != null) {
-      iconHeight = mChannel.getIcon().getIconHeight();
+    int iconHeight = icon.getIconHeight();
+    if (channelIcon != null) {
+      iconHeight = channelIcon.getIconHeight();
     }
 
     if (icon != null) {
