@@ -63,13 +63,13 @@ import tvbrowser.ui.mainframe.MainFrame;
 import tvdataservice.MarkedProgramsList;
 import util.io.IOUtilities;
 import util.misc.OperatingSystem;
+import util.program.ProgramUtilities;
 import util.ui.ScrollableMenu;
 import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 import util.ui.menu.MenuUtil;
 import devplugin.ActionMenu;
 import devplugin.Channel;
-import devplugin.ChannelDayProgram;
 import devplugin.Date;
 import devplugin.Program;
 import devplugin.SettingsItem;
@@ -374,37 +374,43 @@ public class SystemTray {
        */
       Date currentDate = Date.getCurrentDate();
       for (Channel channel : channels) {
-        ChannelDayProgram today = TvDataBase.getInstance().getDayProgram(currentDate, channel);
+        Iterator<Program> today = ProgramUtilities.getJointProgramIteratorFor(currentDate, channel);
 
-        if (today != null && today.getProgramCount() > 0) {
-          final int programCount = today.getProgramCount();
-          for (int j = 0; j < programCount; j++) {
-            if (j == 0 && today.getProgramAt(j).getStartTime() > IOUtilities.getMinutesAfterMidnight()) {
-              ChannelDayProgram yesterday = TvDataBase.getInstance().getDayProgram(currentDate.addDays(-1), channel);
+        if (today != null) {
+          //final int programCount = today.getProgramCount();
+         int j=0;
+          while (today.hasNext()) {
+            Program prog = today.next();
+            if (j == 0 && prog.getStartTime() > IOUtilities.getMinutesAfterMidnight()) {
+              Iterator<Program> yesterday = ProgramUtilities.getJointProgramIteratorFor(currentDate.addDays(-1), channel);
 
-              if (yesterday != null && yesterday.getProgramCount() > 0) {
-                Program p = yesterday.getProgramAt(yesterday.getProgramCount() - 1);
+              if (yesterday != null && yesterday.hasNext()) {
+                Program p = null;
+                
+                while(yesterday.hasNext()) {
+                  p = yesterday.next();
+                }
 
                 if (p.isOnAir()) {
                   addToNowRunning(p, programs, additional);
-                  Program p1 = today.getProgramAt(0);
+                  Program p1 = prog;
                   addToNext(p1, nextPrograms, nextAdditionalPrograms);
                   break;
                 }
               }
             }
 
-            Program p = today.getProgramAt(j);
+        //    Program p = today.getProgramAt(j);
 
-            if (p.isOnAir()) {
-              addToNowRunning(p, programs, additional);
+            if (prog.isOnAir()) {
+              addToNowRunning(prog, programs, additional);
               Program nextProgram = null;
-              if (j < programCount - 1) {
-                nextProgram = today.getProgramAt(j + 1);
+              if (today.hasNext()) {
+                nextProgram = today.next();
               } else {
-                ChannelDayProgram tomorrow = TvDataBase.getInstance().getDayProgram(currentDate.addDays(1), channel);
-                if (tomorrow != null && tomorrow.getProgramCount() > 0) {
-                  nextProgram = tomorrow.getProgramAt(0);
+                Iterator<Program> tomorrow = ProgramUtilities.getJointProgramIteratorFor(currentDate.addDays(1), channel);
+                if (tomorrow != null && tomorrow.hasNext()) {
+                  nextProgram = tomorrow.next();
                 }
               }
               if (nextProgram != null) {
@@ -413,6 +419,8 @@ public class SystemTray {
 
               break;
             }
+            
+            j++;
           }
         }
       }
@@ -637,8 +645,8 @@ public class SystemTray {
         int day = 0;
 
         try {
-          it = TvDataBase.getInstance().getDayProgram(
-              currentDate.addDays((time < IOUtilities.getMinutesAfterMidnight() ? ++day : day)), ch).getPrograms();
+          it = ProgramUtilities.getJointProgramIteratorFor(
+              currentDate.addDays((time < IOUtilities.getMinutesAfterMidnight() ? ++day : day)), ch);
         } catch (Exception ee) {
         }
 
@@ -676,7 +684,7 @@ public class SystemTray {
               }
               else {
                 try {
-                  Program test = TvDataBase.getInstance().getDayProgram(currentDate.addDays(day+1),ch).getProgramAt(0);
+                  Program test = ProgramUtilities.getJointProgramIteratorFor(currentDate.addDays(day+1),ch).next();
                   
                   if(test.getMarkerArr().length > 0 && test.getMarkPriority() >= Settings.propTrayImportantProgramsPriority.getInt()) {
                     additionalNext.add(new ProgramMenuItem(test, ProgramMenuItem.AFTER_TYPE, time, -1));
@@ -688,8 +696,11 @@ public class SystemTray {
 
             int temptime = time + 24 * 60;
             try {
-              ChannelDayProgram dayProg = TvDataBase.getInstance().getDayProgram(currentDate, ch);
-              p = dayProg.getProgramAt(dayProg.getProgramCount() - 1);
+              Iterator<Program> dayProg = ProgramUtilities.getJointProgramIteratorFor(currentDate, ch);
+              
+              while(dayProg.hasNext()) {
+                p = dayProg.next();
+              }
 
               start = p.getStartTime();
               end = p.getStartTime() + p.getLength();
@@ -720,7 +731,7 @@ public class SystemTray {
                   }
                   else {
                     try {
-                      Program test = TvDataBase.getInstance().getDayProgram(currentDate.addDays(day+1),ch).getProgramAt(0);
+                      Program test = ProgramUtilities.getJointProgramIteratorFor(currentDate.addDays(day+1),ch).next();
                       
                       if(test.getMarkerArr().length > 0 && test.getMarkPriority() >= Settings.propTrayImportantProgramsPriority.getInt()) {
                         additionalNext.add(new ProgramMenuItem(test, ProgramMenuItem.AFTER_TYPE, time, -1));
