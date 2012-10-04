@@ -730,9 +730,8 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
     }
     
     for (int i = 1; i < channels.length; i++) {
-      if(!(channels[i-1].isTimeLimited() && channels[i].isTimeLimited() && 
-          (channels[i-1].getStartTimeLimit() == channels[i].getEndTimeLimit())
-          && (channels[i-1].getEndTimeLimit() == channels[i].getStartTimeLimit()))) {
+      if(channels[i-1].getJointChannel() == null || 
+          !channels[i-1].getJointChannel().equals(channels[i])) {
         mGotoChannelMenu.add(createChannelMenuItem(channels[i]));
       }
     }

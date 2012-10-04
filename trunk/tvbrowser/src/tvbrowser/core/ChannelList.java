@@ -1044,9 +1044,13 @@ public class ChannelList {
     Channel previousChannel = null;
     
     for(Channel ch :getSubscribedChannels()) {    
-      if(previousChannel != null && previousChannel.isTimeLimited() && ch.isTimeLimited() 
+      if(previousChannel != null && ((previousChannel.isTimeLimited() && ch.isTimeLimited() 
           && (previousChannel.getStartTimeLimit() == ch.getEndTimeLimit())
-          && (previousChannel.getEndTimeLimit() == ch.getStartTimeLimit())) {
+          && (previousChannel.getEndTimeLimit() == ch.getStartTimeLimit())) || 
+          (previousChannel.getSharedChannelId() != null && ch.getSharedChannelId() != null && 
+          previousChannel.getSharedChannelId().equals(ch.getId()) && 
+          previousChannel.getDataServicePackageName().equals(ch.getDataServicePackageName()))
+          )) {
         previousChannel.setJointChannel(ch);
       }
       else if(previousChannel != null) {

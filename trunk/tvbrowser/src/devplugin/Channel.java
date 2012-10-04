@@ -106,6 +106,8 @@ public class Channel implements Comparable<Channel> {
   private AbstractTvDataServiceProxy mProxy;
   private String mUniqueId;
 
+  private String mSharedChannelId;
+  
   private Channel mJointChannel;
   private Channel mBaseChannel;
   private Icon mJointChannelIcon;
@@ -126,12 +128,13 @@ public class Channel implements Comparable<Channel> {
    * @param unescapedName The unescaped name for this channel.
    * @param allCountries All supported countries of this channel.
    *        ATTENTION: Have to contain the base country too.
+   * @param sharedChannelId The id of the shared channel.
    * @since 3.2.1
    */
   public Channel(AbstractTvDataService dataService, String name, String id,
     TimeZone timeZone, String baseCountry, String copyrightNotice, String webpage,
     devplugin.ChannelGroup group, Icon icon, int categories, String unescapedName,
-    String[] allCountries)
+    String[] allCountries, String sharedChannelId)
   {
     if(allCountries != null) {
       for(String testCountry : allCountries) {
@@ -173,6 +176,33 @@ public class Channel implements Comparable<Channel> {
     mDefaultIcon = icon;
     mCategories = categories;
     mUnescapedName = unescapedName;
+    mSharedChannelId = sharedChannelId;
+  }
+  
+  /**
+   * Creates an instance of this class.
+   * <p>
+   * @param dataService The data service of this channel.
+   * @param name The name of this channel.
+   * @param id The id of this channel.
+   * @param timeZone The time zone of this channel.
+   * @param baseCountry The base country of this channel.
+   * @param copyrightNotice The copyright notice for this channel.
+   * @param webpage The webpage of this channel.
+   * @param group The group of this channel.
+   * @param icon The icon for this channel.
+   * @param categories The categories for this channel.
+   * @param unescapedName The unescaped name for this channel.
+   * @param allCountries All supported countries of this channel.
+   *        ATTENTION: Have to contain the base country too.
+   * @since 3.2.1
+   */
+  public Channel(AbstractTvDataService dataService, String name, String id,
+    TimeZone timeZone, String baseCountry, String copyrightNotice, String webpage,
+    devplugin.ChannelGroup group, Icon icon, int categories, String unescapedName,
+    String[] allCountries)
+  {
+    this(dataService, name, id, timeZone, baseCountry, copyrightNotice, webpage, group, icon, categories, unescapedName, allCountries, null);
   }
 
   /**
@@ -1163,6 +1193,16 @@ public class Channel implements Comparable<Channel> {
    */
   public Channel getBaseChannel() {
     return mBaseChannel;
+  }
+  
+  /**
+   * Gets the shared channel id for this channel.
+   * <p>
+   * @return The shared channel id or <code>null</code> if there is none.
+   * @since 3.2.1
+   */
+  public String getSharedChannelId() {
+    return mSharedChannelId;
   }
   
   /**
