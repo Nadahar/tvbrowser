@@ -163,9 +163,8 @@ public class ChannelChooserPanel extends JPanel implements ListDropAction {
     }
     
     for (int i = 1; i < channelList.length; i++) {
-      if(!(channelList[i-1].isTimeLimited() && channelList[i].isTimeLimited() && 
-          (channelList[i-1].getStartTimeLimit() == channelList[i].getEndTimeLimit())
-          && (channelList[i-1].getEndTimeLimit() == channelList[i].getStartTimeLimit()))) {
+      if(channelList[i-1].getJointChannel() == null || 
+          !channelList[i-1].getJointChannel().equals(channelList[i])) {
           mChannelChooserModel.addElement(channelList[i]);
       }
     }
