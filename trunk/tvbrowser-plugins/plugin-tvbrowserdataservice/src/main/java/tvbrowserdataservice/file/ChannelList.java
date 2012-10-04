@@ -136,7 +136,7 @@ public class ChannelList {
         throw new FileFormatException("Syntax error in mirror file line " + lineCount + ": column count is '" + tokens.length + " < 4' : " + tokens[0]);
       }
 
-      String country = null, timezone = null, id = null, name = null, copyright = null, webpage = null, iconUrl = null, categoryStr = null, unescapedname = null;
+      String country = null, timezone = null, id = null, name = null, copyright = null, webpage = null, iconUrl = null, categoryStr = null, unescapedname = null, sharedChannelId = null;
       String[] countries = null;
       try {
         country = tokens[0];
@@ -159,6 +159,10 @@ public class ChannelList {
         else {
           countries = new String[] {country};
         }
+        
+        if(tokens.length > 10) {
+          sharedChannelId = tokens[10];
+        }
 
       } catch (ArrayIndexOutOfBoundsException e) {
         // ignore
@@ -173,7 +177,7 @@ public class ChannelList {
         }
       }
       Channel channel = new Channel(dataService, name, id, TimeZone.getTimeZone(timezone), country, copyright,
-          webpage, mGroup, null, categories, unescapedname, countries);
+          webpage, mGroup, null, categories, unescapedname, countries, sharedChannelId);
       if (iconLoader != null && iconUrl != null && iconUrl.length() > 0) {
         Icon icon = iconLoader.getIcon(id, iconUrl);
         if (icon != null) {
@@ -228,6 +232,11 @@ public class ChannelList {
       line.append(";\"")
           .append(StringEscapeUtils.escapeHtml(channel.getName())).append('"');
       line.append(";").append(channel.getCountriesString());
+      
+      if(channel.getSharedChannelId() != null) {
+        line.append(";").append(channel.getSharedChannelId());
+      }
+      
       writer.write(line.toString());
       writer.write('\n');
     }
