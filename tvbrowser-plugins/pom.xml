@@ -122,6 +122,7 @@
     <module>plugin-wirschauen</module>
     <module>plugin-zattoo</module>
     <module>plugin-web</module>
+    <module>plugin-unityglobalmenusupport</module>
   </modules>
   <dependencyManagement>
     <dependencies>
@@ -141,7 +142,7 @@
       	<groupId>org.tvbrowser</groupId>
       	<artifactId>tvbrowser</artifactId>
       	<scope>provided</scope>
-      	<version>3.1</version>
+      	<version>3.2.0.50.6</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -162,7 +163,7 @@
   	<dependency>
   		<groupId>org.tvbrowser</groupId>
   		<artifactId>tvbrowser</artifactId>
-  		<version>3.2.0.50.6</version>
+  		<scope>provided</scope>
   	</dependency>
   </dependencies>
 </project>
