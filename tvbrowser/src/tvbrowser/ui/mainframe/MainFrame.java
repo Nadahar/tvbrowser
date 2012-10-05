@@ -319,7 +319,8 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
         if(Settings.propTypeAsYouFindEnabled.getBoolean() && mProgramTableScrollPane != null && !mProgramTableScrollPane.getProgramTable().isSelected()) {
           if(((e.getModifiersEx() & KeyEvent.ALT_DOWN_MASK) != KeyEvent.ALT_DOWN_MASK) &&
               ((e.getModifiersEx() & Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) != 
-              Toolkit.getDefaultToolkit().getMenuShortcutKeyMask())) {
+              Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) &&
+              ((e.getModifiersEx() & KeyEvent.CTRL_DOWN_MASK) != KeyEvent.CTRL_DOWN_MASK)) {
             if(Character.isLetterOrDigit(e.getKeyChar()) || e.getKeyCode() == KeyEvent.VK_SPACE) {
               mFindAsYouType.setText(String.valueOf(e.getKeyChar()));
             }
@@ -1064,7 +1065,52 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
 
     stroke = KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_MASK);
     rootPane.registerKeyboardAction(TVBrowserActions.goToPreviousDay, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+    
+    int i = 0;
+    
+    for(int key = KeyEvent.VK_1; key <= KeyEvent.VK_9; key++) {
+      final int index = i++;
+      stroke = KeyStroke.getKeyStroke(key, InputEvent.CTRL_MASK);
+      
+      rootPane.registerKeyboardAction(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          showTabForIndex(index);
+        }
+      }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+    }
+    
+    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_0, InputEvent.CTRL_MASK);
+    rootPane.registerKeyboardAction(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        showTabForIndex(9);
+      }
+    }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
 
+    i = 0;
+    
+    for(int key = KeyEvent.VK_NUMPAD1; key <= KeyEvent.VK_NUMPAD9; key++) {
+      final int index = i++;
+      stroke = KeyStroke.getKeyStroke(key, InputEvent.CTRL_MASK);
+      
+      rootPane.registerKeyboardAction(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          showTabForIndex(index);
+        }
+      }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+    }
+    
+    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD0, InputEvent.CTRL_MASK);
+    rootPane.registerKeyboardAction(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        showTabForIndex(9);
+      }
+    }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+
+    
     // return from full screen using ESCAPE
     stroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0);
     rootPane.registerKeyboardAction(new ActionListener() {
@@ -3274,6 +3320,14 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       else if(mCenterTabPane.getTabCount() > 0){
         mCenterTabPane.setSelectedIndex(0);
       }
+    }
+  }
+  
+  private void showTabForIndex(int index) {
+    if(mCenterTabPane != null && mScrollPaneWrapper != null) {
+      if(index >= 0 && index < mCenterTabPane.getTabCount()) {
+        mCenterTabPane.setSelectedIndex(index);
+      }      
     }
   }
 }
