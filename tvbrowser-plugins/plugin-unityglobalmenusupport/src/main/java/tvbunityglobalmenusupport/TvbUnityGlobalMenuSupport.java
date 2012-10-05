@@ -14,17 +14,11 @@
  */
 package tvbunityglobalmenusupport;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.net.URL;
-import java.net.URLClassLoader;
-
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
-import util.io.IOUtilities;
+import org.java.ayatana.ApplicationMenu;
+import org.java.ayatana.AyatanaDesktop;
 
 import devplugin.Plugin;
 import devplugin.PluginInfo;
@@ -36,64 +30,24 @@ import devplugin.Version;
  * <p>
  * @author René Mach
  */
-public class TvbUnityGlobalMenuSupport extends Plugin {
-  private File mJarFile;
-  
-  public TvbUnityGlobalMenuSupport() {
-	File dir = new File(getPluginManager().getTvBrowserSettings().getTvBrowserUserHome(),"GlobalMenuSupport");
-	   
-    if(!dir.isDirectory()) {
-      dir.mkdirs();
-    }
-   
-    /*mJarFile = new File(dir,"jayatana-1.2.3.jar");
-   
-    try {
-     byte[] jcomDll = IOUtilities.loadFileFromJar("/tvbunityglobalmenusupport/jayatana-1.2.3.jar", getClass());
-     FileOutputStream out = new FileOutputStream(mJarFile);
-     out.getChannel().truncate(0);
-     out.write(jcomDll);
-     out.close();
-    } catch (IOException e) {
-      e.printStackTrace();
-      // ignore
-    }*/
-  }
-  
+public class TvbUnityGlobalMenuSupport extends Plugin {  
   public static Version getVersion() {
-    return new Version(0,11,false);
+    return new Version(0,12,false);
   }
   
   public PluginInfo getInfo() {
-    return new PluginInfo(TvbUnityGlobalMenuSupport.class, "Unity Global Menu Support", "Moves menu of TV-Browser to the top panel.", "Ren\u00e9 Mach"."GPL");
+    return new PluginInfo(TvbUnityGlobalMenuSupport.class, "Unity Global Menu Support", "Moves menu of TV-Browser to the top panel.", "Ren\u00e9 Mach", "GPL");
   }
   
   public void handleTvBrowserStartFinished() {
     SwingUtilities.invokeLater(new Thread() {
-      
       @Override
       public void run() {
-        try {
-          URL[] urls = new URL[] { mJarFile.toURI().toURL() };
-            URLClassLoader classLoader = URLClassLoader.newInstance(urls, ClassLoader.getSystemClassLoader());
-            
-            Class<?> ayatanaDesktop = classLoader.loadClass("org.java.ayatana.AyatanaDesktop");
-            Method isSupported = ayatanaDesktop.getMethod("isSupported", new Class<?>[0]);
-            
-            Object answer = isSupported.invoke(ayatanaDesktop, new Object[0]);
-            
-            if(answer instanceof Boolean) {
-            if(((Boolean)answer).booleanValue()) {
-                Class<?> applicationMenu = classLoader.loadClass("org.java.ayatana.ApplicationMenu");
-                Method tryInstall = applicationMenu.getMethod("tryInstall", new Class<?>[] {JFrame.class});
-                tryInstall.invoke(applicationMenu, (JFrame)getParentFrame());
-            }
-            else {
-              System.out.println("GLOBAL MENU NOT SUPPORTED");
-            }
-            }
-        }catch(Exception e) {
-            e.printStackTrace();
+    	if(AyatanaDesktop.isSupported()) {
+          ApplicationMenu.tryInstall((JFrame)getParentFrame());
+    	}
+        else {
+          System.out.println("GLOBAL MENU NOT SUPPORTED");
         }
       }
     });
