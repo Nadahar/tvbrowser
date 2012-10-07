@@ -240,7 +240,7 @@
   <target name="make-default" depends="copy-resources">
     <echo message="Compiling the source code ... "/>
     <mkdir dir="${classes.dir}"/>
-    <javac destdir="${classes.dir}" debug="${debug}" deprecation="true" encoding="UTF-8" target="1.5" source="1.5">
+    <javac destdir="${classes.dir}" debug="${debug}" deprecation="true" encoding="UTF-8" target="1.7" source="1.7">
       <src>
         <path refid="sourcepath"/>
       </src>
@@ -325,12 +325,14 @@
          index="true">
       <manifest>
         <attribute name="Main-Class" value="tvbrowser.TVBrowser"/>
+      	<attribute name="SplashScreen-Image" value="splash.png"/>
       </manifest>
       <fileset dir="${classes.dir}" includes="tvbrowser/**"/>
       <fileset dir="${classes.dir}" includes="devplugin/**"/>
       <fileset dir="${classes.dir}" includes="tvdataservice/**"/>
       <fileset dir="${classes.dir}" includes="util/**"/>
       <fileset dir="${classes.dir}" includes="com/**"/>
+      <fileset dir="${classes.dir}/imgs" includes="splash.png"/>
       <fileset dir="${unpacked.dir}/${lib.skinlf.name}.jar" includes="com/**"/>
    	  <fileset dir="${unpacked.dir}/${lib.skinlf.name}.jar" includes="org/**"/>
       <fileset dir="${unpacked.dir}/${lib.bsh.name}.jar" includes="bsh/**"/>
@@ -352,7 +354,7 @@
     <echo message="Copying the images and all the other stuff ..."/>
     <mkdir dir="${tvbrowser-default.runtime.dir}/imgs"/>
     <copy todir="${tvbrowser-default.runtime.dir}/imgs">
-      <fileset dir="${classes.dir}/imgs"/>
+      <fileset dir="${classes.dir}/imgs" excludes="splash.png"/>
     </copy>
 
     <copy todir="${tvbrowser-default.runtime.dir}/imgs">

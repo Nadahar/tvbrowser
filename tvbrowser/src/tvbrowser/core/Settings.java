@@ -1532,29 +1532,6 @@ public class Settings {
 
   public static final BooleanProperty propSplashShow = new BooleanProperty(
       mProp, "splash.show", true);
-  /**
-   * The Splash-Image
-   */
-  public static final StringProperty propSplashImage = new StringProperty(
-      mProp, "splash.file", "imgs/splash.png");
-
-  /**
-   * The X-Position of the Text in the Splash
-   */
-  public static final IntProperty propSplashTextPosX = new IntProperty(mProp,
-      "splash.textPosX", 10);
-
-  /**
-   * The Y-Position of the Text in the Splash
-   */
-  public static final IntProperty propSplashTextPosY = new IntProperty(mProp,
-      "splash.textPosY", 262);
-
-  /**
-   * Foreground-Color
-   */
-  public static final ColorProperty propSplashForegroundColor = new ColorProperty(
-      mProp, "splash.ForegroundColor", Color.WHITE);
 
   public static final StringProperty propLanguage = new StringProperty(mProp,
       "language", System.getProperty("user.language"));
