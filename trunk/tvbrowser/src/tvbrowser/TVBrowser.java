@@ -421,11 +421,7 @@ public class TVBrowser {
 
         @Override
         public void run() {*/
-          splashRef.set(new SplashScreen(
-              Settings.propSplashImage.getString(),
-              Settings.propSplashTextPosX.getInt(),
-              Settings.propSplashTextPosY.getInt(),
-              Settings.propSplashForegroundColor.getColor()));
+          splashRef.set(new SplashScreen());
           splashRef.get().showSplash();
         /*}
       });*/
