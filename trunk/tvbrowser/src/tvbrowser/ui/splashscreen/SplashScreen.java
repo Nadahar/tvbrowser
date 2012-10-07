@@ -44,6 +44,7 @@ public class SplashScreen implements Splash {
 
   private static final String DOMAIN = "tvbrowser.org";
   private static final String VERSION = TVBrowser.VERSION.toString();
+  private static final String INFO = mLocalizer.msg("info", "The free program guide");
 
   private String mMessage;
   private int mMsgX, mMsgY;
@@ -72,10 +73,12 @@ public class SplashScreen implements Splash {
 
     // Draw the message itself
     grp.setColor(new Color(0,0,0,128));
-    grp.drawString(mMessage, mMsgX+2, mMsgY+2);
-
+    grp.drawString(mMessage, mMsgX+2, mMsgY+38);
+    grp.drawString(INFO, mMsgX+2, mMsgY+2);
+    
     grp.setColor(Color.white);
-    grp.drawString(mMessage, mMsgX, mMsgY);
+    grp.drawString(mMessage, mMsgX, mMsgY+36);
+    grp.drawString(INFO, mMsgX, mMsgY);
 
     grp.setFont(VERSION_FONT);
     
