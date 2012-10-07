@@ -69,7 +69,7 @@ import devplugin.Version;
 public class ProgramListPlugin extends Plugin {
   static final Localizer mLocalizer = Localizer.getLocalizerFor(ProgramListPlugin.class);
 
-  private static Version mVersion = new Version(3, 20, true);
+  private static Version mVersion = new Version(3, 21, true);
   
   private static final int MAX_DIALOG_LIST_SIZE = 5000;
   static final int MAX_PANEL_LIST_SIZE = 2500;
@@ -151,7 +151,6 @@ public class ProgramListPlugin extends Plugin {
         @Override
         public void run() {
           mCenterPanelWrapper.add(mCenterPanelEntry, BorderLayout.CENTER);
-          mCenterPanelEntry.selectFirstEntry();
           
           if(Persona.getInstance().getHeaderImage() != null) {
             mCenterPanelEntry.updatePersona();
@@ -168,7 +167,7 @@ public class ProgramListPlugin extends Plugin {
   }
   
   public void handleTvDataUpdateFinished() {
-    if(mCenterPanelEntry != null) {
+    if(mCenterPanelEntry != null) {System.out.println("tvdataupdate");
       mCenterPanelEntry.fillProgramList();
     }
   }
@@ -292,9 +291,7 @@ public class ProgramListPlugin extends Plugin {
 
         layoutWindow("programListWindow", mDialog, new Dimension(500, 500));
 
-        mDialog.setVisible(true);
-
-        mDialogPanel.selectFirstEntry();
+        mDialog.setVisible(true); 
       } else {
         if (!mDialog.isVisible()) {
           mDialogPanel.fillFilterBox();
@@ -302,7 +299,7 @@ public class ProgramListPlugin extends Plugin {
 
         mDialog.setVisible(!mDialog.isVisible());
 
-        if (mDialog.isVisible()) {
+        if (mDialog.isVisible()) {System.out.println("dialog");
           mDialogPanel.fillProgramList();
         } else {
           saveMe();

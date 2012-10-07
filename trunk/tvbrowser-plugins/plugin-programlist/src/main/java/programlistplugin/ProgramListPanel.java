@@ -46,6 +46,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
 
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -79,7 +81,6 @@ public class ProgramListPanel extends JPanel implements PersonaListener {
    * maximum number of programs to be shown in the list. If the filter has more results, only the first results are shown.
    */
   private int mMaxListSize = 5000;
-  private int mShotSleepTime = 0;
   private int mUpdateCounter = 5;
   
   private JComboBox mChannelBox;
@@ -97,11 +98,10 @@ public class ProgramListPanel extends JPanel implements PersonaListener {
   private JButton mSendBtn;
   private JButton mRefreshBtn;
   
+  private boolean mUpdateList;
+  
   public ProgramListPanel(final Channel selectedChannel, boolean showClose, int maxListSize) {
     mMaxListSize = maxListSize;
-    if(ProgramListPlugin.MAX_PANEL_LIST_SIZE == maxListSize) {
-      mShotSleepTime = 1;
-    }
     createGui(selectedChannel,showClose);
   }
   
@@ -250,10 +250,24 @@ public class ProgramListPanel extends JPanel implements PersonaListener {
     add(panel, BorderLayout.NORTH);
     add(new JScrollPane(mList), BorderLayout.CENTER);
     add(southPanel, BorderLayout.SOUTH);
-  }
-  
-  void selectFirstEntry() {
-    mChannelBox.getItemListeners()[0].itemStateChanged(null);
+    
+    mUpdateList = false;
+    
+    addAncestorListener(new AncestorListener() {
+      @Override
+      public void ancestorRemoved(AncestorEvent event) {
+        mUpdateList = false;
+      }
+      
+      @Override
+      public void ancestorMoved(AncestorEvent event) {}
+      
+      @Override
+      public void ancestorAdded(AncestorEvent event) {
+        mUpdateList = true;
+        mChannelBox.getItemListeners()[0].itemStateChanged(null);
+      }
+    });
   }
   
   void fillFilterBox() {
@@ -311,7 +325,7 @@ public class ProgramListPanel extends JPanel implements PersonaListener {
   }
 
   void fillProgramList() {
-    if(mListThread == null || !mListThread.isAlive()) {
+    if(mUpdateList && (mListThread == null || !mListThread.isAlive())) {
       mListThread = new Thread() {
         public void run() {
           if(mUpdateThread != null && mUpdateThread.isAlive()) {
@@ -360,9 +374,6 @@ public class ProgramListPanel extends JPanel implements PersonaListener {
                       } else {
                         mPrograms.add(program);
                       }
-                      try {
-                        sleep(mShotSleepTime);
-                      }catch(InterruptedException e1) {}
                     }
                   }
                 }
@@ -389,12 +400,9 @@ public class ProgramListPanel extends JPanel implements PersonaListener {
             if (forceScrollingIndex > 1000) {
               forceScrollingIndex = 1000;
             }
-            mList.setModel(model);
-            mModel = model;
-            mList.ensureIndexIsVisible(forceScrollingIndex);
-            mList.ensureIndexIsVisible(index);
-            setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-            mList.updateUI();
+            
+            updateList(model, forceScrollingIndex, index);
+            //mList.updateUI();
           } catch (Exception e) {
             e.printStackTrace();
           }
@@ -405,10 +413,24 @@ public class ProgramListPanel extends JPanel implements PersonaListener {
           mSendBtn.setEnabled(true);
         }
       };
+      mListThread.setDaemon(true);
       mListThread.start();
     }
   }
   
+  
+  private void updateList(final DefaultListModel model, final int forceScrollingIndex, final int index) {
+    SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        mModel = model;
+        mList.setModel(model);
+        mList.ensureIndexIsVisible(forceScrollingIndex);
+        mList.ensureIndexIsVisible(index);
+        setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));                
+      }
+    });
+  }
 
   private static class ChannelListCellRenderer extends DefaultListCellRenderer {
     public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
