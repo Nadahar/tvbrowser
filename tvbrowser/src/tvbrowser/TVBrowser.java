@@ -427,6 +427,9 @@ public class TVBrowser {
       });*/
     }
     else {
+      if(java.awt.SplashScreen.getSplashScreen() != null && java.awt.SplashScreen.getSplashScreen().isVisible()) {
+        java.awt.SplashScreen.getSplashScreen().close();
+      }
       splashRef.set(new DummySplash());
     }
     
