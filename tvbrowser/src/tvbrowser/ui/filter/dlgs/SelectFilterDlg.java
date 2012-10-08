@@ -81,7 +81,7 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
   private FilterList mFilterList;
 
   private String mDefaultFilterId;
-  FilterTree mFilterTree;
+  private FilterTree mFilterTree;
   
   public static SelectFilterDlg create(JFrame parent) {
     if(mInstance == null) {

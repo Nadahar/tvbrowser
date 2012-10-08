@@ -3,6 +3,7 @@
  */
 package util.ui.beanshell;
 
+import java.awt.Color;
 import java.awt.Dimension;
 
 import javax.swing.JEditorPane;
@@ -24,7 +25,7 @@ public class BeanShellEditor extends JEditorPane {
    */
   public BeanShellEditor() {
     setDocument(new SyntaxDocument());
-
+    setBackground(Color.white);
     EditorKit editorKit = new StyledEditorKit() {
       public Document createDefaultDocument() {
         return new SyntaxDocument();
