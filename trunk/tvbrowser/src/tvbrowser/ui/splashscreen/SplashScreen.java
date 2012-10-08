@@ -38,7 +38,7 @@ public class SplashScreen implements Splash {
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer
       .getLocalizerFor(SplashScreen.class);
 
-  private static final Font MESSAGE_FONT = new Font("Dialog", Font.BOLD, 16);
+  private static final Font MESSAGE_FONT = new Font("Dialog", Font.BOLD, 15);
   private static final Font VERSION_FONT = new Font("Dialog", Font.BOLD, 12);
   private static final Font DOMAIN_FONT = new Font("Dialog", Font.PLAIN, 10);
 
