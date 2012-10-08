@@ -723,7 +723,7 @@ public class SearchForm extends JPanel {
         mSelectedTypeArr[i]=(ProgramFieldType)o[i];
       }
       
-      if(mDefaultSelection.isSelected()) {
+      if(mDefaultSelection != null && mDefaultSelection.isSelected()) {
         mDefaultTypeArr = mSelectedTypeArr;
       }
 
