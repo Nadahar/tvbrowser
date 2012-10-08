@@ -47,7 +47,6 @@ import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
-import javax.swing.text.html.HTML;
 
 import tvbrowser.TVBrowser;
 import util.ui.ImageUtilities;
@@ -136,7 +135,7 @@ public class AboutBox extends JDialog implements WindowClosingIf{
       JPanel gfxPanel = new JPanel(new BorderLayout());
       gfxPanel.setBackground(new Color(80,170,233));
       gfxPanel.setOpaque(true);
-      gfxPanel.add(gfx, BorderLayout.SOUTH);
+      gfxPanel.add(gfx, BorderLayout.NORTH);
 
       contentPane.add(gfxPanel, BorderLayout.WEST);
     }
