@@ -26,9 +26,11 @@
 package tvdataservice;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -39,6 +41,7 @@ import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginManagerImpl;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.program.ProgramUtilities;
+import devplugin.Channel;
 import devplugin.Marker;
 import devplugin.Program;
 import devplugin.ProgramFilter;
@@ -52,12 +55,12 @@ import devplugin.ProgramFilter;
 public class MarkedProgramsList {
 
   private static MarkedProgramsList mInstance;
-  private Set<MutableProgram> mMarkedPrograms;
+  private Hashtable<Channel,Set<MutableProgram>> mMarkedPrograms;
   private Thread mProgramTableRefreshThread;
   private int mProgramTableRefreshThreadWaitTime;
 
   private MarkedProgramsList() {
-    mMarkedPrograms = Collections.synchronizedSet(new HashSet<MutableProgram>());
+    mMarkedPrograms = new Hashtable<Channel, Set<MutableProgram>>();
     mInstance = this;
   }
 
@@ -92,33 +95,55 @@ public class MarkedProgramsList {
   }
 
   protected void addProgram(MutableProgram p) {
-    if(p!= null && !contains(p) && p.getMarkerArr().length > 0) {
-      synchronized(mMarkedPrograms) {
-        mMarkedPrograms.add(p);
+    synchronized (mMarkedPrograms) {
+      addInternal(p);
+    }
+  }
+  
+  private void addInternal(MutableProgram p) {
+    if(p != null) {
+      Set<MutableProgram> set = mMarkedPrograms.get(p.getChannel());
+      
+      if(set == null) {
+        set = Collections.synchronizedSet(new HashSet<MutableProgram>());
+        synchronized (set) {
+          set.add(p);
+        }
+        
+        handleFilterMarking(p);
+        
+        mMarkedPrograms.put(p.getChannel(), set);
       }
-
-      handleFilterMarking(p);
+      else {
+        if(!contains(set,p)) {
+          synchronized (set) {
+            set.add(p);
+          }
+          
+          handleFilterMarking(p);
+        }
+      }
     }
   }
 
-  private boolean contains(MutableProgram p) {
+  private boolean contains(Set<MutableProgram> set, MutableProgram p) {
     if(p != null) {
-      synchronized(mMarkedPrograms) {
-        for(MutableProgram prog : mMarkedPrograms) {
+      synchronized(set) {
+        for(MutableProgram prog : set) {
           if(p.getDate().equals(prog.getDate()) && p.getID().equals(prog.getID())) {
             return true;
           }
         }
       }
     }
-
+    
     return false;
   }
 
   protected void removeProgram(MutableProgram p) {
     if(p!= null && p.getMarkerArr().length < 1) {
       synchronized(mMarkedPrograms) {
-        mMarkedPrograms.remove(p);
+        mMarkedPrograms.get(p.getChannel()).remove(p);
       }
 
       handleFilterMarking(p);
@@ -153,8 +178,20 @@ public class MarkedProgramsList {
     Program[] p = null;
 
     synchronized(mMarkedPrograms) {
-      p = new Program[mMarkedPrograms.size()];
-      mMarkedPrograms.toArray(p);
+      Iterator<Set<MutableProgram>> marked = mMarkedPrograms.values().iterator();
+      
+      ArrayList<Program> markedList = new ArrayList<Program>();
+      
+      while(marked.hasNext()) {
+        Iterator<MutableProgram> programs = marked.next().iterator();
+        
+        while(programs.hasNext()) {
+          markedList.add(programs.next());
+        }
+      }
+      
+      p = new Program[markedList.size()];
+      markedList.toArray(p);
     }
 
     return p;
@@ -181,41 +218,48 @@ public class MarkedProgramsList {
    * @return The time sorted programs for the tray.
    */
   public Program[] getTimeSortedProgramsForTray(ProgramFilter filter, int markPriority, int numberOfPrograms, boolean includeOnAirPrograms, boolean useTrayFilterSettings, ArrayList<Program> excludePrograms) {
-
+    List<Program> programs = new ArrayList<Program>();
+    
     synchronized(mMarkedPrograms) {
-      List<Program> programs = new ArrayList<Program>();
+      Iterator<Set<MutableProgram>> marked = mMarkedPrograms.values().iterator();
+              
+      while(marked.hasNext()) {
+        Set<MutableProgram> next = marked.next();
+        
+        Iterator<MutableProgram> it = next.iterator();
+        
+        while(it.hasNext()) {
+          Program p = it.next();
+          
+          boolean dontAccept = !filter.accept(p);
 
-      Iterator<MutableProgram> it = mMarkedPrograms.iterator();
-      while (it.hasNext()) {
-        MutableProgram p = it.next();
-        boolean dontAccept = !filter.accept(p);
+          if(dontAccept && useTrayFilterSettings) {
+            dontAccept = !(Settings.propTrayFilterNot.getBoolean() || (Settings.propTrayFilterNotMarked.getBoolean() && p.getMarkerArr().length > 0));
+          }
 
-        if(dontAccept && useTrayFilterSettings) {
-          dontAccept = !(Settings.propTrayFilterNot.getBoolean() || (Settings.propTrayFilterNotMarked.getBoolean() && p.getMarkerArr().length > 0));
+          if((p.isOnAir() && !includeOnAirPrograms) || p.isExpired() || dontAccept || p.getMarkPriority() < markPriority) {
+            continue;
+          }
+          programs.add(p);
+          
         }
-
-        if((p.isOnAir() && !includeOnAirPrograms) || p.isExpired() || dontAccept || p.getMarkPriority() < markPriority) {
-          continue;
-        }
-        programs.add(p);
       }
-
-      if (excludePrograms != null) {
-        programs.removeAll(excludePrograms);
-      }
-
-      Collections.sort(programs, ProgramUtilities.getProgramComparator());
-
-      int maxCount = Math.min(programs.size(), Settings.propTrayImportantProgramsSize.getInt());
-      if (numberOfPrograms > 0) {
-        maxCount = Math.min(maxCount, numberOfPrograms);
-      }
-      programs = programs.subList(0, maxCount);
-      Collections.sort(programs, ProgramUtilities.getProgramComparator()); // needed twice due to sublist not guaranteeing the order
-
-      return programs.toArray(new Program[programs.size()]);
     }
 
+    if (excludePrograms != null) {
+      programs.removeAll(excludePrograms);
+    }
+
+    Collections.sort(programs, ProgramUtilities.getProgramComparator());
+
+    int maxCount = Math.min(programs.size(), Settings.propTrayImportantProgramsSize.getInt());
+    if (numberOfPrograms > 0) {
+      maxCount = Math.min(maxCount, numberOfPrograms);
+    }
+    programs = programs.subList(0, maxCount);
+    Collections.sort(programs, ProgramUtilities.getProgramComparator()); // needed twice due to sublist not guaranteeing the order
+    
+    return programs.toArray(new Program[programs.size()]);
   }
 
   /**
@@ -223,14 +267,27 @@ public class MarkedProgramsList {
    */
   public void revalidatePrograms() {
     synchronized(mMarkedPrograms) {
-      MutableProgram[] programs = mMarkedPrograms.toArray(new MutableProgram[mMarkedPrograms.size()]);
-      mMarkedPrograms.clear();
+      
+        Iterator<Set<MutableProgram>> marked = mMarkedPrograms.values().iterator();
+        
+        ArrayList<MutableProgram> markedList = new ArrayList<MutableProgram>();
+        
+        while(marked.hasNext()) {
+          Iterator<MutableProgram> programs = marked.next().iterator();
+          
+          while(programs.hasNext()) {
+            markedList.add(programs.next());
+          }
+        }
+        
+        mMarkedPrograms.clear();
+      
 
-      for(MutableProgram programInList : programs) {
+      for(MutableProgram programInList : markedList) {
         MutableProgram check = checkProgram(programInList, (MutableProgram)PluginManagerImpl.getInstance().getProgram(programInList.getDate(), programInList.getID()));
         
         if(check != null) {
-          mMarkedPrograms.add(check);
+          addInternal(check);
         }
       }
     }
