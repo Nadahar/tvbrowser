@@ -408,15 +408,24 @@ public class FavoritesPlugin {
           }
         });
         
-        Persona.getInstance().registerPersonaListener(mMangePanel);
         
-        SwingUtilities.invokeLater(new Runnable() {
+        mCenterPanel.addAncestorListener(new AncestorListener() {
           @Override
-          public void run() {
+          public void ancestorRemoved(AncestorEvent event) {
+            Persona.getInstance().removePersonaListerner(mMangePanel);
+            mCenterPanel.remove(mMangePanel);
+          }
+          
+          @Override
+          public void ancestorMoved(AncestorEvent event) {}
+          
+          @Override
+          public void ancestorAdded(AncestorEvent event) {
+            Persona.getInstance().registerPersonaListener(mMangePanel);
             mCenterPanel.add(mMangePanel, BorderLayout.CENTER);
             mCenterPanel.repaint();
             mMangePanel.updatePersona();
-            mMangePanel.scrollToFirstNotExpiredIndex(false);
+            mMangePanel.scrollToFirstNotExpiredIndex(true);            
           }
         });
       }
