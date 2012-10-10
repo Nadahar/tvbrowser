@@ -167,7 +167,7 @@ public class ProgramListPlugin extends Plugin {
   }
   
   public void handleTvDataUpdateFinished() {
-    if(mCenterPanelEntry != null) {System.out.println("tvdataupdate");
+    if(mCenterPanelEntry != null) {
       mCenterPanelEntry.fillProgramList();
     }
   }
