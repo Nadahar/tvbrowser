@@ -41,8 +41,10 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Hashtable;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
@@ -72,6 +74,7 @@ import javax.swing.tree.TreePath;
 
 import com.jgoodies.forms.factories.Borders;
 
+import devplugin.Channel;
 import devplugin.Program;
 import devplugin.SettingsItem;
 
@@ -674,9 +677,18 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
             
             newProgramListeModel.ensureCapacity(Math.min(p.length,MAX_SHOWN_PROGRAMS));
             
+            Hashtable<Channel,ArrayList<Program>> test = new Hashtable<Channel,ArrayList<Program>>();
+            
             for (int i = 0; i < Math.min(p.length,MAX_SHOWN_PROGRAMS); i++) {
               // don't list programs twice, if they are marked by different favorites
-              if (! newProgramListeModel.contains(p[i])) {
+              ArrayList<Program> testList = test.get(p[i].getChannel());
+              if(testList == null) {
+                testList = new ArrayList<Program>();
+                test.put(p[i].getChannel(), testList);
+              }
+              
+              if (!testList.contains(p[i])) {
+                testList.add(p[i]);
                 newProgramListeModel.addElement(p[i]);
 
                 if(firstNotExpiredIndex == -1 && !p[i].isExpired()) {
