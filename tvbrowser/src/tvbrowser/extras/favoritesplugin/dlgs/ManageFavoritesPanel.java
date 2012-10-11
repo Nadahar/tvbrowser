@@ -679,7 +679,9 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
             
             Hashtable<Channel,ArrayList<Program>> test = new Hashtable<Channel,ArrayList<Program>>();
             
-            for (int i = 0; i < Math.min(p.length,MAX_SHOWN_PROGRAMS); i++) {
+            int i = 0;
+            
+            while (i < p.length && newProgramListeModel.size() < MAX_SHOWN_PROGRAMS) {
               // don't list programs twice, if they are marked by different favorites
               ArrayList<Program> testList = test.get(p[i].getChannel());
               if(testList == null) {
@@ -695,6 +697,8 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
                   firstNotExpiredIndex = newProgramListeModel.size()-1;
                 }
               }
+              
+              i++;
             }
             
             mProgramListModel.clear();
