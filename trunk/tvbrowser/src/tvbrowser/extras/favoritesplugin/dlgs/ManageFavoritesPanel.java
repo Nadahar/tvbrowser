@@ -108,7 +108,7 @@ import util.ui.persona.PersonaListener;
  * @author René Mach
  */
 public class ManageFavoritesPanel extends JPanel implements ListDropAction, TreeSelectionListener, PersonaListener {
-  private static final int MAX_SHOWN_PROGRAMS = 4000;
+  private static final int MAX_SHOWN_PROGRAMS = 6000;
   private static final Localizer mLocalizer = ManageFavoritesDialog.mLocalizer;
   private DefaultListModel mFavoritesListModel, mProgramListModel;
   private JList mFavoritesList;
@@ -804,30 +804,36 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
     Program[] programArr = mShowNew ? fav.getNewPrograms() : fav.getWhiteListPrograms();
     Program[] blackListPrograms = fav.getBlackListPrograms();
 
+    DefaultListModel newProgramListModel = new DefaultListModel();
+    
     mProgramListModel.clear();
-    mProgramListModel.ensureCapacity(mShowNew ? programArr.length : programArr.length + blackListPrograms.length);
+    newProgramListModel.ensureCapacity(mShowNew ? programArr.length : programArr.length + blackListPrograms.length);
 
     int firstNotExpiredIndex = -1;
 
     for (int i = 0; i < Math.min(programArr.length,MAX_SHOWN_PROGRAMS); i++) {
-      mProgramListModel.addElement(programArr[i]);
+      newProgramListModel.addElement(programArr[i]);
 
       if(firstNotExpiredIndex == -1 && !programArr[i].isExpired()) {
         firstNotExpiredIndex = i;
       }
     }
 
-    mSendBt.setEnabled(mProgramListModel.size() > 0);
+    mSendBt.setEnabled(newProgramListModel.size() > 0);
 
     if(!mShowNew && mBlackListChb.isSelected()) {
       for (int i = 0; i < Math.min(blackListPrograms.length,MAX_SHOWN_PROGRAMS/10); i++) {
-        mProgramListModel.addElement(blackListPrograms[i]);
+        newProgramListModel.addElement(blackListPrograms[i]);
 
         if(firstNotExpiredIndex == -1 && !blackListPrograms[i].isExpired()) {
           firstNotExpiredIndex = i;
         }
       }
     }
+    
+    mProgramListModel = newProgramListModel;
+    mProgramList.setModel(mProgramListModel);
+    mProgramList.repaint();
     
     scrollInProgramListToIndex(firstNotExpiredIndex);
   }
