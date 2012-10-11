@@ -49,7 +49,7 @@ public class FilterPanel extends JPanel {
   public FilterPanel(KeyListener keyListener) {
     setLayout(new BorderLayout());
     setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
-    setBackground(Color.WHITE);
+    setBackground(UIManager.getColor("List.background"));
     setOpaque(false);
 
     mFilterLabel = new JLabel() {
