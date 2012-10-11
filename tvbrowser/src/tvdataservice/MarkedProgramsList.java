@@ -142,7 +142,12 @@ public class MarkedProgramsList {
   protected void removeProgram(MutableProgram p) {
     if(p!= null && p.getMarkerArr().length < 1) {
       synchronized(mMarkedPrograms) {
-        mMarkedPrograms.get(p.getChannel()).remove(p);
+        if(p.getChannel() != null) {
+          Set<MutableProgram> set = mMarkedPrograms.get(p.getChannel());
+          synchronized (set) {
+            set.remove(p);
+          }
+        }
       }
 
       handleFilterMarking(p);
