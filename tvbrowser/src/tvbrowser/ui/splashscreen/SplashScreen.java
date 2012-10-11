@@ -27,10 +27,23 @@ package tvbrowser.ui.splashscreen;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.Image;
 import java.awt.RenderingHints;
+import java.awt.Window;
+import java.io.IOException;
+import java.lang.reflect.Method;
+
+import javax.swing.ImageIcon;
+import javax.swing.JPanel;
+import javax.swing.JWindow;
 
 import tvbrowser.TVBrowser;
+import util.io.IOUtilities;
 import util.ui.UiUtilities;
 
 public class SplashScreen implements Splash {
@@ -54,11 +67,40 @@ public class SplashScreen implements Splash {
   protected String mImgFileName;
   
   private java.awt.SplashScreen mSplashScreen;
+  
+  private Image mImage;
+  private JWindow mSplashWindow;
 
   public SplashScreen() {
     super();
     mSplashScreen = java.awt.SplashScreen.getSplashScreen();
     mMessage = mLocalizer.ellipsisMsg("loading", "Loading");
+    
+    if(mSplashScreen == null) {
+      try {
+        byte[] image = IOUtilities.loadFileFromJar("splash.png", SplashScreen.class);
+        mImage = new ImageIcon(image).getImage();
+        mSplashWindow = new JWindow() {
+          public void paint(Graphics g) {
+            ((Graphics2D)g).setBackground(new Color(0,0,0,0));
+            g.clearRect(0, 0, getWidth(), getHeight());
+            if (mImage != null) {
+              g.drawImage(mImage, 0, 0, null);
+            }
+            
+            paintOnce((Graphics2D)g);
+          }
+        };
+        mSplashWindow.setSize(mImage.getWidth(null),mImage.getHeight(null));
+        
+        setTransparentBackground(true);
+        ((JPanel)mSplashWindow.getContentPane()).setOpaque(false);
+        ((JPanel)mSplashWindow.getContentPane()).setBackground(new Color(0,0,0,0));
+      } catch (IOException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+    }
   }
   
   
@@ -96,7 +138,7 @@ public class SplashScreen implements Splash {
       public void run() {
         mMessage = msg;
         
-        if(mSplashScreen != null) {
+        if(mSplashScreen != null && mSplashScreen.isVisible()) {
           Graphics2D g2d2 = mSplashScreen.createGraphics();
           g2d2.setColor(Color.white);
           g2d2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1));
@@ -112,6 +154,9 @@ public class SplashScreen implements Splash {
           
           mSplashScreen.update();
         }
+        else if(mSplashWindow != null){
+          mSplashWindow.repaint();
+        }
       }
 
     }.start();
@@ -121,6 +166,9 @@ public class SplashScreen implements Splash {
     if(mSplashScreen != null) {
       return mSplashScreen.getSize().width;
     }
+    else if(mSplashWindow != null) {
+      return mSplashWindow.getWidth();
+    }
     
     return 0;
   }
@@ -129,6 +177,9 @@ public class SplashScreen implements Splash {
     if(mSplashScreen != null) {
       return mSplashScreen.getSize().height;
     }
+    else if(mSplashWindow != null) {
+      return mSplashWindow.getHeight();
+    }
     
     return 0;
   }
@@ -136,6 +187,9 @@ public class SplashScreen implements Splash {
   public void hideSplash() {
     if(mSplashScreen != null && mSplashScreen.isVisible()) {
       mSplashScreen.close();
+    }
+    else if(mSplashWindow != null) {
+      mSplashWindow.dispose();
     }
   }
 
@@ -154,10 +208,47 @@ public class SplashScreen implements Splash {
         
         mVersionX = 24;
         mVersionY = getHeight() - 30;
+        
+        if(mSplashWindow != null) {
+          mSplashWindow.setLocationRelativeTo(null);
+          mSplashWindow.setVisible(true);
+        }
       }
     };
     thread.setPriority(Thread.NORM_PRIORITY);
     thread.start();
+  }
+  
+  /**
+   * Sets the if the clock background should be transparent.
+   * Copied from ClockPlugin.
+   * <p>
+   * @param value <code>true</code> if the clock background should be transparent.
+   */
+  public void setTransparentBackground(boolean value) {
+    GraphicsDevice[] devices = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
+    GraphicsConfiguration config = devices[0].getDefaultConfiguration();
+    
+    try {
+      Class<?> awtUtilities = Class.forName("com.sun.awt.AWTUtilities");
+      Method m = awtUtilities.getMethod("isTranslucencyCapable",new Class<?>[] {GraphicsConfiguration.class});
+      
+      if((Boolean)m.invoke(awtUtilities, new Object[] {config})) {
+        m = awtUtilities.getMethod("setWindowOpaque",new Class<?>[] {Window.class,boolean.class});
+        m.invoke(awtUtilities, new Object[] {mSplashWindow,!value});
+      }
+    } catch (Exception e) {e.printStackTrace();
+      
+      
+      try {
+        Method m = config.getClass().getMethod("isTranslucencyCapable()",new Class<?>[] {GraphicsConfiguration.class});
+        
+        if((Boolean)m.invoke(config,new Object[0])) {
+          m = this.getClass().getMethod("setOpacity",new Class<?>[] {float.class});
+          m.invoke(mSplashWindow,new Object[] {(float)(value ? 0 : 1)});
+        }
+      } catch (Exception e1) {}
+    }    
   }
 
 }
