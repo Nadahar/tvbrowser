@@ -170,6 +170,8 @@ public class FavoritesPlugin {
   
   private ProgramFieldType[] mDefaultProgramFieldTypeSelection;
   
+  private AncestorListener mAncestorListener;
+  
   /**
    * Creates a new instance of FavoritesPlugin.
    */
@@ -390,7 +392,7 @@ public class FavoritesPlugin {
         int splitPanePosition = getIntegerSetting(mSettings, "splitpanePosition",200);
         
         mMangePanel = new ManageFavoritesPanel(null, splitPanePosition, false, null, true);
-        mMangePanel.addAncestorListener(new AncestorListener() {
+     /*   mMangePanel.addAncestorListener(new AncestorListener() {
           private boolean mCheck = false;
           @Override
           public void ancestorRemoved(AncestorEvent event) {}
@@ -406,10 +408,11 @@ public class FavoritesPlugin {
               mCheck = true;
             }
           }
-        });
+        });*/
         
         
-        mCenterPanel.addAncestorListener(new AncestorListener() {
+        mAncestorListener = new AncestorListener() {
+          private boolean mCheck = false;
           @Override
           public void ancestorRemoved(AncestorEvent event) {
             Persona.getInstance().removePersonaListerner(mMangePanel);
@@ -425,15 +428,25 @@ public class FavoritesPlugin {
             mCenterPanel.add(mMangePanel, BorderLayout.CENTER);
             mCenterPanel.repaint();
             mMangePanel.updatePersona();
-            mMangePanel.scrollToFirstNotExpiredIndex(true);            
+            SwingUtilities.invokeLater(new Runnable() {
+              @Override
+              public void run() {
+                mMangePanel.scrollToFirstNotExpiredIndex(mCheck);
+                mCheck = true;
+              }
+            });
+                        
           }
-        });
+        };
+        mCenterPanel.addAncestorListener(mAncestorListener);
       }
     }
     else {
       if(mMangePanel != null) {
         Persona.getInstance().removePersonaListerner(mMangePanel);
       }
+      
+      mCenterPanel.removeAncestorListener(mAncestorListener);
       
       mMangePanel = null;
     }
