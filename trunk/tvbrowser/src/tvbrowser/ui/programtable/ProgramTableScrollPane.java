@@ -344,17 +344,28 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
   }
 
   public void mouseWheelMoved(MouseWheelEvent e) {
-
-    if (e.getScrollType() == MouseWheelEvent.WHEEL_UNIT_SCROLL) {
-      if (((e.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) != 0) || getComponentAt(e.getPoint()).equals(getColumnHeader()) ||
-          getComponentAt(e.getPoint()).equals(getHorizontalScrollBar())) {
-        int amount = e.getUnitsToScroll() * getHorizontalScrollBar().getUnitIncrement();
-        getHorizontalScrollBar().setValue(getHorizontalScrollBar().getValue() + amount);
-      } else {
-        int amount = e.getUnitsToScroll() * getVerticalScrollBar().getUnitIncrement();
-        getVerticalScrollBar().setValue(getVerticalScrollBar().getValue() + amount);
-      }
+    JScrollBar scrollBar = null;
+    int amount = 0;
+    
+    if (((e.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) != 0) || getComponentAt(e.getPoint()).equals(getColumnHeader()) ||
+        getComponentAt(e.getPoint()).equals(getHorizontalScrollBar())) {
+      scrollBar = getHorizontalScrollBar();
+    } else {
+      scrollBar = getVerticalScrollBar();
     }
+    
+    if(scrollBar != null) {
+      if(e.getScrollType() == MouseWheelEvent.WHEEL_UNIT_SCROLL) {
+        amount = e.getUnitsToScroll() * scrollBar.getUnitIncrement();
+      }
+      else if(e.getScrollType() == MouseWheelEvent.WHEEL_BLOCK_SCROLL) {
+        amount = e.getWheelRotation() * scrollBar.getBlockIncrement(1); 
+      }
+      
+      if(amount != 0) {
+        scrollBar.setValue(scrollBar.getValue() + amount);
+      }
+    }      
   }
 
   /**
