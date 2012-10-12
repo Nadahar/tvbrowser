@@ -212,6 +212,7 @@ public class SplashScreen implements Splash {
         if(mSplashWindow != null) {
           mSplashWindow.setLocationRelativeTo(null);
           mSplashWindow.setVisible(true);
+          mSplashWindow.toFront();
         }
       }
     };
