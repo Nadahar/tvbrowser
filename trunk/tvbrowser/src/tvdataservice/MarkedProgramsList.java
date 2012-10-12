@@ -126,7 +126,7 @@ public class MarkedProgramsList {
   }
 
   private boolean contains(Set<MutableProgram> set, MutableProgram p) {
-    if(p != null) {
+    if(p != null && set != null) {
       synchronized(set) {
         for(MutableProgram prog : set) {
           if(p.getDate().equals(prog.getDate()) && p.getID().equals(prog.getID())) {
@@ -273,22 +273,20 @@ public class MarkedProgramsList {
    */
   public void revalidatePrograms() {
     synchronized(mMarkedPrograms) {
+      Iterator<Set<MutableProgram>> marked = mMarkedPrograms.values().iterator();
       
-        Iterator<Set<MutableProgram>> marked = mMarkedPrograms.values().iterator();
+      ArrayList<MutableProgram> markedList = new ArrayList<MutableProgram>();
+      
+      while(marked.hasNext()) {
+        Iterator<MutableProgram> programs = marked.next().iterator();
         
-        ArrayList<MutableProgram> markedList = new ArrayList<MutableProgram>();
-        
-        while(marked.hasNext()) {
-          Iterator<MutableProgram> programs = marked.next().iterator();
-          
-          while(programs.hasNext()) {
-            markedList.add(programs.next());
-          }
+        while(programs.hasNext()) {
+          markedList.add(programs.next());
         }
-        
-        mMarkedPrograms.clear();
+      }
       
-
+      mMarkedPrograms.clear();
+      
       for(MutableProgram programInList : markedList) {
         MutableProgram check = checkProgram(programInList, (MutableProgram)PluginManagerImpl.getInstance().getProgram(programInList.getDate(), programInList.getID()));
         
