@@ -452,7 +452,9 @@ public class ManagePanel extends JPanel implements PersonaListener {
     buttons.add(p, BorderLayout.WEST);
     
     if(mClose != null) {
-      buttons.add(mClose, BorderLayout.EAST);
+      JPanel close = new JPanel(new FormLayout("default","fill:0dlu:grow,default,fill:0dlu:grow"));
+      close.add(mClose, cc.xy(1,2));
+      buttons.add(close, BorderLayout.EAST);
     }
 
     return buttons;
