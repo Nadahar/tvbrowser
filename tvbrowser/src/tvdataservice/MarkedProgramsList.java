@@ -144,8 +144,10 @@ public class MarkedProgramsList {
       synchronized(mMarkedPrograms) {
         if(p.getChannel() != null) {
           Set<MutableProgram> set = mMarkedPrograms.get(p.getChannel());
-          synchronized (set) {
-            set.remove(p);
+          if(set != null) {
+            synchronized (set) {
+              set.remove(p);
+            }
           }
         }
       }
