@@ -29,7 +29,7 @@ import util.exc.TvBrowserException;
 
 /**
  * A filter that channels for filters using a ChannelFilterComponent.
- * NOTE: The ChannelFilterComponent cannot added itself, only the name of
+ * NOTE: The ChannelFilterComponent cannot be added itself, only the name of
  * the of the ChannelFilterComponent can be provided to load it internal.
  * <p>
  * @author René Mach
