@@ -140,7 +140,9 @@ public class FilterTreeModel extends DefaultTreeModel {
    * @param filter The filter to add.
    */
   public void addFilter(ProgramFilter filter) {
-    addFilter(filter, (FilterNode) getRoot(), null);
+    if(filter != null) {
+      addFilter(filter, (FilterNode) getRoot(), null);
+    }
   }
 
   /**
@@ -154,17 +156,21 @@ public class FilterTreeModel extends DefaultTreeModel {
    * @return the newly created node for the filter
    */
   public FilterNode addFilter(ProgramFilter filter, FilterNode parent, FilterTree tree) {
-    if (parent == null) {
-      parent = (FilterNode) getRoot();
+    if(filter != null) {
+      if (parent == null) {
+        parent = (FilterNode) getRoot();
+      }
+      FilterNode newNode = parent.addFilter(filter);
+      if(tree != null) {
+        reload(tree,parent);
+      }
+      else {
+        reload(root);
+      }
+      return newNode;
     }
-    FilterNode newNode = parent.addFilter(filter);
-    if(tree != null) {
-      reload(tree,parent);
-    }
-    else {
-      reload(root);
-    }
-    return newNode;
+    
+    return null;
   }
   
   /**

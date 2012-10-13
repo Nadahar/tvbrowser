@@ -30,6 +30,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JMenu;
@@ -141,16 +142,34 @@ public class FilterNode extends DefaultMutableTreeNode {
     }catch(Throwable t) {t.printStackTrace();}
   }
   
-  public void store(ObjectOutputStream out) throws IOException {
+  public boolean isValidFilter() {
+    if(userObject instanceof PluginsProgramFilter && ((PluginsProgramFilter)(userObject)).getPluginAccessOfFilter() == null) {
+      return false;
+    }
+    
+    return true;
+  }
+  
+  public void store(ObjectOutputStream out) throws IOException {    
     out.writeBoolean(isDirectoryNode());
     
     if(isDirectoryNode()) {
-      out.writeInt(getChildCount());
-      out.writeUTF(toString());
-      out.writeBoolean(mWasExpanded);
+      ArrayList<FilterNode> filterNodeList = new ArrayList<FilterNode>();
       
       for(int i = 0; i < getChildCount(); i++) {
-        ((FilterNode)getChildAt(i)).store(out);
+        FilterNode test = (FilterNode)getChildAt(i);
+        
+        if(test.isValidFilter()) {
+          filterNodeList.add(test);
+        }
+      }
+      
+      out.writeInt(filterNodeList.size());
+      out.writeUTF(userObject.toString());
+      out.writeBoolean(mWasExpanded);
+      
+      for(FilterNode node : filterNodeList) {
+        node.store(out);
       }
     }
     else {

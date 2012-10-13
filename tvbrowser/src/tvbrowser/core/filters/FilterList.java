@@ -52,7 +52,6 @@ import util.io.stream.BufferedReaderProcessor;
 import util.io.stream.StreamUtilities;
 import devplugin.PluginAccess;
 import devplugin.PluginsProgramFilter;
-import devplugin.Program;
 import devplugin.ProgramFilter;
 
 public class FilterList {
