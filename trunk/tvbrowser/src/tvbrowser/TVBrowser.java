@@ -77,6 +77,7 @@ import tvbrowser.core.PluginLoader;
 import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataBase;
 import tvbrowser.core.TvDataUpdater;
+import tvbrowser.core.filters.FilterComponentList;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.plugin.programformating.GlobalPluginProgramFormatingManager;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
@@ -137,7 +138,7 @@ public class TVBrowser {
   private static final boolean mIsStable = false;
   private static final int mMajorVersion = 3;
   private static final int mMinorVersion = 20;
-  private static final int mSubMinorVersion = 99;
+  private static final int mSubMinorVersion = 100;
 
   /* If you want to change the version string, add it to the beginning of this array.
      We need the old version strings to import the settings.
@@ -672,6 +673,11 @@ public class TVBrowser {
                         JOptionPane.INFORMATION_MESSAGE);
                 Settings.handleChangedSettings();
               }
+            }
+            
+            if(currentVersion != null 
+                && currentVersion.compareTo(new Version(3,20,100,false)) < 0) {
+              FilterComponentList.getInstance().store();
             }
             MainFrame.getInstance().getProgramTableScrollPane()
                 .requestFocusInWindow();

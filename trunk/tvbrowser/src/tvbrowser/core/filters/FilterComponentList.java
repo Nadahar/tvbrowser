@@ -32,7 +32,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import tvbrowser.core.filters.filtercomponents.AgeLimitFilterComponent;
@@ -79,39 +81,112 @@ public class FilterComponentList {
 
           @Override
             public void process(final ObjectInputStream in) throws IOException {
-              in.readInt(); // version not yet used
+              int version = in.readInt(); // version not yet used
               int compCnt = in.readInt();
+              
               for (int i = 0; i < compCnt; i++) {
-                FilterComponent comp = null;
-                try {
-                  comp = readComponent(in);
-                } catch (IOException e) {
-                  mLog.warning("error reading filter component: " + e);
-                } catch (ClassNotFoundException e) {
-                  e.printStackTrace();
+                if(version == 1) {
+                  FilterComponent comp = null;
+                  try {
+                    comp = readComponent(in);
+                  } catch (IOException e) {
+                    mLog.warning("error reading filter component: " + e);
+                  } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                  }
+                  if (comp != null) {
+                    mComponentList.add(comp);
+                  }
                 }
-                if (comp != null) {
-                  mComponentList.add(comp);
+                else if(version == 2) {
+                  String key = in.readUTF();
+                  
+                  File componentFile = new File(tvbrowser.core.filters.FilterList.FILTER_DIRECTORY,"java."+key+".dat");
+                  
+                  StreamUtilities.objectInputStreamIgnoringExceptions(componentFile,
+                    0x1000, new ObjectInputStreamProcessor() {
+                      @Override
+                      public void process(ObjectInputStream inputStream) throws IOException {
+                        inputStream.readInt();
+                        int size = inputStream.readInt();
+                        
+                        for(int j = 0; j < size; j++) {
+                          FilterComponent comp = null;
+                          try {
+                            comp = readComponent(inputStream);
+                          } catch (IOException e) {
+                            mLog.warning("error reading filter component: " + e);
+                          } catch (ClassNotFoundException e) {
+                            e.printStackTrace();
+                          }
+                          if (comp != null) {
+                            mComponentList.add(comp);
+                          }
+                        }
+                      }
+                    }
+                  );
                 }
               }
+              
+              in.close();
             }
           });
       }
   }
-
-
+  
   public void store() {
+    final HashMap<String,ArrayList<FilterComponent>> filterTable =new HashMap<String,ArrayList<FilterComponent>>();
+    
+    Iterator<FilterComponent> it = mComponentList.iterator();
+    
+    while(it.hasNext()) {
+      FilterComponent component = it.next();
+      
+      ArrayList<FilterComponent> componentList = filterTable.get(component.getClass().getCanonicalName());
+      
+      if(componentList == null) {
+        componentList = new ArrayList<FilterComponent>();
+        filterTable.put(component.getClass().getCanonicalName(), componentList);
+      }
+      
+      componentList.add(component);
+    }
+    
+    
     File filterCompFile=new File(tvbrowser.core.filters.FilterList.FILTER_DIRECTORY,"filter.comp");
     StreamUtilities.objectOutputStreamIgnoringExceptions(filterCompFile,
         new ObjectOutputStreamProcessor() {
           public void process(ObjectOutputStream out) throws IOException {
-            out.writeInt(1); // version
-            out.writeInt(mComponentList.size());
-            Iterator<FilterComponent> it = mComponentList.iterator();
-            while (it.hasNext()) {
-              FilterComponent comp = it.next();
-              writeComponent(out, comp);
+            out.writeInt(2); // version
+            out.writeInt(filterTable.size());
+            
+            Set<String> filterKeys = filterTable.keySet();
+            
+            for(String key : filterKeys) {
+              out.writeUTF(key);
+              File componentFile = new File(tvbrowser.core.filters.FilterList.FILTER_DIRECTORY,"java."+key+".dat");
+              
+              final ArrayList<FilterComponent> list = filterTable.get(key);
+              
+              StreamUtilities.objectOutputStreamIgnoringExceptions(componentFile,
+                new ObjectOutputStreamProcessor() {
+                  @Override
+                  public void process(ObjectOutputStream outputStream) throws IOException {
+                    outputStream.writeInt(1); // version for future use
+                    outputStream.writeInt(list.size());
+                    
+                    Iterator<FilterComponent> it = list.iterator();
+                    while (it.hasNext()) {
+                      FilterComponent comp = it.next();
+                      writeComponent(outputStream, comp);
+                    }
+                    
+                    outputStream.close();
+                  }
+              });
             }
+            
             out.close();
           }
         });

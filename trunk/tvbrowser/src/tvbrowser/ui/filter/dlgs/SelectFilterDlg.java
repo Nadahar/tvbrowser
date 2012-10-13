@@ -316,6 +316,10 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
         mFilterTree.updateUI();
         //TODO
       }
+      else if(node.getUserObject() instanceof String) {
+        mFilterTree.getModel().removeNodeFromParent(node);
+        mFilterTree.updateUI();
+      }
       
       if(rows[0] > mFilterTree.getRowCount() - 1) {
         rows[0] = mFilterTree.getRowCount() -1;
