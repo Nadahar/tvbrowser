@@ -99,7 +99,7 @@ public class MarkedProgramsList {
     }
   }
   
-  private synchronized void addInternal(MutableProgram p) {
+  private void addInternal(MutableProgram p) {
     if(p != null) {
       Set<MutableProgram> set = mMarkedPrograms.get(p.getChannel());
       
@@ -139,7 +139,7 @@ public class MarkedProgramsList {
     return false;
   }
 
-  protected synchronized void removeProgram(MutableProgram p) {
+  protected void removeProgram(MutableProgram p) {
     if(p!= null && p.getMarkerArr().length < 1) {
       synchronized(mMarkedPrograms) {
         if(p.getChannel() != null) {
