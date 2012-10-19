@@ -73,7 +73,7 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
 
   private JPanel mSettingsPn;
 
-  private JCheckBox mShowSplashChB, mMinimizeAfterStartUpChB, mStartFullscreen,
+  private JCheckBox mShowStartScreenChB, mMinimizeAfterStartUpChB, mStartFullscreen,
       mAutostartWithWindows;
 
   private File mLinkFileFile;
@@ -158,10 +158,10 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
 
     y++;
 
-    mShowSplashChB = new JCheckBox(mLocalizer.msg("showSplashScreen",
-        "Show splash screen during start up"), Settings.propSplashShow
+    mShowStartScreenChB = new JCheckBox(mLocalizer.msg("showStartScreen",
+        "Show TV-Browser start screen during start up"), Settings.propSplashShow
         .getBoolean());
-    mSettingsPn.add(mShowSplashChB, cc.xy(2, ++y));
+    mSettingsPn.add(mShowStartScreenChB, cc.xy(2, ++y));
 
     if (System.getProperty("os.name").toLowerCase().startsWith("windows") && !TVBrowser.isTransportable()) {
       layout.insertRow(++y, RowSpec.decode("1dlu"));
@@ -234,7 +234,7 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
   public void saveSettings() {
     Settings.propMinimizeAfterStartup.setBoolean(mMinimizeAfterStartUpChB
         .isSelected());
-    Settings.propSplashShow.setBoolean(mShowSplashChB.isSelected());
+    Settings.propSplashShow.setBoolean(mShowStartScreenChB.isSelected());
     Settings.propIsUsingFullscreen.setBoolean(mStartFullscreen.isSelected());
 
     if(mAutostartWithWindows != null) {
