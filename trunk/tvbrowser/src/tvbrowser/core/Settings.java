@@ -1530,7 +1530,7 @@ public class Settings {
   public static final SplitViewProperty propViewDateChannel = new SplitViewProperty(
       mProp, "view.date_channel", true, true, 150);
 
-  public static final BooleanProperty propSplashShow = new BooleanProperty(
+  public static final BooleanProperty propStartScreenShow = new BooleanProperty(
       mProp, "splash.show", true);
 
   public static final StringProperty propLanguage = new StringProperty(mProp,

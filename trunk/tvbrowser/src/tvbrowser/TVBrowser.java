@@ -223,7 +223,7 @@ public class TVBrowser {
   /**
    * Show the SplashScreen during startup
    */
-  private static boolean mShowSplashScreen = true;
+  private static boolean mShowStartScreen = true;
 
   /**
    * Show TV-Browser in fullscreen
@@ -396,7 +396,7 @@ public class TVBrowser {
 
     final AtomicReference<Splash> splashRef = new AtomicReference<Splash>();
 
-    if (mShowSplashScreen && Settings.propSplashShow.getBoolean()) {
+    if (mShowStartScreen && Settings.propStartScreenShow.getBoolean()) {
       /*UIThreadRunner.invokeLater(new Runnable() {
 
         @Override
@@ -426,7 +426,7 @@ public class TVBrowser {
     PluginLoader.getInstance().loadAllPlugins();
 
     mLog.info("Loading TV listings service...");
-    splashRef.get().setMessage(mLocalizer.msg("splash.dataService", "Loading TV listings service..."));
+    splashRef.get().setMessage(mLocalizer.msg("startScreen.dataService", "Loading TV listings service..."));
     
     TvDataServiceProxyManager.getInstance().init();
     
@@ -444,12 +444,12 @@ public class TVBrowser {
     
     if (!lookAndFeelInitialized) {
       mLog.info("Loading Look&Feel...");
-      splashRef.get().setMessage(mLocalizer.msg("splash.laf", "Loading look and feel..."));
+      splashRef.get().setMessage(mLocalizer.msg("startScreen.laf", "Loading look and feel..."));
       updateLookAndFeel();
     }
 
     mLog.info("Loading plugins...");
-    splashRef.get().setMessage(mLocalizer.msg("splash.plugins", "Loading plugins..."));
+    splashRef.get().setMessage(mLocalizer.msg("startScreen.plugins", "Loading plugins..."));
     
     try {
       PluginProxyManager.getInstance().init();
@@ -457,13 +457,13 @@ public class TVBrowser {
       ErrorHandler.handle(exc);
     }
     
-    splashRef.get().setMessage(mLocalizer.msg("splash.tvData", "Checking TV database..."));
+    splashRef.get().setMessage(mLocalizer.msg("startScreen.tvData", "Checking TV database..."));
 
     mLog.info("Checking TV listings inventory...");
     TvDataBase.getInstance().checkTvDataInventory();
 
     mLog.info("Starting up...");
-    splashRef.get().setMessage(mLocalizer.msg("splash.ui", "Starting up..."));
+    splashRef.get().setMessage(mLocalizer.msg("startScreen.ui", "Starting up..."));
     
     Toolkit.getDefaultToolkit().getSystemEventQueue().push(new TextComponentPopupEventQueue());
 
@@ -724,10 +724,10 @@ public class TVBrowser {
       System.out.println(SUN_JAVA_WARNING);
     }
     System.out.println("command line options:");
-    System.out.println("    -minimized    The main window will be minimized after start up");
-    System.out.println("    -nosplash     No splash screen during start up");
-    System.out.println("    -fullscreen   Start in fullscreen-mode");
-    System.out.println("    -ignorejvm    Don't check for Sun Java");
+    System.out.println("    -minimized      The main window will be minimized after start up");
+    System.out.println("    -nostartscreen  No start screen during start up");
+    System.out.println("    -fullscreen     Start in fullscreen-mode");
+    System.out.println("    -ignorejvm      Don't check for Sun Java");
     System.out.println();
   }
 
@@ -738,8 +738,8 @@ public class TVBrowser {
         System.exit(0);
       } else if (argument.equalsIgnoreCase("-minimized") || argument.equalsIgnoreCase("-m")) {
         mMinimized = true;
-      } else if (argument.equalsIgnoreCase("-nosplash") || argument.equalsIgnoreCase("-n")) {
-        mShowSplashScreen = false;
+      } else if (argument.equalsIgnoreCase("-nostartscreen") || argument.equalsIgnoreCase("-n")) {
+        mShowStartScreen = false;
       } else if (argument.equalsIgnoreCase("-fullscreen") || argument.equalsIgnoreCase("-f")) {
         mFullscreen = true;
       } else if (argument.startsWith("-D")) {
