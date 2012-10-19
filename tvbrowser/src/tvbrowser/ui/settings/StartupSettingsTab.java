@@ -159,7 +159,7 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
     y++;
 
     mShowStartScreenChB = new JCheckBox(mLocalizer.msg("showStartScreen",
-        "Show TV-Browser start screen during start up"), Settings.propSplashShow
+        "Show TV-Browser start screen during start up"), Settings.propStartScreenShow
         .getBoolean());
     mSettingsPn.add(mShowStartScreenChB, cc.xy(2, ++y));
 
@@ -234,7 +234,7 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
   public void saveSettings() {
     Settings.propMinimizeAfterStartup.setBoolean(mMinimizeAfterStartUpChB
         .isSelected());
-    Settings.propSplashShow.setBoolean(mShowStartScreenChB.isSelected());
+    Settings.propStartScreenShow.setBoolean(mShowStartScreenChB.isSelected());
     Settings.propIsUsingFullscreen.setBoolean(mStartFullscreen.isSelected());
 
     if(mAutostartWithWindows != null) {
