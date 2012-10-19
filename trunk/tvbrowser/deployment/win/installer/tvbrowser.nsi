@@ -62,8 +62,8 @@ SetCompressor /SOLID lzma
 !define MUI_UNFINISHPAGE_TITLE_3LINES
 
 # run TV-Browser from last page
-!define MUI_FINISHPAGE_RUN "$INSTDIR\tvbrowser.exe"
-!define MUI_FINISHPAGE_RUN_NOTCHECKED
+#!define MUI_FINISHPAGE_RUN "$INSTDIR\tvbrowser.exe"
+#!define MUI_FINISHPAGE_RUN_NOTCHECKED
 
 # Set the default start menu folder
 !define MUI_STARTMENUPAGE_DEFAULTFOLDER "$7"
