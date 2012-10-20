@@ -268,6 +268,7 @@ public class ExcludeWizardStep extends AbstractWizardStep {
     } else if (mMode == MODE_EDIT_EXCLUSION) {
       String title = mExclusion.getTitle();
       String topic = mExclusion.getTopic();
+      String episode = mExclusion.getEpisodeTitle();
       ProgramFilter filter = mExclusion.getFilter();
       Channel channel = mExclusion.getChannel();
       int timeFrom = mExclusion.getTimeLowerBound();
@@ -276,6 +277,10 @@ public class ExcludeWizardStep extends AbstractWizardStep {
       if (title != null) {
         mTitleCb.setSelected(true);
         mTitleTf.setText(title);
+      }
+      if (episode != null) {
+        mEpisodeTitleCb.setSelected(true);
+        mEpisodeTitleTf.setText(episode);
       }
       if (topic != null) {
         mTopicCb.setSelected(true);

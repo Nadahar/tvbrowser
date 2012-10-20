@@ -325,7 +325,7 @@ public class Exclusion {
     }
     
     if(mEpisodeTitle != null) {
-      if(prog.getTextField(ProgramFieldType.EPISODE_TYPE).equalsIgnoreCase(mEpisodeTitle)) {
+      if(prog.getTextField(ProgramFieldType.EPISODE_TYPE) != null && prog.getTextField(ProgramFieldType.EPISODE_TYPE).equalsIgnoreCase(mEpisodeTitle)) {
         episodeTitleExcl = true;
       }
     }
