@@ -37,6 +37,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -116,6 +117,8 @@ public class TvDataUpdater {
   private boolean mTvDataWasChanged = false;
 
   private ArrayList<TvDataUpdateListener> mListenerList;
+  
+  private HashSet<ChannelDay> mRecalculatePrograms = new HashSet<ChannelDay>();;
 
 
   private TvDataUpdater() {
@@ -194,6 +197,9 @@ public class TvDataUpdater {
       public void updateDayProgram(MutableChannelDayProgram program) {
         mTvDataWasChanged = true;
         doUpdateDayProgram(program);
+        mRecalculatePrograms.add(new ChannelDay(program.getChannel(),program.getDate()));
+        mRecalculatePrograms.add(new ChannelDay(program.getChannel(),program.getDate().addDays(-1)));       
+
       }
 
       public boolean isDayProgramAvailable(Date date, Channel channel) {
@@ -272,9 +278,18 @@ public class TvDataUpdater {
 
     checkLocalDateUsingNTP();
 
-    ProgressMonitor monitor = monitorGroup.getNextProgressMonitor(subscribedChannels.length+1);
+    ProgressMonitor monitor = monitorGroup.getNextProgressMonitor(mRecalculatePrograms.size()+1);
     monitor.setMessage(mLocalizer.msg("calculateEntries","Calculating new entries in the database"));
-    TvDataBase.getInstance().reCalculateTvData(daysToDownload, monitor);
+    monitor.setMaximum(mRecalculatePrograms.size()+1);
+    int value = 0;
+    
+    for ( Iterator<ChannelDay> i = mRecalculatePrograms.iterator(); i.hasNext(); ) {
+      ChannelDay next = i.next();
+      monitor.setValue(value++);
+      TvDataBase.getInstance().reCalculateTvData(next.getChannel(), next.getDate());
+    }
+    mRecalculatePrograms.clear();
+    
     TvDataBase.getInstance().updateTvDataBase();
     
     mIsUpdating = false;
@@ -626,6 +641,31 @@ public class TvDataUpdater {
       return channelArr;
     }
 
+  }
+  
+  private class ChannelDay {
+    private Date mDate;
+    private Channel mChannel;
+    
+    public ChannelDay(Channel channel, Date date) {
+      mChannel = channel;
+      mDate = date;
+    }
+    public Date getDate() {
+      return mDate;
+    }    
+    public Channel getChannel() {
+      return mChannel;
+    }
+    @Override
+    public int hashCode() {
+      return mDate.hashCode() + mChannel.hashCode();
+    }
+    @Override
+    public boolean equals(Object obj) {
+      ChannelDay oth = (ChannelDay) obj;
+      return mDate.equals(oth.getDate()) && mChannel.equals(oth.getChannel());
+    }
   }
 
   /**

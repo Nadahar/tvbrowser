@@ -329,6 +329,10 @@ public class TvDataBase {
     }
     mNewDayProgramsAfterUpdate.clear();
   }
+  
+  public synchronized void reCalculateTvData(Channel channel, Date date) {
+    correctDayProgramFile(date, channel);
+  }
 
   public synchronized void setDayProgram(MutableChannelDayProgram prog) {
     Date date = prog.getDate();
