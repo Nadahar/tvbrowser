@@ -26,9 +26,14 @@ package devplugin;
 import javax.swing.JPanel;
 
 /**
- * An interface that can be used to add panels to the
+ * A class that can be used to add panels to the
  * TV-Browser main window.
- * 
+ * <p>
+ * ATTENTION: Always extend this class to create own classes
+ *            for your Plugin. Else way it won't work because
+ *            you will not have an unique ID for your center
+ *            panel.
+ *            
  * @author René Mach
  * @since 3.2
  */
@@ -37,11 +42,6 @@ public abstract class PluginCenterPanel {
    * Gets the name of this PluginCenterPanel
    * that is used to show in the tab bar of
    * the main window of TV-Browser.
-   * 
-   * ATTENTION: Always extend this class to create own classes
-   *            for your Plugin. Else way it won't work because
-   *            you will not have an unique ID for your center
-   *            panel.
    * 
    * @return The name of this PluginCenterPanel
    */
