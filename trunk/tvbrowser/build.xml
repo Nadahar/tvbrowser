@@ -827,7 +827,9 @@
              bottom="${doc.bottom}"
              access="package"
              failonerror="true"
-    				 encoding="UTF-8">
+    		 encoding="UTF-8"
+    	     charset="UTF-8" 
+  	         docencoding="UTF-8">
       <link offline="true"
             href="${java-api-location}"
             packagelistLoc="${package-lists.dir}/jdk/"/>
