@@ -741,7 +741,7 @@ public class UiUtilities {
     }
     int currentWidth = icon.getIconWidth();
     int currentHeight = icon.getIconHeight();
-    if ((currentWidth == width) && (currentHeight == height)) {
+    if (((currentWidth == width) && (currentHeight == height)) || currentWidth <= 0 || currentHeight <= 0) {
       return icon;
     }
     try {
@@ -881,7 +881,7 @@ public class UiUtilities {
     int height = 20;
     int width = 40;
 
-    if ((ic.getIconWidth() != 0) && (ic.getIconHeight() != 0)) {
+    if ((ic.getIconWidth() > 0) && (ic.getIconHeight() > 0)) {
       double iWidth = ic.getIconWidth();
       double iHeight = ic.getIconHeight();
       if (iWidth / iHeight < 2.0) {
