@@ -504,7 +504,7 @@ public class Mirror {
     new Thread(new Runnable() {
       public void run() {
         try {
-          mMirrorDownloadData = IOUtilities.loadFileFromHttpServer(new URL(url), 15000);
+          mMirrorDownloadData = IOUtilities.loadFileFromHttpServer(new URL(url), 10000);
         } catch (Exception e) {
           mDownloadException = true;
         }
@@ -513,8 +513,8 @@ public class Mirror {
     }, "Load mirror date from "+url).start();
 
     int num = 0;
-    // Wait till second Thread is finished or 15000 ms reached
-    while ((mMirrorDownloadRunning) && (num < 150)) {
+    // Wait till second Thread is finished or 10000 ms reached
+    while ((mMirrorDownloadRunning) && (num < 100)) {
       num++;
       try {
         Thread.sleep(100);
