@@ -40,7 +40,7 @@ import devplugin.ProgramFieldType;
 
 /**
  * The default ParamLibrary. If you want to add new parameters or functions for your
- * plugin, extend this class and overwrite the public methods. For an example
+ * plugin, extend this class and override the public methods. For an example
  * see the code in the CapturePlugin
  *
  * @author bodum

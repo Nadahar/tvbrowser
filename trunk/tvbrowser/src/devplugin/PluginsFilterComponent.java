@@ -24,7 +24,7 @@ import tvbrowser.core.filters.FilterComponent;
 
 
 /**
- * Overwrite this class to support filter
+ * Override this class to support filter
  * components for your plugin.<br>
  * Implementation note: Your class must be public, so it can be constructed by reflection.
  *

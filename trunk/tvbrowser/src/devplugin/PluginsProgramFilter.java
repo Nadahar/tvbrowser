@@ -21,7 +21,7 @@ package devplugin;
 import tvbrowser.core.plugin.PluginProxyManager;
 
 /**
- * Overwrite this class to support filters for your plugin.
+ * Override this class to support filters for your plugin.
  * 
  * @author René Mach
  */
