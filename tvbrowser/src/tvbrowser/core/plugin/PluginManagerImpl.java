@@ -59,7 +59,6 @@ import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import tvbrowser.extras.reminderplugin.ReminderPluginProxy;
 import tvbrowser.ui.mainframe.MainFrame;
-import tvbrowser.ui.programtable.ProgramTable;
 import tvbrowser.ui.settings.SettingsDialog;
 import tvdataservice.MarkedProgramsList;
 import tvdataservice.MutableProgram;
@@ -351,6 +350,46 @@ public class PluginManagerImpl implements PluginManager {
     if (channelDayProgram == null) {
       return EMPTY_ITERATOR;
     }
+    
+    if(!channel.getTimeZone().equals(TimeZone.getDefault())) {
+      ArrayList<Program> newList = new ArrayList<Program>();
+      
+      ChannelDayProgram yesterday = TvDataBase.getInstance().getDayProgram(date.addDays(-1), channel);
+      
+      if(yesterday != null) {
+        for(int i = yesterday.getProgramCount()-1; i >= 0; i--) {
+          if(yesterday.getProgramAt(i).getDate().equals(date)) {
+            newList.add(yesterday.getProgramAt(i));
+          }
+          else {
+            break;
+          }
+        }
+      }
+      
+      for(int i = 0; i < channelDayProgram.getProgramCount(); i++) {
+        if(channelDayProgram.getProgramAt(i).getDate().equals(date)) {
+          newList.add(channelDayProgram.getProgramAt(i));
+          
+        }
+      }
+      
+      ChannelDayProgram tomorrow = TvDataBase.getInstance().getDayProgram(date.addDays(1), channel);
+      
+      if(tomorrow != null) {
+        for(int i = 0; i < tomorrow.getProgramCount(); i++) {
+          if(tomorrow.getProgramAt(i).getDate().equals(date)) {
+            newList.add(tomorrow.getProgramAt(i));
+          }
+          else {
+            break;
+          }
+        }
+      }
+      
+      return newList.iterator();
+    }
+    
     return channelDayProgram.getPrograms();
   }
 
