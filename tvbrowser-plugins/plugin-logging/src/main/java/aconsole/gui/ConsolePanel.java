@@ -39,6 +39,9 @@ import java.util.Vector;
 import java.util.logging.Level;
 
 import javax.swing.AbstractAction;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -57,12 +60,13 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 
 import util.ui.Localizer;
+import util.ui.UiUtilities;
 import aconsole.AConsole;
 import aconsole.data.Console;
 import aconsole.help.TVBUtilitiesHelpDialog;
 import aconsole.properties.Property;
 
-final class ConsolePanel extends JPanel implements ComponentListener,Console.Listener{
+public final class ConsolePanel extends JPanel implements ComponentListener,Console.Listener{
 	private static final long serialVersionUID = 8848325800260966250L;
 	static private final Localizer mLocalizer= Localizer.getLocalizerFor(ConsolePanel.class);
 	private boolean fastscroll=false;		//false=scroll per lines; true= sroll per block
@@ -109,6 +113,8 @@ final class ConsolePanel extends JPanel implements ComponentListener,Console.Lis
 		if (defaultLoggerLevel<0 && defaultLoggerLevel>loggerLevels.length) {
       defaultLoggerLevel=1;
     }
+		
+		setOpaque(false);
 
 		formatter.setStyle(showDate,showTime,showClass,showMethod);
 
@@ -122,11 +128,14 @@ final class ConsolePanel extends JPanel implements ComponentListener,Console.Lis
 		setFont(font,caretcolor,disabledcolor);
 		add(jScrollPane1, BorderLayout.CENTER);
 
-		toolbar.setLayout(new BorderLayout());
+		toolbar.setLayout(new BoxLayout(toolbar,BoxLayout.X_AXIS));
+		toolbar.setBorder(BorderFactory.createEmptyBorder(2,0,2,0));
+		toolbar.setOpaque(false);
 		tf_loggerFilterText = new JTextField();
 		tf_loggerFilterText.setToolTipText(mLocalizer.msg("loggerfilter_tt","show logger with names starting with this pattern"));
 		tf_loggerFilterText.setText(loggerFilterText);
-		toolbar.add(tf_loggerFilterText,BorderLayout.CENTER);
+		toolbar.add(tf_loggerFilterText);
+		toolbar.add(Box.createRigidArea(new Dimension(5,0)));
 		tf_loggerFilterText.getDocument().addDocumentListener(new DocumentListener(){
 			public void insertUpdate(DocumentEvent e) {
 				updateOutput();
@@ -148,12 +157,13 @@ final class ConsolePanel extends JPanel implements ComponentListener,Console.Lis
 			}
 		});
 
-		JPanel buttonpanel=new JPanel();
-		toolbar.add(buttonpanel,BorderLayout.EAST);
+//		JPanel buttonpanel=new JPanel();
+//		buttonpanel.setOpaque(false);
+	//	toolbar.add(buttonpanel);
 		final JComboBox cb_loggerFilterLevel=new JComboBox(loggerLevels);
 		cb_loggerFilterLevel.setToolTipText(mLocalizer.msg("loggerlevel_tt","set the minimum level for logger events to show"));
-		buttonpanel.add(cb_loggerFilterLevel);
-
+		toolbar.add(cb_loggerFilterLevel);
+		toolbar.add(Box.createRigidArea(new Dimension(5,0)));
 
 		loggerFilterLevel=loggerLevels[defaultLoggerLevel];
 		cb_loggerFilterLevel.setSelectedItem(loggerFilterLevel);
@@ -179,27 +189,33 @@ final class ConsolePanel extends JPanel implements ComponentListener,Console.Lis
 		btnShowDate.setToolTipText(mLocalizer.msg("date_tt","show/hide logger-event date"));
 		btnShowDate.setSelected(showDate);
 
-		buttonpanel.add(btnShowDate);
+		toolbar.add(btnShowDate);
+		toolbar.add(Box.createRigidArea(new Dimension(5,0)));
 		final JToggleButton btnShowTime= new JToggleButton(mLocalizer.msg("time","time"));
 		btnShowTime.setToolTipText(mLocalizer.msg("time_tt","show/hide logger-event time"));
 		btnShowTime.setSelected(showTime);
-		buttonpanel.add(btnShowTime);
+		toolbar.add(btnShowTime);
+		toolbar.add(Box.createRigidArea(new Dimension(5,0)));
 		final JToggleButton btnShowClass= new JToggleButton(mLocalizer.msg("class","class"));
 		btnShowClass.setToolTipText(mLocalizer.msg("class_tt","show/hide name of logger (normally the class name)"));
 		btnShowClass.setSelected(showClass);
-		buttonpanel.add(btnShowClass);
+		toolbar.add(btnShowClass);
+		toolbar.add(Box.createRigidArea(new Dimension(5,0)));
 		final JToggleButton btnShowMethod= new JToggleButton(mLocalizer.msg("method","method"));
 		btnShowMethod.setToolTipText(mLocalizer.msg("method_tt","show/hide java methods where the logger occured (may be null)"));
 		btnShowMethod.setSelected(showMethod);
-		buttonpanel.add(btnShowMethod);
+		toolbar.add(btnShowMethod);
+		toolbar.add(Box.createRigidArea(new Dimension(5,0)));
 		final JToggleButton btnShowOut= new JToggleButton(mLocalizer.msg("out","out"));
 		btnShowOut.setToolTipText(mLocalizer.msg("out_tt","show/hide text from the system default output stream"));
 		btnShowOut.setSelected(showOut);
-		buttonpanel.add(btnShowOut);
+		toolbar.add(btnShowOut);
+		toolbar.add(Box.createRigidArea(new Dimension(5,0)));
 		final JToggleButton btnShowErr= new JToggleButton(mLocalizer.msg("err","err"));
 		btnShowErr.setToolTipText(mLocalizer.msg("err_tt","show/hide text from the system error output stream"));
 		btnShowErr.setSelected(showErr);
-		buttonpanel.add(btnShowErr);
+		toolbar.add(btnShowErr);
+		toolbar.add(Box.createRigidArea(new Dimension(5,0)));
 
 		AbstractAction styleactionlistener=new AbstractAction(){
 			private static final long serialVersionUID = 6352251822580898635L;
@@ -240,7 +256,7 @@ final class ConsolePanel extends JPanel implements ComponentListener,Console.Lis
 		btnShowErr.addActionListener(styleactionlistener);
 
 
-		buttonpanel.add(getOpenHelpButton(frame));
+		toolbar.add(getOpenHelpButton(frame));
 		add(toolbar, BorderLayout.NORTH);
 
 		fastscroll=false;
@@ -456,7 +472,7 @@ final class ConsolePanel extends JPanel implements ComponentListener,Console.Lis
 			public void actionPerformed(ActionEvent evt) {
 				try{
 					final String filename="index.html";
-					TVBUtilitiesHelpDialog.showHelpPage(frame,AConsole.getHelpUrl(filename),mLocalizer.msg("titleHelp", "Help"));
+					TVBUtilitiesHelpDialog.showHelpPage(frame == null ? UiUtilities.getLastModalChildOf(AConsole.getSuperFrame()) : frame,AConsole.getHelpUrl(filename),mLocalizer.msg("titleHelp", "Help"));
 				}catch (Exception ex){
 					AConsole.foundABug(ex);
 				}

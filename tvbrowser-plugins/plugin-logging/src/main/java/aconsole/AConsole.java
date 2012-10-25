@@ -23,7 +23,9 @@
  
  *******************************************************************/
 package aconsole;
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,17 +38,25 @@ import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.BorderFactory;
+import javax.swing.JPanel;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
 
 import util.ui.Localizer;
+import util.ui.UiUtilities;
 import aconsole.config.PropertyPanel;
 import aconsole.data.Console;
 import aconsole.gui.ConsoleFrame;
+import aconsole.gui.ConsolePanel;
 import aconsole.properties.BooleanProperty;
 import aconsole.properties.ColorProperty;
 import aconsole.properties.IntProperty;
 import aconsole.properties.StringProperty;
 import devplugin.ActionMenu;
 import devplugin.Plugin;
+import devplugin.PluginCenterPanel;
+import devplugin.PluginCenterPanelWrapper;
 import devplugin.PluginInfo;
 import devplugin.SettingsTab;
 import devplugin.Version;
@@ -67,7 +77,7 @@ import devplugin.Version;
 public class AConsole extends Plugin {
 	public static final Logger mLog = java.util.logging.Logger.getLogger(AConsole.class.getName());
 	static private final Localizer mLocalizer= Localizer.getLocalizerFor(AConsole.class);
-	private static Version PLUGINVERSION = new Version(0, 04,0,false);
+	private static Version PLUGINVERSION = new Version(0, 05,0,false);
 	Properties settings=new Properties();
 	static ColorProperty colorBg=null;
 	static ColorProperty colorSelection=null;
@@ -109,6 +119,16 @@ public class AConsole extends Plugin {
 	public static IntProperty getConsoleBufferSize(){return intConsoleBufferSize;}
 	
 	private static AConsole instance;
+	
+	private JPanel mCenterPanel;
+	
+	private AConsoleCenterPanel mConsoleCenterPanel;
+	private PluginCenterPanelWrapper mCenterWrapper;
+	
+	private ConsolePanel mConsolePanel;
+	private Console mConsole;
+	
+	public static boolean mTvBrowserWasStarted = false;
 	
 	public AConsole(){
 		instance=this;
@@ -201,14 +221,72 @@ public class AConsole extends Plugin {
 	 * @see devplugin.Plugin#onActivation()
 	 */
 	public void onActivation() {
+	  if(mCenterPanel == null) {
+	    mCenterPanel = UiUtilities.createPersonaBackgroundPanel();
+	    mCenterPanel.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
+	    mConsoleCenterPanel = new AConsoleCenterPanel();
+      mCenterWrapper = new PluginCenterPanelWrapper() {
+        @Override
+        public PluginCenterPanel[] getCenterPanels() {
+          return new PluginCenterPanel[] {mConsoleCenterPanel};
+        }
+      };
+	  }
+	  
+	  mCenterPanel.addAncestorListener(new AncestorListener() {
+      public void ancestorRemoved(AncestorEvent event) {
+        removePanel();
+      }
+      
+      public void ancestorMoved(AncestorEvent event) {}
+      
+      public void ancestorAdded(AncestorEvent event) {
+        addPanel();
+      }
+    });
+    
 		Console.getConsole().activate();
 		super.onActivation();
 	}
+	
+	public void handleTvBrowserStartFinished() {
+	  mTvBrowserWasStarted = true;
+	}
+	
+	public void addPanel() {
+	  new Thread() {
+	    public void run() {
+	      while(!mTvBrowserWasStarted) {
+	        try {
+            sleep(500);
+          } catch (InterruptedException e) {}
+	      }  
+	      
+        if(mConsolePanel == null) {
+          mConsole = Console.getConsole();
+          mConsolePanel = new ConsolePanel(null,mConsole,new java.awt.Font("Monospaced", 0, 12),Color.black,Color.gray);
+          mCenterPanel.add(mConsolePanel, BorderLayout.CENTER);
+          mCenterPanel.repaint();
+         }
+	    }
+	  }.start();
+	}
 
+	private void removePanel() {
+   if(mCenterPanel != null && mConsolePanel != null) {
+      mCenterPanel.remove(mConsolePanel);
+      mConsolePanel.shutdownConsole();
+      mConsole = null;
+      mConsolePanel = null;
+      mCenterPanel.repaint();
+    }
+	}
+	
 	/**
 	 * @see devplugin.Plugin#onDeactivation()
 	 */
 	public void onDeactivation() {
+	  removePanel();
 		Console.getConsole().shutdownConsole();
 		super.onDeactivation();
 	}
@@ -239,4 +317,24 @@ public class AConsole extends Plugin {
 //		ErrorHandler.handle(mLocalizer.msg("found_a_bug","It seems you found a bug (an program error) in the TVBConsole plugin. please visit the tv-browser forum (http://hilfe.tvbrowser.org/) and post the error stack (see details) to help me to improve the plugin"), ex);
 	}
 	
+	public PluginCenterPanelWrapper getPluginCenterPanelWrapper() {
+	  return mCenterWrapper;
+	}
+	
+	private class AConsoleCenterPanel extends PluginCenterPanel {
+    @Override
+    public String getName() {
+      return getInfo().getName();
+    }
+
+    @Override
+    public JPanel getPanel() {
+      return mCenterPanel;
+    }
+	  
+	}
+	
+	public static Frame getSuperFrame() {
+	  return instance.getParentFrame();
+	}
 }
