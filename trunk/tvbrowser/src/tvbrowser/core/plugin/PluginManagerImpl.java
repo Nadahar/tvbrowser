@@ -1109,4 +1109,9 @@ public class PluginManagerImpl implements PluginManager {
   public JPopupMenu createRemovedProgramContextMenu(Program program) {
     return ContextMenuManager.getInstance().createRemovedProgramContextMenu(program);
   }
+  
+  @Override
+  public boolean isTvBrowserStartFinished() {
+    return mTvBrowserStartFinished;
+  }
 }
