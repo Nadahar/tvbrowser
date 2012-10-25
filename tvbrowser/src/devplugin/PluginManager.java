@@ -495,4 +495,12 @@ public interface PluginManager {
    * @since 3.2
    */
   public JPopupMenu createRemovedProgramContextMenu(Program program);
+  
+  /**
+   * Gets if TV-Browser start was finished.
+   * <p>
+   * @return <code>true</code> if TV-Browser start was finished, <code>false</code> otherwise.
+   * @since 3.2.1
+   */
+  public boolean isTvBrowserStartFinished();
 }
