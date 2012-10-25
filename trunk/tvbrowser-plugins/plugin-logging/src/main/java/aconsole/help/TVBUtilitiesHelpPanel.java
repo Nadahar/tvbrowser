@@ -40,10 +40,14 @@ import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLFrameHyperlinkEvent;
+
+import util.io.IOUtilities;
+import util.ui.html.HTMLTextHelper;
 
 
 /**
@@ -123,13 +127,17 @@ public class TVBUtilitiesHelpPanel extends JPanel implements  HyperlinkListener 
   	if (text!=null){
 		SwingUtilities.invokeLater(new ScrollBarUpdater(0));
 		((HTMLDocument)(mEditorPane.getDocument())).setBase(url);
+		text = "<div style=\"color:" + HTMLTextHelper.getCssRgbColorEntry(UIManager.getColor("EditorPane.foreground")) + ";>" + text + "</div>";
+		
 		mEditorPane.setText(text);
 		SwingUtilities.invokeLater(new ScrollBarUpdater(updateScrollBarTo));
   	}else{
   		if (url!=null){
 			try {
 				SwingUtilities.invokeLater(new ScrollBarUpdater(0));
-				mEditorPane.setPage(url);
+				String textLoaded = new String(IOUtilities.loadFileFromHttpServer(url));
+				mEditorPane.setText(textLoaded.replace("<body>", "<body style=\"color:" + HTMLTextHelper.getCssRgbColorEntry(mEditorPane.getForeground()) + ";\">"));
+				
 				SwingUtilities.invokeLater(new ScrollBarUpdater(updateScrollBarTo));
 			} catch (IOException e) {
 			}
