@@ -62,8 +62,6 @@ import javax.swing.text.StyleConstants;
 
 import util.ui.Localizer;
 import util.ui.UiUtilities;
-import util.ui.persona.Persona;
-import util.ui.persona.PersonaListener;
 import aconsole.AConsole;
 import aconsole.data.Console;
 import aconsole.help.TVBUtilitiesHelpDialog;
@@ -128,7 +126,7 @@ public final class ConsolePanel extends JPanel implements ComponentListener,Cons
 		
 		backPanel =  new JPanel(new BorderLayout()){
       protected void paintComponent(Graphics g) {
-        if(AConsole.isTransparentBackgroundInTab() && transparentBackground && Persona.getInstance().getAccentColor() != null && Persona.getInstance().getHeaderImage() != null) {
+        if(AConsole.isTransparentBackgroundInTab() && transparentBackground) {
          
           Color c = outputTextArea.getBackground();
           
@@ -142,38 +140,16 @@ public final class ConsolePanel extends JPanel implements ComponentListener,Cons
         }
       }
     };
+    
+    backPanel.setOpaque(!(AConsole.isTransparentBackgroundInTab() && transparentBackground));
 		
 		outputTextArea.setAutoscrolls(true);
 		outputTextArea.setEnabled(true);
 		outputTextArea.setEditable(false);
 		outputTextArea.addComponentListener(this);
-		
-    if(Persona.getInstance().getHeaderImage() != null ) {
-      backPanel.setOpaque(!(AConsole.isTransparentBackgroundInTab() && transparentBackground));
-      outputTextArea.setOpaque(!(AConsole.isTransparentBackgroundInTab() && transparentBackground));
-    }
-    else {
-      backPanel.setOpaque(true);
-      outputTextArea.setOpaque(true);
-    }
-
+		outputTextArea.setOpaque(!(AConsole.isTransparentBackgroundInTab() && transparentBackground));
 		jScrollPane1 = new JScrollPane(outputTextArea);
 		jScrollPane1.setAutoscrolls(true);
-		
-		if(transparentBackground) {
-		  Persona.getInstance().registerPersonaListener(new PersonaListener() {
-        public void updatePersona() {
-          if(Persona.getInstance().getHeaderImage() != null) {
-            backPanel.setOpaque(!(AConsole.isTransparentBackgroundInTab() && transparentBackground));
-            outputTextArea.setOpaque(!(AConsole.isTransparentBackgroundInTab() && transparentBackground));
-          }
-          else{
-            outputTextArea.setOpaque(true);
-            backPanel.setOpaque(true);
-          }
-        }
-      });
-		}
 		
 		jScrollPane1.getViewport().setOpaque(false);
 		jScrollPane1.setOpaque(false);
@@ -322,16 +298,8 @@ public final class ConsolePanel extends JPanel implements ComponentListener,Cons
 				outputTextArea.setForeground(AConsole.getSystemOutText().get());
 				setBackground(AConsole.getBg().get());
 				outputTextArea.setBackground(AConsole.getBg().get());
-		    
-		    if(Persona.getInstance().getHeaderImage() != null ) {
-		      backPanel.setOpaque(!(AConsole.isTransparentBackgroundInTab() && transparentBackground));
-		      outputTextArea.setOpaque(!(AConsole.isTransparentBackgroundInTab() && transparentBackground));
-		    }
-		    else {
-		      backPanel.setOpaque(true);
-		      outputTextArea.setOpaque(true);
-		    }
-				
+				outputTextArea.setOpaque(!(AConsole.isTransparentBackgroundInTab() && transparentBackground));
+				backPanel.setOpaque(!(AConsole.isTransparentBackgroundInTab() && transparentBackground));
 				outputTextArea.setSelectionColor(AConsole.getSelection().get());
 
 				ConsolePanel.this.console.addListener(ConsolePanel.this);
@@ -354,17 +322,9 @@ public final class ConsolePanel extends JPanel implements ComponentListener,Cons
 		outputTextArea.setFont(font);
 		outputTextArea.setForeground(AConsole.getSystemOutText().get());
 		setBackground(AConsole.getBg().get());
-		outputTextArea.setBackground(AConsole.getBg().get());		
-    
-    if(Persona.getInstance().getHeaderImage() != null ) {
-      backPanel.setOpaque(!(AConsole.isTransparentBackgroundInTab() && transparentBackground));
-      outputTextArea.setOpaque(!(AConsole.isTransparentBackgroundInTab() && transparentBackground));
-    }
-    else {
-      backPanel.setOpaque(true);
-      outputTextArea.setOpaque(true);
-    }
-    
+		outputTextArea.setBackground(AConsole.getBg().get());
+		outputTextArea.setOpaque(!(AConsole.isTransparentBackgroundInTab() && transparentBackground));
+		backPanel.setOpaque(!(AConsole.isTransparentBackgroundInTab() && transparentBackground));
 		outputTextArea.setSelectionColor(AConsole.getSelection().get());
 		outputTextArea.setCaretColor(caretcolor);
 		outputTextArea.setDisabledTextColor(disabledcolor);
