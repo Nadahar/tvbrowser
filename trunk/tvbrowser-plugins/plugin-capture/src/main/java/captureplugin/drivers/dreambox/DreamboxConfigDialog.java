@@ -255,7 +255,7 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
         mTable.getColumnModel().getColumn(1).setCellRenderer(new ExternalChannelTableCellRenderer());
         mTable.getColumnModel().getColumn(1).setCellEditor(new ExternalChannelTableCellEditor(mConfig));
 
-        basicPanel.addGrowingRow();
+        basicPanel.addRow("fill:min:grow");
         basicPanel.add(new JScrollPane(mTable), cc.xyw(2, basicPanel.getRow(), basicPanel.getColumnCount() - 1));
 
         ButtonBarBuilder2 builder = new ButtonBarBuilder2();
@@ -379,8 +379,6 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
         content.setLayout(new FormLayout("fill:pref:grow", "fill:pref:grow, 3dlu, pref"));
         content.add(tabs, cc.xy(1,1));
         content.add(builder.getPanel(), cc.xy(1,3));
-
-        pack();
     }
 
     /**
