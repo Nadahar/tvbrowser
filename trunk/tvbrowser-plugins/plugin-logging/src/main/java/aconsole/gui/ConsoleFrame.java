@@ -77,7 +77,7 @@ public class ConsoleFrame extends JFrame implements Console.Listener{
 			}
 		});
 		//init console-panel
-		consolepanel=new ConsolePanel(this,console,new java.awt.Font("Monospaced", 0, 12),Color.black,Color.gray);
+		consolepanel=new ConsolePanel(this,console,new java.awt.Font("Monospaced", 0, 12),Color.black,Color.gray,false);
 		this.getContentPane().add(consolepanel, BorderLayout.CENTER);
 		//done
 		init=true;

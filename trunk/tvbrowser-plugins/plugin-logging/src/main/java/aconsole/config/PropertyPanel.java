@@ -28,6 +28,7 @@ package aconsole.config;
 import java.util.Vector;
 
 import javax.swing.Icon;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -54,6 +55,8 @@ public class PropertyPanel implements SettingsTab {
   private static final long serialVersionUID = -501346123606891605L;
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(PropertyPanel.class);
 
+  private JCheckBox mTransparent;
+  
   interface Link {
     public void reset();
 
@@ -82,10 +85,11 @@ public class PropertyPanel implements SettingsTab {
     cl.btn = new ColorButton();
     cl.btn.setToolTipText(tooltip);
     cl.reset();
-    layout.insertRow(row, RowSpec.decode("pref"));
-    layout.insertRow(row + 1, RowSpec.decode("5dlu"));
-    panelBuilder.add(new JLabel(label), cc.xyw(2, row, 1));
-    panelBuilder.add(cl.btn, cc.xyw(3, row, 1));
+    
+    layout.insertRow(row, RowSpec.decode("5dlu"));
+    layout.insertRow(row + 1 , RowSpec.decode("pref"));
+    panelBuilder.add(new JLabel(label), cc.xyw(2, row+1, 1));
+    panelBuilder.add(cl.btn, cc.xyw(3, row + 1, 1));
     linklist.add(cl);
     return 2;
   }
@@ -94,12 +98,20 @@ public class PropertyPanel implements SettingsTab {
 
   public PropertyPanel() {
     CellConstraints cc = new CellConstraints();
-    FormLayout layout = new FormLayout("5dlu, pref, pref,default:grow", "pref, 5dlu");
+    FormLayout layout = new FormLayout("5dlu, pref, pref,default:grow", "5dlu, default, 0dlu");
     PanelBuilder panelBuilder = new PanelBuilder(layout);
-    panelBuilder.add(new JLabel(mLocalizer.msg("title", "setup appearance of TVBConsole")), cc.xyw(2, 1, 2));
-    int row = 2;
+    panelBuilder.add(new JLabel(mLocalizer.msg("title", "setup appearance of TVBConsole")), cc.xyw(2, 2, 2));
+    int row = 3;
     row += addColorButton(AConsole.getBg(), mLocalizer.msg("Bg.label", "background:"), mLocalizer.msg("Bg.tooltip",
         "select the color for the console background"), layout, panelBuilder, cc, row);
+    
+    layout.insertRow(row, RowSpec.decode("default"));
+    layout.insertRow(row + 1, RowSpec.decode("2dlu"));
+    
+    mTransparent = new JCheckBox(mLocalizer.msg("transparentTab", "Background in tab semi-transparent"), AConsole.isTransparentBackgroundInTab());
+    panelBuilder.add(mTransparent, cc.xyw(2, row, 2));
+    
+    row += 2;
 
     row += addColorButton(AConsole.getSelection(), mLocalizer.msg("Selection.label", "background for selected rows:"),
         mLocalizer.msg("Selection.tooltip", ""), layout, panelBuilder, cc, row);
@@ -145,6 +157,8 @@ public class PropertyPanel implements SettingsTab {
     for (Link l : this.linklist) {
       l.save();
     }
+    
+    AConsole.setTransparentBackgroundInTab(mTransparent.isSelected());
   }
 
 }
