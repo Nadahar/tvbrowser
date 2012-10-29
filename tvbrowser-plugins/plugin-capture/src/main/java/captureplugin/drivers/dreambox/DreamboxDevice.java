@@ -24,6 +24,7 @@
  */
 package captureplugin.drivers.dreambox;
 
+import java.awt.Dimension;
 import java.awt.Window;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -38,6 +39,7 @@ import javax.swing.JOptionPane;
 import util.paramhandler.ParamParser;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
+import captureplugin.CapturePlugin;
 import captureplugin.drivers.DeviceIf;
 import captureplugin.drivers.DriverIf;
 import captureplugin.drivers.dreambox.connector.DreamboxChannel;
@@ -155,7 +157,8 @@ public final class DreamboxDevice implements DeviceIf {
         DreamboxConfigDialog dialog = new DreamboxConfigDialog(parent, this,
         mConfig);
 
-        UiUtilities.centerAndShow(dialog);
+        CapturePlugin.getInstance().layoutWindow("dreamboxConfig", dialog, new Dimension(400,500));
+        dialog.setVisible(true);
 
         if (dialog.wasOkPressed()) {
             mName = dialog.getDeviceName();
