@@ -77,7 +77,7 @@ import devplugin.Version;
 public class AConsole extends Plugin {
 	public static final Logger mLog = java.util.logging.Logger.getLogger(AConsole.class.getName());
 	static private final Localizer mLocalizer= Localizer.getLocalizerFor(AConsole.class);
-	private static Version PLUGINVERSION = new Version(0, 06,0,false);
+	private static Version PLUGINVERSION = new Version(0, 07,0,false);
 	Properties settings=new Properties();
 	static ColorProperty colorBg=null;
 	static ColorProperty colorSelection=null;
