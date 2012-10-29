@@ -26,6 +26,7 @@ package aconsole.gui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ComponentEvent;
@@ -61,6 +62,7 @@ import javax.swing.text.StyleConstants;
 
 import util.ui.Localizer;
 import util.ui.UiUtilities;
+import util.ui.persona.Persona;
 import aconsole.AConsole;
 import aconsole.data.Console;
 import aconsole.help.TVBUtilitiesHelpDialog;
@@ -76,6 +78,8 @@ public final class ConsolePanel extends JPanel implements ComponentListener,Cons
 	private JScrollPane jScrollPane1=null;
 	private boolean moveToEndOfOutputArea=false;					//if moveToEndOfOutputArea=true outputTextArea will scroll down at the next resize; see componentResized
 	Console console=null;
+	private JPanel backPanel;
+	private boolean transparentBackground;
 
 	RecordFormatter formatter=new RecordFormatter();
 	String loggerFilterText="";
@@ -100,7 +104,8 @@ public final class ConsolePanel extends JPanel implements ComponentListener,Cons
 		Level.ALL
 	};
 	//constructor
-	public ConsolePanel(JFrame frame,Console console,java.awt.Font font,Color caretcolor,Color disabledcolor){
+	public ConsolePanel(JFrame frame,Console console,java.awt.Font font,Color caretcolor,Color disabledcolor, final boolean transparentBackground){
+	  this.transparentBackground = transparentBackground;
 		this.console=console;
 		loggerFilterText=AConsole.getLoggerFilter().get();
 		showDate=AConsole.getShowDate().get();
@@ -119,14 +124,39 @@ public final class ConsolePanel extends JPanel implements ComponentListener,Cons
 		formatter.setStyle(showDate,showTime,showClass,showMethod);
 
 		setLayout(new BorderLayout());
+		
+		backPanel =  new JPanel(new BorderLayout()){
+      protected void paintComponent(Graphics g) {
+        if(AConsole.isTransparentBackgroundInTab() && transparentBackground && Persona.getInstance().getAccentColor() != null && Persona.getInstance().getHeaderImage() != null) {
+         
+          Color c = outputTextArea.getBackground();
+          
+          int alpha = 166;
+          
+          g.setColor(new Color(c.getRed(),c.getGreen(),c.getBlue(),alpha));
+          g.fillRect(0,0,getWidth(),getHeight());
+        }
+        else {
+          super.paintComponent(g);
+        }
+      }
+    };
+    
+    backPanel.setOpaque(!(AConsole.isTransparentBackgroundInTab() && transparentBackground));
+		
 		outputTextArea.setAutoscrolls(true);
 		outputTextArea.setEnabled(true);
 		outputTextArea.setEditable(false);
 		outputTextArea.addComponentListener(this);
+		outputTextArea.setOpaque(!(AConsole.isTransparentBackgroundInTab() && transparentBackground));
 		jScrollPane1 = new JScrollPane(outputTextArea);
 		jScrollPane1.setAutoscrolls(true);
+		
+		jScrollPane1.getViewport().setOpaque(false);
+		jScrollPane1.setOpaque(false);
 		setFont(font,caretcolor,disabledcolor);
-		add(jScrollPane1, BorderLayout.CENTER);
+		backPanel.add(jScrollPane1, BorderLayout.CENTER);
+		add(backPanel, BorderLayout.CENTER);
 
 		toolbar.setLayout(new BoxLayout(toolbar,BoxLayout.X_AXIS));
 		toolbar.setBorder(BorderFactory.createEmptyBorder(2,0,2,0));
@@ -269,6 +299,8 @@ public final class ConsolePanel extends JPanel implements ComponentListener,Cons
 				outputTextArea.setForeground(AConsole.getSystemOutText().get());
 				setBackground(AConsole.getBg().get());
 				outputTextArea.setBackground(AConsole.getBg().get());
+				outputTextArea.setOpaque(!(AConsole.isTransparentBackgroundInTab() && transparentBackground));
+				backPanel.setOpaque(!(AConsole.isTransparentBackgroundInTab() && transparentBackground));
 				outputTextArea.setSelectionColor(AConsole.getSelection().get());
 
 				ConsolePanel.this.console.addListener(ConsolePanel.this);
@@ -292,6 +324,8 @@ public final class ConsolePanel extends JPanel implements ComponentListener,Cons
 		outputTextArea.setForeground(AConsole.getSystemOutText().get());
 		setBackground(AConsole.getBg().get());
 		outputTextArea.setBackground(AConsole.getBg().get());
+		outputTextArea.setOpaque(!(AConsole.isTransparentBackgroundInTab() && transparentBackground));
+		backPanel.setOpaque(!(AConsole.isTransparentBackgroundInTab() && transparentBackground));
 		outputTextArea.setSelectionColor(AConsole.getSelection().get());
 		outputTextArea.setCaretColor(caretcolor);
 		outputTextArea.setDisabledTextColor(disabledcolor);

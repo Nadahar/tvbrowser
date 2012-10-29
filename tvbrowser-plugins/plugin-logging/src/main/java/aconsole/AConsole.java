@@ -77,7 +77,7 @@ import devplugin.Version;
 public class AConsole extends Plugin {
 	public static final Logger mLog = java.util.logging.Logger.getLogger(AConsole.class.getName());
 	static private final Localizer mLocalizer= Localizer.getLocalizerFor(AConsole.class);
-	private static Version PLUGINVERSION = new Version(0, 05,0,false);
+	private static Version PLUGINVERSION = new Version(0, 06,0,false);
 	Properties settings=new Properties();
 	static ColorProperty colorBg=null;
 	static ColorProperty colorSelection=null;
@@ -179,7 +179,7 @@ public class AConsole extends Plugin {
 		colorSystemOutText=new ColorProperty(settings,"colorSystemOutText",Color.blue);
 		colorSystemErrText=new ColorProperty(settings,"colorSystemErrText",Color.RED);
 		colorLevelSevereText=new ColorProperty(settings,"colorLevelSevereText",Color.RED);
-		colorLevelWarningText=new ColorProperty(settings,"colorLevelWarningText",Color.pink);
+		colorLevelWarningText=new ColorProperty(settings,"colorLevelWarningText",new Color(255,108,0));
 		colorLevelInfoText=new ColorProperty(settings,"colorLevelInfoText",Color.BLACK);
 		colorLevelOtherText=new ColorProperty(settings,"colorLevelOtherText",Color.GRAY);
 		stringLoggerFilter=new StringProperty(settings,"loggerFilter","");
@@ -264,7 +264,7 @@ public class AConsole extends Plugin {
 	      
         if(mConsolePanel == null) {
           mConsole = Console.getConsole();
-          mConsolePanel = new ConsolePanel(null,mConsole,new java.awt.Font("Monospaced", 0, 12),Color.black,Color.gray);
+          mConsolePanel = new ConsolePanel(null,mConsole,new java.awt.Font("Monospaced", 0, 12),Color.black,Color.gray,true);
           mCenterPanel.add(mConsolePanel, BorderLayout.CENTER);
           mCenterPanel.repaint();
          }
@@ -336,5 +336,13 @@ public class AConsole extends Plugin {
 	
 	public static Frame getSuperFrame() {
 	  return instance.getParentFrame();
+	}
+	
+	public static boolean isTransparentBackgroundInTab() {
+	  return instance.settings.getProperty("transparentTab", "true").equals("true");
+	}
+	
+	public static void setTransparentBackgroundInTab(boolean isTransparent) {
+	  instance.settings.setProperty("transparentTab", String.valueOf(isTransparent));
 	}
 }
