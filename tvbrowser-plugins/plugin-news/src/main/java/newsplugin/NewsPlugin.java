@@ -29,6 +29,7 @@ import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.SimpleDateFormat;
@@ -56,7 +57,7 @@ import devplugin.Version;
  * @author Til Schneider, www.murfman.de
  */
 public class NewsPlugin extends Plugin {
-  private static final Version mVersion = new Version(3,10);
+  private static final Version mVersion = new Version(3,11);
 
   /** The localizer used by this class. */
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer
@@ -156,11 +157,13 @@ public class NewsPlugin extends Plugin {
         long lastNews = mNewsList.getLastNewsTime(mLastNewsFileModified);
         
         URL url = new URL(NEWS_URL);
-        URLConnection conn = url.openConnection();
-        long lastModified = conn.getLastModified();
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         
-        if(lastModified > mLastNewsFileModified) {
-          mLastNewsFileModified = lastModified;
+        conn.setIfModifiedSince(mLastNewsFileModified);
+        conn.connect();
+        
+        if(conn.getResponseCode() != HttpURLConnection.HTTP_NOT_MODIFIED) {
+          mLastNewsFileModified = conn.getLastModified();
           byte[] newsData = IOUtilities.loadFileFromHttpServer(url, 60000);
           
           String news = new String(newsData, "ISO-8859-1");
