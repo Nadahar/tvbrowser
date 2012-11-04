@@ -115,7 +115,16 @@ public class DVBViewerEPGParser {
         int duration = item.duration().getHours() * 60 + item.duration().getMinutes();
         prog.setLength(duration);
 
-        int bitset = processDescription(item.description(), prog);
+        String shortdesc = item.event();
+        String desc = item.description();
+        if (shortdesc != null) {
+          if (shortdesc.length() <= MutableProgram.MAX_SHORT_INFO_LENGTH) {
+            prog.setShortInfo(item.event());
+          } else if (desc != null &&  desc.indexOf(shortdesc) == -1) {
+            desc = shortdesc + "\n\n" + desc;
+          }
+        }
+        int bitset = processDescription(desc, prog);
         bitset = processContent(item.content(), bitset);
         prog.setInfo(bitset);
 
@@ -174,7 +183,7 @@ public class DVBViewerEPGParser {
       }
     }
 
-    if (null != shortDescription) {
+    if (null != shortDescription && null == prog.getShortInfo()) {
       shortDescription = validateShortInfo(shortDescription);
       prog.setShortInfo(shortDescription);
     }
@@ -251,6 +260,23 @@ public class DVBViewerEPGParser {
       case 118: //film/cinema
       case 119: //experimental film/video
         bitset |= Program.INFO_CATEGORIE_MOVIE;
+        break;
+      case 35: // documentary
+        bitset |= Program.INFO_CATEGORIE_DOCUMENTARY;
+        break;
+      case 64: // sports
+      case 65: // sports..
+      case 66: // sports..
+      case 67: // sports..
+      case 68: // sports..
+      case 69: // sports..
+      case 70: // sports..
+      case 71: // sports..
+      case 72: // sports..
+      case 73: // sports..
+      case 74: // sports..
+      case 75: // sports..
+        bitset |= Program.INFO_CATEGORIE_SPORTS;
         break;
       default:
         // nothing to do

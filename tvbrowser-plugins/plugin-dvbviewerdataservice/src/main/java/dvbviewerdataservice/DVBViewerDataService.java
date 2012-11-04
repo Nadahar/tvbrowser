@@ -72,7 +72,7 @@ public class DVBViewerDataService extends AbstractTvDataService {
   private static final Localizer localizer = Localizer.getLocalizerFor(DVBViewerDataService.class);
 
   /** version of this provider */
-  private static final Version version = new Version(0, 20, false);
+  private static final Version version = new Version(0, 30, false);
 
   /** the name of the channel file stored in the data directory */
   private static final String CHANNELFILENAME = "channellist";
