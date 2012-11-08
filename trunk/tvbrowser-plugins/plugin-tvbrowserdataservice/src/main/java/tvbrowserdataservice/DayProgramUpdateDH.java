@@ -30,6 +30,7 @@ import java.io.InputStream;
 import java.util.logging.Logger;
 
 import tvbrowserdataservice.file.DayProgramFile;
+import tvbrowserdataservice.file.SummaryFile;
 import util.exc.TvBrowserException;
 import util.io.DownloadHandler;
 import util.io.DownloadJob;
@@ -48,6 +49,7 @@ public class DayProgramUpdateDH implements DownloadHandler {
   
   private TvBrowserDataService mDataService;
   private TvDataBaseUpdater mUpdater;
+  private SummaryFile mLocalSummary;
   
   /**
    * Creates a new DayProgramUpdateDH.
@@ -61,6 +63,14 @@ public class DayProgramUpdateDH implements DownloadHandler {
     mDataService = dataService;
     mUpdater = updater;
   }
+  
+  public DayProgramUpdateDH(TvBrowserDataService dataService,
+      TvDataBaseUpdater updater, SummaryFile localSummary)
+    {
+      mDataService = dataService;
+      mUpdater = updater;
+      mLocalSummary = localSummary;
+    }
   
   
   public void handleDownload(DownloadJob job, InputStream stream)
@@ -89,6 +99,15 @@ public class DayProgramUpdateDH implements DownloadHandler {
 
       // Save the complete program
       completeProg.writeToFile(completeFile);
+      
+      if (mLocalSummary != null) {
+        mLocalSummary.setDayProgramVersion(
+            DayProgramFile.getDateFromFileName(completeFileName),
+            DayProgramFile.getCountryFromFileName(completeFileName), 
+            DayProgramFile.getChannelNameFromFileName(completeFileName), 
+            DayProgramFile.getLevelIndexForId(DayProgramFile.getLevelFromFileName(completeFileName)), 
+            completeProg.getVersion());
+      }
       
       // Tell the database updater that this file needs an update
       mUpdater.addUpdateJobForDayProgramFile(completeFileName);

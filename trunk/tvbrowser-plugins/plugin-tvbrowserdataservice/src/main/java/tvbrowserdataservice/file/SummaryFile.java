@@ -64,6 +64,7 @@ public class SummaryFile extends AbstractFile {
   private HashMap<String, ChannelFrame> mChannelFrameHash;
   /** The number of levels used in this summary. */
   private int mLevelCount;
+  private boolean mDataChanged = false;
   
   
   /**
@@ -87,6 +88,8 @@ public class SummaryFile extends AbstractFile {
   public void setDayProgramVersion(Date date, String country, String channelId,
     int level, int version)
   {
+    mDataChanged = true;
+    
     if (version < 0) {
       // Unknown version
       version = 0;
@@ -103,7 +106,7 @@ public class SummaryFile extends AbstractFile {
     if (frame == null) {
       // There is no frame -> create one
       frame = new ChannelFrame(country, channelId);
-			System.out.println("creating frame for "+country+", "+channelId);
+			//System.out.println("creating frame for "+country+", "+channelId);
       mChannelFrameHash.put(key, frame);
     }
     
@@ -240,12 +243,13 @@ public class SummaryFile extends AbstractFile {
     throws IOException, FileFormatException
   {
     GZIPOutputStream gOut = new GZIPOutputStream(stream);
+    mDataChanged = false;
 
 		
 		
     gOut.write(FILE_VERSION);
 
-		System.out.println("get the minimum start date...");
+		//System.out.println("get the minimum start date...");
     
     // Get the minimum start date
     int minStartDaysSince1970 = Integer.MAX_VALUE;
@@ -268,18 +272,18 @@ public class SummaryFile extends AbstractFile {
     gOut.write((byte) (frameCount >> 8));
     gOut.write((byte) (frameCount));
 
-    System.out.println("write frames...");
-    System.out.println("frameCount: "+frameCount);
+    //System.out.println("write frames...");
+    //System.out.println("frameCount: "+frameCount);
 		
     // The frames
     Date startDate = generateDate(minStartDaysSince1970);
-		System.out.println("minStartDaysSince1970: "+minStartDaysSince1970);
+		//System.out.println("minStartDaysSince1970: "+minStartDaysSince1970);
     iter = mChannelFrameHash.values().iterator();
     while (iter.hasNext()) {
       ChannelFrame frame = iter.next();
       
       
-      System.out.println(frame.getChannelId()+", "+frame.getStartDaysSince1970()+", "+frame.getDaysCount(minStartDaysSince1970));
+      //System.out.println(frame.getChannelId()+", "+frame.getStartDaysSince1970()+", "+frame.getDaysCount(minStartDaysSince1970));
 			
       writeString(gOut, frame.getCountry());
       writeString(gOut, frame.getChannelId());
@@ -353,6 +357,10 @@ public class SummaryFile extends AbstractFile {
     java.util.Date utilDate = cal.getTime();
     long millis = utilDate.getTime() + zoneOffset + daylight;
     return (int) (millis / 1000L / 60L / 60L / 24L);
+  }
+  
+  public boolean unsavedChanges() {
+    return mDataChanged;
   }
   
   
