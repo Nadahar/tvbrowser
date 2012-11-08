@@ -68,6 +68,8 @@ public class TvBrowserDataServiceChannelGroup extends ChannelGroupImpl {
 
   private SummaryFile mSummary;
 
+  private SummaryFile mLocalSummary;
+  
   private String mName = null;
 
   private TvBrowserDataService mDataService;
@@ -281,6 +283,38 @@ public class TvBrowserDataServiceChannelGroup extends ChannelGroupImpl {
    */
   public SummaryFile getSummary() {
     return mSummary;
+  }
+  
+  public SummaryFile getLocalSummary() {
+    if (mLocalSummary == null) {
+      //load file
+      mLocalSummary = new SummaryFile();
+      File file = new File(mDataDir, getId() + "_summary.gz");
+      try {
+        if (file.exists()) {
+          mLocalSummary.readFromFile(file);
+        }
+      } catch (IOException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      } catch (FileFormatException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+    }
+    return mLocalSummary;
+  }
+  
+  public void saveLocalSummary() throws IOException {
+    if (mLocalSummary != null && mLocalSummary.unsavedChanges()) {
+      File file = new File(mDataDir, getId() + "_summary.gz");
+      try {
+        mLocalSummary.writeToFile(file);
+      } catch (FileFormatException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+    }
   }
 
   /**

@@ -74,7 +74,7 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
   public static final util.ui.Localizer mLocalizer
           = util.ui.Localizer.getLocalizerFor(TvBrowserDataService.class);
 
-  private static final Version VERSION = new Version(3,04,0);
+  private static final Version VERSION = new Version(3,05,0);
 
   protected static final String CHANNEL_GROUPS_FILENAME = "groups.txt";
   private static final String DEFAULT_CHANNEL_GROUPS_URL = "http://tvbrowser.org/listings";
@@ -92,7 +92,7 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
           new String[] {"http://www.tvbrowser.org/mirrorlists"},
           new String[] {"http://www.tvbrowser.org/mirrorlists"},
           new String[] {"http://www.tvbrowser.org/mirrorlists"},
-          new String[] {"http://sender.wannawork.de"},
+          new String[] {"http://bodos.tvbrowserdaten.de/"},
 
   };
 
@@ -196,7 +196,11 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
     mProgressMonitor = monitor;
 
     HashSet<TvBrowserDataServiceChannelGroup> groups=new HashSet<TvBrowserDataServiceChannelGroup>();
+    
+    monitor.setMaximum(channelArr.length);
+    int i=0;    
     for (Channel element : channelArr) {
+      monitor.setValue(i++);
       TvBrowserDataServiceChannelGroup curGroup=getChannelGroupById(element.getGroup().getId());
       if (curGroup==null) {
         mLog.warning("Invalid channel group id: "+element.getGroup().getId());
@@ -237,22 +241,23 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
     mDownloadManager = new DownloadManager();
     TvDataBaseUpdater updater = new TvDataBaseUpdater(this, updateManager);
 
-    // Add a receive or a update job for each channel and day
-    DayProgramReceiveDH receiveDH = new DayProgramReceiveDH(this, updater);
-    DayProgramUpdateDH updateDH   = new DayProgramUpdateDH(this, updater);
-
-
     monitor.setMaximum(groups.size());
 
     Iterator<TvBrowserDataServiceChannelGroup> groupIt=groups.iterator();
-    int i=0;
+    i=0;
     while (groupIt.hasNext()) {
 
       monitor.setValue(i++);
 
       TvBrowserDataServiceChannelGroup group=groupIt.next();
-      SummaryFile summaryFile = group.getSummary();
-      if (summaryFile != null) {
+      SummaryFile remoteSummaryFile = group.getSummary();
+      SummaryFile localSummaryFile = group.getLocalSummary();
+      if (remoteSummaryFile != null) {
+        
+        // Add a receive or a update job for each channel and day
+        DayProgramReceiveDH receiveDH = new DayProgramReceiveDH(this, updater, localSummaryFile);
+        DayProgramUpdateDH updateDH   = new DayProgramUpdateDH(this, updater, localSummaryFile);
+        
         Date date = startDate;
         for (int day = 0; day < dateCount; day++) {
           for (TvDataLevel element : mSubscribedLevelArr) {
@@ -261,7 +266,7 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
             while (it.hasNext()) {
               Channel ch=it.next();
               addDownloadJob(updateManager, group.getMirror(), date, level, ch,
-                      ch.getCountry(), receiveDH, updateDH, summaryFile);
+                      ch.getBaseCountry(), receiveDH, updateDH, remoteSummaryFile, localSummaryFile);
             }
           }
           date = date.addDays(1);
@@ -286,6 +291,15 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
     finally {
       // Update the programs for which the update succeeded in every case
       mProgressMonitor.setMessage(mLocalizer.msg("info.2","Updating database"));
+      Iterator<TvBrowserDataServiceChannelGroup> groupIt1=groups.iterator();
+      while (groupIt1.hasNext()) {
+        try {
+          groupIt1.next().saveLocalSummary();
+        } catch (IOException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
+      }
       updater.updateTvDataBase(monitor);
       mProgressMonitor.setMessage("");
 
@@ -333,34 +347,44 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
   private void addDownloadJob(TvDataUpdateManager dataBase, Mirror mirror, Date date,
                               String level, Channel channel, String country,
                               DayProgramReceiveDH receiveDH, DayProgramUpdateDH updateDH,
-                              SummaryFile summary)
+                              SummaryFile remoteSummary, SummaryFile localSummary)
   {
     // NOTE: summary is null when getting failed
-    if (summary == null) {
+    if (remoteSummary == null) {
       return;
     }
     String completeFileName = DayProgramFile.getProgramFileName(date,
             country, channel.getId(), level);
-    File completeFile = new File(mDataDir, completeFileName);
+    File completeFile = null;
 
     int levelIdx = DayProgramFile.getLevelIndexForId(level);
 
 
     boolean downloadTheWholeDayProgram;
     // Check whether we already have data for this day
-    downloadTheWholeDayProgram = !(dataBase.isDayProgramAvailable(date, channel) && completeFile.exists());
+    downloadTheWholeDayProgram = !(dataBase.isDayProgramAvailable(date, channel) && (completeFile = new File(mDataDir, completeFileName)).exists());
     if (!downloadTheWholeDayProgram) {
       // We have data -> Check whether the mirror has an update
 
       // Get the version of the file
       int localVersion;
       try {
-        localVersion = DayProgramFile.readVersionFromFile(completeFile);
+        localVersion = localSummary.getDayProgramVersion(date, country, channel.getId(), levelIdx);
+        if (localVersion == -1) {
+          //not found, look into file itself
+          if (completeFile == null) {
+             completeFile = new File(mDataDir, completeFileName);
+          }
+          localVersion = DayProgramFile.readVersionFromFile(completeFile);
+          //directly add it
+          localSummary.setDayProgramVersion(date, country, channel.getId(), levelIdx, localVersion);
+          //getChannelGroupById(channel.getGroup().getId()).saveLocalSummary();
+        }
 
 
         // Check whether the mirror has a newer version
         boolean needsUpdate;
-        int mirrorVersion = summary.getDayProgramVersion(date, country,
+        int mirrorVersion = remoteSummary.getDayProgramVersion(date, country,
                 channel.getId(), levelIdx);
         needsUpdate = (mirrorVersion > localVersion);
 
@@ -386,7 +410,7 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
     {
       // We have no data -> Check whether the mirror has
       boolean needsUpdate;
-      int mirrorVersion = summary.getDayProgramVersion(date, country,
+      int mirrorVersion = remoteSummary.getDayProgramVersion(date, country,
               channel.getId(), levelIdx);
       needsUpdate = (mirrorVersion != -1);
 
@@ -427,7 +451,7 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
     while (it.hasNext()) {
       Channel[] chArr = getAvailableChannels(it.next());
       for (Channel element : chArr) {
-        if (element.getCountry().equals(country) && element.getId().equals(channelName)) {
+        if (element.getBaseCountry().equals(country) && element.getId().equals(channelName)) {
           return element;
         }
       }
