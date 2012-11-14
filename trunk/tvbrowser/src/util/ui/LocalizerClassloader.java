@@ -29,11 +29,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.Enumeration;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+
+import com.sun.jmx.snmp.Enumerated;
 
 import tvbrowser.core.Settings;
 
@@ -92,17 +95,22 @@ public class LocalizerClassloader extends ClassLoader {
         String locale = name.substring(localeIndex,propertyIndex);
         
         // check user home for zip file with translation 
-        File zip = new File(Settings.getUserSettingsDirName() + "/lang/tvbrowser-translation" + locale + ".zip");
+        File zip = new File(Settings.getUserSettingsDirName() + "/languages/tvbrowser-translation" + locale + ".zip");
         
         if(!zip.isFile()) {
           // not in user home, check program directory
-          zip = new File("/lang/tvbrowser-translation" + locale + ".zip");
+          zip = new File("/languages/tvbrowser-translation" + locale + ".zip");
         }
         
         if(zip.isFile()) {
+          
           ZipFile zipFile = new ZipFile(zip);
           
           ZipEntry entry = zipFile.getEntry(name);
+          
+          if(entry == null) {
+            entry = zipFile.getEntry(name.replace("/", "\\"));
+          }
           
           if(entry != null) {
             return zipFile.getInputStream(entry);
