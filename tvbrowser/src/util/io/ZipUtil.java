@@ -26,6 +26,7 @@
 package util.io;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -39,7 +40,31 @@ import java.util.zip.ZipOutputStream;
  * 
  */
 public class ZipUtil {
+  /**
+   * Creates a zip file and stores all files in a directory recursively
+   * 
+   * @param zipfile
+   *          compress to this file
+   * @param directory
+   *          compress this directory
+   * @param fileFilter The filter to use for accepting files to be zipped or
+   *          <code>null</code> if all files should be accepted.
+   * @throws IOException
+   */
+  public void zipDirectory(File zipfile, File directory, FileFilter fileFilter) throws IOException {
+    zipfile.delete();
 
+    if (!directory.exists() || !directory.isDirectory()) {
+      return;
+    }
+
+    ZipOutputStream out = new ZipOutputStream(new FileOutputStream(zipfile));
+
+    zipDirFiles(out, directory, directory.getAbsolutePath().length()+1, fileFilter);
+
+    out.close();
+  }
+  
   /**
    * Creates a zip file and stores all files in a directory recursively
    * 
@@ -50,17 +75,7 @@ public class ZipUtil {
    * @throws IOException
    */
   public void zipDirectory(File zipfile, File directory) throws IOException {
-    zipfile.delete();
-
-    if (!directory.exists() || !directory.isDirectory()) {
-      return;
-    }
-
-    ZipOutputStream out = new ZipOutputStream(new FileOutputStream(zipfile));
-
-    zipDirFiles(out, directory, directory.getAbsolutePath().length()+1);
-
-    out.close();
+    zipDirectory(zipfile, directory, null);
   }
 
   /**
@@ -70,22 +85,22 @@ public class ZipUtil {
    * @param parentlength length of parent-directory name. This is stripped from the entries in the zip file
    * @throws IOException
    */
-  private void zipDirFiles(ZipOutputStream out, File directory, int parentlength) throws IOException {
+  private void zipDirFiles(ZipOutputStream out, File directory, int parentlength, FileFilter fileFilter) throws IOException {
     File[] files = directory.listFiles();
     System.out.println(">" + directory.getAbsolutePath());
     // Compress the files
     if (files != null) {
       for (File file : files) {
         if (file.isDirectory()) {
-          zipDirFiles(out, file, parentlength);
-        } else {
+          zipDirFiles(out, file, parentlength, fileFilter);
+        } else if(fileFilter == null || fileFilter.accept(file)) {
           System.out.println(">" + file.getAbsolutePath());
           byte[] buf = new byte[1024];
   
           FileInputStream in = new FileInputStream(file);
   
           // Add ZIP entry to output stream.
-          out.putNextEntry(new ZipEntry(file.getAbsolutePath().substring(parentlength)));
+          out.putNextEntry(new ZipEntry(file.getAbsolutePath().substring(parentlength).replace("\\", "/")));
   
           // Transfer bytes from the file to the ZIP file
           int len;

@@ -426,12 +426,11 @@ public class Localizer {
         }
       }
       
-      addLocaleFiles(new File(Settings.getUserSettingsDirName() + "/lang"), langArray);
-      addLocaleFiles(new File("/lang"), langArray);
-
       addLocaleFiles(new File(Settings.getUserSettingsDirName() + "/lang/tvbrowser"), langArray);
       addLocaleFiles(new File("lang/tvbrowser"), langArray);
       
+      addLocaleFiles(new File(Settings.getUserSettingsDirName() + "/languages"), langArray);
+      addLocaleFiles(new File("/languages"), langArray);
     } catch (FileNotFoundException e) {
       e.printStackTrace();
     } catch (IOException e) {
@@ -486,7 +485,7 @@ public class Localizer {
    * @param string String with Locale
    * @return Locale
    */
-  private static Locale getLocaleForString(final String string) {
+  public static Locale getLocaleForString(final String string) {
     String[] split = string.split("_");
 
     if (split.length >= 3) {
