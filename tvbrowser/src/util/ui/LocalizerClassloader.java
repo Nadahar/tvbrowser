@@ -29,8 +29,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import tvbrowser.core.Settings;
 
@@ -59,7 +62,7 @@ public class LocalizerClassloader extends ClassLoader {
  
   @Override
   public InputStream getResourceAsStream(String name) {
-    try {
+    try {     
       // Check User-Home
       File file = new File(Settings.getUserSettingsDirName() + "/lang/" +name);
     
@@ -79,6 +82,31 @@ public class LocalizerClassloader extends ClassLoader {
           return new FileInputStream(file);
         } catch (FileNotFoundException e) {
           mLog.log(Level.WARNING, "Could not open language properties found in program directory.", e);
+        }
+      }
+      
+      int propertyIndex = name.indexOf(".properties");
+      int localeIndex = name.indexOf("_");
+      
+      if(localeIndex != -1) {
+        String locale = name.substring(localeIndex,propertyIndex);
+        
+        // check user home for zip file with translation 
+        File zip = new File(Settings.getUserSettingsDirName() + "/lang/tvbrowser-translation" + locale + ".zip");
+        
+        if(!zip.isFile()) {
+          // not in user home, check program directory
+          zip = new File("/lang/tvbrowser-translation" + locale + ".zip");
+        }
+        
+        if(zip.isFile()) {
+          ZipFile zipFile = new ZipFile(zip);
+          
+          ZipEntry entry = zipFile.getEntry(name);
+          
+          if(entry != null) {
+            return zipFile.getInputStream(entry);
+          }
         }
       }
     }catch(Throwable e) {
