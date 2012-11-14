@@ -425,9 +425,13 @@ public class Localizer {
           langArray.add(getLocaleForString(name));
         }
       }
+      
+      addLocaleFiles(new File(Settings.getUserSettingsDirName() + "/lang"), langArray);
+      addLocaleFiles(new File("/lang"), langArray);
 
       addLocaleFiles(new File(Settings.getUserSettingsDirName() + "/lang/tvbrowser"), langArray);
       addLocaleFiles(new File("lang/tvbrowser"), langArray);
+      
     } catch (FileNotFoundException e) {
       e.printStackTrace();
     } catch (IOException e) {
@@ -458,6 +462,14 @@ public class Localizer {
         for (String string : files) {
           if (string.startsWith("tvbrowser_") && string.endsWith(".properties")) {
             Locale loc = getLocaleForString(string.substring(10, string.lastIndexOf(".properties")));
+            
+            if (!langArray.contains(loc)) {
+              langArray.add(loc);
+            }
+          }
+          else if(string.startsWith("tvbrowser") && string.toLowerCase().endsWith(".zip")) {
+            Locale loc = getLocaleForString(string.substring(string.indexOf("_")+1, string.lastIndexOf(".zip")));
+            
             if (!langArray.contains(loc)) {
               langArray.add(loc);
             }
