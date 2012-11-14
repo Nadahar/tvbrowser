@@ -30,6 +30,8 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.Collections;
 import java.util.Comparator;
@@ -264,7 +266,7 @@ final public class TranslationDialog extends JDialog implements WindowClosingIf 
       }
     });
 
-    JButton cancel = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
+    JButton cancel = new JButton(Localizer.getLocalization(Localizer.I18N_CLOSE));
     cancel.addActionListener(new ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent e) {
         close();
@@ -370,7 +372,6 @@ final public class TranslationDialog extends JDialog implements WindowClosingIf 
       e.printStackTrace();
       ErrorHandler.handle(mLocalizer.msg("problemWhileSaving","Problems while storing translations."), e);
     }
-    close();
   }
 
   /**
@@ -380,6 +381,20 @@ final public class TranslationDialog extends JDialog implements WindowClosingIf 
     JFileChooser fileChooser=new JFileChooser();
     ExtensionFileFilter filter = new ExtensionFileFilter(".zip","Zip (*.zip)");
     fileChooser.setFileFilter(filter);
+    
+    Locale loc = (Locale)mLanguageCB.getSelectedItem();
+    final StringBuilder languageCreation = new StringBuilder(loc.getLanguage());
+    
+    if(!loc.equals(new Locale(loc.getLanguage()))) {
+      if(!loc.getCountry().equals(new Locale(loc.getLanguage()).getCountry())) {
+        languageCreation.append("_").append(loc.getCountry());
+      }
+      if(!loc.getVariant().equals(new Locale(loc.getLanguage()).getVariant())) {
+        languageCreation.append("_").append(loc.getVariant());
+      }
+    }
+    
+    fileChooser.setSelectedFile(new File("tvbrowser-translation_" + languageCreation.toString()));
     int retVal = fileChooser.showSaveDialog(this);
 
     if (retVal == JFileChooser.APPROVE_OPTION) {
@@ -395,6 +410,26 @@ final public class TranslationDialog extends JDialog implements WindowClosingIf 
                 File.separatorChar);
 
         try {
+          try {
+            Method zipDirectory = zip.getClass().getMethod("zipDirectory", new Class<?> [] {File.class, File.class, FileFilter.class});
+            zipDirectory.invoke(zip, new Object[] {f,new File(dir.toString()),new FileFilter() {
+              @Override
+              public boolean accept(File pathname) {
+                return pathname.getName().endsWith(languageCreation.toString() + ".properties");
+              }
+            }});
+            
+            return;
+          } catch (SecurityException e) {
+          } catch (NoSuchMethodException e) {e.printStackTrace();
+          } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+          } catch (IllegalAccessException e) {
+            e.printStackTrace();
+          } catch (InvocationTargetException e) {
+            e.printStackTrace();
+          }
+          
           zip.zipDirectory(f, new File(dir.toString()));
           JOptionPane.showMessageDialog(this, mLocalizer.msg("exportDone", "Export Done!"));
         } catch (IOException e) {

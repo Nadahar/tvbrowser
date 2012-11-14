@@ -31,6 +31,7 @@ import java.util.Properties;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.UIManager;
 
 import util.ui.Localizer;
 import util.ui.UiUtilities;
@@ -49,7 +50,7 @@ import devplugin.Version;
  * @author bodum
  */
 public class I18NPlugin extends Plugin {
-  private static final Version mVersion = new Version(3,0);
+  private static final Version mVersion = new Version(3,1);
   
   /** Translator */
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(I18NPlugin.class);
@@ -139,7 +140,7 @@ public class I18NPlugin extends Plugin {
       return Color.ORANGE.darker();
     }
     else {
-      return Color.BLACK;
+      return UIManager.getColor("List.foreground");
     }
     
   }
