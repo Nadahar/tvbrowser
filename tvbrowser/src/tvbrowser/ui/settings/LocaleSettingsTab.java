@@ -358,6 +358,7 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
     pb.setDefaultDialogBorder();
     
     final JDialog dialog = new JDialog(UiUtilities.getLastModalChildOf(MainFrame.getInstance()));
+    dialog.setTitle(mLocalizer.msg("downloadLanguages", "Install additional languages"));
     dialog.setContentPane(pb.getPanel());
     
     CellConstraints cc = new CellConstraints();
@@ -417,7 +418,7 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
     
     UiUtilities.registerForClosing(windowClosing);
     
-    Settings.layoutWindow("languageDownloadDialog", dialog, new Dimension(200,200));
+    Settings.layoutWindow("languageDownloadDialog", dialog, new Dimension(400,300));
     dialog.setVisible(true);
   }
   
