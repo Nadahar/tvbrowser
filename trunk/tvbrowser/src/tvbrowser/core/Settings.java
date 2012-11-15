@@ -43,6 +43,7 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
@@ -455,7 +456,6 @@ public class Settings {
      */
     else if (!oldDirectoryName.equals(newDirectoryName)) {
       File oldDir = null;
-      File testFile = null;
 
       int countValue = 1;
 
@@ -476,52 +476,64 @@ public class Settings {
       String[] directories = {getUserDirectoryName(),firstDir,System.getProperty("user.home") + "/TV-Browser",System.getProperty("user.home") + "/Library/Preferences/TV-Browser", System.getProperty("user.home") + "/.tvbrowser"};
 
       for(int j = 0; j < (TVBrowser.isTransportable() ? directories.length : countValue); j++) {
-        String[] allVersions = TVBrowser.getAllVersionStrings();
-        for (int i = (j == 0 ? 1 : 0); i < allVersions.length; i++) {
-          testFile = new File(directories[j] + File.separator +
-              allVersions[i], SETTINGS_FILE);
-
-          if(testFile.isFile()) {
-            oldDir = new File(directories[j], allVersions[i]);
-            break;
-          }
-        }
-
-        if(oldDir == null) {
-          testFile = new File(directories[j], SETTINGS_FILE);
-
-          if(testFile.isFile()) {
-            oldDir = new File(directories[j]);
-          } else {
-            testFile = new File(oldDirectoryName, SETTINGS_FILE);
-
-            if(testFile.isFile()) {
-              oldDir = new File(oldDirectoryName);
-            }
-          }
-        }
-
+        oldDir = findNewestOldVersionDir(directories[j], oldDirectoryName, j != 0);
+        
         if(oldDir != null) {
           break;
         }
       }
 
-      if (oldDir != null && oldDir.isDirectory() && oldDir.exists() && TVBrowser.isTransportable() && !oldDir.getAbsolutePath().startsWith(new File("settings").getAbsolutePath())) {
-        try {
-          UIManager.setLookAndFeel(getDefaultLookAndFeelClassName());
-        }catch(Exception e) { /*ignore*/}
+      if(TVBrowser.isTransportable()) {
+        if (oldDir != null && oldDir.isDirectory() && oldDir.exists() && !oldDir.getAbsolutePath().startsWith(new File("settings").getAbsolutePath())) {
+          try {
+            UIManager.setLookAndFeel(getDefaultLookAndFeelClassName());
+          }catch(Exception e) { /*ignore*/}
+  
+          String[] options = {MainFrame.mLocalizer.msg("import","Import settings"),
+              MainFrame.mLocalizer.msg("importTransportable","Select import directory"),
+              MainFrame.mLocalizer.msg("configureNew","Create new configuration")};
+          String title = MainFrame.mLocalizer.msg("importInfoTitle","Import settings?");
+          String msg = MainFrame.mLocalizer.msg("importInfoMsg","TV-Browser has found settings for import.\nShould the settings be imported now?");
+  
+          int answer = JOptionPane.showOptionDialog(null,msg,title,JOptionPane.YES_NO_CANCEL_OPTION,JOptionPane.WARNING_MESSAGE,null,options,options[0]);
+          
+          if(answer == JOptionPane.CANCEL_OPTION) {
+            oldDir = null;
+          }
+          else if(answer == JOptionPane.NO_OPTION) {
+            oldDir = loadExternalSettings();
+            
+            if(oldDir != null) {
+              oldDir = findNewestOldVersionDir(oldDir.getAbsolutePath(), oldDirectoryName, true);
+            }
+          }
+        }
+        else {
+          try {
+            UIManager.setLookAndFeel(getDefaultLookAndFeelClassName());
+          }catch(Exception e) { /*ignore*/}
+          
+          String[] options = {MainFrame.mLocalizer.msg("importTransportable","Select import directory"),
+              MainFrame.mLocalizer.msg("configureNew","Create new configuration")};
+          String title = MainFrame.mLocalizer.msg("importInfoTitle","Import settings?");
+          String msg = MainFrame.mLocalizer.msg("importInfoMsgTransportable","No settings were found on the system.\nDo you want to select the directory of another\ntransportable version for import of settings?");
 
-        String[] options = {MainFrame.mLocalizer.msg("import","Import settings"),
-            MainFrame.mLocalizer.msg("configureNew","Create new configuration")};
-        String title = MainFrame.mLocalizer.msg("importInfoTitle","Import settings?");
-        String msg = MainFrame.mLocalizer.msg("importInfoMsg","TV-Browser has found settings for import.\nShould the settings be imported now?");
-
-        if(JOptionPane.showOptionDialog(null,msg,title,JOptionPane.YES_NO_OPTION,JOptionPane.WARNING_MESSAGE,null,options,options[0]) == JOptionPane.NO_OPTION) {
-          oldDir = null;
+          if(JOptionPane.showOptionDialog(null,msg,title,JOptionPane.YES_NO_OPTION,JOptionPane.WARNING_MESSAGE,null,options,options[1]) == JOptionPane.YES_OPTION) {
+            oldDir = loadExternalSettings();
+            
+            if(oldDir != null) {
+              oldDir = findNewestOldVersionDir(oldDir.getAbsolutePath(), oldDirectoryName, true);
+            }
+          }
+          else {
+            oldDir = null;
+          }
         }
       }
 
       if (oldDir != null && oldDir.isDirectory() && oldDir.exists()) {
+        File testFile = new File(oldDir,"settings.prop");
+        
         startImportWaitingDlg();
         mLog.info("Try to load settings from a previous version of TV-Browser: " + oldDir);
 
@@ -537,7 +549,7 @@ public class Settings {
               prop.load(input);
             }
           });
-        }catch(Exception e) {}
+        }catch(Exception e) {e.printStackTrace();}
 
         String versionString = prop.getProperty("version",null);
         Version testVersion = null;
@@ -555,6 +567,7 @@ public class Settings {
         }
 
         String temp = prop.getProperty("dir.tvdata", null);
+        
         boolean versionTest = !TVBrowser.isTransportable() && Launch.isOsWindowsNtBranch() && testVersion != null && testVersion.compareTo(new Version(3,0,true)) < 0
                                && (temp == null || temp.replace("/","\\").equals(System.getProperty("user.home")+"\\TV-Browser\\tvdata"));
 
@@ -708,6 +721,71 @@ public class Settings {
     ((DeferredFontProperty)propProgramInfoFont).resetDefault();
     ((DeferredFontProperty)propChannelNameFont).resetDefault();
     ((DeferredFontProperty)propProgramTimeFont).resetDefault();
+  }
+  
+  
+  private static File findNewestOldVersionDir(String directory, String oldDirectoryName, boolean includeCurrent) {
+    File oldDir = null;
+    File testFile = null;
+    String[] allVersions = TVBrowser.getAllVersionStrings();
+    for (int i = (includeCurrent ? 0 : 1); i < allVersions.length; i++) {
+      testFile = new File(directory + File.separator +
+          allVersions[i], SETTINGS_FILE);
+
+      if(testFile.isFile()) {
+        oldDir = new File(directory, allVersions[i]);
+        break;
+      }
+    }
+
+    if(oldDir == null) {
+      testFile = new File(directory, SETTINGS_FILE);
+
+      if(testFile.isFile()) {
+        oldDir = new File(directory);
+      } else {
+        testFile = new File(oldDirectoryName, SETTINGS_FILE);
+
+        if(testFile.isFile()) {
+          oldDir = new File(oldDirectoryName);
+        }
+      }
+    }
+    
+    return oldDir;
+  }
+  
+  private static File loadExternalSettings() {
+    String msg = MainFrame.mLocalizer.msg("importTransportableInfo", "To import settings of another transportable version select the program\ndirectory of that other transportable version in the next setp.");
+    String title = MainFrame.mLocalizer.msg("importTransportableTitle", "Import settings from transportable version");
+    JOptionPane.showMessageDialog(null, msg, title, JOptionPane.INFORMATION_MESSAGE);
+    
+    JFileChooser chooseDir = new JFileChooser(System.getProperty("user.home"));
+    chooseDir.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+    chooseDir.setDialogTitle(title);
+    chooseDir.setMultiSelectionEnabled(false);
+    
+    int selection = JFileChooser.CANCEL_OPTION;
+    
+    do {
+      if(selection == JFileChooser.APPROVE_OPTION) {
+        String msg2 = MainFrame.mLocalizer.msg("importTransportableError", "You've selected a directory that don't contains a transportable TV-Browser.\nWould you like to try again?");
+        String title2 = MainFrame.mLocalizer.msg("importTransportableErrorTitle", "Wrong directory selected");
+        
+        if(JOptionPane.showConfirmDialog(null, msg2, title2, JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) {
+          selection = JFileChooser.CANCEL_OPTION;
+          break;
+        }
+      }
+      
+      selection = chooseDir.showDialog(null, Localizer.getLocalization(Localizer.I18N_SELECT));
+    }while(selection != JFileChooser.CANCEL_OPTION && !(chooseDir.getSelectedFile() != null && chooseDir.getSelectedFile().isDirectory() && new File(chooseDir.getSelectedFile(),"settings").isDirectory() && new File(chooseDir.getSelectedFile(),"tvbrowser.jar").isFile()));
+    
+    if(selection == JFileChooser.APPROVE_OPTION && chooseDir.getSelectedFile() != null) {
+      return new File(chooseDir.getSelectedFile(),"settings");
+    }
+    
+    return null;
   }
 
   private static void loadWindowSettings() {
