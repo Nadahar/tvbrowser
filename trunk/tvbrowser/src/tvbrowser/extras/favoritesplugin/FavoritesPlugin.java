@@ -1291,7 +1291,7 @@ public class FavoritesPlugin {
     }
 
     public void run() {
-      if(mFavorites.length > 0) {
+      if(newFavoritesFound()) {
         synchronized (mFavorites) {
           final ManageFavoritesPanel panel = new ManageFavoritesPanel(mFavorites, getIntegerSetting(mSettings, "splitpanePosition",200), true, null, true);
         
@@ -1308,7 +1308,19 @@ public class FavoritesPlugin {
         }
       }
     }
+    
+    
+    private boolean newFavoritesFound() {
+      for(int i = 0; i < mFavorites.length; i++) {
+        if(mFavorites[i] != null) {
+          return true;
+        }
+      }
+      
+      return false;
+    }
   }
+
 
   public void addTitleFavorites(Program[] programArr) {
     // filter duplicates in exported programs
