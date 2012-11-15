@@ -453,6 +453,7 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
     }
 
     scrollPane.setBorder(null);
+    scrollPane.setMinimumSize(new Dimension(200,100));
     mSplitPane.setLeftComponent(scrollPane);
 
     mProgramListModel = new DefaultListModel();
