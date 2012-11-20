@@ -29,6 +29,7 @@ public class ProgramListSettings extends PropertyBasedSettings {
   private static final String KEY_FILTER = "filter";
   private static final String KEY_SHOW_DESCRIPTION = "showDescription";
   private static final String KEY_PROVIDE_TAB = "provideTab";
+  private static final String KEY_SHOW_DATE_SEPARATOR = "showDateSeparator";
 
   public ProgramListSettings(final Properties properties) {
     super(properties);
@@ -64,5 +65,13 @@ public class ProgramListSettings extends PropertyBasedSettings {
   
   public void setProvideTab(final boolean value) {
     set(KEY_PROVIDE_TAB, value);
+  }
+  
+  public boolean showDateSeparator() {
+    return get(KEY_SHOW_DATE_SEPARATOR, true);
+  }
+  
+  public void setShowDateSeparator(final boolean show) {
+    set(KEY_SHOW_DATE_SEPARATOR, show);
   }
 }
