@@ -28,6 +28,8 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Font;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -101,6 +103,9 @@ public class ProgramListPanel extends JPanel implements PersonaListener {
 
   private JButton mSendBtn;
   private JButton mRefreshBtn;
+  
+  private JButton mNextDay;
+  private JButton mPreviousDay;
   
   private boolean mUpdateList;
   
@@ -209,6 +214,71 @@ public class ProgramListPanel extends JPanel implements PersonaListener {
     panel.add(mFilterLabel = new JLabel(mLocalizer.msg("filter", "Filter:")), cc.xy(2, 3));
     panel.add(mFilterBox, cc.xy(4, 3));
 
+    mPreviousDay = new JButton(TVBrowserIcons.left(TVBrowserIcons.SIZE_SMALL));
+    mPreviousDay.setToolTipText(mLocalizer.msg("prevDay", "Scrolls to previous day from current view position (if there is previous day in the list)"));
+    mPreviousDay.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        int index = mList.locationToIndex(mList.getVisibleRect().getLocation());
+        
+        if(index > 0) {
+          Object o = mList.getModel().getElementAt(index);
+          
+          if(o instanceof String) {
+            o = mList.getModel().getElementAt(index+1);
+            index++;
+          }
+          
+          if(index > 0) {
+            Date current = ((Program)o).getDate().addDays(-1);
+            
+            for(int i = index-1; i >= 0; i--) {
+              Object test = mList.getModel().getElementAt(i);
+              
+              if(test instanceof Program && current.compareTo(((Program)test).getDate()) > 0) {
+                mList.ensureIndexIsVisible(i+1);
+                return;
+              }
+            }
+            
+            mList.ensureIndexIsVisible(0);
+          }
+        }
+      }
+    });
+    
+    mNextDay = new JButton(TVBrowserIcons.right(TVBrowserIcons.SIZE_SMALL));
+    mNextDay.setToolTipText(mLocalizer.msg("nextDay", "Scrolls to next day from current view position (if there is next day in the list)"));
+    mNextDay.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        int index = mList.locationToIndex(mList.getVisibleRect().getLocation());
+        
+        if(index < mList.getModel().getSize() - 1) {
+          Object o = mList.getModel().getElementAt(index);
+          
+          if(o instanceof String) {
+            o = mList.getModel().getElementAt(index+1);
+            index++;
+          }
+          
+          if(index < mList.getModel().getSize() - 1) {
+            Date current = ((Program)o).getDate();
+            
+            for(int i = index + 1; i < mList.getModel().getSize(); i++) {
+              Object test = mList.getModel().getElementAt(i);
+              
+              if(test instanceof Program && current.compareTo(((Program)test).getDate()) < 0) {
+                Point p = mList.indexToLocation(i-(ProgramListPlugin.getInstance().getSettings().showDateSeparator() ? 1 : 0));
+                mList.scrollRectToVisible(new Rectangle(p.x,p.y,1,mList.getVisibleRect().height));
+                return;
+              }
+            }            
+          }
+        }
+      }
+    });
+    
     mSendBtn = new JButton(TVBrowserIcons.copy(TVBrowserIcons.SIZE_SMALL));
     mSendBtn.setToolTipText(mLocalizer.msg("send", "Send to other Plugins"));
     mSendBtn.addActionListener(new ActionListener() {
@@ -275,11 +345,14 @@ public class ProgramListPanel extends JPanel implements PersonaListener {
       }
     });
 
-    JPanel southPanel = new JPanel(new FormLayout("default,5dlu,default,5dlu,default,0dlu:grow,default", "default"));
+    JPanel southPanel = new JPanel(new FormLayout("default,5dlu,default,10dlu,default,5dlu,default,5dlu,default,0dlu:grow,default", "default"));
     southPanel.setOpaque(false);
-    southPanel.add(mSendBtn, cc.xy(1, 1));
-    southPanel.add(mRefreshBtn, cc.xy(3, 1));
-    southPanel.add(mShowDescription, cc.xy(5, 1));
+    
+    southPanel.add(mPreviousDay, cc.xy(1, 1));
+    southPanel.add(mNextDay, cc.xy(3, 1));
+    southPanel.add(mSendBtn, cc.xy(5, 1));
+    southPanel.add(mRefreshBtn, cc.xy(7, 1));
+    southPanel.add(mShowDescription, cc.xy(9, 1));
     
     if(showClose) {
       southPanel.add(close, cc.xy(7, 1));
