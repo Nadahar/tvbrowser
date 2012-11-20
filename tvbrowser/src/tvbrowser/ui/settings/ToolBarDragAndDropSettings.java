@@ -302,7 +302,7 @@ public class ToolBarDragAndDropSettings extends JDialog implements
         mLog.warning("Big icon missing for action " + action.getValue(Action.NAME));
         icon = (Icon) action.getValue(Action.SMALL_ICON);
       }
-      if ((icon != null)
+      if ((icon != null) && (action.getValue(Plugin.NO_ICON_RESIZE) == null || !((Boolean)action.getValue(Plugin.NO_ICON_RESIZE)))
           && ((icon.getIconHeight() != TVBrowserIcons.SIZE_LARGE) || (icon.getIconWidth() != TVBrowserIcons.SIZE_LARGE))) {
         icon = UiUtilities.scaleIcon(icon, TVBrowserIcons.SIZE_LARGE, TVBrowserIcons.SIZE_LARGE);
       }

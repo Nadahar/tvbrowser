@@ -648,7 +648,7 @@ public class ToolBar extends JToolBar {
           mLog.warning("Big icon missing for action " + action.getValue(Action.NAME));
           icon = (Icon) action.getValue(Action.SMALL_ICON);
         }
-        if ((icon != null)
+        if ((icon != null) && (action.getValue(Plugin.NO_ICON_RESIZE) == null || !((Boolean)action.getValue(Plugin.NO_ICON_RESIZE)))
             && ((icon.getIconHeight() != TVBrowserIcons.SIZE_LARGE) || (icon.getIconWidth() != TVBrowserIcons.SIZE_LARGE))) {
           icon = UiUtilities.scaleIcon(icon, TVBrowserIcons.SIZE_LARGE, TVBrowserIcons.SIZE_LARGE);
         }
@@ -656,7 +656,7 @@ public class ToolBar extends JToolBar {
       } else {
         icon = (Icon) action.getValue(Action.SMALL_ICON);
 
-        if ((icon != null)
+        if ((icon != null) && (action.getValue(Plugin.NO_ICON_RESIZE) == null || !((Boolean)action.getValue(Plugin.NO_ICON_RESIZE)))
             && ((icon.getIconHeight() != 16) || (icon.getIconWidth() != 16))) {
           icon = UiUtilities.scaleIcon(icon, 16, 16);
         }
