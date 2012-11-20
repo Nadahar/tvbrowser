@@ -29,10 +29,12 @@ package util.ui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Font;
 import java.awt.Insets;
 import java.util.HashSet;
 
 import javax.swing.AbstractListModel;
+import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -44,6 +46,9 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
+
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 
 import util.settings.ProgramPanelSettings;
 import devplugin.Date;
@@ -238,6 +243,19 @@ public class ProgramListCellRenderer extends DefaultListCellRenderer {
       }
 
       return mMainPanel;
+    }
+    else if(value instanceof String) {
+      JPanel separator = new JPanel(new FormLayout("0dlu:grow,default,0dlu:grow","5dlu,default,5dlu"));
+      separator.setBorder(BorderFactory.createMatteBorder(2, 0, 2, 0, UIManager.getColor("Label.foreground")));
+      
+      if(list.getModel().getSize() > index + 1) {
+        JLabel date = new JLabel(((Program)list.getModel().getElementAt(index + 1)).getDateString());
+        date.setFont(date.getFont().deriveFont(date.getFont().getSize2D() + 4).deriveFont(Font.BOLD));
+        
+        separator.add(date, new CellConstraints().xy(2, 2));
+        
+        return separator;
+      }
     }
 
     return label;

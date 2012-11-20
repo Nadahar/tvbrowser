@@ -1108,4 +1108,16 @@ public class ReminderPlugin {
     
     return mInfoPanel;
   }
+  
+  public boolean showDateSeparators() {
+    return mSettings.getProperty("showDateSeparators", "true").equals("true");
+  }
+  
+  public void setShowDateSeparators(boolean show) {
+    mSettings.setProperty("showDateSeparators", String.valueOf(show));
+    
+    if(mReminderListPanel != null) {
+      mReminderListPanel.installTableModel();
+    }
+  }
 }

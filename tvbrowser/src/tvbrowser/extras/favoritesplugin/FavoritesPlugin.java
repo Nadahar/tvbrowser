@@ -1487,4 +1487,12 @@ public class FavoritesPlugin {
   public void setDefaultProgramFieldTypeSelection(ProgramFieldType[] defaultSelection) {
     mDefaultProgramFieldTypeSelection = defaultSelection;
   }
+  
+  public boolean showDateSeparators() {
+    return mSettings.getProperty("showDateSeparators","true").equals("true");
+  }
+  
+  public void setShowDateSeparators(boolean show) {
+    mSettings.put("showDateSeparators", String.valueOf(show));
+  }
 }
