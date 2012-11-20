@@ -124,6 +124,8 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
   private boolean mShowNew = false;
   private JCheckBox mBlackListChb;
   
+  private JButton mScrollToPreviousDay, mScrollToNextDay;
+  
   public ManageFavoritesPanel(Favorite[] favoriteArr,
       int splitPanePosition, boolean showNew, Favorite initialSelection, boolean border) {
     init(favoriteArr, splitPanePosition, showNew, initialSelection,border);
@@ -358,18 +360,20 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
     
     toolbarPn.add(Box.createGlue());
     
-    JButton previous = UiUtilities.createToolBarButton(ProgramList.getPreviousActionTooltip(),TVBrowserIcons.left(TVBrowserIcons.SIZE_LARGE));
-    toolbarPn.add(previous);
-    previous.addActionListener(new ActionListener() {
+    mScrollToPreviousDay = UiUtilities.createToolBarButton(ProgramList.getPreviousActionTooltip(),TVBrowserIcons.left(TVBrowserIcons.SIZE_LARGE));
+    mScrollToPreviousDay.setOpaque(false);
+    toolbarPn.add(mScrollToPreviousDay);
+    mScrollToPreviousDay.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
         mProgramList.scrollToPreviousDayIfAvailable();
       }
     });
 
-    JButton next = UiUtilities.createToolBarButton(ProgramList.getNextActionTooltip(),TVBrowserIcons.right(TVBrowserIcons.SIZE_LARGE));
-    toolbarPn.add(next);
-    next.addActionListener(new ActionListener() {
+    mScrollToNextDay = UiUtilities.createToolBarButton(ProgramList.getNextActionTooltip(),TVBrowserIcons.right(TVBrowserIcons.SIZE_LARGE));
+    mScrollToNextDay.setOpaque(false);
+    toolbarPn.add(mScrollToNextDay);
+    mScrollToNextDay.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
         mProgramList.scrollToNextDayIfAvailable();
@@ -742,6 +746,8 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
             }
 
             mSendBt.setEnabled(true);
+            mScrollToPreviousDay.setEnabled(true);
+            mScrollToNextDay.setEnabled(true);
             mDeleteBt.setEnabled(false);
           }
           else {
@@ -753,6 +759,8 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
 
             mDeleteBt.setEnabled(node.isDirectoryNode() && node.getChildCount() < 1);
             mSendBt.setEnabled(false);
+            mScrollToPreviousDay.setEnabled(false);
+            mScrollToNextDay.setEnabled(false);
           }
           mEditBt.setToolTipText(mLocalizer.ellipsisMsg("renameFolder", "Rename selected folder"));
           mDeleteBt.setToolTipText(mLocalizer.msg("deleteFolder", "Delete selected folder"));
@@ -852,6 +860,8 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
     }
 
     mSendBt.setEnabled(newProgramListModel.size() > 0);
+    mScrollToPreviousDay.setEnabled(newProgramListModel.size() > 0);
+    mScrollToNextDay.setEnabled(newProgramListModel.size() > 0);
 
     if(!mShowNew && mBlackListChb.isSelected()) {
       for (int i = 0; i < Math.min(blackListPrograms.length,MAX_SHOWN_PROGRAMS/10); i++) {

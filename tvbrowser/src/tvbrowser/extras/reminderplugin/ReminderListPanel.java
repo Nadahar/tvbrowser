@@ -279,6 +279,7 @@ public class ReminderListPanel extends JPanel implements PersonaListener {
     
     mScrollToPreviousDay = new JButton(TVBrowserIcons.left(TVBrowserIcons.SIZE_SMALL));
     mScrollToPreviousDay.setToolTipText(ProgramList.getPreviousActionTooltip());
+    mScrollToPreviousDay.setEnabled(mTable.getRowCount() > 0);
     mScrollToPreviousDay.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -317,6 +318,7 @@ public class ReminderListPanel extends JPanel implements PersonaListener {
     
     mScrollToNextDay = new JButton(TVBrowserIcons.right(TVBrowserIcons.SIZE_SMALL));
     mScrollToNextDay.setToolTipText(ProgramList.getNextActionTooltip());
+    mScrollToNextDay.setEnabled(mTable.getRowCount() > 0);
     mScrollToNextDay.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -546,6 +548,8 @@ public class ReminderListPanel extends JPanel implements PersonaListener {
     if(mDelete != null) {
       mDelete.setEnabled(mTable.getRowCount() > 0);
       mSend.setEnabled(mTable.getRowCount() > 0);
+      mScrollToPreviousDay.setEnabled(mTable.getRowCount() > 0);
+      mScrollToNextDay.setEnabled(mTable.getRowCount() > 0);
       mUndo.setEnabled(mDeletedItems != null && mDeletedItems.length > 0);
     }
   }
