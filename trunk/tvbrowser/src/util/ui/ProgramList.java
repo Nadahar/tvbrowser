@@ -568,13 +568,13 @@ public class ProgramList extends JList implements ChangeListener,
    * @since 3.2.2
    */
   public void scrollToPreviousDayIfAvailable() {
-    int index = locationToIndex(getVisibleRect().getLocation());
+    int index = locationToIndex(getVisibleRect().getLocation())-1;
     
     if(index > 0) {
-      Object o = super.getModel().getElementAt(index-1);
+      Object o = super.getModel().getElementAt(index);
       
-      if(o instanceof String && index > 1) {
-        o = super.getModel().getElementAt(index-2);
+      if(o instanceof String) {
+        o = super.getModel().getElementAt(index-1);
         index--;
       }
       
@@ -589,9 +589,11 @@ public class ProgramList extends JList implements ChangeListener,
             return;
           }
         }
-        
-        super.ensureIndexIsVisible(0);
       }
+    }
+    
+    if(getModel().getSize() > 0) {
+      super.ensureIndexIsVisible(0);
     }
   }
   
