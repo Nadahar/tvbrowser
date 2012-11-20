@@ -219,18 +219,18 @@ public class ProgramListPanel extends JPanel implements PersonaListener {
     mPreviousDay.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        int index = mList.locationToIndex(mList.getVisibleRect().getLocation());
+        int index = mList.locationToIndex(mList.getVisibleRect().getLocation())-1;
         
         if(index > 0) {
           Object o = mList.getModel().getElementAt(index);
           
           if(o instanceof String) {
-            o = mList.getModel().getElementAt(index+1);
-            index++;
+            o = mList.getModel().getElementAt(index-1);
+            index--;
           }
           
           if(index > 0) {
-            Date current = ((Program)o).getDate().addDays(-1);
+            Date current = ((Program)o).getDate();
             
             for(int i = index-1; i >= 0; i--) {
               Object test = mList.getModel().getElementAt(i);
@@ -240,9 +240,11 @@ public class ProgramListPanel extends JPanel implements PersonaListener {
                 return;
               }
             }
-            
-            mList.ensureIndexIsVisible(0);
           }
+        }
+        
+        if(mList.getModel().getSize() > 0) {
+          mList.ensureIndexIsVisible(0);
         }
       }
     });
