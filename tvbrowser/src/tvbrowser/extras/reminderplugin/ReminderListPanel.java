@@ -282,18 +282,18 @@ public class ReminderListPanel extends JPanel implements PersonaListener {
     mScrollToPreviousDay.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        int row = mTable.rowAtPoint(mTable.getVisibleRect().getLocation());
+        int row = mTable.rowAtPoint(mTable.getVisibleRect().getLocation())-1;
         
         if(row > 0) {
           Object o = mTable.getValueAt(row, 0);
           
           if(o.equals(PluginManagerImpl.getInstance().getExampleProgram())) {
-            o = mTable.getValueAt(row+1, 0);
-            row++;
+            o = mTable.getValueAt(row-1, 0);
+            row--;
           }
           
           if(row > 0) {
-            Date current = ((Program)o).getDate().addDays(-1);
+            Date current = ((Program)o).getDate();
             
             for(int i = row-1; i >= 0; i--) {
               Object test = mTable.getValueAt(i, 0);
@@ -303,9 +303,11 @@ public class ReminderListPanel extends JPanel implements PersonaListener {
                 return;
               }
             }
-            
-            mTable.scrollRectToVisible(mTable.getCellRect(0, 0, true));
           }
+        }
+        
+        if(mTable.getRowCount() > 0) {
+          mTable.scrollRectToVisible(mTable.getCellRect(0, 0, true));
         }
       }
     });
