@@ -91,6 +91,12 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
   public static final String BIG_ICON = "BigIcon";
   
   /**
+   * Key for button action to disable icon resize.
+   * Set value to <code>true</code> to disable button resize. 
+   */
+  public static final String NO_ICON_RESIZE = "NoIconResize";
+  
+  /**
    * A key for sub action menu entries unique ID.
    */
   public static final String ACTION_ID_KEY = ToolBar.ACTION_ID_KEY;
