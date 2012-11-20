@@ -358,7 +358,7 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
     
     toolbarPn.add(Box.createGlue());
     
-    JButton previous = UiUtilities.createToolBarButton(ProgramList.getPreviousActionTooltip(),TVBrowserIcons.right(TVBrowserIcons.SIZE_LARGE));
+    JButton previous = UiUtilities.createToolBarButton(ProgramList.getPreviousActionTooltip(),TVBrowserIcons.left(TVBrowserIcons.SIZE_LARGE));
     toolbarPn.add(previous);
     previous.addActionListener(new ActionListener() {
       @Override
