@@ -31,6 +31,7 @@ import java.awt.Frame;
 
 import javax.swing.JOptionPane;
 
+import tvbrowser.core.plugin.PluginManagerImpl;
 import util.program.ProgramUtilities;
 import devplugin.Program;
 import devplugin.ProgramItem;
@@ -49,6 +50,12 @@ public class ReminderListItem implements Comparable<ReminderListItem> {
       .getLocalizerFor(ReminderListItem.class);
 
   private ProgramItem mProgramItem;
+  
+  public static final ReminderListItem SEPARATOR_ITEM = new ReminderListItem();
+  
+  private ReminderListItem() {
+    mProgramItem = new ProgramItem(PluginManagerImpl.getInstance().getExampleProgram());
+  }
 
   /**
    * Creates an instance of this class.

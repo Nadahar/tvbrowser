@@ -47,6 +47,7 @@ import java.util.Comparator;
 import java.util.Hashtable;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.Icon;
@@ -354,7 +355,27 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
       addToolbarSeperator(toolbarPn);
       toolbarPn.add(settings);
     }
+    
+    toolbarPn.add(Box.createGlue());
+    
+    JButton previous = UiUtilities.createToolBarButton(ProgramList.getPreviousActionTooltip(),TVBrowserIcons.right(TVBrowserIcons.SIZE_LARGE));
+    toolbarPn.add(previous);
+    previous.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        mProgramList.scrollToPreviousDayIfAvailable();
+      }
+    });
 
+    JButton next = UiUtilities.createToolBarButton(ProgramList.getNextActionTooltip(),TVBrowserIcons.right(TVBrowserIcons.SIZE_LARGE));
+    toolbarPn.add(next);
+    next.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        mProgramList.scrollToNextDayIfAvailable();
+      }
+    });
+    
     mSplitPane = new JSplitPane();
     
     for(int i = 0; i < mSplitPane.getComponentCount(); i++) {
@@ -706,6 +727,14 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
             mProgramListModel = newProgramListeModel;
             mProgramList.setModel(mProgramListModel);
             
+            if(FavoritesPlugin.getInstance().showDateSeparators()) {
+              try {
+                mProgramList.addDateSeparators();
+              } catch (TvBrowserException e) {
+                // ignore
+              }
+            }
+            
             mProgramList.updateUI();
             
             if (scrollToFirst) {
@@ -776,7 +805,9 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
         mProgramScrollPane.getVerticalScrollBar().setValue(0);
         mProgramScrollPane.getHorizontalScrollBar().setValue(0);
 
-        Rectangle cellBounds = mProgramList.getCellBounds(index,index);
+        int index1 = mProgramList.getNewIndexForOldIndex(index);
+        
+        Rectangle cellBounds = mProgramList.getCellBounds(index1,index1);
         if (cellBounds != null) {
           cellBounds.setLocation(cellBounds.x, cellBounds.y + mProgramScrollPane.getHeight() - cellBounds.height);
           mProgramList.scrollRectToVisible(cellBounds);
@@ -834,6 +865,15 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
     
     mProgramListModel = newProgramListModel;
     mProgramList.setModel(mProgramListModel);
+    
+    if(FavoritesPlugin.getInstance().showDateSeparators()) {
+      try {
+        mProgramList.addDateSeparators();
+      } catch (TvBrowserException e) {
+        // ignore
+      }
+    }
+    
     mProgramList.repaint();
     
     scrollInProgramListToIndex(firstNotExpiredIndex);

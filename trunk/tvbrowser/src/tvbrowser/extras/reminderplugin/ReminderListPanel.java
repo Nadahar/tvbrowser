@@ -1,5 +1,8 @@
 package tvbrowser.extras.reminderplugin;
 
+import java.awt.Component;
+import java.awt.Font;
+import java.awt.Rectangle;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -10,6 +13,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -19,6 +23,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableColumn;
 
@@ -26,6 +31,7 @@ import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginManagerImpl;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.settings.PluginPictureSettings;
+import util.ui.ProgramList;
 import util.ui.ProgramTableCellRenderer;
 import util.ui.SendToPluginDialog;
 import util.ui.TVBrowserIcons;
@@ -39,6 +45,7 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
+import devplugin.Date;
 import devplugin.Plugin;
 import devplugin.Program;
 import devplugin.SettingsItem;
@@ -46,7 +53,7 @@ import devplugin.SettingsItem;
 public class ReminderListPanel extends JPanel implements PersonaListener {
   private static final util.ui.Localizer mLocalizer = ReminderListDialog.mLocalizer; 
   
-  private JButton mUndo, mDelete, mSend;
+  private JButton mUndo, mDelete, mSend, mScrollToPreviousDay, mScrollToNextDay;
   private ReminderList mReminderList;
   private JTable mTable;
   
@@ -269,13 +276,83 @@ public class ReminderListPanel extends JPanel implements PersonaListener {
     });
     
     builder.addFixed(mUndo);
-    builder.addRelatedGap();
-
-
-
-    builder.addGlue();
     
-    if(close != null) { 
+    mScrollToPreviousDay = new JButton(TVBrowserIcons.left(TVBrowserIcons.SIZE_SMALL));
+    mScrollToPreviousDay.setToolTipText(ProgramList.getPreviousActionTooltip());
+    mScrollToPreviousDay.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        int row = mTable.rowAtPoint(mTable.getVisibleRect().getLocation());
+        
+        if(row > 0) {
+          Object o = mTable.getValueAt(row, 0);
+          
+          if(o.equals(PluginManagerImpl.getInstance().getExampleProgram())) {
+            o = mTable.getValueAt(row+1, 0);
+            row++;
+          }
+          
+          if(row > 0) {
+            Date current = ((Program)o).getDate().addDays(-1);
+            
+            for(int i = row-1; i >= 0; i--) {
+              Object test = mTable.getValueAt(i, 0);
+              
+              if(!test.equals(PluginManagerImpl.getInstance().getExampleProgram()) && test instanceof Program && current.compareTo(((Program)test).getDate()) > 0) {
+                mTable.scrollRectToVisible(mTable.getCellRect(i+1, 0, true));
+                return;
+              }
+            }
+            
+            mTable.scrollRectToVisible(mTable.getCellRect(0, 0, true));
+          }
+        }
+      }
+    });
+        
+    builder.addUnrelatedGap();
+    builder.addFixed(mScrollToPreviousDay);
+    
+    mScrollToNextDay = new JButton(TVBrowserIcons.right(TVBrowserIcons.SIZE_SMALL));
+    mScrollToNextDay.setToolTipText(ProgramList.getNextActionTooltip());
+    mScrollToNextDay.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        int row = mTable.rowAtPoint(mTable.getVisibleRect().getLocation());
+        
+        if(row < mTable.getRowCount() - 1) {
+          Object o = mTable.getValueAt(row, 0);
+          
+          if(o.equals(PluginManagerImpl.getInstance().getExampleProgram())) {
+            o = mTable.getValueAt(row+1, 0);
+            row++;
+          }
+          
+          if(row < mTable.getRowCount() - 1) {
+            Date current = ((Program)o).getDate();
+            
+            for(int i = row + 1; i < mTable.getRowCount(); i++) {
+              Object test = mTable.getValueAt(i, 0);
+              
+              if(test instanceof Program && current.compareTo(((Program)test).getDate()) < 0) {
+                Rectangle rect = mTable.getCellRect(i-(ReminderPlugin.getInstance().showDateSeparators() ? 1 : 0), 0, true);
+                rect.setSize(rect.width, mTable.getVisibleRect().height);
+                
+                mTable.scrollRectToVisible(rect);
+                return;
+              }
+            }            
+          }
+        }
+      }
+    });
+    
+    builder.addRelatedGap();
+    builder.addFixed(mScrollToNextDay);
+    
+    if(close != null) {
+      builder.addUnrelatedGap();
+      builder.addGlue();
       builder.addFixed(close);
     }
     builder.getPanel().setOpaque(false);
@@ -313,7 +390,32 @@ public class ReminderListPanel extends JPanel implements PersonaListener {
     
     mTable.setColumnModel(cModel);
     mTable.setModel(model);
-    mTable.getColumnModel().getColumn(0).setCellRenderer(new ProgramTableCellRenderer(new PluginPictureSettings(PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE)));
+    
+    final ProgramTableCellRenderer backend = new ProgramTableCellRenderer(new PluginPictureSettings(PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE));
+    
+    DefaultTableCellRenderer renderer = new DefaultTableCellRenderer() {
+      public Component getTableCellRendererComponent(final JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        Component c = backend.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+        try {
+        if(value instanceof Program && value.equals(PluginManagerImpl.getInstance().getExampleProgram())) {
+          JPanel separator = new JPanel(new FormLayout("0dlu:grow,default,0dlu:grow","5dlu,default,5dlu"));
+          separator.setBorder(BorderFactory.createMatteBorder(2, 0, 2, 0, UIManager.getColor("Label.foreground")));
+          
+          if(table.getModel().getRowCount() > row + 1) {
+            JLabel date = new JLabel(((Program)table.getModel().getValueAt(row+1, 0)).getDateString());
+            date.setFont(date.getFont().deriveFont(date.getFont().getSize2D() + 4).deriveFont(Font.BOLD));
+            
+            separator.add(date, new CellConstraints().xy(2, 2));
+            
+            return separator;
+          }
+        }
+        }catch(Exception e) {e.printStackTrace();}
+        return c;
+      }
+    };
+    
+    mTable.getColumnModel().getColumn(0).setCellRenderer(renderer);
     mTable.getColumnModel().getColumn(1).setCellEditor(new MinutesCellEditor());
     mTable.getColumnModel().getColumn(1).setCellRenderer(new MinutesCellRenderer());
     updateButtons();
@@ -391,7 +493,11 @@ public class ReminderListPanel extends JPanel implements PersonaListener {
       ArrayList<Program> programs = new ArrayList<Program>();
 
       for (int row : rows) {
-        programs.add((Program) mTable.getValueAt(row, 0));
+        Program test = (Program) mTable.getValueAt(row, 0);
+        
+        if(!test.equals(PluginManagerImpl.getInstance().getExampleProgram())) {
+          programs.add(test);
+        }
       }
 
       programArr = programs.toArray(new Program[programs.size()]);
@@ -425,7 +531,7 @@ public class ReminderListPanel extends JPanel implements PersonaListener {
     }
   }
   
-  void installTableModel() {
+  public void installTableModel() {
     installTableModel(new ReminderTableModel(mReminderList, mTitleSelection));
   }
   

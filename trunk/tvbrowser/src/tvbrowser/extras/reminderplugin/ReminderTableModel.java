@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import javax.swing.JComboBox;
 import javax.swing.table.AbstractTableModel;
 
+import devplugin.Program;
+
+import tvbrowser.core.plugin.PluginManagerImpl;
 import util.ui.Localizer;
 
 /**
@@ -98,21 +101,27 @@ public class ReminderTableModel extends AbstractTableModel {
   }
   
   private ReminderListItem[] getItemsForTitleSelection() {
-    if(mTitleFilterBox.getSelectedIndex() != 0) {
-      ArrayList<ReminderListItem> filteredList = new ArrayList<ReminderListItem>();
-      ReminderListItem[] allItems = mList.getReminderItems();
-      
-      for(ReminderListItem item : allItems) {
-        if(mTitleFilterBox.getSelectedItem() != null && item != null && item.getProgram() != null && 
-            mTitleFilterBox.getSelectedItem().equals(item.getProgram().getTitle())) {
-          filteredList.add(item);
+    ArrayList<ReminderListItem> filteredList = new ArrayList<ReminderListItem>();
+    ReminderListItem[] allItems = mList.getReminderItems();
+    
+    Program previous = null;
+    
+    for(ReminderListItem item : allItems) {
+      if(!item.getProgram().equals(PluginManagerImpl.getInstance().getExampleProgram()) && 
+          (mTitleFilterBox.getSelectedIndex() == 0 || (mTitleFilterBox.getSelectedItem() != null && item != null 
+          && item.getProgram() != null &&  mTitleFilterBox.getSelectedItem().equals(item.getProgram().getTitle())))) {
+        if(ReminderPlugin.getInstance().showDateSeparators() 
+            && (previous == null || item.getProgram().getDate().compareTo(previous.getDate()) > 0)) {
+          filteredList.add(ReminderListItem.SEPARATOR_ITEM);
         }
+        
+        filteredList.add(item);
+        
+        previous = item.getProgram();
       }
-      
-      return filteredList.toArray(new ReminderListItem[filteredList.size()]);
     }
     
-    return mList.getReminderItems();
+    return filteredList.toArray(new ReminderListItem[filteredList.size()]);
   }
 
   public String getColumnName(int column) {

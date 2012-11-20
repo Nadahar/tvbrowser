@@ -32,8 +32,10 @@ import java.awt.Rectangle;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.Vector;
 
+import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import javax.swing.JPopupMenu;
 import javax.swing.ListModel;
@@ -46,9 +48,11 @@ import javax.swing.event.ListDataListener;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.plugin.PluginStateListener;
+import util.exc.TvBrowserException;
 import util.settings.PluginPictureSettings;
 import util.settings.ProgramPanelSettings;
 import devplugin.ContextMenuIf;
+import devplugin.Date;
 import devplugin.Plugin;
 import devplugin.PluginManager;
 import devplugin.Program;
@@ -58,8 +62,12 @@ import devplugin.Program;
  */
 public class ProgramList extends JList implements ChangeListener,
     ListDataListener, PluginStateListener {
+  private final static Localizer mLocalizer = Localizer.getLocalizerFor(ProgramList.class);
+  /** Key for separator list entry */
+  public final static String DATE_SEPARATOR = "DATE_SEPARATOR";
 
   private Vector<Program> mPrograms = new Vector<Program>();
+  private boolean mSeparatorsCreated = false;
 
   /**
    * Creates the JList and adds the default MouseListeners (PopUpBox)
@@ -402,12 +410,26 @@ public class ProgramList extends JList implements ChangeListener,
       return null;
     }
 
-    Program[] p = new Program[o.length];
-    for (int i = 0; i < o.length; i++) {
-      p[i] = (Program) o[i];
+    if(mSeparatorsCreated) {
+      ArrayList<Program> progs = new ArrayList<Program>(o.length);
+      
+      for(Object p : o) {
+        if(p instanceof Program) {
+          progs.add((Program)p);
+        }
+      }
+      
+      return progs.toArray(new Program[progs.size()]);
     }
-
-    return p;
+    else {
+      Program[] p = new Program[o.length];
+      
+      for (int i = 0; i < o.length; i++) {
+        p[i] = (Program) o[i];
+      }
+  
+      return p;
+    }
   }
   
   public void pluginActivated(PluginProxy plugin) {
@@ -459,5 +481,150 @@ public class ProgramList extends JList implements ChangeListener,
     // mouse is over an empty part of the list
     return null;
   }
-
+  
+  
+  /**
+   * Adds date separators to this list.
+   * This needs to be called every time the list elements are changed.
+   * <p>
+   * @throws TvBrowserException Thrown if used ListModel is not {@link #javax.swing.DefaultListModel} or a child class of it.
+   * @since 3.2.2
+   */
+  public void addDateSeparators() throws TvBrowserException {
+    if(getModel() instanceof DefaultListModel) {
+      mSeparatorsCreated = true;
+      
+      DefaultListModel newModel = new DefaultListModel();
+      
+      Program previous = null;
+      
+      for(int i = 0; i < getModel().getSize(); i++) {
+        Object o = getModel().getElementAt(i);
+        
+        if(o instanceof Program) {
+          Program prog = (Program) o;
+          
+          if(previous == null || prog.getDate().compareTo(previous.getDate()) > 0) {
+            newModel.addElement(DATE_SEPARATOR);
+          }
+          
+          newModel.addElement(prog);
+          
+          previous = prog;
+        }
+      }
+      
+      super.setModel(newModel);
+    }
+    else {
+      throw new TvBrowserException(ProgramList.class, "unsupportedListModel", "Used ListModel not supported.");
+    }
+  }
+  
+  public void setModel(ListModel model) {
+    mSeparatorsCreated = false;
+    super.setModel(model);
+  }
+  
+  /**
+   * Scrolls the list to next day from
+   * the current view position (if next
+   * day is available)
+   * <p>
+   * @since 3.2.2
+   */
+  public void scrollToNextDayIfAvailable() {
+    int index = locationToIndex(getVisibleRect().getLocation());
+    
+    if(index < getModel().getSize() - 1) {
+      Object o = super.getModel().getElementAt(index);
+      
+      if(o instanceof String) {
+        o = super.getModel().getElementAt(index+1);
+        index++;
+      }
+      
+      if(index < super.getModel().getSize() - 1) {
+        Date current = ((Program)o).getDate();
+        
+        for(int i = index + 1; i < super.getModel().getSize(); i++) {
+          Object test = super.getModel().getElementAt(i);
+          
+          if(test instanceof Program && current.compareTo(((Program)test).getDate()) < 0) {
+            Point p = indexToLocation(i-(mSeparatorsCreated ? 1 : 0));
+            super.scrollRectToVisible(new Rectangle(p.x,p.y,1,getVisibleRect().height));
+            return;
+          }
+        }            
+      }
+    }
+  }
+  
+  /**
+   * Scrolls the list to previous day from
+   * the current view position (if previous
+   * day is available)
+   * <p>
+   * @since 3.2.2
+   */
+  public void scrollToPreviousDayIfAvailable() {
+    int index = locationToIndex(getVisibleRect().getLocation());
+    
+    if(index > 0) {
+      Object o = super.getModel().getElementAt(index);
+      
+      if(o instanceof String) {
+        o = super.getModel().getElementAt(index+1);
+        index++;
+      }
+      
+      if(index > 0) {
+        Date current = ((Program)o).getDate().addDays(-1);
+        
+        for(int i = index-1; i >= 0; i--) {
+          Object test = super.getModel().getElementAt(i);
+          
+          if(test instanceof Program && current.compareTo(((Program)test).getDate()) > 0) {
+            super.ensureIndexIsVisible(i+1);
+            return;
+          }
+        }
+        
+        super.ensureIndexIsVisible(0);
+      }
+    }
+  }
+  
+  /**
+   * Gets the new index of a row after adding of date separators.
+   * <p>
+   * @param index The old index of the row.
+   * @return The new index or the given index if no separators were added.
+   * @since 3.2.2
+   */
+  public int getNewIndexForOldIndex(int index) {
+    if(mSeparatorsCreated) {
+      for(int i = 0; i < index; i++) {
+        if(getModel().getElementAt(i) instanceof String) {
+          index++;
+        }
+      }
+    }
+    
+    return index;
+  }
+  
+  /**
+   * @return The tool tip text for the previous scroll action,
+   */
+  public static String getPreviousActionTooltip() {
+    return mLocalizer.msg("prevTooltip", "Scrolls to previous day from current view position (if there is previous day in the list)");
+  }
+  
+  /**
+   * @return The tool tip text for the next scroll action,
+   */
+  public static String getNextActionTooltip() {
+    return mLocalizer.msg("nextTooltip", "Scrolls to next day from current view position (if there is next day in the list)");
+  }
 }

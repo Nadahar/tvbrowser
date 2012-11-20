@@ -25,11 +25,14 @@ package tvbrowser.extras.reminderplugin;
 
 import java.awt.Component;
 
+import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
+import javax.swing.UIManager;
 import javax.swing.table.DefaultTableCellRenderer;
 
+import tvbrowser.core.plugin.PluginManagerImpl;
 import util.ui.TVBrowserIcons;
 
 import com.jgoodies.forms.layout.CellConstraints;
@@ -67,29 +70,38 @@ public class MinutesCellRenderer extends DefaultTableCellRenderer {
     
     if (value instanceof ReminderListItem) {
       final ReminderListItem listItem = (ReminderListItem) value;
-      Integer minutes = listItem.getMinutes();
       
-      mTextLabel.setText(ReminderFrame.getStringForMinutes(minutes.intValue()));
-      
-      mTextLabel.setOpaque(def.isOpaque());
-      mTextLabel.setForeground(def.getForeground());
-      mTextLabel.setBackground(def.getBackground());
-      
-      mPanel.setOpaque(def.isOpaque());
-      mPanel.setBackground(def.getBackground());
-      
-      final String comment = listItem.getComment();
-      if (comment != null && !comment.isEmpty()) {
-        mNoteLabel.setVisible(true);
-        mNoteLabel.setText(mLocalizer.msg("note", "Note: {0}", comment));
-        mNoteLabel.setOpaque(def.isOpaque());
-        mNoteLabel.setForeground(def.getForeground());
-        mNoteLabel.setBackground(def.getBackground());
-      } else {
-        mNoteLabel.setVisible(false);
+      if(listItem.getProgram().equals(PluginManagerImpl.getInstance().getExampleProgram())) {
+        JPanel separator = new JPanel(new FormLayout("0dlu:grow,default,0dlu:grow","5dlu,default,5dlu"));
+        separator.setBorder(BorderFactory.createMatteBorder(2, 0, 2, 0, UIManager.getColor("Label.foreground")));
+        
+        return separator;
       }
-      
-      return mPanel;
+      else {
+        Integer minutes = listItem.getMinutes();
+        
+        mTextLabel.setText(ReminderFrame.getStringForMinutes(minutes.intValue()));
+        
+        mTextLabel.setOpaque(def.isOpaque());
+        mTextLabel.setForeground(def.getForeground());
+        mTextLabel.setBackground(def.getBackground());
+        
+        mPanel.setOpaque(def.isOpaque());
+        mPanel.setBackground(def.getBackground());
+        
+        final String comment = listItem.getComment();
+        if (comment != null && !comment.isEmpty()) {
+          mNoteLabel.setVisible(true);
+          mNoteLabel.setText(mLocalizer.msg("note", "Note: {0}", comment));
+          mNoteLabel.setOpaque(def.isOpaque());
+          mNoteLabel.setForeground(def.getForeground());
+          mNoteLabel.setBackground(def.getBackground());
+        } else {
+          mNoteLabel.setVisible(false);
+        }
+        
+        return mPanel;
+      }
     }
     
     return def;
