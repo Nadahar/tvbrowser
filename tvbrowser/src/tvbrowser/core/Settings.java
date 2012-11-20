@@ -476,6 +476,7 @@ public class Settings {
       String[] directories = {getUserDirectoryName(),firstDir,System.getProperty("user.home") + "/TV-Browser",System.getProperty("user.home") + "/Library/Preferences/TV-Browser", System.getProperty("user.home") + "/.tvbrowser"};
 
       for(int j = 0; j < (TVBrowser.isTransportable() ? directories.length : countValue); j++) {
+        mLog.info("Search for settings import in: '" + directories[j] + "'");
         oldDir = findNewestOldVersionDir(directories[j], oldDirectoryName, j != 0);
         
         if(oldDir != null) {
