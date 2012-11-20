@@ -355,7 +355,7 @@ public class ProgramListPanel extends JPanel implements PersonaListener {
     southPanel.add(mShowDescription, cc.xy(9, 1));
     
     if(showClose) {
-      southPanel.add(close, cc.xy(7, 1));
+      southPanel.add(close, cc.xy(11, 1));
     }
 
     add(panel, BorderLayout.NORTH);
