@@ -29,8 +29,9 @@ import devplugin.SettingsTab;
 public class ClockSettingsTab implements SettingsTab, ActionListener {
 
   private JSpinner mTime, mFontSize;
-  private JCheckBox mBox, mShowBorder, mTitleClock, mMove, mUsePersonaColors, mUseTransparency;
+  private JCheckBox mShowClockForever, mShowBorder, mTitleClock, mMove, mUsePersonaColors, mUseTransparency;
   private JLabel mLabel;
+  private JCheckBox mShowTimeIcon;
 
   /** The localizer for this class. */
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(ClockSettingsTab.class);
@@ -38,7 +39,7 @@ public class ClockSettingsTab implements SettingsTab, ActionListener {
   public JPanel createSettingsPanel() {
     FormLayout layout = new FormLayout(
         "5dlu,pref,3dlu,pref,pref:grow,10dlu",
-        "5dlu,pref,pref,pref,pref,5dlu,pref,2dlu,pref,"
+        "5dlu,pref,pref,pref,pref,min,5dlu,pref,2dlu,pref,"
             + "pref,10dlu,pref,pref");
     PanelBuilder pb = new PanelBuilder(layout);
     CellConstraints cc = new CellConstraints();
@@ -55,9 +56,12 @@ public class ClockSettingsTab implements SettingsTab, ActionListener {
         "Clock in the title bar"));
     mTitleClock.setSelected(ClockPlugin.getInstance().getTitleBarClock());
 
-    mBox = new JCheckBox(mLocalizer.msg("forever", "Show clock forever"));
-    mBox.setSelected(ClockPlugin.getInstance().getShowForever());
-    mBox.addActionListener(this);
+    mShowClockForever = new JCheckBox(mLocalizer.msg("forever", "Show clock forever"));
+    mShowClockForever.setSelected(ClockPlugin.getInstance().getShowForever());
+    mShowClockForever.addActionListener(this);
+    
+    mShowTimeIcon = new JCheckBox(mLocalizer.msg("showTimeIcon", "Show time in toolbar instead of big clock icon"));
+    mShowTimeIcon.setSelected(ClockPlugin.getInstance().showTimeOnToolbarIcon());
     
     mUsePersonaColors = new JCheckBox(mLocalizer.msg("usePersonaColors","Use Colors of Persona"),ClockPlugin.getInstance().isUsingPersonaColors());
     mUseTransparency = new JCheckBox(mLocalizer.msg("useTransparency","Clock transparent"),ClockPlugin.getInstance().isUsingTransparentBackground());
@@ -73,9 +77,13 @@ public class ClockSettingsTab implements SettingsTab, ActionListener {
     pb.add(mMove, cc.xyw(2, 2, 4));
     pb.add(mShowBorder, cc.xyw(2, 3, 4));
     pb.add(mTitleClock, cc.xyw(2, 4, 4));
-    pb.add(mBox, cc.xyw(2, 5, 4));
+    pb.add(mShowClockForever, cc.xyw(2, 5, 4));
     
-    int y = 6;
+    if(ClockPlugin.getInstance().supportsBigToolbarIcons()) {
+      pb.add(mShowTimeIcon, cc.xyw(2, 6, 4));
+    }
+    
+    int y = 7;
     
     try {
       Class.forName("util.ui.persona.Persona");
@@ -118,7 +126,7 @@ public class ClockSettingsTab implements SettingsTab, ActionListener {
     pb.addLabel(mLocalizer.msg("info2",
         "and move the mouse with pressed left button."), cc.xyw(2, y, 4));
 
-    if (mBox.isSelected()) {
+    if (mShowClockForever.isSelected()) {
       mTime.setEnabled(false);
       mLabel.setEnabled(false);
     }
@@ -131,12 +139,13 @@ public class ClockSettingsTab implements SettingsTab, ActionListener {
         ((Integer) mTime.getValue()).intValue());
     ClockPlugin.getInstance().setFontValue(
         ((Integer) mFontSize.getValue()).intValue());
-    ClockPlugin.getInstance().setShowForever(mBox.isSelected());
+    ClockPlugin.getInstance().setShowForever(mShowClockForever.isSelected());
     ClockPlugin.getInstance().setShowBorder(mShowBorder.isSelected());
     ClockPlugin.getInstance().setMoveOnScreen(mMove.isSelected());
     ClockPlugin.getInstance().setTitleBarClock(mTitleClock.isSelected());
     ClockPlugin.getInstance().setIsUsingPersonaColors(mUsePersonaColors.isSelected());
     ClockPlugin.getInstance().setTransparentBackground(mUseTransparency.isSelected());
+    ClockPlugin.getInstance().setShowTimeOnToolbarIcon(mShowTimeIcon.isSelected());
   }
 
   public Icon getIcon() {
@@ -148,8 +157,8 @@ public class ClockSettingsTab implements SettingsTab, ActionListener {
   }
 
   public void actionPerformed(ActionEvent e) {
-    mTime.setEnabled(!mBox.isSelected());
-    mLabel.setEnabled(!mBox.isSelected());
+    mTime.setEnabled(!mShowClockForever.isSelected());
+    mLabel.setEnabled(!mShowClockForever.isSelected());
   }
 
 }

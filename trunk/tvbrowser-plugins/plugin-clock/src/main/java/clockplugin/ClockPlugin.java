@@ -1,23 +1,34 @@
 package clockplugin;
 
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Frame;
+import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.util.Calendar;
 import java.util.Properties;
 
 import javax.swing.Action;
+import javax.swing.Icon;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
+
+import util.ui.TimeFormatter;
 
 import devplugin.ActionMenu;
 import devplugin.ButtonAction;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.SettingsTab;
+import devplugin.TvBrowserSettings;
 import devplugin.Version;
 
 /**
@@ -35,8 +46,13 @@ public class ClockPlugin extends Plugin {
   private TitleBarClock mTitleBarClock;
   private Point mLocation;
   private Dimension mParentSize;
+  private String mCurrentTime;
+  private boolean mSupportsBigToolbarIcons;
+  private ButtonAction mButtonAction;
+  private Timer mButtonUpdateTimer;
+  private Icon mTimeIcon;
 
-  private static final Version mVersion = new Version(1, 80, 1, true);
+  private static final Version mVersion = new Version(1, 81, 2, true);
 
   /** The localizer for this class. */
   public static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(ClockPlugin.class);
@@ -74,6 +90,14 @@ public class ClockPlugin extends Plugin {
     mShowForever = false;
     mUsePersonaColors = false;
     mTransparentBackground = false;
+    
+    try {
+      Plugin.class.getDeclaredField("NO_ICON_RESIZE");
+      mSupportsBigToolbarIcons = true;
+    } catch (Exception e) {
+      mSupportsBigToolbarIcons = false;
+    }
+    
   }
 
   /**
@@ -151,21 +175,118 @@ public class ClockPlugin extends Plugin {
   }
 
   public ActionMenu getButtonAction() {
-    ButtonAction action = new ButtonAction();
-    action.setActionListener(new ActionListener() {
+    mButtonAction = new ButtonAction();
+    mButtonAction.setActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         toggleOnOffClock();
       }
     });
+    
+    mCurrentTime = new TimeFormatter().formatTime(Calendar.getInstance().get(Calendar.HOUR_OF_DAY), Calendar.getInstance().get(Calendar.MINUTE));
+    
+    mTimeIcon = new Icon() {
+      private int width = getTimePattern().contains("a") ? 86 : 50; 
+      private Icon mDefaultIcon = getPluginManager().getIconFromTheme(ClockPlugin.getInstance(),"apps","clock",22);
+      
+      public void paintIcon(Component c, Graphics g, int x, int y) {
+        if(showTimeOnToolbarIcon() && mSupportsBigToolbarIcons) {
+          int xPos = 2;
+          
+          Color oldColor = g.getColor();
+          Font oldFont = g.getFont();
+          Color second = null;
+          Color first = oldColor;
+          
+          try {
+            Class<? extends Object> persona = Class.forName("util.ui.persona.Persona");
+            
+            Method m = persona.getMethod("getInstance", new Class<?> [0]);
+            Object personaObj = m.invoke(persona,new Object[0]);
+            
+            m = persona.getMethod("getHeaderImage", new Class<?> [0]);
+            
+            if(m.invoke(personaObj, new Object[0]) != null) {
+              m = persona.getMethod("getTextColor", new Class<?> [0]);
+              first = (Color) m.invoke(personaObj, new Object[0]);
+              
+              m = persona.getMethod("getShadowColor", new Class<?> [0]);
+              
+              Color shadow = (Color) m.invoke(personaObj, new Object[0]);
+              
+              if(!first.equals(shadow)) {
+                second = shadow;
+              }
+            }            
+          } catch (Exception e) {}
+          
+          g.setFont(oldFont.deriveFont((float)getIconHeight()-3).deriveFont(Font.BOLD));
+          width = g.getFontMetrics().stringWidth(mCurrentTime);
+          
+          if(c != null) {
+            xPos = c.getWidth() / 2 - width / 2;
+          }
+          
+          if(second != null) {
+            g.setColor(second);
+            g.drawString(mCurrentTime, xPos+1, getIconHeight()/2 + g.getFont().getSize()/2+2);
+            g.drawString(mCurrentTime, xPos+2, getIconHeight()/2 + g.getFont().getSize()/2+3);
+          }
+          
+          
+          g.setColor(first);
+          g.drawString(mCurrentTime, xPos, getIconHeight()/2 + g.getFont().getSize()/2+1);
+          g.setFont(oldFont);
+          g.setColor(oldColor);
+        }
+        else {
+          mDefaultIcon.paintIcon(c, g, x-1, y-1);
+        }
+      }
+      
+      public int getIconWidth() {
+        return (showTimeOnToolbarIcon() && mSupportsBigToolbarIcons) ? width : 22;
+      }
+      
+      public int getIconHeight() {
+        return 22;
+      }
+    };
+    
+    mButtonAction.putValue(Action.NAME, mLocalizer.msg("name", "Clock for TV-Browser"));
+    mButtonAction.putValue(Action.SMALL_ICON,  getPluginManager().getIconFromTheme(this,"apps","clock",16));
+    
+    mButtonUpdateTimer = new Timer(1000, new ActionListener() {
+      
+      public void actionPerformed(ActionEvent e) {
+        Calendar cal = Calendar.getInstance();
+        
+        String time = new TimeFormatter().formatTime(cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE));
+        
+        if(!mCurrentTime.equals(time)) {
+          mCurrentTime = time;
+          
+          try {
+            Class<? extends Object> persona = Class.forName("util.ui.persona.Persona");
+            
+            Method m = persona.getMethod("getInstance", new Class<?> [0]);
+            Object personaObj = m.invoke(persona,new Object[0]);
+            
+            m = persona.getMethod("applyPersona", new Class<?> [0]);
+            m.invoke(personaObj, new Object[0]);            
+          }catch(Exception e1) {}
+        }
+      }
+    });
 
-    action
-        .putValue(Action.NAME, mLocalizer.msg("name", "Clock for TV-Browser"));
-    action
-        .putValue(Action.SMALL_ICON, getPluginManager().getIconFromTheme(this,"apps","clock",16));
     // big icon
-    action.putValue(BIG_ICON, getPluginManager().getIconFromTheme(this,"apps","clock",22));
+    mButtonAction.putValue(BIG_ICON, mTimeIcon);
+    mButtonAction.putValue("NoIconResize",true);
 
-    return new ActionMenu(action);
+    if(mSupportsBigToolbarIcons && showTimeOnToolbarIcon()) {
+      mButtonUpdateTimer.start();      
+    }
+
+    return new ActionMenu(mButtonAction);
   }
 
   /**
@@ -480,5 +601,47 @@ public class ClockPlugin extends Plugin {
   public String getPluginCategory() {
     //Plugin.OTHER_CATEGORY
     return "misc";
+  }
+  
+  public boolean showTimeOnToolbarIcon() {
+    return mProperties.getProperty("showTimeOnToolbarIcon", "true").equals("true");
+  }
+  
+  public void setShowTimeOnToolbarIcon(boolean show) {
+    mProperties.setProperty("showTimeOnToolbarIcon", String.valueOf(show));
+    
+    if(show && supportsBigToolbarIcons()) {
+      if(!mButtonUpdateTimer.isRunning()) {
+        mButtonUpdateTimer.start();
+      }
+    }
+    else {
+      if(mButtonUpdateTimer.isRunning()) {
+        mButtonUpdateTimer.stop();
+      }
+    }
+    
+    try {
+      Class<? extends Object> persona = Class.forName("util.ui.persona.Persona");
+      
+      Method m = persona.getMethod("getInstance", new Class<?> [0]);
+      Object personaObj = m.invoke(persona,new Object[0]);
+      
+      m = persona.getMethod("applyPersona", new Class<?> [0]);
+      m.invoke(personaObj, new Object[0]);            
+    }catch(Exception e1) {}
+  }
+  
+  public boolean supportsBigToolbarIcons() {
+    return mSupportsBigToolbarIcons;
+  }
+  
+  public String getTimePattern() {
+    try {
+      Method m = TvBrowserSettings.class.getMethod("getTimePattern", new Class[0]);
+      return (String)m.invoke(getPluginManager().getTvBrowserSettings(), new Object[0]);
+    } catch (Exception e) {}
+    
+    return "HH:mm";
   }
 }
