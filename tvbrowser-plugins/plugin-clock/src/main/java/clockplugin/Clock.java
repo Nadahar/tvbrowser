@@ -16,9 +16,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.lang.reflect.Method;
-import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 import java.util.Properties;
 
 import javax.swing.BorderFactory;
@@ -41,7 +40,7 @@ public class Clock extends JDialog implements Runnable, MouseListener, MouseMoti
   private Thread mClockThread;
   private int mShowTime;
   private JLabel mTime;
-  private DateFormat mTimeFormat;
+  private SimpleDateFormat mTimeFormat;
   private Point mDraggingPoint;
   private Properties mProperties;
   private boolean mShowForever, mStop, mDontStop;
@@ -98,7 +97,7 @@ public class Clock extends JDialog implements Runnable, MouseListener, MouseMoti
         if(ClockPlugin.getInstance().isUsingPersonaColors()) {
           if(mPersonaObj != null && mPersonaObj instanceof String) {
             try {
-              Class persona = Class.forName("util.ui.persona.Persona");
+              Class<? extends Object> persona = Class.forName("util.ui.persona.Persona");
               
               Method m = persona.getMethod("getInstance", new Class<?> [0]);
               mPersonaObj = m.invoke(persona,new Object[0]);
@@ -147,7 +146,7 @@ public class Clock extends JDialog implements Runnable, MouseListener, MouseMoti
     };
     mTime.setFont(f);
     mTime.addMouseListener(this);
-    mTimeFormat = DateFormat.getTimeInstance(DateFormat.MEDIUM,Locale.getDefault());
+    mTimeFormat = new SimpleDateFormat(ClockPlugin.getInstance().getTimePattern().replace("mm", "mm:ss"));
     mTime.addMouseMotionListener(this);
     mTimePanel.add(mTime);
 
@@ -166,7 +165,9 @@ public class Clock extends JDialog implements Runnable, MouseListener, MouseMoti
     mTime.setText(mTimeFormat.format(new Date(System.currentTimeMillis())));
     ((JPanel)getContentPane()).setOpaque(false);
     
-    if (width < 15 || height < 5 || fontsize != oldFontSize) {
+    int minWidth = mTime.getFontMetrics(mTime.getFont()).stringWidth(mTime.getText()) + 2;
+        
+    if (width < minWidth || width < 15 || height < 5 || fontsize != oldFontSize) {
       this.pack();
       this.setSize(this.getWidth() + 7, this.getHeight());
     } else {

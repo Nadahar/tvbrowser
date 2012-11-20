@@ -2,6 +2,7 @@ package clockplugin;
 
 import java.awt.Frame;
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
@@ -31,7 +32,7 @@ public class TitleBarClock extends Thread{
   }
 
   public void run() {
-    DateFormat df = DateFormat.getTimeInstance(DateFormat.SHORT,Locale.getDefault());
+    SimpleDateFormat df = new SimpleDateFormat(ClockPlugin.getInstance().getTimePattern());
     String lasttime = null;
     while(mRun) {
       try {
