@@ -571,15 +571,15 @@ public class ProgramList extends JList implements ChangeListener,
     int index = locationToIndex(getVisibleRect().getLocation());
     
     if(index > 0) {
-      Object o = super.getModel().getElementAt(index);
+      Object o = super.getModel().getElementAt(index-1);
       
-      if(o instanceof String) {
-        o = super.getModel().getElementAt(index+1);
-        index++;
+      if(o instanceof String && index > 1) {
+        o = super.getModel().getElementAt(index-2);
+        index--;
       }
       
       if(index > 0) {
-        Date current = ((Program)o).getDate().addDays(-1);
+        Date current = ((Program)o).getDate();
         
         for(int i = index-1; i >= 0; i--) {
           Object test = super.getModel().getElementAt(i);
