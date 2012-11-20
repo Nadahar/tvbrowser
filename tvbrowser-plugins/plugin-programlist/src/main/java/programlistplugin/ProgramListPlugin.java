@@ -69,7 +69,7 @@ import devplugin.Version;
 public class ProgramListPlugin extends Plugin {
   static final Localizer mLocalizer = Localizer.getLocalizerFor(ProgramListPlugin.class);
 
-  private static Version mVersion = new Version(3, 21, true);
+  private static Version mVersion = new Version(3, 22, true);
   
   private static final int MAX_DIALOG_LIST_SIZE = 5000;
   static final int MAX_PANEL_LIST_SIZE = 2500;
@@ -355,13 +355,16 @@ public class ProgramListPlugin extends Plugin {
   public SettingsTab getSettingsTab() {
     return new SettingsTab() {
       private JCheckBox mProvideTab;
+      private JCheckBox mShowDateSeparator;
       @Override
       public JPanel createSettingsPanel() {
-        JPanel panel = new JPanel(new FormLayout("5dlu,min:grow","5dlu,default"));
+        JPanel panel = new JPanel(new FormLayout("5dlu,min:grow","5dlu,default,default"));
         
-        mProvideTab = new JCheckBox(mLocalizer.msg("provideTab", "Provide tab in TV-Browser main window"),getSettings().provideTab());
+        mShowDateSeparator = new JCheckBox(mLocalizer.msg("showDateSeparator", "Show date separator in list"), getSettings().showDateSeparator());
+        mProvideTab = new JCheckBox(mLocalizer.msg("provideTab", "Provide tab in TV-Browser main window"), getSettings().provideTab());
         
-        panel.add(mProvideTab, new CellConstraints().xy(2, 2));
+        panel.add(mShowDateSeparator, new CellConstraints().xy(2, 2));
+        panel.add(mProvideTab, new CellConstraints().xy(2, 3));
         
         return panel;
       }
@@ -369,6 +372,7 @@ public class ProgramListPlugin extends Plugin {
       @Override
       public void saveSettings() {
         getSettings().setProvideTab(mProvideTab.isSelected());
+        getSettings().setShowDateSeparator(mShowDateSeparator.isSelected());
         addPanel();
       }
       

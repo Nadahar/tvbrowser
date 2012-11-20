@@ -27,6 +27,7 @@ package programlistplugin;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Cursor;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -35,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 
+import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -44,6 +46,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.ListCellRenderer;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.event.AncestorEvent;
@@ -76,6 +79,7 @@ import devplugin.ProgramFilter;
  */
 public class ProgramListPanel extends JPanel implements PersonaListener {
   private static final Localizer mLocalizer = ProgramListPlugin.mLocalizer;
+  private static final String DATE_SEPARATOR = "DATE_SEPRATOR";
   
   /**
    * maximum number of programs to be shown in the list. If the filter has more results, only the first results are shown.
@@ -118,7 +122,32 @@ public class ProgramListPanel extends JPanel implements PersonaListener {
     mProgramPanelSettings = new ProgramPanelSettings(new PluginPictureSettings(
         PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE), !showDescription, ProgramPanelSettings.X_AXIS);
     mList = new ProgramList(mModel, mProgramPanelSettings);
-
+    final ListCellRenderer backend = mList.getCellRenderer();
+    
+    mList.setCellRenderer(new DefaultListCellRenderer() {
+      public Component getListCellRendererComponent(final JList list, Object value, final int index, boolean isSelected,
+          boolean cellHasFocus) {
+        Component c = backend.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+        
+        if(value instanceof String) {
+          JPanel separator = new JPanel(new FormLayout("0dlu:grow,default,0dlu:grow","5dlu,default,5dlu"));
+          separator.setBorder(BorderFactory.createMatteBorder(2, 0, 2, 0, UIManager.getColor("Label.foreground")));
+          
+          if(list.getModel().getSize() > index + 1) {
+            JLabel date = new JLabel(((Program)list.getModel().getElementAt(index + 1)).getDateString());
+            date.setFont(date.getFont().deriveFont(date.getFont().getSize2D() + 4).deriveFont(Font.BOLD));
+            
+            separator.add(date, new CellConstraints().xy(2, 2));
+            
+            return separator;
+          }
+          
+        }
+        
+        return c;
+      }
+    });
+    
     mList.addMouseListeners(null);
 
     Channel[] subscribedChannels = Plugin.getPluginManager().getSubscribedChannels();
@@ -183,16 +212,25 @@ public class ProgramListPanel extends JPanel implements PersonaListener {
     mSendBtn = new JButton(TVBrowserIcons.copy(TVBrowserIcons.SIZE_SMALL));
     mSendBtn.setToolTipText(mLocalizer.msg("send", "Send to other Plugins"));
     mSendBtn.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        Program[] programs = mList.getSelectedPrograms();
-        if (programs == null || programs.length == 0) {
-          programs = mPrograms.toArray(new Program[mPrograms.size()]);
+      public void actionPerformed(ActionEvent e) {try {
+        Object[] objects = mList.getSelectedValues();
+        ArrayList<Program> programs = new ArrayList<Program>();
+        
+        for(Object o : objects) {
+          if(o instanceof Program) {
+            programs.add((Program)o);
+          }
         }
-        if (programs != null && programs.length > 0) {
+        
+        if (programs.size() == 0) {
+          programs = mPrograms;
+        }
+        if (programs.size() > 0) {
           SendToPluginDialog sendDialog = new SendToPluginDialog(ProgramListPlugin.getInstance(), ProgramListPlugin.getInstance().getDialog() != null && ProgramListPlugin.getInstance().getDialog().isVisible() ? ProgramListPlugin.getInstance().getDialog() : ProgramListPlugin.getInstance().getSuperFrame(),
-              programs);
+              programs.toArray(new Program[programs.size()]));
           sendDialog.setVisible(true);
         }
+      }catch(Exception e1) {e1.printStackTrace();}
       }
     });
     
@@ -386,14 +424,23 @@ public class ProgramListPanel extends JPanel implements PersonaListener {
             }
   
             int index = -1;
-  
+            
+            Program lastProgram = null;
+            
             for (Program program : mPrograms) {
               if (model.size() < mMaxListSize) {
-                model.addElement(program);
-  
-                if (!program.isExpired() && index == -1) {
-                  index = model.getSize() - 1;
+                if(ProgramListPlugin.getInstance().getSettings().showDateSeparator() && 
+                    (lastProgram == null || program.getDate().compareTo(lastProgram.getDate()) > 0)) {
+                  model.addElement(DATE_SEPARATOR);
                 }
+                
+                model.addElement(program);
+                
+                if (!program.isExpired() && index == -1) {
+                  index = model.getSize() - (ProgramListPlugin.getInstance().getSettings().showDateSeparator() ? 2 : 1);
+                }
+                
+                lastProgram = program;
               }
             }
             int forceScrollingIndex = model.size() - 1;
