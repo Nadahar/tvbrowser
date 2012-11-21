@@ -1548,13 +1548,13 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
    * Handles done TV-Browser start.
    */
   public void handleTvBrowserStartFinished() {
-    mStarting = false;
     mMenuBar.updateChannelGroupMenu();
     PluginProxyManager.getInstance().addPluginStateListener(this);
     
     SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
+        mStarting = false;
         mMenuBar.updateChannelItems();
         if(Persona.getInstance().getHeaderImage() != null) {
           updatePersona();
