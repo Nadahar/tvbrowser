@@ -211,4 +211,9 @@ public class FavoritesPluginProxy extends AbstractInternalPluginProxy implements
   public AfterDataUpdateInfoPanel getAfterDataUpdateInfoPanel() {
     return FavoritesPlugin.getInstance().getAfterDataUpdateInfoPanel();
   }
+
+  @Override
+  public void handleTvBrowserStartFinished() {
+    FavoritesPlugin.getInstance().handleTvBrowserStartFinished();
+  }
 }

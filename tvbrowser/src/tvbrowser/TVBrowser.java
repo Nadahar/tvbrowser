@@ -82,6 +82,8 @@ import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.plugin.programformating.GlobalPluginProgramFormatingManager;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
+import tvbrowser.extras.common.InternalPluginProxyIf;
+import tvbrowser.extras.common.InternalPluginProxyList;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.programinfo.ProgramInfo;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
@@ -478,14 +480,14 @@ public class TVBrowser {
 
             // first reset "starting" flag of mainframe
             mainFrame.handleTvBrowserStartFinished();
-
-            // initialize program info for fast reaction to program table click
-            ProgramInfo.getInstance().handleTvBrowserStartFinished();
-
-            // load reminders and favorites
-            ReminderPlugin.getInstance().handleTvBrowserStartFinished();
-            FavoritesPlugin.getInstance().handleTvBrowserStartFinished();
-
+            
+            // first initialize the internal plugins
+            InternalPluginProxyIf[] internalPlugins = InternalPluginProxyList.getInstance().getAvailableProxys();
+            
+            for(InternalPluginProxyIf internalPlugin : internalPlugins) {
+              internalPlugin.handleTvBrowserStartFinished();
+            }
+            
             // now handle all plugins and services
             GlobalPluginProgramFormatingManager.getInstance();
             PluginProxyManager.getInstance().fireTvBrowserStartFinished();

@@ -106,13 +106,16 @@ public class ProgramInfoProxy extends AbstractInternalPluginProxy implements Con
 
   @Override
   public PluginCenterPanelWrapper getPluginCenterPanelWrapper() {
-    // TODO Auto-generated method stub
     return null;
   }
 
   @Override
   public AfterDataUpdateInfoPanel getAfterDataUpdateInfoPanel() {
-    // TODO Auto-generated method stub
     return null;
+  }
+
+  @Override
+  public void handleTvBrowserStartFinished() {
+    ProgramInfo.getInstance().handleTvBrowserStartFinished();
   }
 }
