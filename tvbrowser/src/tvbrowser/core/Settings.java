@@ -485,6 +485,9 @@ public class Settings {
       }
 
       if(TVBrowser.isTransportable()) {
+        mLog.info("TV-Browser ist transportable version, show import dialog: '" 
+           + (oldDir != null && oldDir.isDirectory() && oldDir.exists() && !oldDir.getAbsolutePath().startsWith(new File("settings").getAbsolutePath()))
+           + "', show import directory selection dialog: '" + (oldDir == null || !oldDir.isDirectory() || !oldDir.exists()) + "'");
         if (oldDir != null && oldDir.isDirectory() && oldDir.exists() && !oldDir.getAbsolutePath().startsWith(new File("settings").getAbsolutePath())) {
           try {
             UIManager.setLookAndFeel(getDefaultLookAndFeelClassName());
@@ -509,7 +512,7 @@ public class Settings {
             }
           }
         }
-        else {
+        else if(oldDir == null || !oldDir.isDirectory() || !oldDir.exists()) {
           try {
             UIManager.setLookAndFeel(getDefaultLookAndFeelClassName());
           }catch(Exception e) { /*ignore*/}
