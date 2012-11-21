@@ -165,4 +165,9 @@ public class ReminderPluginProxy extends AbstractInternalPluginProxy implements 
   public AfterDataUpdateInfoPanel getAfterDataUpdateInfoPanel() {
     return ReminderPlugin.getInstance().getAfterDataUpdateInfoPanel();
   }
+
+  @Override
+  public void handleTvBrowserStartFinished() {
+    ReminderPlugin.getInstance().handleTvBrowserStartFinished();
+  }
 }

@@ -110,13 +110,16 @@ public class SearchPluginProxy extends AbstractInternalPluginProxy implements Bu
 
   @Override
   public PluginCenterPanelWrapper getPluginCenterPanelWrapper() {
-    // TODO Auto-generated method stub
     return null;
   }
 
   @Override
   public AfterDataUpdateInfoPanel getAfterDataUpdateInfoPanel() {
-    // TODO Auto-generated method stub
     return null;
+  }
+
+  @Override
+  public void handleTvBrowserStartFinished() {
+    // nothing to do
   }
 }
