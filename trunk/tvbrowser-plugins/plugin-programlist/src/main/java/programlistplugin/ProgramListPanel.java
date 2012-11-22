@@ -602,7 +602,7 @@ public class ProgramListPanel extends JPanel implements PersonaListener {
             mUpdateThread = new Thread() {
               public void run() {
                 for(int i = mModel.getSize() - 1; i >= 0; i--) {
-                  if(((Program)mModel.get(i)).isExpired()) {
+                  if(mModel.get(i) instanceof Program && ((Program)mModel.get(i)).isExpired()) {
                     mModel.remove(i);
                   }
                 }
