@@ -52,9 +52,9 @@ public class ClockPlugin extends Plugin {
   private boolean mSupportsBigToolbarIcons;
   private ButtonAction mButtonAction;
   private Timer mButtonUpdateTimer;
-  private Icon mTimeIcon;
+  private ClockIcon mTimeIcon;
 
-  private static final Version mVersion = new Version(1, 81, 5, true);
+  private static final Version mVersion = new Version(1, 81, 6, true);
 
   /** The localizer for this class. */
   public static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(ClockPlugin.class);
@@ -210,7 +210,11 @@ public class ClockPlugin extends Plugin {
         if(!mCurrentTime.equals(time)) {
           mCurrentTime = time;
           
-          try {
+          if(mTimeIcon != null) {
+            mTimeIcon.repaint();
+          }
+          
+      /*    try {
             Class<? extends Object> persona = Class.forName("util.ui.persona.Persona");
             
             Method m = persona.getMethod("getInstance", new Class<?> [0]);
@@ -218,7 +222,7 @@ public class ClockPlugin extends Plugin {
             
             m = persona.getMethod("applyPersona", new Class<?> [0]);
             m.invoke(personaObj, new Object[0]);            
-          }catch(Exception e1) {}
+          }catch(Exception e1) {}*/
         }
       }
     });
@@ -228,10 +232,11 @@ public class ClockPlugin extends Plugin {
     }
   }
   
-  private Icon getTimeIcon() {
+  private ClockIcon getTimeIcon() {
     mCurrentTime = new TimeFormatter().formatTime(Calendar.getInstance().get(Calendar.HOUR_OF_DAY), Calendar.getInstance().get(Calendar.MINUTE));
+    return new ClockIcon();
     
-    return new Icon() {
+    /*return new Icon() {
       private int width = getTimePattern().contains("a") ? 86 : 50; 
       private Icon mDefaultIcon = getPluginManager().getIconFromTheme(ClockPlugin.getInstance(),"apps","clock",22);
       
@@ -301,7 +306,7 @@ public class ClockPlugin extends Plugin {
       public int getIconHeight() {
         return 22;
       }
-    };
+    };*/
   }
 
   /**
@@ -636,7 +641,11 @@ public class ClockPlugin extends Plugin {
       }
     }
     
-    try {
+    if(mTimeIcon != null) {
+      mTimeIcon.repaint();
+    }
+    
+   /* try {
       Class<? extends Object> persona = Class.forName("util.ui.persona.Persona");
       
       Method m = persona.getMethod("getInstance", new Class<?> [0]);
@@ -644,7 +653,7 @@ public class ClockPlugin extends Plugin {
       
       m = persona.getMethod("applyPersona", new Class<?> [0]);
       m.invoke(personaObj, new Object[0]);            
-    }catch(Exception e1) {}
+    }catch(Exception e1) {}*/
   }
   
   public boolean supportsBigToolbarIcons() {
@@ -658,5 +667,89 @@ public class ClockPlugin extends Plugin {
     } catch (Exception e) {}
     
     return "HH:mm";
+  }
+  
+  private class ClockIcon implements Icon {
+    private Component mComponent;
+    private int width = getTimePattern().contains("a") ? 86 : 50; 
+    private Icon mDefaultIcon = getPluginManager().getIconFromTheme(ClockPlugin.getInstance(),"apps","clock",22);
+    
+    public void repaint() {
+      if(mComponent != null) 
+      {
+        mComponent.repaint();
+      }
+    }
+    
+    public void paintIcon(Component c, Graphics g, int x, int y) {
+      if(showTimeOnToolbarIcon() && mSupportsBigToolbarIcons) {
+        if(mComponent == null && c != null) {
+          mComponent = c.getParent();
+        }
+        
+        ((Graphics2D)g).setRenderingHint(
+            RenderingHints.KEY_TEXT_ANTIALIASING,
+            RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        
+        int xPos = 2;
+        
+        Color oldColor = g.getColor();
+        Font oldFont = g.getFont();
+        Color second = null;
+        Color first = oldColor;
+        
+        try {
+          Class<? extends Object> persona = Class.forName("util.ui.persona.Persona");
+          
+          Method m = persona.getMethod("getInstance", new Class<?> [0]);
+          Object personaObj = m.invoke(persona,new Object[0]);
+          
+          m = persona.getMethod("getHeaderImage", new Class<?> [0]);
+          
+          if(m.invoke(personaObj, new Object[0]) != null) {
+            m = persona.getMethod("getTextColor", new Class<?> [0]);
+            first = (Color) m.invoke(personaObj, new Object[0]);
+            
+            m = persona.getMethod("getShadowColor", new Class<?> [0]);
+            
+            Color shadow = (Color) m.invoke(personaObj, new Object[0]);
+            
+            if(!first.equals(shadow)) {
+              second = shadow;
+            }
+          }            
+        } catch (Exception e) {}
+        
+        g.setFont(oldFont.deriveFont((float)getIconHeight()-3).deriveFont(Font.BOLD));
+        width = g.getFontMetrics().stringWidth(mCurrentTime);
+        
+        if(c != null) {
+          xPos = c.getWidth() / 2 - width / 2;
+        }
+        
+        if(second != null) {
+          g.setColor(second);
+          g.drawString(mCurrentTime, xPos+1, getIconHeight()/2 + g.getFont().getSize()/2+2);
+          g.drawString(mCurrentTime, xPos+2, getIconHeight()/2 + g.getFont().getSize()/2+3);
+        }
+        
+        
+        g.setColor(first);
+        g.drawString(mCurrentTime, xPos, getIconHeight()/2 + g.getFont().getSize()/2+1);
+        g.setFont(oldFont);
+        g.setColor(oldColor);
+      }
+      else {
+        mDefaultIcon.paintIcon(c, g, x-1, y-1);
+      }
+    }
+    
+    public int getIconWidth() {
+      return (showTimeOnToolbarIcon() && mSupportsBigToolbarIcons) ? width : 22;
+    }
+    
+    public int getIconHeight() {
+      return 22;
+    }
   }
 }
