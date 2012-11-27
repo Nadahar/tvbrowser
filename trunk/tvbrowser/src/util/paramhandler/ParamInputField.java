@@ -114,8 +114,8 @@ public class ParamInputField extends JPanel {
    * @param singleLine set True, if Input-Field should be a Single-Line
    */
   private void createGui(String text, boolean singleLine) {
-    FormLayout layout = new FormLayout("fill:pref:grow, 3dlu, default, 3dlu, default, 3dlu, default",
-                 "fill:pref:grow, 3dlu, default");
+    FormLayout layout = new FormLayout("fill:min:grow, 3dlu, default, 3dlu, default, 3dlu, default",
+                 "fill:min:grow, 3dlu, default");
     setLayout(layout);
     
     CellConstraints cc = new CellConstraints();
