@@ -24,6 +24,7 @@ import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -38,6 +39,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import timelineplugin.format.TextFormatter;
+import tvbrowser.extras.programinfo.ProgramInfo;
 import util.program.ProgramUtilities;
 import devplugin.Plugin;
 import devplugin.PluginManager;
@@ -156,6 +158,13 @@ public class ProgramLabel extends JComponent implements ChangeListener,
 	}
 
 	protected void paintComponent(final Graphics g) {
+	  
+	  if (TimelinePlugin.getSettings().getAntialiasing()) {
+	    Graphics2D g2d = (Graphics2D)g;	    	       
+	    g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+	        RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+	  }
+	    
 		final Rectangle r = g.getClipBounds();
 		final Rectangle rb = this.getBounds();
 

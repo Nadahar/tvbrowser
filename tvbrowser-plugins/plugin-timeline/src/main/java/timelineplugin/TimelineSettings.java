@@ -33,6 +33,7 @@ final class TimelineSettings {
 	private static final String KEY_SHOW_CHANNEL_NAME = "ShowChannelName";
 	private static final String KEY_HOUR_WIDTH = "HourWidth";
 	private static final String KEY_SHOW_HEADER_PANEL = "ShowHeaderPanel";
+	private static final String KEY_ANTIALIASING = "Antialiasing";
 	private static final String DEFAULT_TITLE_FORMAT = "{title}";
 	private Properties mProperties;
 	private String mTitleFormat = DEFAULT_TITLE_FORMAT;
@@ -88,6 +89,14 @@ final class TimelineSettings {
 	boolean showHeaderPanel() {
 	  return getProperty(KEY_SHOW_HEADER_PANEL, false);
 	}
+	
+	protected boolean getAntialiasing() {
+	  return getProperty(KEY_ANTIALIASING, false);
+	}
+	
+	protected void setAntialiasing(final boolean value) {
+	  setProperty(KEY_ANTIALIASING, value);
+    }
 
 	private boolean getProperty(final String key, final boolean defaultValue) {
 		return getProperty(key, defaultValue ? 1 : 0) == 1;

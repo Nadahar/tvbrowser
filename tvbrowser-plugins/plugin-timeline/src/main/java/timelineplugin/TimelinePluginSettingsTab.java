@@ -45,6 +45,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.plaf.basic.BasicComboBoxRenderer;
 
 import timelineplugin.format.TextFormatter;
+import tvbrowser.extras.programinfo.ProgramInfo;
 import util.paramhandler.ParamLibrary;
 import util.ui.FontChooserPanel;
 import util.ui.Localizer;
@@ -84,6 +85,8 @@ public final class TimelinePluginSettingsTab implements SettingsTab {
 	private JRadioButton mShowIcon;
 	private static int mSelectedTab = 0;
 	private JTabbedPane mTabPane; 
+    private JCheckBox mAntiAliasing;
+
 
 	public JPanel createSettingsPanel() {
 		mTabPane = new JTabbedPane();
@@ -236,7 +239,7 @@ public final class TimelinePluginSettingsTab implements SettingsTab {
 	private JPanel getFormatSettings() {
 		final FormLayout layout = new FormLayout(
 				"5dlu, 5dlu, pref, 3dlu, fill:pref:grow, 3dlu, pref, 5dlu",
-				"5dlu, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref, 5dlu, pref, 10dlu, pref, 5dlu, pref, 2dlu, pref, 2dlu, pref");
+				"5dlu, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref, 5dlu, pref, 10dlu, pref, 5dlu, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref");
 
 		final PanelBuilder builder = new PanelBuilder(layout);
 		builder.setBorder(null);
@@ -337,6 +340,10 @@ public final class TimelinePluginSettingsTab implements SettingsTab {
 				mFormat.setText(pre + function + post);
 			}
 		});
+		
+	    mAntiAliasing = new JCheckBox(mLocalizer
+	        .msg("antialiasing", "Antialiasing"));
+	    mAntiAliasing.setSelected(TimelinePlugin.getSettings().getAntialiasing());
 
 		final int pw = Integer.parseInt(mHourWidth.getText());
 		final int ph = Integer.parseInt(mChannelHeight.getText());
@@ -381,6 +388,8 @@ public final class TimelinePluginSettingsTab implements SettingsTab {
 		builder.addLabel(mLocalizer.msg("function", "Function"), cc.xy(3, row));
 		builder.add(mFunctionList, cc.xy(5, row));
 		builder.add(addFunctionBtn, cc.xy(7, row));
+		row += 2;
+        builder.add(mAntiAliasing, cc.xy(5, row));
 		row += 2;
 		builder.add(resetBtn, cc.xy(7, row));
 		row += 2;
@@ -456,6 +465,8 @@ public final class TimelinePluginSettingsTab implements SettingsTab {
 		TimelinePlugin.getSettings().setShowChannelIcon(
 				mShowIconAndName.isSelected() || mShowIcon.isSelected());
 		TimelinePlugin.getSettings().setTitleFormat(mFormat.getText());
+		TimelinePlugin.getSettings().setAntialiasing(mAntiAliasing.isSelected());
+
 		TimelinePlugin.getInstance().resetFormatter();
 		TimelinePlugin.getInstance().resize();
 	}
