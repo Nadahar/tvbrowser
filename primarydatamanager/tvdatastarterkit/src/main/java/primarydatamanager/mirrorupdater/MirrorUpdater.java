@@ -67,6 +67,7 @@ public class MirrorUpdater {
   private String mPrimaryServerUrl;
   
   private Date mDeadlineDay;
+  private Date mMinimumSearchDay;
   
   private String[] mChannelGroupArr;
   private String[] mTargetFileArr;
@@ -81,6 +82,7 @@ public class MirrorUpdater {
     mPrimaryServerUrl = config.getPrimaryServerUrl();
     mChannelGroupArr=config.getChannelgroups();
     mDeadlineDay = new Date().addDays(-2);
+    mMinimumSearchDay = new Date().addDays(21);
   }
     
 
@@ -197,7 +199,7 @@ public class MirrorUpdater {
     Date date = new Date().addDays(-1);
     int daysWithNoData = 0;
     
-    while (daysWithNoData < MAX_DAYS_WITHOUT_DATA) {
+    while (daysWithNoData < MAX_DAYS_WITHOUT_DATA || (date.compareTo(mMinimumSearchDay) <= 0)) {
       String completeFileName = DayProgramFile.getProgramFileName(date,
         channel.getBaseCountry(), channel.getId(), level);
         
