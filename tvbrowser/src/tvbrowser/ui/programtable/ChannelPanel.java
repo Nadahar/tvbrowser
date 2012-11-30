@@ -126,7 +126,9 @@ public class ChannelPanel extends JPanel {
    */
   public void updatePersona() {
     for(ProgramTableChannelLabel label : mLabelArr) {
-      label.updatePersona();
+      if(label != null) {
+        label.updatePersona();
+      }
     }
     
     setOpaque(Persona.getInstance().getAccentColor() == null);
