@@ -13,6 +13,7 @@ import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.UIManager;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
@@ -94,7 +95,8 @@ public class PluginInfoDialog extends JDialog implements WindowClosingIf {
     ExtendedHTMLDocument doc = (ExtendedHTMLDocument) infoPanel.getDocument();
 
     infoPanel.setEditable(false);
-    infoPanel.setText(generateHtml(doc));
+    
+    UiUtilities.updateHtmlHelpTextArea(infoPanel,generateHtml(doc),UIManager.getColor("EditorPane.background"));
 
     infoPanel.addHyperlinkListener(new HyperlinkListener() {
       public void hyperlinkUpdate(HyperlinkEvent evt) {
