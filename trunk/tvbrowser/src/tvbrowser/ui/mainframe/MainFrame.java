@@ -1500,6 +1500,9 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       return;
     }
     mShuttingDown = true;
+    
+    FavoritesPlugin.getInstance().store();
+    ReminderPlugin.getInstance().store();
 
     PluginProxyManager.getInstance().shutdownAllPlugins(log);
 
@@ -1507,9 +1510,6 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       mLog.info("Storing dataservice settings");
     }
     TvDataServiceProxyManager.getInstance().shutDown();
-
-    FavoritesPlugin.getInstance().store();
-    ReminderPlugin.getInstance().store();
 
     TVBrowser.shutdown(log);
 
