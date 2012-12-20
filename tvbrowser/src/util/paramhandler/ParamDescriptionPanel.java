@@ -33,8 +33,10 @@ import javax.swing.JEditorPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
 import util.ui.Localizer;
+import util.ui.UiUtilities;
 
 /**
  * A Panel with a Description for the Parameters
@@ -65,8 +67,9 @@ public class ParamDescriptionPanel extends JPanel {
     setLayout(new BorderLayout());
 
     JEditorPane helpPanel = new JEditorPane();
-    helpPanel.setContentType("text/html");
     helpPanel.setEditable(false);
+    helpPanel.setContentType("text/html");
+    
     StringBuilder text = new StringBuilder("<html>" +
         " <head>" +
         "<style type=\"text/css\" media=\"screen\">" +
@@ -108,7 +111,10 @@ public class ParamDescriptionPanel extends JPanel {
     
     text.append("</table></body></html>");
 
-    helpPanel.setText(text.toString());
+    UiUtilities.updateHtmlHelpTextArea(helpPanel, text.toString(), UIManager.getColor("List.background"));
+
+
+//    helpPanel.setText(text.toString());
     final JScrollPane spane = new JScrollPane(helpPanel);
 
     SwingUtilities.invokeLater(new Runnable() {
