@@ -675,7 +675,7 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
         mProgramListModel.clear();
         mSendBt.setEnabled(false);
       } else {
-        changeProgramList((Favorite)mFavoritesList.getSelectedValue());
+        changeProgramList((Favorite)mFavoritesList.getSelectedValue(),scrollToFirst);
       }
     }
     else {
@@ -684,7 +684,7 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
 
         if(fav != null) {
           enableButtons(true);
-          changeProgramList(fav);
+          changeProgramList(fav,scrollToFirst);
           mDeleteBt.setEnabled(true);
           mEditBt.setToolTipText(mLocalizer.ellipsisMsg("edit", "Edit the selected favorite"));
           mDeleteBt.setToolTipText(mLocalizer.ellipsisMsg("delete", "Delete selected favorite"));
@@ -803,7 +803,7 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
     };
   }
   
-  private void scrollInProgramListToIndex(final int index) {
+  public void scrollInProgramListToIndex(final int index) {
     if (index < 0) {
       return;
     }
@@ -840,7 +840,7 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
     mSortCountBt.setEnabled(mSortAlphaBt.isEnabled());
   }
 
-  private void changeProgramList(Favorite fav) {
+  private void changeProgramList(Favorite fav, boolean scrollToFirstIndex) {
     Program[] programArr = mShowNew ? fav.getNewPrograms() : fav.getWhiteListPrograms();
     Program[] blackListPrograms = fav.getBlackListPrograms();
 
@@ -886,7 +886,9 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
     
     mProgramList.repaint();
     
-    scrollInProgramListToIndex(firstNotExpiredIndex);
+    if(scrollToFirstIndex) {
+      scrollInProgramListToIndex(firstNotExpiredIndex);
+    }
   }
 
   public void showSendDialog() {
@@ -992,12 +994,20 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
       mFavoriteTree.reload(mFavoriteTree.getRoot());
     }
   }
+  
+  public int getSelectedProgramIndex() {
+    return mProgramList.getSelectedIndex();
+  }
 
   public void editSelectedFavorite() {
     Favorite fav = null;
     FavoriteNode node = null;
+    
+    int index = mProgramList.getSelectedIndex();
+    
     if(mFavoritesList != null) {
       fav = (Favorite) mFavoritesList.getSelectedValue();
+      index = mFavoritesList.getSelectedIndex();
     }
     else {
       if (mFavoriteTree.getSelectionCount() > 0) {
@@ -1021,6 +1031,8 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
           mFavoriteTree.reload(node);
           mFavoriteTree.repaint();
         }
+        
+        scrollInProgramListToIndex(index);
     }
 
   }
@@ -1029,6 +1041,7 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
 
   public void deleteSelectedFavorite() {
     int selection = -1;
+    
     if(mFavoritesList != null) {
       selection = mFavoritesList.getSelectedIndex();
     }
@@ -1055,13 +1068,14 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
               mLocalizer.msg("delete", "Delete selected favorite..."),
               JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 
+        
         FavoriteTreeModel.getInstance().deleteFavorite(fav);
 
         if (parent != null) {
           mFavoriteTree.setSelectionPath(new TreePath(parent.getPath()));
           mFavoriteTree.reload(parent);
         }
-
+        
         favoriteSelectionChanged();
       }
     }
