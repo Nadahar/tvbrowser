@@ -42,7 +42,7 @@ import java.util.logging.Logger;
 
 import javax.swing.JMenu;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import tvbrowser.core.Settings;
 import tvbrowser.ui.filter.dlgs.FilterNode;

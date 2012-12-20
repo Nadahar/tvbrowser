@@ -68,7 +68,7 @@ import javax.swing.Timer;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.pushingpixels.substance.api.SubstanceLookAndFeel;
 import org.pushingpixels.substance.api.skin.SkinInfo;
 
@@ -140,13 +140,14 @@ public class TVBrowser {
   private static final boolean mIsStable = false;
   private static final int mMajorVersion = 3;
   private static final int mMinorVersion = 21;
-  private static final int mSubMinorVersion = 50;
+  private static final int mSubMinorVersion = 51;
 
   /* If you want to change the version string, add it to the beginning of this array.
      We need the old version strings to import the settings.
   */
   /** The string array with the names of the earlier versions. */
   private static final String[] ALL_VERSIONS = new String[]{
+          "3.2.1.51 SVN",
           "3.2.1.50 SVN",
           "3.2.1", "3.2.1RC1", "3.2.1beta2", "3.2.1beta1", "3.2.0.50 SVN",
           "3.2", "3.2RC1", "3.2beta2", "3.2beta1", "3.1.0.50 SVN",
@@ -1190,7 +1191,6 @@ public class TVBrowser {
                 StringUtils.replace(StringUtils.replace(className, "Skin", "LookAndFeel"), "skin.", "skin.Substance"));
           }
         }
-        UIManager.installLookAndFeel("Quaqua","ch.randelshofer.quaqua.QuaquaLookAndFeel");
       }
     } catch (Exception e1) {
       // ignore any exception for optional skins

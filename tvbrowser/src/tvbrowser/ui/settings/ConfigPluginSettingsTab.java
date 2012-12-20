@@ -45,8 +45,8 @@ import util.exc.TvBrowserException;
 import util.ui.EnhancedPanelBuilder;
 
 import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormSpecs;
 
 import devplugin.CancelableSettingsTab;
 
@@ -78,8 +78,7 @@ public class ConfigPluginSettingsTab extends AbstractSettingsTab implements Canc
     }
 
   }
-
-
+  
   public JPanel createSettingsPanel() {
     mContentPanel=new JPanel(new BorderLayout());
     mContentPanel.setBorder(Borders.DIALOG_BORDER);
@@ -124,7 +123,7 @@ public class ConfigPluginSettingsTab extends AbstractSettingsTab implements Canc
       mPluginPanel.add(createEmptyPanel(mLocalizer.msg("blocked", "Blocked"), mLocalizer.msg("blocked.text", "This plugin is blocked and cannot be activated.")), BorderLayout.NORTH);
     } else {
       // The plugin is not activated -> Tell it the user
-      EnhancedPanelBuilder panelActivate = new EnhancedPanelBuilder(FormFactory.RELATED_GAP_COLSPEC.encode() + "," + FormFactory.PREF_COLSPEC.encode() + "," + FormFactory.RELATED_GAP_COLSPEC.encode() + "," + FormFactory.PREF_COLSPEC.encode() + ",default:grow");
+      EnhancedPanelBuilder panelActivate = new EnhancedPanelBuilder(FormSpecs.RELATED_GAP_COLSPEC.encode() + "," + FormSpecs.PREF_COLSPEC.encode() + "," + FormSpecs.RELATED_GAP_COLSPEC.encode() + "," + FormSpecs.PREF_COLSPEC.encode() + ",default:grow");
       CellConstraints cc = new CellConstraints();
 
       panelActivate.addParagraph(mLocalizer.msg("activation", "Activation"));

@@ -32,8 +32,8 @@ import java.util.Comparator;
 import javax.swing.DefaultListModel;
 import javax.swing.SwingUtilities;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.text.StrBuilder;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.text.StrBuilder;
 
 import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataBase;

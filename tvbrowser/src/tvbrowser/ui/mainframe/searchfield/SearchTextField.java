@@ -36,7 +36,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.plaf.basic.BasicTextFieldUI;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import util.ui.UiUtilities;
 /**

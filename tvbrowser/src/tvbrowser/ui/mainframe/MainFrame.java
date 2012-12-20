@@ -109,8 +109,6 @@ import javax.swing.WindowConstants;
 import javax.swing.plaf.TabbedPaneUI;
 import javax.swing.plaf.basic.BasicTabbedPaneUI;
 
-import org.apache.commons.lang.math.RandomUtils;
-
 import tvbrowser.TVBrowser;
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.DateListener;
@@ -1602,7 +1600,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
 
     if(mLastTimerMinutesAfterMidnight == -1) {
       resetOnAirArrays();
-      mAutoDownloadTimer = RandomUtils.nextInt(24 * 60 - 10);
+      mAutoDownloadTimer = (int)(Math.random() * (24 * 60 - 10));
     }
 
     // Avoid a repaint 6 times a minute (Once a minute is enough)
@@ -3114,47 +3112,52 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
    * Updates the search field on Persona change.
    */
   public void updatePersona() {
-    repaint();
-    if(Persona.getInstance().getHeaderImage() != null) {
-      mCenterTabPane.setUI(mPersonaUI);
-      if(mToolBarPanel != null) {
-        mToolBarPanel.setOpaque(false);
+    SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        repaint();
+        if(Persona.getInstance().getHeaderImage() != null) {
+          mCenterTabPane.setUI(mPersonaUI);
+          if(mToolBarPanel != null) {
+            mToolBarPanel.setOpaque(false);
+          }
+          if(mSearchField != null) {
+            mSearchField.setOpaque(false);
+          }
+          mCenterTabPane.setOpaque(false);
+          mCenterTabPane.setBackground(new Color(0,0,0,0));
+          mCenterTabPane.setForeground(Persona.getInstance().getTextColor());
+        }
+        else {
+          mCenterTabPane.setUI(mDefaultUI);
+          
+          if(mToolBarPanel != null) {
+            mToolBarPanel.setOpaque(true);
+          }
+          if(mSearchField != null) {
+            mSearchField.setOpaque(true);
+          }
+          mCenterTabPane.setOpaque(true);
+          mCenterTabPane.setBackground(UIManager.getColor("Panel.background"));
+          mCenterTabPane.setForeground(UIManager.getColor("List.foreground"));
+        }
+        if(mToolBarPanel != null) {
+          mToolBarPanel.updateUI();
+        }
+        
+        mMenuBar.updatePersona();
+        mToolBar.updatePersona();
+        
+        if(mSearchField != null) {
+          mSearchField.updatePersona();
+        }
+        
+        mTimeChooserPanel.updatePersona();
+        mStatusBar.updatePersona();
+        mProgramTableScrollPane.updatePersona();
+        mFilterPanel.updatePersona();
       }
-      if(mSearchField != null) {
-        mSearchField.setOpaque(false);
-      }
-      mCenterTabPane.setOpaque(false);
-      mCenterTabPane.setBackground(new Color(0,0,0,0));
-      mCenterTabPane.setForeground(Persona.getInstance().getTextColor());
-    }
-    else {
-      mCenterTabPane.setUI(mDefaultUI);
-      
-      if(mToolBarPanel != null) {
-        mToolBarPanel.setOpaque(true);
-      }
-      if(mSearchField != null) {
-        mSearchField.setOpaque(true);
-      }
-      mCenterTabPane.setOpaque(true);
-      mCenterTabPane.setBackground(UIManager.getColor("Panel.background"));
-      mCenterTabPane.setForeground(UIManager.getColor("List.foreground"));
-    }
-    if(mToolBarPanel != null) {
-      mToolBarPanel.updateUI();
-    }
-    
-    mMenuBar.updatePersona();
-    mToolBar.updatePersona();
-    
-    if(mSearchField != null) {
-      mSearchField.updatePersona();
-    }
-    
-    mTimeChooserPanel.updatePersona();
-    mStatusBar.updatePersona();
-    mProgramTableScrollPane.updatePersona();
-    mFilterPanel.updatePersona();
+    });
   }
   
   public void updateCenterPanels() {

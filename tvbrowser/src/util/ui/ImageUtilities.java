@@ -39,6 +39,7 @@ import java.util.logging.Logger;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import javax.swing.SwingUtilities;
 
 import util.io.IOUtilities;
 
@@ -53,7 +54,16 @@ public class ImageUtilities {
     = Logger.getLogger(ImageUtilities.class.getName());
 
   /** The helper label. */
-  private static final JLabel HELPER_LABEL = new JLabel();
+  private static JLabel HELPER_LABEL;
+  
+  static {
+    SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        HELPER_LABEL = new JLabel();
+      }
+    });
+  }
 
   /**
    * Returns the image in the specified file.

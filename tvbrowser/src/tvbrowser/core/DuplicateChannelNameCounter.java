@@ -2,7 +2,7 @@ package tvbrowser.core;
 
 import java.util.Hashtable;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import devplugin.Channel;
 

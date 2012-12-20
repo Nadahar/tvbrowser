@@ -31,7 +31,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.UIManager;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import tvbrowser.core.Settings;
 import devplugin.Program;

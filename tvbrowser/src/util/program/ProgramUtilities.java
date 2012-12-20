@@ -28,7 +28,7 @@ import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.Settings;

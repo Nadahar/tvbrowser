@@ -43,7 +43,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.UIManager;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import tvbrowser.extras.common.InternalPluginProxyIf;
 import tvbrowser.extras.common.InternalPluginProxyList;

@@ -39,7 +39,7 @@ import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import tvbrowser.core.Settings;
 import util.misc.OperatingSystem;

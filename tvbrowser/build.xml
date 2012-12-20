@@ -977,18 +977,6 @@
 	<target name="download-libs" description="downloads all necessary library files">
 		<mkdir dir="${lib.dir}"/>
 
-		<!-- quaqua -->
-	  	<get dest="${lib.dir}/download.zip" src="${lib.quaqua.url}"/>
-	  	<unzip src="${lib.dir}/download.zip" dest="${lib.dir}/download"/>
-	  	<unzip src="${lib.dir}/download/${lib.quaqua.name}-${lib.quaqua.version}.zip" dest="${lib.dir}/download/"/>
-	    <copy todir="${lib.dir}" verbose="true" overwrite="true">
-	      <fileset dir="${lib.dir}/download/Quaqua/dist">
-	        <include name="*.jnilib"/>
-	      </fileset>
-	    </copy>
-		<copy file="${lib.dir}/download/Quaqua/dist/${lib.quaqua.name}.jar" tofile="${lib.dir}/${lib.quaqua.name}-${lib.quaqua.version}.jar"></copy>
- 		<delete dir="${lib.dir}/download"/>
-
 		<!-- bsh -->
 		<antcall target="download-lib">
 			<param name="lib" value="bsh"/>

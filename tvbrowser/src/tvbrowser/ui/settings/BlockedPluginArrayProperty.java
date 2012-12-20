@@ -26,7 +26,7 @@ package tvbrowser.ui.settings;
 
 import java.util.ArrayList;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import tvbrowser.ui.mainframe.SoftwareUpdater;
 import util.settings.Property;

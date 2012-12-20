@@ -55,7 +55,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.ui.mainframe.MainFrame;

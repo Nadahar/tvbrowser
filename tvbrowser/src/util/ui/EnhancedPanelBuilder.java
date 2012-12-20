@@ -20,8 +20,8 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
 
 /**
@@ -73,9 +73,9 @@ public class EnhancedPanelBuilder extends PanelBuilder {
       appendRow(RowSpec.decode("10dlu"));
     }
     else {
-      appendRow(FormFactory.NARROW_LINE_GAP_ROWSPEC);
+      appendRow(FormSpecs.NARROW_LINE_GAP_ROWSPEC);
     }
-    appendRow(FormFactory.DEFAULT_ROWSPEC);
+    appendRow(FormSpecs.DEFAULT_ROWSPEC);
     incrementRowNumber();
     if (label != null && !label.isEmpty()) {
       return addSeparator(label);
@@ -91,7 +91,7 @@ public class EnhancedPanelBuilder extends PanelBuilder {
    * @return the builder
    */
   public PanelBuilder addRow() {
-    return addRow(FormFactory.DEFAULT_ROWSPEC.encode());
+    return addRow(FormSpecs.DEFAULT_ROWSPEC.encode());
   }
 
   private void incrementRowNumber() {
