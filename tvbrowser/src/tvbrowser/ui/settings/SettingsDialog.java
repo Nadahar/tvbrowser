@@ -533,9 +533,9 @@ public class SettingsDialog implements WindowClosingIf {
     if (nodeId != null && nodeId.equalsIgnoreCase(SettingsItem.CHANNELS)) {
       waitForLoadedChannels();
     }
-    System.out.println(node);
+    
     JPanel pn = node.getSettingsPanel();
-System.out.println("hier");
+    
     if (pn != null) {
       String help = node.getHelpUrl();
 
