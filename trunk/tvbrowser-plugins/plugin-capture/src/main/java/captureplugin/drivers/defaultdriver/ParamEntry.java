@@ -27,7 +27,7 @@ package captureplugin.drivers.defaultdriver;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 
 /**

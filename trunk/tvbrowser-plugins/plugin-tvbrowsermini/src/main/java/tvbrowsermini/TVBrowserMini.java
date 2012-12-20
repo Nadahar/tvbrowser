@@ -75,7 +75,7 @@ import devplugin.Version;
 public class TVBrowserMini extends Plugin {
 
   private static final boolean IS_STABLE = false;
-  private static final Version mVersion = new Version(0, 6, IS_STABLE);
+  private static final Version mVersion = new Version(0, 7, IS_STABLE);
   /**
    * Translator
    */

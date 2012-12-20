@@ -34,7 +34,7 @@ import java.util.Properties;
 import java.util.TimeZone;
 import java.util.logging.Logger;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import tvdataservice.SettingsPanel;
 import tvdataservice.TvDataUpdateManager;
@@ -78,7 +78,7 @@ public class RadioTimesDataService extends AbstractTvDataService {
   private static final Logger mLog = Logger.getLogger(RadioTimesDataService.class
       .getName());
 
-  private static final Version VERSION = new Version(3,03);
+  private static final Version VERSION = new Version(3,04);
 
   /**
    * Channelgroup

@@ -16,9 +16,9 @@ import util.ui.UiUtilities;
 import util.ui.customizableitems.SelectableItemList;
 
 import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.FormSpecs;
 
 import devplugin.SettingsTab;
 
@@ -40,7 +40,7 @@ public class MovieAwardSettingsTab implements SettingsTab {
   }
 
   public JPanel createSettingsPanel() {
-    final JPanel panel = new JPanel(new FormLayout("fill:min:grow", "150," + FormFactory.RELATED_GAP_COLSPEC.encode() + ",fill:min:grow"));
+    final JPanel panel = new JPanel(new FormLayout("fill:min:grow", "150," + FormSpecs.RELATED_GAP_COLSPEC.encode() + ",fill:min:grow"));
     panel.setBorder(Borders.DLU4_BORDER);
     final CellConstraints cc = new CellConstraints();
 

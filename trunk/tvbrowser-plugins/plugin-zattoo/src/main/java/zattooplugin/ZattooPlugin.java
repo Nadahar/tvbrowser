@@ -40,7 +40,7 @@ public final class ZattooPlugin extends Plugin {
   private static final String ICON_NAME = "zattoo";
   private static final String ICON_CATEGORY = "apps";
   private static final boolean PLUGIN_IS_STABLE = true;
-  private static final Version PLUGIN_VERSION = new Version(1, 0, 0, PLUGIN_IS_STABLE);
+  private static final Version PLUGIN_VERSION = new Version(1, 1, 0, PLUGIN_IS_STABLE);
 
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(ZattooPlugin.class);
   private static final Logger mLog = Logger.getLogger(ZattooPlugin.class.getName());

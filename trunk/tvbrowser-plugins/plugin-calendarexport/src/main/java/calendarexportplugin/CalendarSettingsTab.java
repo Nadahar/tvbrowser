@@ -49,8 +49,8 @@ import util.ui.UiUtilities;
 import util.ui.customizableitems.SelectableItemList;
 import calendarexportplugin.exporter.ExporterIf;
 
-import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormSpecs;
 
 import devplugin.SettingsTab;
 
@@ -96,9 +96,9 @@ public class CalendarSettingsTab implements SettingsTab {
   }
 
   public JPanel createSettingsPanel() {
-    final EnhancedPanelBuilder pb = new EnhancedPanelBuilder(FormFactory.RELATED_GAP_COLSPEC.encode() + ","
-        + FormFactory.PREF_COLSPEC.encode() + "," + FormFactory.RELATED_GAP_COLSPEC.encode() + ",default:grow,"
-        + FormFactory.RELATED_GAP_COLSPEC.encode() + "," + FormFactory.PREF_COLSPEC.encode());
+    final EnhancedPanelBuilder pb = new EnhancedPanelBuilder(FormSpecs.RELATED_GAP_COLSPEC.encode() + ","
+        + FormSpecs.PREF_COLSPEC.encode() + "," + FormSpecs.RELATED_GAP_COLSPEC.encode() + ",default:grow,"
+        + FormSpecs.RELATED_GAP_COLSPEC.encode() + "," + FormSpecs.PREF_COLSPEC.encode());
     CellConstraints cc = new CellConstraints();
 
     mCategorie = new JTextField(mSettings.getCategory());

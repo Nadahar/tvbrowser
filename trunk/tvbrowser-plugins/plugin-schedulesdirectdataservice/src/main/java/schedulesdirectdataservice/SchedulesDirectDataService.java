@@ -51,7 +51,7 @@ import net.sf.xtvdclient.xtvd.datatypes.StarRating;
 import net.sf.xtvdclient.xtvd.datatypes.Station;
 import net.sf.xtvdclient.xtvd.datatypes.Xtvd;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import tvdataservice.MutableChannelDayProgram;
 import tvdataservice.MutableProgram;
@@ -85,7 +85,7 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
   private static final Logger mLog
     = Logger.getLogger(SchedulesDirectDataService.class.getName());
 
-  private static final Version VERSION = new Version(3,10,0);
+  private static final Version VERSION = new Version(3,11,0);
 
   private ChannelGroup mChannelGroup = new ChannelGroupImpl("SchedulesDirect", "SchedulesDirect", "SchedulesDirect", "SchedulesDirect");
 

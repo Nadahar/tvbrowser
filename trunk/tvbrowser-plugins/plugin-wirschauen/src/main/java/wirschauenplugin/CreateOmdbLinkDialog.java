@@ -153,7 +153,7 @@ public class CreateOmdbLinkDialog extends JDialog implements WindowClosingIf
     });
     final ButtonBarBuilder builder = new ButtonBarBuilder();
     builder.addGlue();
-    builder.addGriddedButtons(new JButton[]{okButton, cancelButton});
+    builder.addButton(new JButton[]{okButton, cancelButton});
     contentPane.add(builder.getPanel(), cellConstraints.xyw(1, 9, 6));
 
     pack();

@@ -181,7 +181,7 @@ public class CreateWirSchauenDataDialog extends JDialog implements WindowClosing
     });
     final ButtonBarBuilder builder = new ButtonBarBuilder();
     builder.addGlue();
-    builder.addGriddedButtons(new JButton[]{okButton, cancelButton});
+    builder.addButton(new JButton[]{okButton, cancelButton});
 
     contentPane.add(builder.getPanel(), cellConstraints.xyw(1, 15, 3));
 

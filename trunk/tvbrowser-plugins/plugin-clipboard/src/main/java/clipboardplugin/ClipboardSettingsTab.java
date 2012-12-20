@@ -32,8 +32,8 @@ import util.ui.EnhancedPanelBuilder;
 import util.ui.Localizer;
 import util.ui.PluginProgramConfigurationPanel;
 
-import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormSpecs;
 
 import devplugin.SettingsTab;
 
@@ -66,7 +66,7 @@ public class ClipboardSettingsTab implements SettingsTab {
    * @return Settings-Panel
    */
   public JPanel createSettingsPanel() {
-    EnhancedPanelBuilder pb = new EnhancedPanelBuilder(FormFactory.RELATED_GAP_COLSPEC.encode() + ",fill:default:grow");
+    EnhancedPanelBuilder pb = new EnhancedPanelBuilder(FormSpecs.RELATED_GAP_COLSPEC.encode() + ",fill:default:grow");
     CellConstraints cc = new CellConstraints();
     
     mConfigPanel = new PluginProgramConfigurationPanel(mPlugin.getSelectedPluginProgramFormatings(), mPlugin.getAvailableLocalPluginProgramFormatings(), ClipboardPlugin.getDefaultFormating(),false,false);

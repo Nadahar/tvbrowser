@@ -41,7 +41,7 @@ import java.util.zip.GZIPOutputStream;
 
 import javax.swing.Icon;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 
 import tvbrowserdataservice.TvBrowserDataService;
 import util.io.FileFormatException;
@@ -150,7 +150,7 @@ public class ChannelList {
 
         if (tokens.length > 8) {
           unescapedname = name;
-          name = StringEscapeUtils.unescapeHtml(tokens[8]);
+          name = StringEscapeUtils.unescapeHtml4(tokens[8]);
         }
         
         if(tokens.length > 9) {
@@ -230,7 +230,7 @@ public class ChannelList {
           channelItem.getIconUrl() == null ? "" : channelItem.getIconUrl());
       line.append(';').append(channel.getCategories());
       line.append(";\"")
-          .append(StringEscapeUtils.escapeHtml(channel.getName())).append('"');
+          .append(StringEscapeUtils.escapeHtml4(channel.getName())).append('"');
       line.append(";").append(channel.getCountriesString());
       
       if(channel.getSharedChannelId() != null) {

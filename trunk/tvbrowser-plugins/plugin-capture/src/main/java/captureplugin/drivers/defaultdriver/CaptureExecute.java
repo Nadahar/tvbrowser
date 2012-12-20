@@ -42,7 +42,7 @@ import java.net.URLConnection;
 import javax.swing.JOptionPane;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import util.exc.ErrorHandler;
 import util.io.ExecutionHandler;

@@ -49,13 +49,14 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
+import com.jgoodies.forms.builder.ButtonBarBuilder;
 
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
-import com.jgoodies.forms.builder.ButtonBarBuilder2;
+//import com.jgoodies.forms.builder.ButtonBarBuilder2;
 
 /**
  * A Dialog for creating new Devices
@@ -197,7 +198,7 @@ public class DeviceCreatorDialog extends JDialog implements WindowClosingIf {
       }
     });
 
-    ButtonBarBuilder2 builder = new ButtonBarBuilder2();
+    ButtonBarBuilder builder = new ButtonBarBuilder();
     builder.addGlue();
     builder.addButton(new JButton[] { ok, cancel });
 

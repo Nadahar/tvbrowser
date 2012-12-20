@@ -447,92 +447,97 @@ public class ProgramListPanel extends JPanel implements PersonaListener {
             } catch (InterruptedException e) {}
           }
           
-          DefaultListModel model = new DefaultListModel();
-          mFilterBox.setEnabled(false);
-          mChannelBox.setEnabled(false);
-          mRefreshBtn.setEnabled(false);
-          mSendBtn.setEnabled(false);
-          
-          try {
-            setPriority(MIN_PRIORITY);
-            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-            mModel.clear();
-            mPrograms.clear();
-  
-            boolean showExpired = false;
-  
-            Channel[] channels = mChannelBox.getSelectedItem() instanceof String ? Plugin.getPluginManager()
-                .getSubscribedChannels() : new Channel[] { (Channel) mChannelBox.getSelectedItem() };
-  
-            Date date = channels.length > 1
-                && mFilter.equals(Plugin.getPluginManager().getFilterManager().getAllFilter()) ? Plugin
-                .getPluginManager().getCurrentDate() : Date.getCurrentDate();
-  
-            int startTime = Plugin.getPluginManager().getTvBrowserSettings().getProgramTableStartOfDay();
-            int endTime = Plugin.getPluginManager().getTvBrowserSettings().getProgramTableEndOfDay();
-  
-            int maxDays = channels.length > 1
-                && mFilter.equals(Plugin.getPluginManager().getFilterManager().getAllFilter()) ? 2 : 28;
-            for (int d = 0; d < maxDays; d++) {
-              if (Plugin.getPluginManager().isDataAvailable(date)) {
-                for (Channel channel : channels) {
-                  for (Iterator<Program> it = Plugin.getPluginManager().getChannelDayProgram(date, channel); it.hasNext();) {
-                    Program program = it.next();
-                    if ((showExpired || !program.isExpired()) && mFilter.accept(program)) {
-                      if (mFilter.equals(Plugin.getPluginManager().getFilterManager().getAllFilter())) {
-                        if ((d == 0 && program.getStartTime() >= startTime)
-                            || (d == 1 && program.getStartTime() <= endTime)) {
-                          mPrograms.add(program);
+          SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+              DefaultListModel model = new DefaultListModel();
+              mFilterBox.setEnabled(false);
+              mChannelBox.setEnabled(false);
+              mRefreshBtn.setEnabled(false);
+              mSendBtn.setEnabled(false);
+              
+              try {
+                setPriority(MIN_PRIORITY);
+                setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                mModel.clear();
+                mPrograms.clear();
+      
+                boolean showExpired = false;
+      
+                Channel[] channels = mChannelBox.getSelectedItem() instanceof String ? Plugin.getPluginManager()
+                    .getSubscribedChannels() : new Channel[] { (Channel) mChannelBox.getSelectedItem() };
+      
+                Date date = channels.length > 1
+                    && mFilter.equals(Plugin.getPluginManager().getFilterManager().getAllFilter()) ? Plugin
+                    .getPluginManager().getCurrentDate() : Date.getCurrentDate();
+      
+                int startTime = Plugin.getPluginManager().getTvBrowserSettings().getProgramTableStartOfDay();
+                int endTime = Plugin.getPluginManager().getTvBrowserSettings().getProgramTableEndOfDay();
+      
+                int maxDays = channels.length > 1
+                    && mFilter.equals(Plugin.getPluginManager().getFilterManager().getAllFilter()) ? 2 : 28;
+                for (int d = 0; d < maxDays; d++) {
+                  if (Plugin.getPluginManager().isDataAvailable(date)) {
+                    for (Channel channel : channels) {
+                      for (Iterator<Program> it = Plugin.getPluginManager().getChannelDayProgram(date, channel); it.hasNext();) {
+                        Program program = it.next();
+                        if ((showExpired || !program.isExpired()) && mFilter.accept(program)) {
+                          if (mFilter.equals(Plugin.getPluginManager().getFilterManager().getAllFilter())) {
+                            if ((d == 0 && program.getStartTime() >= startTime)
+                                || (d == 1 && program.getStartTime() <= endTime)) {
+                              mPrograms.add(program);
+                            }
+                          } else {
+                            mPrograms.add(program);
+                          }
                         }
-                      } else {
-                        mPrograms.add(program);
                       }
                     }
                   }
+                  date = date.addDays(1);
                 }
+      
+                if (channels.length > 1) {
+                  Collections.sort(mPrograms, ProgramUtilities.getProgramComparator());
+                }
+      
+                int index = -1;
+                
+                Program lastProgram = null;
+                
+                for (Program program : mPrograms) {
+                  if (model.size() < mMaxListSize) {
+                    if(ProgramListPlugin.getInstance().getSettings().showDateSeparator() && 
+                        (lastProgram == null || program.getDate().compareTo(lastProgram.getDate()) > 0)) {
+                      model.addElement(DATE_SEPARATOR);
+                    }
+                    
+                    model.addElement(program);
+                    
+                    if (!program.isExpired() && index == -1) {
+                      index = model.getSize() - (ProgramListPlugin.getInstance().getSettings().showDateSeparator() ? 2 : 1);
+                    }
+                    
+                    lastProgram = program;
+                  }
+                }
+                int forceScrollingIndex = model.size() - 1;
+                if (forceScrollingIndex > 1000) {
+                  forceScrollingIndex = 1000;
+                }
+                
+                updateList(model, forceScrollingIndex, index);
+                //mList.updateUI();
+              } catch (Exception e) {
+                e.printStackTrace();
               }
-              date = date.addDays(1);
+              
+              mFilterBox.setEnabled(true);
+              mChannelBox.setEnabled(true);
+              mRefreshBtn.setEnabled(true);
+              mSendBtn.setEnabled(true);
             }
-  
-            if (channels.length > 1) {
-              Collections.sort(mPrograms, ProgramUtilities.getProgramComparator());
-            }
-  
-            int index = -1;
-            
-            Program lastProgram = null;
-            
-            for (Program program : mPrograms) {
-              if (model.size() < mMaxListSize) {
-                if(ProgramListPlugin.getInstance().getSettings().showDateSeparator() && 
-                    (lastProgram == null || program.getDate().compareTo(lastProgram.getDate()) > 0)) {
-                  model.addElement(DATE_SEPARATOR);
-                }
-                
-                model.addElement(program);
-                
-                if (!program.isExpired() && index == -1) {
-                  index = model.getSize() - (ProgramListPlugin.getInstance().getSettings().showDateSeparator() ? 2 : 1);
-                }
-                
-                lastProgram = program;
-              }
-            }
-            int forceScrollingIndex = model.size() - 1;
-            if (forceScrollingIndex > 1000) {
-              forceScrollingIndex = 1000;
-            }
-            
-            updateList(model, forceScrollingIndex, index);
-            //mList.updateUI();
-          } catch (Exception e) {
-            e.printStackTrace();
-          }
-          
-          mFilterBox.setEnabled(true);
-          mChannelBox.setEnabled(true);
-          mRefreshBtn.setEnabled(true);
-          mSendBtn.setEnabled(true);
+          });
         }
       };
       mListThread.setDaemon(true);
@@ -602,7 +607,8 @@ public class ProgramListPanel extends JPanel implements PersonaListener {
             mUpdateThread = new Thread() {
               public void run() {
                 for(int i = mModel.getSize() - 1; i >= 0; i--) {
-                  if(mModel.get(i) instanceof Program && ((Program)mModel.get(i)).isExpired()) {
+                  Object value = mModel.get(i);
+                  if(value instanceof Program && ((Program)value).isExpired()) {
                     mModel.remove(i);
                   }
                 }

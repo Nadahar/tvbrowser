@@ -27,7 +27,7 @@ package captureplugin.drivers.defaultdriver;
 import java.util.Calendar;
 import java.util.Collection;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import util.paramhandler.ParamLibrary;
 import util.ui.Localizer;

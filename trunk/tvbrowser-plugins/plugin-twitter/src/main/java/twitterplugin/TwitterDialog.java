@@ -106,7 +106,7 @@ public final class TwitterDialog extends JDialog implements WindowClosingIf {
       }
     });
 
-    buttonBar.addGriddedButtons(new JButton[] { ok, cancel });
+    buttonBar.addButton(new JButton[] { ok, cancel });
 
     layout.appendRow(RowSpec.decode("pref"));
     layout.appendRow(RowSpec.decode("5dlu"));

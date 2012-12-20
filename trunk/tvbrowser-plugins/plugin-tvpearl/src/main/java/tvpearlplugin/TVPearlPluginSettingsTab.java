@@ -43,9 +43,9 @@ import util.ui.ScrollableJPanel;
 import util.ui.UiUtilities;
 
 import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.FormSpecs;
 
 import devplugin.ProgramReceiveIf;
 import devplugin.ProgramReceiveTarget;
@@ -181,7 +181,7 @@ public final class TVPearlPluginSettingsTab implements SettingsTab
     });
 		updateFilterEnabled();
 
-		builder.appendRow(FormFactory.PREF_ROWSPEC);
+		builder.appendRow(FormSpecs.PREF_ROWSPEC);
 		builder.setRow(2);
 		builder.addLabel(mLocalizer.msg("view", "View"), cc.xy(2, builder.getRow()));
 		builder.add(mViewOption, cc.xy(4, builder.getRow()));
@@ -243,15 +243,15 @@ public final class TVPearlPluginSettingsTab implements SettingsTab
 	}
 
   private void addSeparator(final PanelBuilder builder, final String label) {
-    builder.appendRow(FormFactory.PARAGRAPH_GAP_ROWSPEC);
-    builder.appendRow(FormFactory.PREF_ROWSPEC);
+    builder.appendRow(FormSpecs.PARAGRAPH_GAP_ROWSPEC);
+    builder.appendRow(FormSpecs.PREF_ROWSPEC);
 		builder.nextRow(2);
     builder.addSeparator(label);
   }
 
   private PanelBuilder newLine(final PanelBuilder builder) {
-    builder.appendRow(FormFactory.LINE_GAP_ROWSPEC);
-    builder.appendRow(FormFactory.PREF_ROWSPEC);
+    builder.appendRow(FormSpecs.LINE_GAP_ROWSPEC);
+    builder.appendRow(FormSpecs.PREF_ROWSPEC);
 		builder.nextRow(2);
 		return builder;
   }

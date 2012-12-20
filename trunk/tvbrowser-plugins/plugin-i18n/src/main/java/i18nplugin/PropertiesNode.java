@@ -300,7 +300,6 @@ public class PropertiesNode extends AbstractHierarchicalNode implements FilterNo
                 + I18NPlugin.getInstance().getInfo().getVersion());
       }
     }
-
   }
 
   /**

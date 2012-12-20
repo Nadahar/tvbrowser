@@ -55,6 +55,7 @@ import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.TreeSelectionEvent;
@@ -118,6 +119,8 @@ final public class TranslationDialog extends JDialog implements WindowClosingIf 
   private JTextField mFilterTF;
 
   private JButton mClearFilterB;
+  
+  private UnsortedPathNode mSelectedPathComponent;
 
   public TranslationDialog(final Window owner, final int splitPos) {
     super(owner);
@@ -218,7 +221,9 @@ final public class TranslationDialog extends JDialog implements WindowClosingIf 
 
     cardPanel.add(mEditor, EDITOR);
 
-    JEditorPane help = new JEditorPane("text/html",mLocalizer.msg("helpText", "<h1>Help missing</h1>"));
+    JEditorPane help = new JEditorPane();
+    help.setContentType("text/html");
+    UiUtilities.updateHtmlHelpTextArea(help, mLocalizer.msg("helpText", "<h1>Help missing</h1>"), UIManager.getColor("EditorPane.background"));
     help.setEditable(false);
 
     cardPanel.add(new JScrollPane(help, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER), HELP);
@@ -408,14 +413,42 @@ final public class TranslationDialog extends JDialog implements WindowClosingIf 
         StringBuilder dir = new StringBuilder(Settings.getUserSettingsDirName())
             .append(File.separatorChar).append("lang").append(
                 File.separatorChar);
-
+        
+        TreePath path = mTree.getSelectionPath();
+        
+        mSelectedPathComponent = null;
+        
+        if(path != null && !path.getLastPathComponent().equals(mRoot)) {
+          mSelectedPathComponent = (UnsortedPathNode)path.getPathComponent(1);
+        }
+        
+        final File baseDir = new File(dir.toString());
+        
         try {
           try {
             Method zipDirectory = zip.getClass().getMethod("zipDirectory", new Class<?> [] {File.class, File.class, FileFilter.class});
-            zipDirectory.invoke(zip, new Object[] {f,new File(dir.toString()),new FileFilter() {
+            zipDirectory.invoke(zip, new Object[] {f,baseDir,new FileFilter() {
               @Override
               public boolean accept(File pathname) {
-                return pathname.getName().endsWith(languageCreation.toString() + ".properties");
+                System.out.println(pathname);
+                boolean accept = false;
+                
+                if(mSelectedPathComponent != null) {
+                  for(int i = 0; i < mSelectedPathComponent.getChildCount(); i++) {
+                    String pathComponentName = ((UnsortedPathNode)mSelectedPathComponent.getChildAt(i)).toString();            
+                    File test = new File(baseDir,pathComponentName);
+                    
+                    if(pathname.getAbsolutePath().startsWith(test.getAbsolutePath())) {
+                      accept = true;
+                      break;
+                    }
+                  }
+                }
+                else {
+                  accept = true;
+                }
+                
+                return accept && pathname.getName().endsWith(languageCreation.toString() + ".properties");
               }
             }});
             

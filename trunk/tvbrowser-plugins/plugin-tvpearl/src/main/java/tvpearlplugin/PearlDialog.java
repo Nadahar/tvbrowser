@@ -196,8 +196,8 @@ public final class PearlDialog extends JDialog implements WindowClosingIf
 		mScrollPane = new JScrollPane(mDataList);
 		main.add(mScrollPane, BorderLayout.CENTER);
 
-		final ButtonBarBuilder builderButton = ButtonBarBuilder
-        .createLeftToRightBuilder();
+		final ButtonBarBuilder builderButton = new ButtonBarBuilder();
+		builderButton.setLeftToRight(true);
 		builderButton.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
 
 		final JButton configBn = new JButton(IconLoader.getInstance()

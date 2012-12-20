@@ -31,7 +31,7 @@ import java.util.TimeZone;
 
 import javax.swing.JOptionPane;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import util.exc.ErrorHandler;
 import util.io.IOUtilities;

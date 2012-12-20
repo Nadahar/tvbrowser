@@ -39,9 +39,9 @@ import javax.swing.event.ListSelectionListener;
 import util.ui.EnhancedPanelBuilder;
 import util.ui.Localizer;
 
-import com.jgoodies.forms.builder.ButtonBarBuilder2;
-import com.jgoodies.forms.factories.FormFactory;
+import com.jgoodies.forms.builder.ButtonBarBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormSpecs;
 
 import devplugin.SettingsTab;
 
@@ -73,9 +73,9 @@ class GenreSettingsTab implements SettingsTab {
   }
 
   public JPanel createSettingsPanel() {
-    final EnhancedPanelBuilder panelBuilder = new EnhancedPanelBuilder(FormFactory.RELATED_GAP_COLSPEC.encode() + ","
-        + FormFactory.PREF_COLSPEC.encode() + "," + FormFactory.RELATED_GAP_COLSPEC.encode() + ","
-        + FormFactory.PREF_COLSPEC.encode() + ", fill:default:grow");
+    final EnhancedPanelBuilder panelBuilder = new EnhancedPanelBuilder(FormSpecs.RELATED_GAP_COLSPEC.encode() + ","
+        + FormSpecs.PREF_COLSPEC.encode() + "," + FormSpecs.RELATED_GAP_COLSPEC.encode() + ","
+        + FormSpecs.PREF_COLSPEC.encode() + ", fill:default:grow");
     final CellConstraints cc = new CellConstraints();
 
     final JLabel label = new JLabel(mLocalizer
@@ -131,7 +131,7 @@ class GenreSettingsTab implements SettingsTab {
       }});
     
     panelBuilder.addRow();
-    ButtonBarBuilder2 buttonBar = new ButtonBarBuilder2();
+    ButtonBarBuilder buttonBar = new ButtonBarBuilder();
     buttonBar.addButton(new JButton[]{mAddFilter, mRemoveFilter});
     panelBuilder.add(buttonBar.getPanel(), cc.xyw(2, panelBuilder.getRow(), panelBuilder.getColumnCount() - 1));
 

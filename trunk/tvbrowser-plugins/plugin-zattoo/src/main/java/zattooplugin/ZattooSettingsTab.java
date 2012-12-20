@@ -26,9 +26,9 @@ import javax.swing.JRadioButton;
 import util.ui.Localizer;
 
 import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.FormSpecs;
 
 import devplugin.SettingsTab;
 
@@ -46,11 +46,11 @@ public final class ZattooSettingsTab implements SettingsTab {
 
   public JPanel createSettingsPanel() {
     final PanelBuilder builder = new PanelBuilder(new FormLayout(
-        FormFactory.RELATED_GAP_COLSPEC.encode() + ","
-        + FormFactory.PREF_COLSPEC.encode() + ","
-        + FormFactory.RELATED_GAP_COLSPEC.encode() + ","
-        + FormFactory.PREF_COLSPEC.encode() + ","
-        + FormFactory.GLUE_COLSPEC.encode(), ""));
+        FormSpecs.RELATED_GAP_COLSPEC.encode() + ","
+        + FormSpecs.PREF_COLSPEC.encode() + ","
+        + FormSpecs.RELATED_GAP_COLSPEC.encode() + ","
+        + FormSpecs.PREF_COLSPEC.encode() + ","
+        + FormSpecs.GLUE_COLSPEC.encode(), ""));
     final CellConstraints cc = new CellConstraints();
 
     final ZattooCountry[] countries = new ZattooCountry[] {
@@ -61,8 +61,8 @@ public final class ZattooSettingsTab implements SettingsTab {
     mCountry = new JComboBox(countries);
     mCountry.setSelectedItem(new ZattooCountry(mSettings.getCountry(), ""));
 
-    builder.appendRow(FormFactory.LINE_GAP_ROWSPEC);
-    builder.appendRow(FormFactory.PREF_ROWSPEC);
+    builder.appendRow(FormSpecs.LINE_GAP_ROWSPEC);
+    builder.appendRow(FormSpecs.PREF_ROWSPEC);
     builder.nextRow();
     builder.add(new JLabel(mLocalizer.msg("country","Country:")), cc.xy(2, builder.getRow()));
     builder.add(mCountry, cc.xy(4, builder.getRow()));
@@ -77,23 +77,23 @@ public final class ZattooSettingsTab implements SettingsTab {
     buttonGroup.add(mRbWebPlayer);
     buttonGroup.add(mRbPrism);
 
-    builder.appendRow(FormFactory.PARAGRAPH_GAP_ROWSPEC);
-    builder.appendRow(FormFactory.PREF_ROWSPEC);
+    builder.appendRow(FormSpecs.PARAGRAPH_GAP_ROWSPEC);
+    builder.appendRow(FormSpecs.PREF_ROWSPEC);
     builder.nextRow(2);
     builder.addSeparator(mLocalizer.msg("player", "Player"));
     
-    builder.appendRow(FormFactory.LINE_GAP_ROWSPEC);
-    builder.appendRow(FormFactory.PREF_ROWSPEC);
+    builder.appendRow(FormSpecs.LINE_GAP_ROWSPEC);
+    builder.appendRow(FormSpecs.PREF_ROWSPEC);
     builder.nextRow(2);
     builder.add(mRbLocalPlayer, cc.xyw(2, builder.getRow(), builder.getColumnCount() - 1));
     
-    builder.appendRow(FormFactory.LINE_GAP_ROWSPEC);
-    builder.appendRow(FormFactory.PREF_ROWSPEC);
+    builder.appendRow(FormSpecs.LINE_GAP_ROWSPEC);
+    builder.appendRow(FormSpecs.PREF_ROWSPEC);
     builder.nextRow(2);
     builder.add(mRbWebPlayer, cc.xyw(2, builder.getRow(), builder.getColumnCount() - 1));
     
-    builder.appendRow(FormFactory.LINE_GAP_ROWSPEC);
-    builder.appendRow(FormFactory.PREF_ROWSPEC);
+    builder.appendRow(FormSpecs.LINE_GAP_ROWSPEC);
+    builder.appendRow(FormSpecs.PREF_ROWSPEC);
     builder.nextRow(2);
     builder.add(mRbPrism, cc.xyw(2, builder.getRow(), builder.getColumnCount() - 1));
     

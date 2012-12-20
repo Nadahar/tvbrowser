@@ -55,7 +55,7 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import util.ui.Localizer;
 import util.ui.UIThreadRunner;
@@ -78,7 +78,7 @@ import devplugin.Version;
  * @author Andreas Hessel, Bodo Tasche
  */
 public class CapturePlugin extends devplugin.Plugin {
-  private static final Version mVersion = new Version(3,11,2);
+  private static final Version mVersion = new Version(3,11,3);
 
     /**
      * Translator

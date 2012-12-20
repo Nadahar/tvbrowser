@@ -31,7 +31,7 @@ import java.util.TreeMap;
 
 import javax.swing.table.AbstractTableModel;
 
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 
 import util.ui.Localizer;
 import captureplugin.drivers.defaultdriver.DeviceConfig;

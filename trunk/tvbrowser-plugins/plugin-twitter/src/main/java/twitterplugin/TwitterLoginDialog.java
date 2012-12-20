@@ -163,14 +163,14 @@ public final class TwitterLoginDialog extends JDialog implements WindowClosingIf
       }
     });
 
-    builder.addGriddedButtons(new JButton[] { ok, cancel });
+    builder.addButton(new JButton[] { ok, cancel });
 
     content.appendRow("fill:pref:grow");
     content.appendRow("pref");
     content.add(builder.getPanel(), cc.xyw(1, content.getRowCount(), 4));
 
     content.appendRow("5dlu");
-    content.setBorder(Borders.DIALOG_BORDER);
+    content.border(Borders.DIALOG_BORDER);
     getContentPane().add(content.getPanel());
 
     UiUtilities.setSize(this, Sizes.dialogUnitXAsPixel(200, this), Sizes.dialogUnitYAsPixel(140, this));
