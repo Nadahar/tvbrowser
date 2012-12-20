@@ -38,7 +38,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import util.paramhandler.ParamParser;
 import util.program.AbstractPluginProgramFormating;
@@ -60,7 +60,7 @@ import devplugin.Version;
  * @author bodo
  */
 public class ClipboardPlugin extends Plugin {
-  private static final Version mVersion = new Version(3,02);
+  private static final Version mVersion = new Version(3,03);
 
   /** Translator */
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(ClipboardPlugin.class);

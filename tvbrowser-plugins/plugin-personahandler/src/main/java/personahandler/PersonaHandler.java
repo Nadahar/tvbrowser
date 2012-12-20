@@ -21,7 +21,7 @@ import javax.swing.Icon;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 
 import util.io.IOUtilities;
 import util.ui.Localizer;
@@ -37,7 +37,7 @@ import devplugin.Version;
 
 public class PersonaHandler extends Plugin implements PersonaListener {
   private final static Localizer mLocalizer = Localizer.getLocalizerFor(PersonaHandler.class);
-  private static Version mVersion = new Version(0,11,0,true);
+  private static Version mVersion = new Version(0,12,0,true);
   private PluginInfo mPluginInfo;
   
   private static PersonaHandler mInstance;

@@ -53,7 +53,7 @@ public class KNotifyPlugin extends Plugin {
   /**
    * plugin version
    */
-  private static final Version mVersion = new Version(3,0);
+  private static final Version mVersion = new Version(3,01);
 
   private static final String TARGET = "KNOTIFY_TARGET";
 

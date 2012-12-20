@@ -40,6 +40,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 
@@ -221,32 +222,36 @@ public class AConsole extends Plugin {
 	 * @see devplugin.Plugin#onActivation()
 	 */
 	public void onActivation() {
-	  if(mCenterPanel == null) {
-	    mCenterPanel = UiUtilities.createPersonaBackgroundPanel();
-	    mCenterPanel.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
-	    mConsoleCenterPanel = new AConsoleCenterPanel();
-      mCenterWrapper = new PluginCenterPanelWrapper() {
-        @Override
-        public PluginCenterPanel[] getCenterPanels() {
-          return new PluginCenterPanel[] {mConsoleCenterPanel};
+	  SwingUtilities.invokeLater(new Runnable() {
+        public void run() {
+    	  if(mCenterPanel == null) {
+    	    mCenterPanel = UiUtilities.createPersonaBackgroundPanel();
+    	    mCenterPanel.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
+    	    mConsoleCenterPanel = new AConsoleCenterPanel();
+            mCenterWrapper = new PluginCenterPanelWrapper() {
+              @Override
+              public PluginCenterPanel[] getCenterPanels() {
+                return new PluginCenterPanel[] {mConsoleCenterPanel};
+              }
+            };
+    	  }
+    	  
+    	  mCenterPanel.addAncestorListener(new AncestorListener() {
+            public void ancestorRemoved(AncestorEvent event) {
+              removePanel();
+            }
+            
+            public void ancestorMoved(AncestorEvent event) {}
+            
+            public void ancestorAdded(AncestorEvent event) {
+              addPanel();
+            }
+          });
+        
+  		  Console.getConsole().activate();
+  		  AConsole.super.onActivation();
         }
-      };
-	  }
-	  
-	  mCenterPanel.addAncestorListener(new AncestorListener() {
-      public void ancestorRemoved(AncestorEvent event) {
-        removePanel();
-      }
-      
-      public void ancestorMoved(AncestorEvent event) {}
-      
-      public void ancestorAdded(AncestorEvent event) {
-        addPanel();
-      }
-    });
-    
-		Console.getConsole().activate();
-		super.onActivation();
+      });
 	}
 	
 	public void handleTvBrowserStartFinished() {
@@ -256,18 +261,23 @@ public class AConsole extends Plugin {
 	public void addPanel() {
 	  new Thread() {
 	    public void run() {
-	      while(!mTvBrowserWasStarted) {
-	        try {
-            sleep(500);
-          } catch (InterruptedException e) {}
-	      }  
-	      
-        if(mConsolePanel == null) {
-          mConsole = Console.getConsole();
-          mConsolePanel = new ConsolePanel(null,mConsole,new java.awt.Font("Monospaced", 0, 12),Color.black,Color.gray,true);
-          mCenterPanel.add(mConsolePanel, BorderLayout.CENTER);
-          mCenterPanel.repaint();
-         }
+  	      while(!mTvBrowserWasStarted) {
+  	        try {
+              sleep(500);
+            } catch (InterruptedException e) {}
+  	      }  
+  	      
+          if(mConsolePanel == null) {
+            mConsole = Console.getConsole();
+  
+            SwingUtilities.invokeLater(new Runnable() {              
+              public void run() {
+                mConsolePanel = new ConsolePanel(null,mConsole,new java.awt.Font("Monospaced", 0, 12),Color.black,Color.gray,true);
+                mCenterPanel.add(mConsolePanel, BorderLayout.CENTER);
+                mCenterPanel.repaint();
+              }
+            });
+          }
 	    }
 	  }.start();
 	}

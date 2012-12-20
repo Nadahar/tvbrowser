@@ -31,8 +31,8 @@ import util.ui.ImageUtilities;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 
-import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormSpecs;
 
 import devplugin.Plugin;
 import devplugin.SettingsTab;
@@ -82,7 +82,7 @@ public class KNotifySettingsTab implements SettingsTab {
       return panel;
     }
     
-    EnhancedPanelBuilder panel = new EnhancedPanelBuilder(FormFactory.RELATED_GAP_COLSPEC.encode() + ", pref:grow, " + FormFactory.RELATED_GAP_COLSPEC.encode() +"," + FormFactory.PREF_COLSPEC.encode());
+    EnhancedPanelBuilder panel = new EnhancedPanelBuilder(FormSpecs.RELATED_GAP_COLSPEC.encode() + ", pref:grow, " + FormSpecs.RELATED_GAP_COLSPEC.encode() +"," + FormSpecs.PREF_COLSPEC.encode());
     
     CellConstraints cc = new CellConstraints();
     

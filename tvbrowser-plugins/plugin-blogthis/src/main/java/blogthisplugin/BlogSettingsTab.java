@@ -35,8 +35,8 @@ import util.ui.EnhancedPanelBuilder;
 import util.ui.Localizer;
 import util.ui.PluginProgramConfigurationPanel;
 
-import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormSpecs;
 
 import devplugin.SettingsTab;
 
@@ -83,9 +83,9 @@ public class BlogSettingsTab implements SettingsTab {
    * Create the SettingsPanel
    */
   public JPanel createSettingsPanel() {
-    final EnhancedPanelBuilder settingsPanel = new EnhancedPanelBuilder(FormFactory.RELATED_GAP_COLSPEC.encode() + ","
-        + FormFactory.PREF_COLSPEC.encode() + "," + FormFactory.RELATED_GAP_COLSPEC.encode() + ","
-        + FormFactory.PREF_COLSPEC.encode() + ", fill:pref:grow");
+    final EnhancedPanelBuilder settingsPanel = new EnhancedPanelBuilder(FormSpecs.RELATED_GAP_COLSPEC.encode() + ","
+        + FormSpecs.PREF_COLSPEC.encode() + "," + FormSpecs.RELATED_GAP_COLSPEC.encode() + ","
+        + FormSpecs.PREF_COLSPEC.encode() + ", fill:pref:grow");
 
     String[] services = { "", "Blogger.com", "Wordpress", "b2evolution" };
 

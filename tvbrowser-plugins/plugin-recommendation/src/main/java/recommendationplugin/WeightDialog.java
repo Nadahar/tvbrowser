@@ -62,7 +62,7 @@ public final class WeightDialog extends JDialog implements WindowClosingIf {
       }
     });
 
-    builder.addGriddedButtons(new JButton[]{ok});
+    builder.addButton(ok);
 
     panel.add(builder.getPanel(), cc.xy(1, line));
 

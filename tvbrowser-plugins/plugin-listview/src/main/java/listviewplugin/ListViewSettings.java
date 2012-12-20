@@ -34,8 +34,8 @@ import javax.swing.JPanel;
 import util.ui.EnhancedPanelBuilder;
 import util.ui.PluginsPictureSettingsPanel;
 
-import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormSpecs;
 
 import devplugin.SettingsTab;
 
@@ -69,7 +69,7 @@ public class ListViewSettings implements SettingsTab {
    * Create the Panel
    */
   public JPanel createSettingsPanel() {
-    EnhancedPanelBuilder panel = new EnhancedPanelBuilder(FormFactory.RELATED_GAP_COLSPEC.encode() + ",default:grow");
+    EnhancedPanelBuilder panel = new EnhancedPanelBuilder(FormSpecs.RELATED_GAP_COLSPEC.encode() + ",default:grow");
     
     CellConstraints cc = new CellConstraints();
     

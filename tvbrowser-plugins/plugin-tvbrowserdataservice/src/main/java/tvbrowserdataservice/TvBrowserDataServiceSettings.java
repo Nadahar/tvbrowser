@@ -19,7 +19,7 @@ package tvbrowserdataservice;
 import java.util.ArrayList;
 import java.util.Properties;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 public class TvBrowserDataServiceSettings {
   private static final String KEY_GROUPNAME = "groupname";

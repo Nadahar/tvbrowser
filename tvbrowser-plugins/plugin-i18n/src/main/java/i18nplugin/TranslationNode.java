@@ -32,7 +32,7 @@ import java.util.jar.JarFile;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * This Node creates a Tree of all Properties in a certain Jar-File

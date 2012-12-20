@@ -45,7 +45,8 @@ public class UnsortedPathNode extends AbstractHierarchicalNode implements Filter
   public void save() throws IOException{
     int max = getChildCount();
     for (int i=0;i<max;i++) {
-      ((LanguageNodeIf)getChildAt(i)).save();
+      LanguageNodeIf nodeIf = (LanguageNodeIf)getChildAt(i);      
+      nodeIf.save();
     }
   }
 

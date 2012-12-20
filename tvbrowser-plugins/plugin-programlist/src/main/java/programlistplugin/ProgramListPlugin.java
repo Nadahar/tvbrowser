@@ -98,6 +98,12 @@ public class ProgramListPlugin extends Plugin {
   }
   
   public void onActivation() {
+    SwingUtilities.invokeLater(new Runnable() {
+      
+      @Override
+      public void run() {
+        // TODO Auto-generated method stub
+        
     mCenterPanelWrapper = UiUtilities.createPersonaBackgroundPanel();
     mCenterPanel = new ProgramListCenterPanel();
     
@@ -139,31 +145,39 @@ public class ProgramListPlugin extends Plugin {
         addPanel();
       }
     }.start();
+      }
+    });
+
   }
   
   
   public void addPanel() {
-    if(getSettings().provideTab()) {
-      mCenterPanelEntry = new ProgramListPanel(null, false, MAX_PANEL_LIST_SIZE);
-      Persona.getInstance().registerPersonaListener(mCenterPanelEntry);
-      
-      SwingUtilities.invokeLater(new Runnable() {
-        @Override
-        public void run() {
-          mCenterPanelWrapper.add(mCenterPanelEntry, BorderLayout.CENTER);
+    SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        if(getSettings().provideTab()) {
+          mCenterPanelEntry = new ProgramListPanel(null, false, MAX_PANEL_LIST_SIZE);
+          Persona.getInstance().registerPersonaListener(mCenterPanelEntry);
           
-          if(Persona.getInstance().getHeaderImage() != null) {
-            mCenterPanelEntry.updatePersona();
+          SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+              mCenterPanelWrapper.add(mCenterPanelEntry, BorderLayout.CENTER);
+              
+              if(Persona.getInstance().getHeaderImage() != null) {
+                mCenterPanelEntry.updatePersona();
+              }
+            }
+          });
+        } else {
+          if(mCenterPanelEntry != null) {
+            Persona.getInstance().removePersonaListerner(mCenterPanelEntry);
           }
+          
+          mCenterPanelEntry = null;
         }
-      });
-    } else {
-      if(mCenterPanelEntry != null) {
-        Persona.getInstance().removePersonaListerner(mCenterPanelEntry);
       }
-      
-      mCenterPanelEntry = null;
-    }
+    });
   }
   
   public void handleTvDataUpdateFinished() {

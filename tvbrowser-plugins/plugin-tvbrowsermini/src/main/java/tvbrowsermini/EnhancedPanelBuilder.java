@@ -20,8 +20,8 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.FormSpecs;
 
 /**
  * panel builder with additional methods for typical TV-Browser UI (e.g. settings tab)
@@ -53,12 +53,12 @@ public class EnhancedPanelBuilder extends PanelBuilder {
    */
   public JComponent addParagraph(final String label) {
     if (getRowCount() > 0) {
-      appendRow(FormFactory.PARAGRAPH_GAP_ROWSPEC);
+      appendRow(FormSpecs.PARAGRAPH_GAP_ROWSPEC);
     }
     else {
-      appendRow(FormFactory.NARROW_LINE_GAP_ROWSPEC);
+      appendRow(FormSpecs.NARROW_LINE_GAP_ROWSPEC);
     }
-    appendRow(FormFactory.PREF_ROWSPEC);
+    appendRow(FormSpecs.PREF_ROWSPEC);
     incrementRowNumber();
     if (label != null && label.length() > 0) {
       return addSeparator(label);
@@ -74,7 +74,7 @@ public class EnhancedPanelBuilder extends PanelBuilder {
    * @return the builder
    */
   public PanelBuilder addRow() {
-    return addRow(FormFactory.PREF_ROWSPEC.encode());
+    return addRow(FormSpecs.PREF_ROWSPEC.encode());
   }
 
   private void incrementRowNumber() {
@@ -104,7 +104,7 @@ public class EnhancedPanelBuilder extends PanelBuilder {
    * @return the builder
    */
   public PanelBuilder addRow(final String rowHeightCode) {
-    appendRow(FormFactory.LINE_GAP_ROWSPEC);
+    appendRow(FormSpecs.LINE_GAP_ROWSPEC);
     appendRow(rowHeightCode);
     incrementRowNumber();
     return this;

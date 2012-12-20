@@ -91,7 +91,7 @@ public final class ImdbUpdateDialog extends JDialog {
     });
     final ButtonBarBuilder builder = new ButtonBarBuilder();
     builder.addGlue();
-    builder.addGriddedButtons(new JButton[] {cancel});
+    builder.addButton(cancel);
     panel.add(builder.getPanel(), cc.xy(1,5));
 
     mMonitor = new ProgressBarProgressMonitor(progressBar, label);

@@ -194,7 +194,7 @@ public class MovieAwardDialog extends JDialog implements WindowClosingIf {
     });
 
     builder.addGlue();
-    builder.addGridded(ok);
+    builder.addButton(ok);
 
     panel.add(builder.getPanel(), cc.xy(1, 3));
     setSize(Sizes.dialogUnitXAsPixel(620, this), Sizes.dialogUnitYAsPixel(

@@ -54,7 +54,7 @@ import devplugin.Version;
  * @author bodo
  */
 public class ListViewPlugin extends Plugin {
-  private static final Version mVersion = new Version(3,22,true);
+  private static final Version mVersion = new Version(3,23,true);
 
     protected static final int PROGRAMTABLEWIDTH = 200;
   
@@ -103,6 +103,12 @@ public class ListViewPlugin extends Plugin {
     }
     
     public void onActivation() {
+      SwingUtilities.invokeLater(new Runnable() {
+        
+        @Override
+        public void run() {
+          // TODO Auto-generated method stub
+          
       if(mCenterPanelWrapper == null) {
         mCenterPanelWrapper = UiUtilities.createPersonaBackgroundPanel();
         mCenterWrapper = new PluginCenterPanelWrapper() {
@@ -173,26 +179,34 @@ public class ListViewPlugin extends Plugin {
           }
         }.start();
       }
+        }
+      });
+
     }
     
     void addPanel() {
-      if(provideTab() && mCenterPanel == null) {
-        mCenterPanel = new ListViewPanel(ListViewPlugin.this);
-        Persona.getInstance().registerPersonaListener(mCenterPanel);
-        
-        SwingUtilities.invokeLater(new Runnable() {
-          public void run() {
-            mCenterPanel.updatePersona();
-            mCenterPanelWrapper.add(mCenterPanel, BorderLayout.CENTER);
-            mCenterPanelWrapper.repaint();
+      SwingUtilities.invokeLater(new Runnable() {
+        @Override
+        public void run() {
+          if(provideTab() && mCenterPanel == null) {
+            mCenterPanel = new ListViewPanel(ListViewPlugin.this);
+            Persona.getInstance().registerPersonaListener(mCenterPanel);
+            
+            SwingUtilities.invokeLater(new Runnable() {
+              public void run() {
+                mCenterPanel.updatePersona();
+                mCenterPanelWrapper.add(mCenterPanel, BorderLayout.CENTER);
+                mCenterPanelWrapper.repaint();
+              }
+            });
           }
-        });
-      }
-      else if(!provideTab() && mCenterPanel != null) {
-        mCenterPanelWrapper.remove(mCenterPanel);
-        Persona.getInstance().removePersonaListerner(mCenterPanel);
-        mCenterPanel = null;
-      }
+          else if(!provideTab() && mCenterPanel != null) {
+            mCenterPanelWrapper.remove(mCenterPanel);
+            Persona.getInstance().removePersonaListerner(mCenterPanel);
+            mCenterPanel = null;
+          }
+        }
+      });
     }
     
     public void onDeactivation() {

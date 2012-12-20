@@ -36,8 +36,8 @@ import util.ui.EnhancedPanelBuilder;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 
-import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormSpecs;
 
 import devplugin.Plugin;
 import devplugin.SettingsTab;
@@ -72,7 +72,7 @@ public class GrowlSettingsTab implements SettingsTab {
    * @return Panel
    */
   public JPanel createSettingsPanel() {
-    final EnhancedPanelBuilder panel = new EnhancedPanelBuilder(FormFactory.RELATED_GAP_COLSPEC.encode() + "," + FormFactory.PREF_COLSPEC.encode() + "," + FormFactory.RELATED_GAP_COLSPEC.encode() + ",pref:grow");
+    final EnhancedPanelBuilder panel = new EnhancedPanelBuilder(FormSpecs.RELATED_GAP_COLSPEC.encode() + "," + FormSpecs.PREF_COLSPEC.encode() + "," + FormSpecs.RELATED_GAP_COLSPEC.encode() + ",pref:grow");
     final CellConstraints cc = new CellConstraints();
     
     panel.addRow();

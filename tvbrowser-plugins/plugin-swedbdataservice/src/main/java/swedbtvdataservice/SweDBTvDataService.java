@@ -24,7 +24,7 @@ import java.util.logging.Logger;
 
 import javax.swing.Icon;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import tvdataservice.SettingsPanel;
 import tvdataservice.TvDataUpdateManager;
@@ -50,7 +50,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
 
   private static final Logger mLog = Logger.getLogger(SweDBTvDataService.class.getName());
 
-  private static final Version VERSION = new Version(3,02);
+  private static final Version VERSION = new Version(3,03);
 
   private File mWorkingDirectory;
 
