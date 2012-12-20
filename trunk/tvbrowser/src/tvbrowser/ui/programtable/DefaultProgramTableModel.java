@@ -513,6 +513,8 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
   
   
   protected int getColumnOfChannel(Channel channel) {
+    channel = Channel.getChannelForChannel(channel);
+    
     checkThread();
     for (int col = 0; col < mShownChannelArr.length; col++) {
       if (channel.equals(mShownChannelArr[col])) {
@@ -621,6 +623,7 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
 
   protected void fireProgramHasChanged(Program program) {
     // Get the column of this program
+    
     int col = getColumnOfChannel(program.getChannel());
     if (col == -1) {
       // This program is not shown in this table
