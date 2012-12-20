@@ -48,7 +48,7 @@ import java.util.logging.Logger;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import tvbrowser.core.plugin.AbstractPluginProxy;
 import tvbrowser.core.plugin.BeanShellPluginProxy;

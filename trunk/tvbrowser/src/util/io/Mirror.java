@@ -44,8 +44,6 @@ import java.util.StringTokenizer;
 import java.util.logging.Logger;
 import java.util.zip.GZIPOutputStream;
 
-import org.apache.commons.lang.math.RandomUtils;
-
 import util.exc.TvBrowserException;
 import devplugin.Date;
 import devplugin.ProgressMonitor;
@@ -372,7 +370,7 @@ public class Mirror {
 
     if(totalWeight > 0) {
       // Choose a weight
-      int chosenWeight = RandomUtils.nextInt(totalWeight);
+      int chosenWeight = (int)(Math.random() * totalWeight);
   
       // Find the chosen mirror
       int currWeight = 0;

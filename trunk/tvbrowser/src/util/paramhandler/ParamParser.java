@@ -30,7 +30,7 @@ import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import util.ui.Localizer;
 import devplugin.Program;

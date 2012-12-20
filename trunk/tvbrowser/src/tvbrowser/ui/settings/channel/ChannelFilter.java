@@ -25,7 +25,7 @@
  */
 package tvbrowser.ui.settings.channel;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import devplugin.Channel;
 

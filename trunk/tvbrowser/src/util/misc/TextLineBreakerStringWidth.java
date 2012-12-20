@@ -35,7 +35,7 @@ import java.util.logging.Logger;
 import net.davidashen.text.Hyphenator;
 import net.davidashen.util.ErrorHandler;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import tvbrowser.core.Settings;
 import util.io.stream.InputStreamProcessor;

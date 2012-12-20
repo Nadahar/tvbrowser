@@ -40,7 +40,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import tvbrowser.core.tvdataservice.ChannelGroupManager;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;

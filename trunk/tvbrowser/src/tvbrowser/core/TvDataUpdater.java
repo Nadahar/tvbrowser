@@ -53,8 +53,6 @@ import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 
-import org.apache.commons.lang.math.RandomUtils;
-
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
@@ -500,7 +498,7 @@ public class TvDataUpdater {
     if (!tvDataWasChanged() && Settings.propNTPTimeCheck.getBoolean()) {
       if (Settings.propLastNTPCheck.getDate() == null || Settings.propLastNTPCheck.getDate().compareTo(Date.getCurrentDate()) < 0) {
         Settings.propLastNTPCheck.setDate(Date.getCurrentDate());
-        int serverNum = RandomUtils.nextInt(4);
+        int serverNum = (int)(Math.random() * 4);
         int differenceSecs = NetworkUtilities
             .getTimeDifferenceSeconds(Integer.toString(serverNum) + ".tvbrowser.pool.ntp.org");
         if (Math.abs(differenceSecs) >= 86400) {

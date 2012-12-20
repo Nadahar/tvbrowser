@@ -41,7 +41,7 @@ import java.util.logging.Logger;
 
 import javax.swing.SwingUtilities;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import util.exc.ErrorHandler;
 import util.io.ExecutionHandler;

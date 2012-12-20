@@ -64,7 +64,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataUpdateListener;
@@ -274,28 +274,33 @@ public class ReminderPlugin {
   }
   
   void addPanel() {
-    if(mSettings.getProperty("provideTab", "true").equals("true")) {
-      if(mReminderListPanel == null) {
-        mReminderListPanel = new ReminderListPanel(mReminderList, null);
-        Persona.getInstance().registerPersonaListener(mReminderListPanel);
-        
-        SwingUtilities.invokeLater(new Runnable() {
-          @Override
-          public void run() {        
-            mCenterPanel.add(mReminderListPanel, BorderLayout.CENTER);
-            mReminderListPanel.updatePersona();
-            mCenterPanel.repaint();
+    SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        if(mSettings.getProperty("provideTab", "true").equals("true")) {
+          if(mReminderListPanel == null) {
+            mReminderListPanel = new ReminderListPanel(mReminderList, null);
+            Persona.getInstance().registerPersonaListener(mReminderListPanel);
+            
+            SwingUtilities.invokeLater(new Runnable() {
+              @Override
+              public void run() {        
+                mCenterPanel.add(mReminderListPanel, BorderLayout.CENTER);
+                mReminderListPanel.updatePersona();
+                mCenterPanel.repaint();
+              }
+            });
           }
-        });
+        }
+        else {
+          if(mReminderListPanel != null) {
+            Persona.getInstance().removePersonaListerner(mReminderListPanel);
+          }
+          
+          mReminderListPanel = null;
+        }
       }
-    }
-    else {
-      if(mReminderListPanel != null) {
-        Persona.getInstance().removePersonaListerner(mReminderListPanel);
-      }
-      
-      mReminderListPanel = null;
-    }
+    });
   }
 
   /**

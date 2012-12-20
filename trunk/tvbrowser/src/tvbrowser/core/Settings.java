@@ -49,7 +49,7 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import tvbrowser.TVBrowser;
 import tvbrowser.core.contextmenu.SeparatorMenuItem;

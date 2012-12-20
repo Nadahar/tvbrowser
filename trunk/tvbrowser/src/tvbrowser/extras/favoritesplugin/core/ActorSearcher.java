@@ -25,7 +25,7 @@
  */
 package tvbrowser.extras.favoritesplugin.core;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import tvbrowser.core.search.regexsearch.RegexSearcher;
 import util.exc.TvBrowserException;

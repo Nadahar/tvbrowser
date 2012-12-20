@@ -533,8 +533,9 @@ public class SettingsDialog implements WindowClosingIf {
     if (nodeId != null && nodeId.equalsIgnoreCase(SettingsItem.CHANNELS)) {
       waitForLoadedChannels();
     }
+    System.out.println(node);
     JPanel pn = node.getSettingsPanel();
-
+System.out.println("hier");
     if (pn != null) {
       String help = node.getHelpUrl();
 
@@ -713,7 +714,7 @@ public class SettingsDialog implements WindowClosingIf {
         if (mSettingsTab != null) {
           try {
             mSettingsPn = mSettingsTab.createSettingsPanel();
-          } catch (Exception e) {
+          } catch (Throwable e) {
             ErrorHandler.handle(mLocalizer.msg("loadError",
                 "An error occurred during loading of {0}", mSettingsTab
                     .getTitle()), e);

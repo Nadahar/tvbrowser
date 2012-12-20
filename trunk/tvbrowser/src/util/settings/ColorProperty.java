@@ -27,7 +27,7 @@ package util.settings;
 
 import java.awt.Color;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import util.ui.UiUtilities;
 
