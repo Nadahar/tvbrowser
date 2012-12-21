@@ -39,7 +39,7 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import util.io.IOUtilities;
 import util.ui.EnhancedPanelBuilder;
@@ -50,8 +50,8 @@ import util.ui.customizableitems.SelectableItem;
 import util.ui.customizableitems.SelectableItemList;
 import util.ui.customizableitems.SelectableItemRendererCenterComponentIf;
 
-import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormSpecs;
 
 import devplugin.SettingsTab;
 
@@ -72,9 +72,9 @@ class FilterViewSettingsTab implements SettingsTab {
   }
 
   public JPanel createSettingsPanel() {
-    final EnhancedPanelBuilder panelBuilder = new EnhancedPanelBuilder(FormFactory.RELATED_GAP_COLSPEC.encode() + ','
-        + FormFactory.PREF_COLSPEC.encode() + ',' + FormFactory.RELATED_GAP_COLSPEC.encode() + ','
-        + FormFactory.PREF_COLSPEC.encode() + ", fill:default:grow");
+    final EnhancedPanelBuilder panelBuilder = new EnhancedPanelBuilder(FormSpecs.RELATED_GAP_COLSPEC.encode() + ','
+        + FormSpecs.PREF_COLSPEC.encode() + ',' + FormSpecs.RELATED_GAP_COLSPEC.encode() + ','
+        + FormSpecs.PREF_COLSPEC.encode() + ", fill:default:grow");
     final CellConstraints cc = new CellConstraints();
 
     final JLabel label = new JLabel(mLocalizer.msg("daysToShow", "Days to show"));
