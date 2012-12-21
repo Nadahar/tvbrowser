@@ -1443,7 +1443,7 @@ public class TVBrowser {
       
       if(updateItems.length > 0) {
         Settings.propPluginBetaWarning.setBoolean(false);
-        SoftwareUpdateDlg updateDlg = new SoftwareUpdateDlg(null,SoftwareUpdater.ONLY_DATA_SERVICE_TYPE,updateItems,true);
+        SoftwareUpdateDlg updateDlg = new SoftwareUpdateDlg(null,SoftwareUpdater.ONLY_DATA_SERVICE_TYPE,updateItems,true,null);
         updateDlg.setLocationRelativeTo(null);
         updateDlg.setVisible(true);
         
@@ -1466,7 +1466,9 @@ public class TVBrowser {
 
         @Override
         public void run() {
-          TvBrowserVersionChangeDlg versionChange = new TvBrowserVersionChangeDlg(Settings.propTVBrowserVersion.getVersion());
+          Version obligartoryUpdate = new Version(3,21,51,false);
+          
+          TvBrowserVersionChangeDlg versionChange = new TvBrowserVersionChangeDlg(Settings.propTVBrowserVersion.getVersion(),obligartoryUpdate);
           versionChange.pack();
           versionChange.setLocationRelativeTo(null);
           versionChange.setVisible(true);
