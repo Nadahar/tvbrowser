@@ -533,10 +533,10 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
       }
       if (successfullyDownloadedItems > 0 && !mIsVersionChange) {
         JOptionPane.showMessageDialog(null, mLocalizer.msg("restartprogram", "please restart tvbrowser before..."));
-        close();
+        setVisible(false);
       }
       else if(mIsVersionChange) {
-        close();
+        setVisible(false);
       }
     }
     else if (event.getSource() == mHelpBtn) {
