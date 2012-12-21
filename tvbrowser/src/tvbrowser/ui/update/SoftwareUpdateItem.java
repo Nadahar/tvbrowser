@@ -39,6 +39,32 @@ import devplugin.Version;
  * Contains informations about a software update.
  */
 public abstract class SoftwareUpdateItem {
+  private static final String VERSION_KEY = "version";
+  private static final String STABLE_KEY = "stable";
+  private static final String VERSION_NAME_KEY = "version.name";
+  private static final String ONLY_UPDATE_KEY = "onlyUpdate";
+  private static final String OS_NAME_KEY = "os.name";
+  private static final String REQUIRES_KEY = "requires";
+  private static final String MAXIMAL_VERSION_KEY = "maximalVersion";
+  private static final String ESSENTIAL_KEY = "essential";
+  private static final String NAME_DE_KEY = "name_de";
+  private static final String NAME_EN_KEY = "name_en";
+  private static final String DESCRIPTION_DE_KEY = "description";
+  private static final String DESCRIPTION_EN_KEY = "description_en";
+  private static final String WEBSITE_DE_KEY = "website";
+  private static final String WEBSITE_EN_KEY = "website_en";
+  private static final String DOWNLOAD_TYPE_KEY = "downloadtype";
+  private static final String DOWNLOAD_KEY = "download";
+  private static final String FILE_NAME_KEY = "filename";
+  private static final String KATEGORY_KEY = "category"; 
+    
+  private static final String DOWNLOAD_TYPE_MIRROR_VALUE = "mirrors";
+  private static final String KATEGORY_UNKNOWN_VALUE = "unknown";
+  
+  private static final char WINDOWS_OS_VALUE = 'w';
+  private static final char OSX_OS_VALUE = 'm';
+  private static final char LINUX_OS_VALUE = 'l';
+  private static final char OTHER_OS_VALUE = 'o';
 
   private HashMap<String, String> mPropertyMap;
   private String mClassName;
@@ -80,7 +106,7 @@ public abstract class SoftwareUpdateItem {
    * @return The version of this update item.
    */
   public Version getVersion() {
-    String v = getProperty("version");
+    String v = getProperty(VERSION_KEY);
     if (v==null) {
       return null;
     }
@@ -101,8 +127,8 @@ public abstract class SoftwareUpdateItem {
     }catch(NumberFormatException e) {
       return null;
     }
-    stable = "true".equalsIgnoreCase(getProperty("stable"));
-    return new Version(major, minor, subMinor, stable, getProperty("version.name"));
+    stable = "true".equalsIgnoreCase(getProperty(STABLE_KEY));
+    return new Version(major, minor, subMinor, stable, getProperty(VERSION_NAME_KEY));
   }
 
   /**
@@ -112,7 +138,7 @@ public abstract class SoftwareUpdateItem {
    * <code>false</code> otherwise.
    */
   public boolean isStable() {
-    return "true".equalsIgnoreCase(getProperty("stable"));
+    return "true".equalsIgnoreCase(getProperty(STABLE_KEY));
   }
 
   /**
@@ -122,7 +148,7 @@ public abstract class SoftwareUpdateItem {
    * only update item, <code>false</code> otherwise.
    */
   public boolean isOnlyUpdate() {
-    return "true".equalsIgnoreCase(getProperty("onlyUpdate"));
+    return "true".equalsIgnoreCase(getProperty(ONLY_UPDATE_KEY));
   }
 
   /**
@@ -133,21 +159,21 @@ public abstract class SoftwareUpdateItem {
    * @since 2.2.4/2.6
    */
   public boolean isSupportingCurrentOs() {
-    String prop = getProperty("os.name");
+    String prop = getProperty(OS_NAME_KEY);
 
     if(prop == null) {
       return true;
     }
-    else if (prop.indexOf('w') != -1 && OperatingSystem.isWindows()) {
+    else if (prop.indexOf(WINDOWS_OS_VALUE) != -1 && OperatingSystem.isWindows()) {
       return true;
     }
-    else if (prop.indexOf('m') != -1 && OperatingSystem.isMacOs()) {
+    else if (prop.indexOf(OSX_OS_VALUE) != -1 && OperatingSystem.isMacOs()) {
       return true;
     }
-    else if (prop.indexOf('l') != -1 && OperatingSystem.isLinux()) {
+    else if (prop.indexOf(LINUX_OS_VALUE) != -1 && OperatingSystem.isLinux()) {
       return true;
     }
-    else if (prop.indexOf('o') != -1 && OperatingSystem.isOther()) {
+    else if (prop.indexOf(OTHER_OS_VALUE) != -1 && OperatingSystem.isOther()) {
       return true;
     }
 
@@ -186,7 +212,7 @@ public abstract class SoftwareUpdateItem {
    * @return The required TV-Browser version.
    */
   public Version getRequiredVersion() {
-    return getVersion(getProperty("requires"));
+    return getVersion(getProperty(REQUIRES_KEY));
   }
 
   /**
@@ -195,7 +221,18 @@ public abstract class SoftwareUpdateItem {
    * @return The maximum supported TV-Browser version.
    */
   public Version getMaximumVersion() {
-    return getVersion(getProperty("maximalVersion"));
+    return getVersion(getProperty(MAXIMAL_VERSION_KEY));
+  }
+  
+  /**
+   * Gets the version for which this software update is essential.
+   * 
+   * @return The TV-Browser version this software update is essential for
+   *          or <code>null</code> if there is no essential version.
+   * @since 3.3
+   */
+  public Version getEssentialTvbVersion() {
+    return getVersion(getProperty(ESSENTIAL_KEY));
   }
 
   /**
@@ -204,10 +241,10 @@ public abstract class SoftwareUpdateItem {
    * @return The name of this update item.
    */
   public String getName() {
-    String n = getProperty("name_de");
+    String n = getProperty(NAME_DE_KEY);
 
     if(!isLocaleGerman()) {
-      n = getProperty("name_en");
+      n = getProperty(NAME_EN_KEY);
     }
 
     if(n != null) {
@@ -223,10 +260,10 @@ public abstract class SoftwareUpdateItem {
    * @return The description of this update item.
    */
   public String getDescription() {
-    String d = getProperty("description");
+    String d = getProperty(DESCRIPTION_DE_KEY);
 
     if(!isLocaleGerman()) {
-      d = getProperty("description_en");
+      d = getProperty(DESCRIPTION_EN_KEY);
     }
 
     if(d != null) {
@@ -242,10 +279,10 @@ public abstract class SoftwareUpdateItem {
    * @return The website of this update item.
    */
   public String getWebsite() {
-    String w = getProperty("website");
+    String w = getProperty(WEBSITE_DE_KEY);
 
     if(!isLocaleGerman()) {
-      w = getProperty("website_en");
+      w = getProperty(WEBSITE_EN_KEY);
     }
 
     return w;
@@ -278,9 +315,9 @@ public abstract class SoftwareUpdateItem {
 	 * @throws TvBrowserException
 	 */
 	public boolean download(String downloadUrl) throws TvBrowserException {
-    String url = getProperty("downloadtype") == null
-        || !getProperty("downloadtype").equalsIgnoreCase("mirrors") ? getProperty("download")
-        : downloadUrl + "/" + getProperty("filename");
+    String url = getProperty(DOWNLOAD_TYPE_KEY) == null
+        || !getProperty(DOWNLOAD_TYPE_KEY).equalsIgnoreCase(DOWNLOAD_TYPE_MIRROR_VALUE) ? getProperty(DOWNLOAD_KEY)
+        : downloadUrl + "/" + getProperty(FILE_NAME_KEY);
 
     if (url == null) {
       throw new TvBrowserException(SoftwareUpdateItem.class, "error.2", "No Url");
@@ -326,11 +363,11 @@ public abstract class SoftwareUpdateItem {
 	 * @return The category of this update item.
 	 */
 	public String getCategory() {
-	  if(mPropertyMap.containsKey("category")) {
-	    return mPropertyMap.get("category");
+	  if(mPropertyMap.containsKey(KATEGORY_KEY)) {
+	    return mPropertyMap.get(KATEGORY_KEY);
 	  }
 	  else {
-	    return "unknown";
+	    return KATEGORY_UNKNOWN_VALUE;
 	  }
 	}
 }

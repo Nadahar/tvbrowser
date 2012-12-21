@@ -41,7 +41,7 @@ import javax.swing.UIManager;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
-import com.jgoodies.forms.builder.ButtonBarBuilder2;
+import com.jgoodies.forms.builder.ButtonBarBuilder;
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -71,15 +71,16 @@ public class TvBrowserVersionChangeDlg extends JDialog implements WindowClosingI
    * Creates the TV-Browser version change dialog.
    * <p>
    * @param oldTvBrowserVersion The TV-Browser version to update from.
+   * @param obligatoryUpdate TV-Browser version that triggers an update for smaller old versions
    */
-  public TvBrowserVersionChangeDlg(Version oldTvBrowserVersion) {
+  public TvBrowserVersionChangeDlg(Version oldTvBrowserVersion, Version obligatoryUpdate) {
     setLocationRelativeTo(null);
     setModal(true);
     mCloseTvBrowser = true;
-    init(oldTvBrowserVersion);
+    init(oldTvBrowserVersion,obligatoryUpdate);
   }
 
-  private void init(Version oldTvBrowserVersion) {
+  private void init(final Version oldTvBrowserVersion, Version obligatoryUpdate) {
     setTitle(mLocalizer.msg("title","TV-Browser was updated from {0} to {1}",oldTvBrowserVersion,TVBrowser.VERSION));
     
     UiUtilities.registerForClosing(this);
@@ -89,24 +90,23 @@ public class TvBrowserVersionChangeDlg extends JDialog implements WindowClosingI
         new FormLayout("default:grow,default,default:grow",
             "default,fill:default:grow,default"),
         (JPanel)getContentPane());
-    
     JLabel l = pb.addLabel(mLocalizer.msg("header","TV-Browser was updated from {0} to {1}!",oldTvBrowserVersion,TVBrowser.VERSION), cc.xy(2,1));
     l.setForeground(new Color(200,0,0));
     l.setFont(l.getFont().deriveFont(Font.BOLD,22));
-    l.setBorder(Borders.createEmptyBorder("10dlu,0dlu,5dlu,0dlu"));
+    l.setBorder(Borders.createEmptyBorder("10dlu,3dlu,5dlu,3dlu"));
     
-    JEditorPane pane = UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("text","<div style=\"font-size:large;text-align:justify\"><p>TV-Browser is developed on a regular basis. Every version contains changes to improve TV-Browser, but sometimes it is necessary to change some functions that could lead to discontinued support for old Plugin versions.</p><br><div style=\"font-weight:bold;color:red\">We recommend to update all installed plugins now.</div><p>You will need an Internet connection.</b> If you currently don't have an internet connection we recommend to close TV-Browser now and using the previous version until a Plugin update is possible.</p><p>Do you want to update your Plugins now (this may take some time)?</p></div>"),
+    JEditorPane pane = UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("text","<div style=\"font-size:large;text-align:justify\"><p>TV-Browser is developed on a regular basis. Every version contains changes to improve TV-Browser, but sometimes it is necessary to change some functions that could lead to discontinued support for old Plugin versions.</p><br><div style=\"font-weight:bold;color:red\">We recommend to update all installed plugins now. (It can happen that a plugin update is obligatory.)</div><p>You will need an Internet connection.</b> If you currently don't have an internet connection we recommend to close TV-Browser now and using the previous version until a Plugin update is possible.</p><p>Do you want to update your Plugins now (this may take some time)?</p></div>"),
         new HyperlinkListener() {
           public void hyperlinkUpdate(HyperlinkEvent e) {
             if(e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
               Launch.openURL(e.getURL().toString());
             }
           }
-        },UIManager.getColor("List.background"));
+        },UIManager.getColor("EditorPane.background"));
     
-    pane.setPreferredSize(new Dimension(400,300));
+    pane.setPreferredSize(new Dimension(400,330));
     
-    pane.setBackground(UIManager.getColor("List.background"));
+    pane.setBackground(UIManager.getColor("EditorPane.background"));
     pane.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createMatteBorder(0,0,1,0,Color.darkGray),Borders.createEmptyBorder("0dlu,10dlu,0dlu,10dlu")));
     
     pb.add(pane, cc.xyw(1,2,3));
@@ -122,7 +122,7 @@ public class TvBrowserVersionChangeDlg extends JDialog implements WindowClosingI
           
           if(updateItems.length > 0) {
             Settings.propPluginBetaWarning.setBoolean(false);
-            SoftwareUpdateDlg updateDlg = new SoftwareUpdateDlg(null,SoftwareUpdater.ONLY_UPDATE_TYPE,updateItems,true);
+            SoftwareUpdateDlg updateDlg = new SoftwareUpdateDlg(null,SoftwareUpdater.ONLY_UPDATE_TYPE,updateItems,true,oldTvBrowserVersion);
             updateDlg.setLocationRelativeTo(null);
             updateDlg.setVisible(true);
           }
@@ -152,9 +152,12 @@ public class TvBrowserVersionChangeDlg extends JDialog implements WindowClosingI
     buttons[1].setFont(buttons[1].getFont().deriveFont(Font.BOLD,13));
     buttons[2].setFont(buttons[2].getFont().deriveFont(Font.BOLD,13));
     
+    buttons[2].setEnabled(oldTvBrowserVersion.compareTo(obligatoryUpdate) >= 0);
+    buttons[2].setToolTipText(mLocalizer.msg("obligatoryTooltip", "If this button is disabled the plugin update is obligatory."));
+    
     getRootPane().setDefaultButton(buttons[0]);
     
-    ButtonBarBuilder2 bb = new ButtonBarBuilder2();
+    ButtonBarBuilder bb = new ButtonBarBuilder();
     bb.setOpaque(true);
     bb.addGlue();
     bb.addButton(buttons);
@@ -162,7 +165,8 @@ public class TvBrowserVersionChangeDlg extends JDialog implements WindowClosingI
     bb.setBorder(Borders.createEmptyBorder("6dlu,6dlu,6dlu,6dlu"));
     
     pb.add(bb.getPanel(), cc.xyw(1,3,3));
-    pb.getPanel().setBackground(UIManager.getColor("List.background"));
+    pb.getPanel().setOpaque(true);
+    pb.getPanel().setBackground(UIManager.getColor("EditorPane.background"));
   }
   
   /**
