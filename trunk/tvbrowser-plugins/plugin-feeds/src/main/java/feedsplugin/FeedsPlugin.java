@@ -34,7 +34,7 @@ import java.util.regex.Pattern;
 import javax.swing.AbstractAction;
 import javax.swing.Icon;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import util.ui.UiUtilities;
 
@@ -71,7 +71,7 @@ public final class FeedsPlugin extends Plugin {
 
   private static final boolean IS_STABLE = false;
 
-  private static final Version mVersion = new Version(2, 74, 0, IS_STABLE);
+  private static final Version mVersion = new Version(2, 75, 0, IS_STABLE);
 
   private static Icon mIcon;
 

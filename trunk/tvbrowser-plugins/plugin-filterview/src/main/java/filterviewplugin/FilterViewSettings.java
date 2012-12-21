@@ -27,7 +27,7 @@ import java.util.Properties;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import util.settings.PropertyBasedSettings;
 import devplugin.Plugin;

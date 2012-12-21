@@ -42,7 +42,7 @@ import devplugin.Version;
 public final class FilterViewPlugin extends Plugin {
   private static final boolean IS_STABLE = false;
 
-  private static final Version mVersion = new Version(2, 71, IS_STABLE);
+  private static final Version mVersion = new Version(2, 71, 1, IS_STABLE);
 
   private PluginInfo mPluginInfo;
 
