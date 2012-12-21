@@ -289,15 +289,15 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
     
     for (SoftwareUpdateItem item : itemArr) {
 			if ((item.isAlreadyInstalled() && item.getInstalledVersion().compareTo(item.getVersion()) < 0) ||
-			    (selectedDataServices.contains(item.getClassName()))) {
+			    (selectedDataServices.contains(item.getClassName())) || mIsVersionChange) {
 				selectedItems.add(item);
 				
-	      if(item.getEssentialTvbVersion() != null && mOldTvbVersion != null && mOldTvbVersion.compareTo(item.getEssentialTvbVersion()) < 0) {
+	      if(mIsVersionChange && (item.getEssentialTvbVersion() != null && mOldTvbVersion != null && mOldTvbVersion.compareTo(item.getEssentialTvbVersion()) < 0)) {
 	        notSelectableItems.add(item);
 	      }
 			}
 		}
-
+    
     mDownloadBtn.setEnabled(!selectedItems.isEmpty());
 
     mSoftwareUpdateItemList = new SelectableItemList(selectedItems.toArray(new SoftwareUpdateItem[selectedItems.size()]),itemArr,notSelectableItems.toArray(new SoftwareUpdateItem[notSelectableItems.size()]));
