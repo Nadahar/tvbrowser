@@ -72,7 +72,7 @@ public class PluginAutoUpdater {
       IOUtilities.download(new URL(baseUrl + (baseUrl.endsWith("/") ? "" : "/") + name), new File(Settings.getUserSettingsDirName(), name));
     } catch(Exception ee) {}
     
-    java.net.URL url = new java.net.URL(/*baseUrl + "/" + PluginAutoUpdater.PLUGIN_UPDATES_FILENAME*/ "file:///home/admin1/Downloads/plugins.gz");
+    java.net.URL url = new java.net.URL(baseUrl + "/" + PluginAutoUpdater.PLUGIN_UPDATES_FILENAME);
     SoftwareUpdater softwareUpdater = new SoftwareUpdater(url,PluginLoader.getInstance().getInfoOfAvailablePlugins());
     
     return softwareUpdater.getAvailableSoftwareUpdateItems();
