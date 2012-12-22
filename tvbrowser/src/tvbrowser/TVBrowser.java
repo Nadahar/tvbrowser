@@ -1443,7 +1443,7 @@ public class TVBrowser {
       
       if(updateItems.length > 0) {
         Settings.propPluginBetaWarning.setBoolean(false);
-        SoftwareUpdateDlg updateDlg = new SoftwareUpdateDlg(null,SoftwareUpdater.ONLY_DATA_SERVICE_TYPE,updateItems,true,null);
+        SoftwareUpdateDlg updateDlg = new SoftwareUpdateDlg(null,SoftwareUpdater.ONLY_DATA_SERVICE_TYPE,updateItems,false,null);
         updateDlg.setLocationRelativeTo(null);
         updateDlg.setVisible(true);
         
