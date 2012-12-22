@@ -1,8 +1,8 @@
 <launch4jConfig>
   <dontWrapJar>false</dontWrapJar>
   <headerType>gui</headerType>
-  <jar>..\launcher\bin\JarWinJavaExeLauncher.jar</jar>
-  <outfile>..\..\..\runtime\tvbrowser_transportable\tvbrowser-transportable.exe</outfile>
+  <jar>../launcher/bin/JarWinJavaExeLauncher.jar</jar>
+  <outfile>../../../runtime/tvbrowser_transportable/tvbrowser-transportable.exe</outfile>
   <errTitle></errTitle>
   <cmdLine>/start tvbrowser.jar -Xmx320m</cmdLine>
   <chdir>.</chdir>
@@ -11,7 +11,7 @@
   <supportUrl></supportUrl>
   <customProcName>false</customProcName>
   <stayAlive>false</stayAlive>
-  <icon>..\..\..\runtime\tvbrowser_transportable\imgs\desktop.ico</icon>
+  <icon>../../../runtime/tvbrowser_transportable/imgs/desktop.ico</icon>
   <jre>
     <path></path>
     <minVersion>1.6.0</minVersion>
