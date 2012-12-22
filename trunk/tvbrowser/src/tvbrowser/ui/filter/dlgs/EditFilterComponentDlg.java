@@ -79,8 +79,9 @@ import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
-import com.jgoodies.forms.builder.ButtonBarBuilder2;
+import com.jgoodies.forms.builder.ButtonBarBuilder;
 import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.factories.CC;
 import com.jgoodies.forms.layout.FormLayout;
 
@@ -156,7 +157,7 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
     
     PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,default,5dlu,default:grow,5dlu,",
         "default,5dlu,default,2dlu,default,2dlu,default,10dlu,default,5dlu,fill:min:grow,5dlu,default,5dlu,default"),mContentPane);
-    pb.setDefaultDialogBorder();
+    pb.border(Borders.DIALOG);
     
     pb.addSeparator(mLocalizer.msg("component", "Component"), CC.xyw(1,1,5));
     pb.addLabel(mLocalizer.msg("name","Name:"), CC.xy(2,3));
@@ -230,7 +231,7 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
       mRuleCb.addItem(it.next());
     }
 
-    ButtonBarBuilder2 bottomBar = Utilities.createFilterButtonBar();
+    ButtonBarBuilder bottomBar = Utilities.createFilterButtonBar();
 
     mOkBtn = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
     mOkBtn.addActionListener(this);

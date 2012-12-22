@@ -46,7 +46,7 @@ import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
-import com.jgoodies.forms.builder.ButtonBarBuilder2;
+import com.jgoodies.forms.builder.ButtonBarBuilder;
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -126,7 +126,7 @@ public class PluginInformationDialog extends JDialog implements WindowClosingIf 
 
     getRootPane().setDefaultButton(buttons[0]);
 
-    ButtonBarBuilder2 bb = new ButtonBarBuilder2();
+    ButtonBarBuilder bb = new ButtonBarBuilder();
     bb.getPanel().setOpaque(true);
     bb.addGlue();
     bb.addButton(buttons);

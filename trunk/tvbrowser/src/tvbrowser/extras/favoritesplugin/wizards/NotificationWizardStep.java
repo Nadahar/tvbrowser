@@ -69,7 +69,7 @@ public class NotificationWizardStep extends AbstractWizardStep {
     PanelBuilder panelBuilder = new PanelBuilder(new FormLayout("pref",
                     "pref, 5dlu, pref, 5dlu, pref, 5dlu, pref"));
 
-    panelBuilder.setBorder(Borders.DLU4_BORDER);
+    panelBuilder.border(Borders.DLU4);
     panelBuilder.add(new JLabel(mLocalizer.msg("mainQuestion","Wollen Sie automatisch auf diese Sendung hingewiesen werden?")), cc.xy(1,1));
     panelBuilder.add(mReminderCb = new JCheckBox(mLocalizer.msg("option.remind","Automatisch an diese Sendung erinnern.")), cc.xy(1,3));
     panelBuilder.add(mCheckOnUpdateCb = new JCheckBox(mLocalizer.msg("option.checkAfterUpdate","Sofort alarmieren, wenn die Sendung nach einer Aktualisierung gefunden wird.")), cc.xy(1,5));

@@ -83,7 +83,7 @@ import util.ui.Localizer;
 import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 
-import com.jgoodies.forms.builder.ButtonBarBuilder2;
+import com.jgoodies.forms.builder.ButtonBarBuilder;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
@@ -132,7 +132,7 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
   public JPanel createSettingsPanel() {
 
     JPanel contentPanel = new JPanel(new FormLayout("default:grow, default", "default, 2dlu, default, 3dlu, fill:default:grow, 3dlu, default"));
-    contentPanel.setBorder(Borders.DLU4_BORDER);
+    contentPanel.setBorder(Borders.DLU4);
     
     CellConstraints cc = new CellConstraints();
     
@@ -278,7 +278,7 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
     
     contentPanel.add(pane, cc.xyw(1,5,2));
     
-    ButtonBarBuilder2 builder = new ButtonBarBuilder2();
+    ButtonBarBuilder builder = new ButtonBarBuilder();
 
     mInfo = new JButton(mLocalizer.msg("info","Info"), IconLoader.getInstance().getIconFromTheme("status", "dialog-information", 16));
     mInfo.addActionListener(new ActionListener() {

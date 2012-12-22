@@ -92,7 +92,7 @@ public class ProgramPanelSettingsTab implements SettingsTab {
    */
   public JPanel createSettingsPanel() {
     EnhancedPanelBuilder panel = new EnhancedPanelBuilder("5dlu, fill:50dlu:grow, 3dlu, fill:50dlu:grow, 3dlu");
-    panel.setBorder(Borders.DIALOG_BORDER);
+    panel.border(Borders.DIALOG);
 
     CellConstraints cc = new CellConstraints();
 

@@ -141,7 +141,7 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
     setLayout(new BorderLayout(5, 5));
     
     if(border) {
-      setBorder(Borders.DLU4_BORDER);
+      setBorder(Borders.DLU4);
     }
     
     setOpaque(false);

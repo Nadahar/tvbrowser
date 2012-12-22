@@ -32,6 +32,7 @@ import javax.swing.event.HyperlinkListener;
 import tvbrowser.ui.settings.SettingsDialog;
 
 import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
@@ -54,7 +55,7 @@ public class DefaultProgramImportanceSelectionPanel extends JPanel {
     PanelBuilder pb = new PanelBuilder(showTitle ? new FormLayout("5dlu,pref,5dlu,pref,0dlu:grow","pref,5dlu,pref,fill:0dlu:grow,10dlu,pref") : new FormLayout("5dlu,pref,5dlu,pref,0dlu:grow","pref,fill:0dlu:grow,10dlu,pref"),this);
     
     if(withDefaultDialogBorder) {
-      pb.setDefaultDialogBorder();
+      pb.border(Borders.DIALOG);
     }
     
     mProgramImportanceSelection = new JComboBox(getProgramImportanceNames(true));

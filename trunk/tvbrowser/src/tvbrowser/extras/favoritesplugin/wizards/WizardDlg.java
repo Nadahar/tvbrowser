@@ -43,7 +43,7 @@ import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
-import com.jgoodies.forms.builder.ButtonBarBuilder2;
+import com.jgoodies.forms.builder.ButtonBarBuilder;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
@@ -92,7 +92,7 @@ public class WizardDlg extends JDialog implements WindowClosingIf {
 
     JPanel panel = (JPanel) getContentPane();
     panel.setLayout(new FormLayout("fill:default:grow", "fill:pref:grow, 3dlu, bottom:pref"));
-    panel.setBorder(Borders.DLU4_BORDER);
+    panel.setBorder(Borders.DLU4);
 
     switchToStep(step);
   }
@@ -119,7 +119,7 @@ public class WizardDlg extends JDialog implements WindowClosingIf {
       panel.add(nextpanel, cc.xy(2, 1));
     }
     
-    ButtonBarBuilder2 builder = new ButtonBarBuilder2();
+    ButtonBarBuilder builder = new ButtonBarBuilder();
     builder.addButton(mDoneBtn);
     builder.addRelatedGap();
     builder.addFixed(mCancelBtn);

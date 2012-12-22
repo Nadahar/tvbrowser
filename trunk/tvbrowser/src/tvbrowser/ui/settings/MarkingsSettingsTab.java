@@ -43,6 +43,7 @@ import util.ui.PooledLocalizer;
 import util.ui.UiUtilities;
 
 import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
@@ -66,7 +67,7 @@ public class MarkingsSettingsTab implements SettingsTab {
   public JPanel createSettingsPanel() {
     CellConstraints cc = new CellConstraints();
     PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,default:grow","pref,5dlu,pref,10dlu,pref,5dlu,pref,fill:10dlu:grow,default"));
-    pb.setDefaultDialogBorder();
+    pb.border(Borders.DIALOG);
     
     JPanel defaultMarkings = new JPanel(new FormLayout("default, 5dlu, default",
     "default,2dlu,default,2dlu,default"));

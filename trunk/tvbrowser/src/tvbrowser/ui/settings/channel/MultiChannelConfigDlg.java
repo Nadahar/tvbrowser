@@ -42,7 +42,7 @@ import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
-import com.jgoodies.forms.builder.ButtonBarBuilder2;
+import com.jgoodies.forms.builder.ButtonBarBuilder;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
@@ -89,7 +89,7 @@ public class MultiChannelConfigDlg extends JDialog implements ActionListener, Wi
 
     CellConstraints cc = new CellConstraints();
 
-    panel.setBorder(Borders.DLU4_BORDER);
+    panel.setBorder(Borders.DLU4);
 
     panel.add(new JLabel(mLocalizer.msg("time", "Time zone correction")), cc.xy(1, 1));
 
@@ -103,7 +103,7 @@ public class MultiChannelConfigDlg extends JDialog implements ActionListener, Wi
     txt.setMinimumSize(new Dimension(200, 20));
     panel.add(txt, cc.xyw(1, 3, 3));
 
-    ButtonBarBuilder2 builder = new ButtonBarBuilder2();
+    ButtonBarBuilder builder = new ButtonBarBuilder();
     
     JButton defaultButton = new JButton(Localizer.getLocalization(Localizer.I18N_DEFAULT));
     

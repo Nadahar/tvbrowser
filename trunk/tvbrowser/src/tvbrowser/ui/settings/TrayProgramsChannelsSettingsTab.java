@@ -49,6 +49,7 @@ import util.ui.OrderChooser;
 import util.ui.UiUtilities;
 
 import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.Sizes;
@@ -88,7 +89,7 @@ public class TrayProgramsChannelsSettingsTab implements SettingsTab {
     PanelBuilder builder = new PanelBuilder(new FormLayout(
         "5dlu,pref,2dlu,default,5dlu,pref,fill:default:grow,5dlu",
         "pref,5dlu,pref,10dlu,pref,5dlu,pref,10dlu,fill:default:grow,5dlu,pref"));
-    builder.setDefaultDialogBorder();
+    builder.border(Borders.DIALOG);
     CellConstraints cc = new CellConstraints();
     try {
    mChannelWidth = new JSlider(SwingConstants.HORIZONTAL, 50, 150, Settings.propTrayChannelWidth.getInt());

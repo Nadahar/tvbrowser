@@ -79,8 +79,9 @@ import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
-import com.jgoodies.forms.builder.ButtonBarBuilder2;
+import com.jgoodies.forms.builder.ButtonBarBuilder;
 import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.factories.CC;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
@@ -157,7 +158,7 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
     
     FormLayout layout = new FormLayout("5dlu,fill:min:grow,5dlu,default,5dlu","default,5dlu,default,10dlu,default,5dlu,default,default,5dlu,default,5dlu,fill:min:grow,5dlu,default,5dlu,default,5dlu,default");
     PanelBuilder filterCreation = new PanelBuilder(layout,(JPanel)getContentPane());
-    filterCreation.setDefaultDialogBorder();
+    filterCreation.border(Borders.DIALOG);
     
     filterCreation.addSeparator(mLocalizer.msg("filterName", "Filter name:"), CC.xyw(1,1,5));
     filterCreation.add(mFilterNameTF, CC.xyw(2,3,3));
@@ -181,7 +182,7 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
     mEditBtn.addActionListener(this);
     mRemoveBtn.addActionListener(this);
 
-    ButtonBarBuilder2 bottomBar = Utilities.createFilterButtonBar();
+    ButtonBarBuilder bottomBar = Utilities.createFilterButtonBar();
 
     mOkBtn = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
     mOkBtn.addActionListener(this);

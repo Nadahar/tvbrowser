@@ -56,7 +56,7 @@ import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
-import com.jgoodies.forms.builder.ButtonBarBuilder2;
+import com.jgoodies.forms.builder.ButtonBarBuilder;
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.factories.DefaultComponentFactory;
@@ -127,7 +127,7 @@ public class ChannelConfigDlg extends JDialog implements ActionListener, WindowC
 
     CellConstraints cc = new CellConstraints();
 
-    panel.setBorder(Borders.DLU4_BORDER);
+    panel.setBorder(Borders.DLU4);
 
     // name
     panel.add(new JLabel(mLocalizer.msg("channelName", "Channel Name:")), cc.xy(1, 1));
@@ -205,7 +205,7 @@ public class ChannelConfigDlg extends JDialog implements ActionListener, WindowC
     panel.add(txt2, cc.xy(3, 17));
     
     // buttons
-    ButtonBarBuilder2 builder = new ButtonBarBuilder2();
+    ButtonBarBuilder builder = new ButtonBarBuilder();
     JButton defaultButton = new JButton(Localizer.getLocalization(Localizer.I18N_DEFAULT));
     
     defaultButton.addActionListener(new ActionListener() {

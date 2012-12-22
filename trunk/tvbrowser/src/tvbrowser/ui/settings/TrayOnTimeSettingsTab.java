@@ -20,6 +20,7 @@ import util.ui.Localizer;
 import util.ui.UiUtilities;
 
 import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
@@ -55,7 +56,7 @@ public class TrayOnTimeSettingsTab implements SettingsTab {
     PanelBuilder builder = new PanelBuilder(new FormLayout("5dlu,12dlu,pref:grow,5dlu",
         "pref,5dlu,pref,pref,pref,5dlu,pref,10dlu,pref,5dlu,pref,pref,pref," +
         "10dlu,pref,5dlu,pref,pref,pref,3dlu,pref,5dlu,pref,fill:pref:grow,pref"));
-    builder.setDefaultDialogBorder();
+    builder.border(Borders.DIALOG);
     
     mIsEnabled = new JCheckBox(mLocalizer.msg("onTimeEnabled","Show programs at..."),Settings.propTrayOnTimeProgramsEnabled.getBoolean());
     

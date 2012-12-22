@@ -362,7 +362,7 @@ public class SearchField extends JPanel {
     final JDialog configure = new JDialog(MainFrame.getInstance(), mLocalizer.msg("settingsTitle","Search-Settings"), false);
     configure.setUndecorated(true);
     JPanel panel = (JPanel)configure.getContentPane();
-    panel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEtchedBorder(),Borders.DLU4_BORDER));
+    panel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEtchedBorder(),Borders.DLU4));
     panel.setLayout(new FormLayout("fill:pref:grow, 3dlu, pref", "pref, fill:3dlu:grow, pref"));
 
     form.setParentDialog(configure);

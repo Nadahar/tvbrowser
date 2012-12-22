@@ -50,7 +50,7 @@ import util.ui.TabLayout;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
-import com.jgoodies.forms.builder.ButtonBarBuilder2;
+import com.jgoodies.forms.builder.ButtonBarBuilder;
 import com.jgoodies.forms.factories.Borders;
 
 import devplugin.PluginManager;
@@ -93,7 +93,7 @@ public class SearchDialog extends JDialog implements WindowClosingIf {
     setTitle(msg);
 
     JPanel main = new JPanel(new TabLayout(1));
-    main.setBorder(Borders.DLU4_BORDER);
+    main.setBorder(Borders.DLU4);
     setContentPane(main);
 
     // pattern
@@ -145,7 +145,7 @@ public class SearchDialog extends JDialog implements WindowClosingIf {
       }
     });
 
-    ButtonBarBuilder2 buttons = new ButtonBarBuilder2();
+    ButtonBarBuilder buttons = new ButtonBarBuilder();
     buttons.addButton(new JButton[]{mSearchBt, mCloseBt});
 
     JPanel buttonPanel = new JPanel(new BorderLayout());

@@ -76,7 +76,7 @@ public class WebbrowserSettingsTab implements devplugin.SettingsTab {
    */
   public JPanel createSettingsPanel() {
     mSettingsPn = new JPanel(new FormLayout("5dlu, 10dlu, pref, 3dlu, pref, 3dlu, pref, fill:3dlu:grow, 3dlu", "pref, 5dlu, pref, 5dlu, pref, 5dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref"));
-    mSettingsPn.setBorder(Borders.DIALOG_BORDER);
+    mSettingsPn.setBorder(Borders.DIALOG);
 
     CellConstraints cc = new CellConstraints();
 

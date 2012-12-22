@@ -41,7 +41,7 @@ import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
-import com.jgoodies.forms.builder.ButtonBarBuilder2;
+import com.jgoodies.forms.builder.ButtonBarBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.Sizes;
@@ -134,7 +134,7 @@ public class LoginDialog extends JDialog implements WindowClosingIf {
     
     mStorePassword.setSelected(mStore);
     
-    ButtonBarBuilder2 builder = new ButtonBarBuilder2();
+    ButtonBarBuilder builder = new ButtonBarBuilder();
     builder.addGlue();
     
     JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_OK));

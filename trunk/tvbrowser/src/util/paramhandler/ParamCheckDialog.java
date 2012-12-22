@@ -170,7 +170,7 @@ public class ParamCheckDialog extends JDialog implements WindowClosingIf {
 		CellConstraints cc = new CellConstraints();
 		FormLayout layout = new FormLayout("fill:default:grow, 3dlu, default", "default, 3dlu, fill:default:grow, 3dlu, default");
 		panel.setLayout(layout);
-		panel.setBorder(Borders.DLU4_BORDER);
+		panel.setBorder(Borders.DLU4);
 		
     panel.add(new JLabel(mLocalizer.msg("Result", "Result") + ":" ), cc.xyw(1,1,3));
     

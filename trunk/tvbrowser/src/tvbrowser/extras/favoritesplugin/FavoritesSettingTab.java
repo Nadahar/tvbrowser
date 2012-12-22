@@ -48,6 +48,7 @@ import util.ui.PluginChooserDlg;
 import util.ui.UiUtilities;
 
 import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
@@ -83,7 +84,7 @@ public class FavoritesSettingTab implements SettingsTab {
         "pref,5dlu,pref,10dlu,pref,5dlu,pref,10dlu,pref,5dlu," +
         "pref,10dlu,pref,5dlu,pref,10dlu,pref,5dlu,pref,10dlu," +
         "pref,5dlu,default,default,10dlu,default,5dlu,default"));
-    builder.setDefaultDialogBorder();
+    builder.border(Borders.DIALOG);
 
     mPluginLabel = new JLabel();
     JButton choose = new JButton(mLocalizer.msg("selectPlugins","Choose Plugins"));

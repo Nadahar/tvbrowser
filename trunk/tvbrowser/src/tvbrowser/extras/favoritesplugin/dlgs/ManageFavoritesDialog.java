@@ -69,7 +69,7 @@ public class ManageFavoritesDialog extends JDialog implements WindowClosingIf{
     
     mManagePanel = new ManageFavoritesPanel(favoriteArr, splitPanePosition, showNew, initialSelection,false);
     
-    ((JPanel)getContentPane()).setBorder(Borders.DIALOG_BORDER);
+    ((JPanel)getContentPane()).setBorder(Borders.DIALOG);
     ((JPanel)getContentPane()).setLayout(new BorderLayout());
     ((JPanel)getContentPane()).add(mManagePanel,BorderLayout.CENTER);
     

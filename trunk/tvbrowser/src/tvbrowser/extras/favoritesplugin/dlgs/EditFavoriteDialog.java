@@ -65,7 +65,7 @@ import util.ui.TimePeriodChooser;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
-import com.jgoodies.forms.builder.ButtonBarBuilder2;
+import com.jgoodies.forms.builder.ButtonBarBuilder;
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.factories.DefaultComponentFactory;
@@ -141,7 +141,7 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
 
     ScrollableJPanel rootPn = new ScrollableJPanel();
     rootPn.setLayout(new BorderLayout());
-    rootPn.setBorder(Borders.DLU4_BORDER);
+    rootPn.setBorder(Borders.DLU4);
 
     JPanel content = new JPanel(new TabLayout(1));
     content.setBorder(new EmptyBorder(10, 10, 10, 10));
@@ -179,7 +179,7 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
       }
     });
 
-    ButtonBarBuilder2 buttons = new ButtonBarBuilder2();
+    ButtonBarBuilder buttons = new ButtonBarBuilder();
     buttons.addGlue();
     buttons.addButton(new JButton[] { okBtn, cancelBtn });
 

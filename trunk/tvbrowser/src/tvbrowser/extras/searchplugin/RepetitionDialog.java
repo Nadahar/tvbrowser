@@ -49,7 +49,7 @@ import util.ui.SearchHelper;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
-import com.jgoodies.forms.builder.ButtonBarBuilder2;
+import com.jgoodies.forms.builder.ButtonBarBuilder;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.factories.DefaultComponentFactory;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -118,7 +118,7 @@ class RepetitionDialog extends JDialog implements WindowClosingIf {
     JPanel panel = (JPanel) getContentPane();
     panel.setLayout(new FormLayout("pref, 3dlu, 0dlu:grow",
         "pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, fill:5dlu:grow, pref"));
-    panel.setBorder(Borders.DLU7_BORDER);
+    panel.setBorder(Borders.DLU7);
 
     CellConstraints cc = new CellConstraints();
 
@@ -181,7 +181,7 @@ class RepetitionDialog extends JDialog implements WindowClosingIf {
       }
     });
 
-    ButtonBarBuilder2 builder = new ButtonBarBuilder2();
+    ButtonBarBuilder builder = new ButtonBarBuilder();
     builder.addButton(stdSearch);
     builder.addUnrelatedGap();
     builder.addGlue();

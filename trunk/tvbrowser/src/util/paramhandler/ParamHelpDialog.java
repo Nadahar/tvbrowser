@@ -147,7 +147,7 @@ public class ParamHelpDialog extends JDialog implements WindowClosingIf {
 		CellConstraints cc = new CellConstraints();
 		FormLayout layout = new FormLayout("fill:default:grow, 3dlu, default", "fill:default:grow, 3dlu, default");
 		panel.setLayout(layout);
-		panel.setBorder(Borders.DLU4_BORDER);
+		panel.setBorder(Borders.DLU4);
 		
 		panel.add(new ParamDescriptionPanel(mParamLib), cc.xyw(1,1, 3));
 		

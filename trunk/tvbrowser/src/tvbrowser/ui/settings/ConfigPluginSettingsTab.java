@@ -81,7 +81,7 @@ public class ConfigPluginSettingsTab extends AbstractSettingsTab implements Canc
   
   public JPanel createSettingsPanel() {
     mContentPanel=new JPanel(new BorderLayout());
-    mContentPanel.setBorder(Borders.DIALOG_BORDER);
+    mContentPanel.setBorder(Borders.DIALOG);
     PluginInfoPanel pluginInfoPanel=new PluginInfoPanel(mPlugin.getInfo(), mSettingsTab != null);
     pluginInfoPanel.setDefaultBorder(true);
     mContentPanel.add(pluginInfoPanel,BorderLayout.NORTH);

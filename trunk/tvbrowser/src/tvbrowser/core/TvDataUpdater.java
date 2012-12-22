@@ -373,7 +373,7 @@ public class TvDataUpdater {
           scrollPane.setBorder(BorderFactory.createEmptyBorder());
           
           JPanel center = new JPanel(new BorderLayout());
-          center.setBorder(Borders.DIALOG_BORDER);
+          center.setBorder(Borders.DIALOG);
           center.add(scrollPane, BorderLayout.CENTER);
           
           JButton close = new JButton(Localizer.getLocalization(Localizer.I18N_CLOSE));

@@ -17,6 +17,7 @@ import tvbrowser.core.icontheme.IconLoader;
 import util.io.NetworkUtilities;
 import util.ui.EnhancedPanelBuilder;
 
+import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
 
 import devplugin.SettingsTab;
@@ -37,7 +38,7 @@ public class NetworkSettingsTab implements SettingsTab {
   
   public JPanel createSettingsPanel() {
     EnhancedPanelBuilder pb = new EnhancedPanelBuilder("5dlu, pref, 3dlu, 0dlu:grow");
-    pb.setDefaultDialogBorder();
+    pb.border(Borders.DIALOG);
     
     CellConstraints cc = new CellConstraints();
     

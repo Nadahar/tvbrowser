@@ -86,7 +86,7 @@ public class ChannelGroupInfoDialog extends JDialog implements WindowClosingIf{
   private void initGui() {
     UiUtilities.registerForClosing(this);
     JPanel panel = (JPanel) getContentPane();
-    panel.setBorder(Borders.DLU4_BORDER);
+    panel.setBorder(Borders.DLU4);
     panel.setLayout(new FormLayout("fill:default:grow, default", "fill:default:grow, 3dlu, default"));
 
     CellConstraints cc = new CellConstraints();

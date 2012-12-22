@@ -71,7 +71,7 @@ public class DirectoriesSettingsTab implements SettingsTab {
 
     JPanel mainPanel = new JPanel(new BorderLayout());
     mainPanel.setLayout(new FormLayout("5dlu, fill:150dlu:grow", "pref, 5dlu, pref, 3dlu, pref"));
-    mainPanel.setBorder(Borders.DIALOG_BORDER);
+    mainPanel.setBorder(Borders.DIALOG);
     
     CellConstraints cc = new CellConstraints();
     

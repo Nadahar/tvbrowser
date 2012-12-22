@@ -36,6 +36,7 @@ import util.ui.SearchFormSettings;
 import util.ui.TVBrowserIcons;
 
 import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
@@ -59,7 +60,7 @@ class SearchSettingsTab implements SettingsTab {
    */
   public JPanel createSettingsPanel() {
     PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,pref,0dlu:grow","pref,5dlu,pref"));
-    pb.setDefaultDialogBorder();
+    pb.border(Borders.DIALOG);
     CellConstraints cc = new CellConstraints();
 
     JButton clearHistory = new JButton(mLocalizer.msg("clearHistory", "Clear Search History"));

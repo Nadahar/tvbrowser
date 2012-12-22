@@ -174,7 +174,7 @@ public class ProgramInfoSettingsTab implements SettingsTab {
 
     CellConstraints cc = new CellConstraints();
     EnhancedPanelBuilder formatPanel = new EnhancedPanelBuilder(new FormLayout("5dlu,10dlu,pref,pref,5dlu,default:grow,pref,5dlu"));
-    formatPanel.setDefaultDialogBorder();
+    formatPanel.border(Borders.DIALOG);
     formatPanel.addParagraph(ProgramInfo.mLocalizer.msg("font","Font settings"));
     formatPanel.addRow();
     formatPanel.add(mAntiAliasing, cc.xyw(2,formatPanel.getRowCount(), formatPanel.getColumnCount() - 2));
@@ -249,14 +249,14 @@ public class ProgramInfoSettingsTab implements SettingsTab {
     });
 
     EnhancedPanelBuilder orderPanel = new EnhancedPanelBuilder("default:grow");
-    orderPanel.setDefaultDialogBorder();
+    orderPanel.border(Borders.DIALOG);
 
     orderPanel.addRow("fill:default:grow");
     orderPanel.add(mList, cc.xy(1, orderPanel.getRowCount()));
 
 
     EnhancedPanelBuilder picturePanel = new EnhancedPanelBuilder("default:grow");
-    picturePanel.setDefaultDialogBorder();
+    picturePanel.border(Borders.DIALOG);
 
     picturePanel.addRow("default");
     picturePanel.add(mPictureSettings = new PluginsPictureSettingsPanel(ProgramInfo.getInstance().getPictureSettings(),false), cc.xy(1, picturePanel.getRowCount()));
@@ -341,7 +341,7 @@ public class ProgramInfoSettingsTab implements SettingsTab {
     PanelBuilder actorPanel = new PanelBuilder(
         new FormLayout(
         "default:grow", "pref,3dlu,default,1dlu,fill:default:grow"));
-    actorPanel.setDefaultDialogBorder();
+    actorPanel.border(Borders.DIALOG);
 
     mPersonSearchCB = new JCheckBox(ProgramInfo.mLocalizer.msg("enableSearch",
         "Show person names as links to person search"));
@@ -378,7 +378,7 @@ public class ProgramInfoSettingsTab implements SettingsTab {
     buttonPn.add(defaultBtn, cc.xy(1,1));
 
     JPanel base = new JPanel(new FormLayout("default:grow","fill:default:grow,10dlu,default"));
-    base.setBorder(Borders.DIALOG_BORDER);
+    base.setBorder(Borders.DIALOG);
     base.add(tabbedPane, cc.xy(1,1));
     base.add(buttonPn, cc.xy(1,3));
 

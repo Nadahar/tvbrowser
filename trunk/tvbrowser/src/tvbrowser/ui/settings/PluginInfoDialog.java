@@ -83,7 +83,7 @@ public class PluginInfoDialog extends JDialog implements WindowClosingIf {
   private void initGui() {
 
     JPanel panel = (JPanel) getContentPane();
-    panel.setBorder(Borders.DLU4_BORDER);
+    panel.setBorder(Borders.DLU4);
     panel.setLayout(new FormLayout("fill:default:grow, default", "fill:default:grow, 3dlu, default"));
 
     CellConstraints cc = new CellConstraints();

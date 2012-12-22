@@ -116,7 +116,7 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
   public JPanel createSettingsPanel() {
     mSettingsPn = new JPanel(new FormLayout("5dlu, pref, 3dlu, default, 5dlu, default, fill:3dlu:grow, 3dlu",
         "pref, 5dlu, pref, 10dlu, pref, 5dlu, pref, 10dlu, pref, 5dlu, pref, 2dlu, pref, fill:3dlu:grow, pref"));
-    mSettingsPn.setBorder(Borders.DIALOG_BORDER);
+    mSettingsPn.setBorder(Borders.DIALOG);
 
     CellConstraints cc = new CellConstraints();
 
@@ -355,7 +355,7 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
     FormLayout layout = new FormLayout("default:grow,default,5dlu,default","default,3dlu,fill:default:grow,5dlu,default");
     
     PanelBuilder pb = new PanelBuilder(layout);
-    pb.setDefaultDialogBorder();
+    pb.border(Borders.DIALOG);
     
     final JDialog dialog = new JDialog(UiUtilities.getLastModalChildOf(MainFrame.getInstance()));
     dialog.setTitle(mLocalizer.msg("downloadLanguages", "Install additional languages"));

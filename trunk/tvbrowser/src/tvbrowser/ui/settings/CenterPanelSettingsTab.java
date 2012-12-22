@@ -30,6 +30,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 
 import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
@@ -115,7 +116,7 @@ public class CenterPanelSettingsTab implements SettingsTab {
     
     PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,default:grow,5dlu","default,5dlu,fill:default:grow,5dlu,default"));
     
-    pb.setDefaultDialogBorder();
+    pb.border(Borders.DIALOG);
     
     pb.addSeparator(mLocalizer.msg("info", "Shown tabs in the main window"), cc.xyw(1, 1, 3));
     pb.add(mPanelChooser, cc.xy(2,3));
