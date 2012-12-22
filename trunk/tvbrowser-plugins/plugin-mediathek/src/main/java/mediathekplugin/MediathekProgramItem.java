@@ -24,7 +24,7 @@ import java.text.DecimalFormat;
 import javax.swing.Icon;
 import javax.swing.ProgressMonitor;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import util.browserlauncher.Launch;
 import util.io.ExecutionHandler;
