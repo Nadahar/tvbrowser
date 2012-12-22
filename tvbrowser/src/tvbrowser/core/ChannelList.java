@@ -45,6 +45,7 @@ import javax.swing.SwingUtilities;
 
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
+import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.io.stream.ObjectInputStreamProcessor;
 import util.io.stream.ObjectOutputStreamProcessor;
@@ -206,6 +207,7 @@ public class ChannelList {
     loadChannelMaps();
     create();
     checkForJointChannels();
+    FavoritesPlugin.getInstance().reValidateChannelLimitation();
   }
 
   private static void create() {

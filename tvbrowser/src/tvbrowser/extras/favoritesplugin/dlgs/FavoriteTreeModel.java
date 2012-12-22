@@ -618,4 +618,8 @@ public class FavoriteTreeModel extends DefaultTreeModel {
   public void resetMultiplesCounter() {
     mMultiples = null;
   }
+  
+  public void reValidateChannelLimitations() {
+    
+  }
 }

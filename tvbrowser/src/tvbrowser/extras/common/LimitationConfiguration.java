@@ -75,9 +75,7 @@ public class LimitationConfiguration {
       for (int i=0; i<cnt; i++) {
         ChannelItem item = new ChannelItem(in, version);
         
-        if(item.isValid()) {
-          mChannelItemList.add(item);
-        }
+        mChannelItemList.add(item);
 
         if (item.getChannel() != null) {
           list.add(item.getChannel());
@@ -165,5 +163,22 @@ public class LimitationConfiguration {
 
   public int getDayLimit() {
     return mDayLimit;
+  }
+  
+  /**
+   * Tries to load the channels again.
+   */
+  public void reValidateChannels() {
+    ArrayList<Channel> channelList = new ArrayList<>(mChannelArr.length);
+    
+    for(ChannelItem item : mChannelItemList) {
+      item.reValidate();
+      
+      if(!item.isNullChannel()) {
+        channelList.add(item.getChannel());
+      }
+    }
+    
+    mChannelArr = channelList.toArray(new Channel[channelList.size()]);
   }
 }

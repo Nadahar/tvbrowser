@@ -1500,4 +1500,11 @@ public class FavoritesPlugin {
   public void setShowDateSeparators(boolean show) {
     mSettings.put("showDateSeparators", String.valueOf(show));
   }
+  
+  /**
+   * Tries to load channel limitations again.
+   */
+  public void reValidateChannelLimitation() {
+    ((FavoriteNode)FavoriteTreeModel.getInstance().getRoot()).reValidateChannelLimitations();
+  }
 }
