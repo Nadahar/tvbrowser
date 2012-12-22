@@ -970,6 +970,10 @@ public abstract class Favorite {
   private String getProgramKeyFor(Program p) {
     return new StringBuilder(p.getChannel().getUniqueId()).append(p.getDate().getValue()).append("_").append(p.getStartTime()).append("_").append(p.getTitle()).toString();
   }
+  
+  public void reValidateChannelLimitation() {
+    mLimitationConfiguration.reValidateChannels();
+  }
 
   public void revalidatePrograms() {
     new Thread("revalidate favorites") {

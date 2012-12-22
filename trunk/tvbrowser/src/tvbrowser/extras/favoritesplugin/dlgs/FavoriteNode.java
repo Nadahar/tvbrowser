@@ -230,4 +230,20 @@ public class FavoriteNode extends DefaultMutableTreeNode implements Comparable<F
     }catch(Exception e) {e.printStackTrace();}
     return null;
   }
+  
+  /**
+   * Tries to load the channel limitation for all childs again.
+   */
+  public void reValidateChannelLimitations() {
+    if(isDirectoryNode()) {
+      for(int i = 0; i < getChildCount(); i++) {
+        ((FavoriteNode)getChildAt(i)).reValidateChannelLimitations();
+      }
+    }
+    else {
+      if(getFavorite() != null) {
+        getFavorite().reValidateChannelLimitation();
+      }
+    }
+  }
 }

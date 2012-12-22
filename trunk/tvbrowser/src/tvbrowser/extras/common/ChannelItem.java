@@ -156,4 +156,12 @@ public class ChannelItem {
   public boolean isNullChannel() {
     return mNullChannel;
   }
+  
+  /**
+   * Tries to load channel again.
+   */
+  public void reValidate() {
+    mChannel = Channel.getChannel(mChannelDataServiceId, mGroupId, mCountry, mCertainChannelId);
+    mNullChannel = mChannel == null;
+  }
 }
