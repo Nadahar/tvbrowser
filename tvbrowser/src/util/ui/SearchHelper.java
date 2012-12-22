@@ -59,7 +59,7 @@ import util.exc.TvBrowserException;
 import util.settings.PluginPictureSettings;
 import util.settings.ProgramPanelSettings;
 
-import com.jgoodies.forms.builder.ButtonBarBuilder2;
+import com.jgoodies.forms.builder.ButtonBarBuilder;
 import com.jgoodies.forms.factories.Borders;
 
 import devplugin.Program;
@@ -298,7 +298,7 @@ public class SearchHelper {
     });
 
     JPanel main = new JPanel(new BorderLayout());
-    main.setBorder(Borders.DLU4_BORDER);
+    main.setBorder(Borders.DLU4);
     dlg.setContentPane(main);
 
 
@@ -361,7 +361,8 @@ public class SearchHelper {
       mProgramList.setSelectedValue(programArr[curPos], true);
     }
 
-    ButtonBarBuilder2 builder = ButtonBarBuilder2.createLeftToRightBuilder();
+    ButtonBarBuilder builder = new ButtonBarBuilder();
+    builder.setLeftToRight(true);
     builder.setBorder(BorderFactory.createEmptyBorder(5, 0, 0, 0));
 
     // send to plugins

@@ -111,7 +111,7 @@ import util.ui.html.ExtendedHTMLDocument;
 import util.ui.html.ExtendedHTMLEditorKit;
 import util.ui.textcomponentpopup.TextComponentPopupEventQueue;
 
-import com.jgoodies.forms.builder.ButtonBarBuilder2;
+import com.jgoodies.forms.builder.ButtonBarBuilder;
 import com.l2fprod.common.swing.JTaskPane;
 import com.l2fprod.common.swing.JTaskPaneGroup;
 
@@ -639,7 +639,7 @@ class ProgramInfoDialog {
     mConfigBtn = new JButton(mLocalizer.msg("config", "Configure view"));
     mConfigBtn.setIcon(TVBrowserIcons.preferences(TVBrowserIcons.SIZE_SMALL));
 
-    ButtonBarBuilder2 buttonBuilder = new ButtonBarBuilder2();
+    ButtonBarBuilder buttonBuilder = new ButtonBarBuilder();
 
     buttonBuilder.addButton(mConfigBtn);
     mConfigBtn.setVisible(showSettings);

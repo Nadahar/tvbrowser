@@ -54,7 +54,7 @@ public class ConfigDataServiceSettingsTab extends AbstractSettingsTab implements
   public JPanel createSettingsPanel() {
 
     JPanel mainPn=new JPanel(new BorderLayout());
-    mainPn.setBorder(Borders.DIALOG_BORDER);
+    mainPn.setBorder(Borders.DIALOG);
     PluginInfoPanel infoPn=new PluginInfoPanel(mSettingsPanel != null);
     infoPn.setDefaultBorder(false);
     infoPn.setPluginInfo(mDataService.getInfo());

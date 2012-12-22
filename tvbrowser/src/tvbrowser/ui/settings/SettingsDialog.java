@@ -84,7 +84,7 @@ import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
-import com.jgoodies.forms.builder.ButtonBarBuilder2;
+import com.jgoodies.forms.builder.ButtonBarBuilder;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
@@ -143,7 +143,7 @@ public class SettingsDialog implements WindowClosingIf {
         "fill:min:grow, 3dlu, pref"));
     CellConstraints cc = new CellConstraints();
 
-    main.setBorder(Borders.DLU4_BORDER);
+    main.setBorder(Borders.DLU4);
     mDialog.setContentPane(main);
 
     final JSplitPane splitPane = new JSplitPane();
@@ -189,7 +189,7 @@ public class SettingsDialog implements WindowClosingIf {
     mSettingsPn = new JPanel(new BorderLayout());
     splitPane.setRightComponent(mSettingsPn);
 
-    ButtonBarBuilder2 builder = new ButtonBarBuilder2();
+    ButtonBarBuilder builder = new ButtonBarBuilder();
 
     mHelpBt = new JButton(mLocalizer.msg("help", "Online help"));
     mHelpBt.addActionListener(new ActionListener() {

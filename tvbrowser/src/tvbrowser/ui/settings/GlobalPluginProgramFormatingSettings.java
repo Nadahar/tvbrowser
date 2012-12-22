@@ -47,6 +47,7 @@ import util.ui.UiUtilities;
 import util.ui.customizableitems.SortableItemList;
 
 import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
@@ -68,7 +69,7 @@ public class GlobalPluginProgramFormatingSettings implements SettingsTab, Action
     try {
       CellConstraints cc = new CellConstraints();
       PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,default:grow,5dlu","pref,5dlu,fill:default:grow,5dlu,pref,10dlu,pref"));
-      pb.setDefaultDialogBorder();
+      pb.border(Borders.DIALOG);
 
       mConfigurations = new SortableItemList("",GlobalPluginProgramFormatingManager.getInstance().getAvailableGlobalPluginProgramFormatings());
       mConfigurations.getList().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);

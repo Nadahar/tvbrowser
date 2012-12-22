@@ -71,7 +71,7 @@ public class MouseSettingsTab implements devplugin.SettingsTab {
 		PanelBuilder contentPanel = new PanelBuilder(
 				new FormLayout("5dlu, pref, 3dlu, pref, fill:pref:grow, 3dlu",
 						"pref, 5dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref"));
-		contentPanel.setBorder(Borders.DIALOG_BORDER);
+		contentPanel.border(Borders.DIALOG);
 
 		CellConstraints cc = new CellConstraints();
 		contentPanel

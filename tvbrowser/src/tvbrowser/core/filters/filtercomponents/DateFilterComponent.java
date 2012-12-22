@@ -76,7 +76,7 @@ public class DateFilterComponent extends AbstractFilterComponent {
     FormLayout layout = new FormLayout(
         "pref, 3dlu, fill:pref:grow, 3dlu, pref", "");
     JPanel content = new JPanel(layout);
-    content.setBorder(Borders.DIALOG_BORDER);
+    content.setBorder(Borders.DIALOG);
 
     CellConstraints cc = new CellConstraints();
     int currentRow = 1;

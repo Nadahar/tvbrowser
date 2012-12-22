@@ -136,7 +136,7 @@ public class ConfigAssistant extends JDialog implements ActionListener, PrevNext
     layout.setColumnGroups(new int[][] { { 2, 4, 6 } });
     JPanel buttonPanel = new JPanel(layout);
 
-    buttonPanel.setBorder(Borders.DLU4_BORDER);
+    buttonPanel.setBorder(Borders.DLU4);
 
     CellConstraints cc = new CellConstraints();
     buttonPanel.add(mBackBt, cc.xy(2, 1));

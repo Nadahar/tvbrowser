@@ -128,7 +128,7 @@ public class LimitationsWizardStep extends AbstractWizardStep {
     CellConstraints cc = new CellConstraints();
     PanelBuilder panelBuilder = new PanelBuilder(new FormLayout("pref, default:grow, pref", "pref, 5dlu, pref, 5dlu, pref, 5dlu, pref, 5dlu, pref"));
 
-    panelBuilder.setBorder(Borders.DLU4_BORDER);
+    panelBuilder.border(Borders.DLU4);
     panelBuilder.add(new JLabel(mLocalizer.msg("mainQuestion", "Are there any limitations?")), cc.xy(1, 1));
     panelBuilder.add(mChannelCb = new JCheckBox(mLocalizer.msg("limitByChannel",
         "Certain channels only:")), cc.xy(1, 3));

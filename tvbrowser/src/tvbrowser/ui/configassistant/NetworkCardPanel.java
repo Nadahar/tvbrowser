@@ -82,7 +82,7 @@ class NetworkCardPanel extends AbstractCardPanel {
 
     JPanel content = new JPanel(new FormLayout("fill:pref:grow, fill:300dlu:grow, fill:pref:grow",
         "fill:pref:grow, pref, 3dlu, pref, 3dlu, pref,3dlu, pref,3dlu, pref, fill:pref:grow"));
-    content.setBorder(Borders.DLU4_BORDER);
+    content.setBorder(Borders.DLU4);
 
     CellConstraints cc = new CellConstraints();
 

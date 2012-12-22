@@ -88,7 +88,7 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
 
     PanelBuilder contentPanel = new PanelBuilder(new FormLayout("5dlu, pref, 3dlu, pref, fill:pref:grow, 3dlu",
         "pref, 5dlu, pref, 3dlu, fill:pref:grow"));
-    contentPanel.setBorder(Borders.DIALOG_BORDER);
+    contentPanel.border(Borders.DIALOG);
 
     CellConstraints cc = new CellConstraints();
     contentPanel.addSeparator(mLocalizer.msg("title", "Title"), cc.xyw(1,

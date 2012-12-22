@@ -61,7 +61,7 @@ public class RenameWizardStep extends AbstractWizardStep {
 
     PanelBuilder panelBuilder = new PanelBuilder(new FormLayout("5dlu, pref, 3dlu, default:grow",
         "pref"));
-    panelBuilder.setBorder(Borders.DLU4_BORDER);
+    panelBuilder.border(Borders.DLU4);
     CellConstraints cc = new CellConstraints();
     panelBuilder.add(new JLabel(mLocalizer.msg("saveAs", "Save as:")), cc.xy(2,1));
     panelBuilder.add(mNameTf, cc.xy(4,1));

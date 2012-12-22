@@ -35,6 +35,7 @@ import javax.swing.JRadioButton;
 import tvbrowser.core.Settings;
 
 import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
@@ -66,7 +67,7 @@ public class ChannelIconAndNameSettingsTab implements SettingsTab {
     CellConstraints cc = new CellConstraints();
     PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu, default:grow, 5dlu",
     "default,5dlu,default,default,default,5dlu,default,10dlu,default,5dlu,default,default,default"));
-    pb.setDefaultDialogBorder();
+    pb.border(Borders.DIALOG);
 
     pb.addSeparator(mLocalizer.msg("programTable","Program table"), cc.xyw(1,1,3));
     pb.add(mShowIconAndNameInProgramTable = new JRadioButton(mLocalizer.msg("showIconAndName","Show channel icon and channel name"), Settings.propShowChannelIconsInProgramTable.getBoolean() && Settings.propShowChannelNamesInProgramTable.getBoolean()), cc.xy(2,3));

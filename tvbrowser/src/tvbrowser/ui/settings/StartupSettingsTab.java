@@ -119,7 +119,7 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
         "5dlu, pref, 3dlu, pref, fill:3dlu:grow, 3dlu",
         "pref, 5dlu, pref, 1dlu, pref, 1dlu, pref, 10dlu, pref, 10dlu, pref, 5dlu, pref, pref");
     mSettingsPn = new JPanel(layout);
-    mSettingsPn.setBorder(Borders.DIALOG_BORDER);
+    mSettingsPn.setBorder(Borders.DIALOG);
 
     CellConstraints cc = new CellConstraints();
 

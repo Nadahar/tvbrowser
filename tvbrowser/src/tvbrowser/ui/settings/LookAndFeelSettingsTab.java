@@ -131,7 +131,7 @@ public final class LookAndFeelSettingsTab implements SettingsTab {
 
     CellConstraints cc = new CellConstraints();
     mSettingsPn = new JPanel(layout);
-    mSettingsPn.setBorder(Borders.DIALOG_BORDER);
+    mSettingsPn.setBorder(Borders.DIALOG);
 
     layout.appendRow(RowSpec.decode("pref"));
     mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("lookAndFeel", "Look and Feel")), cc.xyw(1, 1, 7));

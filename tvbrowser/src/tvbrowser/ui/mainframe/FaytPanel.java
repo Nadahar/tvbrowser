@@ -101,7 +101,7 @@ public class FaytPanel extends JPanel {
         mSearchCloseBtn.removeMouseListener(ml[i]);
       }
     }
-    setBorder(Borders.DLU2_BORDER);
+    setBorder(Borders.DLU2);
     setOpaque(false);
     
     PanelBuilder pb = new PanelBuilder(new FormLayout("default,5dlu,100dlu","default"),this);

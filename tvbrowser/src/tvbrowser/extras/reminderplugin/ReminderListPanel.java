@@ -38,7 +38,7 @@ import util.ui.TVBrowserIcons;
 import util.ui.persona.Persona;
 import util.ui.persona.PersonaListener;
 
-import com.jgoodies.forms.builder.ButtonBarBuilder2;
+import com.jgoodies.forms.builder.ButtonBarBuilder;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -74,7 +74,7 @@ public class ReminderListPanel extends JPanel implements PersonaListener {
     setOpaque(false);
     
     if(close == null) {
-      setBorder(Borders.DLU4_BORDER);
+      setBorder(Borders.DLU4);
     }
 
     CellConstraints cc = new CellConstraints();
@@ -222,7 +222,8 @@ public class ReminderListPanel extends JPanel implements PersonaListener {
     add(mFilterLabel = new JLabel(mLocalizer.msg("titleFilterText","Show only programs with the following title:")), cc.xy(1,1));
     add(mTitleSelection, cc.xy(3,1));
 
-    ButtonBarBuilder2 builder = ButtonBarBuilder2.createLeftToRightBuilder();
+    ButtonBarBuilder builder = new ButtonBarBuilder();
+    builder.setLeftToRight(true);
 
     JButton config = new JButton(TVBrowserIcons.preferences(TVBrowserIcons.SIZE_SMALL));
 

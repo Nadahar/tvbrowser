@@ -39,7 +39,7 @@ import javax.swing.JPanel;
 
 import util.ui.customizableitems.SelectableItemList;
 
-import com.jgoodies.forms.builder.ButtonBarBuilder2;
+import com.jgoodies.forms.builder.ButtonBarBuilder;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
@@ -182,7 +182,7 @@ public ChannelChooserDlg(Frame parent, Channel[] channelArr, String description,
     JPanel contentPane = (JPanel)getContentPane();
     FormLayout layout = new FormLayout("fill:pref:grow", "");
     contentPane.setLayout(layout);
-    contentPane.setBorder(Borders.DLU4_BORDER);
+    contentPane.setBorder(Borders.DLU4);
     CellConstraints cc = new CellConstraints();
     
     if(type == ORDER_CHOOSER) {
@@ -235,7 +235,7 @@ public ChannelChooserDlg(Frame parent, Channel[] channelArr, String description,
       }
     });
 
-    ButtonBarBuilder2 builder = new ButtonBarBuilder2();
+    ButtonBarBuilder builder = new ButtonBarBuilder();
     builder.addGlue();
     builder.addButton(new JButton[] {okBt, cancelBt});
     

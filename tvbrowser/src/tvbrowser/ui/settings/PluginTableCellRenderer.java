@@ -160,7 +160,7 @@ public class PluginTableCellRenderer extends DefaultTableCellRenderer {
         mName.setFont(table.getFont().deriveFont(Font.BOLD, table.getFont().getSize2D() + 2));
 
         mPanel = new JPanel(new FormLayout("default, 2dlu, fill:0dlu:grow", "default, 2dlu, default"));
-        mPanel.setBorder(Borders.DLU2_BORDER);
+        mPanel.setBorder(Borders.DLU2);
 
         mPanel.add(mIcon, mCC.xy(1, 1));
         mPanel.add(mName, mCC.xy(3, 1));

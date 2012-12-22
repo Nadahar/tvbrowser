@@ -87,7 +87,7 @@ public class ReminderListDialog extends JDialog implements WindowClosingIf {
     });
     
     add(mReminderListPanel, BorderLayout.CENTER);
-    ((JPanel)getContentPane()).setBorder(Borders.DIALOG_BORDER);
+    ((JPanel)getContentPane()).setBorder(Borders.DIALOG);
     getRootPane().setDefaultButton(ok);
     
     Settings.layoutWindow("extras.reminderListDlg", this, new Dimension(550,350));

@@ -105,7 +105,7 @@ public class LocalPluginProgramFormatingSettingsDialog extends JDialog implement
     CellConstraints cc = new CellConstraints();
     FormLayout baseLayout = new FormLayout("pref,5dlu,pref:grow","pref,5dlu,pref,fill:default:grow,5dlu,pref");
     PanelBuilder pb = new PanelBuilder(baseLayout,(JPanel)getContentPane());
-    pb.setDefaultDialogBorder();
+    pb.border(Borders.DIALOG);
 
     mName = new JLabel(config.getName());
     mSetName = new JButton(mLocalizer.msg("changeName","Change name"));
@@ -249,7 +249,7 @@ public class LocalPluginProgramFormatingSettingsDialog extends JDialog implement
     });
 
     contentPanel.setLayout(new FormLayout("fill:default:grow, pref", "fill:default:grow, 3dlu, pref"));
-    contentPanel.setBorder(Borders.DLU4_BORDER);
+    contentPanel.setBorder(Borders.DLU4);
 
     JEditorPane example = new JEditorPane("text", content);
     example.setEditable(false);

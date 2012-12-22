@@ -42,6 +42,7 @@ import util.misc.JavaVersion;
 import util.misc.OperatingSystem;
 
 import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
@@ -68,7 +69,7 @@ public class TrayBaseSettingsTab implements SettingsTab {
     final PanelBuilder builder = new PanelBuilder(new FormLayout(
         "5dlu, pref:grow, 5dlu",
         "pref, 5dlu, pref, pref, pref, pref, pref, 10dlu, pref, 5dlu, pref, pref, pref"));
-    builder.setDefaultDialogBorder();
+    builder.border(Borders.DIALOG);
     CellConstraints cc = new CellConstraints();
 
     String msg = mLocalizer.msg("trayIsEnabled", "Tray activated");

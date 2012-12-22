@@ -24,6 +24,7 @@ import javax.swing.event.HyperlinkListener;
 import tvbrowser.ui.settings.MarkingsSettingsTab;
 import tvbrowser.ui.settings.SettingsDialog;
 
+import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
@@ -114,7 +115,7 @@ public final class DefaultMarkingPrioritySelectionPanel extends JPanel {
     int choosersToDraw = Math.min(priority.length, label.length);
 
     if (withDefaultDialogBorder) {
-      pb.setDefaultDialogBorder();
+      pb.border(Borders.DIALOG);
     }
 
     //init the components

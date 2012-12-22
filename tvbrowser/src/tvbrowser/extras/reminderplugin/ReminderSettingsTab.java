@@ -68,6 +68,7 @@ import util.ui.ScrollableJPanel;
 import util.ui.UiUtilities;
 
 import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
@@ -131,7 +132,7 @@ public class ReminderSettingsTab implements SettingsTab {
         "default,10dlu,default,5dlu,pref");
     layout.setColumnGroups(new int[][] {{7,9}});
     PanelBuilder pb = new PanelBuilder(layout, new ScrollableJPanel());
-    pb.setDefaultDialogBorder();
+    pb.border(Borders.DIALOG);
 
     CellConstraints cc = new CellConstraints();
 

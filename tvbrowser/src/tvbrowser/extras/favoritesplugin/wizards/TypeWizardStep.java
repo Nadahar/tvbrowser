@@ -147,7 +147,7 @@ public class TypeWizardStep extends AbstractWizardStep {
     mActorsCb = new JComboBox();
     mActorsCb.setEditable(true);
     panelBuilder.add(mActorsCb, cc.xy(3,7));
-    panelBuilder.setBorder(Borders.DLU4_BORDER);
+    panelBuilder.border(Borders.DLU4);
     panelBuilder.add(expertBtn, cc.xyw(1, 9, 3));
     ButtonGroup group = new ButtonGroup();
     group.add(mTitleRb);

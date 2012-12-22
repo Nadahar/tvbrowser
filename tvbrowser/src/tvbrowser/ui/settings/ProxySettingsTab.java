@@ -75,7 +75,7 @@ public class ProxySettingsTab implements devplugin.SettingsTab {
    */
   public JPanel createSettingsPanel() {
     mSettingsPn = new JPanel(new BorderLayout());
-    mSettingsPn.setBorder(Borders.DIALOG_BORDER);
+    mSettingsPn.setBorder(Borders.DIALOG);
     
     JPanel main = new JPanel(new TabLayout(1));
     mSettingsPn.add(main, BorderLayout.CENTER);

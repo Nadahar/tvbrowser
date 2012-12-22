@@ -82,7 +82,7 @@ public class MassFilterSettingsDialog extends JDialog {
     JPanel content = (JPanel) getContentPane();
 
     content.setLayout(new BorderLayout());
-    content.setBorder(Borders.DLU4_BORDER);
+    content.setBorder(Borders.DLU4);
 
     content.add(mForm, BorderLayout.NORTH);
 

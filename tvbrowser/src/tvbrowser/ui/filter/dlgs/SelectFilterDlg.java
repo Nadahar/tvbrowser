@@ -63,6 +63,7 @@ import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
 import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.factories.CC;
 import com.jgoodies.forms.layout.FormLayout;
 
@@ -108,7 +109,7 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
     FormLayout layout = new FormLayout("default,default:grow,default","default,4dlu,fill:default:grow,5dlu,default");
     
     PanelBuilder pb = new PanelBuilder(layout, (JPanel)getContentPane());
-    pb.setDefaultDialogBorder();
+    pb.border(Borders.DIALOG);
     
     mFilterTree = new FilterTree();
     

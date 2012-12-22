@@ -165,7 +165,7 @@ public class AlphaColorChooser extends JDialog implements ChangeListener {
     public void createGui() {
 
         JPanel panel = (JPanel) getContentPane();
-        panel.setBorder(Borders.DLU4_BORDER);
+        panel.setBorder(Borders.DLU4);
         panel.setLayout(new GridBagLayout());
 
         GridBagConstraints c = new GridBagConstraints();

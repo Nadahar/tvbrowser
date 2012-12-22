@@ -23,8 +23,9 @@ import javax.swing.JPanel;
 
 import tvbrowser.core.Settings;
 
-import com.jgoodies.forms.builder.ButtonBarBuilder2;
+import com.jgoodies.forms.builder.ButtonBarBuilder;
 import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.Sizes;
@@ -174,7 +175,7 @@ public class SendToPluginDialog extends JDialog implements WindowClosingIf {
 
     CellConstraints cc = new CellConstraints();
     PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,0dlu:grow,5dlu","pref,5dlu,pref,5dlu,pref,5dlu,pref,fill:10dlu:grow,pref"), (JPanel)this.getContentPane());
-    pb.setDefaultDialogBorder();
+    pb.border(Borders.DIALOG);
     
     pb.addSeparator(mLocalizer.msg("sendTo", "Send {0} programs to", mPrograms.length), cc.xyw(1,1,3));
     
@@ -258,7 +259,7 @@ public class SendToPluginDialog extends JDialog implements WindowClosingIf {
       }
     });
 
-    ButtonBarBuilder2 buttonBuilder = new ButtonBarBuilder2();
+    ButtonBarBuilder buttonBuilder = new ButtonBarBuilder();
     buttonBuilder.addGlue();
     buttonBuilder.addButton(new JButton[] {sendButton, cancelButton});
     

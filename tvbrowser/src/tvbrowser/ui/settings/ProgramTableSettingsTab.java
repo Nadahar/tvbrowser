@@ -140,7 +140,7 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
   public JPanel createSettingsPanel() {
     FormLayout layout = new FormLayout("5dlu, pref, 3dlu, pref, 3dlu, pref, fill:pref:grow, 3dlu", "");
     mSettingsPn = new JPanel(layout);
-    mSettingsPn.setBorder(Borders.DIALOG_BORDER);
+    mSettingsPn.setBorder(Borders.DIALOG);
 
     CellConstraints cc = new CellConstraints();
     int currentRow = 1;

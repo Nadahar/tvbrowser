@@ -22,6 +22,7 @@ import util.ui.MarkPriorityComboBoxRenderer;
 import util.ui.UiUtilities;
 
 import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
@@ -60,7 +61,7 @@ public class TrayImportantSettingsTab implements SettingsTab {
     PanelBuilder builder = new PanelBuilder(new FormLayout("5dlu,12dlu,pref,5dlu,pref,5dlu,pref:grow,5dlu",
         "pref,5dlu,pref,pref,pref,pref,pref,10dlu,pref,5dlu,pref," +
         "pref,pref,10dlu,pref,5dlu,pref,pref,pref,fill:pref:grow,pref"));
-    builder.setDefaultDialogBorder();
+    builder.border(Borders.DIALOG);
     
     mIsEnabled = new JCheckBox(mLocalizer.msg("importantEnabled","Show important programs"),Settings.propTrayImportantProgramsEnabled.getBoolean());
     mIsEnabled.setToolTipText(mLocalizer.msg("importantToolTip","Important programs are all marked programs."));

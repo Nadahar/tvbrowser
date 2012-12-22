@@ -144,7 +144,7 @@ public class Launch {
         });
 
         JPanel content = (JPanel) dialog.getContentPane();
-        content.setBorder(Borders.DIALOG_BORDER);
+        content.setBorder(Borders.DIALOG);
 
         FormLayout layout = new FormLayout("fill:235dlu:grow", "default, 3dlu, default, 3dlu, default");
         dialog.getContentPane().setLayout(layout);

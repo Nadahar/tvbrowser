@@ -47,7 +47,7 @@ import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
-import com.jgoodies.forms.builder.ButtonBarBuilder2;
+import com.jgoodies.forms.builder.ButtonBarBuilder;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
@@ -92,7 +92,7 @@ public class JGoodiesLNFSettings extends JDialog implements WindowClosingIf {
     JPanel content = (JPanel) getContentPane();
     
     content.setLayout(new FormLayout("pref, 3dlu, fill:pref:grow", "pref, 3dlu, pref, fill:3dlu:grow, pref"));
-    content.setBorder(Borders.DLU4_BORDER);
+    content.setBorder(Borders.DLU4);
     
     CellConstraints cc = new CellConstraints();
     
@@ -138,7 +138,7 @@ public class JGoodiesLNFSettings extends JDialog implements WindowClosingIf {
       }
     });
 
-    ButtonBarBuilder2 bar = new ButtonBarBuilder2();
+    ButtonBarBuilder bar = new ButtonBarBuilder();
     bar.addButton(new JButton[] {ok, cancel});
 
     JPanel panel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
