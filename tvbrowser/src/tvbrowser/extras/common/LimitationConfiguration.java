@@ -169,7 +169,7 @@ public class LimitationConfiguration {
    * Tries to load the channels again.
    */
   public void reValidateChannels() {
-    ArrayList<Channel> channelList = new ArrayList<Channel>(mChannelArr.length);
+    ArrayList<Channel> channelList = new ArrayList<Channel>();
     
     for(ChannelItem item : mChannelItemList) {
       item.reValidate();
