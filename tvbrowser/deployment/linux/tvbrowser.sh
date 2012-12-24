@@ -107,6 +107,7 @@ cd ${PROGRAM_DIR}
 
 echo "${JAVA_PROGRAM_DIR}java -Xms16m -Xmx256m  -Djava.library.path=\"${PROGRAM_DIR}\" -Dpropertiesfile=linux.properties -jar tvbrowser.jar '$@'"
 ${JAVA_PROGRAM_DIR}java -Xms16m -Xmx128m -Djava.library.path="${PROGRAM_DIR}" -Dpropertiesfile=linux.properties -jar tvbrowser.jar "$@"
-
+# ensure disk cache is writte to drive
+sync
 echo "TV-Browser TERMINATED."
 
