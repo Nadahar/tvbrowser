@@ -158,7 +158,7 @@ public class ContextDialog extends JDialog implements WindowClosingIf, ActionLis
 		mCancel.addActionListener(this);
 		
 		buttonBuilder.addGlue();
-		buttonBuilder.addGriddedButtons(new JButton[] { mOk, mCancel });
+		buttonBuilder.addButton(new JButton[] { mOk, mCancel });
 
 		int row = 2;
 		builder.addLabel(mLocalizer.msg("ProgramEditor.programName", "Program name"), cc.xy(2, row));
