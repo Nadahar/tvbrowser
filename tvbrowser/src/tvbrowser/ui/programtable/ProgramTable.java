@@ -1259,13 +1259,20 @@ public class ProgramTable extends JPanel
 
   /**
    * Deselect the selected program.
+   */
+  public void deSelectItem() {
+    deSelectItem(false);
+  }
+  
+  /**
+   * Deselect the selected program.
    * <p>
    * @return The formally selected program or <code>null</code> if there was no selected program.
    */
-  public Program deSelectItem() {
+  public Program deSelectItem(boolean getProgram) {
     Program selected = null;
     
-    if(mCurrentRow >= 0 && mCurrentCol >= 0) {
+    if(getProgram && mCurrentRow >= 0 && mCurrentCol >= 0) {
       selected = mModel.getProgramPanel(mCurrentCol,mCurrentRow).getProgram();
     }
     
@@ -1275,6 +1282,8 @@ public class ProgramTable extends JPanel
     
     return selected;
   }
+  
+  
 
   /**
    * Returns the cell indices for the given point with pixel coordinates

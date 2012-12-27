@@ -57,7 +57,7 @@ public class KeyboardAction extends AbstractAction {
           mScrollPane.togglePopupMenu();
         }
         if (mType == KEY_DESELECT) {
-          mScrollPane.deSelectItem();
+          mScrollPane.deSelectItem(false);
         }
         if (mType == KEY_MIDDLECLICK) {
           mScrollPane.handleMiddleClick();
