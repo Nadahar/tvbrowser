@@ -2138,7 +2138,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       while(dayProgram.hasNext()) {
         next = dayProgram.next();
         
-        if(next.getStartTime() + next.getLength() > selected.getStartTime() && mProgramTableModel.getProgramFilter().accept(next)) {
+        if(!next.isExpired() && next.getStartTime() + next.getLength() > selected.getStartTime() && mProgramTableModel.getProgramFilter().accept(next)) {
           selectProgram(next);
           next = null;
           found = true;
@@ -2146,7 +2146,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
         }
       }
       
-      if(!found && next != null && mProgramTableModel.getProgramFilter().accept(next)) {
+      if(!found && next != null && !next.isExpired() && mProgramTableModel.getProgramFilter().accept(next)) {
         selectProgram(next);
       }
       else if(!found) {
@@ -2170,7 +2170,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       while(dayProgram.hasNext()) {
         next = dayProgram.next();
         
-        if(next.getStartTime() + next.getLength() > selected.getStartTime() && mProgramTableModel.getProgramFilter().accept(next)) {
+        if(!next.isExpired() && next.getStartTime() + next.getLength() > selected.getStartTime() && mProgramTableModel.getProgramFilter().accept(next)) {
           selectProgram(next);
           next = null;
           found = true;
@@ -2178,7 +2178,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
         }
       }
       
-      if(!found && next != null && mProgramTableModel.getProgramFilter().accept(next)) {
+      if(!found && next != null && !next.isExpired() && mProgramTableModel.getProgramFilter().accept(next)) {
         selectProgram(next);
       }
       else if(!found) {
