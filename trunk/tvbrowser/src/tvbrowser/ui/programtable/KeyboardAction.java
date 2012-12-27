@@ -1,8 +1,8 @@
 package tvbrowser.ui.programtable;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
+import javax.swing.AbstractAction;
 import javax.swing.SwingUtilities;
 
 /**
@@ -11,7 +11,7 @@ import javax.swing.SwingUtilities;
  * @author René Mach
  * 
  */
-public class KeyboardAction implements ActionListener {
+public class KeyboardAction extends AbstractAction {
 
   public static final int KEY_UP = 0;
   public static final int KEY_DOWN = 1;
@@ -54,7 +54,7 @@ public class KeyboardAction implements ActionListener {
           mScrollPane.right();
         }
         if (mType == KEY_CONTEXTMENU) {
-          mScrollPane.showPopupMenu();
+          mScrollPane.togglePopupMenu();
         }
         if (mType == KEY_DESELECT) {
           mScrollPane.deSelectItem();
