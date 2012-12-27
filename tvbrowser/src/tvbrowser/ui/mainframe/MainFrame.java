@@ -26,6 +26,7 @@
 
 package tvbrowser.ui.mainframe;
 
+import java.awt.AWTKeyStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -37,6 +38,7 @@ import java.awt.Graphics;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Insets;
+import java.awt.KeyboardFocusManager;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -80,14 +82,17 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Enumeration;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.TooManyListenersException;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import javax.swing.BorderFactory;
+import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -121,6 +126,7 @@ import tvbrowser.core.filters.FilterList;
 import tvbrowser.core.filters.FilterManagerImpl;
 import tvbrowser.core.filters.ShowAllFilter;
 import tvbrowser.core.filters.filtercomponents.ChannelFilterComponent;
+import tvbrowser.core.plugin.PluginManagerImpl;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.plugin.PluginStateListener;
@@ -458,6 +464,17 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
         }
       }
     };
+
+    KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.CTRL_MASK);
+    
+    // Remove ctrl-up from normal focus traversal
+    Set<AWTKeyStroke> forwardKeys = new HashSet<AWTKeyStroke>(mCenterTabPane.getFocusTraversalKeys(KeyboardFocusManager.UP_CYCLE_TRAVERSAL_KEYS));
+    forwardKeys.remove(stroke);
+    mCenterTabPane.setFocusTraversalKeys(KeyboardFocusManager.UP_CYCLE_TRAVERSAL_KEYS, forwardKeys);
+    
+    InputMap im = mCenterTabPane.getInputMap(JTabbedPane.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+    im.put(stroke, "scrollUp");
+    mCenterTabPane.getActionMap().put("scrollUp", new KeyboardAction(mProgramTableScrollPane, KeyboardAction.KEY_UP));
     
     mCenterTabPane.setBorder(BorderFactory.createEmptyBorder());
     mCenterTabPane.addMouseListener(new MouseAdapter() {
@@ -1137,6 +1154,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
           TVBrowserActions.fullScreen.actionPerformed(null);
         }
         else {
+          mProgramTableScrollPane.closePopupMenuIfVisible();
           mProgramTableScrollPane.getProgramTable().stopAutoScroll();
           mAutoDownloadTimer = -1;
           mLastTimerMinutesAfterMidnight = IOUtilities.getMinutesAfterMidnight();
@@ -2109,13 +2127,67 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
   }
 
   public void goToNextDay() {
-    mProgramTableScrollPane.deSelectItem();
-    mFinderPanel.markNextDate();
+    final Program selected = mProgramTableScrollPane.deSelectItem();
+    
+    if(selected != null) {
+      Iterator<Program> dayProgram = PluginManagerImpl.getInstance().getChannelDayProgram(selected.getDate().addDays(1), selected.getChannel());
+      
+      Program next = null;
+      boolean found = false;
+      
+      while(dayProgram.hasNext()) {
+        next = dayProgram.next();
+        
+        if(next.getStartTime() + next.getLength() > selected.getStartTime() && mProgramTableModel.getProgramFilter().accept(next)) {
+          selectProgram(next);
+          next = null;
+          found = true;
+          break;
+        }
+      }
+      
+      if(!found && next != null && mProgramTableModel.getProgramFilter().accept(next)) {
+        selectProgram(next);
+      }
+      else if(!found) {
+        mFinderPanel.markNextDate();
+      }
+    }
+    else {
+      mFinderPanel.markNextDate();
+    }
   }
 
   public void goToPreviousDay() {
-    mProgramTableScrollPane.deSelectItem();
-    mFinderPanel.markPreviousDate();
+    final Program selected = mProgramTableScrollPane.deSelectItem();
+    
+    if(selected != null) {
+      Iterator<Program> dayProgram = PluginManagerImpl.getInstance().getChannelDayProgram(selected.getDate().addDays(-1), selected.getChannel());
+      
+      Program next = null;
+      boolean found = false;
+      
+      while(dayProgram.hasNext()) {
+        next = dayProgram.next();
+        
+        if(next.getStartTime() + next.getLength() > selected.getStartTime() && mProgramTableModel.getProgramFilter().accept(next)) {
+          selectProgram(next);
+          next = null;
+          found = true;
+          break;
+        }
+      }
+      
+      if(!found && next != null && mProgramTableModel.getProgramFilter().accept(next)) {
+        selectProgram(next);
+      }
+      else if(!found) {
+        mFinderPanel.markPreviousDate();
+      }
+    }
+    else {
+      mFinderPanel.markPreviousDate();
+    }
   }
 
   /**

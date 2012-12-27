@@ -54,6 +54,7 @@ import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.programtable.background.BackgroundPainter;
 import util.ui.persona.Persona;
 import devplugin.Channel;
+import devplugin.Program;
 
 /**
  *
@@ -401,11 +402,18 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
   }
 
   /**
-   * Opens the PopupMenu for the selected program.
+   * Closes the PopupMenu menu if it is visible.
+   */
+  public void closePopupMenuIfVisible() {
+    mProgramTable.closePopupMenuIfVisible();
+  }
+  
+  /**
+   * Toggles visibility of the PopupMenu for the selected program.
    *
    */
-  public void showPopupMenu() {
-    mProgramTable.showPopupFromKeyboard();
+  public void togglePopupMenu() {
+    mProgramTable.togglePopupFromKeyboard();
   }
 
   /**
@@ -435,13 +443,14 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
   public void handleDoubleClick() {
     mProgramTable.startDoubleClickPluginFromKeyboard();
   }
-
+  
   /**
    * Deselect the selected program.
-   *
+   * <p>
+   * @return The formally selected program or <code>null</code> if there was no selected program.
    */
-  public void deSelectItem() {
-    mProgramTable.deSelectItem();
+  public Program deSelectItem() {
+    return mProgramTable.deSelectItem();
   }
 
   public void stateChanged(ChangeEvent e) {

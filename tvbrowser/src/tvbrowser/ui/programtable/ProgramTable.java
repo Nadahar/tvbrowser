@@ -49,6 +49,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.sql.NClob;
 
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -968,21 +969,34 @@ public class ProgramTable extends JPanel
   }
 
   /**
-   * Opens the PopupMenu for the selected program.
+   * Closes the PopupMenu menu if it is visible.
+   */
+  public void closePopupMenuIfVisible() {
+    if(mPopupMenu != null && mPopupMenu.isVisible()) {
+      mPopupMenu.setVisible(false);
+    }
+  }
+  
+  /**
+   * Toggles visibility of the PopupMenu for the selected program.
    *
    */
-  public void showPopupFromKeyboard() {
+  public void togglePopupFromKeyboard() {
     if(mCurrentCol == -1 || mCurrentRow == -1) {
       return;
     }
-
-    Program program = mModel.getProgramPanel(mCurrentCol, mCurrentRow).getProgram();
-    Rectangle rect = this.getCellRect(mCurrentCol,mCurrentRow);
-    scrollRectToVisible(rect);
-
-    mPopupMenu = createPluginContextMenu(program);
-    mPopupMenu.show(this, rect.x + (rect.width / 3), rect.y + ((rect.height * 3) / 4));
-
+    
+    if(mPopupMenu != null && mPopupMenu.isVisible()) {
+      mPopupMenu.setVisible(false);
+    }
+    else {
+      Program program = mModel.getProgramPanel(mCurrentCol, mCurrentRow).getProgram();
+      Rectangle rect = this.getCellRect(mCurrentCol,mCurrentRow);
+      scrollRectToVisible(rect);
+  
+      mPopupMenu = createPluginContextMenu(program);
+      mPopupMenu.show(this, rect.x + (rect.width / 3), rect.y + ((rect.height * 3) / 4));
+    }
   }
 
   /**
@@ -1123,8 +1137,13 @@ public class ProgramTable extends JPanel
     } else {
       int rows = mModel.getRowCount(mCurrentCol);
       ProgramPanel panel = mModel.getProgramPanel(mCurrentCol, mCurrentRow);
+      ProgramPanel previous = null;
+      
+      if(mCurrentRow > 0) {
+        previous = mModel.getProgramPanel(mCurrentCol, mCurrentRow-1);
+      }
 
-      if(panel.getProgram().isOnAir()) {
+      if(panel.getProgram().isOnAir() || (previous != null && previous.getProgram().isExpired())) {
         mCurrentRow = rows - 1;
       } else {
         mCurrentRow--;
@@ -1240,12 +1259,21 @@ public class ProgramTable extends JPanel
 
   /**
    * Deselect the selected program.
-   *
+   * <p>
+   * @return The formally selected program or <code>null</code> if there was no selected program.
    */
-  public void deSelectItem() {
+  public Program deSelectItem() {
+    Program selected = null;
+    
+    if(mCurrentRow >= 0 && mCurrentCol >= 0) {
+      selected = mModel.getProgramPanel(mCurrentCol,mCurrentRow).getProgram();
+    }
+    
     repaintCurrentCell();
     mCurrentRow = -1;
     mCurrentCol = -1;
+    
+    return selected;
   }
 
   /**
