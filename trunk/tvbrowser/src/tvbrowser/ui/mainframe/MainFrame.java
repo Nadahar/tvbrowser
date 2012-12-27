@@ -957,7 +957,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
    *
    */
   public void addKeyboardAction() {
-    mProgramTableScrollPane.deSelectItem();
+    mProgramTableScrollPane.deSelectItem(false);
 
     // register the global hot keys, so they also work when the main menu is not visible
     for (final TVBrowserAction action : TVBrowserActions.getActions()) {
@@ -1368,7 +1368,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       mFindAsYouType.closeFayt();
     }
 
-    mProgramTableScrollPane.deSelectItem();
+    mProgramTableScrollPane.deSelectItem(false);
     mProgramTableModel.setProgramFilter(filter);
     mMenuBar.updateFiltersMenu();
 
@@ -1856,7 +1856,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       scrollToProgram(program, new Runnable() {
         public void run() {
           ProgramTable table = MainFrame.getInstance().getProgramTableScrollPane().getProgramTable();
-          table.deSelectItem();
+          table.deSelectItem(false);
           table.selectProgram(program);
         }});
     }
@@ -1867,7 +1867,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
   }
 
   public void scrollToTime(int time) {
-    mProgramTableScrollPane.deSelectItem();
+    mProgramTableScrollPane.deSelectItem(false);
     mProgramTableScrollPane.scrollToTime(time);
     mProgramTableScrollPane.requestFocusInWindow();
     
@@ -1906,7 +1906,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
   }
 
   private void scrollTo(Date day, int minute, final Runnable callback) {
-    mProgramTableScrollPane.deSelectItem();
+    mProgramTableScrollPane.deSelectItem(false);
     // Choose the day.
     // NOTE: If its early in the morning before the set "day start" we should
     // stay at the last day - otherwise the user won't see the current
@@ -2122,12 +2122,12 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
   }
 
   public void goTo(Date date) {
-    mProgramTableScrollPane.deSelectItem();
+    mProgramTableScrollPane.deSelectItem(false);
     mFinderPanel.markDate(date,true);
   }
 
   public void goToNextDay() {
-    final Program selected = mProgramTableScrollPane.deSelectItem();
+    final Program selected = mProgramTableScrollPane.deSelectItem(true);
     
     if(selected != null) {
       Iterator<Program> dayProgram = PluginManagerImpl.getInstance().getChannelDayProgram(selected.getDate().addDays(1), selected.getChannel());
@@ -2159,7 +2159,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
   }
 
   public void goToPreviousDay() {
-    final Program selected = mProgramTableScrollPane.deSelectItem();
+    final Program selected = mProgramTableScrollPane.deSelectItem(true);
     
     if(selected != null) {
       Iterator<Program> dayProgram = PluginManagerImpl.getInstance().getChannelDayProgram(selected.getDate().addDays(-1), selected.getChannel());
@@ -2195,7 +2195,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
    * @since 2.7
    */
   public void goToNextWeek() {
-    mProgramTableScrollPane.deSelectItem();
+    mProgramTableScrollPane.deSelectItem(false);
     mFinderPanel.markNextWeek();
   }
 
@@ -2204,7 +2204,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
    * @since 2.7
    */
   public void goToPreviousWeek() {
-    mProgramTableScrollPane.deSelectItem();
+    mProgramTableScrollPane.deSelectItem(false);
     mFinderPanel.markPreviousWeek();
   }
 
@@ -2224,7 +2224,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         final int currentTime = mProgramTableScrollPane.getScrolledTime();
-        mProgramTableScrollPane.deSelectItem();
+        mProgramTableScrollPane.deSelectItem(false);
         mProgramTableModel.setDate(date, monitor, new Runnable() {
 
           @Override

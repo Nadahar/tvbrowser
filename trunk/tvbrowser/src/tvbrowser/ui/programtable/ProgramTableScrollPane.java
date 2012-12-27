@@ -447,10 +447,11 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
   /**
    * Deselect the selected program.
    * <p>
+   * @param getProgram If the currently selected program should be returned.
    * @return The formally selected program or <code>null</code> if there was no selected program.
    */
-  public Program deSelectItem() {
-    return mProgramTable.deSelectItem();
+  public Program deSelectItem(boolean getProgram) {
+    return mProgramTable.deSelectItem(getProgram);
   }
 
   public void stateChanged(ChangeEvent e) {
