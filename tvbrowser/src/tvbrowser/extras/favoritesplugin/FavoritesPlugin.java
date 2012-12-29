@@ -389,7 +389,7 @@ public class FavoritesPlugin {
   private void addPanel() {
     SwingUtilities.invokeLater(new Runnable() {
       @Override
-      public void run() {
+      public void run() {System.out.println("hier");
         if(mSettings.getProperty("provideTab", "true").equals("true")) {
           if(mMangePanel == null) {
             int splitPanePosition = getIntegerSetting(mSettings, "splitpanePosition",200);
@@ -442,6 +442,10 @@ public class FavoritesPlugin {
               }
             };
             mCenterPanel.addAncestorListener(mAncestorListener);
+            
+            if(mCenterPanel.isVisible()) {
+              mAncestorListener.ancestorAdded(null);
+            }
           }
         }
         else {
