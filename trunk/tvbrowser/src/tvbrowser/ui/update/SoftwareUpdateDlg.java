@@ -120,6 +120,8 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
   private boolean mIsVersionChange;
   
   private Version mOldTvbVersion;
+  
+  private int mDialogType;
 
   /**
    * Creates an instance of this class.
@@ -135,6 +137,7 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
       int dialogType, SoftwareUpdateItem[] itemArr, boolean isVersionChange, Version oldTvbVersion) {
     super(parent);
     setModal(true);
+    mDialogType = dialogType;
     mIsVersionChange = isVersionChange;
     mOldTvbVersion = oldTvbVersion;
     createGui(downloadUrl, dialogType, itemArr);
@@ -531,7 +534,7 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
         mDownloadBtn.setEnabled(true);
         setCursor(cursor);
       }
-      if (successfullyDownloadedItems > 0 && !mIsVersionChange) {
+      if (successfullyDownloadedItems > 0 && !mIsVersionChange && mDialogType != SoftwareUpdater.ONLY_DATA_SERVICE_TYPE) {
         JOptionPane.showMessageDialog(null, mLocalizer.msg("restartprogram", "please restart tvbrowser before..."));
         setVisible(false);
       }
