@@ -30,6 +30,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Frame;
 import java.awt.Image;
+import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -871,21 +872,34 @@ public class TVBrowser {
 
     // Set the right size
     mLog.info("Setting frame size and location");
-
-    int windowWidth = Settings.propWindowWidth.getInt();
-    int windowHeight = Settings.propWindowHeight.getInt();
+    
+    final int windowWidth = Settings.propWindowWidth.getInt();
+    final int windowHeight = Settings.propWindowHeight.getInt();
     mainFrame.setSize(windowWidth, windowHeight);
-    int windowX = Settings.propWindowX.getInt();
-    int windowY = Settings.propWindowY.getInt();
+    final int windowX = Settings.propWindowX.getInt();
+    final int windowY = Settings.propWindowY.getInt();
 
-    Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+    final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
 
     if ((windowX == -1 && windowY == -1) || windowX + windowWidth < 0 || windowX > screen.width + 10 || windowY + windowHeight < 0 || windowY > screen.height + 10 || windowWidth < 200 || windowHeight < 200) {
       UiUtilities.centerAndShow(mainFrame);
     } else {
       mainFrame.setLocation(windowX, windowY);
-
     }
+    
+    SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        Point p = mainFrame.getLocation();
+        
+        if(windowX < 0 || windowY < 0 || windowX > screen.width || windowY > screen.height) {
+          mainFrame.setLocationRelativeTo(null);
+        }
+        else if(p.x != windowX || windowY != p.y) {
+          mainFrame.setLocation(windowX - Math.abs(p.x-windowX), windowY - Math.abs(p.y-windowY));
+        }
+      }
+    });
 
     mainFrame.setVisible(true);
     ErrorHandler.setFrame(mainFrame);

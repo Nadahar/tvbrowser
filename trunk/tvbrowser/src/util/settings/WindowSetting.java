@@ -24,13 +24,18 @@
 package util.settings;
 
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+
+import javax.swing.SwingUtilities;
 
 /**
  * A class with the position and size settings for a window.
@@ -103,7 +108,7 @@ public final class WindowSetting {
    * @param window The window to set the values for.
    */
   public void layout(final Window window) {
-    Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
+    final Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
 
     int width = mWidth;
     int height = mHeight;
@@ -140,48 +145,66 @@ public final class WindowSetting {
     }
 
     if(mWindowCache == null || !window.equals(mWindowCache)) {
-      window.addComponentListener(new ComponentListener() {
+      window.addWindowListener(new WindowAdapter() {
+        @Override
+        public void windowOpened(final WindowEvent e) {
+          SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+              Point p = e.getComponent().getLocation();
+              
+              if(mXPos < 0 || mYPos < 0 || mXPos > d.width || mYPos > d.height) {
+                window.setLocationRelativeTo(null);
+              }
+              else if(p.x != mXPos || mYPos != p.y) {
+                window.setLocation(mXPos - Math.abs(p.x-mXPos), mYPos - Math.abs(p.y-mYPos));
+              }
 
-        public void componentHidden(ComponentEvent e) {
-          savePos(e);
-        }
+              window.addComponentListener(new ComponentListener() {
 
-        public void componentMoved(ComponentEvent e) {
-          savePos(e);
-        }
+                public void componentHidden(ComponentEvent e) {
+                  savePos(e);
+                }
 
-        public void componentResized(ComponentEvent e) {
-          if (mMinSize != null) {
-            int winWidth = window.getWidth();
-            int winHeight = window.getHeight();
-            boolean resize = false;
-            if (winWidth < mMinSize.getWidth()) {
-              winWidth = mMinSize.width;
-              resize = true;
+                public void componentMoved(ComponentEvent e) {
+                  savePos(e);
+                }
+
+                public void componentResized(ComponentEvent e) {
+                  if (mMinSize != null) {
+                    int winWidth = window.getWidth();
+                    int winHeight = window.getHeight();
+                    boolean resize = false;
+                    if (winWidth < mMinSize.getWidth()) {
+                      winWidth = mMinSize.width;
+                      resize = true;
+                    }
+                    if (winHeight < mMinSize.getHeight()) {
+                      winHeight = mMinSize.height;
+                      resize = true;
+                    }
+                    if (resize) {
+                      window.setSize(winWidth, winHeight);
+                    }
+                  }
+                  saveSize(e);
+                }
+
+                public void componentShown(ComponentEvent e) {
+                  savePos(e);
+                }
+
+                private void savePos(ComponentEvent e) {
+                  mXPos = e.getComponent().getX();
+                  mYPos = e.getComponent().getY();
+                }
+
+                private void saveSize(ComponentEvent e) {
+                  mWidth = e.getComponent().getWidth();
+                  mHeight = e.getComponent().getHeight();
+                }
+              });
             }
-            if (winHeight < mMinSize.getHeight()) {
-              winHeight = mMinSize.height;
-              resize = true;
-            }
-            if (resize) {
-              window.setSize(winWidth, winHeight);
-            }
-          }
-          saveSize(e);
-        }
-
-        public void componentShown(ComponentEvent e) {
-          savePos(e);
-        }
-
-        private void savePos(ComponentEvent e) {
-          mXPos = e.getComponent().getX();
-          mYPos = e.getComponent().getY();
-        }
-
-        private void saveSize(ComponentEvent e) {
-          mWidth = e.getComponent().getWidth();
-          mHeight = e.getComponent().getHeight();
+          });
         }
       });
     }
