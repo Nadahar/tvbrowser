@@ -130,7 +130,10 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
     mLanguageCB.setRenderer(new CustomComboBoxRenderer(mLanguageCB.getRenderer()) {
       @Override
       public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-        return getBackendRenderer().getListCellRendererComponent(list, ((Locale)value).getDisplayName(), index, isSelected, cellHasFocus);
+        String name = ((Locale)value).getDisplayName((Locale)value);
+        name = String.valueOf(name.charAt(0)).toUpperCase() + name.substring(1);
+        
+        return getBackendRenderer().getListCellRendererComponent(list, name, index, isSelected, cellHasFocus);
       }
     });
     
