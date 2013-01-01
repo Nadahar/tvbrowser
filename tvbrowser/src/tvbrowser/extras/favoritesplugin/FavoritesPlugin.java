@@ -389,7 +389,7 @@ public class FavoritesPlugin {
   private void addPanel() {
     SwingUtilities.invokeLater(new Runnable() {
       @Override
-      public void run() {System.out.println("hier");
+      public void run() {
         if(mSettings.getProperty("provideTab", "true").equals("true")) {
           if(mMangePanel == null) {
             int splitPanePosition = getIntegerSetting(mSettings, "splitpanePosition",200);
