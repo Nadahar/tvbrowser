@@ -96,7 +96,7 @@ public class PluginInformationDialog extends JDialog implements WindowClosingIf 
               Launch.openURL(e.getURL().toString());
             }
           }
-        },UIManager.getColor("List.background"));
+        },UIManager.getColor("EditorPane.background"));
 
     pane.setPreferredSize(new Dimension(400,300));
     
@@ -134,7 +134,8 @@ public class PluginInformationDialog extends JDialog implements WindowClosingIf 
     bb.setBorder(Borders.createEmptyBorder("6dlu,6dlu,6dlu,6dlu"));
 
     pb.add(bb.getPanel(), cc.xyw(1,3,3));
-    pb.getPanel().setBackground(UIManager.getColor("List.background"));
+    pb.getPanel().setBackground(UIManager.getColor("EditorPane.background"));
+    pb.getPanel().setOpaque(true);
   }
 
   public void close() {
