@@ -148,8 +148,12 @@ public final class WindowSetting {
       window.addWindowListener(new WindowAdapter() {
         @Override
         public void windowOpened(final WindowEvent e) {
-          SwingUtilities.invokeLater(new Runnable() {
+          SwingUtilities.invokeLater(new Thread() {
             public void run() {
+              try {
+                sleep(100);
+              } catch (InterruptedException e1) {}
+              
               Point p = e.getComponent().getLocation();
               
               if(mXPos < 0 || mYPos < 0 || mXPos > d.width || mYPos > d.height) {
