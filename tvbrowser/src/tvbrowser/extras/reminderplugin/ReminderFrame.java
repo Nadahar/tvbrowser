@@ -28,6 +28,7 @@ package tvbrowser.extras.reminderplugin;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -347,7 +348,10 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
       programPanel.setMinimumSize(new Dimension(300,50));
     }
     mDialog.pack();
-    mDialog.setSize(mDialog.getWidth() + scrollPane.getVerticalScrollBar().getPreferredSize().width, mDialog.getHeight()+scrollPane.getHorizontalScrollBar().getPreferredSize().height);
+    
+    int height = Math.min(mDialog.getHeight(), Toolkit.getDefaultToolkit().getScreenSize().height - 60);
+    
+    mDialog.setSize(mDialog.getWidth() + scrollPane.getVerticalScrollBar().getPreferredSize().width, height+scrollPane.getHorizontalScrollBar().getPreferredSize().height);
     
     mCloseBt.setText(mCloseBtText);
     mDialog.setAlwaysOnTop(ReminderPlugin.getInstance().getSettings().getProperty("alwaysOnTop","true").equalsIgnoreCase("true"));
@@ -366,7 +370,7 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
         }
       });
     }
-
+    
     mDialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
     mDialog.addWindowListener(new WindowAdapter() {
       public void windowClosing(final WindowEvent e) {
