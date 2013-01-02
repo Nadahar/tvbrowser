@@ -26,9 +26,11 @@
 
 package tvbrowser.ui.settings;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -43,6 +45,7 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 import javax.swing.ButtonGroup;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -53,6 +56,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JRootPane;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -67,9 +71,11 @@ import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 import util.ui.customizableitems.SelectableItemList;
+import util.ui.customizableitems.SelectableItemRendererCenterComponentIf;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.factories.CC;
 import com.jgoodies.forms.factories.DefaultComponentFactory;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
@@ -321,18 +327,16 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
           
           Locale loc = Localizer.getLocaleForString(lang);
           
-          boolean add = true;
+          boolean installed = false;
           
           for(int i = 0; i < mLanguageCB.getItemCount(); i++) {
             if(loc.equals(mLanguageCB.getItemAt(i))) {
-              add = false;
+              installed = true;
               break;
             }
           }
           
-          if(add) {
-            availableLocales.add(new LocaleLink(loc, link));
-          }
+          availableLocales.add(new LocaleLink(loc, link, installed));
           
           pos = matcher.end();
         }
@@ -355,7 +359,7 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
       }
     });
     
-    FormLayout layout = new FormLayout("default:grow,default,5dlu,default","default,3dlu,fill:default:grow,5dlu,default");
+    FormLayout layout = new FormLayout("default:grow,default,5dlu,default","default,default,3dlu,fill:default:grow,5dlu,default");
     
     PanelBuilder pb = new PanelBuilder(layout);
     pb.border(Borders.DIALOG);
@@ -367,9 +371,34 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
     CellConstraints cc = new CellConstraints();
     
     final SelectableItemList list = new SelectableItemList(new LocaleLink[0], availableLocales.toArray(new LocaleLink[availableLocales.size()]));
+    list.addCenterRendererComponent(LocaleLink.class, new SelectableItemRendererCenterComponentIf() {
+      private DefaultListCellRenderer mRenderer = new DefaultListCellRenderer();
+      
+      @Override
+      public JPanel createCenterPanel(JList list, Object value, int index, boolean isSelected, boolean isEnabled,
+          JScrollPane parentScrollPane, int leftColumnWidth) {
+        DefaultListCellRenderer label = (DefaultListCellRenderer) mRenderer
+            .getListCellRendererComponent(list, value, index, isSelected,
+                false);
+        
+        if(((LocaleLink)value).isInstalled()) {
+          label.setFont(label.getFont().deriveFont(Font.BOLD));
+        }
+        
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setOpaque(false);
+        panel.add(label,BorderLayout.CENTER);
+        
+        return panel;
+      }
+      
+      @Override
+      public void calculateSize(JList list, int index, JPanel contentPane) {}
+    });
     
-    pb.addLabel(mLocalizer.msg("additionalLanguagesFound", "The following additional languages were found:"), cc.xyw(1,1,4));
-    pb.add(list, cc.xyw(1,3,4));
+    pb.addLabel(mLocalizer.msg("additionalLanguagesFound", "The following languages were found:"), cc.xyw(1,1,4));
+    pb.addLabel(mLocalizer.msg("additionalLanguagesInfo", "(Bold language are installed but have possibly been updated.)"), cc.xyw(1,2,4));
+    pb.add(list, cc.xyw(1,4,4));
     
     final JButton download = new JButton(mLocalizer.msg("downloadSelectedLanguages", "Download selected languages"));
     download.setEnabled(false);
@@ -395,8 +424,8 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
       }
     });
     
-    pb.add(download, cc.xy(2,5));
-    pb.add(close, cc.xy(4,5));
+    pb.add(download, cc.xy(2,6));
+    pb.add(close, cc.xy(4,6));
     
     WindowClosingIf windowClosing = new WindowClosingIf() {
       @Override
@@ -428,14 +457,17 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
   private class LocaleLink {
     private Locale mLocale;
     private String mLink;
+    private boolean mInstalledLanguage;
     
-    public LocaleLink(Locale locale, String link) {
+    public LocaleLink(Locale locale, String link, boolean installedLangauge) {
       mLocale = locale;
       mLink = link;
+      mInstalledLanguage = installedLangauge;
     }
     
     public String toString() {
-      return mLocale.getDisplayName();
+      String value = mLocale.getDisplayName(mLocale);
+      return String.valueOf(value.charAt(0)).toUpperCase() + value.substring(1);
     }
     
     public boolean download() {
@@ -456,6 +488,10 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
     
     public Locale getLocale() {
       return mLocale;
+    }
+    
+    public boolean isInstalled() {
+      return mInstalledLanguage;
     }
   }
 }
