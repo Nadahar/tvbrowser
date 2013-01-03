@@ -30,8 +30,13 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import captureplugin.drivers.dreambox.connector.cs.E2ListMapHandler;
+import captureplugin.drivers.dreambox.connector.cs.E2TimerHelper;
+
 /**
  * This class reads dreambox xml-data and maps it into a map
+ * 
+ * adopted by fishhead
  */
 public class DreamboxHandler extends DefaultHandler {
 
@@ -51,10 +56,13 @@ public class DreamboxHandler extends DefaultHandler {
 
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
-        if ("e2servicereference".equals(qName)) {
-            mKey = mCharacters.toString();
-        } else if ("e2servicename".equals(qName)) {
-            mData.put(mKey, mCharacters.toString());
+        // fishhead -----------------------
+        String data = E2ListMapHandler.convertToString(mCharacters);
+        if (E2TimerHelper.SERVICEREFERENCE.equals(qName)) {
+            mKey = data;
+        } else if (E2TimerHelper.SERVICENAME.equals(qName)) {
+            mData.put(mKey, data);
+        // fishhead -----------------------
         }
     }
 
