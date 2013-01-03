@@ -521,7 +521,7 @@ public final class NextViewDataService extends AbstractTvDataService {
    * Since TV-Browser 0.9.7 getAPIVersion must return 1.0
    */
   public static Version getVersion() {
-    return new Version(3, 0, 0, true, null);
+    return new Version(3, 0, 1, true, null);
   }
 
   public void setWorkingDirectory(java.io.File dataDir) {
