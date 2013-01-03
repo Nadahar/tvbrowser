@@ -41,7 +41,7 @@ public class SwitchPlugin extends Plugin {
   private static SwitchPlugin instance;
   private Properties mProp;
   private Hashtable mChannels = new Hashtable();
-  private static Version mVersion = new Version(0,56,3);
+  private static Version mVersion = new Version(0,56,4);
   private ProgramReceiveTarget[] mReceiveTarget;
   
   public static Version getVersion() {
