@@ -124,6 +124,7 @@
     <module>plugin-web</module>
     <module>plugin-unityglobalmenusupport</module>
     <module>plugin-switch</module>
+    <module>plugin-netcontrol</module>
   </modules>
   <dependencyManagement>
     <dependencies>
