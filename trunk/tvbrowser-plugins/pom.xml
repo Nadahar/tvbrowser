@@ -124,7 +124,6 @@
     <module>plugin-web</module>
     <module>plugin-unityglobalmenusupport</module>
     <module>plugin-switch</module>
-    <module>plugin-tvbnetcontrol</module>
   </modules>
   <dependencyManagement>
     <dependencies>
