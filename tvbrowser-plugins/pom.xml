@@ -123,6 +123,7 @@
     <module>plugin-zattoo</module>
     <module>plugin-web</module>
     <module>plugin-unityglobalmenusupport</module>
+    <module>plugin-switch</module>
   </modules>
   <dependencyManagement>
     <dependencies>
