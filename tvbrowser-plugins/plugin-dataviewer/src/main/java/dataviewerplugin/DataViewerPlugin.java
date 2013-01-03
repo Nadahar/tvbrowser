@@ -12,8 +12,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.DateFormat;
@@ -83,7 +81,7 @@ public final class DataViewerPlugin extends Plugin implements Runnable {
   private int mMinRowHeight = 10;
   private int mMinColumnWidth = 20;
 
-  private static final Version mVersion = new Version(1,20,true);
+  private static final Version mVersion = new Version(1,20,1,true);
 
   private static DataViewerPlugin mInstance;
 
@@ -401,34 +399,9 @@ public final class DataViewerPlugin extends Plugin implements Runnable {
     mDialog.setResizable(true);
     mDialog.setModal(false);
 
-    if (!mProperties.isEmpty()) {
-      try {
-        int x = Integer.parseInt(mProperties.getProperty("xpos", "0"));
-        int y = Integer.parseInt(mProperties.getProperty("ypos", "0"));
-        int width = Integer.parseInt(mProperties.getProperty("width", "620"));
-        int height = Integer.parseInt(mProperties.getProperty("height", "390"));
-
-        mDialog.setBounds(x, y, width, height);
-      } catch (Exception ee) {}
-    } else {
-      mDialog.setSize(620, 390);
-      mDialog.setLocationRelativeTo(getParentFrame());
-    }
+    layoutWindow("dataViewerDialog", mDialog, new Dimension(620,390));
 
     mDialog.setVisible(true);
-    mDialog.addComponentListener(new ComponentAdapter() {
-      @Override
-      public void componentHidden(ComponentEvent e) {
-        savePosition();
-      }
-    });
-
-    mDialog.addWindowListener(new WindowAdapter() {
-      @Override
-      public void windowClosing(WindowEvent e) {
-        savePosition();
-      }
-    });
   }
 
   @Override
@@ -480,13 +453,6 @@ public final class DataViewerPlugin extends Plugin implements Runnable {
     action.putValue(Plugin.BIG_ICON, createImageIcon("actions",
         "format-justify-fill",22));
     return new ActionMenu(action);
-  }
-
-  private void savePosition() {
-    mProperties.setProperty("xpos", String.valueOf(mDialog.getX()));
-    mProperties.setProperty("ypos", String.valueOf(mDialog.getY()));
-    mProperties.setProperty("width", String.valueOf(mDialog.getWidth()));
-    mProperties.setProperty("height", String.valueOf(mDialog.getHeight()));
   }
 
   @Override
