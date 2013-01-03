@@ -9,7 +9,7 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class DreamboxStateHandler extends DefaultHandler {
 
-	private StringBuilder mCharacters = new StringBuilder();
+  private StringBuilder mCharacters = new StringBuilder();
     private String mState;
     private String mStatetext;
 

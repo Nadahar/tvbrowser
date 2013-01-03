@@ -75,10 +75,11 @@ import devplugin.Version;
 /**
  * Plugin to send the TV-Data to an external program
  *
- * @author Andreas Hessel, Bodo Tasche
+ * @author Andreas Hessel, Bodo Tasche<br />
+ *         adopted by fishhead
  */
 public class CapturePlugin extends devplugin.Plugin {
-  private static final Version mVersion = new Version(3,11,3);
+  private static final Version mVersion = new Version(3,12,1,false);
 
     /**
      * Translator
@@ -201,7 +202,10 @@ public class CapturePlugin extends devplugin.Plugin {
 
         final DeviceIf[] devices = mConfig.getDeviceArray();
 
-        final Window parent = UiUtilities.getLastModalChildOf(getParentFrame());
+        // fishhead ---------------------------------
+        Frame parentFrame = getParentFrame();
+        final Window parent = (parentFrame == null ? null : UiUtilities.getLastModalChildOf(parentFrame));
+        // fishhead ---------------------------------
 
         String menuText = mLocalizer.msg("record", "record Program");
         ImageIcon menuIcon = createImageIcon("mimetypes", "video-x-generic", 16);
@@ -249,6 +253,9 @@ public class CapturePlugin extends devplugin.Plugin {
 
                       public void actionPerformed(ActionEvent evt) {
                           dev.executeAdditionalCommand(parent, num, program);
+                          // fishhead ---------------------------------
+                          updateMarkedPrograms();
+                          // fishhead ---------------------------------
                       }
                   };
                   caction.putValue(Action.NAME, commands[y]);

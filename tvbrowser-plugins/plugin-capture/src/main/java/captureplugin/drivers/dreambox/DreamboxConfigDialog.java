@@ -1,8 +1,5 @@
 /*
- * CapturePlugin by
- *  Andreas Hessel (Vidrec@gmx.de),
- *  Bodo Tasche,
- *  Markus Ruderman
+ * CapturePlugin by Andreas Hessel (Vidrec@gmx.de), Bodo Tasche
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -80,36 +77,23 @@ import devplugin.Plugin;
  * The configuration dialog for the dreambox
  */
 public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
-
-    /** Automatically generated serial version UID */
-	private static final long serialVersionUID = -6334655471612827090L;
-
-	/**
+    /**
      * Translator
      */
     private static final Localizer mLocalizer = Localizer.getLocalizerFor(DreamboxConfigDialog.class);
 
     /** Configuration */
     private DreamboxConfig mConfig;
-
     /** Device */
     private DreamboxDevice mDevice;
-
     /** Was ok pressed ? */
     private boolean mOkPressed;
-
     /** The software version on the box */
     private JComboBox mSoftwareSelection;
-
-    /** The web interface version number */
-    private JLabel mWebIfVersion;
-
     /** IP-Address of the dreambox */
     private JTextField mDreamboxAddress;
-
     /** Device Name of the dreambox */
     private JTextField mDeviceName;
-
     /** Table with channel mappings */
     private JTable mTable;
 
@@ -176,11 +160,6 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
         mSoftwareSelection.setSelectedIndex(mConfig.isOpkg() ? 1 : 0);
 
         basicPanel.add(mSoftwareSelection, cc.xy(4, basicPanel.getRow()));
-
-        basicPanel.addRow();
-        basicPanel.add(new JLabel(mLocalizer.msg("webIfVersion","Webif Version:")), cc.xy(2,basicPanel.getRow()));
-        mWebIfVersion = new JLabel(mLocalizer.msg("webIfVersionNotIdentified", "not identified yet"));
-        basicPanel.add(mWebIfVersion, cc.xy(4, basicPanel.getRow()));
 
         basicPanel.addRow();
         basicPanel.add(new JLabel(mLocalizer.msg("ipaddress", "IP address")), cc.xy(2, basicPanel.getRow()));
@@ -255,7 +234,7 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
         mTable.getColumnModel().getColumn(1).setCellRenderer(new ExternalChannelTableCellRenderer());
         mTable.getColumnModel().getColumn(1).setCellEditor(new ExternalChannelTableCellEditor(mConfig));
 
-        basicPanel.addRow("fill:min:grow");
+        basicPanel.addGrowingRow();
         basicPanel.add(new JScrollPane(mTable), cc.xyw(2, basicPanel.getRow(), basicPanel.getColumnCount() - 1));
 
         ButtonBarBuilder2 builder = new ButtonBarBuilder2();
@@ -379,6 +358,8 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
         content.setLayout(new FormLayout("fill:pref:grow", "fill:pref:grow, 3dlu, pref"));
         content.add(tabs, cc.xy(1,1));
         content.add(builder.getPanel(), cc.xy(1,3));
+
+        pack();
     }
 
     /**
@@ -428,38 +409,32 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
                         DreamboxConnector connect = new DreamboxConnector(mConfig);
 
                         try {
+                          if (connect.testDreamboxVersion()) {
+                            Collection<DreamboxChannel> channels = null;
 
-                    		String currentVersion = connect.getWebIfVersion();
-                    		String minVersion = connect.getMinRequiredWebIfVersion();
+                            try {
+                                channels = connect.getChannels();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
 
-                        	if (connect.isValidWebIfVersion(currentVersion)) {
-
-                        		mWebIfVersion.setText(currentVersion);
-                        		Collection<DreamboxChannel> channels = null;
-
-                        		try {
-                        			channels = connect.getChannels();
-                        		} catch (Exception e) {
-                        			e.printStackTrace();
-                        		}
-
-	                            if (channels == null) {
-	                                JOptionPane.showMessageDialog(DreamboxConfigDialog.this, mLocalizer.msg("errorText", "Sorry, could not load channel list from Dreambox."),
-	                                        mLocalizer.msg("errorTitle", "Error"), JOptionPane.ERROR_MESSAGE);
-	                            } else {
-	                                mConfig.setDreamboxChannels(channels.toArray(new DreamboxChannel[channels.size()]));
-	                                JOptionPane.showMessageDialog(DreamboxConfigDialog.this, mLocalizer.msg("okText", "Channel list updated."),
-	                                        mLocalizer.msg("okTitle", "Updated"), JOptionPane.INFORMATION_MESSAGE);
-	                            }
-	                            mTable.repaint();
-                        	} else {
-                        		JOptionPane.showMessageDialog(DreamboxConfigDialog.this, mLocalizer.msg("wrongVersion", "Wrong Version of Webinterface. Current installed version is {0} and plugin requires {1} or greater.", currentVersion, minVersion),
-                                        	mLocalizer.msg("errorTitle", "Error"), JOptionPane.INFORMATION_MESSAGE);
-                        	}
+                            if (channels == null) {
+                                JOptionPane.showMessageDialog(DreamboxConfigDialog.this, mLocalizer.msg("errorText", "Sorry, could not load channel list from Dreambox."),
+                                        mLocalizer.msg("errorTitle", "Error"), JOptionPane.ERROR_MESSAGE);
+                            } else {
+                                mConfig.setDreamboxChannels(channels.toArray(new DreamboxChannel[channels.size()]));
+                                JOptionPane.showMessageDialog(DreamboxConfigDialog.this, mLocalizer.msg("okText", "Channel list updated."),
+                                        mLocalizer.msg("okTitle", "Updated"), JOptionPane.INFORMATION_MESSAGE);
+                            }
+                            mTable.repaint();
+                          } else {
+                            JOptionPane.showMessageDialog(DreamboxConfigDialog.this, mLocalizer.msg("wrongVersion", "Wrong Version of Dreambox-WebInterface. Please update!"),
+                                        mLocalizer.msg("errorTitle", "Error"), JOptionPane.INFORMATION_MESSAGE);
+                          }
                         } catch (IOException e) {
-                        	JOptionPane.showMessageDialog(DreamboxConfigDialog.this, mLocalizer.msg("errorText", "Sorry, could not load channel list from Dreambox."),
-                        			mLocalizer.msg("errorTitle", "Error"), JOptionPane.ERROR_MESSAGE);
-                        	e.printStackTrace();
+                          JOptionPane.showMessageDialog(DreamboxConfigDialog.this, mLocalizer.msg("errorText", "Sorry, could not load channel list from Dreambox."),
+                                  mLocalizer.msg("errorTitle", "Error"), JOptionPane.ERROR_MESSAGE);
+                          e.printStackTrace();
                         }
 
                     }

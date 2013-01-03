@@ -26,25 +26,36 @@ package captureplugin.drivers.dreambox.connector;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import captureplugin.drivers.dreambox.connector.cs.E2ListMapHandler;
+
 /**
  * This class parses the timerevent-xml-stream from a dreambox
+ * 
+ * adopted by fishhead
  */
 public class DreamboxTimerHandler extends DefaultHandler {
-    private ArrayList<HashMap<String, String>> mTimers = new ArrayList<HashMap<String, String>>();
-    private HashMap<String, String> mCurrentHashMap = new HashMap<String, String>();
+    // fishhead ---------------------
+    private List<Map<String, String>> mTimers = new ArrayList<Map<String, String>>();
+    private Map<String, String> mCurrentHashMap = new TreeMap<String, String>();
+    // fishhead ---------------------
     private StringBuilder mCharacters = new StringBuilder();
 
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
         if (!"e2timer".equals(qName) && !"e2timerlist".equals(qName)) {
-            mCurrentHashMap.put(qName, mCharacters.toString());
+      // fishhead ---------------------
+      String data = E2ListMapHandler.convertToString(mCharacters);
+      mCurrentHashMap.put(qName, data);
+      // fishhead ---------------------
         }
-
     }
 
     @Override
@@ -66,7 +77,9 @@ public class DreamboxTimerHandler extends DefaultHandler {
     /**
      * @return List of Timers
      */
-    public ArrayList<HashMap<String, String>> getTimers() {
+    // fishhead ---------------------
+    public List<Map<String, String>> getTimers() {
+    // fishhead ---------------------
         return mTimers;
     }
 }
