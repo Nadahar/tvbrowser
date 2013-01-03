@@ -97,7 +97,7 @@ public class MixedDataService extends AbstractTvDataService{
    * Since TV-Browser 0.9.7 getAPIVersion must return 1.0
    */
   public static Version getVersion() {
-    return new Version(0, 0, 3, false, null);
+    return new Version(0, 0, 4, false, null);
   }
 
   /**
@@ -965,25 +965,25 @@ public class MixedDataService extends AbstractTvDataService{
 	          }
 	        }
 	      } else{
-	        if (char1=='á' || char1=='à' || char1=='â'){
+	        if (char1=='ï¿½' || char1=='ï¿½' || char1=='ï¿½'){
 	          char1 = 'a';
 	        } else{
-	          if (char1=='é' || char1=='è' || char1=='ê'){
+	          if (char1=='ï¿½' || char1=='ï¿½' || char1=='ï¿½'){
 	            char1 = 'e';
 	          }else{
-	            if (char1=='í' || char1=='ì' || char1=='î'){
+	            if (char1=='ï¿½' || char1=='ï¿½' || char1=='ï¿½'){
 	              char1 = 'i';
 	            }else{
-	              if (char1=='ó' || char1=='ò' || char1=='ô'){
+	              if (char1=='ï¿½' || char1=='ï¿½' || char1=='ï¿½'){
 	                char1 = 'o';
 	              }else{
-	                if (char1=='ú' || char1=='ù' || char1=='û'){
+	                if (char1=='ï¿½' || char1=='ï¿½' || char1=='ï¿½'){
 	                  char1 = 'u';
 	                }else{
-	                  if (char1=='ç'){
+	                  if (char1=='ï¿½'){
 	                    char1 = 'c';
 	                  }else{
-	                    if (char1=='ñ'){
+	                    if (char1=='ï¿½'){
 	                      char1 = 'n';
 	                    }
 	                  }
@@ -992,22 +992,22 @@ public class MixedDataService extends AbstractTvDataService{
 	            }
 	          }
 	        }
-	        if (char2=='é' || char2=='è' || char2=='ê'){
+	        if (char2=='ï¿½' || char2=='ï¿½' || char2=='ï¿½'){
 	          char2 = 'e';
 	        }else{
-	          if (char2=='í' || char2=='ì' || char2=='î'){
+	          if (char2=='ï¿½' || char2=='ï¿½' || char2=='ï¿½'){
 	            char2 = 'i';
 	          }else{
-	            if (char2=='ó' || char2=='ò' || char2=='ô'){
+	            if (char2=='ï¿½' || char2=='ï¿½' || char2=='ï¿½'){
 	              char2 = 'o';
 	            }else{
-	              if (char2=='ú' || char2=='ù' || char2=='û'){
+	              if (char2=='ï¿½' || char2=='ï¿½' || char2=='ï¿½'){
 	                char2 = 'u';
 	              }else{
-	                if (char2=='ç'){
+	                if (char2=='ï¿½'){
 	                  char2 = 'c';
 	                }else{
-	                  if (char2=='ñ'){
+	                  if (char2=='ï¿½'){
 	                    char2 = 'n';
 	                  }
 	                }
