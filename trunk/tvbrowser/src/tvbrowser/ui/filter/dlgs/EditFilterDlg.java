@@ -353,8 +353,7 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
     updateBtns();
 
     setMinimumSize(new Dimension(600,560));
-    Settings.layoutWindow("editFilterDlg",this,getMinimumSize());
-    setLocationRelativeTo(mParent);
+    Settings.layoutWindow("editFilterDlg",this,getMinimumSize(),mParent);
     setVisible(true);
   }
 

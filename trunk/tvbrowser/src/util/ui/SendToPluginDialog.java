@@ -144,8 +144,7 @@ public class SendToPluginDialog extends JDialog implements WindowClosingIf {
     mPrograms = prg;
     mCaller = caller;
     mCallerTarget = callerTarget;
-    createDialog();
-    setLocationRelativeTo(owner);
+    createDialog(owner);
   }
 
   /**
@@ -170,7 +169,7 @@ public class SendToPluginDialog extends JDialog implements WindowClosingIf {
   /**
    * Creates the Dialog
    */
-  private void createDialog() {
+  private void createDialog(Window parent) {
     setTitle(mLocalizer.msg("title", "Send to other Plugin"));
 
     CellConstraints cc = new CellConstraints();
@@ -266,7 +265,7 @@ public class SendToPluginDialog extends JDialog implements WindowClosingIf {
     pb.add(buttonBuilder.getPanel(), cc.xyw(1,9,3));
 
     Settings.layoutWindow("util.sendToDialog", this, new Dimension(Sizes
-        .dialogUnitXAsPixel(220, this), Sizes.dialogUnitYAsPixel(125, this)));
+        .dialogUnitXAsPixel(220, this), Sizes.dialogUnitYAsPixel(125, this)),parent);
 
     UiUtilities.registerForClosing(this);
     getRootPane().setDefaultButton(sendButton);

@@ -101,13 +101,24 @@ public final class WindowSetting {
     out.writeInt(mWidth);
     out.writeInt(mHeight);
   }
-
+  
   /**
    * Sets the values to the given window.
    *
    * @param window The window to set the values for.
    */
   public void layout(final Window window) {
+    layout(window, null);
+  }
+  
+  /**
+   * Sets the values to the given window.
+   *
+   * @param window The window to set the values for.
+   * @param parent The parent window of the window to layout (if not <code>null</code> the window is placed relative to it.)
+   * @since 3.3
+   */
+  public void layout(final Window window, final Window parent) {
     final Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
 
     int width = mWidth;
@@ -143,7 +154,7 @@ public final class WindowSetting {
     else {
       window.setLocation(mXPos, mYPos);
     }
-
+    
     if(mWindowCache == null || !window.equals(mWindowCache)) {
       window.addWindowListener(new WindowAdapter() {
         @Override
@@ -154,13 +165,15 @@ public final class WindowSetting {
                 sleep(100);
               } catch (InterruptedException e1) {}
               
-              Point p = e.getComponent().getLocation();
-              
-              if(mXPos < 0 || mYPos < 0 || mXPos > d.width || mYPos > d.height) {
-                window.setLocationRelativeTo(null);
-              }
-              else if(p.x != mXPos || mYPos != p.y) {
-                window.setLocation(mXPos - Math.abs(p.x-mXPos), mYPos - Math.abs(p.y-mYPos));
+              if(parent == null) {
+                Point p = e.getComponent().getLocation();
+                
+                if(mXPos < 0 || mYPos < 0 || mXPos > d.width || mYPos > d.height) {
+                  window.setLocationRelativeTo(null);
+                }
+                else if(p.x != mXPos || mYPos != p.y) {
+                  window.setLocation(mXPos - Math.abs(p.x-mXPos), mYPos - Math.abs(p.y-mYPos));
+                }
               }
 
               window.addComponentListener(new ComponentListener() {
@@ -212,7 +225,11 @@ public final class WindowSetting {
         }
       });
     }
-
+    
+    if(parent != null) {
+      window.setLocationRelativeTo(parent);
+    }
+    
     mWindowCache = window;
   }
 
