@@ -95,7 +95,7 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
       String description, ProgramReceiveIf caller) {
     super(parent);
     setModal(true);
-    init(pluginArr, description, caller, null, null);
+    init(pluginArr, description, caller, null, null, parent);
   }
 
   /**
@@ -126,14 +126,9 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
    *          The caller ProgramReceiveIf.
    * @since 3.0
    */
- public PluginChooserDlg(Window parent, ProgramReceiveTarget[] pluginArr,
+  public PluginChooserDlg(Window parent, ProgramReceiveTarget[] pluginArr,
       String description, ProgramReceiveIf caller) {
-    super(parent);
-    setModal(true);
-
-   Hashtable<ProgramReceiveIf,ArrayList<ProgramReceiveTarget>> table = createReceiveTable(pluginArr);
-
-   init(table.keySet().toArray(new ProgramReceiveIf[table.keySet().size()]), description, caller, table, null);
+    this(parent, pluginArr,description, caller, null);
  }
 
   /**
@@ -176,7 +171,7 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
     Hashtable<ProgramReceiveIf, ArrayList<ProgramReceiveTarget>> table = createReceiveTable(pluginArr);
 
     init(table.keySet().toArray(new ProgramReceiveIf[table.keySet().size()]),
-        description, caller, table, disabledTargets);
+        description, caller, table, disabledTargets, parent);
   }
 
   /**
@@ -270,7 +265,7 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
     return table;
   }
 
-  private void init(ProgramReceiveIf[] pluginArr, String description, ProgramReceiveIf caller, Hashtable<ProgramReceiveIf,ArrayList<ProgramReceiveTarget>> targetTable, final ProgramReceiveTarget[] disabledReceiveTargets) {
+  private void init(ProgramReceiveIf[] pluginArr, String description, ProgramReceiveIf caller, Hashtable<ProgramReceiveIf,ArrayList<ProgramReceiveTarget>> targetTable, final ProgramReceiveTarget[] disabledReceiveTargets, Window parent) {
     mOkWasPressed = false;
     setTitle(mLocalizer.msg("title","Choose Plugins"));
     UiUtilities.registerForClosing(this);
@@ -443,7 +438,7 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
     layout.appendRow(RowSpec.decode("pref"));
     contentPane.add(builder.getPanel(), cc.xy(1,pos));
 
-    Settings.layoutWindow("pluginChooserDlg", this, new Dimension(350,300));
+    Settings.layoutWindow("pluginChooserDlg", this, new Dimension(350,300), parent);
 
     setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
     addWindowListener(new WindowAdapter() {

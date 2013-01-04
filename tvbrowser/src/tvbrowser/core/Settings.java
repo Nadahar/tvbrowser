@@ -1910,6 +1910,20 @@ public class Settings {
    * @since 2.7
    */
   public static final void layoutWindow(String windowId, Window window, Dimension defaultSize) {
+    layoutWindow(windowId,window,defaultSize,null);
+  }
+  
+  /**
+   * Sets the window position and size for the given window with the values of the given id.
+
+   * @param windowId The id of the values to set.
+   * @param window The window to layout.
+   * @param defaultSize The default size for the window.
+   * @param parent The parent window of the window to layout (if not <code>null</code> the window is placed relative to it.)
+   *
+   * @since 3.3
+   */
+  public static final void layoutWindow(String windowId, Window window, Dimension defaultSize, Window parent) {
     WindowSetting setting = mWindowSettings.get(windowId);
 
     if(setting == null) {
@@ -1918,7 +1932,7 @@ public class Settings {
       mWindowSettings.put(windowId, setting);
     }
 
-    setting.layout(window);
+    setting.layout(window,parent);
   }
   
   private static final class VariableFontSizeFont extends Font {

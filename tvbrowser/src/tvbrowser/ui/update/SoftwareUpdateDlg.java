@@ -140,7 +140,7 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
     mDialogType = dialogType;
     mIsVersionChange = isVersionChange;
     mOldTvbVersion = oldTvbVersion;
-    createGui(downloadUrl, dialogType, itemArr);
+    createGui(downloadUrl, dialogType, itemArr, parent);
     
     if(dialogType == SoftwareUpdater.DRAG_AND_DROP_TYPE || dialogType == SoftwareUpdater.ONLY_UPDATE_TYPE) {
       mSoftwareUpdateItemList.selectAll();
@@ -188,7 +188,7 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
     mDownloadBtn.setEnabled(mSoftwareUpdateItemList.getItemCount() > 0);
   }
 
-  private void createGui(String downloadUrl, int dialogType, SoftwareUpdateItem[] itemArr) {
+  private void createGui(String downloadUrl, int dialogType, SoftwareUpdateItem[] itemArr, Window parent) {
     mDownloadUrl = downloadUrl;
     setTitle(mLocalizer.msg("title", "Download plugins"));
 
@@ -490,7 +490,7 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
     contentPane.add(mSoftwareUpdateItemList, BorderLayout.CENTER);
     contentPane.add(southPn, BorderLayout.SOUTH);
 
-    Settings.layoutWindow("softwareUpdateDlg", this, new Dimension(700,600));
+    Settings.layoutWindow("softwareUpdateDlg", this, new Dimension(700,600), parent);
 
     setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 

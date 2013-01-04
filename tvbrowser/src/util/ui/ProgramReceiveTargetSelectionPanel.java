@@ -82,7 +82,6 @@ public class ProgramReceiveTargetSelectionPanel extends JPanel {
         PluginChooserDlg chooser = null;
         
         chooser = new PluginChooserDlg(w, mReceiveTargets, description, caller);
-        chooser.setLocationRelativeTo(w);
         chooser.setVisible(true);
         
         if(chooser.getReceiveTargets() != null) {

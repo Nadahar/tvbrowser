@@ -253,8 +253,7 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
     
     updateOkBtn();
     setMinimumSize(new Dimension(500,550));
-    Settings.layoutWindow("editFilterComponentDlg", this, getMinimumSize());
-    setLocationRelativeTo(parent);
+    Settings.layoutWindow("editFilterComponentDlg", this, getMinimumSize(), parent);
     setVisible(true);
   }
 

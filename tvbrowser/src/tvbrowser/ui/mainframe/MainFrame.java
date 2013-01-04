@@ -2548,8 +2548,6 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
                 public void run() {
                   SoftwareUpdateDlg dlg = new SoftwareUpdateDlg(parent, baseUrl,
                       dialogType, mSoftwareUpdateItems);
-                  //dlg.setSoftwareUpdateItems(mSoftwareUpdateItems);
-                  dlg.setLocationRelativeTo(parent);
                   dlg.setVisible(true);
                 }
               });

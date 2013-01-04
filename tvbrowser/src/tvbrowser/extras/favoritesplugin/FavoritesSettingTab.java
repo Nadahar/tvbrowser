@@ -117,8 +117,7 @@ public class FavoritesSettingTab implements SettingsTab {
         PluginChooserDlg chooser = null;
         chooser = new PluginChooserDlg(parent, mClientPluginTargets, null,
             ReminderPluginProxy.getInstance());
-
-        chooser.setLocationRelativeTo(parent);
+        
         chooser.setVisible(true);
 
         if(chooser.getReceiveTargets() != null) {
