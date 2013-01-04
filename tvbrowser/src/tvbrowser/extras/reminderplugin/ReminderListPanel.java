@@ -19,6 +19,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JPopupMenu.Separator;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
@@ -401,21 +402,25 @@ public class ReminderListPanel extends JPanel implements PersonaListener {
     DefaultTableCellRenderer renderer = new DefaultTableCellRenderer() {
       public Component getTableCellRendererComponent(final JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         Component c = backend.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+        
         try {
-        if(value instanceof Program && value.equals(PluginManagerImpl.getInstance().getExampleProgram())) {
-          JPanel separator = new JPanel(new FormLayout("0dlu:grow,default,0dlu:grow","5dlu,default,5dlu"));
-          separator.setBorder(BorderFactory.createMatteBorder(2, 0, 2, 0, UIManager.getColor("Label.foreground")));
-          
-          if(table.getModel().getRowCount() > row + 1) {
-            JLabel date = new JLabel(((Program)table.getModel().getValueAt(row+1, 0)).getDateString());
-            date.setFont(date.getFont().deriveFont(date.getFont().getSize2D() + 4).deriveFont(Font.BOLD));
+          if(value instanceof Program && value.equals(PluginManagerImpl.getInstance().getExampleProgram())) {
+            JPanel separator = new JPanel(new FormLayout("0dlu:grow,default,0dlu:grow","5dlu,min,5dlu"));
+            separator.setBorder(BorderFactory.createMatteBorder(2, 0, 2, 0, UIManager.getColor("Label.foreground")));
             
-            separator.add(date, new CellConstraints().xy(2, 2));
-            
-            return separator;
+            if(table.getModel().getRowCount() > row + 1) {
+              JLabel date = new JLabel(((Program)table.getModel().getValueAt(row+1, 0)).getDateString());
+              date.setFont(date.getFont().deriveFont(date.getFont().getSize2D() + 4).deriveFont(Font.BOLD));
+              
+              separator.add(date, new CellConstraints().xy(2, 2));
+              
+              table.setRowHeight(row, separator.getPreferredSize().height);
+              
+              return separator;
+            }
           }
-        }
         }catch(Exception e) {e.printStackTrace();}
+        
         return c;
       }
     };
