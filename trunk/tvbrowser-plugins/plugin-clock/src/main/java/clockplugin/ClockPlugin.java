@@ -22,6 +22,7 @@ import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
+import javax.swing.UIManager;
 
 import util.ui.TimeFormatter;
 
@@ -54,7 +55,7 @@ public class ClockPlugin extends Plugin {
   private Timer mButtonUpdateTimer;
   private ClockIcon mTimeIcon;
 
-  private static final Version mVersion = new Version(1, 81, 6, true);
+  private static final Version mVersion = new Version(1, 81, 7, true);
 
   /** The localizer for this class. */
   public static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(ClockPlugin.class);
@@ -696,7 +697,7 @@ public class ClockPlugin extends Plugin {
         Color oldColor = g.getColor();
         Font oldFont = g.getFont();
         Color second = null;
-        Color first = oldColor;
+        Color first = UIManager.getColor("Label.foreground");
         
         try {
           Class<? extends Object> persona = Class.forName("util.ui.persona.Persona");
