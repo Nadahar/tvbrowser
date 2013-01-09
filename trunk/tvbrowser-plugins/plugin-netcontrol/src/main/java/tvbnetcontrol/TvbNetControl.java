@@ -43,7 +43,7 @@ public class TvbNetControl extends Plugin {
   private static final String ANSWER_ENABLED_KEY = "answerEnabled";
   private static final String ANSWER_NETWORK_KEY = "answerNetwork";
   
-  private static final Version VERSION = new Version(0, 6, false);
+  private static final Version VERSION = new Version(0, 7, 0, false);
   private static TvbNetControl INSTANCE;
   
   private Properties mSettings;
@@ -139,47 +139,37 @@ public class TvbNetControl extends Plugin {
             
             boolean send = true;
             
-            if(temp.toLowerCase().startsWith("channel")) {
-              final int channel = Integer.parseInt(temp.substring(temp.lastIndexOf("_")+1))-1;
+            String channel = Commands.getRunningNumber(temp);
+            
+            if(channel != null) {
+              selectRunning(channel);
+            }
+            else {
+              channel = Commands.getChannelNumber(temp);
               
-              final Channel[] subscribedChannels = getPluginManager().getSubscribedChannels();
-              
-              if(channel < subscribedChannels.length) {
-                SwingUtilities.invokeLater(new Runnable() {
-                  @Override
-                  public void run() {
-                    UiUtilities.getLastModalChildOf(getParentFrame()).toFront();
-                    UiUtilities.getLastModalChildOf(getParentFrame()).requestFocus();
-                    getPluginManager().scrollToChannel(subscribedChannels[channel]);
-                  }
-                });
+              if(channel != null) {
+                scrollToChannel(channel);
+              }
+              else if(Commands.isFocus(temp)) {
+                focusWindow();
+              }
+              else if(!Commands.isPing(temp)) {
+                String cmd = Commands.getCommandForCommand(temp);
+                
+                if(cmd != null) {
+                  sendKeyCommand(cmd);
+                }
+                else {
+                  send = false;
+                }
               }
             }
+            /*
+            if(temp.toLowerCase().startsWith("channel")) {
+
+            }
             else if(temp.toLowerCase().startsWith("running")) {
-              final int channel = Integer.parseInt(temp.substring(temp.lastIndexOf("_")+1))-1;
-              
-              final Channel[] subscribedChannels = getPluginManager().getSubscribedChannels();
-              
-              if(channel < subscribedChannels.length) {
-                Iterator<Program> dayProgram = getPluginManager().getChannelDayProgram(Date.getCurrentDate(), subscribedChannels[channel]);
-                
-                while(dayProgram.hasNext()) {
-                  final Program prog = dayProgram.next();
-                  
-                  if(prog.isOnAir() || !prog.isExpired()) {
-                    SwingUtilities.invokeLater(new Runnable() {
-                      @Override
-                      public void run() {
-                        UiUtilities.getLastModalChildOf(getParentFrame()).toFront();
-                        UiUtilities.getLastModalChildOf(getParentFrame()).requestFocus();
-                        getPluginManager().selectProgram(prog);
-                      }
-                    });
-                    
-                    break;
-                  }
-                }
-              }              
+             
             }
             else if(temp.toLowerCase().startsWith("up")) {
               sendKey(KeyEvent.VK_UP, false, false, false, false);
@@ -260,13 +250,7 @@ public class TvbNetControl extends Plugin {
               sendKey(KeyEvent.VK_ESCAPE, false, false, false, false);
             }
             else if(temp.toLowerCase().startsWith("focus")) {
-              if(!getParentFrame().isVisible() || ((getParentFrame().getExtendedState() & WindowEvent.WINDOW_ICONIFIED) == WindowEvent.WINDOW_ICONIFIED)) {
-                getParentFrame().setVisible(true);
-                getParentFrame().setExtendedState(mParentState);
-              }
-              
-              UiUtilities.getLastModalChildOf(getParentFrame()).toFront();
-              UiUtilities.getLastModalChildOf(getParentFrame()).requestFocus();            
+          
             }
             else if(temp.toLowerCase().startsWith("k_") || temp.toLowerCase().startsWith("kf_")) {
               String[] parts = temp.trim().substring(temp.toLowerCase().startsWith("kf_") ? 3 : 2).split("\\+");
@@ -302,9 +286,9 @@ public class TvbNetControl extends Plugin {
                 e1.printStackTrace();
               }
             }
-            else {
+            else if(!temp.toLowerCase().startsWith("ping")){
               send = false;
-            }
+            }*/
             
             if(send) {
               send(temp);
@@ -316,6 +300,95 @@ public class TvbNetControl extends Plugin {
         }
       }
     }.start();
+  }
+  
+  private void sendKeyCommand(String cmd) {
+    String[] parts = cmd.trim().substring(cmd.toLowerCase().startsWith("kf_") ? 3 : 2).split("\\+");
+    
+    boolean focus = cmd.toLowerCase().startsWith("kf_");
+    boolean ctrl = false;
+    boolean alt = false;
+    boolean shift = false;
+    String key = "";
+    
+    for(String part : parts) {
+      if(part.equalsIgnoreCase("ctrl")) {
+        ctrl = true;
+      }
+      else if(part.equalsIgnoreCase("shift")) {
+        shift = true;
+      }
+      else if(part.equalsIgnoreCase("alt")) {
+        alt = true;
+      }
+      else {
+        key = part.toUpperCase();
+      }
+    }
+    
+    try {
+      Field keyField = KeyEvent.class.getField("VK_"+key);
+      int keyCode = (Integer)keyField.get(KeyEvent.class);
+      
+      sendKey(keyCode, ctrl, shift, alt, focus);
+    }catch (Exception e1) {
+      // TODO: handle exception
+      e1.printStackTrace();
+    }
+  }
+  
+  private void focusWindow() {
+    if(!getParentFrame().isVisible() || ((getParentFrame().getExtendedState() & WindowEvent.WINDOW_ICONIFIED) == WindowEvent.WINDOW_ICONIFIED)) {
+      getParentFrame().setVisible(true);
+      getParentFrame().setExtendedState(mParentState);
+    }
+    
+    UiUtilities.getLastModalChildOf(getParentFrame()).toFront();
+    UiUtilities.getLastModalChildOf(getParentFrame()).requestFocus();  
+  }
+  
+  private void selectRunning(String ch) {
+    final int channel = Integer.parseInt(ch)-1;
+    
+    final Channel[] subscribedChannels = getPluginManager().getSubscribedChannels();
+    
+    if(channel < subscribedChannels.length) {
+      Iterator<Program> dayProgram = getPluginManager().getChannelDayProgram(Date.getCurrentDate(), subscribedChannels[channel]);
+      
+      while(dayProgram.hasNext()) {
+        final Program prog = dayProgram.next();
+        
+        if(prog.isOnAir() || !prog.isExpired()) {
+          SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+              UiUtilities.getLastModalChildOf(getParentFrame()).toFront();
+              UiUtilities.getLastModalChildOf(getParentFrame()).requestFocus();
+              getPluginManager().selectProgram(prog);
+            }
+          });
+          
+          break;
+        }
+      }
+    }
+  }
+  
+  private void scrollToChannel(String ch) {
+    final int channel = Integer.parseInt(ch)-1;
+    
+    final Channel[] subscribedChannels = getPluginManager().getSubscribedChannels();
+    
+    if(channel < subscribedChannels.length) {
+      SwingUtilities.invokeLater(new Runnable() {
+        @Override
+        public void run() {
+          UiUtilities.getLastModalChildOf(getParentFrame()).toFront();
+          UiUtilities.getLastModalChildOf(getParentFrame()).requestFocus();
+          getPluginManager().scrollToChannel(subscribedChannels[channel]);
+        }
+      });
+    }
   }
   
   private void sendKey(int keyCode, boolean ctrl, boolean shift, boolean alt, boolean requestFocus) {
