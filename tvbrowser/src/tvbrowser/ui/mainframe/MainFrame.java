@@ -989,7 +989,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       }
     }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
     
-    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_MASK);
+    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.CTRL_MASK);
     rootPane.registerKeyboardAction(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
