@@ -42,8 +42,9 @@ public class TvbNetControl extends Plugin {
   private static final String ANSWER_PORT_KEY = "answerPort";
   private static final String ANSWER_ENABLED_KEY = "answerEnabled";
   private static final String ANSWER_NETWORK_KEY = "answerNetwork";
+  private static final String PAKET_SIZE_KEY = "packetSize";
   
-  private static final Version VERSION = new Version(0, 7, 0, false);
+  private static final Version VERSION = new Version(0, 8, 0, false);
   private static TvbNetControl INSTANCE;
   
   private Properties mSettings;
@@ -132,8 +133,8 @@ public class TvbNetControl extends Plugin {
         while(!mSocket.isClosed()) {
           try {
             Thread.sleep(100);
-            byte[] b = new byte[16];
-            DatagramPacket packet = new DatagramPacket(b,16);
+            byte[] b = new byte[getPaketSize()];
+            DatagramPacket packet = new DatagramPacket(b,getPaketSize());
             mSocket.receive(packet);
             String temp = new String(packet.getData()).trim();
             
@@ -164,137 +165,12 @@ public class TvbNetControl extends Plugin {
                 }
               }
             }
-            /*
-            if(temp.toLowerCase().startsWith("channel")) {
-
-            }
-            else if(temp.toLowerCase().startsWith("running")) {
-             
-            }
-            else if(temp.toLowerCase().startsWith("up")) {
-              sendKey(KeyEvent.VK_UP, false, false, false, false);
-            }
-            else if(temp.toLowerCase().startsWith("down")) {
-              sendKey(KeyEvent.VK_DOWN, false, false, false, false);
-            }
-            else if(temp.toLowerCase().startsWith("left")) {
-              sendKey(KeyEvent.VK_LEFT, false, false, false, false);
-            }
-            else if(temp.toLowerCase().startsWith("right")) {
-              sendKey(KeyEvent.VK_RIGHT, false, false, false, false);
-            }
-            else if(temp.toLowerCase().startsWith("pageup")) {
-              sendKey(KeyEvent.VK_PAGE_UP, false, false, false, false);
-            }
-            else if(temp.toLowerCase().startsWith("pagedown")) {
-              sendKey(KeyEvent.VK_PAGE_DOWN, false, false, false, false);
-            }
-            else if(temp.toLowerCase().startsWith("pageleft")) {
-              sendKey(KeyEvent.VK_PAGE_UP, true, false, false, true);
-            }
-            else if(temp.toLowerCase().startsWith("pageright")) {
-              sendKey(KeyEvent.VK_PAGE_DOWN, true, false, false, true);
-            }
-            else if(temp.toLowerCase().startsWith("programup")) {
-              sendKey(KeyEvent.VK_UP, true, false, false, true);
-            }
-            else if(temp.toLowerCase().startsWith("programdown")) {
-              sendKey(KeyEvent.VK_DOWN, true, false, false, true);
-            }
-            else if(temp.toLowerCase().startsWith("programright")) {
-              sendKey(KeyEvent.VK_RIGHT, true, false, false, true);
-            }
-            else if(temp.toLowerCase().startsWith("programleft")) {
-              sendKey(KeyEvent.VK_LEFT, true, false, false, true);
-            }
-            else if(temp.toLowerCase().startsWith("clearselection")) {
-              sendKey(KeyEvent.VK_D, true, false, false, true);
-            }
-            else if(temp.toLowerCase().startsWith("tab")) {
-              sendKey(KeyEvent.VK_TAB, false, false, false, false);
-            }
-            else if(temp.toLowerCase().startsWith("shifttab")) {
-              sendKey(KeyEvent.VK_TAB, false, true, false, false);
-            }
-            else if(temp.toLowerCase().startsWith("now")) {
-              sendKey(KeyEvent.VK_F9, false, false, false, true);
-            }
-            else if(temp.toLowerCase().startsWith("previousday")) {
-              sendKey(KeyEvent.VK_P, true, false, false, true);
-            }
-            else if(temp.toLowerCase().startsWith("nextday")) {
-              sendKey(KeyEvent.VK_N, true, false, false, true);
-            }
-            else if(temp.toLowerCase().startsWith("enter")) {
-              sendKey(KeyEvent.VK_ENTER, false, false, false, false);
-            }
-            else if(temp.toLowerCase().startsWith("programcontext")) {
-              sendKey(KeyEvent.VK_R, false, false, false, true);
-            }
-            else if(temp.toLowerCase().startsWith("singlelclick")) {
-              sendKey(KeyEvent.VK_L, false, false, false, true);
-            }
-            else if(temp.toLowerCase().startsWith("singlemclick")) {
-              sendKey(KeyEvent.VK_M, false, false, false, true);
-            }
-            else if(temp.toLowerCase().startsWith("doublelclick")) {
-              sendKey(KeyEvent.VK_D, false, false, false, true);
-            }
-            else if(temp.toLowerCase().startsWith("doublemclick")) {
-              sendKey(KeyEvent.VK_O, false, false, false, true);
-            }
-            else if(temp.toLowerCase().startsWith("space")) {
-              sendKey(KeyEvent.VK_SPACE, false, false, false, false);
-            }
-            else if(temp.toLowerCase().startsWith("esc")) {
-              sendKey(KeyEvent.VK_ESCAPE, false, false, false, false);
-            }
-            else if(temp.toLowerCase().startsWith("focus")) {
-          
-            }
-            else if(temp.toLowerCase().startsWith("k_") || temp.toLowerCase().startsWith("kf_")) {
-              String[] parts = temp.trim().substring(temp.toLowerCase().startsWith("kf_") ? 3 : 2).split("\\+");
-              
-              boolean focus = temp.toLowerCase().startsWith("kf_");
-              boolean ctrl = false;
-              boolean alt = false;
-              boolean shift = false;
-              String key = "";
-              
-              for(String part : parts) {
-                if(part.equalsIgnoreCase("ctrl")) {
-                  ctrl = true;
-                }
-                else if(part.equalsIgnoreCase("shift")) {
-                  shift = true;
-                }
-                else if(part.equalsIgnoreCase("alt")) {
-                  alt = true;
-                }
-                else {
-                  key = part.toUpperCase();
-                }
-              }
-              
-              try {
-                Field keyField = KeyEvent.class.getField("VK_"+key);
-                int keyCode = (Integer)keyField.get(KeyEvent.class);
-                
-                sendKey(keyCode, ctrl, shift, alt, focus);
-              }catch (Exception e1) {
-                // TODO: handle exception
-                e1.printStackTrace();
-              }
-            }
-            else if(!temp.toLowerCase().startsWith("ping")){
-              send = false;
-            }*/
             
             if(send) {
               send(temp);
             }
             else {
-              send("unknown");
+              send(Commands.UNKNOWN);
             }
           }catch(Exception e) {e.printStackTrace();}
         }
@@ -303,22 +179,22 @@ public class TvbNetControl extends Plugin {
   }
   
   private void sendKeyCommand(String cmd) {
-    String[] parts = cmd.trim().substring(cmd.toLowerCase().startsWith("kf_") ? 3 : 2).split("\\+");
+    String[] parts = Commands.getKeyCommandParts(cmd);
     
-    boolean focus = cmd.toLowerCase().startsWith("kf_");
+    boolean focus = Commands.isKeyFocus(cmd);
     boolean ctrl = false;
     boolean alt = false;
     boolean shift = false;
     String key = "";
     
     for(String part : parts) {
-      if(part.equalsIgnoreCase("ctrl")) {
+      if(Commands.isCtrl(part)) {
         ctrl = true;
       }
-      else if(part.equalsIgnoreCase("shift")) {
+      else if(Commands.isShift(part)) {
         shift = true;
       }
-      else if(part.equalsIgnoreCase("alt")) {
+      else if(Commands.isAlt(part)) {
         alt = true;
       }
       else {
@@ -327,8 +203,12 @@ public class TvbNetControl extends Plugin {
     }
     
     try {
-      Field keyField = KeyEvent.class.getField("VK_"+key);
-      int keyCode = (Integer)keyField.get(KeyEvent.class);
+      int keyCode = -1;
+      
+      if(key.length() > 0) {
+        Field keyField = KeyEvent.class.getField("VK_"+key);
+        keyCode = (Integer)keyField.get(KeyEvent.class);
+      }
       
       sendKey(keyCode, ctrl, shift, alt, focus);
     }catch (Exception e1) {
@@ -403,13 +283,7 @@ public class TvbNetControl extends Plugin {
     
     if(mRobot != null) {
       if(requestFocus) {
-        if(!getParentFrame().isVisible() || ((getParentFrame().getExtendedState() & WindowEvent.WINDOW_ICONIFIED) == WindowEvent.WINDOW_ICONIFIED)) {
-          getParentFrame().setVisible(true);
-          getParentFrame().setExtendedState(mParentState);
-        }
-        
-        UiUtilities.getLastModalChildOf(getParentFrame()).toFront();
-        UiUtilities.getLastModalChildOf(getParentFrame()).requestFocus();
+        focusWindow();
       }
       
       if(ctrl) {
@@ -422,8 +296,10 @@ public class TvbNetControl extends Plugin {
         mRobot.keyPress(KeyEvent.VK_ALT);
       }
       
-      mRobot.keyPress(keyCode);
-      mRobot.keyRelease(keyCode);
+      if(keyCode != -1) {
+        mRobot.keyPress(keyCode);
+        mRobot.keyRelease(keyCode);
+      }
       
       if(ctrl) {
         mRobot.keyRelease(KeyEvent.VK_CONTROL);
@@ -446,6 +322,7 @@ public class TvbNetControl extends Plugin {
   public SettingsTab getSettingsTab() {
     return new SettingsTab() {
       private JSpinner mNetworkPort;
+      private JSpinner mPacketSize;
       private JCheckBox mSendAnswer;
       private JTextField mAnswerPort;
       private JTextField mAnswerNetwork;
@@ -456,6 +333,7 @@ public class TvbNetControl extends Plugin {
         mSettings.setProperty(ANSWER_ENABLED_KEY, String.valueOf(mSendAnswer.isSelected()));
         mSettings.setProperty(ANSWER_PORT_KEY, String.valueOf(mAnswerPort.getText()));
         mSettings.setProperty(ANSWER_NETWORK_KEY, String.valueOf(mAnswerNetwork.getText()));
+        mSettings.setProperty(PAKET_SIZE_KEY, String.valueOf(mPacketSize.getValue()));
         onDeactivation();
         onActivation();
       }
@@ -472,7 +350,7 @@ public class TvbNetControl extends Plugin {
       
       @Override
       public JPanel createSettingsPanel() {
-        JPanel settings = new JPanel(new FormLayout("5dlu,10dlu,min,3dlu,min","5dlu,default,3dlu,default,default,default"));
+        JPanel settings = new JPanel(new FormLayout("5dlu,10dlu,default,3dlu,min","5dlu,default,default,3dlu,default,default,default"));
         int port = getNetworkPort();
         
         if(port == port-1) {
@@ -480,6 +358,7 @@ public class TvbNetControl extends Plugin {
         }
         
         mNetworkPort = new JSpinner(new SpinnerNumberModel(Math.max(1024,Math.min(65535,port)),1024,65535,1));
+        mPacketSize = new JSpinner(new SpinnerNumberModel(getPaketSize(),16,128,2));
         
         mSendAnswer = new JCheckBox("Send answer",mSettings.getProperty(ANSWER_ENABLED_KEY,"false").equals("true"));
         mAnswerPort = new JTextField();
@@ -510,12 +389,15 @@ public class TvbNetControl extends Plugin {
         settings.add(new JLabel("Network port:"), cc.xyw(2, 2, 2));
         settings.add(mNetworkPort, cc.xy(5, 2));
         
-        settings.add(mSendAnswer, cc.xyw(2, 4, 2));
-        settings.add(answerNet, cc.xy(3, 5));
-        settings.add(mAnswerNetwork, cc.xy(5,5));
-        settings.add(answerPort, cc.xy(3, 6));
-        settings.add(mAnswerPort, cc.xy(5,6));
-
+        settings.add(new JLabel("Packet size (Byte):"), cc.xyw(2, 3, 2));
+        settings.add(mPacketSize, cc.xy(5, 3));
+        
+        settings.add(mSendAnswer, cc.xyw(2, 5, 2));
+        settings.add(answerNet, cc.xy(3, 6));
+        settings.add(mAnswerNetwork, cc.xy(5,6));
+        settings.add(answerPort, cc.xy(3, 7));
+        settings.add(mAnswerPort, cc.xy(5,7));
+        
         return settings;
       }
     };
@@ -523,6 +405,10 @@ public class TvbNetControl extends Plugin {
   
   public int getAnswerPort() {
     return Integer.parseInt(mSettings.getProperty(ANSWER_PORT_KEY, "-1"));
+  }
+  
+  public byte getPaketSize() {
+    return Byte.parseByte(mSettings.getProperty(PAKET_SIZE_KEY, "16"));
   }
   
   public int getNetworkPort() {
@@ -535,7 +421,7 @@ public class TvbNetControl extends Plugin {
   
   private void send(String text) {
     if(mSettings.getProperty(ANSWER_ENABLED_KEY,"false").equals("true")) {
-      byte[] buf = new byte[16];
+      byte[] buf = new byte[getPaketSize()];
       try {
         DatagramSocket socket = new DatagramSocket();
         InetAddress address = InetAddress.getByName(getAnswerNetwork());
