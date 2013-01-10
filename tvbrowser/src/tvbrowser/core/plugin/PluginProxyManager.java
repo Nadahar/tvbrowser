@@ -607,7 +607,7 @@ public class PluginProxyManager {
         if (activated) {
           try {
             if(!Settings.propBlockedPluginArray.isBlocked(item.getPlugin())) {
-              activatePlugin(item);
+              activatePlugin(item,true);
             }
           } catch (TvBrowserException exc) {
             ErrorHandler.handle(exc);
@@ -636,7 +636,7 @@ public class PluginProxyManager {
   public void activatePlugin(PluginProxy plugin, boolean setParentFrame) throws TvBrowserException {
     PluginListItem item = getItemForPlugin(plugin);
     if (item != null) {
-      boolean activated = activatePlugin(item);
+      boolean activated = activatePlugin(item,false);
 
       if(activated) {
         if (setParentFrame) {
@@ -676,7 +676,7 @@ public class PluginProxyManager {
    * @param item The item of the plugin to activate
    * @throws TvBrowserException If activating failed
    */
-  private boolean activatePlugin(PluginListItem item) throws TvBrowserException {
+  private boolean activatePlugin(PluginListItem item, boolean start) throws TvBrowserException {
     if(Settings.propBlockedPluginArray.isBlocked(item.getPlugin())) {
       mLog.info("It was tried to actiavte blocked plugin '" + item.getPlugin().getInfo().getName() + "'. FORBIDDEN!");
       return false;
@@ -705,6 +705,11 @@ public class PluginProxyManager {
       // Clear the activated plugins cache
       mActivatedPluginCache = null;
 
+      // If this was not called at start time we have to tell the plugin that TV-Browser start was finished.
+      if(!start) {
+        plugin.handleTvBrowserStartFinished();
+      }
+      
       // Inform the listeners
       firePluginActivated(plugin);
       return true;
