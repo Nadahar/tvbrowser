@@ -41,6 +41,8 @@ public class Commands {
   public static final String CTRL = "ctrl";
   public static final String ALT = "alt";
   
+  public static final String UNKNOWN = "unknown";
+  
   private static final String[] KEY_CMD_ARR = {UP,DOWN,LEFT,RIGHT,PAGE_UP,PAGE_DOWN,PAGE_LEFT,PAGE_RIGHT,PROGRAM_UP,
     PROGRAM_DOWN,PROGRAM_LEFT,PROGRAM_RIGHT,CLEARSELECTION,TAB,SHIFT_TAB,NOW,PREVIOUS_DAY,NEXT_DAY,ENTER,PROGRAM_CONTEXT,SINGLE_LEFT_CLICK,
     SINGLE_MIDDLE_CLICK,DOUBLE_LEFT_CLICK,DOUBLE_MIDDLE_CLICK,SPACE,ESC,DEFAULT_FILTER};
@@ -115,5 +117,25 @@ public class Commands {
   
   public static boolean isPing(String receivedCommand) {
     return receivedCommand != null && receivedCommand.toLowerCase().startsWith(PING);
+  }
+  
+  public static boolean isCtrl(String cmd) {
+    return cmd.equalsIgnoreCase(CTRL);
+  }
+  
+  public static boolean isAlt(String cmd) {
+    return cmd.equalsIgnoreCase(ALT);
+  }
+  
+  public static boolean isShift(String cmd) {
+    return cmd.equalsIgnoreCase(SHIFT);
+  }
+  
+  public static boolean isKeyFocus(String cmd) {
+    return cmd.toLowerCase().startsWith(KEY_FOCUS);
+  }
+  
+  public static String[] getKeyCommandParts(String cmd) {
+    return cmd.trim().substring(cmd.toLowerCase().startsWith(KEY_FOCUS) ? 3 : 2).split("\\+");
   }
 }
