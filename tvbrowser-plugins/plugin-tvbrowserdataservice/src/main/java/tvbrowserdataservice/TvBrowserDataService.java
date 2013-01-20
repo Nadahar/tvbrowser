@@ -74,7 +74,7 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
   public static final util.ui.Localizer mLocalizer
           = util.ui.Localizer.getLocalizerFor(TvBrowserDataService.class);
 
-  private static final Version VERSION = new Version(3,06,0);
+  private static final Version VERSION = new Version(3,07,0);
 
   protected static final String CHANNEL_GROUPS_FILENAME = "groups.txt";
   private static final String DEFAULT_CHANNEL_GROUPS_URL = "http://tvbrowser.org/listings";
@@ -380,6 +380,10 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
           localSummary.setDayProgramVersion(date, country, channel.getId(), levelIdx, localVersion);
           //getChannelGroupById(channel.getGroup().getId()).saveLocalSummary();
         }
+        
+        if (localVersion == 255) {
+          downloadTheWholeDayProgram = true;
+        } else {
 
 
         // Check whether the mirror has a newer version
@@ -395,6 +399,7 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
                   country, channel.getId(), level, localVersion);
           mDownloadManager.addDownloadJob(mirror.getUrl(),updateFileName, updateDH);
         }
+      }
 
       } catch (Exception exc) {
 //      // don't throw an exception; try to download the file again
