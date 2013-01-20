@@ -1,0 +1,11 @@
+[Lens]
+DBusName=unity.singlet.lens.tvbrowser
+DBusPath=/unity/singlet/lens/tvbrowser
+Name=Tvbrowser
+Icon=/usr/share/unity/lenses/tvbrowser/tvbrowser.svg
+Description=TV-Browser Search Lens
+SearchHint=Search in TV-Browser
+Shortcut=r
+
+[Desktop Entry]
+X-Ubuntu-Gettext-Domain=tvbrowser

@@ -1,0 +1,136 @@
+#! /usr/bin/python
+import sys
+import os
+import datetime
+
+from gi.repository import GLib, Unity
+
+from singlet.lens import Lens, SingleScopeLens, IconViewCategory, ListViewCategory
+from singlet.utils import run_lens
+
+import urllib2
+import logging
+import optparse
+import urllib
+
+from xml.dom.minidom import parseString
+
+#import tvbrowserconfig
+
+class TvbrowserLens(SingleScopeLens):
+    class Meta:
+        name = 'tvbrowser'
+        description = 'TV-Browser Lens'
+        search_hint = 'Search TV-Browser'
+        icon = 'tvbrowser.svg'
+        search_on_blank=True
+
+    # TODO: Add your categories
+    running_programs_category = ListViewCategory("Running Programs", "dialog-information-symbolic")
+    found_programs_category = ListViewCategory("Found Programs", "dialog-information-symbolic")
+    favorite_programs_category = ListViewCategory("Found Favorite Programs", "dialog-information-symbolic")
+    reminder_programs_category = ListViewCategory("Found Reminder Programs", "dialog-information-symbolic")
+
+    def handle_uri(self, scope, uri):
+      url = ('%s/show=%s' % ('http://localhost:8080', uri))
+      urllib2.urlopen(url).read()
+      return self.hide_dash_response()
+
+    def js_unquote(self, quoted):
+      quoted = quoted.encode('utf-8')
+      quoted = urllib.unquote_plus(urllib.unquote_plus(quoted)).decode('utf-8')
+      return quoted
+
+    def tvbrowser_query(self, search):
+      url = ('%s/search=%s' % ('http://localhost:8080', search))
+      print "URL %s" % (url)
+      data = urllib2.urlopen(url).read()
+      dom = parseString(data)
+      xmlTag = dom.getElementsByTagName('TvbSearch')[0].toxml()
+
+      answer=[]
+
+      for item in dom.getElementsByTagName('Item'):
+         tag = item.toxml()
+         dom = parseString(xmlTag)
+         xmlTag = tag;
+      
+         dom = parseString(xmlTag)
+         xmlTag = dom.getElementsByTagName('Title')[0].toxml()
+         title=xmlTag.replace('<Title>','').replace('</Title>','')
+
+         xmlTag = dom.getElementsByTagName('UniqueID')[0].toxml()
+         uniqueID=xmlTag.replace('<UniqueID>','').replace('</UniqueID>','')
+
+         xmlTag = dom.getElementsByTagName('Channel')[0].toxml()
+         channelName=xmlTag.replace('<Channel>','').replace('</Channel>','')
+      
+         xmlTag = dom.getElementsByTagName('ChannelIcon')[0].toxml()
+         icon=xmlTag.replace('<ChannelIcon>','').replace('</ChannelIcon>','')
+      
+         xmlTag = dom.getElementsByTagName('StartDate')[0].toxml()
+         startDate=xmlTag.replace('<StartDate>','').replace('</StartDate>','')
+
+         xmlTag = dom.getElementsByTagName('StartTime')[0].toxml()
+         startTime=xmlTag.replace('<StartTime>','').replace('</StartTime>','')
+
+         xmlTag = dom.getElementsByTagName('EndTime')[0].toxml()
+         endTime=xmlTag.replace('<EndTime>','').replace('</EndTime>','')
+
+
+         xmlTag = dom.getElementsByTagName('Picture')[0].toxml()
+         picture=xmlTag.replace('<Picture>','').replace('</Picture>','')
+         
+         words=[]
+         words.append(self.js_unquote(title))
+         words.append(self.js_unquote(channelName))
+         words.append(icon)
+         words.append(startDate)
+         words.append(startTime)
+         words.append(endTime)
+         words.append(uniqueID)
+         
+         if tag.find("ShortDescription") != -1:
+           xmlTag = dom.getElementsByTagName('ShortDescription')[0].toxml()
+           shortDescription=xmlTag.replace('<ShortDescription>','').replace('</ShortDescription>','')
+           words.append(self.js_unquote(shortDescription))
+
+         if picture.find("true") != -1:
+           words.append("true")
+         
+         answer.append(words)
+
+      return answer
+
+    def search(self, search, results):    
+        # TODO: Add your search results
+        for words in self.tvbrowser_query(search):
+          description = ''
+          
+          if len(words) >= 8:
+            description = words[7]
+          
+          category = self.found_programs_category
+          
+          if (len(search) == 0) or (search.find("\\") == 0):
+            category = self.running_programs_category
+          elif search.find("++") == 0:
+            category = self.reminder_programs_category
+          elif search.find("+") == 0:
+            category = self.favorite_programs_category
+            
+          icon = ("http://localhost:8080/channelIcon=%s" % words[2])
+          
+          if len(words) >= 9:
+            icon = ("http://localhost:8080/picture=%s&%s" % (words[6],"64"))
+
+          results.append(words[6],
+                         icon,
+                         category,
+                         "text/html",
+                         "%s\n%s %s-%s\n%s" % (words[1],words[3],words[4],words[5],words[0]),
+                         description,
+                         '')
+        
+if __name__ == "__main__":
+    run_lens(TvbrowserLens, sys.argv)

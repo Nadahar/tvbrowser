@@ -1,0 +1,113 @@
+<?xml version="1.0"?>
+<!--
+  Ant build script for WinTVCap_GUI.
+
+  Author: René Mach
+
+  This program is free software; you can redistribute it and/or
+  modify it under the terms of the GNU General Public License
+  as published by the Free Software Foundation; either version 2
+  of the License, or (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software
+  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+-->
+<project name="SimplePVR" default="targets" basedir=".">
+
+	<property environment="env"/>
+	<property file="build.properties"/>
+	<property name="src.dir" value="src"/>
+	<property name="program.name" value="TV-Browser Unity Lens"/>
+	<property name="target.dir" value="build-target"/>
+	<property name="deployment.dir" value="deployment"/>
+
+    <path id="ant-deb.classpath">
+	  <fileset dir="${deployment.dir}/ant-deb-task" includes="*.jar"/>
+    </path>
+	
+    <!-- Creates an Ubuntu package-->
+	<taskdef name="deb"
+		classname="com.googlecode.ant_deb_task.Deb"
+		classpathref="ant-deb.classpath"/>
+	
+	<target name="targets">
+	    <echo message="usage: build [target]"/>
+	    <echo message=""/>
+	    <echo message="main targets:"/>
+	    <echo message="============="/>
+	    <echo message=" targets            Shows this list of targets."/>
+		<echo message=" package            Creates the deb package."/>
+		<echo message=" src                Creates a .zip file with the source code."/>
+	</target>
+	
+	  <path id="sourcepath">
+	    <pathelement location="${src.dir}"/>
+	  </path>
+
+	  <target name="clean">
+	    <delete dir="${target.dir}"/>
+	  </target>
+
+	
+	<target name="package" depends="clean">
+		<mkdir dir="${target.dir}"/>
+		
+		<deb
+	        todir="${target.dir}"
+	        package="tvbrowser-lens"
+	        section="utils"
+	        depends="sun-java7-jre | openjdk-7-jre, tvbrowser, python-unity-singlet"
+	  	    recommends="openjdk-7-jre"
+			>
+
+	        <version upstream="${version}"/>
+	        <maintainer name="René Mach" email="rene@tvbrowser.org"/>
+
+	  		<!-- do not indent the description, otherwise the indent will be visible in the package manager and other tools -->
+	        <description synopsis="TV-Browser Unity Lens">A Lens for TV-Browser search for the Unity Desktop.</description>
+
+	  	    <tarfileset dir="${src.dir}" prefix="usr/share/tvbrowser-lens" filemode="755" includes="tvbrowser-lens"/>
+			<tarfileset dir="${src.dir}" prefix="usr/share/unity/lenses/tvbrowser">
+				<include name="tvbrowser.lens"/>
+				<include name="tvbrowser.svg"/>
+		    </tarfileset>
+			<tarfileset dir="${src.dir}" prefix="usr/share/dbus-1/services" includes="unity-lens-tvbrowser.service"/>
+	  	</deb>
+		
+<!--		<mkdir dir="${target.dir}/installer"/>
+		
+		<exec executable="files/installer/makensis.exe" failonerror="true">
+		      <arg value="/NOCD"/>
+		      <arg value="/DMUI_VERSION=${version}"/>
+			  <arg value="/DOUT_DIR=${target.dir}\installer"/>
+			  <arg value="/DRUNTIME_DIR=${target.dir}\runtime"/>
+		      <arg value="files/installer/wintvcap_gui.nsi"/>
+		</exec>
+		<exec executable="files/installer/makensis.exe" failonerror="true">
+		      <arg value="/NOCD"/>
+			  <arg value="/DOUT_DIR=${target.dir}\installer"/>
+			  <arg value="/DRUNTIME_DIR=${target.dir}\runtime"/>
+		      <arg value="files/installer/settings_editor.nsi"/>
+		</exec>-->
+	</target>
+	
+	<target name="src">
+	  <mkdir dir="${target.dir}"/>
+	  <zip destfile="${target.dir}/${program.name}-${version}-src.zip">
+	    <zipfileset dir="${src.dir}" prefix="src"/>
+	  	<zipfileset dir="./files" prefix="files"/>
+	  	<zipfileset dir=".">
+		  <include name="build.properties"/>
+  		  <include name="build.xml"/>
+  		  <include name="License.txt"/>
+  		</zipfileset>
+	  </zip>
+	</target>
+</project>
+
