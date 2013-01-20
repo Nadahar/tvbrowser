@@ -413,8 +413,9 @@ public class DayProgramFile extends AbstractFile {
     mVersion = gIn.read();
 
     int programCount = gIn.read();
-
-    if(programCount == 254) {
+    if (mVersion == 255 && programCount == 0) {
+      throw new FileFormatException("Max. version file contains no programs");
+    } else if(programCount == 254) {
       try {
         if(job.getServerUrl() != null) {
           String url = job.getServerUrl() + (job.getServerUrl().endsWith("/") ? "" : "/") + getAdditionalFileName(job.getFileName());
