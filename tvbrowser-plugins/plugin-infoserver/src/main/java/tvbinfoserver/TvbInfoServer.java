@@ -52,7 +52,7 @@ import devplugin.Version;
 
 public class TvbInfoServer extends Plugin {
   private static final String PORT_KEY = "serverPort";
-  private static final Version VERSION = new Version(0,1,0,false);
+  private static final Version VERSION = new Version(0,2,0,false);
   
   private ServerSocket mSocket;
   private Thread mServerThread;
@@ -155,201 +155,205 @@ public class TvbInfoServer extends Plugin {
               OutputStream out = new BufferedOutputStream(connection.getOutputStream());
               PrintStream pout = new PrintStream(out);
               
-              if(!connection.getInetAddress().getHostName().equals("localhost")) {
-                errorReport(pout, connection, "403", "Forbidden",
-                    "You don't have permission to access the requested URL.");
-              }
-              else {
-                // read first line of request (ignore the rest)
-                String request = in.readLine();
-                
-                if (request==null)
-                    continue;
-                //log(connection, request);
-                while (true) {
-                    String misc = in.readLine();
-                    if (misc==null || misc.length()==0)
-                        break;
+              try {
+                if(!connection.getInetAddress().getHostName().equals("localhost")) {
+                  errorReport(pout, connection, "403", "Forbidden",
+                      "You don't have permission to access the requested URL.");
                 }
-                
-                // parse the line
-                if (!request.startsWith("GET") || request.length()<14 ||
-                    !(request.endsWith("HTTP/1.0") || request.endsWith("HTTP/1.1"))) {
-                    // bad request
-                    errorReport(pout, connection, "400", "Bad Request", 
-                                "Your browser sent a request that " + 
-                                "this server could not understand.");
-                } else {
-                  String req = request.substring(4, request.length()-9).trim();
+                else {
+                  // read first line of request (ignore the rest)
+                  String request = in.readLine();
                   
-                  if(req.equals("/search=") || req.equals("/search=running")) {
-                    sendRunning(pout);
+                  if (request==null)
+                      continue;
+                  //log(connection, request);
+                  while (true) {
+                      String misc = in.readLine();
+                      if (misc==null || misc.length()==0)
+                          break;
                   }
-                  else if(req.startsWith("/show=") && req.trim().length() > 10) {
-                    String id = req.substring(req.indexOf("=")+1);
+                  
+                  // parse the line
+                  if (!request.startsWith("GET") || request.length()<14 ||
+                      !(request.endsWith("HTTP/1.0") || request.endsWith("HTTP/1.1"))) {
+                      // bad request
+                      errorReport(pout, connection, "400", "Bad Request", 
+                                  "Your browser sent a request that " + 
+                                  "this server could not understand.");
+                  } else {
+                    String req = request.substring(4, request.length()-9).trim();
                     
-                    if(id.trim().length() > 5 && id.contains("_")) {
-                      final Program p = getPluginManager().getProgram(id);
-                      
-                      if(p != null) {
-                        SwingUtilities.invokeLater(new Runnable() {
-                          
-                          @Override
-                          public void run() {
-                            // TODO Auto-generated method stub
-                            ProgramInfo.getInstance().showProgramInformation(p);    
-                          }
-                        });
-                      }
-                      pout.print("shown\r\n");
+                    if(req.equals("/search=") || req.equals("/search=running")) {
+                      sendRunning(pout);
                     }
-                  }
-                  else if(req.startsWith("/search=") && req.trim().length() > 8) {
-                    String value = req.substring(req.indexOf("=")+1);
-                    
-                    if(value.startsWith("\\")) {
-                      if(value.length() > 1) {
-                        value = value.substring(1);
+                    else if(req.startsWith("/show=") && req.trim().length() > 10) {
+                      String id = req.substring(req.indexOf("=")+1);
+                      
+                      if(id.trim().length() > 5 && id.contains("_")) {
+                        final Program p = getPluginManager().getProgram(id);
                         
-                        if(value.startsWith("\\")) {
-                          if(value.length() > 1) {
-                            value = value.substring(1);
+                        if(p != null) {
+                          SwingUtilities.invokeLater(new Runnable() {
                             
-                            int index = value.indexOf(":");
-                            
-                            int time = 0;
-                            
-                            if(index != -1) {
-                              if(value.length() == 5) {
+                            @Override
+                            public void run() {
+                              // TODO Auto-generated method stub
+                              ProgramInfo.getInstance().showProgramInformation(p);    
+                            }
+                          });
+                        }
+                        pout.print("shown\r\n");
+                      }
+                    }
+                    else if(req.startsWith("/search=") && req.trim().length() > 8) {
+                      String value = req.substring(req.indexOf("=")+1);
+                      
+                      if(value.startsWith("\\")) {
+                        if(value.length() > 1) {
+                          value = value.substring(1);
+                          
+                          if(value.startsWith("\\")) {
+                            if(value.length() > 1) {
+                              value = value.substring(1);
+                              
+                              int index = value.indexOf(":");
+                              
+                              int time = 0;
+                              
+                              if(index != -1) {
+                                if(value.length() == 5) {
+                                  try {
+                                    time = Integer.parseInt(value.substring(0,index)) * 60 + Integer.parseInt(value.substring(index+1));
+                                  }catch(NumberFormatException e1) {}
+                                }
+                              }
+                              else if(value.length() == 4) {
                                 try {
-                                  time = Integer.parseInt(value.substring(0,index)) * 60 + Integer.parseInt(value.substring(index+1));
+                                  time = Integer.parseInt(value.substring(0,2)) * 60 + Integer.parseInt(value.substring(2));
                                 }catch(NumberFormatException e1) {}
                               }
+                              else if(value.length() == 2) {
+                                try {
+                                  time = Integer.parseInt(value) * 60;
+                                }catch(NumberFormatException e1) {}
+                              }
+                              
+                              findProgramInTime(time,pout);
                             }
-                            else if(value.length() == 4) {
-                              try {
-                                time = Integer.parseInt(value.substring(0,2)) * 60 + Integer.parseInt(value.substring(2));
-                              }catch(NumberFormatException e1) {}
-                            }
-                            else if(value.length() == 2) {
-                              try {
-                                time = Integer.parseInt(value) * 60;
-                              }catch(NumberFormatException e1) {}
-                            }
-                            
-                            findProgramInTime(time,pout);
                           }
-                        }
-                        else {
-                          searchChannels(value,pout);
+                          else {
+                            searchChannels(value,pout);
+                          }
                         }
                       }
-                    }
-                    else if(value.startsWith("+")) {
-                      if(value.length() > 1) {
-                        value = value.substring(1);
-                        
-                        if(value.startsWith("+")) {
-                          if(value.length() > 1) {
-                            value = value.substring(1);
-                            
-                            searchForMarkerId(ReminderPluginProxy.getInstance().getId(), value, pout);
+                      else if(value.startsWith("+")) {
+                        if(value.length() > 1) {
+                          value = value.substring(1);
+                          
+                          if(value.startsWith("+")) {
+                            if(value.length() > 1) {
+                              value = value.substring(1);
+                              
+                              searchForMarkerId(ReminderPluginProxy.getInstance().getId(), value, pout);
+                            }
+                            else if(value.length() == 1) {
+                              searchForMarkerId(ReminderPluginProxy.getInstance().getId(), "", pout);
+                            }
                           }
-                          else if(value.length() == 1) {
-                            searchForMarkerId(ReminderPluginProxy.getInstance().getId(), "", pout);
+                          else {
+                            searchForMarkerId(FavoritesPluginProxy.getInstance().getId(), value, pout);
                           }
                         }
                         else {
-                          searchForMarkerId(FavoritesPluginProxy.getInstance().getId(), value, pout);
+                          searchForMarkerId(FavoritesPluginProxy.getInstance().getId(), "", pout);
                         }
                       }
                       else {
-                        searchForMarkerId(FavoritesPluginProxy.getInstance().getId(), "", pout);
+                        searchPrograms(value,pout);
                       }
                     }
-                    else {
-                      searchPrograms(value,pout);
+                    else if(req.startsWith("/searchFavorites=") && req.trim().length() > 17) {
+                      String value = req.substring(req.indexOf("=")+1);
+                      
+                      searchForMarkerId(FavoritesPluginProxy.getInstance().getId(),value,pout);
                     }
-                  }
-                  else if(req.startsWith("/searchFavorites=") && req.trim().length() > 17) {
-                    String value = req.substring(req.indexOf("=")+1);
-                    
-                    searchForMarkerId(FavoritesPluginProxy.getInstance().getId(),value,pout);
-                  }
-                  else if(req.startsWith("/searchReminder=") && req.trim().length() > 16) {
-                    String value = req.substring(req.indexOf("=")+1);
-                    
-                    searchForMarkerId(ReminderPluginProxy.getInstance().getId(),value,pout);
-                  }
-                  else if(req.startsWith("/searchForMarkerId=") && req.contains("&")) {
-                    String value = req.substring(req.indexOf("=")+1);
-                    
-                    String id = value.substring(0, value.indexOf("&"));
-                    value = value.substring(value.indexOf("&")+1);
-                    
-                    searchForMarkerId(id,value,pout);
-                  }
-                  else if(req.startsWith("/searchTime=") && req.trim().length() > 13) {
-                    String value = req.substring(req.indexOf("=")+1);
-                    
-                    String id = value.substring(0, value.indexOf("&"));
-                    value = value.substring(value.indexOf("&")+1);
-                    
-                    searchForMarkerId(id,value,pout);
-                  }
-                  else if(req.startsWith("/channelIcon=") && req.trim().length() > 13) {
-                    String id = req.substring(req.indexOf("=")+1);
-                    
-                    for(Channel channel :getPluginManager().getSubscribedChannels()) {
-                      if(channel.getUniqueId().equals(id)) {
-                        Icon icon = UiUtilities.scaleIcon(channel.getIcon(),64);
+                    else if(req.startsWith("/searchReminder=") && req.trim().length() > 16) {
+                      String value = req.substring(req.indexOf("=")+1);
+                      
+                      searchForMarkerId(ReminderPluginProxy.getInstance().getId(),value,pout);
+                    }
+                    else if(req.startsWith("/searchForMarkerId=") && req.contains("&")) {
+                      String value = req.substring(req.indexOf("=")+1);
+                      
+                      String id = value.substring(0, value.indexOf("&"));
+                      value = value.substring(value.indexOf("&")+1);
+                      
+                      searchForMarkerId(id,value,pout);
+                    }
+                    else if(req.startsWith("/searchTime=") && req.trim().length() > 13) {
+                      String value = req.substring(req.indexOf("=")+1);
+                      
+                      String id = value.substring(0, value.indexOf("&"));
+                      value = value.substring(value.indexOf("&")+1);
+                      
+                      searchForMarkerId(id,value,pout);
+                    }
+                    else if(req.startsWith("/channelIcon=") && req.trim().length() > 13) {
+                      String id = req.substring(req.indexOf("=")+1);
+                      
+                      for(Channel channel :getPluginManager().getSubscribedChannels()) {
+                        if(channel.getUniqueId().equals(id)) {
+                          Icon icon = UiUtilities.scaleIcon(channel.getIcon(),64);
+                          
+                          BufferedImage image = new BufferedImage(icon.getIconWidth(), 64, BufferedImage.TYPE_INT_RGB);
+                          image.getGraphics().setColor(Color.white);
+                          image.getGraphics().fillRect(0, 0, 64, 64);
+                          image.getGraphics().setColor(Color.black);
+                          image.getGraphics().drawRect(0, 0, 64, 64);
+                          image.getGraphics().setColor(Color.white);
+                          icon.paintIcon(null, image.getGraphics(), 0, 64/2 - icon.getIconHeight()/2);
+                          
+                          sendImage(image,pout,out);
+                          
+                          break;
+                        }
+                      }
+                    }
+                    else if(req.startsWith("/picture=") && req.trim().length() > 9) {
+                      String id = req.substring(req.indexOf("=")+1);
+                      int resize = -1;
+                      
+                      if(id.indexOf("&") != -1) {
+                        resize = Integer.parseInt(id.trim().substring(id.indexOf("&")+1));
+                        id = id.trim().substring(0,id.indexOf("&"));
+                      }
+                      
+                      Program prog = getPluginManager().getProgram(id);
+                      
+                      if(prog != null && prog.hasFieldValue(ProgramFieldType.PICTURE_TYPE)) {                    
+                        byte[] picture = prog.getBinaryField(ProgramFieldType.PICTURE_TYPE);
                         
-                        BufferedImage image = new BufferedImage(icon.getIconWidth(), 64, BufferedImage.TYPE_INT_RGB);
-                        image.getGraphics().setColor(Color.white);
-                        image.getGraphics().fillRect(0, 0, 64, 64);
-                        image.getGraphics().setColor(Color.black);
-                        image.getGraphics().drawRect(0, 0, 64, 64);
-                        image.getGraphics().setColor(Color.white);
-                        icon.paintIcon(null, image.getGraphics(), 0, 64/2 - icon.getIconHeight()/2);
+                        BufferedImage image = ImageIO.read(new ByteArrayInputStream(picture));
+                        
+                        if(resize != -1) {
+                          Icon icon = UiUtilities.scaleIcon(new ImageIcon(image), resize);
+                          
+                          image = new BufferedImage(icon.getIconWidth(), resize, BufferedImage.TYPE_INT_ARGB);
+                          image.getGraphics().setColor(new Color(255,255,255,0));
+                          
+                          icon.paintIcon(null, image.getGraphics(), 0, resize/2 - icon.getIconHeight()/2);
+                        }
                         
                         sendImage(image,pout,out);
-                        
-                        break;
                       }
                     }
+                    
+                    
+                   /// info(pout,connection);
                   }
-                  else if(req.startsWith("/picture=") && req.trim().length() > 9) {
-                    String id = req.substring(req.indexOf("=")+1);
-                    int resize = -1;
-                    
-                    if(id.indexOf("&") != -1) {
-                      resize = Integer.parseInt(id.trim().substring(id.indexOf("&")+1));
-                      id = id.trim().substring(0,id.indexOf("&"));
-                    }
-                    
-                    Program prog = getPluginManager().getProgram(id);
-                    
-                    if(prog != null && prog.hasFieldValue(ProgramFieldType.PICTURE_TYPE)) {                    
-                      byte[] picture = prog.getBinaryField(ProgramFieldType.PICTURE_TYPE);
-                      
-                      BufferedImage image = ImageIO.read(new ByteArrayInputStream(picture));
-                      
-                      if(resize != -1) {
-                        Icon icon = UiUtilities.scaleIcon(new ImageIcon(image), resize);
-                        
-                        image = new BufferedImage(icon.getIconWidth(), resize, BufferedImage.TYPE_INT_ARGB);
-                        image.getGraphics().setColor(new Color(255,255,255,0));
-                        
-                        icon.paintIcon(null, image.getGraphics(), 0, resize/2 - icon.getIconHeight()/2);
-                      }
-                      
-                      sendImage(image,pout,out);
-                    }
-                  }
-                  
-                  
-                 /// info(pout,connection);
                 }
+              }catch(Exception e2) {
+                // catch all exceptions to prevent crash of server
               }
               out.flush();
             } catch (IOException e) {
