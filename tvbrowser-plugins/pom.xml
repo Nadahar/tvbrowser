@@ -125,6 +125,7 @@
     <module>plugin-unityglobalmenusupport</module>
     <module>plugin-switch</module>
     <module>plugin-netcontrol</module>
+    <module>plugin-infoserver</module>
   </modules>
   <dependencyManagement>
     <dependencies>
