@@ -13,6 +13,7 @@ import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.Iterator;
 import java.util.Properties;
@@ -52,7 +53,7 @@ import devplugin.Version;
 
 public class TvbInfoServer extends Plugin {
   private static final String PORT_KEY = "serverPort";
-  private static final Version VERSION = new Version(0,2,0,false);
+  private static final Version VERSION = new Version(0,4,0,false);
   
   private ServerSocket mSocket;
   private Thread mServerThread;
@@ -181,7 +182,7 @@ public class TvbInfoServer extends Plugin {
                                   "Your browser sent a request that " + 
                                   "this server could not understand.");
                   } else {
-                    String req = request.substring(4, request.length()-9).trim();
+                    String req = URLDecoder.decode(request.substring(4, request.length()-9).trim(), "UTF-8");
                     
                     if(req.equals("/search=") || req.equals("/search=running")) {
                       sendRunning(pout);
@@ -207,7 +208,7 @@ public class TvbInfoServer extends Plugin {
                     }
                     else if(req.startsWith("/search=") && req.trim().length() > 8) {
                       String value = req.substring(req.indexOf("=")+1);
-                      
+                                            
                       if(value.startsWith("\\")) {
                         if(value.length() > 1) {
                           value = value.substring(1);
@@ -303,15 +304,23 @@ public class TvbInfoServer extends Plugin {
                       
                       for(Channel channel :getPluginManager().getSubscribedChannels()) {
                         if(channel.getUniqueId().equals(id)) {
-                          Icon icon = UiUtilities.scaleIcon(channel.getIcon(),64);
+                          Icon icon = channel.getIcon();
                           
-                          BufferedImage image = new BufferedImage(icon.getIconWidth(), 64, BufferedImage.TYPE_INT_RGB);
+                          int size = 64;
+                          
+                          if(icon.getIconHeight() > icon.getIconWidth()) {
+                            size = (int)((64 * icon.getIconWidth())/(float)icon.getIconHeight());
+                          }
+                          
+                          icon = UiUtilities.scaleIcon(icon,size);
+                          
+                          BufferedImage image = new BufferedImage(64, 64, BufferedImage.TYPE_INT_RGB);
                           image.getGraphics().setColor(Color.white);
                           image.getGraphics().fillRect(0, 0, 64, 64);
                           image.getGraphics().setColor(Color.black);
                           image.getGraphics().drawRect(0, 0, 64, 64);
                           image.getGraphics().setColor(Color.white);
-                          icon.paintIcon(null, image.getGraphics(), 0, 64/2 - icon.getIconHeight()/2);
+                          icon.paintIcon(null, image.getGraphics(), 64/2 - icon.getIconWidth()/2, 64/2 - icon.getIconHeight()/2);
                           
                           sendImage(image,pout,out);
                           
@@ -341,7 +350,7 @@ public class TvbInfoServer extends Plugin {
                           image = new BufferedImage(icon.getIconWidth(), resize, BufferedImage.TYPE_INT_ARGB);
                           image.getGraphics().setColor(new Color(255,255,255,0));
                           
-                          icon.paintIcon(null, image.getGraphics(), 0, resize/2 - icon.getIconHeight()/2);
+                          icon.paintIcon(null, image.getGraphics(), resize/2 - icon.getIconWidth()/2, resize/2 - icon.getIconHeight()/2);
                         }
                         
                         sendImage(image,pout,out);
