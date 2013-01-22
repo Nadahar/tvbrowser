@@ -20741,5 +20741,29 @@
     <alternativetitle lang="de">The Green Wave</alternativetitle>
     <alternativetitle lang="de">Irans grüner Sommer</alternativetitle>
   </movie>
-
+<movie id="movie_db_4312" year="2011">
+ <title lang="de">The Tree of Life</title>
+ <title lang="en" original="yes">The Tree of Life</title>
+</movie>
+<movie id="movie_db_4313" year="2012">
+ <title lang="de">Liebe</title>
+ <title lang="fr" original="yes">Amour</title>
+</movie>
+<movie id="movie_db_4314" year="2011">
+ <title lang="de">Melancholia</title>
+ <title lang="en" original="yes">Melancholia</title>
+</movie>
+<movie id="movie_db_4315" year="2010">
+ <title lang="de">In einer besseren Welt</title>
+ <title lang="da" original="yes">Hævnen</title>
+</movie>
+<movie id="movie_db_4316" year="2010">
+ <title lang="de">The King’s Speech</title>
+ <alternativetitle lang="de">The King's Speech</alternativetitle>
+ <title lang="en" original="yes">The King’s Speech</title>
+</movie>
+<movie id="movie_db_4317" year="2011">
+ <title lang="de">We Need to Talk About Kevin</title>
+ <title lang="en" original="yes">We Need to Talk About Kevin</title>
+</movie>
 </movies>

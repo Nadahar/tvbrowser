@@ -493,7 +493,11 @@
     <movie id="m_143">
       <title lang="de">Muxmäuschenstill</title>
   </movie>
-
+  </movie>
+    <movie id="m_144" year="2011">
+      <title lang="de">Michael</title>
+  </movie>
+    
 </movies>
 <awards>
   <award category="c_1" status="winner" movie="m_1" year="1980" recipient="Niklaus Schilling"/>
@@ -528,6 +532,7 @@
   <award category="c_1" status="winner" movie="m_30" year="2009" recipient="Thomas Woschitz"/>
   <award category="c_1" status="winner" movie="m_134" year="2010" recipient="Maximilian Erlenwein"/>
   <award category="c_1" status="winner" movie="m_141" year="2011" recipient="Johannes Naber"/>
+  <award category="c_1" status="winner" movie="m_144" year="2012" recipient="Johannes Naber"/>
   <award category="c_2" status="winner" movie="m_31" year="2008" recipient="Stefan Schaller"/>
   <award category="c_2" status="winner" movie="m_32" year="2009" recipient="Helene Hegemann"/>
   <award category="c_2" status="winner" movie="m_135" year="2010" recipient="Marvin Kren"/>
