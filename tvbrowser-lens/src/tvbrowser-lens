@@ -40,8 +40,14 @@ class TvbrowserLens(SingleScopeLens):
       quoted = quoted.encode('utf-8')
       quoted = urllib.unquote_plus(urllib.unquote_plus(quoted)).decode('utf-8')
       return quoted
+      
+    def js_quote(self, quoted):
+      quoted = quoted.encode('utf-8')
+      quoted = urllib.quote_plus(quoted)
+      return quoted
 
     def tvbrowser_query(self, search):
+      search = self.js_quote(search)
       url = ('%s/search=%s' % ('http://localhost:8080', search))
       print "URL %s" % (url)
       data = urllib2.urlopen(url).read()
@@ -84,11 +90,11 @@ class TvbrowserLens(SingleScopeLens):
          words=[]
          words.append(self.js_unquote(title))
          words.append(self.js_unquote(channelName))
-         words.append(icon)
+         words.append(self.js_quote(icon))
          words.append(startDate)
          words.append(startTime)
          words.append(endTime)
-         words.append(uniqueID)
+         words.append(self.js_quote(uniqueID))
          
          if tag.find("ShortDescription") != -1:
            xmlTag = dom.getElementsByTagName('ShortDescription')[0].toxml()
