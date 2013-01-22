@@ -39,6 +39,7 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import tvbrowser.core.icontheme.IconLoader;
+import util.io.IOUtilities;
 import util.misc.SoftReferenceCache;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
@@ -65,7 +66,7 @@ public final class ImdbPlugin extends Plugin {
 
   private static final boolean IS_STABLE = true;
 
-  private static final Version mVersion = new Version(1, 6, IS_STABLE);
+  private static final Version mVersion = new Version(1, 7, IS_STABLE);
 
   // Empty Rating for Cache
   private static final ImdbRating DUMMY_RATING = new ImdbRating(0, 0, "", "");
@@ -274,8 +275,10 @@ public final class ImdbPlugin extends Plugin {
   private void initializeDatabase() {
     try {
 			if (mImdbDatabase == null) {
-			  mImdbDatabase = new ImdbDatabase(new File(Plugin.getPluginManager()
-			      .getTvBrowserSettings().getTvBrowserUserHome(), "imdbDatabase"));
+			  File dataBase = new File(new File(Plugin.getPluginManager()
+                  .getTvBrowserSettings().getTvBrowserUserHome()).getParentFile(), "imdbDatabase");
+			  
+			  mImdbDatabase = new ImdbDatabase(dataBase);
 			  mImdbDatabase.init();
 			}
 		} catch (Exception e) {
@@ -331,7 +334,34 @@ public final class ImdbPlugin extends Plugin {
   @Override
   public void readData(final ObjectInputStream in) throws IOException,
       ClassNotFoundException {
-    in.readInt(); // version
+    int version = in.readInt(); // version
+    
+    if(version < 2) {
+      File dataBase = new File(new File(Plugin.getPluginManager()
+          .getTvBrowserSettings().getTvBrowserUserHome()).getParentFile(), "imdbDatabase");
+      
+      if(!dataBase.isDirectory()) {
+        dataBase.mkdirs();
+        
+        File oldDataBase = new File(Plugin.getPluginManager()
+            .getTvBrowserSettings().getTvBrowserUserHome(), "imdbDatabase");
+        
+        if(oldDataBase.isDirectory()) {
+          File[] dataBaseFiles = oldDataBase.listFiles();
+          IOUtilities.copy(oldDataBase.listFiles(), dataBase);
+          
+          for(File file : dataBaseFiles) {
+            if(!file.delete()) {
+              file.deleteOnExit();
+            }
+          }
+          
+          if(!oldDataBase.delete()) {
+            oldDataBase.deleteOnExit();
+          }
+        }
+      }
+    }
 
     final int count = in.readInt();
 
@@ -346,7 +376,7 @@ public final class ImdbPlugin extends Plugin {
 
   @Override
   public void writeData(final ObjectOutputStream out) throws IOException {
-    out.writeInt(1);
+    out.writeInt(2);
 
     out.writeInt(mExcludedChannels.size());
     for (Channel ch : mExcludedChannels) {
