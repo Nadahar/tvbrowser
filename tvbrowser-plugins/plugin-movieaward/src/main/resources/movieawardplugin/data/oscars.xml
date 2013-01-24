@@ -72,7 +72,7 @@
 <category id="best_documentary_short_subject"><name lang="de">Bester Dokumentarkurzfilm</name>
 <name lang="en">Best Documentary short subject</name>
 </category>
-<category id="best_foreign_language_film"><name lang="de">Bester Ausländischer Film</name>
+<category id="best_foreign_language_film"><name lang="de">Bester fremdsprachiger Film</name>
 <name lang="en">Best Foreign Language Film</name>
 </category>
 <category id="best_makeup"><name lang="de">Bestes Makeup</name>
@@ -8234,6 +8234,12 @@
 <award category="best_movie" status="nominated" movie="movie_db_4300" year="2009" recipient="Jason Reitman"/>
 <award category="best_animated_short_subject" status="nominated" movie="movie_db_4301" year="2009" recipient="Nick Park"/>
 <award category="best_documentary" status="nominated" movie="movie_db_4303" year="2009" recipient="Rebecca Cammisa"/>
+<award category="best_movie" status="winner" movie="movie_db_4318" year="2010"/>
+<award category="best_foreign_language_film" status="winner" movie="movie_db_4295" year="2010"/>
+<award category="best_movie" status="winner" movie="movie_db_4316" year="2011"/>
+<award category="best_foreign_language_film" status="winner" movie="movie_db_4315" year="2011"/>
+<award category="best_movie" status="winner" movie="movie_db_4319" year="2012"/>
+<award category="best_foreign_language_film" status="winner" movie="movie_db_4320" year="2012"/>
 
 </awards>
 </awarddata>
