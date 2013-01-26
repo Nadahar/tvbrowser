@@ -83,6 +83,8 @@ public class ReminderListPanel extends JPanel implements PersonaListener {
     mModel = new ReminderTableModel(mReminderList, mTitleSelection = new JComboBox());
 
     mTable = new JTable();
+    mTable.getTableHeader().setResizingAllowed(false);
+    mTable.getTableHeader().setReorderingAllowed(false);
     mTable.addKeyListener(new KeyAdapter() {
       public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_ESCAPE || e.getKeyCode() == KeyEvent.VK_ENTER) {
@@ -386,8 +388,8 @@ public class ReminderListPanel extends JPanel implements PersonaListener {
         TableColumn column = super.getColumn(n);
         
         if(n == 1) {
-          column.setMaxWidth(300);
-          column.setPreferredWidth(250);
+          column.setMaxWidth(mTable.getFontMetrics(mTable.getFont()).stringWidth(ReminderFrame.REMIND_MSG_ARR[1])+20);
+          column.setPreferredWidth(column.getMaxWidth());
         }
         
         return column;
