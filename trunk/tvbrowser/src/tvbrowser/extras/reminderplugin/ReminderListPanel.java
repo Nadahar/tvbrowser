@@ -431,7 +431,16 @@ public class ReminderListPanel extends JPanel implements PersonaListener {
     mTable.getColumnModel().getColumn(1).setCellEditor(new MinutesCellEditor());
     mTable.getColumnModel().getColumn(1).setCellRenderer(new MinutesCellRenderer());
     updateButtons();
-    mTable.updateUI();
+
+    SwingUtilities.invokeLater(new Runnable() {
+      
+      @Override
+      public void run() {
+        try {
+          mTable.updateUI();
+        }catch(Exception e1) {}
+      }
+    });
   }
   
 
