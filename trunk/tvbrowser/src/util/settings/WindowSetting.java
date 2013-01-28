@@ -171,7 +171,7 @@ public final class WindowSetting {
                 if(mXPos < 0 || mYPos < 0 || mXPos > d.width || mYPos > d.height) {
                   window.setLocationRelativeTo(null);
                 }
-                else if(p.x != mXPos || mYPos != p.y) {
+                else if((p.x != mXPos || mYPos != p.y) && System.getenv("DESKTOP_SESSION") != null &&  System.getenv("DESKTOP_SESSION").toLowerCase().equals("ubuntu")) {
                   window.setLocation(mXPos - Math.abs(p.x-mXPos), mYPos - Math.abs(p.y-mYPos));
                 }
               }
