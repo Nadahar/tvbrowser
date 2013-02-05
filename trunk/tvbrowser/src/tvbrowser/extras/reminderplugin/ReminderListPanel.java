@@ -478,7 +478,7 @@ public class ReminderListPanel extends JPanel implements PersonaListener {
         };
       });
       
-      ReminderPlugin.getInstance().updateRootNode(true);
+      ReminderPlugin.getInstance().updateRootNode(true,false);
     }
     
     updateButtons();
@@ -552,8 +552,17 @@ public class ReminderListPanel extends JPanel implements PersonaListener {
     }
   }
   
-  public void installTableModel() {
+  public void installTableModel(boolean scroll) {
     installTableModel(new ReminderTableModel(mReminderList, mTitleSelection));
+    
+    if(scroll) {
+      SwingUtilities.invokeLater(new Runnable() {
+        @Override
+        public void run() {
+          mTable.scrollRectToVisible(new Rectangle(0,0));
+        }
+      });
+    }
   }
   
   void updateTableEntries() {

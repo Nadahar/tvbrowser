@@ -775,14 +775,7 @@ public class ReminderPlugin {
     return mRootNode;
   }
 
-  /**
-   * Updates the plugin tree entry for this plugin.
-   * <p>
-   *
-   * @param save
-   *          <code>True</code> if the reminder entries should be saved.
-   */
-  public void updateRootNode(boolean save) {
+  void updateRootNode(boolean save, boolean scroll) {
     mRootNode.removeAllActions();
     mRootNode.getMutableTreeNode().setIcon(IconLoader.getInstance().getIconFromTheme("apps", "appointment", 16));
 
@@ -823,8 +816,19 @@ public class ReminderPlugin {
     }
     
     if(mReminderListPanel != null) {
-      mReminderListPanel.installTableModel();
+      mReminderListPanel.installTableModel(scroll);
     }
+  }
+  
+  /**
+   * Updates the plugin tree entry for this plugin.
+   * <p>
+   *
+   * @param save
+   *          <code>True</code> if the reminder entries should be saved.
+   */
+  public void updateRootNode(boolean save) {
+    updateRootNode(save, true);
   }
 
   private void saveReminders() {
@@ -1122,7 +1126,7 @@ public class ReminderPlugin {
     mSettings.setProperty("showDateSeparators", String.valueOf(show));
     
     if(mReminderListPanel != null) {
-      mReminderListPanel.installTableModel();
+      mReminderListPanel.installTableModel(false);
     }
   }
 }
