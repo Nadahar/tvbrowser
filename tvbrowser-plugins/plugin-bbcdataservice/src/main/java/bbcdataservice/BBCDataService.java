@@ -29,8 +29,8 @@ import java.util.HashMap;
 import java.util.Properties;
 import java.util.TimeZone;
 
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import tvdataservice.MutableChannelDayProgram;
 import tvdataservice.SettingsPanel;
@@ -66,7 +66,7 @@ public final class BBCDataService extends AbstractTvDataService {
   private static final String PROGRAMMES_URL = "http://www.bbc.co.uk";
   private static final String CHANNEL_LIST = "http://www.tvbrowser.org/mirrorlists/BBCDataService_channellist.gz";
   private static final boolean IS_STABLE = false;
-  private static final Version mVersion = new Version(3, 13, 0, IS_STABLE);
+  private static final Version mVersion = new Version(3, 14, 0, IS_STABLE);
 
   /**
    * created lazily on first access
@@ -248,7 +248,7 @@ public final class BBCDataService extends AbstractTvDataService {
           categoryStr = tokens[7];
           if (tokens.length > 8) {
             unescapedname = name;
-            name = StringEscapeUtils.unescapeHtml(tokens[8]);
+            name = StringEscapeUtils.unescapeHtml4(tokens[8]);
           }
 
         } catch (ArrayIndexOutOfBoundsException e) {
