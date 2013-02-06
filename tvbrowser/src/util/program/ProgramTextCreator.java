@@ -348,7 +348,7 @@ public class ProgramTextCreator {
       buffer.append(mBodyFontSize);
 
       buffer.append(";\"><b>");
-      buffer.append(seriesField);
+      buffer.append(HTMLTextHelper.convertTextToHtml(seriesField, false));
       buffer.append("</b></div>");
       
     }
