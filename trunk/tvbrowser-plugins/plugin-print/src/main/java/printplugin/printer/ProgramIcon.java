@@ -40,6 +40,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.Icon;
+import javax.swing.JLabel;
 
 import printplugin.PrintPlugin;
 import printplugin.settings.PrinterProgramIconSettings;
@@ -113,8 +114,6 @@ public class ProgramIcon implements Icon {
       mChannelIcon = new ChannelIcon(prog.getChannel(), mSettings.getTitleFont());
       titleWidth-=mChannelIcon.getIconWidth();
     }
-
-
 
     mTitleIcon = new TextAreaIcon(null, mSettings.getTitleFont(), titleWidth);
     int timefieldWidth = mSettings.getTimeFieldWidth();
@@ -235,7 +234,10 @@ public class ProgramIcon implements Icon {
     int width = getIconWidth();
     int height = mHeight;
     Graphics2D grp = (Graphics2D) g;
-
+    
+    if(component == null) {
+      component = new JLabel();
+    }
 
     // Draw the background if this program is on air
     if (mSettings.getPaintProgramOnAir() && mProgram.isOnAir()) {
@@ -285,8 +287,12 @@ public class ProgramIcon implements Icon {
         // Draw all the text
         if (mSettings.getPaintExpiredProgramsPale() && mProgram.isExpired()) {
           grp.setColor(Color.gray);
+          component.setForeground(Color.gray);
         } else {
           grp.setColor(Color.black);
+          component.setForeground(Color.black);
+
+         // grp.setColor(Plugin.getPluginManager().getTvBrowserSettings().getProgramTableForegroundColor());
         }
         grp.setFont(mSettings.getTimeFont());
 
