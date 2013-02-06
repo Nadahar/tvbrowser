@@ -28,6 +28,10 @@ package printplugin.settings;
 
 import java.awt.Font;
 
+import javax.swing.JPanel;
+
+import util.ui.TimeFormatter;
+
 import devplugin.ProgramFieldType;
 
 
@@ -39,6 +43,7 @@ public class PrinterProgramIconSettings implements ProgramIconSettings {
   
   private ProgramFieldType[] mProgramInfoFields;
   private boolean mShowPluginMark;
+  private int mTimeFileWidth = -1;
   
   protected PrinterProgramIconSettings() {
     mProgramInfoFields = new ProgramFieldType[]{
@@ -78,7 +83,14 @@ public class PrinterProgramIconSettings implements ProgramIconSettings {
 
 	
 	public int getTimeFieldWidth() {
-		return 35;
+	    if(mTimeFileWidth == -1) {
+	      TimeFormatter time = new TimeFormatter();
+	      
+	      JPanel temp = new JPanel();
+	      mTimeFileWidth = temp.getFontMetrics(temp.getFont()).stringWidth(time.formatTime(23, 59))+4;
+	    }
+	    
+		return mTimeFileWidth;
 	}
 
 

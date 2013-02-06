@@ -279,6 +279,8 @@ public class PreviewDlg extends JDialog implements ActionListener, WindowClosing
 
 
 class PreviewComponent extends JComponent {
+  private static final float MAX_ZOOM = 2.5f;
+  private static final float MIN_ZOOM = 0.5f;
   
   private Printable mPrintable;
   private PageFormat mPageFormat;
@@ -305,22 +307,22 @@ class PreviewComponent extends JComponent {
   }
   
   public boolean minZoom() {
-    return (mZoom <= 0.5);
+    return (mZoom <= MIN_ZOOM);
   }
 
   public boolean maxZoom() {
-    return (mZoom >= 2.5);
+    return (mZoom >= MAX_ZOOM);
   }
 
   public void zoomIn() {
-    if (mZoom < 2.5) {
+    if (mZoom < MAX_ZOOM) {
       mZoom += 0.2;
       setZoom(mZoom);
     }
   }
 
   public void zoomOut() {
-    if (mZoom > 0.5) {
+    if (mZoom > MIN_ZOOM) {
       mZoom -= 0.2;
       setZoom(mZoom);
     }
@@ -355,7 +357,7 @@ class PreviewComponent extends JComponent {
     }
   }
   
-  public void paintComponent(Graphics graphics) {
+  public void paintComponent(Graphics graphics) {try {
     super.paintComponent(graphics);
     Graphics2D g = (Graphics2D)graphics;
     g.scale(mZoom,mZoom);
@@ -372,7 +374,7 @@ class PreviewComponent extends JComponent {
       e.printStackTrace();
     }
     g.scale(1/mZoom, 1/mZoom);
-    
+  }catch(Throwable t){t.printStackTrace();}
   }
   
 }

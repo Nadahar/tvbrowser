@@ -27,6 +27,7 @@
 package printplugin.dlgs.components;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Frame;
@@ -43,6 +44,7 @@ import javax.swing.JScrollPane;
 import printplugin.printer.ProgramIcon;
 import printplugin.settings.MutableProgramIconSettings;
 import printplugin.settings.ProgramIconSettings;
+import util.ui.TimeFormatter;
 import devplugin.Date;
 import devplugin.Plugin;
 import devplugin.ProgramFieldType;
@@ -76,6 +78,8 @@ public class ProgramPreviewPanel extends JPanel {
     mProgramIconLabel = new JLabel(createDemoProgramPanel());
 
     mIconPanel = new JPanel(new BorderLayout());
+    mIconPanel.setBackground(Color.white);
+    
     if (mDateFont != null) {
       mIconPanel.add(mDateLabel, BorderLayout.NORTH);
     }
@@ -173,7 +177,8 @@ public class ProgramPreviewPanel extends JPanel {
   private Icon createDemoProgramPanel() {
     devplugin.Program prog = Plugin.getPluginManager().getExampleProgram();
     if (mProgramIconSettings != null) {
-      mProgramIconSettings.setTimeFieldWidth(util.ui.UiUtilities.getStringWidth(mProgramIconSettings.getTimeFont(),"55:55X"));
+      TimeFormatter format = new TimeFormatter();
+      mProgramIconSettings.setTimeFieldWidth(util.ui.UiUtilities.getStringWidth(mProgramIconSettings.getTimeFont(),format.formatTime(23, 59))+4);
     }
     ProgramIcon ico = new ProgramIcon(prog, mProgramIconSettings, 200, false);
     ico.setMaximumHeight(Integer.MAX_VALUE);
