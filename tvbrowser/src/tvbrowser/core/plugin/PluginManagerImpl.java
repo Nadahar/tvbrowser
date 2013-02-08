@@ -422,6 +422,7 @@ public class PluginManagerImpl implements PluginManager {
         return new RegexSearcher(regex, caseSensitive, searchTerm);
       }
       case SEARCHER_TYPE_KEYWORD: {
+        searchTerm = searchTerm.trim();
         String regex = RegexSearcher.searchTextToRegex(searchTerm, true);
         return new RegexSearcher(regex, caseSensitive, searchTerm);
       }
