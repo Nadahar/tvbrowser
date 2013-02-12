@@ -19,7 +19,6 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.JPopupMenu.Separator;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
@@ -59,7 +58,7 @@ public class ReminderListPanel extends JPanel implements PersonaListener {
   private JTable mTable;
   
   private ReminderTableModel mModel;
-  private ReminderListItem[] mDeletedItems;
+  private RevertCache<ReminderListItem[]> mRevertCache;
   
   private JComboBox mTitleSelection;
   private JLabel mFilterLabel;
@@ -80,6 +79,7 @@ public class ReminderListPanel extends JPanel implements PersonaListener {
 
     CellConstraints cc = new CellConstraints();
     
+    mRevertCache = new RevertCache<ReminderListItem[]>(3);
     mModel = new ReminderTableModel(mReminderList, mTitleSelection = new JComboBox());
 
     mTable = new JTable();
@@ -467,7 +467,7 @@ public class ReminderListPanel extends JPanel implements PersonaListener {
         }
       }
       
-      mDeletedItems = itemList.toArray(new ReminderListItem[itemList.size()]);
+      mRevertCache.push(itemList.toArray(new ReminderListItem[itemList.size()]));
 
       final int row = selected[0] - 1;
 
@@ -485,13 +485,12 @@ public class ReminderListPanel extends JPanel implements PersonaListener {
   }
   
   private void undo() {
-    for(ReminderListItem item : mDeletedItems) {
+    for(ReminderListItem item : mRevertCache.pop()) {
       mReminderList.addWithoutChecking(item);
       item.getProgram().mark(ReminderPluginProxy.getInstance());
     }
     
-    mDeletedItems = null;
-    mUndo.setEnabled(false);
+    mUndo.setEnabled(!mRevertCache.isEmpty());
    
     installTableModel(new ReminderTableModel(mReminderList, mTitleSelection));
     ReminderPlugin.getInstance().updateRootNode(true);
@@ -576,7 +575,7 @@ public class ReminderListPanel extends JPanel implements PersonaListener {
       mSend.setEnabled(mTable.getRowCount() > 0);
       mScrollToPreviousDay.setEnabled(mTable.getRowCount() > 0);
       mScrollToNextDay.setEnabled(mTable.getRowCount() > 0);
-      mUndo.setEnabled(mDeletedItems != null && mDeletedItems.length > 0);
+      mUndo.setEnabled(!mRevertCache.isEmpty());
     }
   }
 
@@ -587,6 +586,36 @@ public class ReminderListPanel extends JPanel implements PersonaListener {
     }
     else {
       mFilterLabel.setForeground(UIManager.getColor("Label.foreground"));
+    }
+  }
+  
+  private class RevertCache<E> {
+    private ArrayList<E> mStackList;
+    private int mSize;
+    
+    public RevertCache(int size) {
+      mSize = size;
+      mStackList = new ArrayList<E>(size);
+    }
+    
+    public void push(E value) {
+      if(mStackList.size() >= mSize) {
+        mStackList.remove(0);
+      }
+      
+      mStackList.add(value);
+    }
+    
+    public E pop() {
+      if(mStackList.size() < 1) {
+        return null;
+      }
+      
+      return mStackList.remove(mStackList.size()-1);
+    }
+        
+    public boolean isEmpty() {
+      return mStackList.isEmpty();
     }
   }
 }
