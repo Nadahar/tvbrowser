@@ -124,7 +124,7 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
   private boolean mShowNew = false;
   private JCheckBox mBlackListChb;
   
-  private JButton mScrollToPreviousDay, mScrollToNextDay;
+  private JButton mScrollToPreviousDay, mScrollToNextDay, mScrollToFirstNotExpired;
   
   public ManageFavoritesPanel(Favorite[] favoriteArr,
       int splitPanePosition, boolean showNew, Favorite initialSelection, boolean border) {
@@ -360,6 +360,18 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
     
     toolbarPn.add(Box.createGlue());
     
+    mScrollToFirstNotExpired = UiUtilities.createToolBarButton(mLocalizer.msg("scrollToFirstNotExpired", "Scroll to first not expired program."),TVBrowserIcons.scrollToNow(TVBrowserIcons.SIZE_LARGE));
+    mScrollToFirstNotExpired.setOpaque(false);
+    toolbarPn.add(mScrollToFirstNotExpired);
+    mScrollToFirstNotExpired.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        scrollToFirstNotExpiredIndex(false);
+      }
+    });
+    
+    toolbarPn.add(Box.createRigidArea(new Dimension(15,0)));
+    
     mScrollToPreviousDay = UiUtilities.createToolBarButton(ProgramList.getPreviousActionTooltip(),TVBrowserIcons.left(TVBrowserIcons.SIZE_LARGE));
     mScrollToPreviousDay.setOpaque(false);
     toolbarPn.add(mScrollToPreviousDay);
@@ -378,7 +390,7 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
       public void actionPerformed(ActionEvent e) {
         mProgramList.scrollToNextDayIfAvailable();
       }
-    });
+    });   
     
     mSplitPane = new JSplitPane();
     
