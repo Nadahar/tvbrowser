@@ -997,7 +997,7 @@ public class PluginManagerImpl implements PluginManager {
   
   public void selectProgram(final Program program) {
     if(program != null) {
-      MainFrame.getInstance().selectProgram(program);
+      MainFrame.getInstance().selectProgram(program,true);
       MainFrame.getInstance().showProgramTableTabIfAvailable();
     }
   }
