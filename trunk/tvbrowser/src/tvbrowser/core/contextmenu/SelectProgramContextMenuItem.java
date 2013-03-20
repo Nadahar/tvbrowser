@@ -63,7 +63,7 @@ public class SelectProgramContextMenuItem implements ContextMenuIf {
         SwingUtilities.invokeLater(new Runnable() {
           @Override
           public void run() {
-            MainFrame.getInstance().selectProgram(program);          
+            MainFrame.getInstance().selectProgram(program,false);          
           }
         });
       }

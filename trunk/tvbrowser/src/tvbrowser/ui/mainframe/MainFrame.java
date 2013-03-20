@@ -1861,14 +1861,23 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     }
   }
   
-  public void selectProgram(final Program program) {
+  private void selectProgramInternal(Program program) {
+    ProgramTable table = MainFrame.getInstance().getProgramTableScrollPane().getProgramTable();
+    table.deSelectItem(false);
+    table.selectProgram(program);
+  }
+  
+  public void selectProgram(final Program program, boolean scroll) {
     if(program != null) {
-      scrollToProgram(program, new Runnable() {
-        public void run() {
-          ProgramTable table = MainFrame.getInstance().getProgramTableScrollPane().getProgramTable();
-          table.deSelectItem(false);
-          table.selectProgram(program);
-        }});
+      if(scroll) {
+        scrollToProgram(program, new Runnable() {
+          public void run() {
+            selectProgramInternal(program);
+          }});
+      }
+      else {
+        selectProgramInternal(program);
+      }
     }
     
     for(PluginCenterPanelWrapper wrapper : mCenterPanelWrapperList) {
@@ -2149,7 +2158,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
         next = dayProgram.next();
         
         if(!next.isExpired() && next.getStartTime() + next.getLength() > selected.getStartTime() && mProgramTableModel.getProgramFilter().accept(next)) {
-          selectProgram(next);
+          selectProgram(next,true);
           next = null;
           found = true;
           break;
@@ -2157,7 +2166,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       }
       
       if(!found && next != null && !next.isExpired() && mProgramTableModel.getProgramFilter().accept(next)) {
-        selectProgram(next);
+        selectProgram(next,true);
       }
       else if(!found) {
         mFinderPanel.markNextDate();
@@ -2181,7 +2190,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
         next = dayProgram.next();
         
         if(!next.isExpired() && next.getStartTime() + next.getLength() > selected.getStartTime() && mProgramTableModel.getProgramFilter().accept(next)) {
-          selectProgram(next);
+          selectProgram(next,true);
           next = null;
           found = true;
           break;
@@ -2189,7 +2198,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       }
       
       if(!found && next != null && !next.isExpired() && mProgramTableModel.getProgramFilter().accept(next)) {
-        selectProgram(next);
+        selectProgram(next,true);
       }
       else if(!found) {
         mFinderPanel.markPreviousDate();
