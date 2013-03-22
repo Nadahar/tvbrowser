@@ -351,6 +351,12 @@ public class TVBrowser {
     if (!isJavaImplementationSupported()) {
       mainLogger.warning(SUN_JAVA_WARNING);
     }
+    
+    /* Set the proxy settings
+     * 
+     * ATTENTION: This has to be done before all Internet connections
+     */
+    updateProxySettings();
 
     //Update plugin on version change
     if(Settings.propTVBrowserVersion.getVersion() != null && VERSION.compareTo(Settings.propTVBrowserVersion.getVersion()) > 0) {
@@ -371,9 +377,6 @@ public class TVBrowser {
     ReminderPlugin.resetLocalizer();
     Date.resetLocalizer();
     ProgramFieldType.resetLocalizer();
-
-    // Set the proxy settings
-    updateProxySettings();
 
     // Set the String to use for indicating the user agent in http requests
     System.setProperty("http.agent", MAINWINDOW_TITLE);
