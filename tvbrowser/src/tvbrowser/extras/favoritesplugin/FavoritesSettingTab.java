@@ -146,7 +146,7 @@ public class FavoritesSettingTab implements SettingsTab {
     builder.add(mProvideTab, cc.xyw(2,24,3));
     
     builder.addSeparator(DefaultMarkingPrioritySelectionPanel.getTitle(), cc.xyw(1,26,4));
-    builder.add(mMarkingsPanel = DefaultMarkingPrioritySelectionPanel.createPanel(FavoritesPlugin.getInstance().getMarkPriority(),false,false), cc.xyw(2,27,3));
+    builder.add(mMarkingsPanel = DefaultMarkingPrioritySelectionPanel.createPanel(FavoritesPlugin.getInstance().getMarkPriority(),false,false), cc.xyw(2,28,3));
     
     return builder.getPanel();
   }
