@@ -68,6 +68,7 @@ import javax.swing.tree.TreeSelectionModel;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.favoritesplugin.core.Favorite;
+import tvbrowser.ui.mainframe.MainFrame;
 import util.ui.Localizer;
 import util.ui.OverlayListener;
 import util.ui.SingleAndDoubleClickTreeUI;
@@ -856,7 +857,7 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
 
   protected void renameFolder(FavoriteNode node) {
     if(node != null && node.isDirectoryNode()) {
-      String value = JOptionPane.showInputDialog(UiUtilities.getLastModalChildOf(ManageFavoritesDialog.getInstance()), mLocalizer.msg("folderName","Folder name:"), node.getUserObject());
+      String value = JOptionPane.showInputDialog(UiUtilities.getLastModalChildOf(MainFrame.getInstance()), mLocalizer.msg("folderName","Folder name:"), node.getUserObject());
 
       if(value != null) {
         node.setUserObject(value);
