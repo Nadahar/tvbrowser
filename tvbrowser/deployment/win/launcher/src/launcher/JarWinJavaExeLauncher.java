@@ -55,23 +55,31 @@ public class JarWinJavaExeLauncher {
       }
     }
     
-    String CMD = "\"" + findAcceptableJavaVersion() + "\" ";
+    ArrayList<String> CMD = new ArrayList<String>();
+    
+    CMD.add(findAcceptableJavaVersion());
+    
+    //String CMD = "\"" + findAcceptableJavaVersion() + "\" ";
     
     for(String opt : dValues)
-      CMD += opt + " ";
+      CMD.add(opt);
+      //CMD += opt + " ";
     
-    CMD += "-jar " + startApp;
+    //CMD += "-jar " + startApp;
+    CMD.add("-jar");
+    CMD.add(startApp);
     
     for(String cmd : cmdValues )
-      CMD += " " + cmd;    
-    
+      CMD.add(cmd);
+      //CMD += " " + cmd;    
+    //System.out.println(CMD);
     try {
-      /*Process p = */Runtime.getRuntime().exec(CMD.split(" "), null, new File(System.getProperty("user.dir")));
+      /*Process p = */Runtime.getRuntime().exec(CMD.toArray(new String[CMD.size()]), null, new File(System.getProperty("user.dir")));
       
       //new StreamReaderThread(p.getInputStream()).start();
       //new StreamReaderThread(p.getErrorStream()).start();
       
-    }catch(Exception e) {
+    }catch(Exception e) {//e.printStackTrace();
       System.exit(1);
     }
     
