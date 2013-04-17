@@ -37,7 +37,7 @@ import devplugin.Version;
 
 public class PersonaHandler extends Plugin implements PersonaListener {
   private final static Localizer mLocalizer = Localizer.getLocalizerFor(PersonaHandler.class);
-  private static Version mVersion = new Version(0,12,0,true);
+  private static Version mVersion = new Version(0,13,0,true);
   private PluginInfo mPluginInfo;
   
   private static PersonaHandler mInstance;
@@ -186,7 +186,8 @@ try{
       
     }
     
-    Pattern p = Pattern.compile("<a href=.*?persona=\"([^\"]*)\">");
+    //Pattern p = Pattern.compile("<a href=.*?persona=\"([^\"]*)\">");
+    Pattern p = Pattern.compile("data-browsertheme=\"([^\"]*)\"");
     Matcher m = p.matcher(string.toString());
 
     int lastPos = 0;
@@ -204,7 +205,7 @@ try{
     
     while(m.find(lastPos)) {
       String persona = StringEscapeUtils.unescapeJava(m.group(1).replace("{","").replace("}",""));
-      StringBuffer buff = new StringBuffer(persona.replace("&quot;","\"").replace("&amp;","&").replace("&lt;","<").replace("&gt;",">"));
+      StringBuffer buff = new StringBuffer(persona.replace("&quot;","\"").replace("&amp;","&").replace("&lt;","<").replace("&gt;",">").replace("&#34;","\""));
       
       boolean openQuote = false; 
 
@@ -293,7 +294,7 @@ try{
         
         Color textColor = UIManager.getColor("Menu.foreground");
         
-        if(!textcolor.equals("null")) {
+        if(!textcolor.equals("null") && textcolor.length() == 7) {
           textColor = new Color(Integer.parseInt(textcolor.substring(1,3),16),Integer.parseInt(textcolor.substring(3,5),16),Integer.parseInt(textcolor.substring(5,7),16));          
         }
         
@@ -303,7 +304,7 @@ try{
         
         Color accentColor = null;
         
-        if(!accentcolor.equals("null")) {
+        if(!accentcolor.equals("null") && accentcolor.length() == 7) {
           accentColor = new Color(Integer.parseInt(accentcolor.substring(1,3),16),Integer.parseInt(accentcolor.substring(3,5),16),Integer.parseInt(accentcolor.substring(5,7),16));
         }
         else if(test <= 127) {
