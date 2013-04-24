@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Properties;
 
@@ -30,7 +31,7 @@ import devplugin.Version;
  * A Plugin to start an external Application, without any marking in the
  * ProgramTable.
  * 
- * @author Ren� Mach
+ * @author René Mach
  * 
  */
 public class SwitchPlugin extends Plugin {
@@ -41,7 +42,7 @@ public class SwitchPlugin extends Plugin {
   private static SwitchPlugin instance;
   private Properties mProp;
   private Hashtable mChannels = new Hashtable();
-  private static Version mVersion = new Version(0,56,4);
+  private static Version mVersion = new Version(0,56,5);
   private ProgramReceiveTarget[] mReceiveTarget;
   
   public static Version getVersion() {
@@ -170,6 +171,41 @@ public class SwitchPlugin extends Plugin {
       execute(params);
   }
 
+  private static String[] getSplittedCmdLine(String appPath, String args) {
+    ArrayList<String> splitted = new ArrayList<String>();
+    
+    splitted.add(appPath.replace("\"+", ""));
+    
+    String[] parts = args.split(" +");
+    
+    for(int i = 0; i < parts.length; i++) {
+  	  if(parts[i].startsWith("\"") && !parts[i].endsWith("\"")) {
+		String newPart = parts[i];
+		
+		int j = i;
+		
+		do {
+		  j++;
+			
+		  newPart += " " + parts[j]; 
+		}while(!parts[j].endsWith("\"") && j < parts.length-1);
+		
+		i = j;
+		
+		if(!newPart.endsWith("\"")) {
+		  newPart += "\"";
+		}
+		
+		splitted.add(newPart);
+	  }
+	  else {
+		splitted.add(parts[i]);
+	  }
+    }
+    
+    return splitted.toArray(new String[splitted.size()]);
+  }
+  
   private void execute(final String para) {
     String temp = mProp.getProperty("app", "").trim();
 
@@ -179,9 +215,7 @@ public class SwitchPlugin extends Plugin {
       if(path == null || !path.isDirectory())
         path = new File(System.getProperty("user.dir"));
       
-      temp += " " + para;
-
-      String[] pro = temp.split(" ");
+      String[] pro = getSplittedCmdLine(temp, para);
 
       try {
         Process p = Runtime.getRuntime().exec(pro, null, path);
