@@ -8,6 +8,8 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
@@ -35,14 +37,14 @@ import devplugin.Version;
  * 
  */
 public class SwitchPlugin extends Plugin {
-
+  static Logger mLog = Logger.getLogger(SwitchPlugin.class.getName());
   protected static Localizer mLocalizer = Localizer
       .getLocalizerFor(SwitchPlugin.class);
 
   private static SwitchPlugin instance;
   private Properties mProp;
   private Hashtable mChannels = new Hashtable();
-  private static Version mVersion = new Version(0,56,5);
+  private static Version mVersion = new Version(0,56,6);
   private ProgramReceiveTarget[] mReceiveTarget;
   
   public static Version getVersion() {
@@ -179,7 +181,7 @@ public class SwitchPlugin extends Plugin {
     String[] parts = args.split(" +");
     
     for(int i = 0; i < parts.length; i++) {
-  	  if(parts[i].startsWith("\"") && !parts[i].endsWith("\"")) {
+  	  if(!containsEvenNumberOfQuotes(parts[i])) {
 		String newPart = parts[i];
 		
 		int j = i;
@@ -206,6 +208,18 @@ public class SwitchPlugin extends Plugin {
     return splitted.toArray(new String[splitted.size()]);
   }
   
+  private static boolean containsEvenNumberOfQuotes(String value) {
+	int quoteCount = 0;
+	
+    for(int i = 0; i < value.length(); i++) {
+      if(value.charAt(i) == '\"') {
+        quoteCount++;
+      }
+    }
+    
+    return quoteCount % 2 == 0;
+  }
+  
   private void execute(final String para) {
     String temp = mProp.getProperty("app", "").trim();
 
@@ -216,12 +230,14 @@ public class SwitchPlugin extends Plugin {
         path = new File(System.getProperty("user.dir"));
       
       String[] pro = getSplittedCmdLine(temp, para);
-
+      
       try {
         Process p = Runtime.getRuntime().exec(pro, null, path);
         new ProcessStreamReader(p.getErrorStream());
         new ProcessStreamReader(p.getInputStream());
-      } catch (Exception e) {}
+      } catch (Exception e) {
+    	mLog.log(Level.SEVERE, "SwitchPlugin: Could not execute '" + temp + " " + para + "'.", e);
+      }
     }
   }
 
