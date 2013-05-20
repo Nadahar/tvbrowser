@@ -47,6 +47,10 @@ public final class WebAddress implements Cloneable {
 
   /** URL */
   private String mUrl;
+  
+  private String mMovieSearchUrl;
+
+  private String mPersonSearchUrl;  
 
   /** Icon */
   private String mIconFileName;
@@ -64,6 +68,10 @@ public final class WebAddress implements Cloneable {
    * cache image icon of this web address to avoid repeated file reads
    */
   private ImageIcon mIcon;
+  
+  public static final int GENERAL_SEARCH = 1;
+  public static final int MOVIE_SEARCH   = 2;
+  public static final int PERSON_SEARCH  = 3;
 
   /**
    * Create the Address
@@ -86,6 +94,16 @@ public final class WebAddress implements Cloneable {
     mUserEntry = userEntry;
     mActive = active;
   }
+  
+  public WebAddress(String name, String url, String movieSearchUrl, String personSearchUrl, String iconFile, boolean userEntry, boolean active) {
+    mName = name;
+    mIconFileName = iconFile;
+    mUrl = url;
+    mMovieSearchUrl = movieSearchUrl;
+    mPersonSearchUrl = personSearchUrl;
+    mUserEntry = userEntry;
+    mActive = active;
+  }
 
   /**
    * Create a Copy of a WebAddress
@@ -96,6 +114,8 @@ public final class WebAddress implements Cloneable {
     mName = address.getName();
     mIconFileName = address.getIconFile();
     mUrl = address.getUrl();
+    mMovieSearchUrl = address.getUrl(MOVIE_SEARCH);
+    mPersonSearchUrl = address.getUrl(PERSON_SEARCH);
     mUserEntry = address.isUserEntry();
     mActive = address.isActive();
   }
@@ -121,8 +141,29 @@ public final class WebAddress implements Cloneable {
   public void setUrl(String url) {
     mUrl = url;
   }
+  
+  public void setUrl(String url, int type) {
+    if (type == MOVIE_SEARCH) {
+      mMovieSearchUrl = url;
+    }
+    else if (type == PERSON_SEARCH) {
+      mPersonSearchUrl = url;
+    } else {
+      mUrl = url;
+    }
+  }
 
   public String getUrl() {
+    return mUrl;
+  }
+  
+  public String getUrl(int type) {
+    if (type == MOVIE_SEARCH && mMovieSearchUrl != null) {
+      return mMovieSearchUrl;
+    }
+    if (type == PERSON_SEARCH && mPersonSearchUrl != null) {
+      return mPersonSearchUrl;
+    }
     return mUrl;
   }
 
