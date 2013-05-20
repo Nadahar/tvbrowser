@@ -64,7 +64,7 @@ import devplugin.Version;
  * A User can configure his favorite Search-Engines and search for the given Movie
  */
 public class WebPlugin extends Plugin {
-  private static final Version mVersion = new Version(3,04);
+  private static final Version mVersion = new Version(3,10);
 
   private static final Logger mLog = java.util.logging.Logger
   .getLogger(WebPlugin.class.getName());
@@ -81,17 +81,33 @@ public class WebPlugin extends Plugin {
 
   /** Default-Addresses */
   final static WebAddress[] DEFAULT_ADRESSES = {
-      new WebAddress("OFDb", "http://www.ofdb.de/view.php?page=suchergebnis&Kat=All&SText={urlencode(" + WEBSEARCH_ALL + ", \"UTF-8\")}", null, false, true),
-      new WebAddress("IMDb", "http://akas.imdb.com/find?q={urlencode(" + WEBSEARCH_ALL + ", \"UTF-8\")}", null, false, true),
+      new WebAddress("OFDb",
+          "http://www.ofdb.de/view.php?page=suchergebnis&Kat=All&SText={urlencode(" + WEBSEARCH_ALL + ", \"UTF-8\")}",
+          "http://www.ofdb.de/view.php?page=suchergebnis&Kat=Titel&SText={urlencode(" + WEBSEARCH_ALL + ", \"UTF-8\")}",
+          "http://www.ofdb.de/view.php?page=suchergebnis&Kat=Person&SText={urlencode(" + WEBSEARCH_ALL + ", \"UTF-8\")}",
+          null, false, true),
+      new WebAddress("IMDb", 
+          "http://akas.imdb.com/find?q={urlencode(" + WEBSEARCH_ALL + ", \"UTF-8\")}", 
+          "http://akas.imdb.com/find?q={urlencode(" + WEBSEARCH_ALL + ", \"UTF-8\")}&s=tt", 
+          "http://akas.imdb.com/find?q={urlencode(" + WEBSEARCH_ALL + ", \"UTF-8\")}&s=nm", 
+          null, false, true),
       new WebAddress("Zelluloid", "http://zelluloid.de/suche/index.php3?qstring={urlencode(" + WEBSEARCH_ALL + ", \"ISO-8859-1\")}", null, false, true),
       new WebAddress("Google", "http://www.google.com/search?q=%22{urlencode(" + WEBSEARCH_ALL + ", \"UTF-8\")}%22", null, false, true),
       new WebAddress("Altavista", "http://de.altavista.com/web/results?q=%22{urlencode(" + WEBSEARCH_ALL + ", \"UTF-8\")}%22", null, false, true),
       new WebAddress("Yahoo", "http://search.yahoo.com/search?p={urlencode(" + WEBSEARCH_ALL + ", \"ISO-8859-1\")}", null, false, true),
       new WebAddress("Wikipedia (DE)", "http://de.wikipedia.org/wiki/Spezial:Search?search={urlencode(" + WEBSEARCH_ALL + ", \"ISO-8859-1\")}", null, false, Locale.getDefault().equals(Locale.GERMAN)),
       new WebAddress("Wikipedia (EN)", "http://en.wikipedia.org/wiki/Spezial:Search?search={urlencode(" + WEBSEARCH_ALL + ", \"ISO-8859-1\")}", null, false, Locale.getDefault().equals(Locale.ENGLISH)),
+      new WebAddress("moviepilot", 
+          "http://www.moviepilot.de/searches?q={urlencode(" + WEBSEARCH_ALL + ", \"UTF-8\")}", 
+          "http://www.moviepilot.de/searches?q={urlencode(" + WEBSEARCH_ALL + ", \"UTF-8\")}&type=movies", 
+          "http://www.moviepilot.de/searches?q={urlencode(" + WEBSEARCH_ALL + ", \"UTF-8\")}&type=people",          
+          null, false, true),
+      new WebAddress("omdb", 
+          "http://www.omdb.org/search?search%5Btext%5D={urlencode(" + WEBSEARCH_ALL + ", \"UTF-8\")}", 
+          "http://www.omdb.org/search/movies?search%5Btext%5D={urlencode(" + WEBSEARCH_ALL + ", \"UTF-8\")}", 
+          "http://www.omdb.org/search/people?search%5Btext%5D={urlencode(" + WEBSEARCH_ALL + ", \"UTF-8\")}", null, false, true),
       new WebAddress(mLocalizer.msg("programPage", "Open website of program"),PROGRAM_SITE,null,false,true),
       new WebAddress(mLocalizer.msg("channelPageGeneral", "Open website of channel"),CHANNEL_SITE,null,false,true),
-      new WebAddress("moviepilot", "http://www.moviepilot.de/searches?q={urlencode(" + WEBSEARCH_ALL + ", \"UTF-8\")}", null, false, true),
   };
 
   /** The WebAddresses */
@@ -286,19 +302,19 @@ public class WebPlugin extends Plugin {
           if (address.getUrl().contains(WEBSEARCH_ALL) && (listActors.size() + listDirectors.size() + listScripts.size() > 0) && mShowDetails) {
             final ArrayList<Object> categoryList = new ArrayList<Object>();
             // title
-            final WebAddress adrTitle = new WebAddress(address.getName(), address.getUrl().replace(WEBSEARCH_ALL, "\"" + program.getTitle() + "\""), null, false, true);
+            final WebAddress adrTitle = new WebAddress(address.getName(), address.getUrl(WebAddress.MOVIE_SEARCH).replace(WEBSEARCH_ALL, "\"" + program.getTitle() + "\""), null, false, true);
             categoryList.add(createSearchAction(program, adrTitle, program.getTitle()));
             String orgTitle = program.getTextField(ProgramFieldType.ORIGINAL_TITLE_TYPE);
             if (orgTitle != null && !orgTitle.equals(program.getTitle())) {
-              final WebAddress adrOrgTitle = new WebAddress(address.getName(), address.getUrl().replace(WEBSEARCH_ALL, "\"" + orgTitle + "\""), null, false, true);
+              final WebAddress adrOrgTitle = new WebAddress(address.getName(), address.getUrl(WebAddress.MOVIE_SEARCH).replace(WEBSEARCH_ALL, "\"" + orgTitle + "\""), null, false, true);
               AbstractAction orgTitleAction = createSearchAction(program, adrOrgTitle, "("+orgTitle+")");
               orgTitleAction.putValue(Plugin.DISABLED_ON_TASK_MENU, true);
               categoryList.add(orgTitleAction);
             }
             categoryList.add(ContextMenuSeparatorAction.getDisabledOnTaskMenuInstance());
-            createSubMenu(program, address, categoryList, mLocalizer.msg("actor", "Actor"), listActors);
-            createSubMenu(program, address, categoryList, mLocalizer.msg("director","Director"), listDirectors);
-            createSubMenu(program, address, categoryList, mLocalizer.msg("script","Script"), listScripts);
+            createSubMenu(program, address, categoryList, mLocalizer.msg("actor", "Actor"), listActors, WebAddress.PERSON_SEARCH);
+            createSubMenu(program, address, categoryList, mLocalizer.msg("director","Director"), listDirectors, WebAddress.PERSON_SEARCH);
+            createSubMenu(program, address, categoryList, mLocalizer.msg("script","Script"), listScripts, WebAddress.PERSON_SEARCH);
             if (categoryList.size() == 2) {
               categoryList.remove(1);
             }
@@ -308,7 +324,7 @@ public class WebPlugin extends Plugin {
           }
           // create only a single menu item for this search
           else {
-            final WebAddress adrTitle = new WebAddress(address.getName(), address.getUrl().replace(WEBSEARCH_ALL, "\"" + program.getTitle() + "\""), null, false, true);
+            final WebAddress adrTitle = new WebAddress(address.getName(), address.getUrl(WebAddress.MOVIE_SEARCH).replace(WEBSEARCH_ALL, "\"" + program.getTitle() + "\""), null, false, true);
             final AbstractAction action = createSearchAction(program, adrTitle,
                 actionName);
             action.putValue(Action.SMALL_ICON, address.getIcon());
@@ -345,11 +361,11 @@ public class WebPlugin extends Plugin {
 
   private void createSubMenu(final Program program, final WebAddress address,
       final ArrayList<Object> categoryList, final String label,
-      final ArrayList<String> subItems) {
+      final ArrayList<String> subItems, final int searchType) {
     if (subItems.size() > 0) {
       AbstractAction[] subActions = new AbstractAction[subItems.size()];
       for (int index = 0; index < subActions.length; index++) {
-        final WebAddress modifiedAddress = new WebAddress(address.getName(), address.getUrl().replace(WEBSEARCH_ALL, "\"" + subItems.get(index) + "\""), null, false, true);
+        final WebAddress modifiedAddress = new WebAddress(address.getName(), address.getUrl(searchType).replace(WEBSEARCH_ALL, "\"" + subItems.get(index) + "\""), null, false, true);
         subActions[index] = createSearchAction(program, modifiedAddress, subItems.get(index));
         subActions[index].putValue(Plugin.DISABLED_ON_TASK_MENU, true);
       }
