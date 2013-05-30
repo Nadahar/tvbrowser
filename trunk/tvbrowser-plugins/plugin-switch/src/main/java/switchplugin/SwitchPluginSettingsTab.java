@@ -35,7 +35,7 @@ import devplugin.SettingsTab;
 /**
  * The settings tab for the SwitchPlugin.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  *
  */
 public class SwitchPluginSettingsTab implements SettingsTab {

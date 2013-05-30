@@ -13,7 +13,7 @@ import devplugin.Channel;
 /**
  * The TableCellRenderer for the ChannelTable.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  *
  */
 public class ChannelTableCellRenderer extends DefaultTableCellRenderer {
