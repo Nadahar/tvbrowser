@@ -6,7 +6,7 @@ import util.paramhandler.ParamLibrary;
 /**
  * The parameter library for the SwitchPlugin.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  * 
  */
 public class SwitchParamLibrary extends ParamLibrary {

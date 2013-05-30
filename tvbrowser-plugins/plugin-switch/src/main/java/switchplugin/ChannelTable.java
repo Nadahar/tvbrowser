@@ -8,7 +8,7 @@ import switchplugin.ChannelTableCellRenderer;
 /**
  * The Table for the Channel setup.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  *
  */
 public class ChannelTable extends JTable{

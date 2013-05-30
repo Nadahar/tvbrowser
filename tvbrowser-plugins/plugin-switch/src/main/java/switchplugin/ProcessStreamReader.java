@@ -8,7 +8,7 @@ import java.io.InputStreamReader;
 /**
  * A Stream Reader for the InputStream of a process.
  * 
- * @author René Mach
+ * @author RenÃ© Mach
  *
  */
 public class ProcessStreamReader extends Thread{
