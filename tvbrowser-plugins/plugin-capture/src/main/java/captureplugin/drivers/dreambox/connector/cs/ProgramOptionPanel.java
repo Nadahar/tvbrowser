@@ -120,6 +120,13 @@ public class ProgramOptionPanel extends JPanel implements ActionListener {
     } else {
       cmbLocation = new JComboBox(new String[] { "" });
     }
+
+    String defaultLocation = locationThread.getDefaultLocation();
+    if (!defaultLocation.equals("")) {
+        int defaultIndex = locations.indexOf(defaultLocation);
+        cmbLocation.setSelectedIndex(defaultIndex);
+    }
+    
     c.insets = new Insets(8, 6, 4, 2);
     c.gridx = 0;
     c.gridy++;
