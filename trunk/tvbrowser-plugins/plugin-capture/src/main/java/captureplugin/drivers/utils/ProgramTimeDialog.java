@@ -95,8 +95,8 @@ public class ProgramTimeDialog extends JDialog {
 
     public ProgramTimeDialog(Window parent, ProgramTime time, boolean editTitle,
       String additionalText, JComponent additionalComponent) {
-    super(parent);
-    setModal(true);
+        super(parent);
+        setModal(true);
         mPrgTime = time;
         createGui(editTitle, additionalText, additionalComponent);
     }

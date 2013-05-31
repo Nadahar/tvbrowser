@@ -75,7 +75,11 @@ public class E2LocationHelper {
     this.mConfig = config;
     this.mThreadWaitFor = thread;
     this.mLocations = null;
-    run();
+    run(mConfig.getDreamboxAddress());
+  }
+  
+  public String getDefaultLocation() {
+      return mConfig.getDefaultLocation();
   }
 
   /**
@@ -93,8 +97,21 @@ public class E2LocationHelper {
    * @return locations
    */
   public synchronized List<String> getLocations() {
-    if (!mThread.isAlive() && (mLocations == null)) {
-      run();
+    if (mThread.isAlive()) {
+        try {
+            mThread.join();
+        } catch (InterruptedException e) {
+            while ((mThread.getState() == Thread.State.RUNNABLE)) {
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e1) {
+                    mLog.log(Level.WARNING, "InterruptedException", e1);
+                }
+            }
+        }
+    }
+    if (mLocations == null) {
+      run(mConfig.getDreamboxAddress());
     }
     try {
       mThread.join();
@@ -109,18 +126,48 @@ public class E2LocationHelper {
     }
     return mLocations;
   }
+  
+
+  public synchronized List<String> getLocations(String dreamboxAddress) {
+    if (mThread.isAlive()) {
+        try {
+            mThread.join();
+        } catch (InterruptedException e) {
+            while ((mThread.getState() == Thread.State.RUNNABLE)) {
+                try {
+                  Thread.sleep(100);
+                } catch (InterruptedException e1) {
+                  mLog.log(Level.WARNING, "InterruptedException", e1);
+                }
+            }
+        }
+    }
+    run(dreamboxAddress);
+    try {
+      mThread.join();
+    } catch (InterruptedException e) {
+      while ((mThread.getState() == Thread.State.RUNNABLE) && (mLocations == null)) {
+        try {
+          Thread.sleep(100);
+        } catch (InterruptedException e1) {
+          mLog.log(Level.WARNING, "InterruptedException", e1);
+        }
+      }
+    }
+
+    List<String> locations = mLocations;
+    mLocations = null;
+    return locations;
+  }
 
   /**
    * read locations from dreambox
    */
-  private void run() {
+  private void run(final String dreamboxAddress) {
     mThread = new Thread() {
 
       @Override
       public void run() {
-
-        if (mLocations == null) {
-          // wait
           if (mThreadWaitFor != null) {
             try {
               mThreadWaitFor.join();
@@ -133,7 +180,7 @@ public class E2LocationHelper {
           String data = "";
 
           try {
-            URL url = new URL("http://" + mConfig.getDreamboxAddress() + "/web/getlocations");
+            URL url = new URL("http://" + dreamboxAddress + "/web/getlocations");
             URLConnection connection = url.openConnection();
 
             String userpassword = mConfig.getUserName() + ":" + mConfig.getPassword();
@@ -180,7 +227,6 @@ public class E2LocationHelper {
           mLog.info("[" + mConfig.getDreamboxAddress() + "] " + "GET getlocations - "
               + (new GregorianCalendar().getTimeInMillis() - cal.getTimeInMillis()) + " ms");
         }
-      }
     };
     mThread.start();
   }

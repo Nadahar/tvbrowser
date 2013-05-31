@@ -33,6 +33,7 @@ import java.util.HashMap;
 import java.util.TimeZone;
 
 import util.io.IOUtilities;
+import util.misc.OperatingSystem;
 import captureplugin.drivers.dreambox.connector.DreamboxChannel;
 import captureplugin.drivers.utils.IDGenerator;
 import captureplugin.utils.ConfigIf;
@@ -69,7 +70,10 @@ public final class DreamboxConfig implements ConfigIf, Cloneable {
     private String mPassword = "";
 
     /** Path to a Mediaplayer typically vlc */
-    private String mMediaplayer = "vlc";
+    private String mMediaplayer = OperatingSystem.isLinux() ? "/usr/bin/vlc" :
+        OperatingSystem.isWindows64() ? System.getenv("%programfiles%" +" " +"(x86)") + "\\VideoLAN\\vlc.exe" :
+        OperatingSystem.isWindows() ? System.getenv("%programfiles%") + "\\vlc.exe" :
+        OperatingSystem.isMacOs() ? "/Applications/VLC.app/Contents/MacOS/VLC" : "vlc";
 
     /** Timeout for connection to the dreambox */
     private int mTimeout = 1000;
@@ -80,6 +84,8 @@ public final class DreamboxConfig implements ConfigIf, Cloneable {
     /** The version of the box software is at least 1.6 */
     private boolean mIsOpkg = true;
 
+    /** The default recording path */
+    private String mDefaultLocation = "";
     /**
      * Constructor
      */
@@ -106,6 +112,7 @@ public final class DreamboxConfig implements ConfigIf, Cloneable {
         mMediaplayer = dreamboxConfig.getMediaplayer();
         mReceiveTargets = dreamboxConfig.getProgramReceiveTargets();
         mIsOpkg = dreamboxConfig.isOpkg();
+        mDefaultLocation = dreamboxConfig.getDefaultLocation();
     }
 
     /**
@@ -138,7 +145,7 @@ public final class DreamboxConfig implements ConfigIf, Cloneable {
      * @throws IOException io errors
      */
     public void writeData(ObjectOutputStream stream) throws IOException {
-        stream.writeInt(6);
+        stream.writeInt(7);
         stream.writeUTF(getId());
 
         stream.writeUTF(mDreamboxAddress);
@@ -185,6 +192,8 @@ public final class DreamboxConfig implements ConfigIf, Cloneable {
         }
         
         stream.writeBoolean(mIsOpkg);
+        
+        stream.writeUTF(mDefaultLocation);
     }
 
     /**
@@ -250,6 +259,10 @@ public final class DreamboxConfig implements ConfigIf, Cloneable {
         
         if(version > 5) {
           mIsOpkg = stream.readBoolean();
+        }
+        
+        if(version > 6) {
+          mDefaultLocation = stream.readUTF();
         }
     }
 
@@ -488,5 +501,13 @@ public final class DreamboxConfig implements ConfigIf, Cloneable {
      */
     public void setIsOpkg(boolean value) {
       mIsOpkg = value;
+    }
+
+    public String getDefaultLocation() {
+        return mDefaultLocation;
+    }
+
+    public void setDefaultLocation(String defaultLocation) {
+        mDefaultLocation = defaultLocation;
     }
 }
