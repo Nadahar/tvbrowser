@@ -261,7 +261,7 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
         basicPanel.addRow();
         basicPanel.add(builder.getPanel(), cc.xyw(2,basicPanel.getRow(), basicPanel.getColumnCount() - 1));
 
-        final EnhancedPanelBuilder extendedPanel = new EnhancedPanelBuilder("2dlu, pref, 3dlu, fill:pref:grow, 3dlu, pref, 5dlu");
+        EnhancedPanelBuilder extendedPanel = new EnhancedPanelBuilder("2dlu, pref, 3dlu, fill:pref:grow, 3dlu, pref, 5dlu");
         extendedPanel.setBorder(Borders.DLU4_BORDER);
 
         extendedPanel.addParagraph(mLocalizer.msg("misc", "Miscellaneous"));
@@ -318,14 +318,21 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
 
         JButton select = new JButton(Localizer.getLocalization(Localizer.I18N_SELECT));
         select.addActionListener(new ActionListener() {
+            JPanel extendedJPanel = null;
+            
+            private ActionListener init(JPanel extendedJPanel) {
+                this.extendedJPanel = extendedJPanel;
+                return this;
+            }
+            
             public void actionPerformed(ActionEvent e) {
                 JFileChooser mediaplayerChooser = new JFileChooser();
-                int returnVal = mediaplayerChooser.showOpenDialog(extendedPanel.getPanel());
+                int returnVal = mediaplayerChooser.showOpenDialog(extendedJPanel);
                 if(returnVal == JFileChooser.APPROVE_OPTION) {
                     mMediaplayer.setText(mediaplayerChooser.getSelectedFile().getAbsolutePath());
                }
             }
-        });
+        }.init(extendedPanel.getPanel()));
         extendedPanel.add(select, cc.xy(6, extendedPanel.getRow()));
 
         mProgramReceiveTargetSelection = new ProgramReceiveTargetSelectionPanel(UiUtilities.getLastModalChildOf(CapturePlugin.getInstance().getSuperFrame()),
@@ -363,30 +370,41 @@ public class DreamboxConfigDialog extends JDialog implements WindowClosingIf {
 
         getRootPane().setDefaultButton(ok);
 
-        final JTabbedPane tabs = new JTabbedPane();
+        JTabbedPane tabs = new JTabbedPane();
         tabs.add(mLocalizer.msg("basicTitle", "Basic settings"), basicPanel.getPanel());
         tabs.add(mLocalizer.msg("extendedTitle", "Extended settings"), extendedPanel.getPanel());
         tabs.addChangeListener(new ChangeListener() {
+            String currentDefaultLocation = mConfig.getDefaultLocation();
+            JTabbedPane tabs = null;
+            JPanel basicJPanel = null;
+            JPanel extendedJPanel = null;
+            
+            private ChangeListener init(JTabbedPane tabs, JPanel basicJPanel, JPanel extendedJPanel) {
+                this.tabs = tabs;
+                this.basicJPanel = basicJPanel;
+                this.extendedJPanel = extendedJPanel;
+                return this;
+            }
+            
             public void stateChanged(ChangeEvent e) {
-                if (tabs.getSelectedIndex() == tabs.indexOfComponent(extendedPanel.getPanel())) {
-                    E2LocationHelper locationHelper = E2LocationHelper.getInstance(mConfig, null);
-                    
-                    List<String> locations = locationHelper.getLocations(mDreamboxAddress.getText());
-                    
+                if (tabs.getSelectedIndex() == tabs.indexOfComponent(basicJPanel)) {
+                    currentDefaultLocation = (String) mDefaultLocation.getSelectedItem();
+                } else if (tabs.getSelectedIndex() == tabs.indexOfComponent(extendedJPanel)) {
                     mDefaultLocation.removeAllItems();
+
+                    List<String> locations = E2LocationHelper.getInstance(mConfig, null).getLocations(mDreamboxAddress.getText());
                     
                     Iterator<String> it = locations.iterator();
                     while(it.hasNext()) {
                         mDefaultLocation.addItem(it.next());
                     }
-                    
-                    if (!mConfig.getDefaultLocation().equals("")) {
-                        int defaultIndex = locations.indexOf(mConfig.getDefaultLocation());
+                    if (!currentDefaultLocation.equals("") && locations.contains(currentDefaultLocation)) {
+                        int defaultIndex = locations.indexOf(currentDefaultLocation);
                         mDefaultLocation.setSelectedIndex(defaultIndex);
                     }
                 }
-            } 
-        });
+            }
+        }.init(tabs, basicPanel.getPanel(), extendedPanel.getPanel()));
 
         JPanel content = (JPanel) getContentPane();
         content.setBorder(Borders.DLU4_BORDER);
