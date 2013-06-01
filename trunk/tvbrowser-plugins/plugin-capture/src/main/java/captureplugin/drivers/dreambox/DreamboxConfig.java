@@ -24,6 +24,7 @@
  */
 package captureplugin.drivers.dreambox;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -70,10 +71,7 @@ public final class DreamboxConfig implements ConfigIf, Cloneable {
     private String mPassword = "";
 
     /** Path to a Mediaplayer typically vlc */
-    private String mMediaplayer = OperatingSystem.isLinux() ? "/usr/bin/vlc" :
-        OperatingSystem.isWindows64() ? System.getenv("%programfiles%" +" " +"(x86)") + "\\VideoLAN\\vlc.exe" :
-        OperatingSystem.isWindows() ? System.getenv("%programfiles%") + "\\vlc.exe" :
-        OperatingSystem.isMacOs() ? "/Applications/VLC.app/Contents/MacOS/VLC" : "vlc";
+    private String mMediaplayer = "";
 
     /** Timeout for connection to the dreambox */
     private int mTimeout = 1000;
@@ -91,6 +89,22 @@ public final class DreamboxConfig implements ConfigIf, Cloneable {
      */
     public DreamboxConfig() {
         resetTimeZone();
+        
+        if (OperatingSystem.isLinux()) {
+            mMediaplayer = "/usr/bin/vlc";
+        } else if (OperatingSystem.isWindows()) {
+            mMediaplayer = System.getenv("ProgramFiles") + "\\VideoLAN\\VLC\\vlc.exe";
+            File f = new File(mMediaplayer);
+            if (!f.isFile() && OperatingSystem.isWindows64()) {
+                mMediaplayer = System.getenv("ProgramFiles(x86)") + "\\VideoLAN\\VLC\\vlc.exe";
+            }
+        } else if (OperatingSystem.isMacOs()) {
+            mMediaplayer = "/Applications/VLC.app/Contents/MacOS/VLC";
+        }
+        File f = new File(mMediaplayer);
+        if (!f.isFile()) {
+            mMediaplayer = "";
+        }
     }
 
     /**
