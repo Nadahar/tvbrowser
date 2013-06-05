@@ -62,6 +62,7 @@ class ProgramInfoSettings {
   private static final String KEY_HIGHLIGHT_ACTIVE = "highlightActive";
   private static final String TITLE_FONT_STYLE = "titleFontStyle";
   private static final String BODY_FONT_STYLE = "bodyFontStyle";
+  static final int DURATION_END_TYPE_VALUE = 1000;
   private Properties mProperties;
 
   protected ProgramInfoSettings(final Properties properties) {
@@ -278,15 +279,22 @@ class ProgramInfoSettings {
     for (int i = 0; i < id.length; i++) {
       try {
         final int parsedId = Integer.parseInt(id[i]);
-        if (parsedId == ProgramFieldType.UNKNOWN_FORMAT) {
-          if (!result.contains(ProgramTextCreator.getDurationTypeString())) {
+        
+        if (parsedId >= 0) {
+          ProgramFieldType type = ProgramFieldType.getTypeForId(parsedId);
+          
+          if(type.getFormat() != ProgramFieldType.UNKNOWN_FORMAT) {
+            result.add(type);
+          }
+          else if (!result.contains(ProgramTextCreator.getDurationTypeString()) && parsedId == ProgramInfoSettings.DURATION_END_TYPE_VALUE) {
             result.add(ProgramTextCreator.getDurationTypeString());
           }
-        } else if (parsedId >= 0) {
-          result.add(ProgramFieldType.getTypeForId(parsedId));
         } else {
-          result.add(CompoundedProgramFieldType
-              .getCompoundedProgramFieldTypeForId(parsedId));
+          CompoundedProgramFieldType type = CompoundedProgramFieldType.getCompoundedProgramFieldTypeForId(parsedId);
+          
+          if(type != null) {
+            result.add(type);
+          }
         }
       }catch(NumberFormatException e) {
         return ProgramTextCreator.getDefaultOrder();
@@ -300,7 +308,7 @@ class ProgramInfoSettings {
 
     for (Object object : order) {
       if (object instanceof String) {
-        temp.append(ProgramFieldType.UNKNOWN_FORMAT).append(';');
+        temp.append(ProgramInfoSettings.DURATION_END_TYPE_VALUE).append(';');
       } else if (object instanceof CompoundedProgramFieldType) {
         temp.append(((CompoundedProgramFieldType) object).getId()).append(';');
       } else {
