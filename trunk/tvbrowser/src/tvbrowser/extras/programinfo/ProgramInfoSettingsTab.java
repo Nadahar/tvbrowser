@@ -80,6 +80,9 @@ public class ProgramInfoSettingsTab implements SettingsTab {
   private String mOldLook;
 
   private JComboBox mLook;
+  
+  private static int mCurrentTab = 0;
+  private JTabbedPane mTabbedPane;
 
   private String[] mLf = {
       "com.l2fprod.common.swing.plaf.aqua.AquaLookAndFeelAddons",
@@ -364,12 +367,12 @@ public class ProgramInfoSettingsTab implements SettingsTab {
     mPersonSearchCB.setSelected(settings.getEnableSearch());
     mPersonSearchCB.getActionListeners()[0].actionPerformed(null);
 
-    final JTabbedPane tabbedPane = new JTabbedPane();
-    tabbedPane.add(ProgramInfo.mLocalizer.msg("look","Look"), formatPanel.getPanel());
-    tabbedPane.add(ProgramInfo.mLocalizer.msg("fields","Fields"), orderPanel.getPanel());
-    tabbedPane.add(Localizer.getLocalization(Localizer.I18N_PICTURES), picturePanel.getPanel());
-    tabbedPane.add(ProgramInfo.mLocalizer.msg("actorSearch","Actor search"), actorPanel.getPanel());
-    tabbedPane.setSelectedIndex(0);
+    mTabbedPane = new JTabbedPane();
+    mTabbedPane.add(ProgramInfo.mLocalizer.msg("look","Look"), formatPanel.getPanel());
+    mTabbedPane.add(ProgramInfo.mLocalizer.msg("fields","Fields"), orderPanel.getPanel());
+    mTabbedPane.add(Localizer.getLocalization(Localizer.I18N_PICTURES), picturePanel.getPanel());
+    mTabbedPane.add(ProgramInfo.mLocalizer.msg("actorSearch","Actor search"), actorPanel.getPanel());
+    mTabbedPane.setSelectedIndex(mCurrentTab);
 
     FormLayout layout = new FormLayout("default,default:grow,default","pref");
     layout.setColumnGroups(new int[][] {{1,3}});
@@ -379,7 +382,7 @@ public class ProgramInfoSettingsTab implements SettingsTab {
 
     JPanel base = new JPanel(new FormLayout("default:grow","fill:default:grow,10dlu,default"));
     base.setBorder(Borders.DIALOG);
-    base.add(tabbedPane, cc.xy(1,1));
+    base.add(mTabbedPane, cc.xy(1,1));
     base.add(buttonPn, cc.xy(1,3));
 
     return base;
@@ -404,11 +407,12 @@ public class ProgramInfoSettingsTab implements SettingsTab {
   }
 
   public void saveSettings() {
+    mCurrentTab = mTabbedPane.getSelectedIndex();
     try {
       final ProgramInfoSettings settings = ProgramInfo.getInstance().getSettings();
       settings.setZoomEnabled(mZoomEnabled.isSelected());
       settings.setZoomValue((Integer) mZoomValue.getValue());
-
+      
       settings.setFieldOrder(mList.getOrder());
       settings.setSetupwasdone(true);
       settings.setPictureSettings(mPictureSettings.getSettings().getType());

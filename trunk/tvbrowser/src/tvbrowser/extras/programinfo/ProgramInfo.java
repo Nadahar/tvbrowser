@@ -260,67 +260,69 @@ public class ProgramInfo {
   }
   
   private void findPreviousAndNextProgram(Program prog) {
-    Iterator<Program> dayProgram = ProgramUtilities.getJointProgramIteratorFor(prog.getDate(), prog.getChannel());
-    
-    ArrayList<Program> previousPrograms = new ArrayList<Program>();
-    ArrayList<Program> nextPrograms = new ArrayList<Program>();
-    
-    boolean currentFound = false;
-    
-    while(dayProgram.hasNext()) {
-      Program current = dayProgram.next();
+    if(!prog.equals(Plugin.getPluginManager().getExampleProgram())) {
+      Iterator<Program> dayProgram = ProgramUtilities.getJointProgramIteratorFor(prog.getDate(), prog.getChannel());
       
-      if(current.equals(prog)) {
-        currentFound = true;
-      }
-      else if(currentFound) {
-        nextPrograms.add(current);
-      }
-      else {
-        previousPrograms.add(current);
-      }
-    }
-    
-    if(previousPrograms.size() < 5) {
-      dayProgram = ProgramUtilities.getJointProgramIteratorFor(prog.getDate().addDays(-1), prog.getChannel());
+      ArrayList<Program> previousPrograms = new ArrayList<Program>();
+      ArrayList<Program> nextPrograms = new ArrayList<Program>();
       
-      if(dayProgram != null) {
-        int i = 0;
+      boolean currentFound = false;
+      
+      while(dayProgram.hasNext()) {
+        Program current = dayProgram.next();
         
-        while(dayProgram.hasNext()) {
-          previousPrograms.add(i++, dayProgram.next());
+        if(current.equals(prog)) {
+          currentFound = true;
+        }
+        else if(currentFound) {
+          nextPrograms.add(current);
+        }
+        else {
+          previousPrograms.add(current);
         }
       }
-    }
-    
-    if(nextPrograms.size() < 5) {
-      dayProgram = ProgramUtilities.getJointProgramIteratorFor(prog.getDate().addDays(1), prog.getChannel());
       
-      if(dayProgram != null) {
-        while(dayProgram.hasNext()) {
-          Program next = dayProgram.next();
+      if(previousPrograms.size() < 5) {
+        dayProgram = ProgramUtilities.getJointProgramIteratorFor(prog.getDate().addDays(-1), prog.getChannel());
+        
+        if(dayProgram != null) {
+          int i = 0;
           
-          nextPrograms.add(next);
-          
-          if(nextPrograms.size() >= 5) {
-            break;
+          while(dayProgram.hasNext()) {
+            previousPrograms.add(i++, dayProgram.next());
           }
         }
       }
-    }
-    
-    int pSize = previousPrograms.size() >= 5 ? 5 : previousPrograms.size();
-    int nSize = nextPrograms.size() >= 5 ? 5 : nextPrograms.size();
-    
-    mPreviousPrograms = new Program[pSize];
-    mNextPrograms = new Program[nSize];
-    
-    for(int i = 0; i < pSize; i++) {
-      mPreviousPrograms[i] = previousPrograms.get(previousPrograms.size() - i - 1);
-    }
-    
-    for(int i = 0; i < nSize; i++) {
-      mNextPrograms[i] = nextPrograms.get(i);
+      
+      if(nextPrograms.size() < 5) {
+        dayProgram = ProgramUtilities.getJointProgramIteratorFor(prog.getDate().addDays(1), prog.getChannel());
+        
+        if(dayProgram != null) {
+          while(dayProgram.hasNext()) {
+            Program next = dayProgram.next();
+            
+            nextPrograms.add(next);
+            
+            if(nextPrograms.size() >= 5) {
+              break;
+            }
+          }
+        }
+      }
+      
+      int pSize = previousPrograms.size() >= 5 ? 5 : previousPrograms.size();
+      int nSize = nextPrograms.size() >= 5 ? 5 : nextPrograms.size();
+      
+      mPreviousPrograms = new Program[pSize];
+      mNextPrograms = new Program[nSize];
+      
+      for(int i = 0; i < pSize; i++) {
+        mPreviousPrograms[i] = previousPrograms.get(previousPrograms.size() - i - 1);
+      }
+      
+      for(int i = 0; i < nSize; i++) {
+        mNextPrograms[i] = nextPrograms.get(i);
+      }
     }
   }
 
