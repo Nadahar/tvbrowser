@@ -115,26 +115,31 @@ public class JarWinJavaExeLauncher {
   }
   
   private int getJreFromName(String name) throws Exception {
-    String value = name.substring(name.indexOf(".")-1);
-    
-    String[] version = value.split("[.]");
-    int parsedVersion = 0;
-    
-    if(version != null && version.length == 3) {      
-      parsedVersion = Integer.parseInt(version[0]) * 10000;
-      parsedVersion += Integer.parseInt(version[1]) * 1000;
-      
-      if(version[2].indexOf("_") == -1)
-        parsedVersion += Integer.parseInt(version[2]) * 100;
-      else {
-        String[] subVersion = version[2].split("_");
-        
-        parsedVersion += Integer.parseInt(subVersion[0]) * 100;
-        parsedVersion += Integer.parseInt(subVersion[1]);
-      }
+    if(name.startsWith("jre")) {
+      return Integer.parseInt(name.substring(3));
     }
-    
-    return parsedVersion;
+    else {
+      String value = name.substring(name.indexOf(".")-1);
+      
+      String[] version = value.split("[.]");
+      int parsedVersion = 0;
+      
+      if(version != null && version.length == 3) {      
+        parsedVersion = Integer.parseInt(version[0]) * 10000;
+        parsedVersion += Integer.parseInt(version[1]) * 1000;
+        
+        if(version[2].indexOf("_") == -1)
+          parsedVersion += Integer.parseInt(version[2]) * 100;
+        else {
+          String[] subVersion = version[2].split("_");
+          
+          parsedVersion += Integer.parseInt(subVersion[0]) * 100;
+          parsedVersion += Integer.parseInt(subVersion[1]);
+        }
+      }
+      
+      return parsedVersion;
+    }
   }
   
   public static void main(String[] args) {
