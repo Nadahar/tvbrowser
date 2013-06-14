@@ -37,6 +37,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import util.exc.ErrorHandler;
+import util.io.ExecutionHandler;
 import util.ui.Localizer;
 import devplugin.Plugin;
 import dvbplugin.Settings;
@@ -127,24 +128,23 @@ public class ProcessHandler {
   }
   
   public static final void runDvbViewer(Settings set, String options) {
-    StringBuilder cmdline = new StringBuilder(128);
+    ExecutionHandler exec = new ExecutionHandler(options, set.getViewerExePath());
+    
     try {
-      cmdline.append(set.getViewerExePath());
-      cmdline.append(" ");
-      cmdline.append(options);
-
-      Runtime.getRuntime().exec(cmdline.toString());
+      exec.execute();
     } catch (Exception e) {
       ErrorHandler.handle(localizer.msg("err_run_dvbviewer_param",
                                         "Unable to start DVBViewer with commandline '{0}'",
-                                        cmdline.toString()), e);
+                                        set.getViewerExePath() + " " + options), e);
     }
   }
 
 
   public static final void runDvbViewer(Settings set) {
+    ExecutionHandler exec = new ExecutionHandler(new String[] {set.getViewerExePath()});
+    
     try {
-      Runtime.getRuntime().exec(set.getViewerExePath());
+      exec.execute();
     } catch (Exception e) {
       ErrorHandler.handle(localizer.msg("err_run_dvbviewer", "Unable to start DVBViewer"), e);
     }
@@ -157,16 +157,14 @@ public class ProcessHandler {
       File scheduler = new File(set.getSchedulerExePath());
       if (!scheduler.exists()) { return; }
 
-      StringBuilder cmdline = new StringBuilder(128);
+      ExecutionHandler exec = new ExecutionHandler("-4", set.getSchedulerExePath());
+      
       try {
-        cmdline.append(set.getSchedulerExePath());
-        cmdline.append(" -4");
-
-        Runtime.getRuntime().exec(cmdline.toString());
+        exec.execute();
       } catch (Exception e) {
         ErrorHandler.handle(localizer.msg("err_run_scheduler",
                                           "Unable to start DVBTaskScheduler with commandline '{0}'",
-                                          cmdline.toString()), e);
+                                          set.getSchedulerExePath() + " -4"), e);
       }
     }
   }
