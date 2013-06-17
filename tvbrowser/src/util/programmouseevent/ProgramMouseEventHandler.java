@@ -61,7 +61,7 @@ public class ProgramMouseEventHandler extends MouseAdapter {
   }
   
   @Override
-  public void mouseClicked(MouseEvent e) {
+  public void mouseClicked(MouseEvent e) {System.out.println(e);
     if(mContextMenuListener instanceof ProgramMouseActionListener) {
       Program prog = mContextMenuListener.getProgramForMouseEvent(e);
       

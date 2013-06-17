@@ -100,11 +100,40 @@ public class ReminderListPanel extends JPanel implements PersonaListener, Progra
       }
     });
     
-    ProgramMouseEventHandler mouseEventHandler = new ProgramMouseEventHandler(this, ReminderPluginProxy.getInstance());
+    ProgramMouseEventHandler mouseEventHandler = new ProgramMouseEventHandler(this, ReminderPluginProxy.getInstance()) {
+      public void mouseClicked(final MouseEvent e) {
+        int column = mTable.columnAtPoint(e.getPoint());
+        
+        if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 1) && column == 1) {
+          int row = mTable.rowAtPoint(e.getPoint());
+          mTable.editCellAt(row,column);
+          ((MinutesCellEditor)mTable.getCellEditor()).getComboBox().addPopupMenuListener(new PopupMenuListener() {
+            
+            @Override
+            public void popupMenuWillBecomeVisible(PopupMenuEvent e) {}
+            
+            @Override
+            public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+              // TODO Auto-generated method stub
+              mLastEditorClosing = System.currentTimeMillis();
+            }
+            
+            @Override
+            public void popupMenuCanceled(PopupMenuEvent e) {}
+          });
+          ((MinutesCellEditor)mTable.getCellEditor()).getComboBox().showPopup();
+        }
+        else {
+          super.mouseClicked(e);
+        }
+        
+        mTable.repaint();
+      }
+    };
 
     mTable.addMouseListener(mouseEventHandler);
     
-    mTable.addMouseListener(new MouseAdapter() {
+ /*   mTable.addMouseListener(new MouseAdapter() {
    /*   private Thread mLeftClickThread;
       private boolean mPerformingSingleClick = false;
 
@@ -122,31 +151,34 @@ public class ReminderListPanel extends JPanel implements PersonaListener, Progra
           showPopup(evt);
         }
       }*/
-
+/*
       public void mouseClicked(final MouseEvent e) {
-        if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 1) && e.getModifiersEx() == 0) {
-          int column = mTable.columnAtPoint(e.getPoint());
-
-          if (column == 1) {
-            int row = mTable.rowAtPoint(e.getPoint());
-            mTable.editCellAt(row,column);
-            ((MinutesCellEditor)mTable.getCellEditor()).getComboBox().addPopupMenuListener(new PopupMenuListener() {
-              
-              @Override
-              public void popupMenuWillBecomeVisible(PopupMenuEvent e) {}
-              
-              @Override
-              public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
-                // TODO Auto-generated method stub
-                mLastEditorClosing = System.currentTimeMillis();
-              }
-              
-              @Override
-              public void popupMenuCanceled(PopupMenuEvent e) {}
-            });
-            ((MinutesCellEditor)mTable.getCellEditor()).getComboBox().showPopup();
-          }
+        int column = mTable.columnAtPoint(e.getPoint());
+        
+        if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 1) && column == 1) {
+          int row = mTable.rowAtPoint(e.getPoint());
+          mTable.editCellAt(row,column);
+          ((MinutesCellEditor)mTable.getCellEditor()).getComboBox().addPopupMenuListener(new PopupMenuListener() {
+            
+            @Override
+            public void popupMenuWillBecomeVisible(PopupMenuEvent e) {}
+            
+            @Override
+            public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+              // TODO Auto-generated method stub
+              mLastEditorClosing = System.currentTimeMillis();
+            }
+            
+            @Override
+            public void popupMenuCanceled(PopupMenuEvent e) {}
+          });
+          ((MinutesCellEditor)mTable.getCellEditor()).getComboBox().showPopup();
         }
+        else {
+          super.mouseClicked(e);
+        }
+        
+        mTable.repaint();
          /* 
           mLeftClickThread = new Thread("Single click") {
             public void run() {
@@ -242,9 +274,9 @@ public class ReminderListPanel extends JPanel implements PersonaListener, Progra
           }
         }*/
         
-        mTable.repaint();
+    /*   mTable.repaint();
       }
-    });
+    });*/
 
     installTableModel(mModel);
     
@@ -663,7 +695,7 @@ public class ReminderListPanel extends JPanel implements PersonaListener, Progra
 
   @Override
   public void mouseEventActionFinished() {
-    mTable.repaint();
+   // mTable.repaint();
   }
 
   @Override
