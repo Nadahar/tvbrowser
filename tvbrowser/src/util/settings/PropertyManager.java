@@ -104,7 +104,7 @@ public class PropertyManager {
         }
         mProperties.remove("dir.plugins");
       }
-      
+            
       clearCaches();
       removeUnknownEntries();
     }
@@ -186,7 +186,7 @@ public class PropertyManager {
       String key = (String) iter.next();
 
       // Check whether this key is known
-      boolean isKnown = (mPropertyHash.get(key) != null);
+      boolean isKnown = key.equals("leftSingleClickIf") || key.equals("contextmenudefaultplugin") || key.equals("middleclickplugin") || key.equals("middledoubleclickplugin") || key.equals("leftSingleCtrlClickIf") || (mPropertyHash.get(key) != null);
       
       if (! isKnown) {
         mLog.info("Removing unknown setting: " + key + " ("

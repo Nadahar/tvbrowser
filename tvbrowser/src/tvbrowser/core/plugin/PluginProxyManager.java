@@ -464,16 +464,16 @@ public class PluginProxyManager {
         Settings.propPluginOrder.setStringArray(pluginOrderArr);
 
         // Convert the default context menu plugin from class name to ID
-        String defaultPluginClassName = Settings.propDoubleClickIf.getString();
-        Settings.propDoubleClickIf.setString("java." + defaultPluginClassName);
+        /*String defaultPluginClassName = Settings.propDoubleClickIf.getString();
+        Settings.propDoubleClickIf.setString("java." + defaultPluginClassName);*/
 
         // Convert the middle click context menu plugin from class name to ID
-        String middleClickPluginClassName = Settings.propMiddleClickIf.getString();
-        Settings.propMiddleClickIf.setString("java." + middleClickPluginClassName);
+        /*String middleClickPluginClassName = Settings.propMiddleClickIf.getString();
+        Settings.propMiddleClickIf.setString("java." + middleClickPluginClassName);*/
 
         // Convert the middle double click context menu plugin from class name to ID
-        String middleDoubleClickPluginClassName = Settings.propMiddleDoubleClickIf.getString();
-        Settings.propMiddleDoubleClickIf.setString("java." + middleDoubleClickPluginClassName);
+        /*String middleDoubleClickPluginClassName = Settings.propMiddleDoubleClickIf.getString();
+        Settings.propMiddleDoubleClickIf.setString("java." + middleDoubleClickPluginClassName);*/
       }
     }
 

@@ -61,7 +61,7 @@ public class ProgramMouseEventHandler extends MouseAdapter {
   }
   
   @Override
-  public void mouseClicked(MouseEvent e) {System.out.println(e);
+  public void mouseClicked(MouseEvent e) {
     if(mContextMenuListener instanceof ProgramMouseActionListener) {
       Program prog = mContextMenuListener.getProgramForMouseEvent(e);
       
@@ -145,7 +145,7 @@ public class ProgramMouseEventHandler extends MouseAdapter {
     handleAction(program, contextMenuIf.getContextMenuActions(program));
   }
   
-  private static void handleAction(Program program, ActionMenu menu) {
+  public static void handleAction(Program program, ActionMenu menu) {
     while (menu != null && menu.hasSubItems()) {
       ActionMenu[] subItems = menu.getSubItems();
       if (subItems.length>0) {

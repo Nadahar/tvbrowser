@@ -112,14 +112,8 @@ public class ProgramTable extends JPanel
   private Runnable mCallback;
 
   private Thread mClickThread;
-/*
-  private Thread mLeftClickThread;
-  private Thread mMiddleSingleClickThread;*/
 
   private Thread mAutoScrollThread;
-/*
-  private boolean mPerformingSingleClick;
-  private boolean mPerformingMiddleSingleClick;*/
 
   /**
    * index of the panel underneath the mouse
@@ -147,9 +141,7 @@ public class ProgramTable extends JPanel
     mCurrentCol = -1;
     mCurrentRow = -1;
     mCurrentY = 0;
-
- //   mPerformingSingleClick = false;
-
+    
     setColumnWidth(Settings.propColumnWidth.getInt());
     setModel(model);
     updateBackground();
@@ -162,10 +154,12 @@ public class ProgramTable extends JPanel
     mProgramMouseEventHandler = new ProgramMouseEventHandler(this, null) {
       public void mousePressed(MouseEvent evt) {
         handleMousePressed(evt);
+        super.mousePressed(evt);
       }
       
       public void mouseReleased(MouseEvent evt) {
         handleMouseReleased(evt);
+        super.mouseReleased(evt);
       }
       
       public void mouseClicked(MouseEvent evt) {
@@ -203,63 +197,6 @@ public class ProgramTable extends JPanel
       }
     });
     
-  /*  addMouseListener(new MouseAdapter() {
-      public void mousePressed(MouseEvent evt) {
-        handleMousePressed(evt);
-      /*  if (evt.isPopupTrigger()) {
-          showPopup(evt);
-        }*/
-  /*    }
-      public void mouseReleased(MouseEvent evt) {
-        // recognize auto scroll
-        if (mDraggingPoint != null
-            && Settings.propProgramTableMouseAutoScroll.getBoolean()
-            && (System.currentTimeMillis() - mLastDragTime < 20)) {
-          if (Math.abs(mLastDragDeltaX) >= 3 || Math.abs(mLastDragDeltaY) >= 3) {
-            // stop last scroll, if it is still active
-            stopAutoScroll();
-            startAutoScroll(new Point(mLastDragDeltaX, mLastDragDeltaY), 2);
-          }
-        }
-
-        // disable dragging
-        mDraggingPoint = null;
-        mDraggingPointOnScreen = null;
-
-        if(mClickThread != null && mClickThread.isAlive()) {
-          mClickThread.interrupt();
-        }
-
-        setCursor(Cursor.getDefaultCursor());
-    /*    if (evt.isPopupTrigger()) {
-          showPopup(evt);
-        }*/
-
- /*       if (SwingUtilities.isMiddleMouseButton(evt)) {
-          stopAutoScroll();
-        }
-      }
-      public void mouseClicked(MouseEvent evt) {
-        final Program program = getProgramAt(evt.getX(), evt.getY());
-       
-        if (SwingUtilities.isLeftMouseButton(evt) && (evt.getClickCount() == 1) &&
-            (evt.isShiftDown())) { System.out.println("hier" + program + " " + !isSelectedItemAt(evt.getX(),evt.getY()));
-          if (program != null) {
-            if(!isSelectedItemAt(evt.getX(),evt.getY())) {
-              selectItemAt(evt.getX(),evt.getY());
-            }
-            else {
-              deSelectItem();
-            }
-          }
-        }
-        //handleMouseClicked(evt);
-      }
-      public void mouseExited(MouseEvent evt) {
-        handleMouseExited(evt);
-      }
-    });*/
-    
     addMouseListener(mProgramMouseEventHandler);
 
     (new DragSource()).createDefaultDragGestureRecognizer(this,
@@ -287,9 +224,6 @@ public class ProgramTable extends JPanel
     }
 
     setCursor(Cursor.getDefaultCursor());
-/*    if (evt.isPopupTrigger()) {
-      showPopup(evt);
-    }*/
 
     if (SwingUtilities.isMiddleMouseButton(evt)) {
       stopAutoScroll();
