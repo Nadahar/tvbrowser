@@ -30,9 +30,9 @@ package tvbrowser.core.contextmenu;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 
 import javax.swing.JMenu;
@@ -50,6 +50,7 @@ import tvbrowser.extras.common.InternalPluginProxyIf;
 import tvbrowser.extras.common.InternalPluginProxyList;
 import tvbrowser.extras.searchplugin.SearchPluginProxy;
 import tvbrowser.ui.mainframe.MainFrame;
+import util.settings.ContextMenuMouseActionSetting;
 import util.settings.StringProperty;
 import util.ui.Localizer;
 import util.ui.TVBrowserIcons;
@@ -68,7 +69,14 @@ import devplugin.SettingsItem;
 public class ContextMenuManager {
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(ContextMenuManager.class);
   
+  public static final int NO_MOUSE_MODIFIER_EX = MouseEvent.BUTTON1_DOWN_MASK & ~MouseEvent.BUTTON1_DOWN_MASK;
+  
   private static ContextMenuManager mInstance;
+  
+  private Hashtable<Integer, ContextMenuIf> mContextMenuLeftSingleClickTable;
+  private Hashtable<Integer, ContextMenuIf> mContextMenuLeftDoubleClickTable;
+  private Hashtable<Integer, ContextMenuIf> mContextMenuMiddleSingleClickTable;
+  private Hashtable<Integer, ContextMenuIf> mContextMenuMiddleDoubleClickTable;
 
   /**
    * The context menu interface that should be executed by default when
@@ -104,10 +112,46 @@ public class ContextMenuManager {
   
   private ContextMenuManager() {
     mInstance = this;
+    mContextMenuLeftSingleClickTable = new Hashtable<Integer, ContextMenuIf>();
+    mContextMenuLeftDoubleClickTable = new Hashtable<Integer, ContextMenuIf>();
+    mContextMenuMiddleSingleClickTable = new Hashtable<Integer, ContextMenuIf>();
+    mContextMenuMiddleDoubleClickTable = new Hashtable<Integer, ContextMenuIf>();
     init();
   }
   
+  private void setContextMenuValues(Hashtable<Integer, ContextMenuIf> hashtable, ContextMenuMouseActionSetting[] clickArray) {
+    for(ContextMenuMouseActionSetting setting : clickArray) {
+      ContextMenuIf menuIf = setting.getContextMenuIf();
+      System.out.println(menuIf);
+      if(menuIf != null) {
+        hashtable.put(setting.getModifiersEx(), menuIf);
+      }
+    }
+  }
+  
   public void init() {
+    mContextMenuLeftSingleClickTable.clear();
+    mContextMenuLeftDoubleClickTable.clear();
+    mContextMenuMiddleSingleClickTable.clear();
+    mContextMenuMiddleDoubleClickTable.clear();
+    System.out.println(Settings.propLeftSingleCtrlClickIf.getString());
+    
+    setContextMenuValues(mContextMenuLeftSingleClickTable,Settings.propLeftSingleClickIfArray.getContextMenuMouseActionArray());
+    setContextMenuValues(mContextMenuLeftDoubleClickTable,Settings.propLeftDoubleClickIfArray.getContextMenuMouseActionArray());
+    setContextMenuValues(mContextMenuMiddleSingleClickTable,Settings.propMiddleSingleClickIfArray.getContextMenuMouseActionArray());
+    setContextMenuValues(mContextMenuMiddleDoubleClickTable,Settings.propMiddleDoubleClickIfArray.getContextMenuMouseActionArray());
+    
+    
+   /* 
+    mContextMenuLeftSingleClickTable.put(NO_MOUSE_MODIFIER_EX, getMenuIf(Settings.propLeftSingleClickIf));
+    
+    mContextMenuLeftDoubleClickTable.put(NO_MOUSE_MODIFIER_EX, getMenuIf(Settings.propDoubleClickIf));
+    mContextMenuLeftSingleClickTable.put(MouseEvent.CTRL_DOWN_MASK, getMenuIf(Settings.propLeftSingleCtrlClickIf));
+    
+    mContextMenuMiddleSingleClickTable.put(NO_MOUSE_MODIFIER_EX, getMenuIf(Settings.propMiddleClickIf));
+    
+    mContextMenuMiddleDoubleClickTable.put(NO_MOUSE_MODIFIER_EX, getMenuIf(Settings.propMiddleDoubleClickIf));*/
+    
     setLeftSingleClickIf(getMenuIf(Settings.propLeftSingleClickIf));
     setDefaultContextMenuIf(getMenuIf(Settings.propDoubleClickIf));
     setMiddleClickIf(getMenuIf(Settings.propMiddleClickIf));
@@ -126,6 +170,17 @@ public class ContextMenuManager {
     }
     return menuIf;
 	}
+  
+  private ContextMenuIf getMenuIf(final String id) {
+    ContextMenuIf menuIf = getContextMenuIfForId(id);
+    /*if (menuIf == null) {
+      menuIf = getContextMenuIfForId(prop.getDefault());
+      if (menuIf != null) {
+        prop.setString(menuIf.getId());
+      }
+    }*/
+    return menuIf;
+  }
 
 	/**
    * Returns the instance of this class.
@@ -148,68 +203,17 @@ public class ContextMenuManager {
    * or <code>null</code> if there is no single mouse click ContextMenuIf for the mouse event.
    */
   public ContextMenuIf getContextMenuForSingleClick(MouseEvent e) {
-    //TODO: Make this user configurable
-    boolean shiftDown = (e.getModifiersEx() & MouseEvent.SHIFT_DOWN_MASK) == MouseEvent.SHIFT_DOWN_MASK;
-    boolean altDown = (e.getModifiersEx() & MouseEvent.ALT_DOWN_MASK) == MouseEvent.ALT_DOWN_MASK;
-    boolean ctrlDown = (e.getModifiersEx() & MouseEvent.CTRL_DOWN_MASK) == MouseEvent.CTRL_DOWN_MASK;
+    int cleanModifierEx = e.getModifiersEx() & ~(MouseEvent.BUTTON1_DOWN_MASK | MouseEvent.BUTTON2_DOWN_MASK | MouseEvent.BUTTON3_DOWN_MASK);
     
-    if(shiftDown && !altDown && !ctrlDown) {
-      //TODO SHIFT
-      if(SwingUtilities.isLeftMouseButton(e)) {
-        
-      }
-      else if(SwingUtilities.isMiddleMouseButton(e)) {
-        
-      }
-    }
-    else if(ctrlDown && !shiftDown && !altDown) {
-      //TODO CTRL
-      if(SwingUtilities.isLeftMouseButton(e)) {
-        return mCtrlLeftClickIf;
-      }
-      else if(SwingUtilities.isMiddleMouseButton(e)) {
-        
-      }
-    }
-    else if(ctrlDown && shiftDown && !altDown) {
-      //TODO CTRL+SHIFT
-      if(SwingUtilities.isLeftMouseButton(e)) {
-        
-      }
-      else if(SwingUtilities.isMiddleMouseButton(e)) {
-        
-      }
-    }
-    else if(SwingUtilities.isLeftMouseButton(e)) {
-      if(altDown && !shiftDown && !ctrlDown) {
-        //TODO ALT
-        
-      }
-      else if(altDown && shiftDown && !ctrlDown) {
-        //TODO ALT+SHIFT
-        
-      }
-      else if(altDown && ctrlDown && !shiftDown) {
-        //TODO ALT+CTRL
-        
-      }
-      else if(altDown && ctrlDown && shiftDown) {
-        // TODO ALT+SHIFT+CTRL
-        
-      }
-      else {
-        //TODO single left click
-        return mDefaultLeftSingleClickMenuIf;
-      }
+    if(SwingUtilities.isLeftMouseButton(e)) {
+      return mContextMenuLeftSingleClickTable.get(cleanModifierEx);
     }
     else if(SwingUtilities.isMiddleMouseButton(e)) {
-      // TODO single middle click
-      return mDefaultMiddleClickIf;
+      return mContextMenuMiddleSingleClickTable.get(cleanModifierEx & ~MouseEvent.ALT_DOWN_MASK);
     }
     
     return null;
   }
-
   
   /**
    * Gets the ContextMenuIf for a double mouse click.
@@ -218,63 +222,13 @@ public class ContextMenuManager {
    * or <code>null</code> if there is no double mouse click ContextMenuIf for the mouse event.
    */
   public ContextMenuIf getContextMenuForDoubleClick(MouseEvent e) {
-    //TODO: Make this user configurable
-    boolean shiftDown = (e.getModifiersEx() & MouseEvent.SHIFT_DOWN_MASK) == MouseEvent.SHIFT_DOWN_MASK;
-    boolean altDown = (e.getModifiersEx() & MouseEvent.ALT_DOWN_MASK) == MouseEvent.ALT_DOWN_MASK;
-    boolean ctrlDown = (e.getModifiersEx() & MouseEvent.CTRL_DOWN_MASK) == MouseEvent.CTRL_DOWN_MASK;
+    int cleanModifierEx = e.getModifiersEx() & ~(MouseEvent.BUTTON1_DOWN_MASK | MouseEvent.BUTTON2_DOWN_MASK | MouseEvent.BUTTON3_DOWN_MASK);
     
-    if(shiftDown && !altDown && !ctrlDown) {
-      //TODO SHIFT
-      if(SwingUtilities.isLeftMouseButton(e)) {
-        
-      }
-      else if(SwingUtilities.isMiddleMouseButton(e)) {
-        
-      }
-    }
-    else if(ctrlDown && !shiftDown && !altDown) {
-      //TODO CTRL
-      if(SwingUtilities.isLeftMouseButton(e)) {
-        
-      }
-      else if(SwingUtilities.isMiddleMouseButton(e)) {
-        
-      }
-    }
-    else if(ctrlDown && shiftDown && !altDown) {
-      //TODO CTRL+SHIFT
-      if(SwingUtilities.isLeftMouseButton(e)) {
-        
-      }
-      else if(SwingUtilities.isMiddleMouseButton(e)) {
-        
-      }
-    }
-    else if(SwingUtilities.isLeftMouseButton(e)) {
-      if(altDown && !shiftDown && !ctrlDown) {
-        //TODO ALT
-        
-      }
-      else if(altDown && shiftDown && !ctrlDown) {
-        //TODO ALT+SHIFT
-        
-      }
-      else if(altDown && ctrlDown && !shiftDown) {
-        //TODO ALT+CTRL
-        
-      }
-      else if(altDown && ctrlDown && shiftDown) {
-        // TODO ALT+SHIFT+CTRL
-        
-      }
-      else {
-        //TODO double left click
-        return mDefaultContextMenuIf;
-      }
+    if(SwingUtilities.isLeftMouseButton(e)) {
+      return mContextMenuLeftDoubleClickTable.get(cleanModifierEx);
     }
     else if(SwingUtilities.isMiddleMouseButton(e)) {
-      // TODO double middle click
-      return mDefaultMiddleDoubleClickIf;
+      return mContextMenuMiddleDoubleClickTable.get(cleanModifierEx & ~MouseEvent.ALT_DOWN_MASK);
     }
     
     return null;

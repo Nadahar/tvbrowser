@@ -45,7 +45,6 @@ import java.awt.dnd.DragSourceDropEvent;
 import java.awt.dnd.DragSourceEvent;
 import java.awt.dnd.DragSourceListener;
 import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 
@@ -160,7 +159,38 @@ public class ProgramTable extends JPanel
 
     setOpaque(true);
     
-    mProgramMouseEventHandler = new ProgramMouseEventHandler(this, null);
+    mProgramMouseEventHandler = new ProgramMouseEventHandler(this, null) {
+      public void mousePressed(MouseEvent evt) {
+        handleMousePressed(evt);
+      }
+      
+      public void mouseReleased(MouseEvent evt) {
+        handleMouseReleased(evt);
+      }
+      
+      public void mouseClicked(MouseEvent evt) {
+        final Program program = getProgramAt(evt.getX(), evt.getY());
+       
+        if (SwingUtilities.isLeftMouseButton(evt) && (evt.getClickCount() == 1) &&
+            (evt.isShiftDown() && !evt.isControlDown() && !evt.isAltDown())) {
+          if (program != null) {
+            if(!isSelectedItemAt(evt.getX(),evt.getY())) {
+              selectItemAt(evt.getX(),evt.getY());
+            }
+            else {
+              deSelectItem();
+            }
+          }
+        }
+        else {
+          super.mouseClicked(evt);
+        }
+      }
+      
+      public void mouseExited(MouseEvent evt) {
+        handleMouseExited(evt);
+      }
+    };
         
     // setFocusable(true);
     addMouseMotionListener(new MouseMotionAdapter() {
@@ -173,15 +203,13 @@ public class ProgramTable extends JPanel
       }
     });
     
-    addMouseListener(mProgramMouseEventHandler);
-    
-    addMouseListener(new MouseAdapter() {
+  /*  addMouseListener(new MouseAdapter() {
       public void mousePressed(MouseEvent evt) {
         handleMousePressed(evt);
       /*  if (evt.isPopupTrigger()) {
           showPopup(evt);
         }*/
-      }
+  /*    }
       public void mouseReleased(MouseEvent evt) {
         // recognize auto scroll
         if (mDraggingPoint != null
@@ -207,23 +235,66 @@ public class ProgramTable extends JPanel
           showPopup(evt);
         }*/
 
-        if (SwingUtilities.isMiddleMouseButton(evt)) {
+ /*       if (SwingUtilities.isMiddleMouseButton(evt)) {
           stopAutoScroll();
         }
       }
-     /* public void mouseClicked(MouseEvent evt) {
-        handleMouseClicked(evt);
-      }*/
+      public void mouseClicked(MouseEvent evt) {
+        final Program program = getProgramAt(evt.getX(), evt.getY());
+       
+        if (SwingUtilities.isLeftMouseButton(evt) && (evt.getClickCount() == 1) &&
+            (evt.isShiftDown())) { System.out.println("hier" + program + " " + !isSelectedItemAt(evt.getX(),evt.getY()));
+          if (program != null) {
+            if(!isSelectedItemAt(evt.getX(),evt.getY())) {
+              selectItemAt(evt.getX(),evt.getY());
+            }
+            else {
+              deSelectItem();
+            }
+          }
+        }
+        //handleMouseClicked(evt);
+      }
       public void mouseExited(MouseEvent evt) {
         handleMouseExited(evt);
       }
-    });
+    });*/
+    
+    addMouseListener(mProgramMouseEventHandler);
 
     (new DragSource()).createDefaultDragGestureRecognizer(this,
         DnDConstants.ACTION_MOVE, this);
   }
 
+  private void handleMouseReleased(MouseEvent evt) {
+    // recognize auto scroll
+    if (mDraggingPoint != null
+        && Settings.propProgramTableMouseAutoScroll.getBoolean()
+        && (System.currentTimeMillis() - mLastDragTime < 20)) {
+      if (Math.abs(mLastDragDeltaX) >= 3 || Math.abs(mLastDragDeltaY) >= 3) {
+        // stop last scroll, if it is still active
+        stopAutoScroll();
+        startAutoScroll(new Point(mLastDragDeltaX, mLastDragDeltaY), 2);
+      }
+    }
 
+    // disable dragging
+    mDraggingPoint = null;
+    mDraggingPointOnScreen = null;
+
+    if(mClickThread != null && mClickThread.isAlive()) {
+      mClickThread.interrupt();
+    }
+
+    setCursor(Cursor.getDefaultCursor());
+/*    if (evt.isPopupTrigger()) {
+      showPopup(evt);
+    }*/
+
+    if (SwingUtilities.isMiddleMouseButton(evt)) {
+      stopAutoScroll();
+    }
+  }
 
   protected void setModel(ProgramTableModel model) {
     mModel = model;
@@ -1346,6 +1417,7 @@ public class ProgramTable extends JPanel
    */
   private boolean isSelectedItemAt(int x, int y) {
     Point cellIndex = getMatrix(x,y);
+    
     return (mCurrentRow == cellIndex.y && mCurrentCol == cellIndex.x);
   }
 

@@ -29,6 +29,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Window;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FilenameFilter;
@@ -52,6 +53,7 @@ import javax.swing.UIManager.LookAndFeelInfo;
 import org.apache.commons.lang3.StringUtils;
 
 import tvbrowser.TVBrowser;
+import tvbrowser.core.contextmenu.ContextMenuManager;
 import tvbrowser.core.contextmenu.SeparatorMenuItem;
 import tvbrowser.core.plugin.DefaultSettings;
 import tvbrowser.core.plugin.PluginProxyManager;
@@ -80,6 +82,8 @@ import util.settings.ByteProperty;
 import util.settings.ChannelArrayProperty;
 import util.settings.ChoiceProperty;
 import util.settings.ColorProperty;
+import util.settings.ContextMenuMouseActionArrayProperty;
+import util.settings.ContextMenuMouseActionSetting;
 import util.settings.DateProperty;
 import util.settings.EncodedStringProperty;
 import util.settings.FontProperty;
@@ -725,6 +729,19 @@ public class Settings {
     ((DeferredFontProperty)propProgramInfoFont).resetDefault();
     ((DeferredFontProperty)propChannelNameFont).resetDefault();
     ((DeferredFontProperty)propProgramTimeFont).resetDefault();
+    
+    updateContextMenuSettings();
+  }
+  
+  private static void updateContextMenuSettings() {
+    //TODO 
+    String ctrlValue = propLeftSingleCtrlClickIf.getString();
+    
+    propLeftSingleClickIfArray.setContextMenuMouseActionArray(new ContextMenuMouseActionSetting[] {new ContextMenuMouseActionSetting(ContextMenuManager.NO_MOUSE_MODIFIER_EX, propLeftSingleClickIf.getString()),
+        new ContextMenuMouseActionSetting(MouseEvent.CTRL_DOWN_MASK, ctrlValue)});
+    propLeftDoubleClickIfArray.setContextMenuMouseActionArray(new ContextMenuMouseActionSetting[] {new ContextMenuMouseActionSetting(ContextMenuManager.NO_MOUSE_MODIFIER_EX, propDoubleClickIf.getString())});
+    propMiddleSingleClickIfArray.setContextMenuMouseActionArray(new ContextMenuMouseActionSetting[] {new ContextMenuMouseActionSetting(ContextMenuManager.NO_MOUSE_MODIFIER_EX, propMiddleClickIf.getString())});
+    propMiddleDoubleClickIfArray.setContextMenuMouseActionArray(new ContextMenuMouseActionSetting[] {new ContextMenuMouseActionSetting(ContextMenuManager.NO_MOUSE_MODIFIER_EX, propMiddleDoubleClickIf.getString())});
   }
   
   
@@ -1312,22 +1329,41 @@ public class Settings {
 
   public static final StringProperty propToolbarLocation = new StringProperty(
       mProp, "toolbarLocation", "north");
-
+  
+  /** @deprecated since 3.3.1 */
   public static final StringProperty propLeftSingleClickIf = new StringProperty(
       mProp, "leftSingleClickIf", ProgramInfo.getProgramInfoPluginId());
 
+  /** @deprecated since 3.3.1 */
   public static final StringProperty propDoubleClickIf = new StringProperty(
       mProp, "contextmenudefaultplugin", ProgramInfo.getProgramInfoPluginId());
 
+  /** @deprecated since 3.3.1 */
   public static final StringProperty propMiddleClickIf = new StringProperty(
       mProp, "middleclickplugin", ReminderPlugin.getReminderPluginId());
 
+  /** @deprecated since 3.3.1 */
   public static final StringProperty propMiddleDoubleClickIf = new StringProperty(
       mProp, "middledoubleclickplugin", FavoritesPlugin.getFavoritesPluginId());
 
+  /** @deprecated since 3.3.1 */
   public static final StringProperty propLeftSingleCtrlClickIf = new StringProperty(
       mProp, "leftSingleCtrlClickIf", null);
+  
+  
+  
+  public static final ContextMenuMouseActionArrayProperty propLeftSingleClickIfArray = new ContextMenuMouseActionArrayProperty(
+      mProp, "leftSingleClickIfArray", new ContextMenuMouseActionSetting[] {new ContextMenuMouseActionSetting(ContextMenuManager.NO_MOUSE_MODIFIER_EX,ProgramInfo.getProgramInfoPluginId())});
+  
+  public static final ContextMenuMouseActionArrayProperty propLeftDoubleClickIfArray = new ContextMenuMouseActionArrayProperty(
+      mProp, "leftDoubleClickIfArray", new ContextMenuMouseActionSetting[] {new ContextMenuMouseActionSetting(ContextMenuManager.NO_MOUSE_MODIFIER_EX,ProgramInfo.getProgramInfoPluginId())});
 
+  public static final ContextMenuMouseActionArrayProperty propMiddleSingleClickIfArray = new ContextMenuMouseActionArrayProperty(
+      mProp, "middleSingleClickIfArray", new ContextMenuMouseActionSetting[] {new ContextMenuMouseActionSetting(ContextMenuManager.NO_MOUSE_MODIFIER_EX,ReminderPlugin.getReminderPluginId())});
+  
+  public static final ContextMenuMouseActionArrayProperty propMiddleDoubleClickIfArray = new ContextMenuMouseActionArrayProperty(
+      mProp, "middleDoubleClickIfArray", new ContextMenuMouseActionSetting[] {new ContextMenuMouseActionSetting(ContextMenuManager.NO_MOUSE_MODIFIER_EX,FavoritesPlugin.getFavoritesPluginId())});
+  
   /**
    * the last active program filter
    */
