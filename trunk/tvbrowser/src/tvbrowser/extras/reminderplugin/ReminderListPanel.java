@@ -23,6 +23,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableColumn;
@@ -30,6 +32,8 @@ import javax.swing.table.TableColumn;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginManagerImpl;
 import tvbrowser.ui.mainframe.MainFrame;
+import util.programmouseevent.ProgramMouseAndContextMenuListener;
+import util.programmouseevent.ProgramMouseEventHandler;
 import util.settings.PluginPictureSettings;
 import util.ui.ProgramList;
 import util.ui.ProgramTableCellRenderer;
@@ -46,11 +50,12 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
 import devplugin.Date;
+//import devplugin.Plugin;
 import devplugin.Plugin;
 import devplugin.Program;
 import devplugin.SettingsItem;
 
-public class ReminderListPanel extends JPanel implements PersonaListener {
+public class ReminderListPanel extends JPanel implements PersonaListener, ProgramMouseAndContextMenuListener {
   private static final util.ui.Localizer mLocalizer = ReminderListDialog.mLocalizer; 
   
   private JButton mUndo, mDelete, mSend, mScrollToPreviousDay, mScrollToNextDay;
@@ -62,8 +67,10 @@ public class ReminderListPanel extends JPanel implements PersonaListener {
   
   private JComboBox mTitleSelection;
   private JLabel mFilterLabel;
+  private long mLastEditorClosing;
   
   public ReminderListPanel(ReminderList list, JButton close) {
+    mLastEditorClosing = 0;
     mReminderList = list;
     createGui(close);
   }
@@ -92,9 +99,13 @@ public class ReminderListPanel extends JPanel implements PersonaListener {
         }
       }
     });
+    
+    ProgramMouseEventHandler mouseEventHandler = new ProgramMouseEventHandler(this, ReminderPluginProxy.getInstance());
 
+    mTable.addMouseListener(mouseEventHandler);
+    
     mTable.addMouseListener(new MouseAdapter() {
-      private Thread mLeftClickThread;
+   /*   private Thread mLeftClickThread;
       private boolean mPerformingSingleClick = false;
 
       private Thread mMiddleSingleClickThread;
@@ -110,7 +121,7 @@ public class ReminderListPanel extends JPanel implements PersonaListener {
         if (evt.isPopupTrigger()) {
           showPopup(evt);
         }
-      }
+      }*/
 
       public void mouseClicked(final MouseEvent e) {
         if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 1) && e.getModifiersEx() == 0) {
@@ -119,9 +130,24 @@ public class ReminderListPanel extends JPanel implements PersonaListener {
           if (column == 1) {
             int row = mTable.rowAtPoint(e.getPoint());
             mTable.editCellAt(row,column);
+            ((MinutesCellEditor)mTable.getCellEditor()).getComboBox().addPopupMenuListener(new PopupMenuListener() {
+              
+              @Override
+              public void popupMenuWillBecomeVisible(PopupMenuEvent e) {}
+              
+              @Override
+              public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+                // TODO Auto-generated method stub
+                mLastEditorClosing = System.currentTimeMillis();
+              }
+              
+              @Override
+              public void popupMenuCanceled(PopupMenuEvent e) {}
+            });
             ((MinutesCellEditor)mTable.getCellEditor()).getComboBox().showPopup();
           }
-          
+        }
+         /* 
           mLeftClickThread = new Thread("Single click") {
             public void run() {
               try {
@@ -214,7 +240,7 @@ public class ReminderListPanel extends JPanel implements PersonaListener {
   
             PluginManagerImpl.getInstance().handleProgramMiddleDoubleClick(p, ReminderPluginProxy.getInstance());
           }
-        }
+        }*/
         
         mTable.repaint();
       }
@@ -534,7 +560,7 @@ public class ReminderListPanel extends JPanel implements PersonaListener {
    * 
    * @param e Mouse-Event
    */
-  private void showPopup(MouseEvent e) {
+/*  private void showPopup(MouseEvent e) {
     int row = mTable.rowAtPoint(e.getPoint());
 
     mTable.changeSelection(row, 0, false, false);
@@ -543,7 +569,7 @@ public class ReminderListPanel extends JPanel implements PersonaListener {
 
     JPopupMenu menu = PluginManagerImpl.getInstance().createPluginContextMenu(p, ReminderPluginProxy.getInstance());
     menu.show(mTable, e.getX() - 15, e.getY() - 15);
-  }
+  }*/
   
   void stopCellEditing() {
     if (mTable.isEditing()) {
@@ -617,5 +643,38 @@ public class ReminderListPanel extends JPanel implements PersonaListener {
     public boolean isEmpty() {
       return mStackList.isEmpty();
     }
+  }
+
+  @Override
+  public Program getProgramForMouseEvent(MouseEvent e) {
+    int column = mTable.columnAtPoint(e.getPoint());
+    
+    if(column == 0 && mLastEditorClosing + Plugin.SINGLE_CLICK_WAITING_TIME + 50 < System.currentTimeMillis()) {
+      int row = mTable.rowAtPoint(e.getPoint());
+
+      mTable.changeSelection(row, 0, false, false);
+      Program p = (Program) mTable.getModel().getValueAt(row, 0);
+      
+      return p;
+    }
+    
+    return null;
+  }
+
+  @Override
+  public void mouseEventActionFinished() {
+    mTable.repaint();
+  }
+
+  @Override
+  public void showContextMenu(MouseEvent e) {
+    int row = mTable.rowAtPoint(e.getPoint());
+
+    mTable.changeSelection(row, 0, false, false);
+
+    Program p = (Program) mTable.getModel().getValueAt(row, 0);
+
+    JPopupMenu menu = PluginManagerImpl.getInstance().createPluginContextMenu(p, ReminderPluginProxy.getInstance());
+    menu.show(mTable, e.getX() - 15, e.getY() - 15);
   }
 }
