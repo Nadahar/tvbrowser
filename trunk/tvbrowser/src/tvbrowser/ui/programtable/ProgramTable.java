@@ -44,12 +44,10 @@ import java.awt.dnd.DragSourceDragEvent;
 import java.awt.dnd.DragSourceDropEvent;
 import java.awt.dnd.DragSourceEvent;
 import java.awt.dnd.DragSourceListener;
-import java.awt.event.InputEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
-import java.sql.NClob;
 
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -71,6 +69,8 @@ import tvbrowser.ui.programtable.background.TimeBlockBackPainter;
 import tvbrowser.ui.programtable.background.TimeOfDayBackPainter;
 import tvbrowser.ui.programtable.background.UiColorBackPainter;
 import tvbrowser.ui.programtable.background.UiTimeBlockBackPainter;
+import util.programmouseevent.ProgramMouseAndContextMenuListener;
+import util.programmouseevent.ProgramMouseEventHandler;
 import util.settings.ProgramPanelSettings;
 import util.ui.ProgramPanel;
 import util.ui.TransferProgram;
@@ -85,7 +85,7 @@ import devplugin.Program;
  */
 public class ProgramTable extends JPanel
  implements ProgramTableModelListener,
-    DragGestureListener, DragSourceListener, PluginStateListener, Scrollable {
+    DragGestureListener, DragSourceListener, PluginStateListener, Scrollable, ProgramMouseAndContextMenuListener {
 
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer
       .getLocalizerFor(ProgramTable.class);
@@ -113,14 +113,14 @@ public class ProgramTable extends JPanel
   private Runnable mCallback;
 
   private Thread mClickThread;
-
+/*
   private Thread mLeftClickThread;
-  private Thread mMiddleSingleClickThread;
+  private Thread mMiddleSingleClickThread;*/
 
   private Thread mAutoScrollThread;
-
+/*
   private boolean mPerformingSingleClick;
-  private boolean mPerformingMiddleSingleClick;
+  private boolean mPerformingMiddleSingleClick;*/
 
   /**
    * index of the panel underneath the mouse
@@ -132,6 +132,8 @@ public class ProgramTable extends JPanel
   private Point mAutoScroll;
 
   private Point mDraggingPointOnScreen;
+  
+  private ProgramMouseEventHandler mProgramMouseEventHandler;
 
   /**
    * Creates a new instance of ProgramTable.
@@ -147,7 +149,7 @@ public class ProgramTable extends JPanel
     mCurrentRow = -1;
     mCurrentY = 0;
 
-    mPerformingSingleClick = false;
+ //   mPerformingSingleClick = false;
 
     setColumnWidth(Settings.propColumnWidth.getInt());
     setModel(model);
@@ -157,7 +159,9 @@ public class ProgramTable extends JPanel
     UIManager.put("programPanel.background",Color.white);
 
     setOpaque(true);
-
+    
+    mProgramMouseEventHandler = new ProgramMouseEventHandler(this, null);
+        
     // setFocusable(true);
     addMouseMotionListener(new MouseMotionAdapter() {
       public void mouseDragged(MouseEvent evt) {
@@ -168,12 +172,15 @@ public class ProgramTable extends JPanel
         handleMouseMoved(evt);
       }
     });
+    
+    addMouseListener(mProgramMouseEventHandler);
+    
     addMouseListener(new MouseAdapter() {
       public void mousePressed(MouseEvent evt) {
         handleMousePressed(evt);
-        if (evt.isPopupTrigger()) {
+      /*  if (evt.isPopupTrigger()) {
           showPopup(evt);
-        }
+        }*/
       }
       public void mouseReleased(MouseEvent evt) {
         // recognize auto scroll
@@ -196,17 +203,17 @@ public class ProgramTable extends JPanel
         }
 
         setCursor(Cursor.getDefaultCursor());
-        if (evt.isPopupTrigger()) {
+    /*    if (evt.isPopupTrigger()) {
           showPopup(evt);
-        }
+        }*/
 
         if (SwingUtilities.isMiddleMouseButton(evt)) {
           stopAutoScroll();
         }
       }
-      public void mouseClicked(MouseEvent evt) {
+     /* public void mouseClicked(MouseEvent evt) {
         handleMouseClicked(evt);
-      }
+      }*/
       public void mouseExited(MouseEvent evt) {
         handleMouseExited(evt);
       }
@@ -587,7 +594,7 @@ public class ProgramTable extends JPanel
     return PluginProxyManager.createPluginContextMenu(program);
   }
 
-  private void showPopup(MouseEvent evt) {
+ /* private void showPopup(MouseEvent evt) {
     stopAutoScroll();
     mMouse = evt.getPoint();
     repaint();
@@ -598,7 +605,7 @@ public class ProgramTable extends JPanel
       mPopupMenu = createPluginContextMenu(program);
       mPopupMenu.show(this, evt.getX(), evt.getY());
     }
-  }
+  }*/
 
   private void handleMousePressed(MouseEvent evt) {
     requestFocus();
@@ -624,7 +631,7 @@ public class ProgramTable extends JPanel
 
 
 
-  private void handleMouseClicked(final MouseEvent evt) {
+ /* private void handleMouseClicked(final MouseEvent evt) {
     // disable normal click handling if we only want to stop auto scrolling
     if (stopAutoScroll()) {
       return;
@@ -743,7 +750,7 @@ public class ProgramTable extends JPanel
       setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
     }
   }
-
+*/
 
 
   private void handleMouseDragged(final MouseEvent evt) {
@@ -1021,7 +1028,7 @@ public class ProgramTable extends JPanel
     }
 
     Program program = mModel.getProgramPanel(mCurrentCol, mCurrentRow).getProgram();
-
+    
     Plugin.getPluginManager().handleProgramMiddleDoubleClick(program);
   }
 
@@ -1267,6 +1274,7 @@ public class ProgramTable extends JPanel
   /**
    * Deselect the selected program.
    * <p>
+   * @param getProgram If the current selected program should be returned.
    * @return The formally selected program or <code>null</code> if there was no selected program.
    */
   public Program deSelectItem(boolean getProgram) {
@@ -1588,5 +1596,53 @@ public class ProgramTable extends JPanel
   
   public boolean isSelected() {
     return mCurrentRow != -1 && mCurrentCol != -1;
+  }
+
+
+
+  @Override
+  public Program getProgramForMouseEvent(MouseEvent e) {
+    if (mAutoScrollThread != null && mAutoScrollThread.isAlive()) {
+      return null;
+    }
+    
+    if(mClickThread != null && mClickThread.isAlive()) {
+      mClickThread.interrupt();
+    }
+
+    mMouse = e.getPoint();
+    repaint();
+    
+    Program program = getProgramAt(e.getX(), e.getY());
+    
+    if(program != null) {
+      deSelectItem();
+    }
+    
+    // TODO Auto-generated method stub
+    return program;
+  }
+
+  @Override
+  public void mouseEventActionFinished() {
+    // TODO Auto-generated method stub
+    setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+  }
+
+
+
+  @Override
+  public void showContextMenu(MouseEvent e) {
+    // TODO Auto-generated method stub
+    stopAutoScroll();
+    mMouse = e.getPoint();
+    repaint();
+
+    Program program = getProgramAt(e.getX(), e.getY());
+    if (program != null) {
+      deSelectItem();
+      mPopupMenu = createPluginContextMenu(program);
+      mPopupMenu.show(this, e.getX(), e.getY());
+    }
   }
 }
