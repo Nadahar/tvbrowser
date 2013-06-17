@@ -27,7 +27,7 @@
 
 package tvbrowser.core.contextmenu;
 
-import java.awt.Color;
+//import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -38,7 +38,7 @@ import java.util.List;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
-import javax.swing.MenuElement;
+//import javax.swing.MenuElement;
 import javax.swing.SwingUtilities;
 
 import tvbrowser.core.Settings;
@@ -51,7 +51,7 @@ import tvbrowser.extras.common.InternalPluginProxyList;
 import tvbrowser.extras.searchplugin.SearchPluginProxy;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.settings.ContextMenuMouseActionSetting;
-import util.settings.StringProperty;
+//import util.settings.StringProperty;
 import util.ui.Localizer;
 import util.ui.TVBrowserIcons;
 import util.ui.menu.MenuUtil;
@@ -77,38 +77,6 @@ public class ContextMenuManager {
   private Hashtable<Integer, ContextMenuIf> mContextMenuLeftDoubleClickTable;
   private Hashtable<Integer, ContextMenuIf> mContextMenuMiddleSingleClickTable;
   private Hashtable<Integer, ContextMenuIf> mContextMenuMiddleDoubleClickTable;
-
-  /**
-   * The context menu interface that should be executed by default when
-   * left single clicking a program in the program table. It is shown with a dark
-   * green font in the context menu.
-   */
-  private ContextMenuIf mDefaultLeftSingleClickMenuIf;
-  
-  /**
-   * The context menu interface that should be executed by default when
-   * double-clicking a program in the program table. It is shown with a bold
-   * font in the context menu.
-   */
-  private ContextMenuIf mDefaultContextMenuIf;
-  
-  /**
-   * The context menu interface that should be executed by default when
-   * middle-clicking a program in the program table.
-   */
-  private ContextMenuIf mDefaultMiddleClickIf;
-  
-  /**
-   * The context menu interface that should be executed by default when
-   * double-middle-clicking a program in the program table.
-   */
-  private ContextMenuIf mDefaultMiddleDoubleClickIf;
-  
-  /**
-   * The context menu interface that should be executed by default when
-   * ctrl-left-clicking a program in the program table.
-   */
-  private ContextMenuIf mCtrlLeftClickIf;
   
   private ContextMenuManager() {
     mInstance = this;
@@ -122,7 +90,7 @@ public class ContextMenuManager {
   private void setContextMenuValues(Hashtable<Integer, ContextMenuIf> hashtable, ContextMenuMouseActionSetting[] clickArray) {
     for(ContextMenuMouseActionSetting setting : clickArray) {
       ContextMenuIf menuIf = setting.getContextMenuIf();
-      System.out.println(menuIf);
+      
       if(menuIf != null) {
         hashtable.put(setting.getModifiersEx(), menuIf);
       }
@@ -134,52 +102,12 @@ public class ContextMenuManager {
     mContextMenuLeftDoubleClickTable.clear();
     mContextMenuMiddleSingleClickTable.clear();
     mContextMenuMiddleDoubleClickTable.clear();
-    System.out.println(Settings.propLeftSingleCtrlClickIf.getString());
+    
     
     setContextMenuValues(mContextMenuLeftSingleClickTable,Settings.propLeftSingleClickIfArray.getContextMenuMouseActionArray());
     setContextMenuValues(mContextMenuLeftDoubleClickTable,Settings.propLeftDoubleClickIfArray.getContextMenuMouseActionArray());
     setContextMenuValues(mContextMenuMiddleSingleClickTable,Settings.propMiddleSingleClickIfArray.getContextMenuMouseActionArray());
     setContextMenuValues(mContextMenuMiddleDoubleClickTable,Settings.propMiddleDoubleClickIfArray.getContextMenuMouseActionArray());
-    
-    
-   /* 
-    mContextMenuLeftSingleClickTable.put(NO_MOUSE_MODIFIER_EX, getMenuIf(Settings.propLeftSingleClickIf));
-    
-    mContextMenuLeftDoubleClickTable.put(NO_MOUSE_MODIFIER_EX, getMenuIf(Settings.propDoubleClickIf));
-    mContextMenuLeftSingleClickTable.put(MouseEvent.CTRL_DOWN_MASK, getMenuIf(Settings.propLeftSingleCtrlClickIf));
-    
-    mContextMenuMiddleSingleClickTable.put(NO_MOUSE_MODIFIER_EX, getMenuIf(Settings.propMiddleClickIf));
-    
-    mContextMenuMiddleDoubleClickTable.put(NO_MOUSE_MODIFIER_EX, getMenuIf(Settings.propMiddleDoubleClickIf));*/
-    
-    setLeftSingleClickIf(getMenuIf(Settings.propLeftSingleClickIf));
-    setDefaultContextMenuIf(getMenuIf(Settings.propDoubleClickIf));
-    setMiddleClickIf(getMenuIf(Settings.propMiddleClickIf));
-    setMiddleDoubleClickIf(getMenuIf(Settings.propMiddleDoubleClickIf));
-    setLeftSingleCtrlClickIf(getMenuIf(Settings.propLeftSingleCtrlClickIf));
-  }
-  
-  private ContextMenuIf getMenuIf(final StringProperty prop) {
-    String id = prop.getString();
-    ContextMenuIf menuIf = getContextMenuIfForId(id);
-    if (menuIf == null) {
-      menuIf = getContextMenuIfForId(prop.getDefault());
-      if (menuIf != null) {
-        prop.setString(menuIf.getId());
-      }
-    }
-    return menuIf;
-	}
-  
-  private ContextMenuIf getMenuIf(final String id) {
-    ContextMenuIf menuIf = getContextMenuIfForId(id);
-    /*if (menuIf == null) {
-      menuIf = getContextMenuIfForId(prop.getDefault());
-      if (menuIf != null) {
-        prop.setString(menuIf.getId());
-      }
-    }*/
-    return menuIf;
   }
 
 	/**
@@ -201,6 +129,7 @@ public class ContextMenuManager {
    * @param e The MouseEvent to get the ContextMenuIf for.
    * @return The ContextMenuIf for a single mouse click that matches the mouse event
    * or <code>null</code> if there is no single mouse click ContextMenuIf for the mouse event.
+   * @since 3.3.1
    */
   public ContextMenuIf getContextMenuForSingleClick(MouseEvent e) {
     int cleanModifierEx = e.getModifiersEx() & ~(MouseEvent.BUTTON1_DOWN_MASK | MouseEvent.BUTTON2_DOWN_MASK | MouseEvent.BUTTON3_DOWN_MASK);
@@ -213,6 +142,34 @@ public class ContextMenuManager {
     }
     
     return null;
+  }
+  
+  /**
+   * Gets the ContextMenuIf for a mouse click and modifier.
+   * @param modifierEx The modifier for the mouse event.
+   * @param leftMouseButton If the ContextMenuIf for the left mouse button should be gotten.
+   * @param singleClick If the ContextMenuIf for a single mouse click should be gotten.
+   * @return The ContextMenuIf for a mouse click that matches given values
+   * or <code>null</code> if there is no single mouse click ContextMenuIf.
+   * @since 3.3.1
+   */
+  public ContextMenuIf getContextMenuArrayForModifierEx(int modifierEx, boolean leftMouseButton, boolean singleClick) {
+    if(leftMouseButton) {
+      if(singleClick) {
+        return mContextMenuLeftSingleClickTable.get(modifierEx);
+      }
+      else {
+        return mContextMenuLeftDoubleClickTable.get(modifierEx);
+      }
+    }
+    else {
+      if(singleClick) {
+        return mContextMenuMiddleSingleClickTable.get(modifierEx);
+      }
+      else {
+        return mContextMenuMiddleDoubleClickTable.get(modifierEx);
+      }
+    }
   }
   
   /**
@@ -269,122 +226,6 @@ public class ContextMenuManager {
     }
     
     return null;
-  }
-  
-  /**
-   * Gets the left single click context menu interface.
-   * <p>
-   * This is context menu that should be executed by default when single left clicking
-   * a program in the program table. It is shown with a dark green font in the context
-   * menu.
-   *
-   * @return The default context menu action or <code>null</code> if there is no
-   *         default context menu interface.
-   */
-  public ContextMenuIf getLeftSingleClickIf() {
-    return mDefaultLeftSingleClickMenuIf;
-  }
-  
-  /**
-   * Gets the left single ctrl click context menu interface.
-   * <p>
-   * This is context menu that should be executed by default when left clicking
-   * a program in the program table with the Ctrl key pressed.
-   *
-   * @return The default context menu action or <code>null</code> if there is no
-   *         default context menu interface.
-   * @since 3.0
-   */
-  public ContextMenuIf getLeftSingleCtrlClickIf() {
-    return mCtrlLeftClickIf;
-  }
-  
-  /**
-   * Gets the default context menu interface.
-   * <p>
-   * This is context menu that should be executed by default when double-clicking
-   * a program in the program table. It is shown with a bold font in the context
-   * menu.
-   *
-   * @return The default context menu action or <code>null</code> if there is no
-   *         default context menu interface.
-   */
-  public ContextMenuIf getDefaultContextMenuIf() {
-    return mDefaultContextMenuIf;
-  }
-  
-  /**
-   * Gets the middle click context menu interface.
-   * <p>
-   * This is the context menu that should be executed by default when middle-clicking
-   * a program in the program table. It is shown with an italic font in the context
-   * menu.
-   *
-   * @return The middle click context menu interface or <code>null</code> if there is no
-   *         middle click context menu interface defined.
-   */
-  public ContextMenuIf getMiddleClickIf() {
-    return mDefaultMiddleClickIf;
-  }
-  
-  /**
-   * Gets the middle double click context menu interface.
-   * <p>
-   * This is the context menu that should be executed by default when double middle-clicking
-   * a program in the program table. It is shown with a dark blue font in the context
-   * menu.
-   *
-   * @return The middle click context menu interface or <code>null</code> if there is no
-   *         middle click context menu interface defined.
-   */
-  public ContextMenuIf getMiddleDoubleClickIf() {
-    return mDefaultMiddleDoubleClickIf;
-  }
-  
-  /**
-   * Sets the left single click context menu interface.
-   *
-   * @param value The ContextMenuIf to set as left single click context menu interface.
-   */
-  public void setLeftSingleClickIf(ContextMenuIf value) {
-    mDefaultLeftSingleClickMenuIf = value;
-  }
-  
-  /**
-   * Sets the left single ctrl click context menu interface.
-   *
-   * @param value The ContextMenuIf to set as left single click context menu interface.
-   * @since 3.0
-   */
-  public void setLeftSingleCtrlClickIf(ContextMenuIf value) {
-    mCtrlLeftClickIf = value;
-  }
-  
-  /**
-   * Sets the default context menu interface.
-   *
-   * @param value The ContextMenuIf to set as default context menu interface.
-   */
-  public void setDefaultContextMenuIf(ContextMenuIf value) {
-    mDefaultContextMenuIf = value;
-  }
-  
-  /**
-   * Sets the middle click context menu interface.
-   *
-   * @param value The ContextMenuIf to set as middle click context menu interface.
-   */
-  public void setMiddleClickIf(ContextMenuIf value) {
-    mDefaultMiddleClickIf = value;
-  }
-  
-  /**
-   * Sets the middle double click context menu interface.
-   *
-   * @param value The ContextMenuIf to set as middle double click context menu interface.
-   */
-  public void setMiddleDoubleClickIf(ContextMenuIf value) {
-    mDefaultMiddleDoubleClickIf = value;
   }
   
   /**
@@ -514,10 +355,6 @@ public class ContextMenuManager {
    */
   public JMenu createContextMenuItems(ContextMenuIf callerIf, Program program, boolean markDefaultIf) {
     ArrayList<JMenuItem> items = new ArrayList<JMenuItem>();
-    ContextMenuIf leftSingleClickIf = getInstance().getLeftSingleClickIf();
-    ContextMenuIf defaultIf = getInstance().getDefaultContextMenuIf();
-    ContextMenuIf middleClickIf = getInstance().getMiddleClickIf();
-    ContextMenuIf middleDoubleClickIf = getInstance().getMiddleDoubleClickIf();
     ContextMenuIf[] menuIfArr = getInstance().getAvailableContextMenuIfs(false, true);
 
     JMenu rootMenu = new JMenu();
@@ -564,21 +401,6 @@ public class ContextMenuManager {
         if (actionMenu != null) {
           JMenuItem menuItem = MenuUtil.createMenuItem(actionMenu);
           items.add(menuItem);
-          if (menuIf == leftSingleClickIf && markDefaultIf && !menuIf.equals(DoNothingContextMenuItem.getInstance())) {
-            ((JMenuItem)getLastFirstMenuEntry(menuItem)).setForeground(new Color(0,90,0));
-          }
-          else if (menuIf == middleDoubleClickIf && markDefaultIf && !menuIf.equals(DoNothingContextMenuItem.getInstance())) {
-            ((JMenuItem)getLastFirstMenuEntry(menuItem)).setForeground(new Color(0,0,160));
-          }
-          if (menuIf == defaultIf && menuIf == middleClickIf && markDefaultIf && !menuIf.equals(DoNothingContextMenuItem.getInstance())) {
-            ((JMenuItem)getLastFirstMenuEntry(menuItem)).setFont(MenuUtil.CONTEXT_MENU_BOLDITALICFONT);
-          }
-          else if (menuIf == defaultIf && markDefaultIf && !menuIf.equals(DoNothingContextMenuItem.getInstance())) {
-            ((JMenuItem)getLastFirstMenuEntry(menuItem)).setFont(MenuUtil.CONTEXT_MENU_BOLDFONT);
-          }
-          else if (menuIf == middleClickIf && markDefaultIf && !menuIf.equals(DoNothingContextMenuItem.getInstance())) {
-            ((JMenuItem)getLastFirstMenuEntry(menuItem)).setFont(MenuUtil.CONTEXT_MENU_ITALICFONT);
-          }
 
           rootMenu.add(menuItem);
         }
@@ -621,14 +443,6 @@ public class ContextMenuManager {
     }
     
     return list;
-  }
-  
-  private MenuElement getLastFirstMenuEntry(MenuElement menu) {
-    if(menu.getSubElements().length == 0) {
-      return menu;
-    }
-    
-    return getLastFirstMenuEntry(menu.getSubElements()[0]);
   }
   
   public JPopupMenu createRemovedProgramContextMenu(final Program program) {

@@ -27,11 +27,18 @@
 package tvbrowser.ui.settings;
 
 import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 import javax.swing.Action;
-import javax.swing.DefaultListCellRenderer;
+import javax.swing.BoxLayout;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.Icon;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -47,12 +54,15 @@ import tvbrowser.core.contextmenu.SelectProgramContextMenuItem;
 import tvbrowser.core.contextmenu.SeparatorMenuItem;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginProxy;
+import util.settings.ContextMenuMouseActionSetting;
 import util.settings.StringProperty;
 import util.ui.CustomComboBoxRenderer;
+import util.ui.EnhancedPanelBuilder;
+import util.ui.Localizer;
+import util.ui.TVBrowserIcons;
 
-import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.factories.CC;
 import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.ActionMenu;
@@ -64,37 +74,169 @@ public class MouseSettingsTab implements devplugin.SettingsTab {
 
 	private static final util.ui.Localizer mLocalizer = util.ui.Localizer
 			.getLocalizerFor(MouseSettingsTab.class);
-
-	private ArrayList<MouseClickSetting> mSettings = new ArrayList<MouseSettingsTab.MouseClickSetting>();
-
+	
+  private static final String[] mLeftModifiersName = {
+    mLocalizer.msg("modifier.none","None"),
+    mLocalizer.msg("modifier.ctrl","Ctrl"),
+    mLocalizer.msg("modifier.ctrlShift","Ctrl+Shift"),
+    mLocalizer.msg("modifier.ctrlAlt","Ctrl+Alt"),
+    mLocalizer.msg("modifier.altShift","Alt+Shift"),
+    mLocalizer.msg("modifier.ctrlAltShift","Ctrl+Alt+Shift")
+  };
+  
+  private static final int[] mLeftModifiersEx = {
+    ContextMenuManager.NO_MOUSE_MODIFIER_EX,
+    MouseEvent.CTRL_DOWN_MASK,
+    MouseEvent.CTRL_DOWN_MASK | MouseEvent.SHIFT_DOWN_MASK,
+    MouseEvent.CTRL_DOWN_MASK | MouseEvent.ALT_DOWN_MASK,
+    MouseEvent.SHIFT_DOWN_MASK | MouseEvent.ALT_DOWN_MASK,
+    MouseEvent.CTRL_DOWN_MASK | MouseEvent.SHIFT_DOWN_MASK | MouseEvent.ALT_DOWN_MASK
+  };
+  
+  private static final String[] mMiddleModifiersName = {
+    mLocalizer.msg("modifier.none","None"),
+    mLocalizer.msg("modifier.ctrl","Ctrl"),
+    mLocalizer.msg("modifier.shift","Shift"),
+    mLocalizer.msg("modifier.ctrlShift","Ctrl+Shift"),
+    mLocalizer.msg("modifier.ctrlAlt","Ctrl+Alt"),
+    mLocalizer.msg("modifier.altShift","Alt+Shift"),
+    mLocalizer.msg("modifier.ctrlAltShift","Ctrl+Alt+Shift")
+  };
+  
+  private static final int[] mMiddleModifiersEx = {
+    ContextMenuManager.NO_MOUSE_MODIFIER_EX,
+    MouseEvent.CTRL_DOWN_MASK,
+    MouseEvent.SHIFT_DOWN_MASK,
+    MouseEvent.CTRL_DOWN_MASK | MouseEvent.SHIFT_DOWN_MASK,
+    MouseEvent.CTRL_DOWN_MASK | MouseEvent.ALT_DOWN_MASK,
+    MouseEvent.SHIFT_DOWN_MASK | MouseEvent.ALT_DOWN_MASK,
+    MouseEvent.CTRL_DOWN_MASK | MouseEvent.SHIFT_DOWN_MASK | MouseEvent.ALT_DOWN_MASK
+  };
+  
+  private static final String[] MOUSE_BUTTON_TEXT = {mLocalizer.msg("button.left", "Left"),mLocalizer.msg("button.middle", "Middle")};
+  private static final String[] CLICK_COUNT_TEXT = {mLocalizer.msg("click.single", "Single"),mLocalizer.msg("click.double", "Double")};
+  
+	private ArrayList<ContextMenuPanel> mMouseActions = new ArrayList<ContextMenuPanel>();
+	private JPanel mMainPanel;
+	
 	public JPanel createSettingsPanel() {
-		PanelBuilder contentPanel = new PanelBuilder(
-				new FormLayout("5dlu, pref, 3dlu, pref, fill:pref:grow, 3dlu",
-						"pref, 5dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref"));
+	  FormLayout layout = new FormLayout("5dlu, pref, 3dlu, pref, fill:pref:grow, 3dlu");
+		EnhancedPanelBuilder contentPanel = new EnhancedPanelBuilder(layout);
 		contentPanel.border(Borders.DIALOG);
+		
+		mMouseActions.clear();
+		
+		contentPanel.addRow();
+		contentPanel.addSeparator(mLocalizer.msg("title", "Title"), CC.xyw(1, contentPanel.getRow(), 6));
 
-		CellConstraints cc = new CellConstraints();
-		contentPanel
-				.addSeparator(mLocalizer.msg("title", "Title"), cc.xyw(1, 1, 6));
-
+		contentPanel.addRow();
 		contentPanel.add(
 				new JLabel(mLocalizer.msg("MouseButtons", "Mouse Buttons:")),
-				cc.xyw(2, 3, 4));
+				CC.xyw(2, contentPanel.getRow(), 4));
 
-		int row = 5;
-		for (MouseClickSetting clickSetting : mSettings) {
-			contentPanel.add(new JLabel(clickSetting.mLabel), cc.xy(2, row));
-			contentPanel.add(clickSetting.createComboxBox(), cc.xy(4, row));
-			row += 2;
-		}
+
+		mMainPanel = new JPanel();
+		mMainPanel.setLayout(new BoxLayout(mMainPanel, BoxLayout.Y_AXIS));
+		
+		contentPanel.addRow();
+		contentPanel.add(mMainPanel, CC.xyw(2, contentPanel.getRow(), 4));
+		
+    ContextMenuMouseActionSetting[] leftSingleClick = Settings.propLeftSingleClickIfArray.getContextMenuMouseActionArray();
+    ContextMenuMouseActionSetting[] leftDoubleClick = Settings.propLeftDoubleClickIfArray.getContextMenuMouseActionArray();
+    ContextMenuMouseActionSetting[] middleSingleClick = Settings.propMiddleSingleClickIfArray.getContextMenuMouseActionArray();
+    ContextMenuMouseActionSetting[] middleDoubleClick = Settings.propMiddleDoubleClickIfArray.getContextMenuMouseActionArray();
+    
+    addListEntries(leftSingleClick,1,1);
+    addListEntries(leftDoubleClick,1,2);
+    addListEntries(middleSingleClick,2,1);
+    addListEntries(middleDoubleClick,2,2);
+        
+    updateList();
+
+    JButton add = new JButton(mLocalizer.msg("add","Add a new mouse action"),TVBrowserIcons.newIcon(TVBrowserIcons.SIZE_SMALL));
+    add.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        ContextMenuMouseActionSetting setting = new ContextMenuMouseActionSetting(ContextMenuManager.NO_MOUSE_MODIFIER_EX,DoNothingContextMenuItem.getInstance().getId());
+        
+        ContextMenuPanel contextMenuPanel = new ContextMenuPanel(setting, 1, 1);
+        mMouseActions.add(contextMenuPanel);
+        
+        mMainPanel.add(contextMenuPanel);
+        mMainPanel.updateUI();
+      }
+    });
+    
+    contentPanel.addRow();
+    contentPanel.add(add, CC.xy(2,contentPanel.getRow()));
+		
 		return contentPanel.getPanel();
+	}
+	
+	private void addListEntries(ContextMenuMouseActionSetting[] actions, int mouseButton, int clickCount) {
+    for(ContextMenuMouseActionSetting setting : actions) {
+      ContextMenuPanel contextMenuPanel = new ContextMenuPanel(setting, mouseButton, clickCount);
+      mMouseActions.add(contextMenuPanel);
+    }
+	}
+	
+	private void updateList() {
+	  mMainPanel.removeAll();
+	  
+	  for(ContextMenuPanel panel : mMouseActions) {
+	    mMainPanel.add(panel);
+	  }
+	  
+	  mMainPanel.updateUI();
 	}
 
 	public void saveSettings() {
-		for (MouseClickSetting clickSetting : mSettings) {
-			clickSetting.saveSetting();
+	  ArrayList<ContextMenuMouseActionSetting> singleLeft = new ArrayList<ContextMenuMouseActionSetting>();
+	  ArrayList<ContextMenuMouseActionSetting> doubleLeft = new ArrayList<ContextMenuMouseActionSetting>();
+	  ArrayList<ContextMenuMouseActionSetting> singleMiddle = new ArrayList<ContextMenuMouseActionSetting>();
+	  ArrayList<ContextMenuMouseActionSetting> doubleMiddle = new ArrayList<ContextMenuMouseActionSetting>();
+	  
+		for (ContextMenuPanel mouseAction : mMouseActions) {
+		  ContextMenuMouseActionSetting setting = mouseAction.getSetting();
+		  
+		  if(mouseAction.isLeftMouseButton()) {
+		    if(mouseAction.isSingleClick()) {
+		      if(!containsModifier(singleLeft, setting.getModifiersEx())) {
+		        singleLeft.add(setting);
+		      }
+		    }
+		    else if(!containsModifier(doubleLeft, setting.getModifiersEx())) {
+		      doubleLeft.add(setting);
+		    }
+		  }
+		  else {
+		    if(mouseAction.isSingleClick()) {
+		      if(!containsModifier(singleMiddle, setting.getModifiersEx())) {
+		        singleMiddle.add(setting);
+		      }
+		    }
+		    else if(!containsModifier(doubleMiddle, setting.getModifiersEx())) {
+		      doubleMiddle.add(setting);
+		    }
+		  }
 		}
+		
+		Settings.propLeftSingleClickIfArray.setContextMenuMouseActionArray(singleLeft.toArray(new ContextMenuMouseActionSetting[singleLeft.size()]));
+		Settings.propLeftDoubleClickIfArray.setContextMenuMouseActionArray(doubleLeft.toArray(new ContextMenuMouseActionSetting[doubleLeft.size()]));
+		Settings.propMiddleSingleClickIfArray.setContextMenuMouseActionArray(singleMiddle.toArray(new ContextMenuMouseActionSetting[singleMiddle.size()]));
+		Settings.propMiddleDoubleClickIfArray.setContextMenuMouseActionArray(doubleMiddle.toArray(new ContextMenuMouseActionSetting[doubleMiddle.size()]));		
+		
 		ContextMenuManager.getInstance().init();
+	}
+	
+	private boolean containsModifier(ArrayList<ContextMenuMouseActionSetting> list, int modifier) {
+	  for(ContextMenuMouseActionSetting setting : list) {
+	    if(setting.getModifiersEx() == modifier) {
+	      return true;
+	    }
+	  }
+	  
+	  return false;
 	}
 
 	public Icon getIcon() {
@@ -105,6 +247,101 @@ public class MouseSettingsTab implements devplugin.SettingsTab {
 	public String getTitle() {
 		return mLocalizer.msg("title", "context menu");
 	}
+	
+	private class ContextMenuPanel extends JPanel {
+	  private JComboBox mMouseButton;
+	  private JComboBox mModifiersEx;
+	  private JComboBox mClickCount;
+	  private MouseClickSetting mMouseClickSetting;
+	  
+	  private ContextMenuPanel(ContextMenuMouseActionSetting setting, int mouseButton, int clickCount) {
+	    EnhancedPanelBuilder pb = new EnhancedPanelBuilder("default,3dlu,default,3dlu,default,3dlu,default,3dlu,default",this);
+
+	    pb.addRow();
+	    pb.addLabel(mLocalizer.msg("mouseButton", "Mouse button"), CC.xy(1, pb.getRow()));
+	    pb.addLabel(mLocalizer.msg("clickCount", "Click count"),CC.xy(3, pb.getRow()));
+	    pb.addLabel(mLocalizer.msg("modifier", "Keyboard"), CC.xy(5, pb.getRow()));
+	    pb.addLabel(mLocalizer.msg("action", "Action"), CC.xy(7, pb.getRow()));
+	    
+	    pb.addRow();
+	    
+	    mMouseButton = new JComboBox(MOUSE_BUTTON_TEXT);
+	    mMouseButton.setSelectedIndex(mouseButton-1);
+	    mModifiersEx = new JComboBox(mouseButton == 1 ? mLeftModifiersName : mMiddleModifiersName);
+	    mModifiersEx.setSelectedIndex(indexOfModifier(mouseButton == 1 ? mLeftModifiersEx : mMiddleModifiersEx, setting.getModifiersEx()));
+	    mMouseClickSetting = new MouseClickSetting(setting.getContextMenuIf());
+	    mClickCount = new JComboBox(CLICK_COUNT_TEXT);
+	    mClickCount.setSelectedIndex(clickCount-1);
+	    
+	    mMouseButton.addItemListener(new ItemListener() {
+        @Override
+        public void itemStateChanged(ItemEvent e) {
+          if(e.getStateChange() == ItemEvent.SELECTED) {
+            ((DefaultComboBoxModel)mModifiersEx.getModel()).removeAllElements();
+            
+            if(e.getItem().equals(MOUSE_BUTTON_TEXT[0])) {
+              for(String name : mLeftModifiersName) {
+                ((DefaultComboBoxModel)mModifiersEx.getModel()).addElement(name);
+              }
+            }
+            else {
+              for(String name : mMiddleModifiersName) {
+                ((DefaultComboBoxModel)mModifiersEx.getModel()).addElement(name);
+              }              
+            }
+          }
+        }
+      });
+	    
+	    JButton delete = new JButton(TVBrowserIcons.delete(TVBrowserIcons.SIZE_SMALL));
+	    delete.setToolTipText(Localizer.getLocalization(Localizer.I18N_DELETE));
+	    delete.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          mMouseActions.remove(ContextMenuPanel.this);
+          mMainPanel.remove(ContextMenuPanel.this);
+          mMainPanel.updateUI();
+        }
+      });
+	    
+	    pb.add(mMouseButton, CC.xy(1, pb.getRow()));
+	    pb.add(mClickCount, CC.xy(3, pb.getRow()));
+	    pb.add(mModifiersEx, CC.xy(5, pb.getRow()));
+	    pb.add(mMouseClickSetting.createComboxBox(), CC.xy(7, pb.getRow()));
+	    pb.add(delete, CC.xy(9, pb.getRow()));
+	  }
+	  
+	  private int indexOfModifier(int[] modifierExArr, int modifierEx) {
+	    for(int i = 0; i < modifierExArr.length; i++) {
+	      if(modifierExArr[i] == modifierEx) {
+	        return i;
+	      }
+	    }
+	    
+	    return 0;
+	  }
+	  
+	  public ContextMenuMouseActionSetting getSetting() {
+	    int mouseButton = mMouseButton.getSelectedIndex() + 1;
+	    ContextMenuIf selected = mMouseClickSetting.getSelectedIf();
+	    
+	    int modifierEx = mouseButton == 1 ? mLeftModifiersEx[mModifiersEx.getSelectedIndex()] : mMiddleModifiersEx[mModifiersEx.getSelectedIndex()];
+	    
+	    ContextMenuMouseActionSetting setting = new ContextMenuMouseActionSetting(modifierEx,selected.getId());
+	    
+	    return setting;
+	  }
+	  
+	  public boolean isLeftMouseButton() {
+	    return mMouseButton.getSelectedIndex() == 0;
+	  }
+	  
+	  public boolean isSingleClick() {
+	    return mClickCount.getSelectedIndex() == 0;
+	  }
+	}
+	
+	
 
 	private static class ContextMenuCellRenderer extends CustomComboBoxRenderer {
 		public ContextMenuCellRenderer(ListCellRenderer backendRenderer) {
@@ -147,45 +384,18 @@ public class MouseSettingsTab implements devplugin.SettingsTab {
 
 	}
 
-	public MouseSettingsTab() {
-		mSettings.add(new MouseClickSetting(ContextMenuManager.getInstance()
-				.getLeftSingleClickIf(), Settings.propLeftSingleClickIf, mLocalizer
-				.msg("leftSingleClickLabel", "Left single click")));
-		mSettings.add(new MouseClickSetting(ContextMenuManager.getInstance()
-				.getDefaultContextMenuIf(), Settings.propDoubleClickIf, mLocalizer.msg(
-				"doubleClickLabel", "Double click")));
-		mSettings.add(new MouseClickSetting(ContextMenuManager.getInstance()
-				.getMiddleClickIf(), Settings.propMiddleClickIf, mLocalizer.msg(
-				"middleClickLabel", "Middle single click")));
-		mSettings.add(new MouseClickSetting(ContextMenuManager.getInstance()
-				.getMiddleDoubleClickIf(), Settings.propMiddleDoubleClickIf, mLocalizer
-				.msg("middleDoubleClickLabel", "Middle double click")));
-		mSettings.add(new MouseClickSetting(ContextMenuManager.getInstance()
-				.getLeftSingleCtrlClickIf(), Settings.propLeftSingleCtrlClickIf,
-				mLocalizer.msg("leftCtrlClickLabel", "Ctrl left click")));
-	}
-
 	private static class MouseClickSetting {
-		private String mLabel;
 		private ContextMenuIf mClickInterface;
-		private StringProperty mSettingsProperty;
 		private JComboBox mComboBox;
 
-		public MouseClickSetting(ContextMenuIf clickIf,
-				StringProperty settingsProperty, final String label) {
+		public MouseClickSetting(ContextMenuIf clickIf) {
 			mClickInterface = clickIf;
-			mLabel = label;
-			mSettingsProperty = settingsProperty;
 		}
 
-		public void saveSetting() {
+		public ContextMenuIf getSelectedIf() {
 			ContextMenuIf selectedIf = (ContextMenuIf) mComboBox.getSelectedItem();
-			if (selectedIf != null) {
-				mSettingsProperty.setString(selectedIf.getId());
-			} else {
-				mSettingsProperty.setString(null);
-			}
-			mClickInterface = selectedIf;
+			
+			return selectedIf;
 		}
 
 		public JComboBox createComboxBox() {

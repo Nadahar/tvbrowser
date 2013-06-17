@@ -54,12 +54,18 @@ public class ContextMenuMouseActionSetting {
   public ContextMenuMouseActionSetting(String value) throws NullPointerException {
     String[] parts = value.split(SEPARATOR);
     
-    mModifiersEx = Integer.parseInt(parts[0]);
+    if(parts[0] != null && parts[0].length() > 0) {
+      mModifiersEx = Integer.parseInt(parts[0]);
+    }
+    else {
+      mModifiersEx = ContextMenuManager.NO_MOUSE_MODIFIER_EX;
+    }
+    
     mContextMenuId = parts[1];
   }
   
   public String toString() {
-    StringBuilder builder = new StringBuilder(mModifiersEx);
+    StringBuilder builder = new StringBuilder(String.valueOf(mModifiersEx));
     
     builder.append(SEPARATOR);
     builder.append(mContextMenuId);
