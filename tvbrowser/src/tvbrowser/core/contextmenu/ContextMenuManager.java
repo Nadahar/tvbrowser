@@ -30,6 +30,8 @@ package tvbrowser.core.contextmenu;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -137,6 +139,145 @@ public class ContextMenuManager {
       new ContextMenuManager();
     }
     return mInstance;
+  }
+  
+  /**
+   * Gets the ContextMenuIf for a single mouse click.
+   * @param e The MouseEvent to get the ContextMenuIf for.
+   * @return The ContextMenuIf for a single mouse click that matches the mouse event
+   * or <code>null</code> if there is no single mouse click ContextMenuIf for the mouse event.
+   */
+  public ContextMenuIf getContextMenuForSingleClick(MouseEvent e) {
+    //TODO: Make this user configurable
+    boolean shiftDown = (e.getModifiersEx() & MouseEvent.SHIFT_DOWN_MASK) == MouseEvent.SHIFT_DOWN_MASK;
+    boolean altDown = (e.getModifiersEx() & MouseEvent.ALT_DOWN_MASK) == MouseEvent.ALT_DOWN_MASK;
+    boolean ctrlDown = (e.getModifiersEx() & MouseEvent.CTRL_DOWN_MASK) == MouseEvent.CTRL_DOWN_MASK;
+    
+    if(shiftDown && !altDown && !ctrlDown) {
+      //TODO SHIFT
+      if(SwingUtilities.isLeftMouseButton(e)) {
+        
+      }
+      else if(SwingUtilities.isMiddleMouseButton(e)) {
+        
+      }
+    }
+    else if(ctrlDown && !shiftDown && !altDown) {
+      //TODO CTRL
+      if(SwingUtilities.isLeftMouseButton(e)) {
+        return mCtrlLeftClickIf;
+      }
+      else if(SwingUtilities.isMiddleMouseButton(e)) {
+        
+      }
+    }
+    else if(ctrlDown && shiftDown && !altDown) {
+      //TODO CTRL+SHIFT
+      if(SwingUtilities.isLeftMouseButton(e)) {
+        
+      }
+      else if(SwingUtilities.isMiddleMouseButton(e)) {
+        
+      }
+    }
+    else if(SwingUtilities.isLeftMouseButton(e)) {
+      if(altDown && !shiftDown && !ctrlDown) {
+        //TODO ALT
+        
+      }
+      else if(altDown && shiftDown && !ctrlDown) {
+        //TODO ALT+SHIFT
+        
+      }
+      else if(altDown && ctrlDown && !shiftDown) {
+        //TODO ALT+CTRL
+        
+      }
+      else if(altDown && ctrlDown && shiftDown) {
+        // TODO ALT+SHIFT+CTRL
+        
+      }
+      else {
+        //TODO single left click
+        return mDefaultLeftSingleClickMenuIf;
+      }
+    }
+    else if(SwingUtilities.isMiddleMouseButton(e)) {
+      // TODO single middle click
+      return mDefaultMiddleClickIf;
+    }
+    
+    return null;
+  }
+
+  
+  /**
+   * Gets the ContextMenuIf for a double mouse click.
+   * @param e The MouseEvent to get the ContextMenuIf for.
+   * @return The ContextMenuIf for a double mouse click that matches the mouse event
+   * or <code>null</code> if there is no double mouse click ContextMenuIf for the mouse event.
+   */
+  public ContextMenuIf getContextMenuForDoubleClick(MouseEvent e) {
+    //TODO: Make this user configurable
+    boolean shiftDown = (e.getModifiersEx() & MouseEvent.SHIFT_DOWN_MASK) == MouseEvent.SHIFT_DOWN_MASK;
+    boolean altDown = (e.getModifiersEx() & MouseEvent.ALT_DOWN_MASK) == MouseEvent.ALT_DOWN_MASK;
+    boolean ctrlDown = (e.getModifiersEx() & MouseEvent.CTRL_DOWN_MASK) == MouseEvent.CTRL_DOWN_MASK;
+    
+    if(shiftDown && !altDown && !ctrlDown) {
+      //TODO SHIFT
+      if(SwingUtilities.isLeftMouseButton(e)) {
+        
+      }
+      else if(SwingUtilities.isMiddleMouseButton(e)) {
+        
+      }
+    }
+    else if(ctrlDown && !shiftDown && !altDown) {
+      //TODO CTRL
+      if(SwingUtilities.isLeftMouseButton(e)) {
+        
+      }
+      else if(SwingUtilities.isMiddleMouseButton(e)) {
+        
+      }
+    }
+    else if(ctrlDown && shiftDown && !altDown) {
+      //TODO CTRL+SHIFT
+      if(SwingUtilities.isLeftMouseButton(e)) {
+        
+      }
+      else if(SwingUtilities.isMiddleMouseButton(e)) {
+        
+      }
+    }
+    else if(SwingUtilities.isLeftMouseButton(e)) {
+      if(altDown && !shiftDown && !ctrlDown) {
+        //TODO ALT
+        
+      }
+      else if(altDown && shiftDown && !ctrlDown) {
+        //TODO ALT+SHIFT
+        
+      }
+      else if(altDown && ctrlDown && !shiftDown) {
+        //TODO ALT+CTRL
+        
+      }
+      else if(altDown && ctrlDown && shiftDown) {
+        // TODO ALT+SHIFT+CTRL
+        
+      }
+      else {
+        //TODO double left click
+        return mDefaultContextMenuIf;
+      }
+    }
+    else if(SwingUtilities.isMiddleMouseButton(e)) {
+      // TODO double middle click
+      return mDefaultMiddleDoubleClickIf;
+    }
+    
+    return null;
   }
   
   /**
