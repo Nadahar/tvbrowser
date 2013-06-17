@@ -49,6 +49,8 @@ import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.plugin.PluginStateListener;
 import util.exc.TvBrowserException;
+import util.programmouseevent.ProgramMouseAndContextMenuListener;
+import util.programmouseevent.ProgramMouseEventHandler;
 import util.settings.PluginPictureSettings;
 import util.settings.ProgramPanelSettings;
 import devplugin.ContextMenuIf;
@@ -61,13 +63,16 @@ import devplugin.Program;
  * This Class extends a JList for showing Programs
  */
 public class ProgramList extends JList implements ChangeListener,
-    ListDataListener, PluginStateListener {
+    ListDataListener, PluginStateListener, ProgramMouseAndContextMenuListener {
   private final static Localizer mLocalizer = Localizer.getLocalizerFor(ProgramList.class);
   /** Key for separator list entry */
   public final static String DATE_SEPARATOR = "DATE_SEPARATOR";
 
   private Vector<Program> mPrograms = new Vector<Program>();
   private boolean mSeparatorsCreated = false;
+  
+  private ProgramMouseEventHandler mMouseEventHandler;
+  private ContextMenuIf mCaller;
 
   /**
    * Creates the JList and adds the default MouseListeners (PopUpBox)
@@ -263,6 +268,12 @@ public class ProgramList extends JList implements ChangeListener,
    *          The ContextMenuIf that called this.
    */
   public void addMouseListeners(final ContextMenuIf caller) {
+    if(mMouseEventHandler == null) {
+      mMouseEventHandler = new ProgramMouseEventHandler(this, caller);
+      addMouseListener(mMouseEventHandler);
+      mCaller = caller;
+    }
+   /* 
     addMouseListener(new MouseAdapter() {
       private Thread mLeftSingleClickThread;
       private Thread mMiddleSingleClickThread;
@@ -358,7 +369,7 @@ public class ProgramList extends JList implements ChangeListener,
         }
         return null;
 			}
-    });
+    });*/
   }
 
   /**
@@ -628,5 +639,27 @@ public class ProgramList extends JList implements ChangeListener,
    */
   public static String getNextActionTooltip() {
     return mLocalizer.msg("nextTooltip", "Scrolls to next day from current view position (if there is next day in the list)");
+  }
+
+  @Override
+  public Program getProgramForMouseEvent(MouseEvent e) {
+    final int inx = locationToIndex(e.getPoint());
+    if (inx >= 0) {
+      final Object element = ProgramList.this.getModel()
+      .getElementAt(inx);
+
+      if(element instanceof Program) {
+        return (Program) element;
+      }
+    }
+    return null;
+  }
+
+  @Override
+  public void mouseEventActionFinished() {}
+
+  @Override
+  public void showContextMenu(MouseEvent e) {
+    showPopup(e, mCaller);
   }
 }
