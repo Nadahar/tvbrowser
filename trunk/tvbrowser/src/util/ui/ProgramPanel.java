@@ -64,6 +64,7 @@ import tvbrowser.extras.common.InternalPluginProxyList;
 import tvbrowser.extras.favoritesplugin.FavoritesPluginProxy;
 import tvbrowser.extras.favoritesplugin.core.Favorite;
 import tvbrowser.extras.favoritesplugin.dlgs.FavoriteTreeModel;
+import tvbrowser.ui.mainframe.MainFrame;
 import util.io.IOUtilities;
 import util.misc.StringPool;
 import util.program.ProgramUtilities;
@@ -424,6 +425,39 @@ private static Font getDynamicFontSize(Font font, int offset) {
   public void setProgram(Program program) {
     setProgram(program, -1);
   }
+  
+  private boolean dontShowPictureAreaIcon(boolean dontShow) {
+    if(mSettings.isShowingPictureForPlugins()) {
+      String[] pluginIds = mSettings.getPluginIds();
+      Marker[] markers = mProgram.getMarkerArr();
+
+      if(markers != null && pluginIds != null) {
+        for (Marker marker : markers) {
+          for (String pluginId : pluginIds) {
+            if(marker.getId().compareTo(pluginId) == 0) {
+              dontShow = false;
+              break;
+            }
+          }
+        }
+      }
+    }
+    
+    return dontShow;
+  }
+  
+  /**
+   * @return If the picture state is changed.
+   */
+  public boolean pictureStateChanged() { 
+    boolean dontShow = dontShowPictureAreaIcon(true);
+    
+    if(dontShow && mPictureAreaIcon.getIconHeight() > 0 || !dontShow && mPictureAreaIcon.getIconHeight() == 0) {
+      return mProgram.hasFieldValue(ProgramFieldType.PICTURE_TYPE);
+    }
+    
+    return false;
+  }
 
   /**
    * Sets the program this panel shows.
@@ -458,23 +492,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
       }
     }
 
-    boolean dontShow = true;
-
-    if(mSettings.isShowingPictureForPlugins()) {
-      String[] pluginIds = mSettings.getPluginIds();
-      Marker[] markers = mProgram.getMarkerArr();
-
-      if(markers != null && pluginIds != null) {
-        for (Marker marker : markers) {
-          for (String pluginId : pluginIds) {
-            if(marker.getId().compareTo(pluginId) == 0) {
-              dontShow = false;
-              break;
-            }
-          }
-        }
-      }
-    }
+    boolean dontShow = dontShowPictureAreaIcon(true);
 
     // Create the picture area icon
     int length = program.getLength();
