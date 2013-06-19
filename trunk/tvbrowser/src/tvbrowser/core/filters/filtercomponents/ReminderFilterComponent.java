@@ -61,11 +61,13 @@ public class ReminderFilterComponent extends AbstractFilterComponent {
   public void write(ObjectOutputStream out) throws IOException {
   }
 
+  public String getTypeDescription() {
+    return mLocalizer.msg("desc",
+        "Accepts all programs that are marked by the Reminder.");
+  }
+  
   public JPanel getSettingsPanel() {
-    JPanel p1 = new JPanel();
-    p1.add(new JLabel(mLocalizer.msg("desc",
-        "Accepts all programs that are marked by the Reminder.")));
-    return p1;
+    return null;
   }
 
   public void saveSettings() {

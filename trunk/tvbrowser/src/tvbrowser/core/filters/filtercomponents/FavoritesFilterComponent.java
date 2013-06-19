@@ -59,12 +59,14 @@ public class FavoritesFilterComponent extends AbstractFilterComponent {
   public void write(ObjectOutputStream out) throws IOException {
     // no settings to store
   }
+  
+  public String getTypeDescription() {
+    return mLocalizer.msg("desc",
+        "Accepts all programs that are marked as Favorite.");
+  }
 
   public JPanel getSettingsPanel() {
-    JPanel p1 = new JPanel();
-    p1.add(new JLabel(mLocalizer.msg("desc",
-        "Accepts all programs that are marked as Favorite.")));
-    return p1;
+    return null;
   }
 
   public void saveSettings() {

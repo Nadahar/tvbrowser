@@ -110,12 +110,15 @@ public class ChannelFilterComponent extends AbstractFilterComponent {
       mSelectedChannels[i] = (Channel) o[i];
     }
   }
+  
+  public String getTypeDescription() {
+    return mLocalizer.msg("description",
+        "This filter accepts programs belonging to the following channels:");
+  }
 
   public JPanel getSettingsPanel() {
     JPanel content = new JPanel(new BorderLayout());
-    content.add(new JLabel(mLocalizer.msg("description",
-        "This filter accepts programs belonging to the following channels:")),
-        BorderLayout.NORTH);
+
     Channel[] channels = tvbrowser.core.ChannelList.getSubscribedChannels();
     mList = new OrderChooser(mSelectedChannels, channels);
 

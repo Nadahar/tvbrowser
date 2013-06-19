@@ -132,13 +132,14 @@ public class MassFilterComponent extends AbstractFilterComponent {
     mSearchFormSettings.writeData(out);
   }
 
+  public String getTypeDescription() {
+    return mLocalizer.msg("desc","help-text");
+  }
+  
   public JPanel getSettingsPanel() {
     mNewSearchFormSettings = mSearchFormSettings;
 
     mSettingsPanel = new JPanel(new BorderLayout());
-
-    mSettingsPanel.add(UiUtilities.createHelpTextArea(mLocalizer.msg("desc",
-        "help-text")), BorderLayout.NORTH);
 
     mTextInput = new JTextArea(mText);
     JScrollPane scrollPane = new JScrollPane(mTextInput);

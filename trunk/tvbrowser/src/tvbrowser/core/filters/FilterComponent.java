@@ -89,6 +89,14 @@ public interface FilterComponent {
   public String getName();
   
   /**
+   * Gets the description of a FilterComponent type.
+   * 
+   * @return The description of the FilterComponent type.
+   * @since 3.3.1
+   */
+  public String getTypeDescription();
+  
+  /**
    * Gets the description of a FilterComponent.
    * 
    * @return The description of the FilterComponent.

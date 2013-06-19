@@ -84,6 +84,10 @@ public class TimeFilterComponent extends AbstractFilterComponent {
       }
     }
   }
+  
+  public String getTypeDescription() {
+    return mLocalizer.msg("desc", "");
+  }
 
   @Override
   public String toString() {
@@ -131,8 +135,6 @@ public class TimeFilterComponent extends AbstractFilterComponent {
     mIncludeBtn = new JCheckBox(mLocalizer.msg("includeRunning",
         "Include programs running at start time"));
     mIncludeBtn.setSelected(mShowRunning);
-    content.add(UiUtilities.createHelpTextArea(mLocalizer.msg("desc", "")),
-        BorderLayout.NORTH);
     content.add(timePn, BorderLayout.CENTER);
     content.add(mIncludeBtn, BorderLayout.SOUTH);
 
