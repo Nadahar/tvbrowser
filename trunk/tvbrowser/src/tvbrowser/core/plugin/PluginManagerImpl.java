@@ -539,12 +539,12 @@ public class PluginManagerImpl implements PluginManager {
     return mExampleProgram;
   }
   
-  /**@deprecated since 3.3.1**/
+  /**@deprecated since 3.3.1 Use {@link #ProgramMouseEventHandler} and/or {@link #ProgramKeyEventHandler} instead.**/
   public void handleProgramSingleClick(Program program) {
     handleProgramSingleClick(program, null);
   }
   
-  /**@deprecated since 3.3.1**/
+  /**@deprecated since 3.3.1 Use {@link #ProgramMouseEventHandler} and/or {@link #ProgramKeyEventHandler} instead.**/
   public void handleProgramSingleClick(Program program, ContextMenuIf caller) {
     ContextMenuMouseActionSetting[] leftSingleSetting = Settings.propLeftSingleClickIfArray.getContextMenuMouseActionArray();
     
@@ -565,7 +565,7 @@ public class PluginManagerImpl implements PluginManager {
     handleAction(program, leftSingleClickIf.getContextMenuActions(program));
   }
 
-  /**@deprecated since 3.3.1**/
+  /**@deprecated since 3.3.1 Use {@link #ProgramMouseEventHandler} and/or {@link #ProgramKeyEventHandler} instead.**/
   public void handleProgramSingleCtrlClick(Program program, ContextMenuIf caller) {
     ContextMenuMouseActionSetting[] leftSingleSetting = Settings.propLeftSingleClickIfArray.getContextMenuMouseActionArray();
     
@@ -597,7 +597,7 @@ public class PluginManagerImpl implements PluginManager {
    * @param program The program to pass to the default context menu plugin.
    *
    * @since 1.1
-   * @deprecated since 3.3.1
+   * @deprecated since 3.3.1 Use {@link #ProgramMouseEventHandler} and/or {@link #ProgramKeyEventHandler} instead.
    */
   public void handleProgramDoubleClick(Program program) {
     handleProgramDoubleClick(program, null);
@@ -612,7 +612,7 @@ public class PluginManagerImpl implements PluginManager {
    * @param caller ContextMenuIf that calls this. Prevents the ContextMenuIf to be activated twice
    *
    * @since 1.1
-   * @deprecated since 3.3.1
+   * @deprecated since 3.3.1 Use {@link #ProgramMouseEventHandler} and/or {@link #ProgramKeyEventHandler} instead.
    */
   public void handleProgramDoubleClick(Program program, ContextMenuIf caller) {
     ContextMenuMouseActionSetting[] leftDoubleSetting = Settings.propLeftDoubleClickIfArray.getContextMenuMouseActionArray();
@@ -646,7 +646,7 @@ public class PluginManagerImpl implements PluginManager {
    * @param program The program to pass to the middle click context menu plugin.
    *
    * @since 1.1
-   * @deprecated since 3.3.1
+   * @deprecated since 3.3.1 Use {@link #ProgramMouseEventHandler} and/or {@link #ProgramKeyEventHandler} instead.
    */
   public void handleProgramMiddleClick(Program program) {
     handleProgramMiddleClick(program, null);
@@ -662,7 +662,7 @@ public class PluginManagerImpl implements PluginManager {
    * @param caller ContextMenuIf that calls this. Prevents the ContextMenuIf to be activated twice.
    *
    * @since 1.1
-   * @deprecated since 3.3.1
+   * @deprecated since 3.3.1 Use {@link #ProgramMouseEventHandler} and/or {@link #ProgramKeyEventHandler} instead.
    */
   public void handleProgramMiddleClick(Program program, ContextMenuIf caller) {
     ContextMenuMouseActionSetting[] middleLeftSetting = Settings.propMiddleSingleClickIfArray.getContextMenuMouseActionArray();
@@ -695,7 +695,7 @@ public class PluginManagerImpl implements PluginManager {
    * @param program The program to pass to the middle click context menu action.
    *
    * @since 3.0
-   * @deprecated since 3.3.1
+   * @deprecated since 3.3.1 Use {@link #ProgramMouseEventHandler} and/or {@link #ProgramKeyEventHandler} instead.
    */
   public void handleProgramMiddleDoubleClick(Program program) {
     handleProgramMiddleDoubleClick(program, null);
@@ -710,7 +710,7 @@ public class PluginManagerImpl implements PluginManager {
    * @param caller ContextMenuIf that calls this. Prevents the ContextMenuIf to be activated twice.
    *
    * @since 3.0
-   * @deprecated since 3.3.1
+   * @deprecated since 3.3.1 Use {@link #ProgramMouseEventHandler} and/or {@link #ProgramKeyEventHandler} instead.
    */
   public void handleProgramMiddleDoubleClick(Program program, ContextMenuIf caller) {
     ContextMenuMouseActionSetting[] middleDoubleSetting = Settings.propMiddleDoubleClickIfArray.getContextMenuMouseActionArray();
