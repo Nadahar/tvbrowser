@@ -29,6 +29,7 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -38,9 +39,12 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Vector;
 
+import javax.swing.AbstractAction;
 import javax.swing.DefaultListModel;
+import javax.swing.JComponent;
 import javax.swing.JList;
 import javax.swing.JPopupMenu;
+import javax.swing.KeyStroke;
 import javax.swing.ListModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
@@ -49,6 +53,7 @@ import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
 import tvbrowser.core.Settings;
+import tvbrowser.core.contextmenu.ContextMenuManager;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.plugin.PluginStateListener;
@@ -83,6 +88,7 @@ public class ProgramList extends JList implements ChangeListener,
   private ProgramMouseEventHandler mMouseEventHandler;
   private ContextMenuIf mCaller;
   private ProgramKeyEventHandler mKeyEventHandler;
+  private JPopupMenu mPopupMenu;
 
   /**
    * Creates the JList and adds the default MouseListeners (PopUpBox)
@@ -314,15 +320,33 @@ public class ProgramList extends JList implements ChangeListener,
    *          The ContextMenuIf that called this
    */
   private void showPopup(Point p, ContextMenuIf caller) {
-    PluginManager mng = Plugin.getPluginManager();
-
-    int inx = locationToIndex(p);
-    setSelectedIndex(inx);
-
-    if (getModel().getElementAt(inx) instanceof Program) {
-      Program prog = (Program) getModel().getElementAt(inx);
-      JPopupMenu menu = mng.createPluginContextMenu(prog, caller);
-      menu.show(ProgramList.this, p.x - 15, p.y - 15);
+    if(mPopupMenu != null && mPopupMenu.isVisible()) {
+      mPopupMenu.setVisible(false);      
+    }
+    else {
+      PluginManager mng = Plugin.getPluginManager();
+  
+      int inx = locationToIndex(p);
+      setSelectedIndex(inx);
+  
+      if (getModel().getElementAt(inx) instanceof Program) {
+        Program prog = (Program) getModel().getElementAt(inx);
+        mPopupMenu = mng.createPluginContextMenu(prog, caller);
+        
+        mPopupMenu.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, ContextMenuManager.NO_MOUSE_MODIFIER_EX), "close window");
+        mPopupMenu.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_R, ContextMenuManager.NO_MOUSE_MODIFIER_EX), "close window");
+        mPopupMenu.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_CONTEXT_MENU, ContextMenuManager.NO_MOUSE_MODIFIER_EX), "close window");
+        
+        mPopupMenu.getActionMap().put("close window", new AbstractAction() {
+          @Override
+          public void actionPerformed(ActionEvent e) {
+            mPopupMenu.setVisible(false);
+          }
+        });
+        
+        
+        mPopupMenu.show(ProgramList.this, p.x - 15, p.y - 15);
+      }
     }
   }
 
