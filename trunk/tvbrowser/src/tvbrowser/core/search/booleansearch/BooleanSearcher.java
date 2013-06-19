@@ -99,6 +99,8 @@ public class BooleanSearcher extends AbstractSearcher {
     mReplaceSpCh = true;
 
     pattern = pattern.trim();
+    pattern = pattern.replace(mLocalizer.msg("and","AND"), "AND").replace(mLocalizer.msg("or","AND"), "OR").replace(mLocalizer.msg("not","AND"), "NOT");
+    
     int braceDifference = StringUtils.countMatches(pattern, "(") - StringUtils.countMatches(pattern, ")");
     if (braceDifference > 0) {
       pattern = pattern + StringUtils.repeat(")", braceDifference);
