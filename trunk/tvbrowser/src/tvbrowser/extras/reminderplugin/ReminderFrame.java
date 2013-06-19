@@ -90,7 +90,12 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
    * reminder should appear.
    */
   static final String[] REMIND_MSG_ARR = {
-    mLocalizer.msg("remind.-1", "Don't remind me"),
+    mLocalizer.msg("remind.-31", "Don't remind me"),
+    mLocalizer.msg("remind.-30","Remind me when the program runs 30 minutes"),
+    mLocalizer.msg("remind.-20","Remind me when the program runs 20 minutes"),
+    mLocalizer.msg("remind.-10","Remind me when the program runs 10 minutes"),
+    mLocalizer.msg("remind.-5","Remind me when the program runs 5 minutes"),
+    mLocalizer.msg("remind.-1","Remind me when the program runs one minute"),
     mLocalizer.msg("remind.0", "Remind me when the program begins"),
     mLocalizer.msg("remind.1", "Remind me one minute before"),
     mLocalizer.msg("remind.2", "Remind me 2 minutes before"),
@@ -110,11 +115,11 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
   };
 
   /**
-   * The values for the choosable options how long before a program start the
+   * The values for the selectable options how long before a program start the
    * reminder should appear.
    */
   static final int[] REMIND_VALUE_ARR
-    = { -1, 0, 1, 2, 3, 5, 10, 15, 30, 60,
+    = { -31, -30, -20, -10, -5, -1, 0, 1, 2, 3, 5, 10, 15, 30, 60,
       90, 120, 240, 480, 720, 1440, 7 * 1440 };
 
   /**
@@ -218,6 +223,7 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
     programsPanel.add(mHeader = new JLabel(""), cc.xyw(1, 1, 3));
     programsPanel.setRow(3);
     int remainingMinutesMax = 0;
+    int runningMinutes = 0;
 
     ArrayList<ProgramPanel> panels = new ArrayList<ProgramPanel>(reminders.size());
 
@@ -227,9 +233,14 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
       // text label
       String msg;
       final int progMinutesAfterMidnight = program.getStartTime();
+      int minutesAfterMidnight = IOUtilities.getMinutesAfterMidnight() + 1440
+          * (program.getDate().getNumberOfDaysSince(Date.getCurrentDate()));
       int remainingMinutes = 0;
+      
+      runningMinutes = Math.max(runningMinutes, (minutesAfterMidnight - progMinutesAfterMidnight));
+      
       if (today.compareTo(program.getDate()) >= 0
-          && IOUtilities.getMinutesAfterMidnight() > progMinutesAfterMidnight) {
+          && minutesAfterMidnight > progMinutesAfterMidnight) {
         msg = updateRunningTime();
       } else {
         msg = mLocalizer.msg("soonStarts", "Soon starts");
@@ -312,7 +323,7 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
     mReminderCB = new JComboBox();
     int i=0;
     while (i < REMIND_VALUE_ARR.length
-        && REMIND_VALUE_ARR[i] < remainingMinutesMax) {
+        && REMIND_VALUE_ARR[i] < remainingMinutesMax && (REMIND_VALUE_ARR[i] < -runningMinutes || REMIND_VALUE_ARR[i] == -31)) {
       mReminderCB.addItem(REMIND_MSG_ARR[i]);
       i++;
     }
@@ -479,12 +490,12 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
         seconds = seconds - 3600 * hours;
       }
       final int minutes = seconds / 60;
-      if (minutes < 10) {
+      if (minutes < 10 && minutes > -10) {
         builder.append("0");
       }
       builder.append(minutes).append(":");
       seconds = seconds - 60 * minutes;
-      if (seconds < 10) {
+      if (seconds < 10 && seconds > -10) {
         builder.append("0");
       }
       builder.append(seconds);
@@ -496,7 +507,7 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
     final int minutes = REMIND_VALUE_ARR[mReminderCB.getSelectedIndex()];
     for (ReminderListItem reminder : mReminderItems) {
       mGlobalReminderList.removeWithoutChecking(reminder.getProgramItem());
-      if (minutes != -1) {
+      if (minutes != -31) {
         Program program = reminder.getProgram();
         mGlobalReminderList.add(program, new ReminderContent(minutes, reminder
             .getComment()));

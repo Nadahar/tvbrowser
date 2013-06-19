@@ -377,7 +377,7 @@ public class ReminderList implements ActionListener {
 
   private boolean isRemindEventRequired(Program prog, int remindMinutes, Date today) {
 
-    if (remindMinutes < 0) {
+    if (remindMinutes < ReminderListItem.MAX_FORWARD_REMINDER_TIME) {
       return false;
     }
 

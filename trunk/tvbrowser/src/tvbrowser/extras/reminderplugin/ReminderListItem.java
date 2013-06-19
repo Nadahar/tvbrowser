@@ -41,6 +41,7 @@ import devplugin.ProgramItem;
  * which a reminder should be shown at some time.
  */
 public class ReminderListItem implements Comparable<ReminderListItem> {
+  public static final int MAX_FORWARD_REMINDER_TIME = -30;
   private static final String KEY_REF_CNT = "refCnt";
   private static final String KEY_MINUTES = "minutes";
   private static final String KEY_COMMENT = "comment";
@@ -162,7 +163,7 @@ public class ReminderListItem implements Comparable<ReminderListItem> {
    * @param minutes The minutes of this list item.
    */
   public void setMinutes(int minutes) {
-    if(minutes < 0) {
+    if(minutes < MAX_FORWARD_REMINDER_TIME) {
       minutes = ReminderPlugin.getInstance().getDefaultReminderTime();
     }
     
