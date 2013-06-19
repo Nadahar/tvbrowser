@@ -17,9 +17,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  * SVN information:
- *     $Date: 2013-06-17 04:02:08 +0200 (Mo, 17 Jun 2013) $
- *   $Author: ds10 $
- * $Revision: 7853 $
+ *     $Date$
+ *   $Author$
+ * $Revision$
  */
 package util.programkeyevent;
 
