@@ -33,6 +33,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
@@ -41,10 +43,13 @@ import javax.swing.JPanel;
 import tvbrowser.core.filters.ShowAllFilter;
 import tvbrowser.extras.favoritesplugin.FavoriteConfigurator;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
+import tvbrowser.ui.filter.dlgs.SelectFilterDlg;
+import tvbrowser.ui.mainframe.MainFrame;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
 import util.ui.SearchForm;
 import util.ui.SearchFormSettings;
+import util.ui.UiUtilities;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -324,30 +329,53 @@ public class AdvancedFavorite extends Favorite {
     private SearchForm mSearchForm;
     private JCheckBox mFilterCheckbox;
     private JComboBox mFilterCombo;
+    private JButton mEditFilter;
 
     public JPanel createConfigurationPanel() {
       mSearchForm = new SearchForm(true, false, false, SearchForm.LAYOUT_HORIZONTAL, true);
       mSearchForm.setSearchFormSettings(mSearchFormSettings);
 
-
       CellConstraints cc = new CellConstraints();
-      PanelBuilder panelBuilder = new PanelBuilder(new FormLayout("pref:grow, 3dlu, pref:grow", "pref, 5dlu, pref"));
+      PanelBuilder panelBuilder = new PanelBuilder(new FormLayout("pref:grow, 3dlu, pref:grow, 3dlu, default", "pref, 5dlu, pref"));
 
-      panelBuilder.add(mSearchForm, cc.xyw(1, 1, 3));
+      panelBuilder.add(mSearchForm, cc.xyw(1, 1, 5));
       panelBuilder.add(mFilterCheckbox = new JCheckBox(mLocalizer.msg("useFilter","Use filter:")), cc.xy(1, 3));
       panelBuilder.add(mFilterCombo = new JComboBox(Plugin.getPluginManager().getFilterManager().getAvailableFilters()), cc.xy(3, 3));
-
+      
+      mEditFilter = new JButton(SelectFilterDlg.mLocalizer.msg("title", "Edit Filters"));
+      mEditFilter.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          SelectFilterDlg filterDlg = SelectFilterDlg.create(UiUtilities.getLastModalChildOf(MainFrame.getInstance()));
+          filterDlg.setVisible(true);
+          
+          Object selected = mFilterCombo.getSelectedItem();
+          
+          ((DefaultComboBoxModel)mFilterCombo.getModel()).removeAllElements();
+          
+          for(ProgramFilter filter :Plugin.getPluginManager().getFilterManager().getAvailableFilters()) {
+            ((DefaultComboBoxModel)mFilterCombo.getModel()).addElement(filter);
+          }
+          
+          mFilterCombo.setSelectedItem(selected);
+        }
+      });
+      
+      panelBuilder.add(mEditFilter, cc.xy(5, 3));
+            
       if (mFilter != null) {
         mFilterCheckbox.setSelected(true);
         mFilterCombo.setSelectedItem(mFilter);
       }
       else {
         mFilterCombo.setEnabled(false);
+        mEditFilter.setEnabled(false);
       }
 
       mFilterCheckbox.addActionListener(new ActionListener(){
         public void actionPerformed(ActionEvent e) {
           mFilterCombo.setEnabled(mFilterCheckbox.isSelected());
+          mEditFilter.setEnabled(mFilterCheckbox.isSelected());
         }
       });
 

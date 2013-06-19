@@ -27,8 +27,10 @@
 package tvbrowser.ui.filter.dlgs;
 
 import java.awt.Component;
+import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.DefaultListCellRenderer;
@@ -36,7 +38,6 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 
@@ -72,7 +73,7 @@ import devplugin.ProgramFilter;
 
 public class SelectFilterDlg extends JDialog implements ActionListener, WindowClosingIf, ListDropAction {
 
-  private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(SelectFilterDlg.class);
+  public static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(SelectFilterDlg.class);
 
   private static SelectFilterDlg mInstance;
 
@@ -84,7 +85,7 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
   private String mDefaultFilterId;
   private FilterTree mFilterTree;
   
-  public static SelectFilterDlg create(JFrame parent) {
+  public static SelectFilterDlg create(Window parent) {
     if(mInstance == null) {
       new SelectFilterDlg(parent);
     }
@@ -96,8 +97,9 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
     return mInstance;
   }
   
-  private SelectFilterDlg(JFrame parent) {
-    super(parent, mLocalizer.msg("title", "Edit Filters"), true);
+  private SelectFilterDlg(Window parent) {
+    super(parent, mLocalizer.msg("title", "Edit Filters"),Dialog.ModalityType.APPLICATION_MODAL);
+    //super(parent, mLocalizer.msg("title", "Edit Filters"), true);
     mInstance = this;
     
     UiUtilities.registerForClosing(this);
