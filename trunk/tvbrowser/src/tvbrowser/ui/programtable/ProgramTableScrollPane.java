@@ -54,6 +54,7 @@ import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.programtable.background.BackgroundPainter;
 import util.ui.persona.Persona;
 import devplugin.Channel;
+import devplugin.ContextMenuIf;
 import devplugin.Program;
 
 /**
@@ -415,33 +416,15 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
   public void togglePopupMenu() {
     mProgramTable.togglePopupFromKeyboard();
   }
-
+  
   /**
-   * Starts the middle click Plugin.
+   * Handles the given action for the selected program
+   * <p>
+   * @param action The action to perform for the selected program.
+   * @since 3.3.1
    */
-  public void handleMiddleClick() {
-    mProgramTable.startMiddleClickPluginFromKeyboard();
-  }
-
-  /**
-   * Starts the middle double click Plugin.
-   */
-  public void handleMiddleDoubleClick() {
-    mProgramTable.startMiddleDoubleClickPluginFromKeyboard();
-  }
-
-  /**
-   * Starts the double click Plugin.
-   */
-  public void handleLeftSingleClick() {
-    mProgramTable.startLeftSingleClickPluginFromKeyboard();
-  }
-
-  /**
-   * Starts the double click Plugin.
-   */
-  public void handleDoubleClick() {
-    mProgramTable.startDoubleClickPluginFromKeyboard();
+  public void handleKeyboardAction(ContextMenuIf action) {
+    mProgramTable.handleKeyboardAction(action);
   }
   
   /**

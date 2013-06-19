@@ -45,6 +45,7 @@ import java.awt.dnd.DragSourceDropEvent;
 import java.awt.dnd.DragSourceEvent;
 import java.awt.dnd.DragSourceListener;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 
@@ -74,6 +75,7 @@ import util.settings.ProgramPanelSettings;
 import util.ui.ProgramPanel;
 import util.ui.TransferProgram;
 import devplugin.Channel;
+import devplugin.ContextMenuIf;
 import devplugin.Date;
 import devplugin.Plugin;
 import devplugin.Program;
@@ -1010,57 +1012,15 @@ public class ProgramTable extends JPanel
       mPopupMenu.show(this, rect.x + (rect.width / 3), rect.y + ((rect.height * 3) / 4));
     }
   }
-
-  /**
-   * Starts the middle click Plugin.
-   */
-  public void startMiddleClickPluginFromKeyboard() {
-    if(mCurrentCol == -1 || mCurrentRow == -1) {
-      return;
-    }
-
-    Program program = mModel.getProgramPanel(mCurrentCol, mCurrentRow).getProgram();
-
-    Plugin.getPluginManager().handleProgramMiddleClick(program);
-  }
-
-  /**
-   * Starts the middle double click Plugin.
-   */
-  public void startMiddleDoubleClickPluginFromKeyboard() {
+  
+  public void handleKeyboardAction(ContextMenuIf action) {
     if(mCurrentCol == -1 || mCurrentRow == -1) {
       return;
     }
 
     Program program = mModel.getProgramPanel(mCurrentCol, mCurrentRow).getProgram();
     
-    Plugin.getPluginManager().handleProgramMiddleDoubleClick(program);
-  }
-
-  /**
-   * Starts the left single click Plugin.
-   */
-  public void startLeftSingleClickPluginFromKeyboard() {
-    if(mCurrentCol == -1 || mCurrentRow == -1) {
-      return;
-    }
-
-    Program program = mModel.getProgramPanel(mCurrentCol, mCurrentRow).getProgram();
-
-    Plugin.getPluginManager().handleProgramSingleClick(program);
-  }
-
-  /**
-   * Starts the double click Plugin.
-   */
-  public void startDoubleClickPluginFromKeyboard() {
-    if(mCurrentCol == -1 || mCurrentRow == -1) {
-      return;
-    }
-
-    Program program = mModel.getProgramPanel(mCurrentCol, mCurrentRow).getProgram();
-
-    Plugin.getPluginManager().handleProgramDoubleClick(program);
+    ProgramMouseEventHandler.handleAction(program, action.getContextMenuActions(program));
   }
 
   /**

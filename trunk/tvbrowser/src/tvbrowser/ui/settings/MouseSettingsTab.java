@@ -54,6 +54,7 @@ import tvbrowser.core.contextmenu.SelectProgramContextMenuItem;
 import tvbrowser.core.contextmenu.SeparatorMenuItem;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginProxy;
+import tvbrowser.ui.mainframe.MainFrame;
 import util.settings.ContextMenuMouseActionSetting;
 import util.settings.StringProperty;
 import util.ui.CustomComboBoxRenderer;
@@ -227,6 +228,7 @@ public class MouseSettingsTab implements devplugin.SettingsTab {
 		Settings.propMiddleDoubleClickIfArray.setContextMenuMouseActionArray(doubleMiddle.toArray(new ContextMenuMouseActionSetting[doubleMiddle.size()]));		
 		
 		ContextMenuManager.getInstance().init();
+		MainFrame.getInstance().addKeyboardAction();
 	}
 	
 	private boolean containsModifier(ArrayList<ContextMenuMouseActionSetting> list, int modifier) {

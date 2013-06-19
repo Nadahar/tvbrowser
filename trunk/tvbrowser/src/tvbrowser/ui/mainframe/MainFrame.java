@@ -91,6 +91,8 @@ import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import javax.swing.AbstractAction;
+import javax.swing.ActionMap;
 import javax.swing.BorderFactory;
 import javax.swing.InputMap;
 import javax.swing.JComponent;
@@ -120,6 +122,7 @@ import tvbrowser.core.DateListener;
 import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataBase;
 import tvbrowser.core.TvDataUpdater;
+import tvbrowser.core.contextmenu.ContextMenuManager;
 import tvbrowser.core.filters.FilterComponent;
 import tvbrowser.core.filters.FilterComponentList;
 import tvbrowser.core.filters.FilterList;
@@ -170,6 +173,9 @@ import util.browserlauncher.Launch;
 import util.exc.ErrorHandler;
 import util.io.IOUtilities;
 import util.misc.OperatingSystem;
+import util.programkeyevent.ProgramKeyEventHandler;
+import util.programmouseevent.ProgramMouseEventHandler;
+import util.settings.ContextMenuMouseActionSetting;
 import util.ui.Localizer;
 import util.ui.UIThreadRunner;
 import util.ui.UiUtilities;
@@ -952,6 +958,52 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     }
   }
 
+  private void clearActionAndInputMap() {
+    ActionMap actionMap = rootPane.getActionMap();
+    InputMap inputMap = rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+    
+    if(inputMap.size() > 0) {
+      for(Object keyStroke : inputMap.keys()) {
+        actionMap.remove(inputMap.get((KeyStroke)keyStroke));
+      }
+      
+      inputMap.clear();
+    }
+  }
+  
+  private void addKeyAction(int keyCode, int modifiers, AbstractAction action) {
+    KeyStroke stroke = KeyStroke.getKeyStroke(keyCode, modifiers);
+    
+    StringBuilder key = new StringBuilder(); 
+    key.append(String.valueOf(stroke.getKeyCode()));
+    key.append("_");
+    key.append(String.valueOf(stroke.getModifiers()));
+    
+    rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(stroke, key.toString());
+    rootPane.getActionMap().put(key.toString(), action);
+  }
+  
+  private void addKeyAction(KeyStroke keyStroke, AbstractAction action) {
+    StringBuilder key = new StringBuilder(); 
+    key.append(String.valueOf(keyStroke.getKeyCode()));
+    key.append("_");
+    key.append(String.valueOf(keyStroke.getModifiers()));
+    
+    rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, key.toString());
+    rootPane.getActionMap().put(key.toString(), action);
+  }
+  
+  private void addProgramMouseActionKeys(int keyCode, ContextMenuMouseActionSetting[] actionSettings) {
+    for(final ContextMenuMouseActionSetting actionSetting : actionSettings) {
+      addKeyAction(keyCode, actionSetting.getModifiersEx(), new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          mProgramTableScrollPane.handleKeyboardAction(actionSetting.getContextMenuIf());
+        }
+      });
+    }
+  }
+  
   /**
    * Adds the keyboard actions for going to the program table with the keyboard.
    *
@@ -959,187 +1011,104 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
   public void addKeyboardAction() {
     mProgramTableScrollPane.deSelectItem(false);
 
+    clearActionAndInputMap();
+        
     // register the global hot keys, so they also work when the main menu is not visible
     for (final TVBrowserAction action : TVBrowserActions.getActions()) {
       KeyStroke keyStroke = action.getAccelerator();
       if (keyStroke != null) {
-        rootPane.registerKeyboardAction(new ActionListener() {
+        addKeyAction(keyStroke, new AbstractAction() {
+          @Override
           public void actionPerformed(ActionEvent e) {
             if (action.isEnabled()) {
               action.actionPerformed(null);
             }
           }
-        }, keyStroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+        });
       }
     }
     
-    KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_F3, 0);
-    rootPane.registerKeyboardAction(new ActionListener() {
+    addKeyAction(KeyEvent.VK_F3, ContextMenuManager.NO_MOUSE_MODIFIER_EX, new AbstractAction() {
       @Override
       public void actionPerformed(ActionEvent e) {
         setShowTimeButtons(!mTimeChooserPanel.isVisible());
       }
-    }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+    });
     
-    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_F4, 0);
-    rootPane.registerKeyboardAction(new ActionListener() {
+    addKeyAction(KeyEvent.VK_F4, ContextMenuManager.NO_MOUSE_MODIFIER_EX, new AbstractAction() {
       @Override
       public void actionPerformed(ActionEvent e) {
         setShowDatelist(!mFinderPanel.getComponent().isVisible());
       }
-    }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+    });
     
-    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.CTRL_MASK);
-    rootPane.registerKeyboardAction(new ActionListener() {
+    addKeyAction(KeyEvent.VK_A, InputEvent.CTRL_DOWN_MASK, new AbstractAction() {
       @Override
       public void actionPerformed(ActionEvent e) {
         if(getProgramFilter() != FilterManagerImpl.getInstance().getDefaultFilter()) {
           setProgramFilter(FilterManagerImpl.getInstance().getDefaultFilter());
         }
       }
-    }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+    });
     
-    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_F6, 0);
-    rootPane.registerKeyboardAction(new ActionListener() {
+    addKeyAction(KeyEvent.VK_F6, ContextMenuManager.NO_MOUSE_MODIFIER_EX, new AbstractAction() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        setShowChannellist(!mChannelChooser.isVisible());
+        if(getProgramFilter() != FilterManagerImpl.getInstance().getDefaultFilter()) {
+          setShowChannellist(!mChannelChooser.isVisible());
+        }
       }
-    }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+    });
     
     if(!OperatingSystem.isMacOs() || TVBrowser.isTransportable()) {
-      stroke = KeyStroke.getKeyStroke(KeyEvent.VK_F7, 0);
-      rootPane.registerKeyboardAction(new ActionListener() {
+      addKeyAction(KeyEvent.VK_F7, ContextMenuManager.NO_MOUSE_MODIFIER_EX, new AbstractAction() {
         @Override
         public void actionPerformed(ActionEvent e) {
           setShowMenubar(!mMenuBar.isVisible());
         }
-      }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+      });
     }
     
-    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.CTRL_MASK);
-    rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,
-        KeyboardAction.KEY_UP), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
-
-    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_KP_UP, InputEvent.CTRL_MASK);
-    rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,
-        KeyboardAction.KEY_UP), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
-
-    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, InputEvent.CTRL_MASK);
-    rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,
-        KeyboardAction.KEY_RIGHT), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
-
-    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_KP_RIGHT, InputEvent.CTRL_MASK);
-    rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,
-        KeyboardAction.KEY_RIGHT), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
-
-    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, InputEvent.CTRL_MASK);
-    rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,
-        KeyboardAction.KEY_DOWN), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
-
-    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_KP_DOWN, InputEvent.CTRL_MASK);
-    rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,
-        KeyboardAction.KEY_DOWN), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
-
-    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, InputEvent.CTRL_MASK);
-    rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,
-        KeyboardAction.KEY_LEFT), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
-
-    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_KP_LEFT, InputEvent.CTRL_MASK);
-    rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,
-        KeyboardAction.KEY_LEFT), stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
-
-    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_CONTEXT_MENU, 0, true);
-    rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,
-        KeyboardAction.KEY_CONTEXTMENU), stroke,
-        JComponent.WHEN_IN_FOCUSED_WINDOW);
-
-    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_R, 0, true);
-    rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,
-        KeyboardAction.KEY_CONTEXTMENU), stroke,
-        JComponent.WHEN_IN_FOCUSED_WINDOW);
-
-    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_MASK);
-    rootPane
-        .registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,
-            KeyboardAction.KEY_DESELECT), stroke,
-            JComponent.WHEN_IN_FOCUSED_WINDOW);
-
-    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_L, 0, true);
-    rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,
-        KeyboardAction.KEY_SINGLECLICK), stroke,
-        JComponent.WHEN_IN_FOCUSED_WINDOW);
-
-    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_D, 0, true);
-    rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,
-        KeyboardAction.KEY_DOUBLECLICK), stroke,
-        JComponent.WHEN_IN_FOCUSED_WINDOW);
-
-    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_M, 0, true);
-    rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,
-        KeyboardAction.KEY_MIDDLECLICK), stroke,
-        JComponent.WHEN_IN_FOCUSED_WINDOW);
-
-    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_O, 0, true);
-    rootPane.registerKeyboardAction(new KeyboardAction(mProgramTableScrollPane,
-        KeyboardAction.KEY_MIDDLE_DOUBLE_CLICK), stroke,
-        JComponent.WHEN_IN_FOCUSED_WINDOW);
-
-    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_MASK);
-    rootPane.registerKeyboardAction(TVBrowserActions.goToNextDay, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
-
-    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_MASK);
-    rootPane.registerKeyboardAction(TVBrowserActions.goToPreviousDay, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+    addKeyAction(KeyEvent.VK_UP, InputEvent.CTRL_DOWN_MASK, new KeyboardAction(mProgramTableScrollPane,
+        KeyboardAction.KEY_UP));
     
-    int i = 0;
-    
-    for(int key = KeyEvent.VK_1; key <= KeyEvent.VK_9; key++) {
-      final int index = i++;
-      stroke = KeyStroke.getKeyStroke(key, InputEvent.CTRL_MASK);
-      
-      rootPane.registerKeyboardAction(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          showTabForIndex(index);
-        }
-      }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
-    }
-    
-    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_0, InputEvent.CTRL_MASK);
-    rootPane.registerKeyboardAction(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        showTabForIndex(9);
-      }
-    }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+    addKeyAction(KeyEvent.VK_KP_UP, InputEvent.CTRL_DOWN_MASK, new KeyboardAction(mProgramTableScrollPane,
+        KeyboardAction.KEY_UP));
 
-    i = 0;
-    
-    for(int key = KeyEvent.VK_NUMPAD1; key <= KeyEvent.VK_NUMPAD9; key++) {
-      final int index = i++;
-      stroke = KeyStroke.getKeyStroke(key, InputEvent.CTRL_MASK);
-      
-      rootPane.registerKeyboardAction(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          showTabForIndex(index);
-        }
-      }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
-    }
-    
-    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD0, InputEvent.CTRL_MASK);
-    rootPane.registerKeyboardAction(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        showTabForIndex(9);
-      }
-    }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+    addKeyAction(KeyEvent.VK_RIGHT, InputEvent.CTRL_DOWN_MASK, new KeyboardAction(mProgramTableScrollPane,
+        KeyboardAction.KEY_RIGHT));
 
+    addKeyAction(KeyEvent.VK_KP_RIGHT, InputEvent.CTRL_DOWN_MASK, new KeyboardAction(mProgramTableScrollPane,
+        KeyboardAction.KEY_RIGHT));
+
+    addKeyAction(KeyEvent.VK_DOWN, InputEvent.CTRL_DOWN_MASK, new KeyboardAction(mProgramTableScrollPane,
+        KeyboardAction.KEY_DOWN));
+
+    addKeyAction(KeyEvent.VK_KP_DOWN, InputEvent.CTRL_DOWN_MASK, new KeyboardAction(mProgramTableScrollPane,
+        KeyboardAction.KEY_DOWN));
+
+    addKeyAction(KeyEvent.VK_LEFT, InputEvent.CTRL_DOWN_MASK, new KeyboardAction(mProgramTableScrollPane,
+        KeyboardAction.KEY_LEFT));
+
+    addKeyAction(KeyEvent.VK_KP_LEFT, InputEvent.CTRL_DOWN_MASK, new KeyboardAction(mProgramTableScrollPane,
+        KeyboardAction.KEY_LEFT));
+
+    addKeyAction(KeyEvent.VK_CONTEXT_MENU, ContextMenuManager.NO_MOUSE_MODIFIER_EX, new KeyboardAction(mProgramTableScrollPane,
+        KeyboardAction.KEY_CONTEXTMENU));
+    
+    addKeyAction(KeyEvent.VK_R, ContextMenuManager.NO_MOUSE_MODIFIER_EX, new KeyboardAction(mProgramTableScrollPane,
+        KeyboardAction.KEY_CONTEXTMENU));
+    
+    addKeyAction(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK, TVBrowserActions.goToNextDay);
+    
+    addKeyAction(KeyEvent.VK_P, InputEvent.CTRL_DOWN_MASK, TVBrowserActions.goToPreviousDay);
+    
+    addKeyAction(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK, new KeyboardAction(mProgramTableScrollPane,
+        KeyboardAction.KEY_DESELECT));
     
     // return from full screen using ESCAPE
-    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0);
-    rootPane.registerKeyboardAction(new ActionListener() {
-
+    addKeyAction(KeyEvent.VK_ESCAPE, ContextMenuManager.NO_MOUSE_MODIFIER_EX, new AbstractAction() {
+      @Override
       public void actionPerformed(ActionEvent e) {
         boolean menuCanceled = false;
         
@@ -1174,45 +1143,80 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
           }
         }
       }
-
-    }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
-
-    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_HOME, 0);
-    rootPane.registerKeyboardAction(new ActionListener() {
-
+    });
+    
+    addKeyAction(KeyEvent.VK_HOME, ContextMenuManager.NO_MOUSE_MODIFIER_EX, new AbstractAction() {
+      @Override
       public void actionPerformed(ActionEvent e) {
         goToLeftSide();
       }
+    });
 
-    }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
-
-    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_END, 0);
-    rootPane.registerKeyboardAction(new ActionListener() {
-
+    addKeyAction(KeyEvent.VK_END, ContextMenuManager.NO_MOUSE_MODIFIER_EX, new AbstractAction() {
+      @Override
       public void actionPerformed(ActionEvent e) {
         goToRightSide();
       }
-
-    }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
-
-
-    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, InputEvent.SHIFT_MASK);
-    rootPane.registerKeyboardAction(new ActionListener() {
-
+    });
+    
+    addKeyAction(KeyEvent.VK_RIGHT, InputEvent.SHIFT_DOWN_MASK, new AbstractAction() {
       @Override
       public void actionPerformed(ActionEvent e) {
         mProgramTableScrollPane.scrollPageRight();
       }
-    }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
-
-    stroke = KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, InputEvent.SHIFT_MASK);
-    rootPane.registerKeyboardAction(new ActionListener() {
-
+    });
+    
+    addKeyAction(KeyEvent.VK_LEFT, InputEvent.SHIFT_DOWN_MASK, new AbstractAction() {
       @Override
       public void actionPerformed(ActionEvent e) {
         mProgramTableScrollPane.scrollPageLeft();
       }
-    }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
+    });
+    
+    int i = 0;
+    
+    for(int key = KeyEvent.VK_1; key <= KeyEvent.VK_9; key++) {
+      final int index = i++;
+      
+      addKeyAction(key, InputEvent.CTRL_DOWN_MASK, new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          showTabForIndex(index);
+        }
+      });
+    }
+    
+    addKeyAction(KeyEvent.VK_0, InputEvent.CTRL_DOWN_MASK, new AbstractAction() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        showTabForIndex(9);
+      }
+    });
+    
+    i = 0;
+    
+    for(int key = KeyEvent.VK_NUMPAD1; key <= KeyEvent.VK_NUMPAD9; key++) {
+      final int index = i++;
+      
+      addKeyAction(key, InputEvent.CTRL_DOWN_MASK, new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          showTabForIndex(index);
+        }
+      });
+    }
+    
+    addKeyAction(KeyEvent.VK_NUMPAD0, InputEvent.CTRL_DOWN_MASK, new AbstractAction() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        showTabForIndex(9);
+      }
+    });
+        
+    addProgramMouseActionKeys(ProgramKeyEventHandler.LEFT_SINGLE_KEY, Settings.propLeftSingleClickIfArray.getContextMenuMouseActionArray());
+    addProgramMouseActionKeys(ProgramKeyEventHandler.LEFT_DOUBLE_KEY, Settings.propLeftDoubleClickIfArray.getContextMenuMouseActionArray());
+    addProgramMouseActionKeys(ProgramKeyEventHandler.MIDDLE_SINGLE_KEY, Settings.propMiddleSingleClickIfArray.getContextMenuMouseActionArray());
+    addProgramMouseActionKeys(ProgramKeyEventHandler.MIDDLE_DOUBLE_KEY, Settings.propMiddleDoubleClickIfArray.getContextMenuMouseActionArray());
 
     this.setRootPane(rootPane);
   }
