@@ -19,10 +19,6 @@ public class KeyboardAction extends AbstractAction {
   public static final int KEY_LEFT = 3;
   public static final int KEY_CONTEXTMENU = 4;
   public static final int KEY_DESELECT = 5;
-  public static final int KEY_MIDDLECLICK = 6;
-  public static final int KEY_DOUBLECLICK = 7;
-  public static final int KEY_SINGLECLICK = 8;
-  public static final int KEY_MIDDLE_DOUBLE_CLICK = 9;
 
   private ProgramTableScrollPane mScrollPane;
 
@@ -58,18 +54,6 @@ public class KeyboardAction extends AbstractAction {
         }
         if (mType == KEY_DESELECT) {
           mScrollPane.deSelectItem(false);
-        }
-        if (mType == KEY_MIDDLECLICK) {
-          mScrollPane.handleMiddleClick();
-        }
-        if (mType == KEY_DOUBLECLICK) {
-          mScrollPane.handleDoubleClick();
-        }
-        if (mType == KEY_SINGLECLICK) {
-          mScrollPane.handleLeftSingleClick();
-        }
-        if (mType == KEY_MIDDLE_DOUBLE_CLICK) {
-          mScrollPane.handleMiddleDoubleClick();
         }
       };
     });

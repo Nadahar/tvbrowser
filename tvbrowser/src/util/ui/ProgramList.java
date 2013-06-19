@@ -53,6 +53,8 @@ import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.plugin.PluginStateListener;
 import util.exc.TvBrowserException;
+import util.programkeyevent.ProgramKeyAndContextMenuListener;
+import util.programkeyevent.ProgramKeyEventHandler;
 import util.programmouseevent.ProgramMouseAndContextMenuListener;
 import util.programmouseevent.ProgramMouseEventHandler;
 import util.settings.ContextMenuMouseActionSetting;
@@ -69,7 +71,8 @@ import devplugin.Program;
  * This Class extends a JList for showing Programs
  */
 public class ProgramList extends JList implements ChangeListener,
-    ListDataListener, PluginStateListener, ProgramMouseAndContextMenuListener {
+    ListDataListener, PluginStateListener, ProgramMouseAndContextMenuListener, 
+    ProgramKeyAndContextMenuListener {
   private final static Localizer mLocalizer = Localizer.getLocalizerFor(ProgramList.class);
   /** Key for separator list entry */
   public final static String DATE_SEPARATOR = "DATE_SEPARATOR";
@@ -79,7 +82,7 @@ public class ProgramList extends JList implements ChangeListener,
   
   private ProgramMouseEventHandler mMouseEventHandler;
   private ContextMenuIf mCaller;
-  private KeyListener mKeyListener;
+  private ProgramKeyEventHandler mKeyEventHandler;
 
   /**
    * Creates the JList and adds the default MouseListeners (PopUpBox)
@@ -294,40 +297,11 @@ public class ProgramList extends JList implements ChangeListener,
       addMouseListener(mMouseEventHandler);
       mCaller = caller;
     }
-    if(mKeyListener == null) {
+    if(mKeyEventHandler == null) {
       mCaller = caller;
-      mKeyListener = new KeyAdapter() {        
-        @Override
-        public void keyPressed(KeyEvent e) {
-          Object program = getSelectedValue();
-          
-          if(program instanceof Program) {
-            ContextMenuMouseActionSetting[] values = null;
-            
-            if(e.getKeyCode() == KeyEvent.VK_L) {
-              values = Settings.propLeftSingleClickIfArray.getContextMenuMouseActionArray();
-            }
-            else if(e.getKeyCode() == KeyEvent.VK_M) {
-              values = Settings.propMiddleSingleClickIfArray.getContextMenuMouseActionArray();
-            }
-            else if(e.getKeyCode() == KeyEvent.VK_D) {
-              values = Settings.propLeftDoubleClickIfArray.getContextMenuMouseActionArray();
-            }
-            else if(e.getKeyCode() == KeyEvent.VK_O) {
-              values = Settings.propMiddleDoubleClickIfArray.getContextMenuMouseActionArray();
-            }
-            
-            if(values != null && values.length > 0) {
-              ProgramMouseEventHandler.handleAction((Program)program, values[0].getContextMenuIf().getContextMenuActions((Program)program));
-            }
-            else if(e.getKeyCode() == KeyEvent.VK_CONTEXT_MENU || e.getKeyCode() == KeyEvent.VK_R) {
-              showPopup(indexToLocation(getSelectedIndex()), mCaller);
-            }
-          }
-        }
-      };
+      mKeyEventHandler = new ProgramKeyEventHandler(this, caller);
       
-      addKeyListener(mKeyListener);
+      addKeyListener(mKeyEventHandler);
     }
   }
 
@@ -620,5 +594,24 @@ public class ProgramList extends JList implements ChangeListener,
   @Override
   public void showContextMenu(MouseEvent e) {
     showPopup(e.getPoint(), mCaller);
+  }
+
+  @Override
+  public Program getProgramForKeyEvent(KeyEvent e) {
+    Object program = getSelectedValue();
+    
+    if(program instanceof Program) {
+      return (Program)program;
+    }
+    
+    return null;
+  }
+
+  @Override
+  public void keyEventActionFinished() {}
+
+  @Override
+  public void showContextMenu(Program program) {
+    showPopup(indexToLocation(getSelectedIndex()), mCaller);
   }
 }
