@@ -295,6 +295,7 @@ public class ProgramList extends JList implements ChangeListener,
       mCaller = caller;
     }
     if(mKeyListener == null) {
+      mCaller = caller;
       mKeyListener = new KeyAdapter() {        
         @Override
         public void keyPressed(KeyEvent e) {
@@ -319,8 +320,9 @@ public class ProgramList extends JList implements ChangeListener,
             if(values != null && values.length > 0) {
               ProgramMouseEventHandler.handleAction((Program)program, values[0].getContextMenuIf().getContextMenuActions((Program)program));
             }
-            
-            e.consume();
+            else if(e.getKeyCode() == KeyEvent.VK_CONTEXT_MENU || e.getKeyCode() == KeyEvent.VK_R) {
+              showPopup(indexToLocation(getSelectedIndex()), mCaller);
+            }
           }
         }
       };
@@ -337,16 +339,16 @@ public class ProgramList extends JList implements ChangeListener,
    * @param caller
    *          The ContextMenuIf that called this
    */
-  private void showPopup(MouseEvent e, ContextMenuIf caller) {
+  private void showPopup(Point p, ContextMenuIf caller) {
     PluginManager mng = Plugin.getPluginManager();
 
-    int inx = locationToIndex(e.getPoint());
+    int inx = locationToIndex(p);
     setSelectedIndex(inx);
 
     if (getModel().getElementAt(inx) instanceof Program) {
       Program prog = (Program) getModel().getElementAt(inx);
       JPopupMenu menu = mng.createPluginContextMenu(prog, caller);
-      menu.show(ProgramList.this, e.getX() - 15, e.getY() - 15);
+      menu.show(ProgramList.this, p.x - 15, p.y - 15);
     }
   }
 
@@ -617,6 +619,6 @@ public class ProgramList extends JList implements ChangeListener,
 
   @Override
   public void showContextMenu(MouseEvent e) {
-    showPopup(e, mCaller);
+    showPopup(e.getPoint(), mCaller);
   }
 }
