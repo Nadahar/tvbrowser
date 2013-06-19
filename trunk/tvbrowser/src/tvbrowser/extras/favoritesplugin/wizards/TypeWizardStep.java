@@ -95,13 +95,15 @@ public class TypeWizardStep extends AbstractWizardStep {
   private String mActor;
 
   private FavoriteNode mParentNode;
+  
+  private boolean mAdvancedSelected;
 
   /**
    * preselected topic in type step
    */
   private String mTopic;
   
-  private AdvancedFavorite favorite;
+  private AdvancedFavorite mFavorite;
 
   public TypeWizardStep() {
     this(null);
@@ -112,6 +114,7 @@ public class TypeWizardStep extends AbstractWizardStep {
   }
 
   public TypeWizardStep(Program program, FavoriteNode parent) {
+    mAdvancedSelected = false;
     mProgram = program;
     mParentNode = parent;
 
@@ -178,6 +181,7 @@ public class TypeWizardStep extends AbstractWizardStep {
 
     expertBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
+        mAdvancedSelected = true;
         
         String title;
         if (mProgram != null) {
@@ -185,14 +189,14 @@ public class TypeWizardStep extends AbstractWizardStep {
         } else {
           title = "";
         }
-        favorite = new AdvancedFavorite(title);
+        mFavorite = new AdvancedFavorite(title);
         Window parent = UiUtilities
             .getLastModalChildOf(MainFrame.getInstance());
-        EditFavoriteDialog dlg = new EditFavoriteDialog(parent, favorite);
+        EditFavoriteDialog dlg = new EditFavoriteDialog(parent, mFavorite);
         UiUtilities.centerAndShow(dlg);
         
         if (!dlg.getOkWasPressed()) {
-          favorite = null;
+          mFavorite = null;
         }
         
         handler.finishWithCurrentStep();
@@ -258,8 +262,8 @@ public class TypeWizardStep extends AbstractWizardStep {
   }
 
   private Favorite createFavorite() {
-    if(favorite != null) {
-      return favorite;
+    if(mFavorite != null || mAdvancedSelected) {
+      return mFavorite;
     }
     else if (mTitleRb.isSelected()) {
       String title = mProgramNameTf.getText();

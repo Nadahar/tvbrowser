@@ -26,10 +26,14 @@
 
 package tvbrowser.extras.favoritesplugin.wizards;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.Calendar;
 
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -45,7 +49,10 @@ import tvbrowser.extras.common.DayListCellRenderer;
 import tvbrowser.extras.common.LimitationConfiguration;
 import tvbrowser.extras.favoritesplugin.core.Exclusion;
 import tvbrowser.extras.favoritesplugin.core.Favorite;
+import tvbrowser.ui.filter.dlgs.SelectFilterDlg;
+import tvbrowser.ui.mainframe.MainFrame;
 import util.ui.TimePeriodChooser;
+import util.ui.UiUtilities;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -53,6 +60,7 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
 import devplugin.Channel;
+import devplugin.Plugin;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
 import devplugin.ProgramFilter;
@@ -104,6 +112,7 @@ public class ExcludeWizardStep extends AbstractWizardStep {
   private int mMode;
 
   private JPanel mContentPanel;
+  private JButton mEditFilter;
 
   /**
    * Creates a new Wizard Step instance to create a new exclusion
@@ -195,41 +204,41 @@ public class ExcludeWizardStep extends AbstractWizardStep {
         LimitationConfiguration.DAYLIMIT_SUNDAY });
     mDayChooser.setRenderer(new DayListCellRenderer());
     CellConstraints cc = new CellConstraints();
-    FormLayout layout = new FormLayout("5dlu, pref, default:grow",
+    FormLayout layout = new FormLayout("5dlu, pref, default:grow, 3dlu, default",
     "pref, 5dlu, pref, 5dlu, pref, 5dlu, pref, 5dlu, pref, 5dlu, pref, 5dlu, pref");
     PanelBuilder panelBuilder = new PanelBuilder(layout);
 
     mChannelCB = new JComboBox(ChannelList.getSubscribedChannels());
 
     int rowInx = 3;
-    panelBuilder.add(new JLabel(mMainQuestion), cc.xyw(1, 1, 3));
+    panelBuilder.add(new JLabel(mMainQuestion), cc.xyw(1, 1, 5));
 
     panelBuilder.add(mTitleCb, cc.xy(2, rowInx));
-    panelBuilder.add(mTitleTf, cc.xy(3, rowInx));
+    panelBuilder.add(mTitleTf, cc.xyw(3, rowInx, 3));
     rowInx += 2;
 
     panelBuilder.add(mTopicCb = new JCheckBox(mTopicQuestion), cc.xy(2, rowInx));
-    panelBuilder.add(mTopicTf = new JTextField(), cc.xy(3, rowInx));
+    panelBuilder.add(mTopicTf = new JTextField(), cc.xyw(3, rowInx, 3));
     
     rowInx += 2;
     
     panelBuilder.add(mEpisodeTitleCb = new JCheckBox(mEpisodeTitleQuestion), cc.xy(2,rowInx));
-    panelBuilder.add(mEpisodeTitleTf = new JTextField(), cc.xy(3, rowInx));
+    panelBuilder.add(mEpisodeTitleTf = new JTextField(), cc.xyw(3, rowInx, 3));
     
     rowInx += 2;
     
     int filterIndex = rowInx;
 
     panelBuilder.add(mChannelCb = new JCheckBox(mChannelQuestion), cc.xy(2, rowInx));
-    panelBuilder.add(mChannelCB, cc.xy(3, rowInx));
+    panelBuilder.add(mChannelCB, cc.xyw(3, rowInx, 3));
     rowInx += 2;
 
     panelBuilder.add(mDayCb = new JCheckBox(mDayQuestion), cc.xy(2, rowInx));
-    panelBuilder.add(mDayChooser, cc.xy(3, rowInx));
+    panelBuilder.add(mDayChooser, cc.xyw(3, rowInx, 3));
 
     rowInx += 2;
     panelBuilder.add(mTimeCb = new JCheckBox(mTimeQuestion), cc.xy(2, rowInx));
-    panelBuilder.add(mTimePeriodChooser = new TimePeriodChooser(TimePeriodChooser.ALIGN_LEFT), cc.xy(3, rowInx));
+    panelBuilder.add(mTimePeriodChooser = new TimePeriodChooser(TimePeriodChooser.ALIGN_LEFT), cc.xyw(3, rowInx, 3));
 
     if(mMode == MODE_EDIT_EXCLUSION || mMode == MODE_CREATE_EXCLUSION) {
       layout.insertRow(filterIndex, RowSpec.decode("pref"));
@@ -237,6 +246,27 @@ public class ExcludeWizardStep extends AbstractWizardStep {
 
       panelBuilder.add(mFilterCb, cc.xy(2, filterIndex));
       panelBuilder.add(mFilterChooser, cc.xy(3, filterIndex));
+      
+      mEditFilter = new JButton(SelectFilterDlg.mLocalizer.msg("title", "Edit Filters"));
+      mEditFilter.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          SelectFilterDlg filterDlg = SelectFilterDlg.create(UiUtilities.getLastModalChildOf(MainFrame.getInstance()));
+          filterDlg.setVisible(true);
+          
+          Object selected = mFilterChooser.getSelectedItem();
+          
+          ((DefaultComboBoxModel)mFilterChooser.getModel()).removeAllElements();
+          
+          for(ProgramFilter filter :Plugin.getPluginManager().getFilterManager().getAvailableFilters()) {
+            ((DefaultComboBoxModel)mFilterChooser.getModel()).addElement(filter);
+          }
+          
+          mFilterChooser.setSelectedItem(selected);
+        }
+      });
+      
+      panelBuilder.add(mEditFilter, cc.xy(5, filterIndex));
     }
 
     if (mMode == MODE_CREATE_DERIVED_FROM_PROGRAM && mProgram != null) {
@@ -389,6 +419,7 @@ public class ExcludeWizardStep extends AbstractWizardStep {
     mTopicTf.setEnabled(mTopicCb.isSelected());
     mEpisodeTitleTf.setEnabled(mEpisodeTitleCb.isSelected());
     mFilterChooser.setEnabled(mFilterCb.isSelected());
+    mEditFilter.setEnabled(mFilterCb.isSelected());
     mTimePeriodChooser.setEnabled(mTimeCb.isSelected());
     mDayChooser.setEnabled(mDayCb.isSelected());
 
