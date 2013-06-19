@@ -114,6 +114,11 @@ public class SingleTitleFilterComponent extends AbstractFilterComponent {
     out.writeInt(mSelectedBits);
   }
 
+  public String getTypeDescription() {
+    return mLocalizer.msg("desc",
+        "Accepts only the first occurrence of several programs with similar titles.");
+  }
+  
   @Override
   public JPanel getSettingsPanel() {
     JPanel p1 = new JPanel();
@@ -123,9 +128,6 @@ public class SingleTitleFilterComponent extends AbstractFilterComponent {
     GridBagConstraints c = new GridBagConstraints();
     c.fill = GridBagConstraints.HORIZONTAL;
     c.gridwidth = GridBagConstraints.REMAINDER;
-   
-    p1.add(new JLabel(mLocalizer.msg("desc",
-    "Accepts only the first occurrence of several programs with similar titles.")), c); 
 
     mCheckBox = new JCheckBox[2];
 

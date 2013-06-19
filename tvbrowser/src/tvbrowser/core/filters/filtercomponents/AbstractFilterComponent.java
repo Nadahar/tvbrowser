@@ -31,6 +31,10 @@ public abstract class AbstractFilterComponent implements FilterComponent {
     return mName;
   }
 
+  public String getTypeDescription() {
+    return null;
+  }
+  
   public String getDescription() {
     return mDescription;
   }

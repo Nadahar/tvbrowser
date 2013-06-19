@@ -93,17 +93,13 @@ public class PluginFilterComponent extends AbstractFilterComponent {
     return mPluginId;
   }
 
+  public String getTypeDescription() {
+    return mLocalizer.msg("desc",
+        "Accept all programs marked by plugin:");
+  }
+  
   public JPanel getSettingsPanel() {
-
     JPanel content = new JPanel(new BorderLayout(0, 7));
-    JTextArea ta = new JTextArea(mLocalizer.msg("desc",
-        "Accept all programs marked by plugin:"));
-    ta.setLineWrap(true);
-    ta.setWrapStyleWord(true);
-    ta.setOpaque(false);
-    ta.setEditable(false);
-    ta.setFocusable(false);
-    content.add(ta, BorderLayout.NORTH);
 
     PluginProxy[] plugins = PluginProxyManager.getInstance()
         .getActivatedPlugins();

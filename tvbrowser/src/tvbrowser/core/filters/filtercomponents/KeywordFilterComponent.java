@@ -93,18 +93,14 @@ public class KeywordFilterComponent extends AbstractFilterComponent {
     return mSearcher.matches(program, mSearchFieldArr);
   }
 
+  public String getTypeDescription() {
+    return mLocalizer.msg("description",
+        "Accept all programs containing the following keyword:");
+  }
+  
   public JPanel getSettingsPanel() {
-    String msg;
-
     JPanel content = new JPanel();
     content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
-
-    JPanel pn = new JPanel(new BorderLayout());
-    pn.setBorder(BorderFactory.createEmptyBorder(3, 0, 5, 0));
-    msg = mLocalizer.msg("description",
-        "Accept all programs containing the following keyword:");
-    pn.add(UiUtilities.createHelpTextArea(msg));
-    content.add(pn);
 
     mSearchForm = new SearchForm(false, false);
     mSearchForm.setSearchFormSettings(mSearchFormSettings);

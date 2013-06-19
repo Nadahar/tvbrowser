@@ -50,13 +50,15 @@ public class AgeLimitFilterComponent extends AbstractFilterComponent {
     return ageLimit > 0 && ageLimit <= mRequiredAge;
   }
 
+  public String getTypeDescription() {
+    return mLocalizer.msg("description", "");
+  }
+  
   public JPanel getSettingsPanel() {
     JPanel content = new JPanel(new BorderLayout());
 
     mAgeSpinner = new JSpinner(new SpinnerNumberModel(16, 6, 21, 1));
     mAgeSpinner.setValue(mRequiredAge);
-    content.add(UiUtilities.createHelpTextArea(mLocalizer
-        .msg("description", "")), BorderLayout.NORTH);
     content.add(mAgeSpinner, BorderLayout.SOUTH);
 
     JPanel centerPanel = new JPanel(new BorderLayout());

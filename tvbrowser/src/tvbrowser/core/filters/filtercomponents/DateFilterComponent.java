@@ -70,6 +70,10 @@ public class DateFilterComponent extends AbstractFilterComponent {
         && progDate.compareTo(mEndDate) <= 0;
   }
 
+  public String getTypeDescription() {
+    return mLocalizer.msg("description", "");
+  }
+  
   @Override
   public JPanel getSettingsPanel() {
 
@@ -82,15 +86,10 @@ public class DateFilterComponent extends AbstractFilterComponent {
     int currentRow = 1;
 
     layout.appendRow(RowSpec.decode("pref"));
-    layout.appendRow(RowSpec.decode("5dlu"));
-    content.add(UiUtilities.createHelpTextArea(mLocalizer
-        .msg("description", "")), cc.xyw(1, currentRow, 5));
-
-    layout.appendRow(RowSpec.decode("pref"));
     layout.appendRow(RowSpec.decode("3dlu"));
 
     content.add(new JLabel(mLocalizer.msg("from.1", "From today plus")), cc.xy(
-        1, currentRow += 2));
+        1, currentRow));
     mFromSpinner = new JSpinner(new SpinnerNumberModel(0, 0, 28, 1));
     mFromSpinner.setValue(mStartDays);
     content.add(mFromSpinner, cc.xy(3, currentRow));

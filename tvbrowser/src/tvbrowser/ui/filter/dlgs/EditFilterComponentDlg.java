@@ -27,6 +27,7 @@
 package tvbrowser.ui.filter.dlgs;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
@@ -41,6 +42,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -103,6 +105,8 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
   private JButton mOkBtn, mCancelBtn;
 
   private JTextField mDescTF, mNameTF;
+  private JEditorPane mFilterComponentDescription;
+  private JPanel mTypeDescriptionPanel;
 
   public EditFilterComponentDlg(JDialog parent) {
     this(parent, null);
@@ -149,6 +153,11 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
     mRuleCb = new JComboBox();
     mRuleCb.addActionListener(this);
     mRuleCb.addItem(mLocalizer.msg("hint", "must choose one"));
+    
+    mFilterComponentDescription = UiUtilities.createHtmlHelpTextArea("");
+    
+    mTypeDescriptionPanel = new JPanel(new FormLayout("min:grow","fill:default:grow"));
+    mTypeDescriptionPanel.add(mFilterComponentDescription, CC.xy(1, 1));
     
     mCenterPanel = new JPanel(new BorderLayout());
     JScrollPane scrollPane = new JScrollPane(mCenterPanel);
@@ -274,18 +283,28 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
 
   }
 
-  public void actionPerformed(ActionEvent e) {
+  public void actionPerformed(ActionEvent e) {try {
     Object o = e.getSource();
     if (o == mRuleCb) {
       if (mRulePanel != null) {
+        mCenterPanel.remove(mTypeDescriptionPanel);
         mCenterPanel.remove(mRulePanel);
       }
       Object item = mRuleCb.getSelectedItem();
       if (item instanceof FilterComponent) {
         FilterComponent fItem = (FilterComponent) item;
+        
+        if(fItem.getTypeDescription() != null && fItem.getTypeDescription().trim().length() > 0) {
+          UiUtilities.updateHtmlHelpTextArea(mFilterComponentDescription, fItem.getTypeDescription());
+          mCenterPanel.add(mTypeDescriptionPanel, BorderLayout.NORTH);
+        }
+        
         mRulePanel = fItem.getSettingsPanel();
-        mRulePanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        mCenterPanel.add(mRulePanel, BorderLayout.CENTER);
+        
+        if(mRulePanel != null) {
+          mRulePanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+          mCenterPanel.add(mRulePanel, BorderLayout.CENTER);
+        }
       }
       mContentPane.updateUI();
       updateOkBtn();
@@ -309,7 +328,7 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
     } else if (o == mCancelBtn) {
       close();
     }
-
+  }catch(Throwable t) {t.printStackTrace();}
   }
 
   public FilterComponent getFilterComponent() {

@@ -78,6 +78,14 @@ public abstract class PluginsFilterComponent implements FilterComponent {
   public JPanel getSettingsPanel() {
     return new JPanel();
   }
+  
+  /**
+   * Gets the description of this type of filter component.
+   * @since 3.3.1
+   */
+  public String getTypeDescription() {
+    return null;
+  }
 
     /**
      * Is called when the settings should be saved (aka the users pressed the OK-Button in the Settings Dialog)

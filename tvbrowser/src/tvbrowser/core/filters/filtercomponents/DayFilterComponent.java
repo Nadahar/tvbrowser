@@ -93,12 +93,14 @@ public class DayFilterComponent extends AbstractFilterComponent {
       bit <<= 1;
     }
   }
+  
+  public String getTypeDescription() {
+    return mLocalizer.msg("description",
+        "This filter accepts programs belonging to the following channels:");
+  }
 
   public JPanel getSettingsPanel() {
     final JPanel content = new JPanel(new BorderLayout());
-    content.add(new JLabel(mLocalizer.msg("description",
-        "This filter accepts programs belonging to the following channels:")),
-        BorderLayout.NORTH);
 
     ArrayList<String> selectedDays = new ArrayList<String>();
 
