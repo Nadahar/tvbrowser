@@ -30,6 +30,9 @@ import java.awt.Container;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.InputEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -45,15 +48,18 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
+import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.plugin.PluginStateListener;
 import util.exc.TvBrowserException;
 import util.programmouseevent.ProgramMouseAndContextMenuListener;
 import util.programmouseevent.ProgramMouseEventHandler;
+import util.settings.ContextMenuMouseActionSetting;
 import util.settings.PluginPictureSettings;
 import util.settings.ProgramPanelSettings;
 import devplugin.ContextMenuIf;
+import devplugin.ContextMenuSeparatorAction;
 import devplugin.Date;
 import devplugin.Plugin;
 import devplugin.PluginManager;
@@ -73,6 +79,7 @@ public class ProgramList extends JList implements ChangeListener,
   
   private ProgramMouseEventHandler mMouseEventHandler;
   private ContextMenuIf mCaller;
+  private KeyListener mKeyListener;
 
   /**
    * Creates the JList and adds the default MouseListeners (PopUpBox)
@@ -257,7 +264,21 @@ public class ProgramList extends JList implements ChangeListener,
       }
     }
   }
-
+  
+  /**
+   * Add a Mouse-Listener for the Popup-Box
+   * 
+   * The caller ContextMenuIfs menus are not shown, if you want to have all
+   * available menus just use <code>null</code> for caller.
+   * 
+   * @param caller
+   *          The ContextMenuIf that called this.
+   * @deprecated since 3.3.1 use {@link #addMouseAndKeyListeners(ContextMenuIf)} instead.
+   */
+  public void addMouseListeners(final ContextMenuIf caller) {
+    addMouseAndKeyListeners(caller);
+  }
+  
   /**
    * Add a Mouse-Listener for the Popup-Box
    * 
@@ -267,109 +288,45 @@ public class ProgramList extends JList implements ChangeListener,
    * @param caller
    *          The ContextMenuIf that called this.
    */
-  public void addMouseListeners(final ContextMenuIf caller) {
+  public void addMouseAndKeyListeners(final ContextMenuIf caller) {
     if(mMouseEventHandler == null) {
       mMouseEventHandler = new ProgramMouseEventHandler(this, caller);
       addMouseListener(mMouseEventHandler);
       mCaller = caller;
     }
-   /* 
-    addMouseListener(new MouseAdapter() {
-      private Thread mLeftSingleClickThread;
-      private Thread mMiddleSingleClickThread;
-      private boolean mPerformingSingleClick = false;
-      private boolean mPerformingSingleMiddleClick = false;
-      
-      public void mousePressed(MouseEvent e) {
-        if (e.isPopupTrigger()) {
-          showPopup(e, caller);
-        }
-      }
-
-      public void mouseReleased(MouseEvent e) {
-        if (e.isPopupTrigger()) {
-          showPopup(e, caller);
-        }
-      }
-
-      public void mouseClicked(final MouseEvent e) {
-        if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 1) && (e.getModifiersEx() == 0 || e.getModifiersEx() == InputEvent.CTRL_DOWN_MASK)) {
-          mLeftSingleClickThread = new Thread("Single left click") {
-          	int modifiers = e.getModifiersEx();
-            public void run() {
-              try {
-                mPerformingSingleClick = false;
-                Thread.sleep(Plugin.SINGLE_CLICK_WAITING_TIME);
-                mPerformingSingleClick = true;
-                
-                if (modifiers == 0) {
-                	Plugin.getPluginManager().handleProgramSingleClick(getProgramFromEvent(e), caller);
-                }
-                else if (modifiers == InputEvent.CTRL_DOWN_MASK) {
-                	Plugin.getPluginManager().handleProgramSingleCtrlClick(getProgramFromEvent(e), caller);
-                }
-                mPerformingSingleClick = false;
-              } catch (InterruptedException e) {
-                // ignore
-              }
-            }
-
-          };
-          mLeftSingleClickThread.setPriority(Thread.MIN_PRIORITY);
-          mLeftSingleClickThread.start();
-        }
-        else if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 2) && e.getModifiersEx() == 0) {
-          if(!mPerformingSingleClick && mLeftSingleClickThread != null && mLeftSingleClickThread.isAlive()) {
-            mLeftSingleClickThread.interrupt();
-          }
+    if(mKeyListener == null) {
+      mKeyListener = new KeyAdapter() {        
+        @Override
+        public void keyPressed(KeyEvent e) {
+          Object program = getSelectedValue();
           
-          if(!mPerformingSingleClick) {
-            Plugin.getPluginManager().handleProgramDoubleClick(getProgramFromEvent(e), caller);
-          }
-        }
-        else if (SwingUtilities.isMiddleMouseButton(e) && (e.getClickCount() == 1)) {
-          mMiddleSingleClickThread = new Thread("Single middle click") {
-            public void run() {
-              try {
-                mPerformingSingleMiddleClick = false;
-                Thread.sleep(Plugin.SINGLE_CLICK_WAITING_TIME);
-                mPerformingSingleMiddleClick = true;
-                
-                Plugin.getPluginManager().handleProgramMiddleClick(getProgramFromEvent(e), caller);
-                
-                mPerformingSingleMiddleClick = false;
-              } catch (InterruptedException e) {
-                // ignore
-              }
+          if(program instanceof Program) {
+            ContextMenuMouseActionSetting[] values = null;
+            
+            if(e.getKeyCode() == KeyEvent.VK_L) {
+              values = Settings.propLeftSingleClickIfArray.getContextMenuMouseActionArray();
             }
-          };
-          mMiddleSingleClickThread.setPriority(Thread.MIN_PRIORITY);
-          mMiddleSingleClickThread.start();
-        }
-        else if (SwingUtilities.isMiddleMouseButton(e) && (e.getClickCount() == 2)) {
-          if(!mPerformingSingleMiddleClick && mMiddleSingleClickThread != null && mMiddleSingleClickThread.isAlive()) {
-            mMiddleSingleClickThread.interrupt();
+            else if(e.getKeyCode() == KeyEvent.VK_M) {
+              values = Settings.propMiddleSingleClickIfArray.getContextMenuMouseActionArray();
+            }
+            else if(e.getKeyCode() == KeyEvent.VK_D) {
+              values = Settings.propLeftDoubleClickIfArray.getContextMenuMouseActionArray();
+            }
+            else if(e.getKeyCode() == KeyEvent.VK_O) {
+              values = Settings.propMiddleDoubleClickIfArray.getContextMenuMouseActionArray();
+            }
+            
+            if(values != null && values.length > 0) {
+              ProgramMouseEventHandler.handleAction((Program)program, values[0].getContextMenuIf().getContextMenuActions((Program)program));
+            }
+            
+            e.consume();
           }
-          
-          if(!mPerformingSingleMiddleClick) {
-            Plugin.getPluginManager().handleProgramMiddleDoubleClick(getProgramFromEvent(e), caller);
-          }
         }
-      }
+      };
       
-			private Program getProgramFromEvent(MouseEvent e) {
-        final int inx = locationToIndex(e.getPoint());
-        if (inx >= 0) {
-          final Object element = ProgramList.this.getModel()
-          .getElementAt(inx);
-
-          if(element instanceof Program) {
-          	return (Program) element;
-          }
-        }
-        return null;
-			}
-    });*/
+      addKeyListener(mKeyListener);
+    }
   }
 
   /**
