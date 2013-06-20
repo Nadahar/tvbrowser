@@ -774,6 +774,8 @@ public class Settings {
     } catch (TvBrowserException e) {
       e.printStackTrace();
     }
+    
+    ContextMenuManager.getInstance().init();
   }
   
   
