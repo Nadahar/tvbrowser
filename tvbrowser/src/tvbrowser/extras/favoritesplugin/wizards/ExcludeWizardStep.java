@@ -189,6 +189,7 @@ public class ExcludeWizardStep extends AbstractWizardStep {
     mTitleCb = new JCheckBox(mTitleQuestion);
     mTitleTf = new JTextField();
     mFilterCb = new JCheckBox(mFilterQuestion);
+    mEditFilter = new JButton(SelectFilterDlg.mLocalizer.msg("title", "Edit Filters"));
     
     mFilterChooser = new JComboBox(FilterManagerImpl.getInstance().getAvailableFilters());
 
@@ -247,7 +248,7 @@ public class ExcludeWizardStep extends AbstractWizardStep {
       panelBuilder.add(mFilterCb, cc.xy(2, filterIndex));
       panelBuilder.add(mFilterChooser, cc.xy(3, filterIndex));
       
-      mEditFilter = new JButton(SelectFilterDlg.mLocalizer.msg("title", "Edit Filters"));
+      
       mEditFilter.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
