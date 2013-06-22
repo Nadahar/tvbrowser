@@ -341,7 +341,7 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
     updateTableContent(null, null);
   }
 
-  private void updateTableContent(ProgressMonitor monitor, final Runnable callback)
+  private synchronized void updateTableContent(ProgressMonitor monitor, final Runnable callback)
   {
     // if this is the initial update, skip every UI related operation, just set
     // necessary members. the UI update will be forced when setting the initial
