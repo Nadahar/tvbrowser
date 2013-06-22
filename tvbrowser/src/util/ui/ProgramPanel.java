@@ -450,9 +450,9 @@ private static Font getDynamicFontSize(Font font, int offset) {
    * @return If the picture state is changed.
    */
   public boolean pictureStateChanged() { 
-    boolean dontShow = dontShowPictureAreaIcon(true);
+    boolean show = showPicture(mProgram, dontShowPictureAreaIcon(true));
     
-    if(dontShow && mPictureAreaIcon.getIconHeight() > 0 || !dontShow && mPictureAreaIcon.getIconHeight() == 0) {
+    if(!show && mPictureAreaIcon.getIconHeight() > 0 || show && mPictureAreaIcon.getIconHeight() == 0) {
       return mProgram.hasFieldValue(ProgramFieldType.PICTURE_TYPE);
     }
     
@@ -491,20 +491,10 @@ private static Font getDynamicFontSize(Font font, int offset) {
         programHasChanged();
       }
     }
-
-    boolean dontShow = dontShowPictureAreaIcon(true);
-
-    // Create the picture area icon
+    
     int length = program.getLength();
-    if (!mSettings.isShowingOnlyDateAndTitle()
-        && mProgram.hasFieldValue(ProgramFieldType.PICTURE_TYPE)
-        && (
-        mSettings.isShowingPictureEver() || !dontShow ||
-        (mSettings.isShowingPictureInTimeRange() &&
-         !ProgramUtilities.isNotInTimeRange(mSettings.getPictureTimeRangeStart(),mSettings.getPictureTimeRangeEnd(),program)) ||
-         (mSettings
-            .isShowingPictureForDuration() && mSettings.getDuration() <= length)
-         )) {
+    // Create the picture area icon
+    if(showPicture(program,dontShowPictureAreaIcon(true))) {
       mPictureAreaIcon = new PictureAreaIcon(program,mNormalFont, WIDTH_RIGHT - 4, mSettings.isShowingPictureDescription(), true, false, mSettings.isShowingPictureBorder());
     } else {
       mPictureAreaIcon = new PictureAreaIcon();
@@ -568,6 +558,22 @@ private static Font getDynamicFontSize(Font font, int offset) {
       revalidate();
       repaint();
     }
+  }
+  
+  private boolean showPicture(Program program, boolean dontShow) {
+    if (!mSettings.isShowingOnlyDateAndTitle()
+        && mProgram.hasFieldValue(ProgramFieldType.PICTURE_TYPE)
+        && (
+        mSettings.isShowingPictureEver() || !dontShow ||
+        (mSettings.isShowingPictureInTimeRange() &&
+         !ProgramUtilities.isNotInTimeRange(mSettings.getPictureTimeRangeStart(),mSettings.getPictureTimeRangeEnd(),program)) ||
+         (mSettings
+            .isShowingPictureForDuration() && mSettings.getDuration() <= program.getLength())
+         )) {
+      dontShow = false;
+    }
+    
+    return !dontShow;
   }
 
   /**
