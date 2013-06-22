@@ -323,7 +323,7 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
     mReminderCB = new JComboBox();
     int i=0;
     while (i < REMIND_VALUE_ARR.length
-        && REMIND_VALUE_ARR[i] < remainingMinutesMax && (REMIND_VALUE_ARR[i] < -runningMinutes || REMIND_VALUE_ARR[i] == -31)) {
+        && REMIND_VALUE_ARR[i] < remainingMinutesMax && (REMIND_VALUE_ARR[i] >= 0 || REMIND_VALUE_ARR[i] < -runningMinutes || REMIND_VALUE_ARR[i] == -31)) {
       mReminderCB.addItem(REMIND_MSG_ARR[i]);
       i++;
     }
