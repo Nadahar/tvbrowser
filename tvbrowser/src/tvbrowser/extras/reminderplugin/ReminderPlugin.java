@@ -537,9 +537,7 @@ public class ReminderPlugin {
     if (settings.getProperty("usemsgbox") == null) {
       settings.setProperty("usemsgbox", "true");
     }
-    if (settings.getProperty("numberofremindoptions") == null && settings.getProperty("defaultReminderEntry") != null) {
-      System.out.println("hier");
-      
+    if (settings.getProperty("numberofremindoptions") == null && settings.getProperty("defaultReminderEntry") != null) {      
       int defaultRemind = Integer.parseInt(settings.getProperty("defaultReminderEntry")) + 5;
       
       settings.setProperty("defaultReminderEntry", String.valueOf(defaultRemind));
