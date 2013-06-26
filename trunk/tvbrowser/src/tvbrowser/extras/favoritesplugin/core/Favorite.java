@@ -544,7 +544,7 @@ public abstract class Favorite {
       }
       else if (comparator.compare(p1[inx1], newProgList[inx2]) > 0) {
         // add (p2[inx2]
-        markProgram(newProgList[inx2],-1);
+        markProgram(newProgList[inx2],-31);
         newPrograms.add(newProgList[inx2]);
         resultList.add(newProgList[inx2]);
         inx2++;
@@ -568,7 +568,7 @@ public abstract class Favorite {
     if (inx2 < newProgList.length) {
       // add (p2[inx2]..p2[p2.length-1])
       for (int i=inx2; i< newProgList.length; i++) {
-        markProgram(newProgList[i],-1);
+        markProgram(newProgList[i],-31);
         newPrograms.add(newProgList[i]);
         resultList.add(newProgList[i]);
       }
@@ -615,7 +615,7 @@ public abstract class Favorite {
       p.mark(FavoritesPluginProxy.getInstance());
       String[] reminderServices = getReminderConfiguration().getReminderServices();
       for (String reminderService : reminderServices) {
-        if (ReminderConfiguration.REMINDER_DEFAULT.equals(reminderService) && reminderMinutes != -2) {
+        if (ReminderConfiguration.REMINDER_DEFAULT.equals(reminderService) && reminderMinutes != -42) {
           ReminderPlugin.getInstance().addProgram(p,reminderMinutes);
         }
       }
@@ -627,7 +627,7 @@ public abstract class Favorite {
       p.unmark(FavoritesPluginProxy.getInstance());
     }
 
-    int reminderMinutes = -2;
+    int reminderMinutes = -32;
 
     String[] reminderServices = getReminderConfiguration().getReminderServices();
     for (String reminderService : reminderServices) {
@@ -695,7 +695,7 @@ public abstract class Favorite {
       return;
     }
     if(mBlackList.remove(program)) {
-      markProgram(program,-1);
+      markProgram(program,-31);
       FavoritesPlugin.getInstance().updateRootNode(true);
       updateManageDialog();
     }
@@ -872,7 +872,7 @@ public abstract class Favorite {
 
           if(pos < 0 && !wasOnList) {
             mPrograms.add(p);
-            markProgram(p,-1);
+            markProgram(p,-31);
 
             if(!p.isExpired()) {
               synchronized(mNewPrograms) {
