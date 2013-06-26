@@ -537,6 +537,19 @@ public class ReminderPlugin {
     if (settings.getProperty("usemsgbox") == null) {
       settings.setProperty("usemsgbox", "true");
     }
+    if (settings.getProperty("numberofremindoptions") == null && settings.getProperty("defaultReminderEntry") != null) {
+      System.out.println("hier");
+      
+      int defaultRemind = Integer.parseInt(settings.getProperty("defaultReminderEntry")) + 5;
+      
+      settings.setProperty("defaultReminderEntry", String.valueOf(defaultRemind));
+      settings.setProperty("numberofremindoptions", String.valueOf(ReminderDialog.SMALL_REMIND_MSG_ARR.length));
+    }
+    else if(settings.getProperty("defaultReminderEntry") == null) {
+      settings.setProperty("defaultReminderEntry", String.valueOf(5));
+      settings.setProperty("numberofremindoptions", String.valueOf(ReminderDialog.SMALL_REMIND_MSG_ARR.length));
+    }
+    
     mSettings = settings;
 
     if(settings.containsKey("usethisplugin") || settings.containsKey("usesendplugin")) {
