@@ -176,12 +176,10 @@ public class DreamboxTimerListPanel extends JPanelRefreshAbstract implements
       Calendar timeNow = GregorianCalendar.getInstance();
       String repeatedText = getRepeatedText(repeated);
 
-      // color
+      // background color
       if (isSelected) {
-        setForeground(table.getSelectionForeground());
         setBackground(table.getSelectionBackground());
       } else {
-        setForeground(table.getForeground());
         setBackground(table.getBackground());
       }
 
@@ -235,7 +233,12 @@ public class DreamboxTimerListPanel extends JPanelRefreshAbstract implements
         setForeground(Color.blue);
       } else {
         // other
-        setForeground(Color.black);
+        if (isSelected) {
+          setForeground(table.getSelectionForeground());
+        }
+        else {
+          setForeground(table.getForeground());
+        }
       }
 
       // adjustment
