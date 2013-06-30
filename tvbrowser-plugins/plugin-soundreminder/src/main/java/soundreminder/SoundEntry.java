@@ -55,7 +55,7 @@ import devplugin.Program;
 /**
  * The entry class for the sound files.
  * <p>
- * @author Ren� Mach
+ * @author René Mach
  */
 public class SoundEntry {
   private String mSearchText;
@@ -173,8 +173,9 @@ public class SoundEntry {
     }
     return found;
   }
-  protected void playSound() {
-    playSound(mPath);
+  
+  protected Object playSound() {
+    return playSound(mPath);
   }
 
   /* Copied from ReminderPlugin */
@@ -216,7 +217,7 @@ public class SoundEntry {
 
         final AudioFormat format = ais.getFormat();
         final DataLine.Info info = new DataLine.Info(SourceDataLine.class, format);
-
+        
         if(AudioSystem.isLineSupported(info)) {
           final SourceDataLine line = (SourceDataLine) AudioSystem.getLine(info);
 
@@ -244,23 +245,26 @@ public class SoundEntry {
                         ais.close();
                       }catch(Exception ee) {
                         // ignore
+                        
+                        ee.printStackTrace();
                       }
                     }
                   }
                 });
-  
+                
                 try {
                   while (total < totalToRead && !stopped) {
                     numBytesRead = ais.read(myData, 0, numBytesToRead);
-  
+                    
                     if (numBytesRead == -1) {
                       break;
                     }
   
                     total += numBytesRead;
+                    
                     line.write(myData, 0, numBytesRead);
                   }
-                }catch(Exception e) {}
+                }catch(Throwable e) {e.printStackTrace();}
                
                 if(line.isRunning()) {
                   line.drain();
@@ -271,7 +275,9 @@ public class SoundEntry {
                 if(line != null) {
                   line.close();
                 }
-              }catch(Exception ex) {}
+              }catch(Throwable ex) {
+                ex.printStackTrace();
+              }
             }
           }.start();
 

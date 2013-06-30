@@ -28,6 +28,8 @@ import java.awt.Frame;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -46,14 +48,18 @@ import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.LineEvent.Type;
 import javax.swing.Icon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -62,8 +68,10 @@ import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
-import com.jgoodies.forms.builder.ButtonBarBuilder2;
+import com.jgoodies.forms.builder.ButtonBarBuilder;
 import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.factories.CC;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.Sizes;
@@ -81,7 +89,7 @@ import devplugin.Version;
 /**
  * A plugin to remind with different sound per title.
  * <p>
- * @author Ren� Mach
+ * @author René Mach
  */
 public class SoundReminder extends Plugin {
   protected static final Localizer mLocalizer = Localizer
@@ -93,14 +101,28 @@ public class SoundReminder extends Plugin {
   private SoundEntry mDefaultEntry;
   private Object mTestSound;
   
+  private ArrayList<SoundEntry> mPlayList;
+  private Thread mPlayThread;
+  private boolean mIsRunning;
+  private Object mSoundPlay;
+  private int mSecondsCount;
+  
+  private boolean mStopRunning;
+  private int mStopCount;
+  
   /** Creates an instance of this class. */
   public SoundReminder() {
     mInstance = this;
     mSoundEntryList = new ArrayList<SoundEntry>(0);
+    mPlayList = new ArrayList<SoundEntry>();
+    mIsRunning = false;
+    mStopCount = 0;
+    mStopRunning = true;
+    mStopCount = 5; 
   }
   
   public static Version getVersion() {
-    return new Version(0,10,1,true);
+    return new Version(0,11,0,true);
   }
   
   public PluginInfo getInfo() {
@@ -127,10 +149,15 @@ public class SoundReminder extends Plugin {
         mDefaultEntry = new SoundEntry(in, version);
       }
     }
+    
+    if(version > 2) {
+      mStopRunning = in.readBoolean();
+      mStopCount = in.readInt();
+    }
   }
   
   public void writeData(final ObjectOutputStream out) throws IOException {
-    out.writeInt(2); // write version
+    out.writeInt(3); // write version
     out.writeInt(mSoundEntryList.size());
     
     for(SoundEntry entry : mSoundEntryList) {
@@ -142,6 +169,9 @@ public class SoundReminder extends Plugin {
     if(mDefaultEntry != null) {
       mDefaultEntry.writeData(out);
     }
+    
+    out.writeBoolean(mStopRunning);
+    out.writeInt(mStopCount);
   }
   
   public ActionMenu getButtonAction() {
@@ -211,7 +241,7 @@ public class SoundReminder extends Plugin {
         final PanelBuilder pb = new PanelBuilder(layout,
             (JPanel) exclusionListDlg
             .getContentPane());
-        pb.setDefaultDialogBorder();
+        pb.border(Borders.DIALOG);
         
         JPanel settingsPanel = mSettings.createSettingsPanel();
         settingsPanel.setMinimumSize(new Dimension(560,420));
@@ -230,14 +260,111 @@ public class SoundReminder extends Plugin {
     return new ActionMenu(openDialog);
   }
   
+  public void onActivation() {
+    if(mPlayThread == null || !mPlayThread.isAlive()) {
+      mIsRunning = true;
+      
+      mPlayThread = new Thread() {
+        public void run() {
+          while(mIsRunning) {
+            try {
+              sleep(1000);
+              
+              playSound();
+            } catch (InterruptedException e) {
+              // ignore
+            }
+          }
+        }
+      };
+      
+      mPlayThread.start();
+    }
+  }
+  
+  public void onDeactivation() {
+    mIsRunning = false;
+  }
+  
+  public void playSound() {
+    boolean isPlaying = (mSoundPlay != null &&
+        ((mSoundPlay instanceof SourceDataLine && ((SourceDataLine)mSoundPlay).isRunning()) 
+        || (mSoundPlay instanceof Sequencer && ((Sequencer)mSoundPlay).isRunning())));
+    
+    if(isPlaying) {
+      mSecondsCount++;
+    }
+    
+    if(mStopRunning && isPlaying) {
+      int size = 0;
+      
+      synchronized (mPlayList) {
+        size = mPlayList.size();
+      }
+      
+      if(mSecondsCount >= mStopCount && size > 0) {
+        mSecondsCount = 0;
+        
+        if(mSoundPlay instanceof SourceDataLine && ((SourceDataLine)mSoundPlay).isRunning()) {
+          ((SourceDataLine)mSoundPlay).stop();
+        } else if(mSoundPlay instanceof Sequencer && ((Sequencer)mSoundPlay).isRunning()) {
+          ((Sequencer)mSoundPlay).stop();
+        }
+      }
+    }
+    
+    isPlaying = (mSoundPlay != null &&
+        ((mSoundPlay instanceof SourceDataLine && ((SourceDataLine)mSoundPlay).isRunning()) 
+        || (mSoundPlay instanceof Sequencer && ((Sequencer)mSoundPlay).isRunning())));
+    
+    if(!isPlaying) {
+      SoundEntry play = null;
+      
+      synchronized (mPlayList) {
+        if(mPlayList.size() > 0) {
+          play = mPlayList.remove(0);
+        }
+      }
+      
+      if(play != null) {
+        mSoundPlay = play.playSound();
+      }
+    }
+  }
+  
   public SettingsTab getSettingsTab() {
     return new SettingsTab() {
       private SoundTablePanel mSoundTablePanel;
       private JTextField mDefaultFile;
+      private JCheckBox mStopParallel;
+      private JSpinner mStopCountSelection;
       
       public JPanel createSettingsPanel() {
-      	PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,min,3dlu,min:grow,3dlu,min,3dlu,min,3dlu,min,5dlu","5dlu,default,10dlu,default,5dlu,fill:default:grow"));
+      	PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,min,5dlu,min:grow,3dlu,min,3dlu,min,3dlu,min,5dlu",
+      	    "5dlu,default,3dlu,default,10dlu,default,5dlu,fill:default:grow"));
         mSoundTablePanel = new SoundTablePanel();
+        
+        PanelBuilder values = new PanelBuilder(new FormLayout("10dlu,min,3dlu,min,3dlu,min:grow","default,2dlu,default"));
+        
+        mStopParallel = new JCheckBox(mLocalizer.msg("settings.stopParallel","For more than one parallel reminder stop"), mStopRunning);
+        mStopCountSelection = new JSpinner(new SpinnerNumberModel(mStopCount, 5, 60, 5));
+        
+        values.add(mStopParallel, CC.xyw(1, 1, 6));
+        final JLabel l1 = values.addLabel(mLocalizer.msg("settings.after","after"), CC.xy(2, 3));
+        values.add(mStopCountSelection, CC.xy(4, 3));
+        final JLabel l2 = values.addLabel(mLocalizer.msg("settings.seconds","seconds"), CC.xy(6, 3));
+        
+        mStopCountSelection.setEnabled(mStopRunning);        
+        l1.setEnabled(mStopCountSelection.isEnabled());
+        l2.setEnabled(mStopCountSelection.isEnabled());
+        
+        mStopParallel.addItemListener(new ItemListener() {
+          public void itemStateChanged(ItemEvent e) {
+            mStopCountSelection.setEnabled(ItemEvent.SELECTED == e.getStateChange());
+            l1.setEnabled(mStopCountSelection.isEnabled());
+            l2.setEnabled(mStopCountSelection.isEnabled());
+          }
+        });
         
         mDefaultFile = new JTextField();
         mDefaultFile.setEditable(false);
@@ -281,13 +408,14 @@ public class SoundReminder extends Plugin {
         
         CellConstraints cc = new CellConstraints();
         
-        pb.addLabel(mLocalizer.msg("settings.default", "Default sound file:"), cc.xy(2, 2));
-        pb.add(mDefaultFile, cc.xy(4, 2));
-        pb.add(select, cc.xy(6, 2));
-        pb.add(delete, cc.xy(8, 2));
-        pb.add(play, cc.xy(10, 2));
-        pb.addSeparator(mLocalizer.msg("settings.search", "Search settings"), cc.xyw(1,4,11));
-        pb.add(mSoundTablePanel, cc.xyw(2, 6, 9));
+        pb.add(values.getPanel(), cc.xyw(2, 2, 9));
+        pb.addLabel(mLocalizer.msg("settings.default", "Default sound file:"), cc.xy(2, 4));
+        pb.add(mDefaultFile, cc.xy(4, 4));
+        pb.add(select, cc.xy(6, 4));
+        pb.add(delete, cc.xy(8, 4));
+        pb.add(play, cc.xy(10, 4));
+        pb.addSeparator(mLocalizer.msg("settings.search", "Search settings"), cc.xyw(1,6,11));
+        pb.add(mSoundTablePanel, cc.xyw(2, 8, 9));
         
         return pb.getPanel();
       }
@@ -313,6 +441,9 @@ public class SoundReminder extends Plugin {
         else {
           mDefaultEntry = null;
         }
+        
+        mStopRunning = mStopParallel.isSelected();
+        mStopCount = (Integer)mStopCountSelection.getValue();
       }
     };
   }
@@ -333,30 +464,41 @@ public class SoundReminder extends Plugin {
       final ProgramReceiveTarget receiveTarget) {
     if(programArr != null && !mSoundEntryList.isEmpty()) {
       for(Program p : programArr) {
-        boolean soundPlayed = false;
+        boolean soundFound = false;
         
         for(SoundEntry entry : mSoundEntryList) {
           if(entry.matches(p)) {
-            entry.playSound();
-            soundPlayed = true;
+            synchronized (mPlayList) {
+              if(!mPlayList.contains(entry)) {
+                mPlayList.add(entry);
+              }              
+            }
+            
+            soundFound = true;
             break;
           }
         }
         
-        if(!soundPlayed) {
-          if(mDefaultEntry != null) {
-            mDefaultEntry.playSound();
-          }
-          else {
-            mSoundEntryList.get(0).playSound();
+        if(!soundFound) {
+          synchronized (mPlayList) {
+            if(mDefaultEntry != null && !mPlayList.contains(mDefaultEntry)) {
+              mPlayList.add(mDefaultEntry);
+            }
+            else {
+              SoundEntry entry = mSoundEntryList.get(0);
+              
+              if(!mPlayList.contains(entry)) {
+                mPlayList.add(entry);
+              }
+            }
           }
         }
       }
       
       return true;
     }
-    else if(mDefaultEntry != null) {
-      mDefaultEntry.playSound();
+    else if(mDefaultEntry != null && !mPlayList.contains(mDefaultEntry)) {
+      mPlayList.add(mDefaultEntry);
       
       return true;
     }
@@ -471,7 +613,7 @@ public class SoundReminder extends Plugin {
       final PanelBuilder pb = new PanelBuilder(layout, this);
       final CellConstraints cc = new CellConstraints();
       
-      ButtonBarBuilder2 buttonPanel = new ButtonBarBuilder2();
+      ButtonBarBuilder buttonPanel = new ButtonBarBuilder();
       buttonPanel.addButton(add);
       buttonPanel.addRelatedGap();
       buttonPanel.addButton(delete);
@@ -549,9 +691,10 @@ public class SoundReminder extends Plugin {
 	  
 	  return null;
 	}
-  private void playSoundFile(final ActionEvent e, String soundFName) {
+  private void playSoundFile(final ActionEvent e, String soundFName) {try {
     if(e.getActionCommand().compareTo(mLocalizer.msg("settings.test", "Test")) == 0) {
       mTestSound = SoundEntry.playSound(soundFName);
+      
       if(mTestSound != null) {
         ((JButton)e.getSource()).setText(mLocalizer.msg("settings.stop", "Stop"));
       }
@@ -587,7 +730,7 @@ public class SoundReminder extends Plugin {
       } else if(mTestSound instanceof Sequencer && ((Sequencer)mTestSound).isRunning()) {
         ((Sequencer)mTestSound).stop();
       }
-    }
+    }}catch(Throwable t) {t.printStackTrace();}
   }
 
   
