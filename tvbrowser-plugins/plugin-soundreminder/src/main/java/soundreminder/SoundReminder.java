@@ -118,7 +118,7 @@ public class SoundReminder extends Plugin {
     mIsRunning = false;
     mStopCount = 0;
     mStopRunning = true;
-    mStopCount = 5; 
+    mStopCount = 10; 
   }
   
   public static Version getVersion() {
@@ -327,6 +327,7 @@ public class SoundReminder extends Plugin {
       }
       
       if(play != null) {
+        mSecondsCount = 0;
         mSoundPlay = play.playSound();
       }
     }
