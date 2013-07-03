@@ -72,7 +72,7 @@
   <property name="installer.dir" value="${win.dir}/installer"/>
   <property name="package-lists.dir" value="${txt.dir}/package-lists"/>
   <property name="public.dir" value="public"/>
-  <property name="newsplugin.url" value="http://www.tvbrowser.org/components/com_tvbplugins/download.php?id=110"/>
+  <property name="newsplugin.url" value="http://www.tvbrowser.org/data/uploads/1372016422809_543/NewsPlugin.jar"/>
 
   <path id="sourcepath">
     <pathelement location="${src.dir}"/>
