@@ -54,6 +54,15 @@ check_version()
       echo $MSG5 "[${JAVA_PROGRAM_DIR}java = ${VERSION}]" ; echo $MSG6
       return 0	      
     fi
+  elif [ "$JAVA_IMPL" = "openjdk" ] ; then
+    VERSION=`echo ${JAVA_HEADER} | sed "s/openjdk version \"\(.*\)\"/\1/"`
+    if echo $VERSION | grep "^1.[0-6]" ; then
+      echo $MSG3 "[${JAVA_PROGRAM_DIR}java = ${VERSION}]" ; echo $MSG4
+      return 1
+    else
+      echo $MSG5 "[${JAVA_PROGRAM_DIR}java = ${VERSION}]" ; echo $MSG6
+      return 0	      
+    fi
   else
     echo $MSG7 "[${JAVA_PROGRAM_DIR}java = ${JAVA_IMPL}]" ; echo $MSG4
     return 1
