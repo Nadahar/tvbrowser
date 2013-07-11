@@ -45,7 +45,6 @@ import java.awt.dnd.DragSourceDropEvent;
 import java.awt.dnd.DragSourceEvent;
 import java.awt.dnd.DragSourceListener;
 import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 
@@ -600,20 +599,7 @@ public class ProgramTable extends JPanel
   private JPopupMenu createPluginContextMenu(Program program) {
     return PluginProxyManager.createPluginContextMenu(program);
   }
-
- /* private void showPopup(MouseEvent evt) {
-    stopAutoScroll();
-    mMouse = evt.getPoint();
-    repaint();
-
-    Program program = getProgramAt(evt.getX(), evt.getY());
-    if (program != null) {
-      deSelectItem();
-      mPopupMenu = createPluginContextMenu(program);
-      mPopupMenu.show(this, evt.getX(), evt.getY());
-    }
-  }*/
-
+  
   private void handleMousePressed(MouseEvent evt) {
     requestFocus();
 
@@ -635,130 +621,6 @@ public class ProgramTable extends JPanel
     mDraggingPoint = evt.getPoint();
     mDraggingPointOnScreen = new Point(evt.getXOnScreen(), evt.getYOnScreen());
   }
-
-
-
- /* private void handleMouseClicked(final MouseEvent evt) {
-    // disable normal click handling if we only want to stop auto scrolling
-    if (stopAutoScroll()) {
-      return;
-    }
-
-    if(mClickThread != null && mClickThread.isAlive()) {
-      mClickThread.interrupt();
-    }
-
-    mMouse = evt.getPoint();
-    repaint();
-    final Program program = getProgramAt(evt.getX(), evt.getY());
-
-    if (SwingUtilities.isLeftMouseButton(evt) && (evt.getClickCount() == 1) && (evt.getModifiersEx() == 0 || evt.getModifiersEx() == InputEvent.CTRL_DOWN_MASK)) {
-      mLeftClickThread = new Thread("Program table single click thread") {
-      	int modifiers = evt.getModifiersEx();
-        public void run() {
-          try {
-            mPerformingSingleClick = false;
-            sleep(Plugin.SINGLE_CLICK_WAITING_TIME);
-            mPerformingSingleClick = true;
-
-            if(program != null) {
-              deSelectItem();
-              if (modifiers == 0) {
-              	Plugin.getPluginManager().handleProgramSingleClick(program);
-              }
-              else if (modifiers == InputEvent.CTRL_DOWN_MASK) {
-              	Plugin.getPluginManager().handleProgramSingleCtrlClick(program, null);
-              }
-            }
-
-            if(mClickThread != null && mClickThread.isAlive()) {
-              mClickThread.interrupt();
-            }
-
-            setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-            mPerformingSingleClick = false;
-          } catch (InterruptedException e) {
-            // IGNORE
-          }
-        }
-      };
-
-      mLeftClickThread.setPriority(Thread.MIN_PRIORITY);
-      mLeftClickThread.start();
-    }
-    if (SwingUtilities.isLeftMouseButton(evt) && (evt.getClickCount() == 2)) {
-      if(!mPerformingSingleClick && mLeftClickThread != null && mLeftClickThread.isAlive()) {
-        mLeftClickThread.interrupt();
-      }
-
-      if (program != null && !mPerformingSingleClick) {
-        deSelectItem();
-
-        // This is a left double click
-        // -> Execute the program using the user defined default plugin
-
-        if(evt.getModifiersEx() == 0) {
-          Plugin.getPluginManager().handleProgramDoubleClick(program);
-        }
-      }
-
-      setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-    }
-    else if (SwingUtilities.isLeftMouseButton(evt) && (evt.getClickCount() == 1) &&
-        (evt.isShiftDown())) {
-      if (program != null) {
-        if(!isSelectedItemAt(evt.getX(),evt.getY())) {
-          selectItemAt(evt.getX(),evt.getY());
-        }
-        else {
-          deSelectItem();
-        }
-      }
-    }
-    else if (SwingUtilities.isMiddleMouseButton(evt) && (evt.getClickCount() == 1)) {
-      mMiddleSingleClickThread = new Thread("Program table single middle click thread") {
-        public void run() {
-          try {
-            mPerformingMiddleSingleClick = false;
-            sleep(Plugin.SINGLE_CLICK_WAITING_TIME);
-            mPerformingMiddleSingleClick = true;
-
-            if(program != null) {
-              deSelectItem();
-              Plugin.getPluginManager().handleProgramMiddleClick(program);
-            }
-
-            if(mClickThread != null && mClickThread.isAlive()) {
-              mClickThread.interrupt();
-            }
-
-            mPerformingMiddleSingleClick = false;
-          } catch (InterruptedException e) {
-            // IGNORE
-          }
-        }
-      };
-
-      mMiddleSingleClickThread.setPriority(Thread.MIN_PRIORITY);
-      mMiddleSingleClickThread.start();
-    }
-    if (SwingUtilities.isMiddleMouseButton(evt) && (evt.getClickCount() == 2)) {
-      if(!mPerformingMiddleSingleClick && mMiddleSingleClickThread != null && mMiddleSingleClickThread.isAlive()) {
-        mMiddleSingleClickThread.interrupt();
-      }
-
-      if (program != null && !mPerformingMiddleSingleClick) {
-        deSelectItem();
-        // This is a middle double click
-        // -> Execute the program using the user defined default plugin
-        Plugin.getPluginManager().handleProgramMiddleDoubleClick(program);
-      }
-
-      setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-    }
-  }
-*/
-
 
   private void handleMouseDragged(final MouseEvent evt) {
     if (mDraggingPoint != null && !evt.isShiftDown()) {
