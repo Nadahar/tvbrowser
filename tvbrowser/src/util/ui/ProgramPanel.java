@@ -68,6 +68,8 @@ import tvbrowser.ui.mainframe.MainFrame;
 import util.io.IOUtilities;
 import util.misc.StringPool;
 import util.program.ProgramUtilities;
+import util.programmouseevent.ProgramMouseAndContextMenuListener;
+import util.programmouseevent.ProgramMouseEventHandler;
 import util.settings.ProgramPanelSettings;
 import devplugin.ContextMenuIf;
 import devplugin.Marker;
@@ -1000,93 +1002,27 @@ private static Font getDynamicFontSize(Font font, int offset) {
    * a right click on the program panel.
    *
    * @param caller
-   *          The ContextMenuIf to exclude from the context menu. When
+   *          The ContextMenuIf to exclude from the context menu. If
    *          <code>null</code> no ContextMenuIf is excluded.
    */
   public void addPluginContextMenuMouseListener(final ContextMenuIf caller) {
-    addMouseListener(new MouseAdapter() {
-      private Thread mLeftClickThread;
-      private boolean mPerformingSingleClick = false;
-
-      private Thread mMiddleSingleClickThread;
-      private boolean mPerformingMiddleSingleClick = false;
-
-      public void mousePressed(MouseEvent e) {
-        if (e.isPopupTrigger()) {
-          showPopup(e, caller);
-        }
+    ProgramMouseAndContextMenuListener listener = new ProgramMouseAndContextMenuListener() {
+      @Override
+      public void showContextMenu(MouseEvent e) {
+        showPopup(e, caller);
       }
-
-      public void mouseReleased(MouseEvent e) {
-        if (e.isPopupTrigger()) {
-          showPopup(e, caller);
-        }
+      
+      @Override
+      public void mouseEventActionFinished() {}
+      
+      @Override
+      public Program getProgramForMouseEvent(MouseEvent e) {
+        return mProgram;
       }
-
-      public void mouseClicked(final MouseEvent evt) {
-        if (SwingUtilities.isLeftMouseButton(evt) && (evt.getClickCount() == 1) && (evt.getModifiersEx() == 0 || evt.getModifiersEx() == InputEvent.CTRL_DOWN_MASK)) {
-          mLeftClickThread = new Thread("Single click") {
-            private int modifiers;
-
-						public void run() {
-            	modifiers = evt.getModifiersEx();
-            	try {
-                mPerformingSingleClick = false;
-                sleep(Plugin.SINGLE_CLICK_WAITING_TIME);
-                mPerformingSingleClick = true;
-                if (modifiers == 0) {
-                	Plugin.getPluginManager().handleProgramSingleClick(mProgram, caller);
-                }
-                else if (modifiers == InputEvent.CTRL_DOWN_MASK) {
-                  Plugin.getPluginManager().handleProgramSingleCtrlClick(mProgram, caller);
-                }
-                mPerformingSingleClick = false;
-              } catch (InterruptedException e) { // ignore
-              }
-            }
-          };
-
-          mLeftClickThread.setPriority(Thread.MIN_PRIORITY);
-          mLeftClickThread.start();
-        }
-        else if (SwingUtilities.isLeftMouseButton(evt) && (evt.getClickCount() == 2) && evt.getModifiersEx() == 0) {
-          if(!mPerformingSingleClick && mLeftClickThread != null && mLeftClickThread.isAlive()) {
-            mLeftClickThread.interrupt();
-          }
-
-          if(!mPerformingSingleClick) {
-            Plugin.getPluginManager().handleProgramDoubleClick(mProgram, caller);
-          }
-        }
-        else if (SwingUtilities.isMiddleMouseButton(evt) && (evt.getClickCount() == 1)) {
-          mMiddleSingleClickThread = new Thread("Single click") {
-            public void run() {
-              try {
-                mPerformingMiddleSingleClick = false;
-                sleep(Plugin.SINGLE_CLICK_WAITING_TIME);
-                mPerformingMiddleSingleClick = true;
-
-                Plugin.getPluginManager().handleProgramMiddleClick(mProgram, caller);
-                mPerformingMiddleSingleClick = false;
-              } catch (InterruptedException e) { // ignore
-              }
-            }
-          };
-
-          mMiddleSingleClickThread.setPriority(Thread.MIN_PRIORITY);
-          mMiddleSingleClickThread.start();
-        }
-        else if (SwingUtilities.isMiddleMouseButton(evt) && (evt.getClickCount() == 2)) {
-          if(!mPerformingMiddleSingleClick && mMiddleSingleClickThread != null && mMiddleSingleClickThread.isAlive()) {
-            mMiddleSingleClickThread.interrupt();
-          }
-
-          if(!mPerformingMiddleSingleClick) {
-            Plugin.getPluginManager().handleProgramMiddleDoubleClick(mProgram, caller);
-          }
-        }
-      }
-    });
+    };
+    ProgramMouseEventHandler mouseHandler = new ProgramMouseEventHandler(listener, caller);
+    
+    addMouseListener(mouseHandler);
   }
 
   /**
