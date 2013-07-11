@@ -33,6 +33,8 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
 
 import util.settings.PluginPictureSettings;
 import util.ui.UiUtilities;
@@ -54,7 +56,7 @@ import devplugin.Version;
  * @author bodo
  */
 public class ListViewPlugin extends Plugin {
-  private static final Version mVersion = new Version(3,23,true);
+  private static final Version mVersion = new Version(3,24,true);
 
     protected static final int PROGRAMTABLEWIDTH = 200;
   
@@ -73,11 +75,13 @@ public class ListViewPlugin extends Plugin {
     
     private PluginCenterPanelWrapper mCenterWrapper;
     
-    private ListViewPanel mCenterPanel;
+    private ListViewPanel mListPanel;
     
     private JPanel mCenterPanelWrapper;
     
     private boolean mTvBrowserStarted;
+    
+    private AncestorListener mAncestorListener;
     
     /**
      * Creates the Plugin
@@ -120,49 +124,43 @@ public class ListViewPlugin extends Plugin {
           
           @Override
           public void scrolledToChannel(Channel channel) {
-            if(mCenterPanel != null) {
-              mCenterPanel.showChannel(channel);
+            if(mListPanel != null) {
+              mListPanel.showChannel(channel);
             }
           }
           
           @Override
           public void filterSelected(ProgramFilter filter) {
-            if(mCenterPanel != null) {
-              mCenterPanel.showForFilter(filter);
+            if(mListPanel != null) {
+              mListPanel.showForFilter(filter);
             }
           }
           
           @Override
           public void scrolledToDate(Date date) {
-            if(mCenterPanel != null) {
-              mCenterPanel.showForDate(date, -1);
+            if(mListPanel != null) {
+              mListPanel.showForDate(date, -1);
             }
           }
-          
-          public void scrolledTo(Date date,int minute) {
-            if(mCenterPanel != null) {
-              mCenterPanel.showForDate(date,minute);
-            }
-          }
-          
+                    
           @Override
           public void scrolledToNow() {
-            if(mCenterPanel != null) {
-              mCenterPanel.showForNow();
+            if(mListPanel != null) {
+              mListPanel.showForNow();
             }
           }
           
           @Override
           public void scrolledToTime(int time) {
-            if(mCenterPanel != null) {
-              mCenterPanel.showForTimeButton(time);
+            if(mListPanel != null) {
+              mListPanel.showForTimeButton(time);
             }
           }
           
           @Override
           public void timeEvent() {
-            if(mCenterPanel != null) {
-              mCenterPanel.refreshView();
+            if(mListPanel != null) {
+              mListPanel.refreshView();
             }
           }
         };
@@ -188,48 +186,65 @@ public class ListViewPlugin extends Plugin {
       SwingUtilities.invokeLater(new Runnable() {
         @Override
         public void run() {
-          if(provideTab() && mCenterPanel == null) {
-            mCenterPanel = new ListViewPanel(ListViewPlugin.this);
-            Persona.getInstance().registerPersonaListener(mCenterPanel);
-            
-            SwingUtilities.invokeLater(new Runnable() {
-              public void run() {
-                mCenterPanel.updatePersona();
-                mCenterPanelWrapper.add(mCenterPanel, BorderLayout.CENTER);
-                mCenterPanelWrapper.repaint();
-              }
-            });
+          if(provideTab()) {
+            updateCenterPanel();
           }
-          else if(!provideTab() && mCenterPanel != null) {
-            mCenterPanelWrapper.remove(mCenterPanel);
-            Persona.getInstance().removePersonaListerner(mCenterPanel);
-            mCenterPanel = null;
+          else if(!provideTab() && mListPanel != null) {
+            mCenterPanelWrapper.remove(mListPanel);
+            Persona.getInstance().removePersonaListerner(mListPanel);
+            mListPanel = null;
           }
         }
       });
     }
     
     public void onDeactivation() {
-      if(mCenterPanel != null) {
-        Persona.getInstance().removePersonaListerner(mCenterPanel);
+      if(mListPanel != null) {
+        Persona.getInstance().removePersonaListerner(mListPanel);
       }
       
-      mCenterPanel = null;
+      mListPanel = null;
     }
     
     private void updateCenterPanel() {
       SwingUtilities.invokeLater(new Runnable() {
         @Override
         public void run() {
-          if(mCenterPanel != null) {
-            mCenterPanelWrapper.remove(mCenterPanel);
-            Persona.getInstance().removePersonaListerner(mCenterPanel);
+          if(mListPanel != null) {
+            Persona.getInstance().removePersonaListerner(mListPanel);
+            mCenterPanelWrapper.remove(mListPanel);
           }
           
-          mCenterPanel = new ListViewPanel(ListViewPlugin.this);
-          Persona.getInstance().registerPersonaListener(mCenterPanel);
-          mCenterPanel.updatePersona();
-          mCenterPanelWrapper.add(mCenterPanel, BorderLayout.CENTER);        
+          mCenterPanelWrapper.removeAncestorListener(mAncestorListener);
+          
+          mListPanel = null;
+          
+          mListPanel = new ListViewPanel(ListViewPlugin.this);
+          
+          mAncestorListener = new AncestorListener() {
+            @Override
+            public void ancestorRemoved(AncestorEvent event) {
+              Persona.getInstance().removePersonaListerner(mListPanel);
+              mCenterPanelWrapper.remove(mListPanel);
+            }
+            
+            @Override
+            public void ancestorMoved(AncestorEvent event) {}
+            
+            @Override
+            public void ancestorAdded(AncestorEvent event) {
+              Persona.getInstance().registerPersonaListener(mListPanel);
+              mCenterPanelWrapper.add(mListPanel, BorderLayout.CENTER);
+              mCenterPanelWrapper.repaint();
+              mListPanel.updatePersona();
+            }
+          };
+          
+          mCenterPanelWrapper.addAncestorListener(mAncestorListener);
+          
+          if(mListPanel.isVisible()) {
+            mAncestorListener.ancestorAdded(null);
+          }
         }
       });
     }
@@ -292,10 +307,10 @@ public class ListViewPlugin extends Plugin {
     public void handleTvBrowserStartFinished() {
       SwingUtilities.invokeLater(new Runnable() {
         public void run() {
-          mCenterPanel = new ListViewPanel(ListViewPlugin.this);
-          Persona.getInstance().registerPersonaListener(mCenterPanel);
-          mCenterPanel.updatePersona();
-          mCenterPanelWrapper.add(mCenterPanel, BorderLayout.CENTER);
+          mListPanel = new ListViewPanel(ListViewPlugin.this);
+          Persona.getInstance().registerPersonaListener(mListPanel);
+          mListPanel.updatePersona();
+          mCenterPanelWrapper.add(mListPanel, BorderLayout.CENTER);
 
           if (mShowAtStartup) {
             showDialog();
