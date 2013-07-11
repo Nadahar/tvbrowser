@@ -137,6 +137,8 @@ public class ListViewPanel extends JPanel implements PersonaListener {
 
   protected int mTimeSelectionIndex;
   
+  private Thread mRefreshThread;
+  
   public ListViewPanel(Plugin plugin) {
     mPlugin = plugin;
     mTimes = Plugin.getPluginManager().getTvBrowserSettings().getTimeButtonTimes();
@@ -639,22 +641,29 @@ public class ListViewPanel extends JPanel implements PersonaListener {
    * Refresh the List with current settings
    */
   synchronized void refreshView() {
-    try {
-      mBox.setEnabled(mRuns.isSelected());
-      mDate.setEnabled(mOn.isSelected());
-      mTimeSpinner.setEnabled(mOn.isSelected());
-    
-      if (mRuns.isSelected()) {
-        int time = calcTimeForSelection(mBox.getSelectedIndex());
-        generateList(new Date(), time);
-      } else {
-        java.util.Date startTime = (java.util.Date) mTimeSpinner.getValue();
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(startTime);
-        int minutes = cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE);
-        generateList((Date) mDate.getSelectedItem(), minutes);
-      }
-    }catch(Throwable t) {t.printStackTrace();}
+    if(mRefreshThread == null || !mRefreshThread.isAlive()) {
+      mRefreshThread = new Thread() {
+        public void run() {
+          try {
+            mBox.setEnabled(mRuns.isSelected());
+            mDate.setEnabled(mOn.isSelected());
+            mTimeSpinner.setEnabled(mOn.isSelected());
+          
+            if (mRuns.isSelected()) {
+              int time = calcTimeForSelection(mBox.getSelectedIndex());
+              generateList(new Date(), time);
+            } else {
+              java.util.Date startTime = (java.util.Date) mTimeSpinner.getValue();
+              Calendar cal = Calendar.getInstance();
+              cal.setTime(startTime);
+              int minutes = cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE);
+              generateList((Date) mDate.getSelectedItem(), minutes);
+            }
+          }catch(Throwable t) {t.printStackTrace();}          
+        }
+      };
+      mRefreshThread.start();
+    }
   }
 
   /**
