@@ -237,7 +237,9 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
           * (program.getDate().getNumberOfDaysSince(Date.getCurrentDate()));
       int remainingMinutes = 0;
       
-      runningMinutes = Math.max(runningMinutes, (minutesAfterMidnight - progMinutesAfterMidnight));
+      if(program.isOnAir()) {
+        runningMinutes = Math.max(runningMinutes, (minutesAfterMidnight - progMinutesAfterMidnight));
+      }
       
       if (today.compareTo(program.getDate()) >= 0
           && minutesAfterMidnight > progMinutesAfterMidnight) {
@@ -246,6 +248,8 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
         msg = mLocalizer.msg("soonStarts", "Soon starts");
         remainingMinutes = ReminderPlugin.getTimeToProgramStart(program);
       }
+      
+      
       mHeader.setText(msg);
       remainingMinutesMax = Math.max(remainingMinutesMax, remainingMinutes);
 
@@ -319,9 +323,11 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
         remainingMinutesMax = reminder.getMinutes();
       }
     }
-
+System.out.println(remainingMinutesMax + " " +runningMinutes);
     mReminderCB = new JComboBox();
+    
     int i=0;
+    
     while (i < REMIND_VALUE_ARR.length
         && REMIND_VALUE_ARR[i] < remainingMinutesMax && (REMIND_VALUE_ARR[i] >= 0 || REMIND_VALUE_ARR[i] < -runningMinutes || REMIND_VALUE_ARR[i] == -31)) {
       mReminderCB.addItem(REMIND_MSG_ARR[i]);
